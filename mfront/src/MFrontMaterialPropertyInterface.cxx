@@ -143,6 +143,10 @@ namespace mfront {
       std::ostream&, const MaterialPropertyDescription&) const {
   }  // end of writeTFELVersionSymbol
 
+  void MFrontMaterialPropertyInterface::writeUnitSystemSymbol(
+      std::ostream&, const MaterialPropertyDescription&) const {
+  }  // end of writeUnitSystemSymbol
+
   void MFrontMaterialPropertyInterface::writeLawSymbol(
       std::ostream&, const MaterialPropertyDescription&) const {
   }  // end of writeMaterialSymbol

@@ -434,6 +434,17 @@ namespace mfront {
     exportStringSymbol(out, std::string{n} + "_tfel_version", ::getTFELVersion());
   }  // end of writeTFELVersionSymbol
 
+  void writeUnitSystemSymbol(std::ostream& out,
+                             const std::string_view n,
+                             const MaterialKnowledgeDescription& d) {
+    if (d.hasUnitSystem()) {
+      exportStringSymbol(out, std::string{n} + "_unit_system",
+                         d.getUnitSystem());
+    } else {
+      exportStringSymbol(out, std::string{n} + "_unit_system", "");
+    }
+  }  // end of writeUnitSystemSymbol
+
   void writeInterfaceSymbol(std::ostream& out,
                             const std::string_view n,
                             const std::string_view i) {

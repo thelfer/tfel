@@ -183,6 +183,12 @@ namespace mfront {
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
+    virtual void writeUnitSystemSymbol(
+        std::ostream&, const MaterialPropertyDescription&) const;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     */
     virtual void writeLawSymbol(std::ostream&,
                                 const MaterialPropertyDescription&) const;
     /*!

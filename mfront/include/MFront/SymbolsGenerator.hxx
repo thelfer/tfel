@@ -84,6 +84,15 @@ namespace mfront {
                                         const StandardBehaviourInterface &,
                                         const std::string &) const;
     /*!
+     * \param[in] out: output file
+     * \param[in] i    : standard behaviour interface
+     * \param[in] n:   name of the entry point
+     */
+    virtual void writeUnitSystemSymbol(std::ostream &,
+                                       const StandardBehaviourInterface &,
+                                       const std::string &,
+                                       const BehaviourDescription &) const;
+    /*!
      * \param[in] out  : output file
      * \param[in] i    : standard behaviour interface
      * \param[in] mb   : behaviour description

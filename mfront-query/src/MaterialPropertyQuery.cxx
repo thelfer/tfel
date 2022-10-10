@@ -50,6 +50,7 @@ namespace mfront {
         {"--law-name", "show the law name"},
         {"--class-name", "show the class name"},
         {"--author", "show the author name"},
+        {"--unit-system", "show the unit system used"},
         {"--description", "show the file description"},
         {"--date", "show the file implementation date"},
         {"--material", "show the material name"},
@@ -216,6 +217,16 @@ namespace mfront {
            [](const FileDescription&, const MaterialPropertyDescription& mpd) {
              cout << mpd.className << endl;
            }});
+    } else if (qn == "--unit-system") {
+      this->queries.push_back(
+          {"unit-system",
+           [](const FileDescription&, const MaterialPropertyDescription& mpd) {
+             if (mpd.hasUnitSystem()) {
+               cout << mpd.getUnitSystem() << endl;
+             } else {
+               cout << "(undefined)" << endl;
+             }
+           }});
     } else if (qn == "--author") {
       this->queries.push_back(
           {"author",
@@ -276,7 +287,7 @@ namespace mfront {
            [](const FileDescription&, const MaterialPropertyDescription& mpd) {
              QueryHandlerBase::displayVariable(mpd.output);
            }});
-    } else if (qn == "--inputs") {
+    } else if ((qn == "--inputs") || (qn == "--state-variables")) {
       this->queries.push_back(
           {"inputs",
            [](const FileDescription&, const MaterialPropertyDescription& mpd) {

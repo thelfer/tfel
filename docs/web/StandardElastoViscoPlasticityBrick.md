@@ -990,9 +990,9 @@ if an option named `A` has been given:
   the variables defined in the behaviour (static variables, parameters,
   material properties, etc...).
 
-If required, the derivative of `R` with respect to `f` and `p` can be
-provided through the option `dR_dp`. The derivative `dR_dp` can depend
-on the variable `R`.
+If required, the derivative of `R` with respect to `p` can be provided
+through the option `dR_dp`. The derivative `dR_dp` can depend on the
+variable `R`.
 
 If this derivative is not provided, automatic differentiation will be
 used. The user shall be warned that the automatic differentiation

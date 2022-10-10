@@ -53,6 +53,11 @@ namespace tfel::system {
     std::string entry_point;
     //! \brief version of TFEL used to generate the entry point
     std::string tfel_version;
+    /*!
+     * \brief unit system used by the entry point (can be empty if no unit
+     * system has been specified)
+     */
+    std::string unit_system;
     //! \brief build identifier
     std::string build_id;
     //! \brief MFront source file

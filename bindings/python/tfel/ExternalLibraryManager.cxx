@@ -153,6 +153,10 @@ void declareExternalLibraryManager() {
       .def("getBuildId", &ELM::getBuildId)
       .def("getMaterial", &ELM::getMaterial)
       .def("getSource", &ELM::getSource)
+      .def("getTFELVersion", &ELM::getTFELVersion,
+           "return the TFEL Version used to generate the given entry point")
+      .def("getUnitSystem", &ELM::getUnitSystem,
+           "return the unit system associated with the given entry point")
       .def("getEntryPoints", &ELM::getEntryPoints,
            "return the list of all mfront generated entry points\n"
            "in a library")

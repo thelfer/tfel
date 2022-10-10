@@ -154,7 +154,7 @@ namespace mfront {
    * \brief write symbols associated with the file description.
    * \param[out] os: output stream
    * \param[in]  n: entry point name
-   * \param[out] fd: description
+   * \param[in] fd: file description
    */
   MFRONT_VISIBILITY_EXPORT void writeFileDescriptionSymbols(
       std::ostream&, const std::string_view, const FileDescription&);
@@ -163,7 +163,7 @@ namespace mfront {
    * \brief write a symbol associated with the build identifier.
    * \param[out] os: output stream
    * \param[in]  n: entry point name
-   * \param[out] d: description
+   * \param[in] d: description
    */
   MFRONT_VISIBILITY_EXPORT void writeBuildIdentifierSymbol(
       std::ostream&, const std::string_view, const MaterialKnowledgeDescription&);
@@ -181,11 +181,21 @@ namespace mfront {
    * \brief write a specific symbol giving the version of `MFront`
    * used to generate the given entry point.
    * \param[out] os: output stream
-   * \param[in]  n:  entry point
-   * name
+   * \param[in]  n:  entry point name
    */
   MFRONT_VISIBILITY_EXPORT void writeTFELVersionSymbol(std::ostream&,
                                                        const std::string_view);
+  /*!
+   * \brief write a specific symbol giving the version of `MFront`
+   * used to generate the given entry point.
+   * \param[out] os: output stream
+   * \param[in]  n:  entry point name
+   * \param[in]  d:  description
+   */
+  MFRONT_VISIBILITY_EXPORT void writeUnitSystemSymbol(
+      std::ostream&,
+      const std::string_view,
+      const MaterialKnowledgeDescription&);
   /*!
    * \brief write a specific symbol stating that a given name entry
    * point (`C`-like function for example) has been created using
@@ -316,7 +326,9 @@ namespace mfront {
    * - `writePhysicalBoundsSymbols`
    */
   MFRONT_VISIBILITY_EXPORT void writeParametersSymbols(
-      std::ostream&, const std::string_view, const MaterialPropertyDescription&);
+      std::ostream&,
+      const std::string_view,
+      const MaterialPropertyDescription&);
   /*!
    * \brief export parameters declarations
    * \param[out] os: output stream
@@ -324,7 +336,9 @@ namespace mfront {
    * \param[out] parameters: list of parameters
    */
   MFRONT_VISIBILITY_EXPORT void writeParametersDeclarationSymbols(
-      std::ostream&, const std::string_view, const VariableDescriptionContainer&);
+      std::ostream&,
+      const std::string_view,
+      const VariableDescriptionContainer&);
   /*!
    * \brief export the default values of a set of parameters
    * \param[out] os: output stream
@@ -332,7 +346,9 @@ namespace mfront {
    * \param[out] parameters: list of parameters
    */
   MFRONT_VISIBILITY_EXPORT void writeParametersDefaultValuesSymbols(
-      std::ostream&, const std::string_view, const VariableDescriptionContainer&);
+      std::ostream&,
+      const std::string_view,
+      const VariableDescriptionContainer&);
   /*!
    * \brief write a symbol describing an array of integers
    * \param[out] os: output stream
@@ -361,8 +377,8 @@ namespace mfront {
    * \param[in] space_dimension: string containing the space dimension
    * \param[in] policy: name of the variable holding the policy
    * \param[in] addThis: add "this->" in front of the variables
-   * \param[in] checkEndOfTimeStepValue: also check the value at the end of the
-   * time step given by the value of the variable plus its increment.
+   * \param[in] checkEndOfTimeStepValue: also check the value at the end of
+   * the time step given by the value of the variable plus its increment.
    */
   MFRONT_VISIBILITY_EXPORT
   void writeBoundsChecks(std::ostream&,
@@ -379,8 +395,8 @@ namespace mfront {
    * array of variables, this argument may point to an element of this array.
    * \param[in] space_dimension: string containing the space dimension
    * \param[in] addThis: add "this->" in front of the variables
-   * \param[in] checkEndOfTimeStepValue: also check the value at the end of the
-   * time step given by the value of the variable plus its increment.
+   * \param[in] checkEndOfTimeStepValue: also check the value at the end of
+   * the time step given by the value of the variable plus its increment.
    */
   MFRONT_VISIBILITY_EXPORT
   void writePhysicalBoundsChecks(std::ostream&,
@@ -407,7 +423,7 @@ namespace mfront {
 
 #endif /* MFRONT_HAVE_MADNEX */
 
-}  // end of namespace mfront
+  }  // end of namespace mfront
 
 #include "MFront/DSLUtilities.ixx"
 

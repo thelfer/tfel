@@ -374,6 +374,11 @@ namespace mfront {
     mfront::writeTFELVersionSymbol(os, this->getSymbolName(mpd));
   }  // end of writeTFELVersionSymbol
 
+  void CMaterialPropertyInterfaceBase::writeUnitSystemSymbol(
+      std::ostream& os, const MaterialPropertyDescription& mpd) const {
+    mfront::writeUnitSystemSymbol(os, this->getSymbolName(mpd), mpd);
+  }  // end of writeUnitSystemSymbol
+
   void CMaterialPropertyInterfaceBase::writeLawSymbol(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
     mfront::writeLawSymbol(os, this->getSymbolName(mpd), mpd.law);
@@ -450,6 +455,7 @@ namespace mfront {
     this->writeBuildIdentifierSymbol(os, mpd);
     this->writeEntryPointSymbol(os, mpd);
     this->writeTFELVersionSymbol(os, mpd);
+    this->writeUnitSystemSymbol(os, mpd);
     this->writeInterfaceSymbol(os, mpd);
     this->writeLawSymbol(os, mpd);
     this->writeMaterialSymbol(os, mpd);

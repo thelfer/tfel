@@ -48,6 +48,7 @@ namespace mfront {
         {"--model-name", "show the model name"},
         {"--class-name", "show the class name"},
         {"--author", "show the author name"},
+        {"--unit-system", "show the unit system used"},
         {"--description", "show the file description"},
         {"--date", "show the file implementation date"},
         {"--material", "show the material name"},
@@ -100,6 +101,16 @@ namespace mfront {
           {"author", [](const FileDescription& fd, const ModelDescription&) {
              const auto& a = fd.authorName;
              std::cout << (!a.empty() ? a : "(undefined)") << std::endl;
+           }});
+    } else if (qn == "--unit-system") {
+      this->queries.push_back(
+          {"unit-system",
+           [](const FileDescription&, const ModelDescription& md) {
+             if (md.hasUnitSystem()) {
+               std::cout << md.getUnitSystem() << std::endl;
+             } else {
+               std::cout << "(undefined)" << std::endl;
+             }
            }});
     } else if (qn == "--description") {
       this->queries.push_back(

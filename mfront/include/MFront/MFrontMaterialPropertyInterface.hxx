@@ -66,6 +66,8 @@ namespace mfront {
         std::ostream&, const MaterialPropertyDescription&) const override;
     void writeTFELVersionSymbol(
         std::ostream&, const MaterialPropertyDescription&) const override;
+    void writeUnitSystemSymbol(
+        std::ostream&, const MaterialPropertyDescription&) const override;
     void writeMaterialKnowledgeTypeSymbol(
         std::ostream&, const MaterialPropertyDescription&) const override;
     void writeVariablesNamesSymbol(

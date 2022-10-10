@@ -27,6 +27,7 @@ namespace tfel::system {
     this->library = l;
     this->entry_point = f;
     this->tfel_version = elm.getTFELVersion(l, f);
+    this->unit_system = elm.getUnitSystem(l, f);
     this->build_id = elm.getBuildId(l, f);
     this->source = elm.getSource(l, f);
     this->material = elm.getMaterial(l, f);

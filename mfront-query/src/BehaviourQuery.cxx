@@ -159,6 +159,7 @@ namespace mfront {
         {"--behaviour-name", "show the behaviour name"},
         {"--class-name", "show the class name"},
         {"--author", "show the author name"},
+        {"--unit-system", "show the unit system used"},
         {"--description", "show the file description"},
         {"--date", "show the file implementation date"},
         {"--material", "show the material name"},
@@ -332,6 +333,16 @@ namespace mfront {
                                   cout << (!a.empty() ? a : "(undefined)")
                                        << '\n';
                                 }});
+    } else if (qn == "--unit-system") {
+      this->queries2.push_back(
+          {"unit-system",
+           [](const FileDescription&, const BehaviourDescription& bd) {
+             if (bd.hasUnitSystem()) {
+               std::cout << bd.getUnitSystem() << std::endl;
+             } else {
+               std::cout << "(undefined)" << std::endl;
+             }
+           }});
     } else if (qn == "--description") {
       this->queries2.push_back(
           {"description",

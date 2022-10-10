@@ -363,6 +363,7 @@ namespace mfront {
     writeBuildIdentifierSymbol(os, name, mpd);
     writeEntryPointSymbol(os, name);
     writeTFELVersionSymbol(os, name);
+    writeUnitSystemSymbol(os, name, mpd);
     writeInterfaceSymbol(os, name, this->getInterfaceNameInCamelCase());
     writeLawSymbol(os, name, mpd.law);
     writeMaterialSymbol(os, name, mpd.material);

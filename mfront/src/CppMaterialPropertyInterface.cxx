@@ -240,6 +240,7 @@ namespace mfront {
     writeEntryPointSymbol(src, name);
     writeLawSymbol(src, name, mpd.law);
     writeTFELVersionSymbol(src, name);
+    writeUnitSystemSymbol(src, name, mpd);
     writeInterfaceSymbol(src, name, "C++");
     writeMaterialSymbol(src, name, mpd.material);
     writeMaterialKnowledgeTypeSymbol(src, name, MATERIALPROPERTY);

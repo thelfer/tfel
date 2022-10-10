@@ -373,6 +373,7 @@ namespace mfront {
     writeBuildIdentifierSymbol(out, name, mpd);
     writeEntryPointSymbol(out, name);
     writeTFELVersionSymbol(out, name);
+    writeUnitSystemSymbol(out, name, mpd);
     writeInterfaceSymbol(out, name, "Castem");
     writeLawSymbol(out, name, mpd.law);
     writeMaterialSymbol(out, name, mpd.material);

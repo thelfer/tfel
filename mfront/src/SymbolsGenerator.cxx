@@ -51,6 +51,7 @@ namespace mfront {
     this->writeBuildIdentifierSymbol(out, i, bd, name);
     this->writeEntryPointSymbol(out, i, name);
     this->writeTFELVersionSymbol(out, i, name);
+    this->writeUnitSystemSymbol(out, i, name, bd);
     this->writeMaterialSymbol(out, i, bd, name);
     this->writeMaterialKnowledgeTypeSymbol(out, i, name);
     this->writeInterfaceNameSymbols(out, i, bd, fd, name);
@@ -96,6 +97,14 @@ namespace mfront {
       const std::string& n) const {
     mfront::writeTFELVersionSymbol(out, i.getFunctionNameBasis(n));
   }  // end of writeTFELVersionSymbol
+
+  void SymbolsGenerator::writeUnitSystemSymbol(
+      std::ostream& out,
+      const StandardBehaviourInterface& i,
+      const std::string& n,
+      const BehaviourDescription& bd) const {
+    mfront::writeUnitSystemSymbol(out, i.getFunctionNameBasis(n), bd);
+  }  // end of writeUnitSystemSymbol
 
   void SymbolsGenerator::writeMaterialSymbol(
       std::ostream& out,
