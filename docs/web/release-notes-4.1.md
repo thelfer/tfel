@@ -2328,6 +2328,47 @@ The following queries are available to retrieve information about climb tensors:
 - `--climb-tensors-by-slip-system`: list all the climb
   tensors sorted by slip systems.
 
+### Display information about a code block{#sec:mfront_query:issue_323}
+
+The query `--code-block` returns the information about code block.
+
+#### Example of usage
+
+~~~~{.bash}
+$ mfront-query --code-block=Integrator UserDefinedViscoplasticityTest.mfront
+- Integrator: 
+  - code:
+  feel -= this->deto;
+  
+  if(!perturbatedSystemEvaluation){
+  }
+  const auto& s = this->sig;
+  const auto seq = sigmaeq(s);
+  const auto iseq = 1/max(seq,(this->relative_value_for_the_equivalent_stress_lower_bound) * this->young);
+  const auto dseq_ds = 3*deviator(s)*(iseq/2);
+  const auto d2seq_dsds = (Stensor4::M()-(dseq_ds^dseq_ds))*iseq;
+  const auto& n = dseq_ds;
+  const auto& dn_ds = d2seq_dsds;
+  feel += this->dp* n;
+  dfeel_ddp = n;
+  dfeel_ddeel += (2 * this->mu)*(this->theta) * ((this->dp) * dn_ds);
+  const auto mfront_udvf_f = seq;
+  const auto vp = [this, mfront_udvf_f] {
+    if(mfront_udvf_f >= stress{0}){
+     return strainrate{(this->A)*(std::pow(mfront_udvf_f,this->E))};
+    }
+    return strainrate{0};
+  }();
+  const auto dvp_dseqe = [this, mfront_udvf_f] {
+    if(mfront_udvf_f >= stress{0}){
+  return derivative_type<strainrate, stress>{(this->A)*((this->E)*(std::pow(mfront_udvf_f,(this->E)-(1))))};
+    }
+    return derivative_type<strainrate, stress>{0};
+  }();
+  fp -= (this->dt) * vp;
+  dfp_ddeel += (2 * this->mu)*(this->theta) * (-(this->dt) * dvp_dseqe * dseq_ds);
+~~~~
+
 # `tfel-check` improvements
 
 ## Automatic declaration of substitutions for `TFEL` executables and `python` interpreter {#sec:tfel_4.1:tfel_check:default_substitutions}
@@ -2373,6 +2414,12 @@ which shall validate the output of the command. The output of the
 command is concatenated in a single string for the test.
 
 # Issues fixed
+
+## Issue #323: [mfront-query] display the code in a code block 
+
+This feature is described in Section @sec:mfront_query:issue_323.
+
+For more details, see <https://github.com/thelfer/tfel/issues/323>
 
 ## Issue #317: [mfront] Automatic declaration of  climb tensors
 

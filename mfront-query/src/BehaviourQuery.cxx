@@ -300,7 +300,8 @@ namespace mfront {
          "- `Upper`\n"
          "- `LowerAndUpper`"},
         {"--physical-bounds-value",
-         "show the bounds value associated as a range"}};
+         "show the bounds value associated as a range"},
+        {"--code-block", "show the information associated with a code block"}};
     for (const auto& q : sq2) {
       this->registerCallBack(
           q.first,
@@ -1131,6 +1132,39 @@ namespace mfront {
         }
       };
       this->queries2.push_back({"schmid-factors", l});
+    } else if (qn == "--code-block") {
+      auto l = [o](const FileDescription&, const BehaviourDescription& d,
+                   const Hypothesis h) {
+        const auto& bd = d.getBehaviourData(h);
+        const auto& c = bd.getCodeBlock(o);
+        std::cout << "- " << o << ": ";
+        if (!c.description) {
+          std::cout << c.description << std::endl;
+        } else {
+          std::cout << "(no description available)" << std::endl;
+        }
+        if (!c.members.empty()) {
+          std::cout << "  - used variables: ";
+          std::copy(c.members.begin(), c.members.end(),
+                    std::ostream_iterator<std::string>(std::cout, " "));
+          std::cout << endl;
+        }
+        if (!c.staticMembers.empty()) {
+          std::cout << "  - used static variables : ";
+          std::copy(c.staticMembers.begin(), c.staticMembers.end(),
+                    std::ostream_iterator<std::string>(std::cout, " "));
+          std::cout << endl;
+        }
+        if (!c.code.empty()) {
+          std::stringstream scode(c.code);
+          std::string code_line;
+          std::cout << "  - code:\n";
+          while (std::getline(scode, code_line)) {
+            std::cout << "  " << code_line << std::endl;
+          }
+        }
+      };
+      this->queries.push_back({"code-block", l});
     } else if (qn == "--schmid-factors-by-index") {
       auto l = [o](const FileDescription&, const BehaviourDescription& d) {
         tfel::raise_if(!d.areSlipSystemsDefined(), "no slip system defined");

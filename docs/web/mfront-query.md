@@ -197,6 +197,57 @@ $ mfront-query --post-processing-variables Elasticity.mfront
 - PrincipalStrain (εᵖ)
 ~~~~
 
+### Getting information about the climb tensors
+
+The following queries are available to retrieve information about climb tensors:
+
+- `--climb-tensors`: list all the climb tensors, sorted by
+  family".
+- `--climb-tensors-by-index`: list all the climb tensors.
+- `--climb-tensors-by-slip-system`: list all the climb
+  tensors sorted by slip systems.
+
+## Display information about a code block
+
+The query `--code-block` returns the information about code block.
+
+### Example of usage
+
+~~~~{.bash}
+$ mfront-query --code-block=Integrator UserDefinedViscoplasticityTest.mfront
+- Integrator: 
+  - code:
+  feel -= this->deto;
+  
+  if(!perturbatedSystemEvaluation){
+  }
+  const auto& s = this->sig;
+  const auto seq = sigmaeq(s);
+  const auto iseq = 1/max(seq,(this->relative_value_for_the_equivalent_stress_lower_bound) * this->young);
+  const auto dseq_ds = 3*deviator(s)*(iseq/2);
+  const auto d2seq_dsds = (Stensor4::M()-(dseq_ds^dseq_ds))*iseq;
+  const auto& n = dseq_ds;
+  const auto& dn_ds = d2seq_dsds;
+  feel += this->dp* n;
+  dfeel_ddp = n;
+  dfeel_ddeel += (2 * this->mu)*(this->theta) * ((this->dp) * dn_ds);
+  const auto mfront_udvf_f = seq;
+  const auto vp = [this, mfront_udvf_f] {
+    if(mfront_udvf_f >= stress{0}){
+     return strainrate{(this->A)*(std::pow(mfront_udvf_f,this->E))};
+    }
+    return strainrate{0};
+  }();
+  const auto dvp_dseqe = [this, mfront_udvf_f] {
+    if(mfront_udvf_f >= stress{0}){
+  return derivative_type<strainrate, stress>{(this->A)*((this->E)*(std::pow(mfront_udvf_f,(this->E)-(1))))};
+    }
+    return derivative_type<strainrate, stress>{0};
+  }();
+  fp -= (this->dt) * vp;
+  dfp_ddeel += (2 * this->mu)*(this->theta) * (-(this->dt) * dvp_dseqe * dseq_ds);
+~~~~
+
 ## List of `MTest` tests associated with a behaviour in a `madnex` file
 
 The `--list-behaviour-mtest-tests` command line argument can be used to
