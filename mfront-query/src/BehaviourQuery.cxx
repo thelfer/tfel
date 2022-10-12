@@ -1138,7 +1138,7 @@ namespace mfront {
         const auto& bd = d.getBehaviourData(h);
         const auto& c = bd.getCodeBlock(o);
         std::cout << "- " << o << ": ";
-        if (!c.description) {
+        if (!c.description.empty()) {
           std::cout << c.description << std::endl;
         } else {
           std::cout << "(no description available)" << std::endl;
