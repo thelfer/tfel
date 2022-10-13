@@ -19,6 +19,7 @@
 #include <algorithm>
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Math/IntegerEvaluator.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
@@ -104,6 +105,7 @@ namespace mfront {
   }  // end of DSLBase::DSLBase
 
   std::vector<std::string> DSLBase::getDefaultReservedNames() {
+    const auto& g = tfel::glossary::Glossary::getGlossary();
     auto names = std::vector<std::string>{};
     // names of the c++ standard
     names.insert(
@@ -120,7 +122,9 @@ namespace mfront {
     names.insert(names.end(), {"tfel", "math", "material", "utilities",
                                "exception", "glossary"});
     for (const auto& v : SupportedTypes::getTypeFlags()) {
-      names.push_back(v.first);
+      if (!g.contains(v.first)) {
+        names.push_back(v.first);
+      }
     }
     names.insert(names.end(),
                  {"policy", "errno", "mfront_errno", "mfront_errno_old"});
