@@ -169,6 +169,7 @@ namespace mfront {
           << "errno = cyrano_errno_old;\n"
           << "return nan(\"" << v.name << " is out of bounds.\");\n"
           << "} else if (cyrano_out_of_bounds_policy==CYRANO_WARNING_POLICY){\n"
+          << "cyrano_output_status->status = 1;\n"
           << "cyrano_output_status->bounds_status = " << i << ";\n"
           << "cyrano_report(\"" << v.name
           << " is below its lower bound (\" + std::to_string(" << v.name
@@ -185,6 +186,7 @@ namespace mfront {
           << "cyrano_output_status->bounds_status = -" << i << ";\n"
           << "return nan(\"" << v.name << " is out of bounds.\");\n"
           << "} else if (cyrano_out_of_bounds_policy==CYRANO_WARNING_POLICY){\n"
+          << "cyrano_output_status->status = 1;\n"
           << "cyrano_output_status->bounds_status = " << i << ";\n"
           << "cyrano_report(\"" << v.name
           << " is over its upper bound (\" + std::to_string(" << v.name
@@ -209,6 +211,7 @@ namespace mfront {
           << "errno = cyrano_errno_old;\n"
           << "return nan(\"" << v.name << " is out of bounds.\");\n"
           << "} else if (cyrano_out_of_bounds_policy==CYRANO_WARNING_POLICY){\n"
+          << "cyrano_output_status->status = 1;\n"
           << "if(" << v.name << " < " << b.lowerBound << "){\n"
           << "cyrano_output_status->bounds_status = " << i << ";\n"
           << "cyrano_report(\"" << v.name
