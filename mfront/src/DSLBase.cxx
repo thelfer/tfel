@@ -23,6 +23,7 @@
 #endif /* MFRONT_HAVE_MADNEX */
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Math/IntegerEvaluator.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Utilities/Data.hxx"
@@ -78,6 +79,7 @@ namespace mfront {
   }  // end of DSLBase::DSLBase
 
   std::vector<std::string> DSLBase::getDefaultReservedNames() {
+    const auto& g = tfel::glossary::Glossary::getGlossary();
     auto names = std::vector<std::string>{};
     // names of the c++ standard
     names.insert(
@@ -97,7 +99,9 @@ namespace mfront {
                  {"policy", "errno", "mfront_errno", "mfront_errno_old"});
     // standard aliases
     for (const auto& a : getTypeAliases()) {
-      names.push_back(a);
+      if (!g.contains(a)) {
+        names.push_back(a);
+      }
     }
     return names;
   }
