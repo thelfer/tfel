@@ -1957,7 +1957,7 @@ defining the test:
 
 ## Improvements to the `TFEL/System` `python` module
 
-### Retrieving the unit system of an entry point {#sec:tfel_4.1:system:elm:unit_system}
+### Retrieving the unit system of an entry point {#sec:tfel_4.1:python:system:elm:unit_system}
 
 The `ExternalLibraryManager` class now exposes the `getUnitSystem` to
 retrieve the unit system associated with an entry point (material

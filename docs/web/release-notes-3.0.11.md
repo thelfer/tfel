@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #320: [mfront] `HeatFlux` can't be use as a glossary name
+
+For more details, see <https://github.com/thelfer/tfel/issues/320>.
+
 ## Issue #309: [mfront] Profiling is broken when using logarithmic strain in the `abaqus` interface 
 
 For more details, see <https://github.com/thelfer/tfel/issues/309>.
