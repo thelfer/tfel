@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 322: [cyrano interface] The output status does not match the specification when a variable is out of its bounds
+
+For more details, see <https://github.com/thelfer/tfel/issues/322>
+
 ## Issue 268: Python binding of ExternalMaterialPropertyDescription class: error if no input variable in the MFront 
 
 For more details, see <https://github.com/thelfer/tfel/issues/268>

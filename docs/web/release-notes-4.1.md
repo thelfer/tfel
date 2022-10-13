@@ -2415,37 +2415,37 @@ command is concatenated in a single string for the test.
 
 # Issues fixed
 
-## Issue #323: [mfront-query] display the code in a code block 
+## Issue 323: [mfront-query] display the code in a code block 
 
 This feature is described in Section @sec:mfront_query:issue_323.
 
 For more details, see <https://github.com/thelfer/tfel/issues/323>
 
-## Issue #317: [mfront] Automatic declaration of  climb tensors
+## Issue 317: [mfront] Automatic declaration of  climb tensors
 
 This feature is described in Sections @sec:mfront:model:issue_317 and
 @sec:mfront_query:model:issue_317.
 
 For more details, see <https://github.com/thelfer/tfel/issues/317>
 
-## Issue #314: [tfel-material] Implement the inverse Langevin function
+## Issue 314: [tfel-material] Implement the inverse Langevin function
 
 This feature is described in Section
 sec:tfel_4.1:tfel_material:inverse_langevin_function.
 
 For more details, see <https://github.com/thelfer/tfel/issues/314>
 
-## Issue #302: [mfront] `mfront` interface for material properties shall generate overloaded functions for every numerical type supported
+## Issue 302: [mfront] `mfront` interface for material properties shall generate overloaded functions for every numerical type supported
 
 For more details, see <https://github.com/thelfer/tfel/issues/302>
 
 ￼
 ￼
-## Issue #301: [mfront] `mfront` interface for material properties shall generate a version of supporting quantites
+## Issue 301: [mfront] `mfront` interface for material properties shall generate a version of supporting quantites
 
 For more details, see <https://github.com/thelfer/tfel/issues/301>
 
-## Issue #300: [mfront] Add a new `castem` interface for point-wise models handled by the `Model` DSL 
+## Issue 300: [mfront] Add a new `castem` interface for point-wise models handled by the `Model` DSL 
 
 This feature is described in Section
 @sec:tfel:4.1:mfront:castem_model_interface. See also Section
@@ -2453,7 +2453,7 @@ This feature is described in Section
 
 For more details, see <https://github.com/thelfer/tfel/issues/300>
 
-## Issue #299: [mfront] Add support for models in the `castem` interface for behaviours
+## Issue 299: [mfront] Add support for models in the `castem` interface for behaviours
 
 This feature is described in Section
 @sec:tfel:4.1:mfront:castem_model_interface2. See also Section
@@ -2461,7 +2461,7 @@ This feature is described in Section
 
 For more details, see <https://github.com/thelfer/tfel/issues/299>
 
-## Issue #298: Add the `@MaterialProperty` keyword for models described by the `Model` DSL
+## Issue 298: Add the `@MaterialProperty` keyword for models described by the `Model` DSL
 
 The `@MaterialProperty` and `@Coef` keywords have been added for
 consistency with DSLs related to behaviours and in particular the
@@ -2470,11 +2470,11 @@ equivalent to the `@ConstantMaterialProperty` keyword.
 
 For more details, see <https://github.com/thelfer/tfel/issues/298>
 
-## Issue #297: [mfront] Automatically include the `<iostream>` header in models
+## Issue 297: [mfront] Automatically include the `<iostream>` header in models
 
 For more details, see <https://github.com/thelfer/tfel/issues/297>
 
-## Issue #296: [mfront] Allow bidirectional convertion between the IntegrationResult enumeration and boolean values
+## Issue 296: [mfront] Allow bidirectional convertion between the IntegrationResult enumeration and boolean values
 
 Some code blocks return boolean values and others return instances of
 the IntegrationResult enumeration. This is inconsistent from the user
@@ -2483,41 +2483,41 @@ IntegrationResult enumeration and boolean values mitigates this issue.
 
 For more details, see <https://github.com/thelfer/tfel/issues/296>
 
-## Issue #295: [mfront] Allow failure of the behaviour initialisation
+## Issue 295: [mfront] Allow failure of the behaviour initialisation
 
 This feature is described in Section @sec:mfront:issue_295.
 
 For more details, see <https://github.com/thelfer/tfel/issues/295>
 
-## Issue #282: [mfront] Allow models based generic behaviours to define tangent operator blocks associated with the derivatives of state variables with respect to external state variables 
+## Issue 282: [mfront] Allow models based generic behaviours to define tangent operator blocks associated with the derivatives of state variables with respect to external state variables 
 
 For more details, see <https://github.com/thelfer/tfel/issues/282>
 
-## Issue #276: [mfront] Add unicode support the `Model` DSL
+## Issue 276: [mfront] Add unicode support the `Model` DSL
 
 For more details, see <https://github.com/thelfer/tfel/issues/276>
 
-## Issue #266: [tfel-math] Add constexpr evaluation of spline and derivative 
+## Issue 266: [tfel-math] Add constexpr evaluation of spline and derivative 
 
 This feature is described in Section @sec:tfel_4.1:tfel_math:issue_266.
 
 For more details, see <https://github.com/thelfer/tfel/issues/266>
 
-## Issue #265: [mfront] Add MTest file generation capability for `generic` behaviours
+## Issue 265: [mfront] Add MTest file generation capability for `generic` behaviours
 
 For more details, see <https://github.com/thelfer/tfel/issues/265>
 
-## Issue #264: Add support to compute linear intepolation
+## Issue 264: Add support to compute linear intepolation
 
 This feature is described in Section @sec:tfel_4.1:tfel_math:issue_264.
 
 For more details, see <https://github.com/thelfer/tfel/issues/264>
 
-## Issue #263: [tfel-math] Add an empty method to `TFEL`' array
+## Issue 263: [tfel-math] Add an empty method to `TFEL`' array
 
 For more details, see <https://github.com/thelfer/tfel/issues/263>
 
-## Issue #262: Installation issue of the `master` branch (future version 4.1) with `gcc-8.1.0`
+## Issue 262: Installation issue of the `master` branch (future version 4.1) with `gcc-8.1.0`
 
 The issue is related to `MFront` tests using quantities such tests fails
 to build with old compilers, i.e. `gcc` `8.1.0`.
@@ -2528,91 +2528,91 @@ ON by default.
 
 For more details, see <https://github.com/thelfer/tfel/issues/262>
 
-## Issue #256: [tfel-math] Add support to clamp `TFEL/Math` arrays
+## Issue 256: [tfel-math] Add support to clamp `TFEL/Math` arrays
 
 This feature is described in Section @sec:tfel_4.1:tfel_math:issue_256.
 
 For more details, see <https://github.com/thelfer/tfel/issues/256>
 
-## Issue #255: [tfel-gossary] add physical bounds to entries of the glossary when appropriate
+## Issue 255: [tfel-gossary] add physical bounds to entries of the glossary when appropriate
 
 For more details, see <https://github.com/thelfer/tfel/issues/255>
 
-## Issue #254: [mfront-query] add queries related to bounds for material properties
+## Issue 254: [mfront-query] add queries related to bounds for material properties
 
 This feature is described in Section @sec:mfront_query:issue_254.
 
 For more details, see <https://github.com/thelfer/tfel/issues/254>
 
-## Issue #249: [mfront] The C++ interface for material properties is broken when declaring parameters with complex types
+## Issue 249: [mfront] The C++ interface for material properties is broken when declaring parameters with complex types
 
 For more details, see <https://github.com/thelfer/tfel/issues/249>
 
-## Issue #248: [mtest] Document the `@AdditionalOutputs` keyword
+## Issue 248: [mtest] Document the `@AdditionalOutputs` keyword
 
 For more details, see <https://github.com/thelfer/tfel/issues/248>
 
-## Issue #245: [mtest] add a `getOutputName` for `MaterialProperty` class
+## Issue 245: [mtest] add a `getOutputName` for `MaterialProperty` class
 
 For more details, see <https://github.com/thelfer/tfel/issues/245>
 ￼
 
-## Issue #244: [mfront] Support for `PhysicalConstants` in the `Model` DSL
+## Issue 244: [mfront] Support for `PhysicalConstants` in the `Model` DSL
 
 This feature is described in Section @sec:mfront:model:issue_244.
 
 For more details, see <https://github.com/thelfer/tfel/issues/244>
 
-## Issue #243: [mfront] Support for `PhysicalConstants` in the `MaterialProperty` DSL
+## Issue 243: [mfront] Support for `PhysicalConstants` in the `MaterialProperty` DSL
 
 This feature is described in Section
 @sec:mfront:material_property:issue_243
 
 For more details, see <https://github.com/thelfer/tfel/issues/243>
 
-## Issue #242: [mfront] Quantity support in the `Model` DSL
+## Issue 242: [mfront] Quantity support in the `Model` DSL
 
 This feature is described in Section @sec:mfront:model:issue_242.
 
 For more details, see <https://github.com/thelfer/tfel/issues/242>
 
-## Issue #241: [mfront] Allow to specify types in the `Model` DSL
+## Issue 241: [mfront] Allow to specify types in the `Model` DSL
 
 This feature is described in Section @sec:mfront:model:issue_241.
 
 For more details, see <https://github.com/thelfer/tfel/issues/241>
 
-## Issue #239: [mfront] Add support for defining an unit system enhancement mfront
+## Issue 239: [mfront] Add support for defining an unit system enhancement mfront
 
 This feature is described in Section @sec:mfront:issue_239.
 
 For more details, see <https://github.com/thelfer/tfel/issues/239>
 
-## Issue #238: [tfel-glossary] Translate all the description in english
+## Issue 238: [tfel-glossary] Translate all the description in english
 
 For more details, see <https://github.com/thelfer/tfel/issues/238>
 
-## Issue #237: [mfront] Add physical bounds declaration in the glossary. Automatically use those bounds in `MFront`
+## Issue 237: [mfront] Add physical bounds declaration in the glossary. Automatically use those bounds in `MFront`
 
 This feature is described in Section @sec:mfront:issue_239.
 
 For more details, see <https://github.com/thelfer/tfel/issues/237>
 
-## Issue #236: [mtest] Allow to use oxidation models in `ptest`
+## Issue 236: [mtest] Allow to use oxidation models in `ptest`
 
 This feature is described in Sections @sec:tfel:4.1:ptest:oxidation_model
 and @sec:tfel:4.1:python:mtest:oxidation_model.
 
 For more details, see <https://github.com/thelfer/tfel/issues/236>.
 
-## Issue #235: [mfront] Document the variable affecting the compilation of shared libraries
+## Issue 235: [mfront] Document the variable affecting the compilation of shared libraries
 
 The compilation process used by `MFront` is now documented on this page:
 <https://thelfer.github.io/tfel/web/compiling-mfront-shared-libraries.html>
 
 For more details, see <https://github.com/thelfer/tfel/issues/235>.
 
-## Issue #233: Add the ability to define failure criteria in `ptest`
+## Issue 233: Add the ability to define failure criteria in `ptest`
 
 This feature is described in Sections
 @sec:tfel:4.1:ptest:failure_criterion and
@@ -2620,7 +2620,7 @@ This feature is described in Sections
 
 For more details, see <https://github.com/thelfer/tfel/issues/233>.
 
-## Issue #231:[tfel-check] Allow to compare the result of a command to a regular expression 
+## Issue 231:[tfel-check] Allow to compare the result of a command to a regular expression 
 
 This feature is described in Section
 @sec:tfel_4.1:tfel_check:command_outputs.
@@ -2628,7 +2628,7 @@ This feature is described in Section
 ￼
 For more details, see <https://github.com/thelfer/tfel/issues/231>.
 
-## Issue #230: [tfel-check] All to compare commands output to numerical values
+## Issue 230: [tfel-check] All to compare commands output to numerical values
 
 This feature is described in Section
 @sec:tfel_4.1:tfel_check:command_outputs.
@@ -2637,47 +2637,47 @@ This feature is described in Section
 For more details, see <https://github.com/thelfer/tfel/issues/230>.
 
 ￼
-## Issue #229:[tfel-check] Allow to specify that a command shall fail 
+## Issue 229:[tfel-check] Allow to specify that a command shall fail 
 
 This feature is described in Section
 @sec:tfel_4.1:tfel_check:test_failure.
 
 For more details, see <https://github.com/thelfer/tfel/issues/229>.
 
-## Issue #225: [mfront] Separate file generation from DSLs
+## Issue 225: [mfront] Separate file generation from DSLs
 
 For more details, see <https://github.com/thelfer/tfel/issues/225>.
 
-## Issue #224: [mfront] add DSL options to override parameters in material properties and point-wise models
+## Issue 224: [mfront] add DSL options to override parameters in material properties and point-wise models
 
 For more details, see <https://github.com/thelfer/tfel/issues/224>.
 
-## Issue #223: [mfront] Allow to define dsl options from a file
+## Issue 223: [mfront] Allow to define dsl options from a file
 
 This feature is described in depth in Section
 @sec:tfel_4.1:mfront:global_dsl_options:external_file.
 
 For more details, see <https://github.com/thelfer/tfel/issues/223>.
 
-## Issue #222: [mfront] Add a behaviour DSL option to define the modelling hypotheses to be treated
+## Issue 222: [mfront] Add a behaviour DSL option to define the modelling hypotheses to be treated
 
 This feature is described in depth in Section
 @sec:tfel:4.1:mfront:global_options:modelling_hypothesis.
 
 For more details, see <https://github.com/thelfer/tfel/issues/222>.
 
-## Issue #219: [mfront] Allow to override "overriden" parameters 
+## Issue 219: [mfront] Allow to override "overriden" parameters 
 
 For more details, see <https://github.com/thelfer/tfel/issues/219>.
 
-## Issue #216: [mfront] Add behaviour `DSL` options to override material properties, external state variables and parameters
+## Issue 216: [mfront] Add behaviour `DSL` options to override material properties, external state variables and parameters
 
 This feature is described in Section
 @sec:tfel:4.1:mfront:global_options:overriding_parameters.
 
 For more details, see <https://github.com/thelfer/tfel/issues/216>.
 
-## Issue #215: [mfront] Allow to override external state variables as parameters
+## Issue 215: [mfront] Allow to override external state variables as parameters
 
 Scalar external state variables can be overriden by parameters. Note
 that if an external state variable is overriden, the increment of this
@@ -2687,61 +2687,61 @@ with a null default value.
 
 For more details, see <https://github.com/thelfer/tfel/issues/215>.
 
-## Issue #210: [tfel-check] Allow to split command in multiple strings
+## Issue 210: [tfel-check] Allow to split command in multiple strings
 
 For more details, see <https://github.com/thelfer/tfel/issues/210>.
 
-## Issue #209: [tfel-utilities] Convertion from `Data` to `std::vector` and `std::map` shall work if the object is empty
+## Issue 209: [tfel-utilities] Convertion from `Data` to `std::vector` and `std::map` shall work if the object is empty
 
 ￼
 For more details, see <https://github.com/thelfer/tfel/issues/209>.
 
 ￼
-## Issue #208: [tfel-check] Automatic declaration of substitutions for `TFEL` executables and `python` interpreter 
+## Issue 208: [tfel-check] Automatic declaration of substitutions for `TFEL` executables and `python` interpreter 
 
 This feature is described in Section
 @sec:tfel_4.1:tfel_check:default_substitutions.
 
 For more details, see <https://github.com/thelfer/tfel/issues/208>.
 
-## Issue #207: [tfel-check] allow comments in config files
+## Issue 207: [tfel-check] allow comments in config files
 
 For more details, see <https://github.com/thelfer/tfel/issues/207>.
 
-## Issue #200: [mfront] Generate a `setParameter` function for material properties generated with the `python` interface
+## Issue 200: [mfront] Generate a `setParameter` function for material properties generated with the `python` interface
 ￼
 
 For more details, see <https://github.com/thelfer/tfel/issues/200>.
 
-## Issue #199: [mfront-query] Add the `--parameters-file` query for material properties
+## Issue 199: [mfront-query] Add the `--parameters-file` query for material properties
 
 For more details, see <https://github.com/thelfer/tfel/issues/199>.
 
-## Issue #197: [mfront] Extension of the `derivative_type` metafunction to higher order derivatives
+## Issue 197: [mfront] Extension of the `derivative_type` metafunction to higher order derivatives
 
 For more details, see <https://github.com/thelfer/tfel/issues/197>.
 
-## Issue #192: [TFEL/System] Access to default values of parameters of a material property through the `ExternalMaterialPropertyDescription` class
+## Issue 192: [TFEL/System] Access to default values of parameters of a material property through the `ExternalMaterialPropertyDescription` class
 
 This feature is described in Section
 @sec:tfel_4.1:system:empd:getParameterDefaultValue.
 
 For more details, see <https://github.com/thelfer/tfel/issues/192>.
 
-## Issue #191: [TFEL/System] Ability to request bounds of variables (inputs, outputs) of a material property in the `ExternalMaterialPropertyDescription` class
+## Issue 191: [TFEL/System] Ability to request bounds of variables (inputs, outputs) of a material property in the `ExternalMaterialPropertyDescription` class
 
 Those features are described in Section @sec:tfel_4.1:system:empd:bounds.
 
 For more details, see <https://github.com/thelfer/tfel/issues/191>.
 
-## Issue #187: [mfront] Get `@Output` from compiled file through `python` bindings
+## Issue 187: [mfront] Get `@Output` from compiled file through `python` bindings
 
 This feature is described in Section
 @sec:tfel_4.1:system:elm:getMaterialPropertyOutput.
 
 For more details, see <https://github.com/thelfer/tfel/issues/187>.
 
-## Issue #186: [mfront] Get `@Material`, `@Law`, `@Author`, `@Date`, `@Description` from compiled file through Python binding
+## Issue 186: [mfront] Get `@Material`, `@Law`, `@Author`, `@Date`, `@Description` from compiled file through Python binding
 
 Those features are described in Sections
 @sec:tfel_4.1:system:elm:getLaw, @sec:tfel_4.1:system:elm:getAuthor,
@@ -2750,41 +2750,41 @@ Those features are described in Sections
 
 For more details, see <https://github.com/thelfer/tfel/issues/186>.
 
-## Issue #183: [mfront] The `rkCastem` algorithm assumes that a variable `young` is defined
+## Issue 183: [mfront] The `rkCastem` algorithm assumes that a variable `young` is defined
 
 This feature is described in Section
 @sec:tfel_4.1:mfront:rkCastem.
 
 For more details, see <https://github.com/thelfer/tfel/issues/183>.
 
-## Issue #181: [mfront-query] add query about the output of a material property
+## Issue 181: [mfront-query] add query about the output of a material property
 
 This feature is described in Section
 @sec:tfel_4.1:mfront_query:mp:output.
 
 For more details, see <https://github.com/thelfer/tfel/issues/181>
 
-## Issue #180: [mfront-query] add query about the inputs of a material property
+## Issue 180: [mfront-query] add query about the inputs of a material property
 
 This feature is described in Section
 @sec:tfel_4.1:mfront_query:mp:inputs.
 
 For more details, see <https://github.com/thelfer/tfel/issues/180>
 
-## Issue #177: [mtest] Support of material properties generated with the `generic` interface
+## Issue 177: [mtest] Support of material properties generated with the `generic` interface
 
 The feature is described in Section
 @sec:tfel:4.1:mtest:generic_material_property_support.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/177>.
 
-## Issue #175: Add support for post-processing to mean-value and the integral value of a state variable
+## Issue 175: Add support for post-processing to mean-value and the integral value of a state variable
 
 The feature is described in Section sec:tfel:4.1:ptest:integral_value.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/175>.
 
-## Issue #172: [tfel-math-parser] Add the ability to derive the power function enhancement {#sec:tfel:4.1:issue:172}
+## Issue 172: [tfel-math-parser] Add the ability to derive the power function enhancement {#sec:tfel:4.1:issue:172}
 
 Previous versions of `TFEL/Math` did not implement the evaluation the
 derivative of the formula `power<N>(x)`. This is now implemented
@@ -2792,7 +2792,7 @@ properly.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/172>.
 
-## Issue #171: ￼[tfel-math-parser] Correct derivative of exponents bug
+## Issue 171: ￼[tfel-math-parser] Correct derivative of exponents bug
 
 The computation of the derivative of power functions lead to the
 following issues in previous versions of `TFEL`. The derivative of
@@ -2808,7 +2808,7 @@ and `db(x)` denote the deriative of `a` and with respect to `x`.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/171>.
 
-## Issue #170: [tfel-math-parser] Add support for integer exponent
+## Issue 170: [tfel-math-parser] Add support for integer exponent
 
 In previous versions, the formula `x**N` was evaluated using
 `std::pow(x,N)` even if `N` was an integer.
@@ -2825,7 +2825,7 @@ See also Issue 172.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/170>.
 
-## Issue #169: [tfel-math-parser] Add feature to simplify formula
+## Issue 169: [tfel-math-parser] Add feature to simplify formula
 
 ### More efficient evaluation of derivatives
 
@@ -2837,77 +2837,77 @@ this derivative as `1`.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/169>.
 
-## Issue #157: Disable `reportContractViolation` on GPUs
+## Issue 157: Disable `reportContractViolation` on GPUs
 
 See Section @sec:tfel_4.1:tfel_exception:reportContractViolation_gpu.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/157>.
 
-## Issue #150: [TFEL/Material] Add device specification
+## Issue 150: [TFEL/Material] Add device specification
 
 See Sections @sec:tfel_4.1:tfel_config:device_specification and @sec:tfel_4.1:tfel_material:gpu.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/150>.
 
-## Issue #148: [TFEL/Material] `constexpr` all the things
+## Issue 148: [TFEL/Material] `constexpr` all the things
 
 See Section @sec:tfel_4.1:tfel_material:constexpr.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/148>.
 
-## Issue #146: [mfront] Export dependencies of MFront files in madnex files
+## Issue 146: [mfront] Export dependencies of MFront files in madnex files
 
 For more details, see : <https://github.com/thelfer/tfel/issues/146>.
 
-## Issue #145: [mfront] Automatically add a madnex input file to the search paths 
+## Issue 145: [mfront] Automatically add a madnex input file to the search paths 
 
 This feature is described in Section
 @sec:tfel_4.1:mfront:automatic_madnex_file_search_path.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/145>.
 
-## Issue #144: [mfront-query] List dependencies of a `mfront` file
+## Issue 144: [mfront-query] List dependencies of a `mfront` file
 
 This feature is described in Section
 @sec:tfel_4.1:mfront_query:list_dependencies.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/144>.
 
-## Issue #143: [mfront] Add the ability to append a madnex paths to the search paths 
+## Issue 143: [mfront] Add the ability to append a madnex paths to the search paths 
 
 This feature is described in Section @sec:tfel_4.1:mfront:madnex_search_paths.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/143>.
 
-## Issue #125: [mfront] Remove behaviour sources if not needed
+## Issue 125: [mfront] Remove behaviour sources if not needed
 
 For more details, see : <https://github.com/thelfer/tfel/issues/125>.
 
-## Issue #124: [mfront] Add DSL option to disable runtime change of the out of bound policy
+## Issue 124: [mfront] Add DSL option to disable runtime change of the out of bound policy
 
 This feature is described in Section
 @sec:tfel:4.1:mfront:global_options:out_of_bounds_policy_runtime_modification.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/124>.
 
-## Issue #123: [mfront] Add DSL option to change the default out of bounds policy
+## Issue 123: [mfront] Add DSL option to change the default out of bounds policy
 
 This feature is described in Section
 @sec:tfel:4.1:mfront:global_options:default_out_of_bounds_policy.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/123>.
 
-## Issue #122: [mfront] remove usage of exceptions in the computeTangentOperator method generated by the `Implicit` DSL
+## Issue 122: [mfront] remove usage of exceptions in the computeTangentOperator method generated by the `Implicit` DSL
 
 For more details, see : <https://github.com/thelfer/tfel/issues/122>.
 
-## Issue #111: [mtest] Support for `madnex` file
+## Issue 111: [mtest] Support for `madnex` file
 
 This feature is described in depth in Section @sec:tfel:4.1:mtest:madnex_support.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/111>.
 
-## Issue #108: [mtest] Support for extended types in MTest
+## Issue 108: [mtest] Support for extended types in MTest
 
 For more details, see : <https://github.com/thelfer/tfel/issues/108>.
 
@@ -2939,45 +2939,45 @@ This feature is described in Section
 
 For more details, see : <https://github.com/thelfer/tfel/issues/90>.
 
-## Issue #83: [mfront] Add a command line argument to retrieve the list of options associated with a domain specific language
+## Issue 83: [mfront] Add a command line argument to retrieve the list of options associated with a domain specific language
 
 This feature is described in Section
 @sec:tfel_4.1:mfront:list_dsl_options.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/83>.
 
-## Issue #82: [mfront] Ability to define DSL options on the command line
+## Issue 82: [mfront] Ability to define DSL options on the command line
 
 This feature is described in Section
 @sec:tfel_4.1:mfront:global_dsl_options.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/82>.
 
-## Issue #55: [mtest] Creation of a wrapper around behaviours written in the logarithmic strain framework generated with the `aster` interface
+## Issue 55: [mtest] Creation of a wrapper around behaviours written in the logarithmic strain framework generated with the `aster` interface
 
 The wrapper is described in Section
 @sec:tfel_4.1:mtest:aster_logarithmic_strain_wrapper.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/55>.
 
-## Issue #57: [gallery] Mistakes in the Drucker Prager Cap model of the gallery
+## Issue 57: [gallery] Mistakes in the Drucker Prager Cap model of the gallery
 
 For more details, see : <https://github.com/thelfer/tfel/issues/57>.
 
-## Issue #50: [mfront] Options to avoid the automatic declaration of the temperature as an external state variable {#sec:tfel:4.1:issue:50}
+## Issue 50: [mfront] Options to avoid the automatic declaration of the temperature as an external state variable {#sec:tfel:4.1:issue:50}
 
 This option is described in depth in Section
 @sec:tfel:4.1:mfront:global_options:temperature_as_first_external_state_variable.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/50>.
 
-## Issue #44: [mtest] Add support for a boundary condition modelling the effet of a mandrel in pipe modelling
+## Issue 44: [mtest] Add support for a boundary condition modelling the effet of a mandrel in pipe modelling
 
 The feature is described in Section @sec:tfel_4.1:mtest:mandrel.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/38>.
 
-## Issue #39: [tfel-config] Add query associated with python bindings support
+## Issue 39: [tfel-config] Add query associated with python bindings support
 
 `tfel-config` now supports an command line option named
 `--python-bindings-support` which displays true if `python` bindings are
@@ -2985,7 +2985,7 @@ available, `false` otherwise.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/39>.
 
-## Issue #38: [tfel-config] Add query associated with `madnex` support
+## Issue 38: [tfel-config] Add query associated with `madnex` support
 
 `tfel-config` now supports an command line option named
 `--madnex-support` which displays true if `madnex` files are supported,
@@ -2993,7 +2993,7 @@ For more details, see : <https://github.com/thelfer/tfel/issues/39>.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/38>.
 
-## Issue #36: [mfront] Improved support for `MTest` file generation (all kind of state variables)
+## Issue 36: [mfront] Improved support for `MTest` file generation (all kind of state variables)
 
 In previous versions, only scalar and symmetric tensors state variables
 were supported when generation `MTest` file on integration failure.
@@ -3002,7 +3002,7 @@ All kind of state variables are now supported.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/36>.
 
-## Issue #28: [mtest] Support of tensorial external state variables
+## Issue 28: [mtest] Support of tensorial external state variables
 
 The `Behaviour` class has new methods:
 
@@ -3027,11 +3027,11 @@ state variables components by components or an array as follows:
 
 For more details, see : <https://github.com/thelfer/tfel/issues/28>.
 
-## Issue #28: [mtest] Support of tensorial external state variables
+## Issue 28: [mtest] Support of tensorial external state variables
 
 For more details, see : <https://github.com/thelfer/tfel/issues/28>.
 
-## Issue #27: [mfront] Better support of tensorial external state variables
+## Issue 27: [mfront] Better support of tensorial external state variables
 
 The type of the external state variables are now exported.
 
@@ -3044,25 +3044,25 @@ Generation of `MTest` file also supports tensor external state variables.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/27>.
 
-## Issue #26: Don't use explicit instanciation for static variables
+## Issue 26: Don't use explicit instanciation for static variables
 
 For more details, see : <https://github.com/thelfer/tfel/issues/26>.
 
-## Issue #25: [mfront] Add ability to define initialisation functions
+## Issue 25: [mfront] Add ability to define initialisation functions
 
 This feature is described in Section
 @sec:tfel_4.1:mfront:initialize_functions.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/25>.
 
-## Issue #24: [mfront] Add ability to define post-processings
+## Issue 24: [mfront] Add ability to define post-processings
 
 This feature is described in Section
 @sec:tfel_4.1:mfront:postprocessings.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/24>.
 
-## Issue #23: [mfront] Remove usage of C++ reserved variables names
+## Issue 23: [mfront] Remove usage of C++ reserved variables names
 
 Some exported variables used to contain a double underscore in their
 names. Such names are reserved by the C++ standard for internal use by
@@ -3070,14 +3070,14 @@ the compilers.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/23>.
 
-## Issue #22 : [mfront] Option to treat parameters as static variables
+## Issue 22 : [mfront] Option to treat parameters as static variables
 
 This option is described in depth in Section
 @sec:tfel:4.1:mfront:global_options:parameters_as_static_variables.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/22>.
 
-## Issue #20: [mtest] Declaration of a behaviour wrapper in python module
+## Issue 20: [mtest] Declaration of a behaviour wrapper in python module
 
 As described in Section @sec:tfel_4.1:pymtest:behaviour_constructor,
 named parameters are now supported in the constructor of the `Behaviour`
@@ -3098,7 +3098,7 @@ Currently, two behaviours wrappers are available:
 
 For more details, see : <https://github.com/thelfer/tfel/issues/20>.
 
-## Issue #18: [mtest] Usage of a `3D` behaviour in `ptest`
+## Issue 18: [mtest] Usage of a `3D` behaviour in `ptest`
 
 Thanks the `SmallStrainTridimensionalBehaviourWrapper` class detailled
 in Section
@@ -3109,7 +3109,7 @@ generalised plane strain.
 
 For more details, see : <https://github.com/thelfer/tfel/issues/18>.
 
-## Issue #15: [mtest] New option for the declaration of the rotation matrix in `MTest`
+## Issue 15: [mtest] New option for the declaration of the rotation matrix in `MTest`
 
 This option is described in depth in Section
 @sec:tfel_4.1:mtest:rotation_matrix.
