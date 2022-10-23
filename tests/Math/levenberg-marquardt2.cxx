@@ -37,7 +37,6 @@ LM_STATIC std::pair<double, tfel::math::tvector<2u, double>> test(
   using namespace tfel::math;
   pair<double, tvector<2u, double>> res;
   double v0 = cos(x * x);
-  ;
   double v1 = exp(p(0) * v0);
   res.first = p(1) * v1;
   res.second(0) = p(1) * v0 * v1;
