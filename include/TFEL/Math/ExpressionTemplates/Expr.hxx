@@ -121,7 +121,8 @@ namespace tfel::math {
     /*!
      * \param l : left argument of the unary operation
      */
-    TFEL_HOST_DEVICE constexpr Expr(T1 l) : a(l) {}  // end of Expr
+    TFEL_HOST_DEVICE constexpr Expr(T1 l)
+        : a(std::forward<T1>(l)) {}  // end of Expr
     /*!
      * \brief multidimensional access operator
      */
@@ -181,7 +182,8 @@ namespace tfel::math {
      * \param l : left argument of the binary operation
      * \param r : right argument of the binary operation
      */
-    TFEL_HOST_DEVICE constexpr Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
+    TFEL_HOST_DEVICE constexpr Expr(T1 l, T2 r)
+        : a(std::forward<T1>(l)), b(std::forward<T2>(r)) {}  // end of Expr
     /*!
      * array-like access operator
      */
@@ -259,7 +261,8 @@ namespace tfel::math {
      * \param l : left argument of the binary operation
      * \param r : right argument of the binary operation
      */
-    TFEL_HOST_DEVICE constexpr Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
+    TFEL_HOST_DEVICE constexpr Expr(T1 l, T2 r)
+        : a(std::forward<T1>(l)), b(std::forward<T2>(r)) {}  // end of Expr
     /*!
      * \brief array-like access operator
      */
@@ -333,7 +336,8 @@ namespace tfel::math {
      * \param l : left argument of the binary operation
      * \param r : right argument of the binary operation
      */
-    TFEL_HOST_DEVICE constexpr Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
+    TFEL_HOST_DEVICE constexpr Expr(T1 l, T2 r)
+        : a(std::forward<T1>(l)), b(std::forward<T2>(r)) {}  // end of Expr
     /*!
      * array-like access operator
      */
@@ -403,7 +407,8 @@ namespace tfel::math {
      * \param l : left argument of the binary operation
      * \param r : right argument of the binary operation
      */
-    TFEL_HOST_DEVICE constexpr Expr(T1 l, T2 r) : a(l), b(r) {}  // end of Expr
+    TFEL_HOST_DEVICE constexpr Expr(T1 l, T2 r)
+        : a(std::forward<T1>(l)), b(std::forward<T2>(r)) {}  // end of Expr
     /*!
      * access operator
      * \param[in] i : row index

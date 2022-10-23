@@ -48,7 +48,7 @@ namespace tfel::math {
 
     TensorProductExprBase() = delete;
 
-    TFEL_MATH_INLINE TensorProductExprBase(A l, B r) : a(l), b(r) {}
+    TFEL_MATH_INLINE TensorProductExprBase(A l, B r) : a(std::forward<A>(l)), b(std::forward<B>(r)) {}
 
     ArgumentStorage<A> a;
     ArgumentStorage<B> b;
