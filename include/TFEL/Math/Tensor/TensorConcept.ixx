@@ -542,7 +542,9 @@ namespace tfel::math {
     const auto i2 = vp_U[0] * vp_U[1] + vp_U[0] * vp_U[2] + vp_U[1] * vp_U[2];
     const auto i3 = vp_U[0] * vp_U[1] * vp_U[2];
     const auto D = i1 * i2 - i3;
-    U = 1 / D * (-square(C) + (i1 * i1 - i2) * C + i1 * i3 * id);
+    const auto C2 = square(C);
+    U = 1 / D * (-C2 + (i1 * i1 - i2) * C + i1 * i3 * id);
+    //    U = 1 / D * (-square(C) + (i1 * i1 - i2) * C + i1 * i3 * id);
     const auto U_1 = (C - i1 * U + i2 * id) * (1 / i3);
     R = F * U_1;
   }  // end of polar_decomposition
