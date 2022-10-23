@@ -316,7 +316,7 @@ static std::pair<std::string,std::string> decompose(const char * const n)
   if(pn==pne){
     error_msg("empty string");
     return std::make_pair(std::string(),std::string());
-  };
+  }
   const std::string ln = extract(pn,pne,"can't extract library name");
 #ifdef _WIN32			 
   std::string lib = "lib" + ln + ".dll";

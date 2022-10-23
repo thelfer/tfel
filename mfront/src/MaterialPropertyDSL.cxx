@@ -396,7 +396,7 @@ namespace mfront {
   }  // end of treatInterface
 
   void MaterialPropertyDSL::finalizeVariablesDeclaration() {
-    for (const auto op : this->overriding_parameters) {
+    for (const auto& op : this->overriding_parameters) {
       auto p = std::find_if(
           this->md.parameters.begin(), this->md.parameters.end(),
           [&op](const VariableDescription& v) {

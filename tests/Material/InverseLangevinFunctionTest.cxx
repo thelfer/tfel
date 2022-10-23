@@ -97,3 +97,4 @@ int main() {
   m.addXMLTestOutput("InverseLangevinFunctionTest.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
+

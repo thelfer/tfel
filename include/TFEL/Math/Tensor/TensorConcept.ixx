@@ -533,10 +533,9 @@ namespace tfel::math {
     using T2 = BinaryOperationResult<T, T, OpMult>;
     constexpr auto dime = getSpaceDimension<TensorType>();
     const auto id = stensor<dime, base>::Id();
-    tvector<3u, T2> vp_C;
-    tvector<3u, T> vp_U;
     const auto C = computeRightCauchyGreenTensor(F);
-    C.computeEigenValues(vp_C);
+    const auto vp_C = C.computeEigenValues();
+    tvector<3u, T> vp_U;
     transform<3u>::exe(vp_C.begin(), vp_U.begin(),
                        [](const T2& v) { return std::sqrt(v); });
     const auto i1 = vp_U[0] + vp_U[1] + vp_U[2];

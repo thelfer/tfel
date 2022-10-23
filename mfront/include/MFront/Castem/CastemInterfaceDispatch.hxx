@@ -83,9 +83,9 @@ namespace castem {
   struct CastemInterfaceDispatch<MODEL, H, Model>
       : public CastemInterfaceExceptions {
     TFEL_CASTEM_INLINE2 static void exe(
-        const CastemInt *const NTENS,
+        const CastemInt *const,
         const CastemReal *const DTIME,
-        const CastemReal *const DROT,
+        const CastemReal *const,
         CastemReal *const DDSDDE,
         const CastemReal *const STRAN,
         const CastemReal *const DSTRAN,
@@ -118,6 +118,10 @@ namespace castem {
               typename CBHandler::template IntegratorWithTimeStepping<bs, ba>,
               typename CBHandler::template Integrator<bs, ba>>,
           typename CBHandler::Error>;
+      if constexpr (is_defined_){
+        CBHandler::checkNPROPS(*NPROPS);
+        CBHandler::checkNSTATV(*NSTATV);
+      }
       Handler handler(DTIME, STRAN, DSTRAN, TEMP, DTEMP, PROPS, PREDEF, DPRED,
                       STATEV, STRESS, op, sfeh);
       handler.exe(DDSDDE, STRESS, STATEV, PNEWDT);

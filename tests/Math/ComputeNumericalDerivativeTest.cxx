@@ -44,7 +44,7 @@ struct ComputeNumericalDerivativeTest final : public tfel::tests::TestCase {
     constexpr auto eps = 1.e-12;
     const auto df = tfel::math::computeNumericalDerivative(
         [](const auto& v) { return v * v; }, 0.5, 1.e-2);
-    TFEL_TESTS_ASSERT(abs(df - 1) < eps);
+    TFEL_TESTS_ASSERT(std::abs(df - 1) < eps);
   }
   template <unsigned short N>
   void test2() {

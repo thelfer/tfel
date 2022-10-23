@@ -2279,3 +2279,4 @@ namespace mfront {
   RungeKuttaCodeGeneratorBase::~RungeKuttaCodeGeneratorBase() = default;
 
 }  // end of namespace mfront
+

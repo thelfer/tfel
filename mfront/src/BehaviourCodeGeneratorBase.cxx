@@ -5542,7 +5542,7 @@ namespace mfront {
          << this->bd.getClassName() << "Profiler::getProfiler()\n"
          << "{\n"
          << "static mfront::BehaviourProfiler profiler(\""
-         << this->bd.getClassName() << "\");\n;"
+         << this->bd.getClassName() << "\");\n"
          << "return profiler;\n"
          << "}\n\n";
     }

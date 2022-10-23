@@ -122,7 +122,7 @@ namespace mfront {
     writeArray(this->th_forces_bts, th_forces_size);
     os << "};\n\n";
     os << "@Gradient{";
-    writeArray(this->gradients_bts, th_forces_size);
+    writeArray(this->gradients_bts, gradients_size);
     os << "};\n\n";
     //
     const auto t0 = *(this->times.begin());
