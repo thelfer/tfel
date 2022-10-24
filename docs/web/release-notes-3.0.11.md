@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #326: Support for Intel's compiler `icx`
+
+For more details, see <https://github.com/thelfer/tfel/issues/326>.
+
 ## Issue #320: [mfront] `HeatFlux` can't be use as a glossary name
 
 For more details, see <https://github.com/thelfer/tfel/issues/320>.
