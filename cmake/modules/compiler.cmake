@@ -142,7 +142,8 @@ endif(NOT USE_EXTERNAL_COMPILER_FLAGS)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   include(cmake/modules/gcc.cmake)
 elseif(((CMAKE_CXX_COMPILER_ID STREQUAL "Clang") OR
-        (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")) AND
+        (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang") OR
+        (CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")) AND
        (NOT PATHSCALE_COMPILER))
   include(cmake/modules/clang.cmake)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
