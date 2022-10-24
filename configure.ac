@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 # Process this file with automake to produce Makefile.in files.
 
-AC_INIT(tfel,3.0.11-dev,tfel-contact@cea.fr)
+AC_INIT(tfel,3.0.11,tfel-contact@cea.fr)
 AC_CONFIG_SRCDIR([include/TFEL/Config/TFELConfig.hxx])
 AC_CONFIG_COMMANDS
 AC_CONFIG_MACRO_DIR([m4])
@@ -78,7 +78,7 @@ case $host in
 	TFEL_ARCH64="yes"
         ;;
     x86_64*-mingw32*)
-# Pas sûr, on verra plus tard
+# Pas sÃ»r, on verra plus tard
 	TFEL_ARCH32="yes"
 	TFEL_WIN="yes"
 	;;
