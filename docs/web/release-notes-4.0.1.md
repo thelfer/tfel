@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 325: [TFEL/Math] Missing argument forwarding in the constructor of Expr class #325
+
+For more details, see <https://github.com/thelfer/tfel/issues/325>
+
 ## Issue 288: [TFEL/Math] The quantity metafunction shall work with a qt<NoUnit, ValueType> as argument
 
 For more details, see <https://github.com/thelfer/tfel/issues/288>
