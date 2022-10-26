@@ -15,6 +15,7 @@
 #define LIB_MFRONT_CASTEM_CASTEMINTERFACEEXCEPTIONS_HXX
 
 #include <string>
+#include <string_view>
 
 #include "TFEL/Exception/TFELException.hxx"
 #include "TFEL/Material/MaterialException.hxx"
@@ -70,7 +71,7 @@ namespace castem {
      * \param[in] n2 : number of material properties declared by the interface
      */
     [[noreturn]] static void throwUnMatchedNumberOfMaterialProperties(
-        const std::string &, const unsigned short n1, const CastemInt n2);
+        const std::string_view, const unsigned short n1, const CastemInt n2);
 
     /*!
      * \brief throw an CastemException. This method shall be called when
@@ -82,7 +83,7 @@ namespace castem {
      * \param[in] n2 : number of state variables declared by the interface
      */
     [[noreturn]] static void throwUnMatchedNumberOfStateVariables(
-        const std::string &, const unsigned short n1, const CastemInt n2);
+        const std::string_view, const unsigned short n1, const CastemInt n2);
 
     /*!
      * \brief display the error message out of an CastemException to the
@@ -90,8 +91,7 @@ namespace castem {
      * \param[in] b : behaviour name
      * \param[in] e : the CastemException to be treated
      */
-    static void treatCastemException(const std::string &,
-                                     const CastemException &);
+    static void treatCastemException(const std::string_view, const CastemException &);
 
     /*!
      * \brief display the error message out of a material exception to the
@@ -100,7 +100,7 @@ namespace castem {
      * \param[in] e : the material exception to be treated
      */
     static void treatMaterialException(
-        const std::string &, const tfel::material::MaterialException &);
+        const std::string_view, const tfel::material::MaterialException &);
 
     /*!
      * \brief display the error message out of a generic tfel
@@ -108,7 +108,7 @@ namespace castem {
      * \param[in] b : behaviour name
      * \param[in] e : the exception to be treated
      */
-    static void treatTFELException(const std::string &,
+    static void treatTFELException(const std::string_view,
                                    const tfel::exception::TFELException &);
 
     /*!
@@ -117,21 +117,20 @@ namespace castem {
      * \param[in] b : behaviour name
      * \param[in] e : the exception to be treated
      */
-    static void treatStandardException(const std::string &,
+    static void treatStandardException(const std::string_view,
                                        const std::exception &);
 
     /*!
      * \brief display the error message when an unknown exception is caught
      * \param[in] b : behaviour name
      */
-    static void treatUnknownException(const std::string &);
+    static void treatUnknownException(const std::string_view);
 
     /*!
      * \brief throw an CastemException if the time step is negative
      * \param[in] b : behaviour name
      */
-    [[noreturn]] static void throwNegativeTimeStepException(
-        const std::string &);
+    [[noreturn]] static void throwNegativeTimeStepException(const std::string_view);
 
     /*!
      * \brief throw an CastemException if the behaviour integration
@@ -139,7 +138,7 @@ namespace castem {
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwBehaviourIntegrationFailedException(
-        const std::string &);
+        const std::string_view);
 
     /*!
      * \brief throw an CastemException if the maximum number of sub
@@ -147,7 +146,7 @@ namespace castem {
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwMaximumNumberOfSubSteppingReachedException(
-        const std::string &);
+        const std::string_view);
 
     /*!
      * \brief throw an CastemException if the maximum number of sub
@@ -155,14 +154,14 @@ namespace castem {
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void
-    throwPlaneStressMaximumNumberOfIterationsReachedException(
-        const std::string &);
+        throwPlaneStressMaximumNumberOfIterationsReachedException(
+            const std::string_view);
     /*!
      * \brief throw an CastemException if the DDSDDE parameter is invalid
      * \param[in] b : behaviour name
      * \param[in] v : DDSDDE value
      */
-    [[noreturn]] static void throwInvalidDDSDDEException(const std::string &,
+    [[noreturn]] static void throwInvalidDDSDDEException(const std::string_view,
                                                          const CastemReal);
     /*!
      * \brief throw an CastemException when a tanget operator is
@@ -170,15 +169,15 @@ namespace castem {
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void
-    throwTangentOperatorNotAvailableThroughGenericPlaneStressHandler(
-        const std::string &);
+        throwTangentOperatorNotAvailableThroughGenericPlaneStressHandler(
+            const std::string_view);
     /*!
      * \brief throw an AsterException if the prediction computation
      * failed
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwPredictionComputationFailedException(
-        const std::string &);
+        const std::string_view);
     /*!
      * \brief throw an AsterException if the a consistent tangent
      * operator has to been requested and that the behaviour does not
@@ -186,14 +185,14 @@ namespace castem {
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwConsistentTangentOperatorIsNotAvalaible(
-        const std::string &);
+        const std::string_view);
     /*!
      * \brief throw an AsterException if the a prediction operator has
      * to been requested and that the behaviour does not provide one.
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwPredictionOperatorIsNotAvalaible(
-        const std::string &);
+        const std::string_view);
     /*!
      * \brief throw an error message if the value of the NTENS
      * parameter is not valid
@@ -202,26 +201,32 @@ namespace castem {
      */
     static void checkNTENSValue(const CastemInt, const unsigned short);
     /*!
+     * \brief display an error message if the initialization of the behaviour
+     * failed \param[in] b : behaviour name
+     */
+    [[noreturn]] static void throwBehaviourInitializationFailed(
+        const std::string_view);
+    /*!
      * \brief throw an error message if the behaviour type is not supported for
      * the given hypothesis \param[in] type : behaviour type \param[in] H    :
      * hypothesis
      */
     [[noreturn]] static void throwInvalidBehaviourTypeAndModellingHypothesis(
-        const CastemBehaviourType, const std::string &);
+        const CastemBehaviourType, const std::string_view);
     /*!
      * \brief display an error message if the behaviour shall handle
      * stress free expansion and that the castem interface can't
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwUnsupportedStressFreeExpansionException(
-        const std::string &);
+        const std::string_view);
     /*!
      * \brief display an error message if the thermal expansion is not
      * null
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwThermalExpansionCoefficientShallBeNull(
-        const std::string &);
+        const std::string_view);
     /*!
      * \brief display an error message if the value of the NDI
      * parameter is not valid

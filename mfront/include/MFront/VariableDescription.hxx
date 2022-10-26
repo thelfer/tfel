@@ -247,7 +247,7 @@ namespace mfront {
    * \param[in] v: variable
    * \param[in] s: unit system
    */
-  MFRONT_VISIBILITY_EXPORT void checkAndComplePhysicalBoundsDeclaration(
+  MFRONT_VISIBILITY_EXPORT void checkAndCompletePhysicalBoundsDeclaration(
       VariableDescription&, const std::string_view);
   /*!
    * \return the size of the variable
@@ -454,7 +454,7 @@ namespace mfront {
    * \param[in] variables: list of variables
    * \param[in] s: unit system
    */
-  MFRONT_VISIBILITY_EXPORT void checkAndComplePhysicalBoundsDeclaration(
+  MFRONT_VISIBILITY_EXPORT void checkAndCompletePhysicalBoundsDeclaration(
       VariableDescriptionContainer&, const std::string_view);
 
   //! \brief a simple alias for backward compatibility with previous version of

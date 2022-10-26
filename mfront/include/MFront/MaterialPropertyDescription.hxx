@@ -20,6 +20,7 @@
 #include <string>
 #include <iosfwd>
 #include <optional>
+#include <string_view>
 
 #include "MFront/LawFunction.hxx"
 #include "MFront/VariableDescription.hxx"
@@ -116,7 +117,7 @@ namespace mfront {
      */
     bool isNameReserved(const std::string&) const;
     //! \brief check and complete the physical bounds of variables
-    void checkAndComplePhysicalBoundsDeclaration();
+    void checkAndCompletePhysicalBoundsDeclaration();
     /*!
      * \return a variable description associated with the given
      * external name.
@@ -202,7 +203,7 @@ namespace mfront {
       std::ostream&,
       const MaterialPropertyDescription&,
       const FileDescription&,
-      const std::string&,
+      const std::string_view,
       const bool);
   /*!
    * \brief an helper function which writes the declaration of some `TFEL`
@@ -215,7 +216,7 @@ namespace mfront {
   MFRONT_VISIBILITY_EXPORT void writeScalarStandardTypedefs(
       std::ostream&,
       const MaterialPropertyDescription&,
-      const std::string&,
+      const std::string_view,
       const bool);
   /*!
    * \return the name of a text file allowing the change the name of the

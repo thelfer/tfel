@@ -99,6 +99,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Material/SlipSystemsDescription.hxx                                                     \
             TFEL/Material/HarmonicSumOfNortonHoffViscoplasticFlows.hxx                                   \
             TFEL/Material/HarmonicSumOfNortonHoffViscoplasticFlows.ixx                                   \
+            TFEL/Material/InverseLangevinFunction.hxx                                                    \
+            TFEL/Material/InverseLangevinFunction.ixx                                                    \
 			TFEL/Config/Internals/TFELTypesInternals.hxx	                                             \
 			TFEL/Config/Internals/SpatialGradType.hxx	                                             \
 			TFEL/Config/Internals/TemperatureGradientType.hxx	                                     \
@@ -218,6 +220,8 @@ nobase_include_HEADERS= TFEL/Macros.hxx                                         
 			TFEL/Math/Parser/LevenbergMarquardtExternalFunctionWrapper.hxx                               \
 			TFEL/Math/Evaluator.hxx 						                     \
 			TFEL/Math/IntegerEvaluator.hxx 						                     \
+			TFEL/Math/LinearInterpolation.hxx					                             \
+			TFEL/Math/LinearInterpolation.ixx					                             \
 			TFEL/Math/CubicSpline.hxx					                             \
 			TFEL/Math/CubicSpline.ixx					                             \
 			TFEL/Math/Kriging.hxx						                             \

@@ -105,8 +105,8 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
     using pair = std::pair<std::string, mfront::SupportedTypes::TypeFlag>;
     auto o = mfront::SupportedTypes::TypeParsingOptions{};
     o.integer_constants = std::map<std::string, int>{{"Nss", 12}};
-    auto check = [&o, this](std::string_view v,
-                            const mfront::SupportedTypes::TypeFlag f) {
+    auto check = [this](std::string_view v,
+                        const mfront::SupportedTypes::TypeFlag f) {
       TFEL_TESTS_CHECK_EQUAL(mfront::SupportedTypes::getTypeFlag(v), f);
     };
     check("Stensor", mfront::SupportedTypes::STENSOR);

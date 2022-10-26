@@ -324,7 +324,9 @@ namespace cyrano {
           auto r = BV::SUCCESS;
           BV behaviour(this->bData, this->iData);
           try {
-            behaviour.initialize();
+            if(!behaviour.initialize()){
+              throwBehaviourInitializationFailedException(Traits::getName());
+            }
             behaviour.setOutOfBoundsPolicy(this->policy);
             behaviour.checkBounds();
             const auto smflag = TangentOperatorTraits<
@@ -466,8 +468,6 @@ namespace cyrano {
         sig[1] = STRESS[2];
         sig[2] = STRESS[1];
         this->behaviour.setCYRANOBehaviourDataThermodynamicForces(sig);
-        // initialise the behaviour
-        this->behaviour.initialize();
       }  // end of Integrator::Integrator
 
       TFEL_CYRANO_INLINE2
@@ -491,8 +491,12 @@ namespace cyrano {
         if (this->dt < 0.) {
           throwNegativeTimeStepException(Traits::getName());
         }
-        behaviour.checkBounds();
         auto r = BV::SUCCESS;
+        // initialise the behaviour
+        if (!this->behaviour.initialize()) {
+          throwBehaviourInitializationFailedException(Traits::getName());
+        }
+        behaviour.checkBounds();
         const auto smflag = TangentOperatorTraits<
             BV::STANDARDSTRAINBASEDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
         if ((-3.25 < *DDSOE) && (*DDSOE < -2.75)) {

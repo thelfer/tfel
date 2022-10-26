@@ -42,12 +42,12 @@ namespace tfel::utilities {
       "volatile",     "wchar_t",   "while",
       "constexpr"};
 
-  unsigned short getNumberOfCxxKeywords() {
+  std::size_t getNumberOfCxxKeywords() {
     return sizeof(reservedCxxKeywords) / sizeof(char *);
   }
 
-  bool isReservedCxxKeywords(const std::string &s) {
-    for (unsigned short i = 0; i < getNumberOfCxxKeywords(); ++i) {
+  bool isReservedCxxKeywords(std::string_view s) {
+    for (std::size_t i = 0; i < getNumberOfCxxKeywords(); ++i) {
       if (s == reservedCxxKeywords[i]) {
         return true;
       }

@@ -55,10 +55,10 @@ namespace tfel::math::parser {
 
   double ExternalFunctionExpr2::getValue() const {
     using namespace tfel::math::parser;
-    std::vector<std::shared_ptr<Expr>>::const_iterator p;
-    std::vector<std::shared_ptr<Expr>>::size_type i;
-    for (p = this->args.begin(), i = 0u; p != this->args.end(); ++p, ++i) {
-      const double val = (*p)->getValue();
+    auto p = this->args.begin();
+    auto i = std::vector<std::shared_ptr<Expr>>::size_type{};
+    for (; p != this->args.end(); ++p, ++i) {
+      const auto val = (*p)->getValue();
       this->f->setVariableValue(i, val);
     }
     return this->f->getValue();

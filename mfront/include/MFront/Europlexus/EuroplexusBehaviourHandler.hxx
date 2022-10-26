@@ -213,7 +213,6 @@ namespace epx {
         DVInitializer::exe(this->behaviour, dv0, dv1, d.sfeh);
         this->behaviour.setEUROPLEXUSBehaviourDataThermodynamicForces(d.STRESS);
         this->behaviour.setOutOfBoundsPolicy(d.op);
-        this->behaviour.initialize();
       }  // end of Integrator::Integrator
 
       TFEL_EPX_INLINE2
@@ -232,6 +231,11 @@ namespace epx {
         EuroplexusReal* const STATEV = d.STATEV;
         if (this->dt < 0.) {
           throwNegativeTimeStepException(Traits::getName());
+        }
+        if (!this->behaviour.initialize()) {
+          *PNEWDT = this->behaviour.getMinimalTimeStepScalingFactor();
+          *(d.STATUS) = -1;
+          return;
         }
         this->behaviour.checkBounds();
         const auto r = (*DDSDDE < -0.5)

@@ -1,6 +1,18 @@
-% The generic behaviour interface
-% Thomas Helfer
-% 12/09/2018
+---
+title: The generic behaviour interface
+author: Thomas Helfer
+date: 12/09/2018
+lang: en-EN
+link-citations: true
+colorlinks: true
+geometry:
+  - margin=2cm
+papersize: a4
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 The generic behaviour interface has been introduced to provide an
 interface suitable for most needs. Whereas other interfaces target a

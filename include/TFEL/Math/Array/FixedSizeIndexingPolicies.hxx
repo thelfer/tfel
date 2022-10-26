@@ -29,7 +29,7 @@ namespace tfel::math {
   }  // end of getUnderlyingArrayMinimalSize
 
   /*!
-   * \brief an indexing policy suitable for scaral
+   * \brief an indexing policy suitable for scalar
    * \tparam SizeType: type used for indexing
    */
   template <typename SizeType>
@@ -51,6 +51,8 @@ namespace tfel::math {
         noexcept {
       return 1;
     }
+    //! \return if the array is empty
+    TFEL_HOST_DEVICE constexpr bool empty() const noexcept { return false; }
     //! \return the logical size of the array
     TFEL_HOST_DEVICE constexpr size_type size() const noexcept { return 1; }
     //!
@@ -103,9 +105,9 @@ namespace tfel::math {
         const std::array<size_type, 1u>& indices) const noexcept {
       return this->getIndex(indices[0]);
     }
-    /*!
-     * \return the logical size of the array
-     */
+    //! \return if the array is empty
+    TFEL_HOST_DEVICE constexpr bool empty() const noexcept { return N == 0; }
+    //! \return the logical size of the array
     TFEL_HOST_DEVICE constexpr size_type size() const noexcept { return N; }
     /*!
      * \return the logical size of the array for the given dimension
@@ -190,6 +192,10 @@ namespace tfel::math {
     constexpr auto getRowMajorIndexingPolicy() {
       return FixedSizeRowMajorMatrixIndexingPolicy<SizeType, N, M>();
     }  // end of getRowMajorIndexingPolicy
+    //! \return if the matrix is empty
+    TFEL_HOST_DEVICE constexpr bool empty() const noexcept {
+      return N * M == 0;
+    }
     //!
     TFEL_HOST_DEVICE constexpr size_type size() const noexcept { return N * M; }
     /*!
@@ -425,6 +431,12 @@ namespace tfel::math {
     constexpr auto getRowMajorIndexingPolicy() {
       return RowMajorIndexingPolicy();
     }  // end of getRowMajorIndexingPolicy
+    //! \return if the array is empty
+    TFEL_HOST_DEVICE constexpr bool empty() const noexcept {
+      IndexingPolicy1 p1;
+      IndexingPolicy2 p2;
+      return p1.empty() || p2.empty();
+    }
     //!
     TFEL_HOST_DEVICE constexpr size_type size() const noexcept {
       IndexingPolicy1 p1;

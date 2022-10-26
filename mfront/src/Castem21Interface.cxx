@@ -31,6 +31,9 @@ namespace mfront {
   std::vector<BehaviourMaterialProperty>
   Castem21Interface::getDefaultMaterialPropertiesList(
       const BehaviourDescription& mb, const Hypothesis h) const {
+    if (mb.isModel()) {
+      return {};
+    }
     if (!((mb.getBehaviourType() ==
            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
           (mb.getBehaviourType() ==

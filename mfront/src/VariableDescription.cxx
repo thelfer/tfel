@@ -462,7 +462,7 @@ namespace mfront {
               "d" + v.name);
   }  // end of getIncrementSymbol
 
-  void checkAndComplePhysicalBoundsDeclaration(VariableDescription& v,
+  void checkAndCompletePhysicalBoundsDeclaration(VariableDescription& v,
                                                const std::string_view s) {
     using tfel::glossary::Glossary;
     if (!v.hasGlossaryName()) {
@@ -482,7 +482,7 @@ namespace mfront {
             tfel::utilities::convert<long double>(e.getLowerPhysicalBound(s));
         if (b1 < b2) {
           auto& os = getLogStream();
-          os << "checkAndComplePhysicalBoundsDeclaration: "
+          os << "checkAndCompletePhysicalBoundsDeclaration: "
              << "lower bound for variable '" << v.name
              << "' is below the lower bound of the associated glossary entry ("
              << b1 << " < " << b2 << ")";
@@ -494,7 +494,7 @@ namespace mfront {
             tfel::utilities::convert<long double>(e.getUpperPhysicalBound(s));
         if (b1 > b2) {
           auto& os = getLogStream();
-          os << "checkAndComplePhysicalBoundsDeclaration: "
+          os << "checkAndCompletePhysicalBoundsDeclaration: "
              << "upper bound for variable '" << v.name
              << "' is greater than the lower bound of the associated glossary "
              << "entry (" << b1 << " > " << b2 << ")";
@@ -502,25 +502,29 @@ namespace mfront {
       }
     } else {
       // complete
-      auto b = VariableBoundsDescription{};
       if ((e.hasLowerPhysicalBound(s)) && (e.hasUpperPhysicalBound(s))) {
+        auto b = VariableBoundsDescription{};
         b.boundsType = VariableBoundsDescription::LOWERANDUPPER;
         b.lowerBound =
             tfel::utilities::convert<long double>(e.getLowerPhysicalBound(s));
         b.upperBound =
             tfel::utilities::convert<long double>(e.getUpperPhysicalBound(s));
+        v.setPhysicalBounds(b);
       } else if (e.hasLowerPhysicalBound(s)) {
+        auto b = VariableBoundsDescription{};
         b.boundsType = VariableBoundsDescription::LOWER;
         b.lowerBound =
             tfel::utilities::convert<long double>(e.getLowerPhysicalBound(s));
+        v.setPhysicalBounds(b);
       } else if (e.hasUpperPhysicalBound(s)) {
+        auto b = VariableBoundsDescription{};
         b.boundsType = VariableBoundsDescription::UPPER;
         b.upperBound =
             tfel::utilities::convert<long double>(e.getUpperPhysicalBound(s));
+        v.setPhysicalBounds(b);
       }
-      v.setPhysicalBounds(b);
     }
-  }  // end of checkAndComplePhysicalBoundsDeclaration
+  }  // end of checkAndCompletePhysicalBoundsDeclaration
 
   VariableDescriptionContainer::VariableDescriptionContainer() = default;
 
@@ -710,11 +714,11 @@ namespace mfront {
     tfel::raise("mfront::getOffset: no variable name '" + n + "'");
   }  // end of getOffset
 
-  void checkAndComplePhysicalBoundsDeclaration(
+  void checkAndCompletePhysicalBoundsDeclaration(
       VariableDescriptionContainer& variables, const std::string_view s) {
     for (auto& v : variables) {
-      checkAndComplePhysicalBoundsDeclaration(v, s);
+      checkAndCompletePhysicalBoundsDeclaration(v, s);
     }
-  }  // end of checkAndComplePhysicalBoundsDeclaration
+  }  // end of checkAndCompletePhysicalBoundsDeclaration
 
 }  // end of namespace mfront

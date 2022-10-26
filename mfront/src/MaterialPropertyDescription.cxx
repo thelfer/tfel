@@ -33,7 +33,7 @@ namespace mfront {
       std::ostream& os,
       const MaterialPropertyDescription& mpd,
       const FileDescription& fd,
-      const std::string& numeric_type,
+      const std::string_view numeric_type,
       const bool areQuantitiesSupported) {
     os << "using namespace std;\n"
        << "using tfel::math::invert_type;\n"
@@ -46,6 +46,10 @@ namespace mfront {
       os << "using PhysicalConstants [[maybe_unused]] = "
          << "tfel::PhysicalConstants<" << numeric_type << ", false>;\n";
     }
+    os << "[[maybe_unused]] auto min = [](const auto a, const auto b) "
+       << "{ return a < b ? a : b; };\n"
+       << "[[maybe_unused]] auto max = [](const auto a, const auto b) "
+       << "{ return a > b ? a : b; };\n";
     writeScalarStandardTypedefs(os, mpd, numeric_type, areQuantitiesSupported);
     writeMaterialLaws(os, mpd.materialLaws);
     writeStaticVariables(os, mpd.staticVars, fd.fileName);
@@ -53,7 +57,7 @@ namespace mfront {
 
   void writeScalarStandardTypedefs(std::ostream& os,
                                    const MaterialPropertyDescription& mpd,
-                                   const std::string& numeric_type,
+                                   const std::string_view numeric_type,
                                    const bool areQuantitiesSupported) {
     const auto use_qt =
         (areQuantitiesSupported && useQuantities(mpd)) ? "true" : "false";
@@ -313,14 +317,14 @@ namespace mfront {
     return this->reservedNames.count(n) != 0;
   }
 
-  void MaterialPropertyDescription::checkAndComplePhysicalBoundsDeclaration() {
+  void MaterialPropertyDescription::checkAndCompletePhysicalBoundsDeclaration() {
     if (this->hasUnitSystem()) {
       const auto& s = this->getUnitSystem();
-      mfront::checkAndComplePhysicalBoundsDeclaration(this->output, s);
-      mfront::checkAndComplePhysicalBoundsDeclaration(this->inputs, s);
-      mfront::checkAndComplePhysicalBoundsDeclaration(this->parameters, s);
+      mfront::checkAndCompletePhysicalBoundsDeclaration(this->output, s);
+      mfront::checkAndCompletePhysicalBoundsDeclaration(this->inputs, s);
+      mfront::checkAndCompletePhysicalBoundsDeclaration(this->parameters, s);
     }
-  }  // end of checkAndComplePhysicalBoundsDeclaration
+  }  // end of checkAndCompletePhysicalBoundsDeclaration
 
   MaterialPropertyDescription::~MaterialPropertyDescription() = default;
 

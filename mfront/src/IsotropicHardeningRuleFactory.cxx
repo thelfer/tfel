@@ -13,6 +13,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "MFront/MFrontUtilities.hxx"
+#include "MFront/BehaviourBrick/DataIsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/VoceIsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/SwiftIsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/PowerIsotropicHardeningRule.hxx"
@@ -67,6 +68,9 @@ namespace mfront::bbrick {
     });
     this->addGenerator("Voce", []() {
       return std::make_shared<bbrick::VoceIsotropicHardeningRule>();
+    });
+    this->addGenerator("Data", []() {
+      return std::make_shared<bbrick::DataIsotropicHardeningRule>();
     });
     this->addGenerator("UserDefined", []() {
       return std::make_shared<bbrick::UserDefinedIsotropicHardeningRule>();

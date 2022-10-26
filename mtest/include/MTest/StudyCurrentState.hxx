@@ -2,7 +2,7 @@
  * \file   StudyCurrentState.hxx
  * \brief
  * \author Thomas Helfer
- * \date   11 nov. 2015
+ * \date   11/11/2015
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -157,6 +157,27 @@ namespace mtest {
      * \param[in] n  : name of the evolution
      */
     const Evolution& getEvolution(const std::string&) const;
+    //! \return if any of the failure criterion is true
+    bool getFailureStatus() const;
+    /*!
+     * \return the status of a failure criterion
+     * \param[in] i: index of the failure criterion
+     */
+    bool getFailureCriterionStatus(const std::size_t) const;
+    /*!
+     * \brief set the status of a failure criterion
+     * \param[in] i: index of the failure criterion
+     * \param[in] status: new status
+     */
+    void setFailureCriterionStatus(const std::size_t, const bool);
+    /*!
+     * \brief set the number of failure criterion status
+     * \param[in] n: number of the failure criteria
+     * \note the newly allocated status are initialized to `false`
+     */
+    void setNumberOfFailureCriterionStatus(const std::size_t);
+    //! \return the number of failure criterion status
+    std::size_t getNumberOfFailureCriterionStatus() const noexcept;
 
    protected:
     /*!
@@ -172,19 +193,17 @@ namespace mtest {
      */
     [[noreturn]] static void throwAlreadyDeclaredParameterException(
         const std::string&);
-    /*!
-     * \brief study parameters
-     */
+    //! \brief study parameters
     std::map<std::string, StudyParameter> parameters;
     /*!
-     * current state of the structures indexed by the structure's
+     * \brief current state of the structures indexed by the structure's
      * names
      */
     std::map<std::string, std::shared_ptr<StructureCurrentState>> s;
-    /*!
-     * \brief evolutions
-     */
+    //! \brief evolutions
     std::map<std::string, std::shared_ptr<Evolution>> evs;
+    //! \brief failure criteria status
+    std::vector<bool> failure_criterion_status;
   };  // end of struct StudyCurrentState
 
 }  // end of namespace mtest

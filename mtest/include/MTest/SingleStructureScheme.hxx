@@ -25,12 +25,11 @@ namespace mtest {
   // forward declaration
   struct Behaviour;
 
-  /*!
-   * \brief base class for schemes describing a single structure
-   */
+  //! \brief base class for schemes describing a single structure
   struct MTEST_VISIBILITY_EXPORT SingleStructureScheme : public SchemeBase {
+    //! \brief a simple alias
     using Parameters = tfel::utilities::Data;
-    //! default constructor
+    //! \brief default constructor
     SingleStructureScheme();
     /*!
      * \brief set the behaviour
@@ -93,20 +92,11 @@ namespace mtest {
      * \param[in] b : boolean
      */
     virtual void setHandleThermalExpansion(const bool);
-    /*!
-     * \brief perform the computation of the packaging step
-     */
+    //
     bool doPackagingStep(StudyCurrentState&) const override;
-    /*!
-     * \brief update current state at the beginning of a new time step:
-     * - update the material properties
-     * - update the external state variables
-     * - compute the thermal expansion if mandatory
-     * \param[out] state: current structure state
-     * \param[in]  t: current time
-     * \param[in] dt: time increment
-     */
-    void prepare(StudyCurrentState&, const real, const real) const override;
+    [[nodiscard]] std::pair<bool, real> prepare(StudyCurrentState&,
+                                                const real,
+                                                const real) const override;
     /*!
      * \param[in] n : parameter name
      * \param[in] v : parameter value
@@ -166,7 +156,7 @@ namespace mtest {
      */
     virtual void setOutOfBoundsPolicy(const tfel::material::OutOfBoundsPolicy);
     void completeInitialisation() override;
-    //! destructor
+    //! \brief destructor
     ~SingleStructureScheme() override;
 
    protected:
@@ -183,15 +173,15 @@ namespace mtest {
     virtual void setBehaviour(const std::shared_ptr<Behaviour>&);
     //! \return the default stiffness matrix type
     StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
-    //! list of internal variable names, including their suffixes
+    //! \brief list of internal variable names, including their suffixes
     std::vector<std::string> ivfullnames;
-    //! the mechanical behaviour
+    //! \brief the mechanical behaviour
     std::shared_ptr<Behaviour> b;
-    //! default values for material properties as given by the behaviour
+    //! \brief default values for material properties as given by the behaviour
     std::shared_ptr<EvolutionManager> dmpv;
-    // inital values of the internal state variables
+    // \brief inital values of the internal state variables
     std::vector<real> iv_t0;
-    //! handle the computation of thermal expansion
+    //! \brief handle the computation of thermal expansion
     bool handleThermalExpansion = true;
   };  // end of SingleStructureScheme
 

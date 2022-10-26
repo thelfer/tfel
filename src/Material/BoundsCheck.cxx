@@ -18,50 +18,57 @@
 
 namespace tfel::material {
 
-  void BoundsCheckBase::throwOutOfLowerBoundsException(const std::string& n,
-                                                       const std::string& v,
-                                                       const std::string& b) {
+  void BoundsCheckBase::throwOutOfLowerBoundsException(
+      const std::string_view n,
+      const std::string_view v,
+      const std::string_view b) {
     tfel::raise<OutOfBoundsException>(
-        "BoundsCheckBase::throwOutOfLowerBoundsException : variable '" + n +
-        "' is below its lower bound (" + v + "<" + b + ")");
+        "BoundsCheckBase::throwOutOfLowerBoundsException: variable '" +
+        std::string{n} + "' is below its lower bound (" + std::string{v} + "<" +
+        std::string{b} + ")");
   }
 
-  void BoundsCheckBase::throwOutOfUpperBoundsException(const std::string& n,
-                                                       const std::string& v,
-                                                       const std::string& b) {
+  void BoundsCheckBase::throwOutOfUpperBoundsException(
+      const std::string_view n,
+      const std::string_view v,
+      const std::string_view b) {
     tfel::raise<OutOfBoundsException>(
-        "BoundsCheckBase::throwOutOfUpperBoundsException : variable '" + n +
-        "' is below its lower bound (" + v + ">" + b + ")");
+        "BoundsCheckBase::throwOutOfUpperBoundsException: variable '" +
+        std::string{n} + "' is below its lower bound (" + std::string{v} + ">" +
+        std::string{b} + ")");
   }
 
-  void BoundsCheckBase::throwOutOfBoundsException(const std::string& n,
-                                                  const std::string& v,
-                                                  const std::string& lb,
-                                                  const std::string& ub) {
+  void BoundsCheckBase::throwOutOfBoundsException(const std::string_view n,
+                                                  const std::string_view v,
+                                                  const std::string_view lb,
+                                                  const std::string_view ub) {
     tfel::raise<OutOfBoundsException>(
-        "BoundsCheckBase::throwOutOfLowerBoundsException : variable '" + n +
-        "' is out of its bounds (" + v + "<" + lb + " or " + v + ">" + ub +
+        "BoundsCheckBase::throwOutOfLowerBoundsException: variable '" +
+        std::string{n} + "' is out of its bounds (" + std::string{v} + "<" +
+        std::string{lb} + " or " + std::string{v} + ">" + std::string{ub} +
         ")");
   }
 
-  void BoundsCheckBase::displayOutOfLowerBoundsWarning(const std::string& n,
-                                                       const std::string& v,
-                                                       const std::string& b) {
+  void BoundsCheckBase::displayOutOfLowerBoundsWarning(
+      const std::string_view n,
+      const std::string_view v,
+      const std::string_view b) {
     std::cerr << "BoundsCheckBase::displayOutOfLowerBoundsWarning : variable '"
               << n << "' is below its lower bound (" << v << "<" << b << ")\n";
   }
 
-  void BoundsCheckBase::displayOutOfUpperBoundsWarning(const std::string& n,
-                                                       const std::string& v,
-                                                       const std::string& b) {
+  void BoundsCheckBase::displayOutOfUpperBoundsWarning(
+      const std::string_view n,
+      const std::string_view v,
+      const std::string_view b) {
     std::cerr << "BoundsCheckBase::displayOutOfUpperBoundsWarning : variable '"
               << n << "' is below its lower bound (" << v << ">" << b << ")\n";
   }
 
-  void BoundsCheckBase::displayOutOfBoundsWarning(const std::string& n,
-                                                  const std::string& v,
-                                                  const std::string& lb,
-                                                  const std::string& ub) {
+  void BoundsCheckBase::displayOutOfBoundsWarning(const std::string_view n,
+                                                  const std::string_view v,
+                                                  const std::string_view lb,
+                                                  const std::string_view ub) {
     std::cerr << "BoundsCheckBase::displayOutOfLowerBoundsWarning : variable '"
               << n << "' is out of its bounds (" << v << "<" << lb << " or "
               << v << ">" << ub << ")\n";

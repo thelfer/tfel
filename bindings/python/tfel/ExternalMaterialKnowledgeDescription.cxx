@@ -29,6 +29,8 @@ void declareExternalMaterialKnowledgeDescription() {
                     &ExternalMaterialKnowledgeDescription::entry_point)
       .def_readonly("tfel_version",
                     &ExternalMaterialKnowledgeDescription::tfel_version)
+      .def_readonly("unit_system",
+                    &ExternalMaterialKnowledgeDescription::unit_system)
       .def_readonly("build_id", &ExternalMaterialKnowledgeDescription::build_id)
       .def_readonly("source", &ExternalMaterialKnowledgeDescription::source)
       .def_readonly("mfront_interface",

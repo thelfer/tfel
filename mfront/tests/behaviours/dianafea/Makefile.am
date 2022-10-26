@@ -20,5 +20,6 @@ EXTRA_DIST = CMakeLists.txt                  	    \
              materialpropertiesboundscheck8.mtest   \
              materialpropertiesboundscheck.mtest    \
              statevariablesboundscheck.mtest        \
-             statevariablesboundscheck2.mtest
+             statevariablesboundscheck2.mtest       \
+             initializationfailuretest.mtest
 

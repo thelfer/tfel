@@ -109,11 +109,11 @@ namespace mtest {
       }
       mfront::getLogStream() << '\n';
     }
-  }  // end of MTest::readInputFile
+  }  // end of readInputFile
 
   std::string MTest::name() const {
     return "unit behaviour test";
-  }  // end of MTest::name
+  }  // end of name
 
   std::string MTest::classname() const { return "MTest"; }
 
@@ -219,11 +219,11 @@ namespace mtest {
                    "invalid initial values size");
     this->s_t0.resize(N, 0);
     std::copy(v.begin(), v.end(), this->s_t0.begin());
-  }  // end of MTest::setThermodynamicForcesInitialValues
+  }  // end of setThermodynamicForcesInitialValues
 
   void MTest::setGaussPointPositionForEvolutionsEvaluation(
       const CurrentState&) const {
-  }  // end of MTest::setGaussPointPositionForEvolutionsEvaluation
+  }  // end of setGaussPointPositionForEvolutionsEvaluation
 
   void MTest::completeInitialisation() {
     using namespace tfel::material;
@@ -431,7 +431,7 @@ namespace mtest {
                "must be a constant evolution");
       cs.Tref = ev(0);
     }
-  }  // end of MTest::initializeCurrentState
+  }  // end of initializeCurrentState
 
   void MTest::initializeWorkSpace(SolverWorkSpace& wk) const {
     tfel::raise_if(!this->initialisationFinished,
@@ -450,7 +450,7 @@ namespace mtest {
     wk.x.resize(psz);
     wk.r.resize(psz, 0.);
     wk.du.resize(psz, 0.);
-  }  // end of MTest::initializeWorkSpace
+  }  // end of initializeWorkSpace
 
   size_t MTest::getNumberOfUnknowns() const {
     using tfel::math::vector;
@@ -466,11 +466,11 @@ namespace mtest {
       s += c.getNumberOfLagrangeMultipliers();
     }
     return s;
-  }  // end of MTest::getNumberOfUnknowns
+  }  // end of getNumberOfUnknowns
 
   tfel::tests::TestResult MTest::execute() {
     return this->execute(true);
-  }  // end of MTest::execute()
+  }  // end of execute
 
   tfel::tests::TestResult MTest::execute(const bool bInit) {
     auto report = [](const char* msg, const StudyCurrentState& s,
@@ -539,25 +539,25 @@ namespace mtest {
 
   void MTest::setCompareToNumericalTangentOperator(const bool bo) {
     this->cto = bo;
-  }  // end of MTest::setCompareToNumericalTangentOperator
+  }  // end of setCompareToNumericalTangentOperator
 
   void MTest::setTangentOperatorComparisonCriterion(const real v) {
     tfel::raise_if(v < 100 * std::numeric_limits<real>::min(),
                    "MTest::setTangentOperatorComparisonCriterion: "
                    "invalid comparison criterium");
     this->toeps = v;
-  }  // end of MTest::setTangentOperatorComparisonCriterion
+  }  // end of setTangentOperatorComparisonCriterion
 
   void MTest::setNumericalTangentOperatorPerturbationValue(const real v) {
     tfel::raise_if(v < 100 * std::numeric_limits<real>::min(),
                    "MTest::setNumericalTangentOperatorPerturbationValue: "
                    "invalid perturbation value");
     this->pv = v;
-  }  // end of MTest::setNumericalTangentOperatorPerturbationValue
+  }  // end of setNumericalTangentOperatorPerturbationValue
 
-  void MTest::prepare(StudyCurrentState& state,
-                      const real t,
-                      const real dt) const {
+  std::pair<bool, real> MTest::prepare(StudyCurrentState& state,
+                                       const real t,
+                                       const real dt) const {
     auto& scs = state.getStructureCurrentState("");
     tfel::raise_if(scs.istates.size() != 1u, "MTest::prepare: invalid state");
     // driving variables at the beginning of the time step
@@ -567,8 +567,8 @@ namespace mtest {
         s.e0[i] = state.u0[i];
       }
     }
-    SingleStructureScheme::prepare(state, t, dt);
-  }  // end of MTest::prepare
+    return SingleStructureScheme::prepare(state, t, dt);
+  }  // end of prepare
 
   void MTest::makeLinearPrediction(StudyCurrentState& state,
                                    const real dt) const {
@@ -581,7 +581,7 @@ namespace mtest {
       s.iv1 = s.iv0 + (s.iv0 - s.iv_1) * r;
       s.s1 = s.s0 + (s.s0 - s.s_1) * r;
     }
-  }  // end of MTest::makeLinearPrediction
+  }  // end of makeLinearPrediction
 
   std::pair<bool, real> MTest::computePredictionStiffnessAndResidual(
       StudyCurrentState& state,
@@ -591,7 +591,7 @@ namespace mtest {
       const real& dt,
       const StiffnessMatrixType smt) const {
     using tfel::material::MechanicalBehaviourBase;
-    using size_type = unsigned short;
+    using index_type = unsigned short;
     auto& scs = state.getStructureCurrentState("");
     auto& bwk = scs.getBehaviourWorkSpace();
     tfel::raise_if(scs.istates.size() != 1u, "MTest::prepare: invalid state");
@@ -608,8 +608,8 @@ namespace mtest {
     // free dilatation treatment
     if (this->b->getBehaviourType() ==
         MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR) {
-      for (size_type i = 0; i != nth; ++i) {
-        for (size_type j = 0; j != ndv; ++j) {
+      for (index_type i = 0; i != nth; ++i) {
+        for (index_type j = 0; j != ndv; ++j) {
           r(i) -= k(i, j) * (s.e_th1[j] - s.e_th0[j]);
         }
       }
@@ -632,7 +632,7 @@ namespace mtest {
       pos = static_cast<size_type>(pos + nl);
     }
     return res;
-  }  // end of MTest::computePredictionStiffnessAndResidual
+  }  // end of computePredictionStiffnessAndResidual
 
   std::pair<bool, real> MTest::computeStiffnessMatrixAndResidual(
       StudyCurrentState& state,
@@ -783,7 +783,7 @@ namespace mtest {
       }
     }
     return rb;
-  }  // end of MTest::computeStiffnessMatrixAndResidual
+  }  // end of computeStiffnessMatrixAndResidual
 
   /*!
    * \brief compute the error norm
@@ -803,7 +803,7 @@ namespace mtest {
   real MTest::getErrorNorm(const tfel::math::vector<real>& du) const {
     const auto ndv = this->b->getGradientsSize();
     return MTest_getErrorNorm(du, ndv);
-  }  // end of MTest::getErrorNorm
+  }  // end of getErrorNorm
 
   bool MTest::checkConvergence(StudyCurrentState& state,
                                const tfel::math::vector<real>& du,
@@ -890,16 +890,16 @@ namespace mtest {
       }
     }
     return fc;
-  }  // end of MTest::getFailedCriteriaDiagnostic
+  }  // end of getFailedCriteriaDiagnostic
 
   void MTest::computeLoadingCorrection(StudyCurrentState&,
                                        SolverWorkSpace&,
                                        const SolverOptions&,
                                        const real,
                                        const real) const {
-  }  // end of MTest::computeLoadingCorrection
+  }  // end of computeLoadingCorrection
 
-  void MTest::postConvergence(StudyCurrentState& state,
+  bool MTest::postConvergence(StudyCurrentState& state,
                               const real t,
                               const real dt,
                               const unsigned int p) const {
@@ -913,7 +913,8 @@ namespace mtest {
     for (const auto& up : this->upostprocessings) {
       up->exe(s, t, dt);
     }
-  }  // end of MTest::postConvergence
+    return true;
+  }  // end of postConvergence
 
   void MTest::execute(StudyCurrentState& state,
                       SolverWorkSpace& wk,
@@ -933,7 +934,7 @@ namespace mtest {
         break;
       }
     }
-  }  // end of MTest::execute
+  }  // end of execute
 
   void MTest::printOutput(const real t,
                           const StudyCurrentState& s,
@@ -960,21 +961,21 @@ namespace mtest {
       // stored and dissipated energies
       this->out << cs.se0 << " " << cs.de0 << '\n';
     }
-  }  // end of MTest::printOutput
+  }  // end of printOutput
 
   void MTest::addEvent(const std::string& e,
                        const std::vector<double>& evtimes) {
     for (const auto t : evtimes) {
       this->events[t].push_back(e);
     }
-  }  // end of MTest::addEvent
+  }  // end of addEvent
 
   void MTest::addUserDefinedPostProcessing(const std::string& f,
                                            const std::vector<std::string>& p) {
     this->upostprocessings.push_back(
         std::make_shared<UserDefinedPostProcessing>(
             *(this->getBehaviour()), this->getEvolutions(), f, p));
-  }  // end of MTest::addUserDefinedPostProcessing
+  }  // end of addUserDefinedPostProcessing
 
   MTest::~MTest() = default;
 

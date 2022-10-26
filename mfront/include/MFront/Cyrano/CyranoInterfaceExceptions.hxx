@@ -15,6 +15,7 @@
 #define LIB_MFRONT_CYRANO_CYRANOINTERFACEEXCEPTIONS_HXX
 
 #include <string>
+#include <string_view>
 
 #include "TFEL/Exception/TFELException.hxx"
 #include "TFEL/Material/MaterialException.hxx"
@@ -60,7 +61,7 @@ namespace cyrano {
    */
   struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoInterfaceExceptions {
     /*!
-     * \brief throw an CyranoException. This method shall be called when
+     * \brief throw a CyranoException. This method shall be called when
      * the number of materials properties declared by the beahviour and the
      * number of  materials properties declared by the interface does not
      * match.
@@ -69,10 +70,10 @@ namespace cyrano {
      * \param[in] n2 : number of material properties declared by the interface
      */
     [[noreturn]] static void throwUnMatchedNumberOfMaterialProperties(
-        const std::string &, const unsigned short n1, const CyranoInt n2);
+        const std::string_view, const unsigned short n1, const CyranoInt n2);
 
     /*!
-     * \brief throw an CyranoException. This method shall be called when
+     * \brief throw a CyranoException. This method shall be called when
      * the number of state variables declared by the beahviour and the
      * number of state variables declared by the interface does not
      * match.
@@ -81,15 +82,15 @@ namespace cyrano {
      * \param[in] n2 : number of state variables declared by the interface
      */
     [[noreturn]] static void throwUnMatchedNumberOfStateVariables(
-        const std::string &, const unsigned short n1, const CyranoInt n2);
+        const std::string_view, const unsigned short n1, const CyranoInt n2);
 
     /*!
-     * \brief display the error message out of an CyranoException to the
+     * \brief display the error message out of a CyranoException to the
      * standard output.
      * \param[in] b : behaviour name
      * \param[in] e : the CyranoException to be treated
      */
-    static void treatCyranoException(const std::string &,
+    static void treatCyranoException(const std::string_view,
                                      const CyranoException &);
 
     /*!
@@ -99,7 +100,7 @@ namespace cyrano {
      * \param[in] e : the material exception to be treated
      */
     static void treatMaterialException(
-        const std::string &, const tfel::material::MaterialException &);
+        const std::string_view, const tfel::material::MaterialException &);
 
     /*!
      * \brief display the error message out of a generic tfel
@@ -107,7 +108,7 @@ namespace cyrano {
      * \param[in] b : behaviour name
      * \param[in] e : the exception to be treated
      */
-    static void treatTFELException(const std::string &,
+    static void treatTFELException(const std::string_view,
                                    const tfel::exception::TFELException &);
 
     /*!
@@ -116,89 +117,95 @@ namespace cyrano {
      * \param[in] b : behaviour name
      * \param[in] e : the exception to be treated
      */
-    static void treatStandardException(const std::string &,
+    static void treatStandardException(const std::string_view,
                                        const std::exception &);
 
     /*!
      * \brief display the error message when an unknown exception is caught
      * \param[in] b : behaviour name
      */
-    static void treatUnknownException(const std::string &);
+    static void treatUnknownException(const std::string_view);
 
     /*!
-     * \brief throw an CyranoException if the time step is negative
+     * \brief throw a CyranoException if the time step is negative
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwNegativeTimeStepException(
-        const std::string &);
+        const std::string_view);
 
     /*!
-     * \brief throw an CyranoException if the behaviour integration
+     * \brief throw a CyranoException if the behaviour integration
      * failed
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwBehaviourIntegrationFailedException(
-        const std::string &);
+        const std::string_view);
 
     /*!
-     * \brief throw an CyranoException if the maximum number of sub
+     * \brief throw a CyranoException if the maximum number of sub
      * stepping has been reached
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwMaximumNumberOfSubSteppingReachedException(
-        const std::string &);
+        const std::string_view);
 
     /*!
-     * \brief throw an CyranoException if the maximum number of sub
+     * \brief throw a CyranoException if the maximum number of sub
      * stepping has been reached
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void
     throwPlaneStressMaximumNumberOfIterationsReachedException(
-        const std::string &);
+        const std::string_view);
     /*!
-     * \brief throw an CyranoException if the DDSOE parameter is invalid
+     * \brief throw a CyranoException if the DDSOE parameter is invalid
      * \param[in] b : behaviour name
      * \param[in] v : DDSOE value
      */
-    [[noreturn]] static void throwInvalidDDSOEException(const std::string &,
+    [[noreturn]] static void throwInvalidDDSOEException(const std::string_view,
                                                         const CyranoReal);
     /*!
-     * \brief throw an CyranoException if the prediction computation
+     * \brief throw a CyranoException if the behaviour initialization failed
+     * \param[in] b : behaviour name
+     */
+    [[noreturn]] static void throwBehaviourInitializationFailedException(
+        const std::string_view);
+    /*!
+     * \brief throw a CyranoException if the prediction computation
      * failed
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwPredictionComputationFailedException(
-        const std::string &);
+        const std::string_view);
     /*!
-     * \brief throw an CyranoException if the a consistent tangent
+     * \brief throw a CyranoException if the a consistent tangent
      * operator has to been requested and that the behaviour does not
      * provide one.
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwConsistentTangentOperatorIsNotAvalaible(
-        const std::string &);
+        const std::string_view);
     /*!
-     * \brief throw an CyranoException if the a prediction operator has
+     * \brief throw a CyranoException if the a prediction operator has
      * to been requested and that the behaviour does not provide one.
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwPredictionOperatorIsNotAvalaible(
-        const std::string &);
+        const std::string_view);
     /*!
      * \brief display an error message if the behaviour shall handle
      * stress free expansion and that the cyrano interface can't
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwUnsupportedStressFreeExpansionException(
-        const std::string &);
+        const std::string_view);
     /*!
      * \brief display an error message if the thermal expansion is not
      * null
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwThermalExpansionCoefficientShallBeNull(
-        const std::string &);
+        const std::string_view);
     /*!
      * \brief throw an error message if the value of the NTENS
      * parameter is not valid
@@ -211,7 +218,7 @@ namespace cyrano {
      * the given hypothesis \param[in] H    : hypothesis
      */
     [[noreturn]] static void throwInvalidBehaviourTypeAndModellingHypothesis(
-        const std::string &);
+        const std::string_view);
     /*!
      * \brief display an error message if the value of the NDI
      * parameter is not valid

@@ -19,7 +19,7 @@
 #include <tuple>
 #include <vector>
 #include <string>
-#include <iostream>
+#include <string_view>
 
 #include "MFront/MFrontConfig.hxx"
 #include "TFEL/Glossary/Forward/Glossary.hxx"
@@ -79,8 +79,8 @@ namespace mfront {
    */
   template <typename ValueType>
   void exportSymbol(std::ostream&,
-                    const std::string&,
-                    const std::string&,
+                    const std::string_view,
+                    const std::string_view,
                     const ValueType&);
   /*!
    * \brief export string symbol using the `MFRONT_EXPORT_SYMBOL` macro
@@ -88,15 +88,15 @@ namespace mfront {
    * \param[in] n: name of the symbol
    */
   void exportStringSymbol(std::ostream&,
-                          const std::string&,
-                          const std::string&);
+                          const std::string_view,
+                          const std::string_view);
   /*!
    * \brief export string symbol using the `MFRONT_EXPORT_SYMBOL` macro
    * \param[out] os: output stream
    * \param[in] n: name of the symbol
    */
   void exportUnsignedShortSymbol(std::ostream&,
-                                 const std::string&,
+                                 const std::string_view,
                                  const unsigned short);
   /*!
    * \brief write the name of the variable
@@ -106,7 +106,7 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT void writeVariablesNamesSymbol(
       std::ostream&,
-      const std::string&,
+      const std::string_view,
       const mfront::MaterialPropertyDescription&);
 
   /*!
@@ -119,9 +119,9 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT void writeBoundsSymbol(
       std::ostream&,
-      const std::string&,
-      const std::string&,
-      const std::string&,
+      const std::string_view,
+      const std::string_view,
+      const std::string_view,
       const mfront::VariableBoundsDescription&);
   /*!
    * \brief write the bounds associated with the given variables
@@ -130,7 +130,7 @@ namespace mfront {
    * \param[in] vc:  variables
    */
   MFRONT_VISIBILITY_EXPORT void writeBoundsSymbols(
-      std::ostream&, const std::string&, const VariableDescriptionContainer&);
+      std::ostream&, const std::string_view, const VariableDescriptionContainer&);
   /*!
    * \brief write the physical bounds associated with the given variables
    * \param[out] os: output stream
@@ -138,7 +138,7 @@ namespace mfront {
    * \param[in] vc:  variables
    */
   MFRONT_VISIBILITY_EXPORT void writePhysicalBoundsSymbols(
-      std::ostream&, const std::string&, const VariableDescriptionContainer&);
+      std::ostream&, const std::string_view, const VariableDescriptionContainer&);
 
   /*!
    * \brief write the name of the variable
@@ -148,25 +148,25 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT void writeVariablesBoundsSymbols(
       std::ostream&,
-      const std::string&,
+      const std::string_view,
       const mfront::MaterialPropertyDescription&);
   /*!
    * \brief write symbols associated with the file description.
    * \param[out] os: output stream
    * \param[in]  n: entry point name
-   * \param[out] fd: description
+   * \param[in] fd: file description
    */
   MFRONT_VISIBILITY_EXPORT void writeFileDescriptionSymbols(
-      std::ostream&, const std::string&, const FileDescription&);
+      std::ostream&, const std::string_view, const FileDescription&);
 
   /*!
    * \brief write a symbol associated with the build identifier.
    * \param[out] os: output stream
    * \param[in]  n: entry point name
-   * \param[out] d: description
+   * \param[in] d: description
    */
   MFRONT_VISIBILITY_EXPORT void writeBuildIdentifierSymbol(
-      std::ostream&, const std::string&, const MaterialKnowledgeDescription&);
+      std::ostream&, const std::string_view, const MaterialKnowledgeDescription&);
   /*!
    * \brief write a specific symbol stating that a given name entry
    * point (`C`-like function for example) has been created using
@@ -176,16 +176,26 @@ namespace mfront {
    * name
    */
   MFRONT_VISIBILITY_EXPORT void writeEntryPointSymbol(std::ostream&,
-                                                      const std::string&);
+                                                      const std::string_view);
   /*!
    * \brief write a specific symbol giving the version of `MFront`
    * used to generate the given entry point.
    * \param[out] os: output stream
-   * \param[in]  n:  entry point
-   * name
+   * \param[in]  n:  entry point name
    */
   MFRONT_VISIBILITY_EXPORT void writeTFELVersionSymbol(std::ostream&,
-                                                       const std::string&);
+                                                       const std::string_view);
+  /*!
+   * \brief write a specific symbol giving the version of `MFront`
+   * used to generate the given entry point.
+   * \param[out] os: output stream
+   * \param[in]  n:  entry point name
+   * \param[in]  d:  description
+   */
+  MFRONT_VISIBILITY_EXPORT void writeUnitSystemSymbol(
+      std::ostream&,
+      const std::string_view,
+      const MaterialKnowledgeDescription&);
   /*!
    * \brief write a specific symbol stating that a given name entry
    * point (`C`-like function for example) has been created using
@@ -195,8 +205,8 @@ namespace mfront {
    * \param[out] n2: entry point name
    */
   MFRONT_VISIBILITY_EXPORT void writeEntryPointSymbol(std::ostream&,
-                                                      const std::string&,
-                                                      const std::string&);
+                                                      const std::string_view,
+                                                      const std::string_view);
   /*!
    * \brief write a specific symbol for the interface of an entry
    * point.
@@ -205,8 +215,8 @@ namespace mfront {
    * \param[out] i: entry point name
    */
   MFRONT_VISIBILITY_EXPORT void writeInterfaceSymbol(std::ostream&,
-                                                     const std::string&,
-                                                     const std::string&);
+                                                     const std::string_view,
+                                                     const std::string_view);
   /*!
    * \brief write a symbol stating that a given entry point is
    * associated to a material law.
@@ -216,8 +226,8 @@ namespace mfront {
    * name
    */
   MFRONT_VISIBILITY_EXPORT void writeLawSymbol(std::ostream&,
-                                               const std::string&,
-                                               const std::string&);
+                                               const std::string_view,
+                                               const std::string_view);
   /*!
    * \brief write a symbol stating that a given entry point is
    * associated to a material.
@@ -227,8 +237,8 @@ namespace mfront {
    * name
    */
   MFRONT_VISIBILITY_EXPORT void writeMaterialSymbol(std::ostream&,
-                                                    const std::string&,
-                                                    const std::string&);
+                                                    const std::string_view,
+                                                    const std::string_view);
   /*!
    * \brief write the symbol giving the material knowledge type.
    * \param[out] os: output stream
@@ -236,7 +246,7 @@ namespace mfront {
    * \param[in]  t:  material knowledge type
    */
   MFRONT_VISIBILITY_EXPORT void writeMaterialKnowledgeTypeSymbol(
-      std::ostream&, const std::string&, const MaterialKnowledgeType&);
+      std::ostream&, const std::string_view, const MaterialKnowledgeType&);
 
   MFRONT_VISIBILITY_EXPORT void writeMaterialLaws(
       std::ostream&, const std::vector<std::string>&);
@@ -244,7 +254,7 @@ namespace mfront {
   MFRONT_VISIBILITY_EXPORT void writeStaticVariables(
       std::ostream&,
       const StaticVariableDescriptionContainer&,
-      const std::string&);
+      const std::string_view);
   /*!
    * \return the base name (without interface specification) of the
    * library to be generated by `MFront`.
@@ -283,9 +293,9 @@ namespace mfront {
   MFRONT_VISIBILITY_EXPORT void writeExportDirectives(std::ostream&,
                                                       const bool = true);
 
-  MFRONT_VISIBILITY_EXPORT std::string makeUpperCase(const std::string&);
+  MFRONT_VISIBILITY_EXPORT std::string makeUpperCase(const std::string_view);
 
-  MFRONT_VISIBILITY_EXPORT std::string makeLowerCase(const std::string&);
+  MFRONT_VISIBILITY_EXPORT std::string makeLowerCase(const std::string_view);
   /*!
    * \brief add the given symbol.
    * \param[in,out] symbols: mapping between a symbol and a replacement string
@@ -293,8 +303,8 @@ namespace mfront {
    * \param[in] r: replacement string
    */
   MFRONT_VISIBILITY_EXPORT void addSymbol(std::map<std::string, std::string>&,
-                                          const std::string&,
-                                          const std::string&);
+                                          const std::string_view,
+                                          const std::string_view);
   /*!
    * \brief display the complete description of a glossary entry
    * \param[out] os : output stream
@@ -316,7 +326,9 @@ namespace mfront {
    * - `writePhysicalBoundsSymbols`
    */
   MFRONT_VISIBILITY_EXPORT void writeParametersSymbols(
-      std::ostream&, const std::string&, const MaterialPropertyDescription&);
+      std::ostream&,
+      const std::string_view,
+      const MaterialPropertyDescription&);
   /*!
    * \brief export parameters declarations
    * \param[out] os: output stream
@@ -324,7 +336,9 @@ namespace mfront {
    * \param[out] parameters: list of parameters
    */
   MFRONT_VISIBILITY_EXPORT void writeParametersDeclarationSymbols(
-      std::ostream&, const std::string&, const VariableDescriptionContainer&);
+      std::ostream&,
+      const std::string_view,
+      const VariableDescriptionContainer&);
   /*!
    * \brief export the default values of a set of parameters
    * \param[out] os: output stream
@@ -332,7 +346,9 @@ namespace mfront {
    * \param[out] parameters: list of parameters
    */
   MFRONT_VISIBILITY_EXPORT void writeParametersDefaultValuesSymbols(
-      std::ostream&, const std::string&, const VariableDescriptionContainer&);
+      std::ostream&,
+      const std::string_view,
+      const VariableDescriptionContainer&);
   /*!
    * \brief write a symbol describing an array of integers
    * \param[out] os: output stream
@@ -341,18 +357,54 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT
   void exportArrayOfIntegersSymbol(std::ostream&,
-                                   const std::string&,
+                                   const std::string_view,
                                    const std::vector<int>&);
   /*!
    * \brief write a symbol describing an array of strings
    * \param[out] os: output stream
-   * \param[out] n: name of the generated symbol
-   * \param[out] values: array of strings
+   * \param[in] n: name of the generated symbol
+   * \param[in] values: array of strings
    */
   MFRONT_VISIBILITY_EXPORT
   void exportArrayOfStringsSymbol(std::ostream&,
-                                  const std::string&,
+                                  const std::string_view,
                                   const std::vector<std::string>&);
+  /*!
+   * \param[out] os: output stream
+   * \param[in] v: variable description
+   * \param[in] n: name of the variable tested. If the variable describes an
+   * array of variables, this argument may point to an element of this array.
+   * \param[in] space_dimension: string containing the space dimension
+   * \param[in] policy: name of the variable holding the policy
+   * \param[in] addThis: add "this->" in front of the variables
+   * \param[in] checkEndOfTimeStepValue: also check the value at the end of
+   * the time step given by the value of the variable plus its increment.
+   */
+  MFRONT_VISIBILITY_EXPORT
+  void writeBoundsChecks(std::ostream&,
+                         const VariableDescription&,
+                         const std::string_view,
+                         const std::string_view,
+                         const std::string_view,
+                         const bool,
+                         const bool);
+  /*!
+   * \param[out] os: output stream
+   * \param[in] v: variable description
+   * \param[in] n: name of the variable tested. If the variable describes an
+   * array of variables, this argument may point to an element of this array.
+   * \param[in] space_dimension: string containing the space dimension
+   * \param[in] addThis: add "this->" in front of the variables
+   * \param[in] checkEndOfTimeStepValue: also check the value at the end of
+   * the time step given by the value of the variable plus its increment.
+   */
+  MFRONT_VISIBILITY_EXPORT
+  void writePhysicalBoundsChecks(std::ostream&,
+                                 const VariableDescription&,
+                                 const std::string_view,
+                                 const std::string_view,
+                                 const bool,
+                                 const bool);
 
 #ifdef MFRONT_HAVE_MADNEX
 
@@ -367,11 +419,11 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT
   std::tuple<std::string, std::string, std::string, std::string>
-  decomposeImplementationPathInMadnexFile(const std::string&);
+  decomposeImplementationPathInMadnexFile(const std::string_view);
 
 #endif /* MFRONT_HAVE_MADNEX */
 
-}  // end of namespace mfront
+  }  // end of namespace mfront
 
 #include "MFront/DSLUtilities.ixx"
 

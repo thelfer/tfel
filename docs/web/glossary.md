@@ -1,5 +1,18 @@
-% TFEL Glossary description
-% Helfer Thomas; Bernaud Stéphane
+---
+title: Description of the TFEL glossary
+author: Helfer Thomas, Maxence Wangermez, Bernaud Stéphane
+date: 21/11/2017
+lang: en-EN
+link-citations: true
+colorlinks: true
+geometry:
+  - margin=2cm
+papersize: a4
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\dtot}{\mathrm{d}}
 \newcommand{\paren}[1]{{\displaystyle \left(#1\right)}}
@@ -7,1048 +20,1040 @@
 \newcommand{\Frac}[2]{{\displaystyle \frac{\displaystyle #1}{\displaystyle #2}}}
 \newcommand{\deriv}[2]{{\displaystyle \frac{\displaystyle \partial #1}{\displaystyle \partial #2}}}
 
-# L'entrée AxialDeformationGradient
+# The `AxialDeformationGradient` entry
 
-Cette entrée décrit la composante axiale du gradient de la transformation (cette grandeur n'a de sens que pour les calculs en contraintes planes).
+This entry describes the axial component of the deformation gradient.
 
-* noms : AxialDeformationGradient
+
 * units:
 no units specified
-* type: scalaire 
-
-# L'entrée AxialGrowth
-
-Cette entrée décrit axial growth under irradiation.
-
-* noms : AxialGrowth
-* units:
-no units specified
-* type: scalaire 
-
-# L'entrée AxialStrain
-
-Cette entrée décrit la déformation axiale (cette grandeur n'a de sens que pour les calculs en contraintes planes).
-
-* noms : AxialStrain
-* units:
-no units specified
-* type: scalaire 
-
-# L'entrée AxialStress
-
-Cette entrée décrit la contrainte axiale.
-
-* noms : AxialStress
-* units:
-no units specified
-* type: scalaire 
+* type: scalar
 
 ## Notes 
 
-Cette grandeur est utilisée dans les calculs 1Daxisymétrique en contraintes planes généralisées
+This quantity is only meaningful under on of the plane stress modelling hypotheses.
 
-# L'entrée B10BurnUp
+# The `AxialGrowth` entry
 
-Cette entrée décrit le taux d'usure en \(\mbox{}^{10}B\).
+This entry describes axial growth under irradiation.
 
-* noms : B10BurnUp
-* units:
-  *SI: m^{-3}
-* type: scalaire 
 
-## Description
-
-Ce nombre décrit le nombre d'atomes de \(\mbox{}^{10}B\) consommé par unité de volume au cours de l'irradiation.
-
-# L'entrée Broken
-
-Cette entrée décrit material failure indicator.
-
-* noms : Broken
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-# L'entrée BulkModulus
+# The `AxialStrain` entry
 
-Cette entrée décrit The bulk modulus of an isotropic material.
+This entry describes the axial strain.
 
-* noms : BulkModulus
+
+* units:
+no units specified
+* type: scalar
+
+## Notes 
+
+This quantity is only meaningful under on of the plane stress modelling hypotheses.
+
+# The `AxialStress` entry
+
+This entry describes the axial stress.
+
+
+* units:
+no units specified
+* type: scalar
+
+## Notes 
+
+This quantity is only meaningful under the axisymmetrical generalized plane stress modelling hypothesis.
+
+# The `B10BurnUp` entry
+
+This entry describes the burn-up of an absorant material containing \(\mbox{}^{10}B\).
+
+
+* units:
+  *SI: m^{-3}
+* type: scalar
+
+# The `Broken` entry
+
+This entry describes a material failure indicator.
+
+
+* units:
+no units specified
+* type: scalar
+
+# The `BulkModulus` entry
+
+This entry describes the bulk modulus of an isotropic material.
+
+
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 
-# L'entrée BurnUp_AtPercent
+# The `BurnUp_AtPercent` entry
 
-Cette entrée décrit le taux de combustion en atome pour cent.
+This entry describes the burn-up in at.%.
 
-* noms : BurnUp (at.%)
+
 * units:
   *SI: at./100
-* type: scalaire 
+* type: scalar
 
-# L'entrée BurnUp_MWJperTm
+# The `BurnUp_MWJperTm` entry
 
-Cette entrée décrit le taux de combustion en MegaWattJour par tonne (métal).
+This entry describes the burn-up in MegaWattJour per tons of metals.
 
-* noms : BurnUp (MWJ/tm)
+
 * units:
   *SI: MWJ/tm
-* type: scalaire 
+* type: scalar
 
-# L'entrée CohesiveForce
+# The `CohesiveForce` entry
 
-Cette entrée décrit cohesive force for cohesize zone models.
+This entry describes cohesive force for cohesize zone models.
 
-* noms : CohesiveForce
+
 * units:
   *SI: Newton
-* type: vecteur 
+* type: vector
 
-# L'entrée ConvectiveHeatTransferCoefficient
+# The `ConvectiveHeatTransferCoefficient` entry
 
-Cette entrée décrit le coefficient d'échange par convection.
+This entry describes the heat transfer coefficient by convection.
 
-* noms : ConvectiveHeatTransferCoefficient
+
 * units:
   *SI: W.m^{-2}.K^{-1}
-* type: scalaire 
+* type: scalar
 
-# L'entrée CrossSectionArea
+# The `CrossSectionArea` entry
 
-Cette entrée décrit ??.
+This entry describes ??.
 
-* noms : CrossSectionArea
+
 * units:
-  *SI: ??
-* type: scalaire 
+  *SI: m^{2}
+* type: scalar
 
-# L'entrée CylindricalStress
+# The `CylindricalStress` entry
 
-Cette entrée décrit les contraintes exprimées dans le repère cylindrique.
+This entry describes the stress in the cylindrical frame.
 
-* noms : CylindricalStress
+
 * units:
   *SI: Pa
-* type: tenseur symétrique
+* type: tensor
 
-# L'entrée Damage
+# The `Damage` entry
 
-Cette entrée décrit l'endommagement d'un matériau.
+This entry describes the damage, generally between 0 (sound material) and 1 (broken material).
 
-* noms : Damage
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-# L'entrée DeformationGradient
+# The `DeformationGradient` entry
 
-Cette entrée décrit gradient of the transformation.
+This entry describes gradient of the transformation.
 
-* noms : DeformationGradient
+
 * units:
 no units specified
-* type: tenseur symétrique
+* type: tensor
 
-# L'entrée Displacement
+# The `Displacement` entry
 
-Cette entrée décrit le déplacement.
+This entry describes the displacement.
 
-* noms : Displacement
+
 * units:
   *SI: m
-* type: vecteur 
+* type: vector
 
-# L'entrée DualStress
+# The `DualStress` entry
 
-Cette entrée décrit dual stress of the strain measure.
+This entry describes the dual stress of the strain measure.
 
-* noms : DualStress
+
 * units:
   *SI: stress
-* type: tenseur symétrique
+* type: tensor
 
-# L'entrée ElasticStrain
+# The `ElasticStrain` entry
 
-Cette entrée décrit The elastic strain.
+This entry describes The elastic strain.
 
-* noms : ElasticStrain
+
 * units:
 no units specified
-* type: tenseur symétrique
+* type: tensor
 
-# L'entrée Emissivity
+# The `Emissivity` entry
 
-Cette entrée décrit Emissivity of the surface of a material is its effectiveness in emitting energy as thermal radiation.
+This entry describes the emissivity of the surface of a material is its effectiveness in emitting energy as thermal radiation.
 
-* noms : Emissivity
+
 * units:
   *SI: kg.m.T^{−3}
-* type: scalaire 
+* type: scalar
 
-# L'entrée EquivalentPlasticStrain
+# The `EquivalentPlasticStrain` entry
 
-Cette entrée décrit The equivalent plastic strain.
+This entry describes the equivalent plastic strain.
 
-* noms : EquivalentPlasticStrain
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-# L'entrée EquivalentStrain
+# The `EquivalentStrain` entry
 
-Cette entrée décrit la somme des déformations plastiques ou viscoplastiques équivalentes.
+This entry describes the sum of all plastic and viscoplastic equivalent strains.
 
-* noms : EquivalentStrain
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
 ## Notes 
 
-Cette quantité n'a pas de sens physique directe.
+This quantity has no direct physical meaning.
 
-# L'entrée EquivalentViscoplasticStrain
+# The `EquivalentViscoplasticStrain` entry
 
-Cette entrée décrit The equivalent viscoplastic strain.
+This entry describes the equivalent viscoplastic strain.
 
-* noms : EquivalentViscoplasticStrain
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-# L'entrée FastNeutronFluence_01MeV
+# The `FastNeutronFluence_01MeV` entry
 
-Cette entrée décrit la fluence rapide.
+This entry describes the fast neutron fluence, where the limit for fast neutron is 0.1 MeV.
 
-* noms : FastNeutronFluence (>0.1 MeV)
+
 * units:
   *SI: n.m^{-2}
-* type: scalaire 
+* type: scalar
 
-# L'entrée FastNeutronFluence_1MeV
+# The `FastNeutronFluence_1MeV` entry
 
-Cette entrée décrit la fluence rapide.
+This entry describes the fast neutron fluence, where the limit for fast neutron is 1 MeV.
 
-* noms : FastNeutronFluence (>1 MeV)
+
 * units:
   *SI: n.m^{-2}
-* type: scalaire 
+* type: scalar
 
-# L'entrée FastNeutronFlux_01MeV
+# The `FastNeutronFlux_01MeV` entry
 
-Cette entrée décrit le flux de neutron rapide.
+This entry describes the fast neutron fluence.
 
-* noms : FastNeutronFlux (>0.1 MeV)
+
 * units:
   *SI: n.m^{-2}.s^{-1}
-* type: scalaire 
+* type: scalar
 
-# L'entrée FastNeutronFlux_1MeV
+# The `FastNeutronFlux_1MeV` entry
 
-Cette entrée décrit le flux de neutron rapide.
+This entry describes the fast neutron fluence.
 
-* noms : FastNeutronFlux (>1 MeV)
+
 * units:
   *SI: n.m^{-2}.s^{-1}
-* type: scalaire 
+* type: scalar
 
-# L'entrée FirstAxisSecondMomentArea
+# The `FirstAxisSecondMomentArea` entry
 
-Cette entrée décrit ??.
+This entry describes ??.
 
-* noms : FirstAxisSecondMomentArea
+
 * units:
-  *SI: ??
-* type: scalaire 
+  *SI: m^{4}
+* type: scalar
 
-# L'entrée FirstLameCoefficient
+# The `FirstLameCoefficient` entry
 
-Cette entrée décrit First Lamé coefficient of an isotropic material.
+This entry describes the first Lamé's coefficient of an isotropic material.
 
-* noms : FirstLameCoefficient
+
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 
-# L'entrée FissionDensity
+# The `FissionDensity` entry
 
-Cette entrée décrit la densité de fission.
+This entry describes the fission density.
 
-* noms : FissionDensity
+
 * units:
   *SI: m^{-3}
-* type: scalaire 
+* type: scalar
 
-# L'entrée GaseousSwelling
+# The `GaseousSwelling` entry
 
-Cette entrée décrit un gonflement imposé dû à des produits de fission gazeux.
+This entry describes swelling du to gazeous fission products.
 
-* noms : GaseousSwelling
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-## Notes 
+# The `GrainSize` entry
 
-L'utilisation de ce nom pour imposer un gonflement n'est pas obligatoire
+This entry describes the grain size.
 
-# L'entrée GrainSize
 
-Cette entrée décrit la taille de grain.
-
-* noms : GrainSize
 * units:
   *SI: m
-* type: scalaire 
+* type: scalar
 
-# L'entrée HeatFlux
+# The `HeatFlux` entry
 
-Cette entrée décrit le flux de chaleur..
+This entry describes the heat flux, generally in the current configuration..
 
-* noms : HeatFlux
+
 * units:
   *SI: J.m^{-2}.s^{-1}
-* type: vecteur 
+* type: vector
 
-# L'entrée HeatTransferCoefficient
+# The `HeatTransferCoefficient` entry
 
-Cette entrée décrit The heat transfer coefficient is the proportionality constant between the heat flux and the temperature difference.
+This entry describes the heat transfer coefficient is the proportionality constant between the heat flux and the temperature difference.
 
-* noms : HeatTransferCoefficient
+
 * units:
   *SI: W.m^{-2}.K^{-1}
-* type: scalaire 
+* type: scalar
 
-# L'entrée HillStress
+# The `HillStress` entry
 
-Cette entrée décrit la contrainte équivalente au sens de Hill.
+This entry describes the Hill equivalent stress.
 
-* noms : HillStress
+
 * units:
   *SI: Pa
-* type: tenseur symétrique
+* type: tensor
 
-# L'entrée HydrostaticPressure
+# The `HydrostaticPressure` entry
 
-Cette entrée décrit la pression hydrostatique (égale au tiers de la trace du tenseur des contraintes).
+This entry describes the hydrostatic pressure, defined as the third of the trace of the stress tensor.
 
-* noms : HydrostaticPressure
+
 * units:
   *SI: Pa
-* type: tenseur symétrique
+* type: tensor
 
-# L'entrée IrradiationDamage
+# The `IrradiationDamage` entry
 
-Cette entrée décrit le dommage due à l'irradiation, mesuré par le nombre de déplacement moyen de chaque atome (dpa).
+This entry describes the irradiation damage, measure by the mean number of displacements of each atoms.
 
-* noms : IrradiationDamage
+
 * units:
   *SI: dpa
-* type: scalaire 
+* type: scalar
 
-# L'entrée IrradiationInducedSwelling
+# The `IrradiationInducedSwelling` entry
 
-Cette entrée décrit un gonflement imposé  dû à des dégâts d'irradiation.
+This entry describes swelling du to irradiation damage.
 
-* noms : IrradiationInducedSwelling
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-## Notes 
+# The `IrradiationSwelling` entry
 
-L'utilisation de ce nom pour imposer un gonflement n'est pas obligatoire
+This entry describes swelling du to irradiation damage.
 
-# L'entrée IrradiationSwelling
 
-Cette entrée décrit un gonflement imposé  dû à des dégâts d'irradiation.
-
-* noms : IrradiationSwelling
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-## Notes 
+# The `IrradiationTemperature` entry
 
-L'utilisation de ce nom pour imposer un gonflement n'est pas obligatoire
+This entry describes the mean temperature (in time) of the temperature during the irradiation.
 
-# L'entrée IrradiationTemperature
 
-Cette entrée décrit la température moyenne (dans le temps) au cours de l'irradiation.
-
-* noms : IrradiationTemperature
 * units:
   *SI: K
-* type: scalaire 
+* type: scalar
 
 ## Description
 
-Cette température est définie ainsi :
+This temperature is defined as follows:
 \[
 \average{T}\paren{t,\vec{r}}  = \Frac{1}{t-t_{0}}\int_{t_{0}}^{t}T\paren{u,\vec{r}}\,\dtot\, u
 \]
-où
+where
 
-* \(T\paren{t,\vec{r}}\) est la valeur à un instant \(t\) de la température au point \(\vec{r}\) ;
-* \(t_{0}\) est la date du début de calcul ;
-* \(t\) est la date courante.
+* \(T\paren{t,\vec{r}}\) is the value of the temperature at time \(t\) and position \(\vec{r}\) ;
+* \(t_{0}\) is the reference time;
+* \(t\) is the current time.
 
-En pratique, l'intégrale temporelle est évaluée de manière incrémentale ainsi :
+In pratice, this integral is computed incrementally as follows: 
 \[
 \average{T}\paren{t+dt,\vec{r}} \approx \Frac{1}{t+dt-t_{0}}\left[\paren{t-t_{0}}\,\average{T}\paren{t,\vec{r}}+\Frac{dt}{2}\left[T\paren{t,\vec{r}}+T\paren{t+dt,\vec{r}}\right]\right]
 \]
 
 ## Notes 
 
-Ce mode de calcul peut conduire à de légères erreurs numériques
+The approximation made when computing the time integral may lead to (small) numerical errors.
 
-# L'entrée KelvinTemperature
+# The `KelvinTemperature` entry
 
-Cette entrée décrit The temperature.
+This entry describes the temperature.
 
-* noms : KelvinTemperature
+
 * units:
   *SI: K
-* type: scalaire 
+* type: scalar
 
 ## Notes 
 
-Cette entrée a été rajoutée par compatibilité avec les choix d'implantation des lois de comportements mécaniques utilisés par le code Germinal
+This entry has been introduced by compatibility with implantation choices made by the Germinal fuel performance code
 
-# L'entrée MassDensity
+# The `MassDensity` entry
 
-Cette entrée décrit The mass density.
+This entry describes the mass density.
 
-* noms : MassDensity
+
 * units:
   *SI: kg.m^{-3}
-* type: scalaire 
+* type: scalar
 
-# L'entrée MeanBurnUp_AtPercent
+# The `MeanBurnUp_AtPercent` entry
 
-Cette entrée décrit le taux de combustion en atome pour cent moyen (au sens spatial) pour un matériau donné.
+This entry describes the spatial average of the  burn-up in at.%.
 
-* noms : MeanBurnUp (at.%)
+
 * units:
   *SI: at./100
-* type: scalaire 
+* type: scalar
 
-# L'entrée MeanBurnUp_MWJperTm
+# The `MeanBurnUp_MWJperTm` entry
 
-Cette entrée décrit le taux de combustion en MegaWattJour par tonne (métal) moyen (au sens spatial) pour un matériau donné.
+This entry describes the spatial average of the  burn-up in MegaWattJour per tons of metals.
 
-* noms : MeanBurnUp (MWJ/tm)
+
 * units:
   *SI: MWJ/tm
-* type: scalaire 
+* type: scalar
 
-# L'entrée MeanIrradiationTemperature
+# The `MeanIrradiationTemperature` entry
 
-Cette entrée décrit la température moyenne dans le temps et dans un domaine \(\Omega\) donné.
+This entry describes The mean temperature  in time over a given domain \(\Omega\).
 
-* noms : MeanIrradiationTemperature
+
 * units:
   *SI: K
-* type: scalaire 
+* type: scalar
 
 ## Description
 
-Cette température est définie ainsi :\[\average{T}\paren{t} =\Frac{1}{t-t_{0}}\Frac{1}{\int_{\Omega}\dtot\,V}\int_{t_{0}}^{t}\paren{\int_{\Omega}T\paren{u,\vec{r}}\,\dtot\,V}\]où \(T\paren{t,\vec{r}}\) est la valeur à un instant \(t\) de la température au point \(\vec{r}\).
+This temperature is defined as follows:\[\average{T}\paren{t} =\Frac{1}{t-t_{0}}\Frac{1}{\int_{\Omega}\dtot\,V}\int_{t_{0}}^{t}\paren{\int_{\Omega}T\paren{u,\vec{r}}\,\dtot\,V}\]where \(T\paren{t,\vec{r}}\) is the value of the temperature at time \(t\) and at position \(\vec{r}\).
 
 ## Notes 
 
-En pratique, l'intégrale spatiale est calculée à l'aide de la discrétisation par éléments finis et l'intégrale temporelle est calculée de manière incrémentale.
+In pratice, the computation of the spatial integral is done using standard finite element operations and the time integral is performed incrementally using a trapezoidal rule.
 
-# L'entrée MeanTemperature
+# The `MeanTemperature` entry
 
-Cette entrée décrit la température moyenne dans un domaine \(\Omega\) donné. .
+This entry describes The mean temperature over a given domain \(\Omega\).
 
-* noms : MeanTemperature
+
 * units:
   *SI: K
-* type: scalaire 
+* type: scalar
 
 ## Description
 
-Cette température est définie ainsi :\[\average{T}\paren{t}  = \Frac{1}{\int_{\Omega}\dtot\,V}\int_{\Omega}T\paren{t,\vec{r}}\,\dtot\, V\]où \(T\paren{t,\vec{r}}\) est la valeur à un instant \(t\) de latempérature au point \(\vec{r}\).
+This temperature is defined as follows:\[\average{T}\paren{t}  = \Frac{1}{\int_{\Omega}\dtot\,V}\int_{\Omega}T\paren{t,\vec{r}}\,\dtot\, V\]where \(T\paren{t,\vec{r}}\) is the value of the temperature at time \(t\) and at position \(\vec{r}\).
 
 ## Notes 
 
-En pratique, l'intégrale spatiale est calculée à l'aide de la discrétisation par éléments finis.
+In pratice, the computation of this integral is done using standard finite element operations.
 
-# L'entrée NeutronFluence
+# The `NeutronFluence` entry
 
-Cette entrée décrit la fluence.
+This entry describes the neutron fluence.
 
-* noms : NeutronFluence
+
 * units:
   *SI: n.m^{-2}
-* type: scalaire 
+* type: scalar
 
-# L'entrée NeutronFlux
+# The `NeutronFlux` entry
 
-Cette entrée décrit le flux de neutron.
+This entry describes the neutron flux.
 
-* noms : NeutronFlux
+
 * units:
   *SI: n.m^{-2}.s^{-1}
-* type: scalaire 
+* type: scalar
 
-# L'entrée NormalStiffness
+# The `NormalStiffness` entry
 
-Cette entrée décrit la raideur normale pour un modèle de zone cohésive.
+This entry describes the normal elastic stiffness for a cohesive zone model.
 
-* noms : NormalStiffness
+
 * units:
   *SI: Pa.m^{-1}
-* type: scalaire 
+* type: scalar
 
-# L'entrée NumberOfMoles
+# The `NumberOfMoles` entry
 
-Cette entrée décrit le nombre de moles d'une substance.
+This entry describes the amount of substance.
 
-* noms : NumberOfMoles
+
 * units:
   *SI: mol
-* type: scalaire 
+* type: scalar
 
-# L'entrée OpeningDisplacement
+# The `OpeningDisplacement` entry
 
-Cette entrée décrit opening displacement in cohesive zone models.
+This entry describes opening displacement in cohesive zone models.
 
-* noms : OpeningDisplacement
+
 * units:
   *SI: m
-* type: vecteur 
+* type: vector
 
-# L'entrée OrthotropicAxisX1
+# The `OrthotropicAxisX1` entry
 
-Cette entrée décrit la première coordonnée du premier axe d'orthotropie.
+This entry describes the first coordinate of the vector giving the first axis of orthotropy.
 
-* noms : OrthotropicAxisX1
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-## Description
+## Notes 
 
-Cette quantité est automatiquementcalculée par Licos à partir de la définition du matériau
+This quantity is defined internally by the Licos fuel performance code
 
-# L'entrée OrthotropicAxisX2
+# The `OrthotropicAxisX2` entry
 
-Cette entrée décrit la première coordonnée du second axe d'orthotropie.
+This entry describes the first coordinate of the vector giving the second axis of orthotropy.
 
-* noms : OrthotropicAxisX2
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-## Description
+## Notes 
 
-Cette quantité est automatiquementcalculée par Licos à partir de la définition du matériau
+This quantity is defined internally by the Licos fuel performance code
 
-# L'entrée OrthotropicAxisY1
+# The `OrthotropicAxisY1` entry
 
-Cette entrée décrit la deuxième coordonnée du premier axe d'orthotropie.
+This entry describes the second coordinate of the vector giving the first axis of orthotropy.
 
-* noms : OrthotropicAxisY1
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-## Description
+## Notes 
 
-Cette quantité est automatiquementcalculée par Licos à partir de la définition du matériau
+This quantity is defined internally by the Licos fuel performance code
 
-# L'entrée OrthotropicAxisY2
+# The `OrthotropicAxisY2` entry
 
-Cette entrée décrit la deuxième coordonnée du second axe d'orthotropie.
+This entry describes the second coordinate of the vector giving the second axis of orthotropy.
 
-* noms : OrthotropicAxisY2
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-## Description
+## Notes 
 
-Cette quantité est automatiquement calculée par Licos à partir de la définition du matériau
+This quantity is defined internally by the Licos fuel performance code
 
-# L'entrée OrthotropicAxisZ1
+# The `OrthotropicAxisZ1` entry
 
-Cette entrée décrit la troisième coordonnée du premier axe d'orthotropie.
+This entry describes the third coordinate of the vector giving the first axis of orthotropy.
 
-* noms : OrthotropicAxisZ1
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-## Description
+## Notes 
 
-Cette quantité est automatiquementcalculée par Licos à partir de la définition du matériau
+This quantity is defined internally by the Licos fuel performance code
 
-# L'entrée OrthotropicAxisZ2
+# The `OrthotropicAxisZ2` entry
 
-Cette entrée décrit la troisième coordonnée du second axe d'orthotropie.
+This entry describes the third coordinate of the vector giving the second axis of orthotropy.
 
-* noms : OrthotropicAxisZ2
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-## Description
+## Notes 
 
-Cette quantité est automatiquementcalculée par Licos à partir de la définition du matériau
+This quantity is defined internally by the Licos fuel performance code
 
-# L'entrée PlasticStrain
+# The `PlasticStrain` entry
 
-Cette entrée décrit The plastic strain.
+This entry describes The plastic strain.
 
-* noms : PlasticStrain
+
 * units:
 no units specified
-* type: tenseur symétrique
+* type: tensor
 
-# L'entrée PlateWidth
+# The `PlateWidth` entry
 
-Cette entrée décrit ??.
+This entry describes ??.
 
-* noms : PlateWidth
+
 * units:
-  *SI: ??
-* type: scalaire 
+  *SI: m
+* type: scalar
 
-# L'entrée PoissonRatio
+# The `PoissonRatio` entry
 
-Cette entrée décrit The Poisson ratio of an isotropic material.
+This entry describes the Poisson ratio of an isotropic material.
 
-* noms : PoissonRatio
-* units:
-no units specified
-* type: scalaire 
 
-# L'entrée PoissonRatio12
-
-Cette entrée décrit le coefficient de Poisson d'un matériau orthotrope relatif aux première et deuxième directions d'orthotropie.
-
-* noms : PoissonRatio12
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-# L'entrée PoissonRatio13
+# The `PoissonRatio12` entry
 
-Cette entrée décrit le coefficient de Poisson d'un matériau orthotrope relatif aux première et troisième directions d'orthotropie.
+This entry describes the Poisson's coefficient between the first and second directions of orthotropy.
 
-* noms : PoissonRatio13
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-# L'entrée PoissonRatio23
+# The `PoissonRatio13` entry
 
-Cette entrée décrit le coefficient de Poisson d'un matériau orthotrope relatif aux deuxième et troisième directions d'orthotropie.
+This entry describes the Poisson's coefficient between the first and third directions of orthotropy.
 
-* noms : PoissonRatio23
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-# L'entrée Porosity
+# The `PoissonRatio23` entry
 
-Cette entrée décrit Porosity of the material.
+This entry describes the Poisson's coefficient between the second and third directions of orthotropy.
 
-* noms : Porosity
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-# L'entrée PorosityIncreaseDueToInelasticFlow
+# The `Porosity` entry
 
-Cette entrée décrit Part of the porosity increase du to inelastic flow.
+This entry describes Porosity of the material.
 
-* noms : PorosityIncreaseDueToInelasticFlow
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-# L'entrée PorosityIncreaseDueToNucleation
+# The `PorosityIncreaseDueToInelasticFlow` entry
 
-Cette entrée décrit Part of the porosity increase du to nucleation.
+This entry describes Part of the porosity increase du to inelastic flow.
 
-* noms : PorosityIncreaseDueToNucleation
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-# L'entrée PowerDensity
+# The `PorosityIncreaseDueToNucleation` entry
 
-Cette entrée décrit la densité de puissance.
+This entry describes Part of the porosity increase du to nucleation.
 
-* noms : PowerDensity
+
+* units:
+no units specified
+* type: scalar
+
+# The `PowerDensity` entry
+
+This entry describes the power density, generally in the current configuration.
+
+
 * units:
   *SI: W.m^{-3}
-* type: scalaire 
+* type: scalar
 
-# L'entrée Pressure
+# The `Pressure` entry
 
-Cette entrée décrit la pression d'un gaz.
+This entry describes the pressure of a gaz.
 
-* noms : Pressure
+
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 
-# L'entrée PrincipalStress1
+# The `PrincipalStress1` entry
 
-Cette entrée décrit la première contrainte principale.
+This entry describes the first principal stress.
 
-* noms : PrincipalStress1
+
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 
-## Notes 
+# The `PrincipalStress2` entry
 
-Son sens est précisé dans la notice de l'opérateur ['PRIN'](http://www-cast3m.cea.fr/index.php?page=notices&notice=PRIN) de [Cast3M](http://www-cast3m.cea.fr)
+This entry describes the third principal stress.
 
-# L'entrée PrincipalStress2
 
-Cette entrée décrit la deuxième contrainte principale.
-
-* noms : PrincipalStress2
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 
-## Notes 
+# The `PrincipalStress3` entry
 
-Son sens est précisé dans la notice de l'opérateur ['PRIN'](http://www-cast3m.cea.fr/index.php?page=notices&notice=PRIN) de [Cast3M](http://www-cast3m.cea.fr)
+This entry describes the third principal stress.
 
-# L'entrée PrincipalStress3
 
-Cette entrée décrit la troisième contrainte principale.
-
-* noms : PrincipalStress3
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 
-## Notes 
+# The `SecondAxisSecondMomentArea` entry
 
-Son sens est précisé dans la notice de l'opérateur ['PRIN'](http://www-cast3m.cea.fr/index.php?page=notices&notice=PRIN) de [Cast3M](http://www-cast3m.cea.fr)
+This entry describes ??.
 
-# L'entrée SecondAxisSecondMomentArea
 
-Cette entrée décrit ??.
-
-* noms : SecondAxisSecondMomentArea
 * units:
-  *SI: ??
-* type: scalaire 
+  *SI: m^{4}
+* type: scalar
 
-# L'entrée ShearModulus
+# The `ShearModulus` entry
 
-Cette entrée décrit The shear modulus of an isotropic material.
+This entry describes the shear modulus of an isotropic material.
 
-* noms : ShearModulus
+
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 
-# L'entrée ShearModulus12
+# The `ShearModulus12` entry
 
-Cette entrée décrit le module de cisaillement d'un matériau orthotrope relatif aux première et deuxième directions d'orthotropie.
+This entry describes the shear moduls between the first and second directions of orthotropy.
 
-* noms : ShearModulus12
+
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 
-# L'entrée ShearModulus13
+# The `ShearModulus13` entry
 
-Cette entrée décrit le module de cisaillement d'un matériau orthotrope relatif aux première et troisième directions d'orthotropie.
+This entry describes the shear moduls between the first and third directions of orthotropy.
 
-* noms : ShearModulus13
+
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 
-# L'entrée ShearModulus23
+# The `ShearModulus23` entry
 
-Cette entrée décrit le module de cisaillement d'un matériau orthotrope relatif aux deuxième et troisième directions d'orthotropie.
+This entry describes the shear moduls between the second and third directions of orthotropy.
 
-* noms : ShearModulus23
+
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 
-# L'entrée SolidSwelling
+# The `SolidSwelling` entry
 
-Cette entrée décrit un gonflement imposé dû à des produits de fission solides.
+This entry describes swelling du to solid fission products.
 
-* noms : SolidSwelling
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-## Notes 
+# The `SpecificHeat` entry
 
-L'utilisation de ce nom pour imposer un gonflement n'est pas obligatoire
+This entry describes the specific heat.
 
-# L'entrée SpecificHeat
 
-Cette entrée décrit la chaleur spécifique.
-
-* noms : SpecificHeat
 * units:
   *SI: J.kg^{-1}.K^{-1}
-* type: scalaire 
+* type: scalar
 
-# L'entrée SphericalStress
+# The `SphericalStress` entry
 
-Cette entrée décrit les contraintes exprimées dans le repère sphérique.
+This entry describes the stress in a spherical frame.
 
-* noms : SphericalStress
+
 * units:
   *SI: Pa
-* type: tenseur symétrique
+* type: tensor
 
-# L'entrée Strain
+# The `Strain` entry
 
-Cette entrée décrit la déformation.
+This entry describes the strain tensor.
 
-* noms : Strain
+
 * units:
 no units specified
-* type: tenseur symétrique
+* type: tensor
 
-# L'entrée StrainMeasure
+# The `StrainMeasure` entry
 
-Cette entrée décrit strain measure.
+This entry describes a generic entry for a strain measure (for instance, the Henky strain or the Green-Lagrange strain).
 
-* noms : StrainMeasure
+
 * units:
 no units specified
-* type: tenseur symétrique
+* type: tensor
 
-# L'entrée Stress
+# The `Stress` entry
 
-Cette entrée décrit les contraintes.
+This entry describes the stress tensor.
 
-* noms : Stress
+
 * units:
   *SI: Pa
-* type: tenseur symétrique
+* type: tensor
 
-# L'entrée Swelling
+# The `Swelling` entry
 
-Cette entrée décrit un gonflement imposé.
+This entry describes an imposed swelling.
 
-* noms : Swelling
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
+
+# The `TangentialStiffness` entry
+
+This entry describes the tangential elastic stiffness for a cohesive zone model.
+
+
+* units:
+  *SI: Pa.m^{-1}
+* type: scalar
+
+# The `Temperature` entry
+
+This entry describes the temperature.
+
+
+* units:
+  *SI: K
+* type: scalar
+
+# The `TemperatureGradient` entry
+
+This entry describes the temperature gradient, generally in the current configuration.
+
+
+* units:
+  *SI: T.m^{-1}
+* type: vector
+
+# The `ThermalConductivity` entry
+
+This entry describes the thermal conductivity of an isotropic material.
+
+
+* units:
+  *SI: W.m^{-1}
+* type: scalar
+
+# The `ThermalConductivity1` entry
+
+This entry describes the thermal conductivity of an orthotropic material along the first axis of orthotropy.
+
+
+* units:
+  *SI: W.m^{-1}
+* type: scalar
+
+# The `ThermalConductivity2` entry
+
+This entry describes the thermal conductivity of an orthotropic material along the second axis of orthotropy.
+
+
+* units:
+  *SI: W.m^{-1}
+* type: scalar
+
+# The `ThermalConductivity3` entry
+
+This entry describes the thermal conductivity of an orthotropic material along the third axis of orthotropy.
+
+
+* units:
+  *SI: W.m^{-1}
+* type: scalar
+
+# The `ThermalExpansion` entry
+
+This entry describes the mean thermal expansion coefficient.
+
+
+* units:
+  *SI: K^{-1}
+* type: scalar
 
 ## Notes 
 
-l'utilisation de ce nom pour imposer un gonflement n'est pasobligatoire.
+This entry shall have be named MeanThermalExpansionCoefficient.
 
-# L'entrée TangentialStiffness
+# The `ThermalExpansion1` entry
 
-Cette entrée décrit la raideur tangentielle pour un modèle de zone cohésive.
+This entry describes the mean thermal expansion coefficient along the first orthotropy direction.
 
-* noms : TangentialStiffness
-* units:
-  *SI: Pa.m^{-1}
-* type: scalaire 
 
-# L'entrée Temperature
-
-Cette entrée décrit The temperature.
-
-* noms : Temperature
-* units:
-  *SI: K
-* type: scalaire 
-
-# L'entrée TemperatureGradient
-
-Cette entrée décrit le gradient de température.
-
-* noms : TemperatureGradient
-* units:
-  *SI: T.m^{-1}
-* type: vecteur 
-
-# L'entrée ThermalConductivity
-
-Cette entrée décrit la conductivité thermique d'un matériau isotrope.
-
-* noms : ThermalConductivity
-* units:
-  *SI: W.m^{-1}
-* type: scalaire 
-
-# L'entrée ThermalConductivity1
-
-Cette entrée décrit la conductivité thermique d'un matériau orthotrope suivant la première direction d'orthotropie.
-
-* noms : ThermalConductivity1
-* units:
-  *SI: W.m^{-1}
-* type: scalaire 
-
-# L'entrée ThermalConductivity2
-
-Cette entrée décrit la conductivité thermique d'un matériau orthotrope suivant la deuxième direction d'orthotropie.
-
-* noms : ThermalConductivity2
-* units:
-  *SI: W.m^{-1}
-* type: scalaire 
-
-# L'entrée ThermalConductivity3
-
-Cette entrée décrit la conductivité thermique d'un matériau orthotrope suivant la troisième direction d'orthotropie.
-
-* noms : ThermalConductivity3
-* units:
-  *SI: W.m^{-1}
-* type: scalaire 
-
-# L'entrée ThermalExpansion
-
-Cette entrée décrit le coefficient de dilatation linéique d'un matériau isotrope.
-
-* noms : ThermalExpansion
 * units:
   *SI: K^{-1}
-* type: scalaire 
+* type: scalar
 
-# L'entrée ThermalExpansion1
+## Notes 
 
-Cette entrée décrit le coefficient de dilatation linéique d'un matériau orthotrope suivant la première direction d'orthotropie.
+This entry shall have be named MeanThermalExpansionCoefficient1.
 
-* noms : ThermalExpansion1
+# The `ThermalExpansion2` entry
+
+This entry describes the mean thermal expansion coefficient along the second orthotropy direction.
+
+
 * units:
   *SI: K^{-1}
-* type: scalaire 
+* type: scalar
 
-# L'entrée ThermalExpansion2
+## Notes 
 
-Cette entrée décrit le coefficient de dilatation linéique d'un matériau orthotrope suivant la deuxième direction d'orthotropie.
+This entry shall have be named MeanThermalExpansionCoefficient2.
 
-* noms : ThermalExpansion2
+# The `ThermalExpansion3` entry
+
+This entry describes the mean thermal expansion coefficient along the third orthotropy direction.
+
+
 * units:
   *SI: K^{-1}
-* type: scalaire 
+* type: scalar
 
-# L'entrée ThermalExpansion3
+## Notes 
 
-Cette entrée décrit le coefficient de dilatation linéique d'un matériau orthotrope suivant la troisième direction d'orthotropie.
+This entry shall have be named MeanThermalExpansionCoefficient3.
 
-* noms : ThermalExpansion3
-* units:
-  *SI: K^{-1}
-* type: scalaire 
+# The `TorsionConstant` entry
 
-# L'entrée TorsionConstant
+This entry describes ??.
 
-Cette entrée décrit ??.
 
-* noms : TorsionConstant
 * units:
   *SI: ??
-* type: scalaire 
+* type: scalar
 
-# L'entrée TrescaStress
+# The `TrescaStress` entry
 
-Cette entrée décrit la contrainte équivalente au sens de Tresca.
+This entry describes the Tresca equivalent stress.
 
-* noms : TrescaStress
+
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 
-# L'entrée UltimateTensileStrength
+# The `UltimateTensileStrength` entry
 
-Cette entrée décrit la valeur maximale de la contrainte qu'un materiau peut supporter.
+This entry describes the maximum stress that a material can withstand while being stretched or pulled before breaking.
 
-* noms : UltimateTensileStress, UltimateTensileStrength
+* alternative names: UltimateTensileStress, UltimateTensileStrength
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 
-# L'entrée ViscoplasticStrain
+# The `ViscoplasticStrain` entry
 
-Cette entrée décrit The viscoplatic strain.
+This entry describes The viscoplatic strain.
 
-* noms : ViscoplasticStrain
+
 * units:
 no units specified
-* type: tenseur symétrique
+* type: tensor
 
-# L'entrée VolumetricStrain
+# The `VolumetricStrain` entry
 
-Cette entrée décrit la dilatation volumique.
+This entry describes the volumetric strain, defined as the trace of the strain tensor.
 
-* noms : VolumetricStrain
+
 * units:
 no units specified
-* type: scalaire 
+* type: scalar
 
-# L'entrée VonMisesStress
+# The `VonMisesStress` entry
 
-Cette entrée décrit la contrainte équivalente au sens de Von Mises.
+This entry describes the von Mises equivalent stress.
 
-* noms : VonMisesStress
+
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 
-# L'entrée YieldStrength
+# The `YieldStrength` entry
 
-Cette entrée décrit la limite d'élasticité.
+This entry describes the stress corresponding to the yield point at which the material begins to deform plastically.
 
-* noms : YieldStress, YieldStrength
+* alternative names: YieldStress, YieldStrength
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 
-# L'entrée YoungModulus
+## Notes 
 
-Cette entrée décrit The Young modulus of an isotropic material.
+When this limit is difficult to identify experimentally, the offset yield point is taken as the stress at which 0.2% plastic deformation occurs
 
-* noms : YoungModulus
+# The `YoungModulus` entry
+
+This entry describes the Young's modulus of an isotropic material.
+
+
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 
-# L'entrée YoungModulus1
+# The `YoungModulus1` entry
 
-Cette entrée décrit le module d'Young d'un matériau orthotrope suivant la première direction d'orthotropie.
+This entry describes the Young's modulus of an isotropic material along the first direction of orthotropy.
 
-* noms : YoungModulus1
+
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 
-# L'entrée YoungModulus2
+# The `YoungModulus2` entry
 
-Cette entrée décrit le module d'Young d'un matériau orthotrope suivant la deuxième direction d'orthotropie.
+This entry describes the Young's modulus of an isotropic material along the second direction of orthotropy.
 
-* noms : YoungModulus2
+
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 
-# L'entrée YoungModulus3
+# The `YoungModulus3` entry
 
-Cette entrée décrit le module d'Young d'un matériau orthotrope suivant la troisième direction d'orthotropie.
+This entry describes the Young's modulus of an isotropic material along the third direction of orthotropy.
 
-* noms : YoungModulus3
+
 * units:
   *SI: Pa
-* type: scalaire 
+* type: scalar
 <!-- Local IspellDict: english -->

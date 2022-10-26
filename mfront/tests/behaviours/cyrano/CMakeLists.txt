@@ -2,6 +2,7 @@ set(mfront_tests_SOURCES
   MaterialPropertiesBoundsCheck
   ExternalStateVariablesBoundsCheck
   TensorialExternalStateVariableTest
+  InitializationFailureTest
   Elasticity
   Elasticity2
   Elasticity3
@@ -42,7 +43,9 @@ set(mfront_tests_SOURCES
   LogarithmicStrainOrthotropicElasticity
   LogarithmicStrainNortonCreep
   LogarithmicStrainNortonCreep2
-  GenerateMTestFileOnFailure)
+  GenerateMTestFileOnFailure
+  ProfilerTest
+  ProfilerTest3)
 
 mfront_dependencies(MFrontCyranoBehaviours
   YoungModulusTest_1
@@ -180,6 +183,8 @@ foreach(rm ${IEEE754_ROUNDING_MODES})
   endif(CMAKE_CONFIGURATION_TYPES)
 endforeach(rm ${IEEE754_ROUNDING_MODES})
 
+test_cyrano(initializationfailuretest
+  NO_XML_OUTPUT WILL_FAIL)
 test_cyrano(externalstatevariablesboundscheck
   NO_XML_OUTPUT WILL_FAIL)
 test_cyrano(externalstatevariablesboundscheck2 

@@ -70,16 +70,21 @@ namespace mtest {
   }
 
   real LPIEvolution::operator()(const real t) const {
-    tfel::raise_if(this->values.empty(),
-                   "LPILoadingEvolution::getValue: "
+    return LPIEvolution::interpolate(this->values, t);
+  } // end of operator()
+
+  real LPIEvolution::interpolate(const std::map<real, real>& values,
+                                 const real t) {
+    tfel::raise_if(values.empty(),
+                   "LPILoadingEvolution::interpolate: "
                    "no values specified");
-    if (this->values.size() == 1u) {
-      return this->values.begin()->second;
+    if (values.size() == 1u) {
+      return values.begin()->second;
     }
-    auto p = this->values.lower_bound(t);
-    if (p == this->values.begin()) {
+    auto p = values.lower_bound(t);
+    if (p == values.begin()) {
       return p->second;
-    } else if (p == this->values.end()) {
+    } else if (p == values.end()) {
       --p;
       return p->second;
     }
@@ -89,11 +94,11 @@ namespace mtest {
     const auto x1 = p->first;
     const auto y1 = p->second;
     return (y1 - y0) / (x1 - x0) * (t - x0) + y0;
-  }
+  }  // end of interpolate
 
   bool LPIEvolution::isConstant() const {
     return (this->values.size() == 1);
-  }  // end of LPIEvolution::isLPI
+  }  // end of LPIEvolution::isConstant
 
   LPIEvolution::~LPIEvolution() = default;
 
@@ -128,5 +133,32 @@ namespace mtest {
     }
     return efm;
   }  // end of buildExternalFunctionManagerFromConstantEvolutions
+
+  void checkIfDeclared(const std::vector<std::string>& names,
+                       const EvolutionManager& m,
+                       const std::string& type) {
+    for (const auto& n : names) {
+      if (m.find(n) == m.end()) {
+        tfel::raise("no " + type +
+                    " named "
+                    "'" +
+                    n + "' declared");
+      }
+    }
+  }
+
+  void checkIfDeclared(const std::vector<std::string>& names,
+                       const EvolutionManager& evm1,
+                       const EvolutionManager& evm2,
+                       const std::string& type) {
+    for (const auto& n : names) {
+      if (evm1.find(n) == evm1.end()) {
+        tfel::raise_if(evm2.find(n) == evm2.end(), "no " + type +
+                                                       " named "
+                                                       "'" +
+                                                       n + "' declared");
+      }
+    }
+  }
 
 }  // end of namespace mtest

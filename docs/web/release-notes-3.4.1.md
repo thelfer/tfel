@@ -65,7 +65,7 @@ Two new entries have been added in the glossary:
 
 # New features of `MFront`
 
-## Support for `Cast3M 21`
+## Support for `Cast3M 21` {#sec:mfront:castem21}
 
 While the so-called `umat` interface of this solver is unchanged, two
 additional material properties are now required to solve mechanical

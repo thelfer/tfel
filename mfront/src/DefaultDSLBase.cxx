@@ -19,6 +19,7 @@
 #include "MFront/AbstractBehaviourInterface.hxx"
 #include "MFront/BehaviourInterfaceFactory.hxx"
 #include "MFront/DSLUtilities.hxx"
+#include "MFront/DefaultCodeGeneratorBase.hxx"
 #include "MFront/DefaultDSLBase.hxx"
 
 namespace mfront {
@@ -40,6 +41,12 @@ namespace mfront {
     this->registerNewCallBack("@ComputeStiffnessTensor",
                               &DefaultDSLBase::treatComputeStiffnessTensor);
   }
+
+  std::unique_ptr<AbstractBehaviourCodeGenerator>
+  DefaultDSLBase::getCodeGenerator() const {
+    return std::make_unique<DefaultCodeGeneratorBase>(this->fd, this->mb,
+                                                      this->interfaces);
+  }  // end of getCodeGenerator
 
   std::string DefaultDSLBase::getCodeBlockTemplate(
       const std::string& c, const MFrontTemplateGenerationOptions&) const {
@@ -111,40 +118,6 @@ namespace mfront {
       this->mb.addLocalVariable(h, D, BehaviourData::ALREADYREGISTRED);
     }
   }  // end of DefaultDSLBase::completeVariableDeclaration
-
-  void DefaultDSLBase::writeBehaviourParserSpecificIncludes(
-      std::ostream& os) const {
-    BehaviourDSLCommon::writeBehaviourParserSpecificIncludes(os);
-  }  // end of DefaultDSLBase::writeBehaviourParserSpecificIncludes
-
-  void DefaultDSLBase::writeBehaviourLocalVariablesInitialisation(
-      std::ostream& os, const Hypothesis h) const {
-    using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
-    Modifier ets = [this](const MaterialPropertyInput& i) -> std::string {
-      if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
-          (i.category ==
-           MaterialPropertyInput::AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
-          (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE)) {
-        return "this->" + i.name + "+this->d" + i.name;
-      } else if ((i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
-                 (i.category == MaterialPropertyInput::PARAMETER)) {
-        return "this->" + i.name;
-      } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
-        return this->mb.getClassName() + "::" + i.name;
-      } else {
-        tfel::raise(
-            "DefaultDSLBase::writeBehaviourLocalVariablesInitialisation: "
-            "unsupported input type for variable '" +
-            i.name + "'");
-      }
-    };
-    if (this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,
-                              false)) {
-      os << "// stiffness tensor at the end of the time step\n";
-      this->writeStiffnessTensorComputation(os, "this->D", ets);
-    }
-    BehaviourDSLCommon::writeBehaviourLocalVariablesInitialisation(os, h);
-  }
 
   void DefaultDSLBase::getSymbols(std::map<std::string, std::string>& symbols,
                                   const Hypothesis h,

@@ -1,0 +1,41 @@
+@DSL DefaultDSL;
+@Behaviour InitializationFailureTest;
+@Author Thomas Helfer;
+@Date 23 / 08 / 2022;
+@Description {
+   This test controls that the initialization
+   failure is correctly handled
+}
+
+@AbaqusFiniteStrainStrategy[abaqusexplicit] FiniteRotationSmallStrain;
+@EuroplexusFiniteStrainStrategy[epx] FiniteRotationSmallStrain; 
+
+@Parameter stress young = 150e9;
+young.setGlossaryName("YoungModulus");
+@Parameter real nu = 0.3;
+nu.setGlossaryName("PoissonRatio");
+
+// \brief Lamé's coefficients
+@LocalVariable stress lambda,mu;
+
+@InitLocalVariables {
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+  return FAILURE;
+}
+
+@PredictionOperator{
+  static_cast<void>(smt); // remove unused variable warning
+  computeAlteredElasticStiffness<hypothesis,real>::exe(Dt,lambda,mu);
+}
+
+@Integrator{
+  constexpr const auto id = Stensor::Id();
+  const auto e = eto + deto;
+  sig = lambda * trace(e) * id  + 2 * mu * e;
+}
+ 
+@TangentOperator {
+  static_cast<void>(smt); // remove unused variable warning
+  Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+}

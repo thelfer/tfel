@@ -82,6 +82,22 @@ MFRONTS=StandardElastoViscoPlasticityTest1.mfront                         \
 	StandardElastoViscoPlasticityPlasticityTest16_nj.mfront               \
 	StandardElastoViscoPlasticityPlasticityTest17.mfront                  \
 	StandardElastoViscoPlasticityPlasticityTest17_nj.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest18.mfront                  \
+	StandardElastoViscoPlasticityPlasticityTest18_nj.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest18_qt.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest18_qt_nj.mfront            \
+	StandardElastoViscoPlasticityPlasticityTest19.mfront                  \
+	StandardElastoViscoPlasticityPlasticityTest19_nj.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest19_qt.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest19_qt_nj.mfront            \
+	StandardElastoViscoPlasticityPlasticityTest20.mfront                  \
+	StandardElastoViscoPlasticityPlasticityTest20_nj.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest20_qt.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest20_qt_nj.mfront            \
+	StandardElastoViscoPlasticityPlasticityTest21.mfront                  \
+	StandardElastoViscoPlasticityPlasticityTest21_nj.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest21_qt.mfront               \
+	StandardElastoViscoPlasticityPlasticityTest21_qt_nj.mfront            \
 	StandardElastoViscoPlasticityIsotropicDamageHookeLaw.mfront           \
 	StandardElastoViscoPlasticityIsotropicDamageHookeLaw_nj.mfront        \
 	StandardElastoViscoPlasticityIsotropicDamageHookeLaw2.mfront          \
@@ -127,7 +143,11 @@ MFRONTS=StandardElastoViscoPlasticityTest1.mfront                         \
 	references/standardelastoviscoplasticityplasticitytest16.ref          \
 	references/standardelastoviscoplasticityplasticitytest17.ref          \
 	references/GursonTvergaardNeedleman1982-test1.ref                     \
-	references/GursonTvergaardNeedleman1982-test2.ref
+	references/GursonTvergaardNeedleman1982-test2.ref                     \
+    references/DataIsotropicHardeningRuleTest-18.ref                      \
+    references/DataIsotropicHardeningRuleTest-19.ref                      \
+    references/DataIsotropicHardeningRuleTest-20.ref                      \
+    references/DataIsotropicHardeningRuleTest-21.ref
 
 
 testsdir = $(pkgdatadir)/mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity

@@ -15,10 +15,9 @@
 #define LIB_MFRONT_ASTER_ASTERINTERFACEEXCEPTIONS_HXX
 
 #include <string>
-
+#include <string_view>
 #include "TFEL/Exception/TFELException.hxx"
 #include "TFEL/Material/MaterialException.hxx"
-
 #include "MFront/Aster/Aster.hxx"
 #include "MFront/Aster/AsterConfig.hxx"
 #include "MFront/Aster/AsterException.hxx"
@@ -69,7 +68,7 @@ namespace aster {
      * \param[in] n2 : number of material properties declared by the interface
      */
     [[noreturn]] static void throwUnMatchedNumberOfMaterialProperties(
-        const std::string &, const unsigned short n1, const AsterInt n2);
+        const std::string_view, const unsigned short n1, const AsterInt n2);
 
     /*!
      * \brief throw an AsterException. This method shall be called when
@@ -81,7 +80,7 @@ namespace aster {
      * \param[in] n2 : number of state variables declared by the interface
      */
     [[noreturn]] static void throwUnMatchedNumberOfStateVariables(
-        const std::string &, const unsigned short n1, const AsterInt n2);
+        const std::string_view, const unsigned short n1, const AsterInt n2);
 
     /*!
      * \brief display the error message out of an AsterException to the
@@ -89,7 +88,7 @@ namespace aster {
      * \param[in] b : behaviour name
      * \param[in] e : the AsterException to be treated
      */
-    static void treatAsterException(const std::string &,
+    static void treatAsterException(const std::string_view,
                                     const AsterException &);
     /*!
      * \brief display the error message out of a material exception to the
@@ -98,14 +97,14 @@ namespace aster {
      * \param[in] e : the material exception to be treated
      */
     static void treatMaterialException(
-        const std::string &, const tfel::material::MaterialException &);
+        const std::string_view, const tfel::material::MaterialException &);
     /*!
      * \brief display the error message out of a generic tfel
      * exception to the standard output.
      * \param[in] b : behaviour name
      * \param[in] e : the exception to be treated
      */
-    static void treatTFELException(const std::string &,
+    static void treatTFELException(const std::string_view,
                                    const tfel::exception::TFELException &);
     /*!
      * \brief display the error message out of a generic standard
@@ -113,40 +112,47 @@ namespace aster {
      * \param[in] b : behaviour name
      * \param[in] e : the exception to be treated
      */
-    static void treatStandardException(const std::string &,
+    static void treatStandardException(const std::string_view,
                                        const std::exception &);
     /*!
      * \brief display the error message when an unknown exception is caught
      * \param[in] b : behaviour name
      */
-    static void treatUnknownException(const std::string &);
+    static void treatUnknownException(const std::string_view);
     /*!
      * \brief throw an AsterException if the time step is negative
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwNegativeTimeStepException(
-        const std::string &);
+        const std::string_view);
     /*!
      * \brief throw an AsterException if the DDSOE parameter is invalid
      * \param[in] b : behaviour name
      * \param[in] v : DDSOE value
      */
-    [[noreturn]] static void throwInvalidDDSOEException(const std::string &,
+    [[noreturn]] static void throwInvalidDDSOEException(const std::string_view,
                                                         const AsterReal);
+    /*!
+     * \brief throw an AsterException if the behaviour integration
+     * failed
+     * \param[in] b : behaviour name
+     */
+    [[noreturn]] static void throwBehaviourInitializationFailedException(
+        const std::string_view);
     /*!
      * \brief throw an AsterException if the prediction computation
      * failed
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwPredictionComputationFailedException(
-        const std::string &);
+        const std::string_view);
     /*!
      * \brief throw an AsterException if the behaviour integration
      * failed
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwBehaviourIntegrationFailedException(
-        const std::string &);
+        const std::string_view);
     /*!
      * \brief throw an AsterException if the a consistent tangent
      * operator has to been requested and that the behaviour does not
@@ -154,21 +160,21 @@ namespace aster {
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwConsistentTangentOperatorIsNotAvalaible(
-        const std::string &);
+        const std::string_view);
     /*!
      * \brief throw an AsterException if the a prediction operator has
      * to been requested and that the behaviour does not provide one.
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwPredictionOperatorIsNotAvalaible(
-        const std::string &);
+        const std::string_view);
     /*!
      * \brief display an error message if the behaviour shall handle
      * stress free expansion and that the umat interface can't
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void throwUnsupportedStressFreeExpansionException(
-        const std::string &);
+        const std::string_view);
     /*!
      * \brief display an error message if the value of the NTENS
      * parameter is not valid

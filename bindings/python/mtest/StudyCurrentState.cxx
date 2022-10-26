@@ -54,5 +54,14 @@ void declareStudyCurrentState() {
       .def_readonly("dt_1", &StudyCurrentState::dt_1)
       .def("getEvolutionValue", &StudyCurrentState_getEvolutionValue)
       .def("getStructureCurrentState", getStructureCurrentState,
-           boost::python::return_internal_reference<>());
+           boost::python::return_internal_reference<>())
+      .def("getFailureStatus", &mtest::StudyCurrentState::getFailureStatus)
+      .def("getFailureCriterionStatus",
+           &mtest::StudyCurrentState::getFailureCriterionStatus)
+      .def("setFailureCriterionStatus",
+           &mtest::StudyCurrentState::setFailureCriterionStatus)
+      .def("setNumberOfFailureCriterionStatus",
+           &mtest::StudyCurrentState::setNumberOfFailureCriterionStatus)
+      .def("getNumberOfFailureCriterionStatus",
+           &mtest::StudyCurrentState::getNumberOfFailureCriterionStatus);
 }

@@ -11,7 +11,7 @@
  * project under specific licensing conditions.
  */
 
-#include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
@@ -93,14 +93,13 @@ namespace tfel::glossary {
         }
       };
       throw_if(s.empty());
-      auto p = std::size_t{};
       auto r = double{};
-      try {
-        r = std::stod(s, &p);
-      } catch (std::exception&) {
+      std::istringstream is(s);
+      is.imbue(std::locale("C"));
+      is >> r;
+      if (is.fail() || is.bad() || !is.eof()) {
         throw_if(true);
       }
-      throw_if(p != s.size());
       return r;
     };
     if (this->names.empty()) {

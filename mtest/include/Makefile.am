@@ -28,6 +28,8 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/PipeCubicElement.hxx	                 \
 			 MTest/PipeProfile.hxx	                         \
 			 MTest/PipeProfileHandler.hxx	                 \
+			 MTest/PipeFailureCriterion.hxx               \
+			 MTest/PipeFailureCriteriaFactory.hxx         \
 			 MTest/UserDefinedPostProcessing.hxx             \
 			 MTest/AnalyticalTest.hxx	                 \
 			 MTest/ReferenceFileComparisonTest.hxx           \
@@ -45,6 +47,7 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/CastemFiniteStrainBehaviour.hxx               \
 			 MTest/CastemFiniteStrainBehaviour2.hxx              \
 			 MTest/CastemCohesiveZoneModel.hxx                   \
+			 MTest/CastemModel.hxx                               \
 			 MTest/MistralBehaviour.hxx                          \
 			 MTest/CastemUmatStandardBehaviour.hxx               \
 			 MTest/CastemUmatSmallStrainBehaviour.hxx            \
@@ -73,6 +76,7 @@ nobase_include_HEADERS = MTest/Config.hxx	                         \
 			 MTest/CastemEvolution.hxx                       \
 			 MTest/CyranoEvolution.hxx                       \
 			 MTest/FunctionEvolution.hxx                     \
+			 MTest/OxidationStatusEvolution.hxx              \
 			 MTest/Constraint.hxx                            \
 			 MTest/ConstraintBase.hxx                        \
 			 MTest/NonLinearConstraint.hxx                   \

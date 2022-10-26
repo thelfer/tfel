@@ -17,9 +17,7 @@
 
 #include "MFront/BehaviourBrick/StandardPorousStressCriterionBase.hxx"
 
-namespace mfront {
-
-  namespace bbrick {
+namespace mfront::bbrick {
 
     /*!
      * \brief implementation of the MichelAndSuquet1992HollowSphere stress
@@ -44,9 +42,7 @@ namespace mfront {
       ~MichelAndSuquet1992HollowSphereStressCriterion() override;
     };  // end of struct MichelAndSuquet1992HollowSphereStressCriterion
 
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB__MFRONT_BEHAVIOURBRICK_MICHEL_SUQUET_1992_HOLLOW_SPHERE_STRESSCRITERION_HXX \
         */

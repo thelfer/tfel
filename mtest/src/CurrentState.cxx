@@ -82,7 +82,7 @@ namespace mtest {
                    "initialized appropriately");
     std::vector<real>::size_type i = 0;
     for (const auto& evn : esvnames) {
-      auto pev = evm.find(evn);
+      const auto pev = evm.find(evn);
       if (pev == evm.end()) {
         tfel::raise(
             "computeExternalStateVariables:"
@@ -175,7 +175,7 @@ namespace mtest {
       std::copy(se_th0.begin(), se_th0.begin() + ss, s.e_th0.begin());
       std::copy(se_th1.begin(), se_th1.begin() + ss, s.e_th1.begin());
     } else {
-      tfel::raise("MTest::prepare: invalid dimension");
+      tfel::raise("computeThermalExpansion: invalid dimension");
     }
   }
 

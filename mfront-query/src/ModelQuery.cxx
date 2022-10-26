@@ -48,11 +48,17 @@ namespace mfront {
         {"--model-name", "show the model name"},
         {"--class-name", "show the class name"},
         {"--author", "show the author name"},
+        {"--unit-system", "show the unit system used"},
         {"--description", "show the file description"},
         {"--date", "show the file implementation date"},
         {"--material", "show the material name"},
         {"--library", "show the library name"},
-        {"--outputs", "show model outputs"},
+        {"--outputs", "show model outputs (same as --state-variables)"},
+        {"--state-variables", "show model state variables (same as --outputs)"},
+        {"--inputs", "show model inputs (same as --external-state-variables)"},
+        {"--external-state-variables",
+         "show model external state variables (same as --inputs)"},
+        {"--parameters", "show the list of parameters"},
         {"--list-dependencies", "list the MFront dependencies"}};
     for (const auto& q : sq) {
       this->registerCallBack(
@@ -62,7 +68,24 @@ namespace mfront {
   }  // end of registerCommandLineCallBacks
 
   void ModelQuery::treatStandardQuery() {
+    auto displayVariableDescriptionContainer =
+        [this](const VariableDescriptionContainer& c) {
+          for (const auto& v : c) {
+            static_cast<QueryHandlerBase&>(*this).displayVariable(v);
+          }
+        };
+    auto displayOutputs = [displayVariableDescriptionContainer](
+                              const FileDescription&,
+                              const ModelDescription& mpd) {
+      displayVariableDescriptionContainer(mpd.outputs);
+    };
+    auto displayInputs = [displayVariableDescriptionContainer](
+                             const FileDescription&,
+                             const ModelDescription& mpd) {
+      displayVariableDescriptionContainer(mpd.inputs);
+    };
     const auto& qn = this->getCurrentCommandLineArgument().as_string();
+
     if (qn == "--model-name") {
       this->queries.push_back({"model-name", [](const FileDescription&,
                                                 const ModelDescription& mpd) {
@@ -78,6 +101,16 @@ namespace mfront {
           {"author", [](const FileDescription& fd, const ModelDescription&) {
              const auto& a = fd.authorName;
              std::cout << (!a.empty() ? a : "(undefined)") << std::endl;
+           }});
+    } else if (qn == "--unit-system") {
+      this->queries.push_back(
+          {"unit-system",
+           [](const FileDescription&, const ModelDescription& md) {
+             if (md.hasUnitSystem()) {
+               std::cout << md.getUnitSystem() << std::endl;
+             } else {
+               std::cout << "(undefined)" << std::endl;
+             }
            }});
     } else if (qn == "--description") {
       this->queries.push_back(
@@ -123,33 +156,24 @@ namespace mfront {
              const auto& l = d.library;
              std::cout << (!l.empty() ? l : "(undefined)") << std::endl;
            }});
-    } else if (qn == "--outputs") {
+    } else if (qn == "--outputs"){
+      this->queries.push_back({"--outputs", displayOutputs});
+    } else if (qn == "--state-variables") {
+      this->queries.push_back({"--state-variables", displayOutputs});
+    } else if (qn == "--inputs"){
+      this->queries.push_back({"--inputs", displayInputs});
+    } else if (qn == "--external-state-variables") {
+      this->queries.push_back({"--external-state-variables", displayInputs});
+    } else if (qn == "--parameters") {
       this->queries.push_back(
-          {"outputs", [](const FileDescription&, const ModelDescription& d) {
-             for (const auto& v : d.outputs) {
-               const auto& n = v.name;  // d.getExternalName(v.name);
-               std::cout << "- " << n;
-               if (v.arraySize != 1u) {
-                 std::cout << '[' << v.arraySize << ']';
-               }
-               if (n != v.name) {
-                 std::cout << " (" << displayName(v) << ")";
-               }
-               if (!v.description.empty()) {
-                 std::cout << ": " << v.description;
-               } else {
-                 const auto& g = tfel::glossary::Glossary::getGlossary();
-                 if (g.contains(n)) {
-                   std::cout << ": "
-                             << g.getGlossaryEntry(n).getShortDescription();
-                 }
-               }
-               std::cout << std::endl;
-             }
+          {"--parameters",
+           [displayVariableDescriptionContainer](const FileDescription&,
+                                                 const ModelDescription& mpd) {
+             displayVariableDescriptionContainer(mpd.parameters);
            }});
     } else {
       tfel::raise(
-          "Model::treatStandardQuery : "
+          "Model::treatStandardQuery: "
           "unsupported query '" +
           qn + "'");
     }

@@ -29,6 +29,7 @@ libTFELMTest_la_SOURCES =                               \
 			  CastemEvolution.cxx                       \
 			  CyranoEvolution.cxx                       \
 			  FunctionEvolution.cxx                     \
+			  OxidationStatusEvolution.cxx              \
 			  Behaviour.cxx                             \
 			  BehaviourWrapperBase.cxx                  \
 			  LogarithmicStrain1DBehaviourWrapper.cxx   \
@@ -68,6 +69,8 @@ libTFELMTest_la_SOURCES =                               \
 			  PipeCubicElement.cxx                      \
 			  PipeProfile.cxx                           \
 			  PipeProfileHandler.cxx                    \
+			  PipeFailureCriterion.cxx                  \
+			  PipeFailureCriteriaFactory.cxx            \
 			  TextDataUtilities.cxx                     \
 			  SchemeParserBase.cxx                      \
 			  SingleStructureSchemeParser.cxx           \
@@ -103,6 +106,7 @@ libTFELMTest_la_SOURCES += CastemStandardBehaviour.cxx         \
 			   CastemFiniteStrainBehaviour.cxx     \
 			   CastemFiniteStrainBehaviour2.cxx    \
 			   CastemCohesiveZoneModel.cxx         \
+			   CastemModel.cxx                     \
 			   CastemUmatStandardBehaviour.cxx     \
 			   CastemUmatSmallStrainBehaviour.cxx  \
 			   CastemUmatFiniteStrainBehaviour.cxx \

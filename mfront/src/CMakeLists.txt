@@ -27,6 +27,7 @@ mfront_library(MTestFileGenerator
   MTestFileGeneratorBase.cxx
   UmatSmallStrainMTestFileGenerator.cxx
   UmatFiniteStrainMTestFileGenerator.cxx
+  GenericBehaviourMTestFileGenerator.cxx
   GenericBehaviourSmallStrainMTestFileGenerator.cxx
   GenericBehaviourFiniteStrainMTestFileGenerator.cxx)
 target_include_directories(MTestFileGenerator
@@ -141,6 +142,18 @@ set(TFELMFront_SOURCES
     PerformanceProfiling.cxx
     MultipleIsotropicMisesFlowsDSL.cxx
     IsotropicBehaviourDSLBase.cxx
+    AbstractBehaviourCodeGenerator.cxx
+    BehaviourCodeGeneratorBase.cxx
+    DefaultCodeGeneratorBase.cxx
+    DefaultCZMCodeGenerator.cxx
+    DefaultFiniteStrainCodeGenerator.cxx
+    RungeKuttaCodeGeneratorBase.cxx
+    ImplicitCodeGeneratorBase.cxx
+    IsotropicBehaviourCodeGeneratorBase.cxx
+    IsotropicStrainHardeningMisesCreepCodeGenerator.cxx
+    IsotropicMisesPlasticFlowCodeGenerator.cxx
+    IsotropicMisesCreepCodeGenerator.cxx
+    MultipleIsotropicMisesFlowsCodeGenerator.cxx
     MFrontMaterialPropertyInterface.cxx
     CMaterialPropertyInterfaceBase.cxx
     CMaterialPropertyInterface.cxx
@@ -208,6 +221,7 @@ set(TFELMFront_SOURCES
     PowerIsotropicHardeningRule.cxx
     SwiftIsotropicHardeningRule.cxx
     VoceIsotropicHardeningRule.cxx
+    DataIsotropicHardeningRule.cxx
     UserDefinedIsotropicHardeningRule.cxx
     IsotropicHardeningRuleFactory.cxx
     KinematicHardeningRule.cxx
@@ -216,6 +230,7 @@ set(TFELMFront_SOURCES
     Chaboche2012KinematicHardeningRule.cxx
     BurletCailletaudKinematicHardeningRule.cxx
     ArmstrongFrederickKinematicHardeningRule.cxx
+    DelobelleRobinetSchafflerKinematicHardeningRule.cxx
     KinematicHardeningRuleFactory.cxx
     ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
@@ -250,6 +265,7 @@ if(HAVE_CASTEM)
 	Castem21Interface.cxx
 	CastemSymbolsGenerator.cxx
 	CastemMaterialPropertyInterface.cxx
+	CastemModelInterface.cxx
 	AmitexInterface.cxx
 	${TFELMFront_SOURCES})
     set(CastemInterface_SOURCES
@@ -470,10 +486,11 @@ endif(HAVE_CASTEM)
 
 target_link_libraries(TFELMFront
   PUBLIC MFrontLogStream
-  PUBLIC TFELMaterial       PUBLIC TFELMathParser
-  PUBLIC TFELSystem         PUBLIC TFELUtilities
-  PUBLIC TFELUnicodeSupport PUBLIC TFELGlossary 
-  PUBLIC TFELException      PUBLIC TFELConfig)
+  PUBLIC TFELMaterial        PUBLIC TFELMathParser
+  PUBLIC TFELMathCubicSpline PUBLIC TFELMath
+  PUBLIC TFELSystem          PUBLIC TFELUtilities
+  PUBLIC TFELUnicodeSupport  PUBLIC TFELGlossary 
+  PUBLIC TFELException       PUBLIC TFELConfig)
 
 if(UNIX)
   if(NOT HAIKU)

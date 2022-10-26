@@ -34,7 +34,7 @@ namespace std {
 namespace cyrano {
 
   void CyranoInterfaceExceptions::throwUnMatchedNumberOfMaterialProperties(
-      const std::string& b, const unsigned short n1, const CyranoInt n2) {
+      const std::string_view b, const unsigned short n1, const CyranoInt n2) {
     std::ostringstream msg;
     msg << "CyranoInterfaceExceptions::"
            "throwUnMatchedNumberOfMaterialProperties : "
@@ -45,7 +45,7 @@ namespace cyrano {
   }  // end of throwUnMatchedNumberOfMaterialProperties
 
   void CyranoInterfaceExceptions::throwUnMatchedNumberOfStateVariables(
-      const std::string& b, const unsigned short n1, const CyranoInt n2) {
+      const std::string_view b, const unsigned short n1, const CyranoInt n2) {
     std::ostringstream msg;
     msg << "CyranoInterfaceExceptions::throwUnMatchedNumberOfStateVariables : "
         << "the number of internal state variables does not match. The "
@@ -56,70 +56,71 @@ namespace cyrano {
   }  // end of throwUnMatchedNumberOfStateVariables
 
   void CyranoInterfaceExceptions::treatCyranoException(
-      const std::string& b, const CyranoException& e) {
+      const std::string_view b, const CyranoException& e) {
     std::cout << "The behaviour '" << b
               << "' has thrown an CyranoException : " << e.what() << std::endl;
   }  // end of treatCyranoException
 
   void CyranoInterfaceExceptions::treatMaterialException(
-      const std::string& b, const tfel::material::MaterialException& e) {
+      const std::string_view b, const tfel::material::MaterialException& e) {
     std::cout << "The behaviour '" << b
               << "' has thrown an MaterialException : " << e.what()
               << std::endl;
   }  // end of treatMaterialException
 
   void CyranoInterfaceExceptions::treatTFELException(
-      const std::string& b, const tfel::exception::TFELException& e) {
+      const std::string_view b, const tfel::exception::TFELException& e) {
     std::cout << "The behaviour '" << b
               << "' has thrown a generic tfel exception : " << e.what()
               << std::endl;
   }  // end of treatTFELException
 
   void CyranoInterfaceExceptions::treatStandardException(
-      const std::string& b, const std::exception& e) {
+      const std::string_view b, const std::exception& e) {
     std::cout << "The behaviour '" << b
               << "' has thrown a generic standard exception : " << e.what()
               << std::endl;
   }  // end of treatStandardException
 
-  void CyranoInterfaceExceptions::treatUnknownException(const std::string& b) {
+  void CyranoInterfaceExceptions::treatUnknownException(
+      const std::string_view b) {
     std::cout << "The behaviour '" << b << "' has thrown an unknown exception"
               << std::endl;
   }  // end of treatUnknownException
 
   void CyranoInterfaceExceptions::throwNegativeTimeStepException(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "CyranoInterfaceExceptions::throwNegativeTimeStepException: "
         "negative time step detected for behaviour '" +
-        b + "'");
-  }  // end of CyranoInterfaceExceptions::throwNegativeTimeStepException
+        std::string{b} + "'");
+  }  // end of throwNegativeTimeStepException
 
   void CyranoInterfaceExceptions::throwBehaviourIntegrationFailedException(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise<CyranoIntegrationFailed>("integration failed for behaviour '" +
-                                         b + "'");
+                                         std::string{b} + "'");
   }  // end of
      // CyranoInterfaceExceptions::throwBehaviourIntegrationFailedException
 
   void
   CyranoInterfaceExceptions::throwMaximumNumberOfSubSteppingReachedException(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise<CyranoIntegrationFailed>(
         "maximum number of sub stepping reached "
         "failed for behaviour '" +
-        b + "'");
+        std::string{b} + "'");
   }  // end of
      // CyranoInterfaceExceptions::throwMaximumNumberOfSubSteppingReachedException
 
   void CyranoInterfaceExceptions::
       throwPlaneStressMaximumNumberOfIterationsReachedException(
-          const std::string& b) {
+          const std::string_view b) {
     tfel::raise<CyranoIntegrationFailed>(
         "maximum number of iterations of "
         "the plane stress algorithm "
         "reached failed for behaviour '" +
-        b + "'");
+        std::string{b} + "'");
   }  // end of
      // CyranoInterfaceExceptions::throwPlaneStressMaximumNumberOfIterationsReachedException
 
@@ -131,7 +132,7 @@ namespace cyrano {
                    "(got '" +
                        std::to_string(NTENS) + "', expected '" +
                        std::to_string(static_cast<unsigned int>(s)) + "')");
-  }  // end of CyranoInterfaceExceptions::checkNTENSValue
+  }  // end of checkNTENSValue
 
   void
   CyranoInterfaceExceptions::displayInvalidModellingHypothesisErrorMessage() {
@@ -142,67 +143,72 @@ namespace cyrano {
 
   void
   CyranoInterfaceExceptions::throwInvalidBehaviourTypeAndModellingHypothesis(
-      const std::string& h) {
+      const std::string_view h) {
     tfel::raise(
         "CyranoInterfaceExceptions::"
         "throwInvalidBehaviourTypeAndModellingHypothesis : "
         "behaviour can't be used in '" +
-        h + "'");
-  }  // end of
-     // CyranoInterfaceExceptions::throwInvalidBehaviourTypeAndModellingHypothesis
+        std::string{h} + "'");
+  }  // end of throwInvalidBehaviourTypeAndModellingHypothesis
+
+  void CyranoInterfaceExceptions::throwBehaviourInitializationFailedException(
+      const std::string_view b) {
+    tfel::raise(
+        "CyranoInterfaceExceptions::"
+        "throwBehaviourInitializationFailedException: "
+        "behaviour initialization failed for behaviour '" +
+        std::string{b} + "'");
+  }  // end of throwBehaviourInitializationFailedException
 
   void CyranoInterfaceExceptions::throwPredictionComputationFailedException(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "CyranoInterfaceExceptions::throwPredictionComputationFailedException: "
         "prediction computation failed for behaviour '" +
-        b + "'");
+        std::string{b} + "'");
   }
 
   void CyranoInterfaceExceptions::throwPredictionOperatorIsNotAvalaible(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "CyranoInterfaceExceptions::throwPredictionOperatorIsNotAvalaible: "
         "behaviour '" +
-        b + "' can't compute a prediction operator");
-  }  // end of
-     // CyranoInterfaceExceptions::throwBehaviourIntegrationFailedException
+        std::string{b} + "' can't compute a prediction operator");
+  }  // end of throwBehaviourIntegrationFailedException
 
   void CyranoInterfaceExceptions::throwConsistentTangentOperatorIsNotAvalaible(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "CyranoInterfaceExceptions::"
         "throwConsistentTangentOperatorIsNotAvalaible: "
         "behaviour '" +
-        b + "' can't compute a consistent tangent operator");
-  }  // end of
-     // CyranoInterfaceExceptions::throwBehaviourIntegrationFailedException
+        std::string{b} + "' can't compute a consistent tangent operator");
+  }  // end of throwBehaviourIntegrationFailedException
 
   void CyranoInterfaceExceptions::throwUnsupportedStressFreeExpansionException(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "CyranoInterfaceExceptions::"
         "throwUnsupportedStressFreeExpansionException: "
         "behaviour '" +
-        b +
+        std::string{b} +
         "' can handle stress-free expansion "
         "but the Cyrano interface can't");
-  }  // end of
-     // CyranoInterfaceExceptions::throwUnsupportedStressFreeExpansionException
+  }  // end of throwUnsupportedStressFreeExpansionException
 
   void CyranoInterfaceExceptions::throwThermalExpansionCoefficientShallBeNull(
-      const std::string& b) {
+      const std::string_view b) {
     tfel::raise(
         "CyranoInterfaceExceptions::"
         "throwThermalExpansionCoefficientShallBeNull: "
         "behaviour '" +
-        b +
+        std::string{b} +
         "' handle thermal expansion, so the thermal expansion "
         "declared in Cyrano must be null.");
   }
 
   void CyranoInterfaceExceptions::throwInvalidDDSOEException(
-      const std::string& b, const CyranoReal v) {
+      const std::string_view b, const CyranoReal v) {
     tfel::raise(
         "CyranoInterfaceExceptions::throwInvalidDDSOEException : "
         "an invalid value for the DDSOE parameter has been given "
@@ -210,7 +216,7 @@ namespace cyrano {
         std::to_string(v) +
         "') "
         "to the behaviour '" +
-        b +
+        std::string{b} +
         "'.\n"
         "The following values are accepted:\n"
         "-3 : compute the prediction tangent operator, no behaviour "
@@ -229,7 +235,7 @@ namespace cyrano {
         "requested\n"
         " 4 : integrate the behaviour over the time step, consistent tagent "
         "operator requested\n");
-  }  // end of CyranoInterfaceExceptions::throwInvalidDDSOEException
+  }  // end of throwInvalidDDSOEException
 
   void CyranoUnSupportedCaseHandler::exe(const CyranoReal* const,
                                          const CyranoReal* const,

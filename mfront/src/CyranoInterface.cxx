@@ -561,7 +561,7 @@ namespace mfront {
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "using mfront::BehaviourProfiler;\n";
       out << "using tfel::material::" << mb.getClassName() << "Profiler;\n";
-      out << "auto total_timer(" << mb.getClassName()
+      out << "BehaviourProfiler::Timer total_timer(" << mb.getClassName()
           << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::TOTALTIME);\n";
     }
@@ -616,7 +616,7 @@ namespace mfront {
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "using mfront::BehaviourProfiler;\n"
           << "using tfel::material::" << mb.getClassName() << "Profiler;\n"
-          << "auto total_timer(" << mb.getClassName()
+          << "BehaviourProfiler::Timer total_timer(" << mb.getClassName()
           << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::TOTALTIME);\n";
     }
@@ -663,7 +663,7 @@ namespace mfront {
                      "no state variable standing for the axial strain");
       if (mb.getAttribute(BehaviourData::profiling, false)) {
         out << "{\n"
-            << "auto pre_timer(" << mb.getClassName()
+            << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName()
             << "Profiler::getProfiler(),\n"
             << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
       }
@@ -694,7 +694,7 @@ namespace mfront {
       out << "if(*KINC>=0){\n";
       if (mb.getAttribute(BehaviourData::profiling, false)) {
         out << "{\n"
-            << "auto post_timer(" << mb.getClassName()
+            << "BehaviourProfiler::Timer post_timer(" << mb.getClassName()
             << "Profiler::getProfiler(),\n"
             << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
       }
@@ -733,7 +733,7 @@ namespace mfront {
         << "// axisymmetrical generalised plane strain\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "{\n"
-          << "auto pre_timer(" << mb.getClassName()
+          << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName()
           << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
     }
@@ -757,7 +757,7 @@ namespace mfront {
     out << "if(*KINC>=0){\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "{\n"
-          << "auto post_timer(" << mb.getClassName()
+          << "BehaviourProfiler::Timer post_timer(" << mb.getClassName()
           << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
     }

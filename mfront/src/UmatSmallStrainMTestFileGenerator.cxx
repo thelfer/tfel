@@ -22,13 +22,12 @@
 namespace mfront {
 
   UmatSmallStrainMTestFileGenerator::UmatSmallStrainMTestFileGenerator(
-      const std::string& i, const std::string& l, const std::string& b)
+      const char* const i, const char* const l, const char* const b)
       : interface(i), library(l), behaviour(b) {
     std::fill(eto, eto + 6, 0.);
     std::fill(deto, deto + 6, 0.);
     std::fill(stress, stress + 6, 0.);
-  }  // end of
-     // UmatSmallStrainMTestFileGenerator::UmatSmallStrainMTestFileGenerator
+  }  // end of UmatSmallStrainMTestFileGenerator
 
   void UmatSmallStrainMTestFileGenerator::writeBehaviourDeclaration(
       std::ostream& os) const {
@@ -39,29 +38,29 @@ namespace mfront {
     os << "@Behaviour<" << this->interface << "> '" << this->library << ".so' '"
        << this->behaviour << "';" << std::endl;
 #endif
-  }  // end of UmatSmallStrainMTestFileGenerator::writeBehaviourDeclaration
+  }  // end of writeBehaviourDeclaration
 
   void UmatSmallStrainMTestFileGenerator::setStrainTensor(
       const double* const e) {
     std::copy(e, e + this->getStensorSize(), this->eto);
-  }  // end of UmatSmallStrainMTestFileGenerator::setStrainTensor
+  }  // end of setStrainTensor
 
   void UmatSmallStrainMTestFileGenerator::setStrainTensorIncrement(
       const double* const de) {
     std::copy(de, de + this->getStensorSize(), this->deto);
-  }  // end of UmatSmallStrainMTestFileGenerator::setStrainTensorIncrement
+  }  // end of setStrainTensorIncrement
 
   void UmatSmallStrainMTestFileGenerator::setStressTensor(
       const double* const s) {
     std::copy(s, s + this->getStensorSize(), this->stress);
-  }  // end of UmatSmallStrainMTestFileGenerator::setStressTensor
+  }  // end of setStressTensor
 
   void UmatSmallStrainMTestFileGenerator::writeGradients(
       std::ostream& os) const {
     using namespace tfel::material;
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     constexpr auto icste = tfel::math::Cste<real>::isqrt2;
-    const auto& n = this->getStrainComponentsNames();
+    const auto& n = this->getStensorComponentsNames();
     unsigned short i;
     tfel::raise_if(this->times.size() != 2,
                    "UmatSmallStrainMTestFileGenerator::writeGradients: "
@@ -111,7 +110,7 @@ namespace mfront {
       }
     }
     os << '\n';
-  }  // end of UmatSmallStrainMTestFileGenerator::writeGradients
+  }  // end of writeGradients
 
   UmatSmallStrainMTestFileGenerator::~UmatSmallStrainMTestFileGenerator() =
       default;

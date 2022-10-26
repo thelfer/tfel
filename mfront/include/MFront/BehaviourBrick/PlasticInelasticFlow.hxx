@@ -16,52 +16,48 @@
 
 #include "MFront/BehaviourBrick/InelasticFlowBase.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  /*!
+   * \brief describe an inelastic flow defined by a plastic law.
+   * \note the base class must declare a state variable named `p`+id.
+   */
+  struct PlasticInelasticFlow : InelasticFlowBase {
+    std::vector<OptionDescription> getOptions() const override;
+    void initialize(BehaviourDescription&,
+                    AbstractBehaviourDSL&,
+                    const std::string&,
+                    const DataMap&) override;
+    //! destructor
+    ~PlasticInelasticFlow() override;
+
+   protected:
+    std::string buildFlowImplicitEquations(const BehaviourDescription&,
+                                           const StressPotential&,
+                                           const std::string&,
+                                           const bool) const override;
 
     /*!
-     * \brief describe an inelastic flow defined by a plastic law.
-     * \note the base class must declare a state variable named `p`+id.
+     *\brief maximum equivalent stress factor
+     *
+     * A factor, denoted \f$alpha\f$ in this description, which gives the
+     * maximal equivalent stress allowed before damping the current Newton
+     * step. This maximal equivalent stress is defined as \f$alpha * R\f$
+     * where \f$R\f$ is the current elastic limit. \f$alpha\f$ must be greater
+     * than one.
+     *
+     * If \f$alpha\f$ is lower than one, which is the default, the code
+     * performing this check is not generated.
      */
-    struct PlasticInelasticFlow : InelasticFlowBase {
-      std::vector<OptionDescription> getOptions() const override;
-      void initialize(BehaviourDescription&,
-                      AbstractBehaviourDSL&,
-                      const std::string&,
-                      const DataMap&) override;
-      //! destructor
-      ~PlasticInelasticFlow() override;
+    double maximum_equivalent_stress_factor = -1;
+    /*!
+     * \brief a factor which gives the maximum number of iterations below
+     * which the check on the maximum equivalent stress is performed.
+     */
+    double equivalent_stress_check_maximum_iteration_factor = 0.5;
 
-     protected:
-      std::string buildFlowImplicitEquations(const BehaviourDescription&,
-                                             const StressPotential&,
-                                             const std::string&,
-                                             const bool) const override;
+  };  // end of struct PlasticInelasticFlow
 
-      /*!
-       *\brief maximum equivalent stress factor
-       *
-       * A factor, denoted \f$alpha\f$ in this description, which gives the
-       * maximal equivalent stress allowed before damping the current Newton
-       * step. This maximal equivalent stress is defined as \f$alpha * R\f$
-       * where \f$R\f$ is the current elastic limit. \f$alpha\f$ must be greater
-       * than one.
-       *
-       * If \f$alpha\f$ is lower than one, which is the default, the code
-       * performing this check is not generated.
-       */
-      double maximum_equivalent_stress_factor = -1;
-      /*!
-       * \brief a factor which gives the maximum number of iterations below
-       * which the check on the maximum equivalent stress is performed.
-       */
-      double equivalent_stress_check_maximum_iteration_factor = 0.5;
-
-    };  // end of struct PlasticInelasticFlow
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICK_PLASTICINELASTICFLOW_HXX */

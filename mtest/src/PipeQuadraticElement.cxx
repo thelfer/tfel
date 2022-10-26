@@ -60,12 +60,6 @@ namespace mtest {
       const auto r2 = r0 + dr;
       // loop over Gauss point
       for (const auto g : {0, 1, 2}) {
-        // radial position of the first node
-        const auto r0 = Ri + dr * i;
-        // radial position of the second node
-        const auto r1 = r0 + dr / 2;
-        // radial position of the second node
-        const auto r2 = r0 + dr;
         // Gauss point position in the reference element
         const auto pg = pg_radii[g];
         // radial position of the Gauss point

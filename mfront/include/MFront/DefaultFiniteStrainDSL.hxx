@@ -35,8 +35,8 @@ namespace mfront {
     ~DefaultFiniteStrainDSL() override;
 
    protected:
-    void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
-
+    std::unique_ptr<AbstractBehaviourCodeGenerator> getCodeGenerator()
+        const override;
   };  // end of struct DefaultFiniteStrainDSL
 
 }  // end of namespace mfront

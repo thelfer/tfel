@@ -63,7 +63,9 @@ namespace mtest {
     if (!r.first) {
       return r;
     }
-    s.postConvergence(scs, t, dt, scs.period);
+    if (!s.postConvergence(scs, t, dt, scs.period)) {
+      return {false, 0.1};
+    }
     return r;
   }  // end of iterate2
 
@@ -234,7 +236,9 @@ namespace mtest {
     if (o.aa != nullptr) {
       o.aa->postExecuteTasks();
     }
-    s.postConvergence(scs, t, dt, scs.period);
+    if (!s.postConvergence(scs, t, dt, scs.period)) {
+      return {false, 0.1};
+    }
     return {true, r_dt};
   }  // end of iterate
 
@@ -288,7 +292,9 @@ namespace mtest {
               std::min(o.maximal_time_step_scaling_factor, r.second), 1.);
           if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL1) {
             auto& log = mfront::getLogStream();
-            log << "Increasing time step by a factor: " << rdt << "\n\n";
+            log << "Increasing time step by a factor: " << rdt
+                << " (time step scaling factor proposed by the behaviour "
+                << r.second << ")\n\n";
           }
           dt *= rdt;
         }
@@ -313,7 +319,9 @@ namespace mtest {
           }
           if (mfront::getVerboseMode() >= mfront::VERBOSE_LEVEL1) {
             auto& log = mfront::getLogStream();
-            log << "Reducing time step by a factor: " << rdt << "\n\n";
+            log << "Reducing time step by a factor: " << rdt
+                << " (time step scaling factor proposed by the behaviour "
+                << r.second << ")\n\n";
           }
           dt *= rdt;
         } else {

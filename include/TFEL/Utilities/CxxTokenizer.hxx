@@ -44,7 +44,7 @@ namespace tfel::utilities {
      * \param[in] s : variable name
      * \param[in] b : boolean telling if C++ keywords are allowed.
      */
-    static bool isValidIdentifier(const std::string&, const bool = true);
+    static bool isValidIdentifier(std::string_view, const bool = true);
     /*!
      * \brief an helper method throwing an exception if the given
      * iterator is egal to the third argument (which shall point

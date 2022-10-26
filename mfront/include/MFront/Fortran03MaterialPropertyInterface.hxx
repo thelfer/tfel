@@ -40,7 +40,9 @@ namespace mfront {
 
    private:
     void writeArgumentsList(std::ostream&,
-                            const MaterialPropertyDescription&) const override;
+                            const MaterialPropertyDescription&,
+                            const std::string_view,
+                            const bool) const override;
     void writeInterfaceSpecificVariables(
         std::ostream&, const MaterialPropertyDescription&) const override;
     void writeSrcPreprocessorDirectives(

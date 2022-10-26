@@ -33,8 +33,11 @@
 #include "MTest/PipeLinearElement.hxx"
 #include "MTest/PipeQuadraticElement.hxx"
 #include "MTest/PipeCubicElement.hxx"
+#include "MTest/OxidationStatusEvolution.hxx"
 #include "MTest/PipeProfile.hxx"
 #include "MTest/PipeProfileHandler.hxx"
+#include "MTest/PipeFailureCriterion.hxx"
+#include "MTest/PipeFailureCriteriaFactory.hxx"
 #include "MTest/PipeTest.hxx"
 
 namespace mtest {
@@ -285,7 +288,18 @@ namespace mtest {
     tfel::raise_if(evm.find(n) != evm.end(),
                    "insert: variable 'n' already declared");
     evm.insert({n, make_evolution(v)});
-  }  // end of setCurrentPosition
+  }  // end of insert
+
+  static real getOxidationLength(const StudyCurrentState state,
+                                 const PipeTest::OxidationModel& m) {
+    if (m.model.get() == nullptr) {
+      tfel::raise("getOxidationLength: internal error");
+    }
+    const auto& cs =
+        state.getStructureCurrentState("").getModelCurrentState(*(m.model));
+    const auto p = m.model->getInternalStateVariablePosition("OxidationLength");
+    return cs.iv1[p];
+  } // end of getOxidationLength
 
   PipeTest::PipeTest() { insert(*(this->evm), "r", 0); }  // end of PipeTest
 
@@ -331,7 +345,7 @@ namespace mtest {
   static void setCurrentPosition(EvolutionManager& evm, const real r) {
     auto p = evm.find("r");
     tfel::raise_if(p == evm.end(),
-                   "setCurrentPosition: radial position undeclared. ");
+                   "setCurrentPosition: radial position undeclared.");
     p->second->setValue(r);
   }  // end of setCurrentPosition
 
@@ -401,6 +415,34 @@ namespace mtest {
       this->mesh.etype = PipeMesh::QUADRATIC;
     }
     SingleStructureScheme::completeInitialisation();
+    //
+    auto initialize_oxidation_model =
+        [this](OxidationModel& m, const real position) {
+          if (m.model == nullptr) {
+            return;
+          }
+          setCurrentPosition(*(this->evm), position);
+          const auto mpnames = m.model->getMaterialPropertiesNames();
+          const auto esvnames = m.model->expandExternalStateVariablesNames();
+          m.model->setOptionalMaterialPropertiesDefaultValues(
+              *(m.default_material_properties), *(this->evm));
+          checkIfDeclared(mpnames, *(this->evm),
+                          *(m.default_material_properties),
+                          "material property");
+          checkIfDeclared(esvnames, *(this->evm), "external state variable");
+        };
+    initialize_oxidation_model(this->inner_boundary_oxidation_model,
+                               this->mesh.inner_radius);
+    initialize_oxidation_model(this->outer_boundary_oxidation_model,
+                               this->mesh.outer_radius);
+    if ((this->inner_boundary_oxidation_model.model.get() != nullptr) ||
+        (this->outer_boundary_oxidation_model.model.get() != nullptr)) {
+      this->oxidation_status_evolution =
+          std::make_shared<OxidationStatusEvolution>(this->mesh, *(this->evm));
+      this->addEvolution("OxidationStatus", this->oxidation_status_evolution,
+                         true, true);
+    }
+    //
     if (this->options.eeps < 0) {
       this->options.eeps = 1.e-11;
     }
@@ -421,7 +463,6 @@ namespace mtest {
         "invalid modelling hypothesis "
         "('" +
             ModellingHypothesis::toString(this->hypothesis) + "')");
-
     if (this->al == DEFAULTAXIALLOADING) {
       this->al = ENDCAPEFFECT;
     }
@@ -478,7 +519,7 @@ namespace mtest {
                      "filling temperature not set");
     }
     if (this->out) {
-      unsigned short c = 7;
+      auto c = 7u;
       this->out << "# first  column : time\n"
                    "# second column : inner radius\n"
                    "# third  column : outer radius\n"
@@ -505,6 +546,19 @@ namespace mtest {
       }
       for (const auto& ao : this->aoutputs) {
         this->out << "# " << c << "th column : " << ao.d << '\n';
+        ++c;
+      }
+      if (this->inner_boundary_oxidation_model.model != nullptr) {
+        this->out << "# " << c << "th column : oxidation length at the inner boundary\n";
+        ++c;
+      }
+      if (this->outer_boundary_oxidation_model.model != nullptr) {
+        this->out << "# " << c << "th column : oxidation length at the outer boundary\n";
+        ++c;
+      }
+      for (const auto& fc : this->failure_criteria) {
+        this->out << "# " << c << "th column : status of the " << fc->getName()
+                  << " criterion\n";
         ++c;
       }
     }
@@ -603,6 +657,18 @@ namespace mtest {
           "PipeTest::getNumberOfUnknowns: "
           "unknown element type");
     }
+    //
+    auto initialize_oxidation_model_current_state =
+        [&ss](const OxidationModel& m) {
+          if (m.model == nullptr) {
+            return;
+          }
+          ss.getModelCurrentState(*(m.model));
+        };
+    initialize_oxidation_model_current_state(
+        this->inner_boundary_oxidation_model);
+    initialize_oxidation_model_current_state(
+        this->outer_boundary_oxidation_model);
     // intial values of strains
     tfel::math::vector<real> e0(this->b->getGradientsSize());
     this->b->getGradientsDefaultInitialValues(e0);
@@ -662,6 +728,8 @@ namespace mtest {
         cs.Tref = ev(0);
       }
     }
+    // failure criterion status
+    s.setNumberOfFailureCriterionStatus(this->failure_criteria.size());
   }  // end of initializeCurrentState
 
   std::string PipeTest::name() const { return "pipe test"; }  // end of name
@@ -759,34 +827,38 @@ namespace mtest {
                          SolverWorkSpace& wk,
                          const real ti,
                          const real te) const {
-    using vector = std::vector<real>;
+    if ((state.getFailureStatus()) && (this->failure_policy != REPORTONLY)) {
+      return;
+    }
     if ((this->rl == IMPOSEDINNERRADIUS) || (this->rl == IMPOSEDOUTERRADIUS) ||
         (this->mandrel_radius_evolution != nullptr)) {
       if (!state.containsEvolution("InnerPressure")) {
         // first call with this study state
-        state.addEvolution("InnerPressure",
-                           std::make_shared<LPIEvolution>(
-                               vector{ti, te}, vector{real(0), real(0)}));
+        state.addEvolution("InnerPressure", std::make_shared<LPIEvolution>(
+                                                std::vector{ti, te},
+                                                std::vector{real(0), real(0)}));
       }
     }
     if (this->rl == TIGHTPIPE) {
       if (!state.containsEvolution("InnerPressure")) {
-        state.addEvolution("InnerPressure",
-                           std::make_shared<LPIEvolution>(
-                               vector{ti, te}, vector{this->P0, this->P0}));
+        state.addEvolution(
+            "InnerPressure",
+            std::make_shared<LPIEvolution>(std::vector{ti, te},
+                                           std::vector{this->P0, this->P0}));
       }
     }
     if ((this->al == IMPOSEDAXIALFORCE) ||
         (this->mandrel_axial_growth_evolution != nullptr)) {
       if (!state.containsEvolution("AxialForce")) {
         // first call with this study state
-        state.addEvolution("AxialForce",
-                           std::make_shared<LPIEvolution>(
-                               vector{ti, te}, vector{real(0), real(0)}));
+        state.addEvolution("AxialForce", std::make_shared<LPIEvolution>(
+                                             std::vector{ti, te},
+                                             std::vector{real(0), real(0)}));
       }
     }
+    //
     GenericSolver().execute(state, wk, *this, this->options, ti, te);
-  }
+  } // end of execute
 
   void PipeTest::initializeWorkSpace(SolverWorkSpace& wk) const {
     const auto psz = this->getNumberOfUnknowns();
@@ -804,9 +876,9 @@ namespace mtest {
     wk.du.resize(psz, 0.);
   }  // end of initializeWorkSpace
 
-  void PipeTest::prepare(StudyCurrentState& state,
-                         const real t,
-                         const real dt) const {
+  std::pair<bool, real> PipeTest::prepare(StudyCurrentState& state,
+                                          const real t,
+                                          const real dt) const {
     auto& scs = state.getStructureCurrentState("");
     // number of elements
     const auto ne = size_t(this->mesh.number_of_elements);
@@ -823,7 +895,48 @@ namespace mtest {
         tfel::raise("PipeTest::prepare: unknown element type");
       }
     }
-    SingleStructureScheme::prepare(state, t, dt);
+    if (const auto r = SingleStructureScheme::prepare(state, t, dt); !r.first) {
+      return r;
+    }
+    //
+    auto call_oxidation_model = [this, &scs, t, dt](const OxidationModel& m,
+                                                    const real position) {
+      if (m.model == nullptr) {
+        return std::make_pair(true, real(1));
+      }
+      auto& cs = scs.getModelCurrentState(*(m.model));
+      setCurrentPosition(*(this->evm), position);
+      computeMaterialProperties(cs, *(this->evm),
+                                *(m.default_material_properties),
+                                m.model->getMaterialPropertiesNames(), t, dt);
+      computeExternalStateVariables(
+          cs, *(this->evm), m.model->expandExternalStateVariablesNames(), t,
+          dt);
+      return m.model->integrate(cs, scs.getModelWorkSpace(*(m.model)), dt,
+                                StiffnessMatrixType::NOSTIFFNESS);
+    };
+    if (const auto r = call_oxidation_model(
+            this->inner_boundary_oxidation_model, this->mesh.inner_radius);
+        !r.first) {
+      return r;
+    }
+    if (this->inner_boundary_oxidation_model.model.get() != nullptr) {
+      const auto l =
+          getOxidationLength(state, this->inner_boundary_oxidation_model);
+      this->oxidation_status_evolution
+          ->setInnerBoundaryOxidationLengthEvolution(t + dt, l);
+    }
+    if (const auto r = call_oxidation_model(
+            this->outer_boundary_oxidation_model, this->mesh.outer_radius);
+        !r.first) {
+      return r;
+    }
+    if (this->outer_boundary_oxidation_model.model.get() != nullptr) {
+      const auto l =
+          getOxidationLength(state, this->outer_boundary_oxidation_model);
+      this->oxidation_status_evolution
+          ->setOuterBoundaryOxidationLengthEvolution(t + dt, l);
+    }
     //
     if (this->mandrel_radius_evolution != nullptr) {
       auto& active_bts = state.getParameter<bool>(
@@ -848,6 +961,7 @@ namespace mtest {
       auto& Pi = state.getEvolution("InnerPressure");
       Pi.setValue(t + dt, Pi(t));
     }
+    return {true, 1};
   }  // end of prepare
 
   void PipeTest::makeLinearPrediction(StudyCurrentState& state,
@@ -1422,10 +1536,22 @@ namespace mtest {
     }
   }  // end of computeLoadingCorrection
 
-  void PipeTest::postConvergence(StudyCurrentState& state,
+  bool PipeTest::postConvergence(StudyCurrentState& state,
                                  const real t,
                                  const real dt,
                                  const unsigned int p) const {
+    // evaluate failure criteria
+    auto nfc = std::size_t{};
+    for (const auto& fc : this->failure_criteria) {
+      if (!state.getFailureCriterionStatus(nfc)) {
+        const auto failed = fc->execute(state, t, t + dt);
+        if ((failed) && (this->failure_policy == STOPCOMPUTATION)) {
+          return false;
+        }
+        state.setFailureCriterionStatus(nfc, failed);
+      }
+      ++nfc;
+    }
     // updating mandrel contact state
     if (this->mandrel_radius_evolution != nullptr) {
       const auto& active_bts = state.getParameter<bool>(
@@ -1466,6 +1592,7 @@ namespace mtest {
     for (const auto& test : this->tests) {
       test->check(state, t, dt, p);
     }
+    return true;
   }  // end of postConvergence
 
   std::pair<real, real> PipeTest::computeMinimumAndMaximumValues(
@@ -1503,17 +1630,31 @@ namespace mtest {
            [this, n](std::ostream& os, const StudyCurrentState& s) {
              os << this->computeMaximumValue(s, n);
            }});
-    } else if (t == "integral_value") {
+    } else if (t == "integral_value_initial_configuration") {
       this->aoutputs.push_back(
-          {"integral value of '" + n + "'",
+          {"integral value of '" + n + "' in the initial configuration",
            [this, n](std::ostream& os, const StudyCurrentState& s) {
              os << this->computeIntegralValue(s, n);
            }});
-    } else if (t == "mean_value") {
+    } else if (t == "integral_value_current_configuration") {
       this->aoutputs.push_back(
-          {"mean value of '" + n + "'",
+          {"integral value of '" + n + "' in the current configuration",
+           [this, n](std::ostream& os, const StudyCurrentState& s) {
+             os << this->computeIntegralValue(
+                 s, n, Configuration::CURRENT_CONFIGURATION);
+           }});
+    } else if (t == "mean_value_initial_configuration") {
+      this->aoutputs.push_back(
+          {"mean value of '" + n + "' in the initial configuration",
            [this, n](std::ostream& os, const StudyCurrentState& s) {
              os << this->computeMeanValue(s, n);
+           }});
+    } else if (t == "mean_value_current_configuration") {
+      this->aoutputs.push_back(
+          {"mean value of '" + n + "' in the current configuration",
+           [this, n](std::ostream& os, const StudyCurrentState& s) {
+             os << this->computeMeanValue(s, n,
+                                          Configuration::CURRENT_CONFIGURATION);
            }});
     } else {
       tfel::raise(
@@ -1524,10 +1665,86 @@ namespace mtest {
           "Valid additional output types are:\n"
           "- minimum_value\n"
           "- maximum_value\n"
-          "- integral_value\n"
-          "- mean_value\n");
+          "- integral_value_initial_configuration\n"
+          "- integral_value_current_configuration\n"
+          "- mean_value_initial_configuration\n"
+          "- mean_value_current_configuration\n");
     }
   }  // end of addAdditionalOutput
+
+  void PipeTest::setFailurePolicy(const FailurePolicy p) {
+    this->failure_policy = p;
+  }  // end of setFailurePolicy
+
+  void PipeTest::addFailureCriterion(const std::string& n,
+                                     const tfel::utilities::DataMap& m) {
+    tfel::raise_if(this->initialisationFinished,
+                   "PipeTest::addFailureCriterion: "
+                   "no failure criterion can be added after the "
+                   "completeInitialisation method");
+    const auto& f = PipeFailureCriteriaFactory::getFactory();
+    this->failure_criteria.push_back(f.generate(n, m));
+  }  // end of addFailureCriterion
+
+  static PipeTest::OxidationModel loadOxidationModel(const std::string& l,
+                                                     const std::string& m) {
+    constexpr auto h = tfel::material::ModellingHypothesis::
+        AXISYMMETRICALGENERALISEDPLANESTRAIN;
+    auto raise = [&l, &m](const char* const msg) {
+      tfel::raise("loadOxidationModel: error while loading model '" + m +
+                  "' in library '" + l + "' (" + std::string{msg} + ")");
+    };
+    const auto mptr = Behaviour::getBehaviour("", l, m, {}, h);
+    if (mptr->getBehaviourType() != 0) {
+      raise("invalid behaviour type");
+    }
+    if (mptr->getBehaviourKinematic() != 0) {
+      raise("invalid behaviour kinematic");
+    }
+    if (mptr->getGradientsSize() != 0) {
+      raise("invalid number of gradients");
+    }
+    if (mptr->getThermodynamicForcesSize() != 0) {
+      raise("invalid number of thermodynamic forces");
+    }
+    const auto& isvnames = mptr->getInternalStateVariablesNames();
+    if (std::find(isvnames.begin(), isvnames.end(), "OxidationLength") ==
+        isvnames.end()) {
+      raise("no internal state variable named 'OxidationLength'");
+    }
+    if (mptr->getInternalStateVariableType("OxidationLength") != 0) {
+      raise("invalid type for the internal state variable 'OxidationLength'");
+    }
+    PipeTest::OxidationModel model;
+    model.model = mptr;
+    model.default_material_properties = std::make_shared<EvolutionManager>();
+    return model;
+  }  // end of loadOxidationModel
+
+  void PipeTest::addOxidationModel(const std::string& library,
+                                   const std::string& model,
+                                   const std::string& boundary) {
+    auto check = [&boundary](const std::shared_ptr<Behaviour>& p) {
+      if (p != nullptr) {
+        tfel::raise(
+            "PipeTest::addOxidationModel: "
+            "oxidation model already defined on boundary '" +
+            boundary + "'");
+      }
+    };
+    if (boundary == "inner_boundary") {
+      check(this->inner_boundary_oxidation_model.model);
+      this->inner_boundary_oxidation_model = loadOxidationModel(library, model);
+    } else if (boundary == "outer_boundary") {
+      check(this->outer_boundary_oxidation_model.model);
+      this->outer_boundary_oxidation_model = loadOxidationModel(library, model);
+    } else {
+      tfel::raise(
+          "PipeTest::addOxidationModel: "
+          "invalid boundary '" +
+          boundary + "', expected 'inner_boundary' or 'outer_boundary'");
+    }
+  }  // end of addOxidationModel
 
   real PipeTest::computeMinimumValue(const StudyCurrentState& state,
                                      const std::string& n) const {
@@ -1554,21 +1771,31 @@ namespace mtest {
   }  // end of computeMaximumValue
 
   real PipeTest::computeIntegralValue(const StudyCurrentState& state,
-                                      const std::string& n) const {
+                                      const std::string& n,
+                                      const Configuration c) const {
     auto g = buildValueExtractor(*(this->b), n);
-    return this->computeIntegralValue(state, g);
+    return this->computeIntegralValue(state, g, c);
   }  // end of computeIntegralValue
 
   real PipeTest::computeIntegralValue(
       const StudyCurrentState& state,
-      const std::function<real(const mtest::CurrentState&)>& e) const {
+      const std::function<real(const mtest::CurrentState&)>& e,
+      const Configuration c) const {
     // extract the field values
     auto& scs = state.getStructureCurrentState("");
     auto values = tfel::math::vector<real>{};
     values.resize(getNumberOfGaussPoints(this->mesh));
     // loop over the elements
     for (size_type i = 0; i != getNumberOfGaussPoints(this->mesh); ++i) {
-      values[i] = e(scs.istates[i]);
+      // current state
+      const auto& cs = scs.istates[i];
+      const auto detF = [this, &cs, c]() -> real {
+        if ((!this->hpp) && (c == Configuration::CURRENT_CONFIGURATION)) {
+          return (1 + cs.e1[0]) * (1 + cs.e1[1]) * (1 + cs.e1[2]);
+        }
+        return 1;
+      }();
+      values[i] = e(cs) * detF;
     }
     if (this->mesh.etype == PipeMesh::LINEAR) {
       return PipeLinearElement::computeIntegralValue(this->mesh, values);
@@ -1584,13 +1811,32 @@ namespace mtest {
   }  // end of computeIntegralValue
 
   real PipeTest::computeMeanValue(const StudyCurrentState& state,
-                                  const std::string& n) const {
+                                  const std::string& n,
+                                  const Configuration c) const {
     constexpr real pi = 3.14159265358979323846;
-    const auto ri = this->mesh.inner_radius;
-    const auto re = this->mesh.outer_radius;
-    const auto h = 1;
+    const auto ri = [this, state, c]() -> real {
+      if ((!this->hpp) && (c == Configuration::CURRENT_CONFIGURATION)) {
+        const auto Ri = this->mesh.inner_radius;
+        return Ri + state.u1[0];
+      }
+      return this->mesh.inner_radius;
+    }();
+    const auto re = [this, state, c]() -> real {
+      if ((!this->hpp) && (c == Configuration::CURRENT_CONFIGURATION)) {
+        const size_type ln = this->getNumberOfNodes() - 1;
+        const auto Re = this->mesh.outer_radius;
+        return Re + state.u1[ln];
+      }
+      return this->mesh.outer_radius;
+    }();
+    const auto h = [this, state, c]() -> real {
+      if ((!this->hpp) && (c == Configuration::CURRENT_CONFIGURATION)) {
+        return 1. + state.u1[this->getNumberOfNodes()];
+      }
+      return 1.;
+    }();
     const auto V = pi * h * (re * re - ri * ri);
-    return this->computeIntegralValue(state, n) / V;
+    return this->computeIntegralValue(state, n, c) / V;
   }  // end of computeMeanValue
 
   void PipeTest::addProfile(const std::string& f,
@@ -1819,41 +2065,53 @@ namespace mtest {
     if ((!o) && (this->output_frequency == USERDEFINEDTIMES)) {
       return;
     }
-    if (this->out) {
-      const auto& u1 = state.u1;
-      const auto n = this->getNumberOfNodes();
-      // inner radius
-      const auto Ri = this->mesh.inner_radius;
-      // outer radius
-      const auto Re = this->mesh.outer_radius;
-      this->out << t << " " << Ri + u1[0] << " " << Re + u1[n - 1] << " "
-                << u1[0] << " " << u1[n - 1] << " " << u1[n];
-      if ((this->rl == IMPOSEDOUTERRADIUS) ||
-          (this->rl == IMPOSEDINNERRADIUS) || (this->rl == TIGHTPIPE) ||
-          (this->mandrel_radius_evolution != nullptr)) {
-        this->out << " " << state.getEvolution("InnerPressure")(t);
-      }
-      if ((this->al == IMPOSEDAXIALGROWTH) ||
-          (this->mandrel_axial_growth_evolution != nullptr)) {
-        this->out << " " << state.getEvolution("AxialForce")(t);
-      }
-      if (this->mandrel_radius_evolution != nullptr) {
-        if (state.containsParameter("MandrelContactStateAtEndOfTimeStep")) {
-          if (state.getParameter<bool>("MandrelContactStateAtEndOfTimeStep")) {
-            this->out << " " << 1;
-          } else {
-            this->out << " " << 0;
-          }
+    if (!this->out) {
+      return;
+    }
+    const auto& u1 = state.u1;
+    const auto n = this->getNumberOfNodes();
+    // inner radius
+    const auto Ri = this->mesh.inner_radius;
+    // outer radius
+    const auto Re = this->mesh.outer_radius;
+    this->out << t << " " << Ri + u1[0] << " " << Re + u1[n - 1] << " " << u1[0]
+              << " " << u1[n - 1] << " " << u1[n];
+    if ((this->rl == IMPOSEDOUTERRADIUS) || (this->rl == IMPOSEDINNERRADIUS) ||
+        (this->rl == TIGHTPIPE) ||
+        (this->mandrel_radius_evolution != nullptr)) {
+      this->out << " " << state.getEvolution("InnerPressure")(t);
+    }
+    if ((this->al == IMPOSEDAXIALGROWTH) ||
+        (this->mandrel_axial_growth_evolution != nullptr)) {
+      this->out << " " << state.getEvolution("AxialForce")(t);
+    }
+    if (this->mandrel_radius_evolution != nullptr) {
+      if (state.containsParameter("MandrelContactStateAtEndOfTimeStep")) {
+        if (state.getParameter<bool>("MandrelContactStateAtEndOfTimeStep")) {
+          this->out << " " << 1;
         } else {
           this->out << " " << 0;
         }
+      } else {
+        this->out << " " << 0;
       }
-      for (const auto& ao : this->aoutputs) {
-        this->out << " ";
-        ao.f(out, state);
-      }
-      this->out << '\n';
     }
+    for (const auto& ao : this->aoutputs) {
+      this->out << " ";
+      ao.f(out, state);
+    }
+    if (this->inner_boundary_oxidation_model.model != nullptr) {
+      this->out << getOxidationLength(state,
+                                      this->inner_boundary_oxidation_model);
+    }
+    if (this->outer_boundary_oxidation_model.model != nullptr) {
+      this->out << getOxidationLength(state,
+                                      this->outer_boundary_oxidation_model);
+    }
+    for (std::size_t i = 0; i != this->failure_criteria.size(); ++i) {
+      this->out << " " << (state.getFailureCriterionStatus(i) ? 1 : 0);
+    }
+    this->out << '\n';
   }  // end of printOutput
 
   PipeTest::~PipeTest() = default;

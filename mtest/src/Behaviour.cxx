@@ -27,6 +27,7 @@
 #include "MTest/CastemFiniteStrainBehaviour.hxx"
 #include "MTest/CastemFiniteStrainBehaviour2.hxx"
 #include "MTest/CastemCohesiveZoneModel.hxx"
+#include "MTest/CastemModel.hxx"
 #include "MTest/MistralBehaviour.hxx"
 #include "MTest/CastemUmatSmallStrainBehaviour.hxx"
 #include "MTest/CastemUmatFiniteStrainBehaviour.hxx"
@@ -326,7 +327,9 @@ namespace mtest {
       check_no_parameters();
       const auto type = elm.getUMATBehaviourType(l, f);
       const auto ktype = elm.getUMATBehaviourKinematic(l, f);
-      if (type == 1u) {
+      if (type == 0u) {
+        b = std::make_shared<CastemModel>(h, l, f);
+      } else if (type == 1u) {
         if ((in == "castem21") || (in == "Castem21") || (in == "Cast3M21")) {
           b = std::make_shared<Castem21SmallStrainBehaviour>(h, l, f);
         } else {

@@ -122,8 +122,8 @@ struct TinyBroyden2SolverTest final : public tfel::tests::TestCase {
     Broyden2Solver s;
     TFEL_TESTS_ASSERT(s.solve());
     const auto x = s.getCurrentEstimate();
-    TFEL_TESTS_ASSERT(abs(x(0)) < 1.e-11);
-    TFEL_TESTS_ASSERT(abs(x(1) - 1) < 1.e-11);
+    TFEL_TESTS_ASSERT(std::abs(x(0)) < 1.e-11);
+    TFEL_TESTS_ASSERT(std::abs(x(1) - 1) < 1.e-11);
   }
 };
 

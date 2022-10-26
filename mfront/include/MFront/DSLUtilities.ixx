@@ -15,12 +15,14 @@
 #ifndef LIB_MFRONT_DSLUTILITIES_IXX
 #define LIB_MFRONT_DSLUTILITIES_IXX
 
+#include <ostream>
+
 namespace mfront {
 
   template <typename ValueType>
   void exportSymbol(std::ostream& os,
-                    const std::string& t,
-                    const std::string& n,
+                    const std::string_view t,
+                    const std::string_view n,
                     const ValueType& v) {
     os << "MFRONT_EXPORT_SYMBOL(" << t << ", " << n << ", " << v << ");\n\n";
   }  // end of exportSymbol

@@ -72,7 +72,7 @@ namespace mfront {
     insert_if(l.link_libraries, "m");
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     insert_if(l.epts, name);
-    d.headers.push_back("include/" + this->getHeaderFileName(name));
+    d.headers.push_back(this->getHeaderFileName(name));
   }  // end of getLibraryDescription
 
   void GenericMaterialPropertyInterfaceBase::getTargetsDescription(
@@ -171,13 +171,14 @@ namespace mfront {
       os << "if(" << v.name << " < " << v.type << "(" << b.lowerBound << ")){\n"
          << "if(mfront_out_of_bounds_policy==" << iucname
          << "_STRICT_POLICY){\n"
-         << "mfront_report(\"" << v.name << " is os of bounds.\");\n"
+         << "mfront_report(\"" << v.name << " is out of bounds.\");\n"
          << "mfront_output_status->status = -1;\n"
          << "mfront_output_status->bounds_status = -" << i << ";\n"
          << "errno = mfront_errno_old;\n"
-         << "return nan(\"" << v.name << " is os of bounds.\");\n"
+         << "return nan(\"" << v.name << " is out of bounds.\");\n"
          << "} else if (mfront_out_of_bounds_policy==" << iucname
          << "_WARNING_POLICY){\n"
+         << "mfront_output_status->status = 1;\n"
          << "mfront_output_status->bounds_status = " << i << ";\n"
          << "mfront_report(\"" << v.name << " is below its lower bound (\" + "
          << to_string << " + \"<" << b.lowerBound << ").\\n\");\n"
@@ -191,9 +192,10 @@ namespace mfront {
          << to_string << " + \">" << b.upperBound << ").\\n\");\n"
          << "mfront_output_status->status = -1;\n"
          << "mfront_output_status->bounds_status = -" << i << ";\n"
-         << "return nan(\"" << v.name << " is os of bounds.\");\n"
+         << "return nan(\"" << v.name << " is out of bounds.\");\n"
          << "} else if (mfront_out_of_bounds_policy==" << iucname
          << "_WARNING_POLICY){\n"
+         << "mfront_output_status->status = 1;\n"
          << "mfront_output_status->bounds_status = " << i << ";\n"
          << "mfront_report(\"" << v.name << " is over its upper bound (\" + "
          << to_string << " + \">" << b.upperBound << ").\\n\");\n"
@@ -214,9 +216,10 @@ namespace mfront {
          << "mfront_output_status->status = -1;\n"
          << "mfront_output_status->bounds_status = -" << i << ";\n"
          << "errno = mfront_errno_old;\n"
-         << "return nan(\"" << v.name << " is os of bounds.\");\n"
+         << "return nan(\"" << v.name << " is out of bounds.\");\n"
          << "} else if (mfront_out_of_bounds_policy==" << iucname
          << "_WARNING_POLICY){\n"
+         << "mfront_output_status->status = 1;\n"
          << "if(" << v.name << " < " << v.type << "(" << b.lowerBound << ")){\n"
          << "mfront_output_status->bounds_status = " << i << ";\n"
          << "mfront_report(\"" << v.name << " is below its lower bound (\" + "
@@ -350,7 +353,9 @@ namespace mfront {
     if (!includes.empty()) {
       os << includes << "\n\n";
     }
+
     writeMaterialPropertyParametersHandler(os, mpd, name, "double", iname);
+
     os << "#ifdef __cplusplus\n"
        << "extern \"C\"{\n"
        << "#endif /* __cplusplus */\n\n";
@@ -361,6 +366,7 @@ namespace mfront {
     writeBuildIdentifierSymbol(os, name, mpd);
     writeEntryPointSymbol(os, name);
     writeTFELVersionSymbol(os, name);
+    writeUnitSystemSymbol(os, name, mpd);
     writeInterfaceSymbol(os, name, this->getInterfaceNameInCamelCase());
     writeLawSymbol(os, name, mpd.law);
     writeMaterialSymbol(os, name, mpd.material);
@@ -370,7 +376,7 @@ namespace mfront {
         os, name + "_src",
         tfel::utilities::tokenize(file, tfel::system::dirSeparator()).back());
 
-    if (!params.empty()) {
+    if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
       os << "MFRONT_SHAREDOBJ int\n"
          << name << "_setParameter(const char *const p,"

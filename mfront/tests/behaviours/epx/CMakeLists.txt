@@ -1,5 +1,6 @@
 set(mfront_tests_SOURCES
   TensorialExternalStateVariableTest
+  InitializationFailureTest
   SaintVenantKirchhoffElasticity
   SaintVenantKirchhoffElasticity2
   SaintVenantKirchhoffElasticity3
@@ -9,7 +10,9 @@ set(mfront_tests_SOURCES
   LogarithmicStrainNortonCreep
   OrthotropicSwelling
   OrthotropicSwelling2
-  AxialGrowth)
+  AxialGrowth
+  ProfilerTest2
+  ProfilerTest3)
 
 mfront_behaviour_check_library(MFrontEuroplexusBehaviours
   epx ${mfront_tests_SOURCES})
@@ -106,6 +109,9 @@ macro(test_epx test_arg)
     endif(CMAKE_CONFIGURATION_TYPES)
   endforeach(rm ${IEEE754_ROUNDING_MODES})
 endmacro(test_epx)
+
+test_epx(initializationfailuretest
+  NO_XML_OUTPUT WILL_FAIL)
 
 test_epx(saintvenantkirchhoffelasticity-uniaxialloading-sig11-2D)
 test_epx(saintvenantkirchhoffelasticity-uniaxialloading-sig22-2D)

@@ -8,6 +8,7 @@ set(mfront_tests_SOURCES
   MaterialPropertiesBoundsCheck
   ExternalStateVariablesBoundsCheck
   TensorialExternalStateVariableTest
+  InitializationFailureTest
   Tvergaard
   Elasticity
   Elasticity2
@@ -94,7 +95,10 @@ set(mfront_tests_SOURCES
   ComputeThermalExpansion3
   ParameterTest
   ParameterTest2
-  GenerateMTestFileOnFailure)
+  GenerateMTestFileOnFailure
+  ProfilerTest
+  ProfilerTest2
+  ProfilerTest3)
 mfront_dependencies(MFrontAsterBehaviours
   ThermalExpansionCoefficientTest
   ThermalExpansionCoefficientTest2
@@ -200,6 +204,8 @@ macro(test_aster_python test)
   endif(CMAKE_CONFIGURATION_TYPES)
 endmacro(test_aster_python)
 
+test_aster(initializationfailuretest
+  NO_XML_OUTPUT WILL_FAIL)
 test_aster(materialpropertiesboundscheck
   NO_XML_OUTPUT WILL_FAIL)
 test_aster(materialpropertiesboundscheck2 

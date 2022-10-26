@@ -159,6 +159,7 @@ namespace mfront {
         {"--behaviour-name", "show the behaviour name"},
         {"--class-name", "show the class name"},
         {"--author", "show the author name"},
+        {"--unit-system", "show the unit system used"},
         {"--description", "show the file description"},
         {"--date", "show the file implementation date"},
         {"--material", "show the material name"},
@@ -200,6 +201,9 @@ namespace mfront {
         {"--orientation-tensors-by-index", "list all the orientation tensors"},
         {"--orientation-tensors-by-slip-system",
          "list all the orientation tensors"},
+        {"--climb-tensors", "list all the climb tensors, sorted by family"},
+        {"--climb-tensors-by-index", "list all the climb tensors"},
+        {"--climb-tensors-by-slip-system", "list all the climb tensors"},
         {"--interaction-matrix", "show the interaction matrix"},
         {"--dislocations-mean-free-path-interaction-matrix",
          "show the interaction matrix associated to the effect of dislocations "
@@ -296,7 +300,8 @@ namespace mfront {
          "- `Upper`\n"
          "- `LowerAndUpper`"},
         {"--physical-bounds-value",
-         "show the bounds value associated as a range"}};
+         "show the bounds value associated as a range"},
+        {"--code-block", "show the information associated with a code block"}};
     for (const auto& q : sq2) {
       this->registerCallBack(
           q.first,
@@ -329,6 +334,16 @@ namespace mfront {
                                   cout << (!a.empty() ? a : "(undefined)")
                                        << '\n';
                                 }});
+    } else if (qn == "--unit-system") {
+      this->queries2.push_back(
+          {"unit-system",
+           [](const FileDescription&, const BehaviourDescription& bd) {
+             if (bd.hasUnitSystem()) {
+               std::cout << bd.getUnitSystem() << std::endl;
+             } else {
+               std::cout << "(undefined)" << std::endl;
+             }
+           }});
     } else if (qn == "--description") {
       this->queries2.push_back(
           {"description",
@@ -547,6 +562,60 @@ namespace mfront {
              auto r = size_t{};
              for (size_t i = 0; i != nss; ++i) {
                const auto os = ssd.getOrientationTensors(i);
+               const auto ss = ssd.getSlipSystems(i);
+               for (decltype(ss.size()) j = 0; j != ss.size(); ++j) {
+                 cout << "- " << to_string(ss[j]) << ": " << to_string(os[j])
+                      << '\n';
+                 ++r;
+               }
+             }
+           }});
+    } else if (qn == "--climb-tensors") {
+      this->queries2.push_back(
+          {"climb-tensors",
+           [](const FileDescription&, const BehaviourDescription& d) {
+             tfel::raise_if(!d.areSlipSystemsDefined(),
+                            "no slip system defined");
+             const auto& ssd = d.getSlipSystems();
+             const auto nss = ssd.getNumberOfSlipSystemsFamilies();
+             for (size_t i = 0; i != nss; ++i) {
+               const auto os = ssd.getClimbTensors(i);
+               cout << "- " << to_string(ssd.getSlipSystemFamily(i), true)
+                    << ":";
+               for (const auto& o : os) {
+                 cout << " " << to_string(o);
+               }
+               cout << '\n';
+             }
+           }});
+    } else if (qn == "--climb-tensors-by-index") {
+      this->queries2.push_back(
+          {"climb-tensors-by-index",
+           [](const FileDescription&, const BehaviourDescription& d) {
+             tfel::raise_if(!d.areSlipSystemsDefined(),
+                            "no slip system defined");
+             const auto& ssd = d.getSlipSystems();
+             const auto nss = ssd.getNumberOfSlipSystemsFamilies();
+             auto r = size_t{};
+             for (size_t i = 0; i != nss; ++i) {
+               const auto os = ssd.getClimbTensors(i);
+               for (const auto& o : os) {
+                 cout << "- " << r << ": " << to_string(o) << '\n';
+                 ++r;
+               }
+             }
+           }});
+    } else if (qn == "--climb-tensors-by-slip-system") {
+      this->queries2.push_back(
+          {"climb-tensors-by-slip-system",
+           [](const FileDescription&, const BehaviourDescription& d) {
+             tfel::raise_if(!d.areSlipSystemsDefined(),
+                            "no slip system defined");
+             const auto& ssd = d.getSlipSystems();
+             const auto nss = ssd.getNumberOfSlipSystemsFamilies();
+             auto r = size_t{};
+             for (size_t i = 0; i != nss; ++i) {
+               const auto os = ssd.getClimbTensors(i);
                const auto ss = ssd.getSlipSystems(i);
                for (decltype(ss.size()) j = 0; j != ss.size(); ++j) {
                  cout << "- " << to_string(ss[j]) << ": " << to_string(os[j])
@@ -1063,6 +1132,39 @@ namespace mfront {
         }
       };
       this->queries2.push_back({"schmid-factors", l});
+    } else if (qn == "--code-block") {
+      auto l = [o](const FileDescription&, const BehaviourDescription& d,
+                   const Hypothesis h) {
+        const auto& bd = d.getBehaviourData(h);
+        const auto& c = bd.getCodeBlock(o);
+        std::cout << "- " << o << ": ";
+        if (!c.description.empty()) {
+          std::cout << c.description << std::endl;
+        } else {
+          std::cout << "(no description available)" << std::endl;
+        }
+        if (!c.members.empty()) {
+          std::cout << "  - used variables: ";
+          std::copy(c.members.begin(), c.members.end(),
+                    std::ostream_iterator<std::string>(std::cout, " "));
+          std::cout << endl;
+        }
+        if (!c.staticMembers.empty()) {
+          std::cout << "  - used static variables : ";
+          std::copy(c.staticMembers.begin(), c.staticMembers.end(),
+                    std::ostream_iterator<std::string>(std::cout, " "));
+          std::cout << endl;
+        }
+        if (!c.code.empty()) {
+          std::stringstream scode(c.code);
+          std::string code_line;
+          std::cout << "  - code:\n";
+          while (std::getline(scode, code_line)) {
+            std::cout << "  " << code_line << std::endl;
+          }
+        }
+      };
+      this->queries.push_back({"code-block", l});
     } else if (qn == "--schmid-factors-by-index") {
       auto l = [o](const FileDescription&, const BehaviourDescription& d) {
         tfel::raise_if(!d.areSlipSystemsDefined(), "no slip system defined");

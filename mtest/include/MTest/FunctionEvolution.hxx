@@ -28,35 +28,18 @@ namespace mtest {
      * \param[in] :
      */
     FunctionEvolution(const std::string&, const EvolutionManager&);
-    /*!
-     * \return the value of the evolution
-     * at the given time
-     */
+    //
     real operator()(const real) const override;
-    /*!
-     * \return true if the evolution is constant
-     */
     bool isConstant() const override;
-    /*!
-     * \brief set the evolution value for a given date
-     * \param[in] v  : value
-     * \note most evolution will throw an exception (this
-     * method only makes sense for constant evolutions)
-     */
     void setValue(const real) override;
-    /*!
-     * \brief set the evolution value for a given date
-     * \param[in] t  : time
-     * \param[in] v  : value
-     */
     void setValue(const real, const real) override;
-    //! destructor
+    //! \brief destructor
     ~FunctionEvolution() override;
 
    private:
-    //! externally defined evolutions
+    //! \brief externally defined evolutions
     const EvolutionManager& evm;
-    //! Evaluator
+    //! \brief Evaluator
     mutable tfel::math::Evaluator f;
   };
 

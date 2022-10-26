@@ -533,17 +533,18 @@ namespace tfel::math {
     using T2 = BinaryOperationResult<T, T, OpMult>;
     constexpr auto dime = getSpaceDimension<TensorType>();
     const auto id = stensor<dime, base>::Id();
-    tvector<3u, T2> vp_C;
-    tvector<3u, T> vp_U;
     const auto C = computeRightCauchyGreenTensor(F);
-    C.computeEigenValues(vp_C);
+    const auto vp_C = C.computeEigenValues();
+    tvector<3u, T> vp_U;
     transform<3u>::exe(vp_C.begin(), vp_U.begin(),
                        [](const T2& v) { return std::sqrt(v); });
     const auto i1 = vp_U[0] + vp_U[1] + vp_U[2];
     const auto i2 = vp_U[0] * vp_U[1] + vp_U[0] * vp_U[2] + vp_U[1] * vp_U[2];
     const auto i3 = vp_U[0] * vp_U[1] * vp_U[2];
     const auto D = i1 * i2 - i3;
-    U = 1 / D * (-square(C) + (i1 * i1 - i2) * C + i1 * i3 * id);
+    const auto C2 = square(C);
+    U = 1 / D * (-C2 + (i1 * i1 - i2) * C + i1 * i3 * id);
+    //     U = 1 / D * (-square(C) + (i1 * i1 - i2) * C + i1 * i3 * id);
     const auto U_1 = (C - i1 * U + i2 * id) * (1 / i3);
     R = F * U_1;
   }  // end of polar_decomposition

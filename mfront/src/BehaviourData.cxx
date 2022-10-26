@@ -2061,19 +2061,19 @@ namespace mfront {
     }
   }  // end of finalizeVariablesDeclaration
 
-  void BehaviourData::checkAndComplePhysicalBoundsDeclaration(
+  void BehaviourData::checkAndCompletePhysicalBoundsDeclaration(
       const std::string_view s) {
-    mfront::checkAndComplePhysicalBoundsDeclaration(this->materialProperties,
+    mfront::checkAndCompletePhysicalBoundsDeclaration(this->materialProperties,
                                                     s);
-    mfront::checkAndComplePhysicalBoundsDeclaration(this->stateVariables, s);
-    mfront::checkAndComplePhysicalBoundsDeclaration(
+    mfront::checkAndCompletePhysicalBoundsDeclaration(this->stateVariables, s);
+    mfront::checkAndCompletePhysicalBoundsDeclaration(
         this->auxiliaryStateVariables, s);
-    mfront::checkAndComplePhysicalBoundsDeclaration(this->integrationVariables,
+    mfront::checkAndCompletePhysicalBoundsDeclaration(this->integrationVariables,
                                                     s);
-    mfront::checkAndComplePhysicalBoundsDeclaration(
+    mfront::checkAndCompletePhysicalBoundsDeclaration(
         this->externalStateVariables, s);
-    mfront::checkAndComplePhysicalBoundsDeclaration(this->parameters, s);
-  }  // end of checkAndComplePhysicalBoundsDeclaration
+    mfront::checkAndCompletePhysicalBoundsDeclaration(this->parameters, s);
+  }  // end of checkAndCompletePhysicalBoundsDeclaration
 
   BehaviourData::~BehaviourData() = default;
 

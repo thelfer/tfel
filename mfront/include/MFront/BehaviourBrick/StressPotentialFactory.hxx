@@ -15,52 +15,48 @@
 #include <functional>
 #include "MFront/MFrontConfig.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  // forward declaration
+  struct StressPotential;
 
-    // forward declaration
-    struct StressPotential;
+  //! \brief abstract factory for Stress potentials.
+  struct MFRONT_VISIBILITY_EXPORT StressPotentialFactory {
+    //! a simple alias
+    using Generator = std::function<std::shared_ptr<StressPotential>()>;
+    //! \return the uniq instance of the class
+    static StressPotentialFactory& getFactory();
+    /*!
+     * \brief add a new generator
+     * \param[in] n: name of the generator
+     * \param[in] g: generator
+     */
+    void addGenerator(const std::string&, const Generator&);
+    //! \return the list of available stress potentials
+    std::vector<std::string> getRegistredStressPotentials() const;
+    /*!
+     * \brief generate a new stress potential
+     * \param[in] n: name of the stress potential
+     */
+    std::shared_ptr<StressPotential> generate(const std::string&) const;
 
-    //! \brief abstract factory for Stress potentials.
-    struct MFRONT_VISIBILITY_EXPORT StressPotentialFactory {
-      //! a simple alias
-      using Generator = std::function<std::shared_ptr<StressPotential>()>;
-      //! \return the uniq instance of the class
-      static StressPotentialFactory& getFactory();
-      /*!
-       * \brief add a new generator
-       * \param[in] n: name of the generator
-       * \param[in] g: generator
-       */
-      void addGenerator(const std::string&, const Generator&);
-      //! \return the list of available stress potentials
-      std::vector<std::string> getRegistredStressPotentials() const;
-      /*!
-       * \brief generate a new stress potential
-       * \param[in] n: name of the stress potential
-       */
-      std::shared_ptr<StressPotential> generate(const std::string&) const;
+   private:
+    //! \brief default constructor
+    StressPotentialFactory();
+    //! \brief move constructor (deleted)
+    StressPotentialFactory(StressPotentialFactory&&) = delete;
+    //! \brief copy constructor (deleted)
+    StressPotentialFactory(const StressPotentialFactory&) = delete;
+    //! \brief move assignement (deleted)
+    StressPotentialFactory& operator=(StressPotentialFactory&&) = delete;
+    //! \brief standard assignement(deleted)
+    StressPotentialFactory& operator=(const StressPotentialFactory&) = delete;
+    //! \brief destructor
+    ~StressPotentialFactory();
+    //! \brief generators
+    std::map<std::string, Generator> generators;
+  };  // end of struct StressPotentialFactory
 
-     private:
-      //! default constructor
-      StressPotentialFactory();
-      //! move constructor (deleted)
-      StressPotentialFactory(StressPotentialFactory&&) = delete;
-      //! copy constructor (deleted)
-      StressPotentialFactory(const StressPotentialFactory&) = delete;
-      //! move assignement (deleted)
-      StressPotentialFactory& operator=(StressPotentialFactory&&) = delete;
-      //! standard assignement(deleted)
-      StressPotentialFactory& operator=(const StressPotentialFactory&) = delete;
-      //! \brief destructor
-      ~StressPotentialFactory();
-      //! \brief generators
-      std::map<std::string, Generator> generators;
-    };  // end of struct StressPotentialFactory
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICK_STRESSPOTENTIALFACTORY_HXX */

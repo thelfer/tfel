@@ -11,6 +11,7 @@ set(mfront_tests_SOURCES
   StateVariablesBoundsCheck
   ExternalStateVariablesBoundsCheck
   TensorialExternalStateVariableTest
+  InitializationFailureTest
   Elasticity
   Elasticity2
   Elasticity3
@@ -128,7 +129,10 @@ set(mfront_tests_SOURCES
   ParameterTest2
   ElasticMaterialPropertiesBoundsCheckTest
   TemperatureUpdateOnSubSteppingCheck
-  GenerateMTestFileOnFailure)
+  GenerateMTestFileOnFailure
+  ProfilerTest
+  ProfilerTest2
+  ProfilerTest3)
 
 mfront_dependencies(MFrontCastemBehaviours
   Inconel600_YoungModulus
@@ -338,6 +342,8 @@ macro(test_castem test_arg)
   endforeach(rm ${IEEE754_ROUNDING_MODES})
 endmacro(test_castem)
 
+test_castem(initializationfailuretest
+  NO_XML_OUTPUT WILL_FAIL)
 test_castem(materialpropertiesboundscheck
   NO_XML_OUTPUT WILL_FAIL)
 test_castem(materialpropertiesboundscheck2 

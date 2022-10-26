@@ -42,26 +42,33 @@ static const char* const constexpr_c = "const";
 
 namespace mfront {
 
-  static void writeUMATArguments(std::ostream& out,
-                                 const BehaviourDescription::BehaviourType& t) {
-    out << "(castem::CastemReal *const STRESS,\n"
-        << " castem::CastemReal *const STATEV,\n"
-        << " castem::CastemReal *const DDSDDE,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n";
-    if (t != BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << " const castem::CastemReal *const STRAN,\n"
+  void CastemInterface::writeUMATFunctionArguments(
+      std::ostream& os, const BehaviourDescription::BehaviourType& t) {
+    if ((t == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
+        (t == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
+        (t == BehaviourDescription::COHESIVEZONEMODEL)) {
+      os << "(castem::CastemReal *const STRESS,\n";
+    } else {
+      os << "(castem::CastemReal *const,\n";
+    }
+    os << " castem::CastemReal *const STATEV,\n"
+       << " castem::CastemReal *const DDSDDE,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n";
+    if ((t == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
+        (t == BehaviourDescription::COHESIVEZONEMODEL)) {
+      os << " const castem::CastemReal *const STRAN,\n"
           << " const castem::CastemReal *const DSTRAN,\n";
     } else {
-      out << " const castem::CastemReal *const,\n"
+      os << " const castem::CastemReal *const,\n"
           << " const castem::CastemReal *const,\n";
     }
-    out << " const castem::CastemReal *const,\n"
+    os << " const castem::CastemReal *const,\n"
         << " const castem::CastemReal *const DTIME,\n"
         << " const castem::CastemReal *const TEMP,\n"
         << " const castem::CastemReal *const DTEMP,\n"
@@ -79,61 +86,61 @@ namespace mfront {
         << "       castem::CastemReal *const PNEWDT,\n"
         << " const castem::CastemReal *const,\n";
     if (t == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << " const castem::CastemReal *const F0,\n"
+      os << " const castem::CastemReal *const F0,\n"
           << " const castem::CastemReal *const F1,\n";
     } else {
-      out << " const castem::CastemReal *const,\n"
+      os << " const castem::CastemReal *const,\n"
           << " const castem::CastemReal *const,\n";
     }
-    out << " const castem::CastemInt  *const,\n"
+    os << " const castem::CastemInt  *const,\n"
         << " const castem::CastemInt  *const,\n"
         << " const castem::CastemInt  *const,\n"
         << " const castem::CastemInt  *const,\n"
         << " const castem::CastemInt  *const,\n"
         << "       castem::CastemInt  *const KINC,\n"
         << "const int)";
-  }  // end of writeUMATArguments
+  }  // end of writeUMATFunctionArguments
 
-  static void writeUMATArguments(std::ostream& out) {
-    out << "(castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const char           *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << "       castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << "       castem::CastemInt  *const,\n"
-        << "const int)";
-  }  // end of writeUMATArguments
+  void CastemInterface::writeUMATFunctionArguments(std::ostream& os) {
+    os << "(castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const char           *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << "       castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << "       castem::CastemInt  *const,\n"
+       << "const int)";
+  }  // end of writeUMATFunctionArguments
 
   static int getCastemModellingHypothesisIndex(
       const tfel::material::ModellingHypothesis::Hypothesis h) {
@@ -1190,10 +1197,23 @@ namespace mfront {
           sg.generateSymbols(out, *this, mb, fd, name, h);
         }
       }
-      if (mb.getBehaviourType() ==
-          BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+      if (mb.isModel()) {
+        const auto fn = this->getFunctionNameBasis(name);
+        exportUnsignedShortSymbol(out, fn + "_BehaviourType", 0u);
+        exportUnsignedShortSymbol(out, fn + "_BehaviourKinematic", 0u);
+        exportUnsignedShortSymbol(out, fn + "_Interface", 1u);
+        exportUnsignedShortSymbol(out, fn + "_nMainVariables", 0u);
+        exportUnsignedShortSymbol(out, fn + "_nGradients", 0u);
+        exportArrayOfIntegersSymbol(out, fn + "_GradientsTypes", {});
+        exportArrayOfStringsSymbol(out, fn + "_Gradients", {});
+        exportUnsignedShortSymbol(out, fn + "_nThermodynamicForces", 0);
+        exportArrayOfIntegersSymbol(out, fn + "_ThermodynamicForcesTypes", {});
+        exportArrayOfStringsSymbol(out, fn + "_ThermodynamicForces", {""});
+      } else if (mb.getBehaviourType() ==
+                 BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
         exportFiniteStrainBehaviourSymbols(this->getFunctionNameBasis(name));
-      } else {
+      } else if (mb.getBehaviourType() ==
+                 BehaviourDescription::COHESIVEZONEMODEL) {
         // cohesize zone model
         const auto fn = this->getFunctionNameBasis(name);
         exportUnsignedShortSymbol(out, fn + "_BehaviourType", 3u);
@@ -1208,6 +1228,8 @@ namespace mfront {
         exportArrayOfIntegersSymbol(out, fn + "_ThermodynamicForcesTypes", {2});
         exportArrayOfStringsSymbol(out, fn + "_ThermodynamicForces",
                                    {"CohesiveForce"});
+      } else {
+        throw_if(true, "internal error, unsupported behaviour type");
       }
     }
 
@@ -1462,13 +1484,13 @@ namespace mfront {
 #ifdef CASTEM_ROOT
     const auto* castem_root = ::getenv("CASTEM_ROOT");
     if (castem_root != nullptr) {
-      insert_if(l.cppflags, "-I" + std::string(castem_root) + "/include");
+      insert_if(l.include_directories, std::string(castem_root) + "/include");
     } else {
-      insert_if(l.cppflags, "-I" + std::string(CASTEM_ROOT) + "/include");
+      insert_if(l.include_directories, std::string(CASTEM_ROOT) + "/include");
     }
 #else  /* CASTEM_ROOT */
     if (castem_root != 0) {
-      insert_if(l.cppflags, "-I" + std::string(castem_root) + "/include");
+      insert_if(l.include_directories, std::string(castem_root) + "/include");
     }
 #endif /* CASTEM_ROOT */
 #endif /* LOCAL_CASTEM_HEADER_FILE */
@@ -1550,12 +1572,15 @@ namespace mfront {
   std::vector<BehaviourMaterialProperty>
   CastemInterface::getDefaultMaterialPropertiesList(
       const BehaviourDescription& mb, const Hypothesis h) const {
+    if (mb.isModel()) {
+      return {};
+    }
     std::vector<BehaviourMaterialProperty> mprops;
-    if ((mb.getBehaviourType() ==
-         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-        (mb.getBehaviourType() ==
-         BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
-      if (mb.getSymmetryType() == mfront::ISOTROPIC) {
+    const auto btype = mb.getBehaviourType();
+    const auto stype = mb.getSymmetryType();
+    if ((btype == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
+        (btype == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
+      if (stype == mfront::ISOTROPIC) {
         appendToMaterialPropertiesList(mprops, "stress", "YoungModulus", "youn",
                                        false);
         appendToMaterialPropertiesList(mprops, "real", "PoissonRatio", "nu",
@@ -1568,7 +1593,7 @@ namespace mfront {
           appendToMaterialPropertiesList(mprops, "length", "PlateWidth", "dim3",
                                          false);
         }
-      } else if (mb.getSymmetryType() == mfront::ORTHOTROPIC) {
+      } else if (stype == mfront::ORTHOTROPIC) {
         if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
           appendToMaterialPropertiesList(mprops, "stress", "YoungModulus1",
                                          "yg1", false);
@@ -1687,9 +1712,8 @@ namespace mfront {
             "The umat interface only support isotropic or "
             "orthotropic behaviour at this time.");
       }
-    } else if (mb.getBehaviourType() ==
-               BehaviourDescription::COHESIVEZONEMODEL) {
-      if (mb.getSymmetryType() == mfront::ISOTROPIC) {
+    } else if (btype == BehaviourDescription::COHESIVEZONEMODEL) {
+      if (stype == mfront::ISOTROPIC) {
         //! those are not the Cast3M conventions, switch is performed
         //! below the CastemInterface class
         appendToMaterialPropertiesList(mprops, "real", "NormalStiffness", "kn",
@@ -1793,7 +1817,7 @@ namespace mfront {
   void CastemInterface::writeCastemFunctionDeclaration(
       std::ostream& out, const std::string& name) const {
     out << "MFRONT_SHAREDOBJ void\n" << this->getFunctionNameBasis(name);
-    writeUMATArguments(out);
+    CastemInterface::writeUMATFunctionArguments(out);
     out << ";\n\n";
   }  // end of writeCastemFunctionDeclaration
 
@@ -1888,8 +1912,8 @@ namespace mfront {
         "CastemInterface::writeFiniteRotationSmallStrainCastemFunction: "
         "finite strain strategies shall be used with small strain behaviours");
     out << "MFRONT_SHAREDOBJ void\n" << fname;
-    writeUMATArguments(out,
-                       BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR);
+    CastemInterface::writeUMATFunctionArguments(
+        out, BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR);
     out << "\n{\n"
         << "using namespace castem;\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
@@ -1980,8 +2004,8 @@ namespace mfront {
              "finite strain strategies shall be used with "
              "small strain behaviours");
     out << "MFRONT_SHAREDOBJ void\n" << fname;
-    writeUMATArguments(out,
-                       BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR);
+    CastemInterface::writeUMATFunctionArguments(
+        out, BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR);
     out << "\n{\n"
         << "using namespace castem;\n"
         << "using namespace tfel::math;\n"
@@ -2021,19 +2045,34 @@ namespace mfront {
             << ",CastemReal>::buildFromFortranMatrix(F1));\n";
       }
       out << "CastemReal eto[" << n << "];\n"
-          << "CastemReal deto[" << n << "];\n"
-          << "lsh0.getHenckyLogarithmicStrain(eto);\n"
+          << "CastemReal deto[" << n << "];\n";
+      if (mb.getAttribute(BehaviourData::profiling, false)) {
+        out << "{\n"
+            << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName()
+            << "Profiler::getProfiler(),\n"
+            << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
+      }
+      out << "lsh0.getHenckyLogarithmicStrain(eto);\n"
           << "lsh1.getHenckyLogarithmicStrain(deto);\n";
       for (unsigned short i = 0; i != n; ++i) {
         out << "deto[" << i << "]-=eto[" << i << "];\n";
       }
       out << "lsh0.convertFromCauchyStress(STRESS);\n";
+      if (mb.getAttribute(BehaviourData::profiling, false)) {
+        out << "}\n";
+      }
     };
     auto postprocessing = [&out, this, &mb](const bool ps) {
       if (ps) {
         if (this->writeInitializeAxialStrain(out, mb, '1')) {
           out << "lsh1.updateAxialDeformationGradient(std::exp(ezz1));\n";
         }
+      }
+      if (mb.getAttribute(BehaviourData::profiling, false)) {
+        out << "{\n"
+            << "BehaviourProfiler::Timer post_timer(" << mb.getClassName()
+            << "Profiler::getProfiler(),\n"
+            << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
       }
       out << "// converting the consistent tangent operator\n"
           << "if(k){\n"
@@ -2043,6 +2082,9 @@ namespace mfront {
           << "}\n"
           << "// converting the stress\n"
           << "lsh1.convertToCauchyStress(STRESS);\n";
+      if (mb.getAttribute(BehaviourData::profiling, false)) {
+        out << "}\n";
+      }
     };
     auto ndi_dispatch = [this, &out, &name, &mb, &suffix, &preprocessing,
                          &postprocessing, &throw_if](
@@ -2059,12 +2101,6 @@ namespace mfront {
             << " castem::CastemLogarithmicStrainStressFreeExpansionHandler);\n"
             << "}";
         return;
-      }
-      if (mb.getAttribute(BehaviourData::profiling, false)) {
-        out << "{\n"
-            << "BehaviourProfiler::Timer pre_timer(" << mb.getClassName()
-            << "Profiler::getProfiler(),\n"
-            << "BehaviourProfiler::FINITESTRAINPREPROCESSING);\n";
       }
       if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         preprocessing(3u, 6u, false);
@@ -2085,11 +2121,6 @@ namespace mfront {
           << " STATEV,NSTATV,STRESS,PNEWDT,KINC,\n"
           << " castem::CastemLogarithmicStrainStressFreeExpansionHandler);\n"
           << "if(*KINC==1){\n";
-      if (mb.getAttribute(BehaviourData::profiling, false)) {
-        out << "BehaviourProfiler::Timer post_timer(" << mb.getClassName()
-            << "Profiler::getProfiler(),\n"
-            << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
-      }
       if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         postprocessing(false);
       } else if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
@@ -2139,7 +2170,8 @@ namespace mfront {
         "CastemInterface::writeLogarithmicStrain1DCastemFunction : "
         "finite strain strategies shall be used with small strain behaviours");
     out << "MFRONT_SHAREDOBJ void\n" << fname;
-    writeUMATArguments(out, BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR);
+    CastemInterface::writeUMATFunctionArguments(
+        out, BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR);
     out << "\n{\n"
         << "using namespace castem;\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
@@ -2187,7 +2219,7 @@ namespace mfront {
         << "if(*KINC==1){\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "{\n"
-          << "auto post_timer(" << mb.getClassName()
+          << "BehaviourProfiler::Timer post_timer(" << mb.getClassName()
           << "Profiler::getProfiler(),\n"
           << "BehaviourProfiler::FINITESTRAINPOSTPROCESSING);\n";
     }
@@ -2236,8 +2268,9 @@ namespace mfront {
       const std::string& fname,
       const std::string& suffix,
       const BehaviourDescription& mb) const {
+    const auto btype = mb.getBehaviourType();
     out << "MFRONT_SHAREDOBJ void\n" << fname;
-    writeUMATArguments(out, mb.getBehaviourType());
+    CastemInterface::writeUMATFunctionArguments(out, mb.getBehaviourType());
     out << "\n{\n";
     if (mb.getAttribute(BehaviourData::profiling, false)) {
       out << "using mfront::BehaviourProfiler;\n";
@@ -2247,18 +2280,27 @@ namespace mfront {
           << "BehaviourProfiler::TOTALTIME);\n";
     }
     this->generateMTestFile1(out, mb);
-    if (mb.getBehaviourType() ==
-        BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+    if (mb.isModel()) {
       out << this->getFunctionNameBasis(name)
-          << "_base(NTENS, DTIME,DROT,DDSDDE,F0,F1,TEMP,DTEMP,\n"
-          << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-          << "STRESS,PNEWDT,NDI,KINC,nullptr);\n";
-    } else {
+          << "_base(NTENS, DTIME, DROT, DDSDDE, nullptr, nullptr, "
+             "TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV, NSTATV, \n"
+          << "nullptr, PNEWDT, NDI, KINC, nullptr);\n";
+    } else if (btype == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       out << this->getFunctionNameBasis(name)
-          << "_base(NTENS, DTIME,DROT,DDSDDE,STRAN,DSTRAN,TEMP,DTEMP,\n"
-          << "PROPS,NPROPS,PREDEF,DPRED,STATEV,NSTATV,\n"
-          << "STRESS,PNEWDT,NDI,KINC,\n"
+          << "_base(NTENS, DTIME, DROT, DDSDDE, F0, F1, TEMP, DTEMP, \n"
+          << "PROPS, NPROPS, PREDEF, DPRED, STATEV, NSTATV, \n"
+          << "STRESS, PNEWDT, NDI, KINC, nullptr);\n";
+    } else if ((btype == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
+               (btype == BehaviourDescription::COHESIVEZONEMODEL)) {
+      out << this->getFunctionNameBasis(name)
+          << "_base(NTENS, DTIME, DROT, DDSDDE, STRAN, DSTRAN, TEMP, DTEMP, \n"
+          << "PROPS, NPROPS, PREDEF, DPRED, STATEV, NSTATV, \n"
+          << "STRESS, PNEWDT, NDI, KINC,\n"
           << "castem::CastemStandardSmallStrainStressFreeExpansionHandler);\n";
+    } else {
+      tfel::raise(
+          "CastemInterface::writeStandardCastemFunction: "
+          "unsupported behaviour type");
     }
     if (this->shallGenerateMTestFileOnFailure(mb)) {
       out << "if(*KINC!=1){\n";
@@ -2634,6 +2676,9 @@ namespace mfront {
           "CastemInterface::getMaterialPropertiesOffsetForBehaviourTraits: " +
           m);
     };
+    if (mb.isModel()) {
+      return "0u";
+    }
     if (mb.getSymmetryType() == mfront::ISOTROPIC) {
       if (mb.getBehaviourType() ==
           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
@@ -2723,8 +2768,11 @@ namespace mfront {
           << "ModellingHypothesis::"
           << ModellingHypothesis::toUpperCaseString(h) << ";\n";
     }
-    if (mb.getBehaviourType() ==
-        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+    if (mb.isModel()) {
+      out << "static " << constexpr_c
+          << " CastemBehaviourType btype  = MODEL;\n";
+    } else if (mb.getBehaviourType() ==
+               BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       out << "static " << constexpr_c
           << " CastemBehaviourType btype  = STANDARDSTRAINBASEDBEHAVIOUR;\n";
     } else if (mb.getBehaviourType() ==

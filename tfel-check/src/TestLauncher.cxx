@@ -273,6 +273,13 @@ namespace tfel::check {
         for (const auto& l : output) {
           msg += "'" + l + "'\n";
         }
+        msg += "\n# Detailled comparison:\n\n";
+        const auto n = std::min(output.size(), values.size());
+        for (std::size_t i = 0; i != n; ++i) {
+          if (output[i] != values[i]) {
+            msg += "- '" + output[i] + "' does not match '" + values[i] + "'\n";
+          }
+        }
         return {false, msg};
       };
     }

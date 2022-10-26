@@ -81,6 +81,13 @@ namespace mfront {
     for (const auto& v : DSLBase::getDefaultReservedNames()) {
       this->reserveName(v);
     }
+    //
+    this->appendToIncludes("#include<cmath>");
+    this->appendToIncludes("#include<limits>");
+    this->appendToIncludes("#include<string>");
+    this->appendToIncludes("#include<sstream>");
+    this->appendToIncludes("#include<iostream>");
+    this->appendToIncludes("#include<stdexcept>");
   }
 
   AbstractDSL::DSLOptions ModelDSLCommon::buildDSLOptions() const {
@@ -112,6 +119,13 @@ namespace mfront {
   }  // end of getOverridenParameters
 
   void ModelDSLCommon::endsInputFileProcessing() {
+    if (this->md.modelName.empty()) {
+      tfel::raise(
+          "ModelDSLCommon::endsInputFileProcessing: "
+          "model name undefined");
+      }
+    // complete the declaration of physical bounds
+    this->md.checkAndCompletePhysicalBoundsDeclaration();
   }  // end of endsInputFileProcessing
 
   bool ModelDSLCommon::useQt() const {
@@ -387,7 +401,27 @@ namespace mfront {
     return is(this->md.outputs, v);
   }  // end of isInputVariable()
 
-  void ModelDSLCommon::treatFunction() {
+  std::map<std::string, std::string> ModelDSLCommon::getSymbols() {
+    auto symbols = std::map<std::string, std::string>{};
+    auto filtered_inputs = VariableDescriptionContainer{};
+    std::copy_if(
+        this->md.inputs.begin(), this->md.inputs.end(),
+        std::back_inserter(filtered_inputs), [](const VariableDescription& v) {
+          if (!v.hasAttribute(VariableDescription::depth)) {
+            return false;
+          }
+          return v.getAttribute<unsigned short>(VariableDescription::depth) > 0;
+        });
+    mfront::getIncrementSymbols(symbols, filtered_inputs);
+    mfront::addSymbol(symbols, "\u0394t", "dt");
+    return symbols;
+  }  // end of getSymbols
+
+  void ModelDSLCommon::treatIntegrator() {
+    this->readFunction("DefaultFunction");
+  } // end of treatIntegrator
+
+  void ModelDSLCommon::readFunction(const std::string& fn) {
     auto throw_if = [this](const bool b, const std::string& m) {
       if (b) {
         this->throwRuntimeError("ModelDSLCommon::treatFunction", m);
@@ -411,21 +445,25 @@ namespace mfront {
       }
       return false;
     };
+    const auto symbols = this->getSymbols();
+    auto demangle = [&symbols](const tfel::utilities::Token& t) {
+      if (t.flag != tfel::utilities::Token::Standard) {
+        return t.value;
+      }
+      const auto p = symbols.find(t.value);
+      if (p != symbols.end()) {
+        return p->second;
+      }
+      return tfel::unicode::getMangledString(t.value);
+    };
     ModelDescription::Function f;
     unsigned int openedBrackets = 0;
     unsigned int openedParenthesis = 0;
     f.useTimeIncrement = false;
-    this->md.registerMemberName("functor" +
-                                std::to_string(this->md.functions.size()));
-    this->checkNotEndOfFile("ModelDSLCommon::treatFunction");
-    f.name = this->current->value;
-    throw_if(!this->isValidIdentifier(f.name),
-             "function name '" + f.name + "' is not valid");
-    this->md.registerMemberName(f.name);
-    this->reserveName(f.name + ".Domain");
-    this->reserveName(f.name + ".Domains");
+    throw_if(!this->isValidIdentifier(fn),
+             "function name '" + fn + "' is not valid");
+    f.name = fn;
     f.line = this->current->line;
-    ++(this->current);
     this->readSpecifiedToken("ModelDSLCommon::treatFunction", "{");
     ++openedBrackets;
     this->checkNotEndOfFile("ModelDSLCommon::treatFunction",
@@ -471,7 +509,7 @@ namespace mfront {
         if (!newLine) {
           f.body += " ";
         }
-        const auto c = tfel::unicode::getMangledString(this->current->value);
+        const auto c = demangle(*(this->current));
         if (isStaticMemberName(this->md, c)) {
           f.body += "(" + this->md.className + ":: " + c + ")";
         } else if (isMemberName(this->md, c)) {
@@ -601,8 +639,30 @@ namespace mfront {
         f.usedVariables.erase(*p3);
       }
     }
+    this->md.registerMemberName(f.name);
+    this->reserveName(f.name + ".Domain");
+    this->reserveName(f.name + ".Domains");
+    this->md.registerMemberName("functor" +
+                                std::to_string(this->md.functions.size()));
     this->md.functions.push_back(f);
-  }  // end of treatFunction()
+  }  // end of readFunction
+
+  void ModelDSLCommon::treatFunction() {
+    this->checkNotEndOfFile("ModelDSLCommon::treatFunction");
+    const auto fn = [this] {
+      const auto symbols = this->getSymbols();
+      if (this->current->flag != tfel::utilities::Token::Standard) {
+        return this->current->value;
+      }
+      const auto p = symbols.find(this->current->value);
+      if (p != symbols.end()) {
+        return p->second;
+      }
+      return tfel::unicode::getMangledString(this->current->value);
+    }();
+    ++(this->current);
+    this->readFunction(fn);
+  }  // end of treatFunction
 
   void ModelDSLCommon::treatOutput() {
     if (!this->md.functions.empty()) {
@@ -871,12 +931,24 @@ namespace mfront {
 
   void ModelDSLCommon::treatConstantMaterialProperty() {
     VariableDescriptionContainer cmp;
-    this->readVarList(cmp, "real", false);
+    const auto type = [this]() -> std::string {
+      const auto otype = this->readVariableTypeIfPresent();
+      if (!otype) {
+        return "real";
+      }
+      return *otype;
+    }();
+    if (SupportedTypes::getTypeFlag(type) != SupportedTypes::SCALAR) {
+      this->throwRuntimeError(
+          "DSLBase::treatConstantMaterialProperty",
+          "the type'" + type + "' is not valid for material properties.");
+    }
+    this->readVarList(cmp, type, false);
     for (const auto& mp : cmp) {
       this->md.registerMemberName(mp.name);
       this->md.constantMaterialProperties.push_back(mp);
     }
-  }  // end of treatConstantMaterialProperty()
+  }  // end of treatConstantMaterialProperty
 
   void ModelDSLCommon::treatConstantMaterialPropertyMethod() {
     auto throw_if = [this](const bool b, const std::string& m) {

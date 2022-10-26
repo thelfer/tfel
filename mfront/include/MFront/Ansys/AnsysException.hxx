@@ -26,22 +26,23 @@ namespace ansys {
    * Ansys or Ansys/Explicit interfaces
    */
   struct MFRONT_ANSYS_VISIBILITY_EXPORT AnsysException : public std::exception {
-    AnsysException(const std::string&);
-    //! move constructor
+    //! \brief constructor
+    AnsysException(std::string);
+    //! \brief move constructor
     AnsysException(AnsysException&&);
-    //! copy constructor
+    //! \brief copy constructor
     AnsysException(const AnsysException&);
 
     const char* what() const noexcept override final;
     virtual std::string getMsg() const noexcept final;
-    //! destructor
+    //! \brief destructor
     ~AnsysException() noexcept override;
 
    private:
     AnsysException() = delete;
     AnsysException& operator=(const AnsysException&) = delete;
     AnsysException& operator=(AnsysException&&) = delete;
-    //! error message
+    //! \brief error message
     const std::string msg;
   };  // end of struct AnsysException
   /*!
@@ -54,11 +55,11 @@ namespace ansys {
      * \param[in] b : behaviour name
      */
     AnsysInvalidModellingHypothesis(const char*);
-    //! move constructor
+    //! \brief move constructor
     AnsysInvalidModellingHypothesis(AnsysInvalidModellingHypothesis&&);
-    //! copy constructor
+    //! \brief copy constructor
     AnsysInvalidModellingHypothesis(const AnsysInvalidModellingHypothesis&);
-    //! destructor
+    //! \brief destructor
     ~AnsysInvalidModellingHypothesis() noexcept override;
 
    private:
@@ -72,11 +73,11 @@ namespace ansys {
   struct MFRONT_ANSYS_VISIBILITY_EXPORT AnsysInvalidNTENSValue final
       : public AnsysException {
     AnsysInvalidNTENSValue(const unsigned short);
-    //! move constructor
+    //! \brief move constructor
     AnsysInvalidNTENSValue(AnsysInvalidNTENSValue&&);
-    //! copy constructor
+    //! \brief copy constructor
     AnsysInvalidNTENSValue(const AnsysInvalidNTENSValue&);
-    //! desctructor
+    //! \brief desctructor
     ~AnsysInvalidNTENSValue() noexcept override;
 
    private:
@@ -89,11 +90,11 @@ namespace ansys {
   struct MFRONT_ANSYS_VISIBILITY_EXPORT AnsysInvalidDimension final
       : public AnsysException {
     AnsysInvalidDimension(const std::string&, const unsigned short);
-    //! move constructor
+    //! \brief move constructor
     AnsysInvalidDimension(AnsysInvalidDimension&&);
-    //! copy constructor
+    //! \brief copy constructor
     AnsysInvalidDimension(const AnsysInvalidDimension&);
-    //! destructor
+    //! \brief destructor
     ~AnsysInvalidDimension() noexcept override;
 
    private:

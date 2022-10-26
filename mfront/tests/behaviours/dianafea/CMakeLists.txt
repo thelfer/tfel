@@ -1,5 +1,6 @@
 mfront_behaviour_check_library(MFrontDianaFEABehaviours dianafea
   DSLOptionsTest
+  InitializationFailureTest
   MaterialPropertiesBoundsCheck
   StateVariablesBoundsCheck
   Elasticity
@@ -15,6 +16,7 @@ mfront_behaviour_check_library(MFrontDianaFEABehaviours dianafea
   ComputeThermalExpansion
   ParameterTest
   ParameterTest2
+  ProfilerTest
   )
 target_link_libraries(MFrontDianaFEABehaviours
   PRIVATE DianaFEAInterface)
@@ -113,6 +115,8 @@ test_dianafea(ddif2 ddif2-uniaxialtesting.ref)
 test_dianafea(parametertest)
 test_dianafea(parametertest2)
 
+test_dianafea(initializationfailuretest
+  NO_XML_OUTPUT WILL_FAIL)
 test_dianafea(materialpropertiesboundscheck
   NO_XML_OUTPUT WILL_FAIL)
 test_dianafea(materialpropertiesboundscheck2 

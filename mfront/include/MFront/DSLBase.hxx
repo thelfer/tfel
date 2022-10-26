@@ -39,12 +39,21 @@ namespace mfront {
    * \return if the given name is valid
    * \param[in] n: material name
    */
-  MFRONT_VISIBILITY_EXPORT bool isValidMaterialName(const std::string&);
+  MFRONT_VISIBILITY_EXPORT bool isValidMaterialName(std::string_view);
   /*!
    * \return if the given name is valid
    * \param[in] n: library name
    */
-  MFRONT_VISIBILITY_EXPORT bool isValidLibraryName(const std::string&);
+  MFRONT_VISIBILITY_EXPORT bool isValidLibraryName(std::string_view);
+  /*!
+   * \return if the given name, provided by the user, is valid.
+   * \param[in] n: variable name
+   *
+   * The variable name must be a valid C++ variable and shall not start with
+   * `mfront_`.
+   */
+  MFRONT_VISIBILITY_EXPORT bool isValidUserDefinedVariableName(
+      std::string_view);
 
   /*!
    * \brief base structure for domain specific languages
@@ -243,16 +252,6 @@ namespace mfront {
      * \param[in] v: variable value
      */
     virtual void overrideByAParameter(const std::string&, const double) = 0;
-    /*!
-     * \return a temporary name which has not been reserved. This
-     * method shall be used to get a temporary name at a
-     * code block scope.
-     * \param[in,out] tmpnames: list of already used temporary names
-     * in the treated code block.
-     * \param[in]     p: prefix
-     */
-    virtual std::string getTemporaryVariableName(std::vector<std::string>&,
-                                                 const std::string&) const;
     /*!
      * \brief add a static variable description
      * \param[in] v : variable description

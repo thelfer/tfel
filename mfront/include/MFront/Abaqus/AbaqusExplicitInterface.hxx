@@ -153,7 +153,9 @@ namespace abaqus {
       b.setBehaviourDataThermodynamicForces(s);
       b.setIntegrationDataGradients(de);
       b.setOutOfBoundsPolicy(d.policy);
-      b.initialize();
+      if (!b.initialize()) {
+        return 1;
+      }
       b.checkBounds();
       const auto smf = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
       const auto r =
@@ -181,7 +183,9 @@ namespace abaqus {
       b.setIntegrationDataGradients(F1);
       b.setBehaviourDataThermodynamicForces(s);
       b.setOutOfBoundsPolicy(d.policy);
-      b.initialize();
+      if (!b.initialize()) {
+        return 1;
+      }
       b.checkBounds();
       const auto smf = TangentOperatorTraits::ABAQUS;
       const auto r =
@@ -216,7 +220,9 @@ namespace abaqus {
       DVInitializer::exe(b, e, de, sfeh);
       b.setBehaviourDataThermodynamicForces(s);
       b.setOutOfBoundsPolicy(d.policy);
-      b.initialize();
+      if (!b.initialize()) {
+        return -1;
+      }
       b.checkBounds();
       const auto smf = TangentOperatorTraits::STANDARDTANGENTOPERATOR;
       auto r_dt = std::numeric_limits<T>::max();
@@ -260,7 +266,9 @@ namespace abaqus {
       b.setIntegrationDataGradients(F1);
       b.setBehaviourDataThermodynamicForces(s);
       b.setOutOfBoundsPolicy(d.policy);
-      b.initialize();
+      if (!b.initialize()) {
+        return -1;
+      }
       b.checkBounds();
       const auto smf = TangentOperatorTraits::ABAQUS;
       auto r_dt = std::numeric_limits<T>::max();

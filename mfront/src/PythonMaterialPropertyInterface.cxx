@@ -74,7 +74,7 @@ namespace mfront {
     const auto name = (mpd.material.empty())
                           ? mpd.className
                           : mpd.material + "_" + mpd.className;
-    const auto headerFileName = "include/" + name + "-python.hxx";
+    const auto headerFileName = name + "-python.hxx";
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     const auto* const python_include_path = std::getenv("PYTHON_INCLUDE_PATH");
     const auto* const python_library_path = std::getenv("PYTHON_LIBRARY_PATH");
@@ -360,6 +360,7 @@ namespace mfront {
     writeBuildIdentifierSymbol(srcFile, name, mpd);
     writeEntryPointSymbol(srcFile, name);
     writeTFELVersionSymbol(srcFile, name);
+    writeUnitSystemSymbol(srcFile, name, mpd);
     writeInterfaceSymbol(srcFile, name, "Python");
     writeLawSymbol(srcFile, name, mpd.material);
     writeMaterialSymbol(srcFile, name, mpd.material);

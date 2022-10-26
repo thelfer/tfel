@@ -99,7 +99,7 @@ namespace numodis {
       if (Coincide(gsystem1.getIBurgers(), gsystem2.getIBurgers()) != 0) {
         // self junction
         throw - 1;
-      } else {
+      }
         // add Burgers vectors
         IBurgers iburgers3a(gsystem1.getIBurgers() + gsystem2.getIBurgers());
         IBurgers iburgers3b(gsystem1.getIBurgers() - gsystem2.getIBurgers());
@@ -111,8 +111,7 @@ namespace numodis {
 
         // return new glide system
         return this->InitGSystem(ijunctionBurgers, gsystem1.getIPlane());
-      }
-    } else {
+    }
       if (Coincide(gsystem1.getIBurgers(), gsystem2.getIBurgers()) != 0) {
         // colinear situation
         throw - 2;
@@ -142,7 +141,6 @@ namespace numodis {
 
       // return new glide system
       return this->InitGSystem(ijunctionBurgers, ijunctionPlane);
-    }
   }
 
   //=====================================================================
@@ -166,10 +164,13 @@ namespace numodis {
     this->GenerateEquivalentIBurgers(gsystem.getIBurgers(), allBurgers);
 
     // generate all glide systems
-    for (decltype(allPlanes.size()) i = 0; i != allPlanes.size(); i++)
-      for (decltype(allBurgers.size()) j = 0; j != allBurgers.size(); j++)
-        if (this->ScalProduct(allPlanes[i], allBurgers[j]) == 0)
-          allGSystems.push_back(GSystem(allBurgers[j], allPlanes[i]));
+    for (const auto& p : allPlanes){
+      for (const auto& b : allBurgers){
+        if (this->ScalProduct(p, b) == 0){
+          allGSystems.push_back(GSystem(b, p));
+	}
+      }
+    }
   }
 
   //===============================================================
@@ -227,8 +228,9 @@ namespace numodis {
     //---------------------
     eqiburgers.clear();
     eqiburgers.reserve(equivalent.size());
-    for (unsigned i = 0; i < equivalent.size(); i++)
-      eqiburgers.push_back(IBurgers(equivalent[i]));
+    for (const auto& e : equivalent){
+      eqiburgers.push_back(IBurgers(e));
+    }
   }
 
   //=====================================================================
@@ -259,8 +261,9 @@ namespace numodis {
     //-------------------
     planes.clear();
     planes.reserve(equivalent.size());
-    for (unsigned i = 0; i < equivalent.size(); i++)
-      planes.push_back(IPlane(equivalent[i]));
+    for (const auto& p : equivalent){
+      planes.push_back(IPlane(p));
+    }
   }
 
   Crystallo::~Crystallo() = default;

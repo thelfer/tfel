@@ -259,6 +259,15 @@ namespace mfront {
     }
   }  // end of ModelDescription::appendToSources
 
+  void ModelDescription::checkAndCompletePhysicalBoundsDeclaration() {
+    if (this->hasUnitSystem()) {
+      const auto& s = this->getUnitSystem();
+      mfront::checkAndCompletePhysicalBoundsDeclaration(this->outputs, s);
+      mfront::checkAndCompletePhysicalBoundsDeclaration(this->inputs, s);
+      mfront::checkAndCompletePhysicalBoundsDeclaration(this->parameters, s);
+    }
+  }  // end of checkAndCompletePhysicalBoundsDeclaration
+
   ModelDescription::~ModelDescription() = default;
 
   BehaviourDescription convertToBehaviourDescription(

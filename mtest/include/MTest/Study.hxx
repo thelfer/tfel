@@ -65,7 +65,9 @@ namespace mtest {
      * \param[in]  t: current time
      * \param[in] dt: time increment
      */
-    virtual void prepare(StudyCurrentState&, const real, const real) const = 0;
+    [[nodiscard]] virtual std::pair<bool, real> prepare(StudyCurrentState&,
+                                                        const real,
+                                                        const real) const = 0;
     /*!
      * \brief make a linear prediction of the unknows and state
      * \param[out] s: current structure state
@@ -93,13 +95,13 @@ namespace mtest {
      * \param[in]  smt: type of tangent operator
      * \note the memory has already been allocated
      */
-    virtual std::pair<bool, real> computePredictionStiffnessAndResidual(
-        StudyCurrentState&,
-        tfel::math::matrix<real>&,
-        tfel::math::vector<real>&,
-        const real&,
-        const real&,
-        const StiffnessMatrixType) const = 0;
+    [[nodiscard]] virtual std::pair<bool, real>
+    computePredictionStiffnessAndResidual(StudyCurrentState&,
+                                          tfel::math::matrix<real>&,
+                                          tfel::math::vector<real>&,
+                                          const real&,
+                                          const real&,
+                                          const StiffnessMatrixType) const = 0;
     /*!
      * \brief compute the stiffness matrix and the residual
      * \return a pair containing:
@@ -117,13 +119,13 @@ namespace mtest {
      * \param[in]  smt: type of tangent operator
      * \note the memory has already been allocated
      */
-    virtual std::pair<bool, real> computeStiffnessMatrixAndResidual(
-        StudyCurrentState&,
-        tfel::math::matrix<real>&,
-        tfel::math::vector<real>&,
-        const real,
-        const real,
-        const StiffnessMatrixType) const = 0;
+    [[nodiscard]] virtual std::pair<bool, real>
+    computeStiffnessMatrixAndResidual(StudyCurrentState&,
+                                      tfel::math::matrix<real>&,
+                                      tfel::math::vector<real>&,
+                                      const real,
+                                      const real,
+                                      const StiffnessMatrixType) const = 0;
     /*!
      * \param[in] : du unknows increment difference between two iterations
      */
@@ -179,10 +181,10 @@ namespace mtest {
      * \param[in]  dt: time increment
      * \param[in]  p:  period
      */
-    virtual void postConvergence(StudyCurrentState&,
-                                 const real,
-                                 const real,
-                                 const unsigned int) const = 0;
+    [[nodiscard]] virtual bool postConvergence(StudyCurrentState&,
+                                               const real,
+                                               const real,
+                                               const unsigned int) const = 0;
     /*!
      * \param[in] h : modelling hypothesis
      */
@@ -199,7 +201,7 @@ namespace mtest {
                              const bool) const = 0;
     //! \brief set the modelling hypothesis to the default one
     virtual void setDefaultModellingHypothesis() = 0;
-    //! destructor
+    //! \brief destructor
     virtual ~Study();
 
    protected:

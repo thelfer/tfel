@@ -18,7 +18,6 @@ namespace mfront::bbrick {
                                               const std::string& fid,
                                               const std::string& id,
                                               const DataMap& d) {
-    using namespace tfel::glossary;
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto get_mp = [&dsl, &bd, &fid, &id, &d](const std::string& t,
                                              const std::string& n) {

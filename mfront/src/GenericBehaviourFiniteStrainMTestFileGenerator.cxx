@@ -22,14 +22,13 @@
 namespace mfront {
 
   GenericBehaviourFiniteStrainMTestFileGenerator::
-      GenericBehaviourFiniteStrainMTestFileGenerator(const std::string& l,
-                                                     const std::string& b)
+      GenericBehaviourFiniteStrainMTestFileGenerator(const char* const l,
+                                                     const char* const b)
       : library(l), behaviour(b) {
-    std::fill(this->F0, this->F0 + 36, 0.);
-    std::fill(this->F1, this->F1 + 36, 0.);
+    std::fill(this->F0, this->F0 + 9, 0.);
+    std::fill(this->F1, this->F1 + 9, 0.);
     std::fill(this->stress, this->stress + 6, 0.);
-  }  // end of
-     // GenericBehaviourFiniteStrainMTestFileGenerator::GenericBehaviourFiniteStrainMTestFileGenerator
+  }  // end of GenericBehaviourFiniteStrainMTestFileGenerator
 
   void
   GenericBehaviourFiniteStrainMTestFileGenerator::writeBehaviourDeclaration(
@@ -41,8 +40,7 @@ namespace mfront {
     os << "@Behaviour<generic> '" << this->library << ".so' '"
        << this->behaviour << "';" << std::endl;
 #endif
-  }  // end of
-     // GenericBehaviourFiniteStrainMTestFileGenerator::writeBehaviourDeclaration
+  }  // end of writeBehaviourDeclaration
 
   void GenericBehaviourFiniteStrainMTestFileGenerator::
       setDeformationGradientTensorAtTheBeginningOfTheTimeStep(
@@ -60,8 +58,7 @@ namespace mfront {
         this->F0[8] = F[8];
       }
     }
-  }  // end of
-     // GenericBehaviourFiniteStrainMTestFileGenerator::setDeformationGradientTensorAtTheBeginningOfTheTimeStep
+  }  // end of setDeformationGradientTensorAtTheBeginningOfTheTimeStep
 
   void GenericBehaviourFiniteStrainMTestFileGenerator::
       setDeformationGradientTensorAtTheEndOfTheTimeStep(const double* const F) {
@@ -78,8 +75,7 @@ namespace mfront {
         this->F1[8] = F[8];
       }
     }
-  }  // end of
-     // GenericBehaviourFiniteStrainMTestFileGenerator::setDeformationGradientTensorAtTheEndOfTheTimeStep
+  }  // end of setDeformationGradientTensorAtTheEndOfTheTimeStep
 
   void GenericBehaviourFiniteStrainMTestFileGenerator::setStressTensor(
       const double* const s) {
@@ -122,7 +118,7 @@ namespace mfront {
          << ":" << this->F0[i] << "," << t1 << ":" << this->F1[i] << "};\n";
     }
     os << '\n';
-  }  // end of GenericBehaviourFiniteStrainMTestFileGenerator::writeGradients
+  }  // end of writeGradients
 
   GenericBehaviourFiniteStrainMTestFileGenerator::
       ~GenericBehaviourFiniteStrainMTestFileGenerator() = default;

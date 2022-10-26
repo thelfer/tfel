@@ -1113,6 +1113,8 @@ namespace mfront {
       } else if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
         out << "#include \"MFront/"
             << "GenericBehaviourFiniteStrainMTestFileGenerator.hxx\"\n";
+      } else if (type == BehaviourDescription::GENERALBEHAVIOUR) {
+        out << "#include \"MFront/GenericBehaviourMTestFileGenerator.hxx\"\n";
       } else {
         tfel::raise(
             "GenericBehaviourInterface::writeInterfaceSpecificIncludes: "
@@ -1404,8 +1406,62 @@ namespace mfront {
     out.close();
   }  // end of endTreatment
 
+  static std::string as_string(const SupportedTypes::TypeFlag& f) {
+    if (f == SupportedTypes::SCALAR) {
+      return "SupportedTypes::SCALAR";
+    }
+    if (f == SupportedTypes::TVECTOR) {
+      return "SupportedTypes::TVECTOR";
+    }
+    if (f == SupportedTypes::STENSOR) {
+      return "SupportedTypes::STENSOR";
+    }
+    if (f == SupportedTypes::TENSOR) {
+      return "SupportedTypes::TENSOR";
+    }
+    tfel::raise(
+        "GenericBehaviourInterface::generateMTestFile: "
+        "unsupported type flag");
+  }  // end of as_string
+
+  static void writeBehaviourVariablesDeclarations(
+      std::ostream& os, const BehaviourDescription& bd) {
+    const auto mvs = bd.getMainVariables();
+    os << "using BehaviourVariablesDescription = "
+       << "mfront::GenericBehaviourMTestFileGenerator::"
+       << "BehaviourVariablesDescription;\n";
+    os << "using VariableDescription = "
+       << "BehaviourVariablesDescription::VariableDescription;\n";
+    os << "const auto gradients = "
+       << "std::array<VariableDescription," << mvs.size() << ">{";
+    for (auto pmv = mvs.begin(); pmv != mvs.end();) {
+      const auto& g = pmv->first;
+      os << "{\"" << g.getExternalName() << "\", " << as_string(g.getTypeFlag())
+         << "}";
+      if (++pmv != mvs.end()) {
+        os << ", ";
+      }
+    }
+    os << "};\n";
+    os << "const auto thermodynamic_forces = "
+       << "std::array<VariableDescription," << mvs.size() << ">{";
+    for (auto pmv = mvs.begin(); pmv != mvs.end();) {
+      const auto& thf = pmv->second;
+      os << "{\"" << thf.getExternalName() << "\", "
+         << as_string(thf.getTypeFlag()) << "}";
+      if (++pmv != mvs.end()) {
+        os << ", ";
+      }
+    }
+    os << "};\n";
+    os << "const auto description = "
+       << "BehaviourVariablesDescription{" << mvs.size() << ", "
+       << "gradients.data(), "
+       << "thermodynamic_forces.data()};\n\n";
+  }  // end of writeBehaviourVariablesDeclarations
+
   void GenericBehaviourInterface::generateMTestFile(
-      std::ostream& out,
+      std::ostream& os,
       const BehaviourDescription& bd,
       const Hypothesis h) const {
     const auto& d = bd.getBehaviourData(h);
@@ -1413,46 +1469,47 @@ namespace mfront {
     const auto& externalStateVarsHolder = d.getExternalStateVariables();
     const auto mprops = this->buildMaterialPropertiesList(bd, h);
     const auto type = bd.getBehaviourType();
-    auto as_string = [](const SupportedTypes::TypeFlag& f) {
-      if (f == SupportedTypes::SCALAR) {
-        return "SupportedTypes::SCALAR";
-      } else if (f == SupportedTypes::TVECTOR) {
-        return "SupportedTypes::TVECTOR";
-      } else if (f == SupportedTypes::STENSOR) {
-        return "SupportedTypes::STENSOR";
-      } else if (f == SupportedTypes::TENSOR) {
-        return "SupportedTypes::TENSOR";
-      }
+    const auto generic_behaviour =
+        type == BehaviourDescription::GENERALBEHAVIOUR;
+    if (!((generic_behaviour) ||
+          (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
+          (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR))) {
       tfel::raise(
-          "GenericBehaviourInterface::generateMTestFile: "
-          "unsupported type flag");
-    };
+          "GenericBehaviourInterface::writeInterfaceSpecificIncludes: "
+          "unsupported behaviour type for MTest file generation");
+    }
+    if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+    }
     const auto fs = [&bd, type] {
+      if (type == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+        return true;
+      }
       if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
         if (bd.isStrainMeasureDefined()) {
           const auto ms = bd.getStrainMeasure();
           return ms != BehaviourDescription::LINEARISED;
-        } else {
-          return false;
         }
-      } else if (type != BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-        tfel::raise(
-            "GenericBehaviourInterface::writeInterfaceSpecificIncludes: "
-            "unsupported behaviour type for MTest file generation");
       }
-      return true;
+      return false;
     }();
     unsigned int offset = 0;
     const auto name = bd.getLibrary() + bd.getClassName();
-    if (fs) {
-      out << "mfront::GenericBehaviourFiniteStrainMTestFileGenerator mg(\""
-          << this->getLibraryName(bd) << "\",\"" << name << "\");\n";
-    } else {
-      out << "mfront::GenericBehaviourSmallStrainMTestFileGenerator mg(\""
-          << this->getLibraryName(bd) << "\",\"" << name << "\");\n";
-    }
-    out << "mg.setModellingHypothesis(tfel::material::ModellingHypothesis:"
-           ":"
+     if (generic_behaviour) {
+       writeBehaviourVariablesDeclarations(os, bd);
+       os << "mfront::GenericBehaviourMTestFileGenerator mg("
+          << "description, \"" << this->getLibraryName(bd) <<  //
+           "\",\"" << name << "\");\n";
+     } else {
+       if (fs) {
+         os << "mfront::GenericBehaviourFiniteStrainMTestFileGenerator mg(\""
+             << this->getLibraryName(bd) << "\",\"" << name << "\");\n";
+       } else {
+         os << "mfront::GenericBehaviourSmallStrainMTestFileGenerator mg(\""
+             << this->getLibraryName(bd) << "\",\"" << name << "\");\n";
+       }
+     }
+     os << "mg.setModellingHypothesis("
+        << "tfel::material::ModellingHypothesis::"
         << tfel::material::ModellingHypothesis::toUpperCaseString(h) << ");\n"
         << "// must be declared after setting the hypothesis\n"
         << "const auto TVectorSize = mg.getTVectorSize();\n"
@@ -1462,114 +1519,124 @@ namespace mfront {
         << "mg.setHandleThermalExpansion(false);\n"
         << "mg.addTime(0.);\n"
         << "mg.addTime(dt);\n";
-    if (fs) {
-      out << "mg.setDeformationGradientTensorAtTheBeginningOfTheTimeStep(d->"
-             "s0.gradients);\n"
-          << "mg.setDeformationGradientTensorAtTheEndOfTheTimeStep(d->s1."
-             "gradients);\n"
-          << "mg.setStressTensor(d->s0.thermodynamic_forces);\n";
-    } else {
-      out << "mg.setStrainTensorAtTheBeginningOfTheTimeStep(d->"
-             "s0.gradients);\n"
-          << "mg.setStrainTensorAtTheEndOfTheTimeStep(d->s1."
-             "gradients);\n"
-          << "mg.setStressTensor(d->s0.thermodynamic_forces);\n";
-    }
-    for (const auto& m : mprops.first) {
-      tfel::raise_if(!m.isScalar(),
-                     "GenericBehaviourInterface::generateMTestFile: "
-                     "unsupported material property  type '" +
-                         m.type + "' in mtest file generation");
-      if (m.arraySize == 1u) {
-        if (offset == 0) {
-          out << "mg.addMaterialProperty(\"" << m.name
-              << "\",*(d->s1.material_properties));\n";
-        } else {
-          out << "mg.addMaterialProperty(\"" << m.name
-              << "\",*(d->s1.material_properties+" << offset << "));\n";
-        }
-        ++offset;
+     if (generic_behaviour) {
+       os << "mg.setGradientsAtTheBeginningOfTheTimeStep("
+          << "d->s0.gradients);\n"
+          << "mg.setGradientsAtTheEndOfTheTimeStep("
+          << "d->s1.gradients);\n"
+          << "mg.setThermodynamicForcesAtTheBeginningOfTheTimeStep("
+          << "d->s0.thermodynamic_forces);\n";
       } else {
-        for (unsigned short s = 0; s != m.arraySize; ++s, ++offset) {
+        if (fs) {
+          os << "mg.setDeformationGradientTensorAtTheBeginningOfTheTimeStep("
+             << "d->s0.gradients);\n"
+             << "mg.setDeformationGradientTensorAtTheEndOfTheTimeStep("
+             << "d->s1.gradients);\n";
+        } else {
+          os << "mg.setStrainTensorAtTheBeginningOfTheTimeStep("
+             << "d->s0.gradients);\n"
+             << "mg.setStrainTensorAtTheEndOfTheTimeStep("
+             << "d->s1.gradients);\n";
+        }
+        os << "mg.setStressTensor(d->s0.thermodynamic_forces);\n";
+      }
+      for (const auto& m : mprops.first) {
+        tfel::raise_if(!m.isScalar(),
+                       "GenericBehaviourInterface::generateMTestFile: "
+                       "unsupported material property  type '" +
+                           m.type + "' in mtest file generation");
+        if (m.arraySize == 1u) {
           if (offset == 0) {
-            out << "mg.addMaterialProperty(\"" << m.name << "[" << s
-                << "]\",*(d->s1.material_properties));\n";
+            os << "mg.addMaterialProperty(\"" << m.name
+                << "\",*(d->s1.material_properties));\n";
           } else {
-            out << "mg.addMaterialProperty(\"" << m.name << "[" << s << "]\","
-                << "*(d->s1.material_properties+" << offset << "));\n";
+            os << "mg.addMaterialProperty(\"" << m.name
+                << "\",*(d->s1.material_properties+" << offset << "));\n";
           }
-        }
-      }
-    }
-    SupportedTypes::TypeSize ivoffset;
-    for (const auto& v : persistentVarsHolder) {
-      auto flag = SupportedTypes::getTypeFlag(v.type);
-      const auto& ivname = d.getExternalName(v.name);
-      if (v.arraySize == 1u) {
-        out << "mg.addInternalStateVariable(\"" << ivname << "\","
-            << as_string(flag) << ","
-            << "&(d->s0.internal_state_variables[" << ivoffset << "]));\n";
-        ivoffset += SupportedTypes::TypeSize(flag);
-      } else {
-        if (v.arraySize >= SupportedTypes::ArraySizeLimit) {
-          out << "for(unsigned short i=0;i!=" << v.arraySize << ";++i){\n";
-          out << "auto name =  \"" << ivname
-              << "[\" + std::to_string(i)+ \"]\";\n";
-          out << "mg.addInternalStateVariable(name," << as_string(flag)
-              << ",&d->s0.internal_state_variables[" << ivoffset << "]+i);\n";
-          out << "}\n";
-          ivoffset += SupportedTypes::TypeSize(v.arraySize, flag);
+          ++offset;
         } else {
-          for (unsigned short i = 0; i != v.arraySize; ++i) {
-            out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
-                << "]\"," << as_string(flag)
-                << ",&(d->s0.internal_state_variables[" << ivoffset << "]));\n";
-            ivoffset += SupportedTypes::TypeSize(flag);
+          for (unsigned short s = 0; s != m.arraySize; ++s, ++offset) {
+            if (offset == 0) {
+              os << "mg.addMaterialProperty(\"" << m.name << "[" << s
+                  << "]\",*(d->s1.material_properties));\n";
+            } else {
+              os << "mg.addMaterialProperty(\"" << m.name << "[" << s << "]\","
+                  << "*(d->s1.material_properties+" << offset << "));\n";
+            }
           }
         }
       }
-    }
-    SupportedTypes::TypeSize evoffset;
-    for (const auto& ev : externalStateVarsHolder) {
-      auto flag = SupportedTypes::getTypeFlag(ev.type);
-      const auto& evname = d.getExternalName(ev.name);
-      if (ev.arraySize == 1u) {
-        out << "mg.addExternalStateVariable(\"" << evname << "\","
-            << as_string(flag) << ", "
-            << "0,d->s0.external_state_variables + " << evoffset << ", "
-            << "dt,d->s1.external_state_variables + " << evoffset << ", "
-            << "false);\n";
-        evoffset += SupportedTypes::TypeSize(flag);
-      } else {
-        if (ev.arraySize >= SupportedTypes::ArraySizeLimit) {
-          out << "for(unsigned short i=0;i!=" << ev.arraySize << ";++i){\n";
-          out << "const auto name = \"" << evname
-              << "[\" +std::to_string(i)+\"]\";\n";
-          out << "mg.addExternalStateVariable(name, "  //
+      SupportedTypes::TypeSize ivoffset;
+      for (const auto& v : persistentVarsHolder) {
+        auto flag = SupportedTypes::getTypeFlag(v.type);
+        const auto& ivname = d.getExternalName(v.name);
+        if (v.arraySize == 1u) {
+          os << "mg.addInternalStateVariable(\"" << ivname << "\","
+              << as_string(flag) << ","
+              << "&(d->s0.internal_state_variables[" << ivoffset << "]));\n";
+          ivoffset += SupportedTypes::TypeSize(flag);
+        } else {
+          if (v.arraySize >= SupportedTypes::ArraySizeLimit) {
+            os << "for(unsigned short i=0;i!=" << v.arraySize << ";++i){\n";
+            os << "auto name =  \"" << ivname
+                << "[\" + std::to_string(i)+ \"]\";\n";
+            os << "mg.addInternalStateVariable(name," << as_string(flag)
+                << ",&d->s0.internal_state_variables[" << ivoffset << "]+i);\n";
+            os << "}\n";
+            ivoffset += SupportedTypes::TypeSize(v.arraySize, flag);
+          } else {
+            for (unsigned short i = 0; i != v.arraySize; ++i) {
+              os << "mg.addInternalStateVariable(\"" << ivname << "[" << i
+                  << "]\"," << as_string(flag)
+                  << ",&(d->s0.internal_state_variables[" << ivoffset
+                  << "]));\n";
+              ivoffset += SupportedTypes::TypeSize(flag);
+            }
+          }
+        }
+      }
+      SupportedTypes::TypeSize evoffset;
+      for (const auto& ev : externalStateVarsHolder) {
+        auto flag = SupportedTypes::getTypeFlag(ev.type);
+        const auto& evname = d.getExternalName(ev.name);
+        if (ev.arraySize == 1u) {
+          os << "mg.addExternalStateVariable(\"" << evname << "\","
               << as_string(flag) << ", "
-              << "0,d->s0.external_state_variables + " << evoffset << " + i, "
-              << "dt, d->s1.external_state_variables + " << evoffset << " + i, "
+              << "0,d->s0.external_state_variables + " << evoffset << ", "
+              << "dt,d->s1.external_state_variables + " << evoffset << ", "
               << "false);\n";
-          out << "}\n";
-          evoffset += SupportedTypes::TypeSize(ev.arraySize, flag);
+          evoffset += SupportedTypes::TypeSize(flag);
         } else {
-          for (unsigned short i = 0; i != ev.arraySize; ++i) {
-            out << "mg.addExternalStateVariable("
-                << "\"" << evname << "[" << i << "]\", "  //
+          if (ev.arraySize >= SupportedTypes::ArraySizeLimit) {
+            os << "for(unsigned short i=0;i!=" << ev.arraySize << ";++i){\n";
+            os << "const auto name = \"" << evname
+                << "[\" +std::to_string(i)+\"]\";\n";
+            os << "mg.addExternalStateVariable(name, "  //
                 << as_string(flag) << ", "
-                << "0, d->s0.external_state_variables + " << evoffset << ", "
-                << "dt, d->s1.external_state_variables + " << evoffset << ", "
+                << "0,d->s0.external_state_variables + " << evoffset << " + i, "
+                << "dt, d->s1.external_state_variables + " << evoffset
+                << " + i, "
                 << "false);\n";
-            evoffset += SupportedTypes::TypeSize(flag);
+            os << "}\n";
+            evoffset += SupportedTypes::TypeSize(ev.arraySize, flag);
+          } else {
+            for (unsigned short i = 0; i != ev.arraySize; ++i) {
+              os << "mg.addExternalStateVariable("
+                  << "\"" << evname << "[" << i << "]\", "  //
+                  << as_string(flag) << ", "
+                  << "0, d->s0.external_state_variables + " << evoffset << ", "
+                  << "dt, d->s1.external_state_variables + " << evoffset << ", "
+                  << "false);\n";
+              evoffset += SupportedTypes::TypeSize(flag);
+            }
           }
         }
       }
-    }
-    out << "mg.generate(\"" + name + "\");\n"
-        << "static_cast<void>(TVectorSize); // remove gcc warning\n"
-        << "static_cast<void>(StensorSize); // remove gcc warning\n"
-        << "static_cast<void>(TensorSize);  // remove gcc warning\n";
-  }  // end of generateMTestFile
+      os << "mg.generate(\"" + name + "\");\n"
+          << "static_cast<void>(TVectorSize); // remove gcc warning\n"
+          << "static_cast<void>(StensorSize); // remove gcc warning\n"
+          << "static_cast<void>(TensorSize);  // remove gcc warning\n";
+    }  // end of generateMTestFile
 
   std::string GenericBehaviourInterface::getLibraryName(
       const BehaviourDescription& bd) const {

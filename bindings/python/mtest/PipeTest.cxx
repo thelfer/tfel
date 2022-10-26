@@ -167,6 +167,28 @@ void declarePipeTest() {
   tfel::tests::TestResult (PipeTest::*pm)() = &PipeTest::execute;
   void (PipeTest::*pm2)(StudyCurrentState&, SolverWorkSpace&, const real,
                         const real) const = &PipeTest::execute;
+  boost::python::enum_<mtest::PipeTest::Configuration>("PipeTestConfiguration")
+      .value("INTIAL_CONFIGURATION",
+             mtest::PipeTest::Configuration::INTIAL_CONFIGURATION)
+      .value("Intial_Configuration",
+             mtest::PipeTest::Configuration::INTIAL_CONFIGURATION)
+      .value("CURRENT_CONFIGURATION",
+             mtest::PipeTest::Configuration::CURRENT_CONFIGURATION)
+      .value("Current_Configuration",
+             mtest::PipeTest::Configuration::CURRENT_CONFIGURATION);
+  boost::python::enum_<mtest::PipeTest::FailurePolicy>("PipeTestFailurePolicy")
+      .value("REPORTONLY", mtest::PipeTest::FailurePolicy::REPORTONLY)
+      .value("STOPCOMPUTATION", mtest::PipeTest::FailurePolicy::STOPCOMPUTATION)
+      .value("FREEZESTATEUNTILENDOFCOMPUTATION",
+             mtest::PipeTest::FailurePolicy::FREEZESTATEUNTILENDOFCOMPUTATION)
+      .value("ReportOnly", mtest::PipeTest::FailurePolicy::REPORTONLY)
+      .value("StopComputation", mtest::PipeTest::FailurePolicy::STOPCOMPUTATION)
+      .value("FREEZESTATE",
+             mtest::PipeTest::FailurePolicy::FREEZESTATEUNTILENDOFCOMPUTATION)
+      .value("FreezeStateUntilEndOfComputation",
+             mtest::PipeTest::FailurePolicy::FREEZESTATEUNTILENDOFCOMPUTATION)
+      .value("FreezeState",
+             mtest::PipeTest::FailurePolicy::FREEZESTATEUNTILENDOFCOMPUTATION);
   boost::python::class_<PipeTest, boost::noncopyable,
                         boost::python::bases<SingleStructureScheme>>("PipeTest")
       .def("setInnerRadius", &PipeTest::setInnerRadius)
@@ -283,12 +305,14 @@ void declarePipeTest() {
            "compute the maximum value of a scalar variable")
       .def("computeMeanValue",
            static_cast<real (PipeTest::*)(const StudyCurrentState&,
-                                          const std::string&) const>(
+                                          const std::string&,
+                                          const PipeTest::Configuration) const>(
                &PipeTest::computeMeanValue),
            "compute the mean value of a scalar variable")
       .def("computeIntegralValue",
            static_cast<real (PipeTest::*)(const StudyCurrentState&,
-                                          const std::string&) const>(
+                                          const std::string&,
+                                          const PipeTest::Configuration) const>(
                &PipeTest::computeIntegralValue),
            "compute the integral value of a scalar variable")
       .def("computeMinimumAndMaximumValues",
@@ -300,5 +324,12 @@ void declarePipeTest() {
            "This method returns the underlying mesh")
       .def("completeInitialisation", &PipeTest::completeInitialisation,
            "complete the initialisation. This method must be called once. This "
-           "method may be called automatically by the execute method.");
+           "method may be called automatically by the execute method.")
+      .def("addFailureCriterion", &PipeTest::addFailureCriterion,
+           "add a failure criterion.")
+      .def("setFailurePolicy", &PipeTest::setFailurePolicy,
+           "set the failure policy.")
+      .def("addOxidationModel", &PipeTest::addOxidationModel,
+           (boost::python::arg("library"), "model", "boundary"),
+           "add an oxidation model.");
 }

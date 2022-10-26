@@ -17,6 +17,7 @@
 
 #include "MFront/AbstractBehaviourInterface.hxx"
 #include "MFront/BehaviourInterfaceFactory.hxx"
+#include "MFront/DefaultCZMCodeGenerator.hxx"
 #include "MFront/DefaultCZMDSL.hxx"
 
 namespace mfront {
@@ -58,6 +59,12 @@ namespace mfront {
                "Dt_tt", 1u, 0u));
   }
 
+  std::unique_ptr<AbstractBehaviourCodeGenerator>
+  DefaultCZMDSL::getCodeGenerator() const {
+    return std::make_unique<DefaultCZMCodeGenerator>(this->fd, this->mb,
+                                                     this->interfaces);
+  }  // end of getCodeGenerator
+
   std::string DefaultCZMDSL::getDescription() {
     return "this parser is the most generic one as it does not make any "
            "restriction "
@@ -78,30 +85,6 @@ namespace mfront {
     d.minimalMFrontFileBody = "@Integrator{}\n\n";
     return d;
   }  // end of DefaultCZMDSL::getBehaviourDSLDescription
-
-  void DefaultCZMDSL::writeBehaviourParserSpecificIncludes(
-      std::ostream& os) const {
-    DefaultDSLBase::writeBehaviourParserSpecificIncludes(os);
-    os << "#include\"TFEL/Math/tmatrix.hxx\"\n"
-       << "#include\"TFEL/Math/tvector.hxx\"\n"
-       << "#include\"TFEL/Math/Vector/tvectorIO.hxx\"\n"
-       << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n";
-  }  // end of DefaultCZMDSL::writeBehaviourParserSpecificIncludes
-
-  std::string DefaultCZMDSL::getLocalVariablesInitializers(
-      const Hypothesis) const {
-    return "u_n(this->u(0)),\n"
-           "du_n(this->du(0)),\n"
-           "t_n(this->t(0)),\n"
-           "u_t(tfel::math::map<tfel::math::tvector<N-1,real>, 1>(this->u)),\n"
-           "du_t(tfel::math::map<tfel::math::tvector<N-1,real>, "
-           "1>(this->du)),\n"
-           "t_t(tfel::math::map<tfel::math::tvector<N-1,real>, 1>(this->t)),\n"
-           "Dt_nn(this->Dt(0,0)),\n"
-           "Dt_nt(this->Dt.template row_view<0, 1, N-1>()),\n"
-           "Dt_tn(this->Dt.template column_view<0, 1, N-1>()),\n"
-           "Dt_tt(this->Dt.template submatrix_view<1, 1, N-1, N-1>())";
-  }  // end of DefaultCZMDSL::getLocalVariablesInitializers
 
   DefaultCZMDSL::~DefaultCZMDSL() = default;
 

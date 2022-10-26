@@ -23,7 +23,7 @@
 namespace mfront {
 
   /*!
-   * Interface for behaviours for use in the Cast3M finite element
+   * \brief Interface for behaviours for use in the Cast3M finite element
    * code.
    *
    * The name of this interface comes to the fact that the Cast3M
@@ -50,8 +50,20 @@ namespace mfront {
      */
     static bool usesGenericPlaneStressAlgorithm(const BehaviourDescription &);
     /*!
-     * \brief default constructor
+     * \brief write the arguments of the `UMAT` function.
+     * \note This function is meant to be used for declaring `UMAT` functions as
+     * the variables of the function are not named
+     * \param[in] os: output stream
      */
+    static void writeUMATFunctionArguments(std::ostream &);
+    /*!
+     *\brief write the arguments of the `UMAT` function
+     * \param[in] os: output stream
+     * \param[in] t: behaviour type
+     */
+    static void writeUMATFunctionArguments(
+        std::ostream &, const BehaviourDescription::BehaviourType &);
+    //! \brief default constructor
     CastemInterface();
     /*!
      * \param[in,out] mb: behaviour description
@@ -90,7 +102,7 @@ namespace mfront {
      */
     void endTreatment(const BehaviourDescription &,
                       const FileDescription &) const override;
-    //! destructor
+    //! \brief destructor
     ~CastemInterface() override;
 
    protected:
@@ -148,10 +160,9 @@ namespace mfront {
         const BehaviourDescription &,
         const std::string &) const override;
     /*!
-     * \brief write the set out of bounds policy function for an alias behaviour
-     * \param[out] out   : output stream
-     * \param[out] name  : name of the alias
-     * \param[out] name2 : name of the original behaviour
+     * \brief write the set out of bounds policy function for an alias
+     * behaviour \param[out] out   : output stream \param[out] name  : name of
+     * the alias \param[out] name2 : name of the original behaviour
      */
     virtual void writeSetOutOfBoundsPolicyFunctionImplementation2(
         std::ostream &, const std::string &, const std::string &) const;

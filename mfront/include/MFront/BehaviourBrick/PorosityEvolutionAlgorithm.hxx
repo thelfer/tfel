@@ -14,20 +14,16 @@
 #ifndef LIB_MFRONT_BBRICK_POROSITYEVOLUTIONALGORITHM_HXX
 #define LIB_MFRONT_BBRICK_POROSITYEVOLUTIONALGORITHM_HXX
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
+  /*!
+   * \brief Algorithm used to handle the porosity evolution
+   */
+  enum struct PorosityEvolutionAlgorithm {
+    STANDARD_IMPLICIT_SCHEME,  //!< \brief monolithich approach
+    STAGGERED_SCHEME           //!< \brief staggered approach
+  };                           // end of enum struct PorosityEvolutionAlgorithm
 
-    /*!
-     * \brief Algorithm used to handle the porosity evolution
-     */
-    enum struct PorosityEvolutionAlgorithm {
-      STANDARD_IMPLICIT_SCHEME,  //!< \brief monolithich approach
-      STAGGERED_SCHEME           //!< \brief staggered approach
-    };  // end of enum struct PorosityEvolutionAlgorithm
-
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB_MFRONT_BBRICK_POROSITYEVOLUTIONALGORITHM_HXX */

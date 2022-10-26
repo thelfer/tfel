@@ -35,42 +35,45 @@ namespace tfel::utilities {
    * \brief a structure in charge of containing a complex data structure.
    */
   struct TFELUTILITIES_VISIBILITY_EXPORT DataStructure {
-    //! default constructor
+    //! \brief default constructor
     DataStructure();
-    //! move constructor
+    //! \brief move constructor
     DataStructure(DataStructure&&);
-    //! copy constructor
+    //! \brief copy constructor
     DataStructure(const DataStructure&);
-    //! move assignement
+    //! \brief move assignement
     DataStructure& operator=(DataStructure&&);
-    //! assignement
+    //! \brief assignement
     DataStructure& operator=(const DataStructure&);
-    //! destructor
+    //! \brief destructor
     ~DataStructure();
-    //! name of the structure
+    //! \brief name of the structure
     std::string name;
-    //! name of the structure
+    //! \brief name of the structure
     DataMap data;
   };  // end of struct DataStructure
 
   struct TFELUTILITIES_VISIBILITY_EXPORT DataParsingOptions {
-    //! default constructor
+    //! \brief default constructor
     DataParsingOptions();
-    //! move constructor
+    //! \brief move constructor
     DataParsingOptions(DataParsingOptions&&);
-    //! copy constructor
+    //! \brief copy constructor
     DataParsingOptions(const DataParsingOptions&);
-    //! move assignement
+    //! \brief move assignement
     DataParsingOptions& operator=(DataParsingOptions&&);
-    //! assignement
+    //! \brief assignement
     DataParsingOptions& operator=(const DataParsingOptions&);
-    //! destructor
+    //! \brief destructor
     ~DataParsingOptions();
-    //!
+    /*!
+     * if true, several values will be associated to the same key and will be
+     * stored in a vector of Data
+     */
     bool allowMultipleKeysInMap = false;
   };  // end of struct DataParsingOptions
 
-  //! list of all type handled by the Data structure
+  //! \brief list of all type handled by the Data structure
   using DataTypes = tfel::meta::GenerateTypeList<bool,
                                                  int,
                                                  double,
@@ -170,17 +173,17 @@ namespace tfel::utilities {
     static Data read_map(CxxTokenizer::const_iterator&,
                          const CxxTokenizer::const_iterator,
                          const DataParsingOptions& = {});
-    //! default constructor
+    //! \brief default constructor
     Data();
-    //! move constructor
+    //! \brief move constructor
     Data(Data&&);
-    //! copy constructor
+    //! \brief copy constructor
     Data(const Data&);
-    //! move assignement
+    //! \brief move assignement
     Data& operator=(Data&&);
-    //! assignement
+    //! \brief assignement
     Data& operator=(const Data&);
-    //! destructor
+    //! \brief destructor
     ~Data();
   };  // end of struct Data
 

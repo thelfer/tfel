@@ -156,6 +156,13 @@ namespace tfel::material {
      * \param[in] i: index
      */
     std::vector<tensor> getOrientationTensors(const size_type) const;
+    //! \return the climb tensors, sorted by family
+    std::vector<std::vector<tensor>> getClimbTensors() const;
+    /*!
+     * \return the climb tensors associated with the ith family
+     * \param[in] i: index
+     */
+    std::vector<tensor> getClimbTensors(const size_type) const;
     /*!
      * \return the Schmid factor, sorted by family
      * \param[in] d: direction

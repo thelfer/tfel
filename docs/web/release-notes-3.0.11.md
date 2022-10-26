@@ -19,6 +19,34 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #326: Support for Intel's compiler `icx`
+
+For more details, see <https://github.com/thelfer/tfel/issues/326>.
+
+## Issue #320: [mfront] `HeatFlux` can't be use as a glossary name
+
+For more details, see <https://github.com/thelfer/tfel/issues/320>.
+
+## Issue #309: [mfront] Profiling is broken when using logarithmic strain in the `abaqus` interface 
+
+For more details, see <https://github.com/thelfer/tfel/issues/309>.
+
+## Issue #308: [mfront] Profiling is broken when using logarithmic strain in the `europlexus` interface 
+
+For more details, see <https://github.com/thelfer/tfel/issues/308>.
+
+## Issue #307: [mfront] Profiling is broken when using logarithmic strain in the `ansys` interface 
+
+For more details, see <https://github.com/thelfer/tfel/issues/307>.
+
+## Issue #305: [mfront] Profiling is broken when using logarithmic strain in the `castem` interface 
+
+For more details, see <https://github.com/thelfer/tfel/issues/305>.
+
+## Issue 274: [mfront] Analysers not called while parsing `@Integrator` and `@Predictor` in implicit DSLs
+
+For more details, see <https://github.com/thelfer/tfel/issues/274>.
+
 ## Issue #251: [mtest] Bad definition of `PipeMeshElementType` in `python` bindings
 
 For more details, see <https://github.com/thelfer/tfel/issues/251>.

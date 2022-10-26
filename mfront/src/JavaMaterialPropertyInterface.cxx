@@ -330,6 +330,7 @@ namespace mfront {
     writeBuildIdentifierSymbol(srcFile, name, mpd);
     writeEntryPointSymbol(srcFile, name);
     writeTFELVersionSymbol(srcFile, name);
+    writeUnitSystemSymbol(srcFile, name, mpd);
     writeInterfaceSymbol(srcFile, name, "Java");
     writeLawSymbol(srcFile, name, mpd.material);
     writeMaterialSymbol(srcFile, name, mpd.material);

@@ -29,6 +29,16 @@ namespace mfront {
 
   MFrontMaterialPropertyInterface::MFrontMaterialPropertyInterface() = default;
 
+  std::vector<std::string>
+  MFrontMaterialPropertyInterface::getSupportedFloatingPointTypes() const {
+    return {"float", "double", "long double"};
+  } // end of getSupportedFloatingPointTypes
+
+  bool MFrontMaterialPropertyInterface::
+      shallGenerateOverloadedFunctionForQuantities() const {
+    return true;
+  }  // end of shallGenerateOverloadedFunctionForQuantities
+
   std::pair<bool,
             tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   MFrontMaterialPropertyInterface::treatKeyword(
@@ -92,7 +102,7 @@ namespace mfront {
 
   void MFrontMaterialPropertyInterface::writeBeginSrcNamespace(
       std::ostream& os) const {
-    os << "namespace mfront{\n";
+    os << "namespace mfront{\n\n";
   }  // end of writeBeginSrcNamespace
 
   void MFrontMaterialPropertyInterface::writeEndSrcNamespace(
@@ -132,6 +142,10 @@ namespace mfront {
   void MFrontMaterialPropertyInterface::writeTFELVersionSymbol(
       std::ostream&, const MaterialPropertyDescription&) const {
   }  // end of writeTFELVersionSymbol
+
+  void MFrontMaterialPropertyInterface::writeUnitSystemSymbol(
+      std::ostream&, const MaterialPropertyDescription&) const {
+  }  // end of writeUnitSystemSymbol
 
   void MFrontMaterialPropertyInterface::writeLawSymbol(
       std::ostream&, const MaterialPropertyDescription&) const {

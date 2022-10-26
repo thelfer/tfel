@@ -22,8 +22,8 @@
 namespace mfront {
 
   GenericBehaviourSmallStrainMTestFileGenerator::
-      GenericBehaviourSmallStrainMTestFileGenerator(const std::string& l,
-                                                    const std::string& b)
+      GenericBehaviourSmallStrainMTestFileGenerator(const char* const l,
+                                                    const char* const b)
       : library(l), behaviour(b) {
     std::fill(this->eto0, this->eto0 + 6, 0.);
     std::fill(this->eto1, this->eto1 + 6, 0.);

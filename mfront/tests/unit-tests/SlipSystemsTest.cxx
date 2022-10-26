@@ -65,17 +65,13 @@ struct SlipSystemsTest final : public tfel::tests::TestCase {
     bd.setSlipSystems(std::vector<system>(1u, gs));
     const auto o = bd.getSlipSystems().getOrientationTensors(0);
     for (const auto& t : o) {
-      std::cout << "\nt: " << t[0] << " " << t[1] << " " << t[2] << " " << t[3]
-                << " " << t[4] << " " << t[5] << " " << t[6] << " " << t[7]
-                << " " << t[8] << '\n';
       const auto b = [&ss, &t] {
         for (const auto& mu : ss.mu) {
-          std::cout << "mu: " << mu << '\n';
           auto e1 = real{};
           auto e2 = real{};
           for (decltype(t.size()) i = 0; i != t.size(); ++i) {
             e1 += std::abs(t[i] - mu[i]);
-            e2 += std::abs(t[i] - mu[i]);
+            e2 += std::abs(t[i] + mu[i]);
           }
           if ((e1 < 1.e-14) || (e2 < 1.e-14)) {
             return true;
@@ -83,7 +79,7 @@ struct SlipSystemsTest final : public tfel::tests::TestCase {
         }
         return false;
       }();
-      // TFEL_TESTS_ASSERT(b);
+      TFEL_TESTS_ASSERT(b);
     }
   }
 };

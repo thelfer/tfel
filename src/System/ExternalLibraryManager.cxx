@@ -426,6 +426,11 @@ namespace tfel::system {
     return this->getStringIfDefined(l, f + "_tfel_version");
   }  // end of getTFELVersion
 
+  std::string ExternalLibraryManager::getUnitSystem(const std::string& l,
+                                                    const std::string& f) {
+    return this->getStringIfDefined(l, f + "_unit_system");
+  }  // end of getUnitSystem
+
   std::vector<std::string>
   ExternalLibraryManager::getSupportedModellingHypotheses(
       const std::string& l, const std::string& f) {
@@ -1329,7 +1334,11 @@ namespace tfel::system {
       std::vector<std::string>& arguments,
       const std::string& l,
       const std::string& f) {
-    arguments = this->getArrayOfStrings(l, f, "args");
+    if (this->getMaterialPropertyNumberOfVariables(l, f) != 0) {
+      arguments = this->getArrayOfStrings(l, f, "args");
+    } else {
+      arguments.clear();
+    }
   }  // end of getMaterialPropertyVariables
 
   std::vector<std::string>

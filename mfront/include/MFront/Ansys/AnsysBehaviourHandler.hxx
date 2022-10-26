@@ -202,7 +202,6 @@ namespace ansys {
         this->behaviour.setANSYSBehaviourDataThermodynamicForces(d.STRESS,
                                                                  d.DROT);
         this->behaviour.setOutOfBoundsPolicy(d.op);
-        this->behaviour.initialize();
       }  // end of Integrator::Integrator
 
       TFEL_ANSYS_INLINE2
@@ -215,6 +214,9 @@ namespace ansys {
             ConsistentTangentOperatorIsNotAvalaible>::type;
         if (this->dt < 0.) {
           throwNegativeTimeStepException(Traits::getName());
+        }
+        if (!this->behaviour.initialize()) {
+          return false;
         }
         this->behaviour.checkBounds();
         const auto smflag =

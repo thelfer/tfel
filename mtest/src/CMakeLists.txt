@@ -23,6 +23,7 @@ set(TFELMTest_SOURCES
   CastemEvolution.cxx
   CyranoEvolution.cxx
   FunctionEvolution.cxx
+  OxidationStatusEvolution.cxx
   Behaviour.cxx
   BehaviourWrapperBase.cxx
   SmallStrainTridimensionalBehaviourWrapper.cxx
@@ -59,6 +60,8 @@ set(TFELMTest_SOURCES
   PipeCubicElement.cxx
   PipeProfile.cxx
   PipeProfileHandler.cxx
+  PipeFailureCriterion.cxx
+  PipeFailureCriteriaFactory.cxx
   TextDataUtilities.cxx
   SchemeParserBase.cxx
   SingleStructureSchemeParser.cxx
@@ -84,6 +87,7 @@ if(HAVE_CASTEM)
     CastemFiniteStrainBehaviour.cxx
     CastemFiniteStrainBehaviour2.cxx
     CastemCohesiveZoneModel.cxx
+    CastemModel.cxx
     CastemUmatStandardBehaviour.cxx
     CastemUmatSmallStrainBehaviour.cxx
     CastemUmatFiniteStrainBehaviour.cxx

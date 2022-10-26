@@ -66,6 +66,39 @@ namespace mtest {
     return *(this->bwks[0]);
   }  // end of StructureCurrentState::getBehaviourWorkSpace
 
+  CurrentState& StructureCurrentState::getModelCurrentState(const Model& m) {
+    const auto p = this->model_states.find(&m);
+    if (p == this->model_states.end()) {
+      auto cs = std::make_shared<CurrentState>();
+      const auto p2 = this->model_states.insert({&m, std::move(cs)}).first;
+      m.allocateCurrentState(*(p2->second));
+      return *(p2->second);
+    }
+    return *(p->second);
+  }  // end of getModelCurrentState
+
+  const CurrentState& StructureCurrentState::getModelCurrentState(
+      const Model& m) const {
+    const auto p = this->model_states.find(&m);
+    if (p == this->model_states.end()) {
+      tfel::raise(
+          "StructureCurrentState::getModelCurrentState: no state associated "
+          "with the given model");
+    }
+    return *(p->second);
+  }  // end of getModelCurrentState
+
+  BehaviourWorkSpace& StructureCurrentState::getModelWorkSpace(const Model& m) {
+    const auto p = this->model_wks.find(&m);
+    if (p == this->model_wks.end()) {
+      auto wk = std::make_unique<BehaviourWorkSpace>();
+      const auto p2 = this->model_wks.insert({&m, std::move(wk)}).first;
+      m.allocateWorkSpace(*(p2->second));
+      return *(p2->second);
+    }
+    return *(p->second);
+  }  // end of getModelWorkSpace
+
   const Behaviour& StructureCurrentState::getBehaviour() const {
     tfel::raise_if(this->b == nullptr,
                    "StructureCurrentState::getBehaviour: "
@@ -73,16 +106,26 @@ namespace mtest {
     return *(this->b);
   }  // end of StructureCurrentState::getBehaviour
 
-  void update(StructureCurrentState& s) {
-    for (auto& ls : s.istates) {
+  void StructureCurrentState::update() {
+    for (auto& s : this->model_states) {
+      mtest::update(*(s.second));
+    }
+    for (auto& ls : this->istates) {
       mtest::update(ls);
     }
-  }
+  } // end of update
 
-  void revert(StructureCurrentState& s) {
-    for (auto& ls : s.istates) {
+  void StructureCurrentState::revert() {
+    for (auto& s : this->model_states) {
+      mtest::revert(*(s.second));
+    }
+    for (auto& ls : this->istates) {
       mtest::revert(ls);
     }
-  }
+  } // end of revert
+
+  void update(StructureCurrentState& s) { s.update(); }  // end of update
+
+  void revert(StructureCurrentState& s) { s.revert(); }  // end of revert
 
 }  // end of namespace mtest

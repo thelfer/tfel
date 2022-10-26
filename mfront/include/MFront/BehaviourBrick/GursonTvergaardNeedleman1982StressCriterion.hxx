@@ -17,40 +17,36 @@
 
 #include "MFront/BehaviourBrick/StandardPorousStressCriterionBase.hxx"
 
-namespace mfront {
+namespace mfront::bbrick {
 
-  namespace bbrick {
-
+  /*!
+   * \brief implementation of the MichelAndSuquet1992HollowSphere stress
+   * criterion
+   */
+  struct GursonTvergaardNeedleman1982StressCriterion
+      : StandardPorousStressCriterionBase {
     /*!
-     * \brief implementation of the MichelAndSuquet1992HollowSphere stress
-     * criterion
+     * \brief constructor
      */
-    struct GursonTvergaardNeedleman1982StressCriterion
-        : StandardPorousStressCriterionBase {
-      /*!
-       * \brief constructor
-       */
-      GursonTvergaardNeedleman1982StressCriterion();
+    GursonTvergaardNeedleman1982StressCriterion();
 
-      std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
-          const override;
+    std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
+        const override;
 
-      std::vector<OptionDescription> getOptions() const override;
+    std::vector<OptionDescription> getOptions() const override;
 
-      PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
-          const override;
+    PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
+        const override;
 
-      std::string updatePorosityUpperBound(const BehaviourDescription&,
-                                           const std::string&,
-                                           const Role) const override;
+    std::string updatePorosityUpperBound(const BehaviourDescription&,
+                                         const std::string&,
+                                         const Role) const override;
 
-      //! \brief destructor
-      ~GursonTvergaardNeedleman1982StressCriterion() override;
-    };  // end of struct GursonTvergaardNeedleman1982StressCriterion
+    //! \brief destructor
+    ~GursonTvergaardNeedleman1982StressCriterion() override;
+  };  // end of struct GursonTvergaardNeedleman1982StressCriterion
 
-  }  // end of namespace bbrick
-
-}  // end of namespace mfront
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB__MFRONT_BEHAVIOURBRICK_GURSON_TVERGAARD_NEEDLEMAN_1982_STRESSCRITERION_HXX \
         */

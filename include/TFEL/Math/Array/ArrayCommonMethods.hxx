@@ -196,7 +196,7 @@ namespace tfel::math {
             typename ArrayPolicyType::value_type>(),
         void>
     multiplyByScalar(const ValueType2&);
-    };
+  };
 
 }  // end of namespace tfel::math
 

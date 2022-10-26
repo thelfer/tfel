@@ -259,6 +259,12 @@ namespace mtest {
                            &PipeTestParser::handleGasEquationOfState);
     this->registerCallBack("@AdditionalOutputs",
                            &PipeTestParser::handleAdditionalOutputs);
+    this->registerCallBack("@FailurePolicy",
+                           &PipeTestParser::handleFailurePolicy);
+    this->registerCallBack("@FailureCriterion",
+                           &PipeTestParser::handleFailureCriterion);
+    this->registerCallBack("@OxidationModel",
+                           &PipeTestParser::handleOxidationModel);
   }
 
   void PipeTestParser::registerCallBack(const std::string& k,
@@ -690,13 +696,121 @@ namespace mtest {
          {"minimum_values", generate_function("minimum_value")},
          {"maximum_value", generate_function("maximum_value")},
          {"maximum_values", generate_function("maximum_value")},
-         {"integral_value", generate_function("integral_value")},
-         {"integral_values", generate_function("integral_value")},
-         {"mean_value", generate_function("mean_value")},
-         {"mean_values", generate_function("mean_value")}});
+         {"integral_value",
+          generate_function("integral_value_initial_configuration")},
+         {"integral_values",
+          generate_function("integral_value_initial_configuration")},
+         {"integral_value_initial_configuration",
+          generate_function("integral_value_initial_configuration")},
+         {"integral_values_initial_configuration",
+          generate_function("integral_value_initial_configuration")},
+         {"integral_value_current_configuration",
+          generate_function("integral_value_current_configuration")},
+         {"integral_values_current_configuration",
+          generate_function("integral_value_current_configuration")},
+         {"mean_value", generate_function("mean_value_initial_configuration")},
+         {"mean_values", generate_function("mean_value_initial_configuration")},
+         {"mean_value_initial_configuration",
+          generate_function("mean_value_initial_configuration")},
+         {"mean_values_initial_configuration",
+          generate_function("mean_value_initial_configuration")},
+         {"mean_value_current_configuration",
+          generate_function("mean_value_current_configuration")},
+         {"mean_values_current_configuration",
+          generate_function("mean_value_current_configuration")}});
     this->readSpecifiedToken("PipeTestParser::handleAdditionalOutputs", ";", p,
                              this->tokens.end());
   }  // end of PipeTestParser::handleAdditionalOutput
+
+  void PipeTestParser::handleFailurePolicy(PipeTest& t, tokens_iterator& p) {
+    this->checkNotEndOfLine("PipeTestParser::handleFailurePolicy", p,
+                            this->tokens.end());
+    const auto policy = this->readString(p, this->tokens.end());
+    this->readSpecifiedToken("PipeTestParser::handleFailurePolicy", ";", p,
+                             this->tokens.end());
+    if (policy == "ReportOnly") {
+      t.setFailurePolicy(PipeTest::REPORTONLY);
+    } else if (policy == "StopComputation") {
+      t.setFailurePolicy(PipeTest::STOPCOMPUTATION);
+    } else if ((policy == "FreezeState") ||
+               (policy == "FreezeStateUntilEndOfComputation")) {
+      t.setFailurePolicy(PipeTest::FREEZESTATEUNTILENDOFCOMPUTATION);
+    } else {
+      tfel::raise(
+          "PipeTestParser::handleFailurePolicy: "
+          "invalid failure policy '" +
+          policy +
+          "'. Valid policies are:\n"
+          "- 'ReportOnly': failure detection is reported in the output file, "
+          "but computations are performed as usual\n"
+          "- 'StopComputation': if a failure is detected, computations are "
+          "stopped\n"
+          "- 'FreezeState' or 'FreezeStateUntilEndOfComputation': if a "
+          "failure is detected, the state of the structure is freezed and do "
+          "not evolve. No equilibrium is performed, the behaviour is no more "
+          "called and PipeTest will output the same results again and again "
+          "until the end of computation. This option may be useful when "
+          "optimizing material parameters.\n");
+    }
+  }  // end of handleFailurePolicy
+
+  void PipeTestParser::handleFailureCriterion(PipeTest& t, tokens_iterator& p) {
+    this->checkNotEndOfLine("PipeTestParser::handleFailureCriterion", p,
+                            this->tokens.end());
+    const auto n = this->readString(p, this->tokens.end());
+    this->checkNotEndOfLine("PipeTestParser::handleFailureCriterion", p,
+                            this->tokens.end());
+    if (p->value == ";") {
+      t.addFailureCriterion(n, tfel::utilities::DataMap{});
+    } else {
+      t.addFailureCriterion(
+          n, tfel::utilities::Data::read_map(p, this->tokens.end())
+                 .get<tfel::utilities::DataMap>());
+    }
+    this->readSpecifiedToken("PipeTestParser::handleFailureCriterion", ";", p,
+                             this->tokens.end());
+  }  // end of handleFailureCriterion
+
+  void PipeTestParser::handleOxidationModel(PipeTest& t, tokens_iterator& p) {
+    this->checkNotEndOfLine("PipeTestParser::handleOxidationModel", p,
+                            this->tokens.end());
+    const auto options = tfel::utilities::Data::read_map(p, this->tokens.end())
+                             .get<tfel::utilities::DataMap>();
+    this->readSpecifiedToken("PipeTestParser::handleOxidationModel", ";", p,
+                             this->tokens.end());
+    //
+    auto validator =
+        tfel::utilities::DataMapValidator()
+            .addDataTypeValidator<std::string>("model")
+            .addDataTypeValidator<std::string>("library")
+            .addDataValidator("boundary", [](const tfel::utilities::Data& d) {
+              if (!d.is<std::string>()) {
+                tfel::raise(
+                    "PipeTestParser::handleOxidationModel: "
+                    "invalid type for option 'boundary'");
+              }
+              const auto& b = d.get<std::string>();
+              if (!((b == "inner_boundary") || (b == "outer_boundary"))) {
+                tfel::raise(
+                    "PipeTestParser::handleOxidationModel: "
+                    "invalid value for option 'boundary', expected "
+                    "'inner_boundary' or 'outer_boundary', read '" +
+                    b + "'");
+              }
+            });
+    validator.validate(options);
+    //
+    if (options.size() != 3u) {
+      tfel::raise(
+          "PipeTestParser::handleOxidationModel: "
+          "invalid number of options, expected "
+          "'model', 'library', and 'boundary'");
+    }
+    //
+    t.addOxidationModel(options.at("library").get<std::string>(),
+                        options.at("model").get<std::string>(),
+                        options.at("boundary").get<std::string>());
+  }  // end of handleOxidationModel
 
   PipeTestParser::~PipeTestParser() = default;
 

@@ -20,11 +20,11 @@
 
 @UMATFiniteStrainStrategies[umat] {None,LogarithmicStrain1D};
 
-//! The Norton coefficient
+//! the Norton coefficient
 @MaterialProperty real A;
 A.setEntryName("NortonCoefficient");
 
-//! The Norton coefficient
+//! the Norton coefficient
 @MaterialProperty real E;
 E.setEntryName("NortonExponent");
 

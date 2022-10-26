@@ -20,6 +20,7 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Math/IntegerEvaluator.hxx"
+#include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/VariableDescription.hxx"
 #include "MFront/DSLUtilities.hxx"
@@ -32,6 +33,8 @@ namespace mfront {
   SupportedTypes_buildFlags() {
     std::map<std::string, SupportedTypes::TypeFlag, std::less<>> flags;
     flags.insert({"NumericType", SupportedTypes::SCALAR});
+    // backward compatibility
+    flags.insert({"double", SupportedTypes::SCALAR});
     for (const auto& t : getScalarTypeAliases()) {
       flags.insert({t, SupportedTypes::SCALAR});
     }
@@ -954,7 +957,7 @@ namespace mfront {
     ++c;
   }  // end of checkIteratorValidity
 
-  void SupportedTypes::normalizeRawScalarType(const TypeInformation& t) {
+  void SupportedTypes::normalizeRawScalarType(TypeInformation& t) {
     const auto oflag = SupportedTypes::getTypeFlag(t);
     if ((!oflag.has_value()) || (*oflag != SupportedTypes::SCALAR)) {
       tfel::raise(
@@ -968,6 +971,13 @@ namespace mfront {
           "no template argument expected "
           "for scalar type '" +
           SupportedTypes::encode(t) + "'");
+    }
+    if (t.type == "double") {
+      getLogStream()
+          << "SupportedTypes::normalizeRawScalarType: using 'double' to "
+          << "declare a scalar is only authorized for backward compatiblity. "
+          << "Use 'real' instead\n";
+      t.type = "real";
     }
   }  // end of normalizeRawScalarType
 
@@ -1004,7 +1014,7 @@ namespace mfront {
           std::get<TypeInformation>(args[0]));
       auto& type_info = std::get<TypeInformation>(args[0]);
       if (type_info.type == "numeric_type") {
-      } else if (type_info.type == "real") {
+      } else if ((type_info.type == "real") || (type_info.type == "double")) {
         // for backward compatibility
         type_info.type = "numeric_type";
       } else {

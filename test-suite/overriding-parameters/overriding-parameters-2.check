@@ -8,7 +8,7 @@
            "- theta",    //
            "- epsilon",  //
            "- iterMax",  //
-           "- Temperature (T): The temperature",
+           "- Temperature (T): the temperature",
            "- dTemperature (dT): increment of variable 'Temperature' over the time step"}
     };
 @Command "@mfront-query@ --external-state-variables --dsl-options-file=options.json  Plasticity.mfront"{

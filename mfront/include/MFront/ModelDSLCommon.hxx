@@ -18,9 +18,7 @@
 #include <map>
 #include <vector>
 #include <string>
-
 #include "MFront/MFrontConfig.hxx"
-
 #include "MFront/DSLBase.hxx"
 #include "MFront/AbstractDSL.hxx"
 #include "MFront/ModelDescription.hxx"
@@ -84,35 +82,49 @@ namespace mfront {
     void setUnitSystem(const std::string_view) override;
     void setMaterial(const std::string&) override;
     void setMaterialKnowledgeIdentifier(const std::string&) override;
+    /*!
+     * \brief get all symbols required to interpret the `@Function` code block.
+     * \param[out] symbols: symbols
+     */
+    virtual std::map<std::string, std::string> getSymbols();
     //! treat the `@UseQt` keyword
     virtual void treatUseQt();
     //! treat the `@Library` keyword
     virtual void treatLibrary();
-
+    //! treat the `@Model` keyword
     virtual void treatModel();
-
+    //! treat the `@Domain` keyword
     virtual void treatDomain();
-
+    //! treat the `@Domains` keyword
     virtual void treatDomains();
-
+    //! treat the `@Bounds` keyword
     virtual void treatBounds();
-
+    //! treat the `@PhysicalBounds` keyword
     virtual void treatPhysicalBounds();
-
+    //! \brief treat the `@ConstantMaterialProperty` keyword
     virtual void treatConstantMaterialProperty();
 
     virtual void treatConstantMaterialPropertyMethod();
-
+    //! \brief treat the `@Integrator` keyword
+    virtual void treatIntegrator();
+    //! \brief treat the `@Function` keyword
     virtual void treatFunction();
-
+    /*!
+     * \brief read the body of a function and register it
+     * \param[in] fn: function name
+     */
+    virtual void readFunction(const std::string&);
+    //! \brief treat the `@Output` keyword or the `@StateVariable` keyword
     virtual void treatOutput();
 
     virtual void treatOutputMethod();
-
+    /*!
+     * \brief treat the `@Input` keyword or the `@ExternalStateVariable` keyword
+     */
     virtual void treatInput();
 
     virtual void treatInputMethod();
-
+    //! \brief treat the `@Parameter` keyword
     virtual void treatParameter();
 
     virtual void treatLocalParameter();

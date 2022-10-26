@@ -129,4 +129,23 @@ nobase_dist_testsuite_DATA =			        	     \
   test-suite/madnex/external-madnex-file/generate.py		     \
   test-suite/python-bindings/material-properties.check 	             \
   test-suite/python-bindings/MaterialPropertyTest.py   	             \
-  test-suite/python-bindings/test-mp.mfront
+  test-suite/python-bindings/test-mp.mfront\
+  test-suite/ptest/integral-value/castemelasticity-quadratic-integral.ref 	\
+  test-suite/ptest/integral-value/castemelasticity-quadratic-integral.check \
+  test-suite/ptest/integral-value/castemelasticity-linear-integral.ptest 	\
+  test-suite/ptest/integral-value/castemelasticity-quadratic-integral.ptest \
+  test-suite/ptest/integral-value/OrthotropicElastic.mfront 				\
+  test-suite/ptest/integral-value/castemelasticity-linear-integral.check 	\
+  test-suite/ptest/integral-value/castemelasticity-linear-integral.ref 		\
+  test-suite/ptest/integral-value/Elasticity.mfront                  		\
+  test-suite/ptest/mean-value/castemelasticity-linear-mean.check 				\
+  test-suite/ptest/mean-value/castemelasticity-quadratic-mean.ref 			\
+  test-suite/ptest/mean-value/castemelasticity-quadratic-mean.ptest 			\
+  test-suite/ptest/mean-value/OrthotropicElastic.mfront						\
+  test-suite/ptest/mean-value/castemelasticity-linear-mean.ref 				\
+  test-suite/ptest/mean-value/castemelasticity-linear-mean.ptest 				\
+  test-suite/ptest/mean-value/castemelasticity-quadratic-mean.check			\
+  test-suite/ptest/mean-value/Elasticity.mfront                             \
+  test-suite/unit-system/Inconel600_YoungModulus.mfront                     \
+  test-suite/unit-system/unit-system.check
+

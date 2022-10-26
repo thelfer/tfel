@@ -26,9 +26,9 @@ namespace tfel::math::parser {
 
   DifferentiatedFunctionExpr::DifferentiatedFunctionExpr(
       std::shared_ptr<ExternalFunction> ff,
-      std::vector<std::shared_ptr<Expr>>& fargs,
-      const std::vector<std::vector<double>::size_type>& fpvar)
-      : f(std::move(ff)), args(fargs), pvar(fpvar) {
+      std::vector<std::shared_ptr<Expr>> fargs,
+      std::vector<std::vector<double>::size_type> fpvar)
+    : f(std::move(ff)), args(std::move(fargs)), pvar(std::move(fpvar)) {
     raise_if(f->getNumberOfVariables() != args.size(),
              "DifferentiatedFunctionExpr::DifferentiatedFunctionExpr: "
              "invalid number of arguments for function "

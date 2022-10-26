@@ -1,9 +1,13 @@
-PTEST_DOCS = AxialForceEvolution.md     \
+PTEST_DOCS = AdditionalOutputs.md       \
+         AxialForceEvolution.md         \
 	     AxialGrowthEvolution.md        \
 	     AxialLoading.md                \
 	     DisplacementEpsilon.md         \
+	     FailureCriterion.md            \
+	     FailurePolicy.md               \
 	     InnerRadiusEvolution.md        \
 	     OuterRadiusEvolution.md        \
+	     OxidationModel.md              \
 	     MandrelRadiusEvolution.md      \
 	     MandrelAxialGrowthEvolution.md \
 	     RadialLoading.md               \

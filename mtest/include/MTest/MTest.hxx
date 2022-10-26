@@ -107,134 +107,51 @@ namespace mtest {
      * \param[in] bInit: if true, call the completeInitialisationMethod
      */
     virtual tfel::tests::TestResult execute(const bool);
-    /*!
-     * \brief integrate the behaviour along the loading path
-     * \note this is equivalent to `execute(true)`
-     */
+    //
     tfel::tests::TestResult execute() override;
-    /*!
-     * \brief update current state at the beginning of a new time step:
-     * - update the material properties
-     * - update the external state variables
-     * - compute the thermal expansion if mandatory
-     * \param[out] state: current structure state
-     * \param[in]  t: current time
-     * \param[in] dt: time increment
-     */
-    void prepare(StudyCurrentState&, const real, const real) const override;
-    /*!
-     * \brief make a linear prediction of the unknows and state
-     * \param[out] s: current structure state
-     * \param[in] dt: time increment
-     */
+    [[nodiscard]] std::pair<bool, real> prepare(StudyCurrentState&,
+                                                const real,
+                                                const real) const override;
     void makeLinearPrediction(StudyCurrentState&, const real) const override;
-    /*!
-     * \brief compute the stiffness matrix and the residual
-     * \return a pair containing:
-     * - a boolean syaing if the behaviour integration shall be
-     *   performed
-     * - a scaling factor that can be used to:
-     *     - increase the time step if the integration was successfull
-     *     - decrease the time step if the integration failed or if the
-     *       results were not reliable (time step too large).
-     * \param[out] state: current structure state
-     * \param[out] k:   tangent operator
-     * \param[out] r:   residual
-     * \param[in]  t:   current time
-     * \param[in]  dt:  time increment
-     * \param[in]  smt: type of tangent operator
-     * \note the memory has already been allocated
-     */
-    std::pair<bool, real> computePredictionStiffnessAndResidual(
+    [[nodiscard]] std::pair<bool, real> computePredictionStiffnessAndResidual(
         StudyCurrentState&,
         tfel::math::matrix<real>&,
         tfel::math::vector<real>&,
         const real&,
         const real&,
         const StiffnessMatrixType) const override;
-    /*!
-     * \brief compute the stiffness matrix and the residual
-     * \return a pair containing:
-     * - a boolean syaing if the behaviour integration shall be
-     *   performed
-     * - a scaling factor that can be used to:
-     *     - increase the time step if the integration was successfull
-     *     - decrease the time step if the integration failed or if the
-     *       results were not reliable (time step too large).
-     * \param[out] s:   current structure state
-     * \param[out] K:   tangent operator
-     * \param[out] r:   residual
-     * \param[in]  t:   current time
-     * \param[in]  dt:  time increment
-     * \param[in]  smt: type of tangent operator
-     * \note the memory has already been allocated
-     */
-    std::pair<bool, real> computeStiffnessMatrixAndResidual(
+    [[nodiscard]] std::pair<bool, real> computeStiffnessMatrixAndResidual(
         StudyCurrentState&,
         tfel::math::matrix<real>&,
         tfel::math::vector<real>&,
         const real,
         const real,
         const StiffnessMatrixType) const override;
-    /*!
-     * \param[in] : du unknows increment difference between two iterations
-     */
-    real getErrorNorm(const tfel::math::vector<real>&) const override;
-    /*!
-     * \param[in]  s: current structure state
-     * \param[in] du: unknows increment estimation
-     * \param[in] r:  residual
-     * \param[in] o:  solver options
-     * \param[in] i:  iteration number
-     * \param[in] t:  current time
-     * \param[in] dt: time increment
-     * \return a boolean saying if all convergence criteria are met
-     */
-    bool checkConvergence(StudyCurrentState&,
-                          const tfel::math::vector<real>&,
-                          const tfel::math::vector<real>&,
-                          const SolverOptions&,
-                          const unsigned int,
-                          const real,
-                          const real) const override;
-    /*!
-     * \param[in]  s: current structure state
-     * \param[in] du: unknows increment estimation
-     * \param[in] r:  residual
-     * \param[in] o:  solver options
-     * \param[in] t:  current time
-     * \param[in] dt: time increment
-     * \return a description of all the criteria that were not met.
-     */
-    std::vector<std::string> getFailedCriteriaDiagnostic(
+    [[nodiscard]] real getErrorNorm(
+        const tfel::math::vector<real>&) const override;
+    [[nodiscard]] bool checkConvergence(StudyCurrentState&,
+                                        const tfel::math::vector<real>&,
+                                        const tfel::math::vector<real>&,
+                                        const SolverOptions&,
+                                        const unsigned int,
+                                        const real,
+                                        const real) const override;
+    [[nodiscard]] std::vector<std::string> getFailedCriteriaDiagnostic(
         const StudyCurrentState&,
         const tfel::math::vector<real>&,
         const tfel::math::vector<real>&,
         const SolverOptions&,
         const real,
         const real) const override;
-    /*!
-     * \param[in,out]  s: current structure state
-     * \param[in,out] wk: solver workspace
-     * \param[in] o:  solver options
-     * \param[in] t:  current time
-     * \param[in] dt: time increment
-     */
     void computeLoadingCorrection(StudyCurrentState&,
                                   SolverWorkSpace&,
                                   const SolverOptions&,
                                   const real,
                                   const real) const override;
-    /*!
-     * \param[out] s: current structure state
-     * \param[in]  t:  current time
-     * \param[in]  dt: time increment
-     * \param[in]  p:  period
-     */
-    void postConvergence(StudyCurrentState&,
-                         const real,
-                         const real,
-                         const unsigned int) const override;
+    [[nodiscard]] bool postConvergence(StudyCurrentState&,
+                                       const real,
+                                       const real,
+                                       const unsigned int) const override;
     /*!
      * integrate the behaviour over one step
      * \param[out] s: current structure state

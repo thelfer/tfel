@@ -50,6 +50,7 @@
 #include "MFront/CastemInterface.hxx"
 #include "MFront/Castem21Interface.hxx"
 #include "MFront/AmitexInterface.hxx"
+#include "MFront/CastemModelInterface.hxx"
 #endif
 
 #ifdef HAVE_CYRANO
@@ -159,6 +160,9 @@ namespace mfront {
         castem21BNames, castem21BNames + 2);
     //
     BehaviourInterfaceProxy<AmitexInterface> amitexProxy;
+    //
+    ModelInterfaceProxy<CastemModelInterface> cmProxy;
+
 #endif /* HAVE_CASTEM */
 
 #ifdef HAVE_CYRANO

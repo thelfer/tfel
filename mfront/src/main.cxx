@@ -51,7 +51,7 @@
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char *const *const argv) {
   auto find = [argv, argc](const char *v) {
-    for (auto a = argv; a != argv + argc; ++a) {
+    for (const auto* a = argv; a != argv + argc; ++a) {
       if (::strcmp(*a, v) == 0) {
         return true;
       }

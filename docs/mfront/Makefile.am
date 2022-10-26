@@ -92,6 +92,7 @@ MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
 	      TangentOperatorBlock.md		                               \
 	      TangentOperatorBlocks.md		                           \
 	      Theta.md		                                           \
+	      UnitSystem.md                                             \
 	      UpdateAuxiliaryStateVars.md                               \
 	      UpdateAuxiliaryStateVariables.md                          \
 	      UsableInPurelyImplicitResolution.md                       \
@@ -109,6 +110,7 @@ MFRONT_DOCS = AdditionalConvergenceChecks.md                            \
 	      Model/Domains.md                                          \
 	      Model/Function.md                                         \
 	      Model/Input.md                                            \
+	      Model/Integrator.md                                       \
 	      Model/GlobalParameter.md                                  \
 	      Model/LocalParameter.md				        \
 	      Model/Model.md				                \

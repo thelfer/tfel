@@ -47,6 +47,8 @@ namespace mfront {
 
    private:
     //
+    std::vector<std::string> getSupportedFloatingPointTypes() const override;
+    bool shallGenerateOverloadedFunctionForQuantities() const override;
     void writeBeginHeaderNamespace(std::ostream&) const override;
     void writeEndHeaderNamespace(std::ostream&) const override;
     void writeBeginSrcNamespace(std::ostream&) const override;
@@ -63,6 +65,8 @@ namespace mfront {
     void writeEntryPointSymbol(
         std::ostream&, const MaterialPropertyDescription&) const override;
     void writeTFELVersionSymbol(
+        std::ostream&, const MaterialPropertyDescription&) const override;
+    void writeUnitSystemSymbol(
         std::ostream&, const MaterialPropertyDescription&) const override;
     void writeMaterialKnowledgeTypeSymbol(
         std::ostream&, const MaterialPropertyDescription&) const override;

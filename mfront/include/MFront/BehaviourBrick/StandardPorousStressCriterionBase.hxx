@@ -24,63 +24,62 @@ namespace mfront {
   // forward declaration
   struct AbstractBehaviourDSL;
 
-  namespace bbrick {
-
-    // forward declaration
-    struct OptionDescription;
-
-    /*!
-     * \brief an helper class used to build a stress criterion.
-     * This class is meant to interface criterion described
-     * in the TFEL/Material library.
-     * The criterion is assumed to be coupled with the porosity evolution.
-     */
-    struct MFRONT_VISIBILITY_EXPORT StandardPorousStressCriterionBase
-        : StressCriterionBase {
-      /*!
-       * \brief constructor
-       * \param[in] n: name of the stress criterion
-       */
-      StandardPorousStressCriterionBase(const std::string& n);
-
-      std::string computeElasticPrediction(
-          const std::string&,
-          const BehaviourDescription&,
-          const StressPotential&) const override;
-      void initialize(BehaviourDescription&,
-                      AbstractBehaviourDSL&,
-                      const std::string&,
-                      const DataMap&,
-                      const Role) override;
-      void endTreatment(BehaviourDescription&,
-                        const AbstractBehaviourDSL&,
-                        const std::string&,
-                        const Role) override;
-      std::string computeCriterion(const std::string&,
-                                   const BehaviourDescription&,
-                                   const StressPotential&) const override;
-      std::string computeNormal(const std::string&,
-                                const BehaviourDescription&,
-                                const StressPotential&,
-                                const Role) const override;
-      std::string computeNormalDerivative(const std::string&,
-                                          const BehaviourDescription&,
-                                          const StressPotential&,
-                                          const Role) const override;
-      bool isCoupledWithPorosityEvolution() const override final;
-      bool isNormalDeviatoric() const override final;
-      //! destructor
-      ~StandardPorousStressCriterionBase() override;
-
-     private:
-      //! \brief name of the stress criterion
-      const std::string name;
-      //! \brief material properties
-      std::map<std::string, BehaviourDescription::MaterialProperty> mps;
-    };  // end of StandardPorousStressCriterionBase
-
-  }  // end of namespace bbrick
-
 }  // end of namespace mfront
+
+namespace mfront::bbrick {
+
+  // forward declaration
+  struct OptionDescription;
+
+  /*!
+   * \brief an helper class used to build a stress criterion.
+   * This class is meant to interface criterion described
+   * in the TFEL/Material library.
+   * The criterion is assumed to be coupled with the porosity evolution.
+   */
+  struct MFRONT_VISIBILITY_EXPORT StandardPorousStressCriterionBase
+      : StressCriterionBase {
+    /*!
+     * \brief constructor
+     * \param[in] n: name of the stress criterion
+     */
+    StandardPorousStressCriterionBase(const std::string& n);
+
+    std::string computeElasticPrediction(const std::string&,
+                                         const BehaviourDescription&,
+                                         const StressPotential&) const override;
+    void initialize(BehaviourDescription&,
+                    AbstractBehaviourDSL&,
+                    const std::string&,
+                    const DataMap&,
+                    const Role) override;
+    void endTreatment(BehaviourDescription&,
+                      const AbstractBehaviourDSL&,
+                      const std::string&,
+                      const Role) override;
+    std::string computeCriterion(const std::string&,
+                                 const BehaviourDescription&,
+                                 const StressPotential&) const override;
+    std::string computeNormal(const std::string&,
+                              const BehaviourDescription&,
+                              const StressPotential&,
+                              const Role) const override;
+    std::string computeNormalDerivative(const std::string&,
+                                        const BehaviourDescription&,
+                                        const StressPotential&,
+                                        const Role) const override;
+    bool isCoupledWithPorosityEvolution() const override final;
+    bool isNormalDeviatoric() const override final;
+    //! destructor
+    ~StandardPorousStressCriterionBase() override;
+
+   private:
+    //! \brief name of the stress criterion
+    const std::string name;
+    //! \brief material properties
+    std::map<std::string, BehaviourDescription::MaterialProperty> mps;
+  };  // end of StandardPorousStressCriterionBase
+
+}  // end of namespace mfront::bbrick
 
 #endif /* LIB_MFRONT_BEHAVIOURBRICK_STANDARDPOROUSSTRESSCRITERIONBASE_HXX */

@@ -154,6 +154,7 @@ namespace mfront {
     writeBuildIdentifierSymbol(out, name, mpd);
     writeEntryPointSymbol(out, name);
     writeTFELVersionSymbol(out, name);
+    writeUnitSystemSymbol(out, name, mpd);
     writeInterfaceSymbol(out, name, "Octave");
     writeLawSymbol(out, name, mpd.material);
     writeMaterialSymbol(out, name, mpd.material);

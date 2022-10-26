@@ -1,6 +1,18 @@
-% The TFEL/Math library
-% Thomas Helfer
-% 22/12/2017
+---
+title: Overview of the mathematical libraries shipped with TFEL
+author: Thomas Helfer
+date: 29/07/2022
+lang: en-EN
+link-citations: true
+colorlinks: true
+geometry:
+  - margin=2cm
+papersize: a4
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\absvalue}[1]{{\left|#1\right|}}
 \newcommand{\Frac}[2]{\displaystyle\frac{\displaystyle #1}{\displaystyle #2}}
@@ -19,6 +31,11 @@ The `TFEL/Math` library defines:
 
 - mathematical objects, such as second and fourth order tensors. See
   [this page](tensors.html) for details.
+- functions related to data interpolations. See [this
+  page](tfel-math-data-interpolation.html) for details
+
+The design of the `TFEL/Math` library is described in depth on [this
+page](tfel-math.html).
 
 # The `TFELMathCubicSpline` library
 

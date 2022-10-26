@@ -28,8 +28,8 @@ namespace mfront {
      * \param[in] l : library
      * \param[in] b : behaviour
      */
-    GenericBehaviourFiniteStrainMTestFileGenerator(const std::string&,
-                                                   const std::string&);
+    GenericBehaviourFiniteStrainMTestFileGenerator(const char* const,
+                                                   const char* const);
     /*!
      * set the deformation gradient at the beginning of the time step
      * \param[in] F : deformation gradient
@@ -64,13 +64,13 @@ namespace mfront {
      */
     void writeGradients(std::ostream&) const override;
     //! library name
-    std::string library;
+    const char* const library;
     //! behaviour name
-    std::string behaviour;
+    const char* const behaviour;
     //! deformation gradient at the beginning of the time step
-    double F0[36];
+    double F0[9];
     //! deformation gradient at the end of the time step
-    double F1[36];
+    double F1[9];
     //! stress increment
     double stress[6];
   };  // end of struct GenericBehaviourFiniteStrainMTestFileGenerator

@@ -61,26 +61,27 @@ namespace mtest {
 
   void SingleStructureSchemeParser::handleHandleThermalExpansion(
       SingleStructureScheme& t, tokens_iterator& p) {
-    bool b;
     this->checkNotEndOfLine(
         "SingleStructureSchemeParser::handleHandleThermalExpansion", p,
         this->tokens.end());
-    if (p->value == "true") {
-      b = true;
-    } else if (p->value == "false") {
-      b = false;
-    } else {
+    const auto b = [&p] {
+      if (p->value == "true") {
+        return true;
+      }
+      if (p->value == "false") {
+        return false;
+      }
       tfel::raise(
           "SingleStructureSchemeParser::handleHandleThermalExpansion : "
           "unexpected token '" +
           p->value + "'");
-    }
+    }();
     ++p;
     this->readSpecifiedToken(
         "SingleStructureSchemeParser::handleHandleThermalExpansion", ";", p,
         this->tokens.end());
     t.setHandleThermalExpansion(b);
-  }
+  } // end of handleHandleThermalExpansion
 
   void SingleStructureSchemeParser::handleBehaviour(SingleStructureScheme& t,
                                                     tokens_iterator& p) {
@@ -468,6 +469,9 @@ namespace mtest {
         &SingleStructureSchemeParser::handleMaterialProperty);
     this->registerCallBack(
         "@InternalStateVariable",
+        &SingleStructureSchemeParser::handleInternalStateVariable);
+    this->registerCallBack(
+        "@StateVariable",
         &SingleStructureSchemeParser::handleInternalStateVariable);
     this->registerCallBack(
         "@ExternalStateVariable",

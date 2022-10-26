@@ -335,6 +335,63 @@ divergence of the Newton method. To avoid this, one may specify a
 relative threshold denoted \(K_{sf}\): if the stress estimate is greater
 than \(K_{sf}\,K\), the step is rejected.
 
+### The `UserDefinedViscoplasticity` inelastic flow
+
+The `UserDefinedViscoplasticity` inelastic flow allows the user to
+specify the viscoplastic strain rate `vp` as a function of `f` and `p`
+where:
+
+- `f` is the positive part of the
+  \(\phi\paren{\tsigma-\sum_{i}\tenseur{X}_{i}}-\sum_{i}R_{i}\paren{p}\)
+  where \(\phi\) is the stress criterion.
+- `p` is the equivalent viscoplastic strain.
+
+This function shall be given by a string option named `vp`. This
+function must depend on `f`. Dependance to `p` is optional.
+
+The function may also depend on other variables. Let `A` be such a
+variable. The `UserDefinedViscoplasticity` flow will look if an option
+named `A` has been given to the flow:
+
+
+- If this option exists, it will be interpreted as a material
+  coefficient as usal and this option can be a number, a formula or the
+  name of an external `MFront` file.
+- If this option does not exist, a suitable variable will be search in
+  the variables defined in the behaviour (static variables, parameters,
+  material properties, etc...).
+
+If required, the derivatives of `vp` with respect to `f` and `p` can be
+provided through the options `dvp_df` and `dvp_dp`. The derivatives
+`dvp_df` and `dvp_dp` can depend on two additional variables, `vp` and
+`seps`, which denotes the viscoplastic strain rate and a stress
+threshold.
+
+If those derivatives are not provided, automatic differentiation will be
+used. The user shall be warned that the automatic differentiation
+provided by the `tfel::math::Evaluator` class may result in inefficient
+code.
+
+#### Example of usage {.unnumbered}
+
+~~~~{.cxx}
+@Parameter temperature Ta = 600;
+@Parameter strain p0 = 1e-8;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "UserDefinedViscoplasticity" {
+    criterion : "Mises",
+    E : 8.2,
+    A : "8e-67 * exp(- T / Ta)",
+    m : 0.32,
+    vp : "A * (f ** E) / ((p + p0) ** m)",
+    dvp_df : "E * vp / (max(f, seps))"
+    // dvp_dp is evaluated by automatic differentiation (which is not recommended)
+  }
+};
+~~~~
+
 ## Newton steps rejections based on the change of the flow direction between two successive estimates {#sec:cosine_checks}
 
 Some stress criteria (Hosford 1972, Barlat 2004, Mohr-Coulomb) shows
@@ -915,6 +972,83 @@ The following code can be added in a block defining an inelastic flow:
     isotropic_hardening : "Voce" {R0 : 200, Rinf : 100, b : 20}
 ~~~~
 
+### User defined isotropic hardening rule
+
+The `UserDefined` isotropic hardening rule allows the user to specify
+the radius of the yield surface as a function of the equivalent plastic
+strain `p`.
+
+This function shall be given by a string option named `R` and must
+depend on `p`. The function may also depend on other variables. Let `A`
+be such a variable. The `UserDefined` isotropic hardening rule will look
+if an option named `A` has been given:
+
+- If this option exists, it will be interpreted as a material
+  coefficient as usal and this option can be a number, a formula or the
+  name of an external `MFront` file.
+- If this option does not exist, a suitable variable will be search in
+  the variables defined in the behaviour (static variables, parameters,
+  material properties, etc...).
+
+If required, the derivative of `R` with respect to `p` can be provided
+through the option `dR_dp`. The derivative `dR_dp` can depend on the
+variable `R`.
+
+If this derivative is not provided, automatic differentiation will be
+used. The user shall be warned that the automatic differentiation
+provided by the `tfel::math::Evaluator` class may result in inefficient
+code.
+
+#### Example of usage {.unnumbered}
+
+~~~~{.cxx}
+@Parameter stress R0 = 200e6;
+@Parameter stress Hy = 40e6;
+@Parameter real b = 100;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "UserDefined" {
+      R : "R0 + Hy * (1 - exp(-b * p))",     // Yield radius
+      dR_dp : "b * (R0 + Hy - R)"
+    }
+  }
+};
+~~~~
+
+### Isotropic harderning rule based defined by points
+
+The `Data` isotropic hardening rule allows the user to define an
+isotropic hardening rule using a curve defined by a set of pairs of
+equivalent strain and equivalent stress.
+
+This isotropic hardening rule can be parametrised using three entries:
+
+- `values`: which must a dictionnary giving the value of the yield
+  surface radius as a function of the equivalent plastic strain.
+- `interpolation`: which allows to select the interpolation type.
+  Possible values are `linear` (default choice) and `cubic_spline`.
+- `extrapolation`: which allows to select the extrapolation type.
+  Possible values are `bound_to_last_value` (or `constant`) and
+  `extrapolation` (default choice).
+
+#### Example of usage
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Data" {
+      values : {0 : 150e6, 1e-3 : 200e6, 2e-3 : 400e6},
+      interpolation : "linear"
+    }
+  }
+};
+~~~~
+
 ## List of available kinematic hardening rules
 
 ### The `Prager` kinematic hardening rule
@@ -1015,6 +1149,42 @@ The following code can be added in a block defining an inelastic flow:
       m : 2,
       w : 0.6,
     }
+~~~~
+
+### Delobelle-Robinet-Schaffler (DRS) kinematic hardening rule
+
+The Delobelle-Robinet-Schaffler (DRS) kinematic hardening rule has been
+introduced to describe orthotropic viscoplasticity of Zircaloy alloys
+[@delobelle_model_1996;@schaffler_thermomechanical_1999]. It describes
+both dynamic and static recovery by the following evolution law:
+\[
+\tenseur{\dot{a}}=
+\dot{p}\,\tenseurq{E}_{c}\,\colon\,\tenseur{n}
+-D\,\dot{p}\,\tenseurq{R}_{d}\,\colon\,\tenseur{a}
+-f\,\paren{\Frac{a_{\mathrm{eq}}}{a_{0}}}^{m}\,\deriv{a_{\mathrm{eq}}}{\tenseur{a}}
+\]
+with \(a_{\mathrm{eq}}=\sqrt{\tenseur{a}\,\colon\,\tenseurq{R}_{s}\,\colon\,\tenseur{a}}\) and 
+\(\deriv{a_{\mathrm{eq}}}{\tenseur{a}}=\Frac{\tenseurq{R}_{s}\,\colon\,\tenseur{a}}{a_{\mathrm{eq}}}\)
+
+The three fourth order tensors \(\tenseurq{E}_{c}\),
+\(\tenseurq{R}_{d}\) and \(\tenseurq{R}_{s}\) are assumed to have the
+same structure as the Hill tensors and are defined by \(6\) components
+(see [this page](tensors.html) for details).
+
+The `f` and `a0` parameters are optional and defaults to \(1\).
+
+#### Example
+
+~~~~{.cxx}
+    kinematic_hardening : "DRS" {
+      C : 150.e9,  // kinematic moduli
+      D : 1e2,    // back-strain callback coefficient
+      f : 10,
+      m : 5,
+      Ec : {0.33, 0.33, 0.33, 1, 1, 1},
+      Rs : {0.33, 0.63, 0.33, 1, 1, 1},
+      Rd : {0.33, 0.33, 0.33, 1, 1, 1}  //
+    },
 ~~~~
 
 # References

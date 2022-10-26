@@ -18,6 +18,7 @@
 namespace castem {
 
   enum CastemBehaviourType {
+    MODEL,
     STANDARDSTRAINBASEDBEHAVIOUR,
     STANDARDFINITESTRAINBEHAVIOUR,
     COHESIVEZONEMODEL

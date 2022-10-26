@@ -23,6 +23,7 @@
 #endif /* MFRONT_HAVE_MADNEX */
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Math/IntegerEvaluator.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Utilities/Data.hxx"
@@ -69,19 +70,24 @@ namespace mfront {
 
   const char* const DSLBase::buildIdentifierOption = "build_identifier";
 
-  bool isValidMaterialName(const std::string& n) {
+  bool isValidMaterialName(std::string_view n) {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
 
-  bool isValidLibraryName(const std::string& n) {
+  bool isValidLibraryName(std::string_view n) {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
   }
+
+  bool isValidUserDefinedVariableName(std::string_view n) {
+    return (tfel::utilities::CxxTokenizer::isValidIdentifier(n, true)) &&
+           (!tfel::utilities::starts_with(n, "mfront_"));
+  } // end of isValidUserDefinedVariableName
 
   tfel::utilities::DataMapValidator DSLBase::getDSLOptionsValidator() {
     auto v = tfel::utilities::DataMapValidator{};
     v.addDataTypeValidator<std::string>(DSLBase::defaultOutOfBoundsPolicyOption)
         .addDataTypeValidator<bool>(
-            DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption)
+           DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption)
         .addDataTypeValidator<bool>(DSLBase::parametersAsStaticVariablesOption)
         .addDataTypeValidator<bool>(DSLBase::initializationFromFileOption)
         .addDataTypeValidator<std::string>(DSLBase::buildIdentifierOption)
@@ -180,6 +186,7 @@ namespace mfront {
   }  // end of getDSLOptions
 
   std::vector<std::string> DSLBase::getDefaultReservedNames() {
+    const auto& g = tfel::glossary::Glossary::getGlossary();
     auto names = std::vector<std::string>{};
     // names of the c++ standard
     names.insert(
@@ -199,28 +206,11 @@ namespace mfront {
                  {"policy", "errno", "mfront_errno", "mfront_errno_old"});
     // standard aliases
     for (const auto& a : getTypeAliases()) {
-      names.push_back(a);
-    }
-    return names;
-  }
-
-  std::string DSLBase::getTemporaryVariableName(
-      std::vector<std::string>& tmpnames, const std::string& p) const {
-    if (!this->isValidIdentifier(p)) {
-      this->throwRuntimeError("DSLBase::getTemporaryVariableName",
-                              "invalid variable prefix '" + p + "'");
-    }
-    for (size_type i = 0; i != std::numeric_limits<size_type>::max(); ++i) {
-      const auto c = p + std::to_string(i);
-      if (!this->isNameReserved(c)) {
-        if (std::find(tmpnames.begin(), tmpnames.end(), c) == tmpnames.end()) {
-          tmpnames.push_back(c);
-          return c;
-        }
+      if (!g.contains(a)) {
+        names.push_back(a);
       }
     }
-    this->throwRuntimeError("DSLBase::getTemporaryVariableName",
-                            "unable to find a temporary variable");
+    return names;
   }
 
   void DSLBase::openFile(const std::string& f,
@@ -585,16 +575,24 @@ namespace mfront {
   }  // end of readSpecifiedToken
 
   std::string DSLBase::readUntilEndOfInstruction() {
+    using tfel::utilities::Token;
     auto res = std::string{};
     while ((this->current != this->tokens.end()) &&
            (this->current->value != ";")) {
-      if (!this->current->value.empty()) {
-        if (this->current->value[0] == '@') {
+      const auto value = [this] {
+        if (this->current->flag == Token::String) {
+          const auto s = this->current->value.size() - 2;
+          return this->current->value.substr(1, s);
+        }
+        return this->current->value;
+      }();
+      if (!value.empty()) {
+        if (value[0] == '@') {
           this->throwRuntimeError(
               "DSLBase::readUntilEndOfInstruction",
               "no word beginning with '@' are allowed here");
         }
-        res += this->current->value;
+        res += value;
         res += " ";
       }
       ++(this->current);
@@ -697,7 +695,7 @@ namespace mfront {
     while ((this->current != this->tokens.end()) && (!endOfTreatment)) {
       const auto sname = this->current->value;
       const auto vname = tfel::unicode::getMangledString(sname);
-      throw_if(!this->isValidIdentifier(vname),
+      throw_if(!isValidUserDefinedVariableName(vname),
                "variable given is not valid (read '" + sname + "').");
       auto lineNumber = this->current->line;
       ++(this->current);
@@ -1183,7 +1181,7 @@ namespace mfront {
   void DSLBase::setDescription(const std::string& d) {
     if (!this->fd.description.empty()) {
       this->throwRuntimeError("DSLBase::setDescription",
-                              "date already specified");
+                              "description already specified");
     }
     this->fd.description = d;
   }  // end of setDescription
@@ -1244,7 +1242,7 @@ namespace mfront {
                             "Cannot read variable name.");
     const auto sname = this->current->value;
     const auto vname = tfel::unicode::getMangledString(sname);
-    if (!this->isValidIdentifier(vname)) {
+    if (!isValidUserDefinedVariableName(vname)) {
       this->throwRuntimeError("DSLBase::treatStaticVar",
                               "Variable name '" + sname + "' is not valid.");
     }
