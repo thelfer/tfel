@@ -1177,6 +1177,16 @@ and
 
  are now equivalent.
 
+### Pedantic check
+
+The `--pedantic` option of `MFront` now allows to check several criteria to ensure a good quality assurance of the `.mfront` file.
+
+### Example of usage
+
+~~~~{.bash}
+$ mfront --pedantic MFrontFileName.mfront
+~~~~
+
 # `MTest` improvements
 
 ## Support for `madnex` file {#sec:tfel:4.1:mtest:madnex_support}
