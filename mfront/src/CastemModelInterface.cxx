@@ -194,7 +194,7 @@ namespace mfront {
       auto temperature_found = false;
       const auto pv = std::find_if(
           variables.begin(), variables.end(),
-          [&n, &raise, &temperature_found, &skip_temperature](const auto& v) {
+          [&n, &raise, &temperature_found](const auto& v) {
             if (v.getTypeFlag() != SupportedTypes::SCALAR) {
               raise("unsupported type for variable '" + v.name + "'");
             }
