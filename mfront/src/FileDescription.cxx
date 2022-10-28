@@ -11,6 +11,8 @@
  * project under specific licensing conditions.
  */
 
+#include <ostream>
+#include "MFront/MFrontLogStream.hxx"
 #include "MFront/FileDescription.hxx"
 
 namespace mfront {
@@ -21,5 +23,19 @@ namespace mfront {
   FileDescription& FileDescription::operator=(FileDescription&&) = default;
   FileDescription& FileDescription::operator=(const FileDescription&) = default;
   FileDescription::~FileDescription() = default;
+
+  void performPedanticChecks(const FileDescription& fd) {
+    auto& log = getLogStream();
+    const auto fn = fd.fileName;
+    if (fd.authorName.empty()) {
+      log << "- no authorname defined. Use @Author.\n";
+    } 
+    if (fd.date.empty()) {
+      log << "- no date defined. Use @Date.\n";
+    } 
+    if (fd.description.empty()) {
+      log << "- no description. Use @Description.\n";
+    }
+  }
 
 }  // end of namespace mfront

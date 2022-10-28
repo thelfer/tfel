@@ -49,6 +49,13 @@ namespace mfront {
   //! typedef provided for backward compatibility
   using GenericData = FileDescription;
 
+
+  /*!
+   * \brief various checks on file description
+   * \param[in] fd: file description
+   */
+  MFRONT_VISIBILITY_EXPORT void performPedanticChecks(const FileDescription&);
+
 }  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MFRONTFILEDESCRIPTION_HXX */

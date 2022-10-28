@@ -1398,7 +1398,7 @@ namespace mfront {
       }
       if (b3) {
         if ((!md.hasGlossaryName(vd.name)) && (!md.hasEntryName(vd.name))) {
-          log << "- " << t << " '" << vd.name << "' has no glossary name.\n";
+          log << "- " << t << " '" << vd.name << "' has no external name.\n";
         }
       }
       if (vd.description.empty()) {
@@ -1435,7 +1435,8 @@ namespace mfront {
   void BehaviourDSLCommon::doPedanticChecks() const {
     const auto& hs = this->mb.getDistinctModellingHypotheses();
     auto& log = getLogStream();
-    log << "\n* Pedantic checks\n";
+    log << "\n* Pedantic checks of "<< this->fd.fileName << "\n\n";
+    performPedanticChecks(this->fd);
     for (auto h : hs) {
       const auto& md = this->mb.getBehaviourData(h);
       // checks if variables are used

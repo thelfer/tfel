@@ -1459,6 +1459,16 @@ and
 
  are now equivalent.
 
+### Pedantic check
+
+The `--pedantic` option of `MFront` now allows to check several criteria to ensure a good quality assurance of the `.mfront` file.
+
+### Example of usage
+
+~~~~{.bash}
+$ mfront --pedantic MFrontFileName.mfront
+~~~~
+
 ## Generation of climb tensors {#sec:mfront:model:issue_317}
 
 For a given slip system of normal \(\vec{n}\), the climb tensor is
