@@ -24,7 +24,7 @@ namespace tfel {
 
   template <typename Exception, typename... Args>
   [[noreturn]] void raise(Args&&... a) {
-    Exception e(std::forward<Args...>(a...));
+    Exception e(std::forward<Args>(a)...);
     throw(std::move(e));
   }  // end of raise
 
@@ -38,7 +38,7 @@ namespace tfel {
   template <typename Exception, typename... Args>
   void raise_if(const bool c, Args&&... a) {
     if (c) {
-      raise<Exception>(std::forward<Args...>(a...));
+      raise<Exception>(std::forward<Args>(a)...);
     }
   }  // end of raise
 
