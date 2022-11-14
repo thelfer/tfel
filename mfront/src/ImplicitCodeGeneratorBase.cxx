@@ -1183,12 +1183,12 @@ namespace mfront {
        << "/*!\n"
        << " * \\brief update the jacobian matrix if required.\n"
        << " * \\param[in] converged: boolean stating if the method is\n"
-       << " * called after the convergence of the algorithm or before "
+       << " * called after the convergence of the algorithm or before\n"
        << " * the computation of the next correction.\n"
        << " *\n"
-       << " * This method can be used to compute the jacobian or part "
+       << " * This method can be used to compute the jacobian or part\n"
        << " * of the jacobian numerically. If the jacobian was computed\n"
-       << " * in `computeResidual`, this method can be used to compare it "
+       << " * in `computeResidual`, this method can be used to compare it\n"
        << " * to a numerical approximation.\n"
        << " */\n"
        << "void updateOrCheckJacobian(){\n";
@@ -1206,8 +1206,8 @@ namespace mfront {
     }
     os << "}\n"
        << "/*!\n"
-       << " * \\brief method meant to set bounds on some components "
-       << " * of the current Newton correction or to implement a line "
+       << " * \\brief method meant to set bounds on some components\n"
+       << " * of the current Newton correction or to implement a line\n"
        << " * search.\n"
        << " */\n"
        << "void processNewCorrection()\n"
@@ -1233,12 +1233,12 @@ namespace mfront {
         os << "static_cast<void>(delta_d" << v.name << ");\n";
       }
     }
-    os << "}\n"
-       << "/*!\n"
-       << " * \\brief method called when the current Newton is rejected\n"
-       << " */\n";
+    os << "}\n";
     if (this->bd.hasCode(h, BehaviourData::RejectCurrentCorrection)) {
-      os << "void rejectCurrentCorrection()\n"
+      os << "/*!\n"
+         << " * \\brief method called when the current Newton is rejected\n"
+         << " */\n"
+         << "void rejectCurrentCorrection()\n"
          << "{\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n"
@@ -1261,8 +1261,9 @@ namespace mfront {
     os << "/*!\n"
        << " * \\brief method meant to process the new estimate.\n"
        << " *\n"
-       << " * This method may be called to apply bounds on the "
-       << " * new estimate.\n"
+       << " * This method may be called to apply bounds on the\n"
+       << " * new estimate and update material properties\n"
+       << " * dependending on the current state.\n"
        << " */\n"
        << "void processNewEstimate(){\n";
     if (this->bd.hasCode(h, BehaviourData::ProcessNewEstimate)) {
