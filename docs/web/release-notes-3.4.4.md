@@ -20,6 +20,14 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 3.4.4 of the
 `TFEL` project.
 
+Version 3.4.4 has been released on October, 24th 2022. It inherits from
+all the issues fixes in:
+
+- [Version 3.0.11](release-notes-3.0.11.html).
+- [Version 3.1.11](release-notes-3.1.11.html).
+- [Version 3.2.8](release-notes-3.2.8.html).
+- [Version 3.3.4](release-notes-3.3.4.html).
+
 # Known incompatilities
 
 ## Known incompatilities in `MFront`

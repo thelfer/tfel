@@ -424,7 +424,7 @@ namespace mfront {
   void ModelDSLCommon::readFunction(const std::string& fn) {
     auto throw_if = [this](const bool b, const std::string& m) {
       if (b) {
-        this->throwRuntimeError("ModelDSLCommon::treatFunction", m);
+        this->throwRuntimeError("ModelDSLCommon::rreatFunction", m);
       }
     };
     auto isStaticMemberName = [](const ModelDescription& d,
@@ -471,7 +471,7 @@ namespace mfront {
     auto currentLine = this->current->line;
     auto newInstruction = true;
     auto newLine = true;
-    if (getDebugMode()) {
+    if (!getDebugMode()) {
       f.body += "#line " + std::to_string(currentLine) + " \"" +
                 this->fd.fileName + "\"\n";
     }
@@ -480,7 +480,7 @@ namespace mfront {
       if (this->current->line != currentLine) {
         currentLine = this->current->line;
         f.body += "\n";
-        if (getDebugMode()) {
+        if (!getDebugMode()) {
           f.body += "#line " + std::to_string(currentLine) + " \"" +
                     this->fd.fileName + "\"\n";
         }

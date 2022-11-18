@@ -17,6 +17,8 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+Version 3.0.11 has been released on October, 24th 2022.
+
 # Issues fixed
 
 ## Issue #326: Support for Intel's compiler `icx`

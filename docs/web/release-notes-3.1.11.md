@@ -17,6 +17,10 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+Version 3.1.11 has been released on October, 24th 2022. It inherits from
+all the issues fixes in [Version 3.0.11](release-notes-3.0.11.html).
+
+
 # Issues fixed
 
 ## Issue #306: [mfront] Profiling is broken in the `cyrano` interface 

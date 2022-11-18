@@ -46,8 +46,7 @@ namespace mfront {
     for (p = b; p != e; ++p) {
       mlif.registerInterfaceDependency(Interface::getName(), *p);
     }
-  }  // end of
-     // MaterialPropertyInterfaceProxy<Interface>::MaterialPropertyInterfaceProxy
+  }  // end of MaterialPropertyInterfaceProxy
 
   template <typename Interface>
   template <typename InputIterator>
@@ -60,8 +59,7 @@ namespace mfront {
     for (p = b; p != e; ++p) {
       mlif.registerInterfaceAlias(Interface::getName(), *p);
     }
-  }  // end of
-     // MaterialPropertyInterfaceProxy<Interface>::MaterialPropertyInterfaceProxy
+  }  // end of MaterialPropertyInterfaceProxy
 
   template <typename Interface>
   MaterialPropertyInterfaceProxy<Interface>::MaterialPropertyInterfaceProxy(
@@ -71,8 +69,7 @@ namespace mfront {
     mlif.registerInterfaceCreator(Interface::getName(), &createInterface);
     mlif.registerInterfaceAlias(Interface::getName(), name);
     mlif.registerInterfaceDependency(Interface::getName(), dep);
-  }  // end of
-     // MaterialPropertyInterfaceProxy<Interface>::MaterialPropertyInterfaceProxy
+  }  // end of MaterialPropertyInterfaceProxy
 
   template <typename Interface>
   template <typename InputIterator>
@@ -86,8 +83,7 @@ namespace mfront {
       mlif.registerInterfaceAlias(Interface::getName(), *p);
     }
     mlif.registerInterfaceDependency(Interface::getName(), dep);
-  }  // end of
-     // MaterialPropertyInterfaceProxy<Interface>::MaterialPropertyInterfaceProxy
+  }  // end of MaterialPropertyInterfaceProxy
 
   template <typename Interface>
   template <typename InputIterator, typename InputIterator2>
@@ -107,8 +103,7 @@ namespace mfront {
     for (p2 = b2; p2 != e2; ++p2) {
       mlif.registerInterfaceDependency(Interface::getName(), *p2);
     }
-  }  // end of
-     // MaterialPropertyInterfaceProxy<Interface>::MaterialPropertyInterfaceProxy
+  }  // end of MaterialPropertyInterfaceProxy
 
   template <typename Interface>
   std::shared_ptr<AbstractMaterialPropertyInterface>

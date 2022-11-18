@@ -25,13 +25,21 @@
 namespace mfront {
 
   struct MFRONT_VISIBILITY_EXPORT ModelInterfaceFactory {
-    typedef std::shared_ptr<AbstractModelInterface> (*InterfaceCreator)();
+    typedef std::shared_ptr<AbstractModelInterface> (
+        *InterfaceCreator)();
 
-    static ModelInterfaceFactory& getModelInterfaceFactory();
+    static ModelInterfaceFactory&
+    getModelInterfaceFactory();
 
     std::vector<std::string> getRegistredInterfaces() const;
 
     void registerInterfaceCreator(const std::string&, InterfaceCreator);
+
+    void registerInterfaceAlias(const std::string&, const std::string&);
+
+    void registerInterfaceDependency(const std::string&, const std::string&);
+
+    std::vector<std::string> getInterfaceDependencies(const std::string&) const;
     /*!
      * \return true if the given interface exists
      * \param[in] n : interface name
@@ -47,13 +55,31 @@ namespace mfront {
     ~ModelInterfaceFactory();
 
    private:
+    typedef std::map<std::string, std::string> AliasContainer;
     typedef std::map<std::string, InterfaceCreator> InterfaceCreatorsContainer;
+    typedef std::map<std::string, std::vector<std::string>>
+        InterfaceDependencyContainer;
 
     TFEL_VISIBILITY_LOCAL
     ModelInterfaceFactory();
 
+    ModelInterfaceFactory(const ModelInterfaceFactory&) =
+        delete;
+    ModelInterfaceFactory(ModelInterfaceFactory&&) =
+        delete;
+    ModelInterfaceFactory& operator=(
+        const ModelInterfaceFactory&) = delete;
+    ModelInterfaceFactory& operator=(
+        ModelInterfaceFactory&&) = delete;
+
+    TFEL_VISIBILITY_LOCAL
+    InterfaceDependencyContainer& getDependenciesMap() const;
+
     TFEL_VISIBILITY_LOCAL
     InterfaceCreatorsContainer& getInterfaceCreatorsMap() const;
+
+    TFEL_VISIBILITY_LOCAL
+    AliasContainer& getAliasesMap() const;
   };
 
 }  // end of namespace mfront

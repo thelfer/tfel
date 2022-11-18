@@ -88,12 +88,12 @@ namespace mfront {
       const ModelDescription& md) const {
     if (md.library.empty()) {
       if (!md.material.empty()) {
-        return md.material + "-umat";
+        return "Castem" + md.material;
       } else {
-        return "Model";
+        return "CastemModel";
       }
     }
-    return md.library + "-umat";
+    return "Castem" + md.library;
   }  // end of getLibraryName
 
   std::string CastemModelInterface::getName() {
@@ -601,9 +601,7 @@ namespace mfront {
     insert_if(l.link_libraries, "$(shell " + tfel_config +
                                     " --library-dependency "
                                     "--material --mfront-profiling)");
-    for (const auto& h : ModellingHypothesis::getModellingHypotheses()) {
-      insert_if(l.epts, name + "_" + ModellingHypothesis::toString(h));
-    }
+    insert_if(l.epts, getUmatFunctionName(md));
   }  // end of getTargetsDescription
 
   CastemModelInterface::~CastemModelInterface() = default;

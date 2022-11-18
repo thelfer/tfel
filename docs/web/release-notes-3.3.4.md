@@ -17,6 +17,14 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+Version 3.3.4 has been released on October, 24th 2022. It inherits from
+all the issues fixes in:
+
+- [Version 3.0.11](release-notes-3.0.11.html).
+- [Version 3.1.11](release-notes-3.1.11.html).
+- [Version 3.2.8](release-notes-3.2.8.html).
+
+
 # Issues fixed
 
 ## Issue 322: [cyrano interface] The output status does not match the specification when a variable is out of its bounds

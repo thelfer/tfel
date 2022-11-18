@@ -19,9 +19,91 @@ namespace mfront {
 
   template <typename Interface>
   ModelInterfaceProxy<Interface>::ModelInterfaceProxy() {
-    auto& mbif = ModelInterfaceFactory::getModelInterfaceFactory();
-    mbif.registerInterfaceCreator(Interface::getName(), &createInterface);
+    typedef ModelInterfaceFactory MLIF;
+    auto& mlif = MLIF::getModelInterfaceFactory();
+    mlif.registerInterfaceCreator(Interface::getName(), &createInterface);
+    mlif.registerInterfaceAlias(Interface::getName(), Interface::getName());
   }
+
+  template <typename Interface>
+  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(
+      const std::string& name) {
+    typedef ModelInterfaceFactory MLIF;
+    auto& mlif = MLIF::getModelInterfaceFactory();
+    mlif.registerInterfaceCreator(Interface::getName(), &createInterface);
+    mlif.registerInterfaceAlias(Interface::getName(), name);
+  }
+
+  template <typename Interface>
+  template <typename InputIterator>
+  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(
+      const std::string& name, const InputIterator b, const InputIterator e) {
+    typedef ModelInterfaceFactory MLIF;
+    auto& mlif = MLIF::getModelInterfaceFactory();
+    InputIterator p;
+    mlif.registerInterfaceCreator(Interface::getName(), &createInterface);
+    mlif.registerInterfaceAlias(Interface::getName(), name);
+    for (p = b; p != e; ++p) {
+      mlif.registerInterfaceDependency(Interface::getName(), *p);
+    }
+  }  // end of ModelInterfaceProxy
+
+  template <typename Interface>
+  template <typename InputIterator>
+  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(
+      const InputIterator b, const InputIterator e) {
+    typedef ModelInterfaceFactory MLIF;
+    auto& mlif = MLIF::getModelInterfaceFactory();
+    InputIterator p;
+    mlif.registerInterfaceCreator(Interface::getName(), &createInterface);
+    for (p = b; p != e; ++p) {
+      mlif.registerInterfaceAlias(Interface::getName(), *p);
+    }
+  }  // end of ModelInterfaceProxy
+
+  template <typename Interface>
+  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(
+      const std::string& name, const std::string& dep) {
+    typedef ModelInterfaceFactory MLIF;
+    auto& mlif = MLIF::getModelInterfaceFactory();
+    mlif.registerInterfaceCreator(Interface::getName(), &createInterface);
+    mlif.registerInterfaceAlias(Interface::getName(), name);
+    mlif.registerInterfaceDependency(Interface::getName(), dep);
+  }  // end of ModelInterfaceProxy
+
+  template <typename Interface>
+  template <typename InputIterator>
+  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(
+      const InputIterator b, const InputIterator e, const std::string& dep) {
+    typedef ModelInterfaceFactory MLIF;
+    auto& mlif = MLIF::getModelInterfaceFactory();
+    InputIterator p;
+    mlif.registerInterfaceCreator(Interface::getName(), &createInterface);
+    for (p = b; p != e; ++p) {
+      mlif.registerInterfaceAlias(Interface::getName(), *p);
+    }
+    mlif.registerInterfaceDependency(Interface::getName(), dep);
+  }  // end of ModelInterfaceProxy
+
+  template <typename Interface>
+  template <typename InputIterator, typename InputIterator2>
+  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(
+      const InputIterator b,
+      const InputIterator e,
+      const InputIterator2 b2,
+      const InputIterator2 e2) {
+    typedef ModelInterfaceFactory MLIF;
+    auto& mlif = MLIF::getModelInterfaceFactory();
+    InputIterator p;
+    InputIterator2 p2;
+    mlif.registerInterfaceCreator(Interface::getName(), &createInterface);
+    for (p = b; p != e; ++p) {
+      mlif.registerInterfaceAlias(Interface::getName(), *p);
+    }
+    for (p2 = b2; p2 != e2; ++p2) {
+      mlif.registerInterfaceDependency(Interface::getName(), *p2);
+    }
+  }  // end of ModelInterfaceProxy
 
   template <typename Interface>
   std::shared_ptr<AbstractModelInterface>

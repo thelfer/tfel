@@ -19,10 +19,18 @@
 
 namespace mfront {
 
-  ModelInterfaceFactory& ModelInterfaceFactory::getModelInterfaceFactory() {
+  ModelInterfaceFactory&
+  ModelInterfaceFactory::getModelInterfaceFactory() {
     static ModelInterfaceFactory f;
     return f;
-  }  // end of ModelInterfaceFactory::getModelInterfaceFactory
+  }  // end of
+     // ModelInterfaceFactory::getModelInterfaceFactory
+
+  ModelInterfaceFactory::InterfaceDependencyContainer&
+  ModelInterfaceFactory::getDependenciesMap() const {
+    static InterfaceDependencyContainer map;
+    return map;
+  }  // end of ModelInterfaceFactory::getDependenciesMap
 
   ModelInterfaceFactory::InterfaceCreatorsContainer&
   ModelInterfaceFactory::getInterfaceCreatorsMap() const {
@@ -30,50 +38,105 @@ namespace mfront {
     return map;
   }  // end of ModelInterfaceFactory::getInterfaceCreatorsMap
 
-  ModelInterfaceFactory::ModelInterfaceFactory() = default;
+  ModelInterfaceFactory::AliasContainer&
+  ModelInterfaceFactory::getAliasesMap() const {
+    static AliasContainer map;
+    return map;
+  }  // end of ModelInterfaceFactory::getAliasesMap
 
-  std::vector<std::string> ModelInterfaceFactory::getRegistredInterfaces()
-      const {
+  ModelInterfaceFactory::ModelInterfaceFactory() =
+      default;
+
+  std::vector<std::string>
+  ModelInterfaceFactory::getRegistredInterfaces() const {
     auto res = std::vector<std::string>{};
-    for (const auto& c : this->getInterfaceCreatorsMap()) {
-      res.push_back(c.first);
+    for (const auto& a : this->getAliasesMap()) {
+      res.push_back(a.first);
     }
     return res;
   }
 
-  bool ModelInterfaceFactory::exists(const std::string& n) const {
-    return this->getInterfaceCreatorsMap().count(n) != 0;
-  }  // end of ModelInterfaceFactory::exists
-
   void ModelInterfaceFactory::registerInterfaceCreator(
-      const std::string& i, const ModelInterfaceFactory::InterfaceCreator f) {
+      const std::string& i,
+      const ModelInterfaceFactory::InterfaceCreator f) {
     auto& imap = this->getInterfaceCreatorsMap();
-    tfel::raise_if(imap.find(i) != imap.end(),
-                   "ModelInterfaceFactory::registerInterfaceCreator: "
-                   "interface creator '" +
-                       i + "' already declared");
-    imap.insert({i, f});
+    tfel::raise_if(
+        imap.find(i) != imap.end(),
+        "ModelInterfaceFactory::registerInterfaceCreator: "
+        "interface creator '" +
+            i + "' already declared");
+    imap.insert(make_pair(i, f));
   }
 
-  std::shared_ptr<AbstractModelInterface> ModelInterfaceFactory::getInterface(
-      const std::string& n) const {
-    auto p = this->getInterfaceCreatorsMap().find(n);
-    if (p == this->getInterfaceCreatorsMap().end()) {
+  void ModelInterfaceFactory::registerInterfaceAlias(
+      const std::string& i, const std::string& a) {
+    auto& amap = this->getAliasesMap();
+    tfel::raise_if(
+        amap.find(a) != amap.end(),
+        "ModelInterfaceFactory::registerInterfaceCreator: "
+        "interface alias '" +
+            a + "' already declared");
+    amap.insert(make_pair(a, i));
+  }
+
+  void ModelInterfaceFactory::registerInterfaceDependency(
+      const std::string& name, const std::string& dep) {
+    this->getDependenciesMap()[name].push_back(dep);
+  }  // end of ModelInterfaceFactory::registerInterfaceDependency
+
+  std::vector<std::string>
+  ModelInterfaceFactory::getInterfaceDependencies(
+      const std::string& name) const {
+    std::vector<std::string> res;
+    std::vector<std::string> tmp;
+    auto p = this->getAliasesMap().find(name);
+    if (p == this->getAliasesMap().end()) {
       auto msg = std::string(
-          "ModelInterfaceFactory::createNewInterface: "
-          "no interface named '");
-      msg += n + "'.\n";
+          "ModelInterfaceFactory::getInterfaceDependencies: ");
+      msg += "no interface named '" + name + "'.\n";
       msg += "Available interface are : \n";
-      for (p = this->getInterfaceCreatorsMap().begin();
-           p != this->getInterfaceCreatorsMap().end(); ++p) {
+      for (p = this->getAliasesMap().begin(); p != this->getAliasesMap().end();
+           ++p) {
         msg += p->first + " ";
       }
       tfel::raise(msg);
     }
+    const auto& deps = this->getDependenciesMap()[p->second];
+    copy(deps.begin(), deps.end(), back_inserter(tmp));
+    for (const auto& d : deps) {
+      const auto& deps2 = this->getInterfaceDependencies(d);
+      std::copy(deps2.begin(), deps2.end(), std::back_inserter(tmp));
+    }
+    std::unique_copy(tmp.begin(), tmp.end(), std::back_inserter(res));
+    return res;
+  }  // end of ModelInterfaceFactory::getInterfaceDependencies
+
+  bool ModelInterfaceFactory::exists(const std::string& n) const {
+    return this->getAliasesMap().count(n) != 0;
+  }  // end of ModelInterfaceFactory::exists
+
+  std::shared_ptr<AbstractModelInterface>
+  ModelInterfaceFactory::getInterface(
+      const std::string& interfaceName) const {
+    auto p2 = this->getAliasesMap().find(interfaceName);
+    if (p2 == this->getAliasesMap().end()) {
+      auto msg =
+          std::string("ModelInterfaceFactory::createNewInterface: ");
+      msg += "no interface named '" + interfaceName + "'.\n";
+      msg += "Available interface are : \n";
+      for (p2 = this->getAliasesMap().begin();
+           p2 != this->getAliasesMap().end(); ++p2) {
+        msg += p2->first + " ";
+      }
+      tfel::raise(msg);
+    }
+    auto p = this->getInterfaceCreatorsMap().find(p2->second);
+    assert(p != this->getInterfaceCreatorsMap().end());
     auto c = p->second;
     return c();
   }
 
-  ModelInterfaceFactory::~ModelInterfaceFactory() = default;
+  ModelInterfaceFactory::~ModelInterfaceFactory() =
+      default;
 
 }  // end of namespace mfront

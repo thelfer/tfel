@@ -148,9 +148,10 @@ namespace mfront {
 #endif /* HAVE_JAVA */
 
 #ifdef HAVE_CASTEM
-    const char* castemINames[3] = {"castem", "Castem", "Cast3M"};
+    const char* castemINames[6] = {"castem",   "Castem",   "Cast3M",
+                                   "castem21", "Castem21", "Cast3M21"};
     MaterialPropertyInterfaceProxy<CastemMaterialPropertyInterface>
-        castemLawProxy(castemINames, castemINames + 3);
+        castemLawProxy(castemINames, castemINames + 6);
     const char* castemBNames[3] = {"umat", "Castem", "Cast3M"};
     BehaviourInterfaceProxy<CastemInterface> umatProxy(castemBNames,
                                                        castemBNames + 3);
@@ -161,7 +162,10 @@ namespace mfront {
     //
     BehaviourInterfaceProxy<AmitexInterface> amitexProxy;
     //
-    ModelInterfaceProxy<CastemModelInterface> cmProxy;
+    const char* castemINames2[6] = {"castem",   "Castem",   "Cast3M",
+                                    "castem21", "Castem21", "Cast3M21"};
+    ModelInterfaceProxy<CastemModelInterface> cmProxy(castemINames2,
+                                                      castemINames2 + 6);
 
 #endif /* HAVE_CASTEM */
 
