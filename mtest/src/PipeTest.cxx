@@ -1770,6 +1770,13 @@ namespace mtest {
     return this->computeMinimumAndMaximumValues(state, e).second;
   }  // end of computeMaximumValue
 
+  real PipeTest::computeMeanValue(const StudyCurrentState& state,
+                                  const std::string& n,
+                                  const Configuration c) const {
+    auto g = buildValueExtractor(*(this->b), n);
+    return this->computeMeanValue(state, g, c);
+  }  // end of computeIntegralValue
+
   real PipeTest::computeIntegralValue(const StudyCurrentState& state,
                                       const std::string& n,
                                       const Configuration c) const {
@@ -1810,9 +1817,10 @@ namespace mtest {
     }
   }  // end of computeIntegralValue
 
-  real PipeTest::computeMeanValue(const StudyCurrentState& state,
-                                  const std::string& n,
-                                  const Configuration c) const {
+  real PipeTest::computeMeanValue(
+      const StudyCurrentState& state,
+      const std::function<real(const mtest::CurrentState&)>& e,
+      const Configuration c) const {
     constexpr real pi = 3.14159265358979323846;
     const auto ri = [this, state, c]() -> real {
       if ((!this->hpp) && (c == Configuration::CURRENT_CONFIGURATION)) {
@@ -1836,7 +1844,7 @@ namespace mtest {
       return 1.;
     }();
     const auto V = pi * h * (re * re - ri * ri);
-    return this->computeIntegralValue(state, n, c) / V;
+    return this->computeIntegralValue(state, e, c) / V;
   }  // end of computeMeanValue
 
   void PipeTest::addProfile(const std::string& f,
