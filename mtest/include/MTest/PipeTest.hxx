@@ -362,6 +362,7 @@ namespace mtest {
      * \brief compute the integral value of a scalar variable
      * \param[in] s: structure state
      * \param[in] n: variable name
+     * \param[in] c: enum element to choose the initial or final configuration
      */
     virtual real computeIntegralValue(
         const StudyCurrentState&,
@@ -387,6 +388,16 @@ namespace mtest {
     virtual real computeMeanValue(
         const StudyCurrentState&,
         const std::string&,
+        const Configuration = Configuration::INTIAL_CONFIGURATION) const;
+    /*!
+     * \brief compute the mean value of a scalar variable
+     * \param[in] s: structure state
+     * \param[in] n: variable name
+     * \param[in] c: enum element to choose the initial or final configuration
+     */
+    virtual real computeMeanValue(
+        const StudyCurrentState&,
+        const std::function<real(const mtest::CurrentState&)>&,
         const Configuration = Configuration::INTIAL_CONFIGURATION) const;
     /*!
      * \brief add a test comparing to results stored in a reference
