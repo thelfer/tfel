@@ -136,7 +136,6 @@ namespace mfront {
       }
     };
     tfel::system::systemCall::mkdir("include/MFront");
-    tfel::system::systemCall::mkdir("src");
     const auto hname = getHeaderFileName(md) + ".hxx";
     std::ofstream header("include/" + hname);
     throw_if(!header, "can't open file 'include/" + hname + "'");

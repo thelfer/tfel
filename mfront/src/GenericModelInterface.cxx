@@ -199,7 +199,6 @@ namespace mfront {
       }
       return pv - variables.begin();
     };  // end of getVariablePosition
-    tfel::system::systemCall::mkdir("src");
     const auto name = md.library + md.className;
     const auto header = name + "-generic.hxx";
     const auto src = name + "-generic.cxx";
@@ -415,9 +414,9 @@ namespace mfront {
            << ">(mfront_model_data.s1.internal_state_variables[" << pos
            << "]) = " << v.name << ";\n";
         static_cast<void>(vdepth);
-          }
-          os << "} // end of execute_" << f.name << "\n\n";
-        }
+      }
+      os << "} // end of execute_" << f.name << "\n\n";
+    }
     os << "private:\n";
     if (!md.members.empty()) {
       os << md.members << "\n\n";

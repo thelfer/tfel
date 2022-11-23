@@ -151,7 +151,6 @@ namespace mfront {
                                                 const ModelDescription& mdata) {
     using namespace std;
     using namespace tfel::system;
-    systemCall::mkdir("src");
     const string file = "src/" + mdata.className + "-" + getName() + ".cxx";
     std::ofstream out(file.c_str());
     if (!out) {

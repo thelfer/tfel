@@ -175,10 +175,8 @@ namespace mfront {
 
   void MFrontModelInterface::openOutputFiles() {
     // creating directories
-    tfel::system::systemCall::mkdir("include");
     tfel::system::systemCall::mkdir("include/Pleiades");
     tfel::system::systemCall::mkdir("include/Pleiades/Model");
-    tfel::system::systemCall::mkdir("src");
     this->headerFile.open(this->headerFileName);
     tfel::raise_if(!this->headerFile,
                    "MFrontModelInterface::openOutputFiles: "

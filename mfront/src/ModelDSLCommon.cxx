@@ -15,10 +15,12 @@
 #include <stdexcept>
 #include <algorithm>
 #include "TFEL/Raise.hxx"
+#include "TFEL/System/System.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
+#include "MFront/PedanticMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontDebugMode.hxx"
@@ -123,9 +125,13 @@ namespace mfront {
       tfel::raise(
           "ModelDSLCommon::endsInputFileProcessing: "
           "model name undefined");
-      }
+    }
     // complete the declaration of physical bounds
     this->md.checkAndCompletePhysicalBoundsDeclaration();
+
+    if (getPedanticMode()) {
+      this->doPedanticChecks();
+    }
   }  // end of endsInputFileProcessing
 
   bool ModelDSLCommon::useQt() const {
@@ -264,9 +270,10 @@ namespace mfront {
   }  // end of setInterfaces
 
   void ModelDSLCommon::generateOutputFiles() {
-    if (this->interfaces.empty()) {
-      this->throwRuntimeError("ModelDSLCommon::generateOutputFiles",
-                              "no interface defined");
+    // creating directories
+    if (!this->interfaces.empty()) {
+      tfel::system::systemCall::mkdir("include");
+      tfel::system::systemCall::mkdir("src");
     }
     //! generating sources du to external material properties and models
     for (const auto& em : this->md.getExternalMFrontFiles()) {
@@ -419,7 +426,7 @@ namespace mfront {
 
   void ModelDSLCommon::treatIntegrator() {
     this->readFunction("DefaultFunction");
-  } // end of treatIntegrator
+  }  // end of treatIntegrator
 
   void ModelDSLCommon::readFunction(const std::string& fn) {
     auto throw_if = [this](const bool b, const std::string& m) {
@@ -1078,6 +1085,100 @@ namespace mfront {
   ModelDSLCommon::getMaterialKnowledgeDescription() const {
     return this->md;
   }  // end of getMaterialKnowledgeDescription
+
+  /*!
+   * \brief various checks on variables
+   * \param[in] v  : variables
+   */
+  static void performPedanticChecks(const VariableDescriptionContainer& vc,
+                                    const std::map<std::string, std::size_t>& f,
+                                    const std::string& t) {
+    auto& log = getLogStream();
+    auto& glossary = tfel::glossary::Glossary::getGlossary();
+    for (const auto& v : vc) {
+      if (f.find(v.name) == f.end()) {
+        log << "- " << t << " '" << v.name << "' is unused.\n";
+      } else {
+        if (v.hasAttribute(VariableDescription::depth)) {
+          const auto d =
+              v.getAttribute<unsigned short>(VariableDescription::depth);
+          if (d > 0) {
+            for (int i = 1; i <= d; i = i + 1) {
+              std::string dv = v.name + '_' + std::to_string(i);
+              if (f.find(dv) == f.end()) {
+                log << "- " << t << " '" << dv << "' is unused.\n";
+              }
+            }
+          }
+        }
+        if ((!v.hasGlossaryName()) && (!v.hasEntryName())) {
+          log << "- " << t << " '" << v.name << "' has no external name.\n";
+        }
+        if (!v.hasPhysicalBounds()) {
+          log << "- " << t << " '" << v.name << "' has no physical bounds.\n";
+        }
+        if (!v.hasBounds()) {
+          log << "- " << t << " '" << v.name << "' has no bounds.\n";
+        }
+        if (v.description.empty()) {
+          auto hasDoc = false;
+          if (v.hasGlossaryName()) {
+            const auto& e = glossary.getGlossaryEntry(v.getExternalName());
+            hasDoc = (!e.getShortDescription().empty()) ||
+                     (!e.getDescription().empty());
+          }
+          if (!hasDoc) {
+            log << "- " << t << " '" << v.name << "' has no description.\n";
+          }
+        }
+      }
+    }
+  }  // end of performPedanticChecks
+
+  void ModelDSLCommon::doPedanticChecks() const {
+    auto& log = getLogStream();
+    log << "\n* Pedantic checks of " << this->fd.fileName << "\n\n";
+    performPedanticChecks(this->fd);
+
+    if (this->md.functions.size() > 1) {
+      log << "- multiple @Function instances can be collected into a single "
+             "one \n";
+    }
+
+    // getting all used variables
+    // variable names and counts
+    auto members = std::map<std::string, std::size_t>{};
+    // static variable names and counts
+    auto smembers = std::map<std::string, std::size_t>{};
+    for (const auto& df : this->md.functions) {
+      for (const auto& v : df.parameters) {
+        if (members.count(v) == 0) {
+          members[v] = 1;
+        } else {
+          ++(members[v]);
+        }
+      }
+      for (const auto& v : df.usedVariables) {
+        if (members.count(v) == 0) {
+          members[v] = 1;
+        } else {
+          ++(members[v]);
+        }
+      }
+      for (const auto& v : df.modifiedVariables) {
+        if (members.count(v) == 0) {
+          members[v] = 1;
+        } else {
+          ++(members[v]);
+        }
+      }
+    }
+
+    performPedanticChecks(this->md.outputs, members, "output");
+    performPedanticChecks(this->md.parameters, members, "parameter");
+    performPedanticChecks(this->md.inputs, members, "input");
+    log << "\n# End of pedantic checks\n";
+  }  // end of doPedanticChecks
 
   ModelDSLCommon::~ModelDSLCommon() = default;
 
