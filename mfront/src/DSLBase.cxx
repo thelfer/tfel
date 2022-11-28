@@ -216,7 +216,9 @@ namespace mfront {
   void DSLBase::openFile(const std::string& f,
                          const std::vector<std::string>& ecmds,
                          const std::map<std::string, std::string>& s) {
-    if (tfel::utilities::starts_with(f, "madnex:")) {
+    if ((tfel::utilities::starts_with(f, "madnex:")) ||
+        (tfel::utilities::starts_with(f, "mdnx:")) ||
+        (tfel::utilities::starts_with(f, "edf:"))) {
 #ifdef MFRONT_HAVE_MADNEX
       const auto path = decomposeImplementationPathInMadnexFile(f);
       const auto& material = std::get<2>(path);

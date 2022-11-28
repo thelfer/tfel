@@ -269,7 +269,9 @@ namespace mfront {
       const std::string& behaviour_identifier,
       const std::string& model_identifier) {
     auto inputs = std::vector<std::string>{};
-    if (tfel::utilities::starts_with(f, "madnex:")) {
+    if ((tfel::utilities::starts_with(f, "madnex:")) ||
+        (tfel::utilities::starts_with(f, "mdnx:")) ||
+        (tfel::utilities::starts_with(f, "edf:"))) {
 #ifdef MFRONT_HAVE_MADNEX
       // full path specifier
       auto check = [](const std::string& s, const char* const t) {

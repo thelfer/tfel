@@ -265,7 +265,9 @@ namespace mfront {
   void SearchPathsHandler::addSearchPathsFromImplementationPaths(
       const std::vector<std::string>& paths) {
     for (const auto& path : paths) {
-      if (tfel::utilities::starts_with(path, "madnex:")) {
+      if ((tfel::utilities::starts_with(path, "madnex:")) ||
+          (tfel::utilities::starts_with(path, "mdnx:")) ||
+          (tfel::utilities::starts_with(path, "edf:"))) {
 #ifdef MFRONT_HAVE_MADNEX
         const auto f =
             std::get<0>(decomposeImplementationPathInMadnexFile(path));

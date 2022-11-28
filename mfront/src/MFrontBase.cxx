@@ -53,7 +53,9 @@ namespace mfront {
     std::string library, dslName;
     tfel::utilities::CxxTokenizer file;
     auto dsl_options = tfel::utilities::DataMap{};
-    if (tfel::utilities::starts_with(f, "madnex:")) {
+    if ((tfel::utilities::starts_with(f, "madnex:")) ||
+        (tfel::utilities::starts_with(f, "mdnx:")) ||
+        (tfel::utilities::starts_with(f, "edf:"))) {
 #ifdef MFRONT_HAVE_MADNEX
       const auto path = decomposeImplementationPathInMadnexFile(f);
       const auto impl =

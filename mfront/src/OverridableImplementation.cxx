@@ -90,7 +90,9 @@ namespace mfront {
 
 #ifdef MFRONT_HAVE_MADNEX
   static std::string getSourceFileContent(const std::string& f) {
-    if (tfel::utilities::starts_with(f, "madnex:")) {
+    if ((tfel::utilities::starts_with(f, "madnex:")) ||
+        (tfel::utilities::starts_with(f, "mdnx:")) ||
+        (tfel::utilities::starts_with(f, "edf:"))) {
       const auto path = decomposeImplementationPathInMadnexFile(f);
       const auto& material = std::get<2>(path);
       const auto& name = std::get<3>(path);
