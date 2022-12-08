@@ -112,6 +112,25 @@ namespace mtest {
     std::copy(Kv.begin(), Kv.end(), K);
   }  // end of convertFromDPK1DF
 
+  template <unsigned short N>
+  void convertFromDTAUDDF(real* const K,
+                          const real* const F0,
+                          const real* const F1,
+                          const real* const s) {
+    using FSTOBase = tfel::material::FiniteStrainBehaviourTangentOperatorBase;
+    tfel::math::t2tost2<N, real> dtau_ddF;
+    std::copy(K, K + dtau_ddF.size(), dtau_ddF.begin());
+    const auto dtau_dF =
+        tfel::material::convert<FSTOBase::DTAU_DF, FSTOBase::DTAU_DDF>(
+            dtau_ddF, tfel::math::tensor<N, real>(F0),
+            tfel::math::tensor<N, real>(F1), tfel::math::stensor<N, real>(s));
+    const auto Kv =
+        tfel::material::convert<FSTOBase::DSIG_DF, FSTOBase::DTAU_DF>(
+            dtau_dF, tfel::math::tensor<N, real>(F0),
+            tfel::math::tensor<N, real>(F1), tfel::math::stensor<N, real>(s));
+    std::copy(Kv.begin(), Kv.end(), K);
+  }  // end of convertFromDTAUDDF
+
   GenericBehaviour::GenericBehaviour(const Hypothesis h,
                                      const std::string& l,
                                      const std::string& b)
@@ -235,6 +254,8 @@ namespace mtest {
           this->fsto = DS_DEGL;
         } else if (to == "DPK1_DF") {
           this->fsto = DPK1_DF;
+        } else if (to == "DTAU_DDF") {
+          this->fsto = DTAU_DDF;
         } else {
           tfel::raise(
               "GenericBehaviour::GenericBehaviour: "
@@ -266,6 +287,10 @@ namespace mtest {
         wk.D.resize(ndv, ndv);
         wk.k.resize(ndv, ndv);
         wk.kt.resize(ndv, ndv);
+      } else if (this->fsto == DTAU_DDF) {
+        wk.D.resize(nth, ndv);
+        wk.k.resize(nth, ndv);
+        wk.kt.resize(nth, ndv);
       } else {
         tfel::raise(
             "GenericBehaviour::allocate: "
@@ -431,6 +456,10 @@ namespace mtest {
       } else if (this->fsto == DPK1_DF) {
         const auto ndv = this->getGradientsSize();
         throw_if((wk.D.getNbRows() != ndv) || (wk.D.getNbCols() != ndv),
+                 "the memory has not been allocated correctly");
+      } else if (this->fsto == DTAU_DDF) {
+        throw_if((wk.D.getNbRows() != Kt.getNbRows()) ||
+                     (wk.D.getNbCols() != Kt.getNbCols()),
                  "the memory has not been allocated correctly");
       } else {
         throw_if(true, "unsupported tangent operator");
@@ -718,6 +747,8 @@ namespace mtest {
         d.K[2] = real(1);
       } else if (this->fsto == DPK1_DF) {
         d.K[2] = real(2);
+      } else if (this->fsto == DTAU_DDF) {
+        d.K[2] = real(3);
       } else {
         tfel::raise(
             "GenericBehaviour::"
@@ -800,7 +831,7 @@ namespace mtest {
             ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "using DS_DEGL in plane strain is not supported yet");
+              "using DS_DEGL in plane stress is not supported yet");
         } else {
           convertFromDSDEGL<1u>(d.K, d.s0.gradients, d.s1.gradients,
                                 d.s1.thermodynamic_forces);
@@ -809,7 +840,7 @@ namespace mtest {
         if (this->getHypothesis() == ModellingHypothesis::PLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "using DS_DEGL in plane strain is not supported yet");
+              "using DS_DEGL in plane stress is not supported yet");
         } else {
           convertFromDSDEGL<2u>(d.K, d.s0.gradients, d.s1.gradients,
                                 d.s1.thermodynamic_forces);
@@ -829,7 +860,7 @@ namespace mtest {
             ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "using DS_DEGL in plane strain is not supported yet");
+              "using DPK1_DG in plane stress is not supported yet");
         } else {
           convertFromDPK1DF<1u>(d.K, d.s0.gradients, d.s1.gradients,
                                 d.s1.thermodynamic_forces);
@@ -838,7 +869,7 @@ namespace mtest {
         if (this->getHypothesis() == ModellingHypothesis::PLANESTRESS) {
           tfel::raise(
               "GenericBehaviour::call_behaviour: "
-              "using DS_DEGL in plane strain is not supported yet");
+              "using DS_DEGL in plane stress is not supported yet");
         } else {
           convertFromDPK1DF<2u>(d.K, d.s0.gradients, d.s1.gradients,
                                 d.s1.thermodynamic_forces);
@@ -846,6 +877,35 @@ namespace mtest {
       } else if (n == 3u) {
         convertFromDPK1DF<3u>(d.K, d.s0.gradients, d.s1.gradients,
                               d.s1.thermodynamic_forces);
+      } else {
+        tfel::raise(
+            "GenericBehaviour::call_behaviour: "
+            "invalid space dimensions");
+      }
+    } else if (this->fsto == DTAU_DDF) {
+      const auto n = tfel::material::getSpaceDimension(this->getHypothesis());
+      if (n == 1u) {
+        if (this->getHypothesis() ==
+            ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) {
+          tfel::raise(
+              "GenericBehaviour::call_behaviour: "
+              "using DPK1_DG in plane stress is not supported yet");
+        } else {
+          convertFromDTAUDDF<1u>(d.K, d.s0.gradients, d.s1.gradients,
+                                 d.s1.thermodynamic_forces);
+        }
+      } else if (n == 2u) {
+        if (this->getHypothesis() == ModellingHypothesis::PLANESTRESS) {
+          tfel::raise(
+              "GenericBehaviour::call_behaviour: "
+              "using DS_DEGL in plane stress is not supported yet");
+        } else {
+          convertFromDTAUDDF<2u>(d.K, d.s0.gradients, d.s1.gradients,
+                                 d.s1.thermodynamic_forces);
+        }
+      } else if (n == 3u) {
+        convertFromDTAUDDF<3u>(d.K, d.s0.gradients, d.s1.gradients,
+                               d.s1.thermodynamic_forces);
       } else {
         tfel::raise(
             "GenericBehaviour::call_behaviour: "

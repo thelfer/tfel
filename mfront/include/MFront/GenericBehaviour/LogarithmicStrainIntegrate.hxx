@@ -231,6 +231,14 @@ namespace mfront::gb::logarithmic_strain {
           tfel::math::T2toT2View<N, real>(d.K) =
               convert<FiniteStrainTangentOperator::DPK1_DF,
                       FiniteStrainTangentOperator::DS_DEGL>(Cse, F0, F0, s0);
+        } else if (smf == FiniteStrainTangentOperator::DTAU_DDF) {
+          const auto Cs = lgh0.convertToSpatialTangentModuli(K, T0);
+          const auto Dt = convert<FiniteStrainTangentOperator::DTAU_DF,
+                                  FiniteStrainTangentOperator::SPATIAL_MODULI>(
+              Cs, F0, F0, s0);
+          tfel::math::T2toST2View<N, real>(d.K) =
+              convert<FiniteStrainTangentOperator::DTAU_DDF,
+                      FiniteStrainTangentOperator::DTAU_DF>(Dt, F0, F0, s0);
         } else {
           reportError(d, "invalid choice for consistent tangent operator");
           return -1;
@@ -284,6 +292,15 @@ namespace mfront::gb::logarithmic_strain {
             tfel::math::T2toT2View<N, real>(d.K) =
                 convert<FiniteStrainTangentOperator::DPK1_DF,
                         FiniteStrainTangentOperator::DS_DEGL>(Cse, F0, F1, s1);
+          } else if (smf == FiniteStrainTangentOperator::DTAU_DDF) {
+            const auto Cs = lgh0.convertToSpatialTangentModuli(K, T1);
+            const auto Dt =
+                convert<FiniteStrainTangentOperator::DTAU_DF,
+                        FiniteStrainTangentOperator::SPATIAL_MODULI>(Cs, F0, F1,
+                                                                     s1);
+            tfel::math::T2toST2View<N, real>(d.K) =
+                convert<FiniteStrainTangentOperator::DTAU_DDF,
+                        FiniteStrainTangentOperator::DTAU_DF>(Dt, F0, F1, s1);
           } else {
             reportError(d, "invalid choice for consistent tangent operator");
             return -1;

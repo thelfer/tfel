@@ -72,12 +72,16 @@ namespace mfront::gb {
       // returned value is meaningless
       return FiniteStrainTangentOperator::DSIG_DF;
     }
+    std::cout << "K[2]: " << K[2] << std::endl;
     if (K[2] < 0.5) {
       return FiniteStrainTangentOperator::DSIG_DF;
     } else if (K[2] < 1.5) {
       return FiniteStrainTangentOperator::DS_DEGL;
     } else if (K[2] < 2.5) {
       return FiniteStrainTangentOperator::DPK1_DF;
+    } else if (K[2] < 3.5) {
+      std::cout << "HERE" << std::endl;
+      return FiniteStrainTangentOperator::DTAU_DDF;
     }
     return FiniteStrainTangentOperator::C_TRUESDELL;
   }  // end of getTangentOperator

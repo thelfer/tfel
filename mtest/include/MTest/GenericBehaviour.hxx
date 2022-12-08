@@ -136,8 +136,11 @@ namespace mtest {
                     deformation gradient */
       DS_DEGL, /*!< derivative of the second Piola-Kirchoff stress with
                     respect to the Green-Lagrange strain */
-      DPK1_DF  /*!< derivative of the first Piola-Kirchoff stress with
-                    respect to the deformation gradient  */
+      DPK1_DF, /*!< derivative of the first Piola-Kirchoff stress with
+                   respect to the deformation gradient  */
+      DTAU_DDF /*!< derivative of the Kirchoff stress with
+                   respect to the spatial increment of the deformation gradient,
+                  i.e. F1 * F0 ^ -1  */
     } fsto = DSIG_DF;
   };  // end of struct GenericBehaviour
 
