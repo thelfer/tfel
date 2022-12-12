@@ -67,11 +67,9 @@ namespace mfront {
     using namespace std;
     using namespace tfel::system;
     // creating directories
-    systemCall::mkdir("include");
     systemCall::mkdir("include/Pleiades");
     systemCall::mkdir("include/Pleiades/PMetier");
     systemCall::mkdir("include/Pleiades/PMetier/PModels");
-    systemCall::mkdir("src");
     this->headerFile.open(("include/" + this->headerFileName).c_str());
     tfel::raise_if(!this->headerFile,
                    "MFrontPleiadesModelInterfaceBase::openOutputFiles: "

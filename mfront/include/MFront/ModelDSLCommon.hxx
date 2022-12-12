@@ -58,6 +58,7 @@ namespace mfront {
     void setInterfaces(const std::set<std::string>&) override;
     //! \brief destructor
     ~ModelDSLCommon() override;
+    void doPedanticChecks() const;
 
    protected:
     //
@@ -146,6 +147,7 @@ namespace mfront {
     //! \brief current variable. This variable is set before calling the
     //! `treatVariableMethod` method
     std::string currentVar;
+    
   };  // end of class ModelDSLCommon
 
 }  // end of namespace mfront

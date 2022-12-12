@@ -212,7 +212,6 @@ namespace mfront {
       }
       return pv - variables.begin();
     };  // end of getVariablePosition
-    tfel::system::systemCall::mkdir("src");
     const auto name = md.library + md.className;
     const auto header = name + "-castem.hxx";
     const auto src = name + "-castem.cxx";
