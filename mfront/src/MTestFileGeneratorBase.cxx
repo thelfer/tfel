@@ -240,7 +240,7 @@ namespace mfront {
       }
     }
     os << '\n';
-  }  // end of MTestFileGeneratorBase::writeMaterialProperties
+  }  // end of MTestFileGeneratorBase::writeInternalStateVariables
 
   void MTestFileGeneratorBase::writeExternalStateVariables(
       std::ostream& os) const {
