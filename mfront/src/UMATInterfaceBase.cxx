@@ -1108,7 +1108,7 @@ namespace mfront {
     for (const auto& m : mprops.first) {
       auto flag = SupportedTypes::getTypeFlag(m.type);
       tfel::raise_if(flag != SupportedTypes::SCALAR,
-                     "UMATInterfaceBase::generateFile2: "
+                     "UMATInterfaceBase::generateMTestFileForHypothesis: "
                      "unsupported external state variable type "
                      "in mtest file generation");
       if (m.arraySize == 1u) {
@@ -1135,6 +1135,11 @@ namespace mfront {
     for (const auto& v : persistentVarsHolder) {
       auto flag = SupportedTypes::getTypeFlag(v.type);
       const auto& ivname = d.getExternalName(v.name);
+      tfel::raise_if(
+          (flag != SupportedTypes::SCALAR) && (flag != SupportedTypes::STENSOR),
+          "UMATInterfaceBase::generateMTestFileForHypothesis: "
+          "unsupported material property type "
+          "in mtest file generation");
       if (v.arraySize == 1u) {
         if (flag == SupportedTypes::SCALAR) {
           out << "mg.addInternalStateVariable(\"" << ivname
