@@ -1170,11 +1170,6 @@ namespace mfront {
     for (const auto& v : persistentVarsHolder) {
       auto flag = SupportedTypes::getTypeFlag(v.type);
       const auto& ivname = d.getExternalName(v.name);
-      tfel::raise_if(
-          (flag != SupportedTypes::SCALAR) && (flag != SupportedTypes::STENSOR),
-          "UMATInterfaceBase::generateMTestFileForHypothesis: "
-          "unsupported internal state variable type "
-          "in mtest file generation");
       if (v.arraySize == 1u) {
         out << "mg.addInternalStateVariable(\"" << ivname << "\" , "
             << as_string(flag) << ", "  //
