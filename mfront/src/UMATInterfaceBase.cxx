@@ -1428,7 +1428,7 @@ namespace mfront {
           auto flag = SupportedTypes::getTypeFlag(m.type);
           tfel::raise_if(flag != SupportedTypes::Scalar,
                          "UMATInterfaceBase::generateFile2: "
-                         "unsupported external state variable type "
+                         "unsupported material property type "
                          "in mtest file generation");
           if (m.arraySize == 1u) {
             if (offset == 0) {
@@ -1455,6 +1455,11 @@ namespace mfront {
         for (const auto& v : persistentVarsHolder) {
           auto flag = SupportedTypes::getTypeFlag(v.type);
           const auto& ivname = d.getExternalName(v.name);
+          tfel::raise_if((flag != SupportedTypes::Stensor) &&
+                             (flag != SupportedTypes::Scalar),
+                         "UMATInterfaceBase::generateFile2: "
+                         "unsupported internal state variable type "
+                         "in mtest file generation");
           if (v.arraySize == 1u) {
             if (flag == SupportedTypes::Scalar) {
               out << "mg.addInternalStateVariable(\"" << ivname
