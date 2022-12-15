@@ -1198,11 +1198,16 @@ namespace mfront {
                   << "\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset
                   << "]);\n";
               ivoffset += SupportedTypes::TypeSize(1u, 0u, 0u, 0u);
-            } else {
+            } else if (flag == SupportedTypes::Stensor){
               out << "mg.addInternalStateVariable(\"" << ivname
                   << "\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset
                   << "]);\n";
               ivoffset += SupportedTypes::TypeSize(0u, 0u, 1u, 0u);
+            } else {
+              throw(
+                  runtime_error("UMATInterfaceBase::generateFile2 : "
+                                "unsupported internal state variable type "
+                                "in mtest file generation"));
             }
           } else {
             if (p->arraySize >= SupportedTypes::ArraySizeLimit) {
@@ -1213,16 +1218,26 @@ namespace mfront {
                 out << "mg.addInternalStateVariable(name.str(),SupportedTypes::"
                        "Scalar,&mg_STATEV["
                     << ivoffset << "]+i);\n";
-              } else {
+              } else if (flag == SupportedTypes::Stensor) {
                 out << "mg.addInternalStateVariable(name.str(),SupportedTypes::"
                        "Stensor,&mg_STATEV["
                     << ivoffset << "]+i);\n";
+              } else {
+                throw(
+                    runtime_error("UMATInterfaceBase::generateFile2 : "
+                                  "unsupported internal state variable type "
+                                  "in mtest file generation"));
               }
               out << "}\n";
               if (flag == SupportedTypes::Scalar) {
                 ivoffset += SupportedTypes::TypeSize(p->arraySize, 0u, 0u, 0u);
-              } else {
+              } else if (flag == SupportedTypes::Stensor) {
                 ivoffset += SupportedTypes::TypeSize(0u, 0u, p->arraySize, 0u);
+              } else {
+                throw(
+                    runtime_error("UMATInterfaceBase::generateFile2 : "
+                                  "unsupported internal state variable type "
+                                  "in mtest file generation"));
               }
             } else {
               for (i = 0; i != p->arraySize; ++i) {
@@ -1231,11 +1246,16 @@ namespace mfront {
                       << "]\",SupportedTypes::Scalar,&mg_STATEV[" << ivoffset
                       << "]);\n";
                   ivoffset += SupportedTypes::TypeSize(1u, 0u, 0u, 0u);
-                } else {
+                } else if (flag == SupportedTypes::Stensor) {
                   out << "mg.addInternalStateVariable(\"" << ivname << "[" << i
                       << "]\",SupportedTypes::Stensor,&mg_STATEV[" << ivoffset
                       << "]);\n";
                   ivoffset += SupportedTypes::TypeSize(0u, 0u, 1u, 0u);
+                } else {
+                  throw(
+                      runtime_error("UMATInterfaceBase::generateFile2 : "
+                                    "unsupported internal state variable type "
+                                    "in mtest file generation"));
                 }
               }
             }
