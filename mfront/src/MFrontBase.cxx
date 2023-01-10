@@ -41,41 +41,24 @@
 
 namespace mfront {
 
-  std::shared_ptr<AbstractDSL> MFrontBase::getDSL(const std::string& f) {
+  std::shared_ptr<AbstractDSL> MFrontBase::getDSL(const tfel::utilities::CxxTokenizer::const_iterator ptb,
+						  const tfel::utilities::CxxTokenizer::const_iterator pte){
     using namespace tfel::system;
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "MFrontBase::getDSL: " + m);
     };
+    auto dsl_options = tfel::utilities::DataMap{};
     const auto& global_options =
         GlobalDomainSpecificLanguageOptionsManager::get();
     auto& dslFactory = DSLFactory::getDSLFactory();
     std::shared_ptr<AbstractDSL> dsl;
     std::string library, dslName;
-    tfel::utilities::CxxTokenizer file;
-    auto dsl_options = tfel::utilities::DataMap{};
-    if ((tfel::utilities::starts_with(f, "madnex:")) ||
-        (tfel::utilities::starts_with(f, "mdnx:")) ||
-        (tfel::utilities::starts_with(f, "edf:"))) {
-#ifdef MFRONT_HAVE_MADNEX
-      const auto path = decomposeImplementationPathInMadnexFile(f);
-      const auto impl =
-          madnex::getMFrontImplementation(std::get<0>(path), std::get<1>(path),
-                                          std::get<2>(path), std::get<3>(path));
-      file.parseString(impl.source);
-#else  /* HAVE_MANDEX */
-      tfel::raise("DSLBase::openFile: madnex support was not enabled");
-#endif /* HAVE_MANDEX */
-    } else {
-      file.openFile(f);
-    }
-    file.stripComments();
-    auto pt = file.begin();
-    const auto pte = file.end();
     bool found = false;
+    auto pt = ptb;
     while ((pt != pte) && (!found)) {
       if ((pt->value == "@Parser") || (pt->value == "@DSL")) {
-        if (pt != file.begin()) {
-          auto ptp = pt;
+      if (pt != ptb) {
+	auto ptp = pt;
           --ptp;
           throw_if(ptp->value != ";",
                    "the keyword @DSL (or @Parser) does "
@@ -95,10 +78,11 @@ namespace mfront {
           dsl_options = tfel::utilities::Data::read(pt, pte, o)
                             .get<tfel::utilities::DataMap>();
         }
+	throw_if(pt == pte, "unexpected end of file (exepected ';' or library name)");
         if (pt->value != ";") {
           library = pt->value;
           ++pt;
-          throw_if(pt == pte, "unexpected end of file (exepected dsl name)");
+          throw_if(pt == pte, "unexpected end of file (exepected library name)");
           throw_if(pt->value == ";", "unexepected token '" + pt->value +
                                          "'.\n"
                                          "Error at line " +
@@ -152,6 +136,28 @@ namespace mfront {
       dsl = dslFactory.createNewDSL(DefaultDSL::getName(),
                                     global_options.getBehaviourDSLOptions());
     }
+    return dsl;
+  } // end of getDSL
+  
+  std::shared_ptr<AbstractDSL> MFrontBase::getDSL(const std::string& f) {
+    tfel::utilities::CxxTokenizer file;
+    if ((tfel::utilities::starts_with(f, "madnex:")) ||
+        (tfel::utilities::starts_with(f, "mdnx:")) ||
+        (tfel::utilities::starts_with(f, "edf:"))) {
+#ifdef MFRONT_HAVE_MADNEX
+      const auto path = decomposeImplementationPathInMadnexFile(f);
+      const auto impl =
+          madnex::getMFrontImplementation(std::get<0>(path), std::get<1>(path),
+                                          std::get<2>(path), std::get<3>(path));
+      file.parseString(impl.source);
+#else  /* HAVE_MANDEX */
+      tfel::raise("DSLBase::openFile: madnex support was not enabled");
+#endif /* HAVE_MANDEX */
+    } else {
+      file.openFile(f);
+    }
+    file.stripComments();
+    auto dsl = MFrontBase::getDSL(file.cbegin(), file.cend());
     if (tfel::utilities::starts_with(f, "madnex:")) {
 #ifdef MFRONT_HAVE_MADNEX
       const auto type = std::get<1>(decomposeImplementationPathInMadnexFile(f));

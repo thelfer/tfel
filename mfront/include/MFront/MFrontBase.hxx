@@ -38,6 +38,13 @@ namespace mfront {
      */
     static std::shared_ptr<AbstractDSL> getDSL(const std::string&);
     /*!
+     * \return an abstract dsl that will handle the source described by the given iterators
+     * \param[in] pt: iterator to the first token of the source
+     * \param[in] pte: iterator to the last token  of the source
+     */
+    static  std::shared_ptr<AbstractDSL> getDSL(tfel::utilities::CxxTokenizer::const_iterator,
+						const tfel::utilities::CxxTokenizer::const_iterator);
+    /*!
      * \brief add a new DSL option
      * \param[in] o: option. Must of a string of the form
      * `<option_name>:<option_value>`.
