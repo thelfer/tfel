@@ -560,26 +560,26 @@ namespace mfront {
     for (std::size_t idx = 0; idx != nb; ++idx) {
       const auto& nps = sss.getSlipPlaneNormals(idx);
       write_vector(out, "this->np" + std::to_string(idx), nps);
-      for (decltype(nps.size()) i = 0; i !=nps.size(); ++i) {
-        out << "this->climb_tensors" << idx << "[" << i << "] = "
-            << "stensor::buildFromVectorDiadicProduct("
-            << "this->np" << idx << "[" << i << "]);\n";
-      }
       gnps.insert(gnps.end(), nps.begin(), nps.end());
     }
     write_vector(out, "this->np", gnps);
-    for (decltype(gnps.size()) i = 0; i != gnps.size(); ++i) {
-      out << "this->climb_tensors[" << i << "] = "
-          << "stensor::buildFromVectorDiadicProduct("
-          << "this->np[" << i << "]);\n";
-    }
     // slip direction
     for (std::size_t idx = 0; idx != nb; ++idx) {
       const auto& nss2 = sss.getSlipDirections(idx);
       write_vector(out, "this->ns" + std::to_string(idx), nss2);
+      for (decltype(nss2.size()) i = 0; i !=nss2.size(); ++i) {
+        out << "this->climb_tensors" << idx << "[" << i << "] = "
+            << "stensor::buildFromVectorDiadicProduct("
+            << "this->ns" << idx << "[" << i << "]);\n";
+      }
       gnss.insert(gnss.end(), nss2.begin(), nss2.end());
     }
     write_vector(out, "this->ns", gnss);
+    for (decltype(gnss.size()) i = 0; i != gnss.size(); ++i) {
+      out << "this->climb_tensors[" << i << "] = "
+          << "stensor::buildFromVectorDiadicProduct("
+          << "this->ns[" << i << "]);\n";
+    }
 
     auto write_imatrix = [&out, &sss, &nb, &nss, &ims](
                              const std::vector<long double>& m,
