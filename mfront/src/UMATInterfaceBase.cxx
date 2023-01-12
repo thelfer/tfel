@@ -113,17 +113,17 @@ namespace mfront {
           "UMATInterfaceBase::exportThermodynamicForce: "
           "unsupported forces type");
     }
-  }  // end of UMATInterfaceBase::exportThermodynamicForce
+  }  // end of exportThermodynamicForce
 
   std::vector<std::pair<std::string, std::string>>
   UMATInterfaceBase::getBehaviourConstructorsAdditionalVariables() const {
     return {};
-  }  // end of UMATInterfaceBase::getBehaviourConstructorsAdditionalVariables
+  }  // end of getBehaviourConstructorsAdditionalVariables
 
   std::vector<std::pair<std::string, std::string>>
   UMATInterfaceBase::getBehaviourDataConstructorAdditionalVariables() const {
     return {};
-  }  // end of UMATInterfaceBase::getBehaviourDataConstructorAdditionalVariables
+  }  // end of getBehaviourDataConstructorAdditionalVariables
 
   std::vector<std::pair<std::string, std::string>>
   UMATInterfaceBase::getIntegrationDataConstructorAdditionalVariables() const {
@@ -174,8 +174,7 @@ namespace mfront {
       }
       currentOffset += this->getTypeSize(p->type, p->arraySize);
     }
-  }  // end of
-     // SupportedTypes::writeVariableInitializersInBehaviourDataConstructorI
+  }  // end of writeVariableInitializersInBehaviourDataConstructorI
 
   void UMATInterfaceBase::writeVariableInitializersInBehaviourDataConstructorII(
       std::ostream& f,
@@ -262,15 +261,14 @@ namespace mfront {
         }
       }
     }
-  }  // end of
-     // SupportedTypes::writeVariableInitializersInBehaviourDataConstructorII
+  }  // end of writeVariableInitializersInBehaviourDataConstructorII
 
   void UMATInterfaceBase::writeResultsArrayResize(
       std::ostream& f,
       const std::string& dest,
       const VariableDescriptionContainer& v) const {
     this->writeResultsArrayResize(f, dest, v.getTypeSize());
-  }  // end of UMATInterfaceBase::writeResultsArrayResize
+  }  // end of writeResultsArrayResize
 
   void UMATInterfaceBase::writeResultsArrayResize(
       std::ostream& f,
@@ -484,11 +482,11 @@ namespace mfront {
     if (!initStateVarsIncrements.empty()) {
       out << ",\n" << initStateVarsIncrements;
     }
-  }  // end of UMATInterfaceBase::writeBehaviourConstructorHeader
+  }  // end of writeBehaviourConstructorHeader
 
   void UMATInterfaceBase::writeBehaviourConstructorBody(
       std::ostream&, const BehaviourDescription&, const Hypothesis) const {
-  }  // end of UMATInterfaceBase::writeBehaviourConstructorBody
+  }  // end of writeBehaviourConstructorBody
 
   void UMATInterfaceBase::
       writeMaterialPropertiesInitializersInBehaviourDataConstructorI(
@@ -692,7 +690,7 @@ namespace mfront {
 
   void UMATInterfaceBase::completeBehaviourDataConstructor(
       std::ostream&, const Hypothesis, const BehaviourDescription&) const {
-  }  // end of UMATInterfaceBase::completeBehaviourDataConstructor
+  }  // end of completeBehaviourDataConstructor
 
   void UMATInterfaceBase::writeIntegrationDataConstructor(
       std::ostream& out,
@@ -782,7 +780,7 @@ namespace mfront {
       of += SupportedTypes::getTypeSize(v.second.type, 1u);
     }
     os << "}\n\n";
-  }  // end of UMATInterfaceBase::writeBehaviourDataMainVariablesSetters
+  }  // end of writeBehaviourDataMainVariablesSetters
 
   void UMATInterfaceBase::writeBehaviourDataGradientSetter(
       std::ostream& os,
@@ -853,7 +851,7 @@ namespace mfront {
             "unsupported driving variable type");
       }
     }
-  }  // end of UMATInterfaceBase::writeBehaviourDataGradientSetter
+  }  // end of writeBehaviourDataGradientSetter
 
   void UMATInterfaceBase::writeBehaviourDataThermodynamicForceSetter(
       std::ostream& os,
@@ -888,7 +886,7 @@ namespace mfront {
           "UMATInterfaceBase::writeBehaviourDataMainVariablesSetters: "
           "unsupported forces type");
     }
-  }  // end of UMATInterfaceBase::writeBehaviourDataThermodynamicForceSetter
+  }  // end of writeBehaviourDataThermodynamicForceSetter
 
   void UMATInterfaceBase::writeIntegrationDataMainVariablesSetters(
       std::ostream& os, const BehaviourDescription& mb) const {
@@ -975,7 +973,7 @@ namespace mfront {
             "unsupported driving variable type");
       }
     }
-  }  // end of UMATInterfaceBase::writeIntegrationDataGradientSetter
+  }  // end of writeIntegrationDataGradientSetter
 
   void UMATInterfaceBase::getExtraSrcIncludes(
       std::ostream& out, const BehaviourDescription& mb) const {
@@ -991,7 +989,7 @@ namespace mfront {
           << "#include\"MFront/UmatSmallStrainMTestFileGenerator.hxx\"\n"
           << "#include\"MFront/UmatFiniteStrainMTestFileGenerator.hxx\"\n";
     }
-  }  // end of UMATInterfaceBase::getExtraSrcIncludes
+  }  // end of getExtraSrcIncludes
 
   void UMATInterfaceBase::generateMTestFile1(
       std::ostream& out, const BehaviourDescription& bd) const {
@@ -1004,7 +1002,7 @@ namespace mfront {
           << "std::copy(STRESS,STRESS+*NTENS,mg_STRESS.begin());\n"
           << "std::copy(STATEV,STATEV+*NSTATV,mg_STATEV.begin());\n";
     }
-  }  // end of UMATInterfaceBase::generateMTestFile1
+  }  // end of generateMTestFile1
 
   void UMATInterfaceBase::generateMTestFile2(
       std::ostream& out,
@@ -1026,7 +1024,7 @@ namespace mfront {
         }
       }
     }
-  }  // end of UMATInterfaceBase::generateMTestFile2
+  }  // end of generateMTestFile2
 
   std::map<UMATInterfaceBase::Hypothesis, std::string>
   UMATInterfaceBase::gatherModellingHypothesesAndTests(
@@ -1069,7 +1067,7 @@ namespace mfront {
         "UMATInterfaceBase::getModellingHypothesisTest: "
         "invalid call, this method is only valid for some interfaces "
         "that must override it.");
-  }  // end of UMATInterfaceBase::getModellingHypothesisTest
+  }  // end of getModellingHypothesisTest
 
   void UMATInterfaceBase::generateMTestFileForHypothesis(
       std::ostream& out,
@@ -1236,7 +1234,7 @@ namespace mfront {
         << "static_cast<void>(TVectorSize); // remove gcc warning\n"
         << "static_cast<void>(StensorSize); // remove gcc warning\n"
         << "static_cast<void>(TensorSize);  // remove gcc warning\n";
-  }  // end of UMATInterfaceBase::generateMTestFileForHypothesis();
+  }  // end of generateMTestFileForHypothesis();
 
   void UMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix(
       std::ostream& out, const BehaviourDescription& mb) const {
@@ -1246,15 +1244,15 @@ namespace mfront {
           << "DROT[1],DROT[4],DROT[7],"
           << "DROT[2],DROT[5],DROT[8]);\n";
     }
-  }  // end of UMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix
+  }  // end of writeMTestFileGeneratorSetRotationMatrix
 
   bool UMATInterfaceBase::areExternalStateVariablesSupported() const {
     return true;
-  }  // end of UMATInterfaceBase::areExternalStateVariablesSupported()
+  }  // end of areExternalStateVariablesSupported()
 
   bool UMATInterfaceBase::isTemperatureIncrementSupported() const {
     return true;
-  }  // end of UMATInterfaceBase::isTemperatureIncrementSupported()
+  }  // end of isTemperatureIncrementSupported()
 
   UMATInterfaceBase::~UMATInterfaceBase() = default;
 

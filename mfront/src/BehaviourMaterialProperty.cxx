@@ -155,9 +155,7 @@ namespace mfront {
         add_mp("real", "PoissonRatio12", "nu12", false);
         add_mp("real", "PoissonRatio23", "nu23", false);
         add_mp("real", "PoissonRatio13", "nu13", false);
-        if ((h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
-            (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) ||
-            (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
+        if ((h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
             (h == ModellingHypothesis::AXISYMMETRICAL) ||
             (h == ModellingHypothesis::PLANESTRAIN) ||
             (h == ModellingHypothesis::PLANESTRESS)) {
