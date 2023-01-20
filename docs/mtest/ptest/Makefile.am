@@ -8,6 +8,7 @@ PTEST_DOCS = AdditionalOutputs.md       \
 	     InnerRadiusEvolution.md        \
 	     OuterRadiusEvolution.md        \
 	     OxidationModel.md              \
+	     Profile.md                     \
 	     MandrelRadiusEvolution.md      \
 	     MandrelAxialGrowthEvolution.md \
 	     RadialLoading.md               \

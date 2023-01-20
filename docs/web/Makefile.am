@@ -107,6 +107,7 @@ EXTRA_DIST=CMakeLists.txt					      \
 	   ./release-notes-4.0.1.md				      \
 	   ./release-notes-4.1.md				      \
 	   ./release-notes-4.1.1.md				      \
+	   ./release-notes-4.2.md				      \
            ./hyperelasticity.md				              \
        ./FeFpImplicitPlasticity.md                  \
        ./initializers.md                          \
