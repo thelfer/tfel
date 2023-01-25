@@ -44,6 +44,16 @@ namespace mfront::bbrick {
 
     //! \brief destructor
     ~GursonTvergaardNeedleman1982StressCriterion() override;
+
+   protected:
+    void initializeMissingMaterialProperty(const std::string&) override;
+    std::string generateMissingMaterialPropertyInitializationCode(
+        BehaviourDescription&,
+        const AbstractBehaviourDSL&,
+        const std::string&,
+        const Role,
+        const std::string&) override;
+
   };  // end of struct GursonTvergaardNeedleman1982StressCriterion
 
 }  // end of namespace mfront::bbrick

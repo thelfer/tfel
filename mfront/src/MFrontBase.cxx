@@ -41,8 +41,9 @@
 
 namespace mfront {
 
-  std::shared_ptr<AbstractDSL> MFrontBase::getDSL(const tfel::utilities::CxxTokenizer::const_iterator ptb,
-						  const tfel::utilities::CxxTokenizer::const_iterator pte){
+  std::shared_ptr<AbstractDSL> MFrontBase::getDSL(
+      const tfel::utilities::CxxTokenizer::const_iterator ptb,
+      const tfel::utilities::CxxTokenizer::const_iterator pte) {
     using namespace tfel::system;
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "MFrontBase::getDSL: " + m);
@@ -57,8 +58,8 @@ namespace mfront {
     auto pt = ptb;
     while ((pt != pte) && (!found)) {
       if ((pt->value == "@Parser") || (pt->value == "@DSL")) {
-      if (pt != ptb) {
-	auto ptp = pt;
+        if (pt != ptb) {
+          auto ptp = pt;
           --ptp;
           throw_if(ptp->value != ";",
                    "the keyword @DSL (or @Parser) does "
@@ -78,11 +79,13 @@ namespace mfront {
           dsl_options = tfel::utilities::Data::read(pt, pte, o)
                             .get<tfel::utilities::DataMap>();
         }
-	throw_if(pt == pte, "unexpected end of file (exepected ';' or library name)");
+        throw_if(pt == pte,
+                 "unexpected end of file (exepected ';' or library name)");
         if (pt->value != ";") {
           library = pt->value;
           ++pt;
-          throw_if(pt == pte, "unexpected end of file (exepected library name)");
+          throw_if(pt == pte,
+                   "unexpected end of file (exepected library name)");
           throw_if(pt->value == ";", "unexepected token '" + pt->value +
                                          "'.\n"
                                          "Error at line " +
@@ -137,8 +140,8 @@ namespace mfront {
                                     global_options.getBehaviourDSLOptions());
     }
     return dsl;
-  } // end of getDSL
-  
+  }  // end of getDSL
+
   std::shared_ptr<AbstractDSL> MFrontBase::getDSL(const std::string& f) {
     tfel::utilities::CxxTokenizer file;
     if ((tfel::utilities::starts_with(f, "madnex:")) ||

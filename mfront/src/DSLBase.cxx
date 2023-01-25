@@ -81,13 +81,13 @@ namespace mfront {
   bool isValidUserDefinedVariableName(std::string_view n) {
     return (tfel::utilities::CxxTokenizer::isValidIdentifier(n, true)) &&
            (!tfel::utilities::starts_with(n, "mfront_"));
-  } // end of isValidUserDefinedVariableName
+  }  // end of isValidUserDefinedVariableName
 
   tfel::utilities::DataMapValidator DSLBase::getDSLOptionsValidator() {
     auto v = tfel::utilities::DataMapValidator{};
     v.addDataTypeValidator<std::string>(DSLBase::defaultOutOfBoundsPolicyOption)
         .addDataTypeValidator<bool>(
-           DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption)
+            DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption)
         .addDataTypeValidator<bool>(DSLBase::parametersAsStaticVariablesOption)
         .addDataTypeValidator<bool>(DSLBase::initializationFromFileOption)
         .addDataTypeValidator<std::string>(DSLBase::buildIdentifierOption)

@@ -27,4 +27,4 @@ void declareStructureCurrentState() {
   class_<mtest::StructureCurrentState>("StructureCurrentState")
       .add_property("istates",
                     make_function(&get_istates, return_internal_reference<>()));
-} // end of declareStructureCurrentState
+}  // end of declareStructureCurrentState

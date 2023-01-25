@@ -15,7 +15,7 @@ namespace mfront {
   // forward declaration
   struct LocalDataStructure;
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 namespace mfront::bbrick {
 

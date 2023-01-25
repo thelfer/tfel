@@ -307,6 +307,10 @@ For $\left\{q_1,q_2,q_3,f_c,f_r \right\} =
 \left\{1,1,1,+\infty,-\right\}$, Gurson-Tvergaard-Needleman model
 reduces to the Gurson model [@gurson1977] which has no free parameter.
 
+Note that the physical meaning of \(q_3\) different from \(q_1^2\) is
+doubtful. Moreover, the current implementation is incorrect for \(q_3
+> q_1^2\).
+
 - **Rousselier-Tanguy-Besson** [@tanguybesson2002]
 
 \[

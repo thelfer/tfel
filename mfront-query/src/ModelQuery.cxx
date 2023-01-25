@@ -103,15 +103,14 @@ namespace mfront {
              std::cout << (!a.empty() ? a : "(undefined)") << std::endl;
            }});
     } else if (qn == "--unit-system") {
-      this->queries.push_back(
-          {"unit-system",
-           [](const FileDescription&, const ModelDescription& md) {
-             if (md.hasUnitSystem()) {
-               std::cout << md.getUnitSystem() << std::endl;
-             } else {
-               std::cout << "(undefined)" << std::endl;
-             }
-           }});
+      this->queries.push_back({"unit-system", [](const FileDescription&,
+                                                 const ModelDescription& md) {
+                                 if (md.hasUnitSystem()) {
+                                   std::cout << md.getUnitSystem() << std::endl;
+                                 } else {
+                                   std::cout << "(undefined)" << std::endl;
+                                 }
+                               }});
     } else if (qn == "--description") {
       this->queries.push_back(
           {"description",
@@ -156,11 +155,11 @@ namespace mfront {
              const auto& l = d.library;
              std::cout << (!l.empty() ? l : "(undefined)") << std::endl;
            }});
-    } else if (qn == "--outputs"){
+    } else if (qn == "--outputs") {
       this->queries.push_back({"--outputs", displayOutputs});
     } else if (qn == "--state-variables") {
       this->queries.push_back({"--state-variables", displayOutputs});
-    } else if (qn == "--inputs"){
+    } else if (qn == "--inputs") {
       this->queries.push_back({"--inputs", displayInputs});
     } else if (qn == "--external-state-variables") {
       this->queries.push_back({"--external-state-variables", displayInputs});

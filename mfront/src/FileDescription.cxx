@@ -29,10 +29,10 @@ namespace mfront {
     const auto fn = fd.fileName;
     if (fd.authorName.empty()) {
       log << "- no authorname defined. Use @Author.\n";
-    } 
+    }
     if (fd.date.empty()) {
       log << "- no date defined. Use @Date.\n";
-    } 
+    }
     if (fd.description.empty()) {
       log << "- no description. Use @Description.\n";
     }

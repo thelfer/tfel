@@ -1,6 +1,6 @@
 /*!
  * \file   mtest/src/PipeFailureCriterion.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   12/09/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -13,7 +13,7 @@
 
 #include "MTest/PipeFailureCriterion.hxx"
 
-namespace mtest{
+namespace mtest {
 
   PipeFailureCriterion::~PipeFailureCriterion() = default;
 

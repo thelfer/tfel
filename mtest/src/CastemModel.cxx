@@ -26,12 +26,11 @@
 namespace mtest {
 
   CastemModel::CastemModel(const Hypothesis h,
-                                                   const std::string& l,
-                                                   const std::string& b)
+                           const std::string& l,
+                           const std::string& b)
       : StandardBehaviourBase(h, l, b) {
     auto throw_if = [](const bool c, const std::string& m) {
-      tfel::raise_if(c,
-                     "CastemModel::CastemModel: " + m);
+      tfel::raise_if(c, "CastemModel::CastemModel: " + m);
     };
     auto& elm =
         tfel::system::ExternalLibraryManager::getExternalLibraryManager();
@@ -52,8 +51,7 @@ namespace mtest {
     tfel::raise("CastemModel::getRotationMatrix: invalid call");
   }  // end of CastemModel::getRotationMatrix
 
-  void CastemModel::allocateWorkSpace(
-      BehaviourWorkSpace& wk) const {
+  void CastemModel::allocateWorkSpace(BehaviourWorkSpace& wk) const {
 #pragma "something needs to be done here"
     const auto ndv = this->getGradientsSize();
     const auto nth = this->getThermodynamicForcesSize();
@@ -78,8 +76,7 @@ namespace mtest {
     }
   }  // end of CastemModel::setGradientsDefaultInitialValue
 
-  StiffnessMatrixType CastemModel::getDefaultStiffnessMatrixType()
-      const {
+  StiffnessMatrixType CastemModel::getDefaultStiffnessMatrixType() const {
     return StiffnessMatrixType::ELASTICSTIFNESSFROMMATERIALPROPERTIES;
   }
 
@@ -143,13 +140,12 @@ namespace mtest {
                                       0, 0, 1};
     auto kinc = CastemInt{1};
     auto k = CastemReal{0};
-    (this->fct)(&s.s1(0), &wk.ivs(0), &k, nullptr, nullptr, nullptr,
-                nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-                &dt, &(s.esv0(0)), &(s.desv(0)), &(s.esv0(0)) + 1,
-                &(s.desv(0)) + 1, nullptr, &ndi, nullptr, &ntens, &nstatv,
-                &(s.mprops1(0)), &nprops, nullptr, &drot(0, 0), &ndt, nullptr,
-                nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-                &kinc, 0);
+    (this->fct)(&s.s1(0), &wk.ivs(0), &k, nullptr, nullptr, nullptr, nullptr,
+                nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &dt,
+                &(s.esv0(0)), &(s.desv(0)), &(s.esv0(0)) + 1, &(s.desv(0)) + 1,
+                nullptr, &ndi, nullptr, &ntens, &nstatv, &(s.mprops1(0)),
+                &nprops, nullptr, &drot(0, 0), &ndt, nullptr, nullptr, nullptr,
+                nullptr, nullptr, nullptr, nullptr, nullptr, &kinc, 0);
     if (kinc != 1) {
       return {false, ndt};
     }
@@ -167,8 +163,7 @@ namespace mtest {
       EvolutionManager&, const EvolutionManager&) const {
   }  // end of setOptionalMaterialPropertiesDefaultValues
 
-  CastemInterfaceVersion CastemModel::getCastemInterfaceVersion()
-      const {
+  CastemInterfaceVersion CastemModel::getCastemInterfaceVersion() const {
     return CastemInterfaceVersion::LEGACY_CASTEM_INTERFACE_VERSION;
   }  // end of getCastemInterfaceVersion
 

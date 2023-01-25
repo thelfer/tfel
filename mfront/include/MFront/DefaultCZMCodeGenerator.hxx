@@ -16,7 +16,7 @@
 
 #include "MFront/DefaultCodeGeneratorBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   struct DefaultCZMCodeGenerator : DefaultCodeGeneratorBase {
     /*!

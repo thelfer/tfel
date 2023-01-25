@@ -1377,7 +1377,8 @@ namespace mfront {
        << "using namespace tfel::math;\n"
        << "using std::vector;\n";
     if (this->bd.getAttribute(BehaviourData::profiling, false)) {
-      writeStandardPerformanceProfiling(os, this->bd.getClassName(), "ComputeFdF");
+      writeStandardPerformanceProfiling(os, this->bd.getClassName(),
+                                        "ComputeFdF");
     }
     writeMaterialLaws(os, this->bd.getMaterialLaws());
     os << "// silent compiler warning\n"

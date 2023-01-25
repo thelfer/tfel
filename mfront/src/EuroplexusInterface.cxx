@@ -667,7 +667,8 @@ namespace mfront {
       out << "}\n";
     }
     out << "const epx::EPXData d = "
-        << "                       {STATUS,sig,STATEV,DDSDDE,PNEWDT,BROKEN,MSG,\n"
+        << "                       "
+           "{STATUS,sig,STATEV,DDSDDE,PNEWDT,BROKEN,MSG,\n"
         << "                        *NSTATV,*DTIME,eto,deto,R,PROPS,*NPROPS,\n"
         << "                        TEMP,DTEMP,PREDEF,DPRED,*NPREDEF,\n"
         << "                        " << this->getFunctionNameBasis(name)

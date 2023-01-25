@@ -1435,7 +1435,7 @@ namespace mfront {
   void BehaviourDSLCommon::doPedanticChecks() const {
     const auto& hs = this->mb.getDistinctModellingHypotheses();
     auto& log = getLogStream();
-    log << "\n* Pedantic checks of "<< this->fd.fileName << "\n\n";
+    log << "\n* Pedantic checks of " << this->fd.fileName << "\n\n";
     performPedanticChecks(this->fd);
     for (auto h : hs) {
       const auto& md = this->mb.getBehaviourData(h);
@@ -1517,7 +1517,7 @@ namespace mfront {
     }
     const auto g = this->getCodeGenerator();
     g->generateOutputFiles(this->getModellingHypothesesToBeTreated());
-  } // end of generateOutputFiles
+  }  // end of generateOutputFiles
 
   void BehaviourDSLCommon::
       declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(

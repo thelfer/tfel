@@ -55,14 +55,13 @@ namespace mtest {
     //! \brief move constructor (disabled)
     PipeFailureCriteriaFactory(PipeFailureCriteriaFactory&&) = delete;
     //! \brief copy constructor (disabled)
-    PipeFailureCriteriaFactory(const PipeFailureCriteriaFactory&) =
-        delete;
+    PipeFailureCriteriaFactory(const PipeFailureCriteriaFactory&) = delete;
     //! \brief move assignement (disabled)
-    PipeFailureCriteriaFactory& operator=(
-        PipeFailureCriteriaFactory&&) = delete;
+    PipeFailureCriteriaFactory& operator=(PipeFailureCriteriaFactory&&) =
+        delete;
     //! \brief copy assignement (disabled)
-    PipeFailureCriteriaFactory& operator=(
-        const PipeFailureCriteriaFactory&) = delete;
+    PipeFailureCriteriaFactory& operator=(const PipeFailureCriteriaFactory&) =
+        delete;
     //! \brief destructor
     ~PipeFailureCriteriaFactory();
     //! \brief list of registred generators

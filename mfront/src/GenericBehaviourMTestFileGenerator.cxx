@@ -40,14 +40,14 @@ namespace mfront {
 #endif
   }  // end of writeBehaviourDeclaration
 
-  void GenericBehaviourMTestFileGenerator::
-      setGradientsAtTheBeginningOfTheTimeStep(
-          const double* const g) {
+  void
+  GenericBehaviourMTestFileGenerator::setGradientsAtTheBeginningOfTheTimeStep(
+      const double* const g) {
     this->gradients_bts = g;
   }  // end of setGradientsAtTheBeginningOfTheTimeStep
 
-  void GenericBehaviourMTestFileGenerator::
-      setGradientsAtTheEndOfTheTimeStep(const double* const g) {
+  void GenericBehaviourMTestFileGenerator::setGradientsAtTheEndOfTheTimeStep(
+      const double* const g) {
     this->gradients_ets = g;
   }  // end of setGradientsAtTheEndOfTheTimeStep
 

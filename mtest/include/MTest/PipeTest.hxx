@@ -104,7 +104,7 @@ namespace mtest {
       std::shared_ptr<Behaviour> model;
       //! \brief default material properties
       std::shared_ptr<EvolutionManager> default_material_properties;
-    }; // end of OxidationModel
+    };  // end of OxidationModel
     //! \brief default constructor
     PipeTest();
     //! \return the name of the test
@@ -242,8 +242,8 @@ namespace mtest {
     void initializeCurrentState(StudyCurrentState&) const override;
     void initializeWorkSpace(SolverWorkSpace&) const override;
     [[nodiscard]] std::pair<bool, real> prepare(StudyCurrentState&,
-                                  const real,
-                                  const real) const override;
+                                                const real,
+                                                const real) const override;
     void makeLinearPrediction(StudyCurrentState&, const real) const override;
     [[nodiscard]] std::pair<bool, real> computePredictionStiffnessAndResidual(
         StudyCurrentState&,

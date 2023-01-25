@@ -20,7 +20,8 @@ namespace mfront {
   GeneratorOptions::GeneratorOptions(GeneratorOptions&&) noexcept = default;
   GeneratorOptions& GeneratorOptions::operator=(const GeneratorOptions&) =
       default;
-  GeneratorOptions& GeneratorOptions::operator=(GeneratorOptions&&) noexcept = default;
+  GeneratorOptions& GeneratorOptions::operator=(GeneratorOptions&&) noexcept =
+      default;
   GeneratorOptions::~GeneratorOptions() = default;
 
 }  // end of namespace mfront

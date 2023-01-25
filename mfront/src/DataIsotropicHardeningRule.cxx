@@ -255,7 +255,7 @@ namespace mfront::bbrick {
     // add collocation points
     tfel::math::CubicSpline<double, double> spline;
     const auto points = [this] {
-      auto abscissae = std::vector<double> {};
+      auto abscissae = std::vector<double>{};
       auto lvalues = std::vector<double>{};
       for (const auto& v : this->values) {
         abscissae.push_back(v.first);
@@ -287,8 +287,7 @@ namespace mfront::bbrick {
     const auto etype_value = this->etype ? "true" : "false";
     const auto m1 = "mfront_computeYieldRadius" + local_id;
     const auto m2 = "mfront_computeYieldRadiusAndDerivative" + local_id;
-    auto m = "stress "+m1 +
-             "(const strain mfront_arg_p) const{\n";
+    auto m = "stress " + m1 + "(const strain mfront_arg_p) const{\n";
     if (this->values.size() == 1) {
       const auto& v = *(this->values.begin());
       std::ostringstream os;

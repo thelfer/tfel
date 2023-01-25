@@ -16,7 +16,7 @@
 namespace tfel::check {
 
   SplineInterpolation::SplineInterpolation() = default;
-  SplineInterpolation::SplineInterpolation(SplineInterpolation&&)  = default;
+  SplineInterpolation::SplineInterpolation(SplineInterpolation&&) = default;
   SplineInterpolation::SplineInterpolation(const SplineInterpolation&) =
       default;
   SplineInterpolation& SplineInterpolation::operator=(SplineInterpolation&&) =

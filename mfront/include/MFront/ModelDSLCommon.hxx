@@ -147,7 +147,7 @@ namespace mfront {
     //! \brief current variable. This variable is set before calling the
     //! `treatVariableMethod` method
     std::string currentVar;
-    
+
   };  // end of class ModelDSLCommon
 
 }  // end of namespace mfront

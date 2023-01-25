@@ -47,12 +47,13 @@ namespace mfront::bbrick {
       BOOLEAN,                    //<! \brief boolean value
       REAL,                       //<! \brief floating point value
       STRING,                     //<! \brief string value
-      DOUBLEDOUBLEMAP,            //<! \brief a map associating pairs of floating point numbers
-      DATAMAP,                    //<! \brief a map of data
-      DATASTRUCTURE,              //<! \brief data structure
-      DATASTRUCTURES /*! \brief the option must be a data structure or an
-                      *  array of data structures.
-                      */
+      DOUBLEDOUBLEMAP,  //<! \brief a map associating pairs of floating point
+                        //numbers
+      DATAMAP,          //<! \brief a map of data
+      DATASTRUCTURE,    //<! \brief data structure
+      DATASTRUCTURES    /*! \brief the option must be a data structure or an
+                         *  array of data structures.
+                         */
     };
     /*!
      * \brief constructor

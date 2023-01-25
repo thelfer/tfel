@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/DefaultCZMCodeGenerator.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   04/08/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -14,7 +14,7 @@
 #include <ostream>
 #include "MFront/DefaultCZMCodeGenerator.hxx"
 
-namespace mfront{
+namespace mfront {
 
   DefaultCZMCodeGenerator::DefaultCZMCodeGenerator(
       const FileDescription& f,
@@ -49,4 +49,4 @@ namespace mfront{
 
   DefaultCZMCodeGenerator::~DefaultCZMCodeGenerator() = default;
 
-} // end of namespace mfront
+}  // end of namespace mfront

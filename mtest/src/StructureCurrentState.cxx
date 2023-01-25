@@ -113,7 +113,7 @@ namespace mtest {
     for (auto& ls : this->istates) {
       mtest::update(ls);
     }
-  } // end of update
+  }  // end of update
 
   void StructureCurrentState::revert() {
     for (auto& s : this->model_states) {
@@ -122,7 +122,7 @@ namespace mtest {
     for (auto& ls : this->istates) {
       mtest::revert(ls);
     }
-  } // end of revert
+  }  // end of revert
 
   void update(StructureCurrentState& s) { s.update(); }  // end of update
 

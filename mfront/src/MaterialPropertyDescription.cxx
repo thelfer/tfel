@@ -317,7 +317,8 @@ namespace mfront {
     return this->reservedNames.count(n) != 0;
   }
 
-  void MaterialPropertyDescription::checkAndCompletePhysicalBoundsDeclaration() {
+  void
+  MaterialPropertyDescription::checkAndCompletePhysicalBoundsDeclaration() {
     if (this->hasUnitSystem()) {
       const auto& s = this->getUnitSystem();
       mfront::checkAndCompletePhysicalBoundsDeclaration(this->output, s);

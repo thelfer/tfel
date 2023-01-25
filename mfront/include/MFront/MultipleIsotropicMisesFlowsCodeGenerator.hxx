@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/include/MFront/MultipleIsotropicMisesFlowsCodeGenerator.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   03/08/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -17,7 +17,7 @@
 #include "MFront/MultipleIsotropicMisesFlowsDSL.hxx"
 #include "MFront/IsotropicBehaviourCodeGeneratorBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   struct MultipleIsotropicMisesFlowsCodeGenerator
       : IsotropicBehaviourCodeGeneratorBase {
@@ -51,6 +51,6 @@ namespace mfront{
     const std::vector<MultipleIsotropicMisesFlowsDSL::FlowHandler>& flows;
   };  // end of MultipleIsotropicMisesFlowsCodeGenerator
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_MULTIPLEISOTROPICMISESFLOWSCODEGENERATOR_HXX */

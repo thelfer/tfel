@@ -108,7 +108,7 @@ namespace mfront {
       return make_pair(true, current);
     }
     if ((key == "@AsterTangentOperatorComparisonCriterium") ||
-	(key == "@AsterTangentOperatorComparisonCriterion")) {
+        (key == "@AsterTangentOperatorComparisonCriterion")) {
       throw_if(
           !this->compareToNumericalTangentOperator,
           "comparison to tangent operator is not enabled at this stage.\n"

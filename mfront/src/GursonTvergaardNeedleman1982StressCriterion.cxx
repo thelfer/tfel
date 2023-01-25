@@ -47,6 +47,30 @@ namespace mfront::bbrick {
     return opts;
   }  // end of getOptions
 
+  void GursonTvergaardNeedleman1982StressCriterion::initializeMissingMaterialProperty(
+      const std::string& n) {
+    if (n != "q_3") {
+      StandardPorousStressCriterionBase::initializeMissingMaterialProperty(n);
+    }
+  }  // end of initializeMissingMaterialProperty
+
+  std::string GursonTvergaardNeedleman1982StressCriterion::
+      generateMissingMaterialPropertyInitializationCode(
+          BehaviourDescription& bd,
+          const AbstractBehaviourDSL& dsl,
+          const std::string& id,
+          const Role r,
+          const std::string& n) {
+    if (n != "q_3") {
+      StandardPorousStressCriterionBase::
+          generateMissingMaterialPropertyInitializationCode(bd, dsl, id, r, n);
+    }
+    const auto params =
+        StressCriterion::getVariableId("sscb_parameters", id, r);
+    const auto q1 = StressCriterion::getVariableId("q_1", id, r);
+    return params + ".q_3 = (this->" + q1 + ") * (this->" + q1 + ");\n";
+  }  // end of generateMissingMaterialPropertyInitializationCode
+
   StressCriterion::PorosityEffectOnFlowRule
   GursonTvergaardNeedleman1982StressCriterion::
       getPorosityEffectOnEquivalentPlasticStrain() const {
@@ -77,3 +101,4 @@ namespace mfront::bbrick {
       ~GursonTvergaardNeedleman1982StressCriterion() = default;
 
 }  // end of namespace mfront::bbrick
+

@@ -34,11 +34,11 @@ namespace mfront {
 
   static std::string getModelName(const ModelDescription& md) {
     return md.library + md.className;
-  } // end of getModelName
+  }  // end of getModelName
 
   static std::string getUmatFunctionName(const ModelDescription& md) {
     return "umat" + makeLowerCase(getModelName(md));
-  } // end of getUmatFunctionName
+  }  // end of getUmatFunctionName
 
   static bool isRealParameter(const VariableDescription& p) {
     return (p.type == "double") || (p.isScalar());
@@ -102,9 +102,9 @@ namespace mfront {
 
   std::pair<bool, CastemModelInterface::tokens_iterator>
   CastemModelInterface::treatKeyword(const std::string& k,
-                                      const std::vector<std::string>& i,
-                                      tokens_iterator current,
-                                      const tokens_iterator) {
+                                     const std::vector<std::string>& i,
+                                     tokens_iterator current,
+                                     const tokens_iterator) {
     tfel::raise_if(
         ((std::find(i.begin(), i.end(), this->getName()) != i.end()) ||
          (std::find(i.begin(), i.end(), "umat") != i.end()) ||
@@ -124,7 +124,7 @@ namespace mfront {
   }  // end of writeOutputFiles
 
   void CastemModelInterface::writeHeaderFile(const FileDescription& fd,
-                                              const ModelDescription& md) {
+                                             const ModelDescription& md) {
     using tfel::material::ModellingHypothesis;
     auto raise = [](const std::string& m) {
       tfel::raise("CastemModelInterface::writeHeaderFile: " + m);
@@ -388,8 +388,8 @@ namespace mfront {
           if (vdepth != 1) {
             raise("unsupported depth for variable '" + n + "'");
           }
-            os << "const auto " << v.name << "_1 = " << v.type
-               << "{mfront_STATEV[" << pos << "]};\n";
+          os << "const auto " << v.name << "_1 = " << v.type
+             << "{mfront_STATEV[" << pos << "]};\n";
         }
       }
       auto write_physical_bounds = [&os, &raise](const VariableDescription& v,
@@ -452,9 +452,9 @@ namespace mfront {
         os << "tfel::math::map<" << v.type << ">(mfront_STATEV[" << pos
            << "]) = " << v.name << ";\n";
         static_cast<void>(vdepth);
-          }
-          os << "} // end of execute_" << f.name << "\n\n";
-        }
+      }
+      os << "} // end of execute_" << f.name << "\n\n";
+    }
     os << "private:\n";
     if (!md.members.empty()) {
       os << md.members << "\n\n";
@@ -565,8 +565,8 @@ namespace mfront {
        << "}\n\n";
   }  // end of writeSourceFile
 
-  void CastemModelInterface::getTargetsDescription(
-      TargetsDescription& td, const ModelDescription& md) {
+  void CastemModelInterface::getTargetsDescription(TargetsDescription& td,
+                                                   const ModelDescription& md) {
     using tfel::material::ModellingHypothesis;
     const auto lib = this->getLibraryName(md);
     const auto name = md.library + md.className;

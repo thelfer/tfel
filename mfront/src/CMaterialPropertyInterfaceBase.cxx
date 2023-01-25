@@ -481,8 +481,7 @@ namespace mfront {
             const auto output_type = getOutputType(mpd, fptype, true);
             os << "template <>\n";
             os << output_type << " " << this->getCallingConvention() << '\n'
-               << this->getFunctionName(mpd) << "<" << output_type
-               << ">(){\n";
+               << this->getFunctionName(mpd) << "<" << output_type << ">(){\n";
             this->writeMaterialPropertyBody(os, mpd, fd, fptype, true);
             os << "} /* end of " << mpd.className << " */\n\n";
           }
@@ -503,7 +502,8 @@ namespace mfront {
              << this->getFunctionName(mpd) << "(";
           this->writeArgumentsList(os, mpd, floating_point_type, true);
           os << ")\n{\n";
-          this->writeMaterialPropertyBody(os, mpd, fd, floating_point_type, true);
+          this->writeMaterialPropertyBody(os, mpd, fd, floating_point_type,
+                                          true);
           os << "} /* end of " << mpd.className << " */\n\n";
         }
       }
@@ -565,7 +565,7 @@ namespace mfront {
        << mpd.f.body << "\n";
     if (!mpd.inputs.empty()) {
       os << "#ifndef MFRONT_NOERRNO_HANDLING\n";
-         // can't use std::swap here as errno might be a macro
+      // can't use std::swap here as errno might be a macro
       os << "const auto mfront_errno = errno;\n"
          << "errno = mfront_errno_old;\n";
       if (use_qt) {
@@ -613,12 +613,12 @@ namespace mfront {
       const std::string_view floating_point_type,
       const bool use_qt) const {
     os << "return ";
-    if (use_qt){
+    if (use_qt) {
       os << getOutputType(mpd, std::string{floating_point_type}, true) << "{";
     }
     os << "std::nan(\"" << this->getFunctionName(mpd)
        << ": invalid call to a C function (errno is not null)\")";
-    if (use_qt){
+    if (use_qt) {
       os << "}";
     }
     os << ";\n";

@@ -32,7 +32,7 @@ namespace mfront {
   DefaultFiniteStrainDSL::getCodeGenerator() const {
     return std::make_unique<DefaultFiniteStrainCodeGenerator>(
         this->fd, this->mb, this->interfaces);
-  } // end of getCodeGenerator
+  }  // end of getCodeGenerator
 
   std::string DefaultFiniteStrainDSL::getDescription() {
     return "this parser is the most generic one as it does not make any "

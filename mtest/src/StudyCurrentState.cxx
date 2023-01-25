@@ -57,7 +57,8 @@ namespace mtest {
     this->failure_criterion_status[i] = status;
   }  // end of setFailureCriterionStatus
 
-  void StudyCurrentState::setNumberOfFailureCriterionStatus(const std::size_t n) {
+  void StudyCurrentState::setNumberOfFailureCriterionStatus(
+      const std::size_t n) {
     this->failure_criterion_status.resize(n, false);
   }  // end of setNumberOfFailureCriterionStatus
 

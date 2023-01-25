@@ -71,7 +71,8 @@ namespace tfel::math {
     auto interpolate = [&abscissae, &values, a](const size_type i) {
       const auto ai = abscissae[i];
       const auto vi = values[i];
-      const auto d = derivative_value_type{(values[i + 1] - vi) / (abscissae[i + 1] - ai)};
+      const auto d =
+          derivative_value_type{(values[i + 1] - vi) / (abscissae[i + 1] - ai)};
       return value_type{vi + d * (a - ai)};
     };
     linear_interpolation_internals::makeChecks(abscissae, values);
@@ -115,26 +116,27 @@ namespace tfel::math {
     auto interpolate = [&abscissae, &values, a](const size_type i) {
       const auto ai = abscissae[i];
       const auto vi = values[i];
-      const auto d = derivative_value_type{(values[i + 1] - vi) / (abscissae[i + 1] - ai)};
+      const auto d =
+          derivative_value_type{(values[i + 1] - vi) / (abscissae[i + 1] - ai)};
       return std::make_pair(value_type{vi + d * (a - ai)}, d);
     };
     linear_interpolation_internals::makeChecks(abscissae, values);
-    if (abscissae.size() == 1u){
+    if (abscissae.size() == 1u) {
       return std::make_pair(values[0], zero);
     }
     if (a <= abscissae[0]) {
       if constexpr (extrapolate) {
-       return interpolate(0);
+        return interpolate(0);
       } else {
         return std::make_pair(values[0], zero);
       }
     }
     if (a >= abscissae.back()) {
-     if constexpr (extrapolate) {
-       return interpolate(abscissae.size() - 2);
-     } else {
-       return std::make_pair(values.back(), zero);
-     }
+      if constexpr (extrapolate) {
+        return interpolate(abscissae.size() - 2);
+      } else {
+        return std::make_pair(values.back(), zero);
+      }
     }
     const auto i = linear_interpolation_internals::findIndex(abscissae, a);
     return interpolate(i);

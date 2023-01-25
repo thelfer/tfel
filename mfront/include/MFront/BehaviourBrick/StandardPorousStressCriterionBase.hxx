@@ -73,12 +73,34 @@ namespace mfront::bbrick {
     //! destructor
     ~StandardPorousStressCriterionBase() override;
 
+   protected:
+    /*!
+     * \brief initialize a material property not defined by the user
+     * \param[in] n: name of the material property
+     */
+    virtual void initializeMissingMaterialProperty(const std::string&);
+    /*!
+     * \brief generate the initialization code for a  a material property not
+     * defined by the user.
+     * \param[in] bd: behaviour description
+     * \param[in] dsl: abstract behaviour dsl
+     * \param[in] id: identifier
+     * \param[in] r: role
+     * \param[in] n: name of the material property
+     */
+    virtual std::string generateMissingMaterialPropertyInitializationCode(
+        BehaviourDescription&,
+        const AbstractBehaviourDSL&,
+        const std::string&,
+        const Role,
+        const std::string&);
+
    private:
     //! \brief name of the stress criterion
     const std::string name;
     //! \brief material properties
     std::map<std::string, BehaviourDescription::MaterialProperty> mps;
-  };  // end of StandardPorousStressCriterionBase
+    };  // end of StandardPorousStressCriterionBase
 
 }  // end of namespace mfront::bbrick
 

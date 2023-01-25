@@ -231,6 +231,7 @@ namespace mfront {
        << "}\n";
   }  // end of writeBehaviourParserSpecificInitializeMethodPart
 
-  IsotropicMisesCreepCodeGenerator::~IsotropicMisesCreepCodeGenerator() = default;
+  IsotropicMisesCreepCodeGenerator::~IsotropicMisesCreepCodeGenerator() =
+      default;
 
 }  // end of namespace mfront

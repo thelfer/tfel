@@ -299,7 +299,7 @@ namespace mtest {
         state.getStructureCurrentState("").getModelCurrentState(*(m.model));
     const auto p = m.model->getInternalStateVariablePosition("OxidationLength");
     return cs.iv1[p];
-  } // end of getOxidationLength
+  }  // end of getOxidationLength
 
   PipeTest::PipeTest() { insert(*(this->evm), "r", 0); }  // end of PipeTest
 
@@ -416,21 +416,20 @@ namespace mtest {
     }
     SingleStructureScheme::completeInitialisation();
     //
-    auto initialize_oxidation_model =
-        [this](OxidationModel& m, const real position) {
-          if (m.model == nullptr) {
-            return;
-          }
-          setCurrentPosition(*(this->evm), position);
-          const auto mpnames = m.model->getMaterialPropertiesNames();
-          const auto esvnames = m.model->expandExternalStateVariablesNames();
-          m.model->setOptionalMaterialPropertiesDefaultValues(
-              *(m.default_material_properties), *(this->evm));
-          checkIfDeclared(mpnames, *(this->evm),
-                          *(m.default_material_properties),
-                          "material property");
-          checkIfDeclared(esvnames, *(this->evm), "external state variable");
-        };
+    auto initialize_oxidation_model = [this](OxidationModel& m,
+                                             const real position) {
+      if (m.model == nullptr) {
+        return;
+      }
+      setCurrentPosition(*(this->evm), position);
+      const auto mpnames = m.model->getMaterialPropertiesNames();
+      const auto esvnames = m.model->expandExternalStateVariablesNames();
+      m.model->setOptionalMaterialPropertiesDefaultValues(
+          *(m.default_material_properties), *(this->evm));
+      checkIfDeclared(mpnames, *(this->evm), *(m.default_material_properties),
+                      "material property");
+      checkIfDeclared(esvnames, *(this->evm), "external state variable");
+    };
     initialize_oxidation_model(this->inner_boundary_oxidation_model,
                                this->mesh.inner_radius);
     initialize_oxidation_model(this->outer_boundary_oxidation_model,
@@ -549,11 +548,13 @@ namespace mtest {
         ++c;
       }
       if (this->inner_boundary_oxidation_model.model != nullptr) {
-        this->out << "# " << c << "th column : oxidation length at the inner boundary\n";
+        this->out << "# " << c
+                  << "th column : oxidation length at the inner boundary\n";
         ++c;
       }
       if (this->outer_boundary_oxidation_model.model != nullptr) {
-        this->out << "# " << c << "th column : oxidation length at the outer boundary\n";
+        this->out << "# " << c
+                  << "th column : oxidation length at the outer boundary\n";
         ++c;
       }
       for (const auto& fc : this->failure_criteria) {
@@ -858,7 +859,7 @@ namespace mtest {
     }
     //
     GenericSolver().execute(state, wk, *this, this->options, ti, te);
-  } // end of execute
+  }  // end of execute
 
   void PipeTest::initializeWorkSpace(SolverWorkSpace& wk) const {
     const auto psz = this->getNumberOfUnknowns();

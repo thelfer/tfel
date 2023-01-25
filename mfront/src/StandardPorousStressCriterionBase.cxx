@@ -47,10 +47,7 @@ namespace mfront::bbrick {
       }
       const auto n = StressCriterion::getVariableId(mp.name, id, r);
       if (d.count(mp.name) == 0) {
-        tfel::raise(
-            "StandardPorousStressCriterionBase::initialize: "
-            "material property '" +
-            mp.name + "' is not defined");
+        this->initializeMissingMaterialProperty(mp.name);
       }
       auto mpd =
           getBehaviourDescriptionMaterialProperty(dsl, mp.name, d.at(mp.name));
@@ -62,15 +59,22 @@ namespace mfront::bbrick {
                      params, 1u);
   }  // end of initialize
 
+  void StandardPorousStressCriterionBase::initializeMissingMaterialProperty(
+      const std::string& n) {
+    tfel::raise(
+        "StandardPorousStressCriterionBase::initializeMissingMaterialProperty: "
+        "material property '" +
+        n + "' is not defined");
+  }  // end of initializeMissingMaterialProperty
+
   bool StandardPorousStressCriterionBase::isCoupledWithPorosityEvolution()
       const {
     return true;
-  }  // end of
-     // StandardPorousStressCriterionBase::isCoupledWithPorosityEvolution()
+  }  // end of isCoupledWithPorosityEvolution
 
   bool StandardPorousStressCriterionBase::isNormalDeviatoric() const {
     return false;
-  }  // end of Hosford1972StressCriterion::StandardPorousStressCriterionBase
+  }  // end of isNormalDeviatoric
 
   void StandardPorousStressCriterionBase::endTreatment(
       BehaviourDescription& bd,
@@ -87,10 +91,21 @@ namespace mfront::bbrick {
       if (mp.type != OptionDescription::MATERIALPROPERTY) {
         break;
       }
-      const auto n = StressCriterion::getVariableId(mp.name, id, r);
-      c += generateMaterialPropertyInitializationCode(dsl, bd, n,
-                                                      this->mps.at(mp.name));
-      c += params + "." + mp.name + " = this->" + n + ";\n";
+      if (this->mps.count(mp.name) != 0) {
+        const auto n = StressCriterion::getVariableId(mp.name, id, r);
+        c += generateMaterialPropertyInitializationCode(dsl, bd, n,
+                                                        this->mps.at(mp.name));
+        c += params + "." + mp.name + " = this->" + n + ";\n";
+      }
+    }
+    for (const auto& mp : this->getOptions()) {
+      if (mp.type != OptionDescription::MATERIALPROPERTY) {
+        break;
+      }
+      if (this->mps.count(mp.name) == 0) {
+        c += this->generateMissingMaterialPropertyInitializationCode(
+            bd, dsl, id, r, mp.name);
+      }
     }
     if (!c.empty()) {
       CodeBlock i;
@@ -99,6 +114,20 @@ namespace mfront::bbrick {
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
     }
   }  // end of endTreatment
+
+  std::string StandardPorousStressCriterionBase::
+      generateMissingMaterialPropertyInitializationCode(
+          BehaviourDescription&,
+          const AbstractBehaviourDSL&,
+          const std::string&,
+          const Role,
+          const std::string& n) {
+    tfel::raise(
+        "StandardPorousStressCriterionBase::"
+        "generateMissingMaterialPropertyInitializationCode: "
+        "material property '" +
+        n + "' handled");
+  }  // end of generateMissingMaterialPropertyInitializationCode
 
   std::string StandardPorousStressCriterionBase::computeElasticPrediction(
       const std::string& id,

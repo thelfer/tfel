@@ -463,7 +463,7 @@ namespace mfront {
   }  // end of getIncrementSymbol
 
   void checkAndCompletePhysicalBoundsDeclaration(VariableDescription& v,
-                                               const std::string_view s) {
+                                                 const std::string_view s) {
     using tfel::glossary::Glossary;
     if (!v.hasGlossaryName()) {
       return;

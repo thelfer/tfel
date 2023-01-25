@@ -291,7 +291,8 @@ namespace mfront {
     }
     auto final_components = std::vector<std::string>{};
     final_components.resize(components.size());
-    std::transform(components.begin(), components.end(), final_components.begin(),
+    std::transform(components.begin(), components.end(),
+                   final_components.begin(),
                    [&n](const std::string& c) { return n + c; });
     return final_components;
   }

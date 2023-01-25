@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/DefaultFiniteStrainCodeGenerator.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   04/08/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -14,7 +14,7 @@
 #include <ostream>
 #include "MFront/DefaultFiniteStrainCodeGenerator.hxx"
 
-namespace mfront{
+namespace mfront {
 
   DefaultFiniteStrainCodeGenerator::DefaultFiniteStrainCodeGenerator(
       const FileDescription& f,
@@ -32,4 +32,4 @@ namespace mfront{
   DefaultFiniteStrainCodeGenerator::~DefaultFiniteStrainCodeGenerator() =
       default;
 
-} // end of namespace mfront
+}  // end of namespace mfront

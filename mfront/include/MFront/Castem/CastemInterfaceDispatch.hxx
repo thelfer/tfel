@@ -104,13 +104,14 @@ namespace castem {
       using namespace tfel::material;
       using ModelImplementation = Model<H, CastemReal, false>;
       using Traits = CastemTraits<ModelImplementation>;
-      using MTraits =  MechanicalBehaviourTraits<ModelImplementation>;
+      using MTraits = MechanicalBehaviourTraits<ModelImplementation>;
       using CBHandler = CastemBehaviourHandler<MODEL, H, Model>;
       constexpr auto is_defined_ = MTraits::is_defined;
       constexpr auto bs = Traits::requiresStiffnessTensor;
       constexpr auto ba = Traits::requiresThermalExpansionCoefficientTensor;
-      static_assert(!bs,"mdoels can't require a stiffness tensor");
-      static_assert(!ba,"mdoels can't require a thermal expansion coefficient tensor");
+      static_assert(!bs, "mdoels can't require a stiffness tensor");
+      static_assert(
+          !ba, "mdoels can't require a thermal expansion coefficient tensor");
       using Handler = std::conditional_t<
           is_defined_,
           std::conditional_t<
@@ -118,7 +119,7 @@ namespace castem {
               typename CBHandler::template IntegratorWithTimeStepping<bs, ba>,
               typename CBHandler::template Integrator<bs, ba>>,
           typename CBHandler::Error>;
-      if constexpr (is_defined_){
+      if constexpr (is_defined_) {
         CBHandler::checkNPROPS(*NPROPS);
         CBHandler::checkNSTATV(*NSTATV);
       }

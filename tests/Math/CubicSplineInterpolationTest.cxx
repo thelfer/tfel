@@ -80,8 +80,10 @@ struct CubicSplineInterpolationTest final : public tfel::tests::TestCase {
     //
     constexpr auto fdf_values = std::array<std::pair<double, double>, 4u>{
         tfel::math::computeCubicSplineInterpolationAndDerivative<true>(pts, -1),
-        tfel::math::computeCubicSplineInterpolationAndDerivative<true>(pts, 0.4),
-        tfel::math::computeCubicSplineInterpolationAndDerivative<true>(pts, 1.2),
+        tfel::math::computeCubicSplineInterpolationAndDerivative<true>(pts,
+                                                                       0.4),
+        tfel::math::computeCubicSplineInterpolationAndDerivative<true>(pts,
+                                                                       1.2),
         tfel::math::computeCubicSplineInterpolationAndDerivative<true>(pts, 3),
     };
     TFEL_TESTS_STATIC_ASSERT(my_abs(std::get<0>(fdf_values[0]) - 0.25) < eps);
@@ -222,7 +224,8 @@ struct CubicSplineInterpolationTest final : public tfel::tests::TestCase {
   }
 };
 
-TFEL_TESTS_GENERATE_PROXY(CubicSplineInterpolationTest, "CubicSplineInterpolationTest");
+TFEL_TESTS_GENERATE_PROXY(CubicSplineInterpolationTest,
+                          "CubicSplineInterpolationTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {

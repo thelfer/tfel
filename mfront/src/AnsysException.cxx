@@ -66,8 +66,8 @@ namespace ansys {
                        std::to_string(static_cast<unsigned int>(N)) + "'") {
   }  // end of AnsysInvalidNTENSValue::AnsysInvalidNTENSValue
 
-  AnsysInvalidNTENSValue::AnsysInvalidNTENSValue(
-      AnsysInvalidNTENSValue&&) = default;
+  AnsysInvalidNTENSValue::AnsysInvalidNTENSValue(AnsysInvalidNTENSValue&&) =
+      default;
 
   AnsysInvalidNTENSValue::AnsysInvalidNTENSValue(
       const AnsysInvalidNTENSValue&) = default;

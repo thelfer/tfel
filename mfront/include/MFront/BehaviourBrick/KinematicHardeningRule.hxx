@@ -32,7 +32,7 @@ namespace mfront {
   // forward declaration
   struct AbstractBehaviourDSL;
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 namespace mfront::bbrick {
 

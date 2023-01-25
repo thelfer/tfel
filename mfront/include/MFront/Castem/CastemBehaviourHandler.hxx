@@ -518,7 +518,7 @@ namespace castem {
           AInitializer::exe(behaviour, PROPS);
           DVInitializer::exe(behaviour, STRAN, DSTRAN, sfeh);
           behaviour.setCASTEMBehaviourDataThermodynamicForces(STRESS);
-          if(!behaviour.initialize()){
+          if (!behaviour.initialize()) {
             r = BV::FAILURE;
           } else {
             auto tsf = behaviour.computeAPrioriTimeStepScalingFactor(*pnewdt);

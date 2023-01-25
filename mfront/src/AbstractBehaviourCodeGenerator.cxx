@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/AbstractBehaviourCodeGenerator.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   03/08/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -13,8 +13,8 @@
 
 #include "MFront/AbstractBehaviourCodeGenerator.hxx"
 
-namespace mfront{
+namespace mfront {
 
   AbstractBehaviourCodeGenerator::~AbstractBehaviourCodeGenerator() = default;
 
-} // end of namespace mfront
+}  // end of namespace mfront

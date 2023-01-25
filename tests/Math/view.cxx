@@ -154,7 +154,7 @@ struct StensorViewTest final : public tfel::tests::TestCase {
 
   void constexpr_test1() {
     /* does not compile with icc 2021.1, but compiles with 2021.1 */
-#ifndef __INTEL_COMPILER 
+#ifndef __INTEL_COMPILER
     constexpr auto s = StensorViewTest::get();
     TFEL_TESTS_STATIC_ASSERT(s[0] == 2);
     TFEL_TESTS_STATIC_ASSERT(s[1] == 2);

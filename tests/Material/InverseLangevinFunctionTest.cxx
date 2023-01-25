@@ -28,7 +28,7 @@
 struct InverseLangevinFunctionTest final : public tfel::tests::TestCase {
   InverseLangevinFunctionTest()
       : tfel::tests::TestCase("TFEL/Material", "InverseLangevinFunctionTest") {
-  } // end of InverseLangevinFunctionTest
+  }  // end of InverseLangevinFunctionTest
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();
@@ -97,4 +97,3 @@ int main() {
   m.addXMLTestOutput("InverseLangevinFunctionTest.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-

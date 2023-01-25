@@ -32,7 +32,7 @@ namespace mfront {
   std::vector<std::string>
   MFrontMaterialPropertyInterface::getSupportedFloatingPointTypes() const {
     return {"float", "double", "long double"};
-  } // end of getSupportedFloatingPointTypes
+  }  // end of getSupportedFloatingPointTypes
 
   bool MFrontMaterialPropertyInterface::
       shallGenerateOverloadedFunctionForQuantities() const {

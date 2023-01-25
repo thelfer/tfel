@@ -34,7 +34,8 @@ namespace mfront::bbrick {
    * Delobelle, P. and Robinet, P. and Geyer, P. and Bouffioux, P.
    * Journal of Nuclear Materials. 1996
    */
-  struct DelobelleRobinetSchafflerKinematicHardeningRule : KinematicHardeningRuleBase {
+  struct DelobelleRobinetSchafflerKinematicHardeningRule
+      : KinematicHardeningRuleBase {
     std::vector<OptionDescription> getOptions() const override;
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,

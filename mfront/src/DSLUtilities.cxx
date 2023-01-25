@@ -126,7 +126,8 @@ namespace mfront {
     exportArrayOfStringsSymbol(os, std::string{n} + "_Parameters",
                                parameters.getExternalNames());
     if (parameters.empty()) {
-      exportSymbol(os, "const int *", std::string{n} + "_ParametersTypes", "nullptr");
+      exportSymbol(os, "const int *", std::string{n} + "_ParametersTypes",
+                   "nullptr");
       return;
     }
     const auto size = [&parameters] {
@@ -183,9 +184,10 @@ namespace mfront {
             "writeParameterDefaultValueSymbols: "
             "array of parameters is not supported");
       }
-      exportSymbol(os, "double",
-                   std::string{n} + "_" + p.getExternalName() + "_ParameterDefaultValue",
-                   p.getAttribute<double>(VariableDescription::defaultValue));
+      exportSymbol(
+          os, "double",
+          std::string{n} + "_" + p.getExternalName() + "_ParameterDefaultValue",
+          p.getAttribute<double>(VariableDescription::defaultValue));
       os.precision(prec);
     }
   }  // end of writeParametersDefaultValuesSymbols
@@ -244,8 +246,10 @@ namespace mfront {
       std::ostream& out,
       const std::string_view name,
       const mfront::MaterialPropertyDescription& mpd) {
-    exportStringSymbol(out, std::string{name} + "_output", mpd.output.getExternalName());
-    exportUnsignedShortSymbol(out, std::string{name} + "_nargs", mpd.inputs.size());
+    exportStringSymbol(out, std::string{name} + "_output",
+                       mpd.output.getExternalName());
+    exportUnsignedShortSymbol(out, std::string{name} + "_nargs",
+                              mpd.inputs.size());
     if (!mpd.inputs.empty()) {
       out << "MFRONT_EXPORT_ARRAY_OF_SYMBOLS(const char *, " << name
           << "_args, " << mpd.inputs.size()
@@ -431,7 +435,8 @@ namespace mfront {
   }  // end of writeEntryPointSymbols
 
   void writeTFELVersionSymbol(std::ostream& out, const std::string_view n) {
-    exportStringSymbol(out, std::string{n} + "_tfel_version", ::getTFELVersion());
+    exportStringSymbol(out, std::string{n} + "_tfel_version",
+                       ::getTFELVersion());
   }  // end of writeTFELVersionSymbol
 
   void writeUnitSystemSymbol(std::ostream& out,

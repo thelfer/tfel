@@ -33,8 +33,7 @@
 namespace mtest {
 
   SingleStructureScheme::SingleStructureScheme()
-      : dmpv(new EvolutionManager()) {
-  }  // end of SingleStructureScheme
+      : dmpv(new EvolutionManager()) {}  // end of SingleStructureScheme
 
   void SingleStructureScheme::setMaterialProperty(const std::string& n,
                                                   const EvolutionPtr p,
@@ -366,7 +365,7 @@ namespace mtest {
                    "SingleStructureScheme::setHandleThermalExpansion: "
                    "thermal expansion is not handled");
     this->handleThermalExpansion = b1;
-  } // end of setHandleThermalExpansion
+  }  // end of setHandleThermalExpansion
 
   SingleStructureScheme::~SingleStructureScheme() = default;
 

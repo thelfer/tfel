@@ -72,7 +72,7 @@ namespace mtest {
     }
     return LPIEvolution::interpolate(
         this->inner_boundary_oxidation_length_evolution, t);
-  } // end of getInnerBoundaryOxidationLength
+  }  // end of getInnerBoundaryOxidationLength
 
   real OxidationStatusEvolution::getOuterBoundaryOxidationLength(
       const real t) const {
@@ -81,7 +81,7 @@ namespace mtest {
     }
     return LPIEvolution::interpolate(
         this->outer_boundary_oxidation_length_evolution, t);
-  } // end of getOuterBoundaryOxidationLength
+  }  // end of getOuterBoundaryOxidationLength
 
   OxidationStatusEvolution::~OxidationStatusEvolution() = default;
 

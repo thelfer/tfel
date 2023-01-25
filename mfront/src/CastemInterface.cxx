@@ -63,42 +63,42 @@ namespace mfront {
     if ((t == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
         (t == BehaviourDescription::COHESIVEZONEMODEL)) {
       os << " const castem::CastemReal *const STRAN,\n"
-          << " const castem::CastemReal *const DSTRAN,\n";
+         << " const castem::CastemReal *const DSTRAN,\n";
     } else {
       os << " const castem::CastemReal *const,\n"
-          << " const castem::CastemReal *const,\n";
+         << " const castem::CastemReal *const,\n";
     }
     os << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const DTIME,\n"
-        << " const castem::CastemReal *const TEMP,\n"
-        << " const castem::CastemReal *const DTEMP,\n"
-        << " const castem::CastemReal *const PREDEF,\n"
-        << " const castem::CastemReal *const DPRED,\n"
-        << " const char           *const,\n"
-        << " const castem::CastemInt  *const NDI,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const NTENS,\n"
-        << " const castem::CastemInt  *const NSTATV,\n"
-        << " const castem::CastemReal *const PROPS,\n"
-        << " const castem::CastemInt  *const NPROPS,\n"
-        << " const castem::CastemReal *const,\n"
-        << " const castem::CastemReal *const DROT,\n"
-        << "       castem::CastemReal *const PNEWDT,\n"
-        << " const castem::CastemReal *const,\n";
+       << " const castem::CastemReal *const DTIME,\n"
+       << " const castem::CastemReal *const TEMP,\n"
+       << " const castem::CastemReal *const DTEMP,\n"
+       << " const castem::CastemReal *const PREDEF,\n"
+       << " const castem::CastemReal *const DPRED,\n"
+       << " const char           *const,\n"
+       << " const castem::CastemInt  *const NDI,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const NTENS,\n"
+       << " const castem::CastemInt  *const NSTATV,\n"
+       << " const castem::CastemReal *const PROPS,\n"
+       << " const castem::CastemInt  *const NPROPS,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const DROT,\n"
+       << "       castem::CastemReal *const PNEWDT,\n"
+       << " const castem::CastemReal *const,\n";
     if (t == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       os << " const castem::CastemReal *const F0,\n"
-          << " const castem::CastemReal *const F1,\n";
+         << " const castem::CastemReal *const F1,\n";
     } else {
       os << " const castem::CastemReal *const,\n"
-          << " const castem::CastemReal *const,\n";
+         << " const castem::CastemReal *const,\n";
     }
     os << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << " const castem::CastemInt  *const,\n"
-        << "       castem::CastemInt  *const KINC,\n"
-        << "const int)";
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << "       castem::CastemInt  *const KINC,\n"
+       << "const int)";
   }  // end of writeUMATFunctionArguments
 
   void CastemInterface::writeUMATFunctionArguments(std::ostream& os) {

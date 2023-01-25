@@ -22,3 +22,7 @@ eqnPrefixTemplate: "($$i$$)"
 ## Issue 360: [mtest] Documentation of the  `@Profile` keyword in `PTest`
 
 For more details, see <https://github.com/thelfer/tfel/issues/360>
+
+## Issue 356:  [mfront] modification of the Gurson-Tvergaard-Needleman stress criterion
+
+For more details, see <https://github.com/thelfer/tfel/issues/356>

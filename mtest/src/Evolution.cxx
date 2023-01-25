@@ -71,7 +71,7 @@ namespace mtest {
 
   real LPIEvolution::operator()(const real t) const {
     return LPIEvolution::interpolate(this->values, t);
-  } // end of operator()
+  }  // end of operator()
 
   real LPIEvolution::interpolate(const std::map<real, real>& values,
                                  const real t) {

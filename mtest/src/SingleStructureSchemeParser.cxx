@@ -81,7 +81,7 @@ namespace mtest {
         "SingleStructureSchemeParser::handleHandleThermalExpansion", ";", p,
         this->tokens.end());
     t.setHandleThermalExpansion(b);
-  } // end of handleHandleThermalExpansion
+  }  // end of handleHandleThermalExpansion
 
   void SingleStructureSchemeParser::handleBehaviour(SingleStructureScheme& t,
                                                     tokens_iterator& p) {

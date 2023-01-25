@@ -21,12 +21,10 @@ namespace mfront {
     this->mb.declareAsGenericBehaviour();
     this->disableCallBack("@Behaviour");
     this->registerNewCallBack("@Model", &ImplicitModelDSL::treatModel2, true);
-    this->registerNewCallBack(
-        "@TangentOperatorBlock",
-        &ImplicitModelDSL::treatTangentOperatorBlock);
-    this->registerNewCallBack(
-        "@TangentOperatorBlocks",
-        &ImplicitModelDSL::treatTangentOperatorBlocks);
+    this->registerNewCallBack("@TangentOperatorBlock",
+                              &ImplicitModelDSL::treatTangentOperatorBlock);
+    this->registerNewCallBack("@TangentOperatorBlocks",
+                              &ImplicitModelDSL::treatTangentOperatorBlocks);
     this->registerNewCallBack(
         "@AdditionalTangentOperatorBlock",
         &ImplicitModelDSL::treatAdditionalTangentOperatorBlock);
