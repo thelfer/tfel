@@ -26,3 +26,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/360>
 ## Issue 356:  [mfront] modification of the Gurson-Tvergaard-Needleman stress criterion
 
 For more details, see <https://github.com/thelfer/tfel/issues/356>
+
+## Issue 353: [mfront] Add support for unsymmetric tensorial variables when generating `MTest` files
+
+For more details, see <https://github.com/thelfer/tfel/issues/353>
