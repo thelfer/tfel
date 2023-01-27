@@ -326,13 +326,47 @@ namespace mfront {
          << "{}\n\n";
     }
     for (const auto& f : md.functions) {
+      const auto [require_temperature,
+                  require_other_external_state_variable] = [&md, &f, &raise] {
+        auto b1 = false;
+        auto b2 = false;
+        for (const auto& mv : f.usedVariables) {
+          const auto [n, vdepth] = md.decomposeVariableName(mv);
+          if (vdepth > 1) {
+            raise("unsupported depth for variable '" + n + "'");
+          }
+          if (md.inputs.contains(n)) {
+            const auto& v = md.inputs.getVariable(n);
+            if (v.getExternalName() == Glossary::Temperature) {
+              b1 = true;
+            } else {
+              b2 = true;
+            }
+          }
+        }
+        return std::make_pair(b1, b2);
+      }();
       os << "void execute_" << f.name
-         << "(castem::CastemReal *const mfront_STATEV, \n"
-         << "const castem::CastemReal *const mfront_DTIME, \n"
-         << "const castem::CastemReal *const mfront_TEMP,\n "
-         << "const castem::CastemReal *const mfront_DTEMP,\n "
-         << "const castem::CastemReal *const mfront_PREDEF,\n "
-         << "const castem::CastemReal *const mfront_DPRED) const {\n";
+         << "(castem::CastemReal *const mfront_STATEV,\n";
+      if (f.useTimeIncrement) {
+        os << "const castem::CastemReal *const mfront_DTIME,\n";
+      } else {
+        os << "const castem::CastemReal *const,\n";
+      }
+      if (require_temperature) {
+        os << "const castem::CastemReal *const mfront_TEMP,\n "
+           << "const castem::CastemReal *const mfront_DTEMP,\n ";
+      } else {
+        os << "const castem::CastemReal *const,\n "
+           << "const castem::CastemReal *const,\n ";
+      }
+      if (require_other_external_state_variable) {
+        os << "const castem::CastemReal *const mfront_PREDEF,\n "
+           << "const castem::CastemReal *const mfront_DPRED) const {\n";
+      } else {
+        os << "const castem::CastemReal *const,\n "
+           << "const castem::CastemReal *const) const {\n";
+      }
       os << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using namespace tfel::material;\n";
@@ -511,9 +545,13 @@ namespace mfront {
        << " const castem::CastemReal *const mfront_TEMP,\n"
        << " const castem::CastemReal *const mfront_DTEMP,\n"
        << " const castem::CastemReal *const mfront_PREDEF,\n"
-       << " const castem::CastemReal *const mfront_DPRED,\n"
-       << " const castem::CastemReal *const mfront_PROPS){\n"
-       << "try{\n";
+       << " const castem::CastemReal *const mfront_DPRED,\n";
+    if (!md.constantMaterialProperties.empty()) {
+      os << " const castem::CastemReal *const mfront_PROPS){\n";
+    } else {
+      os << " const castem::CastemReal *const){\n";
+    }
+    os << "try{\n";
     if (!md.constantMaterialProperties.empty()) {
       os << "const " << md.className << " m(mfront_PROPS);\n";
     } else {
@@ -555,11 +593,42 @@ namespace mfront {
          << "} // end of " << name << "_setParameter\n\n";
     }
     //
+    const auto& bdata =
+        bd.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     os << "void " << fn;
     CastemInterface::writeUMATFunctionArguments(
         os, BehaviourDescription::GENERALBEHAVIOUR);
-    os << "{\n"
-       << "*KINC = castem::" << name
+    os << "{\n";
+    // checks on material properties
+    const auto mps_size = bdata.getMaterialProperties().size();
+    os << "if (" << mps_size << " != *NPROPS){\n"
+       << "std::cerr << \"" << md.className
+       << ": invalid number of material properties \"";
+    if (mps_size == 0) {
+      os << " << \"(no material property expected, ";
+    } else {
+      os << " << \"(" << mps_size << " material properties expected, ";
+    }
+    os << "\" << *NPROPS << \" given)\\n\";\n"
+       << "*KINC = -1;\n"
+       << "return;\n"
+       << "}\n";
+    // checks on internal state variables
+    const auto isvs_size = bdata.getMaterialProperties().size();
+    os << "if (" << isvs_size << " != *NSTATV){\n"
+       << "std::cerr << \"" << md.className
+       << ": invalid number of state variables \"";
+    if (isvs_size == 0) {
+      os << " << \"(no state variable expected, ";
+    } else {
+      os << " << \"(" << isvs_size << " state variables expected, ";
+    }
+    os << "\" << *NSTATV << \" given)\\n\";\n"
+       << "*KINC = -1;\n"
+       << "return;\n"
+       << "}\n";
+    // call the model
+    os << "*KINC = castem::" << name
        << "_implementation(STATEV, PNEWDT, DTIME, TEMP, DTEMP, PREDEF, "
        << "DPRED, PROPS);\n"
        << "}\n\n";
