@@ -19,8 +19,11 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 363: [mfront] Check number of material properties and state variables in the `Cast3M` interface for point-wise models
+
+For more details, see <https://github.com/thelfer/tfel/issues/363>.
+
 ## Issue 355: [MFront] Invalid implementation of the climb tensors
 
 For more details, see <https://github.com/thelfer/tfel/issues/355>.
-
 

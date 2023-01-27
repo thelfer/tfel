@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 362: [mfront] Better code generation for point-wise models using the Cast3M interface 
+
+For more details, see <https://github.com/thelfer/tfel/issues/362>
+
 ## Issue 360: [mtest] Documentation of the  `@Profile` keyword in `PTest`
 
 For more details, see <https://github.com/thelfer/tfel/issues/360>

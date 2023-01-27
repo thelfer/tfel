@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #361: [mfront] State variables shall be rotated for orthotropic behaviours written using the native corotationnal frame
+
+For more details, see <https://github.com/thelfer/tfel/issues/361>.
+
 ## Issue #352: [mfront] generation of `MTest` file is broken when an unsymmetric tensor internal state variable is present
 
 For more details, see <https://github.com/thelfer/tfel/issues/352>.
