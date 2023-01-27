@@ -1106,15 +1106,13 @@ namespace mfront {
     /*
      * We apply the rotation associated to the Jauman corotationnal frame only
      * if:
-     * - the behaviour symmetry is isotropic
      * - the behaviour is written in small strain
      * - the finite strain strategy is either undefined or `Native`
      */
-    const bool c = ((mb.getSymmetryType() == mfront::ISOTROPIC) &&
-                    (mb.getBehaviourType() ==
-                     BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR) &&
-                    ((this->fss == UNDEFINEDSTRATEGY) ||
-                     (this->fss == NATIVEFINITESTRAINSTRATEGY)));
+    const auto c = (mb.getBehaviourType() ==
+                    BehaviourDescription::SMALLSTRAINSTANDARDBEHAVIOUR) &&
+                   ((this->fss == UNDEFINEDSTRATEGY) ||
+                    (this->fss == NATIVEFINITESTRAINSTRATEGY));
     if (!c) {
       do_nothing();
       return;
