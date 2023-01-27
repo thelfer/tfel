@@ -1238,20 +1238,16 @@ namespace mfront {
     /*
      * We apply the rotation associated to the Jauman corotationnal frame only
      * if:
-     * - the behaviour symmetry is isotropic
      * - the behaviour is written in small strain
      * - the finite strain strategy is either undefined or `Native`
      */
-    // this is required for gcc 4.7.2
-    const auto c = [&mb, this] {
-      if (mb.getSymmetryType() == mfront::ISOTROPIC) {
-        if (mb.getBehaviourType() ==
-            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-          if (AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)) {
-            return AbaqusInterfaceBase::getFiniteStrainStrategy(mb) == "Native";
-          }
-          return true;
+    const auto c = [&mb] {
+      if (mb.getBehaviourType() ==
+          BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+        if (AbaqusInterfaceBase::hasFiniteStrainStrategy(mb)) {
+          return AbaqusInterfaceBase::getFiniteStrainStrategy(mb) == "Native";
         }
+        return true;
       }
       return false;
     }();
