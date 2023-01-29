@@ -96,6 +96,7 @@ namespace mfront {
     /*!
      * \return the attribute with the given name
      * \param[in] n: name
+     * \param[in] v: default value if the attribute is not defined
      */
     template <typename T>
     std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), T> getAttribute(

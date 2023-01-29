@@ -49,6 +49,11 @@ namespace mfront {
 
    protected:
     /*!
+     *\brief write the arguments of the `UMAT` function
+     * \param[in] os: output stream
+     */
+    static void writeUMATFunctionArguments(std::ostream &);
+    /*!
      * \brief generate the header file
      * \param fd: file description
      * \param md: model description

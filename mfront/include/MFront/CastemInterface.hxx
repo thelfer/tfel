@@ -40,6 +40,7 @@ namespace mfront {
 
     static const char *const maximumSubStepping;
 
+    //! \return the name of the interface
     static std::string getName();
     /*!
      * \return true if the interface shall support plane stress
