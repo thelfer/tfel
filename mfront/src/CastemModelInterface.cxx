@@ -82,6 +82,47 @@ namespace mfront {
     }
   }  // end of writeScalarStandardTypedefs
 
+  void CastemModelInterface::writeUMATFunctionArguments(std::ostream& os) {
+    os << "(castem::CastemReal *const,\n"
+       << " castem::CastemReal *const STATEV,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const DTIME,\n"
+       << " const castem::CastemReal *const TEMP,\n"
+       << " const castem::CastemReal *const DTEMP,\n"
+       << " const castem::CastemReal *const PREDEF,\n"
+       << " const castem::CastemReal *const DPRED,\n"
+       << " const char           *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const NSTATV,\n"
+       << " const castem::CastemReal *const PROPS,\n"
+       << " const castem::CastemInt  *const NPROPS,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << "       castem::CastemReal *const PNEWDT,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const,\n"
+       << "       castem::CastemInt  *const KINC,\n"
+       << "const int)";
+  }  // end of writeUMATFunctionArguments
+
   CastemModelInterface::CastemModelInterface() = default;
 
   std::string CastemModelInterface::getLibraryName(
@@ -596,8 +637,7 @@ namespace mfront {
     const auto& bdata =
         bd.getBehaviourData(ModellingHypothesis::UNDEFINEDHYPOTHESIS);
     os << "void " << fn;
-    CastemInterface::writeUMATFunctionArguments(
-        os, BehaviourDescription::GENERALBEHAVIOUR);
+    CastemModelInterface::writeUMATFunctionArguments(os);
     os << "{\n";
     // checks on material properties
     const auto mps_size = bdata.getMaterialProperties().size();

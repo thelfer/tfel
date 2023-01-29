@@ -48,7 +48,7 @@ namespace mfront::bbrick {
       REAL,                       //<! \brief floating point value
       STRING,                     //<! \brief string value
       DOUBLEDOUBLEMAP,  //<! \brief a map associating pairs of floating point
-                        //numbers
+                        // numbers
       DATAMAP,          //<! \brief a map of data
       DATASTRUCTURE,    //<! \brief data structure
       DATASTRUCTURES    /*! \brief the option must be a data structure or an

@@ -100,7 +100,7 @@ namespace mfront::bbrick {
     const std::string name;
     //! \brief material properties
     std::map<std::string, BehaviourDescription::MaterialProperty> mps;
-    };  // end of StandardPorousStressCriterionBase
+  };  // end of StandardPorousStressCriterionBase
 
 }  // end of namespace mfront::bbrick
 

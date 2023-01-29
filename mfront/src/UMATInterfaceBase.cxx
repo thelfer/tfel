@@ -49,34 +49,34 @@ namespace mfront {
   }  // end of checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable
 
   void UMATInterfaceBase::exportMechanicalData(
-      std::ostream& out,
+      std::ostream& os,
       const Hypothesis h,
       const BehaviourDescription& mb) const {
     const auto& d = mb.getBehaviourData(h);
     const auto& persistentVarsHolder = d.getPersistentVariables();
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    if (!persistentVarsHolder.empty()) {
-      out << "void\n"
-          << iprefix + "exportStateData("
-          << "NumericType * const " << iprefix + "stress_, "
-          << "NumericType * const " << iprefix + "statev) const\n";
+    os << "void\n" << iprefix + "exportStateData(";
+    if (mb.getMainVariables().empty()) {
+      os << "NumericType * const, ";
     } else {
-      out << "void\n"
-          << iprefix + "exportStateData("
-          << "NumericType * const " << iprefix << "stress_, "
-          << "NumericType * const) const\n";
+      os << "NumericType * const " << iprefix + "stress_, ";
     }
-    out << "{\n";
-    out << "using namespace tfel::math;\n";
+    if (persistentVarsHolder.empty()) {
+      os << "NumericType * const) const\n";
+    } else {
+      os << "NumericType * const " << iprefix + "statev) const\n";
+    }
+    os << "{\n"
+       << "using namespace tfel::math;\n";
     SupportedTypes::TypeSize of;
     for (const auto& v : mb.getMainVariables()) {
-      this->exportThermodynamicForce(out, iprefix + "stress_", v.second, of);
+      this->exportThermodynamicForce(os, iprefix + "stress_", v.second, of);
       of += SupportedTypes::getTypeSize(v.second.type, 1u);
     }
     if (!persistentVarsHolder.empty()) {
-      this->exportResults(out, mb, persistentVarsHolder, iprefix + "statev");
+      this->exportResults(os, mb, persistentVarsHolder, iprefix + "statev");
     }
-    out << "} // end of " << iprefix << "exportStateData\n\n";
+    os << "} // end of " << iprefix << "exportStateData\n\n";
   }
 
   void UMATInterfaceBase::exportThermodynamicForce(
@@ -761,25 +761,36 @@ namespace mfront {
   void UMATInterfaceBase::writeBehaviourDataMainVariablesSetters(
       std::ostream& os, const BehaviourDescription& mb) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
-    SupportedTypes::TypeSize ov, of;
-    os << "void set" << iprefix
-       << "BehaviourDataGradients(const NumericType* const " << iprefix
-       << "stran)\n"
-       << "{\n";
-    for (const auto& v : mb.getMainVariables()) {
-      this->writeBehaviourDataGradientSetter(os, v.first, ov);
-      ov += SupportedTypes::getTypeSize(v.first.type, 1u);
+    if (mb.getMainVariables().empty()) {
+      os << "void set" << iprefix
+         << "BehaviourDataGradients(const NumericType* const)\n"
+         << "{\n"
+         << "}\n\n"
+         << "void set" << iprefix
+         << "BehaviourDataThermodynamicForces(const NumericType* const)\n"
+         << "{\n"
+         << "}\n\n";
+    } else {
+      SupportedTypes::TypeSize ov, of;
+      os << "void set" << iprefix
+         << "BehaviourDataGradients(const NumericType* const " << iprefix
+         << "stran)\n"
+         << "{\n";
+      for (const auto& v : mb.getMainVariables()) {
+        this->writeBehaviourDataGradientSetter(os, v.first, ov);
+        ov += SupportedTypes::getTypeSize(v.first.type, 1u);
+      }
+      os << "}\n\n";
+      os << "void set" << iprefix
+         << "BehaviourDataThermodynamicForces(const NumericType* const "
+         << iprefix << "stress_)\n"
+         << "{\n";
+      for (const auto& v : mb.getMainVariables()) {
+        this->writeBehaviourDataThermodynamicForceSetter(os, v.second, of);
+        of += SupportedTypes::getTypeSize(v.second.type, 1u);
+      }
+      os << "}\n\n";
     }
-    os << "}\n\n";
-    os << "void set" << iprefix
-       << "BehaviourDataThermodynamicForces(const NumericType* const "
-       << iprefix << "stress_)\n"
-       << "{\n";
-    for (const auto& v : mb.getMainVariables()) {
-      this->writeBehaviourDataThermodynamicForceSetter(os, v.second, of);
-      of += SupportedTypes::getTypeSize(v.second.type, 1u);
-    }
-    os << "}\n\n";
   }  // end of writeBehaviourDataMainVariablesSetters
 
   void UMATInterfaceBase::writeBehaviourDataGradientSetter(
@@ -892,15 +903,22 @@ namespace mfront {
       std::ostream& os, const BehaviourDescription& mb) const {
     const auto iprefix = makeUpperCase(this->getInterfaceName());
     SupportedTypes::TypeSize ov;
-    os << "void set" << iprefix
-       << "IntegrationDataGradients(const NumericType* const " << iprefix
-       << "dstran)\n"
-       << "{\n";
-    for (const auto& v : mb.getMainVariables()) {
-      this->writeIntegrationDataGradientSetter(os, v.first, ov);
-      ov += SupportedTypes::getTypeSize(v.first.type, 1u);
+    if (mb.getMainVariables().empty()) {
+      os << "void set" << iprefix
+         << "IntegrationDataGradients(const NumericType* const)\n"
+         << "{\n"
+         << "}\n\n";
+    } else {
+      os << "void set" << iprefix
+         << "IntegrationDataGradients(const NumericType* const " << iprefix
+         << "dstran)\n"
+         << "{\n";
+      for (const auto& v : mb.getMainVariables()) {
+        this->writeIntegrationDataGradientSetter(os, v.first, ov);
+        ov += SupportedTypes::getTypeSize(v.first.type, 1u);
+      }
+      os << "}\n\n";
     }
-    os << "}\n\n";
   }  // end of writeIntegrationDataMainVariablesSetters
 
   void UMATInterfaceBase::writeIntegrationDataGradientSetter(

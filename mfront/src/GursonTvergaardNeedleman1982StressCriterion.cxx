@@ -47,8 +47,8 @@ namespace mfront::bbrick {
     return opts;
   }  // end of getOptions
 
-  void GursonTvergaardNeedleman1982StressCriterion::initializeMissingMaterialProperty(
-      const std::string& n) {
+  void GursonTvergaardNeedleman1982StressCriterion::
+      initializeMissingMaterialProperty(const std::string& n) {
     if (n != "q_3") {
       StandardPorousStressCriterionBase::initializeMissingMaterialProperty(n);
     }
@@ -101,4 +101,3 @@ namespace mfront::bbrick {
       ~GursonTvergaardNeedleman1982StressCriterion() = default;
 
 }  // end of namespace mfront::bbrick
-

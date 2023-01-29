@@ -122,6 +122,9 @@ namespace castem {
       if constexpr (is_defined_) {
         CBHandler::checkNPROPS(*NPROPS);
         CBHandler::checkNSTATV(*NSTATV);
+      } else {
+        static_cast<void>(NPROPS);
+        static_cast<void>(NSTATV);
       }
       Handler handler(DTIME, STRAN, DSTRAN, TEMP, DTEMP, PROPS, PREDEF, DPRED,
                       STATEV, STRESS, op, sfeh);

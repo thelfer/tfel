@@ -44,22 +44,10 @@ namespace mfront {
 
   void CastemInterface::writeUMATFunctionArguments(
       std::ostream& os, const BehaviourDescription::BehaviourType& t) {
-    if ((t == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
-        (t == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-        (t == BehaviourDescription::COHESIVEZONEMODEL)) {
-      os << "(castem::CastemReal *const STRESS,\n";
-    } else {
-      os << "(castem::CastemReal *const,\n";
-    }
-    os << " castem::CastemReal *const STATEV,\n";
-    if ((t == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
-        (t == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-        (t == BehaviourDescription::COHESIVEZONEMODEL)) {
-      os << " castem::CastemReal *const DDSDDE,\n";
-    } else {
-      os << " castem::CastemReal *const,\n";
-    }
-    os << " castem::CastemReal *const,\n"
+    os << "(castem::CastemReal *const STRESS,\n"
+       << " castem::CastemReal *const STATEV,\n"
+       << " castem::CastemReal *const DDSDDE,\n"
+       << " castem::CastemReal *const,\n"
        << " castem::CastemReal *const,\n"
        << " castem::CastemReal *const,\n"
        << " castem::CastemReal *const,\n"
@@ -80,34 +68,16 @@ namespace mfront {
        << " const castem::CastemReal *const DTEMP,\n"
        << " const castem::CastemReal *const PREDEF,\n"
        << " const castem::CastemReal *const DPRED,\n"
-       << " const char           *const,\n";
-    if ((t == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
-        (t == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-        (t == BehaviourDescription::COHESIVEZONEMODEL)) {
-      os << " const castem::CastemInt  *const NDI,\n";
-    } else {
-      os << " const castem::CastemInt  *const,\n";
-    }
-    os << " const castem::CastemInt  *const,\n";
-    if ((t == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
-        (t == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-        (t == BehaviourDescription::COHESIVEZONEMODEL)) {
-      os << " const castem::CastemInt  *const NTENS,\n";
-    } else {
-      os << " const castem::CastemInt  *const,\n";
-    }
-    os << " const castem::CastemInt  *const NSTATV,\n"
+       << " const char           *const,\n"
+       << " const castem::CastemInt  *const NDI,\n"
+       << " const castem::CastemInt  *const,\n"
+       << " const castem::CastemInt  *const NTENS,\n"
+       << " const castem::CastemInt  *const NSTATV,\n"
        << " const castem::CastemReal *const PROPS,\n"
        << " const castem::CastemInt  *const NPROPS,\n"
-       << " const castem::CastemReal *const,\n";
-    if ((t == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
-        (t == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-        (t == BehaviourDescription::COHESIVEZONEMODEL)) {
-      os << " const castem::CastemReal *const DROT,\n";
-    } else {
-      os << " const castem::CastemReal *const,\n";
-    }
-    os << "       castem::CastemReal *const PNEWDT,\n"
+       << " const castem::CastemReal *const,\n"
+       << " const castem::CastemReal *const DROT,\n"
+       << "       castem::CastemReal *const PNEWDT,\n"
        << " const castem::CastemReal *const,\n";
     if (t == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       os << " const castem::CastemReal *const F0,\n"
@@ -204,7 +174,7 @@ namespace mfront {
       "castem::doSubSteppingOnInvalidResults";
 
   const char* const CastemInterface::maximumSubStepping =
-      "castem::::maximumSubStepping";
+      "castem::maximumSubStepping";
 
   static void checkFiniteStrainStrategy(const std::string& fs) {
     tfel::raise_if((fs != "None") && (fs != "FiniteRotationSmallStrain") &&
@@ -2308,7 +2278,7 @@ namespace mfront {
       out << this->getFunctionNameBasis(name)
           << "_base(NTENS, DTIME, DROT, DDSDDE, nullptr, nullptr, "
              "TEMP, DTEMP, PROPS, NPROPS, PREDEF, DPRED, STATEV, NSTATV, \n"
-          << "nullptr, PNEWDT, NDI, KINC, nullptr);\n";
+          << "STRESS, PNEWDT, NDI, KINC, nullptr);\n";
     } else if (btype == BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
       out << this->getFunctionNameBasis(name)
           << "_base(NTENS, DTIME, DROT, DDSDDE, F0, F1, TEMP, DTEMP, \n"

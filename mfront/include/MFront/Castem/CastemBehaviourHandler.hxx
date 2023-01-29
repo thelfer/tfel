@@ -433,7 +433,9 @@ namespace castem {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename std::conditional<
-            Traits::hasPredictionOperator, StandardPredictionOperatorComputer,
+            ((Traits::hasPredictionOperator) &&
+             (CastemTraits<BV>::btype != castem::MODEL)),
+            StandardPredictionOperatorComputer,
             PredictionOperatorIsNotAvalaible>::type PredictionOperatorComputer;
         typedef typename std::conditional<
             Traits::hasStressFreeExpansion,
@@ -487,7 +489,8 @@ namespace castem {
             GradientInitialiserWithStressFreeExpansion,
             GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
         typedef typename std::conditional<
-            Traits::hasConsistentTangentOperator,
+            ((Traits::hasConsistentTangentOperator) &&
+             (CastemTraits<BV>::btype != castem::MODEL)),
             typename std::conditional<
                 Traits::isConsistentTangentOperatorSymmetric,
                 SymmetricConsistentTangentOperatorComputer,
@@ -582,7 +585,8 @@ namespace castem {
             GradientInitialiserWithStressFreeExpansion,
             GradientInitialiserWithoutStressFreeExpansion>::type DVInitializer;
         typedef typename std::conditional<
-            Traits::hasConsistentTangentOperator,
+            ((Traits::hasConsistentTangentOperator) &&
+             (CastemTraits<BV>::btype != castem::MODEL)),
             typename std::conditional<
                 Traits::isConsistentTangentOperatorSymmetric,
                 SymmetricConsistentTangentOperatorComputer,
@@ -742,13 +746,15 @@ namespace castem {
         using namespace tfel::material;
         using Traits = MechanicalBehaviourTraits<BV>;
         using ConsistentTangentOperatorHandler = std::conditional_t<
-            Traits::hasConsistentTangentOperator,
+            ((Traits::hasConsistentTangentOperator) &&
+             (CastemTraits<BV>::btype != castem::MODEL)),
             std::conditional_t<Traits::isConsistentTangentOperatorSymmetric,
                                SymmetricConsistentTangentOperatorComputer,
                                GeneralConsistentTangentOperatorComputer>,
             ConsistentTangentOperatorIsNotAvalaible>;
         using PredictionOperatorComputer =
-            std::conditional_t<Traits::hasPredictionOperator,
+            std::conditional_t<((Traits::hasPredictionOperator) &&
+                                (CastemTraits<BV>::btype != castem::MODEL)),
                                StandardPredictionOperatorComputer,
                                PredictionOperatorIsNotAvalaible>;
         constexpr auto smflag =
