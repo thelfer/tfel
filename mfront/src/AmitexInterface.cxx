@@ -5,9 +5,9 @@
  * \date   17 Jan 2007
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -129,35 +129,35 @@ namespace mfront {
   void AmitexInterface::generateInputFileExample(const BehaviourDescription& bd,
                                                  const FileDescription&) const {
     try {
-    const auto name((!bd.getLibrary().empty())
-                        ? bd.getLibrary() + bd.getClassName()
-                        : bd.getClassName());
-    const auto fileName("amitex/" + name + ".xml");
-    // opening output file
-    tfel::system::systemCall::mkdir("amitex");
-    std::ofstream out;
-    out.open(fileName);
-    tfel::raise_if(!out,
-                   "AmitexInterface::generateInputFileExample: "
-                   "could not open file '" +
-                       fileName + "'");
-    // header
-    out << "<!--\n"
-        << "    Simple template for use in AMITEX_FFTP.\n"
-        << "    \n"
-        << "    You may copy-paste those lines in your material.xml file\n"
-        << "    and adjust:\n\n"
-        << "    - the material number I,\n"
-        << "    - the path to the library (currently "
-        << this->getLibraryName(bd) << "),\n"
-        << "    - the coefficients and initial internal variables values\n"
-        << "      which are currently replaced by three dots.\n"
-        << "-->\n\n";
-    // loop over hypothesis
-    for (const auto& h : this->getModellingHypothesesToBeTreated(bd)) {
-      this->generateInputFileExampleForHypothesis(out, bd, h);
-    }
-    out.close();
+      const auto name((!bd.getLibrary().empty())
+                          ? bd.getLibrary() + bd.getClassName()
+                          : bd.getClassName());
+      const auto fileName("amitex/" + name + ".xml");
+      // opening output file
+      tfel::system::systemCall::mkdir("amitex");
+      std::ofstream out;
+      out.open(fileName);
+      tfel::raise_if(!out,
+                     "AmitexInterface::generateInputFileExample: "
+                     "could not open file '" +
+                         fileName + "'");
+      // header
+      out << "<!--\n"
+          << "    Simple template for use in AMITEX_FFTP.\n"
+          << "    \n"
+          << "    You may copy-paste those lines in your material.xml file\n"
+          << "    and adjust:\n\n"
+          << "    - the material number I,\n"
+          << "    - the path to the library (currently "
+          << this->getLibraryName(bd) << "),\n"
+          << "    - the coefficients and initial internal variables values\n"
+          << "      which are currently replaced by three dots.\n"
+          << "-->\n\n";
+      // loop over hypothesis
+      for (const auto& h : this->getModellingHypothesesToBeTreated(bd)) {
+        this->generateInputFileExampleForHypothesis(out, bd, h);
+      }
+      out.close();
     } catch (std::exception& e) {
       if (getVerboseMode() > VERBOSE_QUIET) {
         getLogStream() << e.what() << std::endl;

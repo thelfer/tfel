@@ -5,9 +5,9 @@
  * \brief 21 mai 2013
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -36,7 +36,7 @@
 namespace mfront {
 
 #ifdef MFRONT_HAVE_MADNEX
-  
+
   static std::string getFileExtension(const std::string& f) {
     const auto pos = f.find(".");
     if (pos != std::string::npos) {
@@ -46,7 +46,7 @@ namespace mfront {
   }  // end of getFileExtension
 
 #endif /* MFRONT_HAVE_MADNEX */
-  
+
   static bool fileExistsAndIsReadable(const std::string& f) {
     if (::access(f.c_str(), F_OK) == 0) {
       tfel::raise_if(::access(f.c_str(), R_OK) != 0,
@@ -82,7 +82,7 @@ namespace mfront {
       }
     }
     tfel::raise(
-                       "SearchPathsHandler::search : "
+        "SearchPathsHandler::search : "
         "file '" +
         f + "' has not been found.");
   }  // namespace mfront
@@ -100,7 +100,7 @@ namespace mfront {
       return "madnex:" + f + ":" + mkt + ":" + m + ":" + n;
     }
     return {};
-  }  // end of getMatchingMaterialKnoweldge
+  }    // end of getMatchingMaterialKnoweldge
 #endif /* MFRONT_HAVE_MADNEX */
 
   std::string SearchPathsHandler::search(const std::string& f) {
@@ -156,7 +156,7 @@ namespace mfront {
       } else {
         const auto file = p.get<std::string>() + dirSeparator() + f;
         if (fileExistsAndIsReadable(file)) {
-        return file;
+          return file;
         }
       }
     }
@@ -268,8 +268,7 @@ namespace mfront {
             std::get<0>(decomposeImplementationPathInMadnexFile(path));
         SearchPathsHandler::addMadnexSearchPath(f);
 #else  /* MFRONT_HAVE_MADNEX */
-        tfel::raise(
-            "MFrontBase::addInputPaths: madnex support is not enabled");
+        tfel::raise("MFrontBase::addInputPaths: madnex support is not enabled");
 #endif /* MFRONT_HAVE_MADNEX */
       }
     }

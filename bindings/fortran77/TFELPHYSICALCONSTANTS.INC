@@ -4,7 +4,7 @@ C> \author Thomas Helfer
 C> \date   18 août 2017
 C> \copyright Copyright (C) 2006-2014 CEA/DEN, EDF R&D. All rights 
 C> reserved. 
-C> This project is publicly released under either the GNU GPL Licence 
+C> This project is publicly released under either the GNU GPL Licence with linking exception 
 C> or the CECILL-A licence. A copy of thoses licences are delivered 
 C> with the sources of TFEL. CEA or EDF may also distribute this 
 C> project under specific licensing conditions.

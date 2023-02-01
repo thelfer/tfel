@@ -5,9 +5,9 @@
  * \date   10 Nov 2006
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -345,13 +345,13 @@ namespace mfront {
   }  // end of treatInterface
 
   void MaterialPropertyDSL::finalizeVariablesDeclaration() {
-    for(const auto op : this->overriding_parameters){
-      auto p =
-          std::find_if(this->md.parameters.begin(), this->md.parameters.end(),
-                       [&op](const VariableDescription& v) {
-                         return (v.symbolic_form == op.first) || (v.name == op.first) ||
-                                (v.getExternalName() == op.first);
-                       });
+    for (const auto op : this->overriding_parameters) {
+      auto p = std::find_if(
+          this->md.parameters.begin(), this->md.parameters.end(),
+          [&op](const VariableDescription& v) {
+            return (v.symbolic_form == op.first) || (v.name == op.first) ||
+                   (v.getExternalName() == op.first);
+          });
       if (p == this->md.parameters.end()) {
         tfel::raise(
             "MaterialPropertyDSL::finalizeVariablesDeclaration: "

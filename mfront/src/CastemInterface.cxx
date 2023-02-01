@@ -5,9 +5,9 @@
  * \date   17 Jan 2007
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -2705,93 +2705,94 @@ namespace mfront {
   void CastemInterface::generateInputFileExample(
       const BehaviourDescription& bd, const FileDescription& fd) const {
     try {
-    const auto name((!bd.getLibrary().empty())
-                        ? bd.getLibrary() + bd.getClassName()
-                        : bd.getClassName());
-    const auto fileName("castem/" + name + ".dgibi");
-    // opening output file
-    tfel::system::systemCall::mkdir("castem");
-    std::ofstream out;
-    out.open(fileName);
-    tfel::raise_if(!out,
-                   "CastemInterface::generateInputFileExample: "
-                   "could not open file '" +
-                       fileName + "'");
-    // header
-    out << "*\n"
-        << "* \\file   " << fd.fileName << '\n'
-        << "* \\brief  example of how to use the " << bd.getClassName()
-        << " behaviour law\n"
-        << "* in the Cast3M finite element solver\n"
-        << "* \\author " << fd.authorName << '\n'
-        << "* \\date   " << fd.date << '\n'
-        << "*\n\n";
-    // elastic properties, if any
-    if (bd.areElasticMaterialPropertiesDefined()) {
-      const auto& emps = bd.getElasticMaterialProperties();
-      const auto& empds = bd.getElasticMaterialPropertiesDescriptions();
-      auto gen_emp = [this, &bd, &out](
-                         const BehaviourDescription::MaterialProperty& emp,
-                         const MaterialPropertyDescription& empd,
-                         const char* const n) {
-        constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-        if (emp.is<BehaviourDescription::ConstantMaterialProperty>()) {
-          auto& cmp = emp.get<BehaviourDescription::ConstantMaterialProperty>();
-          out << n << " = " << cmp.value << ";\n";
-        } else {
-          CastemMaterialPropertyInterface i;
-          const auto f = i.getCastemFunctionName(empd);
-          out << n << " = 'TABLE';\n"
-              << n << " . 'MODELE' = '" << f << "';\n"
-              << n << " . 'LIBRAIRIE' = '" << this->getLibraryName(bd)
-              << "';\n";
-          if (!empd.inputs.empty()) {
-            out << n << " . 'VARIABLES' = 'MOTS' ";
-            this->writeVariableDescriptionsToGibiane(
-                out, uh, empd.inputs.begin(), empd.inputs.end());
-            out << ";\n";
+      const auto name((!bd.getLibrary().empty())
+                          ? bd.getLibrary() + bd.getClassName()
+                          : bd.getClassName());
+      const auto fileName("castem/" + name + ".dgibi");
+      // opening output file
+      tfel::system::systemCall::mkdir("castem");
+      std::ofstream out;
+      out.open(fileName);
+      tfel::raise_if(!out,
+                     "CastemInterface::generateInputFileExample: "
+                     "could not open file '" +
+                         fileName + "'");
+      // header
+      out << "*\n"
+          << "* \\file   " << fd.fileName << '\n'
+          << "* \\brief  example of how to use the " << bd.getClassName()
+          << " behaviour law\n"
+          << "* in the Cast3M finite element solver\n"
+          << "* \\author " << fd.authorName << '\n'
+          << "* \\date   " << fd.date << '\n'
+          << "*\n\n";
+      // elastic properties, if any
+      if (bd.areElasticMaterialPropertiesDefined()) {
+        const auto& emps = bd.getElasticMaterialProperties();
+        const auto& empds = bd.getElasticMaterialPropertiesDescriptions();
+        auto gen_emp = [this, &bd, &out](
+                           const BehaviourDescription::MaterialProperty& emp,
+                           const MaterialPropertyDescription& empd,
+                           const char* const n) {
+          constexpr const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+          if (emp.is<BehaviourDescription::ConstantMaterialProperty>()) {
+            auto& cmp =
+                emp.get<BehaviourDescription::ConstantMaterialProperty>();
+            out << n << " = " << cmp.value << ";\n";
+          } else {
+            CastemMaterialPropertyInterface i;
+            const auto f = i.getCastemFunctionName(empd);
+            out << n << " = 'TABLE';\n"
+                << n << " . 'MODELE' = '" << f << "';\n"
+                << n << " . 'LIBRAIRIE' = '" << this->getLibraryName(bd)
+                << "';\n";
+            if (!empd.inputs.empty()) {
+              out << n << " . 'VARIABLES' = 'MOTS' ";
+              this->writeVariableDescriptionsToGibiane(
+                  out, uh, empd.inputs.begin(), empd.inputs.end());
+              out << ";\n";
+            }
           }
+          out << '\n';
+        };
+        if (empds.size() == 2u) {
+          gen_emp(emps[0], empds[0], "xyoun");
+          gen_emp(emps[1], empds[1], "xnu");
+        } else if (emps.size() == 9u) {
+          gen_emp(emps[0], empds[0], "yg1");
+          gen_emp(emps[1], empds[1], "yg2");
+          gen_emp(emps[2], empds[2], "yg3");
+          gen_emp(emps[3], empds[3], "nu12");
+          gen_emp(emps[4], empds[4], "nu23");
+          gen_emp(emps[5], empds[5], "nu13");
+          gen_emp(emps[6], empds[6], "g12");
+          gen_emp(emps[7], empds[7], "g23");
+          gen_emp(emps[8], empds[8], "g13");
+        } else {
+          tfel::raise(
+              "CastemInterface::generateInputFileExample: "
+              "invalid number of elastic material properties");
         }
-        out << '\n';
-      };
-      if (empds.size() == 2u) {
-        gen_emp(emps[0], empds[0], "xyoun");
-        gen_emp(emps[1], empds[1], "xnu");
-      } else if (emps.size() == 9u) {
-        gen_emp(emps[0], empds[0], "yg1");
-        gen_emp(emps[1], empds[1], "yg2");
-        gen_emp(emps[2], empds[2], "yg3");
-        gen_emp(emps[3], empds[3], "nu12");
-        gen_emp(emps[4], empds[4], "nu23");
-        gen_emp(emps[5], empds[5], "nu13");
-        gen_emp(emps[6], empds[6], "g12");
-        gen_emp(emps[7], empds[7], "g23");
-        gen_emp(emps[8], empds[8], "g13");
-      } else {
-        tfel::raise(
-            "CastemInterface::generateInputFileExample: "
-            "invalid number of elastic material properties");
       }
-    }
 
-    // loop over hypothesis
-    for (const auto& h : this->getModellingHypothesesToBeTreated(bd)) {
-      this->generateInputFileExampleForHypothesis(out, bd, h);
-    }
-    if (this->usesGenericPlaneStressAlgorithm(bd)) {
-      out << "* The behaviour does not support the plane stress hypothesis\n"
-          << "* natively.\n"
-          << "* Support for the plane stress hypothesis\n"
-          << "* is added through the generic plane stress handler\n"
-          << "* provided by the Cast3M interface. This requires some tricky\n"
-          << "* manipulations of the material properties and can be quite\n"
-          << "* inefficient. Use it with care and consider adding proper\n"
-          << "* plane stress support to your behaviour.\n"
-          << "*\n";
-      this->generateInputFileExampleForHypothesis(
-          out, bd, ModellingHypothesis::PLANESTRESS);
-    }
-    out.close();
+      // loop over hypothesis
+      for (const auto& h : this->getModellingHypothesesToBeTreated(bd)) {
+        this->generateInputFileExampleForHypothesis(out, bd, h);
+      }
+      if (this->usesGenericPlaneStressAlgorithm(bd)) {
+        out << "* The behaviour does not support the plane stress hypothesis\n"
+            << "* natively.\n"
+            << "* Support for the plane stress hypothesis\n"
+            << "* is added through the generic plane stress handler\n"
+            << "* provided by the Cast3M interface. This requires some tricky\n"
+            << "* manipulations of the material properties and can be quite\n"
+            << "* inefficient. Use it with care and consider adding proper\n"
+            << "* plane stress support to your behaviour.\n"
+            << "*\n";
+        this->generateInputFileExampleForHypothesis(
+            out, bd, ModellingHypothesis::PLANESTRESS);
+      }
+      out.close();
     } catch (std::exception& e) {
       if (getVerboseMode() > VERBOSE_QUIET) {
         getLogStream() << e.what() << std::endl;

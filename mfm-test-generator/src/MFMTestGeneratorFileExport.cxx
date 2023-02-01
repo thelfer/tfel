@@ -5,9 +5,9 @@
  * \date   01/03/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -46,7 +46,8 @@ namespace mfmtg {
   TestDescription& TestDescription::operator=(const TestDescription&) = default;
   TestDescription::~TestDescription() noexcept = default;
 
-  void loadMFMTestGeneratorFileContent(TestDescription& d, const std::string& f) {
+  void loadMFMTestGeneratorFileContent(TestDescription& d,
+                                       const std::string& f) {
     d.content = getSourceFileContent(f);
   }  // end of loadMFMTestGeneratorFileContent
 
@@ -81,10 +82,11 @@ namespace mfmtg {
       tfel::raise_if(bid.empty(), "writeMadnexFile: empty behaviour");
       auto r = file.getRoot();
       if (!material.empty()) {
-        return createGroups(
-            r, {"MFront", material, "Behaviours", bid, "MFMTestGeneratorTests"});
+        return createGroups(r, {"MFront", material, "Behaviours", bid,
+                                "MFMTestGeneratorTests"});
       }
-      return createGroups(r, {"MFront", "Behaviours", bid, "MFMTestGeneratorTests"});
+      return createGroups(
+          r, {"MFront", "Behaviours", bid, "MFMTestGeneratorTests"});
     }();
     madnex::write(g, e);
   }  // end of writeMadnexFile

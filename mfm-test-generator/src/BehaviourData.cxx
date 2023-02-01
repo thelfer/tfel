@@ -5,9 +5,9 @@
  * \date   07/10/2019
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -44,20 +44,20 @@ namespace mfmtg {
                               const char* const t) {
       for (const auto& n : names) {
         if (evs.count(n) == 0) {
-        if (std::strcmp(t, "material property") == 0) {
-          if (std::find(omps.begin(), omps.end(), n) == omps.end()) {
+          if (std::strcmp(t, "material property") == 0) {
+            if (std::find(omps.begin(), omps.end(), n) == omps.end()) {
+              const auto type = std::string{t};
+              tfel::raise("BehaviourData::BehaviourData: " + type + " '" + n +
+                          "' is not defined when declaring "
+                          "behaviour '" +
+                          this->function + "' in library '" + this->library +
+                          "'");
+            }
+          } else {
             const auto type = std::string{t};
             tfel::raise("BehaviourData::BehaviourData: " + type + " '" + n +
                         "' is not defined when declaring "
                         "behaviour '" +
-                        this->function + "' in library '" + this->library +
-                        "'");
-          }
-        } else {
-          const auto type = std::string{t};
-          tfel::raise("BehaviourData::BehaviourData: " + type + " '" + n +
-                      "' is not defined when declaring "
-                      "behaviour '" +
                         this->function + "' in library '" + this->library +
                         "'");
           }

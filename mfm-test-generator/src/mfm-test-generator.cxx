@@ -5,9 +5,9 @@
  * \date   13 avril 2017
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -68,7 +68,7 @@ namespace mfmtg {
 
     void execute() {
       for (const auto& i : this->input_files) {
-          this->execute(i);
+        this->execute(i);
       }
     }  // end of execute
 
@@ -80,11 +80,11 @@ namespace mfmtg {
 #ifdef MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT
         this->treatMadnexPath(i);
 #else  /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
-            tfel::raise(
-                "MFMTestGenerator::execute : "
+        tfel::raise(
+            "MFMTestGenerator::execute : "
             "madnex support is not enabled");
 #endif /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
-          }
+      }
       const auto ext = [&i]() -> std::string {
         const auto pos = i.rfind('.');
         if (pos != std::string::npos) {
@@ -305,7 +305,7 @@ namespace mfmtg {
         tfel::raise(
             "MFMTestGenerator::execute: "
             "invalid input file");
-    }
+      }
       // name of the test case
       const auto n = get<std::string>(d, "test_case");
       const auto& atcf = AbstractTestCaseFactory::get();
@@ -487,7 +487,7 @@ namespace mfmtg {
     //! \brief test name (required for madnex files)
     std::string test;
 #endif /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
-  };  // end of MFMTestGenerator
+  };   // end of MFMTestGenerator
 
 }  // end of namespace mfmtg
 

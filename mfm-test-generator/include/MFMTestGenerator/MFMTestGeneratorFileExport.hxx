@@ -1,5 +1,6 @@
 /*!
- * \file   mfm-test-generator/include/MFMTestGenerator/MFMTestGeneratorFileExport.hxx
+ * \file
+ * mfm-test-generator/include/MFMTestGenerator/MFMTestGeneratorFileExport.hxx
  * \brief
  * \author Thomas Helfer
  * \date   01/03/2022
@@ -57,8 +58,8 @@ namespace mfmtg {
    * \param[out] d: mfm-test-generator file description
    * \param[in] f: output file path
    */
-  MFMTG_VISIBILITY_EXPORT void loadMFMTestGeneratorFileContent(TestDescription&,
-							       const std::string&);
+  MFMTG_VISIBILITY_EXPORT void loadMFMTestGeneratorFileContent(
+      TestDescription&, const std::string&);
   /*!
    * \brief write an `mfm-test-generator` test to a file.
    *

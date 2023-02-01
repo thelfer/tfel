@@ -5,9 +5,9 @@
  * \brief 03 mar 2011
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -29,20 +29,20 @@ namespace tfel {
               (std::equal(s2.rbegin(), s2.rend(), s1.rbegin())));
     }  // end of ends_with
 
-  std::vector<std::string> tokenize(const std::string& s,
-                                    const char c,
-                                    const bool keep_empty_strings) {
-    std::vector<std::string> res;
-    auto b = std::string::size_type{};
-    auto e = s.find_first_of(c, b);
-    while (std::string::npos != e || std::string::npos != b) {
+    std::vector<std::string> tokenize(const std::string& s,
+                                      const char c,
+                                      const bool keep_empty_strings) {
+      std::vector<std::string> res;
+      auto b = std::string::size_type{};
+      auto e = s.find_first_of(c, b);
+      while (std::string::npos != e || std::string::npos != b) {
         // Found a token, add it to the vector.
-      res.push_back(std::string{s.substr(b, e - b)});
-      if (keep_empty_strings) {
-        b = e == std::string::npos ? e : e + 1;
-      } else {
-        b = s.find_first_not_of(c, e);
-      }
+        res.push_back(std::string{s.substr(b, e - b)});
+        if (keep_empty_strings) {
+          b = e == std::string::npos ? e : e + 1;
+        } else {
+          b = s.find_first_not_of(c, e);
+        }
         e = s.find_first_of(c, b);
       }
       return res;

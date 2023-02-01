@@ -41,7 +41,7 @@ namespace tfel {
      * split a string into tokens using the specified delimiter
      * \param s : string to be splitted
      * \param c : delimiter
-   * \param keep_empty_string:
+     * \param keep_empty_string:
      * \return the tokens
      */
     TFELUTILITIES_VISIBILITY_EXPORT

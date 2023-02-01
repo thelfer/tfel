@@ -6,9 +6,9 @@
  * \date   18 Jan 2007
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -1818,7 +1818,7 @@ namespace mfront {
 
   std::map<std::string, double> BehaviourData::getOverridenParameters() const {
     return this->overriding_parameters;
-  } // end of getOverridenParameters
+  }  // end of getOverridenParameters
 
   void BehaviourData::finalizeVariablesDeclaration() {
     auto check = [](const VariableDescription& v) {
@@ -1861,9 +1861,9 @@ namespace mfront {
     auto pp = oparameters.begin();
     while (pp != oparameters.end()) {
       if (pp->first.empty()) {
-          tfel::raise(
-              "BehaviourData::finalizeVariablesDeclaration: "
-              "overriding parameter with empty name specified");
+        tfel::raise(
+            "BehaviourData::finalizeVariablesDeclaration: "
+            "overriding parameter with empty name specified");
       }
       if (override_variable(this->materialProperties, pp->first, pp->second)) {
         pp = oparameters.erase(pp);
@@ -1902,14 +1902,12 @@ namespace mfront {
           if (odp != oparameters.end()) {
             return odp;
           }
-          const auto odp2 =
-              oparameters.find("d" + v.getExternalName());
+          const auto odp2 = oparameters.find("d" + v.getExternalName());
           if (odp2 != oparameters.end()) {
             return odp2;
           }
           if (v.symbolic_form.empty()) {
-            const auto odp3 =
-                oparameters.find("\u0394" + v.symbolic_form);
+            const auto odp3 = oparameters.find("\u0394" + v.symbolic_form);
             if (odp3 != oparameters.end()) {
               return odp3;
             }

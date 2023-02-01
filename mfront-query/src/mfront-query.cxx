@@ -5,9 +5,9 @@
  * \date   04 mars 2015
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -262,8 +262,8 @@ static std::vector<std::string> filter(const std::vector<std::string>& values,
 template <std::vector<std::string> (madnex::DataBase::*getAvailableTests)(
     const std::string&, const std::string&) const>
 static void listBehaviourTests(const mfront::PathSpecifier& p,
-                                    const bool sorted_by_behaviours,
-                                    const std::string& test_specifier) {
+                               const bool sorted_by_behaviours,
+                               const std::string& test_specifier) {
   if (!p.material_property_identifier.empty()) {
     tfel::raise(
         "mfront-query: specifying a material property "
@@ -334,11 +334,14 @@ static void listBehaviourMTestTests(const mfront::PathSpecifier& p,
 #ifdef MADNEX_MTEST_TEST_SUPPORT
   using MemberType = std::vector<std::string> (madnex::DataBase::*)(
       const std::string&, const std::string&) const;
-  listBehaviourTests<static_cast<MemberType>(&madnex::DataBase::getAvailableMTestTests)>(p, sorted_by_behaviours, test_specifier);
-#else /* MADNEX_MTEST_TEST_SUPPORT */
-  tfel::raise("mfront-query: mtest tests are not supported by the madnex library");
+  listBehaviourTests<static_cast<MemberType>(
+      &madnex::DataBase::getAvailableMTestTests)>(p, sorted_by_behaviours,
+                                                  test_specifier);
+#else  /* MADNEX_MTEST_TEST_SUPPORT */
+  tfel::raise(
+      "mfront-query: mtest tests are not supported by the madnex library");
 #endif /* MADNEX_MTEST_TEST_SUPPORT */
-} // end of listBehaviourMTestTests
+}  // end of listBehaviourMTestTests
 
 static void listBehaviourMFMTestGeneratorTests(
     const mfront::PathSpecifier& p,
@@ -347,7 +350,9 @@ static void listBehaviourMFMTestGeneratorTests(
 #ifdef MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT
   using MemberType = std::vector<std::string> (madnex::DataBase::*)(
       const std::string&, const std::string&) const;
-  listBehaviourTests<static_cast<MemberType>(&madnex::DataBase::getAvailableMFMTestGeneratorTests)>(p, sorted_by_behaviours, test_specifier);
+  listBehaviourTests<static_cast<MemberType>(
+      &madnex::DataBase::getAvailableMFMTestGeneratorTests)>(
+      p, sorted_by_behaviours, test_specifier);
 #else  /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
   tfel::raise(
       "mfront-query: mfm-test-generator tests are not supported by the madnex "
@@ -436,9 +441,9 @@ static bool treatListImplementationPathsOption(bool& b,
 }  // end of treatListImplementationPathsOption
 
 static bool treatListBehaviourTestsOptions(bool& b,
-                                                bool& sorted,
-                                                const char* const opt,
-                                                const std::string& arg) {
+                                           bool& sorted,
+                                           const char* const opt,
+                                           const std::string& arg) {
   if (tfel::utilities::starts_with(arg, opt)) {
     if (b) {
       tfel::raise("mfront-query: " + std::string{opt} + " multiply defined");
@@ -619,10 +624,10 @@ int main(const int argc, const char* const* const argv) {
       } else if (treatListMaterialKnowledge(list_behaviours,
                                             sort_behaviours_list,
                                             "--list-behaviours", a)) {
-      } else if (treatListBehaviourTestsOptions(
-                     list_behaviour_mtest_tests,
-                     sort_behaviour_mtest_tests_list,
-                     "--list-behaviour-mtest-tests", a)) {
+      } else if (treatListBehaviourTestsOptions(list_behaviour_mtest_tests,
+                                                sort_behaviour_mtest_tests_list,
+                                                "--list-behaviour-mtest-tests",
+                                                a)) {
       } else if (treatListBehaviourTestsOptions(
                      list_behaviour_mfm_test_generator_tests,
                      sort_behaviour_mfm_test_generator_tests_list,
@@ -646,10 +651,10 @@ int main(const int argc, const char* const* const argv) {
       } else if ((tfel::utilities::starts_with(a, "/test")) &&
                  (treatTest(a.substr(strlen("/test"))))) {
         treatTest(a.substr(strlen("/test")));
-      } else if (treatListBehaviourTestsOptions(
-                     list_behaviour_mtest_tests,
-                     sort_behaviour_mtest_tests_list,
-                     "/list-behaviour-mtest-tests", a)) {
+      } else if (treatListBehaviourTestsOptions(list_behaviour_mtest_tests,
+                                                sort_behaviour_mtest_tests_list,
+                                                "/list-behaviour-mtest-tests",
+                                                a)) {
       } else if (treatListBehaviourTestsOptions(
                      list_behaviour_mfm_test_generator_tests,
                      sort_behaviour_mfm_test_generator_tests_list,
@@ -674,11 +679,11 @@ int main(const int argc, const char* const* const argv) {
           "with --list-materials, --list-material-properties, "
           "--list-behaviour, --list-behaviour-mtest-tests or --list-models");
     }
-    if (!test.empty()){
+    if (!test.empty()) {
       if ((!list_behaviour_mtest_tests) &&
           (!list_behaviour_mfm_test_generator_tests)) {
-      tfel::raise(
-          "using --test is only meaningful with "
+        tfel::raise(
+            "using --test is only meaningful with "
             "--list_behaviour_mtest_tests or "
             "--list_behaviour_mfm_test_generator_tests "
             "command line arguments");

@@ -5,9 +5,9 @@
  * \brief 03 mar 2011
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -30,8 +30,8 @@ struct StringAlgorithmsTest final : public tfel::tests::TestCase {
     this->test2();
     return this->result;
   }  // end of execute
-private:
- void test1() {
+ private:
+  void test1() {
     using namespace tfel::utilities;
     TFEL_TESTS_CHECK_EQUAL(replace_all("foo bar", "o", "a"), "faa bar");
     TFEL_TESTS_CHECK_EQUAL(replace_all("foo bar", "u", "a"), "foo bar");
@@ -44,24 +44,24 @@ private:
     TFEL_TESTS_ASSERT(ends_with("foobar", "bar"));
     TFEL_TESTS_ASSERT(!ends_with("foobar", "foo"));
   }  // end of execute()
- void test2() {
-   const auto s = "a:bbc::d";
-   const auto tokens1 = tfel::utilities::tokenize(s, ':');
-   const auto tokens2 = tfel::utilities::tokenize(s, ':', true);
-   TFEL_TESTS_ASSERT(tokens1.size() == 3);
-   if (tokens1.size() == 3) {
-     TFEL_TESTS_ASSERT(tokens1[0] == "a");
-     TFEL_TESTS_ASSERT(tokens1[1] == "bbc");
-     TFEL_TESTS_ASSERT(tokens1[2] == "d");
-   }
-   TFEL_TESTS_ASSERT(tokens2.size() == 4);
-   if (tokens2.size() == 3) {
-     TFEL_TESTS_ASSERT(tokens2[0] == "a");
-     TFEL_TESTS_ASSERT(tokens2[1] == "bbc");
-     TFEL_TESTS_ASSERT(tokens2[1] == "");
-     TFEL_TESTS_ASSERT(tokens2[2] == "d");
-   }
- }  // end of test2
+  void test2() {
+    const auto s = "a:bbc::d";
+    const auto tokens1 = tfel::utilities::tokenize(s, ':');
+    const auto tokens2 = tfel::utilities::tokenize(s, ':', true);
+    TFEL_TESTS_ASSERT(tokens1.size() == 3);
+    if (tokens1.size() == 3) {
+      TFEL_TESTS_ASSERT(tokens1[0] == "a");
+      TFEL_TESTS_ASSERT(tokens1[1] == "bbc");
+      TFEL_TESTS_ASSERT(tokens1[2] == "d");
+    }
+    TFEL_TESTS_ASSERT(tokens2.size() == 4);
+    if (tokens2.size() == 3) {
+      TFEL_TESTS_ASSERT(tokens2[0] == "a");
+      TFEL_TESTS_ASSERT(tokens2[1] == "bbc");
+      TFEL_TESTS_ASSERT(tokens2[1] == "");
+      TFEL_TESTS_ASSERT(tokens2[2] == "d");
+    }
+  }  // end of test2
 };
 
 TFEL_TESTS_GENERATE_PROXY(StringAlgorithmsTest, "StringAlgorithms");
