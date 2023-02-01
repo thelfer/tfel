@@ -52,7 +52,7 @@ namespace tfel {
       fedisableexcept(FE_INEXACT);  // The Inexact exception occurs when the
                                     // rounded  result  of  an operation  is not
                                     // equal to the infinite precision result.
-#endif /* __GLIBC__ */
+#endif                              /* __GLIBC__ */
 #endif /* LIB_TFEL_FLOATING_POINT_EXCEPTIONS_HXX_ */
     }
 

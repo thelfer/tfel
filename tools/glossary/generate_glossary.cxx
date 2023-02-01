@@ -5,9 +5,9 @@
  * \brief 14 mai 2009
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -312,7 +312,8 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
       << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights"
       << endl
       << " * reserved." << endl
-      << " * This project is publicly released under either the GNU GPL Licence"
+      << " * This project is publicly released under either the GNU GPL "
+         "Licence with linking exception"
       << endl
       << " * or the CECILL-A licence. A copy of thoses licences are delivered"
       << endl
@@ -420,7 +421,8 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
       << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights"
       << endl
       << " * reserved." << endl
-      << " * This project is publicly released under either the GNU GPL Licence"
+      << " * This project is publicly released under either the GNU GPL "
+         "Licence with linking exception"
       << endl
       << " * or the CECILL-A licence. A copy of thoses licences are delivered"
       << endl
@@ -776,22 +778,22 @@ void generateBoostPythonBindings(const GlossaryTokenizer& tokenizer) {
   }
   GlossaryTokenizer::const_iterator p;
   // python bindings
-  psrc
-      << "/*!" << endl
-      << " * \\file   PythonGlossary.cxx" << endl
-      << " * \\author Helfer Thomas" << endl
-      << " * \\date   09/06/14" << endl
-      << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights"
-      << endl
-      << " * reserved." << endl
-      << " * This project is publicly released under either the GNU GPL Licence"
-      << endl
-      << " * or the CECILL-A licence. A copy of thoses licences are delivered"
-      << endl
-      << " * with the sources of TFEL. CEA or EDF may also distribute this"
-      << endl
-      << " * project under specific licensing conditions." << endl
-      << " */" << endl;
+  psrc << "/*!" << endl
+       << " * \\file   PythonGlossary.cxx" << endl
+       << " * \\author Helfer Thomas" << endl
+       << " * \\date   09/06/14" << endl
+       << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights"
+       << endl
+       << " * reserved." << endl
+       << " * This project is publicly released under either the GNU GPL "
+          "Licence with linking exception"
+       << endl
+       << " * or the CECILL-A licence. A copy of thoses licences are delivered"
+       << endl
+       << " * with the sources of TFEL. CEA or EDF may also distribute this"
+       << endl
+       << " * project under specific licensing conditions." << endl
+       << " */" << endl;
   psrc << endl;
   psrc << "#include<boost/python.hpp>" << endl;
   psrc << endl;

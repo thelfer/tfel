@@ -52,7 +52,8 @@
 // 	: public T2toT2Concept<Expr<t2tot2<N,T>,
 // 					      T2toT2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T>
 // > >, 	  public t2tot2_base<Expr<t2tot2<N,T>,
-// 					    T2toT2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T> >
+// 					    T2toT2FromTinyMatrixViewExpr<N,Mn,Mm,In,Im,T>
+// >
 // >
 //     {
 

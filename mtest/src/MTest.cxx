@@ -5,9 +5,9 @@
  * \brief 12 avril 2013
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -111,10 +111,11 @@ namespace mtest {
   std::string MTest::classname() const { return "MTest"; }
 
   void MTest::addConstraint(const std::shared_ptr<Constraint> c) {
-    if(this->initialisationFinished){
-      throw(std::runtime_error("MTest::addConstraint: "
-			       "constraints can't be added after that "
-			       "the `completeInitialisation` method has not been called"));
+    if (this->initialisationFinished) {
+      throw(std::runtime_error(
+          "MTest::addConstraint: "
+          "constraints can't be added after that "
+          "the `completeInitialisation` method has not been called"));
     }
     this->constraints.push_back(c);
   }
