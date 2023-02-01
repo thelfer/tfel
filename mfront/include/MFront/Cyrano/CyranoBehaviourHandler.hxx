@@ -324,7 +324,7 @@ namespace cyrano {
           auto r = BV::SUCCESS;
           BV behaviour(this->bData, this->iData);
           try {
-            if(!behaviour.initialize()){
+            if (!behaviour.initialize()) {
               throwBehaviourInitializationFailedException(Traits::getName());
             }
             behaviour.setOutOfBoundsPolicy(this->policy);

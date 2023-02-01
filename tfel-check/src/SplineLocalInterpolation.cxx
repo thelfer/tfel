@@ -5,9 +5,9 @@
  *      Author: rp238441
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -50,12 +50,12 @@ namespace tfel::check {
 
   double SplineLocalInterpolation::getValue(const double x) const {
     // if we have only one spline, return it
-    if (this->timesBefore.size() == 1){
+    if (this->timesBefore.size() == 1) {
       return (this->splines.find(this->timesBefore.at(0)))->second.getValue(x);
     }
     // else, we search the right spline
     for (unsigned i = 0; i < this->timesBefore.size(); ++i) {
-      if (this->timesBefore.at(i) > x){
+      if (this->timesBefore.at(i) > x) {
         return (this->splines.find(this->timesBefore.at(i - 1)))
             ->second.getValue(x);
       }

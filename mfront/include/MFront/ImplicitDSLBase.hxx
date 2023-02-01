@@ -54,7 +54,6 @@ namespace mfront {
     ~ImplicitDSLBase() override;
 
    protected:
-
     virtual void predictorAnalyser(const Hypothesis, const std::string&);
 
     virtual void integratorAnalyser(const Hypothesis, const std::string&);

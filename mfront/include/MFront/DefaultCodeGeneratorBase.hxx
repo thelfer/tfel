@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/include/MFront/DefaultCodeGeneratorBase.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   03/08/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -16,7 +16,7 @@
 
 #include "MFront/BehaviourCodeGeneratorBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   struct DefaultCodeGeneratorBase : BehaviourCodeGeneratorBase {
     /*!
@@ -37,6 +37,6 @@ namespace mfront{
         std::ostream&, const Hypothesis) const override;
   };  // end of DefaultCodeGeneratorBase
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_DEFAULTCODEGENERATORBASE_HXX */

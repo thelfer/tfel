@@ -1,20 +1,20 @@
 /*!
  * \file   mfront/src/IsotropicBehaviourCodeGeneratorBase.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   04/08/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
 #include <ostream>
 #include "MFront/IsotropicBehaviourCodeGeneratorBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   IsotropicBehaviourCodeGeneratorBase::IsotropicBehaviourCodeGeneratorBase(
       const FileDescription& f,
@@ -23,8 +23,9 @@ namespace mfront{
       : BehaviourCodeGeneratorBase(f, d, bim) {
   }  // end of IsotropicBehaviourCodeGeneratorBase
 
-  void IsotropicBehaviourCodeGeneratorBase::writeBehaviourLocalVariablesInitialisation(
-      std::ostream& os, const Hypothesis h) const {
+  void IsotropicBehaviourCodeGeneratorBase::
+      writeBehaviourLocalVariablesInitialisation(std::ostream& os,
+                                                 const Hypothesis h) const {
     using Modifier = std::function<std::string(const MaterialPropertyInput&)>;
     Modifier mts = [this](const MaterialPropertyInput& i) -> std::string {
       if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
@@ -115,20 +116,24 @@ namespace mfront{
          << "this->lambda_tdt = this->lambda;\n"
          << "this->mu_tdt     = this->mu;\n";
     }
-    BehaviourCodeGeneratorBase::writeBehaviourLocalVariablesInitialisation(os, h);
+    BehaviourCodeGeneratorBase::writeBehaviourLocalVariablesInitialisation(os,
+                                                                           h);
   }  // end of writeBehaviourLocalVariablesInitialisation
 
-  void IsotropicBehaviourCodeGeneratorBase::writeBehaviourParserSpecificIncludes(
+  void
+  IsotropicBehaviourCodeGeneratorBase::writeBehaviourParserSpecificIncludes(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
   }  // end of writeBehaviourParserSpecificIncludes
 
-  void IsotropicBehaviourCodeGeneratorBase::writeBehaviourParserSpecificTypedefs(
+  void
+  IsotropicBehaviourCodeGeneratorBase::writeBehaviourParserSpecificTypedefs(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
   }  // end of writeBehaviourParserSpecificTypedefs
 
-  void IsotropicBehaviourCodeGeneratorBase::writeBehaviourComputePredictionOperator(
+  void
+  IsotropicBehaviourCodeGeneratorBase::writeBehaviourComputePredictionOperator(
       std::ostream& os, const Hypothesis h) const {
     const auto btype = this->bd.getBehaviourTypeFlag();
     if (!this->bd.hasCode(h, BehaviourData::ComputePredictionOperator)) {
@@ -160,15 +165,17 @@ namespace mfront{
          << "return SUCCESS;\n"
          << "}\n\n";
     } else {
-      BehaviourCodeGeneratorBase::writeBehaviourComputePredictionOperator(os, h);
+      BehaviourCodeGeneratorBase::writeBehaviourComputePredictionOperator(os,
+                                                                          h);
     }
   }  // end of writeBehaviourComputePredictionOperator
 
-  void IsotropicBehaviourCodeGeneratorBase::writeBehaviourComputeTangentOperator(
+  void
+  IsotropicBehaviourCodeGeneratorBase::writeBehaviourComputeTangentOperator(
       std::ostream&, const Hypothesis) const {
   }  // end of writeBehaviourComputeTangentOperator
 
   IsotropicBehaviourCodeGeneratorBase::~IsotropicBehaviourCodeGeneratorBase() =
       default;
 
-}// end of namespace mfront
+}  // end of namespace mfront

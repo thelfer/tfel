@@ -30,20 +30,20 @@ namespace mfront {
     //! \return the name of the interface
     static std::string getName();
     //! \return the name of the generated library
-    std::string getLibraryName(const ModelDescription&) const;
+    std::string getLibraryName(const ModelDescription &) const;
     //! \brief constructor
     CastemModelInterface();
     //
     std::pair<bool, tokens_iterator> treatKeyword(
-        const std::string&,
-        const std::vector<std::string>&,
+        const std::string &,
+        const std::vector<std::string> &,
         tokens_iterator,
         const tokens_iterator) override;
-    void declareReservedNames(std::set<std::string>&) override;
-    void writeOutputFiles(const FileDescription&,
-                          const ModelDescription&) override;
-    void getTargetsDescription(TargetsDescription&,
-                               const ModelDescription&) override;
+    void declareReservedNames(std::set<std::string> &) override;
+    void writeOutputFiles(const FileDescription &,
+                          const ModelDescription &) override;
+    void getTargetsDescription(TargetsDescription &,
+                               const ModelDescription &) override;
     //! \brief destructor
     ~CastemModelInterface() override;
 
@@ -58,15 +58,15 @@ namespace mfront {
      * \param fd: file description
      * \param md: model description
      */
-    virtual void writeHeaderFile(const FileDescription&,
-                                 const ModelDescription&);
+    virtual void writeHeaderFile(const FileDescription &,
+                                 const ModelDescription &);
     /*!
      * \brief generate the source file
      * \param fd: file description
      * \param md: model description
      */
-    virtual void writeSourceFile(const FileDescription&,
-                                 const ModelDescription&);
+    virtual void writeSourceFile(const FileDescription &,
+                                 const ModelDescription &);
 
   };  // end of struct CastemModelInterface
 

@@ -71,7 +71,7 @@ namespace tfel::material {
      */
     struct IntegrationResult {
       //! \brief default constructor
-      constexpr IntegrationResult() noexcept : status(SUCCESS){}
+      constexpr IntegrationResult() noexcept : status(SUCCESS) {}
 #ifndef __clang__
       //! \brief move constructor
       constexpr IntegrationResult(IntegrationResult&&) noexcept = default;
@@ -85,16 +85,18 @@ namespace tfel::material {
           const IntegrationResult&) noexcept = default;
 #else
       //! \brief move constructor
-      IntegrationResult(IntegrationResult&& src) noexcept : status(src.status){}
+      IntegrationResult(IntegrationResult&& src) noexcept
+          : status(src.status) {}
       //! \brief default constructor
-      IntegrationResult(const IntegrationResult& src) noexcept : status(src.status){}
+      IntegrationResult(const IntegrationResult& src) noexcept
+          : status(src.status) {}
       //! \brief move assignement
       IntegrationResult& operator=(IntegrationResult&& src) noexcept {
         this->status = src.status;
         return *this;
       }
       //! \brief standard assignement
-      IntegrationResult& operator=(const IntegrationResult& src) noexcept  {
+      IntegrationResult& operator=(const IntegrationResult& src) noexcept {
         this->status = src.status;
         return *this;
       }

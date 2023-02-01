@@ -106,7 +106,7 @@ namespace mtest {
 
    private:
     std::map<real, real> values;
-  }; // end of struct LPIEvolution
+  };  // end of struct LPIEvolution
 
   /*!
    * \brief build a constant evolution from a real value
@@ -131,9 +131,9 @@ namespace mtest {
    * \brief check if evolutions with given names have been declared
    */
   MTEST_VISIBILITY_EXPORT
-  void checkIfDeclared(const std::vector<std::string>& ,
-                       const EvolutionManager& ,
-                       const std::string& );
+  void checkIfDeclared(const std::vector<std::string>&,
+                       const EvolutionManager&,
+                       const std::string&);
   /*!
    * \brief check if evolutions with given names have been declared
    */

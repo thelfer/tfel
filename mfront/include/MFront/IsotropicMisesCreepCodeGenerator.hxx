@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/include/MFront/IsotropicMisesCreepCodeGenerator.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   03/08/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -16,7 +16,7 @@
 
 #include "MFront/IsotropicBehaviourCodeGeneratorBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   struct IsotropicMisesCreepCodeGenerator
       : IsotropicBehaviourCodeGeneratorBase {
@@ -43,6 +43,6 @@ namespace mfront{
                                               const Hypothesis) const override;
   };  // end of IsotropicMisesCreepCodeGenerator
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_ISOTROPICMISESCREEPCODEGENERATOR_HXX */

@@ -1,13 +1,13 @@
 /*!
  * \file   mfront/src/MultipleIsotropicMisesFlowsCodeGenerator.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   04/08/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -27,13 +27,14 @@ namespace mfront {
       : IsotropicBehaviourCodeGeneratorBase(f, d, bim),
         flows(fhs) {}  // end of MultipleIsotropicMisesFlowsCodeGenerator
 
-  void MultipleIsotropicMisesFlowsCodeGenerator::writeBehaviourParserSpecificIncludes(
-      std::ostream& os) const {
+  void MultipleIsotropicMisesFlowsCodeGenerator::
+      writeBehaviourParserSpecificIncludes(std::ostream& os) const {
     this->checkBehaviourFile(os);
     os << "#include\"TFEL/Math/TinyMatrixSolve.hxx\"\n\n";
   }
 
-  void MultipleIsotropicMisesFlowsCodeGenerator::writeBehaviourParserSpecificMembers(
+  void
+  MultipleIsotropicMisesFlowsCodeGenerator::writeBehaviourParserSpecificMembers(
       std::ostream& os, const Hypothesis) const {
     const auto has_plastic_flow = [this] {
       for (auto p = this->flows.begin(); p != this->flows.end(); ++p) {
@@ -360,8 +361,9 @@ namespace mfront {
     os << "}\n\n";
   }
 
-  void MultipleIsotropicMisesFlowsCodeGenerator::writeBehaviourComputeTangentOperator(
-      std::ostream& os, const Hypothesis) const {
+  void MultipleIsotropicMisesFlowsCodeGenerator::
+      writeBehaviourComputeTangentOperator(std::ostream& os,
+                                           const Hypothesis) const {
     os << "bool computeConsistentTangentOperator(const SMType smt){\n"
        << "using namespace std;\n"
        << "using tfel::material::computeElasticStiffness;\n"

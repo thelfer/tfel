@@ -1,20 +1,20 @@
 /*!
  * \file   mfront/src/DefaultCZMCodeGenerator.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   04/08/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
 #include <ostream>
 #include "MFront/DefaultCZMCodeGenerator.hxx"
 
-namespace mfront{
+namespace mfront {
 
   DefaultCZMCodeGenerator::DefaultCZMCodeGenerator(
       const FileDescription& f,
@@ -49,4 +49,4 @@ namespace mfront{
 
   DefaultCZMCodeGenerator::~DefaultCZMCodeGenerator() = default;
 
-} // end of namespace mfront
+}  // end of namespace mfront

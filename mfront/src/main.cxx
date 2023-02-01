@@ -5,9 +5,9 @@
  * \date   09 nov 2006
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -51,7 +51,7 @@
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char *const *const argv) {
   auto find = [argv, argc](const char *v) {
-    for (const auto* a = argv; a != argv + argc; ++a) {
+    for (const auto *a = argv; a != argv + argc; ++a) {
       if (::strcmp(*a, v) == 0) {
         return true;
       }

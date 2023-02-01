@@ -6,9 +6,9 @@
  * \date   04 jun 2007
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -81,13 +81,13 @@ namespace mfront {
   bool isValidUserDefinedVariableName(std::string_view n) {
     return (tfel::utilities::CxxTokenizer::isValidIdentifier(n, true)) &&
            (!tfel::utilities::starts_with(n, "mfront_"));
-  } // end of isValidUserDefinedVariableName
+  }  // end of isValidUserDefinedVariableName
 
   tfel::utilities::DataMapValidator DSLBase::getDSLOptionsValidator() {
     auto v = tfel::utilities::DataMapValidator{};
     v.addDataTypeValidator<std::string>(DSLBase::defaultOutOfBoundsPolicyOption)
         .addDataTypeValidator<bool>(
-           DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption)
+            DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption)
         .addDataTypeValidator<bool>(DSLBase::parametersAsStaticVariablesOption)
         .addDataTypeValidator<bool>(DSLBase::initializationFromFileOption)
         .addDataTypeValidator<std::string>(DSLBase::buildIdentifierOption)

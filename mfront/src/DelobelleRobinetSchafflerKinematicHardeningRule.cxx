@@ -5,9 +5,9 @@
  * \date   04/04/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -47,11 +47,12 @@ namespace mfront::bbrick {
     return opts;
   }  // end of getOptions()
 
-  void DelobelleRobinetSchafflerKinematicHardeningRule::initialize(BehaviourDescription& bd,
-                                                      AbstractBehaviourDSL& dsl,
-                                                      const std::string& fid,
-                                                      const std::string& kid,
-                                                      const DataMap& d) {
+  void DelobelleRobinetSchafflerKinematicHardeningRule::initialize(
+      BehaviourDescription& bd,
+      AbstractBehaviourDSL& dsl,
+      const std::string& fid,
+      const std::string& kid,
+      const DataMap& d) {
     KinematicHardeningRuleBase::initialize(bd, dsl, fid, kid, d);
     const auto Dn = KinematicHardeningRule::getVariableId("D", fid, kid);
     const auto fn = KinematicHardeningRule::getVariableId("f", fid, kid);
@@ -100,21 +101,24 @@ namespace mfront::bbrick {
     }
     declareParameterOrLocalVariable(bd, this->a0, "strain", a0n);
     //
-    tfel::raise_if(d.count("m") == 0,
-                   "DelobelleRobinetSchafflerKinematicHardeningRule::initialize: "
-                   "'m' material property undefined");
+    tfel::raise_if(
+        d.count("m") == 0,
+        "DelobelleRobinetSchafflerKinematicHardeningRule::initialize: "
+        "'m' material property undefined");
     this->m = getBehaviourDescriptionMaterialProperty(dsl, "m", d.at("m"));
     declareParameterOrLocalVariable(bd, this->m, "stress", mn);
     //
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     bd.reserveName(uh, KinematicHardeningRule::getVariableId("aeq", fid, kid));
-    bd.reserveName(uh, KinematicHardeningRule::getVariableId("aeq_a0_m", fid, kid));
+    bd.reserveName(uh,
+                   KinematicHardeningRule::getVariableId("aeq_a0_m", fid, kid));
     bd.reserveName(uh, KinematicHardeningRule::getVariableId("Rs_a", fid, kid));
     bd.reserveName(uh, KinematicHardeningRule::getVariableId("Rd_a", fid, kid));
     bd.reserveName(uh, KinematicHardeningRule::getVariableId("Ec_n", fid, kid));
     bd.reserveName(uh, KinematicHardeningRule::getVariableId("iaeq", fid, kid));
     bd.reserveName(uh, KinematicHardeningRule::getVariableId("na", fid, kid));
-    bd.reserveName(uh, KinematicHardeningRule::getVariableId("dna_da", fid, kid));
+    bd.reserveName(uh,
+                   KinematicHardeningRule::getVariableId("dna_da", fid, kid));
   }  // end of initialize
 
   void DelobelleRobinetSchafflerKinematicHardeningRule::endTreatment(
@@ -155,16 +159,17 @@ namespace mfront::bbrick {
             "DelobelleRobinetSchafflerKinematicHardeningRule::endTreatment: "
             "internal error, unsupported orthotropic axes convention");
         for (const auto mh : bd.getDistinctModellingHypotheses()) {
-          tfel::raise_if(mh != ModellingHypothesis::TRIDIMENSIONAL,
-                         "DelobelleRobinetSchafflerKinematicHardeningRule::endTreatment: "
-                         "an orthotropic axes convention must be choosen when "
-                         "defining a stress free expansion in behaviours "
-                         "which shall be valid in other modelling hypothesis "
-                         "than 'Tridimensional'.\n"
-                         "Either restrict the validity of the behaviour to "
-                         "'Tridimensional' (see @ModellingHypothesis) or "
-                         "choose and orthotropic axes convention as on option "
-                         "to the @OrthotropicBehaviour keyword");
+          tfel::raise_if(
+              mh != ModellingHypothesis::TRIDIMENSIONAL,
+              "DelobelleRobinetSchafflerKinematicHardeningRule::endTreatment: "
+              "an orthotropic axes convention must be choosen when "
+              "defining a stress free expansion in behaviours "
+              "which shall be valid in other modelling hypothesis "
+              "than 'Tridimensional'.\n"
+              "Either restrict the validity of the behaviour to "
+              "'Tridimensional' (see @ModellingHypothesis) or "
+              "choose and orthotropic axes convention as on option "
+              "to the @OrthotropicBehaviour keyword");
         }
       }
       return "tfel::material::OrthotropicAxesConvention::DEFAULT";
@@ -185,22 +190,23 @@ namespace mfront::bbrick {
                BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
   }  // end of endTreatment
 
-  std::string
-  DelobelleRobinetSchafflerKinematicHardeningRule::buildBackStrainImplicitEquations(
-      const BehaviourDescription& bd,
-      const StressPotential& sp,
-      const StressCriterion& fc,
-      const std::vector<std::shared_ptr<KinematicHardeningRule>>& khrs,
-      const std::string& fid,
-      const std::string& kid,
-      const bool b) const {
+  std::string DelobelleRobinetSchafflerKinematicHardeningRule::
+      buildBackStrainImplicitEquations(
+          const BehaviourDescription& bd,
+          const StressPotential& sp,
+          const StressCriterion& fc,
+          const std::vector<std::shared_ptr<KinematicHardeningRule>>& khrs,
+          const std::string& fid,
+          const std::string& kid,
+          const bool b) const {
     auto get_member_id = [&fid, &kid](const char* const n) {
       return "this->" + KinematicHardeningRule::getVariableId(n, fid, kid);
     };
     const auto an = KinematicHardeningRule::getVariableId("a", fid, kid);
     const auto aeqn = KinematicHardeningRule::getVariableId("aeq", fid, kid);
     const auto nan = KinematicHardeningRule::getVariableId("na", fid, kid);
-    const auto dna_da = KinematicHardeningRule::getVariableId("dna_da", fid, kid);
+    const auto dna_da =
+        KinematicHardeningRule::getVariableId("dna_da", fid, kid);
     const auto iaeqn = KinematicHardeningRule::getVariableId("iaeq", fid, kid);
     const auto aeq_a0_m =
         KinematicHardeningRule::getVariableId("aeq_a0_m", fid, kid);
@@ -235,7 +241,7 @@ namespace mfront::bbrick {
     c += " = pow(" + aeqn + " / (" + a0n + "), " + mn + ");\n";
     c += "f" + an + " -= ";
     c += "   (" + dpn + ") * " + Ec_n;
-    c += " - (" + Dn + ")  * (" + dpn + ") * " + Rd_a ;
+    c += " - (" + Dn + ")  * (" + dpn + ") * " + Rd_a;
     c += " - (this->dt) * (" + fn + ")  * " + aeq_a0_m + " * " + nan;
     c += ";\n";
     if (b) {
@@ -263,7 +269,7 @@ namespace mfront::bbrick {
     return c;
   }  // end of buildBackStrainImplicitEquations
 
-  DelobelleRobinetSchafflerKinematicHardeningRule::~DelobelleRobinetSchafflerKinematicHardeningRule() =
-      default;
+  DelobelleRobinetSchafflerKinematicHardeningRule::
+      ~DelobelleRobinetSchafflerKinematicHardeningRule() = default;
 
 }  // end of namespace mfront::bbrick

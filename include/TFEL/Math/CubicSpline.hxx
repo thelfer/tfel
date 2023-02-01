@@ -255,7 +255,7 @@ namespace tfel::math {
 
 }  // end of namespace tfel::math
 
-namespace tfel::typetraits{
+namespace tfel::typetraits {
 
   template <typename AbscissaType,
             typename ValueType,
@@ -273,7 +273,6 @@ namespace tfel::typetraits{
   };
 
 }  // end of namespace tfel::typetraits
-
 
 #include "TFEL/Math/CubicSpline.ixx"
 

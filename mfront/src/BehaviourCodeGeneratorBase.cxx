@@ -5,9 +5,9 @@
  * \date   03/08/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -567,7 +567,7 @@ namespace mfront {
     for (std::size_t idx = 0; idx != nb; ++idx) {
       const auto& nss2 = sss.getSlipDirections(idx);
       write_vector(out, "this->ns" + std::to_string(idx), nss2);
-      for (decltype(nss2.size()) i = 0; i !=nss2.size(); ++i) {
+      for (decltype(nss2.size()) i = 0; i != nss2.size(); ++i) {
         out << "this->climb_tensors" << idx << "[" << i << "] = "
             << "stensor::buildFromVectorDiadicProduct("
             << "this->ns" << idx << "[" << i << "]);\n";
@@ -4182,7 +4182,8 @@ namespace mfront {
           "defined");
     }
     if (!hasUserDefinedPredictionOperatorCode(this->bd, h)) {
-      os << "[[nodiscard]] IntegrationResult computePredictionOperator(const SMFlag,const "
+      os << "[[nodiscard]] IntegrationResult computePredictionOperator(const "
+            "SMFlag,const "
             "SMType) override{\n"
          << "tfel::raise(\"" << this->bd.getClassName()
          << "::computePredictionOperator: \"\n"
@@ -4221,8 +4222,8 @@ namespace mfront {
           const auto ktype =
               convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
           if (std::find(ktos.begin(), ktos.end(), t) != ktos.end()) {
-            os << "[[nodiscard]] IntegrationResult\ncomputePredictionOperator_" << ktype
-               << "(const SMType smt){\n"
+            os << "[[nodiscard]] IntegrationResult\ncomputePredictionOperator_"
+               << ktype << "(const SMType smt){\n"
                << "using namespace std;\n"
                << "using namespace tfel::math;\n"
                << "using std::vector;\n";
@@ -4237,8 +4238,8 @@ namespace mfront {
             if ((h ==
                  ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
                 (h == ModellingHypothesis::PLANESTRESS)) {
-              os << "[[nodiscard]] IntegrationResult computePredictionOperator_" << ktype
-                 << "(const SMType){\n"
+              os << "[[nodiscard]] IntegrationResult computePredictionOperator_"
+                 << ktype << "(const SMType){\n"
                  << "tfel::raise(\"" << this->bd.getClassName()
                  << "::computePredictionOperator_" << ktype << ": \"\n"
                  << "\"computing the prediction operator '" << ktype
@@ -4249,16 +4250,18 @@ namespace mfront {
                   FiniteStrainBehaviourTangentOperatorConversionPath::
                       getShortestPath(paths, t);
               if (path.empty()) {
-                os << "[[nodiscard]] IntegrationResult computePredictionOperator_" << ktype
-                   << "(const SMType){\n"
+                os << "[[nodiscard]] IntegrationResult "
+                      "computePredictionOperator_"
+                   << ktype << "(const SMType){\n"
                    << "tfel::raise(\"" << this->bd.getClassName()
                    << "::computePredictionOperator_" << ktype << ": \"\n"
                    << "\"computing the prediction operator '" << ktype
                    << "' is not supported\");\n"
                    << "}\n\n";
               } else {
-                os << "[[nodiscard]] IntegrationResult computePredictionOperator_" << ktype
-                   << "(const SMType smt){\n";
+                os << "[[nodiscard]] IntegrationResult "
+                      "computePredictionOperator_"
+                   << ktype << "(const SMType smt){\n";
                 auto pc = path.begin();
                 const auto k =
                     convertFiniteStrainBehaviourTangentOperatorFlagToString(
@@ -4267,7 +4270,8 @@ namespace mfront {
                     getFiniteStrainBehaviourTangentOperatorFlagType(pc->from());
                 os << "using namespace tfel::math;\n";
                 os << "// computing " << k << '\n';
-                os << "if(this->computePredictionOperator_" << k << "(smt) != SUCCESS){\n"
+                os << "if(this->computePredictionOperator_" << k
+                   << "(smt) != SUCCESS){\n"
                    << "return FAILURE;\n"
                    << "}\n"
                    << "const " << from_type_flag << "<N,stress> "
@@ -4287,7 +4291,8 @@ namespace mfront {
             }
           }
         }
-        os << "[[nodiscard]] IntegrationResult computePredictionOperator(const SMFlag "
+        os << "[[nodiscard]] IntegrationResult computePredictionOperator(const "
+              "SMFlag "
               "smflag,const SMType smt) override{\n"
            << "using namespace std;\n"
            << "switch(smflag){\n";

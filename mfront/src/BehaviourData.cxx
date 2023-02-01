@@ -6,9 +6,9 @@
  * \date   18/01/2007
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -2064,12 +2064,12 @@ namespace mfront {
   void BehaviourData::checkAndCompletePhysicalBoundsDeclaration(
       const std::string_view s) {
     mfront::checkAndCompletePhysicalBoundsDeclaration(this->materialProperties,
-                                                    s);
+                                                      s);
     mfront::checkAndCompletePhysicalBoundsDeclaration(this->stateVariables, s);
     mfront::checkAndCompletePhysicalBoundsDeclaration(
         this->auxiliaryStateVariables, s);
-    mfront::checkAndCompletePhysicalBoundsDeclaration(this->integrationVariables,
-                                                    s);
+    mfront::checkAndCompletePhysicalBoundsDeclaration(
+        this->integrationVariables, s);
     mfront::checkAndCompletePhysicalBoundsDeclaration(
         this->externalStateVariables, s);
     mfront::checkAndCompletePhysicalBoundsDeclaration(this->parameters, s);

@@ -130,7 +130,9 @@ namespace mfront {
    * \param[in] vc:  variables
    */
   MFRONT_VISIBILITY_EXPORT void writeBoundsSymbols(
-      std::ostream&, const std::string_view, const VariableDescriptionContainer&);
+      std::ostream&,
+      const std::string_view,
+      const VariableDescriptionContainer&);
   /*!
    * \brief write the physical bounds associated with the given variables
    * \param[out] os: output stream
@@ -138,7 +140,9 @@ namespace mfront {
    * \param[in] vc:  variables
    */
   MFRONT_VISIBILITY_EXPORT void writePhysicalBoundsSymbols(
-      std::ostream&, const std::string_view, const VariableDescriptionContainer&);
+      std::ostream&,
+      const std::string_view,
+      const VariableDescriptionContainer&);
 
   /*!
    * \brief write the name of the variable
@@ -166,7 +170,9 @@ namespace mfront {
    * \param[in] d: description
    */
   MFRONT_VISIBILITY_EXPORT void writeBuildIdentifierSymbol(
-      std::ostream&, const std::string_view, const MaterialKnowledgeDescription&);
+      std::ostream&,
+      const std::string_view,
+      const MaterialKnowledgeDescription&);
   /*!
    * \brief write a specific symbol stating that a given name entry
    * point (`C`-like function for example) has been created using
@@ -423,7 +429,7 @@ namespace mfront {
 
 #endif /* MFRONT_HAVE_MADNEX */
 
-  }  // end of namespace mfront
+}  // end of namespace mfront
 
 #include "MFront/DSLUtilities.ixx"
 

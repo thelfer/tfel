@@ -5,9 +5,9 @@
  * \date   03/10/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -72,7 +72,7 @@ namespace mtest {
     }
     return LPIEvolution::interpolate(
         this->inner_boundary_oxidation_length_evolution, t);
-  } // end of getInnerBoundaryOxidationLength
+  }  // end of getInnerBoundaryOxidationLength
 
   real OxidationStatusEvolution::getOuterBoundaryOxidationLength(
       const real t) const {
@@ -81,7 +81,7 @@ namespace mtest {
     }
     return LPIEvolution::interpolate(
         this->outer_boundary_oxidation_length_evolution, t);
-  } // end of getOuterBoundaryOxidationLength
+  }  // end of getOuterBoundaryOxidationLength
 
   OxidationStatusEvolution::~OxidationStatusEvolution() = default;
 

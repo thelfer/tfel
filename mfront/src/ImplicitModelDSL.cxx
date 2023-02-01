@@ -5,9 +5,9 @@
  * \brief 18 févr. 2013
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -21,12 +21,10 @@ namespace mfront {
     this->mb.declareAsGenericBehaviour();
     this->disableCallBack("@Behaviour");
     this->registerNewCallBack("@Model", &ImplicitModelDSL::treatModel2, true);
-    this->registerNewCallBack(
-        "@TangentOperatorBlock",
-        &ImplicitModelDSL::treatTangentOperatorBlock);
-    this->registerNewCallBack(
-        "@TangentOperatorBlocks",
-        &ImplicitModelDSL::treatTangentOperatorBlocks);
+    this->registerNewCallBack("@TangentOperatorBlock",
+                              &ImplicitModelDSL::treatTangentOperatorBlock);
+    this->registerNewCallBack("@TangentOperatorBlocks",
+                              &ImplicitModelDSL::treatTangentOperatorBlocks);
     this->registerNewCallBack(
         "@AdditionalTangentOperatorBlock",
         &ImplicitModelDSL::treatAdditionalTangentOperatorBlock);

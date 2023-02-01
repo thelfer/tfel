@@ -49,7 +49,6 @@ namespace mfront {
   //! typedef provided for backward compatibility
   using GenericData = FileDescription;
 
-
   /*!
    * \brief various checks on file description
    * \param[in] fd: file description

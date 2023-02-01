@@ -91,7 +91,8 @@ namespace castem {
      * \param[in] b : behaviour name
      * \param[in] e : the CastemException to be treated
      */
-    static void treatCastemException(const std::string_view, const CastemException &);
+    static void treatCastemException(const std::string_view,
+                                     const CastemException &);
 
     /*!
      * \brief display the error message out of a material exception to the
@@ -130,7 +131,8 @@ namespace castem {
      * \brief throw an CastemException if the time step is negative
      * \param[in] b : behaviour name
      */
-    [[noreturn]] static void throwNegativeTimeStepException(const std::string_view);
+    [[noreturn]] static void throwNegativeTimeStepException(
+        const std::string_view);
 
     /*!
      * \brief throw an CastemException if the behaviour integration
@@ -154,8 +156,8 @@ namespace castem {
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void
-        throwPlaneStressMaximumNumberOfIterationsReachedException(
-            const std::string_view);
+    throwPlaneStressMaximumNumberOfIterationsReachedException(
+        const std::string_view);
     /*!
      * \brief throw an CastemException if the DDSDDE parameter is invalid
      * \param[in] b : behaviour name
@@ -169,8 +171,8 @@ namespace castem {
      * \param[in] b : behaviour name
      */
     [[noreturn]] static void
-        throwTangentOperatorNotAvailableThroughGenericPlaneStressHandler(
-            const std::string_view);
+    throwTangentOperatorNotAvailableThroughGenericPlaneStressHandler(
+        const std::string_view);
     /*!
      * \brief throw an AsterException if the prediction computation
      * failed

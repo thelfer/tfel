@@ -55,6 +55,7 @@ namespace mtest {
                                                           const real);
     //! \brief destructor
     ~OxidationStatusEvolution() override;
+
    private:
     /*!
      * \return the oxidation length at the inner boundary at the given time
@@ -76,7 +77,7 @@ namespace mtest {
     std::map<real, real> inner_boundary_oxidation_length_evolution;
     //! \brief oxidation length at the outer boundary as a function of time
     std::map<real, real> outer_boundary_oxidation_length_evolution;
-  }; // end of struct OxidationStatusEvolution
+  };  // end of struct OxidationStatusEvolution
 
 }  // end of namespace mtest
 

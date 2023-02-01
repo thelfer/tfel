@@ -5,9 +5,9 @@
  * \brief 09 juil. 2013
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -291,7 +291,8 @@ namespace mfront {
     }
     auto final_components = std::vector<std::string>{};
     final_components.resize(components.size());
-    std::transform(components.begin(), components.end(), final_components.begin(),
+    std::transform(components.begin(), components.end(),
+                   final_components.begin(),
                    [&n](const std::string& c) { return n + c; });
     return final_components;
   }

@@ -237,8 +237,9 @@ namespace mfront::bbrick {
    * \param[in] bd: behaviour description
    * \param[in] d: data map
    * \param[in] o: name of option containing the linear transformation
-   * \param[in] n: name of the variable associated with the linear transformation
-   * \param[in] en: external name of the variable associated with the linear transformation
+   * \param[in] n: name of the variable associated with the linear
+   * transformation \param[in] en: external name of the variable associated with
+   * the linear transformation
    */
   MFRONT_VISIBILITY_EXPORT
   std::array<BehaviourDescription::MaterialProperty, 9u>
@@ -254,8 +255,9 @@ namespace mfront::bbrick {
    * \param[in] bd: behaviour description
    * \param[in] d: data map
    * \param[in] o: name of option containing the linear transformation
-   * \param[in] n: name of the variable associated with the linear transformation
-   * \param[in] en: external name of the variable associated with the linear transformation
+   * \param[in] n: name of the variable associated with the linear
+   * transformation \param[in] en: external name of the variable associated with
+   * the linear transformation
    */
   MFRONT_VISIBILITY_EXPORT
   std::array<BehaviourDescription::MaterialProperty, 6u>

@@ -5,9 +5,9 @@
  * \date   03/07/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -34,11 +34,11 @@ namespace mfront {
 
   static std::string getModelName(const ModelDescription& md) {
     return md.library + md.className;
-  } // end of getModelName
+  }  // end of getModelName
 
   static std::string getUmatFunctionName(const ModelDescription& md) {
     return "umat" + makeLowerCase(getModelName(md));
-  } // end of getUmatFunctionName
+  }  // end of getUmatFunctionName
 
   static bool isRealParameter(const VariableDescription& p) {
     return (p.type == "double") || (p.isScalar());
@@ -463,8 +463,8 @@ namespace mfront {
           if (vdepth != 1) {
             raise("unsupported depth for variable '" + n + "'");
           }
-            os << "const auto " << v.name << "_1 = " << v.type
-               << "{mfront_STATEV[" << pos << "]};\n";
+          os << "const auto " << v.name << "_1 = " << v.type
+             << "{mfront_STATEV[" << pos << "]};\n";
         }
       }
       auto write_physical_bounds = [&os, &raise](const VariableDescription& v,
@@ -527,9 +527,9 @@ namespace mfront {
         os << "tfel::math::map<" << v.type << ">(mfront_STATEV[" << pos
            << "]) = " << v.name << ";\n";
         static_cast<void>(vdepth);
-          }
-          os << "} // end of execute_" << f.name << "\n\n";
-        }
+      }
+      os << "} // end of execute_" << f.name << "\n\n";
+    }
     os << "private:\n";
     if (!md.members.empty()) {
       os << md.members << "\n\n";
@@ -674,8 +674,8 @@ namespace mfront {
        << "}\n\n";
   }  // end of writeSourceFile
 
-  void CastemModelInterface::getTargetsDescription(
-      TargetsDescription& td, const ModelDescription& md) {
+  void CastemModelInterface::getTargetsDescription(TargetsDescription& td,
+                                                   const ModelDescription& md) {
     using tfel::material::ModellingHypothesis;
     const auto lib = this->getLibraryName(md);
     const auto name = md.library + md.className;

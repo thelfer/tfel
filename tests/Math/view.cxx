@@ -5,9 +5,9 @@
  * \date   12/05/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -154,7 +154,7 @@ struct StensorViewTest final : public tfel::tests::TestCase {
 
   void constexpr_test1() {
     /* does not compile with icc 2021.1, but compiles with 2021.1 */
-#ifndef __INTEL_COMPILER 
+#ifndef __INTEL_COMPILER
     constexpr auto s = StensorViewTest::get();
     TFEL_TESTS_STATIC_ASSERT(s[0] == 2);
     TFEL_TESTS_STATIC_ASSERT(s[1] == 2);

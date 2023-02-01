@@ -26,8 +26,7 @@ namespace mfront {
   }
 
   template <typename Interface>
-  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(
-      const std::string& name) {
+  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(const std::string& name) {
     typedef ModelInterfaceFactory MLIF;
     auto& mlif = MLIF::getModelInterfaceFactory();
     mlif.registerInterfaceCreator(Interface::getName(), &createInterface);
@@ -36,8 +35,9 @@ namespace mfront {
 
   template <typename Interface>
   template <typename InputIterator>
-  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(
-      const std::string& name, const InputIterator b, const InputIterator e) {
+  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(const std::string& name,
+                                                      const InputIterator b,
+                                                      const InputIterator e) {
     typedef ModelInterfaceFactory MLIF;
     auto& mlif = MLIF::getModelInterfaceFactory();
     InputIterator p;
@@ -50,8 +50,8 @@ namespace mfront {
 
   template <typename Interface>
   template <typename InputIterator>
-  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(
-      const InputIterator b, const InputIterator e) {
+  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(const InputIterator b,
+                                                      const InputIterator e) {
     typedef ModelInterfaceFactory MLIF;
     auto& mlif = MLIF::getModelInterfaceFactory();
     InputIterator p;
@@ -62,8 +62,8 @@ namespace mfront {
   }  // end of ModelInterfaceProxy
 
   template <typename Interface>
-  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(
-      const std::string& name, const std::string& dep) {
+  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(const std::string& name,
+                                                      const std::string& dep) {
     typedef ModelInterfaceFactory MLIF;
     auto& mlif = MLIF::getModelInterfaceFactory();
     mlif.registerInterfaceCreator(Interface::getName(), &createInterface);
@@ -73,8 +73,9 @@ namespace mfront {
 
   template <typename Interface>
   template <typename InputIterator>
-  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(
-      const InputIterator b, const InputIterator e, const std::string& dep) {
+  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(const InputIterator b,
+                                                      const InputIterator e,
+                                                      const std::string& dep) {
     typedef ModelInterfaceFactory MLIF;
     auto& mlif = MLIF::getModelInterfaceFactory();
     InputIterator p;
@@ -87,11 +88,10 @@ namespace mfront {
 
   template <typename Interface>
   template <typename InputIterator, typename InputIterator2>
-  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(
-      const InputIterator b,
-      const InputIterator e,
-      const InputIterator2 b2,
-      const InputIterator2 e2) {
+  ModelInterfaceProxy<Interface>::ModelInterfaceProxy(const InputIterator b,
+                                                      const InputIterator e,
+                                                      const InputIterator2 b2,
+                                                      const InputIterator2 e2) {
     typedef ModelInterfaceFactory MLIF;
     auto& mlif = MLIF::getModelInterfaceFactory();
     InputIterator p;

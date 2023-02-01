@@ -1,6 +1,7 @@
 /*!
- * \file   mfront/include/MFront/IsotropicStrainHardeningMisesCreepCodeGenerator.hxx
- * \brief    
+ * \file
+ * mfront/include/MFront/IsotropicStrainHardeningMisesCreepCodeGenerator.hxx
+ * \brief
  * \author Thomas Helfer
  * \date   03/08/2022
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
@@ -16,7 +17,7 @@
 
 #include "MFront/IsotropicBehaviourCodeGeneratorBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   struct IsotropicStrainHardeningMisesCreepCodeGenerator
       : IsotropicBehaviourCodeGeneratorBase {

@@ -5,9 +5,9 @@
  * \date   18 août 2017
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -241,6 +241,7 @@ static void generate_python(const std::vector<Constant>& cs) {
      << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights \n"
      << " * reserved. \n"
      << " * This project is publicly released under either the GNU GPL Licence "
+        "with linking exception "
         "\n"
      << " * or the CECILL-A licence. A copy of thoses licences are delivered \n"
      << " * with the sources of TFEL. CEA or EDF may also distribute this \n"
@@ -320,6 +321,7 @@ static void generate_fortran77(const std::vector<Constant>& cs) {
      << "C> \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights \n"
      << "C> reserved. \n"
      << "C> This project is publicly released under either the GNU GPL Licence "
+        "with linking exception "
         "\n"
      << "C> or the CECILL-A licence. A copy of thoses licences are delivered \n"
      << "C> with the sources of TFEL. CEA or EDF may also distribute this \n"
@@ -387,6 +389,7 @@ static void generate_fortran90(const std::vector<Constant>& cs) {
      << "!> \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights \n"
      << "!  reserved. \n"
      << "!  This project is publicly released under either the GNU GPL Licence "
+        "with linking exception "
         "\n"
      << "!  or the CECILL-A licence. A copy of thoses licences are delivered \n"
      << "!  with the sources of TFEL. CEA or EDF may also distribute this \n"

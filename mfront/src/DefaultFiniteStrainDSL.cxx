@@ -5,9 +5,9 @@
  * \date   08 nov 2006
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -32,7 +32,7 @@ namespace mfront {
   DefaultFiniteStrainDSL::getCodeGenerator() const {
     return std::make_unique<DefaultFiniteStrainCodeGenerator>(
         this->fd, this->mb, this->interfaces);
-  } // end of getCodeGenerator
+  }  // end of getCodeGenerator
 
   std::string DefaultFiniteStrainDSL::getDescription() {
     return "this parser is the most generic one as it does not make any "
