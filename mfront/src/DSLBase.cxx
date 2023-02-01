@@ -6,9 +6,9 @@
  * \date   04 jun 2007
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -1197,11 +1197,11 @@ namespace mfront {
     }
     // adding dependencies to main targets
     for (const auto& al : atd.libraries) {
-        for (auto& l : this->td.libraries) {
-          if (l.name != al.name) {
-            insert_if(l.deps, al.name);
-          }
+      for (auto& l : this->td.libraries) {
+        if (l.name != al.name) {
+          insert_if(l.deps, al.name);
         }
+      }
       for (auto& tg : this->td.specific_targets) {
         if ((tg.first == "all") || (tg.first == "clean")) {
           continue;

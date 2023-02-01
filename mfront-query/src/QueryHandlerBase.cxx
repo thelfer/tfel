@@ -1,6 +1,6 @@
 /*!
  * \file    mfront-query/src/QueryHandlerBase.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   22/11/2021
  */
@@ -14,7 +14,7 @@
 #include "MFront/TargetsDescription.hxx"
 #include "MFront/QueryHandlerBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   QueryHandlerBase::QueryHandlerBase(const int argc,
                                      const char* const* const argv)
@@ -277,7 +277,7 @@ namespace mfront{
     };
   }  // end of generateLibrariesDependenciesQuery
 
-  std::function<void()> QueryHandlerBase::generateCppFlagsQuery() const{
+  std::function<void()> QueryHandlerBase::generateCppFlagsQuery() const {
     return [ldsl = this->getDSL()] {
       for (const auto& l : ldsl->getTargetsDescription().libraries) {
         if (l.name == "MFrontMaterialLaw") {
@@ -303,4 +303,4 @@ namespace mfront{
 
   QueryHandlerBase::~QueryHandlerBase() = default;
 
-} // end of namespace mfront
+}  // end of namespace mfront

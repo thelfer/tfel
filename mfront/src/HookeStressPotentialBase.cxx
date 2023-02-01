@@ -5,9 +5,9 @@
  * \date   20/03/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  * <!-- Local IspellDict: english -->
  */
@@ -362,15 +362,13 @@ namespace mfront::bbrick {
     if (this->pss) {
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "etozz");
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "detozz");
-      bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                     "\u0394etozz");
+      bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "\u0394etozz");
       //       bd.setGlossaryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
       //       "etozz",
       //                          tfel::glossary::Glossary::AxialStrain);
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "sigzz");
       bd.registerMemberName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "dsigzz");
-      bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                     "\u0394sigzz");
+      bd.reserveName(ModellingHypothesis::UNDEFINEDHYPOTHESIS, "\u0394sigzz");
       //       bd.setGlossaryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
       //       "sigzz",
       //                          tfel::glossary::Glossary::AxialStress);

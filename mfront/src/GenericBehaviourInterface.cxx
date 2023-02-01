@@ -5,9 +5,9 @@
  * \date   30/06/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -2088,12 +2088,12 @@ namespace mfront {
       return true;
     }();
     if ((h != ModellingHypothesis::PLANESTRESS) &&
-	(h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+        (h != ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS)) {
       out << "tfel::math::stensor<" << N << ",real> s0;\n";
     }
     out << "tfel::math::stensor<" << N << ",real> s1;\n"
         << "auto *const thermodynamic_forces0_old = "
-        <<  "d->s0.thermodynamic_forces;\n"
+        << "d->s0.thermodynamic_forces;\n"
         << "auto *const thermodynamic_forces1_old = "
         << "d->s1.thermodynamic_forces;\n"
         << "if(sm!=StressMeasure::CAUCHY){\n";

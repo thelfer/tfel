@@ -55,7 +55,7 @@ namespace mfront {
      * \param[in] o: option passed the query
      */
     virtual std::function<void()> generateGeneratedSourcesQuery(
-        const std::string&) const;
+        const std::string &) const;
     /*!
      * \return an object handling the `--specific-target-generated-sources`
      * query.

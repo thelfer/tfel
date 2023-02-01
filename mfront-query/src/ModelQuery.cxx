@@ -5,9 +5,9 @@
  * \date   08 juin 2016
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -39,7 +39,7 @@ namespace mfront {
 
   std::shared_ptr<const AbstractDSL> ModelQuery::getDSL() const {
     return this->dsl;
-  } // end of getDSL
+  }  // end of getDSL
 
   void ModelQuery::registerCommandLineCallBacks() {
     QueryHandlerBase::registerCommandLineCallBacks();
@@ -58,7 +58,7 @@ namespace mfront {
           q.first,
           CallBack(q.second, [this] { this->treatStandardQuery(); }, false));
     }
-      }  // end of registerCommandLineCallBacks
+  }  // end of registerCommandLineCallBacks
 
   void ModelQuery::treatStandardQuery() {
     const auto& qn = this->getCurrentCommandLineArgument().as_string();

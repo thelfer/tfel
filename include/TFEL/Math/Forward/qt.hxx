@@ -319,24 +319,24 @@ namespace tfel::math {
   };
   //! \brief partial specialisation for quantities
   template <typename UnitType, typename ValueType>
-  struct MakeQuantityReferenceType<qt<UnitType,ValueType>>{
+  struct MakeQuantityReferenceType<qt<UnitType, ValueType>> {
     //! \brief result
-    using type = qt_ref<UnitType,ValueType>;
-  }; // end of MakeQuantityReferenceType<qt<UnitType,ValueType>>
+    using type = qt_ref<UnitType, ValueType>;
+  };  // end of MakeQuantityReferenceType<qt<UnitType,ValueType>>
 
   namespace internals {
 
     template <typename ValueType>
-    struct MakeQuantityValueType{
+    struct MakeQuantityValueType {
       //! \brief result of the metafunction
       using type = ValueType;
-    }; // end of struct MakeQuantityValueType
+    };  // end of struct MakeQuantityValueType
 
     template <typename ValueType>
     struct MakeQuantityValueType<qt<NoUnit, ValueType>> {
       //! \brief result of the metafunction
       using type = ValueType;
-    }; // end of struct MakeQuantityValueType
+    };  // end of struct MakeQuantityValueType
 
   }  // end of namespace internals
 

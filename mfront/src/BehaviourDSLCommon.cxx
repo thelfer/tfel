@@ -6,9 +6,9 @@
  * \date   05/05/2008
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -4950,7 +4950,8 @@ namespace mfront {
       if (b) {
         os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\"" << n << "+d" << n
            << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "),"
+           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound
+           << "),"
            << "static_cast<" << numeric_type << ">(" << bounds.upperBound
            << "),this->policy);\n";
       }
@@ -4990,25 +4991,30 @@ namespace mfront {
     }();
     if (bounds.boundsType == VariableBoundsDescription::LOWER) {
       os << "BoundsCheck<N>::lowerBoundCheck(\"" << n << "\",this->" << n << ","
-         << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "));\n";
+         << "static_cast<" << numeric_type << ">(" << bounds.lowerBound
+         << "));\n";
       if (b) {
         os << "BoundsCheck<N>::lowerBoundCheck(\"" << n << "+d" << n
            << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "));\n";
+           << "static_cast<" << numeric_type << ">(" << bounds.lowerBound
+           << "));\n";
       }
     } else if (bounds.boundsType == VariableBoundsDescription::UPPER) {
       os << "BoundsCheck<N>::upperBoundCheck(\"" << n << "\",this->" << n << ","
-         << "static_cast<" << numeric_type << ">(" << bounds.upperBound << "));\n";
+         << "static_cast<" << numeric_type << ">(" << bounds.upperBound
+         << "));\n";
       if (b) {
         os << "BoundsCheck<N>::upperBoundCheck(\"" << n << "+d" << n
            << "\",this->" << n << "+this->d" << n << ","
-           << "static_cast<" << numeric_type << ">(" << bounds.upperBound << "));\n";
+           << "static_cast<" << numeric_type << ">(" << bounds.upperBound
+           << "));\n";
       }
     } else if (bounds.boundsType == VariableBoundsDescription::LOWERANDUPPER) {
       os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\"" << n << "\",this->"
          << n << ","
          << "static_cast<" << numeric_type << ">(" << bounds.lowerBound << "),"
-         << "static_cast<" << numeric_type << ">(" << bounds.upperBound << "));\n";
+         << "static_cast<" << numeric_type << ">(" << bounds.upperBound
+         << "));\n";
       if (b) {
         os << "BoundsCheck<N>::lowerAndUpperBoundsChecks(\"" << n << "+d" << n
            << "\",this->" << n << "+this->d" << n << ","

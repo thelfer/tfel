@@ -5,9 +5,9 @@
  * \date   04 mars 2015
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -56,7 +56,7 @@ using GetAvailableImplementationsPtr2 =
     std::map<std::string, std::vector<std::string>> (
         madnex::MFrontDataBase::*)() const;
 
-static bool checkMadnexFileExtension(const mfront::PathSpecifier& p){
+static bool checkMadnexFileExtension(const mfront::PathSpecifier& p) {
   const auto ext = [p]() -> std::string {
     const auto pos = p.file.find(".");
     if (pos != std::string::npos) {
@@ -65,7 +65,7 @@ static bool checkMadnexFileExtension(const mfront::PathSpecifier& p){
     return "";
   }();
   return (ext == "madnex") || (ext == "mdnx") || (ext == "edf");
-} // end of checkMadnexFileExtension
+}  // end of checkMadnexFileExtension
 
 static void listImplementations1(const mfront::PathSpecifier& p,
                                  const std::string& itypes,
@@ -145,11 +145,11 @@ static void listImplementations(const mfront::PathSpecifier& p,
   }
   auto d = madnex::MFrontDataBase{p.file};
   if (sorted_by_materials) {
-  if (!p.material_identifier.empty()) {
+    if (!p.material_identifier.empty()) {
       const auto impls = (d.*m1)(
           p.material_identifier == "<none>" ? "" : p.material_identifier);
       listImplementations1(p, itypes, impls);
-      } else {
+    } else {
       listImplementations2(itypes, (d.*m2)());
     }
   } else {

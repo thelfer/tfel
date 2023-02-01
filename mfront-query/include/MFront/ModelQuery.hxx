@@ -53,6 +53,7 @@ namespace mfront {
     virtual void exe();
     //! \brief destructor
     ~ModelQuery() override;
+
    protected:
     //
     std::shared_ptr<const AbstractDSL> getDSL() const override;

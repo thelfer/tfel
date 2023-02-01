@@ -82,21 +82,21 @@ namespace tfel::math {
     auto i = decltype(this->values.size()){};
     auto s = this->values.size() - 1u;
     std::vector<real> m(2 * s + 1u);  // matrix (main an upper diagonal)
-      real* const md = &m[0];        // main  diagonal
-      real* const mu = md + s + 1u;  // upper diagonal
-      real ho = real(0);
-      value uo = value(real(0));
-      for (i = 0; i != s; ++i) {
+    real* const md = &m[0];           // main  diagonal
+    real* const mu = md + s + 1u;     // upper diagonal
+    real ho = real(0);
+    value uo = value(real(0));
+    for (i = 0; i != s; ++i) {
       const auto hn = 1 / (this->values[i + 1].x - this->values[i].x);
       const auto un = 3 * hn * hn * (this->values[i + 1].y - this->values[i].y);
-        mu[i] = hn;
+      mu[i] = hn;
       md[i] = 2 * (hn + ho);
-        this->values[i].d = un + uo;
-        uo = un;
-        ho = hn;
-      }
+      this->values[i].d = un + uo;
+      uo = un;
+      ho = hn;
+    }
     md[s] = 2 * ho;
-      this->values[s].d = uo;
+    this->values[s].d = uo;
     this->solveTridiagonalLinearSystem(mu, md);
   }
 
@@ -185,9 +185,9 @@ namespace tfel::math {
       return -this->computeIntegral(xb, xa);
     }
     auto pa = lower_bound(this->values.begin(), this->values.end(), xa,
-                     PointComparator());
+                          PointComparator());
     auto pb = lower_bound(this->values.begin(), this->values.end(), xb,
-                     PointComparator());
+                          PointComparator());
     if (pa == pb) {
       if (pb == this->values.begin()) {
         const real xe = this->values.front().x;
@@ -267,7 +267,7 @@ namespace tfel::math {
       return;
     }
     auto in = lower_bound(this->values.begin(), this->values.end(), x,
-                     PointComparator());
+                          PointComparator());
     // Extrapolation
     if (in == this->values.begin()) {
       x -= in->x;
@@ -309,7 +309,7 @@ namespace tfel::math {
       return this->values[0].y;
     }
     auto in = lower_bound(this->values.begin(), this->values.end(), x,
-                     PointComparator());
+                          PointComparator());
     // Extrapolation
     if (in == this->values.begin()) {
       x -= in->x;

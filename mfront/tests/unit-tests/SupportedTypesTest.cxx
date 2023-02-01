@@ -5,9 +5,9 @@
  * \date   30/08/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * re served.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -173,13 +173,13 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
     check("strain", 0);
     check("stress", 0);
     //
-    check("StrainStensor", 1);    
+    check("StrainStensor", 1);
     //
     check("tvector<N,stress>", 2);
     check("tvector<3u,strain>", 2 + (3 << 3));
     check("TVector", 2);
     //
-    check("Tensor", 3);    
+    check("Tensor", 3);
     //
     check("st2tost2<N,stress>", sid);
     check("StiffnessTensor", sid);
@@ -189,7 +189,7 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
     check("tmatrix<N, N, stress>", 4 + (2 << 3) + (2 << 8));
     check("tmatrix<3u, 2u, stress>",
           4 + ((2 + (3 << 3)) << 3) + ((2 + (2 << 3)) << 8));
-    // 
+    //
     check("derivative_type<tvector<N,stress>,stress>", mid);
     check("derivative_type<stensor<N,stress>, stensor<N,stress>>",
           4 + (1 << 3) + (1 << 8));

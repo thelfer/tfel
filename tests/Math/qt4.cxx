@@ -5,9 +5,9 @@
  * \date   15/11/2021
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -33,7 +33,8 @@ static constexpr T my_abs(const T& v) noexcept {
 }
 
 struct StensorQtTest final : public tfel::tests::TestCase {
-  StensorQtTest() : tfel::tests::TestCase("TFEL/Math", "qt4") {}  // end of qtTest
+  StensorQtTest()
+      : tfel::tests::TestCase("TFEL/Math", "qt4") {}  // end of qtTest
   tfel::tests::TestResult execute() override {
     this->test1();
     this->test2();

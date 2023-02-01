@@ -35,7 +35,7 @@ namespace tfel::math {
     using Result = typename UnaryResultType<A_, Op>::type;
     //! \brief no specific handlers for scalars
     using Handle = typename UnaryResultType<A_, Op>::type;
-  }; // end of struct ComputeUnaryResult_
+  };  // end of struct ComputeUnaryResult_
 
   template <typename A, typename Op>
   class ComputeUnaryResult {

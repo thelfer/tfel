@@ -5,9 +5,9 @@
  * \brief 11 jun 2010
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -88,7 +88,7 @@ namespace mfront {
         "unimplemented feature");
   }  // end of getOverridableVariableNameByExternalName
 
-  void ModelDSLCommon::overrideByAParameter(const std::string&, const double) {
+  void ModelDSLCommon::overrideByAParameter(const std::string&, const double){
 #pragma message("unimplemented")
   }  // end of overrideByAParameter
 

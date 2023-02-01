@@ -85,7 +85,7 @@ namespace tfel::math {
                        implementsTensorConcept<TensorType>() &&
                        getSpaceDimension<ST2toST2Type>() == 1u &&
                        getSpaceDimension<ST2toST2Type2>() == 1u &&
-                           getSpaceDimension<TensorType>() == 1u,
+                       getSpaceDimension<TensorType>() == 1u,
                    void>
   push_forward(ST2toST2Type&, const ST2toST2Type2&, const TensorType&);
   /*!

@@ -52,6 +52,7 @@ namespace mfront {
     virtual void exe();
     //! \brief destructor
     ~MaterialPropertyQuery() override;
+
    protected:
     //
     std::shared_ptr<const AbstractDSL> getDSL() const override;

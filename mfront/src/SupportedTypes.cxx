@@ -6,9 +6,9 @@
  * \date   12/01/2007
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * re served.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -446,7 +446,7 @@ namespace mfront {
     }
     auto treatDerivative =
         [](const std::pair<int, int> id1,
-             const std::pair<int, int> id2) -> std::pair<int, int> {
+           const std::pair<int, int> id2) -> std::pair<int, int> {
       return {4 + (id1.first << 3) + (id2.first << (3 + id1.second)),
               3 + id1.second + id2.second};
     };
@@ -586,7 +586,7 @@ namespace mfront {
         "SupportedTypes::getTypeIdentifier: "
         "unsupported type identifier for '" +
         encode(t) + "'");
-  } // end of getTypeIdentifier
+  }  // end of getTypeIdentifier
 
   std::optional<SupportedTypes::TypeFlag> SupportedTypes::getTypeFlag(
       const TypeInformation& t) {
@@ -1105,8 +1105,8 @@ namespace mfront {
     const auto N = SupportedTypes::getSizeOrSpaceDimension(
         std::get<TypeInformation::IntegerTemplateArgument>(args[0]));
     if (N > 3) {
-        report_invalid_space_dimension();
-      }
+      report_invalid_space_dimension();
+    }
     return N;
   }  // end of getTensorialObjectSpaceDimension
 
@@ -1162,14 +1162,14 @@ namespace mfront {
       return;
     }
     if (SupportedTypes::matchesTFELMathType(t.type, "tvector")) {
-        SupportedTypes::normalizeTinyVectorTemplateArguments(t, opts);
+      SupportedTypes::normalizeTinyVectorTemplateArguments(t, opts);
       t.type = "tfel::math::tvector";
-        return;
-      }
+      return;
+    }
     if (SupportedTypes::matchesTFELMathType(t.type, "tmatrix")) {
-        SupportedTypes::normalizeTinyMatrixTemplateArguments(t, opts);
+      SupportedTypes::normalizeTinyMatrixTemplateArguments(t, opts);
       t.type = "tfel::math::tmatrix";
-        return;
+      return;
     }
     if (SupportedTypes::matchesTFELMathType(t.type, "invert_type")) {
       if (!t.template_arguments) {
