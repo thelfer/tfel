@@ -6,9 +6,9 @@
  * \date   18 Jan 2007
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -964,12 +964,12 @@ namespace mfront {
           tfel::raise(
               "BehaviourData::addVariable: "
               "already registred variable '" +
-              v.name + "' with entry name '" + pe->second +
-              "' now declares '" + v.getExternalName() + "' as glossary name");
+              v.name + "' with entry name '" + pe->second + "' now declares '" +
+              v.getExternalName() + "' as glossary name");
         }
         const auto p = this->glossaryNames.find(v.name);
         if (p == this->glossaryNames.end()) {
-	  this->setGlossaryName(v.name, v.getExternalName());
+          this->setGlossaryName(v.name, v.getExternalName());
         } else {
           if (p->second != v.getExternalName()) {
             tfel::raise(
@@ -991,7 +991,7 @@ namespace mfront {
         }
         const auto p = this->entryNames.find(v.name);
         if (p == this->entryNames.end()) {
-	  this->setEntryName(v.name, v.getExternalName());
+          this->setEntryName(v.name, v.getExternalName());
         } else {
           if (p->second != v.getExternalName()) {
             tfel::raise(
@@ -1010,10 +1010,10 @@ namespace mfront {
       }
       c.push_back(v);
       if (v.hasGlossaryName()) {
-	this->setGlossaryName(v.name, v.getExternalName());
+        this->setGlossaryName(v.name, v.getExternalName());
       }
       if (v.hasEntryName()) {
-	this->setEntryName(v.name, v.getExternalName());
+        this->setEntryName(v.name, v.getExternalName());
       }
     }
   }  // end of BehaviourData::addVariable
@@ -1380,16 +1380,18 @@ namespace mfront {
     auto set_glossary_name = [&n, &g,
                               &treated](VariableDescriptionContainer& c) {
       if (c.contains(n)) {
-	auto& v = c.getVariable(n);
-	if(v.hasGlossaryName()){
-	  if(v.getExternalName() != g){
-	    tfel::raise("BehaviourData::setGlossaryName: "
-			"inconsistent glossary name for "
-			"variable '"+v.name+"'");
-	  }
-	} else {
-	  v.setGlossaryName(g);
-	}
+        auto& v = c.getVariable(n);
+        if (v.hasGlossaryName()) {
+          if (v.getExternalName() != g) {
+            tfel::raise(
+                "BehaviourData::setGlossaryName: "
+                "inconsistent glossary name for "
+                "variable '" +
+                v.name + "'");
+          }
+        } else {
+          v.setGlossaryName(g);
+        }
         treated = true;
       }
     };
@@ -1432,16 +1434,18 @@ namespace mfront {
     bool treated = false;
     auto set_entry_name = [&n, &e, &treated](VariableDescriptionContainer& c) {
       if (c.contains(n)) {
-	auto& v = c.getVariable(n);
-	if(v.hasEntryName()){
-	  if(v.getExternalName() != e){
-	    tfel::raise("BehaviourData::setEntryName: "
-			"inconsistent entry name for "
-			"variable '"+v.name+"'");
-	  }
-	} else {
-	  v.setEntryName(e);
-	}
+        auto& v = c.getVariable(n);
+        if (v.hasEntryName()) {
+          if (v.getExternalName() != e) {
+            tfel::raise(
+                "BehaviourData::setEntryName: "
+                "inconsistent entry name for "
+                "variable '" +
+                v.name + "'");
+          }
+        } else {
+          v.setEntryName(e);
+        }
         treated = true;
       }
     };

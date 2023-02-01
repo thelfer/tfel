@@ -5,9 +5,9 @@
  * \date   17 Jan 2007
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -2583,45 +2583,45 @@ namespace mfront {
   void CastemInterface::generateGibianeDeclaration(
       const BehaviourDescription& bd, const FileDescription& fd) const {
     try {
-    const auto name((!bd.getLibrary().empty())
-                        ? bd.getLibrary() + bd.getClassName()
-                        : bd.getClassName());
-    const auto fileName("castem/" + name + ".dgibi");
-    // opening output file
-    tfel::system::systemCall::mkdir("castem");
-    std::ofstream out;
-    out.open(fileName);
-    tfel::raise_if(!out,
-                   "CastemInterface::generateGibianeDeclaration: "
-                   "could not open file '" +
-                       fileName + "'");
-    // header
-    out << "*\n"
-        << "* \\file   " << fd.fileName << '\n'
-        << "* \\brief  example of how to use the " << bd.getClassName()
-        << " behaviour law\n"
-        << "* in the Cast3M finite element solver\n"
-        << "* \\author " << fd.authorName << '\n'
-        << "* \\date   " << fd.date << '\n'
-        << "*\n\n";
-    // loop over hypothesis
-    for (const auto& h : this->getModellingHypothesesToBeTreated(bd)) {
-      this->generateGibianeDeclarationForHypothesis(out, bd, h);
-    }
-    if (this->usesGenericPlaneStressAlgorithm(bd)) {
-      out << "* The behaviour does not support the plane stress hypothesis\n"
-          << "* natively.\n"
-          << "* Support for the plane stress hypothesis\n"
-          << "* is added through the generic plane stress handler\n"
-          << "* provided by the Cast3M interface. This requires some tricky\n"
-          << "* manipulations of the material properties and can be quite\n"
-          << "* inefficient. Use it with care and consider adding proper\n"
-          << "* plane stress support to your behaviour.\n"
-          << "*\n";
-      this->generateGibianeDeclarationForHypothesis(
-          out, bd, ModellingHypothesis::PLANESTRESS);
-    }
-    out.close();
+      const auto name((!bd.getLibrary().empty())
+                          ? bd.getLibrary() + bd.getClassName()
+                          : bd.getClassName());
+      const auto fileName("castem/" + name + ".dgibi");
+      // opening output file
+      tfel::system::systemCall::mkdir("castem");
+      std::ofstream out;
+      out.open(fileName);
+      tfel::raise_if(!out,
+                     "CastemInterface::generateGibianeDeclaration: "
+                     "could not open file '" +
+                         fileName + "'");
+      // header
+      out << "*\n"
+          << "* \\file   " << fd.fileName << '\n'
+          << "* \\brief  example of how to use the " << bd.getClassName()
+          << " behaviour law\n"
+          << "* in the Cast3M finite element solver\n"
+          << "* \\author " << fd.authorName << '\n'
+          << "* \\date   " << fd.date << '\n'
+          << "*\n\n";
+      // loop over hypothesis
+      for (const auto& h : this->getModellingHypothesesToBeTreated(bd)) {
+        this->generateGibianeDeclarationForHypothesis(out, bd, h);
+      }
+      if (this->usesGenericPlaneStressAlgorithm(bd)) {
+        out << "* The behaviour does not support the plane stress hypothesis\n"
+            << "* natively.\n"
+            << "* Support for the plane stress hypothesis\n"
+            << "* is added through the generic plane stress handler\n"
+            << "* provided by the Cast3M interface. This requires some tricky\n"
+            << "* manipulations of the material properties and can be quite\n"
+            << "* inefficient. Use it with care and consider adding proper\n"
+            << "* plane stress support to your behaviour.\n"
+            << "*\n";
+        this->generateGibianeDeclarationForHypothesis(
+            out, bd, ModellingHypothesis::PLANESTRESS);
+      }
+      out.close();
     } catch (std::exception& e) {
       if (getVerboseMode() > VERBOSE_QUIET) {
         getLogStream() << e.what() << std::endl;

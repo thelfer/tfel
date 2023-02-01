@@ -125,7 +125,7 @@ namespace mfront {
      */
     std::map<std::string,                         //< target name
              std::pair<std::vector<std::string>,  //< dependencies to other
-                                                  //targets
+                                                  // targets
                        std::vector<std::string>   //< commands
                        >>
         specific_targets;

@@ -5,9 +5,9 @@
  * \date   20/03/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  * <!-- Local IspellDict: english -->
  */
@@ -421,11 +421,11 @@ namespace mfront {
         if (bmh.count(agps) != 0) {
           VariableDescription etozz("strain", "etozz", 1u, 0u);
           etozz.description = "axial strain";
-        etozz.setGlossaryName(tfel::glossary::Glossary::AxialStrain);
+          etozz.setGlossaryName(tfel::glossary::Glossary::AxialStrain);
           bd.addStateVariable(agps, etozz, BehaviourData::ALREADYREGISTRED);
           VariableDescription sigzz("strain", "sigzz", 1u, 0u);
-        sigzz.description = "axial stress";
-        sigzz.setGlossaryName(tfel::glossary::Glossary::AxialStress);
+          sigzz.description = "axial stress";
+          sigzz.setGlossaryName(tfel::glossary::Glossary::AxialStress);
           bd.addExternalStateVariable(agps, sigzz,
                                       BehaviourData::ALREADYREGISTRED);
           d.addVariable(agps, {"stress", "szz"});
