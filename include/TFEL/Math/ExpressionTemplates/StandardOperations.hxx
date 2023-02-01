@@ -41,10 +41,11 @@ namespace tfel {
      */
     template <typename T1>
     TFEL_MATH_INLINE auto operator-(T1&& a) -> typename std::enable_if<
-      ((!tfel::typetraits::IsScalar<typename std::decay<T1>::type>::cond) &&
-       (isUnaryOperationResultTypeValid<decltype(a), OpNeg>::value) &&
-       (!tfel::typetraits::IsInvalid<UnaryOperationHandler<decltype(a), OpNeg>>::cond)),
-    UnaryOperationHandler<decltype(a), OpNeg>>::type {
+        ((!tfel::typetraits::IsScalar<typename std::decay<T1>::type>::cond) &&
+         (isUnaryOperationResultTypeValid<decltype(a), OpNeg>::value) &&
+         (!tfel::typetraits::IsInvalid<
+             UnaryOperationHandler<decltype(a), OpNeg>>::cond)),
+        UnaryOperationHandler<decltype(a), OpNeg>>::type {
       return UnaryOperationHandler<decltype(a), OpNeg>(std::forward<T1>(a));
     }
 

@@ -5,9 +5,9 @@
  * \date   31 Oct 2007
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -974,10 +974,11 @@ namespace tfel {
       if (nb != 0) {
         char** res = ::tfel_getMaterialPropertyVariables(lib, f.c_str());
         char** p;
-        raise_if(res == nullptr,
-                 "ExternalLibraryManager::getMaterialPropertyNumberOfVariables: "
-                  " variables names could not be read (" +
-                   getErrorMessage() + ")");
+        raise_if(
+            res == nullptr,
+            "ExternalLibraryManager::getMaterialPropertyNumberOfVariables: "
+            " variables names could not be read (" +
+                getErrorMessage() + ")");
         for (p = res; p != res + nb; ++p) {
           vars.emplace_back(*p);
         }

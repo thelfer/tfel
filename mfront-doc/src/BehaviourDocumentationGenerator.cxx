@@ -5,9 +5,9 @@
  * \date   01 avril 2015
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -185,11 +185,11 @@ namespace mfront {
       } else {
         const auto uncompatible = [&d, &pd, &pv] {
           if ((pd->name != pv->name) ||
-                           (pd->externalName != d.getExternalName(pv->name)) ||
+              (pd->externalName != d.getExternalName(pv->name)) ||
               (pd->arraySize != pv->arraySize)) {
             return true;
           }
-          if(pd->type != pv->type){
+          if (pd->type != pv->type) {
             if (!((tfel::utilities::starts_with(pd->type, "struct")) &&
                   (tfel::utilities::starts_with(pv->type, "struct")))) {
               return true;

@@ -6,9 +6,9 @@
  * \date   18 Jan 2007
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -968,7 +968,7 @@ namespace mfront {
         if (!v.symbolic_form.empty()) {
           checkAlreadyRegistred(this->reservedNames,
                                 "\u0394" + v.symbolic_form);
-    } else {
+        } else {
           checkAlreadyRegistred(this->reservedNames, "\u0394" + v.name);
         }
       }
@@ -978,8 +978,8 @@ namespace mfront {
           tfel::raise(
               "BehaviourData::addVariable: "
               "already registred variable '" +
-              v.name + "' with entry name '" + pe->second +
-              "' now declares '" + v.getExternalName() + "' as glossary name");
+              v.name + "' with entry name '" + pe->second + "' now declares '" +
+              v.getExternalName() + "' as glossary name");
         }
         const auto p = this->glossaryNames.find(v.name);
         if (p == this->glossaryNames.end()) {
@@ -1030,10 +1030,10 @@ namespace mfront {
           this->reserveName("\u0394" + v.name);
         }
       }
-    if (v.hasGlossaryName()) {
+      if (v.hasGlossaryName()) {
         this->registerGlossaryName(v.name, v.getExternalName());
-    }
-    if (v.hasEntryName()) {
+      }
+      if (v.hasEntryName()) {
         this->registerEntryName(v.name, v.getExternalName());
       }
     }

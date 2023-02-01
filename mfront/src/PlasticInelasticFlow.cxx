@@ -5,9 +5,9 @@
  * \date   28/03/2018
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -68,7 +68,8 @@ namespace mfront {
         c += sp.computeDerivatives(bd, "strain", "p" + id,
                                    dseq_ds + "/(" + snf + ")",
                                    this->sc->isNormalDeviatoric());
-        c += "if(" + seq + " < " + sp.getEquivalentStressLowerBound(bd) + "){\n";
+        c +=
+            "if(" + seq + " < " + sp.getEquivalentStressLowerBound(bd) + "){\n";
         c += "if(" + dR_ddp + ">0){\n";
         c += dfp_ddp + " = -1*std::max(real(1.e-12),(" + dR_ddp + ")/(" + snf +
              "));\n";
