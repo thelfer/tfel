@@ -120,7 +120,7 @@ namespace tfel {
        */
       template <typename T1, typename T2>
       static TFEL_MATH_INLINE auto apply(T1&& a, T2&& b)
-          -> decltype(std::forward<T1>(a) + std::forward<T2>(b)){
+          -> decltype(std::forward<T1>(a) + std::forward<T2>(b)) {
         return std::forward<T1>(a) + std::forward<T2>(b);
       }
     };
@@ -157,7 +157,7 @@ namespace tfel {
        */
       template <typename T1, typename T2>
       static TFEL_MATH_INLINE auto apply(T1&& a, T2&& b)
-          -> decltype(std::forward<T1>(a) / std::forward<T2>(b)){
+          -> decltype(std::forward<T1>(a) / std::forward<T2>(b)) {
         return std::forward<T1>(a) / std::forward<T2>(b);
       }
     };  // end of OpDiv
