@@ -302,6 +302,7 @@ option(python-static-interpreter-workaround
   "a workaround to handle the fact the conda' python interpreter is statically linked, which causes issues on Mac Os. See for details https://github.com/ContinuumIO/anaconda-issues/issues/9078. A proper solution may only appear with CMake 3.15 with the `Python::module` target, see https://gitlab.kitware.com/cmake/cmake/issues/18100. Until this version is widely available, this flag proposes a hack. Use with care." OFF)
  
 if(enable-python OR enable-python-bindings)
+  find_package(PythonInterp REQUIRED)
   find_package(PythonLibs REQUIRED)
   set(HAVE_PYTHON ON)
   add_definitions("-DHAVE_PYTHON=1")
@@ -320,8 +321,6 @@ if(enable-python OR enable-python-bindings)
   message(STATUS "python include path   ${PYTHON_INCLUDE_DIRS}")
   message(STATUS "python libraries path ${PYTHON_LIBRARY_PATH}")
   message(STATUS "python library        ${PYTHON_LIBRARY}")
-  string(REGEX REPLACE "[a-z]+.*$" "" PYTHONLIBS_VERSION_CLEANED ${PYTHONLIBS_VERSION_STRING})
-  find_package(PythonInterp ${PYTHONLIBS_VERSION_CLEANED} REQUIRED)
   message(STATUS "python interpreter    ${PYTHON_EXECUTABLE}")
   if(enable-numpy-support AND PYTHON_EXECUTABLE AND (NOT NUMPY_INCLUDE_DIRS))
     execute_process(
