@@ -302,7 +302,7 @@ namespace mfront {
     }
     // file extensions
     const auto ext = [&f]() -> std::string {
-      const auto p = f.find(".");
+      const auto p = f.rfind(".");
       if (p != std::string::npos) {
         return f.substr(p + 1);
       }
