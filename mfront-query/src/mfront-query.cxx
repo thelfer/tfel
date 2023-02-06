@@ -58,7 +58,7 @@ using GetAvailableImplementationsPtr2 =
 
 static bool checkMadnexFileExtension(const mfront::PathSpecifier& p) {
   const auto ext = [p]() -> std::string {
-    const auto pos = p.file.find(".");
+    const auto pos = p.file.rfind(".");
     if (pos != std::string::npos) {
       return p.file.substr(pos + 1);
     }

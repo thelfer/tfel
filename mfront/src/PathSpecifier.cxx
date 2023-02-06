@@ -147,7 +147,7 @@ namespace mfront {
     auto inputs = std::vector<std::string>{};
     auto db = madnex::MFrontDataBase{f};
     auto raise = [](const std::string& m) {
-      tfel::raise("MFrontBase::treatMadnexFile: " + m);
+      tfel::raise("getImplementationsPathsInMadnexFiles: " + m);
     };
     if ((material_property_identifier.empty()) &&
         (behaviour_identifier.empty()) && (model_identifier.empty())) {
@@ -302,7 +302,7 @@ namespace mfront {
     }
     // file extensions
     const auto ext = [&f]() -> std::string {
-      const auto p = f.find(".");
+      const auto p = f.rfind(".");
       if (p != std::string::npos) {
         return f.substr(p + 1);
       }
