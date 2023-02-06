@@ -15,6 +15,7 @@ eqnPrefixTemplate: "($$i$$)"
 nocite: |
     @zhang_modeling_2023
     @soleilhet_numerical_2023
+    @mollens_development_2022
     @draup_development_2022
     @fokam_implantation_2022
     @gelebart_simple_2022
