@@ -36,7 +36,7 @@ namespace mfront {
   bool parsePathSpecifierArguments(std::vector<PathSpecifier>& paths,
                                    PathSpecifier& s,
                                    const std::string& a) {
-    auto get_substring = [&a](const char* const r) {
+ex    auto get_substring = [&a](const char* const r) {
       return a.substr(std::strlen(r));
     };
     auto set_material_property_identifier = [&s](const std::string& n) {
@@ -297,7 +297,7 @@ namespace mfront {
     }
     // file extensions
     const auto ext = [&f]() -> std::string {
-      const auto p = f.find(".");
+      const auto p = f.rfind(".");
       if (p != std::string::npos) {
         return f.substr(p + 1);
       }
