@@ -36,7 +36,7 @@ namespace mfront {
   bool parsePathSpecifierArguments(std::vector<PathSpecifier>& paths,
                                    PathSpecifier& s,
                                    const std::string& a) {
-ex    auto get_substring = [&a](const char* const r) {
+    auto get_substring = [&a](const char* const r) {
       return a.substr(std::strlen(r));
     };
     auto set_material_property_identifier = [&s](const std::string& n) {
