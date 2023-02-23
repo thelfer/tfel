@@ -81,6 +81,8 @@ A set of interfaces are provided for various solvers:
   [`CalculiX`](http://www.calculix.de/)
   finite element solver. This interface is described
   [here](calculix.html).
+- the [`ANSYS Mechanical APDL`](https://www.ansys.com/) finite element
+  solver. This interface is described [here](ansys.html).
 - the [`ZeBuLoN`](http://www.zset-software.com/products/zebulon)
   finite element solver. This interface is described [here](zmat.html).
 - the `TMFFT` and the
