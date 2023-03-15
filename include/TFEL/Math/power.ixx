@@ -133,6 +133,12 @@ namespace tfel::math::internals {
     static_assert(N >= 0);
 
    public:
+    /*!
+     * \brief computes the N-th root of a number
+     * \tparam N: exponent numerator
+     * \result sqrt(pow(x,N))
+     * \param x: variable N-th root to be calculated
+     */
     template <typename T>
     static constexpr T exe(const T& x) {
       return std::sqrt(PowerPos<N>::exe(x));
@@ -191,11 +197,24 @@ namespace tfel::math::internals {
 
 namespace tfel::math {
 
+  /*!
+   * \brief computes the power of x 
+   * \tparam N: exponent 
+   * \result pow(x,N)
+   * \param x: variable power to be calculated
+   */
   template <int N, typename T>
   constexpr std::enable_if_t<std::is_floating_point_v<T>, T> power(const T x) {
     return tfel::math::internals::PowerImplSelector<N, 1u>::type::exe(x);
   }
 
+  /*!
+   * \brief computes the power of x with a rational exponent
+   * \tparam N: exponent numerator
+   * \tparam M: exponent denumerator
+   * \result pow(x,N/D)
+   * \param x: variable power to be calculated
+   */
   template <int N, unsigned int D, typename T>
   constexpr std::enable_if_t<std::is_floating_point_v<T>, T> power(const T x) {
     return tfel::math::internals::PowerImplSelector<N, D>::type::exe(x);
