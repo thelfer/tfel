@@ -134,10 +134,10 @@ namespace tfel::math::internals {
 
    public:
     /*!
-     * \brief computes the N-th root of a number
-     * \tparam N: exponent numerator
-     * \result sqrt(pow(x,N))
-     * \param x: variable N-th root to be calculated
+     * \brief computes the power N/2 of a positive number
+     * \tparam N: exponent 
+     * \result std::sqrt(power<N>(x))
+     * \param x: variable whose square root of the power N must be computed
      */
     template <typename T>
     static constexpr T exe(const T& x) {
