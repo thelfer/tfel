@@ -9,6 +9,7 @@ test_PROGRAMS = gentype                                \
 		gentype3                               \
 		CxxTokenizerTest                       \
 		CxxTokenizerTest2                      \
+		CxxTokenizerTest3                      \
 		CxxTokenizerOffsetTest                 \
 		CxxTokenizerKeepCommentBoundariesTest  \
 		DataTest                               \
@@ -26,6 +27,7 @@ gentype2_SOURCES               = gentype2.cxx
 gentype3_SOURCES               = gentype3.cxx
 CxxTokenizerTest_SOURCES       = CxxTokenizerTest.cxx
 CxxTokenizerTest2_SOURCES      = CxxTokenizerTest2.cxx
+CxxTokenizerTest3_SOURCES      = CxxTokenizerTest3.cxx
 CxxTokenizerOffsetTest_SOURCES = CxxTokenizerOffsetTest.cxx
 CxxTokenizerKeepCommentBoundariesTest_SOURCES = CxxTokenizerKeepCommentBoundariesTest.cxx
 DataTest_SOURCES               = DataTest.cxx

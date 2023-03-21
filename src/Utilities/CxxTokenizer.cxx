@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <iostream>
 #include <algorithm>
 #include <array>
 #include <cctype>
@@ -626,6 +627,45 @@ namespace tfel::utilities {
     advance(o, p, pe - p);
   }
 
+  void CxxTokenizer::parseRawString(Token::size_type &o,
+                                    std::string::const_iterator &p,
+                                    const std::string::const_iterator pe,
+                                    const Token::size_type n) {
+    auto findDelimiter = [this, pe](std::string::const_iterator c) {
+      if (*c != ')') {
+        return false;
+      }
+      ++c;
+      for (Token::size_type i = 0; i != this->currentRawStringDelimiter.size();
+           ++i) {
+        if (c == pe) {
+          return false;
+        }
+        if (*c != this->currentRawStringDelimiter[i]) {
+          return false;
+        }
+        ++c;
+      }
+      if (c == pe) {
+        return false;
+      }
+      return *c == '\"';
+    };
+    this->tokens.emplace_back("", n, o, Token::String);
+    auto &value = this->tokens.back().value;
+    while (p != pe) {
+      if (findDelimiter(p)) {
+        advance(o, p, this->currentRawStringDelimiter.size() + 2);
+        this->rawStringOpened = false;
+        this->currentRawStringDelimiter.clear();
+        return;
+      } else {
+        value += *p;
+        advance(o, p, 1u);
+      }
+    }
+  }  // end of parseRawString
+
   void CxxTokenizer::parsePreprocessorDirective(
       Token::size_type &o,
       std::string::const_iterator &p,
@@ -710,6 +750,24 @@ namespace tfel::utilities {
           this->tokens.emplace_back(std::string(1u, *p), n, o, Token::Standard);
           advance(o, p, 1u);
         }
+      } else if ((*p == 'R') &&
+                 ((std::next(p) != pe) && ((*(std::next(p)) == '\"')))) {
+        // raw strings litteral
+        advance(o, p, 2u);
+        this->currentRawStringDelimiter.clear();
+        this->rawStringOpened = true;
+        throw_if(
+            p == pe,
+            "invalid end of line, expected to read the raw string delimiter");
+        while (*p != '(') {
+          this->currentRawStringDelimiter += *p;
+          advance(o, p, 1u);
+          throw_if(
+              p == pe,
+              "invalid end of line, expected to read the raw string delimiter");
+        }
+        advance(o, p, 1u);
+        this->parseRawString(o, p, pe, n);
       } else if (*p == '\"') {
         // c-strings
         if (this->treatStrings) {
@@ -855,6 +913,29 @@ namespace tfel::utilities {
       }
       advance(o, p, pos3 + 2);
       this->cStyleCommentOpened = false;
+    }
+    if (this->rawStringOpened) {
+      const auto delimiter = ")" + this->currentRawStringDelimiter + '\"';
+      const auto pos3 = line.find(delimiter);
+      if (pos3 == std::string::npos) {
+      }
+      if (tokens.empty()) {
+        this->tokens.emplace_back("", n, o, Token::String);
+      }
+      throw_if((this->tokens.back().flag != Token::String),
+               "internal error (previous token is not a string)");
+      if (!this->tokens.back().value.empty()) {
+        this->tokens.back().value += '\n';
+      }
+      if (pos3 == std::string::npos) {
+        this->tokens.back().value += line;
+        advance(o, p, line.size());
+        return;
+      }
+      this->tokens.back().value += std::string{p, p + pos3};
+      advance(o, p, pos3 + delimiter.size());
+      this->rawStringOpened = false;
+      this->currentRawStringDelimiter.clear();
     }
     ignore_space(o, p, pe);
     if ((p != pe) && (*p == '#')) {
@@ -1013,8 +1094,28 @@ namespace tfel::utilities {
     return this->cStyleCommentOpened;
   }  // end of CxxTokenizer::isCStyleCommentOpened
 
+  void CxxTokenizer::setRawStringOpened(const bool b) {
+    this->rawStringOpened = b;
+    this->currentRawStringDelimiter = "";
+  }
+
+  void CxxTokenizer::setRawStringDelimiter(std::string_view d) {
+    this->rawStringOpened = true;
+    this->currentRawStringDelimiter = d;
+  }  // end of setRawStringDelimiter
+
+  bool CxxTokenizer::isRawStringOpened() const {
+    return this->rawStringOpened;
+  }  // end of CxxTokenizer::isRawStringOpened
+
+  std::string CxxTokenizer::getCurrentRawStringDelimiter() const noexcept{
+    return this->currentRawStringDelimiter;
+  }  // end of getCurrentRawStringDelimiter
+
   void CxxTokenizer::clear() {
     this->cStyleCommentOpened = false;
+    this->rawStringOpened = false;
+    this->currentRawStringDelimiter.clear();
     this->tokens.clear();
     this->comments.clear();
   }  // end of CxxTokenizer::clear
@@ -1071,16 +1172,24 @@ namespace tfel::utilities {
     double res;
     CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readDouble",
                                     "expected number", p, pe);
+    raise_if(p->flag != Token::Number,
+             "CxxTokenizer::readInt: given value is not a number (read " +
+                 p->value + ")");
+    const auto value = [&p] {
+      auto v = p->value;
+      replace_all(v, '\'', "");
+      return v;
+    }();
 #ifdef __CYGWIN__
-    std::istringstream is(p->value);
+    std::istringstream is(value);
     is >> res;
     raise_if(!is && (!is.eof()),
-             "CxxTokenizer::readInt: "
+             "CxxTokenizer::readDouble: "
              "could not read value from token '" +
                  p->value + "'.");
 #else
     try {
-      res = convert<double>(p->value);
+      res = convert<double>(value);
     } catch (std::exception &e) {
       raise(
           "CxxTokenizer::readDouble: "
@@ -1099,7 +1208,15 @@ namespace tfel::utilities {
     int res;
     CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readInt", "expected number",
                                     p, pe);
-    std::istringstream is(p->value);
+    raise_if(p->flag != Token::Number,
+             "CxxTokenizer::readInt: given value is not a number (read " +
+                 p->value + ")");
+    const auto value = [&p] {
+      auto v = p->value;
+      replace_all(v, '\'', "");
+      return v;
+    }();
+    std::istringstream is(value);
     is >> res;
     raise_if(!is && (!is.eof()),
              "CxxTokenizer::readInt: "
@@ -1114,7 +1231,15 @@ namespace tfel::utilities {
     unsigned int res;
     CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readUnsignedInt",
                                     "expected number", p, pe);
-    std::istringstream is(p->value);
+    raise_if(p->flag != Token::Number,
+             "CxxTokenizer::readInt: given value is not a number (read " +
+                 p->value + ")");
+    const auto value = [&p] {
+      auto v = p->value;
+      replace_all(v, '\'', "");
+      return v;
+    }();
+    std::istringstream is(value);
     is >> res;
     if (!is && (!is.eof())) {
       tfel::raise(

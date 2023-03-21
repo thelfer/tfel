@@ -52,7 +52,7 @@ namespace mtest {
       r(this->c) -= a * u1(pos);
       r(pos) -= a * (u1(this->c) - e(t + dt));
     } else {
-      K(pos, pos) = 1;
+      K(pos, pos) = -a;
     }
   }  // end of ImposedGradient::setValues
 
@@ -62,6 +62,9 @@ namespace mtest {
                                          const real,
                                          const real t,
                                          const real dt) const {
+    if (!this->isActive()) {
+      return true;
+    }
     const auto& e = *(this->eev);
     return std::abs(u(this->c) - e(t + dt)) < eeps;
   }

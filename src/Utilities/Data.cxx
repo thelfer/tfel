@@ -276,7 +276,7 @@ namespace tfel::utilities {
         c(Data::read(p, pe, o));
       } catch (std::exception& e) {
         raise<std::runtime_error>(
-            "Data::read: error while "
+            "Data::parse: error while "
             "treating key '" +
             k + "'.\n" + std::string(e.what()));
       }
@@ -288,7 +288,7 @@ namespace tfel::utilities {
       }
     }
     CxxTokenizer::readSpecifiedToken("Data::parse", "}", p, pe);
-  }  // end of Data::read
+  }  // end of parse
 
   struct TFEL_VISIBILITY_LOCAL DataComparator {
     using return_type = bool;

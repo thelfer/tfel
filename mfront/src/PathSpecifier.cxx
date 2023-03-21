@@ -177,8 +177,7 @@ namespace mfront {
                         const std::string& t) {
         for (const auto& mi : selected_implementations) {
           for (const auto& i : mi.second) {
-            insert_if(inputs,
-                      "madnex:" + f + ":" + t + ":" + mi.first + ":" + i);
+            insert_if(inputs, "mdnx:" + f + ":" + t + ":" + mi.first + ":" + i);
           }
         }
       };
@@ -226,7 +225,7 @@ namespace mfront {
               const std::vector<std::string>& selected_implementations,
               const std::string& t) {
             for (const auto& i : selected_implementations) {
-              insert_if(inputs, "madnex:" + f + ":" + t + ":" + m_id + ":" + i);
+              insert_if(inputs, "mdnx:" + f + ":" + t + ":" + m_id + ":" + i);
             }
           };
       if (!material_property_identifier.empty()) {

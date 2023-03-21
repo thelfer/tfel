@@ -99,7 +99,7 @@ namespace mfront {
                                                   const std::string mkt) {
     const auto mks = (d.*get)(m);
     if (std::find(mks.begin(), mks.end(), n) != mks.end()) {
-      return "madnex:" + f + ":" + mkt + ":" + m + ":" + n;
+      return "mdnx:" + f + ":" + mkt + ":" + m + ":" + n;
     }
     return {};
   }  // end of getMatchingMaterialKnoweldge

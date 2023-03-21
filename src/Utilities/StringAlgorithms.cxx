@@ -115,7 +115,7 @@ namespace tfel::utilities {
   void replace_all(std::string& s, const char c, std::string_view n) {
     std::string::size_type p = 0u;
     std::string::size_type ns = n.size();
-    if ((s.empty()) || (ns == 0)) {
+    if (s.empty()) {
       return;
     }
     while ((p = s.find(c, p)) != std::string::npos) {

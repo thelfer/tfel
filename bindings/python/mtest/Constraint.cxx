@@ -41,7 +41,7 @@ static mtest::ConstraintOptions makeConstraintOptions(
       boost::python::extract<std::vector<std::string>> vc(*pv);
       tfel::raise_if(!vc.check(),
                      "makeConstraintOptions: invalid value type for "
-                     "key 'desactivating_events', expected a list of strings");
+                     "key 'activating_events', expected a list of strings");
       opts.activating_events = vc();
     } else if (k == "desactivating_events") {
       boost::python::extract<std::vector<std::string>> vc(*pv);
