@@ -60,7 +60,7 @@ namespace mfront {
     using namespace tfel::material;
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     constexpr auto icste = tfel::math::Cste<real>::isqrt2;
-    const auto& n = this->getStensorComponentsNames();
+    const auto& n = this->getStrainComponentsNames();
     unsigned short i;
     tfel::raise_if(this->times.size() != 2,
                    "UmatSmallStrainMTestFileGenerator::writeGradients: "
@@ -99,12 +99,12 @@ namespace mfront {
       if (i < 3) {
         if (!((i == 2) &&
               (this->hypothesis == ModellingHypothesis::PLANESTRAIN))) {
-          os << "@ImposedStrain<evolution> '" << *p << "' {" << t0 << ":"
+          os << "@ImposedStrain<evolution> 'E" << *p << "' {" << t0 << ":"
              << this->eto[i] << "," << t1 << ":" << this->eto[i] + this->deto[i]
              << "};\n";
         }
       } else {
-        os << "@ImposedStrain<evolution> '" << *p << "' {" << t0 << ":"
+        os << "@ImposedStrain<evolution> 'E" << *p << "' {" << t0 << ":"
            << this->eto[i] * icste << "," << t1 << ":"
            << (this->eto[i] + this->deto[i]) * icste << "};\n";
       }
