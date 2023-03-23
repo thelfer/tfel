@@ -60,7 +60,7 @@ namespace mfront {
     using namespace tfel::material;
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     constexpr auto icste = tfel::math::Cste<real>::isqrt2;
-    const auto& n = this->getStensorComponentsNames();
+    const auto& n = this->getStrainComponentsNames();
     unsigned short i;
     tfel::raise_if(this->times.size() != 2,
                    "UmatSmallStrainMTestFileGenerator::writeGradients: "
