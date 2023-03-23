@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 369: [TFEL/Utilities] support for raw string literals in `CxxTokenizer`
+
+For more details, see <https://github.com/thelfer/tfel/issues/369>
+
 ## Issue 362: [mfront] Better code generation for point-wise models using the Cast3M interface 
 
 For more details, see <https://github.com/thelfer/tfel/issues/362>

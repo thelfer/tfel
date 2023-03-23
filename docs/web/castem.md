@@ -249,8 +249,44 @@ EVSIG = 'EVOL' 'ROUG' 'MANU' 'EZZ' peto 'SMZZ' psig;
 The results given by `Cast3M` can be compared to an equivalent `MTest`
 computation on the following figure:
 
-![Comparaison des résultats `MTest`/`Cast3M`](img/NortonCreepUniaxialTesting
- "Comparaison des résultats `MTest`/`Cast3M`")
+![Comparaison of the results `MTest`/`Cast3M`](img/NortonCreepUniaxialTesting
+ "Comparison of the results `MTest`/`Cast3M`")
+
+## Keywords specific to the `Cast3M` interface
+
+The following keywords are specific to the `Cast3M` interface:
+
+- `@CastemGenerateMTestFileOnFailure` (or
+  `@UMATGenerateMTestFileOnFailure`). This keyword is followed by a
+  boolean. If this boolean is true, the behaviour will generate an
+  `MTest` file for every integration failure. This keyword is deprecated
+  in favor of `@GenerateMTestFileOnFailure`.
+- `@CastemUseTimeSubStepping` (or `@UMATUseTimeSubStepping`). This
+  keyword is followed by a boolean. If this boolean is true, a local
+  substepping scheme is set up. The time step is reduced by a factor
+  \(2\) at each sub steps. This time step is never increased.
+- `@CastemMaximumSubStepping` (or `@UMATMaximumSubStepping`). This
+  keyword is followed by a strictly positive integer which indicates the
+  maximum number of sub steps allowed. Any value greater that \(5\) is
+  not reasonnable, as it would lead to reduction by a factor of at most
+  \(2^{5}\) (i.e. \(32\)) of the initial time step.
+- `@CastemDoSubSteppingOnInvalidResults` (or
+  `@UMATDoSubSteppingOnInvalidResults`). This keyword is followed by a
+  boolean. If true, invalid results will lead to a sub step. By default,
+  invalid results does not lead to a substeps. Invalid results are
+  debious results according to user defined criteria in the
+  `@APosterioriTimeStepScalingFactor` code block.
+- `@CastemFiniteStrainStrategy` (or `@UMATFiniteStrainStrategy`). This
+  keyword is followed by a string. This keyword is only valid for
+  strain-based behaviours. Valid values are `None`,
+  `FiniteRotationSmallStrain`, `MieheApelLambrechtLogarithmicStrain` and
+  `LogarithmicStrain1D`. This keyword is deprecated in favor of the
+  `@StrainMeasure` keyword.
+- `@CastemFiniteStrainStrategies` (or `@UMATFiniteStrainStrategies`).
+  This keyword is followed by a list of strings (see the documentation
+  of the `@CastemFiniteStrainStrategy` keyword). A version of the
+  behaviour will be generated for each strategy defined. This keyword is
+  deprecated in favor of the `@StrainMeasure` keyword.
 
 # Material proprerties
 

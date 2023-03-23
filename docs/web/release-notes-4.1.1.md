@@ -19,6 +19,14 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 376: Add documentation for the keywords specific to the `Cast3M` interface
+
+For more details, see <https://github.com/thelfer/tfel/issues/376.
+
+## Issue 375: Invalid strain components when generating `MTest` files
+
+For more details, see <https://github.com/thelfer/tfel/issues/375.
+
 ## Issue 364: [mfront] castem interface is broken for points wise models which are implemented as behaviours and which declares a consistent tangent operator
 
 For more details, see <https://github.com/thelfer/tfel/issues/364>.
