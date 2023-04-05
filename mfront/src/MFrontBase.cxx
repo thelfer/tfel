@@ -152,7 +152,9 @@ namespace mfront {
       dsl = dslFactory.createNewDSL(DefaultDSL::getName(),
                                     global_options.getBehaviourDSLOptions());
     }
-    if (tfel::utilities::starts_with(f, "madnex:")) {
+    if ((tfel::utilities::starts_with(f, "madnex:")) ||
+        (tfel::utilities::starts_with(f, "mdnx:")) ||
+        (tfel::utilities::starts_with(f, "edf:"))) {
 #ifdef MFRONT_HAVE_MADNEX
       const auto type = std::get<1>(decomposeImplementationPathInMadnexFile(f));
       if (type == "material_property") {
