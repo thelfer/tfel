@@ -44,18 +44,18 @@ namespace tfel {
     }  // end of TestResult::succees
 
     TestResult::const_iterator TestResult::begin() const {
-      return std::vector<TestResult>::begin();
+      return this->results.begin();
     }  // end of TestResult::begin()
 
     TestResult::const_iterator TestResult::end() const {
-      return std::vector<TestResult>::end();
+      return this->results.end();
     }  // end of TestResult::end()
 
     void TestResult::append(const TestResult& r) {
       if (!r.success()) {
         this->s = false;
       }
-      std::vector<TestResult>::push_back(r);
+      this->results.push_back(r);
     }  // end of TestResult::end()
 
     void TestResult::setTestDuration(const double td) {
