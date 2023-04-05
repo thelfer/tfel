@@ -50,7 +50,9 @@ namespace mfront {
     std::string library, dslName;
     tfel::utilities::CxxTokenizer file;
     auto dsl_options = std::map<std::string, tfel::utilities::Data>{};
-    if (tfel::utilities::starts_with(f, "madnex:")) {
+        if ((tfel::utilities::starts_with(f, "madnex:")) ||
+        (tfel::utilities::starts_with(f, "mdnx:")) ||
+        (tfel::utilities::starts_with(f, "edf:"))) {
 #ifdef MFRONT_HAVE_MADNEX
       const auto path = decomposeImplementationPathInMadnexFile(f);
       const auto impl =
@@ -128,7 +130,9 @@ namespace mfront {
       }
       dsl = dslFactory.createNewParser(DefaultDSL::getName());
     }
-    if (tfel::utilities::starts_with(f, "madnex:")) {
+    if ((tfel::utilities::starts_with(f, "madnex:")) ||
+        (tfel::utilities::starts_with(f, "mdnx:")) ||
+        (tfel::utilities::starts_with(f, "edf:"))) {
 #ifdef MFRONT_HAVE_MADNEX
       const auto type = std::get<1>(decomposeImplementationPathInMadnexFile(f));
       if (type == "material_property") {

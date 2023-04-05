@@ -22,12 +22,10 @@ namespace cyrano {
       const CyranoInt ndi) {
     using namespace tfel::material;
     switch (ndi) {
-      case 14:
+      case 1:
         return ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN;
-        // C                       =  3 a 11 : unidimensionnel plan (massif 1D)
-        // C                       = 12 a 14 : unidimensionnel axisymetrique
-        // (massif 1D) C                       = 15 : unidimensionnel spherique
-        // (massif 1D)
+      case 2:
+        return ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS;
       default:;
     }
     std::ostringstream msg;
