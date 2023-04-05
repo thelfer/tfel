@@ -11,6 +11,7 @@ mfront_PYTHON = __init__.py
 
 mfront_LTLIBRARIES = _mfront.la
 _mfront_la_SOURCES = mfront.cxx                                \
+                     madnex.cxx                                \
 		     MaterialKnowledgeDescriptionAttribute.cxx \
 		     AbstractDSL.cxx                           \
 		     FileDescription.cxx                       \

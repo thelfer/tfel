@@ -52,6 +52,7 @@ namespace boost {
 }  // namespace boost
 #endif /* _MSC_VER */
 
+void declareMadnexSupport();
 void declareAbstractDSL();
 void declareDSLFactory();
 void declareFileDescription();
@@ -101,6 +102,7 @@ BOOST_PYTHON_MODULE(_mfront) {
        boost::python::args("material_property") = "",
        boost::python::args("behaviour") = "",
        boost::python::args("model") = ""));
+  declareMadnexSupport();
   declareDSLFactory();
   declareAbstractDSL();
   declareFileDescription();

@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #384: [mfront] the `cyrano::getModellingHypothesis` is not implemented properly
+
+For more details, see <https://github.com/thelfer/tfel/issues/384>.
+
 ## Issue #361: [mfront] State variables shall be rotated for orthotropic behaviours written using the native corotationnal frame
 
 For more details, see <https://github.com/thelfer/tfel/issues/361>.

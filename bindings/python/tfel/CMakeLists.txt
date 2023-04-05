@@ -31,10 +31,12 @@ if(TFEL_NUMPY_SUPPORT)
   endif(TFEL_USES_CONAN)
 endif(TFEL_NUMPY_SUPPORT)
 
-tfel_python_module(_tfel tfel.cxx
+tfel_python_module(_tfel
+  tfel.cxx
+  Config.cxx
   PhysicalConstants.cxx)
 target_link_libraries(py_tfel__tfel
-  PRIVATE ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
+  PRIVATE TFELConfig ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
 
 tfel_python_module(tests tests.cxx
   TestResult.cxx

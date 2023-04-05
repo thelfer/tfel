@@ -28,9 +28,12 @@ endif
 
 
 _tfel_la_SOURCES = tfel.cxx              \
+           Config.cxx                    \
 		   PhysicalConstants.cxx
-_tfel_la_LIBADD  = @BOOST_LIBS@ @BOOST_PYTHON_LIBS@             \
-		   -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
+_tfel_la_LIBADD  = -L@top_builddir@/src/Config                 \
+		           -lTFELConfig                                \
+                    @BOOST_LIBS@ @BOOST_PYTHON_LIBS@            \
+		           -L@PYTHONPATH@/lib -lpython@PYTHON_VERSION@
 _tfel_la_LDFLAGS = -module
 
 tests_la_SOURCES = tests.cxx         \

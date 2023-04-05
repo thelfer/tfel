@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 383: [python-bindings] Add the ability to retrieve the `TFEL` version
+
+For more details, see <https://github.com/thelfer/tfel/issues/383>
+
 ## Issue 369: [TFEL/Utilities] support for raw string literals in `CxxTokenizer`
 
 For more details, see <https://github.com/thelfer/tfel/issues/369>

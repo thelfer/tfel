@@ -13,6 +13,10 @@
 
 #include <boost/python.hpp>
 
+void declareConfig();
 void declarePhysicalConstants();
 
-BOOST_PYTHON_MODULE(_tfel) { declarePhysicalConstants(); }
+BOOST_PYTHON_MODULE(_tfel) {
+  declareConfig();
+  declarePhysicalConstants();
+}
