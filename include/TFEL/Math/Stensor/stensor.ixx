@@ -278,7 +278,7 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <typename Function>
-  stensor<N, typename std::result_of<Function(T)>::type>
+  stensor<N, typename std::invoke_result_t<Function, T>::type>
   stensor<N, T>::computeIsotropicFunction(const Function& f,
                                           const tvector<3u, T>& vp,
                                           const rotation_matrix<T>& m) {
@@ -295,14 +295,14 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <typename Function, typename FunctionDerivative>
-  st2tost2<N, typename std::result_of<FunctionDerivative(T)>::type>
+  st2tost2<N, typename std::invoke_result_t<FunctionDerivative, T>::type>
   stensor<N, T>::computeIsotropicFunctionDerivative(
       const Function& f,
       const FunctionDerivative& df,
       const tvector<3u, T>& vp,
       const rotation_matrix<T>& m,
       const T eps) {
-    st2tost2<N, typename std::result_of<FunctionDerivative(T)>::type> r;
+    st2tost2<N, typename std::invoke_result_t<FunctionDerivative, T>::type> r;
     stensor<N, T>::computeIsotropicFunctionDerivative(r, f, df, vp, m, eps);
     return r;
   }  // end of stensor<N,T>::computeIsotropicFunctionDerivative
@@ -361,7 +361,7 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <typename stensor_common::EigenSolver es, typename Function>
-  stensor<N, typename std::result_of<Function(T)>::type>
+  stensor<N, typename std::invoke_result_t<Function, T>::type>
   stensor<N, T>::computeIsotropicFunction(const Function& f,
                                           const bool b) const {
     using base = base_type<T>;
@@ -376,7 +376,7 @@ namespace tfel::math {
   template <typename stensor_common::EigenSolver es,
             typename Function,
             typename FunctionDerivative>
-  st2tost2<N, typename std::result_of<FunctionDerivative(T)>::type>
+  st2tost2<N, typename std::invoke_result_t<FunctionDerivative, T>::type>
   stensor<N, T>::computeIsotropicFunctionDerivative(
       const Function& f,
       const FunctionDerivative& df,
@@ -395,8 +395,8 @@ namespace tfel::math {
   template <typename stensor_common::EigenSolver es,
             typename Function,
             typename FunctionDerivative>
-  std::pair<stensor<N, typename std::result_of<Function(T)>::type>,
-            st2tost2<N, typename std::result_of<FunctionDerivative(T)>::type>>
+  std::pair<stensor<N, typename std::invoke_result_t<Function, T>::type>,
+            st2tost2<N, typename std::invoke_result_t<FunctionDerivative, T>::type>>
   stensor<N, T>::computeIsotropicFunctionAndDerivative(
       const Function& f,
       const FunctionDerivative& df,
