@@ -534,7 +534,7 @@ namespace tfel::math {
      * \param[in]  m:   eigenvectors
      */
     template <typename Function>
-    static stensor<N, typename std::result_of<Function(ValueType)>::type>
+    static stensor<N, typename std::invoke_result_t<Function, ValueType>::type>
     computeIsotropicFunction(const Function&,
                              const tvector<3u, ValueType>&,
                              const rotation_matrix<ValueType>&);
@@ -599,7 +599,7 @@ namespace tfel::math {
     template <typename Function, typename FunctionDerivative>
     static st2tost2<
         N,
-        typename std::result_of<FunctionDerivative(ValueType)>::type>
+        typename std::invoke_result_t<FunctionDerivative, ValueType>::type>
     computeIsotropicFunctionDerivative(const Function&,
                                        const FunctionDerivative&,
                                        const tvector<3u, ValueType>&,
@@ -637,7 +637,7 @@ namespace tfel::math {
      * \param[in] b:   if true, refinement of eigen values is performed
      */
     template <EigenSolver = TFELEIGENSOLVER, typename Function>
-    stensor<N, typename std::result_of<Function(ValueType)>::type>
+    stensor<N, typename std::invoke_result_t<Function, ValueType>::type>
     computeIsotropicFunction(const Function&, const bool = false) const;
     /*!
      * \return the derivative of an isotropic function
@@ -650,7 +650,7 @@ namespace tfel::math {
     template <EigenSolver = TFELEIGENSOLVER,
               typename Function,
               typename FunctionDerivative>
-    st2tost2<N, typename std::result_of<FunctionDerivative(ValueType)>::type>
+    st2tost2<N, typename std::invoke_result_t<FunctionDerivative, ValueType>::type>
     computeIsotropicFunctionDerivative(const Function&,
                                        const FunctionDerivative&,
                                        const ValueType,
@@ -667,9 +667,9 @@ namespace tfel::math {
               typename Function,
               typename FunctionDerivative>
     std::pair<
-        stensor<N, typename std::result_of<Function(ValueType)>::type>,
+        stensor<N, typename std::invoke_result_t<Function, ValueType>::type>,
         st2tost2<N,
-                 typename std::result_of<FunctionDerivative(ValueType)>::type>>
+                 typename std::invoke_result_t<FunctionDerivative, ValueType>::type>>
     computeIsotropicFunctionAndDerivative(const Function&,
                                           const FunctionDerivative&,
                                           const ValueType,

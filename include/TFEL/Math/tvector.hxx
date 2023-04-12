@@ -161,7 +161,7 @@ namespace tfel::math {
    * \param[in] x: inital value
    */
   template <typename F, typename T, unsigned short N>
-  tvector<N, typename std::result_of<F(T)>::type> map(F, const tvector<N, T>&);
+  tvector<N, typename std::invoke_result_t<F, T>::type> map(F, const tvector<N, T>&);
   /*!
    * export the given vector to an array of the
    */
