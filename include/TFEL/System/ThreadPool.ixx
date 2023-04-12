@@ -23,9 +23,9 @@ namespace tfel::system {
   struct ThreadPool::Wrapper {
     Wrapper(F&& f_) : f(f_) {}
     template <typename... Args>
-    ThreadedTaskResult<typename std::result_of<F(Args...)>::type> operator()(
+    ThreadedTaskResult<typename std::invoke_result_t<F, Args...>::type> operator()(
         Args&&... args) {
-      using result = typename std::result_of<F(Args...)>::type;
+      using result = typename std::invoke_result_t<F, Args...>::type;
       using apply = typename std::conditional<std::is_same<result, void>::value,
                                               GetVoid, Get<result>>::type;
       ThreadedTaskResult<result> r;
@@ -60,10 +60,10 @@ namespace tfel::system {
 
   // add new work item to the pool
   template <typename F, typename... Args>
-  std::future<ThreadedTaskResult<typename std::result_of<F(Args...)>::type>>
+  std::future<ThreadedTaskResult<typename std::invoke_result_t<F, Args...>::type>>
   ThreadPool::addTask(F&& f, Args&&... a) {
     using return_type =
-        ThreadedTaskResult<typename std::result_of<F(Args...)>::type>;
+        ThreadedTaskResult<typename std::invoke_result_t<F, Args...>::type>;
     using task = std::packaged_task<return_type()>;
     auto t = std::make_shared<task>(
         std::bind(Wrapper<F>(std::forward<F>(f)), std::forward<Args>(a)...));
