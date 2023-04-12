@@ -103,9 +103,8 @@ namespace tfel::math {
    * \param[in] x: inital value
    */
   template <typename F, typename T, unsigned short N>
-  tvector<N, typename std::result_of<F(T)>::type> map(F f,
-                                                      const tvector<N, T>& x) {
-    tvector<N, typename std::result_of<F(T)>::type> r;
+  tvector<N, std::invoke_result_t<F, T>> map(F f, const tvector<N, T>& x) {
+    tvector<N, std::invoke_result_t<F, T>> r;
     tfel::fsalgo::transform<N>::exe(x.begin(), r.begin(), f);
     return r;
   }  // end of map
