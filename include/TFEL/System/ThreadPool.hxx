@@ -49,7 +49,7 @@ namespace tfel::system {
      * \param[in] a: arguments passed to the the task
      */
     template <typename F, typename... Args>
-    std::future<ThreadedTaskResult<typename std::invoke_result_t<F, Args...>::type>>
+    std::future<ThreadedTaskResult<std::invoke_result_t<F, Args...>>>
     addTask(F&&, Args&&...);
     //! \return the number of threads managed by the ppol
     size_type getNumberOfThreads() const;
