@@ -13,6 +13,7 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @ziegelwanger_pcba_2023
     @tsekpuia_microstructure-based_2023
     @riparbelli_hygromechanical_2023
     @zhang_modeling_2023
@@ -24,6 +25,7 @@ nocite: |
     @jamond_manta_2022
     @fandeur_approche_2022
     @siedel_schema_2022
+    @bacquaert_formulation_2022
     @li_influence_2022
     @seidlhofer_hygro-coupled_2022
     @kafle_numerical_2022
