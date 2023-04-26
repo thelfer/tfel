@@ -23,12 +23,12 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/System/LibraryInformation.hxx"
 
-namespace tfel::system {
-
 #include "LibraryInformationImplementation.cxx"
 #include "LibraryInformation-elf_info.cxx"
 #include "LibraryInformation-pe_info.cxx"
 #include "LibraryInformation-macho_info.cxx"
+
+namespace tfel::system {
 
   LibraryInformation::LibraryInformation::Implementation::~Implementation() =
       default;
