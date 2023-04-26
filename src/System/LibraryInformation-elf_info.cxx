@@ -15,7 +15,9 @@
  * Antony Polukhin, Renato Tegon Forti and Antony Polukhin.
  */
 
-namespace details {
+#include <cstdint>
+
+namespace tfel::system::details {
 
   template <class AddressOffsetT>
   struct Elf_Ehdr_template {
@@ -289,4 +291,4 @@ namespace details {
   typedef elf_info<std::uint32_t> elf_info32;
   typedef elf_info<std::uint64_t> elf_info64;
 
-}  // namespace details
+}  // namespace tfel::system::details

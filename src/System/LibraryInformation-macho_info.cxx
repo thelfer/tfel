@@ -15,7 +15,7 @@
  * Antony Polukhin, Renato Tegon Forti and Antony Polukhin.
  */
 
-namespace details {
+namespace tfel::system::details {
 
   typedef int integer_t;
   typedef int vm_prot_t;
@@ -351,4 +351,4 @@ namespace details {
   typedef macho_info<std::uint32_t> macho_info32;
   typedef macho_info<std::uint64_t> macho_info64;
 
-}  // namespace details
+}  // namespace tfel::system::details
