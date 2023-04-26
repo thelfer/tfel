@@ -14,9 +14,17 @@
  * project under specific licensing conditions.
  */
 
-struct LibraryInformation::LibraryInformation::Implementation {
-  virtual std::vector<std::string> sections() = 0;
-  virtual std::vector<std::string> symbols() = 0;
-  virtual std::vector<std::string> symbols(const char*) = 0;
-  virtual ~Implementation();
-};  // end of struct LibraryInformation::LibraryInformation::Implementation
+namespace tfel {
+
+  namespace system {
+
+    struct LibraryInformation::LibraryInformation::Implementation {
+      virtual std::vector<std::string> sections() = 0;
+      virtual std::vector<std::string> symbols() = 0;
+      virtual std::vector<std::string> symbols(const char*) = 0;
+      virtual ~Implementation();
+    };  // end of struct LibraryInformation::LibraryInformation::Implementation
+
+  }  // end of namespace system
+
+}  // end of namespace tfel
