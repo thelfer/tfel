@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #390: Fix build with `Fedora 38`
+
+For more details, see <https://github.com/thelfer/tfel/issues/390>.
+
 ## Issue #384: [mfront] the `cyrano::getModellingHypothesis` is not implemented properly
 
 For more details, see <https://github.com/thelfer/tfel/issues/384>.

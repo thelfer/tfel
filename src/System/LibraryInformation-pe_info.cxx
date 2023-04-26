@@ -15,7 +15,7 @@
  * Antony Polukhin, Renato Tegon Forti and Antony Polukhin.
  */
 
-namespace details {
+namespace tfel::system::details {
 
   // reference:
   // http://www.joachim-bauch.de/tutorials/loading-a-dll-from-memory/
@@ -452,4 +452,4 @@ namespace details {
   typedef pe_info<details::DWORD_> pe_info32;
   typedef pe_info<details::ULONGLONG_> pe_info64;
 
-}  // end of namespace details
+}  // end of namespace tfel::system::details
