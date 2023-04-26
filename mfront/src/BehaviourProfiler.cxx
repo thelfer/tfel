@@ -13,6 +13,7 @@
 
 #include <ctime>
 #include <string>
+#include <cstdint>
 #include <iterator>
 #include <iomanip>
 #include <iostream>
