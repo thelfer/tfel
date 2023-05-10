@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #393: [mfront] Use cohesive zone model in axisymmetrical FE simulation with `Cast3M`
+
+For more details, see <https://github.com/thelfer/tfel/issues/393>.
+
 ## Issue #390: Fix build with `Fedora 38`
 
 For more details, see <https://github.com/thelfer/tfel/issues/390>.
