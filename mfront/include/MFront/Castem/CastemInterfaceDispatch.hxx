@@ -233,12 +233,11 @@ namespace castem {
 
   /* cohesive zones models */
   template <
+      tfel::material::ModellingHypothesis::Hypothesis hypothesis,
       template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
       class Behaviour>
-  struct CastemInterfaceDispatch<
-      COHESIVEZONEMODEL,
-      tfel::material::ModellingHypothesis::PLANESTRAIN,
-      Behaviour> : public CastemInterfaceExceptions {
+  struct CastemCohesizeZoneModelInterfaceDispatch2D
+      : public CastemInterfaceExceptions {
     TFEL_CASTEM_INLINE2 static void exe(
         const CastemInt *const NTENS,
         const CastemReal *const DTIME,
@@ -260,15 +259,14 @@ namespace castem {
         const StressFreeExpansionHandler &sfeh) {
       using namespace std;
       using namespace tfel::meta;
-      typedef tfel::material::ModellingHypothesis MH;
-      typedef Behaviour<MH::PLANESTRAIN, CastemReal, false> BV;
+      typedef Behaviour<hypothesis, CastemReal, false> BV;
       //! a simple alias
       typedef CastemTraits<BV> Traits;
       typedef typename std::conditional<
           Traits::stype == castem::ISOTROPIC,
-          CastemIsotropicBehaviourHandler<COHESIVEZONEMODEL, MH::PLANESTRAIN,
+          CastemIsotropicBehaviourHandler<COHESIVEZONEMODEL,hypothesis,
                                           Behaviour>,
-          CastemOrthotropicBehaviourHandler<COHESIVEZONEMODEL, MH::PLANESTRAIN,
+          CastemOrthotropicBehaviourHandler<COHESIVEZONEMODEL,hypothesis,
                                             Behaviour>>::type Handler;
       CastemInterfaceExceptions::checkNTENSValue(
           *NTENS, Traits::ThermodynamicForceVariableSize);
@@ -294,6 +292,28 @@ namespace castem {
       STRESS[1] = t[0];
     }  // end of exe
   };   // end of struct CastemInterfaceDispatch
+
+  template <
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
+  struct CastemInterfaceDispatch<
+      COHESIVEZONEMODEL,
+      tfel::material::ModellingHypothesis::PLANESTRAIN,
+      Behaviour>
+      : public CastemCohesizeZoneModelInterfaceDispatch2D<
+            tfel::material::ModellingHypothesis::PLANESTRAIN,
+            Behaviour> {};
+
+  template <
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
+  struct CastemInterfaceDispatch<
+      COHESIVEZONEMODEL,
+      tfel::material::ModellingHypothesis::AXISYMMETRICAL,
+      Behaviour>
+      : public CastemCohesizeZoneModelInterfaceDispatch2D<
+            tfel::material::ModellingHypothesis::AXISYMMETRICAL,
+            Behaviour> {};
 
   /* cohesive zones models */
   template <
