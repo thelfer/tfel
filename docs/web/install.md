@@ -498,7 +498,7 @@ $ make install
 Finally, add the paths in your local `.bashrc` file:
 
 ~~~~{.sh}
-export PATH=$PATH:~.local/bin
+export PATH=$PATH:~/.local/bin
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:~/.local/lib
 export PYTHONPATH=${PYTHONPATH}:~/.local/lib/python3.8/site-packages
 ~~~~
