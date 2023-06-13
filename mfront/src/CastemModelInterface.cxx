@@ -470,8 +470,12 @@ namespace mfront {
       auto write_physical_bounds = [&os, &raise](const VariableDescription& v,
                                                  const std::string& n,
                                                  const unsigned short vdepth) {
+        if (!v.hasPhysicalBounds()) {
+          return;
+        }
         if (!v.isScalar()) {
-          raise("only scalar variable are supported");
+          raise("error while treating physical bounds of variable '" + v.name +
+                "' (only scalar variable are supported)");
         }
         writePhysicalBoundsChecks(os, v, n, "1u", false, false);
         if (vdepth == 1u) {
@@ -496,8 +500,12 @@ namespace mfront {
       auto write_bounds = [&os, &raise](const VariableDescription& v,
                                         const std::string& n,
                                         const unsigned short vdepth) {
+        if (!v.hasBounds()) {
+          return;
+        }
         if (!v.isScalar()) {
-          raise("only scalar variable are supported");
+          raise("error while treating bounds of variable '" + v.name +
+                "' (only scalar variable are supported)");
         }
         writeBoundsChecks(os, v, n, "1u", "policy", false, false);
         if (vdepth == 1u) {
