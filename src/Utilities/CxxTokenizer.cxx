@@ -1108,7 +1108,7 @@ namespace tfel::utilities {
     return this->rawStringOpened;
   }  // end of CxxTokenizer::isRawStringOpened
 
-  std::string CxxTokenizer::getCurrentRawStringDelimiter() const noexcept{
+  std::string CxxTokenizer::getCurrentRawStringDelimiter() const noexcept {
     return this->currentRawStringDelimiter;
   }  // end of getCurrentRawStringDelimiter
 

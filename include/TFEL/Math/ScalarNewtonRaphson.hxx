@@ -1,5 +1,5 @@
 /*!
- * \file   include/TFEL/Math/NewtonRaphson.hxx
+ * \file   include/TFEL/Math/ScalarNewtonRaphson.hxx
  * \brief
  * \author Thomas Helfer
  * \date   31/03/2020

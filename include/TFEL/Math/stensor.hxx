@@ -543,9 +543,8 @@ namespace tfel::math {
      * \param[in]  m:   eigenvectors
      */
     template <typename Function>
-    TFEL_HOST_DEVICE static stensor<
-        N,
-        std::invoke_result_t<Function, ValueType>>
+    TFEL_HOST_DEVICE static stensor<N,
+                                    std::invoke_result_t<Function, ValueType>>
     computeIsotropicFunction(const Function&,
                              const tvector<3u, ValueType>&,
                              const rotation_matrix<ValueType>&);
@@ -648,9 +647,8 @@ namespace tfel::math {
      * \param[in] b:   if true, refinement of eigen values is performed
      */
     template <EigenSolver = TFELEIGENSOLVER, typename Function>
-    TFEL_HOST_DEVICE
-        stensor<N, std::invoke_result_t<Function, ValueType>>
-        computeIsotropicFunction(const Function&, const bool = false) const;
+    TFEL_HOST_DEVICE stensor<N, std::invoke_result_t<Function, ValueType>>
+    computeIsotropicFunction(const Function&, const bool = false) const;
     /*!
      * \return the derivative of an isotropic function
      * \param[in] f:   function
@@ -663,8 +661,7 @@ namespace tfel::math {
               typename Function,
               typename FunctionDerivative>
     TFEL_HOST_DEVICE
-        st2tost2<N,
-                 std::invoke_result_t<FunctionDerivative, ValueType>>
+        st2tost2<N, std::invoke_result_t<FunctionDerivative, ValueType>>
         computeIsotropicFunctionDerivative(const Function&,
                                            const FunctionDerivative&,
                                            const ValueType,

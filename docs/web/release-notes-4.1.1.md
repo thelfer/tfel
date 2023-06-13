@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 404: [mfront] Invalid treatments of variables bounds in the `Cast3M` and `generic` interfaces for models
+
+For more details, see <https://github.com/thelfer/tfel/issues/404.
+
 ## Issue 376: Add documentation for the keywords specific to the `Cast3M` interface
 
 For more details, see <https://github.com/thelfer/tfel/issues/376.

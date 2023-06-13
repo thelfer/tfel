@@ -62,8 +62,7 @@ namespace tfel::system {
   template <typename F, typename... Args>
   std::future<ThreadedTaskResult<std::invoke_result_t<F, Args...>>>
   ThreadPool::addTask(F&& f, Args&&... a) {
-    using return_type =
-        ThreadedTaskResult<std::invoke_result_t<F, Args...>>;
+    using return_type = ThreadedTaskResult<std::invoke_result_t<F, Args...>>;
     using task = std::packaged_task<return_type()>;
     auto t = std::make_shared<task>(
         std::bind(Wrapper<F>(std::forward<F>(f)), std::forward<Args>(a)...));

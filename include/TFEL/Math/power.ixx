@@ -135,7 +135,7 @@ namespace tfel::math::internals {
    public:
     /*!
      * \brief computes the power N/2 of a positive number
-     * \tparam N: exponent 
+     * \tparam N: exponent
      * \result std::sqrt(power<N>(x))
      * \param x: variable whose square root of the power N must be computed
      */
@@ -198,8 +198,8 @@ namespace tfel::math::internals {
 namespace tfel::math {
 
   /*!
-   * \brief computes the power of x 
-   * \tparam N: exponent 
+   * \brief computes the power of x
+   * \tparam N: exponent
    * \result pow(x,N)
    * \param x: variable power to be calculated
    */

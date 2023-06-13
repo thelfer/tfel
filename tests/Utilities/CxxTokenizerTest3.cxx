@@ -1,6 +1,6 @@
 /*!
  * \file   tests/Utilities/CxxTokenizerTest3.cxx
- * \brief    
+ * \brief
  * \date   09/03/2023
  */
 
@@ -26,17 +26,17 @@ struct CxxTokenizerTest3 final : public tfel::tests::TestCase {
     this->checkInteger("1'000", 1000);
     return this->result;
   }  // end of execute()
-private:
- void checkInteger(const std::string& s, const int v) {
-   tfel::utilities::CxxTokenizer t;
-   t.parseString(s);
-   TFEL_TESTS_ASSERT(t.size() == 1);
-   if (t.size() != 1u) {
-     return;
-   }
-   auto p = t.begin();
-   TFEL_TESTS_ASSERT(t.readInt(p, t.end()) == v);
- }
+ private:
+  void checkInteger(const std::string& s, const int v) {
+    tfel::utilities::CxxTokenizer t;
+    t.parseString(s);
+    TFEL_TESTS_ASSERT(t.size() == 1);
+    if (t.size() != 1u) {
+      return;
+    }
+    auto p = t.begin();
+    TFEL_TESTS_ASSERT(t.readInt(p, t.end()) == v);
+  }
 };
 
 TFEL_TESTS_GENERATE_PROXY(CxxTokenizerTest3, "CxxTokenizer3");
@@ -48,5 +48,3 @@ int main() {
   m.addXMLTestOutput("CxxTokenizer3.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-
-
