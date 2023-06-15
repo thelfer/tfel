@@ -23,6 +23,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 For more details, see <https://github.com/thelfer/tfel/issues/404.
 
+## Issue 402: [TFEL/Math] problem with `tfel::math::deviator` when compiling with `Sycl`
+
+For more details, see <https://github.com/thelfer/tfel/issues/402.
+
 ## Issue 376: Add documentation for the keywords specific to the `Cast3M` interface
 
 For more details, see <https://github.com/thelfer/tfel/issues/376.
