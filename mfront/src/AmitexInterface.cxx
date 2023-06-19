@@ -93,7 +93,7 @@ namespace mfront {
                 "unsupported state variable type");
           }
         } else {
-          for (unsigned short j = 0; j != v.arraySize;) {
+          for (unsigned short j = 0; j != v.arraySize; ++j) {
             out << "<!-- internal state variable " << v.getExternalName() << "["
                 << j << "] -->\n";
             if (flag == SupportedTypes::SCALAR) {
