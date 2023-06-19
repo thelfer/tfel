@@ -23,6 +23,10 @@ The page describes the new functionalities of Version 3.4.5 of the
 
 # Issues solved
 
+## Issue #405: [amitex interface] Generation of the example input file leads to a infinite loop
+
+For more details, see : <https://github.com/thelfer/tfel/issues/405>
+
 ## Issue #366: Relative paths are not supported when dealing with `mdnx` files
 
 For more details, see : <https://github.com/thelfer/tfel/issues/366>
