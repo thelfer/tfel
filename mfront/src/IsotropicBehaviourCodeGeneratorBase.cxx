@@ -137,7 +137,7 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     const auto btype = this->bd.getBehaviourTypeFlag();
     if (!this->bd.hasCode(h, BehaviourData::ComputePredictionOperator)) {
-      os << "[[nodiscard]] IntegrationResult\n"
+      os << "TFEL_HOST_DEVICE [[nodiscard]] IntegrationResult\n"
          << "computePredictionOperator(const SMFlag smflag, const SMType smt) "
             "override{\n";
       os << "using namespace std;\n";

@@ -343,7 +343,8 @@ namespace mfront {
     BehaviourCodeGeneratorBase::writeBehaviourParserSpecificMembers(os, h);
     // updating material properties
     os << "// updating material properties, in mandatory\n"
-       << "void updateMaterialPropertiesDependantOnStateVariables(){\n"
+       << "TFEL_HOST_DEVICE void "
+          "updateMaterialPropertiesDependantOnStateVariables(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "using std::vector;\n";
@@ -524,7 +525,8 @@ namespace mfront {
     }
     // additional convergence checks
     if (this->bd.hasCode(h, BehaviourData::AdditionalConvergenceChecks)) {
-      os << "void additionalConvergenceChecks(bool& converged, "
+      os << "TFEL_HOST_DEVICE void additionalConvergenceChecks(bool& "
+            "converged, "
          << "const NumericType& error){\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n"
@@ -540,7 +542,7 @@ namespace mfront {
     }
     // compute stress
     if (this->bd.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
-      os << "void computeThermodynamicForces(){\n"
+      os << "TFEL_HOST_DEVICE void computeThermodynamicForces(){\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using std::vector;\n";
@@ -550,7 +552,7 @@ namespace mfront {
          << "::computeThermodynamicForces\n\n";
     }
     if (this->bd.hasCode(h, BehaviourData::ComputeFinalThermodynamicForces)) {
-      os << "void computeFinalThermodynamicForces(){\n"
+      os << "TFEL_HOST_DEVICE void computeFinalThermodynamicForces(){\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using std::vector;\n";
@@ -652,8 +654,8 @@ namespace mfront {
       const auto v2 = VariableDescription{"StrainStensor", "\u03B5\u1D57\u1D52",
                                           "eto", 1u, 0u};
       os << "struct TFEL_VISIBILITY_LOCAL GetPartialJacobianInvert{\n"
-         << "GetPartialJacobianInvert(" << this->bd.getClassName()
-         << "& mfront_behaviour_argument,\n"
+         << "TFEL_HOST_DEVICE GetPartialJacobianInvert("
+         << this->bd.getClassName() << "& mfront_behaviour_argument,\n"
          << "const tfel::math::TinyPermutation<" << nivs
          << ">& mfront_permutation_argument,\n"
          << "bool& mfront_success_argument)\n"
@@ -664,7 +666,7 @@ namespace mfront {
          << "mfront_success_reference(mfront_success_argument)"
          << "{}\n";
       for (std::size_t i = 0; i != isvs.size(); ++i) {
-        os << "void operator()(";
+        os << "TFEL_HOST_DEVICE void operator()(";
         for (std::size_t i2 = 0; i2 <= i;) {
           const auto& v = isvs[i2];
           os << getDerivativeTypeHolder(v, v2) << "& ";
@@ -806,8 +808,8 @@ namespace mfront {
         const auto m = "dfzeros_dd" + givd.name;
         os << "struct TFEL_VISIBILITY_LOCAL GetIntegrationVariablesDerivatives_"
            << givd.name << "{\n"
-           << "GetIntegrationVariablesDerivatives_" << givd.name << "("
-           << this->bd.getClassName() << "& b,\n"
+           << "TFEL_HOST_DEVICE GetIntegrationVariablesDerivatives_"
+           << givd.name << "(" << this->bd.getClassName() << "& b,\n"
            << "const tfel::math::TinyPermutation<" << nivs << ">& "
            << "mfront_permutation_argument,\n"
            << rhs_type << "& mfront_rhs_argument,\n"
@@ -818,7 +820,7 @@ namespace mfront {
            << "mfront_success_reference(mfront_success_argument)\n"
            << "{}\n";
         for (std::size_t i = 0; i != isvs.size(); ++i) {
-          os << "void operator()(";
+          os << "TFEL_HOST_DEVICE void operator()(";
           for (std::size_t i2 = 0; i2 <= i;) {
             const auto& v = isvs[i2];
             os << getDerivativeTypeHolder(v, givd) << "& "
@@ -898,7 +900,7 @@ namespace mfront {
     const auto v2 = VariableDescription{"StrainStensor", "\u03B5\u1D57\u1D52",
                                         "eto", 1u, 0u};
     for (std::size_t i = 0; i != isvs.size(); ++i) {
-      os << "[[nodiscard]] bool\ncomputePartialJacobianInvert("
+      os << "TFEL_HOST_DEVICE [[nodiscard]] bool\ncomputePartialJacobianInvert("
             "const tfel::math::TinyPermutation<"
          << n << ">& jacobian_permutation, ";
       for (std::size_t i2 = 0; i2 <= i;) {
@@ -988,7 +990,7 @@ namespace mfront {
     const auto& d = this->bd.getBehaviourData(h);
     const auto n = d.getIntegrationVariables().getTypeSize();
     this->checkBehaviourFile(os);
-    os << "void computeNumericalJacobian("
+    os << "TFEL_HOST_DEVICE void computeNumericalJacobian("
        << "tfel::math::tmatrix<" << n << "," << n
        << ", NumericType>& njacobian)\n"
        << "{\n"
@@ -1037,7 +1039,7 @@ namespace mfront {
     os << "/*!\n"
        << " * \\brief Integrate behaviour law over the time step\n"
        << " */\n"
-       << "[[nodiscard]] IntegrationResult ";
+       << "TFEL_HOST_DEVICE [[nodiscard]] IntegrationResult ";
     if (this->bd.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
       os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
     } else {
@@ -1154,7 +1156,7 @@ namespace mfront {
     }
     os << "} // end of " << this->bd.getClassName() << "::integrate\n\n";
     //
-    os << "bool computeResidual(){\n";
+    os << "TFEL_HOST_DEVICE bool computeResidual(){\n";
     if (this->bd.hasCode(h, BehaviourData::ComputeThermodynamicForces)) {
       os << "this->computeThermodynamicForces();\n";
     }
@@ -1162,14 +1164,14 @@ namespace mfront {
        << "}\n";
     //
     os << "//! \\return the norm of the residual\n"
-       << "NumericType computeResidualNorm() {\n"
+       << "TFEL_HOST_DEVICE NumericType computeResidualNorm() {\n"
        << "return tfel::math::norm(this->fzeros) / (" << n2 << ");\n"
        << "}\n"
        << "/*!\n"
        << " * \\brief check the convergence of the method\n"
        << " * \\param[in] error: current error\n"
        << " */\n"
-       << "bool checkConvergence(const NumericType error) {\n"
+       << "TFEL_HOST_DEVICE bool checkConvergence(const NumericType error) {\n"
        << "auto converged = error < this->epsilon;\n";
     if (this->bd.hasCode(h, BehaviourData::AdditionalConvergenceChecks)) {
       os << "auto mfront_internals_converged = converged;\n"
@@ -1191,7 +1193,7 @@ namespace mfront {
        << " * in `computeResidual`, this method can be used to compare it\n"
        << " * to a numerical approximation.\n"
        << " */\n"
-       << "void updateOrCheckJacobian(){\n";
+       << "TFEL_HOST_DEVICE void updateOrCheckJacobian(){\n";
     if (this->solver.requiresNumericalJacobian()) {
       os << "this->computeNumericalJacobian(this->jacobian);\n";
     } else {
@@ -1210,7 +1212,7 @@ namespace mfront {
        << " * of the current Newton correction or to implement a line\n"
        << " * search.\n"
        << " */\n"
-       << "void processNewCorrection()\n"
+       << "TFEL_HOST_DEVICE void processNewCorrection()\n"
        << "{\n";
     if (this->bd.hasCode(h, BehaviourData::ProcessNewCorrection)) {
       os << "using namespace std;\n"
@@ -1238,7 +1240,7 @@ namespace mfront {
       os << "/*!\n"
          << " * \\brief method called when the current Newton is rejected\n"
          << " */\n"
-         << "void rejectCurrentCorrection()\n"
+         << "TFEL_HOST_DEVICE void rejectCurrentCorrection()\n"
          << "{\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n"
@@ -1265,7 +1267,7 @@ namespace mfront {
        << " * new estimate and update material properties\n"
        << " * dependending on the current state.\n"
        << " */\n"
-       << "void processNewEstimate(){\n";
+       << "TFEL_HOST_DEVICE void processNewEstimate(){\n";
     if (this->bd.hasCode(h, BehaviourData::ProcessNewEstimate)) {
       os << "using namespace std;\n"
          << "using namespace tfel::math;\n"
@@ -1337,7 +1339,7 @@ namespace mfront {
        << " * \\param[in] m: matrix\n"
        << " * \\param[in,out] v: right hand side on input, solution on output\n"
        << " */\n"
-       << "bool solveLinearSystem("
+       << "TFEL_HOST_DEVICE bool solveLinearSystem("
        << "tfel::math::tmatrix<" << n2 << ", " << n2
        << ", NumericType>& mfront_matrix,"
        << "tfel::math::tvector<" << n2 << ", NumericType>& mfront_vector)"
@@ -1372,7 +1374,8 @@ namespace mfront {
     os << "/*!\n"
        << "* \\brief compute fzeros and jacobian\n"
        << "*/\n"
-       << "bool computeFdF(const bool perturbatedSystemEvaluation){\n"
+       << "TFEL_HOST_DEVICE bool computeFdF(const bool "
+          "perturbatedSystemEvaluation){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "using std::vector;\n";

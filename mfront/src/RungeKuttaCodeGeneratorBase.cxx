@@ -342,7 +342,7 @@ namespace mfront {
       os << "/*!\n"
          << "* \\brief Update auxiliary state variables at end of integration\n"
          << "*/\n"
-         << "void\n"
+         << "TFEL_HOST_DEVICE void\n"
          << "updateAuxiliaryStateVariables(const time dt_)"
          << "{\n"
          << "static_cast<void>(dt_);\n"

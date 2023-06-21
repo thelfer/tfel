@@ -1853,7 +1853,7 @@ namespace mfront {
     os << "/*!\n"
        << "* \\brief Update internal variables at end of integration\n"
        << "*/\n"
-       << "void updateIntegrationVariables()";
+       << "TFEL_HOST_DEVICE void updateIntegrationVariables()";
     if (!d.getIntegrationVariables().empty()) {
       os << "{\n";
       for (const auto& v : d.getIntegrationVariables()) {
@@ -1877,7 +1877,7 @@ namespace mfront {
     os << "/*!\n"
        << "* \\brief Update internal variables at end of integration\n"
        << "*/\n"
-       << "void updateStateVariables()";
+       << "TFEL_HOST_DEVICE void updateStateVariables()";
     if (!d.getStateVariables().empty()) {
       os << "{\n";
       for (const auto& v : d.getStateVariables()) {
@@ -1895,7 +1895,7 @@ namespace mfront {
     os << "/*!\n"
        << "* \\brief Update auxiliary state variables at end of integration\n"
        << "*/\n"
-       << "void updateAuxiliaryStateVariables()";
+       << "TFEL_HOST_DEVICE void updateAuxiliaryStateVariables()";
     const auto& em = this->bd.getModelsDescriptions();
     if ((this->bd.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) ||
         (!em.empty())) {
@@ -1922,8 +1922,7 @@ namespace mfront {
     } else {
       os << "\n{}\n\n";
     }
-  }  // end of
-     // BehaviourCodeGeneratorBase::writeBehaviourUpdateAuxiliaryStateVariables
+  }  // end of writeBehaviourUpdateAuxiliaryStateVariables
 
   void BehaviourCodeGeneratorBase::writeBehaviourComputeInternalEnergy(
       std::ostream& os, const Hypothesis h) const {
@@ -1931,7 +1930,7 @@ namespace mfront {
        << "* \\brief Update the internal energy at end of the time step\n"
        << "* \\param[in] Psi_s: internal energy at end of the time step\n"
        << "*/\n"
-       << "void computeInternalEnergy(stress& Psi_s) const";
+       << "TFEL_HOST_DEVICE void computeInternalEnergy(stress& Psi_s) const";
     if (this->bd.hasCode(h, BehaviourData::ComputeInternalEnergy)) {
       os << "{\n"
          << "using namespace std;\n"
@@ -1950,7 +1949,7 @@ namespace mfront {
        << "* \\brief Update the dissipated energy at end of the time step\n"
        << "* \\param[in] Psi_d: dissipated energy at end of the time step\n"
        << "*/\n"
-       << "void computeDissipatedEnergy(stress& Psi_d) const";
+       << "TFEL_HOST_DEVICE void computeDissipatedEnergy(stress& Psi_d) const";
     if (this->bd.hasCode(h, BehaviourData::ComputeDissipatedEnergy)) {
       os << "{\n"
          << "using namespace std;\n"
@@ -1972,7 +1971,8 @@ namespace mfront {
     if (this->bd.hasCode(h, BehaviourData::ComputeSpeedOfSound)) {
       const auto vs = tfel::unicode::getMangledString("vₛ");
       const auto rho_m0 = tfel::unicode::getMangledString("ρₘ₀");
-      os << "speed computeSpeedOfSound(const massdensity& rho_m0) const {\n"
+      os << "TFEL_HOST_DEVICE speed computeSpeedOfSound(const massdensity& "
+            "rho_m0) const {\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n";
       writeMaterialLaws(os, this->bd.getMaterialLaws());
@@ -1985,7 +1985,8 @@ namespace mfront {
          << "return v_sound;\n"
          << "}\n\n";
     } else {
-      os << "speed computeSpeedOfSound(const massdensity&) const {\n"
+      os << "TFEL_HOST_DEVICE speed computeSpeedOfSound(const massdensity&) "
+            "const {\n"
          << "return speed(0);\n"
          << "\n}\n\n";
     }
@@ -2094,12 +2095,12 @@ namespace mfront {
        << " * \\brief set the policy for \"out of bounds\" conditions\n"
        << " */\n";
     if (allowRuntimeModificationOfTheOutOfBoundsPolicy(this->bd)) {
-      os << "void\n"
+      os << "TFEL_HOST_DEVICE void\n"
          << "setOutOfBoundsPolicy(const OutOfBoundsPolicy policy_value){\n"
          << "  this->policy = policy_value;\n"
          << "} // end of setOutOfBoundsPolicy\n\n";
     } else {
-      os << "void\n"
+      os << "TFEL_HOST_DEVICE void\n"
          << "setOutOfBoundsPolicy(const OutOfBoundsPolicy) const {\n"
          << "} // end of setOutOfBoundsPolicy\n\n";
     }
@@ -2146,7 +2147,7 @@ namespace mfront {
     const auto& md = this->bd.getBehaviourData(h);
     this->checkBehaviourFile(os);
     os << "//! \\brief check physical bounds and standard bounds\n"
-       << "void checkBounds() const{\n";
+       << "TFEL_HOST_DEVICE void checkBounds() const{\n";
     write_physical_bounds(md.getMaterialProperties(), false);
     write_physical_bounds(md.getPersistentVariables(), false);
     write_physical_bounds(md.getExternalStateVariables(), true);
@@ -3081,7 +3082,7 @@ namespace mfront {
     os << "/*!\n"
        << " * \\ brief initialize the behaviour with user code\n"
        << " */\n"
-       << "[[nodiscard]] bool initialize(){\n"
+       << "TFEL_HOST_DEVICE [[nodiscard]] bool initialize(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "using std::vector;\n";
@@ -3517,7 +3518,7 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     const auto& md = this->bd.getBehaviourData(h);
     this->checkBehaviourFile(os);
-    os << "void updateExternalStateVariables(){\n";
+    os << "TFEL_HOST_DEVICE void updateExternalStateVariables(){\n";
     for (const auto& v : this->bd.getMainVariables()) {
       if (Gradient::isIncrementKnown(v.first)) {
         os << "this->" << v.first.name << "  += this->d" << v.first.name
@@ -4221,7 +4222,8 @@ namespace mfront {
           const auto ktype =
               convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
           if (std::find(ktos.begin(), ktos.end(), t) != ktos.end()) {
-            os << "[[nodiscard]] IntegrationResult\ncomputePredictionOperator_"
+            os << "TFEL_HOST_DEVICE [[nodiscard]] "
+                  "IntegrationResult\ncomputePredictionOperator_"
                << ktype << "(const SMType smt){\n"
                << "using namespace std;\n"
                << "using namespace tfel::math;\n"
@@ -4237,7 +4239,8 @@ namespace mfront {
             if ((h ==
                  ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
                 (h == ModellingHypothesis::PLANESTRESS)) {
-              os << "[[nodiscard]] IntegrationResult computePredictionOperator_"
+              os << "TFEL_HOST_DEVICE [[nodiscard]] IntegrationResult "
+                    "computePredictionOperator_"
                  << ktype << "(const SMType){\n"
                  << "tfel::raise(\"" << this->bd.getClassName()
                  << "::computePredictionOperator_" << ktype << ": \"\n"
@@ -4249,7 +4252,7 @@ namespace mfront {
                   FiniteStrainBehaviourTangentOperatorConversionPath::
                       getShortestPath(paths, t);
               if (path.empty()) {
-                os << "[[nodiscard]] IntegrationResult "
+                os << "TFEL_HOST_DEVICE [[nodiscard]] IntegrationResult "
                       "computePredictionOperator_"
                    << ktype << "(const SMType){\n"
                    << "tfel::raise(\"" << this->bd.getClassName()
@@ -4258,7 +4261,7 @@ namespace mfront {
                    << "' is not supported\");\n"
                    << "}\n\n";
               } else {
-                os << "[[nodiscard]] IntegrationResult "
+                os << "TFEL_HOST_DEVICE [[nodiscard]] IntegrationResult "
                       "computePredictionOperator_"
                    << ktype << "(const SMType smt){\n";
                 auto pc = path.begin();
@@ -4290,7 +4293,8 @@ namespace mfront {
             }
           }
         }
-        os << "[[nodiscard]] IntegrationResult computePredictionOperator(const "
+        os << "TFEL_HOST_DEVICE [[nodiscard]] IntegrationResult "
+              "computePredictionOperator(const "
               "SMFlag "
               "smflag,const SMType smt) override{\n"
            << "using namespace std;\n"
@@ -4309,7 +4313,7 @@ namespace mfront {
            << "}\n\n";
       }
     } else {
-      os << "[[nodiscard]] IntegrationResult\n"
+      os << "TFEL_HOST_DEVICE [[nodiscard]] IntegrationResult\n"
          << "computePredictionOperator(const SMFlag smflag,const SMType smt) "
             "override{\n"
          << "using namespace std;\n"
@@ -4372,8 +4376,8 @@ namespace mfront {
           const auto ktype =
               convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
           if (find(ktos.begin(), ktos.end(), t) != ktos.end()) {
-            os << "bool computeConsistentTangentOperator_" << ktype
-               << "(const SMType smt){\n"
+            os << "TFEL_HOST_DEVICE bool computeConsistentTangentOperator_"
+               << ktype << "(const SMType smt){\n"
                << "using namespace std;\n"
                << "using namespace tfel::math;\n"
                << "using std::vector;\n";
@@ -4389,8 +4393,8 @@ namespace mfront {
             if ((h ==
                  ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
                 (h == ModellingHypothesis::PLANESTRESS)) {
-              os << "bool computeConsistentTangentOperator_" << ktype
-                 << "(const SMType){\n"
+              os << "TFEL_HOST_DEVICE bool computeConsistentTangentOperator_"
+                 << ktype << "(const SMType){\n"
                  << "tfel::raise(\"" << this->bd.getClassName()
                  << "::computeConsistentTangentOperator_" << ktype << ": \"\n"
                  << "\"computing the tangent operator '" << ktype
@@ -4401,8 +4405,8 @@ namespace mfront {
                   FiniteStrainBehaviourTangentOperatorConversionPath::
                       getShortestPath(paths, t);
               if (path.empty()) {
-                os << "bool computeConsistentTangentOperator_" << ktype
-                   << "(const SMType){\n"
+                os << "TFEL_HOST_DEVICE bool computeConsistentTangentOperator_"
+                   << ktype << "(const SMType){\n"
                    << "tfel::raise(\"" << this->bd.getClassName()
                    << "::computeConsistentTangentOperator_" << ktype << ": \"\n"
                    << "\"computing the tangent operator '" << ktype
@@ -4415,8 +4419,8 @@ namespace mfront {
                         pc->from());
                 const auto k_type_flag =
                     getFiniteStrainBehaviourTangentOperatorFlagType(pc->from());
-                os << "bool computeConsistentTangentOperator_" << ktype
-                   << "(const SMType smt){\n";
+                os << "TFEL_HOST_DEVICE bool computeConsistentTangentOperator_"
+                   << ktype << "(const SMType smt){\n";
                 os << "using namespace tfel::math;\n";
                 os << "// computing " << k << '\n';
                 os << "if(!this->computeConsistentTangentOperator_" << k
@@ -4440,7 +4444,8 @@ namespace mfront {
             }
           }
         }
-        os << "bool computeConsistentTangentOperator(const SMFlag smflag,const "
+        os << "TFEL_HOST_DEVICE bool computeConsistentTangentOperator(const "
+              "SMFlag smflag,const "
               "SMType smt){\n"
            << "switch(smflag){\n";
         for (const auto& t : tos) {
@@ -4458,7 +4463,8 @@ namespace mfront {
       }
     } else {
       if (this->bd.hasCode(h, BehaviourData::ComputeTangentOperator)) {
-        os << "bool computeConsistentTangentOperator(const SMType smt){\n"
+        os << "TFEL_HOST_DEVICE bool computeConsistentTangentOperator(const "
+              "SMType smt){\n"
            << "using namespace std;\n"
            << "using namespace tfel::math;\n"
            << "using std::vector;\n";
@@ -4481,7 +4487,8 @@ namespace mfront {
       std::ostream& os) const {
     this->checkBehaviourFile(os);
     if (this->bd.hasTangentOperator()) {
-      os << "const TangentOperator& getTangentOperator() const{\n"
+      os << "TFEL_HOST_DEVICE const TangentOperator& getTangentOperator() "
+            "const{\n"
          << "return this->Dt;\n"
          << "}\n\n";
     }
@@ -4490,7 +4497,8 @@ namespace mfront {
   void BehaviourCodeGeneratorBase::writeBehaviourGetTimeStepScalingFactor(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
-    os << "real getMinimalTimeStepScalingFactor() const noexcept override{\n"
+    os << "TFEL_HOST_DEVICE real getMinimalTimeStepScalingFactor() const "
+          "noexcept override{\n"
           "  return this->minimal_time_step_scaling_factor;\n"
           "}\n\n";
   }
@@ -4499,7 +4507,7 @@ namespace mfront {
   BehaviourCodeGeneratorBase::writeBehaviourComputeAPrioriTimeStepScalingFactor(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
-    os << "std::pair<bool, real>\n"
+    os << "TFEL_HOST_DEVICE std::pair<bool, real>\n"
           "computeAPrioriTimeStepScalingFactor(const real "
           "current_time_step_scaling_factor) const override{\n"
           "const auto time_scaling_factor = "
@@ -4517,7 +4525,8 @@ namespace mfront {
       writeBehaviourComputeAPrioriTimeStepScalingFactorII(
           std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
-    os << "std::pair<bool, real> computeAPrioriTimeStepScalingFactorII() "
+    os << "TFEL_HOST_DEVICE std::pair<bool, real> "
+          "computeAPrioriTimeStepScalingFactorII() "
           "const{\n";
     if (this->bd.hasCode(h, BehaviourData::APrioriTimeStepScalingFactor)) {
       os << "using namespace std;\n"
@@ -4535,7 +4544,7 @@ namespace mfront {
       writeBehaviourComputeAPosterioriTimeStepScalingFactor(
           std::ostream& os) const {
     this->checkBehaviourFile(os);
-    os << "std::pair<bool, real>\n"
+    os << "TFEL_HOST_DEVICE std::pair<bool, real>\n"
           "computeAPosterioriTimeStepScalingFactor(const real "
           "current_time_step_scaling_factor) const override{\n"
           "const auto time_scaling_factor = "
@@ -4554,7 +4563,8 @@ namespace mfront {
       writeBehaviourComputeAPosterioriTimeStepScalingFactorII(
           std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
-    os << "std::pair<bool, real> computeAPosterioriTimeStepScalingFactorII() "
+    os << "TFEL_HOST_DEVICE std::pair<bool, real> "
+          "computeAPosterioriTimeStepScalingFactorII() "
           "const{\n";
     if (this->bd.hasCode(h, BehaviourData::APosterioriTimeStepScalingFactor)) {
       os << "using namespace std;\n"
@@ -4792,7 +4802,7 @@ namespace mfront {
        << "* \\brief scale the integration data by a scalar.\n"
        << "*/\n"
        << "template<typename Scal>\n"
-       << "typename std::enable_if<\n"
+       << "TFEL_HOST_DEVICE typename std::enable_if<\n"
        << "tfel::typetraits::IsFundamentalNumericType<Scal>::cond&&\n"
        << "tfel::typetraits::IsScalar<Scal>::cond&&\n"
        << "tfel::typetraits::IsReal<Scal>::cond&&\n"
@@ -4852,7 +4862,8 @@ namespace mfront {
     os << "/*!\n"
        << "* \\brief update the driving variable in case of substepping.\n"
        << "*/\n"
-       << this->bd.getClassName() << "IntegrationData&\n";
+       << "TFEL_HOST_DEVICE " << this->bd.getClassName()
+       << "IntegrationData&\n";
     if (!iknown) {
       if (this->bd.useQt()) {
         os << "updateDrivingVariables(const " << this->bd.getClassName()

@@ -2242,7 +2242,8 @@ namespace mfront {
       }
     };
     const auto& d = bd.getBehaviourData(h);
-    os << "void exportStateData(mfront::gb::State& mbg_s1) const\n";
+    os << "TFEL_HOST_DEVICE void exportStateData(mfront::gb::State& mbg_s1) "
+          "const\n";
     os << "{\n";
     os << "using namespace tfel::math;\n";
     auto o = SupportedTypes::TypeSize{};
