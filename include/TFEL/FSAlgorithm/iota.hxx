@@ -49,7 +49,7 @@ namespace tfel::fsalgo {
      *
      */
     template <typename ForwardIterator, typename T>
-    static TFEL_FSALGORITHM_INLINE void exe(ForwardIterator p, T value) {
+    TFEL_HOST_DEVICE constexpr static void exe(ForwardIterator p, T value) {
       *p = value;
       iota<N - 1>::exe(++p, ++value);
     }
@@ -72,7 +72,7 @@ namespace tfel::fsalgo {
      * \date   30 Jun 2006
      */
     template <typename ForwardIterator, typename T>
-    static TFEL_FSALGORITHM_INLINE void exe(ForwardIterator, T) {}
+    TFEL_HOST_DEVICE constexpr static void exe(ForwardIterator, T) {}
   };
 
 }  // end of namespace tfel::fsalgo

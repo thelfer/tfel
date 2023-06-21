@@ -20,27 +20,31 @@
 namespace tfel::math {
 
   template <unsigned short N>
-  TinyPermutation<N>::TinyPermutation() : is_identity(true) {
+  constexpr TinyPermutation<N>::TinyPermutation() : is_identity(true) {
     typename tvector<N, unsigned short>::value_type s{0u};
     tfel::fsalgo::iota<N>::exe(this->begin(), s);
   }
 
   template <unsigned short N>
-  void TinyPermutation<N>::swap(const unsigned short i,
-                                const unsigned short j) {
-    std::swap(tvector<N, unsigned short>::operator[](i),
-              tvector<N, unsigned short>::operator[](j));
+  constexpr void TinyPermutation<N>::swap(const unsigned short i,
+                                          const unsigned short j) {
+    auto tmp = tvector<N, unsigned short>::operator[](i);
+    tvector<N, unsigned short>::operator[](i) =
+        tvector<N, unsigned short>::operator[](j);
+    tvector<N, unsigned short>::operator[](j) = tmp;
+    // std::swap(tvector<N, unsigned short>::operator[](i),
+    //           tvector<N, unsigned short>::operator[](j));
     this->is_identity = false;
   }
 
   template <unsigned short N>
-  bool TinyPermutation<N>::isIdentity() const {
+  constexpr bool TinyPermutation<N>::isIdentity() const {
     return this->is_identity;
   }
 
   template <unsigned short N>
   template <typename T>
-  void TinyPermutation<N>::exe(tvector<N, T>& v) const {
+  constexpr void TinyPermutation<N>::exe(tvector<N, T>& v) const {
     const tvector<N, T> tmp{v};
     for (unsigned short i = 0; i < N; ++i) {
       v(i) = tmp(*(this->v + i));

@@ -106,14 +106,14 @@ namespace tfel::math {
      *
      * \return true on success
      */
-    bool solveNonLinearSystem();
+    TFEL_HOST_DEVICE bool solveNonLinearSystem();
     /*!
      * \brief solve the non linear problem. This method is called by the
      * `solveNonLinearSystem` and must contain the core of the resolution
      * algorithm.
      * \return true on success
      */
-    bool solveNonLinearSystem2();
+    TFEL_HOST_DEVICE bool solveNonLinearSystem2();
     /*!
      * \brief this method is called at the beginning of the
      * `solveNonLinearSystem` method.
@@ -134,7 +134,7 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr void
     executeInitialisationTaskBeforeBeginningOfCoreAlgorithm() noexcept {}
     //! \return the norm of the residual
-    NumericType computeResidualNorm() const noexcept {
+    TFEL_HOST_DEVICE NumericType computeResidualNorm() const noexcept {
       return norm(this->fzeros);
     }
     /*!
@@ -151,8 +151,9 @@ namespace tfel::math {
      * \param[in] m: matrix
      * \param[in,out] v: right hand side on input, solution on output
      */
-    bool solveLinearSystem(tfel::math::tmatrix<N, N, NumericType>&,
-                           tfel::math::tvector<N, NumericType>&) const noexcept;
+    TFEL_HOST_DEVICE bool solveLinearSystem(
+        tfel::math::tmatrix<N, N, NumericType>&,
+        tfel::math::tvector<N, NumericType>&) const noexcept;
     /*!
      * \brief update the jacobian matrix if required.
      *

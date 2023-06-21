@@ -349,8 +349,8 @@
 #endif /* __CUDACC__ */
 
 #ifdef SYCL_LANGUAGE_VERSION
-// FIXME: as June 2023, we were not able to use __SYCL_DEVICE_ONLY__ of OpenSycl appropriately.
-// #ifdef __SYCL_DEVICE_ONLY__
+// FIXME: as June 2023, we were not able to use __SYCL_DEVICE_ONLY__ of OpenSycl
+// appropriately. #ifdef __SYCL_DEVICE_ONLY__
 #ifndef TFEL_NO_REPORT_CONTRACT_VIOLATION
 #define TFEL_NO_REPORT_CONTRACT_VIOLATION 1
 #endif /* TFEL_NO_REPORT_CONTRACT_VIOLATION */

@@ -6,6 +6,7 @@ tfel_add_cxx_compiler_flag_if_available(COMPILER_WARNINGS  "Wno-documentation-un
 tfel_add_cxx_compiler_flag_if_available(COMPILER_WARNINGS  "Wno-exit-time-destructors")
 tfel_add_cxx_compiler_flag_if_available(COMPILER_WARNINGS  "Wno-global-constructors")
 tfel_add_cxx_compiler_flag_if_available(COMPILER_WARNINGS  "Wno-missing-braces")
+tfel_add_cxx_compiler_flag_if_available(COMPILER_WARNINGS  "Wno-unsafe-buffer-usage")
 tfel_add_cxx_compiler_flag_if_available(COMPILER_WARNINGS  "Wrange-loop-analysis")
 tfel_add_cxx_compiler_flag_if_available(COMPILER_WARNINGS  "Wmove")
 tfel_add_cxx_compiler_flag_if_available(COMPILER_WARNINGS  "Winfinite-recursion")

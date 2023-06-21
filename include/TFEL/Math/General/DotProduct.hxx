@@ -57,7 +57,9 @@ namespace tfel::math {
      * - The type of x + y * z is convertible to T.
      */
     template <typename InputIterator1, typename InputIterator2, typename T>
-    static TFEL_MATH_INLINE T exe(InputIterator1 p, InputIterator2 q, T init) {
+    TFEL_HOST_DEVICE static constexpr T exe(InputIterator1 p,
+                                            InputIterator2 q,
+                                            T init) {
       const T value = init + (conj(*p)) * (*q);
       return dotProduct<N - 1>::exe(++p, ++q, value);
     }
@@ -81,7 +83,9 @@ namespace tfel::math {
      * \date   30 Jun 2006
      */
     template <typename InputIterator1, typename InputIterator2, typename T>
-    static TFEL_MATH_INLINE T exe(InputIterator1, InputIterator2, T init) {
+    TFEL_HOST_DEVICE static constexpr T exe(InputIterator1,
+                                            InputIterator2,
+                                            T init) {
       return init;
     }
 
@@ -90,7 +94,7 @@ namespace tfel::math {
   template <unsigned int N, unsigned int M>
   struct DotProduct {
     template <typename T, typename T1, typename T2>
-    static TFEL_MATH_INLINE const T exe(const T1& a, const T2& b) {
+    TFEL_HOST_DEVICE static constexpr const T exe(const T1& a, const T2& b) {
       return a(M) * b(M) +
              DotProduct<N - 1, M + 1>::template exe<T, T1, T2>(a, b);
     }
@@ -99,7 +103,7 @@ namespace tfel::math {
   template <unsigned int M>
   struct DotProduct<0u, M> {
     template <typename T, typename T1, typename T2>
-    static TFEL_MATH_INLINE const T exe(const T1&, const T2&) {
+    TFEL_HOST_DEVICE static constexpr const T exe(const T1&, const T2&) {
       return T(0);
     }
   };

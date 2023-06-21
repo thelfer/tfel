@@ -78,9 +78,10 @@ namespace tfel::math {
    * \param v: the vector.
    */
   template <typename T>
-  std::enable_if_t<isScalar<T>(),
-                   typename tfel::typetraits::RealPartType<T>::type>
-  norm(const vector<T>&);
+  TFEL_HOST_DEVICE
+      std::enable_if_t<isScalar<T>(),
+                       typename tfel::typetraits::RealPartType<T>::type>
+      norm(const vector<T>&);
 
 }  // end of namespace tfel::math
 

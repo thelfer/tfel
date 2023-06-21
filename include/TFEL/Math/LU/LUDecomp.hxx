@@ -44,7 +44,7 @@ namespace tfel::math {
      * \note The decomposition is done in-place
      */
     template <typename MatrixType, typename PermutationType>
-    static TFEL_MATH_INLINE2 std::pair<bool, int> exe(
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 std::pair<bool, int> exe(
         MatrixType&,
         PermutationType&,
         const numeric_type<MatrixType> =

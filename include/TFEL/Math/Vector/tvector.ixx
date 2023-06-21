@@ -67,8 +67,8 @@ namespace tfel::math {
 
   // Norm2
   template <unsigned short N, typename T>
-  std::enable_if_t<isScalar<T>(),
-                   typename tfel::typetraits::RealPartType<T>::type>
+  constexpr std::enable_if_t<isScalar<T>(),
+                             typename tfel::typetraits::RealPartType<T>::type>
   norm(const tvector<N, T>& vec) noexcept {
     typedef result_type<T, T, OpMult> squareT;
     return std::sqrt(
@@ -76,7 +76,7 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T>
-  auto abs(const tvector<N, T>& v) {
+  constexpr auto abs(const tvector<N, T>& v) {
     AbsSum<T> a;
     tfel::fsalgo::for_each<N>::exe(v.begin(), a);
     return a.result;

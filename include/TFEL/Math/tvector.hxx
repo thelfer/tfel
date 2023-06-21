@@ -171,7 +171,13 @@ namespace tfel::math {
   exportToBaseTypeArray(const tvector<N, T>&, OutputIterator);
 
   template <unsigned short N, typename T>
-  TFEL_HOST_DEVICE auto abs(const tvector<N, T>& v);
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
+      isScalar<T>(),
+      typename tfel::typetraits::RealPartType<T>::type>
+  norm(const tvector<N, T>&) noexcept;
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr auto abs(const tvector<N, T>& v);
 
   template <typename T>
   TFEL_HOST_DEVICE constexpr tvector<1u, T> makeTVector1D(const T);

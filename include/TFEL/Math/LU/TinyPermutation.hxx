@@ -22,26 +22,29 @@ namespace tfel::math {
   template <unsigned short N>
   struct TinyPermutation : protected tvector<N, unsigned short> {
     //! default constructor
-    TinyPermutation();
-    //! disabling default constructors and assignement operators
-    TinyPermutation(const TinyPermutation&) = delete;
-    TinyPermutation(TinyPermutation&&) = delete;
-    TinyPermutation& operator=(const TinyPermutation&) = delete;
-    TinyPermutation& operator=(TinyPermutation&&) = delete;
+    TFEL_HOST_DEVICE constexpr TinyPermutation();
     //! apply the permutation to the given vector
     template <typename T>
-    TFEL_MATH_INLINE void exe(tvector<N, T>&) const;
+    TFEL_HOST_DEVICE constexpr void exe(tvector<N, T>&) const;
 
     using tvector<N, unsigned short>::operator[];
     using tvector<N, unsigned short>::operator();
     using tvector<N, unsigned short>::size;
 
-    TFEL_MATH_INLINE void swap(const unsigned short, const unsigned short);
+    TFEL_HOST_DEVICE constexpr void swap(const unsigned short,
+                                         const unsigned short);
 
-    TFEL_MATH_INLINE bool isIdentity() const;
+    TFEL_HOST_DEVICE constexpr bool isIdentity() const;
 
    protected:
     bool is_identity;
+
+   private:
+    //! disabling default constructors and assignement operators
+    TinyPermutation(const TinyPermutation&) = delete;
+    TinyPermutation(TinyPermutation&&) = delete;
+    TinyPermutation& operator=(const TinyPermutation&) = delete;
+    TinyPermutation& operator=(TinyPermutation&&) = delete;
   };
 
 }  // end of namespace tfel::math

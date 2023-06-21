@@ -49,7 +49,8 @@ namespace tfel::math {
      * \param[in] b : second term of the product
      */
     template <typename ST2toST2Type, typename ST2toST2Type2>
-    TFEL_MATH_INLINE Expr(const ST2toST2Type& a, const ST2toST2Type2& b) {
+    TFEL_HOST_DEVICE constexpr Expr(const ST2toST2Type& a,
+                                    const ST2toST2Type2& b) {
       static_assert(implementsST2toST2Concept<ST2toST2Type>());
       static_assert(implementsST2toST2Concept<ST2toST2Type2>());
       static_assert(getSpaceDimension<ST2toST2Type>() == 1u);
@@ -69,14 +70,14 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_MATH_INLINE const value_type& operator()(
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 3 + j];
     }  // end of operator()
     /*!
      * \return the runtime properties
      */
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const {
       return RunTimeProperties();
     }
   };  // end of struct Expr<ST2toST2ResultType,ST2toST2ST2toST2ProductExpr>
@@ -104,7 +105,8 @@ namespace tfel::math {
      * \param[in] b : second term of the product
      */
     template <typename ST2toST2Type, typename ST2toST2Type2>
-    TFEL_MATH_INLINE Expr(const ST2toST2Type& a, const ST2toST2Type2& b) {
+    TFEL_HOST_DEVICE constexpr Expr(const ST2toST2Type& a,
+                                    const ST2toST2Type2& b) {
       static_assert(implementsST2toST2Concept<ST2toST2Type>());
       static_assert(implementsST2toST2Concept<ST2toST2Type2>());
       static_assert(getSpaceDimension<ST2toST2Type>() == 2u);
@@ -147,14 +149,14 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_MATH_INLINE const value_type& operator()(
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 4 + j];
     }  // end of operator()
     /*!
      * \return the runtime properties
      */
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const {
       return RunTimeProperties();
     }
   };  // end of struct Expr<ST2toST2ResultType,ST2toST2ST2toST2ProductExpr>
@@ -182,7 +184,13 @@ namespace tfel::math {
      * \param[in] b : second term of the product
      */
     template <typename ST2toST2Type, typename ST2toST2Type2>
-    TFEL_MATH_INLINE Expr(const ST2toST2Type& a, const ST2toST2Type2& b) {
+    TFEL_HOST_DEVICE constexpr Expr(const ST2toST2Type& a,
+                                    const ST2toST2Type2& b)
+        : array_holder<StensorDimeToSize<
+                           getSpaceDimension<ST2toST2ResultType>()>::value *
+                           StensorDimeToSize<
+                               getSpaceDimension<ST2toST2ResultType>()>::value,
+                       numeric_type<ST2toST2ResultType>>() {
       static_assert(implementsST2toST2Concept<ST2toST2Type>());
       static_assert(implementsST2toST2Concept<ST2toST2Type2>());
       static_assert(getSpaceDimension<ST2toST2Type>() == 3u);
@@ -265,14 +273,14 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_MATH_INLINE const value_type& operator()(
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 6 + j];
     }  // end of operator()
     /*!
      * \return the runtime properties
      */
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const {
       return RunTimeProperties();
     }
   };  // end of struct Expr<ST2toST2ResultType,ST2toST2ST2toST2ProductExpr>

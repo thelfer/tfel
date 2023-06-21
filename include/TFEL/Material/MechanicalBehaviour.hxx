@@ -71,7 +71,8 @@ namespace tfel::material {
      */
     struct IntegrationResult {
       //! \brief default constructor
-      constexpr IntegrationResult() noexcept : status(SUCCESS) {}
+      TFEL_HOST_DEVICE constexpr IntegrationResult() noexcept
+          : status(SUCCESS) {}
 #ifndef __clang__
       //! \brief move constructor
       constexpr IntegrationResult(IntegrationResult&&) noexcept = default;
@@ -85,18 +86,20 @@ namespace tfel::material {
           const IntegrationResult&) noexcept = default;
 #else
       //! \brief move constructor
-      IntegrationResult(IntegrationResult&& src) noexcept
+      TFEL_HOST_DEVICE IntegrationResult(IntegrationResult&& src) noexcept
           : status(src.status) {}
       //! \brief default constructor
-      IntegrationResult(const IntegrationResult& src) noexcept
+      TFEL_HOST_DEVICE IntegrationResult(const IntegrationResult& src) noexcept
           : status(src.status) {}
       //! \brief move assignement
-      IntegrationResult& operator=(IntegrationResult&& src) noexcept {
+      TFEL_HOST_DEVICE IntegrationResult& operator=(
+          IntegrationResult&& src) noexcept {
         this->status = src.status;
         return *this;
       }
       //! \brief standard assignement
-      IntegrationResult& operator=(const IntegrationResult& src) noexcept {
+      TFEL_HOST_DEVICE IntegrationResult& operator=(
+          const IntegrationResult& src) noexcept {
         this->status = src.status;
         return *this;
       }
@@ -104,16 +107,18 @@ namespace tfel::material {
       /*!
        * \brief constructor from an ExitStatus
        */
-      constexpr IntegrationResult(const ExitStatus s) noexcept
+      TFEL_HOST_DEVICE constexpr IntegrationResult(const ExitStatus s) noexcept
           : status(s) {}  // end of IntegrationResult
       /*!
        * \brief constructor from a boolean value
        */
-      constexpr IntegrationResult(const bool b) noexcept
+      TFEL_HOST_DEVICE constexpr IntegrationResult(const bool b) noexcept
           : status(b ? SUCCESS : FAILURE) {}  // end of IntegrationResult
 
       //! \brief convertion operator to the ExistStatus enumeration
-      constexpr operator ExitStatus() const noexcept { return this->status; }
+      TFEL_HOST_DEVICE constexpr operator ExitStatus() const noexcept {
+        return this->status;
+      }
       //! \brief destructor
       inline ~IntegrationResult() noexcept = default;
 
@@ -190,15 +195,15 @@ namespace tfel::material {
      * \param[in] smt    : expected tangent operator
      * \return SUCCESS if the integration is successfull.
      */
-    virtual IntegrationResult computePredictionOperator(const SMFlag,
-                                                        const SMType) = 0;
+    TFEL_HOST_DEVICE virtual IntegrationResult computePredictionOperator(
+        const SMFlag, const SMType) = 0;
     /*!
      * \return the minimal scaling factor to be used. This scaling
      * factor is used to decrease the time step if the integration
      * failed.
      */
-    virtual typename TFELTypes::real getMinimalTimeStepScalingFactor()
-        const = 0;
+    TFEL_HOST_DEVICE virtual typename TFELTypes::real
+    getMinimalTimeStepScalingFactor() const = 0;
     /*!
      * \param[in] dt: time step scaling factor proposed by the calling code
      * \return a pair containing:
@@ -215,7 +220,7 @@ namespace tfel::material {
      * give such a time step scaling factor. If not, behaviours
      * may return the NumType(1) value.
      */
-    virtual std::pair<bool, typename TFELTypes::real>
+    TFEL_HOST_DEVICE virtual std::pair<bool, typename TFELTypes::real>
     computeAPrioriTimeStepScalingFactor(
         const typename TFELTypes::real) const = 0;
     /*!
@@ -225,7 +230,8 @@ namespace tfel::material {
      * \param[in] smt    : expected tangent operator
      * \return SUCCESS if the integration is successfull.
      */
-    virtual IntegrationResult integrate(const SMFlag, const SMType) = 0;
+    TFEL_HOST_DEVICE virtual IntegrationResult integrate(const SMFlag,
+                                                         const SMType) = 0;
     /*!
      * \param[in] dt: current time step scaling factor
      * \return a pair containing:
@@ -242,7 +248,7 @@ namespace tfel::material {
      * give such a time step scaling factor. If not, behaviours
      * may return the NumType(1) value.
      */
-    virtual std::pair<bool, typename TFELTypes::real>
+    TFEL_HOST_DEVICE virtual std::pair<bool, typename TFELTypes::real>
     computeAPosterioriTimeStepScalingFactor(
         const typename TFELTypes::real) const = 0;
     //! destructor
