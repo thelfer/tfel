@@ -105,7 +105,8 @@ namespace tfel::math {
      * to be copied.
      */
     template <typename InputIterator>
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE void copy(const InputIterator src);
+    TFEL_HOST_DEVICE TFEL_MATH_INLINE constexpr void copy(
+        const InputIterator src);
     /*!
      * \brief create a slice
      * \param[in] I : the starting index
@@ -161,13 +162,13 @@ namespace tfel::math {
    * \param[in] x: inital value
    */
   template <typename F, typename T, unsigned short N>
-  TFEL_HOST_DEVICE tvector<N, std::invoke_result_t<F, T>> map(
+  TFEL_HOST_DEVICE constexpr tvector<N, std::invoke_result_t<F, T>> map(
       F, const tvector<N, T>&);
   /*!
    * export the given vector to an array of the
    */
   template <unsigned short N, typename T, typename OutputIterator>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void>
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<isScalar<T>(), void>
   exportToBaseTypeArray(const tvector<N, T>&, OutputIterator);
 
   template <unsigned short N, typename T>
@@ -202,8 +203,8 @@ namespace tfel::math {
    * find a vector perpendicular to the second one
    */
   template <typename T>
-  TFEL_HOST_DEVICE void find_perpendicular_vector(tvector<3u, T>&,
-                                                  const tvector<3u, T>&);
+  TFEL_HOST_DEVICE constexpr void find_perpendicular_vector(
+      tvector<3u, T>&, const tvector<3u, T>&);
 
   /*!
    * \brief create a slice from a tiny vector

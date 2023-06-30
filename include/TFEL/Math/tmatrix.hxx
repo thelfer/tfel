@@ -339,8 +339,8 @@ namespace tfel::math {
 
     TFEL_HOST_DEVICE constexpr auto abs_max() const;
 
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 void swap_rows(const unsigned short i,
-                                                      const unsigned short j);
+    TFEL_HOST_DEVICE constexpr void swap_rows(const unsigned short i,
+                                              const unsigned short j);
 
     /*!
      * copy the N*Mth elements following this argument.
@@ -348,7 +348,7 @@ namespace tfel::math {
      * to be copied.
      */
     template <typename InputIterator>
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 void copy(const InputIterator);
+    TFEL_HOST_DEVICE constexpr void copy(const InputIterator);
   };
 
   /*!

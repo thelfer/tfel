@@ -273,34 +273,36 @@ namespace tfel::math::internals {
 namespace tfel::math {
 
   template <unsigned short N, unsigned short M, typename T>
-  constexpr unsigned short tmatrix<N, M, T>::getNbCols() const {
+  TFEL_HOST_DEVICE constexpr unsigned short tmatrix<N, M, T>::getNbCols()
+      const {
     return M;
   }
 
   template <unsigned short N, unsigned short M, typename T>
-  constexpr unsigned short tmatrix<N, M, T>::getNbRows() const {
+  TFEL_HOST_DEVICE constexpr unsigned short tmatrix<N, M, T>::getNbRows()
+      const {
     return N;
   }
 
   template <unsigned short N, unsigned short M, typename T>
-  constexpr auto tmatrix<N, M, T>::max() const {
+  TFEL_HOST_DEVICE constexpr auto tmatrix<N, M, T>::max() const {
     return *tfel::fsalgo::max_element<this->size()>::exe(this->v);
   }
 
   template <unsigned short N, unsigned short M, typename T>
-  constexpr auto tmatrix<N, M, T>::abs_max() const {
+  TFEL_HOST_DEVICE constexpr auto tmatrix<N, M, T>::abs_max() const {
     return tfel::math::abs(*tfel::fsalgo::max_element<this->size()>::exe(
         this->v, absCompare<T>()));
   }
 
   template <unsigned short N, unsigned short M, typename T>
-  void tmatrix<N, M, T>::swap_rows(const unsigned short i,
-                                   const unsigned short j) {
+  TFEL_HOST_DEVICE constexpr void tmatrix<N, M, T>::swap_rows(
+      const unsigned short i, const unsigned short j) {
     tfel::fsalgo::swap_ranges<M>::exe(this->v + M * i, this->v + M * j);
   }
 
   template <unsigned short N, unsigned short M, typename T>
-  constexpr auto tmatrix<N, M, T>::Id() {
+  TFEL_HOST_DEVICE constexpr auto tmatrix<N, M, T>::Id() {
     static_assert(N == M);
     tmatrix<N, N, T> id(static_cast<T>(0.));
     for (typename tmatrix<N, N, T>::size_type i = 0; i < N; ++i) {
@@ -311,7 +313,8 @@ namespace tfel::math {
 
   template <unsigned short N, unsigned short M, typename T>
   template <typename InputIterator>
-  void tmatrix<N, M, T>::copy(const InputIterator src) {
+  TFEL_HOST_DEVICE constexpr void tmatrix<N, M, T>::copy(
+      const InputIterator src) {
     tfel::fsalgo::copy<this->size()>::exe(src, this->v);
   }
 

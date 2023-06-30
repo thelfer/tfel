@@ -127,7 +127,7 @@ namespace tfel::math {
     //! \brief import from external memory location which uses Voigt notations
     //! for strains
     template <typename InputIterator>
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<
         std::is_same<typename std::iterator_traits<InputIterator>::value_type,
                      base_type<ValueType>>::value,
         void>
@@ -135,23 +135,24 @@ namespace tfel::math {
     //! \brief import from external memory location which uses Voigt notations
     //! for stresses
     template <typename InputIterator>
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<
         std::is_same<typename std::iterator_traits<InputIterator>::value_type,
                      base_type<ValueType>>::value,
         void>
     importTab(const InputIterator);
     //! \brief import values from external memory location
     template <typename InputIterator>
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<
+    TFEL_HOST_DEVICE constexpr std::enable_if_t<
         std::is_same<typename std::iterator_traits<InputIterator>::value_type,
                      base_type<ValueType>>::value,
         void>
     import(const InputIterator);
     //! \brief export to external memory location using Voigt notations for
     //! stresses
-    TFEL_HOST_DEVICE void exportTab(base_type<ValueType>* const) const;
+    TFEL_HOST_DEVICE constexpr void exportTab(
+        base_type<ValueType>* const) const;
     //! \brief write to external memory location
-    TFEL_HOST_DEVICE void write(base_type<ValueType>* const) const;
+    TFEL_HOST_DEVICE constexpr void write(base_type<ValueType>* const) const;
     /*!
      * compute eigenvalues
      * \tparam     es:  eigen solver
@@ -297,7 +298,7 @@ namespace tfel::math {
      * \param[in] m : matrix
      */
     template <typename MatrixType>
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2
+    TFEL_HOST_DEVICE constexpr static TFEL_MATH_INLINE2
         std::enable_if_t<isAssignableTo<numeric_type<MatrixType>, ValueType>(),
                          stensor<N, ValueType>>
         buildFromMatrix(const MatrixType&);
@@ -308,7 +309,7 @@ namespace tfel::math {
      * \param[in] v : vector
      */
     template <typename VectorType>
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 std::enable_if_t<
+    TFEL_HOST_DEVICE constexpr static TFEL_MATH_INLINE2 std::enable_if_t<
         isAssignableTo<typename ComputeUnaryResult<numeric_type<VectorType>,
                                                    Power<2>>::Result,
                        ValueType>(),
@@ -322,7 +323,7 @@ namespace tfel::math {
      * \param[in] v1 : second vector
      */
     template <typename VectorType, typename VectorType2>
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 std::enable_if_t<
+    TFEL_HOST_DEVICE constexpr static TFEL_MATH_INLINE2 std::enable_if_t<
         isAssignableTo<BinaryOperationResult<numeric_type<VectorType>,
                                              numeric_type<VectorType2>,
                                              OpMult>,
@@ -338,7 +339,7 @@ namespace tfel::math {
      * \param[in] v2 : third  eigen value
      * \param[in] m  : matrix containing the eigen vectors
      */
-    TFEL_HOST_DEVICE static stensor<N, ValueType>
+    TFEL_HOST_DEVICE constexpr static stensor<N, ValueType>
     buildFromEigenValuesAndVectors(const ValueType&,
                                    const ValueType&,
                                    const ValueType&,
@@ -349,7 +350,7 @@ namespace tfel::math {
      * \param[in] vp : eigen values
      * \param[in] m  : matrix containing the eigen vectors
      */
-    TFEL_HOST_DEVICE static stensor<N, ValueType>
+    TFEL_HOST_DEVICE constexpr static stensor<N, ValueType>
     buildFromEigenValuesAndVectors(const tvector<3u, ValueType>&,
                                    const rotation_matrix<ValueType>&);
 
@@ -705,7 +706,7 @@ namespace tfel::math {
    * export the given vector to an array of the
    */
   template <unsigned short N, typename T, typename OutputIterator>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void>
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<isScalar<T>(), void>
   exportToBaseTypeArray(const stensor<N, T>&, OutputIterator);
 
   /*!
@@ -726,7 +727,8 @@ namespace tfel::math {
    * \param s : symmetric tensor
    */
   template <typename T>
-  TFEL_HOST_DEVICE T tresca(const stensor<1u, T>&, const bool = false);
+  TFEL_HOST_DEVICE constexpr T tresca(const stensor<1u, T>&,
+                                      const bool = false);
 
   template <typename StensorType>
   TFEL_HOST_DEVICE std::enable_if_t<

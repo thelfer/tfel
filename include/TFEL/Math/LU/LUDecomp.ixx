@@ -20,7 +20,7 @@ namespace tfel::math {
 
   template <bool use_exceptions>
   template <typename MatrixType, typename PermutationType>
-  std::pair<bool, int> LUDecomp<use_exceptions>::exe(
+  TFEL_HOST_DEVICE std::pair<bool, int> LUDecomp<use_exceptions>::exe(
       MatrixType& m, PermutationType& p, const numeric_type<MatrixType> eps) {
     using size_type = index_type<MatrixType>;
     using real = numeric_type<MatrixType>;
