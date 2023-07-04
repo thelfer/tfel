@@ -13,6 +13,8 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @abbas_3d_2023
+    @riparbelli_coupling_2023
     @senac_yield_2023
     @agius_experimental_2023
     @madec_plastic_2023
@@ -20,6 +22,7 @@ nocite: |
     @tsekpuia_microstructure-based_2023
     @riparbelli_hygromechanical_2023
     @zhang_modeling_2023
+    @siedel_approche_2023
     @soleilhet_numerical_2023
     @mollens_development_2022
     @draup_development_2022
