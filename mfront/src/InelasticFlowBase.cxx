@@ -677,7 +677,7 @@ namespace mfront::bbrick {
     if ((this->contributesToPorosityGrowth()) &&
         (this->save_porosity_increase)) {
       CodeBlock uav;
-      uav.code += "fg" + id + " += this->dfg" + id + ";\n";
+      uav.code += "this->fg" + id + " += this->dfg" + id + ";\n";
       bd.setCode(uh, BehaviourData::UpdateAuxiliaryStateVariables, uav,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
     }

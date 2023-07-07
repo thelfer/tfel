@@ -23,6 +23,10 @@ The page describes the new functionalities of Version 3.4.5 of the
 
 # Issues solved
 
+## Issue #409: [mfront] Problem with saving individual contributions to the porosity evolutions in dedicated auxiliary state variables
+
+For more details, see : <https://github.com/thelfer/tfel/issues/409>
+
 ## Issue #405: [amitex interface] Generation of the example input file leads to a infinite loop
 
 For more details, see : <https://github.com/thelfer/tfel/issues/405>
