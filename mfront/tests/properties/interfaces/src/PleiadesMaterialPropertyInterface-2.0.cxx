@@ -15,6 +15,7 @@
 #include <stdexcept>
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/System/System.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontHeader.hxx"
@@ -50,6 +51,7 @@ namespace mfront {
 
   void PleiadesMaterialPropertyInterface::getTargetsDescription(
       TargetsDescription& d, const MaterialPropertyDescription& mpd) const {
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     const auto lib = "libPleiades" + getMaterialLawLibraryNameBase(mpd);
     const auto name = mpd.material.empty() ? mpd.className
                                            : mpd.material + "_" + mpd.className;
@@ -58,6 +60,8 @@ namespace mfront {
     auto& l = d.getLibrary(lib);
     l.ldflags.push_back("-lm");
     l.cppflags.push_back("`pleiades-config --includes`");
+    insert_if(l.cppflags,
+              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
     l.sources.push_back(name + "-pleiades.cpp");
     l.epts.push_back(name);
     d.headers.push_back(hn.substr(8));
