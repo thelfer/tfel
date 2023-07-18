@@ -46,7 +46,7 @@ namespace tfel {
       using real = MichelAndSuquet1992HollowSphereBaseType<StressStensor>;
       constexpr const auto cste_3_2 = real(3) / 2;
       constexpr const auto cste_9_4 = real(9) / 4;
-      const auto s = deviator(s);
+      const auto s = deviator(sig);
       const auto s2 = cste_3_2 * (s | s);
       const auto pr = trace(sig) / 3;
       const auto n = p.n;
