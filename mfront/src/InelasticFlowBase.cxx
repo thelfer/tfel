@@ -707,7 +707,9 @@ namespace mfront::bbrick {
              "(this->dp" + id + ") * (this->trace_n" + id + ")";
     }();
     auto c = std::string{};
-    c = "if (this->bpl" + id + "){\n";
+    if (!this->ihrs.empty()) {
+      c = "if (this->bpl" + id + "){\n";
+    }
     if (this->save_porosity_increase) {
       c += "this->dfg" + id + " = " + df + ";\n";
       c += StandardElastoViscoPlasticityBrick::
@@ -722,7 +724,9 @@ namespace mfront::bbrick {
       c += "} else {\n";
       c += "this->dfg" + id + " = real{};\n";
     }
-    c += "}\n";
+    if (!this->ihrs.empty()) {
+      c += "}\n";
+    }
     return c;
   }  // end of updateNextEstimateOfThePorosityIncrement
 

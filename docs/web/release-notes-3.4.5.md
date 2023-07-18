@@ -23,6 +23,10 @@ The page describes the new functionalities of Version 3.4.5 of the
 
 # Issues solved
 
+## Issue #412: [mfront] Error when trying to compile with `StandardElastoViscoplasticity` brick and porous stress criterion
+
+For more details, see : <https://github.com/thelfer/tfel/issues/412>
+
 ## Issue #409: [mfront] Problem with saving individual contributions to the porosity evolutions in dedicated auxiliary state variables
 
 For more details, see : <https://github.com/thelfer/tfel/issues/409>
