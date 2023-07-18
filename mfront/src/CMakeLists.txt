@@ -170,6 +170,7 @@ set(TFELMFront_SOURCES
     GenericMaterialPropertyInterfaceBase.cxx
     GenericMaterialPropertyInterface.cxx
     GenericBehaviourInterface.cxx
+    CudaGenericBehaviourInterface.cxx
     GenericBehaviourSymbolsGenerator.cxx
     GenericModelInterface.cxx
     OptionDescription.cxx

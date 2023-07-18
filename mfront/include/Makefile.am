@@ -100,6 +100,7 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/GenericMaterialPropertyInterfaceBase.hxx                   \
 			MFront/GenericMaterialPropertyInterface.hxx                       \
 			MFront/GenericBehaviourInterface.hxx                              \
+			MFront/CudaGenericBehaviourInterface.hxx                          \
 			MFront/GenericModelInterface.hxx                                  \
 			MFront/CastemModelInterface.hxx                                   \
             MFront/SymbolsGenerator.hxx                                       \

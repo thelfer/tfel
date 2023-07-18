@@ -147,6 +147,7 @@ libTFELMFront_la_SOURCES = MFront.cxx                                     \
 			       GenericMaterialPropertyInterfaceBase.cxx               \
 			       GenericMaterialPropertyInterface.cxx                   \
 		           GenericBehaviourInterface.cxx                          \
+		           CudaGenericBehaviourInterface.cxx                      \
 		           GenericBehaviourSymbolsGenerator.cxx                   \
 		           GenericModelInterface.cxx                              \
 		           OptionDescription.cxx                                  \
