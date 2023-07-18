@@ -132,7 +132,7 @@ namespace mfront {
         return "Behaviours";
       } else if (t != AbstractDSL::MODELDSL) {
         tfel::raise(
-            "mfront::writeMadnexFile: "
+            "mfront::getPathBaseName: "
             "unsupported DSL target");
       }
       return "Models";
@@ -181,7 +181,7 @@ namespace mfront {
             i.getSourceMaterialKnowledgeIdentifier());
     if (impl.name.empty()) {
       tfel::raise(
-          "mfront::writeMadnexFile: "
+          "mfront::getMFrontImplementation: "
           "no material knowledge identifier defined");
     }
     copy_if(impl.metadata.author, i.getOverridenValue<Tags::AUTHOR_NAME>(),
@@ -215,6 +215,10 @@ namespace mfront {
             "path '" +
             p + "' already exists");
       }
+    }
+    //
+    if (!madnex::exists(r, "tests")) {
+      madnex::createGroup(r, "tests");
     }
     //
     const auto m = getMaterial(i);
