@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #415: [mtest] Interpreting data with a formula leads to invalid results
+
+For more details, see <https://github.com/thelfer/tfel/issues/415>.
+
 ## Issue #393: [mfront] Use cohesive zone model in axisymmetrical FE simulation with `Cast3M`
 
 For more details, see <https://github.com/thelfer/tfel/issues/393>.
