@@ -22,7 +22,7 @@ namespace mtest {
                            const EvolutionManager& m,
                            const std::string& f) {
     struct Variable {
-      unsigned short p;
+      std::string n;
       std::vector<double> values;
     };
     auto matches = [](const std::string& vn) {
@@ -59,10 +59,9 @@ namespace mtest {
     };
     tfel::math::Evaluator e{f};
     std::vector<Variable> variables;
-    unsigned short p = 0u;
     for (const auto& v : e.getVariablesNames()) {
       if (matches(v)) {
-        variables.push_back(Variable{p, d.getColumn(convert(v))});
+        variables.push_back(Variable{v, d.getColumn(convert(v))});
       } else {
         auto pev = m.find(v);
         if (pev == m.end()) {
@@ -78,9 +77,8 @@ namespace mtest {
                                  "'" +
                                  v + "' is not constant"));
         }
-        e.setVariableValue(p, ev(real(0)));
+        e.setVariableValue(v, ev(real(0)));
       }
-      ++p;
     }
     if (variables.empty()) {
       return d.getColumn(convert(f));
@@ -89,7 +87,7 @@ namespace mtest {
     r.resize(variables[0].values.size());
     for (std::vector<double>::size_type i = 0; i != r.size(); ++i) {
       for (const auto& v : variables) {
-        e.setVariableValue(v.p, v.values[i]);
+        e.setVariableValue(v.n, v.values[i]);
       }
       r[i] = e.getValue();
     }
