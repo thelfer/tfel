@@ -13,7 +13,6 @@
 
 #include <cmath>
 #include <sstream>
-
 #include "MTest/Behaviour.hxx"
 #include "MTest/ImposedGradient.hxx"
 
