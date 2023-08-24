@@ -13,6 +13,9 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @rapanakis_three-dimensional_2023
+    @lewandowski_multifield_2023
+    @socie_fully_2023
     @abbas_3d_2023
     @riparbelli_coupling_2023
     @senac_yield_2023

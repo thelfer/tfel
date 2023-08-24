@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 422: Document the product of two symmetric tensors and its derivatives
+
+For more details, see <https://github.com/thelfer/tfel/issues/422>
+
 ## Issue 383: [python-bindings] Add the ability to retrieve the `TFEL` version
 
 For more details, see <https://github.com/thelfer/tfel/issues/383>
