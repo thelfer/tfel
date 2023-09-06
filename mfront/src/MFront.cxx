@@ -469,7 +469,7 @@ namespace mfront {
                               true);
     this->registerCallBack(
         "-g", CallBack("add debugging symbols",
-                       [this] { this->opts.debugFlags = true; }, false));
+                       [this]() noexcept { this->opts.debugFlags = true; }, false));
     this->registerNewCallBack(
         "--target", "-t", &MFront::treatTarget,
         "generate build file and build the specified target", true);
