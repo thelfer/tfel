@@ -19,6 +19,13 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #425 [mfront] query the `mdnx` path where an `OverridableImplementation` is written
+
+The `getDestinationPathInMadnexFile` returns the `mdnx` path where an
+`OverridableImplementation` is written.
+
+For more details, see <https://github.com/thelfer/tfel/issues/425>
+
 ## Issue 422: Document the product of two symmetric tensors and its derivatives
 
 For more details, see <https://github.com/thelfer/tfel/issues/422>

@@ -20,6 +20,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
+#include "TFEL/System/System.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MaterialKnowledgeDescription.hxx"
 #include "MFront/FileDescription.hxx"
@@ -260,4 +261,19 @@ namespace mfront {
 #endif /* MFRONT_HAVE_MADNEX */
   }    // end of write
 
+  void write(const OverridableImplementation& i,
+             const std::string& t,
+             const std::string& f) {
+    std::ifstream infile(f);
+    if (!infile.good()) {
+      // file doesn't exists, copying the template file
+      tfel::system::systemCall::copy(t, f);
+    }
+    write(i, f);
+  }    // end of write
+
+  std::string getDestinationPathInMadnexFile(const OverridableImplementation& i) {
+    return getPath(i);
+  }  // end of getDestinationPathInMadnexFile
+  
 }  // end of namespace mfront

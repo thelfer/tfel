@@ -137,6 +137,13 @@ namespace mfront {
   };  // end of OverridableImplementation
 
   /*!
+   * \brief return the implementation path where the given implementation will be written
+   * \param[in] i: implementation
+   */
+  MFRONT_VISIBILITY_EXPORT std::string
+  getDestinationPathInMadnexFile(const OverridableImplementation&);
+  
+  /*!
    * \brief write the implementation to the file
    * \param[in] i: implementation
    * \param[in] f: file name
@@ -145,6 +152,18 @@ namespace mfront {
    * Currently, the only driver available is associated with `madnex` files.
    */
   MFRONT_VISIBILITY_EXPORT void write(const OverridableImplementation&,
+                                      const std::string&);
+  /*!
+   * \brief write the implementation to the file
+   * \param[in] i: implementation
+   * \param[in] t: path to a template file
+   * \param[in] f: file name
+   *
+   * The extension of the file is used to determine the driver used.
+   * Currently, the only driver available is associated with `madnex` files.
+   */
+  MFRONT_VISIBILITY_EXPORT void write(const OverridableImplementation&,
+                                      const std::string&,
                                       const std::string&);
 
 }  // end of namespace mfront

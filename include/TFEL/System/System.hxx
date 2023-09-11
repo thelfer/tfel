@@ -51,7 +51,7 @@ namespace tfel::system {
   struct TFELSYSTEM_VISIBILITY_EXPORT systemCall {
     /*
      * An helper function to convert errno values to C++ exceptions.
-     * \param const std::string&, a description of the error.
+     * \param[in] a description of the error.
      * \param const int, value of errno.
      */
     [[noreturn]] static void throwSystemError(const std::string&, const int);
@@ -59,7 +59,7 @@ namespace tfel::system {
 /*
  * create one or more directories.
  * This command is equivalent to the shell command 'mkdir -p'.
- * \param const std::string&, path to be created.
+ * \param[in] path to be created.
  * \param const mode_t, opening mode.
  */
 #if defined _WIN32 || defined _WIN64
@@ -81,12 +81,12 @@ namespace tfel::system {
 #if !(defined _WIN32 || defined _WIN64)
     static void write(const int, const void* const, size_t);
 #endif /* !(defined _WIN32 || defined _WIN64 ) */
-       /*!
-        * copy a file or a directory.
-        * This command is equivalent to the shell command 'cp -R'.
-        * \param const std::string&, src.
-        * \param const std::string&, destination.
-        */
+    /*!
+     * copy a file or a directory.
+     * This command is equivalent to the shell command 'cp -R'.
+     * \param[in] src.
+     * \param[in] destination.
+     */
     static void copy(const std::string&, const std::string&);
     /*!
      * \return the absolute path of a file or a directory (this is a
