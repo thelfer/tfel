@@ -49,53 +49,65 @@ namespace mtest {
                  const tfel::utilities::TextData& d,
                  const unsigned short c,
                  const real e)
-        : name(n), values(d.getColumn(c)), eps(e) {
-      if (n == "InnerDisplacement") {
-        this->v = INNERDISPLACEMENT;
-      } else if (n == "OuterDisplacement") {
-        this->v = OUTERDISPLACEMENT;
-      } else if (n == "AxialGrowth") {
-        this->v = AXIALGROWTH;
-      } else {
-        tfel::raise(
-            "IntegralTest::IntegralTest: "
-            "unsupported variable '" +
-            n + "'");
-      }
-    }
+        : IntegralTest(n, e) {
+      this->reference_values_evaluator = [this, values = d.getColumn(c)](
+                                             const StudyCurrentState&,
+                                             const real t, const real dt,
+                                             const unsigned int p) {
+        if (p >= values.size()) {
+          std::ostringstream msg;
+          msg << "IntegralTest::check : comparison for variable '" << this->name
+              << "' failed for time '" << t + dt << "' "
+              << "(reference value is not available for period  '" << p << "')";
+          tfel::raise(msg.str());
+        }
+        return values.at(p);
+      };
+    }  // end of IntegralTest
+    IntegralTest(const std::string& n,
+                 const std::shared_ptr<Evolution> ev,
+                 const real e)
+        : IntegralTest(n, e) {
+      this->reference_values_evaluator =
+          [ev](const StudyCurrentState&, const real t, const real dt,
+               const unsigned int) { return ev->operator()(t + dt); };
+    }  // end of IntegralTest
     void check(const StudyCurrentState& s,
                const real t,
                const real dt,
                const unsigned int p) override {
-      const auto uv = [](const tfel::math::vector<real>& u, const Variable vn) {
-        if (vn == INNERDISPLACEMENT) {
-          return *(u.begin());
-        } else if (vn == OUTERDISPLACEMENT) {
-          return *(u.rbegin() + 1);
-        } else if (vn == AXIALGROWTH) {
-          return *(u.rbegin());
+      const auto uv = [this, &s, &t, &dt]() {
+        if (this->v == INNERDISPLACEMENT) {
+          return *(s.u1.begin());
+        } else if (this->v == OUTERDISPLACEMENT) {
+          return *(s.u1.rbegin() + 1);
+        } else if (this->v == AXIALGROWTH) {
+          return *(s.u1.rbegin());
+        } else if (this->v == INNERPRESSURE) {
+          auto& Pi = s.getEvolution("InnerPressure");
+          return Pi(t + dt);
+        } else if (this->v == AXIALFORCE) {
+          auto& F = s.getEvolution("AxialForce");
+          return F(t + dt);
         }
         tfel::raise(
             "IntegralTest::check: "
             "unsupported variable");
-      }(s.u1, this->v);
-      if (p >= this->values.size()) {
-        std::ostringstream msg;
-        msg << "IntegralTest::check : comparison for variable '" << this->name
-            << "' failed for time '" << t + dt << "' "
-            << "(reference value is not available for period  '" << p << "')";
-        this->results.append(tfel::tests::TestResult(false, msg.str()));
-      } else {
-        const real err = std::abs(uv - this->values[p]);
+      }();
+      try {
+        const auto rv = this->reference_values_evaluator(s, t, dt, p);
+        const real err = std::abs(uv - rv);
         if (err > this->eps) {
           std::ostringstream msg;
           msg << "IntegralTest::check : comparison for variable '" << this->name
               << "' failed for time '" << t + dt << "' "
               << "(computed value: '" << uv << "', "
-              << "expected value: '" << this->values[p] << "', "
+              << "expected value: '" << rv << "', "
               << "error: '" << err << "', criterion '" << this->eps << "')";
           this->results.append(tfel::tests::TestResult(false, msg.str()));
         }
+      } catch (std::runtime_error& e) {
+        this->results.append(tfel::tests::TestResult(false, e.what()));
       }
     }  // end of check
     tfel::tests::TestResult getResults() const override {
@@ -108,17 +120,48 @@ namespace mtest {
       }
       return this->results;
     }
+    //! \brief destructor
     ~IntegralTest() override = default;
 
-   protected:
-    enum Variable { INNERDISPLACEMENT, OUTERDISPLACEMENT, AXIALGROWTH } v;
-    //! results of the test
+   private:
+    //
+    IntegralTest(const std::string& n,
+                 const real e)
+        : name(n), eps(e) {
+      if (n == "InnerDisplacement") {
+        this->v = INNERDISPLACEMENT;
+      } else if (n == "OuterDisplacement") {
+        this->v = OUTERDISPLACEMENT;
+      } else if (n == "AxialGrowth") {
+        this->v = AXIALGROWTH;
+      } else if (n == "InnerPressure") {
+        this->v = INNERPRESSURE;
+      } else if (n == "AxialForce") {
+        this->v = AXIALFORCE;
+      } else {
+        tfel::raise(
+            "IntegralTest::IntegralTest: "
+            "unsupported variable '" +
+            n + "'");
+      }
+    } // end of IntegralTest
+      //
+    enum Variable {
+      INNERDISPLACEMENT,
+      OUTERDISPLACEMENT,
+      AXIALGROWTH,
+      INNERPRESSURE,
+      AXIALFORCE
+    } v;
+    //! \brief results of the test
     tfel::tests::TestResult results;
-    //! name of the variable
+    //! \brief name of the variable
     const std::string name;
-    //! values of for the test
-    const std::vector<real> values;
-    //! criterion value
+    //! \brief values of for the test
+    std::function<real(
+        const StudyCurrentState& s, const real, const real, const unsigned int)>
+        reference_values_evaluator;
+    //! \brief criterion value
     const real eps;
   };
 
@@ -354,20 +397,46 @@ namespace mtest {
     setCurrentPosition(*(this->evm), s.position);
   }  // end of setGaussPointPositionForEvolutionsEvaluation
 
+  void PipeTest::checkIntegralTestArgument(const std::string& n) const {
+    if ((n != "InnerDisplacement") && (n != "OuterDisplacement") &&
+        (n != "AxialGrowth") && (n != "AxialForce") && (n != "InnerPressure")) {
+      tfel::raise(
+          "PipeTest::checkIntegralTestArgument: "
+          "unsupported variable '" +
+          n + "'.");
+    }
+    if (n == "InnerPressure") {
+      if ((this->getRadialLoading() != PipeTest::IMPOSEDOUTERRADIUS) &&
+          (this->getRadialLoading() != PipeTest::IMPOSEDINNERRADIUS)) {
+        tfel::raise(
+            "PipeTest::checkIntegralTestArgument: "
+            "test on 'InnerPressure' is only meaningful if "
+            "either the inner radius or the outer radius is imposed.");
+      }
+    }
+    if (n == "AxialForce") {
+      if (this->getAxialLoading() != PipeTest::IMPOSEDAXIALGROWTH) {
+        tfel::raise(
+            "PipeTest::checkIntegralTestArgument: "
+            "test on 'Axial' is only meaningful if "
+            "the axial growth is imposed.");
+      }
+    }
+  }  // end of checkIntegralTestArgument
+
   void PipeTest::addIntegralTest(const std::string& n,
                                  const tfel::utilities::TextData& d,
                                  const unsigned short c,
                                  const real e) {
-    if ((n == "InnerDisplacement") || (n == "OuterDisplacement") ||
-        (n == "AxialGrowth")) {
-      this->tests.push_back(
-          std::shared_ptr<UTest>(new IntegralTest(n, d, c, e)));
-    } else {
-      tfel::raise(
-          "PipeTest::addIntegralTest: "
-          "unsupported variable '" +
-          n + "'");
-    }
+    this->checkIntegralTestArgument(n);
+    this->tests.push_back(std::make_shared<IntegralTest>(n, d, c, e));
+  }  // end of addIntegralTest
+
+  void PipeTest::addIntegralTest(const std::string& n,
+                                 const std::shared_ptr<Evolution> ev,
+                                 const real e) {
+    this->checkIntegralTestArgument(n);
+    this->tests.push_back(std::make_shared<IntegralTest>(n, ev, e));
   }  // end of addIntegralTest
 
   void PipeTest::addProfileTest(const std::string& n,
