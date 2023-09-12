@@ -39,6 +39,7 @@
 #include "MTest/AnalyticalTest.hxx"
 #include "MTest/ReferenceFileComparisonTest.hxx"
 #include "MTest/Evolution.hxx"
+#include "MTest/FunctionEvolution.hxx"
 #include "MTest/Behaviour.hxx"
 #include "MTest/Constraint.hxx"
 #include "MTest/ImposedThermodynamicForce.hxx"
@@ -588,12 +589,11 @@ namespace mtest {
     this->checkNotEndOfLine("PipeTestParser::handleTest", p,
                             this->tokens.end());
     const auto& type = p->value;
-    bool profile = false;
-    tfel::raise_if(type != "file",
-                   "PipeTestParser::handleTest: "
-                   "invalid test type '" +
-                       type + "'");
+    tfel::raise_if((type != "file") && (type != "function"),
+                   "PipeTestParser::handleTest: invalid test type '" + type +
+                       "', expected 'file' or 'function'");
     ++p;
+    bool profile = false;
     if (p->value == ",") {
       ++p;
       this->checkNotEndOfLine("PipeTestParser::handleTest", p,
@@ -662,6 +662,51 @@ namespace mtest {
         for (const auto& v : variables) {
           t.addIntegralTest(v.first, data, v.second, eps);
         }
+      }
+    } else if (type == "function") {
+      auto variables = std::map<std::string, std::string>{};
+      if (p->flag == tfel::utilities::Token::String) {
+        const auto& v = this->readString(p, this->tokens.end());
+        const auto ev = this->readString(p, this->tokens.end());
+        variables.insert({v, ev});
+      } else {
+        tfel::raise_if(profile,
+                       "PipeTestParser::handleTest: "
+                       "analytical test defined by a "
+                       "function are not supported yet");
+        this->readSpecifiedToken("PipeTestParser::handleTest", "{", p,
+                                 this->tokens.end());
+        this->checkNotEndOfLine("PipeTestParser::handleTest", p,
+                                this->tokens.end());
+        while (p->value != "}") {
+          const auto& v = this->readString(p, this->tokens.end());
+          this->readSpecifiedToken("PipeTestParser::handleTest", ":", p,
+                                   this->tokens.end());
+          const auto ev = this->readString(p, this->tokens.end());
+          variables.insert({v, ev});
+          this->checkNotEndOfLine("PipeTestParser::handleTest", p,
+                                  this->tokens.end());
+          if (p->value != "}") {
+            this->readSpecifiedToken("PipeTestParser::handleTest", ",", p,
+                                     this->tokens.end());
+            this->checkNotEndOfLine("PipeTestParser::handleTest", p,
+                                    this->tokens.end());
+            tfel::raise_if(p->value == "}",
+                           "PipeTestParser::handleTest: "
+                           "unexpected token '}'");
+          }
+        }
+        this->readSpecifiedToken("PipeTestParser::handleTest", "}", p,
+                                 this->tokens.end());
+      }
+      const real eps = this->readDouble(t, p);
+      tfel::raise_if(eps < 0,
+                     "PipeTestParser::handleTest: "
+                     "invalid criterion value");
+      for (const auto& v : variables) {
+        auto ev =
+            std::make_shared<FunctionEvolution>(v.second, t.getEvolutions());
+        t.addIntegralTest(v.first, ev, eps);
       }
     } else {
       tfel::raise(

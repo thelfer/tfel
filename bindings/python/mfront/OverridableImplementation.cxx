@@ -14,10 +14,16 @@
 #include <boost/python.hpp>
 #include "MFront/OverridableImplementation.hxx"
 
+void declareOverridableImplementation();
+
 void declareOverridableImplementation() {
   auto write_ptr =
       static_cast<void (*)(const mfront::OverridableImplementation&,
                            const std::string&)>(mfront::write);
+  auto write_ptr2 =
+      static_cast<void (*)(const mfront::OverridableImplementation&,
+                           const std::string&, const std::string&)>(
+          mfront::write);
 
   boost::python::class_<mfront::OverridableImplementation>(
       "OverridableImplementation", boost::python::init<std::string>())
@@ -85,8 +91,37 @@ void declareOverridableImplementation() {
            "describe a model)")
       .def("overrideByAParameter",
            &mfront::OverridableImplementation::overrideByAParameter,
-           "override a variable by the given parameter");
+           "override a variable by the given parameter")
+      .def("getMaterialKnowledgeIdentifier",
+           &mfront::OverridableImplementation::getMaterialKnowledgeIdentifier,
+           "return the material knowledge identifier, i.e. the law name "
+           "or the behaviour name or the model name")
+      .def("getMaterial", &mfront::OverridableImplementation::getMaterial,
+           "return the name of the material. This name can be inherited "
+           "from the overriden implementation or overriden");
 
-  boost::python::def("write", write_ptr, "export an implementation to a file");
+  boost::python::def(
+      "getDestinationPathInMadnexFile",
+      static_cast<std::string (*)(const mfront::OverridableImplementation&)>(
+          mfront::getDestinationPathInMadnexFile),
+      R"(
+      return the path where an overridable implementation will be written in a madnex file.
+      )");
+
+  boost::python::def("write", write_ptr,
+                     R"(
+                     export an overridable implementation to a file
+                     
+                     o: OverridableImplementation
+                     f: generated file
+                     )");
+  boost::python::def("write", write_ptr2,
+                     R"(
+                     export an overridable implementation to a file using a template file
+                     
+                     o: OverridableImplementation
+                     t: template file
+                     f: generated file
+                     )");
 
 }  // end of declareOverridableImplementation

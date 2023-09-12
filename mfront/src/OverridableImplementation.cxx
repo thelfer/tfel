@@ -20,6 +20,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
+#include "TFEL/System/System.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MaterialKnowledgeDescription.hxx"
 #include "MFront/FileDescription.hxx"
@@ -86,6 +87,17 @@ namespace mfront {
         .getExternalMFrontFiles();
   }  // end of getExternalMFrontFiles
 
+  std::string OverridableImplementation::getMaterialKnowledgeIdentifier()
+      const {
+    const auto& n = this->getOverridenValue<Tags::MATERIAL_KNOWLEDGE_IDENTIFIER>();
+    return n.empty() ? this->getSourceMaterialKnowledgeIdentifier() : n;
+  }
+
+  std::string OverridableImplementation::getMaterial() const {
+    const auto& m = this->getOverridenValue<Tags::MATERIAL_NAME>();
+    return m.empty() ? this->getSourceMaterialName() : m;
+  }
+
   OverridableImplementation::~OverridableImplementation() = default;
 
 #ifdef MFRONT_HAVE_MADNEX
@@ -110,19 +122,6 @@ namespace mfront {
     return s.str();
   }  // end of getSourceFileContent
 
-  static std::string getMaterialKnowledgeIdentifier(
-      const OverridableImplementation& i) {
-    using Tags = OverridableImplementation::Tags;
-    const auto& n = i.getOverridenValue<Tags::MATERIAL_KNOWLEDGE_IDENTIFIER>();
-    return n.empty() ? i.getSourceMaterialKnowledgeIdentifier() : n;
-  }
-
-  static std::string getMaterial(const OverridableImplementation& i) {
-    using Tags = OverridableImplementation::Tags;
-    const auto& m = i.getOverridenValue<Tags::MATERIAL_NAME>();
-    return m.empty() ? i.getSourceMaterialName() : m;
-  }
-
   static std::string getPathBaseName(const OverridableImplementation& i) {
     const auto mkt = [i]() -> std::string {
       const auto t = i.getTargetType();
@@ -137,7 +136,7 @@ namespace mfront {
       }
       return "Models";
     }();
-    const auto m = getMaterial(i);
+    const auto m = i.getMaterial();
     if (!m.empty()) {
       return "MFront/" + m + '/' + mkt;
     }
@@ -146,7 +145,7 @@ namespace mfront {
 
   static std::string getPath(const OverridableImplementation& i) {
     const auto b = getPathBaseName(i);
-    const auto n = getMaterialKnowledgeIdentifier(i);
+    const auto n = i.getMaterialKnowledgeIdentifier();
     return b + '/' + n;
   }  // end of getPath
 
@@ -221,7 +220,7 @@ namespace mfront {
       madnex::createGroup(r, "tests");
     }
     //
-    const auto m = getMaterial(i);
+    const auto m = i.getMaterial();
     madnex::createGroup(r, "MFront");
     if (!m.empty()) {
       madnex::createGroup(r, "MFront/" + m);
@@ -260,4 +259,19 @@ namespace mfront {
 #endif /* MFRONT_HAVE_MADNEX */
   }    // end of write
 
+  void write(const OverridableImplementation& i,
+             const std::string& t,
+             const std::string& f) {
+    std::ifstream infile(f);
+    if (!infile.good()) {
+      // file doesn't exists, copying the template file
+      tfel::system::systemCall::copy(t, f);
+    }
+    write(i, f);
+  }    // end of write
+
+  std::string getDestinationPathInMadnexFile(const OverridableImplementation& i) {
+    return getPath(i);
+  }  // end of getDestinationPathInMadnexFile
+  
 }  // end of namespace mfront
