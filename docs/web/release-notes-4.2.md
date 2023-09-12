@@ -19,6 +19,18 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #428: [mfront] Add the methods `getMaterialKnowledgeIdentifier` and `getMaterial` to the `OverridableImplementation` class
+
+The `getMaterialKnowledgeIdentifier` methods returns the name given to
+the overridable implementation. Depending on the case, this can be the
+name of the material property, the name of the behaviour or the name of
+the model.
+
+The `getMaterial` method returns the name of the material associated
+with the overridable implementation.
+
+For more details, see <https://github.com/thelfer/tfel/issues/428>.
+
 ## Issue #427: [mtest] Add support for integral tests based on the inner pressure or the axial force in the ptest scheme
 
 When the evolution of the inner radius or the evolution of the outer
@@ -28,7 +40,7 @@ radius is prescribed, integral tests on the inner pressure
 When the evolution of the axial growth is prescribed, integral tests on
 the axial force (`AxialForce`) can be set.
 
-For more details, see <https://github.com/thelfer/tfel/issues/427>
+For more details, see <https://github.com/thelfer/tfel/issues/427>.
 
 ## Issue #426: [mtest] Add support for tests based on analytical formulae in the ptest scheme mtest
 
@@ -42,18 +54,18 @@ to the values of an evolution named `InnerPressureReferenceValues`:
 @Test<function> 'InnerPressure' 'InnerPressureReferenceValues' 1e2;
 ~~~~
 
-For more details, see <https://github.com/thelfer/tfel/issues/426>
+For more details, see <https://github.com/thelfer/tfel/issues/426>.
 
 ## Issue #425: [mfront] query the `mdnx` path where an `OverridableImplementation` is written
 
 The `getDestinationPathInMadnexFile` returns the `mdnx` path where an
 `OverridableImplementation` is written.
 
-For more details, see <https://github.com/thelfer/tfel/issues/425>
+For more details, see <https://github.com/thelfer/tfel/issues/425>.
 
 ## Issue #424: [madnex] Add an option to use a template file when generating a `mdnx` file
 
-For more details, see <https://github.com/thelfer/tfel/issues/424>
+For more details, see <https://github.com/thelfer/tfel/issues/424>.
 
 ## Issue 422: Document the product of two symmetric tensors and its derivatives
 
@@ -61,11 +73,11 @@ For more details, see <https://github.com/thelfer/tfel/issues/422>
 
 ## Issue 383: [python-bindings] Add the ability to retrieve the `TFEL` version
 
-For more details, see <https://github.com/thelfer/tfel/issues/383>
+For more details, see <https://github.com/thelfer/tfel/issues/383>.
 
 ## Issue 369: [TFEL/Utilities] support for raw string literals in `CxxTokenizer`
 
-For more details, see <https://github.com/thelfer/tfel/issues/369>
+For more details, see <https://github.com/thelfer/tfel/issues/369>.
 
 ## Issue 362: [mfront] Better code generation for point-wise models using the Cast3M interface 
 
@@ -73,12 +85,12 @@ For more details, see <https://github.com/thelfer/tfel/issues/362>
 
 ## Issue 360: [mtest] Documentation of the  `@Profile` keyword in `PTest`
 
-For more details, see <https://github.com/thelfer/tfel/issues/360>
+For more details, see <https://github.com/thelfer/tfel/issues/360>.
 
 ## Issue 356:  [mfront] modification of the Gurson-Tvergaard-Needleman stress criterion
 
-For more details, see <https://github.com/thelfer/tfel/issues/356>
+For more details, see <https://github.com/thelfer/tfel/issues/356>.
 
 ## Issue 353: [mfront] Add support for unsymmetric tensorial variables when generating `MTest` files
 
-For more details, see <https://github.com/thelfer/tfel/issues/353>
+For more details, see <https://github.com/thelfer/tfel/issues/353>.

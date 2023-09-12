@@ -91,14 +91,23 @@ void declareOverridableImplementation() {
            "describe a model)")
       .def("overrideByAParameter",
            &mfront::OverridableImplementation::overrideByAParameter,
-           "override a variable by the given parameter");
+           "override a variable by the given parameter")
+      .def("getMaterialKnowledgeIdentifier",
+           &mfront::OverridableImplementation::getMaterialKnowledgeIdentifier,
+           "return the material knowledge identifier, i.e. the law name "
+           "or the behaviour name or the model name")
+      .def("getMaterial", &mfront::OverridableImplementation::getMaterial,
+           "return the name of the material. This name can be inherited "
+           "from the overriden implementation or overriden");
 
-  boost::python::def("getDestinationPathInMadnexFile",
-		     static_cast<std::string (*)(const mfront::OverridableImplementation&)>(mfront::getDestinationPathInMadnexFile),
-		     R"(
-                     return the path where an overridable implementation will be written in a madnex file.
-                     )");
-  
+  boost::python::def(
+      "getDestinationPathInMadnexFile",
+      static_cast<std::string (*)(const mfront::OverridableImplementation&)>(
+          mfront::getDestinationPathInMadnexFile),
+      R"(
+      return the path where an overridable implementation will be written in a madnex file.
+      )");
+
   boost::python::def("write", write_ptr,
                      R"(
                      export an overridable implementation to a file

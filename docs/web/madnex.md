@@ -69,7 +69,7 @@ For a behaviour, this selection is done through the `--material` and
 `--behaviour` options. For example:
 
 ~~~~{.bash}
-$ mfront --obuild --interface=generic --material=<material_id> --behaviour=<behaviour_id> file.madnex
+$ mfront --obuild --interface=generic --material=<material_id> --behaviour=<behaviour_id> file.mdnx
 ~~~~
 
 Here, `behaviour_id` can be a regular expression.
@@ -83,7 +83,7 @@ options allows to select all the material properties, behaviours and
 models respectively, as follows:
 
 ~~~~{.bash}
-$ mfront --obuild --interface=generic --material=<material_id> --all-behaviours file.madnex
+$ mfront --obuild --interface=generic --material=<material_id> --all-behaviours file.mdnx
 ~~~~
 
 The material name `<none>` has a special meaning here: it allows the
@@ -244,7 +244,7 @@ implementation is encoded.
 ~~~~{.python}
 import mfront
 
-paths = mfront.getImplementationsPaths("file.madnex",
+paths = mfront.getImplementationsPaths("file.mdnx",
                                        material=<material_id>,
                                        behaviour=behaviour_id>)
 if len(paths) == 0:
@@ -340,7 +340,7 @@ The `--list-materials` returns the list of all materials in a `MFront`
 file:
 
 ~~~~{.bash}
-$ mfront-query --list-materials file.madnex
+$ mfront-query --list-materials file.mdnx
 ~~~~
 
 ### Listing of all material properties, all behaviours or all models
@@ -354,14 +354,14 @@ The following options are available:
 A typical call is as follows:
 
 ~~~~{.bash}
-$ mfront-query --list-behaviours file.madnex
+$ mfront-query --list-behaviours file.mdnx
 ~~~~
 
 The previous options are affected by the the definition of a material,
 as follows:
 
 ~~~~{.bash}
-$ mfront-query --material=<material_id> --list-behaviours file.madnex
+$ mfront-query --material=<material_id> --list-behaviours file.mdnx
 ~~~~
 
 ## Querying information about implementation, options specific to `madnex` files
@@ -371,7 +371,7 @@ are made is done through the `--material` and `--behaviour` options. For
 example:
 
 ~~~~{.bash}
-$ mfront-query --obuild --interface=generic --material=<material_id> --behaviour=<behaviour_id> file.madnex --state-variables
+$ mfront-query --obuild --interface=generic --material=<material_id> --behaviour=<behaviour_id> file.mdnx --state-variables
 ~~~~
 
 Here, `behaviour_id` can be a regular expression.
@@ -421,9 +421,15 @@ function. Here is an example in `python`:
 import mfront
 
 i = mfront.OverridableImplementation("Plasticity.mfront")
-mfront.write(i, "Plasticity.madnex")
+mfront.write(i, "Plasticity.mdnx")
 ~~~~
 
+Note that an override of the `write` function is available to specify a
+template file, as follows:
+
+~~~~{.python}
+mfront.write(i, template_file_path,"Plasticity.mdnx")
+~~~~
 
 However, the `OverridableImplementation` class also allows modifying
 the medata of a implementation, as follows:
@@ -435,7 +441,7 @@ i = mfront.OverridableImplementation("Plasticity.mfront")
 i.overrideBehaviourName("Plasticity_SRMA2022")
 i.overrideMaterial("A316LN")
 i.overrideAuthor("John Mac Enroe")
-mfront.write(i, "Plasticity.madnex")
+mfront.write(i, "Plasticity.mdnx")
 ~~~~
 
 # Storing an `MTest` file in a `madnex` file

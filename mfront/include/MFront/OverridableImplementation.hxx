@@ -119,6 +119,10 @@ namespace mfront {
     const FileDescription& getSourceFileDescription() const;
     //! \return the path to the source file
     const std::string& getSourceFilePath() const;
+    //! \return the material knowledge identifier (material property name, behaviour name or model name)
+    std::string getMaterialKnowledgeIdentifier() const;
+    //! \return the material name
+    std::string getMaterial() const;
     //! \return the external `MFront` files
     const std::map<std::string,               // file path
                    std::vector<std::string>,  // list of interfaces
