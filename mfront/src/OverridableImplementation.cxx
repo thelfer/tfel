@@ -100,28 +100,6 @@ namespace mfront {
 
   OverridableImplementation::~OverridableImplementation() = default;
 
-#ifdef MFRONT_HAVE_MADNEX
-  static std::string getSourceFileContent(const std::string& f) {
-    if ((tfel::utilities::starts_with(f, "madnex:")) ||
-        (tfel::utilities::starts_with(f, "mdnx:")) ||
-        (tfel::utilities::starts_with(f, "edf:"))) {
-      const auto path = decomposeImplementationPathInMadnexFile(f);
-      const auto& material = std::get<2>(path);
-      const auto& name = std::get<3>(path);
-      const auto impl = madnex::getMFrontImplementation(
-          std::get<0>(path), std::get<1>(path), material, name);
-      return impl.source;
-    }
-    std::ifstream file(f);
-    if (!file) {
-      tfel::raise("mfront::getSourceFileContent: can't open file '" +
-                  std::string{f} + "'");
-    }
-    std::ostringstream s;
-    s << file.rdbuf();
-    return s.str();
-  }  // end of getSourceFileContent
-
   static std::string getPathBaseName(const OverridableImplementation& i) {
     const auto mkt = [i]() -> std::string {
       const auto t = i.getTargetType();
@@ -148,6 +126,28 @@ namespace mfront {
     const auto n = i.getMaterialKnowledgeIdentifier();
     return b + '/' + n;
   }  // end of getPath
+
+#ifdef MFRONT_HAVE_MADNEX
+  static std::string getSourceFileContent(const std::string& f) {
+    if ((tfel::utilities::starts_with(f, "madnex:")) ||
+        (tfel::utilities::starts_with(f, "mdnx:")) ||
+        (tfel::utilities::starts_with(f, "edf:"))) {
+      const auto path = decomposeImplementationPathInMadnexFile(f);
+      const auto& material = std::get<2>(path);
+      const auto& name = std::get<3>(path);
+      const auto impl = madnex::getMFrontImplementation(
+          std::get<0>(path), std::get<1>(path), material, name);
+      return impl.source;
+    }
+    std::ifstream file(f);
+    if (!file) {
+      tfel::raise("mfront::getSourceFileContent: can't open file '" +
+                  std::string{f} + "'");
+    }
+    std::ostringstream s;
+    s << file.rdbuf();
+    return s.str();
+  }  // end of getSourceFileContent
 
   static std::vector<std::string> getPaths(const OverridableImplementation& i) {
     auto r = std::vector<std::string>{};
@@ -270,8 +270,9 @@ namespace mfront {
     write(i, f);
   }    // end of write
 
-  std::string getDestinationPathInMadnexFile(const OverridableImplementation& i) {
+  std::string getDestinationPathInMadnexFile(
+      const OverridableImplementation& i) {
     return getPath(i);
   }  // end of getDestinationPathInMadnexFile
-  
+
 }  // end of namespace mfront
