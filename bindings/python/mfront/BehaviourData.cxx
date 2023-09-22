@@ -169,17 +169,50 @@ void declareBehaviourData() {
       .def("getVariablesNames", getVariablesNames)
       .def("hasParameter", &BehaviourData::hasParameter)
       .def("hasParameters", &BehaviourData::hasParameters)
-      .def("setFloattingPointParameterDefaultVale",
+      .def("setFloatingPointParameterDefaultValue",
            static_cast<void (BehaviourData::*)(const std::string&,
                                                const double)>(
                &BehaviourData::setParameterDefaultValue))
-      .def("setUnsignedShortParameterDefaultVale",
+      .def("setFloatingPointParameterDefaultValue",
+           static_cast<void (BehaviourData::*)(
+               const std::string&, const unsigned short, const double)>(
+               &BehaviourData::setParameterDefaultValue))
+      .def("setFloattingPointParameterDefaultValue",
+           static_cast<void (BehaviourData::*)(const std::string&,
+                                               const double)>(
+               &BehaviourData::setParameterDefaultValue))
+      .def("setFloattingPointParameterDefaultValue",
+           static_cast<void (BehaviourData::*)(
+               const std::string&, const unsigned short, const double)>(
+               &BehaviourData::setParameterDefaultValue))
+      .def("setUnsignedShortParameterDefaultValue",
            static_cast<void (BehaviourData::*)(const std::string&,
                                                const unsigned short)>(
                &BehaviourData::setParameterDefaultValue))
-      .def("setIntegerParameterDefaultVale",
+      .def("setIntegerParameterDefaultValue",
            static_cast<void (BehaviourData::*)(const std::string&, const int)>(
                &BehaviourData::setParameterDefaultValue))
+      .def("getFloatingPointParameterDefaultValue",
+           static_cast<double (BehaviourData::*)(const std::string&) const>(
+               &BehaviourData::getFloattingPointParameterDefaultValue))
+      .def("getFloatingPointParameterDefaultValue",
+           static_cast<double (BehaviourData::*)(const std::string&,
+                                                 const unsigned short) const>(
+               &BehaviourData::getFloattingPointParameterDefaultValue))
+      .def("getFloattingPointParameterDefaultValue",
+           static_cast<double (BehaviourData::*)(const std::string&) const>(
+               &BehaviourData::getFloattingPointParameterDefaultValue))
+      .def("getFloattingPointParameterDefaultValue",
+           static_cast<double (BehaviourData::*)(const std::string&,
+                                                 const unsigned short) const>(
+               &BehaviourData::getFloattingPointParameterDefaultValue))
+      .def("getUnsignedShortParameterDefaultValue",
+           static_cast<unsigned short (BehaviourData::*)(const std::string&)
+                           const>(
+               &BehaviourData::getUnsignedShortParameterDefaultValue))
+      .def("getIntegerParameterDefaultValue",
+           static_cast<int (BehaviourData::*)(const std::string&) const>(
+               &BehaviourData::getIntegerParameterDefaultValue))
       .def("getCodeBlockNames", &BehaviourData::getCodeBlockNames)
       .def("getCode", &BehaviourData::getCode)
       .def("hasCode", &BehaviourData::hasCode);

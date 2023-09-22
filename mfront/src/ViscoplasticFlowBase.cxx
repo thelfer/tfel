@@ -75,8 +75,8 @@ namespace mfront {
         auto kid = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
           c += khr->generateImplicitEquationDerivatives(
-              "p",
-              "(this->dt) * dvp" + id + "_dseqe " + id + " * dseq" + id +
+              "p" + id,
+              "(this->dt) * dvp" + id + "_dseqe" + id + " * dseq" + id +
                   "_ds" + id,
               id, std::to_string(kid));
           ++kid;

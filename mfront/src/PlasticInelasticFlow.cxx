@@ -162,7 +162,8 @@ namespace mfront {
         auto kid = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
           c += khr->generateImplicitEquationDerivatives(
-              "p", "-dseq_ds/(" + snf + ")", id, std::to_string(kid));
+              "p" + id, "-dseq" + id + "_ds" + id + "/(" + snf + ")", id,
+              std::to_string(kid));
           ++kid;
         }
         if (this->isCoupledWithPorosityEvolution()) {

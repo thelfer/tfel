@@ -470,7 +470,8 @@ namespace mtest {
         }
         return "";
       }();
-      if (tfel::utilities::starts_with(i, "madnex:")) {
+      if (tfel::utilities::starts_with(i, "madnex:") ||
+          tfel::utilities::starts_with(i, "mdnx:")) {
         this->treatMadnexInputFile(i);
       } else {
         if ((ext == ".madnex") || (ext == ".mdnx") || (ext == ".edf")) {
@@ -548,7 +549,8 @@ namespace mtest {
 
   void MTestMain::treatMadnexInputFile(const std::string& i) {
 #ifdef MADNEX_MTEST_TEST_SUPPORT
-    if (tfel::utilities::starts_with(i, "madnex:")) {
+    if (tfel::utilities::starts_with(i, "madnex:") ||
+        tfel::utilities::starts_with(i, "mdnx:")) {
       const auto [f, m, b, t] = [&i] {
         const auto details = tfel::utilities::tokenize(i, ':', true);
         if (details.size() != 5u) {
@@ -601,6 +603,7 @@ namespace mtest {
   }    // end of treatMadnexInputFile
 
   void MTestMain::treatStandardInputFile(const std::string& i) {
+#ifdef MTEST_HAVE_MADNEX
     if (!this->material.empty()) {
       tfel::raise(
           "MTestMain::treatStandardInputFile: specifying a material is only "
@@ -616,6 +619,7 @@ namespace mtest {
           "MTestMain::treatStandardInputFile: specifying a test is only "
           "meaningful when using a madnex file");
     }
+#endif /* MTEST_HAVE_MADNEX */
     const auto pos = i.rfind('.');
     auto tname = i.substr(0, pos);
     tfel::raise_if(tname.back() == '/',
