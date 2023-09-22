@@ -20,6 +20,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #432: UserDefinedViscoplasticity and Plastic flows
+
+For more details, see <https://github.com/thelfer/tfel/issues/432>.
+
 ## Issue #358: [mfront] Index error with interface cyrano, orthotropic behaviour and require stiffness tensor 
 
 For more details, see <https://github.com/thelfer/tfel/issues/358>.

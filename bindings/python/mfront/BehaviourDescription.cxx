@@ -172,19 +172,19 @@ void declareBehaviourDescription() {
   class_<BehaviourDescription>("BehaviourDescription")
       .def("setBehaviourName", &BehaviourDescription::setBehaviourName)
       .def("getBehaviourName", &BehaviourDescription::getBehaviourName,
-           return_internal_reference<>())
+           return_value_policy<copy_const_reference>())
       .def("setDSLName", &BehaviourDescription::setDSLName)
       .def("getDSLName", &BehaviourDescription::getDSLName,
-           return_internal_reference<>())
+           return_value_policy<copy_const_reference>())
       .def("setMaterialName", &BehaviourDescription::setMaterialName)
       .def("getMaterialName", &BehaviourDescription::getMaterialName,
-           return_internal_reference<>())
+           return_value_policy<copy_const_reference>())
       .def("setLibrary", &BehaviourDescription::setLibrary)
       .def("getLibrary", &BehaviourDescription::getLibrary,
-           return_internal_reference<>())
+           return_value_policy<copy_const_reference>())
       .def("setClassName", &BehaviourDescription::setClassName)
       .def("getClassName", &BehaviourDescription::getClassName,
-           return_internal_reference<>())
+           return_value_policy<copy_const_reference>())
       .def("areModellingHypothesesDefined",
            &BehaviourDescription::areModellingHypothesesDefined)
       .def("isModellingHypothesisSupported",

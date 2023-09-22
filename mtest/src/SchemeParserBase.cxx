@@ -66,7 +66,8 @@ namespace mtest {
   void SchemeParserBase::openFile(const std::string& f) {
     this->file = f;
     this->treatCharAsString(true);
-    if (tfel::utilities::starts_with(f, "madnex:")) {
+    if (tfel::utilities::starts_with(f, "madnex:") ||
+        tfel::utilities::starts_with(f, "mdnx:")) {
 #ifdef MADNEX_MTEST_TEST_SUPPORT
       const auto path = decomposeMadnexPath(f);
       const auto test =

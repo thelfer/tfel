@@ -496,7 +496,8 @@ namespace mtest {
         }
         return "";
       }();
-      if (tfel::utilities::starts_with(i, "madnex:")) {
+      if (tfel::utilities::starts_with(i, "madnex:") ||
+          tfel::utilities::starts_with(i, "mdnx:")) {
         this->treatMadnexInputFile(i);
       } else {
         if ((ext == ".madnex") || (ext == ".mdnx") || (ext == ".edf")) {
@@ -574,7 +575,8 @@ namespace mtest {
 
   void MTestMain::treatMadnexInputFile(const std::string& i) {
 #ifdef MADNEX_MTEST_TEST_SUPPORT
-    if (tfel::utilities::starts_with(i, "madnex:")) {
+    if (tfel::utilities::starts_with(i, "madnex:") ||
+        tfel::utilities::starts_with(i, "mdnx:")) {
       const auto [f, m, b, t] = [&i] {
         const auto details = tfel::utilities::tokenize(i, ':', true);
         if (details.size() != 5u) {
