@@ -82,7 +82,7 @@ namespace mfront {
         c += "}\n";
         auto kid = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
-          c += khr->computeDerivatives("p", "-dseq_ds/(" + snf + ")", id,
+          c += khr->computeDerivatives("p" + id, "-dseq" + id + "_ds" + id + "/(" + snf + ")", id,
                                        std::to_string(kid));
           ++kid;
         }
