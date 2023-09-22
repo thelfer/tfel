@@ -69,7 +69,7 @@ namespace mfront {
                id + "*dR" + id + "_ddp" + id + ";\n";
           auto kid = decltype(khrs.size()){};
           for (const auto& khr : khrs) {
-            c += khr->computeDerivatives("p",
+            c += khr->computeDerivatives("p" + id,
                                          "(this->dt)*dvp" + id + "_dseqe" + id +
                                              "*dseq" + id + "_ds" + id,
                                          id, std::to_string(kid));
@@ -90,7 +90,7 @@ namespace mfront {
                                      this->sc->isNormalDeviatoric());
           auto kid = decltype(khrs.size()){};
           for (const auto& khr : khrs) {
-            c += khr->computeDerivatives("p",
+            c += khr->computeDerivatives("p" + id,
                                          "(this->dt)*dvp" + id + "_dseqe" + id +
                                              "*dseq" + id + "_ds" + id,
                                          id, std::to_string(kid));
