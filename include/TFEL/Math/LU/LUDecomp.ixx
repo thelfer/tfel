@@ -18,34 +18,37 @@
 
 namespace tfel::math {
 
-  template <bool use_exceptions>
+  template <bool use_exceptions, bool perfom_runtime_checks>
   template <typename MatrixType, typename PermutationType>
-  TFEL_HOST_DEVICE std::pair<bool, int> LUDecomp<use_exceptions>::exe(
+  TFEL_HOST_DEVICE std::pair<bool, int>
+  LUDecomp<use_exceptions, perfom_runtime_checks>::exe(
       MatrixType& m, PermutationType& p, const numeric_type<MatrixType> eps) {
     using size_type = index_type<MatrixType>;
     using real = numeric_type<MatrixType>;
     constexpr const auto c = real(1) / 10;
     const auto nr =  m.getIndexingPolicy().size(0);
-    const auto nc =  m.getIndexingPolicy().size(1);
-    if (nr != nc) {
-      if constexpr (use_exceptions) {
-        tfel::raise<LUMatrixNotSquare>();
-      } else {
-        return {false, 0};
+    if constexpr (perfom_runtime_checks) {
+      const auto nc = m.getIndexingPolicy().size(1);
+      if (nr != nc) {
+        if constexpr (use_exceptions) {
+          tfel::raise<LUMatrixNotSquare>();
+        } else {
+          return {false, 0};
+        }
       }
-    }
-    if (nr != p.size()) {
-      if constexpr (use_exceptions) {
-        tfel::raise<LUUnmatchedSize>();
-      } else {
-        return {false, 0};
+      if (nr != p.size()) {
+        if constexpr (use_exceptions) {
+          tfel::raise<LUUnmatchedSize>();
+        } else {
+          return {false, 0};
+        }
       }
-    }
-    if (nr == 0) {
-      if constexpr (use_exceptions) {
-        tfel::raise<LUInvalidMatrixSize>();
-      } else {
-        return {false, 0};
+      if (nr == 0) {
+        if constexpr (use_exceptions) {
+          tfel::raise<LUInvalidMatrixSize>();
+        } else {
+          return {false, 0};
+        }
       }
     }
     int d = 1;

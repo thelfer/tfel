@@ -32,7 +32,10 @@ namespace tfel::math {
    * \param N : dimension of the system
    * \param T : numerical type
    */
-  template <unsigned short N, typename T, bool use_exceptions>
+  template <unsigned short N,
+            typename T,
+            bool use_exceptions,
+            bool perform_runtime_checks>
   struct TinyMatrixSolveBase {
     /*!
      * \brief LU decompose the given matrix
@@ -85,8 +88,14 @@ namespace tfel::math {
    * \param N : dimension of the system
    * \param T : numerical type
    */
-  template <unsigned short N, typename T, bool use_exceptions = true>
-  struct TinyMatrixSolve : public TinyMatrixSolveBase<N, T, use_exceptions> {
+  template <unsigned short N,
+            typename T,
+            bool use_exceptions = true,
+            bool perform_runtime_checks = false>
+  struct TinyMatrixSolve : public TinyMatrixSolveBase<N,
+                                                      T,
+                                                      use_exceptions,
+                                                      perform_runtime_checks> {
     /*!
      * solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -95,7 +104,8 @@ namespace tfel::math {
      * \note the matrix m is overwritten during computations
      * \note the right member is overwritten by the solution
      */
-    template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
+    template <typename FixedSizeMatrixType,
+              typename FixedSizeVectorType>
     TFEL_HOST_DEVICE static std::enable_if_t<
         (implementsMatrixConcept<FixedSizeMatrixType>() &&
          implementsVectorConcept<FixedSizeVectorType>()),
@@ -122,9 +132,12 @@ namespace tfel::math {
    * solve a linear problem by direct invertion
    * \param T : numerical type
    */
-  template <typename T, bool use_exceptions>
-  struct TinyMatrixSolve<1u, T, use_exceptions>
-      : public TinyMatrixSolveBase<1u, T, use_exceptions> {
+  template <typename T, bool use_exceptions, bool perform_runtime_checks>
+  struct TinyMatrixSolve<1u, T, use_exceptions, perform_runtime_checks>
+      : public TinyMatrixSolveBase<1u,
+                                   T,
+                                   use_exceptions,
+                                   perform_runtime_checks> {
     /*!
      * solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -158,9 +171,12 @@ namespace tfel::math {
    * solve a linear problem by direct invertion
    * \param T : numerical type
    */
-  template <typename T, bool use_exceptions>
-  struct TinyMatrixSolve<2u, T, use_exceptions>
-      : public TinyMatrixSolveBase<2u, T, use_exceptions> {
+  template <typename T, bool use_exceptions, bool perform_runtime_checks>
+  struct TinyMatrixSolve<2u, T, use_exceptions, perform_runtime_checks>
+      : public TinyMatrixSolveBase<2u,
+                                   T,
+                                   use_exceptions,
+                                   perform_runtime_checks> {
     /*!
      * solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -194,9 +210,12 @@ namespace tfel::math {
    * solve a linear problem by direct invertion
    * \param T : numerical type
    */
-  template <typename T, bool use_exceptions>
-  struct TinyMatrixSolve<3u, T, use_exceptions>
-      : public TinyMatrixSolveBase<3u, T, use_exceptions> {
+  template <typename T, bool use_exceptions, bool perform_runtime_checks>
+  struct TinyMatrixSolve<3u, T, use_exceptions, perform_runtime_checks>
+      : public TinyMatrixSolveBase<3u,
+                                   T,
+                                   use_exceptions,
+                                   perform_runtime_checks> {
     /*!
      * \brief solve the linear system m.x = b
      * \param m   : matrix to be inverted

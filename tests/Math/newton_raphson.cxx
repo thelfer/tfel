@@ -109,7 +109,7 @@ struct NewtonRaphsonSolver3
 template<unsigned short N, typename NumericType>
 struct HeapAllocatedWorkspace{
   HeapAllocatedWorkspace()
-      : fzeros(N), zeros(N), delta_zeros(N), jacobian(N, N){};
+      : fzeros(N), zeros(N), delta_zeros(N), jacobian(N, N){}
   //! \brief residual vector
   tfel::math::vector<NumericType> fzeros;
   //! \brief current estimate of the unknowns
@@ -160,7 +160,7 @@ struct NewtonRaphsonSolver4
 template<unsigned short N, typename NumericType>
 struct ExternallyAllocatedWorkspace{
   ExternallyAllocatedWorkspace(NumericType* const v)
-      : fzeros(v), zeros(v + N), delta_zeros(v + 2 * N), jacobian(v + 3 * N){};
+      : fzeros(v), zeros(v + N), delta_zeros(v + 2 * N), jacobian(v + 3 * N){}
   //! \brief residual vector
   tfel::math::View<tfel::math::tvector<N, NumericType>> fzeros;
   //! \brief current estimate of the unknowns
