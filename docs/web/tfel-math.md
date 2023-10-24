@@ -847,6 +847,16 @@ example inherits from `TinyNewtonRaphson` `Solver<2u, double,
 NewtonRaphsonSolver>` which itself inherits from
 `TinyNonLinearSolverBase<2u, double, NewtonRaphsonSolver>`.
 
+> **Note**
+>
+> For the sake of clarity, one template parameter of the `TinyNewtonRaphsonSolver`
+> and `TinyNonLinearSolverBase` class have been omitted.
+>
+> This template parameter describes a data structure containing the
+> so-called workspace of the solver, i.e. all the data members
+> required by the solver. The default value of this template parameter
+> allocates those data members on the stack.
+
 While a bit contrieved, this design ensures that all algorithms share
 the same customization points, a constraint which is not easy to enforce
 when relying on CRTP (compared to standard approach based on virtual

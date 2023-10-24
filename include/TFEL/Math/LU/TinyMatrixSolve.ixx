@@ -23,13 +23,22 @@
 namespace tfel::math {
 
   template <unsigned short N, typename T, bool use_exceptions>
-  bool TinyMatrixSolveBase<N, T, use_exceptions>::back_substitute(
-      const tmatrix<N, N, T>& m,
+  template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
+  std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
+                    implementsVectorConcept<FixedSizeVectorType>()),
+                   bool>
+  TinyMatrixSolveBase<N, T, use_exceptions>::back_substitute(
+      const FixedSizeMatrixType& m,
       const TinyPermutation<N>& p,
-      tvector<N, T>& b,
+      FixedSizeVectorType& b,
       const T eps) {
     using size_type = index_type<tmatrix<N, N, T>>;
-    auto x = b;
+    static_assert(m.getIndexingPolicy().size(0) == N,
+                  "invalid number of rows");
+    static_assert(m.getIndexingPolicy().size(1) == N,
+                  "invalid number of columns");
+    static_assert(b.size() == N, "invalid size");
+    tvector<N, T> x = b;
     if (p.isIdentity()) {
       for (size_type i = 0; i != N; ++i) {
         auto v = T(0);
@@ -174,16 +183,27 @@ namespace tfel::math {
   }  // end of TinyMatrixSolve<N,T>::exe
 
   template <unsigned short N, typename T, bool use_exceptions>
-  bool TinyMatrixSolveBase<N, T, use_exceptions>::decomp(tmatrix<N, N, T>& m,
-                                                         TinyPermutation<N>& p,
-                                                         const T eps) {
+  template <typename FixedSizeMatrixType>
+  std::enable_if_t<implementsMatrixConcept<FixedSizeMatrixType>(), bool>
+  TinyMatrixSolveBase<N, T, use_exceptions>::decomp(FixedSizeMatrixType& m,
+                                                    TinyPermutation<N>& p,
+                                                    const T eps) {
+    static_assert(m.getIndexingPolicy().size(0) == N, "invalid number of rows");
+    static_assert(m.getIndexingPolicy().size(1) == N, "invalid number of columns");
     return LUDecomp<false>::exe(m, p, eps).first;
   }  // end of TinyMatrixSolve<N,T>::exe
 
   template <unsigned short N, typename T, bool use_exceptions>
-  bool TinyMatrixSolve<N, T, use_exceptions>::exe(tmatrix<N, N, T>& m,
-                                                  tvector<N, T>& b,
-                                                  const T eps) {
+  template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
+  std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
+                    implementsVectorConcept<FixedSizeVectorType>()),
+                   bool>
+  TinyMatrixSolve<N, T, use_exceptions>::exe(FixedSizeMatrixType& m,
+                                             FixedSizeVectorType& b,
+                                             const T eps) {
+    static_assert(m.getIndexingPolicy().size(0) == N, "invalid number of rows");
+    static_assert(m.getIndexingPolicy().size(1) == N, "invalid number of columns");
+    static_assert(b.size() == N, "invalid size");
     TinyPermutation<N> p;
     if (!TinyMatrixSolve<N, T, use_exceptions>::decomp(m, p, eps)) {
       return false;
@@ -205,9 +225,16 @@ namespace tfel::math {
 
   // Partial specialisation for 1*1 matrix
   template <typename T, bool use_exceptions>
-  bool TinyMatrixSolve<1u, T, use_exceptions>::exe(const tmatrix<1u, 1u, T>& m,
-                                                   tvector<1u, T>& b,
-                                                   const T eps) {
+  template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
+  std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
+                    implementsVectorConcept<FixedSizeVectorType>()),
+                   bool>
+  TinyMatrixSolve<1u, T, use_exceptions>::exe(const FixedSizeMatrixType& m,
+                                              FixedSizeVectorType& b,
+                                              const T eps) {
+    static_assert(m.getIndexingPolicy().size(0) == 1u, "invalid number of rows");
+    static_assert(m.getIndexingPolicy().size(1) == 1u, "invalid number of columns");
+    static_assert(b.size() == 1u, "invalid size");
     if (tfel::math::abs(m(0, 0)) < eps) {
       if constexpr (use_exceptions) {
         tfel::raise<LUNullDeterminant>();
@@ -237,9 +264,16 @@ namespace tfel::math {
 
   // Partial specialisation for 2*2 matrix
   template <typename T, bool use_exceptions>
-  bool TinyMatrixSolve<2u, T, use_exceptions>::exe(const tmatrix<2u, 2u, T>& m,
-                                                   tvector<2u, T>& b,
-                                                   const T eps) {
+  template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
+  std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
+                    implementsVectorConcept<FixedSizeVectorType>()),
+                   bool>
+  TinyMatrixSolve<2u, T, use_exceptions>::exe(const FixedSizeMatrixType& m,
+                                              FixedSizeVectorType& b,
+                                              const T eps) {
+    static_assert(m.getIndexingPolicy().size(0) == 2u, "invalid number of columns");
+    static_assert(m.getIndexingPolicy().size(1) == 2u, "invalid number of columns");
+    static_assert(b.size() == 2u, "invalid size");
     const auto det = m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0);
     if (tfel::math::abs(det) < eps) {
       if constexpr (use_exceptions) {
@@ -279,9 +313,16 @@ namespace tfel::math {
 
   // Partial specialisation for 3*3 matrix
   template <typename T, bool use_exceptions>
-  bool TinyMatrixSolve<3u, T, use_exceptions>::exe(const tmatrix<3u, 3u, T>& m,
-                                                   tvector<3u, T>& b,
-                                                   const T eps) {
+  template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
+  std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
+                    implementsVectorConcept<FixedSizeVectorType>()),
+                   bool>
+  TinyMatrixSolve<3u, T, use_exceptions>::exe(const FixedSizeMatrixType& m,
+                                              FixedSizeVectorType& b,
+                                              const T eps) {
+    static_assert(m.getIndexingPolicy().size(0) == 3u, "invalid number of columns");
+    static_assert(m.getIndexingPolicy().size(1) == 3u, "invalid number of columns");
+    static_assert(b.size() == 3u, "invalid size");
     const auto det = m(0, 0) * (m(1, 1) * m(2, 2) - m(1, 2) * m(2, 1)) -
                      m(0, 1) * (m(1, 0) * m(2, 2) - m(1, 2) * m(2, 0)) +
                      m(0, 2) * (m(1, 0) * m(2, 1) - m(1, 1) * m(2, 0));

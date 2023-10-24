@@ -23,11 +23,26 @@
 namespace tfel::math {
 
   /*!
+   * \brief class allocating on the stack a workspace usable by the
+   * `TinyNewtonRaphsonSolver` class.
+   * \tparam N: size of the system of non linear equations.
+   * \tparam NumericType: numeric type.
+   */
+  template <unsigned short N, typename NumericType>
+  struct StackAllocatedTinyNewtonRaphsonSolverWorkspace
+      : public StackAllocatedTinyNonLinearSolverWorkspace<N, NumericType> {
+    //! \brief jacobian matrix
+    tmatrix<N, N, NumericType> jacobian;
+  };
+
+  /*!
    * \brief A class based on the curiously recurring template pattern (CRTP)
    * to solve system of non linear equations using the Newton-Raphson algorithm.
    * \tparam N: size of the system of non linear equations.
    * \tparam NumericType: numeric type.
    * \tparam Child: base class.
+   * \tparam ExternalWorkSpace: class containing data members used by the
+   * solver.
    *
    * By default, the `Child` class must:
    *
@@ -39,15 +54,22 @@ namespace tfel::math {
    * the data member `jacobian` using the current estimate of the solution, i.e.
    * the data member `zeros`.
    */
-  template <unsigned short N, typename NumericType, typename Child>
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename> typename ExternalWorkSpace =
+                StackAllocatedTinyNewtonRaphsonSolverWorkspace>
   struct TinyNewtonRaphsonSolver
-      : TinyNonLinearSolverBase<N, NumericType, Child> {
+      : TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace> {
     //
     static_assert(N != 0, "invalid size");
     static_assert(std::is_floating_point_v<NumericType>,
                   "invalid numeric type");
     //! \brief default constructor
     TinyNewtonRaphsonSolver() = default;
+    //! \brief constructor
+    template <typename... ExternalWorkSpaceArguments>
+    TinyNewtonRaphsonSolver(ExternalWorkSpaceArguments&&...);
     //! \brief default constructor
     TinyNewtonRaphsonSolver(TinyNewtonRaphsonSolver&) noexcept = default;
     //! \brief default constructor
@@ -62,10 +84,6 @@ namespace tfel::math {
     TFEL_HOST_DEVICE bool computeNewCorrection();
     //! \brief destructor
     ~TinyNewtonRaphsonSolver() noexcept = default;
-
-   protected:
-    //! \brief jacobian matrix
-    tmatrix<N, N, NumericType> jacobian;
   };
 
 }  // end of namespace tfel::math

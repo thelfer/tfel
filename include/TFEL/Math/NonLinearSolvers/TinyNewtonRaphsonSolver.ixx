@@ -16,8 +16,25 @@
 
 namespace tfel::math {
 
-  template <unsigned short N, typename NumericType, typename Child>
-  bool TinyNewtonRaphsonSolver<N, NumericType, Child>::computeNewCorrection() {
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
+  template <typename... ExternalWorkSpaceArguments>
+  TinyNewtonRaphsonSolver<N, NumericType, Child, ExternalWorkSpace>::
+      TinyNewtonRaphsonSolver(ExternalWorkSpaceArguments&&... args)
+      : TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>(
+            std::forward<ExternalWorkSpaceArguments>(args)...) {
+  }  // end of TinyNewtonRaphsonSolver
+
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
+  bool TinyNewtonRaphsonSolver<N, NumericType, Child, ExternalWorkSpace>::
+      computeNewCorrection() {
     auto& child = static_cast<Child&>(*this);
     child.updateOrCheckJacobian();
     if (!child.solveLinearSystem(this->jacobian, this->fzeros)) {

@@ -151,6 +151,40 @@ namespace tfel::math {
   }  // end of GenericRuntimeArray<Child, ArrayPolicy>
 
   template <typename Child, typename ArrayPolicy>
+  template <typename ValueType2>
+  std::enable_if_t<
+      isAssignableTo<
+          BinaryOperationResult<
+              ValueType2,
+              typename GenericRuntimeArray<Child, ArrayPolicy>::value_type,
+              OpMult>,
+          typename GenericRuntimeArray<Child, ArrayPolicy>::value_type>(),
+      Child&>
+  GenericRuntimeArray<Child, ArrayPolicy>::operator*=(
+      const ValueType2& v) noexcept {
+    auto& child = static_cast<Child&>(*this);
+    child.multiplyByScalar(v);
+    return child;
+  }
+  //
+  template <typename Child, typename ArrayPolicy>
+  template <typename ValueType2>
+  std::enable_if_t<
+      isAssignableTo<
+          BinaryOperationResult<
+              typename GenericRuntimeArray<Child, ArrayPolicy>::value_type,
+              ValueType2,
+              OpDiv>,
+          typename GenericRuntimeArray<Child, ArrayPolicy>::value_type>(),
+      Child&>
+  GenericRuntimeArray<Child, ArrayPolicy>::operator/=(
+      const ValueType2& v) noexcept {
+    auto& child = static_cast<Child&>(*this);
+    child.multiplyByScalar(1 / v);
+    return child;
+  }  // end of operator /=
+
+  template <typename Child, typename ArrayPolicy>
   typename GenericRuntimeArray<Child, ArrayPolicy>::pointer
   GenericRuntimeArray<Child, ArrayPolicy>::data() noexcept {
     return this->data_values.data();

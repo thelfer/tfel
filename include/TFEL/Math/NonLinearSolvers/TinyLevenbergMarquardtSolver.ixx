@@ -18,8 +18,12 @@
 
 namespace tfel::math {
 
-  template <unsigned short N, typename NumericType, typename Child>
-  bool TinyLevenbergMarquardtSolver<N, NumericType, Child>::
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
+  bool TinyLevenbergMarquardtSolver<N, NumericType, Child, ExternalWorkSpace>::
       computeLevenbergMarquardtCorrection() {
     auto& child = static_cast<Child&>(*this);
     // matrix containing tJJ+levmar_mu*I
@@ -48,9 +52,13 @@ namespace tfel::math {
     return true;
   }  // end of computeLevenbergMarquardtCorrection
 
-  template <unsigned short N, typename NumericType, typename Child>
-  bool
-  TinyLevenbergMarquardtSolver<N, NumericType, Child>::computeNewCorrection() {
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
+  bool TinyLevenbergMarquardtSolver<N, NumericType, Child, ExternalWorkSpace>::
+      computeNewCorrection() {
     auto& child = static_cast<Child&>(*this);
     this->levmar_error = norm(this->fzeros);
     if (!this->levmar_first) {

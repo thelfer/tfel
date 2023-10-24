@@ -25,33 +25,34 @@ namespace tfel::math {
     using size_type = index_type<MatrixType>;
     using real = numeric_type<MatrixType>;
     constexpr const auto c = real(1) / 10;
-    if (m.getNbRows() != m.getNbCols()) {
+    const auto nr =  m.getIndexingPolicy().size(0);
+    const auto nc =  m.getIndexingPolicy().size(1);
+    if (nr != nc) {
       if constexpr (use_exceptions) {
         tfel::raise<LUMatrixNotSquare>();
       } else {
         return {false, 0};
       }
     }
-    if (m.getNbRows() != p.size()) {
+    if (nr != p.size()) {
       if constexpr (use_exceptions) {
         tfel::raise<LUUnmatchedSize>();
       } else {
         return {false, 0};
       }
     }
-    if (m.getNbRows() == 0) {
+    if (nr == 0) {
       if constexpr (use_exceptions) {
         tfel::raise<LUInvalidMatrixSize>();
       } else {
         return {false, 0};
       }
     }
-    const size_type n = m.getNbRows();
     int d = 1;
-    for (size_type i = 0; i != n; ++i) {
+    for (size_type i = 0; i != nr; ++i) {
       // L update (column)
       if (p.isIdentity()) {
-        for (size_type j = i; j != n; ++j) {
+        for (size_type j = i; j != nr; ++j) {
           real v = real(0);
           for (size_type k = 0; k != i; ++k) {
             v += m(j, k) * m(k, i);
@@ -59,7 +60,7 @@ namespace tfel::math {
           m(j, i) -= v;
         }
       } else {
-        for (size_type j = i; j != n; ++j) {
+        for (size_type j = i; j != nr; ++j) {
           size_type pj = p(j);
           real v = real(0);
           for (size_type k = 0; k != i; ++k) {
@@ -72,7 +73,7 @@ namespace tfel::math {
       size_type piv = i;
       if (p.isIdentity()) {
         auto cmax = tfel::math::abs(m(i, i));
-        for (size_type j = static_cast<size_type>(i + 1u); j != n; ++j) {
+        for (size_type j = static_cast<size_type>(i + 1u); j != nr; ++j) {
           if (tfel::math::abs(m(j, i)) > cmax) {
             cmax = tfel::math::abs(m(j, i));
             piv = j;
@@ -87,7 +88,7 @@ namespace tfel::math {
         }
       } else {
         auto cmax = tfel::math::abs(m(p(i), i));
-        for (size_type j = static_cast<size_type>(i + 1u); j != n; ++j) {
+        for (size_type j = static_cast<size_type>(i + 1u); j != nr; ++j) {
           size_type pj = p(j);
           if (tfel::math::abs(m(pj, i)) > cmax) {
             cmax = tfel::math::abs(m(pj, i));
@@ -111,7 +112,7 @@ namespace tfel::math {
       }
       if (p.isIdentity()) {
         auto j = i;
-        for (++j; j != n; ++j) {
+        for (++j; j != nr; ++j) {
           auto v = real(0);
           for (size_type k = 0; k != i; ++k) {
             v += m(i, k) * m(k, j);
@@ -123,7 +124,7 @@ namespace tfel::math {
         size_type pi = p(i);
         // U update
         auto j = i;
-        for (++j; j != n; ++j) {
+        for (++j; j != nr; ++j) {
           for (size_type k = 0; k != i; ++k) {
             m(pi, j) -= m(pi, k) * m(p(k), j);
           }

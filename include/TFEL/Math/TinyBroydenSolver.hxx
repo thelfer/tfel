@@ -21,11 +21,28 @@
 namespace tfel::math {
 
   /*!
+   * \brief class allocating on the stack a workspace usable by the
+   * `TinyBroydenSolver` class.
+   * \tparam N: size of the system of non linear equations.
+   * \tparam NumericType: numeric type.
+   */
+  template <unsigned short N, typename NumericType>
+  struct StackAllocatedTinyBroydenSolverWorkspace
+      : public StackAllocatedTinyNonLinearSolverWorkspace<N, NumericType> {
+    //! \brief residual of the previous iterations
+    tvector<N, NumericType> fzeros_1;
+    //! \brief jacobian matrix
+    tmatrix<N, N, NumericType> jacobian;
+  };
+
+  /*!
    * \brief A class based on the curiously recurring template pattern (CRTP)
    * to solve system of non linear equations using the Broyden algorithm.
    * \tparam N: size of the system of non linear equations.
    * \tparam NumericType: numeric type.
    * \tparam Child: base class.
+   * \tparam ExternalWorkSpace: class containing data members used by the
+   * solver.
    *
    * By default, the `Child` class must:
    *
@@ -37,8 +54,13 @@ namespace tfel::math {
    * the residual, i.e. the data member `fzeros` using the current estimate of
    * the solution, i.e. the data member `zeros`.
    */
-  template <unsigned short N, typename NumericType, typename Child>
-  struct TinyBroydenSolver : TinyNonLinearSolverBase<N, NumericType, Child> {
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename> typename ExternalWorkSpace =
+                StackAllocatedTinyBroydenSolverWorkspace>
+  struct TinyBroydenSolver
+      : TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace> {
     //
     static_assert(N != 0, "invalid size");
     static_assert(std::is_floating_point_v<NumericType>,
@@ -59,12 +81,6 @@ namespace tfel::math {
     TFEL_HOST_DEVICE void updateOrCheckJacobian();
     //! \brief compute a new correction to the unknowns
     TFEL_HOST_DEVICE bool computeNewCorrection();
-
-   protected:
-    //! \brief residual of the previous iterations
-    tvector<N, NumericType> fzeros_1;
-    //! \brief jacobian matrix
-    tmatrix<N, N, NumericType> jacobian;
   };
 
 }  // end of namespace tfel::math

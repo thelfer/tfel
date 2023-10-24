@@ -21,11 +21,28 @@
 namespace tfel::math {
 
   /*!
+   * \brief class allocating on the stack a workspace usable by the
+   * `TinyLevenbergMarquardtSolver` class.
+   * \tparam N: size of the system of non linear equations.
+   * \tparam NumericType: numeric type.
+   */
+  template <unsigned short N, typename NumericType>
+  struct StackAllocatedTinyLevenbergMarquardtSolverWorkspace
+      : public StackAllocatedTinyNonLinearSolverWorkspace<N, NumericType> {
+    //! \brief jacobian matrix
+    tmatrix<N, N, NumericType> jacobian;
+    tmatrix<N, N, NumericType> levmar_jacobian_1;
+    tvector<N, NumericType> levmar_fzeros_1;
+  }; // end of StackAllocatedTinyLevenbergMarquardtSolverWorkspace
+
+  /*!
    * \brief A class based on the curiously recurring template pattern (CRTP)
    * to solve system of non linear equations using the Newton-Raphson algorithm.
    * \tparam N: size of the system of non linear equations.
    * \tparam NumericType: numeric type.
    * \tparam Child: base class.
+   * \tparam ExternalWorkSpace: class containing data members used by the
+   * solver.
    *
    * By default, the `Child` class must:
    *
@@ -37,9 +54,13 @@ namespace tfel::math {
    * the data member `jacobian` using the current estimate of the solution, i.e.
    * the data member `zeros`.
    */
-  template <unsigned short N, typename NumericType, typename Child>
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename> typename ExternalWorkSpace =
+                StackAllocatedTinyLevenbergMarquardtSolverWorkspace>
   struct TinyLevenbergMarquardtSolver
-      : TinyNonLinearSolverBase<N, NumericType, Child> {
+      : TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace> {
     //
     static_assert(N != 0, "invalid size");
     static_assert(std::is_floating_point_v<NumericType>,
@@ -82,8 +103,6 @@ namespace tfel::math {
     TFEL_HOST_DEVICE bool computeLevenbergMarquardtCorrection();
 
    protected:
-    //! \brief jacobian matrix
-    tmatrix<N, N, NumericType> jacobian;
     //! \brief
     NumericType levmar_mu0;
     NumericType levmar_p0;
@@ -92,8 +111,6 @@ namespace tfel::math {
     NumericType levmar_m;
 
    private:
-    tmatrix<N, N, NumericType> levmar_jacobian_1;
-    tvector<N, NumericType> levmar_fzeros_1;
     NumericType levmar_error;
     NumericType levmar_error_1;
     NumericType levmar_mu;

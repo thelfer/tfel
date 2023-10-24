@@ -40,10 +40,12 @@ namespace tfel::math {
      * \param p   : permutation vector
      * \param eps : numerical parameter to detect null pivot
      */
-    TFEL_HOST_DEVICE static bool decomp(
-        tmatrix<N, N, T>&,
-        TinyPermutation<N>&,
-        const T = 100 * std::numeric_limits<T>::min());
+    template <typename FixedSizeMatrixType>
+    TFEL_HOST_DEVICE static std::
+        enable_if_t<implementsMatrixConcept<FixedSizeMatrixType>(), bool>
+        decomp(FixedSizeMatrixType&,
+               TinyPermutation<N>&,
+               const T = 100 * std::numeric_limits<T>::min());
 
     /*!
      * \brief solve the linear system m.x = b once the matrix has been
@@ -53,11 +55,15 @@ namespace tfel::math {
      * \param b   : right member
      * \param eps : numerical parameter to detect null pivot
      */
-    TFEL_HOST_DEVICE static bool back_substitute(
-        const tmatrix<N, N, T>&,
-        const TinyPermutation<N>&,
-        tvector<N, T>&,
-        const T = 100 * std::numeric_limits<T>::min());
+    template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
+    TFEL_HOST_DEVICE static std::enable_if_t<
+        (implementsMatrixConcept<FixedSizeMatrixType>() &&
+         implementsVectorConcept<FixedSizeVectorType>()),
+        bool>
+    back_substitute(const FixedSizeMatrixType&,
+                    const TinyPermutation<N>&,
+                    FixedSizeVectorType&,
+                    const T = 100 * std::numeric_limits<T>::min());
     /*!
      * \brief solve the linear system m.x = b once the matrix has been
      * decomposed
@@ -89,10 +95,14 @@ namespace tfel::math {
      * \note the matrix m is overwritten during computations
      * \note the right member is overwritten by the solution
      */
-    TFEL_HOST_DEVICE static bool exe(tmatrix<N, N, T>& m,
-                                     tvector<N, T>&,
-                                     const T = 100 *
-                                               std::numeric_limits<T>::min());
+    template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
+    TFEL_HOST_DEVICE static std::enable_if_t<
+        (implementsMatrixConcept<FixedSizeMatrixType>() &&
+         implementsVectorConcept<FixedSizeVectorType>()),
+        bool>
+    exe(FixedSizeMatrixType&,
+        FixedSizeVectorType&,
+        const T = 100 * std::numeric_limits<T>::min());
     /*!
      * solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -122,10 +132,14 @@ namespace tfel::math {
      * \param eps : numerical paramater to detect null pivot
      * \note the right member is overwritten by the solution
      */
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 bool exe(
-        const tmatrix<1u, 1u, T>& m,
-        tvector<1u, T>&,
-        const T = 100 * std::numeric_limits<T>::min());
+    template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2
+        std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
+                          implementsVectorConcept<FixedSizeVectorType>()),
+                         bool>
+        exe(const FixedSizeMatrixType&,
+            FixedSizeVectorType&,
+            const T = 100 * std::numeric_limits<T>::min());
     /*!
      * solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -154,10 +168,14 @@ namespace tfel::math {
      * \param eps : numerical paramater to detect null pivot
      * \note the right member is overwritten by the solution
      */
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 bool exe(
-        const tmatrix<2u, 2u, T>& m,
-        tvector<2u, T>&,
-        const T = 100 * std::numeric_limits<T>::min());
+    template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2
+        std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
+                          implementsVectorConcept<FixedSizeVectorType>()),
+                         bool>
+        exe(const FixedSizeMatrixType& m,
+            FixedSizeVectorType&,
+            const T = 100 * std::numeric_limits<T>::min());
     /*!
      * solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -187,10 +205,14 @@ namespace tfel::math {
      * \note the right member is overwritten by the solution
      * \note the matrix is destroyed
      */
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 bool exe(
-        const tmatrix<3u, 3u, T>& m,
-        tvector<3u, T>&,
-        const T = 100 * std::numeric_limits<T>::min());
+    template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
+    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2
+        std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
+                          implementsVectorConcept<FixedSizeVectorType>()),
+                         bool>
+        exe(const FixedSizeMatrixType&,
+            FixedSizeVectorType&,
+            const T = 100 * std::numeric_limits<T>::min());
     /*!
      * \brief solve the linear system m.x = b
      * \param m   : matrix to be inverted
