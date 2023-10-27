@@ -348,6 +348,10 @@
 #endif /* __CUDA_ARCH__ */
 #endif /* __CUDACC__ */
 
+#if defined(__clang__) && defined(__CUDA__) && defined(__CUDA_ARCH__)
+#define TFEL_NO_REPORT_CONTRACT_VIOLATION 1
+#endif
+
 #ifdef SYCL_LANGUAGE_VERSION
 // FIXME: as June 2023, we were not able to use __SYCL_DEVICE_ONLY__ of OpenSycl
 // appropriately. #ifdef __SYCL_DEVICE_ONLY__

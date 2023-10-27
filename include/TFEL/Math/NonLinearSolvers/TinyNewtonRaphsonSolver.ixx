@@ -22,6 +22,7 @@ namespace tfel::math {
             template <unsigned short, typename>
             typename ExternalWorkSpace>
   template <typename... ExternalWorkSpaceArguments>
+  TFEL_HOST_DEVICE
   TinyNewtonRaphsonSolver<N, NumericType, Child, ExternalWorkSpace>::
       TinyNewtonRaphsonSolver(ExternalWorkSpaceArguments&&... args)
       : TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>(
@@ -33,7 +34,8 @@ namespace tfel::math {
             typename Child,
             template <unsigned short, typename>
             typename ExternalWorkSpace>
-  bool TinyNewtonRaphsonSolver<N, NumericType, Child, ExternalWorkSpace>::
+  TFEL_HOST_DEVICE bool
+  TinyNewtonRaphsonSolver<N, NumericType, Child, ExternalWorkSpace>::
       computeNewCorrection() {
     auto& child = static_cast<Child&>(*this);
     child.updateOrCheckJacobian();

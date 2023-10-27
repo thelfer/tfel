@@ -27,14 +27,15 @@ namespace tfel::math {
             bool use_exceptions,
             bool perfom_runtime_checks>
   template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
-  std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
-                    implementsVectorConcept<FixedSizeVectorType>()),
-                   bool>
-  TinyMatrixSolveBase<N, T, use_exceptions, perfom_runtime_checks>::
-      back_substitute(const FixedSizeMatrixType& m,
-                      const TinyPermutation<N>& p,
-                      FixedSizeVectorType& b,
-                      const T eps) {
+  TFEL_HOST_DEVICE
+      std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
+                        implementsVectorConcept<FixedSizeVectorType>()),
+                       bool>
+      TinyMatrixSolveBase<N, T, use_exceptions, perfom_runtime_checks>::
+          back_substitute(const FixedSizeMatrixType& m,
+                          const TinyPermutation<N>& p,
+                          FixedSizeVectorType& b,
+                          const T eps) {
     using size_type = index_type<tmatrix<N, N, T>>;
     if constexpr (perfom_runtime_checks) {
       if (m.getIndexingPolicy().size(0) != N) {
@@ -109,7 +110,8 @@ namespace tfel::math {
             bool use_exceptions,
             bool perfom_runtime_checks>
   template <unsigned short M>
-  bool TinyMatrixSolveBase<N, T, use_exceptions, perfom_runtime_checks>::
+  TFEL_HOST_DEVICE bool
+  TinyMatrixSolveBase<N, T, use_exceptions, perfom_runtime_checks>::
       back_substitute(const tmatrix<N, N, T>& m,
                       const TinyPermutation<N>& p,
                       tfel::math::tmatrix<N, M, T>& b,
@@ -199,9 +201,10 @@ namespace tfel::math {
             bool use_exceptions,
             bool perfom_runtime_checks>
   template <typename FixedSizeMatrixType>
-  std::enable_if_t<implementsMatrixConcept<FixedSizeMatrixType>(), bool>
-  TinyMatrixSolveBase<N, T, use_exceptions, perfom_runtime_checks>::decomp(
-      FixedSizeMatrixType& m, TinyPermutation<N>& p, const T eps) {
+  TFEL_HOST_DEVICE
+      std::enable_if_t<implementsMatrixConcept<FixedSizeMatrixType>(), bool>
+      TinyMatrixSolveBase<N, T, use_exceptions, perfom_runtime_checks>::decomp(
+          FixedSizeMatrixType& m, TinyPermutation<N>& p, const T eps) {
     if constexpr (perfom_runtime_checks) {
       if (m.getIndexingPolicy().size(0) != N) {
         return false;
@@ -218,11 +221,12 @@ namespace tfel::math {
             bool use_exceptions,
             bool perfom_runtime_checks>
   template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
-  std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
-                    implementsVectorConcept<FixedSizeVectorType>()),
-                   bool>
-  TinyMatrixSolve<N, T, use_exceptions, perfom_runtime_checks>::exe(
-      FixedSizeMatrixType& m, FixedSizeVectorType& b, const T eps) {
+  TFEL_HOST_DEVICE
+      std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
+                        implementsVectorConcept<FixedSizeVectorType>()),
+                       bool>
+      TinyMatrixSolve<N, T, use_exceptions, perfom_runtime_checks>::exe(
+          FixedSizeMatrixType& m, FixedSizeVectorType& b, const T eps) {
     if constexpr (perfom_runtime_checks) {
       if (m.getIndexingPolicy().size(0) != N) {
         return false;
@@ -249,7 +253,8 @@ namespace tfel::math {
             bool use_exceptions,
             bool perfom_runtime_checks>
   template <unsigned short M>
-  bool TinyMatrixSolve<N, T, use_exceptions, perfom_runtime_checks>::exe(
+  TFEL_HOST_DEVICE bool
+  TinyMatrixSolve<N, T, use_exceptions, perfom_runtime_checks>::exe(
       tmatrix<N, N, T>& m, tmatrix<N, M, T>& b, const T eps) {
     TinyPermutation<N> p;
     if (!TinyMatrixSolve<N, T, use_exceptions, perfom_runtime_checks>::decomp(
@@ -264,11 +269,12 @@ namespace tfel::math {
   // Partial specialisation for 1*1 matrix
   template <typename T, bool use_exceptions, bool perfom_runtime_checks>
   template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
-  std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
-                    implementsVectorConcept<FixedSizeVectorType>()),
-                   bool>
-  TinyMatrixSolve<1u, T, use_exceptions, perfom_runtime_checks>::exe(
-      const FixedSizeMatrixType& m, FixedSizeVectorType& b, const T eps) {
+  TFEL_HOST_DEVICE
+      std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
+                        implementsVectorConcept<FixedSizeVectorType>()),
+                       bool>
+      TinyMatrixSolve<1u, T, use_exceptions, perfom_runtime_checks>::exe(
+          const FixedSizeMatrixType& m, FixedSizeVectorType& b, const T eps) {
     if constexpr (perfom_runtime_checks) {
       if (m.getIndexingPolicy().size(0) != 1u) {
         return false;
@@ -293,7 +299,8 @@ namespace tfel::math {
 
   template <typename T, bool use_exceptions, bool perfom_runtime_checks>
   template <unsigned short M>
-  bool TinyMatrixSolve<1u, T, use_exceptions, perfom_runtime_checks>::exe(
+  TFEL_HOST_DEVICE bool
+  TinyMatrixSolve<1u, T, use_exceptions, perfom_runtime_checks>::exe(
       const tmatrix<1u, 1u, T>& m, tmatrix<1u, M, T>& b, const T eps) {
     if (tfel::math::abs(m(0, 0)) < eps) {
       if constexpr (use_exceptions) {
@@ -309,11 +316,12 @@ namespace tfel::math {
   // Partial specialisation for 2*2 matrix
   template <typename T, bool use_exceptions, bool perfom_runtime_checks>
   template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
-  std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
-                    implementsVectorConcept<FixedSizeVectorType>()),
-                   bool>
-  TinyMatrixSolve<2u, T, use_exceptions, perfom_runtime_checks>::exe(
-      const FixedSizeMatrixType& m, FixedSizeVectorType& b, const T eps) {
+  TFEL_HOST_DEVICE
+      std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
+                        implementsVectorConcept<FixedSizeVectorType>()),
+                       bool>
+      TinyMatrixSolve<2u, T, use_exceptions, perfom_runtime_checks>::exe(
+          const FixedSizeMatrixType& m, FixedSizeVectorType& b, const T eps) {
     if constexpr (perfom_runtime_checks) {
       if (m.getIndexingPolicy().size(0) != 2u) {
         return false;
@@ -342,7 +350,8 @@ namespace tfel::math {
 
   template <typename T, bool use_exceptions, bool perfom_runtime_checks>
   template <unsigned short M>
-  bool TinyMatrixSolve<2u, T, use_exceptions, perfom_runtime_checks>::exe(
+  TFEL_HOST_DEVICE bool
+  TinyMatrixSolve<2u, T, use_exceptions, perfom_runtime_checks>::exe(
       const tmatrix<2u, 2u, T>& m, tmatrix<2u, M, T>& b, const T eps) {
     const auto det = m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0);
     if (tfel::math::abs(det) < eps) {
@@ -364,11 +373,12 @@ namespace tfel::math {
   // Partial specialisation for 3*3 matrix
   template <typename T, bool use_exceptions, bool perfom_runtime_checks>
   template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
-  std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
-                    implementsVectorConcept<FixedSizeVectorType>()),
-                   bool>
-  TinyMatrixSolve<3u, T, use_exceptions, perfom_runtime_checks>::exe(
-      const FixedSizeMatrixType& m, FixedSizeVectorType& b, const T eps) {
+  TFEL_HOST_DEVICE
+      std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
+                        implementsVectorConcept<FixedSizeVectorType>()),
+                       bool>
+      TinyMatrixSolve<3u, T, use_exceptions, perfom_runtime_checks>::exe(
+          const FixedSizeMatrixType& m, FixedSizeVectorType& b, const T eps) {
     if constexpr (perfom_runtime_checks) {
       if (m.getIndexingPolicy().size(0) != 3u) {
         return false;
@@ -410,7 +420,8 @@ namespace tfel::math {
 
   template <typename T, bool use_exceptions, bool perfom_runtime_checks>
   template <unsigned short M>
-  bool TinyMatrixSolve<3u, T, use_exceptions, perfom_runtime_checks>::exe(
+  TFEL_HOST_DEVICE bool
+  TinyMatrixSolve<3u, T, use_exceptions, perfom_runtime_checks>::exe(
       const tmatrix<3u, 3u, T>& m, tmatrix<3u, M, T>& b, const T eps) {
     const auto det = m(0, 0) * (m(1, 1) * m(2, 2) - m(1, 2) * m(2, 1)) -
                      m(0, 1) * (m(1, 0) * m(2, 2) - m(1, 2) * m(2, 0)) +

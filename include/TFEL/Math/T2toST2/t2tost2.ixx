@@ -28,35 +28,37 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <typename TensorType>
-  std::enable_if_t<implementsTensorConcept<TensorType>() &&
-                       getSpaceDimension<TensorType>() == N &&
-                       isAssignableTo<numeric_type<TensorType>, T>(),
-                   Expr<t2tost2<N, T>, RightCauchyGreenTensorDerivativeExpr<N>>>
+  TFEL_HOST_DEVICE std::enable_if_t<
+      implementsTensorConcept<TensorType>() &&
+          getSpaceDimension<TensorType>() == N &&
+          isAssignableTo<numeric_type<TensorType>, T>(),
+      Expr<t2tost2<N, T>, RightCauchyGreenTensorDerivativeExpr<N>>>
   t2tost2<N, T>::dCdF(const TensorType& F) {
     return Expr<t2tost2<N, T>, RightCauchyGreenTensorDerivativeExpr<N>>(F);
   }  // end of t2tost2::dCdF
 
   template <unsigned short N, typename T>
   template <typename TensorType>
-  std::enable_if_t<implementsTensorConcept<TensorType>() &&
-                       getSpaceDimension<TensorType>() == N &&
-                       isAssignableTo<numeric_type<TensorType>, T>(),
-                   Expr<t2tost2<N, T>, LeftCauchyGreenTensorDerivativeExpr<N>>>
+  TFEL_HOST_DEVICE std::enable_if_t<
+      implementsTensorConcept<TensorType>() &&
+          getSpaceDimension<TensorType>() == N &&
+          isAssignableTo<numeric_type<TensorType>, T>(),
+      Expr<t2tost2<N, T>, LeftCauchyGreenTensorDerivativeExpr<N>>>
   t2tost2<N, T>::dBdF(const TensorType& F) {
     return Expr<t2tost2<N, T>, LeftCauchyGreenTensorDerivativeExpr<N>>(F);
   }  // end of t2tost2::dBdF
 
   template <unsigned short N, typename T>
   template <typename InputIterator>
-  TFEL_MATH_INLINE2 void t2tost2<N, T>::copy(const InputIterator src) {
+  TFEL_HOST_DEVICE void t2tost2<N, T>::copy(const InputIterator src) {
     tfel::fsalgo::copy<StensorDimeToSize<N>::value *
                        TensorDimeToSize<N>::value>::exe(src, *this);
   }
 
   template <typename T2toT2Type>
-  std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 1u) &&
-                    implementsT2toT2Concept<T2toT2Type>()),
-                   t2tost2<1u, numeric_type<T2toT2Type>>>
+  TFEL_HOST_DEVICE std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 1u) &&
+                                     implementsT2toT2Concept<T2toT2Type>()),
+                                    t2tost2<1u, numeric_type<T2toT2Type>>>
   convertToT2toST2(const T2toT2Type& t) {
     using value_type = numeric_type<T2toT2Type>;
     t2tost2<1u, value_type> r;
@@ -73,9 +75,9 @@ namespace tfel::math {
   }
 
   template <typename T2toT2Type>
-  std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 2u) &&
-                    implementsT2toT2Concept<T2toT2Type>()),
-                   t2tost2<2u, numeric_type<T2toT2Type>>>
+  TFEL_HOST_DEVICE std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 2u) &&
+                                     implementsT2toT2Concept<T2toT2Type>()),
+                                    t2tost2<2u, numeric_type<T2toT2Type>>>
   convertToT2toST2(const T2toT2Type& t) {
     using value_type = numeric_type<T2toT2Type>;
     constexpr auto icste = Cste<value_type>::isqrt2;
@@ -104,9 +106,9 @@ namespace tfel::math {
   }
 
   template <typename T2toT2Type>
-  std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 3u) &&
-                    implementsT2toT2Concept<T2toT2Type>()),
-                   t2tost2<3u, numeric_type<T2toT2Type>>>
+  TFEL_HOST_DEVICE std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 3u) &&
+                                     implementsT2toT2Concept<T2toT2Type>()),
+                                    t2tost2<3u, numeric_type<T2toT2Type>>>
   convertToT2toST2(const T2toT2Type& t) {
     using value_type = numeric_type<T2toT2Type>;
     constexpr auto icste = Cste<value_type>::isqrt2;
@@ -169,9 +171,9 @@ namespace tfel::math {
   }
 
   template <typename TensorType>
-  std::enable_if_t<(implementsTensorConcept<TensorType>()) &&
-                       (getSpaceDimension<TensorType>() == 1u),
-                   t2tost2<1u, numeric_type<TensorType>>>
+  TFEL_HOST_DEVICE std::enable_if_t<(implementsTensorConcept<TensorType>()) &&
+                                        (getSpaceDimension<TensorType>() == 1u),
+                                    t2tost2<1u, numeric_type<TensorType>>>
   computeRateOfDeformationDerivative(const TensorType& F) {
     using value_type = numeric_type<TensorType>;
     const auto iF = invert(F);
@@ -180,11 +182,10 @@ namespace tfel::math {
   }
 
   template <typename TensorType>
-  TFEL_MATH_INLINE2
-      std::enable_if_t<(implementsTensorConcept<TensorType>()) &&
-                           (getSpaceDimension<TensorType>() == 2u),
-                       t2tost2<2u, numeric_type<TensorType>>>
-      computeRateOfDeformationDerivative(const TensorType& F) {
+  TFEL_HOST_DEVICE std::enable_if_t<(implementsTensorConcept<TensorType>()) &&
+                                        (getSpaceDimension<TensorType>() == 2u),
+                                    t2tost2<2u, numeric_type<TensorType>>>
+  computeRateOfDeformationDerivative(const TensorType& F) {
     using value_type = numeric_type<TensorType>;
     constexpr auto icste = Cste<value_type>::isqrt2;
     constexpr auto zero = value_type(0);
@@ -222,7 +223,7 @@ namespace tfel::math {
   }
 
   template <typename T2toST2Type, typename StensorType, typename TensorType>
-  std::enable_if_t<
+  TFEL_HOST_DEVICE std::enable_if_t<
       implementsT2toST2Concept<T2toST2Type>() &&
           implementsStensorConcept<StensorType>() &&
           implementsTensorConcept<TensorType>() &&
@@ -246,7 +247,7 @@ namespace tfel::math {
   }
 
   template <typename T2toST2Type, typename StensorType, typename TensorType>
-  std::enable_if_t<
+  TFEL_HOST_DEVICE std::enable_if_t<
       implementsT2toST2Concept<T2toST2Type>() &&
           implementsStensorConcept<StensorType>() &&
           implementsTensorConcept<TensorType>() &&
@@ -273,7 +274,7 @@ namespace tfel::math {
             typename T2toST2Type,
             typename StensorType,
             typename TensorType>
-  typename std::enable_if<
+  TFEL_HOST_DEVICE typename std::enable_if<
       implementsT2toST2Concept<T2toST2ResultType>() &&
           implementsT2toST2Concept<T2toST2Type>() &&
           implementsStensorConcept<StensorType>() &&
@@ -303,7 +304,7 @@ namespace tfel::math {
   }  // end of computePushForwardDerivative
 
   template <typename T2toST2Type, typename StensorType, typename TensorType>
-  std::enable_if_t<
+  TFEL_HOST_DEVICE std::enable_if_t<
       implementsT2toST2Concept<T2toST2Type>() &&
           implementsStensorConcept<StensorType>() &&
           implementsTensorConcept<TensorType>() &&
@@ -328,16 +329,17 @@ namespace tfel::math {
   }
 
   template <typename T2toST2Type>
-  std::enable_if_t<((implementsT2toST2Concept<T2toST2Type>()) &&
-                    (getSpaceDimension<T2toST2Type>() == 1u)),
-                   t2tost2<1u, numeric_type<T2toST2Type>>>
-  change_basis(const T2toST2Type& s,
-               const rotation_matrix<numeric_type<T2toST2Type>>&) {
+  TFEL_HOST_DEVICE
+      std::enable_if_t<((implementsT2toST2Concept<T2toST2Type>()) &&
+                        (getSpaceDimension<T2toST2Type>() == 1u)),
+                       t2tost2<1u, numeric_type<T2toST2Type>>>
+      change_basis(const T2toST2Type& s,
+                   const rotation_matrix<numeric_type<T2toST2Type>>&) {
     return s;
   }  // end of change_basis
 
   template <typename T2toST2Type>
-  std::enable_if_t<
+  TFEL_HOST_DEVICE std::enable_if_t<
       ((implementsT2toST2Concept<T2toST2Type>()) &&
        (getSpaceDimension<T2toST2Type>() != 1u)),
       t2tost2<getSpaceDimension<T2toST2Type>(), numeric_type<T2toST2Type>>>

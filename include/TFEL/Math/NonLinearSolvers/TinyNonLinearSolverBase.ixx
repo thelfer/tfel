@@ -25,6 +25,7 @@ namespace tfel::math {
             template <unsigned short, typename>
             typename ExternalWorkSpace>
   template <typename... ExternalWorkSpaceArguments>
+  TFEL_HOST_DEVICE
   TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
       TinyNonLinearSolverBase(ExternalWorkSpaceArguments&&... args)
       : ExternalWorkSpace<N, NumericType>(
@@ -36,7 +37,8 @@ namespace tfel::math {
             typename Child,
             template <unsigned short, typename>
             typename ExternalWorkSpace>
-  bool TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
+  TFEL_HOST_DEVICE bool
+  TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
       solveNonLinearSystem2() {
     auto& child = static_cast<Child&>(*this);
     auto converged = false;
@@ -80,7 +82,8 @@ namespace tfel::math {
             typename Child,
             template <unsigned short, typename>
             typename ExternalWorkSpace>
-  bool TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
+  TFEL_HOST_DEVICE bool
+  TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
       solveNonLinearSystem() {
     constexpr auto one_half = NumericType(1) / 2;
     auto& child = static_cast<Child&>(*this);
@@ -116,12 +119,13 @@ namespace tfel::math {
             template <unsigned short, typename>
             typename ExternalWorkSpace>
   template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
-  std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
-                    implementsVectorConcept<FixedSizeVectorType>()),
-                   bool>
-  TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
-      solveLinearSystem(FixedSizeMatrixType& m, FixedSizeVectorType& v) const
-      noexcept {
+  TFEL_HOST_DEVICE
+      std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
+                        implementsVectorConcept<FixedSizeVectorType>()),
+                       bool>
+      TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
+          solveLinearSystem(FixedSizeMatrixType& m,
+                            FixedSizeVectorType& v) const noexcept {
     return TinyMatrixSolve<N, NumericType, false>::exe(m, v);
   }  // end of solveLinearSystem
 

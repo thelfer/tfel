@@ -24,10 +24,10 @@ namespace tfel {
    * \param[in] msg: message
    */
 #ifndef TFEL_NO_REPORT_CONTRACT_VIOLATION
-  TFEL_HOST [[noreturn]] TFEL_VISIBILITY_EXPORT void reportContractViolation(
+  [[noreturn]] TFEL_HOST TFEL_VISIBILITY_EXPORT void reportContractViolation(
       const char* const msg);
 #else  /* TFEL_NO_REPORT_CONTRACT_VIOLATION */
-  TFEL_DEVICE constexpr void reportContractViolation(const char* const) {
+  TFEL_HOST_DEVICE constexpr void reportContractViolation(const char* const) {
   }  // end of reportContractViolation
 #endif /* TFEL_NO_REPORT_CONTRACT_VIOLATION */
 #else  /* SYCL_LANGUAGE_VERSION  */
