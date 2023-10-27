@@ -26,7 +26,7 @@ namespace tfel::math {
     using size_type = index_type<MatrixType>;
     using real = numeric_type<MatrixType>;
     constexpr const auto c = real(1) / 10;
-    const auto nr =  m.getIndexingPolicy().size(0);
+    const auto nr = m.getIndexingPolicy().size(0);
     if constexpr (perfom_runtime_checks) {
       const auto nc = m.getIndexingPolicy().size(1);
       if (nr != nc) {

@@ -125,9 +125,7 @@ namespace mtest {
 
    private:
     //
-    IntegralTest(const std::string& n,
-                 const real e)
-        : name(n), eps(e) {
+    IntegralTest(const std::string& n, const real e) : name(n), eps(e) {
       if (n == "InnerDisplacement") {
         this->v = INNERDISPLACEMENT;
       } else if (n == "OuterDisplacement") {
@@ -144,8 +142,8 @@ namespace mtest {
             "unsupported variable '" +
             n + "'");
       }
-    } // end of IntegralTest
-      //
+    }  // end of IntegralTest
+       //
     enum Variable {
       INNERDISPLACEMENT,
       OUTERDISPLACEMENT,

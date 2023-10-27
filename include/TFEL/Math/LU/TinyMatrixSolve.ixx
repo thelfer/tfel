@@ -37,7 +37,7 @@ namespace tfel::math {
                       const T eps) {
     using size_type = index_type<tmatrix<N, N, T>>;
     if constexpr (perfom_runtime_checks) {
-      if(m.getIndexingPolicy().size(0) != N){
+      if (m.getIndexingPolicy().size(0) != N) {
         return false;
       }
       if (m.getIndexingPolicy().size(1) != N) {
@@ -203,7 +203,7 @@ namespace tfel::math {
   TinyMatrixSolveBase<N, T, use_exceptions, perfom_runtime_checks>::decomp(
       FixedSizeMatrixType& m, TinyPermutation<N>& p, const T eps) {
     if constexpr (perfom_runtime_checks) {
-      if(m.getIndexingPolicy().size(0) != N){
+      if (m.getIndexingPolicy().size(0) != N) {
         return false;
       }
       if (m.getIndexingPolicy().size(1) != N) {
@@ -224,7 +224,7 @@ namespace tfel::math {
   TinyMatrixSolve<N, T, use_exceptions, perfom_runtime_checks>::exe(
       FixedSizeMatrixType& m, FixedSizeVectorType& b, const T eps) {
     if constexpr (perfom_runtime_checks) {
-      if(m.getIndexingPolicy().size(0) != N){
+      if (m.getIndexingPolicy().size(0) != N) {
         return false;
       }
       if (m.getIndexingPolicy().size(1) != N) {
@@ -270,7 +270,7 @@ namespace tfel::math {
   TinyMatrixSolve<1u, T, use_exceptions, perfom_runtime_checks>::exe(
       const FixedSizeMatrixType& m, FixedSizeVectorType& b, const T eps) {
     if constexpr (perfom_runtime_checks) {
-      if(m.getIndexingPolicy().size(0) != 1u){
+      if (m.getIndexingPolicy().size(0) != 1u) {
         return false;
       }
       if (m.getIndexingPolicy().size(1) != 1u) {
@@ -315,7 +315,7 @@ namespace tfel::math {
   TinyMatrixSolve<2u, T, use_exceptions, perfom_runtime_checks>::exe(
       const FixedSizeMatrixType& m, FixedSizeVectorType& b, const T eps) {
     if constexpr (perfom_runtime_checks) {
-      if(m.getIndexingPolicy().size(0) != 2u){
+      if (m.getIndexingPolicy().size(0) != 2u) {
         return false;
       }
       if (m.getIndexingPolicy().size(1) != 2u) {
@@ -370,7 +370,7 @@ namespace tfel::math {
   TinyMatrixSolve<3u, T, use_exceptions, perfom_runtime_checks>::exe(
       const FixedSizeMatrixType& m, FixedSizeVectorType& b, const T eps) {
     if constexpr (perfom_runtime_checks) {
-      if(m.getIndexingPolicy().size(0) != 3u){
+      if (m.getIndexingPolicy().size(0) != 3u) {
         return false;
       }
       if (m.getIndexingPolicy().size(1) != 3u) {

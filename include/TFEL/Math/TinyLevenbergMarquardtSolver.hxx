@@ -33,7 +33,7 @@ namespace tfel::math {
     tmatrix<N, N, NumericType> jacobian;
     tmatrix<N, N, NumericType> levmar_jacobian_1;
     tvector<N, NumericType> levmar_fzeros_1;
-  }; // end of StackAllocatedTinyLevenbergMarquardtSolverWorkspace
+  };  // end of StackAllocatedTinyLevenbergMarquardtSolverWorkspace
 
   /*!
    * \brief A class based on the curiously recurring template pattern (CRTP)

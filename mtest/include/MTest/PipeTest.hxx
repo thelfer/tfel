@@ -415,7 +415,7 @@ namespace mtest {
      * \brief add a test comparing to results given by an evolution
      * to the computed ones
      * \param[in] n: named of the variable tested
-     * \param[in] ev: evolution 
+     * \param[in] ev: evolution
      * \param[in] e: criterion value
      */
     virtual void addIntegralTest(const std::string&,

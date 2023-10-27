@@ -106,10 +106,10 @@ struct NewtonRaphsonSolver3
   }  // end of computFdF
 };   // end of struct NewtonRaphsonSolver3
 
-template<unsigned short N, typename NumericType>
-struct HeapAllocatedWorkspace{
+template <unsigned short N, typename NumericType>
+struct HeapAllocatedWorkspace {
   HeapAllocatedWorkspace()
-      : fzeros(N), zeros(N), delta_zeros(N), jacobian(N, N){}
+      : fzeros(N), zeros(N), delta_zeros(N), jacobian(N, N) {}
   //! \brief residual vector
   tfel::math::vector<NumericType> fzeros;
   //! \brief current estimate of the unknowns
@@ -157,10 +157,10 @@ struct NewtonRaphsonSolver4
 
 };  // end of struct NewtonRaphsonSolver4
 
-template<unsigned short N, typename NumericType>
-struct ExternallyAllocatedWorkspace{
+template <unsigned short N, typename NumericType>
+struct ExternallyAllocatedWorkspace {
   ExternallyAllocatedWorkspace(NumericType* const v)
-      : fzeros(v), zeros(v + N), delta_zeros(v + 2 * N), jacobian(v + 3 * N){}
+      : fzeros(v), zeros(v + N), delta_zeros(v + 2 * N), jacobian(v + 3 * N) {}
   //! \brief residual vector
   tfel::math::View<tfel::math::tvector<N, NumericType>> fzeros;
   //! \brief current estimate of the unknowns
@@ -238,7 +238,6 @@ struct NewtonRaphsonSolver6
   }  // end of computFdF
 
 };  // end of struct NewtonRaphsonSolver6
-
 
 struct TinyNewtonRaphsonSolverTest final : public tfel::tests::TestCase {
   TinyNewtonRaphsonSolverTest()

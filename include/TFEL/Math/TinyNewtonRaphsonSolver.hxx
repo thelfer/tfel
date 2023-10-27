@@ -69,7 +69,7 @@ namespace tfel::math {
     TinyNewtonRaphsonSolver() = default;
     //! \brief constructor
     template <typename... ExternalWorkSpaceArguments>
-    TinyNewtonRaphsonSolver(ExternalWorkSpaceArguments&&...);
+    TFEL_HOST_DEVICE TinyNewtonRaphsonSolver(ExternalWorkSpaceArguments&&...);
     //! \brief default constructor
     TinyNewtonRaphsonSolver(TinyNewtonRaphsonSolver&) noexcept = default;
     //! \brief default constructor

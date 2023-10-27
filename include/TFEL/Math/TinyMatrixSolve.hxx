@@ -104,8 +104,7 @@ namespace tfel::math {
      * \note the matrix m is overwritten during computations
      * \note the right member is overwritten by the solution
      */
-    template <typename FixedSizeMatrixType,
-              typename FixedSizeVectorType>
+    template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
     TFEL_HOST_DEVICE static std::enable_if_t<
         (implementsMatrixConcept<FixedSizeMatrixType>() &&
          implementsVectorConcept<FixedSizeVectorType>()),

@@ -21,7 +21,7 @@ namespace tfel::math {
 
   /*!
    * \brief base class for allocating on the stack a workspace
-   * usable by the solvers derived from 
+   * usable by the solvers derived from
    * `TinyNonLinearSolverBase` class.
    * \tparam N: size of the system of non linear equations.
    * \tparam NumericType: numeric type.
@@ -42,7 +42,8 @@ namespace tfel::math {
    * \tparam N: size of the system of non linear equations.
    * \tparam NumericType: numeric type.
    * \tparam Child: base class.
-   * \tparam ExternalWorkSpace: class containing data members used by the solver.
+   * \tparam ExternalWorkSpace: class containing data members used by the
+   * solver.
    *
    * By default, the `Child` class must:
    *
@@ -98,7 +99,7 @@ namespace tfel::math {
      * \param[in] args: arguments forwarded to the external workspace
      */
     template <typename... ExternalWorkSpaceArguments>
-    TinyNonLinearSolverBase(ExternalWorkSpaceArguments&&...);
+    TFEL_HOST_DEVICE TinyNonLinearSolverBase(ExternalWorkSpaceArguments&&...);
     //! \brief default constructor
     TinyNonLinearSolverBase(TinyNonLinearSolverBase&) noexcept = default;
     //! \brief default constructor

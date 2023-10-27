@@ -21,7 +21,6 @@
 
 namespace tfel::math {
 
-
   /*!
    * \brief class allocating on the stack a workspace usable by the
    * `TinyPowellDogLegBroydenSolver` class.
@@ -36,7 +35,6 @@ namespace tfel::math {
     //! \brief residual of the previous iterations
     tvector<N, NumericType> fzeros_1;
   };
-
 
   /*!
    * \brief A class based on the curiously recurring template pattern (CRTP)

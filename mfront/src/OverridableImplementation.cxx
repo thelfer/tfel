@@ -89,7 +89,8 @@ namespace mfront {
 
   std::string OverridableImplementation::getMaterialKnowledgeIdentifier()
       const {
-    const auto& n = this->getOverridenValue<Tags::MATERIAL_KNOWLEDGE_IDENTIFIER>();
+    const auto& n =
+        this->getOverridenValue<Tags::MATERIAL_KNOWLEDGE_IDENTIFIER>();
     return n.empty() ? this->getSourceMaterialKnowledgeIdentifier() : n;
   }
 
@@ -268,7 +269,7 @@ namespace mfront {
       tfel::system::systemCall::copy(t, f);
     }
     write(i, f);
-  }    // end of write
+  }  // end of write
 
   std::string getDestinationPathInMadnexFile(
       const OverridableImplementation& i) {

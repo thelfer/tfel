@@ -165,4 +165,5 @@ namespace tfel::material {
 
 #include "TFEL/Material/GursonTvergaardNeedleman1982StressCriterion.ixx"
 
-#endif /* LIB_TFEL_MATERIAL_GURSON_TVERGAARD_NEEDLEMAN_1982_STRESS_CRITERION_HXX */
+#endif /* LIB_TFEL_MATERIAL_GURSON_TVERGAARD_NEEDLEMAN_1982_STRESS_CRITERION_HXX \
+        */
