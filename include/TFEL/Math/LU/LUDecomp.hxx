@@ -30,7 +30,7 @@ namespace tfel::math {
    * structure in charge of computing the LU decomposition of a
    * matrix. Line permutation is performed.
    */
-  template <bool use_exceptions = true>
+  template <bool use_exceptions = true, bool perfom_runtime_checks = false>
   struct LUDecomp {
     /*!
      * Compute the LU decomposition of a matrix. Line permutation is

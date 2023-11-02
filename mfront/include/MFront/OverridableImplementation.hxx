@@ -119,7 +119,8 @@ namespace mfront {
     const FileDescription& getSourceFileDescription() const;
     //! \return the path to the source file
     const std::string& getSourceFilePath() const;
-    //! \return the material knowledge identifier (material property name, behaviour name or model name)
+    //! \return the material knowledge identifier (material property name,
+    //! behaviour name or model name)
     std::string getMaterialKnowledgeIdentifier() const;
     //! \return the material name
     std::string getMaterial() const;
@@ -141,12 +142,12 @@ namespace mfront {
   };  // end of OverridableImplementation
 
   /*!
-   * \brief return the implementation path where the given implementation will be written
-   * \param[in] i: implementation
+   * \brief return the implementation path where the given implementation will
+   * be written \param[in] i: implementation
    */
-  MFRONT_VISIBILITY_EXPORT std::string
-  getDestinationPathInMadnexFile(const OverridableImplementation&);
-  
+  MFRONT_VISIBILITY_EXPORT std::string getDestinationPathInMadnexFile(
+      const OverridableImplementation&);
+
   /*!
    * \brief write the implementation to the file
    * \param[in] i: implementation

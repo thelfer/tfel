@@ -23,8 +23,8 @@
 namespace tfel::math {
 
   template <unsigned short N, typename T>
-  void tensor<N, T>::buildFromFortranMatrix(tensor<N, T>& t,
-                                            const base_type<T>* const v) {
+  TFEL_HOST_DEVICE void tensor<N, T>::buildFromFortranMatrix(
+      tensor<N, T>& t, const base_type<T>* const v) {
     t[0] = T(v[0]);
     t[1] = T(v[4]);
     t[2] = T(v[8]);
@@ -41,7 +41,7 @@ namespace tfel::math {
   }  // end of void tensor<N,T>::buildFromFortranMatrix
 
   template <unsigned short N, typename T>
-  tensor<N, T> tensor<N, T>::buildFromFortranMatrix(
+  TFEL_HOST_DEVICE tensor<N, T> tensor<N, T>::buildFromFortranMatrix(
       const base_type<T>* const v) {
     tensor<N, T> t;
     tensor<N, T>::buildFromFortranMatrix(t, v);
@@ -61,8 +61,9 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T>
-  T tensor<N, T>::operator()(const typename tensor<N, T>::size_type i,
-                             const typename tensor<N, T>::size_type j) const {
+  TFEL_HOST_DEVICE T
+  tensor<N, T>::operator()(const typename tensor<N, T>::size_type i,
+                           const typename tensor<N, T>::size_type j) const {
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if ((i > 2) || (j > 2)) {
       throw(TensorInvalidIndexesException());
@@ -97,7 +98,7 @@ namespace tfel::math {
   }  // end of operator()
 
   template <unsigned short N, typename T>
-  void tensor<N, T>::import(const base_type<T>* const src) {
+  TFEL_HOST_DEVICE void tensor<N, T>::import(const base_type<T>* const src) {
     tfel::fsalgo::transform<TensorDimeToSize<N>::value>::exe(
         src, this->begin(), [](const auto& v) { return T(v); });
   }
@@ -109,7 +110,8 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T>
-  void tensor<N, T>::changeBasis(const rotation_matrix<T>& m) noexcept {
+  TFEL_HOST_DEVICE void tensor<N, T>::changeBasis(
+      const rotation_matrix<T>& m) noexcept {
     const auto rt = change_basis(*this, m);
     *this = rt;
   }  // end of changeBasis
@@ -129,13 +131,13 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <typename InputIterator>
-  void tensor<N, T>::copy(const InputIterator src) {
+  TFEL_HOST_DEVICE void tensor<N, T>::copy(const InputIterator src) {
     tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(src, *this);
   }
 
   template <unsigned short N, typename T, typename OutputIterator>
-  TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void> exportToBaseTypeArray(
-      const tensor<N, T>& t, OutputIterator p) {
+  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void>
+  exportToBaseTypeArray(const tensor<N, T>& t, OutputIterator p) {
     tfel::fsalgo::transform<TensorDimeToSize<N>::value>::exe(
         t.cbegin(), p, [](const auto& v) { return base_type_cast(v); });
   }
@@ -147,7 +149,7 @@ namespace tfel::math {
              typename ComputeBinaryResult<base_type<numeric_type<TensorType>>,
                                           numeric_type<TensorType>,
                                           OpDiv>::Result>>
-  invert(const TensorType& t) noexcept {
+      TFEL_HOST_DEVICE invert(const TensorType& t) noexcept {
     using real = base_type<numeric_type<TensorType>>;
     constexpr auto one = real(1);
     constexpr auto N = getSpaceDimension<TensorType>();
@@ -169,10 +171,11 @@ namespace tfel::math {
   }  // end of invert
 
   template <typename TensorType>
-  std::enable_if_t<implementsTensorConcept<TensorType>(),
-                   tensor<getSpaceDimension<TensorType>(),
-                          typename ComputeUnaryResult<numeric_type<TensorType>,
-                                                      Power<2>>::Result>>
+  TFEL_HOST_DEVICE std::enable_if_t<
+      implementsTensorConcept<TensorType>(),
+      tensor<getSpaceDimension<TensorType>(),
+             typename ComputeUnaryResult<numeric_type<TensorType>,
+                                         Power<2>>::Result>>
   computeDeterminantDerivative(const TensorType& F) {
     tensor<
         getSpaceDimension<TensorType>(),
@@ -183,7 +186,7 @@ namespace tfel::math {
   }
 
   template <typename TensorType>
-  std::enable_if_t<
+  TFEL_HOST_DEVICE std::enable_if_t<
       implementsTensorConcept<TensorType>(),
       tensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   change_basis(const TensorType& t,
@@ -242,7 +245,7 @@ namespace tfel::math {
   }  // end of change_basis
 
   template <typename StensorType>
-  std::enable_if_t<
+  TFEL_HOST_DEVICE std::enable_if_t<
       implementsStensorConcept<StensorType>(),
       tensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   unsyme(const StensorType& s) {
@@ -264,14 +267,15 @@ namespace tfel::math {
   }
 
   template <typename StensorType, typename TensorType>
-  std::enable_if_t<(implementsStensorConcept<StensorType>() &&
-                    implementsTensorConcept<TensorType>()),
-                   tensor<getSpaceDimension<StensorType>(),
-                          result_type<numeric_type<StensorType>,
-                                      numeric_type<TensorType>,
-                                      OpMult>>>
-  convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType& s,
-                                                 const TensorType& F) {
+  TFEL_HOST_DEVICE
+      std::enable_if_t<(implementsStensorConcept<StensorType>() &&
+                        implementsTensorConcept<TensorType>()),
+                       tensor<getSpaceDimension<StensorType>(),
+                              result_type<numeric_type<StensorType>,
+                                          numeric_type<TensorType>,
+                                          OpMult>>>
+      convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType& s,
+                                                     const TensorType& F) {
     constexpr auto N = getSpaceDimension<StensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     static_assert(getSpaceDimension<TensorType>() == N);
@@ -327,14 +331,15 @@ namespace tfel::math {
   }  // end of convertCauchyStressToFirstPiolaKirchhoffStress
 
   template <typename TensorType, typename TensorType2>
-  std::enable_if_t<(implementsTensorConcept<TensorType>() &&
-                    implementsTensorConcept<TensorType2>()),
-                   stensor<getSpaceDimension<TensorType>(),
-                           result_type<numeric_type<TensorType>,
-                                       numeric_type<TensorType2>,
-                                       OpMult>>>
-  convertFirstPiolaKirchhoffStressToCauchyStress(const TensorType& P,
-                                                 const TensorType2& F) {
+  TFEL_HOST_DEVICE
+      std::enable_if_t<(implementsTensorConcept<TensorType>() &&
+                        implementsTensorConcept<TensorType2>()),
+                       stensor<getSpaceDimension<TensorType>(),
+                               result_type<numeric_type<TensorType>,
+                                           numeric_type<TensorType2>,
+                                           OpMult>>>
+      convertFirstPiolaKirchhoffStressToCauchyStress(const TensorType& P,
+                                                     const TensorType2& F) {
     constexpr auto N = getSpaceDimension<TensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     static_assert(getSpaceDimension<TensorType2>() == N);

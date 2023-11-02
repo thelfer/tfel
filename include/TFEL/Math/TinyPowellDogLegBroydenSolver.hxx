@@ -22,12 +22,29 @@
 namespace tfel::math {
 
   /*!
+   * \brief class allocating on the stack a workspace usable by the
+   * `TinyPowellDogLegBroydenSolver` class.
+   * \tparam N: size of the system of non linear equations.
+   * \tparam NumericType: numeric type.
+   */
+  template <unsigned short N, typename NumericType>
+  struct StackAllocatedTinyPowellDogLegBroydenSolverWorkspace
+      : public StackAllocatedTinyNonLinearSolverWorkspace<N, NumericType> {
+    //! \brief approximation of the invert of the jacobian matrix
+    tmatrix<N, N, NumericType> jacobian;
+    //! \brief residual of the previous iterations
+    tvector<N, NumericType> fzeros_1;
+  };
+
+  /*!
    * \brief A class based on the curiously recurring template pattern (CRTP)
    * to solve system of non linear equations using the
    * Newton-Raphson algorithm coupled with the Powell' dog leg algorithm.
    * \tparam N: size of the system of non linear equations.
    * \tparam NumericType: numeric type.
    * \tparam Child: base class.
+   * \tparam ExternalWorkSpace: class containing data members used by the
+   * solver.
    *
    * By default, the `Child` class must:
    *
@@ -39,9 +56,13 @@ namespace tfel::math {
    * the data member `jacobian` using the current estimate of the solution, i.e.
    * the data member `zeros`.
    */
-  template <unsigned short N, typename NumericType, typename Child>
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename> typename ExternalWorkSpace =
+                StackAllocatedTinyPowellDogLegBroydenSolverWorkspace>
   struct TinyPowellDogLegBroydenSolver
-      : TinyNonLinearSolverBase<N, NumericType, Child> {
+      : TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace> {
     //
     static_assert(N != 0, "invalid size");
     static_assert(std::is_floating_point_v<NumericType>,
@@ -68,10 +89,6 @@ namespace tfel::math {
     TFEL_HOST_DEVICE bool computeNewCorrection();
 
    protected:
-    //! \brief approximation of the invert of the jacobian matrix
-    tmatrix<N, N, NumericType> jacobian;
-    //! \brief residual of the previous iterations
-    tvector<N, NumericType> fzeros_1;
     //! \brief size of the trust region
     NumericType powell_dogleg_trust_region_size;
   };

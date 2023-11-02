@@ -219,7 +219,7 @@ namespace tfel::material {
   template <typename StressStensor,
             typename HosfordExponentType,
             tfel::math::stensor_common::EigenSolver es>
-  HosfordStressType<StressStensor> computeHosfordStress(
+  TFEL_HOST_DEVICE HosfordStressType<StressStensor> computeHosfordStress(
       const StressStensor& s,
       const HosfordExponentType a,
       const HosfordStressType<StressStensor> e) {
@@ -240,8 +240,8 @@ namespace tfel::material {
   template <typename StressStensor,
             typename HosfordExponentType,
             tfel::math::stensor_common::EigenSolver es>
-  std::tuple<HosfordStressType<StressStensor>,
-             HosfordStressNormalType<StressStensor>>
+  TFEL_HOST_DEVICE std::tuple<HosfordStressType<StressStensor>,
+                              HosfordStressNormalType<StressStensor>>
   computeHosfordStressNormal(const StressStensor& s,
                              const HosfordExponentType a,
                              const HosfordStressType<StressStensor> e) {
@@ -292,9 +292,9 @@ namespace tfel::material {
   template <typename StressStensor,
             typename HosfordExponentType,
             tfel::math::stensor_common::EigenSolver es>
-  std::tuple<HosfordStressType<StressStensor>,
-             HosfordStressNormalType<StressStensor>,
-             HosfordStressSecondDerivativeType<StressStensor>>
+  TFEL_HOST_DEVICE std::tuple<HosfordStressType<StressStensor>,
+                              HosfordStressNormalType<StressStensor>,
+                              HosfordStressSecondDerivativeType<StressStensor>>
   computeHosfordStressSecondDerivative(
       const StressStensor& s,
       const HosfordExponentType a,

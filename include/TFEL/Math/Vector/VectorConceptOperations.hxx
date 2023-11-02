@@ -114,9 +114,10 @@ namespace tfel::math {
    * an operation : use of parenthesis is required.
    */
   template <typename T1, typename T2>
-  std::enable_if_t<IsVectorVectorOperationValid<T1, T2, OpDotProduct>::cond,
-                   BinaryOperationResult<T1, T2, OpDotProduct>>
-  operator|(const T1&, const T2&);
+  TFEL_HOST_DEVICE
+      std::enable_if_t<IsVectorVectorOperationValid<T1, T2, OpDotProduct>::cond,
+                       BinaryOperationResult<T1, T2, OpDotProduct>>
+      operator|(const T1&, const T2&);
 
   /*!
    * \brief  return the euclidian norm of a tvector
@@ -124,10 +125,11 @@ namespace tfel::math {
    * \return const typename tfel::typetraits::RealPartType<T>::type, the result
    */
   template <typename T1>
-  std::enable_if_t<IsEuclidianNormValid<T1>::cond,
-                   typename tfel::typetraits::RealPartType<
-                       BinaryOperationResult<T1, T1, OpDotProduct>>::type>
-  norm(const T1&);
+  TFEL_HOST_DEVICE
+      std::enable_if_t<IsEuclidianNormValid<T1>::cond,
+                       typename tfel::typetraits::RealPartType<
+                           BinaryOperationResult<T1, T1, OpDotProduct>>::type>
+      norm(const T1&);
 
 }  // end of namespace tfel::math
 

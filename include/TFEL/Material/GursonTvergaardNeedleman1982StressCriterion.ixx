@@ -261,4 +261,5 @@ namespace tfel::material {
 
 }  // end of namespace tfel::material
 
-#endif /* LIB_TFEL_MATERIAL_GURSON_TVERGAARD_NEEDLEMAN_1982_STRESS_CRITERION_IXX */
+#endif /* LIB_TFEL_MATERIAL_GURSON_TVERGAARD_NEEDLEMAN_1982_STRESS_CRITERION_IXX \
+        */

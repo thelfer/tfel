@@ -21,10 +21,12 @@
 
 namespace tfel::material {
 
-  LogarithmicStrainHandlerBase::LogarithmicStrainHandlerBase(const Setting c)
+  TFEL_HOST_DEVICE LogarithmicStrainHandlerBase::LogarithmicStrainHandlerBase(
+      const Setting c)
       : s(c) {}  // end of LogarithmicStrainHandlerBase
 
   template <typename StressType>
+  TFEL_HOST_DEVICE
   LogarithmicStrainHandler<1u, StressType>::LogarithmicStrainHandler(
       const Setting c, const DeformationGradient& F1)
       : LogarithmicStrainHandlerBase(c), F(F1) {
@@ -33,19 +35,23 @@ namespace tfel::material {
   }  // end of LogarithmicStrainHandler
 
   template <typename StressType>
-  void LogarithmicStrainHandler<1u, StressType>::updateAxialDeformationGradient(
+  TFEL_HOST_DEVICE void
+  LogarithmicStrainHandler<1u, StressType>::updateAxialDeformationGradient(
       const real Fzz) {
     this->F[1] = Fzz;
   }  // end of updateAxialDeformationGradient
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<1u, StressType>::StrainStensor
-  LogarithmicStrainHandler<1u, StressType>::getHenckyLogarithmicStrain() const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<1u, StressType>::StrainStensor
+      LogarithmicStrainHandler<1u, StressType>::getHenckyLogarithmicStrain()
+          const {
     return {this->e[0], this->e[1], this->e[2]};
   }  // end of getHenckyLogarithmicStrain
 
   template <typename StressType>
-  void LogarithmicStrainHandler<1u, StressType>::getHenckyLogarithmicStrain(
+  TFEL_HOST_DEVICE void
+  LogarithmicStrainHandler<1u, StressType>::getHenckyLogarithmicStrain(
       real* const elog) const {
     elog[0] = this->e[0];
     elog[1] = this->e[1];
@@ -53,15 +59,16 @@ namespace tfel::material {
   }  // end of getHenckyLogarithmicStrain
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<1u, StressType>::StressStensor
-  LogarithmicStrainHandler<1u, StressType>::
-      convertFromSecondPiolaKirchhoffStress(const StressStensor& S) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<1u, StressType>::StressStensor
+      LogarithmicStrainHandler<1u, StressType>::
+          convertFromSecondPiolaKirchhoffStress(const StressStensor& S) const {
     return {S[0] * (this->F[0] * this->F[0]), S[1] * (this->F[1] * this->F[1]),
             S[2] * (this->F[2] * this->F[2])};
   }  // end of convertFromSecondPiolaKirchhoffStress
 
   template <typename StressType>
-  void LogarithmicStrainHandler<1u, StressType>::
+  TFEL_HOST_DEVICE void LogarithmicStrainHandler<1u, StressType>::
       convertFromSecondPiolaKirchhoffStress(stress* const ST) const {
     ST[0] *= this->F[0] * this->F[0];
     ST[1] *= this->F[1] * this->F[1];
@@ -69,7 +76,8 @@ namespace tfel::material {
   }  // end of convertFromSecondPiolaKirchhoffStress
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<1u, StressType>::StressStensor
+  TFEL_HOST_DEVICE typename LogarithmicStrainHandler<1u,
+                                                     StressType>::StressStensor
   LogarithmicStrainHandler<1u, StressType>::convertToSecondPiolaKirchhoffStress(
       const StressStensor& T) const {
     return {T[0] / (this->F[0] * this->F[0]), T[1] / (this->F[1] * this->F[1]),
@@ -77,7 +85,7 @@ namespace tfel::material {
   }  // end of convertToSecondPiolaKirchhoffStress
 
   template <typename StressType>
-  void
+  TFEL_HOST_DEVICE void
   LogarithmicStrainHandler<1u, StressType>::convertToSecondPiolaKirchhoffStress(
       stress* const TS) const {
     TS[0] /= this->F[0] * this->F[0];
@@ -86,14 +94,16 @@ namespace tfel::material {
   }  // end of convertToSecondPiolaKirchhoffStress
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<1u, StressType>::StressStensor
-  LogarithmicStrainHandler<1u, StressType>::convertToCauchyStress(
-      const StressStensor& T) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<1u, StressType>::StressStensor
+      LogarithmicStrainHandler<1u, StressType>::convertToCauchyStress(
+          const StressStensor& T) const {
     return T / tfel::math::det(this->F);
   }  // end of convertToSecondPiolaKirchhoffStress
 
   template <typename StressType>
-  void LogarithmicStrainHandler<1u, StressType>::convertToCauchyStress(
+  TFEL_HOST_DEVICE void
+  LogarithmicStrainHandler<1u, StressType>::convertToCauchyStress(
       stress* const T) const {
     const auto iJ = 1 / tfel::math::det(this->F);
     T[0] *= iJ;
@@ -102,14 +112,16 @@ namespace tfel::material {
   }  // end of convertToSecondPiolaKirchhoffStress
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<1u, StressType>::StressStensor
-  LogarithmicStrainHandler<1u, StressType>::convertFromCauchyStress(
-      const StressStensor& sig) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<1u, StressType>::StressStensor
+      LogarithmicStrainHandler<1u, StressType>::convertFromCauchyStress(
+          const StressStensor& sig) const {
     return sig * tfel::math::det(this->F);
   }  // end of convertFromCauchyStress
 
   template <typename StressType>
-  void LogarithmicStrainHandler<1u, StressType>::convertFromCauchyStress(
+  TFEL_HOST_DEVICE void
+  LogarithmicStrainHandler<1u, StressType>::convertFromCauchyStress(
       stress* const T) const {
     const auto J = tfel::math::det(this->F);
     T[0] *= J;
@@ -118,9 +130,10 @@ namespace tfel::material {
   }  // end of convertToSecondPiolaKirchhoffStress
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<1u, StressType>::TangentOperator
-  LogarithmicStrainHandler<1u, StressType>::convertToMaterialTangentModuli(
-      const TangentOperator& Ks, const StressStensor& T) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<1u, StressType>::TangentOperator
+      LogarithmicStrainHandler<1u, StressType>::convertToMaterialTangentModuli(
+          const TangentOperator& Ks, const StressStensor& T) const {
     const real iC[3] = {1 / ((this->F[0]) * (this->F[0])),
                         1 / ((this->F[1]) * (this->F[1])),
                         1 / ((this->F[2]) * (this->F[2]))};
@@ -138,9 +151,10 @@ namespace tfel::material {
   }
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<1u, StressType>::TangentOperator
-  LogarithmicStrainHandler<1u, StressType>::convertToSpatialTangentModuli(
-      const TangentOperator& Ks, const StressStensor& T) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<1u, StressType>::TangentOperator
+      LogarithmicStrainHandler<1u, StressType>::convertToSpatialTangentModuli(
+          const TangentOperator& Ks, const StressStensor& T) const {
     auto Kr = TangentOperator();
     Kr(0, 0) = (Ks(0, 0) - 2 * T[0]);
     Kr(0, 1) = Ks(0, 1);
@@ -155,10 +169,11 @@ namespace tfel::material {
   }  // end of convertToSpatialTangentModuli
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<1u, StressType>::TangentOperator
-  LogarithmicStrainHandler<1u, StressType>::
-      convertToCauchyStressTruesdellRateTangentModuli(
-          const TangentOperator& Ks, const StressStensor& T) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<1u, StressType>::TangentOperator
+      LogarithmicStrainHandler<1u, StressType>::
+          convertToCauchyStressTruesdellRateTangentModuli(
+              const TangentOperator& Ks, const StressStensor& T) const {
     const auto iJ = 1 / tfel::math::det(this->F);
     auto Kr = TangentOperator();
     Kr(0, 0) = (Ks(0, 0) - 2 * T[0]) * iJ;
@@ -174,7 +189,7 @@ namespace tfel::material {
   }  // end of convertToCauchyStressTruesdellRateTangentModuli
 
   template <typename StressType>
-  void LogarithmicStrainHandler<1u, StressType>::
+  TFEL_HOST_DEVICE void LogarithmicStrainHandler<1u, StressType>::
       convertToCauchyStressTruesdellRateTangentModuli(
           stress* const K, const stress* const T) const {
     const auto iJ = 1 / tfel::math::det(this->F);
@@ -198,19 +213,21 @@ namespace tfel::material {
   }  // end of convertToCauchyStressTruesdellRateTangentModuli
 
   template <typename StressType>
-  const typename LogarithmicStrainHandler<1u, StressType>::DeformationGradient&
-  LogarithmicStrainHandler<1u, StressType>::getDeformationGradient() const {
+  TFEL_HOST_DEVICE const typename LogarithmicStrainHandler<1u, StressType>::
+      DeformationGradient&
+      LogarithmicStrainHandler<1u, StressType>::getDeformationGradient() const {
     return this->F;
   }  // end of getDeformationGradient
 
   template <typename StressType>
+  TFEL_HOST_DEVICE
   LogarithmicStrainHandler<2u, StressType>::LogarithmicStrainHandler(
       const Setting c, const DeformationGradient& F1, const bool b)
       : LogarithmicStrainHandler(Builder(c, F1, b), c, F1) {
   }  // end of LogarithmicStrainHandler
 
   template <typename StressType>
-  LogarithmicStrainHandler<2u, StressType>::Builder::Builder(
+  TFEL_HOST_DEVICE LogarithmicStrainHandler<2u, StressType>::Builder::Builder(
       const Setting c, const DeformationGradient& F1, const bool b) {
     using namespace tfel::math;
     using stensor = stensor<2u, real>;
@@ -247,6 +264,7 @@ namespace tfel::material {
   }
 
   template <typename StressType>
+  TFEL_HOST_DEVICE
   LogarithmicStrainHandler<2u, StressType>::LogarithmicStrainHandler(
       Builder&& src, const Setting c, const DeformationGradient& F1)
       : LogarithmicStrainHandlerBase(c),
@@ -257,13 +275,16 @@ namespace tfel::material {
         e(src.e) {}  // end of LogarithmicStrainHandler
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<2u, StressType>::StrainStensor
-  LogarithmicStrainHandler<2u, StressType>::getHenckyLogarithmicStrain() const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<2u, StressType>::StrainStensor
+      LogarithmicStrainHandler<2u, StressType>::getHenckyLogarithmicStrain()
+          const {
     return StrainStensor::computeIsotropicFunction(this->e, this->m);
   }  // end of getHenckyLogarithmicStrain
 
   template <typename StressType>
-  void LogarithmicStrainHandler<2u, StressType>::getHenckyLogarithmicStrain(
+  TFEL_HOST_DEVICE void
+  LogarithmicStrainHandler<2u, StressType>::getHenckyLogarithmicStrain(
       real* const elog) const {
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     const auto el = StrainStensor::computeIsotropicFunction(this->e, this->m);
@@ -274,15 +295,16 @@ namespace tfel::material {
   }  // end of getHenckyLogarithmicStrain
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<2u, StressType>::StressStensor
-  LogarithmicStrainHandler<2u, StressType>::
-      convertFromSecondPiolaKirchhoffStress(const StressStensor& S) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<2u, StressType>::StressStensor
+      LogarithmicStrainHandler<2u, StressType>::
+          convertFromSecondPiolaKirchhoffStress(const StressStensor& S) const {
     this->checkLagrangianSetting();
     return (S | tfel::math::invert(p)) / 2;
   }  // end of convertFromSecondPiolaKirchhoffStress
 
   template <typename StressType>
-  void LogarithmicStrainHandler<2u, StressType>::
+  TFEL_HOST_DEVICE void LogarithmicStrainHandler<2u, StressType>::
       convertFromSecondPiolaKirchhoffStress(stress* const ST) const {
     this->checkLagrangianSetting();
     tfel::math::stensor<2u, stress> S;
@@ -292,7 +314,8 @@ namespace tfel::material {
   }  // end of convertFromSecondPiolaKirchhoffStress
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<2u, StressType>::StressStensor
+  TFEL_HOST_DEVICE typename LogarithmicStrainHandler<2u,
+                                                     StressType>::StressStensor
   LogarithmicStrainHandler<2u, StressType>::convertToSecondPiolaKirchhoffStress(
       const StressStensor& T) const {
     this->checkLagrangianSetting();
@@ -300,7 +323,7 @@ namespace tfel::material {
   }  // end of convertToSecondPiolaKirchhoffStress
 
   template <typename StressType>
-  void
+  TFEL_HOST_DEVICE void
   LogarithmicStrainHandler<2u, StressType>::convertToSecondPiolaKirchhoffStress(
       stress* const TS) const {
     this->checkLagrangianSetting();
@@ -311,9 +334,10 @@ namespace tfel::material {
   }  // end of convertToSecondPiolaKirchhoffStress
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<2u, StressType>::StressStensor
-  LogarithmicStrainHandler<2u, StressType>::convertFromCauchyStress(
-      const StressStensor& sig) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<2u, StressType>::StressStensor
+      LogarithmicStrainHandler<2u, StressType>::convertFromCauchyStress(
+          const StressStensor& sig) const {
     if (this->s == LAGRANGIAN) {
       const auto S =
           tfel::math::convertCauchyStressToSecondPiolaKirchhoffStress(sig,
@@ -325,7 +349,8 @@ namespace tfel::material {
   }  // end of ::convertFromCauchyStress
 
   template <typename StressType>
-  void LogarithmicStrainHandler<2u, StressType>::convertFromCauchyStress(
+  TFEL_HOST_DEVICE void
+  LogarithmicStrainHandler<2u, StressType>::convertFromCauchyStress(
       stress* const sT) const {
     StressStensor sig;
     sig.importTab(sT);
@@ -333,9 +358,10 @@ namespace tfel::material {
   }  // end of convertFromCauchyStress
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<2u, StressType>::StressStensor
-  LogarithmicStrainHandler<2u, StressType>::convertToCauchyStress(
-      const StressStensor& T) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<2u, StressType>::StressStensor
+      LogarithmicStrainHandler<2u, StressType>::convertToCauchyStress(
+          const StressStensor& T) const {
     if (this->s == LAGRANGIAN) {
       const auto S = this->convertToSecondPiolaKirchhoffStress(T);
       return tfel::math::convertSecondPiolaKirchhoffStressToCauchyStress(
@@ -345,7 +371,8 @@ namespace tfel::material {
   }  // end of convertToSecondPiolaKirchhoffStress
 
   template <typename StressType>
-  void LogarithmicStrainHandler<2u, StressType>::convertToCauchyStress(
+  TFEL_HOST_DEVICE void
+  LogarithmicStrainHandler<2u, StressType>::convertToCauchyStress(
       stress* const Ts) const {
     StressStensor T;
     T.importTab(Ts);
@@ -353,13 +380,15 @@ namespace tfel::material {
   }  // end of convertToCauchyStress
 
   template <typename StressType>
-  void LogarithmicStrainHandler<2u, StressType>::updateAxialDeformationGradient(
+  TFEL_HOST_DEVICE void
+  LogarithmicStrainHandler<2u, StressType>::updateAxialDeformationGradient(
       const real Fzz) {
     this->F[2] = Fzz;
   }  // end of updateAxialDeformationGradient
 
   template <typename StressType>
-  void LogarithmicStrainHandler<2u, StressType>::convertTangentModuli(
+  TFEL_HOST_DEVICE void
+  LogarithmicStrainHandler<2u, StressType>::convertTangentModuli(
       TangentOperator& Kr,
       const TangentOperator& Ks,
       const StressStensor& T,
@@ -402,7 +431,7 @@ namespace tfel::material {
   }  // end of convertTangentModuli
 
   template <typename StressType>
-  tfel::math::tvector<
+  TFEL_HOST_DEVICE tfel::math::tvector<
       4u,
       tfel::math::
           stensor<2u, typename LogarithmicStrainHandler<2u, StressType>::real>>
@@ -421,7 +450,7 @@ namespace tfel::material {
   }  // end of getNTensors
 
   template <typename StressType>
-  tfel::math::tvector<
+  TFEL_HOST_DEVICE tfel::math::tvector<
       4u,
       tfel::math::
           stensor<2u, typename LogarithmicStrainHandler<2u, StressType>::real>>
@@ -449,9 +478,10 @@ namespace tfel::material {
   }  // end of getEulerianMTensors
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<2u, StressType>::TangentOperator
-  LogarithmicStrainHandler<2u, StressType>::convertToMaterialTangentModuli(
-      const TangentOperator& Ks, const StressStensor& T) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<2u, StressType>::TangentOperator
+      LogarithmicStrainHandler<2u, StressType>::convertToMaterialTangentModuli(
+          const TangentOperator& Ks, const StressStensor& T) const {
     this->checkLagrangianSetting();
     // real work starts here
     const auto N = getNTensors(this->m);
@@ -461,9 +491,10 @@ namespace tfel::material {
   }
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<2u, StressType>::TangentOperator
-  LogarithmicStrainHandler<2u, StressType>::convertToSpatialTangentModuli(
-      const TangentOperator& Ks, const StressStensor& T) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<2u, StressType>::TangentOperator
+      LogarithmicStrainHandler<2u, StressType>::convertToSpatialTangentModuli(
+          const TangentOperator& Ks, const StressStensor& T) const {
     if (this->s == LAGRANGIAN) {
       using FSTOBase = FiniteStrainBehaviourTangentOperatorBase;
       const auto F0 = tfel::math::tensor<2u, real>::Id();
@@ -481,10 +512,11 @@ namespace tfel::material {
   }  // end of convertToSpatialTangentModuli
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<2u, StressType>::TangentOperator
-  LogarithmicStrainHandler<2u, StressType>::
-      convertToCauchyStressTruesdellRateTangentModuli(
-          const TangentOperator& Ks, const StressStensor& T) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<2u, StressType>::TangentOperator
+      LogarithmicStrainHandler<2u, StressType>::
+          convertToCauchyStressTruesdellRateTangentModuli(
+              const TangentOperator& Ks, const StressStensor& T) const {
     if (this->s == LAGRANGIAN) {
       using FSTOBase = FiniteStrainBehaviourTangentOperatorBase;
       const auto F0 = tfel::math::tensor<2u, real>::Id();
@@ -504,7 +536,7 @@ namespace tfel::material {
   }  // end of convertToCauchyStressTruesdellRateTangentModuli
 
   template <typename StressType>
-  void LogarithmicStrainHandler<2u, StressType>::
+  TFEL_HOST_DEVICE void LogarithmicStrainHandler<2u, StressType>::
       convertToCauchyStressTruesdellRateTangentModuli(
           stress* const K, const stress* const T) const {
     tfel::math::ST2toST2View<2u, stress> k(K);
@@ -546,9 +578,10 @@ namespace tfel::material {
   }  // end of convertToCauchyStressTruesdellRateTangentModuli
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<2u, StressType>::TangentOperator
-  LogarithmicStrainHandler<2u, StressType>::convertToAbaqusTangentModuli(
-      const TangentOperator& Ks, const StressStensor& T) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<2u, StressType>::TangentOperator
+      LogarithmicStrainHandler<2u, StressType>::convertToAbaqusTangentModuli(
+          const TangentOperator& Ks, const StressStensor& T) const {
     using FSTOBase = FiniteStrainBehaviourTangentOperatorBase;
     const auto F0 = tfel::math::tensor<2u, real>::Id();
     const auto sig = this->convertToCauchyStress(T);
@@ -568,7 +601,8 @@ namespace tfel::material {
   }  // end of convertToAbaqusTangentModuli
 
   template <typename StressType>
-  void LogarithmicStrainHandler<2u, StressType>::convertToAbaqusTangentModuli(
+  TFEL_HOST_DEVICE void
+  LogarithmicStrainHandler<2u, StressType>::convertToAbaqusTangentModuli(
       stress* const K, const stress* const T) const {
     tfel::math::ST2toST2View<2u, stress> k(K);
     auto transpose = [&k]() {
@@ -609,19 +643,21 @@ namespace tfel::material {
   }  // end of convertToAbaqusTangentModuli
 
   template <typename StressType>
-  const typename LogarithmicStrainHandler<2u, StressType>::DeformationGradient&
-  LogarithmicStrainHandler<2u, StressType>::getDeformationGradient() const {
+  TFEL_HOST_DEVICE const typename LogarithmicStrainHandler<2u, StressType>::
+      DeformationGradient&
+      LogarithmicStrainHandler<2u, StressType>::getDeformationGradient() const {
     return this->F;
   }  // end of getDeformationGradient
 
   template <typename StressType>
+  TFEL_HOST_DEVICE
   LogarithmicStrainHandler<3u, StressType>::LogarithmicStrainHandler(
       const Setting c, const DeformationGradient& F1)
       : LogarithmicStrainHandler(Builder(c, F1), c, F1) {
   }  // end of LogarithmicStrainHandler
 
   template <typename StressType>
-  LogarithmicStrainHandler<3u, StressType>::Builder::Builder(
+  TFEL_HOST_DEVICE LogarithmicStrainHandler<3u, StressType>::Builder::Builder(
       const Setting c, const DeformationGradient& F1) {
     using namespace tfel::math;
     using stensor = stensor<3u, real>;
@@ -689,6 +725,7 @@ namespace tfel::material {
   }
 
   template <typename StressType>
+  TFEL_HOST_DEVICE
   LogarithmicStrainHandler<3u, StressType>::LogarithmicStrainHandler(
       Builder&& src, const Setting c, const DeformationGradient& F1)
       : LogarithmicStrainHandlerBase(c),
@@ -699,13 +736,16 @@ namespace tfel::material {
         e(src.e) {}  // end of LogarithmicStrainHandler
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<3u, StressType>::StrainStensor
-  LogarithmicStrainHandler<3u, StressType>::getHenckyLogarithmicStrain() const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<3u, StressType>::StrainStensor
+      LogarithmicStrainHandler<3u, StressType>::getHenckyLogarithmicStrain()
+          const {
     return StrainStensor::computeIsotropicFunction(this->e, this->m);
   }  // end of getHenckyLogarithmicStrain
 
   template <typename StressType>
-  void LogarithmicStrainHandler<3u, StressType>::getHenckyLogarithmicStrain(
+  TFEL_HOST_DEVICE void
+  LogarithmicStrainHandler<3u, StressType>::getHenckyLogarithmicStrain(
       real* const elog) const {
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     const auto el = StrainStensor::computeIsotropicFunction(this->e, this->m);
@@ -718,15 +758,16 @@ namespace tfel::material {
   }  // end of getHenckyLogarithmicStrain
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<3u, StressType>::StressStensor
-  LogarithmicStrainHandler<3u, StressType>::
-      convertFromSecondPiolaKirchhoffStress(const StressStensor& S) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<3u, StressType>::StressStensor
+      LogarithmicStrainHandler<3u, StressType>::
+          convertFromSecondPiolaKirchhoffStress(const StressStensor& S) const {
     this->checkLagrangianSetting();
     return (S | tfel::math::invert(p)) / 2;
   }  // end of convertFromSecondPiolaKirchhoffStress
 
   template <typename StressType>
-  void LogarithmicStrainHandler<3u, StressType>::
+  TFEL_HOST_DEVICE void LogarithmicStrainHandler<3u, StressType>::
       convertFromSecondPiolaKirchhoffStress(stress* const ST) const {
     this->checkLagrangianSetting();
     tfel::math::stensor<3u, stress> S;
@@ -736,7 +777,8 @@ namespace tfel::material {
   }  // end of convertFromSecondPiolaKirchhoffStress
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<3u, StressType>::StressStensor
+  TFEL_HOST_DEVICE typename LogarithmicStrainHandler<3u,
+                                                     StressType>::StressStensor
   LogarithmicStrainHandler<3u, StressType>::convertToSecondPiolaKirchhoffStress(
       const StressStensor& T) const {
     this->checkLagrangianSetting();
@@ -744,7 +786,7 @@ namespace tfel::material {
   }  // end of convertToSecondPiolaKirchhoffStress
 
   template <typename StressType>
-  void
+  TFEL_HOST_DEVICE void
   LogarithmicStrainHandler<3u, StressType>::convertToSecondPiolaKirchhoffStress(
       stress* const TS) const {
     this->checkLagrangianSetting();
@@ -755,9 +797,10 @@ namespace tfel::material {
   }  // end of convertToSecondPiolaKirchhoffStress
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<3u, StressType>::StressStensor
-  LogarithmicStrainHandler<3u, StressType>::convertToCauchyStress(
-      const StressStensor& T) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<3u, StressType>::StressStensor
+      LogarithmicStrainHandler<3u, StressType>::convertToCauchyStress(
+          const StressStensor& T) const {
     if (this->s == LAGRANGIAN) {
       const auto S = this->convertToSecondPiolaKirchhoffStress(T);
       return tfel::math::convertSecondPiolaKirchhoffStressToCauchyStress(
@@ -768,7 +811,8 @@ namespace tfel::material {
   }  // end of convertToSecondPiolaKirchhoffStress
 
   template <typename StressType>
-  void LogarithmicStrainHandler<3u, StressType>::convertToCauchyStress(
+  TFEL_HOST_DEVICE void
+  LogarithmicStrainHandler<3u, StressType>::convertToCauchyStress(
       stress* const Ts) const {
     StressStensor T;
     T.importTab(Ts);
@@ -776,9 +820,10 @@ namespace tfel::material {
   }  // end of convertToCauchyStress
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<3u, StressType>::StressStensor
-  LogarithmicStrainHandler<3u, StressType>::convertFromCauchyStress(
-      const StressStensor& sig) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<3u, StressType>::StressStensor
+      LogarithmicStrainHandler<3u, StressType>::convertFromCauchyStress(
+          const StressStensor& sig) const {
     if (this->s == LAGRANGIAN) {
       const auto S =
           tfel::math::convertCauchyStressToSecondPiolaKirchhoffStress(sig,
@@ -790,7 +835,8 @@ namespace tfel::material {
   }  // end of convertFromCauchyStress
 
   template <typename StressType>
-  void LogarithmicStrainHandler<3u, StressType>::convertFromCauchyStress(
+  TFEL_HOST_DEVICE void
+  LogarithmicStrainHandler<3u, StressType>::convertFromCauchyStress(
       stress* const sT) const {
     StressStensor sig;
     sig.importTab(sT);
@@ -798,7 +844,7 @@ namespace tfel::material {
   }  // end of convertFromCauchyStress
 
   template <typename StressType>
-  tfel::math::tmatrix<
+  TFEL_HOST_DEVICE tfel::math::tmatrix<
       3u,
       3u,
       tfel::math::
@@ -821,7 +867,7 @@ namespace tfel::material {
   }  // end of getNTensors
 
   template <typename StressType>
-  tfel::math::tmatrix<
+  TFEL_HOST_DEVICE tfel::math::tmatrix<
       3u,
       3u,
       tfel::math::
@@ -851,7 +897,8 @@ namespace tfel::material {
   }  // end of getEulerianMTensors
 
   template <typename StressType>
-  bool LogarithmicStrainHandler<3u, StressType>::areEigenValuesEqual(
+  TFEL_HOST_DEVICE bool
+  LogarithmicStrainHandler<3u, StressType>::areEigenValuesEqual(
       const tfel::math::tvector<3u, real>& vp) {
     return ((tfel::math::abs(vp(1) - vp(0)) < eps) &&
             (tfel::math::abs(vp(1) - vp(2)) < eps) &&
@@ -859,7 +906,7 @@ namespace tfel::material {
   }  // end of areEigenValuesEqual
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<3u, StressType>::size_type
+  TFEL_HOST_DEVICE typename LogarithmicStrainHandler<3u, StressType>::size_type
   LogarithmicStrainHandler<3u, StressType>::findSingleEigenValue(
       const tfel::math::tvector<3u, real>& vp) {
     if (areEigenValuesEqual(vp)) {
@@ -885,7 +932,8 @@ namespace tfel::material {
   }
 
   template <typename StressType>
-  void LogarithmicStrainHandler<3u, StressType>::convertTangentModuli(
+  TFEL_HOST_DEVICE void
+  LogarithmicStrainHandler<3u, StressType>::convertTangentModuli(
       TangentOperator& Kr,
       const TangentOperator& Ks,
       const StressStensor& T,
@@ -1001,8 +1049,9 @@ namespace tfel::material {
 
   template <typename StressType>
   typename LogarithmicStrainHandler<3u, StressType>::TangentOperator
-  LogarithmicStrainHandler<3u, StressType>::convertToMaterialTangentModuli(
-      const TangentOperator& Ks, const StressStensor& T) const {
+      TFEL_HOST_DEVICE
+      LogarithmicStrainHandler<3u, StressType>::convertToMaterialTangentModuli(
+          const TangentOperator& Ks, const StressStensor& T) const {
     this->checkLagrangianSetting();
     // real work starts here
     const auto N = getNTensors(this->m);
@@ -1012,9 +1061,10 @@ namespace tfel::material {
   }
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<3u, StressType>::TangentOperator
-  LogarithmicStrainHandler<3u, StressType>::convertToSpatialTangentModuli(
-      const TangentOperator& Ks, const StressStensor& T) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<3u, StressType>::TangentOperator
+      LogarithmicStrainHandler<3u, StressType>::convertToSpatialTangentModuli(
+          const TangentOperator& Ks, const StressStensor& T) const {
     if (this->s == LAGRANGIAN) {
       using FSTOBase = FiniteStrainBehaviourTangentOperatorBase;
       const auto F0 = tfel::math::tensor<3u, real>::Id();
@@ -1032,10 +1082,11 @@ namespace tfel::material {
   }  // end of convertToSpatialTangentModuli
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<3u, StressType>::TangentOperator
-  LogarithmicStrainHandler<3u, StressType>::
-      convertToCauchyStressTruesdellRateTangentModuli(
-          const TangentOperator& Ks, const StressStensor& T) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<3u, StressType>::TangentOperator
+      LogarithmicStrainHandler<3u, StressType>::
+          convertToCauchyStressTruesdellRateTangentModuli(
+              const TangentOperator& Ks, const StressStensor& T) const {
     if (this->s == LAGRANGIAN) {
       using FSTOBase = FiniteStrainBehaviourTangentOperatorBase;
       const auto F0 = tfel::math::tensor<3u, real>::Id();
@@ -1056,7 +1107,7 @@ namespace tfel::material {
   }  // end of convertToCauchyStressTruesdellRateTangentModuli
 
   template <typename StressType>
-  void LogarithmicStrainHandler<3u, StressType>::
+  TFEL_HOST_DEVICE void LogarithmicStrainHandler<3u, StressType>::
       convertToCauchyStressTruesdellRateTangentModuli(
           stress* const K, const stress* const T) const {
     tfel::math::ST2toST2View<3u, stress> k(K);
@@ -1147,9 +1198,10 @@ namespace tfel::material {
   }  // end of convertToCauchyStressTruesdellRateTangentModuli
 
   template <typename StressType>
-  typename LogarithmicStrainHandler<3u, StressType>::TangentOperator
-  LogarithmicStrainHandler<3u, StressType>::convertToAbaqusTangentModuli(
-      const TangentOperator& Ks, const StressStensor& T) const {
+  TFEL_HOST_DEVICE
+      typename LogarithmicStrainHandler<3u, StressType>::TangentOperator
+      LogarithmicStrainHandler<3u, StressType>::convertToAbaqusTangentModuli(
+          const TangentOperator& Ks, const StressStensor& T) const {
     using FSTOBase = FiniteStrainBehaviourTangentOperatorBase;
     const auto F0 = tfel::math::tensor<3u, real>::Id();
     const auto sig = this->convertToCauchyStress(T);
@@ -1170,7 +1222,8 @@ namespace tfel::material {
   }  // end of convertToAbaqusTangentModuli
 
   template <typename StressType>
-  void LogarithmicStrainHandler<3u, StressType>::convertToAbaqusTangentModuli(
+  TFEL_HOST_DEVICE void
+  LogarithmicStrainHandler<3u, StressType>::convertToAbaqusTangentModuli(
       stress* const K, const stress* const T) const {
     tfel::math::ST2toST2View<3u, stress> k(K);
     auto transpose = [&k]() {
@@ -1260,8 +1313,9 @@ namespace tfel::material {
   }  // end of convertToAbaqusTangentModuli
 
   template <typename StressType>
-  const typename LogarithmicStrainHandler<3u, StressType>::DeformationGradient&
-  LogarithmicStrainHandler<3u, StressType>::getDeformationGradient() const {
+  TFEL_HOST_DEVICE const typename LogarithmicStrainHandler<3u, StressType>::
+      DeformationGradient&
+      LogarithmicStrainHandler<3u, StressType>::getDeformationGradient() const {
     return this->F;
   }  // end of getDeformationGradient
 

@@ -17,7 +17,54 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+# `TFEL/Math` improvements
+
+## Workspace of nonlinear solvers {#sec:tfel_4.2:tfel_math:nonlinear_solvers:workspace}
+
+The nonlinear solvers available in `TFEL/Math` now have an additional
+optional template argument which allows the user to control how the data
+members of those solvers are defined. Those data members generally
+include the residual (named `fzeros`), the jacobian matrix (named
+`jacobian`), etc...
+
+The main rationale behing this development is to better handle how those
+data members are allocated. By default, those data members are allocated
+on the stack. This strategy is well suited on CPUs but can lead to
+excessive usage of registers on GPUs.
+
+### Example of usage
+
+The following workspace defines the data members used by the
+`TinyNewtonRaphsonSolverClass` as views into a pre-allocated buffer:
+
+~~~~{.cxx}
+template<unsigned short N, typename NumericType>
+struct ExternallyAllocatedWorkspace{
+  ExternallyAllocatedWorkspace(NumericType* const v)
+      : fzeros(v), zeros(v + N), delta_zeros(v + 2 * N), jacobian(v + 3 * N){};
+  //! \brief residual vector
+  tfel::math::View<tfel::math::tvector<N, NumericType>> fzeros;
+  //! \brief current estimate of the unknowns
+  tfel::math::View<tfel::math::tvector<N, NumericType>> zeros;
+  //! \brief current correction
+  tfel::math::View<tfel::math::tvector<N, NumericType>> delta_zeros;
+  //! \brief jacobian matrix
+  tfel::math::View<tfel::math::tmatrix<N, N, NumericType>> jacobian;
+};
+~~~~
+
+> **Note**
+>
+> The use is responsible for properly allocating memory.
+
 # Issues fixed
+
+## Issue #436: [tfel-math] Add support for external workspace in non linear solvers
+
+This feature is described in depth in Section
+@sec:tfel_4.2:tfel_math:nonlinear_solvers:workspace.
+
+For more details, see <https://github.com/thelfer/tfel/issues/436>.
 
 ## Issue #428: [mfront] Add the methods `getMaterialKnowledgeIdentifier` and `getMaterial` to the `OverridableImplementation` class
 

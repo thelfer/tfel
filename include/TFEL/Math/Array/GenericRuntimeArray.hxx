@@ -179,6 +179,26 @@ namespace tfel::math {
     std::enable_if_t<isAssignableTo<OtherArray, Child>(), Child&> operator-=(
         const OtherArray&);
     //
+    template <typename ValueType2>
+    std::enable_if_t<
+        isAssignableTo<
+            BinaryOperationResult<ValueType2,
+                                  typename GenericRuntimeArray::value_type,
+                                  OpMult>,
+            typename GenericRuntimeArray::value_type>(),
+        Child&>
+    operator*=(const ValueType2&) noexcept;
+    //
+    template <typename ValueType2>
+    std::enable_if_t<
+        isAssignableTo<
+            BinaryOperationResult<typename GenericRuntimeArray::value_type,
+                                  ValueType2,
+                                  OpDiv>,
+            typename GenericRuntimeArray::value_type>(),
+        Child&>
+    operator/=(const ValueType2&) noexcept;
+    //
     bool empty() const;
     //
     void clear();

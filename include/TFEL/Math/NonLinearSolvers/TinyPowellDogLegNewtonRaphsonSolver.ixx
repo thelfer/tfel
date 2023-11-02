@@ -19,9 +19,16 @@
 
 namespace tfel::math {
 
-  template <unsigned short N, typename NumericType, typename Child>
-  bool TinyPowellDogLegNewtonRaphsonSolver<N, NumericType, Child>::
-      computeNewCorrection() {
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
+  bool TinyPowellDogLegNewtonRaphsonSolver<
+      N,
+      NumericType,
+      Child,
+      ExternalWorkSpace>::computeNewCorrection() {
     auto& child = static_cast<Child&>(*this);
     child.updateOrCheckJacobian();
     const auto tjacobian = this->jacobian;
