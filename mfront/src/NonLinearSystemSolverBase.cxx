@@ -189,7 +189,9 @@ namespace mfront {
             << "this->fzeros = tfzeros;\n";
       }
       if (pd.second.isOne()) {
+        out << "{\n";
         compute_perturbation(to_string(pd.first));
+        out << "}\n";
       } else {
         out << "for(unsigned short idx = 0; idx!= " << pd.second
             << ";++idx){\n";
