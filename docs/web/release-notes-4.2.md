@@ -59,14 +59,14 @@ struct ExternallyAllocatedWorkspace{
 
 # Issues fixed
 
-## Issue #436: [tfel-math] Add support for external workspace in non linear solvers
+## Issue 436: [tfel-math] Add support for external workspace in non linear solvers
 
 This feature is described in depth in Section
 @sec:tfel_4.2:tfel_math:nonlinear_solvers:workspace.
 
 For more details, see <https://github.com/thelfer/tfel/issues/436>.
 
-## Issue #428: [mfront] Add the methods `getMaterialKnowledgeIdentifier` and `getMaterial` to the `OverridableImplementation` class
+## Issue 428: [mfront] Add the methods `getMaterialKnowledgeIdentifier` and `getMaterial` to the `OverridableImplementation` class
 
 The `getMaterialKnowledgeIdentifier` methods returns the name given to
 the overridable implementation. Depending on the case, this can be the
@@ -78,7 +78,7 @@ with the overridable implementation.
 
 For more details, see <https://github.com/thelfer/tfel/issues/428>.
 
-## Issue #427: [mtest] Add support for integral tests based on the inner pressure or the axial force in the ptest scheme
+## Issue 427: [mtest] Add support for integral tests based on the inner pressure or the axial force in the ptest scheme
 
 When the evolution of the inner radius or the evolution of the outer
 radius is prescribed, integral tests on the inner pressure
@@ -89,7 +89,7 @@ the axial force (`AxialForce`) can be set.
 
 For more details, see <https://github.com/thelfer/tfel/issues/427>.
 
-## Issue #426: [mtest] Add support for tests based on analytical formulae in the ptest scheme mtest
+## Issue 426: [mtest] Add support for tests based on analytical formulae in the ptest scheme mtest
 
 The `@Test` keyword now supports the `function` option, the syntax of
 which is similar to the `@Test` keyword of the `mtest` scheme.
@@ -103,14 +103,14 @@ to the values of an evolution named `InnerPressureReferenceValues`:
 
 For more details, see <https://github.com/thelfer/tfel/issues/426>.
 
-## Issue #425: [mfront] query the `mdnx` path where an `OverridableImplementation` is written
+## Issue 425: [mfront] query the `mdnx` path where an `OverridableImplementation` is written
 
 The `getDestinationPathInMadnexFile` returns the `mdnx` path where an
 `OverridableImplementation` is written.
 
 For more details, see <https://github.com/thelfer/tfel/issues/425>.
 
-## Issue #424: [madnex] Add an option to use a template file when generating a `mdnx` file
+## Issue 424: [madnex] Add an option to use a template file when generating a `mdnx` file
 
 For more details, see <https://github.com/thelfer/tfel/issues/424>.
 
