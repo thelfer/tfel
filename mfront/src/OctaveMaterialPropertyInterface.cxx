@@ -21,6 +21,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/System/System.hxx"
+#include "TFEL/Config/GetInstallPath.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/FileDescription.hxx"
@@ -72,18 +73,21 @@ namespace mfront {
 
   void OctaveMaterialPropertyInterface::getTargetsDescription(
       TargetsDescription& td, const MaterialPropertyDescription& mpd) const {
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     const char* mkoctfile = ::getenv("MKOCTFILE");
     const auto name = (mpd.material.empty())
                           ? mpd.className
                           : mpd.material + "_" + mpd.className;
     const auto target = "../octave/" + name + ".oct";
-    std::string cmd = "@cd ../octave/ && CXXFLAGS=\"$(CXXFLAGS) -std=c++11\" ";
+    std::string cmd = "@cd ../octave/ && CXXFLAGS=\"$(CXXFLAGS) -std=c++17\" ";
     if (mkoctfile == nullptr) {
       cmd += "mkoctfile";
     } else {
       cmd += mkoctfile;
     }
     cmd += " $(INCLUDES) -L../src/";
+    cmd += " $(shell " + tfel_config + " --cppflags --compiler-flags)";
+    cmd += " $(shell " + tfel_config + " --includes)";
     cmd += " " + name + ".cpp";
     auto& res = td.specific_targets;
     insert_if(res[target].sources, "../octave/" + name + ".cpp");
@@ -131,7 +135,9 @@ namespace mfront {
         << "#include<string>\n"
         << "#include<vector>\n"
         << "#include<cmath>\n"
-        << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
+        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
+        << "#include\"TFEL/PhysicalConstants.hxx\"\n"
+        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n";
     if (useQuantities(mpd)) {
       out << "#include\"TFEL/Math/qt.hxx\"\n"
           << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
