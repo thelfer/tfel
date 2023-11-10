@@ -86,6 +86,7 @@ function(mfront_check_library lib interface ext)
   add_library(${lib} EXCLUDE_FROM_ALL
     ${${lib}_SOURCES}
     ${${lib}_ADDITIONAL_SOURCES})
+  target_link_libraries(${lib} PRIVATE TFELException)
   set_target_properties(${lib} PROPERTIES
       COMPILE_FLAGS "-DMFRONT_COMPILING")
   add_dependencies(check ${lib})
@@ -101,6 +102,7 @@ function(mfront_check_module lib interface ext)
   add_library(${lib} MODULE EXCLUDE_FROM_ALL
     ${${lib}_SOURCES}
     ${${lib}_ADDITIONAL_SOURCES})
+  target_link_libraries(${lib} PRIVATE TFELException)
   set_target_properties(${lib} PROPERTIES
       COMPILE_FLAGS "-DMFRONT_COMPILING")
   add_dependencies(check ${lib})

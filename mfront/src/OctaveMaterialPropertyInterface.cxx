@@ -85,7 +85,9 @@ namespace mfront {
     } else {
       cmd += mkoctfile;
     }
-    cmd += " $(INCLUDES) -L../src/ `"+tfel_config + " --cppflags --compiler-flags` `" + tfel_config + " --includes`";
+    cmd += " $(INCLUDES) -L../src/";
+    cmd += " $(shell " + tfel_config + " --cppflags --compiler-flags)";
+    cmd += " $(shell " + tfel_config + " --includes)";
     cmd += " " + name + ".cpp";
     auto& res = td.specific_targets;
     insert_if(res[target].sources, "../octave/" + name + ".cpp");

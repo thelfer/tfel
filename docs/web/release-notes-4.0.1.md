@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 443: [octave] Fix the octave interface 
+
+For more details, see <https://github.com/thelfer/tfel/issues/443>
+
 ## Issue 325: [TFEL/Math] Missing argument forwarding in the constructor of Expr class #325
 
 For more details, see <https://github.com/thelfer/tfel/issues/325>
