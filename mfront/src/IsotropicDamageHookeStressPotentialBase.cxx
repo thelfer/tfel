@@ -578,7 +578,7 @@ namespace mfront::bbrick {
         to.code += "} else if(smt==SECANTOPERATOR){\n";
         to.code +=
             "  this->Dt = "
-            "(1-min(this->d,this->damage_thresold)x)*(this->D_tdt);\n";
+            "(1-min(this->d,this->damage_thresold))*(this->D_tdt);\n";
         to.code += "} else {\n";
         to.code += "  return FAILURE;\n";
         to.code += "}";
@@ -656,7 +656,7 @@ namespace mfront::bbrick {
         c += "((" + dfv_ds + ") | (this->D));\n";
         c += "df" + v + "_ddd -= ";
         c += "(this->theta) * ((" + dfv_ds + ") | ((this->D) * ";
-        c += "(this->eel + (this->theta) * (this->deel)));\n";
+        c += "(this->eel + (this->theta) * (this->deel))));\n";
       } else if (vf == SupportedTypes::STENSOR) {
         c = "df" + v + "_ddeel += ";
         c += "(this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
@@ -749,7 +749,7 @@ namespace mfront::bbrick {
           c += "((" + dfv_ds + ") | (this->D));\n";
           c += "df" + v + "_ddd -= ";
           c += "(this->theta) * ((" + dfv_ds + ") | ((this->D) * ";
-          c += "(this->eel + (this->theta) * (this->deel)));\n";
+          c += "(this->eel + (this->theta) * (this->deel))));\n";
         } else if (vf == SupportedTypes::STENSOR) {
           c = "df" + v + "_ddeel += ";
           c += "(this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";

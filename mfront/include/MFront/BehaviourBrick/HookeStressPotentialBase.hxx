@@ -66,7 +66,7 @@ namespace mfront::bbrick {
     static std::vector<OptionDescription> getOrthotropicBehaviourOptions();
     //! get options only valid for all behaviours
     static std::vector<OptionDescription> getGeneralOptions();
-    //! constructor
+    //! \brief constructor
     HookeStressPotentialBase();
     std::string getName() const override;
     std::vector<OptionDescription> getOptions(const BehaviourDescription&,
@@ -86,7 +86,7 @@ namespace mfront::bbrick {
         const BehaviourDescription&) const override;
     std::string getEquivalentStressLowerBound(
         const BehaviourDescription&) const override;
-    //! destructor
+    //! \brief destructor
     ~HookeStressPotentialBase() override;
 
    protected:
