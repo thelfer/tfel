@@ -20,6 +20,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue #444: Fix the `IsotropicDamage` stress potential
+
+For more details, see <https://github.com/thelfer/tfel/issues/444>.
+
 ## Issue #432: UserDefinedViscoplasticity and Plastic flows
 
 For more details, see <https://github.com/thelfer/tfel/issues/432>.
