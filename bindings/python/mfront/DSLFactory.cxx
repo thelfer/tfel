@@ -21,6 +21,6 @@ void declareDSLFactory() {
       .def("getDSLFactory", DSLFactory::getDSLFactory,
            return_value_policy<reference_existing_object>())
       .staticmethod("getDSLFactory")
-      .def("createNewParser", &DSLFactory::createNewParser)
+      .def("createNewParser", &DSLFactory::createNewDSL)
       .def("createNewDSL", &DSLFactory::createNewDSL);
 }

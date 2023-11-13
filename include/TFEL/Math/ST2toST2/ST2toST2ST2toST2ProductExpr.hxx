@@ -50,7 +50,12 @@ namespace tfel::math {
      */
     template <typename ST2toST2Type, typename ST2toST2Type2>
     TFEL_HOST_DEVICE constexpr Expr(const ST2toST2Type& a,
-                                    const ST2toST2Type2& b) {
+                                    const ST2toST2Type2& b)
+        : array_holder<StensorDimeToSize<
+                           getSpaceDimension<ST2toST2ResultType>()>::value *
+                           StensorDimeToSize<
+                               getSpaceDimension<ST2toST2ResultType>()>::value,
+                       numeric_type<ST2toST2ResultType>>() {
       static_assert(implementsST2toST2Concept<ST2toST2Type>());
       static_assert(implementsST2toST2Concept<ST2toST2Type2>());
       static_assert(getSpaceDimension<ST2toST2Type>() == 1u);
@@ -106,7 +111,12 @@ namespace tfel::math {
      */
     template <typename ST2toST2Type, typename ST2toST2Type2>
     TFEL_HOST_DEVICE constexpr Expr(const ST2toST2Type& a,
-                                    const ST2toST2Type2& b) {
+                                    const ST2toST2Type2& b)
+        : array_holder<StensorDimeToSize<
+                           getSpaceDimension<ST2toST2ResultType>()>::value *
+                           StensorDimeToSize<
+                               getSpaceDimension<ST2toST2ResultType>()>::value,
+                       numeric_type<ST2toST2ResultType>>() {
       static_assert(implementsST2toST2Concept<ST2toST2Type>());
       static_assert(implementsST2toST2Concept<ST2toST2Type2>());
       static_assert(getSpaceDimension<ST2toST2Type>() == 2u);

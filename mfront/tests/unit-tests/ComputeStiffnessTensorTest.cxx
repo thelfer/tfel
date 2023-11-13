@@ -86,7 +86,7 @@ struct ComputeStiffnessTensorTest final : public tfel::tests::TestCase {
     const auto h = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto& f = mfront::DSLFactory::getDSLFactory();
     auto dsl = std::dynamic_pointer_cast<mfront::AbstractBehaviourDSL>(
-        f.createNewParser("Implicit"));
+        f.createNewDSL("Implicit"));
     dsl->analyseString("@ComputeStiffnessTensor {150e9,0.3};");
     const auto& bd = dsl->getBehaviourDescription().getBehaviourData(h);
     TFEL_TESTS_ASSERT(bd.getParameters().size() == 2u);
@@ -103,7 +103,7 @@ struct ComputeStiffnessTensorTest final : public tfel::tests::TestCase {
     const auto h = tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     auto& f = mfront::DSLFactory::getDSLFactory();
     auto dsl = std::dynamic_pointer_cast<mfront::AbstractBehaviourDSL>(
-        f.createNewParser("Implicit"));
+        f.createNewDSL("Implicit"));
     dsl->analyseString(
         "@OrthotropicBehaviour;"
         "@ComputeStiffnessTensor {150e9,150e9,150e9,"
@@ -129,7 +129,7 @@ struct ComputeStiffnessTensorTest final : public tfel::tests::TestCase {
   }
   void check(const std::string& n, const std::string& s) {
     auto& f = mfront::DSLFactory::getDSLFactory();
-    auto dsl = f.createNewParser(n);
+    auto dsl = f.createNewDSL(n);
     try {
       dsl->analyseString(s);
     } catch (std::runtime_error& e) {
