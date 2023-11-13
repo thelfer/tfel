@@ -662,7 +662,7 @@ namespace mfront {
           c += "((" + dfv_ds + ") | (this->D));\n";
           c += "df" + v + "_ddd -= ";
           c += "(this->theta) * ((" + dfv_ds + ") | ((this->D) * ";
-          c += "(this->eel + (this->theta) * (this->deel)));\n";
+          c += "(this->eel + (this->theta) * (this->deel))));\n";
         } else if (vf == SupportedTypes::STENSOR) {
           c = "df" + v + "_ddeel += ";
           c += "(this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
@@ -757,7 +757,7 @@ namespace mfront {
             c += "((" + dfv_ds + ") | (this->D));\n";
             c += "df" + v + "_ddd -= ";
             c += "(this->theta) * ((" + dfv_ds + ") | ((this->D) * ";
-            c += "(this->eel + (this->theta) * (this->deel)));\n";
+            c += "(this->eel + (this->theta) * (this->deel))));\n";
           } else if (vf == SupportedTypes::STENSOR) {
             c = "df" + v + "_ddeel += ";
             c += "(this->theta) * (1-this->d-(this->theta)*(this->dd)) * ";
