@@ -1376,6 +1376,7 @@ namespace mfront {
       if (!suffix.empty()) {
         fname += "_" + suffix;
       }
+      out << "try{\n";
       if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
         out << "mfront::UmatSmallStrainMTestFileGenerator mg(\""
             << makeLowerCase(this->getInterfaceName()) << "\",\""
@@ -1584,7 +1585,13 @@ namespace mfront {
       out << "mg.generate(\"" + name + "\");\n"
           << "static_cast<void>(TVectorSize); // remove gcc warning\n"
           << "static_cast<void>(StensorSize); // remove gcc warning\n"
-          << "static_cast<void>(TensorSize);  // remove gcc warning\n";
+          << "static_cast<void>(TensorSize);  // remove gcc warning\n"
+          << "} catch(std::exception& mtest_generation_exception){\n"
+          << "std::cerr << \"MTest file generation failed: \" << "
+          << "mtest_generation_exception.what() << \"\\n\";\n"
+          << "} catch(...){\n"
+          << "std::cerr << \"MTest file generation failed\\n\";"
+          << "}\n";
     }
   }
 
