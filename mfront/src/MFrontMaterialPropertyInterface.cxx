@@ -131,6 +131,10 @@ namespace mfront {
       const MaterialPropertyDescription&,
       const FileDescription&) const {}  // end of writeFileDescriptionSymbols
 
+  void MFrontMaterialPropertyInterface::writeValidatorSymbol(
+      std::ostream&, const MaterialPropertyDescription&) const {
+  }  // end of writeValidatorSymbol
+
   void MFrontMaterialPropertyInterface::writeBuildIdentifierSymbol(
       std::ostream&, const MaterialPropertyDescription&) const {
   }  // end of writeBuildIdentifierSymbol

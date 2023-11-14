@@ -1557,6 +1557,7 @@ namespace mfront {
     }();
     unsigned int offset = 0;
     const auto name = bd.getLibrary() + bd.getClassName();
+    os << "try{\n";
     if (generic_behaviour) {
       writeBehaviourVariablesDeclarations(os, bd);
       os << "mfront::GenericBehaviourMTestFileGenerator mg("
@@ -1696,7 +1697,13 @@ namespace mfront {
     os << "mg.generate(\"" + name + "\");\n"
        << "static_cast<void>(TVectorSize); // remove gcc warning\n"
        << "static_cast<void>(StensorSize); // remove gcc warning\n"
-       << "static_cast<void>(TensorSize);  // remove gcc warning\n";
+       << "static_cast<void>(TensorSize);  // remove gcc warning\n"
+       << "} catch(std::exception& mtest_generation_exception){\n"
+       << "std::cerr << \"MTest file generation failed: \" << "
+       << "mtest_generation_exception.what() << \"\\n\";\n"
+       << "} catch(...){\n"
+       << "std::cerr << \"MTest file generation failed\\n\";"
+       << "}\n";
   }  // end of generateMTestFile
 
   std::string GenericBehaviourInterface::getLibraryName(

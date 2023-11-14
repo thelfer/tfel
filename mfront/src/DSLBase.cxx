@@ -67,7 +67,7 @@ namespace mfront {
   const char* const DSLBase::initializationFromFileOption =
       "parameters_initialization_from_file";
   const char* const DSLBase::overridingParameters = "overriding_parameters";
-
+  const char* const DSLBase::validatorOption = "validator";
   const char* const DSLBase::buildIdentifierOption = "build_identifier";
 
   bool isValidMaterialName(std::string_view n) {
@@ -90,6 +90,7 @@ namespace mfront {
             DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption)
         .addDataTypeValidator<bool>(DSLBase::parametersAsStaticVariablesOption)
         .addDataTypeValidator<bool>(DSLBase::initializationFromFileOption)
+        .addDataTypeValidator<std::string>(DSLBase::validatorOption)
         .addDataTypeValidator<std::string>(DSLBase::buildIdentifierOption)
         .addDataTypeValidator<tfel::utilities::DataMap>(
             DSLBase::overridingParameters);
@@ -134,6 +135,11 @@ namespace mfront {
                      b, false);
     }
     //
+    if (opts.count(DSLBase::validatorOption) != 0) {
+      const auto id = opts.at(DSLBase::validatorOption).get<std::string>();
+      d.setAttribute(MaterialKnowledgeDescription::validator, id, false);
+    }
+    //
     if (opts.count(DSLBase::buildIdentifierOption) != 0) {
       const auto id =
           opts.at(DSLBase::buildIdentifierOption).get<std::string>();
@@ -147,6 +153,8 @@ namespace mfront {
         MaterialKnowledgeDescription::defaultOutOfBoundsPolicy, "None");
     const auto build_id = d.getAttribute<std::string>(
         MaterialKnowledgeDescription::buildIdentifier, "");
+    const auto validator = d.getAttribute<std::string>(
+        MaterialKnowledgeDescription::validator, "");
     return {{DSLBase::defaultOutOfBoundsPolicyOption, policy},
             {DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption,
              allowRuntimeModificationOfTheOutOfBoundsPolicy(d)},
@@ -154,6 +162,7 @@ namespace mfront {
              areParametersTreatedAsStaticVariables(d)},
             {DSLBase::initializationFromFileOption,
              allowsParametersInitializationFromFile(d)},
+            {DSLBase::validatorOption, validator},
             {DSLBase::buildIdentifierOption, build_id},
             {DSLBase::overridingParameters, tfel::utilities::DataMap{}}};
   }  // end of buildCommonOptions

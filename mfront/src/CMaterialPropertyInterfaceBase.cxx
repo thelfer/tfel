@@ -359,6 +359,11 @@ namespace mfront {
     mfront::writeFileDescriptionSymbols(os, this->getSymbolName(mpd), fd);
   }  // end of writeFileDescriptionSymbols
 
+  void CMaterialPropertyInterfaceBase::writeValidatorSymbol(
+      std::ostream& os, const MaterialPropertyDescription& mpd) const {
+    mfront::writeValidatorSymbol(os, this->getSymbolName(mpd), mpd);
+  }  // end of writeValidatorSymbol
+
   void CMaterialPropertyInterfaceBase::writeBuildIdentifierSymbol(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
     mfront::writeBuildIdentifierSymbol(os, this->getSymbolName(mpd), mpd);

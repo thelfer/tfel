@@ -155,11 +155,20 @@ namespace mfront {
   }  // end of MTestFileGeneratorBase::addExternalStateVariable
 
   void MTestFileGeneratorBase::generate(const std::string& n) const {
-    std::ofstream file(n + "-" + std::to_string(getIdentifier()) + ".mtest");
+    const auto fn = [&n]() -> std::string {
+      const auto* const d =
+          std::getenv("MTEST_FILE_GENERATOR_OUTPUT_DIRECTORY");
+      const auto f = n + "-" + std::to_string(getIdentifier()) + ".mtest";
+      if (d != nullptr) {
+        return std::string(d) + '/' + f;
+      }
+      return f;
+    }();
+    std::ofstream file(fn);
     tfel::raise_if(!file,
                    "MTestFileGeneratorBase::generate: "
                    "can't open file '" +
-                       n + ".mtest'");
+                       fn + "'");
     file << "@MaximumNumberOfSubSteps 1;\n";
     if (this->handleThermalExpansion) {
       file << "@HandleThermalExpansion true;\n";

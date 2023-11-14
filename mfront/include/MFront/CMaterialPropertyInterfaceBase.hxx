@@ -165,6 +165,12 @@ namespace mfront {
      * \param[out] os:  output file stream
      * \param[out] mpd: material property description
      */
+    virtual void writeValidatorSymbol(std::ostream&,
+                                      const MaterialPropertyDescription&) const;
+    /*!
+     * \param[out] os:  output file stream
+     * \param[out] mpd: material property description
+     */
     virtual void writeBuildIdentifierSymbol(
         std::ostream&, const MaterialPropertyDescription&) const;
     /*!

@@ -38,6 +38,8 @@ namespace mfront {
     //! \brief attribute name
     static const char* const initializeParametersFromFile;
     //! \brief attribute name
+    static const char* const validator;
+    //! \brief attribute name
     static const char* const buildIdentifier;
     /*!
      * \brief throw an exception saying that no attribute with the given name

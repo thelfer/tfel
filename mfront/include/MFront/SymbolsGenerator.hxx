@@ -63,6 +63,16 @@ namespace mfront {
      * \param[in] d: material knowledge description
      * \param[in] n: name of the entry point
      */
+    virtual void writeValidatorSymbol(std::ostream &,
+                                      const StandardBehaviourInterface &,
+                                      const BehaviourDescription &,
+                                      const std::string &) const;
+    /*!
+     * \param[in] out: output file
+     * \param[in] i: standard behaviour interface
+     * \param[in] d: material knowledge description
+     * \param[in] n: name of the entry point
+     */
     virtual void writeBuildIdentifierSymbol(std::ostream &,
                                             const StandardBehaviourInterface &,
                                             const BehaviourDescription &,

@@ -378,10 +378,20 @@ namespace tfel::system {
     return this->getStringIfDefined(l, s + "_description");
   }  // end of getDescription
 
+  std::string ExternalLibraryManager::getValidator(const std::string& l,
+                                                 const std::string& s) {
+    return this->getStringIfDefined(l, s + "_validator");
+  }  // end of getValidator
+
   std::string ExternalLibraryManager::getBuildId(const std::string& l,
                                                  const std::string& s) {
-    return this->getStringIfDefined(l, s + "_build_id");
+    return this->getBuildIdentifier(l, s);
   }  // end of getBuildId
+
+  std::string ExternalLibraryManager::getBuildIdentifier(const std::string& l,
+                                                         const std::string& s) {
+    return this->getStringIfDefined(l, s + "_build_id");
+  }  // end of getBuildIdentifier
 
   std::string ExternalLibraryManager::getSource(const std::string& l,
                                                 const std::string& f) {

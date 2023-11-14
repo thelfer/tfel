@@ -70,6 +70,8 @@ namespace mfront {
     //! \brief standard option name
     static const char* const initializationFromFileOption;
     //! \brief standard option name
+    static const char* const validatorOption;
+    //! \brief standard option name
     static const char* const buildIdentifierOption;
     //! \brief standard option
     static const char* const overridingParameters;

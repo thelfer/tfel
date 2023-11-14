@@ -150,7 +150,9 @@ void declareExternalLibraryManager() {
       .def("getAuthor", &ELM::getAuthor)
       .def("getDate", &ELM::getDate)
       .def("getDescription", &ELM::getDescription)
-      .def("getBuildId", &ELM::getBuildId)
+      .def("getValidator", &ELM::getValidator)
+      .def("getBuildId", &ELM::getBuildIdentifier)
+      .def("getBuildIdentifier", &ELM::getBuildIdentifier)
       .def("getMaterial", &ELM::getMaterial)
       .def("getSource", &ELM::getSource)
       .def("getTFELVersion", &ELM::getTFELVersion,

@@ -410,6 +410,14 @@ namespace mfront {
     exportStringSymbol(os, std::string{n} + "_description", description);
   }  // end of writeFileDescriptionSymbols
 
+  void writeValidatorSymbol(std::ostream& os,
+                            const std::string_view n,
+                            const MaterialKnowledgeDescription& d) {
+    const auto validator = d.getAttribute<std::string>(
+        MaterialKnowledgeDescription::validator, "");
+    exportStringSymbol(os, std::string{n} + "_validator", validator);
+  }  // end of writeValidatorSymbols
+
   void writeBuildIdentifierSymbol(std::ostream& os,
                                   const std::string_view n,
                                   const MaterialKnowledgeDescription& d) {

@@ -26,6 +26,7 @@ namespace mfront {
       "parameters_as_static_variables";
   const char* const MaterialKnowledgeDescription::initializeParametersFromFile =
       "parameters_initialization_from_file";
+  const char* const MaterialKnowledgeDescription::validator = "validator";
   const char* const MaterialKnowledgeDescription::buildIdentifier =
       "build_identifier";
 

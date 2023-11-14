@@ -164,6 +164,16 @@ namespace mfront {
       std::ostream&, const std::string_view, const FileDescription&);
 
   /*!
+   * \brief write a symbol associated with the validator.
+   * \param[out] os: output stream
+   * \param[in]  n: entry point name
+   * \param[in] d: description
+   */
+  MFRONT_VISIBILITY_EXPORT void writeValidatorSymbol(
+      std::ostream&,
+      const std::string_view,
+      const MaterialKnowledgeDescription&);
+  /*!
    * \brief write a symbol associated with the build identifier.
    * \param[out] os: output stream
    * \param[in]  n: entry point name

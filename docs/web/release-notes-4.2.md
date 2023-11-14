@@ -57,7 +57,62 @@ struct ExternallyAllocatedWorkspace{
 >
 > The use is responsible for properly allocating memory.
 
+# `MFront` improvements
+
+## The `validator` DSL option {#sec:tfel_4.2:mfront:validator}
+
+The `validator` option allows to specify an project or an institute
+which assumes assurance quality aspects related to an `MFront` file.
+
+The `validator` is defined as a DSL option for proper support in the
+[`MFrontGallery`
+project](https://thelfer.github.io/MFrontGallery/web/index.html).
+
+### Example of usage {.unnumbered}
+
+The following example declares the validator on the command line:
+
+~~~~{.bash}
+$ mfront --obuild --interface=generic --dsl-option='validator:BGE Tech' Plasticity.mfront
+~~~~
+
+The validator can also be defined in the the `MFront` file:
+
+~~~~{.cxx}
+@DSL Implicit{
+  validator: "BGE Tech"
+}
+~~~~
+
+## Allow to specify a directory where to save the `mtest` files in case of integration failure {#sec:tfel_4.2:mfront:MTEST_FILE_GENERATOR_OUTPUT_DIRECTORY}
+
+By default, `mtest` files are generated in the current working
+directory. This can be inconvenient, in particular for the users of the
+`code_aster` solver, as this solver creates a temporary directory to
+perform the calculations and erases this directory at the end of the
+execution.
+
+The `MTEST_FILE_GENERATOR_OUTPUT_DIRECTORY` environment variable
+specifies where to put the generated `mtest` files.
+
 # Issues fixed
+
+## Issue 447: [mfront] Generation of MTest file shall be protected by a try/catch
+
+For more details, see <https://github.com/thelfer/tfel/issues/447>.
+
+## Issue 446: [mfront] Allow to specify a validator
+
+This feature is described in Section @sec:tfel_4.2:mfront:validator.
+
+For more details, see <https://github.com/thelfer/tfel/issues/446>.
+
+## Issue 445: [mfront] Allow to specify a directory where to save the `mtest` files in case of integration failure
+
+This feature is described in Section
+@sec:tfel_4.2:mfront:MTEST_FILE_GENERATOR_OUTPUT_DIRECTORY.
+
+For more details, see <https://github.com/thelfer/tfel/issues/445>.
 
 ## Issue 436: [tfel-math] Add support for external workspace in non linear solvers
 
