@@ -249,6 +249,13 @@ namespace mfront {
      */
     virtual void overrideDescription(const std::string&);
     /*!
+     * \brief specify the unit system of the `MFront` implementation before
+     * parsing the `MFront` source file. Any unit system specified with the
+     * `@UnitSystem` keyword will be ignored.
+     * \param[in] s: unit system
+     */
+    virtual void overrideUnitSystem(const std::string&);
+    /*!
      * \brief specify that the given variable must be overriden by a parameter.
      * \param[in] n: variable name
      * \param[in] v: variable value
@@ -610,6 +617,8 @@ namespace mfront {
     std::string overriden_date;
     //! \brief overriden description
     std::string overriden_description;
+    //! \brief overriden unit system
+    std::string overriden_unit_system;
   };  // end of class DSLBase
 
 }  // end of namespace mfront

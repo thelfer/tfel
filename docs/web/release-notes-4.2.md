@@ -133,6 +133,10 @@ with the overridable implementation.
 
 For more details, see <https://github.com/thelfer/tfel/issues/428>.
 
+## Issue 435: Issue with `std::tie` with `nvcc`
+
+For more details, see <https://github.com/thelfer/tfel/issues/435>.
+
 ## Issue 427: [mtest] Add support for integral tests based on the inner pressure or the axial force in the ptest scheme
 
 When the evolution of the inner radius or the evolution of the outer

@@ -247,6 +247,9 @@ namespace mfront {
       if (!impl.metadata.description.empty()) {
         this->overrideDescription(impl.metadata.description);
       }
+      if (!impl.metadata.unit_system.empty()) {
+        this->overrideUnitSystem(impl.metadata.unit_system);
+      }
       for (const auto& p : impl.parameters) {
         this->overrideByAParameter(p.first, p.second);
       }
@@ -1100,6 +1103,15 @@ namespace mfront {
     this->setDescription(d);
   }  // end of overrideAuthorName
 
+  void DSLBase::overrideUnitSystem(const std::string& d) {
+    if (!this->overriden_unit_system.empty()) {
+      this->throwRuntimeError("DSLBase::overrideUnitSystem",
+                              "the author is already overriden");
+    }
+    this->overriden_unit_system = d;
+    this->setUnitSystem(d);
+  }  // end of overrideUnitSystem
+
   void DSLBase::treatMaterial() {
     const auto& m = this->readOnlyOneToken();
     if (this->overriden_material.empty()) {
@@ -1116,7 +1128,9 @@ namespace mfront {
 
   void DSLBase::treatUnitSystem() {
     const auto& m = this->readOnlyOneToken();
-    this->setUnitSystem(m);
+    if (this->overriden_unit_system.empty()) {
+      this->setUnitSystem(m);
+    }
   }  // end of treatUnitSystem
 
   void DSLBase::setAuthor(const std::string& a) {

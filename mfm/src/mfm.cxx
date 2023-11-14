@@ -188,8 +188,11 @@ struct MFM : public tfel::utilities::ArgumentParserBase<MFM> {
                      material_filter);
     this->add_filter("--filter-by-name", "filter entry points by name",
                      name_filter);
-    this->add_filter("--filter-by-type", "filter entry points by name",
-                     type_filter);
+    this->add_filter(
+        "--filter-by-type",
+        "filter entry points by material knowledge type. Valid types are "
+        "material-property, behaviour or model",
+        type_filter);
     this->registerCallBack(
         "--verbose", CallBack("set verbose output", set_verbose_level, true));
     this->registerCallBack("--show-libs",

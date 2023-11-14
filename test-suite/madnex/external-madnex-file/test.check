@@ -5,7 +5,7 @@
     "@mfront-query@ --madnex-search-path=MaterialProperties.mdnx "
     "--list-dependencies Test.mfront" {
       expected_output :
-          "madnex:MaterialProperties.mdnx:MaterialProperty::YoungModulusTest"
+          "mdnx:MaterialProperties.mdnx:MaterialProperty::YoungModulusTest"
     };
 @Command
     "@mfront@ --obuild --interface=generic "
