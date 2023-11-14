@@ -419,7 +419,6 @@ namespace tfel::check {
     this->checkNotEndOfFile("TestLauncher::treatCommand");
     while ((this->current->value != "{") &&  //
            (this->current->value != ";")) {
-      std::cout << "current begin: " << this->current->value << std::endl;
       c.command += " " + this->readString("TestLauncher::treatCommand");
       this->checkNotEndOfFile("TestLauncher::treatCommand");
     }
