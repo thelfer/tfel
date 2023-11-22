@@ -25,9 +25,8 @@ namespace tfel {
   namespace tests {
 
     //! \brief structure describing the result of a test or a test suite
-    struct TFELTESTS_VISIBILITY_EXPORT TestResult
-        : protected std::vector<TestResult> {
-      using std::vector<TestResult>::const_iterator;
+    struct TFELTESTS_VISIBILITY_EXPORT TestResult {
+      using const_iterator = std::vector<TestResult>::const_iterator;
       //! \brief default onstructor
       TestResult();
       /*!
@@ -90,7 +89,9 @@ namespace tfel {
       ~TestResult();
 
      private:
-      //! detail
+      //! \brief registred tests
+      std::vector<TestResult> results;
+      //! details
       std::string d;
       //! test duration
       double test_duration = 0.;
