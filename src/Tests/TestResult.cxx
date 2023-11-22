@@ -46,19 +46,19 @@ namespace tfel::tests {
   }  // end of TestResult::getFailureDescription
 
   TestResult::const_iterator TestResult::begin() const {
-    return std::vector<TestResult>::begin();
-  }  // end of TestResult::begin()
+    return this->results.begin();
+  }  // end of begin
 
   TestResult::const_iterator TestResult::end() const {
-    return std::vector<TestResult>::end();
-  }  // end of TestResult::end()
+    return this->results.end();
+  }  // end of end
 
   void TestResult::append(const TestResult& r) {
     if (!r.success()) {
       this->status = false;
     }
-    std::vector<TestResult>::push_back(r);
-  }  // end of TestResult::end()
+    this->results.push_back(r);
+  }  // end of append
 
   void TestResult::setTestDuration(const double td) {
     this->test_duration = td;
