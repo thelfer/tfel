@@ -12,6 +12,7 @@
  */
 
 #include <algorithm>
+#include <iterator>
 #include "TFEL/Raise.hxx"
 #include "MFront/MaterialKnowledgeDescription.hxx"
 
