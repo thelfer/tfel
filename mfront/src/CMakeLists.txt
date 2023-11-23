@@ -177,8 +177,8 @@ set(TFELMFront_SOURCES
     StressPotential.cxx
     HookeStressPotentialBase.cxx
     HookeStressPotential.cxx
-    IsotropicDamageHookeStressPotentialBase.cxx
-    IsotropicDamageHookeStressPotential.cxx
+    ScalarDamageHookeStressPotentialBase.cxx
+    ScalarDamageHookeStressPotential.cxx
     DDIF2StressPotential.cxx
     StressPotentialFactory.cxx
     InelasticFlow.cxx

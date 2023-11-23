@@ -9,7 +9,7 @@
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/BehaviourBrick/HookeStressPotential.hxx"
 #include "MFront/BehaviourBrick/DDIF2StressPotential.hxx"
-#include "MFront/BehaviourBrick/IsotropicDamageHookeStressPotential.hxx"
+#include "MFront/BehaviourBrick/ScalarDamageHookeStressPotential.hxx"
 #include "MFront/BehaviourBrick/StressPotentialFactory.hxx"
 
 namespace mfront::bbrick {
@@ -54,7 +54,10 @@ namespace mfront::bbrick {
       return std::make_shared<bbrick::DDIF2StressPotential>();
     });
     this->addGenerator("IsotropicDamage", [] {
-      return std::make_shared<bbrick::IsotropicDamageHookeStressPotential>();
+      return std::make_shared<bbrick::ScalarDamageHookeStressPotential>();
+    });
+    this->addGenerator("ScalarDamage", [] {
+      return std::make_shared<bbrick::ScalarDamageHookeStressPotential>();
     });
   }  // end of StressPotentialFactory
 

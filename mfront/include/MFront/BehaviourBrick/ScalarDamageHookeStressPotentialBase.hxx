@@ -1,6 +1,6 @@
 /*!
  * \file
- * mfront/include/MFront/BehaviourBrick/IsotropicDamageHookeStressPotentialBase.hxx
+ * mfront/include/MFront/BehaviourBrick/ScalarDamageHookeStressPotentialBase.hxx
  * \brief
  * \author Thomas Helfer
  * \date   30/04/2018
@@ -13,8 +13,8 @@
  * <!-- Local IspellDict: english -->
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURBRICK_ISOTROPICDAMAGEHOOKESTRESSPOTENTIALBASE_HXX
-#define LIB_MFRONT_BEHAVIOURBRICK_ISOTROPICDAMAGEHOOKESTRESSPOTENTIALBASE_HXX
+#ifndef LIB_MFRONT_BEHAVIOURBRICK_SCALARDAMAGEHOOKESTRESSPOTENTIALBASE_HXX
+#define LIB_MFRONT_BEHAVIOURBRICK_SCALARDAMAGEHOOKESTRESSPOTENTIALBASE_HXX
 
 #include "MFront/BehaviourBrick/HookeStressPotentialBase.hxx"
 
@@ -31,9 +31,9 @@ namespace mfront::bbrick {
    * \brief base class for stress potential describing the computation of the
    * stress through the Hooke law coupled with an isotropic damage.
    */
-  struct IsotropicDamageHookeStressPotentialBase : HookeStressPotentialBase {
+  struct ScalarDamageHookeStressPotentialBase : HookeStressPotentialBase {
     //! \brief constructor
-    IsotropicDamageHookeStressPotentialBase();
+    ScalarDamageHookeStressPotentialBase();
     std::vector<OptionDescription> getOptions(const BehaviourDescription&,
                                               const bool) const override;
     void initialize(BehaviourDescription&,
@@ -48,7 +48,7 @@ namespace mfront::bbrick {
                                                     const std::string&,
                                                     const bool) const override;
     //! \brief destructor
-    ~IsotropicDamageHookeStressPotentialBase() override;
+    ~ScalarDamageHookeStressPotentialBase() override;
 
    protected:
     void declareComputeElasticPredictionMethod(
@@ -61,9 +61,9 @@ namespace mfront::bbrick {
         BehaviourDescription&, const AbstractBehaviourDSL&) const override;
     void addGenericPredictionOperatorSupport(
         BehaviourDescription&) const override;
-  };  // end of struct IsotropicDamageHookeStressPotentialBase
+  };  // end of struct ScalarDamageHookeStressPotentialBase
 
 }  // end of namespace mfront::bbrick
 
-#endif /* LIB_MFRONT_BEHAVIOURBRICK_ISOTROPICDAMAGEHOOKESTRESSPOTENTIALBASE_HXX \
+#endif /* LIB_MFRONT_BEHAVIOURBRICK_SCALARDAMAGEHOOKESTRESSPOTENTIALBASE_HXX \
         */

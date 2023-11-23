@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/src/IsotropicDamageHookeStressPotentialBase.cxx
+ * \file   mfront/src/ScalarDamageHookeStressPotentialBase.cxx
  * \brief
  * \author Thomas Helfer
  * \date   30/04/2018
@@ -22,15 +22,15 @@
 #include "MFront/NonLinearSystemSolver.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
-#include "MFront/BehaviourBrick/IsotropicDamageHookeStressPotentialBase.hxx"
+#include "MFront/BehaviourBrick/ScalarDamageHookeStressPotentialBase.hxx"
 
 namespace mfront::bbrick {
 
-  IsotropicDamageHookeStressPotentialBase::
-      IsotropicDamageHookeStressPotentialBase() = default;
+  ScalarDamageHookeStressPotentialBase::ScalarDamageHookeStressPotentialBase() =
+      default;
 
   std::vector<OptionDescription>
-  IsotropicDamageHookeStressPotentialBase::getOptions(
+  ScalarDamageHookeStressPotentialBase::getOptions(
       const BehaviourDescription& bd, const bool b) const {
     auto opts = HookeStressPotentialBase::getOptions(bd, b);
     opts.emplace_back(
@@ -41,7 +41,7 @@ namespace mfront::bbrick {
     return opts;
   }  // end of getOptions
 
-  void IsotropicDamageHookeStressPotentialBase::initialize(
+  void ScalarDamageHookeStressPotentialBase::initialize(
       BehaviourDescription& bd, AbstractBehaviourDSL& dsl, const DataMap& d) {
     using tfel::glossary::Glossary;
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -65,7 +65,7 @@ namespace mfront::bbrick {
       return dmin;
     }();
     tfel::raise_if((dc_v > 1) || (dc_v < 0),
-                   "IsotropicDamageHookeStressPotentialBase::initialize: "
+                   "ScalarDamageHookeStressPotentialBase::initialize: "
                    "invalid default value "
                    "for the 'damage_thresold' parameter");
     VariableDescription dc("real", dc_n, 1u, 0u);
@@ -77,10 +77,11 @@ namespace mfront::bbrick {
     bd.setEntryName(uh, dc_n, "DamageThresold");
   }  // end of initialize
 
-  void IsotropicDamageHookeStressPotentialBase::
-      declareComputeElasticPredictionMethod(BehaviourDescription& bd) const {
+  void
+  ScalarDamageHookeStressPotentialBase::declareComputeElasticPredictionMethod(
+      BehaviourDescription& bd) const {
     // damage effect
-    const std::string de = "(1-this->d)";
+    const std::string gde = "(1 - this->d)";
     for (const auto h : bd.getDistinctModellingHypotheses()) {
       std::string m =
           "//! \\brief return an elastic prediction of the stresses\n"
@@ -110,14 +111,14 @@ namespace mfront::bbrick {
                 m += "prediction_strain(1) += ";
                 m += "(this->theta)*";
                 m += "computeAxialStrainIncrementElasticPrediction(";
-                m += de + " * (this->D(1,0)),";
-                m += de + " * (this->D(1,1)),";
-                m += de + " * (this->D(1,2)),";
+                m += gde + " * (this->D(1,0)),";
+                m += gde + " * (this->D(1,1)),";
+                m += gde + " * (this->D(1,2)),";
                 m += "this->eel,this->etozz,this->deto,";
                 m += "this->sigzz+this->dsigzz,";
                 m += "real(1),this->epsilon);\n";
                 m += "const StressStensor prediction_stress = ";
-                m += de + " * (this->D) * prediction_strain;\n";
+                m += gde + " * (this->D) * prediction_strain;\n";
                 m += "return prediction_stress;\n";
               } else {
                 m += "StressStensor prediction_stress;\n";
@@ -125,7 +126,7 @@ namespace mfront::bbrick {
                      "this->eel+(this->theta)*this->deto;\n";
                 m += "prediction_stress(1) = "
                      "this->sigzz+(this->theta)*(this->dsigzz);\n";
-                m += "prediction_stress(0) = " + de + "*(" +
+                m += "prediction_stress(0) = " + gde + "*(" +
                      "(this->D(0,0)-((this->D(0,1))*(this->D(1,0)))/"
                      "(this->D(1,1)))*prediction_strain(0)+\n";
                 m += "                       "
@@ -135,7 +136,7 @@ namespace mfront::bbrick {
                      "(this->D(0,1))/"
                      "(this->D(1,1))*(this->sigzz+(this->theta)*(this->"
                      "dsigzz)));\n";
-                m += "prediction_stress(2) = " + de + "*(" +
+                m += "prediction_stress(2) = " + gde + "*(" +
                      "(this->D(2,0)-((this->D(2,1))*(this->D(1,0)))/"
                      "(this->D(1,1)))*prediction_strain(0)+\n";
                 m += "                       "
@@ -166,29 +167,29 @@ namespace mfront::bbrick {
               m += "prediction_strain(1) += ";
               m += "(this->theta)*";
               m += "computeAxialStrainIncrementElasticPrediction(";
-              m += de + " * " + lambda + ",";
-              m += de + " * (2 * (" + mu + ") + " + lambda + "),";
-              m += de + " * " + lambda + ",";
+              m += gde + " * " + lambda + ",";
+              m += gde + " * (2 * (" + mu + ") + " + lambda + "),";
+              m += gde + " * " + lambda + ",";
               m += "this->eel,this->etozz,this->deto,";
               m += "this->sigzz + this->dsigzz,";
               m += "real(1),this->epsilon);\n";
               m += "const StressStensor prediction_stress = ";
-              m += "(" + de + " * " + lambda +
+              m += "(" + gde + " * " + lambda +
                    ") * trace(prediction_strain) * Stensor::Id() + ";
-              m += "2 * (" + de + " * (" + mu + ")) * prediction_strain;\n";
+              m += "2 * (" + gde + " * (" + mu + ")) * prediction_strain;\n";
               m += "return prediction_stress;\n";
             } else {
               m += "StressStensor prediction_stress;\n";
               m += "StrainStensor prediction_strain = "
                    "this->eel+(this->theta)*this->deto;\n";
-              m += "prediction_stress(0) = " + de + " * (2 * (" + mu +
+              m += "prediction_stress(0) = " + gde + " * (2 * (" + mu +
                    ") * ((" + lambda + ")/(" + lambda + "+2*(" + mu +
                    "))*(prediction_strain(0)+prediction_strain(2))+"
                    "prediction_"
                    "strain(0))+\n";
               m += "(" + lambda + ")/(" + lambda + "+2*(" + mu +
                    "))*(this->sigzz+(this->theta)*(this->dsigzz)));\n";
-              m += "prediction_stress(2) = " + de + "*(2*(" + mu + ")*((" +
+              m += "prediction_stress(2) = " + gde + "*(2*(" + mu + ")*((" +
                    lambda + ")/(" + lambda + "+2*(" + mu +
                    "))*(prediction_strain(0)+prediction_strain(2))+"
                    "prediction_"
@@ -202,7 +203,7 @@ namespace mfront::bbrick {
           } else {
             tfel::raise_if(!bd.getAttribute<bool>(
                                BehaviourDescription::requiresStiffnessTensor),
-                           "IsotropicDamageHookeStressPotentialBase::"
+                           "ScalarDamageHookeStressPotentialBase::"
                            "declareComputeElasticPredictionMethod: "
                            "the stiffness tensor must be defined for "
                            "orthotropic behaviours");
@@ -224,21 +225,21 @@ namespace mfront::bbrick {
               m += "StressStensor prediction_stress;\n";
               m += "StrainStensor prediction_strain = "
                    "this->eel+(this->theta)*this->deto;\n";
-              m += "prediction_stress(0) = " + de +
+              m += "prediction_stress(0) = " + gde +
                    "*("
                    "(this->D(0,0)-((this->D(0,2))*(this->D(2,0)))/"
                    "(this->D(2,2)))*prediction_strain(0)+\n";
               m += "                       "
                    "(this->D(0,1)-((this->D(0,2))*(this->D(2,1)))/"
                    "(this->D(2,2)))*prediction_strain(1));\n";
-              m += "prediction_stress(1) = " + de +
+              m += "prediction_stress(1) = " + gde +
                    "*("
                    "(this->D(1,0)-((this->D(1,2))*(this->D(2,0)))/"
                    "(this->D(2,2)))*prediction_strain(0)+\n";
               m += "                       "
                    "(this->D(1,1)-((this->D(1,2))*(this->D(2,1)))/"
                    "(this->D(2,2)))*prediction_strain(1));\n";
-              m += "prediction_stress(3) = " + de +
+              m += "prediction_stress(3) = " + gde +
                    "*(this->D(3,3))*prediction_strain(3);\n";
               m += "prediction_stress(2) = stress(0);\n";
               m += "return prediction_stress;\n";
@@ -256,24 +257,24 @@ namespace mfront::bbrick {
             m += "StressStensor prediction_stress;\n";
             m += "StressStensor prediction_strain = "
                  "this->eel+(this->theta)*this->deto;\n";
-            m += "prediction_stress(0) = " + de + "*2*(" + mu + ")*((" +
+            m += "prediction_stress(0) = " + gde + "*2*(" + mu + ")*((" +
                  lambda + ")/(" + lambda + "+2*(" + mu +
                  "))*(prediction_strain(0)+prediction_strain(1))+"
                  "prediction_"
                  "strain(0));\n";
-            m += "prediction_stress(1) = " + de + "*2*(" + mu + ")*((" +
+            m += "prediction_stress(1) = " + gde + "*2*(" + mu + ")*((" +
                  lambda + ")/(" + lambda + "+2*(" + mu +
                  "))*(prediction_strain(0)+prediction_strain(1))+"
                  "prediction_"
                  "strain(1));\n";
-            m += "prediction_stress(3) = " + de + "*2*(" + mu +
+            m += "prediction_stress(3) = " + gde + "*2*(" + mu +
                  ")*prediction_strain(3);\n";
             m += "prediction_stress(2) = stress(0);\n";
             m += "return prediction_stress;\n";
           } else {
             tfel::raise_if(!bd.getAttribute<bool>(
                                BehaviourDescription::requiresStiffnessTensor),
-                           "IsotropicDamageHookeStressPotentialBase::"
+                           "ScalarDamageHookeStressPotentialBase::"
                            "declareComputeElasticPredictionMethod: "
                            "the stiffness tensor must be defined for "
                            "orthotropic behaviours");
@@ -284,7 +285,7 @@ namespace mfront::bbrick {
                              false)) ||
             (bd.getAttribute(BehaviourDescription::computesStiffnessTensor,
                              false))) {
-          m += "return " + de +
+          m += "return " + gde +
                "*(this->D)*(this->eel+(this->theta)*this->deto);\n";
         } else {
           if (bd.getElasticSymmetryType() == mfront::ISOTROPIC) {
@@ -293,14 +294,14 @@ namespace mfront::bbrick {
             const std::string lambda =
                 b ? "this->sebdata.lambda" : "this->lambda";
             const std::string mu = b ? "this->sebdata.mu" : "this->mu";
-            m += "return " + de + "*(" + lambda +
+            m += "return " + gde + "*(" + lambda +
                  "*trace(this->eel+(this->theta)*(this->deto))*Stensor::Id("
                  ")+";
             m += "2*(" + mu + ")*(this->eel+(this->theta)*(this->deto)));\n";
           } else {
             tfel::raise_if(!bd.getAttribute<bool>(
                                BehaviourDescription::requiresStiffnessTensor),
-                           "IsotropicDamageHookeStressPotentialBase::"
+                           "ScalarDamageHookeStressPotentialBase::"
                            "declareComputeElasticPredictionMethod: "
                            "the stiffness tensor must be defined for "
                            "orthotropic behaviours");
@@ -310,10 +311,9 @@ namespace mfront::bbrick {
       m += "}\n";
       bd.appendToMembers(h, m, false);
     }
-  }  // end of
-     // IsotropicDamageHookeStressPotentialBase::declareComputeElasticPredictionMethod
+  }  // end of declareComputeElasticPredictionMethod
 
-  void IsotropicDamageHookeStressPotentialBase::
+  void ScalarDamageHookeStressPotentialBase::
       declareComputeStressWhenStiffnessTensorIsDefined(
           BehaviourDescription& bd) const {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -323,56 +323,48 @@ namespace mfront::bbrick {
                               false)
             ? "this->D_tdt"
             : "this->D";
-    const std::string d_mts = "(1-this->d-(this->theta)*(this->dd))";
-    const std::string d_ets = "(1-this->d)";
-    smts.code = "this->sig = " + d_mts +
-                "*(this->D)*(this->eel+(this->theta)*(this->deel))"
-                ";\n";
-    sets.code = "this->sig = " + d_ets + "*(" + D_tdt + ")*(this->eel);\n";
+    const std::string gd_mts = "(1 - this->d - (this->theta) * (this->dd))";
+    const std::string gd_ets = "(1 - this->d)";
+    const std::string eel_mts = "this->eel + (this->theta) * (this->deel)";
+    smts.code = "this->sig = " + gd_mts + "*(this->D)*(" + eel_mts + ");\n";
+    sets.code = "this->sig = " + gd_ets + "*(" + D_tdt + ")*(this->eel);\n";
     bd.setCode(h, BehaviourData::ComputeThermodynamicForces, smts,
                BehaviourData::CREATE, BehaviourData::AT_BEGINNING, false);
     bd.setCode(h, BehaviourData::ComputeFinalThermodynamicForces, sets,
                BehaviourData::CREATE, BehaviourData::AT_BEGINNING, false);
-  }  // end of
-  // IsotropicDamageHookeStressPotentialBase::declareComputeStressWhenStiffnessTensorIsDefined
+  }  // end of declareComputeStressWhenStiffnessTensorIsDefined
 
-  void IsotropicDamageHookeStressPotentialBase::
+  void ScalarDamageHookeStressPotentialBase::
       declareComputeStressForIsotropicBehaviour(BehaviourDescription& bd,
                                                 LocalDataStructure&) const {
     using tfel::glossary::Glossary;
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if (getVerboseMode() >= VERBOSE_DEBUG) {
-      getLogStream() << "IsotropicDamageHookeStressPotentialBase::"
+      getLogStream() << "ScalarDamageHookeStressPotentialBase::"
                         "declareComputeStressForIsotropicBehaviour: begin\n";
     }
     CodeBlock smts;
     CodeBlock sets;
+    const std::string gd_mts = "(1-this->d-(this->theta)*(this->dd))";
+    const std::string gd_ets = "(1-this->d)";
+    const std::string eel_mts = "this->eel + (this->theta) * (this->deel)";
     if (bd.areElasticMaterialPropertiesDefined()) {
-      const std::string d_mts = "(1-this->d-(this->theta)*(this->dd))";
-      const std::string d_ets = "(1-this->d)";
-      smts.code =
-          "this->sig = " + d_mts +
-          "*(this->lambda*trace(this->eel+(this->theta)*(this->deel))"  //
-          "*Stensor::Id()+"                                             //
-          "2*(this->mu)*(this->eel+(this->theta)*(this->deel)));\n";
-      sets.code = "this->sig = " + d_ets +
+      smts.code = "this->sig = " + gd_mts + "*(this->lambda*trace(" + eel_mts +
+                  ")*Stensor::Id()+2*(this->mu)*(" + eel_mts + "));\n";
+      sets.code = "this->sig = " + gd_ets +
                   "*(this->lambda_tdt*trace(this->eel)*Stensor::Id()+"  //
                   "2*(this->mu_tdt)*this->eel);\n";
     } else {
-      // IsotropicDamageHooke law
+      // ScalarDamageHooke law
       // damage effect
-      const std::string d_mts = "(1-this->d-(this->theta)*(this->dd))";
-      const std::string d_ets = "(1-this->d)";
-      smts.code =
-          "this->sig = " + d_mts +
-          " * ("                                                        //
-          "(this->sebdata.lambda)*"                                     //
-          "trace(this->eel+(this->theta)*(this->deel))*Stensor::Id()+"  //
-          "2*(this->sebdata.mu)*(this->eel+(this->theta)*(this->deel)));\n";
-      sets.code = "this->sig = " + d_ets +
-                  " * ("                                                    //
-                  "(this->sebdata.lambda)*trace(this->eel)*Stensor::Id()+"  //
-                  "2*(this->sebdata.mu)*this->eel);\n";
+      smts.code = "this->sig = " + gd_mts +
+                  " * ((this->sebdata.lambda) * trace(" + eel_mts +
+                  ")*Stensor::Id() + 2*(this->sebdata.mu)*(" + eel_mts +
+                  "));\n";
+      sets.code =
+          "this->sig = " + gd_ets +
+          " * ((this->sebdata.lambda)*trace(this->eel)*Stensor::Id()+"  //
+          "2*(this->sebdata.mu)*this->eel);\n";
     }
     addBrokenStateSupportToComputeStress(smts.code, bd, false);
     addBrokenStateSupportToComputeStress(sets.code, bd, true);
@@ -381,18 +373,16 @@ namespace mfront::bbrick {
     bd.setCode(uh, BehaviourData::ComputeFinalThermodynamicForces, sets,
                BehaviourData::CREATE, BehaviourData::AT_BEGINNING, false);
     if (getVerboseMode() >= VERBOSE_DEBUG) {
-      getLogStream() << "IsotropicDamageHookeStressPotentialBase::"
+      getLogStream() << "ScalarDamageHookeStressPotentialBase::"
                         "declareComputeStressForIsotropicBehaviour: end\n";
     }
-  }  // end of
-     // IsotropicDamageHookeStressPotentialBase::declareComputeStressForIsotropicBehaviour
+  }  // end of declareComputeStressForIsotropicBehaviour
 
-  void
-  IsotropicDamageHookeStressPotentialBase::addGenericTangentOperatorSupport(
+  void ScalarDamageHookeStressPotentialBase::addGenericTangentOperatorSupport(
       BehaviourDescription& bd, const AbstractBehaviourDSL& dsl) const {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b,
-                     "IsotropicDamageHookeStressPotentialBase::"
+                     "ScalarDamageHookeStressPotentialBase::"
                      "addGenericTangentOperatorSupport: " +
                          m);
     };
@@ -406,6 +396,8 @@ namespace mfront::bbrick {
     bd.checkVariablePosition("d", "IntegrationVariable", 1u);
     // modelling hypotheses supported by the behaviour
     const auto bmh = bd.getModellingHypotheses();
+    const std::string de = "min(this->d, this->damage_thresold)";
+    const std::string ge = "(1 - " + de + ")";
     if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
                          false)) ||
         (bd.getAttribute(BehaviourDescription::computesStiffnessTensor,
@@ -414,18 +406,16 @@ namespace mfront::bbrick {
           bd.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)
               ? "this->D"
               : "this->D_tdt";
-      to.code += "if(smt==ELASTIC){\n";
+      to.code += "if(smt == ELASTIC){\n";
       to.code += "  this->Dt = " + D + ";\n";
-      to.code += "} else if(smt==SECANTOPERATOR){\n";
-      to.code +=
-          "  this->Dt = (1-min(this->d,this->damage_thresold))*" + D + ";\n";
+      to.code += "} else if(smt == SECANTOPERATOR){\n";
+      to.code += "  this->Dt = " + ge + " * " + D + ";\n";
       if (idsl.getSolver().usesJacobian()) {
-        to.code += "} else if (smt==CONSISTENTTANGENTOPERATOR){\n";
+        to.code += "} else if (smt == CONSISTENTTANGENTOPERATOR){\n";
         to.code += "  Stensor4 Je;\n";
         to.code += "  Stensor  Jd;\n";
         to.code += "  getPartialJacobianInvert(Je,Jd);\n";
-        to.code += "  Dt = (1-min(this->d,this->damage_thresold)) * (" + D +
-                   ") * Je - ";
+        to.code += "  Dt = " + ge + " * (" + D + ") * Je - ";
         to.code += "  (((" + D + ")*(this->eel)) ^ (Jd));\n";
       }
       to.code += "} else {\n";
@@ -445,23 +435,20 @@ namespace mfront::bbrick {
         to.code += "} else if(smt==SECANTOPERATOR){\n";
         to.code +=
             "  computeAlteredElasticStiffness<hypothesis, stress>::exe(Dt,";
-        to.code += "(1-min(this->d,this->damage_thresold)) * (" + lambda + "),";
-        to.code += "(1-min(this->d,this->damage_thresold)) * (" + mu + "));\n";
+        to.code += ge + " * (" + lambda + "),";
+        to.code += ge + " * (" + mu + "));\n";
         if (idsl.getSolver().usesJacobian()) {
           to.code += "} else if (smt==CONSISTENTTANGENTOPERATOR){\n";
-          to.code += "StiffnessTensor IsotropicDamageHooke;\n";
-          to.code += "Stensor4 Je;\n";
-          to.code += "Stensor  Jd;\n";
-          to.code += "getPartialJacobianInvert(Je,Jd);\n";
+          to.code += "StiffnessTensor mfront_ScalarDamageHooke;\n";
+          to.code += "Stensor4 mfront_Je;\n";
+          to.code += "Stensor  mfront_Jd;\n";
+          to.code += "getPartialJacobianInvert(mfront_Je, mfront_Jd);\n";
           to.code +=
-              "  computeElasticStiffness<N, "
-              "stress>::exe(IsotropicDamageHooke," +
+              "computeElasticStiffness<N, "
+              "stress>::exe(mfront_ScalarDamageHooke," +
               lambda + "," + mu + ");\n";
-          to.code +=
-              "  Dt = (1-min(this->d,this->damage_thresold)) * "
-              "IsotropicDamageHooke * Je "
-              "- ";
-          to.code += "  ((IsotropicDamageHooke*(this->eel)) ^ (Jd));\n";
+          to.code += " Dt = " + ge + " * mfront_ScalarDamageHooke * mfront_Je - ";
+          to.code += "((mfront_ScalarDamageHooke * (this->eel)) ^ (mfront_Jd));\n";
         }
         to.code += "} else {\n";
         to.code += "  return false;\n";
@@ -470,21 +457,17 @@ namespace mfront::bbrick {
         throw_if(!bd.getAttribute<bool>(
                      BehaviourDescription::computesStiffnessTensor, false),
                  "orthotropic behaviour shall require the stiffness tensor");
-        to.code += "if((smt==ELASTIC){\n";
+        to.code += "if((smt == ELASTIC){\n";
         to.code += "  this->Dt = this->D_tdt;\n";
-        to.code += "} else if(smt==SECANTOPERATOR){\n";
-        to.code +=
-            "  this->Dt = (1-min(this->d,this->damage_thresold)) * "
-            "D_tdt;\n";
+        to.code += "} else if(smt == SECANTOPERATOR){\n";
+        to.code += "  this->Dt = " + ge + " * (this->D_tdt);\n";
         if (idsl.getSolver().usesJacobian()) {
           to.code += "} else if (smt==CONSISTENTTANGENTOPERATOR){\n";
-          to.code += "  Stensor4 Je;\n";
-          to.code += "  Stensor  Jd;\n";
-          to.code += "  getPartialJacobianInvert(Je,Jd);\n";
-          to.code +=
-              "  Dt = (1-min(this->d,this->damage_thresold)) * "
-              "(this->D_tdt) * Je - ";
-          to.code += "  (((this->D_tdt) * eel) ^ (Jd));\n";
+          to.code += "  Stensor4 mfront_Je;\n";
+          to.code += "  Stensor  mfront_Jd;\n";
+          to.code += "  getPartialJacobianInvert(mfront_Je, mfront_Jd);\n";
+          to.code += "  Dt = " + ge + " * (this->D_tdt) * mfront_Je - ";
+          to.code += "  (((this->D_tdt) * eel) ^ (mfront_Jd));\n";
         }
         to.code +=
             "} else {\n"
@@ -502,17 +485,19 @@ namespace mfront::bbrick {
   }
 
   void
-  IsotropicDamageHookeStressPotentialBase::addGenericPredictionOperatorSupport(
+  ScalarDamageHookeStressPotentialBase::addGenericPredictionOperatorSupport(
       BehaviourDescription& bd) const {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b,
-                     "IsotropicDamageHookeStressPotentialBase::"
+                     "ScalarDamageHookeStressPotentialBase::"
                      "addGenericPredictionOperatorSupport: " +
                          m);
     };
     CodeBlock to;
     // modelling hypotheses supported by the behaviour
     const auto bmh = bd.getModellingHypotheses();
+    const std::string de = "min(this->d, this->damage_thresold)";
+    const std::string ge = "(1 - " + de + ")";
     if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
                          false)) ||
         (bd.getAttribute(BehaviourDescription::computesStiffnessTensor,
@@ -541,14 +526,13 @@ namespace mfront::bbrick {
           bd.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)
               ? "this->D"
               : "this->D_tdt";
-      to.code += "if(smt==ELASTIC){\n";
+      to.code += "if(smt == ELASTIC){\n";
       to.code += "  this->Dt = " + D + ";\n";
-      to.code += "} else if(smt==SECANTOPERATOR){\n";
-      to.code +=
-          "  this->Dt = (1-min(this->d,this->damage_thresold))*" + D + ";\n";
+      to.code += "} else if(smt == SECANTOPERATOR){\n";
+      to.code += "  this->Dt = " + ge + " * " + D + ";\n";
       to.code += "} else {\n";
       to.code += "  return FAILURE;\n";
-      to.code += "}";
+      to.code += "}\n";
     } else {
       if (bd.getElasticSymmetryType() == mfront::ISOTROPIC) {
         auto b = bd.getAttribute(
@@ -564,24 +548,22 @@ namespace mfront::bbrick {
         to.code +=
             "computeAlteredElasticStiffness<hypothesis, "
             "NumericType>::exe(Dt,";
-        to.code += "(1-min(this->d,this->damage_thresold)) * (" + lambda + "),";
-        to.code += "(1-min(this->d,this->damage_thresold)) * (" + mu + "));\n";
+        to.code += ge + " * (" + lambda + "),";
+        to.code += ge + " * (" + mu + "));\n";
         to.code += "} else {\n";
         to.code += "  return FAILURE;\n";
-        to.code += "}";
+        to.code += "}\n";
       } else if (bd.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
         throw_if(!bd.getAttribute<bool>(
                      BehaviourDescription::computesStiffnessTensor, false),
                  "orthotropic behaviour shall require the stiffness tensor");
-        to.code += "if(smt==ELASTIC){\n";
+        to.code += "if(smt == ELASTIC){\n";
         to.code += "  this->Dt = this->D_tdt;\n";
-        to.code += "} else if(smt==SECANTOPERATOR){\n";
-        to.code +=
-            "  this->Dt = "
-            "(1-min(this->d,this->damage_thresold))*(this->D_tdt);\n";
+        to.code += "} else if(smt == SECANTOPERATOR){\n";
+        to.code += "  this->Dt = " + ge + " * (this->D_tdt);\n";
         to.code += "} else {\n";
         to.code += "  return FAILURE;\n";
-        to.code += "}";
+        to.code += "}\n";
       } else {
         throw_if(true, "unsupported elastic symmetry type");
       }
@@ -595,7 +577,7 @@ namespace mfront::bbrick {
 
   std::vector<
       std::tuple<std::string, std::string, mfront::SupportedTypes::TypeFlag>>
-  IsotropicDamageHookeStressPotentialBase::getStressDerivatives(
+  ScalarDamageHookeStressPotentialBase::getStressDerivatives(
       const BehaviourDescription& bd) const {
     const auto d = [&bd]() -> std::string {
       if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
@@ -638,7 +620,7 @@ namespace mfront::bbrick {
   }  // end of getStressDerivatives
 
   std::string
-  IsotropicDamageHookeStressPotentialBase::generateImplicitEquationDerivatives(
+  ScalarDamageHookeStressPotentialBase::generateImplicitEquationDerivatives(
       const BehaviourDescription& bd,
       const std::string& t,
       const std::string& v,
@@ -666,7 +648,7 @@ namespace mfront::bbrick {
         c += "(this->eel + (this->theta) * (this->deel));\n";
       } else {
         tfel::raise(
-            "IsotropicDamageHookeStressPotentialBase::"
+            "ScalarDamageHookeStressPotentialBase::"
             "generateImplicitEquationDerivatives: "
             "unsupported type for variable '" +
             t + "'");
@@ -696,7 +678,7 @@ namespace mfront::bbrick {
             c += "deviator(this->eel + (this->theta) * (this->deel));\n";
           } else {
             tfel::raise(
-                "IsotropicDamageHookeStressPotentialBase::"
+                "ScalarDamageHookeStressPotentialBase::"
                 "generateImplicitEquationDerivatives:"
                 " unsupported type for variable '" +
                 t + "'");
@@ -728,7 +710,7 @@ namespace mfront::bbrick {
                  "Stensor::Id());\n";
           } else {
             tfel::raise(
-                "IsotropicDamageHookeStressPotentialBase::"
+                "ScalarDamageHookeStressPotentialBase::"
                 "generateImplicitEquationDerivatives:"
                 " "
                 "unsupported type for variable '" +
@@ -739,7 +721,7 @@ namespace mfront::bbrick {
         if (!bd.getAttribute<bool>(
                 BehaviourDescription::computesStiffnessTensor, false)) {
           tfel::raise(
-              "IsotropicDamageHookeStressPotentialBase::"
+              "ScalarDamageHookeStressPotentialBase::"
               "generateImplicitEquationDerivatives: "
               "orthotropic behaviour shall require the stiffness tensor");
         }
@@ -759,14 +741,14 @@ namespace mfront::bbrick {
           c += "(this->eel + (this->theta) * (this->deel));\n";
         } else {
           tfel::raise(
-              "IsotropicDamageHookeStressPotentialBase::"
+              "ScalarDamageHookeStressPotentialBase::"
               "generateImplicitEquationDerivatives: "
               "unsupported type for variable '" +
               t + "'");
         }
       } else {
         tfel::raise(
-            "IsotropicDamageHookeStressPotentialBase::"
+            "ScalarDamageHookeStressPotentialBase::"
             "generateImplicitEquationDerivatives: "
             "unsupported elastic symmetry type");
       }
@@ -774,7 +756,7 @@ namespace mfront::bbrick {
     return c;
   }  // end of generateImplicitEquationDerivatives
 
-  IsotropicDamageHookeStressPotentialBase::
-      ~IsotropicDamageHookeStressPotentialBase() = default;
+  ScalarDamageHookeStressPotentialBase::
+      ~ScalarDamageHookeStressPotentialBase() = default;
 
 }  // end of namespace mfront::bbrick

@@ -123,8 +123,8 @@ nobase_include_HEADERS= MFront/MFront.hxx                                     \
 			MFront/BehaviourBrick/HookeStressPotentialBase.hxx                \
 			MFront/BehaviourBrick/HookeStressPotential.hxx                    \
 			MFront/BehaviourBrick/DDIF2StressPotential.hxx                    \
-			MFront/BehaviourBrick/IsotropicDamageHookeStressPotentialBase.hxx \
-			MFront/BehaviourBrick/IsotropicDamageHookeStressPotential.hxx     \
+			MFront/BehaviourBrick/ScalarDamageHookeStressPotentialBase.hxx    \
+			MFront/BehaviourBrick/ScalarDamageHookeStressPotential.hxx        \
 			MFront/BehaviourBrick/StressPotentialFactory.hxx                  \
 			MFront/BehaviourBrick/InelasticFlowFactory.hxx                    \
 			MFront/BehaviourBrick/InelasticFlow.hxx                           \

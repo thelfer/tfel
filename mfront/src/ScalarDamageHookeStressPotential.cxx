@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/src/IsotropicDamageHookeStressPotential.cxx
+ * \file   mfront/src/ScalarDamageHookeStressPotential.cxx
  * \brief
  * \author Thomas Helfer
  * \date   30/04/2018
@@ -12,14 +12,14 @@
  * <!-- Local IspellDict: english -->
  */
 
-#include "MFront/BehaviourBrick/IsotropicDamageHookeStressPotential.hxx"
+#include "MFront/BehaviourBrick/ScalarDamageHookeStressPotential.hxx"
 
 namespace mfront::bbrick {
 
-  IsotropicDamageHookeStressPotential::IsotropicDamageHookeStressPotential() =
+  ScalarDamageHookeStressPotential::ScalarDamageHookeStressPotential() =
       default;
 
-  IsotropicDamageHookeStressPotential::~IsotropicDamageHookeStressPotential() =
+  ScalarDamageHookeStressPotential::~ScalarDamageHookeStressPotential() =
       default;
 
 }  // end of namespace mfront::bbrick
