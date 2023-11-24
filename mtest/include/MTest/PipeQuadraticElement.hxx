@@ -34,7 +34,6 @@ namespace mtest {
    * \brief structure describing a quadratic element for pipes
    */
   struct PipeQuadraticElement {
-#ifndef _MSC_VER
     // absolute value of the Gauss points position in the reference
     // element
     static constexpr real abs_pg =
@@ -44,12 +43,6 @@ namespace mtest {
     // Gauss point weight
     static constexpr real wg[3] = {real(5.) / real(9.), real(8.) / real(9.),
                                    real(5.) / real(9.)};
-#else  /* _MSC_VER */
-    // value of the Gauss points position in the reference element
-    static const real pg_radii[3];
-    // Gauss point weight
-    static const real wg[3];
-#endif /* _MSC_VER */
     /*!
      * \return the integral value of the given values at integration
      * points.

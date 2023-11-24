@@ -13,7 +13,6 @@ libTFELUtilities_la_SOURCES = TextData.cxx           \
 			      CxxKeywords.cxx         \
 			      CxxTokenizer.cxx        \
 			      CxxTokenizerOptions.cxx \
-			      TerminalColors.cxx      \
 			      StringAlgorithms.cxx    \
 			      Argument.cxx            \
 			      ArgumentParser.cxx 

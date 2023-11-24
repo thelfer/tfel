@@ -5,7 +5,6 @@ tfel_library(TFELUtilities
   Token.cxx
   Data.cxx
   CxxKeywords.cxx
-  TerminalColors.cxx
   CxxTokenizerOptions.cxx
   CxxTokenizer.cxx
   Argument.cxx

@@ -23,17 +23,6 @@
 
 namespace mtest {
 
-#ifndef _MSC_VER
-  constexpr real PipeLinearElement::abs_pg;
-  constexpr real PipeLinearElement::wg;
-  constexpr real PipeLinearElement::pg_radii[2];
-#else  /* _MSC_VER */
-  const real PipeLinearElement::abs_pg = real(1) / (std::sqrt(3));
-  const real PipeLinearElement::wg = 1;
-  const real PipeLinearElement::pg_radii[2] = {-real(1) / (std::sqrt(3)),
-                                               real(1) / (std::sqrt(3))};
-#endif /* _MSC_VER */
-
   real PipeLinearElement::interpolate(const real v0,
                                       const real v1,
                                       const real x) {
