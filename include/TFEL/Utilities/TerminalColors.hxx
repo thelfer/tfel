@@ -14,8 +14,6 @@
 #ifndef LIB_TFEL_TERMINAL_COLORS_HXX
 #define LIB_TFEL_TERMINAL_COLORS_HXX
 
-#include "TFEL/Config/TFELConfig.hxx"
-
 namespace tfel::utilities {
 
   /*!
@@ -25,7 +23,7 @@ namespace tfel::utilities {
    * \author Thomas Helfer
    * \date   26 Jul 2006
    */
-  struct TFELUTILITIES_VISIBILITY_EXPORT TerminalColors {
+  struct TerminalColors {
     /*!
      * \brief char sequence correponding to black.
      * \code
