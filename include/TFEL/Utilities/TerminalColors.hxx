@@ -25,7 +25,7 @@ namespace tfel::utilities {
    * \author Thomas Helfer
    * \date   26 Jul 2006
    */
-  struct TFELUTILITIES_VISIBILITY_EXPORT TerminalColors {
+  struct TerminalColors {
     /*!
      * \brief char sequence correponding to black.
      * \code
