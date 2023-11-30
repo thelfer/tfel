@@ -17,6 +17,10 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+Version 3.2.9 has been released on November, 28th 2023. This version
+inherits from the bug fixes of Versions
+[3.0.12](release-notes-3.0.12.html) and
+[3.1.12](release-notes-3.1.12.html).
 
 # Issues fixed
 

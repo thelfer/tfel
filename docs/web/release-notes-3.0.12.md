@@ -17,6 +17,8 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+Version 3.0.12 has been released on November, 28th 2023.
+
 # Issues fixed
 
 ## Issue #415: [mtest] Interpreting data with a formula leads to invalid results

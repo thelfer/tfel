@@ -17,6 +17,17 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+| Debian buster gcc 8.3                       | Yes | Yes | 100% |
+| Debian buster llvm 11.0.1                   | Yes | Yes | 100% |
+| Debian buster llvm 13.0                     | Yes | Yes | 100% |
+| Debian buster llvm 14.0                     | Yes | Yes | 100% |
+| Debian buster llvm 16.0                     | Yes | Yes | 99%  |
+| Debian buster Intel One API 2023.2.0 (icpc) | Yes | Yes |      |
+| Debian buster Intel One API 2023.2.0 (icpx) | Yes | Yes | 99%  |
+| Windows Intel One API 2023.2.0 (icpx)       | Yes |     |      |
+| Windows MingGw 10.3                         | Yes |     |      |
+| Ubuntu 21.04 gcc 10.3                       | Yes | No  |      |
+
 # `TFEL/Math` improvements
 
 ## Workspace of nonlinear solvers {#sec:tfel_4.2:tfel_math:nonlinear_solvers:workspace}

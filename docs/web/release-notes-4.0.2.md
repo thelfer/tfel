@@ -1,5 +1,5 @@
 ---
-title: Release notes of the 4.0.1 version of `TFEL`, `MFront` and `MTest`
+title: Release notes of the 4.0.2 version of `TFEL`, `MFront` and `MTest`
 author: Thomas Helfer
 date: 2022
 lang: en-EN
@@ -17,7 +17,11 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
-Version 4.0.1 has been released on December, 12th 2022.
+Version 4.0.2 has been released on November, 28th 2023. This version
+inherits from the bug fixes of Versions
+[3.0.12](release-notes-3.0.12.html), [3.1.12](release-notes-3.1.12.html)
+[3.2.9](release-notes-3.2.9.html) and [3.4.5](release-notes-3.4.5.html).
+
 
 # Issues fixed
 
