@@ -383,7 +383,7 @@ namespace mtest {
       tfel::raise(
           "SchemeParserBase::handleOutputFrequency: "
           "invalid frequency '" +
-          v + "'");
+          v + "'. Expected 'UserDefinedTimes' or 'EveryPeriod'");
     }
     this->readSpecifiedToken("SchemeParserBase::handleOutputFrequency", ";", p,
                              this->tokens.end());
