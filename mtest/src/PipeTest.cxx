@@ -891,9 +891,9 @@ namespace mtest {
 #ifdef _MSC_VER
         // pi capture is required for Visual Studio 2015
         const auto Pi = [this, T, Ri_, pi] {
-#elif _MSC_VER
+#else /* _MSC_VER */
         const auto Pi = [this, T, Ri_] {
-#endif _MSC_VER
+#endif /* _MSC_VER */
           if (this->gseq == nullptr) {
             return this->P0 * (T / this->T0);
           }
