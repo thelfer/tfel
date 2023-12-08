@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
-## Issue #459: [mtest] correct the documentation of `@OutputFrequence`
+# Issue 460: [tfel-config] allow to modify the compiler flag associated with the `C++` standard 
+
+For more details, see <https://github.com/thelfer/tfel/issues/460>.
+
+## Issue 459: [mtest] correct the documentation of `@OutputFrequence`
 
 For more details, see <https://github.com/thelfer/tfel/issues/459>.

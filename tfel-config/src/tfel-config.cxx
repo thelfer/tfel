@@ -542,9 +542,15 @@ int main(const int argc, const char* const* const argv) {
 
     if (compilerflags) {
       std::cout << COMPILER_FLAGS << " " << COMPILER_CXXFLAGS << " ";
+      const auto* const cxx_standard =
+          getenv("TFEL_CXX_STANDARD_COMPILER_FLAG");
+      if (cxx_standard != nullptr) {
+        std::cout << cxx_standard << " ";
+      } else {
 #if (defined __GNUC__) || (defined __clang__) || (defined __INTEL_COMPILER)
-      std::cout << "-std=c++17 ";
+        std::cout << "-std=c++20 ";
 #endif
+      }
     }
 
     if (debugflags) {
