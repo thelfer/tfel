@@ -2,7 +2,7 @@
  * \file   src/TFELConfig/tfel-config.cxx
  * \brief
  * \author Helfer Thomas
- * \date   27 août 2007
+ * \date   27 aoÃ»t 2007
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -236,6 +236,32 @@ static std::string includeDir() {
 #endif /* TFEL_APPEND_VERSION  */
   return inc;
 }  // end of includeDir
+
+static void replace_all(std::string& r,
+                        const std::string& s,
+                        const std::string& s1,
+                        const std::string& s2) {
+  using namespace std;
+  string::size_type rs;
+  string::size_type pos = 0;
+  string::size_type p;
+  r.clear();
+  if (!s1.empty()) {
+    p = s.find(s1, pos);
+    while (p != string::npos) {
+      rs = r.size();
+      r.resize(rs + p - pos + s2.size());
+      //	  copy(s.begin()+pos,s.begin()+p,r.begin()+rs);
+      copy(&s[0] + pos, &s[0] + p, &r[0] + rs);
+      copy(s2.begin(), s2.end(), &r[0] + rs + p - pos);
+      pos = p + s1.size();
+      p = s.find(s1, pos);
+    }
+  }
+  rs = r.size();
+  r.resize(rs + s.size() - pos);
+  copy(&s[0] + pos, &s[0] + s.size(), &r[0] + rs);
+}
 
 static void registerCallBack(const std::string& key,
                              const FuncPtr& f,
@@ -557,7 +583,16 @@ int main(const int argc, const char* const* const argv) {
     }
 
     if (compilerflags) {
-      cout << COMPILER_FLAGS << " " << COMPILER_CXXFLAGS << " ";
+      const auto* const cxx_standard =
+          getenv("TFEL_CXX_STANDARD_COMPILER_FLAG");
+      if (cxx_standard != nullptr) {
+        cout << " " << cxx_standard << " ";
+        auto ncompiler_cxxflags = std::string{};
+        replace_all(ncompiler_cxxflags, COMPILER_CXXFLAGS, "-std=c++11", "");
+        cout << COMPILER_FLAGS << " " << ncompiler_cxxflags << " ";
+      } else {
+        cout << COMPILER_FLAGS << " " << COMPILER_CXXFLAGS << " ";
+      }
     }
 
     if (oflags0) {
