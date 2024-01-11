@@ -872,7 +872,7 @@ This entry describes the thermal conductivity of an isotropic material.
 
 
 * units:
-  *SI: W.m^{-1}
+  *SI: W.m^{-1}.K^{-1}
 * type: scalar
 
 # The `ThermalConductivity1` entry
@@ -881,7 +881,7 @@ This entry describes the thermal conductivity of an orthotropic material along t
 
 
 * units:
-  *SI: W.m^{-1}
+  *SI: W.m^{-1}.K^{-1}
 * type: scalar
 
 # The `ThermalConductivity2` entry
@@ -890,7 +890,7 @@ This entry describes the thermal conductivity of an orthotropic material along t
 
 
 * units:
-  *SI: W.m^{-1}
+  *SI: W.m^{-1}.K^{-1}
 * type: scalar
 
 # The `ThermalConductivity3` entry
@@ -899,7 +899,7 @@ This entry describes the thermal conductivity of an orthotropic material along t
 
 
 * units:
-  *SI: W.m^{-1}
+  *SI: W.m^{-1}.K^{-1}
 * type: scalar
 
 # The `ThermalExpansion` entry
