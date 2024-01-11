@@ -20,7 +20,7 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   struct KrigingDefaultNuggetModel {
-    KrigingDefaultNuggetModel<N, T>() : nugget(T(0)) {}
+    KrigingDefaultNuggetModel() : nugget(T(0)) {}
 
     T nuggetEffect(typename vector<T>::size_type,
                    const typename KrigingVariable<N, T>::type&) const {
