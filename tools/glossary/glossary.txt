@@ -111,7 +111,7 @@ notes : {
 };
 
 "ThermalConductivity" {
-units : { "SI" : "W.m^{-1}" };
+units : { "SI" : "W.m^{-1}.K^{-1}" };
 lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
@@ -120,7 +120,7 @@ short_description:
 };
 
 "ThermalConductivity1" {
-units : { "SI" : "W.m^{-1}" };
+units : { "SI" : "W.m^{-1}.K^{-1}" };
 lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
@@ -130,7 +130,7 @@ short_description:
 };
 
 "ThermalConductivity2" {
-units : { "SI" : "W.m^{-1}" };
+units : { "SI" : "W.m^{-1}.K^{-1}" };
 lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
@@ -140,7 +140,7 @@ short_description:
 };
 
 "ThermalConductivity3" {
-units : { "SI" : "W.m^{-1}" };
+units : { "SI" : "W.m^{-1}.K^{-1}" };
 lower_physical_bounds : { "SI" : 0 };
 type:
   "scalar";
