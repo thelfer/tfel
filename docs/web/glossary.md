@@ -801,7 +801,7 @@ Cette entrée décrit le gradient de température.
 Cette entrée décrit la conductivité thermique d'un matériau isotrope.
 
 * noms : ThermalConductivity
-* unité: \(W.m^{-1}\)
+* unité: \(W.m^{-1}.K^{-1}\)
 * type: scalaire 
 
 # L'entrée ThermalConductivity1
@@ -809,7 +809,7 @@ Cette entrée décrit la conductivité thermique d'un matériau isotrope.
 Cette entrée décrit la conductivité thermique d'un matériau orthotrope suivant la première direction d'orthotropie.
 
 * noms : ThermalConductivity1
-* unité: \(W.m^{-1}\)
+* unité: \(W.m^{-1}.K^{-1}\)
 * type: scalaire 
 
 # L'entrée ThermalConductivity2
@@ -817,7 +817,7 @@ Cette entrée décrit la conductivité thermique d'un matériau orthotrope suiva
 Cette entrée décrit la conductivité thermique d'un matériau orthotrope suivant la deuxième direction d'orthotropie.
 
 * noms : ThermalConductivity2
-* unité: \(W.m^{-1}\)
+* unité: \(W.m^{-1}.K^{-1}\)
 * type: scalaire 
 
 # L'entrée ThermalConductivity3
@@ -825,7 +825,7 @@ Cette entrée décrit la conductivité thermique d'un matériau orthotrope suiva
 Cette entrée décrit la conductivité thermique d'un matériau orthotrope suivant la troisième direction d'orthotropie.
 
 * noms : ThermalConductivity3
-* unité: \(W.m^{-1}\)
+* unité: \(W.m^{-1}.K^{-1}\)
 * type: scalaire 
 
 # L'entrée ThermalExpansion
