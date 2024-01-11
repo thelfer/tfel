@@ -868,7 +868,7 @@ namespace tfel {
     const GlossaryEntry Glossary::ThermalConductivity(
         "ThermalConductivity",
         "ThermalConductivity",
-        "W.m^{-1}",
+        "W.m^{-1}.K^{-1}",
         "scalar",
         "la conductivité thermique d'un matériau isotrope",
         "" /* no 'description' defined */,
@@ -877,7 +877,7 @@ namespace tfel {
     const GlossaryEntry Glossary::ThermalConductivity1(
         "ThermalConductivity1",
         "ThermalConductivity1",
-        "W.m^{-1}",
+        "W.m^{-1}.K^{-1}",
         "scalar",
         "la conductivité thermique d'un matériau orthotrope suivant la "
         "première direction d'orthotropie",
@@ -887,7 +887,7 @@ namespace tfel {
     const GlossaryEntry Glossary::ThermalConductivity2(
         "ThermalConductivity2",
         "ThermalConductivity2",
-        "W.m^{-1}",
+        "W.m^{-1}.K^{-1}",
         "scalar",
         "la conductivité thermique d'un matériau orthotrope suivant la "
         "deuxième direction d'orthotropie",
@@ -897,7 +897,7 @@ namespace tfel {
     const GlossaryEntry Glossary::ThermalConductivity3(
         "ThermalConductivity3",
         "ThermalConductivity3",
-        "W.m^{-1}",
+        "W.m^{-1}.K^{-1}",
         "scalar",
         "la conductivité thermique d'un matériau orthotrope suivant la "
         "troisième direction d'orthotropie",
