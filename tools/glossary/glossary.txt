@@ -59,25 +59,25 @@
 };
 
 "ThermalConductivity"{
- unit : "W.m^{-1}";
+ unit : "W.m^{-1}.K^{-1}";
  type : "scalar";
  short_description : "la conductivité thermique d'un matériau isotrope";
 };
 
 "ThermalConductivity1"{
- unit : "W.m^{-1}";
+ unit : "W.m^{-1}.K^{-1}";
  type : "scalar";
  short_description : "la conductivité thermique d'un matériau orthotrope suivant la première direction d'orthotropie";
 };
 
 "ThermalConductivity2"{
- unit : "W.m^{-1}";
+ unit : "W.m^{-1}.K^{-1}";
  type : "scalar";
  short_description : "la conductivité thermique d'un matériau orthotrope suivant la deuxième direction d'orthotropie";
 };
 
 "ThermalConductivity3"{
- unit : "W.m^{-1}";
+ unit : "W.m^{-1}.K^{-1}";
  type : "scalar";
  short_description : "la conductivité thermique d'un matériau orthotrope suivant la troisième direction d'orthotropie";
 };
