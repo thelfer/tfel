@@ -29,3 +29,10 @@ jobs:
     
     - name: Generate doxygen
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target doc-html 
+
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ${{github.workspace}}/build/docs/doxygen/html/ 
+        deploy_dir: doxygen/
