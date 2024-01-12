@@ -35,4 +35,5 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ${{github.workspace}}/build/docs/doxygen/html/ 
-        destination_dir: doxygen/
+        external_repository: thelfer/thelfer.github.io
+        destination_dir: tfel/doxygen/
