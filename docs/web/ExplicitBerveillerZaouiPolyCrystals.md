@@ -335,7 +335,7 @@ functionalities provided by the [`NUMODIS` code](http://www.numodis.fr):
 ~~~~
 
 Those keywords are fully described on this page:
-<http://tfel.sourceforge.net/singlecrystal.html>.
+<https://thelfer.github.io/tfel/web/singlecrystal.html>.
 
 They generate a class called `PolycrystalHCP_BZSlipSystems` which contains
 the orientation tensors of the all the slip systems.

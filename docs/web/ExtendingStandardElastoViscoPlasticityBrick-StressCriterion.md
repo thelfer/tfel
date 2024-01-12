@@ -185,12 +185,12 @@ where \(C\) and \(F\) are two material properties.
 The implementation of a perfect plasticity in pure `MFront` is detailed
 in an entry of the `MFront` gallery:
 
-<http://tfel.sourceforge.net/greenplasticity.html>
+<https://thelfer.github.io/tfel/web/greenplasticity.html>
 
 In a new directory, we just follow the steps given by the previous paragraph:
 
 ~~~~{.sh}
-wget http://tfel.sourceforge.net/scripts/generate.sh
+wget https://thelfer.github.io/tfel/web/scripts/generate.sh
 chmod +x generate.sh
 ./generate.sh
 ~~~~

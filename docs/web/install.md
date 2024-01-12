@@ -13,7 +13,7 @@ eqnPrefixTemplate: "($$i$$)"
 ---
 
 The latest version of this document is always available at
-<http://tfel.sourceforge.net/install.html>.
+<https://thelfer.github.io/tfel/web/install.html>.
 
 > **Note** `TFEL` can be installed along with 
 > [`Cast3M`](http://www-cast3m.cea.fr/) (>2019). *No extra
@@ -72,25 +72,17 @@ Intel and AMD processors, either 32 or 64 bits. As no specific
 instructions relative to the underlying architecture is used in the
 code, other architectures shall work as well.
 
-If you have `cmake` (version greater than \(2.8\)) installed on your
-system, installing ̀TFEL` basically boils down to the following
-simple commands:
+You must have the `cmake` build system (version greater than \(2.8\))
+installed on your system, installing ̀`TFEL` basically boils down to the
+following simple commands:
 
-~~~~ {#building1 .bash}
+~~~~{#building1 .bash}
 $ cmake [options]
 $ make 
 $ make install
 ~~~~
 
-If you do not have `cmake`, you can use the standard procedure
-
-~~~~ {#building2 .bash}
-$ configure [options]
-$ make 
-$ make install
-~~~~
-
-The optional parameters of `cmake` and `configure` allows you to:
+The optional parameters of `cmake` allows you to:
 
 - specify the source location
 - specify the installation directory
@@ -111,19 +103,16 @@ the installation procedure into five steps:
 
 ## Compilers 
 
-`TFEL` version 2.0 requires a `C++-98` compliant compiler, a `C`
+`TFEL` version 5.0 requires a `C++-20` compliant compiler, a `C`
 compiler and optionally a `fortran` compiler. The following compilers
 suite are officially supported:
 
 - [The GNU Compiler Collection](https://gcc.gnu.org/). This is the
   default on most Linux distributions and is used for the development
-  of `TFEL`. Most versions starting from gcc 3.4 have been tested
-  successfully, although versions prior to 4.4 are less and less used.
-- [The `clang` C and C++ compilers](http://clang.llvm.org/). All
-  versions starting from 3.3 have been tested successfully.
+  of `TFEL`.
+- [The `clang` C and C++ compilers](http://clang.llvm.org/).
 - The
   [Intel compilers suite](https://software.intel.com/en-us/c-compilers).
-  All versions starting from 11.0 have been tested successfully.
 
 ## Third party libraries
 
@@ -152,24 +141,13 @@ To build `TFEL` documentation, one may need:
 
 # Downloading the source
 
-Official releases sources can be downloaded on
-[`TFEL` sourceforge page](http://sourceforge.net/projects/tfel/files)
-(see the Download entry of the navigation bar).
-
-Sources of the development version are accessible through CEA svn
-servers (see the
-[Contributing](http://tfel.sourceforge.net/contributing.html) page for
-details).
+Official releases sources can be downloaded on [`TFEL` github
+page](https://github.com/thelfer/tfel/releases) (see the Download entry
+of the navigation bar).
 
 # Configuration
 
-`TFEL` supports two build-systems:
-
-- [`cmake`](http://www.cmake.org/) which is recommended.
-- a `configure` script build upon the
-  [GNU build system](http://www.gnu.org). This system is considered as
-  deprecated and shall only be used if `cmake` is not available. Note
-  that most unit tests will not be build.
+`TFEL` is based on the [`cmake`](http://www.cmake.org/) build-system.
 
 ## Creating a `build` directory
 
@@ -303,49 +281,7 @@ A specific `python` version can be selected by setting the
 `Python_ADDITIONAL_VERSIONS`, as follows:
 
 ~~~~{.bash}
-cmake ../trunk/ -Denable-python-bindings=ON -DPython_ADDITIONAL_VERSIONS=2.7 ...
-~~~~
-
-## Using the `configure` script
-
-~~~~ {#building-configure .bash}
-$ $srcdir/configure --enable-fortran --enable-aster --enable-tests --enable-local-castem-header --prefix=${prefix}
-~~~~
-
-This will build `TFEL` with the support of interfaces for the
-[Cast3M](http://www-cast3m.cea.fr/) and
-[Code-Aster](http://www.code-aster.org) finite element solvers.
-
-Various other options can be passed to the `configure` script:
-
-- The option `--enable-cyrano` enables the interface for the
-  `Cyrano3` fuel performance code.
-- To enable the mechanical behaviour interface for the ZeBuLoN finite
-  element solver, one may use the `--enable-zmat
-  --with-zset=$ZSETPATH` option, where `$ZSETPATH` points to the
-  installation directory of the ZeBuLoN finite element solver.
-- To enable the material properties interface for the
-  [`Python`](https://www.python.org/) language, one may use the
-  `--enable-python` option.
-- To enable bindings for the [`Python`](https://www.python.org/)
-  language, notably for the `MTest` tool, one may use the
-  `--enable-python-bindings` option. This requires the
-  [Boost.Python](http://www.boost.org) to be available.
-
-Some default compiler settings are detected by `configure`, depending on
-your system. To explicitly specify the compilers to be used, one may
-define one of the following variables:
-
-- `CXX` : name of the `C++` compiler
-- `CC`  : name of the `C` compiler
-- `FC`  : name of the `fortran` compiler
-- `F77` : name of the `fortran` compiler (77 standard)
-
-For example, we can use the following command to select the
-[Intel compilers suite](https://software.intel.com/en-us/c-compilers):
-
-~~~~ {#building-configure-icpc .bash}
-$ CXX=icpc CC=icc FC=ifort F77=ifort $srcdir/configure --enable-fortran --enable-aster --enable-tests --enable-local-castem-header --prefix=${prefix}
+cmake ../master/ -Denable-python-bindings=ON -DPython_ADDITIONAL_VERSIONS=2.7 ...
 ~~~~
 
 # Building
@@ -420,24 +356,7 @@ To install `TFEL` binaries and libraries in the directory pointed by
 $ make install
 ~~~~
 
-Using `cmake`, the previous command will install the documentation if
-build.
-
-If you are using the `autotools` build system, the installation of the
-documentation is a separate process done by one of the following
-commands:
-
-~~~~ {#building-doc-install .bash}
-$ # install the reference manual
-$ make doc-pdf-install
-$ # install the doxygen manual
-$ make doc-html-install
-$ # install all the available documentation
-$ make doc-install
-~~~~
-
-Note that you can not build the `TFEL` website using the `autotools`
-build system.
+The previous command also installs the documentation if build.
 
 # A Quick installation procedure on `Ubuntu` {#sec:QuickUbuntu}
 

@@ -16,25 +16,23 @@ eqnPrefixTemplate: "($$i$$)"
 There are various ways of getting help, including this FAQ.
 
 The main source is the `TFEL` website:
-<http://tfel.sourceforge.net/>. In particular, one may want to read
+<https://thelfer.github.io/tfel/web/>. In particular, one may want to read
 the pages dedicated to:
 
 - the documentation (see also the various entries in the FAQ below):
-  <http://tfel.sourceforge.net/documentation.html>
+  <https://thelfer.github.io/tfel/web/documentation.html>
 - the installation process (see also the dedicated entry in the FAQ
-  below): <http://tfel.sourceforge.net/documentation.html>
+  below): <https://thelfer.github.io/tfel/web/documentation.html>
 
 If none of the resources available is satisfying, one may want to use:
 
-- the `TFEL` forums: <https://sourceforge.net/p/tfel/discussion>
-- the user mailing list:
-  [tfel-discuss@lists.sourceforge.net](mailto:tfel-discuss@lists.sourceforge.net)
+- the `TFEL` forums: <https://github.com/thelfer/tfel/discussions>
+- the `TFEL` bug report: <https://github.com/thelfer/tfel/issues>
 - the `TFEL` official mail adress to contact the developpers:
   [tfel-contact@cea.fr](tfel-contact@cea.fr).
 
-We recommend using the forums and the mailing list for general
-questions, as our answers can hopefully also be of any help to other
-users.
+We recommend using the forums for general questions, as our answers can
+hopefully also be of any help to other users.
 
 # Documentation
 

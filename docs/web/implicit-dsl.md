@@ -297,9 +297,9 @@ simplified if the following assumptions are made:
 
 Those assumptions are more or the less the basis upon which various
 bricks in `MFront` are built
-([`StandardElasticity`](http://tfel.sourceforge.net/HookeStressPotential.html),
-[`StandardElastoViscoplasticity`](http://tfel.sourceforge.net/StandardElastoViscoPlasticityBrick.html),
-[`DDIF2`](http://tfel.sourceforge.net/DDIF2Brick.html)).
+([`StandardElasticity`](https://thelfer.github.io/tfel/web/HookeStressPotential.html),
+[`StandardElastoViscoplasticity`](https://thelfer.github.io/tfel/web/StandardElastoViscoPlasticityBrick.html),
+[`DDIF2`](https://thelfer.github.io/tfel/web/DDIF2Brick.html)).
 
 Thanks to Equation @eq:tangent_operator:common_cases:dF_ddeto, one sees
 that the product \(-J^{-1}\,\deriv{\vec{F}}{\Delta\,\tepsilonto}\) only

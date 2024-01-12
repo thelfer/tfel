@@ -219,7 +219,7 @@ madnex:Example.mdnx:MaterialProperty::YoungModulusTest
 
 The `mfront` python module is fully described here:
 
-<http://tfel.sourceforge.net/mfront-python.html>
+<https://thelfer.github.io/tfel/web/mfront-python.html>
 
 The main function related to `madnex` file support is the
 `getImplementationsPaths` which takes five arguments:
