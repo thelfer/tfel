@@ -35,4 +35,4 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ${{github.workspace}}/build/docs/doxygen/html/ 
-        deploy_dir: doxygen/
+        destination_dir: doxygen/
