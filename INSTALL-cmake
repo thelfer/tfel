@@ -31,8 +31,6 @@ Options
 =======
 
 - `enable-static`: compiles static libraries
-- `enable-mkl`: allows support for linear solvers provided by the Math
-  Kernel Library
 - `enable-fortran`: enables fortran support
 - `enable-python`: enables python support
 - `enable-numpy-support: enables numpy support. This is activated by

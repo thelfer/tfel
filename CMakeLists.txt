@@ -517,15 +517,6 @@ endif(enable-java)
 # cadna
 include(cmake/modules/cadna.cmake)
 
-# mkl support
-option(enable-mkl "enable mkl support" OFF)
-if(enable-mkl)
-  include(cmake/modules/FindMKL.cmake)
-  if(NOT MKL_FOUND)
-    message(FATAL_ERROR "the MKL library has not been found")
-  endif(NOT MKL_FOUND)
-endif(enable-mkl)
-
 # sub directories
 add_subdirectory(include) 
 add_subdirectory(src)
