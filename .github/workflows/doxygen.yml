@@ -12,7 +12,7 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  using: "composite"
+  runs-on: ubuntu-latest
   
   steps:
   - uses: actions/checkout@v2
