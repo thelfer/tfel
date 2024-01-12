@@ -7,7 +7,7 @@ class TFELConan(ConanFile):
     author = "Thomas Helfer (tfel-contact@cea.fr)"
     version = "3.1-dev"
     license = "GPL/CECILL-A"
-    url = "http://tfel.sourceforge.net"
+    url = "https://thelfer.github.io/tfel/web/index.html"
     description = """TFEL is a collaborative development of CEA and EDF.
     MFront is a code generator which translates a set of closely related 
     domain specific languages into plain C++ on top of the  TFEL library.

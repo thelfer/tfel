@@ -3,9 +3,8 @@
 % Janvier 2015
 
 I) Télécharger les sources mfront 
-    - 1) allez sur le site http://sourceforge.net/projects/tfel/
-    - 2) cliquez sur l'onglet "Files"
-    - 4) téléchargez la version d'intérêt; copiez-la dans un dossier de votre ordi ou vous désirez réaliser l'installation. Décompressez la dans le dossier choisi
+    - 1) allez sur le site <https://github.com/thelfer/tfel/releases>
+    - 2) téléchargez la version d'intérêt; copiez-la dans un dossier de votre ordi ou vous désirez réaliser l'installation. Décompressez la dans le dossier choisi
 
 II) Installer un version récente de GCC et de python
     - 1) Comme pas de droits admin sur calibre, utilisez l'environnement "conda". Pour ça :

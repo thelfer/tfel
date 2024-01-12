@@ -46,7 +46,7 @@
 > embargo, las nuevas versiones (>= 3.0.x) introducen nuevos conceptos e
 > instrucciones que simplifican aún más la implementación de nuevos
 > comportamientos mecánicos (en particular, el bloque StandardElasticity
-> descrito [aquí](http://tfel.sourceforge.net/BehaviourBricks.html).
+> descrito [aquí](https://thelfer.github.io/tfel/web/BehaviourBricks.html).
 
 Introducción
 ============
@@ -1948,7 +1948,7 @@ instalación.
 
 Se podrá descargar la última versión lanzada del producto desde la
 página dedicada a la descarga de archivos de TFEL
-([*https://sourceforge.net/projects/tfel/files/)*](https://sourceforge.net/projects/tfel/files/)),
+([https://github.com/thelfer/tfel/releases](https://github.com/thelfer/tfel/releases)),
 donde a fecha de realización de este trabajo, la última versión
 disponible era la `tfel-2.0.4`.
 

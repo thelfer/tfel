@@ -1,3 +1,0 @@
-nobase_include_HEADERS= MFront/BehaviourDocumentationGenerator.hxx
-
-EXTRA_DIST=CMakeLists.txt

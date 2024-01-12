@@ -45,7 +45,7 @@ will open the script in `Notepad`, but any text editor will do.
 
 ## About binary packages
 
-Various binary packages can be downloaded on the `sourceforge`
+Various binary packages can be downloaded on the `github`
 website. Those binary packages are built against specific versions of
 `Cast3M`. When installing thoses packages, the user have the choice to
 modify the `PATH` variable globally.
@@ -71,8 +71,8 @@ The archive contains the following files:
   `MFront` using the compiler delivered with `Cast3M` `2017`.
 
 The two first scripts are not mandatory: the user can directly
-download an archive from the sourceforge website
-(<https://sourceforge.net/projects/tfel/files/>).
+download an archive from the github website
+(<https://github.com/thelfer/tfel/releases>).
 
 It also contains a directory called `test`. The usage is those scripts
 is fully detailed in the following sections.
@@ -86,7 +86,7 @@ In the following, we will suppose that:
 
 - `git` is installed. This is not mandatory. Users that do not want to
   follow the latest developments of `TFEL` and `MFront` can download a
-  packaged version on the sourceforge website. The tutorial will
+  packaged version on the github website. The tutorial will
   mostly apply, but the name of the directory containing the sources
   must be changed. `git` for `Windows` can be downloaded
   [here](https://git-scm.com/download/win)
@@ -105,7 +105,7 @@ In the following, we will suppose that:
 # Getting the sources using `git`
 
 This section can be skipped if the user wants to use a packaged
-version of tfel (<https://sourceforge.net/projects/tfel/files/>).
+version of tfel (<https://github.com/thelfer/tfel/releases>).
 
 ## Cloning the repository
 
@@ -140,7 +140,7 @@ By default, the script assumes that the sources are in the `tfel`
 subdirectory. This is the case if the user cloned the `git` repository
 as explained before.
 
-If the user has downloaded an archive from the `sourceforge` website,
+If the user has downloaded an archive from the `github` website,
 the name of the directory can be different and the user must update
 the following line:
 

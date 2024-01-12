@@ -52,7 +52,7 @@ This page shows:
   header file.
 - how the implementation finally looks like once introduced in the
   [`StandardElastoViscoplasticity`
-  brick](http://tfel.sourceforge.net/StandardElastoViscoPlasticityBrick.html)
+  brick](https://thelfer.github.io/tfel/web/StandardElastoViscoPlasticityBrick.html)
 
 # Description of the behaviour
 

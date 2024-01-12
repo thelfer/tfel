@@ -1062,7 +1062,7 @@ The user may specify an initial guess for the unknowns using the
 > The reader may find an example of such algorithms in the case of a
 > perfect plastic behaviour based on the Hosford stress criterion
 > on this page of the `MFront` gallery: 
-> <http://tfel.sourceforge.net/hosford.html>
+> <https://thelfer.github.io/tfel/web/hosford.html>
 
 An important caveat to this strategy is link to the use of an active-set
 method to describe multi-surface plasticity. The active-set method makes

@@ -50,7 +50,6 @@ The final advice is the more important: as every open-source project,
 questions**:
 
 - [on the forum](https://github.com/thelfer/tfel/discussions).
-- [on the mailing lists](https://sourceforge.net/p/tfel/tfel/).
 - [to the authors](mailto:tfel-contact@cea.fr).
 
 # First step: installation
@@ -61,7 +60,7 @@ The main points are the followings:
 
 - `MFront` is mostly distributed as `C++` sources that must be compiled.
   Official releases are available on
-  [sourceforge](https://sourceforge.net/projects/tfel/files/).
+  [github](https://github.com/thelfer/tfel/releases).
 - For those wanting to follow the latest developments, a clone of the
   source repository is available on
   [GitHub](https://github.com/thelfer/tfel). You obviously need to

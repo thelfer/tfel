@@ -3,7 +3,7 @@
 % October 31, 2014
 
 The latest version of this document is always available at
-<http://tfel.sourceforge.net/packages.html>.
+<https://thelfer.github.io/tfel/web/packages.html>.
 
 This document describes how to generate packages for `TFEL`. It relies
 on the instructions given [here](install.html) to build `TFEL` from
