@@ -44,7 +44,7 @@ namespace tfel::material {
    * `tfel::math::computeDeviatorDeterminantDerivative` function.
    */
   TFEL_HOST_DEVICE constexpr auto computeJ3Derivative(
-      const StensorConcept auto&);
+      const tfel::math::StensorConcept auto&);
   /*!
    * \brief Let \f$\underline{s}\f$ be a symmetric tensor and
    * \f$J_{3}\f$ be the determinant of \f$\underline{s}'\f$ the
@@ -68,7 +68,7 @@ namespace tfel::material {
    * function.
    */
   TFEL_HOST_DEVICE constexpr auto computeJ3SecondDerivative(
-      const StensorConcept auto&);
+      const tfel::math::StensorConcept auto&);
 
 }  // end of namespace tfel::material
 

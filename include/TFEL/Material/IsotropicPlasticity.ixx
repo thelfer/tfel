@@ -18,12 +18,12 @@
 namespace tfel::material {
 
   TFEL_HOST_DEVICE constexpr auto computeJ3Derivative(
-      const StensorConcept auto& s) {
+      const tfel::math::StensorConcept auto& s) {
     return tfel::math::computeDeviatorDeterminantDerivative(s);
   }  // end of computeJ3Derivative
 
   TFEL_HOST_DEVICE constexpr auto computeJ3SecondDerivative(
-      const StensorConcept auto& s) {
+      const tfel::math::StensorConcept auto& s) {
     return tfel::math::computeDeviatorDeterminantSecondDerivative(s);
   }  // end of computeJ3SecondDerivative
 

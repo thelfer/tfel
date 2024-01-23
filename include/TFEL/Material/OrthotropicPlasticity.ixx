@@ -89,9 +89,12 @@ namespace tfel::material {
           const tfel::math::base_type<StensorType>,
           const tfel::math::base_type<StensorType>,
           const tfel::math::base_type<StensorType>) {
-    return {(a3 * (s[0] - s[2])) / 3 + (a1 * (s[0] - s[1])) / 3,
-            (a2 * (s[1] - s[2])) / 3 - (a1 * (s[0] - s[1])) / 3,
-            (-(a2 * (s[1] - s[2])) / 3) - (a3 * (s[0] - s[2])) / 3};
+    using Result =
+        tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
+                            tfel::math::numeric_type<StensorType>>;
+    return Result{(a3 * (s[0] - s[2])) / 3 + (a1 * (s[0] - s[1])) / 3,
+                  (a2 * (s[1] - s[2])) / 3 - (a1 * (s[0] - s[1])) / 3,
+                  (-(a2 * (s[1] - s[2])) / 3) - (a3 * (s[0] - s[2])) / 3};
   }  // end of computeJ2ODerivative
 
   template <tfel::math::StensorConcept StensorType>
@@ -104,9 +107,13 @@ namespace tfel::material {
           const tfel::math::base_type<StensorType> a4,
           const tfel::math::base_type<StensorType>,
           const tfel::math::base_type<StensorType>) {
-    return {(a3 * (s[0] - s[2])) / 3 + (a1 * (s[0] - s[1])) / 3,
-            (a2 * (s[1] - s[2])) / 3 - (a1 * (s[0] - s[1])) / 3,
-            (-(a2 * (s[1] - s[2])) / 3) - (a3 * (s[0] - s[2])) / 3, a4 * s[3]};
+    using Result =
+        tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
+                            tfel::math::numeric_type<StensorType>>;
+    return Result{(a3 * (s[0] - s[2])) / 3 + (a1 * (s[0] - s[1])) / 3,
+                  (a2 * (s[1] - s[2])) / 3 - (a1 * (s[0] - s[1])) / 3,
+                  (-(a2 * (s[1] - s[2])) / 3) - (a3 * (s[0] - s[2])) / 3,
+                  a4 * s[3]};
   }  // end of computeJ2ODerivative
 
   template <tfel::math::StensorConcept StensorType>
@@ -119,12 +126,15 @@ namespace tfel::material {
           const tfel::math::base_type<StensorType> a4,
           const tfel::math::base_type<StensorType> a5,
           const tfel::math::base_type<StensorType> a6) {
-    return {(a3 * (s[0] - s[2])) / 3 + (a1 * (s[0] - s[1])) / 3,
-            (a2 * (s[1] - s[2])) / 3 - (a1 * (s[0] - s[1])) / 3,
-            (-(a2 * (s[1] - s[2])) / 3) - (a3 * (s[0] - s[2])) / 3,
-            a4 * s[3],
-            a5 * s[4],
-            a6 * s[5]};
+    using Result =
+        tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
+                            tfel::math::numeric_type<StensorType>>;
+    return Result{(a3 * (s[0] - s[2])) / 3 + (a1 * (s[0] - s[1])) / 3,
+                  (a2 * (s[1] - s[2])) / 3 - (a1 * (s[0] - s[1])) / 3,
+                  (-(a2 * (s[1] - s[2])) / 3) - (a3 * (s[0] - s[2])) / 3,
+                  a4 * s[3],
+                  a5 * s[4],
+                  a6 * s[5]};
   }  // end of computeJ2ODerivative
 
   template <tfel::math::StensorConcept StensorType>
@@ -143,8 +153,13 @@ namespace tfel::material {
           const tfel::math::base_type<StensorType>,
           const tfel::math::base_type<StensorType>,
           const tfel::math::base_type<StensorType>) {
-    return {(a3 + a1) / 3, -a1 / 3, -a3 / 3, -a1 / 3,      (a2 + a1) / 3,
-            -a2 / 3,       -a3 / 3, -a2 / 3, (a2 + a3) / 3};
+    using Result = tfel::math::st2tost2<
+        tfel::math::getSpaceDimension<StensorType>(),
+        tfel::math::BinaryOperationResult<tfel::math::base_type<StensorType>,
+                                          tfel::math::numeric_type<StensorType>,
+                                          tfel::math::OpDiv>>;
+    return Result{(a3 + a1) / 3, -a1 / 3, -a3 / 3, -a1 / 3,      (a2 + a1) / 3,
+                  -a2 / 3,       -a3 / 3, -a2 / 3, (a2 + a3) / 3};
   }  // end of computeJ2OSecondDerivative
 
   template <tfel::math::StensorConcept StensorType>
@@ -157,12 +172,17 @@ namespace tfel::material {
           const tfel::math::base_type<StensorType> a4,
           const tfel::math::base_type<StensorType>,
           const tfel::math::base_type<StensorType>) {
+    using Result = tfel::math::st2tost2<
+        tfel::math::getSpaceDimension<StensorType>(),
+        tfel::math::BinaryOperationResult<tfel::math::base_type<StensorType>,
+                                          tfel::math::numeric_type<StensorType>,
+                                          tfel::math::OpDiv>>;
     using real = tfel::math::base_type<StensorType>;
     constexpr auto zero = real{0};
-    return {(a3 + a1) / 3, -a1 / 3,       -a3 / 3,       zero,
-            -a1 / 3,       (a2 + a1) / 3, -a2 / 3,       zero,
-            -a3 / 3,       -a2 / 3,       (a2 + a3) / 3, zero,
-            zero,          zero,          zero,          a4};
+    return Result{(a3 + a1) / 3, -a1 / 3,       -a3 / 3,       zero,
+                  -a1 / 3,       (a2 + a1) / 3, -a2 / 3,       zero,
+                  -a3 / 3,       -a2 / 3,       (a2 + a3) / 3, zero,
+                  zero,          zero,          zero,          a4};
   }  // end of computeJ2OSecondDerivative
 
   template <tfel::math::StensorConcept StensorType>
@@ -175,14 +195,19 @@ namespace tfel::material {
           const tfel::math::base_type<StensorType> a4,
           const tfel::math::base_type<StensorType> a5,
           const tfel::math::base_type<StensorType> a6) {
+    using Result = tfel::math::st2tost2<
+        tfel::math::getSpaceDimension<StensorType>(),
+        tfel::math::BinaryOperationResult<tfel::math::base_type<StensorType>,
+                                          tfel::math::numeric_type<StensorType>,
+                                          tfel::math::OpDiv>>;
     using real = tfel::math::base_type<StensorType>;
     constexpr auto zero = real{0};
-    return {(a3 + a1) / 3, -a1 / 3,       -a3 / 3,       zero, zero, zero,
-            -a1 / 3,       (a2 + a1) / 3, -a2 / 3,       zero, zero, zero,
-            -a3 / 3,       -a2 / 3,       (a2 + a3) / 3, zero, zero, zero,
-            zero,          zero,          zero,          a4,   zero, zero,
-            zero,          zero,          zero,          zero, a5,   zero,
-            zero,          zero,          zero,          zero, zero, a6};
+    return Result{(a3 + a1) / 3, -a1 / 3,       -a3 / 3,       zero, zero, zero,
+                  -a1 / 3,       (a2 + a1) / 3, -a2 / 3,       zero, zero, zero,
+                  -a3 / 3,       -a2 / 3,       (a2 + a3) / 3, zero, zero, zero,
+                  zero,          zero,          zero,          a4,   zero, zero,
+                  zero,          zero,          zero,          zero, a5,   zero,
+                  zero,          zero,          zero,          zero, zero, a6};
   }  // end of computeJ2OSecondDerivative
 
   template <tfel::math::StensorConcept StensorType>
