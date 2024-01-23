@@ -18,19 +18,12 @@
 
 namespace tfel::math {
 
-  template <typename StensorType>
-  constexpr std::enable_if_t<implementsStensorConcept<StensorType>(),
-                             numeric_type<StensorType>>
-  trace(const StensorType& s) {
+  TFEL_HOST_DEVICE constexpr auto trace(const StensorConcept auto& s) noexcept {
     return s(0) + s(1) + s(2);
   }
 
-  template <typename StensorType>
-  constexpr std::enable_if_t<
-      implementsStensorConcept<StensorType>(),
-      typename tfel::typetraits::AbsType<numeric_type<StensorType>>::type>
-  abs(const StensorType& s) {
-    constexpr auto N = getSpaceDimension<StensorType>();
+  TFEL_HOST_DEVICE constexpr auto abs(const StensorConcept auto& s) noexcept {
+    constexpr auto N = getSpaceDimension<decltype(s)>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1u) {
       return tfel::math::abs(s(0)) + tfel::math::abs(s(1)) +
@@ -45,14 +38,13 @@ namespace tfel::math {
     }
   }  // end of abs
 
-  template <typename StensorType>
-  constexpr std::enable_if_t<implementsStensorConcept<StensorType>(),
-                             numeric_type<StensorType>>
-  sigmaeq(const StensorType& s) {
+  TFEL_HOST_DEVICE constexpr auto sigmaeq(
+      const StensorConcept auto& s) noexcept {
+    using StensorType = decltype(s);
     using real = base_type<numeric_type<StensorType>>;
     constexpr auto N = getSpaceDimension<StensorType>();
-    constexpr const auto one_third = real(1) / real(3);
-    constexpr const auto cste = real(3) / real(2);
+    constexpr auto one_third = real(1) / real(3);
+    constexpr auto cste = real(3) / real(2);
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     auto square = [](const auto x) { return x * x; };
     const auto tr = one_third * trace(s);
@@ -72,10 +64,9 @@ namespace tfel::math {
     }
   }  // end of sigmaeq
 
-  template <typename StensorType>
-  constexpr std::enable_if_t<implementsStensorConcept<StensorType>(),
-                             EvaluationResult<StensorType>>
-  deviator(const StensorType& s) {
+  TFEL_HOST_DEVICE constexpr auto deviator(
+      const StensorConcept auto& s) noexcept {
+    using StensorType = decltype(s);
     using Result = EvaluationResult<StensorType>;
     using real = base_type<numeric_type<StensorType>>;
     constexpr auto N = getSpaceDimension<StensorType>();
@@ -91,15 +82,10 @@ namespace tfel::math {
     }
   }  // end of deviator
 
-  template <typename StensorResultType, typename StensorType>
-  constexpr std::enable_if_t<
-      (implementsStensorConcept<StensorResultType>() &&
-       implementsStensorConcept<StensorType>() &&
-       isAssignableTo<typename ComputeUnaryResult<numeric_type<StensorType>,
-                                                  Power<2>>::Result,
-                      numeric_type<StensorResultType>>()),
-      void>
-  computeDeterminantDerivative(StensorResultType& dJ, const StensorType& s) {
+  TFEL_HOST_DEVICE constexpr auto computeDeterminantDerivative(
+      StensorConcept auto& dJ, const StensorConcept auto& s) noexcept {
+    using StensorType = decltype(s);
+    using StensorResultType = decltype(dJ);
     constexpr auto N = getSpaceDimension<StensorType>();
     static_assert(N == getSpaceDimension<StensorResultType>(),
                   "arguments must have the same space dimension");
@@ -127,16 +113,10 @@ namespace tfel::math {
     }
   }  // end of ComputeDeterminantDerivative
 
-  template <typename StensorResultType, typename StensorType>
-  constexpr std::enable_if_t<
-      (implementsStensorConcept<StensorResultType>() &&
-       implementsStensorConcept<StensorType>() &&
-       isAssignableTo<typename ComputeUnaryResult<numeric_type<StensorType>,
-                                                  Power<2>>::Result,
-                      numeric_type<StensorResultType>>()),
-      void>
-  computeDeviatorDeterminantDerivative(StensorResultType& dJ,
-                                       const StensorType& s) {
+  TFEL_HOST_DEVICE constexpr auto computeDeviatorDeterminantDerivative(
+      StensorConcept auto& dJ, const StensorConcept auto& s) noexcept {
+    using StensorType = decltype(s);
+    using StensorResultType = decltype(dJ);
     constexpr auto N = getSpaceDimension<StensorType>();
     static_assert(N == getSpaceDimension<StensorResultType>(),
                   "arguments must have the same space dimension");

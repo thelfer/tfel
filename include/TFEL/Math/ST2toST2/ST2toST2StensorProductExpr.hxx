@@ -33,7 +33,7 @@ namespace tfel::math {
    */
   template <typename StensorResultType>
   struct Expr<StensorResultType, ST2toST2StensorProductExpr<1u>>
-      : public StensorConcept<
+      : public StensorConceptBase<
             Expr<StensorResultType, ST2toST2StensorProductExpr<1u>>>,
         public array_holder<
             StensorDimeToSize<getSpaceDimension<StensorResultType>()>::value,
@@ -86,7 +86,7 @@ namespace tfel::math {
    */
   template <typename StensorResultType>
   struct Expr<StensorResultType, ST2toST2StensorProductExpr<2u>>
-      : public StensorConcept<
+      : public StensorConceptBase<
             Expr<StensorResultType, ST2toST2StensorProductExpr<2u>>>,
         public array_holder<
             StensorDimeToSize<getSpaceDimension<StensorResultType>()>::value,
@@ -144,7 +144,7 @@ namespace tfel::math {
    */
   template <typename StensorResultType>
   struct Expr<StensorResultType, ST2toST2StensorProductExpr<3u>>
-      : public StensorConcept<
+      : public StensorConceptBase<
             Expr<StensorResultType, ST2toST2StensorProductExpr<3u>>>,
         public array_holder<
             StensorDimeToSize<getSpaceDimension<StensorResultType>()>::value,

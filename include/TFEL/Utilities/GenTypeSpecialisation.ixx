@@ -29,7 +29,7 @@
      * \param const X&, the source                               \
      */                                                          \
     TFEL_INLINE void set##Y(const X& src) {                      \
-      static_cast<Child*>(this)->template set<const X&>(src);           \
+      static_cast<Child*>(this)->template set<const X&>(src);    \
     }                                                            \
     /*                                                           \
      * get an object of type X.                                  \

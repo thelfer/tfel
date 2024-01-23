@@ -87,8 +87,8 @@ namespace tfel::tests {
     ~TestResult();
 
    private:
-      //! \brief registred tests
-      std::vector<TestResult> results;
+    //! \brief registred tests
+    std::vector<TestResult> results;
     //! \brief details
     std::string description;
     //! \brief reason why the test failed (if any)

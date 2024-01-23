@@ -108,7 +108,7 @@ namespace tfel::math {
 
   template <unsigned short N, typename ValueType>
   struct stensor
-      : StensorConcept<stensor<N, ValueType>>,
+      : StensorConceptBase<stensor<N, ValueType>>,
         stensor_common,
         GenericFixedSizeArray<
             stensor<N, ValueType>,

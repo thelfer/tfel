@@ -70,9 +70,7 @@ function(const MatrixType& x,
   ASSERT(std::abs(x(1, 1) - v3) <= eps);
 }
 
-template <typename StensorType>
-std::enable_if_t<tfel::math::implementsStensorConcept<StensorType>(), void>
-function(const StensorType& x) {
+void function(const tfel::math::StensorConcept auto& x) {
   std::cout << x(0) << " " << x(1) << " " << x(2) << std::endl;
   std::cout << "------" << std::endl;
 }

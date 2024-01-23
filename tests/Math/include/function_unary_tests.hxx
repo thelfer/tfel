@@ -38,8 +38,7 @@ void function(const tfel::math::MatrixConcept<T>&,
               const typename tfel::math::MathObjectTraits<T>::NumType,
               const unsigned int);
 
-template <class T>
-void function(const tfel::math::StensorConcept<T>&);
+void function(const tfel::math::StensorConcept auto&);
 
 #include "function_unary_tests.ixx"
 
