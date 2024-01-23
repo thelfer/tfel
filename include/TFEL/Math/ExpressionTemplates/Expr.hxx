@@ -122,7 +122,17 @@ namespace tfel::math {
      * \param l : left argument of the unary operation
      */
     TFEL_HOST_DEVICE constexpr Expr(T1 l)
-        : a(std::forward<T1>(l)) {}  // end of Expr
+        : a(std::forward<T1>(l)) {}
+    /*!
+     * array-like access operator
+     */
+    TFEL_HOST_DEVICE constexpr value_type operator[](const size_type i) const {
+      static_assert(
+          isUnaryOperationResultTypeValid<
+              tfel::meta::result_of<argument_storage_type, size_type>, Op>(),
+          "invalid call to unary operation operator[]");
+      return Op::apply(this->a(i));
+    }
     /*!
      * \brief multidimensional access operator
      */
