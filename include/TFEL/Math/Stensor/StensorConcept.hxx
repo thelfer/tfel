@@ -68,22 +68,6 @@ namespace tfel::math {
     return StensorConcept<StensorType>;
   }  // end of implementsStensorConcept
 
-  //! \brief a simple alias for backward compatibility with versions prior
-  //! to 4.0
-  template <typename StensorType>
-  using StensorTraits =
-      std::conditional_t<StensorConcept<StensorType>,
-                         MathObjectTraits<StensorType>,
-                         MathObjectTraits<tfel::meta::InvalidType>>;
-
-  //! \brief a simple alias for backward compatibility with versions prior
-  //! to 4.0
-  template <typename StensorType>
-  using StensorNumType =
-      std::conditional_t<StensorConcept<StensorType>,
-                         numeric_type<StensorType>,
-                         MathObjectTraits<tfel::meta::InvalidType>>;
-
   /*!
    * \brief partial specialisation for symmetric tensors
    */
@@ -92,6 +76,7 @@ namespace tfel::math {
     //! \brief a simple alias
     using type = StensorConceptBase<Type>;
   };
+
   /*!
    * \return the sum of the absolute values of all components of a symmetric
    * tensor
@@ -135,6 +120,26 @@ namespace tfel::math {
    */
   TFEL_HOST TFELMATH_VISIBILITY_EXPORT unsigned short getStensorSize(
       const unsigned short);
+
+  /*!
+   * \brief a simple alias for backward compatibility with versions prior
+   * to 4.0
+   */
+  template <typename StensorType>
+  using StensorTraits =
+      std::conditional_t<StensorConcept<StensorType>,
+                         MathObjectTraits<StensorType>,
+                         MathObjectTraits<tfel::meta::InvalidType>>;
+
+  /*!
+   * \brief a simple alias for backward compatibility with versions prior
+   * to 4.0
+   */
+  template <typename StensorType>
+  using StensorNumType =
+      std::conditional_t<StensorConcept<StensorType>,
+                         numeric_type<StensorType>,
+                         MathObjectTraits<tfel::meta::InvalidType>>;
 
 }  // end of namespace tfel::math
 
