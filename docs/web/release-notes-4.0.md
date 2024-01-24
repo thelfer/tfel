@@ -102,7 +102,7 @@ The implementation of this function in `TFEL-3.4.1` is illustrated in Listing @l
 
 ~~~~{#lst:sigmaeq_tfel_3.4.0 .cxx caption="Implementation of the sigmaeq function in TFEL-3.4.1"}
 template <typename T>
-typename std::enable_if<tfel::meta::Implements<T, StensorConcept>::cond,
+typename std::enable_if<tfel::meta::Implements<T, StensorConceptBase>::cond,
                         StensorNumType<T>>::type
 sigmaeq(const T& s) {
   typedef tfel::math::internals::SigmaEqImpl<StensorTraits<T>::dime> Impl;
@@ -135,7 +135,7 @@ namespace internals {
   struct SigmaEqImpl<1u> : public SigmaEqImplBase {
     template <class T>
     static typename std::enable_if<
-        tfel::meta::Implements<T, StensorConcept>::cond,
+        tfel::meta::Implements<T, StensorConceptBase>::cond,
         StensorNumType<T>>::type
     exe(const T& s) {
       typedef StensorNumType<T> NumType;

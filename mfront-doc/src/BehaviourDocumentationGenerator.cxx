@@ -138,7 +138,7 @@ namespace mfront {
   struct Data {
     using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
     Data();
-    Data(Data&&);
+    Data(Data&&) noexcept;
     Data(const Data&);
     Data& operator=(Data&&);
     Data& operator=(const Data&);
@@ -154,7 +154,7 @@ namespace mfront {
   };
 
   Data::Data() = default;
-  Data::Data(Data&&) = default;
+  Data::Data(Data&&) noexcept = default;
   Data::Data(const Data&) = default;
   Data& Data::operator=(Data&&) = default;
   Data& Data::operator=(const Data&) = default;
@@ -551,14 +551,14 @@ namespace mfront {
     Parser::registerCallBack(
         "--standalone",
         CallBack("generate a standalone document (false by default)",
-                 [this] { this->standalone = true; }, false));
+                 [this]() noexcept { this->standalone = true; }, false));
     Parser::registerNewCallBack("--web",
                                 &BehaviourDocumentationGenerator::treatWeb,
                                 "output a web version of the file");
     Parser::registerCallBack(
         "--std-output", "--",
         CallBack("print the output ont the standard output stream",
-                 [this] { this->std_output = true; }, false));
+                 [this]() noexcept { this->std_output = true; }, false));
   }  // end of BehaviourDocumentationGenerator::registerCommandLineCallBacks
 
   void BehaviourDocumentationGenerator::treatUnknownArgument() {

@@ -144,13 +144,12 @@ namespace tfel::math {
                                       Expr<Result, UnaryOperation<A, OpNeg>>>;
   };
 
-  template <typename T1, typename T2>
-  TFEL_MATH_INLINE typename std::enable_if<
-      implementsStensorConcept<T1>() && implementsT2toST2Concept<T2>() &&
-          !isInvalid<BinaryOperationResult<T1, T2, OpMult>>(),
-      BinaryOperationHandler<T1, T2, OpMult>>::type
-  operator|(const T1& a, const T2& b) {
-    typedef BinaryOperationHandler<T1, T2, OpMult> Handle;
+  template <typename T2>
+  TFEL_HOST_DEVICE constexpr
+  auto operator|(const StensorConcept auto& a, const T2& b) noexcept requires(
+      implementsT2toST2Concept<T2>() &&
+      !isInvalid<BinaryOperationResult<decltype(a), T2, OpMult>>()) {
+    typedef BinaryOperationHandler<decltype(a), T2, OpMult> Handle;
     return Handle(a, b);
   }
 

@@ -230,10 +230,9 @@ namespace tfel::math {
     }
   }  // end of computeGreenLagrangeTensor
 
-  template <typename StensorType, typename TensorType>
+  template <StensorConcept StensorType, typename TensorType>
   std::enable_if_t<
-      ((implementsStensorConcept<StensorType>()) &&
-       (implementsTensorConcept<TensorType>()) &&
+      ((implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
            numeric_type<StensorType>>::cond)),
       stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
@@ -244,10 +243,9 @@ namespace tfel::math {
     return push_forward(p, F);
   }  // end of pushForward
 
-  template <typename StensorType, typename TensorType>
+  template <StensorConcept StensorType, typename TensorType>
   std::enable_if_t<
-      ((implementsStensorConcept<StensorType>()) &&
-       (implementsTensorConcept<TensorType>()) &&
+      ((implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
            numeric_type<StensorType>>::cond)),
       stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
@@ -295,10 +293,9 @@ namespace tfel::math {
     }
   }  // end of push_forward
 
-  template <typename StensorType, typename TensorType>
+  template <StensorConcept StensorType, typename TensorType>
   std::enable_if_t<
-      ((implementsStensorConcept<StensorType>()) &&
-       (implementsTensorConcept<TensorType>()) &&
+      ((implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
            numeric_type<TensorType>>::cond)),
       stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
@@ -362,10 +359,9 @@ namespace tfel::math {
     }
   }  // end of convertCauchyStressToSecondPiolaKirchhoffStress
 
-  template <typename StensorType, typename TensorType>
+  template <StensorConcept StensorType, typename TensorType>
   std::enable_if_t<
-      ((implementsStensorConcept<StensorType>()) &&
-       (implementsTensorConcept<TensorType>()) &&
+      ((implementsTensorConcept<TensorType>()) &&
        (tfel::typetraits::IsFundamentalNumericType<
            numeric_type<TensorType>>::cond)),
       stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
@@ -489,10 +485,9 @@ namespace tfel::math {
     }
   }  // end of computeDeterminantDerivative
 
-  template <typename TensorType, typename StensorType, typename TensorType2>
+  template <typename TensorType, StensorConcept StensorType, typename TensorType2>
   std::enable_if_t<implementsTensorConcept<TensorType>() &&
                        implementsTensorConcept<TensorType2>() &&
-                       implementsStensorConcept<StensorType>() &&
                        std::is_same<numeric_type<StensorType>,
                                     numeric_type<TensorType2>>::value &&
                        std::is_same<base_type<numeric_type<TensorType2>>,
@@ -511,10 +506,9 @@ namespace tfel::math {
     copy<3u>::exe(F.begin(), U.begin());
   }  // end of polar_decomposition
 
-  template <typename TensorType, typename StensorType, typename TensorType2>
+  template <typename TensorType, StensorConcept StensorType, typename TensorType2>
   std::enable_if_t<implementsTensorConcept<TensorType>() &&
                        implementsTensorConcept<TensorType2>() &&
-                       implementsStensorConcept<StensorType>() &&
                        std::is_same<numeric_type<StensorType>,
                                     numeric_type<TensorType2>>::value &&
                        std::is_same<base_type<numeric_type<TensorType2>>,

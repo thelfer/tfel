@@ -32,12 +32,11 @@ namespace tfel::math {
    * \return the moduli associated with Jauman rate of the Kirchhoff
    * stress
    */
-  template <typename ST2toST2Type, typename StensorType>
+  template <typename ST2toST2Type, StensorConcept StensorType>
   typename std::enable_if<
       ((getSpaceDimension<ST2toST2Type>() == 1u) &&
        (getSpaceDimension<StensorType>() == 1u) &&
        implementsST2toST2Concept<ST2toST2Type>() &&
-       implementsStensorConcept<StensorType>() &&
        std::is_same_v<numeric_type<ST2toST2Type>, numeric_type<StensorType>>),
       st2tost2<1u, numeric_type<ST2toST2Type>>>::type
   convertSpatialModuliToKirchhoffJaumanRateModuli(const ST2toST2Type& C_s,
@@ -64,12 +63,11 @@ namespace tfel::math {
    * \return the moduli associated with Jauman rate of the Kirchhoff
    * stress
    */
-  template <typename ST2toST2Type, typename StensorType>
+  template <typename ST2toST2Type, StensorConcept StensorType>
   typename std::enable_if<
       ((getSpaceDimension<ST2toST2Type>() == 2u) &&
        (getSpaceDimension<StensorType>() == 2u) &&
        implementsST2toST2Concept<ST2toST2Type>() &&
-       implementsStensorConcept<StensorType>() &&
        std::is_same_v<numeric_type<ST2toST2Type>, numeric_type<StensorType>>),
       st2tost2<2u, numeric_type<ST2toST2Type>>>::type
   convertSpatialModuliToKirchhoffJaumanRateModuli(const ST2toST2Type& C_s,
@@ -103,12 +101,11 @@ namespace tfel::math {
    * \return the moduli associated with Jauman rate of the Kirchhoff
    * stress
    */
-  template <typename ST2toST2Type, typename StensorType>
+  template <typename ST2toST2Type, StensorConcept StensorType>
   typename std::enable_if<
       ((getSpaceDimension<ST2toST2Type>() == 3u) &&
        (getSpaceDimension<StensorType>() == 3u) &&
        implementsST2toST2Concept<ST2toST2Type>() &&
-       implementsStensorConcept<StensorType>() &&
        std::is_same_v<numeric_type<ST2toST2Type>, numeric_type<StensorType>>),
       st2tost2<3u, numeric_type<ST2toST2Type>>>::type
   convertSpatialModuliToKirchhoffJaumanRateModuli(const ST2toST2Type& C_s,

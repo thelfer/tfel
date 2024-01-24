@@ -379,7 +379,7 @@ namespace tfel::system {
   }  // end of getDescription
 
   std::string ExternalLibraryManager::getValidator(const std::string& l,
-                                                 const std::string& s) {
+                                                   const std::string& s) {
     return this->getStringIfDefined(l, s + "_validator");
   }  // end of getValidator
 

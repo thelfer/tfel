@@ -28,7 +28,7 @@ namespace tfel::material {
   template <typename StressType>
   TFEL_HOST_DEVICE
   LogarithmicStrainHandler<1u, StressType>::LogarithmicStrainHandler(
-      const Setting c, const DeformationGradient& F1)
+      const Setting c, const DeformationGradient& F1) noexcept
       : LogarithmicStrainHandlerBase(c), F(F1) {
     this->e = {std::log(this->F[0]), std::log(this->F[1]),
                std::log(this->F[2])};

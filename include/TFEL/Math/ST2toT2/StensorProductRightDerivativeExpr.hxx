@@ -42,9 +42,8 @@ namespace tfel::math {
     /*!
      * \param[in] a : first stensor of the product
      */
-    template <typename StensorType>
+    template <StensorConcept StensorType>
     Expr(const StensorType& a) {
-      static_assert(implementsStensorConcept<StensorType>());
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());
       static_assert(isAssignableTo<numeric_type<StensorType>,
@@ -61,9 +60,8 @@ namespace tfel::math {
      * \param[in] A : first tensor of the product
      * \param[in] C : derivative of the second tensor
      */
-    template <typename StensorType, typename ST2toST2Type>
+    template <StensorConcept StensorType, typename ST2toST2Type>
     Expr(const StensorType& a, const ST2toST2Type& C) {
-      static_assert(implementsStensorConcept<StensorType>());
       static_assert(implementsST2toST2Concept<ST2toST2Type>());
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());
@@ -120,9 +118,8 @@ namespace tfel::math {
     /*!
      * \param[in] a : first stensor of the product
      */
-    template <typename StensorType>
+    template <StensorConcept StensorType>
     Expr(const StensorType& a) {
-      static_assert(implementsStensorConcept<StensorType>());
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());
       static_assert(isAssignableTo<numeric_type<StensorType>,
@@ -156,9 +153,8 @@ namespace tfel::math {
      * \param[in] A : first tensor of the product
      * \param[in] C : derivative of the second tensor
      */
-    template <typename StensorType, typename ST2toST2Type>
+    template <StensorConcept StensorType, typename ST2toST2Type>
     Expr(const StensorType& a, const ST2toST2Type& C) {
-      static_assert(implementsStensorConcept<StensorType>());
       static_assert(implementsST2toST2Concept<ST2toST2Type>());
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());
@@ -229,9 +225,8 @@ namespace tfel::math {
     /*!
      * \param[in] a : first stensor of the product
      */
-    template <typename StensorType>
+    template <StensorConcept StensorType>
     Expr(const StensorType& a) {
-      static_assert(implementsStensorConcept<StensorType>());
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());
       static_assert(isAssignableTo<numeric_type<StensorType>,
@@ -299,9 +294,8 @@ namespace tfel::math {
      * \param[in] a : first stensor of the product
      * \param[in] C : derivative of the second tensor
      */
-    template <typename StensorType, typename ST2toST2Type>
+    template <StensorConcept StensorType, typename ST2toST2Type>
     Expr(const StensorType& a, const ST2toST2Type& C) {
-      static_assert(implementsStensorConcept<StensorType>());
       static_assert(implementsST2toST2Concept<ST2toST2Type>());
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());

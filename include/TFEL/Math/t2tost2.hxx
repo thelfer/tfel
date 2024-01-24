@@ -86,13 +86,11 @@ namespace tfel::math {
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
-  template <typename StensorType1, typename TensorType2>
+  template <StensorConcept StensorType1, typename TensorType2>
   struct DerivativeTypeDispatcher<StensorTag,
                                   TensorTag,
                                   StensorType1,
                                   TensorType2> {
-    static_assert(implementsStensorConcept<StensorType1>(),
-                  "template argument StensorType1 is not a symmetric tensor");
     static_assert(implementsTensorConcept<TensorType2>(),
                   "template argument TensorType2 is not a tensor");
     static_assert(getSpaceDimension<StensorType1>() ==
@@ -273,10 +271,9 @@ namespace tfel::math {
    * \param[in]  s:  Cauchy stress
    * \param[in]  F:  deformation gradient
    */
-  template <typename T2toST2Type, typename StensorType, typename TensorType>
+  template <typename T2toST2Type, StensorConcept StensorType, typename TensorType>
   TFEL_HOST_DEVICE std::enable_if_t<
       implementsT2toST2Concept<T2toST2Type>() &&
-          implementsStensorConcept<StensorType>() &&
           implementsTensorConcept<TensorType>() &&
           getSpaceDimension<T2toST2Type>() ==
               getSpaceDimension<StensorType>() &&
@@ -297,10 +294,9 @@ namespace tfel::math {
    * \param[in]  s:  Cauchy stress
    * \param[in]  F:  deformation gradient
    */
-  template <typename T2toST2Type, typename StensorType, typename TensorType>
+  template <typename T2toST2Type, StensorConcept StensorType, typename TensorType>
   TFEL_HOST_DEVICE std::enable_if_t<
       implementsT2toST2Concept<T2toST2Type>() &&
-          implementsStensorConcept<StensorType>() &&
           implementsTensorConcept<TensorType>() &&
           getSpaceDimension<T2toST2Type>() ==
               getSpaceDimension<StensorType>() &&
@@ -328,10 +324,9 @@ namespace tfel::math {
    * \param[in]  : orginal tensor (second Piola-Kirschoff stress)
    * \param[in]  : deformation gradient
    */
-  template <typename T2toST2Type, typename StensorType, typename TensorType>
+  template <typename T2toST2Type, StensorConcept StensorType, typename TensorType>
   TFEL_HOST_DEVICE std::enable_if_t<
       implementsT2toST2Concept<T2toST2Type>() &&
-          implementsStensorConcept<StensorType>() &&
           implementsTensorConcept<TensorType>() &&
           getSpaceDimension<StensorType>() ==
               getSpaceDimension<T2toST2Type>() &&
@@ -362,12 +357,11 @@ namespace tfel::math {
    */
   template <typename T2toST2ResultType,
             typename T2toST2Type,
-            typename StensorType,
+            StensorConcept StensorType,
             typename TensorType>
   TFEL_HOST_DEVICE typename std::enable_if<
       implementsT2toST2Concept<T2toST2ResultType>() &&
           implementsT2toST2Concept<T2toST2Type>() &&
-          implementsStensorConcept<StensorType>() &&
           implementsTensorConcept<TensorType>() &&
           tfel::typetraits::IsFundamentalNumericType<
               numeric_type<TensorType>>::cond &&

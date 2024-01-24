@@ -25,10 +25,8 @@
 
 namespace tfel::math {
 
-  template <typename A, typename B>
+  template <StensorConcept A, StensorConcept B>
   class TFEL_VISIBILITY_LOCAL StensorProductExprBase : public ExprBase {
-    static_assert(implementsStensorConcept<A>());
-    static_assert(implementsStensorConcept<B>());
 
     typedef typename ComputeBinaryResult<std::decay_t<A>,
                                          std::decay_t<B>,

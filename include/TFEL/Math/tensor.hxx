@@ -202,11 +202,8 @@ namespace tfel::math {
    * \return the unsymmetric tensor corresponding to the given symmetric tensor.
    * \param[in] s: symmetric tensor
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE std::enable_if_t<
-      implementsStensorConcept<StensorType>(),
-      tensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
-  unsyme(const StensorType&);
+  template <StensorConcept StensorType>
+  TFEL_HOST_DEVICE constexpr auto unsyme(const StensorType&) noexcept;
   /*!
    * \brief convert the Cauchy stress to the first Piola-Kirchhoff stress.
    *
@@ -217,10 +214,9 @@ namespace tfel::math {
    * \param[in] F: deformation gradient
    * \return the first Piola-Kirchhoff stress
    */
-  template <typename StensorType, typename TensorType>
+  template <StensorConcept StensorType, typename TensorType>
   TFEL_HOST_DEVICE TFEL_MATH_INLINE
-      std::enable_if_t<(implementsStensorConcept<StensorType>() &&
-                        implementsTensorConcept<TensorType>()),
+      std::enable_if_t<implementsTensorConcept<TensorType>(),
                        tensor<getSpaceDimension<StensorType>(),
                               result_type<numeric_type<StensorType>,
                                           numeric_type<TensorType>,

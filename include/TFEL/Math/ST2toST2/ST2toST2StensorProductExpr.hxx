@@ -33,7 +33,7 @@ namespace tfel::math {
    */
   template <typename StensorResultType>
   struct Expr<StensorResultType, ST2toST2StensorProductExpr<1u>>
-      : public StensorConcept<
+      : public StensorConceptBase<
             Expr<StensorResultType, ST2toST2StensorProductExpr<1u>>>,
         public array_holder<
             StensorDimeToSize<getSpaceDimension<StensorResultType>()>::value,
@@ -47,10 +47,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename ST2toST2Type, typename StensorType>
+    template <typename ST2toST2Type, StensorConcept StensorType>
     TFEL_MATH_INLINE Expr(const ST2toST2Type& a, const StensorType& b) {
       static_assert(implementsST2toST2Concept<ST2toST2Type>());
-      static_assert(implementsStensorConcept<StensorType>());
       static_assert(getSpaceDimension<ST2toST2Type>() == 1u);
       static_assert(getSpaceDimension<StensorType>() == 1u);
       this->v[0] = a(0, 0) * b(0) + a(0, 1) * b(1) + a(0, 2) * b(2);
@@ -86,7 +85,7 @@ namespace tfel::math {
    */
   template <typename StensorResultType>
   struct Expr<StensorResultType, ST2toST2StensorProductExpr<2u>>
-      : public StensorConcept<
+      : public StensorConceptBase<
             Expr<StensorResultType, ST2toST2StensorProductExpr<2u>>>,
         public array_holder<
             StensorDimeToSize<getSpaceDimension<StensorResultType>()>::value,
@@ -100,10 +99,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename ST2toST2Type, typename StensorType>
+    template <typename ST2toST2Type, StensorConcept StensorType>
     TFEL_MATH_INLINE Expr(const ST2toST2Type& a, const StensorType& b) {
       static_assert(implementsST2toST2Concept<ST2toST2Type>());
-      static_assert(implementsStensorConcept<StensorType>());
       static_assert(getSpaceDimension<ST2toST2Type>() == 2u);
       static_assert(getSpaceDimension<StensorType>() == 2u);
       this->v[0] =
@@ -144,7 +142,7 @@ namespace tfel::math {
    */
   template <typename StensorResultType>
   struct Expr<StensorResultType, ST2toST2StensorProductExpr<3u>>
-      : public StensorConcept<
+      : public StensorConceptBase<
             Expr<StensorResultType, ST2toST2StensorProductExpr<3u>>>,
         public array_holder<
             StensorDimeToSize<getSpaceDimension<StensorResultType>()>::value,
@@ -158,10 +156,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename ST2toST2Type, typename StensorType>
+    template <typename ST2toST2Type, StensorConcept StensorType>
     TFEL_MATH_INLINE Expr(const ST2toST2Type& a, const StensorType& b) {
       static_assert(implementsST2toST2Concept<ST2toST2Type>());
-      static_assert(implementsStensorConcept<StensorType>());
       static_assert(getSpaceDimension<ST2toST2Type>() == 3u);
       static_assert(getSpaceDimension<StensorType>() == 3u);
       this->v[0] = a(0, 0) * b(0) + a(0, 1) * b(1) + a(0, 2) * b(2) +

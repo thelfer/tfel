@@ -2256,11 +2256,6 @@ namespace mfront {
     auto o = SupportedTypes::TypeSize{};
     for (const auto& v : bd.getMainVariables()) {
       const auto& th = v.second;
-      if (th.arraySize != 1) {
-        tfel::raise(
-            "GenericBehaviourInterface::exportMechancialData: "
-            "array of thermodynamical forces are not supported");
-      }
       export_variable(th, "thermodynamic_forces", o);
       o += SupportedTypes::getTypeSize(th.type, th.arraySize);
     }

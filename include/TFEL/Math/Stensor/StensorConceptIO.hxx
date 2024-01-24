@@ -19,12 +19,14 @@
 
 namespace tfel::math {
 
-  //! Serialisation operator
-  template <class StensorType>
-  std::enable_if_t<implementsStensorConcept<StensorType>(), std::ostream&>
-  operator<<(std::ostream& os, const StensorType& s) {
+  /*!
+   * \brief serialisation operator
+   * \param[in] os: output stream
+   * \param[in] s: symmetric tensor
+   */
+  std::ostream& operator<<(std::ostream& os, const StensorConcept auto& s) {
     constexpr auto size =
-        StensorDimeToSize<getSpaceDimension<StensorType>()>::value;
+        StensorDimeToSize<getSpaceDimension<decltype(s)>()>::value;
     os << "[ ";
     for (unsigned short i = 0; i != size; ++i) {
       os << s(i) << " ";
