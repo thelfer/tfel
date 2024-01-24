@@ -30,9 +30,9 @@ namespace tfel::math {
   /*!
    * Partial specialisation
    */
-  template <typename TensorResultType>
+  template <TensorConcept TensorResultType>
   struct Expr<TensorResultType, StensorT2toST2ProductExpr<1u>>
-      : public TensorConcept<
+      : public TensorConceptBase<
             Expr<TensorResultType, StensorT2toST2ProductExpr<1u>>>,
         public array_holder<
             TensorDimeToSize<getSpaceDimension<TensorResultType>()>::value,
@@ -74,9 +74,9 @@ namespace tfel::math {
   /*!
    * Partial specialisation
    */
-  template <typename TensorResultType>
+  template <TensorConcept TensorResultType>
   struct Expr<TensorResultType, StensorT2toST2ProductExpr<2u>>
-      : public TensorConcept<
+      : public TensorConceptBase<
             Expr<TensorResultType, StensorT2toST2ProductExpr<2u>>>,
         public array_holder<
             TensorDimeToSize<getSpaceDimension<TensorResultType>()>::value,
@@ -125,9 +125,9 @@ namespace tfel::math {
   /*!
    * Partial specialisation
    */
-  template <typename TensorResultType>
+  template <TensorConcept TensorResultType>
   struct Expr<TensorResultType, StensorT2toST2ProductExpr<3u>>
-      : public TensorConcept<
+      : public TensorConceptBase<
             Expr<TensorResultType, StensorT2toST2ProductExpr<3u>>>,
         public array_holder<
             TensorDimeToSize<getSpaceDimension<TensorResultType>()>::value,

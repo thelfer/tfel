@@ -191,10 +191,9 @@ namespace tfel::math {
   }  // end of t2tot2<N,T>::fromRotationMatrix
 
   template <unsigned short N, typename T>
-  template <typename TensorType>
+  template <TensorConcept TensorType>
   TFEL_HOST_DEVICE
-      std::enable_if_t<implementsTensorConcept<TensorType>() &&
-                           getSpaceDimension<TensorType>() == N &&
+      std::enable_if_t<getSpaceDimension<TensorType>() == N &&
                            isAssignableTo<numeric_type<TensorType>, T>(),
                        Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>>
       t2tot2<N, T>::tpld(const TensorType& B) {
@@ -202,10 +201,9 @@ namespace tfel::math {
   }  // end of t2tot2<N,T>
 
   template <unsigned short N, typename T>
-  template <typename TensorType, typename T2toT2Type>
+  template <TensorConcept TensorType, typename T2toT2Type>
   TFEL_HOST_DEVICE std::enable_if_t<
-      implementsTensorConcept<TensorType>() &&
-          implementsT2toT2Concept<T2toT2Type>() &&
+      implementsT2toT2Concept<T2toT2Type>() &&
           getSpaceDimension<TensorType>() == N &&
           getSpaceDimension<T2toT2Type>() == N &&
           isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
@@ -218,10 +216,9 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T>
-  template <typename TensorType>
+  template <TensorConcept TensorType>
   TFEL_HOST_DEVICE
-      std::enable_if_t<implementsTensorConcept<TensorType>() &&
-                           getSpaceDimension<TensorType>() == N &&
+      std::enable_if_t<getSpaceDimension<TensorType>() == N &&
                            isAssignableTo<numeric_type<TensorType>, T>(),
                        Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>>
       t2tot2<N, T>::tprd(const TensorType& A) {
@@ -229,10 +226,9 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T>
-  template <typename TensorType, typename T2toT2Type>
+  template <TensorConcept TensorType, typename T2toT2Type>
   TFEL_HOST_DEVICE std::enable_if_t<
-      implementsTensorConcept<TensorType>() &&
-          implementsT2toT2Concept<T2toT2Type>() &&
+      implementsT2toT2Concept<T2toT2Type>() &&
           getSpaceDimension<TensorType>() == N &&
           getSpaceDimension<T2toT2Type>() == N &&
           isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
@@ -404,22 +400,18 @@ namespace tfel::math {
     }
   }  // end of change_basis
 
-  template <typename TensorType>
-  TFEL_HOST_DEVICE std::enable_if_t<
-      implementsTensorConcept<TensorType>(),
-      t2tot2<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
-  computeVelocityGradientDerivative(const TensorType& F) {
+  TFEL_HOST_DEVICE constexpr auto computeVelocityGradientDerivative(
+      const TensorConcept auto& F) noexcept {
+    using TensorType = decltype(F);
     using res =
         t2tot2<getSpaceDimension<TensorType>(), numeric_type<TensorType>>;
     const auto iF = invert(F);
     return res::tpld(iF);
-  }
+  }  // end of computeVelocityGradientDerivative
 
-  template <typename TensorType>
-  TFEL_HOST_DEVICE std::enable_if_t<
-      implementsTensorConcept<TensorType>(),
-      t2tot2<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
-  computeSpinRateDerivative(const TensorType& F) {
+  TFEL_HOST_DEVICE constexpr auto computeSpinRateDerivative(
+      const TensorConcept auto& F) noexcept {
+    using TensorType = decltype(F);
     constexpr auto N = getSpaceDimension<TensorType>();
     using value_type = numeric_type<TensorType>;
     using base = base_type<TensorType>;
@@ -431,10 +423,9 @@ namespace tfel::math {
     return eval((res::tpld(iF) - res::tprd(itF, dt)) / 2);
   }
 
-  template <typename TensorType>
+  template <TensorConcept TensorType>
   TFEL_HOST_DEVICE std::enable_if_t<
-      implementsTensorConcept<TensorType>() &&
-          isScalar<numeric_type<TensorType>>(),
+      isScalar<numeric_type<TensorType>>(),
       t2tot2<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   computeDeterminantSecondDerivative(const TensorType& t) {
     constexpr auto N = getSpaceDimension<TensorType>();

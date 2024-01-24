@@ -24,11 +24,10 @@
 
 namespace tfel::math {
 
-  template <typename T2toST2Type, typename TensorType>
+  template <typename T2toST2Type, TensorConcept TensorType>
   typename std::enable_if<((getSpaceDimension<T2toST2Type>() == 1u) &&
                            (getSpaceDimension<TensorType>() == 1u) &&
-                           implementsT2toST2Concept<T2toST2Type>() &&
-                           implementsTensorConcept<TensorType>()),
+                           implementsT2toST2Concept<T2toST2Type>()),
                           st2tost2<1u,
                                    result_type<numeric_type<T2toST2Type>,
                                                numeric_type<TensorType>,
@@ -49,11 +48,10 @@ namespace tfel::math {
     return C;
   }  // end of convertToTangentModuli
 
-  template <typename T2toST2Type, typename TensorType>
+  template <typename T2toST2Type, TensorConcept TensorType>
   typename std::enable_if<((getSpaceDimension<T2toST2Type>() == 2u) &&
                            (getSpaceDimension<TensorType>() == 2u) &&
-                           implementsT2toST2Concept<T2toST2Type>() &&
-                           implementsTensorConcept<TensorType>()),
+                           implementsT2toST2Concept<T2toST2Type>()),
                           st2tost2<2u,
                                    result_type<numeric_type<T2toST2Type>,
                                                numeric_type<TensorType>,
@@ -90,11 +88,10 @@ namespace tfel::math {
     return C;
   }  // end of convertToTangentModuli
 
-  template <typename T2toST2Type, typename TensorType>
+  template <typename T2toST2Type, TensorConcept TensorType>
   typename std::enable_if<((getSpaceDimension<T2toST2Type>() == 3u) &&
                            (getSpaceDimension<TensorType>() == 3u) &&
-                           implementsT2toST2Concept<T2toST2Type>() &&
-                           implementsTensorConcept<TensorType>()),
+                           implementsT2toST2Concept<T2toST2Type>()),
                           st2tost2<3u,
                                    result_type<numeric_type<T2toST2Type>,
                                                numeric_type<TensorType>,

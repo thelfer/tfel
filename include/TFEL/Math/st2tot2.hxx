@@ -80,13 +80,11 @@ namespace tfel::math {
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
-  template <typename TensorType1, StensorConcept StensorType2>
+  template <TensorConcept TensorType1, StensorConcept StensorType2>
   struct DerivativeTypeDispatcher<TensorTag,
                                   StensorTag,
                                   TensorType1,
                                   StensorType2> {
-    static_assert(implementsTensorConcept<TensorType1>(),
-                  "template argument TensorType1 is not a tensor");
     static_assert(getSpaceDimension<TensorType1>() ==
                       getSpaceDimension<StensorType2>(),
                   "symmetric tensor types don't have the same dimension");
@@ -147,7 +145,7 @@ namespace tfel::math {
      */
     template <StensorConcept StensorType>
     static TFEL_MATH_INLINE std::enable_if_t<
-            getSpaceDimension<StensorType>() == N &&
+        getSpaceDimension<StensorType>() == N &&
             isAssignableTo<numeric_type<StensorType>, ValueType>(),
         Expr<st2tot2<N, ValueType>, StensorProductRightDerivativeExpr<N>>>
     tprd(const StensorType&);
@@ -158,7 +156,7 @@ namespace tfel::math {
      */
     template <StensorConcept StensorType, typename ST2toST2Type>
     static TFEL_MATH_INLINE std::enable_if_t<
-            implementsST2toST2Concept<ST2toST2Type>() &&
+        implementsST2toST2Concept<ST2toST2Type>() &&
             getSpaceDimension<StensorType>() == N &&
             getSpaceDimension<ST2toST2Type>() == N &&
             isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,

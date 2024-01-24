@@ -42,9 +42,8 @@ namespace tfel::math {
     /*!
      * \param[in] B : second tensor of the product
      */
-    template <typename TensorType>
-    Expr(const TensorType& B) {
-      static_assert(implementsTensorConcept<TensorType>());
+    template <TensorConcept TensorType>
+    TFEL_HOST_DEVICE constexpr Expr(const TensorType& B) noexcept {
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
       static_assert(isAssignableTo<numeric_type<TensorType>,
@@ -60,9 +59,9 @@ namespace tfel::math {
      * \param[in] B : second tensor of the product
      * \param[in] C : derivative of the first tensor
      */
-    template <typename TensorType, typename T2toT2Type>
-    Expr(const TensorType& B, const T2toT2Type& C) {
-      static_assert(implementsTensorConcept<TensorType>());
+    template <TensorConcept TensorType, typename T2toT2Type>
+    TFEL_HOST_DEVICE constexpr Expr(const TensorType& B,
+                                    const T2toT2Type& C) noexcept {
       static_assert(implementsT2toT2Concept<T2toT2Type>());
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
@@ -88,8 +87,8 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    const value_type& operator()(const unsigned short i,
-                                 const unsigned short j) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 3 + j];
     }  // end of operator()
     /*!
@@ -97,7 +96,7 @@ namespace tfel::math {
      * In this case, the number of lines and columns
      * are deduced from the template parameter
      */
-    RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<T2toT2ResultType,TensorProductLeftDerivativeExpr<1u>
@@ -119,9 +118,8 @@ namespace tfel::math {
     /*!
      * \param[in] B : second tensor of the product
      */
-    template <typename TensorType>
-    Expr(const TensorType& B) {
-      static_assert(implementsTensorConcept<TensorType>());
+    template <TensorConcept TensorType>
+    TFEL_HOST_DEVICE constexpr Expr(const TensorType& B) noexcept {
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
       static_assert(isAssignableTo<numeric_type<TensorType>,
@@ -156,9 +154,9 @@ namespace tfel::math {
      * \param[in] B : second tensor of the product
      * \param[in] C : derivative of the first tensor
      */
-    template <typename TensorType, typename T2toT2Type>
-    Expr(const TensorType& B, const T2toT2Type& C) {
-      static_assert(implementsTensorConcept<TensorType>());
+    template <TensorConcept TensorType, typename T2toT2Type>
+    TFEL_HOST_DEVICE constexpr Expr(const TensorType& B,
+                                    const T2toT2Type& C) noexcept {
       static_assert(implementsT2toT2Concept<T2toT2Type>());
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
@@ -200,8 +198,8 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    const value_type& operator()(const unsigned short i,
-                                 const unsigned short j) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 5 + j];
     }  // end of operator()
     /*!
@@ -209,7 +207,7 @@ namespace tfel::math {
      * In this case, the number of lines and columns
      * are deduced from the template parameter
      */
-    RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const {
       return RunTimeProperties();
     }
   };  // end of struct Expr<T2toT2ResultType,TensorProductLeftDerivativeExpr<1u>
@@ -231,9 +229,8 @@ namespace tfel::math {
     /*!
      * \param[in] B : second tensor of the product
      */
-    template <typename TensorType>
-    Expr(const TensorType& B) {
-      static_assert(implementsTensorConcept<TensorType>());
+    template <TensorConcept TensorType>
+    TFEL_HOST_DEVICE constexpr Expr(const TensorType& B) noexcept {
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
       static_assert(isAssignableTo<numeric_type<TensorType>,
@@ -288,9 +285,8 @@ namespace tfel::math {
      * \param[in] B : second tensor of the product
      * \param[in] C : derivative of the first tensor
      */
-    template <typename TensorType, typename T2toT2Type>
-    Expr(const TensorType& B, const T2toT2Type& C) {
-      static_assert(implementsTensorConcept<TensorType>());
+    template <TensorConcept TensorType, typename T2toT2Type>
+    TFEL_HOST_DEVICE constexpr Expr(const TensorType& B, const T2toT2Type& C) {
       static_assert(implementsT2toT2Concept<T2toT2Type>());
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
@@ -388,8 +384,8 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    const value_type& operator()(const unsigned short i,
-                                 const unsigned short j) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 9 + j];
     }  // end of operator()
     /*!
@@ -397,7 +393,7 @@ namespace tfel::math {
      * In this case, the number of lines and columns
      * are deduced from the template parameter
      */
-    RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const {
       return RunTimeProperties();
     }
   };  // end of struct Expr<T2toT2ResultType,TensorProductLeftDerivativeExpr<1u>

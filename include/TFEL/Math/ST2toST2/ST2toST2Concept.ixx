@@ -95,9 +95,8 @@ namespace tfel::math {
     return r.second == 1 ? v : -v;
   }  // end of det
 
-  template <typename ST2toST2ResultType, typename TensorType>
+  template <typename ST2toST2ResultType, TensorConcept TensorType>
   typename std::enable_if<implementsST2toST2Concept<ST2toST2ResultType>() &&
-                              implementsTensorConcept<TensorType>() &&
                               tfel::typetraits::IsFundamentalNumericType<
                                   numeric_type<TensorType>>::cond,
                           void>::type

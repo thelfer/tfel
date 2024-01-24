@@ -27,22 +27,20 @@ namespace tfel::math {
   /*!
    * Matrix view from tensor
    */
-  template <typename TensorType>
+  template <TensorConcept TensorType>
   struct MatrixViewFromTensorExpr {};  // end of struct MatrixViewFromTensorExpr
 
-  template <typename TensorType>
+  template <TensorConcept TensorType>
   struct Expr<tmatrix<3u, 3u, numeric_type<TensorType>>,
               MatrixViewFromTensorExpr<TensorType>>
       : public ExprBase,
         public MatrixConcept<Expr<tmatrix<3u, 3u, numeric_type<TensorType>>,
                                   MatrixViewFromTensorExpr<TensorType>>> {
-    static_assert(implementsTensorConcept<TensorType>());
-
     using NumType = numeric_type<TensorType>;
     typedef unsigned short IndexType;
     typedef EmptyRunTimeProperties RunTimeProperties;
 
-    RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
 

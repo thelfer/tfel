@@ -176,7 +176,7 @@ namespace tfel::math {
      */
     template <StensorConcept StensorType>
     static TFEL_MATH_INLINE std::enable_if_t<
-            getSpaceDimension<StensorType>() == N &&
+        getSpaceDimension<StensorType>() == N &&
             isAssignableTo<numeric_type<StensorType>, ValueType>(),
         tfel::math::st2tost2<N, ValueType>>
     stpd(const StensorType&);
@@ -246,9 +246,8 @@ namespace tfel::math {
    * \param[in] C: input
    * \param[in] F: deformation gradient
    */
-  template <typename ST2toST2Type, typename TensorType>
+  template <typename ST2toST2Type, TensorConcept TensorType>
   std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
-                       implementsTensorConcept<TensorType>() &&
                        getSpaceDimension<ST2toST2Type>() ==
                            getSpaceDimension<TensorType>(),
                    st2tost2<getSpaceDimension<ST2toST2Type>(),
@@ -257,9 +256,8 @@ namespace tfel::math {
                                                   OpMult>>>
   push_forward(const ST2toST2Type&, const TensorType&);
 
-  template <typename ST2toST2Type, typename TensorType>
+  template <typename ST2toST2Type, TensorConcept TensorType>
   std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
-                       implementsTensorConcept<TensorType>() &&
                        getSpaceDimension<ST2toST2Type>() ==
                            getSpaceDimension<TensorType>(),
                    st2tost2<getSpaceDimension<ST2toST2Type>(),

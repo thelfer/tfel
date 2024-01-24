@@ -31,15 +31,26 @@
 
 namespace tfel::math {
 
-  //! forward declaration
-  template <typename TensorType>
-  struct MatrixViewFromTensorExpr;
-
   /*!
    * \class TensorTag
    * \brief an helper class to characterize tensors.
    */
   struct TensorTag {};  // end of TensorTag
+
+  /*!
+   * \brief definition of the StensorConcept
+   * a class matching the stensor concept must expose the `StensorTag` and have
+   * access operators.
+   */
+  template <typename T>
+  concept TensorConcept =
+      (std::is_same_v<typename std::decay_t<T>::ConceptTag, TensorTag>)&&  //
+      (requires(const T t, const unsigned short i) { t[i]; }) &&           //
+      (requires(const T t, const unsigned short i) { t(i); });
+
+  //! forward declaration
+  template <TensorConcept TensorType>
+  struct MatrixViewFromTensorExpr;
 
   /*!
    * \brief exception thrown if invalid index is given
@@ -81,98 +92,67 @@ namespace tfel::math {
     ~TensorInvalidInitializerListSizeException() noexcept override;
   };  // end of struct TensorInvalidInitializerListSizeException
 
-  /*!
-   * The base class which implements the tensor concept
-   */
+  //! \brief base class which implements the tensor concept
   template <typename T>
-  struct TensorConcept {
-    typedef TensorTag ConceptTag;
-
-    numeric_type<T> operator()(const unsigned short,
-                               const unsigned short) const;
-
-   protected:
-    TensorConcept() = default;
-    TensorConcept(TensorConcept&&) = default;
-    TensorConcept(const TensorConcept&) = default;
-    TensorConcept& operator=(const TensorConcept&) = default;
-    ~TensorConcept() = default;
+  struct TensorConceptBase {
+    //! \brief alias exposing TensorTag as the concept that must be satisfied by
+    //! the T-type
+    using ConceptTag = TensorTag;
+    /*!
+     * \brief matrix-like access to values
+     * \param[in] i: row number
+     * \param[in] j: column number
+     */
+    TFEL_HOST numeric_type<T> operator()(const unsigned short,
+                                         const unsigned short) const;
   };
-
-  /*!
-   * \brief an helper function which returns if the given type implements the
-   * `TensorConcept`.
-   * \tparam TensorType: type tested
-   */
-  template <typename TensorType>
-  TFEL_HOST_DEVICE constexpr bool implementsTensorConcept() {
-    return tfel::meta::implements<TensorType, TensorConcept>();
-  }  // end of implementsTensorConcept
 
   //! partial specialisation for tensors
   template <typename Type>
   struct ConceptRebind<TensorTag, Type> {
-    using type = TensorConcept<Type>;
+    using type = TensorConceptBase<Type>;
   };
   /*!
    * \return the sum of the absolute value of the components of a tensor
-   * \tparam TensorType: type of the tensor
    * \param[in] t: tensor
    */
-  template <typename TensorType>
-  std::enable_if_t<
-      implementsTensorConcept<TensorType>(),
-      typename tfel::typetraits::AbsType<numeric_type<TensorType>>::type>
-  abs(const TensorType&);
-
-  template <typename TensorType>
-  TFEL_MATH_INLINE std::enable_if_t<implementsTensorConcept<TensorType>(),
-                                    numeric_type<TensorType>>
-  trace(const TensorType& s);
-
-  template <typename TensorType>
-  TFEL_MATH_INLINE std::enable_if_t<
-      implementsTensorConcept<TensorType>(),
-      stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
-  syme(const TensorType&);
-
-  //   template <typename TensorType>
-  //   TFEL_MATH_INLINE2 std::enable_if_t<
-  //       (implementsTensorConcept<TensorType>()) &&
-  //           (tfel::typetraits::IsFundamentalNumericType<
-  //               numeric_type<TensorType>>::cond),
-  //       stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
-  //   computeRightCauchyGreenTensor(const TensorType&);
-
-  template <typename TensorType>
-  TFEL_MATH_INLINE2 std::enable_if_t<
-      (implementsTensorConcept<TensorType>()) &&
-          (tfel::typetraits::IsFundamentalNumericType<
-              numeric_type<TensorType>>::cond),
-      stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
-  computeLeftCauchyGreenTensor(const TensorType&);
-
-  //   template <typename TensorType>
-  //   TFEL_HOST_DEVICE constexpr std::enable_if_t<
-  //       (implementsTensorConcept<TensorType>()) &&
-  //           (tfel::typetraits::IsFundamentalNumericType<
-  //               numeric_type<TensorType>>::cond),
-  //       stensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
-  //   computeGreenLagrangeTensor(const TensorType&);
-
+  TFEL_HOST_DEVICE constexpr auto abs(const TensorConcept auto&) noexcept;
+  /*!
+   * \return the trace of a tensor
+   * \param[in] t: tensor
+   */
+  TFEL_HOST_DEVICE constexpr auto trace(const TensorConcept auto&) noexcept;
+  /*!
+   * \return the symmetric part of a tensor
+   * \param[in] t: tensor
+   */
+  TFEL_HOST_DEVICE constexpr auto syme(const TensorConcept auto&) noexcept;
+  /*!
+   * \return the right Cauchy-Green tensor
+   * \param[in] t: tensor
+   */
+  TFEL_HOST_DEVICE constexpr auto computeRightCauchyGreenTensor(
+      const TensorConcept auto&) noexcept;
+  /*!
+   * \return the left Cauchy-Green tensor
+   * \param[in] t: tensor
+   */
+  TFEL_HOST_DEVICE constexpr auto computeLeftCauchyGreenTensor(
+      const TensorConcept auto&) noexcept;
+  /*!
+   * \return the left Green-Lagrange tensor
+   * \param[in] t: tensor
+   */
+  TFEL_HOST_DEVICE constexpr auto computeGreenLagrangeTensor(
+      const TensorConcept auto&) noexcept;
   /*!
    * compute the product:
    * \[F.s.F^{T}\]
    * \param[in] p: a symmetric tensor
    * \param[in] F: a tensor
    */
-  template <StensorConcept StensorType, typename TensorType>
-  std::enable_if_t<
-      ((implementsTensorConcept<TensorType>()) &&
-       (tfel::typetraits::IsFundamentalNumericType<
-           numeric_type<StensorType>>::cond)),
-      stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
-  pushForward(const StensorType&, const TensorType&);
+  TFEL_HOST_DEVICE constexpr auto pushForward(
+      const StensorConcept auto&, const TensorConcept auto&) noexcept;
   /*!
    * compute the product:
    * \[F.s.F^{T}\]
@@ -180,95 +160,70 @@ namespace tfel::math {
    * \param[in] F: a tensor
    * \note the same as pushForward
    */
-  template <StensorConcept StensorType, typename TensorType>
-  std::enable_if_t<
-      ((implementsTensorConcept<TensorType>()) &&
-       (tfel::typetraits::IsFundamentalNumericType<
-           numeric_type<StensorType>>::cond)),
-      stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
-  push_forward(const StensorType&, const TensorType&);
-
-  template <StensorConcept StensorType, typename TensorType>
-  std::enable_if_t<
-      ((implementsTensorConcept<TensorType>()) &&
-       (tfel::typetraits::IsFundamentalNumericType<
-           numeric_type<TensorType>>::cond)),
-      stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
-  convertCauchyStressToSecondPiolaKirchhoffStress(const StensorType&,
-                                                  const TensorType&);
-
-  template <StensorConcept StensorType, typename TensorType>
-  std::enable_if_t<
-      ((implementsTensorConcept<TensorType>()) &&
-       (tfel::typetraits::IsFundamentalNumericType<
-           numeric_type<TensorType>>::cond)),
-      stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
-  convertSecondPiolaKirchhoffStressToCauchyStress(const StensorType&,
-                                                  const TensorType&);
-
-  template <typename TensorType>
-  std::enable_if_t<
-      implementsTensorConcept<TensorType>(),
-      typename ComputeUnaryResult<numeric_type<TensorType>, Power<3>>::Result>
-  det(const TensorType&);
-
+  TFEL_HOST_DEVICE constexpr auto push_forward(
+      const StensorConcept auto&, const TensorConcept auto&) noexcept;
+  /*!
+   * \brief convert the Cauchy stress to the second Piola-Kirchhoff stress
+   * \param[in] s: Cauchy stress
+   * \param[in] F: deformation gradient
+   */
+  TFEL_HOST_DEVICE constexpr auto
+  convertCauchyStressToSecondPiolaKirchhoffStress(
+      const StensorConcept auto&, const TensorConcept auto&) noexcept;
+  /*!
+   * \brief convert the second Piola-Kirchhoff stress to the Cauchy stress
+   * \param[in] p: Cauchy stress
+   * \param[in] F: deformation gradient
+   */
+  TFEL_HOST_DEVICE constexpr auto
+  convertSecondPiolaKirchhoffStressToCauchyStress(
+      const StensorConcept auto&, const TensorConcept auto&) noexcept;
+  /*!
+   * \return the determinant of a tensor
+   * \param[in] t: tensor
+   */
+  TFEL_HOST_DEVICE constexpr auto det(const TensorConcept auto&) noexcept;
   /*!
    * \brief compute the derivative of the determinant with respect
    * to its argument.
    * \param[out] : determinant derivative
    * \param[in]  : argument
    */
-  template <typename TensorResultType, typename TensorType>
-  std::enable_if_t<
-      (implementsTensorConcept<TensorResultType>() &&
-       implementsTensorConcept<TensorType>() &&
-       isAssignableTo<typename ComputeUnaryResult<numeric_type<TensorType>,
-                                                  Power<2>>::Result,
-                      numeric_type<TensorResultType>>()),
-      void>
-  computeDeterminantDerivative(TensorResultType&, const TensorType&);
+  TFEL_HOST_DEVICE constexpr auto computeDeterminantDerivative(
+      TensorConcept auto&, const TensorConcept auto&) noexcept;
   /*!
    * \brief provide the polar decomposition of a tensor
-   * \param[out] rotation
-   * \param[out] stretch
-   * \param[in]  F
+   * \param[out] R: rotation tensor
+   * \param[out] U: stretch tensor
+   * \param[in]  F: deformation gradient
    */
-  template <typename TensorType, StensorConcept StensorType, typename TensorType2>
-  std::enable_if_t<implementsTensorConcept<TensorType>() &&
-                       implementsTensorConcept<TensorType2>() &&
-                       std::is_same<numeric_type<StensorType>,
-                                    numeric_type<TensorType2>>::value &&
-                       std::is_same<base_type<numeric_type<TensorType2>>,
-                                    numeric_type<TensorType>>::value &&
-                       (getSpaceDimension<TensorType>() ==
-                        getSpaceDimension<TensorType2>()) &&
-                       (getSpaceDimension<TensorType>() ==
-                        getSpaceDimension<StensorType>()) &&
-                       (getSpaceDimension<TensorType>() == 1u),
-                   void>
-  polar_decomposition(TensorType&, StensorType&, const TensorType2&);
+  TFEL_HOST void polar_decomposition(TensorConcept auto&,
+                                     StensorConcept auto&,
+                                     const TensorConcept auto&);
+  /*!
+   * \return an expression representing a matrix view from a tensor
+   * \param[in] t: tensor
+   */
+  template <TensorConcept TensorType>
+  TFEL_HOST_DEVICE constexpr auto matrix_view(TensorType&& t) noexcept;
+  /*!
+   * \return an expression representing the transpose of a tensor
+   * \param[in] t: tensor
+   */
+  template <TensorConcept TensorType>
+  TFEL_HOST_DEVICE constexpr auto transpose(TensorType&&) noexcept;
 
   /*!
-   * \brief provide the polar decomposition of a tensor
-   * \param[out] rotation
-   * \param[out] stretch
-   * \param[in]  F
+   * \brief an helper function which returns if the given type implements the
+   * `TensorConcept`.
+   * \tparam TensorType: type tested
+   * \note function given for backward compatibility with versions prior
+   * to 5.0
    */
-  template <typename TensorType, StensorConcept StensorType, typename TensorType2>
-  std::enable_if_t<implementsTensorConcept<TensorType>() &&
-                       implementsTensorConcept<TensorType2>() &&
-                       std::is_same<numeric_type<StensorType>,
-                                    numeric_type<TensorType2>>::value &&
-                       std::is_same<base_type<numeric_type<TensorType2>>,
-                                    numeric_type<TensorType>>::value &&
-                       (getSpaceDimension<TensorType>() ==
-                        getSpaceDimension<TensorType2>()) &&
-                       (getSpaceDimension<TensorType>() ==
-                        getSpaceDimension<StensorType>()) &&
-                       ((getSpaceDimension<TensorType>() == 2u) ||
-                        (getSpaceDimension<TensorType>() == 3u)),
-                   void>
-  polar_decomposition(TensorType&, StensorType&, const TensorType2&);
+  template <typename TensorType>
+  [[deprecated]] TFEL_HOST_DEVICE constexpr bool implementsTensorConcept() {
+    return TensorConcept<TensorType>;
+  }  // end of implementsTensorConcept
 
 }  // end of namespace tfel::math
 

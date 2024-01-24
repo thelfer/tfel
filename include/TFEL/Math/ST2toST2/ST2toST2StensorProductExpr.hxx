@@ -31,7 +31,7 @@ namespace tfel::math {
   /*!
    * Partial specialisation
    */
-  template <typename StensorResultType>
+  template <StensorConcept StensorResultType>
   struct Expr<StensorResultType, ST2toST2StensorProductExpr<1u>>
       : public StensorConceptBase<
             Expr<StensorResultType, ST2toST2StensorProductExpr<1u>>>,
@@ -83,7 +83,7 @@ namespace tfel::math {
   /*!
    * Partial specialisation
    */
-  template <typename StensorResultType>
+  template <StensorConcept StensorResultType>
   struct Expr<StensorResultType, ST2toST2StensorProductExpr<2u>>
       : public StensorConceptBase<
             Expr<StensorResultType, ST2toST2StensorProductExpr<2u>>>,
@@ -140,7 +140,7 @@ namespace tfel::math {
   /*!
    * Partial specialisation
    */
-  template <typename StensorResultType>
+  template <StensorConcept StensorResultType>
   struct Expr<StensorResultType, ST2toST2StensorProductExpr<3u>>
       : public StensorConceptBase<
             Expr<StensorResultType, ST2toST2StensorProductExpr<3u>>>,

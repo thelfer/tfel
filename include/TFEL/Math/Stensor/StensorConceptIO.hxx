@@ -24,7 +24,8 @@ namespace tfel::math {
    * \param[in] os: output stream
    * \param[in] s: symmetric tensor
    */
-  std::ostream& operator<<(std::ostream& os, const StensorConcept auto& s) {
+  TFEL_HOST std::ostream& operator<<(std::ostream& os,
+                                     const StensorConcept auto& s) {
     constexpr auto size =
         StensorDimeToSize<getSpaceDimension<decltype(s)>()>::value;
     os << "[ ";

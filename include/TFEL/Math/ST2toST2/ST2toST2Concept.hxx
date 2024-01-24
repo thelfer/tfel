@@ -79,9 +79,8 @@ namespace tfel::math {
    * \param[out] r: derivative of the push-forward symmetric tensor
    * \param[in]  F: deformation gradient
    */
-  template <typename ST2toST2ResultType, typename TensorType>
+  template <typename ST2toST2ResultType, TensorConcept TensorType>
   typename std::enable_if<implementsST2toST2Concept<ST2toST2ResultType>() &&
-                              implementsTensorConcept<TensorType>() &&
                               tfel::typetraits::IsFundamentalNumericType<
                                   numeric_type<TensorType>>::cond,
                           void>::type
@@ -95,10 +94,11 @@ namespace tfel::math {
    * \param[in] C: input
    * \param[in] F: deformation gradient
    */
-  template <typename ST2toST2Type, typename ST2toST2Type2, typename TensorType>
+  template <typename ST2toST2Type,
+            typename ST2toST2Type2,
+            TensorConcept TensorType>
   std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
                        implementsST2toST2Concept<ST2toST2Type2>() &&
-                       implementsTensorConcept<TensorType>() &&
                        getSpaceDimension<ST2toST2Type>() == 1u &&
                        getSpaceDimension<ST2toST2Type2>() == 1u &&
                        getSpaceDimension<TensorType>() == 1u,
@@ -113,10 +113,11 @@ namespace tfel::math {
    * \param[in] C: input
    * \param[in] F: deformation gradient
    */
-  template <typename ST2toST2Type, typename ST2toST2Type2, typename TensorType>
+  template <typename ST2toST2Type,
+            typename ST2toST2Type2,
+            TensorConcept TensorType>
   std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
                        implementsST2toST2Concept<ST2toST2Type2>() &&
-                       implementsTensorConcept<TensorType>() &&
                        getSpaceDimension<ST2toST2Type>() == 2u &&
                        getSpaceDimension<ST2toST2Type2>() == 2u &&
                        getSpaceDimension<TensorType>() == 2u,
@@ -131,10 +132,11 @@ namespace tfel::math {
    * \param[in] C: input
    * \param[in] F: deformation gradient
    */
-  template <typename ST2toST2Type, typename ST2toST2Type2, typename TensorType>
+  template <typename ST2toST2Type,
+            typename ST2toST2Type2,
+            TensorConcept TensorType>
   std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
                        implementsST2toST2Concept<ST2toST2Type2>() &&
-                       implementsTensorConcept<TensorType>() &&
                        getSpaceDimension<ST2toST2Type>() == 3u &&
                        getSpaceDimension<ST2toST2Type2>() == 3u &&
                        getSpaceDimension<TensorType>() == 3u,
