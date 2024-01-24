@@ -95,12 +95,10 @@ namespace tfel::math {
                                       Expr<Result, UnaryOperation<A, OpNeg>>>;
   };
 
-  template <typename T1, typename T2>
-  TFEL_MATH_INLINE std::enable_if_t<
-      implementsTensorConcept<T1>() && implementsT2toT2Concept<T2>() &&
-          !isInvalid<BinaryOperationResult<T1, T2, OpMult>>(),
-      BinaryOperationHandler<T1, T2, OpMult>>
-  operator|(const T1& a, const T2& b) {
+  template <TensorConcept T1, typename T2>
+  constexpr auto operator|(const T1& a, const T2& b) noexcept requires(
+      implementsT2toT2Concept<T2>() &&
+      !isInvalid<BinaryOperationResult<T1, T2, OpMult>>()) {
     typedef BinaryOperationHandler<T1, T2, OpMult> Handle;
     return Handle(a, b);
   }

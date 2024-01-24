@@ -46,7 +46,8 @@ namespace tfel::math {
                          ValueType>(),
       Expr<st2tot2<N, ValueType>, StensorProductLeftDerivativeExpr<N>>>
   st2tot2<N, ValueType>::tpld(const StensorType& b, const ST2toST2Type& C) {
-    return Expr<st2tot2<N, ValueType>, StensorProductLeftDerivativeExpr<N>>(b, C);
+    return Expr<st2tot2<N, ValueType>, StensorProductLeftDerivativeExpr<N>>(b,
+                                                                            C);
   }
 
   template <unsigned short N, typename T>

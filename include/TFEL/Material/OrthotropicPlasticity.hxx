@@ -24,7 +24,7 @@
 namespace tfel::material {
 
   //! a simple alias
-  template <typename StensorType>
+  template <tfel::math::StensorConcept StensorType>
   using J2OCoefficients =
       tfel::math::tvector<6u, tfel::math::base_type<StensorType>>;
   /*!

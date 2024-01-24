@@ -45,9 +45,8 @@ namespace tfel::math {
     /*!
      * \param[in] B : second tensor of the product
      */
-    template <typename TensorType>
+    template <TensorConcept TensorType>
     TFEL_MATH_INLINE2 Expr(const TensorType& F) {
-      static_assert(implementsTensorConcept<TensorType>());
       static_assert(getSpaceDimension<T2toST2Type>() ==
                     getSpaceDimension<TensorType>());
       static_assert(isAssignableTo<numeric_type<TensorType>,
@@ -87,10 +86,9 @@ namespace tfel::math {
     /*!
      * \param[in] B : second tensor of the product
      */
-    template <typename TensorType>
+    template <TensorConcept TensorType>
     TFEL_MATH_INLINE2 Expr(const TensorType& F) {
       //! a simple check
-      static_assert(implementsTensorConcept<TensorType>());
       static_assert(getSpaceDimension<T2toST2Type>() ==
                     getSpaceDimension<TensorType>());
       static_assert(isAssignableTo<numeric_type<TensorType>,
@@ -141,9 +139,8 @@ namespace tfel::math {
     /*!
      * \param[in] B : second tensor of the product
      */
-    template <typename TensorType>
+    template <TensorConcept TensorType>
     TFEL_MATH_INLINE2 Expr(const TensorType& F) {
-      static_assert(implementsTensorConcept<TensorType>());
       static_assert(getSpaceDimension<T2toST2Type>() ==
                     getSpaceDimension<TensorType>());
       static_assert(isAssignableTo<numeric_type<TensorType>,

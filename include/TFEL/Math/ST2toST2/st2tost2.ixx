@@ -255,9 +255,8 @@ namespace tfel::math {
         getSpaceDimension<ST2toST2Type>()>::exe(s, r);
   }
 
-  template <typename ST2toST2Type, typename TensorType>
+  template <typename ST2toST2Type, TensorConcept TensorType>
   std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
-                       implementsTensorConcept<TensorType>() &&
                        getSpaceDimension<ST2toST2Type>() ==
                            getSpaceDimension<TensorType>(),
                    st2tost2<getSpaceDimension<ST2toST2Type>(),
@@ -273,10 +272,9 @@ namespace tfel::math {
     return r;
   }
 
-  template <typename ST2toST2Type, typename TensorType>
+  template <typename ST2toST2Type, TensorConcept TensorType>
   std::enable_if_t<
       implementsST2toST2Concept<ST2toST2Type>() &&
-          implementsTensorConcept<TensorType>() &&
           getSpaceDimension<ST2toST2Type>() == getSpaceDimension<TensorType>(),
       st2tost2<getSpaceDimension<ST2toST2Type>(),
                typename ComputeBinaryResult<numeric_type<ST2toST2Type>,

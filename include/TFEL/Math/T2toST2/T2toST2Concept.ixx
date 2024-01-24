@@ -42,9 +42,8 @@ namespace tfel::math {
 
   template <typename T2toST2ResultType,
             StensorConcept StensorType,
-            typename TensorType>
+            TensorConcept TensorType>
   typename std::enable_if<implementsT2toST2Concept<T2toST2ResultType>() &&
-                              implementsTensorConcept<TensorType>() &&
                               tfel::typetraits::IsFundamentalNumericType<
                                   numeric_type<TensorType>>::cond &&
                               isAssignableTo<numeric_type<StensorType>,
@@ -152,11 +151,10 @@ namespace tfel::math {
   template <typename T2toST2ResultType,
             typename T2toST2Type,
             StensorConcept StensorType,
-            typename TensorType>
+            TensorConcept TensorType>
   typename std::enable_if<
       implementsT2toST2Concept<T2toST2ResultType>() &&
           implementsT2toST2Concept<T2toST2Type>() &&
-          implementsTensorConcept<TensorType>() &&
           getSpaceDimension<T2toST2ResultType>() ==
               getSpaceDimension<T2toST2Type>() &&
           getSpaceDimension<T2toST2ResultType>() ==
@@ -183,11 +181,10 @@ namespace tfel::math {
   template <typename T2toST2ResultType,
             typename T2toST2Type,
             StensorConcept StensorType,
-            typename TensorType>
+            TensorConcept TensorType>
   typename std::enable_if<
       implementsT2toST2Concept<T2toST2ResultType>() &&
           implementsT2toST2Concept<T2toST2Type>() &&
-          implementsTensorConcept<TensorType>() &&
           getSpaceDimension<T2toST2ResultType>() ==
               getSpaceDimension<T2toST2Type>() &&
           getSpaceDimension<T2toST2ResultType>() ==

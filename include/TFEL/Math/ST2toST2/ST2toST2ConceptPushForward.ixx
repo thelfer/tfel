@@ -18,10 +18,11 @@
 
 namespace tfel::math {
 
-  template <typename ST2toST2Type, typename ST2toST2Type2, typename TensorType>
+  template <typename ST2toST2Type,
+            typename ST2toST2Type2,
+            TensorConcept TensorType>
   typename std::enable_if<implementsST2toST2Concept<ST2toST2Type>() &&
                               implementsST2toST2Concept<ST2toST2Type2>() &&
-                              implementsTensorConcept<TensorType>() &&
                               getSpaceDimension<ST2toST2Type>() == 1u &&
                               getSpaceDimension<ST2toST2Type2>() == 1u &&
                               getSpaceDimension<TensorType>() == 1u,
@@ -41,10 +42,11 @@ namespace tfel::math {
     Ct(2, 2) = C2 * C2 * C(2, 2);
   }
 
-  template <typename ST2toST2Type, typename ST2toST2Type2, typename TensorType>
+  template <typename ST2toST2Type,
+            typename ST2toST2Type2,
+            TensorConcept TensorType>
   typename std::enable_if<implementsST2toST2Concept<ST2toST2Type>() &&
                               implementsST2toST2Concept<ST2toST2Type2>() &&
-                              implementsTensorConcept<TensorType>() &&
                               getSpaceDimension<ST2toST2Type>() == 2u &&
                               getSpaceDimension<ST2toST2Type2>() == 2u &&
                               getSpaceDimension<TensorType>() == 2u,
@@ -224,10 +226,11 @@ namespace tfel::math {
     Ct(2, 2) = F[2] * F[2] * F[2] * F[2] * C(2, 2);
   }
 
-  template <typename ST2toST2Type, typename ST2toST2Type2, typename TensorType>
+  template <typename ST2toST2Type,
+            typename ST2toST2Type2,
+            TensorConcept TensorType>
   typename std::enable_if<implementsST2toST2Concept<ST2toST2Type>() &&
                               implementsST2toST2Concept<ST2toST2Type2>() &&
-                              implementsTensorConcept<TensorType>() &&
                               getSpaceDimension<ST2toST2Type>() == 3u &&
                               getSpaceDimension<ST2toST2Type2>() == 3u &&
                               getSpaceDimension<TensorType>() == 3u,

@@ -121,8 +121,7 @@ namespace tfel::math {
     /*!
      * \param l : left argument of the unary operation
      */
-    TFEL_HOST_DEVICE constexpr Expr(T1 l)
-        : a(std::forward<T1>(l)) {}
+    TFEL_HOST_DEVICE constexpr Expr(T1 l) : a(std::forward<T1>(l)) {}
     /*!
      * array-like access operator
      */

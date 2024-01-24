@@ -85,15 +85,11 @@ namespace tfel::math {
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
-  template <typename TensorType1, typename TensorType2>
+  template <TensorConcept TensorType1, TensorConcept TensorType2>
   struct DerivativeTypeDispatcher<TensorTag,
                                   TensorTag,
                                   TensorType1,
                                   TensorType2> {
-    static_assert(implementsTensorConcept<TensorType1>(),
-                  "template argument TensorType1 is not a tensor");
-    static_assert(implementsTensorConcept<TensorType2>(),
-                  "template argument TensorType2 is not a tensor");
     static_assert(getSpaceDimension<TensorType1>() ==
                       getSpaceDimension<TensorType2>(),
                   "symmetric tensor types don't have the same dimension");
@@ -132,10 +128,9 @@ namespace tfel::math {
      * \param[in] B : second tensor of the product
      * \return the left part of the derivative of a tensor product
      */
-    template <typename TensorType>
+    template <TensorConcept TensorType>
     TFEL_HOST_DEVICE static TFEL_MATH_INLINE std::enable_if_t<
-        implementsTensorConcept<TensorType>() &&
-            getSpaceDimension<TensorType>() == N &&
+        getSpaceDimension<TensorType>() == N &&
             isAssignableTo<numeric_type<TensorType>, ValueType>(),
         Expr<t2tot2<N, ValueType>, TensorProductLeftDerivativeExpr<N>>>
     tpld(const TensorType&);
@@ -144,10 +139,9 @@ namespace tfel::math {
      * \param[in] C : derivative of the first tensor
      * \return the left part of the derivative of a tensor product
      */
-    template <typename TensorType, typename T2toT2Type>
+    template <TensorConcept TensorType, typename T2toT2Type>
     TFEL_HOST_DEVICE static TFEL_MATH_INLINE std::enable_if_t<
-        implementsTensorConcept<TensorType>() &&
-            implementsT2toT2Concept<T2toT2Type>() &&
+        implementsT2toT2Concept<T2toT2Type>() &&
             getSpaceDimension<TensorType>() == N &&
             getSpaceDimension<T2toT2Type>() == N &&
             isAssignableTo<
@@ -161,10 +155,9 @@ namespace tfel::math {
      * \param[in] A : first tensor of the product
      * \return the right part of the derivative of a tensor product
      */
-    template <typename TensorType>
+    template <TensorConcept TensorType>
     TFEL_HOST_DEVICE static TFEL_MATH_INLINE std::enable_if_t<
-        implementsTensorConcept<TensorType>() &&
-            getSpaceDimension<TensorType>() == N &&
+        getSpaceDimension<TensorType>() == N &&
             isAssignableTo<numeric_type<TensorType>, ValueType>(),
         Expr<t2tot2<N, ValueType>, TensorProductRightDerivativeExpr<N>>>
     tprd(const TensorType&);
@@ -173,10 +166,9 @@ namespace tfel::math {
      * \param[in] C : derivative of the first tensor
      * \return the right part of the derivative of a tensor product
      */
-    template <typename TensorType, typename T2toT2Type>
+    template <TensorConcept TensorType, typename T2toT2Type>
     TFEL_HOST_DEVICE static TFEL_MATH_INLINE std::enable_if_t<
-        implementsTensorConcept<TensorType>() &&
-            implementsT2toT2Concept<T2toT2Type>() &&
+        implementsT2toT2Concept<T2toT2Type>() &&
             getSpaceDimension<TensorType>() == N &&
             getSpaceDimension<T2toT2Type>() == N &&
             isAssignableTo<
@@ -252,32 +244,24 @@ namespace tfel::math {
 
   /*!
    * \return compute the derivative of the velocity gradient
-   * \param[in] F : deformation gradient
+   * \param[in] F: deformation gradient
    */
-  template <typename TensorType>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<
-      implementsTensorConcept<TensorType>(),
-      t2tot2<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
-  computeVelocityGradientDerivative(const TensorType&);
-
+  TFEL_HOST_DEVICE constexpr auto computeVelocityGradientDerivative(
+      const TensorConcept auto&) noexcept;
   /*!
    * \return compute the derivative of the spin rate
-   * \param[in] F : deformation gradient
+   * \param[in] F: deformation gradient
    */
-  template <typename TensorType>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<
-      implementsTensorConcept<TensorType>(),
-      t2tot2<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
-  computeSpinRateDerivative(const TensorType&);
+  TFEL_HOST_DEVICE constexpr auto computeSpinRateDerivative(
+      const TensorConcept auto&) noexcept;
   /*!
    * \brief compute the second derivative of the determinant of a
    * symmetric tensor
    * \param[in] s: tensor
    */
-  template <typename TensorType>
+  template <TensorConcept TensorType>
   TFEL_HOST_DEVICE std::enable_if_t<
-      implementsTensorConcept<TensorType>() &&
-          isScalar<numeric_type<TensorType>>(),
+      isScalar<numeric_type<TensorType>>(),
       t2tot2<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
   computeDeterminantSecondDerivative(const TensorType&);
 

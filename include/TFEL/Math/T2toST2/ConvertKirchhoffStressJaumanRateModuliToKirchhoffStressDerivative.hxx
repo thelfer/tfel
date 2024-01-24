@@ -33,7 +33,9 @@ namespace tfel::math {
      * \param[in] CsJ: moduli associated to the Jauman rate of the Kirchhoff
      * stress \param[in] F: deformation gradient \param[in] t: Kirchhoff stress
      */
-    template <typename ST2toST2Type, typename TensorType, typename StensorType>
+    template <typename ST2toST2Type,
+              TensorConcept TensorType,
+              StensorConcept StensorType>
     static t2tost2<1u, T> exe(const ST2toST2Type& CsJ,
                               const TensorType& F,
                               const StensorType&) {
@@ -50,7 +52,9 @@ namespace tfel::math {
      * \param[in] CsJ: moduli associated to the Jauman rate of the Kirchhoff
      * stress \param[in] F: deformation gradient \param[in] t: Kirchhoff stress
      */
-    template <typename ST2toST2Type, typename TensorType, typename StensorType>
+    template <typename ST2toST2Type,
+              TensorConcept TensorType,
+              StensorConcept StensorType>
     static t2tost2<2u, T> exe(const ST2toST2Type& CsJ,
                               const TensorType& F,
                               const StensorType& t) {
@@ -98,7 +102,9 @@ namespace tfel::math {
      * \param[in] CsJ: moduli associated to the Jauman rate of the Kirchhoff
      * stress \param[in] F: deformation gradient \param[in] t: Kirchhoff stress
      */
-    template <typename ST2toST2Type, typename TensorType, typename StensorType>
+    template <typename ST2toST2Type,
+              TensorConcept TensorType,
+              StensorConcept StensorType>
     static t2tost2<3u, T> exe(const ST2toST2Type& CsJ,
                               const TensorType& F,
                               const StensorType& t) {

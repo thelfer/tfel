@@ -213,14 +213,11 @@ namespace tfel::math {
    * \warning the operator| has not the priority expected for such
    * an operation : use of parenthesis is required.
    */
-  template <typename TensorType1, typename TensorType2>
-  std::enable_if_t<
-      ((implementsTensorConcept<TensorType1>()) &&
-       (implementsTensorConcept<TensorType2>()) &&
-       (!isInvalid<
-           BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>())),
-      BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>
-  operator|(const TensorType1&, const TensorType2&);
+  template <TensorConcept TensorType1, TensorConcept TensorType2>
+  TFEL_HOST_DEVICE constexpr auto
+  operator|(const TensorType1&, const TensorType2&) noexcept requires(
+      !isInvalid<
+          BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>());
 
 }  // end of namespace tfel::math
 

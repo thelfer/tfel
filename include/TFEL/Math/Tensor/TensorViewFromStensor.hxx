@@ -19,32 +19,34 @@
 
 namespace tfel::math {
 
-  /*!
-   * Tensor View From Stensor
-   */
-  template <typename T>
+  //! \brief tensor view from a symmetric tensor
+  template <StensorConcept>
   struct TensorViewFromStensorExpr {
   };  // end of struct TensorViewFromStensorExpr
 
-  template <unsigned short N, typename ValueType, typename T>
+  template <unsigned short N, typename ValueType, StensorConcept T>
   struct Expr<tensor<N, ValueType>, TensorViewFromStensorExpr<T>>
-      : public TensorConcept<
+      : public TensorConceptBase<
             Expr<tensor<N, ValueType>, TensorViewFromStensorExpr<T>>>,
         public ExprBase {
     typedef EmptyRunTimeProperties RunTimeProperties;
 
-    RunTimeProperties getRunTimeProperties() const {
+    constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
 
-    TFEL_MATH_INLINE Expr(T s_) : s(s_) {}  // end of Expr
+    TFEL_HOST_DEVICE constexpr Expr(T s_) noexcept : s(s_) {}  // end of Expr
 
-    TFEL_MATH_INLINE Expr(const Expr&) = default;
-    TFEL_MATH_INLINE Expr(Expr&&) = default;
-    TFEL_MATH_INLINE Expr& operator=(const Expr&) = default;
-    TFEL_MATH_INLINE Expr& operator=(Expr&&) = default;
+    TFEL_HOST_DEVICE constexpr Expr(const Expr&) = default;
+    TFEL_HOST_DEVICE constexpr Expr(Expr&&) = default;
+    TFEL_HOST_DEVICE constexpr Expr& operator=(const Expr&) = default;
+    TFEL_HOST_DEVICE constexpr Expr& operator=(Expr&&) = default;
 
-    ValueType operator()(const unsigned short i) const {
+    TFEL_HOST ValueType operator[](const unsigned short i) const {
+      return this->operator()(i);
+    }
+
+    TFEL_HOST ValueType operator()(const unsigned short i) const {
       constexpr auto icste = Cste<ValueType>::isqrt2;
       switch (i) {
         case 0:
