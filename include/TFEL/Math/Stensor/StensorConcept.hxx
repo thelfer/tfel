@@ -59,16 +59,6 @@ namespace tfel::math {
       (requires(const T t, const unsigned short i) { t(i); });
 
   /*!
-   * \brief an helper function which returns if the given type implements the
-   * `StensorConcept`.
-   * \tparam StensorType: type tested
-   */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr bool implementsStensorConcept() {
-    return StensorConcept<StensorType>;
-  }  // end of implementsStensorConcept
-
-  /*!
    * \brief partial specialisation for symmetric tensors
    */
   template <typename Type>
@@ -140,6 +130,18 @@ namespace tfel::math {
       std::conditional_t<StensorConcept<StensorType>,
                          numeric_type<StensorType>,
                          MathObjectTraits<tfel::meta::InvalidType>>;
+
+  /*!
+   * \brief an helper function which returns if the given type implements the
+   * `StensorConcept`.
+   * \tparam StensorType: type tested
+   * \note function given for backward compatibility with versions prior
+   * to 5.0
+   */
+  template <typename StensorType>
+  [[deprecated]] TFEL_HOST_DEVICE constexpr bool implementsStensorConcept() {
+    return StensorConcept<StensorType>;
+  }  // end of implementsStensorConcept
 
 }  // end of namespace tfel::math
 

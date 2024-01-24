@@ -57,7 +57,7 @@ namespace tfel::math {
     template <typename ST2toST2Type,
               typename ST2toST2Type2,
               typename ST2toST2Type3,
-              typename StressStensorType>
+              StensorConcept StressStensorType>
     static typename std::enable_if<
         ((implementsST2toST2Concept<ST2toST2Type>()) &&
              (tfel::math::getSpaceDimension<ST2toST2Type>() == 1u) &&
@@ -67,10 +67,7 @@ namespace tfel::math {
              (isAssignableTo<numeric_type<ST2toST2Type2>, stress>()),
          (implementsST2toST2Concept<ST2toST2Type3>()) &&
              (tfel::math::getSpaceDimension<ST2toST2Type3>() == 1u) &&
-             (isAssignableTo<numeric_type<ST2toST2Type3>, real>()),
-         (implementsStensorConcept<StressStensorType>()) &&
-             (tfel::math::getSpaceDimension<StressStensorType>() == 1u) &&
-             (isAssignableTo<numeric_type<StressStensorType>, stress>())),
+             (isAssignableTo<numeric_type<ST2toST2Type3>, real>())),
         void>::type
     exe(ST2toST2Type& Cse,
         const ST2toST2Type2& C,

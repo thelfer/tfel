@@ -244,32 +244,30 @@ namespace tfel::math {
     }
   }  // end of change_basis
 
-  template <typename StensorType>
-  TFEL_HOST_DEVICE std::enable_if_t<
-      implementsStensorConcept<StensorType>(),
-      tensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
-  unsyme(const StensorType& s) {
+  template <StensorConcept StensorType>
+  TFEL_HOST_DEVICE constexpr auto unsyme(const StensorType& s) noexcept {
+    using Result =
+        tensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>;
     constexpr auto N = getSpaceDimension<StensorType>();
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     if constexpr (N == 1) {
-      return {s[0], s[1], s[2]};
+      return Result{s[0], s[1], s[2]};
     } else if constexpr (N == 2) {
       constexpr auto cste = Cste<numeric_type<StensorType>>::isqrt2;
       const auto s01 = s[3] * cste;
-      return {s[0], s[1], s[2], s01, s01};
+      return Result{s[0], s[1], s[2], s01, s01};
     } else {
       constexpr auto cste = Cste<numeric_type<StensorType>>::isqrt2;
       const auto s01 = s[3] * cste;
       const auto s02 = s[4] * cste;
       const auto s12 = s[5] * cste;
-      return {s[0], s[1], s[2], s01, s01, s02, s02, s12, s12};
+      return Result{s[0], s[1], s[2], s01, s01, s02, s02, s12, s12};
     }
   }
 
-  template <typename StensorType, typename TensorType>
+  template <StensorConcept StensorType, typename TensorType>
   TFEL_HOST_DEVICE
-      std::enable_if_t<(implementsStensorConcept<StensorType>() &&
-                        implementsTensorConcept<TensorType>()),
+      std::enable_if_t<implementsTensorConcept<TensorType>(),
                        tensor<getSpaceDimension<StensorType>(),
                               result_type<numeric_type<StensorType>,
                                           numeric_type<TensorType>,

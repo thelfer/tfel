@@ -222,10 +222,9 @@ namespace tfel::math {
             iF[2] * icste, iF[1] * icste};
   }
 
-  template <typename T2toST2Type, typename StensorType, typename TensorType>
+  template <typename T2toST2Type, StensorConcept StensorType, typename TensorType>
   TFEL_HOST_DEVICE std::enable_if_t<
       implementsT2toST2Concept<T2toST2Type>() &&
-          implementsStensorConcept<StensorType>() &&
           implementsTensorConcept<TensorType>() &&
           getSpaceDimension<T2toST2Type>() ==
               getSpaceDimension<StensorType>() &&
@@ -246,10 +245,9 @@ namespace tfel::math {
     return r;
   }
 
-  template <typename T2toST2Type, typename StensorType, typename TensorType>
+  template <typename T2toST2Type, StensorConcept StensorType, typename TensorType>
   TFEL_HOST_DEVICE std::enable_if_t<
       implementsT2toST2Concept<T2toST2Type>() &&
-          implementsStensorConcept<StensorType>() &&
           implementsTensorConcept<TensorType>() &&
           getSpaceDimension<T2toST2Type>() ==
               getSpaceDimension<StensorType>() &&
@@ -272,12 +270,11 @@ namespace tfel::math {
 
   template <typename T2toST2ResultType,
             typename T2toST2Type,
-            typename StensorType,
+            StensorConcept StensorType,
             typename TensorType>
   TFEL_HOST_DEVICE typename std::enable_if<
       implementsT2toST2Concept<T2toST2ResultType>() &&
           implementsT2toST2Concept<T2toST2Type>() &&
-          implementsStensorConcept<StensorType>() &&
           implementsTensorConcept<TensorType>() &&
           tfel::typetraits::IsFundamentalNumericType<
               numeric_type<TensorType>>::cond &&
@@ -303,10 +300,11 @@ namespace tfel::math {
     dT_dF = d1 + d2 * dS_dF;
   }  // end of computePushForwardDerivative
 
-  template <typename T2toST2Type, typename StensorType, typename TensorType>
+  template <typename T2toST2Type,
+            StensorConcept StensorType,
+            typename TensorType>
   TFEL_HOST_DEVICE std::enable_if_t<
       implementsT2toST2Concept<T2toST2Type>() &&
-          implementsStensorConcept<StensorType>() &&
           implementsTensorConcept<TensorType>() &&
           getSpaceDimension<StensorType>() ==
               getSpaceDimension<T2toST2Type>() &&

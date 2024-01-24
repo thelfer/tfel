@@ -91,15 +91,11 @@ namespace tfel::math {
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
-  template <typename StensorType1, typename StensorType2>
+  template <StensorConcept StensorType1, StensorConcept StensorType2>
   struct DerivativeTypeDispatcher<StensorTag,
                                   StensorTag,
                                   StensorType1,
                                   StensorType2> {
-    static_assert(implementsStensorConcept<StensorType1>(),
-                  "template argument StensorType1 is not a symmetric tensor");
-    static_assert(implementsStensorConcept<StensorType2>(),
-                  "template argument StensorType2 is not a symmetric tensor");
     static_assert(getSpaceDimension<StensorType1>() ==
                       getSpaceDimension<StensorType2>(),
                   "symmetric tensor types don't have the same dimension");
@@ -132,10 +128,9 @@ namespace tfel::math {
      * \param[in] s : tensor squared
      * \return the derivative of the square of a symmetric tensor
      */
-    template <typename StensorType>
+    template <StensorConcept StensorType>
     static TFEL_MATH_INLINE std::enable_if_t<
-        implementsStensorConcept<StensorType>() &&
-            getSpaceDimension<StensorType>() == N &&
+        getSpaceDimension<StensorType>() == N &&
             isAssignableTo<numeric_type<StensorType>, ValueType>(),
         Expr<st2tost2<N, ValueType>, StensorSquareDerivativeExpr<N>>>
     dsquare(const StensorType&);
@@ -144,10 +139,9 @@ namespace tfel::math {
      * \param[in] C : derivative of s
      * \return the derivative of the square of a symmetric tensor
      */
-    template <typename StensorType, typename ST2toST2Type>
+    template <StensorConcept StensorType, typename ST2toST2Type>
     static TFEL_MATH_INLINE std::enable_if_t<
-        implementsStensorConcept<StensorType>() &&
-            implementsST2toST2Concept<ST2toST2Type>() &&
+        implementsST2toST2Concept<ST2toST2Type>() &&
             getSpaceDimension<StensorType>() == N &&
             getSpaceDimension<ST2toST2Type>() == N &&
             isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
@@ -180,9 +174,8 @@ namespace tfel::math {
      * \f]
      * \param[in] s: second tensor of the product
      */
-    template <typename StensorType>
+    template <StensorConcept StensorType>
     static TFEL_MATH_INLINE std::enable_if_t<
-        implementsStensorConcept<StensorType>() &&
             getSpaceDimension<StensorType>() == N &&
             isAssignableTo<numeric_type<StensorType>, ValueType>(),
         tfel::math::st2tost2<N, ValueType>>
@@ -292,10 +285,9 @@ namespace tfel::math {
    *
    * \[ \param[in] s: tensor
    */
-  template <typename StensorType>
+  template <StensorConcept StensorType>
   std::enable_if_t<
-      implementsStensorConcept<StensorType>() &&
-          isScalar<numeric_type<StensorType>>(),
+      isScalar<numeric_type<StensorType>>(),
       st2tost2<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   computeDeviatorDeterminantSecondDerivative(const StensorType&);
   /*!
@@ -316,10 +308,9 @@ namespace tfel::math {
    *
    * \param[in] s: tensor
    */
-  template <typename StensorType>
+  template <StensorConcept StensorType>
   std::enable_if_t<
-      implementsStensorConcept<StensorType>() &&
-          isScalar<numeric_type<StensorType>>(),
+      isScalar<numeric_type<StensorType>>(),
       st2tost2<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   computeDeviatorDeterminantSecondDerivative(const StensorType&);
 

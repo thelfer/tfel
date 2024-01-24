@@ -31,9 +31,8 @@
 namespace tfel::math {
 
   template <unsigned short N, typename T>
-  template <typename StensorType>
-  std::enable_if_t<implementsStensorConcept<StensorType>() &&
-                       getSpaceDimension<StensorType>() == N &&
+  template <StensorConcept StensorType>
+  std::enable_if_t<getSpaceDimension<StensorType>() == N &&
                        isAssignableTo<numeric_type<StensorType>, T>(),
                    Expr<st2tost2<N, T>, StensorSquareDerivativeExpr<N>>>
   st2tost2<N, T>::dsquare(const StensorType& s) {
@@ -41,10 +40,9 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T>
-  template <typename StensorType, typename ST2toST2Type>
+  template <StensorConcept StensorType, typename ST2toST2Type>
   std::enable_if_t<
-      implementsStensorConcept<StensorType>() &&
-          implementsST2toST2Concept<ST2toST2Type>() &&
+      implementsST2toST2Concept<ST2toST2Type>() &&
           getSpaceDimension<StensorType>() == N &&
           getSpaceDimension<ST2toST2Type>() == N &&
           isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
@@ -57,9 +55,8 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T>
-  template <typename StensorType>
-  std::enable_if_t<implementsStensorConcept<StensorType>() &&
-                       getSpaceDimension<StensorType>() == N &&
+  template <StensorConcept StensorType>
+  std::enable_if_t<getSpaceDimension<StensorType>() == N &&
                        isAssignableTo<numeric_type<StensorType>, T>(),
                    tfel::math::st2tost2<N, T>>
   st2tost2<N, T>::stpd(const StensorType& s) {
@@ -290,10 +287,9 @@ namespace tfel::math {
     return push_forward(C, iF);
   }
 
-  template <typename StensorType>
+  template <StensorConcept StensorType>
   std::enable_if_t<
-      implementsStensorConcept<StensorType>() &&
-          isScalar<numeric_type<StensorType>>(),
+      isScalar<numeric_type<StensorType>>(),
       st2tost2<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   computeDeterminantSecondDerivative(const StensorType& s) {
     using NumType = numeric_type<StensorType>;
@@ -316,10 +312,9 @@ namespace tfel::math {
     }
   }  // end of computeDeterminantSecondDerivative
 
-  template <typename StensorType>
+  template <StensorConcept StensorType>
   std::enable_if_t<
-      implementsStensorConcept<StensorType>() &&
-          isScalar<numeric_type<StensorType>>(),
+      isScalar<numeric_type<StensorType>>(),
       st2tost2<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
   computeDeviatorDeterminantSecondDerivative(const StensorType& s) {
     constexpr auto N = getSpaceDimension<StensorType>();

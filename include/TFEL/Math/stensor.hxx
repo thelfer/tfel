@@ -48,8 +48,6 @@ namespace tfel::math {
                                   ScalarTag,
                                   StensorType,
                                   ScalarType> {
-    static_assert(implementsStensorConcept<StensorType>(),
-                  "StensorType is not a symmetric tensor");
     static_assert(isScalar<ScalarType>(), "ScalarType is not a scalar");
     static_assert(isScalar<numeric_type<StensorType>>(),
                   "the symmetric tensor type does not hold a scalar");
@@ -67,8 +65,6 @@ namespace tfel::math {
                                   StensorTag,
                                   ScalarType,
                                   StensorType> {
-    static_assert(implementsStensorConcept<StensorType>(),
-                  "StensorType is not a symmetric tensor");
     static_assert(isScalar<ScalarType>(), "ScalarType is not a scalar");
     //! \brief result
     using type =

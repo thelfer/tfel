@@ -84,8 +84,8 @@ namespace tfel::material {
      * \param[in] c:  setting
      * \param[in] F1: deformation gradient
      */
-    TFEL_HOST_DEVICE LogarithmicStrainHandler(const Setting,
-                                              const DeformationGradient &);
+    TFEL_HOST_DEVICE LogarithmicStrainHandler(
+        const Setting, const DeformationGradient &) noexcept;
     /*!
      * \brief update the axial deformation gradient
      * \param[in] Fzz: axial deformation gradient

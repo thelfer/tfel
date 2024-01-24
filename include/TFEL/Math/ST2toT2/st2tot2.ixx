@@ -26,35 +26,32 @@
 namespace tfel::math {
 
   template <unsigned short N, typename T>
-  template <typename StensorType>
-  std::enable_if_t<implementsStensorConcept<StensorType>() &&
-                       getSpaceDimension<StensorType>() == N &&
+  template <StensorConcept StensorType>
+  std::enable_if_t<getSpaceDimension<StensorType>() == N &&
                        isAssignableTo<numeric_type<StensorType>, T>(),
                    Expr<st2tot2<N, T>, StensorProductLeftDerivativeExpr<N>>>
   st2tot2<N, T>::tpld(const StensorType& b) {
     return Expr<st2tot2<N, T>, StensorProductLeftDerivativeExpr<N>>(b);
   }  // end of st2tot2<N,T>
 
-  template <unsigned short N, typename T>
-  template <typename StensorType, typename ST2toST2Type>
+  template <unsigned short N, typename ValueType>
+  template <StensorConcept StensorType, typename ST2toST2Type>
   std::enable_if_t<
-      implementsStensorConcept<StensorType>() &&
-          implementsST2toST2Concept<ST2toST2Type>() &&
+      implementsST2toST2Concept<ST2toST2Type>() &&
           getSpaceDimension<StensorType>() == N &&
           getSpaceDimension<ST2toST2Type>() == N &&
           isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
                                                numeric_type<ST2toST2Type>,
                                                OpMult>,
-                         T>(),
-      Expr<st2tot2<N, T>, StensorProductLeftDerivativeExpr<N>>>
-  st2tot2<N, T>::tpld(const StensorType& b, const ST2toST2Type& C) {
-    return Expr<st2tot2<N, T>, StensorProductLeftDerivativeExpr<N>>(b, C);
+                         ValueType>(),
+      Expr<st2tot2<N, ValueType>, StensorProductLeftDerivativeExpr<N>>>
+  st2tot2<N, ValueType>::tpld(const StensorType& b, const ST2toST2Type& C) {
+    return Expr<st2tot2<N, ValueType>, StensorProductLeftDerivativeExpr<N>>(b, C);
   }
 
   template <unsigned short N, typename T>
-  template <typename StensorType>
-  std::enable_if_t<implementsStensorConcept<StensorType>() &&
-                       getSpaceDimension<StensorType>() == N &&
+  template <StensorConcept StensorType>
+  std::enable_if_t<getSpaceDimension<StensorType>() == N &&
                        isAssignableTo<numeric_type<StensorType>, T>(),
                    Expr<st2tot2<N, T>, StensorProductRightDerivativeExpr<N>>>
   st2tot2<N, T>::tprd(const StensorType& a) {
@@ -62,10 +59,9 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T>
-  template <typename StensorType, typename ST2toST2Type>
+  template <StensorConcept StensorType, typename ST2toST2Type>
   std::enable_if_t<
-      implementsStensorConcept<StensorType>() &&
-          implementsST2toST2Concept<ST2toST2Type>() &&
+      implementsST2toST2Concept<ST2toST2Type>() &&
           getSpaceDimension<StensorType>() == N &&
           getSpaceDimension<ST2toST2Type>() == N &&
           isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,

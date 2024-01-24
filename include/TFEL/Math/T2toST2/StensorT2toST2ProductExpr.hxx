@@ -46,10 +46,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename StensorType, typename T2toST2Type>
+    template <StensorConcept StensorType, typename T2toST2Type>
     TFEL_MATH_INLINE Expr(const StensorType& a, const T2toST2Type& b) {
       static_assert(implementsT2toST2Concept<T2toST2Type>());
-      static_assert(implementsStensorConcept<StensorType>());
       static_assert(getSpaceDimension<T2toST2Type>() == 1u);
       static_assert(getSpaceDimension<StensorType>() == 1u);
       this->v[0] = b(0, 0) * a(0) + b(1, 0) * a(1) + b(2, 0) * a(2);
@@ -91,10 +90,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename StensorType, typename T2toST2Type>
+    template <StensorConcept StensorType, typename T2toST2Type>
     TFEL_MATH_INLINE Expr(const StensorType& a, const T2toST2Type& b) {
       static_assert(implementsT2toST2Concept<T2toST2Type>());
-      static_assert(implementsStensorConcept<StensorType>());
       static_assert(getSpaceDimension<T2toST2Type>() == 2u);
       static_assert(getSpaceDimension<StensorType>() == 2u);
       this->v[0] =
@@ -143,10 +141,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename StensorType, typename T2toST2Type>
+    template <StensorConcept StensorType, typename T2toST2Type>
     TFEL_MATH_INLINE Expr(const StensorType& a, const T2toST2Type& b) {
       static_assert(implementsT2toST2Concept<T2toST2Type>());
-      static_assert(implementsStensorConcept<StensorType>());
       static_assert(getSpaceDimension<T2toST2Type>() == 3u);
       static_assert(getSpaceDimension<StensorType>() == 3u);
       this->v[0] = b(5, 0) * a[5] + b(4, 0) * a[4] + b(3, 0) * a[3] +
