@@ -102,7 +102,7 @@ namespace mfront {
   OverridableImplementation::~OverridableImplementation() = default;
 
   static std::string getPathBaseName(const OverridableImplementation& i) {
-    const auto mkt = [i]() -> std::string {
+    const auto mkt = [&i]() -> std::string {
       const auto t = i.getTargetType();
       if (t == AbstractDSL::MATERIALPROPERTYDSL) {
         return "MaterialProperties";

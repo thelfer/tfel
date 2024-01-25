@@ -19,26 +19,26 @@
 
 namespace tfel::math {
 
-  // Serialisation operator
-  template <typename T2toT2Type>
-  std::enable_if_t<implementsT2toT2Concept<T2toT2Type>(), std::ostream&>
-  operator<<(std::ostream& os, const T2toT2Type& s) {
+  //! \brief serialisation operator
+  TFEL_HOST std::ostream& operator<<(std::ostream& os,
+                                     const T2toT2Concept auto& t) {
+    using T2toT2Type = decltype(t);
     constexpr auto N = getSpaceDimension<T2toT2Type>();
-    constexpr auto tensor_size = TensorDimeToSize<N>::value;
+    constexpr auto ts = TensorDimeToSize<N>::value;
     os << "[";
-    for (unsigned short i = 0; i < tensor_size;) {
+    for (unsigned short i = 0; i < ts;) {
       if (i != 0) {
         os << " [";
       } else {
         os << "[";
       }
-      for (unsigned short j = 0; j < tensor_size;) {
-        os << s(i, j);
-        if (++j != tensor_size) {
+      for (unsigned short j = 0; j < ts;) {
+        os << t(i, j);
+        if (++j != ts) {
           os << ",";
         }
       }
-      if (++i != tensor_size) {
+      if (++i != ts) {
         os << "]\n";
       } else {
         os << "]";

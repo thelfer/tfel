@@ -53,120 +53,107 @@ namespace tfel::math {
                        TensorDimeToSize<N>::value>::exe(src, *this);
   }
 
-  template <typename T2toT2Type>
-  TFEL_HOST_DEVICE std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 1u) &&
-                                     implementsT2toT2Concept<T2toT2Type>()),
-                                    t2tost2<1u, numeric_type<T2toT2Type>>>
-  convertToT2toST2(const T2toT2Type& t) {
+  TFEL_HOST_DEVICE constexpr auto convertToT2toST2(
+      const T2toT2Concept auto& t) noexcept {
+    using T2toT2Type = decltype(t);
     using value_type = numeric_type<T2toT2Type>;
-    t2tost2<1u, value_type> r;
-    r(0, 0) = t(0, 0);
-    r(0, 1) = t(0, 1);
-    r(0, 2) = t(0, 2);
-    r(1, 0) = t(1, 0);
-    r(1, 1) = t(1, 1);
-    r(1, 2) = t(1, 2);
-    r(2, 0) = t(2, 0);
-    r(2, 1) = t(2, 1);
-    r(2, 2) = t(2, 2);
-    return r;
-  }
-
-  template <typename T2toT2Type>
-  TFEL_HOST_DEVICE std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 2u) &&
-                                     implementsT2toT2Concept<T2toT2Type>()),
-                                    t2tost2<2u, numeric_type<T2toT2Type>>>
-  convertToT2toST2(const T2toT2Type& t) {
-    using value_type = numeric_type<T2toT2Type>;
-    constexpr auto icste = Cste<value_type>::isqrt2;
-    t2tost2<2u, value_type> r;
-    r(0, 0) = t(0, 0);
-    r(0, 3) = t(0, 3);
-    r(0, 4) = t(0, 4);
-    r(0, 1) = t(0, 1);
-    r(0, 2) = t(0, 2);
-    r(3, 0) = (t(3, 0) + t(4, 0)) * icste;
-    r(3, 3) = (t(3, 3) + t(4, 3)) * icste;
-    r(3, 4) = (t(3, 4) + t(4, 4)) * icste;
-    r(3, 1) = (t(3, 1) + t(4, 1)) * icste;
-    r(3, 2) = (t(3, 2) + t(4, 2)) * icste;
-    r(1, 0) = t(1, 0);
-    r(1, 3) = t(1, 3);
-    r(1, 4) = t(1, 4);
-    r(1, 1) = t(1, 1);
-    r(1, 2) = t(1, 2);
-    r(2, 0) = t(2, 0);
-    r(2, 3) = t(2, 3);
-    r(2, 4) = t(2, 4);
-    r(2, 1) = t(2, 1);
-    r(2, 2) = t(2, 2);
-    return r;
-  }
-
-  template <typename T2toT2Type>
-  TFEL_HOST_DEVICE std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 3u) &&
-                                     implementsT2toT2Concept<T2toT2Type>()),
-                                    t2tost2<3u, numeric_type<T2toT2Type>>>
-  convertToT2toST2(const T2toT2Type& t) {
-    using value_type = numeric_type<T2toT2Type>;
-    constexpr auto icste = Cste<value_type>::isqrt2;
-    t2tost2<3u, value_type> r;
-    r(0, 0) = t(0, 0);
-    r(0, 3) = t(0, 3);
-    r(0, 5) = t(0, 5);
-    r(0, 4) = t(0, 4);
-    r(0, 1) = t(0, 1);
-    r(0, 7) = t(0, 7);
-    r(0, 6) = t(0, 6);
-    r(0, 8) = t(0, 8);
-    r(0, 2) = t(0, 2);
-    r(3, 0) = (t(3, 0) + t(4, 0)) * icste;
-    r(3, 3) = (t(3, 3) + t(4, 3)) * icste;
-    r(3, 5) = (t(3, 5) + t(4, 5)) * icste;
-    r(3, 4) = (t(3, 4) + t(4, 4)) * icste;
-    r(3, 1) = (t(3, 1) + t(4, 1)) * icste;
-    r(3, 7) = (t(3, 7) + t(4, 7)) * icste;
-    r(3, 6) = (t(3, 6) + t(4, 6)) * icste;
-    r(3, 8) = (t(3, 8) + t(4, 8)) * icste;
-    r(3, 2) = (t(3, 2) + t(4, 2)) * icste;
-    r(4, 0) = (t(5, 0) + t(6, 0)) * icste;
-    r(4, 3) = (t(5, 3) + t(6, 3)) * icste;
-    r(4, 5) = (t(5, 5) + t(6, 5)) * icste;
-    r(4, 4) = (t(5, 4) + t(6, 4)) * icste;
-    r(4, 1) = (t(5, 1) + t(6, 1)) * icste;
-    r(4, 7) = (t(5, 7) + t(6, 7)) * icste;
-    r(4, 6) = (t(5, 6) + t(6, 6)) * icste;
-    r(4, 8) = (t(5, 8) + t(6, 8)) * icste;
-    r(4, 2) = (t(5, 2) + t(6, 2)) * icste;
-    r(1, 0) = t(1, 0);
-    r(1, 3) = t(1, 3);
-    r(1, 5) = t(1, 5);
-    r(1, 4) = t(1, 4);
-    r(1, 1) = t(1, 1);
-    r(1, 7) = t(1, 7);
-    r(1, 6) = t(1, 6);
-    r(1, 8) = t(1, 8);
-    r(1, 2) = t(1, 2);
-    r(5, 0) = (t(7, 0) + t(8, 0)) * icste;
-    r(5, 3) = (t(7, 3) + t(8, 3)) * icste;
-    r(5, 5) = (t(7, 5) + t(8, 5)) * icste;
-    r(5, 4) = (t(7, 4) + t(8, 4)) * icste;
-    r(5, 1) = (t(7, 1) + t(8, 1)) * icste;
-    r(5, 7) = (t(7, 7) + t(8, 7)) * icste;
-    r(5, 6) = (t(7, 6) + t(8, 6)) * icste;
-    r(5, 8) = (t(7, 8) + t(8, 8)) * icste;
-    r(5, 2) = (t(7, 2) + t(8, 2)) * icste;
-    r(2, 0) = t(2, 0);
-    r(2, 3) = t(2, 3);
-    r(2, 5) = t(2, 5);
-    r(2, 4) = t(2, 4);
-    r(2, 1) = t(2, 1);
-    r(2, 7) = t(2, 7);
-    r(2, 6) = t(2, 6);
-    r(2, 8) = t(2, 8);
-    r(2, 2) = t(2, 2);
-    return r;
-  }
+    constexpr auto N = getSpaceDimension<T2toT2Type>();
+    if constexpr (N == 1) {
+      t2tost2<1u, value_type> r;
+      r(0, 0) = t(0, 0);
+      r(0, 1) = t(0, 1);
+      r(0, 2) = t(0, 2);
+      r(1, 0) = t(1, 0);
+      r(1, 1) = t(1, 1);
+      r(1, 2) = t(1, 2);
+      r(2, 0) = t(2, 0);
+      r(2, 1) = t(2, 1);
+      r(2, 2) = t(2, 2);
+      return r;
+    } else if constexpr (N == 2) {
+      constexpr auto icste = Cste<value_type>::isqrt2;
+      t2tost2<2u, value_type> r;
+      r(0, 0) = t(0, 0);
+      r(0, 3) = t(0, 3);
+      r(0, 4) = t(0, 4);
+      r(0, 1) = t(0, 1);
+      r(0, 2) = t(0, 2);
+      r(3, 0) = (t(3, 0) + t(4, 0)) * icste;
+      r(3, 3) = (t(3, 3) + t(4, 3)) * icste;
+      r(3, 4) = (t(3, 4) + t(4, 4)) * icste;
+      r(3, 1) = (t(3, 1) + t(4, 1)) * icste;
+      r(3, 2) = (t(3, 2) + t(4, 2)) * icste;
+      r(1, 0) = t(1, 0);
+      r(1, 3) = t(1, 3);
+      r(1, 4) = t(1, 4);
+      r(1, 1) = t(1, 1);
+      r(1, 2) = t(1, 2);
+      r(2, 0) = t(2, 0);
+      r(2, 3) = t(2, 3);
+      r(2, 4) = t(2, 4);
+      r(2, 1) = t(2, 1);
+      r(2, 2) = t(2, 2);
+      return r;
+    } else {
+      constexpr auto icste = Cste<value_type>::isqrt2;
+      t2tost2<3u, value_type> r;
+      r(0, 0) = t(0, 0);
+      r(0, 3) = t(0, 3);
+      r(0, 5) = t(0, 5);
+      r(0, 4) = t(0, 4);
+      r(0, 1) = t(0, 1);
+      r(0, 7) = t(0, 7);
+      r(0, 6) = t(0, 6);
+      r(0, 8) = t(0, 8);
+      r(0, 2) = t(0, 2);
+      r(3, 0) = (t(3, 0) + t(4, 0)) * icste;
+      r(3, 3) = (t(3, 3) + t(4, 3)) * icste;
+      r(3, 5) = (t(3, 5) + t(4, 5)) * icste;
+      r(3, 4) = (t(3, 4) + t(4, 4)) * icste;
+      r(3, 1) = (t(3, 1) + t(4, 1)) * icste;
+      r(3, 7) = (t(3, 7) + t(4, 7)) * icste;
+      r(3, 6) = (t(3, 6) + t(4, 6)) * icste;
+      r(3, 8) = (t(3, 8) + t(4, 8)) * icste;
+      r(3, 2) = (t(3, 2) + t(4, 2)) * icste;
+      r(4, 0) = (t(5, 0) + t(6, 0)) * icste;
+      r(4, 3) = (t(5, 3) + t(6, 3)) * icste;
+      r(4, 5) = (t(5, 5) + t(6, 5)) * icste;
+      r(4, 4) = (t(5, 4) + t(6, 4)) * icste;
+      r(4, 1) = (t(5, 1) + t(6, 1)) * icste;
+      r(4, 7) = (t(5, 7) + t(6, 7)) * icste;
+      r(4, 6) = (t(5, 6) + t(6, 6)) * icste;
+      r(4, 8) = (t(5, 8) + t(6, 8)) * icste;
+      r(4, 2) = (t(5, 2) + t(6, 2)) * icste;
+      r(1, 0) = t(1, 0);
+      r(1, 3) = t(1, 3);
+      r(1, 5) = t(1, 5);
+      r(1, 4) = t(1, 4);
+      r(1, 1) = t(1, 1);
+      r(1, 7) = t(1, 7);
+      r(1, 6) = t(1, 6);
+      r(1, 8) = t(1, 8);
+      r(1, 2) = t(1, 2);
+      r(5, 0) = (t(7, 0) + t(8, 0)) * icste;
+      r(5, 3) = (t(7, 3) + t(8, 3)) * icste;
+      r(5, 5) = (t(7, 5) + t(8, 5)) * icste;
+      r(5, 4) = (t(7, 4) + t(8, 4)) * icste;
+      r(5, 1) = (t(7, 1) + t(8, 1)) * icste;
+      r(5, 7) = (t(7, 7) + t(8, 7)) * icste;
+      r(5, 6) = (t(7, 6) + t(8, 6)) * icste;
+      r(5, 8) = (t(7, 8) + t(8, 8)) * icste;
+      r(5, 2) = (t(7, 2) + t(8, 2)) * icste;
+      r(2, 0) = t(2, 0);
+      r(2, 3) = t(2, 3);
+      r(2, 5) = t(2, 5);
+      r(2, 4) = t(2, 4);
+      r(2, 1) = t(2, 1);
+      r(2, 7) = t(2, 7);
+      r(2, 6) = t(2, 6);
+      r(2, 8) = t(2, 8);
+      r(2, 2) = t(2, 2);
+      return r;
+    }
+  }  // end of convertToT2toST2
 
   TFEL_HOST_DEVICE constexpr auto computeRateOfDeformationDerivative(
       const TensorConcept auto& F) noexcept {
