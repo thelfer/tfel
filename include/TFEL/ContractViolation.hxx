@@ -30,7 +30,7 @@ namespace tfel {
   TFEL_DEVICE constexpr void reportContractViolation(const char* const) {
   }  // end of reportContractViolation
 #endif /* TFEL_NO_REPORT_CONTRACT_VIOLATION */
-#else /* SYCL_LANGUAGE_VERSION  */
+#else  /* SYCL_LANGUAGE_VERSION  */
   TFEL_HOST_DEVICE constexpr void reportContractViolation(const char* const) {
   }  // end of reportContractViolation
 #endif /* SYCL_LANGUAGE_VERSION  */
