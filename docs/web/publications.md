@@ -13,6 +13,7 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @lorenzo_exploring_2024
     @simo_novel_2024
     @singh_irradiation_2024
     @fokam_implementation_2023
