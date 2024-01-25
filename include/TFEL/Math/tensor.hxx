@@ -84,7 +84,8 @@ namespace tfel::math {
     /*!
      * \return the identity tensor
      */
-    TFEL_HOST_DEVICE static constexpr tensor<N, base_type<ValueType>> Id();
+    TFEL_HOST_DEVICE static constexpr tensor<N, base_type<ValueType>>
+    Id() noexcept;
     /*!
      * \brief Build a tensor from a fortran matrix.
      * \param[in] t: tensor to be filled
@@ -114,13 +115,13 @@ namespace tfel::math {
      * \param[in] i: index
      */
     TFEL_HOST_DEVICE constexpr ValueType operator()(
-        const typename tensor::size_type) const;
+        const typename tensor::size_type) const noexcept;
     /*!
      * \brief access operator
      * \param[in] i: index
      */
     TFEL_HOST_DEVICE constexpr ValueType& operator()(
-        const typename tensor::size_type);
+        const typename tensor::size_type) noexcept;
     /*!
      * \brief matrix-like access operator
      * \param[in] i: row number
@@ -130,15 +131,16 @@ namespace tfel::math {
         const typename tensor::size_type,
         const typename tensor::size_type) const;
     //! \brief write to an external memory location
-    TFEL_MATH_INLINE2 void write(base_type<ValueType>* const) const;
+    TFEL_HOST_DEVICE constexpr void write(base_type<ValueType>* const) const
+        noexcept;
     //! \brief import values from an external memory location
-    TFEL_HOST_DEVICE void import(const base_type<ValueType>* const);
+    TFEL_HOST_DEVICE constexpr void import(
+        const base_type<ValueType>* const) noexcept;
     //! \brief change basis
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 void changeBasis(
+    TFEL_HOST_DEVICE constexpr void changeBasis(
         const rotation_matrix<ValueType>&) noexcept;
-
-    template <typename InputIterator>
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 void copy(const InputIterator src);
+    //! \brief copy from a range
+    TFEL_HOST_DEVICE constexpr void copy(const auto) noexcept;
   };  // end of struct tensor
 
   /*!

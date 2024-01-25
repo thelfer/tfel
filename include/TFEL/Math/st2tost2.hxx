@@ -50,13 +50,11 @@ namespace tfel::math {
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
-  template <typename ST2toST2Type, typename ScalarType>
+  template <ST2toST2Concept ST2toST2Type, typename ScalarType>
   struct DerivativeTypeDispatcher<ST2toST2Tag,
                                   ScalarTag,
                                   ST2toST2Type,
                                   ScalarType> {
-    static_assert(implementsST2toST2Concept<ST2toST2Type>(),
-                  "template argument ST2toST2Type is not a st2tost2");
     static_assert(isScalar<ScalarType>(),
                   "template argument ScalarType is not a scalar");
     static_assert(isScalar<numeric_type<ST2toST2Type>>(),
@@ -70,13 +68,11 @@ namespace tfel::math {
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
-  template <typename ScalarType, typename ST2toST2Type>
+  template <typename ScalarType, ST2toST2Concept ST2toST2Type>
   struct DerivativeTypeDispatcher<ScalarTag,
                                   ST2toST2Tag,
                                   ScalarType,
                                   ST2toST2Type> {
-    static_assert(implementsST2toST2Concept<ST2toST2Type>(),
-                  "template argument ST2toST2Type is not a st2tost2");
     static_assert(isScalar<ScalarType>(),
                   "template argument ScalarType is not a scalar");
     static_assert(isScalar<numeric_type<ST2toST2Type>>(),
@@ -111,7 +107,7 @@ namespace tfel::math {
 
   template <unsigned short N, typename ValueType>
   struct st2tost2
-      : ST2toST2Concept<st2tost2<N, ValueType>>,
+      : ST2toST2ConceptBase<st2tost2<N, ValueType>>,
         GenericFixedSizeArray<
             st2tost2<N, ValueType>,
             FixedSizeRowMajorMatrixPolicy<StensorDimeToSize<N>::value,
@@ -129,27 +125,24 @@ namespace tfel::math {
      * \return the derivative of the square of a symmetric tensor
      */
     template <StensorConcept StensorType>
-    static TFEL_MATH_INLINE std::enable_if_t<
+    TFEL_HOST_DEVICE static constexpr auto
+    dsquare(const StensorType&) noexcept requires(
         getSpaceDimension<StensorType>() == N &&
-            isAssignableTo<numeric_type<StensorType>, ValueType>(),
-        Expr<st2tost2<N, ValueType>, StensorSquareDerivativeExpr<N>>>
-    dsquare(const StensorType&);
+        isAssignableTo<numeric_type<StensorType>, ValueType>());
     /*!
      * \param[in] s : tensor squared
      * \param[in] C : derivative of s
      * \return the derivative of the square of a symmetric tensor
      */
-    template <StensorConcept StensorType, typename ST2toST2Type>
-    static TFEL_MATH_INLINE std::enable_if_t<
-        implementsST2toST2Concept<ST2toST2Type>() &&
-            getSpaceDimension<StensorType>() == N &&
-            getSpaceDimension<ST2toST2Type>() == N &&
-            isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
-                                                 numeric_type<ST2toST2Type>,
-                                                 OpMult>,
-                           ValueType>(),
-        Expr<st2tost2<N, ValueType>, StensorSquareDerivativeExpr<N>>>
-    dsquare(const StensorType&, const ST2toST2Type&);
+    template <StensorConcept StensorType, ST2toST2Concept ST2toST2Type>
+    TFEL_HOST_DEVICE static constexpr auto
+    dsquare(const StensorType&, const ST2toST2Type&) noexcept requires(
+        getSpaceDimension<StensorType>() == N &&
+        getSpaceDimension<ST2toST2Type>() == N &&
+        isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
+                                             numeric_type<ST2toST2Type>,
+                                             OpMult>,
+                       ValueType>());
     /*!
      * convert a T2toST2 to a ST2toST2
      * \param[in] src : T2toST2 to be converted
@@ -181,11 +174,11 @@ namespace tfel::math {
         tfel::math::st2tost2<N, ValueType>>
     stpd(const StensorType&);
     //
-    static constexpr st2tost2 Id();
-    static constexpr st2tost2 IxI();
-    static constexpr st2tost2 K();
-    static constexpr st2tost2 M();
-    static constexpr st2tost2 J();
+    static constexpr st2tost2 Id() noexcept;
+    static constexpr st2tost2 IxI() noexcept;
+    static constexpr st2tost2 K() noexcept;
+    static constexpr st2tost2 M() noexcept;
+    static constexpr st2tost2 J() noexcept;
     //
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(st2tost2,
                                                GenericFixedSizeArrayBase);
@@ -193,10 +186,13 @@ namespace tfel::math {
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
     //! \brief import values from an external memory location
-    void import(const base_type<ValueType>* const);
-
-    template <typename InputIterator>
-    TFEL_MATH_INLINE2 void copy(const InputIterator src);
+    TFEL_HOST_DEVICE constexpr void import(
+        const base_type<ValueType>* const) noexcept;
+    /*!
+     * \brief copy the values from a range
+     * \param[in] p: iterator
+     */
+    TFEL_HOST_DEVICE constexpr void copy(const auto) noexcept;
   };
 
   /*!
@@ -219,75 +215,46 @@ namespace tfel::math {
    * \param[in] s : st2tost2
    * \param[in] r : rotation matrix
    */
-  template <typename ST2toST2Type>
-  TFEL_MATH_INLINE2 std::enable_if_t<
-      implementsST2toST2Concept<ST2toST2Type>(),
-      st2tost2<getSpaceDimension<ST2toST2Type>(), numeric_type<ST2toST2Type>>>
+  template <ST2toST2Concept ST2toST2Type>
+  TFEL_HOST_DEVICE constexpr st2tost2<getSpaceDimension<ST2toST2Type>(),
+                                      numeric_type<ST2toST2Type>>
   change_basis(const ST2toST2Type&,
-               const rotation_matrix<numeric_type<ST2toST2Type>>&);
+               const rotation_matrix<numeric_type<ST2toST2Type>>&) noexcept;
   /*!
    * \return the invert of a st2tost2
    * \param[in] s : st2tost2 to be inverted
    */
-  template <typename ST2toST2Type>
-  TFEL_MATH_INLINE2 std::enable_if_t<
-      implementsST2toST2Concept<ST2toST2Type>(),
-      st2tost2<getSpaceDimension<ST2toST2Type>(),
-               BinaryOperationResult<base_type<numeric_type<ST2toST2Type>>,
-                                     numeric_type<ST2toST2Type>,
-                                     OpDiv>>>
-  invert(const ST2toST2Type&);
+  TFEL_HOST constexpr auto invert(const ST2toST2Concept auto&);
 
   /*!
-   * \return the push_forward of a st2tost2:
+   * \return the push-forward of a fourth order tensor:
    * \f[
    * Ct_{ijkl}=F_{im}F_{jn}F_{kp}F_{lq}C_{mnpq}
    * \f]
    * \param[in] C: input
    * \param[in] F: deformation gradient
    */
-  template <typename ST2toST2Type, TensorConcept TensorType>
-  std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
-                       getSpaceDimension<ST2toST2Type>() ==
-                           getSpaceDimension<TensorType>(),
-                   st2tost2<getSpaceDimension<ST2toST2Type>(),
-                            BinaryOperationResult<numeric_type<ST2toST2Type>,
-                                                  numeric_type<TensorType>,
-                                                  OpMult>>>
-  push_forward(const ST2toST2Type&, const TensorType&);
-
-  template <typename ST2toST2Type, TensorConcept TensorType>
-  std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
-                       getSpaceDimension<ST2toST2Type>() ==
-                           getSpaceDimension<TensorType>(),
-                   st2tost2<getSpaceDimension<ST2toST2Type>(),
-                            BinaryOperationResult<numeric_type<ST2toST2Type>,
-                                                  numeric_type<TensorType>,
-                                                  OpMult>>>
-  pull_back(const ST2toST2Type&, const TensorType&);
+  template <ST2toST2Concept ST2toST2Type, TensorConcept TensorType>
+  TFEL_HOST_DEVICE constexpr auto push_forward(
+      const ST2toST2Type&,
+      const TensorType&) noexcept requires(getSpaceDimension<ST2toST2Type>() ==
+                                           getSpaceDimension<TensorType>());
   /*!
-   * \brief compute the second derivative of determinant of the
-   * deviator of a symmetric tensor with respect to this tensor.
-   *
-   * Let \f$\underline{s}\f$ be a symmetric tensor and \f$J_{3}\f$
-   * be the determinant of \f$\underline{s}'\f$ the deviator of
-   * \f$\underline{s}\f$:
-   * \f[
-   * J_{3} = \mathrm{det}\left(\underline{s}'\right)
-   *       =
-   * \mathrm{det}\left(\underline{s}-\mathrm{tr}\left(\underline{s}'\right)\,\underline{I}\right)
-   * \f]
-   *
-   * This function computes \f$\displaystyle\frac{\partial^{2} J_{3}}{\partial
-   * \underline{\sigma}^{2}}\f$.
-   *
-   * \[ \param[in] s: tensor
+   * \return the pull-back of a fourth order tensor
+   * \param[in] C: input
+   * \param[in] F: deformation gradient
    */
-  template <StensorConcept StensorType>
-  std::enable_if_t<
-      isScalar<numeric_type<StensorType>>(),
-      st2tost2<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
-  computeDeviatorDeterminantSecondDerivative(const StensorType&);
+  template <ST2toST2Concept ST2toST2Type, TensorConcept TensorType>
+  TFEL_HOST constexpr auto pull_back(
+      const ST2toST2Type&,
+      const TensorType&) requires(getSpaceDimension<ST2toST2Type>() ==
+                                  getSpaceDimension<TensorType>());
+  /*!
+   * \brief compute the second derivative of determinant of a
+   * \param[in] s: tensor
+   */
+  TFEL_HOST_DEVICE constexpr auto computeDeterminantSecondDerivative(
+      const StensorConcept auto&) noexcept;
   /*!
    * \brief compute the second derivative of the determinant of the
    * deviator of symmetric tensor.
@@ -302,15 +269,12 @@ namespace tfel::math {
    * \f]
    *
    * This function computes \f$\displaystyle\frac{\partial^{2} J_{3}}{\partial
-   \underline{\sigma}^{2}}\f$.
+   * \underline{\sigma}^{2}}\f$.
    *
    * \param[in] s: tensor
    */
-  template <StensorConcept StensorType>
-  std::enable_if_t<
-      isScalar<numeric_type<StensorType>>(),
-      st2tost2<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
-  computeDeviatorDeterminantSecondDerivative(const StensorType&);
+  TFEL_HOST_DEVICE constexpr auto computeDeviatorDeterminantSecondDerivative(
+      const StensorConcept auto&) noexcept;
 
 }  // end of namespace tfel::math
 

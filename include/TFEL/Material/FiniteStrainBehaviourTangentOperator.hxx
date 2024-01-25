@@ -149,12 +149,11 @@ namespace tfel::material {
       return *this;
     }
     /*!
-     * assignement operator
+     * \brief assignement operator
      */
-    template <typename T>
+    template <tfel::math::ST2toST2Concept T>
     std::enable_if_t<
-        tfel::math::implementsST2toST2Concept<T>() &&
-            tfel::math::getSpaceDimension<T>() == N &&
+        tfel::math::getSpaceDimension<T>() == N &&
             std::is_same_v<tfel::math::numeric_type<T>, StressType>,
         FiniteStrainBehaviourTangentOperator&>
     operator=(const T& e) {

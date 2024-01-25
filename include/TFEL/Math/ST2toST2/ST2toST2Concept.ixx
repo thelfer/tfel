@@ -21,86 +21,69 @@
 
 namespace tfel::math {
 
-  template <typename ST2toST2Type>
-  std::enable_if_t<
-      implementsST2toST2Concept<ST2toST2Type>(),
-      typename tfel::typetraits::AbsType<numeric_type<ST2toST2Type>>::type>
-  abs(const ST2toST2Type& v) {
+  TFEL_HOST_DEVICE constexpr auto abs(const ST2toST2Concept auto& v) noexcept {
+    using ST2toST2Type = decltype(v);
     using NumType = numeric_type<ST2toST2Type>;
     using IndexType = index_type<ST2toST2Type>;
     using AbsNumType = typename tfel::typetraits::AbsType<NumType>::type;
     constexpr auto ssize =
         StensorDimeToSize<getSpaceDimension<ST2toST2Type>()>::value;
-    AbsNumType a(0);
+    auto a = AbsNumType{};
     for (IndexType i = 0; i < ssize; ++i) {
       for (IndexType j = 0; j < ssize; ++j) {
         a += abs(v(i, j));
       }
     }
     return a;
-  }
+  }  // end of abs
 
-  template <typename ST2toST2Type>
-  auto transpose(ST2toST2Type&& t)
-      -> std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>(),
-                          Expr<EvaluationResult<ST2toST2Type>,
-                               ST2toST2TransposeExpr<decltype(t)>>> {
+  TFEL_HOST_DEVICE constexpr auto transpose(ST2toST2Concept auto&& t) noexcept {
+    using ST2toST2Type = decltype(t);
     return Expr<EvaluationResult<ST2toST2Type>,
                 ST2toST2TransposeExpr<decltype(t)>>(
         std::forward<ST2toST2Type>(t));
-  }
+  }  // end of transpose
 
-  template <typename ST2toST2Type>
-  std::enable_if_t<
-      implementsST2toST2Concept<ST2toST2Type>() &&
-          (getSpaceDimension<ST2toST2Type>() == 1u) &&
-          isScalar<numeric_type<ST2toST2Type>>(),
-      typename ComputeUnaryResult<numeric_type<ST2toST2Type>, Power<3>>::Result>
-  det(const ST2toST2Type& s) {
-    const auto a = s(0, 0);
-    const auto b = s(0, 1);
-    const auto c = s(0, 2);
-    const auto d = s(1, 0);
-    const auto e = s(1, 1);
-    const auto f = s(1, 2);
-    const auto g = s(2, 0);
-    const auto h = s(2, 1);
-    const auto i = s(2, 2);
-    return a * (e * i - f * h) + b * (f * g - d * i) + c * (d * h - e * g);
-  }  // end of det
-
-  template <typename ST2toST2Type>
-  std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
-                       ((getSpaceDimension<ST2toST2Type>() == 2u) ||
-                        (getSpaceDimension<ST2toST2Type>() == 3u)) &&
-                       isScalar<numeric_type<ST2toST2Type>>(),
-                   typename ComputeUnaryResult<
-                       numeric_type<ST2toST2Type>,
-                       Power<getSpaceDimension<ST2toST2Type>()>>::Result>
-  det(const ST2toST2Type& s) {
-    using real = numeric_type<ST2toST2Type>;
+  TFEL_HOST_DEVICE constexpr auto det(const ST2toST2Concept auto& s) noexcept {
+    using ST2toST2Type = decltype(s);
     constexpr auto N = getSpaceDimension<ST2toST2Type>();
-    constexpr auto ts = StensorDimeToSize<N>::value;
-    tmatrix<ts, ts, real> m;
-    TinyPermutation<ts> p;
-    tfel::fsalgo::copy<ts * ts>::exe(s.begin(), m.begin());
-    const auto r = LUDecomp<false>::exe(m, p);
-    if (!r.first) {
-      return {};
+    if constexpr (N == 1) {
+      const auto a = s(0, 0);
+      const auto b = s(0, 1);
+      const auto c = s(0, 2);
+      const auto d = s(1, 0);
+      const auto e = s(1, 1);
+      const auto f = s(1, 2);
+      const auto g = s(2, 0);
+      const auto h = s(2, 1);
+      const auto i = s(2, 2);
+      return a * (e * i - f * h) + b * (f * g - d * i) + c * (d * h - e * g);
+    } else {
+      constexpr auto ts = StensorDimeToSize<N>::value;
+      using Result = UnaryResultType<numeric_type<ST2toST2Type>, Power<ts>>;
+      using real = base_type<numeric_type<ST2toST2Type>>;
+      tmatrix<ts, ts, real> m;
+      tfel::fsalgo::transform<ts * ts>::exe(
+          s.begin(), m.begin(), [](const auto v) { return base_type_cast(v); });
+      TinyPermutation<ts> p;
+      const auto r = LUDecomp<false>::exe(m, p);
+      if (!r.first) {
+        return Result{};
+      }
+      auto v = base_type<real>{1};
+      for (const index_type<ST2toST2Type> i = 0; i != ts; ++i) {
+        v *= m(i, i);
+      }
+      return r.second == 1 ? Result{v} : -Result{v};
     }
-    auto v = base_type<real>{1};
-    for (const index_type<ST2toST2Type> i = 0; i != ts; ++i) {
-      v *= m(i, i);
-    }
-    return r.second == 1 ? v : -v;
   }  // end of det
 
-  template <typename ST2toST2ResultType, TensorConcept TensorType>
-  typename std::enable_if<implementsST2toST2Concept<ST2toST2ResultType>() &&
-                              tfel::typetraits::IsFundamentalNumericType<
-                                  numeric_type<TensorType>>::cond,
-                          void>::type
-  computePushForwardDerivative(ST2toST2ResultType& r, const TensorType& F) {
+  template <ST2toST2Concept ST2toST2ResultType, TensorConcept TensorType>
+  TFEL_HOST_DEVICE constexpr void computePushForwardDerivative(
+      ST2toST2ResultType& r,
+      const TensorType& F) noexcept  //
+      requires(tfel::typetraits::IsFundamentalNumericType<
+               numeric_type<TensorType>>::cond) {
     constexpr auto N = getSpaceDimension<ST2toST2ResultType>();
     static_assert(getSpaceDimension<TensorType>() == N);
     using value_type = numeric_type<ST2toST2ResultType>;

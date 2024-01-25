@@ -20,9 +20,9 @@
 namespace tfel::math {
 
   // Serialisation operator
-  template <typename ST2toST2Type>
-  std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>(), std::ostream&>
-  operator<<(std::ostream& os, const ST2toST2Type& s) {
+  TFEL_HOST std::ostream& operator<<(std::ostream& os,
+                                     const ST2toST2Concept auto& s) {
+    using ST2toST2Type = decltype(s);
     constexpr auto stensor_size =
         StensorDimeToSize<getSpaceDimension<ST2toST2Type>()>::value;
     os << "[";

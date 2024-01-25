@@ -49,14 +49,14 @@ namespace tfel::math {
   }  // end of void tensor<N,T>::buildFromFortranMatrix
 
   template <unsigned short N, typename ValueType>
-  constexpr ValueType tensor<N, ValueType>::operator()(
-      const typename tensor::size_type i) const {
+  TFEL_HOST_DEVICE constexpr ValueType tensor<N, ValueType>::operator()(
+      const typename tensor::size_type i) const noexcept {
     return GenericFixedSizeArrayBase::operator()(i);
   }  // end of operator()
 
   template <unsigned short N, typename ValueType>
-  constexpr ValueType& tensor<N, ValueType>::operator()(
-      const typename tensor::size_type i) {
+  TFEL_HOST_DEVICE constexpr ValueType& tensor<N, ValueType>::operator()(
+      const typename tensor::size_type i) noexcept {
     return GenericFixedSizeArrayBase::operator()(i);
   }
 
@@ -98,26 +98,29 @@ namespace tfel::math {
   }  // end of operator()
 
   template <unsigned short N, typename T>
-  TFEL_HOST_DEVICE void tensor<N, T>::import(const base_type<T>* const src) {
+  TFEL_HOST_DEVICE constexpr void tensor<N, T>::import(
+      const base_type<T>* const src) noexcept {
     tfel::fsalgo::transform<TensorDimeToSize<N>::value>::exe(
         src, this->begin(), [](const auto& v) { return T(v); });
   }
 
   template <unsigned short N, typename T>
-  void tensor<N, T>::write(base_type<T>* const t) const {
+  TFEL_HOST_DEVICE constexpr void tensor<N, T>::write(
+      base_type<T>* const t) const noexcept {
     tfel::fsalgo::transform<TensorDimeToSize<N>::value>::exe(
         this->cbegin(), t, [](const auto& v) { return base_type_cast(v); });
   }
 
   template <unsigned short N, typename T>
-  TFEL_HOST_DEVICE void tensor<N, T>::changeBasis(
+  TFEL_HOST_DEVICE constexpr void tensor<N, T>::changeBasis(
       const rotation_matrix<T>& m) noexcept {
     const auto rt = change_basis(*this, m);
     *this = rt;
   }  // end of changeBasis
 
   template <unsigned short N, typename T>
-  constexpr tensor<N, base_type<T>> tensor<N, T>::Id() {
+  TFEL_HOST_DEVICE constexpr tensor<N, base_type<T>>
+  tensor<N, T>::Id() noexcept {
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     constexpr auto zero = base_type<T>{0};
     constexpr auto one = base_type<T>{1};
@@ -130,10 +133,9 @@ namespace tfel::math {
   }  // end of tensor<N,T>::Id
 
   template <unsigned short N, typename T>
-  template <typename InputIterator>
-  TFEL_HOST_DEVICE void tensor<N, T>::copy(const InputIterator src) {
-    tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(src, *this);
-  }
+  TFEL_HOST_DEVICE constexpr void tensor<N, T>::copy(const auto p) noexcept {
+    tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(p, *this);
+  }  // end of copy
 
   template <unsigned short N, typename T, typename OutputIterator>
   TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void>

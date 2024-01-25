@@ -278,12 +278,13 @@ namespace tfel::math {
         VectorType&, const ValueType) const;
     /*!
      * \brief change basis
+     * \param[in] m: rotation matrix
      */
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 void changeBasis(
-        const rotation_matrix<ValueType>&);
+    TFEL_HOST_DEVICE constexpr void changeBasis(
+        const rotation_matrix<base_type<ValueType>>&) noexcept;
     //! \return the identity
-    TFEL_HOST_DEVICE
-    TFEL_MATH_INLINE static constexpr stensor<N, base_type<ValueType>> Id();
+    TFEL_HOST_DEVICE static constexpr stensor<N, base_type<ValueType>>
+    Id() noexcept;
     /*!
      * copy the value from a container
      */
@@ -517,10 +518,9 @@ namespace tfel::math {
      * \param[in]  m:      eigen vectors
      * \param[in]  eps:    numerical parameter for regularisation
      */
-    template <typename ST2toST2Type>
+    template <ST2toST2Concept ST2toST2Type>
     TFEL_HOST_DEVICE static std::enable_if_t<
-        (implementsST2toST2Concept<ST2toST2Type>()) &&
-            (getSpaceDimension<ST2toST2Type>() == N) &&
+        (getSpaceDimension<ST2toST2Type>() == N) &&
             (isAssignableTo<
                 BinaryOperationResult<base_type<ValueType>, ValueType, OpDiv>,
                 numeric_type<ST2toST2Type>>()),
@@ -577,10 +577,9 @@ namespace tfel::math {
      * \param[in]  eps: criterion value used to judge if two eigenvalues are
      * equals
      */
-    template <typename ST2toST2Type, typename T1, typename T2>
+    template <ST2toST2Concept ST2toST2Type, typename T1, typename T2>
     TFEL_HOST_DEVICE static std::enable_if_t<
-        (implementsST2toST2Concept<ST2toST2Type>()) &&
-            (getSpaceDimension<ST2toST2Type>() == N) &&
+        (getSpaceDimension<ST2toST2Type>() == N) &&
             (isAssignableTo<
                 BinaryOperationResult<base_type<ValueType>, ValueType, OpDiv>,
                 numeric_type<ST2toST2Type>>()),
@@ -620,12 +619,11 @@ namespace tfel::math {
      * \param[in]  eps: criterion value used to judge if two eigenvalues are
      * equals
      */
-    template <typename ST2toST2Type,
+    template <ST2toST2Concept ST2toST2Type,
               typename Function,
               typename FunctionDerivative>
     TFEL_HOST_DEVICE static std::enable_if_t<
-        (implementsST2toST2Concept<ST2toST2Type>()) &&
-            (getSpaceDimension<ST2toST2Type>() == N) &&
+        (getSpaceDimension<ST2toST2Type>() == N) &&
             (isAssignableTo<
                 BinaryOperationResult<base_type<ValueType>, ValueType, OpDiv>,
                 numeric_type<ST2toST2Type>>()),
