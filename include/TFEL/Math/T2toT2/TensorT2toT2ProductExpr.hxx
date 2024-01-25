@@ -45,11 +45,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <TensorConcept TensorType, typename T2toT2Type>
+    template <TensorConcept TensorType, T2toT2Concept T2toT2Type>
     TFEL_HOST_DEVICE constexpr Expr(const TensorType& a,
                                     const T2toT2Type& b) noexcept {
-      static_assert(getSpaceDimension<T2toT2Type>() == 1u);
-      static_assert(implementsT2toT2Concept<T2toT2Type>());
       static_assert(getSpaceDimension<TensorType>() == 1u);
       this->v[0] = b(0, 0) * a(0) + b(1, 0) * a(1) + b(2, 0) * a(2);
       this->v[1] = b(0, 1) * a(0) + b(1, 1) * a(1) + b(2, 1) * a(2);
@@ -97,10 +95,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <TensorConcept TensorType, typename T2toT2Type>
+    template <TensorConcept TensorType, T2toT2Concept T2toT2Type>
     TFEL_HOST_DEVICE constexpr Expr(const TensorType& a,
                                     const T2toT2Type& b) noexcept {
-      static_assert(implementsT2toT2Concept<T2toT2Type>());
       static_assert(getSpaceDimension<T2toT2Type>() == 2u);
       static_assert(getSpaceDimension<TensorType>() == 2u);
       this->v[0] = b(4, 0) * a[4] + b(3, 0) * a[3] + b(2, 0) * a[2] +
@@ -156,10 +153,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <TensorConcept TensorType, typename T2toT2Type>
+    template <TensorConcept TensorType, T2toT2Concept T2toT2Type>
     TFEL_HOST_DEVICE constexpr Expr(const TensorType& a,
                                     const T2toT2Type& b) noexcept {
-      static_assert(implementsT2toT2Concept<T2toT2Type>());
       static_assert(getSpaceDimension<T2toT2Type>() == 3u);
       static_assert(getSpaceDimension<TensorType>() == 3u);
       this->v[0] = b(8, 0) * a[8] + b(7, 0) * a[7] + b(6, 0) * a[6] +

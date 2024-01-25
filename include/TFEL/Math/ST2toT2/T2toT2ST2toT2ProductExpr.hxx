@@ -189,7 +189,8 @@ namespace tfel::math {
      * \param[in] b : second term of the product
      */
     template <T2toT2Concept T2toT2Type, typename ST2toT2Type2>
-    TFEL_HOST_DEVICE constexpr  Expr(const T2toT2Type& a, const ST2toT2Type2& b) noexcept{
+    TFEL_HOST_DEVICE constexpr Expr(const T2toT2Type& a,
+                                    const ST2toT2Type2& b) noexcept {
       static_assert(implementsST2toT2Concept<ST2toT2Type2>());
       static_assert(getSpaceDimension<T2toT2Type>() == 3u);
       static_assert(getSpaceDimension<ST2toT2Type2>() == 3u);

@@ -21,32 +21,23 @@
 
 namespace tfel::math {
 
-  template <typename T2toT2Type>
-  std::enable_if_t<
-      implementsT2toT2Concept<T2toT2Type>(),
-      typename tfel::typetraits::AbsType<numeric_type<T2toT2Type>>::type>
-  abs(const T2toT2Type& v) {
-    unsigned short i;
-    unsigned short j;
-    typedef numeric_type<T2toT2Type> NumType;
-    typedef typename tfel::typetraits::AbsType<NumType>::type AbsNumType;
-    AbsNumType a(0);
-    for (i = 0; i < TensorDimeToSize<getSpaceDimension<T2toT2Type>()>::value;
-         ++i) {
-      for (j = 0; j < TensorDimeToSize<getSpaceDimension<T2toT2Type>()>::value;
-           ++j) {
-        a += abs(v(i, j));
+  TFEL_HOST_DEVICE constexpr auto abs(const T2toT2Concept auto& t) noexcept {
+    using T2toT2Type = decltype(t);
+    using NumType = numeric_type<T2toT2Type>;
+    using AbsNumType = typename tfel::typetraits::AbsType<NumType>::type;
+    constexpr auto ts =
+        TensorDimeToSize<getSpaceDimension<T2toT2Type>()>::value;
+    auto a = AbsNumType{};
+    for (unsigned short i = 0; i < ts; ++i) {
+      for (unsigned short j = 0; j < ts; ++j) {
+        a += abs(t(i, j));
       }
     }
     return a;
   }
 
-  template <typename T2toT2Type>
-  std::enable_if_t<
-      implementsT2toT2Concept<T2toT2Type>() &&
-          isScalar<numeric_type<T2toT2Type>>(),
-      typename ComputeUnaryResult<numeric_type<T2toT2Type>, Power<3>>::Result>
-  det(const T2toT2Type& s) {
+  TFEL_HOST_DEVICE constexpr auto det(const T2toT2Concept auto& s) noexcept {
+    using T2toT2Type = decltype(s);
     constexpr auto N = getSpaceDimension<T2toT2Type>();
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {
@@ -61,20 +52,22 @@ namespace tfel::math {
       const auto i = s(2, 2);
       return a * (e * i - f * h) + b * (f * g - d * i) + c * (d * h - e * g);
     } else {
-      using real = numeric_type<T2toT2Type>;
       constexpr auto ts = TensorDimeToSize<N>::value;
+      using Result = UnaryResultType<numeric_type<T2toT2Type>, Power<ts>>;
+      using real = base_type<numeric_type<T2toT2Type>>;
       tmatrix<ts, ts, real> m;
+      tfel::fsalgo::transform<ts * ts>::exe(
+          s.begin(), m.begin(), [](const auto v) { return base_type_cast(v); });
       TinyPermutation<ts> p;
-      tfel::fsalgo::copy<ts * ts>::exe(s.begin(), m.begin());
       const auto r = LUDecomp<false>::exe(m, p);
       if (!r.first) {
-        return {};
+        return Result{};
       }
       auto v = base_type<real>{1};
       for (const index_type<T2toT2Type> i = 0; i != ts; ++i) {
         v *= m(i, i);
       }
-      return r.second == 1 ? v : -v;
+      return r.second == 1 ? Result{v} : -Result{v};
     }
   }  // end of det
 

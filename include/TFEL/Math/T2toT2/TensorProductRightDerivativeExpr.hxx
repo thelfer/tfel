@@ -59,10 +59,9 @@ namespace tfel::math {
      * \param[in] A : first tensor of the product
      * \param[in] C : derivative of the second tensor
      */
-    template <TensorConcept TensorType, typename T2toT2Type>
+    template <TensorConcept TensorType, T2toT2Concept T2toT2Type>
     TFEL_HOST_DEVICE constexpr Expr(const TensorType& A,
                                     const T2toT2Type& C) noexcept {
-      static_assert(implementsT2toT2Concept<T2toT2Type>());
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
       static_assert(getSpaceDimension<T2toT2Type>() ==
@@ -143,10 +142,9 @@ namespace tfel::math {
      * \param[in] A : first tensor of the product
      * \param[in] C : derivative of the second tensor
      */
-    template <TensorConcept TensorType, typename T2toT2Type>
+    template <TensorConcept TensorType, T2toT2Concept T2toT2Type>
     TFEL_HOST_DEVICE constexpr Expr(const TensorType& A,
                                     const T2toT2Type& C) noexcept {
-      static_assert(implementsT2toT2Concept<T2toT2Type>());
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
       static_assert(getSpaceDimension<T2toT2Type>() ==
@@ -274,10 +272,9 @@ namespace tfel::math {
      * \param[in] A : first tensor of the product
      * \param[in] C : derivative of the second tensor
      */
-    template <TensorConcept TensorType, typename T2toT2Type>
+    template <TensorConcept TensorType, T2toT2Concept T2toT2Type>
     TFEL_HOST_DEVICE constexpr Expr(const TensorType& A,
                                     const T2toT2Type& C) noexcept {
-      static_assert(implementsT2toT2Concept<T2toT2Type>());
       static_assert(getSpaceDimension<T2toT2ResultType>() ==
                     getSpaceDimension<TensorType>());
       static_assert(getSpaceDimension<T2toT2Type>() ==
