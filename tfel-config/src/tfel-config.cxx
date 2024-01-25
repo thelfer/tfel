@@ -513,7 +513,7 @@ int main(const int argc, const char* const* const argv) {
         std::cout << cxx_standard << " ";
       } else {
 #if (defined __GNUC__) || (defined __clang__) || (defined __INTEL_COMPILER)
-      std::cout << "-std=c++17 ";
+        std::cout << "-std=c++17 ";
 #endif
       }
     }

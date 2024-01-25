@@ -264,9 +264,9 @@ namespace castem {
       typedef CastemTraits<BV> Traits;
       typedef typename std::conditional<
           Traits::stype == castem::ISOTROPIC,
-          CastemIsotropicBehaviourHandler<COHESIVEZONEMODEL,hypothesis,
+          CastemIsotropicBehaviourHandler<COHESIVEZONEMODEL, hypothesis,
                                           Behaviour>,
-          CastemOrthotropicBehaviourHandler<COHESIVEZONEMODEL,hypothesis,
+          CastemOrthotropicBehaviourHandler<COHESIVEZONEMODEL, hypothesis,
                                             Behaviour>>::type Handler;
       CastemInterfaceExceptions::checkNTENSValue(
           *NTENS, Traits::ThermodynamicForceVariableSize);

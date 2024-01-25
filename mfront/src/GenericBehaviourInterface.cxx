@@ -1456,7 +1456,7 @@ namespace mfront {
         << "static_cast<void>(TVectorSize); // remove gcc warning\n"
         << "static_cast<void>(StensorSize); // remove gcc warning\n"
         << "static_cast<void>(TensorSize);  // remove gcc warning\n"
-	<< "} catch(std::exception& mtest_generation_exception){\n"
+        << "} catch(std::exception& mtest_generation_exception){\n"
         << "std::cerr << \"MTest file generation failed: \" << "
         << "mtest_generation_exception.what() << \"\\n\";\n"
         << "} catch(...){\n"

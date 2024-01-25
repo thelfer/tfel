@@ -14,13 +14,13 @@
  * project under specific licensing conditions.
  */
 
-namespace tfel::system{
+namespace tfel::system {
 
-struct LibraryInformation::LibraryInformation::Implementation {
-  virtual std::vector<std::string> sections() = 0;
-  virtual std::vector<std::string> symbols() = 0;
-  virtual std::vector<std::string> symbols(const char*) = 0;
-  virtual ~Implementation();
-};  // end of struct LibraryInformation::LibraryInformation::Implementation
+  struct LibraryInformation::LibraryInformation::Implementation {
+    virtual std::vector<std::string> sections() = 0;
+    virtual std::vector<std::string> symbols() = 0;
+    virtual std::vector<std::string> symbols(const char*) = 0;
+    virtual ~Implementation();
+  };  // end of struct LibraryInformation::LibraryInformation::Implementation
 
-} // end of namespace tfel::sytem
+}  // namespace tfel::system

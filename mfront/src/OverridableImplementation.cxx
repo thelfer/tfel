@@ -147,8 +147,8 @@ namespace mfront {
       }
       return madnex::File(f, H5F_ACC_TRUNC);
     }();
-    auto r = file.getRoot(); 
-   //
+    auto r = file.getRoot();
+    //
     if (!madnex::exists(r, "tests")) {
       madnex::createGroup(r, "tests");
     }
