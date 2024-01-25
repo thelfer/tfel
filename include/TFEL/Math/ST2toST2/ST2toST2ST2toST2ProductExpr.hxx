@@ -32,7 +32,7 @@ namespace tfel::math {
   template <typename ST2toST2ResultType>
   struct TFEL_VISIBILITY_LOCAL
       Expr<ST2toST2ResultType, ST2toST2ST2toST2ProductExpr<1u>>
-      : public ST2toST2Concept<
+      : public ST2toST2ConceptBase<
             Expr<ST2toST2ResultType, ST2toST2ST2toST2ProductExpr<1u>>>,
         public array_holder<
             StensorDimeToSize<getSpaceDimension<ST2toST2ResultType>()>::value *
@@ -48,7 +48,7 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename ST2toST2Type, typename ST2toST2Type2>
+    template <ST2toST2Concept ST2toST2Type, ST2toST2Concept ST2toST2Type2>
     TFEL_HOST_DEVICE constexpr Expr(const ST2toST2Type& a,
                                     const ST2toST2Type2& b)
         : array_holder<StensorDimeToSize<
@@ -56,8 +56,6 @@ namespace tfel::math {
                            StensorDimeToSize<
                                getSpaceDimension<ST2toST2ResultType>()>::value,
                        numeric_type<ST2toST2ResultType>>() {
-      static_assert(implementsST2toST2Concept<ST2toST2Type>());
-      static_assert(implementsST2toST2Concept<ST2toST2Type2>());
       static_assert(getSpaceDimension<ST2toST2Type>() == 1u);
       static_assert(getSpaceDimension<ST2toST2Type2>() == 1u);
       this->v[0] = a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0) + a(0, 2) * b(2, 0);
@@ -93,7 +91,7 @@ namespace tfel::math {
   template <typename ST2toST2ResultType>
   struct TFEL_VISIBILITY_LOCAL
       Expr<ST2toST2ResultType, ST2toST2ST2toST2ProductExpr<2u>>
-      : public ST2toST2Concept<
+      : public ST2toST2ConceptBase<
             Expr<ST2toST2ResultType, ST2toST2ST2toST2ProductExpr<2u>>>,
         public array_holder<
             StensorDimeToSize<getSpaceDimension<ST2toST2ResultType>()>::value *
@@ -109,7 +107,7 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename ST2toST2Type, typename ST2toST2Type2>
+    template <ST2toST2Concept ST2toST2Type, ST2toST2Concept ST2toST2Type2>
     TFEL_HOST_DEVICE constexpr Expr(const ST2toST2Type& a,
                                     const ST2toST2Type2& b)
         : array_holder<StensorDimeToSize<
@@ -117,8 +115,6 @@ namespace tfel::math {
                            StensorDimeToSize<
                                getSpaceDimension<ST2toST2ResultType>()>::value,
                        numeric_type<ST2toST2ResultType>>() {
-      static_assert(implementsST2toST2Concept<ST2toST2Type>());
-      static_assert(implementsST2toST2Concept<ST2toST2Type2>());
       static_assert(getSpaceDimension<ST2toST2Type>() == 2u);
       static_assert(getSpaceDimension<ST2toST2Type2>() == 2u);
       this->v[0] = a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0) + a(0, 2) * b(2, 0) +
@@ -177,7 +173,7 @@ namespace tfel::math {
   template <typename ST2toST2ResultType>
   struct TFEL_VISIBILITY_LOCAL
       Expr<ST2toST2ResultType, ST2toST2ST2toST2ProductExpr<3u>>
-      : public ST2toST2Concept<
+      : public ST2toST2ConceptBase<
             Expr<ST2toST2ResultType, ST2toST2ST2toST2ProductExpr<3u>>>,
         public array_holder<
             StensorDimeToSize<getSpaceDimension<ST2toST2ResultType>()>::value *
@@ -193,7 +189,7 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename ST2toST2Type, typename ST2toST2Type2>
+    template <ST2toST2Concept ST2toST2Type, ST2toST2Concept ST2toST2Type2>
     TFEL_HOST_DEVICE constexpr Expr(const ST2toST2Type& a,
                                     const ST2toST2Type2& b)
         : array_holder<StensorDimeToSize<
@@ -201,8 +197,6 @@ namespace tfel::math {
                            StensorDimeToSize<
                                getSpaceDimension<ST2toST2ResultType>()>::value,
                        numeric_type<ST2toST2ResultType>>() {
-      static_assert(implementsST2toST2Concept<ST2toST2Type>());
-      static_assert(implementsST2toST2Concept<ST2toST2Type2>());
       static_assert(getSpaceDimension<ST2toST2Type>() == 3u);
       static_assert(getSpaceDimension<ST2toST2Type2>() == 3u);
       this->v[0] = a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0) + a(0, 2) * b(2, 0) +

@@ -35,7 +35,7 @@ namespace tfel::math {
   template <typename ST2toST2ResultType>
   struct TFEL_VISIBILITY_LOCAL
       Expr<ST2toST2ResultType, T2toST2ST2toT2ProductExpr<1u>>
-      : public ST2toST2Concept<
+      : public ST2toST2ConceptBase<
             Expr<ST2toST2ResultType, T2toST2ST2toT2ProductExpr<1u>>>,
         public array_holder<
             StensorDimeToSize<getSpaceDimension<ST2toST2ResultType>()>::value *
@@ -95,7 +95,7 @@ namespace tfel::math {
   template <typename ST2toST2ResultType>
   struct TFEL_VISIBILITY_LOCAL
       Expr<ST2toST2ResultType, T2toST2ST2toT2ProductExpr<2u>>
-      : public ST2toST2Concept<
+      : public ST2toST2ConceptBase<
             Expr<ST2toST2ResultType, T2toST2ST2toT2ProductExpr<2u>>>,
         public array_holder<
             StensorDimeToSize<getSpaceDimension<ST2toST2ResultType>()>::value *
@@ -178,7 +178,7 @@ namespace tfel::math {
   template <typename ST2toST2ResultType>
   struct TFEL_VISIBILITY_LOCAL
       Expr<ST2toST2ResultType, T2toST2ST2toT2ProductExpr<3u>>
-      : public ST2toST2Concept<
+      : public ST2toST2ConceptBase<
             Expr<ST2toST2ResultType, T2toST2ST2toT2ProductExpr<3u>>>,
         public array_holder<
             StensorDimeToSize<getSpaceDimension<ST2toST2ResultType>()>::value *

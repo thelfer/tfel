@@ -47,9 +47,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename ST2toST2Type, StensorConcept StensorType>
-    TFEL_MATH_INLINE Expr(const ST2toST2Type& a, const StensorType& b) {
-      static_assert(implementsST2toST2Concept<ST2toST2Type>());
+    template <ST2toST2Concept ST2toST2Type, StensorConcept StensorType>
+    TFEL_HOST_DEVICE constexpr Expr(const ST2toST2Type& a,
+                                    const StensorType& b) noexcept {
       static_assert(getSpaceDimension<ST2toST2Type>() == 1u);
       static_assert(getSpaceDimension<StensorType>() == 1u);
       this->v[0] = a(0, 0) * b(0) + a(0, 1) * b(1) + a(0, 2) * b(2);
@@ -60,22 +60,20 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_MATH_INLINE const value_type& operator()(
-        const unsigned short i) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator()
     /*!
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_MATH_INLINE const value_type& operator[](
-        const unsigned short i) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator[](
+        const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator[]
-    /*!
-     * \return the runtime properties
-     */
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    //! \return the runtime properties
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<StensorResultType,T2SST2toST2StensorProductExp>
@@ -99,9 +97,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename ST2toST2Type, StensorConcept StensorType>
-    TFEL_MATH_INLINE Expr(const ST2toST2Type& a, const StensorType& b) {
-      static_assert(implementsST2toST2Concept<ST2toST2Type>());
+    template <ST2toST2Concept ST2toST2Type, StensorConcept StensorType>
+    TFEL_HOST_DEVICE constexpr Expr(const ST2toST2Type& a,
+                                    const StensorType& b) noexcept {
       static_assert(getSpaceDimension<ST2toST2Type>() == 2u);
       static_assert(getSpaceDimension<StensorType>() == 2u);
       this->v[0] =
@@ -117,22 +115,21 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_MATH_INLINE const value_type& operator()(
-        const unsigned short i) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator()
     /*!
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_MATH_INLINE const value_type& operator[](
-        const unsigned short i) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator[](
+        const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator[]
-    /*!
-     * \return the runtime properties
-     */
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    //! \return the runtime properties
+    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const
+        noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<StensorResultType,T2SST2toST2StensorProductExp>
@@ -156,9 +153,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename ST2toST2Type, StensorConcept StensorType>
-    TFEL_MATH_INLINE Expr(const ST2toST2Type& a, const StensorType& b) {
-      static_assert(implementsST2toST2Concept<ST2toST2Type>());
+    template <ST2toST2Concept ST2toST2Type, StensorConcept StensorType>
+    TFEL_HOST_DEVICE constexpr Expr(const ST2toST2Type& a,
+                                    const StensorType& b) noexcept {
       static_assert(getSpaceDimension<ST2toST2Type>() == 3u);
       static_assert(getSpaceDimension<StensorType>() == 3u);
       this->v[0] = a(0, 0) * b(0) + a(0, 1) * b(1) + a(0, 2) * b(2) +
@@ -178,22 +175,20 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_MATH_INLINE const value_type& operator()(
-        const unsigned short i) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator()
     /*!
      * \brief access operator
      * \param[in] i : index
      */
-    TFEL_MATH_INLINE const value_type& operator[](
-        const unsigned short i) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator[](
+        const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator[]
-    /*!
-     * \return the runtime properties
-     */
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    //! \return the runtime properties
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<StensorResultType,T2SST2toST2StensorProductExp>

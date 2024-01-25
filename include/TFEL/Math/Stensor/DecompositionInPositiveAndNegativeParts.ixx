@@ -33,14 +33,15 @@ namespace tfel::math::internals {
 
 namespace tfel::math {
 
-  template <typename DPPType, StensorConcept PPType, StensorConcept StensorType>
+  template <ST2toST2Concept DPPType,
+            StensorConcept PPType,
+            StensorConcept StensorType>
   void computeStensorPositivePartAndDerivative(
       DPPType& dpp,
       PPType& pp,
       const StensorType& s,
       const numeric_type<StensorType> eps)  //
       requires(
-          implementsST2toST2Concept<DPPType>() &&
           getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<StensorType>() == 1u &&
@@ -85,14 +86,15 @@ namespace tfel::math {
     }
   }
 
-  template <typename DPPType, StensorConcept PPType, StensorConcept StensorType>
+  template <ST2toST2Concept DPPType,
+            StensorConcept PPType,
+            StensorConcept StensorType>
   void computeStensorPositivePartAndDerivative(
       DPPType& dpp,
       PPType& pp,
       const StensorType& s,
       const numeric_type<StensorType> eps)  //
       requires(
-          implementsST2toST2Concept<DPPType>() &&
           getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<StensorType>() == 2u &&
@@ -159,14 +161,15 @@ namespace tfel::math {
     }
   }
 
-  template <typename DPPType, StensorConcept PPType, StensorConcept StensorType>
+  template <ST2toST2Concept DPPType,
+            StensorConcept PPType,
+            StensorConcept StensorType>
   void computeStensorPositivePartAndDerivative(
       DPPType& dpp,
       PPType& pp,
       const StensorType& s,
       const numeric_type<StensorType> eps)  //
       requires(
-          implementsST2toST2Concept<DPPType>() &&
           getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<StensorType>() == 3u &&
@@ -309,8 +312,8 @@ namespace tfel::math {
     }
   }
 
-  template <typename DPPType,
-            typename DNPType,
+  template <ST2toST2Concept DPPType,
+            ST2toST2Concept DNPType,
             StensorConcept PPType,
             StensorConcept NPType,
             StensorConcept StensorType>
@@ -322,8 +325,6 @@ namespace tfel::math {
       const StensorType& s,
       const numeric_type<StensorType> eps)  //
       requires(
-          implementsST2toST2Concept<DPPType>() &&
-          implementsST2toST2Concept<DNPType>() &&
           getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
@@ -390,8 +391,8 @@ namespace tfel::math {
     }
   }  // end of computeStensorDecompositionInPositiveAndNegativeParts
 
-  template <typename DPPType,
-            typename DNPType,
+  template <ST2toST2Concept DPPType,
+            ST2toST2Concept DNPType,
             StensorConcept PPType,
             StensorConcept NPType,
             StensorConcept StensorType>
@@ -403,8 +404,6 @@ namespace tfel::math {
       const StensorType& s,
       const numeric_type<StensorType> eps)  //
       requires(
-          implementsST2toST2Concept<DPPType>() &&
-          implementsST2toST2Concept<DNPType>() &&
           getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
@@ -494,8 +493,8 @@ namespace tfel::math {
     }
   }  // end of computeStensorDecompositionInPositiveAndNegativeParts
 
-  template <typename DPPType,
-            typename DNPType,
+  template <ST2toST2Concept DPPType,
+            ST2toST2Concept DNPType,
             StensorConcept PPType,
             StensorConcept NPType,
             StensorConcept StensorType>
@@ -507,8 +506,6 @@ namespace tfel::math {
       const StensorType& s,
       const numeric_type<StensorType> eps)  //
       requires(
-          implementsST2toST2Concept<DPPType>() &&
-          implementsST2toST2Concept<DNPType>() &&
           getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
           getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&

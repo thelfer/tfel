@@ -31,7 +31,7 @@ namespace tfel::math {
    */
   template <typename ST2toST2ResultType>
   struct Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<1u>>
-      : public ST2toST2Concept<
+      : public ST2toST2ConceptBase<
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<1u>>>,
         public array_holder<9u, numeric_type<ST2toST2ResultType>> {
     static_assert(getSpaceDimension<ST2toST2ResultType>() == 1u);
@@ -77,7 +77,7 @@ namespace tfel::math {
    */
   template <typename ST2toST2ResultType>
   struct Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<2u>>
-      : public ST2toST2Concept<
+      : public ST2toST2ConceptBase<
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<2u>>>,
         public array_holder<16u, numeric_type<ST2toST2ResultType>> {
     //! a simple check
@@ -140,7 +140,7 @@ namespace tfel::math {
    */
   template <typename ST2toST2ResultType>
   struct Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<3u>>
-      : public ST2toST2Concept<
+      : public ST2toST2ConceptBase<
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<3u>>>,
         public array_holder<36u, numeric_type<ST2toST2ResultType>> {
     static_assert(getSpaceDimension<ST2toST2ResultType>() == 3u);

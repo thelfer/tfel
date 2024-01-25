@@ -262,10 +262,9 @@ namespace tfel::math {
   }  // end of stensor<N,T>::computeEigenTensors
 
   template <unsigned short N, typename T>
-  template <typename ST2toST2Type>
+  template <ST2toST2Concept ST2toST2Type>
   TFEL_HOST_DEVICE std::enable_if_t<
-      (implementsST2toST2Concept<ST2toST2Type>()) &&
-          (getSpaceDimension<ST2toST2Type>() == N) &&
+      (getSpaceDimension<ST2toST2Type>() == N) &&
           (isAssignableTo<BinaryOperationResult<base_type<T>, T, OpDiv>,
                           numeric_type<ST2toST2Type>>()),
       void>
@@ -311,12 +310,11 @@ namespace tfel::math {
   }  // end of stensor<N,T>::computeIsotropicFunctionDerivative
 
   template <unsigned short N, typename T>
-  template <typename ST2toST2Type,
+  template <ST2toST2Concept ST2toST2Type,
             typename Function,
             typename FunctionDerivative>
   TFEL_HOST_DEVICE std::enable_if_t<
-      (implementsST2toST2Concept<ST2toST2Type>()) &&
-          (getSpaceDimension<ST2toST2Type>() == N) &&
+      (getSpaceDimension<ST2toST2Type>() == N) &&
           (isAssignableTo<BinaryOperationResult<base_type<T>, T, OpDiv>,
                           numeric_type<ST2toST2Type>>()),
       void>
@@ -345,10 +343,9 @@ namespace tfel::math {
   }  // end of stensor<N,T>::computeIsotropicFunctionDerivative
 
   template <unsigned short N, typename T>
-  template <typename ST2toST2Type, typename T1, typename T2>
+  template <ST2toST2Concept ST2toST2Type, typename T1, typename T2>
   TFEL_HOST_DEVICE std::enable_if_t<
-      (implementsST2toST2Concept<ST2toST2Type>()) &&
-          (getSpaceDimension<ST2toST2Type>() == N) &&
+      (getSpaceDimension<ST2toST2Type>() == N) &&
           (isAssignableTo<BinaryOperationResult<base_type<T>, T, OpDiv>,
                           numeric_type<ST2toST2Type>>()),
       void>
@@ -420,16 +417,14 @@ namespace tfel::math {
     return r;
   }  // end of stensor<N,T>::computeIsotropicFunctionAndDerivative
 
-  // ChangeBasis
   template <unsigned short N, typename T>
-  TFEL_HOST_DEVICE void stensor<N, T>::changeBasis(
-      const rotation_matrix<T>& m) {
+  TFEL_HOST_DEVICE constexpr void stensor<N, T>::changeBasis(
+      const rotation_matrix<base_type<T>>& m) noexcept {
     return tfel::math::internals::StensorChangeBasis<N>::exe(this->v, m);
   }
 
-  // Return Id
   template <unsigned short N, typename T>
-  constexpr stensor<N, base_type<T>> stensor<N, T>::Id() {
+  constexpr stensor<N, base_type<T>> stensor<N, T>::Id() noexcept {
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     constexpr auto zero = base_type<T>{0};
     constexpr auto one = base_type<T>{1};

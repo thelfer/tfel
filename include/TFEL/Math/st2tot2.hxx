@@ -128,10 +128,9 @@ namespace tfel::math {
      * \param[in] C : derivative of the first tensor
      * \return the left part of the derivative of a tensor product
      */
-    template <StensorConcept StensorType, typename ST2toST2Type>
+    template <StensorConcept StensorType, ST2toST2Concept ST2toST2Type>
     static TFEL_MATH_INLINE std::enable_if_t<
-        implementsST2toST2Concept<ST2toST2Type>() &&
-            getSpaceDimension<StensorType>() == N &&
+        getSpaceDimension<StensorType>() == N &&
             getSpaceDimension<ST2toST2Type>() == N &&
             isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
                                                  numeric_type<ST2toST2Type>,
@@ -144,27 +143,26 @@ namespace tfel::math {
      * \return the right part of the derivative of a tensor product
      */
     template <StensorConcept StensorType>
-    static TFEL_MATH_INLINE std::enable_if_t<
+    TFEL_HOST_DEVICE static constexpr std::enable_if_t<
         getSpaceDimension<StensorType>() == N &&
             isAssignableTo<numeric_type<StensorType>, ValueType>(),
         Expr<st2tot2<N, ValueType>, StensorProductRightDerivativeExpr<N>>>
-    tprd(const StensorType&);
+    tprd(const StensorType&) noexcept;
     /*!
      * \param[in] A : first tensor of the product
      * \param[in] C : derivative of the first tensor
      * \return the right part of the derivative of a tensor product
      */
-    template <StensorConcept StensorType, typename ST2toST2Type>
-    static TFEL_MATH_INLINE std::enable_if_t<
-        implementsST2toST2Concept<ST2toST2Type>() &&
-            getSpaceDimension<StensorType>() == N &&
+    template <StensorConcept StensorType, ST2toST2Concept ST2toST2Type>
+    TFEL_HOST_DEVICE static constexpr std::enable_if_t<
+        getSpaceDimension<StensorType>() == N &&
             getSpaceDimension<ST2toST2Type>() == N &&
             isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
                                                  numeric_type<ST2toST2Type>,
                                                  OpMult>,
                            ValueType>(),
         Expr<st2tot2<N, ValueType>, StensorProductRightDerivativeExpr<N>>>
-    tprd(const StensorType&, const ST2toST2Type&);
+    tprd(const StensorType&, const ST2toST2Type&) noexcept;
     //
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(st2tot2,
                                                GenericFixedSizeArrayBase);
@@ -174,8 +172,7 @@ namespace tfel::math {
     //! \brief import values from an external memory location
     void import(const base_type<ValueType>* const);
     //
-    template <typename InputIterator>
-    TFEL_MATH_INLINE2 void copy(const InputIterator src);
+    TFEL_HOST_DEVICE constexpr void copy(const auto) noexcept;
   };
 
   /*!

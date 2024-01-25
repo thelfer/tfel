@@ -18,9 +18,7 @@
 
 namespace tfel::math {
 
-  /*!
-   * Empty structure allowing partial specialisation
-   */
+  //! \brief empty structure allowing partial specialisation
   template <unsigned short N>
   struct StensorProductLeftDerivativeExpr {
   };  // end of struct StensorProductLeftDerivativeExpr
@@ -42,7 +40,7 @@ namespace tfel::math {
      * \param[in] B : second tensor of the product
      */
     template <StensorConcept StensorType>
-    Expr(const StensorType& b) {
+    TFEL_HOST_DEVICE constexpr Expr(const StensorType& b) noexcept {
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());
       static_assert(isAssignableTo<numeric_type<StensorType>,
@@ -59,9 +57,9 @@ namespace tfel::math {
      * \param[in] B : second tensor of the product
      * \param[in] C : derivative of the first tensor
      */
-    template <StensorConcept StensorType, typename ST2toST2Type>
-    Expr(const StensorType& b, const ST2toST2Type& C) {
-      static_assert(implementsST2toST2Concept<ST2toST2Type>());
+    template <StensorConcept StensorType, ST2toST2Concept ST2toST2Type>
+    TFEL_HOST_DEVICE constexpr Expr(const StensorType& b,
+                                    const ST2toST2Type& C) noexcept {
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());
       static_assert(getSpaceDimension<ST2toST2Type>() ==
@@ -86,8 +84,8 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    const value_type& operator()(const unsigned short i,
-                                 const unsigned short j) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 3 + j];
     }  // end of operator()
     /*!
@@ -95,7 +93,7 @@ namespace tfel::math {
      * In this case, the number of lines and columns
      * are deduced from the template parameter
      */
-    RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct
@@ -118,7 +116,7 @@ namespace tfel::math {
      * \param[in] B : second tensor of the product
      */
     template <StensorConcept StensorType>
-    Expr(const StensorType& b) {
+    TFEL_HOST_DEVICE constexpr Expr(const StensorType& b) noexcept {
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());
       static_assert(isAssignableTo<numeric_type<StensorType>,
@@ -152,9 +150,9 @@ namespace tfel::math {
      * \param[in] B : second tensor of the product
      * \param[in] C : derivative of the first tensor
      */
-    template <StensorConcept StensorType, typename ST2toST2Type>
-    Expr(const StensorType& b, const ST2toST2Type& C) {
-      static_assert(implementsST2toST2Concept<ST2toST2Type>());
+    template <StensorConcept StensorType, ST2toST2Concept ST2toST2Type>
+    TFEL_HOST_DEVICE constexpr Expr(const StensorType& b,
+                                    const ST2toST2Type& C) noexcept {
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());
       static_assert(getSpaceDimension<ST2toST2Type>() ==
@@ -193,8 +191,8 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    const value_type& operator()(const unsigned short i,
-                                 const unsigned short j) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 4 + j];
     }  // end of operator()
     /*!
@@ -202,11 +200,11 @@ namespace tfel::math {
      * In this case, the number of lines and columns
      * are deduced from the template parameter
      */
-    RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct
-      // Expr<ST2toT2ResultType,StensorProductLeftDerivativeExpr<1u> >
+      // Expr<ST2toT2ResultType,StensorProductLeftDerivativeExpr<2u> >
 
   /*!
    * Partial specialisation for 3D tensor
@@ -225,7 +223,7 @@ namespace tfel::math {
      * \param[in] B : second tensor of the product
      */
     template <StensorConcept StensorType>
-    Expr(const StensorType& b) {
+    TFEL_HOST_DEVICE constexpr Expr(const StensorType& b) noexcept {
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());
       static_assert(isAssignableTo<numeric_type<StensorType>,
@@ -293,9 +291,9 @@ namespace tfel::math {
      * \param[in] B : second tensor of the product
      * \param[in] C : derivative of the first tensor
      */
-    template <StensorConcept StensorType, typename ST2toST2Type>
-    Expr(const StensorType& b, const ST2toST2Type& C) {
-      static_assert(implementsST2toST2Concept<ST2toST2Type>());
+    template <StensorConcept StensorType, ST2toST2Concept ST2toST2Type>
+    TFEL_HOST_DEVICE constexpr Expr(const StensorType& b,
+                                    const ST2toST2Type& C) noexcept {
       static_assert(getSpaceDimension<ST2toT2ResultType>() ==
                     getSpaceDimension<StensorType>());
       static_assert(getSpaceDimension<ST2toST2Type>() ==
@@ -421,8 +419,8 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    const value_type& operator()(const unsigned short i,
-                                 const unsigned short j) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 6 + j];
     }  // end of operator()
     /*!
@@ -430,11 +428,11 @@ namespace tfel::math {
      * In this case, the number of lines and columns
      * are deduced from the template parameter
      */
-    RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct
-      // Expr<ST2toT2ResultType,StensorProductLeftDerivativeExpr<1u> >
+      // Expr<ST2toT2ResultType,StensorProductLeftDerivativeExpr<2u> >
 
 }  // namespace tfel::math
 

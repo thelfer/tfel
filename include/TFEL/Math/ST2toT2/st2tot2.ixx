@@ -35,10 +35,9 @@ namespace tfel::math {
   }  // end of st2tot2<N,T>
 
   template <unsigned short N, typename ValueType>
-  template <StensorConcept StensorType, typename ST2toST2Type>
+  template <StensorConcept StensorType, ST2toST2Concept ST2toST2Type>
   std::enable_if_t<
-      implementsST2toST2Concept<ST2toST2Type>() &&
-          getSpaceDimension<StensorType>() == N &&
+      getSpaceDimension<StensorType>() == N &&
           getSpaceDimension<ST2toST2Type>() == N &&
           isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
                                                numeric_type<ST2toST2Type>,
@@ -52,33 +51,32 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <StensorConcept StensorType>
-  std::enable_if_t<getSpaceDimension<StensorType>() == N &&
-                       isAssignableTo<numeric_type<StensorType>, T>(),
-                   Expr<st2tot2<N, T>, StensorProductRightDerivativeExpr<N>>>
-  st2tot2<N, T>::tprd(const StensorType& a) {
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
+      getSpaceDimension<StensorType>() == N &&
+          isAssignableTo<numeric_type<StensorType>, T>(),
+      Expr<st2tot2<N, T>, StensorProductRightDerivativeExpr<N>>>
+  st2tot2<N, T>::tprd(const StensorType& a) noexcept {
     return Expr<st2tot2<N, T>, StensorProductRightDerivativeExpr<N>>(a);
   }
 
   template <unsigned short N, typename T>
-  template <StensorConcept StensorType, typename ST2toST2Type>
-  std::enable_if_t<
-      implementsST2toST2Concept<ST2toST2Type>() &&
-          getSpaceDimension<StensorType>() == N &&
+  template <StensorConcept StensorType, ST2toST2Concept ST2toST2Type>
+  TFEL_HOST_DEVICE constexpr std::enable_if_t<
+      getSpaceDimension<StensorType>() == N &&
           getSpaceDimension<ST2toST2Type>() == N &&
           isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
                                                numeric_type<ST2toST2Type>,
                                                OpMult>,
                          T>(),
       Expr<st2tot2<N, T>, StensorProductRightDerivativeExpr<N>>>
-  st2tot2<N, T>::tprd(const StensorType& a, const ST2toST2Type& C) {
+  st2tot2<N, T>::tprd(const StensorType& a, const ST2toST2Type& C) noexcept {
     return Expr<st2tot2<N, T>, StensorProductRightDerivativeExpr<N>>(a, C);
   }
 
   template <unsigned short N, typename T>
-  template <typename InputIterator>
-  TFEL_MATH_INLINE2 void st2tot2<N, T>::copy(const InputIterator src) {
+  TFEL_HOST_DEVICE constexpr void st2tot2<N, T>::copy(const auto p) noexcept {
     tfel::fsalgo::copy<TensorDimeToSize<N>::value *
-                       StensorDimeToSize<N>::value>::exe(src, *this);
+                       StensorDimeToSize<N>::value>::exe(p, *this);
   }
 
 }  // end of namespace tfel::math

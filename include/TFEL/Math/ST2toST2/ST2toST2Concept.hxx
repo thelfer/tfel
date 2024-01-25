@@ -27,48 +27,61 @@
 
 namespace tfel::math {
 
-  //! a simple alias
-  template <typename A>
-  struct ST2toST2TransposeExpr;
-
   /*!
    * \class ST2toST2Tag
    * \brief Helper class to characterise st2tost2.
    */
   struct ST2toST2Tag {};
-
+  /*!
+   * \brief an helper class that simply exposes publically a member named
+   * ConceptTag as an alias to StensorTag.
+   *
+   * The main reason for this alias is to properly implement the `ConceptRebind`
+   * metafunction.
+   */
   template <class T>
-  struct ST2toST2Concept {
-    typedef ST2toST2Tag ConceptTag;
+  struct ST2toST2ConceptBase {
+    using ConceptTag = ST2toST2Tag;
+  };
+  /*!
+   * \brief definition of the StensorConcept
+   * a class matching the stensor concept must expose the `StensorTag` and have
+   * access operators.
+   */
+  template <typename T>
+  concept ST2toST2Concept =
+      (std::is_same_v<typename std::decay_t<T>::ConceptTag, ST2toST2Tag>)&&  //
+      (requires(const T t, const unsigned short i, const unsigned short j) {
+        t(i, j);
+      });
+  //! a simple alias
+  template <ST2toST2Concept A>
+  struct ST2toST2TransposeExpr;
 
-   protected:
-    ST2toST2Concept() = default;
-    ST2toST2Concept(ST2toST2Concept&&) = default;
-    ST2toST2Concept(const ST2toST2Concept&) = default;
-    ST2toST2Concept& operator=(const ST2toST2Concept&) = default;
-    ~ST2toST2Concept() = default;
+  //! \brief partial specialisation for symmetric tensors
+  template <typename T>
+  struct ConceptRebind<ST2toST2Tag, T> {
+    //! \brief a simple alias
+    using type = ST2toST2ConceptBase<T>;
   };
 
   /*!
-   * \brief an helper function which returns if the given type implements the
-   * `ST2toST2Concept`.
-   * \tparam ST2toST2Type: type tested
+   * \return the sum of the absolute values of all components of an
+   * linear application transforming a symmetric tensor in a symmetric tensor
+   * \param[in] s: linear application transforming a symmetric tensor in a
+   * symmetric tensor
    */
-  template <typename ST2toST2Type>
-  TFEL_HOST_DEVICE constexpr bool implementsST2toST2Concept() {
-    return tfel::meta::implements<ST2toST2Type, ST2toST2Concept>();
-  }  // end of implementsST2toST2Concept
-
-  template <typename T>
-  struct ConceptRebind<ST2toST2Tag, T> {
-    typedef ST2toST2Concept<T> type;
-  };
-
-  template <typename ST2toST2Type>
-  std::enable_if_t<
-      implementsST2toST2Concept<ST2toST2Type>(),
-      typename tfel::typetraits::AbsType<numeric_type<ST2toST2Type>>::type>
-  abs(const ST2toST2Type&);
+  TFEL_HOST_DEVICE constexpr auto abs(const ST2toST2Concept auto&) noexcept;
+  /*!
+   * \return a transposed view of a fourth order tensor
+   * \param[in] t: fourth order tensor
+   */
+  TFEL_HOST_DEVICE constexpr auto transpose(ST2toST2Concept auto&&) noexcept;
+  /*!
+   * \return the determinant of a `st2tost2`
+   * \param[in] s: fourth order tensor
+   */
+  TFEL_HOST_DEVICE constexpr auto det(const ST2toST2Concept auto&) noexcept;
 
   /*!
    * \brief compute de derivative of the push-forward of a symmetric
@@ -79,12 +92,12 @@ namespace tfel::math {
    * \param[out] r: derivative of the push-forward symmetric tensor
    * \param[in]  F: deformation gradient
    */
-  template <typename ST2toST2ResultType, TensorConcept TensorType>
-  typename std::enable_if<implementsST2toST2Concept<ST2toST2ResultType>() &&
-                              tfel::typetraits::IsFundamentalNumericType<
-                                  numeric_type<TensorType>>::cond,
-                          void>::type
-  computePushForwardDerivative(ST2toST2ResultType&, const TensorType&);
+  template <ST2toST2Concept ST2toST2ResultType, TensorConcept TensorType>
+  TFEL_HOST_DEVICE constexpr void computePushForwardDerivative(
+      ST2toST2ResultType&,
+      const TensorType&) noexcept  //
+      requires(tfel::typetraits::IsFundamentalNumericType<
+               numeric_type<TensorType>>::cond);
   /*!
    * \brief performs the push_forward of a st2tost2:
    * \[
@@ -94,85 +107,28 @@ namespace tfel::math {
    * \param[in] C: input
    * \param[in] F: deformation gradient
    */
-  template <typename ST2toST2Type,
-            typename ST2toST2Type2,
+  template <ST2toST2Concept ST2toST2Type,
+            ST2toST2Concept ST2toST2Type2,
             TensorConcept TensorType>
-  std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
-                       implementsST2toST2Concept<ST2toST2Type2>() &&
-                       getSpaceDimension<ST2toST2Type>() == 1u &&
-                       getSpaceDimension<ST2toST2Type2>() == 1u &&
-                       getSpaceDimension<TensorType>() == 1u,
-                   void>
-  push_forward(ST2toST2Type&, const ST2toST2Type2&, const TensorType&);
+  TFEL_HOST_DEVICE constexpr void push_forward(ST2toST2Type&,
+                                               const ST2toST2Type2&,
+                                               const TensorType&) noexcept  //
+      requires(getSpaceDimension<ST2toST2Type>() ==
+                   getSpaceDimension<ST2toST2Type2>() &&
+               getSpaceDimension<ST2toST2Type>() ==
+                   getSpaceDimension<TensorType>());
+
   /*!
-   * \brief performs the push_forward of a st2tost2:
-   * \[
-   * Ct_{ijkl}=F_{im}F_{jn}F_{kp}F_{lq}C_{mnpq}
-   * \]
-   * \param[out] Ct: result
-   * \param[in] C: input
-   * \param[in] F: deformation gradient
-   */
-  template <typename ST2toST2Type,
-            typename ST2toST2Type2,
-            TensorConcept TensorType>
-  std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
-                       implementsST2toST2Concept<ST2toST2Type2>() &&
-                       getSpaceDimension<ST2toST2Type>() == 2u &&
-                       getSpaceDimension<ST2toST2Type2>() == 2u &&
-                       getSpaceDimension<TensorType>() == 2u,
-                   void>
-  push_forward(ST2toST2Type&, const ST2toST2Type2&, const TensorType&);
-  /*!
-   * \brief performs the push_forward of a st2tost2:
-   * \[
-   * Ct_{ijkl}=F_{im}F_{jn}F_{kp}F_{lq}C_{mnpq}
-   * \]
-   * \param[out] Ct: result
-   * \param[in] C: input
-   * \param[in] F: deformation gradient
-   */
-  template <typename ST2toST2Type,
-            typename ST2toST2Type2,
-            TensorConcept TensorType>
-  std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
-                       implementsST2toST2Concept<ST2toST2Type2>() &&
-                       getSpaceDimension<ST2toST2Type>() == 3u &&
-                       getSpaceDimension<ST2toST2Type2>() == 3u &&
-                       getSpaceDimension<TensorType>() == 3u,
-                   void>
-  push_forward(ST2toST2Type&, const ST2toST2Type2&, const TensorType&);
-  /*!
-   * \return a transposed view
+   * \brief an helper function which returns if the given type implements the
+   * `ST2toST2Concept`.
+   * \tparam ST2toST2Type: type tested
+   * \note function given for backward compatibility with versions prior
+   * to 5.0
    */
   template <typename ST2toST2Type>
-  TFEL_MATH_INLINE auto transpose(ST2toST2Type&& t) -> std::enable_if_t<
-      implementsST2toST2Concept<ST2toST2Type>(),
-      Expr<EvaluationResult<ST2toST2Type>, ST2toST2TransposeExpr<decltype(t)>>>;
-  /*!
-   * \return the determinant of a `st2tost2`
-   * \param[in] s: fourth order tensor
-   */
-  template <typename ST2toST2Type>
-  std::enable_if_t<
-      implementsST2toST2Concept<ST2toST2Type>() &&
-          (getSpaceDimension<ST2toST2Type>() == 1u) &&
-          isScalar<numeric_type<ST2toST2Type>>(),
-      typename ComputeUnaryResult<numeric_type<ST2toST2Type>, Power<3>>::Result>
-  det(const ST2toST2Type&);
-  /*!
-   * \return the determinant of a `st2tost2`
-   * \param[in] s: fourth order tensor
-   */
-  template <typename ST2toST2Type>
-  std::enable_if_t<implementsST2toST2Concept<ST2toST2Type>() &&
-                       ((getSpaceDimension<ST2toST2Type>() == 2u) ||
-                        (getSpaceDimension<ST2toST2Type>() == 3u)) &&
-                       isScalar<numeric_type<ST2toST2Type>>(),
-                   typename ComputeUnaryResult<
-                       numeric_type<ST2toST2Type>,
-                       Power<getSpaceDimension<ST2toST2Type>()>>::Result>
-  det(const ST2toST2Type&);
+  [[deprecated]] TFEL_HOST_DEVICE constexpr bool implementsST2toST2Concept() {
+    return ST2toST2Concept<ST2toST2Type>;
+  }  // end of implementsST2toST2Concept
 
 }  // end of namespace tfel::math
 

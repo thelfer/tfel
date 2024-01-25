@@ -30,17 +30,16 @@ namespace tfel::math {
    * \tparam A: type of the object to be transposed
    * \pre A must match the `ST2toST2Concept` concept
    */
-  template <typename A>
+  template <ST2toST2Concept A>
   struct TFEL_VISIBILITY_LOCAL ST2toST2TransposeExpr : public ExprBase {
-    static_assert(implementsST2toST2Concept<A>());
     //! a simple alias
     using RunTimeProperties = EmptyRunTimeProperties;
     //! a simple alias
     using IndexType = unsigned short;
     //! a simple alias
     using NumType = numeric_type<A>;
-
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    //! \return the runtime properties
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return EmptyRunTimeProperties();
     }
 
@@ -52,11 +51,20 @@ namespace tfel::math {
     typedef const NumType& const_reference;
     typedef IndexType size_type;
     typedef ptrdiff_t difference_type;
-
-    TFEL_MATH_INLINE ST2toST2TransposeExpr(A l) : a(l) {}
-
-    TFEL_MATH_INLINE NumType operator()(const IndexType i,
-                                        const IndexType j) const {
+    /*!
+     * \brief access operator
+     * \param[in] i: row number
+     * \param[in] j: colum number
+     */
+    TFEL_HOST_DEVICE constexpr ST2toST2TransposeExpr(A l) noexcept : a(l) {}
+    /*!
+     * \brief access operator
+     * \param[in] i: row number
+     * \param[in] j: colum number
+     */
+    TFEL_HOST_DEVICE constexpr NumType operator()(const IndexType i,
+                                                  const IndexType j) const
+        noexcept {
       return this->a(j, i);
     }  // end of operator()
     //! storage for the object

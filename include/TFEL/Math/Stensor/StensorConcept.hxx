@@ -58,9 +58,7 @@ namespace tfel::math {
       (requires(const T t, const unsigned short i) { t[i]; }) &&            //
       (requires(const T t, const unsigned short i) { t(i); });
 
-  /*!
-   * \brief partial specialisation for symmetric tensors
-   */
+  //! \brief partial specialisation for symmetric tensors
   template <typename Type>
   struct ConceptRebind<StensorTag, Type> {
     //! \brief a simple alias
