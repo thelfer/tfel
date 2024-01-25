@@ -13,8 +13,8 @@
  */
 
 #include <cctype>
-#include <iterator>
 #include <sstream>
+#include <iterator>
 #include <stdexcept>
 #include <algorithm>
 
@@ -1256,13 +1256,7 @@ namespace mfront {
   void DSLBase::treatStaticVar() {
     this->checkNotEndOfFile("DSLBase::treatStaticVar",
                             "Cannot read type of static variable.");
-    const auto type = this->current->value;
-    if (!this->isValidIdentifier(type, false)) {
-      --(this->current);
-      this->throwRuntimeError("DSLBase::treatStaticVar",
-                              "type given is not valid.");
-    }
-    ++(this->current);
+    const auto type = this->readType();
     this->checkNotEndOfFile("DSLBase::treatStaticVar",
                             "Cannot read variable name.");
     const auto sname = this->current->value;

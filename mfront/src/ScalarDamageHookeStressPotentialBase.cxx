@@ -447,8 +447,10 @@ namespace mfront::bbrick {
               "computeElasticStiffness<N, "
               "stress>::exe(mfront_ScalarDamageHooke," +
               lambda + "," + mu + ");\n";
-          to.code += " Dt = " + ge + " * mfront_ScalarDamageHooke * mfront_Je - ";
-          to.code += "((mfront_ScalarDamageHooke * (this->eel)) ^ (mfront_Jd));\n";
+          to.code +=
+              " Dt = " + ge + " * mfront_ScalarDamageHooke * mfront_Je - ";
+          to.code +=
+              "((mfront_ScalarDamageHooke * (this->eel)) ^ (mfront_Jd));\n";
         }
         to.code += "} else {\n";
         to.code += "  return false;\n";
