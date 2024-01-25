@@ -31,7 +31,7 @@ namespace tfel::math {
    */
   template <typename T2toT2ResultType>
   struct Expr<T2toT2ResultType, TensorProductRightDerivativeExpr<1u>>
-      : public T2toT2Concept<
+      : public T2toT2ConceptBase<
             Expr<T2toT2ResultType, TensorProductRightDerivativeExpr<1u>>>,
         public array_holder<9u, numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 1u);
@@ -107,7 +107,7 @@ namespace tfel::math {
    */
   template <typename T2toT2ResultType>
   struct Expr<T2toT2ResultType, TensorProductRightDerivativeExpr<2u>>
-      : public T2toT2Concept<
+      : public T2toT2ConceptBase<
             Expr<T2toT2ResultType, TensorProductRightDerivativeExpr<2u>>>,
         public array_holder<25u, numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 2u);
@@ -207,7 +207,7 @@ namespace tfel::math {
    */
   template <typename T2toT2ResultType>
   struct Expr<T2toT2ResultType, TensorProductRightDerivativeExpr<3u>>
-      : public T2toT2Concept<
+      : public T2toT2ConceptBase<
             Expr<T2toT2ResultType, TensorProductRightDerivativeExpr<3u>>>,
         public array_holder<81u, numeric_type<T2toT2ResultType>> {
     static_assert(getSpaceDimension<T2toT2ResultType>() == 3u);

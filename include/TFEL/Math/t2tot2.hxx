@@ -46,13 +46,11 @@ namespace tfel::math {
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
-  template <typename T2toT2Type, typename ScalarType>
+  template <T2toT2Concept T2toT2Type, typename ScalarType>
   struct DerivativeTypeDispatcher<T2toT2Tag,
                                   ScalarTag,
                                   T2toT2Type,
                                   ScalarType> {
-    static_assert(implementsT2toT2Concept<T2toT2Type>(),
-                  "template argument T2toT2Type is not a t2tot2");
     static_assert(isScalar<ScalarType>(),
                   "template argument ScalarType is not a scalar");
     static_assert(isScalar<numeric_type<T2toT2Type>>(),
@@ -65,13 +63,11 @@ namespace tfel::math {
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
-  template <typename ScalarType, typename T2toT2Type>
+  template <typename ScalarType, T2toT2Concept T2toT2Type>
   struct DerivativeTypeDispatcher<ScalarTag,
                                   T2toT2Tag,
                                   ScalarType,
                                   T2toT2Type> {
-    static_assert(implementsT2toT2Concept<T2toT2Type>(),
-                  "template argument T2toT2Type is not a t2tot2");
     static_assert(isScalar<ScalarType>(),
                   "template argument ScalarType is not a scalar");
     static_assert(isScalar<numeric_type<T2toT2Type>>(),
@@ -104,7 +100,7 @@ namespace tfel::math {
   };  // end of struct DerivativeTypeDispatcher
 
   template <unsigned short N, typename ValueType>
-  struct t2tot2 : T2toT2Concept<t2tot2<N, ValueType>>,
+  struct t2tot2 : T2toT2ConceptBase<t2tot2<N, ValueType>>,
                   GenericFixedSizeArray<
                       t2tot2<N, ValueType>,
                       FixedSizeRowMajorMatrixPolicy<TensorDimeToSize<N>::value,
@@ -122,77 +118,68 @@ namespace tfel::math {
      * system
      * \param[in] r : rotation matrix
      */
-    TFEL_HOST_DEVICE static t2tot2<N, base_type<ValueType>> fromRotationMatrix(
-        const rotation_matrix<ValueType>&);
+    TFEL_HOST_DEVICE static constexpr auto fromRotationMatrix(
+        const rotation_matrix<ValueType>&) noexcept;
     /*!
      * \param[in] B : second tensor of the product
      * \return the left part of the derivative of a tensor product
      */
     template <TensorConcept TensorType>
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE std::enable_if_t<
+    TFEL_HOST_DEVICE static constexpr auto
+    tpld(const TensorType&) noexcept requires(
         getSpaceDimension<TensorType>() == N &&
-            isAssignableTo<numeric_type<TensorType>, ValueType>(),
-        Expr<t2tot2<N, ValueType>, TensorProductLeftDerivativeExpr<N>>>
-    tpld(const TensorType&);
+        isAssignableTo<numeric_type<TensorType>, ValueType>());
     /*!
      * \param[in] B : second tensor of the product
      * \param[in] C : derivative of the first tensor
      * \return the left part of the derivative of a tensor product
      */
-    template <TensorConcept TensorType, typename T2toT2Type>
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE std::enable_if_t<
-        implementsT2toT2Concept<T2toT2Type>() &&
-            getSpaceDimension<TensorType>() == N &&
-            getSpaceDimension<T2toT2Type>() == N &&
-            isAssignableTo<
-                typename ComputeBinaryResult<numeric_type<TensorType>,
-                                             numeric_type<T2toT2Type>,
-                                             OpMult>::Result,
-                ValueType>(),
-        Expr<t2tot2<N, ValueType>, TensorProductLeftDerivativeExpr<N>>>
-    tpld(const TensorType&, const T2toT2Type&);
+    template <TensorConcept TensorType, T2toT2Concept T2toT2Type>
+    TFEL_HOST_DEVICE static constexpr auto
+    tpld(const TensorType&, const T2toT2Type&) noexcept requires(
+        getSpaceDimension<TensorType>() == N &&
+        getSpaceDimension<T2toT2Type>() == N &&
+        isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
+                                                    numeric_type<T2toT2Type>,
+                                                    OpMult>::Result,
+                       ValueType>());
     /*!
      * \param[in] A : first tensor of the product
      * \return the right part of the derivative of a tensor product
      */
     template <TensorConcept TensorType>
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE std::enable_if_t<
+    TFEL_HOST_DEVICE static constexpr auto
+    tprd(const TensorType&) noexcept requires(
         getSpaceDimension<TensorType>() == N &&
-            isAssignableTo<numeric_type<TensorType>, ValueType>(),
-        Expr<t2tot2<N, ValueType>, TensorProductRightDerivativeExpr<N>>>
-    tprd(const TensorType&);
+        isAssignableTo<numeric_type<TensorType>, ValueType>());
     /*!
      * \param[in] A : first tensor of the product
      * \param[in] C : derivative of the first tensor
      * \return the right part of the derivative of a tensor product
      */
-    template <TensorConcept TensorType, typename T2toT2Type>
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE std::enable_if_t<
-        implementsT2toT2Concept<T2toT2Type>() &&
-            getSpaceDimension<TensorType>() == N &&
-            getSpaceDimension<T2toT2Type>() == N &&
-            isAssignableTo<
-                typename ComputeBinaryResult<numeric_type<TensorType>,
-                                             numeric_type<T2toT2Type>,
-                                             OpMult>::Result,
-                ValueType>(),
-        Expr<t2tot2<N, ValueType>, TensorProductRightDerivativeExpr<N>>>
-    tprd(const TensorType&, const T2toT2Type&);
+    template <TensorConcept TensorType, T2toT2Concept T2toT2Type>
+    TFEL_HOST_DEVICE static constexpr auto
+    tprd(const TensorType&, const T2toT2Type&) noexcept requires(
+        getSpaceDimension<TensorType>() == N &&
+        getSpaceDimension<T2toT2Type>() == N &&
+        isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
+                                                    numeric_type<T2toT2Type>,
+                                                    OpMult>::Result,
+                       ValueType>());
     /*!
      * \return the derivative of the transpose of a tensor with respect of
      * this tensor
      */
-    TFEL_HOST_DEVICE static constexpr t2tot2<N, base_type<ValueType>>
-    transpose_derivative();
+    TFEL_HOST_DEVICE static constexpr auto transpose_derivative() noexcept;
     //! \return the identity
-    TFEL_HOST_DEVICE static constexpr t2tot2<N, base_type<ValueType>> Id();
+    TFEL_HOST_DEVICE static constexpr auto Id() noexcept;
     //! \return Id2^Id2, where Id2 is the identity tensor
-    TFEL_HOST_DEVICE static constexpr t2tot2<N, base_type<ValueType>> IxI();
+    TFEL_HOST_DEVICE static constexpr auto IxI() noexcept;
     /*!
      * \return Id4-Id2^Id2/3, where Id4 is the identity of t2tot2 and
      * Id2 is the identity tensor
      */
-    TFEL_HOST_DEVICE static constexpr t2tot2<N, base_type<ValueType>> K();
+    TFEL_HOST_DEVICE static constexpr auto K() noexcept;
     /*!
      * \brief constructor from a t2tost2
      * \param[in] v : values
@@ -211,8 +198,7 @@ namespace tfel::math {
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
 
-    template <typename InputIterator>
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 void copy(const InputIterator src);
+    TFEL_HOST_DEVICE constexpr void copy(const auto) noexcept;
   };
 
   /*!
@@ -235,12 +221,10 @@ namespace tfel::math {
    * \param[in] s : t2tot2
    * \param[in] r : rotation matrix
    */
-  template <typename T2toT2Type>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<
-      implementsT2toT2Concept<T2toT2Type>(),
-      t2tot2<getSpaceDimension<T2toT2Type>(), numeric_type<T2toT2Type>>>
-  change_basis(const T2toT2Type&,
-               const rotation_matrix<numeric_type<T2toT2Type>>&);
+  template <T2toT2Concept T2toT2Type>
+  TFEL_HOST_DEVICE constexpr auto change_basis(
+      const T2toT2Type&,
+      const rotation_matrix<numeric_type<T2toT2Type>>&) noexcept;
 
   /*!
    * \return compute the derivative of the velocity gradient
@@ -260,10 +244,9 @@ namespace tfel::math {
    * \param[in] s: tensor
    */
   template <TensorConcept TensorType>
-  TFEL_HOST_DEVICE std::enable_if_t<
-      isScalar<numeric_type<TensorType>>(),
-      t2tot2<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
-  computeDeterminantSecondDerivative(const TensorType&);
+  TFEL_HOST_DEVICE constexpr auto
+  computeDeterminantSecondDerivative(const TensorType&) noexcept requires(
+      isScalar<numeric_type<TensorType>>());
 
   template <typename T, typename T2toST2Type>
   TFEL_HOST_DEVICE

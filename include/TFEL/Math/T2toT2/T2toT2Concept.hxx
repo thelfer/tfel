@@ -30,36 +30,48 @@ namespace tfel::math {
    * \brief Helper class to characterise t2tot2.
    */
   struct T2toT2Tag {};
-
+  /*!
+   * \brief an helper class that simply exposes publically a member named
+   * ConceptTag as an alias to ST2toST2Tag.
+   *
+   * The main reason for this alias is to properly implement the `ConceptRebind`
+   * metafunction.
+   */
   template <typename T>
-  struct T2toT2Concept {
-    typedef T2toT2Tag ConceptTag;
-
-   protected:
-    T2toT2Concept() = default;
-    T2toT2Concept(T2toT2Concept&&) = default;
-    T2toT2Concept(const T2toT2Concept&) = default;
-    T2toT2Concept& operator=(const T2toT2Concept&) = default;
-    ~T2toT2Concept() = default;
+  struct T2toT2ConceptBase {
+    using ConceptTag = T2toT2Tag;
   };
-
+  /*!
+   * \brief definition of the ST2toST2Concept
+   * a class matching the stensor concept must expose the `ST2toST2Tag` and have
+   * access operators.
+   */
+  template <typename T>
+  concept T2toT2Concept =
+      (std::is_same_v<typename std::decay_t<T>::ConceptTag, T2toT2Tag>)&&  //
+      (requires(const T t, const unsigned short i, const unsigned short j) {
+        t(i, j);
+      });
+  //! \brief partial specialisation for fourth order tensor
+  template <typename Type>
+  struct ConceptRebind<T2toT2Tag, Type> {
+    using type = T2toT2ConceptBase<Type>;
+  };
   /*!
    * \brief an helper function which returns if the given type implements the
    * `T2toT2Concept`.
    * \tparam T2toT2Type: type tested
    */
-  template <typename T2toT2Type>
+  template <T2toT2Concept T2toT2Type>
   TFEL_HOST_DEVICE constexpr bool implementsT2toT2Concept() {
-    return tfel::meta::implements<T2toT2Type, T2toT2Concept>();
+    return T2toT2Concept<T2toT2Type>;
   }  // end of implementsT2toT2Concept
-
-  //! paratial specialisation for symmetric tensors
-  template <typename Type>
-  struct ConceptRebind<T2toT2Tag, Type> {
-    using type = T2toT2Concept<Type>;
-  };
-
-  template <typename T2toT2Type>
+  /*!
+   * \return the sum of the absolute values of all components of an
+   * linear application transforming a tensor in a tensor
+   * \param[in] s: fourth order tensor
+   */
+  template <T2toT2Concept T2toT2Type>
   std::enable_if_t<
       implementsT2toT2Concept<T2toT2Type>(),
       typename tfel::typetraits::AbsType<numeric_type<T2toT2Type>>::type>
@@ -68,7 +80,7 @@ namespace tfel::math {
    * \return the determinant of a `st2tost2`
    * \param[in] s: fourth order tensor
    */
-  template <typename T2toT2Type>
+  template <T2toT2Concept T2toT2Type>
   std::enable_if_t<
       implementsT2toT2Concept<T2toT2Type>() &&
           isScalar<numeric_type<T2toT2Type>>(),

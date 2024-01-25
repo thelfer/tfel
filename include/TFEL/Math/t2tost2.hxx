@@ -199,35 +199,11 @@ namespace tfel::math {
                const rotation_matrix<numeric_type<T2toST2Type>>&);
 
   /*!
-   * convert a t2tot2 tensor to a t2tost2
+   * \brief convert a t2tot2 tensor to a t2tost2
+   * \param[in] t: fourth order tensor to be converted
    */
-  template <typename T2toT2Type>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE
-      std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 1u) &&
-                        implementsT2toT2Concept<T2toT2Type>()),
-                       t2tost2<1u, numeric_type<T2toT2Type>>>
-      convertToT2toST2(const T2toT2Type&);
-
-  /*!
-   * convert a t2tot2 tensor to a t2tost2
-   */
-  template <typename T2toT2Type>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE
-      std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 2u) &&
-                        implementsT2toT2Concept<T2toT2Type>()),
-                       t2tost2<2u, numeric_type<T2toT2Type>>>
-      convertToT2toST2(const T2toT2Type&);
-
-  /*!
-   * convert a t2tot2 tensor to a t2tost2
-   */
-  template <typename T2toT2Type>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE
-      std::enable_if_t<((getSpaceDimension<T2toT2Type>() == 3u) &&
-                        implementsT2toT2Concept<T2toT2Type>()),
-                       t2tost2<3u, numeric_type<T2toT2Type>>>
-      convertToT2toST2(const T2toT2Type&);
-
+  TFEL_HOST_DEVICE constexpr auto convertToT2toST2(
+      const T2toT2Concept auto&) noexcept;
   /*!
    * \return compute the "derivative" of the rate of deformation
    * \delta D = dD_dF:\delta F with \delta D = ((delta F).F^{-1}+F^{-T}.(delta

@@ -34,18 +34,18 @@ namespace tfel::math {
   struct ST2toST2Tag {};
   /*!
    * \brief an helper class that simply exposes publically a member named
-   * ConceptTag as an alias to StensorTag.
+   * ConceptTag as an alias to ST2toST2Tag.
    *
    * The main reason for this alias is to properly implement the `ConceptRebind`
    * metafunction.
    */
-  template <class T>
+  template <typename T>
   struct ST2toST2ConceptBase {
     using ConceptTag = ST2toST2Tag;
   };
   /*!
-   * \brief definition of the StensorConcept
-   * a class matching the stensor concept must expose the `StensorTag` and have
+   * \brief definition of the ST2toST2Concept
+   * a class matching the stensor concept must expose the `ST2toST2Tag` and have
    * access operators.
    */
   template <typename T>
@@ -54,17 +54,15 @@ namespace tfel::math {
       (requires(const T t, const unsigned short i, const unsigned short j) {
         t(i, j);
       });
-  //! a simple alias
-  template <ST2toST2Concept A>
-  struct ST2toST2TransposeExpr;
-
   //! \brief partial specialisation for symmetric tensors
   template <typename T>
   struct ConceptRebind<ST2toST2Tag, T> {
     //! \brief a simple alias
     using type = ST2toST2ConceptBase<T>;
   };
-
+  // \forward declaration
+  template <ST2toST2Concept A>
+  struct ST2toST2TransposeExpr;
   /*!
    * \return the sum of the absolute values of all components of an
    * linear application transforming a symmetric tensor in a symmetric tensor

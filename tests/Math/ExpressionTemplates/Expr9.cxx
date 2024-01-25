@@ -32,7 +32,7 @@ struct Expr9Test final : public tfel::tests::TestCase {
     using namespace tfel::meta;
     using namespace tfel::math;
     using expr = Expr<t2tot2<2u, double>, TensorProductLeftDerivativeExpr<2u>>;
-    TFEL_TESTS_STATIC_ASSERT((Implements<expr, T2toT2Concept>::cond));
+    TFEL_TESTS_STATIC_ASSERT((Implements<expr, T2toT2ConceptBase>::cond));
     TFEL_TESTS_STATIC_ASSERT(
         (std::is_same_v<EvaluationResult<expr>, t2tot2<2u, double>>));
     TFEL_TESTS_STATIC_ASSERT(

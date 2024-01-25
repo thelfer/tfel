@@ -32,7 +32,7 @@ namespace tfel::math {
   template <typename T2toT2ResultType>
   struct TFEL_VISIBILITY_LOCAL
       Expr<T2toT2ResultType, T2toT2T2toT2ProductExpr<1u>>
-      : public T2toT2Concept<
+      : public T2toT2ConceptBase<
             Expr<T2toT2ResultType, T2toT2T2toT2ProductExpr<1u>>>,
         public array_holder<
             TensorDimeToSize<getSpaceDimension<T2toT2ResultType>()>::value *
@@ -86,7 +86,7 @@ namespace tfel::math {
   template <typename T2toT2ResultType>
   struct TFEL_VISIBILITY_LOCAL
       Expr<T2toT2ResultType, T2toT2T2toT2ProductExpr<2u>>
-      : public T2toT2Concept<
+      : public T2toT2ConceptBase<
             Expr<T2toT2ResultType, T2toT2T2toT2ProductExpr<2u>>>,
         public array_holder<
             TensorDimeToSize<getSpaceDimension<T2toT2ResultType>()>::value *
@@ -181,7 +181,7 @@ namespace tfel::math {
   template <typename T2toT2ResultType>
   struct TFEL_VISIBILITY_LOCAL
       Expr<T2toT2ResultType, T2toT2T2toT2ProductExpr<3u>>
-      : public T2toT2Concept<
+      : public T2toT2ConceptBase<
             Expr<T2toT2ResultType, T2toT2T2toT2ProductExpr<3u>>>,
         public array_holder<
             TensorDimeToSize<getSpaceDimension<T2toT2ResultType>()>::value *
