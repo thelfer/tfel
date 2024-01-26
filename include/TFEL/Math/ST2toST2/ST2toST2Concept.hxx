@@ -54,7 +54,10 @@ namespace tfel::math {
       (requires(const T t, const unsigned short i, const unsigned short j) {
         t(i, j);
       });
-  //! \brief partial specialisation for symmetric tensors
+  /*!
+   * \brief partial specialisation for fourth order tensor transforming a
+   * symmetric tensor in another symmetric tensor
+   */
   template <typename T>
   struct ConceptRebind<ST2toST2Tag, T> {
     //! \brief a simple alias

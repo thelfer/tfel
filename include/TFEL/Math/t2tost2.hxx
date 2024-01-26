@@ -46,13 +46,11 @@ namespace tfel::math {
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
-  template <typename T2toST2Type, typename ScalarType>
+  template <T2toST2Concept T2toST2Type, typename ScalarType>
   struct DerivativeTypeDispatcher<T2toST2Tag,
                                   ScalarTag,
                                   T2toST2Type,
                                   ScalarType> {
-    static_assert(implementsT2toST2Concept<T2toST2Type>(),
-                  "template argument T2toST2Type is not a t2tost2");
     static_assert(isScalar<ScalarType>(),
                   "template argument ScalarType is not a scalar");
     static_assert(isScalar<numeric_type<T2toST2Type>>(),
@@ -66,13 +64,11 @@ namespace tfel::math {
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
-  template <typename ScalarType, typename T2toST2Type>
+  template <typename ScalarType, T2toST2Concept T2toST2Type>
   struct DerivativeTypeDispatcher<ScalarTag,
                                   T2toST2Tag,
                                   ScalarType,
                                   T2toST2Type> {
-    static_assert(implementsT2toST2Concept<T2toST2Type>(),
-                  "template argument T2toST2Type is not a t2tost2");
     static_assert(isScalar<ScalarType>(),
                   "template argument ScalarType is not a scalar");
     static_assert(isScalar<numeric_type<T2toST2Type>>(),
@@ -107,7 +103,7 @@ namespace tfel::math {
   //
   template <unsigned short N, typename ValueType>
   struct t2tost2
-      : T2toST2Concept<t2tost2<N, ValueType>>,
+      : T2toST2ConceptBase<t2tost2<N, ValueType>>,
         GenericFixedSizeArray<
             t2tost2<N, ValueType>,
             FixedSizeRowMajorMatrixPolicy<StensorDimeToSize<N>::value,
@@ -126,22 +122,20 @@ namespace tfel::math {
      * with respect to the deformation gradient
      */
     template <TensorConcept TensorType>
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE std::enable_if_t<
+    TFEL_HOST_DEVICE static TFEL_HOST_DEVICE constexpr auto
+    dCdF(const TensorType&) noexcept requires(
         getSpaceDimension<TensorType>() == N &&
-            isAssignableTo<numeric_type<TensorType>, ValueType>(),
-        Expr<t2tost2<N, ValueType>, RightCauchyGreenTensorDerivativeExpr<N>>>
-    dCdF(const TensorType&);
+        isAssignableTo<numeric_type<TensorType>, ValueType>());
     /*!
      * \param[in] F : deformation gradient
      * \return the derivative of the Cauchy left symmetric tensor
      * with respect to the deformation gradient
      */
     template <TensorConcept TensorType>
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE std::enable_if_t<
+    TFEL_HOST_DEVICE static TFEL_HOST_DEVICE constexpr auto
+    dBdF(const TensorType&) noexcept requires(
         getSpaceDimension<TensorType>() == N &&
-            isAssignableTo<numeric_type<TensorType>, ValueType>(),
-        Expr<t2tost2<N, ValueType>, LeftCauchyGreenTensorDerivativeExpr<N>>>
-    dBdF(const TensorType&);
+        isAssignableTo<numeric_type<TensorType>, ValueType>());
     //
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(t2tost2,
                                                GenericFixedSizeArrayBase);
@@ -149,13 +143,10 @@ namespace tfel::math {
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
     //! \brief import values
-    template <typename T2>
-    TFEL_HOST_DEVICE
-        std::enable_if_t<std::is_convertible_v<T2, base_type<ValueType>>, void>
-        import(const T2* const);
-
-    template <typename InputIterator>
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 void copy(const InputIterator src);
+    TFEL_HOST_DEVICE constexpr void import(
+        const base_type<ValueType>* const) noexcept;
+    //! \brief copy from a range
+    TFEL_HOST_DEVICE constexpr void copy(const auto) noexcept;
   };
 
   /*!
@@ -174,30 +165,14 @@ namespace tfel::math {
   using ConstT2toST2View = ConstView<t2tost2<N, T>>;
 
   /*!
-   * \return change the basis of a 1D t2tost2
+   * \return change the basis of a t2tost2
    * \param[in] s: t2tost2
    * \param[in] r: rotation matrix
    */
-  template <typename T2toST2Type>
-  TFEL_HOST_DEVICE
-      std::enable_if_t<((implementsT2toST2Concept<T2toST2Type>()) &&
-                        (getSpaceDimension<T2toST2Type>() == 1u)),
-                       t2tost2<1u, numeric_type<T2toST2Type>>>
-      change_basis(const T2toST2Type&,
-                   const rotation_matrix<numeric_type<T2toST2Type>>&);
-  /*!
-   * \return change the basis of a 2D or 3D t2tost2
-   * \param[in] s: t2tost2
-   * \param[in] r: rotation matrix
-   */
-  template <typename T2toST2Type>
-  TFEL_HOST_DEVICE std::enable_if_t<
-      ((implementsT2toST2Concept<T2toST2Type>()) &&
-       (getSpaceDimension<T2toST2Type>() != 1u)),
-      t2tost2<getSpaceDimension<T2toST2Type>(), numeric_type<T2toST2Type>>>
-  change_basis(const T2toST2Type& s,
-               const rotation_matrix<numeric_type<T2toST2Type>>&);
-
+  template <T2toST2Concept T2toST2Type>
+  TFEL_HOST_DEVICE constexpr auto change_basis(
+      const T2toST2Type&,
+      const rotation_matrix<numeric_type<T2toST2Type>>&) noexcept;
   /*!
    * \brief convert a t2tot2 tensor to a t2tost2
    * \param[in] t: fourth order tensor to be converted
@@ -219,23 +194,20 @@ namespace tfel::math {
    * \param[in]  s:  Cauchy stress
    * \param[in]  F:  deformation gradient
    */
-  template <typename T2toST2Type,
+  template <T2toST2Concept T2toST2Type,
             StensorConcept StensorType,
             TensorConcept TensorType>
-  TFEL_HOST_DEVICE std::enable_if_t<
-      implementsT2toST2Concept<T2toST2Type>() &&
-          getSpaceDimension<T2toST2Type>() ==
-              getSpaceDimension<StensorType>() &&
-          getSpaceDimension<T2toST2Type>() == getSpaceDimension<TensorType>() &&
-          tfel::typetraits::IsFundamentalNumericType<
-              numeric_type<TensorType>>::cond,
-      t2tost2<getSpaceDimension<T2toST2Type>(),
-              typename ComputeBinaryResult<numeric_type<T2toST2Type>,
-                                           numeric_type<StensorType>,
-                                           OpPlus>::Result>>
-  computeCauchyStressDerivativeFromKirchhoffStressDerivative(const T2toST2Type&,
-                                                             const StensorType&,
-                                                             const TensorType&);
+  TFEL_HOST_DEVICE constexpr auto
+  computeCauchyStressDerivativeFromKirchhoffStressDerivative(
+      const T2toST2Type&,
+      const StensorType&,
+      const TensorType&) noexcept  //
+      requires(getSpaceDimension<T2toST2Type>() ==
+                   getSpaceDimension<StensorType>() &&
+               getSpaceDimension<T2toST2Type>() ==
+                   getSpaceDimension<TensorType>() &&
+               tfel::typetraits::IsFundamentalNumericType<
+                   numeric_type<TensorType>>::cond);
   /*!
    * \brief compute the Cauchy stress derivative from the Kirchhoff stress
    * derivative
@@ -243,23 +215,20 @@ namespace tfel::math {
    * \param[in]  s:  Cauchy stress
    * \param[in]  F:  deformation gradient
    */
-  template <typename T2toST2Type,
+  template <T2toST2Concept T2toST2Type,
             StensorConcept StensorType,
             TensorConcept TensorType>
-  TFEL_HOST_DEVICE std::enable_if_t<
-      implementsT2toST2Concept<T2toST2Type>() &&
-          getSpaceDimension<T2toST2Type>() ==
-              getSpaceDimension<StensorType>() &&
-          getSpaceDimension<T2toST2Type>() == getSpaceDimension<TensorType>() &&
-          tfel::typetraits::IsFundamentalNumericType<
-              numeric_type<TensorType>>::cond,
-      t2tost2<getSpaceDimension<T2toST2Type>(),
-              typename ComputeBinaryResult<numeric_type<T2toST2Type>,
-                                           numeric_type<StensorType>,
-                                           OpPlus>::Result>>
-  computeKirchhoffStressDerivativeFromCauchyStressDerivative(const T2toST2Type&,
-                                                             const StensorType&,
-                                                             const TensorType&);
+  TFEL_HOST_DEVICE constexpr auto
+  computeKirchhoffStressDerivativeFromCauchyStressDerivative(
+      const T2toST2Type&,
+      const StensorType&,
+      const TensorType&) noexcept  //
+      requires(getSpaceDimension<T2toST2Type>() ==
+                   getSpaceDimension<StensorType>() &&
+               getSpaceDimension<T2toST2Type>() ==
+                   getSpaceDimension<TensorType>() &&
+               tfel::typetraits::IsFundamentalNumericType<
+                   numeric_type<TensorType>>::cond);
   /*!
    * \return the derivative of the push-forward of a symmetric
    * second order tensor with respect to the deformation gradient
@@ -274,23 +243,19 @@ namespace tfel::math {
    * \param[in]  : orginal tensor (second Piola-Kirschoff stress)
    * \param[in]  : deformation gradient
    */
-  template <typename T2toST2Type,
+  template <T2toST2Concept T2toST2Type,
             StensorConcept StensorType,
             TensorConcept TensorType>
-  TFEL_HOST_DEVICE std::enable_if_t<
-      implementsT2toST2Concept<T2toST2Type>() &&
-          getSpaceDimension<StensorType>() ==
-              getSpaceDimension<T2toST2Type>() &&
-          getSpaceDimension<TensorType>() == getSpaceDimension<T2toST2Type>() &&
-          tfel::typetraits::IsFundamentalNumericType<
-              numeric_type<TensorType>>::cond,
-      t2tost2<getSpaceDimension<T2toST2Type>(),
-              typename ComputeBinaryResult<numeric_type<T2toST2Type>,
-                                           numeric_type<StensorType>,
-                                           OpPlus>::Result>>
-  computePushForwardDerivative(const T2toST2Type&,
-                               const StensorType&,
-                               const TensorType&);
+  TFEL_HOST_DEVICE constexpr auto computePushForwardDerivative(
+      const T2toST2Type&,
+      const StensorType&,
+      const TensorType&) noexcept  //
+      requires(getSpaceDimension<StensorType>() ==
+                   getSpaceDimension<T2toST2Type>() &&
+               getSpaceDimension<TensorType>() ==
+                   getSpaceDimension<T2toST2Type>() &&
+               tfel::typetraits::IsFundamentalNumericType<
+                   numeric_type<TensorType>>::cond);
   /*!
    * \brief compute de derivative of the push-forward of a symmetric
    * second order tensor with respect to the deformation gradient
@@ -306,24 +271,22 @@ namespace tfel::math {
    * \param[in]  : orginal tensor (second Piola-Kirschoff stress)
    * \param[in]  : deformation gradient
    */
-  template <typename T2toST2ResultType,
-            typename T2toST2Type,
+  template <T2toST2Concept T2toST2ResultType,
+            T2toST2Concept T2toST2Type,
             StensorConcept StensorType,
             TensorConcept TensorType>
-  TFEL_HOST_DEVICE typename std::enable_if<
-      implementsT2toST2Concept<T2toST2ResultType>() &&
-          implementsT2toST2Concept<T2toST2Type>() &&
-          tfel::typetraits::IsFundamentalNumericType<
-              numeric_type<TensorType>>::cond &&
-          isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
-                                                      numeric_type<StensorType>,
-                                                      OpPlus>::Result,
-                         numeric_type<T2toST2ResultType>>(),
-      void>::type
-  computePushForwardDerivative(T2toST2ResultType&,
-                               const T2toST2Type&,
-                               const StensorType&,
-                               const TensorType&);
+  TFEL_HOST_DEVICE constexpr void computePushForwardDerivative(
+      T2toST2ResultType&,
+      const T2toST2Type&,
+      const StensorType&,
+      const TensorType&) noexcept  //
+      requires(tfel::typetraits::IsFundamentalNumericType<
+               numeric_type<TensorType>>::cond&&
+                   isAssignableTo<
+                       typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                                    numeric_type<StensorType>,
+                                                    OpPlus>::Result,
+                       numeric_type<T2toST2ResultType>>());
 
 }  // end of namespace tfel::math
 

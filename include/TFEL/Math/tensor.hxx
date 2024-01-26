@@ -158,9 +158,9 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   using ConstTensorView = ConstView<tensor<N, T>>;
 
-  template <unsigned short N, typename T, typename OutputIterator>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void>
-  exportToBaseTypeArray(const tensor<N, T>&, OutputIterator);
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr void exportToBaseTypeArray(
+      const tensor<N, T>&, const auto) noexcept requires(isScalar<T>());
   /*!
    * \return the invert of a tensor
    * \param[in] t : tensor to be inverted

@@ -361,15 +361,22 @@ namespace tfel::math {
   }  // end of K
 
   template <unsigned short N, typename T>
-  template <
-      typename T2toST2Type,
-      std::enable_if_t<((implementsT2toST2Concept<T2toST2Type>()) &&
-                        (isAssignableTo<numeric_type<T2toST2Type>, T>()) &&
-                        (getSpaceDimension<T2toST2Type>() == N)),
-                       bool>>
-  constexpr t2tot2<N, T>::t2tot2(const T2toST2Type& s) {
+  template <T2toST2Concept T2toST2Type>
+  constexpr t2tot2<N, T>::t2tot2(const T2toST2Type& s) noexcept requires(
+      (isAssignableTo<numeric_type<T2toST2Type>, T>()) &&
+      (getSpaceDimension<T2toST2Type>() == N)) {
     convert(*this, s);
-  }  // end of t2tot2<N, T>::t2tot2
+  }  // end of t2tot2
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr void t2tot2<N, T>::import(
+      const base_type<T>* const src) noexcept {
+    tfel::fsalgo::transform<TensorDimeToSize<N>::value *
+                            TensorDimeToSize<N>::value>::exe(src, this->begin(),
+                                                             [](const auto& v) {
+                                                               return T(v);
+                                                             });
+  }  // end of import
 
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr void t2tot2<N, T>::copy(const auto p) noexcept {
@@ -447,13 +454,11 @@ namespace tfel::math {
     }
   }  // end of computeDeterminantSecondDerivative
 
-  template <typename T, typename T2toST2Type>
-  TFEL_HOST_DEVICE
-      std::enable_if_t<((implementsT2toST2Concept<T2toST2Type>()) &&
-                        (isAssignableTo<numeric_type<T2toST2Type>, T>())),
-                       void>
-      convert(t2tot2<getSpaceDimension<T2toST2Type>(), T>& d,
-              const T2toST2Type& s) {
+  template <typename T, T2toST2Concept T2toST2Type>
+  TFEL_HOST_DEVICE constexpr void convert(
+      t2tot2<getSpaceDimension<T2toST2Type>(), T>& d,
+      const T2toST2Type& s) noexcept  //
+      requires(isAssignableTo<numeric_type<T2toST2Type>, T>()) {
     constexpr auto N = getSpaceDimension<T2toST2Type>();
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {

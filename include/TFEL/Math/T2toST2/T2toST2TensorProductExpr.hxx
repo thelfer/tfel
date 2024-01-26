@@ -22,14 +22,14 @@
 
 namespace tfel::math {
 
-  //! Empty structure used for partial specialisation of the
-  //! Expr class
+  /*!
+   * \brief empty structure used for partial specialisation of the
+   * Expr class
+   */
   template <unsigned short N>
   struct T2toST2TensorProductExpr {};  // end of struct T2toST2TensorProductExpr
 
-  /*!
-   * Partial specialisation
-   */
+  //! \brief partial specialisation in 1D
   template <StensorConcept StensorResultType>
   struct Expr<StensorResultType, T2toST2TensorProductExpr<1u>>
       : public StensorConceptBase<
@@ -44,10 +44,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename T2toST2Type, TensorConcept TensorType>
+    template <T2toST2Concept T2toST2Type, TensorConcept TensorType>
     TFEL_HOST_DEVICE constexpr Expr(const T2toST2Type& a,
                                     const TensorType& b) noexcept {
-      static_assert(implementsT2toST2Concept<T2toST2Type>());
       static_assert(getSpaceDimension<T2toST2Type>() == 1u);
       static_assert(getSpaceDimension<TensorType>() == 1u);
       this->v[0] = a(0, 0) * b(0) + a(0, 1) * b(1) + a(0, 2) * b(2);
@@ -60,20 +59,25 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
+    TFEL_HOST_DEVICE constexpr const value_type& operator[](
+        const unsigned short i) const noexcept {
+      return this->operator()(i);
+    }  // end of operator()
+    /*!
+     * \brief access operator
+     * \param[in] i : index
+     */
     TFEL_HOST_DEVICE constexpr const value_type& operator()(
         const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator()
     //! \return the runtime properties
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<StensorResultType,T2ST2toST2TensorProductExp>
 
-  /*!
-   * Partial specialisation
-   */
+  //! \brief partial specialisation in 2D
   template <StensorConcept StensorResultType>
   struct Expr<StensorResultType, T2toST2TensorProductExpr<2u>>
       : public StensorConceptBase<
@@ -88,10 +92,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename T2toST2Type, TensorConcept TensorType>
+    template <T2toST2Concept T2toST2Type, TensorConcept TensorType>
     TFEL_HOST_DEVICE constexpr Expr(const T2toST2Type& a,
                                     const TensorType& b) noexcept {
-      static_assert(implementsT2toST2Concept<T2toST2Type>());
       static_assert(getSpaceDimension<T2toST2Type>() == 2u);
       static_assert(getSpaceDimension<TensorType>() == 2u);
       this->v[0] = a(0, 4) * b[4] + a(0, 3) * b[3] + a(0, 2) * b[2] +
@@ -109,20 +112,25 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
+    TFEL_HOST_DEVICE constexpr const value_type& operator[](
+        const unsigned short i) const noexcept {
+      return this->operator()(i);
+    }  // end of operator()
+    /*!
+     * \brief access operator
+     * \param[in] i : index
+     */
     TFEL_HOST_DEVICE constexpr const value_type& operator()(
         const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator()
     //! \return the runtime properties
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<StensorResultType,T2ST2toST2TensorProductExp>
 
-  /*!
-   * Partial specialisation
-   */
+  //! \brief partial specialisation in 2D
   template <StensorConcept StensorResultType>
   struct Expr<StensorResultType, T2toST2TensorProductExpr<3u>>
       : public StensorConceptBase<
@@ -137,10 +145,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename T2toST2Type, TensorConcept TensorType>
+    template <T2toST2Concept T2toST2Type, TensorConcept TensorType>
     TFEL_HOST_DEVICE constexpr Expr(const T2toST2Type& a,
                                     const TensorType& b) noexcept {
-      static_assert(implementsT2toST2Concept<T2toST2Type>());
       static_assert(getSpaceDimension<T2toST2Type>() == 3u);
       static_assert(getSpaceDimension<TensorType>() == 3u);
       this->v[0] = a(0, 8) * b[8] + a(0, 7) * b[7] + a(0, 6) * b[6] +
@@ -168,13 +175,20 @@ namespace tfel::math {
      * \brief access operator
      * \param[in] i : index
      */
+    TFEL_HOST_DEVICE constexpr const value_type& operator[](
+        const unsigned short i) const noexcept {
+      return this->operator()(i);
+    }  // end of operator()
+    /*!
+     * \brief access operator
+     * \param[in] i : index
+     */
     TFEL_HOST_DEVICE constexpr const value_type& operator()(
         const unsigned short i) const noexcept {
       return this->v[i];
     }  // end of operator()
     //! \return the runtime properties
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<StensorResultType,T2ST2toST2TensorProductExp>

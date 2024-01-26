@@ -20,18 +20,17 @@
 namespace tfel::math {
 
   /*!
-   * Empty structure allowing partial specialisation
+   * \brief empty structure allowing partial specialisation
+   * of the Expr class
    */
   template <unsigned short N>
   struct StensorProductRightDerivativeExpr {
   };  // end of struct StensorProductRightDerivativeExpr
 
-  /*!
-   * Partial specialisation for 1D stensor
-   */
-  template <typename ST2toT2ResultType>
+  //! \brief partial specialisation in 1D
+  template <ST2toT2Concept ST2toT2ResultType>
   struct Expr<ST2toT2ResultType, StensorProductRightDerivativeExpr<1u>>
-      : public ST2toT2Concept<
+      : public ST2toT2ConceptBase<
             Expr<ST2toT2ResultType, StensorProductRightDerivativeExpr<1u>>>,
         public array_holder<9u, numeric_type<ST2toT2ResultType>> {
     static_assert(getSpaceDimension<ST2toT2ResultType>() == 1u);
@@ -99,15 +98,12 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
-  };  // end of struct
-      // Expr<ST2toT2ResultType,StensorProductRightDerivativeExpr<1u> >
+  };  // end of Expr<ST2toT2ResultType,StensorProductRightDerivativeExpr<1u>>
 
-  /*!
-   * Partial specialisation for 2D stensor
-   */
-  template <typename ST2toT2ResultType>
+  //! \brief partial specialisation in 3D
+  template <ST2toT2Concept ST2toT2ResultType>
   struct Expr<ST2toT2ResultType, StensorProductRightDerivativeExpr<2u>>
-      : public ST2toT2Concept<
+      : public ST2toT2ConceptBase<
             Expr<ST2toT2ResultType, StensorProductRightDerivativeExpr<2u>>>,
         public array_holder<20u, numeric_type<ST2toT2ResultType>> {
     static_assert(getSpaceDimension<ST2toT2ResultType>() == 2u);
@@ -206,15 +202,12 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
-  };  // end of struct
-      // Expr<ST2toT2ResultType,StensorProductRightDerivativeExpr<2u> >
+  };  // end of Expr<ST2toT2ResultType,StensorProductRightDerivativeExpr<2u>>
 
-  /*!
-   * Partial specialisation for 3D stensor
-   */
-  template <typename ST2toT2ResultType>
+  //! \brief partial specialisation in 3D
+  template <ST2toT2Concept ST2toT2ResultType>
   struct Expr<ST2toT2ResultType, StensorProductRightDerivativeExpr<3u>>
-      : public ST2toT2Concept<
+      : public ST2toT2ConceptBase<
             Expr<ST2toT2ResultType, StensorProductRightDerivativeExpr<3u>>>,
         public array_holder<54u, numeric_type<ST2toT2ResultType>> {
     static_assert(getSpaceDimension<ST2toT2ResultType>() == 3u);
@@ -435,8 +428,7 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
-  };  // end of struct
-      // Expr<ST2toT2ResultType,StensorProductRightDerivativeExpr<1u> >
+  };  // end of Expr<ST2toT2ResultType,StensorProductRightDerivativeExpr<3u>>
 
 }  // end of namespace tfel::math
 

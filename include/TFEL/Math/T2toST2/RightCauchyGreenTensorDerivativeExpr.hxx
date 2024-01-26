@@ -34,7 +34,7 @@ namespace tfel::math {
    */
   template <typename T2toST2Type>
   struct Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<1u>>
-      : public T2toST2Concept<
+      : public T2toST2ConceptBase<
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<1u>>>,
         public array_holder<9u, numeric_type<T2toST2Type>> {
     static_assert(getSpaceDimension<T2toST2Type>() == 1u);
@@ -81,7 +81,7 @@ namespace tfel::math {
    */
   template <typename T2toST2Type>
   struct Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<2u>>
-      : public T2toST2Concept<
+      : public T2toST2ConceptBase<
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<2u>>>,
         public array_holder<20u, numeric_type<T2toST2Type>> {
     static_assert(getSpaceDimension<T2toST2Type>() == 2u);
@@ -139,7 +139,7 @@ namespace tfel::math {
    */
   template <typename T2toST2Type>
   struct Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<3u>>
-      : public T2toST2Concept<
+      : public T2toST2ConceptBase<
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<3u>>>,
         public array_holder<54u, numeric_type<T2toST2Type>> {
     static_assert(getSpaceDimension<T2toST2Type>() == 3u);

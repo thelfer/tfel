@@ -32,7 +32,7 @@ namespace tfel::math {
   struct T2toT2Tag {};
   /*!
    * \brief an helper class that simply exposes publically a member named
-   * ConceptTag as an alias to ST2toST2Tag.
+   * ConceptTag as an alias to T2toT2Tag.
    *
    * The main reason for this alias is to properly implement the `ConceptRebind`
    * metafunction.
@@ -42,9 +42,10 @@ namespace tfel::math {
     using ConceptTag = T2toT2Tag;
   };
   /*!
-   * \brief definition of the ST2toST2Concept
-   * a class matching the stensor concept must expose the `ST2toST2Tag` and have
-   * access operators.
+   * \brief definition of the T2toT2Concept
+   *
+   * A class matching this concept must expose the `T2toT2Tag` and have
+   * appropriate access operators.
    */
   template <typename T>
   concept T2toT2Concept =

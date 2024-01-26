@@ -885,10 +885,9 @@ namespace tfel::math {
   }
 
   template <StensorConcept StensorType>
-  TFEL_HOST_DEVICE stensor<getSpaceDimension<StensorType>(),
-                           numeric_type<StensorType>>
-  change_basis(const StensorType& s,
-               const tmatrix<3u, 3u, base_type<numeric_type<StensorType>>>& r) {
+  TFEL_HOST_DEVICE constexpr auto change_basis(
+      const StensorType& s,
+      const tmatrix<3u, 3u, base_type<numeric_type<StensorType>>>& r) noexcept {
     stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>> ns{s};
     ns.changeBasis(r);
     return ns;

@@ -147,19 +147,17 @@ namespace tfel::math {
      * convert a T2toST2 to a ST2toST2
      * \param[in] src : T2toST2 to be converted
      */
-    template <typename T2toST2Type>
-    static TFEL_MATH_INLINE std::enable_if_t<
-        implementsT2toST2Concept<T2toST2Type>() &&
-            getSpaceDimension<T2toST2Type>() == N &&
-            isAssignableTo<numeric_type<T2toST2Type>, ValueType>(),
-        Expr<st2tost2<N, ValueType>, ConvertT2toST2ToST2toST2Expr<N>>>
-    convert(const T2toST2Type&);
+    template <T2toST2Concept T2toST2Type>
+    TFEL_HOST_DEVICE static constexpr auto
+    convert(const T2toST2Type&) noexcept requires(
+        getSpaceDimension<T2toST2Type>() == N &&
+        isAssignableTo<numeric_type<T2toST2Type>, ValueType>());
     /*!
      * build the equivalent st2tost2 from a rotation matrix
      * \param[in] r : rotation matrix
      */
-    static tfel::math::st2tost2<N, base_type<ValueType>> fromRotationMatrix(
-        const rotation_matrix<ValueType>&);
+    TFEL_HOST_DEVICE static constexpr auto fromRotationMatrix(
+        const rotation_matrix<ValueType>&) noexcept;
     /*!
      * \brief compute the derivative of the symmetric tensor product:
      * \f[
@@ -168,11 +166,10 @@ namespace tfel::math {
      * \param[in] s: second tensor of the product
      */
     template <StensorConcept StensorType>
-    static TFEL_MATH_INLINE std::enable_if_t<
+    TFEL_HOST_DEVICE static constexpr auto
+    stpd(const StensorType&) noexcept requires(
         getSpaceDimension<StensorType>() == N &&
-            isAssignableTo<numeric_type<StensorType>, ValueType>(),
-        tfel::math::st2tost2<N, ValueType>>
-    stpd(const StensorType&);
+        isAssignableTo<numeric_type<StensorType>, ValueType>());
     //
     static constexpr st2tost2 Id() noexcept;
     static constexpr st2tost2 IxI() noexcept;
@@ -216,16 +213,14 @@ namespace tfel::math {
    * \param[in] r : rotation matrix
    */
   template <ST2toST2Concept ST2toST2Type>
-  TFEL_HOST_DEVICE constexpr st2tost2<getSpaceDimension<ST2toST2Type>(),
-                                      numeric_type<ST2toST2Type>>
-  change_basis(const ST2toST2Type&,
-               const rotation_matrix<numeric_type<ST2toST2Type>>&) noexcept;
+  TFEL_HOST_DEVICE constexpr auto change_basis(
+      const ST2toST2Type&,
+      const rotation_matrix<numeric_type<ST2toST2Type>>&) noexcept;
   /*!
    * \return the invert of a st2tost2
    * \param[in] s : st2tost2 to be inverted
    */
   TFEL_HOST constexpr auto invert(const ST2toST2Concept auto&);
-
   /*!
    * \return the push-forward of a fourth order tensor:
    * \f[
