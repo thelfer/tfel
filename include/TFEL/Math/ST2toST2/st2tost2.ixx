@@ -53,26 +53,25 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <StensorConcept StensorType>
-  std::enable_if_t<getSpaceDimension<StensorType>() == N &&
-                       isAssignableTo<numeric_type<StensorType>, T>(),
-                   tfel::math::st2tost2<N, T>>
-  st2tost2<N, T>::stpd(const StensorType& s) {
+  TFEL_HOST_DEVICE constexpr auto
+  st2tost2<N, T>::stpd(const StensorType& s) noexcept requires(
+      getSpaceDimension<StensorType>() == N &&
+      isAssignableTo<numeric_type<StensorType>, T>()) {
     return StensorSymmetricProductDerivative<N, T>::exe(s);
   }
 
   template <unsigned short N, typename T>
-  template <typename T2toST2Type>
-  std::enable_if_t<implementsT2toST2Concept<T2toST2Type>() &&
-                       getSpaceDimension<T2toST2Type>() == N &&
-                       isAssignableTo<numeric_type<T2toST2Type>, T>(),
-                   Expr<st2tost2<N, T>, ConvertT2toST2ToST2toST2Expr<N>>>
-  st2tost2<N, T>::convert(const T2toST2Type& src) {
+  template <T2toST2Concept T2toST2Type>
+  TFEL_HOST_DEVICE constexpr auto
+  st2tost2<N, T>::convert(const T2toST2Type& src) noexcept requires(
+      getSpaceDimension<T2toST2Type>() == N &&
+      isAssignableTo<numeric_type<T2toST2Type>, T>()) {
     return Expr<st2tost2<N, T>, ConvertT2toST2ToST2toST2Expr<N>>(src);
-  }
+  }  // end of convert
 
   template <unsigned short N, typename T>
-  st2tost2<N, base_type<T>> st2tost2<N, T>::fromRotationMatrix(
-      const rotation_matrix<T>& r) {
+  TFEL_HOST_DEVICE constexpr auto st2tost2<N, T>::fromRotationMatrix(
+      const rotation_matrix<T>& r) noexcept {
     return st2tost2_internals::BuildFromRotationMatrix<N, T>::exe(r);
   }  // end of st2tost2<N,T>::fromRotationMatrix
 
@@ -245,21 +244,21 @@ namespace tfel::math {
   }  // end of invert
 
   template <ST2toST2Concept ST2toST2Type>
-  TFEL_HOST_DEVICE constexpr st2tost2<getSpaceDimension<ST2toST2Type>(),
-                                      numeric_type<ST2toST2Type>>
-  change_basis(const ST2toST2Type& s,
-               const rotation_matrix<numeric_type<ST2toST2Type>>& r) noexcept {
+  TFEL_HOST_DEVICE constexpr auto change_basis(
+      const ST2toST2Type& s,
+      const rotation_matrix<numeric_type<ST2toST2Type>>& r) noexcept {
     constexpr auto N = getSpaceDimension<ST2toST2Type>();
+    using Result = st2tost2<N, numeric_type<ST2toST2Type>>;
     if constexpr (N == 1) {
-      return s;
+      return Result{s};
     } else {
       using st2tost2 =
           tfel::math::st2tost2<N, tfel::math::numeric_type<ST2toST2Type>>;
       const auto sr = st2tost2::fromRotationMatrix(r);
       const auto sir = st2tost2::fromRotationMatrix(transpose(r));
-      return sr * s * sir;
+      return Result{sr * s * sir};
     }
-  }  // end of change_basie
+  }  // end of change_basis
 
   template <ST2toST2Concept ST2toST2Type, TensorConcept TensorType>
   TFEL_HOST_DEVICE constexpr auto

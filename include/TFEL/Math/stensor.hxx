@@ -767,10 +767,9 @@ namespace tfel::math {
    * \return the rotated symmetric tensor
    */
   template <StensorConcept StensorType>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE2
-      stensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>
-      change_basis(const StensorType&,
-                   const rotation_matrix<numeric_type<StensorType>>&);
+  TFEL_HOST_DEVICE constexpr auto change_basis(
+      const StensorType&,
+      const rotation_matrix<numeric_type<StensorType>>&) noexcept;
   /*!
    * \return the inverse of a symmetric tensor
    * \param[in] s: symmetric tensor

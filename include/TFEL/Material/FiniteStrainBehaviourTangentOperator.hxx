@@ -17,9 +17,7 @@
 #include <vector>
 #include <string>
 #include <utility>
-
 #include "TFEL/Config/TFELConfig.hxx"
-
 #include "TFEL/Metaprogramming/Implements.hxx"
 #include "TFEL/TypeTraits/BaseType.hxx"
 #include "TFEL/Math/Forward/st2tost2.hxx"
@@ -28,7 +26,6 @@
 #include "TFEL/Math/T2toST2/T2toST2Concept.hxx"
 #include "TFEL/Math/Forward/t2tot2.hxx"
 #include "TFEL/Math/T2toT2/T2toT2Concept.hxx"
-
 #include "TFEL/Utilities/GenTypeBase.hxx"
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperatorBase.hxx"
 
@@ -115,28 +112,22 @@ namespace tfel::material {
       GenType::operator=(src);
       return *this;
     }  // end of FiniteStrainBehaviourTangentOperator& operator=
-       /*!
-        * \param const T1&, the value affected to the GenType.
-        * \pre   T1 must be a type that the GenType can hold.
-        */
+    /*!
+     * \param const T1&, the value affected to the GenType.
+     * \pre   T1 must be a type that the GenType can hold.
+     */
     template <typename T1>
-    TFEL_INLINE
-        typename std::enable_if<tfel::meta::TLCountNbrOfT<T1, TOTypes>::value ==
-                                    1,
-                                void>::type
-        set_uninitialised() {
+    TFEL_INLINE void set_uninitialised() requires(
+        tfel::meta::TLCountNbrOfT<T1, TOTypes>::value == 1) {
       GenType::template set_uninitialised<T1>();
     }
     /*!
-     * assignement operator
+     * \brief assignement operator
      */
-    template <typename T>
-    std::enable_if_t<
-        tfel::math::implementsT2toST2Concept<T>() &&
-            tfel::math::getSpaceDimension<T>() == N &&
-            std::is_same_v<tfel::math::numeric_type<T>, StressType>,
-        FiniteStrainBehaviourTangentOperator&>
-    operator=(const T& e) {
+    template <tfel::math::T2toST2Concept T>
+    FiniteStrainBehaviourTangentOperator& operator=(const T& e) requires(
+        tfel::math::getSpaceDimension<T>() == N &&
+        std::is_same_v<tfel::math::numeric_type<T>, StressType>) {
       using namespace tfel::math;
       if (this->template is<t2tost2<N, StressType>*>()) {
         *(this->template get<t2tost2<N, StressType>*>()) = e;
@@ -152,11 +143,9 @@ namespace tfel::material {
      * \brief assignement operator
      */
     template <tfel::math::ST2toST2Concept T>
-    std::enable_if_t<
+    FiniteStrainBehaviourTangentOperator& operator=(const T& e) requires(
         tfel::math::getSpaceDimension<T>() == N &&
-            std::is_same_v<tfel::math::numeric_type<T>, StressType>,
-        FiniteStrainBehaviourTangentOperator&>
-    operator=(const T& e) {
+        std::is_same_v<tfel::math::numeric_type<T>, StressType>) {
       using namespace tfel::math;
       if (this->template is<st2tost2<N, StressType>*>()) {
         *(this->template get<st2tost2<N, StressType>*>()) = e;

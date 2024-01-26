@@ -29,10 +29,8 @@ namespace tfel::math {
   struct TFEL_VISIBILITY_LOCAL T2toST2ST2toT2ProductExpr {
   };  // end of struct T2toST2ST2toT2ProductExpr
 
-  /*!
-   * Partial specialisation
-   */
-  template <typename ST2toST2ResultType>
+  //! \brief partial specialisation in 1D
+  template <ST2toST2Concept ST2toST2ResultType>
   struct TFEL_VISIBILITY_LOCAL
       Expr<ST2toST2ResultType, T2toST2ST2toT2ProductExpr<1u>>
       : public ST2toST2ConceptBase<
@@ -52,12 +50,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename T2toST2Type, typename ST2toT2Type2>
-    TFEL_MATH_INLINE Expr(const T2toST2Type& a, const ST2toT2Type2& b) {
-      //! a simple check
-      static_assert((implementsT2toST2Concept<T2toST2Type>()));
-      //! a simple check
-      static_assert((implementsST2toT2Concept<ST2toT2Type2>()));
+    template <T2toST2Concept T2toST2Type, ST2toT2Concept ST2toT2Type2>
+    TFEL_HOST_DEVICE constexpr Expr(const T2toST2Type& a,
+                                    const ST2toT2Type2& b) noexcept {
       //! a simple check
       static_assert((getSpaceDimension<T2toST2Type>() == 1u));
       //! a simple check
@@ -77,22 +72,18 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_MATH_INLINE const value_type& operator()(
-        const unsigned short i, const unsigned short j) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 3 + j];
     }  // end of operator()
-    /*!
-     * \return the runtime properties
-     */
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    //! \return the runtime properties
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<ST2toST2ResultType,T2toST2ST2toT2ProductExpr>
 
-  /*!
-   * Partial specialisation
-   */
-  template <typename ST2toST2ResultType>
+  //! \brief partial specialisation in 2D
+  template <ST2toST2Concept ST2toST2ResultType>
   struct TFEL_VISIBILITY_LOCAL
       Expr<ST2toST2ResultType, T2toST2ST2toT2ProductExpr<2u>>
       : public ST2toST2ConceptBase<
@@ -112,12 +103,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename T2toST2Type, typename ST2toT2Type2>
-    TFEL_MATH_INLINE Expr(const T2toST2Type& a, const ST2toT2Type2& b) {
-      //! a simple check
-      static_assert((implementsT2toST2Concept<T2toST2Type>()));
-      //! a simple check
-      static_assert((implementsST2toT2Concept<ST2toT2Type2>()));
+    template <T2toST2Concept T2toST2Type, ST2toT2Concept ST2toT2Type2>
+    TFEL_HOST_DEVICE constexpr Expr(const T2toST2Type& a,
+                                    const ST2toT2Type2& b) noexcept {
       //! a simple check
       static_assert((getSpaceDimension<T2toST2Type>() == 2u));
       //! a simple check
@@ -160,22 +148,18 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_MATH_INLINE const value_type& operator()(
-        const unsigned short i, const unsigned short j) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 4 + j];
     }  // end of operator()
-    /*!
-     * \return the runtime properties
-     */
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    //! \return the runtime properties
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<ST2toST2ResultType,T2toST2ST2toT2ProductExpr>
 
-  /*!
-   * Partial specialisation
-   */
-  template <typename ST2toST2ResultType>
+  //! \brief partial specialisation in 3D
+  template <ST2toST2Concept ST2toST2ResultType>
   struct TFEL_VISIBILITY_LOCAL
       Expr<ST2toST2ResultType, T2toST2ST2toT2ProductExpr<3u>>
       : public ST2toST2ConceptBase<
@@ -195,12 +179,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename T2toST2Type, typename ST2toT2Type2>
-    TFEL_MATH_INLINE Expr(const T2toST2Type& a, const ST2toT2Type2& b) {
-      //! a simple check
-      static_assert((implementsT2toST2Concept<T2toST2Type>()));
-      //! a simple check
-      static_assert((implementsST2toT2Concept<ST2toT2Type2>()));
+    template <T2toST2Concept T2toST2Type, ST2toT2Concept ST2toT2Type2>
+    TFEL_HOST_DEVICE constexpr Expr(const T2toST2Type& a,
+                                    const ST2toT2Type2& b) noexcept {
       //! a simple check
       static_assert((getSpaceDimension<T2toST2Type>() == 3u));
       //! a simple check
@@ -319,14 +300,12 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_MATH_INLINE const value_type& operator()(
-        const unsigned short i, const unsigned short j) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 6 + j];
     }  // end of operator()
-    /*!
-     * \return the runtime properties
-     */
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    //! \return the runtime properties
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<ST2toST2ResultType,T2toST2ST2toT2ProductExpr>

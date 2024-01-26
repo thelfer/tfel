@@ -184,20 +184,20 @@ namespace tfel::math {
      * \brief constructor from a t2tost2
      * \param[in] v : values
      */
-    template <typename T2toST2Type,
-              std::enable_if_t<
-                  ((implementsT2toST2Concept<T2toST2Type>()) &&
-                   (isAssignableTo<numeric_type<T2toST2Type>, ValueType>()) &&
-                   (getSpaceDimension<T2toST2Type>() == N)),
-                  bool> = true>
-    TFEL_HOST_DEVICE constexpr t2tot2(const T2toST2Type&);
+    template <T2toST2Concept T2toST2Type>
+    TFEL_HOST_DEVICE constexpr t2tot2(const T2toST2Type&) noexcept requires(
+        (isAssignableTo<numeric_type<T2toST2Type>, ValueType>()) &&
+        (getSpaceDimension<T2toST2Type>() == N));
     //
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(t2tot2,
                                                GenericFixedSizeArrayBase);
     //! exposing GenericFixedSizeArray access operator
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
-
+    //! \brief import values from an external memory location
+    TFEL_HOST_DEVICE constexpr void import(
+        const base_type<ValueType>* const) noexcept;
+    //! \brief copy from a range
     TFEL_HOST_DEVICE constexpr void copy(const auto) noexcept;
   };
 
@@ -225,7 +225,6 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr auto change_basis(
       const T2toT2Type&,
       const rotation_matrix<numeric_type<T2toT2Type>>&) noexcept;
-
   /*!
    * \return compute the derivative of the velocity gradient
    * \param[in] F: deformation gradient
@@ -248,12 +247,11 @@ namespace tfel::math {
   computeDeterminantSecondDerivative(const TensorType&) noexcept requires(
       isScalar<numeric_type<TensorType>>());
 
-  template <typename T, typename T2toST2Type>
-  TFEL_HOST_DEVICE
-      std::enable_if_t<((implementsT2toST2Concept<T2toST2Type>()) &&
-                        (isAssignableTo<numeric_type<T2toST2Type>, T>())),
-                       void>
-      convert(t2tot2<getSpaceDimension<T2toST2Type>(), T>&, const T2toST2Type&);
+  template <typename T, T2toST2Concept T2toST2Type>
+  TFEL_HOST_DEVICE constexpr void convert(
+      t2tot2<getSpaceDimension<T2toST2Type>(), T>&,
+      const T2toST2Type&) noexcept  //
+      requires(isAssignableTo<numeric_type<T2toST2Type>, T>());
 
 }  // end of namespace tfel::math
 

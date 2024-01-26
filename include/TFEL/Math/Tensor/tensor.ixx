@@ -137,9 +137,9 @@ namespace tfel::math {
     tfel::fsalgo::copy<TensorDimeToSize<N>::value>::exe(p, *this);
   }  // end of copy
 
-  template <unsigned short N, typename T, typename OutputIterator>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void>
-  exportToBaseTypeArray(const tensor<N, T>& t, OutputIterator p) {
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr void exportToBaseTypeArray(
+      const tensor<N, T>& t, const auto p) noexcept requires(isScalar<T>()) {
     tfel::fsalgo::transform<TensorDimeToSize<N>::value>::exe(
         t.cbegin(), p, [](const auto& v) { return base_type_cast(v); });
   }
