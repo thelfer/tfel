@@ -25,7 +25,7 @@ namespace tfel::math {
    * \tparam T: value hold
    */
   template <unsigned short N, typename T>
-  struct tvector;
+  struct [[nodiscard]] tvector;
 
   /*!
    * \brief partial specialisation for tvectors.
