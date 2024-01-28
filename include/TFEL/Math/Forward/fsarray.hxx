@@ -21,7 +21,7 @@ namespace tfel::math {
 
   //! \brief a class representing tiny vectors of fixed size.
   template <unsigned short N, typename T>
-  struct fsarray;
+  struct [[nodiscard]] fsarray;
 
   /*!
    * \brief partial specialisation for fsarrays.

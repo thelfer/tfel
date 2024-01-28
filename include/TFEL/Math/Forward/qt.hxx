@@ -262,7 +262,7 @@ namespace tfel::math {
    * \date   06 Jun 2006
    */
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>
-  struct Quantity;
+  struct [[nodiscard]] Quantity;
 
   /*!
    * \brief an helper structure to retrieve the underlying numeric type and

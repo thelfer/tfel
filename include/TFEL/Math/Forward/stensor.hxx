@@ -28,7 +28,7 @@ namespace tfel::math {
    * \see   StensorDimeToSize and StensorSizeToDime.
    */
   template <unsigned short N, typename T = double>
-  struct stensor;
+  struct [[nodiscard]] stensor;
 
   /*!
    * \brief partial specialisation of the `MathObjectTraits` class.

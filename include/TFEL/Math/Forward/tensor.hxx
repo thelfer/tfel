@@ -27,7 +27,7 @@ namespace tfel::math {
    * \see   TensorDimeToSize and TensorSizeToDime.
    */
   template <unsigned short N, typename T = double>
-  struct tensor;
+  struct [[nodiscard]] tensor;
 
   /*!
    * \brief partial specialisation of the `MathObjectTraits` class.
