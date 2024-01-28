@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+# Issue 87: [tfel-config] remove reference to svn revision
+
+For more details, see <https://github.com/thelfer/tfel/issues/487>.
+
 # Issue 466: Fix build with gcc 13
 
 For more details, see <https://github.com/thelfer/tfel/issues/466>.
