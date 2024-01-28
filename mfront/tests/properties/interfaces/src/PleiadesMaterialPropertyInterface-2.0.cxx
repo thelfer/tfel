@@ -27,8 +27,8 @@
 
 namespace mfront {
 
-  PleiadesMaterialPropertyInterface::PleiadesMaterialPropertyInterface() =
-      default;
+  PleiadesMaterialPropertyInterface::
+      PleiadesMaterialPropertyInterface() noexcept = default;
 
   std::string PleiadesMaterialPropertyInterface::getName(void) {
     return "pleiades-2.0";

@@ -27,7 +27,7 @@ namespace mfront {
 
   struct PleiadesMaterialPropertyInterface
       : public AbstractMaterialPropertyInterface {
-    PleiadesMaterialPropertyInterface();
+    PleiadesMaterialPropertyInterface() noexcept;
 
     using const_iterator =
         tfel::utilities::CxxTokenizer::TokensContainer::const_iterator;

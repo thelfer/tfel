@@ -99,45 +99,45 @@ namespace mfront {
     this->registerCallBack(
         "--dsl-option",
         CallBack("allow to define options passed to domain specific languages",
-                 [] {}, true));
+                 []() noexcept {}, true));
     this->registerCallBack(
         "--dsl-material-property-option",
         CallBack("allow to define options passed to domain specific languages "
                  "related to material properties",
-                 [] {}, true));
+                 []() noexcept {}, true));
     this->registerCallBack(
         "--dsl-behaviour-option",
         CallBack("allow to define options passed to domain specific languages "
                  "related to behaviours",
-                 [] {}, true));
+                 []() noexcept {}, true));
     this->registerCallBack(
         "--dsl-model-option",
         CallBack("allow to define options passed to domain specific languages "
                  "related to models",
-                 [] {}, true));
+                 []() noexcept {}, true));
     this->registerCallBack(
         "--dsl-options-file",
         CallBack("allow to define options passed to domain specific languages  "
                  "thanks to an external file in a JSON-like format",
-                 [] {}, true));
+                 []() noexcept {}, true));
     this->registerCallBack(
         "--dsl-material-property-options-file",
         CallBack("allow to define options passed to domain specific languages "
                  "related to material properties thanks to an external file in "
                  "a JSON-like format",
-                 [] {}, true));
+                 []() noexcept {}, true));
     this->registerCallBack(
         "--dsl-behaviour-options-file",
         CallBack("allow to define options passed to domain specific languages "
                  "related to behaviours thanks to an external file in a "
                  "JSON-like format",
-                 [] {}, true));
+                 []() noexcept {}, true));
     this->registerCallBack(
         "--dsl-model-options-file",
         CallBack("allow to define options passed to domain specific languages "
                  "related to models thanks to an external file in a JSON-like "
                  "format",
-                 [] {}, true));
+                 []() noexcept {}, true));
     this->registerNewCallBack(
         "--include", "-I", &QueryHandlerBase::treatSearchPath,
         "add a new path at the beginning of the search paths", true);
@@ -156,8 +156,9 @@ namespace mfront {
                               "(same as --install-path)",
                               true);
     this->registerCallBack(
-        "--nomelt", CallBack("don't melt librairies sources",
-                             [this] { this->melt_sources = false; }, false));
+        "--nomelt",
+        CallBack("don't melt librairies sources",
+                 [this]() noexcept { this->melt_sources = false; }, false));
     this->registerNewCallBack(
         "--warning", "-W", &QueryHandlerBase::treatWarning, "print warnings");
     this->registerNewCallBack("--pedantic", &QueryHandlerBase::treatPedantic,
@@ -211,7 +212,7 @@ namespace mfront {
                  [this] { this->treatSpecificTargets(); }, false));
     this->registerCallBack("--no-gui", CallBack("do not display errors using "
                                                 "a message box (windows only)",
-                                                [] {}, false));
+                                                []() noexcept {}, false));
   }
 
   std::function<void()> QueryHandlerBase::generateGeneratedSourcesQuery(

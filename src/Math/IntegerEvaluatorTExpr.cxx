@@ -106,7 +106,7 @@ namespace tfel::math {
   template <typename Op>
   IntegerEvaluator::TBinaryOperation::BinaryOperation<Op>::BinaryOperation(
       const std::shared_ptr<tfel::math::parser::IntegerExpr> a_,
-      const std::shared_ptr<tfel::math::parser::IntegerExpr> b_)
+      const std::shared_ptr<tfel::math::parser::IntegerExpr> b_) noexcept
       : a(a_), b(b_) {}  // end of BinaryOperation
 
   template <typename Op>

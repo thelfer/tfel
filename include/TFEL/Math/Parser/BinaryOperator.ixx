@@ -19,7 +19,7 @@ namespace tfel::math::parser {
 
   template <typename Op>
   BinaryOperation<Op>::BinaryOperation(const std::shared_ptr<Expr> a_,
-                                       const std::shared_ptr<Expr> b_)
+                                       const std::shared_ptr<Expr> b_) noexcept
       : a(a_), b(b_) {}  // end of BinaryOperation
 
   template <typename Op>

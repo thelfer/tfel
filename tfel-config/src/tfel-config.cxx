@@ -229,8 +229,8 @@ static void listOptions(std::ostream& os) {
 }  // end of listOptions
 
 [[noreturn]] static void treatVersion() {
-  std::cout << "tfel-config " << VERSION
-            << " (git hash: " << TFEL_GIT_HASH << ")" << std::endl;
+  std::cout << "tfel-config " << VERSION << " (git hash: " << TFEL_GIT_HASH
+            << ")" << std::endl;
   std::exit(EXIT_SUCCESS);
 }  // end of treatHelp
 
