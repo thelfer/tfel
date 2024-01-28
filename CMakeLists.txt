@@ -91,14 +91,16 @@ else( CMAKE_SIZEOF_VOID_P EQUAL 8 )
   add_definitions("-DTFEL_ARCH32")
 endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
-#extraction svn revision
-if(NOT TFEL_SVN_REVISION)
-execute_process(COMMAND svnversion
-                WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-                OUTPUT_VARIABLE TFEL_SVN_REVISION 
-		OUTPUT_STRIP_TRAILING_WHITESPACE)
-endif(NOT TFEL_SVN_REVISION)
-add_definitions("-DTFEL_SVN_REVISION=\\\"\"${TFEL_SVN_REVISION}\"\\\"")
+#extraction git hash
+if(NOT TFEL_GIT_HASH)
+execute_process(
+  COMMAND git log -1 --format=%h
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE TFEL_GIT_HASH
+  OUTPUT_STRIP_TRAILING_WHITESPACE)
+message("Abbreviated commit hash: ${TFEL_GIT_HASH}")
+endif(NOT TFEL_GIT_HASH)
+add_definitions("-DTFEL_GIT_HASH=\\\"\"${TFEL_GIT_HASH}\"\\\"")
 add_definitions("-DTFEL_CMAKE_GENERATOR=\\\"\"${CMAKE_GENERATOR}\"\\\"")
 
 # testing
