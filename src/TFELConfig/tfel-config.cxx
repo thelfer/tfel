@@ -378,11 +378,10 @@ static void listOptions(std::ostream& os) {
   }
 }  // end of listOptions
 
-TFEL_NORETURN static void treatVersion() {
-  using namespace std;
-  cout << "tfel-config " << VERSION << " (svn revision : " << TFEL_SVN_REVISION
-       << ")" << endl;
-  exit(EXIT_SUCCESS);
+[[noreturn]] static void treatVersion() {
+  std::cout << "tfel-config " << VERSION
+            << " (git hash: " << TFEL_GIT_HASH << ")" << std::endl;
+  std::exit(EXIT_SUCCESS);
 }  // end of treatHelp
 
 TFEL_NORETURN static void treatHelp() {
