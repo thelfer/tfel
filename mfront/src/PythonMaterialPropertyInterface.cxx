@@ -365,7 +365,7 @@ namespace mfront {
     writeInterfaceSymbol(srcFile, name, "Python");
     writeLawSymbol(srcFile, name, mpd.material);
     writeMaterialSymbol(srcFile, name, mpd.material);
-    writeMaterialKnowledgeTypeSymbol(srcFile, name, MATERIALPROPERTY);
+    writeMaterialKnowledgeTypeSymbol(srcFile, name, MaterialKnowledgeType::MATERIALPROPERTY);
     writeParametersSymbols(srcFile, name, mpd);
     // parameters
     if ((!areParametersTreatedAsStaticVariables(mpd)) &&

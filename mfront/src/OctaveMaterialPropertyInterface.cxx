@@ -163,7 +163,7 @@ namespace mfront {
     writeInterfaceSymbol(out, name, "Octave");
     writeLawSymbol(out, name, mpd.material);
     writeMaterialSymbol(out, name, mpd.material);
-    writeMaterialKnowledgeTypeSymbol(out, name, MATERIALPROPERTY);
+    writeMaterialKnowledgeTypeSymbol(out, name, MaterialKnowledgeType::MATERIALPROPERTY);
 
     if (mpd.inputs.size() > 1) {
       out << "static double\n"

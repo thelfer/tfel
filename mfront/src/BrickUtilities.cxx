@@ -61,11 +61,11 @@ namespace mfront::bbrick {
     if (d.is<double>()) {
       BehaviourDescription::ConstantMaterialProperty cmp;
       cmp.value = d.get<double>();
-      return std::move(cmp);
+      return cmp;
     } else if (d.is<int>()) {
       BehaviourDescription::ConstantMaterialProperty cmp;
       cmp.value = static_cast<double>(d.get<int>());
-      return std::move(cmp);
+      return cmp;
     }
     if (!d.is<std::string>()) {
       tfel::raise(
@@ -78,11 +78,11 @@ namespace mfront::bbrick {
       // file name
       BehaviourDescription::ExternalMFrontMaterialProperty emp;
       emp.mpd = dsl.handleMaterialPropertyDescription(mp);
-      return std::move(emp);
+      return emp;
     }
     BehaviourDescription::AnalyticMaterialProperty amp;
     amp.f = mp;
-    return std::move(amp);
+    return amp;
   }  // end of getBehaviourDescriptionMaterialProperty_impl
 
   void declareParameterOrLocalVariable(

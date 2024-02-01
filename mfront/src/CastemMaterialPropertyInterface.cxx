@@ -378,7 +378,7 @@ namespace mfront {
     writeInterfaceSymbol(out, name, "Castem");
     writeLawSymbol(out, name, mpd.law);
     writeMaterialSymbol(out, name, mpd.material);
-    writeMaterialKnowledgeTypeSymbol(out, name, MATERIALPROPERTY);
+    writeMaterialKnowledgeTypeSymbol(out, name, MaterialKnowledgeType::MATERIALPROPERTY);
     writeParametersSymbols(out, name, mpd);
     exportStringSymbol(
         out, name + "_src",

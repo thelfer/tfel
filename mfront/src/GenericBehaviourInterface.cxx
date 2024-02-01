@@ -736,7 +736,6 @@ namespace mfront {
       const std::string& array_offset = "") {
     using size_type = size_t;
     auto o = size_type{};
-    auto idx = size_type{};
     for (const auto& b : bd.getTangentOperatorBlocks()) {
       const auto& v1 = b.first;
       const auto& v2 = b.second;
@@ -814,7 +813,6 @@ namespace mfront {
           SupportedTypes::getTypeSize(v2.type, v2.arraySize)
               .getValueForModellingHypothesis(h));
       o += static_cast<size_type>(s1 * s2);
-      ++idx;
     }
   }  // end of writeTangentOperatorRotationFunctionsImplementationBody
 

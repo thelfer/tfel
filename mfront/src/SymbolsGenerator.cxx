@@ -287,7 +287,7 @@ namespace mfront {
       const StandardBehaviourInterface& i,
       const std::string& n) const {
     mfront::writeMaterialKnowledgeTypeSymbol(out, i.getFunctionNameBasis(n),
-                                             BEHAVIOUR);
+                                             MaterialKnowledgeType::BEHAVIOUR);
   }  // end of writeEntryPointSymbol
 
   void SymbolsGenerator::generateSymbols(std::ostream& out,

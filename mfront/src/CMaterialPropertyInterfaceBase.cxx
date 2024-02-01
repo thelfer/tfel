@@ -397,7 +397,7 @@ namespace mfront {
   void CMaterialPropertyInterfaceBase::writeMaterialKnowledgeTypeSymbol(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
     mfront::writeMaterialKnowledgeTypeSymbol(os, this->getSymbolName(mpd),
-                                             MATERIALPROPERTY);
+                                             MaterialKnowledgeType::MATERIALPROPERTY);
   }  // end of writeMaterialKnowledgeTypeSymbol
 
   void CMaterialPropertyInterfaceBase::writeVariablesNamesSymbol(

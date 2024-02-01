@@ -371,7 +371,7 @@ namespace mfront {
     writeInterfaceSymbol(os, name, this->getInterfaceNameInCamelCase());
     writeLawSymbol(os, name, mpd.law);
     writeMaterialSymbol(os, name, mpd.material);
-    writeMaterialKnowledgeTypeSymbol(os, name, MATERIALPROPERTY);
+    writeMaterialKnowledgeTypeSymbol(os, name, MaterialKnowledgeType::MATERIALPROPERTY);
     writeParametersSymbols(os, name, mpd);
     exportStringSymbol(
         os, name + "_src",
