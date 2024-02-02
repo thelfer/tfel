@@ -34,8 +34,8 @@ namespace tfel::math {
   struct Expr<tmatrix<3u, 3u, numeric_type<TensorType>>,
               MatrixViewFromTensorExpr<TensorType>>
       : public ExprBase,
-        public MatrixConcept<Expr<tmatrix<3u, 3u, numeric_type<TensorType>>,
-                                  MatrixViewFromTensorExpr<TensorType>>> {
+        public MatrixConceptBase<Expr<tmatrix<3u, 3u, numeric_type<TensorType>>,
+                                      MatrixViewFromTensorExpr<TensorType>>> {
     using NumType = numeric_type<TensorType>;
     typedef unsigned short IndexType;
     typedef EmptyRunTimeProperties RunTimeProperties;

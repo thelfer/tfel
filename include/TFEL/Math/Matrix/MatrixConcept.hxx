@@ -29,48 +29,54 @@ namespace tfel::math {
   struct MatrixTag {};  // end of MatrixTag
 
   /*!
-   * \class MatrixConcept
+   * \class MatrixConceptBase
    * \brief A class used to model the concept of matrices.
-   * Here we use the curiously recurring template pattern.
-   * \param T, a matrix type.
-   * \author Thomas Helfer
-   * \date   04 May 2006
    */
-  template <typename T>
-  struct MatrixConcept {
+  template <typename MatrixType>
+  struct MatrixConceptBase {
     using ConceptTag = MatrixTag;
-
-   protected:
-    MatrixConcept() = default;
-    MatrixConcept(MatrixConcept&&) = default;
-    MatrixConcept(const MatrixConcept&) = default;
-    MatrixConcept& operator=(const MatrixConcept&) = default;
-    ~MatrixConcept() = default;
   };
 
   /*!
-   * \brief an helper function which returns if the given type implements the
-   * `MatrixConcept`.
-   * \tparam MatrixType: type tested
+   * \brief definition of the MatrixConcept concept
+   * a class matching the matrix concept must expose the `MatrixTag` and have
+   * access operators.
    */
   template <typename MatrixType>
-  TFEL_HOST_DEVICE constexpr bool implementsMatrixConcept() {
-    return tfel::meta::implements<MatrixType, MatrixConcept>();
-  }  // end of implementsMatrixConcept
+  concept MatrixConcept =
+      (std::is_same_v<typename std::decay_t<MatrixType>::ConceptTag,
+                      MatrixTag>)&&(requires(const MatrixType t,
+                                             const index_type<MatrixType> i,
+                                             const index_type<MatrixType> j) {
+        t(i, j);
+      });
 
   //! paratial specialisation for matrices
-  template <typename Type>
-  struct ConceptRebind<MatrixTag, Type> {
-    using type = MatrixConcept<Type>;
+  template <typename MatrixType>
+  struct ConceptRebind<MatrixTag, MatrixType> {
+    using type = MatrixConceptBase<MatrixType>;
   };
 
   //! \brief a simple alias for backward compatibility with versions prior
   //! to 4.0
   template <typename MatrixType>
   using MatrixTraits =
-      std::conditional_t<implementsMatrixConcept<MatrixType>(),
+      std::conditional_t<MatrixConcept<MatrixType>,
                          MathObjectTraits<MatrixType>,
                          MathObjectTraits<tfel::meta::InvalidType>>;
+
+  /*!
+   * \brief an helper function which returns if the given type implements the
+   * `MatrixConcept`.
+   * \tparam MatrixType: type tested
+   * \note function given for backward compatibility with versions prior
+   * to 5.0
+   */
+  template <typename MatrixType>
+  [[deprecated]] TFEL_HOST_DEVICE constexpr bool implementsMatrixConcept() {
+    return MatrixConcept<MatrixType>;
+    // return tfel::meta::implements<MatrixType, MatrixConcept>();
+  }  // end of implementsMatrixConcept
 
 }  // end of namespace tfel::math
 
