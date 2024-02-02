@@ -39,11 +39,11 @@ namespace tfel::math {
    * a class matching the vector concept must expose the `VectorTag` and have
    * access operators.
    */
-  template <typename T>
+  template <typename VectorType>
   concept VectorConcept =
-      (std::is_same_v<typename std::decay_t<T>::ConceptTag, VectorTag>)&&  //
-      (requires(const T t, const unsigned short i) { t[i]; }) &&           //
-      (requires(const T t, const unsigned short i) { t(i); });
+      (std::is_same_v<typename std::decay_t<VectorType>::ConceptTag, VectorTag>)&&  //
+      (requires(const VectorType t, const index_type<VectorType> i) { t[i]; }) &&           //
+      (requires(const VectorType t, const index_type<VectorType> i) { t(i); });
 
   //! paratial specialisation for vectors
   template <typename Type>
