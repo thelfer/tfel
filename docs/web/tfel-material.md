@@ -332,16 +332,17 @@ Various functions are available:
 
 # Orthotropic axes convention
 
-Most finite element solver can't have a uniq definition of the
-orthotropic axes for all the modelling hypotheses.
+Most finite element solver can't have a unique definition of the
+orthotropic axes  valied for all the modelling hypotheses.
 
 For example, one can define a pipe using the following axes
 definition:
 
 - \(\left(rr,zz,tt,...\right)\) in \(3D\), \(2D\) axysymmetric, \(1D\)
-  axisymmetric generalised plane strain or generalised plane stress.
-- \(\left(rr,tt,zz,...\right)\) in \(2D\) plane stress, strain,
-  generalized plane strain.
+  axisymmetric generalised plane strain or \(1D\)
+  axisymmetric generalised plane stress.
+- \(\left(rr,tt,zz,...\right)\) in \(2D\) plane stress, \(2D\) plane
+  strain and \(2D\) generalized plane strain.
 
 ![The `Pipe` orthotropic axes convention for \(3D\), \(2D\)
   axysymmetric, \(1D\) axisymmetric generalised plane strain or
@@ -352,40 +353,16 @@ definition:
   (left) and \(2D\) plane stress, strain, generalized plane strain
   (right)"){width=50%}
 
-With those conventions, the axial direction is either the second or
-the third material axis, a fact that must be taken into account when
-defining the stiffness tensor, the Hill tensor(s), the thermal
-expansion, etc.
-
-![The `Plate` orthotropic axes convention](img/plate.svg "The `Plate`
-  orthotropic axes convention"){width=50%}
-
-If we were to model plates, a appropriate convention is the following:
-
-- The first material axis is the rolling direction
-- The second material axis is the in plane direction perpendicular to
-  the rolling direction (transverse direction).
-- The third material axis is the normal to the plate.
+With those conventions, named `Pipe` in `MFront`, the axial direction is
+either the second or the third material axis, a fact that must be taken
+into account when defining the stiffness tensor, the Hill tensor(s), the
+thermal expansion, etc.
 
 This convention is only valid for \(3D\), \(2D\) axysymmetric, \(1D\)
   axisymmetric generalised plane strain or generalised plane stress.
 - \(\left(rr,tt,zz,...\right)\) in \(2D\) plane stress, strain,
   generalized plane strain.
 
-![The `Pipe` orthotropic axes convention for \(3D\), \(2D\)
-  axysymmetric, \(1D\) axisymmetric generalised plane strain or
-  generalised plane stress (left) and \(2D\) plane stress, strain,
-  generalized plane strain (right)](img/pipe.svg "The `Pipe`
-  orthotropic axes convention for \(3D\), \(2D\) axysymmetric, \(1D\)
-  axisymmetric generalised plane strain or generalised plane stress
-  (left) and \(2D\) plane stress, strain, generalized plane strain
-  (right)"){width=50%}
-
-With those conventions, the axial direction is either the second or
-the third material axis, a fact that must be taken into account when
-defining the stiffness tensor, the Hill tensor(s), the thermal
-expansion, etc.
-
 ![The `Plate` orthotropic axes convention](img/plate.svg "The `Plate`
   orthotropic axes convention"){width=50%}
 
@@ -396,37 +373,8 @@ If we were to model plates, a appropriate convention is the following:
   the rolling direction (transverse direction).
 - The third material axis is the normal to the plate.
 
-This convention is only valid for 
-\(3D\), \(2D\) axysymmetric, \(1D\)
-  axisymmetric generalised plane strain or generalised plane stress.
-- \(\left(rr,tt,zz,...\right)\) in \(2D\) plane stress, strain,
-  generalized plane strain.
-
-![The `Pipe` orthotropic axes convention for \(3D\), \(2D\)
-  axysymmetric, \(1D\) axisymmetric generalised plane strain or
-  generalised plane stress (left) and \(2D\) plane stress, strain,
-  generalized plane strain (right)](img/pipe.svg "The `Pipe`
-  orthotropic axes convention for \(3D\), \(2D\) axysymmetric, \(1D\)
-  axisymmetric generalised plane strain or generalised plane stress
-  (left) and \(2D\) plane stress, strain, generalized plane strain
-  (right)"){width=50%}
-
-With those conventions, the axial direction is either the second or
-the third material axis, a fact that must be taken into account when
-defining the stiffness tensor, the Hill tensor(s), the thermal
-expansion, etc.
-
-![The `Plate` orthotropic axes convention](img/plate.svg "The `Plate`
-  orthotropic axes convention"){width=50%}
-
-If we were to model plates, a appropriate convention is the following:
-
-- The first material axis is the rolling direction
-- The second material axis is the in plane direction perpendicular to
-  the rolling direction (transverse direction).
-- The third material axis is the normal to the plate.
-
-By definition, this convention is only valid for \(3D\), \(2D\) plane
-stress, strain and generalized plane strain modelling hypotheses.
+By definition, this convention, named `Plate` in `MFront` is only valid
+for \(3D\), \(2D\) plane stress, \(2D\) plane strain and \(2D\)
+generalized plane strain modelling hypotheses.
 
 <!-- Local IspellDict: english -->
