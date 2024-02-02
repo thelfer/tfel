@@ -25,21 +25,25 @@
   }                                               \
   static_cast<void>(0)
 
-template <typename VectorType>
-std::enable_if_t<tfel::math::implementsVectorConcept<VectorType>(), void>
-function(const VectorType& x) {
+// template <typename VectorType>
+// std::enable_if_t<tfel::math::implementsVectorConcept<VectorType>(), void>
+// function(const VectorType& x) {
+//   std::cout << x(0) << " " << x(1) << " " << x(2) << std::endl;
+//   std::cout << "------" << std::endl;
+// }
+
+void function(const tfel::math::VectorConcept auto& x) {
   std::cout << x(0) << " " << x(1) << " " << x(2) << std::endl;
   std::cout << "------" << std::endl;
 }
 
-template <typename VectorType>
-std::enable_if_t<tfel::math::implementsVectorConcept<VectorType>(), void>
-function(const VectorType& x,
-         const tfel::math::numeric_type<VectorType> v0,
-         const tfel::math::numeric_type<VectorType> v1,
-         const tfel::math::numeric_type<VectorType> v2,
-         const tfel::math::numeric_type<VectorType> eps,
-         const unsigned int test_number) {
+template <tfel::math::VectorConcept VectorType>
+void function(const VectorType& x,
+              const tfel::math::numeric_type<VectorType> v0,
+              const tfel::math::numeric_type<VectorType> v1,
+              const tfel::math::numeric_type<VectorType> v2,
+              const tfel::math::numeric_type<VectorType> eps,
+              const unsigned int test_number) {
 #ifdef TFEL_VERBOSE
   std::cout << "Test : " << test_number << std::endl;
 #else
