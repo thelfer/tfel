@@ -80,7 +80,7 @@ namespace tfel::math {
   };  // end of struct DerivativeTypeDispatcher
 
   template <unsigned short N, typename ValueType = double>
-  struct tvector : VectorConcept<tvector<N, ValueType>>,
+  struct tvector : VectorConceptBase<tvector<N, ValueType>>,
                    GenericFixedSizeArray<tvector<N, ValueType>,
                                          FixedSizeVectorPolicy<N, ValueType>> {
     //! \brief a simple alias
