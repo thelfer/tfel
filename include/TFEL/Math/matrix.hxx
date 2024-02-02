@@ -29,7 +29,7 @@ namespace tfel::math {
    */
   template <typename ValueType>
   struct matrix
-      : VectorConcept<matrix<ValueType>>,
+      : VectorConceptBase<matrix<ValueType>>,
         GenericRuntimeArray<matrix<ValueType>,
                             RuntimeRowMajorMatrixArrayPolicy<ValueType>> {
     //! \brief a simple alias

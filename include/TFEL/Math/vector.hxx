@@ -26,7 +26,7 @@
 namespace tfel::math {
 
   template <typename ValueType>
-  struct vector : VectorConcept<vector<ValueType>>,
+  struct vector : VectorConceptBase<vector<ValueType>>,
                   GenericRuntimeArray<vector<ValueType>,
                                       RuntimeVectorArrayPolicy<ValueType>> {
     //! \brief a simple alias
