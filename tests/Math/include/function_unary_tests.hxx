@@ -28,13 +28,13 @@ void function(const VectorType&,
               const tfel::math::numeric_type<VectorType>,
               const unsigned int);
 
-template <class T>
-void function(const tfel::math::MatrixConcept<T>&,
-              const typename tfel::math::MathObjectTraits<T>::NumType,
-              const typename tfel::math::MathObjectTraits<T>::NumType,
-              const typename tfel::math::MathObjectTraits<T>::NumType,
-              const typename tfel::math::MathObjectTraits<T>::NumType,
-              const typename tfel::math::MathObjectTraits<T>::NumType,
+template <tfel::math::MatrixConcept MatrixType>
+void function(const MatrixType&,
+              const tfel::math::numeric_type<MatrixType>,
+              const tfel::math::numeric_type<MatrixType>,
+              const tfel::math::numeric_type<MatrixType>,
+              const tfel::math::numeric_type<MatrixType>,
+              const tfel::math::numeric_type<MatrixType>,
               const unsigned int);
 
 void function(const tfel::math::StensorConcept auto&);
