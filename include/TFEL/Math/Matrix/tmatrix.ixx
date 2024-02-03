@@ -244,12 +244,12 @@ namespace tfel::math::internals {
   };   // end of struct DerivativeViewFromTinyMatrixImplementation
 
   template <MatrixConcept MatrixType>
-  constexpr auto det2(const MatrixType& m) {
+  TFEL_HOST_DEVICE constexpr auto det2(const MatrixType& m) noexcept {
     return m(0, 0) * m(1, 1) - m(1, 0) * m(0, 1);
   }
 
   template <MatrixConcept MatrixType>
-  constexpr auto det3(const MatrixType& m) {
+  TFEL_HOST_DEVICE constexpr auto det3(const MatrixType& m) noexcept {
     const auto a = m(0, 0);
     const auto b = m(0, 1);
     const auto c = m(0, 2);
