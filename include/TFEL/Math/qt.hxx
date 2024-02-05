@@ -52,25 +52,23 @@ namespace tfel::math::internals {
      * \brief constructor from a value
      * \param src: the src.
      */
-    template <typename T,
-              std::enable_if_t<((std::is_constructible_v<ValueType, T>)&&  //
-                                (std::is_convertible_v<ValueType, T>)&&    //
-                                (!AllowImplicitConversion)),
-                               bool> = false>
+    template <typename T>
     TFEL_HOST_DEVICE constexpr explicit QuantityValueOwnershipPolicy(
-        const T& src) noexcept
+        const T& src) noexcept                              //
+        requires((std::is_constructible_v<ValueType, T>)&&  //
+                 (std::is_convertible_v<ValueType, T>)&&    //
+                 (!AllowImplicitConversion))
         : value(src) {}
     /*!
      * \brief constructor from a value
      * \param src: the src.
      */
-    template <typename T,
-              std::enable_if_t<((std::is_constructible_v<ValueType, T>)&&  //
-                                (std::is_convertible_v<ValueType, T>)&&    //
-                                (AllowImplicitConversion)),
-                               bool> = false>
+    template <typename T>
     TFEL_HOST_DEVICE constexpr QuantityValueOwnershipPolicy(
-        const T& src) noexcept
+        const T& src) noexcept                              //
+        requires((std::is_constructible_v<ValueType, T>)&&  //
+                 (std::is_convertible_v<ValueType, T>)&&    //
+                 (AllowImplicitConversion))
         : value(src) {}
     //! \brief return the value
     TFEL_HOST_DEVICE constexpr ValueType& getValue() noexcept {
@@ -91,29 +89,26 @@ namespace tfel::math::internals {
      * \param src: the src.
      */
     template <typename T>
-    TFEL_HOST_DEVICE constexpr std::enable_if_t<
-        ((std::is_constructible_v<ValueType, T>)&&  //
-         (std::is_convertible_v<ValueType, T>)&&    //
-         (AllowImplicitConversion)),
-        QuantityValueOwnershipPolicy&>
-    operator=(const T& src) noexcept {
+    TFEL_HOST_DEVICE constexpr QuantityValueOwnershipPolicy&
+    operator=(const T& src) noexcept requires(
+        (std::is_constructible_v<ValueType, T>)&&  //
+        (std::is_convertible_v<ValueType, T>)&&    //
+        (AllowImplicitConversion)) {
       this->value = src;
       return *this;
     }
     //! \brief conversion operator
-    template <typename T,
-              std::enable_if_t<((std::is_same_v<ValueType, T>)&&  //
-                                (AllowImplicitConversion)),
-                               bool> = false>
-    TFEL_HOST_DEVICE constexpr operator T&() noexcept {
+    template <typename T>
+    TFEL_HOST_DEVICE constexpr operator T&() noexcept requires(
+        (std::is_same_v<ValueType, T>)&&  //
+        (AllowImplicitConversion)) {
       return this->value;
     }
     //! \brief conversion operator
-    template <typename T,
-              std::enable_if_t<((std::is_same_v<ValueType, T>)&&  //
-                                (AllowImplicitConversion)),
-                               bool> = false>
-    TFEL_HOST_DEVICE constexpr operator T() const noexcept {
+    template <typename T>
+    TFEL_HOST_DEVICE constexpr operator T() const
+        noexcept requires((std::is_same_v<ValueType, T>)&&  //
+                          (AllowImplicitConversion)) {
       return this->value;
     }
     //! \brief destructor
@@ -160,29 +155,26 @@ namespace tfel::math::internals {
      * \param src: the src.
      */
     template <typename T>
-    TFEL_HOST_DEVICE constexpr std::enable_if_t<
-        ((std::is_constructible_v<ValueType, T>)&&  //
-         (std::is_convertible_v<ValueType, T>)&&    //
-         (AllowImplicitConversion)),
-        QuantityReferenceOwnershipPolicy&>
-    operator=(const T& src) noexcept {
+    TFEL_HOST_DEVICE constexpr QuantityReferenceOwnershipPolicy&
+    operator=(const T& src) noexcept requires(
+        (std::is_constructible_v<ValueType, T>)&&  //
+        (std::is_convertible_v<ValueType, T>)&&    //
+        (AllowImplicitConversion)) {
       this->value = src;
       return *this;
     }
     //! \brief conversion operator
-    template <typename T,
-              std::enable_if_t<((std::is_same_v<ValueType, T>)&&  //
-                                (AllowImplicitConversion)),
-                               bool> = false>
-    TFEL_HOST_DEVICE constexpr operator T&() noexcept {
+    template <typename T>
+    TFEL_HOST_DEVICE constexpr operator T&() noexcept requires(
+        (std::is_same_v<ValueType, T>)&&  //
+        (AllowImplicitConversion)) {
       return this->value;
     }
     //! \brief conversion operator
-    template <typename T,
-              std::enable_if_t<((std::is_same_v<ValueType, T>)&&  //
-                                (AllowImplicitConversion)),
-                               bool> = false>
-    TFEL_HOST_DEVICE constexpr operator const T&() const noexcept {
+    template <typename T>
+    TFEL_HOST_DEVICE constexpr operator const T&() const
+        noexcept requires((std::is_same_v<ValueType, T>)&&  //
+                          (AllowImplicitConversion)) {
       return this->value;
     }
     //! \brief destructor
@@ -221,43 +213,40 @@ namespace tfel::math {
     //
     using OwnershipPolicy::OwnershipPolicy;
     //
-    template <typename ValueType2,
-              typename OwnershipPolicy2,
-              std::enable_if_t<
-                  std::is_same_v<promote<ValueType, ValueType2>, ValueType>,
-                  bool> = true>
+    template <typename ValueType2, typename OwnershipPolicy2>
     TFEL_HOST_DEVICE constexpr Quantity(
-        const Quantity<UnitType, ValueType2, OwnershipPolicy2>& src) noexcept
+        const Quantity<UnitType, ValueType2, OwnershipPolicy2>&
+            src) noexcept  //
+        requires(std::is_same_v<promote<ValueType, ValueType2>, ValueType>)
         : OwnershipPolicy(src.getValue()) {}  // end of Quantity
     //
     using OwnershipPolicy::operator=;
     //! \brief assignement operator
     template <typename ValueType2, typename OwnershipPolicy2>
-    TFEL_HOST_DEVICE constexpr std::enable_if_t<
-        std::is_same_v<promote<ValueType, ValueType2>, ValueType>,
-        Quantity&>
-    operator=(
-        const Quantity<UnitType, ValueType2, OwnershipPolicy2>& src) noexcept {
+    TFEL_HOST_DEVICE constexpr Quantity& operator=(
+        const Quantity<UnitType, ValueType2, OwnershipPolicy2>&
+            src) noexcept requires(std::is_same_v<promote<ValueType,
+                                                          ValueType2>,
+                                                  ValueType>) {
       this->getValue() = src.getValue();
       return *this;
     }
     //! \brief operator +=
     template <typename ValueType2, typename OwnershipPolicy2>
-    TFEL_HOST_DEVICE constexpr std::enable_if_t<
-        std::is_same_v<promote<ValueType, ValueType2>, ValueType>,
-        Quantity&>
-    operator+=(
-        const Quantity<UnitType, ValueType2, OwnershipPolicy2>& src) noexcept {
+    TFEL_HOST_DEVICE constexpr Quantity& operator+=(
+        const Quantity<UnitType, ValueType2, OwnershipPolicy2>&
+            src) noexcept requires(std::is_same_v<promote<ValueType,
+                                                          ValueType2>,
+                                                  ValueType>) {
       this->getValue() += src.getValue();
       return *this;
     }
     //! \brief operator -=
     template <typename ValueType2, typename OwnershipPolicy2>
-    TFEL_HOST_DEVICE constexpr std::enable_if_t<
-        std::is_same<promote<ValueType, ValueType2>, ValueType>::value,
-        Quantity&>
-    operator-=(
-        const Quantity<UnitType, ValueType2, OwnershipPolicy2>& src) noexcept {
+    TFEL_HOST_DEVICE constexpr Quantity& operator-=(
+        const Quantity<UnitType, ValueType2, OwnershipPolicy2>&
+            src) noexcept requires(std::is_same<promote<ValueType, ValueType2>,
+                                                ValueType>::value) {
       this->getValue() -= src.getValue();
       return *this;
     }
@@ -267,10 +256,9 @@ namespace tfel::math {
      * \param[in] a: a scalar
      */
     template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr std::enable_if_t<
-        IsQtScalarOperationValid<ValueType, ValueType2>::cond,
-        Quantity&>
-    operator*=(const ValueType2& a) noexcept {
+    TFEL_HOST_DEVICE constexpr Quantity&
+    operator*=(const ValueType2& a) noexcept requires(
+        IsQtScalarOperationValid<ValueType, ValueType2>::cond) {
       this->getValue() *= a;
       return *this;
     }
@@ -280,11 +268,10 @@ namespace tfel::math {
      * \param[in] a: a scalar
      */
     template <typename ValueType2, typename OwnershipPolicy2>
-    TFEL_HOST_DEVICE constexpr std::enable_if_t<
-        IsQtScalarOperationValid<ValueType, ValueType2>::cond,
-        Quantity&>
-    operator*=(
-        const Quantity<NoUnit, ValueType2, OwnershipPolicy2>& a) noexcept {
+    TFEL_HOST_DEVICE constexpr Quantity& operator*=(
+        const Quantity<NoUnit, ValueType2, OwnershipPolicy2>&
+            a) noexcept requires(IsQtScalarOperationValid<ValueType,
+                                                          ValueType2>::cond) {
       this->getValue() *= a.getValue();
       return *this;
     }
@@ -294,10 +281,9 @@ namespace tfel::math {
      * \param[in] a: a scalar
      */
     template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr std::enable_if_t<
-        IsQtScalarOperationValid<ValueType, ValueType2>::cond,
-        Quantity&>
-    operator/=(const ValueType2& a) noexcept {
+    TFEL_HOST_DEVICE constexpr Quantity&
+    operator/=(const ValueType2& a) noexcept requires(
+        IsQtScalarOperationValid<ValueType, ValueType2>::cond) {
       this->getValue() /= a;
       return *this;
     }
@@ -307,11 +293,10 @@ namespace tfel::math {
      * \param[in] a: a scalar
      */
     template <typename ValueType2, typename OwnershipPolicy2>
-    TFEL_HOST_DEVICE constexpr std::enable_if_t<
-        IsQtScalarOperationValid<ValueType, ValueType2>::cond,
-        Quantity&>
-    operator/=(
-        const Quantity<NoUnit, ValueType2, OwnershipPolicy2>& a) noexcept {
+    TFEL_HOST_DEVICE constexpr Quantity& operator/=(
+        const Quantity<NoUnit, ValueType2, OwnershipPolicy2>&
+            a) noexcept requires(IsQtScalarOperationValid<ValueType,
+                                                          ValueType2>::cond) {
       this->getValue() /= a.getValue();
       return *this;
     }
@@ -431,11 +416,9 @@ namespace tfel::math {
   };
 
   template <int N, typename Unit, typename ValueType, typename OwnershipPolicy>
-  TFEL_HOST_DEVICE constexpr std::enable_if_t<
-      std::is_floating_point_v<ValueType>,
-      typename UnaryResultType<Quantity<Unit, ValueType, OwnershipPolicy>,
-                               Power<N, 1u>>::type>
-  power(const Quantity<Unit, ValueType, OwnershipPolicy>& x) {
+  TFEL_HOST_DEVICE constexpr auto
+  power(const Quantity<Unit, ValueType, OwnershipPolicy>& x) requires(
+      std::is_floating_point_v<ValueType>) {
     using Result =
         typename UnaryResultType<Quantity<Unit, ValueType, OwnershipPolicy>,
                                  Power<N, 1u>>::type;
@@ -447,11 +430,9 @@ namespace tfel::math {
             typename Unit,
             typename ValueType,
             typename OwnershipPolicy>
-  TFEL_HOST_DEVICE constexpr std::enable_if_t<
-      std::is_floating_point_v<ValueType>,
-      typename UnaryResultType<Quantity<Unit, ValueType, OwnershipPolicy>,
-                               Power<N, D>>::type>
-  power(const Quantity<Unit, ValueType, OwnershipPolicy>& x) {
+  TFEL_HOST_DEVICE constexpr auto
+  power(const Quantity<Unit, ValueType, OwnershipPolicy>& x) requires(
+      std::is_floating_point_v<ValueType>) {
     using Result =
         typename UnaryResultType<Quantity<Unit, ValueType, OwnershipPolicy>,
                                  Power<N, D>>::type;
