@@ -31,33 +31,30 @@ namespace tfel::math {
    */
   struct ArrayTag {};  // end of ArrayTag
 
+  /*!
+   * \class ArrayConceptBase
+   * \brief A class used to model the concept of arrays.
+   */
   template <typename T>
-  struct ArrayConcept {
-    //! \brief type alias
-    typedef ArrayTag ConceptTag;
-
-   protected:
-    ArrayConcept() = default;
-    ArrayConcept(ArrayConcept&&) = default;
-    ArrayConcept(const ArrayConcept&) = default;
-    ArrayConcept& operator=(const ArrayConcept&) = default;
-    ~ArrayConcept() = default;
+  struct ArrayConceptBase {
+    using ConceptTag = ArrayTag;
   };
 
   /*!
-   * \brief an helper function which returns if the given type implements
-   * the `ArrayConcept`.
-   * \tparam ArrayType: type tested
+   * \brief definition of the ArrayConcept concept
+   * a class matching the array concept must expose the `ArrayTag` and have
+   * access operators.
    */
   template <typename ArrayType>
-  TFEL_HOST_DEVICE constexpr bool implementsArrayConcept() {
-    return tfel::meta::implements<ArrayType, ArrayConcept>();
-  }  // end of implementsArrayConcept
+  concept ArrayConcept =
+      (std::is_same_v<typename std::decay_t<ArrayType>::ConceptTag, ArrayTag>)&&  //
+      (requires(const ArrayType t, const index_type<ArrayType> i) { t[i]; }) &&   //
+      (requires(const ArrayType t, const index_type<ArrayType> i) { t(i); });
 
   //! paratial specialisation for arrays
-  template <typename Type>
-  struct ConceptRebind<ArrayTag, Type> {
-    using type = ArrayConcept<Type>;
+  template <typename ArrayType>
+  struct ConceptRebind<ArrayTag, ArrayType> {
+    using type = ArrayConceptBase<ArrayType>;
   };
 
   //! \brief partial specialisation of ComputeUnaryResult_ for arrays
@@ -72,6 +69,17 @@ namespace tfel::math {
                                       DummyHandle,
                                       Expr<Result, UnaryOperation<A, OpNeg>>>;
   };
+
+  /*!
+   * \brief an helper function which returns if the given type implements
+   * the `ArrayConcept`.
+   * \tparam ArrayType: type tested
+   */
+  template <typename ArrayType>
+  [[deprecated]] TFEL_HOST_DEVICE constexpr bool implementsArrayConcept() {
+    // return tfel::meta::implements<ArrayType, ArrayConceptBase>;
+    return ArrayConcept<ArrayType>;
+  }  // end of implementsArrayConcept
 
 }  // end of namespace tfel::math
 

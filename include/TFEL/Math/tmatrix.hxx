@@ -234,7 +234,7 @@ namespace tfel::math {
 
   template <unsigned short N, unsigned short M, typename ValueType = double>
   struct tmatrix
-      : MatrixConcept<tmatrix<N, M, ValueType>>,
+      : MatrixConceptBase<tmatrix<N, M, ValueType>>,
         GenericFixedSizeArray<tmatrix<N, M, ValueType>,
                               FixedSizeRowMajorMatrixPolicy<N, M, ValueType>> {
     static_assert((N != 0) && (M != 0));
