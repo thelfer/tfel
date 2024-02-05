@@ -335,7 +335,8 @@ namespace mfront {
     writeInterfaceSymbol(srcFile, name, "Java");
     writeLawSymbol(srcFile, name, mpd.material);
     writeMaterialSymbol(srcFile, name, mpd.material);
-    writeMaterialKnowledgeTypeSymbol(srcFile, name, MaterialKnowledgeType::MATERIALPROPERTY);
+    writeMaterialKnowledgeTypeSymbol(srcFile, name,
+                                     MaterialKnowledgeType::MATERIALPROPERTY);
     // java
     srcFile << "JNIEXPORT jdouble JNICALL\n";
     if (this->package.empty()) {

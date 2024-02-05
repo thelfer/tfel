@@ -243,7 +243,8 @@ namespace mfront {
     writeUnitSystemSymbol(src, name, mpd);
     writeInterfaceSymbol(src, name, "C++");
     writeMaterialSymbol(src, name, mpd.material);
-    writeMaterialKnowledgeTypeSymbol(src, name, MaterialKnowledgeType::MATERIALPROPERTY);
+    writeMaterialKnowledgeTypeSymbol(src, name,
+                                     MaterialKnowledgeType::MATERIALPROPERTY);
     src << "#ifdef __cplusplus\n"
         << "} // end of extern \"C\"\n"
         << "#endif /* __cplusplus */\n\n";
