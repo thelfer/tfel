@@ -17,171 +17,141 @@
 #include "TFEL/Math/General/Abs.hxx"
 #include "TFEL/Material/OrthotropicStressLinearTransformation.hxx"
 
+namespace tfel::material::internals {
+
+  /*!
+   * \brief add the terms relative to the eigenvectors derivatives
+   * \param[out] d2Phi_ds2: second derivative of the Barlat equivalent stress
+   * \param[in] dPhi_dvp: first derivative of the Barlat
+   * equivalent stress with respect to the eigenvalues
+   * \param[in] d2Phi_dvp2: second derivative of the Barlat
+   * equivalent stress with respect to the eigenvalues
+   * \param[in] vp: eigen values
+   * \param[in] m: matrix for the eigen vectors
+   * \param[in] e: criterion used to check if two eigenvalues are equal
+   */
+  template <typename StressStensor>
+  TFEL_HOST_DEVICE constexpr void completeBaralatStressSecondDerivative(
+      tfel::material::BarlatStressSecondDerivativeType<StressStensor>&,
+      const tfel::math::tvector<3u,
+                                tfel::material::BarlatBaseType<StressStensor>>&,
+      const tfel::math::
+          tvector<6u, tfel::material::BarlatInvertStressType<StressStensor>>&,
+      const tfel::math::tvector<3u, BarlatStressType<StressStensor>>&,
+      const tfel::math::tmatrix<3u, 3u, BarlatBaseType<StressStensor>>&,
+      const tfel::material::BarlatStressType<StressStensor>) noexcept  //
+      requires(tfel::math::getSpaceDimension<StressStensor>() == 1u) {
+  }  // end of completeBaralatStressSecondDerivative
+  /*!
+   * \brief add the terms relative to the eigenvectors derivatives
+   * \param[out] d2Phi_ds2: second derivative of the Barlat equivalent stress
+   * \param[in] dPhi_dvp: first derivative of the Barlat
+   * equivalent stress with respect to the eigenvalues
+   * \param[in] d2Phi_dvp2: second derivative of the Barlat
+   * equivalent stress with respect to the eigenvalues
+   * \param[in] vp: eigen values
+   * \param[in] m: matrix for the eigen vectors
+   * \param[in] e: criterion used to check if two eigenvalues are equal
+   */
+  template <typename StressStensor>
+  TFEL_HOST_DEVICE typename std::enable_if<
+      tfel::math::getSpaceDimension<StressStensor>() == 2u,
+      void>::type
+  completeBaralatStressSecondDerivative(
+      tfel::material::BarlatStressSecondDerivativeType<StressStensor>&
+          d2Phi_ds2,
+      const tfel::math::tvector<3u,
+                                tfel::material::BarlatBaseType<StressStensor>>&
+          dPhi_dvp,
+      const tfel::math::tvector<
+          6u,
+          tfel::material::BarlatInvertStressType<StressStensor>>& d2Phi_dvp2,
+      const tfel::math::tvector<3u, BarlatStressType<StressStensor>>& vp,
+      const tfel::math::tmatrix<3u, 3u, BarlatBaseType<StressStensor>>& m,
+      const tfel::material::BarlatStressType<StressStensor> e) {
+    using namespace tfel::math;
+    using base = tfel::material::BarlatBaseType<StressStensor>;
+    constexpr auto icste = Cste<base>::isqrt2;
+    const tvector<3u, base> v0 = m.template column_view<0u>();
+    const tvector<3u, base> v1 = m.template column_view<1u>();
+    const stensor<2u, base> n01 =
+        stensor<2u, base>::buildFromVectorsSymmetricDiadicProduct(v0, v1) *
+        icste;
+    if (tfel::math::abs(vp[0] - vp[1]) < e) {
+      d2Phi_ds2 += ((d2Phi_dvp2[0] + d2Phi_dvp2[1] - 2 * d2Phi_dvp2[3]) / 2) *
+                   (n01 ^ n01);
+    } else {
+      d2Phi_ds2 += (dPhi_dvp[0] - dPhi_dvp[1]) / (vp[0] - vp[1]) * (n01 ^ n01);
+    }
+  }  // end of completeBaralatStressSecondDerivative
+  /*!
+   * \brief add the terms relative to the eigenvectors derivatives
+   * \param[out] d2Phi_ds2: second derivative of the Barlat equivalent stress
+   * \param[in] dPhi_dvp: first derivative of the Barlat
+   * equivalent stress with respect to the eigenvalues
+   * \param[in] d2Phi_dvp2: second derivative of the Barlat
+   * equivalent stress with respect to the eigenvalues
+   * \param[in] vp: eigen values
+   * \param[in] m: matrix for the eigen vectors
+   * \param[in] e: criterion used to check if two eigenvalues are equal
+   */
+  template <typename StressStensor>
+  TFEL_HOST_DEVICE typename std::enable_if<
+      tfel::math::getSpaceDimension<StressStensor>() == 3u,
+      void>::type
+  completeBaralatStressSecondDerivative(
+      tfel::material::BarlatStressSecondDerivativeType<StressStensor>&
+          d2Phi_ds2,
+      const tfel::math::tvector<3u,
+                                tfel::material::BarlatBaseType<StressStensor>>&
+          dPhi_dvp,
+      const tfel::math::tvector<
+          6u,
+          tfel::material::BarlatInvertStressType<StressStensor>>& d2Phi_dvp2,
+      const tfel::math::tvector<3u, BarlatStressType<StressStensor>>& vp,
+      const tfel::math::tmatrix<3u, 3u, BarlatBaseType<StressStensor>>& m,
+      const tfel::material::BarlatStressType<StressStensor> e) {
+    using namespace tfel::math;
+    using base = tfel::material::BarlatBaseType<StressStensor>;
+    constexpr auto cste = Cste<base>::isqrt2;
+    const tvector<3u, base> v0 = m.template column_view<0u>();
+    const tvector<3u, base> v1 = m.template column_view<1u>();
+    const tvector<3u, base> v2 = m.template column_view<2u>();
+    const stensor<3u, base> n01 =
+        stensor<3u, base>::buildFromVectorsSymmetricDiadicProduct(v0, v1) *
+        cste;
+    const stensor<3u, base> n02 =
+        stensor<3u, base>::buildFromVectorsSymmetricDiadicProduct(v0, v2) *
+        cste;
+    const stensor<3u, base> n12 =
+        stensor<3u, base>::buildFromVectorsSymmetricDiadicProduct(v1, v2) *
+        cste;
+    if (tfel::math::abs(vp[0] - vp[1]) < e) {
+      d2Phi_ds2 += ((d2Phi_dvp2[0] + d2Phi_dvp2[1] - 2 * d2Phi_dvp2[3]) / 2) *
+                   (n01 ^ n01);
+    } else {
+      d2Phi_ds2 += (dPhi_dvp[0] - dPhi_dvp[1]) / (vp[0] - vp[1]) * (n01 ^ n01);
+    }
+    if (tfel::math::abs(vp[0] - vp[2]) < e) {
+      d2Phi_ds2 += ((d2Phi_dvp2[0] + d2Phi_dvp2[2] - 2 * d2Phi_dvp2[4]) / 2) *
+                   (n02 ^ n02);
+    } else {
+      d2Phi_ds2 += (dPhi_dvp[0] - dPhi_dvp[2]) / (vp[0] - vp[2]) * (n02 ^ n02);
+    }
+    if (tfel::math::abs(vp[1] - vp[2]) < e) {
+      d2Phi_ds2 += ((d2Phi_dvp2[1] + d2Phi_dvp2[2] - 2 * d2Phi_dvp2[5]) / 2) *
+                   (n12 ^ n12);
+    } else {
+      d2Phi_ds2 += (dPhi_dvp[1] - dPhi_dvp[2]) / (vp[1] - vp[2]) * (n12 ^ n12);
+    }
+  }  // end of completeBaralatStressSecondDerivative
+
+}  // end of namespace tfel::material::internals
+
 namespace tfel::material {
 
-  namespace internals {
-
-    /*!
-     * \brief add the terms relative to the eigenvectors derivatives
-     * \param[out] d2Phi_ds2: second derivative of the Barlat equivalent stress
-     * \param[in] dPhi_dvp: first derivative of the Barlat
-     * equivalent stress with respect to the eigenvalues
-     * \param[in] d2Phi_dvp2: second derivative of the Barlat
-     * equivalent stress with respect to the eigenvalues
-     * \param[in] vp: eigen values
-     * \param[in] m: matrix for the eigen vectors
-     * \param[in] e: criterion used to check if two eigenvalues are equal
-     */
-    template <typename StressStensor>
-    TFEL_HOST_DEVICE typename std::enable_if<
-        tfel::math::getSpaceDimension<StressStensor>() == 1u,
-        void>::type
-    completeBaralatStressSecondDerivative(
-        tfel::material::BarlatStressSecondDerivativeType<StressStensor>&,
-        const tfel::math::
-            tvector<3u, tfel::material::BarlatBaseType<StressStensor>>&,
-        const tfel::math::
-            tvector<6u, tfel::material::BarlatInvertStressType<StressStensor>>&,
-        const tfel::math::tvector<3u, BarlatStressType<StressStensor>>&,
-        const tfel::math::tmatrix<3u, 3u, BarlatBaseType<StressStensor>>&,
-        const tfel::material::BarlatStressType<StressStensor>) {
-    }  // end of completeBaralatStressSecondDerivative
-    /*!
-     * \brief add the terms relative to the eigenvectors derivatives
-     * \param[out] d2Phi_ds2: second derivative of the Barlat equivalent stress
-     * \param[in] dPhi_dvp: first derivative of the Barlat
-     * equivalent stress with respect to the eigenvalues
-     * \param[in] d2Phi_dvp2: second derivative of the Barlat
-     * equivalent stress with respect to the eigenvalues
-     * \param[in] vp: eigen values
-     * \param[in] m: matrix for the eigen vectors
-     * \param[in] e: criterion used to check if two eigenvalues are equal
-     */
-    template <typename StressStensor>
-    TFEL_HOST_DEVICE typename std::enable_if<
-        tfel::math::getSpaceDimension<StressStensor>() == 2u,
-        void>::type
-    completeBaralatStressSecondDerivative(
-        tfel::material::BarlatStressSecondDerivativeType<StressStensor>&
-            d2Phi_ds2,
-        const tfel::math::tvector<
-            3u,
-            tfel::material::BarlatBaseType<StressStensor>>& dPhi_dvp,
-        const tfel::math::tvector<
-            6u,
-            tfel::material::BarlatInvertStressType<StressStensor>>& d2Phi_dvp2,
-        const tfel::math::tvector<3u, BarlatStressType<StressStensor>>& vp,
-        const tfel::math::tmatrix<3u, 3u, BarlatBaseType<StressStensor>>& m,
-        const tfel::material::BarlatStressType<StressStensor> e) {
-      using namespace tfel::math;
-      using base = tfel::material::BarlatBaseType<StressStensor>;
-      constexpr auto icste = Cste<base>::isqrt2;
-      const tvector<3u, base> v0 = m.template column_view<0u>();
-      const tvector<3u, base> v1 = m.template column_view<1u>();
-      const stensor<2u, base> n01 =
-          stensor<2u, base>::buildFromVectorsSymmetricDiadicProduct(v0, v1) *
-          icste;
-      if (tfel::math::abs(vp[0] - vp[1]) < e) {
-        d2Phi_ds2 += ((d2Phi_dvp2[0] + d2Phi_dvp2[1] - 2 * d2Phi_dvp2[3]) / 2) *
-                     (n01 ^ n01);
-      } else {
-        d2Phi_ds2 +=
-            (dPhi_dvp[0] - dPhi_dvp[1]) / (vp[0] - vp[1]) * (n01 ^ n01);
-      }
-    }  // end of completeBaralatStressSecondDerivative
-    /*!
-     * \brief add the terms relative to the eigenvectors derivatives
-     * \param[out] d2Phi_ds2: second derivative of the Barlat equivalent stress
-     * \param[in] dPhi_dvp: first derivative of the Barlat
-     * equivalent stress with respect to the eigenvalues
-     * \param[in] d2Phi_dvp2: second derivative of the Barlat
-     * equivalent stress with respect to the eigenvalues
-     * \param[in] vp: eigen values
-     * \param[in] m: matrix for the eigen vectors
-     * \param[in] e: criterion used to check if two eigenvalues are equal
-     */
-    template <typename StressStensor>
-    TFEL_HOST_DEVICE typename std::enable_if<
-        tfel::math::getSpaceDimension<StressStensor>() == 3u,
-        void>::type
-    completeBaralatStressSecondDerivative(
-        tfel::material::BarlatStressSecondDerivativeType<StressStensor>&
-            d2Phi_ds2,
-        const tfel::math::tvector<
-            3u,
-            tfel::material::BarlatBaseType<StressStensor>>& dPhi_dvp,
-        const tfel::math::tvector<
-            6u,
-            tfel::material::BarlatInvertStressType<StressStensor>>& d2Phi_dvp2,
-        const tfel::math::tvector<3u, BarlatStressType<StressStensor>>& vp,
-        const tfel::math::tmatrix<3u, 3u, BarlatBaseType<StressStensor>>& m,
-        const tfel::material::BarlatStressType<StressStensor> e) {
-      using namespace tfel::math;
-      using base = tfel::material::BarlatBaseType<StressStensor>;
-      constexpr auto cste = Cste<base>::isqrt2;
-      const tvector<3u, base> v0 = m.template column_view<0u>();
-      const tvector<3u, base> v1 = m.template column_view<1u>();
-      const tvector<3u, base> v2 = m.template column_view<2u>();
-      const stensor<3u, base> n01 =
-          stensor<3u, base>::buildFromVectorsSymmetricDiadicProduct(v0, v1) *
-          cste;
-      const stensor<3u, base> n02 =
-          stensor<3u, base>::buildFromVectorsSymmetricDiadicProduct(v0, v2) *
-          cste;
-      const stensor<3u, base> n12 =
-          stensor<3u, base>::buildFromVectorsSymmetricDiadicProduct(v1, v2) *
-          cste;
-      if (tfel::math::abs(vp[0] - vp[1]) < e) {
-        d2Phi_ds2 += ((d2Phi_dvp2[0] + d2Phi_dvp2[1] - 2 * d2Phi_dvp2[3]) / 2) *
-                     (n01 ^ n01);
-      } else {
-        d2Phi_ds2 +=
-            (dPhi_dvp[0] - dPhi_dvp[1]) / (vp[0] - vp[1]) * (n01 ^ n01);
-      }
-      if (tfel::math::abs(vp[0] - vp[2]) < e) {
-        d2Phi_ds2 += ((d2Phi_dvp2[0] + d2Phi_dvp2[2] - 2 * d2Phi_dvp2[4]) / 2) *
-                     (n02 ^ n02);
-      } else {
-        d2Phi_ds2 +=
-            (dPhi_dvp[0] - dPhi_dvp[2]) / (vp[0] - vp[2]) * (n02 ^ n02);
-      }
-      if (tfel::math::abs(vp[1] - vp[2]) < e) {
-        d2Phi_ds2 += ((d2Phi_dvp2[1] + d2Phi_dvp2[2] - 2 * d2Phi_dvp2[5]) / 2) *
-                     (n12 ^ n12);
-      } else {
-        d2Phi_ds2 +=
-            (dPhi_dvp[1] - dPhi_dvp[2]) / (vp[1] - vp[2]) * (n12 ^ n12);
-      }
-    }  // end of completeBaralatStressSecondDerivative
-
-  }  // end namespace internals
-
   template <unsigned short N, typename real>
-  constexpr tfel::math::st2tost2<N, real> makeBarlatLinearTransformation(
-      const real c12,
-      const real c21,
-      const real c13,
-      const real c31,
-      const real c23,
-      const real c32,
-      const real c44,
-      const real c55,
-      const real c66) {
-    return makeOrthotropicStressLinearTransformation<N, real>(
-        c12, c21, c13, c31, c23, c32, c44, c55, c66);
-  }  // end of makeBarlatLinearTransformation
-
-  template <unsigned short N, typename real>
-  constexpr tfel::math::st2tost2<N, real> makeBarlatLinearTransformation(
-      const tfel::math::fsarray<9u, real>& c) {
-    return makeOrthotropicStressLinearTransformation<N, real>(c);
-  }  // end of makeBarlatLinearTransformation
-
-  template <ModellingHypothesis::Hypothesis H,
-            OrthotropicAxesConvention c,
-            typename real>
-  constexpr tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
-                                 real>
+  TFEL_HOST_DEVICE constexpr tfel::math::st2tost2<N, real>
   makeBarlatLinearTransformation(const real c12,
                                  const real c21,
                                  const real c13,
@@ -190,7 +160,32 @@ namespace tfel::material {
                                  const real c32,
                                  const real c44,
                                  const real c55,
-                                 const real c66) {
+                                 const real c66) noexcept {
+    return makeOrthotropicStressLinearTransformation<N, real>(
+        c12, c21, c13, c31, c23, c32, c44, c55, c66);
+  }  // end of makeBarlatLinearTransformation
+
+  template <unsigned short N, typename real>
+  TFEL_HOST_DEVICE constexpr tfel::math::st2tost2<N, real>
+  makeBarlatLinearTransformation(
+      const tfel::math::fsarray<9u, real>& c) noexcept {
+    return makeOrthotropicStressLinearTransformation<N, real>(c);
+  }  // end of makeBarlatLinearTransformation
+
+  template <ModellingHypothesis::Hypothesis H,
+            OrthotropicAxesConvention c,
+            typename real>
+  TFEL_HOST_DEVICE constexpr tfel::math::
+      st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+      makeBarlatLinearTransformation(const real c12,
+                                     const real c21,
+                                     const real c13,
+                                     const real c31,
+                                     const real c23,
+                                     const real c32,
+                                     const real c44,
+                                     const real c55,
+                                     const real c66) noexcept {
     return makeOrthotropicStressLinearTransformation<H, c, real>(
         c12, c21, c13, c31, c23, c32, c44, c55, c66);
   }  // end of makeBarlatLinearTransformation
@@ -198,9 +193,10 @@ namespace tfel::material {
   template <ModellingHypothesis::Hypothesis H,
             OrthotropicAxesConvention oac,
             typename real>
-  constexpr tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
-                                 real>
-  makeBarlatLinearTransformation(const tfel::math::fsarray<9u, real>& c) {
+  TFEL_HOST_DEVICE constexpr tfel::math::
+      st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
+      makeBarlatLinearTransformation(
+          const tfel::math::fsarray<9u, real>& c) noexcept {
     return makeOrthotropicStressLinearTransformation<H, oac, real>(c);
   }  // end of makeBarlatLinearTransformation
 
