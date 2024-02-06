@@ -20,92 +20,93 @@
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
 
-namespace mfront {
+namespace mfront::gb {
 
-  namespace gb {
+  /*!
+   * \brief compute the unaltered elastic stiffness tensor
+   * \param[out] C: stiffness tensor
+   * \param[out] mps: elastic material properties
+   */
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            typename stress,
+            typename real>
+  TFEL_HOST_DEVICE constexpr void
+      computeOrthotropicUnAlteredElasticStiffnessTensor(
+          tfel::math::st2tost2<1u, stress>&,
+          const real* const) noexcept  //
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               1u);
+  /*!
+   * \brief compute the unaltered elastic stiffness tensor
+   * \param[out] C: stiffness tensor
+   * \param[out] mps: elastic material properties
+   */
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            typename stress,
+            typename real>
+  TFEL_HOST_DEVICE constexpr void
+      computeOrthotropicUnAlteredElasticStiffnessTensor(
+          tfel::math::st2tost2<2u, stress>&,
+          const real* const) noexcept  //
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               2u);
+  /*!
+   * \brief compute the unaltered elastic stiffness tensor
+   * \param[out] C: stiffness tensor
+   * \param[out] mps: elastic material properties
+   */
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            typename stress,
+            typename real>
+  TFEL_HOST_DEVICE constexpr void
+      computeOrthotropicUnAlteredElasticStiffnessTensor(
+          tfel::math::st2tost2<3u, stress>&,
+          const real* const) noexcept  //
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               3u);
+  /*!
+   * \brief compute the unaltered elastic stiffness tensor
+   * \param[out] C: stiffness tensor
+   * \param[out] mps: elastic material properties
+   */
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            typename stress,
+            typename real>
+  TFEL_HOST_DEVICE constexpr void
+      computeOrthotropicAlteredElasticStiffnessTensor(
+          tfel::math::st2tost2<1u, stress>&,
+          const real* const) noexcept  //
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               1u);
+  /*!
+   * \brief compute the unaltered elastic stiffness tensor
+   * \param[out] C: stiffness tensor
+   * \param[out] mps: elastic material properties
+   */
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            typename stress,
+            typename real>
+  TFEL_HOST_DEVICE constexpr void
+      computeOrthotropicAlteredElasticStiffnessTensor(
+          tfel::math::st2tost2<2u, stress>&,
+          const real* const) noexcept  //
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               2u);
+  /*!
+   * \brief compute the unaltered elastic stiffness tensor
+   * \param[out] C: stiffness tensor
+   * \param[out] mps: elastic material properties
+   */
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            typename stress,
+            typename real>
+  TFEL_HOST_DEVICE constexpr void
+      computeOrthotropicAlteredElasticStiffnessTensor(
+          tfel::math::st2tost2<3u, stress>&, const real* const) noexcept  //
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               3u);
 
-    /*!
-     * \brief compute the unaltered elastic stiffness tensor
-     * \param[out] C: stiffness tensor
-     * \param[out] mps: elastic material properties
-     */
-    template <tfel::material::ModellingHypothesis::Hypothesis H,
-              typename stress,
-              typename real>
-    typename std::enable_if<
-        tfel::material::ModellingHypothesisToSpaceDimension<H>::value == 1u,
-        void>::type
-        computeOrthotropicUnAlteredElasticStiffnessTensor(
-            tfel::math::st2tost2<1u, stress>&, const real* const);
-    /*!
-     * \brief compute the unaltered elastic stiffness tensor
-     * \param[out] C: stiffness tensor
-     * \param[out] mps: elastic material properties
-     */
-    template <tfel::material::ModellingHypothesis::Hypothesis H,
-              typename stress,
-              typename real>
-    typename std::enable_if<
-        tfel::material::ModellingHypothesisToSpaceDimension<H>::value == 2u,
-        void>::type
-        computeOrthotropicUnAlteredElasticStiffnessTensor(
-            tfel::math::st2tost2<2u, stress>&, const real* const);
-    /*!
-     * \brief compute the unaltered elastic stiffness tensor
-     * \param[out] C: stiffness tensor
-     * \param[out] mps: elastic material properties
-     */
-    template <tfel::material::ModellingHypothesis::Hypothesis H,
-              typename stress,
-              typename real>
-    typename std::enable_if<
-        tfel::material::ModellingHypothesisToSpaceDimension<H>::value == 3u,
-        void>::type
-        computeOrthotropicUnAlteredElasticStiffnessTensor(
-            tfel::math::st2tost2<3u, stress>&, const real* const);
-    /*!
-     * \brief compute the unaltered elastic stiffness tensor
-     * \param[out] C: stiffness tensor
-     * \param[out] mps: elastic material properties
-     */
-    template <tfel::material::ModellingHypothesis::Hypothesis H,
-              typename stress,
-              typename real>
-    typename std::enable_if<
-        tfel::material::ModellingHypothesisToSpaceDimension<H>::value == 1u,
-        void>::type
-        computeOrthotropicAlteredElasticStiffnessTensor(
-            tfel::math::st2tost2<1u, stress>&, const real* const);
-    /*!
-     * \brief compute the unaltered elastic stiffness tensor
-     * \param[out] C: stiffness tensor
-     * \param[out] mps: elastic material properties
-     */
-    template <tfel::material::ModellingHypothesis::Hypothesis H,
-              typename stress,
-              typename real>
-    typename std::enable_if<
-        tfel::material::ModellingHypothesisToSpaceDimension<H>::value == 2u,
-        void>::type
-        computeOrthotropicAlteredElasticStiffnessTensor(
-            tfel::math::st2tost2<2u, stress>&, const real* const);
-    /*!
-     * \brief compute the unaltered elastic stiffness tensor
-     * \param[out] C: stiffness tensor
-     * \param[out] mps: elastic material properties
-     */
-    template <tfel::material::ModellingHypothesis::Hypothesis H,
-              typename stress,
-              typename real>
-    typename std::enable_if<
-        tfel::material::ModellingHypothesisToSpaceDimension<H>::value == 3u,
-        void>::type
-        computeOrthotropicAlteredElasticStiffnessTensor(
-            tfel::math::st2tost2<3u, stress>&, const real* const);
-
-  }  // end of namespace gb
-
-}  // end of namespace mfront
+}  // end of namespace mfront::gb
 
 #include "MFront/GenericBehaviour/ComputeStiffnessTensor.ixx"
 
