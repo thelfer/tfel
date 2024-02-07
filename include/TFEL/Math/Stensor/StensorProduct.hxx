@@ -70,8 +70,8 @@ namespace tfel::math {
     }
 
     TFEL_MATH_INLINE
-    BinaryOperationResult<tfel::meta::result_of<A, size_type>,
-                          tfel::meta::result_of<B, size_type>,
+    BinaryOperationResult<std::invoke_result_t<A, size_type>,
+                          std::invoke_result_t<B, size_type>,
                           OpMult>
     operator()(const size_type i) const {
       return (this->a(i)) * (this->b(i));
@@ -91,8 +91,8 @@ namespace tfel::math {
     }
 
     TFEL_MATH_INLINE
-    BinaryOperationResult<tfel::meta::result_of<A, size_type>,
-                          tfel::meta::result_of<B, size_type>,
+    BinaryOperationResult<std::invoke_result_t<A, size_type>,
+                          std::invoke_result_t<B, size_type>,
                           OpMult>
     operator()(const size_type i) const {
       typedef typename StensorProductExprBase<A, B>::NumType T;
@@ -128,8 +128,8 @@ namespace tfel::math {
     }
 
     TFEL_MATH_INLINE
-    BinaryOperationResult<tfel::meta::result_of<A, size_type>,
-                          tfel::meta::result_of<B, size_type>,
+    BinaryOperationResult<std::invoke_result_t<A, size_type>,
+                          std::invoke_result_t<B, size_type>,
                           OpMult>
     operator()(const size_type i) const {
       typedef typename StensorProductExprBase<A, B>::NumType T;

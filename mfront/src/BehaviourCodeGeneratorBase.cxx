@@ -3082,7 +3082,7 @@ namespace mfront {
     os << "/*!\n"
        << " * \\ brief initialize the behaviour with user code\n"
        << " */\n"
-       << "TFEL_HOST_DEVICE [[nodiscard]] bool initialize(){\n"
+       << "[[nodiscard]] TFEL_HOST_DEVICE bool initialize(){\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
        << "using std::vector;\n";
@@ -4222,7 +4222,7 @@ namespace mfront {
           const auto ktype =
               convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
           if (std::find(ktos.begin(), ktos.end(), t) != ktos.end()) {
-            os << "TFEL_HOST_DEVICE [[nodiscard]] "
+            os << "[[nodiscard]] TFEL_HOST_DEVICE "
                   "IntegrationResult\ncomputePredictionOperator_"
                << ktype << "(const SMType smt){\n"
                << "using namespace std;\n"
@@ -4239,7 +4239,7 @@ namespace mfront {
             if ((h ==
                  ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
                 (h == ModellingHypothesis::PLANESTRESS)) {
-              os << "TFEL_HOST_DEVICE [[nodiscard]] IntegrationResult "
+              os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult "
                     "computePredictionOperator_"
                  << ktype << "(const SMType){\n"
                  << "tfel::raise(\"" << this->bd.getClassName()
@@ -4252,7 +4252,7 @@ namespace mfront {
                   FiniteStrainBehaviourTangentOperatorConversionPath::
                       getShortestPath(paths, t);
               if (path.empty()) {
-                os << "TFEL_HOST_DEVICE [[nodiscard]] IntegrationResult "
+                os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult "
                       "computePredictionOperator_"
                    << ktype << "(const SMType){\n"
                    << "tfel::raise(\"" << this->bd.getClassName()
@@ -4261,7 +4261,7 @@ namespace mfront {
                    << "' is not supported\");\n"
                    << "}\n\n";
               } else {
-                os << "TFEL_HOST_DEVICE [[nodiscard]] IntegrationResult "
+                os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult "
                       "computePredictionOperator_"
                    << ktype << "(const SMType smt){\n";
                 auto pc = path.begin();
@@ -4293,7 +4293,7 @@ namespace mfront {
             }
           }
         }
-        os << "TFEL_HOST_DEVICE [[nodiscard]] IntegrationResult "
+        os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult "
               "computePredictionOperator(const "
               "SMFlag "
               "smflag,const SMType smt) override{\n"
@@ -4313,7 +4313,7 @@ namespace mfront {
            << "}\n\n";
       }
     } else {
-      os << "TFEL_HOST_DEVICE [[nodiscard]] IntegrationResult\n"
+      os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult\n"
          << "computePredictionOperator(const SMFlag smflag,const SMType smt) "
             "override{\n"
          << "using namespace std;\n"
