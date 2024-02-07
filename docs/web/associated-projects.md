@@ -29,7 +29,7 @@ The interface to this solver is described on [this page](castem.html).
 
 `AMITEX_FFTP` is a massively parallel mechanical solver based on the
 Fast-Fourier Transform developped by `CEA`:
-<http://www.maisondelasimulation.fr/projects/amitex/general/_build/html/index.html>
+<https://amitexfftp.github.io/AMITEX/>
 
 The interface to this solver is described on [this page](amitex.html).
 
