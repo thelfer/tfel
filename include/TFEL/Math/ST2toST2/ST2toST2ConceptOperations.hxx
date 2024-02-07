@@ -98,7 +98,7 @@ namespace tfel::math {
   };
 
   template <typename T1, typename T2>
-  TFEL_MATH_INLINE typename std::enable_if<
+  TFEL_HOST_DEVICE TFEL_MATH_INLINE typename std::enable_if<
       implementsStensorConcept<T1>() && implementsST2toST2Concept<T2>() &&
           !isInvalid<BinaryOperationResult<T1, T2, OpMult>>(),
       BinaryOperationHandler<T1, T2, OpMult>>::type

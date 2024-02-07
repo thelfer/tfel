@@ -349,7 +349,9 @@ namespace tfel::material {
         const auto inv_detS =
             1 / (S11 * S22 * S33 + 2 * S23 * S13 * S12 - S11 * S23 * S23 -
                  S22 * S13 * S13 - S33 * S12 * S12);
-        std::fill(C.begin(), C.end(), StressType(0.));
+        for (auto& v : C) {
+          v = StressType(0.);
+        }
         C(0, 0) = (S22 * S33 - S23 * S23) * inv_detS;
         C(1, 1) = (S11 * S33 - S13 * S13) * inv_detS;
         C(2, 2) = (S11 * S22 - S12 * S12) * inv_detS;

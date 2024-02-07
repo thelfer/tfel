@@ -351,7 +351,6 @@ namespace tfel::math {
     const auto sr = st2tost2::fromRotationMatrix(r);
     const auto sir = t2tot2::fromRotationMatrix(transpose(r));
     return sr * s * sir;
-    return s;
   }  // end of change_basis
 
 }  // end of namespace tfel::math

@@ -116,7 +116,7 @@ namespace tfel::math {
    * an operation : use of parenthesis is required.
    */
   template <typename T1, typename T2>
-  typename std::enable_if<
+  TFEL_HOST_DEVICE typename std::enable_if<
       implementsStensorConcept<T1>() && implementsStensorConcept<T2>() &&
           getSpaceDimension<T1>() == 1u && getSpaceDimension<T2>() == 1u &&
           !isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>(),
@@ -132,7 +132,7 @@ namespace tfel::math {
    * an operation : use of parenthesis is required.
    */
   template <typename T1, typename T2>
-  typename std::enable_if<
+  TFEL_HOST_DEVICE typename std::enable_if<
       implementsStensorConcept<T1>() && implementsStensorConcept<T2>() &&
           getSpaceDimension<T1>() == 2u && getSpaceDimension<T2>() == 2u &&
           !isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>(),
@@ -148,7 +148,7 @@ namespace tfel::math {
    * an operation : use of parenthesis is required.
    */
   template <typename T1, typename T2>
-  typename std::enable_if<
+  TFEL_HOST_DEVICE typename std::enable_if<
       implementsStensorConcept<T1>() && implementsStensorConcept<T2>() &&
           getSpaceDimension<T1>() == 3u && getSpaceDimension<T2>() == 3u &&
           !isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>(),

@@ -336,7 +336,7 @@
  */
 #define TFEL_CONSTEXPR constexpr
 
-#if (defined __CUDACC__) || (defined __HIPCC__) 
+#if (defined __CUDACC__) || (defined __HIPCC__)
 #ifndef TFEL_DEVICE
 #define TFEL_DEVICE __device__
 #endif /* TFEL_DEVICE */
