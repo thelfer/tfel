@@ -900,7 +900,7 @@ namespace mfront {
     const auto v2 = VariableDescription{"StrainStensor", "\u03B5\u1D57\u1D52",
                                         "eto", 1u, 0u};
     for (std::size_t i = 0; i != isvs.size(); ++i) {
-      os << "TFEL_HOST_DEVICE [[nodiscard]] bool\ncomputePartialJacobianInvert("
+      os << "[[nodiscard]] TFEL_HOST_DEVICE bool\ncomputePartialJacobianInvert("
             "const tfel::math::TinyPermutation<"
          << n << ">& jacobian_permutation, ";
       for (std::size_t i2 = 0; i2 <= i;) {
@@ -1039,7 +1039,7 @@ namespace mfront {
     os << "/*!\n"
        << " * \\brief Integrate behaviour law over the time step\n"
        << " */\n"
-       << "TFEL_HOST_DEVICE [[nodiscard]] IntegrationResult ";
+       << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult ";
     if (this->bd.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
       os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
     } else {
