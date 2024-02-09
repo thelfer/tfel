@@ -14,41 +14,65 @@
 #ifndef LIB_TFEL_MATH_POWER_HXX
 #define LIB_TFEL_MATH_POWER_HXX
 
+#include <concepts>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Math/General/ComputeUnaryResult.hxx"
 
 namespace tfel::math {
 
+  //! \brief an help structure used to specialize the UnaryResultType class
   template <int N, unsigned int D = 1>
   struct Power;
-
+  /*!
+   * \brief partial specialisation for the UnaryResultType class
+   * for exponentation of floating point number using rational
+   * exponent
+   * \tparam N: 
+   * \tparam D: 
+   */
   template <int N, unsigned int D>
-  struct UnaryResultType<float, Power<N, D>> {
+  requires(D != 0) struct UnaryResultType<float, Power<N, D>> {
     using type = float;
   };
-
+  /*!
+   * \brief partial specialisation for the UnaryResultType class
+   * for exponentation of floating point number using rational
+   * exponent
+   * \tparam N: 
+   * \tparam D: 
+   */
   template <int N, unsigned int D>
-  struct UnaryResultType<double, Power<N, D>> {
+  requires(D != 0) struct UnaryResultType<double, Power<N, D>> {
     using type = double;
   };
-
+  /*!
+   * \brief partial specialisation for the UnaryResultType class
+   * for exponentation of floating point number using rational
+   * exponent
+   * \tparam N: 
+   * \tparam D: 
+   */
   template <int N, unsigned int D>
-  struct UnaryResultType<long double, Power<N, D>> {
+  requires(D != 0) struct UnaryResultType<long double, Power<N, D>> {
     using type = long double;
   };
-
-  template <int N, typename T>
-  TFEL_HOST_DEVICE
-      TFEL_HOST_DEVICE constexpr std::enable_if_t<std::is_floating_point_v<T>,
-                                                  T>
-      power(const T);
-
+  /*!
+   * \brief computes x to the power N
+   * \tparam N: exponent
+   * \param x: value
+   */
+  template <int N>
+  TFEL_HOST_DEVICE auto power(const std::floating_point auto) noexcept;
+  /*!
+   * \brief computes x to the power N/D
+   * \tparam N: exponent numerator
+   * \tparam M: exponent denumerator
+   * \param x: value
+   */
   template <int N, unsigned int D, typename T>
-  TFEL_HOST_DEVICE
-      TFEL_HOST_DEVICE constexpr std::enable_if_t<std::is_floating_point_v<T>,
-                                                  T>
-      power(const T);
+  TFEL_HOST_DEVICE auto power(const std::floating_point auto) noexcept  //
+      requires(D != 0);
 
 }  // end of namespace tfel::math
 
