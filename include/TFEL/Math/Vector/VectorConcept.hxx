@@ -41,8 +41,11 @@ namespace tfel::math {
    */
   template <typename VectorType>
   concept VectorConcept =
-      (std::is_same_v<typename std::decay_t<VectorType>::ConceptTag, VectorTag>)&&  //
-      (requires(const VectorType t, const index_type<VectorType> i) { t[i]; }) &&           //
+      (std::is_same_v<typename std::decay_t<VectorType>::ConceptTag,
+                      VectorTag>)&&  //
+      (requires(const VectorType t, const index_type<VectorType> i) {
+        t[i];
+      }) &&  //
       (requires(const VectorType t, const index_type<VectorType> i) { t(i); });
 
   //! paratial specialisation for vectors

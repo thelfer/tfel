@@ -131,10 +131,9 @@ namespace tfel::utilities::internals {
 namespace tfel::utilities {
 
   template <typename T1>
-  std::enable_if_t<
-      tfel::meta::TLCountNbrOfT<std::decay_t<T1>, DataTypes>::value == 1,
-      DataMapValidator&>
-  DataMapValidator::addDataTypeValidator(const std::string& k) {
+  DataMapValidator&
+  DataMapValidator::addDataTypeValidator(const std::string& k) requires(
+      tfel::meta::TLCountNbrOfT<std::decay_t<T1>, DataTypes>::value == 1) {
     return this->addDataValidator(k, [](const Data& d) {
       if (!d.template is<T1>()) {
         tfel::raise("invalid type");

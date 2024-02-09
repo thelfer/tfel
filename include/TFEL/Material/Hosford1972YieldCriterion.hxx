@@ -20,30 +20,30 @@
 namespace tfel::material {
 
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using HosfordStressType = tfel::math::numeric_type<StressStensor>;
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using HosfordBaseType =
       tfel::typetraits::base_type<tfel::math::numeric_type<StressStensor>>;
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using HosfordInvertStressType =
       tfel::math::result_type<HosfordBaseType<StressStensor>,
                               HosfordStressType<StressStensor>,
                               tfel::math::OpDiv>;
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using HosfordStressNormalType =
       tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
                           HosfordBaseType<StressStensor>>;
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using HosfordStressEigenTensorType =
       tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
                           HosfordBaseType<StressStensor>>;
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using HosfordStressSecondDerivativeType =
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
                            HosfordInvertStressType<StressStensor>>;
@@ -57,7 +57,7 @@ namespace tfel::material {
    * \param[in] a: Hosford exponent
    * \param[in] e: criterion used to check if the stress are null
    */
-  template <typename StressStensor,
+  template <tfel::math::StensorConcept StressStensor,
             typename HosfordExponentType,
             tfel::math::stensor_common::EigenSolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
@@ -75,7 +75,7 @@ namespace tfel::material {
    * \param[in] a: Hosford exponent
    * \param[in] e: criterion used to check if the stress are null
    */
-  template <typename StressStensor,
+  template <tfel::math::StensorConcept StressStensor,
             typename HosfordExponentType,
             tfel::math::stensor_common::EigenSolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
@@ -95,7 +95,7 @@ namespace tfel::material {
    * \param[in] a: Hosford exponent
    * \param[in] e: criterion used to check if the stress are null
    */
-  template <typename StressStensor,
+  template <tfel::math::StensorConcept StressStensor,
             typename HosfordExponentType,
             tfel::math::stensor_common::EigenSolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>

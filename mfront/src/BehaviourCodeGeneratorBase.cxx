@@ -4802,39 +4802,38 @@ namespace mfront {
        << "* \\brief scale the integration data by a scalar.\n"
        << "*/\n"
        << "template<typename Scal>\n"
-       << "TFEL_HOST_DEVICE typename std::enable_if<\n"
-       << "tfel::typetraits::IsFundamentalNumericType<Scal>::cond&&\n"
-       << "tfel::typetraits::IsScalar<Scal>::cond&&\n"
-       << "tfel::typetraits::IsReal<Scal>::cond&&\n"
-       << "std::is_same<NumericType,"
-       << "typename tfel::typetraits::Promote"
-       << "<NumericType,Scal>::type>::value,\n"
-       << this->bd.getClassName() << "IntegrationData&\n"
-       << ">::type\n";
+       << "TFEL_HOST_DEVICE " << this->bd.getClassName()
+       << "IntegrationData&\n";
     if (!iknown) {
       if (this->bd.useQt()) {
         os << "scale(const " << this->bd.getClassName()
            << "BehaviourData<hypothesis, NumericType, use_qt>& behaviourData, "
               "const "
-              "Scal time_scaling_factor){\n";
+              "Scal time_scaling_factor)\n";
       } else {
         os << "scale(const " << this->bd.getClassName()
            << "BehaviourData<hypothesis, NumericType, false>& behaviourData, "
               "const Scal "
-              "time_scaling_factor){\n";
+              "time_scaling_factor)\n";
       }
     } else {
       if (this->bd.useQt()) {
         os << "scale(const " << this->bd.getClassName()
            << "BehaviourData<hypothesis, NumericType, use_qt>&, const Scal "
-              "time_scaling_factor){\n";
+              "time_scaling_factor)\n";
       } else {
         os << "scale(const " << this->bd.getClassName()
            << "BehaviourData<hypothesis, NumericType, false>&, const Scal "
-              "time_scaling_factor){\n";
+              "time_scaling_factor)\n";
       }
     }
-    os << "this->dt   *= time_scaling_factor;\n";
+    os << "requires(tfel::typetraits::IsFundamentalNumericType<Scal>::cond&&\n"
+       << "tfel::typetraits::IsScalar<Scal>::cond&&\n"
+       << "tfel::typetraits::IsReal<Scal>::cond&&\n"
+       << "std::is_same<NumericType,"
+       << "typename tfel::typetraits::Promote"
+       << "<NumericType,Scal>::type>::value){\n"
+       << "this->dt   *= time_scaling_factor;\n";
     for (const auto& v : this->bd.getMainVariables()) {
       if (Gradient::isIncrementKnown(v.first)) {
         os << "this->d" << v.first.name << " *= time_scaling_factor;\n";

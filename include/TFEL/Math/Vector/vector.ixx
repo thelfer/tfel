@@ -87,15 +87,13 @@ namespace tfel::math {
   template <typename ValueType>
   vector<ValueType>::~vector() noexcept = default;
 
-  template <typename ValueType>
-  std::enable_if_t<isScalar<ValueType>(),
-                   typename tfel::typetraits::RealPartType<ValueType>::type>
-  norm(const vector<ValueType>& vec) {
+  template <ScalarConcept ValueType>
+  TFEL_HOST_DEVICE auto norm(const vector<ValueType>& vec) noexcept {
     auto n = ValueType{} * ValueType{};
     for (const auto& v : vec) {
       n += v * v;
     }
-    return std::sqrt(real(n));
+    return power<1, 2>(real(n));
   }  // end of norm
 
 }  // end of namespace tfel::math

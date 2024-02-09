@@ -336,17 +336,17 @@
  */
 #define TFEL_CONSTEXPR constexpr
 
-#if (defined __CUDACC__) || (defined __HIPPCC__) 
+#if (defined __CUDACC__) || (defined __HIPCC__)
 #ifndef TFEL_DEVICE
 #define TFEL_DEVICE __device__
 #endif /* TFEL_DEVICE */
 #ifndef TFEL_HOST
 #define TFEL_HOST __host__
 #endif /* TFEL_HOST */
-#if (defined __CUDA_ARCH__) || (defined __HIP_ARCH__)
+#if (defined __CUDA_ARCH__) || (defined __HIP_DEVICE_COMPILE__)
 #define TFEL_NO_REPORT_CONTRACT_VIOLATION 1
-#endif /* (defined __CUDA_ARCH__) || (defined __HIP_ARCH__) */
-#endif /* (defined __CUDACC__) || (defined __HIPPCC__) */
+#endif /* (defined __CUDA_ARCH__) || (defined __HIP_DEVICE_COMPILE__) */
+#endif /* (defined __CUDACC__) || (defined __HIPCC__) */
 
 #if defined(__clang__) && defined(__CUDA__) && defined(__CUDA_ARCH__)
 #define TFEL_NO_REPORT_CONTRACT_VIOLATION 1

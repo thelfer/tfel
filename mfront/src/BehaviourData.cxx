@@ -392,7 +392,7 @@ namespace mfront {
       }
     }
     tfel::raise(
-        "MaterialPropertyDSL::getIntegerConstant: "
+        "BehaviourData::getIntegerConstant: "
         "unknown variable '" +
         n + "'");
   }  // end of getIntegerConstant

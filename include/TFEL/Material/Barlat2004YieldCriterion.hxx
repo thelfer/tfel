@@ -22,35 +22,35 @@
 namespace tfel::material {
 
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using BarlatStressType = tfel::math::numeric_type<StressStensor>;
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using BarlatBaseType =
       tfel::typetraits::base_type<tfel::math::numeric_type<StressStensor>>;
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using BarlatLinearTransformationType =
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
                            BarlatBaseType<StressStensor>>;
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using BarlatInvertStressType =
       tfel::math::result_type<BarlatBaseType<StressStensor>,
                               BarlatStressType<StressStensor>,
                               tfel::math::OpDiv>;
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using BarlatStressNormalType =
       tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
                           BarlatBaseType<StressStensor>>;
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using BarlatStressEigenTensorType =
       tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
                           BarlatBaseType<StressStensor>>;
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using BarlatStressSecondDerivativeType =
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
                            BarlatInvertStressType<StressStensor>>;
@@ -58,7 +58,7 @@ namespace tfel::material {
    * \brief an helper structure used to simplify the code
    * \tparam StressStensor: type of the stress tensor
    */
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   struct BarlatStressAndDerivativesWithRespectToEigenvalues {
     //! Barlat stress
     BarlatStressType<StressStensor> Phi;
@@ -89,68 +89,69 @@ namespace tfel::material {
     tfel::math::tvector<9u, BarlatInvertStressType<StressStensor>>
         d2Phi_dsvp1dsvp2;
   };  // end of struct BarlatStressAndDerivativesWithRespectToEigenvalues
-      /*!
-       * \tparam N:    space dimension
-       * \tparam real: numerical type
-       * \return a linear transformation of the stresses
-       * \param[in] c12: coefficient of the linear transformation
-       * \param[in] c21: coefficient of the linear transformation
-       * \param[in] c13: coefficient of the linear transformation
-       * \param[in] c31: coefficient of the linear transformation
-       * \param[in] c23: coefficient of the linear transformation
-       * \param[in] c32: coefficient of the linear transformation
-       * \param[in] c44: coefficient of the linear transformation
-       * \param[in] c55: coefficient of the linear transformation
-       * \param[in] c66: coefficient of the linear transformation
-       *
-       * The linear transformation is defined as follows:
-       * \f[
-       * \underline{L}=
-       * \frac{1}{3}\,
-       * \begin{pmatrix}
-       * 0 & -c_{12} & -c_{13} & 0 & 0 & 0 \\
-       * -c_{21} & 0 & -c_{23} & 0 & 0 & 0 \\
-       * -c_{31} & -c_{32} & 0 & 0 & 0 & 0 \\
-       * 0 & 0 & 0 & c_{44} & 0 & 0 \\
-       * 0 & 0 & 0 & 0 & c_{55} & 0 \\
-       * 0 & 0 & 0 & 0 & 0 & c_{66} \\
-       * \end{pmatrix}
-       * \,
-       * \cdot
-       * \,
-       * \begin{pmatrix}
-       * 2  & -1 & -1 & 0 & 0 & 0 \\
-       * -1 &  2 & -1 & 0 & 0 & 0 \\
-       * -1 & -1 & 2 & 0 & 0 & 0 \\
-       * 0 & 0 & 0 & 1 & 0 & 0 \\
-       * 0 & 0 & 0 & 0 & 1 & 0 \\
-       * 0 & 0 & 0 & 0 & 0 & 1 \\
-       * \end{pmatrix}
-       * \f]
-       * \note Barlat uses the following convention for storing
-       * symmetric tensors:
-       * \f[
-       * \begin{pmatrix}
-       * xx & yy & zz & yz & zx & xy
-       * \end{pmatrix}
-       * \f]
-       * which is not consistent with the
-       * `TFEL`/`Cast3M`/`Abaqus`/`Ansys` conventions:
-       * \f[
-       * \begin{pmatrix}
-       * xx & yy & zz & xy & xz & yz
-       * \end{pmatrix}
-       * \f]
-       *
-       * Therefore, if one wants to uses coeficients \f$c^{B}\f$ given
-       * by Barlat, one shall call this function as follows:
-       *
-       * \code{.cpp}
-       * const auto l1 =
-       * makeBarlatLinearTransformation<3>(cB_12,cB_21,cB_13,cB_31,
-       *                                                   cB_23,cB_32,cB_66,cBB_55,cBB_44);
-       * \endcode
-       */
+
+  /*!
+   * \tparam N:    space dimension
+   * \tparam real: numerical type
+   * \return a linear transformation of the stresses
+   * \param[in] c12: coefficient of the linear transformation
+   * \param[in] c21: coefficient of the linear transformation
+   * \param[in] c13: coefficient of the linear transformation
+   * \param[in] c31: coefficient of the linear transformation
+   * \param[in] c23: coefficient of the linear transformation
+   * \param[in] c32: coefficient of the linear transformation
+   * \param[in] c44: coefficient of the linear transformation
+   * \param[in] c55: coefficient of the linear transformation
+   * \param[in] c66: coefficient of the linear transformation
+   *
+   * The linear transformation is defined as follows:
+   * \f[
+   * \underline{L}=
+   * \frac{1}{3}\,
+   * \begin{pmatrix}
+   * 0 & -c_{12} & -c_{13} & 0 & 0 & 0 \\
+   * -c_{21} & 0 & -c_{23} & 0 & 0 & 0 \\
+   * -c_{31} & -c_{32} & 0 & 0 & 0 & 0 \\
+   * 0 & 0 & 0 & c_{44} & 0 & 0 \\
+   * 0 & 0 & 0 & 0 & c_{55} & 0 \\
+   * 0 & 0 & 0 & 0 & 0 & c_{66} \\
+   * \end{pmatrix}
+   * \,
+   * \cdot
+   * \,
+   * \begin{pmatrix}
+   * 2  & -1 & -1 & 0 & 0 & 0 \\
+   * -1 &  2 & -1 & 0 & 0 & 0 \\
+   * -1 & -1 & 2 & 0 & 0 & 0 \\
+   * 0 & 0 & 0 & 1 & 0 & 0 \\
+   * 0 & 0 & 0 & 0 & 1 & 0 \\
+   * 0 & 0 & 0 & 0 & 0 & 1 \\
+   * \end{pmatrix}
+   * \f]
+   * \note Barlat uses the following convention for storing
+   * symmetric tensors:
+   * \f[
+   * \begin{pmatrix}
+   * xx & yy & zz & yz & zx & xy
+   * \end{pmatrix}
+   * \f]
+   * which is not consistent with the
+   * `TFEL`/`Cast3M`/`Abaqus`/`Ansys` conventions:
+   * \f[
+   * \begin{pmatrix}
+   * xx & yy & zz & xy & xz & yz
+   * \end{pmatrix}
+   * \f]
+   *
+   * Therefore, if one wants to uses coeficients \f$c^{B}\f$ given
+   * by Barlat, one shall call this function as follows:
+   *
+   * \code{.cpp}
+   * const auto l1 =
+   * makeBarlatLinearTransformation<3>(cB_12,cB_21,cB_13,cB_31,
+   *                                                   cB_23,cB_32,cB_66,cBB_55,cBB_44);
+   * \endcode
+   */
   template <unsigned short N, typename real>
   TFEL_HOST_DEVICE constexpr tfel::math::st2tost2<N, real>
   makeBarlatLinearTransformation(const real,
@@ -161,7 +162,7 @@ namespace tfel::material {
                                  const real,
                                  const real,
                                  const real,
-                                 const real);
+                                 const real) noexcept;
   /*!
    * \tparam N:    space dimension
    * \tparam real: numerical type
@@ -195,7 +196,7 @@ namespace tfel::material {
    */
   template <unsigned short N, typename real>
   TFEL_HOST_DEVICE constexpr tfel::math::st2tost2<N, real>
-  makeBarlatLinearTransformation(const tfel::math::fsarray<9u, real>&);
+  makeBarlatLinearTransformation(const tfel::math::fsarray<9u, real>&) noexcept;
   /*!
    * \tparam H: modelling hypothesis
    * \tparam c: orthotropic axis convention
@@ -255,7 +256,7 @@ namespace tfel::material {
                                      const real,
                                      const real,
                                      const real,
-                                     const real);
+                                     const real) noexcept;
   /*!
    * \tparam H: modelling hypothesis
    * \tparam oac: orthotropic axis convention
@@ -297,9 +298,10 @@ namespace tfel::material {
   template <ModellingHypothesis::Hypothesis H,
             OrthotropicAxesConvention,
             typename real>
-  TFEL_HOST_DEVICE constexpr tfel::math::
-      st2tost2<ModellingHypothesisToSpaceDimension<H>::value, real>
-      makeBarlatLinearTransformation(const tfel::math::fsarray<9u, real>&);
+  TFEL_HOST_DEVICE constexpr tfel::math::st2tost2<
+      ModellingHypothesisToSpaceDimension<H>::value,
+      real>
+  makeBarlatLinearTransformation(const tfel::math::fsarray<9u, real>&) noexcept;
   /*!
    * \brief This function computes the Barlat yield stress.
    * The Barlat yield stress is defined by:
@@ -389,7 +391,7 @@ namespace tfel::material {
    * \param[in] e: criterion used to check if the von Mises stress is null
    * \return the Barlat yield stress \f$\phi\left(\underline{\bf s}\right)\f$
    */
-  template <typename StressStensor,
+  template <tfel::math::StensorConcept StressStensor,
             typename BarlatExponentType,
             tfel::math::stensor_common::EigenSolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
@@ -412,7 +414,7 @@ namespace tfel::material {
    * \param[in] e: criterion used to check if the von Mises stress is null.
    * \see `computeBarlatStress`
    */
-  template <typename StressStensor,
+  template <tfel::math::StensorConcept StressStensor,
             typename BarlatExponentType,
             tfel::math::stensor_common::EigenSolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
@@ -437,7 +439,8 @@ namespace tfel::material {
    * \param[in] a: Barlat exponent
    * \see `computeBarlatStress`
    */
-  template <typename StressStensor, typename BarlatExponentType>
+  template <tfel::math::StensorConcept StressStensor,
+            typename BarlatExponentType>
   TFEL_HOST_DEVICE
       BarlatStressAndDerivativesWithRespectToEigenvalues<StressStensor>
       computeBarlatStressSecondDerivative(
@@ -459,7 +462,7 @@ namespace tfel::material {
    * \param[in] e: criterion used to check if the stress are null
    * \see `computeBarlatStress`
    */
-  template <typename StressStensor,
+  template <tfel::math::StensorConcept StressStensor,
             typename BarlatExponentType,
             tfel::math::stensor_common::EigenSolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
