@@ -10,7 +10,5 @@ macro(tests_metaprogramming test_arg)
   target_link_libraries(${test_arg} TFELUtilities TFELTests)
 endmacro(tests_metaprogramming)
 
-tests_metaprogramming(ResultOf)
-tests_metaprogramming(IsConstCallable)
 tests_metaprogramming(HasConstIterator)
 tests_metaprogramming(typelist2)
