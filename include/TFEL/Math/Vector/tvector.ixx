@@ -73,7 +73,7 @@ namespace tfel::math {
     typedef result_type<T, T, OpMult> squareT;
     return power<1, 2>(
         real(dotProduct<N>::exe(vec.begin(), vec.begin(), squareT(0u))));
-  } // end of norm
+  }  // end of norm
 
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr auto abs(const tvector<N, T>& v) noexcept {

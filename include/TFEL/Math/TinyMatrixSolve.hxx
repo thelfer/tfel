@@ -43,12 +43,12 @@ namespace tfel::math {
      * \param p   : permutation vector
      * \param eps : numerical parameter to detect null pivot
      */
-    template <typename FixedSizeMatrixType>
-    TFEL_HOST_DEVICE static std::
-        enable_if_t<implementsMatrixConcept<FixedSizeMatrixType>(), bool>
-        decomp(FixedSizeMatrixType&,
-               TinyPermutation<N>&,
-               const T = 100 * std::numeric_limits<T>::min());
+    template <MatrixConcept FixedSizeMatrixType>
+    TFEL_HOST_DEVICE static bool decomp(
+        FixedSizeMatrixType&,
+        TinyPermutation<N>&,
+        const T = 100 *
+                  std::numeric_limits<T>::min()) noexcept(!use_exceptions);
 
     /*!
      * \brief solve the linear system m.x = b once the matrix has been
@@ -58,15 +58,14 @@ namespace tfel::math {
      * \param b   : right member
      * \param eps : numerical parameter to detect null pivot
      */
-    template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
-    TFEL_HOST_DEVICE static std::enable_if_t<
-        (implementsMatrixConcept<FixedSizeMatrixType>() &&
-         implementsVectorConcept<FixedSizeVectorType>()),
-        bool>
-    back_substitute(const FixedSizeMatrixType&,
-                    const TinyPermutation<N>&,
-                    FixedSizeVectorType&,
-                    const T = 100 * std::numeric_limits<T>::min());
+    template <MatrixConcept FixedSizeMatrixType,
+              VectorConcept FixedSizeVectorType>
+    TFEL_HOST_DEVICE static bool back_substitute(
+        const FixedSizeMatrixType&,
+        const TinyPermutation<N>&,
+        FixedSizeVectorType&,
+        const T = 100 *
+                  std::numeric_limits<T>::min()) noexcept(!use_exceptions);
     /*!
      * \brief solve the linear system m.x = b once the matrix has been
      * decomposed
@@ -80,7 +79,8 @@ namespace tfel::math {
         const tmatrix<N, N, T>&,
         const TinyPermutation<N>&,
         tmatrix<N, M, T>&,
-        const T = 100 * std::numeric_limits<T>::min());
+        const T = 100 *
+                  std::numeric_limits<T>::min()) noexcept(!use_exceptions);
   };
 
   /*!
@@ -104,14 +104,13 @@ namespace tfel::math {
      * \note the matrix m is overwritten during computations
      * \note the right member is overwritten by the solution
      */
-    template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
-    TFEL_HOST_DEVICE static std::enable_if_t<
-        (implementsMatrixConcept<FixedSizeMatrixType>() &&
-         implementsVectorConcept<FixedSizeVectorType>()),
-        bool>
-    exe(FixedSizeMatrixType&,
+    template <MatrixConcept FixedSizeMatrixType,
+              VectorConcept FixedSizeVectorType>
+    TFEL_HOST_DEVICE static bool exe(
+        FixedSizeMatrixType&,
         FixedSizeVectorType&,
-        const T = 100 * std::numeric_limits<T>::min());
+        const T = 100 *
+                  std::numeric_limits<T>::min()) noexcept(!use_exceptions);
     /*!
      * solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -121,10 +120,11 @@ namespace tfel::math {
      * \note the right member is overwritten by the solution
      */
     template <unsigned short M>
-    TFEL_HOST_DEVICE static bool exe(tmatrix<N, N, T>& m,
-                                     tmatrix<N, M, T>&,
-                                     const T = 100 *
-                                               std::numeric_limits<T>::min());
+    TFEL_HOST_DEVICE static bool exe(
+        tmatrix<N, N, T>& m,
+        tmatrix<N, M, T>&,
+        const T = 100 *
+                  std::numeric_limits<T>::min()) noexcept(!use_exceptions);
   };
 
   /*!
@@ -144,14 +144,13 @@ namespace tfel::math {
      * \param eps : numerical paramater to detect null pivot
      * \note the right member is overwritten by the solution
      */
-    template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2
-        std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
-                          implementsVectorConcept<FixedSizeVectorType>()),
-                         bool>
-        exe(const FixedSizeMatrixType&,
-            FixedSizeVectorType&,
-            const T = 100 * std::numeric_limits<T>::min());
+    template <MatrixConcept FixedSizeMatrixType,
+              VectorConcept FixedSizeVectorType>
+    TFEL_HOST_DEVICE static bool exe(
+        const FixedSizeMatrixType&,
+        FixedSizeVectorType&,
+        const T = 100 *
+                  std::numeric_limits<T>::min()) noexcept(!use_exceptions);
     /*!
      * solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -160,10 +159,11 @@ namespace tfel::math {
      * \note the right member is overwritten by the solution
      */
     template <unsigned short M>
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 bool exe(
+    TFEL_HOST_DEVICE static bool exe(
         const tmatrix<1u, 1u, T>& m,
         tmatrix<1u, M, T>&,
-        const T = 100 * std::numeric_limits<T>::min());
+        const T = 100 *
+                  std::numeric_limits<T>::min()) noexcept(!use_exceptions);
   };
 
   /*!
@@ -183,14 +183,13 @@ namespace tfel::math {
      * \param eps : numerical paramater to detect null pivot
      * \note the right member is overwritten by the solution
      */
-    template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2
-        std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
-                          implementsVectorConcept<FixedSizeVectorType>()),
-                         bool>
-        exe(const FixedSizeMatrixType& m,
-            FixedSizeVectorType&,
-            const T = 100 * std::numeric_limits<T>::min());
+    template <MatrixConcept FixedSizeMatrixType,
+              VectorConcept FixedSizeVectorType>
+    TFEL_HOST_DEVICE static bool exe(
+        const FixedSizeMatrixType& m,
+        FixedSizeVectorType&,
+        const T = 100 *
+                  std::numeric_limits<T>::min()) noexcept(!use_exceptions);
     /*!
      * solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -199,10 +198,11 @@ namespace tfel::math {
      * \note the right member is overwritten by the solution
      */
     template <unsigned short M>
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 bool exe(
+    TFEL_HOST_DEVICE static bool exe(
         const tmatrix<2u, 2u, T>& m,
         tmatrix<2u, M, T>&,
-        const T = 100 * std::numeric_limits<T>::min());
+        const T = 100 *
+                  std::numeric_limits<T>::min()) noexcept(!use_exceptions);
   };
 
   /*!
@@ -223,14 +223,13 @@ namespace tfel::math {
      * \note the right member is overwritten by the solution
      * \note the matrix is destroyed
      */
-    template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2
-        std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
-                          implementsVectorConcept<FixedSizeVectorType>()),
-                         bool>
-        exe(const FixedSizeMatrixType&,
-            FixedSizeVectorType&,
-            const T = 100 * std::numeric_limits<T>::min());
+    template <MatrixConcept FixedSizeMatrixType,
+              VectorConcept FixedSizeVectorType>
+    TFEL_HOST_DEVICE static bool exe(
+        const FixedSizeMatrixType&,
+        FixedSizeVectorType&,
+        const T = 100 *
+                  std::numeric_limits<T>::min()) noexcept(!use_exceptions);
     /*!
      * \brief solve the linear system m.x = b
      * \param m   : matrix to be inverted
@@ -240,10 +239,11 @@ namespace tfel::math {
      * \note the matrix is destroyed
      */
     template <unsigned short M>
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 bool exe(
+    TFEL_HOST_DEVICE static bool exe(
         const tmatrix<3u, 3u, T>& m,
         tmatrix<3u, M, T>&,
-        const T = 100 * std::numeric_limits<T>::min());
+        const T = 100 *
+                  std::numeric_limits<T>::min()) noexcept(!use_exceptions);
   };
 
 }  // end of namespace tfel::math

@@ -47,24 +47,6 @@ namespace tfel::math {
     this->operator=(src);
   }  // end of GenericRuntimeArray
 
-  //   template <typename Child, typename ArrayPolicy>
-  //   template <
-  //       typename ArrayPolicy2,
-  //       typename std::enable_if<((checkIndexingPoliciesCompatiblity<
-  //                                    typename ArrayPolicy::IndexingPolicy,
-  //                                    typename
-  //                                    ArrayPolicy2::IndexingPolicy>()) &&
-  //                                (isAssignableTo<
-  //                                    typename ArrayPolicy2::value_type,
-  //                                    typename ArrayPolicy::value_type>())),
-  //                               bool>::type>
-  //   constexpr GenericRuntimeArray<Child,
-  //   ArrayPolicy>::GenericRuntimeArray(
-  //       const GenericRuntimeArray<N, ArrayPolicy2>& src) noexcept
-  //       : GenericRuntimeArray() {
-  //     this->operator=(src);
-  //   }
-
   template <typename Child, typename ArrayPolicy>
   template <typename ValueType>
   GenericRuntimeArray<Child, ArrayPolicy>::GenericRuntimeArray(

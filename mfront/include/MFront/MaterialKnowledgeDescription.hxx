@@ -86,23 +86,23 @@ namespace mfront {
      * \param[in] n : name
      */
     template <typename T>
-    std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), T&> getAttribute(
-        const std::string_view);
+    T& getAttribute(const std::string_view) requires(
+        isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
     template <typename T>
-    std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), const T&>
-    getAttribute(const std::string_view) const;
+    const T& getAttribute(const std::string_view) const
+        requires(isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return the attribute with the given name
      * \param[in] n: name
      * \param[in] v: default value if the attribute is not defined
      */
     template <typename T>
-    std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), T> getAttribute(
-        const std::string_view, const T&) const;
+    T getAttribute(const std::string_view, const T&) const
+        requires(isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return all the attribute registred
      * \param[in] n : name

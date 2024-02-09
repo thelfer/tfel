@@ -28,8 +28,8 @@ namespace tfel::math {
    * \brief partial specialisation for the UnaryResultType class
    * for exponentation of floating point number using rational
    * exponent
-   * \tparam N: 
-   * \tparam D: 
+   * \tparam N:
+   * \tparam D:
    */
   template <int N, unsigned int D>
   requires(D != 0) struct UnaryResultType<float, Power<N, D>> {
@@ -39,8 +39,8 @@ namespace tfel::math {
    * \brief partial specialisation for the UnaryResultType class
    * for exponentation of floating point number using rational
    * exponent
-   * \tparam N: 
-   * \tparam D: 
+   * \tparam N:
+   * \tparam D:
    */
   template <int N, unsigned int D>
   requires(D != 0) struct UnaryResultType<double, Power<N, D>> {
@@ -50,8 +50,8 @@ namespace tfel::math {
    * \brief partial specialisation for the UnaryResultType class
    * for exponentation of floating point number using rational
    * exponent
-   * \tparam N: 
-   * \tparam D: 
+   * \tparam N:
+   * \tparam D:
    */
   template <int N, unsigned int D>
   requires(D != 0) struct UnaryResultType<long double, Power<N, D>> {

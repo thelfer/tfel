@@ -69,24 +69,6 @@ namespace tfel::math {
     this->operator=(src);
   }  // end of GenericFixedSizeArray
 
-  //   template <typename Child, typename ArrayPolicy, typename
-  //   ArrayPolicy::IndexingPolicy::size_type N> template <
-  //       typename ArrayPolicy2,
-  //       typename std::enable_if<((checkIndexingPoliciesCompatiblity<
-  //                                    typename ArrayPolicy::IndexingPolicy,
-  //                                    typename
-  //                                    ArrayPolicy2::IndexingPolicy>()) &&
-  //                                (isAssignableTo<
-  //                                    typename ArrayPolicy2::value_type,
-  //                                    typename ArrayPolicy::value_type>())),
-  //                               bool>::type>
-  //   constexpr GenericFixedSizeArray<Child, N,
-  //   ArrayPolicy>::GenericFixedSizeArray(
-  //       const GenericFixedSizeArray<N, ArrayPolicy2>& src) noexcept
-  //       : GenericFixedSizeArray() {
-  //     this->operator=(src);
-  //   }
-
   template <typename Child,
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>

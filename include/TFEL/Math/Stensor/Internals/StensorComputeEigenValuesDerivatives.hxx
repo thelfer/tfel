@@ -22,13 +22,12 @@ namespace tfel::math::internals {
   template <>
   struct StensorComputeEigenValuesDerivatives<1u> {
     template <StensorConcept StensorType>
-    static TFEL_MATH_INLINE2
-        typename std::enable_if<getSpaceDimension<StensorType>() == 1u,
-                                void>::type
-        exe(StensorType& n0,
-            StensorType& n1,
-            StensorType& n2,
-            const rotation_matrix<numeric_type<StensorType>>&) {
+    TFEL_HOST_DEVICE static constexpr void exe(
+        StensorType& n0,
+        StensorType& n1,
+        StensorType& n2,
+        const rotation_matrix<numeric_type<StensorType>>&)  //
+        noexcept requires(getSpaceDimension<StensorType>() == 1u) {
       using real = base_type<numeric_type<StensorType>>;
       constexpr auto zero = real(0);
       constexpr auto one = real(1);
@@ -41,13 +40,12 @@ namespace tfel::math::internals {
   template <>
   struct StensorComputeEigenValuesDerivatives<2u> {
     template <StensorConcept StensorType>
-    static TFEL_MATH_INLINE2
-        typename std::enable_if<getSpaceDimension<StensorType>() == 2u,
-                                void>::type
-        exe(StensorType& n0,
-            StensorType& n1,
-            StensorType& n2,
-            const rotation_matrix<numeric_type<StensorType>>& m) {
+    TFEL_HOST_DEVICE static constexpr void exe(
+        StensorType& n0,
+        StensorType& n1,
+        StensorType& n2,
+        const rotation_matrix<numeric_type<StensorType>>& m) noexcept  //
+        requires(getSpaceDimension<StensorType>() == 2u) {
       using real = base_type<numeric_type<StensorType>>;
       constexpr auto zero = real(0);
       constexpr auto one = real(1);
@@ -62,13 +60,12 @@ namespace tfel::math::internals {
   template <>
   struct StensorComputeEigenValuesDerivatives<3u> {
     template <StensorConcept StensorType>
-    static TFEL_MATH_INLINE2
-        typename std::enable_if<getSpaceDimension<StensorType>() == 3u,
-                                void>::type
-        exe(StensorType& n0,
-            StensorType& n1,
-            StensorType& n2,
-            const rotation_matrix<numeric_type<StensorType>>& m) {
+    TFEL_HOST_DEVICE static constexpr void exe(
+        StensorType& n0,
+        StensorType& n1,
+        StensorType& n2,
+        const rotation_matrix<numeric_type<StensorType>>& m) noexcept  //
+        requires(getSpaceDimension<StensorType>() == 3u) {
       using real = base_type<numeric_type<StensorType>>;
       const tvector<3u, real> v0 = m.template column_view<0u>();
       const tvector<3u, real> v1 = m.template column_view<1u>();

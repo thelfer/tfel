@@ -137,9 +137,9 @@ namespace tfel::math {
     return tfel::typetraits::isScalar<T>();
   }  // end of isScalar
 
-  template<typename T>
+  template <typename T>
   concept ScalarConcept = tfel::typetraits::IsScalar<std::decay_t<T>>::cond;
-  
+
 }  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_GENERAL_MATHOBJECTTRAITS_HXX */

@@ -24,7 +24,8 @@ namespace tfel::math::internals {
   template <int N, unsigned int D>
   struct TFEL_VISIBILITY_LOCAL PowerGenerator {
     TFEL_HOST_DEVICE static auto exe(const std::floating_point auto x) {
-      return std::pow(x, static_cast<decltype(x)>(N) / static_cast<decltype(x)>(D));
+      return std::pow(
+          x, static_cast<decltype(x)>(N) / static_cast<decltype(x)>(D));
     }
   };
 

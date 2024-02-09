@@ -30,7 +30,7 @@ namespace tfel::material::internals {
    * \param[in] m: matrix for the eigen vectors
    * \param[in] e: criterion used to check if two eigenvalues are equal
    */
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   TFEL_HOST_DEVICE constexpr void completeBaralatStressSecondDerivative(
       tfel::material::BarlatStressSecondDerivativeType<StressStensor>&,
       const tfel::math::tvector<3u,
@@ -53,11 +53,8 @@ namespace tfel::material::internals {
    * \param[in] m: matrix for the eigen vectors
    * \param[in] e: criterion used to check if two eigenvalues are equal
    */
-  template <typename StressStensor>
-  TFEL_HOST_DEVICE typename std::enable_if<
-      tfel::math::getSpaceDimension<StressStensor>() == 2u,
-      void>::type
-  completeBaralatStressSecondDerivative(
+  template <tfel::math::StensorConcept StressStensor>
+  TFEL_HOST_DEVICE void completeBaralatStressSecondDerivative(
       tfel::material::BarlatStressSecondDerivativeType<StressStensor>&
           d2Phi_ds2,
       const tfel::math::tvector<3u,
@@ -68,7 +65,8 @@ namespace tfel::material::internals {
           tfel::material::BarlatInvertStressType<StressStensor>>& d2Phi_dvp2,
       const tfel::math::tvector<3u, BarlatStressType<StressStensor>>& vp,
       const tfel::math::tmatrix<3u, 3u, BarlatBaseType<StressStensor>>& m,
-      const tfel::material::BarlatStressType<StressStensor> e) {
+      const tfel::material::BarlatStressType<StressStensor> e)  //
+      requires(tfel::math::getSpaceDimension<StressStensor>() == 2u) {
     using namespace tfel::math;
     using base = tfel::material::BarlatBaseType<StressStensor>;
     constexpr auto icste = Cste<base>::isqrt2;
@@ -95,11 +93,8 @@ namespace tfel::material::internals {
    * \param[in] m: matrix for the eigen vectors
    * \param[in] e: criterion used to check if two eigenvalues are equal
    */
-  template <typename StressStensor>
-  TFEL_HOST_DEVICE typename std::enable_if<
-      tfel::math::getSpaceDimension<StressStensor>() == 3u,
-      void>::type
-  completeBaralatStressSecondDerivative(
+  template <tfel::math::StensorConcept StressStensor>
+  TFEL_HOST_DEVICE void completeBaralatStressSecondDerivative(
       tfel::material::BarlatStressSecondDerivativeType<StressStensor>&
           d2Phi_ds2,
       const tfel::math::tvector<3u,
@@ -110,7 +105,8 @@ namespace tfel::material::internals {
           tfel::material::BarlatInvertStressType<StressStensor>>& d2Phi_dvp2,
       const tfel::math::tvector<3u, BarlatStressType<StressStensor>>& vp,
       const tfel::math::tmatrix<3u, 3u, BarlatBaseType<StressStensor>>& m,
-      const tfel::material::BarlatStressType<StressStensor> e) {
+      const tfel::material::BarlatStressType<StressStensor> e)  //
+      requires(tfel::math::getSpaceDimension<StressStensor>() == 3u) {
     using namespace tfel::math;
     using base = tfel::material::BarlatBaseType<StressStensor>;
     constexpr auto cste = Cste<base>::isqrt2;
@@ -200,7 +196,7 @@ namespace tfel::material {
     return makeOrthotropicStressLinearTransformation<H, oac, real>(c);
   }  // end of makeBarlatLinearTransformation
 
-  template <typename StressStensor,
+  template <tfel::math::StensorConcept StressStensor,
             typename BarlatExponentType,
             tfel::math::stensor_common::EigenSolver es>
   BarlatStressType<StressStensor> computeBarlatStress(
@@ -232,7 +228,7 @@ namespace tfel::material {
                           1 / real(a));
   }  // end of computeBarlatStress
 
-  template <typename StressStensor,
+  template <tfel::math::StensorConcept StressStensor,
             typename BarlatExponentType,
             tfel::math::stensor_common::EigenSolver es>
   std::tuple<BarlatStressType<StressStensor>,
@@ -329,7 +325,8 @@ namespace tfel::material {
     return std::make_tuple(Phi, eval(dPhi_ds1 * l1 + dPhi_ds2 * l2));
   }  // end of computeBarlatStressNormal
 
-  template <typename StressStensor, typename BarlatExponentType>
+  template <tfel::math::StensorConcept StressStensor,
+            typename BarlatExponentType>
   BarlatStressAndDerivativesWithRespectToEigenvalues<StressStensor>
   computeBarlatStressSecondDerivative(
       const tfel::math::tvector<3u, BarlatStressType<StressStensor>>& vp1,
@@ -442,7 +439,7 @@ namespace tfel::material {
     return d;
   }  // end of BarlatStressSecondDerivative
 
-  template <typename StressStensor,
+  template <tfel::math::StensorConcept StressStensor,
             typename BarlatExponentType,
             tfel::math::stensor_common::EigenSolver es>
   std::tuple<BarlatStressType<StressStensor>,

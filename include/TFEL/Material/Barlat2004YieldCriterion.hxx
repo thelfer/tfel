@@ -22,35 +22,35 @@
 namespace tfel::material {
 
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using BarlatStressType = tfel::math::numeric_type<StressStensor>;
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using BarlatBaseType =
       tfel::typetraits::base_type<tfel::math::numeric_type<StressStensor>>;
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using BarlatLinearTransformationType =
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
                            BarlatBaseType<StressStensor>>;
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using BarlatInvertStressType =
       tfel::math::result_type<BarlatBaseType<StressStensor>,
                               BarlatStressType<StressStensor>,
                               tfel::math::OpDiv>;
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using BarlatStressNormalType =
       tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
                           BarlatBaseType<StressStensor>>;
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using BarlatStressEigenTensorType =
       tfel::math::stensor<tfel::math::getSpaceDimension<StressStensor>(),
                           BarlatBaseType<StressStensor>>;
   //! a simple alias
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   using BarlatStressSecondDerivativeType =
       tfel::math::st2tost2<tfel::math::getSpaceDimension<StressStensor>(),
                            BarlatInvertStressType<StressStensor>>;
@@ -58,7 +58,7 @@ namespace tfel::material {
    * \brief an helper structure used to simplify the code
    * \tparam StressStensor: type of the stress tensor
    */
-  template <typename StressStensor>
+  template <tfel::math::StensorConcept StressStensor>
   struct BarlatStressAndDerivativesWithRespectToEigenvalues {
     //! Barlat stress
     BarlatStressType<StressStensor> Phi;
@@ -391,7 +391,7 @@ namespace tfel::material {
    * \param[in] e: criterion used to check if the von Mises stress is null
    * \return the Barlat yield stress \f$\phi\left(\underline{\bf s}\right)\f$
    */
-  template <typename StressStensor,
+  template <tfel::math::StensorConcept StressStensor,
             typename BarlatExponentType,
             tfel::math::stensor_common::EigenSolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
@@ -414,7 +414,7 @@ namespace tfel::material {
    * \param[in] e: criterion used to check if the von Mises stress is null.
    * \see `computeBarlatStress`
    */
-  template <typename StressStensor,
+  template <tfel::math::StensorConcept StressStensor,
             typename BarlatExponentType,
             tfel::math::stensor_common::EigenSolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
@@ -439,7 +439,8 @@ namespace tfel::material {
    * \param[in] a: Barlat exponent
    * \see `computeBarlatStress`
    */
-  template <typename StressStensor, typename BarlatExponentType>
+  template <tfel::math::StensorConcept StressStensor,
+            typename BarlatExponentType>
   TFEL_HOST_DEVICE
       BarlatStressAndDerivativesWithRespectToEigenvalues<StressStensor>
       computeBarlatStressSecondDerivative(
@@ -461,7 +462,7 @@ namespace tfel::material {
    * \param[in] e: criterion used to check if the stress are null
    * \see `computeBarlatStress`
    */
-  template <typename StressStensor,
+  template <tfel::math::StensorConcept StressStensor,
             typename BarlatExponentType,
             tfel::math::stensor_common::EigenSolver =
                 tfel::math::stensor_common::TFELEIGENSOLVER>
