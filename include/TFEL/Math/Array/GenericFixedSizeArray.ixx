@@ -19,15 +19,15 @@ namespace tfel::math {
   template <typename Child,
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
-  constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::
+  TFEL_HOST_DEVICE constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::
       GenericFixedSizeArray() noexcept
       : v() {}  // end of GenericFixedSizeArray
 
   template <typename Child,
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
-  constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::GenericFixedSizeArray(
-      const GenericFixedSizeArray& src) noexcept
+  TFEL_HOST_DEVICE constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::
+      GenericFixedSizeArray(const GenericFixedSizeArray& src) noexcept
       : GenericFixedSizeArray() {
     this->operator=(src);
   }  // end of GenericFixedSizeArray
@@ -35,8 +35,8 @@ namespace tfel::math {
   template <typename Child,
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
-  constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::GenericFixedSizeArray(
-      GenericFixedSizeArray&& src) noexcept
+  TFEL_HOST_DEVICE constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::
+      GenericFixedSizeArray(GenericFixedSizeArray&& src) noexcept
       : GenericFixedSizeArray() {
     this->operator=(src);
   }  // end of GenericFixedSizeArray
@@ -45,11 +45,10 @@ namespace tfel::math {
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
   template <typename ValueType>
-  constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::
+  TFEL_HOST_DEVICE constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::
       GenericFixedSizeArray(const ValueType& value) noexcept requires(
           isAssignableTo<ValueType,
-                         typename GenericFixedSizeArray<Child, ArrayPolicy, N>::
-                             value_type>())
+                         typename GenericFixedSizeArray::value_type>())
       : GenericFixedSizeArray() {
     this->fill(value);
   }  // end of GenericFixedSizeArray
@@ -58,8 +57,8 @@ namespace tfel::math {
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
   template <typename OtherArray>
-  constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::GenericFixedSizeArray(
-      const OtherArray& src) noexcept  //
+  TFEL_HOST_DEVICE constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::
+      GenericFixedSizeArray(const OtherArray& src) noexcept  //
       requires((isAssignableTo<OtherArray, Child>()) &&
                (!std::is_same_v<OtherArray, Child>))
       : GenericFixedSizeArray() {
@@ -73,12 +72,11 @@ namespace tfel::math {
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
   template <typename ValueType>
-  constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::GenericFixedSizeArray(
-      const std::initializer_list<ValueType>& values) noexcept  //
-      requires(
-          isAssignableTo<ValueType,
-                         typename GenericFixedSizeArray<Child, ArrayPolicy, N>::
-                             value_type>())
+  TFEL_HOST_DEVICE constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::
+      GenericFixedSizeArray(
+          const std::initializer_list<ValueType>& values) noexcept  //
+      requires(isAssignableTo<ValueType,
+                              typename GenericFixedSizeArray::value_type>())
       : GenericFixedSizeArray() {
     if (values.size() == 1u) {
       this->fill(*(values.begin()));
@@ -91,12 +89,11 @@ namespace tfel::math {
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
   template <typename InputIterator>
-  constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::GenericFixedSizeArray(
-      const InputIterator p) noexcept  //
+  TFEL_HOST_DEVICE constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::
+      GenericFixedSizeArray(const InputIterator p) noexcept  //
       requires(std::is_same_v<
                typename std::iterator_traits<InputIterator>::value_type,
-               base_type<typename GenericFixedSizeArray<Child, ArrayPolicy, N>::
-                             value_type>>) {
+               base_type<typename GenericFixedSizeArray::value_type>>) {
     const auto& policy = this->getRowMajorIndexingPolicy();
     this->import(policy, p, p + this->size());
   }  // end of GenericFixedSizeArray
@@ -104,7 +101,7 @@ namespace tfel::math {
   template <typename Child,
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
-  constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>&
+  TFEL_HOST_DEVICE constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>&
   GenericFixedSizeArray<Child, ArrayPolicy, N>::operator=(
       const GenericFixedSizeArray& src) noexcept {
     this->assign(src);
@@ -114,7 +111,7 @@ namespace tfel::math {
   template <typename Child,
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
-  constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>&
+  TFEL_HOST_DEVICE constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>&
   GenericFixedSizeArray<Child, ArrayPolicy, N>::operator=(
       GenericFixedSizeArray&& src) noexcept {
     this->assign(src);
@@ -125,7 +122,8 @@ namespace tfel::math {
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
   template <typename OtherArray>
-  constexpr Child& GenericFixedSizeArray<Child, ArrayPolicy, N>::
+  TFEL_HOST_DEVICE constexpr Child&
+  GenericFixedSizeArray<Child, ArrayPolicy, N>::
   operator=(const OtherArray& src) noexcept requires(
       isAssignableTo<OtherArray, Child>()) {
     auto& child = static_cast<Child&>(*this);
@@ -137,7 +135,8 @@ namespace tfel::math {
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
   template <typename OtherArray>
-  constexpr Child& GenericFixedSizeArray<Child, ArrayPolicy, N>::operator+=(
+  TFEL_HOST_DEVICE constexpr Child&
+  GenericFixedSizeArray<Child, ArrayPolicy, N>::operator+=(
       const OtherArray& src) noexcept  //
       requires(isAssignableTo<OtherArray, Child>()) {
     auto& child = static_cast<Child&>(*this);
@@ -149,7 +148,8 @@ namespace tfel::math {
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
   template <typename OtherArray>
-  constexpr Child& GenericFixedSizeArray<Child, ArrayPolicy, N>::
+  TFEL_HOST_DEVICE constexpr Child&
+  GenericFixedSizeArray<Child, ArrayPolicy, N>::
   operator-=(const OtherArray& src) noexcept requires(
       isAssignableTo<OtherArray, Child>()) {
     auto& child = static_cast<Child&>(*this);
@@ -161,16 +161,14 @@ namespace tfel::math {
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
   template <typename ValueType2>
-  constexpr Child& GenericFixedSizeArray<Child, ArrayPolicy, N>::operator*=(
+  TFEL_HOST_DEVICE constexpr Child&
+  GenericFixedSizeArray<Child, ArrayPolicy, N>::operator*=(
       const ValueType2& s) noexcept  //
       requires(isAssignableTo<
-               BinaryOperationResult<
-                   ValueType2,
-                   typename GenericFixedSizeArray<Child, ArrayPolicy, N>::
-                       value_type,
-                   OpMult>,
-               typename GenericFixedSizeArray<Child, ArrayPolicy, N>::
-                   value_type>()) {
+               BinaryOperationResult<ValueType2,
+                                     typename GenericFixedSizeArray::value_type,
+                                     OpMult>,
+               typename GenericFixedSizeArray::value_type>()) {
     auto& child = static_cast<Child&>(*this);
     child.multiplyByScalar(s);
     return child;
@@ -180,16 +178,14 @@ namespace tfel::math {
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
   template <typename ValueType2>
-  constexpr Child& GenericFixedSizeArray<Child, ArrayPolicy, N>::operator/=(
+  TFEL_HOST_DEVICE constexpr Child&
+  GenericFixedSizeArray<Child, ArrayPolicy, N>::operator/=(
       const ValueType2& s) noexcept  //
       requires(isAssignableTo<
-               BinaryOperationResult<
-                   typename GenericFixedSizeArray<Child, ArrayPolicy, N>::
-                       value_type,
-                   ValueType2,
-                   OpDiv>,
-               typename GenericFixedSizeArray<Child, ArrayPolicy, N>::
-                   value_type>()) {
+               BinaryOperationResult<typename GenericFixedSizeArray::value_type,
+                                     ValueType2,
+                                     OpDiv>,
+               typename GenericFixedSizeArray::value_type>()) {
     auto& child = static_cast<Child&>(*this);
     child.multiplyByScalar(1 / s);
     return child;
@@ -198,24 +194,27 @@ namespace tfel::math {
   template <typename Child,
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
-  constexpr typename GenericFixedSizeArray<Child, ArrayPolicy, N>::pointer
-  GenericFixedSizeArray<Child, ArrayPolicy, N>::data() noexcept {
+  TFEL_HOST_DEVICE constexpr
+      typename GenericFixedSizeArray<Child, ArrayPolicy, N>::pointer
+      GenericFixedSizeArray<Child, ArrayPolicy, N>::data() noexcept {
     return this->v;
   }  // end of data
 
   template <typename Child,
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
-  constexpr typename GenericFixedSizeArray<Child, ArrayPolicy, N>::const_pointer
-  GenericFixedSizeArray<Child, ArrayPolicy, N>::data() const noexcept {
+  TFEL_HOST_DEVICE constexpr
+      typename GenericFixedSizeArray<Child, ArrayPolicy, N>::const_pointer
+      GenericFixedSizeArray<Child, ArrayPolicy, N>::data() const noexcept {
     return this->v;
   }  // end of data
 
   template <typename Child,
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
-  constexpr typename GenericFixedSizeArray<Child, ArrayPolicy, N>::size_type
-  GenericFixedSizeArray<Child, ArrayPolicy, N>::getContainerSize() const
+  TFEL_HOST_DEVICE constexpr
+      typename GenericFixedSizeArray<Child, ArrayPolicy, N>::size_type
+      GenericFixedSizeArray<Child, ArrayPolicy, N>::getContainerSize() const
       noexcept {
     return N;
   }  // end of data

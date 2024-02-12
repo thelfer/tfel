@@ -123,9 +123,9 @@ namespace tfel::math {
      */
     template <typename ValueType>
     TFEL_HOST_DEVICE constexpr explicit GenericFixedSizeArray(
-        const ValueType&) noexcept  //
-        requires(isAssignableTo<ValueType,
-                                typename GenericFixedSizeArray::value_type>());
+        const ValueType&) noexcept requires(isAssignableTo<ValueType,
+                                                           typename GenericFixedSizeArray::
+                                                               value_type>());
     /*!
      * \brief constructor from an initializer list
      * \param[in] values: values
