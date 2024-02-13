@@ -274,6 +274,10 @@ namespace tfel::math {
     return v[i];
   }  // end of get
 
+  // class template argument deduction
+  template <typename... T>
+  fsarray(T&&... t)->fsarray<sizeof...(T), std::common_type_t<T...>>;
+
 }  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_FSARRAY_HXX */
