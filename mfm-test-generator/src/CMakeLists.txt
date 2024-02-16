@@ -36,6 +36,7 @@ if(TFEL_HAVE_MADNEX)
 endif(TFEL_HAVE_MADNEX)
 
 add_executable(mfm-test-generator mfm-test-generator.cxx)
+set_property(TARGET mfm-test-generator PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 target_link_libraries(mfm-test-generator
  PRIVATE
  MFMTestGenerator)
