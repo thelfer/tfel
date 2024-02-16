@@ -293,6 +293,7 @@ target_link_libraries(MTestFileGenerator
 # MFront
 
 add_executable(mfront main.cxx)
+set_property(TARGET mfront PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 if(TFEL_APPEND_VERSION)
   set_target_properties(mfront
     PROPERTIES OUTPUT_NAME "mfront-${TFEL_VERSION}")
@@ -313,6 +314,7 @@ add_executable(mfront-query mfront-query.cxx
   MaterialPropertyQuery.cxx
   BehaviourQuery.cxx
   ModelQuery.cxx)
+set_property(TARGET mfront-query PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 if(TFEL_APPEND_VERSION)
   set_target_properties(mfront-query
     PROPERTIES OUTPUT_NAME "mfront-query-${TFEL_VERSION}")
@@ -327,6 +329,7 @@ install(TARGETS mfront-query DESTINATION bin
 # mfront-doc
 add_executable(mfront-doc mfront-doc.cxx
   BehaviourDocumentationGenerator.cxx)
+set_property(TARGET mfront-doc PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 if(TFEL_APPEND_VERSION)
   set_target_properties(mfront-doc
     PROPERTIES OUTPUT_NAME "mfront-doc-${TFEL_VERSION}")

@@ -8,6 +8,10 @@ endif(CMAKE_VERSION VERSION_GREATER 3.0.0)
 if(CMAKE_VERSION VERSION_GREATER 3.1.0)
   cmake_policy(SET CMP0054 NEW)
 endif(CMAKE_VERSION VERSION_GREATER 3.1.0)
+if(CMAKE_VERSION VERSION_GREATER 3.14.0)
+  include(CheckPIESupported)
+  check_pie_supported()
+endif(CMAKE_VERSION VERSION_GREATER 3.14.0)
 
 option(TFEL_APPEND_VERSION
   "append TFEL version number to all libraries, executables and directories" OFF)
