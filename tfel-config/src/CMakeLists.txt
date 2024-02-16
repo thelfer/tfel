@@ -4,6 +4,7 @@ target_include_directories(tfel-config
   PRIVATE ${PROJECT_BINARY_DIR}/tfel-config/include
   PRIVATE ${PROJECT_SOURCE_DIR}/include)
 
+set_property(TARGET tfel-config PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 if(TFEL_HAVE_MADNEX)
   target_compile_definitions(tfel-config
     PUBLIC TFEL_HAVE_MADNEX)

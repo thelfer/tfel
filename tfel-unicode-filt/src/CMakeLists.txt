@@ -4,6 +4,7 @@ target_include_directories(tfel-unicode-filt
 target_link_libraries(tfel-unicode-filt
 	PRIVATE TFELUnicodeSupport TFELUtilities)
 
+set_property(TARGET tfel-unicode-filt PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 if(WIN32 AND enable-static)
   set_target_properties(tfel-unicode-filt PROPERTIES COMPILE_FLAGS "-DTFEL_STATIC_BUILD")
   set_target_properties(tfel-unicode-filt PROPERTIES LINK_FLAGS "-static-libgcc -static") 
