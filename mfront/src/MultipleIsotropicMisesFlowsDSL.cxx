@@ -51,7 +51,7 @@ namespace mfront {
     this->mb.setGlossaryName(h, "eel", "ElasticStrain");
     this->mb.setGlossaryName(h, "p", "EquivalentStrain");
     // default local vars
-    this->reserveName("mu_3_theta");
+    this->reserveName("mfront_internal_3_mu_theta");
     this->reserveName("surf");
     this->reserveName("jacobian_inversion_succeeded");
     this->mb.addLocalVariable(
@@ -225,7 +225,7 @@ namespace mfront {
                                 "Could not read theta value (read '" +
                                     this->current->value + "').");
       }
-      otheta << "mu_3_theta" << this->flows.size();
+      otheta << "mfront_internal_3_mu_theta" << this->flows.size();
       ose << "se" << this->flows.size();
       oseq_e << "seq_e" << this->flows.size();
       this->reserveName(ose.str());

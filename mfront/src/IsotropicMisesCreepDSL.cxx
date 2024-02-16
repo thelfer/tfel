@@ -36,9 +36,8 @@ namespace mfront {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("IsotropicMisesCreepDSL");
     // Default state vars
-    this->reserveName("ccto_tmp_1");
-    this->reserveName("inv_sqrt2");
-    this->reserveName("mu_3_theta");
+    this->reserveName("mfront_internal_ccto_tmp_1");
+    this->reserveName("mfront_internal_3_mu_theta");
     this->mb.addStateVariable(
         h, VariableDescription("StrainStensor", "εᵉˡ", "eel", 1u, 0u));
     this->mb.addStateVariable(h, VariableDescription("strain", "p", 1u, 0u));
