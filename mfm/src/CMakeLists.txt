@@ -5,6 +5,7 @@ link_directories("${PROJECT_BINARY_DIR}/src/System"
 		 "${PROJECT_BINARY_DIR}/src/Config")
 
 add_executable(mfm mfm.cxx)
+set_property(TARGET mfm PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 target_link_libraries(mfm
   TFELSystem TFELUtilities)
 if(TFEL_APPEND_SUFFIX)

@@ -20,6 +20,7 @@ link_directories("${PROJECT_BINARY_DIR}/mfront/src"
 # mfront-doc
 add_executable(mfront-doc mfront-doc.cxx
   BehaviourDocumentationGenerator.cxx)
+set_property(TARGET mfront-doc PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 target_link_libraries(mfront-doc
   TFELMFront 
   MFrontLogStream

@@ -23,6 +23,7 @@ add_executable(mfront-query mfront-query.cxx
   MaterialPropertyQuery.cxx
   BehaviourQuery.cxx
   ModelQuery.cxx)
+set_property(TARGET mfront-query PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 target_link_libraries(mfront-query
   TFELMFront 
   MFrontLogStream
