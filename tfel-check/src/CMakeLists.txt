@@ -31,6 +31,7 @@ target_link_libraries(TFELCheck
   TFELConfig)
 
 add_executable(tfel-check tfel-check.cxx)
+set_property(TARGET tfel-check PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 if(enable-python OR enable-python-bindings)
   target_compile_definitions(tfel-check
     PRIVATE TFEL_PYTHON_EXECUTABLE="${PYTHON_EXECUTABLE}")

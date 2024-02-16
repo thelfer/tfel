@@ -10,6 +10,7 @@ set(tfel-doc_SOURCES tfel-doc.cxx
 		     MarkdownGenerator.cxx)
 
 add_executable(tfel-doc ${tfel-doc_SOURCES})
+set_property(TARGET tfel-doc PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 target_include_directories(tfel-doc 
   PRIVATE "${PROJECT_SOURCE_DIR}/tfel-doc/include")
 target_link_libraries(tfel-doc
