@@ -174,6 +174,7 @@ mtest_library(TFELMTest ${TFELMTest_SOURCES})
 target_link_libraries(TFELMTest ${TFELMTest_LDADD})
 
 add_executable(mtest MTestMain.cxx)
+set_property(TARGET mtest PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 if(WIN32 AND enable-static)
   set(mtest_static_link_libraries
     TFELMTest-static

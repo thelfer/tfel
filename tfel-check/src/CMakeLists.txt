@@ -33,6 +33,7 @@ target_link_libraries(TFELCheck
   TFELMath TFELUtilities TFELSystem)
 
 add_executable(tfel-check tfel-check.cxx)
+set_property(TARGET tfel-check PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 target_link_libraries(tfel-check
   TFELCheck TFELUtilities TFELSystem)
 if(TFEL_APPEND_SUFFIX)

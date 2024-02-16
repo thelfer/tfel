@@ -1065,7 +1065,12 @@ namespace mfront {
   void DSLBase::treatStaticVar() {
     this->checkNotEndOfFile("DSLBase::treatStaticVar",
                             "Cannot read type of static variable.");
-    const auto type = this->current->value;
+    const auto r = this->readType();
+    if (!r.second) {
+      this->throwRuntimeError("DSLBase::treatStaticVar",
+                              "type given is not valid.");
+    }
+    const auto type = r.first;
     if (!this->isValidIdentifier(type, false)) {
       --(this->current);
       this->throwRuntimeError("DSLBase::treatStaticVar",

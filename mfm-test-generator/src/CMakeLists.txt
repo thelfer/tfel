@@ -30,6 +30,7 @@ target_link_libraries(MFMTestGenerator
   TFELSystem TFELUtilities)
 
 add_executable(mfm-test-generator mfm-test-generator.cxx)
+set_property(TARGET mfm-test-generator PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 target_link_libraries(mfm-test-generator MFMTestGenerator)
 if(TFEL_APPEND_SUFFIX)
   set_target_properties(mfm-test-generator

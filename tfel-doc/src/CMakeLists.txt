@@ -24,6 +24,7 @@ set(tfel-doc_SOURCES tfel-doc.cxx
 		     MarkdownGenerator.cxx)
 
 add_executable(tfel-doc ${tfel-doc_SOURCES})
+set_property(TARGET tfel-doc PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 target_link_libraries(tfel-doc
                       TFELMTest
                       TFELSystem
