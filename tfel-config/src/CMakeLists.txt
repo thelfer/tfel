@@ -1,4 +1,5 @@
 add_executable(tfel-config tfel-config.cxx)
+set_property(TARGET tfel-config PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 target_include_directories(tfel-config
   PRIVATE ${PROJECT_BINARY_DIR}/include
   PRIVATE ${PROJECT_BINARY_DIR}/tfel-config/include

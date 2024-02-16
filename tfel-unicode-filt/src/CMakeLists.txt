@@ -1,4 +1,5 @@
 add_executable(tfel-unicode-filt tfel-unicode-filt.cxx)
+set_property(TARGET tfel-unicode-filt PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 target_include_directories(tfel-unicode-filt
   PRIVATE ${PROJECT_SOURCE_DIR}/include)
 target_link_libraries(tfel-unicode-filt
