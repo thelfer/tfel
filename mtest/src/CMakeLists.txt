@@ -188,6 +188,7 @@ if(TFEL_HAVE_MADNEX)
 endif(TFEL_HAVE_MADNEX)
 
 add_executable(mtest MTestMain.cxx)
+set_property(TARGET mtest PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 if(WIN32 AND enable-static)
   set(mtest_static_link_libraries
     TFELMTest-static

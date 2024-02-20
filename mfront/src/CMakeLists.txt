@@ -518,6 +518,7 @@ endif(TFEL_HAVE_MADNEX)
 # MFront
 
 add_executable(mfront main.cxx)
+set_property(TARGET mfront PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 target_link_libraries(mfront
   TFELMFront 
   MFrontLogStream

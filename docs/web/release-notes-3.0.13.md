@@ -19,7 +19,11 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
-# Issue 87: [tfel-config] remove reference to svn revision
+# Issue 512: Backport PR 509 "Add PIE for some tools" to all rliv branches
+
+For more details, see <https://github.com/thelfer/tfel/issues/512>.
+
+# Issue 487: [tfel-config] remove reference to svn revision
 
 For more details, see <https://github.com/thelfer/tfel/issues/487>.
 
