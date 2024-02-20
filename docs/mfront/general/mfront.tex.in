@@ -200,7 +200,7 @@ notes sont intégrées à la gestion de configuration de \TFEL{} et
 \begin{center}
   {\tt make doc-pdf}
 \end{center}}. Le présent document a été généré à partir de la
-révision @TFEL_SVN_REVISION@.
+révision @TFEL_GIT_HASH@.
 
 \subsection{Objectif de \mfront{}}
 
