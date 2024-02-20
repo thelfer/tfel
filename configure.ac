@@ -24,10 +24,10 @@ case "$libdir" in
 esac
 
 
-define([svnrevision],esyscmd([sh -c "svnversion|tr -d '\n'"]))
+define([githash],esyscmd([sh -c "git log -1 --format=%h | tr -d '\n'"]))
 AC_SUBST(TFEL_VERSION,"$PACKAGE_VERSION")
-AC_DEFINE(TFEL_SVN_REVISION,"svnrevision",[SVN REVISION])
-AC_SUBST(TFEL_SVN_REVISION,"svnrevision")
+AC_DEFINE(TFEL_GIT_HASH,"githash",[TFEL GIT HASH])
+AC_SUBST(TFEL_GIT_HASH,"githash")
 
 #disable static library generation by default
 AC_ENABLE_STATIC(no)
