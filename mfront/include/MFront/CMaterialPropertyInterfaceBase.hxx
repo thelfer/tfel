@@ -246,6 +246,36 @@ namespace mfront {
                                       const std::string_view,
                                       const bool) const;
 
+    /*!
+     * \brief write the `try` statement before the material property body
+     * \param[out] os:  output file stream
+     */
+    virtual void writeCxxTryBlock(std::ostream&) const;
+    /*!
+     * \brief write catch blocks before the material property body
+     * \param[out] os:  output file stream
+     * \param[in]  mpd: material property description
+     * \param[in] floating_point_type: floating-point type
+     * \param[in] use_qt: use quantities
+     */
+    virtual void writeCxxCatchBlock(std::ostream&,
+                                    const MaterialPropertyDescription&,
+                                    const std::string_view,
+                                    const bool) const;
+    /*!
+     * \brief write catch blocks before the material property body
+     * \param[out] os:  output file stream
+     * \param[in] msh: code returning the error message (a string must be escaped)
+     * \param[in] mpd: material property description
+     * \param[in] floating_point_type: floating-point type
+     * \param[in] use_qt: use quantities
+     */
+    virtual void returnInvalidValue(std::ostream&,
+                                    std::string_view,
+                                    const MaterialPropertyDescription&,
+                                    const std::string_view,
+                                    const bool) const;
+    //
     virtual std::string getCallingConvention() const;
     /*!
      * \return the name used to generate the symbols associated with the
