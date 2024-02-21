@@ -125,8 +125,7 @@ namespace mfront {
           << "cerr << \"" << name << ": " << v.name
           << " is below its physical lower bound (\"\n << " << v.name
           << " << \"<" << b.lowerBound << ").\\n\";\n"
-          << "return nan(\"" << name << ": " << v.name
-          << " is not physically valid.\");\n"
+          << "return std::nan(\"\");\n"
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
       out << "if(" << v.name << " > " << v.type << "(" << b.upperBound
@@ -134,8 +133,7 @@ namespace mfront {
           << "cerr << \"" << name << ": " << v.name
           << " is below its physical upper bound (\"\n << " << v.name
           << " << \">" << b.upperBound << ").\\n\";\n"
-          << "return nan(\"" << name << ": " << v.name
-          << " is not physically valid.\");\n"
+          << "return std::nan(\"\");\n"
           << "}\n";
     } else {
       out << "if((" << v.name << " < " << v.type << "(" << b.lowerBound
@@ -150,8 +148,7 @@ namespace mfront {
           << " is over its physical upper bound (\"\n << " << v.name
           << " << \">" << b.upperBound << ").\\n\";\n"
           << "}\n"
-          << "return nan(\"" << name << ": " << v.name
-          << " is not physically valid.\");\n"
+          << "return std::nan(\"\");\n"
           << "}\n";
     }
   }  // end of writePhysicalBounds
@@ -191,8 +188,7 @@ namespace mfront {
           << ")){\n"
           << get_policy  //
           << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
-          << "return nan(\"" << name << ": " << v.name
-          << " is out of bounds.\");\n"
+          << "return std::nan(\"\");\n"
           << "} else if (::strcmp(mfront_policy,\"WARNING\")==0){\n"
           << "cerr << \"" << name << ": " << v.name
           << " is below its lower bound (\"\n << " << v.name << " << \"<"
@@ -207,8 +203,7 @@ namespace mfront {
           << "cerr << \"" << name << ": " << v.name
           << " is over its upper bound (\"\n << " << v.name << " << \">"
           << b.upperBound << ").\\n\";\n"
-          << "return nan(\"" << name << ": " << v.name
-          << " is out of bounds.\");\n"
+          << "return std::nan(\"\");\n"
           << "} else if (::strcmp(mfront_policy,\"WARNING\")==0){\n"
           << "cerr << \"" << name << ": " << v.name
           << " is over its upper bound (\"\n << " << v.name << " << \">"
@@ -231,8 +226,7 @@ namespace mfront {
           << " is over its upper bound (\"\n << " << v.name << " << \">"
           << b.upperBound << ").\\n\";\n"
           << "}\n"
-          << "return nan(\"" << name << ": " << v.name
-          << " is out of bounds.\");\n"
+          << "return std::nan(\"\");\n"
           << "} else if (::strcmp(mfront_policy,\"WARNING\")==0){\n"
           << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
           << ")){\n"
@@ -413,9 +407,9 @@ namespace mfront {
     if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
       out << "if(!castem::" << hn << "::get" << hn << "().ok){\n"
-          << "return std::nan(castem::" << name
-          << "MaterialPropertyHandler::get" << name
-          << "MaterialPropertyHandler().msg.c_str());\n"
+          << "std::cerr << castem::" << hn << "::get" << hn
+          << "().msg.c_str() << '\\n';\n"
+          << "return std::nan(\"\");\n"
           << "}\n";
     }
     writeAssignMaterialPropertyParameters(out, mpd, name, "real", "castem");
