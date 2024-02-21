@@ -26,8 +26,6 @@
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
 #include "TFEL/Math/Forward/st2tot2.hxx"
-#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include "TFEL/Math/ST2toT2/ST2toT2Concept.hxx"
 #include "TFEL/Math/ST2toT2/ST2toT2ConceptOperations.hxx"
 #include "TFEL/Math/ST2toT2/StensorProductLeftDerivativeExpr.hxx"

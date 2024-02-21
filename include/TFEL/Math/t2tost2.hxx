@@ -25,8 +25,6 @@
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/Forward/t2tost2.hxx"
-#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include "TFEL/Math/Tensor/TensorConcept.hxx"
 #include "TFEL/Math/T2toT2/T2toT2Concept.hxx"
 #include "TFEL/Math/T2toST2/T2toST2Concept.hxx"

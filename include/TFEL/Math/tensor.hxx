@@ -25,7 +25,6 @@
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include "TFEL/Math/Tensor/TensorConcept.hxx"
 #include "TFEL/Math/Tensor/TensorConceptOperations.hxx"
 #include "TFEL/Math/tvector.hxx"
@@ -230,7 +229,6 @@ namespace tfel::typetraits {
 
 }  // end of namespace tfel::typetraits
 
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include "TFEL/Math/Tensor/tensor.ixx"
 #include "TFEL/Math/Tensor/tensorResultType.hxx"
 

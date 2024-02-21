@@ -925,7 +925,6 @@ namespace tfel::typetraits {
 
 }  // end of namespace tfel::typetraits
 
-#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
 #include "TFEL/Math/Stensor/stensor.ixx"
 #include "TFEL/Math/Stensor/stensorResultType.hxx"
 #include "TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx"
