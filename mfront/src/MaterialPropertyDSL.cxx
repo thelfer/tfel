@@ -914,7 +914,7 @@ namespace mfront {
     const auto [n, bounds] = this->readVariableBounds();
     this->readSpecifiedToken("MaterialPropertyDSL::treatPhysicalBounds", ";");
     if (n == this->md.output.name) {
-      this->md.output.setBounds(bounds);
+      this->md.output.setPhysicalBounds(bounds);
       return;
     }
     auto& v = this->md.inputs.getVariable(n);
