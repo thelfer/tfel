@@ -155,13 +155,14 @@ namespace mfront {
             } else {
               os << " = ((" << this->bd.getClassName()
                  << "::theta)*(this->df_dp" << n << ")"
-                 << "-mfront_internal_3_mu_theta*(this->df_dseq" << n << "))/(this->young);\n";
+                 << "-mfront_internal_3_mu_theta*(this->df_dseq" << n
+                 << "))/(this->young);\n";
             }
           } else {
             os << "newton_df(" << n << "," << n2 << ")";
             if (p->hasSpecificTheta) {
-              os << " = -mfront_internal_3_mu_theta" << n << "*(this->df_dseq" << n
-                 << ")/(this->young);\n";
+              os << " = -mfront_internal_3_mu_theta" << n << "*(this->df_dseq"
+                 << n << ")/(this->young);\n";
             } else {
               os << " = -mfront_internal_3_mu_theta*(this->df_dseq" << n
                  << ")/(this->young);\n";
