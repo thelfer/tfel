@@ -410,7 +410,7 @@ int main(const int argc, const char* const* const argv) {
                        }
                      },
                      "print tfel revision version.");
-    registerCallBack("--cxx-standard", [] { std::cout << "17"; },
+    registerCallBack("--cxx-standard", [] { std::cout << "20"; },
                      "print the version of the C++ standard "
                      "used to compile TFEL.");
     registerCallBack("--licence", &treatLicences, "print TFEL licences.");
