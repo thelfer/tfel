@@ -448,7 +448,19 @@ namespace mfront {
     if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
       out << "#endif /* NO_CASTEM_BOUNDS_CHECK */\n";
     }
+    out << "try{\n";
     out << function.body;
+    out << "#ifndef NO_CASTEM_ERROR_OUTPUT\n"
+        << "} catch(std::exception& e){\n"
+        << "std::cerr << \"" << name << ": \" << e.what() << '\\n';\n"
+        << "return std::nan(\"\");\n"
+        << "#endif  /* NO_CASTEM_ERROR_OUTPUT */\n"
+        << "} catch(...){\n"
+        << "#ifndef NO_CASTEM_ERROR_OUTPUT\n"
+        << "std::cerr << \""<< name << ": unsupported C++ exception\" << '\\n';\n"
+        << "#endif  /* NO_CASTEM_ERROR_OUTPUT */\n"
+        << "return std::nan(\"\");\n"
+        << "}\n";
     if ((mpd.output.hasPhysicalBounds()) || (mpd.output.hasBounds())) {
       out << "#ifndef NO_CASTEM_BOUNDS_CHECK\n";
       if (mpd.output.hasPhysicalBounds()) {
