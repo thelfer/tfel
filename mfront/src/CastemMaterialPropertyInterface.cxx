@@ -457,7 +457,8 @@ namespace mfront {
         << "#endif  /* NO_CASTEM_ERROR_OUTPUT */\n"
         << "} catch(...){\n"
         << "#ifndef NO_CASTEM_ERROR_OUTPUT\n"
-        << "std::cerr << \""<< name << ": unsupported C++ exception\" << '\\n';\n"
+        << "std::cerr << \"" << name
+        << ": unsupported C++ exception\" << '\\n';\n"
         << "#endif  /* NO_CASTEM_ERROR_OUTPUT */\n"
         << "return std::nan(\"\");\n"
         << "}\n";
