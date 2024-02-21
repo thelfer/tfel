@@ -27,12 +27,15 @@ namespace tfel::math {
    * | 3                 | 6                     |
    *
    * \tparam N : the spatial dimension.
-   * \pre   This class is only defined for N=1u,2u and 3u.
-   * \see   StensorSizeToDime and
-   * include/TFEL/Math/Stensor/StensorSizeToDime.hxx for implementation.
    */
   template <unsigned short N>
-  struct StensorDimeToSize;
+  requires((N == 1u) || (N == 2u) || (N == 3u)) struct StensorDimeToSize {
+    static constexpr auto value = []() constexpr -> unsigned short {
+      constexpr unsigned short values[4] = {0u, 3u, 4u, 6u};
+      return values[N];
+    }
+    ();
+  };
 
   /*!
    * \class StensorSizeToDime
@@ -40,47 +43,14 @@ namespace tfel::math {
    * the number of components of a stensor.
    * \param N, the number of components of an stensor
    * \param value, the spatial dimension.
-   * \pre   This class is only defined for N=3u,4u and 6u.
-   * \see   StensorDimeToSize and
-   * include/TFEL/Math/Stensor/StensorSizeToDime.hxx for implementation.
    */
   template <unsigned short N>
-  struct StensorSizeToDime;
-
-  //! \brief partial specialisation for 1D.
-  template <>
-  struct StensorDimeToSize<1u> {
-    static constexpr unsigned short value = 3u;
-  };
-
-  //! \brief partial specialisation for 2D.
-  template <>
-  struct StensorDimeToSize<2u> {
-    static constexpr unsigned short value = 4u;
-  };
-
-  //! \brief partial specialisation for 3D.
-  template <>
-  struct StensorDimeToSize<3u> {
-    static constexpr unsigned short value = 6u;
-  };
-
-  //! \brief partial specialisation for 1D.
-  template <>
-  struct StensorSizeToDime<3u> {
-    static constexpr unsigned short value = 1u;
-  };
-
-  //! \brief partial specialisation for 2D.
-  template <>
-  struct StensorSizeToDime<4u> {
-    static constexpr unsigned short value = 2u;
-  };
-
-  //! \brief partial specialisation for 3D.
-  template <>
-  struct StensorSizeToDime<6u> {
-    static constexpr unsigned short value = 3u;
+  requires((N == 3u) || (N == 4u) || (N == 6u)) struct StensorSizeToDime {
+    static constexpr auto value = []() constexpr -> unsigned short {
+      constexpr unsigned short values[7] = {0u, 0u, 0u, 1u, 2u, 0u, 3u};
+      return values[N];
+    }
+    ();
   };
 
   /*!

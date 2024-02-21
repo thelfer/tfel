@@ -143,6 +143,11 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr void copy(const auto) noexcept;
   };  // end of struct tensor
 
+  // class template argument deduction
+  template <typename... T>
+  tensor(T&&... t)
+      ->tensor<TensorSizeToDime<sizeof...(T)>::value, std::common_type_t<T...>>;
+
   /*!
    * \brief a simple alias for backward compatibility
    * \tparam N: space dimension

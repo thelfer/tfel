@@ -670,6 +670,12 @@ namespace tfel::math {
         const bool = false) const;
   };  // end of struct stensor
 
+  // class template argument deduction
+  template <typename... T>
+  stensor(T&&... t)
+      ->stensor<StensorSizeToDime<sizeof...(T)>::value,
+                std::common_type_t<T...>>;
+
   /*!
    * \brief a simple alias for backward compatibility
    * \tparam N: space dimension

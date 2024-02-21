@@ -567,26 +567,26 @@ namespace mfront {
          << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
     }
 
-  os << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
-  this->writeCxxTryBlock(os);
-  os << mpd.f.body << "\n";
-  this->writeCxxCatchBlock(os, mpd, floating_point_type, use_qt);
-  if (!mpd.inputs.empty()) {
-    os << "#ifndef MFRONT_NOERRNO_HANDLING\n";
-    // can't use std::swap here as errno might be a macro
-    os << "const auto mfront_errno = errno;\n"
-       << "errno = mfront_errno_old;\n";
-    if (use_qt) {
-      os << "if((mfront_errno != 0)||"
-         << "(!tfel::math::ieee754::isfinite(" << mpd.output.name
-         << ".getValue()))){\n";
-    } else {
-      os << "if((mfront_errno != 0)||"
-         << "(!tfel::math::ieee754::isfinite(" << mpd.output.name << "))){\n";
-    }
-    this->writeCErrorTreatment(os, mpd, floating_point_type, use_qt);
-    os << "}\n"
-       << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
+    os << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
+    this->writeCxxTryBlock(os);
+    os << mpd.f.body << "\n";
+    this->writeCxxCatchBlock(os, mpd, floating_point_type, use_qt);
+    if (!mpd.inputs.empty()) {
+      os << "#ifndef MFRONT_NOERRNO_HANDLING\n";
+      // can't use std::swap here as errno might be a macro
+      os << "const auto mfront_errno = errno;\n"
+         << "errno = mfront_errno_old;\n";
+      if (use_qt) {
+        os << "if((mfront_errno != 0)||"
+           << "(!tfel::math::ieee754::isfinite(" << mpd.output.name
+           << ".getValue()))){\n";
+      } else {
+        os << "if((mfront_errno != 0)||"
+           << "(!tfel::math::ieee754::isfinite(" << mpd.output.name << "))){\n";
+      }
+      this->writeCErrorTreatment(os, mpd, floating_point_type, use_qt);
+      os << "}\n"
+         << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
     }
     if ((useQuantities(mpd)) && (!use_qt)) {
       os << "return " << mpd.output.name << ".getValue();\n";

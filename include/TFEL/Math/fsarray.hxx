@@ -78,6 +78,10 @@ namespace tfel::math {
                                 FixedSizeVectorPolicy<N, ValueType>>::operator=;
   };  // end of fsarray
 
+  // class template argument deduction
+  template <typename... T>
+  fsarray(T&&... t)->fsarray<sizeof...(T), std::common_type_t<T...>>;
+
   /*!
    * \tparam N: arrray size
    * \tparam T: numeric type used by the array
@@ -273,10 +277,6 @@ namespace tfel::math {
   get(const fsarray<N, ValueType>& v) noexcept {
     return v[i];
   }  // end of get
-
-  // class template argument deduction
-  template <typename... T>
-  fsarray(T&&... t)->fsarray<sizeof...(T), std::common_type_t<T...>>;
 
 }  // end of namespace tfel::math
 
