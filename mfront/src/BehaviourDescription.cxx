@@ -1294,6 +1294,14 @@ namespace mfront {
         !this->allowsNewUserDefinedVariables(),
         "BehaviourDescription::addMainVariables: "
         "new variables are can't be defined after the first code block.");
+    if (g.arraySize != f.arraySize) {
+      tfel::raise(
+          "BehaviourDescription::addMainVariables: "
+          "the gradient '" +
+          g.name + "' and the thermodynamic force '" + f.name +
+          "' must have the same array size (" + std::to_string(g.arraySize) +
+          " vs " + std::to_string(f.arraySize) + ")");
+    }
     for (const auto& v : this->mvariables) {
       tfel::raise_if(g.name == v.first.name,
                      "BehaviourDescription::addMainVariables: "

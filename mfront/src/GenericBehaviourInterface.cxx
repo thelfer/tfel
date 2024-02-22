@@ -1755,20 +1755,42 @@ namespace mfront {
 
   static void GenericBehaviourInterface_initializeVariable(
       std::ostream& os,
-      const SupportedTypes::TypeSize& o,
+      const SupportedTypes::TypeSize& offset,
       const VariableDescription& v,
       const std::string& n,
       const std::string& src) {
-    if (v.isScalar()) {
-      os << "this->" << n << " = " << src << "[" << o << "];\n";
-    } else {
-      os << "this-> " << n << " = tfel::math::map<" << v.type << ">(";
-      if (!o.isNull()) {
-        os << src << "+" << o;
+    auto o = offset;
+    const auto s = SupportedTypes::getTypeSize(v.type, 1);
+    if (v.arraySize == 1) {
+      if (v.isScalar()) {
+        os << "this->" << n << " = " << src << "[" << o << "];\n";
       } else {
-        os << src;
+        os << "this-> " << n << " = tfel::math::map<" << v.type << ">(";
+        if (!o.isNull()) {
+          os << src << "+" << o;
+        } else {
+          os << src;
+        }
+        os << ");\n";
       }
-      os << ");\n";
+      o += s;
+    } else {
+      for (unsigned short idx = 0; idx != v.arraySize; ++idx) {
+        if (v.isScalar()) {
+          os << "this->" << n << "[" << idx << "] = "  //
+             << src << "[" << o << "];\n";
+        } else {
+          os << "this->" << n << "[" << idx << "] = "  //
+             << "tfel::math::map<" << v.type << ">(";
+          if (!o.isNull()) {
+            os << src << "+" << o;
+          } else {
+            os << src;
+          }
+          os << ");\n";
+        }
+        o += s;
+      }
     }
   }  // end of GenericBehaviourInterface_initializeVariable
 
@@ -1776,7 +1798,7 @@ namespace mfront {
       std::ostream& os,
       const BehaviourDescription& bd,
       const Hypothesis h) const {
-    auto throw_if = [](const bool b, const char* msg) {
+    auto throw_if = [](const bool b, std::string_view msg) {
       if (b) {
         tfel::raise(
             "GenericBehaviourInterface::writeBehaviourConstructorBody: " +
@@ -1790,55 +1812,108 @@ namespace mfront {
     for (const auto& mv : bd.getMainVariables()) {
       const auto& dv = mv.first;
       const auto& th = mv.second;
-      throw_if(dv.arraySize != 1, "arrays of gradients are not supported");
-      throw_if(th.arraySize != 1,
-               "arrays of thermodynamic forces are not supported");
-      const auto s = SupportedTypes::getTypeSize(dv.type, dv.arraySize);
+      throw_if(dv.arraySize != th.arraySize,
+               "the gradient '" + dv.name + "' and the thermodynamic force '" +
+                   th.name + "' must have the same array size (" +
+                   std::to_string(dv.arraySize) + " vs " +
+                   std::to_string(th.arraySize) + ")");
+      const auto s = SupportedTypes::getTypeSize(dv.type, 1);
       // driving variable
       const auto dvname =
           Gradient::isIncrementKnown(dv) ? dv.name : dv.name + "0";
       GenericBehaviourInterface_initializeVariable(os, odv, dv, dvname,
                                                    "mgb_d.s0.gradients");
       if (!Gradient::isIncrementKnown(dv)) {
-        if (dv.isScalar()) {
-          if (bd.useQt()) {
-            os << "this->" << dv.name << "1 = " << dv.type
-               << "(mgb_d.s1.gradients[" << odv << "]);\n";
+        if (dv.arraySize == 1) {
+          if (dv.isScalar()) {
+            if (bd.useQt()) {
+              os << "this->" << dv.name << "1 = " << dv.type
+                 << "(mgb_d.s1.gradients[" << odv << "]);\n";
+            } else {
+              os << "this->" << dv.name << "1 = mgb_d.s1.gradients[" << odv
+                 << "];\n";
+            }
           } else {
-            os << "this->" << dv.name << "1 = mgb_d.s1.gradients[" << odv
-               << "];\n";
+            if (!odv.isNull()) {
+              os << "tfel::fsalgo::copy<" << s << ">::exe("
+                 << "mgb_d.s1.gradients+" << odv << ","
+                 << "this->" << dv.name << "1.begin());\n";
+            } else {
+              os << "tfel::fsalgo::copy<" << s << " >::exe("
+                 << "mgb_d.s1.gradients,"
+                 << "this->" << dv.name << "1.begin());\n";
+            }
           }
+          odv += s;
         } else {
-          if (!odv.isNull()) {
-            os << "tfel::fsalgo::copy<" << s << ">::exe("
-               << "mgb_d.s1.gradients+" << odv << ","
-               << "this->" << dv.name << "1.begin());\n";
-          } else {
-            os << "tfel::fsalgo::copy<" << s << " >::exe("
-               << "mgb_d.s1.gradients,"
-               << "this->" << dv.name << "1.begin());\n";
+          for (unsigned short idx = 0; idx != dv.arraySize; ++idx) {
+            if (dv.isScalar()) {
+              if (bd.useQt()) {
+                os << "this->" << dv.name << "1[" << idx << "] = " << dv.type
+                   << "(mgb_d.s1.gradients[" << odv << "]);\n";
+              } else {
+                os << "this->" << dv.name << "1[" << idx
+                   << "] = mgb_d.s1.gradients[" << odv << "];\n";
+              }
+            } else {
+              if (!odv.isNull()) {
+                os << "tfel::fsalgo::copy<" << s << ">::exe("
+                   << "mgb_d.s1.gradients+" << odv << ","
+                   << "this->" << dv.name << "1[" << idx << "].begin());\n";
+              } else {
+                os << "tfel::fsalgo::copy<" << s << " >::exe("
+                   << "mgb_d.s1.gradients,"
+                   << "this->" << dv.name << "1[" << idx << "].begin());\n";
+              }
+            }
+            odv += s;
           }
         }
       } else {
-        if (dv.isScalar()) {
-          os << "this->d" << dv.name << " = "
-             << "mgb_d.s1.gradients[" << odv << "] - "
-             << "mgb_d.s0.gradients[" << odv << "];\n";
-        } else {
-          if (!odv.isNull()) {
-            os << "tfel::fsalgo::transform<" << s << ">::exe("
-               << "mgb_d.s1.gradients+" << odv << ","
-               << "mgb_d.s0.gradients+" << odv << ","
-               << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
+        if (dv.arraySize == 1) {
+          if (dv.isScalar()) {
+            os << "this->d" << dv.name << " = "
+               << "mgb_d.s1.gradients[" << odv << "] - "
+               << "mgb_d.s0.gradients[" << odv << "];\n";
           } else {
-            os << "tfel::fsalgo::transform<" << s << ">::exe("
-               << "mgb_d.s1.gradients,"
-               << "mgb_d.s0.gradients,"
-               << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
+            if (!odv.isNull()) {
+              os << "tfel::fsalgo::transform<" << s << ">::exe("
+                 << "mgb_d.s1.gradients+" << odv << ","
+                 << "mgb_d.s0.gradients+" << odv << ","
+                 << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
+            } else {
+              os << "tfel::fsalgo::transform<" << s << ">::exe("
+                 << "mgb_d.s1.gradients,"
+                 << "mgb_d.s0.gradients,"
+                 << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
+            }
+          }
+          odv += s;
+        } else {
+          for (unsigned short idx = 0; idx != dv.arraySize; ++idx) {
+            if (dv.isScalar()) {
+              os << "this->d" << dv.name << "[" << idx << "] = "
+                 << "mgb_d.s1.gradients[" << odv << "] - "
+                 << "mgb_d.s0.gradients[" << odv << "];\n";
+            } else {
+              if (!odv.isNull()) {
+                os << "tfel::fsalgo::transform<" << s << ">::exe("
+                   << "mgb_d.s1.gradients+" << odv << ","
+                   << "mgb_d.s0.gradients+" << odv << ","
+                   << "this->d" << dv.name << "[" << idx << "].begin(),"
+                   << "std::minus<real>());\n";
+              } else {
+                os << "tfel::fsalgo::transform<" << s << ">::exe("
+                   << "mgb_d.s1.gradients,"
+                   << "mgb_d.s0.gradients,"
+                   << "this->d" << dv.name << "[" << idx
+                   << "].begin(),std::minus<real>());\n";
+              }
+            }
+            odv += s;
           }
         }
       }
-      odv += s;
     }
     if (bd.requiresStressFreeExpansionTreatment(h)) {
       os << "std::pair<StressFreeExpansionType,StressFreeExpansionType> "
@@ -2036,11 +2111,6 @@ namespace mfront {
     auto oth = SupportedTypes::TypeSize{};
     for (const auto& mv : bd.getMainVariables()) {
       const auto& th = mv.second;
-      if (th.arraySize != 1) {
-        tfel::raise(
-            "GenericBehaviourInterface::writeBehaviourConstructorBody: "
-            "arrays of thermodynamic forces are not supported");
-      }
       GenericBehaviourInterface_initializeVariable(
           os, oth, th, th.name, "mgb_d.s0.thermodynamic_forces");
       oth += SupportedTypes::getTypeSize(th.type, th.arraySize);

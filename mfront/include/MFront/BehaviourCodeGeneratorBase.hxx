@@ -57,6 +57,14 @@ namespace mfront {
    protected:
     //! \brief a simple alias
     using OrthotropicAxesConvention = tfel::material::OrthotropicAxesConvention;
+
+    /*!
+     * \brief a method checking if the given gradient and the thermodynamic
+     * forces have the same array size. \param[in] m: name of the calling method
+     * \param[in] mv: main variable
+     */
+    static void checkArraySizeOfMainVariables(
+        const std::string_view, const std::pair<Gradient, ThermodynamicForce>&);
     /*!
      * \brief throw an std::runtime_error
      * \param[in] m: calling method name

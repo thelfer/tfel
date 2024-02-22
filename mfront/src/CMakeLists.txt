@@ -144,6 +144,9 @@ set(TFELMFront_SOURCES
     IsotropicBehaviourDSLBase.cxx
     AbstractBehaviourCodeGenerator.cxx
     BehaviourCodeGeneratorBase.cxx
+    BehaviourCodeGeneratorBase-BehaviourDataFile.cxx
+    BehaviourCodeGeneratorBase-IntegrationDataFile.cxx
+    BehaviourCodeGeneratorBase-SrcFile.cxx
     DefaultCodeGeneratorBase.cxx
     DefaultCZMCodeGenerator.cxx
     DefaultFiniteStrainCodeGenerator.cxx
