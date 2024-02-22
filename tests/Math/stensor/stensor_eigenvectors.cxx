@@ -50,6 +50,7 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
     // this->check<EigenSolver::FSESCUPPENEIGENSOLVER>();
     // this->check<EigenSolver::FSESHYBRIDEIGENSOLVER>();
     // this->check<EigenSolver::FSESANALYTICALEIGENSOLVER>();
+    this->check<EigenSolver::HARARIEIGENSOLVER>();
     return this->result;
   }  // end of execute
 
@@ -204,8 +205,7 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
     constexpr const auto prec = 20 * std::numeric_limits<T>::epsilon();
     tfel::math::tmatrix<3u, 3u, T> m;
     tfel::math::tvector<3u, T> vp;
-    s.template computeEigenVectors<stensor::GTESYMMETRICQREIGENSOLVER>(
-        vp, m, stensor::DESCENDING);
+    s.template computeEigenVectors<stensor::GTESYMMETRICQREIGENSOLVER>(vp, m, stensor::DESCENDING);
     TFEL_TESTS_ASSERT(std::abs(vp(0) - T(4.16709379934921)) < prec);
     TFEL_TESTS_ASSERT(std::abs(vp(1) - T(1.50793773158270)) < prec);
     TFEL_TESTS_ASSERT(std::abs(vp(2) + T(1.68923153093191)) < prec);
