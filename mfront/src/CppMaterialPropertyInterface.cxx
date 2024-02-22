@@ -34,6 +34,143 @@ namespace mfront {
     return n + "-cxx.hxx";
   }
 
+  static void writeBoundsChecks(std::ostream& src,
+                                const MaterialPropertyDescription& mpd,
+                                const VariableDescription& v,
+                                const std::string& name) {
+    if (!v.hasBounds()) {
+      return;
+    }
+    const auto& b = v.getBounds();
+    const auto get_policy = [&mpd] {
+      const auto default_policy =
+          getDefaultOutOfBoundsPolicyAsUpperCaseString(mpd);
+      if (allowRuntimeModificationOfTheOutOfBoundsPolicy(mpd)) {
+        return "const char * const mfront_policy = "
+               "[]{\n"
+               " const auto* const p= "
+               " ::getenv(\"OUT_OF_BOUNDS_POLICY\");\n"
+               " if(p == nullptr){\n"
+               " return \"" +
+               default_policy +
+               "\";\n"
+               " }\n"
+               " return p;\n"
+               "}();\n";
+      }
+      return "const char * const mfront_policy = \"" +  //
+             default_policy + "\";\n";
+    }();
+    if (b.boundsType == VariableBoundsDescription::LOWER) {
+      src << "if(" << v.name << " < " << b.lowerBound << "){\n"
+          << get_policy  //
+          << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
+          << "std::ostringstream msg;\n"
+          << "msg << \"" << name << " : " << v.name
+          << " is below its lower bound \";\n"
+          << "msg << \"(\" << " << v.name << " << \" < " << b.lowerBound
+          << ")\";\n"
+          << "tfel::raise<std::range_error>(msg.str());\n"
+          << "} else if(::strcmp(mfront_policy,\"WARNING\")==0){\n"
+          << "std::cerr << \"" << v.name << " is below its lower bound \";\n"
+          << "std::cerr << \"(\" << " << v.name << " << \" < " << b.lowerBound
+          << ")\\n\";\n"
+          << "}\n"
+          << "}\n";
+    } else if (b.boundsType == VariableBoundsDescription::UPPER) {
+      src << "if(" << v.name << " > " << b.upperBound << "){\n"
+          << get_policy  //
+          << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
+          << "std::ostringstream msg;\n"
+          << "msg << \"" << name << " : " << v.name
+          << " is beyond its upper bound \";\n"
+          << "msg << \"(\" << " << v.name << " << \" > " << b.upperBound
+          << ")\";\n"
+          << "tfel::raise<std::range_error>(msg.str());\n"
+          << "} else if(::strcmp(mfront_policy,\"WARNING\")==0){\n"
+          << "std::cerr << \"" << v.name << " is beyond its upper bound \";\n"
+          << "std::cerr << \"(\" << " << v.name << " << \" > " << b.upperBound
+          << ")\\n\";\n"
+          << "}\n"
+          << "}\n";
+    } else {
+      src << "if(" << v.name << " < " << b.lowerBound << "){\n"
+          << get_policy  //
+          << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
+          << "std::ostringstream msg;\n"
+          << "msg << \"" << name << " : " << v.name
+          << " is below its lower bound \";\n"
+          << "msg << \"(\" << " << v.name << " << \" < " << b.lowerBound
+          << ")\";\n"
+          << "tfel::raise<std::range_error>(msg.str());\n"
+          << "} else if(::strcmp(mfront_policy,\"WARNING\")==0){\n"
+          << "std::cerr << \"" << v.name << " is below its lower bound \";\n"
+          << "std::cerr << \"(\" << " << v.name << " << \" < " << b.lowerBound
+          << ")\\n\";\n"
+          << "}\n"
+          << "}\n"
+          << "if(" << v.name << " > " << b.upperBound << "){\n"
+          << get_policy  //
+          << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
+          << "std::ostringstream msg;\n"
+          << "msg << \"" << name << " : " << v.name
+          << " is beyond its upper bound \";\n"
+          << "msg << \"(\" << " << v.name << " << \" > " << b.upperBound
+          << ")\";\n"
+          << "tfel::raise<std::range_error>(msg.str());\n"
+          << "} else if(::strcmp(mfront_policy,\"WARNING\")==0){\n"
+          << "std::cerr << \"" << v.name << " is beyond its upper bound \";\n"
+          << "std::cerr << \"(\" << " << v.name << " << \" > " << b.upperBound
+          << ")\\n\";\n"
+          << "}\n"
+          << "}\n";
+    }
+  }
+
+  static void writePhysicalBoundsChecks(std::ostream& src,
+                                        const VariableDescription& v,
+                                        const std::string& name) {
+    if (!v.hasPhysicalBounds()) {
+      return;
+    }
+    const auto& b = v.getPhysicalBounds();
+    if (b.boundsType == VariableBoundsDescription::LOWER) {
+      src << "if(" << v.name << " < " << b.lowerBound << "){\n"
+          << "std::ostringstream msg;\n"
+          << "msg << \"" << name << " : " << v.name
+          << " is below its physical lower bound \";\n"
+          << "msg << \"(\" << " << v.name << " << \" < " << b.lowerBound
+          << ")\";\n"
+          << "tfel::raise<std::range_error>(msg.str());\n"
+          << "}\n";
+    } else if (b.boundsType == VariableBoundsDescription::UPPER) {
+      src << "if(" << v.name << " > " << b.upperBound << "){\n"
+          << "std::ostringstream msg;\n"
+          << "msg << \"" << name << " : " << v.name
+          << " is beyond its physical upper bound \";\n"
+          << "msg << \"(\" << " << v.name << " << \" > " << b.upperBound
+          << ")\";\n"
+          << "tfel::raise<std::range_error>(msg.str());\n"
+          << "}\n";
+    } else {
+      src << "if(" << v.name << " < " << b.lowerBound << "){\n"
+          << "std::ostringstream msg;\n"
+          << "msg << \"" << name << " : " << v.name
+          << " is below its physical lower bound \";\n"
+          << "msg << \"(\" << " << v.name << " << \" < " << b.lowerBound
+          << ")\";\n"
+          << "tfel::raise<std::range_error>(msg.str());\n"
+          << "}\n"
+          << "if(" << v.name << " > " << b.upperBound << "){\n"
+          << "std::ostringstream msg;\n"
+          << "msg << \"" << name << " : " << v.name
+          << " is beyond its physical upper bound \";\n"
+          << "msg << \"(\" << " << v.name << " << \" > " << b.upperBound
+          << ")\";\n"
+          << "tfel::raise<std::range_error>(msg.str());\n"
+          << "}\n";
+    }
+  }
   std::string CppMaterialPropertyInterface::getName() { return "c++"; }
 
   CppMaterialPropertyInterface::CppMaterialPropertyInterface() = default;
@@ -243,7 +380,8 @@ namespace mfront {
     writeUnitSystemSymbol(src, name, mpd);
     writeInterfaceSymbol(src, name, "C++");
     writeMaterialSymbol(src, name, mpd.material);
-    writeMaterialKnowledgeTypeSymbol(src, name, MATERIALPROPERTY);
+    writeMaterialKnowledgeTypeSymbol(src, name,
+                                     MaterialKnowledgeType::MATERIALPROPERTY);
     src << "#ifdef __cplusplus\n"
         << "} // end of extern \"C\"\n"
         << "#endif /* __cplusplus */\n\n";
@@ -343,6 +481,10 @@ namespace mfront {
           << "\"(\"+std::string(::strerror(errno))+\")\");\n"
           << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
     }
+    //
+    writePhysicalBoundsChecks(src, mpd.output, name);
+    writeBoundsChecks(src, mpd, mpd.output, name);
+    //
     if (useQuantities(mpd)) {
       src << "return " << mpd.output.name << ".getValue();\n";
     } else {
@@ -368,141 +510,15 @@ namespace mfront {
         src << "using namespace std;\n"
             << "// treating physical bounds\n";
         for (const auto& i : mpd.inputs) {
-          if (!i.hasPhysicalBounds()) {
-            continue;
-          }
-          const auto& b = i.getPhysicalBounds();
-          if (b.boundsType == VariableBoundsDescription::LOWER) {
-            src << "if(" << i.name << " < " << b.lowerBound << "){\n"
-                << "ostringstream msg;\n"
-                << "msg << \"" << name << " : " << i.name
-                << " is below its physical lower bound \";\n"
-                << "msg << \"(\" << " << i.name << " << \" < " << b.lowerBound
-                << ")\";\n"
-                << "tfel::raise<range_error>(msg.str());\n"
-                << "}\n";
-          } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-            src << "if(" << i.name << " > " << b.upperBound << "){\n"
-                << "ostringstream msg;\n"
-                << "msg << \"" << name << " : " << i.name
-                << " is beyond its physical upper bound \";\n"
-                << "msg << \"(\" << " << i.name << " << \" > " << b.upperBound
-                << ")\";\n"
-                << "tfel::raise<range_error>(msg.str());\n"
-                << "}\n";
-          } else {
-            src << "if(" << i.name << " < " << b.lowerBound << "){\n"
-                << "ostringstream msg;\n"
-                << "msg << \"" << name << " : " << i.name
-                << " is below its physical lower bound \";\n"
-                << "msg << \"(\" << " << i.name << " << \" < " << b.lowerBound
-                << ")\";\n"
-                << "tfel::raise<range_error>(msg.str());\n"
-                << "}\n"
-                << "if(" << i.name << " > " << b.upperBound << "){\n"
-                << "ostringstream msg;\n"
-                << "msg << \"" << name << " : " << i.name
-                << " is beyond its physical upper bound \";\n"
-                << "msg << \"(\" << " << i.name << " << \" > " << b.upperBound
-                << ")\";\n"
-                << "tfel::raise<range_error>(msg.str());\n"
-                << "}\n";
-          }
+          writePhysicalBoundsChecks(src, i, name);
         }
       }
       if (hasBounds(mpd.inputs)) {
         src << "// treating standard bounds\n";
-        for (const auto& i : mpd.inputs) {
-          if (!i.hasBounds()) {
-            continue;
-          }
-          if ((!allowRuntimeModificationOfTheOutOfBoundsPolicy(mpd)) &&
-              (getDefaultOutOfBoundsPolicy(mpd) == tfel::material::None)) {
-            continue;
-          }
-          const auto& b = i.getBounds();
-          const auto get_policy = [&mpd] {
-            const auto default_policy =
-                getDefaultOutOfBoundsPolicyAsUpperCaseString(mpd);
-            if (allowRuntimeModificationOfTheOutOfBoundsPolicy(mpd)) {
-              return "const char * const mfront_policy = "
-                     "[]{\n"
-                     " const auto* const p= "
-                     " ::getenv(\"OUT_OF_BOUNDS_POLICY\");\n"
-                     " if(p == nullptr){\n"
-                     " return \"" +
-                     default_policy +
-                     "\";\n"
-                     " }\n"
-                     " return p;\n"
-                     "}();\n";
-            }
-            return "const char * const mfront_policy = \"" +  //
-                   default_policy + "\";\n";
-          }();
-          if (b.boundsType == VariableBoundsDescription::LOWER) {
-            src << "if(" << i.name << " < " << b.lowerBound << "){\n"
-                << get_policy  //
-                << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
-                << "ostringstream msg;\n"
-                << "msg << \"" << name << " : " << i.name
-                << " is below its lower bound \";\n"
-                << "msg << \"(\" << " << i.name << " << \" < " << b.lowerBound
-                << ")\";\n"
-                << "tfel::raise<range_error>(msg.str());\n"
-                << "} else if(::strcmp(mfront_policy,\"WARNING\")==0){\n"
-                << "cerr << \"" << i.name << " is below its lower bound \";\n"
-                << "cerr << \"(\" << " << i.name << " << \" < " << b.lowerBound
-                << ")\\n\";\n"
-                << "}\n"
-                << "}\n";
-          } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-            src << "if(" << i.name << " > " << b.upperBound << "){\n"
-                << get_policy  //
-                << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
-                << "ostringstream msg;\n"
-                << "msg << \"" << name << " : " << i.name
-                << " is beyond its upper bound \";\n"
-                << "msg << \"(\" << " << i.name << " << \" > " << b.upperBound
-                << ")\";\n"
-                << "tfel::raise<range_error>(msg.str());\n"
-                << "} else if(::strcmp(mfront_policy,\"WARNING\")==0){\n"
-                << "cerr << \"" << i.name << " is beyond its upper bound \";\n"
-                << "cerr << \"(\" << " << i.name << " << \" > " << b.upperBound
-                << ")\\n\";\n"
-                << "}\n"
-                << "}\n";
-          } else {
-            src << "if(" << i.name << " < " << b.lowerBound << "){\n"
-                << get_policy  //
-                << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
-                << "ostringstream msg;\n"
-                << "msg << \"" << name << " : " << i.name
-                << " is below its lower bound \";\n"
-                << "msg << \"(\" << " << i.name << " << \" < " << b.lowerBound
-                << ")\";\n"
-                << "tfel::raise<range_error>(msg.str());\n"
-                << "} else if(::strcmp(mfront_policy,\"WARNING\")==0){\n"
-                << "cerr << \"" << i.name << " is below its lower bound \";\n"
-                << "cerr << \"(\" << " << i.name << " << \" < " << b.lowerBound
-                << ")\\n\";\n"
-                << "}\n"
-                << "}\n"
-                << "if(" << i.name << " > " << b.upperBound << "){\n"
-                << get_policy  //
-                << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
-                << "ostringstream msg;\n"
-                << "msg << \"" << name << " : " << i.name
-                << " is beyond its upper bound \";\n"
-                << "msg << \"(\" << " << i.name << " << \" > " << b.upperBound
-                << ")\";\n"
-                << "tfel::raise<range_error>(msg.str());\n"
-                << "} else if(::strcmp(mfront_policy,\"WARNING\")==0){\n"
-                << "cerr << \"" << i.name << " is beyond its upper bound \";\n"
-                << "cerr << \"(\" << " << i.name << " << \" > " << b.upperBound
-                << ")\\n\";\n"
-                << "}\n"
-                << "}\n";
+        if (!((!allowRuntimeModificationOfTheOutOfBoundsPolicy(mpd)) &&
+              (getDefaultOutOfBoundsPolicy(mpd) == tfel::material::None))) {
+          for (const auto& i : mpd.inputs) {
+            writeBoundsChecks(src, mpd, i, name);
           }
         }
       }

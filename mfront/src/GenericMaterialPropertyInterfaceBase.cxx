@@ -123,7 +123,7 @@ namespace mfront {
          << "mfront_output_status->status = -1;\n"
          << "mfront_output_status->bounds_status = -" << i << ";\n"
          << "errno = mfront_errno_old;\n"
-         << "return nan(\"" << v.name << " is not physically valid.\");\n"
+         << "return std::nan(\"\");\n"
          << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
       os << "if(" << v.name << " > " << v.type << "(" << b.upperBound << ")){\n"
@@ -133,7 +133,7 @@ namespace mfront {
          << "mfront_output_status->status = -1;\n"
          << "mfront_output_status->bounds_status = -" << i << ";\n"
          << "errno = mfront_errno_old;\n"
-         << "return nan(\"" << v.name << " is not physically valid.\");\n"
+         << "return std::nan(\"\");\n"
          << "}\n";
     } else {
       os << "if((" << v.name << " < " << v.type << "(" << b.lowerBound << "))||"
@@ -150,7 +150,7 @@ namespace mfront {
          << "mfront_output_status->status = -1;\n"
          << "mfront_output_status->bounds_status = -" << i << ";\n"
          << "errno = mfront_errno_old;\n"
-         << "return nan(\"" << v.name << " is not physically valid.\");\n"
+         << "return std::nan(\"\");\n"
          << "}\n";
     }
   }  // end of writePhysicalBounds
@@ -175,7 +175,7 @@ namespace mfront {
          << "mfront_output_status->status = -1;\n"
          << "mfront_output_status->bounds_status = -" << i << ";\n"
          << "errno = mfront_errno_old;\n"
-         << "return nan(\"" << v.name << " is out of bounds.\");\n"
+         << "return std::nan(\"\");\n"
          << "} else if (mfront_out_of_bounds_policy==" << iucname
          << "_WARNING_POLICY){\n"
          << "mfront_output_status->status = 1;\n"
@@ -191,8 +191,9 @@ namespace mfront {
          << "mfront_report(\"" << v.name << " is over its upper bound (\" + "
          << to_string << " + \">" << b.upperBound << ").\\n\");\n"
          << "mfront_output_status->status = -1;\n"
-         << "mfront_output_status->bounds_status = -" << i << ";\n"
-         << "return nan(\"" << v.name << " is out of bounds.\");\n"
+         << "mfront_output_status->bounds_status = -" << i
+         << ";\n"
+         << "return std::nan(\"\");\n"
          << "} else if (mfront_out_of_bounds_policy==" << iucname
          << "_WARNING_POLICY){\n"
          << "mfront_output_status->status = 1;\n"
@@ -216,7 +217,7 @@ namespace mfront {
          << "mfront_output_status->status = -1;\n"
          << "mfront_output_status->bounds_status = -" << i << ";\n"
          << "errno = mfront_errno_old;\n"
-         << "return nan(\"" << v.name << " is out of bounds.\");\n"
+         << "return std::nan(\"\");\n"
          << "} else if (mfront_out_of_bounds_policy==" << iucname
          << "_WARNING_POLICY){\n"
          << "mfront_output_status->status = 1;\n"
@@ -371,7 +372,8 @@ namespace mfront {
     writeInterfaceSymbol(os, name, this->getInterfaceNameInCamelCase());
     writeLawSymbol(os, name, mpd.law);
     writeMaterialSymbol(os, name, mpd.material);
-    writeMaterialKnowledgeTypeSymbol(os, name, MATERIALPROPERTY);
+    writeMaterialKnowledgeTypeSymbol(os, name,
+                                     MaterialKnowledgeType::MATERIALPROPERTY);
     writeParametersSymbols(os, name, mpd);
     exportStringSymbol(
         os, name + "_src",
@@ -511,12 +513,12 @@ namespace mfront {
        << "mfront_output_status->status = -2;\n"
        << "mfront_report(e.what());\n"
        << "errno = mfront_errno_old;\n"
-       << "return nan(\"C++ exception\");\n"
+       << "return std::nan(\"\");\n"
        << "} catch(...){\n"
        << "mfront_output_status->status = -2;\n"
        << "mfront_report(\"unknown C++ exception\");\n"
        << "errno = mfront_errno_old;\n"
-       << "return nan(\"C++ exception\");\n"
+       << "return nan(\"\");\n"
        << "}\n"
        << "if (errno != 0) {\n"
        << "mfront_output_status->status = -3;\n"
