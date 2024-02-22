@@ -47,9 +47,10 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
     this->check<EigenSolver::GTESYMMETRICQREIGENSOLVER>();
     this->check<EigenSolver::FSESJACOBIEIGENSOLVER>();
     this->check<EigenSolver::FSESQLEIGENSOLVER>();
-    // this->check<EigenSolver::FSESCUPPENEIGENSOLVER>();
-    // this->check<EigenSolver::FSESHYBRIDEIGENSOLVER>();
-    // this->check<EigenSolver::FSESANALYTICALEIGENSOLVER>();
+    this->check<EigenSolver::FSESCUPPENEIGENSOLVER>();
+    this->check<EigenSolver::FSESHYBRIDEIGENSOLVER>();
+    this->check<EigenSolver::FSESANALYTICALEIGENSOLVER>();
+    this->check<EigenSolver::SCHERZINGEREIGENSOLVER>();
     return this->result;
   }  // end of execute
 
@@ -179,7 +180,7 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
     check_eigenvector(m4.template column_view<2>(), v2, prec);
     // iterative eigen solver, descding ordering
     this->template test1b<T, stensor::GTESYMMETRICQREIGENSOLVER>(s);
-    // non iterative eigen solver, descding ordering
+        // non iterative eigen solver, descding ordering
     this->template test1b<T, stensor::FSESANALYTICALEIGENSOLVER>(s);
     // iterative eigen solver, descding ordering
     this->template test1b<T, stensor::FSESJACOBIEIGENSOLVER>(s);
@@ -204,7 +205,7 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
     constexpr const auto prec = 20 * std::numeric_limits<T>::epsilon();
     tfel::math::tmatrix<3u, 3u, T> m;
     tfel::math::tvector<3u, T> vp;
-    s.template computeEigenVectors<stensor::GTESYMMETRICQREIGENSOLVER>(
+    s.template computeEigenVectors<es>(
         vp, m, stensor::DESCENDING);
     TFEL_TESTS_ASSERT(std::abs(vp(0) - T(4.16709379934921)) < prec);
     TFEL_TESTS_ASSERT(std::abs(vp(1) - T(1.50793773158270)) < prec);
@@ -212,6 +213,7 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
     check_eigenvector(m.template column_view<2>(), v0, prec);
     check_eigenvector(m.template column_view<1>(), v1, prec);
     check_eigenvector(m.template column_view<0>(), v2, prec);
+    
   }
 
   template <typename T, EigenSolver es>

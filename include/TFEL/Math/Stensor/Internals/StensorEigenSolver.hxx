@@ -18,6 +18,7 @@
 #include "TFEL/Math/Stensor/Internals/GteSymmetricEigenSolver.hxx"
 #include "TFEL/Math/Stensor/Internals/StensorComputeEigenValues.hxx"
 #include "TFEL/Math/Stensor/Internals/StensorComputeEigenVectors.hxx"
+#include "TFEL/Math/Stensor/Internals/ScherzingerEigenSolver.hxx"
 #include "FSES/syevj3.hxx"
 #include "FSES/syevq3.hxx"
 #include "FSES/syevd3.hxx"
@@ -42,11 +43,14 @@ namespace tfel::math::internals {
     static constexpr auto as_base_matrix(const NumType* const v) noexcept {
       constexpr auto icste = Cste<NumType>::isqrt2;
       return tmatrix<3u, 3u, base_type<NumType>>{
-          base_type_cast(v[0]),         base_type_cast(v[3]) * icste,
+          base_type_cast(v[0]),          //
+          base_type_cast(v[3]) * icste,  //
           base_type_cast(v[4]) * icste,  //
-          base_type_cast(v[3]) * icste, base_type_cast(v[1]),
+          base_type_cast(v[3]) * icste,  //
+          base_type_cast(v[1]),          //
           base_type_cast(v[5]) * icste,  //
-          base_type_cast(v[4]) * icste, base_type_cast(v[5]) * icste,
+          base_type_cast(v[4]) * icste,  //
+          base_type_cast(v[5]) * icste,  //
           base_type_cast(v[2])};
     }  // end of as_base_matrix
   };   // end of StensorEigenSolverBase<3u, NumType>
@@ -107,6 +111,55 @@ namespace tfel::math::internals {
           [](const auto& value) { return NumType(value); });
     }  // end of computeEigenVectors
   };
+
+  /*!
+   * \brief Partial specialisation of the `StensorEigenSolver`
+   * class for the SCHERZINGEREIGENSOLVER solver in 3D
+   * \tparam NumType: numeric type
+   */
+  template <typename NumType>
+  struct StensorEigenSolver<stensor_common::SCHERZINGEREIGENSOLVER, 3u, NumType>
+      : StensorEigenSolverBase<3u, NumType> {
+    //! base type
+    using real = base_type<NumType>;
+    /*!
+     * \param[out] vp0: first  eigen value
+     * \param[out] vp1: second eigen value
+     * \param[out] vp2: third  eigen value
+     * \param[in]  v:   stensor values
+     * \param[in]  b:   refine eigenvalues
+     */
+    TFEL_MATH_INLINE static void computeEigenValues(NumType& vp0,
+                                                    NumType& vp1,
+                                                    NumType& vp2,
+                                                    const NumType* const v,
+                                                    const bool) {
+      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      auto vp = tvector<3u, real>{};
+      auto m = tmatrix<3u, 3u, real>{};
+      ScherzingerEigensolver3x3<real>::computeEigenValues(
+          vp, m, sm(0, 0), sm(1, 1), sm(2, 2), sm(0, 1), sm(0, 2), sm(1, 2));
+      vp0 = NumType(vp[0]);
+      vp1 = NumType(vp[1]);
+      vp2 = NumType(vp[2]);
+    }  // end of computeEigenValues
+    /*!
+     * \param[out] vp: eigen values
+     * \param[out] m:  eigen vectors
+     * \param[in]  v:  stensor values
+     * \param[in]  b:  refine eigenvalues
+     */
+    TFEL_MATH_INLINE static void computeEigenVectors(tvector<3u, NumType>& vp,
+                                                     tmatrix<3u, 3u, real>& m,
+                                                     const NumType* const v,
+                                                     const bool) {
+      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      auto vp2 = tvector<3u, real>{};
+      ScherzingerEigensolver3x3<real>::computeEigenVectors(
+          vp2, m, sm(0, 0), sm(1, 1), sm(2, 2), sm(0, 1), sm(0, 2), sm(1, 2));
+      vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
+    }  // end of computeEigenVectors
+  };   // end of struct StensorEigenSolver
 
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
