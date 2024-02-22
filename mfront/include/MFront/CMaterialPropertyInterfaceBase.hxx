@@ -265,8 +265,10 @@ namespace mfront {
      * \brief write catch blocks before the material property body
      * \param[out] os:  output file stream
      * \param[in] msh: code returning the error message (a string must be
-     * escaped) \param[in] mpd: material property description \param[in]
-     * floating_point_type: floating-point type \param[in] use_qt: use
+     * escaped)
+     * \param[in] mpd: material property description
+     * \param[in] floating_point_type: floating-point type
+     * \param[in] use_qt: use
      * quantities
      */
     virtual void returnInvalidValue(std::ostream&,

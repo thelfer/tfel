@@ -175,7 +175,6 @@ namespace mfront {
          << "mfront_output_status->status = -1;\n"
          << "mfront_output_status->bounds_status = -" << i << ";\n"
          << "errno = mfront_errno_old;\n"
-         //         << "return nan(\"" << v.name << " is out of bounds.\");\n"
          << "return std::nan(\"\");\n"
          << "} else if (mfront_out_of_bounds_policy==" << iucname
          << "_WARNING_POLICY){\n"
@@ -194,7 +193,6 @@ namespace mfront {
          << "mfront_output_status->status = -1;\n"
          << "mfront_output_status->bounds_status = -" << i
          << ";\n"
-         //         << "return nan(\"" << v.name << " is out of bounds.\");\n"
          << "return std::nan(\"\");\n"
          << "} else if (mfront_out_of_bounds_policy==" << iucname
          << "_WARNING_POLICY){\n"
@@ -219,7 +217,6 @@ namespace mfront {
          << "mfront_output_status->status = -1;\n"
          << "mfront_output_status->bounds_status = -" << i << ";\n"
          << "errno = mfront_errno_old;\n"
-         //         << "return nan(\"" << v.name << " is out of bounds.\");\n"
          << "return std::nan(\"\");\n"
          << "} else if (mfront_out_of_bounds_policy==" << iucname
          << "_WARNING_POLICY){\n"
