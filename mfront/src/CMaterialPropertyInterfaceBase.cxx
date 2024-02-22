@@ -567,26 +567,52 @@ namespace mfront {
          << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
     }
 
-  os << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
-  this->writeCxxTryBlock(os);
-  os << mpd.f.body << "\n";
-  this->writeCxxCatchBlock(os, mpd, floating_point_type, use_qt);
-  if (!mpd.inputs.empty()) {
-    os << "#ifndef MFRONT_NOERRNO_HANDLING\n";
-    // can't use std::swap here as errno might be a macro
-    os << "const auto mfront_errno = errno;\n"
-       << "errno = mfront_errno_old;\n";
-    if (use_qt) {
-      os << "if((mfront_errno != 0)||"
-         << "(!tfel::math::ieee754::isfinite(" << mpd.output.name
-         << ".getValue()))){\n";
-    } else {
-      os << "if((mfront_errno != 0)||"
-         << "(!tfel::math::ieee754::isfinite(" << mpd.output.name << "))){\n";
+    os << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
+    this->writeCxxTryBlock(os);
+    os << mpd.f.body << "\n";
+    // checking the bounds and physical bounds of the output
+    if ((mpd.output.hasBounds()) || (mpd.output.hasPhysicalBounds())) {
+      const auto cast_start = useQuantities(mpd) ? mpd.output.type + "(" : "";
+      const auto cast_end = useQuantities(mpd) ? ")" : "";
+      if (mpd.output.hasPhysicalBounds()) {
+        const auto b = mpd.output.getPhysicalBounds();
+        if (b.boundsType == VariableBoundsDescription::LOWER) {
+          os << "if(" << mpd.output.name << " < " << cast_start << b.lowerBound
+             << cast_end << "){\n"
+             << "return std::nan(\"\");\n"
+             << "}\n";
+        } else if (b.boundsType == VariableBoundsDescription::UPPER) {
+          os << "if(" << mpd.output.name << " > " << cast_start << b.upperBound
+             << cast_end << "){\n"
+             << "return std::nan(\"\");\n"
+             << "}\n";
+        } else {
+          os << "if((" << mpd.output.name << " < " << cast_start << b.lowerBound
+             << cast_end << ")||"
+             << "(" << mpd.output.name << " > " << cast_start << b.upperBound
+             << cast_end << ")){\n"
+             << "return std::nan(\"\");\n"
+             << "}\n";
+        }
+      }
     }
-    this->writeCErrorTreatment(os, mpd, floating_point_type, use_qt);
-    os << "}\n"
-       << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
+    this->writeCxxCatchBlock(os, mpd, floating_point_type, use_qt);
+    if (!mpd.inputs.empty()) {
+      os << "#ifndef MFRONT_NOERRNO_HANDLING\n";
+      // can't use std::swap here as errno might be a macro
+      os << "const auto mfront_errno = errno;\n"
+         << "errno = mfront_errno_old;\n";
+      if (use_qt) {
+        os << "if((mfront_errno != 0)||"
+           << "(!tfel::math::ieee754::isfinite(" << mpd.output.name
+           << ".getValue()))){\n";
+      } else {
+        os << "if((mfront_errno != 0)||"
+           << "(!tfel::math::ieee754::isfinite(" << mpd.output.name << "))){\n";
+      }
+      this->writeCErrorTreatment(os, mpd, floating_point_type, use_qt);
+      os << "}\n"
+         << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
     }
     if ((useQuantities(mpd)) && (!use_qt)) {
       os << "return " << mpd.output.name << ".getValue();\n";
