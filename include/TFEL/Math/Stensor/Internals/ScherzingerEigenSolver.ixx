@@ -61,9 +61,11 @@ namespace tfel::math::internals {
                     (B - trM_3) * E * E - D * D * (C - trM_3) -
                     (A - trM_3) * F * F;
 
-    if (J2 > 1.e-12) {
-      const auto alpha = one_third * acos(J3 / 2 * std::sqrt(power<3>(3 / J2)));
-
+    // alpha not well computed... 
+    // use test std::numeric_limits<real>::min()
+    if (J2 > std::numeric_limits<real>::epsilon()) {
+      const auto alpha =
+          one_third * std::acos(J3 / 2 * std::sqrt(power<3>(3 / J2)));
       vp[0] = 2 * std::sqrt(one_third * J2) * std::cos(alpha);
     } else {
       vp[0] = 0.;
@@ -105,7 +107,7 @@ namespace tfel::math::internals {
     const int rMaxId = argmax(listNormr);
 
     const auto s1 = [&]() -> tvector<3u, real> {
-      if (listNormr(rMaxId) > 1.e-12) {
+      if (listNormr(rMaxId) > std::numeric_limits<real>::min()) {
         if (rMaxId == 0) {
           return r.template column_view<0u>() / listNormr(0);
         } else if (rMaxId == 1) {
@@ -114,7 +116,7 @@ namespace tfel::math::internals {
           return r.template column_view<2u>() / listNormr(2);
         }
       } else {
-        return tvector<3u, real>{1., 0., 0.};
+        return tvector<3u, real>{1, 0, 0};
       }
     }();
 
@@ -135,7 +137,7 @@ namespace tfel::math::internals {
       }
     }();
 
-    tmatrix<3u, 3u, real> t;
+    tmatrix<3u, 2u, real> t;
     const tvector<3u, real> r2 = ri.template column_view<0u>();
     const tvector<3u, real> r3 = ri.template column_view<1u>();
     t.template column_view<0u>() = r2 - (s1 | r2) * s1;
@@ -148,17 +150,14 @@ namespace tfel::math::internals {
     const int tMaxId = argmax(listNormt);
 
     const auto s2 = [&]() -> tvector<3u, real> {
-      if (listNormr(rMaxId) > 1.e-12) {
+      if (listNormr(rMaxId) > std::numeric_limits<real>::min()) {
         if (tMaxId == 0) {
           return t.template column_view<0u>() / listNormt(0);
-        } else if (tMaxId == 1) {
-          return t.template column_view<1u>() / listNormt(1);
         } else {
-          return t.template column_view<2u>() / listNormt(2);
+          return t.template column_view<1u>() / listNormt(1);
         }
-      } else {
-        return tvector<3u, real>{0., 1., 0.};
       }
+      return tvector<3u, real>{0, 1, 0};
     }();
 
     m.template column_view<0u>() =
@@ -260,7 +259,7 @@ namespace tfel::math::internals {
     const int uMaxId = argmax(listNormu);
 
     const auto w1 = [&]() -> tvector<3u, real> {
-      if (listNormu(uMaxId) > 1.e-12) {
+      if (listNormu(uMaxId) > std::numeric_limits<real>::min()) {
         if (uMaxId == 0) {
           return u1 / listNormu(0);
         } else {
@@ -272,7 +271,6 @@ namespace tfel::math::internals {
     }();
 
     const auto v2 = cross_product(w1, v1);
-    const auto v3 = cross_product(v1, v2);
     m.template column_view<0u>() = v1;
     m.template column_view<1u>() = v2;
     m.template column_view<2u>() = cross_product(v1, v2);

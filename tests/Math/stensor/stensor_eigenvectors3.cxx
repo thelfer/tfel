@@ -32,7 +32,7 @@ void test() {
   using namespace std;
   using namespace tfel::math;
   using namespace tfel::math::internals;
-  std::cout << "Start test3" << std::endl;
+  std::cout << "Start test1" << std::endl;
   T vp1;
   T vp2;
   T vp3;
@@ -104,7 +104,7 @@ void test2() {
   using namespace std;
   using namespace tfel::math;
   using namespace tfel::math::internals;
-  std::cout << "Start test4" << std::endl;
+  std::cout << "Start test2" << std::endl;
   T vp1;
   T vp2;
   T vp3;
@@ -159,6 +159,66 @@ void test2() {
   assert(abs(vec3[2] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
 }
 
+template <typename T>
+void test3() {
+  using namespace std;
+  using namespace tfel::math;
+  using namespace tfel::math::internals;
+  std::cout << "Start test3" << std::endl;
+  T vp1;
+  T vp2;
+  T vp3;
+  T vec1[3];
+  T vec2[3];
+  T vec3[3];
+
+  tfel::math::tmatrix<3u, 3u, T> m;
+  tfel::math::tvector<3u, T> vp;
+
+  stensor<3, T> s(static_cast<T>(0.));
+  s(0) = static_cast<T>(1.);
+  s(1) = static_cast<T>(1.);
+  s(2) = static_cast<T>(0.);
+  s(3) = static_cast<T>(0.);
+  s(4) = static_cast<T>(0.);
+  s(5) = static_cast<T>(0.);
+
+  s.template computeEigenVectors<
+      stensor_common::EigenSolver::SCHERZINGEREIGENSOLVER>(vp, m);
+
+  vp1 = vp(0);
+  vp2 = vp(1);
+  vp3 = vp(2);
+
+  vec1[0] = m(0, 0);
+  vec1[1] = m(1, 0);
+  vec1[2] = m(2, 0);
+
+  vec2[0] = m(0, 1);
+  vec2[1] = m(1, 1);
+  vec2[2] = m(2, 1);
+
+  vec3[0] = m(0, 2);
+  vec3[1] = m(1, 2);
+  vec3[2] = m(2, 2);
+
+  assert(abs(vp1 - static_cast<T>(1.)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vp2 - static_cast<T>(1.)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vp3 - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
+
+  assert(abs(vec1[0] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec1[1] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec1[2] - static_cast<T>(1.)) < 20 * numeric_limits<T>::epsilon());
+
+  assert(abs(vec2[0] - static_cast<T>(1.)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec2[1] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec2[2] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
+
+  assert(abs(vec3[0] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec3[1] - static_cast<T>(1.)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec3[2] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
+}
+
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   using namespace tfel::math;
@@ -170,11 +230,13 @@ int main() {
 #endif
   test<float>();
   test2<float>();
+//   test3<float>();
 #ifdef TFEL_VERBOSE
   std::cerr << " Beginning test<double>()" << std::endl;
 #endif
   test<double>();
   test2<double>();
+  test3<double>();
 
   return EXIT_SUCCESS;
 }
