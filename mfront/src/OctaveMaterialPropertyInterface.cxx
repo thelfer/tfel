@@ -33,6 +33,108 @@
 
 namespace mfront {
 
+  static void writeBoundsChecks(
+      std::ostream& out,
+      const VariableDescription& v,
+      const std::string& name,
+      const VariableDescriptionContainer::size_type nbr) {
+    if (!v.hasBounds()) {
+      return;
+    }
+    const auto& b = v.getBounds();
+    if (b.boundsType == VariableBoundsDescription::LOWER) {
+      out << "if(" << v.name << " < " << b.lowerBound << "){\n"
+          << "const octave_value policy = get_global_value("
+          << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\", true);\n"
+          << "if(policy.is_defined()){\n"
+          << "if(policy.is_string()){\n"
+          << "string msg(\"" << name << " : " << v.name
+          << " is below its physical lower bound.\");\n"
+          << "if(policy.string_value()==\"STRICT\"){\n"
+          << "error(msg.c_str());\n"
+          << "return -" << nbr << ";\n"
+          << "}\n"
+          << "if(policy.string_value()==\"WARNING\"){\n"
+          << "octave_stdout << msg << \"\\n\";\n"
+          << "}\n"
+          << "}\n"
+          << "}\n"
+          << "return " << nbr << ";\n"
+          << "}\n";
+    } else if (b.boundsType == VariableBoundsDescription::UPPER) {
+      out << "if(" << v.name << " < " << b.lowerBound << "){\n"
+          << "const octave_value policy = get_global_value("
+          << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\", true);\n"
+          << "if(policy.is_defined()){\n"
+          << "if(policy.is_string()){\n"
+          << "string msg(\"" << v.name
+          << " is over its physical upper bound.\");\n"
+          << "if(policy.string_value()==\"STRICT\"){\n"
+          << "error(msg.c_str());\n"
+          << "return -" << nbr << ";\n"
+          << "}\n"
+          << "}\n"
+          << "}\n"
+          << "return " << nbr << ";\n"
+          << "}\n";
+    } else {
+      out << "if((" << v.name << " < " << b.lowerBound << ")||"
+          << "(" << v.name << " > " << b.upperBound << ")){\n"
+          << "const octave_value policy = get_global_value("
+          << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\", true);\n"
+          << "if(policy.is_defined()){\n"
+          << "if(policy.is_string()){\n"
+          << "string msg(\"" << v.name << " is out of its bounds.\");\n"
+          << "if(policy.string_value()==\"STRICT\"){\n"
+          << "error(msg.c_str());\n"
+          << "return -" << nbr << ";\n"
+          << "} if(policy.string_value()==\"WARNING\"){\n"
+          << "octave_stdout << msg << \"\\n\";\n"
+          << "}\n"
+          << "}\n"
+          << "}\n"
+          << "return " << nbr << ";\n"
+          << "}\n";
+    }
+  }  // end of writeBoundsChecks
+
+  static void writePhysicalBoundsChecks(
+      std::ostream& out,
+      const VariableDescription& v,
+      const std::string& name,
+      const VariableDescriptionContainer::size_type nbr) {
+    if (!v.hasPhysicalBounds()) {
+      return;
+    }
+    const auto& b = v.getPhysicalBounds();
+    if (b.boundsType == VariableBoundsDescription::LOWER) {
+      out << "if(" << v.name << " < " << b.lowerBound << "){\n";
+      out << "error(\"" << name << " :" << v.name
+          << " is below its physical lower bound.\");\n";
+      out << "return -" << nbr << ";\n";
+      out << "}\n";
+    } else if (b.boundsType == VariableBoundsDescription::UPPER) {
+      out << "if(" << v.name << " > " << b.upperBound << "){\n";
+      out << "error(\"" << name << " : " << v.name
+          << " is over its physical upper bound.\");\n";
+      out << "return -" << nbr << ";\n";
+      out << "}\n";
+    } else {
+      out << "if((" << v.name << " < " << b.lowerBound << ")||"
+          << "(" << v.name << " > " << b.upperBound << ")){\n";
+      out << "if(" << v.name << " < " << b.lowerBound << "){\n";
+      out << "error(\"" << name << " : " << v.name
+          << " is below its physical lower bound.\");\n";
+      out << "}\n";
+      out << "if(" << v.name << " > " << b.upperBound << "){\n";
+      out << "error(\"" << name << " : " << v.name
+          << " is over its physical upper bound.\");\n";
+      out << "}\n";
+      out << "return -" << nbr << ";\n";
+      out << "}\n";
+    }
+  }  // end of writePhysicalBoundsChecks
+
   static std::vector<std::string> tokenize(const std::string& s, const char c) {
     using namespace std;
     vector<string> res;
@@ -214,7 +316,18 @@ namespace mfront {
     } else {
       out << "auto " << mpd.output.name << " = real{};\n";
     }
+    out << "try{\n";
     out << mpd.f.body;
+    out << "} catch(std::exception& e){\n"
+        << "error(e.what());\n"
+        << "return 0;\n"
+        << "} catch(...){\n"
+        << "error(\"" << name << ": unsupported C++ exception\");\n"
+        << "return 0;\n"
+        << "}\n";
+    writePhysicalBoundsChecks(out, mpd.output, name, 0);
+    writeBoundsChecks(out, mpd.output, name, 0);
+    //
     if (useQuantities(mpd)) {
       out << "return " << mpd.output.name << ".getValue();\n";
     } else {
@@ -234,125 +347,21 @@ namespace mfront {
       if (hasPhysicalBounds(mpd.inputs)) {
         out << "// treating physical bounds\n";
         for (const auto& i : mpd.inputs) {
-          if (!i.hasPhysicalBounds()) {
-            continue;
-          }
-          const auto& b = i.getPhysicalBounds();
           const auto nbr =
               CMaterialPropertyInterfaceBase::getVariableNumber(mpd, i.name);
-          if (b.boundsType == VariableBoundsDescription::LOWER) {
-            out << "if(" << i.name << " < " << b.lowerBound << "){\n";
-            out << "error(\"" << name << " :" << i.name
-                << " is below its physical lower bound.\");\n";
-            out << "return -" << nbr << ";\n";
-            out << "}\n";
-          } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-            out << "if(" << i.name << " > " << b.upperBound << "){\n";
-            out << "error(\"" << name << " : " << i.name
-                << " is over its physical upper bound.\");\n";
-            out << "return -" << nbr << ";\n";
-            out << "}\n";
-          } else {
-            out << "if((" << i.name << " < " << b.lowerBound << ")||"
-                << "(" << i.name << " > " << b.upperBound << ")){\n";
-            out << "if(" << i.name << " < " << b.lowerBound << "){\n";
-            out << "error(\"" << name << " : " << i.name
-                << " is below its physical lower bound.\");\n";
-            out << "}\n";
-            out << "if(" << i.name << " > " << b.upperBound << "){\n";
-            out << "error(\"" << name << " : " << i.name
-                << " is over its physical upper bound.\");\n";
-            out << "}\n";
-            out << "return -" << nbr << ";\n";
-            out << "}\n";
-          }
+          writePhysicalBoundsChecks(out, i, name, nbr);
         }
       }
       if (hasBounds(mpd.inputs)) {
         out << "// treating standard bounds\n";
         for (const auto& i : mpd.inputs) {
-          if (!i.hasBounds()) {
-            continue;
-          }
-          const auto& b = i.getBounds();
           const auto nbr =
               CMaterialPropertyInterfaceBase::getVariableNumber(mpd, i.name);
-          if (b.boundsType == VariableBoundsDescription::LOWER) {
-            out << "if(" << i.name << " < " << b.lowerBound << "){\n";
-            out << "const octave_value policy = get_global_value("
-                << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\", true);\n";
-            out << "if(policy.is_defined()){\n";
-            out << "if(policy.is_string()){\n";
-            out << "string msg(\"" << name << " : " << i.name
-                << " is below its physical lower bound.\");\n";
-            out << "if(policy.string_value()==\"STRICT\"){\n";
-            out << "error(msg.c_str());\n";
-            out << "return -" << nbr << ";\n";
-            out << "} if(policy.string_value()==\"WARNING\"){\n";
-            out << "octave_stdout << msg << \"\\n\";\n";
-            out << "} else {\n";
-            out << "return " << nbr << ";\n";
-            out << "}\n";
-            out << "} else {\n";
-            out << "return " << nbr << ";\n";
-            out << "}\n";
-            out << "} else {\n";
-            out << "return " << nbr << ";\n";
-            out << "}\n";
-            out << "return " << nbr << ";\n";
-            out << "}\n";
-          } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-            out << "if(" << i.name << " < " << b.lowerBound << "){\n";
-            out << "const octave_value policy = get_global_value("
-                << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\", true);\n";
-            out << "if(policy.is_defined()){\n";
-            out << "if(policy.is_string()){\n";
-            out << "string msg(\"" << i.name
-                << " is over its physical upper bound.\");\n";
-            out << "if(policy.string_value()==\"STRICT\"){\n";
-            out << "error(msg.c_str());\n";
-            out << "return -" << nbr << ";\n";
-            out << "} if(policy.string_value()==\"WARNING\"){\n";
-            out << "octave_stdout << msg << \"\\n\";\n";
-            out << "} else {\n";
-            out << "return " << nbr << ";\n";
-            out << "}\n";
-            out << "} else {\n";
-            out << "return " << nbr << ";\n";
-            out << "}\n";
-            out << "} else {\n";
-            out << "return " << nbr << ";\n";
-            out << "}\n";
-            out << "return " << nbr << ";\n";
-            out << "}\n";
-          } else {
-            out << "if((" << i.name << " < " << b.lowerBound << ")||"
-                << "(" << i.name << " > " << b.upperBound << ")){\n";
-            out << "const octave_value policy = get_global_value("
-                << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\", true);\n";
-            out << "if(policy.is_defined()){\n";
-            out << "if(policy.is_string()){\n";
-            out << "string msg(\"" << i.name << " is out of its bounds.\");\n";
-            out << "if(policy.string_value()==\"STRICT\"){\n";
-            out << "error(msg.c_str());\n";
-            out << "return -" << nbr << ";\n";
-            out << "} if(policy.string_value()==\"WARNING\"){\n";
-            out << "octave_stdout << msg << \"\\n\";\n";
-            out << "} else {\n";
-            out << "return " << nbr << ";\n";
-            out << "}\n";
-            out << "} else {\n";
-            out << "return " << nbr << ";\n";
-            out << "}\n";
-            out << "} else {\n";
-            out << "return " << nbr << ";\n";
-            out << "}\n";
-            out << "return " << nbr << ";\n";
-            out << "}\n";
-          }
+          writeBoundsChecks(out, i, name, nbr);
         }
       }
-      out << "return 0;\n} // end of " << name << "_checkBounds\n\n";
+      out << "return 0;\n"
+          << "} // end of " << name << "_checkBounds\n\n";
     }
 
     out << "DEFUN_DLD(" << name << ",args,nargout,\n"

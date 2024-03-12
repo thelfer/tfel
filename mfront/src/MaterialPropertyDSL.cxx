@@ -900,17 +900,25 @@ namespace mfront {
   }  // end of treatOutput
 
   void MaterialPropertyDSL::treatBounds() {
-    const auto b = this->readVariableBounds();
+    const auto [n, bounds] = this->readVariableBounds();
     this->readSpecifiedToken("MaterialPropertyDSL::treatBounds", ";");
-    auto& v = this->md.inputs.getVariable(std::get<0>(b));
-    v.setBounds(std::get<1>(b));
+    if (n == this->md.output.name) {
+      this->md.output.setBounds(bounds);
+      return;
+    }
+    auto& v = this->md.inputs.getVariable(n);
+    v.setBounds(bounds);
   }  // end of treatBounds
 
   void MaterialPropertyDSL::treatPhysicalBounds() {
-    const auto b = this->readVariableBounds();
+    const auto [n, bounds] = this->readVariableBounds();
     this->readSpecifiedToken("MaterialPropertyDSL::treatPhysicalBounds", ";");
-    auto& v = this->md.inputs.getVariable(std::get<0>(b));
-    v.setPhysicalBounds(std::get<1>(b));
+    if (n == this->md.output.name) {
+      this->md.output.setPhysicalBounds(bounds);
+      return;
+    }
+    auto& v = this->md.inputs.getVariable(n);
+    v.setPhysicalBounds(bounds);
   }  // end of treatPhysicalBounds
 
   void MaterialPropertyDSL::treatUnknownKeyword() {
