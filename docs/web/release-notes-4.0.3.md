@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 522: [mfront] Visual Studio 2022 compiler intrinsic type traits error C2139
+
+For more details, see <https://github.com/thelfer/tfel/issues/522>
+
 ## Issue 484: Allow `result_type` for `@StaticVariable`
 
 For more details, see <https://github.com/thelfer/tfel/issues/484>
