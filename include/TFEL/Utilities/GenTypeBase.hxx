@@ -195,7 +195,7 @@ namespace tfel::utilities {
 
    protected:
     //! \brief clear the GenType
-    TFEL_INLINE void clear() { this->operator=(std::monostate()); }
+    TFEL_INLINE void clear() { variant::operator=(std::monostate()); }
     //! \brief set the value of the GenType.
     template <typename T1>
     TFEL_INLINE type_check<T1, void> set_uninitialised() {
