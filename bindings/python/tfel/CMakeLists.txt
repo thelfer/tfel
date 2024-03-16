@@ -118,6 +118,8 @@ else(NOT WIN32)
   tfel_python_module(system system.cxx
     LibraryInformation.cxx
     ExternalLibraryManager.cxx
+    ExternalMaterialKnowledgeDescription.cxx
+    ExternalMaterialPropertyDescription.cxx
     ExternalBehaviourDescription.cxx)
 endif(NOT WIN32)
 target_link_libraries(py_tfel_system
