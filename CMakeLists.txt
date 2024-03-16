@@ -331,6 +331,13 @@ if(enable-python OR enable-python-bindings)
   string(REGEX REPLACE "[a-z]+.*$" "" PYTHONLIBS_VERSION_CLEANED "${PYTHONLIBS_VERSION_STRING}")
   find_package(PythonInterp ${PYTHONLIBS_VERSION_CLEANED} REQUIRED)
   message(STATUS "python interpreter    ${PYTHON_EXECUTABLE}")
+  if(NOT TFEL_PYTHON_SITE_PACKAGES_DIR)
+    if(WIN32)
+      set(TFEL_PYTHON_SITE_PACKAGES_DIR "bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages")
+    else(WIN32)
+      set(TFEL_PYTHON_SITE_PACKAGES_DIR "lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages")
+    endif(WIN32)
+  endif(NOT TFEL_PYTHON_SITE_PACKAGES_DIR)
   if(enable-numpy-support AND PYTHON_EXECUTABLE AND (NOT NUMPY_INCLUDE_DIRS))
     execute_process(
       COMMAND "${PYTHON_EXECUTABLE}" -c
