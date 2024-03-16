@@ -23,23 +23,6 @@
 
 namespace mtest {
 
-#ifndef _MSC_VER
-  constexpr real PipeCubicElement::one_third;
-  constexpr real PipeCubicElement::cste;
-  constexpr real PipeCubicElement::cste2;
-  constexpr real PipeCubicElement::wg[4];
-  constexpr real PipeCubicElement::pg_radii[4];
-#else  /* _MSC_VER */
-  const real PipeCubicElement::one_third = real{1} / real{3};
-  const real PipeCubicElement::cste = real{9} / real{16};
-  const real PipeCubicElement::cste2 = real{27} / real{16};
-  const real PipeCubicElement::pg_radii[4] = {
-      -0.861136311594053, -0.339981043584856, 0.339981043584856,
-      0.861136311594053};
-  const real PipeCubicElement::wg[4] = {0.347854845137454, 0.652145154862546,
-                                        0.652145154862546, 0.347854845137454};
-#endif /* _MSC_VER */
-
   constexpr real PipeCubicElement::sf0(const real x) {
     return cste * (1 - x) * (x - one_third) * (x + one_third);
   }
