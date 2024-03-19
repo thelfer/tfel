@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 519: [ImplicitCZM] Typo in ComputeCohesiveForce block
+
+For more details, see <https://github.com/thelfer/tfel/issues/519.
+
 ## Issue 514: [material-properties] add try/catch blocks in interfaces for the C family (fortran, C, Cast3M)
 
 For more details, see <https://github.com/thelfer/tfel/issues/514.
