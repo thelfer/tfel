@@ -411,6 +411,10 @@ namespace tfel::math {
     return v[i];
   }  // end of get
 
+  // class template argument deduction
+  template <typename... T>
+  tvector(T&&... t)->tvector<sizeof...(T), std::common_type_t<T...>>;
+
 }  // end of namespace tfel::math
 
 #include "TFEL/Math/Vector/tvector.ixx"

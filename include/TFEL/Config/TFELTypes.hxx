@@ -21,8 +21,6 @@
 #include "TFEL/Math/Forward/stensor.hxx"
 #include "TFEL/Math/Forward/t2tost2.hxx"
 #include "TFEL/Math/Forward/st2tost2.hxx"
-#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include "TFEL/Config/Internals/TFELTypesInternals.hxx"
 
 namespace tfel::config {

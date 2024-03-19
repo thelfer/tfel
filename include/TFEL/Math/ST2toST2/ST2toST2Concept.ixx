@@ -14,7 +14,6 @@
 #define LIB_TFEL_MATH_ST2TOST2_CONCEPT_IXX 1
 
 #include "TFEL/Math/General/Abs.hxx"
-#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
 #include "TFEL/Math/LU/LUDecomp.hxx"
 #include "TFEL/Math/LU/TinyPermutation.hxx"
 #include "TFEL/Math/ST2toST2/ST2toST2TransposeExpr.hxx"

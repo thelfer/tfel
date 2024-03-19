@@ -35,6 +35,8 @@ struct FSArrayTest final : public tfel::tests::TestCase {
     this->test3();
     this->test4();
     this->test5();
+    this->test6();
+    this->test7();
     return this->result;
   }  // end of execute
  private:
@@ -139,6 +141,15 @@ struct FSArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(a[2] == -3);
 #endif /* __INTEL_COMPILER  */
   }    // end of test6
+  void test7() {
+    using namespace tfel::math;
+    // class template argument deduction
+    constexpr auto a = fsarray{1, -4, 3};
+    static_assert(std::is_same_v<decltype(a), const fsarray<3u, int>>);
+    TFEL_TESTS_STATIC_ASSERT(a[0] == 1);
+    TFEL_TESTS_STATIC_ASSERT(a[1] == -4);
+    TFEL_TESTS_STATIC_ASSERT(a[2] == 3);
+  }  // end of test7
 };
 
 TFEL_TESTS_GENERATE_PROXY(FSArrayTest, "FSArrayTest");

@@ -38,6 +38,7 @@ struct qtTest final : public tfel::tests::TestCase {
     this->test3();
     this->test4();
     this->test5();
+    this->test6();
     return this->result;
   }  // end of execute
  private:
@@ -91,6 +92,14 @@ struct qtTest final : public tfel::tests::TestCase {
       return 2 * v.getValue();
     };
     TFEL_TESTS_STATIC_ASSERT(my_abs(d(12) - 24) < 1.e-14);
+  }
+  // tests related to class template argument deduction
+  void test6() {
+    using namespace tfel::math;
+    using time = qt<Time>;
+    constexpr Quantity t = time{1.2};
+    TFEL_TESTS_STATIC_ASSERT((std::is_same_v<decltype(t), const time>));
+    TFEL_TESTS_STATIC_ASSERT(my_abs(t.getValue() - 1.2) < 1e-15);
   }
 };
 

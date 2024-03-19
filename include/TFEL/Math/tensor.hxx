@@ -25,7 +25,6 @@
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include "TFEL/Math/Tensor/TensorConcept.hxx"
 #include "TFEL/Math/Tensor/TensorConceptOperations.hxx"
 #include "TFEL/Math/tvector.hxx"
@@ -143,6 +142,11 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr void copy(const auto) noexcept;
   };  // end of struct tensor
 
+  // class template argument deduction
+  template <typename... T>
+  tensor(T&&... t)
+      ->tensor<TensorSizeToDime<sizeof...(T)>::value, std::common_type_t<T...>>;
+
   /*!
    * \brief a simple alias for backward compatibility
    * \tparam N: space dimension
@@ -225,7 +229,6 @@ namespace tfel::typetraits {
 
 }  // end of namespace tfel::typetraits
 
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include "TFEL/Math/Tensor/tensor.ixx"
 #include "TFEL/Math/Tensor/tensorResultType.hxx"
 

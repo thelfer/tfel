@@ -15,8 +15,6 @@
 #define LIB_TFEL_MATH_T2TOST2_CONCEPT_IXX 1
 
 #include "TFEL/Math/General/MathConstants.hxx"
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
-#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
 
 namespace tfel::math {
 

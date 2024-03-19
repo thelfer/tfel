@@ -14,9 +14,6 @@
 #ifndef LIB_TFEL_MATH_ST2TOT2_CONCEPT_IXX
 #define LIB_TFEL_MATH_ST2TOT2_CONCEPT_IXX 1
 
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
-#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
-
 namespace tfel::math {
 
   TFEL_HOST_DEVICE constexpr auto abs(const ST2toT2Concept auto& t) noexcept {
