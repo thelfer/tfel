@@ -124,7 +124,7 @@ Cette entrée décrit The elastic strain.
 Cette entrée décrit Emissivity of the surface of a material is its effectiveness in emitting energy as thermal radiation.
 
 * noms : Emissivity
-* unité: \(kg.m.T^{−3}\)
+* unité: sans unité
 * type: scalaire 
 
 # L'entrée EquivalentPlasticStrain
