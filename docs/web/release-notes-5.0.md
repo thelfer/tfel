@@ -30,3 +30,11 @@ const auto m2 = tmatrix<2u, 2u, int>{4, -1,  //
                                      5, 2};
 const auto m3 = m1 * m2;
 ~~~~
+
+# Issues fixed
+
+## Issue 526: The `@UseQt` keyword is not mentioned in the `MaterialLaw`'s keywords help page
+
+For more details, see <https://github.com/thelfer/tfel/issues/526>
+
+
