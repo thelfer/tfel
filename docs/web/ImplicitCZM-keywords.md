@@ -1,4 +1,4 @@
-% `RungeKutta` keywords
+% `ImplicitCZM` keywords
 
 
 # The `;` keyword
@@ -12,6 +12,45 @@ The keyword `@APosterioriTimeStepScalingFactor` is not documented yet
 # The `@APrioriTimeStepScalingFactor` keyword
 
 The keyword `@APrioriTimeStepScalingFactor` is not documented yet
+
+# The `@AdditionalConvergenceChecks` keyword
+
+The `@AdditionalConvergenceChecks` keyword is meant to introduce a
+code block returning stating if convergence has been reached. More
+precisely, this code block is meant to modify a boolean variable
+called `converged`. This boolean is `true` if the standard convergence
+criterion has been reached, `false` otherwise.
+
+One possible usage of this code block is multi-surfaces' plasticity
+treated by activating or desactivating statuses, as described by Simo
+and Hughes.
+
+# Example
+
+Consider a two surfaces plastic behaviour. We will use an array of
+booleans called `statuses`.
+
+~~~~{.cpp}
+@Brick StandardElasticity; // to have computeElasticPrediction
+
+@LocalVariable bool statuses[2];
+
+@Prediction{
+  // initial status based of the elastic prediction
+  auto sigel = computeElasticPrediction();
+  for(unsigned short i=0;i!=2;++i){
+	statuses[i] = ...
+  }
+} // end of @Prediction
+
+@Integrator{
+  for(unsigned short i=0;i!=2;++i){
+    if(statuses[i]){
+      ...
+    }
+  }
+} // end of @Integrator
+~~~~
 
 # The `@Algorithm` keyword
 
@@ -198,35 +237,40 @@ The `@Brick` keyword introduces a behaviour brick.
 The `@Coef` keyword is a deprecated synonymous of
 `@MaterialProperty`.
 
-# The `@ComputeFinalStress` keyword
+# The `@CompareToNumericalJacobian` keyword
 
-The `@ComputeFinalStress` keyword introduces a code block meant to
-compute the stress symmetric tensor after the integration.
+The `@CompareToNumericalJacobian` keyword enables or disables the
+comparison of the user defined jacobian to a numerically computed
+jacobian. This keyword is followed by a boolean value (`true` or
+`false`).
 
-The code block is called after the update of the state variables. The
-auxiliary state variable and the external state variables are not
-updated yet.
+Jacobians are compared by blocks. Blocks for which the comparison
+failed are reported on the standard output.
+
+The comparison criterion value can be changed used the
+`@JacobianComparisonCriterion` keyword.
 
 ## Example
 
 ~~~~{.cpp}
-@ComputeFinalStress{
-  const SlidingSystems& ss = SlidingSystems::getSlidingSystems();
-  // approximation de l'inverse de \(\Delta\,F_p\)
-  inv_dFp = Tensor::Id();
-  for(unsigned short i=0;i!=12;++i){
-    inv_dFp -= dg[i]*ss.mu[i];
-  }
-  real J_inv_dFp = det(inv_dFp);
-  inv_dFp /= CubicRoots::cbrt(J_inv_dFp);
-  // Fe en fin de pas de temps
-  Fe  = Fe_tr*inv_dFp;
-  // Piola-Kirchhoff II
-  S = D*eel;
-  // Cauchy
-  sig = convertSecondPiolaKirchhoffStressToCauchyStress(S,Fe);
-}
+@CompareToNumericalJacobian true;
 ~~~~
+
+# The `@ComputeCohesiveForce` keyword
+
+The keyword `@ComputeCohesiveForce` is not documented yet
+
+# The `@ComputeCohesizeForce` keyword
+
+The keyword `@ComputeCohesizeForce` is not documented yet
+
+# The `@ComputeFinalCohesiveForce` keyword
+
+The keyword `@ComputeFinalCohesiveForce` is not documented yet
+
+# The `@ComputeFinalCohesizeForce` keyword
+
+The keyword `@ComputeFinalCohesizeForce` is not documented yet
 
 # The `@ComputeStiffnessTensor` keyword
 
@@ -293,36 +337,6 @@ evolves during the time step.
     0.13,0.24,0.18,
     4.8e+4,1.16418e+5,7.8e+4};
 ~~~~
-
-# The `@ComputeStress` keyword
-
-The `@ComputeStress` keyword introduces a code block meant to compute
-the stress symmetric tensor.
-
-This keyword interprets the code block to generate two methods:
-
-- The first one is used before the integration step, using updated
-  values for the state variables and external state variables.
-- The second one is a candidate for the computation of the stress at
-  the end of the integration. This candidate is used if the user does
-  not provide an appropriate way of computing the stress at the end of
-  the time step using the `@ComputeFinalStress` keyword.
-
-## Note
-
-If the user provide a way of computing the stress at the end of the
-time step through the `@ComputeFinalStress` keyword, we consider that
-the use of `@ComputeStress` is meaningless and advice the user to
-rather compute explicitly the stress as part of the integration step.
-
-## Example
-
-~~~~{.cpp}
-@ComputeStress{
-  sig = (1-d)*(lambda*trace(eel)*Stensor::Id()+2*mu*eel);
-}
-~~~~
-
 
 # The `@ComputeStressFreeExpansion` keyword
 
@@ -607,10 +621,6 @@ semi-colon.
 ~~~~
 
 
-# The `@Derivative` keyword
-
-The keyword `@Derivative` is not documented yet
-
 # The `@Description` keyword
 
 The `@Description` describes the material property, behaviour or model
@@ -687,6 +697,66 @@ convergence was reached, after that:
 }
 ~~~~
 
+# The `@ElasticMaterialProperties` keyword
+
+The `@ElasticMaterialProperties` keyword is used give the material
+properties for standard mechanical behaviours.
+
+This keywords is followed by an array which values can be either a
+string referring to a formula, an external `MFront` file or a
+numerical value. After this array, a semi-colon is expected.
+
+If an entry refers to an external `MFront` file or a formula, all the
+inputs of this material property must be either:
+
+- a material property
+- a parameter
+- a state variable
+- an external state variable
+
+of the behaviour.
+
+Elastic material properties are used by behaviours bricks.
+
+## Isotropic case
+
+In the isotropic case, two entries are expected in the array, in that
+order:
+
+- the Young Modulus
+- the Poisson ratio
+
+In domain specific languages providing an implicit scheme
+(`Implicit`,`ImplicitII`, `ImplicitFiniteStrain`), the following local
+variables are automatically defined and computed:
+
+- `young`, `young_tdt` which respectively stand for the Young modulus
+  at \(t+\theta\,dt\) and \(t+\,dt\).
+- `nu`, `nu_tdt` which respectively stand for the Poisson ratio at
+  \(t+\theta\,dt\) and \(t+\,dt\).
+
+## Orthotropic case
+
+In the orthotropic case, 9 entries are expected in the array, in that
+order:
+
+- three Young modulus \((E_{1},E_{2},E_{3})\)
+- three Poisson ratio \((nu_{12},nu_{23},nu_{13})\)
+- three shear modulus \((G_{12},G_{23},G_{13})\)
+
+In the orthoropic case, behaviours bricks will rely on the definition
+of an orthotropic convention to compute the stiffness tensor. For
+example, the `Pipe` orthotropic convention will lead to automatically
+exchange the second and first axises when computing the stiffness
+tensor for the plane strain, plane stress and generalised plane strain
+hypotheses.
+
+## Example
+
+~~~~ {#ElasticMaterialProperties .cpp}
+@ElasticMaterialProperties {"AISI348_YoungModulus.mfront",0.3};
+~~~~
+
 # The `@Epsilon` keyword
 
 The `@Epsilon` keyword let the user define the convergence criterion
@@ -758,6 +828,10 @@ See `@SlipSystem` for details.
 An synonymous of `@SlipSystems`.
 See `@SlipSystems` for details.
 
+# The `@HillTensor` keyword
+
+The keyword `@HillTensor` is not documented yet
+
 # The `@Import` keyword
 
 The `@Import` keyword allows the inclusion of one or several
@@ -797,6 +871,16 @@ name).
 #include<fstream>
 }
 ~~~~
+
+# The `@InitJacobian` keyword
+
+The `@InitJacobian` keyword is a deprecated synonymous of
+`@InitializeJacobian`.
+
+# The `@InitJacobianInvert` keyword
+
+The `@InitJacobianInvert` keyword is a deprecated synonymous of
+`@InitializeJacobianInvert`.
 
 # The `@InitLocalVariables` keyword
 
@@ -872,6 +956,43 @@ function variables **before** their use in an initialize function.
 Note that an initialize function variable can be used in differents
 initialize function.
 
+# The `@InitializeJacobian` keyword
+
+The `@InitializeJacobian` keyword let the user introduce an initial
+estimate for the jacobian matrix used by quasi-newton methods, such as
+the first Broyden method.
+
+## Example
+
+~~~~{.cpp}
+@InitializeJacobian{
+  // setting the jacobian to identity (which is the default)
+  fill(this->jacobian.begin(),this->jacobian.end(),real(0));
+  for(unsigned short i=0;i!=this->jacobian.size();++i){
+    this->jacobian(i,i)=real(1);
+  }
+}
+~~~~
+
+# The `@InitializeJacobianInvert` keyword
+
+The `@InitializeJacobianInvert` keyword let the user introduce an
+initial estimate for the jacobian matrix used by quasi-newton methods,
+such as the second Broyden method.
+
+## Example
+
+~~~~{.cpp}
+@InitializeJacobianInvert{
+  // setting the inverse of the jacobian (still called jacobian by the
+  // way) to identity (which is the default)
+  fill(this->jacobian.begin(),this->jacobian.end(),real(0));
+  for(unsigned short i=0;i!=this->jacobian.size();++i){
+    this->jacobian(i,i)=real(1);
+  }
+}
+~~~~
+
 # The `@InitializeLocalVariables` keyword
 
 The `@InitializeLocalVariables` introduces a code block meant to
@@ -907,6 +1028,41 @@ initialize the local variables (see the `@LocalVariable` keyword).
 # The `@IntegerConstant` keyword
 
 The keyword `@IntegerConstant` is not documented yet
+
+# The `@IntegrationVariable` keyword
+
+The `IntegrationVariable` keyword introduces one or several new
+integration variables. It is followed by a type name and the name(s)
+of the variable(s) declared, separated by commas.
+
+The integration variables names must be valid `C++` identifiers.
+
+The following characters are legal as the first character of an
+identifier, or any subsequent character:
+
+`_` `a` `b` `c` `d` `e` `f` `g` `h` `i` `j` `k` `l` `m`
+`n` `o` `p` `q` `r` `s` `t` `u` `v` `w` `x` `y` `z`
+`A` `B` `C` `D` `E` `F` `G` `H` `I` `J` `K` `L` `M`
+`N` `O` `P` `Q` `R` `S` `T` `U` `V` `W` `X` `Y` `Z`
+
+The following characters are legal as any character in an identifier
+except the first:
+
+`0` `1` `2` `3` `4` `5` `6` `7` `8` `9`
+
+## Arrays
+
+One may declare an array of integration variables by specifying the array
+size after the integration variable name.
+
+## Example
+
+~~~~{.cpp}
+// scalar integration variable
+@IntegrationVariables strain p;
+// symmetric tensors integration variable
+@IntegrationVariables StrainStensor evp,evp2;
+~~~~
 
 # The `@Integrator` keyword
 
@@ -1064,6 +1220,37 @@ behaviour.
 ~~~~{.cpp}
 @IsotropicElasticBehaviour;
 ~~~~
+
+# The `@IterMax` keyword
+
+The `@IterMax` keyword is a deprecated synonymous of
+`@MaximumNumberOfIterations`.
+
+# The `@JacobianComparisonCriterion` keyword
+
+The `@JacobianComparisonCriterion` keyword defines the criterion value
+used for the comparison of the user-defined jacobian to a numerically
+computed one. This keyword must be followed by a positive
+floating-point number.
+
+## The jacobianComparisonCriterion parameter
+
+The `@JacobianComparisonCriterion` keyword defines the default value
+for the `jacobianComparisonCriterion` parameter. This parameter can be
+changed at runtime.
+
+## Example
+
+~~~~{.cpp}
+@JacobianComparisonCriterion 1.e-6;
+~~~~
+
+
+
+# The `@JacobianComparisonCriterium` keyword
+
+The `@JacobianComparisonCriterium` keyword is a deprecated synonymous
+of `@JacobianComparisonCriterion`.
 
 # The `@Library` keyword
 
@@ -1248,13 +1435,30 @@ will be very large so that the value returned by the
 @MaximalTimeStepScalingFactor 1.2;
 ~~~~
 
+# The `@MaximumIncrementValuePerIteration` keyword
+
+The keyword `@MaximumIncrementValuePerIteration` is not documented yet
+
+# The `@MaximumNumberOfIterations` keyword
+
+The `@MaximumNumberOfIterations` keyword let the user define the
+maximum number of iterations allowed. It is followed by a positive
+integer.
+
+## The iterMax parameter
+
+The `@MaximumNumberOfIterations` keyword defines the default value for
+the `itermax` parameter. This parameter can be changed at runtime.
+
+## Example
+
+~~~~{.cpp}
+@MaximumNumberOfIterations 200;
+~~~~
+
 # The `@Members` keyword
 
 The keyword `@Members` is not documented yet
-
-# The `@MinimalTimeStep` keyword
-
-The keyword `@MinimalTimeStep` is not documented yet
 
 # The `@MinimalTimeStepScalingFactor` keyword
 
@@ -1319,6 +1523,27 @@ The keyword `@ModellingHypotheses` is not documented yet
 
 The keyword `@ModellingHypothesis` is not documented yet
 
+# The `@NumericallyComputedJacobianBlocks` keyword
+
+The `@NumericallyComputedJacobianBlocks` keyword is used to give a
+list of jacobian blocks that have to be computed numerically.
+
+This keyword can optionnaly be followed by a list of modelling
+hypotheses. The list of jacobian blocks is given as an array.
+
+## Notes
+
+- This keyword is only valid for implicit dsl and an analytical
+  jacobian.
+- This keyword can be used multiple times. The newly declared jacobian
+  blocks are added to the existing ones.
+
+## Example
+
+~~~~ {#NumericallyComputedJacobianBlocks .cpp}
+@NumericallyComputedJacobianBlocks {dfp_ddeel,dfeel_ddeel};
+~~~~
+
 # The `@OrthotropicBehaviour` keyword
 
 The `@OrthotropicBehaviour` declares the behaviour to be orthotropic.
@@ -1378,6 +1603,36 @@ fc.setDefaultValue(1.e-2);
 # The `@Parser` keyword
 
 The `@Paser` keyword is a deprecated synonymous of `@DSL`.
+
+# The `@PerturbationValueForNumericalJacobianComputation` keyword
+
+The `@PerturbationValueForNumericalJacobianComputation` keyword let the
+user defines the pertubation value used to compute the numerical
+jacobian.
+
+If \(Y\) is the vector of integration variables and \(F\) the function
+defining the implicit system, the \(j^{\text{th}}\) column of the
+numerical jacobian \(J^{n}\) is defined by the centered finite difference
+formulae:
+\[
+J^{n}(i,j)=\frac{F(Y_{i}^{+\epsilon})-F(Y_{i}^{-\epsilon})}{2\,\epsilon}
+\]
+where:
+\[
+Y_{i}^{+\epsilon}(j)=
+\left\{
+  \begin{aligned}
+    Y(j)          & \text{ si } &j \neq i \\
+    Y(i)+\epsilon & \text{ si } &j =    i
+  \end{aligned}
+\right.
+\]
+
+## Example
+
+~~~~{.cpp}
+@PerturbationValueForNumericalJacobianComputation 1.e-7;
+~~~~
 
 # The `@PhysicalBounds` keyword
 
@@ -1488,6 +1743,10 @@ principal strains and the strain eigen vectors.
 
 The keyword `@PredictionOperator` is not documented yet
 
+# The `@Predictor` keyword
+
+The keyword `@Predictor` is not documented yet
+
 # The `@Private` keyword
 
 The `@Private` keyword let the user define private methods or members
@@ -1503,6 +1762,59 @@ of in the generated behaviour class.
 } // end of @Private
 ~~~~
 
+# The `@ProcessNewCorrection` keyword
+
+The `@ProcessNewCorrection` keyword introduces a code block called when
+a new correction of the increments of the integration variables is
+available.
+
+This method can be used to:
+
+- Limit the amplitude of the correction (see also the
+  `setMaximumIncrementValuePerIteration` method).
+- Implement a line-search algorithm.
+- Implement the decondensation step when some integration variables were
+  eliminated by static condensation.
+
+This increment is stored in an array called `delta_zeros`. The
+`delta_zeros` variable is not meant to be used directly by the users and
+views to the corrections of the increments of the integration variables
+are automatically declared in this code block.
+
+Let `v` be an integration variable, then the variable `delta_dv` is a
+view to the correction of the increment of this variable. If unicode
+notations are used, let `υ` be the symbolic name of `v`, then `δΔv` is
+an alias for `delta_dv`.
+
+The increments of the integration variables are not updated at this
+stage of the resolution algorithm.
+
+## Example
+
+The following code limits the amplitude of the correction given to the
+increment of the elastic strain:
+
+~~~~{.cpp}
+@ProcessNewCorrection{
+ constexpr const real δΔεᵉˡ_m = 1.e-4;
+ const auto e = abs(δΔεᵉˡ);
+ if(e > δΔεᵉˡ_m){
+   δΔεᵉˡ *= e / δΔεᵉˡ_m;
+ }
+}
+~~~~
+# The `@ProcessNewEstimate` keyword
+
+The `@ProcessNewEstimate` keyword introduces a code block called after
+the update of the increments of the integration variables.
+
+This method may be used to compute local variables dependent on the
+updated value of the integration variables.
+
+For example, `MFront` may define or update this code block to evaluate
+material properties dependent on the value of the state variable (for
+example, a Young modulus depending of the porosity), if any.
+
 # The `@Profiling` keyword
 
 The `@Profiling` keyword is followed by a boolean. If true, several
@@ -1516,6 +1828,19 @@ calling process exits.
 ~~~~{.cpp}
 @Profiling true;
 ~~~~
+
+# The `@RejectCurrentCorrection` keyword
+
+The `@RejectCurrentCorrection` keyword introduces a code block called
+when the current correction is rejected.
+
+This method can be used to reject the decondensation step when some
+integration variables were eliminated by static condensation.
+
+This increment is stored in an array called `delta_zeros`. The
+`delta_zeros` variable is not meant to be used directly by the users and
+views to the corrections of the increments of the integration variables
+are automatically declared in this code block.
 
 # The `@Relocation` keyword
 
@@ -1928,14 +2253,6 @@ material frame.
 };
 ~~~~
 
-# The `@StressErrorNormalisationFactor` keyword
-
-The keyword `@StressErrorNormalisationFactor` is not documented yet
-
-# The `@StressErrorNormalizationFactor` keyword
-
-The keyword `@StressErrorNormalizationFactor` is not documented yet
-
 # The `@Swelling` keyword
 
 The `@Swelling` keyword allow the user to specify that an additional
@@ -2030,6 +2347,24 @@ the possible values for `smt` are the following:
     return false;
   }
 }
+~~~~
+
+# The `@Theta` keyword
+
+The `Theta` keyword is used to define the default value of \(\theta\)
+parameter used by implicit schemes. If the `Theta` keyword is not
+used, implicit domain specific languages provide their own specific
+default value (either \(0.5\) or \(1\)).
+
+The value given to \(\theta\) must be in the range \(]0:1]).
+
+The value of \(\theta\) can be changed at runtime by modifying the
+`theta` parameter (see the `@Parameter` keyword).
+
+## Example
+
+~~~~{.cpp}
+@Theta 0.5;
 ~~~~
 
 # The `@UnitSystem` keyword

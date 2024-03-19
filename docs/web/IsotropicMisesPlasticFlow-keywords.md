@@ -1,4 +1,4 @@
-% `RungeKutta` keywords
+% `IsotropicMisesPlasticFlow` keywords
 
 
 # The `;` keyword
@@ -12,35 +12,6 @@ The keyword `@APosterioriTimeStepScalingFactor` is not documented yet
 # The `@APrioriTimeStepScalingFactor` keyword
 
 The keyword `@APrioriTimeStepScalingFactor` is not documented yet
-
-# The `@Algorithm` keyword
-
-The `@Algorithm` keyword is used to select a numerical algorithm.
-
-The set of available algorithms depends on the domain specific
-language. As the time of writting this notice, the following
-algorithms are available:
-
-- `euler`, `rk2`, `rk4`, `rk42` , `rk54` and `rkCastem` for the
-  `Runge-Kutta` dsl.
-- `NewtonRaphson`, `NewtonRaphson_NumericalJacobian`,
-  `PowellDogLeg_NewtonRaphson`,
-  `PowellDogLeg_NewtonRaphson_NumericalJacobian`, `Broyden`,
-  `PowellDogLeg_Broyden`, `Broyden2`, `LevenbergMarquardt`,
-  `LevenbergMarquardt_NumericalJacobian` for implicit dsls.
-
-## Example (Runge-Kutta dsl)
-
-~~~~{.cpp}
-@Algorithm rk54;
-~~~~
-
-## Example (Implicit dsl)
-
-~~~~{.cpp}
-@Algorithm NewtonRaphson;
-~~~~
-
 
 # The `@Author` keyword
 
@@ -198,132 +169,6 @@ The `@Brick` keyword introduces a behaviour brick.
 The `@Coef` keyword is a deprecated synonymous of
 `@MaterialProperty`.
 
-# The `@ComputeFinalStress` keyword
-
-The `@ComputeFinalStress` keyword introduces a code block meant to
-compute the stress symmetric tensor after the integration.
-
-The code block is called after the update of the state variables. The
-auxiliary state variable and the external state variables are not
-updated yet.
-
-## Example
-
-~~~~{.cpp}
-@ComputeFinalStress{
-  const SlidingSystems& ss = SlidingSystems::getSlidingSystems();
-  // approximation de l'inverse de \(\Delta\,F_p\)
-  inv_dFp = Tensor::Id();
-  for(unsigned short i=0;i!=12;++i){
-    inv_dFp -= dg[i]*ss.mu[i];
-  }
-  real J_inv_dFp = det(inv_dFp);
-  inv_dFp /= CubicRoots::cbrt(J_inv_dFp);
-  // Fe en fin de pas de temps
-  Fe  = Fe_tr*inv_dFp;
-  // Piola-Kirchhoff II
-  S = D*eel;
-  // Cauchy
-  sig = convertSecondPiolaKirchhoffStressToCauchyStress(S,Fe);
-}
-~~~~
-
-# The `@ComputeStiffnessTensor` keyword
-
-The `ComputeStiffnessTensor` keyword is used to define the elastic
-stiffness tensor based on the elastic material properites given as an
-array of entries. After this array, a semi-colon is expected.
-
-This array is used to automatically used to declared the elastic
-material properties of the behaviour (see the
-`@ElasticMaterialProperties` keyword for details).
-
-An entry can be either a string referring to an external `MFront`
-file, a formula or a numerical value.
-
-If an entry refers to an external `MFront` file or the formula, all
-the inputs of this material property must be either:
-
-- a material property
-- a parameter
-- a state variable
-- an external state variable
-
-of the behaviour.
-
-## Isotropic case
-
-In the isotropic case, two entries are expected in the array, in that
-order:
-
-- the Young Modulus
-- the Poisson ratio
-
-## Orthotropic case
-
-In the orthotropic case, 9 entries are expected in the array, in that
-order:
-
-- three Young modulus \((E_{1},E_{2},E_{3})\)
-- three Poisson ratio \((nu_{12},nu_{23},nu_{13})\)
-- three shear modulus \((G_{12},G_{23},G_{13})\)
-
-In the orthoropic case, computation of the stiffness tensor rely on the
-definition of an orthotropic convention. For example, the `Pipe`
-orthotropic convention will lead to automatically exchange the second
-and first axes when computing the stiffness tensor for the plane strain,
-plane stress and generalised plane strain hypotheses. See the
-`OrthotropicBehaviour` keyword for details.
-
-## Tensors computed
-
-In an implicit scheme, this keyword leads to the definition and the
-automatic computation of the tensors `D` and `D_tdt` which
-respectively refer to the stiffness tensor at \(t+\theta\,dt\) and
-\(t+dt\).
-
-In an explicit scheme, this this keyword leads to the definition of
-the stiffness tensor which is automatically updated if this tensor
-evolves during the time step.
-
-## Example
-
-~~~~ {#ComputeStiffnessTensor .cpp}
-@ComputeStiffnessTensor{7.8e+4,2.64233e+5,3.32e+5,
-    0.13,0.24,0.18,
-    4.8e+4,1.16418e+5,7.8e+4};
-~~~~
-
-# The `@ComputeStress` keyword
-
-The `@ComputeStress` keyword introduces a code block meant to compute
-the stress symmetric tensor.
-
-This keyword interprets the code block to generate two methods:
-
-- The first one is used before the integration step, using updated
-  values for the state variables and external state variables.
-- The second one is a candidate for the computation of the stress at
-  the end of the integration. This candidate is used if the user does
-  not provide an appropriate way of computing the stress at the end of
-  the time step using the `@ComputeFinalStress` keyword.
-
-## Note
-
-If the user provide a way of computing the stress at the end of the
-time step through the `@ComputeFinalStress` keyword, we consider that
-the use of `@ComputeStress` is meaningless and advice the user to
-rather compute explicitly the stress as part of the integration step.
-
-## Example
-
-~~~~{.cpp}
-@ComputeStress{
-  sig = (1-d)*(lambda*trace(eel)*Stensor::Id()+2*mu*eel);
-}
-~~~~
-
-
 # The `@ComputeStressFreeExpansion` keyword
 
 The `ComputeStressFreeExansion` keyword introduces a code block which
@@ -436,10 +281,6 @@ into account (see `OrthotropicBehaviour`).
 ~~~~ {#ComputeThermalExpansion3 .cpp}
 @ComputeThermalExpansion {1.e-5,0.2e-5,1.2e-5};
 ~~~~
-
-# The `@ComputedVar` keyword
-
-The keyword `@ComputedVar` is not documented yet
 
 # The `@CrystalStructure` keyword
 
@@ -607,10 +448,6 @@ semi-colon.
 ~~~~
 
 
-# The `@Derivative` keyword
-
-The keyword `@Derivative` is not documented yet
-
 # The `@Description` keyword
 
 The `@Description` describes the material property, behaviour or model
@@ -687,6 +524,66 @@ convergence was reached, after that:
 }
 ~~~~
 
+# The `@ElasticMaterialProperties` keyword
+
+The `@ElasticMaterialProperties` keyword is used give the material
+properties for standard mechanical behaviours.
+
+This keywords is followed by an array which values can be either a
+string referring to a formula, an external `MFront` file or a
+numerical value. After this array, a semi-colon is expected.
+
+If an entry refers to an external `MFront` file or a formula, all the
+inputs of this material property must be either:
+
+- a material property
+- a parameter
+- a state variable
+- an external state variable
+
+of the behaviour.
+
+Elastic material properties are used by behaviours bricks.
+
+## Isotropic case
+
+In the isotropic case, two entries are expected in the array, in that
+order:
+
+- the Young Modulus
+- the Poisson ratio
+
+In domain specific languages providing an implicit scheme
+(`Implicit`,`ImplicitII`, `ImplicitFiniteStrain`), the following local
+variables are automatically defined and computed:
+
+- `young`, `young_tdt` which respectively stand for the Young modulus
+  at \(t+\theta\,dt\) and \(t+\,dt\).
+- `nu`, `nu_tdt` which respectively stand for the Poisson ratio at
+  \(t+\theta\,dt\) and \(t+\,dt\).
+
+## Orthotropic case
+
+In the orthotropic case, 9 entries are expected in the array, in that
+order:
+
+- three Young modulus \((E_{1},E_{2},E_{3})\)
+- three Poisson ratio \((nu_{12},nu_{23},nu_{13})\)
+- three shear modulus \((G_{12},G_{23},G_{13})\)
+
+In the orthoropic case, behaviours bricks will rely on the definition
+of an orthotropic convention to compute the stiffness tensor. For
+example, the `Pipe` orthotropic convention will lead to automatically
+exchange the second and first axises when computing the stiffness
+tensor for the plane strain, plane stress and generalised plane strain
+hypotheses.
+
+## Example
+
+~~~~ {#ElasticMaterialProperties .cpp}
+@ElasticMaterialProperties {"AISI348_YoungModulus.mfront",0.3};
+~~~~
+
 # The `@Epsilon` keyword
 
 The `@Epsilon` keyword let the user define the convergence criterion
@@ -747,6 +644,10 @@ or an entry name through the methods `setGlossaryName` or
 // scalar external state variable
 @ExternalStateVariable strain s;
 ~~~~
+
+# The `@FlowRule` keyword
+
+The keyword `@FlowRule` is not documented yet
 
 # The `@GlidingSystem` keyword
 
@@ -1037,10 +938,6 @@ convergence was reached, after that:
 }
 ~~~~
 
-# The `@IsTangentOperatorSymmetric` keyword
-
-The keyword `@IsTangentOperatorSymmetric` is not documented yet
-
 # The `@IsotropicBehaviour` keyword
 
 The `@IsotropicBehaviour` declares the behaviour to be isotropic. As
@@ -1064,6 +961,11 @@ behaviour.
 ~~~~{.cpp}
 @IsotropicElasticBehaviour;
 ~~~~
+
+# The `@IterMax` keyword
+
+The `@IterMax` keyword is a deprecated synonymous of
+`@MaximumNumberOfIterations`.
 
 # The `@Library` keyword
 
@@ -1251,10 +1153,6 @@ will be very large so that the value returned by the
 # The `@Members` keyword
 
 The keyword `@Members` is not documented yet
-
-# The `@MinimalTimeStep` keyword
-
-The keyword `@MinimalTimeStep` is not documented yet
 
 # The `@MinimalTimeStepScalingFactor` keyword
 
@@ -1928,14 +1826,6 @@ material frame.
 };
 ~~~~
 
-# The `@StressErrorNormalisationFactor` keyword
-
-The keyword `@StressErrorNormalisationFactor` is not documented yet
-
-# The `@StressErrorNormalizationFactor` keyword
-
-The keyword `@StressErrorNormalizationFactor` is not documented yet
-
 # The `@Swelling` keyword
 
 The `@Swelling` keyword allow the user to specify that an additional
@@ -1988,48 +1878,22 @@ s.setGlossaryName("SolidSwelling");
 @Swelling<Volume> s;
 ~~~~
 
-# The `@TangentOperator` keyword
+# The `@Theta` keyword
 
-The `TangentOperator` keyword introduces a code block used to define
-the tangent operator. This code is called once the integration
-variables, the stresses and the auxiliary state variables (see the
-`@UpdateAuxiliaryStateVariables` keyword) have been updated.
+The `Theta` keyword is used to define the default value of \(\theta\)
+parameter used by implicit schemes. If the `Theta` keyword is not
+used, implicit domain specific languages provide their own specific
+default value (either \(0.5\) or \(1\)).
 
-The kind of tangent operator requested is given by variable named
-`smt` (stiffness matrix type). As the time of writting this notice,
-the possible values for `smt` are the following:
+The value given to \(\theta\) must be in the range \(]0:1]).
 
-- `ELASTIC`: the elastic operator is requested (undamaged).
-- `SECANT`: the secant operator is requested. This operator is only
-  meaningful for behaviours describing brittle damage. The expected
-  operator is then the elastic operator modified by the damage
-  variables.
-- `TANGENTOPERATOR`: the tangent operator is requested. This operator
-  is seldom implemented as the consistent tangent operator is more
-  interesting (and easier to compute).
-- `CONSISTENTTANGENTOPERATOR`: the consistent tangent operator is
-  requested. If an implicit scheme is used in small strain, the
-  consistent tangent operator can be computed using the jacobian of
-  the implicit system, see the mfront behaviours documentation for
-  details.
+The value of \(\theta\) can be changed at runtime by modifying the
+`theta` parameter (see the `@Parameter` keyword).
 
 ## Example
 
 ~~~~{.cpp}
-@TangentOperator{
-  using namespace tfel::material::lame;
-  if((smt==ELASTIC)||(smt==SECANTOPERATOR)){
-    computeAlteredElasticStiffness<hypothesis,Type>::exe(Dt,lambda,mu);
-  } else if (smt==CONSISTENTTANGENTOPERATOR){
-    StiffnessTensor De;
-    Stensor4 Je;
-    computeElasticStiffness<N,Type>::exe(De,lambda,mu);
-    getPartialJacobianInvert(Je);
-    Dt = De*Je;
-  } else {
-    return false;
-  }
-}
+@Theta 0.5;
 ~~~~
 
 # The `@UnitSystem` keyword

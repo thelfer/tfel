@@ -1,4 +1,4 @@
-% `RungeKutta` keywords
+% `RungeKuttaGenericBehaviour` keywords
 
 
 # The `;` keyword
@@ -12,6 +12,57 @@ The keyword `@APosterioriTimeStepScalingFactor` is not documented yet
 # The `@APrioriTimeStepScalingFactor` keyword
 
 The keyword `@APrioriTimeStepScalingFactor` is not documented yet
+
+# The `@AdditionalTangentOperatorBlock` keyword
+
+The `@AdditionalTangentOperatorBlock` keyword allows adding a tangent
+operator block to the list of available tangent operator blocks.
+
+The tangent operator blocks can be:
+
+- the derivative of a flux with respect to a gradient.
+- the derivative of a flux with respect to an external state variable.
+- the derivative of a state variable with respect to an external state
+  variable.
+
+## Example
+
+~~~~{.cpp}
+@Gradient TemperatureGradient gT;
+gT.setGlossaryName("TemperatureGradient");
+
+@Flux HeatFlux j;
+j.setGlossaryName("HeatFlux");
+
+@AdditionalTangentOperatorBlock dj_ddT;
+~~~~
+
+# The `@AdditionalTangentOperatorBlocks` keyword
+
+The `@AdditionalTangentOperatorBlocks` keyword allows adding tangent
+operator blocks to the list of available tangent operator blocks.
+
+The tangent operator blocks can be:
+
+- the derivative of a flux with respect to a gradient.
+- the derivative of a flux with respect to an external state variable.
+- the derivative of a state variable with respect to an external state
+  variable.
+
+## Example
+
+~~~~{.cpp}
+@Gradient TemperatureGradient gT;
+gT.setGlossaryName("TemperatureGradient");
+
+@Flux HeatFlux j;
+j.setGlossaryName("HeatFlux");
+
+@StateVariable real H;
+H.setEntryName("Enthalpy");
+
+@AdditionalTangentOperatorBlock {dj_ddT, dH_ddT};
+~~~~
 
 # The `@Algorithm` keyword
 
@@ -198,35 +249,9 @@ The `@Brick` keyword introduces a behaviour brick.
 The `@Coef` keyword is a deprecated synonymous of
 `@MaterialProperty`.
 
-# The `@ComputeFinalStress` keyword
+# The `@ComputeFinalThermodynamicForces` keyword
 
-The `@ComputeFinalStress` keyword introduces a code block meant to
-compute the stress symmetric tensor after the integration.
-
-The code block is called after the update of the state variables. The
-auxiliary state variable and the external state variables are not
-updated yet.
-
-## Example
-
-~~~~{.cpp}
-@ComputeFinalStress{
-  const SlidingSystems& ss = SlidingSystems::getSlidingSystems();
-  // approximation de l'inverse de \(\Delta\,F_p\)
-  inv_dFp = Tensor::Id();
-  for(unsigned short i=0;i!=12;++i){
-    inv_dFp -= dg[i]*ss.mu[i];
-  }
-  real J_inv_dFp = det(inv_dFp);
-  inv_dFp /= CubicRoots::cbrt(J_inv_dFp);
-  // Fe en fin de pas de temps
-  Fe  = Fe_tr*inv_dFp;
-  // Piola-Kirchhoff II
-  S = D*eel;
-  // Cauchy
-  sig = convertSecondPiolaKirchhoffStressToCauchyStress(S,Fe);
-}
-~~~~
+The keyword `@ComputeFinalThermodynamicForces` is not documented yet
 
 # The `@ComputeStiffnessTensor` keyword
 
@@ -293,36 +318,6 @@ evolves during the time step.
     0.13,0.24,0.18,
     4.8e+4,1.16418e+5,7.8e+4};
 ~~~~
-
-# The `@ComputeStress` keyword
-
-The `@ComputeStress` keyword introduces a code block meant to compute
-the stress symmetric tensor.
-
-This keyword interprets the code block to generate two methods:
-
-- The first one is used before the integration step, using updated
-  values for the state variables and external state variables.
-- The second one is a candidate for the computation of the stress at
-  the end of the integration. This candidate is used if the user does
-  not provide an appropriate way of computing the stress at the end of
-  the time step using the `@ComputeFinalStress` keyword.
-
-## Note
-
-If the user provide a way of computing the stress at the end of the
-time step through the `@ComputeFinalStress` keyword, we consider that
-the use of `@ComputeStress` is meaningless and advice the user to
-rather compute explicitly the stress as part of the integration step.
-
-## Example
-
-~~~~{.cpp}
-@ComputeStress{
-  sig = (1-d)*(lambda*trace(eel)*Stensor::Id()+2*mu*eel);
-}
-~~~~
-
 
 # The `@ComputeStressFreeExpansion` keyword
 
@@ -436,6 +431,10 @@ into account (see `OrthotropicBehaviour`).
 ~~~~ {#ComputeThermalExpansion3 .cpp}
 @ComputeThermalExpansion {1.e-5,0.2e-5,1.2e-5};
 ~~~~
+
+# The `@ComputeThermodynamicForces` keyword
+
+The keyword `@ComputeThermodynamicForces` is not documented yet
 
 # The `@ComputedVar` keyword
 
@@ -748,6 +747,10 @@ or an entry name through the methods `setGlossaryName` or
 @ExternalStateVariable strain s;
 ~~~~
 
+# The `@Flux` keyword
+
+The keyword `@Flux` is not documented yet
+
 # The `@GlidingSystem` keyword
 
 An synonymous of `@SlipSystem`.
@@ -757,6 +760,10 @@ See `@SlipSystem` for details.
 
 An synonymous of `@SlipSystems`.
 See `@SlipSystems` for details.
+
+# The `@Gradient` keyword
+
+The keyword `@Gradient` is not documented yet
 
 # The `@Import` keyword
 
@@ -2031,6 +2038,84 @@ the possible values for `smt` are the following:
   }
 }
 ~~~~
+
+# The `@TangentOperatorBlock` keyword
+
+The `@TangentOperatorBlock` keyword allows defining a the tangent
+operator defined by a unique block.
+
+This keyword disables the automatic declaration of the default tangent
+operator block,s namely, the derivatives of all the fluxes with respect
+to all the gradients.
+
+Other tangent operator blocks still can be added using the
+`@AdditionalTangentOperatorBlock` `@AdditionalTangentOperatorBlocks`
+keywords, although we recommend using the `@TangentOperatorBlocks` to
+define all the tangent operator blocks at once (and disable the default
+tangent operator blocks).
+
+The tangent operator blocks can be:
+
+- the derivative of a flux with respect to a gradient.
+- the derivative of a flux with respect to an external state variable.
+- the derivative of a state variable with respect to an external state
+  variable.
+
+## Example
+
+~~~~{.cpp}
+@Gradient StrainStensor e₁;
+e₁.setEntryName("MatrixStrain");
+@Flux StressStensor σ₁;
+σ₁.setEntryName("MatrixStress");
+
+@Gradient StrainStensor e₂;
+e₂.setEntryName("InclusionStrain");
+@Flux StressStensor σ₂;
+σ₂.setEntryName("InclusionStress");
+
+@TangentOperatorBlock ∂σ₁∕∂Δe₁;
+~~~~
+
+# The `@TangentOperatorBlocks` keyword
+
+The `@TangentOperatorBlocks` keyword allows explicitly defining the
+tangent operator blocks.
+
+This keyword disables the automatic declaration of the default tangent
+operator block,s namely, the derivatives of all the fluxes with respect
+to all the gradients
+
+Other tangent operator blocks still can be added using the
+`@AdditionalTangentOperatorBlock` `@AdditionalTangentOperatorBlocks`
+keywords.
+
+The tangent operator blocks can be:
+
+- the derivative of a flux with respect to a gradient.
+- the derivative of a flux with respect to an external state variable.
+- the derivative of a state variable with respect to an external state
+  variable.
+
+## Example
+
+~~~~{.cpp}
+@Gradient StrainStensor e₁;
+e₁.setEntryName("MatrixStrain");
+@Flux StressStensor σ₁;
+σ₁.setEntryName("MatrixStress");
+
+@Gradient StrainStensor e₂;
+e₂.setEntryName("InclusionStrain");
+@Flux StressStensor σ₂;
+σ₂.setEntryName("InclusionStress");
+
+@TangentOperatorBlock {∂σ₁∕∂Δe₁, ∂σ₂∕∂Δe₂};
+~~~~
+
+# The `@ThermodynamicForce` keyword
+
+The keyword `@ThermodynamicForce` is not documented yet
 
 # The `@UnitSystem` keyword
 

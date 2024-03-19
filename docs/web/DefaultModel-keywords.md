@@ -1,4 +1,4 @@
-% `RungeKutta` keywords
+% `DefaultModel` keywords
 
 
 # The `;` keyword
@@ -13,34 +13,56 @@ The keyword `@APosterioriTimeStepScalingFactor` is not documented yet
 
 The keyword `@APrioriTimeStepScalingFactor` is not documented yet
 
-# The `@Algorithm` keyword
+# The `@AdditionalTangentOperatorBlock` keyword
 
-The `@Algorithm` keyword is used to select a numerical algorithm.
+The `@AdditionalTangentOperatorBlock` keyword allows adding a tangent
+operator block to the list of available tangent operator blocks.
 
-The set of available algorithms depends on the domain specific
-language. As the time of writting this notice, the following
-algorithms are available:
+The tangent operator blocks can be:
 
-- `euler`, `rk2`, `rk4`, `rk42` , `rk54` and `rkCastem` for the
-  `Runge-Kutta` dsl.
-- `NewtonRaphson`, `NewtonRaphson_NumericalJacobian`,
-  `PowellDogLeg_NewtonRaphson`,
-  `PowellDogLeg_NewtonRaphson_NumericalJacobian`, `Broyden`,
-  `PowellDogLeg_Broyden`, `Broyden2`, `LevenbergMarquardt`,
-  `LevenbergMarquardt_NumericalJacobian` for implicit dsls.
+- the derivative of a flux with respect to a gradient.
+- the derivative of a flux with respect to an external state variable.
+- the derivative of a state variable with respect to an external state
+  variable.
 
-## Example (Runge-Kutta dsl)
+## Example
 
 ~~~~{.cpp}
-@Algorithm rk54;
+@Gradient TemperatureGradient gT;
+gT.setGlossaryName("TemperatureGradient");
+
+@Flux HeatFlux j;
+j.setGlossaryName("HeatFlux");
+
+@AdditionalTangentOperatorBlock dj_ddT;
 ~~~~
 
-## Example (Implicit dsl)
+# The `@AdditionalTangentOperatorBlocks` keyword
+
+The `@AdditionalTangentOperatorBlocks` keyword allows adding tangent
+operator blocks to the list of available tangent operator blocks.
+
+The tangent operator blocks can be:
+
+- the derivative of a flux with respect to a gradient.
+- the derivative of a flux with respect to an external state variable.
+- the derivative of a state variable with respect to an external state
+  variable.
+
+## Example
 
 ~~~~{.cpp}
-@Algorithm NewtonRaphson;
-~~~~
+@Gradient TemperatureGradient gT;
+gT.setGlossaryName("TemperatureGradient");
 
+@Flux HeatFlux j;
+j.setGlossaryName("HeatFlux");
+
+@StateVariable real H;
+H.setEntryName("Enthalpy");
+
+@AdditionalTangentOperatorBlock {dj_ddT, dH_ddT};
+~~~~
 
 # The `@Author` keyword
 
@@ -198,36 +220,6 @@ The `@Brick` keyword introduces a behaviour brick.
 The `@Coef` keyword is a deprecated synonymous of
 `@MaterialProperty`.
 
-# The `@ComputeFinalStress` keyword
-
-The `@ComputeFinalStress` keyword introduces a code block meant to
-compute the stress symmetric tensor after the integration.
-
-The code block is called after the update of the state variables. The
-auxiliary state variable and the external state variables are not
-updated yet.
-
-## Example
-
-~~~~{.cpp}
-@ComputeFinalStress{
-  const SlidingSystems& ss = SlidingSystems::getSlidingSystems();
-  // approximation de l'inverse de \(\Delta\,F_p\)
-  inv_dFp = Tensor::Id();
-  for(unsigned short i=0;i!=12;++i){
-    inv_dFp -= dg[i]*ss.mu[i];
-  }
-  real J_inv_dFp = det(inv_dFp);
-  inv_dFp /= CubicRoots::cbrt(J_inv_dFp);
-  // Fe en fin de pas de temps
-  Fe  = Fe_tr*inv_dFp;
-  // Piola-Kirchhoff II
-  S = D*eel;
-  // Cauchy
-  sig = convertSecondPiolaKirchhoffStressToCauchyStress(S,Fe);
-}
-~~~~
-
 # The `@ComputeStiffnessTensor` keyword
 
 The `ComputeStiffnessTensor` keyword is used to define the elastic
@@ -293,36 +285,6 @@ evolves during the time step.
     0.13,0.24,0.18,
     4.8e+4,1.16418e+5,7.8e+4};
 ~~~~
-
-# The `@ComputeStress` keyword
-
-The `@ComputeStress` keyword introduces a code block meant to compute
-the stress symmetric tensor.
-
-This keyword interprets the code block to generate two methods:
-
-- The first one is used before the integration step, using updated
-  values for the state variables and external state variables.
-- The second one is a candidate for the computation of the stress at
-  the end of the integration. This candidate is used if the user does
-  not provide an appropriate way of computing the stress at the end of
-  the time step using the `@ComputeFinalStress` keyword.
-
-## Note
-
-If the user provide a way of computing the stress at the end of the
-time step through the `@ComputeFinalStress` keyword, we consider that
-the use of `@ComputeStress` is meaningless and advice the user to
-rather compute explicitly the stress as part of the integration step.
-
-## Example
-
-~~~~{.cpp}
-@ComputeStress{
-  sig = (1-d)*(lambda*trace(eel)*Stensor::Id()+2*mu*eel);
-}
-~~~~
-
 
 # The `@ComputeStressFreeExpansion` keyword
 
@@ -436,10 +398,6 @@ into account (see `OrthotropicBehaviour`).
 ~~~~ {#ComputeThermalExpansion3 .cpp}
 @ComputeThermalExpansion {1.e-5,0.2e-5,1.2e-5};
 ~~~~
-
-# The `@ComputedVar` keyword
-
-The keyword `@ComputedVar` is not documented yet
 
 # The `@CrystalStructure` keyword
 
@@ -607,10 +565,6 @@ semi-colon.
 ~~~~
 
 
-# The `@Derivative` keyword
-
-The keyword `@Derivative` is not documented yet
-
 # The `@Description` keyword
 
 The `@Description` describes the material property, behaviour or model
@@ -686,23 +640,6 @@ convergence was reached, after that:
 	Psi_d += (sig0+sig)|(deto-deel)/2
 }
 ~~~~
-
-# The `@Epsilon` keyword
-
-The `@Epsilon` keyword let the user define the convergence criterion
-value. It is followed by a positive floating-point number.
-
-## The epsilon parameter
-
-The `@Epsilon` keyword defines the default value for the `epsilon`
-parameter. This parameter can be changed at runtime.
-
-## Example
-
-~~~~{.cpp}
-@Epsilon 1.e-12;
-~~~~
-
 
 # The `@ExternalStateVar` keyword
 
@@ -1252,10 +1189,6 @@ will be very large so that the value returned by the
 
 The keyword `@Members` is not documented yet
 
-# The `@MinimalTimeStep` keyword
-
-The keyword `@MinimalTimeStep` is not documented yet
-
 # The `@MinimalTimeStepScalingFactor` keyword
 
 The `@MinimalTimeStepScalingFactor` let the user define the default
@@ -1516,6 +1449,14 @@ calling process exits.
 ~~~~{.cpp}
 @Profiling true;
 ~~~~
+
+# The `@ProvidesSymmetricTangentOperator` keyword
+
+The keyword `@ProvidesSymmetricTangentOperator` is not documented yet
+
+# The `@ProvidesTangentOperator` keyword
+
+The keyword `@ProvidesTangentOperator` is not documented yet
 
 # The `@Relocation` keyword
 
@@ -1928,14 +1869,6 @@ material frame.
 };
 ~~~~
 
-# The `@StressErrorNormalisationFactor` keyword
-
-The keyword `@StressErrorNormalisationFactor` is not documented yet
-
-# The `@StressErrorNormalizationFactor` keyword
-
-The keyword `@StressErrorNormalizationFactor` is not documented yet
-
 # The `@Swelling` keyword
 
 The `@Swelling` keyword allow the user to specify that an additional
@@ -2032,6 +1965,80 @@ the possible values for `smt` are the following:
 }
 ~~~~
 
+# The `@TangentOperatorBlock` keyword
+
+The `@TangentOperatorBlock` keyword allows defining a the tangent
+operator defined by a unique block.
+
+This keyword disables the automatic declaration of the default tangent
+operator block,s namely, the derivatives of all the fluxes with respect
+to all the gradients.
+
+Other tangent operator blocks still can be added using the
+`@AdditionalTangentOperatorBlock` `@AdditionalTangentOperatorBlocks`
+keywords, although we recommend using the `@TangentOperatorBlocks` to
+define all the tangent operator blocks at once (and disable the default
+tangent operator blocks).
+
+The tangent operator blocks can be:
+
+- the derivative of a flux with respect to a gradient.
+- the derivative of a flux with respect to an external state variable.
+- the derivative of a state variable with respect to an external state
+  variable.
+
+## Example
+
+~~~~{.cpp}
+@Gradient StrainStensor e₁;
+e₁.setEntryName("MatrixStrain");
+@Flux StressStensor σ₁;
+σ₁.setEntryName("MatrixStress");
+
+@Gradient StrainStensor e₂;
+e₂.setEntryName("InclusionStrain");
+@Flux StressStensor σ₂;
+σ₂.setEntryName("InclusionStress");
+
+@TangentOperatorBlock ∂σ₁∕∂Δe₁;
+~~~~
+
+# The `@TangentOperatorBlocks` keyword
+
+The `@TangentOperatorBlocks` keyword allows explicitly defining the
+tangent operator blocks.
+
+This keyword disables the automatic declaration of the default tangent
+operator block,s namely, the derivatives of all the fluxes with respect
+to all the gradients
+
+Other tangent operator blocks still can be added using the
+`@AdditionalTangentOperatorBlock` `@AdditionalTangentOperatorBlocks`
+keywords.
+
+The tangent operator blocks can be:
+
+- the derivative of a flux with respect to a gradient.
+- the derivative of a flux with respect to an external state variable.
+- the derivative of a state variable with respect to an external state
+  variable.
+
+## Example
+
+~~~~{.cpp}
+@Gradient StrainStensor e₁;
+e₁.setEntryName("MatrixStrain");
+@Flux StressStensor σ₁;
+σ₁.setEntryName("MatrixStress");
+
+@Gradient StrainStensor e₂;
+e₂.setEntryName("InclusionStrain");
+@Flux StressStensor σ₂;
+σ₂.setEntryName("InclusionStress");
+
+@TangentOperatorBlock {∂σ₁∕∂Δe₁, ∂σ₂∕∂Δe₂};
+~~~~
+
 # The `@UnitSystem` keyword
 
 The `@UnitSystem` keyword declares that the state variables, external
@@ -2097,28 +2104,6 @@ variables are set to their values at the current date.
 
 The `@UpdateAuxiliaryStateVars` keyword is a deprecated synonymous of
 `@UpdateAuxiliaryStateVariables`.
-
-# The `@UsableInPurelyImplicitResolution` keyword
-
-The `@UsableInPurelyImplicitResolution` is a specifier which states
-that the behaviour is usable in a purely implicit resolution, i. e. if
-we can call the behaviour by only providing the values of external
-state variables at the end of the time step and by setting their
-increments to zero.
-
-This behaviour characteristic may or may not have any influence
-depending on the calling code. As the time of writting this notice,
-only the `Licos` fuel performance code take advantage of this
-characteristic. If true, the `Licos` code will simplify the definition
-of the external state variables (called material loadings in this
-context) which may result in some gain in time and memory space.
-
-## Example
-
-~~~~{.cpp}
-@UsableInPurelyImplicitResolution true;
-~~~~
-
 
 # The `@UseQt` keyword
 
