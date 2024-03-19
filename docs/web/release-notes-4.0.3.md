@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 524: [mfront] prevent importing a model not implemented using the Model DSL in behaviors
+
+For more details, see <https://github.com/thelfer/tfel/issues/524>
+
 ## Issue 522: [mfront] Visual Studio 2022 compiler intrinsic type traits error C2139
 
 For more details, see <https://github.com/thelfer/tfel/issues/522>
