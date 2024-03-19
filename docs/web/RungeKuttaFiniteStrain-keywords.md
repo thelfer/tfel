@@ -1,4 +1,4 @@
-% `RungeKutta` keywords
+% `RungeKuttaFiniteStrain` keywords
 
 
 # The `;` keyword
