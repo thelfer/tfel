@@ -200,7 +200,7 @@ This entry describes the emissivity of the surface of a material is its effectiv
 
 
 * units:
-  *SI: kg.m.T^{−3}
+  no units specified
 * type: scalar
 
 # The `EquivalentPlasticStrain` entry
