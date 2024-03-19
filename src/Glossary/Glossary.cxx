@@ -344,14 +344,14 @@ namespace tfel::glossary {
       "Emissivity",
       Glossary::names + 18,
       Glossary::names + 19,
-      "SI:kg.m.T^{−3}",
+      "",
       "scalar",
       "the emissivity of the surface of a material is its effectiveness in "
       "emitting energy as thermal radiation",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
-      "");
+      "SI:1");
 
   const GlossaryEntry Glossary::EquivalentPlasticStrain(
       "EquivalentPlasticStrain",
