@@ -214,7 +214,7 @@ const GlossaryEntry Glossary::ElasticStrain("ElasticStrain","ElasticStrain",
 "" /* no 'notes' defined */);
 
 const GlossaryEntry Glossary::Emissivity("Emissivity","Emissivity",
-"kg.m.T^{−3}","scalar",
+"","scalar",
 "Emissivity of the surface of a material is its effectiveness in emitting energy as thermal radiation",
 "" /* no 'description' defined */,
 "" /* no 'notes' defined */);
