@@ -31,6 +31,11 @@ namespace mfront {
     this->registerNewCallBack(
         "@ComputeFinalCohesizeForce",
         &ImplicitCZMDSL::treatComputeFinalThermodynamicForces);
+    this->registerNewCallBack("@ComputeCohesiveForce",
+                              &ImplicitCZMDSL::treatComputeThermodynamicForces);
+    this->registerNewCallBack(
+        "@ComputeFinalCohesiveForce",
+        &ImplicitCZMDSL::treatComputeFinalThermodynamicForces);
     //     this->mb.addLocalVariable(h, VariableDescription("real&", "u_n", 1u,
     //     0u)); this->mb.addLocalVariable(h, VariableDescription("real&",
     //     "du_n", 1u, 0u)); this->mb.addLocalVariable(h,
