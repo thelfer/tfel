@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 524: [physical-constants] Units of the Stefan constant are wrong
+
+For more details, see <https://github.com/thelfer/tfel/issues/529>
+
 ## Issue 524: [mfront] prevent importing a model not implemented using the Model DSL in behaviors
 
 For more details, see <https://github.com/thelfer/tfel/issues/524>
