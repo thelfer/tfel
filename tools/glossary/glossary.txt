@@ -17,7 +17,7 @@
 };
 
 "Emissivity"{
- unit: "kg.m.T^{−3}";
+ unit: "none";
  type: "scalar";
  short_description: "Emissivity of the surface of a material is its effectiveness in emitting energy as thermal radiation";
 };

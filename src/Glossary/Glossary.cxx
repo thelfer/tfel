@@ -292,7 +292,7 @@ namespace tfel {
     const GlossaryEntry Glossary::Emissivity(
         "Emissivity",
         "Emissivity",
-        "kg.m.T^{−3}",
+        "no unit specified",
         "scalar",
         "Emissivity of the surface of a material is its effectiveness in "
         "emitting energy as thermal radiation",
