@@ -13,4 +13,4 @@ such as the second Broyden method.
     this->jacobian(i,i)=real(1);
   }
 }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

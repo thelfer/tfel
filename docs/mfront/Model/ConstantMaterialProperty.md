@@ -28,4 +28,4 @@ glossary or an entry name through the methods `setGlossaryName` or
 ~~~~{.cpp}
 @ConstantMaterialProperty E;
 E.setEntryName("EnergyReleasedByFission");
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

@@ -23,5 +23,5 @@ rather compute explicitly the stress as part of the integration step.
 @ComputeStress{
   sig = (1-d)*(lambda*trace(eel)*Stensor::Id()+2*mu*eel);
 }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 

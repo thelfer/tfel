@@ -29,4 +29,4 @@ size after the integration variable name.
 @IntegrationVariables strain p;
 // symmetric tensors integration variable
 @IntegrationVariables StrainStensor evp,evp2;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

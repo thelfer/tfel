@@ -20,4 +20,4 @@ Files to be imported are searched, in that order:
 
 ~~~~{.cpp}
 @Import "SlidingSystemsCC.mfront";
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

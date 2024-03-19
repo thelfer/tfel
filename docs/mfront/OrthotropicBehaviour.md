@@ -26,8 +26,8 @@ currently supported:
 
 ~~~~{.cpp}
 @OrthotropicBehaviour;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 ~~~~{.cpp}
 @OrthotropicBehaviour<Pipe>;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

@@ -9,6 +9,6 @@ of an orthotropic behaviour).
 
 ~~~~{.cpp}
 @RequireStiffnessTensor true;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 

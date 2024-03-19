@@ -25,4 +25,4 @@ of information including:
   Aurore Michaux, Lionel Gosmain, Jean-Louis Seran
   DMN/SRMA/LA2M/NT/2008-2967/A
 }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

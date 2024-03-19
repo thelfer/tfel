@@ -24,4 +24,4 @@ updated yet.
   // Cauchy
   sig = convertSecondPiolaKirchhoffStressToCauchyStress(S,Fe);
 }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
