@@ -33,7 +33,11 @@ namespace tfel::math {
    * \brief an expression representing the product of a (N, K) tiny matrix
    * by a (K, M) tiny matrix.
    */
-  template <unsigned short N, unsigned short M, unsigned short K, typename A, typename B>
+  template <unsigned short N,
+            unsigned short M,
+            unsigned short K,
+            typename A,
+            typename B>
   struct TMatrixTMatrixExpr : public ExprBase {
     static_assert(implementsMatrixConcept<A>());
     static_assert(implementsMatrixConcept<B>());
@@ -56,7 +60,6 @@ namespace tfel::math {
     }
 
    protected:
-
     TMatrixTMatrixExpr() = delete;
 
     /*!
@@ -68,7 +71,7 @@ namespace tfel::math {
       using NumType = numeric_type<MType>;
       //! default constructor
       TFEL_HOST_DEVICE constexpr RowConstIterator(const MType& m_,
-                                        const unsigned short i_)
+                                                  const unsigned short i_)
           : m(m_), i(i_) {}
       //! go to the next column
       TFEL_HOST_DEVICE constexpr RowConstIterator& operator++() {
@@ -89,13 +92,16 @@ namespace tfel::math {
     struct ColumnConstIterator {
       using MType = std::decay_t<B>;
       using NumType = numeric_type<MType>;
-      TFEL_HOST_DEVICE constexpr ColumnConstIterator(const MType& m_, const size_type j_)
+      TFEL_HOST_DEVICE constexpr ColumnConstIterator(const MType& m_,
+                                                     const size_type j_)
           : m(m_), i(0), j(j_) {}
       TFEL_HOST_DEVICE constexpr ColumnConstIterator& operator++() noexcept {
         ++i;
         return *this;
       }  // end of operator++
-      TFEL_HOST_DEVICE constexpr auto operator*() const noexcept { return m(i, j); }
+      TFEL_HOST_DEVICE constexpr auto operator*() const noexcept {
+        return m(i, j);
+      }
 
      private:
       const MType& m;
@@ -103,7 +109,8 @@ namespace tfel::math {
       const size_type j;
     };  // end of struct ColumnConstIterator
 
-    TFEL_HOST_DEVICE constexpr TMatrixTMatrixExpr(const A& l, const B& r) noexcept
+    TFEL_HOST_DEVICE constexpr TMatrixTMatrixExpr(const A& l,
+                                                  const B& r) noexcept
         : a(l), b(r) {}
 
     TFEL_HOST_DEVICE constexpr auto operator()(const IndexType i,

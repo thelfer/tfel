@@ -46,8 +46,8 @@ namespace tfel::math {
   };
 
   /*!
-   * \brief partial specialisation of ComputeBinaryOperationHandler for matrix-vector
-   * multiplication
+   * \brief partial specialisation of ComputeBinaryOperationHandler for
+   * matrix-vector multiplication
    */
   template <typename A, typename B>
   struct ComputeBinaryOperationHandler<MatrixTag, VectorTag, A, B, OpMult> {
@@ -64,8 +64,8 @@ namespace tfel::math {
   };
 
   /*!
-   * \brief partial specialisation of ComputeBinaryOperationHandler for vector-matrix
-   * multiplication
+   * \brief partial specialisation of ComputeBinaryOperationHandler for
+   * vector-matrix multiplication
    */
   template <typename A, typename B>
   struct ComputeBinaryOperationHandler<VectorTag, MatrixTag, A, B, OpMult> {
@@ -82,8 +82,8 @@ namespace tfel::math {
   };
 
   /*!
-   * \brief partial specialisation of ComputeBinaryOperationHandler for matrix-matrix
-   * multiplication
+   * \brief partial specialisation of ComputeBinaryOperationHandler for
+   * matrix-matrix multiplication
    */
   template <typename A, typename B>
   struct ComputeBinaryOperationHandler<MatrixTag, MatrixTag, A, B, OpMult> {

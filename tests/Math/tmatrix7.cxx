@@ -10,7 +10,7 @@
  * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
- 
+
 #include <cmath>
 #include <fstream>
 #include <cstdlib>
@@ -49,5 +49,5 @@ int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
   m.addXMLTestOutput("TMatrixSubMatrixView.xml");
-  return m.execute().success() ? EXIT_SUCCESS: EXIT_FAILURE;
+  return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }  // end of main

@@ -139,7 +139,11 @@ namespace tfel::math {
                                     tvector<M, ResBase_>>;
   };  // end of ResultType.
 
-  template <unsigned short N, unsigned short M, unsigned short K, typename T, typename T2>
+  template <unsigned short N,
+            unsigned short M,
+            unsigned short K,
+            typename T,
+            typename T2>
   class ResultType<tmatrix<N, K, T>, tmatrix<K, M, T2>, OpMult> {
     typedef result_type<T, T2, OpMult> ResBase_;
 
