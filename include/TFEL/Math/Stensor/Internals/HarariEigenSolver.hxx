@@ -2,8 +2,8 @@
  * \file   HarariEigenSolver.hxx
  * \brief
  * \author Maxence Wangermez/Thomas Helfer
- * \date   13/02/2023
- * \copyright Copyright (C) 2006-2023 CEA/DEN, EDF R&D. All rights
+ * \date   13/02/2024
+ * \copyright Copyright (C) 2006-2024 CEA/DEN, EDF R&D. All rights
  * reserved.
  *
  * This project is publicly released under either the GNU GPL Licence

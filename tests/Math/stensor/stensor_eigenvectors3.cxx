@@ -2,7 +2,7 @@
  * \file   tests/Math/stensor_eigenvectors3.cxx
  * \brief
  * \author Maxence Wangermez
- * \date   13/02/2023
+ * \date   13/02/2024
  * \copyright Copyright (C) 2006-2024 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
