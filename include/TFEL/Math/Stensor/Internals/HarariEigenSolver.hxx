@@ -41,24 +41,6 @@ namespace tfel::math::internals {
 
   template <typename real>
   struct HarariEigensolver3x3 {
-    // /*!
-    //  * \brief calculates the eigenvalues of a real symmetric 3x3 matrix
-    //  *    [ A  D  E ]
-    //  *    [ D  B  F ]
-    //  *    [ E  F  C ]
-    //  * \param[out] vp: eigen values
-    //  * \param[in]  A:  component of the matrix
-    //  * \param[in]  B:  component of the matrix
-    //  * \param[in]  C:  component of the matrix
-    //  */
-    // static void computeEigenValues(tvector<3u, real>&,
-    //                                tmatrix<3u, 3u, real>&,
-    //                                const real,
-    //                                const real,
-    //                                const real,
-    //                                const real,
-    //                                const real,
-    //                                const real);
     /*!
      * \brief calculates the eigensystem of a real symmetric 3x3 matrix
      *    [ A  D  E ]
