@@ -139,7 +139,7 @@ namespace tfel::math::internals {
                                                        const real F) {
     constexpr auto one = real{1};
     constexpr const auto one_third = one / 3;
-
+constexpr const auto cste = Cste<real>::sqrt2;
     // compute the deviatoric part of M : dev(M)
     const auto trM_3 = one_third * (A + B + C);
     real s[6u] = {A, B, C, D*Cste<real>::sqrt2, E*Cste<real>::sqrt2, F*Cste<real>::sqrt2};
