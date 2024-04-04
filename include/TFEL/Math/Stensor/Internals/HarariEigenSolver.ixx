@@ -24,12 +24,6 @@
 
 namespace tfel::math::internals {
 
-  template <typename t>
-  int sign(t val) {
-    return (t(0) < val) - (val < t(0));
-  }
-
-
   template <typename real>
   void HarariEigensolver3x3<real>::computeEigenValues(tvector<3u, real>& vp,
                                                       const real A,
@@ -38,7 +32,6 @@ namespace tfel::math::internals {
                                                       const real D,
                                                       const real E,
                                                       const real F) {
-    // std::cout.precision(14);
     constexpr auto one = real{1};
     constexpr const auto one_half = one / 2;
     constexpr const auto one_third = one / 3;
@@ -139,10 +132,10 @@ namespace tfel::math::internals {
                                                        const real F) {
     constexpr auto one = real{1};
     constexpr const auto one_third = one / 3;
-constexpr const auto cste = Cste<real>::sqrt2;
+    constexpr const auto cste = Cste<real>::sqrt2;
     // compute the deviatoric part of M : dev(M)
     const auto trM_3 = one_third * (A + B + C);
-    const real s[6u] = {A, B, C, D*cste, E*cste, F*cste};
+    const real s[6u] = {A, B, C, D * cste, E * cste, F * cste};
     // computing eigen values
     HarariEigensolver3x3::computeEigenValues(vp, A, B, C, D, E, F);
     StensorComputeEigenVectors<3u>::computeEigenVectors(s, vp, m);

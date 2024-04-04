@@ -23,20 +23,10 @@
 #define LIB_TFEL_MATH_HARARIEIGENSOLVER_HXX
 
 #include <cmath>
-#include <vector>
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 
 namespace tfel::math::internals {
-
-  template <typename t>
-  int sign(t val);
-
-  template <typename T, typename A>
-  int argmax(std::vector<T, A> const&);
-
-  template <typename T, typename A>
-  int argmin(std::vector<T, A> const&);
 
   template <typename real>
   struct HarariEigensolver3x3 {
