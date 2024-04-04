@@ -37,7 +37,10 @@ const auto m3 = m1 * m2;
 
 ### New eigen solvers{#sec:eigensolvers}
 
-New eigen solver based on Harari analytical solution have been introduced for symmetric tensors. The computation of eigen values is done with the Harai algorithm [@harari_computation_2023] and the computation of eigen vectors is done with the default eigen solver for symmetric tensors of `TFEL`. Such computations are more efficient but more accurate than the default `TFEL` algorithm.
+New eigen solver based on Harari analytical solution have been introduced for symmetric tensors. The
+computation of eigen values is done with the Harai algorithm [@harari_computation_2023] and the
+computation of eigen vectors is done with the default eigen solver for symmetric tensors of `TFEL`. Such
+computations are more efficient and more accurate than the default `TFEL` algorithm.
 
 Those algorithms are available in 3D. For 2D symmetric tensors, we
 fall back to some default algorithm as described below.
