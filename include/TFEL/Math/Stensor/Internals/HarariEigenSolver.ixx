@@ -142,7 +142,7 @@ namespace tfel::math::internals {
 constexpr const auto cste = Cste<real>::sqrt2;
     // compute the deviatoric part of M : dev(M)
     const auto trM_3 = one_third * (A + B + C);
-    real s[6u] = {A, B, C, D*Cste<real>::sqrt2, E*Cste<real>::sqrt2, F*Cste<real>::sqrt2};
+    const real s[6u] = {A, B, C, D*cste, E*cste, F*cste};
     // computing eigen values
     HarariEigensolver3x3::computeEigenValues(vp, A, B, C, D, E, F);
     StensorComputeEigenVectors<3u>::computeEigenVectors(s, vp, m);
