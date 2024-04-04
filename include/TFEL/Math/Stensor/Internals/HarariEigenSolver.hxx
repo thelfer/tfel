@@ -22,7 +22,6 @@
 #ifndef LIB_TFEL_MATH_HARARIEIGENSOLVER_HXX
 #define LIB_TFEL_MATH_HARARIEIGENSOLVER_HXX
 
-#include <iostream>
 #include <cmath>
 #include <vector>
 #include "TFEL/Math/tvector.hxx"
