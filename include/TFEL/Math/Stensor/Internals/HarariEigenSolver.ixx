@@ -105,7 +105,9 @@ namespace tfel::math::internals {
     }
     const real d = std::sqrt((TmsS) / (TpsS));
 
-    const auto sj = sign(1 - d);
+    const auto sj = [](const real value) -> int {
+      return (real(0) < value) - (value < real(0));
+    }(1 - d);
 
     if (sj * (1 - d) < std::numeric_limits<real>::min()) {
       vp[0] = std::sqrt(J2) + I1 / 3;
