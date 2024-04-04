@@ -29,11 +29,6 @@ namespace tfel::math::internals {
     return (t(0) < val) - (val < t(0));
   }
 
-  template <typename Container>
-  int argmax(Container& vec) {
-    return static_cast<int>(
-        std::distance(vec.begin(), std::max_element(vec.begin(), vec.end())));
-  }
 
   template <typename real>
   void HarariEigensolver3x3<real>::computeEigenValues(tvector<3u, real>& vp,
