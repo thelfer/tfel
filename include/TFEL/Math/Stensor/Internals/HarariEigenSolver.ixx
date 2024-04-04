@@ -1,5 +1,5 @@
 /*!
- * \file   HarariEigenSolver.ixx
+ * \file   TFEL/Math/Stensor/Internals/HarariEigenSolver.ixx
  * \brief
  * \author Maxence Wangermez/Thomas Helfer
  * \date   13/02/2024
