@@ -572,18 +572,20 @@ namespace mfront {
      * \param[in,out] tmpnames: temporary names
      * \param[in]  h:   hypothesis
      * \param[in]  md:  model description
-     * \param[in]  vo:  name of the variable containing the result
-     * \param[in]  vs:  name of the variable containing the value of the
-     *                  variable modified by the model at the beginning
-     *                  of the time step
-     * \param[in]  bn:  base name for temporary variable
+     * \param[in]  outputVariables: names of the variables containing the
+     * results \param[in]  inputVariables: names of the variables containing the
+     * values of the variables modified by the model at the beginning of the
+     * time step \param[in]  bn:  base name for temporary variable
+     *
+     * \pre the size of the input variables must be equal to the size of the
+     * output variables
      */
     virtual void writeModelCall(std::ostream&,
                                 std::vector<std::string>&,
                                 const Hypothesis,
                                 const ModelDescription&,
-                                const std::string&,
-                                const std::string&,
+                                const std::vector<std::string>&,
+                                const std::vector<std::string>&,
                                 const std::string&) const;
     //! \brief write the header files declaring the slip systems
     virtual void generateSlipSystemsFiles();
