@@ -883,7 +883,7 @@ namespace mfront {
       getLogStream() << "BehaviourDSLCommon::getModelDescription: "
                      << "treating file '" << f << "'\n";
     }
-    // 
+    //
     const auto path = SearchPathsHandler::search(f);
     // a simple test to fix Issue #524
     const auto adsl = MFrontBase::getDSL(path);

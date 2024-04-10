@@ -191,8 +191,7 @@ namespace mfront {
          << "mfront_report(\"" << v.name << " is over its upper bound (\" + "
          << to_string << " + \">" << b.upperBound << ").\\n\");\n"
          << "mfront_output_status->status = -1;\n"
-         << "mfront_output_status->bounds_status = -" << i
-         << ";\n"
+         << "mfront_output_status->bounds_status = -" << i << ";\n"
          << "return std::nan(\"\");\n"
          << "} else if (mfront_out_of_bounds_policy==" << iucname
          << "_WARNING_POLICY){\n"

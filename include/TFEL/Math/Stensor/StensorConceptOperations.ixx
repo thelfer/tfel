@@ -46,7 +46,7 @@ namespace tfel::math {
   }
 
   template <typename StensorType1, typename StensorType2>
-  TFEL_HOST_DEVICE  std::enable_if_t<
+  TFEL_HOST_DEVICE std::enable_if_t<
       implementsStensorConcept<StensorType1>() &&
           implementsStensorConcept<StensorType2>() &&
           getSpaceDimension<StensorType1>() == 3u &&

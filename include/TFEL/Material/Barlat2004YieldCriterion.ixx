@@ -240,7 +240,7 @@ namespace tfel::material {
             typename BarlatExponentType,
             tfel::math::stensor_common::EigenSolver es>
   TFEL_HOST_DEVICE std::tuple<BarlatStressType<StressStensor>,
-             BarlatStressNormalType<StressStensor>>
+                              BarlatStressNormalType<StressStensor>>
   computeBarlatStressNormal(
       const StressStensor& s,
       const BarlatLinearTransformationType<StressStensor>& l1,
@@ -334,12 +334,13 @@ namespace tfel::material {
   }  // end of computeBarlatStressNormal
 
   template <typename StressStensor, typename BarlatExponentType>
-  TFEL_HOST_DEVICE BarlatStressAndDerivativesWithRespectToEigenvalues<StressStensor>
-  computeBarlatStressSecondDerivative(
-      const tfel::math::tvector<3u, BarlatStressType<StressStensor>>& vp1,
-      const tfel::math::tvector<3u, BarlatStressType<StressStensor>>& vp2,
-      const BarlatStressType<StressStensor> seq,
-      const BarlatExponentType a) {
+  TFEL_HOST_DEVICE
+      BarlatStressAndDerivativesWithRespectToEigenvalues<StressStensor>
+      computeBarlatStressSecondDerivative(
+          const tfel::math::tvector<3u, BarlatStressType<StressStensor>>& vp1,
+          const tfel::math::tvector<3u, BarlatStressType<StressStensor>>& vp2,
+          const BarlatStressType<StressStensor> seq,
+          const BarlatExponentType a) {
     using real = BarlatBaseType<StressStensor>;
     BarlatStressAndDerivativesWithRespectToEigenvalues<StressStensor> d;
     // Barlat equivalent stress
@@ -450,8 +451,8 @@ namespace tfel::material {
             typename BarlatExponentType,
             tfel::math::stensor_common::EigenSolver es>
   TFEL_HOST_DEVICE std::tuple<BarlatStressType<StressStensor>,
-             BarlatStressNormalType<StressStensor>,
-             BarlatStressSecondDerivativeType<StressStensor>>
+                              BarlatStressNormalType<StressStensor>,
+                              BarlatStressSecondDerivativeType<StressStensor>>
   computeBarlatStressSecondDerivative(
       const StressStensor& s,
       const BarlatLinearTransformationType<StressStensor>& l1,
