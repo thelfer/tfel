@@ -98,7 +98,7 @@ namespace tfel::math::internals {
     vp[0] = 2 * cd + tr;
 
     // other eigenvalues
-    const auto sd = std::sqrt(J2) * std::sin(alpha);
+    const auto sd = sqrt3 * s * std::sin(alpha);
     vp[1] = -cd + sd + tr;
     vp[2] = -cd - sd + tr;
   }
