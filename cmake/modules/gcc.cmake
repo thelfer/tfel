@@ -86,6 +86,8 @@ SET(CMAKE_C_FLAGS_PROFILING "-pg" CACHE STRING
 MARK_AS_ADVANCED(CMAKE_CXX_FLAGS_PROFILING
   CMAKE_C_FLAGS_PROFILING)
 
+# tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fanalyzer")
+
 if(enable-sanitize-options)
   tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fcheck-pointer-bounds")
   tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=bounds-strict")
