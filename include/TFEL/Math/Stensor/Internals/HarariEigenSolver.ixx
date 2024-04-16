@@ -32,7 +32,8 @@ namespace tfel::math::internals {
                                                       const real D,
                                                       const real E,
                                                       const real F) {
-    constexpr auto one = real{1};
+    constexpr auto sqrt3 = Cste<real>::sqrt3; 
+    constexpr auto one   = real{1};
     constexpr const auto one_third = one / 3;
     constexpr auto eye = tmatrix<3u, 3u, real>::Id();
 
