@@ -130,9 +130,31 @@ void test2() {
   vp2 = vp(1);
   vp3 = vp(2);
 
+  vec1[0] = m(0, 0);
+  vec1[1] = m(1, 0);
+  vec1[2] = m(2, 0);
+
+  vec2[0] = m(0, 1);
+  vec2[1] = m(1, 1);
+  vec2[2] = m(2, 1);
+
+  vec3[0] = m(0, 2);
+  vec3[1] = m(1, 2);
+  vec3[2] = m(2, 2);
+
   assert(abs(vp1 - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
   assert(abs(vp2 - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
   assert(abs(vp3 - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
+
+  assert(abs(vec1[0] - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec1[1] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec1[2] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec2[0] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec2[1] - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec2[2] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec3[0] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec3[1] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec3[2] - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
 }
 
 template <typename T>
@@ -181,6 +203,17 @@ void test3() {
   assert(abs(vp3 - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
   assert(abs(vp2 - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
   assert(abs(vp1 - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+
+  assert(abs(vec1[0] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec1[1] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec1[2] - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec2[0] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec2[1] - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec2[2] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec3[0] + static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec3[1] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec3[2] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  
 }
 
 /* coverity [UNCAUGHT_EXCEPT]*/

@@ -33,28 +33,17 @@ namespace tfel::math::internals {
                                                       const real E,
                                                       const real F) {
     constexpr auto one = real{1};
-    constexpr const auto one_half = one / 2;
     constexpr const auto one_third = one / 3;
-
-    tmatrix<3u, 3u, real> eye;
-    eye(0, 0) = one;
-    eye(1, 1) = one;
-    eye(2, 2) = one;
+    constexpr auto eye = tmatrix<3u, 3u, real>::Id();
 
     // compute the trace of A
-    const real I1 = (A + B + C);
+    const auto I1 = (A + B + C);
+    const auto tr = one_third * I1;
 
     // compute deviatoric part of M
-    tmatrix<3u, 3u, real> S;
-    S(0, 0) = (A - I1 / 3);
-    S(1, 1) = (B - I1 / 3);
-    S(2, 2) = (C - I1 / 3);
-    S(0, 1) = D;
-    S(0, 2) = E;
-    S(1, 2) = F;
-    S(1, 0) = D;
-    S(2, 0) = E;
-    S(2, 1) = F;
+    const auto S = tmatrix<3u, 3u, real>{A - tr, D,      E,  //
+                                         D,      B - tr, F,  //
+                                         E,      F,      C - tr};
 
     // compute second invariant : J2
     const real J2 =
@@ -65,23 +54,15 @@ namespace tfel::math::internals {
     const real s = std::sqrt(J2 / 3);
 
     if (s < std::numeric_limits<real>::min()) {
-      vp[0] = 0 + I1 / 3;
-      vp[1] = 0 + I1 / 3;
-      vp[2] = 0 + I1 / 3;
+      vp[0] = 0 + tr;
+      vp[1] = 0 + tr;
+      vp[2] = 0 + tr;
       return;
     }
 
     // compute T
-    tmatrix<3u, 3u, real> S2;
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) {
-        S2(i, j) = 0;
-        for (int k = 0; k < 3; k++) {
-          S2(i, j) += S(i, k) * S(k, j);
-        }
-      }
-    }
-    const tmatrix<3u, 3u, real> T = S2 - (real{2} * J2 / 3) * eye;
+    const auto S2 = eval(S * S);
+    const tmatrix<3u, 3u, real> T = S2 - (one_third * real{2} * J2) * eye;
 
     // compute d
     real TmsS = 0;
@@ -96,29 +77,31 @@ namespace tfel::math::internals {
         TpsS += (T(i, j) + s * S(i, j)) * (T(i, j) + s * S(i, j));
       }
     }
-    const real d = std::sqrt((TmsS) / (TpsS));
+    const auto d = std::sqrt((TmsS) / (TpsS));
 
     const auto sj = [](const real value) -> int {
       return (real(0) < value) - (value < real(0));
     }(1 - d);
 
     if (sj * (1 - d) < std::numeric_limits<real>::min()) {
-      vp[0] = std::sqrt(J2) + I1 / 3;
-      vp[1] = 0 + I1 / 3;
-      vp[2] = -vp[0] + I1 / 3;
+      vp[0] = std::sqrt(J2) + tr;
+      vp[1] = 0 + tr;
+      vp[2] = -vp[0] + tr;
       return;
     }
 
-    const auto alpha = real{2} / 3 * std::atan(std::pow(d, sj));
+    // compute alpha
+    const auto dsj = sj < 0 ? real{1} / d : d;
+    const auto alpha = 2 * one_third * std::atan(dsj);
 
     // distinct eigenvalue
     const auto cd = sj * s * std::cos(alpha);
-    vp[0] = 2 * cd + I1 / 3;
+    vp[0] = 2 * cd + tr;
 
     // other eigenvalues
     const auto sd = std::sqrt(J2) * std::sin(alpha);
-    vp[1] = -cd + sd + I1 / 3;
-    vp[2] = -cd - sd + I1 / 3;
+    vp[1] = -cd + sd + tr;
+    vp[2] = -cd - sd + tr;
   }
 
   template <typename real>
@@ -130,11 +113,7 @@ namespace tfel::math::internals {
                                                        const real D,
                                                        const real E,
                                                        const real F) {
-    constexpr auto one = real{1};
-    constexpr const auto one_third = one / 3;
     constexpr const auto cste = Cste<real>::sqrt2;
-    // compute the deviatoric part of M : dev(M)
-    const auto trM_3 = one_third * (A + B + C);
     const real s[6u] = {A, B, C, D * cste, E * cste, F * cste};
     // computing eigen values
     HarariEigensolver3x3::computeEigenValues(vp, A, B, C, D, E, F);

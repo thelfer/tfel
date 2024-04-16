@@ -35,10 +35,10 @@ const auto m3 = m1 * m2;
 
 - New eigen solvers have been introduced.
 
-### New eigen solvers{#sec:eigensolvers}
+### New eigen solvers{#sec:tfel-5.0.0:tfel-math:eigensolvers}
 
 New eigen solver based on Harari analytical solution have been introduced for symmetric tensors. The
-computation of eigen values is done with the Harai algorithm [@harari_computation_2023] and the
+computation of eigen values is done with Harari's algorithm [@harari_computation_2023] and the
 computation of eigen vectors is done with the default eigen solver for symmetric tensors of `TFEL`. Such
 computations are more efficient and more accurate than the default `TFEL` algorithm.
 
@@ -74,38 +74,38 @@ std::tie(vp,m)=s.computeEigenVectors<stensor::HARARIEIGENSOLVER>();
 
 |          Algorithm          | Failure ratio | \(\Delta_{\infty}\) | Times (ns) | Time ratio |
 | :-------------------------: | :-----------: | :-----------------: | :--------: | :--------: |
-|      `TFELEIGENSOLVER`      |   0.000642    |      3.29e-05       | 250174564  |     1      |
-| `GTESYMMETRICQREIGENSOLVER` |       0       |      1.10e-06       | 359854550  |    1.44    |
-|   `FSESJACOBIEIGENSOLVER`   |       0       |      5.62e-07       | 473263841  |    1.89    |
-|     `FSESQLEIGENSOLVER`     |   0.000397    |      1.69e-06       | 259080052  |    1.04    |
-|   `FSESCUPPENEIGENSOLVER`   |   0.019469    |      3.49e-06       | 274547371  |    1.10    |
-|   `FSESHYBRIDEIGENSOLVER`   |   0.076451    |      5.56e-03       | 126689850  |    0.51    |
-| `FSESANALYTICALEIGENSOLVER` |   0.108877    |      1.58e-01       | 127236908  |    0.51    |
-|     `HARARIEIGENSOLVER`     |   0.000018    |      4.04e-06       | 167626780  |    0.67    |
+|      `TFELEIGENSOLVER`      |   0.000557    |      2.37e-05       | 129452335  |     1      |
+| `GTESYMMETRICQREIGENSOLVER` |       0       |      9.57e-07       | 236544828  |    1.83    |
+|   `FSESJACOBIEIGENSOLVER`   |       0       |      4.61e-07       | 241131631  |    1.86    |
+|     `FSESQLEIGENSOLVER`     |   0.000173    |      1.67e-06       | 155435496  |    1.20    |
+|   `FSESCUPPENEIGENSOLVER`   |   0.018223    |      2.87e-06       | 151727321  |    1.17    |
+|   `FSESHYBRIDEIGENSOLVER`   |   0.068411    |      3.90e-03       |  80039266  |    0.62    |
+| `FSESANALYTICALEIGENSOLVER` |   0.102626    |      6.21e-02       |  76865961  |    0.59    |
+|     `HARARIEIGENSOLVER`     |   0.000018    |      2.46e-06       | 110028802  |    0.85    |
 : Test on \(10^{6}\) random symmetric tensors in single precision (`float`). {#tbl:comp_eigensolvers_float}
 
 |          Algorithm          | Failure ratio | \(\Delta_{\infty}\) | Times (ns) | Time ratio |
 | :-------------------------: | :-----------: | :-----------------: | :--------: | :--------: |
-|      `TFELEIGENSOLVER`      |   0.000632    |      7.75e-14       | 252663338  |     1      |
-| `GTESYMMETRICQREIGENSOLVER` |       0       |      2.06e-15       | 525845499  |    2.08    |
-|   `FSESJACOBIEIGENSOLVER`   |       0       |      1.05e-15       | 489507133  |    1.94    |
-|     `FSESQLEIGENSOLVER`     |   0.000422    |      3.30e-15       | 367599140  |    1.45    |
-|   `FSESCUPPENEIGENSOLVER`   |   0.020174    |      5.79e-15       | 374190684  |    1.48    |
-|   `FSESHYBRIDEIGENSOLVER`   |   0.090065    |      3.53e-10       | 154911762  |    0.61    |
-| `FSESANALYTICALEIGENSOLVER` |   0.110399    |      1.09e-09       | 157613994  |    0.62    |
-|     `HARARIEIGENSOLVER`     |   0.000022    |      8.90e-15       | 175109610  |    0.69    |
+|      `TFELEIGENSOLVER`      |    0.00058    |      6.94e-14       | 137752068  |     1      |
+| `GTESYMMETRICQREIGENSOLVER` |     1e-06     |      2.30e-15       | 315593552  |    2.29    |
+|   `FSESJACOBIEIGENSOLVER`   |       0       |      9.08e-16       | 256285090  |    1.86    |
+|     `FSESQLEIGENSOLVER`     |   0.000202    |      3.04e-15       | 214537012  |    1.56    |
+|   `FSESCUPPENEIGENSOLVER`   |   0.019251    |      5.58e-15       | 219113965  |    1.59    |
+|   `FSESHYBRIDEIGENSOLVER`   |   0.081586    |      1.29e-10       |  81861668  |    0.59    |
+| `FSESANALYTICALEIGENSOLVER` |   0.103935    |      4.11e-10       |  79701256  |    0.58    |
+|     `HARARIEIGENSOLVER`     |   0.000037    |      2.27e-14       | 116977683  |    0.85    |
 : Test on \(10^{6}\) random symmetric tensors in double precision (`double`). {#tbl:comp_eigensolvers_double}
 
 |          Algorithm          | Failure ratio | \(\Delta_{\infty}\) | Times (ns) | Time ratio |
 | :-------------------------: | :-----------: | :-----------------: | :--------: | :--------: |
-|      `TFELEIGENSOLVER`      |   0.000575    |      2.06e-17       | 428333721  |     1      |
-| `GTESYMMETRICQREIGENSOLVER` |       0       |      1.00e-18       | 814990447  |    1.90    |
-|   `FSESJACOBIEIGENSOLVER`   |       0       |      5.11e-19       | 748476926  |    1.75    |
-|     `FSESQLEIGENSOLVER`     |    0.00045    |      1.83e-18       | 548604588  |    1.28    |
-|   `FSESCUPPENEIGENSOLVER`   |   0.009134    |      3.23e-18       | 734707748  |    1.71    |
-|   `FSESHYBRIDEIGENSOLVER`   |    0.99959    |      4.01e-10       | 272701749  |    0.64    |
-| `FSESANALYTICALEIGENSOLVER` |   0.999669    |      1.36e-11       | 315243286  |    0.74    |
-|     `HARARIEIGENSOLVER`     |   0.000044    |      9.49e-18       | 459905551  |    1.07    |
+|      `TFELEIGENSOLVER`      |   0.000578    |      1.76e-17       | 304165023  |     1      |
+| `GTESYMMETRICQREIGENSOLVER` |       0       |      1.01e-18       | 558605772  |    1.84    |
+|   `FSESJACOBIEIGENSOLVER`   |       0       |      5.11e-19       | 408584703  |    1.34    |
+|     `FSESQLEIGENSOLVER`     |    0.00045    |      1.83e-18       | 311028180  |    1.02    |
+|   `FSESCUPPENEIGENSOLVER`   |   0.009134    |      3.23e-18       | 485590150  |    1.60    |
+|   `FSESHYBRIDEIGENSOLVER`   |    0.99959    |      4.01e-10       | 187308886  |    0.62    |
+| `FSESANALYTICALEIGENSOLVER` |   0.999669    |      1.36e-11       | 211710377  |    0.70    |
+|     `HARARIEIGENSOLVER`     |   0.000046    |      4.62e-18       | 338589049  |    1.11    |
 : Test on \(10^{6}\) random symmetric tensors in extended precision (`long double`). {#tbl:comp_eigensolvers_long_double}
 
 
