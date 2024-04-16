@@ -36,6 +36,7 @@ namespace tfel::math::internals {
     constexpr auto one   = real{1};
     constexpr const auto one_third = one / 3;
     constexpr auto eye = tmatrix<3u, 3u, real>::Id();
+    constexpr const auto eps = std::numeric_limits<real>::min();
 
     // compute the trace of A
     const auto I1 = (A + B + C);
@@ -54,7 +55,7 @@ namespace tfel::math::internals {
     // compute s
     const real s = std::sqrt(J2 / 3);
 
-    if (s < std::numeric_limits<real>::min()) {
+    if (s < eps) {
       vp = {tr, tr, tr};
       return;
     }
@@ -82,8 +83,8 @@ namespace tfel::math::internals {
       return (real(0) < value) - (value < real(0));
     }(1 - d);
 
-    if (sj * (1 - d) < std::numeric_limits<real>::min()) {
-      vp[0] = std::sqrt(J2) + tr;
+    if (sj * (1 - d) < eps) {
+      vp[0] = sqrt3 * s + tr;
       vp[1] = 0 + tr;
       vp[2] = -vp[0] + tr;
       return;
