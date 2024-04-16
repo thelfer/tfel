@@ -54,9 +54,7 @@ namespace tfel::math::internals {
     const real s = std::sqrt(J2 / 3);
 
     if (s < std::numeric_limits<real>::min()) {
-      vp[0] = 0 + tr;
-      vp[1] = 0 + tr;
-      vp[2] = 0 + tr;
+      vp = {tr, tr, tr};
       return;
     }
 
