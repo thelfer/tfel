@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 542: Fix the `ConceptRebind` specialisation for `FixedSizeArrayDerivative`
+
+For more details, see <https://github.com/thelfer/tfel/issues/542>
+
 ## Issue 524: [physical-constants] Units of the Stefan constant are wrong
 
 For more details, see <https://github.com/thelfer/tfel/issues/529>
