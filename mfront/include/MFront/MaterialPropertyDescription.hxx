@@ -33,25 +33,25 @@ namespace mfront {
   // forward declaration
   struct FileDescription;
 
-  //! structure describing a material property
+  //! \brief structure describing a material property
   struct MFRONT_VISIBILITY_EXPORT MaterialPropertyDescription
       : public MaterialKnowledgeDescription {
-    //! default constructor
+    //! \brief default constructor
     MaterialPropertyDescription();
-    //! copy constructor
+    //! \brief copy constructor
     MaterialPropertyDescription(const MaterialPropertyDescription&);
-    //! move constructor
+    //! \brief move constructor
     MaterialPropertyDescription(MaterialPropertyDescription&&);
-    //! standard assignement
+    //! \brief standard assignement
     MaterialPropertyDescription& operator=(const MaterialPropertyDescription&);
-    //! move assignement
+    //! \brief move assignement
     MaterialPropertyDescription& operator=(MaterialPropertyDescription&&);
     /*!
      * \return the variable description with the given name
      * \param[in] n: variable name
      */
     const VariableDescription& getVariableDescription(const std::string&) const;
-    //! \return the external names of each input variables.
+    //! \brief \return the external names of each input variables.
     std::vector<std::string> getInputVariablesExternalNames();
     /*!
      * \return true if the given variable is the name of a input

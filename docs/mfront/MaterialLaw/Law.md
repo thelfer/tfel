@@ -25,5 +25,5 @@ material name, as specified by the `@MaterialLaw` keyword.
 
 ~~~~{.cpp}
 @Law ThermalExansionCoefficient_SRMA;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 

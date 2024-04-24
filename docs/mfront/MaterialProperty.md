@@ -35,4 +35,4 @@ respectively.
 // scalar material property
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

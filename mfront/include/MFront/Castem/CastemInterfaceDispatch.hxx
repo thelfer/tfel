@@ -298,7 +298,7 @@ namespace castem {
       tfel::material::ModellingHypothesis::Hypothesis hypothesis,
       template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
       class Behaviour>
-  struct CastemCohesizeZoneModelInterfaceDispatch2D
+  struct CastemCohesiveZoneModelInterfaceDispatch2D
       : public CastemInterfaceExceptions {
     TFEL_CASTEM_INLINE2 static void exe(
         const CastemInt *const NTENS,
@@ -362,7 +362,7 @@ namespace castem {
       COHESIVEZONEMODEL,
       tfel::material::ModellingHypothesis::PLANESTRAIN,
       Behaviour>
-      : public CastemCohesizeZoneModelInterfaceDispatch2D<
+      : public CastemCohesiveZoneModelInterfaceDispatch2D<
             tfel::material::ModellingHypothesis::PLANESTRAIN,
             Behaviour> {};
 
@@ -373,7 +373,7 @@ namespace castem {
       COHESIVEZONEMODEL,
       tfel::material::ModellingHypothesis::AXISYMMETRICAL,
       Behaviour>
-      : public CastemCohesizeZoneModelInterfaceDispatch2D<
+      : public CastemCohesiveZoneModelInterfaceDispatch2D<
             tfel::material::ModellingHypothesis::AXISYMMETRICAL,
             Behaviour> {};
 

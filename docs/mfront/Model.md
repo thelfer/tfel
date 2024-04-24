@@ -23,5 +23,5 @@ model.
 ~~~~ {#Model .cpp}
 // Evolution of the \(\beta\) phase
 @Model "M5PhaseTransformation_EdgarV3_SRMA2017.mfront";
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 

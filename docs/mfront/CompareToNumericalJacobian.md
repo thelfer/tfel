@@ -13,4 +13,4 @@ The comparison criterion value can be changed used the
 
 ~~~~{.cpp}
 @CompareToNumericalJacobian true;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

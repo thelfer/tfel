@@ -46,8 +46,7 @@ namespace mfront {
      *\param[in] opts: options passed to the DSL
      */
     MaterialPropertyDSL(const DSLOptions&);
-    //! \brief return the description of the material property treated by the
-    //! DSL
+    //! \return the description of the material property treated by the DSL
     virtual const MaterialPropertyDescription& getMaterialPropertyDescription()
         const;
     //

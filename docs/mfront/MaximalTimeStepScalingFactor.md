@@ -20,4 +20,4 @@ will be very large so that the value returned by the
 
 ~~~~ {#MaximalTimeStepScalingFactor .cpp}
 @MaximalTimeStepScalingFactor 1.2;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

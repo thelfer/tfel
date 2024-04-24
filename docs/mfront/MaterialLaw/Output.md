@@ -6,4 +6,4 @@ of the output variable.
 
 ~~~~{.cpp}
 @Output b ;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

@@ -36,11 +36,11 @@ given by:
 ~~~~ {#AxialGrowth .cpp}
 // axial growth defined by an external model
 @AxialGrowth 'M5AxialGrowth.mfront';
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 ~~~~ {#AxialGrowth2 .cpp}
 // axial growth defined by an external state variable
 @ExternalStateVariable real ag;
 ag.setGlossaryName("AxialGrowth");
 @AxialGrowth ag;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

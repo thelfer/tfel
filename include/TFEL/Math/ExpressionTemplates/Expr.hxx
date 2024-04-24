@@ -59,7 +59,7 @@ namespace tfel::math {
      * \param[in] args : arguments of Operation constructor
      */
     template <typename... Args>
-    TFEL_HOST_DEVICE constexpr explicit TFEL_MATH_INLINE Expr(Args&&... args)
+    TFEL_HOST_DEVICE constexpr explicit Expr(Args&&... args)
         : Operation(std::forward<Args>(args)...) {}
     /*!
      * \brief array like access operator

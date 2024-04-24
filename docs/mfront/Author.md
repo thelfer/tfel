@@ -12,6 +12,6 @@ behaviour or model shall be given in the description section (see the
 
 ~~~~ {#Author .cpp}
 @Author Éric Brunon;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 

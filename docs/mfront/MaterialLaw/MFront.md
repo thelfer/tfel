@@ -8,5 +8,5 @@ treated. The second member of the pair describes a list of interfaces.
 
 ~~~~{.cpp}
 @MFront {"YoungModulus.mfront",{"c","excel"}};
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 

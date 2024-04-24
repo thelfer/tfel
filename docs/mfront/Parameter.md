@@ -13,5 +13,5 @@ declaration using the `setDefaultValue` method.
 @Parameter  Q2(0),b2(0);
 @Parameter  fc;
 fc.setDefaultValue(1.e-2);
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 

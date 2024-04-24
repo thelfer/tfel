@@ -661,7 +661,7 @@ namespace mfront {
     if (!fd.date.empty()) {
       out << fd.date;
     } else {
-      out << "(unspecified)";
+      out << "(unspecified)\n";
     }
     if (mb.hasAttribute(BehaviourData::algorithm)) {
       out << "* algorithm: "
@@ -678,7 +678,7 @@ namespace mfront {
         }
       }
     } else {
-      out << "No description specified";
+      out << "No description specified\n";
     }
     //
     std::ifstream f(this->file);
@@ -689,9 +689,9 @@ namespace mfront {
     out << '\n'
         << "## Source code\n"
         << '\n'
-        << "~~~~ {#" << mb.getClassName() << " .cpp .numberLines}\n"
+        << "~~~~{#" << mb.getClassName() << " .cpp .numberLines}\n"
         << f.rdbuf() << '\n'
-        << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+        << "~~~~\n"
         << '\n';
   }  // end of BehaviourDocumentationGenerator::writeWebOutput
 

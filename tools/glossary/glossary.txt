@@ -22,8 +22,8 @@ short_description:
 };
 
 "Emissivity" {
-units : { "SI" : "kg.m.T^{−3}" };
 lower_physical_bounds : { "SI" : 0 };
+upper_physical_bounds : { "SI" : 1 };
 type:
   "scalar";
 short_description:
