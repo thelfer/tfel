@@ -283,12 +283,14 @@ namespace tfel::math::internals {
                     tfel::math::rotation_matrix<T>& vec,
                     const bool b) {
       StensorComputeEigenValues<3u>::exe(s, vp(0), vp(1), vp(2), b);
-      vp = {vp(0),vp(1),vp(2)};
-      return computeEigenVectors<T>(s, vp,  vec);
+      vp = {vp(0), vp(1), vp(2)};
+      return computeEigenVectors<T>(s, vp, vec);
     }
 
     template <typename T>
-    static bool computeEigenVectors(const T* const s, const tfel::math::tvector<3u, T>& vp, tfel::math::rotation_matrix<T>& vec) {
+    static bool computeEigenVectors(const T* const s,
+                                    const tfel::math::tvector<3u, T>& vp,
+                                    tfel::math::rotation_matrix<T>& vec) {
       using namespace std;
       using tfel::math::tvector;
       static_assert(tfel::typetraits::IsFundamentalNumericType<T>::cond);

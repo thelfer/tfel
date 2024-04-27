@@ -674,9 +674,8 @@ namespace tfel::math {
 
   // class template argument deduction
   template <typename... T>
-  stensor(T&&... t)
-      ->stensor<StensorSizeToDime<sizeof...(T)>::value,
-                std::common_type_t<T...>>;
+  stensor(T&&... t) -> stensor<StensorSizeToDime<sizeof...(T)>::value,
+                               std::common_type_t<T...>>;
 
   /*!
    * \brief a simple alias for backward compatibility

@@ -152,8 +152,9 @@ namespace mfront {
     //
     this->registerCallBack(
         "--modelling-hypothesis",
-        CallBack("select a modelling hypothesis",
-                 [this] { this->treatModellingHypothesis(); }, true));
+        CallBack(
+            "select a modelling hypothesis",
+            [this] { this->treatModellingHypothesis(); }, true));
     // standard queries
     const std::vector<std::pair<const char*, const char*>> sq = {
         {"--behaviour-name", "show the behaviour name"},
@@ -266,7 +267,8 @@ namespace mfront {
     for (const auto& q : sq) {
       this->registerCallBack(
           q.first,
-          CallBack(q.second, [this] { this->treatStandardQuery(); }, false));
+          CallBack(
+              q.second, [this] { this->treatStandardQuery(); }, false));
     }
     const std::vector<std::pair<const char*, const char*>> sq2 = {
         {"--attribute-type", "display an attribute type"},
@@ -305,7 +307,8 @@ namespace mfront {
     for (const auto& q : sq2) {
       this->registerCallBack(
           q.first,
-          CallBack(q.second, [this] { this->treatStandardQuery2(); }, true));
+          CallBack(
+              q.second, [this] { this->treatStandardQuery2(); }, true));
     }
   }  // end of registerCommandLineCallBacks
 

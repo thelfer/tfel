@@ -109,7 +109,7 @@ namespace tfel {
       static_assert(tfel::typetraits::IsFundamentalNumericType<Type>::cond);
       static_assert(tfel::typetraits::IsReal<Type>::cond);
 
-      friend std::ostream& operator<<<>(std::ostream&, const EllipticCreep&);
+      friend std::ostream& operator<< <>(std::ostream&, const EllipticCreep&);
 
       static constexpr unsigned short TVectorSize = N;
       typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;

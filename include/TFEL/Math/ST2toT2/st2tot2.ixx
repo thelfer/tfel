@@ -26,46 +26,50 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <StensorConcept StensorType>
-  TFEL_HOST_DEVICE constexpr auto
-  st2tot2<N, T>::tpld(const StensorType& b) noexcept requires(
-      getSpaceDimension<StensorType>() == N &&
-      isAssignableTo<numeric_type<StensorType>, T>()) {
+  TFEL_HOST_DEVICE constexpr auto st2tot2<N, T>::tpld(
+      const StensorType& b) noexcept
+    requires(getSpaceDimension<StensorType>() == N &&
+             isAssignableTo<numeric_type<StensorType>, T>())
+  {
     return Expr<st2tot2<N, T>, StensorProductLeftDerivativeExpr<N>>(b);
   }  // end of st2tot2<N,T>
 
   template <unsigned short N, typename ValueType>
   template <StensorConcept StensorType, ST2toST2Concept ST2toST2Type>
-  TFEL_HOST_DEVICE constexpr auto st2tot2<N, ValueType>::
-      tpld(const StensorType& b, const ST2toST2Type& C) noexcept requires(
-          getSpaceDimension<StensorType>() == N &&
-          getSpaceDimension<ST2toST2Type>() == N &&
-          isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
-                                               numeric_type<ST2toST2Type>,
-                                               OpMult>,
-                         ValueType>()) {
+  TFEL_HOST_DEVICE constexpr auto st2tot2<N, ValueType>::tpld(
+      const StensorType& b, const ST2toST2Type& C) noexcept
+    requires(getSpaceDimension<StensorType>() == N &&
+             getSpaceDimension<ST2toST2Type>() == N &&
+             isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
+                                                  numeric_type<ST2toST2Type>,
+                                                  OpMult>,
+                            ValueType>())
+  {
     return Expr<st2tot2<N, ValueType>, StensorProductLeftDerivativeExpr<N>>(b,
                                                                             C);
   }
 
   template <unsigned short N, typename T>
   template <StensorConcept StensorType>
-  TFEL_HOST_DEVICE constexpr auto
-  st2tot2<N, T>::tprd(const StensorType& a) noexcept requires(
-      getSpaceDimension<StensorType>() == N &&
-      isAssignableTo<numeric_type<StensorType>, T>()) {
+  TFEL_HOST_DEVICE constexpr auto st2tot2<N, T>::tprd(
+      const StensorType& a) noexcept
+    requires(getSpaceDimension<StensorType>() == N &&
+             isAssignableTo<numeric_type<StensorType>, T>())
+  {
     return Expr<st2tot2<N, T>, StensorProductRightDerivativeExpr<N>>(a);
   }
 
   template <unsigned short N, typename T>
   template <StensorConcept StensorType, ST2toST2Concept ST2toST2Type>
-  TFEL_HOST_DEVICE constexpr auto st2tot2<N, T>::
-      tprd(const StensorType& a, const ST2toST2Type& C) noexcept requires(
-          getSpaceDimension<StensorType>() == N &&
-          getSpaceDimension<ST2toST2Type>() == N &&
-          isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
-                                               numeric_type<ST2toST2Type>,
-                                               OpMult>,
-                         T>()) {
+  TFEL_HOST_DEVICE constexpr auto st2tot2<N, T>::tprd(
+      const StensorType& a, const ST2toST2Type& C) noexcept
+    requires(getSpaceDimension<StensorType>() == N &&
+             getSpaceDimension<ST2toST2Type>() == N &&
+             isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
+                                                  numeric_type<ST2toST2Type>,
+                                                  OpMult>,
+                            T>())
+  {
     return Expr<st2tot2<N, T>, StensorProductRightDerivativeExpr<N>>(a, C);
   }
 

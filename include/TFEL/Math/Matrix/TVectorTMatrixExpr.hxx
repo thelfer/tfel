@@ -96,8 +96,8 @@ namespace tfel::math {
                                                   const B& r) noexcept
         : a(l), b(r) {}
 
-    TFEL_HOST_DEVICE constexpr auto operator()(const IndexType i) const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr auto operator()(
+        const IndexType i) const noexcept {
       using namespace tfel::fsalgo;
       return inner_product<N>::template exe<NumType>(VectorConstIterator(a),
                                                      ColumnConstIterator(b, i));

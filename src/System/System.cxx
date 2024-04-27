@@ -38,24 +38,24 @@
 #include <windows.h>
 #include <direct.h>
 #ifndef S_ISDIR
-#define S_ISDIR(mode) (((mode)&S_IFMT) == S_IFDIR)
+#define S_ISDIR(mode) (((mode) & S_IFMT) == S_IFDIR)
 #endif
 #ifndef S_ISREG
-#define S_ISREG(mode) (((mode)&S_IFMT) == S_IFREG)
+#define S_ISREG(mode) (((mode) & S_IFMT) == S_IFREG)
 #endif
 #ifndef S_ISCHR
-#define S_ISCHR(m) (((m)&S_IFMT) == S_IFCHR)
+#define S_ISCHR(m) (((m) & S_IFMT) == S_IFCHR)
 #endif /* S_ISCHR */
 /* Not in MS Visual Studio 2008 Express */
 #ifndef S_IFBLK
 #ifndef S_ISBLK
-#define S_ISBLK(m) (((m)&S_IFMT) == S_IFBLK)
+#define S_ISBLK(m) (((m) & S_IFMT) == S_IFBLK)
 #endif /* S_ISBLK */
 #define S_IFBLK(m) (0)
 #endif /* S_IFBLK */
 #ifndef S_IFIFO
 #ifndef S_ISFIFO
-#define S_ISFIFO(m) (((m)&S_IFMT) == S_IFIFO)
+#define S_ISFIFO(m) (((m) & S_IFMT) == S_IFIFO)
 #endif /* S_ISFIFO */
 #define S_IFFIFO(m) (0)
 #endif /* S_IFIFO */

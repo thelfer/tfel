@@ -136,7 +136,6 @@ namespace tfel::math::internals {
                                                     const bool) {
       auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
       auto vp = tvector<3u, real>{};
-      auto m = tmatrix<3u, 3u, real>{};
       HarariEigensolver3x3<real>::computeEigenValues(
           vp, sm(0, 0), sm(1, 1), sm(2, 2), sm(0, 1), sm(0, 2), sm(1, 2));
       vp0 = NumType(vp[0]);

@@ -82,10 +82,10 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr void
   computePushForwardDerivativeWithRespectToDeformationGradient(
       T2toST2ResultType&, const StensorType&, const TensorType&) noexcept  //
-      requires(tfel::typetraits::IsFundamentalNumericType<
-               numeric_type<TensorType>>::cond&&
-                   isAssignableTo<numeric_type<StensorType>,
-                                  numeric_type<T2toST2ResultType>>());
+    requires(tfel::typetraits::IsFundamentalNumericType<
+                 numeric_type<TensorType>>::cond &&
+             isAssignableTo<numeric_type<StensorType>,
+                            numeric_type<T2toST2ResultType>>());
   /*!
    * \brief compute the Cauchy stress derivative from the Kirchhoff
    * stress derivative with respect to the deformation gradient
@@ -104,19 +104,19 @@ namespace tfel::math {
       const T2toST2Type&,
       const StensorType&,
       const TensorType&) noexcept  //
-      requires(
-          getSpaceDimension<T2toST2ResultType>() ==
-              getSpaceDimension<T2toST2Type>() &&
-          getSpaceDimension<T2toST2ResultType>() ==
-              getSpaceDimension<StensorType>() &&
-          getSpaceDimension<T2toST2ResultType>() ==
-              getSpaceDimension<TensorType>() &&
-          tfel::typetraits::IsFundamentalNumericType<
-              numeric_type<TensorType>>::cond &&
-          isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
-                                                      numeric_type<StensorType>,
-                                                      OpPlus>::Result,
-                         numeric_type<T2toST2ResultType>>());
+    requires(
+        getSpaceDimension<T2toST2ResultType>() ==
+            getSpaceDimension<T2toST2Type>() &&
+        getSpaceDimension<T2toST2ResultType>() ==
+            getSpaceDimension<StensorType>() &&
+        getSpaceDimension<T2toST2ResultType>() ==
+            getSpaceDimension<TensorType>() &&
+        tfel::typetraits::IsFundamentalNumericType<
+            numeric_type<TensorType>>::cond &&
+        isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                                    numeric_type<StensorType>,
+                                                    OpPlus>::Result,
+                       numeric_type<T2toST2ResultType>>());
   /*!
    * \brief compute the Kirchhoff stress derivative from the Cauchy
    * stress derivative with respect to the deformation gradient
@@ -135,19 +135,19 @@ namespace tfel::math {
       const T2toST2Type&,
       const StensorType&,
       const TensorType&) noexcept  //
-      requires(
-          getSpaceDimension<T2toST2ResultType>() ==
-              getSpaceDimension<T2toST2Type>() &&
-          getSpaceDimension<T2toST2ResultType>() ==
-              getSpaceDimension<StensorType>() &&
-          getSpaceDimension<T2toST2ResultType>() ==
-              getSpaceDimension<TensorType>() &&
-          tfel::typetraits::IsFundamentalNumericType<
-              numeric_type<TensorType>>::cond &&
-          isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
-                                                      numeric_type<StensorType>,
-                                                      OpPlus>::Result,
-                         numeric_type<T2toST2ResultType>>());
+    requires(
+        getSpaceDimension<T2toST2ResultType>() ==
+            getSpaceDimension<T2toST2Type>() &&
+        getSpaceDimension<T2toST2ResultType>() ==
+            getSpaceDimension<StensorType>() &&
+        getSpaceDimension<T2toST2ResultType>() ==
+            getSpaceDimension<TensorType>() &&
+        tfel::typetraits::IsFundamentalNumericType<
+            numeric_type<TensorType>>::cond &&
+        isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                                    numeric_type<StensorType>,
+                                                    OpPlus>::Result,
+                       numeric_type<T2toST2ResultType>>());
   /*!
    * \brief an helper function which returns if the given type implements the
    * `T2toST2Concept`.

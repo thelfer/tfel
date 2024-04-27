@@ -70,8 +70,8 @@ namespace tfel::math {
       return this->v[i];
     }  // end of operator()
     //! \return the runtime properties
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties()
+        const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<TensorResultType,T2STensorT2toT2ProductExp>
@@ -128,8 +128,8 @@ namespace tfel::math {
       return this->v[i];
     }  // end of operator()
     //! \return the runtime properties
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties()
+        const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<TensorResultType,T2STensorT2toT2ProductExp>

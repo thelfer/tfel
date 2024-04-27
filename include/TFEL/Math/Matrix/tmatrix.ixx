@@ -266,6 +266,22 @@ namespace tfel::math::internals {
 
 namespace tfel::math {
 
+  template <unsigned short N, unsigned short M, typename ValueType>
+  template <std::size_t... d>
+  constexpr tmatrix<N, M, ValueType>::tmatrix(
+      ValueType const (&... arrays)[d])  //
+    requires((sizeof...(d) == N) && ((d == M) && ...))
+  {
+    auto init_row = [this](const typename tmatrix::size_type i,
+                           ValueType const(&values)[M]) {
+      for (typename tmatrix::size_type j = 0u; j < M; ++j) {
+        this->operator()(i, j) = values[j];
+      }
+    };
+    auto i = typename tmatrix::size_type{};
+    (init_row(i++, arrays), ...);
+  }  // end of tmatrix
+
   template <unsigned short N, unsigned short M, typename T>
   TFEL_HOST_DEVICE constexpr unsigned short tmatrix<N, M, T>::getNbCols()
       const {

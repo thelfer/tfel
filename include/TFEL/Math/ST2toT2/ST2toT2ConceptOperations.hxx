@@ -178,9 +178,9 @@ namespace tfel::math {
   };
 
   template <TensorConcept T1, ST2toT2Concept T2>
-  TFEL_HOST_DEVICE constexpr auto
-  operator|(const T1& a, const T2& b) noexcept requires(
-      !isInvalid<BinaryOperationResult<T1, T2, OpMult>>()) {
+  TFEL_HOST_DEVICE constexpr auto operator|(const T1& a, const T2& b) noexcept
+    requires(!isInvalid<BinaryOperationResult<T1, T2, OpMult>>())
+  {
     using Handle = BinaryOperationHandler<T1, T2, OpMult>;
     return Handle(a, b);
   }  // end of operator|

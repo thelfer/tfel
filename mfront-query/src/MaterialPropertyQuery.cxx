@@ -68,12 +68,14 @@ namespace mfront {
     for (const auto& q : sq) {
       this->registerCallBack(
           q.first,
-          CallBack(q.second, [this] { this->treatStandardQuery(); }, false));
+          CallBack(
+              q.second, [this] { this->treatStandardQuery(); }, false));
     }
     this->registerCallBack(
         "--parameter-default-value",
-        CallBack("display the default value of a parameter",
-                 [this] { this->treatParameterDefaultValue(); }, true));
+        CallBack(
+            "display the default value of a parameter",
+            [this] { this->treatParameterDefaultValue(); }, true));
     // bounds
     auto has_bounds = [this] {
       const auto& q = this->getCurrentCommandLineArgument();

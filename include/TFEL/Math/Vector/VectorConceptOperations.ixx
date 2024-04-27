@@ -18,16 +18,18 @@
 namespace tfel::math {
 
   template <VectorConcept T1, VectorConcept T2>
-  TFEL_HOST_DEVICE constexpr auto operator|(const T1& a, const T2& b) requires(
-      !isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>()) {
+  TFEL_HOST_DEVICE constexpr auto operator|(const T1& a, const T2& b)
+    requires(!isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>())
+  {
     typedef BinaryOperationResult<T1, T2, OpDotProduct> Result;
     typedef BinaryOperationHandler<T1, T2, OpDotProduct> Handle;
     return Handle::template exe<Result, T1, T2>(a, b);
   }
 
   template <VectorConcept T1>
-  TFEL_HOST_DEVICE auto norm(const T1& v) requires(
-      !isInvalid<BinaryOperationResult<T1, T1, OpDotProduct>>()) {
+  TFEL_HOST_DEVICE auto norm(const T1& v)
+    requires(!isInvalid<BinaryOperationResult<T1, T1, OpDotProduct>>())
+  {
     return power<1, 2>(real(v | v));
   }
 

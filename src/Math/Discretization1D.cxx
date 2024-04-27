@@ -29,8 +29,8 @@ namespace tfel::math {
   GeometricDiscretizationInvalidLength::
       ~GeometricDiscretizationInvalidLength() noexcept = default;
 
-  const char* GeometricDiscretizationInvalidNumberOfElements::what() const
-      noexcept {
+  const char* GeometricDiscretizationInvalidNumberOfElements::what()
+      const noexcept {
     return "geometricDiscretization : invalid number of elements";
   }  // end of GeometricDiscretizationInvalidNumberOfElements::what
 
