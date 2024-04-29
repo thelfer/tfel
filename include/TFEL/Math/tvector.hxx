@@ -168,13 +168,12 @@ namespace tfel::math {
    * export the given vector to an array of the
    */
   template <unsigned short N, typename T, typename OutputIterator>
-  TFEL_HOST_DEVICE constexpr void exportToBaseTypeArray(const tvector<N, T>&,
-                                                        OutputIterator) noexcept
-    requires(isScalar<T>());
+  TFEL_HOST_DEVICE constexpr void exportToBaseTypeArray(
+      const tvector<N, T>&, OutputIterator) noexcept requires(isScalar<T>());
 
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr auto norm(const tvector<N, T>&) noexcept  //
-    requires(isScalar<T>());
+      requires(isScalar<T>());
 
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr auto abs(const tvector<N, T>& v) noexcept;
@@ -250,12 +249,12 @@ namespace tfel::math {
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy,
             unsigned short N>
-  TFEL_HOST_DEVICE constexpr auto map(
-      tvector<N, base_type<numeric_type<MappedType>>>&) noexcept
-    requires((!isScalar<MappedType>()) && (IndexingPolicyType::hasFixedSizes) &&
-             (checkIndexingPoliciesCompatiblity<
-                 IndexingPolicyType,
-                 typename std::remove_cv_t<MappedType>::indexing_policy>()));
+  TFEL_HOST_DEVICE constexpr auto
+  map(tvector<N, base_type<numeric_type<MappedType>>>&) noexcept requires(
+      (!isScalar<MappedType>()) && (IndexingPolicyType::hasFixedSizes) &&
+      (checkIndexingPoliciesCompatiblity<
+          IndexingPolicyType,
+          typename std::remove_cv_t<MappedType>::indexing_policy>()));
 
   /*!
    * \brief create a constant view of a math object from a tiny vector
@@ -268,12 +267,12 @@ namespace tfel::math {
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy,
             unsigned short N>
-  TFEL_HOST_DEVICE constexpr auto map(
-      const tvector<N, base_type<numeric_type<MappedType>>>&) noexcept
-    requires((!isScalar<MappedType>()) && (IndexingPolicyType::hasFixedSizes) &&
-             (checkIndexingPoliciesCompatiblity<
-                 IndexingPolicyType,
-                 typename std::remove_cv_t<MappedType>::indexing_policy>()));
+  TFEL_HOST_DEVICE constexpr auto
+  map(const tvector<N, base_type<numeric_type<MappedType>>>&) noexcept requires(
+      (!isScalar<MappedType>()) && (IndexingPolicyType::hasFixedSizes) &&
+      (checkIndexingPoliciesCompatiblity<
+          IndexingPolicyType,
+          typename std::remove_cv_t<MappedType>::indexing_policy>()));
   /*!
    * \brief create a view of a math object from a tiny vector
    * \tparam MappedType : type of mapped object
@@ -287,12 +286,11 @@ namespace tfel::math {
             typename IndexingPolicyType = typename MappedType::indexing_policy,
             unsigned short N,
             typename real>
-  TFEL_HOST_DEVICE constexpr auto map(tvector<N, real>&) noexcept
-    requires((!std::is_const_v<MappedType>) &&
-             (IndexingPolicyType::hasFixedSizes) &&
-             (checkIndexingPoliciesCompatiblity<
-                 IndexingPolicyType,
-                 typename MappedType::indexing_policy>()));
+  TFEL_HOST_DEVICE constexpr auto map(tvector<N, real>&) noexcept requires(
+      (!std::is_const_v<MappedType>)&&(IndexingPolicyType::hasFixedSizes) &&
+      (checkIndexingPoliciesCompatiblity<
+          IndexingPolicyType,
+          typename MappedType::indexing_policy>()));
 
   /*!
    * \brief create a constant view of a math object from a tiny vector
@@ -308,11 +306,12 @@ namespace tfel::math {
                 typename std::remove_cv_t<MappedType>::indexing_policy,
             unsigned short N,
             typename real>
-  TFEL_HOST_DEVICE constexpr auto map(const tvector<N, real>&) noexcept
-    requires((IndexingPolicyType::hasFixedSizes) &&
-             (checkIndexingPoliciesCompatiblity<
-                 IndexingPolicyType,
-                 typename std::remove_cv_t<MappedType>::indexing_policy>()));
+  TFEL_HOST_DEVICE constexpr auto
+  map(const tvector<N, real>&) noexcept requires(
+      (IndexingPolicyType::hasFixedSizes) &&
+      (checkIndexingPoliciesCompatiblity<
+          IndexingPolicyType,
+          typename std::remove_cv_t<MappedType>::indexing_policy>()));
 
   /*!
    * \brief create a view on an array of fixed sized math objects from a tiny
@@ -327,9 +326,9 @@ namespace tfel::math {
             unsigned short offset = 0u,
             unsigned short stride = getViewsArrayMinimalStride<MappedType>(),
             unsigned short N>
-  TFEL_HOST_DEVICE constexpr auto map(
-      tvector<N, ViewsArrayNumericType<MappedType>>&) noexcept
-    requires(!std::is_const_v<MappedType>);
+  TFEL_HOST_DEVICE constexpr auto
+  map(tvector<N, ViewsArrayNumericType<MappedType>>&) noexcept requires(
+      !std::is_const_v<MappedType>);
   /*!
    * \brief create a const view on an array of fixed sized math objects from a
    * tiny vector
@@ -414,7 +413,7 @@ namespace tfel::math {
 
   // class template argument deduction
   template <typename... T>
-  tvector(T&&... t) -> tvector<sizeof...(T), std::common_type_t<T...>>;
+  tvector(T&&... t)->tvector<sizeof...(T), std::common_type_t<T...>>;
 
 }  // end of namespace tfel::math
 

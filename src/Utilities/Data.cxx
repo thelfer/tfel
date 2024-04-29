@@ -294,9 +294,7 @@ namespace tfel::utilities {
     using return_type = bool;
     // default implementation
     template <typename T1, typename T2>
-    static bool apply(const T1&, const T2&)
-      requires(!std::is_same_v<T1, T2>)
-    {
+    static bool apply(const T1&, const T2&) requires(!std::is_same_v<T1, T2>) {
       return false;
     }  // end of apply
     static bool apply(const std::string& x1, const std::string& x2) {

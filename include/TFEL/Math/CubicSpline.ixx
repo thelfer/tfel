@@ -96,9 +96,8 @@ namespace tfel::math {
   }  // end of namespace internals
 
   template <typename AbscissaType, typename ValueType>
-  constexpr bool
-  CubicSpline<AbscissaType, ValueType>::PointComparator::operator()(
-      const Point& p, const AbscissaType& x) const noexcept {
+  constexpr bool CubicSpline<AbscissaType, ValueType>::PointComparator::
+  operator()(const Point& p, const AbscissaType& x) const noexcept {
     return p.x < x;
   }  // end of operator()
 

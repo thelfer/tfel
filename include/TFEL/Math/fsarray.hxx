@@ -80,7 +80,7 @@ namespace tfel::math {
 
   // class template argument deduction
   template <typename... T>
-  fsarray(T&&... t) -> fsarray<sizeof...(T), std::common_type_t<T...>>;
+  fsarray(T&&... t)->fsarray<sizeof...(T), std::common_type_t<T...>>;
 
   /*!
    * \tparam N: arrray size

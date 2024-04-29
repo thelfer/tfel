@@ -62,8 +62,8 @@ namespace mtest {
     this->failure_criterion_status.resize(n, false);
   }  // end of setNumberOfFailureCriterionStatus
 
-  std::size_t StudyCurrentState::getNumberOfFailureCriterionStatus()
-      const noexcept {
+  std::size_t StudyCurrentState::getNumberOfFailureCriterionStatus() const
+      noexcept {
     return this->failure_criterion_status.size();
   }  // end of getNumberOfFailureCriterionStatus
 

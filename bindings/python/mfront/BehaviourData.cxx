@@ -54,7 +54,7 @@ void declareBehaviourData() {
   using namespace boost::python;
   using namespace mfront;
 
-  const VariableDescription& (BehaviourData::*ptr)(const std::string&) const =
+  const VariableDescription& (BehaviourData::*ptr)(const std::string&)const =
       &BehaviourData::getVariableDescription;
 
   class_<BehaviourData>("BehaviourData")

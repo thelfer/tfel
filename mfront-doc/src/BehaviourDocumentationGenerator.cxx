@@ -550,17 +550,15 @@ namespace mfront {
         "add a mandex file to the search paths", true);
     Parser::registerCallBack(
         "--standalone",
-        CallBack(
-            "generate a standalone document (false by default)",
-            [this]() noexcept { this->standalone = true; }, false));
+        CallBack("generate a standalone document (false by default)",
+                 [this]() noexcept { this->standalone = true; }, false));
     Parser::registerNewCallBack("--web",
                                 &BehaviourDocumentationGenerator::treatWeb,
                                 "output a web version of the file");
     Parser::registerCallBack(
         "--std-output", "--",
-        CallBack(
-            "print the output ont the standard output stream",
-            [this]() noexcept { this->std_output = true; }, false));
+        CallBack("print the output ont the standard output stream",
+                 [this]() noexcept { this->std_output = true; }, false));
   }  // end of BehaviourDocumentationGenerator::registerCommandLineCallBacks
 
   void BehaviourDocumentationGenerator::treatUnknownArgument() {

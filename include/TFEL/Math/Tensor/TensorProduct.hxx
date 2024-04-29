@@ -62,14 +62,14 @@ namespace tfel::math {
         : TensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {}
 
     TFEL_HOST_DEVICE constexpr typename TensorProductExprBase<A, B>::NumType
-    operator()(const typename TensorProductExprBase<A, B>::IndexType i)
-        const noexcept {
+    operator()(const typename TensorProductExprBase<A, B>::IndexType i) const
+        noexcept {
       return (this->a(i)) * (this->b(i));
     }  // end of operator()
 
     TFEL_HOST_DEVICE constexpr auto operator[](
-        const typename TensorProductExprBase<A, B>::IndexType i)
-        const noexcept {
+        const typename TensorProductExprBase<A, B>::IndexType i) const
+        noexcept {
       return this->operator()(i);
     }  // end of operator[]
   };
@@ -84,8 +84,8 @@ namespace tfel::math {
         : TensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {}
 
     TFEL_HOST_DEVICE constexpr typename TensorProductExprBase<A, B>::NumType
-    operator()(const typename TensorProductExprBase<A, B>::IndexType i)
-        const noexcept {
+    operator()(const typename TensorProductExprBase<A, B>::IndexType i) const
+        noexcept {
       typedef typename TensorProductExprBase<A, B>::NumType T;
       switch (i) {
         case 0:
@@ -103,8 +103,8 @@ namespace tfel::math {
     }  // end of operator()
 
     TFEL_HOST_DEVICE constexpr auto operator[](
-        const typename TensorProductExprBase<A, B>::IndexType i)
-        const noexcept {
+        const typename TensorProductExprBase<A, B>::IndexType i) const
+        noexcept {
       return this->operator()(i);
     }  // end of operator[]
   };
@@ -116,8 +116,8 @@ namespace tfel::math {
         : TensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {}
 
     TFEL_HOST_DEVICE constexpr typename TensorProductExprBase<A, B>::NumType
-    operator()(const typename TensorProductExprBase<A, B>::IndexType i)
-        const noexcept {
+    operator()(const typename TensorProductExprBase<A, B>::IndexType i) const
+        noexcept {
       using namespace std;
       typedef typename TensorProductExprBase<A, B>::NumType T;
       switch (i) {
@@ -153,8 +153,8 @@ namespace tfel::math {
     }  // end of operator()
 
     TFEL_HOST_DEVICE constexpr auto operator[](
-        const typename TensorProductExprBase<A, B>::IndexType i)
-        const noexcept {
+        const typename TensorProductExprBase<A, B>::IndexType i) const
+        noexcept {
       return this->operator()(i);
     }  // end of operator[]
 

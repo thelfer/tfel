@@ -197,16 +197,14 @@ struct MFM : public tfel::utilities::ArgumentParserBase<MFM> {
         "--verbose", CallBack("set verbose output", set_verbose_level, true));
     this->registerCallBack(
         "--show-libs",
-        CallBack(
-            "show library name in front "
-            "of entry points",
-            [this]() noexcept { this->show_libs = true; }, false));
+        CallBack("show library name in front "
+                 "of entry points",
+                 [this]() noexcept { this->show_libs = true; }, false));
     this->registerCallBack(
         "--show-sources",
-        CallBack(
-            "show the name of the MFront "
-            "file used to generate the entry points",
-            [this]() noexcept { this->show_sources = true; }, false));
+        CallBack("show the name of the MFront "
+                 "file used to generate the entry points",
+                 [this]() noexcept { this->show_sources = true; }, false));
   }  // end of registerCommandLineCallBacks
 
   const tfel::utilities::Argument& getCurrentCommandLineArgument() const {

@@ -38,9 +38,8 @@ namespace tfel::math {
      // LevenbergMarquardtFunctionWrapper<T>::LevenbergMarquardtFunctionWrapper
 
   template <typename T>
-  LevenbergMarquardtFunctionWrapper<T>&
-  LevenbergMarquardtFunctionWrapper<T>::operator=(
-      const LevenbergMarquardtFunctionWrapper<T>& src) {
+  LevenbergMarquardtFunctionWrapper<T>& LevenbergMarquardtFunctionWrapper<T>::
+  operator=(const LevenbergMarquardtFunctionWrapper<T>& src) {
     this->f = src.f;
     this->np = src.np;
     this->nv = src.nv;

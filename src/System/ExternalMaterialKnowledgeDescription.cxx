@@ -43,12 +43,10 @@ namespace tfel::system {
       ExternalMaterialKnowledgeDescription&&) = default;
   ExternalMaterialKnowledgeDescription::ExternalMaterialKnowledgeDescription(
       const ExternalMaterialKnowledgeDescription&) = default;
-  ExternalMaterialKnowledgeDescription&
-  ExternalMaterialKnowledgeDescription::operator=(
-      const ExternalMaterialKnowledgeDescription&) = default;
-  ExternalMaterialKnowledgeDescription&
-  ExternalMaterialKnowledgeDescription::operator=(
-      ExternalMaterialKnowledgeDescription&&) = default;
+  ExternalMaterialKnowledgeDescription& ExternalMaterialKnowledgeDescription::
+  operator=(const ExternalMaterialKnowledgeDescription&) = default;
+  ExternalMaterialKnowledgeDescription& ExternalMaterialKnowledgeDescription::
+  operator=(ExternalMaterialKnowledgeDescription&&) = default;
   ExternalMaterialKnowledgeDescription::
       ~ExternalMaterialKnowledgeDescription() = default;
 

@@ -147,9 +147,8 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr auto operator|(
       const StensorConcept auto& a,
       const T2toST2Concept auto& b) noexcept  //
-    requires(
-        !isInvalid<BinaryOperationResult<decltype(a), decltype(b), OpMult>>())
-  {
+      requires(!isInvalid<
+               BinaryOperationResult<decltype(a), decltype(b), OpMult>>()) {
     typedef BinaryOperationHandler<decltype(a), decltype(b), OpMult> Handle;
     return Handle(a, b);
   }  // end of operator |

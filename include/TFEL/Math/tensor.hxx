@@ -107,8 +107,8 @@ namespace tfel::math {
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArray<
         tensor<N, ValueType>,
-        FixedSizeVectorPolicy<TensorDimeToSize<N>::value,
-                              ValueType>>::operator[];
+        FixedSizeVectorPolicy<TensorDimeToSize<N>::value, ValueType>>::
+    operator[];
     /*!
      * \brief access operator
      * \param[in] i: index
@@ -130,8 +130,8 @@ namespace tfel::math {
         const typename tensor::size_type,
         const typename tensor::size_type) const;
     //! \brief write to an external memory location
-    TFEL_HOST_DEVICE constexpr void write(
-        base_type<ValueType>* const) const noexcept;
+    TFEL_HOST_DEVICE constexpr void write(base_type<ValueType>* const) const
+        noexcept;
     //! \brief import values from an external memory location
     TFEL_HOST_DEVICE constexpr void import(
         const base_type<ValueType>* const) noexcept;
@@ -144,8 +144,8 @@ namespace tfel::math {
 
   // class template argument deduction
   template <typename... T>
-  tensor(T&&... t) -> tensor<TensorSizeToDime<sizeof...(T)>::value,
-                             std::common_type_t<T...>>;
+  tensor(T&&... t)
+      ->tensor<TensorSizeToDime<sizeof...(T)>::value, std::common_type_t<T...>>;
 
   /*!
    * \brief a simple alias for backward compatibility
@@ -163,9 +163,8 @@ namespace tfel::math {
   using ConstTensorView = ConstView<tensor<N, T>>;
 
   template <unsigned short N, typename T>
-  TFEL_HOST_DEVICE constexpr void exportToBaseTypeArray(const tensor<N, T>&,
-                                                        const auto) noexcept
-    requires(isScalar<T>());
+  TFEL_HOST_DEVICE constexpr void exportToBaseTypeArray(
+      const tensor<N, T>&, const auto) noexcept requires(isScalar<T>());
   /*!
    * \return the invert of a tensor
    * \param[in] t : tensor to be inverted

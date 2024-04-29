@@ -31,11 +31,11 @@ namespace mfront::gb {
             typename stress,
             typename real>
   TFEL_HOST_DEVICE constexpr void
-  computeOrthotropicUnAlteredElasticStiffnessTensor(
-      tfel::math::st2tost2<1u, stress>&,
-      const real* const) noexcept  //
-    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
-             1u);
+      computeOrthotropicUnAlteredElasticStiffnessTensor(
+          tfel::math::st2tost2<1u, stress>&,
+          const real* const) noexcept  //
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               1u);
   /*!
    * \brief compute the unaltered elastic stiffness tensor
    * \param[out] C: stiffness tensor
@@ -45,11 +45,11 @@ namespace mfront::gb {
             typename stress,
             typename real>
   TFEL_HOST_DEVICE constexpr void
-  computeOrthotropicUnAlteredElasticStiffnessTensor(
-      tfel::math::st2tost2<2u, stress>&,
-      const real* const) noexcept  //
-    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
-             2u);
+      computeOrthotropicUnAlteredElasticStiffnessTensor(
+          tfel::math::st2tost2<2u, stress>&,
+          const real* const) noexcept  //
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               2u);
   /*!
    * \brief compute the unaltered elastic stiffness tensor
    * \param[out] C: stiffness tensor
@@ -59,11 +59,11 @@ namespace mfront::gb {
             typename stress,
             typename real>
   TFEL_HOST_DEVICE constexpr void
-  computeOrthotropicUnAlteredElasticStiffnessTensor(
-      tfel::math::st2tost2<3u, stress>&,
-      const real* const) noexcept  //
-    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
-             3u);
+      computeOrthotropicUnAlteredElasticStiffnessTensor(
+          tfel::math::st2tost2<3u, stress>&,
+          const real* const) noexcept  //
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               3u);
   /*!
    * \brief compute the unaltered elastic stiffness tensor
    * \param[out] C: stiffness tensor
@@ -73,11 +73,11 @@ namespace mfront::gb {
             typename stress,
             typename real>
   TFEL_HOST_DEVICE constexpr void
-  computeOrthotropicAlteredElasticStiffnessTensor(
-      tfel::math::st2tost2<1u, stress>&,
-      const real* const) noexcept  //
-    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
-             1u);
+      computeOrthotropicAlteredElasticStiffnessTensor(
+          tfel::math::st2tost2<1u, stress>&,
+          const real* const) noexcept  //
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               1u);
   /*!
    * \brief compute the unaltered elastic stiffness tensor
    * \param[out] C: stiffness tensor
@@ -87,11 +87,11 @@ namespace mfront::gb {
             typename stress,
             typename real>
   TFEL_HOST_DEVICE constexpr void
-  computeOrthotropicAlteredElasticStiffnessTensor(
-      tfel::math::st2tost2<2u, stress>&,
-      const real* const) noexcept  //
-    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
-             2u);
+      computeOrthotropicAlteredElasticStiffnessTensor(
+          tfel::math::st2tost2<2u, stress>&,
+          const real* const) noexcept  //
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               2u);
   /*!
    * \brief compute the unaltered elastic stiffness tensor
    * \param[out] C: stiffness tensor
@@ -101,10 +101,10 @@ namespace mfront::gb {
             typename stress,
             typename real>
   TFEL_HOST_DEVICE constexpr void
-  computeOrthotropicAlteredElasticStiffnessTensor(
-      tfel::math::st2tost2<3u, stress>&, const real* const) noexcept  //
-    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
-             3u);
+      computeOrthotropicAlteredElasticStiffnessTensor(
+          tfel::math::st2tost2<3u, stress>&, const real* const) noexcept  //
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               3u);
 
 }  // end of namespace mfront::gb
 

@@ -98,7 +98,7 @@ namespace numodis {
     if (gsystem1.getIPlane() == gsystem2.getIPlane()) {
       if (Coincide(gsystem1.getIBurgers(), gsystem2.getIBurgers()) != 0) {
         // self junction
-        throw -1;
+        throw - 1;
       }
       // add Burgers vectors
       IBurgers iburgers3a(gsystem1.getIBurgers() + gsystem2.getIBurgers());
@@ -114,7 +114,7 @@ namespace numodis {
     }
     if (Coincide(gsystem1.getIBurgers(), gsystem2.getIBurgers()) != 0) {
       // colinear situation
-      throw -2;
+      throw - 2;
     }
     // compute junction direction
     IDirection ijunction(this->getNindices());

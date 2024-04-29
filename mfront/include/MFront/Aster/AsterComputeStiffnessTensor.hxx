@@ -40,9 +40,9 @@ namespace aster {
    * \param[in]  props : material properties
    */
   MFRONT_ASTER_VISIBILITY_EXPORT void
-  AsterComputeIsotropicPlaneStressAlteredStiffnessTensor(
-      tfel::config::Types<2u, AsterReal, false>::StiffnessTensor&,
-      const AsterReal* const);
+      AsterComputeIsotropicPlaneStressAlteredStiffnessTensor(
+          tfel::config::Types<2u, AsterReal, false>::StiffnessTensor&,
+          const AsterReal* const);
 
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
@@ -71,9 +71,9 @@ namespace aster {
    * \param[in]  props : material properties
    */
   MFRONT_ASTER_VISIBILITY_EXPORT void
-  AsterComputeOrthotropicPlaneStressAlteredStiffnessTensor(
-      tfel::config::Types<2u, AsterReal, false>::StiffnessTensor&,
-      const AsterReal* const);
+      AsterComputeOrthotropicPlaneStressAlteredStiffnessTensor(
+          tfel::config::Types<2u, AsterReal, false>::StiffnessTensor&,
+          const AsterReal* const);
 
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal

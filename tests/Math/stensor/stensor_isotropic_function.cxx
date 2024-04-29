@@ -86,11 +86,10 @@ struct StensorIsotropicFunctionDerivativeTest final
   }
   template <unsigned short N>
   void test2(const tfel::math::stensor<N, double>& v) {
-    this->test(
-        v, [](const double x) { return std::abs(x); },
-        [](const double x) {
-          return std::abs(x) < 1.e-12 ? 0.5 : ((x < 0) ? -1 : 1);
-        });
+    this->test(v, [](const double x) { return std::abs(x); },
+               [](const double x) {
+                 return std::abs(x) < 1.e-12 ? 0.5 : ((x < 0) ? -1 : 1);
+               });
   }
 };
 

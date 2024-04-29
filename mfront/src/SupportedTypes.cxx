@@ -89,11 +89,10 @@ namespace mfront {
       default;
   SupportedTypes::TypeParsingOptions::TypeParsingOptions(
       const TypeParsingOptions&) = default;
-  SupportedTypes::TypeParsingOptions&
-  SupportedTypes::TypeParsingOptions::operator=(TypeParsingOptions&&) = default;
-  SupportedTypes::TypeParsingOptions&
-  SupportedTypes::TypeParsingOptions::operator=(const TypeParsingOptions&) =
-      default;
+  SupportedTypes::TypeParsingOptions& SupportedTypes::TypeParsingOptions::
+  operator=(TypeParsingOptions&&) = default;
+  SupportedTypes::TypeParsingOptions& SupportedTypes::TypeParsingOptions::
+  operator=(const TypeParsingOptions&) = default;
   SupportedTypes::TypeParsingOptions::~TypeParsingOptions() = default;
 
   SupportedTypes::TypeSize SupportedTypes::TypeSize::getDerivativeSize(

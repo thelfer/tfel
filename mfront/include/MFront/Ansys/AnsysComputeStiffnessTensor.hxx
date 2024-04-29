@@ -48,9 +48,9 @@ namespace ansys {
    * \param[in]  props : material properties
    */
   MFRONT_ANSYS_VISIBILITY_EXPORT void
-  AnsysComputeIsotropicPlaneStressAlteredStiffnessTensor(
-      tfel::config::Types<2u, float, false>::StiffnessTensor&,
-      const float* const);
+      AnsysComputeIsotropicPlaneStressAlteredStiffnessTensor(
+          tfel::config::Types<2u, float, false>::StiffnessTensor&,
+          const float* const);
   /*!
    * \brief compute the stiffness tensor for plane stress modelling
    * hypothesis.
@@ -58,9 +58,9 @@ namespace ansys {
    * \param[in]  props : material properties
    */
   MFRONT_ANSYS_VISIBILITY_EXPORT void
-  AnsysComputeIsotropicPlaneStressAlteredStiffnessTensor(
-      tfel::config::Types<2u, double, false>::StiffnessTensor&,
-      const double* const);
+      AnsysComputeIsotropicPlaneStressAlteredStiffnessTensor(
+          tfel::config::Types<2u, double, false>::StiffnessTensor&,
+          const double* const);
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
    * modelling hypothesis.
@@ -104,9 +104,9 @@ namespace ansys {
    * \param[in]  props : material properties
    */
   MFRONT_ANSYS_VISIBILITY_EXPORT void
-  AnsysComputeOrthotropicPlaneStressAlteredStiffnessTensor(
-      tfel::config::Types<2u, float, false>::StiffnessTensor&,
-      const float* const);
+      AnsysComputeOrthotropicPlaneStressAlteredStiffnessTensor(
+          tfel::config::Types<2u, float, false>::StiffnessTensor&,
+          const float* const);
   /*!
    * \brief compute the stiffness tensor for plane stress modelling
    * hypothesis.
@@ -114,9 +114,9 @@ namespace ansys {
    * \param[in]  props : material properties
    */
   MFRONT_ANSYS_VISIBILITY_EXPORT void
-  AnsysComputeOrthotropicPlaneStressAlteredStiffnessTensor(
-      tfel::config::Types<2u, double, false>::StiffnessTensor&,
-      const double* const);
+      AnsysComputeOrthotropicPlaneStressAlteredStiffnessTensor(
+          tfel::config::Types<2u, double, false>::StiffnessTensor&,
+          const double* const);
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
    * modelling hypothesis.

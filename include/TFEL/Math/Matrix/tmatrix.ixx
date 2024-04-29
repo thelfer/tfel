@@ -268,10 +268,9 @@ namespace tfel::math {
 
   template <unsigned short N, unsigned short M, typename ValueType>
   template <std::size_t... d>
-  constexpr tmatrix<N, M, ValueType>::tmatrix(
+  TFEL_HOST_DEVICE constexpr tmatrix<N, M, ValueType>::tmatrix(
       ValueType const (&... arrays)[d])  //
-    requires((sizeof...(d) == N) && ((d == M) && ...))
-  {
+      requires((sizeof...(d) == N) && ((d == M) && ...)) {
     auto init_row = [this](const typename tmatrix::size_type i,
                            ValueType const(&values)[M]) {
       for (typename tmatrix::size_type j = 0u; j < M; ++j) {

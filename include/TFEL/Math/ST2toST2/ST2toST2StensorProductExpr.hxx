@@ -128,8 +128,8 @@ namespace tfel::math {
       return this->v[i];
     }  // end of operator[]
     //! \return the runtime properties
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties()
-        const noexcept {
+    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const
+        noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<StensorResultType,T2SST2toST2StensorProductExp>

@@ -192,51 +192,45 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <TensorConcept TensorType>
-  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::tpld(
-      const TensorType& B) noexcept
-    requires(getSpaceDimension<TensorType>() == N &&
-             isAssignableTo<numeric_type<TensorType>, T>())
-  {
+  TFEL_HOST_DEVICE constexpr auto
+  t2tot2<N, T>::tpld(const TensorType& B) noexcept requires(
+      getSpaceDimension<TensorType>() == N &&
+      isAssignableTo<numeric_type<TensorType>, T>()) {
     return Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>(B);
   }  // end of t2tot2<N,T>
 
   template <unsigned short N, typename T>
   template <TensorConcept TensorType, T2toT2Concept T2toT2Type>
-  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::tpld(
-      const TensorType& B, const T2toT2Type& C) noexcept
-    requires(
-        getSpaceDimension<TensorType>() == N &&
-        getSpaceDimension<T2toT2Type>() == N &&
-        isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
-                                                    numeric_type<T2toT2Type>,
-                                                    OpMult>::Result,
-                       T>())
-  {
+  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::
+      tpld(const TensorType& B, const T2toT2Type& C) noexcept requires(
+          getSpaceDimension<TensorType>() == N &&
+          getSpaceDimension<T2toT2Type>() == N &&
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
+                                                      numeric_type<T2toT2Type>,
+                                                      OpMult>::Result,
+                         T>()) {
     return Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>(B, C);
   }
 
   template <unsigned short N, typename T>
   template <TensorConcept TensorType>
-  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::tprd(
-      const TensorType& A) noexcept
-    requires(getSpaceDimension<TensorType>() == N &&
-             isAssignableTo<numeric_type<TensorType>, T>())
-  {
+  TFEL_HOST_DEVICE constexpr auto
+  t2tot2<N, T>::tprd(const TensorType& A) noexcept requires(
+      getSpaceDimension<TensorType>() == N &&
+      isAssignableTo<numeric_type<TensorType>, T>()) {
     return Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>(A);
   }
 
   template <unsigned short N, typename T>
   template <TensorConcept TensorType, T2toT2Concept T2toT2Type>
-  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::tprd(
-      const TensorType& A, const T2toT2Type& C) noexcept
-    requires(
-        getSpaceDimension<TensorType>() == N &&
-        getSpaceDimension<T2toT2Type>() == N &&
-        isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
-                                                    numeric_type<T2toT2Type>,
-                                                    OpMult>::Result,
-                       T>())
-  {
+  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::
+      tprd(const TensorType& A, const T2toT2Type& C) noexcept requires(
+          getSpaceDimension<TensorType>() == N &&
+          getSpaceDimension<T2toT2Type>() == N &&
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
+                                                      numeric_type<T2toT2Type>,
+                                                      OpMult>::Result,
+                         T>()) {
     return Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>(A, C);
   }
 
@@ -368,11 +362,28 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <T2toST2Concept T2toST2Type>
-  constexpr t2tot2<N, T>::t2tot2(const T2toST2Type& s) noexcept
-    requires((isAssignableTo<numeric_type<T2toST2Type>, T>()) &&
-             (getSpaceDimension<T2toST2Type>() == N))
-  {
+  constexpr t2tot2<N, T>::t2tot2(const T2toST2Type& s) noexcept requires(
+      (isAssignableTo<numeric_type<T2toST2Type>, T>()) &&
+      (getSpaceDimension<T2toST2Type>() == N)) {
     convert(*this, s);
+  }  // end of t2tot2
+
+  template <unsigned short N, typename ValueType>
+  template <std::size_t... d>
+  TFEL_HOST_DEVICE constexpr t2tot2<N, ValueType>::t2tot2(
+      ValueType const (&... arrays)[d])  //
+      requires((sizeof...(d) == TensorDimeToSize<N>::value) &&
+               ((d == TensorDimeToSize<N>::value) && ...)) {
+    auto init_row = [this](
+                        const typename t2tot2::size_type i,
+                        ValueType const(&values)[TensorDimeToSize<N>::value]) {
+      for (typename t2tot2::size_type j = 0u; j < TensorDimeToSize<N>::value;
+           ++j) {
+        this->operator()(i, j) = values[j];
+      }
+    };
+    auto i = typename t2tot2::size_type{};
+    (init_row(i++, arrays), ...);
   }  // end of t2tot2
 
   template <unsigned short N, typename T>
@@ -433,10 +444,9 @@ namespace tfel::math {
   }
 
   template <TensorConcept TensorType>
-  TFEL_HOST_DEVICE constexpr auto computeDeterminantSecondDerivative(
-      const TensorType& t) noexcept
-    requires(isScalar<numeric_type<TensorType>>())
-  {
+  TFEL_HOST_DEVICE constexpr auto
+  computeDeterminantSecondDerivative(const TensorType& t) noexcept requires(
+      isScalar<numeric_type<TensorType>>()) {
     constexpr auto N = getSpaceDimension<TensorType>();
     using NumType = numeric_type<TensorType>;
     constexpr auto zero = NumType{0};
@@ -466,8 +476,7 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr void convert(
       t2tot2<getSpaceDimension<T2toST2Type>(), T>& d,
       const T2toST2Type& s) noexcept  //
-    requires(isAssignableTo<numeric_type<T2toST2Type>, T>())
-  {
+      requires(isAssignableTo<numeric_type<T2toST2Type>, T>()) {
     constexpr auto N = getSpaceDimension<T2toST2Type>();
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {

@@ -61,17 +61,15 @@ namespace tfel::math {
 
   template <unsigned short N, typename T, typename OutputIterator>
   TFEL_HOST_DEVICE constexpr void exportToBaseTypeArray(
-      const tvector<N, T>& v, OutputIterator p) noexcept
-    requires(isScalar<T>())
-  {
+      const tvector<N, T>& v,
+      OutputIterator p) noexcept requires(isScalar<T>()) {
     tfel::fsalgo::transform<N>::exe(
         v.begin(), p, [](const auto& value) { return base_type_cast(value); });
   }  // end of exportToBaseTypePointer
 
   template <unsigned short N, typename T>
-  TFEL_HOST_DEVICE constexpr auto norm(const tvector<N, T>& vec) noexcept
-    requires(isScalar<T>())
-  {
+  TFEL_HOST_DEVICE constexpr auto norm(
+      const tvector<N, T>& vec) noexcept requires(isScalar<T>()) {
     typedef result_type<T, T, OpMult> squareT;
     return power<1, 2>(
         real(dotProduct<N>::exe(vec.begin(), vec.begin(), squareT(0u))));
@@ -194,13 +192,12 @@ namespace tfel::math {
   }  // end of slice
 
   template <typename MappedType, typename IndexingPolicyType, unsigned short N>
-  TFEL_HOST_DEVICE constexpr auto map(
-      tvector<N, base_type<numeric_type<MappedType>>>& v) noexcept
-    requires((!isScalar<MappedType>()) && (IndexingPolicyType::hasFixedSizes) &&
-             (checkIndexingPoliciesCompatiblity<
-                 IndexingPolicyType,
-                 typename std::remove_cv_t<MappedType>::indexing_policy>()))
-  {
+  TFEL_HOST_DEVICE constexpr auto
+  map(tvector<N, base_type<numeric_type<MappedType>>>& v) noexcept requires(
+      (!isScalar<MappedType>()) && (IndexingPolicyType::hasFixedSizes) &&
+      (checkIndexingPoliciesCompatiblity<
+          IndexingPolicyType,
+          typename std::remove_cv_t<MappedType>::indexing_policy>())) {
     static_assert(N >= getUnderlyingArrayMinimalSize<IndexingPolicyType>(),
                   "invalid vector size");
     return map<MappedType, IndexingPolicyType>(v.data());
@@ -209,11 +206,11 @@ namespace tfel::math {
   template <typename MappedType, typename IndexingPolicyType, unsigned short N>
   TFEL_HOST_DEVICE constexpr auto map(
       const tvector<N, base_type<numeric_type<MappedType>>>& v) noexcept  //
-    requires((!isScalar<MappedType>()) && (IndexingPolicyType::hasFixedSizes) &&
-             (checkIndexingPoliciesCompatiblity<
-                 IndexingPolicyType,
-                 typename std::remove_cv_t<MappedType>::indexing_policy>()))
-  {
+      requires((!isScalar<MappedType>()) &&
+               (IndexingPolicyType::hasFixedSizes) &&
+               (checkIndexingPoliciesCompatiblity<
+                   IndexingPolicyType,
+                   typename std::remove_cv_t<MappedType>::indexing_policy>())) {
     static_assert(N >= getUnderlyingArrayMinimalSize<IndexingPolicyType>(),
                   "invalid vector size");
     return map<const MappedType, IndexingPolicyType>(v.data());
@@ -224,13 +221,11 @@ namespace tfel::math {
             typename IndexingPolicyType,
             unsigned short N,
             typename real>
-  TFEL_HOST_DEVICE constexpr auto map(tvector<N, real>& v) noexcept
-    requires((!std::is_const_v<MappedType>) &&
-             (IndexingPolicyType::hasFixedSizes) &&
-             (checkIndexingPoliciesCompatiblity<
-                 IndexingPolicyType,
-                 typename MappedType::indexing_policy>()))
-  {
+  TFEL_HOST_DEVICE constexpr auto map(tvector<N, real>& v) noexcept requires(
+      (!std::is_const_v<MappedType>)&&(IndexingPolicyType::hasFixedSizes) &&
+      (checkIndexingPoliciesCompatiblity<
+          IndexingPolicyType,
+          typename MappedType::indexing_policy>())) {
     static_assert(
         N >= offset + getUnderlyingArrayMinimalSize<IndexingPolicyType>(),
         "invalid vector size");
@@ -242,12 +237,12 @@ namespace tfel::math {
             typename IndexingPolicyType,
             unsigned short N,
             typename real>
-  TFEL_HOST_DEVICE constexpr auto map(const tvector<N, real>& v) noexcept
-    requires((IndexingPolicyType::hasFixedSizes) &&
-             (checkIndexingPoliciesCompatiblity<
-                 IndexingPolicyType,
-                 typename std::remove_cv_t<MappedType>::indexing_policy>()))
-  {
+  TFEL_HOST_DEVICE constexpr auto
+  map(const tvector<N, real>& v) noexcept requires(
+      (IndexingPolicyType::hasFixedSizes) &&
+      (checkIndexingPoliciesCompatiblity<
+          IndexingPolicyType,
+          typename std::remove_cv_t<MappedType>::indexing_policy>())) {
     static_assert(
         N >= offset + getUnderlyingArrayMinimalSize<IndexingPolicyType>(),
         "invalid vector size");
@@ -259,10 +254,9 @@ namespace tfel::math {
             unsigned short offset,
             unsigned short stride,
             unsigned short N>
-  TFEL_HOST_DEVICE constexpr auto map(
-      tvector<N, ViewsArrayNumericType<MappedType>>& v) noexcept
-    requires(!std::is_const_v<MappedType>)
-  {
+  TFEL_HOST_DEVICE constexpr auto
+  map(tvector<N, ViewsArrayNumericType<MappedType>>& v) noexcept requires(
+      !std::is_const_v<MappedType>) {
     constexpr auto mstride = getViewsArrayMinimalStride<MappedType>();
     static_assert(stride >= mstride, "invalid stride");
     static_assert(N >= offset + M * mstride, "invalid vector size");

@@ -97,8 +97,8 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr void computePushForwardDerivative(
       ST2toST2ResultType&,
       const TensorType&) noexcept  //
-    requires(tfel::typetraits::IsFundamentalNumericType<
-             numeric_type<TensorType>>::cond);
+      requires(tfel::typetraits::IsFundamentalNumericType<
+               numeric_type<TensorType>>::cond);
   /*!
    * \brief performs the push_forward of a st2tost2:
    * \[
@@ -114,10 +114,10 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr void push_forward(ST2toST2Type&,
                                                const ST2toST2Type2&,
                                                const TensorType&) noexcept  //
-    requires(getSpaceDimension<ST2toST2Type>() ==
-                 getSpaceDimension<ST2toST2Type2>() &&
-             getSpaceDimension<ST2toST2Type>() ==
-                 getSpaceDimension<TensorType>());
+      requires(getSpaceDimension<ST2toST2Type>() ==
+                   getSpaceDimension<ST2toST2Type2>() &&
+               getSpaceDimension<ST2toST2Type>() ==
+                   getSpaceDimension<TensorType>());
 
   /*!
    * \brief an helper function which returns if the given type implements the

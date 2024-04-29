@@ -40,9 +40,9 @@ namespace epx {
    * \param[in]  props : material properties
    */
   MFRONT_EPX_VISIBILITY_EXPORT void
-  EuroplexusComputeIsotropicPlaneStressAlteredStiffnessTensor(
-      tfel::config::Types<2u, EuroplexusReal, false>::StiffnessTensor&,
-      const EuroplexusReal* const);
+      EuroplexusComputeIsotropicPlaneStressAlteredStiffnessTensor(
+          tfel::config::Types<2u, EuroplexusReal, false>::StiffnessTensor&,
+          const EuroplexusReal* const);
 
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
@@ -61,9 +61,9 @@ namespace epx {
    * \param[in]  props : material properties
    */
   MFRONT_EPX_VISIBILITY_EXPORT void
-  EuroplexusComputeOrthotropicStiffnessTensor2D(
-      tfel::config::Types<2u, EuroplexusReal, false>::StiffnessTensor&,
-      const EuroplexusReal* const);
+      EuroplexusComputeOrthotropicStiffnessTensor2D(
+          tfel::config::Types<2u, EuroplexusReal, false>::StiffnessTensor&,
+          const EuroplexusReal* const);
 
   /*!
    * \brief compute the stiffness tensor for plane stress modelling
@@ -72,9 +72,9 @@ namespace epx {
    * \param[in]  props : material properties
    */
   MFRONT_EPX_VISIBILITY_EXPORT void
-  EuroplexusComputeOrthotropicPlaneStressAlteredStiffnessTensor(
-      tfel::config::Types<2u, EuroplexusReal, false>::StiffnessTensor&,
-      const EuroplexusReal* const);
+      EuroplexusComputeOrthotropicPlaneStressAlteredStiffnessTensor(
+          tfel::config::Types<2u, EuroplexusReal, false>::StiffnessTensor&,
+          const EuroplexusReal* const);
 
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
@@ -83,9 +83,9 @@ namespace epx {
    * \param[in]  props : material properties
    */
   MFRONT_EPX_VISIBILITY_EXPORT void
-  EuroplexusComputeOrthotropicStiffnessTensor3D(
-      tfel::config::Types<3u, EuroplexusReal, false>::StiffnessTensor&,
-      const EuroplexusReal* const);
+      EuroplexusComputeOrthotropicStiffnessTensor3D(
+          tfel::config::Types<3u, EuroplexusReal, false>::StiffnessTensor&,
+          const EuroplexusReal* const);
 
   /*!
    * This structure is in charge of computing the Stiffness operator

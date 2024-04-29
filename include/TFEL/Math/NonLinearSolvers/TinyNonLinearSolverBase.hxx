@@ -171,8 +171,8 @@ namespace tfel::math {
      * \brief check the convergence of the method
      * \param[in] e: current error
      */
-    TFEL_HOST_DEVICE constexpr bool checkConvergence(
-        const NumericType e) const noexcept {
+    TFEL_HOST_DEVICE constexpr bool checkConvergence(const NumericType e) const
+        noexcept {
       return e < this->epsilon;
     }
     /*!
@@ -183,8 +183,9 @@ namespace tfel::math {
      */
     template <MatrixConcept FixedSizeMatrixType,
               VectorConcept FixedSizeVectorType>
-    TFEL_HOST_DEVICE bool solveLinearSystem(
-        FixedSizeMatrixType&, FixedSizeVectorType&) const noexcept;
+    TFEL_HOST_DEVICE bool solveLinearSystem(FixedSizeMatrixType&,
+                                            FixedSizeVectorType&) const
+        noexcept;
     /*!
      * \brief update the jacobian matrix if required.
      *
@@ -217,15 +218,15 @@ namespace tfel::math {
      */
     TFEL_HOST_DEVICE constexpr void processNewEstimate() noexcept {}
     //! \brief method called when the resolution begins
-    TFEL_HOST_DEVICE constexpr void reportBeginningOfResolution()
-        const noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportBeginningOfResolution() const
+        noexcept {}
     //! \brief method called when the resolution succeeds
     TFEL_HOST_DEVICE constexpr void reportSuccess() const noexcept {}
     //! \brief method called when the resolution fails
     TFEL_HOST_DEVICE constexpr void reportFailure() const noexcept {}
     //! \brief method called when the evaluation of the residual failed.
-    TFEL_HOST_DEVICE constexpr void reportInvalidResidualEvaluation()
-        const noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportInvalidResidualEvaluation() const
+        noexcept {}
     //! \brief method called when the computation of a new correction failed.
     TFEL_HOST_DEVICE constexpr void reportNewCorrectionComputationFailure()
         const noexcept {}
