@@ -796,7 +796,24 @@ The keyword `@IntegerConstant` is not documented yet
 
 # The `@Integrator` keyword
 
-The keyword `@Integrator` is not documented yet
+The `@Integrator` keyword allows the user to construct the implicit system to resolve.
+
+## Specific conventions 
+
+The following conventions apply: 
+— sig represents the updated stress (calculated by the code provided after the @ComputeStress keyword);
+— eto represents the total strain at the start of the step;
+— deto represents the total strain rate (constant over the step);
+— dT represents the rate of temperature change (constant over time);
+— for any internal variable Y, Y represents its value at the start of the step;
+— for any internal variable Y, Y represents the current estimate of the increment of this variable over the step;
+— for any internal variable Y, fY represents the implicit equation associated with this variable;
+— for any auxiliary internal variable Y, Y represents its value at the start of the step;
+— for any external variable V, V represents its value at the start of the step;
+— for any external variable V, dV represents its rate of change over the time step (constant over the time step). 
+
+If NEWTON's algorithm or the first BROYDEN algorithm is used, for any pair of internal variables Yi and Yj, dfYi_ddYj represents the Jacobian term ∂fYi ∂Yj;
+
 
 # The `@InteractionMatrix` keyword
 
