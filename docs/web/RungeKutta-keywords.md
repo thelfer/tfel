@@ -910,7 +910,21 @@ The keyword `@IntegerConstant` is not documented yet
 
 # The `@Integrator` keyword
 
-The keyword `@Integrator` is not documented yet
+The `@Integrator` keyword allows the user to construct the implicit system to resolve.
+
+## Specific conventions 
+
+The following conventions apply: 
+— sig represents the updated stress (calculated by the code provided after the @ComputeStress keyword);
+— eto represents the total strain at the start of the time step;
+— deto represents the increment of the total strain (constant over the time step);
+— dT represents the increment of the temperature (constant over the time step);
+— for any internal variable Y, Y represents its value at the start of the time step;
+— for any internal variable Y, dY represents the current estimate of the increment of this variable over the time step;
+— for any internal variable Y, fY represents the implicit equation associated with this variable;
+— for any auxiliary internal variable Y, Y represents its value at the start of the time step;
+— for any external variable V, V represents its value at the start of the time step;
+— for any external variable V, dV represents its increment over the time step (constant over the time step). 
 
 # The `@InteractionMatrix` keyword
 
