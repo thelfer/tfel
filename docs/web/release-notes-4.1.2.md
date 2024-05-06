@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 548: [generic-interface] Fix initialisation of array of material properties when quantities are used
+
+For more details, see <https://github.com/thelfer/tfel/issues/548.
+
 ## Issue 541: [tfel-math] support for quantities in `computePushForwardDerivative` and `convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative`
 
 For more details, see <https://github.com/thelfer/tfel/issues/540.
