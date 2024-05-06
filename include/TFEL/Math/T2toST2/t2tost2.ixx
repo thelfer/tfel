@@ -295,7 +295,7 @@ namespace tfel::math {
     static_assert(getSpaceDimension<TensorType>() == N);
     using value_type = numeric_type<T2toST2ResultType>;
     using real = base_type<value_type>;
-    auto d1 = t2tost2<N, real>{};
+    auto d1 = t2tost2<N, value_type>{};
     computePushForwardDerivativeWithRespectToDeformationGradient(d1, S, F);
     auto d2 = st2tost2<N, real>{};
     computePushForwardDerivative(d2, F);
