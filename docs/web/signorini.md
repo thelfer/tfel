@@ -118,7 +118,7 @@ where \(K\) is the bulk modulus.
 The Signorini behaviour mostly refers to the following choice of
 \(W^{i}\):
 \[
-W^{i}= C_{10}\,\paren{\bar{I}_{1}-3}+2\,C_{20}\,\paren{\bar{I}_{1}-3}^{2}+C_{01}\,\paren{\bar{I}_{2}-3}
+W^{i}= C_{10}\,\paren{\bar{I}_{1}-3}+C_{20}\,\paren{\bar{I}_{1}-3}^{2}+C_{01}\,\paren{\bar{I}_{2}-3}
 \]
 
 The general expression of the second Piola-Kirchhoff stress is:
