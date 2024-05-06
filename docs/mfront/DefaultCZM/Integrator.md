@@ -15,18 +15,20 @@ The `@Integrator` keyword allows the user to compute:
   the time step. This value must be updated. t is automatically
   decomposed in its normal part t_n (scalar) and its tangential part t_t
   (vectorial).
-- u represents the opening displacement the start of the time step and
+- u represents the opening displacement the beginning of the time step and
   du represents its increment (constant over the time step). u is
   automatically decomposed in its normal part u_n (scalar) and its
   tangential part u_t (vectorial).
-- for any internal variable Y, Y represents its value at the start of
-  the time step. The increment of Y, represented by the variable dY,
-  must be computed.
-- for any auxiliary internal variable Y, Y represents its value at the
-  start of the time step. This value must be updated.
-- for any external variable V, V represents its value at the start of
-  the time step and dV represents its increment over the time step
-  (constant over the time step).
+- for any internal variable Y (declared by the @StateVariable keyword),
+  Y represents its value at the beginning of the time step. The
+  increment of Y, represented by the variable dY, must be computed.
+- for any auxiliary internal variable Y (declared by the
+  @AuxiliaryStateVariable keyword), Y represents its value at the
+  beginning of the time step. This value must be updated.
+- for any external variable V (declared by the @ExternalStateVariable
+  keyword), V represents its value at the beginning of the time step and
+  dV represents its increment over the time step (constant over the time
+  step).
 
 If the consistent tangent operator is to be computed, the variable Dt is
 available. The computeTangentOperator_ boolean value states if the the

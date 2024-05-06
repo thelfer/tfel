@@ -11,17 +11,20 @@ The `@Integrator` keyword allows the user to compute:
 
 ￼The following conventions apply: 
 
-- sig is initialized by value of the stress at the beginning of the time
-  step. This value must be updated.
-- eto represents the total strain at the beginning of the time step and deto
-  represents its increment (constant over the time step).
-- for any internal variable Y (declared by the @StateVariable keyword),
-  Y represents its value at the beginning of the time step. The
-  increment of Y, represented by the variable dY, must be computed.
-- for any auxiliary internal variable Y (declared by the
+- for any thermodynamic force thf (declared using the
+  @ThermodynamicForce keyword), thf represents the value of the
+  thermodynamic force at the beginning of the time step. This value must
+  be updated.
+- for any gradient g (declared using the @Gradient keyword), g
+  represents the value of the gradient the beginning of the time step
+  and dg represents its increment (constant over the time step).
+- for any internal variable Y (declared using the @StateVariable
+  keyword), Y represents its value at the beginning of the time step.
+  The increment of Y, represented by the variable dY, must be computed.
+- for any auxiliary internal variable Y (declared using the
   @AuxiliaryStateVariable keyword), Y represents its value at the
   beginning of the time step. This value must be updated.
-- for any external variable V (declared by the @ExternalStateVariable
+- for any external variable V (declared using the @ExternalStateVariable
   keyword), V represents its value at the beginning of the time step and
   dV represents its increment over the time step (constant over the time
   step).

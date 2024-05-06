@@ -13,14 +13,17 @@ The `@Integrator` keyword allows the user to compute:
 - F0 represents the deformation gradient at the beginning of the time
   step and F1 represents the deformation gradient at the end of the time
   step.
-- for any internal variable Y, Y represents its value at the start of
+- for any internal variable Y (declared by the @StateVariable
+  keyword), Y represents its value at the beginning of
   the time step. The increment of Y, represented by the variable dY,
   must be computed.
-- for any auxiliary internal variable Y, Y represents its value at the
-  start of the time step. This value must be updated.
-- for any external variable V, V represents its value at the start of
-  the time step and dV represents its increment over the time step
-  (constant over the time step).
+- for any auxiliary internal variable Y (declared by the
+  @AuxiliaryStateVariable keyword), Y represents its value at the
+  beginning of the time step. This value must be updated.
+- for any external variable V (declared by the @ExternalStateVariable
+  keyword), V represents its value at the beginning of the time step and
+  dV represents its increment over the time step (constant over the time
+  step).
 
 ## Notes
 
