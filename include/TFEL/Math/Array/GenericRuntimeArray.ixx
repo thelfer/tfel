@@ -89,6 +89,10 @@ namespace tfel::math {
       const GenericRuntimeArray& src) {
     //     checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
     //                                              src.getIndexingPolicy());
+    if (&src == this) {
+      return *this;
+    }
+    this->resize(src.getIndexingPolicy());
     const auto f = makeMultiIndicesBinaryOperatorFunctor(
         [](auto& a, const auto& b) { a = b; }, *this, src);
     this->iterate(f);
@@ -105,11 +109,13 @@ namespace tfel::math {
       if (this->getContainerSize() == src.getContainerSize()) {
         this->data_values.operator=(std::move(src.data_values));
       } else {
+        this->resize(src.getIndexingPolicy());
         const auto f = makeMultiIndicesBinaryOperatorFunctor(
             [](auto& a, const auto& b) { a = b; }, *this, src);
         this->iterate(f);
       }
     } else {
+      this->resize(src.getIndexingPolicy());
       const auto f = makeMultiIndicesBinaryOperatorFunctor(
           [](auto& a, const auto& b) { a = b; }, *this, src);
       this->iterate(f);
