@@ -21,6 +21,8 @@ nocite: |
     @lorenzo_exploring_2024
     @simo_novel_2024
     @singh_irradiation_2024
+    @loiseau_formulation_2023
+	@thuillet_modelisation_2023
     @wang_modelling_2023
     @fokam_implementation_2023
     @bacquaert_standard_2023
