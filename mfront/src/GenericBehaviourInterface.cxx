@@ -1936,8 +1936,8 @@ namespace mfront {
         os << "for(unsigned short idx=0; idx != " << v.arraySize
            << "; ++idx){\n";
         if (v.isScalar()) {
-          os << "this->" << v.name << "[idx] = " << src << "[" << get_offset(o)
-             << "+idx];\n";
+          os << "this->" << v.name << "[idx] = " << v.type << "{" << src << "["
+             << get_offset(o) << "+idx]};\n";
         } else {
           os << "this->" << v.name << "[idx] = tfel::math::map<" << v.type
              << ">(" << src << " + " << get_offset(o) << "+idx * "
@@ -1947,8 +1947,8 @@ namespace mfront {
       } else {
         for (unsigned short index = 0; index != v.arraySize; ++index) {
           if (v.isScalar()) {
-            os << "this->" << v.name << "[" << index << "] = " << src << "["
-               << get_offset(o) << "];\n";
+            os << "this->" << v.name << "[" << index << "] = " << v.type << "{"
+               << src << "[" << get_offset(o) << "]};\n";
           } else {
             os << "this->" << v.name << "[" << index << "] = tfel::math::map<"
                << v.type << ">(" << src << " + " << get_offset(o) << ");\n";
