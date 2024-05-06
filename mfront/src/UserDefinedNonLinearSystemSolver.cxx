@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <algorithm>
 #include "TFEL/Raise.hxx"
 #include "MFront/UserDefinedNonLinearSystemSolver.hxx"
 

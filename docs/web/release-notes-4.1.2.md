@@ -23,6 +23,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 For more details, see <https://github.com/thelfer/tfel/issues/548.
 
+## Issue 541: [tfel-math] support for quantities in `computePushForwardDerivative` and `convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative`
+
+For more details, see <https://github.com/thelfer/tfel/issues/540.
+
 ## Issue 540: Allow behaviour to call models with more than one output
 
 For more details, see <https://github.com/thelfer/tfel/issues/540.

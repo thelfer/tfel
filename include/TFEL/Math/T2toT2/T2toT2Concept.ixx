@@ -16,8 +16,6 @@
 
 #include "TFEL/Math/LU/LUDecomp.hxx"
 #include "TFEL/Math/LU/TinyPermutation.hxx"
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
-#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
 
 namespace tfel::math {
 

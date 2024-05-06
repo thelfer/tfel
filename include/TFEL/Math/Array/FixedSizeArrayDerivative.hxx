@@ -81,7 +81,9 @@ namespace tfel::math {
    * \tparam Array2Tag: tag of variable
    * \tparam ArrayDerivativeType: type of the array derivative
    */
-  template <typename Array1Tag, typename Array2Tag, typename ArrayDerivativeType>
+  template <typename Array1Tag,
+            typename Array2Tag,
+            typename ArrayDerivativeType>
   struct ConceptRebind<FixedSizeArrayDerivativeTag<Array1Tag, Array2Tag>,
                        ArrayDerivativeType> {
     //! \brief a simple alias

@@ -368,6 +368,24 @@ namespace tfel::math {
     convert(*this, s);
   }  // end of t2tot2
 
+  template <unsigned short N, typename ValueType>
+  template <std::size_t... d>
+  TFEL_HOST_DEVICE constexpr t2tot2<N, ValueType>::t2tot2(
+      ValueType const (&... arrays)[d])  //
+      requires((sizeof...(d) == TensorDimeToSize<N>::value) &&
+               ((d == TensorDimeToSize<N>::value) && ...)) {
+    auto init_row = [this](
+                        const typename t2tot2::size_type i,
+                        ValueType const(&values)[TensorDimeToSize<N>::value]) {
+      for (typename t2tot2::size_type j = 0u; j < TensorDimeToSize<N>::value;
+           ++j) {
+        this->operator()(i, j) = values[j];
+      }
+    };
+    auto i = typename t2tot2::size_type{};
+    (init_row(i++, arrays), ...);
+  }  // end of t2tot2
+
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr void t2tot2<N, T>::import(
       const base_type<T>* const src) noexcept {

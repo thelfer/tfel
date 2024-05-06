@@ -307,6 +307,11 @@ namespace tfel::math {
     }
   };  // end of struct Quantity
 
+  // class template argument deduction guide line
+  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  Quantity(Quantity<UnitType, ValueType, OwnershipPolicy>)
+      ->Quantity<UnitType, ValueType, OwnershipPolicy>;
+
   template <typename UnitType,
             typename ValueType,
             typename OwnershipPolicy,

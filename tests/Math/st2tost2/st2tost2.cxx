@@ -17,40 +17,76 @@
 
 #include <cmath>
 #include <cstdlib>
-#include <cassert>
-
+#include <type_traits>
 #include "TFEL/Math/st2tost2.hxx"
+
+template <typename T>
+static constexpr T my_abs(const T& v) noexcept {
+  return v < T(0) ? -v : v;
+}
+
+static void test1() {
+  using namespace std;
+  using namespace tfel::math;
+  constexpr st2tost2<3> s1(1.5);
+  constexpr st2tost2<3> s2(4.);
+  constexpr st2tost2<3> s3 = s1 + 0.5 * s2;
+  static_assert(my_abs(s3(0, 0) - 3.5) < 1.e-14);
+  static_assert(my_abs(s3(0, 1) - 3.5) < 1.e-14);
+  static_assert(my_abs(s3(0, 2) - 3.5) < 1.e-14);
+  static_assert(my_abs(s3(0, 3) - 3.5) < 1.e-14);
+  static_assert(my_abs(s3(1, 0) - 3.5) < 1.e-14);
+  static_assert(my_abs(s3(1, 1) - 3.5) < 1.e-14);
+  static_assert(my_abs(s3(1, 2) - 3.5) < 1.e-14);
+  static_assert(my_abs(s3(1, 3) - 3.5) < 1.e-14);
+  static_assert(my_abs(s3(2, 0) - 3.5) < 1.e-14);
+  static_assert(my_abs(s3(2, 1) - 3.5) < 1.e-14);
+  static_assert(my_abs(s3(2, 2) - 3.5) < 1.e-14);
+  static_assert(my_abs(s3(2, 3) - 3.5) < 1.e-14);
+  static_assert(my_abs(s3(3, 0) - 3.5) < 1.e-14);
+  static_assert(my_abs(s3(3, 1) - 3.5) < 1.e-14);
+  static_assert(my_abs(s3(3, 2) - 3.5) < 1.e-14);
+  static_assert(my_abs(s3(3, 3) - 3.5) < 1.e-14);
+}
+
+static void test2() {
+  using namespace tfel::math;
+  constexpr auto s = st2tost2{{1, 0, 2},  //
+                              {-1, 1, 6},
+                              {3, 4, 1}};
+  static_assert(std::is_same_v<decltype(s), const st2tost2<1u, int>>);
+  static_assert(s(0, 0) == 1);
+  static_assert(s(0, 1) == 0);
+  static_assert(s(0, 2) == 2);
+  static_assert(s(1, 0) == -1);
+  static_assert(s(1, 1) == 1);
+  static_assert(s(1, 2) == 6);
+  static_assert(s(2, 0) == 3);
+  static_assert(s(2, 1) == 4);
+  static_assert(s(2, 2) == 1);
+}
+
+static void test3() {
+  using namespace tfel::math;
+  constexpr st2tost2<1u, int> s = {{1, 0, 2},  //
+                                   {-1, 1, 6},
+                                   {3, 4, 1}};
+  static_assert(std::is_same_v<decltype(s), const st2tost2<1u, int>>);
+  static_assert(s(0, 0) == 1);
+  static_assert(s(0, 1) == 0);
+  static_assert(s(0, 2) == 2);
+  static_assert(s(1, 0) == -1);
+  static_assert(s(1, 1) == 1);
+  static_assert(s(1, 2) == 6);
+  static_assert(s(2, 0) == 3);
+  static_assert(s(2, 1) == 4);
+  static_assert(s(2, 2) == 1);
+}
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
-  using namespace tfel::math;
-  using namespace std;
-
-  st2tost2<3> s1(1.5);
-  st2tost2<3> s2(4.);
-
-  st2tost2<3> s3;
-  s3 = s1 + 0.5 * s2;
-
-  assert(abs(s3(0, 0) - 3.5) < 1.e-14);
-  assert(abs(s3(0, 1) - 3.5) < 1.e-14);
-  assert(abs(s3(0, 2) - 3.5) < 1.e-14);
-  assert(abs(s3(0, 3) - 3.5) < 1.e-14);
-
-  assert(abs(s3(1, 0) - 3.5) < 1.e-14);
-  assert(abs(s3(1, 1) - 3.5) < 1.e-14);
-  assert(abs(s3(1, 2) - 3.5) < 1.e-14);
-  assert(abs(s3(1, 3) - 3.5) < 1.e-14);
-
-  assert(abs(s3(2, 0) - 3.5) < 1.e-14);
-  assert(abs(s3(2, 1) - 3.5) < 1.e-14);
-  assert(abs(s3(2, 2) - 3.5) < 1.e-14);
-  assert(abs(s3(2, 3) - 3.5) < 1.e-14);
-
-  assert(abs(s3(3, 0) - 3.5) < 1.e-14);
-  assert(abs(s3(3, 1) - 3.5) < 1.e-14);
-  assert(abs(s3(3, 2) - 3.5) < 1.e-14);
-  assert(abs(s3(3, 3) - 3.5) < 1.e-14);
-
+  test1();
+  test2();
+  test3();
   return EXIT_SUCCESS;
 }
