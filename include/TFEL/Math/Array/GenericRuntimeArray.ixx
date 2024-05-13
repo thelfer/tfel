@@ -30,7 +30,7 @@ namespace tfel::math {
       const typename ArrayPolicy::IndexingPolicy& p,
       const ValueType& value)  //
       requires(
-          isAssignableTo<ValueType, typename GenericRuntimeArray::value_type>())
+          isAssignableTo<ValueType, typename GenericRuntimeArray<Child, ArrayPolicy>::value_type>())
       : GenericRuntimeArray(p) {
     this->fill(value);
   }  // end of GenericRuntimeArray
@@ -49,7 +49,7 @@ namespace tfel::math {
   GenericRuntimeArray<Child, ArrayPolicy>::GenericRuntimeArray(
       const std::initializer_list<ValueType>&
           values) requires((isAssignableTo<ValueType,
-                                           typename GenericRuntimeArray::
+                                           typename GenericRuntimeArray<Child, ArrayPolicy>::
                                                value_type>()) &&
                            (ArrayPolicy::IndexingPolicy::arity == 1) &&
                            (ArrayPolicy::IndexingPolicy::areDataContiguous))
@@ -130,9 +130,9 @@ namespace tfel::math {
   operator*=(const ValueType2& v) noexcept requires(
       isAssignableTo<
           BinaryOperationResult<ValueType2,
-                                typename GenericRuntimeArray::value_type,
+                                typename GenericRuntimeArray<Child, ArrayPolicy>::value_type,
                                 OpMult>,
-          typename GenericRuntimeArray::value_type>()) {
+          typename GenericRuntimeArray<Child, ArrayPolicy>::value_type>()) {
     auto& child = static_cast<Child&>(*this);
     child.multiplyByScalar(v);
     return child;
@@ -143,10 +143,10 @@ namespace tfel::math {
   Child& GenericRuntimeArray<Child, ArrayPolicy>::
   operator/=(const ValueType2& v) noexcept requires(
       isAssignableTo<
-          BinaryOperationResult<typename GenericRuntimeArray::value_type,
+          BinaryOperationResult<typename GenericRuntimeArray<Child, ArrayPolicy>::value_type,
                                 ValueType2,
                                 OpDiv>,
-          typename GenericRuntimeArray::value_type>()) {
+          typename GenericRuntimeArray<Child, ArrayPolicy>::value_type>()) {
     auto& child = static_cast<Child&>(*this);
     child.multiplyByScalar(1 / v);
     return child;

@@ -48,7 +48,7 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::
       GenericFixedSizeArray(const ValueType& value) noexcept requires(
           isAssignableTo<ValueType,
-                         typename GenericFixedSizeArray::value_type>())
+                         typename GenericFixedSizeArray<Child, ArrayPolicy, N>::value_type>())
       : GenericFixedSizeArray() {
     this->fill(value);
   }  // end of GenericFixedSizeArray
@@ -76,7 +76,7 @@ namespace tfel::math {
       GenericFixedSizeArray(
           const std::initializer_list<ValueType>& values) noexcept  //
       requires(isAssignableTo<ValueType,
-                              typename GenericFixedSizeArray::value_type>())
+                              typename GenericFixedSizeArray<Child, ArrayPolicy, N>::value_type>())
       : GenericFixedSizeArray() {
     if (values.size() == 1u) {
       this->fill(*(values.begin()));

@@ -124,7 +124,7 @@ namespace tfel::math {
     template <typename ValueType>
     TFEL_HOST_DEVICE constexpr explicit GenericFixedSizeArray(
         const ValueType&) noexcept requires(isAssignableTo<ValueType,
-                                                           typename GenericFixedSizeArray::
+                                                           typename GenericFixedSizeArray<Child, ArrayPolicy, N>::
                                                                value_type>());
     /*!
      * \brief constructor from an initializer list
@@ -134,7 +134,7 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr GenericFixedSizeArray(
         const std::initializer_list<ValueType2>& values) noexcept  //
         requires(isAssignableTo<ValueType2,
-                                typename GenericFixedSizeArray::value_type>());
+                                typename GenericFixedSizeArray<Child, ArrayPolicy, N>::value_type>());
     /*!
      * \brief default donstructor.
      * \param p pointer to an array used to initialise the components
@@ -162,7 +162,7 @@ namespace tfel::math {
      * be greater than than the logical number of elements contained in the
      * array which is returned by `IndexingPolicy::size`.
      */
-    TFEL_HOST_DEVICE constexpr typename GenericFixedSizeArray::size_type
+    TFEL_HOST_DEVICE constexpr typename GenericFixedSizeArray<Child, ArrayPolicy, N>::size_type
     getContainerSize() const noexcept;
     // inheriting MutableFixedSizeArrayBase' assignement operator
     using MutableFixedSizeArrayBase<
@@ -204,10 +204,11 @@ namespace tfel::math {
                                     OpDiv>,
                                 typename GenericFixedSizeArray::value_type>());
     //! \return a pointer to the underlying array serving as element storage.
-    TFEL_HOST_DEVICE constexpr typename GenericFixedSizeArray::pointer
+    TFEL_HOST_DEVICE constexpr typename GenericFixedSizeArray<Child, ArrayPolicy, N>::pointer
     data() noexcept;
     //! \return a pointer to the underlying array serving as element storage.
-    TFEL_HOST_DEVICE constexpr typename GenericFixedSizeArray::const_pointer
+    TFEL_HOST_DEVICE constexpr
+        typename GenericFixedSizeArray<Child, ArrayPolicy, N>::const_pointer
     data() const noexcept;
 
    protected:

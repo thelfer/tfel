@@ -59,9 +59,9 @@ namespace tfel::math {
                 const typename matrix::size_type,
                 const ValueType& = ValueType{});
     //
-    typename matrix::size_type getNbRows() const;
+    typename matrix<ValueType>::size_type getNbRows() const;
     //
-    typename matrix::size_type getNbCols() const;
+    typename matrix<ValueType>::size_type getNbCols() const;
     /*!
      * \brief constructor from intricated initializer list
      * \param[in] values: values
