@@ -171,17 +171,16 @@ struct ExternallyAllocatedWorkspace {
   tfel::math::View<tfel::math::tmatrix<N, N, NumericType>> jacobian;
 };
 
-struct NewtonRaphsonSolver5
-    : public tfel::math::TinyNewtonRaphsonSolver<2u,
+struct NewtonRaphsonSolver5;
+using TinyNewtonRaphsonSolver5 = tfel::math::TinyNewtonRaphsonSolver<2u,
                                                  double,
                                                  NewtonRaphsonSolver5,
-                                                 ExternallyAllocatedWorkspace> {
+                                                 ExternallyAllocatedWorkspace>;
+
+struct NewtonRaphsonSolver5
+    : public TinyNewtonRaphsonSolver5 {
   NewtonRaphsonSolver5(double* const buffer)
-      : tfel::math::TinyNewtonRaphsonSolver<2u,
-                                            double,
-                                            NewtonRaphsonSolver5,
-                                            ExternallyAllocatedWorkspace>(
-            buffer) {
+      : TinyNewtonRaphsonSolver5(buffer) {
     this->zeros = {0.5, 0.5};
     this->epsilon = 1.e-14;
     this->iterMax = 20;
@@ -203,17 +202,16 @@ struct NewtonRaphsonSolver5
 
 };  // end of struct NewtonRaphsonSolver5
 
-struct NewtonRaphsonSolver6
-    : public tfel::math::TinyNewtonRaphsonSolver<4u,
+struct NewtonRaphsonSolver6;
+using TinyNewtonRaphsonSolver6 = tfel::math::TinyNewtonRaphsonSolver<4u,
                                                  double,
                                                  NewtonRaphsonSolver6,
-                                                 ExternallyAllocatedWorkspace> {
+                                                 ExternallyAllocatedWorkspace>;
+
+struct NewtonRaphsonSolver6
+    : public TinyNewtonRaphsonSolver6 {
   NewtonRaphsonSolver6(double* const buffer)
-      : tfel::math::TinyNewtonRaphsonSolver<4u,
-                                            double,
-                                            NewtonRaphsonSolver6,
-                                            ExternallyAllocatedWorkspace>(
-            buffer) {
+      : TinyNewtonRaphsonSolver6(buffer) {
     this->zeros = {0.5, 0.5, 1., 1.};
     this->epsilon = 1.e-14;
     this->iterMax = 20;
