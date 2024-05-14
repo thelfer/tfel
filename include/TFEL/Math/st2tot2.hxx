@@ -26,8 +26,6 @@
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
 #include "TFEL/Math/Forward/st2tot2.hxx"
-#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include "TFEL/Math/ST2toT2/ST2toT2Concept.hxx"
 #include "TFEL/Math/ST2toT2/ST2toT2ConceptOperations.hxx"
 #include "TFEL/Math/ST2toT2/StensorProductLeftDerivativeExpr.hxx"
@@ -158,6 +156,15 @@ namespace tfel::math {
     //
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(st2tot2,
                                                GenericFixedSizeArrayBase);
+    /*!
+     * \brief constructors from arrays to implement class
+     * template argument deduction.
+     * \tparam d: dimensions of the arrays
+     */
+    template <std::size_t... d>
+    TFEL_HOST_DEVICE constexpr st2tot2(ValueType const (&... arrays)[d])  //
+        requires((sizeof...(d) == TensorDimeToSize<N>::value) &&
+                 ((d == StensorDimeToSize<N>::value) && ...));
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
@@ -167,6 +174,16 @@ namespace tfel::math {
     //! \brief copy from a range
     TFEL_HOST_DEVICE constexpr void copy(const auto) noexcept;
   };
+
+  /*!
+   * \brief class template argument deduction
+   * \tparam ValueType: numeric type
+   * \tparam M: number of columns
+   * \tparam d: sizes of the arrays, that must be all equal to M
+   */
+  template <typename ValueType, std::size_t M, std::size_t... d>
+  st2tot2(ValueType const (&)[M], ValueType const (&... arrays)[d])
+      ->st2tot2<TensorSizeToDime<sizeof...(d) + 1>::value, ValueType>;
 
   /*!
    * \brief a simple alias for backward compatibility

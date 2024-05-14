@@ -27,7 +27,7 @@ variables are set to their values at the current date.
   const real Q = Q0 + (Qm - Q0) * (1 - exp(-2 * Mu * q_) );
   R+=b*(Q-R)*dp;
 }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 ## Example (Runge-Kutta dsl)
 
@@ -35,4 +35,4 @@ variables are set to their values at the current date.
 @UpdateAuxiliaryStateVariables{
   sigeq = sqrt(sig|sig);
 }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

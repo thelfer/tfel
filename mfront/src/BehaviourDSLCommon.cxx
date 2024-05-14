@@ -883,9 +883,19 @@ namespace mfront {
       getLogStream() << "BehaviourDSLCommon::getModelDescription: "
                      << "treating file '" << f << "'\n";
     }
+    //
+    const auto path = SearchPathsHandler::search(f);
+    // a simple test to fix Issue #524
+    const auto adsl = MFrontBase::getDSL(path);
+    if (adsl->getTargetType() != AbstractDSL::MODELDSL) {
+      this->throwRuntimeError("BehaviourDSLCommon::getModelDescription",
+                              "error while treating file '" + f +
+                                  "'.\n"
+                                  "This file is not handled by the Model DSL");
+    }
+    //
     const auto& global_options =
         GlobalDomainSpecificLanguageOptionsManager::get();
-    const auto path = SearchPathsHandler::search(f);
     auto dsl = ModelDSL{tfel::utilities::merge(
         global_options.getModelDSLOptions(), this->buildDSLOptions(), true)};
     // getting informations the source files

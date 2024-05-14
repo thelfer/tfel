@@ -16,11 +16,11 @@ algorithms are available:
 
 ~~~~{.cpp}
 @Algorithm rk54;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 ## Example (Implicit dsl)
 
 ~~~~{.cpp}
 @Algorithm NewtonRaphson;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 

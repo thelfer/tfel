@@ -8,4 +8,4 @@ calling process exits.
 
 ~~~~{.cpp}
 @Profiling true;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

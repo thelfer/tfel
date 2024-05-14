@@ -12,4 +12,4 @@ expressed in the material frame.
 
 ~~~~{.cpp}
 @RequireThermalExpansionCoefficientTensor true;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

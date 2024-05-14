@@ -11,10 +11,10 @@
  * project under specific licensing conditions.
  */
 
-// g++ -std=c++17 `tfel-config --includes --libs --utilities --glossary`
+// g++ -std=c++20 `tfel-config --includes --libs --utilities --glossary`
 // generate_glossary.cxx -o generate_glossary
 
-// g++ -std=c++17 generate_glossary.cxx  -o generate_glossary `tfel-config
+// g++ -std=c++20 generate_glossary.cxx  -o generate_glossary `tfel-config
 // --includes` `tfel-config --libs` -lTFELUtilities  -lTFELGlossary &&
 // ./generate_glossary && mv Glossary.hxx
 // ../../include/TFEL/Glossary/Glossary.hxx && mv Glossary.cxx

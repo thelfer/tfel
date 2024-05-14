@@ -443,24 +443,13 @@ endfunction(python_module_base)
 function(python_lib_module name package)
   python_module_base(${package}_${name} ${name} ${ARGN})
   if(TFEL_APPEND_SUFFIX)
-    if(WIN32)
-      install(TARGETS py_${package}_${name}
-        DESTINATION bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}_${TFEL_SUFFIX_FOR_PYTHON_MODULES}
-        COMPONENT python_bindings)
-    else(WIN32)
-      install(TARGETS py_${package}_${name}
-        DESTINATION lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}_${TFEL_SUFFIX_FOR_PYTHON_MODULES}
-        COMPONENT python_bindings)
-    endif(WIN32)
+    install(TARGETS py_${package}_${name}
+      DESTINATION ${TFEL_PYTHON_SITE_PACKAGES_DIR}/${package}_${TFEL_SUFFIX_FOR_PYTHON_MODULES}
+      COMPONENT python_bindings)
   else(TFEL_APPEND_SUFFIX)
-    if(WIN32)
-      install(TARGETS py_${package}_${name}
-        DESTINATION bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}
-        COMPONENT python_bindings)
-    else(WIN32)
-      install(TARGETS py_${package}_${name}        DESTINATION lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}
-        COMPONENT python_bindings)
-    endif(WIN32)
+    install(TARGETS py_${package}_${name}
+       DESTINATION ${TFEL_PYTHON_SITE_PACKAGES_DIR}/${package}
+       COMPONENT python_bindings)
   endif(TFEL_APPEND_SUFFIX)
 endfunction(python_lib_module)
 
@@ -518,15 +507,9 @@ function(tfel_python_script_base dir)
     else(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
       set(python_script "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}")
     endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
-    if(WIN32)
-      install(PROGRAMS ${python_script}
-        DESTINATION bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${dir}/
-        COMPONENT python_bindings)
-    else(WIN32)
-      install(PROGRAMS ${python_script}
-        DESTINATION lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${dir}/
-        COMPONENT python_bindings)
-    endif(WIN32)
+    install(PROGRAMS ${python_script}
+       DESTINATION ${TFEL_PYTHON_SITE_PACKAGES_DIR}/${dir}/
+       COMPONENT python_bindings)
   endforeach(pyscript ${ARGN})
 endfunction(tfel_python_script_base)
 

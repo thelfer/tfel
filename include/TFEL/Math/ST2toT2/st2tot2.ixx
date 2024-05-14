@@ -69,6 +69,24 @@ namespace tfel::math {
     return Expr<st2tot2<N, T>, StensorProductRightDerivativeExpr<N>>(a, C);
   }
 
+  template <unsigned short N, typename ValueType>
+  template <std::size_t... d>
+  TFEL_HOST_DEVICE constexpr st2tot2<N, ValueType>::st2tot2(
+      ValueType const (&... arrays)[d])  //
+      requires((sizeof...(d) == TensorDimeToSize<N>::value) &&
+               ((d == StensorDimeToSize<N>::value) && ...)) {
+    auto init_row = [this](
+                        const typename st2tot2::size_type i,
+                        ValueType const(&values)[StensorDimeToSize<N>::value]) {
+      for (typename st2tot2::size_type j = 0u; j < StensorDimeToSize<N>::value;
+           ++j) {
+        this->operator()(i, j) = values[j];
+      }
+    };
+    auto i = typename st2tot2::size_type{};
+    (init_row(i++, arrays), ...);
+  }  // end of st2tot2
+
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr void st2tot2<N, T>::import(
       const base_type<T>* const src) noexcept {

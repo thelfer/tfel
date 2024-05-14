@@ -29,6 +29,24 @@
 
 namespace tfel::math {
 
+  template <unsigned short N, typename ValueType>
+  template <std::size_t... d>
+  TFEL_HOST_DEVICE constexpr st2tost2<N, ValueType>::st2tost2(
+      ValueType const (&... arrays)[d])  //
+      requires((sizeof...(d) == StensorDimeToSize<N>::value) &&
+               ((d == StensorDimeToSize<N>::value) && ...)) {
+    auto init_row = [this](
+                        const typename st2tost2::size_type i,
+                        ValueType const(&values)[StensorDimeToSize<N>::value]) {
+      for (typename st2tost2::size_type j = 0u; j < StensorDimeToSize<N>::value;
+           ++j) {
+        this->operator()(i, j) = values[j];
+      }
+    };
+    auto i = typename st2tost2::size_type{};
+    (init_row(i++, arrays), ...);
+  }  // end of st2tost2
+
   template <unsigned short N, typename T>
   template <StensorConcept StensorType>
   TFEL_HOST_DEVICE constexpr auto

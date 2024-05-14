@@ -33,7 +33,7 @@ One may use the following syntax to define  \(T^{\alpha}\):
 @ComputeThermalExpansion "a0+a1*(T-273.15)"{
  reference_temperature : 273.15
 };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 However, if the mean linear thermal expansion coefficient is given by
 an external `MFront` file, it is recommended to define a static
@@ -63,12 +63,12 @@ into account (see `OrthotropicBehaviour`).
 
 ~~~~ {#ComputeThermalExpansion .cpp}
 @ComputeThermalExpansion 1.e-5;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 ~~~~ {#ComputeThermalExpansion2 .cpp}
 @ComputeThermalExpansion "UO2_ThermalExpansion.mfront"
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 ~~~~ {#ComputeThermalExpansion3 .cpp}
 @ComputeThermalExpansion {1.e-5,0.2e-5,1.2e-5};
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

@@ -9,4 +9,4 @@ of in the generated behaviour class.
     std::cout << "eto " << this->eto << std::endl;
   }
 } // end of @Private
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

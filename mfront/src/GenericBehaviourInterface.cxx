@@ -1755,13 +1755,11 @@ namespace mfront {
 
   static void GenericBehaviourInterface_initializeVariable(
       std::ostream& os,
-      const SupportedTypes::TypeSize& offset,
+      const SupportedTypes::TypeSize& o,
       const VariableDescription& v,
       const std::string& n,
       const std::string& src) {
-    auto o = offset;
-    const auto s = SupportedTypes::getTypeSize(v.type, 1);
-    if (v.arraySize == 1) {
+    if(v.arraySize == 1){
       if (v.isScalar()) {
         os << "this->" << n << " = " << src << "[" << o << "];\n";
       } else {
@@ -1773,23 +1771,21 @@ namespace mfront {
         }
         os << ");\n";
       }
-      o += s;
     } else {
-      for (unsigned short idx = 0; idx != v.arraySize; ++idx) {
+      auto odv = o;
+      for(unsigned short idx = 0; idx != v.arraySize; ++idx){
         if (v.isScalar()) {
-          os << "this->" << n << "[" << idx << "] = "  //
-             << src << "[" << o << "];\n";
+          os << "this->" << n << "[" << idx << "] = " << src << "[" << odv << "];\n";
         } else {
-          os << "this->" << n << "[" << idx << "] = "  //
-             << "tfel::math::map<" << v.type << ">(";
-          if (!o.isNull()) {
-            os << src << "+" << o;
+          os << "this-> " << n << "[" << idx << "] = tfel::math::map<" << v.type << ">(";
+          if (!odv.isNull()) {
+            os << src << "+" << odv;
           } else {
             os << src;
           }
           os << ");\n";
         }
-        o += s;
+        odv += SupportedTypes::getTypeSize(v.type, 1u);
       }
     }
   }  // end of GenericBehaviourInterface_initializeVariable
@@ -1798,7 +1794,7 @@ namespace mfront {
       std::ostream& os,
       const BehaviourDescription& bd,
       const Hypothesis h) const {
-    auto throw_if = [](const bool b, std::string_view msg) {
+    auto throw_if = [](const bool b, const char* msg) {
       if (b) {
         tfel::raise(
             "GenericBehaviourInterface::writeBehaviourConstructorBody: " +
@@ -1812,108 +1808,81 @@ namespace mfront {
     for (const auto& mv : bd.getMainVariables()) {
       const auto& dv = mv.first;
       const auto& th = mv.second;
-      throw_if(dv.arraySize != th.arraySize,
-               "the gradient '" + dv.name + "' and the thermodynamic force '" +
-                   th.name + "' must have the same array size (" +
-                   std::to_string(dv.arraySize) + " vs " +
-                   std::to_string(th.arraySize) + ")");
-      const auto s = SupportedTypes::getTypeSize(dv.type, 1);
+      if(th.arraySize != dv.arraySize){
+        tfel::raise("the array size of thermodynamic force '" + th.name + "' is not "
+                    "the same as the array size of gradient '" + dv.name + "'");
+      }
+      const auto s = SupportedTypes::getTypeSize(dv.type, dv.arraySize);
       // driving variable
       const auto dvname =
           Gradient::isIncrementKnown(dv) ? dv.name : dv.name + "0";
       GenericBehaviourInterface_initializeVariable(os, odv, dv, dvname,
                                                    "mgb_d.s0.gradients");
       if (!Gradient::isIncrementKnown(dv)) {
-        if (dv.arraySize == 1) {
-          if (dv.isScalar()) {
-            if (bd.useQt()) {
-              os << "this->" << dv.name << "1 = " << dv.type
-                 << "(mgb_d.s1.gradients[" << odv << "]);\n";
-            } else {
-              os << "this->" << dv.name << "1 = mgb_d.s1.gradients[" << odv
-                 << "];\n";
-            }
+        if (dv.isScalar()) {
+          if (bd.useQt()) {
+            os << "this->" << dv.name << "1 = " << dv.type
+               << "(mgb_d.s1.gradients[" << odv << "]);\n";
           } else {
-            if (!odv.isNull()) {
-              os << "tfel::fsalgo::copy<" << s << ">::exe("
-                 << "mgb_d.s1.gradients+" << odv << ","
-                 << "this->" << dv.name << "1.begin());\n";
-            } else {
-              os << "tfel::fsalgo::copy<" << s << " >::exe("
-                 << "mgb_d.s1.gradients,"
-                 << "this->" << dv.name << "1.begin());\n";
-            }
+            os << "this->" << dv.name << "1 = mgb_d.s1.gradients[" << odv
+               << "];\n";
           }
-          odv += s;
         } else {
-          for (unsigned short idx = 0; idx != dv.arraySize; ++idx) {
-            if (dv.isScalar()) {
-              if (bd.useQt()) {
-                os << "this->" << dv.name << "1[" << idx << "] = " << dv.type
-                   << "(mgb_d.s1.gradients[" << odv << "]);\n";
-              } else {
-                os << "this->" << dv.name << "1[" << idx
-                   << "] = mgb_d.s1.gradients[" << odv << "];\n";
-              }
-            } else {
-              if (!odv.isNull()) {
-                os << "tfel::fsalgo::copy<" << s << ">::exe("
-                   << "mgb_d.s1.gradients+" << odv << ","
-                   << "this->" << dv.name << "1[" << idx << "].begin());\n";
-              } else {
-                os << "tfel::fsalgo::copy<" << s << " >::exe("
-                   << "mgb_d.s1.gradients,"
-                   << "this->" << dv.name << "1[" << idx << "].begin());\n";
-              }
-            }
-            odv += s;
+          if (!odv.isNull()) {
+            os << "tfel::fsalgo::copy<" << s << ">::exe("
+               << "mgb_d.s1.gradients+" << odv << ","
+               << "this->" << dv.name << "1.begin());\n";
+          } else {
+            os << "tfel::fsalgo::copy<" << s << " >::exe("
+               << "mgb_d.s1.gradients,"
+               << "this->" << dv.name << "1.begin());\n";
           }
         }
       } else {
-        if (dv.arraySize == 1) {
+        if(dv.arraySize == 1){
           if (dv.isScalar()) {
             os << "this->d" << dv.name << " = "
-               << "mgb_d.s1.gradients[" << odv << "] - "
-               << "mgb_d.s0.gradients[" << odv << "];\n";
+              << "mgb_d.s1.gradients[" << odv << "] - "
+              << "mgb_d.s0.gradients[" << odv << "];\n";
           } else {
             if (!odv.isNull()) {
               os << "tfel::fsalgo::transform<" << s << ">::exe("
-                 << "mgb_d.s1.gradients+" << odv << ","
-                 << "mgb_d.s0.gradients+" << odv << ","
-                 << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
+                << "mgb_d.s1.gradients+" << odv << ","
+                << "mgb_d.s0.gradients+" << odv << ","
+                << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
             } else {
               os << "tfel::fsalgo::transform<" << s << ">::exe("
-                 << "mgb_d.s1.gradients,"
-                 << "mgb_d.s0.gradients,"
-                 << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
+                << "mgb_d.s1.gradients,"
+                << "mgb_d.s0.gradients,"
+                << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
             }
           }
-          odv += s;
         } else {
-          for (unsigned short idx = 0; idx != dv.arraySize; ++idx) {
+          auto lodv = odv; // local offset
+          const auto ls = SupportedTypes::getTypeSize(dv.type, 1);
+          for(unsigned short idx = 0; idx != dv.arraySize; ++idx){
             if (dv.isScalar()) {
               os << "this->d" << dv.name << "[" << idx << "] = "
-                 << "mgb_d.s1.gradients[" << odv << "] - "
-                 << "mgb_d.s0.gradients[" << odv << "];\n";
+                 << "mgb_d.s1.gradients[" << idx << "] - "
+                 << "mgb_d.s0.gradients[" << idx << "];\n";
             } else {
-              if (!odv.isNull()) {
-                os << "tfel::fsalgo::transform<" << s << ">::exe("
-                   << "mgb_d.s1.gradients+" << odv << ","
-                   << "mgb_d.s0.gradients+" << odv << ","
-                   << "this->d" << dv.name << "[" << idx << "].begin(),"
-                   << "std::minus<real>());\n";
+              if (!lodv.isNull()) {
+                os << "tfel::fsalgo::transform<" << ls << ">::exe("
+                   << "mgb_d.s1.gradients+" << lodv << ","
+                   << "mgb_d.s0.gradients+" << lodv << ","
+                   << "this->d" << dv.name << "[" << idx << "].begin(),std::minus<real>());\n";
               } else {
-                os << "tfel::fsalgo::transform<" << s << ">::exe("
+                os << "tfel::fsalgo::transform<" << ls << ">::exe("
                    << "mgb_d.s1.gradients,"
                    << "mgb_d.s0.gradients,"
-                   << "this->d" << dv.name << "[" << idx
-                   << "].begin(),std::minus<real>());\n";
+                   << "this->d" << dv.name << "[" << idx << "].begin(),std::minus<real>());\n";
               }
             }
-            odv += s;
+            lodv += SupportedTypes::getTypeSize(dv.type, 1);
           }
         }
       }
+      odv += s;
     }
     if (bd.requiresStressFreeExpansionTreatment(h)) {
       os << "std::pair<StressFreeExpansionType,StressFreeExpansionType> "
@@ -2011,8 +1980,8 @@ namespace mfront {
         os << "for(unsigned short idx=0; idx != " << v.arraySize
            << "; ++idx){\n";
         if (v.isScalar()) {
-          os << "this->" << v.name << "[idx] = " << src << "[" << get_offset(o)
-             << "+idx];\n";
+          os << "this->" << v.name << "[idx] = " << v.type << "{" << src << "["
+             << get_offset(o) << "+idx]};\n";
         } else {
           os << "this->" << v.name << "[idx] = tfel::math::map<" << v.type
              << ">(" << src << " + " << get_offset(o) << "+idx * "
@@ -2022,8 +1991,8 @@ namespace mfront {
       } else {
         for (unsigned short index = 0; index != v.arraySize; ++index) {
           if (v.isScalar()) {
-            os << "this->" << v.name << "[" << index << "] = " << src << "["
-               << get_offset(o) << "];\n";
+            os << "this->" << v.name << "[" << index << "] = " << v.type << "{"
+               << src << "[" << get_offset(o) << "]};\n";
           } else {
             os << "this->" << v.name << "[" << index << "] = tfel::math::map<"
                << v.type << ">(" << src << " + " << get_offset(o) << ");\n";

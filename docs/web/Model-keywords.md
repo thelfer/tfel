@@ -1,9 +1,13 @@
 % `Model` keywords
 
 
+# The `;` keyword
+
+The keyword `;` is not documented yet
+
 # The `@Author` keyword
 
-The `@Author` keyword is used give the name of the person who wrote
+The `@Author` keyword is used to give the name of the person who wrote
 the `mfront` file.
 
 All the following words are appended to the author's name up to a
@@ -17,7 +21,7 @@ behaviour or model shall be given in the description section (see the
 
 ~~~~ {#Author .cpp}
 @Author Éric Brunon;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 
 
@@ -46,8 +50,13 @@ following policies:
 
 ~~~~{.cpp}
 @Bounds T in [293.15:873.15];
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
+
+# The `@Coef` keyword
+
+The `@Coef` keyword is a deprecated synonymous of
+`@MaterialProperty`.
 
 # The `@ConstantMaterialProperty` keyword
 
@@ -81,7 +90,142 @@ glossary or an entry name through the methods `setGlossaryName` or
 ~~~~{.cpp}
 @ConstantMaterialProperty E;
 E.setEntryName("EnergyReleasedByFission");
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
+
+# The `@DSL` keyword
+
+The `@DSL` keyword specify the domain specific language (dsl) used.
+
+The list of available dsl's is returned by the `--list-dsl` option of
+`mfront`:
+
+~~~~{.bash}
+$ mfront --list-dsl
+~~~~
+
+As the time of writting this notice, the following dsl's are available:
+
+- `DefaultDSL`: this parser is the most generic one as it does not
+  make any restriction on the behaviour or the integration method that
+  may be used.
+- `DefaultCZMDSL`: this parser is the most generic one as it does not
+  make any restriction on the behaviour or the integration method that
+  may be used.
+- `DefaultFiniteStrainDSL`: this parser is the most generic one as it
+  does not make any restriction on the behaviour or the integration
+  method that may be used.
+- `Implicit`: this parser provides a generic integrator based on an
+  implicit scheme. The elastic strain is automatically defined as a
+  state variable
+- `ImplicitII`: this parser provides a generic integrator based on a
+  theta method. Unlike `Implicit`, the elastic strain is not
+  automatically defined as a state variable.
+- `ImplicitFiniteStrain`: this parser provides a generic integrator
+  based on a theta method..
+- `IsotropicMisesCreep`: this parser is used for standard creep
+  behaviours of the form \(\dot{p}=f(s)\) where \(p\) is the equivalent
+  creep strain and \(s\) the equivalent mises stress.
+- `IsotropicPlasticMisesFlow`: this parser is used for standard
+  plastics behaviours with yield surface of the form \(f(s,p)=0\)
+  where \(p\) is the equivalent creep strain and \(s\) the equivalent
+  mises stress.
+- `IsotropicStrainHardeningMisesCreep`: this parser is used for
+  standard strain hardening creep behaviours of the form
+  \(\dot{p}=f(s,p)\) where \(p\) is the equivalent creep strain and
+  \(s\) the equivalent mises stress.
+- `MaterialLaw`: this parser is used to define material properties.
+- `Model`: this parser is used to define simple material models.
+- `MultipleIsotropicMisesFlows `: this parser is used to define
+  behaviours combining several isotropic flows. Supported flow type
+  are 'Creep' (\(\dot{p}=f(s)\)) 'StrainHardeningCreep'
+  (\(\dot{p}=f(s,p)\)) and 'Plasticity' (\(f(p,s)=0\)) where \(p\) is
+  the equivalent plastic strain and \(s\) the equivalent mises stress.
+- `RungeKutta`: this parser provides a generic integrator based on one
+  of the many Runge-Kutta algorithm.
+
+## DSL options
+
+A DSL' behaviour may be changed using options defined either in the
+`MFront` file using a JSON-like syntax or as a command line
+argument.
+
+The options related to a specific `DSL` can be retrieved using the
+`--list-dsl-options` command line argument, as follows:
+
+~~~~{.bash}
+$ mfront --list-dsl-options=Model
+- parameters_as_static_variables: boolean stating if the parameter shall be treated as static variables.
+- build_identifier              : string specifying a build identifier. This option shall only be specified on the command line.
+~~~~
+
+### Defining `DSL` options in the MFront file
+
+Options can be passed to a DSL as follows:
+
+~~~~{.cxx}
+@DSL Default{
+  parameters_as_static_variables : true
+};
+~~~~
+
+### Defining `DSL` options on the command line:
+
+`MFront` have various command line arguments to define options passed to DSLs:
+
+- `--dsl-option`, which allows to define options passed to domain
+  specific languages.
+- `--behaviour-dsl-option`, which allows to define options passed to
+  domain specific languages related to behaviours.
+- `--material-property-dsl-option`, which allows to define options
+  passed to domain specific languages related to material properties.
+- `--model-dsl-option`, which allows to define options passed to domain
+  specific languages related to models.
+
+For example, the `--dsl-option` can be used as follows:
+
+~~~~{.bash}
+$ mfront --obuild --interface=cyrano --dsl-option=build_identifier:\"Cyrano-3.2\" Elasticity.mfront
+~~~~
+
+This example illustrates that special care must be taken when defining
+an option expecting a string value.
+
+### Options common to all DSLs
+
+The following options are available for all DSLs:
+
+- `build_identifier` (string), which must be associated to a string
+  value. However, the `build_identifier` is not meant to be directly
+  specified in the `MFront` source file. It shall rather be defined on
+  the command line.
+- `parameters_as_static_variables` (boolean), which states if parameters
+  shall be treated as static variables.
+- `parameters_initialization_from_file` (boolean), which states if
+  parameters can be modified from a external state file. This feature is
+  only implemented by a few interfaces and is enabled by default.
+- `default_out_of_bounds_policy` (string), which selects the default out
+  of bounds policy. Allowed values ar `None` (the default), `Warning` or
+  `Strict`.
+- `out_of_bounds_policy_runtime_modification` (boolean), which states if
+  the out of bounds policy can be changed at runtime. By default, this
+  option is `true`.
+
+
+### Options common to all DSLs related to behaviours
+
+- `automatic_declaration_of_the_temperature_as_first_external_state_variable`
+  (boolean), which states if the temperature shall be automatically
+  declared as an external state variable.
+- `overriding_parameters`, which allows to specify overriding
+  parameters. This parameters must be a map associating variables names
+  and default values of the overriding parameters.
+
+## Example
+
+~~~~{.cpp}
+@DSL Implicit;
+~~~~
+
 
 # The `@Date` keyword
 
@@ -95,7 +239,7 @@ semi-colon.
 
 ~~~~{.cpp}
 @Date 2008-11-17;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 
 # The `@Description` keyword
@@ -127,7 +271,7 @@ of information including:
   Aurore Michaux, Lionel Gosmain, Jean-Louis Seran
   DMN/SRMA/LA2M/NT/2008-2967/A
 }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 # The `@Domain` keyword
 
@@ -141,7 +285,7 @@ by specialisation.
 
 ~~~~{.cpp}
 @Domain "Fuel";
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 # The `@Domains` keyword
 
@@ -155,7 +299,46 @@ by specialisation.
 
 ~~~~{.cpp}
 @Domains {"MATRIX","CLADDING"};
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
+
+# The `@ExternalStateVariable` keyword
+
+The `ExternalStateVariable` keyword introduces one or several new
+external state variables. It is followed by a type name and the
+name(s) of the variable(s) declared, separated by commas.
+
+The external state variables names must be valid `C++` identifiers.
+
+The following characters are legal as the first character of an
+identifier, or any subsequent character:
+
+`_` `a` `b` `c` `d` `e` `f` `g` `h` `i` `j` `k` `l` `m`
+`n` `o` `p` `q` `r` `s` `t` `u` `v` `w` `x` `y` `z`
+`A` `B` `C` `D` `E` `F` `G` `H` `I` `J` `K` `L` `M`
+`N` `O` `P` `Q` `R` `S` `T` `U` `V` `W` `X` `Y` `Z`
+
+The following characters are legal as any character in an identifier
+except the first:
+
+`0` `1` `2` `3` `4` `5` `6` `7` `8` `9`
+
+## Arrays
+
+One may declare an array of external state variables by specifying the
+array size after the external state variable name.
+
+## External names
+
+It is recommended to associate to a external state variable a glossary
+or an entry name through the methods `setGlossaryName` or
+`setEntryName` respectively.
+
+## Example
+
+~~~~{.cpp}
+// scalar external state variable
+@ExternalStateVariable strain s;
+~~~~
 
 # The `@Function` keyword
 
@@ -173,40 +356,7 @@ part of the computation.
   const real p_    = 0.5*(p+p_1);
   s = s_1 + coef1*exp(coef2-p_)*(Bu-Bu_1);
 } // end of function compute
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# The `@GlobalParameter` keyword
-
-The `@GlobalParameter` keyword let the user defines model
-parameters. This keyword is followed by the type and the names of the
-parameters, separated by commas. The names of the variables must be
-valid `C++` identifiers.
-
-The following characters are legal as the first character of an
-identifier, or any subsequent character:
-
-`_` `a` `b` `c` `d` `e` `f` `g` `h` `i` `j` `k` `l` `m`
-`n` `o` `p` `q` `r` `s` `t` `u` `v` `w` `x` `y` `z`
-`A` `B` `C` `D` `E` `F` `G` `H` `I` `J` `K` `L` `M`
-`N` `O` `P` `Q` `R` `S` `T` `U` `V` `W` `X` `Y` `Z`
-
-The following characters are legal as any character in an identifier
-except the first:
-
-`0` `1` `2` `3` `4` `5` `6` `7` `8` `9`
-
-## Default values
-
-The user may attribute a default value to a global parameter through
-the `setDefaultValue` method.
-
-## Example
-
-~~~~{.cpp}
-@GlobalParameter real a;
-a.setDefaultValue(1.23);
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+~~~~
 
 # The `@Import` keyword
 
@@ -232,7 +382,7 @@ Files to be imported are searched, in that order:
 
 ~~~~{.cpp}
 @Import "SlidingSystemsCC.mfront";
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 # The `@Includes` keyword
 
@@ -246,7 +396,7 @@ name).
 @Includes{
 #include<fstream>
 }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 # The `@Input` keyword
 
@@ -294,7 +444,7 @@ p.setGlossaryName("Porosity");
 // we need the value at the end of the time step and the value at the
 // beginning at the time step
 p.setGlossaryName("Porosity");
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 # The `@LocalParameter` keyword
 
@@ -326,7 +476,7 @@ the `setDefaultValue` method.
 ~~~~{.cpp}
 @LocalParameter real a;
 a.setDefaultValue(1.23);
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 
 # The `@Material` keyword
@@ -353,7 +503,7 @@ except the first:
 
 ~~~~{.cpp}
 @Material UO2;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 # The `@MaterialLaw` keyword
 
@@ -386,7 +536,48 @@ library which is of no use.
 
 ~~~~{.cpp}
 @MaterialLaw "UO2_YoungModulus.mfront";
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
+
+# The `@MaterialProperty` keyword
+
+The `@MaterialProperty` keyword let the user define one or several
+material properties. This keyword is followed by the type of the
+material property and a list of material properties names separated by
+commas.
+
+The material properties names must be valid `C++` identifiers.
+
+The following characters are legal as the first character of an
+identifier, or any subsequent character:
+
+`_` `a` `b` `c` `d` `e` `f` `g` `h` `i` `j` `k` `l` `m`
+`n` `o` `p` `q` `r` `s` `t` `u` `v` `w` `x` `y` `z`
+`A` `B` `C` `D` `E` `F` `G` `H` `I` `J` `K` `L` `M`
+`N` `O` `P` `Q` `R` `S` `T` `U` `V` `W` `X` `Y` `Z`
+
+The following characters are legal as any character in an identifier
+except the first:
+
+`0` `1` `2` `3` `4` `5` `6` `7` `8` `9`
+
+## Arrays
+
+One may declare an array of material properties by specifying the
+array size after the material property name.
+
+## External names
+
+It is recommended to associate to a material property a glossary or an
+entry name through the methods `setGlossaryName` or `setEntryName`
+respectively.
+
+## Example
+
+~~~~{.cpp}
+// scalar material property
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+~~~~
 
 # The `@Model` keyword
 
@@ -410,7 +601,7 @@ except the first:
 
 ~~~~{.cpp}
 @Model SolidSwelling;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 # The `@Output` keyword
 
@@ -456,7 +647,27 @@ respectively.
 @Output T,p;
 T.setGlossaryName("Temperature");
 p.setGlossaryName("Porosity");
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
+
+# The `@Parameter` keyword
+
+The `@Parameter` keyword declares a new parameter or a list of new
+parameters. Optionally, the default value of the declared parameters
+may also be given following various C++ standard assignment syntaxes.
+
+The default value of a parameter can also be declared after its
+declaration using the `setDefaultValue` method.
+
+## Example
+
+~~~~{.cpp}
+@Parameter  R0 = 500;
+@Parameter  Q1{1000000000},b1{0.000001};
+@Parameter  Q2(0),b2(0);
+@Parameter  fc;
+fc.setDefaultValue(1.e-2);
+~~~~
+
 
 # The `@Parser` keyword
 
@@ -486,8 +697,49 @@ of the integration depending on the nature of the variable.
 ~~~~{.cpp}
 // a temperature (in Kelvin) can't be negative
 @PhysicalBounds T in [0:*[;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
+
+# The `@StateVariable` keyword
+
+The `StateVariable` keyword introduces one or several new state
+variables. It is followed by a type name and the name(s) of the
+variable(s) declared, separated by commas.
+
+The state variables names must be valid `C++` identifiers.
+
+The following characters are legal as the first character of an
+identifier, or any subsequent character:
+
+`_` `a` `b` `c` `d` `e` `f` `g` `h` `i` `j` `k` `l` `m`
+`n` `o` `p` `q` `r` `s` `t` `u` `v` `w` `x` `y` `z`
+`A` `B` `C` `D` `E` `F` `G` `H` `I` `J` `K` `L` `M`
+`N` `O` `P` `Q` `R` `S` `T` `U` `V` `W` `X` `Y` `Z`
+
+The following characters are legal as any character in an identifier
+except the first:
+
+`0` `1` `2` `3` `4` `5` `6` `7` `8` `9`
+
+## Arrays
+
+One may declare an array of state variables by specifying the array
+size after the state variable name.
+
+## External names
+
+It is recommended to associate to a state variable a glossary or an
+entry name through the methods `setGlossaryName` or `setEntryName`
+respectively.
+
+## Example
+
+~~~~{.cpp}
+// scalar state variable
+@StateVariables strain p;
+// symmetric tensors state variable
+@StateVariables StrainStensor evp,evp2;
+~~~~
 
 # The `@StaticVar` keyword
 
@@ -507,4 +759,40 @@ an equal sign and its value.
 
 ~~~~{.cpp}
 @StaticVariable real A = 1.234e56;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
+
+# The `@UnitSystem` keyword
+
+The `@UnitSystem` keyword declares that the state variables, external
+state variables an parameters are expressed in a given unit system. In
+the current version of `MFront`, the only supported unit system is the
+international system of units, denoted `SI`.
+
+One advantage of declaring an unit system is that physical bounds of
+variables associated with a glossary entry can automatically be declared
+by `MFront`.
+
+For instance the declaration of the physical bounds for the temperature
+and the porosity is automatic if the `SI` unit system is used.
+
+## Example of usage
+
+~~~~{.cxx}
+@UnitSystem SI;
+~~~~
+
+# The `@UseQt` keyword
+
+The `UseQt` keyword (use quantities) specify if the behaviour
+compilation should perform compile-time units checks. It is followed
+by a boolean.
+
+## Note
+
+This feature is still experimental and is disabled in most cases.
+
+## Example
+
+~~~~{.cpp}
+@UseQt true;
+~~~~

@@ -34,76 +34,78 @@ namespace tfel::math {
     static_assert(implementsVectorConcept<A>());
     static_assert(implementsMatrixConcept<B>());
 
-    typedef EmptyRunTimeProperties RunTimeProperties;
+    using RunTimeProperties = EmptyRunTimeProperties;
+    using Result = BinaryOperationResult<A, B, OpMult>;
+
+    using NumType = numeric_type<Result>;
+    using IndexType = index_type<Result>;
+    using value_type = NumType;
+    using pointer = NumType*;
+    using const_pointer = const NumType*;
+    using reference = NumType&;
+    using const_reference = const NumType&;
+    using size_type = IndexType;
+    using difference_type = ptrdiff_t;
+
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
+      return RunTimeProperties();
+    }
 
    protected:
-    typedef BinaryOperationResult<A, B, OpMult> Result;
-
-    ArgumentStorage<A> a;
-    ArgumentStorage<B> b;
-
     TVectorTMatrixExpr() = delete;
 
     struct ColumnConstIterator {
       using MType = std::decay_t<B>;
       using NumType = numeric_type<MType>;
-      TFEL_MATH_INLINE ColumnConstIterator(const MType& m_,
-                                           const unsigned short j_)
+      TFEL_HOST_DEVICE constexpr ColumnConstIterator(const MType& m_,
+                                                     const size_type j_)
           : m(m_), i(0), j(j_) {}
-      TFEL_MATH_INLINE ColumnConstIterator& operator++() {
+      TFEL_HOST_DEVICE constexpr ColumnConstIterator& operator++() noexcept {
         ++i;
         return *this;
       }  // end of operator++
-      TFEL_MATH_INLINE NumType operator*() const { return m(i, j); }
+      TFEL_HOST_DEVICE constexpr auto operator*() const noexcept {
+        return m(i, j);
+      }
 
      private:
       const MType& m;
-      unsigned short i;
-      const unsigned short j;
+      size_type i;
+      const size_type j;
     };  // end of struc ColumnConstIterator
 
     struct VectorConstIterator {
       using VType = std::decay_t<A>;
       using NumType = numeric_type<VType>;
-      TFEL_MATH_INLINE VectorConstIterator(const VType& v_) : v(v_), i(0) {}
-      TFEL_MATH_INLINE VectorConstIterator& operator++() {
+      TFEL_HOST_DEVICE constexpr VectorConstIterator(const VType& v_) noexcept
+          : v(v_), i(0) {}
+      TFEL_HOST_DEVICE constexpr VectorConstIterator& operator++() noexcept {
         ++i;
         return *this;
       }  // end of operator++
-      TFEL_MATH_INLINE NumType operator*() const { return this->v(this->i); }
+      TFEL_HOST_DEVICE constexpr auto operator*() const noexcept {
+        return this->v(this->i);
+      }
 
      private:
       const VType& v;
-      unsigned short i;
+      size_type i;
     };  // end of struc VectorConstIterator
 
-    using NumType = numeric_type<Result>;
-    using IndexType = numeric_type<Result>;
+    TFEL_HOST_DEVICE constexpr TVectorTMatrixExpr(const A& l,
+                                                  const B& r) noexcept
+        : a(l), b(r) {}
 
-    typedef NumType value_type;
-    typedef NumType* pointer;
-    typedef const NumType* const_pointer;
-    typedef NumType& reference;
-    typedef const NumType& const_reference;
-    typedef IndexType size_type;
-    typedef ptrdiff_t difference_type;
-
-    TFEL_MATH_INLINE TVectorTMatrixExpr(const A& l, const B& r) : a(l), b(r) {}
-
-    TFEL_MATH_INLINE TVectorTMatrixExpr(
-        const TVectorTMatrixExpr<N, M, A, B>& src)
-        : a(src.a), b(src.b) {}
-
-    TFEL_MATH_INLINE const NumType operator()(const IndexType i) const {
+    TFEL_HOST_DEVICE constexpr auto operator()(const IndexType i) const
+        noexcept {
       using namespace tfel::fsalgo;
       return inner_product<N>::template exe<NumType>(VectorConstIterator(a),
                                                      ColumnConstIterator(b, i));
     }
 
-   public:
-    TFEL_MATH_INLINE const RunTimeProperties getRunTimeProperties() const {
-      return RunTimeProperties();
-    }
+   private:
+    ArgumentStorage<A> a;
+    ArgumentStorage<B> b;
   };
 
 }  // end of namespace tfel::math

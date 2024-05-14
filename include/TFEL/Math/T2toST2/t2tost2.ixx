@@ -289,7 +289,7 @@ namespace tfel::math {
     static_assert(getSpaceDimension<TensorType>() == N);
     using value_type = numeric_type<T2toST2ResultType>;
     using real = base_type<value_type>;
-    auto d1 = t2tost2<N, real>{};
+    auto d1 = t2tost2<N, value_type>{};
     computePushForwardDerivativeWithRespectToDeformationGradient(d1, S, F);
     auto d2 = st2tost2<N, real>{};
     computePushForwardDerivative(d2, F);
@@ -312,6 +312,24 @@ namespace tfel::math {
       return Result{sr * s * sir};
     }
   }  // end of change_basis
+
+  template <unsigned short N, typename ValueType>
+  template <std::size_t... d>
+  TFEL_HOST_DEVICE constexpr t2tost2<N, ValueType>::t2tost2(
+      ValueType const (&... arrays)[d])  //
+      requires((sizeof...(d) == StensorDimeToSize<N>::value) &&
+               ((d == TensorDimeToSize<N>::value) && ...)) {
+    auto init_row = [this](
+                        const typename t2tost2::size_type i,
+                        ValueType const(&values)[TensorDimeToSize<N>::value]) {
+      for (typename t2tost2::size_type j = 0u; j < TensorDimeToSize<N>::value;
+           ++j) {
+        this->operator()(i, j) = values[j];
+      }
+    };
+    auto i = typename t2tost2::size_type{};
+    (init_row(i++, arrays), ...);
+  }  // end of t2tost2
 
 }  // end of namespace tfel::math
 

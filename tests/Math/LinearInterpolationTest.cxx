@@ -46,7 +46,9 @@ struct LinearInterpolationTest final : public tfel::tests::TestCase {
     this->test3();
     this->test4();
     this->test5();
+#ifndef _MSC_VER
     this->test6();
+#endif /* _MSC_VER */
     return this->result;
   }  // end of execute
  private:
@@ -227,6 +229,7 @@ struct LinearInterpolationTest final : public tfel::tests::TestCase {
         (my_abs(std::get<0>(values2[4]) - stress{4}) < 10 * eps));
     TFEL_TESTS_STATIC_ASSERT((my_abs(std::get<1>(values2[4])) < 10 * eps2));
   }
+#ifndef _MSC_VER
   void test6() {
     using tvector = tfel::math::tvector<3u, double>;
     constexpr auto eps = std::numeric_limits<double>::epsilon();
@@ -245,6 +248,7 @@ struct LinearInterpolationTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT((my_abs(d[1] - 1) < 10 * eps));
     TFEL_TESTS_STATIC_ASSERT((my_abs(d[2] - 1) < 10 * eps));
   }
+#endif /* _MSC_VER */
 };
 
 TFEL_TESTS_GENERATE_PROXY(LinearInterpolationTest, "LinearInterpolationTest");

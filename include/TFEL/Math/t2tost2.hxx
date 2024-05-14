@@ -25,8 +25,6 @@
 #include "TFEL/Math/General/BasicOperations.hxx"
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/Forward/t2tost2.hxx"
-#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include "TFEL/Math/Tensor/TensorConcept.hxx"
 #include "TFEL/Math/T2toT2/T2toT2Concept.hxx"
 #include "TFEL/Math/T2toST2/T2toST2Concept.hxx"
@@ -139,6 +137,15 @@ namespace tfel::math {
     //
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(t2tost2,
                                                GenericFixedSizeArrayBase);
+    /*!
+     * \brief constructors from arrays to implement class
+     * template argument deduction.
+     * \tparam d: dimensions of the arrays
+     */
+    template <std::size_t... d>
+    TFEL_HOST_DEVICE constexpr t2tost2(ValueType const (&... arrays)[d])  //
+        requires((sizeof...(d) == StensorDimeToSize<N>::value) &&
+                 ((d == TensorDimeToSize<N>::value) && ...));
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
@@ -148,6 +155,16 @@ namespace tfel::math {
     //! \brief copy from a range
     TFEL_HOST_DEVICE constexpr void copy(const auto) noexcept;
   };
+
+  /*!
+   * \brief class template argument deduction
+   * \tparam ValueType: numeric type
+   * \tparam M: number of columns
+   * \tparam d: sizes of the arrays, that must be all equal to M
+   */
+  template <typename ValueType, std::size_t M, std::size_t... d>
+  t2tost2(ValueType const (&)[M], ValueType const (&... arrays)[d])
+      ->t2tost2<StensorSizeToDime<sizeof...(d) + 1>::value, ValueType>;
 
   /*!
    * \brief a simple alias for backward compatibility

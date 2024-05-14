@@ -25,7 +25,6 @@
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include "TFEL/Math/Tensor/TensorConcept.hxx"
 #include "TFEL/Math/Tensor/TensorConceptOperations.hxx"
 #include "TFEL/Math/tvector.hxx"
@@ -115,21 +114,21 @@ namespace tfel::math {
      * \param[in] i: index
      */
     TFEL_HOST_DEVICE constexpr ValueType operator()(
-        const typename tensor::size_type) const noexcept;
+        const typename tensor<N, ValueType>::size_type) const noexcept;
     /*!
      * \brief access operator
      * \param[in] i: index
      */
     TFEL_HOST_DEVICE constexpr ValueType& operator()(
-        const typename tensor::size_type) noexcept;
+        const typename tensor<N, ValueType>::size_type) noexcept;
     /*!
      * \brief matrix-like access operator
      * \param[in] i: row number
      * \param[in] j: column number
      */
     TFEL_HOST constexpr ValueType operator()(
-        const typename tensor::size_type,
-        const typename tensor::size_type) const;
+        const typename tensor<N, ValueType>::size_type,
+        const typename tensor<N, ValueType>::size_type) const;
     //! \brief write to an external memory location
     TFEL_HOST_DEVICE constexpr void write(base_type<ValueType>* const) const
         noexcept;
@@ -142,6 +141,11 @@ namespace tfel::math {
     //! \brief copy from a range
     TFEL_HOST_DEVICE constexpr void copy(const auto) noexcept;
   };  // end of struct tensor
+
+  // class template argument deduction
+  template <typename... T>
+  tensor(T&&... t)
+      ->tensor<TensorSizeToDime<sizeof...(T)>::value, std::common_type_t<T...>>;
 
   /*!
    * \brief a simple alias for backward compatibility
@@ -225,7 +229,6 @@ namespace tfel::typetraits {
 
 }  // end of namespace tfel::typetraits
 
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include "TFEL/Math/Tensor/tensor.ixx"
 #include "TFEL/Math/Tensor/tensorResultType.hxx"
 

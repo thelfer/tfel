@@ -35,4 +35,4 @@ respectively.
 @StateVariables strain p;
 // symmetric tensors state variable
 @StateVariables StrainStensor evp,evp2;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

@@ -50,13 +50,13 @@ namespace tfel::math {
 
   template <unsigned short N, typename ValueType>
   TFEL_HOST_DEVICE constexpr ValueType tensor<N, ValueType>::operator()(
-      const typename tensor::size_type i) const noexcept {
+      const typename tensor<N, ValueType>::size_type i) const noexcept {
     return GenericFixedSizeArrayBase::operator()(i);
   }  // end of operator()
 
   template <unsigned short N, typename ValueType>
   TFEL_HOST_DEVICE constexpr ValueType& tensor<N, ValueType>::operator()(
-      const typename tensor::size_type i) noexcept {
+      const typename tensor<N, ValueType>::size_type i) noexcept {
     return GenericFixedSizeArrayBase::operator()(i);
   }
 
