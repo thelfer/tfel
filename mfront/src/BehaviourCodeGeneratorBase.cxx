@@ -11,6 +11,8 @@
  * project under specific licensing conditions.
  */
 
+#include <iostream>
+
 #include <ostream>
 #include <fstream>
 #include <sstream>
@@ -2250,9 +2252,10 @@ namespace mfront {
             }
           }
         }
-        o += (v1.arraySize) * (v2.arraySize) * 
-             SupportedTypes::TypeSize::getDerivativeSize(v1.getTypeSize(),
-                                                         v2.getTypeSize());
+        const auto block_size = SupportedTypes::TypeSize::getDerivativeSize(
+            SupportedTypes::getTypeSize(v1.type),
+            SupportedTypes::getTypeSize(v2.type));
+        o += (v1.arraySize) * (v2.arraySize) * block_size;
       }
     }
     return init;
@@ -4638,7 +4641,7 @@ namespace mfront {
       return;
     }
     const auto& blocks = this->bd.getTangentOperatorBlocks();
-    os << "//! Tangent operator;\n"
+    os << "//! \\brief tangent operator;\n"
        << "TangentOperator Dt;\n";
     if (this->bd.hasTrivialTangentOperatorStructure()) {
       tfel::raise_if(
@@ -4648,7 +4651,7 @@ namespace mfront {
           "error");
       if (this->bd.getBehaviourType() !=
           BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-        os << "//! alias to the tangent operator;\n"
+        os << "//! \\brief alias to the tangent operator;\n"
            << "TangentOperator& "
            << this->bd.getTangentOperatorBlockName(blocks.front()) << ";\n";
       }
@@ -4661,7 +4664,8 @@ namespace mfront {
       const auto& v2 = b.second;
       const auto bn = this->bd.getTangentOperatorBlockName(b);
       const auto block_size = SupportedTypes::TypeSize::getDerivativeSize(
-          v1.getTypeSize(), v2.getTypeSize());
+          SupportedTypes::getTypeSize(v1.type),
+          SupportedTypes::getTypeSize(v2.type));
       if ((v1.arraySize == 1u) && (v2.arraySize == 1u)) {
         if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
             (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
@@ -4677,25 +4681,40 @@ namespace mfront {
           os << "tfel::math::View<tfel::math::derivative_type<" << v1.type << ","
              << v2.type << ">> " << bn << ";\n";
         }
-      } else if (v1.arraySize == 1u){
-        os << "auto " << bn
-           << "(const ushort mfront_idx) noexcept {\n"
-           << "return tfel::math::map_derivative<" << v1.type << ", " << v2.type
-           << ">(this->Dt, o + mfront_idx * " << block_size << ");\n"
-           << "};\n";
-      } else if (v2.arraySize == 1u){
-        os << "auto " << bn
-           << "(const ushort mfront_idx) noexcept {\n"
-           << "return tfel::math::map_derivative<" << v1.type << ", " << v2.type
-           << ">(this->Dt, o + mfront_idx * " << block_size << ");\n"
-           << "};\n";
+      } else if ((v1.arraySize == 1u) || (v2.arraySize == 1u)) {
+        os << "/*!\n"
+           << " * \\return the derivative of " << v1.name << " with respect "
+           << v2.name << "\n"
+           << " * \\param[in] mfront_idx: array index relative to "<< v1.name << "\n"
+           << " */\n"
+           << "auto " << bn << "(const ushort mfront_idx) noexcept {\n"
+           << "return tfel::math::map<tfel::math::derivative_type<" << v1.type << ", " << v2.type
+           << ">>(this->Dt.data() + ";
+        if (!o.isNull()) {
+          os << o << " + ";
+        }
+        os << "mfront_idx * " << block_size << ");\n"
+           << "}\n";
       } else {
-        os << "auto " << bn
-           << "(const ushort mfront_idx, const ushort mfront_idx2) noexcept {\n"
-           << "return tfel::math::map_derivative<" << v1.type << ", " << v2.type
-           << ">(this->Dt, o + (" << v2.arraySize
-           << " * mfront_idx + mfront_idx2) * " << block_size << ");\n"
-           << "};\n";
+        os << "/*!\n"
+           << " * \\return the derivative of " << v1.name << " with respect "
+           << v2.name << "\n"
+           << " * \\param[in] mfront_idx: array index relative to " << v1.name
+           << "\n"
+           << " * \\param[in] mfront_idx2: array index relative to " << v2.name
+           << "\n"
+           << " */\n"
+           << "auto " << bn
+           << "(const ushort mfront_idx, const ushort mfront_idx2) noexcept "
+           << "{\n"
+           << "return tfel::math::map<tfel::math::derivative_type<" << v1.type << ", " << v2.type
+           << ">>(this->Dt.data() + ";
+        if (!o.isNull()) {
+          os << o << " + ";
+        }
+        os << "(" << v2.arraySize << " * mfront_idx + mfront_idx2) * "
+           << block_size << ");\n"
+           << "}\n";
       }
       o += (v1.arraySize) * (v2.arraySize) * block_size;
     }
