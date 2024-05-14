@@ -1203,12 +1203,27 @@ namespace mfront {
       os << "ThermalExpansionCoefficientTensor A;\n";
     }
     for (const auto& mv : this->bd.getMainVariables()) {
-      if (Gradient::isIncrementKnown(mv.first)) {
-        os << mv.first.type << " " << mv.first.name << ";\n\n";
-      } else {
-        os << mv.first.type << " " << mv.first.name << "0;\n\n";
+      if(mv.first.arraySize != mv.second.arraySize){
+        tfel::raise("BehaviourCodeGeneratorBase::writeBehaviourDataDefaultMembers: "
+                    "the array size of the gradient '" + mv.first.name + "' is "
+                    "different from the array size of the thermodynamic force '" +
+                    mv.second.name + "'");
       }
-      os << mv.second.type << " " << mv.second.name << ";\n\n";
+      if(mv.first.arraySize == 1){
+        if (Gradient::isIncrementKnown(mv.first)) {
+          os << mv.first.type << " " << mv.first.name << ";\n\n";
+        } else {
+          os << mv.first.type << " " << mv.first.name << "0;\n\n";
+        }
+        os << mv.second.type << " " << mv.second.name << ";\n\n";
+      } else {
+        if (Gradient::isIncrementKnown(mv.first)) {
+          os << mv.first.type << " " << mv.first.name << "[" << mv.first.arraySize << "];\n\n";
+        } else {
+          os << mv.first.type << " " << mv.first.name << "0[" << mv.first.arraySize << "];\n\n";
+        }
+        os << mv.second.type << " " << mv.second.name << "[" << mv.first.arraySize << "];\n\n";
+      }
     }
   }
 
@@ -2222,21 +2237,21 @@ namespace mfront {
       for (const auto& b : blocks) {
         const auto& v1 = b.first;
         const auto& v2 = b.second;
-        if ((v1.arraySize != 1u) || (v2.arraySize != 1u)) {
-          break;
-        }
-        const auto bn = this->bd.getTangentOperatorBlockName(b);
-        if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
-            (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
-          append(bn + "(Dt[" + o.asString() + "])");
-        } else {
-          if (o.isNull()) {
-            append(bn + "(Dt.begin())");
+        if ((v1.arraySize == 1u) && (v2.arraySize == 1u)) {
+          const auto bn = this->bd.getTangentOperatorBlockName(b);
+          if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
+              (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
+            append(bn + "(Dt[" + o.asString() + "])");
           } else {
-            append(bn + "(Dt.begin()+" + o.asString() + ")");
+            if (o.isNull()) {
+              append(bn + "(Dt.begin())");
+            } else {
+              append(bn + "(Dt.begin()+" + o.asString() + ")");
+            }
           }
         }
-        o += SupportedTypes::TypeSize::getDerivativeSize(v1.getTypeSize(),
+        o += (v1.arraySize) * (v2.arraySize) * 
+             SupportedTypes::TypeSize::getDerivativeSize(v1.getTypeSize(),
                                                          v2.getTypeSize());
       }
     }
@@ -4640,27 +4655,39 @@ namespace mfront {
       return;
     }
     // write blocks
+    auto o = SupportedTypes::TipeSize{};
     for (const auto& b : blocks) {
       const auto& v1 = b.first;
       const auto& v2 = b.second;
-      if ((v1.arraySize != 1u) || (v2.arraySize != 1u)) {
-        break;
-      }
       const auto bn = this->bd.getTangentOperatorBlockName(b);
-      if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
-          (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
-        if (this->bd.useQt()) {
-          os << "typename tfel::math::MakeQuantityReferenceType<"
-             << "tfel::math::derivative_type<" << v1.type << "," << v2.type
-             << ">>::type " << bn << ";\n";
+      if ((v1.arraySize == 1u) && (v2.arraySize == 1u) {
+        if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
+            (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
+          if (this->bd.useQt()) {
+            os << "typename tfel::math::MakeQuantityReferenceType<"
+               << "tfel::math::derivative_type<" << v1.type << "," << v2.type
+               << ">>::type " << bn << ";\n";
+          } else {
+            os << "tfel::math::derivative_type<" << v1.type << "," << v2.type
+               << ">& " << bn << ";\n";
+          }
         } else {
-          os << "tfel::math::derivative_type<" << v1.type << "," << v2.type
-             << ">& " << bn << ";\n";
+          os << "tfel::math::View<tfel::math::derivative_type<" << v1.type << ","
+             << v2.type << ">> " << bn << ";\n";
         }
+      } else if (v1.arraySize == 1u){
+      } else if (v2.arraySize == 1u){
       } else {
-        os << "tfel::math::View<tfel::math::derivative_type<" << v1.type << ","
-           << v2.type << ">> " << bn << ";\n";
+        os << "auto " << bn << "(const ushort mfront_idx, const ushort mfront_idx2) noexcept {\n"
+           << "return tfel::math::map_derivative<" << v1.type << ", " << v2.type
+           << ">(this->Dt, o + mfront_idx * "
+           << SupportedTypes::getTypeSize(v1.type, 1u) * SupportedTypes::getTypeSize(v2.type, 1u)
+           << "+ mfront_idx2 * " << SupportedTypes::getTypeSize(v2.type, 1u) << ");\n"
+           << "};\n";
       }
+      o += (v1.arraySize) * (v2.arraySize) * 
+             SupportedTypes::TypeSize::getDerivativeSize(v1.getTypeSize(),
+                                                         v2.getTypeSize());
     }
   }  // end of writeBehaviourTangentOperator()
 
@@ -4755,16 +4782,30 @@ namespace mfront {
     this->checkIntegrationDataFile(os);
     os << "protected: \n\n";
     for (const auto& v : this->bd.getMainVariables()) {
+      if(v.first.arraySize != v.second.arraySize){
+        tfel::raise("BehaviourCodeGeneratorBase::writeIntegrationDataDefaultMembers: "
+                    "the array size of the gradient '" + v.first.name + "' is "
+                    "different from the array size of the thermodynamic force '" +
+                    v.second.name + "'");
+      }
       if (Gradient::isIncrementKnown(v.first)) {
         os << "/*!\n"
            << " * \\brief " << v.first.name << " increment\n"
-           << " */\n"
-           << v.first.type << " d" << v.first.name << ";\n\n";
+           << " */\n";
+        if(v.first.arraySize == 1u){
+          os << v.first.type << " d" << v.first.name << ";\n\n";
+        } else {
+          os << v.first.type << " d" << v.first.name << "[" << v.first.arraySize << "];\n\n";
+        }
       } else {
         os << "/*!\n"
            << " * \\brief " << v.first.name << " at the end of the time step\n"
-           << " */\n"
-           << v.first.type << " " << v.first.name << "1;\n\n";
+           << " */\n";
+        if(v.first.arraySize == 1u){
+          os << v.first.type << " " << v.first.name << "1;\n\n";
+        } else {
+          os << v.first.type << " " << v.first.name << "1[" << v.first.arraySize << "];\n\n";
+        }
       }
     }
     os << "/*!\n"
