@@ -4655,12 +4655,14 @@ namespace mfront {
       return;
     }
     // write blocks
-    auto o = SupportedTypes::TipeSize{};
+    auto o = SupportedTypes::TypeSize{};
     for (const auto& b : blocks) {
       const auto& v1 = b.first;
       const auto& v2 = b.second;
       const auto bn = this->bd.getTangentOperatorBlockName(b);
-      if ((v1.arraySize == 1u) && (v2.arraySize == 1u) {
+      const auto block_size = SupportedTypes::TypeSize::getDerivativeSize(
+          v1.getTypeSize(), v2.getTypeSize());
+      if ((v1.arraySize == 1u) && (v2.arraySize == 1u)) {
         if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
             (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
           if (this->bd.useQt()) {
@@ -4676,18 +4678,26 @@ namespace mfront {
              << v2.type << ">> " << bn << ";\n";
         }
       } else if (v1.arraySize == 1u){
-      } else if (v2.arraySize == 1u){
-      } else {
-        os << "auto " << bn << "(const ushort mfront_idx, const ushort mfront_idx2) noexcept {\n"
+        os << "auto " << bn
+           << "(const ushort mfront_idx) noexcept {\n"
            << "return tfel::math::map_derivative<" << v1.type << ", " << v2.type
-           << ">(this->Dt, o + mfront_idx * "
-           << SupportedTypes::getTypeSize(v1.type, 1u) * SupportedTypes::getTypeSize(v2.type, 1u)
-           << "+ mfront_idx2 * " << SupportedTypes::getTypeSize(v2.type, 1u) << ");\n"
+           << ">(this->Dt, o + mfront_idx * " << block_size << ");\n"
+           << "};\n";
+      } else if (v2.arraySize == 1u){
+        os << "auto " << bn
+           << "(const ushort mfront_idx) noexcept {\n"
+           << "return tfel::math::map_derivative<" << v1.type << ", " << v2.type
+           << ">(this->Dt, o + mfront_idx * " << block_size << ");\n"
+           << "};\n";
+      } else {
+        os << "auto " << bn
+           << "(const ushort mfront_idx, const ushort mfront_idx2) noexcept {\n"
+           << "return tfel::math::map_derivative<" << v1.type << ", " << v2.type
+           << ">(this->Dt, o + (" << v2.arraySize
+           << " * mfront_idx + mfront_idx2) * " << block_size << ");\n"
            << "};\n";
       }
-      o += (v1.arraySize) * (v2.arraySize) * 
-             SupportedTypes::TypeSize::getDerivativeSize(v1.getTypeSize(),
-                                                         v2.getTypeSize());
+      o += (v1.arraySize) * (v2.arraySize) * block_size;
     }
   }  // end of writeBehaviourTangentOperator()
 
