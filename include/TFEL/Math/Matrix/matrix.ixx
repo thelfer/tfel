@@ -14,7 +14,7 @@
 #ifndef LIB_TFEL_MATH_MATRIX_IXX
 #define LIB_TFEL_MATH_MATRIX_IXX
 
-#include"TFEL/Raise.hxx"
+#include "TFEL/Raise.hxx"
 
 namespace tfel::math {
 
