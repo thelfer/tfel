@@ -1,3 +1,5 @@
+include(CMakePackageConfigHelpers)
+
 macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   project("tfel")
   set(PACKAGE_NAME "tfel")
@@ -166,7 +168,25 @@ function(tfel_library_internal name component)
       COMPONENT ${component})
   endif(WIN32)
   install(EXPORT ${name} DESTINATION ${export_install_path}
-          NAMESPACE tfel:: FILE ${name}Config.cmake)
+          EXPORT_LINK_INTERFACE_LIBRARIES
+          NAMESPACE tfel:: FILE ${name}Targets.cmake)
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${name}Config.cmake.in)
+    set(_package_config_file ${CMAKE_CURRENT_SOURCE_DIR}/${name}Config.cmake.in)
+  else()
+    set(_package_config_file ${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake.in)
+    file(WRITE ${_package_config_file}
+         "@PACKAGE_INIT@\n"
+         "\n"
+         "include(\"\${CMAKE_CURRENT_LIST_DIR}/${name}Targets.cmake\")")
+  endif()
+  # generate the config file that includes the exports
+  configure_package_config_file(${_package_config_file}
+                                "${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake"
+                                INSTALL_DESTINATION ${export_install_path}
+                                NO_SET_AND_CHECK_MACRO
+                                NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake"
+          DESTINATION ${export_install_path})
   if(enable-static)
     add_library(${name}-static STATIC ${ARGN})
     if(TFEL_APPEND_SUFFIX)
@@ -192,7 +212,25 @@ function(tfel_library_internal name component)
       install(TARGETS ${name}-static EXPORT ${name}-static DESTINATION lib${LIB_SUFFIX})
     endif(WIN32)
     install(EXPORT ${name}-static DESTINATION ${export_install_path}
-            NAMESPACE tfel:: FILE ${name}StaticConfig.cmake)
+            NAMESPACE tfel:: FILE ${name}StaticTargets.cmake
+            EXPORT_LINK_INTERFACE_LIBRARIES)
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${name}StaticConfig.cmake.in)
+      set(_package_config_file ${CMAKE_CURRENT_SOURCE_DIR}/${name}StaticConfig.cmake.in)
+    else()
+      set(_package_config_file ${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake.in)
+      file(WRITE ${_package_config_file}
+           "@PACKAGE_INIT@\n"
+           "\n"
+          "include(\"\${CMAKE_CURRENT_LIST_DIR}/${name}StaticTargets.cmake\")")
+    endif()
+    # generate the config file that includes the exports
+    configure_package_config_file(${_package_config_file}
+                                  "${CMAKE_CURRENT_BINARY_DIR}/${name}StaticConfig.cmake"
+                                  INSTALL_DESTINATION ${export_install_path}
+                                  NO_SET_AND_CHECK_MACRO
+                                  NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${name}StaticConfig.cmake"
+            DESTINATION ${export_install_path})
     target_compile_options (${name}-static PRIVATE "${TFEL_CXX_FLAGS}")
   endif(enable-static)
 endfunction(tfel_library_internal)
