@@ -213,7 +213,13 @@ set_property(TARGET mtest PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 if(WIN32 AND enable-static)
   set(mtest_static_link_libraries
     TFELMTest-static
+    MFrontLogStream-static    
     TFELMaterial-static
+    TFELMathParser-static
+    TFELMath-static
+    TFELSystem-static
+    TFELUtilities-static
+    TFELException-static
     TFELTests-static)
   if(HAVE_CASTEM)
     list(APPEND mtest_static_link_libraries UMATInterface-static)

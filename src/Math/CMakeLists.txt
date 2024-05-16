@@ -112,7 +112,7 @@ target_include_directories(TFELMathParser
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELMathParser
 	PUBLIC TFELMathKriging
-    PUBLIC TFELMath
+        PUBLIC TFELMath
 	PUBLIC TFELException
 	PUBLIC TFELUnicodeSupport)
 if(enable-static)
