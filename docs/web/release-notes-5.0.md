@@ -127,6 +127,10 @@ The results of those tests are reported on Tables
 
 # Issues fixed
 
+## Issue 557: `[mfront]` allow to specify dsl options in `MFrontBase::getDSL`
+
+For more details, see <https://github.com/thelfer/tfel/issues/557>
+
 ## Issue 526: The `@UseQt` keyword is not mentioned in the `MaterialLaw`'s keywords help page
 
 For more details, see <https://github.com/thelfer/tfel/issues/526>
