@@ -43,12 +43,14 @@ namespace mfront {
 
   std::shared_ptr<AbstractDSL> MFrontBase::getDSL(
       const tfel::utilities::CxxTokenizer::const_iterator ptb,
-      const tfel::utilities::CxxTokenizer::const_iterator pte) {
+      const tfel::utilities::CxxTokenizer::const_iterator pte,
+      const tfel::utilities::DataMap& dsl_options) {
     using namespace tfel::system;
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "MFrontBase::getDSL: " + m);
     };
-    auto dsl_options = tfel::utilities::DataMap{};
+    // local dsl options
+    auto ldsl_options = dsl_options;
     const auto& global_options =
         GlobalDomainSpecificLanguageOptionsManager::get();
     auto& dslFactory = DSLFactory::getDSLFactory();
@@ -76,8 +78,10 @@ namespace mfront {
         throw_if(pt == pte, "unexpected end of file (exepected dsl name)");
         if (pt->value == "{") {
           const auto o = tfel::utilities::DataParsingOptions{};
-          dsl_options = tfel::utilities::Data::read(pt, pte, o)
-                            .get<tfel::utilities::DataMap>();
+          ldsl_options = tfel::utilities::merge(ldsl_options,
+                                                tfel::utilities::Data::read(pt, pte, o)
+                                                .get<tfel::utilities::DataMap>(),
+                                                false);          
         }
         throw_if(pt == pte,
                  "unexpected end of file (exepected ';' or library name)");
@@ -107,23 +111,23 @@ namespace mfront {
       }
       try {
         // first try to get the target type of the DSL
-        dsl = dslFactory.createNewDSL(dslName, dsl_options);
+        dsl = dslFactory.createNewDSL(dslName, ldsl_options);
         const auto t = dsl->getTargetType();
         if (t == AbstractDSL::MATERIALPROPERTYDSL) {
           dsl = dslFactory.createNewDSL(
               dslName, tfel::utilities::merge(
                            global_options.getMaterialPropertyDSLOptions(),
-                           dsl_options, true));
+                           ldsl_options, true));
         } else if (t == AbstractDSL::BEHAVIOURDSL) {
           dsl = dslFactory.createNewDSL(
               dslName,
               tfel::utilities::merge(global_options.getBehaviourDSLOptions(),
-                                     dsl_options, true));
+                                     ldsl_options, true));
         } else if (t == AbstractDSL::MODELDSL) {
           dsl = dslFactory.createNewDSL(
               dslName,
               tfel::utilities::merge(global_options.getModelDSLOptions(),
-                                     dsl_options, true));
+                                     ldsl_options, true));
         } else {
           tfel::raise("MFrontBase::getDSL: unsupported DSL target type");
         }
@@ -142,7 +146,7 @@ namespace mfront {
     return dsl;
   }  // end of getDSL
 
-  std::shared_ptr<AbstractDSL> MFrontBase::getDSL(const std::string& f) {
+  std::shared_ptr<AbstractDSL> MFrontBase::getDSL(const std::string& f, const tfel::utilities::DataMap& dsl_options) {
     tfel::utilities::CxxTokenizer file;
     if ((tfel::utilities::starts_with(f, "madnex:")) ||
         (tfel::utilities::starts_with(f, "mdnx:")) ||
@@ -160,7 +164,7 @@ namespace mfront {
       file.openFile(f);
     }
     file.stripComments();
-    auto dsl = MFrontBase::getDSL(file.cbegin(), file.cend());
+    auto dsl = MFrontBase::getDSL(file.cbegin(), file.cend(), dsl_options);
     if ((tfel::utilities::starts_with(f, "madnex:")) ||
         (tfel::utilities::starts_with(f, "mdnx:")) ||
         (tfel::utilities::starts_with(f, "edf:"))) {
