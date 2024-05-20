@@ -61,14 +61,43 @@ else(TFEL_DL_LIBRARY)
   if((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
     if(Threads_FOUND)
       target_link_libraries(TFELSystem 
-		PUBLIC TFELException 
+		PUBLIC TFELException
 		PRIVATE Threads::Threads)
     else(Threads_FOUND)
       target_link_libraries(TFELSystem
-		PUBLIC TFELException)
+		                        PUBLIC TFELException)
     endif(Threads_FOUND)
   else((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
     target_link_libraries(TFELSystem
-		PUBLIC TFELException)
+		                      PUBLIC TFELException)
   endif((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
 endif(TFEL_DL_LIBRARY)
+if(enable-static)
+  target_include_directories(TFELSystem-static
+    PUBLIC 
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
+    $<INSTALL_INTERFACE:include>
+    PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+  if(TFEL_DL_LIBRARY)
+    target_link_libraries(TFELSystem-static 
+    PUBLIC TFELException-static
+      PRIVATE ${TFEL_DL_LIBRARY}
+      PRIVATE ${CMAKE_THREAD_LIBS_INIT})
+  else(TFEL_DL_LIBRARY)
+    if((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
+      if(Threads_FOUND)
+        target_link_libraries(TFELSystem-static 
+      PUBLIC TFELException -static
+      PRIVATE Threads::Threads)
+      else(Threads_FOUND)
+        target_link_libraries(TFELSystem-static
+      PUBLIC TFELException-static)
+      endif(Threads_FOUND)
+    else((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
+      target_link_libraries(TFELSystem-static
+      PUBLIC TFELException-static)
+    endif((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
+  endif(TFEL_DL_LIBRARY)
+endif(enable-static)

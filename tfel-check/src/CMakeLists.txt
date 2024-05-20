@@ -21,7 +21,7 @@ tfel_library(TFELCheck
   MixedComparison.cxx
   AreaComparison.cxx
   Test.cxx)
-target_include_directories(TFELUtilities
+target_include_directories(TFELCheck
    PUBLIC 
    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/tfel-check/include>
    $<INSTALL_INTERFACE:include>)
@@ -29,6 +29,19 @@ target_link_libraries(TFELCheck
   TFELMathCubicSpline TFELMathParser
   TFELMath TFELUtilities TFELSystem
   TFELConfig)
+if(enable-static)
+  target_include_directories(TFELCheck-static
+     PUBLIC 
+     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/tfel-check/include>
+     $<INSTALL_INTERFACE:include>)
+  target_link_libraries(TFELCheck-static
+    TFELMathCubicSpline-static
+    TFELMathParser-static
+    TFELMath-static
+    TFELUtilities-static
+    TFELSystem-static
+    TFELConfig-static)
+endif(enable-static)
 
 add_executable(tfel-check tfel-check.cxx)
 set_property(TARGET tfel-check PROPERTY POSITION_INDEPENDENT_CODE TRUE)
