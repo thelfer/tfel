@@ -17,3 +17,14 @@ target_link_libraries(TFELMaterial
 	PUBLIC TFELMath
 	PUBLIC TFELUtilities
 	PUBLIC TFELException)
+if(enable-static)
+    target_include_directories(TFELMaterial-static
+        PUBLIC 
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>)
+    target_link_libraries(TFELMaterial-static
+        PUBLIC TFELNUMODIS-static
+        PUBLIC TFELMath-static
+        PUBLIC TFELUtilities-static
+        PUBLIC TFELException-static)
+endif(enable-static)
