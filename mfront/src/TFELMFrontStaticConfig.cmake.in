@@ -1,0 +1,17 @@
+@PACKAGE_INIT@
+
+find_package(TFELConfigStaticStatic REQUIRED)
+find_package(TFELExceptionStatic REQUIRED)
+find_package(TFELUnicodeSupportStatic REQUIRED)
+find_package(TFELGlossaryStatic REQUIRED)
+find_package(TFELUtilitiesStatic REQUIRED)
+find_package(TFELSystemStatic REQUIRED)
+find_package(TFELMathStatic REQUIRED)
+find_package(TFELMathKrigingStatic REQUIRED)
+find_package(TFELMathParserStatic REQUIRED)
+find_package(TFELMathCubicSplineStatic REQUIRED)
+find_package(TFELNumodisStatic REQUIRED)
+find_package(TFELMaterialStatic REQUIRED)
+find_package(MFrontLogStreamStatic REQUIRED)
+
+include("${CMAKE_CURRENT_LIST_DIR}/TFELMFrontStaticTargets.cmake")
