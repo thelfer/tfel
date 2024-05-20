@@ -15,12 +15,31 @@ mfmtg_library(MFMTestGenerator
   MTestInputFileGenerators.cxx
   LicosInputFileGenerators.cxx)
 target_include_directories(MFMTestGenerator
+  PUBLIC 
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfm-test-generator/include>
+  $<INSTALL_INTERFACE:include>)
+target_link_libraries(MFMTestGenerator
+  PUBLIC
+  MFrontLogStream
+  TFELMTest TFELMaterial
+  TFELSystem TFELUtilities)
+if(enable-static)
+  target_include_directories(MFMTestGenerator-static
    PUBLIC 
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfm-test-generator/include>
    $<INSTALL_INTERFACE:include>)
-target_link_libraries(MFMTestGenerator
-  TFELMTest MFrontLogStream TFELMaterial
-  TFELSystem TFELUtilities)
+  target_link_libraries(MFMTestGenerator-static
+    PUBLIC
+    MFrontLogStream-static
+    TFELMTest-static TFELMaterial-static
+    TFELSystem-static TFELUtilities-static)
+endif(enable-static)
 
 add_executable(mfm-test-generator mfm-test-generator.cxx)
 set_property(TARGET mfm-test-generator PROPERTY POSITION_INDEPENDENT_CODE TRUE)

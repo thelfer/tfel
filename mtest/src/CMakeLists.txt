@@ -170,6 +170,22 @@ target_include_directories(TFELMTest
    $<INSTALL_INTERFACE:include>)
 
 target_link_libraries(TFELMTest PUBLIC ${TFELMTest_LDADD})
+if(enable-static)
+  target_include_directories(TFELMTest-static
+    PUBLIC 
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mtest/include>
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>)
+  target_link_libraries(TFELMTest-static PUBLIC
+    MFrontLogStream-static
+    TFELMaterial-static
+    TFELMathParser-static
+    TFELMath-static
+    TFELSystem-static
+    TFELTests-static
+    TFELConfig-static)
+endif(enable-static)
 
 add_executable(mtest MTestMain.cxx)
 set_property(TARGET mtest PROPERTY POSITION_INDEPENDENT_CODE TRUE)
