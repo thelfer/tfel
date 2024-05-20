@@ -2,6 +2,8 @@
 set(CMAKE_LEGACY_CYGWIN_WIN32 0) 
 cmake_minimum_required(VERSION 2.4)
 cmake_policy(SET CMP0005 OLD)
+cmake_policy(SET CMP0022 NEW)
+
 if(CMAKE_VERSION VERSION_GREATER 3.0.0)
   cmake_policy(SET CMP0026 OLD)
 endif(CMAKE_VERSION VERSION_GREATER 3.0.0)
