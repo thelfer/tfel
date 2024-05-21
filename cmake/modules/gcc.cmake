@@ -44,47 +44,47 @@ option(enable-sanitize-options "enable various gcc sanitize options (undefined, 
 
 option(enable-glibcxx-debug "use the debug version of the C++ standard as implemented by the glib C++ library" OFF)
 if(enable-glibcxx-debug)
-SET(CMAKE_CXX_FLAGS_DEBUG "-g -D_GLIBCXX_DEBUG" CACHE STRING
-    "Flags used by the C++ compiler during debug builds."
-    FORCE)
+  set(TFEL_CMAKE_CXX_FLAGS_DEBUG "-g -D_GLIBCXX_DEBUG" CACHE STRING
+      "Flags used by the C++ compiler during debug builds."
+      FORCE)
 else(enable-glibcxx-debug)
-SET(CMAKE_CXX_FLAGS_DEBUG "-g" CACHE STRING
-    "Flags used by the C++ compiler during debug builds."
-    FORCE)
+  set(TFEL_CMAKE_CXX_FLAGS_DEBUG "-g" CACHE STRING
+      "Flags used by the C++ compiler during debug builds."
+      FORCE)
 endif(enable-glibcxx-debug)
 
-SET(CMAKE_C_FLAGS_DEBUG "-g" CACHE STRING
+set(TFEL_CMAKE_C_FLAGS_DEBUG "-g" CACHE STRING
     "Flags used by the C compiler during debug builds."
     FORCE)
 
 # coverage
-SET(CMAKE_CXX_FLAGS_COVERAGE "-O0 -g -DNDEBUG -fprofile-arcs -ftest-coverage" CACHE STRING
+set(TFEL_CMAKE_CXX_FLAGS_COVERAGE "-O0 -g -DNDEBUG -fprofile-arcs -ftest-coverage" CACHE STRING
     "Flags used by the C++ compiler during builds with tests coverage checks."
     FORCE)
-SET(CMAKE_C_FLAGS_COVERAGE "-O0 -g -DNDEBUG -fprofile-arcs -ftest-coverage" CACHE STRING
+set(TFEL_CMAKE_C_FLAGS_COVERAGE "-O0 -g -DNDEBUG -fprofile-arcs -ftest-coverage" CACHE STRING
     "Flags used by the C compiler during builds with tests coverage checks."
     FORCE)
-set(CMAKE_EXE_LINKER_FLAGS_COVERAGE
+set(TFEL_CMAKE_EXE_LINKER_FLAGS_COVERAGE
   "-fprofile-arcs -ftest-coverage -lgcov")
-set(CMAKE_MODULE_LINKER_FLAGS_COVERAGE
+set(TFEL_CMAKE_MODULE_LINKER_FLAGS_COVERAGE
   "-fprofile-arcs -ftest-coverage -lgcov")
-set(CMAKE_SHARED_LINKER_FLAGS_COVERAGE
+set(TFEL_CMAKE_SHARED_LINKER_FLAGS_COVERAGE
   "-fprofile-arcs -ftest-coverage -lgcov")
-MARK_AS_ADVANCED(CMAKE_CXX_FLAGS_COVERAGE
-  CMAKE_C_FLAGS_COVERAGE
-  CMAKE_EXE_LINKER_FLAGS_COVERAGE
-  CMAKE_MODULE_LINKER_FLAGS_COVERAGE
-  CMAKE_SHARED_LINKER_FLAGS_COVERAGE)
+mark_as_advanced(TFEL_CMAKE_CXX_FLAGS_COVERAGE
+                 TFEL_CMAKE_C_FLAGS_COVERAGE
+                 TFEL_CMAKE_EXE_LINKER_FLAGS_COVERAGE
+                 TFEL_CMAKE_MODULE_LINKER_FLAGS_COVERAGE
+                 TFEL_CMAKE_SHARED_LINKER_FLAGS_COVERAGE)
 
 # profiling
-SET(CMAKE_CXX_FLAGS_PROFILING "-pg" CACHE STRING
+set(TFEL_CMAKE_CXX_FLAGS_PROFILING "-pg" CACHE STRING
     "Flags used by the C++ compiler during profiled builds."
     FORCE)
-SET(CMAKE_C_FLAGS_PROFILING "-pg" CACHE STRING
+set(TFEL_CMAKE_C_FLAGS_PROFILING "-pg" CACHE STRING
     "Flags used by the C compiler during profiled builds."
     FORCE)
-MARK_AS_ADVANCED(CMAKE_CXX_FLAGS_PROFILING
-  CMAKE_C_FLAGS_PROFILING)
+mark_as_advanced(TFEL_CMAKE_CXX_FLAGS_PROFILING
+                 TFEL_CMAKE_C_FLAGS_PROFILING)
 
 # tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fanalyzer")
 
