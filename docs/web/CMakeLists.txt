@@ -143,7 +143,6 @@ pandoc_html(release-notes-3.2   "--toc" "--toc-depth=2" "--number-sections" "-c 
 pandoc_html(release-notes-3.2.1 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2.2 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2.3 "--toc" "--toc-depth=2")
-pandoc_html(release-notes-3.2.3 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2.4 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2.5 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2.6 "--toc" "--toc-depth=2")
@@ -220,7 +219,6 @@ pandoc_html(IsotropicStrainHardeningMisesCreep-keywords "--toc" "--toc-depth=1")
 pandoc_html(MaterialLaw-keywords "--toc" "--toc-depth=1")
 pandoc_html(MaterialProperty-keywords "--toc" "--toc-depth=1")
 pandoc_html(Model-keywords "--toc" "--toc-depth=1")
-pandoc_html(MTest-keywords "--toc" "--toc-depth=1")
 pandoc_html(MultipleIsotropicMisesFlows-keywords "--toc" "--toc-depth=1")
 pandoc_html(RungeKuttaFiniteStrain-keywords "--toc" "--toc-depth=1")
 pandoc_html(RungeKuttaGenericBehaviour-keywords "--toc" "--toc-depth=1")
@@ -228,7 +226,6 @@ pandoc_html(RungeKutta-keywords "--toc" "--toc-depth=1")
 pandoc_html(RungeKuttaModel-keywords "--toc" "--toc-depth=1")
 
 # mtest keywords
-
 pandoc_html(MTest-keywords "--toc" "--toc-depth=1")
 
 if(TFEL_APPEND_SUFFIX)

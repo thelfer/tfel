@@ -143,3 +143,34 @@ find_package(TFELMathCubicSpline REQUIRED HINTS "${TFEL_DIR}/share/tfel/cmake")
 add_executable(test main.cxx)
 target_link_libraries(test tfel::TFELMathCubicSpline)
 ~~~~
+
+## Exported variables
+
+The `tfel-modules-common.cmake` file defines the following variables:
+
+- `TFEL_CXX_STANDARD`:
+- `TFEL_COMPILER_FLAGS`:
+- `TFEL_COMPILER_CXXFLAGS`:
+- `TFEL_COMPILER_WARNINGS`:
+- `TFEL_OPTIMISATION_FLAGS0`:
+- `TFEL_OPTIMISATION_FLAGS`:
+- `TFEL_OPTIMISATION_FLAGS2`:
+- `TFEL_CMAKE_C_FLAGS`:
+- `TFEL_CMAKE_C_FLAGS_DEBUG`:
+- `TFEL_CMAKE_C_FLAGS_RELEASE`:
+- `TFEL_CMAKE_C_FLAGS_COVERAGE`:
+- `TFEL_CMAKE_C_FLAGS_PROFILING`:
+- `TFEL_CMAKE_CXX_FLAGS`:
+- `TFEL_CMAKE_CXX_FLAGS_DEBUG`:
+- `TFEL_CMAKE_CXX_FLAGS_RELEASE`:
+- `TFEL_CMAKE_CXX_FLAGS_COVERAGE`:
+- `TFEL_CMAKE_CXX_FLAGS_PROFILING`:
+- `TFEL_CMAKE_EXE_LINKER_FLAGS_COVERAGE`:
+- `TFEL_CMAKE_MODULE_LINKER_FLAGS_COVERAGE`:
+- `TFEL_CMAKE_SHARED_LINKER_FLAGS_COVERAGE`:
+
+The `tfel-modules-common.cmake` can be included as follows:
+
+~~~~{.cmake}
+include("${TFEL_DIR}/share/tfel/cmake/tfel-modules-common.cmake")
+~~~~
