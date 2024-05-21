@@ -692,6 +692,18 @@ if(install-system-libraries)
 
 endif(install-system-libraries)
 
+# install tfel-modules-common.cmake
+
+if(TFEL_APPEND_SUFFIX)
+  install(FILES cmake/modules/tfel-modules-common.cmake
+          DESTINATION "share/tfel-${TFEL_SUFFIX}/cmake"
+          COMPONENT core)
+else(TFEL_APPEND_SUFFIX)
+  install(FILES cmake/modules/tfel-modules-common.cmake
+          DESTINATION "share/tfel/cmake"
+          COMPONENT core)
+endif(TFEL_APPEND_SUFFIX)
+
 # install licences
 if(TFEL_APPEND_SUFFIX)
   install (FILES LICENCE-GNU-GPL
