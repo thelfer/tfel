@@ -137,12 +137,14 @@ use the `TFEL` libraries in `C++` projects, using either the
 
 For more details, see <https://github.com/thelfer/tfel/issues/557>
 
-## Issue 555: [cmake] better handling of dependencies in exported `cmake` files
+## Issue 556: `[cmake]` export compile flags in dedicated variables
+
+For more details, see <https://github.com/thelfer/tfel/issues/556>
+
+## Issue 555: `[cmake]` better handling of dependencies in exported `cmake` files
 
 For more details, see <https://github.com/thelfer/tfel/issues/556>
 
 ## Issue 526: The `@UseQt` keyword is not mentioned in the `MaterialLaw`'s keywords help page
 
 For more details, see <https://github.com/thelfer/tfel/issues/526>
-
-
