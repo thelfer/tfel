@@ -18,3 +18,9 @@ target_include_directories(TFELNUMODIS
    PUBLIC 
    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
+if(enable-static)
+  target_include_directories(TFELNUMODIS-static
+    PUBLIC 
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>)
+endif(enable-static)

@@ -1,7 +1,7 @@
 ---
 title: Release notes of the 5.0 version of `TFEL`, `MFront` and `MTest`
 author: Thomas Helfer, Maxence Wangermez
-date: 2020
+date: 2024
 lang: en-EN
 numbersections: true
 documentclass: article
@@ -121,14 +121,30 @@ where \(\varepsilon\) is the accuracy of the floatting point considered.
 
 The results of those tests are reported on Tables
 @tbl:comp_eigensolvers_float, @tbl:comp_eigensolvers_double and
-@tbl:comp_eigensolvers_long_double:
+@tbl:comp_eigensolvers_long_double. The Harari eigen solver offers a
+better compromise between accuracy and numerical efficiency than the
+default `TFEL` solver.
 
-- The Harari eigen solver offers a better compromise between accuracy and numerical efficiency than the default `TFEL` solver.
+# Documentation
+
+The page [Libaries usage in C++](libraries_usage.html) describe how to
+use the `TFEL` libraries in `C++` projects, using either the
+`tfel-config` utility or `cmake` packages.
 
 # Issues fixed
+
+## Issue 557: `[mfront]` allow to specify dsl options in `MFrontBase::getDSL`
+
+For more details, see <https://github.com/thelfer/tfel/issues/557>
+
+## Issue 556: `[cmake]` export compile flags in dedicated variables
+
+For more details, see <https://github.com/thelfer/tfel/issues/556>
+
+## Issue 555: `[cmake]` better handling of dependencies in exported `cmake` files
+
+For more details, see <https://github.com/thelfer/tfel/issues/556>
 
 ## Issue 526: The `@UseQt` keyword is not mentioned in the `MaterialLaw`'s keywords help page
 
 For more details, see <https://github.com/thelfer/tfel/issues/526>
-
-

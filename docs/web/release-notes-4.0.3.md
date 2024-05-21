@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 562: [cmake] fix enable-static option
+
+For more details, see <https://github.com/thelfer/tfel/issues/562>
+
 ## Issue 542: Fix the `ConceptRebind` specialisation for `FixedSizeArrayDerivative`
 
 For more details, see <https://github.com/thelfer/tfel/issues/542>
