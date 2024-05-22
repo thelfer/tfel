@@ -1,6 +1,6 @@
 # mfront-doc
-add_executable(mfront-doc mfront-doc.cxx
-  BehaviourDocumentationGenerator.cxx)
+add_executable(mfront-doc mfront-doc.cxx DocumentationGeneratorBase.cxx
+  BehaviourDocumentationGenerator.cxx MaterialPropertyDocumentationGenerator.cxx)
 set_property(TARGET mfront-doc PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 target_include_directories(mfront-doc
   PRIVATE ${PROJECT_SOURCE_DIR}/mfront-doc/include)
