@@ -93,127 +93,47 @@ namespace mfront {
        << "\\newcommand{\\ets}[1]{\\left.#1\\right|_{t+\\Delta\\,t}}\n\n";
   }  // end of writeStandardLatexMacros
 
-static void getData(std::vector<DocumentationGeneratorBase::Data>& data,
-                      const MaterialPropertyDescription& mpd,
-                      const VariableDescription MaterialPropertyDescription::*m) {
-    // const auto& d = mpd.getBehaviourData(h);
-    const auto& mdata = mpd.*m;
-    for (auto pv = mdata.begin(); pv != mdata.end(); ++pv) {
-      bool found = false;
-      auto pd = data.begin();
-      while ((pd != data.end()) && (!found)) {
-        found = pd->name == pv->name;
-        if (!found) {
-          ++pd;
-        }
-      }
-      if (pd == data.end()) {
-        data.push_back(DocumentationGeneratorBase::Data());
-        pd = data.end();
-        --pd;
-        pd->name = pv->name;
-        pd->arraySize = pv->arraySize;
-        pd->type = pv->type;
-        // pd->externalName = d.getExternalName(pv->name);
-      } else {
-        const auto uncompatible = [&pd, &pv] {
-          if ((pd->name != pv->name) ||
-              // (pd->externalName != d.getExternalName(pv->name)) ||
-              (pd->arraySize != pv->arraySize)) {
-            return true;
-          }
-          if (pd->type != pv->type) {
-            if (!((tfel::utilities::starts_with(pd->type, "struct")) &&
-                  (tfel::utilities::starts_with(pv->type, "struct")))) {
-              return true;
-            }
-          }
-          return false;
-        }();
-        tfel::raise_if(uncompatible,
-                       "getData: inconsistent data across "
-                       "hypothesis for variable '" +
-                           pd->name + "'");
-      }
-      // if (!pv->description.empty()) {
-      //   pd->descriptions[h] = pv->description;
-      // }
-      // pd->hypotheses.push_back(h);
-    }
-  }  // end of getData
-
   static void getData(std::vector<DocumentationGeneratorBase::Data>& data,
-                      const MaterialPropertyDescription& mpd,
-                      const VariableDescriptionContainer MaterialPropertyDescription::*m) {
-    // const auto& d = mpd.getBehaviourData(h);
-    const auto& mdata = mpd.*m;
-    for (auto pv = mdata.begin(); pv != mdata.end(); ++pv) {
-      bool found = false;
-      auto pd = data.begin();
-      while ((pd != data.end()) && (!found)) {
-        found = pd->name == pv->name;
-        if (!found) {
-          ++pd;
-        }
-      }
-      if (pd == data.end()) {
-        data.push_back(DocumentationGeneratorBase::Data());
-        pd = data.end();
-        --pd;
-        pd->name = pv->name;
-        pd->arraySize = pv->arraySize;
-        pd->type = pv->type;
-        // pd->externalName = d.getExternalName(pv->name);
-      } else {
-        const auto uncompatible = [&pd, &pv] {
-          if ((pd->name != pv->name) ||
-              // (pd->externalName != d.getExternalName(pv->name)) ||
-              (pd->arraySize != pv->arraySize)) {
-            return true;
-          }
-          if (pd->type != pv->type) {
-            if (!((tfel::utilities::starts_with(pd->type, "struct")) &&
-                  (tfel::utilities::starts_with(pv->type, "struct")))) {
-              return true;
-            }
-          }
-          return false;
-        }();
-        tfel::raise_if(uncompatible,
-                       "getData: inconsistent data across "
-                       "hypothesis for variable '" +
-                           pd->name + "'");
-      }
-      // if (!pv->description.empty()) {
-      //   pd->descriptions[h] = pv->description;
-      // }
-      // pd->hypotheses.push_back(h);
-    }
+                      const VariableDescription& v) {
+    auto ndata = DocumentationGeneratorBase::Data{};
+    ndata.name = v.name;
+    ndata.arraySize = v.arraySize;
+    ndata.type = v.type;
+    data.push_back(ndata);
   }  // end of getData
 
   static std::vector<DocumentationGeneratorBase::Data> getData(
-      const MaterialPropertyDescription& mpd,
-      const VariableDescriptionContainer MaterialPropertyDescription::*m) {
+      const VariableDescription& vd) {
     using namespace tfel::material;
     using namespace tfel::glossary;
     const auto& glossary = Glossary::getGlossary();
     auto data = std::vector<DocumentationGeneratorBase::Data>{};
-    // const auto& dh = mpd.getDistinctModellingHypotheses();
-    // for (const auto& h : dh) {
-    // }
-    getData(data, mpd, m);
+    getData(data, vd);
+    // description deserves a specific treatment
+    return data;
+  }
+
+  static std::vector<DocumentationGeneratorBase::Data> getData(
+      const VariableDescriptionContainer& vdc) {
+    using namespace tfel::material;
+    using namespace tfel::glossary;
+    const auto& glossary = Glossary::getGlossary();
+    auto data = std::vector<DocumentationGeneratorBase::Data>{};
+    for (const auto& vd : vdc) {
+      getData(data, vd);
+    }
     // description deserves a specific treatment
     for (auto& d : data) {
       if (glossary.contains(d.externalName)) {
         const auto& e = glossary.getGlossaryEntry(d.externalName);
         std::ostringstream os;
         os << e.getShortDescription();
-        // const auto& cd = e.getDescription();
-        // for(const auto & cd_pcd : cd){
-        //   if(!cd_pcd.empty()){
-        //     os << cd_pcd << '\n';
-        //   }
-        // }
+        const auto& cd = e.getDescription();
+        for (const auto& cd_pcd : cd) {
+          if (!cd_pcd.empty()) {
+            os << cd_pcd << '\n';
+          }
+        }
         d.description += os.str();
       }
       auto ddc = d.descriptions.size();
@@ -348,8 +268,8 @@ static void getData(std::vector<DocumentationGeneratorBase::Data>& data,
       //         os << mpd.getFloattingPointParameterDefaultValue(h, d.name);
       //       } else {
       //         for (unsigned short i = 0; i != p.arraySize;) {
-      //           os << mpd.getFloattingPointParameterDefaultValue(h, d.name, i);
-      //           if (++i != p.arraySize) {
+      //           os << mpd.getFloattingPointParameterDefaultValue(h, d.name,
+      //           i); if (++i != p.arraySize) {
       //             os << " ";
       //           }
       //         }
@@ -495,7 +415,8 @@ static void getData(std::vector<DocumentationGeneratorBase::Data>& data,
       const MaterialPropertyDescription& mpd,
       const FileDescription& fd) const {
     using namespace tfel::utilities;
-    out << "# " << mfront::getMaterialLawLibraryNameBase(mpd) << mpd.className << " material property description\n\n"
+    out << "# " << mfront::getMaterialLawLibraryNameBase(mpd) << mpd.className
+        << " material property description\n\n"
         << "* file   : " << fd.fileName << '\n'
         << "* author : ";
     if (!fd.authorName.empty()) {
@@ -552,7 +473,9 @@ static void getData(std::vector<DocumentationGeneratorBase::Data>& data,
     const auto* const basic_title_level = this->standalone ? "" : "#";
     if (this->standalone) {
       out << "---\n"
-          << "title: Description of material property " << mfront::getMaterialLawLibraryNameBase(mpd) << mpd.className << '\n';
+          << "title: Description of material property "
+          << mfront::getMaterialLawLibraryNameBase(mpd) << mpd.className
+          << '\n';
       if (!fd.authorName.empty()) {
         out << "author: " << fd.authorName << '\n';
       }
@@ -568,7 +491,8 @@ static void getData(std::vector<DocumentationGeneratorBase::Data>& data,
           << "eqnPrefixTemplate: ($$i$$)\n"
           << "---";
     } else {
-      out << "# " << mfront::getMaterialLawLibraryNameBase(mpd) << '_' << mpd.className << " material property description\n\n"
+      out << "# " << mfront::getMaterialLawLibraryNameBase(mpd) << '_'
+          << mpd.className << " material property description\n\n"
           << "* file: " << fd.fileName << '\n'
           << "* author: ";
       if (!fd.authorName.empty()) {
@@ -599,27 +523,22 @@ static void getData(std::vector<DocumentationGeneratorBase::Data>& data,
     out << '\n'  //
         << basic_title_level << "# Variables\n\n";
     // printData(out, mpd, "Material properties",
-    //           getData(mpd, &MaterialPropertyDescription::getMaterialProperties),
+    //           getData(mpd,
+    //           &MaterialPropertyDescription::getMaterialProperties),
     //           this->standalone);
+    out << '\n';
+    printData(out, mpd, "Output", getData(mpd.output), this->standalone);
     // out << '\n';
-    // printData(out, mpd, "State variables",
-    //           getData(mpd, &MaterialPropertyDescription::getPersistentVariables),
+    // printData(out, mpd, "Constante",
+    //           getData(mpd, &MaterialPropertyDescription::staticVars),
     //           this->standalone);
-    // out << '\n';
-    // printData(
-    //     out, mpd, "External state variables",
-    //     getData(mpd, &MaterialPropertyDescription::getExternalStateVariables),
-    //     this->standalone);
     out << '\n';
     if (mpd.hasParameters()) {
-      printData(out, mpd, "Parameters",
-                getData(mpd, &MaterialPropertyDescription::parameters),
+      printData(out, mpd, "Parameters", getData(mpd.parameters),
                 this->standalone);
     }
     out << '\n';
-    printData(out, mpd, "Inputs",
-              getData(mpd, &MaterialPropertyDescription::inputs),
-              this->standalone);
+    printData(out, mpd, "Inputs", getData(mpd.inputs), this->standalone);
     out << '\n';
     const auto code = getCodeBlocksDocumentation(mpd, fd, this->standalone);
     if (!code.empty() != 0) {
