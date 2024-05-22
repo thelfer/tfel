@@ -11,8 +11,6 @@
  * project under specific licensing conditions.
  */
 
-#include <iostream>
-
 #include <ostream>
 #include <fstream>
 #include <sstream>
@@ -1220,11 +1218,12 @@ namespace mfront {
         os << mv.second.type << " " << mv.second.name << ";\n\n";
       } else {
         if (Gradient::isIncrementKnown(mv.first)) {
-          os << mv.first.type << " " << mv.first.name << "[" << mv.first.arraySize << "];\n\n";
+          os << "tfel::math::fsarray<" << mv.first.arraySize << ", " << mv.first.type << "> " << mv.first.name << ";\n\n";
         } else {
-          os << mv.first.type << " " << mv.first.name << "0[" << mv.first.arraySize << "];\n\n";
+          os << "tfel::math::fsarray<" << mv.first.arraySize << ", " << mv.first.type << "> " << mv.first.name << "0;\n\n";
         }
-        os << mv.second.type << " " << mv.second.name << "[" << mv.first.arraySize << "];\n\n";
+        os << "tfel::math::fsarray<" << mv.second.arraySize << ", "
+           << mv.second.type << "> " << mv.second.name << ";\n\n";
       }
     }
   }
@@ -4704,7 +4703,7 @@ namespace mfront {
            << " * \\param[in] mfront_idx2: array index relative to " << v2.name
            << "\n"
            << " */\n"
-           << "auto " << bn
+           << "decltype(auto) " << bn
            << "(const ushort mfront_idx, const ushort mfront_idx2) noexcept "
            << "{\n"
            << "return tfel::math::map<tfel::math::derivative_type<" << v1.type << ", " << v2.type
