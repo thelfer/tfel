@@ -148,3 +148,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/556>
 ## Issue 526: The `@UseQt` keyword is not mentioned in the `MaterialLaw`'s keywords help page
 
 For more details, see <https://github.com/thelfer/tfel/issues/526>
+
+## Issue 476: [generic interface] Add support for arrays of thermodynamic forces
+
+For more details, see <https://github.com/thelfer/tfel/issues/476>
