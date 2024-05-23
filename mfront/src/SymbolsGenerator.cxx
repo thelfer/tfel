@@ -245,28 +245,27 @@ namespace mfront {
     auto default_impl = [&bd, &write_impl] {
       std::vector<std::string> bns;
       for (const auto& b : bd.getTangentOperatorBlocks()) {
-        const auto& g = bd.getGradient(b.second.name);
-        const auto& thf = bd.getThermodynamicForce(b.first.name);
-        if ((g.arraySize == 1u) && (thf.arraySize == 1u)) {
-          bns.push_back(thf.getExternalName());
-          bns.push_back(g.getExternalName());
-        } else if (g.arraySize == 1u) {
-          for (unsigned short i = 0; i != thf.arraySize; ++i) {
-            bns.push_back(thf.getExternalName() + '[' + std::to_string(i) +
-                          ']');
-            bns.push_back(g.getExternalName());
+        const auto& f = b.second; // function
+        const auto& v = b.first;  // variable
+        if ((v.arraySize == 1u) && (f.arraySize == 1u)) {
+          bns.push_back(f.getExternalName());
+          bns.push_back(v.getExternalName());
+        } else if (v.arraySize == 1u) {
+          for (unsigned short idx = 0; idx != f.arraySize; ++idx) {
+            bns.push_back(f.getExternalName() + '[' + std::to_string(idx) + ']');
+            bns.push_back(v.getExternalName());
           }
-        } else if (thf.arraySize == 1u) {
-          for (unsigned short i = 0; i != g.arraySize; ++i) {
-            bns.push_back(thf.getExternalName());
-            bns.push_back(g.getExternalName() + '[' + std::to_string(i) + ']');
+        } else if (f.arraySize == 1u) {
+          for (unsigned short idx = 0; idx != v.arraySize; ++idx) {
+            bns.push_back(f.getExternalName());
+            bns.push_back(v.getExternalName() + '[' + std::to_string(idx) + ']');
           }
         } else {
-          for (unsigned short i = 0; i != g.arraySize; ++i) {
-            for (unsigned short j = 0; j != thf.arraySize; ++j) {
-              bns.push_back(thf.getExternalName() + '[' + std::to_string(j) +
+          for (unsigned short idx = 0; idx != v.arraySize; ++idx) {
+            for (unsigned short jdx = 0; jdx != f.arraySize; ++jdx) {
+              bns.push_back(f.getExternalName() + '[' + std::to_string(jdx) +
                             ']');
-              bns.push_back(g.getExternalName() + '[' + std::to_string(i) +
+              bns.push_back(v.getExternalName() + '[' + std::to_string(idx) +
                             ']');
             }
           }
