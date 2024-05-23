@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 571: [mtest] fix handling of the tangent operator blocks in the GenericBehaviour class
+
+For more details, see <https://github.com/thelfer/tfel/issues/571>
+
 ## Issue 562: [cmake] fix enable-static option
 
 For more details, see <https://github.com/thelfer/tfel/issues/562>
