@@ -699,11 +699,11 @@ configure_file(${PROJECT_SOURCE_DIR}/cmake/modules/tfel-modules-common.cmake.in
                @ONLY)
 
 if(TFEL_APPEND_SUFFIX)
-  install(FILES ${PROJECT_SOURCE_DIR}/cmake/modules/tfel-modules-common.cmake
+  install(FILES ${PROJECT_BINARY_DIR}/cmake/modules/tfel-modules-common.cmake
           DESTINATION "share/tfel-${TFEL_SUFFIX}/cmake"
           COMPONENT core)
 else(TFEL_APPEND_SUFFIX)
-  install(FILES ${PROJECT_SOURCE_DIR}/cmake/modules/tfel-modules-common.cmake
+  install(FILES ${PROJECT_BINARY_DIR}/cmake/modules/tfel-modules-common.cmake
           DESTINATION "share/tfel/cmake"
           COMPONENT core)
 endif(TFEL_APPEND_SUFFIX)
