@@ -245,8 +245,32 @@ namespace mfront {
     auto default_impl = [&bd, &write_impl] {
       std::vector<std::string> bns;
       for (const auto& b : bd.getTangentOperatorBlocks()) {
-        bns.push_back(b.first.getExternalName());
-        bns.push_back(b.second.getExternalName());
+        const auto& g = bd.getGradient(b.second.name);
+        const auto& thf = bd.getThermodynamicForce(b.first.name);
+        if ((g.arraySize == 1u) && (thf.arraySize == 1u)) {
+          bns.push_back(thf.getExternalName());
+          bns.push_back(g.getExternalName());
+        } else if (g.arraySize == 1u) {
+          for (unsigned short i = 0; i != thf.arraySize; ++i) {
+            bns.push_back(thf.getExternalName() + '[' + std::to_string(i) +
+                          ']');
+            bns.push_back(g.getExternalName());
+          }
+        } else if (thf.arraySize == 1u) {
+          for (unsigned short i = 0; i != g.arraySize; ++i) {
+            bns.push_back(thf.getExternalName());
+            bns.push_back(g.getExternalName() + '[' + std::to_string(i) + ']');
+          }
+        } else {
+          for (unsigned short i = 0; i != g.arraySize; ++i) {
+            for (unsigned short j = 0; j != thf.arraySize; ++j) {
+              bns.push_back(thf.getExternalName() + '[' + std::to_string(j) +
+                            ']');
+              bns.push_back(g.getExternalName() + '[' + std::to_string(i) +
+                            ']');
+            }
+          }
+        }
       }
       write_impl(bns);
     };

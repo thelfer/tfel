@@ -1365,7 +1365,7 @@ namespace mfront {
                      [&n](const value_type& v) { return v.first.name == n; });
     tfel::raise_if(p == this->mvariables.end(),
                    "BehaviourDescription::getGradient: "
-                   "unknown driving variable '" +
+                   "unknown gradient '" +
                        n + "'");
     return p->first;
   }  // end of getGradient
@@ -1378,7 +1378,7 @@ namespace mfront {
                      [&n](const value_type& v) { return v.second.name == n; });
     tfel::raise_if(p == this->mvariables.end(),
                    "BehaviourDescription::getGradient: "
-                   "unknown driving variable '" +
+                   "unknown thermodynamic force '" +
                        n + "'");
     return p->second;
   }  // end of getThermodynamicForce
