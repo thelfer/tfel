@@ -29,6 +29,14 @@ namespace mtest {
   StudyCurrentState& StudyCurrentState::operator=(StudyCurrentState&&) =
       default;
 
+  StudyCurrentState StudyCurrentState::makeDeepCopy() const {
+    StudyCurrentState copy(*this);
+    for (auto& [n, state] : copy.s) {
+      state = std::make_shared<StructureCurrentState>(state->makeDeepCopy());
+    }
+    return copy;
+  }  // end of makeDeepCopy
+
   bool StudyCurrentState::getFailureStatus() const {
     for (const auto& failure_status : this->failure_criterion_status) {
       if (failure_status) {
