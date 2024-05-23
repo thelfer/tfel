@@ -245,8 +245,31 @@ namespace mfront {
     auto default_impl = [&bd, &write_impl] {
       std::vector<std::string> bns;
       for (const auto& b : bd.getTangentOperatorBlocks()) {
-        bns.push_back(b.first.getExternalName());
-        bns.push_back(b.second.getExternalName());
+        const auto& f = b.first;     // function
+        const auto& v = b.second;    // variable
+        if ((v.arraySize == 1u) && (f.arraySize == 1u)) {
+          bns.push_back(f.getExternalName());
+          bns.push_back(v.getExternalName());
+        } else if (v.arraySize == 1u) {
+          for (unsigned short idx = 0; idx != f.arraySize; ++idx) {
+            bns.push_back(f.getExternalName() + '[' + std::to_string(idx) + ']');
+            bns.push_back(v.getExternalName());
+          }
+        } else if (f.arraySize == 1u) {
+          for (unsigned short idx = 0; idx != v.arraySize; ++idx) {
+            bns.push_back(f.getExternalName());
+            bns.push_back(v.getExternalName() + '[' + std::to_string(idx) + ']');
+          }
+        } else {
+          for (unsigned short idx = 0; idx != f.arraySize; ++idx) {
+            for (unsigned short jdx = 0; jdx != v.arraySize; ++jdx) {
+              bns.push_back(f.getExternalName() + '[' + std::to_string(idx) +
+                            ']');
+              bns.push_back(v.getExternalName() + '[' + std::to_string(jdx) +
+                            ']');
+            }
+          }
+        }
       }
       write_impl(bns);
     };

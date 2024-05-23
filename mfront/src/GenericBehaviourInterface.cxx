@@ -1759,16 +1759,34 @@ namespace mfront {
       const VariableDescription& v,
       const std::string& n,
       const std::string& src) {
-    if (v.isScalar()) {
-      os << "this->" << n << " = " << src << "[" << o << "];\n";
-    } else {
-      os << "this-> " << n << " = tfel::math::map<" << v.type << ">(";
-      if (!o.isNull()) {
-        os << src << "+" << o;
+    if(v.arraySize == 1){
+      if (v.isScalar()) {
+        os << "this->" << n << " = " << src << "[" << o << "];\n";
       } else {
-        os << src;
+        os << "this-> " << n << " = tfel::math::map<" << v.type << ">(";
+        if (!o.isNull()) {
+          os << src << "+" << o;
+        } else {
+          os << src;
+        }
+        os << ");\n";
       }
-      os << ");\n";
+    } else {
+      auto odv = o;
+      for(unsigned short idx = 0; idx != v.arraySize; ++idx){
+        if (v.isScalar()) {
+          os << "this->" << n << "[" << idx << "] = " << src << "[" << odv << "];\n";
+        } else {
+          os << "this-> " << n << "[" << idx << "] = tfel::math::map<" << v.type << ">(";
+          if (!odv.isNull()) {
+            os << src << "+" << odv;
+          } else {
+            os << src;
+          }
+          os << ");\n";
+        }
+        odv += SupportedTypes::getTypeSize(v.type, 1u);
+      }
     }
   }  // end of GenericBehaviourInterface_initializeVariable
 
@@ -1790,9 +1808,10 @@ namespace mfront {
     for (const auto& mv : bd.getMainVariables()) {
       const auto& dv = mv.first;
       const auto& th = mv.second;
-      throw_if(dv.arraySize != 1, "arrays of gradients are not supported");
-      throw_if(th.arraySize != 1,
-               "arrays of thermodynamic forces are not supported");
+      if(th.arraySize != dv.arraySize){
+        tfel::raise("the array size of thermodynamic force '" + th.name + "' is not "
+                    "the same as the array size of gradient '" + dv.name + "'");
+      }
       const auto s = SupportedTypes::getTypeSize(dv.type, dv.arraySize);
       // driving variable
       const auto dvname =
@@ -1820,21 +1839,46 @@ namespace mfront {
           }
         }
       } else {
-        if (dv.isScalar()) {
-          os << "this->d" << dv.name << " = "
-             << "mgb_d.s1.gradients[" << odv << "] - "
-             << "mgb_d.s0.gradients[" << odv << "];\n";
-        } else {
-          if (!odv.isNull()) {
-            os << "tfel::fsalgo::transform<" << s << ">::exe("
-               << "mgb_d.s1.gradients+" << odv << ","
-               << "mgb_d.s0.gradients+" << odv << ","
-               << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
+        if(dv.arraySize == 1){
+          if (dv.isScalar()) {
+            os << "this->d" << dv.name << " = "
+              << "mgb_d.s1.gradients[" << odv << "] - "
+              << "mgb_d.s0.gradients[" << odv << "];\n";
           } else {
-            os << "tfel::fsalgo::transform<" << s << ">::exe("
-               << "mgb_d.s1.gradients,"
-               << "mgb_d.s0.gradients,"
-               << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
+            if (!odv.isNull()) {
+              os << "tfel::fsalgo::transform<" << s << ">::exe("
+                << "mgb_d.s1.gradients+" << odv << ","
+                << "mgb_d.s0.gradients+" << odv << ","
+                << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
+            } else {
+              os << "tfel::fsalgo::transform<" << s << ">::exe("
+                << "mgb_d.s1.gradients,"
+                << "mgb_d.s0.gradients,"
+                << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
+            }
+          }
+        } else {
+          auto lodv = odv; // local offset
+          const auto ls = SupportedTypes::getTypeSize(dv.type, 1);
+          for(unsigned short idx = 0; idx != dv.arraySize; ++idx){
+            if (dv.isScalar()) {
+              os << "this->d" << dv.name << "[" << idx << "] = "
+                 << "mgb_d.s1.gradients[" << idx << "] - "
+                 << "mgb_d.s0.gradients[" << idx << "];\n";
+            } else {
+              if (!lodv.isNull()) {
+                os << "tfel::fsalgo::transform<" << ls << ">::exe("
+                   << "mgb_d.s1.gradients+" << lodv << ","
+                   << "mgb_d.s0.gradients+" << lodv << ","
+                   << "this->d" << dv.name << "[" << idx << "].begin(),std::minus<real>());\n";
+              } else {
+                os << "tfel::fsalgo::transform<" << ls << ">::exe("
+                   << "mgb_d.s1.gradients,"
+                   << "mgb_d.s0.gradients,"
+                   << "this->d" << dv.name << "[" << idx << "].begin(),std::minus<real>());\n";
+              }
+            }
+            lodv += SupportedTypes::getTypeSize(dv.type, 1);
           }
         }
       }
@@ -2036,11 +2080,6 @@ namespace mfront {
     auto oth = SupportedTypes::TypeSize{};
     for (const auto& mv : bd.getMainVariables()) {
       const auto& th = mv.second;
-      if (th.arraySize != 1) {
-        tfel::raise(
-            "GenericBehaviourInterface::writeBehaviourConstructorBody: "
-            "arrays of thermodynamic forces are not supported");
-      }
       GenericBehaviourInterface_initializeVariable(
           os, oth, th, th.name, "mgb_d.s0.thermodynamic_forces");
       oth += SupportedTypes::getTypeSize(th.type, th.arraySize);
