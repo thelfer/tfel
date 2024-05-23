@@ -622,9 +622,9 @@ namespace mtest {
           const auto g_size = mtest::getVariableSize(this->gtypes[gpos], h);
           const auto th_size = mtest::getVariableSize(this->thtypes[tfpos], h);
           const auto p = wk.D.begin();
-          for (size_type i = 0; i != g_size; ++i) {
-            for (size_type j = 0; j != th_size; ++j) {
-              Kt(og + i, otf + j) = p[to_offset + i * th_size + j];
+          for (size_type i = 0; i != th_size; ++i) {
+            for (size_type j = 0; j != g_size; ++j) {
+              Kt(otf + i, og + j) = p[to_offset + i * g_size + j];
             }
           }
           to_offset += to_ro * to_co;
