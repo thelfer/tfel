@@ -44,27 +44,12 @@ namespace mtest {
     StudyCurrentState& operator=(const StudyCurrentState&);
     StudyCurrentState& operator=(StudyCurrentState&&);
     ~StudyCurrentState();
-    // vector of unknows at
-    // the beginning of the
-    // previous time step.
-    tfel::math::vector<real> u_1;
-    // vector of unknows at the beginning of the
-    // time step.
-    tfel::math::vector<real> u0;
-    // vector of unknows at the end of the
-    // time step
-    tfel::math::vector<real> u1;
-    // vector of unknows at the previous iteration (end of the
-    // time step)
-    tfel::math::vector<real> u10;
-    // current period number
-    unsigned int period = 1u;
-    // number of iterations made so far
-    unsigned int iterations = 0u;
-    // number of sub-steppings so far
-    unsigned int subSteps = 0u;
-    // previous time step
-    real dt_1 = real{};
+    /*!
+     * \brief make a deep copy of the object
+     * Contrary to standard copy which shares pointers to the structure current
+     * states with the original object, those states are duplicated in a deep copy.
+     */
+    StudyCurrentState makeDeepCopy() const;
     /*!
      * \brief allocate memory
      * \param[out] psz: problem size
@@ -178,6 +163,27 @@ namespace mtest {
     void setNumberOfFailureCriterionStatus(const std::size_t);
     //! \return the number of failure criterion status
     std::size_t getNumberOfFailureCriterionStatus() const noexcept;
+    // vector of unknows at
+    // the beginning of the
+    // previous time step.
+    tfel::math::vector<real> u_1;
+    // vector of unknows at the beginning of the
+    // time step.
+    tfel::math::vector<real> u0;
+    // vector of unknows at the end of the
+    // time step
+    tfel::math::vector<real> u1;
+    // vector of unknows at the previous iteration (end of the
+    // time step)
+    tfel::math::vector<real> u10;
+    // current period number
+    unsigned int period = 1u;
+    // number of iterations made so far
+    unsigned int iterations = 0u;
+    // number of sub-steppings so far
+    unsigned int subSteps = 0u;
+    // previous time step
+    real dt_1 = real{};
 
    protected:
     /*!
