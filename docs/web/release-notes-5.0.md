@@ -133,6 +133,16 @@ use the `TFEL` libraries in `C++` projects, using either the
 
 # Issues fixed
 
+## Issue 567: `MTestCurrentState.copy()` produces a shallow copy in python bindings
+
+This behaviour is consistent with the copy constructor of the
+`StudyCurrentState` class.
+
+To make a deep copy of this object, the `makeDeepCopy` method has been
+introduced.
+
+For more details, see <https://github.com/thelfer/tfel/issues/567>
+
 ## Issue 557: `[mfront]` allow to specify dsl options in `MFrontBase::getDSL`
 
 For more details, see <https://github.com/thelfer/tfel/issues/557>
