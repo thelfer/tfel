@@ -1,17 +1,32 @@
 @PACKAGE_INIT@
 
-find_package(TFELConfig REQUIRED)
-find_package(TFELException REQUIRED)
-find_package(TFELUnicodeSupport REQUIRED)
-find_package(TFELGlossary REQUIRED)
-find_package(TFELUtilities REQUIRED)
-find_package(TFELSystem REQUIRED)
-find_package(TFELMath REQUIRED)
-find_package(TFELMathKriging REQUIRED)
-find_package(TFELMathParser REQUIRED)
-find_package(TFELMathCubicSpline REQUIRED)
-find_package(TFELNumodis REQUIRED)
-find_package(TFELMaterial REQUIRED)
-find_package(MFrontLogStream REQUIRED)
+include("${CMAKE_CURRENT_LIST_DIR}/tfel-modules-common.cmake")
+
+find_package(TFELConfig REQUIRED
+  HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
+find_package(TFELException REQUIRED
+  HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
+find_package(TFELUnicodeSupport REQUIRED
+  HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
+find_package(TFELGlossary REQUIRED
+  HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
+find_package(TFELUtilities REQUIRED
+  HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
+find_package(TFELSystem REQUIRED
+  HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
+find_package(TFELMath REQUIRED
+  HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
+find_package(TFELMathKriging REQUIRED
+  HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
+find_package(TFELMathParser REQUIRED
+  HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
+find_package(TFELMathCubicSpline REQUIRED
+  HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
+find_package(TFELNUMODIS REQUIRED
+  HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
+find_package(TFELMaterial REQUIRED
+  HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
+find_package(MFrontLogStream REQUIRED
+  HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
 
 include("${CMAKE_CURRENT_LIST_DIR}/TFELMFrontTargets.cmake")

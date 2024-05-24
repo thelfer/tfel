@@ -1,7 +1,7 @@
 @PACKAGE_INIT@
 
 include("${CMAKE_CURRENT_LIST_DIR}/tfel-modules-common.cmake")
-find_package(TFELGlossary REQUIRED
+find_package(TFELUtilities REQUIRED
   HINTS "${CMAKE_CURRENT_LIST_DIR}" "${TFEL_MODULE_PATH}")
 
 include("${CMAKE_CURRENT_LIST_DIR}/TFELGlossaryTargets.cmake")
