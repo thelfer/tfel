@@ -478,14 +478,14 @@ namespace mfront {
           << "!! material properties\n";
       for (const auto& mp : buildMaterialPropertiesList(mb, h).first) {
         throw_if(SupportedTypes::getTypeFlag(mp.type) != SupportedTypes::SCALAR,
-                 "material property '" + mp.name +
+                 "material property '" + mp.getExternalName() +
                      "' is not a scalar. "
                      "This is not supported yet");
         if (mp.arraySize == 1u) {
-          out << "MATP '" << mp.name << "' ???\n";
+          out << "MATP '" << mp.getExternalName() << "' ???\n";
         } else {
           for (unsigned short i = 0; i != mp.arraySize; ++i) {
-            out << "MATP '" << mp.name << '[' << i << "]' ???\n";
+            out << "MATP '" << mp.getExternalName() << '[' << i << "]' ???\n";
           }
         }
       }

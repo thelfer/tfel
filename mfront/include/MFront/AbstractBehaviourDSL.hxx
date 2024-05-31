@@ -31,9 +31,7 @@ namespace mfront {
   // forward declaration
   struct MaterialPropertyDescription;
 
-  /*!
-   * Interface class for all domain specific languages.
-   */
+  //! \brief interface class for all domain specific languages associated with behaviours.
   struct MFRONT_VISIBILITY_EXPORT AbstractBehaviourDSL
       : public virtual AbstractDSL {
     //! a simple alias
@@ -154,7 +152,7 @@ namespace mfront {
      * `@ModellingHypothesis` or `@ModellingHypotheses` keywords.
      */
     virtual bool isModellingHypothesisSupported(const Hypothesis) const = 0;
-    //! destructor
+    //! \brief destructor
     ~AbstractBehaviourDSL() override;
   };
 

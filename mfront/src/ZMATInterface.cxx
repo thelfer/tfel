@@ -213,6 +213,20 @@ namespace mfront {
     return h;
   }  // edn of ZMATInterface::getModellingHypothesesToBeTreated
 
+  std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
+  ZMATInterface::buildMaterialPropertiesList(
+      const BehaviourDescription& bd, const Hypothesis h) const override {
+    const auto opts = BuildMaterialPropertiesListOptions {
+      .useMaterialPropertiesToBuildStiffnessTensor = false,
+      .useMaterialPropertiesToBuildThermalExpansionCoefficientTensor = false
+    };
+    if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+      return mfront::buildMaterialPropertiesList(
+          bd, this->getModellingHypothesesToBeTreated(bd), opts);
+    }
+    return mfront::buildMaterialPropertiesList(bd, h, opts);
+  }
+
   void ZMATInterface::exportMechanicalData(
       std::ostream& out,
       const Hypothesis h,

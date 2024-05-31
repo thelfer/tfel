@@ -1777,7 +1777,7 @@ namespace mfront {
               "CastemInterface::buildMaterialPropertiesList: "
               "incompatible offset for material "
               "property '" +
-                  mp.name + "' (aka '" + mp1.name +
+                  mp.name + "' (aka '" + mp1.getExternalName() +
                   "'). "
                   "This is one pitfall of the umat interface. "
                   "To by-pass this limitation, you may want to "
@@ -2457,10 +2457,10 @@ namespace mfront {
       throw_if(flag != SupportedTypes::SCALAR,
                "material properties shall be scalars");
       if (pm->arraySize == 1) {
-        mcoel << treatScalar(pm->var_name);
+        mcoel << treatScalar(pm->name);
       } else {
         for (unsigned short j = 0; j != pm->arraySize;) {
-          mcoel << treatScalar(pm->var_name, j);
+          mcoel << treatScalar(pm->name, j);
           if (++j != pm->arraySize) {
             mcoel << " ";
           }
@@ -2530,12 +2530,12 @@ namespace mfront {
         }
       }
       if (pm->arraySize == 1) {
-        tmp = treatScalar(pm->var_name);
-        mi << tmp << " x" << makeLowerCase(pm->var_name);
+        tmp = treatScalar(pm->name);
+        mi << tmp << " x" << makeLowerCase(pm->name);
       } else {
         for (unsigned short j = 0; j != pm->arraySize;) {
-          tmp = treatScalar(pm->var_name, j);
-          mi << tmp << " x" << makeLowerCase(pm->var_name) << j;
+          tmp = treatScalar(pm->name, j);
+          mi << tmp << " x" << makeLowerCase(pm->name) << j;
           if (++j != pm->arraySize) {
             mi << " ";
           }

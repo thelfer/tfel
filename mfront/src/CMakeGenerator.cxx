@@ -233,9 +233,9 @@ namespace mfront {
       }
       return r;
     }();
-    if ((!o.libraries_path.empty()) || (!link_directories.empty())) {
+    if ((!o.library_paths.empty()) || (!link_directories.empty())) {
       m << "set(LINK_DIRECTORIES)\n";
-      for (const auto& p : o.libraries_path) {
+      for (const auto& p : o.library_paths) {
         append2("LINK_DIRECTORIES", p);
       }
       for (const auto& ld : link_directories) {

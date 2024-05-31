@@ -192,7 +192,7 @@ set(TFELMFront_SOURCES
     ExcelMaterialPropertyInternalInterface.cxx
     MFrontModelInterface.cxx
     BehaviourMaterialProperty.cxx
-    StandardBehaviourInterface.cxx
+    BehaviourInterfaceBase.cxx
     SymbolsGenerator.cxx
     UMATInterfaceBase.cxx
     GenericMaterialPropertyInterfaceBase.cxx

@@ -989,7 +989,9 @@ namespace mfront {
                                           const std::vector<std::string>& i,
                                           tokens_iterator current,
                                           const tokens_iterator end) {
+    using tfel::material::ModellingHypothesis;
     using tfel::utilities::CxxTokenizer;
+    using tfel::utilities::Token;
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "GenericBehaviourInterface::treatKeyword: " + m);
     };
@@ -1010,13 +1012,68 @@ namespace mfront {
           bd, this->readBooleanValue(k, current, end));
       return {true, current};
     }
+    if ((k == "@SelectedModellingHypothesis") ||
+        (k == "@SelectedModellingHypotheses")) {
+      if (current == end) {
+        tfel::raise(
+            "GenericBehaviourInterface::treatKeyword: "
+            "unexpected end of file");
+      }
+      if (this->selectedHypotheses) {
+        tfel::raise(
+            "GenericBehaviourInterface::treatKeyword: "
+            "the modelling hypotheses to be treated have already been "
+            "selected");
+      }
+      if (k == "@SelectedModellingHypothesis") {
+        const auto h = ModellingHypothesis::fromString(current->value);
+        ++(current);
+        this->selectedHypotheses = std::set<ModellingHypothesis::Hypothesis>{};
+        this->selectedHypotheses->insert(h);
+        return {true, current};
+      }
+      if (k == "@SelectedModellingHypotheses") {
+        auto hypotheses = std::set<Hypothesis>{};
+        const auto values = CxxTokenizer::readList(
+            "GenericBehaviourInterface::treatKeyword", "{", "}", current, end);
+        for (const auto& v : values) {
+          if (v.flag == Token::String) {
+            hypotheses.insert(ModellingHypothesis::fromString(
+                v.value.substr(1, v.value.size() - 2)));
+          } else {
+            hypotheses.insert(ModellingHypothesis::fromString(v.value));
+          }
+        }
+        if (hypotheses.empty()) {
+          tfel::raise("GenericBehaviourInterface::treatKeyword: "
+                      "no hypothesis declared");
+        }
+        //
+        this->selectedHypotheses = hypotheses;
+        return {true, current};
+      }
+    }
     return {false, current};
   }  // end of treatKeyword
 
   std::set<GenericBehaviourInterface::Hypothesis>
   GenericBehaviourInterface::getModellingHypothesesToBeTreated(
       const BehaviourDescription& bd) const {
-    return bd.getModellingHypotheses();
+    using tfel::material::ModellingHypothesis;
+    const auto mhs = bd.getModellingHypotheses();
+    if (this->selectedHypotheses) {
+      for (const auto& h : *(this->selectedHypotheses)) {
+        if (!mhs.contains(h)) {
+          tfel::raise(
+              "GenericBehaviourInterface::getModellingHypothesesToBeTreated: "
+              "the modelling hypothesis '" +
+              ModellingHypothesis::toString(h) +
+              "' is not supported by the behaviour");
+        }
+      }
+      return *(this->selectedHypotheses);
+    }
+    return mhs;
   }  // end of getModellingHypothesesToBeTreated
 
   void GenericBehaviourInterface::writeInterfaceSpecificIncludes(
@@ -1609,20 +1666,20 @@ namespace mfront {
                          m.type + "' in mtest file generation");
       if (m.arraySize == 1u) {
         if (offset == 0) {
-          os << "mg.addMaterialProperty(\"" << m.name
+          os << "mg.addMaterialProperty(\"" << m.getExternalName()
              << "\",*(d->s1.material_properties));\n";
         } else {
-          os << "mg.addMaterialProperty(\"" << m.name
+          os << "mg.addMaterialProperty(\"" << m.getExternalName()
              << "\",*(d->s1.material_properties+" << offset << "));\n";
         }
         ++offset;
       } else {
         for (unsigned short s = 0; s != m.arraySize; ++s, ++offset) {
           if (offset == 0) {
-            os << "mg.addMaterialProperty(\"" << m.name << "[" << s
+            os << "mg.addMaterialProperty(\"" << m.getExternalName() << "[" << s
                << "]\",*(d->s1.material_properties));\n";
           } else {
-            os << "mg.addMaterialProperty(\"" << m.name << "[" << s << "]\","
+            os << "mg.addMaterialProperty(\"" << m.getExternalName() << "[" << s << "]\","
                << "*(d->s1.material_properties+" << offset << "));\n";
           }
         }
@@ -1759,7 +1816,7 @@ namespace mfront {
       const VariableDescription& v,
       const std::string& n,
       const std::string& src) {
-    if(v.arraySize == 1){
+    if (v.arraySize == 1) {
       if (v.isScalar()) {
         os << "this->" << n << " = " << src << "[" << o << "];\n";
       } else {
@@ -1773,11 +1830,13 @@ namespace mfront {
       }
     } else {
       auto odv = o;
-      for(unsigned short idx = 0; idx != v.arraySize; ++idx){
+      for (unsigned short idx = 0; idx != v.arraySize; ++idx) {
         if (v.isScalar()) {
-          os << "this->" << n << "[" << idx << "] = " << src << "[" << odv << "];\n";
+          os << "this->" << n << "[" << idx << "] = " << src << "[" << odv
+             << "];\n";
         } else {
-          os << "this-> " << n << "[" << idx << "] = tfel::math::map<" << v.type << ">(";
+          os << "this-> " << n << "[" << idx << "] = tfel::math::map<" << v.type
+             << ">(";
           if (!odv.isNull()) {
             os << src << "+" << odv;
           } else {
@@ -1808,9 +1867,11 @@ namespace mfront {
     for (const auto& mv : bd.getMainVariables()) {
       const auto& dv = mv.first;
       const auto& th = mv.second;
-      if(th.arraySize != dv.arraySize){
-        tfel::raise("the array size of thermodynamic force '" + th.name + "' is not "
-                    "the same as the array size of gradient '" + dv.name + "'");
+      if (th.arraySize != dv.arraySize) {
+        tfel::raise("the array size of thermodynamic force '" + th.name +
+                    "' is not "
+                    "the same as the array size of gradient '" +
+                    dv.name + "'");
       }
       const auto s = SupportedTypes::getTypeSize(dv.type, dv.arraySize);
       // driving variable
@@ -1839,28 +1900,28 @@ namespace mfront {
           }
         }
       } else {
-        if(dv.arraySize == 1){
+        if (dv.arraySize == 1) {
           if (dv.isScalar()) {
             os << "this->d" << dv.name << " = "
-              << "mgb_d.s1.gradients[" << odv << "] - "
-              << "mgb_d.s0.gradients[" << odv << "];\n";
+               << "mgb_d.s1.gradients[" << odv << "] - "
+               << "mgb_d.s0.gradients[" << odv << "];\n";
           } else {
             if (!odv.isNull()) {
               os << "tfel::fsalgo::transform<" << s << ">::exe("
-                << "mgb_d.s1.gradients+" << odv << ","
-                << "mgb_d.s0.gradients+" << odv << ","
-                << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
+                 << "mgb_d.s1.gradients+" << odv << ","
+                 << "mgb_d.s0.gradients+" << odv << ","
+                 << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
             } else {
               os << "tfel::fsalgo::transform<" << s << ">::exe("
-                << "mgb_d.s1.gradients,"
-                << "mgb_d.s0.gradients,"
-                << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
+                 << "mgb_d.s1.gradients,"
+                 << "mgb_d.s0.gradients,"
+                 << "this->d" << dv.name << ".begin(),std::minus<real>());\n";
             }
           }
         } else {
-          auto lodv = odv; // local offset
+          auto lodv = odv;  // local offset
           const auto ls = SupportedTypes::getTypeSize(dv.type, 1);
-          for(unsigned short idx = 0; idx != dv.arraySize; ++idx){
+          for (unsigned short idx = 0; idx != dv.arraySize; ++idx) {
             if (dv.isScalar()) {
               os << "this->d" << dv.name << "[" << idx << "] = "
                  << "mgb_d.s1.gradients[" << idx << "] - "
@@ -1870,12 +1931,14 @@ namespace mfront {
                 os << "tfel::fsalgo::transform<" << ls << ">::exe("
                    << "mgb_d.s1.gradients+" << lodv << ","
                    << "mgb_d.s0.gradients+" << lodv << ","
-                   << "this->d" << dv.name << "[" << idx << "].begin(),std::minus<real>());\n";
+                   << "this->d" << dv.name << "[" << idx
+                   << "].begin(),std::minus<real>());\n";
               } else {
                 os << "tfel::fsalgo::transform<" << ls << ">::exe("
                    << "mgb_d.s1.gradients,"
                    << "mgb_d.s0.gradients,"
-                   << "this->d" << dv.name << "[" << idx << "].begin(),std::minus<real>());\n";
+                   << "this->d" << dv.name << "[" << idx
+                   << "].begin(),std::minus<real>());\n";
               }
             }
             lodv += SupportedTypes::getTypeSize(dv.type, 1);

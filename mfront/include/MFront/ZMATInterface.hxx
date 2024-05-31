@@ -52,6 +52,9 @@ namespace mfront {
         const Hypothesis, const BehaviourDescription&) const override;
     std::set<Hypothesis> getModellingHypothesesToBeTreated(
         const BehaviourDescription&) const override;
+    std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
+    buildMaterialPropertiesList(const BehaviourDescription &,
+                                const Hypothesis) const override;
     void writeInterfaceSpecificIncludes(
         std::ostream&, const BehaviourDescription&) const override;
     void exportMechanicalData(std::ostream&,

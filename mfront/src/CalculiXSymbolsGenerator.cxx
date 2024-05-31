@@ -15,7 +15,7 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/BehaviourDescription.hxx"
-#include "MFront/StandardBehaviourInterface.hxx"
+#include "MFront/BehaviourInterfaceBase.hxx"
 #include "MFront/CalculiXInterface.hxx"
 #include "MFront/CalculiXSymbolsGenerator.hxx"
 
@@ -25,7 +25,7 @@ namespace mfront {
 
   void CalculiXSymbolsGenerator::writeBehaviourTypeSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
     const auto s = i.getFunctionNameBasis(name) + "_BehaviourType";
@@ -48,7 +48,7 @@ namespace mfront {
 
   void CalculiXSymbolsGenerator::writeBehaviourKinematicSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
     const auto s = i.getFunctionNameBasis(name) + +"_BehaviourKinematic";
@@ -71,7 +71,7 @@ namespace mfront {
 
   void CalculiXSymbolsGenerator::writeAdditionalSymbols(
       std::ostream&,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription&,
       const FileDescription&,
       const std::string&,

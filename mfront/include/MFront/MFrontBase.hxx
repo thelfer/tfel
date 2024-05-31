@@ -184,13 +184,13 @@ namespace mfront {
     //! \brief treat the `--all-models` command line option
     virtual void treatAllModels();
     /*!
-     * \brief external commands specificed on the command line through
-     * an `--@XXX` option. Those external commends are applied to
+     * \brief external commands specified on the command line through
+     * an `--@XXX` option. Those external commands are applied to
      * all input files.
      */
     std::vector<std::string> ecmds;
     /*!
-     * \brief substitutions specificed on the command line through an
+     * \brief substitutions specified on the command line through an
      * `--@XXX@=YYY` option: every occurrence of `XXX` in the input
      * files will be replaced by `YYY`
      */

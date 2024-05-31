@@ -1,5 +1,5 @@
 /*!
- * \file  mfront/include/MFront/StandardBehaviourInterface.hxx
+ * \file  mfront/include/MFront/BehaviourInterfaceBase.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 10 juil. 2013
@@ -11,12 +11,11 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_STANDARDBEHAVIOURINTERFACE_HXX
-#define LIB_MFRONT_STANDARDBEHAVIOURINTERFACE_HXX
+#ifndef LIB_MFRONT_BEHAVIOURINTERFACEBASE_HXX
+#define LIB_MFRONT_BEHAVIOURINTERFACEBASE_HXX
 
 #include "MFront/SupportedTypes.hxx"
 #include "MFront/AbstractBehaviourInterface.hxx"
-#include "MFront/BehaviourMaterialProperty.hxx"
 
 namespace mfront {
 
@@ -26,7 +25,7 @@ namespace mfront {
    * currently the most current case (to the very exception of the
    * `ZMAT` interface).
    */
-  struct MFRONT_VISIBILITY_EXPORT StandardBehaviourInterface
+  struct MFRONT_VISIBILITY_EXPORT BehaviourInterfaceBase
       : public AbstractBehaviourInterface,
         public SupportedTypes {
     //! attribute used to store if an MTest file shall be generated
@@ -36,12 +35,14 @@ namespace mfront {
     //! \brief a simple alias
     using Hypothesis = ModellingHypothesis::Hypothesis;
     //! \brief constructor
-    StandardBehaviourInterface();
+    BehaviourInterfaceBase();
     //
     std::string getInterfaceVersion() const override;
     bool isBehaviourConstructorRequired(
         const Hypothesis, const BehaviourDescription &) const override;
-    //
+    std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
+    buildMaterialPropertiesList(const BehaviourDescription &,
+                                const Hypothesis) const override;
     void writeBehaviourInitializeFunctions(std::ostream &,
                                            const BehaviourDescription &,
                                            const Hypothesis) const override;
@@ -75,18 +76,6 @@ namespace mfront {
      * \param[in] bd: behaviour description
      */
     virtual std::string getHeaderGuard(const BehaviourDescription &) const;
-    /*!
-     * \return a pair which first member gives the position of the
-     * material properties in the values given through the interface
-     * and which second member is an offset giving the number of
-     * imposed material properties.
-     * \param[in] mb: behaviour description
-     * \param[in] h:  modelling hypothesis
-     */
-    virtual std::pair<std::vector<BehaviourMaterialProperty>,
-                      SupportedTypes::TypeSize>
-    buildMaterialPropertiesList(const BehaviourDescription &,
-                                const Hypothesis) const;
     /*!
      * \brief include the appropriate headers and write the definition
      * of the `MFRONT_SHAREDOBJ` macro which is used to define the
@@ -164,9 +153,9 @@ namespace mfront {
                                   tokens_iterator &,
                                   const tokens_iterator) const;
     //! \brief destructor
-    ~StandardBehaviourInterface() override;
-  };  // end of struct StandardBehaviourInterface
+    ~BehaviourInterfaceBase() override;
+  };  // end of struct BehaviourInterfaceBase
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_STANDARDBEHAVIOURINTERFACE_HXX */
+#endif /* LIB_MFRONT_BEHAVIOURINTERFACEBASE_HXX */

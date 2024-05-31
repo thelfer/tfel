@@ -15,7 +15,7 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/BehaviourDescription.hxx"
-#include "MFront/StandardBehaviourInterface.hxx"
+#include "MFront/BehaviourInterfaceBase.hxx"
 #include "MFront/AbaqusInterface.hxx"
 #include "MFront/AbaqusSymbolsGenerator.hxx"
 
@@ -25,7 +25,7 @@ namespace mfront {
 
   void AbaqusSymbolsGenerator::writeAdditionalSymbols(
       std::ostream&,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription&,
       const FileDescription&,
       const std::string&,
@@ -34,7 +34,7 @@ namespace mfront {
 
   void AbaqusSymbolsGenerator::writeSpecificSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const FileDescription&,
       const std::string& name) const {
@@ -61,7 +61,7 @@ namespace mfront {
 
   void AbaqusSymbolsGenerator::writeBehaviourTypeSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
     auto throw_if = [](const bool b, const std::string& m) {
@@ -87,7 +87,7 @@ namespace mfront {
 
   void AbaqusSymbolsGenerator::writeBehaviourKinematicSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
     auto throw_if = [](const bool b, const std::string& m) {

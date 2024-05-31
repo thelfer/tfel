@@ -633,7 +633,7 @@ namespace mfront {
             << "' modelling hypothesis\n";
         out << "/com, List of material properties\n";
         for (const auto& mp : mps.first) {
-          out << "/com, -" << mp.name << "\n";
+          out << "/com, -" << mp.getExternalName() << "\n";
         }
         out << "tb,user,<mat_id>,<number of temperatures>,"
             << msize.getValueForModellingHypothesis(h) << "\n"

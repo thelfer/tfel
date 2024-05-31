@@ -22,9 +22,10 @@
 #include <memory>
 #include <utility>
 
-#include "MFront/MFrontConfig.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/BehaviourMaterialProperty.hxx"
 
 namespace mfront {
 
@@ -35,9 +36,7 @@ namespace mfront {
   // forward declartion
   struct TargetsDescription;
 
-  /*!
-   * \brief this is the abstract base class of all behaviour interfaces
-   */
+  //! \brief abstract interface of all behaviour interfaces
   struct MFRONT_VISIBILITY_EXPORT AbstractBehaviourInterface {
     //! a simple alias
     typedef tfel::material::ModellingHypothesis ModellingHypothesis;
@@ -88,7 +87,18 @@ namespace mfront {
      */
     virtual std::set<Hypothesis> getModellingHypothesesToBeTreated(
         const BehaviourDescription&) const = 0;
-
+    /*!
+     * \return a pair which first member gives the position of the
+     * material properties in the values given through the interface
+     * and which second member is an offset giving the number of
+     * imposed material properties.
+     * \param[in] mb: behaviour description
+     * \param[in] h:  modelling hypothesis
+     */
+    virtual std::pair<std::vector<BehaviourMaterialProperty>,
+                      SupportedTypes::TypeSize>
+    buildMaterialPropertiesList(const BehaviourDescription &,
+                                const Hypothesis) const = 0;
     /*!
      * write interface specific includes
      * \param[in] out : output file
@@ -182,7 +192,7 @@ namespace mfront {
      */
     virtual void getTargetsDescription(TargetsDescription&,
                                        const BehaviourDescription&) = 0;
-    //! destructor
+    //! \brief destructor
     virtual ~AbstractBehaviourInterface();
 
   };  // end of AbstractBehaviourInterface

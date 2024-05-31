@@ -125,6 +125,31 @@ The results of those tests are reported on Tables
 better compromise between accuracy and numerical efficiency than the
 default `TFEL` solver.
 
+# MFront
+
+## `generic` interface improvements
+
+### The `@SelectedModellingHypothesis` and `@SelectedModellingHypotheses` keywords
+
+The `@SelectedModellingHypothesis` and `@SelectedModellingHypotheses`
+keywords allows to select which modelling hypotheses will be
+generated.
+
+Their syntaxes are similar to the keywords
+`@ModellingHypothesis` and `@ModellingHypotheses`, respectively.
+
+The selected modelling hypotheses must be a sub-set of the modelling
+hypotheses supported by the behaviour.
+
+#### Example of usage
+
+~~~~{.cxx}
+$ mfront --obuild --interface=generic --@SelectedModellingHypothesis=PlaneStrain Plasticity.mfront
+Treating target : all
+The following library has been built :
+- libBehaviour.so :  Plasticity_PlaneStrain
+~~~~
+
 # Documentation
 
 The page [Libaries usage in C++](libraries_usage.html) describe how to
