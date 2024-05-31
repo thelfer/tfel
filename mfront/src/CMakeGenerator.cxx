@@ -187,9 +187,14 @@ namespace mfront {
         << "\n";
     }
     // include_directories
-    const auto include_directories = [&t] {
+    const auto include_directories = [&t, &o] {
       auto r = std::vector<std::string>{};
       r.push_back("../include");
+      for (const auto& path : o.include_paths) {
+        if (std::find(r.begin(), r.end(), path) == r.end()) {
+          r.push_back(path);
+        }
+      }
       for (const auto& l : t.libraries) {
         for (const auto& ld : l.include_directories) {
           if (std::find(r.begin(), r.end(), ld) == r.end()) {
@@ -228,8 +233,11 @@ namespace mfront {
       }
       return r;
     }();
-    if (!link_directories.empty()) {
+    if ((!o.libraries_path.empty()) || (!link_directories.empty())) {
       m << "set(LINK_DIRECTORIES)\n";
+      for (const auto& p : o.libraries_path) {
+        append2("LINK_DIRECTORIES", p);
+      }
       for (const auto& ld : link_directories) {
         append2("LINK_DIRECTORIES", ld);
       }
