@@ -702,10 +702,10 @@ namespace tfel {
         const tensor<N, real>& F,
         const stensor<N, stress>& s) {
       const auto dE_dF = eval(t2tost2<N, real>::dCdF(F) / 2);
-      const auto dS_dF = t2tot2<N, real>{dS * dE_dF};
+      const auto dS_dF = t2tot2<N, stress>{dS * dE_dF};
       const auto S =
           unsyme(convertCauchyStressToSecondPiolaKirchhoffStress(s, F));
-      dP = t2tot2<N, stress>::tpld(S) + t2tot2<N, real>::tprd(F, dS_dF);
+      dP = t2tot2<N, stress>::tpld(S) + t2tot2<N, stress>::tprd(F, dS_dF);
     }  // end of
        // convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative
 
