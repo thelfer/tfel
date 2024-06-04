@@ -17,6 +17,11 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+The page describes the new functionalities of Version 3.0.13 of the
+`TFEL` project.
+
+This version was released on June 4, 2024.
+
 # Issues fixed
 
 # Issue 512: Backport PR 509 "Add PIE for some tools" to all rliv branches
