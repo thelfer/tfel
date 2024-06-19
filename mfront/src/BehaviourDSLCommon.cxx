@@ -1753,23 +1753,23 @@ namespace mfront {
     using Parameters = AbstractBehaviourBrick::Parameters;
     auto& f = BehaviourBrickFactory::getFactory();
     auto parameters = Parameters{};
-    this->checkNotEndOfFile("BehaviourDSLCommon::treatBehaviourBrick",
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatBrick",
                             "Expected brick name or '<'.");
     if (this->current->value == "<") {
       auto options = std::vector<tfel::utilities::Token>{};
-      this->readList(options, "BehaviourDSLCommon::treatBehaviourBrick", "<",
+      this->readList(options, "BehaviourDSLCommon::treatBrick", "<",
                      ">", true);
       for (const auto& o : options) {
         const auto pos = o.value.find('=');
         if (pos != std::string::npos) {
           if (pos == 0) {
-            this->throwRuntimeError("BehaviourDSLCommon::treatBehaviourBrick",
+            this->throwRuntimeError("BehaviourDSLCommon::treatBrick",
                                     "no parameter name given");
           }
           // extracting the name
           const auto& n = o.value.substr(0, pos);
           if (pos == o.value.size()) {
-            this->throwRuntimeError("BehaviourDSLCommon::treatBehaviourBrick",
+            this->throwRuntimeError("BehaviourDSLCommon::treatBrick",
                                     "no option given to the "
                                     "parameter '" +
                                         n + "'");
@@ -1781,11 +1781,11 @@ namespace mfront {
         }
       }
     }
-    this->checkNotEndOfFile("BehaviourDSLCommon::treatBehaviourBrick",
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatBrick",
                             "Expected brick name.");
     const auto b = [this]() -> std::string {
       if (this->current->flag == tfel::utilities::Token::String) {
-        return this->readString("BehaviourDSLCommon::treatBehaviourBrick");
+        return this->readString("BehaviourDSLCommon::treatBrick");
       }
       const auto r = this->current->value;
       ++(this->current);
@@ -1803,7 +1803,7 @@ namespace mfront {
     }();
     const auto br = f.get(b, *this, this->mb);
     br->initialize(parameters, d);
-    this->readSpecifiedToken("BehaviourDSLCommon::treatBehaviourBrick", ";");
+    this->readSpecifiedToken("BehaviourDSLCommon::treatBrick", ";");
     this->bricks.push_back(std::move(br));
   }  // end of treatBrick
 
