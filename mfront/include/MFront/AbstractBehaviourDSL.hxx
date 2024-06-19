@@ -28,7 +28,8 @@
 
 namespace mfront {
 
-  // forward declaration
+  // forward declarations
+  struct AbstractBehaviourInterface;
   struct MaterialPropertyDescription;
 
   //! \brief interface class for all domain specific languages associated with behaviours.
@@ -44,6 +45,9 @@ namespace mfront {
     using Hypothesis = ModellingHypothesis::Hypothesis;
     //! \return the target of the dsl
     DSLTarget getTargetType() const override final;
+    //! \return the declared behaviour interfaces
+    virtual std::map<std::string, std::shared_ptr<AbstractBehaviourInterface>>
+    getBehaviourInterfaces() const = 0;
     //! \return a description of the DSL
     virtual BehaviourDSLDescription getBehaviourDSLDescription() const = 0;
     //! \return the behaviour description

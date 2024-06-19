@@ -13,6 +13,8 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @josien_merope_2024
+    @chen_anisotropic_2024
     @mohanan_intergranular_2024
     @scherer_tensile_2024
     @vedrine_role_2024
