@@ -3,7 +3,7 @@
  * \brief
  *
  * \author Thomas Helfer
- * \date   13 fév 2007
+ * \date   13/02/2007
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -64,6 +64,9 @@ namespace aster {
     static constexpr bool requiresStiffnessTensor = false;
     static constexpr bool requiresThermalExpansionCoefficientTensor = false;
     static constexpr unsigned short propertiesOffset = 0u;
+    static constexpr unsigned short material_properties_nb = 0u;
+    static constexpr unsigned short elasticPropertiesOffset = 0u;
+    static constexpr unsigned short thermalExpansionPropertiesOffset = 0u;
     //! \brief type of the behaviour of the material (isotropic or orthotropic)
     static constexpr AsterSymmetryType type = aster::ISOTROPIC;
     //! \brief type of the elastic behaviour of the material (isotropic or
