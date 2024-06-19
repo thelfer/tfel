@@ -160,6 +160,7 @@ void declareCurrentState() {
       .add_property("iv1", CurrentState_getiv1)
       .add_property("evs0", CurrentState_getesv0)
       .add_property("desv", CurrentState_getdesv)
+      .def_readonly("desv", &mtest::CurrentState::position)
       .def("setInternalStateVariableValue", ptr,
            "set the value of a scalar internal state variable\n"
            "\n"
