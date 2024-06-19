@@ -116,7 +116,7 @@ namespace mfront {
       if (std::holds_alternative<MadnexPath>(p)) {
 #ifdef MFRONT_HAVE_MADNEX
         using ptr = std::vector<std::string>  //
-            (madnex::DataBase::*)(const std::string&)const;
+            (madnex::DataBase::*)(const std::string&) const;
         const auto& madnex_path = std::get<MadnexPath>(p);
         const auto name = [&f] {
           const auto ext = getFileExtension(f);
@@ -242,7 +242,7 @@ namespace mfront {
         "SearchPathsHandler::addMadnexSearchPaths: "
         "madnex support is not enabled");
 #endif /* MFRONT_HAVE_MADNEX */
-  }    // end of addMadnexSearchPath
+  }  // end of addMadnexSearchPath
 
   void SearchPathsHandler::addSearchPaths(const std::string& p) {
     auto& msf = SearchPathsHandler::getSearchPathsHandler();

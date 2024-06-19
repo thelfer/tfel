@@ -32,7 +32,8 @@ namespace mfront {
   struct AbstractBehaviourInterface;
   struct MaterialPropertyDescription;
 
-  //! \brief interface class for all domain specific languages associated with behaviours.
+  //! \brief interface class for all domain specific languages associated with
+  //! behaviours.
   struct MFRONT_VISIBILITY_EXPORT AbstractBehaviourDSL
       : public virtual AbstractDSL {
     //! a simple alias

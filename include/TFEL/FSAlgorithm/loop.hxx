@@ -54,7 +54,7 @@ namespace tfel::fsalgo {
        */
       template <typename F>
       void exe(F&) {}  // end of exe
-    };                 // end of struct do_loop<N, N>
+    };  // end of struct do_loop<N, N>
 
   }  // namespace internals
 

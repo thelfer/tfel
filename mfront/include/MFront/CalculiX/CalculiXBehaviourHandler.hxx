@@ -152,7 +152,7 @@ namespace calculix {
         b.setCALCULIXBehaviourDataGradients(DV0);
         b.setCALCULIXIntegrationDataGradients(DV1);
       }  // end of exe
-    };   // end of struct GradientInitialiserWithoutStressFreeExpansion
+    };  // end of struct GradientInitialiserWithoutStressFreeExpansion
 
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer {
       typedef Behaviour<H, CalculiXReal, false> BV;
@@ -162,7 +162,7 @@ namespace calculix {
         CalculiXComputeStiffnessTensor<CalculiXTraits<BV>::etype>::exe(
             data.getStiffnessTensor(), props);
       }  // end of exe
-    };   // end of struct StiffnessOperatorInitializer
+    };  // end of struct StiffnessOperatorInitializer
 
     struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer {
       typedef Behaviour<H, CalculiXReal, false> BV;
@@ -174,7 +174,7 @@ namespace calculix {
             BV>::stype>::exe(props + o,
                              data.getThermalExpansionCoefficientTensor());
       }  // end of exe
-    };   // end of struct ThermalExpansionCoefficientTensorInitializer
+    };  // end of struct ThermalExpansionCoefficientTensorInitializer
 
     struct TFEL_VISIBILITY_LOCAL DoNothingInitializer {
       typedef Behaviour<H, CalculiXReal, false> BV;

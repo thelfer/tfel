@@ -40,10 +40,10 @@ namespace mtest {
       //! \brief position
       unsigned short p;
     };  // end of struct Variable
-        /*!
-         * A structure containing the constraint derivative and the second
-         * derivative of the constraint
-         */
+    /*!
+     * A structure containing the constraint derivative and the second
+     * derivative of the constraint
+     */
     struct ConstraintDerivative {
       //! variable used to differentiate the constraint
       std::shared_ptr<Variable> v;

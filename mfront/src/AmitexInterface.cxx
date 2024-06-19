@@ -55,7 +55,8 @@ namespace mfront {
         ++nprops;
       } else {
         for (unsigned short j = 0; j != pm.arraySize;) {
-          out << "<!-- material property " << pm.getExternalName() << "[" << j << "] -->\n"
+          out << "<!-- material property " << pm.getExternalName() << "[" << j
+              << "] -->\n"
               << "<Coeff Index = \"" << nprops << "\" "
               << "Type = \"Constant\" Value = \"...\" />\n";
           ++nprops;

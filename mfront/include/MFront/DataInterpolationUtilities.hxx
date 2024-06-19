@@ -77,7 +77,7 @@ namespace mfront {
       const SingleVariableInterpolatedData::
           WriteLinearInterpolationValuesArguments&);
   /*!
-   * \brief write the collocations points computed from 
+   * \brief write the collocations points computed from
    * abscissaes and the ordinates of interpolation data
    * \param[in] idata: interpolated data
    * \param[in] args: additional information

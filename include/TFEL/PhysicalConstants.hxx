@@ -91,8 +91,8 @@ namespace tfel {
     //! Stefan-Boltzmann constant (W.m-2.K-4)
     static constexpr auto s = quantity<1, 0, -3, 0, -4, 0, 0>(5.67037e-08);
   };  // end of PhysicalConstants
-      /*!
-       * \brief partial specialisation when quantities are not used */
+  /*!
+   * \brief partial specialisation when quantities are not used */
   template <typename NumericType>
   struct PhysicalConstants<NumericType, false> {
     //! Atomic mass constant (kg)

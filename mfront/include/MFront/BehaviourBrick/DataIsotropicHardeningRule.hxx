@@ -30,8 +30,9 @@ namespace mfront::bbrick {
    * - \f$R_{inf}\f$ is the maximal yield strength
    * - \f$b\f$ is a parameter
    */
-  struct DataIsotropicHardeningRule final : public IsotropicHardeningRule,
-                                            private SingleVariableInterpolatedData {
+  struct DataIsotropicHardeningRule final
+      : public IsotropicHardeningRule,
+        private SingleVariableInterpolatedData {
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,

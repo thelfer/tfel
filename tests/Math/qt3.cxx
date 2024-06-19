@@ -56,11 +56,10 @@ struct QtRefTest final : public tfel::tests::TestCase {
 #if (not defined __INTEL_COMPILER) && (not defined __clang__)
     using namespace tfel::math;
     constexpr auto eps = double{1e-14};
-    constexpr auto s = []() constexpr->stensor<3, qt<Stress, double>> {
+    constexpr auto s = []() constexpr -> stensor<3, qt<Stress, double>> {
       double stress_values[6] = {0, 1, 2, 3, 4, 5};
       return map<stensor<3, qt<Stress>>>(stress_values);
-    }
-    ();
+    }();
     TFEL_TESTS_STATIC_ASSERT(my_abs(s[0].getValue()) < eps);
     TFEL_TESTS_STATIC_ASSERT(my_abs(s[1].getValue() - 1) < eps);
     TFEL_TESTS_STATIC_ASSERT(my_abs(s[2].getValue() - 2) < eps);
@@ -68,7 +67,7 @@ struct QtRefTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(my_abs(s[4].getValue() - 4) < eps);
     TFEL_TESTS_STATIC_ASSERT(my_abs(s[5].getValue() - 5) < eps);
 #endif /* (not defined __INTEL_COMPILER) && (not defined __clang__) */
-  }    // end of test2
+  }  // end of test2
   void test3() {
     using namespace tfel::math;
     using stress = qt<Stress, double>;

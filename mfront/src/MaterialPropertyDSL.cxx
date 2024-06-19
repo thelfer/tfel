@@ -502,8 +502,98 @@ namespace mfront {
     this->md.checkAndCompletePhysicalBoundsDeclaration();
   }  // end of finalizeVariablesDeclaration
 
-  void MaterialPropertyDSL::treatData() {
+  static std::string getFunctionAssociatedWithAValue(
+      const VariableDescription& output, const double value) {
+    auto body = std::string{};
+    std::ostringstream os;
+    os.precision(14);
+    os << value;
+    body += output.name + " = ";
+    body += output.type + "{" + os.str() + "};\n";
+    return body;
+  }  // end of getFunctionAssociatedWithAValue
+
+  void MaterialPropertyDSL::treatDataWithoutInput() {
     using namespace tfel::utilities;
+    const auto opts =
+        Data::read(this->current, this->tokens.end()).get<DataMap>();
+    for (const auto& [k, v] : opts) {
+      if (k != "value") {
+        this->throwRuntimeError("MaterialPropertyDSL::treatData",
+                                "unexpected option '" + k + "'");
+      }
+      if (!v.is<double>()) {
+        this->throwRuntimeError("MaterialPropertyDSL::treatData",
+                                "invalid type for option '" + k + "'");
+      }
+    }
+    if (opts.empty()) {
+      this->throwRuntimeError("MaterialPropertyDSL::treatData",
+                              "no option 'value' defined");
+    }
+    const auto v = opts.at("value");
+    this->md.f.body +=
+        getFunctionAssociatedWithAValue(this->md.output, v.get<double>());
+  }  // end of treatDataWithoutInput
+
+  void MaterialPropertyDSL::treatDataWithOneInput() {
+    using namespace tfel::utilities;
+    auto& body = this->md.f.body;
+    const auto& v = this->md.inputs[0];
+    const auto idata = SingleVariableInterpolatedData::extract(
+        Data::read(this->current, this->tokens.end()).get<DataMap>());
+    if (idata.itype == SingleVariableInterpolatedData::LINEAR_INTERPOLATION) {
+      if (idata.values.size() == 1) {
+        const auto value = idata.values.begin()->second;
+        body += getFunctionAssociatedWithAValue(this->md.output, value);
+      } else {
+        this->md.f.used_inputs.insert(v.name);
+        this->md.appendToIncludes(
+            "#include \"TFEL/Math/LinearInterpolation.hxx\"");
+        const auto args = SingleVariableInterpolatedData::
+            WriteLinearInterpolationValuesArguments{
+                .abscissae_name = "mfront_" + v.name + "_values",
+                .abscissae_type = v.type,
+                .ordinates_name = "mfront_" + this->md.output.name + "_values",
+                .ordinates_type = this->md.output.type};
+        const auto etype_value = idata.etype ? "true" : "false";
+        body += writeLinearInterpolationValues(idata, args);
+        body += this->md.output.name + " = ";
+        body += "tfel::math::computeLinearInterpolation<";
+        body += etype_value;
+        body += ">(";
+        body += args.abscissae_name + ", ";
+        body += args.ordinates_name + ", ";
+        body += v.name + ");\n";
+      }
+    } else {
+      if (idata.values.size() == 1) {
+        const auto value = idata.values.begin()->second;
+        body += getFunctionAssociatedWithAValue(this->md.output, value);
+      } else {
+        this->md.appendToIncludes("#include \"TFEL/Math/CubicSpline.hxx\"");
+        this->md.f.used_inputs.insert(v.name);
+        const auto etype_value = idata.etype ? "true" : "false";
+        const auto args =
+            SingleVariableInterpolatedData::WriteCollocationPointsArguments{
+                .collocation_points_name = "mfront_collocation_points",
+                .abscissae_type = v.type,
+                .ordinates_type = this->md.output.type,
+                .ordinates_derivatives_type = "tfel::math::derivative_type<" +
+                                              this->md.output.type + ", " +
+                                              this->md.output.type + ">"};
+        body += writeCollocationPoints(idata, args);
+        body += this->md.output.name + " = ";
+        body += "tfel::math::computeCubicSplineInterpolation<";
+        body += etype_value;
+        body += ">(";
+        body += args.collocation_points_name + ", ";
+        body += v.name + ");\n";
+      }
+    }
+  }  // end of treatDataWithOneInput
+
+  void MaterialPropertyDSL::treatData() {
     auto throw_if = [this](const bool b, const std::string& m) {
       if (b) {
         this->throwRuntimeError("MaterialPropertyDSL::treatData", m);
@@ -514,81 +604,17 @@ namespace mfront {
       this->reserveName("res");
       this->md.output = VariableDescription{"real", "res", 1u, 0u};
     }
-    this->md.f.modified = true;
-    auto& body = this->md.f.body;
-    throw_if(!body.empty(), "function already defined");
+    throw_if(!this->md.f.body.empty(), "function already defined");
     if (this->md.inputs.empty()) {
-      // read a single value here
-      this->readSpecifiedToken("MaterialPropertyDSL::treatData", "{");
-      // a simple check to see if this function is not empty
-      this->checkNotEndOfFile("MaterialPropertyDSL::treatData");
-      throw_if(this->current->value == "}", "function is empty.");
+      this->treatDataWithoutInput();
     } else if (this->md.inputs.size() == 1) {
-      const auto& v = this->md.inputs[0];
-      const auto idata = SingleVariableInterpolatedData::extract(
-          Data::read(this->current, this->tokens.end()).get<DataMap>());
-      if (idata.itype == SingleVariableInterpolatedData::LINEAR_INTERPOLATION) {
-        if (idata.values.size() == 1) {
-          const auto& value = *(idata.values.begin());
-          std::ostringstream os;
-          os.precision(14);
-          os << value.second;
-          body += this->md.output.name + " = ";
-          body += this->md.output.type + "{" + os.str() + "};\n";
-        } else {
-          this->md.f.used_inputs.insert(v.name);
-          this->md.appendToIncludes("#include \"TFEL/Math/LinearInterpolation.hxx\"");
-          const auto args = SingleVariableInterpolatedData::
-              WriteLinearInterpolationValuesArguments{
-                  .abscissae_name = "mfront_" + v.name + "_values",
-                  .abscissae_type = v.type,
-                  .ordinates_name =
-                      "mfront_" + this->md.output.name + "_values",
-                  .ordinates_type = this->md.output.type};
-          const auto etype_value = idata.etype ? "true" : "false";
-          body += writeLinearInterpolationValues(idata, args);
-          body += this->md.output.name + " = ";
-          body += "tfel::math::computeLinearInterpolation<";
-          body += etype_value;
-          body += ">(";
-          body += args.abscissae_name + ", ";
-          body += args.ordinates_name + ", ";
-          body += v.name + ");\n";
-        }
-      } else {
-        if (idata.values.size() == 1) {
-          const auto& value = *(idata.values.begin());
-          std::ostringstream os;
-          os.precision(14);
-          os << value.second;
-          body += this->md.output.name + " = ";
-          body += this->md.output.type + "{" + os.str() + "};\n";
-        } else {
-          this->md.appendToIncludes("#include \"TFEL/Math/CubicSpline.hxx\"");
-          this->md.f.used_inputs.insert(v.name);
-          const auto etype_value = idata.etype ? "true" : "false";
-          const auto args =
-              SingleVariableInterpolatedData::WriteCollocationPointsArguments{
-                  .collocation_points_name = "mfront_collocation_points",
-                  .abscissae_type = v.type,
-                  .ordinates_type = this->md.output.type,
-                  .ordinates_derivatives_type = "tfel::math::derivative_type<" +
-                                                this->md.output.type + ", " +
-                                                this->md.output.type + ">"};
-          body += writeCollocationPoints(idata, args);
-          body += this->md.output.name + " = ";
-          body += "tfel::math::computeCubicSplineInterpolation<";
-          body += etype_value;
-          body += ">(";
-          body += args.collocation_points_name + ", ";
-          body += v.name + ");\n";
-        }
-      }
+      this->treatDataWithOneInput();
     } else {
       this->throwRuntimeError(
           "MaterialPropertyDSL::treatData",
           "data with multiple inputs are not supported yet");
     }
+    this->md.f.modified = true;
   }
 
   void MaterialPropertyDSL::treatFunction() {

@@ -53,7 +53,7 @@ namespace tfel::math {
         }
       }
     }  // end of exe
-  };   // end of struct
+  };  // end of struct
 
 }  // end of namespace tfel::math
 

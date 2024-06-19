@@ -38,8 +38,8 @@ namespace mfront {
      * \param[in] dsl_options: options passed to the DSL
      * \return an abstract dsl that will handle the file
      */
-    static std::shared_ptr<AbstractDSL> getDSL(const std::string&,
-                                               const tfel::utilities::DataMap& = {});
+    static std::shared_ptr<AbstractDSL> getDSL(
+        const std::string&, const tfel::utilities::DataMap& = {});
     /*!
      * \return an abstract dsl that will handle the source described by the
      * given iterators

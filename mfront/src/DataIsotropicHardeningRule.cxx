@@ -184,37 +184,37 @@ namespace mfront::bbrick {
       os.precision(14);
       os << v.second;
       m += "return stress{" + os.str() + "};\n";
-      } else {
-        m += writeCollocationPoints(*this, args);
-        m += "return ";
-        m += "tfel::math::computeCubicSplineInterpolation<";
-        m += etype_value;
-        m += ">(";
-        m += "mfront_yield_surface_collocation_points, ";
-        m += "mfront_arg_p);\n";
-        m += "return {};\n";
-      }
-      m += "} // end of " + m1 + "\n\n";
-      m += "std::pair<stress, stress> " + m2 + local_id +
-           "(const strain mfront_arg_p) const {\n";
-      if (this->values.size() == 1) {
-        const auto& v = *(this->values.begin());
-        std::ostringstream os;
-        os.precision(14);
-        os << v.second;
-        m += "return {stress{" + os.str() + "}, stress{0}};\n";
-      } else {
-        m += writeCollocationPoints(*this, args);
-        m += "return ";
-        m += "tfel::math::computeCubicSplineInterpolationAndDerivative<";
-        m += etype_value;
-        m += ">(";
-        m += args.collocation_points_name + ", ";
-        m += "mfront_arg_p);\n";
-      }
-      m += "} // end of " + m2 + "\n\n";
-      bd.appendToIncludes("#include \"TFEL/Math/CubicSpline.hxx\"");
-      bd.appendToMembers(uh, m, true);
+    } else {
+      m += writeCollocationPoints(*this, args);
+      m += "return ";
+      m += "tfel::math::computeCubicSplineInterpolation<";
+      m += etype_value;
+      m += ">(";
+      m += "mfront_yield_surface_collocation_points, ";
+      m += "mfront_arg_p);\n";
+      m += "return {};\n";
+    }
+    m += "} // end of " + m1 + "\n\n";
+    m += "std::pair<stress, stress> " + m2 + local_id +
+         "(const strain mfront_arg_p) const {\n";
+    if (this->values.size() == 1) {
+      const auto& v = *(this->values.begin());
+      std::ostringstream os;
+      os.precision(14);
+      os << v.second;
+      m += "return {stress{" + os.str() + "}, stress{0}};\n";
+    } else {
+      m += writeCollocationPoints(*this, args);
+      m += "return ";
+      m += "tfel::math::computeCubicSplineInterpolationAndDerivative<";
+      m += etype_value;
+      m += ">(";
+      m += args.collocation_points_name + ", ";
+      m += "mfront_arg_p);\n";
+    }
+    m += "} // end of " + m2 + "\n\n";
+    bd.appendToIncludes("#include \"TFEL/Math/CubicSpline.hxx\"");
+    bd.appendToMembers(uh, m, true);
   }  // end of endTreatment
 
   DataIsotropicHardeningRule::~DataIsotropicHardeningRule() = default;

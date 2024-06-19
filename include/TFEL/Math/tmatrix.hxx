@@ -252,7 +252,7 @@ namespace tfel::math {
      */
     template <std::size_t... d>
     TFEL_HOST_DEVICE constexpr tmatrix(ValueType const (&... arrays)[d])  //
-        requires((sizeof...(d) == N) && ((d == M) && ...));
+      requires((sizeof...(d) == N) && ((d == M) && ...));
     //! \return the identity matrix
     TFEL_HOST_DEVICE static constexpr auto Id();
     // inheriting GenericFixedSizeArray' access operators
@@ -367,7 +367,7 @@ namespace tfel::math {
    */
   template <typename ValueType, std::size_t M, std::size_t... d>
   tmatrix(ValueType const (&)[M], ValueType const (&... arrays)[d])
-      ->tmatrix<1u + sizeof...(d), M, ValueType>;
+      -> tmatrix<1u + sizeof...(d), M, ValueType>;
 
   /*!
    * \brief a simple alias for backward compatibility

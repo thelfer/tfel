@@ -31,8 +31,8 @@ namespace tfel::math {
     using IndexType = index_type<A>;
     using NumType = numeric_type<A>;
 
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties()
+        const noexcept {
       return EmptyRunTimeProperties();
     }
 
@@ -64,8 +64,8 @@ namespace tfel::math {
     }  // end of operator[]
 
     TFEL_HOST_DEVICE constexpr typename TensorTransposeExprBase<A>::NumType
-    operator()(const typename TensorTransposeExprBase<A>::IndexType i) const
-        noexcept {
+    operator()(
+        const typename TensorTransposeExprBase<A>::IndexType i) const noexcept {
       return this->a(i);
     }  // end of operator()
   };
@@ -84,8 +84,8 @@ namespace tfel::math {
     }  // end of operator[]
 
     TFEL_HOST_DEVICE constexpr typename TensorTransposeExprBase<A>::NumType
-    operator()(const typename TensorTransposeExprBase<A>::IndexType i) const
-        noexcept {
+    operator()(
+        const typename TensorTransposeExprBase<A>::IndexType i) const noexcept {
       constexpr typename TensorTransposeExprBase<A>::NumType zero{0};
       switch (i) {
         case 0:
@@ -124,8 +124,8 @@ namespace tfel::math {
     }  // end of operator[]
 
     TFEL_HOST_DEVICE constexpr typename TensorTransposeExprBase<A>::NumType
-    operator()(const typename TensorTransposeExprBase<A>::IndexType i) const
-        noexcept {
+    operator()(
+        const typename TensorTransposeExprBase<A>::IndexType i) const noexcept {
       constexpr typename TensorTransposeExprBase<A>::NumType zero{0};
       switch (i) {
         case 0:

@@ -97,18 +97,16 @@ namespace mfront {
     return header;
   }  // end of getHeaderGuard
 
-  void BehaviourInterfaceBase::writeVisibilityDefines(
-      std::ostream& out) const {
+  void BehaviourInterfaceBase::writeVisibilityDefines(std::ostream& out) const {
     mfront::writeExportDirectives(out, false);
   }  // end of writeVisibilityDefines
 
   std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
   BehaviourInterfaceBase::buildMaterialPropertiesList(
       const BehaviourDescription& bd, const Hypothesis h) const {
-    const auto opts = BuildMaterialPropertiesListOptions {
-      .useMaterialPropertiesToBuildStiffnessTensor = true,
-      .useMaterialPropertiesToBuildThermalExpansionCoefficientTensor = true
-    };
+    const auto opts = BuildMaterialPropertiesListOptions{
+        .useMaterialPropertiesToBuildStiffnessTensor = true,
+        .useMaterialPropertiesToBuildThermalExpansionCoefficientTensor = true};
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       return mfront::buildMaterialPropertiesList(
           bd, this->getModellingHypothesesToBeTreated(bd), opts);
@@ -123,8 +121,7 @@ namespace mfront {
         << "_setOutOfBoundsPolicy(const int);\n\n";
   }
 
-  void
-  BehaviourInterfaceBase::writeGetOutOfBoundsPolicyFunctionImplementation(
+  void BehaviourInterfaceBase::writeGetOutOfBoundsPolicyFunctionImplementation(
       std::ostream& out,
       const BehaviourDescription& bd,
       const std::string& name) const {
@@ -144,8 +141,7 @@ namespace mfront {
     }
   }  // end of writeGetOutOfBoundsPolicyFunctionImplementation
 
-  void
-  BehaviourInterfaceBase::writeSetOutOfBoundsPolicyFunctionImplementation(
+  void BehaviourInterfaceBase::writeSetOutOfBoundsPolicyFunctionImplementation(
       std::ostream& out,
       const BehaviourDescription& bd,
       const std::string& name) const {
@@ -291,15 +287,15 @@ namespace mfront {
 
   void BehaviourInterfaceBase::setGenerateMTestFileOnFailureAttribute(
       BehaviourDescription& bd, const bool b) const {
-    const auto a = this->getInterfaceName() + "::" +
-                   BehaviourInterfaceBase::generateMTestFileAttribute;
+    const auto a = this->getInterfaceName() +
+                   "::" + BehaviourInterfaceBase::generateMTestFileAttribute;
     bd.setAttribute(a, b, false);
   }  // end of setGenerateMTestFileOnFailureAttribute
 
   bool BehaviourInterfaceBase::shallGenerateMTestFileOnFailure(
       const BehaviourDescription& bd) const {
-    const auto a = this->getInterfaceName() + "::" +
-                   BehaviourInterfaceBase::generateMTestFileAttribute;
+    const auto a = this->getInterfaceName() +
+                   "::" + BehaviourInterfaceBase::generateMTestFileAttribute;
     return bd.getAttribute<bool>(a, false);
   }  // end of shallGenerateMTestFileOnFailure
 

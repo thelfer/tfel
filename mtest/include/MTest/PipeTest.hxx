@@ -78,7 +78,7 @@ namespace mtest {
                                         * This option may be useful when
                                         * optimizing material parameters.
                                         */
-    };                                 // end of FailurePolicy
+    };  // end of FailurePolicy
     //! \brief base class for tests
     struct UTest {
       /*!

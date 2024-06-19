@@ -1757,8 +1757,7 @@ namespace mfront {
                             "Expected brick name or '<'.");
     if (this->current->value == "<") {
       auto options = std::vector<tfel::utilities::Token>{};
-      this->readList(options, "BehaviourDSLCommon::treatBrick", "<",
-                     ">", true);
+      this->readList(options, "BehaviourDSLCommon::treatBrick", "<", ">", true);
       for (const auto& o : options) {
         const auto pos = o.value.find('=');
         if (pos != std::string::npos) {

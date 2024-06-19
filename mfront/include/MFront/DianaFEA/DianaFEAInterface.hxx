@@ -119,7 +119,7 @@ namespace dianafea {
         i.exe(d);
       }
     };  // end of struct CallBehaviour2
-  };    // end of struct DianaFEAInterface
+  };  // end of struct DianaFEAInterface
 
 }  // end of namespace dianafea
 

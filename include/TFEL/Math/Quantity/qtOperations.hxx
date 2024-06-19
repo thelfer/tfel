@@ -220,13 +220,13 @@
   TFEL_HOST_DEVICE constexpr qt<                                               \
       UnitType, typename tfel::typetraits::Promote<ValueType, X>::type>        \
   operator*(const Quantity<UnitType, ValueType, OwnershipPolicy>&,             \
-            const X&)noexcept;                                                 \
+            const X&) noexcept;                                                \
                                                                                \
   template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
   TFEL_HOST_DEVICE constexpr qt<                                               \
       UnitType, typename tfel::typetraits::Promote<ValueType, X>::type>        \
   operator*(const X&,                                                          \
-            const Quantity<UnitType, ValueType, OwnershipPolicy>&)noexcept;    \
+            const Quantity<UnitType, ValueType, OwnershipPolicy>&) noexcept;   \
                                                                                \
   /*!                                                                          \
    * \brief Partial specialisation for qt by scalar division                   \

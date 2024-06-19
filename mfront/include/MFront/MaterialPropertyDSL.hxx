@@ -120,6 +120,10 @@ namespace mfront {
     virtual void treatFunction();
     //! \brief treat the `@Data` keyword
     virtual void treatData();
+    //! \brief auxiliary method to treat constant data
+    void treatDataWithoutInput();
+    //! \brief auxiliary method to treat data for one input
+    void treatDataWithOneInput();
     /*!
      * treat the setGlossaryName and the setEntryName method for
      * inputs or output.

@@ -78,10 +78,11 @@ namespace mfront {
         throw_if(pt == pte, "unexpected end of file (exepected dsl name)");
         if (pt->value == "{") {
           const auto o = tfel::utilities::DataParsingOptions{};
-          ldsl_options = tfel::utilities::merge(ldsl_options,
-                                                tfel::utilities::Data::read(pt, pte, o)
-                                                .get<tfel::utilities::DataMap>(),
-                                                false);          
+          ldsl_options =
+              tfel::utilities::merge(ldsl_options,
+                                     tfel::utilities::Data::read(pt, pte, o)
+                                         .get<tfel::utilities::DataMap>(),
+                                     false);
         }
         throw_if(pt == pte,
                  "unexpected end of file (exepected ';' or library name)");
@@ -146,7 +147,8 @@ namespace mfront {
     return dsl;
   }  // end of getDSL
 
-  std::shared_ptr<AbstractDSL> MFrontBase::getDSL(const std::string& f, const tfel::utilities::DataMap& dsl_options) {
+  std::shared_ptr<AbstractDSL> MFrontBase::getDSL(
+      const std::string& f, const tfel::utilities::DataMap& dsl_options) {
     tfel::utilities::CxxTokenizer file;
     if ((tfel::utilities::starts_with(f, "madnex:")) ||
         (tfel::utilities::starts_with(f, "mdnx:")) ||
