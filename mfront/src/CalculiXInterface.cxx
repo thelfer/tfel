@@ -292,8 +292,7 @@ namespace mfront {
       if (std::find(i.begin(), i.end(), this->getName()) != i.end()) {
         const auto keys =
             std::vector<std::string>{"@CalculiXFiniteStrainStrategy",
-                                     "@CalculiXGenerateMTestFileOnFailure",
-                                     "@CalculiXStrainPerturbationValue"};
+                                     "@CalculiXGenerateMTestFileOnFailure"};
         throw_if(std::find(keys.begin(), keys.end(), k) == keys.end(),
                  "unsupported key '" + k + "'");
       } else {
