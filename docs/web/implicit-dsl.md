@@ -126,7 +126,7 @@ However, if the jacobian matrix is computed numerically (at least
 partially), such updates could be wrong, because they can be based
 on the perturbated values of the unknowns. 
 
-In `TFEL 3.1`, this can be circumvented by testing the value of the
+Since `TFEL 3.1`, this can be circumvented by testing the value of the
 `perturbatedSystemEvaluation` boolean value as follows:
 
 ~~~~{.cpp}
@@ -151,6 +151,68 @@ Newton iterations, it can be more pratical to compute its increment,
 defined in by local variable and to update the auxiliary variable in
 the `@UpdateAuxiliaryStateVariables` code block. The previous trick can
 be used in this case in a straightforward manner.
+
+## Homotopy
+
+In Equation @eq:tangent_operator:implicit_system, the parameter `theta`
+is considered fixed. If this parameter varies, the solution
+\(\Delta\,\vec{Y}\) of the implicit system changes, which can be written
+as follows:
+
+\[
+F\paren{\Delta\,\vec{Y}\paren{\theta},\theta}=0
+\]{#eq:mfront:implicit_dsl:homotopy}
+
+Using the implicit function theorem, one can evaluate the sensibility of
+the solution with respect to \(\theta\) as follows:
+
+\[
+\deriv{\Delta\,\vec{Y}}{\theta} = -\paren{\deriv{F}{\Delta\,\vec{Y}}}^{-1}\,\deriv{F}{\theta} = -J^{-1}\,\deriv{F}{\theta}
+\]{#eq:mfront:implicit_dsl:homotopy2}
+
+where \(J=\deriv{F}{\Delta\,\vec{Y}}\) is the jacobian of the implicit system.
+
+Equation @eq:mfront:implicit_dsl:homotopy2 shows that
+\(\Delta\,\vec{Y}\) is a smooth function of \(\theta\) as long as the
+jacobian is invertible which is the requirements of most algorithms
+available.
+
+Equation @eq:mfront:implicit_dsl:homotopy2 could be integrated using an
+explicit algorithm and theorically find
+\(\Delta\,\vec{Y}\paren{\theta}\) to the Implicit System
+@eq:tangent_operator:implicit_system if \(\Delta\,\vec{Y}\paren{0}\) is
+known.
+
+> **Note**
+> 
+> Equation @eq:mfront:implicit_dsl:homotopy2 can be integrated
+>  as follows:
+> 
+> \[
+> \Delta\,\vec{Y}\paren{\theta} = \Delta\,\vec{Y}\paren{0}-\int_{0}^{\theta}J^{-1}\,\deriv{F}{\Theta}\,\dtot\,\Theta
+> \]{#eq:mfront:implicit_dsl:homotopy3}
+
+For time dependent behaviours, Equation @eq:mfront:implicit_dsl:homotopy
+is trival to solve for \(\theta=0\), \(\Delta\,\vec{Y}\paren{0}\)
+corresponds to the fully explicit Euler approximation:
+
+\[
+\Delta\,\vec{Y}\paren{0} = G\paren{\bts{\vec{Y}},t}\,\Delta\,t
+\]
+
+The case of time independent behaviours is more involved. Let us
+consider for instance, a plastic behaviour with isotropic hardening for
+which the implicit equation \(f_{p}\) associated with the plastic
+multiplier \(p\) is:
+
+\[
+f_{p} = \mts{\seq}-R\paren{\mts{p}}
+\]
+
+In this case, the derivatives \(f_{p}\) with respect to the internal
+state variables are null for \(\theta=0\).
+
+
 
 # Computation of the consistent tangent operator
 

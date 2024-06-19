@@ -3846,6 +3846,11 @@ namespace mfront {
     return this->mb.getOverridenParameters();
   }  // end of getOverridenParameters
 
+  std::map<std::string, std::shared_ptr<AbstractBehaviourInterface>>
+  BehaviourDSLCommon::getBehaviourInterfaces() const {
+    return this->interfaces;
+  }  // end of getBehaviourInterfaces
+
   BehaviourDSLCommon::~BehaviourDSLCommon() = default;
 
 }  // end of namespace mfront
