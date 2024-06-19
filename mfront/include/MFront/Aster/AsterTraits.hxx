@@ -64,6 +64,9 @@ namespace aster {
     static constexpr bool requiresStiffnessTensor = false;
     static constexpr bool requiresThermalExpansionCoefficientTensor = false;
     static constexpr unsigned short propertiesOffset = 0u;
+    static constexpr unsigned short material_properties_nb = 0u;
+    static constexpr unsigned short elasticPropertiesOffset = 0u;
+    static constexpr unsigned short thermalExpansionPropertiesOffset = 0u;
     //! \brief type of the behaviour of the material (isotropic or orthotropic)
     static constexpr AsterSymmetryType type = aster::ISOTROPIC;
     //! \brief type of the elastic behaviour of the material (isotropic or
