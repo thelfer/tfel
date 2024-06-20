@@ -17,8 +17,6 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
-# Issues fixed
-
 The page describes the new functionalities of Version 4.2.1 of the
 `TFEL` project.
 
@@ -32,6 +30,8 @@ inherits from the bug fixes of:
 - Version [3.4.6](release-notes-3.4.6.html),
 - Version [4.0.3](release-notes-4.0.3.html),
 - Version [4.1.2](release-notes-4.1.2.html).
+
+# Issues fixed
 
 ## Issue 504: Add support for HIP
 
