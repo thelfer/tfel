@@ -21,6 +21,7 @@
 #include <iostream>
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/Token.hxx"
 #include "TFEL/System/System.hxx"
@@ -538,6 +539,7 @@ namespace mfront {
 
   void MaterialPropertyDSL::treatDataWithOneInput() {
     using namespace tfel::utilities;
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& body = this->md.f.body;
     const auto& v = this->md.inputs[0];
     const auto idata = SingleVariableInterpolatedData::extract(
@@ -572,6 +574,11 @@ namespace mfront {
         body += getFunctionAssociatedWithAValue(this->md.output, value);
       } else {
         this->md.appendToIncludes("#include \"TFEL/Math/CubicSpline.hxx\"");
+        insert_if(this->link_directories,
+                  "$(shell " + tfel_config + " --library-path)");
+        insert_if(this->link_libraries,
+                  "$(shell " + tfel_config +
+                      " --library-dependency --math-cubic-spline)");
         this->md.f.used_inputs.insert(v.name);
         const auto etype_value = idata.etype ? "true" : "false";
         const auto args =
@@ -581,7 +588,7 @@ namespace mfront {
                 .ordinates_type = this->md.output.type,
                 .ordinates_derivatives_type = "tfel::math::derivative_type<" +
                                               this->md.output.type + ", " +
-                                              this->md.output.type + ">"};
+                                              v.type + ">"};
         body += writeCollocationPoints(idata, args);
         body += this->md.output.name + " = ";
         body += "tfel::math::computeCubicSplineInterpolation<";

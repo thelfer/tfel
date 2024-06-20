@@ -1,0 +1,17 @@
+@DSL MaterialProperty;
+@Law CubicSplineDataInterpolationTest2;
+
+@UseQt true;
+@UnitSystem SI;
+
+@Output stress E;
+E.setGlossaryName("YoungModulus");
+
+@StateVariable temperature T;
+T.setGlossaryName("Temperature");
+
+@Data {
+  values: { 293.15 : 240e9, 693.15 : 180e9, 893.15 : 170e9 },
+  interpolation: "cubic_spline",
+  extrapolation: false
+}

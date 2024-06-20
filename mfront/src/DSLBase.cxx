@@ -1315,6 +1315,12 @@ namespace mfront {
     for (auto& l : this->td.libraries) {
       l.ldflags.insert(l.ldflags.end(), this->ldflags.begin(),
                        this->ldflags.end());
+      l.link_libraries.insert(l.link_libraries.end(),
+                              this->link_libraries.begin(),
+                              this->link_libraries.end());
+      l.link_directories.insert(l.link_directories.end(),
+                                this->link_directories.begin(),
+                                this->link_directories.end());
     }
     // merging auxiliary target description
     auto atd = TargetsDescription();
@@ -1337,6 +1343,8 @@ namespace mfront {
     }
     mergeTargetsDescription(this->td, atd, false);
     this->ldflags.clear();
+    this->link_libraries.clear();
+    this->link_directories.clear();
     this->atds.clear();
   }  // end of completeTargetsDescription
 

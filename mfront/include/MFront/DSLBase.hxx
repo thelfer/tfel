@@ -593,6 +593,10 @@ namespace mfront {
     TargetsDescription td;
     //! \brief additional linker flags
     std::vector<std::string> ldflags;
+    //! \brief additional link libraries
+    std::vector<std::string> link_libraries;
+    //! \brief additional link directories
+    std::vector<std::string> link_directories;
     //! \brief auxiliary target descriptions
     std::vector<TargetsDescription> atds;
     //! \brief current position in the input stream
