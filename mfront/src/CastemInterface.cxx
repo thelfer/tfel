@@ -2474,6 +2474,13 @@ namespace mfront {
     writeGibianeInstruction(out, mcoel.str());
     out << '\n';
     if (!persistentVarsHolder.empty()) {
+
+      out << "** List of state variables:\n**\n";
+      for (const auto& sv : persistentVarsHolder) {
+          // out << sv.getshortname() << " -> " << sv.getExternalName() << "\n";
+          out << "** - Shortname: " << sv.getExternalName() << "\n";
+      }
+
       std::ostringstream mstatev;
       mstatev << "statev = 'MOTS' ";
       this->writeVariableDescriptionContainerToGibiane(mstatev, h,
@@ -2496,7 +2503,7 @@ namespace mfront {
     std::ostringstream mmod;
     mmod << "MO = 'MODELISER' v 'MECANIQUE' 'ELASTIQUE' ";
     if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
-      mmod << "'ORTHOTROPE'";
+      mmod << "'ORTHOTROPE' ";
     }
     mmod << nonlin << "\n"
          << "'LIB_LOI' 'lib" + this->getLibraryName(bd) + ".so'\n"
