@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 3.0.14 of the
 
 # Issues fixed
 
+## Issue 583: [mtest] Fix typo when comparing tangent operator to its numerical approximation
+
+For more details, see <https://github.com/thelfer/tfel/issues/583>.
+
 ## Issue 580: [aster interface] Some fields are missing in the default implementation of the `AsterTraits` class
 
 The following fields are missing:
