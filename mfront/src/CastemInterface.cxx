@@ -2377,56 +2377,48 @@ namespace mfront {
       std::ostream& out,
       const Hypothesis h,
       const VariableDescriptionContainer& v) const {
-    this->writeGibianeMappingComments(out, h, v.begin(), v.end());
-  }
-
-  void CastemInterface::writeGibianeMappingComments(
-      std::ostream& out,
-      const Hypothesis h,
-      const VariableDescriptionContainer::const_iterator pb,
-      const VariableDescriptionContainer::const_iterator pe) const {
-    for (auto p = pb; p != pe; ++p) {
-      const auto flag = SupportedTypes::getTypeFlag(p->type);
+    for (const auto& pv : v) {
+      const auto flag = SupportedTypes::getTypeFlag(pv.type);
       std::string tmp;
       tmp += "** - ";
       if (flag == SupportedTypes::SCALAR) {
-        if (p->arraySize == 1) {
-          tmp += p->getExternalName();
-          tmp += ": " + treatScalar(p->name) + "\n";
+        if (pv.arraySize == 1) {
+          tmp += pv.getExternalName();
+          tmp += ": " + treatScalar(pv.name) + "\n";
         } else {
-          for (unsigned short j = 0; j != p->arraySize;) {
-            tmp += p->getExternalName();
-            tmp += ": " + treatScalar(p->name, j) + "\n";
+          for (unsigned short j = 0; j != pv.arraySize;) {
+            tmp += pv.getExternalName();
+            tmp += ": " + treatScalar(pv.name, j) + "\n";
           }
         }
       } else if (flag == SupportedTypes::TVECTOR) {
-        if (p->arraySize == 1) {
-          tmp += p->getExternalName();
-          tmp += ": " + treatTVector(h, p->name);
+        if (pv.arraySize == 1) {
+          tmp += pv.getExternalName();
+          tmp += ": " + treatTVector(h, pv.name);
         } else {
-          for (unsigned short j = 0; j != p->arraySize;) {
-            tmp += p->getExternalName();
-            tmp += ": " + treatTVector(h, p->name, j) + "\n";
+          for (unsigned short j = 0; j != pv.arraySize;) {
+            tmp += pv.getExternalName();
+            tmp += ": " + treatTVector(h, pv.name, j) + "\n";
           }
         }
       } else if (flag == SupportedTypes::STENSOR) {
-        if (p->arraySize == 1) {
-          tmp += p->getExternalName();
-          tmp += ": " + treatStensor(h, p->name) + "\n";
+        if (pv.arraySize == 1) {
+          tmp += pv.getExternalName();
+          tmp += ": " + treatStensor(h, pv.name) + "\n";
         } else {
-          for (unsigned short j = 0; j != p->arraySize;) {
-            tmp += p->getExternalName();
-            tmp += ": " + treatStensor(h, p->name, j) + "\n";
+          for (unsigned short j = 0; j != pv.arraySize;) {
+            tmp += pv.getExternalName();
+            tmp += ": " + treatStensor(h, pv.name, j) + "\n";
           }
         }
       } else if (flag == SupportedTypes::TENSOR) {
-        if (p->arraySize == 1) {
-          tmp += p->getExternalName();
-          tmp += ": " + treatTensor(h, p->name) + "\n";
+        if (pv.arraySize == 1) {
+          tmp += pv.getExternalName();
+          tmp += ": " + treatTensor(h, pv.name) + "\n";
         } else {
-          for (unsigned short j = 0; j != p->arraySize;) {
-            tmp += p->getExternalName();
-            tmp += ": " + treatTensor(h, p->name, j) + "\n";
+          for (unsigned short j = 0; j != pv.arraySize;) {
+            tmp += pv.getExternalName();
+            tmp += ": " + treatTensor(h, pv.name, j) + "\n";
           }
         }
       } else {
