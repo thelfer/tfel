@@ -764,7 +764,7 @@ namespace mtest {
         }
         if (merr > this->toeps) {
           auto& log = mfront::getLogStream();
-          log << "Compaison to numerical jacobian failed "
+          log << "Comparison to numerical jacobian failed "
               << "(error : " << merr << ", criterium " << this->toeps << ").\n"
               << "Tangent operator returned by the behaviour : \n";
           display(bwk.k);
