@@ -2373,6 +2373,70 @@ namespace mfront {
     }
   }
 
+  void CastemInterface::writeGibianeMappingComments(
+      std::ostream& out,
+      const Hypothesis h,
+      const VariableDescriptionContainer& v) const {
+    this->writeGibianeMappingComments(out, h, v.begin(), v.end());
+  }
+
+  void CastemInterface::writeGibianeMappingComments(
+      std::ostream& out,
+      const Hypothesis h,
+      const VariableDescriptionContainer::const_iterator pb,
+      const VariableDescriptionContainer::const_iterator pe) const {
+    for (auto p = pb; p != pe; ++p) {
+      const auto flag = SupportedTypes::getTypeFlag(p->type);
+      std::string tmp;
+      tmp += "** - ";
+      if (flag == SupportedTypes::SCALAR) {
+        if (p->arraySize == 1) {
+          tmp += treatScalar(p->name);
+          tmp += ": " + p->getExternalName() + "\n";
+        } else {
+          for (unsigned short j = 0; j != p->arraySize;) {
+            tmp += treatScalar(p->name, j);
+            tmp += ": " + p->getExternalName() + "\n";
+          }
+        }
+      } else if (flag == SupportedTypes::TVECTOR) {
+        if (p->arraySize == 1) {
+          tmp += treatTVector(h, p->name);
+        } else {
+          for (unsigned short j = 0; j != p->arraySize;) {
+            tmp += treatTVector(h, p->name, j);
+            tmp += ": " + p->getExternalName() + "\n";
+          }
+        }
+      } else if (flag == SupportedTypes::STENSOR) {
+        if (p->arraySize == 1) {
+          tmp += treatStensor(h, p->name);
+          tmp += ": " + p->getExternalName() + "\n";
+        } else {
+          for (unsigned short j = 0; j != p->arraySize;) {
+            tmp += treatStensor(h, p->name, j);
+            tmp += ": " + p->getExternalName() + "\n";
+          }
+        }
+      } else if (flag == SupportedTypes::TENSOR) {
+        if (p->arraySize == 1) {
+          tmp += treatTensor(h, p->name);
+          tmp += ": " + p->getExternalName() + "\n";
+        } else {
+          for (unsigned short j = 0; j != p->arraySize;) {
+            tmp += treatTensor(h, p->name, j);
+            tmp += ": " + p->getExternalName() + "\n";
+          }
+        }
+      } else {
+        tfel::raise(
+            "CastemInterface::writeVariableDescriptionContainerToGibiane: "
+            "internal error, tag unsupported");
+      }
+      out << tmp;
+    }
+  }
+
   void CastemInterface::writeGibianeInstruction(std::ostream& out,
                                                 const std::string& i) const {
     std::istringstream in(i);
@@ -2473,13 +2537,23 @@ namespace mfront {
     mcoel << ";";
     writeGibianeInstruction(out, mcoel.str());
     out << '\n';
-    if (!persistentVarsHolder.empty()) {
 
-      out << "** List of state variables:\n**\n";
-      for (const auto& sv : persistentVarsHolder) {
-          // out << sv.getshortname() << " -> " << sv.getExternalName() << "\n";
-          out << "** - Shortname: " << sv.getExternalName() << "\n";
-      }
+    if (!persistentVarsHolder.empty()) {
+      std::ostringstream mappingComment;
+      out << "** List of state variables (statev):\n**\n";
+
+      // for (auto p = persistentVarsHolder.begin();
+      //      p != persistentVarsHolder.end(); ++p) {
+        // for (const auto& sv : persistentVarsHolder) {
+        // out << sv.getshortname() << " -> " << sv.getExternalName() << "\n";
+        // out << "** - " << this->writeVariableDescriptions(out, h, sv) << ": "
+        // << sv.getExternalName() << "\n";
+        // out << "** - ";
+        this->writeGibianeMappingComments(mappingComment, h, persistentVarsHolder);
+        // out << ": " << p->getExternalName() << "\n";
+      // }
+
+      out << mappingComment.str();
 
       std::ostringstream mstatev;
       mstatev << "statev = 'MOTS' ";
@@ -2765,8 +2839,8 @@ namespace mfront {
           << "tfel::material::ModellingHypothesisToSpaceDimension<H>;\n";
     }
     if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      out << "static " << constexpr_c << " ModellingHypothesis::Hypothesis H = "
-          << "ModellingHypothesis::"
+      out << "static " << constexpr_c
+          << " ModellingHypothesis::Hypothesis H = " << "ModellingHypothesis::"
           << ModellingHypothesis::toUpperCaseString(h) << ";\n";
     }
     if (mb.isModel()) {
