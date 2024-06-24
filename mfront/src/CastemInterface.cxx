@@ -2438,6 +2438,35 @@ namespace mfront {
     }
   }
 
+  void CastemInterface::writeGibianeMappingComments(
+      std::ostream& out,
+      const std::pair<std::vector<BehaviourMaterialProperty>,
+                      SupportedTypes::TypeSize>& mprops) const {
+    auto throw_if = [](const bool c, const std::string& msg) {
+      tfel::raise_if(c,
+                     "checkFiniteStrainStrategyDefinitionConsistency "
+                     "(CastemInterface): " +
+                         msg);
+    };
+    for (const auto& pm : mprops.first) {
+      const auto flag = SupportedTypes::getTypeFlag(pm.type);
+      throw_if(flag != SupportedTypes::SCALAR,
+               "material properties shall be scalars");
+      std::string tmp;
+      tmp += "** - ";
+      if (pm.arraySize == 1) {
+        tmp += pm.getExternalName();
+        tmp += ": " + treatScalar(pm.name) + "\n";
+      } else {
+        for (unsigned short j = 0; j != pm.arraySize;) {
+          tmp += pm.getExternalName();
+          tmp += treatScalar(pm.name, j) + "\n";
+        }
+      }
+      out << tmp;
+    }
+  }
+
   void CastemInterface::writeGibianeInstruction(std::ostream& out,
                                                 const std::string& i) const {
     std::istringstream in(i);
@@ -2515,6 +2544,12 @@ namespace mfront {
       out << "** 'OPTION' 'DIMENSION' " << getSpaceDimension(h)
           << " 'MODELISER' " << mo.at(h) << " ;\n\n";
     }
+
+    std::ostringstream mappingMaterialPropertyComment;
+    out << "** List of material properties:\n**\n";
+    this->writeGibianeMappingComments(mappingMaterialPropertyComment, mprops);
+    out << mappingMaterialPropertyComment.str();
+    
     std::ostringstream mcoel;
     mcoel << "coel = 'MOTS' ";
     for (auto pm = mprops.first.cbegin(); pm != mprops.first.cend();) {
@@ -2540,11 +2575,11 @@ namespace mfront {
     out << '\n';
 
     if (!persistentVarsHolder.empty()) {
-      std::ostringstream mappingComment;
+      std::ostringstream mappingPersistentVarsComment;
       out << "** List of state variables:\n**\n";
-      this->writeGibianeMappingComments(mappingComment, h,
+      this->writeGibianeMappingComments(mappingPersistentVarsComment, h,
                                         persistentVarsHolder);
-      out << mappingComment.str();
+      out << mappingPersistentVarsComment.str();
 
       std::ostringstream mstatev;
       mstatev << "statev = 'MOTS' ";
@@ -2554,6 +2589,13 @@ namespace mfront {
       writeGibianeInstruction(out, mstatev.str());
       out << '\n';
     }
+
+    std::ostringstream mappingexternalStateVarsComment;
+    out << "** List of externale state variables:\n**\n";
+    this->writeGibianeMappingComments(mappingexternalStateVarsComment, h,
+                                      externalStateVarsHolder);
+    out << mappingexternalStateVarsComment.str();
+
     std::ostringstream mparam;
     mparam << "params = 'MOTS' 'T'";
     if (!externalStateVarsHolder.empty()) {
