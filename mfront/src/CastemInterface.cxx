@@ -2549,7 +2549,7 @@ namespace mfront {
     out << "** List of material properties:\n**\n";
     this->writeGibianeMappingComments(mappingMaterialPropertyComment, mprops);
     out << mappingMaterialPropertyComment.str();
-    
+
     std::ostringstream mcoel;
     mcoel << "coel = 'MOTS' ";
     for (auto pm = mprops.first.cbegin(); pm != mprops.first.cend();) {
