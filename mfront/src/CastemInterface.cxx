@@ -2391,41 +2391,42 @@ namespace mfront {
       tmp += "** - ";
       if (flag == SupportedTypes::SCALAR) {
         if (p->arraySize == 1) {
-          tmp += treatScalar(p->name);
-          tmp += ": " + p->getExternalName() + "\n";
+          tmp += p->getExternalName();
+          tmp += ": " + treatScalar(p->name) + "\n";
         } else {
           for (unsigned short j = 0; j != p->arraySize;) {
-            tmp += treatScalar(p->name, j);
-            tmp += ": " + p->getExternalName() + "\n";
+            tmp += p->getExternalName();
+            tmp += ": " + treatScalar(p->name, j) + "\n";
           }
         }
       } else if (flag == SupportedTypes::TVECTOR) {
         if (p->arraySize == 1) {
-          tmp += treatTVector(h, p->name);
+          tmp += p->getExternalName();
+          tmp += ": " + treatTVector(h, p->name);
         } else {
           for (unsigned short j = 0; j != p->arraySize;) {
-            tmp += treatTVector(h, p->name, j);
-            tmp += ": " + p->getExternalName() + "\n";
+            tmp += p->getExternalName();
+            tmp += ": " + treatTVector(h, p->name, j) + "\n";
           }
         }
       } else if (flag == SupportedTypes::STENSOR) {
         if (p->arraySize == 1) {
-          tmp += treatStensor(h, p->name);
-          tmp += ": " + p->getExternalName() + "\n";
+          tmp += p->getExternalName();
+          tmp += ": " + treatStensor(h, p->name) + "\n";
         } else {
           for (unsigned short j = 0; j != p->arraySize;) {
-            tmp += treatStensor(h, p->name, j);
-            tmp += ": " + p->getExternalName() + "\n";
+            tmp += p->getExternalName();
+            tmp += ": " + treatStensor(h, p->name, j) + "\n";
           }
         }
       } else if (flag == SupportedTypes::TENSOR) {
         if (p->arraySize == 1) {
-          tmp += treatTensor(h, p->name);
-          tmp += ": " + p->getExternalName() + "\n";
+          tmp += p->getExternalName();
+          tmp += ": " + treatTensor(h, p->name) + "\n";
         } else {
           for (unsigned short j = 0; j != p->arraySize;) {
-            tmp += treatTensor(h, p->name, j);
-            tmp += ": " + p->getExternalName() + "\n";
+            tmp += p->getExternalName();
+            tmp += ": " + treatTensor(h, p->name, j) + "\n";
           }
         }
       } else {
@@ -2540,19 +2541,9 @@ namespace mfront {
 
     if (!persistentVarsHolder.empty()) {
       std::ostringstream mappingComment;
-      out << "** List of state variables (statev):\n**\n";
-
-      // for (auto p = persistentVarsHolder.begin();
-      //      p != persistentVarsHolder.end(); ++p) {
-        // for (const auto& sv : persistentVarsHolder) {
-        // out << sv.getshortname() << " -> " << sv.getExternalName() << "\n";
-        // out << "** - " << this->writeVariableDescriptions(out, h, sv) << ": "
-        // << sv.getExternalName() << "\n";
-        // out << "** - ";
-        this->writeGibianeMappingComments(mappingComment, h, persistentVarsHolder);
-        // out << ": " << p->getExternalName() << "\n";
-      // }
-
+      out << "** List of state variables:\n**\n";
+      this->writeGibianeMappingComments(mappingComment, h,
+                                        persistentVarsHolder);
       out << mappingComment.str();
 
       std::ostringstream mstatev;
