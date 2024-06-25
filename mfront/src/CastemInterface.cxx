@@ -2583,7 +2583,7 @@ namespace mfront {
     }
 
     std::ostringstream mappingexternalStateVarsComment;
-    out << "** List of externale state variables:\n**\n";
+    out << "** List of external state variables:\n**\n";
     this->writeGibianeMappingComments(mappingexternalStateVarsComment, h,
                                       externalStateVarsHolder);
     out << mappingexternalStateVarsComment.str();
