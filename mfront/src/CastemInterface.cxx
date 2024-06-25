@@ -2566,7 +2566,7 @@ namespace mfront {
 
     if (!persistentVarsHolder.empty()) {
       out << "** List of state variables:\n**\n";
-      this->writeGibianeMappingComments(out, persistentVarsHolder);
+      this->writeGibianeMappingComments(out, h, persistentVarsHolder);
 
       std::ostringstream mstatev;
       mstatev << "statev = 'MOTS' ";
