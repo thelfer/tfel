@@ -2537,10 +2537,8 @@ namespace mfront {
           << " 'MODELISER' " << mo.at(h) << " ;\n\n";
     }
 
-    std::ostringstream mappingMaterialPropertyComment;
     out << "** List of material properties:\n**\n";
-    this->writeGibianeMappingComments(mappingMaterialPropertyComment, mprops);
-    out << mappingMaterialPropertyComment.str();
+    this->writeGibianeMappingComments(out, mprops);
 
     std::ostringstream mcoel;
     mcoel << "coel = 'MOTS' ";
