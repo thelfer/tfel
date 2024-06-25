@@ -18,7 +18,6 @@
 #include <iterator>
 #include <algorithm>
 #include <stdexcept>
-#include <iostream>
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/Token.hxx"
@@ -132,14 +131,18 @@ namespace mfront {
 
   std::string MaterialPropertyDSL::getOverridableVariableNameByExternalName(
       const std::string& en) const {
-    const auto p = findByExternalName(this->md.parameters, en);
-    if (p == this->md.parameters.end()) {
+    const auto pi = findByExternalName(this->md.inputs, en);
+    if (pi != this->md.inputs.end()) {
+      return pi->name;
+    }
+    const auto pp = findByExternalName(this->md.parameters, en);
+    if (pp == this->md.parameters.end()) {
       tfel::raise(
           "MaterialPropertyDSL::getOverridableVariableNameByExternalName: "
           "no overridable variable associated with external name '" +
           en + "'");
     }
-    return p->name;
+    return pp->name;
   }  // end of getOverridableVariableNameByExternalName
 
   void MaterialPropertyDSL::overrideByAParameter(const std::string& n,
@@ -472,29 +475,43 @@ namespace mfront {
 
   void MaterialPropertyDSL::finalizeVariablesDeclaration() {
     for (const auto& op : this->overriding_parameters) {
-      auto p = std::find_if(
-          this->md.parameters.begin(), this->md.parameters.end(),
-          [&op](const VariableDescription& v) {
-            return (v.symbolic_form == op.first) || (v.name == op.first) ||
-                   (v.getExternalName() == op.first);
-          });
-      if (p == this->md.parameters.end()) {
+      auto match = [&op](const VariableDescription& v) {
+        return (v.symbolic_form == op.first) || (v.name == op.first) ||
+               (v.getExternalName() == op.first);
+      };
+      auto pi =
+          std::find_if(this->md.inputs.begin(), this->md.inputs.end(), match);
+      auto pp = std::find_if(this->md.parameters.begin(),
+                             this->md.parameters.end(), match);
+      if ((pi == this->md.inputs.end()) &&
+          (pp == this->md.parameters.end())) {
         tfel::raise(
             "MaterialPropertyDSL::finalizeVariablesDeclaration: "
             "no variable named '" +
             op.first + "' to be overriden");
       }
-      if (p->getTypeFlag() != SupportedTypes::SCALAR) {
-        tfel::raise(
-            "MaterialPropertyDSL::finalizeVariablesDeclaration: "
-            "only scalar variables can be overriden by a parameter");
+      {
+        // checks
+        const auto& v = (pi != this->md.inputs.end()) ? *pi : *pp;
+        if (v.getTypeFlag() != SupportedTypes::SCALAR) {
+          tfel::raise(
+              "MaterialPropertyDSL::finalizeVariablesDeclaration: "
+              "only scalar variables can be overriden by a parameter");
+        }
+        if (v.arraySize != 1u) {
+          tfel::raise(
+              "MaterialPropertyDSL::finalizeVariablesDeclaration: "
+              "overriding array of parameters is not supported yet");
+        }
       }
-      if (p->arraySize != 1u) {
-        tfel::raise(
-            "MaterialPropertyDSL::finalizeVariablesDeclaration: "
-            "overriding array of parameters is not supported yet");
+      if (pi != this->md.inputs.end()) {
+        auto v = *pi;
+        v.setAttribute(VariableDescription::defaultValue, op.second, true);
+        this->md.inputs.erase(pi);
+        this->md.parameters.push_back(v);
+      } else {
+        pp->setAttribute(VariableDescription::defaultValue, op.second, true);
       }
-      p->setAttribute(VariableDescription::defaultValue, op.second, true);
     }
     this->md.checkAndCompletePhysicalBoundsDeclaration();
   }  // end of finalizeVariablesDeclaration

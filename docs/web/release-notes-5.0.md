@@ -158,6 +158,22 @@ use the `TFEL` libraries in `C++` projects, using either the
 
 # Issues fixed
 
+## Issue 585: [mfront] Allow to override inputs in material properties
+
+~~~{.bash}
+$ mfront-query --state-variables Inconel600_YoungModulus.mfront 
+- Temperature (TK): the temperature
+$ mfront-query --parameters Inconel600_YoungModulus.mfront
+~~~~
+
+~~~~{.bash}
+$ mfront-query --state-variables --dsl-option='overriding_parameters:{"TK": 400}}' Inconel600_YoungModulus.mfront
+$ mfront-query --parameters --dsl-option='overriding_parameters:{"TK": 400}}' Inconel600_YoungModulus.mfront
+- Temperature (TK): the temperature
+~~~~
+
+For more details, see <https://github.com/thelfer/tfel/issues/585>
+
 ## Issue 567: `MTestCurrentState.copy()` produces a shallow copy in python bindings
 
 This behaviour is consistent with the copy constructor of the
