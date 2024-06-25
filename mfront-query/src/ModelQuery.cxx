@@ -76,25 +76,25 @@ namespace mfront {
         };
     auto displayOutputs = [displayVariableDescriptionContainer](
                               const FileDescription&,
-                              const ModelDescription& mpd) {
-      displayVariableDescriptionContainer(mpd.outputs);
+                              const ModelDescription& md) {
+      displayVariableDescriptionContainer(md.outputs);
     };
     auto displayInputs = [displayVariableDescriptionContainer](
                              const FileDescription&,
-                             const ModelDescription& mpd) {
-      displayVariableDescriptionContainer(mpd.inputs);
+                             const ModelDescription& md) {
+      displayVariableDescriptionContainer(md.inputs);
     };
     const auto& qn = this->getCurrentCommandLineArgument().as_string();
 
     if (qn == "--model-name") {
       this->queries.push_back({"model-name", [](const FileDescription&,
-                                                const ModelDescription& mpd) {
-                                 std::cout << mpd.modelName << std::endl;
+                                                const ModelDescription& md) {
+                                 std::cout << md.modelName << std::endl;
                                }});
     } else if (qn == "--class-name") {
       this->queries.push_back({"class-name", [](const FileDescription&,
-                                                const ModelDescription& mpd) {
-                                 std::cout << mpd.className << std::endl;
+                                                const ModelDescription& md) {
+                                 std::cout << md.className << std::endl;
                                }});
     } else if (qn == "--author") {
       this->queries.push_back(
@@ -167,8 +167,10 @@ namespace mfront {
       this->queries.push_back(
           {"--parameters",
            [displayVariableDescriptionContainer](const FileDescription&,
-                                                 const ModelDescription& mpd) {
-             displayVariableDescriptionContainer(mpd.parameters);
+                                                 const ModelDescription& md) {
+             if (!areParametersTreatedAsStaticVariables(md)) {
+               displayVariableDescriptionContainer(md.parameters);
+             }
            }});
     } else {
       tfel::raise(
