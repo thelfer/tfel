@@ -13,7 +13,6 @@
 
 #include <stdexcept>
 #include <sstream>
-#include <cerrno>
 
 #if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
 #include <sys/types.h>

@@ -325,8 +325,10 @@ namespace mfront {
         << "error(\"" << name << ": unsupported C++ exception\");\n"
         << "return 0;\n"
         << "}\n";
-    writePhysicalBoundsChecks(out, mpd.output, name, 0);
-    writeBoundsChecks(out, mpd.output, name, 0);
+    if (!areRuntimeChecksDisabled(mpd)) {
+      writePhysicalBoundsChecks(out, mpd.output, name, 0);
+      writeBoundsChecks(out, mpd.output, name, 0);
+    }
     //
     if (useQuantities(mpd)) {
       out << "return " << mpd.output.name << ".getValue();\n";
@@ -334,36 +336,37 @@ namespace mfront {
       out << "return " << mpd.output.name << ";\n";
     }
     out << "} // end of " << name << "_compute\n\n";
-    if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
-      out << "static double " << name << "_checkBounds(";
-      for (auto p3 = mpd.inputs.begin(); p3 != mpd.inputs.end();) {
-        out << "const double " << p3->name;
-        if ((++p3) != mpd.inputs.end()) {
-          out << ",";
+    if (!areRuntimeChecksDisabled(mpd)) {
+      if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
+        out << "static double " << name << "_checkBounds(";
+        for (auto p3 = mpd.inputs.begin(); p3 != mpd.inputs.end();) {
+          out << "const double " << p3->name;
+          if ((++p3) != mpd.inputs.end()) {
+            out << ",";
+          }
         }
-      }
-      out << ")\n{\n";
-      out << "using namespace std;\n";
-      if (hasPhysicalBounds(mpd.inputs)) {
-        out << "// treating physical bounds\n";
-        for (const auto& i : mpd.inputs) {
-          const auto nbr =
-              CMaterialPropertyInterfaceBase::getVariableNumber(mpd, i.name);
-          writePhysicalBoundsChecks(out, i, name, nbr);
+        out << ")\n{\n";
+        out << "using namespace std;\n";
+        if (hasPhysicalBounds(mpd.inputs)) {
+          out << "// treating physical bounds\n";
+          for (const auto& i : mpd.inputs) {
+            const auto nbr =
+                CMaterialPropertyInterfaceBase::getVariableNumber(mpd, i.name);
+            writePhysicalBoundsChecks(out, i, name, nbr);
+          }
         }
-      }
-      if (hasBounds(mpd.inputs)) {
-        out << "// treating standard bounds\n";
-        for (const auto& i : mpd.inputs) {
-          const auto nbr =
-              CMaterialPropertyInterfaceBase::getVariableNumber(mpd, i.name);
-          writeBoundsChecks(out, i, name, nbr);
+        if (hasBounds(mpd.inputs)) {
+          out << "// treating standard bounds\n";
+          for (const auto& i : mpd.inputs) {
+            const auto nbr =
+                CMaterialPropertyInterfaceBase::getVariableNumber(mpd, i.name);
+            writeBoundsChecks(out, i, name, nbr);
+          }
         }
+        out << "return 0;\n"
+            << "} // end of " << name << "_checkBounds\n\n";
       }
-      out << "return 0;\n"
-          << "} // end of " << name << "_checkBounds\n\n";
     }
-
     out << "DEFUN_DLD(" << name << ",args,nargout,\n"
         << "\"this function implements the " << name << " material law.\\n\"\n";
     if (!fd.description.empty()) {
@@ -418,11 +421,13 @@ namespace mfront {
       out << "retval = " << name << "_compute();\n";
     } else if (mpd.inputs.size() == 1) {
       out << "if(args(0).is_real_scalar()){\n";
-      if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
-        out << "if(" << name << "_checkBounds(";
-        out << "args(0).scalar_value())<0){\n";
-        out << "return retval;\n";
-        out << "}\n";
+      if (!areRuntimeChecksDisabled(mpd)) {
+        if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
+          out << "if(" << name << "_checkBounds(";
+          out << "args(0).scalar_value())<0){\n";
+          out << "return retval;\n";
+          out << "}\n";
+        }
       }
       out << "retval = " << name << "_compute(";
       out << "args(0).scalar_value());\n";
@@ -433,11 +438,13 @@ namespace mfront {
       out << "Matrix xout(xin0.rows(),xin0.cols());\n";
       out << "for(i=0;i!=xin0.rows();++i){\n";
       out << "for(j=0;j!=xin0.cols();++j){\n";
-      if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
-        out << "if(" << name << "_checkBounds(";
-        out << "xin0(i,j))<0){\n";
-        out << "return retval;\n";
-        out << "}\n";
+      if (!areRuntimeChecksDisabled(mpd)) {
+        if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
+          out << "if(" << name << "_checkBounds(";
+          out << "xin0(i,j))<0){\n";
+          out << "return retval;\n";
+          out << "}\n";
+        }
       }
       out << "xout(i,j) = " << name << "_compute(";
       out << "xin0(i,j));\n";
@@ -495,14 +502,16 @@ namespace mfront {
       // all scalar case
       out << "if(areAllVariablesScalars){\n";
       decltype(mpd.inputs.size()) i;
-      if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
-        out << "if(" << name << "_checkBounds(";
-        for (i = 0; i != mpd.inputs.size() - 1; ++i) {
-          out << "args(" << i << ").scalar_value(),";
+      if (!areRuntimeChecksDisabled(mpd)) {
+        if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
+          out << "if(" << name << "_checkBounds(";
+          for (i = 0; i != mpd.inputs.size() - 1; ++i) {
+            out << "args(" << i << ").scalar_value(),";
+          }
+          out << "args(" << i << ").scalar_value())<0){\n";
+          out << "return retval;\n";
+          out << "}\n";
         }
-        out << "args(" << i << ").scalar_value())<0){\n";
-        out << "return retval;\n";
-        out << "}\n";
       }
       out << "retval = " << name << "_compute(";
       for (i = 0; i != mpd.inputs.size() - 1; ++i) {
@@ -517,14 +526,16 @@ namespace mfront {
       out << "Matrix xout(row,col);\n";
       out << "for(i=0;i!=row;++i){\n";
       out << "for(j=0;j!=col;++j){\n";
-      if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
-        out << "if(" << name << "_checkBounds(";
-        for (i = 0; i != mpd.inputs.size() - 1; ++i) {
-          out << "xin" << i << "(i,j),";
+      if (!areRuntimeChecksDisabled(mpd)) {
+        if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
+          out << "if(" << name << "_checkBounds(";
+          for (i = 0; i != mpd.inputs.size() - 1; ++i) {
+            out << "xin" << i << "(i,j),";
+          }
+          out << "xin" << i << "(i,j))<0){\n";
+          out << "return retval;\n";
+          out << "}\n";
         }
-        out << "xin" << i << "(i,j))<0){\n";
-        out << "return retval;\n";
-        out << "}\n";
       }
       out << "xout(i,j) = " << name << "_compute(";
       for (i = 0; i != mpd.inputs.size() - 1; ++i) {
@@ -539,14 +550,16 @@ namespace mfront {
       out << "Matrix xout(row,col);\n";
       out << "for(i=0;i!=row;++i){\n";
       out << "for(j=0;j!=col;++j){\n";
-      if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
-        out << "if(" << name << "_checkBounds(";
-        for (i = 0; i != mpd.inputs.size() - 1; ++i) {
-          out << "(*(getfunction[" << i << "]))(args(" << i << "),i,j),\n";
+      if (!areRuntimeChecksDisabled(mpd)) {
+        if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
+          out << "if(" << name << "_checkBounds(";
+          for (i = 0; i != mpd.inputs.size() - 1; ++i) {
+            out << "(*(getfunction[" << i << "]))(args(" << i << "),i,j),\n";
+          }
+          out << "(*(getfunction[" << i << "]))(args(" << i << "),i,j))<0){\n";
+          out << "return retval;\n";
+          out << "}\n";
         }
-        out << "(*(getfunction[" << i << "]))(args(" << i << "),i,j))<0){\n";
-        out << "return retval;\n";
-        out << "}\n";
       }
       out << "xout(i,j) = " << name << "_compute(";
       for (i = 0; i != mpd.inputs.size() - 1; ++i) {

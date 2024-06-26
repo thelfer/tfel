@@ -453,42 +453,46 @@ namespace mfront {
     } else {
       src << "auto " << mpd.output.name << " = real{};\n";
     }
-    if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
-      src << "#ifndef MFRONT_NO_BOUNDS_CHECK\n";
-      src << name << "::checkBounds(";
-      for (auto pi = mpd.inputs.begin(); pi != mpd.inputs.end();) {
-        src << pi->name;
-        if (useQuantities(mpd)) {
-          src << ".getValue()";
+    if (!areRuntimeChecksDisabled(mpd)) {
+      if ((hasBounds(mpd.inputs)) || (hasPhysicalBounds(mpd.inputs))) {
+        src << "#ifndef MFRONT_NO_BOUNDS_CHECK\n";
+        src << name << "::checkBounds(";
+        for (auto pi = mpd.inputs.begin(); pi != mpd.inputs.end();) {
+          src << pi->name;
+          if (useQuantities(mpd)) {
+            src << ".getValue()";
+          }
+          if ((++pi) != mpd.inputs.end()) {
+            src << ",";
+          }
         }
-        if ((++pi) != mpd.inputs.end()) {
-          src << ",";
-        }
+        src << ");\n";
+        src << "#endif /* MFRONT_NO_BOUNDS_CHECK */\n";
       }
-      src << ");\n";
-      src << "#endif /* MFRONT_NO_BOUNDS_CHECK */\n";
-    }
-    if (!mpd.inputs.empty()) {
-      src << "#ifndef MFRONT_NOERRNO_HANDLING\n"
-          << "const auto mfront_errno_old = errno;\n"
-          << "errno=0;\n"
-          << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
+      if (!mpd.inputs.empty()) {
+        src << "#ifndef MFRONT_NOERRNO_HANDLING\n"
+            << "const auto mfront_errno_old = errno;\n"
+            << "errno=0;\n"
+            << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
+      }
     }
     src << mpd.f.body;
-    if (!mpd.inputs.empty()) {
-      src << "#ifndef MFRONT_NOERRNO_HANDLING\n"
-          // can't use std::swap here as errno might be a macro
-          << "const auto mfront_errno = errno;\n"
-          << "errno = mfront_errno_old;\n"
-          << "tfel::raise_if((mfront_errno!=0)||"
-          << "(!tfel::math::ieee754::isfinite(" << mpd.output.name << ")),\n"
-          << "\"" << name << ": errno has been set \"\n"
-          << "\"(\"+std::string(::strerror(errno))+\")\");\n"
-          << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
+    if (!areRuntimeChecksDisabled(mpd)) {
+      if (!mpd.inputs.empty()) {
+        src << "#ifndef MFRONT_NOERRNO_HANDLING\n"
+            // can't use std::swap here as errno might be a macro
+            << "const auto mfront_errno = errno;\n"
+            << "errno = mfront_errno_old;\n"
+            << "tfel::raise_if((mfront_errno!=0)||"
+            << "(!tfel::math::ieee754::isfinite(" << mpd.output.name << ")),\n"
+            << "\"" << name << ": errno has been set \"\n"
+            << "\"(\"+std::string(::strerror(errno))+\")\");\n"
+            << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
+      }
+      //
+      writePhysicalBoundsChecks(src, mpd.output, name);
+      writeBoundsChecks(src, mpd, mpd.output, name);
     }
-    //
-    writePhysicalBoundsChecks(src, mpd.output, name);
-    writeBoundsChecks(src, mpd, mpd.output, name);
     //
     if (useQuantities(mpd)) {
       src << "return " << mpd.output.name << ".getValue();\n";
@@ -522,18 +526,20 @@ namespace mfront {
               << i.type << "(mfront_" << i.name << ");\n";
         }
       }
-      if (hasPhysicalBounds(mpd.inputs)) {
-        src << "// treating physical bounds\n";
-        for (const auto& i : mpd.inputs) {
-          writePhysicalBoundsChecks(src, i, name);
-        }
-      }
-      if (hasBounds(mpd.inputs)) {
-        src << "// treating standard bounds\n";
-        if (!((!allowRuntimeModificationOfTheOutOfBoundsPolicy(mpd)) &&
-              (getDefaultOutOfBoundsPolicy(mpd) == tfel::material::None))) {
+      if (!areRuntimeChecksDisabled(mpd)) {
+        if (hasPhysicalBounds(mpd.inputs)) {
+          src << "// treating physical bounds\n";
           for (const auto& i : mpd.inputs) {
-            writeBoundsChecks(src, mpd, i, name);
+            writePhysicalBoundsChecks(src, i, name);
+          }
+        }
+        if (hasBounds(mpd.inputs)) {
+          src << "// treating standard bounds\n";
+          if (!((!allowRuntimeModificationOfTheOutOfBoundsPolicy(mpd)) &&
+                (getDefaultOutOfBoundsPolicy(mpd) == tfel::material::None))) {
+            for (const auto& i : mpd.inputs) {
+              writeBoundsChecks(src, mpd, i, name);
+            }
           }
         }
       }

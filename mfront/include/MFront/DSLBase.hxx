@@ -75,6 +75,8 @@ namespace mfront {
     static const char* const buildIdentifierOption;
     //! \brief standard option
     static const char* const overridingParameters;
+    //! \brief standard option name
+    static const char* const disableRuntimeChecksOption;
     //! \return a validator for the options passed to the DSL
     static tfel::utilities::DataMapValidator getDSLOptionsValidator();
     //
