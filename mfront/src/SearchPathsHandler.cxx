@@ -290,6 +290,14 @@ namespace mfront {
     return directories;
   }  // end of getSearchPaths
 
+  std::vector<SearchPathsHandler::Path> SearchPathsHandler::getRegistredPaths() {
+    return SearchPathsHandler::getSearchPathsHandler().paths;
+  }  // end of getRegistredPaths
+
+  void SearchPathsHandler::resetPaths(const std::vector<Path>& npaths){
+    SearchPathsHandler::getSearchPathsHandler().paths = npaths;
+  } // end of resetPaths
+
   SearchPathsHandler::SearchPathsHandler() {
     const char* const p = ::getenv("MFRONT_INCLUDE_PATH");
     if (p != nullptr) {

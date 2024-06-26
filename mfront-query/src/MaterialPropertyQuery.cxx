@@ -184,6 +184,9 @@ namespace mfront {
     this->queries.push_back(
         {"parameter-default-value",
          [pn](const FileDescription&, const MaterialPropertyDescription& mpd) {
+           if (areParametersTreatedAsStaticVariables(mpd)) {
+             return;
+           }
            const auto& p = findByExternalName(mpd.parameters, pn);
            if (p == mpd.parameters.end()) {
              tfel::raise_if(!p->hasAttribute(VariableDescription::defaultValue),
@@ -300,15 +303,19 @@ namespace mfront {
       this->queries.push_back(
           {"parameters",
            [](const FileDescription&, const MaterialPropertyDescription& mpd) {
-             for (const auto& p : mpd.parameters) {
-               QueryHandlerBase::displayVariable(p);
+             if (!areParametersTreatedAsStaticVariables(mpd)) {
+               for (const auto& p : mpd.parameters) {
+                 QueryHandlerBase::displayVariable(p);
+               }
              }
            }});
     } else if (qn == "--parameters-file") {
       this->queries.push_back(
           {"parameters-file",
            [](const FileDescription&, const MaterialPropertyDescription& mpd) {
-             std::cout << mfront::getParametersFileName(mpd) << '\n';
+             if (!areParametersTreatedAsStaticVariables(mpd)) {
+               std::cout << mfront::getParametersFileName(mpd) << '\n';
+             }
            }});
     } else {
       tfel::raise(

@@ -160,7 +160,7 @@ namespace mfront {
                                           std::get<2>(path), std::get<3>(path));
       file.parseString(impl.source);
 #else  /* HAVE_MANDEX */
-      tfel::raise("DSLBase::openFile: madnex support was not enabled");
+      tfel::raise("DSLBase::getDSL: madnex support was not enabled");
 #endif /* HAVE_MANDEX */
     } else {
       file.openFile(f);
@@ -200,7 +200,7 @@ namespace mfront {
         }
       }
 #else  /* HAVE_MANDEX */
-      tfel::raise("DSLBase::openFile: madnex support was not enabled");
+      tfel::raise("DSLBase::getDSL: madnex support was not enabled");
 #endif /* HAVE_MANDEX */
     }
     return dsl;

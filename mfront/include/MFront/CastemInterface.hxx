@@ -195,6 +195,16 @@ namespace mfront {
         const VariableDescriptionContainer::const_iterator,
         const VariableDescriptionContainer::const_iterator) const;
 
+    virtual void writeGibianeMappingComments(
+        std::ostream &,
+        const Hypothesis,
+        const VariableDescriptionContainer &) const;
+
+    virtual void writeGibianeMappingComments(
+        std::ostream &,
+        const std::pair<std::vector<BehaviourMaterialProperty>,
+                        SupportedTypes::TypeSize> &) const;
+
     virtual void writeGibianeInstruction(std::ostream &,
                                          const std::string &) const;
 

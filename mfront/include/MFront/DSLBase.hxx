@@ -565,9 +565,7 @@ namespace mfront {
     virtual void registerIntegerConstant(const std::string&,
                                          const size_t,
                                          const int);
-    /*!
-     * \brief extract a double from the current token
-     */
+    //! \brief extract a double from the current token
     double readDouble();
     //! \brief destructor
     ~DSLBase() override;

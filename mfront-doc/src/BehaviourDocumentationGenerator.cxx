@@ -361,34 +361,36 @@ namespace mfront {
         os << "\t+ " << map_at(l, "description") << ": " << d.description
            << '\n';
       }
-      for (const auto& h : d.hypotheses) {
-        if (mb.isParameterName(h, d.name)) {
-          if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-            os << "\t+ " << map_at(l, "default value") << ": ";
-          } else {
-            os << "\t+ "
-               << map_at(l, "default value for") + " " +
-                      ModellingHypothesis::toString(h) + ": ";
-          }
-          if (d.type == "int") {
-            os << mb.getIntegerParameterDefaultValue(h, d.name);
-          } else if (d.type == "ushort") {
-            os << mb.getUnsignedShortParameterDefaultValue(h, d.name);
-          } else {
-            const auto& p =
-                mb.getBehaviourData(h).getParameters().getVariable(d.name);
-            if (p.arraySize == 1u) {
-              os << mb.getFloattingPointParameterDefaultValue(h, d.name);
+      if (!areParametersTreatedAsStaticVariables(mb)) {
+        for (const auto& h : d.hypotheses) {
+          if (mb.isParameterName(h, d.name)) {
+            if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+              os << "\t+ " << map_at(l, "default value") << ": ";
             } else {
-              for (unsigned short i = 0; i != p.arraySize;) {
-                os << mb.getFloattingPointParameterDefaultValue(h, d.name, i);
-                if (++i != p.arraySize) {
-                  os << " ";
+              os << "\t+ "
+                 << map_at(l, "default value for") + " " +
+                        ModellingHypothesis::toString(h) + ": ";
+            }
+            if (d.type == "int") {
+              os << mb.getIntegerParameterDefaultValue(h, d.name);
+            } else if (d.type == "ushort") {
+              os << mb.getUnsignedShortParameterDefaultValue(h, d.name);
+            } else {
+              const auto& p =
+                  mb.getBehaviourData(h).getParameters().getVariable(d.name);
+              if (p.arraySize == 1u) {
+                os << mb.getFloattingPointParameterDefaultValue(h, d.name);
+              } else {
+                for (unsigned short i = 0; i != p.arraySize;) {
+                  os << mb.getFloattingPointParameterDefaultValue(h, d.name, i);
+                  if (++i != p.arraySize) {
+                    os << " ";
+                  }
                 }
               }
             }
+            os << '\n';
           }
-          os << '\n';
         }
       }
       // codes blocks referring to the current variable
@@ -774,9 +776,11 @@ namespace mfront {
               getData(mb, &BehaviourData::getExternalStateVariables),
               this->standalone);
     out << '\n';
-    if (mb.hasParameters()) {
-      printData(out, mb, "Parameters",
-                getData(mb, &BehaviourData::getParameters), this->standalone);
+    if (!areParametersTreatedAsStaticVariables(mb)) {
+      if (mb.hasParameters()) {
+        printData(out, mb, "Parameters",
+                  getData(mb, &BehaviourData::getParameters), this->standalone);
+      }
     }
     out << '\n';
     printData(out, mb, "Local variables",
@@ -787,8 +791,8 @@ namespace mfront {
       out << basic_title_level  //
           << "# Code documentation\n\n"
           << code << '\n';
-    }
-  }  // end of BehaviourDocumentationGenerator::writeFullOutput
+      }
+    }  // end of BehaviourDocumentationGenerator::writeFullOutput
 
   BehaviourDocumentationGenerator::~BehaviourDocumentationGenerator() = default;
 
