@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 4.1.3 of the
 
 # Issues fixed
 
+## Issue 589: [mfront-doc] Treat correctly the DSL option `parameters_as_static_variables`
+
+For more details, see <https://github.com/thelfer/tfel/issues/589.
+
 ## Issue 586: [mfront-query] Treat correctly the DSL option `parameters_as_static_variables`
 
 For more details, see <https://github.com/thelfer/tfel/issues/586.
