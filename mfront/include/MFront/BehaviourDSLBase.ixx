@@ -31,12 +31,13 @@ namespace mfront {
   void BehaviourDSLBase<Child>::registerNewCallBack(const std::string& k,
                                                     const MemberFuncPtr f,
                                                     const bool b) {
-    this->addCallBack(k,
-                      [this, f] {
-                        auto& c = *(static_cast<Child*>(this));
-                        (c.*f)();
-                      },
-                      b);
+    this->addCallBack(
+        k,
+        [this, f] {
+          auto& c = *(static_cast<Child*>(this));
+          (c.*f)();
+        },
+        b);
   }  // end of registerNewCallBack
 
   template <typename Child>

@@ -48,7 +48,7 @@ namespace tfel::math {
   template <typename ArrayType>
   concept ArrayConcept =
       (std::is_same_v<typename std::decay_t<ArrayType>::ConceptTag,
-                      ArrayTag>)&&  //
+                      ArrayTag>) &&  //
       (requires(const ArrayType t, const index_type<ArrayType> i) {
         t[i];
       }) &&  //

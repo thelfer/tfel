@@ -50,13 +50,13 @@ namespace mtest {
        */
       THERMODYNAMICFORCECONSTRAINT
     };  // end of enum NormalisationPolicy
-        /*!
-         * constructor
-         * \param[in] b_:  behaviour
-         * \param[in] f:   analytic defintion of the constraint
-         * \param[in] evm: evolution manager
-         * \param[in] p:   normalisation policy
-         */
+    /*!
+     * constructor
+     * \param[in] b_:  behaviour
+     * \param[in] f:   analytic defintion of the constraint
+     * \param[in] evm: evolution manager
+     * \param[in] p:   normalisation policy
+     */
     NonLinearConstraint(const Behaviour&,
                         const std::string&,
                         const EvolutionManager&,

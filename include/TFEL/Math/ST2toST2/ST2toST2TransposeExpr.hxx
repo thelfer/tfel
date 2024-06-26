@@ -62,9 +62,8 @@ namespace tfel::math {
      * \param[in] i: row number
      * \param[in] j: colum number
      */
-    TFEL_HOST_DEVICE constexpr NumType operator()(const IndexType i,
-                                                  const IndexType j) const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr NumType operator()(
+        const IndexType i, const IndexType j) const noexcept {
       return this->a(j, i);
     }  // end of operator()
     //! storage for the object

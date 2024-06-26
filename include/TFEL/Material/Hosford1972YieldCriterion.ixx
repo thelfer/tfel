@@ -51,26 +51,27 @@ namespace tfel::material::internals {
       const tfel::math::tvector<3u, HosfordStressType<StressStensor>>&,
       const tfel::math::tmatrix<3u, 3u, HosfordBaseType<StressStensor>>&,
       const tfel::material::HosfordStressType<StressStensor>)  //
-      requires(tfel::math::getSpaceDimension<StressStensor>() == 1u) {
+    requires(tfel::math::getSpaceDimension<StressStensor>() == 1u)
+  {
     d2Psi_ds2 = {d2Psi_dvp2[0], d2Psi_dvp2[3], d2Psi_dvp2[4],
                  d2Psi_dvp2[3], d2Psi_dvp2[1], d2Psi_dvp2[5],
                  d2Psi_dvp2[4], d2Psi_dvp2[5], d2Psi_dvp2[2]};
   }  // end of computeHosfordStressSecondDerivative
-     /*!
-      * \brief compute the second derivative of the Hosford equivalent stress
-      * \param[out] d2Psi_ds2: second derivative of the Hosford equivalent
-      * stress
-      * \param[in] dPsi_dvp: first derivative of the Hosford
-      * equivalent stress with respect to the eigenvalue
-      * \param[in] d2Psi_dvp2: second derivative of the Hosford
-      * equivalent stress with respect to the eigenvalue
-      * \param[in] n0: first eigen tensor
-      * \param[in] n1: second eigen tensor
-      * \param[in] n2: third eigen tensor
-      * \param[in] vp: eigen values
-      * \param[in] m: matrix for the eigen vectors
-      * \param[in] e: criterion used to check if two eigenvalues are equal
-      */
+  /*!
+   * \brief compute the second derivative of the Hosford equivalent stress
+   * \param[out] d2Psi_ds2: second derivative of the Hosford equivalent
+   * stress
+   * \param[in] dPsi_dvp: first derivative of the Hosford
+   * equivalent stress with respect to the eigenvalue
+   * \param[in] d2Psi_dvp2: second derivative of the Hosford
+   * equivalent stress with respect to the eigenvalue
+   * \param[in] n0: first eigen tensor
+   * \param[in] n1: second eigen tensor
+   * \param[in] n2: third eigen tensor
+   * \param[in] vp: eigen values
+   * \param[in] m: matrix for the eigen vectors
+   * \param[in] e: criterion used to check if two eigenvalues are equal
+   */
   template <tfel::math::StensorConcept StressStensor>
   void computeHosfordStressSecondDerivative(
       tfel::material::HosfordStressSecondDerivativeType<StressStensor>&
@@ -87,7 +88,8 @@ namespace tfel::material::internals {
       const tfel::math::tvector<3u, HosfordStressType<StressStensor>>& vp,
       const tfel::math::tmatrix<3u, 3u, HosfordBaseType<StressStensor>>& m,
       const tfel::material::HosfordStressType<StressStensor> e)  //
-      requires(tfel::math::getSpaceDimension<StressStensor>() == 2u) {
+    requires(tfel::math::getSpaceDimension<StressStensor>() == 2u)
+  {
     using namespace tfel::math;
     using base = tfel::material::HosfordBaseType<StressStensor>;
     constexpr auto icste = Cste<base>::isqrt2;
@@ -110,21 +112,21 @@ namespace tfel::material::internals {
       d2Psi_ds2 += (dPsi_dvp[0] - dPsi_dvp[1]) / (vp[0] - vp[1]) * (n01 ^ n01);
     }
   }  // end of computeHosfordStressSecondDerivative
-     /*!
-      * \brief compute the second derivative of the Hosford equivalent stress
-      * \param[out] d2Psi_ds2: second derivative of the Hosford equivalent
-      * stress
-      * \param[in] dPsi_dvp: first derivative of the Hosford
-      * equivalent stress with respect to the eigenvalue
-      * \param[in] d2Psi_dvp2: second derivative of the Hosford
-      * equivalent stress with respect to the eigenvalue
-      * \param[in] n0: first eigen tensor
-      * \param[in] n1: second eigen tensor
-      * \param[in] n2: third eigen tensor
-      * \param[in] vp: eigen values
-      * \param[in] m: matrix for the eigen vectors
-      * \param[in] e: criterion used to check if two eigenvalues are equal
-      */
+  /*!
+   * \brief compute the second derivative of the Hosford equivalent stress
+   * \param[out] d2Psi_ds2: second derivative of the Hosford equivalent
+   * stress
+   * \param[in] dPsi_dvp: first derivative of the Hosford
+   * equivalent stress with respect to the eigenvalue
+   * \param[in] d2Psi_dvp2: second derivative of the Hosford
+   * equivalent stress with respect to the eigenvalue
+   * \param[in] n0: first eigen tensor
+   * \param[in] n1: second eigen tensor
+   * \param[in] n2: third eigen tensor
+   * \param[in] vp: eigen values
+   * \param[in] m: matrix for the eigen vectors
+   * \param[in] e: criterion used to check if two eigenvalues are equal
+   */
   template <tfel::math::StensorConcept StressStensor>
   void computeHosfordStressSecondDerivative(
       tfel::material::HosfordStressSecondDerivativeType<StressStensor>&
@@ -141,7 +143,8 @@ namespace tfel::material::internals {
       const tfel::math::tvector<3u, HosfordStressType<StressStensor>>& vp,
       const tfel::math::tmatrix<3u, 3u, HosfordBaseType<StressStensor>>& m,
       const tfel::material::HosfordStressType<StressStensor> e)  //
-      requires(tfel::math::getSpaceDimension<StressStensor>() == 3u) {
+    requires(tfel::math::getSpaceDimension<StressStensor>() == 3u)
+  {
     using namespace tfel::math;
     using base = tfel::material::HosfordBaseType<StressStensor>;
     constexpr auto cste = Cste<base>::isqrt2;

@@ -373,7 +373,7 @@ namespace mfront {
            << "const mfront_gb_size_type);\n\n";
       }
     }  // end of for (const auto h : mhs)
-  }    // end of writeRotationFunctionsDeclarations
+  }  // end of writeRotationFunctionsDeclarations
 
   static void writeRotationMatrixDefinition(std::ostream& os, const bool b) {
     os << "const auto r = [&rv]() -> tfel::math::tmatrix<3,3,mfront::gb::real> "
@@ -1045,8 +1045,9 @@ namespace mfront {
           }
         }
         if (hypotheses.empty()) {
-          tfel::raise("GenericBehaviourInterface::treatKeyword: "
-                      "no hypothesis declared");
+          tfel::raise(
+              "GenericBehaviourInterface::treatKeyword: "
+              "no hypothesis declared");
         }
         //
         this->selectedHypotheses = hypotheses;
@@ -1679,7 +1680,8 @@ namespace mfront {
             os << "mg.addMaterialProperty(\"" << m.getExternalName() << "[" << s
                << "]\",*(d->s1.material_properties));\n";
           } else {
-            os << "mg.addMaterialProperty(\"" << m.getExternalName() << "[" << s << "]\","
+            os << "mg.addMaterialProperty(\"" << m.getExternalName() << "[" << s
+               << "]\","
                << "*(d->s1.material_properties+" << offset << "));\n";
           }
         }

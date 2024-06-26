@@ -58,18 +58,18 @@ namespace tfel::math {
       this->v[5] = this->v[6] = this->v[7] = zero;
       this->v[8] = 2 * F[2];
     }  // end of Expr
-       /*!
-        * \brief access operator
-        * \param[in] i : line   index
-        * \param[in] j : column index
-        */
+    /*!
+     * \brief access operator
+     * \param[in] i : line   index
+     * \param[in] j : column index
+     */
     TFEL_MATH_INLINE const value_type& operator()(
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 3 + j];
     }  // end of operator()
-       /*!
-        * \return the runtime properties
-        */
+    /*!
+     * \return the runtime properties
+     */
     TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
       return RunTimeProperties();
     }
@@ -116,18 +116,18 @@ namespace tfel::math {
       this->v[18] = cste * F[0];
       this->v[19] = cste * F[1];
     }  // end of Expr
-       /*!
-        * \brief access operator
-        * \param[in] i : line   index
-        * \param[in] j : column index
-        */
+    /*!
+     * \brief access operator
+     * \param[in] i : line   index
+     * \param[in] j : column index
+     */
     TFEL_MATH_INLINE const value_type& operator()(
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 5 + j];
     }  // end of operator()
-       /*!
-        * \return the runtime properties
-        */
+    /*!
+     * \return the runtime properties
+     */
     TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
       return RunTimeProperties();
     }
@@ -204,18 +204,18 @@ namespace tfel::math {
       this->v[52] = cste * F[1];
       this->v[53] = cste * F[2];
     }  // end of Expr
-       /*!
-        * \brief access operator
-        * \param[in] i : line   index
-        * \param[in] j : column index
-        */
+    /*!
+     * \brief access operator
+     * \param[in] i : line   index
+     * \param[in] j : column index
+     */
     TFEL_MATH_INLINE const value_type& operator()(
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 9 + j];
     }  // end of operator()
-       /*!
-        * \return the runtime properties
-        */
+    /*!
+     * \return the runtime properties
+     */
     TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
       return RunTimeProperties();
     }

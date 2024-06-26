@@ -54,8 +54,8 @@ namespace tfel::math {
    */
   template <typename T>
   concept StensorConcept =
-      (std::is_same_v<typename std::decay_t<T>::ConceptTag, StensorTag>)&&  //
-      (requires(const T t, const unsigned short i) { t[i]; }) &&            //
+      (std::is_same_v<typename std::decay_t<T>::ConceptTag, StensorTag>) &&  //
+      (requires(const T t, const unsigned short i) { t[i]; }) &&             //
       (requires(const T t, const unsigned short i) { t(i); });
 
   //! \brief partial specialisation for symmetric tensors

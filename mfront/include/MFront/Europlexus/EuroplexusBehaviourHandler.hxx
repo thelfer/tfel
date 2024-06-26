@@ -139,7 +139,7 @@ namespace epx {
         b.setEUROPLEXUSBehaviourDataGradients(STRAN);
         b.setEUROPLEXUSIntegrationDataGradients(DSTRAN);
       }  // end of exe
-    };   // end of struct GradientInitialiserWithoutStressFreeExpansion
+    };  // end of struct GradientInitialiserWithoutStressFreeExpansion
 
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer {
       typedef Behaviour<H, EuroplexusReal, false> BV;
@@ -153,7 +153,7 @@ namespace epx {
                                          buas>::exe(data.getStiffnessTensor(),
                                                     props);
       }  // end of exe
-    };   // end of struct StiffnessOperatorInitializer
+    };  // end of struct StiffnessOperatorInitializer
 
     struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer {
       typedef Behaviour<H, EuroplexusReal, false> BV;
@@ -165,7 +165,7 @@ namespace epx {
             EuroplexusTraits<BV>::btype, H, EuroplexusTraits<BV>::stype>::
             exe(props + o, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
-    };   // end of struct ThermalExpansionCoefficientTensorInitializer
+    };  // end of struct ThermalExpansionCoefficientTensorInitializer
 
     struct TFEL_VISIBILITY_LOCAL DoNothingInitializer {
       typedef Behaviour<H, EuroplexusReal, false> BV;

@@ -47,7 +47,8 @@ namespace mtest {
     /*!
      * \brief make a deep copy of the object
      * Contrary to standard copy which shares pointers to the structure current
-     * states with the original object, those states are duplicated in a deep copy.
+     * states with the original object, those states are duplicated in a deep
+     * copy.
      */
     StudyCurrentState makeDeepCopy() const;
     /*!

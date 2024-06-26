@@ -254,7 +254,7 @@ namespace cyrano {
             c1, c1, c3, DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
             NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, op);
       }  // end of exe
-    };   // end of struct TreatPlanStressIsotropicBehaviour
+    };  // end of struct TreatPlanStressIsotropicBehaviour
 
     struct TreatPlaneStressOrthotropicBehaviour {
       TFEL_CYRANO_INLINE2 static void exe(
@@ -330,7 +330,7 @@ namespace cyrano {
             c1, c2, S22, DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, nPROPS,
             NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, op);
       }  // end of exe
-    };   // end of struct TreatPlanStressOrthotropicBehaviour
+    };  // end of struct TreatPlanStressOrthotropicBehaviour
 
   };  // end of struct CyranoGenericPlaneStressHandlerTreatPlaneStrain
 

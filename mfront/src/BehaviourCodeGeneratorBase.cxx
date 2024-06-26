@@ -1203,13 +1203,16 @@ namespace mfront {
       os << "ThermalExpansionCoefficientTensor A;\n";
     }
     for (const auto& mv : this->bd.getMainVariables()) {
-      if(mv.first.arraySize != mv.second.arraySize){
-        tfel::raise("BehaviourCodeGeneratorBase::writeBehaviourDataDefaultMembers: "
-                    "the array size of the gradient '" + mv.first.name + "' is "
-                    "different from the array size of the thermodynamic force '" +
-                    mv.second.name + "'");
+      if (mv.first.arraySize != mv.second.arraySize) {
+        tfel::raise(
+            "BehaviourCodeGeneratorBase::writeBehaviourDataDefaultMembers: "
+            "the array size of the gradient '" +
+            mv.first.name +
+            "' is "
+            "different from the array size of the thermodynamic force '" +
+            mv.second.name + "'");
       }
-      if(mv.first.arraySize == 1){
+      if (mv.first.arraySize == 1) {
         if (Gradient::isIncrementKnown(mv.first)) {
           os << mv.first.type << " " << mv.first.name << ";\n\n";
         } else {
@@ -1218,9 +1221,11 @@ namespace mfront {
         os << mv.second.type << " " << mv.second.name << ";\n\n";
       } else {
         if (Gradient::isIncrementKnown(mv.first)) {
-          os << "tfel::math::fsarray<" << mv.first.arraySize << ", " << mv.first.type << "> " << mv.first.name << ";\n\n";
+          os << "tfel::math::fsarray<" << mv.first.arraySize << ", "
+             << mv.first.type << "> " << mv.first.name << ";\n\n";
         } else {
-          os << "tfel::math::fsarray<" << mv.first.arraySize << ", " << mv.first.type << "> " << mv.first.name << "0;\n\n";
+          os << "tfel::math::fsarray<" << mv.first.arraySize << ", "
+             << mv.first.type << "> " << mv.first.name << "0;\n\n";
         }
         os << "tfel::math::fsarray<" << mv.second.arraySize << ", "
            << mv.second.type << "> " << mv.second.name << ";\n\n";
@@ -4677,18 +4682,19 @@ namespace mfront {
                << ">& " << bn << ";\n";
           }
         } else {
-          os << "tfel::math::View<tfel::math::derivative_type<" << v1.type << ","
-             << v2.type << ">> " << bn << ";\n";
+          os << "tfel::math::View<tfel::math::derivative_type<" << v1.type
+             << "," << v2.type << ">> " << bn << ";\n";
         }
       } else if ((v1.arraySize == 1u) || (v2.arraySize == 1u)) {
         os << "/*!\n"
            << " * \\return the derivative of " << v1.name << " with respect "
            << v2.name << "\n"
-           << " * \\param[in] mfront_idx: array index relative to "<< v1.name << "\n"
+           << " * \\param[in] mfront_idx: array index relative to " << v1.name
+           << "\n"
            << " */\n"
            << "auto " << bn << "(const ushort mfront_idx) noexcept {\n"
-           << "return tfel::math::map<tfel::math::derivative_type<" << v1.type << ", " << v2.type
-           << ">>(this->Dt.data() + ";
+           << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
+           << ", " << v2.type << ">>(this->Dt.data() + ";
         if (!o.isNull()) {
           os << o << " + ";
         }
@@ -4706,8 +4712,8 @@ namespace mfront {
            << "decltype(auto) " << bn
            << "(const ushort mfront_idx, const ushort mfront_idx2) noexcept "
            << "{\n"
-           << "return tfel::math::map<tfel::math::derivative_type<" << v1.type << ", " << v2.type
-           << ">>(this->Dt.data() + ";
+           << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
+           << ", " << v2.type << ">>(this->Dt.data() + ";
         if (!o.isNull()) {
           os << o << " + ";
         }
@@ -4810,29 +4816,34 @@ namespace mfront {
     this->checkIntegrationDataFile(os);
     os << "protected: \n\n";
     for (const auto& v : this->bd.getMainVariables()) {
-      if(v.first.arraySize != v.second.arraySize){
-        tfel::raise("BehaviourCodeGeneratorBase::writeIntegrationDataDefaultMembers: "
-                    "the array size of the gradient '" + v.first.name + "' is "
-                    "different from the array size of the thermodynamic force '" +
-                    v.second.name + "'");
+      if (v.first.arraySize != v.second.arraySize) {
+        tfel::raise(
+            "BehaviourCodeGeneratorBase::writeIntegrationDataDefaultMembers: "
+            "the array size of the gradient '" +
+            v.first.name +
+            "' is "
+            "different from the array size of the thermodynamic force '" +
+            v.second.name + "'");
       }
       if (Gradient::isIncrementKnown(v.first)) {
         os << "/*!\n"
            << " * \\brief " << v.first.name << " increment\n"
            << " */\n";
-        if(v.first.arraySize == 1u){
+        if (v.first.arraySize == 1u) {
           os << v.first.type << " d" << v.first.name << ";\n\n";
         } else {
-          os << v.first.type << " d" << v.first.name << "[" << v.first.arraySize << "];\n\n";
+          os << v.first.type << " d" << v.first.name << "[" << v.first.arraySize
+             << "];\n\n";
         }
       } else {
         os << "/*!\n"
            << " * \\brief " << v.first.name << " at the end of the time step\n"
            << " */\n";
-        if(v.first.arraySize == 1u){
+        if (v.first.arraySize == 1u) {
           os << v.first.type << " " << v.first.name << "1;\n\n";
         } else {
-          os << v.first.type << " " << v.first.name << "1[" << v.first.arraySize << "];\n\n";
+          os << v.first.type << " " << v.first.name << "1[" << v.first.arraySize
+             << "];\n\n";
         }
       }
     }

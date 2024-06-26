@@ -202,11 +202,10 @@ namespace mfront {
      *                   (generally taking into account the material
      *                    and the behaviour name)
      */
-    virtual void writeBehaviourKinematicSymbols(
-        std::ostream &,
-        const BehaviourInterfaceBase &,
-        const BehaviourDescription &,
-        const std::string &) const = 0;
+    virtual void writeBehaviourKinematicSymbols(std::ostream &,
+                                                const BehaviourInterfaceBase &,
+                                                const BehaviourDescription &,
+                                                const std::string &) const = 0;
     /*!
      * \brief write the symbols associated with the source file
      * \param[in] out  : output file
@@ -308,12 +307,11 @@ namespace mfront {
      *                   and the behaviour name)
      * \param[in] h   : modelling hypothesis
      */
-    virtual void writeMaterialPropertiesSymbols(
-        std::ostream &,
-        const BehaviourInterfaceBase &,
-        const BehaviourDescription &,
-        const std::string &,
-        const Hypothesis) const;
+    virtual void writeMaterialPropertiesSymbols(std::ostream &,
+                                                const BehaviourInterfaceBase &,
+                                                const BehaviourDescription &,
+                                                const std::string &,
+                                                const Hypothesis) const;
     /*!
      * \param[in] out  : output file
      * \param[in] i    : standard behaviour interface
@@ -358,12 +356,11 @@ namespace mfront {
      * \param[in] name : name of the behaviour
      * \param[in] h    : modelling hypothesis
      */
-    virtual void writeInitializeFunctionsSymbols(
-        std::ostream &,
-        const BehaviourInterfaceBase &,
-        const BehaviourDescription &,
-        const std::string &,
-        const Hypothesis) const;
+    virtual void writeInitializeFunctionsSymbols(std::ostream &,
+                                                 const BehaviourInterfaceBase &,
+                                                 const BehaviourDescription &,
+                                                 const std::string &,
+                                                 const Hypothesis) const;
     /*!
      * \param[in] out  : output file
      * \param[in] i    : standard behaviour interface
@@ -441,11 +438,10 @@ namespace mfront {
      * \param[in] mb   : behaviour description
      * \param[in] name : behaviour name
      */
-    virtual void writeElasticSymmetryTypeSymbols(
-        std::ostream &,
-        const BehaviourInterfaceBase &,
-        const BehaviourDescription &,
-        const std::string &) const;
+    virtual void writeElasticSymmetryTypeSymbols(std::ostream &,
+                                                 const BehaviourInterfaceBase &,
+                                                 const BehaviourDescription &,
+                                                 const std::string &) const;
     /*!
      * \param[in] out  : output file
      * \param[in] i    : standard behaviour interface

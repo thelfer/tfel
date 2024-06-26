@@ -97,6 +97,7 @@ set(TFELMFront_SOURCES
     InitInterfaces.cxx
     InitDSLs.cxx
     DSLFactory.cxx
+    DataInterpolationUtilities.cxx
     Gradient.cxx
     ThermodynamicForce.cxx
     LawFunction.cxx

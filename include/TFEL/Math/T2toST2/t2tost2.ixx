@@ -28,19 +28,21 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   template <TensorConcept TensorType>
-  TFEL_HOST_DEVICE constexpr auto
-  t2tost2<N, T>::dCdF(const TensorType& F) noexcept requires(
-      getSpaceDimension<TensorType>() == N &&
-      isAssignableTo<numeric_type<TensorType>, T>()) {
+  TFEL_HOST_DEVICE constexpr auto t2tost2<N, T>::dCdF(
+      const TensorType& F) noexcept
+    requires(getSpaceDimension<TensorType>() == N &&
+             isAssignableTo<numeric_type<TensorType>, T>())
+  {
     return Expr<t2tost2<N, T>, RightCauchyGreenTensorDerivativeExpr<N>>(F);
   }  // end of t2tost2::dCdF
 
   template <unsigned short N, typename T>
   template <TensorConcept TensorType>
-  TFEL_HOST_DEVICE constexpr auto
-  t2tost2<N, T>::dBdF(const TensorType& F) noexcept requires(
-      getSpaceDimension<TensorType>() == N &&
-      isAssignableTo<numeric_type<TensorType>, T>()) {
+  TFEL_HOST_DEVICE constexpr auto t2tost2<N, T>::dBdF(
+      const TensorType& F) noexcept
+    requires(getSpaceDimension<TensorType>() == N &&
+             isAssignableTo<numeric_type<TensorType>, T>())
+  {
     return Expr<t2tost2<N, T>, LeftCauchyGreenTensorDerivativeExpr<N>>(F);
   }  // end of t2tost2::dBdF
 
@@ -210,12 +212,13 @@ namespace tfel::math {
       const T2toST2Type& dt,
       const StensorType& s,
       const TensorType& F) noexcept  //
-      requires(getSpaceDimension<T2toST2Type>() ==
-                   getSpaceDimension<StensorType>() &&
-               getSpaceDimension<T2toST2Type>() ==
-                   getSpaceDimension<TensorType>() &&
-               tfel::typetraits::IsFundamentalNumericType<
-                   numeric_type<TensorType>>::cond) {
+    requires(getSpaceDimension<T2toST2Type>() ==
+                 getSpaceDimension<StensorType>() &&
+             getSpaceDimension<T2toST2Type>() ==
+                 getSpaceDimension<TensorType>() &&
+             tfel::typetraits::IsFundamentalNumericType<
+                 numeric_type<TensorType>>::cond)
+  {
     using stress =
         typename ComputeBinaryResult<numeric_type<T2toST2Type>,
                                      numeric_type<StensorType>, OpPlus>::Result;
@@ -232,12 +235,13 @@ namespace tfel::math {
       const T2toST2Type& ds,
       const StensorType& s,
       const TensorType& F) noexcept  //
-      requires(getSpaceDimension<T2toST2Type>() ==
-                   getSpaceDimension<StensorType>() &&
-               getSpaceDimension<T2toST2Type>() ==
-                   getSpaceDimension<TensorType>() &&
-               tfel::typetraits::IsFundamentalNumericType<
-                   numeric_type<TensorType>>::cond) {
+    requires(getSpaceDimension<T2toST2Type>() ==
+                 getSpaceDimension<StensorType>() &&
+             getSpaceDimension<T2toST2Type>() ==
+                 getSpaceDimension<TensorType>() &&
+             tfel::typetraits::IsFundamentalNumericType<
+                 numeric_type<TensorType>>::cond)
+  {
     using stress =
         typename ComputeBinaryResult<numeric_type<T2toST2Type>,
                                      numeric_type<StensorType>, OpPlus>::Result;
@@ -253,12 +257,13 @@ namespace tfel::math {
       const T2toST2Type& K,
       const StensorType& S,
       const TensorType& F) noexcept  //
-      requires(getSpaceDimension<StensorType>() ==
-                   getSpaceDimension<T2toST2Type>() &&
-               getSpaceDimension<TensorType>() ==
-                   getSpaceDimension<T2toST2Type>() &&
-               tfel::typetraits::IsFundamentalNumericType<
-                   numeric_type<TensorType>>::cond) {
+    requires(getSpaceDimension<StensorType>() ==
+                 getSpaceDimension<T2toST2Type>() &&
+             getSpaceDimension<TensorType>() ==
+                 getSpaceDimension<T2toST2Type>() &&
+             tfel::typetraits::IsFundamentalNumericType<
+                 numeric_type<TensorType>>::cond)
+  {
     using stress =
         typename ComputeBinaryResult<numeric_type<T2toST2Type>,
                                      numeric_type<StensorType>, OpPlus>::Result;
@@ -276,13 +281,14 @@ namespace tfel::math {
       const T2toST2Type& dS_dF,
       const StensorType& S,
       const TensorType& F) noexcept  //
-      requires(tfel::typetraits::IsFundamentalNumericType<
-               numeric_type<TensorType>>::cond&&
-                   isAssignableTo<
-                       typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+    requires(
+        tfel::typetraits::IsFundamentalNumericType<
+            numeric_type<TensorType>>::cond &&
+        isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
                                                     numeric_type<StensorType>,
                                                     OpPlus>::Result,
-                       numeric_type<T2toST2ResultType>>()) {
+                       numeric_type<T2toST2ResultType>>())
+  {
     constexpr auto N = getSpaceDimension<T2toST2ResultType>();
     static_assert(getSpaceDimension<T2toST2Type>() == N);
     static_assert(getSpaceDimension<StensorType>() == N);
@@ -317,8 +323,9 @@ namespace tfel::math {
   template <std::size_t... d>
   TFEL_HOST_DEVICE constexpr t2tost2<N, ValueType>::t2tost2(
       ValueType const (&... arrays)[d])  //
-      requires((sizeof...(d) == StensorDimeToSize<N>::value) &&
-               ((d == TensorDimeToSize<N>::value) && ...)) {
+    requires((sizeof...(d) == StensorDimeToSize<N>::value) &&
+             ((d == TensorDimeToSize<N>::value) && ...))
+  {
     auto init_row = [this](
                         const typename t2tost2::size_type i,
                         ValueType const(&values)[TensorDimeToSize<N>::value]) {

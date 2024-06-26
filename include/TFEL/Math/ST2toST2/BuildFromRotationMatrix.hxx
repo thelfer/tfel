@@ -83,7 +83,7 @@ namespace tfel::math::st2tost2_internals {
       s(3, 3) = r(0, 0) * r(1, 1) + r(0, 1) * r(1, 0);
       return s;
     }  // end of BuildFromRotationMatrix<2u>::exe
-  };   // end of struct BuildFromRotationMatrix<2u>
+  };  // end of struct BuildFromRotationMatrix<2u>
   /*!
    * \brief partial specialisation in 3D
    */
@@ -157,7 +157,7 @@ namespace tfel::math::st2tost2_internals {
       s(5, 5) = e * i + f * h;
       return s;
     }  // end of BuildFromRotationMatrix<3u>::exe
-  };   // end of struct BuildFromRotationMatrix<3u>
+  };  // end of struct BuildFromRotationMatrix<3u>
 
 }  // end of namespace tfel::math::st2tost2_internals
 

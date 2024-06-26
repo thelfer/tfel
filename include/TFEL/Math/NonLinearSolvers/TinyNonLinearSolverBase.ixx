@@ -122,8 +122,8 @@ namespace tfel::math {
             VectorConcept FixedSizeVectorType>
   TFEL_HOST_DEVICE bool
   TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
-      solveLinearSystem(FixedSizeMatrixType& m, FixedSizeVectorType& v) const
-      noexcept {
+      solveLinearSystem(FixedSizeMatrixType& m,
+                        FixedSizeVectorType& v) const noexcept {
     return TinyMatrixSolve<N, NumericType, false>::exe(m, v);
   }  // end of solveLinearSystem
 

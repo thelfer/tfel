@@ -141,9 +141,11 @@ namespace tfel::utilities {
     //! \return an reverse iterator at the end of the string
     auto rbegin() -> typename std::array<CharT, N + 1>::reverse_iterator;
     //! \return an reverse iterator at the end of the string
-    auto rbegin() const -> typename std::array<CharT, N + 1>::const_reverse_iterator;
+    auto rbegin() const ->
+        typename std::array<CharT, N + 1>::const_reverse_iterator;
     //! \return an reverse iterator at the end of the string
-    auto crbegin() const -> typename std::array<CharT, N + 1>::const_reverse_iterator;
+    auto crbegin() const ->
+        typename std::array<CharT, N + 1>::const_reverse_iterator;
     //! \return the last character of the string
     CharT& back();
     //! \return the last character of the string

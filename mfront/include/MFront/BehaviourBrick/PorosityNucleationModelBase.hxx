@@ -53,12 +53,12 @@ namespace mfront::bbrick {
       //! \brief description of the material coefficient
       std::string description;
     };  // end of struct MaterialCoefficientDescripion
-        /*!
-         * \return a list of material coefficients
-         * Those material coefficients are:
-         * - automatically declared as options to the nucleation model
-         * - initialized in the `@InitLocalVariables` code block
-         */
+    /*!
+     * \return a list of material coefficients
+     * Those material coefficients are:
+     * - automatically declared as options to the nucleation model
+     * - initialized in the `@InitLocalVariables` code block
+     */
     virtual std::vector<MaterialCoefficientDescription>
     getMaterialCoefficientDescriptions() const;
     /*!

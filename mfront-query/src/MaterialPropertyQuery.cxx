@@ -72,8 +72,9 @@ namespace mfront {
     }
     this->registerCallBack(
         "--parameter-default-value",
-        CallBack("display the default value of a parameter",
-                 [this] { this->treatParameterDefaultValue(); }, true));
+        CallBack(
+            "display the default value of a parameter",
+            [this] { this->treatParameterDefaultValue(); }, true));
     // bounds
     auto has_bounds = [this] {
       const auto& q = this->getCurrentCommandLineArgument();

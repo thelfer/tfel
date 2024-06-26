@@ -68,7 +68,7 @@ namespace tfel::python::internals {
       using namespace boost::python;
       return incref(make_tuple(std::get<S>(t)...).ptr());
     }  // end of exe
-  };   // end of build_python_tuple
+  };  // end of build_python_tuple
 
   template <typename T, int n>
   T extract_nth_elt(const boost::python::tuple& l) {
@@ -92,7 +92,7 @@ namespace tfel::python::internals {
                     const integer_sequence<S...>&) {
       new (s) std::tuple<Types...>(extract_nth_elt<Types, S>(l)...);
     }  // end of exe
-  };   // end of build_tuple
+  };  // end of build_tuple
 
   /*!
    * \brief convert tuple converter to python tuple
@@ -102,7 +102,7 @@ namespace tfel::python::internals {
     static PyObject* convert(const std::tuple<Types...>& t) {
       return build_python_tuple<Types...>::exe(t);
     }  // end of convert
-  };   // end of struct tuple_to_python_tuple
+  };  // end of struct tuple_to_python_tuple
 
   template <typename... Types>
   struct tuple_from_python_tuple {

@@ -158,42 +158,39 @@ namespace tfel::utilities {
   }  // end of basic_fcstring<N,CharT,Traits>::size
 
   template <std::size_t N, typename CharT, typename Traits>
-  auto basic_fcstring<N, CharT, Traits>::end() -> typename std::array<CharT, N + 1>::iterator
-  {
+  auto basic_fcstring<N, CharT, Traits>::end() ->
+      typename std::array<CharT, N + 1>::iterator {
     return this->begin() + this->size();
   }  // end of basic_fcstring<N,CharT,Traits>::end
 
   template <std::size_t N, typename CharT, typename Traits>
-  auto basic_fcstring<N, CharT, Traits>::end() const -> typename std::array<CharT, N + 1>::const_iterator
-  {
+  auto basic_fcstring<N, CharT, Traits>::end() const ->
+      typename std::array<CharT, N + 1>::const_iterator {
     return this->begin() + this->size();
   }  // end of basic_fcstring<N,CharT,Traits>::end
 
   template <std::size_t N, typename CharT, typename Traits>
-  auto basic_fcstring<N, CharT, Traits>::cend() const -> typename std::array<CharT, N + 1>::const_iterator
-  {
+  auto basic_fcstring<N, CharT, Traits>::cend() const ->
+      typename std::array<CharT, N + 1>::const_iterator {
     return this->end();
   }  // end of basic_fcstring<N,CharT,Traits>::cend
 
   template <std::size_t N, typename CharT, typename Traits>
-  auto basic_fcstring<N, CharT, Traits>::rbegin()
-      -> typename std::array<CharT, N + 1>::reverse_iterator
-  {
+  auto basic_fcstring<N, CharT, Traits>::rbegin() ->
+      typename std::array<CharT, N + 1>::reverse_iterator {
     return typename std::array<CharT, N + 1>::reverse_iterator{this->end()};
   }  // end of basic_fcstring<N,CharT,Traits>::rbegin
 
   template <std::size_t N, typename CharT, typename Traits>
-  auto basic_fcstring<N, CharT, Traits>::rbegin() const
-      -> typename std::array<CharT, N + 1>::const_reverse_iterator
-  {
+  auto basic_fcstring<N, CharT, Traits>::rbegin() const ->
+      typename std::array<CharT, N + 1>::const_reverse_iterator {
     return
         typename std::array<CharT, N + 1>::const_reverse_iterator{this->end()};
   }  // end of basic_fcstring<N,CharT,Traits>::rbegin
 
   template <std::size_t N, typename CharT, typename Traits>
-  auto basic_fcstring<N, CharT, Traits>::crbegin() const
-      -> typename std::array<CharT, N + 1>::const_reverse_iterator
-  {
+  auto basic_fcstring<N, CharT, Traits>::crbegin() const ->
+      typename std::array<CharT, N + 1>::const_reverse_iterator {
     return
         typename std::array<CharT, N + 1>::const_reverse_iterator{this->end()};
   }  // end of basic_fcstring<N,CharT,Traits>::crbegin

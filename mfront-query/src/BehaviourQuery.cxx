@@ -178,8 +178,9 @@ namespace mfront {
     //
     this->registerCallBack(
         "--modelling-hypothesis",
-        CallBack("select a modelling hypothesis",
-                 [this] { this->treatModellingHypothesis(); }, true));
+        CallBack(
+            "select a modelling hypothesis",
+            [this] { this->treatModellingHypothesis(); }, true));
     // standard queries
     const std::vector<std::pair<const char*, const char*>> sq = {
         {"--behaviour-name", "show the behaviour name"},

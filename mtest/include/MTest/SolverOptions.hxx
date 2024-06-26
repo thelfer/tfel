@@ -63,9 +63,9 @@ namespace mtest {
     //! default value
     UNSPECIFIEDSTIFFNESSUPDATINGPOLICY
   };  // end of enum struct StiffnessUpdatingPolicy
-      /*!
-       * \brief possible prediction policies
-       */
+  /*!
+   * \brief possible prediction policies
+   */
   enum struct PredictionPolicy {
     NOPREDICTION,
     LINEARPREDICTION,

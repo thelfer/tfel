@@ -113,12 +113,12 @@ namespace mfront {
        */
       virtual ~VariableModifier();
     };  // end of struct VariableModifier
-        /*!
-         * \brief An helper structure used by the DSLBase class to modify the
-         * code provided by the user.
-         *
-         * These modifiers are called when the parser encounters variables.
-         */
+    /*!
+     * \brief An helper structure used by the DSLBase class to modify the
+     * code provided by the user.
+     *
+     * These modifiers are called when the parser encounters variables.
+     */
     struct MFRONT_VISIBILITY_EXPORT WordAnalyser {
       /*!
        * \param[in] cb : code block being treated
@@ -591,6 +591,10 @@ namespace mfront {
     TargetsDescription td;
     //! \brief additional linker flags
     std::vector<std::string> ldflags;
+    //! \brief additional link libraries
+    std::vector<std::string> link_libraries;
+    //! \brief additional link directories
+    std::vector<std::string> link_directories;
     //! \brief auxiliary target descriptions
     std::vector<TargetsDescription> atds;
     //! \brief current position in the input stream
