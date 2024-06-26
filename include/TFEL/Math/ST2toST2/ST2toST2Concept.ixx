@@ -14,7 +14,6 @@
 #define LIB_TFEL_MATH_ST2TOST2_CONCEPT_IXX 1
 
 #include "TFEL/Math/General/Abs.hxx"
-#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
 #include "TFEL/Math/LU/LUDecomp.hxx"
 #include "TFEL/Math/LU/TinyPermutation.hxx"
 #include "TFEL/Math/ST2toST2/ST2toST2TransposeExpr.hxx"
@@ -82,8 +81,9 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr void computePushForwardDerivative(
       ST2toST2ResultType& r,
       const TensorType& F) noexcept  //
-      requires(tfel::typetraits::IsFundamentalNumericType<
-               numeric_type<TensorType>>::cond) {
+    requires(tfel::typetraits::IsFundamentalNumericType<
+             numeric_type<TensorType>>::cond)
+  {
     constexpr auto N = getSpaceDimension<ST2toST2ResultType>();
     static_assert(getSpaceDimension<TensorType>() == N);
     using value_type = numeric_type<ST2toST2ResultType>;

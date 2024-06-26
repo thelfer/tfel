@@ -13,6 +13,9 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @abou_chakra_micromechanical_2024
+    @josien_merope_2024
+    @chen_anisotropic_2024
     @mohanan_intergranular_2024
     @scherer_tensile_2024
     @vedrine_role_2024
@@ -21,6 +24,8 @@ nocite: |
     @lorenzo_exploring_2024
     @simo_novel_2024
     @singh_irradiation_2024
+    @loiseau_formulation_2023
+	@thuillet_modelisation_2023
     @wang_modelling_2023
     @fokam_implementation_2023
     @bacquaert_standard_2023

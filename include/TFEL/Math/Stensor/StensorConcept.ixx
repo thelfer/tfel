@@ -14,7 +14,6 @@
 
 #include "TFEL/Math/power.hxx"
 #include "TFEL/Math/General/Abs.hxx"
-#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
 
 namespace tfel::math {
 

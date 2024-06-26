@@ -50,13 +50,13 @@ namespace tfel::math {
 
   template <unsigned short N, typename ValueType>
   TFEL_HOST_DEVICE constexpr ValueType tensor<N, ValueType>::operator()(
-      const typename tensor::size_type i) const noexcept {
+      const typename tensor<N, ValueType>::size_type i) const noexcept {
     return GenericFixedSizeArrayBase::operator()(i);
   }  // end of operator()
 
   template <unsigned short N, typename ValueType>
   TFEL_HOST_DEVICE constexpr ValueType& tensor<N, ValueType>::operator()(
-      const typename tensor::size_type i) noexcept {
+      const typename tensor<N, ValueType>::size_type i) noexcept {
     return GenericFixedSizeArrayBase::operator()(i);
   }
 
@@ -138,8 +138,10 @@ namespace tfel::math {
   }  // end of copy
 
   template <unsigned short N, typename T>
-  TFEL_HOST_DEVICE constexpr void exportToBaseTypeArray(
-      const tensor<N, T>& t, const auto p) noexcept requires(isScalar<T>()) {
+  TFEL_HOST_DEVICE constexpr void exportToBaseTypeArray(const tensor<N, T>& t,
+                                                        const auto p) noexcept
+    requires(isScalar<T>())
+  {
     tfel::fsalgo::transform<TensorDimeToSize<N>::value>::exe(
         t.cbegin(), p, [](const auto& v) { return base_type_cast(v); });
   }

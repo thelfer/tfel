@@ -1161,10 +1161,10 @@ both dynamic and static recovery by the following evolution law:
 \tenseur{\dot{a}}=
 \dot{p}\,\tenseurq{E}_{c}\,\colon\,\tenseur{n}
 -D\,\dot{p}\,\tenseurq{R}_{d}\,\colon\,\tenseur{a}
--f\,\paren{\Frac{a_{\mathrm{eq}}}{a_{0}}}^{m}\,\deriv{a_{\mathrm{eq}}}{\tenseur{a}}
+-f\,\paren{\frac{a_{\mathrm{eq}}}{a_{0}}}^{m}\,\deriv{a_{\mathrm{eq}}}{\tenseur{a}}
 \]
 with \(a_{\mathrm{eq}}=\sqrt{\tenseur{a}\,\colon\,\tenseurq{R}_{s}\,\colon\,\tenseur{a}}\) and 
-\(\deriv{a_{\mathrm{eq}}}{\tenseur{a}}=\Frac{\tenseurq{R}_{s}\,\colon\,\tenseur{a}}{a_{\mathrm{eq}}}\)
+\(\deriv{a_{\mathrm{eq}}}{\tenseur{a}}=\frac{\tenseurq{R}_{s}\,\colon\,\tenseur{a}}{a_{\mathrm{eq}}}\)
 
 The three fourth order tensors \(\tenseurq{E}_{c}\),
 \(\tenseurq{R}_{d}\) and \(\tenseurq{R}_{s}\) are assumed to have the

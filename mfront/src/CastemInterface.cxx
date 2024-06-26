@@ -1777,7 +1777,7 @@ namespace mfront {
               "CastemInterface::buildMaterialPropertiesList: "
               "incompatible offset for material "
               "property '" +
-                  mp.name + "' (aka '" + mp1.name +
+                  mp.name + "' (aka '" + mp1.getExternalName() +
                   "'). "
                   "This is one pitfall of the umat interface. "
                   "To by-pass this limitation, you may want to "
@@ -2373,6 +2373,92 @@ namespace mfront {
     }
   }
 
+  void CastemInterface::writeGibianeMappingComments(
+      std::ostream& out,
+      const Hypothesis h,
+      const VariableDescriptionContainer& v) const {
+    for (const auto& pv : v) {
+      const auto flag = SupportedTypes::getTypeFlag(pv.type);
+      std::string tmp;
+      tmp += "** - ";
+      if (flag == SupportedTypes::SCALAR) {
+        if (pv.arraySize == 1) {
+          tmp += pv.getExternalName();
+          tmp += ": " + treatScalar(pv.name) + "\n";
+        } else {
+          for (unsigned short j = 0; j != pv.arraySize;) {
+            tmp += pv.getExternalName();
+            tmp += ": " + treatScalar(pv.name, j) + "\n";
+          }
+        }
+      } else if (flag == SupportedTypes::TVECTOR) {
+        if (pv.arraySize == 1) {
+          tmp += pv.getExternalName();
+          tmp += ": " + treatTVector(h, pv.name);
+        } else {
+          for (unsigned short j = 0; j != pv.arraySize;) {
+            tmp += pv.getExternalName();
+            tmp += ": " + treatTVector(h, pv.name, j) + "\n";
+          }
+        }
+      } else if (flag == SupportedTypes::STENSOR) {
+        if (pv.arraySize == 1) {
+          tmp += pv.getExternalName();
+          tmp += ": " + treatStensor(h, pv.name) + "\n";
+        } else {
+          for (unsigned short j = 0; j != pv.arraySize;) {
+            tmp += pv.getExternalName();
+            tmp += ": " + treatStensor(h, pv.name, j) + "\n";
+          }
+        }
+      } else if (flag == SupportedTypes::TENSOR) {
+        if (pv.arraySize == 1) {
+          tmp += pv.getExternalName();
+          tmp += ": " + treatTensor(h, pv.name) + "\n";
+        } else {
+          for (unsigned short j = 0; j != pv.arraySize;) {
+            tmp += pv.getExternalName();
+            tmp += ": " + treatTensor(h, pv.name, j) + "\n";
+          }
+        }
+      } else {
+        tfel::raise(
+            "CastemInterface::writeVariableDescriptionContainerToGibiane: "
+            "internal error, tag unsupported");
+      }
+      out << tmp;
+    }
+  }
+
+  void CastemInterface::writeGibianeMappingComments(
+      std::ostream& out,
+      const std::pair<std::vector<BehaviourMaterialProperty>,
+                      SupportedTypes::TypeSize>& mprops) const {
+    auto throw_if = [](const bool c, const std::string& msg) {
+      tfel::raise_if(c,
+                     "checkFiniteStrainStrategyDefinitionConsistency "
+                     "(CastemInterface): " +
+                         msg);
+    };
+    for (const auto& pm : mprops.first) {
+      const auto flag = SupportedTypes::getTypeFlag(pm.type);
+      throw_if(flag != SupportedTypes::SCALAR,
+               "material properties shall be scalars");
+      std::string tmp;
+      tmp += "** - ";
+      if (pm.arraySize == 1) {
+        tmp += pm.getExternalName();
+        tmp += ": " + treatScalar(pm.name) + "\n";
+      } else {
+        for (unsigned short j = 0; j != pm.arraySize;) {
+          tmp += pm.getExternalName();
+          tmp += treatScalar(pm.name, j) + "\n";
+        }
+      }
+      out << tmp;
+    }
+  }
+
   void CastemInterface::writeGibianeInstruction(std::ostream& out,
                                                 const std::string& i) const {
     std::istringstream in(i);
@@ -2450,6 +2536,10 @@ namespace mfront {
       out << "** 'OPTION' 'DIMENSION' " << getSpaceDimension(h)
           << " 'MODELISER' " << mo.at(h) << " ;\n\n";
     }
+
+    out << "** List of material properties:\n**\n";
+    this->writeGibianeMappingComments(out, mprops);
+
     std::ostringstream mcoel;
     mcoel << "coel = 'MOTS' ";
     for (auto pm = mprops.first.cbegin(); pm != mprops.first.cend();) {
@@ -2457,10 +2547,10 @@ namespace mfront {
       throw_if(flag != SupportedTypes::SCALAR,
                "material properties shall be scalars");
       if (pm->arraySize == 1) {
-        mcoel << treatScalar(pm->var_name);
+        mcoel << treatScalar(pm->name);
       } else {
         for (unsigned short j = 0; j != pm->arraySize;) {
-          mcoel << treatScalar(pm->var_name, j);
+          mcoel << treatScalar(pm->name, j);
           if (++j != pm->arraySize) {
             mcoel << " ";
           }
@@ -2473,7 +2563,11 @@ namespace mfront {
     mcoel << ";";
     writeGibianeInstruction(out, mcoel.str());
     out << '\n';
+
     if (!persistentVarsHolder.empty()) {
+      out << "** List of state variables:\n**\n";
+      this->writeGibianeMappingComments(out, h, persistentVarsHolder);
+
       std::ostringstream mstatev;
       mstatev << "statev = 'MOTS' ";
       this->writeVariableDescriptionContainerToGibiane(mstatev, h,
@@ -2482,6 +2576,10 @@ namespace mfront {
       writeGibianeInstruction(out, mstatev.str());
       out << '\n';
     }
+
+    std::ostringstream mappingexternalStateVarsComment;
+    out << "** List of external state variables:\n**\n";
+    this->writeGibianeMappingComments(out, h, externalStateVarsHolder);
     std::ostringstream mparam;
     mparam << "params = 'MOTS' 'T'";
     if (!externalStateVarsHolder.empty()) {
@@ -2496,7 +2594,7 @@ namespace mfront {
     std::ostringstream mmod;
     mmod << "MO = 'MODELISER' v 'MECANIQUE' 'ELASTIQUE' ";
     if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
-      mmod << "'ORTHOTROPE'";
+      mmod << "'ORTHOTROPE' ";
     }
     mmod << nonlin << "\n"
          << "'LIB_LOI' 'lib" + this->getLibraryName(bd) + ".so'\n"
@@ -2530,12 +2628,12 @@ namespace mfront {
         }
       }
       if (pm->arraySize == 1) {
-        tmp = treatScalar(pm->var_name);
-        mi << tmp << " x" << makeLowerCase(pm->var_name);
+        tmp = treatScalar(pm->name);
+        mi << tmp << " x" << makeLowerCase(pm->name);
       } else {
         for (unsigned short j = 0; j != pm->arraySize;) {
-          tmp = treatScalar(pm->var_name, j);
-          mi << tmp << " x" << makeLowerCase(pm->var_name) << j;
+          tmp = treatScalar(pm->name, j);
+          mi << tmp << " x" << makeLowerCase(pm->name) << j;
           if (++j != pm->arraySize) {
             mi << " ";
           }
@@ -2758,8 +2856,8 @@ namespace mfront {
           << "tfel::material::ModellingHypothesisToSpaceDimension<H>;\n";
     }
     if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      out << "static " << constexpr_c << " ModellingHypothesis::Hypothesis H = "
-          << "ModellingHypothesis::"
+      out << "static " << constexpr_c
+          << " ModellingHypothesis::Hypothesis H = " << "ModellingHypothesis::"
           << ModellingHypothesis::toUpperCaseString(h) << ";\n";
     }
     if (mb.isModel()) {

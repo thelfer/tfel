@@ -208,7 +208,7 @@ namespace castem {
                       STATEV, STRESS, op, sfeh);
       handler.exe(DDSDDE, STRESS, STATEV, PNEWDT);
     }  // end of CastemOrthotropicBehaviourHander<1u,Behaviour>::exe
-  };   // end of struct CastemOrthotropicBehaviourHander<1u,Behaviour>
+  };  // end of struct CastemOrthotropicBehaviourHander<1u,Behaviour>
 
   template <
       tfel::material::ModellingHypothesis::Hypothesis H,
@@ -280,7 +280,7 @@ namespace castem {
         m.rotateTangentOperatorBackward(DDSDDE);
       }
     }  // end of CastemOrthotropicBehaviourHander<2u,Behaviour>::exe
-  };   // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
+  };  // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
 
   template <
       template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
@@ -355,7 +355,7 @@ namespace castem {
         m.rotateTangentOperatorBackward(DDSDDE);
       }
     }  // end of CastemOrthotropicBehaviourHander<2u,Behaviour>::exe
-  };   // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
+  };  // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
 
   template <
       tfel::material::ModellingHypothesis::Hypothesis H,
@@ -508,7 +508,7 @@ namespace castem {
                       STRESS, op, sfeh);
       handler.exe(DDSDDE, STRESS, STATEV, PNEWDT);
     }  // end of CastemOrthotropicBehaviourHander<1u,Behaviour>::exe
-  };   // end of struct CastemOrthotropicBehaviourHander<1u,Behaviour>
+  };  // end of struct CastemOrthotropicBehaviourHander<1u,Behaviour>
 
   template <
       tfel::material::ModellingHypothesis::Hypothesis H,
@@ -581,7 +581,7 @@ namespace castem {
         m.rotateTangentOperatorBackward(DDSDDE);
       }
     }  // end of CastemOrthotropicBehaviourHander<2u,Behaviour>::exe
-  };   // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
+  };  // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
 
   template <
       template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
@@ -658,7 +658,7 @@ namespace castem {
         m.rotateTangentOperatorBackward(DDSDDE);
       }
     }  // end of CastemOrthotropicBehaviourHander<2u,Behaviour>::exe
-  };   // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
+  };  // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
 
   template <
       tfel::material::ModellingHypothesis::Hypothesis H,

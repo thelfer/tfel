@@ -15,7 +15,7 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/BehaviourDescription.hxx"
-#include "MFront/StandardBehaviourInterface.hxx"
+#include "MFront/BehaviourInterfaceBase.hxx"
 #include "MFront/EuroplexusInterface.hxx"
 #include "MFront/EuroplexusSymbolsGenerator.hxx"
 
@@ -25,7 +25,7 @@ namespace mfront {
 
   void EuroplexusSymbolsGenerator::writeBehaviourTypeSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
     const auto s = i.getFunctionNameBasis(name) + "_BehaviourType";
@@ -48,7 +48,7 @@ namespace mfront {
 
   void EuroplexusSymbolsGenerator::writeBehaviourKinematicSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
     const auto s = i.getFunctionNameBasis(name) + "_BehaviourKinematic";
@@ -72,7 +72,7 @@ namespace mfront {
 
   void EuroplexusSymbolsGenerator::writeAdditionalSymbols(
       std::ostream&,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription&,
       const FileDescription&,
       const std::string&,

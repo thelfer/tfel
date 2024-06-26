@@ -143,6 +143,6 @@ namespace tfel::system {
       }
     }
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-  }    // end of recursiveFind
+  }  // end of recursiveFind
 
 }  // end of namespace tfel::system

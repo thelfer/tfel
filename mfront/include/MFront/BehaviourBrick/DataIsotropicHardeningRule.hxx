@@ -15,6 +15,7 @@
 #define LIB_MFRONT_BEHAVIOURBRICK_DATAISOTROPICHARDENINGRULE_HXX
 
 #include <map>
+#include "MFront/DataInterpolationUtilities.hxx"
 #include "MFront/BehaviourBrick/IsotropicHardeningRule.hxx"
 
 namespace mfront::bbrick {
@@ -29,7 +30,9 @@ namespace mfront::bbrick {
    * - \f$R_{inf}\f$ is the maximal yield strength
    * - \f$b\f$ is a parameter
    */
-  struct DataIsotropicHardeningRule final : IsotropicHardeningRule {
+  struct DataIsotropicHardeningRule final
+      : public IsotropicHardeningRule,
+        private SingleVariableInterpolatedData {
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
@@ -72,26 +75,6 @@ namespace mfront::bbrick {
      */
     virtual void writeCubicSplineInterpolationOfYieldRadius(
         BehaviourDescription&, const std::string&, const std::string&) const;
-    /*!
-     * \brief interpolation algorithm
-     */
-    enum InterpolationType {
-      LINEAR_INTERPOLATION,
-      CUBIC_SPLINE_INTERPOLATION
-    } itype = LINEAR_INTERPOLATION;
-    /*!
-     * \brief extrapolation type
-     *
-     * If true, extrapolation is allowed and based on the interpolation
-     * selected. If false, no extrapolation is performed and the value is kept
-     * constant, egal to the value of the closest point.
-     */
-    bool etype = true;
-    /*!
-     * \brief the values of the yield radius as a function of the equivalent
-     * plastic strain.
-     */
-    std::map<double, double> values;
   };  // end of struct DataIsotropicHardeningRule
 
 }  // end of namespace mfront::bbrick

@@ -102,7 +102,7 @@ namespace tfel::math {
       //! no ordering
       UNSORTED
     };  // end of EigenValuesOrdering
-  };    // end of struct stensor_common
+  };  // end of struct stensor_common
 
   template <unsigned short N, typename ValueType>
   struct stensor
@@ -672,6 +672,11 @@ namespace tfel::math {
         const bool = false) const;
   };  // end of struct stensor
 
+  // class template argument deduction
+  template <typename... T>
+  stensor(T&&... t) -> stensor<StensorSizeToDime<sizeof...(T)>::value,
+                               std::common_type_t<T...>>;
+
   /*!
    * \brief a simple alias for backward compatibility
    * \tparam N: space dimension
@@ -917,7 +922,6 @@ namespace tfel::typetraits {
 
 }  // end of namespace tfel::typetraits
 
-#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
 #include "TFEL/Math/Stensor/stensor.ixx"
 #include "TFEL/Math/Stensor/stensorResultType.hxx"
 #include "TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx"

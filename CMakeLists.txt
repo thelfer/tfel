@@ -2,6 +2,8 @@
 set(CMAKE_LEGACY_CYGWIN_WIN32 0) 
 cmake_minimum_required(VERSION 2.4)
 cmake_policy(SET CMP0005 OLD)
+cmake_policy(SET CMP0022 NEW)
+
 if(CMAKE_VERSION VERSION_GREATER 3.0.0)
   cmake_policy(SET CMP0026 OLD)
 endif(CMAKE_VERSION VERSION_GREATER 3.0.0)
@@ -689,6 +691,22 @@ if(install-system-libraries)
   endif( CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS )
 
 endif(install-system-libraries)
+
+# install tfel-modules-common.cmake
+
+configure_file(${PROJECT_SOURCE_DIR}/cmake/modules/tfel-modules-common.cmake.in
+               ${PROJECT_BINARY_DIR}/cmake/modules/tfel-modules-common.cmake
+               @ONLY)
+
+if(TFEL_APPEND_SUFFIX)
+  install(FILES ${PROJECT_BINARY_DIR}/cmake/modules/tfel-modules-common.cmake
+          DESTINATION "share/tfel-${TFEL_SUFFIX}/cmake"
+          COMPONENT core)
+else(TFEL_APPEND_SUFFIX)
+  install(FILES ${PROJECT_BINARY_DIR}/cmake/modules/tfel-modules-common.cmake
+          DESTINATION "share/tfel/cmake"
+          COMPONENT core)
+endif(TFEL_APPEND_SUFFIX)
 
 # install licences
 if(TFEL_APPEND_SUFFIX)

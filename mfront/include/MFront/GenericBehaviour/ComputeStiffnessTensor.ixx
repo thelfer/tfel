@@ -25,8 +25,9 @@ namespace mfront::gb {
   computeOrthotropicUnAlteredElasticStiffnessTensor(
       tfel::math::st2tost2<1u, stress>& C,
       const real* const mps) noexcept  //
-      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
-               1u) {
+    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+             1u)
+  {
     using namespace tfel::material;
     constexpr StiffnessTensorAlterationCharacteristic stac =
         StiffnessTensorAlterationCharacteristic::UNALTERED;
@@ -43,8 +44,9 @@ namespace mfront::gb {
   computeOrthotropicUnAlteredElasticStiffnessTensor(
       tfel::math::st2tost2<2u, stress>& C,
       const real* const mps) noexcept  //
-      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
-               2u) {
+    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+             2u)
+  {
     using namespace tfel::material;
     constexpr StiffnessTensorAlterationCharacteristic stac =
         StiffnessTensorAlterationCharacteristic::UNALTERED;
@@ -59,11 +61,10 @@ namespace mfront::gb {
             typename real>
   TFEL_HOST_DEVICE constexpr void
   computeOrthotropicUnAlteredElasticStiffnessTensor(
-      tfel::math::st2tost2<3u, stress>& C,
-      const real* const
-          mps) noexcept requires(tfel::material::
-                                     ModellingHypothesisToSpaceDimension<
-                                         H>::value == 3u) {
+      tfel::math::st2tost2<3u, stress>& C, const real* const mps) noexcept
+    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+             3u)
+  {
     using namespace tfel::material;
     constexpr StiffnessTensorAlterationCharacteristic stac =
         StiffnessTensorAlterationCharacteristic::UNALTERED;
@@ -79,8 +80,9 @@ namespace mfront::gb {
   computeOrthotropicAlteredElasticStiffnessTensor(
       tfel::math::st2tost2<1u, stress>& C,
       const real* const mps) noexcept  //
-      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
-               1u) {
+    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+             1u)
+  {
     using namespace tfel::material;
     constexpr StiffnessTensorAlterationCharacteristic stac =
         StiffnessTensorAlterationCharacteristic::ALTERED;
@@ -97,8 +99,9 @@ namespace mfront::gb {
   computeOrthotropicAlteredElasticStiffnessTensor(
       tfel::math::st2tost2<2u, stress>& C,
       const real* const mps) noexcept  //
-      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
-               2u) {
+    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+             2u)
+  {
     using namespace tfel::material;
     constexpr StiffnessTensorAlterationCharacteristic stac =
         StiffnessTensorAlterationCharacteristic::ALTERED;
@@ -115,8 +118,9 @@ namespace mfront::gb {
   computeOrthotropicAlteredElasticStiffnessTensor(
       tfel::math::st2tost2<3u, stress>& C,
       const real* const mps) noexcept  //
-      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
-               3u) {
+    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+             3u)
+  {
     using namespace tfel::material;
     constexpr StiffnessTensorAlterationCharacteristic stac =
         StiffnessTensorAlterationCharacteristic::ALTERED;

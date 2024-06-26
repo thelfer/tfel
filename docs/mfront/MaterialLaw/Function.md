@@ -18,6 +18,6 @@ thus introduced by the interfaces. We advice the user to use this
 {
   const real C0 =    575.57;
   const real C1 = -21094.;
-  Cp = C0+C1/T;
+  Cp = C0 + C1 / T;
 }
 ~~~~

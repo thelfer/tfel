@@ -67,8 +67,8 @@ namespace tfel::math {
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 3 + j];
     }  // end of operator()
-  };   // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
-       // >
+  };  // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
+      // >
 
   /*!
    * Partial specialisation for 2D tensor
@@ -120,8 +120,8 @@ namespace tfel::math {
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 5 + j];
     }  // end of operator()
-  };   // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
-       // >
+  };  // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
+      // >
 
   /*!
    * Partial specialisation for 3D tensor
@@ -201,8 +201,8 @@ namespace tfel::math {
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 9 + j];
     }  // end of operator()
-  };   // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
-       // >
+  };  // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
+      // >
 
 }  // end of namespace tfel::math
 

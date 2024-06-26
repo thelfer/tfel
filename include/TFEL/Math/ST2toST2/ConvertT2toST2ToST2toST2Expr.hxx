@@ -49,11 +49,11 @@ namespace tfel::math {
                                    numeric_type<ST2toST2ResultType>>());
       copy<9u>::exe(&A(0, 0), this->v);
     }  // end of Expr
-       /*!
-        * \brief access operator
-        * \param[in] i : line   index
-        * \param[in] j : column index
-        */
+    /*!
+     * \brief access operator
+     * \param[in] i : line   index
+     * \param[in] j : column index
+     */
     TFEL_HOST_DEVICE constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 3 + j];

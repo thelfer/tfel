@@ -152,7 +152,17 @@ set(mfront_SOURCES
   T91MartensiticSteel_Rinf_ROUX2007
   T91MartensiticSteel_ThermalExpansion_ROUX2007
   T91MartensiticSteel_YieldStress_ROUX2007
-  T91MartensiticSteel_YoungModulus_ROUX2007)
+  T91MartensiticSteel_YoungModulus_ROUX2007
+  LinearDataInterpolationTest
+  LinearDataInterpolationTest2
+  LinearDataInterpolationTest3
+  LinearDataInterpolationTest4
+  LinearDataInterpolationTest5
+  CubicSplineDataInterpolationTest
+  CubicSplineDataInterpolationTest2
+  CubicSplineDataInterpolationTest3
+  CubicSplineDataInterpolationTest4
+  CubicSplineDataInterpolationTest5)
 
 mfront_dependencies(MFrontMaterialProperties-generic
   MaterialLawDSLOptionsTest

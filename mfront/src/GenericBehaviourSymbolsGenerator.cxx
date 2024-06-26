@@ -15,7 +15,7 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/BehaviourDescription.hxx"
-#include "MFront/StandardBehaviourInterface.hxx"
+#include "MFront/BehaviourInterfaceBase.hxx"
 #include "MFront/GenericBehaviourInterface.hxx"
 #include "MFront/GenericBehaviourSymbolsGenerator.hxx"
 
@@ -26,7 +26,7 @@ namespace mfront {
 
   void GenericBehaviourSymbolsGenerator::writeSpecificSymbols(
       std::ostream& os,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription&,
       const FileDescription&,
       const std::string& name) const {
@@ -38,7 +38,7 @@ namespace mfront {
 
   void GenericBehaviourSymbolsGenerator::writeBehaviourTypeSymbols(
       std::ostream& os,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& bd,
       const std::string& name) const {
     const auto s = i.getFunctionNameBasis(name) + "_BehaviourType";
@@ -76,7 +76,7 @@ namespace mfront {
 
   void GenericBehaviourSymbolsGenerator::writeBehaviourKinematicSymbols(
       std::ostream& os,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& bd,
       const std::string& name) const {
     const auto s = i.getFunctionNameBasis(name) + "_BehaviourKinematic";
@@ -117,7 +117,7 @@ namespace mfront {
 
   void GenericBehaviourSymbolsGenerator::writeTangentOperatorSymbols(
       std::ostream& os,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& bd,
       const std::string& name) const {
     auto write_impl = [this, &os, &i, &name] {
@@ -149,7 +149,7 @@ namespace mfront {
 
   void GenericBehaviourSymbolsGenerator::writeInitializeFunctionsSymbols(
       std::ostream& os,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& bd,
       const std::string& name,
       const Hypothesis h) const {
@@ -181,7 +181,7 @@ namespace mfront {
 
   void GenericBehaviourSymbolsGenerator::writePostProcessingsSymbols(
       std::ostream& os,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& bd,
       const std::string& name,
       const Hypothesis h) const {
@@ -213,7 +213,7 @@ namespace mfront {
 
   void GenericBehaviourSymbolsGenerator::writeAdditionalSymbols(
       std::ostream&,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription&,
       const FileDescription&,
       const std::string&,

@@ -95,7 +95,7 @@ namespace tfel::check {
 #ifdef TFEL_PYTHON_EXECUTABLE
     c.addSubstitution("@python@", TFEL_PYTHON_EXECUTABLE, false);
 #endif /* */
-  }    // end of declareTFELExecutables
+  }  // end of declareTFELExecutables
 
   /*!
    * \brief main entry point
@@ -184,25 +184,26 @@ namespace tfel::check {
       this->registerCallBack(n, a, c);
     };
     declare2("--config", "-c",
-             CallBack("add a configuration file",
-                      [this] {
-                        const auto f = this->currentArgument->getOption();
-                        parse(this->configurations, f);
-                      },
-                      true));
+             CallBack(
+                 "add a configuration file",
+                 [this] {
+                   const auto f = this->currentArgument->getOption();
+                   parse(this->configurations, f);
+                 },
+                 true));
     this->registerCallBack(
         "--list-default-components",
-        CallBack("list all default components",
-                 [this] {
-                   auto global_configuration =
-                       this->configurations.getConfiguration("");
-                   for (const auto& c :
-                        global_configuration.available_components) {
-                     std::cout << "- " << c << '\n';
-                   }
-                   std::exit(EXIT_SUCCESS);
-                 },
-                 false));
+        CallBack(
+            "list all default components",
+            [this] {
+              auto global_configuration =
+                  this->configurations.getConfiguration("");
+              for (const auto& c : global_configuration.available_components) {
+                std::cout << "- " << c << '\n';
+              }
+              std::exit(EXIT_SUCCESS);
+            },
+            false));
   }  // end of TFELCheck::registerArgumentCallBacks
 
   std::string TFELCheck::getVersionDescription() const { return VERSION; }

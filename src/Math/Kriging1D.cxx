@@ -48,7 +48,7 @@ namespace tfel::math {
   }
 
   double Kriging1D::operator()(const double vx) const {
-    return Kriging<1u, double>::operator()(this->a* vx + this->b);
+    return Kriging<1u, double>::operator()(this->a * vx + this->b);
   }  // end of Kriging1D::operator()
 
   Kriging1D::~Kriging1D() = default;

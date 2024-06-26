@@ -15,7 +15,7 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/BehaviourDescription.hxx"
-#include "MFront/StandardBehaviourInterface.hxx"
+#include "MFront/BehaviourInterfaceBase.hxx"
 #include "MFront/AnsysInterface.hxx"
 #include "MFront/AnsysSymbolsGenerator.hxx"
 
@@ -25,7 +25,7 @@ namespace mfront {
 
   void AnsysSymbolsGenerator::writeAdditionalSymbols(
       std::ostream&,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription&,
       const FileDescription&,
       const std::string&,
@@ -34,14 +34,14 @@ namespace mfront {
 
   void AnsysSymbolsGenerator::writeSpecificSymbols(
       std::ostream&,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription&,
       const FileDescription&,
       const std::string&) const {}
 
   void AnsysSymbolsGenerator::writeBehaviourTypeSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
     auto throw_if = [](const bool b, const std::string& m) {
@@ -67,7 +67,7 @@ namespace mfront {
 
   void AnsysSymbolsGenerator::writeBehaviourKinematicSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
     auto throw_if = [](const bool b, const std::string& m) {

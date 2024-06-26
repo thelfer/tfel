@@ -45,11 +45,10 @@ namespace tfel::math {
   template <typename MatrixType>
   concept MatrixConcept =
       (std::is_same_v<typename std::decay_t<MatrixType>::ConceptTag,
-                      MatrixTag>)&&(requires(const MatrixType t,
-                                             const index_type<MatrixType> i,
-                                             const index_type<MatrixType> j) {
-        t(i, j);
-      });
+                      MatrixTag>) &&
+      (requires(const MatrixType t,
+                const index_type<MatrixType> i,
+                const index_type<MatrixType> j) { t(i, j); });
 
   //! paratial specialisation for matrices
   template <typename MatrixType>

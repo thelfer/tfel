@@ -109,7 +109,7 @@ namespace tfel {
       static_assert(tfel::typetraits::IsFundamentalNumericType<Type>::cond);
       static_assert(tfel::typetraits::IsReal<Type>::cond);
 
-      friend std::ostream& operator<<<>(std::ostream&, const EllipticCreep&);
+      friend std::ostream& operator<< <>(std::ostream&, const EllipticCreep&);
 
       static constexpr unsigned short TVectorSize = N;
       typedef tfel::math::StensorDimeToSize<N> StensorDimeToSize;
@@ -833,7 +833,7 @@ namespace tfel {
        */
       static std::string getName(void) { return std::string("EllipticCreep"); }
     };  // end of struct Name
-  }     // end of namespace utilities
+  }  // end of namespace utilities
 }  // end of namespace tfel
 
 #endif /* LIB_TFELMATERIAL_ELLIPTICCREEP_HXX_ */

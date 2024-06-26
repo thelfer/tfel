@@ -333,34 +333,36 @@ namespace mfront {
         os << "\t+ " << map_at(l, "description") << ": " << d.description
            << '\n';
       }
-      for (const auto& h : d.hypotheses) {
-        if (mb.isParameterName(h, d.name)) {
-          if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-            os << "\t+ " << map_at(l, "default value") << ": ";
-          } else {
-            os << "\t+ "
-               << map_at(l, "default value for") + " " +
-                      ModellingHypothesis::toString(h) + ": ";
-          }
-          if (d.type == "int") {
-            os << mb.getIntegerParameterDefaultValue(h, d.name);
-          } else if (d.type == "ushort") {
-            os << mb.getUnsignedShortParameterDefaultValue(h, d.name);
-          } else {
-            const auto& p =
-                mb.getBehaviourData(h).getParameters().getVariable(d.name);
-            if (p.arraySize == 1u) {
-              os << mb.getFloattingPointParameterDefaultValue(h, d.name);
+      if (!areParametersTreatedAsStaticVariables(mb)) {
+        for (const auto& h : d.hypotheses) {
+          if (mb.isParameterName(h, d.name)) {
+            if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+              os << "\t+ " << map_at(l, "default value") << ": ";
             } else {
-              for (unsigned short i = 0; i != p.arraySize;) {
-                os << mb.getFloattingPointParameterDefaultValue(h, d.name, i);
-                if (++i != p.arraySize) {
-                  os << " ";
+              os << "\t+ "
+                 << map_at(l, "default value for") + " " +
+                        ModellingHypothesis::toString(h) + ": ";
+            }
+            if (d.type == "int") {
+              os << mb.getIntegerParameterDefaultValue(h, d.name);
+            } else if (d.type == "ushort") {
+              os << mb.getUnsignedShortParameterDefaultValue(h, d.name);
+            } else {
+              const auto& p =
+                  mb.getBehaviourData(h).getParameters().getVariable(d.name);
+              if (p.arraySize == 1u) {
+                os << mb.getFloattingPointParameterDefaultValue(h, d.name);
+              } else {
+                for (unsigned short i = 0; i != p.arraySize;) {
+                  os << mb.getFloattingPointParameterDefaultValue(h, d.name, i);
+                  if (++i != p.arraySize) {
+                    os << " ";
+                  }
                 }
               }
             }
+            os << '\n';
           }
-          os << '\n';
         }
       }
       // codes blocks referring to the current variable
@@ -449,7 +451,125 @@ namespace mfront {
     }
   }  // end of BehaviourDocumentationGenerator::BehaviourDocumentationGenerator
 
-  void BehaviourDocumentationGenerator::exe() const {
+  void BehaviourDocumentationGenerator::registerCommandLineCallBacks() {
+    using Parser =
+        tfel::utilities::ArgumentParserBase<BehaviourDocumentationGenerator>;
+    Parser::registerNewCallBack("--verbose",
+                                &BehaviourDocumentationGenerator::treatVerbose,
+                                "set verbose output", true);
+    this->registerNewCallBack(
+        "--dsl-option", &BehaviourDocumentationGenerator::treatDSLOption,
+        "allow to define options passed to domain specific languages", true);
+    this->registerNewCallBack(
+        "--material-property-dsl-option",
+        &BehaviourDocumentationGenerator::treatMaterialPropertyDSLOption,
+        "allow to define options passed to domain specific languages related "
+        "to material properties",
+        true);
+    this->registerNewCallBack(
+        "--behaviour-dsl-option",
+        &BehaviourDocumentationGenerator::treatBehaviourDSLOption,
+        "allow to define options passed to domain specific languages related "
+        "to behaviours",
+        true);
+    this->registerNewCallBack(
+        "--model-dsl-option",
+        &BehaviourDocumentationGenerator::treatModelDSLOption,
+        "allow to define options passed to domain specific languages related "
+        "to models",
+        true);
+    this->registerNewCallBack(
+        "--dsl-options-file",
+        &BehaviourDocumentationGenerator::treatDSLOptionsFile,
+        "allow to define options passed to domain specific languages thanks to "
+        "an external file in a JSON-like format",
+        true);
+    this->registerNewCallBack(
+        "--material-property-dsl-options-file",
+        &BehaviourDocumentationGenerator::treatMaterialPropertyDSLOptionsFile,
+        "allow to define options passed to domain specific languages related "
+        "to material properties thanks to an external file in a JSON-like "
+        "format",
+        true);
+    this->registerNewCallBack(
+        "--behaviour-dsl-options-file",
+        &BehaviourDocumentationGenerator::treatBehaviourDSLOptionsFile,
+        "allow to define options passed to domain specific languages related "
+        "to behaviours thanks to an external file in a JSON-like format",
+        true);
+    this->registerNewCallBack(
+        "--model-dsl-options-file",
+        &BehaviourDocumentationGenerator::treatModelDSLOptionsFile,
+        "allow to define options passed to domain specific languages related "
+        "to models thanks to an external file in a JSON-like format",
+        true);
+    Parser::registerNewCallBack(
+        "--unicode-output",
+        &BehaviourDocumentationGenerator::treatUnicodeOutput,
+        "allow/disallow unicode output", true);
+    Parser::registerNewCallBack(
+        "--include", "-I", &BehaviourDocumentationGenerator::treatSearchPath,
+        "add a new path at the beginning of the search paths", true);
+    Parser::registerNewCallBack(
+        "--search-path", &BehaviourDocumentationGenerator::treatSearchPath,
+        "add a new path at the beginning of the search paths", true);
+    this->registerNewCallBack(
+        "--madnex-search-path",
+        &BehaviourDocumentationGenerator::treatMadnexSearchPath,
+        "add a mandex file to the search paths", true);
+    Parser::registerCallBack(
+        "--standalone",
+        CallBack(
+            "generate a standalone document (false by default)",
+            [this]() noexcept { this->standalone = true; }, false));
+    Parser::registerNewCallBack("--web",
+                                &BehaviourDocumentationGenerator::treatWeb,
+                                "output a web version of the file");
+    Parser::registerCallBack(
+        "--std-output", "--",
+        CallBack(
+            "print the output ont the standard output stream",
+            [this]() noexcept { this->std_output = true; }, false));
+  }  // end of BehaviourDocumentationGenerator::registerCommandLineCallBacks
+
+  void BehaviourDocumentationGenerator::treatUnknownArgument() {
+    if (!MFrontBase::treatUnknownArgumentBase()) {
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+      ArgumentParserBase<
+          BehaviourDocumentationGenerator>::treatUnknownArgument();
+#else
+      auto a = static_cast<const std::string&>(
+          this->getCurrentCommandLineArgument());
+      std::cerr << "mfront : unsupported option '" << a << '\'' << std::endl;
+      exit(EXIT_FAILURE);
+#endif /* __CYGWIN__ */
+    }
+  }  // end of BehaviourDocumentationGenerator::treatUnknownArgument
+
+  const tfel::utilities::Argument&
+  BehaviourDocumentationGenerator::getCurrentCommandLineArgument() const {
+    return *(this->currentArgument);
+  }
+
+  std::string BehaviourDocumentationGenerator::getVersionDescription() const {
+    return MFrontHeader::getHeader();
+  }  // end of BehaviourDocumentationGenerator::getVersionDescription
+
+  std::string BehaviourDocumentationGenerator::getUsageDescription() const {
+    std::string usage("Usage : ");
+    usage += this->programName;
+    usage += " [options] [files]";
+    return usage;
+  }  // end of BehaviourDocumentationGenerator::getUsageDescription
+
+  void BehaviourDocumentationGenerator::treatWeb() {
+    tfel::raise_if(this->otype != FULL,
+                   "BehaviourDocumentationGenerator::treatWeb: "
+                   "output type already specified");
+    this->otype = WEB;
+  }  // end of BehaviourDocumentationGenerator::treatWeb
+
+  void BehaviourDocumentationGenerator::exe() {
     if (getVerboseMode() >= VERBOSE_LEVEL2) {
       getLogStream() << "Treating file '" << this->file << "'\n";
     }
@@ -623,9 +743,11 @@ namespace mfront {
               getData(mb, &BehaviourData::getExternalStateVariables),
               this->standalone);
     out << '\n';
-    if (mb.hasParameters()) {
-      printData(out, mb, "Parameters",
-                getData(mb, &BehaviourData::getParameters), this->standalone);
+    if (!areParametersTreatedAsStaticVariables(mb)) {
+      if (mb.hasParameters()) {
+        printData(out, mb, "Parameters",
+                  getData(mb, &BehaviourData::getParameters), this->standalone);
+      }
     }
     out << '\n';
     printData(out, mb, "Local variables",
@@ -636,8 +758,8 @@ namespace mfront {
       out << basic_title_level  //
           << "# Code documentation\n\n"
           << code << '\n';
-    }
-  }  // end of BehaviourDocumentationGenerator::writeFullOutput
+      }
+    }  // end of BehaviourDocumentationGenerator::writeFullOutput
 
   BehaviourDocumentationGenerator::~BehaviourDocumentationGenerator() = default;
 

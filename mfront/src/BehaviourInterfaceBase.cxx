@@ -1,5 +1,5 @@
 /*!
- * \file  mfront/src/StandardBehaviourInterface.cxx
+ * \file  mfront/src/BehaviourInterfaceBase.cxx
  * \brief
  * \author Thomas Helfer
  * \brief 21 juil. 2018
@@ -17,7 +17,7 @@
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/BehaviourDescription.hxx"
-#include "MFront/StandardBehaviourInterface.hxx"
+#include "MFront/BehaviourInterfaceBase.hxx"
 
 namespace mfront {
 
@@ -53,16 +53,16 @@ namespace mfront {
     }
   }  // end of checkParametersType
 
-  const char* const StandardBehaviourInterface::generateMTestFileAttribute =
+  const char* const BehaviourInterfaceBase::generateMTestFileAttribute =
       "GenerateMTestFileOnFailure";
 
-  StandardBehaviourInterface::StandardBehaviourInterface() = default;
+  BehaviourInterfaceBase::BehaviourInterfaceBase() = default;
 
-  std::string StandardBehaviourInterface::getInterfaceVersion() const {
+  std::string BehaviourInterfaceBase::getInterfaceVersion() const {
     return "";
   }  // end of getInterfaceVersion
 
-  bool StandardBehaviourInterface::isBehaviourConstructorRequired(
+  bool BehaviourInterfaceBase::isBehaviourConstructorRequired(
       const Hypothesis h, const BehaviourDescription& mb) const {
     const auto mhs = this->getModellingHypothesesToBeTreated(mb);
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
@@ -71,15 +71,15 @@ namespace mfront {
     return mhs.find(h) != mhs.end();
   }  // end of isBehaviourConstructorRequired
 
-  void StandardBehaviourInterface::writeBehaviourInitializeFunctions(
+  void BehaviourInterfaceBase::writeBehaviourInitializeFunctions(
       std::ostream&, const BehaviourDescription&, const Hypothesis) const {
   }  // end of writeBehaviourInitializeFunctions
 
-  void StandardBehaviourInterface::writeBehaviourPostProcessings(
+  void BehaviourInterfaceBase::writeBehaviourPostProcessings(
       std::ostream&, const BehaviourDescription&, const Hypothesis) const {
   }  // end of writeBehaviourPostProcessings
 
-  std::string StandardBehaviourInterface::getHeaderGuard(
+  std::string BehaviourInterfaceBase::getHeaderGuard(
       const BehaviourDescription& mb) const {
     const auto& m = mb.getMaterialName();
     auto header = "LIB_" + makeUpperCase(this->getInterfaceName());
@@ -97,30 +97,31 @@ namespace mfront {
     return header;
   }  // end of getHeaderGuard
 
-  void StandardBehaviourInterface::writeVisibilityDefines(
-      std::ostream& out) const {
+  void BehaviourInterfaceBase::writeVisibilityDefines(std::ostream& out) const {
     mfront::writeExportDirectives(out, false);
   }  // end of writeVisibilityDefines
 
   std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
-  StandardBehaviourInterface::buildMaterialPropertiesList(
+  BehaviourInterfaceBase::buildMaterialPropertiesList(
       const BehaviourDescription& bd, const Hypothesis h) const {
+    const auto opts = BuildMaterialPropertiesListOptions{
+        .useMaterialPropertiesToBuildStiffnessTensor = true,
+        .useMaterialPropertiesToBuildThermalExpansionCoefficientTensor = true};
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       return mfront::buildMaterialPropertiesList(
-          bd, this->getModellingHypothesesToBeTreated(bd));
+          bd, this->getModellingHypothesesToBeTreated(bd), opts);
     }
-    return mfront::buildMaterialPropertiesList(bd, h);
+    return mfront::buildMaterialPropertiesList(bd, h, opts);
   }  // end of buildMaterialPropertiesList
 
-  void StandardBehaviourInterface::writeSetOutOfBoundsPolicyFunctionDeclaration(
+  void BehaviourInterfaceBase::writeSetOutOfBoundsPolicyFunctionDeclaration(
       std::ostream& out, const std::string& name) const {
     out << "MFRONT_SHAREDOBJ void\n"
         << this->getFunctionNameBasis(name)
         << "_setOutOfBoundsPolicy(const int);\n\n";
   }
 
-  void
-  StandardBehaviourInterface::writeGetOutOfBoundsPolicyFunctionImplementation(
+  void BehaviourInterfaceBase::writeGetOutOfBoundsPolicyFunctionImplementation(
       std::ostream& out,
       const BehaviourDescription& bd,
       const std::string& name) const {
@@ -140,8 +141,7 @@ namespace mfront {
     }
   }  // end of writeGetOutOfBoundsPolicyFunctionImplementation
 
-  void
-  StandardBehaviourInterface::writeSetOutOfBoundsPolicyFunctionImplementation(
+  void BehaviourInterfaceBase::writeSetOutOfBoundsPolicyFunctionImplementation(
       std::ostream& out,
       const BehaviourDescription& bd,
       const std::string& name) const {
@@ -171,7 +171,7 @@ namespace mfront {
         << "}\n\n";
   }
 
-  void StandardBehaviourInterface::writeSetParametersFunctionsDeclarations(
+  void BehaviourInterfaceBase::writeSetParametersFunctionsDeclarations(
       std::ostream& out,
       const BehaviourDescription& mb,
       const std::string& name) const {
@@ -212,7 +212,7 @@ namespace mfront {
     }
   }  // end of writeSetParametersFunctionsDeclarations
 
-  void StandardBehaviourInterface::writeSetParametersFunctionsImplementations(
+  void BehaviourInterfaceBase::writeSetParametersFunctionsImplementations(
       std::ostream& out,
       const BehaviourDescription& mb,
       const std::string& name) const {
@@ -285,22 +285,22 @@ namespace mfront {
     }
   }
 
-  void StandardBehaviourInterface::setGenerateMTestFileOnFailureAttribute(
+  void BehaviourInterfaceBase::setGenerateMTestFileOnFailureAttribute(
       BehaviourDescription& bd, const bool b) const {
-    const auto a = this->getInterfaceName() + "::" +
-                   StandardBehaviourInterface::generateMTestFileAttribute;
+    const auto a = this->getInterfaceName() +
+                   "::" + BehaviourInterfaceBase::generateMTestFileAttribute;
     bd.setAttribute(a, b, false);
   }  // end of setGenerateMTestFileOnFailureAttribute
 
-  bool StandardBehaviourInterface::shallGenerateMTestFileOnFailure(
+  bool BehaviourInterfaceBase::shallGenerateMTestFileOnFailure(
       const BehaviourDescription& bd) const {
-    const auto a = this->getInterfaceName() + "::" +
-                   StandardBehaviourInterface::generateMTestFileAttribute;
+    const auto a = this->getInterfaceName() +
+                   "::" + BehaviourInterfaceBase::generateMTestFileAttribute;
     return bd.getAttribute<bool>(a, false);
   }  // end of shallGenerateMTestFileOnFailure
 
   std::pair<bool, SupportedTypes::TypeSize>
-  StandardBehaviourInterface::checkIfAxialStrainIsDefinedAndGetItsOffset(
+  BehaviourInterfaceBase::checkIfAxialStrainIsDefinedAndGetItsOffset(
       const BehaviourDescription& mb, const Hypothesis h) const {
     using tfel::glossary::Glossary;
     const auto& d = mb.getBehaviourData(h);
@@ -315,7 +315,7 @@ namespace mfront {
     return {false, o};
   }
 
-  std::pair<bool, SupportedTypes::TypeSize> StandardBehaviourInterface::
+  std::pair<bool, SupportedTypes::TypeSize> BehaviourInterfaceBase::
       checkIfAxialDeformationGradientIsDefinedAndGetItsOffset(
           const BehaviourDescription& mb, const Hypothesis h) const {
     using tfel::glossary::Glossary;
@@ -331,7 +331,7 @@ namespace mfront {
     return {false, o};
   }
 
-  bool StandardBehaviourInterface::readBooleanValue(
+  bool BehaviourInterfaceBase::readBooleanValue(
       const std::string& key,
       tokens_iterator& current,
       const tokens_iterator end) const {
@@ -357,6 +357,6 @@ namespace mfront {
     return b;
   }  // end of readBooleanValue
 
-  StandardBehaviourInterface::~StandardBehaviourInterface() = default;
+  BehaviourInterfaceBase::~BehaviourInterfaceBase() = default;
 
 }  // end of namespace mfront

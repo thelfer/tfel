@@ -213,7 +213,6 @@ void test3() {
   assert(abs(vec3[0] + static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
   assert(abs(vec3[1] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
   assert(abs(vec3[2] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
-  
 }
 
 /* coverity [UNCAUGHT_EXCEPT]*/

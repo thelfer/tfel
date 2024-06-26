@@ -18,7 +18,7 @@
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "MFront/VariableDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
-#include "MFront/StandardBehaviourInterface.hxx"
+#include "MFront/BehaviourInterfaceBase.hxx"
 
 namespace mfront {
 
@@ -41,7 +41,7 @@ namespace mfront {
    * - etc..
    */
   struct MFRONT_VISIBILITY_EXPORT UMATInterfaceBase
-      : public StandardBehaviourInterface {
+      : public BehaviourInterfaceBase {
     //! \brief constructor
     UMATInterfaceBase();
 

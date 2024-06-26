@@ -5,7 +5,7 @@ function(tests_glossary test_arg)
   add_dependencies(check ${test_arg})
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST ${test_arg}
-      PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")
+      PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELUtilities>\;$ENV{PATH}")
   endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
   target_link_libraries(${test_arg} TFELGlossary TFELTests)
 endfunction(tests_glossary)

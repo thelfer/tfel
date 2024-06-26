@@ -58,11 +58,11 @@ namespace mtest {
       this->ds_dP = std::dynamic_pointer_cast<tfel::math::Evaluator>(
           s.differentiate("P"));
     }  // end of GasEquationOfStateMembers
-       /*!
-        * \param[in] P: pressure
-        * \param[in] V: volume
-        * \param[in] T: temperature
-        */
+    /*!
+     * \param[in] P: pressure
+     * \param[in] V: volume
+     * \param[in] T: temperature
+     */
     double computeNumberOfMoles(const double P,
                                 const double V,
                                 const double T) {

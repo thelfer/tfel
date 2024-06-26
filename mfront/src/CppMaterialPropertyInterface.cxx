@@ -62,7 +62,7 @@ namespace mfront {
              default_policy + "\";\n";
     }();
     if (b.boundsType == VariableBoundsDescription::LOWER) {
-      src << "if(" << v.name << " < " << b.lowerBound << "){\n"
+      src << "if(" << v.name << " < " << v.type << '{' << b.lowerBound << "}){\n"
           << get_policy  //
           << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
           << "std::ostringstream msg;\n"
@@ -78,7 +78,7 @@ namespace mfront {
           << "}\n"
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-      src << "if(" << v.name << " > " << b.upperBound << "){\n"
+      src << "if(" << v.name << " > " << v.type << '{' << b.upperBound << "}){\n"
           << get_policy  //
           << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
           << "std::ostringstream msg;\n"
@@ -94,7 +94,8 @@ namespace mfront {
           << "}\n"
           << "}\n";
     } else {
-      src << "if(" << v.name << " < " << b.lowerBound << "){\n"
+      src << "if(" << v.name << " < " << v.type << '{' << b.lowerBound
+          << "}){\n"
           << get_policy  //
           << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
           << "std::ostringstream msg;\n"
@@ -109,7 +110,8 @@ namespace mfront {
           << ")\\n\";\n"
           << "}\n"
           << "}\n"
-          << "if(" << v.name << " > " << b.upperBound << "){\n"
+          << "if(" << v.name << " > " << v.type << '{' << b.upperBound
+          << "}){\n"
           << get_policy  //
           << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
           << "std::ostringstream msg;\n"
@@ -135,7 +137,7 @@ namespace mfront {
     }
     const auto& b = v.getPhysicalBounds();
     if (b.boundsType == VariableBoundsDescription::LOWER) {
-      src << "if(" << v.name << " < " << b.lowerBound << "){\n"
+      src << "if(" << v.name << " < " << v.type << '{' << b.lowerBound << "}){\n"
           << "std::ostringstream msg;\n"
           << "msg << \"" << name << " : " << v.name
           << " is below its physical lower bound \";\n"
@@ -144,7 +146,7 @@ namespace mfront {
           << "tfel::raise<std::range_error>(msg.str());\n"
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-      src << "if(" << v.name << " > " << b.upperBound << "){\n"
+      src << "if(" << v.name << " > " << v.type << '{' << b.upperBound << "}){\n"
           << "std::ostringstream msg;\n"
           << "msg << \"" << name << " : " << v.name
           << " is beyond its physical upper bound \";\n"
@@ -153,7 +155,8 @@ namespace mfront {
           << "tfel::raise<std::range_error>(msg.str());\n"
           << "}\n";
     } else {
-      src << "if(" << v.name << " < " << b.lowerBound << "){\n"
+      src << "if(" << v.name << " < " << v.type << '{' << b.lowerBound
+          << "}){\n"
           << "std::ostringstream msg;\n"
           << "msg << \"" << name << " : " << v.name
           << " is below its physical lower bound \";\n"
@@ -161,7 +164,8 @@ namespace mfront {
           << ")\";\n"
           << "tfel::raise<std::range_error>(msg.str());\n"
           << "}\n"
-          << "if(" << v.name << " > " << b.upperBound << "){\n"
+          << "if(" << v.name << " > " << v.type << '{' << b.upperBound
+          << "}){\n"
           << "std::ostringstream msg;\n"
           << "msg << \"" << name << " : " << v.name
           << " is beyond its physical upper bound \";\n"
@@ -498,7 +502,11 @@ namespace mfront {
       src << "::checkBounds(";
       if (!mpd.inputs.empty()) {
         for (auto pi = mpd.inputs.begin(); pi != mpd.inputs.end();) {
-          src << "const double " << pi->name;
+          if (useQuantities(mpd)) {
+            src << "[[maybe_unused]] const double mfront_" << pi->name;
+          } else {
+            src << "const double " << pi->name;
+          }
           if ((++pi) != mpd.inputs.end()) {
             src << ",";
           }
@@ -506,10 +514,16 @@ namespace mfront {
       } else {
         src << "void";
       }
-      src << ")\n{\n";
+      src << ")\n{\n"
+          << "using namespace std;\n";
+      for (const auto& i : mpd.inputs) {
+        if (useQuantities(mpd)) {
+          src << "[[maybe_unused]] const auto " << i.name << " = "  //
+              << i.type << "(mfront_" << i.name << ");\n";
+        }
+      }
       if (hasPhysicalBounds(mpd.inputs)) {
-        src << "using namespace std;\n"
-            << "// treating physical bounds\n";
+        src << "// treating physical bounds\n";
         for (const auto& i : mpd.inputs) {
           writePhysicalBoundsChecks(src, i, name);
         }

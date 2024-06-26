@@ -233,8 +233,8 @@ namespace tfel::math {
        * \param p : first point
        * \param x : abscissa
        */
-      constexpr bool operator()(const Point&, const AbscissaType&) const
-          noexcept;
+      constexpr bool operator()(const Point&,
+                                const AbscissaType&) const noexcept;
     };  // end of struct PointComparator
 
     /*!

@@ -619,6 +619,13 @@ static mtest::MTestCurrentState MTestCurrentState_copy(
   return src;
 }
 
+static mtest::MTestCurrentState MTestCurrentState_makeDeepCopy(
+    const mtest::MTestCurrentState& src) {
+  auto copy = mtest::MTestCurrentState{src};
+  static_cast<mtest::StudyCurrentState&>(copy) = src.makeDeepCopy();
+  return copy;
+}
+
 static void MTest_setRotationMatrix1(
     mtest::MTest& t,
     const std::vector<std::vector<mtest::real>>& m,
@@ -834,6 +841,7 @@ void declareMTest() {
 
   class_<MTestCurrentState, bases<StudyCurrentState>>("MTestCurrentState")
       .def("copy", &MTestCurrentState_copy)
+      .def("makeDeepCopy", &MTestCurrentState_makeDeepCopy)
       .add_property("u_1", MTestCurrentState_getu_1)
       .add_property("u0", MTestCurrentState_getu0)
       .add_property("u1", MTestCurrentState_getu1)

@@ -15,7 +15,7 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/BehaviourDescription.hxx"
-#include "MFront/StandardBehaviourInterface.hxx"
+#include "MFront/BehaviourInterfaceBase.hxx"
 #include "MFront/DianaFEAInterface.hxx"
 #include "MFront/DianaFEASymbolsGenerator.hxx"
 
@@ -25,7 +25,7 @@ namespace mfront {
 
   void DianaFEASymbolsGenerator::writeBehaviourTypeSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
     auto throw_if = [](const bool b, const std::string& m) {
@@ -44,7 +44,7 @@ namespace mfront {
 
   void DianaFEASymbolsGenerator::writeBehaviourKinematicSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription&,
       const std::string& name) const {
     exportUnsignedShortSymbol(
@@ -53,7 +53,7 @@ namespace mfront {
 
   void DianaFEASymbolsGenerator::writeAdditionalSymbols(
       std::ostream&,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription&,
       const FileDescription&,
       const std::string&,

@@ -80,7 +80,7 @@ struct NewtonRaphsonSolver2
     J = 2 * x;
     return true;
   }  // end of computFdF
-};   // end of struct NewtonRaphsonSolver2
+};  // end of struct NewtonRaphsonSolver2
 
 struct NewtonRaphsonSolver3
     : public tfel::math::
@@ -104,7 +104,7 @@ struct NewtonRaphsonSolver3
          -200 * x(0), 100.};
     return true;
   }  // end of computFdF
-};   // end of struct NewtonRaphsonSolver3
+};  // end of struct NewtonRaphsonSolver3
 
 template <unsigned short N, typename NumericType>
 struct HeapAllocatedWorkspace {
@@ -171,17 +171,16 @@ struct ExternallyAllocatedWorkspace {
   tfel::math::View<tfel::math::tmatrix<N, N, NumericType>> jacobian;
 };
 
-struct NewtonRaphsonSolver5
-    : public tfel::math::TinyNewtonRaphsonSolver<2u,
-                                                 double,
-                                                 NewtonRaphsonSolver5,
-                                                 ExternallyAllocatedWorkspace> {
+struct NewtonRaphsonSolver5;
+using TinyNewtonRaphsonSolver5 =
+    tfel::math::TinyNewtonRaphsonSolver<2u,
+                                        double,
+                                        NewtonRaphsonSolver5,
+                                        ExternallyAllocatedWorkspace>;
+
+struct NewtonRaphsonSolver5 : public TinyNewtonRaphsonSolver5 {
   NewtonRaphsonSolver5(double* const buffer)
-      : tfel::math::TinyNewtonRaphsonSolver<2u,
-                                            double,
-                                            NewtonRaphsonSolver5,
-                                            ExternallyAllocatedWorkspace>(
-            buffer) {
+      : TinyNewtonRaphsonSolver5(buffer) {
     this->zeros = {0.5, 0.5};
     this->epsilon = 1.e-14;
     this->iterMax = 20;
@@ -203,17 +202,16 @@ struct NewtonRaphsonSolver5
 
 };  // end of struct NewtonRaphsonSolver5
 
-struct NewtonRaphsonSolver6
-    : public tfel::math::TinyNewtonRaphsonSolver<4u,
-                                                 double,
-                                                 NewtonRaphsonSolver6,
-                                                 ExternallyAllocatedWorkspace> {
+struct NewtonRaphsonSolver6;
+using TinyNewtonRaphsonSolver6 =
+    tfel::math::TinyNewtonRaphsonSolver<4u,
+                                        double,
+                                        NewtonRaphsonSolver6,
+                                        ExternallyAllocatedWorkspace>;
+
+struct NewtonRaphsonSolver6 : public TinyNewtonRaphsonSolver6 {
   NewtonRaphsonSolver6(double* const buffer)
-      : tfel::math::TinyNewtonRaphsonSolver<4u,
-                                            double,
-                                            NewtonRaphsonSolver6,
-                                            ExternallyAllocatedWorkspace>(
-            buffer) {
+      : TinyNewtonRaphsonSolver6(buffer) {
     this->zeros = {0.5, 0.5, 1., 1.};
     this->epsilon = 1.e-14;
     this->iterMax = 20;
