@@ -2082,13 +2082,15 @@ namespace mfront {
     os << "this->updateIntegrationVariables();\n"
        << "this->updateStateVariables();\n"
        << "this->updateAuxiliaryStateVariables();\n";
-    for (const auto& v :
-         this->bd.getBehaviourData(h).getPersistentVariables()) {
-      this->writePhysicalBoundsChecks(os, v, false);
-    }
-    for (const auto& v :
-         this->bd.getBehaviourData(h).getPersistentVariables()) {
-      this->writeBoundsChecks(os, v, false);
+    if (!areRuntimeChecksDisabled(this->bd)) {
+      for (const auto& v :
+           this->bd.getBehaviourData(h).getPersistentVariables()) {
+        this->writePhysicalBoundsChecks(os, v, false);
+      }
+      for (const auto& v :
+           this->bd.getBehaviourData(h).getPersistentVariables()) {
+        this->writeBoundsChecks(os, v, false);
+      }
     }
     if (!this->bd.getTangentOperatorBlocks().empty()) {
       if (hasUserDefinedTangentOperatorCode(this->bd, h)) {

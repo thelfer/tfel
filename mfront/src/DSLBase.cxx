@@ -69,6 +69,8 @@ namespace mfront {
   const char* const DSLBase::overridingParameters = "overriding_parameters";
   const char* const DSLBase::validatorOption = "validator";
   const char* const DSLBase::buildIdentifierOption = "build_identifier";
+  const char* const DSLBase::disableRuntimeChecksOption =
+      "disable_runtime_checks";
 
   bool isValidMaterialName(std::string_view n) {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
@@ -90,6 +92,7 @@ namespace mfront {
             DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption)
         .addDataTypeValidator<bool>(DSLBase::parametersAsStaticVariablesOption)
         .addDataTypeValidator<bool>(DSLBase::initializationFromFileOption)
+        .addDataTypeValidator<bool>(DSLBase::disableRuntimeChecksOption)
         .addDataTypeValidator<std::string>(DSLBase::validatorOption)
         .addDataTypeValidator<std::string>(DSLBase::buildIdentifierOption)
         .addDataTypeValidator<tfel::utilities::DataMap>(
@@ -107,11 +110,14 @@ namespace mfront {
 
   void DSLBase::handleDSLOptions(MaterialKnowledgeDescription& d,
                                  const DSLOptions& opts) {
+    if (opts.count(DSLBase::disableRuntimeChecksOption) != 0) {
+      const auto opt = opts.at(DSLBase::disableRuntimeChecksOption).get<bool>();
+      setDisableRuntimeChecks(d, opt);
+    }
     if (opts.count(DSLBase::defaultOutOfBoundsPolicyOption) != 0) {
       const auto opt =
           opts.at(DSLBase::defaultOutOfBoundsPolicyOption).get<std::string>();
-      d.setAttribute(MaterialKnowledgeDescription::defaultOutOfBoundsPolicy,
-                     opt, false);
+      setDefaultOutOfBoundsPolicy(d, opt);
     }
     if (opts.count(DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption) !=
         0) {
@@ -155,7 +161,8 @@ namespace mfront {
         MaterialKnowledgeDescription::buildIdentifier, "");
     const auto validator = d.getAttribute<std::string>(
         MaterialKnowledgeDescription::validator, "");
-    return {{DSLBase::defaultOutOfBoundsPolicyOption, policy},
+    return {{DSLBase::disableRuntimeChecksOption, areRuntimeChecksDisabled(d)},
+            {DSLBase::defaultOutOfBoundsPolicyOption, policy},
             {DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption,
              allowRuntimeModificationOfTheOutOfBoundsPolicy(d)},
             {DSLBase::parametersAsStaticVariablesOption,
@@ -174,7 +181,11 @@ namespace mfront {
 
   std::vector<AbstractDSL::DSLOptionDescription> DSLBase::getDSLOptions()
       const {
-    return {{DSLBase::defaultOutOfBoundsPolicyOption,
+    return {{DSLBase::disableRuntimeChecksOption,
+             "boolean stating if interfaces shall remove as much runtime "
+             "checks as possible. Those checks include the treatment of "
+             "standard and physical bounds for instance."},
+            {DSLBase::defaultOutOfBoundsPolicyOption,
              "string specifying the default out of bounds policy. Allowed "
              "values are `None`, `Warning`, `Strict`"},
             {DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption,

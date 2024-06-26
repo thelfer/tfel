@@ -22,7 +22,6 @@
 #include <sstream>
 #include <cstring>
 #include <string>
-#include <cerrno>
 #include <memory>
 
 #include "TFEL/Raise.hxx"

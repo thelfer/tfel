@@ -404,13 +404,15 @@ namespace mfront {
     out << ")\n{\n";
     writeBeginningOfMaterialPropertyBody(out, mpd, fd, "double", true);
     // parameters
-    if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
-      const auto hn = getMaterialPropertyParametersHandlerClassName(name);
-      out << "if(!castem::" << hn << "::get" << hn << "().ok){\n"
-          << "std::cerr << castem::" << hn << "::get" << hn
-          << "().msg.c_str() << '\\n';\n"
-          << "return std::nan(\"\");\n"
-          << "}\n";
+    if (!areRuntimeChecksDisabled(mpd)) {
+      if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
+        const auto hn = getMaterialPropertyParametersHandlerClassName(name);
+        out << "if(!castem::" << hn << "::get" << hn << "().ok){\n"
+            << "std::cerr << castem::" << hn << "::get" << hn
+            << "().msg.c_str() << '\\n';\n"
+            << "return std::nan(\"\");\n"
+            << "}\n";
+      }
     }
     writeAssignMaterialPropertyParameters(out, mpd, name, "real", "castem");
     //
@@ -430,23 +432,25 @@ namespace mfront {
       }
     }
     out << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
-    if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
-      out << "#ifndef NO_CASTEM_BOUNDS_CHECK\n";
-    }
-    if (hasPhysicalBounds(mpd.inputs)) {
-      out << "// treating physical bounds\n";
-      for (const auto& i : mpd.inputs) {
-        writePhysicalBounds(out, name, i);
+    if (!areRuntimeChecksDisabled(mpd)) {
+      if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
+        out << "#ifndef NO_CASTEM_BOUNDS_CHECK\n";
       }
-    }
-    if (hasBounds(mpd.inputs)) {
-      out << "// treating standard bounds\n";
-      for (const auto& i : mpd.inputs) {
-        writeBounds(out, mpd, name, i);
+      if (hasPhysicalBounds(mpd.inputs)) {
+        out << "// treating physical bounds\n";
+        for (const auto& i : mpd.inputs) {
+          writePhysicalBounds(out, name, i);
+        }
       }
-    }
-    if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
-      out << "#endif /* NO_CASTEM_BOUNDS_CHECK */\n";
+      if (hasBounds(mpd.inputs)) {
+        out << "// treating standard bounds\n";
+        for (const auto& i : mpd.inputs) {
+          writeBounds(out, mpd, name, i);
+        }
+      }
+      if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
+        out << "#endif /* NO_CASTEM_BOUNDS_CHECK */\n";
+      }
     }
     out << "try{\n";
     out << function.body;
@@ -462,17 +466,19 @@ namespace mfront {
         << "#endif  /* NO_CASTEM_ERROR_OUTPUT */\n"
         << "return std::nan(\"\");\n"
         << "}\n";
-    if ((mpd.output.hasPhysicalBounds()) || (mpd.output.hasBounds())) {
-      out << "#ifndef NO_CASTEM_BOUNDS_CHECK\n";
-      if (mpd.output.hasPhysicalBounds()) {
-        out << "// treating physical bounds\n";
-        writePhysicalBounds(out, name, mpd.output);
+    if (!areRuntimeChecksDisabled(mpd)) {
+      if ((mpd.output.hasPhysicalBounds()) || (mpd.output.hasBounds())) {
+        out << "#ifndef NO_CASTEM_BOUNDS_CHECK\n";
+        if (mpd.output.hasPhysicalBounds()) {
+          out << "// treating physical bounds\n";
+          writePhysicalBounds(out, name, mpd.output);
+        }
+        if (mpd.output.hasBounds()) {
+          out << "// treating bounds\n";
+          writeBounds(out, mpd, name, mpd.output);
+        }
+        out << "#endif /* NO_CASTEM_BOUNDS_CHECK */\n";
       }
-      if (mpd.output.hasBounds()) {
-        out << "// treating bounds\n";
-        writeBounds(out, mpd, name, mpd.output);
-      }
-      out << "#endif /* NO_CASTEM_BOUNDS_CHECK */\n";
     }
     if (useQuantities(mpd)) {
       out << "return " << mpd.output.name << ".getValue();\n";

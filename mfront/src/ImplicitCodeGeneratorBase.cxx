@@ -1116,11 +1116,13 @@ namespace mfront {
       os << "this->computeFinalThermodynamicForces();\n";
     }
     os << "this->updateAuxiliaryStateVariables();\n";
-    for (const auto& v : d.getPersistentVariables()) {
-      this->writePhysicalBoundsChecks(os, v, false);
-    }
-    for (const auto& v : d.getPersistentVariables()) {
-      this->writeBoundsChecks(os, v, false);
+    if (!areRuntimeChecksDisabled(this->bd)) {
+      for (const auto& v : d.getPersistentVariables()) {
+        this->writePhysicalBoundsChecks(os, v, false);
+      }
+      for (const auto& v : d.getPersistentVariables()) {
+        this->writeBoundsChecks(os, v, false);
+      }
     }
     if (!this->bd.getTangentOperatorBlocks().empty()) {
       os << "if(smt!=NOSTIFFNESSREQUESTED){\n";

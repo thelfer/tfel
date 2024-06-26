@@ -184,6 +184,14 @@ T.setGlossaryName("Temperature");
 }
 ~~~~
 
+## New DSL options
+
+### The `disable_runtime_checks` option
+
+If this option is set to `true`, interfaces may disable as much runtime
+checks as possible. Those runtime checks include checking standard
+bounds and physical bounds for instance.
+
 ## `generic` interface improvements
 
 ### The `@SelectedModellingHypothesis` and `@SelectedModellingHypotheses` keywords
