@@ -99,6 +99,19 @@ namespace mfront {
     ndata.name = v.name;
     ndata.arraySize = v.arraySize;
     ndata.type = v.type;
+    ndata.externalName = v.getExternalName();
+    ndata.description = v.description;
+
+    data.push_back(ndata);
+  }  // end of getData
+
+  static void getData(std::vector<DocumentationGeneratorBase::Data>& data,
+                      const StaticVariableDescription& v) {
+    auto ndata = DocumentationGeneratorBase::Data{};
+    ndata.name = v.name;
+    ndata.arraySize = v.arraySize;
+    ndata.type = v.type;
+    ndata.description = v.description;
     data.push_back(ndata);
   }  // end of getData
 
@@ -106,7 +119,6 @@ namespace mfront {
       const VariableDescription& vd) {
     using namespace tfel::material;
     using namespace tfel::glossary;
-    const auto& glossary = Glossary::getGlossary();
     auto data = std::vector<DocumentationGeneratorBase::Data>{};
     getData(data, vd);
     // description deserves a specific treatment
@@ -179,9 +191,74 @@ namespace mfront {
     return data;
   }
 
+  static std::vector<DocumentationGeneratorBase::Data> getData(
+      const StaticVariableDescriptionContainer& vdc) {
+    using namespace tfel::material;
+    using namespace tfel::glossary;
+    const auto& glossary = Glossary::getGlossary();
+    auto data = std::vector<DocumentationGeneratorBase::Data>{};
+    for (const auto& vd : vdc) {
+      getData(data, vd);
+    }
+    // description deserves a specific treatment
+    for (auto& d : data) {
+      if (glossary.contains(d.externalName)) {
+        const auto& e = glossary.getGlossaryEntry(d.externalName);
+        std::ostringstream os;
+        os << e.getShortDescription();
+        const auto& cd = e.getDescription();
+        for (const auto& cd_pcd : cd) {
+          if (!cd_pcd.empty()) {
+            os << cd_pcd << '\n';
+          }
+        }
+        d.description += os.str();
+      }
+      auto ddc = d.descriptions.size();
+      if (ddc == 1u) {
+        auto pd = d.descriptions.begin();
+        if (!pd->second.empty()) {
+          if (!d.description.empty()) {
+            d.description += "\n";
+          }
+          d.description += pd->second;
+        }
+      } else if (ddc != 0u) {
+        // Two cases: all descriptions are the same
+        bool b = true;
+        auto pd = d.descriptions.begin();
+        auto pd2 = pd;
+        advance(pd2, 1u);
+        for (; (pd2 != d.descriptions.end()) && (b); ++pd2) {
+          b = pd->second == pd2->second;
+        }
+        if (b) {
+          if (!d.description.empty()) {
+            d.description += "\n";
+          }
+          d.description += pd->second;
+        } else {
+          for (pd2 = pd; (pd2 != d.descriptions.end()) && (b); ++pd2) {
+            if (!pd2->second.empty()) {
+              if (!d.description.empty()) {
+                d.description += "\n";
+              }
+              if (pd2->first == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+                d.description += "Default Hypothesis : " + pd2->second;
+              } else {
+                d.description += ModellingHypothesis::toString(pd2->first) +
+                                 " : " + pd2->second;
+              }
+            }
+          }
+        }
+      }
+    }
+    return data;
+  }
+
   static void printData(
       std::ostream& os,
-      const MaterialPropertyDescription& mpd,
       const std::string& title,
       const std::vector<DocumentationGeneratorBase::Data>& data,
       const bool standalone,
@@ -215,14 +292,6 @@ namespace mfront {
       auto& log = getLogStream();
       log << "printData : begin\n";
     }
-    // const auto& dh = mpd.getDistinctModellingHypotheses();
-    auto cbnames = std::set<std::string>{};
-    // for (const auto& h : dh) {
-    //   const auto& d = mpd.getBehaviourData(h);
-    //   const auto& cn = d.getCodeBlockNames();
-    //   cbnames.insert(cn.begin(), cn.end());
-    // }
-    cbnames.insert(mfront::getMaterialLawLibraryNameBase(mpd));
     os << basic_title_level  //
        << "##  " << title << "\n\n";
     for (const auto& d : data) {
@@ -234,88 +303,21 @@ namespace mfront {
       if (d.arraySize != 1u) {
         os << "\t+ " << map_at(l, "array size") << ": " << d.arraySize << '\n';
       }
-      // if (d.hypotheses.size() != dh.size()) {
-      //   os << "\t+ " << map_at(l, "defined for") << " ";
-      //   for (auto pvh = d.hypotheses.begin(); pvh != d.hypotheses.end();) {
-      //     os << ModellingHypothesis::toString(*pvh);
-      //     if (++pvh != d.hypotheses.end()) {
-      //       os << ", ";
-      //     }
-      //   }
-      //   os << '\n';
-      // }
       if (!d.description.empty()) {
         os << "\t+ " << map_at(l, "description") << ": " << d.description
            << '\n';
       }
-      // for (const auto& h : d.hypotheses) {
-      //   if (mpd.isParameterName(h, d.name)) {
-      //     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      //       os << "\t+ " << map_at(l, "default value") << ": ";
-      //     } else {
-      //       os << "\t+ "
-      //          << map_at(l, "default value for") + " " +
-      //                 ModellingHypothesis::toString(h) + ": ";
-      //     }
-      //     if (d.type == "int") {
-      //       os << mpd.getIntegerParameterDefaultValue(h, d.name);
-      //     } else if (d.type == "ushort") {
-      //       os << mpd.getUnsignedShortParameterDefaultValue(h, d.name);
-      //     } else {
-      //       const auto& p =
-      //           mpd.getBehaviourData(h).getParameters().getVariable(d.name);
-      //       if (p.arraySize == 1u) {
-      //         os << mpd.getFloattingPointParameterDefaultValue(h, d.name);
-      //       } else {
-      //         for (unsigned short i = 0; i != p.arraySize;) {
-      //           os << mpd.getFloattingPointParameterDefaultValue(h, d.name,
-      //           i); if (++i != p.arraySize) {
-      //             os << " ";
-      //           }
-      //         }
-      //       }
-      //     }
-      //     os << '\n';
-      //   }
-      // }
+
       // codes blocks referring to the current variable
       auto vcb =
           std::map<std::string, std::vector<ModellingHypothesis::Hypothesis>>{};
       auto dvcb =
           std::map<std::string, std::vector<ModellingHypothesis::Hypothesis>>{};
-      // for (const auto& cbname : cbnames) {
-      //   // for (const auto& h : dh) {
-      //   //   const auto& bd = mpd.getBehaviourData(h);
-      //   //   const bool b = (bd.isIntegrationVariableName(d.name) ||
-      //   //                   bd.isExternalStateVariableName(d.name));
-      //   //   if (bd.hasCode(cbname)) {
-      //   //     const auto& cb = bd.getCodeBlock(cbname);
-      //   //     if (cb.members.find(d.name) != cb.members.end()) {
-      //   //       vcb[cbname].push_back(h);
-      //   //     }
-      //   //     if (b) {
-      //   //       if (cb.members.find("d" + d.name) != cb.members.end()) {
-      //   //         dvcb[cbname].push_back(h);
-      //   //       }
-      //   //     }
-      //   //   }
-      //   // }
-      // }
       if (getVerboseMode() >= VERBOSE_DEBUG) {
         if (!vcb.empty()) {
           os << "\t+ used in ";
           for (auto pc = vcb.begin(); pc != vcb.end();) {
             os << pc->first;
-            // if (pc->second.size() != dh.size()) {
-            //   os << " (";
-            //   for (auto pvh = pc->second.begin(); pvh != pc->second.end();) {
-            //     os << ModellingHypothesis::toString(*pvh);
-            //     if (++pvh != pc->second.end()) {
-            //       os << ", ";
-            //     }
-            //   }
-            //   os << ")";
-            // }
             if (++pc != vcb.end()) {
               os << ", ";
             }
@@ -326,16 +328,6 @@ namespace mfront {
           os << "\t+ increment (or rate) used in ";
           for (auto pc = dvcb.begin(); pc != dvcb.end();) {
             os << pc->first;
-            // if (pc->second.size() != dh.size()) {
-            //   os << " (";
-            //   for (auto pvh = pc->second.begin(); pvh != pc->second.end();) {
-            //     os << ModellingHypothesis::toString(*pvh);
-            //     if (++pvh != pc->second.end()) {
-            //       os << ", ";
-            //     }
-            //   }
-            //   os << ")";
-            // }
             if (++pc != dvcb.end()) {
               os << ", ";
             }
@@ -383,7 +375,9 @@ namespace mfront {
       if (this->std_output) {
         return std::cout;
       }
-      const auto name = mfront::getMaterialLawLibraryNameBase(mpd);
+      const auto name = mpd.material.empty()
+                            ? mpd.className
+                            : mpd.material + "_" + mpd.className;
       output_file.open(name + ".md");
       output_file.exceptions(std::ios::badbit | std::ios::failbit);
       tfel::raise_if(!output_file,
@@ -430,12 +424,6 @@ namespace mfront {
     } else {
       out << "(unspecified)\n";
     }
-    // if (mpd.hasAttribute(MaterialPropertyDescription::algorithm)) {
-    //   out << "* algorithm: "
-    //       << mpd.getAttribute<std::string>(
-    //              MaterialPropertyDescription::algorithm)
-    //       << '\n';
-    // }
     out << "\n\n";
     if (!fd.description.empty()) {
       const auto d = tokenize(fd.description, '\n');
@@ -522,23 +510,16 @@ namespace mfront {
     }
     out << '\n'  //
         << basic_title_level << "# Variables\n\n";
-    // printData(out, mpd, "Material properties",
-    //           getData(mpd,
-    //           &MaterialPropertyDescription::getMaterialProperties),
-    //           this->standalone);
     out << '\n';
-    printData(out, mpd, "Output", getData(mpd.output), this->standalone);
-    // out << '\n';
-    // printData(out, mpd, "Constante",
-    //           getData(mpd, &MaterialPropertyDescription::staticVars),
-    //           this->standalone);
+    printData(out, "Inputs", getData(mpd.inputs), this->standalone);
+    out << '\n';
+    printData(out, "Outputs", getData(mpd.output), this->standalone);
     out << '\n';
     if (mpd.hasParameters()) {
-      printData(out, mpd, "Parameters", getData(mpd.parameters),
-                this->standalone);
+      printData(out, "Parameters", getData(mpd.parameters), this->standalone);
     }
     out << '\n';
-    printData(out, mpd, "Inputs", getData(mpd.inputs), this->standalone);
+    printData(out, "Constantes", getData(mpd.staticVars), this->standalone);
     out << '\n';
     const auto code = getCodeBlocksDocumentation(mpd, fd, this->standalone);
     if (!code.empty() != 0) {
