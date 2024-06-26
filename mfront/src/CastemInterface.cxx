@@ -2386,7 +2386,7 @@ namespace mfront {
           tmp += pv.getExternalName();
           tmp += ": " + treatScalar(pv.name) + "\n";
         } else {
-          for (unsigned short j = 0; j != pv.arraySize;) {
+          for (unsigned short j = 0; j != pv.arraySize; ++j) {
             tmp += pv.getExternalName();
             tmp += ": " + treatScalar(pv.name, j) + "\n";
           }
@@ -2396,7 +2396,7 @@ namespace mfront {
           tmp += pv.getExternalName();
           tmp += ": " + treatTVector(h, pv.name);
         } else {
-          for (unsigned short j = 0; j != pv.arraySize;) {
+          for (unsigned short j = 0; j != pv.arraySize; ++j) {
             tmp += pv.getExternalName();
             tmp += ": " + treatTVector(h, pv.name, j) + "\n";
           }
@@ -2406,7 +2406,7 @@ namespace mfront {
           tmp += pv.getExternalName();
           tmp += ": " + treatStensor(h, pv.name) + "\n";
         } else {
-          for (unsigned short j = 0; j != pv.arraySize;) {
+          for (unsigned short j = 0; j != pv.arraySize; ++j) {
             tmp += pv.getExternalName();
             tmp += ": " + treatStensor(h, pv.name, j) + "\n";
           }
@@ -2416,7 +2416,7 @@ namespace mfront {
           tmp += pv.getExternalName();
           tmp += ": " + treatTensor(h, pv.name) + "\n";
         } else {
-          for (unsigned short j = 0; j != pv.arraySize;) {
+          for (unsigned short j = 0; j != pv.arraySize; ++j) {
             tmp += pv.getExternalName();
             tmp += ": " + treatTensor(h, pv.name, j) + "\n";
           }
@@ -2450,7 +2450,7 @@ namespace mfront {
         tmp += pm.getExternalName();
         tmp += ": " + treatScalar(pm.name) + "\n";
       } else {
-        for (unsigned short j = 0; j != pm.arraySize;) {
+        for (unsigned short j = 0; j != pm.arraySize; ++j) {
           tmp += pm.getExternalName();
           tmp += treatScalar(pm.name, j) + "\n";
         }
