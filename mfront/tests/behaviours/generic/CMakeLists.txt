@@ -15,6 +15,7 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCry
     PolyCrystalsAngles-30.txt @ONLY)
 
 set(mfront_tests_SOURCES
+  DigitSeparatorTest
   MaterialPropertiesBoundsCheck
   StateVariablesBoundsCheck
   ExternalStateVariablesBoundsCheck
