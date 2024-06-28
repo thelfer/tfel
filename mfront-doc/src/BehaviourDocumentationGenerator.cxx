@@ -25,6 +25,7 @@
 #include "MFront/VariableDescription.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
+#include "MFront/DocumentationGeneratorBase.hxx"
 #include "MFront/BehaviourDocumentationGenerator.hxx"
 
 namespace mfront {
@@ -131,36 +132,7 @@ namespace mfront {
        << "\\newcommand{\\ets}[1]{\\left.#1\\right|_{t+\\Delta\\,t}}\n\n";
   }  // end of writeStandardLatexMacros
 
-  /*!
-   * internal structure gathering data from mechanical behaviour
-   * description
-   */
-  struct Data {
-    using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
-    Data();
-    Data(Data&&) noexcept;
-    Data(const Data&);
-    Data& operator=(Data&&);
-    Data& operator=(const Data&);
-    ~Data() noexcept;
-    std::string name;
-    std::string type;
-    std::string description;
-    //! specific description per modelling hypothesis
-    std::map<Hypothesis, std::string> descriptions;
-    std::string externalName;
-    std::vector<Hypothesis> hypotheses;
-    unsigned short arraySize;
-  };
-
-  Data::Data() = default;
-  Data::Data(Data&&) noexcept = default;
-  Data::Data(const Data&) = default;
-  Data& Data::operator=(Data&&) = default;
-  Data& Data::operator=(const Data&) = default;
-  Data::~Data() noexcept = default;
-
-  static void getData(std::vector<Data>& data,
+  static void getData(std::vector<DocumentationGeneratorBase::Data>& data,
                       const BehaviourDescription& mb,
                       const VariableDescriptionContainer& (BehaviourData::*m)()
                           const,
@@ -177,7 +149,7 @@ namespace mfront {
         }
       }
       if (pd == data.end()) {
-        data.push_back(Data());
+        data.push_back(DocumentationGeneratorBase::Data());
         pd = data.end();
         --pd;
         pd->name = pv->name;
@@ -226,13 +198,13 @@ namespace mfront {
     }
   }  // end of
 
-  static std::vector<Data> getData(
+  static std::vector<DocumentationGeneratorBase::Data> getData(
       const BehaviourDescription& mb,
       const VariableDescriptionContainer& (BehaviourData::*m)() const) {
     using namespace tfel::material;
     using namespace tfel::glossary;
     const auto& glossary = Glossary::getGlossary();
-    auto data = std::vector<Data>{};
+    auto data = std::vector<DocumentationGeneratorBase::Data>{};
     const auto& dh = mb.getDistinctModellingHypotheses();
     for (const auto& h : dh) {
       getData(data, mb, m, h);
@@ -297,7 +269,7 @@ namespace mfront {
   static void printData(std::ostream& os,
                         const BehaviourDescription& mb,
                         const std::string& title,
-                        const std::vector<Data>& data,
+                        const std::vector<DocumentationGeneratorBase::Data>& data,
                         const bool standalone,
                         const std::string& language = "english") {
     using namespace tfel::material;
@@ -471,13 +443,8 @@ namespace mfront {
       const char* const* const argv,
       std::shared_ptr<AbstractBehaviourDSL> d,
       const std::string& f)
-      : tfel::utilities::ArgumentParserBase<BehaviourDocumentationGenerator>(
-            argc, argv),
-        dsl(d),
-        file(f),
-        otype(BehaviourDocumentationGenerator::FULL) {
-    this->registerCommandLineCallBacks();
-    this->parseArguments();
+
+      : DocumentationGeneratorBase(argc, argv, f), dsl(d) {
     // registring interfaces
     if (!this->interfaces.empty()) {
       dsl->setInterfaces(this->interfaces);

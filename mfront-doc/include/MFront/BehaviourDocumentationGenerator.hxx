@@ -20,29 +20,15 @@
 #include <utility>
 #include <functional>
 
-#include "TFEL/Utilities/ArgumentParserBase.hxx"
-#include "TFEL/Material/ModellingHypothesis.hxx"
-#include "MFront/MFrontBase.hxx"
+#include "MFront/DocumentationGeneratorBase.hxx"
 
 namespace mfront {
-
-  // forward declaration
-  struct AbstractBehaviourDSL;
-  // forward declaration
-  struct BehaviourDescription;
-  // forward declaration
-  struct FileDescription;
 
   /*!
    * Class used by the mfront-query tool to extract information from
    * behaviour implementation
    */
-  struct BehaviourDocumentationGenerator
-      : public tfel::utilities::ArgumentParserBase<
-            BehaviourDocumentationGenerator>,
-        public MFrontBase {
-    //! \brief type of documentation to be generated
-    enum OutputType { FULL, WEB };
+  struct BehaviourDocumentationGenerator : public DocumentationGeneratorBase {
     /*!
      * build a BehaviourDocumentationGenerator object based on command line
      * arguments
@@ -56,48 +42,19 @@ namespace mfront {
                                     std::shared_ptr<AbstractBehaviourDSL>,
                                     const std::string &);
     //! treat the requests
-    void exe();
+    void exe() const override;
     //! destructor
     ~BehaviourDocumentationGenerator() override;
 
    private:
-    //! ArgumentParserBase must be a friend
-    friend struct tfel::utilities::ArgumentParserBase<
-        BehaviourDocumentationGenerator>;
-    //! \brief register call-backs associated with command line arguments
-    virtual void registerCommandLineCallBacks();
-    //! treat the web argument
-    virtual void treatWeb();
-    virtual void writeWebOutput(std::ostream &,
-                                const BehaviourDescription &,
-                                const FileDescription &) const;
-    virtual void writeFullOutput(std::ostream &,
-                                 const BehaviourDescription &,
-                                 const FileDescription &) const;
-    //! return the current argument
-    const tfel::utilities::Argument &getCurrentCommandLineArgument()
-        const override final;
-    //! treat an unknown argument
-    void treatUnknownArgument() override final;
-    //! get the version description
-    std::string getVersionDescription() const override final;
-    //! get the usage description
-    std::string getUsageDescription() const override final;
+    void writeWebOutput(std::ostream &,
+                        const BehaviourDescription &,
+                        const FileDescription &) const ;
+    void writeFullOutput(std::ostream &,
+                         const BehaviourDescription &,
+                         const FileDescription &) const;
     //! abstract behaviour dsl
     std::shared_ptr<AbstractBehaviourDSL> dsl;
-    //! input file name
-    std::string file;
-    //! type of ouput
-    OutputType otype;
-    //! \brief generate output on standard output
-    bool std_output = false;
-    /*!
-     * \brief boolean whose meaning is the following:
-     * - if true, the generated documentation is contained in a whole document.
-     * - if false, the generated documentation is contained in a section meant
-     *   to be included in a bigger document.
-     */
-    bool standalone = false;
   };  // end of struct BehaviourDocumentationGenerator
 
 }  // end of namespace mfront

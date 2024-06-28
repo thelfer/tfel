@@ -1,1 +1,1 @@
-install_mfront_header(MFront BehaviourDocumentationGenerator.hxx)
+install_mfront_header(MFront DocumentationGeneratorBase.hxx BehaviourDocumentationGenerator.hxx MaterialPropertyDocumentationGenerator.hxx)

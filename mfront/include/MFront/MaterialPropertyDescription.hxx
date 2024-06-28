@@ -107,6 +107,15 @@ namespace mfront {
      */
     void appendToSources(const std::string&);
     /*!
+     * \return true a parameter with the given name has been declared
+     * \param[in] n: name
+     */
+    bool hasParameter(const std::string&) const;
+    /*!
+     * \return true if at least one parameter has been declared
+     */
+    bool hasParameters() const;
+    /*!
      * \brief register a name.
      * \param[in] n : name
      */

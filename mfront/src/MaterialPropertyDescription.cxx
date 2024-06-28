@@ -62,9 +62,9 @@ namespace mfront {
     const auto use_qt =
         (areQuantitiesSupported && useQuantities(mpd)) ? "true" : "false";
     for (const auto& a : getScalarTypeAliases()) {
-      os << "using " << a << " [[maybe_unused]] = "
-         << "typename tfel::config::ScalarTypes<" << numeric_type << ", "
-         << use_qt << ">::" << a << ";\n";
+      os << "using " << a
+         << " [[maybe_unused]] = " << "typename tfel::config::ScalarTypes<"
+         << numeric_type << ", " << use_qt << ">::" << a << ";\n";
     }
   }  // end of writeScalarStandardTypedefs
 
@@ -305,6 +305,17 @@ namespace mfront {
       this->materialLaws.push_back(m);
     }
   }  // end of addMaterialLaw
+
+  bool MaterialPropertyDescription::hasParameter(const std::string& v) const {
+    return this->parameters.contains(v);
+  }  // end of hasParameter
+
+  bool MaterialPropertyDescription::hasParameters() const {
+    if (!this->parameters.empty()) {
+      return true;
+    }
+    return false;
+  }  // end of hasParameters
 
   void MaterialPropertyDescription::reserveName(const std::string& n) {
     tfel::raise_if(!this->reservedNames.insert(n).second,
