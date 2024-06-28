@@ -17,9 +17,35 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+# New `TFEL/Utilities` features
+
+## Support for `C++` digit separator in `CxxTokenizer`
+
+The `CxxTokenizer` class now supports `C++` digit separators in numbers,
+(integer of floatting point numbers), as illustrated in the following
+example:
+
+~~~~{.cxx}
+@DSL IsotropicMisesCreep;
+@Behaviour DigitSeparatorTest;
+
+@UseQt true;
+@Epsilon 0.000'000'000'1;
+@IterMax 1'000;
+
+@ElasticMaterialProperties{150'000'000'000, 0.3};
+@Parameter stress s0 = 10'000'000;
+@Parameter strainrate de0 = 8.230'512e-67;
+@Parameter strainrate E = 8.2;
+
+@FlowRule{
+  f = de0 * pow(seq / s0, E);
+}
+~~~~
+
 # New `TFEL/Math` features
 
-## tiny matrices product
+## Tiny matrices product
 
 The product of two tiny matrices has been implemented:
 
@@ -287,3 +313,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/526>
 ## Issue 476: [generic interface] Add support for arrays of thermodynamic forces
 
 For more details, see <https://github.com/thelfer/tfel/issues/476>
+
+## Issue 370: [tfel-utilities] Support for `C++` digit separator
+
+For more details, see <https://github.com/thelfer/tfel/issues/370>

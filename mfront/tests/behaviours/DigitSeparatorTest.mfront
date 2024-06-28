@@ -1,0 +1,14 @@
+@DSL IsotropicMisesCreep;
+@Behaviour DigitSeparatorTest;
+
+@Epsilon 0.000'000'000'1;
+@IterMax 1'000;
+
+@ElasticMaterialProperties{150'000'000'000, 0.3};
+@Parameter stress s0 = 10'000'000;
+@Parameter strainrate de0 = 8.230'512e-67;
+@Parameter strainrate E = 8.2;
+
+@FlowRule{
+  f = de0 * pow(seq / s0, E);
+}
