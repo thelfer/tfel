@@ -29,10 +29,8 @@
 
 namespace tfel::math {
 
-  template <unsigned short N, unsigned short M, typename A, typename B>
+  template <unsigned short N, unsigned short M, VectorConcept A, MatrixConcept B>
   struct TVectorTMatrixExpr : public ExprBase {
-    static_assert(implementsVectorConcept<A>());
-    static_assert(implementsMatrixConcept<B>());
 
     using RunTimeProperties = EmptyRunTimeProperties;
     using Result = BinaryOperationResult<A, B, OpMult>;

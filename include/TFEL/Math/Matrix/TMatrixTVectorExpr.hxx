@@ -37,11 +37,8 @@ namespace tfel::math {
    * \tparam A : type of the tiny matrix object (can be a reference)
    * \tparam B : type of the tiny vector object (can be a reference)
    */
-  template <unsigned short N, unsigned short M, typename A, typename B>
+  template <unsigned short N, unsigned short M, MatrixConcept A, MatrixConcept B>
   struct TMatrixTVectorExpr : public ExprBase {
-    static_assert(implementsMatrixConcept<A>());
-    static_assert(implementsVectorConcept<B>());
-
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! \brief return the runtime properties
