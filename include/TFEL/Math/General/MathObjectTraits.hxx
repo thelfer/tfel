@@ -30,6 +30,10 @@ namespace tfel::math {
    */
   template <typename ValueType, typename SizeType>
   struct MathObjectTraitsBase {
+    //! \brief flag stating if the MathObjectTraitsBase class has been specialized
+    static constexpr auto is_specialized =
+      !((tfel::typetraits::isInvalid<ValueType>())||
+	(tfel::typetraits::isInvalid<SizeType>()));
     /*!
      * \brief numerical type on which the object is based
      */
@@ -139,6 +143,9 @@ namespace tfel::math {
 
   template <typename T>
   concept ScalarConcept = tfel::typetraits::IsScalar<std::decay_t<T>>::cond;
+
+  template <typename T>
+  concept MathObjectConcept = MathObjectTraits<T>::is_specialized;
 
 }  // end of namespace tfel::math
 
