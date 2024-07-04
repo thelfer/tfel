@@ -21,7 +21,6 @@
 #include <functional>
 
 #include "TFEL/Utilities/ArgumentParserBase.hxx"
-#include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontBase.hxx"
 
 namespace mfront {
@@ -69,26 +68,21 @@ namespace mfront {
     bool std_output = false;
     //! type of ouput
     OutputType otype;
+    //! \brief generate latex macros for header of output file
+    void writeStandardLatexMacros(std::ostream &) const;
 
-    /*!
-     * internal structure gathering data from mechanical behaviour
-     * description
-     */
-    struct Data {
-      using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
-      Data();
-      Data(Data &&) noexcept;
-      Data(const Data &);
-      Data &operator=(Data &&);
-      Data &operator=(const Data &);
-      ~Data() noexcept;
+    //! \brief data structure describing a variable
+    struct VariableInformationBase {
+      VariableInformationBase();
+      VariableInformationBase(VariableInformationBase &&) noexcept;
+      VariableInformationBase(const VariableInformationBase &);
+      VariableInformationBase &operator=(VariableInformationBase &&);
+      VariableInformationBase &operator=(const VariableInformationBase &);
+      ~VariableInformationBase() noexcept;
       std::string name;
       std::string type;
       std::string description;
-      //! specific description per modelling hypothesis
-      std::map<Hypothesis, std::string> descriptions;
       std::string externalName;
-      std::vector<Hypothesis> hypotheses;
       unsigned short arraySize;
     };
 

@@ -42,7 +42,6 @@
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main(const int argc, const char* const* const argv) {
   using namespace mfront;
-  using BGen = DocumentationGeneratorBase;
   initDSLs();
   initInterfaces();
   auto current_path_specifier = mfront::PathSpecifier{};
@@ -77,8 +76,10 @@ int main(const int argc, const char* const* const argv) {
         mfront::getImplementationsPaths(path_specifiers);
     SearchPathsHandler::addSearchPathsFromImplementationPaths(implementations);
     //
-    auto bgens = std::vector<std::shared_ptr<BehaviourDocumentationGenerator>>{};
-    auto mpgens = std::vector<std::shared_ptr<MaterialPropertyDocumentationGenerator>>{};
+    auto bgens =
+        std::vector<std::shared_ptr<BehaviourDocumentationGenerator>>{};
+    auto mpgens =
+        std::vector<std::shared_ptr<MaterialPropertyDocumentationGenerator>>{};
     for (const auto& f : implementations) {
       auto dsl = MFrontBase::getDSL(f);
       if (dsl->getTargetType() == AbstractDSL::BEHAVIOURDSL) {
@@ -89,8 +90,9 @@ int main(const int argc, const char* const* const argv) {
       } else if (dsl->getTargetType() == AbstractDSL::MATERIALPROPERTYDSL) {
         auto b = std::dynamic_pointer_cast<MaterialPropertyDSL>(dsl);
         tfel::raise_if(!b, "mfront-doc: invalid dsl implementation");
-        mpgens.push_back(std::make_shared<MaterialPropertyDocumentationGenerator>(
-            untreated_arguments.size(), untreated_arguments.data(), b, f));
+        mpgens.push_back(
+            std::make_shared<MaterialPropertyDocumentationGenerator>(
+                untreated_arguments.size(), untreated_arguments.data(), b, f));
       } else {
         tfel::raise("mfront-doc: unsupported dsl type");
       }

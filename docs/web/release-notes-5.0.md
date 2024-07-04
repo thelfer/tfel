@@ -219,9 +219,10 @@ use the `TFEL` libraries in `C++` projects, using either the
 
 Allows mfront-doc to be used with the `MaterialLaw` DSL. Example of use:
 
-```
-mfront-doc T91MartensiticSteel_gamma1_ROUX2007.mfront
-```
+~~~~{.bash}
+$ mfront-doc T91MartensiticSteel_gamma1_ROUX2007.mfront
+~~~~
+
 For more details, see <https://github.com/thelfer/tfel/issues/535>
 
 ## Issue 582: [cast3m interface] add explicit names and 4-letter mapping of internal variables to the castem file

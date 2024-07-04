@@ -62,40 +62,11 @@ namespace mfront {
     return out.str();
   }
 
-  static void writeStandardLatexMacros(std::ostream& os) {
-    os << "\\newcommand{\\tensor}[1]{\\underline{#1}}\n"
-       << "\\newcommand{\\tensorq}[1]{\\underline{\\mathbf{#1}}}\n"
-       << "\\newcommand{\\ust}[1]{\\underset{\\tilde{}}{\\mathbf{#1}}}\n"
-       << "\\newcommand{\\transpose}[1]{#1^{\\mathop{T}}}\n"
-       << "\\newcommand{\\tsigma}{\\underline{\\sigma}}\n"
-       << "\\newcommand{\\sigmaeq}{\\sigma_{\\mathrm{eq}}}\n"
-       << "\\newcommand{\\epsilonth}{\\epsilon^{\\mathrm{th}}}\n"
-       << "\\newcommand{\\tepsilonto}{\\underline{\\epsilon}^{\\mathrm{to}}}\n"
-       << "\\newcommand{\\tepsilonel}{\\underline{\\epsilon}^{\\mathrm{el}}}\n"
-       << "\\newcommand{\\tepsilonth}{\\underline{\\epsilon}^{\\mathrm{th}}}\n"
-       << "\\newcommand{\\tepsilonvis}{\\underline{\\epsilon}^{\\mathrm{vis}}}"
-          "\n"
-       << "\\newcommand{\\tdepsilonvis}{\\underline{\\dot{\\epsilon}}^{"
-          "\\mathrm{vis}}}\n"
-       << "\\newcommand{\\tepsilonp}{\\underline{\\epsilon}^{\\mathrm{p}}}\n"
-       << "\\newcommand{\\tdepsilonp}{\\underline{\\dot{\\epsilon}}^{\\mathrm{"
-          "p}}}\n"
-       << "\\newcommand{\\trace}[1]{\\mathrm{tr}\\paren{#1}}\n"
-       << "\\newcommand{\\Frac}[2]{{\\displaystyle \\frac{\\displaystyle "
-          "#1}{\\displaystyle #2}}}\n"
-       << "\\newcommand{\\deriv}[2]{{\\displaystyle \\frac{\\displaystyle "
-          "\\partial #1}{\\displaystyle \\partial #2}}}\n"
-       << "\\newcommand{\\dtot}{\\mathrm{d}}\n"
-       << "\\newcommand{\\paren}[1]{\\left(#1\\right)}\n"
-       << "\\newcommand{\\bts}[1]{\\left.#1\\right|_{t}}\n"
-       << "\\newcommand{\\mts}[1]{\\left.#1\\right|_{t+\\theta\\,\\Delta\\,t}}"
-          "\n"
-       << "\\newcommand{\\ets}[1]{\\left.#1\\right|_{t+\\Delta\\,t}}\n\n";
-  }  // end of writeStandardLatexMacros
-
-  static void getData(std::vector<DocumentationGeneratorBase::Data>& data,
-                      const VariableDescription& v) {
-    auto ndata = DocumentationGeneratorBase::Data{};
+  static void getData(
+      std::vector<MaterialPropertyDocumentationGenerator::VariableInformation>&
+          data,
+      const VariableDescription& v) {
+    auto ndata = MaterialPropertyDocumentationGenerator::VariableInformation{};
     ndata.name = v.name;
     ndata.arraySize = v.arraySize;
     ndata.type = v.type;
@@ -105,9 +76,11 @@ namespace mfront {
     data.push_back(ndata);
   }  // end of getData
 
-  static void getData(std::vector<DocumentationGeneratorBase::Data>& data,
-                      const StaticVariableDescription& v) {
-    auto ndata = DocumentationGeneratorBase::Data{};
+  static void getData(
+      std::vector<MaterialPropertyDocumentationGenerator::VariableInformation>&
+          data,
+      const StaticVariableDescription& v) {
+    auto ndata = MaterialPropertyDocumentationGenerator::VariableInformation{};
     ndata.name = v.name;
     ndata.arraySize = v.arraySize;
     ndata.type = v.type;
@@ -115,22 +88,26 @@ namespace mfront {
     data.push_back(ndata);
   }  // end of getData
 
-  static std::vector<DocumentationGeneratorBase::Data> getData(
-      const VariableDescription& vd) {
+  static std::vector<
+      MaterialPropertyDocumentationGenerator::VariableInformation>
+  getData(const VariableDescription& vd) {
     using namespace tfel::material;
     using namespace tfel::glossary;
-    auto data = std::vector<DocumentationGeneratorBase::Data>{};
+    auto data = std::vector<
+        MaterialPropertyDocumentationGenerator::VariableInformation>{};
     getData(data, vd);
     // description deserves a specific treatment
     return data;
   }
 
-  static std::vector<DocumentationGeneratorBase::Data> getData(
-      const VariableDescriptionContainer& vdc) {
+  static std::vector<
+      MaterialPropertyDocumentationGenerator::VariableInformation>
+  getData(const VariableDescriptionContainer& vdc) {
     using namespace tfel::material;
     using namespace tfel::glossary;
     const auto& glossary = Glossary::getGlossary();
-    auto data = std::vector<DocumentationGeneratorBase::Data>{};
+    auto data = std::vector<
+        MaterialPropertyDocumentationGenerator::VariableInformation>{};
     for (const auto& vd : vdc) {
       getData(data, vd);
     }
@@ -148,55 +125,57 @@ namespace mfront {
         }
         d.description += os.str();
       }
-      auto ddc = d.descriptions.size();
-      if (ddc == 1u) {
-        auto pd = d.descriptions.begin();
-        if (!pd->second.empty()) {
-          if (!d.description.empty()) {
-            d.description += "\n";
-          }
-          d.description += pd->second;
-        }
-      } else if (ddc != 0u) {
-        // Two cases: all descriptions are the same
-        bool b = true;
-        auto pd = d.descriptions.begin();
-        auto pd2 = pd;
-        advance(pd2, 1u);
-        for (; (pd2 != d.descriptions.end()) && (b); ++pd2) {
-          b = pd->second == pd2->second;
-        }
-        if (b) {
-          if (!d.description.empty()) {
-            d.description += "\n";
-          }
-          d.description += pd->second;
-        } else {
-          for (pd2 = pd; (pd2 != d.descriptions.end()) && (b); ++pd2) {
-            if (!pd2->second.empty()) {
-              if (!d.description.empty()) {
-                d.description += "\n";
-              }
-              if (pd2->first == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-                d.description += "Default Hypothesis : " + pd2->second;
-              } else {
-                d.description += ModellingHypothesis::toString(pd2->first) +
-                                 " : " + pd2->second;
-              }
-            }
-          }
-        }
-      }
+      // auto ddc = d.descriptions.size();
+      // if (ddc == 1u) {
+      //   auto pd = d.descriptions.begin();
+      //   if (!pd->second.empty()) {
+      //     if (!d.description.empty()) {
+      //       d.description += "\n";
+      //     }
+      //     d.description += pd->second;
+      //   }
+      // } else if (ddc != 0u) {
+      //   // Two cases: all descriptions are the same
+      //   bool b = true;
+      //   auto pd = d.descriptions.begin();
+      //   auto pd2 = pd;
+      //   advance(pd2, 1u);
+      //   for (; (pd2 != d.descriptions.end()) && (b); ++pd2) {
+      //     b = pd->second == pd2->second;
+      //   }
+      //   if (b) {
+      //     if (!d.description.empty()) {
+      //       d.description += "\n";
+      //     }
+      //     d.description += pd->second;
+      //   } else {
+      //     for (pd2 = pd; (pd2 != d.descriptions.end()) && (b); ++pd2) {
+      //       if (!pd2->second.empty()) {
+      //         if (!d.description.empty()) {
+      //           d.description += "\n";
+      //         }
+      //         if (pd2->first == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+      //           d.description += "Default Hypothesis : " + pd2->second;
+      //         } else {
+      //           d.description += ModellingHypothesis::toString(pd2->first) +
+      //                            " : " + pd2->second;
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
     }
     return data;
   }
 
-  static std::vector<DocumentationGeneratorBase::Data> getData(
-      const StaticVariableDescriptionContainer& vdc) {
+  static std::vector<
+      MaterialPropertyDocumentationGenerator::VariableInformation>
+  getData(const StaticVariableDescriptionContainer& vdc) {
     using namespace tfel::material;
     using namespace tfel::glossary;
     const auto& glossary = Glossary::getGlossary();
-    auto data = std::vector<DocumentationGeneratorBase::Data>{};
+    auto data = std::vector<
+        MaterialPropertyDocumentationGenerator::VariableInformation>{};
     for (const auto& vd : vdc) {
       getData(data, vd);
     }
@@ -214,45 +193,45 @@ namespace mfront {
         }
         d.description += os.str();
       }
-      auto ddc = d.descriptions.size();
-      if (ddc == 1u) {
-        auto pd = d.descriptions.begin();
-        if (!pd->second.empty()) {
-          if (!d.description.empty()) {
-            d.description += "\n";
-          }
-          d.description += pd->second;
-        }
-      } else if (ddc != 0u) {
-        // Two cases: all descriptions are the same
-        bool b = true;
-        auto pd = d.descriptions.begin();
-        auto pd2 = pd;
-        advance(pd2, 1u);
-        for (; (pd2 != d.descriptions.end()) && (b); ++pd2) {
-          b = pd->second == pd2->second;
-        }
-        if (b) {
-          if (!d.description.empty()) {
-            d.description += "\n";
-          }
-          d.description += pd->second;
-        } else {
-          for (pd2 = pd; (pd2 != d.descriptions.end()) && (b); ++pd2) {
-            if (!pd2->second.empty()) {
-              if (!d.description.empty()) {
-                d.description += "\n";
-              }
-              if (pd2->first == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-                d.description += "Default Hypothesis : " + pd2->second;
-              } else {
-                d.description += ModellingHypothesis::toString(pd2->first) +
-                                 " : " + pd2->second;
-              }
-            }
-          }
-        }
-      }
+      // auto ddc = d.descriptions.size();
+      // if (ddc == 1u) {
+      //   auto pd = d.descriptions.begin();
+      //   if (!pd->second.empty()) {
+      //     if (!d.description.empty()) {
+      //       d.description += "\n";
+      //     }
+      //     d.description += pd->second;
+      //   }
+      // } else if (ddc != 0u) {
+      //   // Two cases: all descriptions are the same
+      //   bool b = true;
+      //   auto pd = d.descriptions.begin();
+      //   auto pd2 = pd;
+      //   advance(pd2, 1u);
+      //   for (; (pd2 != d.descriptions.end()) && (b); ++pd2) {
+      //     b = pd->second == pd2->second;
+      //   }
+      //   if (b) {
+      //     if (!d.description.empty()) {
+      //       d.description += "\n";
+      //     }
+      //     d.description += pd->second;
+      //   } else {
+      //     for (pd2 = pd; (pd2 != d.descriptions.end()) && (b); ++pd2) {
+      //       if (!pd2->second.empty()) {
+      //         if (!d.description.empty()) {
+      //           d.description += "\n";
+      //         }
+      //         if (pd2->first == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+      //           d.description += "Default Hypothesis : " + pd2->second;
+      //         } else {
+      //           d.description += ModellingHypothesis::toString(pd2->first) +
+      //                            " : " + pd2->second;
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
     }
     return data;
   }
@@ -260,7 +239,8 @@ namespace mfront {
   static void printData(
       std::ostream& os,
       const std::string& title,
-      const std::vector<DocumentationGeneratorBase::Data>& data,
+      const std::vector<
+          MaterialPropertyDocumentationGenerator::VariableInformation>& data,
       const bool standalone,
       const std::string& language = "english") {
     using namespace tfel::material;
@@ -386,7 +366,7 @@ namespace mfront {
                          name + ".txt'");
       return output_file;
     }();
-    writeStandardLatexMacros(out);
+    DocumentationGeneratorBase::writeStandardLatexMacros(out);
     if (this->otype == FULL) {
       this->writeFullOutput(out, mpd, fd);
     } else if (this->otype == WEB) {
@@ -531,5 +511,20 @@ namespace mfront {
 
   MaterialPropertyDocumentationGenerator::
       ~MaterialPropertyDocumentationGenerator() = default;
+
+  MaterialPropertyDocumentationGenerator::VariableInformation::
+      VariableInformation() = default;
+  MaterialPropertyDocumentationGenerator::VariableInformation::
+      VariableInformation(VariableInformation&&) noexcept = default;
+  MaterialPropertyDocumentationGenerator::VariableInformation::
+      VariableInformation(const VariableInformation&) = default;
+  MaterialPropertyDocumentationGenerator::VariableInformation&
+  MaterialPropertyDocumentationGenerator::VariableInformation::operator=(
+      VariableInformation&&) = default;
+  MaterialPropertyDocumentationGenerator::VariableInformation&
+  MaterialPropertyDocumentationGenerator::VariableInformation::operator=(
+      const VariableInformation&) = default;
+  MaterialPropertyDocumentationGenerator::VariableInformation::
+      ~VariableInformation() noexcept = default;
 
 }  // end of namespace mfront

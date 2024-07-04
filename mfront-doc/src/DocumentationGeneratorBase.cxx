@@ -38,7 +38,8 @@ namespace mfront {
     return p->second;
   }
 
-  static void writeStandardLatexMacros(std::ostream& os) {
+  void DocumentationGeneratorBase::writeStandardLatexMacros(
+      std::ostream& os) const {
     os << "\\newcommand{\\tensor}[1]{\\underline{#1}}\n"
        << "\\newcommand{\\tensorq}[1]{\\underline{\\mathbf{#1}}}\n"
        << "\\newcommand{\\ust}[1]{\\underset{\\tilde{}}{\\mathbf{#1}}}\n"
@@ -195,11 +196,18 @@ namespace mfront {
 
   DocumentationGeneratorBase::~DocumentationGeneratorBase() = default;
 
-  DocumentationGeneratorBase::Data::Data() = default;
-  DocumentationGeneratorBase::Data::Data(Data&&) noexcept = default;
-  DocumentationGeneratorBase::Data::Data(const Data&) = default;
-  DocumentationGeneratorBase::Data& DocumentationGeneratorBase::Data::operator=(Data&&) = default;
-  DocumentationGeneratorBase::Data& DocumentationGeneratorBase::Data::operator=(const Data&) = default;
-  DocumentationGeneratorBase::Data::~Data() noexcept = default;
-
+  DocumentationGeneratorBase::VariableInformationBase::
+      VariableInformationBase() = default;
+  DocumentationGeneratorBase::VariableInformationBase::VariableInformationBase(
+      VariableInformationBase&&) noexcept = default;
+  DocumentationGeneratorBase::VariableInformationBase::VariableInformationBase(
+      const VariableInformationBase&) = default;
+  DocumentationGeneratorBase::VariableInformationBase&
+  DocumentationGeneratorBase::VariableInformationBase::operator=(
+      VariableInformationBase&&) = default;
+  DocumentationGeneratorBase::VariableInformationBase&
+  DocumentationGeneratorBase::VariableInformationBase::operator=(
+      const VariableInformationBase&) = default;
+  DocumentationGeneratorBase::VariableInformationBase::
+      ~VariableInformationBase() noexcept = default;
 }  // end of namespace mfront

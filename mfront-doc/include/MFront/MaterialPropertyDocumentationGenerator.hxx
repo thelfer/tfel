@@ -47,6 +47,16 @@ namespace mfront {
     //! destructor
     ~MaterialPropertyDocumentationGenerator() override;
 
+    struct VariableInformation
+        : DocumentationGeneratorBase::VariableInformationBase {
+      VariableInformation();
+      VariableInformation(VariableInformation &&) noexcept;
+      VariableInformation(const VariableInformation &);
+      VariableInformation &operator=(VariableInformation &&);
+      VariableInformation &operator=(const VariableInformation &);
+      ~VariableInformation() noexcept;
+    };
+
    private:
     void writeWebOutput(std::ostream &,
                         const MaterialPropertyDescription &,
