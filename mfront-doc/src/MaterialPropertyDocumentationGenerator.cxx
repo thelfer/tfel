@@ -486,21 +486,25 @@ namespace mfront {
         }
       }
     } else {
-      out << "No description specified";
+      out << "No description specified\n";
     }
-    out << '\n'  //
-        << basic_title_level << "# Variables\n\n";
-    out << '\n';
+
+    out << '\n' << basic_title_level << "# Variables\n\n";
+
     printData(out, "Inputs", getData(mpd.inputs), this->standalone);
     out << '\n';
+
     printData(out, "Outputs", getData(mpd.output), this->standalone);
-    out << '\n';
-    if (mpd.hasParameters()) {
-      printData(out, "Parameters", getData(mpd.parameters), this->standalone);
+
+    if (!areParametersTreatedAsStaticVariables(mpd)) {
+      if (mpd.hasParameters()) {
+        out << '\n';
+        printData(out, "Parameters", getData(mpd.parameters), this->standalone);
+      }
     }
     out << '\n';
     printData(out, "Constantes", getData(mpd.staticVars), this->standalone);
-    out << '\n';
+
     const auto code = getCodeBlocksDocumentation(mpd, fd, this->standalone);
     if (!code.empty() != 0) {
       out << basic_title_level  //

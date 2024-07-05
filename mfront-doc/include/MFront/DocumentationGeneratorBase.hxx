@@ -69,7 +69,7 @@ namespace mfront {
     //! type of ouput
     OutputType otype;
     //! \brief generate latex macros for header of output file
-    void writeStandardLatexMacros(std::ostream &) const;
+    static void writeStandardLatexMacros(std::ostream &);
 
     //! \brief data structure describing a variable
     struct VariableInformationBase {

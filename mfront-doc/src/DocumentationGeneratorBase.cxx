@@ -38,8 +38,7 @@ namespace mfront {
     return p->second;
   }
 
-  void DocumentationGeneratorBase::writeStandardLatexMacros(
-      std::ostream& os) const {
+  void DocumentationGeneratorBase::writeStandardLatexMacros(std::ostream& os) {
     os << "\\newcommand{\\tensor}[1]{\\underline{#1}}\n"
        << "\\newcommand{\\tensorq}[1]{\\underline{\\mathbf{#1}}}\n"
        << "\\newcommand{\\ust}[1]{\\underset{\\tilde{}}{\\mathbf{#1}}}\n"
