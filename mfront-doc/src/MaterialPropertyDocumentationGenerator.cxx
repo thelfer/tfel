@@ -125,45 +125,6 @@ namespace mfront {
         }
         d.description += os.str();
       }
-      // auto ddc = d.descriptions.size();
-      // if (ddc == 1u) {
-      //   auto pd = d.descriptions.begin();
-      //   if (!pd->second.empty()) {
-      //     if (!d.description.empty()) {
-      //       d.description += "\n";
-      //     }
-      //     d.description += pd->second;
-      //   }
-      // } else if (ddc != 0u) {
-      //   // Two cases: all descriptions are the same
-      //   bool b = true;
-      //   auto pd = d.descriptions.begin();
-      //   auto pd2 = pd;
-      //   advance(pd2, 1u);
-      //   for (; (pd2 != d.descriptions.end()) && (b); ++pd2) {
-      //     b = pd->second == pd2->second;
-      //   }
-      //   if (b) {
-      //     if (!d.description.empty()) {
-      //       d.description += "\n";
-      //     }
-      //     d.description += pd->second;
-      //   } else {
-      //     for (pd2 = pd; (pd2 != d.descriptions.end()) && (b); ++pd2) {
-      //       if (!pd2->second.empty()) {
-      //         if (!d.description.empty()) {
-      //           d.description += "\n";
-      //         }
-      //         if (pd2->first == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      //           d.description += "Default Hypothesis : " + pd2->second;
-      //         } else {
-      //           d.description += ModellingHypothesis::toString(pd2->first) +
-      //                            " : " + pd2->second;
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
     }
     return data;
   }
@@ -193,45 +154,6 @@ namespace mfront {
         }
         d.description += os.str();
       }
-      // auto ddc = d.descriptions.size();
-      // if (ddc == 1u) {
-      //   auto pd = d.descriptions.begin();
-      //   if (!pd->second.empty()) {
-      //     if (!d.description.empty()) {
-      //       d.description += "\n";
-      //     }
-      //     d.description += pd->second;
-      //   }
-      // } else if (ddc != 0u) {
-      //   // Two cases: all descriptions are the same
-      //   bool b = true;
-      //   auto pd = d.descriptions.begin();
-      //   auto pd2 = pd;
-      //   advance(pd2, 1u);
-      //   for (; (pd2 != d.descriptions.end()) && (b); ++pd2) {
-      //     b = pd->second == pd2->second;
-      //   }
-      //   if (b) {
-      //     if (!d.description.empty()) {
-      //       d.description += "\n";
-      //     }
-      //     d.description += pd->second;
-      //   } else {
-      //     for (pd2 = pd; (pd2 != d.descriptions.end()) && (b); ++pd2) {
-      //       if (!pd2->second.empty()) {
-      //         if (!d.description.empty()) {
-      //           d.description += "\n";
-      //         }
-      //         if (pd2->first == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      //           d.description += "Default Hypothesis : " + pd2->second;
-      //         } else {
-      //           d.description += ModellingHypothesis::toString(pd2->first) +
-      //                            " : " + pd2->second;
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
     }
     return data;
   }
@@ -491,8 +413,10 @@ namespace mfront {
 
     out << '\n' << basic_title_level << "# Variables\n\n";
 
-    printData(out, "Inputs", getData(mpd.inputs), this->standalone);
-    out << '\n';
+    if (!mpd.inputs.empty()) {
+      printData(out, "Inputs", getData(mpd.inputs), this->standalone);
+      out << '\n';
+    }
 
     printData(out, "Outputs", getData(mpd.output), this->standalone);
 
