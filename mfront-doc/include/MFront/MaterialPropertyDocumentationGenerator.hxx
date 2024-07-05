@@ -1,9 +1,9 @@
 /*!
- * \file  BehaviourDocumentationGenerator.hxx
+ * \file  MaterialPropertyDocumentationGenerator.hxx
  * \brief
- * \author Thomas Helfer
- * \date   04 mars 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \author Maxence Wangermez
+ * \date   16 avril 2024
+ * \copyright Copyright (C) 2006-2024 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
  * or the CECILL-A licence. A copy of thoses licences are delivered
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_BEHAVIOURDOCUMENTATIONGENERATOR_H
-#define LIB_MFRONT_BEHAVIOURDOCUMENTATIONGENERATOR_H
+#ifndef LIB_MFRONT_MATERIALPROPERTYDOCUMENTATIONGENERATOR_H
+#define LIB_MFRONT_MATERIALPROPERTYDOCUMENTATIONGENERATOR_H
 
 #include <string>
 #include <vector>
@@ -20,6 +20,7 @@
 #include <utility>
 #include <functional>
 
+#include "MFront/MaterialPropertyDSL.hxx"
 #include "MFront/DocumentationGeneratorBase.hxx"
 
 namespace mfront {
@@ -28,48 +29,45 @@ namespace mfront {
    * Class used by the mfront-query tool to extract information from
    * behaviour implementation
    */
-  struct BehaviourDocumentationGenerator : public DocumentationGeneratorBase {
+  struct MaterialPropertyDocumentationGenerator
+      : public DocumentationGeneratorBase {
     /*!
-     * build a BehaviourDocumentationGenerator object based on command line
-     * arguments
-     * \param[in] argc : number of command line arguments
+     * build a MaterialPropertyDocumentationGenerator object based on command
+     * line arguments \param[in] argc : number of command line arguments
      * \param[in] argv : command line arguments
      * \param[in] d    : behaviour domain specific language
      * \param[in] f    : behaviour domain specific language
      */
-    BehaviourDocumentationGenerator(const int,
-                                    const char *const *const,
-                                    std::shared_ptr<AbstractBehaviourDSL>,
-                                    const std::string &);
+    MaterialPropertyDocumentationGenerator(const int,
+                                           const char *const *const,
+                                           std::shared_ptr<MaterialPropertyDSL>,
+                                           const std::string &);
     //! treat the requests
     void exe() const override;
     //! destructor
-    ~BehaviourDocumentationGenerator() override;
+    ~MaterialPropertyDocumentationGenerator() override;
 
     struct VariableInformation
         : DocumentationGeneratorBase::VariableInformationBase {
-      using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
       VariableInformation();
       VariableInformation(VariableInformation &&) noexcept;
       VariableInformation(const VariableInformation &);
       VariableInformation &operator=(VariableInformation &&);
       VariableInformation &operator=(const VariableInformation &);
       ~VariableInformation() noexcept;
-      std::map<Hypothesis, std::string> descriptions;
-      std::vector<Hypothesis> hypotheses;
     };
 
    private:
     void writeWebOutput(std::ostream &,
-                        const BehaviourDescription &,
+                        const MaterialPropertyDescription &,
                         const FileDescription &) const;
     void writeFullOutput(std::ostream &,
-                         const BehaviourDescription &,
+                         const MaterialPropertyDescription &,
                          const FileDescription &) const;
     //! abstract behaviour dsl
-    std::shared_ptr<AbstractBehaviourDSL> dsl;
-  };  // end of struct BehaviourDocumentationGenerator
+    std::shared_ptr<MaterialPropertyDSL> dsl;
+  };  // end of struct MaterialPropertyDocumentationGenerator
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_BEHAVIOURDOCUMENTATIONGENERATOR_H */
+#endif /* LIB_MFRONT_MATERIALPROPERTYDOCUMENTATIONGENERATOR_H */
