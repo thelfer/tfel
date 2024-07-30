@@ -586,14 +586,12 @@ namespace mfront {
                             "no slip system defined");
              const auto& ssd = d.getSlipSystems();
              const auto nss = ssd.getNumberOfSlipSystemsFamilies();
-             auto r = size_t{};
              for (size_t i = 0; i != nss; ++i) {
                const auto os = ssd.getOrientationTensors(i);
                const auto ss = ssd.getSlipSystems(i);
                for (decltype(ss.size()) j = 0; j != ss.size(); ++j) {
                  cout << "- " << to_string(ss[j]) << ": " << to_string(os[j])
                       << '\n';
-                 ++r;
                }
              }
            }});
@@ -640,14 +638,12 @@ namespace mfront {
                             "no slip system defined");
              const auto& ssd = d.getSlipSystems();
              const auto nss = ssd.getNumberOfSlipSystemsFamilies();
-             auto r = size_t{};
              for (size_t i = 0; i != nss; ++i) {
                const auto os = ssd.getClimbTensors(i);
                const auto ss = ssd.getSlipSystems(i);
                for (decltype(ss.size()) j = 0; j != ss.size(); ++j) {
                  cout << "- " << to_string(ss[j]) << ": " << to_string(os[j])
                       << '\n';
-                 ++r;
                }
              }
            }});
