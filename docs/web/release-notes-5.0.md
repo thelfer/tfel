@@ -17,6 +17,8 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+\newcommand{\tenseur}[1]{\underline{#1}}
+
 # New `TFEL/Utilities` features
 
 ## Support for `C++` digit separator in `CxxTokenizer`
@@ -207,7 +209,7 @@ T.setGlossaryName("Temperature");
 @Data {
   values: { 293.15 : 240e9, 693.15 : 180e9, 893.15 : 170e9 },
   interpolation : "linear"
-}
+};
 ~~~~
 
 ## New DSL options
