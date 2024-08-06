@@ -42,11 +42,19 @@ namespace mfront {
       return;
     }
     const auto& b = v.getBounds();
+    const char* const get_out_of_bounds_policy =
+        "#if OCTAVE_MAJOR_VERSION >= 6\n"
+        "const octave_value mfront_policy = "
+        "mfront_octave_interpreter.global_varval("
+        "\"OCTAVE_OUT_OF_BOUNDS_POLICY\");\n"
+        "#else /* OCTAVE_MAJOR_VERSION */\n"
+        "const octave_value mfront_policy = "
+        "mfront_octave_interpreter.get_symbol_table().global_varval("
+        "\"OCTAVE_OUT_OF_BOUNDS_POLICY\");\n"
+        "#endif /* OCTAVE_MAJOR_VERSION */\n";
     if (b.boundsType == VariableBoundsDescription::LOWER) {
       out << "if(" << v.name << " < " << b.lowerBound << "){\n"
-          << "const octave_value mfront_policy = "
-          << "mfront_octave_interpreter.global_varval("
-          << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\");\n"
+          << get_out_of_bounds_policy  //
           << "if(mfront_policy.is_defined()){\n"
           << "if(mfront_policy.is_string()){\n"
           << "string msg(\"" << name << ": " << v.name
@@ -64,8 +72,7 @@ namespace mfront {
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
       out << "if(" << v.name << " < " << b.lowerBound << "){\n"
-          << "const octave_value mfront_policy = "
-          << "mfront_octave_interpreter.global_varval("
+          << get_out_of_bounds_policy  //
           << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\");\n"
           << "if(mfront_policy.is_defined()){\n"
           << "if(mfront_policy.is_string()){\n"
@@ -82,12 +89,11 @@ namespace mfront {
     } else {
       out << "if((" << v.name << " < " << b.lowerBound << ")||"
           << "(" << v.name << " > " << b.upperBound << ")){\n"
-          << "const octave_value mfront_policy = "
-          << "mfront_octave_interpreter.global_varval("
-          << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\");\n"
+          << get_out_of_bounds_policy  //
           << "if(mfront_policy.is_defined()){\n"
           << "if(mfront_policy.is_string()){\n"
-          << "string msg(\"" << name << ": " << v.name << " is out of its bounds.\");\n"
+          << "string msg(\"" << name << ": " << v.name
+          << " is out of its bounds.\");\n"
           << "if(mfront_policy.string_value()==\"STRICT\"){\n"
           << "error(\"%s\\n\", msg.c_str());\n"
           << "return -" << nbr << ";\n"

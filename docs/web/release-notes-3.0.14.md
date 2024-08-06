@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 3.0.14 of the
 
 # Issues fixed
 
+## Issue 605: update `octave` interface
+
+For more details, see <https://github.com/thelfer/tfel/issues/605>.
+
 ## Issue 583: [mtest] Fix typo when comparing tangent operator to its numerical approximation
 
 For more details, see <https://github.com/thelfer/tfel/issues/583>.
