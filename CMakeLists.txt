@@ -28,6 +28,8 @@ include(cmake/modules/autotools.cmake)
 #major and minor version
 tfel_project(3 0 "14-dev")
 set(PACKAGE_BUGREPORT "tfel-contact@cea.fr")
+set(CMAKE_CXX_STANDARD 11)
+set(CXX_STANDARD_REQUIRED ON)
 
 # check for the fenv package
 include(CheckIncludeFiles)
