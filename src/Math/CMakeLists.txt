@@ -54,14 +54,14 @@ set(TFELMathParser_SOURCES
 tfel_library(TFELMath ${TFELMath_SOURCES})
 target_include_directories(TFELMath
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELMath
 	PUBLIC TFELException)
 if(enable-static)
     target_include_directories(TFELMath-static
       PUBLIC 
-      $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
       $<INSTALL_INTERFACE:include>)
     target_link_libraries(TFELMath-static
         PUBLIC TFELException-static)
@@ -70,7 +70,7 @@ endif(enable-static)
 tfel_library(TFELMathCubicSpline ${TFELMathCubicSpline_SOURCES})
 target_include_directories(TFELMathCubicSpline
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELMathCubicSpline
 	PUBLIC TFELMath
@@ -79,7 +79,7 @@ target_link_libraries(TFELMathCubicSpline
 if(enable-static)
     target_include_directories(TFELMathCubicSpline-static
       PUBLIC 
-      $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
       $<INSTALL_INTERFACE:include>)
     target_link_libraries(TFELMathCubicSpline-static
         PUBLIC TFELMath-static
@@ -89,7 +89,7 @@ endif(enable-static)
 tfel_library(TFELMathKriging ${TFELMathKriging_SOURCES})
 target_include_directories(TFELMathKriging
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELMathKriging
     PUBLIC TFELMath
@@ -97,7 +97,7 @@ target_link_libraries(TFELMathKriging
 if(enable-static)
     target_include_directories(TFELMathKriging-static
         PUBLIC 
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>)
     target_link_libraries(TFELMathKriging-static
         PUBLIC TFELMath-static
@@ -108,8 +108,8 @@ tfel_library(TFELMathParser ${TFELMathParser_SOURCES})
 add_dependencies(TFELMathParser TFELMath)
 target_include_directories(TFELMathParser
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELMathParser
 	PUBLIC TFELMathKriging
@@ -119,8 +119,8 @@ target_link_libraries(TFELMathParser
 if(enable-static)
     target_include_directories(TFELMathParser-static
       PUBLIC 
-      $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
-      $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
       $<INSTALL_INTERFACE:include>)
     target_link_libraries(TFELMathParser-static
         PUBLIC TFELMathKriging-static

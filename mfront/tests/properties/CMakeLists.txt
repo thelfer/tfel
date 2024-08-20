@@ -160,8 +160,8 @@ mfront_dependencies(MFrontMaterialProperties-generic
   VanadiumAlloy_PoissonRatio_SRMA)
 mfront_check_module(MFrontMaterialProperties-generic generic "generic" ${mfront_SOURCES})
 target_include_directories(MFrontMaterialProperties-generic
-  PRIVATE "${CMAKE_SOURCE_DIR}/include"
-  PRIVATE "${CMAKE_SOURCE_DIR}/mfront/include"
+  PRIVATE "${PROJECT_SOURCE_DIR}/include"
+  PRIVATE "${PROJECT_SOURCE_DIR}/mfront/include"
   PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
 
 mfront_dependencies(MFrontMaterialProperties
@@ -170,7 +170,7 @@ mfront_dependencies(MFrontMaterialProperties
   VanadiumAlloy_PoissonRatio_SRMA)
 mfront_check_library(MFrontMaterialProperties c "" ${mfront_SOURCES})
 target_include_directories(MFrontMaterialProperties
-  PRIVATE "${CMAKE_SOURCE_DIR}/include"
+  PRIVATE "${PROJECT_SOURCE_DIR}/include"
   PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
 
 if(HAVE_CASTEM)
@@ -180,7 +180,7 @@ if(HAVE_CASTEM)
     VanadiumAlloy_PoissonRatio_SRMA)
   mfront_check_module(MFrontMaterialProperties-castem castem "castem" ${mfront_SOURCES})
   target_include_directories(MFrontMaterialProperties-castem
-    PRIVATE "${CMAKE_SOURCE_DIR}/include"
+    PRIVATE "${PROJECT_SOURCE_DIR}/include"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
   if(WIN32)
     if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
@@ -195,7 +195,7 @@ mfront_dependencies(MFrontMaterialProperties-cxx
   VanadiumAlloy_PoissonRatio_SRMA)
 mfront_check_library(MFrontMaterialProperties-cxx cxx cxx ${mfront_SOURCES})
 target_include_directories(MFrontMaterialProperties-cxx
-  PRIVATE "${CMAKE_SOURCE_DIR}/include"
+  PRIVATE "${PROJECT_SOURCE_DIR}/include"
   PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
@@ -210,7 +210,7 @@ if(HAVE_FORTRAN)
     VanadiumAlloy_PoissonRatio_SRMA)
   mfront_check_library(MFrontMaterialProperties-fortran fortran "fortran" ${mfront_SOURCES})
   target_include_directories(MFrontMaterialProperties-fortran
-    PRIVATE "${CMAKE_SOURCE_DIR}/include"
+    PRIVATE "${PROJECT_SOURCE_DIR}/include"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
   if(WIN32)
     if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
