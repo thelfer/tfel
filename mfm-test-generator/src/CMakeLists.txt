@@ -16,10 +16,10 @@ mfmtg_library(MFMTestGenerator
   LicosInputFileGenerators.cxx)
 target_include_directories(MFMTestGenerator
   PUBLIC 
-  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
-  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
-  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
-  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfm-test-generator/include>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfm-test-generator/include>
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(MFMTestGenerator
   PUBLIC
@@ -29,10 +29,10 @@ target_link_libraries(MFMTestGenerator
 if(enable-static)
   target_include_directories(MFMTestGenerator-static
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfm-test-generator/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfm-test-generator/include>
    $<INSTALL_INTERFACE:include>)
   target_link_libraries(MFMTestGenerator-static
     PUBLIC

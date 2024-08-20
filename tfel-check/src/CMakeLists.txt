@@ -23,7 +23,7 @@ tfel_library(TFELCheck
   Test.cxx)
 target_include_directories(TFELCheck
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/tfel-check/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tfel-check/include>
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELCheck
   TFELMathCubicSpline TFELMathParser
@@ -32,7 +32,7 @@ target_link_libraries(TFELCheck
 if(enable-static)
   target_include_directories(TFELCheck-static
      PUBLIC 
-     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/tfel-check/include>
+     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tfel-check/include>
      $<INSTALL_INTERFACE:include>)
   target_link_libraries(TFELCheck-static
     TFELMathCubicSpline-static
