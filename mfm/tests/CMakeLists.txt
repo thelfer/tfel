@@ -43,7 +43,7 @@ macro(mfm_test args mfront_library file)
   #     -D TEST_PROGRAM=${mfm}
   # # ${PROJECT_BINARY_DIR}/mfm/src/mfm${CMAKE_EXECUTABLE_SUFFIX}
   #     -D TEST_ARGS=${args}
-  #     -D MFRONT_FILE=${CMAKE_SOURCE_DIR}/mfront/tests/behaviours/${mfront_file}
+  #     -D MFRONT_FILE=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/${mfront_file}
   #     -D TEST_OUTPUT=mfm-result-${MFM_TEST_ID}.txt
   #     -D REFERENCE_FILE=${CMAKE_CURRENT_SOURCE_DIR}/references/${file}
   #     -P ${CMAKE_CURRENT_SOURCE_DIR}/mfm.cmake )
