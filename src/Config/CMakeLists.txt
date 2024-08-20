@@ -6,15 +6,15 @@ tfel_library(TFELConfig
   ${PROJECT_BINARY_DIR}/src/Config/GetTFELVersion.c)
 target_include_directories(TFELConfig
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>
    PRIVATE
-   $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>)
+   $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
 if(enable-static)
    target_include_directories(TFELConfig-static
      PUBLIC 
-     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     PRIVATE
-    $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>)
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>)
 endif(enable-static)
