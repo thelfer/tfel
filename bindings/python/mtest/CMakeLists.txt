@@ -27,7 +27,7 @@ mtest_python_module(_mtest
   StructureCurrentState.cxx
   StudyCurrentState.cxx
   SolverWorkSpace.cxx
-  MFrontLogStream)
+  MFrontLogStream.cxx)
 
 target_link_libraries(py_mtest__mtest
   TFELMTest)
