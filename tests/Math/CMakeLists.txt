@@ -14,7 +14,7 @@ endif(enable-cadna)
 macro(tests_math test_arg)
   add_executable(${test_arg} EXCLUDE_FROM_ALL ${test_arg}.cxx)
   target_include_directories(${test_arg}
-    PRIVATE ${CMAKE_SOURCE_DIR}/tests/Math/include/)
+    PRIVATE ${PROJECT_SOURCE_DIR}/tests/Math/include/)
   target_link_libraries(${test_arg}
     TFELMath TFELUtilities TFELException TFELTests)
   add_test(NAME ${test_arg} COMMAND ${test_arg})

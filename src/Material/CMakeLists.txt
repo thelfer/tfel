@@ -10,7 +10,7 @@ set(TFELMaterial_SOURCES
 tfel_library(TFELMaterial ${TFELMaterial_SOURCES})
 target_include_directories(TFELMaterial
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELMaterial
 	PUBLIC TFELNUMODIS
