@@ -10,11 +10,11 @@ ADD_CUSTOM_COMMAND(
   DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/behaviours.tex.in
   DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/annexe-orthotropie.tex.in
   DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/InternalNames.tex.in
-  DEPENDS    ${CMAKE_SOURCE_DIR}/docs/mfront/glossary.tex.in
+  DEPENDS    ${PROJECT_SOURCE_DIR}/docs/mfront/glossary.tex.in
   DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/behaviours.tex
   DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/annexe-orthotropie.tex
   DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/InternalNames.tex
-  DEPENDS    ${CMAKE_BINARY_DIR}/docs/mfront/glossary.tex
+  DEPENDS    ${PROJECT_BINARY_DIR}/docs/mfront/glossary.tex
   COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
   ARGS      -interaction=batchmode
   ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
@@ -30,13 +30,13 @@ ADD_CUSTOM_COMMAND(
   COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
   ARGS      -terse behaviours
   # COMMAND   ${MAKEINDEX_COMPILER}
-  # ARGS      -s ${CMAKE_SOURCE_DIR}/docs/mfront/style.ist benv.idx
+  # ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist benv.idx
   COMMAND   ${MAKEINDEX_COMPILER}
-  ARGS      -s ${CMAKE_SOURCE_DIR}/docs/mfront/style.ist bheaders.idx
+  ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist bheaders.idx
   COMMAND   ${MAKEINDEX_COMPILER}
-  ARGS      -s ${CMAKE_SOURCE_DIR}/docs/mfront/style.ist bmkeys.idx
+  ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist bmkeys.idx
   COMMAND   ${MAKEINDEX_COMPILER}
-  ARGS      -s ${CMAKE_SOURCE_DIR}/docs/mfront/style.ist btfel.idx
+  ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist btfel.idx
   COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
   ARGS      -interaction=batchmode
   ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
