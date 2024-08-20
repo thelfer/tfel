@@ -6,10 +6,10 @@ ADD_CUSTOM_COMMAND(
   OUTPUT    mfront.pdf
   DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/Champs.tex.in
   DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/mfront.tex.in
-  DEPENDS    ${CMAKE_SOURCE_DIR}/docs/mfront/glossary.tex.in
+  DEPENDS    ${PROJECT_SOURCE_DIR}/docs/mfront/glossary.tex.in
   DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/Champs.tex
   DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/mfront.tex
-  DEPENDS    ${CMAKE_BINARY_DIR}/docs/mfront/glossary.tex
+  DEPENDS    ${PROJECT_BINARY_DIR}/docs/mfront/glossary.tex
   COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
   ARGS      -interaction=batchmode
   ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
@@ -25,9 +25,9 @@ ADD_CUSTOM_COMMAND(
   COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
   ARGS      -terse mfront
   COMMAND   ${MAKEINDEX_COMPILER}
-  ARGS      -s ${CMAKE_SOURCE_DIR}/docs/mfront/style.ist env.idx
+  ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist env.idx
   COMMAND   ${MAKEINDEX_COMPILER}
-  ARGS      -s ${CMAKE_SOURCE_DIR}/docs/mfront/style.ist mkeys.idx
+  ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist mkeys.idx
   COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
   ARGS      -interaction=batchmode
   ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex

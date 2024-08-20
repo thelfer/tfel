@@ -19,13 +19,13 @@ ADD_CUSTOM_COMMAND(
   #    COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
   #    ARGS      -terse aster
   COMMAND   ${MAKEINDEX_COMPILER}
-  ARGS      -s ${CMAKE_SOURCE_DIR}/docs/mfront/style.ist aenv.idx
+  ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist aenv.idx
   COMMAND   ${MAKEINDEX_COMPILER}
-  ARGS      -s ${CMAKE_SOURCE_DIR}/docs/mfront/style.ist aheaders.idx
+  ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist aheaders.idx
   COMMAND   ${MAKEINDEX_COMPILER}
-  ARGS      -s ${CMAKE_SOURCE_DIR}/docs/mfront/style.ist amkeys.idx
+  ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist amkeys.idx
   COMMAND   ${MAKEINDEX_COMPILER}
-  ARGS      -s ${CMAKE_SOURCE_DIR}/docs/mfront/style.ist atfel.idx
+  ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist atfel.idx
   COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
   ARGS      -interaction=batchmode
   ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex

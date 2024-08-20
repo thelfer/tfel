@@ -18,7 +18,7 @@ if(TFEL_APPEND_SUFFIX)
     DESTINATION share/doc/tfel-${TFEL_SUFFIX}/web/documents/portable-behaviour
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
-  install(DIRECTORY ${CMAKE_SOURCE_DIR}/docs/html/reveal.js
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/docs/html/reveal.js
     DESTINATION share/doc/tfel-${TFEL_SUFFIX}/web/documents/portable-behaviour
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
@@ -29,7 +29,7 @@ if(TFEL_APPEND_SUFFIX)
     DESTINATION share/doc/mfront-${TFEL_SUFFIX}/portable-behaviour
     COMPONENT docs
     PATTERN ".svn" EXCLUDE)
-  install(DIRECTORY ${CMAKE_SOURCE_DIR}/docs/html/reveal.js
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/docs/html/reveal.js
     DESTINATION share/doc/mfront-${TFEL_SUFFIX}/portable-behaviour
     COMPONENT docs
     PATTERN ".svn" EXCLUDE)
@@ -41,7 +41,7 @@ else(TFEL_APPEND_SUFFIX)
     DESTINATION share/doc/tfel/web/documents/portable-behaviour
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
-  install(DIRECTORY ${CMAKE_SOURCE_DIR}/docs/html/reveal.js
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/docs/html/reveal.js
     DESTINATION share/doc/tfel/web/documents/portable-behaviour
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
@@ -52,7 +52,7 @@ else(TFEL_APPEND_SUFFIX)
     DESTINATION share/doc/mfront/portable-behaviour
     COMPONENT docs
     PATTERN ".svn" EXCLUDE)
-  install(DIRECTORY ${CMAKE_SOURCE_DIR}/docs/html/reveal.js
+  install(DIRECTORY ${PROJECT_SOURCE_DIR}/docs/html/reveal.js
     DESTINATION share/doc/mfront/portable-behaviour
     COMPONENT docs
     PATTERN ".svn" EXCLUDE)
