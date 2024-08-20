@@ -28,11 +28,11 @@ if(NOT BUILD_SHARED_LIBS)
   set(enable-static OFF CACHE BOOL "enable additional static libraries" FORCE)
 endif()
 
-if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+if(EXISTS "${PROJECT_BINARY_DIR}/conanbuildinfo.cmake")
+  include(${PROJECT_BINARY_DIR}/conanbuildinfo.cmake)
   conan_basic_setup(NO_OUTPUT_DIRS)
   set(TFEL_USES_CONAN ON)
-endif(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+endif(EXISTS "${PROJECT_BINARY_DIR}/conanbuildinfo.cmake")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CXX_STANDARD_REQUIRED ON)
@@ -114,7 +114,7 @@ endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 if(NOT TFEL_GIT_HASH)
 execute_process(
   COMMAND git log -1 --format=%h
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
   OUTPUT_VARIABLE TFEL_GIT_HASH
   OUTPUT_STRIP_TRAILING_WHITESPACE)
 message("Abbreviated commit hash: ${TFEL_GIT_HASH}")
@@ -771,8 +771,8 @@ set(CPACK_DEBIAN_PACKAGE_HOMEPAGE     "${TFEL_WEBSITE}")
 
 #NSIS
 set(CPACK_NSIS_MODIFY_PATH ON)
-set(CPACK_NSIS_MUI_ICON       "${CMAKE_SOURCE_DIR}/docs/mfront.ico")
-set(CPACK_NSIS_MUI_UNIICON    "${CMAKE_SOURCE_DIR}/docs/mfront.ico")
+set(CPACK_NSIS_MUI_ICON       "${PROJECT_SOURCE_DIR}/docs/mfront.ico")
+set(CPACK_NSIS_MUI_UNIICON    "${PROJECT_SOURCE_DIR}/docs/mfront.ico")
 set(CPACK_NSIS_URL_INFO_ABOUT "${TFEL_WEBSITE}")
 set(CPACK_NSIS_HELP_LINK "${TFEL_WEBSITE}")
 set(CPACK_NSIS_CONTACT "${PACKAGE_BUGREPORT}")

@@ -2,7 +2,7 @@
 macro(tests_rungekutta test_arg)
   add_executable(${test_arg} EXCLUDE_FROM_ALL ${test_arg}.cxx)
   target_include_directories(${test_arg}
-    PRIVATE ${CMAKE_SOURCE_DIR}/tests/Math/RungeKutta/include)
+    PRIVATE ${PROJECT_SOURCE_DIR}/tests/Math/RungeKutta/include)
   add_test(NAME ${test_arg} COMMAND ${test_arg})
   if((CMAKE_HOST_WIN32) AND (NOT MSYS))
     set_property(TEST ${test_arg}

@@ -1,7 +1,7 @@
 include(CMakePackageConfigHelpers)
 
 macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
-  project("tfel")
+  project("tfel" LANGUAGES "C;CXX")
   set(PACKAGE_NAME "tfel")
   set(VERSION "${tfel_version_major}.${tfel_version_minor}.${tfel_version_patch}")
 

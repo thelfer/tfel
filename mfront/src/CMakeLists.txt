@@ -6,14 +6,14 @@ mfront_library(MFrontLogStream
   MFrontLogStream.cxx)
 target_include_directories(MFrontLogStream
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
 if(enable-static)
   target_include_directories(MFrontLogStream-static
     PUBLIC 
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
 endif(enable-static)
 
@@ -22,8 +22,8 @@ mfront_library(MFrontProfiling
   BehaviourProfiler.cxx)
 target_include_directories(MFrontProfiling
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
 if(UNIX AND (NOT APPLE) AND (NOT HAIKU) AND (NOT (CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")))
    target_link_libraries(MFrontProfiling PRIVATE rt)
@@ -31,8 +31,8 @@ endif(UNIX AND (NOT APPLE) AND (NOT HAIKU) AND (NOT (CMAKE_SYSTEM_NAME STREQUAL 
 if(enable-static)
   target_include_directories(MFrontProfiling-static
     PUBLIC 
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
   if(UNIX AND (NOT APPLE) AND (NOT HAIKU) AND (NOT (CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")))
     target_link_libraries(MFrontProfiling-static PRIVATE rt)
@@ -48,8 +48,8 @@ mfront_library(MTestFileGenerator
   GenericBehaviourFiniteStrainMTestFileGenerator.cxx)
 target_include_directories(MTestFileGenerator
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(MTestFileGenerator
   PUBLIC TFELMaterial
@@ -59,8 +59,8 @@ target_link_libraries(MTestFileGenerator
 if(enable-static)
     target_include_directories(MTestFileGenerator-static
     PUBLIC 
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
     $<INSTALL_INTERFACE:include>)
   target_link_libraries(MTestFileGenerator-static
     PUBLIC TFELMaterial
@@ -502,14 +502,14 @@ endif(HAVE_CYRANO)
 mfront_library(TFELMFront ${TFELMFront_SOURCES})
 target_include_directories(TFELMFront
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
    $<INSTALL_INTERFACE:include>)
 if(enable-static)
   target_include_directories(TFELMFront-static
     PUBLIC 
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
     $<INSTALL_INTERFACE:include>)
 endif(enable-static)
 if(HAVE_CASTEM)

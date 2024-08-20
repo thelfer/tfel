@@ -174,9 +174,9 @@ endif(HAVE_DIANAFEA)
 mtest_library(TFELMTest ${TFELMTest_SOURCES})
 target_include_directories(TFELMTest
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mtest/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mtest/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELMTest PUBLIC ${TFELMTest_LDADD})
 if(TFEL_HAVE_MADNEX)
@@ -188,9 +188,9 @@ endif(TFEL_HAVE_MADNEX)
 if(enable-static)
   target_include_directories(TFELMTest-static
     PUBLIC 
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mtest/include>
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mtest/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
   target_link_libraries(TFELMTest-static PUBLIC
     MFrontLogStream-static
