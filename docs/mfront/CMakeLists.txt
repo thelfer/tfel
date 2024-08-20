@@ -37,7 +37,7 @@ macro(install_mfront_desc3 directory1 directory2 file)
       DESTINATION share/doc/mfront/${directory2}
       COMPONENT mfront)
   endif(TFEL_APPEND_SUFFIX)
-endmacro(install_mfront_desc2 directory file)
+endmacro(install_mfront_desc3 directory file)
 
 install_mfront_desc(AdditionalConvergenceChecks)
 install_mfront_desc(AdditionalTangentOperatorBlock)
