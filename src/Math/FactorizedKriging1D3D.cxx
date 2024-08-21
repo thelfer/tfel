@@ -89,7 +89,7 @@ namespace tfel::math {
                                            const double vz) const {
     const tvector<3u> v = {this->a1 * (vx) + b1, this->a2 * (vy) + b2,
                            this->a3 * (vz) + b3};
-    return FK::operator()(this->a0* vt + this->b0, v);
+    return FK::operator()(this->a0 * vt + this->b0, v);
   }  // end of FactorizedKriging1D3D::operator()
 
   FactorizedKriging1D3D::~FactorizedKriging1D3D() = default;

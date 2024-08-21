@@ -28,13 +28,16 @@ namespace tfel::math::internals {
   template <>
   struct StensorChangeBasis<1u> {
     template <typename T>
-    static void exe(T*, const tfel::math::rotation_matrix<T>&) {}
+    TFEL_HOST_DEVICE static constexpr void exe(
+        T* const, const tfel::math::rotation_matrix<base_type<T>>&) noexcept {}
   };
 
   template <>
   struct StensorChangeBasis<2u> {
     template <typename T>
-    static void exe(T* s, const tfel::math::rotation_matrix<T>& m) {
+    TFEL_HOST_DEVICE static constexpr void exe(
+        T* const s,
+        const tfel::math::rotation_matrix<base_type<T>>& m) noexcept {
       constexpr auto cste = Cste<T>::sqrt2;
       T tmp[3];
       // Works begin
@@ -53,7 +56,9 @@ namespace tfel::math::internals {
   template <>
   struct StensorChangeBasis<3u> {
     template <typename T>
-    static void exe(T* s, const tfel::math::rotation_matrix<T>& m) {
+    TFEL_HOST_DEVICE static constexpr void exe(
+        T* const s,
+        const tfel::math::rotation_matrix<base_type<T>>& m) noexcept {
       constexpr auto cste = Cste<T>::sqrt2;
       T tmp[6];
       const auto a = m(0, 0);

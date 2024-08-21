@@ -174,7 +174,7 @@ namespace tfel::utilities {
       }
     }
     CxxTokenizer::readSpecifiedToken("Data::read_vector", "}", p, pe);
-    return std::move(v);
+    return v;
   }
 
   Data Data::read_map(CxxTokenizer::const_iterator& p,
@@ -214,7 +214,7 @@ namespace tfel::utilities {
     }
     DataMap r;
     tfel::utilities::read_map(r, p, pe, opts);
-    return std::move(r);
+    return r;
   }
 
   Data Data::read(CxxTokenizer::const_iterator& p,
@@ -294,8 +294,9 @@ namespace tfel::utilities {
     using return_type = bool;
     // default implementation
     template <typename T1, typename T2>
-    static typename std::enable_if<!std::is_same<T1, T2>::value, bool>::type
-    apply(const T1&, const T2&) {
+    static bool apply(const T1&, const T2&)
+      requires(!std::is_same_v<T1, T2>)
+    {
       return false;
     }  // end of apply
     static bool apply(const std::string& x1, const std::string& x2) {
@@ -336,7 +337,7 @@ namespace tfel::utilities {
     static bool apply(const double v1, const double v2) {
       return tfel::math::ieee754::fpclassify(v1 - v2) == FP_ZERO;
     }  // end of apply
-  };   // end of struct DataComparator
+  };  // end of struct DataComparator
 
   bool operator==(const Data& lhs, const Data& rhs) {
     if (&lhs == &rhs) {

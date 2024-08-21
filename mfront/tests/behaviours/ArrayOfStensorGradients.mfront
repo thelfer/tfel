@@ -1,0 +1,20 @@
+@DSL DefaultGenericBehaviour;
+@Behaviour ArrayOfStensorGradients;
+@Gradient Stensor a[2];
+@Flux Stensor b[2];
+@ProvidesSymmetricTangentOperator;
+@Integrator{
+  for (unsigned short i = 0; i != 2u; ++i) {
+    b[i] = 2 * (a[i] + da[i]);
+    if (computeTangentOperator_) {
+      static_cast<void>(smt);  // discard the stiffness matrix type
+      for (unsigned short j = 0; j != 2u; ++j) {
+        if (i == j) {
+          db_dda(i, j) = 2 * Stensor4::Id();
+        } else {
+          db_dda(i, j) = Stensor4(real(0));
+        }
+      }
+    }
+  }
+}

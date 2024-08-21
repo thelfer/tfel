@@ -41,17 +41,21 @@ namespace tfel::math {
      * \return the cubic root of a real number of type float
      * \param[in] x : value
      */
-    static TFEL_MATH_INLINE float cbrt(const float x) { return ::cbrtf(x); }
+    TFEL_HOST_DEVICE static float cbrt(const float x) noexcept {
+      return ::cbrtf(x);
+    }
     /*!
      * \return the cubic root of a real number of type double
      * \param[in] x : value
      */
-    static TFEL_MATH_INLINE double cbrt(const double x) { return ::cbrt(x); }
+    TFEL_HOST_DEVICE static double cbrt(const double x) noexcept {
+      return ::cbrt(x);
+    }
     /*!
      * \return the cubic root of a real number of type long double
      * \param[in] x : value
      */
-    static TFEL_MATH_INLINE long double cbrt(const long double x) {
+    TFEL_HOST_DEVICE static long double cbrt(const long double x) noexcept {
       return ::cbrtl(x);
     }
 #endif /* LIB_TFEL_MATH_CUBICROOTS_HXX */
@@ -61,7 +65,7 @@ namespace tfel::math {
      * \param[in] x : value
      */
     template <typename T>
-    static TFEL_HOST_DEVICE TFEL_MATH_INLINE T cbrt(const T x) {
+    TFEL_HOST_DEVICE static T cbrt(const T x) noexcept {
       constexpr const auto one_third = T(1) / T(3);
       if (x < 0) {
         return -std::pow(-x, one_third);
@@ -88,12 +92,16 @@ namespace tfel::math {
      * - x2 and x3 contain the real part of the two other roots
      */
     template <typename T>
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 std::enable_if_t<
-        tfel::typetraits::IsReal<T>::cond &&
-            tfel::typetraits::IsFundamentalNumericType<T>::cond,
-        unsigned short>
-    find_roots(
-        T& x1, T& x2, T& x3, const T a3, const T a2, const T a1, const T a0) {
+    TFEL_HOST_DEVICE static unsigned short find_roots(T& x1,
+                                                      T& x2,
+                                                      T& x3,
+                                                      const T a3,
+                                                      const T a2,
+                                                      const T a1,
+                                                      const T a0)  //
+      requires((tfel::typetraits::IsReal<T>::cond) &&
+               (tfel::typetraits::IsFundamentalNumericType<T>::cond))
+    {
       constexpr auto C_1_2 = T{1} / T{2};
       constexpr auto C_1_3 = T{1} / T{3};
       constexpr auto C_2_3 = T{2} * C_1_3;
@@ -203,18 +211,17 @@ namespace tfel::math {
      *                  refine the roots found
      */
     template <typename T>
-    TFEL_HOST_DEVICE static TFEL_MATH_INLINE2 std::enable_if_t<
-        tfel::typetraits::IsReal<T>::cond &&
-            tfel::typetraits::IsFundamentalNumericType<T>::cond,
-        unsigned short>
-    exe(T& x1,
-        T& x2,
-        T& x3,
-        const T a3,
-        const T a2,
-        const T a1,
-        const T a0,
-        const bool b = false) {
+    TFEL_HOST_DEVICE static unsigned short exe(T& x1,
+                                               T& x2,
+                                               T& x3,
+                                               const T a3,
+                                               const T a2,
+                                               const T a1,
+                                               const T a0,
+                                               const bool b = false)  //
+      requires((tfel::typetraits::IsReal<T>::cond) &&
+               (tfel::typetraits::IsFundamentalNumericType<T>::cond))
+    {
       const auto nb = CubicRoots::find_roots(x1, x2, x3, a3, a2, a1, a0);
       if ((nb > 0) && (b)) {
         CubicRoots::improve(x1, a3, a2, a1, a0);

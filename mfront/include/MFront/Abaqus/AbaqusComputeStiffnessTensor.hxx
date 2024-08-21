@@ -48,9 +48,9 @@ namespace abaqus {
    * \param[in]  props : material properties
    */
   MFRONT_ABAQUS_VISIBILITY_EXPORT void
-      AbaqusComputeIsotropicPlaneStressAlteredStiffnessTensor(
-          tfel::config::Types<2u, float, false>::StiffnessTensor&,
-          const float* const);
+  AbaqusComputeIsotropicPlaneStressAlteredStiffnessTensor(
+      tfel::config::Types<2u, float, false>::StiffnessTensor&,
+      const float* const);
   /*!
    * \brief compute the stiffness tensor for plane stress modelling
    * hypothesis.
@@ -58,9 +58,9 @@ namespace abaqus {
    * \param[in]  props : material properties
    */
   MFRONT_ABAQUS_VISIBILITY_EXPORT void
-      AbaqusComputeIsotropicPlaneStressAlteredStiffnessTensor(
-          tfel::config::Types<2u, double, false>::StiffnessTensor&,
-          const double* const);
+  AbaqusComputeIsotropicPlaneStressAlteredStiffnessTensor(
+      tfel::config::Types<2u, double, false>::StiffnessTensor&,
+      const double* const);
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
    * modelling hypothesis.
@@ -86,9 +86,9 @@ namespace abaqus {
    * \param[in]  props : material properties
    */
   MFRONT_ABAQUS_VISIBILITY_EXPORT void
-      AbaqusComputeOrthotropicStiffnessTensor2D(
-          tfel::config::Types<2u, float, false>::StiffnessTensor&,
-          const float* const);
+  AbaqusComputeOrthotropicStiffnessTensor2D(
+      tfel::config::Types<2u, float, false>::StiffnessTensor&,
+      const float* const);
   /*!
    * \brief compute the stiffness tensor for plane strain, generalised
    * plane strain and axisymmetrical hypotheses.
@@ -96,9 +96,9 @@ namespace abaqus {
    * \param[in]  props : material properties
    */
   MFRONT_ABAQUS_VISIBILITY_EXPORT void
-      AbaqusComputeOrthotropicStiffnessTensor2D(
-          tfel::config::Types<2u, double, false>::StiffnessTensor&,
-          const double* const);
+  AbaqusComputeOrthotropicStiffnessTensor2D(
+      tfel::config::Types<2u, double, false>::StiffnessTensor&,
+      const double* const);
   /*!
    * \brief compute the stiffness tensor for plane stress modelling
    * hypothesis.
@@ -106,9 +106,9 @@ namespace abaqus {
    * \param[in]  props : material properties
    */
   MFRONT_ABAQUS_VISIBILITY_EXPORT void
-      AbaqusComputeOrthotropicPlaneStressAlteredStiffnessTensor(
-          tfel::config::Types<2u, float, false>::StiffnessTensor&,
-          const float* const);
+  AbaqusComputeOrthotropicPlaneStressAlteredStiffnessTensor(
+      tfel::config::Types<2u, float, false>::StiffnessTensor&,
+      const float* const);
   /*!
    * \brief compute the stiffness tensor for plane stress modelling
    * hypothesis.
@@ -116,9 +116,9 @@ namespace abaqus {
    * \param[in]  props : material properties
    */
   MFRONT_ABAQUS_VISIBILITY_EXPORT void
-      AbaqusComputeOrthotropicPlaneStressAlteredStiffnessTensor(
-          tfel::config::Types<2u, double, false>::StiffnessTensor&,
-          const double* const);
+  AbaqusComputeOrthotropicPlaneStressAlteredStiffnessTensor(
+      tfel::config::Types<2u, double, false>::StiffnessTensor&,
+      const double* const);
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
    * modelling hypothesis.
@@ -126,9 +126,9 @@ namespace abaqus {
    * \param[in]  props : material properties
    */
   MFRONT_ABAQUS_VISIBILITY_EXPORT void
-      AbaqusComputeOrthotropicStiffnessTensor3D(
-          tfel::config::Types<3u, float, false>::StiffnessTensor&,
-          const float* const);
+  AbaqusComputeOrthotropicStiffnessTensor3D(
+      tfel::config::Types<3u, float, false>::StiffnessTensor&,
+      const float* const);
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
    * modelling hypothesis.
@@ -136,9 +136,9 @@ namespace abaqus {
    * \param[in]  props : material properties
    */
   MFRONT_ABAQUS_VISIBILITY_EXPORT void
-      AbaqusComputeOrthotropicStiffnessTensor3D(
-          tfel::config::Types<3u, double, false>::StiffnessTensor&,
-          const double* const);
+  AbaqusComputeOrthotropicStiffnessTensor3D(
+      tfel::config::Types<3u, double, false>::StiffnessTensor&,
+      const double* const);
 
   /*!
    * This structure is in charge of computing the Stiffness operator

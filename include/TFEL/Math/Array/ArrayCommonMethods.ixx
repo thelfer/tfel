@@ -20,9 +20,9 @@ namespace tfel::math {
 
   template <typename Child, typename ArrayPolicyType>
   constexpr typename ArrayPolicyType::const_reference
-      ConstArrayCommonMethods<Child, ArrayPolicyType>::operator[](
-          const typename ArrayPolicyType::IndexingPolicy::size_type i) const
-      noexcept {
+  ConstArrayCommonMethods<Child, ArrayPolicyType>::operator[](
+      const typename ArrayPolicyType::IndexingPolicy::size_type i)
+      const noexcept {
     static_assert(ArrayPolicyType::IndexingPolicy::arity == 1u, "invalid call");
     const auto& child = static_cast<const Child&>(*this);
     const auto* const d = child.data();
@@ -35,10 +35,10 @@ namespace tfel::math {
 
   template <typename Child, typename ArrayPolicyType>
   constexpr typename ArrayPolicyType::const_reference
-      ConstArrayCommonMethods<Child, ArrayPolicyType>::operator[](
-          const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
-                           ArrayPolicyType::IndexingPolicy::arity>& i) const
-      noexcept {
+  ConstArrayCommonMethods<Child, ArrayPolicyType>::operator[](
+      const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
+                       ArrayPolicyType::IndexingPolicy::arity>& i)
+      const noexcept {
     const auto& child = static_cast<const Child&>(*this);
     const auto* const d = child.data();
     if constexpr (ArrayPolicyType::isMakeConstReferenceTrivial) {
@@ -70,8 +70,8 @@ namespace tfel::math {
   constexpr typename ArrayPolicyType::const_reference
   ConstArrayCommonMethods<Child, ArrayPolicyType>::operator()(
       const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
-                       ArrayPolicyType::IndexingPolicy::arity>& i) const
-      noexcept {
+                       ArrayPolicyType::IndexingPolicy::arity>& i)
+      const noexcept {
     const auto& child = static_cast<const Child&>(*this);
     const auto* const d = child.data();
     if constexpr (ArrayPolicyType::isMakeConstReferenceTrivial) {
@@ -83,9 +83,8 @@ namespace tfel::math {
 
   template <typename Child, typename ArrayPolicyType>
   constexpr typename ArrayPolicyType::reference
-      MutableArrayCommonMethods<Child, ArrayPolicyType>::operator[](
-          const typename ArrayPolicyType::IndexingPolicy::size_type
-              i) noexcept {
+  MutableArrayCommonMethods<Child, ArrayPolicyType>::operator[](
+      const typename ArrayPolicyType::IndexingPolicy::size_type i) noexcept {
     static_assert(ArrayPolicyType::IndexingPolicy::arity == 1u, "invalid call");
     auto& child = static_cast<Child&>(*this);
     auto* const d = child.data();
@@ -98,10 +97,9 @@ namespace tfel::math {
 
   template <typename Child, typename ArrayPolicyType>
   constexpr typename ArrayPolicyType::reference
-      MutableArrayCommonMethods<Child, ArrayPolicyType>::operator[](
-          const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
-                           ArrayPolicyType::IndexingPolicy::arity>&
-              i) noexcept {
+  MutableArrayCommonMethods<Child, ArrayPolicyType>::operator[](
+      const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
+                       ArrayPolicyType::IndexingPolicy::arity>& i) noexcept {
     auto& child = static_cast<Child&>(*this);
     auto* const d = child.data();
     if constexpr (ArrayPolicyType::isMakeReferenceTrivial) {
@@ -180,11 +178,10 @@ namespace tfel::math {
 
   template <typename Child, typename ArrayPolicyType>
   template <typename ValueType>
-  constexpr std::enable_if_t<
-      isAssignableTo<ValueType, typename ArrayPolicyType::value_type>(),
-      Child&>
-  MutableArrayCommonMethods<Child, ArrayPolicyType>::operator=(
-      const std::initializer_list<ValueType>& values) noexcept {
+  constexpr Child& MutableArrayCommonMethods<Child, ArrayPolicyType>::operator=(
+      const std::initializer_list<ValueType>& values) noexcept
+    requires(isAssignableTo<ValueType, typename ArrayPolicyType::value_type>())
+  {
     auto& child = static_cast<Child&>(*this);
     if (values.size() != child.size()) {
       tfel::reportContractViolation(
@@ -221,10 +218,10 @@ namespace tfel::math {
 
   template <typename Child, typename ArrayPolicyType>
   template <typename ValueType2>
-  constexpr std::enable_if_t<
-      isAssignableTo<ValueType2, typename ArrayPolicyType::value_type>(),
-      void>
-  MutableArrayCommonMethods<Child, ArrayPolicyType>::fill(const ValueType2& v) {
+  constexpr void MutableArrayCommonMethods<Child, ArrayPolicyType>::fill(
+      const ValueType2& v)
+    requires(isAssignableTo<ValueType2, typename ArrayPolicyType::value_type>())
+  {
     const auto f = makeMultiIndicesUnaryOperatorFunctor(
         [v](typename ArrayPolicyType::reference a) { a = v; }, *this);
     auto& child = static_cast<Child&>(*this);
@@ -233,12 +230,13 @@ namespace tfel::math {
 
   template <typename Child, typename ArrayPolicyType>
   template <typename ValueType2, typename ValueType3>
-  constexpr std::enable_if_t<
-      (isAssignableTo<ValueType2, typename ArrayPolicyType::value_type>() &&
-       isAssignableTo<ValueType3, typename ArrayPolicyType::value_type>()),
-      void>
-  MutableArrayCommonMethods<Child, ArrayPolicyType>::clamp(
-      const ValueType2& lower_bound, const ValueType3& upper_bound) {
+  constexpr void MutableArrayCommonMethods<Child, ArrayPolicyType>::clamp(
+      const ValueType2& lower_bound,
+      const ValueType3& upper_bound)  //
+    requires(
+        isAssignableTo<ValueType2, typename ArrayPolicyType::value_type>() &&
+        isAssignableTo<ValueType3, typename ArrayPolicyType::value_type>())
+  {
     const auto f = makeMultiIndicesUnaryOperatorFunctor(
         [lower_bound, upper_bound](typename ArrayPolicyType::reference a) {
           if (a < lower_bound) {
@@ -254,14 +252,15 @@ namespace tfel::math {
 
   template <typename Child, typename ArrayPolicyType>
   template <typename ValueType2>
-  constexpr std::enable_if_t<
-      isAssignableTo<BinaryOperationResult<ValueType2,
-                                           typename ArrayPolicyType::value_type,
-                                           OpMult>,
-                     typename ArrayPolicyType::value_type>(),
-      void>
+  constexpr void
   MutableArrayCommonMethods<Child, ArrayPolicyType>::multiplyByScalar(
-      const ValueType2& s) {
+      const ValueType2& s)  //
+    requires(isAssignableTo<
+             BinaryOperationResult<ValueType2,
+                                   typename ArrayPolicyType::value_type,
+                                   OpMult>,
+             typename ArrayPolicyType::value_type>())
+  {
     const auto f = makeMultiIndicesUnaryOperatorFunctor(
         [s](typename ArrayPolicyType::reference a) { a *= s; }, *this);
     auto& child = static_cast<Child&>(*this);

@@ -20,7 +20,7 @@
 #include "MFront/FileDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/BehaviourMaterialProperty.hxx"
-#include "MFront/StandardBehaviourInterface.hxx"
+#include "MFront/BehaviourInterfaceBase.hxx"
 #include "MFront/SymbolsGenerator.hxx"
 
 namespace mfront {
@@ -30,23 +30,21 @@ namespace mfront {
     return bd.isTemperatureDefinedAsTheFirstExternalStateVariable();
   }  // end of shallRemoveTemperatureFromExternalStateVariables
 
-  std::string SymbolsGenerator::getSymbolName(
-      const StandardBehaviourInterface& i,
-      const std::string& n,
-      const Hypothesis h) const {
+  std::string SymbolsGenerator::getSymbolName(const BehaviourInterfaceBase& i,
+                                              const std::string& n,
+                                              const Hypothesis h) const {
     if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       return i.getFunctionNameBasis(n) + "_" + ModellingHypothesis::toString(h);
     }
     return i.getFunctionNameBasis(n);
   }  // end of getSymbolName
 
-  void SymbolsGenerator::generateGeneralSymbols(
-      std::ostream& out,
-      const StandardBehaviourInterface& i,
-      const BehaviourDescription& bd,
-      const FileDescription& fd,
-      const std::set<Hypothesis>& mhs,
-      const std::string& name) const {
+  void SymbolsGenerator::generateGeneralSymbols(std::ostream& out,
+                                                const BehaviourInterfaceBase& i,
+                                                const BehaviourDescription& bd,
+                                                const FileDescription& fd,
+                                                const std::set<Hypothesis>& mhs,
+                                                const std::string& name) const {
     this->writeFileDescriptionSymbols(out, i, fd, name);
     this->writeValidatorSymbol(out, i, bd, name);
     this->writeBuildIdentifierSymbol(out, i, bd, name);
@@ -71,62 +69,58 @@ namespace mfront {
 
   void SymbolsGenerator::writeFileDescriptionSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const FileDescription& fd,
       const std::string& n) const {
     mfront::writeFileDescriptionSymbols(out, i.getFunctionNameBasis(n), fd);
   }  // end of writeFileDescriptionSymbols
 
-  void SymbolsGenerator::writeValidatorSymbol(
-      std::ostream& out,
-      const StandardBehaviourInterface& i,
-      const BehaviourDescription& d,
-      const std::string& n) const {
+  void SymbolsGenerator::writeValidatorSymbol(std::ostream& out,
+                                              const BehaviourInterfaceBase& i,
+                                              const BehaviourDescription& d,
+                                              const std::string& n) const {
     mfront::writeValidatorSymbol(out, i.getFunctionNameBasis(n), d);
   }  // end of writeValidatorSymbol
 
   void SymbolsGenerator::writeBuildIdentifierSymbol(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& d,
       const std::string& n) const {
     mfront::writeBuildIdentifierSymbol(out, i.getFunctionNameBasis(n), d);
   }  // end of writeBuildIdentifierSymbol
 
-  void SymbolsGenerator::writeEntryPointSymbol(
-      std::ostream& out,
-      const StandardBehaviourInterface& i,
-      const std::string& n) const {
+  void SymbolsGenerator::writeEntryPointSymbol(std::ostream& out,
+                                               const BehaviourInterfaceBase& i,
+                                               const std::string& n) const {
     mfront::writeEntryPointSymbol(out, i.getFunctionNameBasis(n));
   }  // end of writeEntryPointSymbol
 
-  void SymbolsGenerator::writeTFELVersionSymbol(
-      std::ostream& out,
-      const StandardBehaviourInterface& i,
-      const std::string& n) const {
+  void SymbolsGenerator::writeTFELVersionSymbol(std::ostream& out,
+                                                const BehaviourInterfaceBase& i,
+                                                const std::string& n) const {
     mfront::writeTFELVersionSymbol(out, i.getFunctionNameBasis(n));
   }  // end of writeTFELVersionSymbol
 
   void SymbolsGenerator::writeUnitSystemSymbol(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const std::string& n,
       const BehaviourDescription& bd) const {
     mfront::writeUnitSystemSymbol(out, i.getFunctionNameBasis(n), bd);
   }  // end of writeUnitSystemSymbol
 
-  void SymbolsGenerator::writeMaterialSymbol(
-      std::ostream& out,
-      const StandardBehaviourInterface& i,
-      const BehaviourDescription& mb,
-      const std::string& n) const {
+  void SymbolsGenerator::writeMaterialSymbol(std::ostream& out,
+                                             const BehaviourInterfaceBase& i,
+                                             const BehaviourDescription& mb,
+                                             const std::string& n) const {
     mfront::writeMaterialSymbol(out, i.getFunctionNameBasis(n),
                                 mb.getMaterialName());
   }  // end of writeEntryPointSymbol
 
   void SymbolsGenerator::writeMainVariablesSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& bd,
       const std::string& name) const {
     const auto& mvs = bd.getMainVariables();
@@ -232,7 +226,7 @@ namespace mfront {
 
   void SymbolsGenerator::writeTangentOperatorSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& bd,
       const std::string& name) const {
     auto write_impl = [this, &out, &i,
@@ -245,8 +239,33 @@ namespace mfront {
     auto default_impl = [&bd, &write_impl] {
       std::vector<std::string> bns;
       for (const auto& b : bd.getTangentOperatorBlocks()) {
-        bns.push_back(b.first.getExternalName());
-        bns.push_back(b.second.getExternalName());
+        const auto& f = b.first;   // function
+        const auto& v = b.second;  // variable
+        if ((v.arraySize == 1u) && (f.arraySize == 1u)) {
+          bns.push_back(f.getExternalName());
+          bns.push_back(v.getExternalName());
+        } else if (v.arraySize == 1u) {
+          for (unsigned short idx = 0; idx != f.arraySize; ++idx) {
+            bns.push_back(f.getExternalName() + '[' + std::to_string(idx) +
+                          ']');
+            bns.push_back(v.getExternalName());
+          }
+        } else if (f.arraySize == 1u) {
+          for (unsigned short idx = 0; idx != v.arraySize; ++idx) {
+            bns.push_back(f.getExternalName());
+            bns.push_back(v.getExternalName() + '[' + std::to_string(idx) +
+                          ']');
+          }
+        } else {
+          for (unsigned short idx = 0; idx != f.arraySize; ++idx) {
+            for (unsigned short jdx = 0; jdx != v.arraySize; ++jdx) {
+              bns.push_back(f.getExternalName() + '[' + std::to_string(idx) +
+                            ']');
+              bns.push_back(v.getExternalName() + '[' + std::to_string(jdx) +
+                            ']');
+            }
+          }
+        }
       }
       write_impl(bns);
     };
@@ -284,14 +303,14 @@ namespace mfront {
 
   void SymbolsGenerator::writeMaterialKnowledgeTypeSymbol(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const std::string& n) const {
     mfront::writeMaterialKnowledgeTypeSymbol(out, i.getFunctionNameBasis(n),
-                                             BEHAVIOUR);
+                                             MaterialKnowledgeType::BEHAVIOUR);
   }  // end of writeEntryPointSymbol
 
   void SymbolsGenerator::generateSymbols(std::ostream& out,
-                                         const StandardBehaviourInterface& i,
+                                         const BehaviourInterfaceBase& i,
                                          const BehaviourDescription& bd,
                                          const FileDescription& fd,
                                          const std::string& name,
@@ -314,7 +333,7 @@ namespace mfront {
 
   void SymbolsGenerator::writeComputesInternalEnergySymbol(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& bd,
       const std::string& name,
       const Hypothesis h) const {
@@ -325,7 +344,7 @@ namespace mfront {
 
   void SymbolsGenerator::writeComputesDissipatedEnergySymbol(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& bd,
       const std::string& name,
       const Hypothesis h) const {
@@ -337,7 +356,7 @@ namespace mfront {
   void
   SymbolsGenerator::writeTemperatureRemovedFromExternalStateVariablesSymbol(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& bd,
       const std::string& name) const {
     const auto s = i.getFunctionNameBasis(name) +
@@ -347,7 +366,7 @@ namespace mfront {
   }  // end of writeTemperatureRemovedFromExternalStateVariablesSymbol
 
   void SymbolsGenerator::writeSpecificSymbols(std::ostream&,
-                                              const StandardBehaviourInterface&,
+                                              const BehaviourInterfaceBase&,
                                               const BehaviourDescription&,
                                               const FileDescription&,
                                               const std::string&) const {
@@ -355,7 +374,7 @@ namespace mfront {
 
   void SymbolsGenerator::writeSupportedModellingHypothesis(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription&,
       const std::set<Hypothesis>& mhs,
       const std::string& name) const {
@@ -375,7 +394,7 @@ namespace mfront {
 
   void SymbolsGenerator::writeMaterialPropertiesSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name,
       const Hypothesis h) const {
@@ -422,10 +441,10 @@ namespace mfront {
       for (auto idx = ib; idx != mprops.first.size(); ++idx) {
         const auto& m = mprops.first[idx];
         if (m.arraySize == 1u) {
-          mps.push_back(m.name);
+          mps.push_back(m.getExternalName());
         } else {
           for (unsigned short j = 0; j != m.arraySize; ++j) {
-            mps.push_back(m.name + '[' + std::to_string(j) + ']');
+            mps.push_back(m.getExternalName() + '[' + std::to_string(j) + ']');
           }
         }
       }
@@ -440,7 +459,7 @@ namespace mfront {
 
   void SymbolsGenerator::writeVariablesTypesSymbol(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const std::string& name,
       const Hypothesis h,
       const VariableDescriptionContainer& variables,
@@ -478,7 +497,7 @@ namespace mfront {
 
   void SymbolsGenerator::writeStateVariablesSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name,
       const Hypothesis h) const {
@@ -499,7 +518,7 @@ namespace mfront {
 
   void SymbolsGenerator::writeExternalStateVariablesSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name,
       const Hypothesis h) const {
@@ -520,24 +539,23 @@ namespace mfront {
 
   void SymbolsGenerator::writeInitializeFunctionsSymbols(
       std::ostream&,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription&,
       const std::string&,
       const Hypothesis) const {}  // end of writeInitializeFunctionsSymbols
 
   void SymbolsGenerator::writePostProcessingsSymbols(
       std::ostream&,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription&,
       const std::string&,
       const Hypothesis) const {}  // end of writePostProcessingsSymbols
 
-  void SymbolsGenerator::writeParametersSymbols(
-      std::ostream& out,
-      const StandardBehaviourInterface& i,
-      const BehaviourDescription& mb,
-      const std::string& name,
-      const Hypothesis h) const {
+  void SymbolsGenerator::writeParametersSymbols(std::ostream& out,
+                                                const BehaviourInterfaceBase& i,
+                                                const BehaviourDescription& mb,
+                                                const std::string& name,
+                                                const Hypothesis h) const {
     if (!areParametersTreatedAsStaticVariables(mb)) {
       mfront::writeParametersDeclarationSymbols(
           out, this->getSymbolName(i, name, h),
@@ -550,7 +568,7 @@ namespace mfront {
 
   void SymbolsGenerator::writeParameterDefaultValueSymbols(
       std::ostream& os,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name,
       const Hypothesis h) const {
@@ -602,7 +620,7 @@ namespace mfront {
   }  // end of writeParameterDefaultValueSymbols
 
   void SymbolsGenerator::writeBoundsSymbols(std::ostream& os,
-                                            const StandardBehaviourInterface& i,
+                                            const BehaviourInterfaceBase& i,
                                             const BehaviourDescription& mb,
                                             const std::string& name,
                                             const Hypothesis h) const {
@@ -618,7 +636,7 @@ namespace mfront {
 
   void SymbolsGenerator::writePhysicalBoundsSymbols(
       std::ostream& os,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name,
       const Hypothesis h) const {
@@ -634,7 +652,7 @@ namespace mfront {
 
   void SymbolsGenerator::writeRequirementsSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name,
       const Hypothesis h) const {
@@ -653,7 +671,7 @@ namespace mfront {
 
   void SymbolsGenerator::writeIsUsableInPurelyImplicitResolutionSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name,
       const Hypothesis h) const {
@@ -666,7 +684,7 @@ namespace mfront {
 
   void SymbolsGenerator::writeSymmetryTypeSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
     const auto st = [&mb]() -> unsigned short {
@@ -687,7 +705,7 @@ namespace mfront {
 
   void SymbolsGenerator::writeElasticSymmetryTypeSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
     const auto est = [&mb]() -> unsigned short {
@@ -708,7 +726,7 @@ namespace mfront {
 
   void SymbolsGenerator::writeSourceFileSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription&,
       const mfront::FileDescription& fd,
       const std::string& name) const {
@@ -720,7 +738,7 @@ namespace mfront {
 
   void SymbolsGenerator::writeInterfaceNameSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription&,
       const mfront::FileDescription&,
       const std::string& name) const {
@@ -729,7 +747,7 @@ namespace mfront {
   }  // end of writeInterfaceNameSymbols
 
   void SymbolsGenerator::writeExternalNames(std::ostream& os,
-                                            const StandardBehaviourInterface& i,
+                                            const BehaviourInterfaceBase& i,
                                             const std::string& name,
                                             const Hypothesis& h,
                                             const std::vector<std::string>& v,

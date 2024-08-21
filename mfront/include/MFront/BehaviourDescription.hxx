@@ -101,10 +101,10 @@ namespace mfront {
       GREENLAGRANGE,
       HENCKY
     };  // end of enum StrainMeasure
-        /*!
-         * \brief this structure holds the value of a constant material
-         * property
-         */
+    /*!
+     * \brief this structure holds the value of a constant material
+     * property
+     */
     struct ConstantMaterialProperty {
       //! \brief parameter name associated with the material property
       std::string name;
@@ -121,10 +121,10 @@ namespace mfront {
       //! \brief description of a material property
       std::string f;
     };  // end of AnalyticMaterialProperty
-        /*!
-         * \brief this structure holds the value of a material
-         * property defined through an mfront file
-         */
+    /*!
+     * \brief this structure holds the value of a material
+     * property defined through an mfront file
+     */
     struct ExternalMFrontMaterialProperty {
       //! \brief description of a material property
       std::shared_ptr<MaterialPropertyDescription> mpd;

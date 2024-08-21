@@ -22,14 +22,11 @@
 
 namespace tfel::math {
 
-  template <typename A, typename B>
+  template <TensorConcept A, TensorConcept B>
   struct TFEL_VISIBILITY_LOCAL TensorProductExprBase : public ExprBase {
-    static_assert(implementsTensorConcept<A>());
-    static_assert(implementsTensorConcept<B>());
-
     typedef EmptyRunTimeProperties RunTimeProperties;
 
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return EmptyRunTimeProperties();
     }
 
@@ -48,39 +45,47 @@ namespace tfel::math {
 
     TensorProductExprBase() = delete;
 
-    TFEL_MATH_INLINE TensorProductExprBase(A l, B r)
+    TFEL_HOST_DEVICE constexpr TensorProductExprBase(A l, B r) noexcept
         : a(std::forward<A>(l)), b(std::forward<B>(r)) {}
 
     ArgumentStorage<A> a;
     ArgumentStorage<B> b;
   };
 
-  template <typename A, typename B>
+  template <TensorConcept A, TensorConcept B>
   struct TFEL_VISIBILITY_LOCAL TensorProductExpr1D
       : public TensorProductExprBase<A, B> {
     static_assert(tfel::math::MathObjectTraits<std::decay_t<A>>::dime == 1u);
     static_assert(tfel::math::MathObjectTraits<std::decay_t<B>>::dime == 1u);
 
-    TFEL_MATH_INLINE TensorProductExpr1D(A l, B r)
+    TFEL_HOST_DEVICE constexpr TensorProductExpr1D(A l, B r) noexcept
         : TensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {}
 
-    TFEL_MATH_INLINE typename TensorProductExprBase<A, B>::NumType operator()(
-        const typename TensorProductExprBase<A, B>::IndexType i) const {
+    TFEL_HOST_DEVICE constexpr typename TensorProductExprBase<A, B>::NumType
+    operator()(const typename TensorProductExprBase<A, B>::IndexType i)
+        const noexcept {
       return (this->a(i)) * (this->b(i));
     }  // end of operator()
+
+    TFEL_HOST_DEVICE constexpr auto operator[](
+        const typename TensorProductExprBase<A, B>::IndexType i)
+        const noexcept {
+      return this->operator()(i);
+    }  // end of operator[]
   };
 
-  template <typename A, typename B>
+  template <TensorConcept A, TensorConcept B>
   struct TFEL_VISIBILITY_LOCAL TensorProductExpr2D
       : public TensorProductExprBase<A, B> {
     static_assert(tfel::math::MathObjectTraits<std::decay_t<A>>::dime == 2u);
     static_assert(tfel::math::MathObjectTraits<std::decay_t<B>>::dime == 2u);
 
-    TFEL_MATH_INLINE TensorProductExpr2D(A l, B r)
+    TFEL_HOST_DEVICE constexpr TensorProductExpr2D(A l, B r) noexcept
         : TensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {}
 
-    TFEL_MATH_INLINE typename TensorProductExprBase<A, B>::NumType operator()(
-        const typename TensorProductExprBase<A, B>::IndexType i) const {
+    TFEL_HOST_DEVICE constexpr typename TensorProductExprBase<A, B>::NumType
+    operator()(const typename TensorProductExprBase<A, B>::IndexType i)
+        const noexcept {
       typedef typename TensorProductExprBase<A, B>::NumType T;
       switch (i) {
         case 0:
@@ -96,16 +101,23 @@ namespace tfel::math {
       }
       return T(0);
     }  // end of operator()
+
+    TFEL_HOST_DEVICE constexpr auto operator[](
+        const typename TensorProductExprBase<A, B>::IndexType i)
+        const noexcept {
+      return this->operator()(i);
+    }  // end of operator[]
   };
 
-  template <typename A, typename B>
+  template <TensorConcept A, TensorConcept B>
   struct TFEL_VISIBILITY_LOCAL TensorProductExpr3D
       : public TensorProductExprBase<A, B> {
-    TFEL_MATH_INLINE TensorProductExpr3D(A l, B r)
+    TFEL_HOST_DEVICE constexpr TensorProductExpr3D(A l, B r) noexcept
         : TensorProductExprBase<A, B>(std::forward<A>(l), std::forward<B>(r)) {}
 
-    TFEL_MATH_INLINE typename TensorProductExprBase<A, B>::NumType operator()(
-        const typename TensorProductExprBase<A, B>::IndexType i) const {
+    TFEL_HOST_DEVICE constexpr typename TensorProductExprBase<A, B>::NumType
+    operator()(const typename TensorProductExprBase<A, B>::IndexType i)
+        const noexcept {
       using namespace std;
       typedef typename TensorProductExprBase<A, B>::NumType T;
       switch (i) {
@@ -139,6 +151,12 @@ namespace tfel::math {
       }
       return T(0);
     }  // end of operator()
+
+    TFEL_HOST_DEVICE constexpr auto operator[](
+        const typename TensorProductExprBase<A, B>::IndexType i)
+        const noexcept {
+      return this->operator()(i);
+    }  // end of operator[]
 
    private:
     using ttypeA = std::decay_t<A>;

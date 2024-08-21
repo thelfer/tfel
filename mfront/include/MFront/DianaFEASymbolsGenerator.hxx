@@ -27,15 +27,15 @@ namespace mfront {
     //! constructor
     DianaFEASymbolsGenerator();
     void writeBehaviourTypeSymbols(std::ostream &,
-                                   const StandardBehaviourInterface &,
+                                   const BehaviourInterfaceBase &,
                                    const BehaviourDescription &,
                                    const std::string &) const override;
     void writeBehaviourKinematicSymbols(std::ostream &,
-                                        const StandardBehaviourInterface &,
+                                        const BehaviourInterfaceBase &,
                                         const BehaviourDescription &,
                                         const std::string &) const override;
     void writeAdditionalSymbols(std::ostream &,
-                                const StandardBehaviourInterface &,
+                                const BehaviourInterfaceBase &,
                                 const BehaviourDescription &,
                                 const FileDescription &,
                                 const std::string &,

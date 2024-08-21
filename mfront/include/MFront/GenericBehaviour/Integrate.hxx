@@ -255,7 +255,7 @@ namespace mfront::gb {
       b.computeDissipatedEnergy(e);
       tfel::math::map<stress>(*(d.s1.dissipated_energy)) = e;
     }  // end of exe
-  };   // end of struct DissipatedEnergyComputer
+  };  // end of struct DissipatedEnergyComputer
   //! place holder for tag dispatching
   struct DoNothingEnergyComputer {
     //! \brief empty function

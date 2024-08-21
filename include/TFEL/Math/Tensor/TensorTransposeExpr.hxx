@@ -25,15 +25,14 @@
 
 namespace tfel::math {
 
-  template <typename A>
+  template <TensorConcept A>
   struct TFEL_VISIBILITY_LOCAL TensorTransposeExprBase : public ExprBase {
-    static_assert(implementsTensorConcept<A>());
-
     typedef EmptyRunTimeProperties RunTimeProperties;
     using IndexType = index_type<A>;
     using NumType = numeric_type<A>;
 
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties()
+        const noexcept {
       return EmptyRunTimeProperties();
     }
 
@@ -46,7 +45,7 @@ namespace tfel::math {
     typedef IndexType size_type;
     typedef ptrdiff_t difference_type;
 
-    TFEL_MATH_INLINE TensorTransposeExprBase(A l) : a(l) {}
+    TFEL_HOST_DEVICE constexpr TensorTransposeExprBase(A l) : a(l) {}
 
     ArgumentStorage<A> a;
   };
@@ -56,11 +55,17 @@ namespace tfel::math {
       : public TensorTransposeExprBase<A> {
     static_assert(getSpaceDimension<A>() == 1u);
 
-    TFEL_MATH_INLINE TensorTransposeExpr1D(A l)
+    TFEL_HOST_DEVICE constexpr TensorTransposeExpr1D(A l) noexcept
         : TensorTransposeExprBase<A>(std::forward<A>(l)) {}
 
-    TFEL_MATH_INLINE typename TensorTransposeExprBase<A>::NumType operator()(
-        const typename TensorTransposeExprBase<A>::IndexType i) const {
+    TFEL_HOST_DEVICE constexpr auto operator[](
+        const typename TensorTransposeExprBase<A>::IndexType i) const noexcept {
+      return this->operator()(i);
+    }  // end of operator[]
+
+    TFEL_HOST_DEVICE constexpr typename TensorTransposeExprBase<A>::NumType
+    operator()(
+        const typename TensorTransposeExprBase<A>::IndexType i) const noexcept {
       return this->a(i);
     }  // end of operator()
   };
@@ -70,11 +75,17 @@ namespace tfel::math {
       : public TensorTransposeExprBase<A> {
     static_assert(getSpaceDimension<A>() == 2u);
 
-    TFEL_MATH_INLINE TensorTransposeExpr2D(A l)
+    TFEL_HOST_DEVICE constexpr TensorTransposeExpr2D(A l) noexcept
         : TensorTransposeExprBase<A>(std::forward<A>(l)) {}
 
-    TFEL_MATH_INLINE typename TensorTransposeExprBase<A>::NumType operator()(
-        const typename TensorTransposeExprBase<A>::IndexType i) const {
+    TFEL_HOST_DEVICE constexpr auto operator[](
+        const typename TensorTransposeExprBase<A>::IndexType i) const noexcept {
+      return this->operator()(i);
+    }  // end of operator[]
+
+    TFEL_HOST_DEVICE constexpr typename TensorTransposeExprBase<A>::NumType
+    operator()(
+        const typename TensorTransposeExprBase<A>::IndexType i) const noexcept {
       constexpr typename TensorTransposeExprBase<A>::NumType zero{0};
       switch (i) {
         case 0:
@@ -104,11 +115,17 @@ namespace tfel::math {
       : public TensorTransposeExprBase<A> {
     static_assert(getSpaceDimension<A>() == 3u);
 
-    TFEL_MATH_INLINE TensorTransposeExpr3D(A l)
+    TFEL_HOST_DEVICE constexpr TensorTransposeExpr3D(A l) noexcept
         : TensorTransposeExprBase<A>(std::forward<A>(l)) {}
 
-    TFEL_MATH_INLINE typename TensorTransposeExprBase<A>::NumType operator()(
-        const typename TensorTransposeExprBase<A>::IndexType i) const {
+    TFEL_HOST_DEVICE constexpr auto operator[](
+        const typename TensorTransposeExprBase<A>::IndexType i) const noexcept {
+      return this->operator()(i);
+    }  // end of operator[]
+
+    TFEL_HOST_DEVICE constexpr typename TensorTransposeExprBase<A>::NumType
+    operator()(
+        const typename TensorTransposeExprBase<A>::IndexType i) const noexcept {
       constexpr typename TensorTransposeExprBase<A>::NumType zero{0};
       switch (i) {
         case 0:

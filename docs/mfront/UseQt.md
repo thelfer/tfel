@@ -10,4 +10,4 @@ This feature is still experimental and is disabled in most cases.
 
 ~~~~{.cpp}
 @UseQt true;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

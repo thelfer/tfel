@@ -55,10 +55,10 @@ namespace tfel::material {
       NONE,
       DUPUY2017
     };  // end of InteractionMatrixModel
-        /*!
-         * \brief structure describing the structure of the interaction
-         * matrix.
-         */
+    /*!
+     * \brief structure describing the structure of the interaction
+     * matrix.
+     */
     struct TFELMATERIAL_VISIBILITY_EXPORT InteractionMatrixStructure {
       /*!
        * \brief structure descrbing the interaction of two sliding

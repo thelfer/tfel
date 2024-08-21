@@ -38,4 +38,4 @@ the possible values for `smt` are the following:
     return false;
   }
 }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

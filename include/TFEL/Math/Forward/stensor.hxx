@@ -28,7 +28,7 @@ namespace tfel::math {
    * \see   StensorDimeToSize and StensorSizeToDime.
    */
   template <unsigned short N, typename T = double>
-  struct stensor;
+  struct [[nodiscard]] stensor;
 
   /*!
    * \brief partial specialisation of the `MathObjectTraits` class.
@@ -41,6 +41,54 @@ namespace tfel::math {
     //! \brief space dimension
     static constexpr unsigned short dime = N;
   };  // end of MathObjectTraits
+
+  /*!
+   * \class StensorDimeToSize
+   * \brief Metafunction which returns the number of components of
+   * an stensor given the spatial dimension used.
+   * The correspondance between these two numbers is given by the
+   * following table:
+   *
+   * | Spatial Dimension | Number of components  |
+   * | :---------------: | :-------------------: |
+   * | 1                 | 3                     |
+   * | 2                 | 4                     |
+   * | 3                 | 6                     |
+   *
+   * \tparam N : the spatial dimension.
+   */
+  template <unsigned short N>
+    requires((N == 1u) || (N == 2u) || (N == 3u))
+  struct StensorDimeToSize {
+    static constexpr auto value = []() constexpr -> unsigned short {
+      constexpr unsigned short values[4] = {0u, 3u, 4u, 6u};
+      return values[N];
+    }();
+  };
+
+  /*!
+   * \class StensorSizeToDime
+   * \brief Metafunction which returns the spatial dimension given
+   * the number of components of a stensor.
+   * \param N, the number of components of an stensor
+   * \param value, the spatial dimension.
+   */
+  template <unsigned short N>
+    requires((N == 3u) || (N == 4u) || (N == 6u))
+  struct StensorSizeToDime {
+    static constexpr auto value = []() constexpr -> unsigned short {
+      constexpr unsigned short values[7] = {0u, 0u, 0u, 1u, 2u, 0u, 3u};
+      return values[N];
+    }();
+  };
+
+  /*!
+   * \brief a small helper function around `StensorDimeToSize`
+   */
+  template <unsigned short N>
+  TFEL_HOST_DEVICE constexpr unsigned short getStensorSize() {
+    return StensorDimeToSize<N>::value;
+  }  // end of getStensorSize
 
 }  // end of namespace tfel::math
 

@@ -234,7 +234,7 @@ namespace tfel::math {
 
   template <unsigned short N, unsigned short M, typename ValueType = double>
   struct tmatrix
-      : MatrixConcept<tmatrix<N, M, ValueType>>,
+      : MatrixConceptBase<tmatrix<N, M, ValueType>>,
         GenericFixedSizeArray<tmatrix<N, M, ValueType>,
                               FixedSizeRowMajorMatrixPolicy<N, M, ValueType>> {
     static_assert((N != 0) && (M != 0));
@@ -245,6 +245,14 @@ namespace tfel::math {
     //
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(tmatrix,
                                                GenericFixedSizeArrayBase);
+    /*!
+     * \brief constructors from arrays to implement class
+     * template argument deduction.
+     * \tparam d: dimensions of the arrays
+     */
+    template <std::size_t... d>
+    TFEL_HOST_DEVICE constexpr tmatrix(ValueType const (&... arrays)[d])  //
+      requires((sizeof...(d) == N) && ((d == M) && ...));
     //! \return the identity matrix
     TFEL_HOST_DEVICE static constexpr auto Id();
     // inheriting GenericFixedSizeArray' access operators
@@ -350,6 +358,16 @@ namespace tfel::math {
     template <typename InputIterator>
     TFEL_HOST_DEVICE constexpr void copy(const InputIterator);
   };
+
+  /*!
+   * \brief class template argument deduction
+   * \tparam ValueType: numeric type
+   * \tparam M: number of columns
+   * \tparam d: sizes of the arrays, that must be all equal to M
+   */
+  template <typename ValueType, std::size_t M, std::size_t... d>
+  tmatrix(ValueType const (&)[M], ValueType const (&... arrays)[d])
+      -> tmatrix<1u + sizeof...(d), M, ValueType>;
 
   /*!
    * \brief a simple alias for backward compatibility

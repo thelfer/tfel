@@ -24,7 +24,7 @@ namespace tfel::math {
    * \tparam T: the type hold by the matrix.
    */
   template <typename T>
-  struct matrix;
+  struct [[nodiscard]] matrix;
 
   /*!
    * \brief partial specialisation for `matrix`.

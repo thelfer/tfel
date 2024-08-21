@@ -1165,19 +1165,21 @@ namespace mfront {
                      "in mtest file generation");
       if (m.arraySize == 1u) {
         if (offset == 0) {
-          out << "mg.addMaterialProperty(\"" << m.name << "\",*(PROPS));\n";
+          out << "mg.addMaterialProperty(\"" << m.getExternalName()
+              << "\",*(PROPS));\n";
         } else {
-          out << "mg.addMaterialProperty(\"" << m.name << "\",*(PROPS+"
-              << offset << "));\n";
+          out << "mg.addMaterialProperty(\"" << m.getExternalName()
+              << "\",*(PROPS+" << offset << "));\n";
         }
         ++offset;
       } else {
         for (unsigned short s = 0; s != m.arraySize; ++s, ++offset) {
           if (offset == 0) {
-            out << "mg.addMaterialProperty(\"" << m.name << "[" << s
-                << "]\",*(PROPS));\n";
+            out << "mg.addMaterialProperty(\"" << m.getExternalName() << "["
+                << s << "]\",*(PROPS));\n";
           } else {
-            out << "mg.addMaterialProperty(\"" << m.name << "[" << s << "]\","
+            out << "mg.addMaterialProperty(\"" << m.getExternalName() << "["
+                << s << "]\","
                 << "*(PROPS+" << offset << "));\n";
           }
         }

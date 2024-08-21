@@ -135,8 +135,8 @@ namespace tfel::utilities {
                                           "to double");
     };
     throw_if(s.empty());
-    std::size_t p;
-    double r;
+    auto p = std::size_t{};
+    auto r = double{};
     try {
       r = std::stod(s, &p);
     } catch (std::exception&) {
@@ -157,8 +157,8 @@ namespace tfel::utilities {
                                           "to long double");
     };
     throw_if(s.empty());
-    std::size_t p;
-    long double r;
+    auto p = std::size_t{};
+    auto r = static_cast<long double>(0);
     try {
       r = std::stold(s, &p);
     } catch (std::exception&) {

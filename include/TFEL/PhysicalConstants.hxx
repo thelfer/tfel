@@ -87,12 +87,12 @@ namespace tfel {
     static constexpr auto R = quantity<1, 2, -2, 0, -1, 0, -1>(8.31446);
     //! Stefan-Boltzmann constant (W.m-2.K-4)
     static constexpr auto StefanBoltzmannConstant =
-        quantity<1, 0, -3, 0, -5, 0, 0>(5.67037e-08);
+        quantity<1, 0, -3, 0, -4, 0, 0>(5.67037e-08);
     //! Stefan-Boltzmann constant (W.m-2.K-4)
-    static constexpr auto s = quantity<1, 0, -3, 0, -5, 0, 0>(5.67037e-08);
+    static constexpr auto s = quantity<1, 0, -3, 0, -4, 0, 0>(5.67037e-08);
   };  // end of PhysicalConstants
-      /*!
-       * \brief partial specialisation when quantities are not used */
+  /*!
+   * \brief partial specialisation when quantities are not used */
   template <typename NumericType>
   struct PhysicalConstants<NumericType, false> {
     //! Atomic mass constant (kg)

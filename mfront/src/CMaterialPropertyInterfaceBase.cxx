@@ -396,8 +396,8 @@ namespace mfront {
 
   void CMaterialPropertyInterfaceBase::writeMaterialKnowledgeTypeSymbol(
       std::ostream& os, const MaterialPropertyDescription& mpd) const {
-    mfront::writeMaterialKnowledgeTypeSymbol(os, this->getSymbolName(mpd),
-                                             MATERIALPROPERTY);
+    mfront::writeMaterialKnowledgeTypeSymbol(
+        os, this->getSymbolName(mpd), MaterialKnowledgeType::MATERIALPROPERTY);
   }  // end of writeMaterialKnowledgeTypeSymbol
 
   void CMaterialPropertyInterfaceBase::writeVariablesNamesSymbol(
@@ -560,15 +560,45 @@ namespace mfront {
       }
     }
     this->writeInterfaceSpecificVariables(os, mpd);
-    if (!mpd.inputs.empty()) {
+    if ((!areRuntimeChecksDisabled(mpd)) && (!mpd.inputs.empty())) {
       os << "#ifndef MFRONT_NOERRNO_HANDLING\n"
          << "const auto mfront_errno_old = errno;\n"
          << "errno=0;\n"
          << "#endif /* MFRONT_NOERRNO_HANDLING */\n";
     }
-    os << mpd.output.type << " " << mpd.output.name << ";\n"
-       << mpd.f.body << "\n";
-    if (!mpd.inputs.empty()) {
+    os << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
+    this->writeCxxTryBlock(os);
+    os << mpd.f.body << "\n";
+    if (!areRuntimeChecksDisabled(mpd)) {
+      // checking the bounds and physical bounds of the output
+      if ((mpd.output.hasBounds()) || (mpd.output.hasPhysicalBounds())) {
+        const auto cast_start = useQuantities(mpd) ? mpd.output.type + "(" : "";
+        const auto cast_end = useQuantities(mpd) ? ")" : "";
+        if (mpd.output.hasPhysicalBounds()) {
+          const auto b = mpd.output.getPhysicalBounds();
+          if (b.boundsType == VariableBoundsDescription::LOWER) {
+            os << "if(" << mpd.output.name << " < " << cast_start
+               << b.lowerBound << cast_end << "){\n"
+               << "return std::nan(\"\");\n"
+               << "}\n";
+          } else if (b.boundsType == VariableBoundsDescription::UPPER) {
+            os << "if(" << mpd.output.name << " > " << cast_start
+               << b.upperBound << cast_end << "){\n"
+               << "return std::nan(\"\");\n"
+               << "}\n";
+          } else {
+            os << "if((" << mpd.output.name << " < " << cast_start
+               << b.lowerBound << cast_end << ")||"
+               << "(" << mpd.output.name << " > " << cast_start << b.upperBound
+               << cast_end << ")){\n"
+               << "return std::nan(\"\");\n"
+               << "}\n";
+          }
+        }
+      }
+    }
+    this->writeCxxCatchBlock(os, mpd, floating_point_type, use_qt);
+    if ((!areRuntimeChecksDisabled(mpd)) && (!mpd.inputs.empty())) {
       os << "#ifndef MFRONT_NOERRNO_HANDLING\n";
       // can't use std::swap here as errno might be a macro
       os << "const auto mfront_errno = errno;\n"
@@ -601,19 +631,49 @@ namespace mfront {
     for (const auto& i : mpd.inputs) {
       os << "static_cast<void>(" << i.name << ");\n";
     }
-    if (hasPhysicalBounds(mpd.inputs)) {
-      os << "/* treating mpd.physical bounds */\n";
-      writePhysicalBounds(os, mpd);
-    }
-    if (hasBounds(mpd.inputs)) {
-      os << "/* treating standard bounds */\n";
-      writeBounds(os, mpd);
+    if (!areRuntimeChecksDisabled(mpd)) {
+      if (hasPhysicalBounds(mpd.inputs)) {
+        os << "/* treating mpd.physical bounds */\n";
+        writePhysicalBounds(os, mpd);
+      }
+      if (hasBounds(mpd.inputs)) {
+        os << "/* treating standard bounds */\n";
+        writeBounds(os, mpd);
+      }
     }
     os << "return 0;\n";
   }  // end of writeMaterialPropertyCheckBoundsBody
 
+  void CMaterialPropertyInterfaceBase::writeCxxTryBlock(
+      std::ostream& os) const {
+    os << "try{\n";
+  }  // end of writeCxxCatchBlock
+
+  void CMaterialPropertyInterfaceBase::writeCxxCatchBlock(
+      std::ostream& os,
+      const MaterialPropertyDescription& mpd,
+      const std::string_view floating_point_type,
+      const bool use_qt) const {
+    os << "} catch(std::exception&){\n";
+    this->returnInvalidValue(os, "e.what()", mpd, floating_point_type, use_qt);
+    os << "} catch(...){\n";
+    this->returnInvalidValue(os, "\"unsupported C++ exception\"", mpd,
+                             floating_point_type, use_qt);
+    os << "}\n";
+  }  // end of writeCxxCatchBlock
+
   void CMaterialPropertyInterfaceBase::writeCErrorTreatment(
       std::ostream& os,
+      const MaterialPropertyDescription& mpd,
+      const std::string_view floating_point_type,
+      const bool use_qt) const {
+    const auto* msg = "\"invalid call to a C function (errno is not null)\"";
+    this->returnInvalidValue(os, msg, mpd, floating_point_type, use_qt);
+  }  // end of writeCErrorTreatment
+
+  void CMaterialPropertyInterfaceBase::returnInvalidValue(
+      std::ostream& os,
+      std::string_view,
       const MaterialPropertyDescription& mpd,
       const std::string_view floating_point_type,
       const bool use_qt) const {
@@ -621,13 +681,12 @@ namespace mfront {
     if (use_qt) {
       os << getOutputType(mpd, std::string{floating_point_type}, true) << "{";
     }
-    os << "std::nan(\"" << this->getFunctionName(mpd)
-       << ": invalid call to a C function (errno is not null)\")";
+    os << "std::nan(\"\")";
     if (use_qt) {
       os << "}";
     }
     os << ";\n";
-  }  // end of writeCErrorTreatment
+  }  // end of returnInvalidValue
 
   CMaterialPropertyInterfaceBase::~CMaterialPropertyInterfaceBase() = default;
 

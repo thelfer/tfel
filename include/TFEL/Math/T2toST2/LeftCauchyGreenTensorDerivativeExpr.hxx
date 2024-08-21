@@ -34,7 +34,7 @@ namespace tfel::math {
    */
   template <typename T2toST2Type>
   struct Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<1u>>
-      : public T2toST2Concept<
+      : public T2toST2ConceptBase<
             Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<1u>>>,
         public array_holder<9u, numeric_type<T2toST2Type>> {
     static_assert(getSpaceDimension<T2toST2Type>() == 1u);
@@ -45,9 +45,8 @@ namespace tfel::math {
     /*!
      * \param[in] B : second tensor of the product
      */
-    template <typename TensorType>
+    template <TensorConcept TensorType>
     TFEL_MATH_INLINE2 Expr(const TensorType& F) {
-      static_assert(implementsTensorConcept<TensorType>());
       static_assert(getSpaceDimension<T2toST2Type>() ==
                     getSpaceDimension<TensorType>());
       static_assert(isAssignableTo<numeric_type<TensorType>,
@@ -68,15 +67,15 @@ namespace tfel::math {
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 3 + j];
     }  // end of operator()
-  };   // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
-       // >
+  };  // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
+      // >
 
   /*!
    * Partial specialisation for 2D tensor
    */
   template <typename T2toST2Type>
   struct Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<2u>>
-      : public T2toST2Concept<
+      : public T2toST2ConceptBase<
             Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<2u>>>,
         public array_holder<20u, numeric_type<T2toST2Type>> {
     static_assert(getSpaceDimension<T2toST2Type>() == 2u);
@@ -87,10 +86,9 @@ namespace tfel::math {
     /*!
      * \param[in] B : second tensor of the product
      */
-    template <typename TensorType>
+    template <TensorConcept TensorType>
     TFEL_MATH_INLINE2 Expr(const TensorType& F) {
       //! a simple check
-      static_assert(implementsTensorConcept<TensorType>());
       static_assert(getSpaceDimension<T2toST2Type>() ==
                     getSpaceDimension<TensorType>());
       static_assert(isAssignableTo<numeric_type<TensorType>,
@@ -122,15 +120,15 @@ namespace tfel::math {
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 5 + j];
     }  // end of operator()
-  };   // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
-       // >
+  };  // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
+      // >
 
   /*!
    * Partial specialisation for 3D tensor
    */
   template <typename T2toST2Type>
   struct Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<3u>>
-      : public T2toST2Concept<
+      : public T2toST2ConceptBase<
             Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<3u>>>,
         public array_holder<54u, numeric_type<T2toST2Type>> {
     static_assert(getSpaceDimension<T2toST2Type>() == 3u);
@@ -141,9 +139,8 @@ namespace tfel::math {
     /*!
      * \param[in] B : second tensor of the product
      */
-    template <typename TensorType>
+    template <TensorConcept TensorType>
     TFEL_MATH_INLINE2 Expr(const TensorType& F) {
-      static_assert(implementsTensorConcept<TensorType>());
       static_assert(getSpaceDimension<T2toST2Type>() ==
                     getSpaceDimension<TensorType>());
       static_assert(isAssignableTo<numeric_type<TensorType>,
@@ -204,8 +201,8 @@ namespace tfel::math {
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 9 + j];
     }  // end of operator()
-  };   // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
-       // >
+  };  // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
+      // >
 
 }  // end of namespace tfel::math
 

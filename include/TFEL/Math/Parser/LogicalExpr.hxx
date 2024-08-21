@@ -143,7 +143,7 @@ namespace tfel::math::parser {
 
   template <typename Op>
   struct TFEL_VISIBILITY_LOCAL LogicalOperation final : public LogicalExpr {
-    LogicalOperation(const ExprPtr, const ExprPtr);
+    LogicalOperation(const ExprPtr, const ExprPtr) noexcept;
     //
     bool isConstant() const override;
     bool dependsOnVariable(const std::vector<double>::size_type) const override;
@@ -171,7 +171,7 @@ namespace tfel::math::parser {
   template <typename Op>
   struct TFEL_VISIBILITY_LOCAL LogicalBinaryOperation final
       : public LogicalExpr {
-    LogicalBinaryOperation(LogicalExprPtr, LogicalExprPtr);
+    LogicalBinaryOperation(LogicalExprPtr, LogicalExprPtr) noexcept;
     //
     bool isConstant() const override;
     bool dependsOnVariable(const std::vector<double>::size_type) const override;
@@ -197,7 +197,7 @@ namespace tfel::math::parser {
   };  // end of struct LogicalBinaryOperation
 
   struct TFEL_VISIBILITY_LOCAL NegLogicalExpression final : public LogicalExpr {
-    NegLogicalExpression(LogicalExprPtr);
+    NegLogicalExpression(LogicalExprPtr) noexcept;
     //
     bool isConstant() const override;
     bool dependsOnVariable(const std::vector<double>::size_type) const override;

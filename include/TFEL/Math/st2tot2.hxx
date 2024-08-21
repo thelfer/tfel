@@ -26,8 +26,6 @@
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
 #include "TFEL/Math/Forward/st2tot2.hxx"
-#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include "TFEL/Math/ST2toT2/ST2toT2Concept.hxx"
 #include "TFEL/Math/ST2toT2/ST2toT2ConceptOperations.hxx"
 #include "TFEL/Math/ST2toT2/StensorProductLeftDerivativeExpr.hxx"
@@ -39,13 +37,11 @@ namespace tfel::math {
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
-  template <typename ST2toT2Type, typename ScalarType>
+  template <ST2toT2Concept ST2toT2Type, typename ScalarType>
   struct DerivativeTypeDispatcher<ST2toT2Tag,
                                   ScalarTag,
                                   ST2toT2Type,
                                   ScalarType> {
-    static_assert(implementsST2toT2Concept<ST2toT2Type>(),
-                  "template argument ST2toT2Type is not a st2tot2");
     static_assert(isScalar<ScalarType>(),
                   "template argument ScalarType is not a scalar");
     static_assert(isScalar<numeric_type<ST2toT2Type>>(),
@@ -59,13 +55,11 @@ namespace tfel::math {
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
-  template <typename ScalarType, typename ST2toT2Type>
+  template <typename ScalarType, ST2toT2Concept ST2toT2Type>
   struct DerivativeTypeDispatcher<ScalarTag,
                                   ST2toT2Tag,
                                   ScalarType,
                                   ST2toT2Type> {
-    static_assert(implementsST2toT2Concept<ST2toT2Type>(),
-                  "template argument ST2toT2Type is not a st2tot2");
     static_assert(isScalar<ScalarType>(),
                   "template argument ScalarType is not a scalar");
     static_assert(isScalar<numeric_type<ST2toT2Type>>(),
@@ -80,15 +74,11 @@ namespace tfel::math {
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
-  template <typename TensorType1, typename StensorType2>
+  template <TensorConcept TensorType1, StensorConcept StensorType2>
   struct DerivativeTypeDispatcher<TensorTag,
                                   StensorTag,
                                   TensorType1,
                                   StensorType2> {
-    static_assert(implementsTensorConcept<TensorType1>(),
-                  "template argument TensorType1 is not a tensor");
-    static_assert(implementsStensorConcept<StensorType2>(),
-                  "template argument StensorType2 is not a symmetric tensor");
     static_assert(getSpaceDimension<TensorType1>() ==
                       getSpaceDimension<StensorType2>(),
                   "symmetric tensor types don't have the same dimension");
@@ -104,7 +94,7 @@ namespace tfel::math {
 
   template <unsigned short N, typename ValueType>
   struct st2tot2
-      : ST2toT2Concept<st2tot2<N, ValueType>>,
+      : ST2toT2ConceptBase<st2tot2<N, ValueType>>,
         GenericFixedSizeArray<
             st2tot2<N, ValueType>,
             FixedSizeRowMajorMatrixPolicy<TensorDimeToSize<N>::value,
@@ -121,70 +111,77 @@ namespace tfel::math {
      * \param[in] B : second tensor of the product
      * \return the left part of the derivative of a tensor product
      */
-    template <typename StensorType>
-    static TFEL_MATH_INLINE std::enable_if_t<
-        implementsStensorConcept<StensorType>() &&
-            getSpaceDimension<StensorType>() == N &&
-            isAssignableTo<numeric_type<StensorType>, ValueType>(),
-        Expr<st2tot2<N, ValueType>, StensorProductLeftDerivativeExpr<N>>>
-    tpld(const StensorType&);
+    template <StensorConcept StensorType>
+    static TFEL_HOST_DEVICE constexpr auto tpld(const StensorType&) noexcept
+      requires(getSpaceDimension<StensorType>() == N &&
+               isAssignableTo<numeric_type<StensorType>, ValueType>());
     /*!
      * \param[in] B : second tensor of the product
      * \param[in] C : derivative of the first tensor
      * \return the left part of the derivative of a tensor product
      */
-    template <typename StensorType, typename ST2toST2Type>
-    static TFEL_MATH_INLINE std::enable_if_t<
-        implementsStensorConcept<StensorType>() &&
-            implementsST2toST2Concept<ST2toST2Type>() &&
-            getSpaceDimension<StensorType>() == N &&
-            getSpaceDimension<ST2toST2Type>() == N &&
-            isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
-                                                 numeric_type<ST2toST2Type>,
-                                                 OpMult>,
-                           ValueType>(),
-        Expr<st2tot2<N, ValueType>, StensorProductLeftDerivativeExpr<N>>>
-    tpld(const StensorType&, const ST2toST2Type&);
+    template <StensorConcept StensorType, ST2toST2Concept ST2toST2Type>
+    static TFEL_HOST_DEVICE constexpr auto tpld(const StensorType&,
+                                                const ST2toST2Type&) noexcept
+      requires(getSpaceDimension<StensorType>() == N &&
+               getSpaceDimension<ST2toST2Type>() == N &&
+               isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
+                                                    numeric_type<ST2toST2Type>,
+                                                    OpMult>,
+                              ValueType>());
     /*!
      * \param[in] A : first tensor of the product
      * \return the right part of the derivative of a tensor product
      */
-    template <typename StensorType>
-    static TFEL_MATH_INLINE std::enable_if_t<
-        implementsStensorConcept<StensorType>() &&
-            getSpaceDimension<StensorType>() == N &&
-            isAssignableTo<numeric_type<StensorType>, ValueType>(),
-        Expr<st2tot2<N, ValueType>, StensorProductRightDerivativeExpr<N>>>
-    tprd(const StensorType&);
+    template <StensorConcept StensorType>
+    TFEL_HOST_DEVICE static constexpr auto tprd(const StensorType&) noexcept
+      requires(getSpaceDimension<StensorType>() == N &&
+               isAssignableTo<numeric_type<StensorType>, ValueType>());
     /*!
      * \param[in] A : first tensor of the product
      * \param[in] C : derivative of the first tensor
      * \return the right part of the derivative of a tensor product
      */
-    template <typename StensorType, typename ST2toST2Type>
-    static TFEL_MATH_INLINE std::enable_if_t<
-        implementsStensorConcept<StensorType>() &&
-            implementsST2toST2Concept<ST2toST2Type>() &&
-            getSpaceDimension<StensorType>() == N &&
-            getSpaceDimension<ST2toST2Type>() == N &&
-            isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
-                                                 numeric_type<ST2toST2Type>,
-                                                 OpMult>,
-                           ValueType>(),
-        Expr<st2tot2<N, ValueType>, StensorProductRightDerivativeExpr<N>>>
-    tprd(const StensorType&, const ST2toST2Type&);
+    template <StensorConcept StensorType, ST2toST2Concept ST2toST2Type>
+    TFEL_HOST_DEVICE static constexpr auto tprd(const StensorType&,
+                                                const ST2toST2Type&) noexcept
+      requires(getSpaceDimension<StensorType>() == N &&
+               getSpaceDimension<ST2toST2Type>() == N &&
+               isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
+                                                    numeric_type<ST2toST2Type>,
+                                                    OpMult>,
+                              ValueType>());
     //
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(st2tot2,
                                                GenericFixedSizeArrayBase);
+    /*!
+     * \brief constructors from arrays to implement class
+     * template argument deduction.
+     * \tparam d: dimensions of the arrays
+     */
+    template <std::size_t... d>
+    TFEL_HOST_DEVICE constexpr st2tot2(ValueType const (&... arrays)[d])  //
+      requires((sizeof...(d) == TensorDimeToSize<N>::value) &&
+               ((d == StensorDimeToSize<N>::value) && ...));
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
     //! \brief import values from an external memory location
-    void import(const base_type<ValueType>* const);
-    //
-    template <typename InputIterator>
-    TFEL_MATH_INLINE2 void copy(const InputIterator src);
+    TFEL_HOST_DEVICE constexpr void import(
+        const base_type<ValueType>* const) noexcept;
+    //! \brief copy from a range
+    TFEL_HOST_DEVICE constexpr void copy(const auto) noexcept;
   };
+
+  /*!
+   * \brief class template argument deduction
+   * \tparam ValueType: numeric type
+   * \tparam M: number of columns
+   * \tparam d: sizes of the arrays, that must be all equal to M
+   */
+  template <typename ValueType, std::size_t M, std::size_t... d>
+  st2tot2(ValueType const (&)[M], ValueType const (&... arrays)[d])
+      -> st2tot2<TensorSizeToDime<sizeof...(d) + 1>::value, ValueType>;
 
   /*!
    * \brief a simple alias for backward compatibility

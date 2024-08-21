@@ -60,7 +60,7 @@ namespace aster {
       const auto pk2 = convertCauchyStressToSecondPiolaKirchhoffStress(s, F);
       pk2.exportTab(STRESS);
     }  // end of exe
-  };   // end of struct AsterConvertStress
+  };  // end of struct AsterConvertStress
 
 }  // end of namespace aster
 

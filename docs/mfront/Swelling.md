@@ -46,4 +46,4 @@ orthotropic behaviours and is not compatible with the `Volume` option.
 @ExternalStateVariable strain s;
 s.setGlossaryName("SolidSwelling");
 @Swelling<Volume> s;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

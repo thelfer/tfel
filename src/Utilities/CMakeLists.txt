@@ -11,5 +11,11 @@ tfel_library(TFELUtilities
   ArgumentParser.cxx)
 target_include_directories(TFELUtilities
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
+if(enable-static)
+  target_include_directories(TFELUtilities-static
+    PUBLIC 
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>)
+endif(enable-static)

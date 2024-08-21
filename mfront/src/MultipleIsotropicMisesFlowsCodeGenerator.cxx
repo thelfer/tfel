@@ -89,7 +89,7 @@ namespace mfront {
     for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
       if (p->hasSpecificTheta) {
         std::ostringstream otheta;
-        otheta << "mu_3_theta" << n;
+        otheta << "mfront_internal_3_mu_theta" << n;
         os << "stress " + otheta.str() + " = 3*(real(";
         os << p->theta << "))*(this->mu);\n";
       } else {
@@ -98,7 +98,7 @@ namespace mfront {
     }
 
     if (genericTheta) {
-      os << "stress mu_3_theta = 3*(";
+      os << "stress mfront_internal_3_mu_theta = 3*(";
       os << this->bd.getClassName() << "::theta)*(this->mu);\n";
     }
     os << "unsigned int iter=0u;\n"
@@ -117,11 +117,11 @@ namespace mfront {
       if (p->hasSpecificTheta) {
         std::ostringstream otheta;
         os << "this->seq = std::max(this->seq_e" << n << "-";
-        otheta << "mu_3_theta" << n << "*(";
+        otheta << "mfront_internal_3_mu_theta" << n << "*(";
         os << otheta.str();
       } else {
         os << "this->seq = std::max(this->seq_e-";
-        os << "mu_3_theta*(";
+        os << "mfront_internal_3_mu_theta*(";
       }
       auto p2 = this->flows.begin();
       unsigned short n2 = 0u;
@@ -150,20 +150,21 @@ namespace mfront {
             os << "newton_df(" << n << "," << n << ")";
             if (p->hasSpecificTheta) {
               os << " = ((real(" << p->theta << "))*(this->df_dp" << n << ")"
-                 << "-mu_3_theta" << n << "*(this->df_dseq" << n
+                 << "-mfront_internal_3_mu_theta" << n << "*(this->df_dseq" << n
                  << "))/(this->young);\n";
             } else {
               os << " = ((" << this->bd.getClassName()
                  << "::theta)*(this->df_dp" << n << ")"
-                 << "-mu_3_theta*(this->df_dseq" << n << "))/(this->young);\n";
+                 << "-mfront_internal_3_mu_theta*(this->df_dseq" << n
+                 << "))/(this->young);\n";
             }
           } else {
             os << "newton_df(" << n << "," << n2 << ")";
             if (p->hasSpecificTheta) {
-              os << " = -mu_3_theta" << n << "*(this->df_dseq" << n
-                 << ")/(this->young);\n";
+              os << " = -mfront_internal_3_mu_theta" << n << "*(this->df_dseq"
+                 << n << ")/(this->young);\n";
             } else {
-              os << " = -mu_3_theta*(this->df_dseq" << n
+              os << " = -mfront_internal_3_mu_theta*(this->df_dseq" << n
                  << ")/(this->young);\n";
             }
           }
@@ -187,9 +188,9 @@ namespace mfront {
            << ")*(this->dt);\n";
         os << "newton_df(" << n << "," << n << ") = 1+";
         if (p->hasSpecificTheta) {
-          os << "mu_3_theta" << n;
+          os << "mfront_internal_3_mu_theta" << n;
         } else {
-          os << "mu_3_theta";
+          os << "mfront_internal_3_mu_theta";
         }
         os << "*(this->df_dseq" << n << ")*(this->dt);\n";
         for (p2 = this->flows.begin(), n2 = 0; p2 != this->flows.end();
@@ -197,9 +198,9 @@ namespace mfront {
           if (p2 != p) {
             os << "newton_df(" << n << "," << n2 << ") = ";
             if (p->hasSpecificTheta) {
-              os << "mu_3_theta" << n;
+              os << "mfront_internal_3_mu_theta" << n;
             } else {
-              os << "mu_3_theta";
+              os << "mfront_internal_3_mu_theta";
             }
             os << "*(this->df_dseq" << n << ")*(this->dt);\n";
           }
@@ -219,9 +220,9 @@ namespace mfront {
         }
         os << "*(this->df_dp" << n << ")-";
         if (p->hasSpecificTheta) {
-          os << "mu_3_theta" << n;
+          os << "mfront_internal_3_mu_theta" << n;
         } else {
-          os << "mu_3_theta";
+          os << "mfront_internal_3_mu_theta";
         }
         os << "*(this->df_dseq" << n << "));\n";
         for (p2 = this->flows.begin(), n2 = 0; p2 != this->flows.end();
@@ -229,9 +230,9 @@ namespace mfront {
           if (p2 != p) {
             os << "newton_df(" << n << "," << n2 << ") = ";
             if (p->hasSpecificTheta) {
-              os << "mu_3_theta" << n;
+              os << "mfront_internal_3_mu_theta" << n;
             } else {
-              os << "mu_3_theta";
+              os << "mfront_internal_3_mu_theta";
             }
             os << "*(this->df_dseq" << n << ")*(this->dt);\n";
           }
@@ -345,11 +346,13 @@ namespace mfront {
           "(this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*("
           "this->eel);\n"
        << "this->updateAuxiliaryStateVariables();\n";
-    for (const auto& v : d.getPersistentVariables()) {
-      this->writePhysicalBoundsChecks(os, v, false);
-    }
-    for (const auto& v : d.getPersistentVariables()) {
-      this->writeBoundsChecks(os, v, false);
+    if (!areRuntimeChecksDisabled(this->bd)) {
+      for (const auto& v : d.getPersistentVariables()) {
+        this->writePhysicalBoundsChecks(os, v, false);
+      }
+      for (const auto& v : d.getPersistentVariables()) {
+        this->writeBoundsChecks(os, v, false);
+      }
     }
     if (this->bd.useQt()) {
       os << "return MechanicalBehaviour<" << btype

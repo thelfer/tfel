@@ -22,7 +22,7 @@ namespace tfel::material {
     BCC,    //!< body centered cubic structure
     FCC,    //!< face centered cubic structure
     HCP     //!< hexagonal closed-packed structures
-  };        // end of enum struct CrystalStructure
+  };  // end of enum struct CrystalStructure
 
 }  // end of namespace tfel::material
 

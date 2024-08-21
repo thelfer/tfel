@@ -72,7 +72,7 @@ namespace tfel::math {
     }
     v.back() = xe;  // not mandatory (xe is the value that shall be
                     // found) but this is more precise
-  }                 // end of geometricDiscretization
+  }  // end of geometricDiscretization
 
 }  // end of namespace tfel::math
 

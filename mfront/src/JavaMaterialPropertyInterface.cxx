@@ -29,7 +29,7 @@
 #include <io.h>
 #define F_OK 0 /* Test for existence.  */
 #ifndef S_ISREG
-#define S_ISREG(mode) (((mode)&S_IFMT) == S_IFREG)
+#define S_ISREG(mode) (((mode) & S_IFMT) == S_IFREG)
 #endif
 #endif
 
@@ -335,7 +335,8 @@ namespace mfront {
     writeInterfaceSymbol(srcFile, name, "Java");
     writeLawSymbol(srcFile, name, mpd.material);
     writeMaterialSymbol(srcFile, name, mpd.material);
-    writeMaterialKnowledgeTypeSymbol(srcFile, name, MATERIALPROPERTY);
+    writeMaterialKnowledgeTypeSymbol(srcFile, name,
+                                     MaterialKnowledgeType::MATERIALPROPERTY);
     // java
     srcFile << "JNIEXPORT jdouble JNICALL\n";
     if (this->package.empty()) {

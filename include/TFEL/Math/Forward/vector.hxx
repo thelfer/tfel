@@ -26,7 +26,7 @@ namespace tfel::math {
    * \date   04/04/2007
    */
   template <typename T>
-  struct vector;
+  struct [[nodiscard]] vector;
 
   /*!
    * \brief Partial specialisation for the vector class.

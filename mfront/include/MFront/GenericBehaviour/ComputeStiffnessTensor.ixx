@@ -16,112 +16,119 @@
 
 #include "TFEL/Material/StiffnessTensor.hxx"
 
-namespace mfront {
+namespace mfront::gb {
 
-  namespace gb {
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            typename stress,
+            typename real>
+  TFEL_HOST_DEVICE constexpr void
+  computeOrthotropicUnAlteredElasticStiffnessTensor(
+      tfel::math::st2tost2<1u, stress>& C,
+      const real* const mps) noexcept  //
+    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+             1u)
+  {
+    using namespace tfel::material;
+    constexpr StiffnessTensorAlterationCharacteristic stac =
+        StiffnessTensorAlterationCharacteristic::UNALTERED;
+    // last three parameters are unused
+    computeOrthotropicStiffnessTensor<H, stac, stress, real>(
+        C, stress(mps[0]), stress(mps[1]), stress(mps[2]), mps[3], mps[4],
+        mps[5], stress(mps[0]), stress(mps[1]), stress(mps[2]));
+  }  // end of computeOrthotropicUnAlteredElasticStiffnessTensor
 
-    template <tfel::material::ModellingHypothesis::Hypothesis H,
-              typename stress,
-              typename real>
-    typename std::enable_if<
-        tfel::material::ModellingHypothesisToSpaceDimension<H>::value == 1u,
-        void>::type
-    computeOrthotropicUnAlteredElasticStiffnessTensor(
-        tfel::math::st2tost2<1u, stress>& C, const real* const mps) {
-      using namespace tfel::material;
-      constexpr StiffnessTensorAlterationCharacteristic stac =
-          StiffnessTensorAlterationCharacteristic::UNALTERED;
-      // last three parameters are unused
-      computeOrthotropicStiffnessTensor<H, stac, stress, real>(
-          C, stress(mps[0]), stress(mps[1]), stress(mps[2]), mps[3], mps[4],
-          mps[5], stress(mps[0]), stress(mps[1]), stress(mps[2]));
-    }  // end of computeOrthotropicUnAlteredElasticStiffnessTensor
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            typename stress,
+            typename real>
+  TFEL_HOST_DEVICE constexpr void
+  computeOrthotropicUnAlteredElasticStiffnessTensor(
+      tfel::math::st2tost2<2u, stress>& C,
+      const real* const mps) noexcept  //
+    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+             2u)
+  {
+    using namespace tfel::material;
+    constexpr StiffnessTensorAlterationCharacteristic stac =
+        StiffnessTensorAlterationCharacteristic::UNALTERED;
+    // last two parameters are unused
+    computeOrthotropicStiffnessTensor<H, stac, stress, real>(
+        C, stress(mps[0]), stress(mps[1]), stress(mps[2]), mps[3], mps[4],
+        mps[5], stress(mps[6]), stress(mps[1]), stress(mps[2]));
+  }  // end of computeOrthotropicUnAlteredElasticStiffnessTensor
 
-    template <tfel::material::ModellingHypothesis::Hypothesis H,
-              typename stress,
-              typename real>
-    typename std::enable_if<
-        tfel::material::ModellingHypothesisToSpaceDimension<H>::value == 2u,
-        void>::type
-    computeOrthotropicUnAlteredElasticStiffnessTensor(
-        tfel::math::st2tost2<2u, stress>& C, const real* const mps) {
-      using namespace tfel::material;
-      constexpr StiffnessTensorAlterationCharacteristic stac =
-          StiffnessTensorAlterationCharacteristic::UNALTERED;
-      // last two parameters are unused
-      computeOrthotropicStiffnessTensor<H, stac, stress, real>(
-          C, stress(mps[0]), stress(mps[1]), stress(mps[2]), mps[3], mps[4],
-          mps[5], stress(mps[6]), stress(mps[1]), stress(mps[2]));
-    }  // end of computeOrthotropicUnAlteredElasticStiffnessTensor
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            typename stress,
+            typename real>
+  TFEL_HOST_DEVICE constexpr void
+  computeOrthotropicUnAlteredElasticStiffnessTensor(
+      tfel::math::st2tost2<3u, stress>& C, const real* const mps) noexcept
+    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+             3u)
+  {
+    using namespace tfel::material;
+    constexpr StiffnessTensorAlterationCharacteristic stac =
+        StiffnessTensorAlterationCharacteristic::UNALTERED;
+    computeOrthotropicStiffnessTensor<H, stac, stress, real>(
+        C, stress(mps[0]), stress(mps[1]), stress(mps[2]), mps[3], mps[4],
+        mps[5], stress(mps[6]), stress(mps[7]), stress(mps[8]));
+  }  // end of computeOrthotropicUnAlteredElasticStiffnessTensor
 
-    template <tfel::material::ModellingHypothesis::Hypothesis H,
-              typename stress,
-              typename real>
-    typename std::enable_if<
-        tfel::material::ModellingHypothesisToSpaceDimension<H>::value == 3u,
-        void>::type
-    computeOrthotropicUnAlteredElasticStiffnessTensor(
-        tfel::math::st2tost2<3u, stress>& C, const real* const mps) {
-      using namespace tfel::material;
-      constexpr StiffnessTensorAlterationCharacteristic stac =
-          StiffnessTensorAlterationCharacteristic::UNALTERED;
-      computeOrthotropicStiffnessTensor<H, stac, stress, real>(
-          C, stress(mps[0]), stress(mps[1]), stress(mps[2]), mps[3], mps[4],
-          mps[5], stress(mps[6]), stress(mps[7]), stress(mps[8]));
-    }  // end of computeOrthotropicUnAlteredElasticStiffnessTensor
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            typename stress,
+            typename real>
+  TFEL_HOST_DEVICE constexpr void
+  computeOrthotropicAlteredElasticStiffnessTensor(
+      tfel::math::st2tost2<1u, stress>& C,
+      const real* const mps) noexcept  //
+    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+             1u)
+  {
+    using namespace tfel::material;
+    constexpr StiffnessTensorAlterationCharacteristic stac =
+        StiffnessTensorAlterationCharacteristic::ALTERED;
+    // last three parameters are unused
+    computeOrthotropicStiffnessTensor<H, stac, stress, real>(
+        C, stress(mps[0]), stress(mps[1]), stress(mps[2]), mps[3], mps[4],
+        mps[5], stress(mps[0]), stress(mps[1]), stress(mps[2]));
+  }  // end of computeOrthotropicAlteredElasticStiffnessTensor
 
-    template <tfel::material::ModellingHypothesis::Hypothesis H,
-              typename stress,
-              typename real>
-    typename std::enable_if<
-        tfel::material::ModellingHypothesisToSpaceDimension<H>::value == 1u,
-        void>::type
-    computeOrthotropicAlteredElasticStiffnessTensor(
-        tfel::math::st2tost2<1u, stress>& C, const real* const mps) {
-      using namespace tfel::material;
-      constexpr StiffnessTensorAlterationCharacteristic stac =
-          StiffnessTensorAlterationCharacteristic::ALTERED;
-      // last three parameters are unused
-      computeOrthotropicStiffnessTensor<H, stac, stress, real>(
-          C, stress(mps[0]), stress(mps[1]), stress(mps[2]), mps[3], mps[4],
-          mps[5], stress(mps[0]), stress(mps[1]), stress(mps[2]));
-    }  // end of computeOrthotropicAlteredElasticStiffnessTensor
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            typename stress,
+            typename real>
+  TFEL_HOST_DEVICE constexpr void
+  computeOrthotropicAlteredElasticStiffnessTensor(
+      tfel::math::st2tost2<2u, stress>& C,
+      const real* const mps) noexcept  //
+    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+             2u)
+  {
+    using namespace tfel::material;
+    constexpr StiffnessTensorAlterationCharacteristic stac =
+        StiffnessTensorAlterationCharacteristic::ALTERED;
+    // last two parameters are unused
+    computeOrthotropicStiffnessTensor<H, stac, stress, real>(
+        C, stress(mps[0]), stress(mps[1]), stress(mps[2]), mps[3], mps[4],
+        mps[5], stress(mps[6]), stress(mps[1]), stress(mps[2]));
+  }  // end of computeOrthotropicAlteredElasticStiffnessTensor
 
-    template <tfel::material::ModellingHypothesis::Hypothesis H,
-              typename stress,
-              typename real>
-    typename std::enable_if<
-        tfel::material::ModellingHypothesisToSpaceDimension<H>::value == 2u,
-        void>::type
-    computeOrthotropicAlteredElasticStiffnessTensor(
-        tfel::math::st2tost2<2u, stress>& C, const real* const mps) {
-      using namespace tfel::material;
-      constexpr StiffnessTensorAlterationCharacteristic stac =
-          StiffnessTensorAlterationCharacteristic::ALTERED;
-      // last two parameters are unused
-      computeOrthotropicStiffnessTensor<H, stac, stress, real>(
-          C, stress(mps[0]), stress(mps[1]), stress(mps[2]), mps[3], mps[4],
-          mps[5], stress(mps[6]), stress(mps[1]), stress(mps[2]));
-    }  // end of computeOrthotropicAlteredElasticStiffnessTensor
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            typename stress,
+            typename real>
+  TFEL_HOST_DEVICE constexpr void
+  computeOrthotropicAlteredElasticStiffnessTensor(
+      tfel::math::st2tost2<3u, stress>& C,
+      const real* const mps) noexcept  //
+    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+             3u)
+  {
+    using namespace tfel::material;
+    constexpr StiffnessTensorAlterationCharacteristic stac =
+        StiffnessTensorAlterationCharacteristic::ALTERED;
+    computeOrthotropicStiffnessTensor<H, stac, stress, real>(
+        C, stress(mps[0]), stress(mps[1]), stress(mps[2]), mps[3], mps[4],
+        mps[5], stress(mps[6]), stress(mps[7]), stress(mps[8]));
+  }  // end of computeOrthotropicAlteredElasticStiffnessTensor
 
-    template <tfel::material::ModellingHypothesis::Hypothesis H,
-              typename stress,
-              typename real>
-    typename std::enable_if<
-        tfel::material::ModellingHypothesisToSpaceDimension<H>::value == 3u,
-        void>::type
-    computeOrthotropicAlteredElasticStiffnessTensor(
-        tfel::math::st2tost2<3u, stress>& C, const real* const mps) {
-      using namespace tfel::material;
-      constexpr StiffnessTensorAlterationCharacteristic stac =
-          StiffnessTensorAlterationCharacteristic::ALTERED;
-      computeOrthotropicStiffnessTensor<H, stac, stress, real>(
-          C, stress(mps[0]), stress(mps[1]), stress(mps[2]), mps[3], mps[4],
-          mps[5], stress(mps[6]), stress(mps[7]), stress(mps[8]));
-    }  // end of computeOrthotropicAlteredElasticStiffnessTensor
-
-  }  // end of namespace gb
-
-}  // end of namespace mfront
+}  // end of namespace mfront::gb
 
 #endif /* LIB_MFRONT_GENERIC_COMPUTESTIFFNESSTENSOR_HXX */

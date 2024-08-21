@@ -292,8 +292,7 @@ namespace mfront {
       if (std::find(i.begin(), i.end(), this->getName()) != i.end()) {
         const auto keys =
             std::vector<std::string>{"@CalculiXFiniteStrainStrategy",
-                                     "@CalculiXGenerateMTestFileOnFailure",
-                                     "@CalculiXStrainPerturbationValue"};
+                                     "@CalculiXGenerateMTestFileOnFailure"};
         throw_if(std::find(keys.begin(), keys.end(), k) == keys.end(),
                  "unsupported key '" + k + "'");
       } else {
@@ -1287,10 +1286,10 @@ namespace mfront {
         };
         for (auto pm = mps.first.begin(); pm != mps.first.end();) {
           if (pm->arraySize == 1u) {
-            write(pm->name);
+            write(pm->getExternalName());
           } else {
             for (unsigned short a = 0; a != pm->arraySize;) {
-              write(pm->name + "_" + std::to_string(a));
+              write(pm->getExternalName() + "_" + std::to_string(a));
               if (++a != pm->arraySize) {
                 out << ", ";
               }

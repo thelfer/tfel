@@ -15,6 +15,7 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCry
     PolyCrystalsAngles-30.txt @ONLY)
 
 set(mfront_tests_SOURCES
+  DigitSeparatorTest
   MaterialPropertiesBoundsCheck
   StateVariablesBoundsCheck
   ExternalStateVariablesBoundsCheck
@@ -149,7 +150,9 @@ set(mfront_tests_SOURCES
   MiehePhaseFieldDisplacementDeviatoricSplit
   ProfilerTest
   ProfilerTest2
-  ProfilerTest3)
+  ProfilerTest3
+  ArrayOfScalarGradients
+  ArrayOfStensorGradients)
 
 if(enable-mfront-quantity-tests)
   list(APPEND mfront_tests_SOURCES

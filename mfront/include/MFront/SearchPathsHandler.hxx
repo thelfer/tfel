@@ -29,6 +29,22 @@ namespace mfront {
    * - searching imported mfront file
    */
   struct MFRONT_VISIBILITY_EXPORT SearchPathsHandler {
+    //! \brief structure describing a path in a madnex file
+    struct MadnexPath {
+      //! \brief file path
+      std::string file_path;
+      //! \brief material
+      std::string material;
+      //! \brief type of material knowledge
+      enum MaterialKnowledgeType {
+        MADNEX_ALL,
+        MADNEX_MATERIAL_PROPERTY,
+        MADNEX_BEHAVIOUR,
+        MADNEX_MODEL
+      } mkt = MADNEX_ALL;
+    };
+    //! \brief a simple alias
+    using Path = std::variant<std::string, MadnexPath>;
     /*!
      * search a file in the specified paths.
      * The file is searched using
@@ -81,24 +97,15 @@ namespace mfront {
         const std::vector<std::string>&);
     //! \return the list of the search paths associated with directories
     static std::vector<std::string> getSearchPaths();
+    //! \return the registred paths
+    static std::vector<Path> getRegistredPaths();
+    /*!
+     * \brief reset the paths
+     * \param[in] npaths: new paths
+     */
+    static void resetPaths(const std::vector<Path>&);
 
    private:
-    //! \brief structure describing a path in a madnex file
-    struct MadnexPath {
-      //! \brief file path
-      std::string file_path;
-      //! \brief material
-      std::string material;
-      //! \brief type of material knowledge
-      enum MaterialKnowledgeType {
-        MADNEX_ALL,
-        MADNEX_MATERIAL_PROPERTY,
-        MADNEX_BEHAVIOUR,
-        MADNEX_MODEL
-      } mkt = MADNEX_ALL;
-    };
-    //! \brief a simple alias
-    using Path = std::variant<std::string, MadnexPath>;
     //! \return the unique instance of the class
     static TFEL_VISIBILITY_LOCAL SearchPathsHandler& getSearchPathsHandler();
     /*!

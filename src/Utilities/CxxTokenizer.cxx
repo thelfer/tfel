@@ -506,7 +506,8 @@ namespace tfel::utilities {
       }
     }
     throw_if((p != pe) && (*p == '.'), "invalid number");
-    this->tokens.emplace_back(std::string{b, p}, n, o, Token::Number);
+    this->tokens.emplace_back(replace_all(std::string{b, p}, "\'", ""), n, o,
+                              Token::Number);
     const auto d = p - b;
     p = b;
     advance(o, p, d);

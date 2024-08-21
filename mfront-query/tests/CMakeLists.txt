@@ -9,7 +9,7 @@ macro(mfront_query_test args mfront_file file)
 	COMMAND ${CMAKE_COMMAND}
 	-D TEST_PROGRAM=$<TARGET_FILE:mfront-query>
 	-D TEST_ARGS=${args}
-	-D MFRONT_FILE=${CMAKE_SOURCE_DIR}/mfront/tests/behaviours/${mfront_file}
+	-D MFRONT_FILE=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/${mfront_file}
 	-D TEST_OUTPUT=mfront-query-result-${MFRONT_QUERY_TEST_ID}.txt
 	-D REFERENCE_FILE=${CMAKE_CURRENT_SOURCE_DIR}/references/${file}
 	-P ${CMAKE_CURRENT_SOURCE_DIR}/mfront-query.cmake
@@ -29,7 +29,7 @@ macro(mfront_query_test args mfront_file file)
       COMMAND ${CMAKE_COMMAND}
       -D TEST_PROGRAM=$<TARGET_FILE:mfront-query>
       -D TEST_ARGS=${args}
-      -D MFRONT_FILE=${CMAKE_SOURCE_DIR}/mfront/tests/behaviours/${mfront_file}
+      -D MFRONT_FILE=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/${mfront_file}
       -D TEST_OUTPUT=mfront-query-result-${MFRONT_QUERY_TEST_ID}.txt
       -D REFERENCE_FILE=${CMAKE_CURRENT_SOURCE_DIR}/references/${file}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/mfront-query.cmake )
@@ -43,7 +43,7 @@ macro(mfront_query_test args mfront_file file)
   #     -D TEST_PROGRAM=${mfront_query}
   # # ${PROJECT_BINARY_DIR}/mfront-query/src/mfront-query${CMAKE_EXECUTABLE_SUFFIX}
   #     -D TEST_ARGS=${args}
-  #     -D MFRONT_FILE=${CMAKE_SOURCE_DIR}/mfront/tests/behaviours/${mfront_file}
+  #     -D MFRONT_FILE=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/${mfront_file}
   #     -D TEST_OUTPUT=mfront-query-result-${MFRONT_QUERY_TEST_ID}.txt
   #     -D REFERENCE_FILE=${CMAKE_CURRENT_SOURCE_DIR}/references/${file}
   #     -P ${CMAKE_CURRENT_SOURCE_DIR}/mfront-query.cmake )

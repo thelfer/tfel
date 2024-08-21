@@ -115,45 +115,11 @@ namespace tfel::math {
    * \warning the operator| has not the priority expected for such
    * an operation : use of parenthesis is required.
    */
-  template <typename T1, typename T2>
-  typename std::enable_if<
-      implementsStensorConcept<T1>() && implementsStensorConcept<T2>() &&
-          getSpaceDimension<T1>() == 1u && getSpaceDimension<T2>() == 1u &&
-          !isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>(),
-      BinaryOperationResult<T1, T2, OpDotProduct>>::type
-  operator|(const T1&, const T2&);
-  /*!
-   * \return the inner product of a stensor
-   * \param const T1&, the left  stensor.
-   * \param const T2&, the right stensor.
-   * \return const result_type<T,T2,OpMult>, the
-   * result.
-   * \warning the operator| has not the priority expected for such
-   * an operation : use of parenthesis is required.
-   */
-  template <typename T1, typename T2>
-  typename std::enable_if<
-      implementsStensorConcept<T1>() && implementsStensorConcept<T2>() &&
-          getSpaceDimension<T1>() == 2u && getSpaceDimension<T2>() == 2u &&
-          !isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>(),
-      BinaryOperationResult<T1, T2, OpDotProduct>>::type
-  operator|(const T1&, const T2&);
-  /*!
-   * \return the inner product of a stensor
-   * \param const T1&, the left  stensor.
-   * \param const T2&, the right stensor.
-   * \return const result_type<T,T2,OpMult>, the
-   * result.
-   * \warning the operator| has not the priority expected for such
-   * an operation : use of parenthesis is required.
-   */
-  template <typename T1, typename T2>
-  typename std::enable_if<
-      implementsStensorConcept<T1>() && implementsStensorConcept<T2>() &&
-          getSpaceDimension<T1>() == 3u && getSpaceDimension<T2>() == 3u &&
-          !isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>(),
-      BinaryOperationResult<T1, T2, OpDotProduct>>::type
-  operator|(const T1&, const T2&);
+  template <StensorConcept T1, StensorConcept T2>
+  TFEL_HOST_DEVICE constexpr BinaryOperationResult<T1, T2, OpDotProduct>
+  operator|(const T1&, const T2&) noexcept
+    requires((getSpaceDimension<T1>() == getSpaceDimension<T2>()) &&
+             (!isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>()));
 
 }  // end of namespace tfel::math
 

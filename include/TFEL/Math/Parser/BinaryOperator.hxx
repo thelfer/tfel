@@ -100,7 +100,8 @@ namespace tfel::math::parser {
   struct TFEL_VISIBILITY_LOCAL BinaryOperation final
       : public Expr,
         protected BinaryOperationBase {
-    BinaryOperation(const std::shared_ptr<Expr>, const std::shared_ptr<Expr>);
+    BinaryOperation(const std::shared_ptr<Expr>,
+                    const std::shared_ptr<Expr>) noexcept;
     //
     bool isConstant() const override;
     double getValue() const override final;

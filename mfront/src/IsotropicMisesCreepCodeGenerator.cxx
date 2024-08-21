@@ -49,10 +49,13 @@ namespace mfront {
        << "strain newton_df;\n"
        << "auto newton_ddp = strain{}; // previous correction of the Newton "
           "algorithm\n"
-       << "const auto mu_3_theta = 3*(this->theta)*(this->mu);\n"
+       << "const auto mfront_internal_3_mu_theta = "
+          "3*(this->theta)*(this->mu);\n"
        << "unsigned int iter=0;\n";
     os << "while((converged==false)&&(iter<(this->iterMax))){\n"
-       << "this->seq = std::max(this->seq_e-mu_3_theta*(this->dp),stress(0));\n"
+       << "this->seq = "
+          "std::max(this->seq_e-mfront_internal_3_mu_theta*(this->dp),stress(0)"
+          ");\n"
        << "const auto compute_flow_r = this->computeFlow();\n"
        << "if(!((compute_flow_r)&&\n"
        << "(tfel::math::ieee754::isfinite(this->f))&&\n"
@@ -65,13 +68,14 @@ namespace mfront {
     }
     os << "if(iter==0u){\n"
        << "// probably an elastic prediction\n"
-       << "newton_ddp = (this->seq_e / mu_3_theta) / 2;\n"
+       << "newton_ddp = (this->seq_e / mfront_internal_3_mu_theta) / 2;\n"
        << "} // end of if(iter==0u)\n"
        << "this->dp += newton_ddp;\n"
        << "iter+=1;\n"
        << "} else {"
        << "newton_f  = this->dp - (this->f)*(this->dt);\n"
-       << "newton_df = 1+mu_3_theta*(this->df_dseq)*(this->dt);\n"
+       << "newton_df = "
+          "1+mfront_internal_3_mu_theta*(this->df_dseq)*(this->dt);\n"
        << "if(tfel::math::abs(newton_df) > newton_epsilon){\n"
        << "newton_ddp = -newton_f/newton_df;\n"
        << "this->dp += newton_ddp;\n"
@@ -96,7 +100,7 @@ namespace mfront {
          << "<< iter << \": invalid jacobian on the first iteration\\n\";\n";
     }
     os << "// probably an elastic prediction\n"
-       << "newton_ddp = (this->seq_e / mu_3_theta) / 2;\n"
+       << "newton_ddp = (this->seq_e / mfront_internal_3_mu_theta) / 2;\n"
        << "} // end of if(iter==0u)\n"
        << "this->dp += newton_ddp;\n"
        << "iter+=1;\n"
@@ -169,11 +173,13 @@ namespace mfront {
           "(this->lambda_tdt)*trace(this->eel)*StrainStensor::Id()+2*(this->mu_"
           "tdt)*(this->eel);\n"
        << "this->updateAuxiliaryStateVariables();\n";
-    for (const auto& v : d.getPersistentVariables()) {
-      this->writePhysicalBoundsChecks(os, v, false);
-    }
-    for (const auto& v : d.getPersistentVariables()) {
-      this->writeBoundsChecks(os, v, false);
+    if (!areRuntimeChecksDisabled(this->bd)) {
+      for (const auto& v : d.getPersistentVariables()) {
+        this->writePhysicalBoundsChecks(os, v, false);
+      }
+      for (const auto& v : d.getPersistentVariables()) {
+        this->writeBoundsChecks(os, v, false);
+      }
     }
     if (this->bd.useQt()) {
       os << "return MechanicalBehaviour<" << btype
@@ -198,10 +204,11 @@ namespace mfront {
        << "if(this->seq_e > real(0.01)*(this->young) *std::numeric_limits<"
           "real>::epsilon()){\n"
        << "constexpr auto M = st2tost2<N, NumericType>::M();\n"
-       << "const auto ccto_tmp_1 =  this->dp/this->seq_e;\n"
+       << "const auto mfront_internal_ccto_tmp_1 =  this->dp/this->seq_e;\n"
        << "this->Dt += "
-          "-4*(this->mu_tdt)*(this->mu)*(this->theta)*(ccto_tmp_1*M-(ccto_tmp_"
-          "1-this->df_dseq*(this->dt)/"
+          "-4*(this->mu_tdt)*(this->mu)*(this->theta)*"
+       << "(mfront_internal_ccto_tmp_1*M-(mfront_internal_ccto_tmp_1-this->df_"
+          "dseq*(this->dt)/"
           "(1+3*(this->mu)*(this->theta)*(this->dt)*this->df_dseq))*((this->n)^"
           "(this->n)));\n"
        << "}\n"

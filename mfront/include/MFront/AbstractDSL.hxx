@@ -33,9 +33,7 @@ namespace mfront {
   // forward declaration
   struct MaterialPropertyDescription;
 
-  /*!
-   * Interface class for all domain specific languages.
-   */
+  //! \brief interface class for all domain specific languages.
   struct MFRONT_VISIBILITY_EXPORT AbstractDSL {
     //! \brief a simple alias
     using DSLOptions = tfel::utilities::DataMap;

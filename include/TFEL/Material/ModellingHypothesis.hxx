@@ -21,9 +21,7 @@
 
 namespace tfel::material {
 
-  /*!
-   * a helper structure defining the Hypothesis enum.
-   */
+  //! \brief a helper structure defining the Hypothesis enum.
   struct TFELMATERIAL_VISIBILITY_EXPORT ModellingHypothesis {
     /*!
      * the list of supported modelling hypothesis

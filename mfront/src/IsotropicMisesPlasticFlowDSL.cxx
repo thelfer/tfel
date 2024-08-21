@@ -46,8 +46,8 @@ namespace mfront {
     this->mb.setGlossaryName(h, "eel", "ElasticStrain");
     this->mb.setGlossaryName(h, "p", "EquivalentPlasticStrain");
     // default local vars
-    this->reserveName("mu_3_theta");
-    this->reserveName("surf");
+    this->reserveName("mfront_internal_3_mu_theta");
+    this->reserveName("mfront_internal_surf");
     this->mb.addLocalVariable(h, VariableDescription("stress", "f", 1u, 0u));
     this->mb.addLocalVariable(
         h, VariableDescription("real", "\u2202f\u2215\u2202\u03C3\u2091",

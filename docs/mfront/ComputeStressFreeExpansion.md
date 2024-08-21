@@ -28,6 +28,6 @@ Ctau.setEntryName("SolidSwellingCoefficient");
   dl0_l0 += Ctau*tau*StrainStensor::Id();
   dl1_l0 += Ctau*(tau+dtau)*StrainStensor::Id();
 }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 

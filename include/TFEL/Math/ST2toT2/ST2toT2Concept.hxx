@@ -29,40 +29,51 @@ namespace tfel::math {
    * \brief Helper class to characterise st2tot2.
    */
   struct ST2toT2Tag {};
-
+  /*!
+   * \brief an helper class that simply exposes publically a member named
+   * ConceptTag as an alias to T2toT2Tag.
+   *
+   * The main reason for this alias is to properly implement the `ConceptRebind`
+   * metafunction.
+   */
   template <class T>
-  struct ST2toT2Concept {
-    typedef ST2toT2Tag ConceptTag;
-
-   protected:
-    ST2toT2Concept() = default;
-    ST2toT2Concept(ST2toT2Concept&&) = default;
-    ST2toT2Concept(const ST2toT2Concept&) = default;
-    ST2toT2Concept& operator=(const ST2toT2Concept&) = default;
-    ~ST2toT2Concept() = default;
+  struct ST2toT2ConceptBase {
+    using ConceptTag = ST2toT2Tag;
   };
-
+  /*!
+   * \brief definition of the ST2toT2Concept
+   *
+   * A class matching this concept must expose the `ST2toT2Tag` and have
+   * appropriate access operators.
+   */
+  template <typename T>
+  concept ST2toT2Concept =
+      (std::is_same_v<typename std::decay_t<T>::ConceptTag, ST2toT2Tag>) &&  //
+      (requires(const T t, const unsigned short i, const unsigned short j) {
+        t(i, j);
+      });
+  //! \brief partial specialisation for fourth order tensor
+  template <typename Type>
+  struct ConceptRebind<ST2toT2Tag, Type> {
+    using type = ST2toT2ConceptBase<Type>;
+  };
+  /*!
+   * \return the sum of the absolute values of all components of an
+   * linear application transforming a tensor in a tensor
+   * \param[in] t: fourth order tensor
+   */
+  constexpr auto abs(const ST2toT2Concept auto&) noexcept;
   /*!
    * \brief an helper function which returns if the given type implements the
    * `ST2toT2Concept`.
    * \tparam ST2toT2Type: type tested
+   * \note function given for backward compatibility with versions prior
+   * to 5.0
    */
   template <typename ST2toT2Type>
-  TFEL_HOST_DEVICE constexpr bool implementsST2toT2Concept() {
-    return tfel::meta::implements<ST2toT2Type, ST2toT2Concept>();
+  [[deprecated]] TFEL_HOST_DEVICE constexpr bool implementsST2toT2Concept() {
+    return ST2toT2Concept<ST2toT2Type>;
   }  // end of implementsST2toT2Concept
-
-  //! paratial specialisation for symmetric tensors
-  template <typename Type>
-  struct ConceptRebind<ST2toT2Tag, Type> {
-    using type = ST2toT2Concept<Type>;
-  };
-
-  template <typename ST2toT2Type>
-  typename std::enable_if<
-      implementsST2toT2Concept<ST2toT2Type>(),
-      typename tfel::typetraits::AbsType<numeric_type<ST2toT2Type>>::type>::type
-  abs(const ST2toT2Type&);
 
 }  // end of namespace tfel::math
 

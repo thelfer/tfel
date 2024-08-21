@@ -2,7 +2,7 @@
 macro(test_mfront test_arg)
   add_executable(mfront-${test_arg} EXCLUDE_FROM_ALL ${test_arg}.cxx)
   target_include_directories(mfront-${test_arg}
-    PRIVATE ${CMAKE_SOURCE_DIR}/docs/mfront/abaqus/)
+    PRIVATE ${PROJECT_SOURCE_DIR}/docs/mfront/abaqus/)
   target_link_libraries(mfront-${test_arg}
     TFELMFront TFELMaterial TFELMath
     TFELSystem  TFELGlossary

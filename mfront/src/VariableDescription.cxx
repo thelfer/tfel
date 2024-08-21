@@ -396,7 +396,7 @@ namespace mfront {
   const VariableBoundsDescription& VariableDescription::getPhysicalBounds()
       const {
     tfel::raise_if(!this->hasPhysicalBounds(),
-                   "VariableDescription::setPhysicalBounds: "
+                   "VariableDescription::getPhysicalBounds: "
                    "no bounds set on variable "
                    "'" +
                        this->name + "'");
@@ -406,7 +406,7 @@ namespace mfront {
   const VariableBoundsDescription& VariableDescription::getPhysicalBounds(
       const unsigned short i) const {
     tfel::raise_if(!this->hasPhysicalBounds(i),
-                   "VariableDescription::setPhysicalBounds: "
+                   "VariableDescription::getPhysicalBounds: "
                    "no bounds set on variable "
                    "'" +
                        this->name + "'");

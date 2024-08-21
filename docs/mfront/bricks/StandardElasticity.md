@@ -4,4 +4,4 @@ The `StandardElasticity` brick is build upon the `Hooke` stress potential.
 
 ~~~~{.cpp}
 @Brick "StandardElasticity";
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

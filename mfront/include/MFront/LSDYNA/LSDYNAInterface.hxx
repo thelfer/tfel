@@ -122,7 +122,7 @@ namespace lsdyna {
         i.exe(d);
       }
     };  // end of struct CallBehaviour2
-  };    // end of struct LSDYNAInterface
+  };  // end of struct LSDYNAInterface
 
 }  // end of namespace lsdyna
 

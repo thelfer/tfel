@@ -13,6 +13,7 @@
 
 #include <ostream>
 #include "TFEL/Raise.hxx"
+#include "TFEL/Glossary/Glossary.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/BehaviourMaterialProperty.hxx"
@@ -20,19 +21,22 @@
 namespace mfront {
 
   BehaviourMaterialProperty::BehaviourMaterialProperty(
-      const std::string& t,
-      const std::string& n,
-      const std::string& v,
-      const unsigned short a,
+      const VariableDescription& v,
       const SupportedTypes::TypeSize o,
       const bool d)
-      : type(t),
-        name(n),
-        var_name(v),
-        arraySize(a),
+      : VariableDescription(v),
         offset(o),
         dummy(d) {
   }  // end olf BehaviourMaterialProperty::BehaviourMaterialProperty
+
+  BehaviourMaterialProperty::BehaviourMaterialProperty(
+      const BehaviourMaterialProperty&) = default;
+  BehaviourMaterialProperty::BehaviourMaterialProperty(
+      BehaviourMaterialProperty&&) = default;
+  BehaviourMaterialProperty& BehaviourMaterialProperty::operator=(
+      const BehaviourMaterialProperty&) = default;
+  BehaviourMaterialProperty& BehaviourMaterialProperty::operator=(
+      BehaviourMaterialProperty&&) = default;
 
   bool BehaviourMaterialProperty::isScalar() const {
     return SupportedTypes::isScalarType(this->type);
@@ -44,7 +48,7 @@ namespace mfront {
       const std::vector<BehaviourMaterialProperty>& mprops,
       const std::string& n) {
     for (const auto& m : mprops) {
-      if ((m.name == n) && (!m.dummy)) {
+      if ((m.getExternalName() == n) && (!m.dummy)) {
         return m;
       }
     }
@@ -58,7 +62,8 @@ namespace mfront {
   std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
   buildMaterialPropertiesList(
       const BehaviourDescription& bd,
-      const std::set<tfel::material::ModellingHypothesis::Hypothesis>& mh) {
+      const std::set<tfel::material::ModellingHypothesis::Hypothesis>& mh,
+      const BuildMaterialPropertiesListOptions& opts) {
     constexpr auto h =
         BehaviourMaterialProperty::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     std::set<BehaviourMaterialProperty::Hypothesis> uh;
@@ -77,7 +82,7 @@ namespace mfront {
         std::vector<std::pair<std::vector<BehaviourMaterialProperty>,
                               SupportedTypes::TypeSize>>{};
     for (const auto& lh : uh) {
-      mpositions.push_back(buildMaterialPropertiesList(bd, lh));
+      mpositions.push_back(buildMaterialPropertiesList(bd, lh, opts));
     }
     auto ph = uh.begin();
     auto pum = mpositions.begin();
@@ -98,7 +103,7 @@ namespace mfront {
         o2 += mfirst.second;
         if (o1 != o2) {
           tfel::raise("incompatible offset for material property '" + mp.name +
-                      "' (aka '" + mp1.name +
+                      "' (aka '" + mp1.getExternalName() +
                       "'). This is one pitfall of the umat interface. "
                       "To by-pass this limitation, you may want to explicitely "
                       "specialise some modelling hypotheses");
@@ -111,7 +116,8 @@ namespace mfront {
   std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
   buildMaterialPropertiesList(
       const BehaviourDescription& bd,
-      const tfel::material::ModellingHypothesis::Hypothesis h) {
+      const tfel::material::ModellingHypothesis::Hypothesis h,
+      const BuildMaterialPropertiesListOptions& opts) {
     using ModellingHypothesis = BehaviourMaterialProperty::ModellingHypothesis;
     auto raise = [](const std::string& m) {
       tfel::raise("buildMaterialPropertiesList: " + m);
@@ -144,42 +150,47 @@ namespace mfront {
               "'");
       }
     }
-    if (bd.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
-      if (bd.getSymmetryType() == mfront::ISOTROPIC) {
-        add_mp("stress", "YoungModulus", "youn", false);
-        add_mp("real", "PoissonRatio", "nu", false);
-      } else if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
-        add_mp("stress", "YoungModulus1", "yg1", false);
-        add_mp("stress", "YoungModulus2", "yg2", false);
-        add_mp("stress", "YoungModulus3", "yg3", false);
-        add_mp("real", "PoissonRatio12", "nu12", false);
-        add_mp("real", "PoissonRatio23", "nu23", false);
-        add_mp("real", "PoissonRatio13", "nu13", false);
-        if ((h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
-            (h == ModellingHypothesis::AXISYMMETRICAL) ||
-            (h == ModellingHypothesis::PLANESTRAIN) ||
-            (h == ModellingHypothesis::PLANESTRESS)) {
-          add_mp("stress", "ShearModulus12", "g12", false);
-        } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-          add_mp("stress", "ShearModulus12", "g12", false);
-          add_mp("stress", "ShearModulus23", "g23", false);
-          add_mp("stress", "ShearModulus13", "g13", false);
+    if (opts.useMaterialPropertiesToBuildStiffnessTensor) {
+      if (bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
+                          false)) {
+        if (bd.getSymmetryType() == mfront::ISOTROPIC) {
+          add_mp("stress", "YoungModulus", "youn", false);
+          add_mp("real", "PoissonRatio", "nu", false);
+        } else if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
+          add_mp("stress", "YoungModulus1", "yg1", false);
+          add_mp("stress", "YoungModulus2", "yg2", false);
+          add_mp("stress", "YoungModulus3", "yg3", false);
+          add_mp("real", "PoissonRatio12", "nu12", false);
+          add_mp("real", "PoissonRatio23", "nu23", false);
+          add_mp("real", "PoissonRatio13", "nu13", false);
+          if ((h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
+              (h == ModellingHypothesis::AXISYMMETRICAL) ||
+              (h == ModellingHypothesis::PLANESTRAIN) ||
+              (h == ModellingHypothesis::PLANESTRESS)) {
+            add_mp("stress", "ShearModulus12", "g12", false);
+          } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
+            add_mp("stress", "ShearModulus12", "g12", false);
+            add_mp("stress", "ShearModulus23", "g23", false);
+            add_mp("stress", "ShearModulus13", "g13", false);
+          }
+        } else {
+          throw_if(true, "unsupported behaviour symmetry type");
         }
-      } else {
-        throw_if(true, "unsupported behaviour symmetry type");
       }
     }
-    if (bd.getAttribute(
-            BehaviourDescription::requiresThermalExpansionCoefficientTensor,
-            false)) {
-      if (bd.getSymmetryType() == mfront::ISOTROPIC) {
-        add_mp("thermalexpansion", "ThermalExpansion", "alph", false);
-      } else if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
-        add_mp("thermalexpansion", "ThermalExpansion1", "alp1", false);
-        add_mp("thermalexpansion", "ThermalExpansion2", "alp2", false);
-        add_mp("thermalexpansion", "ThermalExpansion3", "alp3", false);
-      } else {
-        throw_if(true, "unsupported behaviour symmetry type");
+    if (opts.useMaterialPropertiesToBuildThermalExpansionCoefficientTensor) {
+      if (bd.getAttribute(
+              BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+              false)) {
+        if (bd.getSymmetryType() == mfront::ISOTROPIC) {
+          add_mp("thermalexpansion", "ThermalExpansion", "alph", false);
+        } else if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
+          add_mp("thermalexpansion", "ThermalExpansion1", "alp1", false);
+          add_mp("thermalexpansion", "ThermalExpansion2", "alp2", false);
+          add_mp("thermalexpansion", "ThermalExpansion3", "alp3", false);
+        } else {
+          throw_if(true, "unsupported behaviour symmetry type");
+        }
       }
     }
     if (!mprops.empty()) {
@@ -197,8 +208,9 @@ namespace mfront {
                                       const std::string& v,
                                       const bool b) {
     const auto flag = SupportedTypes::getTypeFlag(t);
+    const auto& g = tfel::glossary::Glossary::getGlossary();
     tfel::raise_if(flag != SupportedTypes::SCALAR,
-                   "BehaviourMaterialProperty::BehaviourMaterialProperty: "
+                   "appendToMaterialPropertiesList: "
                    "material properties shall be scalars");
     auto o = SupportedTypes::TypeSize{};
     if (!l.empty()) {
@@ -206,7 +218,13 @@ namespace mfront {
       o = m.offset;
       o += SupportedTypes::getTypeSize(t, 1u);
     }
-    l.push_back(BehaviourMaterialProperty(t, n, v, 1u, o, b));
+    auto vd = VariableDescription{t, v, 1u, 0u};
+    if (g.contains(n)) {
+      vd.setGlossaryName(n);
+    } else {
+      vd.setEntryName(n);
+    }
+    l.emplace_back(vd, o, b);
   }  // end of appendToMaterialPropertiesList
 
   void completeMaterialPropertiesList(
@@ -230,7 +248,7 @@ namespace mfront {
       for (auto pum = mprops.begin(); (pum != mprops.end()) && (!found);
            ++pum) {
         if (!pum->dummy) {
-          if (pum->name == n) {
+          if (pum->getExternalName() == n) {
             // type check
             if (mb.useQt()) {
               throw_if(p->type != pum->type,
@@ -264,8 +282,7 @@ namespace mfront {
           o = m.offset;
           o += SupportedTypes::getTypeSize(m.type, m.arraySize);
         }
-        mprops.push_back(BehaviourMaterialProperty(p->type, n, p->name,
-                                                   p->arraySize, o, false));
+        mprops.emplace_back(*p, o, false);
       }
     }
   }  // end of completeMaterialPropertiesList

@@ -14,6 +14,8 @@
 #ifndef LIB_TFEL_MATH_MATRIX_IXX
 #define LIB_TFEL_MATH_MATRIX_IXX
 
+#include "TFEL/Raise.hxx"
+
 namespace tfel::math {
 
   template <typename ValueType>
@@ -21,6 +23,37 @@ namespace tfel::math {
                             const typename matrix::size_type c,
                             const ValueType& v) {
     this->resize(r, c, v);
+  }  // end of matrix
+
+  template <typename ValueType>
+  matrix<ValueType>::matrix(
+      const std::initializer_list<std::initializer_list<ValueType>>& values) {
+    this->operator=(values);
+  }
+
+  template <typename ValueType>
+  template <typename ValueType2>
+  matrix<ValueType>& matrix<ValueType>::operator=(
+      const std::initializer_list<std::initializer_list<ValueType2>>& values)
+    requires(isAssignableTo<ValueType2, ValueType2>())
+  {
+    const auto nc = values.begin()->size();
+    for (const auto row : values) {
+      if (row.size() != nc) {
+        raise<std::invalid_argument>("all rows must have the same size");
+      }
+    }
+    this->resize(values.size(), nc);
+    auto i = typename matrix::size_type{};
+    for (const auto row : values) {
+      auto j = typename matrix::size_type{};
+      for (const auto v : row) {
+        this->operator()(i, j) = v;
+        ++j;
+      }
+      ++i;
+    }
+    return *this;
   }  // end of matrix
 
   template <typename ValueType>

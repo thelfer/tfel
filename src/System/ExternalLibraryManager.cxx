@@ -66,7 +66,7 @@ namespace tfel::system {
     }
     return "";
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-  }    // end of  getErrorMessage
+  }  // end of  getErrorMessage
 
   static void ExternalLibraryManagerCheckModellingHypothesisName(
       const std::string& h) {
@@ -134,7 +134,7 @@ namespace tfel::system {
 #else
     return ::dlopen(l.c_str(), RTLD_NOW);
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-  }    // end of load_library
+  }  // end of load_library
 
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
   static std::pair<HINSTANCE__*, std::string>
@@ -249,7 +249,7 @@ namespace tfel::system {
         "can't find library '" +
         l + "'");
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-  }    // end of getLibraryPath
+  }  // end of getLibraryPath
 
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
   HINSTANCE__*
@@ -332,7 +332,7 @@ namespace tfel::system {
     void* p = ::dlsym(lib, s.c_str());
     return p != nullptr;
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-  }    // end of contains
+  }  // end of contains
 
   std::string ExternalLibraryManager::getString(const std::string& l,
                                                 const std::string& s) {
@@ -361,7 +361,7 @@ namespace tfel::system {
 #else
     return *(static_cast<const char* const*>(p));
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-  }    // end of ExternalLibraryManager::getStringIfDefined
+  }  // end of ExternalLibraryManager::getStringIfDefined
 
   std::string ExternalLibraryManager::getAuthor(const std::string& l,
                                                 const std::string& s) {
@@ -379,7 +379,7 @@ namespace tfel::system {
   }  // end of getDescription
 
   std::string ExternalLibraryManager::getValidator(const std::string& l,
-                                                 const std::string& s) {
+                                                   const std::string& s) {
     return this->getStringIfDefined(l, s + "_validator");
   }  // end of getValidator
 
@@ -419,7 +419,7 @@ namespace tfel::system {
 #else
     return *(static_cast<const char* const*>(p));
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-  }    // end of getInterface
+  }  // end of getInterface
 
   std::string ExternalLibraryManager::getLaw(const std::string& l,
                                              const std::string& f) {

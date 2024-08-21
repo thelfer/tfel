@@ -54,4 +54,4 @@ hypotheses.
 
 ~~~~ {#ElasticMaterialProperties .cpp}
 @ElasticMaterialProperties {"AISI348_YoungModulus.mfront",0.3};
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

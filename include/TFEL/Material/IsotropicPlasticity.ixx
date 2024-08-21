@@ -17,25 +17,13 @@
 
 namespace tfel::material {
 
-  template <typename StensorType>
-  constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
-      tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-                          typename tfel::math::ComputeUnaryResult<
-                              tfel::math::numeric_type<StensorType>,
-                              tfel::math::Power<2>>::Result>>::type
-  computeJ3Derivative(const StensorType& s) {
+  TFEL_HOST_DEVICE constexpr auto computeJ3Derivative(
+      const tfel::math::StensorConcept auto& s) {
     return tfel::math::computeDeviatorDeterminantDerivative(s);
   }  // end of computeJ3Derivative
 
-  template <typename StensorType>
-  constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::typetraits::IsScalar<
-              tfel::math::numeric_type<StensorType>>::cond,
-      tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-                           tfel::math::numeric_type<StensorType>>>::type
-  computeJ3SecondDerivative(const StensorType& s) {
+  TFEL_HOST_DEVICE constexpr auto computeJ3SecondDerivative(
+      const tfel::math::StensorConcept auto& s) {
     return tfel::math::computeDeviatorDeterminantSecondDerivative(s);
   }  // end of computeJ3SecondDerivative
 

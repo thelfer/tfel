@@ -27,18 +27,19 @@ namespace tfel::math {
    * \param[in] s: value
    */
   template <typename NumericType>
-  TFEL_HOST_DEVICE constexpr std::enable_if_t<
-      tfel::typetraits::isFundamentalNumericType<NumericType>(),
-      NumericType>
-  abs(const NumericType& s) noexcept {
+  TFEL_HOST_DEVICE constexpr auto abs(const NumericType& s) noexcept
+    requires(tfel::typetraits::isFundamentalNumericType<NumericType>())
+  {
     return (s < NumericType(0)) ? -s : s;
   }
-
+  /*!
+   * \return the norm of a complex
+   * \param[in] s: value
+   */
   template <typename NumericType>
-  TFEL_MATH_INLINE std::enable_if_t<
-      tfel::typetraits::IsFundamentalNumericType<NumericType>::cond,
-      NumericType>
-  abs(const Complex<NumericType>& s) {
+  TFEL_HOST_DEVICE constexpr auto abs(const Complex<NumericType>& s)
+    requires(tfel::typetraits::IsFundamentalNumericType<NumericType>::cond)
+  {
     return s.norm();
   }
 
@@ -52,14 +53,14 @@ namespace tfel::math {
     //! \brief a simple alias
     using result_type = void;
     //! \param [in] v : initial value
-    AbsSum(const T& v = T()) : result(v) {}  // end of AbsSum
+    TFEL_HOST_DEVICE constexpr AbsSum(const T& v = T())
+        : result(v) {}  // end of AbsSum
     /*!
      * \brief add the absolute value of the argument to the result member
      */
     TFEL_HOST_DEVICE constexpr void operator()(const T& v) noexcept {
       result += abs(v);
     }
-
     //! \brief result
     T result;
   };  // end of struct AbsSum

@@ -883,9 +883,19 @@ namespace mfront {
       getLogStream() << "BehaviourDSLCommon::getModelDescription: "
                      << "treating file '" << f << "'\n";
     }
+    //
+    const auto path = SearchPathsHandler::search(f);
+    // a simple test to fix Issue #524
+    const auto adsl = MFrontBase::getDSL(path);
+    if (adsl->getTargetType() != AbstractDSL::MODELDSL) {
+      this->throwRuntimeError("BehaviourDSLCommon::getModelDescription",
+                              "error while treating file '" + f +
+                                  "'.\n"
+                                  "This file is not handled by the Model DSL");
+    }
+    //
     const auto& global_options =
         GlobalDomainSpecificLanguageOptionsManager::get();
-    const auto path = SearchPathsHandler::search(f);
     auto dsl = ModelDSL{tfel::utilities::merge(
         global_options.getModelDSLOptions(), this->buildDSLOptions(), true)};
     // getting informations the source files
@@ -1743,23 +1753,22 @@ namespace mfront {
     using Parameters = AbstractBehaviourBrick::Parameters;
     auto& f = BehaviourBrickFactory::getFactory();
     auto parameters = Parameters{};
-    this->checkNotEndOfFile("BehaviourDSLCommon::treatBehaviourBrick",
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatBrick",
                             "Expected brick name or '<'.");
     if (this->current->value == "<") {
       auto options = std::vector<tfel::utilities::Token>{};
-      this->readList(options, "BehaviourDSLCommon::treatBehaviourBrick", "<",
-                     ">", true);
+      this->readList(options, "BehaviourDSLCommon::treatBrick", "<", ">", true);
       for (const auto& o : options) {
         const auto pos = o.value.find('=');
         if (pos != std::string::npos) {
           if (pos == 0) {
-            this->throwRuntimeError("BehaviourDSLCommon::treatBehaviourBrick",
+            this->throwRuntimeError("BehaviourDSLCommon::treatBrick",
                                     "no parameter name given");
           }
           // extracting the name
           const auto& n = o.value.substr(0, pos);
           if (pos == o.value.size()) {
-            this->throwRuntimeError("BehaviourDSLCommon::treatBehaviourBrick",
+            this->throwRuntimeError("BehaviourDSLCommon::treatBrick",
                                     "no option given to the "
                                     "parameter '" +
                                         n + "'");
@@ -1771,11 +1780,11 @@ namespace mfront {
         }
       }
     }
-    this->checkNotEndOfFile("BehaviourDSLCommon::treatBehaviourBrick",
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatBrick",
                             "Expected brick name.");
     const auto b = [this]() -> std::string {
       if (this->current->flag == tfel::utilities::Token::String) {
-        return this->readString("BehaviourDSLCommon::treatBehaviourBrick");
+        return this->readString("BehaviourDSLCommon::treatBrick");
       }
       const auto r = this->current->value;
       ++(this->current);
@@ -1793,7 +1802,7 @@ namespace mfront {
     }();
     const auto br = f.get(b, *this, this->mb);
     br->initialize(parameters, d);
-    this->readSpecifiedToken("BehaviourDSLCommon::treatBehaviourBrick", ";");
+    this->readSpecifiedToken("BehaviourDSLCommon::treatBrick", ";");
     this->bricks.push_back(std::move(br));
   }  // end of treatBrick
 
@@ -2018,11 +2027,11 @@ namespace mfront {
         // file name
         BehaviourDescription::ExternalMFrontMaterialProperty mp;
         mp.mpd = this->handleMaterialPropertyDescription(f);
-        return std::move(mp);
+        return mp;
       } else {
         BehaviourDescription::AnalyticMaterialProperty mp;
         mp.f = f;
-        return std::move(mp);
+        return mp;
       }
     }
     BehaviourDescription::ConstantMaterialProperty mp;
@@ -2034,7 +2043,7 @@ namespace mfront {
                                      "(" +
                                      std::string(e.what()) + ")");
     }
-    return std::move(mp);
+    return mp;
   }
 
   std::vector<BehaviourDescription::MaterialProperty>
@@ -3835,6 +3844,11 @@ namespace mfront {
       const {
     return this->mb.getOverridenParameters();
   }  // end of getOverridenParameters
+
+  std::map<std::string, std::shared_ptr<AbstractBehaviourInterface>>
+  BehaviourDSLCommon::getBehaviourInterfaces() const {
+    return this->interfaces;
+  }  // end of getBehaviourInterfaces
 
   BehaviourDSLCommon::~BehaviourDSLCommon() = default;
 

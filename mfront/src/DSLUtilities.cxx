@@ -482,11 +482,11 @@ namespace mfront {
                                         const std::string_view n,
                                         const MaterialKnowledgeType& t) {
     const auto s = [&t] {
-      if (t == MATERIALPROPERTY) {
+      if (t == MaterialKnowledgeType::MATERIALPROPERTY) {
         return 0;
-      } else if (t == BEHAVIOUR) {
+      } else if (t == MaterialKnowledgeType::BEHAVIOUR) {
         return 1;
-      } else if (t == MODEL) {
+      } else if (t == MaterialKnowledgeType::MODEL) {
         return 2;
       } else {
         tfel::raise(

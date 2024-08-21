@@ -79,7 +79,7 @@ namespace mfront {
           return std::make_shared<__StressCriterionName__StressCriterion>();
         });
       }  // end of __StressCriterionName__StressCriterionProxy
-    };   // end of struct __StressCriterionName__StressCriterionProxy
+    };  // end of struct __StressCriterionName__StressCriterionProxy
 
     static __StressCriterionName__StressCriterionProxy proxy;
 

@@ -368,19 +368,21 @@ namespace mfront {
           writePhysicalBoundsChecks(os, v, v.name + "_1", "1u", false, false);
         }
       };
-      for (const auto& mv : f.usedVariables) {
-        const auto [n, vdepth] = md.decomposeVariableName(mv);
-        if (md.outputs.contains(n)) {
-          const auto& v = md.outputs.getVariable(n);
-          write_physical_bounds(v, v.name, vdepth);
+      if (!areRuntimeChecksDisabled(md)) {
+        for (const auto& mv : f.usedVariables) {
+          const auto [n, vdepth] = md.decomposeVariableName(mv);
+          if (md.outputs.contains(n)) {
+            const auto& v = md.outputs.getVariable(n);
+            write_physical_bounds(v, v.name, vdepth);
+          }
+          if (md.inputs.contains(n)) {
+            const auto& v = md.inputs.getVariable(n);
+            write_physical_bounds(v, v.name, vdepth);
+          }
         }
-        if (md.inputs.contains(n)) {
-          const auto& v = md.inputs.getVariable(n);
-          write_physical_bounds(v, v.name, vdepth);
+        for (const auto& p : md.parameters) {
+          write_physical_bounds(p, p.name, 0u);
         }
-      }
-      for (const auto& p : md.parameters) {
-        write_physical_bounds(p, p.name, 0u);
       }
       //
       auto write_bounds = [&os, &raise](const VariableDescription& v,
@@ -398,19 +400,21 @@ namespace mfront {
           writeBoundsChecks(os, v, v.name + "_1", "1u", "policy", false, false);
         }
       };
-      for (const auto& mv : f.usedVariables) {
-        const auto [n, vdepth] = md.decomposeVariableName(mv);
-        if (md.outputs.contains(n)) {
-          const auto& v = md.outputs.getVariable(n);
-          write_bounds(v, v.name, vdepth);
+      if (!areRuntimeChecksDisabled(md)) {
+        for (const auto& mv : f.usedVariables) {
+          const auto [n, vdepth] = md.decomposeVariableName(mv);
+          if (md.outputs.contains(n)) {
+            const auto& v = md.outputs.getVariable(n);
+            write_bounds(v, v.name, vdepth);
+          }
+          if (md.inputs.contains(n)) {
+            const auto& v = md.inputs.getVariable(n);
+            write_bounds(v, v.name, vdepth);
+          }
         }
-        if (md.inputs.contains(n)) {
-          const auto& v = md.inputs.getVariable(n);
-          write_bounds(v, v.name, vdepth);
+        for (const auto& p : md.parameters) {
+          write_bounds(p, p.name, 0u);
         }
-      }
-      for (const auto& p : md.parameters) {
-        write_bounds(p, p.name, 0u);
       }
       //
       os << f.body << '\n';

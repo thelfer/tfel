@@ -35,6 +35,8 @@ struct FSArrayTest final : public tfel::tests::TestCase {
     this->test3();
     this->test4();
     this->test5();
+    this->test6();
+    this->test7();
     return this->result;
   }  // end of execute
  private:
@@ -74,7 +76,7 @@ struct FSArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(*(a5.rbegin() + 1) == 3);
     TFEL_TESTS_STATIC_ASSERT(*(a5.rbegin() + 2) == 5);
 #endif /* __INTEL_COMPILER  */
-  }    // end of test1
+  }  // end of test1
   void test2() {
     /* does not compile with icc 2021.1, but compiles with 2021.1 */
 #ifndef __INTEL_COMPILER
@@ -89,7 +91,7 @@ struct FSArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(a2[1] == 3);
     TFEL_TESTS_STATIC_ASSERT(a2[2] == 4);
 #endif /* __INTEL_COMPILER  */
-  }    // end of test2
+  }  // end of test2
   void test3() {
     int values[] = {0, 2, 0};
     const int values2[] = {0, 2, -2};
@@ -138,7 +140,16 @@ struct FSArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(a[1] == 4);
     TFEL_TESTS_STATIC_ASSERT(a[2] == -3);
 #endif /* __INTEL_COMPILER  */
-  }    // end of test6
+  }  // end of test6
+  void test7() {
+    using namespace tfel::math;
+    // class template argument deduction
+    constexpr auto a = fsarray{1, -4, 3};
+    static_assert(std::is_same_v<decltype(a), const fsarray<3u, int>>);
+    TFEL_TESTS_STATIC_ASSERT(a[0] == 1);
+    TFEL_TESTS_STATIC_ASSERT(a[1] == -4);
+    TFEL_TESTS_STATIC_ASSERT(a[2] == 3);
+  }  // end of test7
 };
 
 TFEL_TESTS_GENERATE_PROXY(FSArrayTest, "FSArrayTest");

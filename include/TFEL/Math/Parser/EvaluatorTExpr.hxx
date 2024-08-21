@@ -100,7 +100,7 @@ namespace tfel::math {
   template <typename LogicalOperator>
   struct Evaluator::TLogicalOperation final : public Evaluator::TLogicalExpr {
     TLogicalOperation(std::shared_ptr<Evaluator::TExpr>,
-                      std::shared_ptr<Evaluator::TExpr>);
+                      std::shared_ptr<Evaluator::TExpr>) noexcept;
     void reduce() override;
     parser::LogicalExprPtr analyse() override;
     ~TLogicalOperation() noexcept override = default;
@@ -114,7 +114,7 @@ namespace tfel::math {
   struct Evaluator::TLogicalBinaryOperation final
       : public Evaluator::TLogicalExpr {
     TLogicalBinaryOperation(std::shared_ptr<Evaluator::TLogicalExpr>,
-                            std::shared_ptr<Evaluator::TLogicalExpr>);
+                            std::shared_ptr<Evaluator::TLogicalExpr>) noexcept;
     void reduce() override;
     parser::LogicalExprPtr analyse() override;
     ~TLogicalBinaryOperation() noexcept override = default;

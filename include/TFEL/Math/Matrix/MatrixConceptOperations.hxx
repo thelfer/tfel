@@ -37,9 +37,17 @@ namespace tfel::math {
     using type = DummyHandle;
   };
 
-  /*
-   * Partial Specialisation of ComputeBinaryOperationHandler for matrix-vector
-   * multiplication
+  template <typename AType, typename BType, typename A, typename B>
+  class MatrixMatrixHandle {
+    struct DummyHandle {};
+
+   public:
+    using type = DummyHandle;
+  };
+
+  /*!
+   * \brief partial specialisation of ComputeBinaryOperationHandler for
+   * matrix-vector multiplication
    */
   template <typename A, typename B>
   struct ComputeBinaryOperationHandler<MatrixTag, VectorTag, A, B, OpMult> {
@@ -55,9 +63,9 @@ namespace tfel::math {
         typename MatrixVectorHandle<MatrixTypeA, VectorTypeB, A, B>::type>;
   };
 
-  /*
-   * Partial Specialisation of ComputeBinaryOperationHandler for vector-matrix
-   * multiplication
+  /*!
+   * \brief partial specialisation of ComputeBinaryOperationHandler for
+   * vector-matrix multiplication
    */
   template <typename A, typename B>
   struct ComputeBinaryOperationHandler<VectorTag, MatrixTag, A, B, OpMult> {
@@ -73,8 +81,26 @@ namespace tfel::math {
         typename MatrixVectorHandle<VectorTypeA, MatrixTypeB, A, B>::type>;
   };
 
-  /*
-   * Partial Specialisation of ComputeUnaryResult_ for matrices
+  /*!
+   * \brief partial specialisation of ComputeBinaryOperationHandler for
+   * matrix-matrix multiplication
+   */
+  template <typename A, typename B>
+  struct ComputeBinaryOperationHandler<MatrixTag, MatrixTag, A, B, OpMult> {
+    struct DummyHandle {};
+    using MatrixTypeA = EvaluationResult<A>;
+    using MatrixTypeB = EvaluationResult<B>;
+
+   public:
+    using Result = result_type<MatrixTypeA, MatrixTypeB, OpMult>;
+    using Handle = std::conditional_t<
+        isInvalid<Result>(),
+        DummyHandle,
+        typename MatrixMatrixHandle<MatrixTypeA, MatrixTypeB, A, B>::type>;
+  };
+
+  /*!
+   * \brief partial specialisation of ComputeUnaryResult_ for matrices
    */
   template <typename A>
   class ComputeUnaryResult_<MatrixTag, UnaryOperatorTag, A, OpNeg> {

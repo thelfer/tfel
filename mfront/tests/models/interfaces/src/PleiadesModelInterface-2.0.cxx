@@ -45,7 +45,7 @@ namespace mfront {
     return "\"" + mdata.getVariableDescription(v).getExternalName() + "\"";
   }  // end of getGlossaryName
 
-  PleiadesModelInterface::PleiadesModelInterface() = default;
+  PleiadesModelInterface::PleiadesModelInterface() noexcept = default;
 
   void PleiadesModelInterface::declareReservedNames(std::set<std::string>& v) {
     v.insert({"declareMaterialProperty",

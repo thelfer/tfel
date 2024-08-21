@@ -22,8 +22,8 @@
 namespace tfel::math::parser {
 
   template <typename Op>
-  LogicalOperation<Op>::LogicalOperation(const std::shared_ptr<Expr> a_,
-                                         const std::shared_ptr<Expr> b_)
+  LogicalOperation<Op>::LogicalOperation(
+      const std::shared_ptr<Expr> a_, const std::shared_ptr<Expr> b_) noexcept
       : a(a_), b(b_) {}  // end of LogicalOperation
 
   template <typename Op>
@@ -98,7 +98,7 @@ namespace tfel::math::parser {
   template <typename Op>
   LogicalBinaryOperation<Op>::LogicalBinaryOperation(
       const std::shared_ptr<LogicalExpr> a_,
-      const std::shared_ptr<LogicalExpr> b_)
+      const std::shared_ptr<LogicalExpr> b_) noexcept
       : a(a_), b(b_) {}  // end of LogicalBinaryOperation
 
   template <typename Op>

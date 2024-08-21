@@ -25,6 +25,8 @@ The `TFEL/PhysicalConstants` library is header-only which provides:
   namespace `tfel::constants`. Those variables have the same
   template parameters than the `PhysicalConstants class`
 
+The values of the physical constants are extracted from: <http://physics.nist.gov/cuu/Constants/index.html>
+
 ## Bindings
 
 ### `Fortran` bindings

@@ -26,7 +26,7 @@ namespace tfel::math {
    * \param typename T, the type hold by the tmatrix.
    */
   template <unsigned short N, unsigned short M, typename T>
-  struct tmatrix;
+  struct [[nodiscard]] tmatrix;
 
   /*!
    * \brief partial specialisation for tmatrix

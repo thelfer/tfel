@@ -20,60 +20,63 @@
 #include "TFEL/Math/General/MathObjectTraits.hxx"
 #include "TFEL/Math/Array/MutableRuntimeArrayBase.hxx"
 
-#define TFEL_MATH_RUNTIME_ARRAY_DEFAULT_METHODS(X, Y)                     \
-  /*! \brief default constructor */                                       \
-  X() = default;                                                          \
-  /*! \brief move constructor */                                          \
-  X(X&&) = default;                                                       \
-  /*! \brief copy constructor */                                          \
-  X(const X&) = default;                                                  \
-  /*! \brief move assignement */                                          \
-  X& operator=(X&&) = default;                                            \
-  /*! \brief standard assignement */                                      \
-  X& operator=(const X&) = default;                                       \
-  /*!                                                                     \
-   * \brief constructor from a value                                      \
-   * \param[in] value: value used to initialize the array                 \
-   */                                                                     \
-  template <typename ValueType2,                                          \
-            typename std::enable_if<                                      \
-                isAssignableTo<ValueType2, typename X::value_type>(),     \
-                bool>::type = true>                                       \
-  explicit X(const ValueType2& value) : Y(value) {}                       \
-  /*!                                                                     \
-   * \brief constructor from an initializer list                          \
-   * \param[in] values: values                                            \
-   */                                                                     \
-  template <typename ValueType2,                                          \
-            typename std::enable_if<                                      \
-                isAssignableTo<ValueType2, typename X::value_type>(),     \
-                bool>::type = true>                                       \
-  X(const std::initializer_list<ValueType2>& values) : Y(values) {}       \
-  /*!                                                                     \
-   * \brief copy constructor from an object assignable the X class.       \
-   * \param[in] src: source                                               \
-   *                                                                      \
-   * This is mostly used by expression objects and views.                 \
-   */                                                                     \
-  template <typename OtherArray,                                          \
-            typename std::enable_if<((isAssignableTo<OtherArray, X>()) && \
-                                     (!std::is_same_v<OtherArray, X>)),   \
-                                    bool>::type = true>                   \
-  X(const OtherArray& src) : Y(src) {}                                    \
-  /*!                                                                     \
-   * \brief Default Constructor.                                          \
-   * \param const base_type<T>*                                           \
-   * const, pointer to a tabular used to initialise the components        \
-   * of the stensor. This tabular is left unchanged.                      \
-   */                                                                     \
-  template <                                                              \
-      typename InputIterator,                                             \
-      std::enable_if_t<std::is_same_v<typename std::iterator_traits<      \
-                                          InputIterator>::value_type,     \
-                                      base_type<typename X::value_type>>, \
-                       bool> = true>                                      \
-  explicit X(const InputIterator p) : Y(p) {}                             \
-  /* inheriting GenericFixedSizeArray' assignement operators */           \
+#define TFEL_MATH_RUNTIME_ARRAY_DEFAULT_METHODS(X, Y)                  \
+  /*! \brief default constructor */                                    \
+  X() = default;                                                       \
+  /*! \brief move constructor */                                       \
+  X(X&&) = default;                                                    \
+  /*! \brief copy constructor */                                       \
+  X(const X&) = default;                                               \
+  /*! \brief move assignement */                                       \
+  X& operator=(X&&) = default;                                         \
+  /*! \brief standard assignement */                                   \
+  X& operator=(const X&) = default;                                    \
+  /*!                                                                  \
+   * \brief constructor from a value                                   \
+   * \param[in] value: value used to initialize the array              \
+   */                                                                  \
+  template <typename ValueType2>                                       \
+  explicit X(const ValueType2& value)                                  \
+    requires(isAssignableTo<ValueType2, typename X::value_type>())     \
+      : Y(value) {}                                                    \
+  /*!                                                                  \
+   * \brief constructor from an initializer list                       \
+   * \param[in] values: values                                         \
+   */                                                                  \
+  X(const std::initializer_list<typename X::value_type>& values)       \
+      : Y(values) {}                                                   \
+  /*!                                                                  \
+   * \brief constructor from an initializer list                       \
+   * \param[in] values: values                                         \
+   */                                                                  \
+  template <typename ValueType2>                                       \
+  X(const std::initializer_list<ValueType2>& values)                   \
+    requires(isAssignableTo<ValueType2, typename X::value_type>())     \
+      : Y(values) {}                                                   \
+  /*!                                                                  \
+   * \brief copy constructor from an object assignable the X class.    \
+   * \param[in] src: source                                            \
+   *                                                                   \
+   * This is mostly used by expression objects and views.              \
+   */                                                                  \
+  template <typename OtherArray>                                       \
+  X(const OtherArray& src)                                             \
+    requires((isAssignableTo<OtherArray, X>()) &&                      \
+             (!std::is_same_v<OtherArray, X>))                         \
+      : Y(src) {}                                                      \
+  /*!                                                                  \
+   * \brief Default Constructor.                                       \
+   * \param const base_type<T>*                                        \
+   * const, pointer to a tabular used to initialise the components     \
+   * of the stensor. This tabular is left unchanged.                   \
+   */                                                                  \
+  template <typename InputIterator>                                    \
+  explicit X(const InputIterator p)                                    \
+    requires(std::is_same_v<                                           \
+             typename std::iterator_traits<InputIterator>::value_type, \
+             base_type<typename X::value_type>>)                       \
+      : Y(p) {}                                                        \
+  /* inheriting GenericFixedSizeArray' assignement operators */        \
   using Y::operator=
 
 namespace tfel::math {
@@ -102,55 +105,53 @@ namespace tfel::math {
      * \brief constructor from a value
      * \param[in] value: value used to initialize the array
      */
-    template <typename ValueType,
-              typename std::enable_if<
-                  isAssignableTo<ValueType,
-                                 typename GenericRuntimeArray::value_type>(),
-                  bool>::type = true>
+    template <typename ValueType>
     explicit GenericRuntimeArray(const typename ArrayPolicy::IndexingPolicy&,
-                                 const ValueType&);
+                                 const ValueType&)
+      requires(isAssignableTo<
+               ValueType,
+               typename GenericRuntimeArray<Child, ArrayPolicy>::value_type>());
     /*!
      * \brief constructor from an initializer list
      * \param[in] values: values
      */
-    template <
-        typename ValueType,
-        typename std::enable_if<
-            ((isAssignableTo<ValueType,
-                             typename GenericRuntimeArray::value_type>()) &&
-             (ArrayPolicy::IndexingPolicy::arity == 1) &&
-             (ArrayPolicy::IndexingPolicy::areDataContiguous)),
-            bool>::type = true>
-    GenericRuntimeArray(const typename GenericRuntimeArray::indexing_policy,
-                        const std::initializer_list<ValueType>&);
+    template <typename ValueType>
+    GenericRuntimeArray(
+        const typename GenericRuntimeArray<Child, ArrayPolicy>::indexing_policy,
+        const std::initializer_list<ValueType>&)
+      requires(
+          (isAssignableTo<ValueType,
+                          typename GenericRuntimeArray<Child, ArrayPolicy>::
+                              value_type>()) &&
+          (ArrayPolicy::IndexingPolicy::arity == 1) &&
+          (ArrayPolicy::IndexingPolicy::areDataContiguous));
     /*!
      * \brief constructor from an initializer list
      * \param[in] values: values
      */
-    template <
-        typename ValueType,
-        typename std::enable_if<
-            ((isAssignableTo<ValueType,
-                             typename GenericRuntimeArray::value_type>()) &&
-             (ArrayPolicy::IndexingPolicy::arity == 1) &&
-             (ArrayPolicy::IndexingPolicy::areDataContiguous)),
-            bool>::type = true>
-    GenericRuntimeArray(const std::initializer_list<ValueType>&);
+    template <typename ValueType>
+    GenericRuntimeArray(const std::initializer_list<ValueType>&)
+      requires(
+          (isAssignableTo<ValueType,
+                          typename GenericRuntimeArray<Child, ArrayPolicy>::
+                              value_type>()) &&
+          (ArrayPolicy::IndexingPolicy::arity == 1) &&
+          (ArrayPolicy::IndexingPolicy::areDataContiguous));
     /*!
      * \brief copy constructor from an object assignable to the `Child` class.
      * \param[in] src: source
      *
      * This is mostly used by expression objects and views.
      */
-    template <typename OtherArray,
-              typename std::enable_if<((isAssignableTo<OtherArray, Child>()) &&
-                                       (!std::is_same_v<OtherArray, Child>)),
-                                      bool>::type = true>
-    explicit GenericRuntimeArray(const OtherArray&);
+    template <typename OtherArray>
+    explicit GenericRuntimeArray(const OtherArray&)
+      requires((isAssignableTo<OtherArray, Child>()) &&
+               (!std::is_same_v<OtherArray, Child>));
     //! \return a pointer to the underlying array serving as element storage.
-    typename GenericRuntimeArray::pointer data() noexcept;
+    typename GenericRuntimeArray<Child, ArrayPolicy>::pointer data() noexcept;
     //! \return a pointer to the underlying array serving as element storage.
-    typename GenericRuntimeArray::const_pointer data() const noexcept;
+    typename GenericRuntimeArray<Child, ArrayPolicy>::const_pointer data()
+        const noexcept;
     //! \brief resize the array
     void resize(const typename ArrayPolicy::IndexingPolicy&);
     /*!
@@ -158,7 +159,8 @@ namespace tfel::math {
      * be greater than than the logical number of elements contained in the
      * array which is returned by `IndexingPolicy::size`.
      */
-    typename GenericRuntimeArray::size_type getContainerSize() const noexcept;
+    typename GenericRuntimeArray<Child, ArrayPolicy>::size_type
+    getContainerSize() const noexcept;
     // inheriting MutableRuntimeArrayBase' assignement operator
     using MutableRuntimeArrayBase<GenericRuntimeArray<Child, ArrayPolicy>,
                                   ArrayPolicy>::operator=;
@@ -168,36 +170,34 @@ namespace tfel::math {
      * \param[in] src: array to be assigned
      */
     template <typename OtherArray>
-    std::enable_if_t<isAssignableTo<OtherArray, Child>(), Child&> operator=(
-        const OtherArray&);
+    Child& operator=(const OtherArray&)
+      requires(isAssignableTo<OtherArray, Child>());
     //
     template <typename OtherArray>
-    std::enable_if_t<isAssignableTo<OtherArray, Child>(), Child&> operator+=(
-        const OtherArray&);
+    Child& operator+=(const OtherArray&)
+      requires(isAssignableTo<OtherArray, Child>());
     //
     template <typename OtherArray>
-    std::enable_if_t<isAssignableTo<OtherArray, Child>(), Child&> operator-=(
-        const OtherArray&);
+    Child& operator-=(const OtherArray&)
+      requires(isAssignableTo<OtherArray, Child>());
     //
     template <typename ValueType2>
-    std::enable_if_t<
-        isAssignableTo<
-            BinaryOperationResult<ValueType2,
-                                  typename GenericRuntimeArray::value_type,
-                                  OpMult>,
-            typename GenericRuntimeArray::value_type>(),
-        Child&>
-    operator*=(const ValueType2&) noexcept;
+    Child& operator*=(const ValueType2&) noexcept
+      requires(isAssignableTo<
+               BinaryOperationResult<
+                   ValueType2,
+                   typename GenericRuntimeArray<Child, ArrayPolicy>::value_type,
+                   OpMult>,
+               typename GenericRuntimeArray<Child, ArrayPolicy>::value_type>());
     //
     template <typename ValueType2>
-    std::enable_if_t<
-        isAssignableTo<
-            BinaryOperationResult<typename GenericRuntimeArray::value_type,
-                                  ValueType2,
-                                  OpDiv>,
-            typename GenericRuntimeArray::value_type>(),
-        Child&>
-    operator/=(const ValueType2&) noexcept;
+    Child& operator/=(const ValueType2&) noexcept
+      requires(isAssignableTo<
+               BinaryOperationResult<
+                   typename GenericRuntimeArray<Child, ArrayPolicy>::value_type,
+                   ValueType2,
+                   OpDiv>,
+               typename GenericRuntimeArray<Child, ArrayPolicy>::value_type>());
     //
     bool empty() const;
     //

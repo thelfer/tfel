@@ -49,13 +49,14 @@ namespace mfront {
       throw_if(flag != SupportedTypes::SCALAR,
                "material properties shall be scalars");
       if (pm.arraySize == 1) {
-        out << "<!-- material property " << pm.name << " -->\n"
+        out << "<!-- material property " << pm.getExternalName() << " -->\n"
             << "<Coeff Index = \"" << nprops << "\" "
             << "Type = \"Constant\" Value = \"...\" />\n";
         ++nprops;
       } else {
         for (unsigned short j = 0; j != pm.arraySize;) {
-          out << "<!-- material property " << pm.name << "[" << j << "] -->\n"
+          out << "<!-- material property " << pm.getExternalName() << "[" << j
+              << "] -->\n"
               << "<Coeff Index = \"" << nprops << "\" "
               << "Type = \"Constant\" Value = \"...\" />\n";
           ++nprops;

@@ -12,4 +12,4 @@ The value of \(\theta\) can be changed at runtime by modifying the
 
 ~~~~{.cpp}
 @Theta 0.5;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

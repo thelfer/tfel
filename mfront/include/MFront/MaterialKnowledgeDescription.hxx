@@ -31,6 +31,8 @@ namespace mfront {
   struct MFRONT_VISIBILITY_EXPORT MaterialKnowledgeDescription {
     //! \brief standard option and attribute name
     static const char* const defaultOutOfBoundsPolicy;
+    //! \brief standard option and attribute name
+    static const char* const disableRuntimeChecks;
     //! \brief standard option name
     static const char* const runtimeModificationOfTheOutOfBoundsPolicy;
     //! \brief attribute name
@@ -86,23 +88,23 @@ namespace mfront {
      * \param[in] n : name
      */
     template <typename T>
-    std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), T&> getAttribute(
-        const std::string_view);
+    T& getAttribute(const std::string_view)
+      requires(isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
     template <typename T>
-    std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), const T&>
-    getAttribute(const std::string_view) const;
+    const T& getAttribute(const std::string_view) const
+      requires(isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return the attribute with the given name
      * \param[in] n: name
      * \param[in] v: default value if the attribute is not defined
      */
     template <typename T>
-    std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), T> getAttribute(
-        const std::string_view, const T&) const;
+    T getAttribute(const std::string_view, const T&) const
+      requires(isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return all the attribute registred
      * \param[in] n : name
@@ -157,6 +159,21 @@ namespace mfront {
         externalMFrontFiles;
   };  // end of struct MaterialKnowledgeDescription
 
+  /*!
+   * \brief set if runtime checks shall be disabled
+   * \param[out] d: material knowledge description
+   * \param[in] b: boolean
+   */
+  MFRONT_VISIBILITY_EXPORT void setDisableRuntimeChecks(
+      MaterialKnowledgeDescription&, const bool);
+  /*!
+   * \brief this function returns the value of the
+   * `MaterialKnowledgeDescription::disableRuntimeChecks`
+   * attribute if it is defined, `false` otherwise.
+   * \param[in] d: material knowledge description
+   */
+  MFRONT_VISIBILITY_EXPORT bool areRuntimeChecksDisabled(
+      const MaterialKnowledgeDescription&);
   /*!
    * \brief set the default out of bounds policy
    * \param[out] d: material knowledge description

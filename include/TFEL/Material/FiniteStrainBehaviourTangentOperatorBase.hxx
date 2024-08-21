@@ -67,7 +67,7 @@ namespace tfel::material {
                         with respect to Hencky strain tensor */
       DPK1_DF         /*!< derivative of the first Piola-Kirchhoff stress
                         with respect to deformation gradient */
-    };                // end of Flag
+    };  // end of Flag
   };
 
 }  // end of namespace tfel::material

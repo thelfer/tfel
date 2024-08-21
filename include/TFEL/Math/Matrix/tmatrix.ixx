@@ -83,7 +83,7 @@ namespace tfel::math::internals {
                                                           VariableType>{
           &m(i, j)};
     }  // end of exe
-  };   // end of struct DerivativeViewFromTinyMatrixImplementation
+  };  // end of struct DerivativeViewFromTinyMatrixImplementation
 
   /*!
    * \brief partial specialization if the function type is a scalar.
@@ -137,7 +137,7 @@ namespace tfel::math::internals {
                                                           VariableType>{
           &m(i, j)};
     }  // end of exe
-  };   // end of struct DerivativeViewFromTinyMatrixImplementation
+  };  // end of struct DerivativeViewFromTinyMatrixImplementation
 
   /*!
    * \brief partial specialization if the variable type is a scalar.
@@ -191,7 +191,7 @@ namespace tfel::math::internals {
                                                           VariableType>{
           &m(i, j)};
     }  // end of exe
-  };   // end of struct DerivativeViewFromTinyMatrixImplementation
+  };  // end of struct DerivativeViewFromTinyMatrixImplementation
 
   /*!
    * \brief partial specialization if the function type and the variable type
@@ -241,21 +241,15 @@ namespace tfel::math::internals {
                                                           VariableType>(
           m(i, j));
     }  // end of exe
-  };   // end of struct DerivativeViewFromTinyMatrixImplementation
+  };  // end of struct DerivativeViewFromTinyMatrixImplementation
 
-  template <typename Matrix>
-  constexpr std::enable_if_t<
-      implementsMatrixConcept<Matrix>(),
-      typename ComputeUnaryResult<numeric_type<Matrix>, Power<3>>::Result>
-  det2(const Matrix& m) {
+  template <MatrixConcept MatrixType>
+  TFEL_HOST_DEVICE constexpr auto det2(const MatrixType& m) noexcept {
     return m(0, 0) * m(1, 1) - m(1, 0) * m(0, 1);
   }
 
-  template <typename Matrix>
-  constexpr std::enable_if_t<
-      implementsMatrixConcept<Matrix>(),
-      typename ComputeUnaryResult<numeric_type<Matrix>, Power<3>>::Result>
-  det3(const Matrix& m) {
+  template <MatrixConcept MatrixType>
+  TFEL_HOST_DEVICE constexpr auto det3(const MatrixType& m) noexcept {
     const auto a = m(0, 0);
     const auto b = m(0, 1);
     const auto c = m(0, 2);
@@ -271,6 +265,22 @@ namespace tfel::math::internals {
 }  // end of namespace tfel::math::internals
 
 namespace tfel::math {
+
+  template <unsigned short N, unsigned short M, typename ValueType>
+  template <std::size_t... d>
+  TFEL_HOST_DEVICE constexpr tmatrix<N, M, ValueType>::tmatrix(
+      ValueType const (&... arrays)[d])  //
+    requires((sizeof...(d) == N) && ((d == M) && ...))
+  {
+    auto init_row = [this](const typename tmatrix::size_type i,
+                           ValueType const(&values)[M]) {
+      for (typename tmatrix::size_type j = 0u; j < M; ++j) {
+        this->operator()(i, j) = values[j];
+      }
+    };
+    auto i = typename tmatrix::size_type{};
+    (init_row(i++, arrays), ...);
+  }  // end of tmatrix
 
   template <unsigned short N, unsigned short M, typename T>
   TFEL_HOST_DEVICE constexpr unsigned short tmatrix<N, M, T>::getNbCols()

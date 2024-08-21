@@ -56,7 +56,9 @@ namespace tfel::fsalgo {
      * - The type of x + y * z is convertible to T.
      */
     template <typename InputIterator1, typename InputIterator2, typename T>
-    static T exe(InputIterator1 p, InputIterator2 q, const T init) {
+    TFEL_HOST_DEVICE static constexpr T exe(InputIterator1 p,
+                                            InputIterator2 q,
+                                            const T init) {
       if constexpr (N >= 1) {
         const auto r = init + (*p) * (*q);
         return inner_product<N - 1>::exe(++p, ++q, r);
@@ -103,11 +105,11 @@ namespace tfel::fsalgo {
               typename T,
               typename BinaryFunction1,
               typename BinaryFunction2>
-    static T exe(InputIterator1 p,
-                 InputIterator2 q,
-                 T init,
-                 BinaryFunction1 binary_op1,
-                 BinaryFunction2 binary_op2) {
+    TFEL_HOST_DEVICE static constexpr T exe(InputIterator1 p,
+                                            InputIterator2 q,
+                                            T init,
+                                            BinaryFunction1 binary_op1,
+                                            BinaryFunction2 binary_op2) {
       if constexpr (N >= 1) {
         const auto r = binary_op1(init, binary_op2(*p, *q));
         return inner_product<N - 1>::exe(++p, ++q, r, binary_op1, binary_op2);
@@ -141,7 +143,8 @@ namespace tfel::fsalgo {
      * - The type of x + y * z is convertible to T.
      */
     template <typename T, typename InputIterator1, typename InputIterator2>
-    static T exe(InputIterator1 p, InputIterator2 q) {
+    TFEL_HOST_DEVICE static constexpr T exe(InputIterator1 p,
+                                            InputIterator2 q) {
       if constexpr (N == 0) {
         return T{};
       } else {

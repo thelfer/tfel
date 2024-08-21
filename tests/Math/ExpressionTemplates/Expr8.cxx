@@ -70,11 +70,11 @@ struct Expr8Test final : public tfel::tests::TestCase {
         (is_same<ComputeObjectTag<res>::type, StensorTag>::value));
 #ifndef _MSC_VER
     TFEL_TESTS_STATIC_ASSERT(
-        (is_base_of<StensorConcept<handler>, handler>::value));
+        (is_base_of<StensorConceptBase<handler>, handler>::value));
 #endif
     TFEL_TESTS_STATIC_ASSERT(
         (is_same<ConceptRebind<ComputeObjectTag<res>::type, double>::type,
-                 StensorConcept<double>>::value));
+                 StensorConceptBase<double>>::value));
 #ifndef _MSC_VER
     TFEL_TESTS_STATIC_ASSERT(
         (isBinaryOperationResultTypeValid<const stensor&, const handler&,

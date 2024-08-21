@@ -106,9 +106,9 @@ namespace mfront {
     };
     if (!i.empty()) {
       if (std::find(i.begin(), i.end(), this->getName()) != i.end()) {
-        const auto keys = std::vector<std::string>{
-            "@DianaFEAGenerateMTestFileOnFailure",
-            "@GenerateMTestFileOnFailure", "@DianaFEAStrainPerturbationValue"};
+        const auto keys =
+            std::vector<std::string>{"@DianaFEAGenerateMTestFileOnFailure",
+                                     "@GenerateMTestFileOnFailure"};
         throw_if(std::find(keys.begin(), keys.end(), k) == keys.end(),
                  "unsupported key '" + k + "'");
       } else {

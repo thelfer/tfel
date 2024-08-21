@@ -26,7 +26,7 @@
 namespace tfel::math {
 
   template <typename ValueType>
-  struct vector : VectorConcept<vector<ValueType>>,
+  struct vector : VectorConceptBase<vector<ValueType>>,
                   GenericRuntimeArray<vector<ValueType>,
                                       RuntimeVectorArrayPolicy<ValueType>> {
     //! \brief a simple alias
@@ -77,11 +77,8 @@ namespace tfel::math {
    * \return the euclidian norm of a vector
    * \param v: the vector.
    */
-  template <typename T>
-  TFEL_HOST_DEVICE
-      std::enable_if_t<isScalar<T>(),
-                       typename tfel::typetraits::RealPartType<T>::type>
-      norm(const vector<T>&);
+  template <ScalarConcept T>
+  TFEL_HOST_DEVICE auto norm(const vector<T>&) noexcept;
 
 }  // end of namespace tfel::math
 

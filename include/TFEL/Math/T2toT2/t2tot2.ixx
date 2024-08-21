@@ -40,8 +40,8 @@
 namespace tfel::math {
 
   template <unsigned short N, typename T>
-  TFEL_HOST_DEVICE t2tot2<N, base_type<T>> t2tot2<N, T>::fromRotationMatrix(
-      const rotation_matrix<T>& r) {
+  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::fromRotationMatrix(
+      const rotation_matrix<T>& r) noexcept {
     using base = base_type<T>;
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {
@@ -191,235 +191,255 @@ namespace tfel::math {
   }  // end of t2tot2<N,T>::fromRotationMatrix
 
   template <unsigned short N, typename T>
-  template <typename TensorType>
-  TFEL_HOST_DEVICE
-      std::enable_if_t<implementsTensorConcept<TensorType>() &&
-                           getSpaceDimension<TensorType>() == N &&
-                           isAssignableTo<numeric_type<TensorType>, T>(),
-                       Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>>
-      t2tot2<N, T>::tpld(const TensorType& B) {
+  template <TensorConcept TensorType>
+  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::tpld(
+      const TensorType& B) noexcept
+    requires(getSpaceDimension<TensorType>() == N &&
+             isAssignableTo<numeric_type<TensorType>, T>())
+  {
     return Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>(B);
   }  // end of t2tot2<N,T>
 
   template <unsigned short N, typename T>
-  template <typename TensorType, typename T2toT2Type>
-  TFEL_HOST_DEVICE std::enable_if_t<
-      implementsTensorConcept<TensorType>() &&
-          implementsT2toT2Concept<T2toT2Type>() &&
-          getSpaceDimension<TensorType>() == N &&
-          getSpaceDimension<T2toT2Type>() == N &&
-          isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
-                                                      numeric_type<T2toT2Type>,
-                                                      OpMult>::Result,
-                         T>(),
-      Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>>
-  t2tot2<N, T>::tpld(const TensorType& B, const T2toT2Type& C) {
+  template <TensorConcept TensorType, T2toT2Concept T2toT2Type>
+  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::tpld(
+      const TensorType& B, const T2toT2Type& C) noexcept
+    requires(
+        getSpaceDimension<TensorType>() == N &&
+        getSpaceDimension<T2toT2Type>() == N &&
+        isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
+                                                    numeric_type<T2toT2Type>,
+                                                    OpMult>::Result,
+                       T>())
+  {
     return Expr<t2tot2<N, T>, TensorProductLeftDerivativeExpr<N>>(B, C);
   }
 
   template <unsigned short N, typename T>
-  template <typename TensorType>
-  TFEL_HOST_DEVICE
-      std::enable_if_t<implementsTensorConcept<TensorType>() &&
-                           getSpaceDimension<TensorType>() == N &&
-                           isAssignableTo<numeric_type<TensorType>, T>(),
-                       Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>>
-      t2tot2<N, T>::tprd(const TensorType& A) {
+  template <TensorConcept TensorType>
+  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::tprd(
+      const TensorType& A) noexcept
+    requires(getSpaceDimension<TensorType>() == N &&
+             isAssignableTo<numeric_type<TensorType>, T>())
+  {
     return Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>(A);
   }
 
   template <unsigned short N, typename T>
-  template <typename TensorType, typename T2toT2Type>
-  TFEL_HOST_DEVICE std::enable_if_t<
-      implementsTensorConcept<TensorType>() &&
-          implementsT2toT2Concept<T2toT2Type>() &&
-          getSpaceDimension<TensorType>() == N &&
-          getSpaceDimension<T2toT2Type>() == N &&
-          isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
-                                                      numeric_type<T2toT2Type>,
-                                                      OpMult>::Result,
-                         T>(),
-      Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>>
-  t2tot2<N, T>::tprd(const TensorType& A, const T2toT2Type& C) {
+  template <TensorConcept TensorType, T2toT2Concept T2toT2Type>
+  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::tprd(
+      const TensorType& A, const T2toT2Type& C) noexcept
+    requires(
+        getSpaceDimension<TensorType>() == N &&
+        getSpaceDimension<T2toT2Type>() == N &&
+        isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
+                                                    numeric_type<T2toT2Type>,
+                                                    OpMult>::Result,
+                       T>())
+  {
     return Expr<t2tot2<N, T>, TensorProductRightDerivativeExpr<N>>(A, C);
   }
 
   template <unsigned short N, typename T>
-  constexpr tfel::math::t2tot2<N, base_type<T>>
-  t2tot2<N, T>::transpose_derivative() {
+  TFEL_HOST_DEVICE constexpr auto
+  t2tot2<N, T>::transpose_derivative() noexcept {
     using base = base_type<T>;
     constexpr auto c0 = base{0};
     constexpr auto c1 = base{1};
     static_assert((N == 1) || (N == 2) || (N == 3));
+    using result = t2tot2<N, base>;
     if constexpr (N == 1) {
-      return {c1, c0, c0,  //
-              c0, c1, c0,  //
-              c0, c0, c1};
+      return result{c1, c0, c0,  //
+                    c0, c1, c0,  //
+                    c0, c0, c1};
     } else if constexpr (N == 2) {
-      return {c1, c0, c0, c0, c0,  //
-              c0, c1, c0, c0, c0,  //
-              c0, c0, c1, c0, c0,  //
-              c0, c0, c0, c0, c1,  //
-              c0, c0, c0, c1, c0};
+      return result{c1, c0, c0, c0, c0,  //
+                    c0, c1, c0, c0, c0,  //
+                    c0, c0, c1, c0, c0,  //
+                    c0, c0, c0, c0, c1,  //
+                    c0, c0, c0, c1, c0};
     } else {
-      return {c1, c0, c0, c0, c0, c0, c0, c0, c0,  //
-              c0, c1, c0, c0, c0, c0, c0, c0, c0,  //
-              c0, c0, c1, c0, c0, c0, c0, c0, c0,  //
-              c0, c0, c0, c0, c1, c0, c0, c0, c0,  //
-              c0, c0, c0, c1, c0, c0, c0, c0, c0,  //
-              c0, c0, c0, c0, c0, c0, c1, c0, c0,  //
-              c0, c0, c0, c0, c0, c1, c0, c0, c0,  //
-              c0, c0, c0, c0, c0, c0, c0, c0, c1,  //
-              c0, c0, c0, c0, c0, c0, c0, c1, c0};
+      return result{c1, c0, c0, c0, c0, c0, c0, c0, c0,  //
+                    c0, c1, c0, c0, c0, c0, c0, c0, c0,  //
+                    c0, c0, c1, c0, c0, c0, c0, c0, c0,  //
+                    c0, c0, c0, c0, c1, c0, c0, c0, c0,  //
+                    c0, c0, c0, c1, c0, c0, c0, c0, c0,  //
+                    c0, c0, c0, c0, c0, c0, c1, c0, c0,  //
+                    c0, c0, c0, c0, c0, c1, c0, c0, c0,  //
+                    c0, c0, c0, c0, c0, c0, c0, c0, c1,  //
+                    c0, c0, c0, c0, c0, c0, c0, c1, c0};
     }
   }
 
   template <unsigned short N, typename T>
-  constexpr t2tot2<N, base_type<T>> t2tot2<N, T>::Id() {
+  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::Id() noexcept {
     using base = base_type<T>;
     constexpr auto c0 = base{0};
     constexpr auto c1 = base{1};
     static_assert((N == 1) || (N == 2) || (N == 3));
+    using result = t2tot2<N, base>;
     if constexpr (N == 1) {
-      return {c1, c0, c0,  //
-              c0, c1, c0,  //
-              c0, c0, c1};
+      return result{c1, c0, c0,  //
+                    c0, c1, c0,  //
+                    c0, c0, c1};
     } else if constexpr (N == 2) {
-      return {c1, c0, c0, c0, c0,  //
-              c0, c1, c0, c0, c0,  //
-              c0, c0, c1, c0, c0,  //
-              c0, c0, c0, c1, c0,  //
-              c0, c0, c0, c0, c1};
+      return result{c1, c0, c0, c0, c0,  //
+                    c0, c1, c0, c0, c0,  //
+                    c0, c0, c1, c0, c0,  //
+                    c0, c0, c0, c1, c0,  //
+                    c0, c0, c0, c0, c1};
     } else {
-      return {c1, c0, c0, c0, c0, c0, c0, c0, c0,  //
-              c0, c1, c0, c0, c0, c0, c0, c0, c0,  //
-              c0, c0, c1, c0, c0, c0, c0, c0, c0,  //
-              c0, c0, c0, c1, c0, c0, c0, c0, c0,  //
-              c0, c0, c0, c0, c1, c0, c0, c0, c0,  //
-              c0, c0, c0, c0, c0, c1, c0, c0, c0,  //
-              c0, c0, c0, c0, c0, c0, c1, c0, c0,  //
-              c0, c0, c0, c0, c0, c0, c0, c1, c0,  //
-              c0, c0, c0, c0, c0, c0, c0, c0, c1};
+      return result{c1, c0, c0, c0, c0, c0, c0, c0, c0,  //
+                    c0, c1, c0, c0, c0, c0, c0, c0, c0,  //
+                    c0, c0, c1, c0, c0, c0, c0, c0, c0,  //
+                    c0, c0, c0, c1, c0, c0, c0, c0, c0,  //
+                    c0, c0, c0, c0, c1, c0, c0, c0, c0,  //
+                    c0, c0, c0, c0, c0, c1, c0, c0, c0,  //
+                    c0, c0, c0, c0, c0, c0, c1, c0, c0,  //
+                    c0, c0, c0, c0, c0, c0, c0, c1, c0,  //
+                    c0, c0, c0, c0, c0, c0, c0, c0, c1};
     }
   }  // end of Id
 
   template <unsigned short N, typename T>
-  constexpr t2tot2<N, base_type<T>> t2tot2<N, T>::IxI() {
+  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::IxI() noexcept {
     using base = base_type<T>;
     constexpr auto c1 = base{1};
     static_assert((N == 1) || (N == 2) || (N == 3));
+    using result = t2tot2<N, base>;
     if constexpr (N == 1) {
-      return {c1, c1, c1,  //
-              c1, c1, c1,  //
-              c1, c1, c1};
+      return result{c1, c1, c1,  //
+                    c1, c1, c1,  //
+                    c1, c1, c1};
     } else if constexpr (N == 2) {
       constexpr auto c0 = base{0};
-      return {c1, c1, c1, c0, c0,  //
-              c1, c1, c1, c0, c0,  //
-              c1, c1, c1, c0, c0,  //
-              c0, c0, c0, c0, c0,  //
-              c0, c0, c0, c0, c0};
+      return result{c1, c1, c1, c0, c0,  //
+                    c1, c1, c1, c0, c0,  //
+                    c1, c1, c1, c0, c0,  //
+                    c0, c0, c0, c0, c0,  //
+                    c0, c0, c0, c0, c0};
     } else {
       constexpr auto c0 = base{0};
-      return {c1, c1, c1, c0, c0, c0, c0, c0, c0,  //
-              c1, c1, c1, c0, c0, c0, c0, c0, c0,  //
-              c1, c1, c1, c0, c0, c0, c0, c0, c0,  //
-              c0, c0, c0, c0, c0, c0, c0, c0, c0,  //
-              c0, c0, c0, c0, c0, c0, c0, c0, c0,  //
-              c0, c0, c0, c0, c0, c0, c0, c0, c0,  //
-              c0, c0, c0, c0, c0, c0, c0, c0, c0,  //
-              c0, c0, c0, c0, c0, c0, c0, c0, c0,  //
-              c0, c0, c0, c0, c0, c0, c0, c0, c0};
+      return result{c1, c1, c1, c0, c0, c0, c0, c0, c0,  //
+                    c1, c1, c1, c0, c0, c0, c0, c0, c0,  //
+                    c1, c1, c1, c0, c0, c0, c0, c0, c0,  //
+                    c0, c0, c0, c0, c0, c0, c0, c0, c0,  //
+                    c0, c0, c0, c0, c0, c0, c0, c0, c0,  //
+                    c0, c0, c0, c0, c0, c0, c0, c0, c0,  //
+                    c0, c0, c0, c0, c0, c0, c0, c0, c0,  //
+                    c0, c0, c0, c0, c0, c0, c0, c0, c0,  //
+                    c0, c0, c0, c0, c0, c0, c0, c0, c0};
     }
   }  // end of IxI
 
   template <unsigned short N, typename T>
-  constexpr t2tot2<N, base_type<T>> t2tot2<N, T>::K() {
+  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::K() noexcept {
     using base = base_type<T>;
     static_assert((N == 1) || (N == 2) || (N == 3));
+    using result = t2tot2<N, base>;
     constexpr auto c2_3 = base{2} / base{3};
     constexpr auto mc1_3 = -base{1} / base{3};
     if constexpr (N == 1) {
-      return {c2_3,  mc1_3, mc1_3,  //
-              mc1_3, c2_3,  mc1_3,  //
-              mc1_3, mc1_3, c2_3};
+      return result{c2_3,  mc1_3, mc1_3,  //
+                    mc1_3, c2_3,  mc1_3,  //
+                    mc1_3, mc1_3, c2_3};
     } else if constexpr (N == 2) {
       constexpr auto c0 = base{0};
       constexpr auto c1 = base{1};
-      return {c2_3,  mc1_3, mc1_3, c0, c0,  //
-              mc1_3, c2_3,  mc1_3, c0, c0,  //
-              mc1_3, mc1_3, c2_3,  c0, c0,  //
-              c0,    c0,    c0,    c1, c0,  //
-              c0,    c0,    c0,    c0, c1};
+      return result{c2_3,  mc1_3, mc1_3, c0, c0,  //
+                    mc1_3, c2_3,  mc1_3, c0, c0,  //
+                    mc1_3, mc1_3, c2_3,  c0, c0,  //
+                    c0,    c0,    c0,    c1, c0,  //
+                    c0,    c0,    c0,    c0, c1};
     } else {
       constexpr auto c0 = base{0};
       constexpr auto c1 = base{1};
-      return {c2_3,  mc1_3, mc1_3, c0, c0, c0, c0, c0, c0,  //
-              mc1_3, c2_3,  mc1_3, c0, c0, c0, c0, c0, c0,  //
-              mc1_3, mc1_3, c2_3,  c0, c0, c0, c0, c0, c0,  //
-              c0,    c0,    c0,    c1, c0, c0, c0, c0, c0,  //
-              c0,    c0,    c0,    c0, c1, c0, c0, c0, c0,  //
-              c0,    c0,    c0,    c0, c0, c1, c0, c0, c0,  //
-              c0,    c0,    c0,    c0, c0, c0, c1, c0, c0,  //
-              c0,    c0,    c0,    c0, c0, c0, c0, c1, c0,  //
-              c0,    c0,    c0,    c0, c0, c0, c0, c0, c1};
+      return result{c2_3,  mc1_3, mc1_3, c0, c0, c0, c0, c0, c0,  //
+                    mc1_3, c2_3,  mc1_3, c0, c0, c0, c0, c0, c0,  //
+                    mc1_3, mc1_3, c2_3,  c0, c0, c0, c0, c0, c0,  //
+                    c0,    c0,    c0,    c1, c0, c0, c0, c0, c0,  //
+                    c0,    c0,    c0,    c0, c1, c0, c0, c0, c0,  //
+                    c0,    c0,    c0,    c0, c0, c1, c0, c0, c0,  //
+                    c0,    c0,    c0,    c0, c0, c0, c1, c0, c0,  //
+                    c0,    c0,    c0,    c0, c0, c0, c0, c1, c0,  //
+                    c0,    c0,    c0,    c0, c0, c0, c0, c0, c1};
     }
   }  // end of K
 
   template <unsigned short N, typename T>
-  template <
-      typename T2toST2Type,
-      std::enable_if_t<((implementsT2toST2Concept<T2toST2Type>()) &&
-                        (isAssignableTo<numeric_type<T2toST2Type>, T>()) &&
-                        (getSpaceDimension<T2toST2Type>() == N)),
-                       bool>>
-  constexpr t2tot2<N, T>::t2tot2(const T2toST2Type& s) {
+  template <T2toST2Concept T2toST2Type>
+  constexpr t2tot2<N, T>::t2tot2(const T2toST2Type& s) noexcept
+    requires((isAssignableTo<numeric_type<T2toST2Type>, T>()) &&
+             (getSpaceDimension<T2toST2Type>() == N))
+  {
     convert(*this, s);
-  }  // end of t2tot2<N, T>::t2tot2
+  }  // end of t2tot2
+
+  template <unsigned short N, typename ValueType>
+  template <std::size_t... d>
+  TFEL_HOST_DEVICE constexpr t2tot2<N, ValueType>::t2tot2(
+      ValueType const (&... arrays)[d])  //
+    requires((sizeof...(d) == TensorDimeToSize<N>::value) &&
+             ((d == TensorDimeToSize<N>::value) && ...))
+  {
+    auto init_row = [this](
+                        const typename t2tot2::size_type i,
+                        ValueType const(&values)[TensorDimeToSize<N>::value]) {
+      for (typename t2tot2::size_type j = 0u; j < TensorDimeToSize<N>::value;
+           ++j) {
+        this->operator()(i, j) = values[j];
+      }
+    };
+    auto i = typename t2tot2::size_type{};
+    (init_row(i++, arrays), ...);
+  }  // end of t2tot2
 
   template <unsigned short N, typename T>
-  template <typename InputIterator>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 void t2tot2<N, T>::copy(
-      const InputIterator src) {
+  TFEL_HOST_DEVICE constexpr void t2tot2<N, T>::import(
+      const base_type<T>* const src) noexcept {
+    tfel::fsalgo::transform<TensorDimeToSize<N>::value *
+                            TensorDimeToSize<N>::value>::exe(src, this->begin(),
+                                                             [](const auto& v) {
+                                                               return T(v);
+                                                             });
+  }  // end of import
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr void t2tot2<N, T>::copy(const auto p) noexcept {
     tfel::fsalgo::copy<TensorDimeToSize<N>::value *
-                       TensorDimeToSize<N>::value>::exe(src, *this);
+                       TensorDimeToSize<N>::value>::exe(p, *this);
   }
 
-  template <typename T2toT2Type>
-  TFEL_HOST_DEVICE std::enable_if_t<
-      implementsT2toT2Concept<T2toT2Type>(),
-      t2tot2<getSpaceDimension<T2toT2Type>(), numeric_type<T2toT2Type>>>
-  change_basis(const T2toT2Type& s,
-               const rotation_matrix<numeric_type<T2toT2Type>>& r) {
+  template <T2toT2Concept T2toT2Type>
+  TFEL_HOST_DEVICE constexpr auto change_basis(
+      const T2toT2Type& s,
+      const rotation_matrix<numeric_type<T2toT2Type>>& r) noexcept {
     constexpr auto N = getSpaceDimension<T2toT2Type>();
     static_assert((N == 1) || (N == 2) || (N == 3));
+    using result = t2tot2<N, numeric_type<T2toT2Type>>;
     if constexpr (N == 1) {
-      return s;
+      return result{s};
     } else {
       using real = base_type<numeric_type<T2toT2Type>>;
-      using t2tot2 = tfel::math::t2tot2<getSpaceDimension<T2toT2Type>(), real>;
+      using t2tot2 = tfel::math::t2tot2<N, real>;
       const auto sr = t2tot2::fromRotationMatrix(r);
       const auto sir = t2tot2::fromRotationMatrix(transpose(r));
-      return sr * s * sir;
+      return result{sr * s * sir};
     }
   }  // end of change_basis
 
-  template <typename TensorType>
-  TFEL_HOST_DEVICE std::enable_if_t<
-      implementsTensorConcept<TensorType>(),
-      t2tot2<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
-  computeVelocityGradientDerivative(const TensorType& F) {
+  TFEL_HOST_DEVICE constexpr auto computeVelocityGradientDerivative(
+      const TensorConcept auto& F) noexcept {
+    using TensorType = decltype(F);
     using res =
         t2tot2<getSpaceDimension<TensorType>(), numeric_type<TensorType>>;
     const auto iF = invert(F);
     return res::tpld(iF);
-  }
+  }  // end of computeVelocityGradientDerivative
 
-  template <typename TensorType>
-  TFEL_HOST_DEVICE std::enable_if_t<
-      implementsTensorConcept<TensorType>(),
-      t2tot2<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
-  computeSpinRateDerivative(const TensorType& F) {
+  TFEL_HOST_DEVICE constexpr auto computeSpinRateDerivative(
+      const TensorConcept auto& F) noexcept {
+    using TensorType = decltype(F);
     constexpr auto N = getSpaceDimension<TensorType>();
     using value_type = numeric_type<TensorType>;
     using base = base_type<TensorType>;
@@ -431,42 +451,42 @@ namespace tfel::math {
     return eval((res::tpld(iF) - res::tprd(itF, dt)) / 2);
   }
 
-  template <typename TensorType>
-  TFEL_HOST_DEVICE std::enable_if_t<
-      implementsTensorConcept<TensorType>() &&
-          isScalar<numeric_type<TensorType>>(),
-      t2tot2<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
-  computeDeterminantSecondDerivative(const TensorType& t) {
+  template <TensorConcept TensorType>
+  TFEL_HOST_DEVICE constexpr auto computeDeterminantSecondDerivative(
+      const TensorType& t) noexcept
+    requires(isScalar<numeric_type<TensorType>>())
+  {
     constexpr auto N = getSpaceDimension<TensorType>();
     using NumType = numeric_type<TensorType>;
     constexpr auto zero = NumType{0};
     static_assert((N == 1) || (N == 2) || (N == 3));
+    using Result = t2tot2<N, NumType>;
     if constexpr (N == 1) {
-      return {zero, t[2], t[1], t[2], zero, t[0], t[1], t[0], zero};
+      return Result{zero, t[2], t[1], t[2], zero, t[0], t[1], t[0], zero};
     } else if constexpr (N == 2) {
-      return {zero,  t[2], t[1], zero, zero,  t[2],  zero, t[0], zero,
-              zero,  t[1], t[0], zero, -t[4], -t[3], zero, zero, -t[3],
-              -t[2], zero, zero, zero, -t[4], zero,  -t[2]};
+      return Result{zero,  t[2], t[1], zero, zero,  t[2],  zero, t[0], zero,
+                    zero,  t[1], t[0], zero, -t[4], -t[3], zero, zero, -t[3],
+                    -t[2], zero, zero, zero, -t[4], zero,  -t[2]};
     } else {
-      return {zero,  t[2],  t[1],  zero,  zero,  zero,  zero,  -t[8], -t[7],
-              t[2],  zero,  t[0],  zero,  zero,  -t[6], -t[5], zero,  zero,
-              t[1],  t[0],  zero,  -t[4], -t[3], zero,  zero,  zero,  zero,
-              zero,  zero,  -t[3], -t[2], zero,  t[8],  zero,  zero,  t[5],
-              zero,  zero,  -t[4], zero,  -t[2], zero,  t[7],  t[6],  zero,
-              zero,  -t[5], zero,  t[7],  zero,  -t[1], zero,  t[3],  zero,
-              zero,  -t[6], zero,  zero,  t[8],  zero,  -t[1], zero,  t[4],
-              -t[7], zero,  zero,  zero,  t[5],  t[4],  zero,  -t[0], zero,
-              -t[8], zero,  zero,  t[6],  zero,  zero,  t[3],  zero,  -t[0]};
+      return Result{
+          zero,  t[2],  t[1],  zero,  zero,  zero,  zero,  -t[8], -t[7],
+          t[2],  zero,  t[0],  zero,  zero,  -t[6], -t[5], zero,  zero,
+          t[1],  t[0],  zero,  -t[4], -t[3], zero,  zero,  zero,  zero,
+          zero,  zero,  -t[3], -t[2], zero,  t[8],  zero,  zero,  t[5],
+          zero,  zero,  -t[4], zero,  -t[2], zero,  t[7],  t[6],  zero,
+          zero,  -t[5], zero,  t[7],  zero,  -t[1], zero,  t[3],  zero,
+          zero,  -t[6], zero,  zero,  t[8],  zero,  -t[1], zero,  t[4],
+          -t[7], zero,  zero,  zero,  t[5],  t[4],  zero,  -t[0], zero,
+          -t[8], zero,  zero,  t[6],  zero,  zero,  t[3],  zero,  -t[0]};
     }
   }  // end of computeDeterminantSecondDerivative
 
-  template <typename T, typename T2toST2Type>
-  TFEL_HOST_DEVICE
-      std::enable_if_t<((implementsT2toST2Concept<T2toST2Type>()) &&
-                        (isAssignableTo<numeric_type<T2toST2Type>, T>())),
-                       void>
-      convert(t2tot2<getSpaceDimension<T2toST2Type>(), T>& d,
-              const T2toST2Type& s) {
+  template <typename T, T2toST2Concept T2toST2Type>
+  TFEL_HOST_DEVICE constexpr void convert(
+      t2tot2<getSpaceDimension<T2toST2Type>(), T>& d,
+      const T2toST2Type& s) noexcept  //
+    requires(isAssignableTo<numeric_type<T2toST2Type>, T>())
+  {
     constexpr auto N = getSpaceDimension<T2toST2Type>();
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {

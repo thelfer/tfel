@@ -306,7 +306,7 @@ namespace mfront::gb::logarithmic_strain {
             return -1;
           }
         }  // end of if(bk)
-      }    // end of if(bp)
+      }  // end of if(bp)
     }
     return r;
   }  // end of integrate

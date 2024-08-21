@@ -17,14 +17,12 @@
 
 namespace tfel::math {
 
-  template <typename TensorType1, typename TensorType2>
-  std::enable_if_t<
-      ((implementsTensorConcept<TensorType1>()) &&
-       (implementsTensorConcept<TensorType2>()) &&
-       (!isInvalid<
-           BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>())),
-      BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>
-  operator|(const TensorType1& a, const TensorType2& b) {
+  template <TensorConcept TensorType1, TensorConcept TensorType2>
+  TFEL_HOST_DEVICE constexpr auto operator|(const TensorType1& a,
+                                            const TensorType2& b) noexcept
+    requires(!isInvalid<
+             BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>())
+  {
     constexpr auto N = getSpaceDimension<TensorType1>();
     static_assert((N == 1u) || (N == 2u) || (N == 3u));
     static_assert(N == getSpaceDimension<TensorType2>());

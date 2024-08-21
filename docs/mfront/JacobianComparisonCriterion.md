@@ -13,6 +13,6 @@ changed at runtime.
 
 ~~~~{.cpp}
 @JacobianComparisonCriterion 1.e-6;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 

@@ -19,6 +19,7 @@
 #include <vector>
 #include <memory>
 
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/ArgumentParserBase.hxx"
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/TargetsDescription.hxx"
@@ -34,17 +35,22 @@ namespace mfront {
   struct MFRONT_VISIBILITY_EXPORT MFrontBase {
     /*!
      * \param[in] f : file name
+     * \param[in] dsl_options: options passed to the DSL
      * \return an abstract dsl that will handle the file
      */
-    static std::shared_ptr<AbstractDSL> getDSL(const std::string&);
+    static std::shared_ptr<AbstractDSL> getDSL(
+        const std::string&, const tfel::utilities::DataMap& = {});
     /*!
      * \return an abstract dsl that will handle the source described by the
-     * given iterators \param[in] pt: iterator to the first token of the source
+     * given iterators
+     * \param[in] pt: iterator to the first token of the source
      * \param[in] pte: iterator to the last token  of the source
+     * \param[in] dsl_options: options passed to the DSL
      */
     static std::shared_ptr<AbstractDSL> getDSL(
         tfel::utilities::CxxTokenizer::const_iterator,
-        const tfel::utilities::CxxTokenizer::const_iterator);
+        const tfel::utilities::CxxTokenizer::const_iterator,
+        const tfel::utilities::DataMap& = {});
     /*!
      * \brief add a new DSL option
      * \param[in] o: option. Must of a string of the form
@@ -178,13 +184,13 @@ namespace mfront {
     //! \brief treat the `--all-models` command line option
     virtual void treatAllModels();
     /*!
-     * \brief external commands specificed on the command line through
-     * an `--@XXX` option. Those external commends are applied to
+     * \brief external commands specified on the command line through
+     * an `--@XXX` option. Those external commands are applied to
      * all input files.
      */
     std::vector<std::string> ecmds;
     /*!
-     * \brief substitutions specificed on the command line through an
+     * \brief substitutions specified on the command line through an
      * `--@XXX@=YYY` option: every occurrence of `XXX` in the input
      * files will be replaced by `YYY`
      */

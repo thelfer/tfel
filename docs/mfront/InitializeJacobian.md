@@ -12,4 +12,4 @@ the first Broyden method.
     this->jacobian(i,i)=real(1);
   }
 }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

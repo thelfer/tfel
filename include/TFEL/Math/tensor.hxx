@@ -25,7 +25,6 @@
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include "TFEL/Math/Tensor/TensorConcept.hxx"
 #include "TFEL/Math/Tensor/TensorConceptOperations.hxx"
 #include "TFEL/Math/tvector.hxx"
@@ -39,13 +38,11 @@ namespace tfel::math {
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
-  template <typename TensorType, typename ScalarType>
+  template <TensorConcept TensorType, typename ScalarType>
   struct DerivativeTypeDispatcher<TensorTag,
                                   ScalarTag,
                                   TensorType,
                                   ScalarType> {
-    static_assert(implementsTensorConcept<TensorType>(),
-                  "template argument TensorType is not a tensor");
     static_assert(isScalar<ScalarType>(),
                   "template argument ScalarType is not a scalar");
     static_assert(isScalar<numeric_type<TensorType>>(),
@@ -58,13 +55,11 @@ namespace tfel::math {
    * \brief partial specialisation of the `DerivativeTypeDispatcher`
    * metafunction.
    */
-  template <typename ScalarType, typename TensorType>
+  template <typename ScalarType, TensorConcept TensorType>
   struct DerivativeTypeDispatcher<ScalarTag,
                                   TensorTag,
                                   ScalarType,
                                   TensorType> {
-    static_assert(implementsTensorConcept<TensorType>(),
-                  "template argument TensorType is not a tensor");
     static_assert(isScalar<ScalarType>(),
                   "template argument ScalarType is not a scalar");
     static_assert(isScalar<numeric_type<TensorType>>(),
@@ -76,7 +71,7 @@ namespace tfel::math {
 
   template <unsigned short N, typename ValueType>
   struct tensor
-      : TensorConcept<tensor<N, ValueType>>,
+      : TensorConceptBase<tensor<N, ValueType>>,
         GenericFixedSizeArray<
             tensor<N, ValueType>,
             FixedSizeVectorPolicy<TensorDimeToSize<N>::value, ValueType>> {
@@ -88,62 +83,69 @@ namespace tfel::math {
     /*!
      * \return the identity tensor
      */
-    TFEL_HOST_DEVICE static constexpr tensor<N, base_type<ValueType>> Id();
+    TFEL_HOST_DEVICE static constexpr tensor<N, base_type<ValueType>>
+    Id() noexcept;
     /*!
      * \brief Build a tensor from a fortran matrix.
      * \param[in] t: tensor to be filled
      * \param[in] v: pointer to an array used to initialise the
      * components of the tensor. This array is left unchanged.
      */
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 static void buildFromFortranMatrix(
-        tensor<N, ValueType>&, const base_type<ValueType>* const);
+    TFEL_HOST_DEVICE static constexpr void buildFromFortranMatrix(
+        tensor<N, ValueType>&, const base_type<ValueType>* const) noexcept;
     /*!
      * \brief Build a tensor from a fortran matrix.
      * \param[in] t: tensor to be filled
      * \param[in] v: pointer to an array used to initialise the
      * components of the tensor. This array is left unchanged.
      */
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 static tensor<N, ValueType>
-    buildFromFortranMatrix(const base_type<ValueType>* const);
+    TFEL_HOST_DEVICE static constexpr tensor<N, ValueType>
+    buildFromFortranMatrix(const base_type<ValueType>* const) noexcept;
     //
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(tensor,
                                                GenericFixedSizeArrayBase);
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArray<
         tensor<N, ValueType>,
-        FixedSizeVectorPolicy<TensorDimeToSize<N>::value, ValueType>>::
-    operator[];
+        FixedSizeVectorPolicy<TensorDimeToSize<N>::value,
+                              ValueType>>::operator[];
     /*!
      * \brief access operator
      * \param[in] i: index
      */
     TFEL_HOST_DEVICE constexpr ValueType operator()(
-        const typename tensor::size_type) const;
+        const typename tensor<N, ValueType>::size_type) const noexcept;
     /*!
      * \brief access operator
      * \param[in] i: index
      */
     TFEL_HOST_DEVICE constexpr ValueType& operator()(
-        const typename tensor::size_type);
+        const typename tensor<N, ValueType>::size_type) noexcept;
     /*!
      * \brief matrix-like access operator
      * \param[in] i: row number
      * \param[in] j: column number
      */
-    TFEL_HOST_DEVICE ValueType
-    operator()(const typename tensor::size_type,
-               const typename tensor::size_type) const;
+    TFEL_HOST constexpr ValueType operator()(
+        const typename tensor<N, ValueType>::size_type,
+        const typename tensor<N, ValueType>::size_type) const;
     //! \brief write to an external memory location
-    TFEL_MATH_INLINE2 void write(base_type<ValueType>* const) const;
+    TFEL_HOST_DEVICE constexpr void write(
+        base_type<ValueType>* const) const noexcept;
     //! \brief import values from an external memory location
-    TFEL_HOST_DEVICE void import(const base_type<ValueType>* const);
+    TFEL_HOST_DEVICE constexpr void import(
+        const base_type<ValueType>* const) noexcept;
     //! \brief change basis
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 void changeBasis(
+    TFEL_HOST_DEVICE constexpr void changeBasis(
         const rotation_matrix<ValueType>&) noexcept;
-
-    template <typename InputIterator>
-    TFEL_HOST_DEVICE TFEL_MATH_INLINE2 void copy(const InputIterator src);
+    //! \brief copy from a range
+    TFEL_HOST_DEVICE constexpr void copy(const auto) noexcept;
   };  // end of struct tensor
+
+  // class template argument deduction
+  template <typename... T>
+  tensor(T&&... t) -> tensor<TensorSizeToDime<sizeof...(T)>::value,
+                             std::common_type_t<T...>>;
 
   /*!
    * \brief a simple alias for backward compatibility
@@ -160,53 +162,36 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   using ConstTensorView = ConstView<tensor<N, T>>;
 
-  template <unsigned short N, typename T, typename OutputIterator>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<isScalar<T>(), void>
-  exportToBaseTypeArray(const tensor<N, T>&, OutputIterator);
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr void exportToBaseTypeArray(const tensor<N, T>&,
+                                                        const auto) noexcept
+    requires(isScalar<T>());
   /*!
    * \return the invert of a tensor
    * \param[in] t : tensor to be inverted
    */
-  template <typename TensorType>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<
-      implementsTensorConcept<TensorType>(),
-      tensor<getSpaceDimension<TensorType>(),
-             typename ComputeBinaryResult<base_type<numeric_type<TensorType>>,
-                                          numeric_type<TensorType>,
-                                          OpDiv>::Result>>
-  invert(const TensorType&) noexcept;
+  TFEL_HOST_DEVICE constexpr auto invert(const TensorConcept auto&) noexcept;
   /*!
    * \return the derivative of the determinant
    * \param[in] F: tensor where the the determinant is evaluated
    */
-  template <typename TensorType>
-  TFEL_HOST_DEVICE std::enable_if_t<
-      implementsTensorConcept<TensorType>(),
-      tensor<getSpaceDimension<TensorType>(),
-             typename ComputeUnaryResult<numeric_type<TensorType>,
-                                         Power<2>>::Result>>
-  computeDeterminantDerivative(const TensorType&);
+  TFEL_HOST_DEVICE constexpr auto computeDeterminantDerivative(
+      const TensorConcept auto&) noexcept;
   /*!
    * \brief rotate a tensor using a rotation matrix
    * \param[in] s: tensor to be rotated
    * \param[in] r: rotation matrix
    * \return the rotated tensor
    */
-  template <typename TensorType>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 std::enable_if_t<
-      implementsTensorConcept<TensorType>(),
-      tensor<getSpaceDimension<TensorType>(), numeric_type<TensorType>>>
-  change_basis(const TensorType&,
-               const rotation_matrix<numeric_type<TensorType>>&) noexcept;
+  template <TensorConcept TensorType>
+  TFEL_HOST_DEVICE constexpr auto change_basis(
+      const TensorType&,
+      const rotation_matrix<numeric_type<TensorType>>&) noexcept;
   /*!
    * \return the unsymmetric tensor corresponding to the given symmetric tensor.
    * \param[in] s: symmetric tensor
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE std::enable_if_t<
-      implementsStensorConcept<StensorType>(),
-      tensor<getSpaceDimension<StensorType>(), numeric_type<StensorType>>>
-  unsyme(const StensorType&);
+  TFEL_HOST_DEVICE constexpr auto unsyme(const StensorConcept auto&) noexcept;
   /*!
    * \brief convert the Cauchy stress to the first Piola-Kirchhoff stress.
    *
@@ -217,16 +202,9 @@ namespace tfel::math {
    * \param[in] F: deformation gradient
    * \return the first Piola-Kirchhoff stress
    */
-  template <typename StensorType, typename TensorType>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE
-      std::enable_if_t<(implementsStensorConcept<StensorType>() &&
-                        implementsTensorConcept<TensorType>()),
-                       tensor<getSpaceDimension<StensorType>(),
-                              result_type<numeric_type<StensorType>,
-                                          numeric_type<TensorType>,
-                                          OpMult>>>
-      convertCauchyStressToFirstPiolaKirchhoffStress(const StensorType&,
-                                                     const TensorType&);
+  TFEL_HOST_DEVICE constexpr auto
+  convertCauchyStressToFirstPiolaKirchhoffStress(
+      const StensorConcept auto&, const TensorConcept auto&) noexcept;
   /*!
    * \brief convert the first Piola-Kirchhoff stress to the Cauchy stress
    * \tparam TensorType: type of the  first Piola-Kirchhoff stress
@@ -236,16 +214,9 @@ namespace tfel::math {
    * \param[in] F: deformation gradient
    * \return the Cauchy stress
    */
-  template <typename TensorType, typename TensorType2>
-  TFEL_HOST_DEVICE
-      std::enable_if_t<(implementsTensorConcept<TensorType>() &&
-                        implementsTensorConcept<TensorType2>()),
-                       stensor<getSpaceDimension<TensorType>(),
-                               result_type<numeric_type<TensorType>,
-                                           numeric_type<TensorType2>,
-                                           OpMult>>>
-      convertFirstPiolaKirchhoffStressToCauchyStress(const TensorType&,
-                                                     const TensorType2&);
+  TFEL_HOST_DEVICE constexpr auto
+  convertFirstPiolaKirchhoffStressToCauchyStress(
+      const TensorConcept auto&, const TensorConcept auto&) noexcept;
 
 }  // end of namespace tfel::math
 
@@ -259,7 +230,6 @@ namespace tfel::typetraits {
 
 }  // end of namespace tfel::typetraits
 
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
 #include "TFEL/Math/Tensor/tensor.ixx"
 #include "TFEL/Math/Tensor/tensorResultType.hxx"
 

@@ -102,7 +102,7 @@ namespace mfront {
   OverridableImplementation::~OverridableImplementation() = default;
 
   static std::string getPathBaseName(const OverridableImplementation& i) {
-    const auto mkt = [i]() -> std::string {
+    const auto mkt = [&i]() -> std::string {
       const auto t = i.getTargetType();
       if (t == AbstractDSL::MATERIALPROPERTYDSL) {
         return "MaterialProperties";
@@ -237,7 +237,7 @@ namespace mfront {
     }
     //
     madnex::write(g, impl);
-  }    // end of writeMadnexFile
+  }  // end of writeMadnexFile
 #endif /* MFRONT_HAVE_MADNEX */
 
   void write(const OverridableImplementation& i, const std::string& f) {
@@ -258,7 +258,7 @@ namespace mfront {
     static_cast<void>(i);
     tfel::raise("write: unsupported file extension '" + ext + "'");
 #endif /* MFRONT_HAVE_MADNEX */
-  }    // end of write
+  }  // end of write
 
   void write(const OverridableImplementation& i,
              const std::string& t,

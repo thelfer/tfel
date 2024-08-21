@@ -195,15 +195,18 @@ struct MFM : public tfel::utilities::ArgumentParserBase<MFM> {
         type_filter);
     this->registerCallBack(
         "--verbose", CallBack("set verbose output", set_verbose_level, true));
-    this->registerCallBack("--show-libs",
-                           CallBack("show library name in front "
-                                    "of entry points",
-                                    [this] { this->show_libs = true; }, false));
+    this->registerCallBack(
+        "--show-libs",
+        CallBack(
+            "show library name in front "
+            "of entry points",
+            [this]() noexcept { this->show_libs = true; }, false));
     this->registerCallBack(
         "--show-sources",
-        CallBack("show the name of the MFront "
-                 "file used to generate the entry points",
-                 [this] { this->show_sources = true; }, false));
+        CallBack(
+            "show the name of the MFront "
+            "file used to generate the entry points",
+            [this]() noexcept { this->show_sources = true; }, false));
   }  // end of registerCommandLineCallBacks
 
   const tfel::utilities::Argument& getCurrentCommandLineArgument() const {
@@ -274,7 +277,7 @@ struct MFM : public tfel::utilities::ArgumentParserBase<MFM> {
     VERBOSE_LEVEL3 = 3,  //<! the finer level for standard user
     VERBOSE_DEBUG = 4,   //<! an output adapted for debugging
     VERBOSE_FULL = 5     //<! a very detailled output
-  };                     // end of enum VerboseLevel
+  };  // end of enum VerboseLevel
 
   std::vector<Filter> filters;
 

@@ -2,6 +2,8 @@
 set(CMAKE_LEGACY_CYGWIN_WIN32 0) 
 cmake_minimum_required(VERSION 2.4)
 cmake_policy(SET CMP0005 OLD)
+cmake_policy(SET CMP0022 NEW)
+
 if(CMAKE_VERSION VERSION_GREATER 3.0.0)
   cmake_policy(SET CMP0026 OLD)
 endif(CMAKE_VERSION VERSION_GREATER 3.0.0)
@@ -9,6 +11,11 @@ if(CMAKE_VERSION VERSION_GREATER 3.1.0)
   cmake_policy(SET CMP0053 OLD)
   cmake_policy(SET CMP0054 NEW)
 endif(CMAKE_VERSION VERSION_GREATER 3.1.0)
+if(CMAKE_VERSION VERSION_GREATER 3.14.0)
+  cmake_policy(SET CMP0083 NEW)  
+  include(CheckPIESupported)
+  check_pie_supported()
+endif(CMAKE_VERSION VERSION_GREATER 3.14.0)
 
 set(TFEL_VERSION_FLAVOUR "" CACHE STRING
   "Append a flavour to the version number")
@@ -21,11 +28,11 @@ if(NOT BUILD_SHARED_LIBS)
   set(enable-static OFF CACHE BOOL "enable additional static libraries" FORCE)
 endif()
 
-if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+if(EXISTS "${PROJECT_BINARY_DIR}/conanbuildinfo.cmake")
+  include(${PROJECT_BINARY_DIR}/conanbuildinfo.cmake)
   conan_basic_setup(NO_OUTPUT_DIRS)
   set(TFEL_USES_CONAN ON)
-endif(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+endif(EXISTS "${PROJECT_BINARY_DIR}/conanbuildinfo.cmake")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CXX_STANDARD_REQUIRED ON)
@@ -103,14 +110,16 @@ else( CMAKE_SIZEOF_VOID_P EQUAL 8 )
   add_definitions("-DTFEL_ARCH32")
 endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
-#extraction svn revision
-if(NOT TFEL_SVN_REVISION)
-execute_process(COMMAND svnversion
-                WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-                OUTPUT_VARIABLE TFEL_SVN_REVISION 
-		OUTPUT_STRIP_TRAILING_WHITESPACE)
-endif(NOT TFEL_SVN_REVISION)
-add_definitions("-DTFEL_SVN_REVISION=\\\"\"${TFEL_SVN_REVISION}\"\\\"")
+#extraction git hash
+if(NOT TFEL_GIT_HASH)
+execute_process(
+  COMMAND git log -1 --format=%h
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+  OUTPUT_VARIABLE TFEL_GIT_HASH
+  OUTPUT_STRIP_TRAILING_WHITESPACE)
+message("Abbreviated commit hash: ${TFEL_GIT_HASH}")
+endif(NOT TFEL_GIT_HASH)
+add_definitions("-DTFEL_GIT_HASH=\\\"\"${TFEL_GIT_HASH}\"\\\"")
 add_definitions("-DTFEL_CMAKE_GENERATOR=\\\"\"${CMAKE_GENERATOR}\"\\\"")
 
 # testing
@@ -321,9 +330,16 @@ if(enable-python OR enable-python-bindings)
   message(STATUS "python include path   ${PYTHON_INCLUDE_DIRS}")
   message(STATUS "python libraries path ${PYTHON_LIBRARY_PATH}")
   message(STATUS "python library        ${PYTHON_LIBRARY}")
-  string(REGEX REPLACE "[a-z]+.*$" "" PYTHONLIBS_VERSION_CLEANED "${PYTHONLIBS_VERSION_STRING}")
+  string(REGEX REPLACE "[-a-z+]+.*$" "" PYTHONLIBS_VERSION_CLEANED "${PYTHONLIBS_VERSION_STRING}")
   find_package(PythonInterp ${PYTHONLIBS_VERSION_CLEANED} REQUIRED)
   message(STATUS "python interpreter    ${PYTHON_EXECUTABLE}")
+  if(NOT TFEL_PYTHON_SITE_PACKAGES_DIR)
+    if(WIN32)
+      set(TFEL_PYTHON_SITE_PACKAGES_DIR "bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages")
+    else(WIN32)
+      set(TFEL_PYTHON_SITE_PACKAGES_DIR "lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages")
+    endif(WIN32)
+  endif(NOT TFEL_PYTHON_SITE_PACKAGES_DIR)
   if(enable-numpy-support AND PYTHON_EXECUTABLE AND (NOT NUMPY_INCLUDE_DIRS))
     execute_process(
       COMMAND "${PYTHON_EXECUTABLE}" -c
@@ -676,6 +692,22 @@ if(install-system-libraries)
 
 endif(install-system-libraries)
 
+# install tfel-modules-common.cmake
+
+configure_file(${PROJECT_SOURCE_DIR}/cmake/modules/tfel-modules-common.cmake.in
+               ${PROJECT_BINARY_DIR}/cmake/modules/tfel-modules-common.cmake
+               @ONLY)
+
+if(TFEL_APPEND_SUFFIX)
+  install(FILES ${PROJECT_BINARY_DIR}/cmake/modules/tfel-modules-common.cmake
+          DESTINATION "share/tfel-${TFEL_SUFFIX}/cmake"
+          COMPONENT core)
+else(TFEL_APPEND_SUFFIX)
+  install(FILES ${PROJECT_BINARY_DIR}/cmake/modules/tfel-modules-common.cmake
+          DESTINATION "share/tfel/cmake"
+          COMPONENT core)
+endif(TFEL_APPEND_SUFFIX)
+
 # install licences
 if(TFEL_APPEND_SUFFIX)
   install (FILES LICENCE-GNU-GPL
@@ -709,11 +741,11 @@ else(TFEL_APPEND_SUFFIX)
     PATTERN ".svn" EXCLUDE)
 endif(TFEL_APPEND_SUFFIX)
 
-set(CPACK_PACKAGE_VERSION   "${CMAKE_PROJECT_NAME}-${TFEL_VERSION}")
+set(CPACK_PACKAGE_VERSION   "${TFEL_VERSION}")
 if(${CMAKE_SYSTEM_PROCESSOR})
-  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_PROCESSOR}") 
+  set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_PROCESSOR}") 
 else(${CMAKE_SYSTEM_PROCESSOR})
-  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_VERSION}") 
+  set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION}") 
 endif(${CMAKE_SYSTEM_PROCESSOR})
 set(CPACK_PACKAGE_INSTALL_DIRECTORY   "${CPACK_PACKAGE_VERSION}")
 set(CPACK_PACKAGE_NAME                "${PACKAGE_NAME}")
@@ -722,10 +754,10 @@ set(CPACK_PACKAGE_VERSION_PATCH       "${TFEL_VERSION_PATCH}")
 set(CPACK_PACKAGE_VERSION_MAJOR       "${TFEL_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR       "${TFEL_VERSION_MINOR}")
 set(CPACK_PACKAGE_VENDOR              "CEA_EDF")
-set(CPACK_SOURCE_IGNORE_FILES         "build;/\\\\.svn/;.*~")
+#set(CPACK_SOURCE_IGNORE_FILES         "build;/\.git/;.*~")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "TFEL is a numerical library.")
-set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README.md")
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENCE-GNU-GPL")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${PROJECT_SOURCE_DIR}/README.md")
+set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENCE-GNU-GPL")
 
 # rpm packaging
 set(CPACK_RPM_COMPONENT_INSTALL ON)
@@ -739,8 +771,8 @@ set(CPACK_DEBIAN_PACKAGE_HOMEPAGE     "${TFEL_WEBSITE}")
 
 #NSIS
 set(CPACK_NSIS_MODIFY_PATH ON)
-set(CPACK_NSIS_MUI_ICON       "${CMAKE_SOURCE_DIR}/docs/mfront.ico")
-set(CPACK_NSIS_MUI_UNIICON    "${CMAKE_SOURCE_DIR}/docs/mfront.ico")
+set(CPACK_NSIS_MUI_ICON       "${PROJECT_SOURCE_DIR}/docs/mfront.ico")
+set(CPACK_NSIS_MUI_UNIICON    "${PROJECT_SOURCE_DIR}/docs/mfront.ico")
 set(CPACK_NSIS_URL_INFO_ABOUT "${TFEL_WEBSITE}")
 set(CPACK_NSIS_HELP_LINK "${TFEL_WEBSITE}")
 set(CPACK_NSIS_CONTACT "${PACKAGE_BUGREPORT}")
@@ -753,17 +785,13 @@ set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
       SetRegView  64
       DeleteRegKey HKCR 'TFELHOME-${TFEL_VERSION}'")
 
-# if(UNIX)
-#   add_custom_target(dist-bzip2
-#     COMMAND svn export svn://localhost/PLEIADES/SVN/TFEL/trunk 
-#     ${CMAKE_BINARY_DIR}/${PACKAGE_NAME}-${VERSION}
-#     COMMAND tar -cvjf ${CMAKE_BINARY_DIR}/${PACKAGE_NAME}-${VERSION}.tar.bz2 
-#     ${CMAKE_BINARY_DIR}/${PACKAGE_NAME}-${VERSION}
-#     COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/${PACKAGE_NAME}-${VERSION}
-#     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-# endif(UNIX)
-
 set(CPACK_BUNDLE_NAME "TFEL/MFront")
+
+# source packaging
+set(CPACK_VERBATIM_VARIABLES YES)
+if(NOT CPACK_SOURCE_GENERATOR)
+  set(CPACK_SOURCE_GENERATOR "TGZ")
+endif()
 
 # packaging
 include(CPack)

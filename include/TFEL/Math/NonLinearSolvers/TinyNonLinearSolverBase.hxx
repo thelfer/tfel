@@ -99,7 +99,8 @@ namespace tfel::math {
      * \param[in] args: arguments forwarded to the external workspace
      */
     template <typename... ExternalWorkSpaceArguments>
-    TFEL_HOST_DEVICE TinyNonLinearSolverBase(ExternalWorkSpaceArguments&&...);
+    TFEL_HOST_DEVICE TinyNonLinearSolverBase(
+        ExternalWorkSpaceArguments&&...) noexcept;
     //! \brief default constructor
     TinyNonLinearSolverBase(TinyNonLinearSolverBase&) noexcept = default;
     //! \brief default constructor
@@ -135,14 +136,14 @@ namespace tfel::math {
      *
      * \return true on success
      */
-    TFEL_HOST_DEVICE bool solveNonLinearSystem();
+    TFEL_HOST_DEVICE bool solveNonLinearSystem() noexcept;
     /*!
      * \brief solve the non linear problem. This method is called by the
      * `solveNonLinearSystem` and must contain the core of the resolution
      * algorithm.
      * \return true on success
      */
-    TFEL_HOST_DEVICE bool solveNonLinearSystem2();
+    TFEL_HOST_DEVICE bool solveNonLinearSystem2() noexcept;
     /*!
      * \brief this method is called at the beginning of the
      * `solveNonLinearSystem` method.
@@ -170,8 +171,8 @@ namespace tfel::math {
      * \brief check the convergence of the method
      * \param[in] e: current error
      */
-    TFEL_HOST_DEVICE constexpr bool checkConvergence(const NumericType e) const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr bool checkConvergence(
+        const NumericType e) const noexcept {
       return e < this->epsilon;
     }
     /*!
@@ -180,13 +181,10 @@ namespace tfel::math {
      * \param[in] m: matrix
      * \param[in,out] v: right hand side on input, solution on output
      */
-    template <typename FixedSizeMatrixType, typename FixedSizeVectorType>
-    TFEL_HOST_DEVICE
-        std::enable_if_t<(implementsMatrixConcept<FixedSizeMatrixType>() &&
-                          implementsVectorConcept<FixedSizeVectorType>()),
-                         bool>
-        solveLinearSystem(FixedSizeMatrixType&, FixedSizeVectorType&) const
-        noexcept;
+    template <MatrixConcept FixedSizeMatrixType,
+              VectorConcept FixedSizeVectorType>
+    TFEL_HOST_DEVICE bool solveLinearSystem(
+        FixedSizeMatrixType&, FixedSizeVectorType&) const noexcept;
     /*!
      * \brief update the jacobian matrix if required.
      *
@@ -219,15 +217,15 @@ namespace tfel::math {
      */
     TFEL_HOST_DEVICE constexpr void processNewEstimate() noexcept {}
     //! \brief method called when the resolution begins
-    TFEL_HOST_DEVICE constexpr void reportBeginningOfResolution() const
-        noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportBeginningOfResolution()
+        const noexcept {}
     //! \brief method called when the resolution succeeds
     TFEL_HOST_DEVICE constexpr void reportSuccess() const noexcept {}
     //! \brief method called when the resolution fails
     TFEL_HOST_DEVICE constexpr void reportFailure() const noexcept {}
     //! \brief method called when the evaluation of the residual failed.
-    TFEL_HOST_DEVICE constexpr void reportInvalidResidualEvaluation() const
-        noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportInvalidResidualEvaluation()
+        const noexcept {}
     //! \brief method called when the computation of a new correction failed.
     TFEL_HOST_DEVICE constexpr void reportNewCorrectionComputationFailure()
         const noexcept {}

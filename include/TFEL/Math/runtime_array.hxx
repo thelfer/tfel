@@ -27,7 +27,7 @@ namespace tfel::math {
   struct runtime_array
       : GenericRuntimeArray<runtime_array<ValueType>,
                             RuntimeVectorArrayPolicy<ValueType>>,
-        ArrayConcept<runtime_array<ValueType>> {
+        ArrayConceptBase<runtime_array<ValueType>> {
     //! \brief a simple alias
     using GenericRuntimeArrayBase =
         GenericRuntimeArray<runtime_array<ValueType>,

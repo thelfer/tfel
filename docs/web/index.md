@@ -86,7 +86,7 @@ A set of interfaces are provided for various solvers:
 - the [`ZeBuLoN`](http://www.zset-software.com/products/zebulon)
   finite element solver. This interface is described [here](zmat.html).
 - the `TMFFT` and the
-  [`AMITEX_FFTP`](http://www.maisondelasimulation.fr/projects/amitex/html/)
+  [`AMITEX_FFTP`](https://amitexfftp.github.io/AMITEX/)
   Fast Fourier Transform solvers developed internally at
   [CEA](http://www.cea.fr/english-portal "Commissariat à l'énergie
   atomique"). Note that

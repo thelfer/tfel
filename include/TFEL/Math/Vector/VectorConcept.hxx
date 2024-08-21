@@ -30,40 +30,49 @@ namespace tfel::math {
   struct VectorTag {};  // end of VectorTag
 
   template <typename T>
-  struct VectorConcept {
-    typedef VectorTag ConceptTag;
-
-   protected:
-    VectorConcept() = default;
-    VectorConcept(VectorConcept&&) = default;
-    VectorConcept(const VectorConcept&) = default;
-    VectorConcept& operator=(const VectorConcept&) = default;
-    ~VectorConcept() = default;
+  struct VectorConceptBase {
+    using ConceptTag = VectorTag;
   };
 
   /*!
-   * \brief an helper function which returns if the given type implements the
-   * `VectorConcept`.
-   * \tparam VectorType: type tested
+   * \brief definition of the VectorConcept concept
+   * a class matching the vector concept must expose the `VectorTag` and have
+   * access operators.
    */
   template <typename VectorType>
-  TFEL_HOST_DEVICE constexpr bool implementsVectorConcept() {
-    return tfel::meta::implements<VectorType, VectorConcept>();
-  }  // end of implementsVectorConcept
+  concept VectorConcept =
+      (std::is_same_v<typename std::decay_t<VectorType>::ConceptTag,
+                      VectorTag>) &&  //
+      (requires(const VectorType t, const index_type<VectorType> i) {
+        t[i];
+      }) &&  //
+      (requires(const VectorType t, const index_type<VectorType> i) { t(i); });
 
   //! paratial specialisation for vectors
   template <typename Type>
   struct ConceptRebind<VectorTag, Type> {
-    using type = VectorConcept<Type>;
+    using type = VectorConceptBase<Type>;
   };
 
   //! \brief a simple alias for backward compatibility with versions prior
   //! to 4.0
   template <typename VectorType>
   using VectorTraits =
-      std::conditional_t<implementsVectorConcept<VectorType>(),
+      std::conditional_t<VectorConcept<VectorType>,
                          MathObjectTraits<VectorType>,
                          MathObjectTraits<tfel::meta::InvalidType>>;
+
+  /*!
+   * \brief an helper function which returns if the given type implements the
+   * `VectorConcept`.
+   * \tparam VectorType: type tested
+   * \note function given for backward compatibility with versions prior
+   * to 5.0
+   */
+  template <typename VectorType>
+  [[deprecated]] TFEL_HOST_DEVICE constexpr bool implementsVectorConcept() {
+    return VectorConcept<VectorType>;
+  }  // end of implementsVectorConcept
 
 }  // end of namespace tfel::math
 

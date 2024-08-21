@@ -19,70 +19,70 @@
 #include "TFEL/Math/Array/View.hxx"
 #include "TFEL/Math/Array/FixedSizeIndexingPolicies.hxx"
 
+namespace tfel::math::internals {
+
+  /*!
+   * \brief an helper structure using to define the type of views generate by
+   * `ViewsArray`.
+   * \tparam is_scalar: boolean stating if the mapped type is a scalar
+   * \tparam MappedType: mapped type
+   * \tparam ViewIndexingPolicyType: indexing policy used by the view
+   */
+  template <bool is_scalar,
+            typename MappedType,
+            typename ViewIndexingPolicyType>
+  struct ViewsArrayBase {
+    static_assert(!tfel::math::isScalar<MappedType>());
+    //! \brief type of views
+    using view_type = tfel::math::View<MappedType, ViewIndexingPolicyType>;
+    //! \brief type of read-only views
+    using const_view_type =
+        tfel::math::View<const MappedType, ViewIndexingPolicyType>;
+  };  // end of ViewsArrayBase
+
+  /*!
+   * \brief an helper structure using to define the type of views generate by
+   * `ViewsArray`.
+   * \tparam MappedType: mapped type
+   * \tparam ViewIndexingPolicyType: indexing policy used by the view
+   */
+  template <typename MappedType, typename ViewIndexingPolicyType>
+  struct ViewsArrayBase<true, MappedType, ViewIndexingPolicyType> {
+    static_assert(tfel::math::isScalar<MappedType>());
+    //! \brief type of views
+    using view_type = MappedType&;
+    //! \brief type of read-only views
+    using const_view_type = const MappedType&;
+  };  // end of ViewsArrayBase
+
+  /*!
+   * \brief a metafunction returning the default indexing policy for the given
+   * mapped type
+   * \tparam is_scalar: boolean stating if the mapped type is a scalar
+   * \tparam MappedType: mapped type
+   */
+  template <bool is_scalar, typename MappedType>
+  struct ViewsArrayDefaultViewIndexingPolicy {
+    static_assert(!tfel::math::isScalar<MappedType>());
+    //! \brief default indexing type
+    using type = typename MappedType::indexing_policy;
+  };  // end of ViewsArrayDefaultViewIndexingPolicy
+
+  /*!
+   * \brief a metafunction returning the default indexing policy for the given
+   * scalar mapped type
+   * \tparam MappedType: mapped type
+   */
+  template <typename MappedType>
+  struct ViewsArrayDefaultViewIndexingPolicy<true, MappedType> {
+    static_assert(tfel::math::isScalar<MappedType>());
+    //! \brief default indexing type
+    using type = tfel::math::ScalarIndexingPolicy<unsigned short>;
+  };  // end of ViewsArrayDefaultViewIndexingPolicy
+
+}  // end of namespace tfel::math::internals
+
 namespace tfel::math {
-
-  namespace internals {
-
-    /*!
-     * \brief an helper structure using to define the type of views generate by
-     * `ViewsArray`.
-     * \tparam is_scalar: boolean stating if the mapped type is a scalar
-     * \tparam MappedType: mapped type
-     * \tparam ViewIndexingPolicyType: indexing policy used by the view
-     */
-    template <bool is_scalar,
-              typename MappedType,
-              typename ViewIndexingPolicyType>
-    struct ViewsArrayBase {
-      static_assert(!tfel::math::isScalar<MappedType>());
-      //! \brief type of views
-      using view_type = tfel::math::View<MappedType, ViewIndexingPolicyType>;
-      //! \brief type of read-only views
-      using const_view_type =
-          tfel::math::View<const MappedType, ViewIndexingPolicyType>;
-    };  // end of ViewsArrayBase
-
-    /*!
-     * \brief an helper structure using to define the type of views generate by
-     * `ViewsArray`.
-     * \tparam MappedType: mapped type
-     * \tparam ViewIndexingPolicyType: indexing policy used by the view
-     */
-    template <typename MappedType, typename ViewIndexingPolicyType>
-    struct ViewsArrayBase<true, MappedType, ViewIndexingPolicyType> {
-      static_assert(tfel::math::isScalar<MappedType>());
-      //! \brief type of views
-      using view_type = MappedType&;
-      //! \brief type of read-only views
-      using const_view_type = const MappedType&;
-    };  // end of ViewsArrayBase
-
-    /*!
-     * \brief a metafunction returning the default indexing policy for the given
-     * mapped type
-     * \tparam is_scalar: boolean stating if the mapped type is a scalar
-     * \tparam MappedType: mapped type
-     */
-    template <bool is_scalar, typename MappedType>
-    struct ViewsArrayDefaultViewIndexingPolicy {
-      static_assert(!tfel::math::isScalar<MappedType>());
-      //! \brief default indexing type
-      using type = typename MappedType::indexing_policy;
-    };  // end of ViewsArrayDefaultViewIndexingPolicy
-
-    /*!
-     * \brief a metafunction returning the default indexing policy for the given
-     * scalar mapped type
-     * \tparam MappedType: mapped type
-     */
-    template <typename MappedType>
-    struct ViewsArrayDefaultViewIndexingPolicy<true, MappedType> {
-      static_assert(tfel::math::isScalar<MappedType>());
-      //! \brief default indexing type
-      using type = tfel::math::ScalarIndexingPolicy<unsigned short>;
-    };  // end of ViewsArrayDefaultViewIndexingPolicy
-
-  }  // end of namespace internals
 
   //! \brief the numeric type used by the mapped type
   template <typename MappedType>
@@ -260,8 +260,8 @@ namespace tfel::math {
     constexpr auto operator()(
         const typename MemoryIndexingPolicyType::size_type i,
         const std::array<typename ViewIndexingPolicyType::size_type,
-                         ViewIndexingPolicyType::arity>& vsizes) const
-        noexcept {
+                         ViewIndexingPolicyType::arity>& vsizes)
+        const noexcept {
       static_assert(!ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       static_assert(MemoryIndexingPolicyType::arity == 1u, "invalid call");
       using const_view_type = typename ViewsArrayBase::const_view_type;
@@ -306,8 +306,8 @@ namespace tfel::math {
         const std::array<typename MemoryIndexingPolicyType::size_type,
                          MemoryIndexingPolicyType::arity>& indices,
         const std::array<typename ViewIndexingPolicyType::size_type,
-                         ViewIndexingPolicyType::arity>& vsizes) const
-        noexcept {
+                         ViewIndexingPolicyType::arity>& vsizes)
+        const noexcept {
       static_assert(!ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       using const_view_type = typename ViewsArrayBase::const_view_type;
       const auto p = ViewIndexingPolicyType{vsizes};
@@ -315,12 +315,13 @@ namespace tfel::math {
     }
     // \brief multiplication by a scalar
     template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr std::enable_if_t<
-        ((isScalar<ValueType2>()) &&
-         (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpMult>,
-                         MappedType>())),
-        ViewsArray&>
-    operator*=(const ValueType2& s) noexcept {
+    TFEL_HOST_DEVICE constexpr ViewsArray& operator*=(
+        const ValueType2& s) noexcept
+      requires(
+          (isScalar<ValueType2>()) &&
+          (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpMult>,
+                          MappedType>()))
+    {
       static_assert(!std::is_const_v<MappedType>, "invalid call");
       const auto f =
           makeMultiIndicesUnaryOperatorFunctor([s](auto& a) { a *= s; }, *this);
@@ -341,12 +342,13 @@ namespace tfel::math {
     }  // end of operator*=
     // \brief division by a scalar
     template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr std::enable_if_t<
-        ((isScalar<ValueType2>()) &&
-         (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpDiv>,
-                         MappedType>())),
-        ViewsArray&>
-    operator/=(const ValueType2& s) noexcept {
+    TFEL_HOST_DEVICE constexpr ViewsArray& operator/=(
+        const ValueType2& s) noexcept
+      requires(
+          (isScalar<ValueType2>()) &&
+          (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpDiv>,
+                          MappedType>()))
+    {
       static_assert(!std::is_const_v<MappedType>, "invalid call");
       return this->operator*=(1 / s);
     }  // end of operator/=

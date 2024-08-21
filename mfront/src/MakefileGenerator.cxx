@@ -231,6 +231,9 @@ namespace mfront {
       m << inc << " ";
     }
     m << "-I../include";
+    for (const auto& path : o.include_paths) {
+      m << " -I" << path;
+    }
     // cpp flags
     std::vector<std::string> cppflags;
     for (const auto& l : t.libraries) {
@@ -267,7 +270,7 @@ namespace mfront {
       }
     }
     //
-    m << '\n' << '\n';
+    m << "\n\n";
     // LDFLAGS
     if (ldflags != nullptr) {
       m << "LDFLAGS := " << ldflags << '\n';

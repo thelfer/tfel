@@ -60,8 +60,8 @@ namespace tfel::math {
       Child,
       ArrayPolicy>::const_iterator
   ConstArrayWithContiguousDataSTLCompatibilityLayer<Child,
-                                                    ArrayPolicy>::cbegin() const
-      noexcept {
+                                                    ArrayPolicy>::cbegin()
+      const noexcept {
     static_assert(ArrayPolicy::IndexingPolicy::areDataContiguous,
                   "invalid indexing policy");
     return static_cast<const Child&>(*this).data();
@@ -95,8 +95,8 @@ namespace tfel::math {
       Child,
       ArrayPolicy>::const_reverse_iterator
   ConstArrayWithContiguousDataSTLCompatibilityLayer<Child,
-                                                    ArrayPolicy>::rbegin() const
-      noexcept {
+                                                    ArrayPolicy>::rbegin()
+      const noexcept {
     static_assert(ArrayPolicy::IndexingPolicy::areDataContiguous,
                   "invalid indexing policy");
     return this->crbegin();

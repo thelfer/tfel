@@ -16,35 +16,23 @@
 
 namespace zmat {
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(tfel::math::stensor<1u, T>& dest,
-                         const double* const src) {
+  inline void ZMATInterface::convert(tfel::math::stensor<1u, double>& dest,
+                                     const double* const src) {
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
   }  // end of ZMATInterface::convert
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(tfel::math::stensor<2u, T>& dest,
-                         const double* const src) {
+  inline void ZMATInterface::convert(tfel::math::stensor<2u, double>& dest,
+                                     const double* const src) {
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
     dest[3] = src[3];
   }  // end of ZMATInterface::convert
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(tfel::math::stensor<3u, T>& dest,
-                         const double* const src) {
+  inline void ZMATInterface::convert(tfel::math::stensor<3u, double>& dest,
+                                     const double* const src) {
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
@@ -53,35 +41,23 @@ namespace zmat {
     dest[5] = src[4];
   }  // end of ZMATInterface::convert
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(double* const dest,
-                         const tfel::math::stensor<1u, T>& src) {
+  inline void ZMATInterface::convert(
+      double* const dest, const tfel::math::stensor<1u, double>& src) {
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
   }  // end of ZMATInterface::convert
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(double* const dest,
-                         const tfel::math::stensor<2u, T>& src) {
+  inline void ZMATInterface::convert(
+      double* const dest, const tfel::math::stensor<2u, double>& src) {
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
     dest[3] = src[3];
   }  // end of ZMATInterface::convert
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(double* const dest,
-                         const tfel::math::stensor<3u, T>& src) {
+  inline void ZMATInterface::convert(
+      double* const dest, const tfel::math::stensor<3u, double>& src) {
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
@@ -90,12 +66,8 @@ namespace zmat {
     dest[5] = src[4];
   }  // end of ZMATInterface::convert
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(ZSET::MATRIX& dest,
-                         const tfel::math::st2tost2<1u, T>& src) {
+  inline void ZMATInterface::convert(
+      ZSET::MATRIX& dest, const tfel::math::st2tost2<1u, double>& src) {
     dest(0, 0) = src(0, 0);
     dest(1, 0) = src(1, 0);
     dest(2, 0) = src(2, 0);
@@ -107,12 +79,8 @@ namespace zmat {
     dest(2, 2) = src(2, 2);
   }
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(ZSET::MATRIX& dest,
-                         const tfel::math::st2tost2<2u, T>& src) {
+  inline void ZMATInterface::convert(
+      ZSET::MATRIX& dest, const tfel::math::st2tost2<2u, double>& src) {
     dest(0, 0) = src(0, 0);
     dest(1, 0) = src(1, 0);
     dest(2, 0) = src(2, 0);
@@ -131,12 +99,8 @@ namespace zmat {
     dest(3, 3) = src(3, 3);
   }  // end of ZMATInterface::convert
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(ZSET::MATRIX& dest,
-                         const tfel::math::st2tost2<3u, T>& src) {
+  inline void ZMATInterface::convert(
+      ZSET::MATRIX& dest, const tfel::math::st2tost2<3u, double>& src) {
     dest(0, 0) = src(0, 0);
     dest(1, 0) = src(1, 0);
     dest(2, 0) = src(2, 0);
@@ -175,12 +139,8 @@ namespace zmat {
     dest(5, 5) = src(4, 4);
   }  // end of ZMATInterface::convert
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(tfel::math::st2tost2<1u, T>& dest,
-                         const ZSET::MATRIX& src) {
+  inline void ZMATInterface::convert(tfel::math::st2tost2<1u, double>& dest,
+                                     const ZSET::MATRIX& src) {
     dest(0, 0) = src(0, 0);
     dest(1, 0) = src(1, 0);
     dest(2, 0) = src(2, 0);
@@ -192,12 +152,8 @@ namespace zmat {
     dest(2, 2) = src(2, 2);
   }
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(tfel::math::st2tost2<2u, T>& dest,
-                         const ZSET::MATRIX& src) {
+  inline void ZMATInterface::convert(tfel::math::st2tost2<2u, double>& dest,
+                                     const ZSET::MATRIX& src) {
     dest(0, 0) = src(0, 0);
     dest(1, 0) = src(1, 0);
     dest(2, 0) = src(2, 0);
@@ -216,12 +172,8 @@ namespace zmat {
     dest(3, 3) = src(3, 3);
   }  // end of ZMATInterface::convert
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(tfel::math::st2tost2<3u, T>& dest,
-                         const ZSET::MATRIX& src) {
+  inline void ZMATInterface::convert(tfel::math::st2tost2<3u, double>& dest,
+                                     const ZSET::MATRIX& src) {
     dest(0, 0) = src(0, 0);
     dest(1, 0) = src(1, 0);
     dest(2, 0) = src(2, 0);
@@ -260,23 +212,15 @@ namespace zmat {
     dest(5, 5) = src(4, 4);
   }  // end of ZMATInterface::convert
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(tfel::math::tensor<1u, T>& dest,
-                         const double* const src) {
+  inline void ZMATInterface::convert(tfel::math::tensor<1u, double>& dest,
+                                     const double* const src) {
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
   }  // end of ZMATInterface::convert
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(tfel::math::tensor<2u, T>& dest,
-                         const double* const src) {
+  inline void ZMATInterface::convert(tfel::math::tensor<2u, double>& dest,
+                                     const double* const src) {
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
@@ -284,12 +228,8 @@ namespace zmat {
     dest[4] = src[4];
   }  // end of ZMATInterface::convert
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(tfel::math::tensor<3u, T>& dest,
-                         const double* const src) {
+  inline void ZMATInterface::convert(tfel::math::tensor<3u, double>& dest,
+                                     const double* const src) {
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
@@ -301,23 +241,15 @@ namespace zmat {
     dest[5] = src[8];
   }  // end of ZMATInterface::convert
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(double* const dest,
-                         const tfel::math::tensor<1u, T>& src) {
+  inline void ZMATInterface::convert(
+      double* const dest, const tfel::math::tensor<1u, double>& src) {
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
   }  // end of ZMATInterface::convert
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(double* const dest,
-                         const tfel::math::tensor<2u, T>& src) {
+  inline void ZMATInterface::convert(
+      double* const dest, const tfel::math::tensor<2u, double>& src) {
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];
@@ -325,12 +257,8 @@ namespace zmat {
     dest[4] = src[4];
   }  // end of ZMATInterface::convert
 
-  template <typename T>
-  typename std::enable_if<
-      std::is_same<tfel::typetraits::base_type<T>, double>::value,
-      void>::type
-  ZMATInterface::convert(double* const dest,
-                         const tfel::math::tensor<3u, T>& src) {
+  inline void ZMATInterface::convert(
+      double* const dest, const tfel::math::tensor<3u, double>& src) {
     dest[0] = src[0];
     dest[1] = src[1];
     dest[2] = src[2];

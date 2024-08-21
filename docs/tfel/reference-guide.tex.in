@@ -1141,7 +1141,7 @@ combinaison de différentes techniques de programmation relativement
 pointues~:
 \begin{enumerate}
   \item une classe \texttt{S} implante la notion de concept en dérivant
-  de la classe \texttt{StensorConcept<S>}~: \texttt{S} hérite d'une
+  de la classe \texttt{StensorConceptBase<S>}~: \texttt{S} hérite d'une
   classe dont elle est paramètre. Cette technique, appelée
   \texttt{Curiously Recurring Template Pattern}, a été énormément
   utilisée en programmation générique pour obtenir une flexibilité
@@ -1149,7 +1149,7 @@ pointues~:
   \item une classe à deux paramètres \texttt{Implements} qui contient
   une variable statique \varcpp{cond}. Si une \texttt{S} implante le
   concept \texttt{StensorConcept}, la variable statique
-  \texttt{Implements<S,StensorConcept>::cond} vaut \texttt{true},
+  \texttt{Implements<S,StensorConceptBase>::cond} vaut \texttt{true},
   \texttt{false} dans le cas contraire. L'implantation effective de la
   classe \texttt{Implements} repose sur les capacités d'introspection de
   l'opérateur \texttt{sizeof}~;

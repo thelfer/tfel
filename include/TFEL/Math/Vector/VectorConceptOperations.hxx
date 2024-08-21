@@ -16,6 +16,7 @@
 
 #include <cmath>
 #include <type_traits>
+#include "TFEL/Math/power.hxx"
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/TypeTraits/RealPartType.hxx"
 #include "TFEL/Math/ExpressionTemplates/Expr.hxx"
@@ -82,28 +83,6 @@ namespace tfel::math {
                                       Expr<Result, UnaryOperation<A, OpNeg>>>;
   };
 
-  template <typename T1, typename T2, typename Op>
-  struct IsVectorVectorOperationValid {
-    static constexpr bool cond =
-        (implementsVectorConcept<T1>() && implementsVectorConcept<T2>() &&
-         (!isInvalid<BinaryOperationResult<T1, T2, Op>>()));
-  };
-
-  template <typename T1, typename T2, typename Op>
-  struct IsScalarVectorOperationValid {
-    static constexpr bool cond =
-        (isScalar<T1>() && implementsVectorConcept<T2>() &&
-         (!isInvalid<BinaryOperationResult<T1, T2, Op>>()));
-  };
-
-  template <typename T1>
-  struct IsEuclidianNormValid {
-    static constexpr bool cond =
-        implementsVectorConcept<T1>() &&
-        !isInvalid<typename tfel::typetraits::RealPartType<
-            BinaryOperationResult<T1, T1, OpDotProduct>>::type>();
-  };
-
   /*!
    * \return the inner product of a vector
    * \param const T1&, the left  vector.
@@ -113,23 +92,18 @@ namespace tfel::math {
    * \warning the operator| has not the priority expected for such
    * an operation : use of parenthesis is required.
    */
-  template <typename T1, typename T2>
-  TFEL_HOST_DEVICE
-      std::enable_if_t<IsVectorVectorOperationValid<T1, T2, OpDotProduct>::cond,
-                       BinaryOperationResult<T1, T2, OpDotProduct>>
-      operator|(const T1&, const T2&);
+  template <VectorConcept T1, VectorConcept T2>
+  TFEL_HOST_DEVICE constexpr auto operator|(const T1&, const T2&)
+    requires(!isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>());
 
   /*!
    * \brief  return the euclidian norm of a tvector
    * \param  v : the vector.
    * \return const typename tfel::typetraits::RealPartType<T>::type, the result
    */
-  template <typename T1>
-  TFEL_HOST_DEVICE
-      std::enable_if_t<IsEuclidianNormValid<T1>::cond,
-                       typename tfel::typetraits::RealPartType<
-                           BinaryOperationResult<T1, T1, OpDotProduct>>::type>
-      norm(const T1&);
+  template <VectorConcept T1>
+  TFEL_HOST_DEVICE auto norm(const T1& v)
+    requires(!isInvalid<BinaryOperationResult<T1, T1, OpDotProduct>>());
 
 }  // end of namespace tfel::math
 

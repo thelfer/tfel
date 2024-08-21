@@ -1,0 +1,16 @@
+@DSL DefaultGenericBehaviour;
+@Behaviour ArrayOfScalarGradients;
+@Gradient real a[2];
+@Flux real b[2];
+@ProvidesSymmetricTangentOperator;
+@Integrator{
+  for (unsigned short i = 0; i != 2u; ++i) {
+    b[i] = 2 * (a[i] + da[i]);
+    if (computeTangentOperator_) {
+      static_cast<void>(smt);  // discard the stiffness matrix type
+      for (unsigned short j = 0; j != 2u; ++j) {
+        db_dda(i, j) = (i == j) ? 2 : 0;
+      }
+    }
+  }
+}

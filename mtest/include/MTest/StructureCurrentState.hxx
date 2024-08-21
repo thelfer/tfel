@@ -53,6 +53,13 @@ namespace mtest {
     //! \brief assignment operator
     StructureCurrentState &operator=(const StructureCurrentState &);
     /*!
+     * \brief make a deep copy of the object
+     * Contrary to standard copy which shares pointers to the current
+     * states of each models with the original object,
+     * those states are duplicated in a deep copy.
+     */
+    StructureCurrentState makeDeepCopy() const;
+    /*!
      * \set the behaviour associated to the structure
      * \param[in] p : pointer to the behaviour
      */

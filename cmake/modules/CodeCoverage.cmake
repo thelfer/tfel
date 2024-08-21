@@ -86,11 +86,11 @@ IF(NOT CMAKE_COMPILER_IS_GNUCXX)
 	ENDIF()
 ENDIF() # NOT CMAKE_COMPILER_IS_GNUCXX
 
-SET(CMAKE_CXX_FLAGS_COVERAGE
+SET(TFEL_CMAKE_CXX_FLAGS_COVERAGE
     "-g -O0 --coverage -fprofile-arcs -ftest-coverage"
     CACHE STRING "Flags used by the C++ compiler during coverage builds."
     FORCE )
-SET(CMAKE_C_FLAGS_COVERAGE
+SET(TFEL_CMAKE_C_FLAGS_COVERAGE
     "-g -O0 --coverage -fprofile-arcs -ftest-coverage"
     CACHE STRING "Flags used by the C compiler during coverage builds."
     FORCE )

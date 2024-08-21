@@ -17,10 +17,9 @@
 namespace mfront {
 
   template <typename T>
-  typename std::enable_if<
-      tfel::meta::TLCountNbrOfT<T, VariableAttributeTypes>::value == 1,
-      T&>::type
-  VariableDescription::getAttribute(const std::string& n) {
+  T& VariableDescription::getAttribute(const std::string& n)
+    requires(isVariableAttribute<T>)
+  {
     auto p = this->attributes.find(n);
     if (p == this->attributes.end()) {
       p = this->attributes.insert({n, VariableAttribute(T())}).first;
@@ -29,10 +28,9 @@ namespace mfront {
   }  // end of VariableDescription::getAttribute
 
   template <typename T>
-  typename std::enable_if<
-      tfel::meta::TLCountNbrOfT<T, VariableAttributeTypes>::value == 1,
-      const T&>::type
-  VariableDescription::getAttribute(const std::string& n) const {
+  const T& VariableDescription::getAttribute(const std::string& n) const
+    requires(isVariableAttribute<T>)
+  {
     auto p = this->attributes.find(n);
     if (p == this->attributes.end()) {
       VariableDescription::throwUndefinedAttribute(n);
@@ -41,10 +39,9 @@ namespace mfront {
   }  // end of VariableDescription::getAttribute
 
   template <typename T>
-  typename std::enable_if<
-      tfel::meta::TLCountNbrOfT<T, VariableAttributeTypes>::value == 1,
-      T>::type
-  VariableDescription::getAttribute(const std::string& n, const T& v) const {
+  T VariableDescription::getAttribute(const std::string& n, const T& v) const
+    requires(isVariableAttribute<T>)
+  {
     auto p = this->attributes.find(n);
     if (p != this->attributes.end()) {
       return p->second.template get<T>();

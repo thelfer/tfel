@@ -56,9 +56,10 @@ namespace mfront {
     using Hook = std::function<void()>;
     //! a simple alias
     using OrthotropicAxesConvention = tfel::material::OrthotropicAxesConvention;
-    //! \return the behaviour description
+    //
     const BehaviourDescription& getBehaviourDescription() const override final;
-
+    std::map<std::string, std::shared_ptr<AbstractBehaviourInterface>>
+    getBehaviourInterfaces() const override;
     std::shared_ptr<MaterialPropertyDescription>
     handleMaterialPropertyDescription(const std::string&) override;
     std::string getMaterialKnowledgeIdentifier() const override;
@@ -813,9 +814,9 @@ namespace mfront {
      */
     virtual void treatUnknownVariableMethod(const Hypothesis,
                                             const std::string&);
-    //! method called when an unknown keyword is parsed
+    //! \brief method called when an unknown keyword is parsed
     void treatUnknownKeyword() override;
-    //! destructor
+    //! \brief destructor
     ~BehaviourDSLCommon() override;
     /*!
      * \param[in] h : modelling hypothesis
