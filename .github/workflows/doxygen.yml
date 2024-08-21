@@ -34,6 +34,7 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         personal_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_branch: master
         publish_dir: ${{github.workspace}}/build/docs/doxygen/html/ 
         external_repository: thelfer/thelfer.github.io
         destination_dir: tfel/doxygen/
