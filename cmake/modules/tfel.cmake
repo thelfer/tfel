@@ -1,7 +1,9 @@
 include(CMakePackageConfigHelpers)
 
 macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
-  project("tfel")
+  project("tfel"
+           HOMEPAGE_URL "https://thelfer.github.io/tfel/web/index.html"
+           LANGUAGES C CXX)
   set(PACKAGE_NAME "tfel")
   set(VERSION "${tfel_version_major}.${tfel_version_minor}.${tfel_version_patch}")
 

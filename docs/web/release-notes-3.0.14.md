@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 3.0.14 of the
 
 # Issues fixed
 
+## Issue 610 [cmake] better support for using `TFEL` as a `CPM` dependency
+
+For more details, see <https://github.com/thelfer/tfel/issues/610>.
+
 ## Issue 605: update `octave` interface
 
 For more details, see <https://github.com/thelfer/tfel/issues/605>.
