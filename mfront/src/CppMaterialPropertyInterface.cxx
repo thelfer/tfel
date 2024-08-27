@@ -123,7 +123,9 @@ namespace mfront {
            << "#include<cmath>\n"
            << "#include<algorithm>\n"
            << "#include<stdexcept>\n"
-           << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
+           << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
+           << "#include\"TFEL/PhysicalConstants.hxx\"\n"
+           << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n";
     if (useQuantities(mpd)) {
       header << "#include\"TFEL/Math/qt.hxx\"\n"
              << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
@@ -291,7 +293,21 @@ namespace mfront {
       }
     }
     src << ") const\n{\n"
-        << "using namespace std;\n";
+        << "using namespace std;\n"
+        << "using tfel::math::invert_type;\n"
+        << "using tfel::math::result_type;\n"
+        << "using tfel::math::derivative_type;\n";
+    if (useQuantities(mpd)) {
+      src << "using PhysicalConstants [[maybe_unused]] = "
+          << "tfel::PhysicalConstants<double, true>;\n";
+    } else {
+      src << "using PhysicalConstants [[maybe_unused]] = "
+          << "tfel::PhysicalConstants<double, false>;\n";
+    }
+    src << "[[maybe_unused]] auto min = [](const auto a, const auto b) "
+	<< "{ return a < b ? a : b; };\n"
+	<< "[[maybe_unused]] auto max = [](const auto a, const auto b) "
+	<< "{ return a > b ? a : b; };\n";
     writeMaterialLaws(src, mpd.materialLaws);
     writeStaticVariables(src, mpd.staticVars, fd.fileName);
     for (const auto& i : mpd.inputs) {
