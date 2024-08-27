@@ -175,6 +175,7 @@ namespace mfront {
           << "}\n";
     }
   }
+
   std::string CppMaterialPropertyInterface::getName() { return "c++"; }
 
   CppMaterialPropertyInterface::CppMaterialPropertyInterface() = default;
@@ -437,7 +438,21 @@ namespace mfront {
       }
     }
     src << ") const\n{\n"
-        << "using namespace std;\n";
+        << "using namespace std;\n"
+        << "using tfel::math::invert_type;\n"
+        << "using tfel::math::result_type;\n"
+        << "using tfel::math::derivative_type;\n";
+    if (useQuantities(mpd)) {
+      src << "using PhysicalConstants [[maybe_unused]] = "
+          << "tfel::PhysicalConstants<double, true>;\n";
+    } else {
+      src << "using PhysicalConstants [[maybe_unused]] = "
+          << "tfel::PhysicalConstants<double, false>;\n";
+    }
+    src << "[[maybe_unused]] auto min = [](const auto a, const auto b) "
+	<< "{ return a < b ? a : b; };\n"
+	<< "[[maybe_unused]] auto max = [](const auto a, const auto b) "
+	<< "{ return a > b ? a : b; };\n";
     writeMaterialLaws(src, mpd.materialLaws);
     writeStaticVariables(src, mpd.staticVars, fd.fileName);
     for (const auto& i : mpd.inputs) {
