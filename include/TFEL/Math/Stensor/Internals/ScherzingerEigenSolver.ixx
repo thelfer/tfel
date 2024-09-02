@@ -56,19 +56,34 @@ namespace tfel::math::internals {
                         (E * E + F * F + (C - trM_3) * (C - trM_3));
     const real J2 = one_half * trMdMd;
 
-    // compute third invariant : det(dev(M))
-    const real J3 = (A - trM_3) * (B - trM_3) * (C - trM_3) + 2 * D * E * F -
-                    (B - trM_3) * E * E - D * D * (C - trM_3) -
-                    (A - trM_3) * F * F;
-
-    // alpha not well computed... 
+    // alpha not well computed...
     // use test std::numeric_limits<real>::min()
-    if (J2 > std::numeric_limits<real>::epsilon()) {
-      const auto alpha =
-          one_third * std::acos(J3 / 2 * std::sqrt(power<3>(3 / J2)));
-      vp[0] = 2 * std::sqrt(one_third * J2) * std::cos(alpha);
+    if (abs(J2) > std::numeric_limits<real>::epsilon()) {
+      // compute third invariant : det(dev(M))
+      const real J3 = (A - trM_3) * (B - trM_3) * (C - trM_3) + 2 * D * E * F -
+                      (B - trM_3) * E * E - D * D * (C - trM_3) -
+                      (A - trM_3) * F * F;
+
+      // const auto alpha =
+      //     one_third * std::acos(J3 / 2 * std::sqrt(power<3>(3 / J2)));
+
+      const auto alpha = [&]() -> real {
+        if (J3 / 2 * std::sqrt(power<3>(3 / J2)) + 1 <
+            std::numeric_limits<real>::min()) {
+          return M_PI;
+        }
+        if (J3 / 2 * std::sqrt(power<3>(3 / J2)) - 1 >
+            std::numeric_limits<real>::min()) {
+          return 0;
+        }
+        return one_third *
+               std::acos(J3 / real{2} * std::sqrt(power<3>(real{3} / J2)));
+      }();
+
+      vp[0] = real{2} * std::sqrt(one_third * J2) * std::cos(alpha);
+
     } else {
-      vp[0] = 0.;
+      vp[0] = 0;
     }
   }
 
@@ -266,7 +281,7 @@ namespace tfel::math::internals {
           return u2 / listNormu(1);
         }
       } else {
-        return tvector<3u, real>{0., 1., 0.};
+        return tvector<3u, real>{0, 1, 0};
       }
     }();
 
