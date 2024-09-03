@@ -183,12 +183,12 @@ else(HAVE_NORETURN_ATTRIBUTE)
   MESSAGE(STATUS "disabling [[ noreturn ]] attribute")
 endif(HAVE_NORETURN_ATTRIBUTE)
 			  
-add_definitions("-DOPTIMISATION_FLAGS0=\\\"\"${VISIBILITY_FLAGS} ${OPTIMISATION_FLAGS}\"\\\"")
-add_definitions("-DOPTIMISATION_FLAGS=\\\"\"${OPTIMISATION_FLAGS_MARCH}\"\\\"")
-add_definitions("-DOPTIMISATION_FLAGS2=\\\"\"${OPTIMISATION_FLAGS2}\"\\\"")
-add_definitions("-DCOMPILER_WARNINGS=\\\"\"${COMPILER_WARNINGS}\"\\\"")
-add_definitions("-DCOMPILER_FLAGS=\\\"\"${COMPILER_FLAGS}\"\\\"")
-add_definitions("-DCOMPILER_CXXFLAGS=\\\"\"${COMPILER_CXXFLAGS}\"\\\"")
+tfel_add_c_cxx_definitions("OPTIMISATION_FLAGS0=\"${VISIBILITY_FLAGS} ${OPTIMISATION_FLAGS}\"")
+tfel_add_c_cxx_definitions("OPTIMISATION_FLAGS=\"${OPTIMISATION_FLAGS_MARCH}\"")
+tfel_add_c_cxx_definitions("OPTIMISATION_FLAGS2=\"${OPTIMISATION_FLAGS2}\"")
+tfel_add_c_cxx_definitions("COMPILER_WARNINGS=\"${COMPILER_WARNINGS}\"")
+tfel_add_c_cxx_definitions("COMPILER_FLAGS=\"${COMPILER_FLAGS}\"")
+tfel_add_c_cxx_definitions("COMPILER_CXXFLAGS=\"${COMPILER_CXXFLAGS}\"")
 
 # export variables defining compilation options as cmake lists
 set(TFEL_COMPILER_FLAGS      "${COMPILER_FLAGS}")
