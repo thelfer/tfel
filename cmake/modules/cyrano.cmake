@@ -1,5 +1,5 @@
 if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-  add_definitions("-DCYRANO_ARCH=64")
+  tfel_add_c_cxx_definitions("CYRANO_ARCH=64")
 else( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-  add_definitions("-DCYRANO_ARCH=32")
+  tfel_add_c_cxx_definitions("CYRANO_ARCH=32")
 endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
