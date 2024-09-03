@@ -1,13 +1,20 @@
 include(CMakePackageConfigHelpers)
 
+# function add the given definition to the C and C++ preprocessor
+function(tfel_add_c_cxx_definitions define)
+  add_compile_definitions("$<$<COMPILE_LANGUAGE:C,CXX>:${define}>")
+endfunction(tfel_add_c_cxx_definitions)
+
 macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
-  project("tfel")
+  project("tfel"
+           HOMEPAGE_URL "https://thelfer.github.io/tfel/web/index.html"
+           LANGUAGES C CXX)
   set(PACKAGE_NAME "tfel")
   set(VERSION "${tfel_version_major}.${tfel_version_minor}.${tfel_version_patch}")
 
   if(TFEL_APPEND_VERSION OR TFEL_VERSION_FLAVOUR)
     set(TFEL_APPEND_SUFFIX ON)
-    add_definitions("-DTFEL_APPEND_SUFFIX")
+    tfel_add_c_cxx_definitions("TFEL_APPEND_SUFFIX")
   endif(TFEL_APPEND_VERSION OR TFEL_VERSION_FLAVOUR)
 
   set(TFEL_WEBSITE "http://tfel.sourceforce.net")
@@ -22,15 +29,15 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   else(TFEL_VERSION_FLAVOUR)
     set(TFEL_VERSION "${VERSION}")
   endif(TFEL_VERSION_FLAVOUR)
-  add_definitions("-DVERSION=\\\"\"${TFEL_VERSION}\"\\\"")
+  tfel_add_c_cxx_definitions("VERSION=\"${TFEL_VERSION}\"")
   
   if(TFEL_APPEND_VERSION)
     set(TFEL_SUFFIX "${TFEL_VERSION}")
-    add_definitions("-DTFEL_SUFFIX=\\\"\"${TFEL_SUFFIX}\"\\\"")
+    tfel_add_c_cxx_definitions("TFEL_SUFFIX=\"${TFEL_SUFFIX}\"")
   else(TFEL_APPEND_VERSION)
     if(TFEL_VERSION_FLAVOUR)
       set(TFEL_SUFFIX "${TFEL_VERSION_FLAVOUR}")
-      add_definitions("-DTFEL_SUFFIX=\\\"\"${TFEL_SUFFIX}\"\\\"")
+      tfel_add_c_cxx_definitions("TFEL_SUFFIX=\"${TFEL_SUFFIX}\"")
     endif(TFEL_VERSION_FLAVOUR)
   endif(TFEL_APPEND_VERSION)
 
@@ -40,7 +47,7 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   endif(TFEL_SUFFIX)
   
   if(LIB_SUFFIX)
-    add_definitions("-DLIB_SUFFIX=\\\"\"${LIB_SUFFIX}\"\\\"")
+    tfel_add_c_cxx_definitions("LIB_SUFFIX=\"${LIB_SUFFIX}\"")
   endif(LIB_SUFFIX)
 endmacro(tfel_project)
 
