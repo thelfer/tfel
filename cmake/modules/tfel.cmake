@@ -1,5 +1,14 @@
+include(CMakePackageConfigHelpers)
+
+# function add the given definition to the C and C++ preprocessor
+function(tfel_add_c_cxx_definitions define)
+  add_compile_definitions("$<$<COMPILE_LANGUAGE:C,CXX>:${define}>")
+endfunction(tfel_add_c_cxx_definitions)
+
 macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
-  project("tfel")
+  project("tfel"
+           HOMEPAGE_URL "https://thelfer.github.io/tfel/web/index.html"
+           LANGUAGES C CXX)
   set(PACKAGE_NAME "tfel")
   set(VERSION "${tfel_version_major}.${tfel_version_minor}.${tfel_version_patch}")
   set(TFEL_VERSION "${VERSION}")
@@ -8,11 +17,11 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   set(TFEL_VERSION_MAJOR "${tfel_version_major}")
   set(TFEL_VERSION_MINOR "${tfel_version_minor}")
   set(TFEL_VERSION_PATCH "${tfel_version_patch}")
-  add_definitions("-DVERSION=\\\"\"${TFEL_VERSION}\"\\\"")
+  tfel_add_c_cxx_definitions("VERSION=\"${TFEL_VERSION}\"")
   string(REPLACE "." "_" TFEL_VERSION_FOR_PYTHON_MODULES "${TFEL_VERSION}")
   string(REPLACE "-" "_" TFEL_VERSION_FOR_PYTHON_MODULES "${TFEL_VERSION_FOR_PYTHON_MODULES}")
   if(LIB_SUFFIX)
-    add_definitions("-DLIB_SUFFIX=\\\"\"${LIB_SUFFIX}\"\\\"")
+    tfel_add_c_cxx_definitions("LIB_SUFFIX=\"${LIB_SUFFIX}\"")
   endif(LIB_SUFFIX)
 endmacro(tfel_project)
 
