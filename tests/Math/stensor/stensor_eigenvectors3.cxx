@@ -43,7 +43,7 @@ void test() {
   tfel::math::tmatrix<3u, 3u, T> m;
   tfel::math::tvector<3u, T> vp;
 
-  stensor<3, T> s(static_cast<T>(0.));
+  stensor<3, T> s(static_cast<T>(0));
   s(0) = static_cast<T>(1.232);
   s(1) = static_cast<T>(2.5198);
   s(2) = static_cast<T>(0.234);
@@ -115,13 +115,13 @@ void test2() {
   tfel::math::tmatrix<3u, 3u, T> m;
   tfel::math::tvector<3u, T> vp;
 
-  stensor<3, T> s(static_cast<T>(0.));
-  s(0) = static_cast<T>(1.);
-  s(1) = static_cast<T>(1.);
-  s(2) = static_cast<T>(1.);
-  s(3) = static_cast<T>(0.);
-  s(4) = static_cast<T>(0.);
-  s(5) = static_cast<T>(0.);
+  stensor<3, T> s(static_cast<T>(0));
+  s(0) = static_cast<T>(1);
+  s(1) = static_cast<T>(1);
+  s(2) = static_cast<T>(1);
+  s(3) = static_cast<T>(0);
+  s(4) = static_cast<T>(0);
+  s(5) = static_cast<T>(0);
 
   s.template computeEigenVectors<
       stensor_common::EigenSolver::SCHERZINGEREIGENSOLVER>(vp, m);
@@ -142,21 +142,21 @@ void test2() {
   vec3[1] = m(1, 2);
   vec3[2] = m(2, 2);
 
-  assert(abs(vp1 - static_cast<T>(1.)) < 20 * numeric_limits<T>::epsilon());
-  assert(abs(vp2 - static_cast<T>(1.)) < 20 * numeric_limits<T>::epsilon());
-  assert(abs(vp3 - static_cast<T>(1.)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vp1 - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vp2 - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vp3 - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
 
-  assert(abs(vec1[0] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
-  assert(abs(vec1[1] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
-  assert(abs(vec1[2] - static_cast<T>(1.)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec1[0] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec1[1] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec1[2] - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
 
-  assert(abs(vec2[0] - static_cast<T>(1.)) < 20 * numeric_limits<T>::epsilon());
-  assert(abs(vec2[1] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
-  assert(abs(vec2[2] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec2[0] - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec2[1] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec2[2] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
 
-  assert(abs(vec3[0] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
-  assert(abs(vec3[1] - static_cast<T>(1.)) < 20 * numeric_limits<T>::epsilon());
-  assert(abs(vec3[2] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec3[0] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec3[1] - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec3[2] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
 }
 
 template <typename T>
@@ -175,13 +175,13 @@ void test3() {
   tfel::math::tmatrix<3u, 3u, T> m;
   tfel::math::tvector<3u, T> vp;
 
-  stensor<3, T> s(static_cast<T>(0.));
-  s(0) = static_cast<T>(1.);
-  s(1) = static_cast<T>(1.);
-  s(2) = static_cast<T>(0.);
-  s(3) = static_cast<T>(0.);
-  s(4) = static_cast<T>(0.);
-  s(5) = static_cast<T>(0.);
+  stensor<3, T> s(static_cast<T>(0));
+  s(0) = static_cast<T>(1);
+  s(1) = static_cast<T>(1);
+  s(2) = static_cast<T>(0);
+  s(3) = static_cast<T>(0);
+  s(4) = static_cast<T>(0);
+  s(5) = static_cast<T>(0);
 
   s.template computeEigenVectors<
       stensor_common::EigenSolver::SCHERZINGEREIGENSOLVER>(vp, m);
@@ -202,21 +202,26 @@ void test3() {
   vec3[1] = m(1, 2);
   vec3[2] = m(2, 2);
 
-  assert(abs(vp1 - static_cast<T>(1.)) < 20 * numeric_limits<T>::epsilon());
-  assert(abs(vp2 - static_cast<T>(1.)) < 20 * numeric_limits<T>::epsilon());
-  assert(abs(vp3 - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
+  std::cout << "abs(vp1 - static_cast<T>(1)) = " << abs(vp1 - static_cast<T>(1)) << std::endl;
+  std::cout << "abs(vp2 - static_cast<T>(1)) = " << abs(vp2 - static_cast<T>(1)) << std::endl;
+  std::cout << "abs(vp3 - static_cast<T>(0)) = " << abs(vp3 - static_cast<T>(0)) << std::endl;
+  std::cout << "20 * numeric_limits<T>::epsilon() = " << 20 * numeric_limits<T>::epsilon() << std::endl;
 
-  assert(abs(vec1[0] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
-  assert(abs(vec1[1] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
-  assert(abs(vec1[2] - static_cast<T>(1.)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vp1 - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vp2 - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vp3 - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
 
-  assert(abs(vec2[0] - static_cast<T>(1.)) < 20 * numeric_limits<T>::epsilon());
-  assert(abs(vec2[1] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
-  assert(abs(vec2[2] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec1[0] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec1[1] - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec1[2] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
 
-  assert(abs(vec3[0] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
-  assert(abs(vec3[1] - static_cast<T>(1.)) < 20 * numeric_limits<T>::epsilon());
-  assert(abs(vec3[2] - static_cast<T>(0.)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec2[0] + static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec2[1] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec2[2] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+
+  assert(abs(vec3[0] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec3[1] - static_cast<T>(0)) < 20 * numeric_limits<T>::epsilon());
+  assert(abs(vec3[2] - static_cast<T>(1)) < 20 * numeric_limits<T>::epsilon());
 }
 
 /* coverity [UNCAUGHT_EXCEPT]*/
