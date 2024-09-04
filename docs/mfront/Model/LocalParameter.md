@@ -26,5 +26,5 @@ the `setDefaultValue` method.
 ~~~~{.cpp}
 @LocalParameter real a;
 a.setDefaultValue(1.23);
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 

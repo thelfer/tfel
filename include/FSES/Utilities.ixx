@@ -52,8 +52,9 @@ namespace fses {
   template <typename VectorType>
   struct GetVectorNumericType {
     //! the result
-    using type = typename std::decay<decltype(
-        std::declval<VectorType>().operator()(0))>::type;
+    using type =
+        typename std::decay<decltype(std::declval<VectorType>().operator()(
+            0))>::type;
   };  // end of struct GetVectorNumericType
 
   /*!
@@ -80,8 +81,9 @@ namespace fses {
   template <typename MatrixType>
   struct GetMatrixNumericType {
     //! the result
-    using type = typename std::decay<decltype(
-        std::declval<MatrixType>().operator()(0, 0))>::type;
+    using type =
+        typename std::decay<decltype(std::declval<MatrixType>().operator()(
+            0, 0))>::type;
   };  // end of struct GetMatrixNumericType
   /*!
    * \brief partial specialisation for pointers

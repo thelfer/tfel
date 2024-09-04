@@ -18,9 +18,10 @@
 #include <iterator>
 #include <algorithm>
 #include <stdexcept>
-#include <iostream>
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Config/GetInstallPath.hxx"
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/Token.hxx"
 #include "TFEL/System/System.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
@@ -37,6 +38,7 @@
 #include "MFront/DSLFactory.hxx"
 #include "MFront/MaterialPropertyDSL.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/DataInterpolationUtilities.hxx"
 #include "MFront/MaterialPropertyInterfaceFactory.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
@@ -101,6 +103,7 @@ namespace mfront {
                               &MaterialPropertyDSL::treatInput);
     this->registerNewCallBack("@Output", &MaterialPropertyDSL::treatOutput);
     this->registerNewCallBack("@Function", &MaterialPropertyDSL::treatFunction);
+    this->registerNewCallBack("@Data", &MaterialPropertyDSL::treatData);
     this->registerNewCallBack("@Import", &MaterialPropertyDSL::treatImport);
     this->registerNewCallBack("@Interface",
                               &MaterialPropertyDSL::treatInterface);
@@ -132,14 +135,18 @@ namespace mfront {
 
   std::string MaterialPropertyDSL::getOverridableVariableNameByExternalName(
       const std::string& en) const {
-    const auto p = findByExternalName(this->md.parameters, en);
-    if (p == this->md.parameters.end()) {
+    const auto pi = findByExternalName(this->md.inputs, en);
+    if (pi != this->md.inputs.end()) {
+      return pi->name;
+    }
+    const auto pp = findByExternalName(this->md.parameters, en);
+    if (pp == this->md.parameters.end()) {
       tfel::raise(
           "MaterialPropertyDSL::getOverridableVariableNameByExternalName: "
           "no overridable variable associated with external name '" +
           en + "'");
     }
-    return p->name;
+    return pp->name;
   }  // end of getOverridableVariableNameByExternalName
 
   void MaterialPropertyDSL::overrideByAParameter(const std::string& n,
@@ -472,32 +479,167 @@ namespace mfront {
 
   void MaterialPropertyDSL::finalizeVariablesDeclaration() {
     for (const auto& op : this->overriding_parameters) {
-      auto p = std::find_if(
-          this->md.parameters.begin(), this->md.parameters.end(),
-          [&op](const VariableDescription& v) {
-            return (v.symbolic_form == op.first) || (v.name == op.first) ||
-                   (v.getExternalName() == op.first);
-          });
-      if (p == this->md.parameters.end()) {
+      auto match = [&op](const VariableDescription& v) {
+        return (v.symbolic_form == op.first) || (v.name == op.first) ||
+               (v.getExternalName() == op.first);
+      };
+      auto pi =
+          std::find_if(this->md.inputs.begin(), this->md.inputs.end(), match);
+      auto pp = std::find_if(this->md.parameters.begin(),
+                             this->md.parameters.end(), match);
+      if ((pi == this->md.inputs.end()) &&
+          (pp == this->md.parameters.end())) {
         tfel::raise(
             "MaterialPropertyDSL::finalizeVariablesDeclaration: "
             "no variable named '" +
             op.first + "' to be overriden");
       }
-      if (p->getTypeFlag() != SupportedTypes::SCALAR) {
-        tfel::raise(
-            "MaterialPropertyDSL::finalizeVariablesDeclaration: "
-            "only scalar variables can be overriden by a parameter");
+      {
+        // checks
+        const auto& v = (pi != this->md.inputs.end()) ? *pi : *pp;
+        if (v.getTypeFlag() != SupportedTypes::SCALAR) {
+          tfel::raise(
+              "MaterialPropertyDSL::finalizeVariablesDeclaration: "
+              "only scalar variables can be overriden by a parameter");
+        }
+        if (v.arraySize != 1u) {
+          tfel::raise(
+              "MaterialPropertyDSL::finalizeVariablesDeclaration: "
+              "overriding array of parameters is not supported yet");
+        }
       }
-      if (p->arraySize != 1u) {
-        tfel::raise(
-            "MaterialPropertyDSL::finalizeVariablesDeclaration: "
-            "overriding array of parameters is not supported yet");
+      if (pi != this->md.inputs.end()) {
+        auto v = *pi;
+        v.setAttribute(VariableDescription::defaultValue, op.second, true);
+        this->md.inputs.erase(pi);
+        this->md.parameters.push_back(v);
+      } else {
+        pp->setAttribute(VariableDescription::defaultValue, op.second, true);
       }
-      p->setAttribute(VariableDescription::defaultValue, op.second, true);
     }
     this->md.checkAndCompletePhysicalBoundsDeclaration();
   }  // end of finalizeVariablesDeclaration
+
+  static std::string getFunctionAssociatedWithAValue(
+      const VariableDescription& output, const double value) {
+    auto body = std::string{};
+    std::ostringstream os;
+    os.precision(14);
+    os << value;
+    body += output.name + " = ";
+    body += output.type + "{" + os.str() + "};\n";
+    return body;
+  }  // end of getFunctionAssociatedWithAValue
+
+  void MaterialPropertyDSL::treatDataWithoutInput() {
+    using namespace tfel::utilities;
+    const auto opts =
+        Data::read(this->current, this->tokens.end()).get<DataMap>();
+    for (const auto& [k, v] : opts) {
+      if (k != "value") {
+        this->throwRuntimeError("MaterialPropertyDSL::treatData",
+                                "unexpected option '" + k + "'");
+      }
+      if (!v.is<double>()) {
+        this->throwRuntimeError("MaterialPropertyDSL::treatData",
+                                "invalid type for option '" + k + "'");
+      }
+    }
+    if (opts.empty()) {
+      this->throwRuntimeError("MaterialPropertyDSL::treatData",
+                              "no option 'value' defined");
+    }
+    const auto v = opts.at("value");
+    this->md.f.body +=
+        getFunctionAssociatedWithAValue(this->md.output, v.get<double>());
+  }  // end of treatDataWithoutInput
+
+  void MaterialPropertyDSL::treatDataWithOneInput() {
+    using namespace tfel::utilities;
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
+    auto& body = this->md.f.body;
+    const auto& v = this->md.inputs[0];
+    const auto idata = SingleVariableInterpolatedData::extract(
+        Data::read(this->current, this->tokens.end()).get<DataMap>());
+    if (idata.itype == SingleVariableInterpolatedData::LINEAR_INTERPOLATION) {
+      if (idata.values.size() == 1) {
+        const auto value = idata.values.begin()->second;
+        body += getFunctionAssociatedWithAValue(this->md.output, value);
+      } else {
+        this->md.f.used_inputs.insert(v.name);
+        this->md.appendToIncludes(
+            "#include \"TFEL/Math/LinearInterpolation.hxx\"");
+        const auto args = SingleVariableInterpolatedData::
+            WriteLinearInterpolationValuesArguments{
+                .abscissae_name = "mfront_" + v.name + "_values",
+                .abscissae_type = v.type,
+                .ordinates_name = "mfront_" + this->md.output.name + "_values",
+                .ordinates_type = this->md.output.type};
+        const auto etype_value = idata.etype ? "true" : "false";
+        body += writeLinearInterpolationValues(idata, args);
+        body += this->md.output.name + " = ";
+        body += "tfel::math::computeLinearInterpolation<";
+        body += etype_value;
+        body += ">(";
+        body += args.abscissae_name + ", ";
+        body += args.ordinates_name + ", ";
+        body += v.name + ");\n";
+      }
+    } else {
+      if (idata.values.size() == 1) {
+        const auto value = idata.values.begin()->second;
+        body += getFunctionAssociatedWithAValue(this->md.output, value);
+      } else {
+        this->md.appendToIncludes("#include \"TFEL/Math/CubicSpline.hxx\"");
+        insert_if(this->link_directories,
+                  "$(shell " + tfel_config + " --library-path)");
+        insert_if(this->link_libraries,
+                  "$(shell " + tfel_config +
+                      " --library-dependency --math-cubic-spline)");
+        this->md.f.used_inputs.insert(v.name);
+        const auto etype_value = idata.etype ? "true" : "false";
+        const auto args =
+            SingleVariableInterpolatedData::WriteCollocationPointsArguments{
+                .collocation_points_name = "mfront_collocation_points",
+                .abscissae_type = v.type,
+                .ordinates_type = this->md.output.type,
+                .ordinates_derivatives_type = "tfel::math::derivative_type<" +
+                                              this->md.output.type + ", " +
+                                              v.type + ">"};
+        body += writeCollocationPoints(idata, args);
+        body += this->md.output.name + " = ";
+        body += "tfel::math::computeCubicSplineInterpolation<";
+        body += etype_value;
+        body += ">(";
+        body += args.collocation_points_name + ", ";
+        body += v.name + ");\n";
+      }
+    }
+  }  // end of treatDataWithOneInput
+
+  void MaterialPropertyDSL::treatData() {
+    auto throw_if = [this](const bool b, const std::string& m) {
+      if (b) {
+        this->throwRuntimeError("MaterialPropertyDSL::treatData", m);
+      }
+    };
+    this->finalizeVariablesDeclaration();
+    if (this->md.output.name.empty()) {
+      this->reserveName("res");
+      this->md.output = VariableDescription{"real", "res", 1u, 0u};
+    }
+    throw_if(!this->md.f.body.empty(), "function already defined");
+    if (this->md.inputs.empty()) {
+      this->treatDataWithoutInput();
+    } else if (this->md.inputs.size() == 1) {
+      this->treatDataWithOneInput();
+    } else {
+      this->throwRuntimeError(
+          "MaterialPropertyDSL::treatData",
+          "data with multiple inputs are not supported yet");
+    }
+    this->md.f.modified = true;
+  }
 
   void MaterialPropertyDSL::treatFunction() {
     auto throw_if = [this](const bool b, const std::string& m) {
@@ -621,7 +763,7 @@ namespace mfront {
              "parenthesis still opened at the end of function");
     throw_if(this->md.f.body.empty(), "empty function");
     throw_if(!this->md.f.modified, "function does not modifiy output.");
-  }  // end of treatFunction()
+  }  // end of treatFunction
 
   void MaterialPropertyDSL::treatMethod() {
     using namespace tfel::utilities;

@@ -4,8 +4,8 @@ if(TFEL_NUMPY_SUPPORT)
     ndarray.cxx)
   target_include_directories(TFELNumpySupport
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/bindings/python/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/bindings/python/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
   target_include_directories(TFELNumpySupport
     SYSTEM
@@ -118,6 +118,8 @@ else(NOT WIN32)
   tfel_python_module(system system.cxx
     LibraryInformation.cxx
     ExternalLibraryManager.cxx
+    ExternalMaterialKnowledgeDescription.cxx
+    ExternalMaterialPropertyDescription.cxx
     ExternalBehaviourDescription.cxx)
 endif(NOT WIN32)
 target_link_libraries(py_tfel_system

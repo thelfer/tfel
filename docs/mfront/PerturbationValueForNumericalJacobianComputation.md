@@ -24,4 +24,4 @@ Y_{i}^{+\epsilon}(j)=
 
 ~~~~{.cpp}
 @PerturbationValueForNumericalJacobianComputation 1.e-7;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

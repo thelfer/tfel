@@ -173,11 +173,13 @@ namespace mfront {
           "(this->lambda_tdt)*trace(this->eel)*StrainStensor::Id()+2*(this->mu_"
           "tdt)*(this->eel);\n"
        << "this->updateAuxiliaryStateVariables();\n";
-    for (const auto& v : d.getPersistentVariables()) {
-      this->writePhysicalBoundsChecks(os, v, false);
-    }
-    for (const auto& v : d.getPersistentVariables()) {
-      this->writeBoundsChecks(os, v, false);
+    if (!areRuntimeChecksDisabled(this->bd)) {
+      for (const auto& v : d.getPersistentVariables()) {
+        this->writePhysicalBoundsChecks(os, v, false);
+      }
+      for (const auto& v : d.getPersistentVariables()) {
+        this->writeBoundsChecks(os, v, false);
+      }
     }
     if (this->bd.useQt()) {
       os << "return MechanicalBehaviour<" << btype

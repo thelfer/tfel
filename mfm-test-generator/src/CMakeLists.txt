@@ -16,23 +16,43 @@ mfmtg_library(MFMTestGenerator
   LicosInputFileGenerators.cxx
   MFMTestGeneratorFileExport.cxx)
 target_include_directories(MFMTestGenerator
-   PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfm-test-generator/include>
-   $<INSTALL_INTERFACE:include>)
+  PUBLIC 
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfm-test-generator/include>
+  $<INSTALL_INTERFACE:include>)
 target_link_libraries(MFMTestGenerator
   PUBLIC
   MFrontLogStream
   TFELMTest TFELMaterial
   TFELSystem TFELUtilities)
+if(enable-static)
+  target_include_directories(MFMTestGenerator-static
+   PUBLIC 
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfm-test-generator/include>
+   $<INSTALL_INTERFACE:include>)
+  target_link_libraries(MFMTestGenerator-static
+    PUBLIC
+    MFrontLogStream-static
+    TFELMTest-static TFELMaterial-static
+    TFELSystem-static TFELUtilities-static)
+endif(enable-static)
 
 if(TFEL_HAVE_MADNEX)
   target_compile_definitions(MFMTestGenerator
     PUBLIC MFM_TEST_GENERATOR_HAVE_MADNEX)
   target_link_libraries(MFMTestGenerator
     PUBLIC madnex::Madnex)
+  if(enable-static)
+    target_compile_definitions(MFMTestGenerator-static
+      PUBLIC MFM_TEST_GENERATOR_HAVE_MADNEX)
+    target_link_libraries(MFMTestGenerator-static
+      PUBLIC madnex::Madnex)
+  endif(enable-static)
 endif(TFEL_HAVE_MADNEX)
 
 add_executable(mfm-test-generator mfm-test-generator.cxx)

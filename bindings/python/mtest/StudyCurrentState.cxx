@@ -52,6 +52,7 @@ void declareStudyCurrentState() {
       .def_readonly("iterations", &StudyCurrentState::iterations)
       .def_readonly("subSteps", &StudyCurrentState::subSteps)
       .def_readonly("dt_1", &StudyCurrentState::dt_1)
+      .def("makeDeepCopy", &StudyCurrentState::makeDeepCopy)
       .def("getEvolutionValue", &StudyCurrentState_getEvolutionValue)
       .def("getStructureCurrentState", getStructureCurrentState,
            boost::python::return_internal_reference<>())

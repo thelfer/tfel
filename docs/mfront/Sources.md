@@ -16,5 +16,5 @@ the `@Includes` keyword.
     std::cout << "Example of a function " << std::endl;
   } // end of f
 }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 

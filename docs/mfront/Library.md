@@ -19,4 +19,4 @@ except the first:
 
 ~~~~{.cpp}
 @Library AlcyoneLibrary;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

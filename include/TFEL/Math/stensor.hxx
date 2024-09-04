@@ -76,22 +76,24 @@ namespace tfel::math {
   struct stensor_common {
     //! \brief available eigen solver
     enum EigenSolver {
-      //! historical algorithm
+      //! \brief historical algorithm
       TFELEIGENSOLVER,
-      //! non iterative solver from Joachim Kopp,
+      //! \brief non iterative solver from Joachim Kopp,
       FSESANALYTICALEIGENSOLVER,
-      //! Jacobi iterative solver from Joachim Kopp
+      //! \brief Jacobi iterative solver from Joachim Kopp
       FSESJACOBIEIGENSOLVER,
-      //! QL with implicit shifts iterative solver from Joachim Kopp
+      //! \brief QL with implicit shifts iterative solver from Joachim Kopp
       FSESQLEIGENSOLVER,
-      //!  Cuppen's Divide & Conquer solver from Joachim Kopp
+      //! \brief  Cuppen's Divide & Conquer solver from Joachim Kopp
       FSESCUPPENEIGENSOLVER,
-      //!  hybride solver from Joachim Kopp
+      //! \brief  hybride solver from Joachim Kopp
       FSESHYBRIDEIGENSOLVER,
-      //! iterative solver from David Eberly, Geometric Tools
+      //! \brief iterative solver from David Eberly, Geometric Tools
       GTESYMMETRICQREIGENSOLVER,
-      //! non iterative solver from Scherzinger, W. M. and Dohrmann, C. R.,
-      SCHERZINGEREIGENSOLVER
+      //! \brief non iterative solver from Scherzinger, W. M. and Dohrmann, C. R.,
+      SCHERZINGEREIGENSOLVER,
+      //! \brief non iterative solver from Isaac Harari and Uri Albocher,
+      HARARIEIGENSOLVER
     };  // end of EigenSolver
     //! \brief available eigen solver
     enum EigenValuesOrdering {
@@ -102,7 +104,7 @@ namespace tfel::math {
       //! no ordering
       UNSORTED
     };  // end of EigenValuesOrdering
-  };    // end of struct stensor_common
+  };  // end of struct stensor_common
 
   template <unsigned short N, typename ValueType>
   struct stensor
@@ -672,6 +674,11 @@ namespace tfel::math {
         const bool = false) const;
   };  // end of struct stensor
 
+  // class template argument deduction
+  template <typename... T>
+  stensor(T&&... t) -> stensor<StensorSizeToDime<sizeof...(T)>::value,
+                               std::common_type_t<T...>>;
+
   /*!
    * \brief a simple alias for backward compatibility
    * \tparam N: space dimension
@@ -917,7 +924,6 @@ namespace tfel::typetraits {
 
 }  // end of namespace tfel::typetraits
 
-#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
 #include "TFEL/Math/Stensor/stensor.ixx"
 #include "TFEL/Math/Stensor/stensorResultType.hxx"
 #include "TFEL/Math/Stensor/DecompositionInPositiveAndNegativeParts.hxx"

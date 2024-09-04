@@ -43,6 +43,8 @@ struct StensorComputeEigenValues final : public tfel::tests::TestCase {
     this->test2<double, EigenSolver::GTESYMMETRICQREIGENSOLVER>();
     this->test2<float, EigenSolver::SCHERZINGEREIGENSOLVER>();
     this->test2<double, EigenSolver::SCHERZINGEREIGENSOLVER>();
+    this->test2<float, EigenSolver::HARARIEIGENSOLVER>();
+    this->test2<double, EigenSolver::HARARIEIGENSOLVER>();
     return this->result;
   }  // end of execute
 

@@ -17,6 +17,7 @@
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/Matrix/TVectorTMatrixExpr.hxx"
 #include "TFEL/Math/Matrix/TMatrixTVectorExpr.hxx"
+#include "TFEL/Math/Matrix/TMatrixTMatrixExpr.hxx"
 
 namespace tfel::math {
 
@@ -126,7 +127,7 @@ namespace tfel::math {
     using type = std::conditional_t<isInvalid<ResBase_>(),
                                     tfel::meta::InvalidType,
                                     tvector<N, ResBase_>>;
-  };  // end of ComputeBinaryResult.
+  };  // end of ResultType.
 
   template <unsigned short N, unsigned short M, typename T, typename T2>
   class ResultType<tvector<N, T>, tmatrix<N, M, T2>, OpMult> {
@@ -136,7 +137,21 @@ namespace tfel::math {
     using type = std::conditional_t<isInvalid<ResBase_>(),
                                     tfel::meta::InvalidType,
                                     tvector<M, ResBase_>>;
-  };  // end of ComputeBinaryResult.
+  };  // end of ResultType.
+
+  template <unsigned short N,
+            unsigned short M,
+            unsigned short K,
+            typename T,
+            typename T2>
+  class ResultType<tmatrix<N, K, T>, tmatrix<K, M, T2>, OpMult> {
+    typedef result_type<T, T2, OpMult> ResBase_;
+
+   public:
+    using type = std::conditional_t<isInvalid<ResBase_>(),
+                                    tfel::meta::InvalidType,
+                                    tmatrix<N, M, ResBase_>>;
+  };  // end of ResultType.
 
   template <unsigned short N,
             unsigned short M,
@@ -164,6 +179,21 @@ namespace tfel::math {
    public:
     using type = Expr<result_type<tvector<N, T>, tmatrix<N, M, T2>, OpMult>,
                       TVectorTMatrixExpr<N, M, A, B>>;
+  };
+
+  template <unsigned short N,
+            unsigned short M,
+            unsigned short K,
+            typename T,
+            typename T2,
+            typename A,
+            typename B>
+  class MatrixMatrixHandle<tmatrix<N, K, T>, tmatrix<K, M, T2>, A, B> {
+    struct DummyHandle {};
+
+   public:
+    using type = Expr<result_type<tmatrix<N, K, T>, tmatrix<K, M, T2>, OpMult>,
+                      TMatrixTMatrixExpr<N, M, K, A, B>>;
   };
 
 }  // end of namespace tfel::math

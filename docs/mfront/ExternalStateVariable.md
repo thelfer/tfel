@@ -33,4 +33,4 @@ or an entry name through the methods `setGlossaryName` or
 ~~~~{.cpp}
 // scalar external state variable
 @ExternalStateVariable strain s;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

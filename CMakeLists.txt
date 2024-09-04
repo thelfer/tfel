@@ -2,6 +2,8 @@
 set(CMAKE_LEGACY_CYGWIN_WIN32 0) 
 cmake_minimum_required(VERSION 2.4)
 cmake_policy(SET CMP0005 OLD)
+cmake_policy(SET CMP0022 NEW)
+
 if(CMAKE_VERSION VERSION_GREATER 3.0.0)
   cmake_policy(SET CMP0026 OLD)
 endif(CMAKE_VERSION VERSION_GREATER 3.0.0)
@@ -26,11 +28,11 @@ if(NOT BUILD_SHARED_LIBS)
   set(enable-static OFF CACHE BOOL "enable additional static libraries" FORCE)
 endif()
 
-if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+if(EXISTS "${PROJECT_BINARY_DIR}/conanbuildinfo.cmake")
+  include(${PROJECT_BINARY_DIR}/conanbuildinfo.cmake)
   conan_basic_setup(NO_OUTPUT_DIRS)
   set(TFEL_USES_CONAN ON)
-endif(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+endif(EXISTS "${PROJECT_BINARY_DIR}/conanbuildinfo.cmake")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CXX_STANDARD_REQUIRED ON)
@@ -51,7 +53,7 @@ include(cmake/modules/ieee754.cmake)
 include(CheckIncludeFiles)
 check_include_files(fenv.h HAVE_FENV_H)
 if(HAVE_FENV_H)
-  add_definitions("-DHAVE_FENV")
+  tfel_add_c_cxx_definitions("HAVE_FENV")
 endif(HAVE_FENV_H)
 
 option(enable-include-what-you-use
@@ -103,22 +105,22 @@ endif()
 
 # type of architecture
 if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-  add_definitions("-DTFEL_ARCH64")
+  tfel_add_c_cxx_definitions("TFEL_ARCH64")
 else( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-  add_definitions("-DTFEL_ARCH32")
+  tfel_add_c_cxx_definitions("TFEL_ARCH32")
 endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
 #extraction git hash
 if(NOT TFEL_GIT_HASH)
 execute_process(
   COMMAND git log -1 --format=%h
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
   OUTPUT_VARIABLE TFEL_GIT_HASH
   OUTPUT_STRIP_TRAILING_WHITESPACE)
 message("Abbreviated commit hash: ${TFEL_GIT_HASH}")
 endif(NOT TFEL_GIT_HASH)
-add_definitions("-DTFEL_GIT_HASH=\\\"\"${TFEL_GIT_HASH}\"\\\"")
-add_definitions("-DTFEL_CMAKE_GENERATOR=\\\"\"${CMAKE_GENERATOR}\"\\\"")
+tfel_add_c_cxx_definitions("TFEL_GIT_HASH=\"${TFEL_GIT_HASH}\"")
+tfel_add_c_cxx_definitions("TFEL_CMAKE_GENERATOR=\"${CMAKE_GENERATOR}\"")
 
 # testing
 set(CTEST_CONFIGURATION_TYPE "${JOB_BUILD_CONFIGURATION}")
@@ -173,7 +175,7 @@ endif(enable-madnex)
 option(enable-fortran "enable fortran support" OFF)
 if(enable-fortran)
   set(HAVE_FORTRAN ON)
-  add_definitions("-DHAVE_FORTRAN=1")
+  tfel_add_c_cxx_definitions("HAVE_FORTRAN=1")
   enable_language (Fortran)
   message(STATUS "fortran support enabled")
   set(enable-fortran-bindings ON)
@@ -195,7 +197,7 @@ option(enable-aster "build aster interface for mechanical behaviours" OFF)
 if(enable-aster)
   message(STATUS "aster support enabled")
   set(HAVE_ASTER ON)
-  add_definitions("-DHAVE_ASTER=1")
+  tfel_add_c_cxx_definitions("HAVE_ASTER=1")
   include(cmake/modules/aster.cmake)
 endif(enable-aster)
 
@@ -204,7 +206,7 @@ option(enable-abaqus "build abaqus interface for mechanical behaviours" OFF)
 if(enable-abaqus)
   message(STATUS "abaqus support enabled")
   set(HAVE_ABAQUS ON)
-  add_definitions("-DHAVE_ABAQUS=1")
+  tfel_add_c_cxx_definitions("HAVE_ABAQUS=1")
 endif(enable-abaqus)
 
 # LS-DYNA
@@ -212,7 +214,7 @@ option(enable-lsdyna "build lsdyna interface for mechanical behaviours" OFF)
 if(enable-lsdyna)
   message(STATUS "lsdyna support enabled")
   set(HAVE_LSDYNA ON)
-  add_definitions("-DHAVE_LSDYNA=1")
+  tfel_add_c_cxx_definitions("HAVE_LSDYNA=1")
 endif(enable-lsdyna)
 
 #diana-fea
@@ -220,7 +222,7 @@ option(enable-diana-fea "build Diana FEA interface for mechanical behaviours" OF
 if(enable-diana-fea)
   message(STATUS "Diana FEA support enabled")
   set(HAVE_DIANAFEA ON)
-  add_definitions("-DHAVE_DIANAFEA=1")
+  tfel_add_c_cxx_definitions("HAVE_DIANAFEA=1")
 endif(enable-diana-fea)
 
 #calculix
@@ -228,7 +230,7 @@ option(enable-calculix "build CalculiX interface for mechanical behaviours" OFF)
 if(enable-calculix)
   message(STATUS "CalculiX support enabled")
   set(HAVE_CALCULIX ON)
-  add_definitions("-DHAVE_CALCULIX=1")
+  tfel_add_c_cxx_definitions("HAVE_CALCULIX=1")
 endif(enable-calculix)
 
 #ansys
@@ -236,7 +238,7 @@ option(enable-ansys "build ansys interface for mechanical behaviours" OFF)
 if(enable-ansys)
   message(STATUS "ansys support enabled")
   set(HAVE_ANSYS ON)
-  add_definitions("-DHAVE_ANSYS=1")
+  tfel_add_c_cxx_definitions("HAVE_ANSYS=1")
 endif(enable-ansys)
 
 #europlexus
@@ -244,7 +246,7 @@ option(enable-europlexus "build europlexus interface for mechanical behaviours" 
 if(enable-europlexus)
   message(STATUS "europlexus support enabled")
   set(HAVE_EUROPLEXUS ON)
-  add_definitions("-DHAVE_EUROPLEXUS=1")
+  tfel_add_c_cxx_definitions("HAVE_EUROPLEXUS=1")
 endif(enable-europlexus)
 
 #zmat
@@ -253,7 +255,7 @@ if(enable-zmat)
   include(cmake/modules/zset.cmake)
   message(STATUS "zmat support enabled")
   set(HAVE_ZMAT ON)
-  add_definitions("-DHAVE_ZMAT=1")
+  tfel_add_c_cxx_definitions("HAVE_ZMAT=1")
 endif(enable-zmat)
 
 #cyrano
@@ -262,7 +264,7 @@ option(enable-cyrano "build cyrano interface for mechanical behaviours" OFF)
 if(enable-cyrano)
   message(STATUS "cyrano support enabled")
   set(HAVE_CYRANO ON)
-  add_definitions("-DHAVE_CYRANO=1")
+  tfel_add_c_cxx_definitions("HAVE_CYRANO=1")
 endif(enable-cyrano)
 
 #castem
@@ -270,8 +272,8 @@ include(cmake/modules/castem-unix-type.cmake)
 option(local-castem-header    "use a local version of castem.h"  OFF)
 option(enable-castem-pleiades "use a pleiades version of castem" OFF)
 if(local-castem-header)
-  add_definitions(-DLOCAL_CASTEM_HEADER=1)
-  add_definitions("-DLOCAL_CASTEM_HEADER=1 -DHAVE_CASTEM=1")
+  tfel_add_c_cxx_definitions("LOCAL_CASTEM_HEADER=1")
+  tfel_add_c_cxx_definitions("HAVE_CASTEM=1")
   set(HAVE_CASTEM ON)
   set(LOCAL_CASTEM_HEADER ON)
 else(local-castem-header)
@@ -283,15 +285,15 @@ option(enable-comsol "build Comsol interface for mechanical behaviours" OFF)
 if(enable-comsol)
   message(STATUS "Comsol support enabled")
   set(HAVE_COMSOL ON)
-  add_definitions("-DHAVE_COMSOL=1")
+  tfel_add_c_cxx_definitions("HAVE_COMSOL=1")
 endif(enable-comsol)
 
 #gnuplot
 include(FindGnuplot)
 if(GNUPLOT_FOUND)
   set(HAVE_GNUPLOT ON)
-  add_definitions("-DHAVE_GNUPLOT=1")
-  add_definitions("-DGNUPLOT_PATH=\\\"\"${GNUPLOT_EXECUTABLE}\"\\\"")
+  tfel_add_c_cxx_definitions("HAVE_GNUPLOT=1")
+  tfel_add_c_cxx_definitions("GNUPLOT_PATH=\"${GNUPLOT_EXECUTABLE}\"")
   message(STATUS "found gnuplot")
   message(STATUS "gnuplot path ${GNUPLOT_EXECUTABLE}")
 else(GNUPLOT_FOUND)
@@ -312,25 +314,32 @@ option(python-static-interpreter-workaround
 if(enable-python OR enable-python-bindings)
   find_package(PythonLibs REQUIRED)
   set(HAVE_PYTHON ON)
-  add_definitions("-DHAVE_PYTHON=1")
-  add_definitions("-DTFEL_PYTHON_INCLUDES=\\\"\"-I${PYTHON_INCLUDE_DIRS}\"\\\"")
+  tfel_add_c_cxx_definitions("HAVE_PYTHON=1")
+  tfel_add_c_cxx_definitions("TFEL_PYTHON_INCLUDES=\"-I${PYTHON_INCLUDE_DIRS}\"")
   get_filename_component(PYTHON_LIBRARY_PATH ${PYTHON_LIBRARIES} PATH)
   get_filename_component(PYTHON_LIBRARY_FULL ${PYTHON_LIBRARIES} NAME)
   string(REGEX REPLACE "lib(.+)\\.(.+)$" "\\1" PYTHON_LIBRARY ${PYTHON_LIBRARY_FULL})
-  add_definitions("-DTFEL_PYTHON_LIBRARY_PATH=\\\"\"${PYTHON_LIBRARY_PATH}\"\\\"")
-  add_definitions("-DTFEL_PYTHON_LIBRARY=\\\"\"${PYTHON_LIBRARY}\"\\\"")
+  tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBRARY_PATH=\"${PYTHON_LIBRARY_PATH}\"")
+  tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBRARY=\"${PYTHON_LIBRARY}\"")
   if(MSVC)
-    add_definitions("-DTFEL_PYTHON_LIBS=\\\"\"${PYTHON_LIBRARY_PATH}\${PYTHON_LIBRARY}\"\\\"")
+    tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBS=\"${PYTHON_LIBRARY_PATH}\${PYTHON_LIBRARY}\"")
   else(MSVC)
-    add_definitions("-DTFEL_PYTHON_LIBS=\\\"\"-L${PYTHON_LIBRARY_PATH} -l${PYTHON_LIBRARY}\"\\\"")
+    tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBS=\"-L${PYTHON_LIBRARY_PATH} -l${PYTHON_LIBRARY}\"")
   endif(MSVC) 
   message(STATUS "found python          ${PYTHONLIBS_VERSION_STRING}")
   message(STATUS "python include path   ${PYTHON_INCLUDE_DIRS}")
   message(STATUS "python libraries path ${PYTHON_LIBRARY_PATH}")
   message(STATUS "python library        ${PYTHON_LIBRARY}")
-  string(REGEX REPLACE "[a-z]+.*$" "" PYTHONLIBS_VERSION_CLEANED "${PYTHONLIBS_VERSION_STRING}")
+  string(REGEX REPLACE "[-a-z+]+.*$" "" PYTHONLIBS_VERSION_CLEANED "${PYTHONLIBS_VERSION_STRING}")
   find_package(PythonInterp ${PYTHONLIBS_VERSION_CLEANED} REQUIRED)
   message(STATUS "python interpreter    ${PYTHON_EXECUTABLE}")
+  if(NOT TFEL_PYTHON_SITE_PACKAGES_DIR)
+    if(WIN32)
+      set(TFEL_PYTHON_SITE_PACKAGES_DIR "bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages")
+    else(WIN32)
+      set(TFEL_PYTHON_SITE_PACKAGES_DIR "lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages")
+    endif(WIN32)
+  endif(NOT TFEL_PYTHON_SITE_PACKAGES_DIR)
   if(enable-numpy-support AND PYTHON_EXECUTABLE AND (NOT NUMPY_INCLUDE_DIRS))
     execute_process(
       COMMAND "${PYTHON_EXECUTABLE}" -c
@@ -491,9 +500,9 @@ if(enable-python-bindings)
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DESCRIPTION 
     "Contains the python bindings for TFEL, MFront and MTest")
   set(CPACK_COMPONENT_PYTHON_BINDINGS_DEPENDS  core mfront mtest)
-  add_definitions("-DTFEL_PYTHON_BINDINGS")
+  tfel_add_c_cxx_definitions("TFEL_PYTHON_BINDINGS")
   if(enable-broken-boost-python-module-visibility-handling)
-    add_definitions("-DBOOST_PYTHON_USE_GCC_SYMBOL_VISIBILITY")
+    tfel_add_c_cxx_definitions("BOOST_PYTHON_USE_GCC_SYMBOL_VISIBILITY")
   endif(enable-broken-boost-python-module-visibility-handling)
 endif(enable-python-bindings)
 
@@ -514,11 +523,11 @@ if(enable-java)
   message(STATUS "javac path       : ${Java_JAVAC_EXECUTABLE}")
   message(STATUS "jni include path : ${JNI_INCLUDE_DIRS}")
   set(HAVE_JAVA ON)
-  add_definitions("-DHAVE_JAVA=1")
+  tfel_add_c_cxx_definitions("HAVE_JAVA=1")
   foreach(jni_include ${JNI_INCLUDE_DIRS})
     set(JNI_INCLUDES_FLAGS "${JNI_INCLUDES_FLAGS} -I${jni_include}")
   endforeach(jni_include ${JNI_INCLUDE_DIRS})
-  add_definitions("-DTFEL_JAVA_INCLUDES=\\\"\"${JNI_INCLUDES_FLAGS}\"\\\"")
+  tfel_add_c_cxx_definitions("TFEL_JAVA_INCLUDES=\"${JNI_INCLUDES_FLAGS}\"")
 endif(enable-java)
 
 # cadna
@@ -683,6 +692,22 @@ if(install-system-libraries)
 
 endif(install-system-libraries)
 
+# install tfel-modules-common.cmake
+
+configure_file(${PROJECT_SOURCE_DIR}/cmake/modules/tfel-modules-common.cmake.in
+               ${PROJECT_BINARY_DIR}/cmake/modules/tfel-modules-common.cmake
+               @ONLY)
+
+if(TFEL_APPEND_SUFFIX)
+  install(FILES ${PROJECT_BINARY_DIR}/cmake/modules/tfel-modules-common.cmake
+          DESTINATION "share/tfel-${TFEL_SUFFIX}/cmake"
+          COMPONENT core)
+else(TFEL_APPEND_SUFFIX)
+  install(FILES ${PROJECT_BINARY_DIR}/cmake/modules/tfel-modules-common.cmake
+          DESTINATION "share/tfel/cmake"
+          COMPONENT core)
+endif(TFEL_APPEND_SUFFIX)
+
 # install licences
 if(TFEL_APPEND_SUFFIX)
   install (FILES LICENCE-GNU-GPL
@@ -716,11 +741,11 @@ else(TFEL_APPEND_SUFFIX)
     PATTERN ".svn" EXCLUDE)
 endif(TFEL_APPEND_SUFFIX)
 
-set(CPACK_PACKAGE_VERSION   "${CMAKE_PROJECT_NAME}-${TFEL_VERSION}")
+set(CPACK_PACKAGE_VERSION   "${TFEL_VERSION}")
 if(${CMAKE_SYSTEM_PROCESSOR})
-  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_PROCESSOR}") 
+  set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_PROCESSOR}") 
 else(${CMAKE_SYSTEM_PROCESSOR})
-  set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_VERSION}") 
+  set(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION}") 
 endif(${CMAKE_SYSTEM_PROCESSOR})
 set(CPACK_PACKAGE_INSTALL_DIRECTORY   "${CPACK_PACKAGE_VERSION}")
 set(CPACK_PACKAGE_NAME                "${PACKAGE_NAME}")
@@ -729,10 +754,10 @@ set(CPACK_PACKAGE_VERSION_PATCH       "${TFEL_VERSION_PATCH}")
 set(CPACK_PACKAGE_VERSION_MAJOR       "${TFEL_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR       "${TFEL_VERSION_MINOR}")
 set(CPACK_PACKAGE_VENDOR              "CEA_EDF")
-set(CPACK_SOURCE_IGNORE_FILES         "build;/\\\\.svn/;.*~")
+#set(CPACK_SOURCE_IGNORE_FILES         "build;/\.git/;.*~")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "TFEL is a numerical library.")
-set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README.md")
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENCE-GNU-GPL")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${PROJECT_SOURCE_DIR}/README.md")
+set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENCE-GNU-GPL")
 
 # rpm packaging
 set(CPACK_RPM_COMPONENT_INSTALL ON)
@@ -746,8 +771,8 @@ set(CPACK_DEBIAN_PACKAGE_HOMEPAGE     "${TFEL_WEBSITE}")
 
 #NSIS
 set(CPACK_NSIS_MODIFY_PATH ON)
-set(CPACK_NSIS_MUI_ICON       "${CMAKE_SOURCE_DIR}/docs/mfront.ico")
-set(CPACK_NSIS_MUI_UNIICON    "${CMAKE_SOURCE_DIR}/docs/mfront.ico")
+set(CPACK_NSIS_MUI_ICON       "${PROJECT_SOURCE_DIR}/docs/mfront.ico")
+set(CPACK_NSIS_MUI_UNIICON    "${PROJECT_SOURCE_DIR}/docs/mfront.ico")
 set(CPACK_NSIS_URL_INFO_ABOUT "${TFEL_WEBSITE}")
 set(CPACK_NSIS_HELP_LINK "${TFEL_WEBSITE}")
 set(CPACK_NSIS_CONTACT "${PACKAGE_BUGREPORT}")
@@ -760,17 +785,13 @@ set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
       SetRegView  64
       DeleteRegKey HKCR 'TFELHOME-${TFEL_VERSION}'")
 
-# if(UNIX)
-#   add_custom_target(dist-bzip2
-#     COMMAND svn export svn://localhost/PLEIADES/SVN/TFEL/trunk 
-#     ${CMAKE_BINARY_DIR}/${PACKAGE_NAME}-${VERSION}
-#     COMMAND tar -cvjf ${CMAKE_BINARY_DIR}/${PACKAGE_NAME}-${VERSION}.tar.bz2 
-#     ${CMAKE_BINARY_DIR}/${PACKAGE_NAME}-${VERSION}
-#     COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}/${PACKAGE_NAME}-${VERSION}
-#     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-# endif(UNIX)
-
 set(CPACK_BUNDLE_NAME "TFEL/MFront")
+
+# source packaging
+set(CPACK_VERBATIM_VARIABLES YES)
+if(NOT CPACK_SOURCE_GENERATOR)
+  set(CPACK_SOURCE_GENERATOR "TGZ")
+endif()
 
 # packaging
 include(CPack)

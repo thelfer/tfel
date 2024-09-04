@@ -191,8 +191,7 @@ namespace mfront {
          << "mfront_report(\"" << v.name << " is over its upper bound (\" + "
          << to_string << " + \">" << b.upperBound << ").\\n\");\n"
          << "mfront_output_status->status = -1;\n"
-         << "mfront_output_status->bounds_status = -" << i
-         << ";\n"
+         << "mfront_output_status->bounds_status = -" << i << ";\n"
          << "return std::nan(\"\");\n"
          << "} else if (mfront_out_of_bounds_policy==" << iucname
          << "_WARNING_POLICY){\n"
@@ -430,33 +429,38 @@ namespace mfront {
        << "mfront_error_message.c_str(),511);\n"
        << "mfront_output_status->msg[511]='\\0';\n"
        << "};\n";
-    os << "const int mfront_errno_old = errno;\n"
-       << "mfront_output_status->status = 0;\n"
+    if (!areRuntimeChecksDisabled(mpd)) {
+      os << "const int mfront_errno_old = errno;\n";
+    }
+    os << "mfront_output_status->status = 0;\n"
        << "mfront_output_status->bounds_status = 0;\n"
-       << "mfront_output_status->c_error_number = 0;\n"
-       << "errno = 0;\n";
-    // check number of arguments
-    os << "if(mfront_nargs!= " << mpd.inputs.size() << "){\n"
-       << "mfront_output_status->status = -5;\n"
-       << "mfront_report(\"invalid number of arguments "
-       << "(\"+std::to_string(mfront_nargs)+\" given, " << mpd.inputs.size()
-       << " expected)\");\n"
-       << "errno = mfront_errno_old;\n"
-       << "return std::nan(\"invalid number of arguments\");\n"
-       << "}\n";
-    // parameters
-    if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
-      const auto hn = getMaterialPropertyParametersHandlerClassName(name);
-      os << "if(!" << iname << "::" << hn << "::get" << hn << "().ok){\n"
-         << "mfront_output_status->status = -6;\n"
-         << "mfront_report(" << iname << "::" << name
-         << "MaterialPropertyHandler::get" << name
-         << "MaterialPropertyHandler().msg);\n"
+       << "mfront_output_status->c_error_number = 0;\n";
+    if (!areRuntimeChecksDisabled(mpd)) {
+      // C-error handling
+      os << "errno = 0;\n";
+      // check number of arguments
+      os << "if(mfront_nargs!= " << mpd.inputs.size() << "){\n"
+         << "mfront_output_status->status = -5;\n"
+         << "mfront_report(\"invalid number of arguments "
+         << "(\"+std::to_string(mfront_nargs)+\" given, " << mpd.inputs.size()
+         << " expected)\");\n"
          << "errno = mfront_errno_old;\n"
-         << "return std::nan(" << iname << "::" << name
-         << "MaterialPropertyHandler::get" << name
-         << "MaterialPropertyHandler().msg.c_str());\n"
+         << "return std::nan(\"invalid number of arguments\");\n"
          << "}\n";
+      // parameters
+      if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
+        const auto hn = getMaterialPropertyParametersHandlerClassName(name);
+        os << "if(!" << iname << "::" << hn << "::get" << hn << "().ok){\n"
+           << "mfront_output_status->status = -6;\n"
+           << "mfront_report(" << iname << "::" << name
+           << "MaterialPropertyHandler::get" << name
+           << "MaterialPropertyHandler().msg);\n"
+           << "errno = mfront_errno_old;\n"
+           << "return std::nan(" << iname << "::" << name
+           << "MaterialPropertyHandler::get" << name
+           << "MaterialPropertyHandler().msg.c_str());\n"
+           << "}\n";
+      }
     }
     writeAssignMaterialPropertyParameters(os, mpd, name, "real", iname);
     //
@@ -476,59 +480,69 @@ namespace mfront {
     }
     os << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
     os << "try{\n";
-    if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
-      os << "#ifndef NO_" << iucname << "_BOUNDS_CHECK\n";
-    }
-    if (hasPhysicalBounds(mpd.inputs)) {
-      os << "// treating physical bounds\n";
-      for (decltype(mpd.inputs.size()) i = 0; i != mpd.inputs.size(); ++i) {
-        writePhysicalBounds(os, mpd.inputs[i], i + 1, useQuantities(mpd));
+    if (!areRuntimeChecksDisabled(mpd)) {
+      if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
+        os << "#ifndef NO_" << iucname << "_BOUNDS_CHECK\n";
       }
-    }
-    if (hasBounds(mpd.inputs)) {
-      os << "// treating standard bounds\n";
-      for (decltype(mpd.inputs.size()) i = 0; i != mpd.inputs.size(); ++i) {
-        writeBounds(os, prefix, mpd.inputs[i], i + 1, useQuantities(mpd));
+      if (hasPhysicalBounds(mpd.inputs)) {
+        os << "// treating physical bounds\n";
+        for (decltype(mpd.inputs.size()) i = 0; i != mpd.inputs.size(); ++i) {
+          writePhysicalBounds(os, mpd.inputs[i], i + 1, useQuantities(mpd));
+        }
       }
-    }
-    if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
-      os << "#endif /* NO_" << iucname << "_BOUNDS_CHECK */\n";
+      if (hasBounds(mpd.inputs)) {
+        os << "// treating standard bounds\n";
+        for (decltype(mpd.inputs.size()) i = 0; i != mpd.inputs.size(); ++i) {
+          writeBounds(os, prefix, mpd.inputs[i], i + 1, useQuantities(mpd));
+        }
+      }
+      if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
+        os << "#endif /* NO_" << iucname << "_BOUNDS_CHECK */\n";
+      }
     }
     os << function.body;
-    if ((mpd.output.hasPhysicalBounds()) || (mpd.output.hasBounds())) {
-      os << "#ifndef NO_" << iucname << "_BOUNDS_CHECK\n";
-      if (mpd.output.hasPhysicalBounds()) {
-        os << "// treating physical bounds\n";
-        writePhysicalBounds(os, mpd.output, mpd.inputs.size() + 1,
-                            useQuantities(mpd));
+    if (!areRuntimeChecksDisabled(mpd)) {
+      if ((mpd.output.hasPhysicalBounds()) || (mpd.output.hasBounds())) {
+        os << "#ifndef NO_" << iucname << "_BOUNDS_CHECK\n";
+        if (mpd.output.hasPhysicalBounds()) {
+          os << "// treating physical bounds\n";
+          writePhysicalBounds(os, mpd.output, mpd.inputs.size() + 1,
+                              useQuantities(mpd));
+        }
+        if (mpd.output.hasBounds()) {
+          os << "// treating bounds\n";
+          writeBounds(os, prefix, mpd.output, mpd.inputs.size() + 1,
+                      useQuantities(mpd));
+        }
+        os << "#endif /* NO_" << iucname << "_BOUNDS_CHECK */\n";
       }
-      if (mpd.output.hasBounds()) {
-        os << "// treating bounds\n";
-        writeBounds(os, prefix, mpd.output, mpd.inputs.size() + 1,
-                    useQuantities(mpd));
-      }
-      os << "#endif /* NO_" << iucname << "_BOUNDS_CHECK */\n";
     }
     os << "} catch(std::exception& e){\n"
        << "mfront_output_status->status = -2;\n"
-       << "mfront_report(e.what());\n"
-       << "errno = mfront_errno_old;\n"
-       << "return std::nan(\"\");\n"
+       << "mfront_report(e.what());\n";
+    if (!areRuntimeChecksDisabled(mpd)) {
+      os << "errno = mfront_errno_old;\n";
+    }
+    os << "return std::nan(\"\");\n"
        << "} catch(...){\n"
        << "mfront_output_status->status = -2;\n"
-       << "mfront_report(\"unknown C++ exception\");\n"
-       << "errno = mfront_errno_old;\n"
-       << "return nan(\"\");\n"
-       << "}\n"
-       << "if (errno != 0) {\n"
-       << "mfront_output_status->status = -3;\n"
-       << "mfront_output_status->c_error_number = errno;\n"
-       << "mfront_report(strerror(errno));\n"
-       << "}\n"
-       << "errno = mfront_errno_old;\n"
-       << "if(!tfel::math::ieee754::isfinite(" << mpd.output.name << ")){\n"
-       << "mfront_output_status->status = -4;\n"
+       << "mfront_report(\"unknown C++ exception\");\n";
+    if (!areRuntimeChecksDisabled(mpd)) {
+      os << "errno = mfront_errno_old;\n";
+    }
+    os << "return nan(\"\");\n"
        << "}\n";
+    if (!areRuntimeChecksDisabled(mpd)) {
+      os << "if (errno != 0) {\n"
+         << "mfront_output_status->status = -3;\n"
+         << "mfront_output_status->c_error_number = errno;\n"
+         << "mfront_report(strerror(errno));\n"
+         << "}\n"
+         << "errno = mfront_errno_old;\n"
+         << "if(!tfel::math::ieee754::isfinite(" << mpd.output.name << ")){\n"
+         << "mfront_output_status->status = -4;\n"
+         << "}\n";
+    }
     if (useQuantities(mpd)) {
       os << "return " << mpd.output.name << ".getValue();\n";
     } else {

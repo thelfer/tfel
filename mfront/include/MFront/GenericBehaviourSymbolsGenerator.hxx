@@ -28,34 +28,34 @@ namespace mfront {
     GenericBehaviourSymbolsGenerator();
     //
     void writeSpecificSymbols(std::ostream &,
-                              const StandardBehaviourInterface &,
+                              const BehaviourInterfaceBase &,
                               const BehaviourDescription &,
                               const FileDescription &,
                               const std::string &) const override;
     void writeBehaviourTypeSymbols(std::ostream &,
-                                   const StandardBehaviourInterface &,
+                                   const BehaviourInterfaceBase &,
                                    const BehaviourDescription &,
                                    const std::string &) const override;
     void writeBehaviourKinematicSymbols(std::ostream &,
-                                        const StandardBehaviourInterface &,
+                                        const BehaviourInterfaceBase &,
                                         const BehaviourDescription &,
                                         const std::string &) const override;
     void writeTangentOperatorSymbols(std::ostream &,
-                                     const StandardBehaviourInterface &,
+                                     const BehaviourInterfaceBase &,
                                      const BehaviourDescription &,
                                      const std::string &) const override;
     void writeInitializeFunctionsSymbols(std::ostream &,
-                                         const StandardBehaviourInterface &,
+                                         const BehaviourInterfaceBase &,
                                          const BehaviourDescription &,
                                          const std::string &,
                                          const Hypothesis) const override;
     void writePostProcessingsSymbols(std::ostream &,
-                                     const StandardBehaviourInterface &,
+                                     const BehaviourInterfaceBase &,
                                      const BehaviourDescription &,
                                      const std::string &,
                                      const Hypothesis) const override;
     void writeAdditionalSymbols(std::ostream &,
-                                const StandardBehaviourInterface &,
+                                const BehaviourInterfaceBase &,
                                 const BehaviourDescription &,
                                 const FileDescription &,
                                 const std::string &,

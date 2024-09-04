@@ -143,7 +143,7 @@ namespace lsdyna {
         b.setLSDYNABehaviourDataGradients(STRAN);
         b.setLSDYNAIntegrationDataGradients(DSTRAN);
       }  // end of exe
-    };   // end of struct GradientInitialiserWithoutStressFreeExpansion
+    };  // end of struct GradientInitialiserWithoutStressFreeExpansion
 
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer {
       typedef Behaviour<H, LSDYNAReal, false> BV;
@@ -157,7 +157,7 @@ namespace lsdyna {
                                      buas>::exe(data.getStiffnessTensor(),
                                                 props);
       }  // end of exe
-    };   // end of struct StiffnessOperatorInitializer
+    };  // end of struct StiffnessOperatorInitializer
 
     struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer {
       typedef Behaviour<H, LSDYNAReal, false> BV;
@@ -169,7 +169,7 @@ namespace lsdyna {
             LSDYNATraits<BV>::btype, H, LSDYNATraits<BV>::stype>::
             exe(props + o, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
-    };   // end of struct ThermalExpansionCoefficientTensorInitializer
+    };  // end of struct ThermalExpansionCoefficientTensorInitializer
 
     struct TFEL_VISIBILITY_LOCAL DoNothingInitializer {
       typedef Behaviour<H, LSDYNAReal, false> BV;

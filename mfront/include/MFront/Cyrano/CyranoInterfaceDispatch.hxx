@@ -72,7 +72,7 @@ namespace cyrano {
       Handler::exe(DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
                    NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, sfeh, op);
     }  // end of exe
-  };   // end of struct CyranoInterfaceDispatch
+  };  // end of struct CyranoInterfaceDispatch
 
 }  // end of namespace cyrano
 

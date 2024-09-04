@@ -18,6 +18,8 @@
 
 namespace mfront {
 
+  const char* const MaterialKnowledgeDescription::disableRuntimeChecks =
+      "disable_runtime_checks";
   const char* const MaterialKnowledgeDescription::defaultOutOfBoundsPolicy =
       "default_out_of_bounds_policy";
   const char* const
@@ -153,6 +155,11 @@ namespace mfront {
                    policy, false);
   }  // end of setDefaultOutOfBoundsPolicy
 
+  void setDisableRuntimeChecks(MaterialKnowledgeDescription& d, const bool b) {
+    d.setAttribute(MaterialKnowledgeDescription::disableRuntimeChecks, b,
+                   false);
+  }  // end of setDisableRuntimeChecks
+
   tfel::material::OutOfBoundsPolicy getDefaultOutOfBoundsPolicy(
       const MaterialKnowledgeDescription& d) {
     const auto policy = d.getAttribute<std::string>(
@@ -168,6 +175,11 @@ namespace mfront {
     }
     return tfel::material::None;
   }  // end of getDefaultOutOfBoundsPolicy
+
+  bool areRuntimeChecksDisabled(const MaterialKnowledgeDescription& d) {
+    return d.getAttribute<bool>(
+        MaterialKnowledgeDescription::disableRuntimeChecks, false);
+  }  // end of getDisableRuntimeChecks
 
   std::string getDefaultOutOfBoundsPolicyAsString(
       const MaterialKnowledgeDescription& d) {

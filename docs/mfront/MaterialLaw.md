@@ -27,4 +27,4 @@ library which is of no use.
 
 ~~~~{.cpp}
 @MaterialLaw "UO2_YoungModulus.mfront";
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

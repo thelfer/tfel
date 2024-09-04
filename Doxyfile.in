@@ -1082,7 +1082,7 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = @abs_top_srcdir@/docs/doxygen/header.html
+HTML_HEADER            = 
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1092,7 +1092,7 @@ HTML_HEADER            = @abs_top_srcdir@/docs/doxygen/header.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = @abs_top_srcdir@/docs/doxygen/footer.html
+HTML_FOOTER            = 
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
@@ -1117,7 +1117,7 @@ HTML_STYLESHEET        =
 # list). For an example see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_STYLESHEET  = @abs_top_srcdir@/docs/doxygen/customdoxygen.css   
+HTML_EXTRA_STYLESHEET  = @abs_top_srcdir@/docs/doxygen/doxygen-awesome-css/doxygen-awesome.css
 
 # The HTML_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the HTML output directory. Note
@@ -1127,37 +1127,10 @@ HTML_EXTRA_STYLESHEET  = @abs_top_srcdir@/docs/doxygen/customdoxygen.css
 # files will be copied as-is; there are no commands or markers available.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_FILES       = @abs_top_srcdir@/docs/doxygen/doxy-boot.js
+HTML_EXTRA_FILES       = 
 
-# The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
-# will adjust the colors in the style sheet and background images according to
-# this color. Hue is specified as an angle on a colorwheel, see
-# http://en.wikipedia.org/wiki/Hue for more information. For instance the value
-# 0 represents red, 60 is yellow, 120 is green, 180 is cyan, 240 is blue, 300
-# purple, and 360 is red again.
-# Minimum value: 0, maximum value: 359, default value: 220.
-# This tag requires that the tag GENERATE_HTML is set to YES.
+HTML_COLORSTYLE = LIGHT
 
-HTML_COLORSTYLE_HUE    = 220
-
-# The HTML_COLORSTYLE_SAT tag controls the purity (or saturation) of the colors
-# in the HTML output. For a value of 0 the output will use grayscales only. A
-# value of 255 will produce the most vivid colors.
-# Minimum value: 0, maximum value: 255, default value: 100.
-# This tag requires that the tag GENERATE_HTML is set to YES.
-
-HTML_COLORSTYLE_SAT    = 100
-
-# The HTML_COLORSTYLE_GAMMA tag controls the gamma correction applied to the
-# luminance component of the colors in the HTML output. Values below 100
-# gradually make the output lighter, whereas values above 100 make the output
-# darker. The value divided by 100 is the actual gamma applied, so 80 represents
-# a gamma of 0.8, The value 220 represents a gamma of 2.2, and 100 does not
-# change the gamma.
-# Minimum value: 40, maximum value: 240, default value: 80.
-# This tag requires that the tag GENERATE_HTML is set to YES.
-
-HTML_COLORSTYLE_GAMMA  = 80
 
 # If the HTML_TIMESTAMP tag is set to YES then the footer of each generated HTML
 # page will contain the date and time when the page was generated. Setting this
@@ -1403,7 +1376,7 @@ DISABLE_INDEX          = NO
 # The default value is: NO.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-GENERATE_TREEVIEW      = NO
+GENERATE_TREEVIEW      = YES
 
 # The ENUM_VALUES_PER_LINE tag can be used to set the number of enum values that
 # doxygen will group on one line in the generated HTML documentation.

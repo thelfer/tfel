@@ -63,10 +63,10 @@ namespace mfront {
       //! \brief if true, the body of the function uses the time increment dt
       bool useTimeIncrement = false;
     };  // end of struct MFrontData::Function
-        /*!
-         * \brief decompose a variable name to get the basis and the depth
-         * of the variable
-         */
+    /*!
+     * \brief decompose a variable name to get the basis and the depth
+     * of the variable
+     */
     std::pair<std::string, unsigned short> decomposeVariableName(
         const std::string&) const;
     //! \brief defaut constructor

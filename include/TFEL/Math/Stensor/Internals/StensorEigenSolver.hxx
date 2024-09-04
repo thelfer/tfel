@@ -19,6 +19,7 @@
 #include "TFEL/Math/Stensor/Internals/StensorComputeEigenValues.hxx"
 #include "TFEL/Math/Stensor/Internals/StensorComputeEigenVectors.hxx"
 #include "TFEL/Math/Stensor/Internals/ScherzingerEigenSolver.hxx"
+#include "TFEL/Math/Stensor/Internals/HarariEigenSolver.hxx"
 #include "FSES/syevj3.hxx"
 #include "FSES/syevq3.hxx"
 #include "FSES/syevd3.hxx"
@@ -53,7 +54,7 @@ namespace tfel::math::internals {
           base_type_cast(v[5]) * icste,  //
           base_type_cast(v[2])};
     }  // end of as_base_matrix
-  };   // end of StensorEigenSolverBase<3u, NumType>
+  };  // end of StensorEigenSolverBase<3u, NumType>
 
   /*!
    * A class for interfacing various eigen solvers. By default,
@@ -161,6 +162,54 @@ namespace tfel::math::internals {
     }  // end of computeEigenVectors
   };   // end of struct StensorEigenSolver
 
+ /*!
+   * \brief Partial specialisation of the `StensorEigenSolver`
+   * class for the HARARIEIGENSOLVER solver in 3D
+   * \tparam NumType: numeric type
+   */
+  template <typename NumType>
+  struct StensorEigenSolver<stensor_common::HARARIEIGENSOLVER, 3u, NumType>
+      : StensorEigenSolverBase<3u, NumType> {
+    //! base type
+    using real = base_type<NumType>;
+    /*!
+     * \param[out] vp0: first  eigen value
+     * \param[out] vp1: second eigen value
+     * \param[out] vp2: third  eigen value
+     * \param[in]  v:   stensor values
+     * \param[in]  b:   refine eigenvalues
+     */
+    TFEL_MATH_INLINE static void computeEigenValues(NumType& vp0,
+                                                    NumType& vp1,
+                                                    NumType& vp2,
+                                                    const NumType* const v,
+                                                    const bool) {
+      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      auto vp = tvector<3u, real>{};
+      HarariEigensolver3x3<real>::computeEigenValues(
+          vp, sm(0, 0), sm(1, 1), sm(2, 2), sm(0, 1), sm(0, 2), sm(1, 2));
+      vp0 = NumType(vp[0]);
+      vp1 = NumType(vp[1]);
+      vp2 = NumType(vp[2]);
+    }  // end of computeEigenValues
+    /*!
+     * \param[out] vp: eigen values
+     * \param[out] m:  eigen vectors
+     * \param[in]  v:  stensor values
+     * \param[in]  b:  refine eigenvalues
+     */
+    TFEL_MATH_INLINE static void computeEigenVectors(tvector<3u, NumType>& vp,
+                                                     tmatrix<3u, 3u, real>& m,
+                                                     const NumType* const v,
+                                                     const bool) {
+      auto sm = StensorEigenSolverBase<3u, NumType>::as_base_matrix(v);
+      auto vp2 = tvector<3u, real>{};
+      HarariEigensolver3x3<real>::computeEigenVectors(
+          vp2, m, sm(0, 0), sm(1, 1), sm(2, 2), sm(0, 1), sm(0, 2), sm(1, 2));
+      vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
+    }  // end of computeEigenVectors
+  };  // end of struct StensorEigenSolver
+
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
    * class for the GTESYMMETRICQREIGENSOLVER solver in 3D
@@ -214,7 +263,7 @@ namespace tfel::math::internals {
           base_type_cast(v[5]) * icste, base_type_cast(v[2]), b);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
-  };   // end of struct StensorEigenSolver
+  };  // end of struct StensorEigenSolver
 
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
@@ -270,7 +319,7 @@ namespace tfel::math::internals {
       m(1, 2) = real(0);
       m(2, 2) = real(1);
     }  // end of computeEigenVectors
-  };   // end of struct StensorEigenSolver
+  };  // end of struct StensorEigenSolver
 
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
@@ -318,7 +367,7 @@ namespace tfel::math::internals {
                                                                        sm);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
-  };   // end of struct StensorEigenSolver
+  };  // end of struct StensorEigenSolver
 
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
@@ -378,7 +427,7 @@ namespace tfel::math::internals {
       fses::syevj3(m, vp2, sm);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
-  };   // end of struct StensorEigenSolver
+  };  // end of struct StensorEigenSolver
 
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
@@ -437,7 +486,7 @@ namespace tfel::math::internals {
       fses::syevq3(m, vp2, sm);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
-  };   // end of struct StensorEigenSolver
+  };  // end of struct StensorEigenSolver
 
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
@@ -496,7 +545,7 @@ namespace tfel::math::internals {
       fses::syevd3(m, vp2, sm);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
-  };   // end of struct StensorEigenSolver
+  };  // end of struct StensorEigenSolver
 
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
@@ -555,7 +604,7 @@ namespace tfel::math::internals {
       fses::syevh3(m, vp2, sm);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
-  };   // end of struct StensorEigenSolver
+  };  // end of struct StensorEigenSolver
 
 }  // namespace tfel::math::internals
 

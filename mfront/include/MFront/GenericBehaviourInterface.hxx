@@ -14,7 +14,9 @@
 #ifndef LIB_MFRONT_GENERICBEHAVIOURINTERFACE_HXX
 #define LIB_MFRONT_GENERICBEHAVIOURINTERFACE_HXX
 
-#include "MFront/StandardBehaviourInterface.hxx"
+#include <set>
+#include <optional>
+#include "MFront/BehaviourInterfaceBase.hxx"
 
 namespace mfront {
 
@@ -23,7 +25,7 @@ namespace mfront {
    * See https://github.com/thelfer/MFrontGenericInterfaceSupport
    */
   struct MFRONT_VISIBILITY_EXPORT GenericBehaviourInterface
-      : public StandardBehaviourInterface {
+      : public BehaviourInterfaceBase {
     //! \return the interface name
     static std::string getName();
     /*!
@@ -100,7 +102,9 @@ namespace mfront {
     virtual void generateMTestFile(std::ostream&,
                                    const BehaviourDescription&,
                                    const Hypothesis) const;
-
+    //! \brief list of selected hypotheses
+    std::optional<std::set<GenericBehaviourInterface::Hypothesis>>
+        selectedHypotheses;
   };  // end of struct GenericBehaviourInterface
 
 }  // end of namespace mfront

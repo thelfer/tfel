@@ -1,11 +1,20 @@
+include(CMakePackageConfigHelpers)
+
+# function add the given definition to the C and C++ preprocessor
+function(tfel_add_c_cxx_definitions define)
+  add_compile_definitions("$<$<COMPILE_LANGUAGE:C,CXX>:${define}>")
+endfunction(tfel_add_c_cxx_definitions)
+
 macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
-  project("tfel")
+  project("tfel"
+           HOMEPAGE_URL "https://thelfer.github.io/tfel/web/index.html"
+           LANGUAGES C CXX)
   set(PACKAGE_NAME "tfel")
   set(VERSION "${tfel_version_major}.${tfel_version_minor}.${tfel_version_patch}")
 
   if(TFEL_APPEND_VERSION OR TFEL_VERSION_FLAVOUR)
     set(TFEL_APPEND_SUFFIX ON)
-    add_definitions("-DTFEL_APPEND_SUFFIX")
+    tfel_add_c_cxx_definitions("TFEL_APPEND_SUFFIX")
   endif(TFEL_APPEND_VERSION OR TFEL_VERSION_FLAVOUR)
 
   set(TFEL_WEBSITE "http://tfel.sourceforce.net")
@@ -20,15 +29,15 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   else(TFEL_VERSION_FLAVOUR)
     set(TFEL_VERSION "${VERSION}")
   endif(TFEL_VERSION_FLAVOUR)
-  add_definitions("-DVERSION=\\\"\"${TFEL_VERSION}\"\\\"")
+  tfel_add_c_cxx_definitions("VERSION=\"${TFEL_VERSION}\"")
   
   if(TFEL_APPEND_VERSION)
     set(TFEL_SUFFIX "${TFEL_VERSION}")
-    add_definitions("-DTFEL_SUFFIX=\\\"\"${TFEL_SUFFIX}\"\\\"")
+    tfel_add_c_cxx_definitions("TFEL_SUFFIX=\"${TFEL_SUFFIX}\"")
   else(TFEL_APPEND_VERSION)
     if(TFEL_VERSION_FLAVOUR)
       set(TFEL_SUFFIX "${TFEL_VERSION_FLAVOUR}")
-      add_definitions("-DTFEL_SUFFIX=\\\"\"${TFEL_SUFFIX}\"\\\"")
+      tfel_add_c_cxx_definitions("TFEL_SUFFIX=\"${TFEL_SUFFIX}\"")
     endif(TFEL_VERSION_FLAVOUR)
   endif(TFEL_APPEND_VERSION)
 
@@ -38,7 +47,7 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   endif(TFEL_SUFFIX)
   
   if(LIB_SUFFIX)
-    add_definitions("-DLIB_SUFFIX=\\\"\"${LIB_SUFFIX}\"\\\"")
+    tfel_add_c_cxx_definitions("LIB_SUFFIX=\"${LIB_SUFFIX}\"")
   endif(LIB_SUFFIX)
 endmacro(tfel_project)
 
@@ -166,7 +175,25 @@ function(tfel_library_internal name component)
       COMPONENT ${component})
   endif(WIN32)
   install(EXPORT ${name} DESTINATION ${export_install_path}
-          NAMESPACE tfel:: FILE ${name}Config.cmake)
+          EXPORT_LINK_INTERFACE_LIBRARIES
+          NAMESPACE tfel:: FILE ${name}Targets.cmake)
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${name}Config.cmake.in)
+    set(_package_config_file ${CMAKE_CURRENT_SOURCE_DIR}/${name}Config.cmake.in)
+  else()
+    set(_package_config_file ${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake.in)
+    file(WRITE ${_package_config_file}
+         "@PACKAGE_INIT@\n"
+         "\n"
+         "include(\"\${CMAKE_CURRENT_LIST_DIR}/${name}Targets.cmake\")")
+  endif()
+  # generate the config file that includes the exports
+  configure_package_config_file(${_package_config_file}
+                                "${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake"
+                                INSTALL_DESTINATION ${export_install_path}
+                                NO_SET_AND_CHECK_MACRO
+                                NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake"
+          DESTINATION ${export_install_path})
   if(enable-static)
     add_library(${name}-static STATIC ${ARGN})
     if(TFEL_APPEND_SUFFIX)
@@ -192,7 +219,25 @@ function(tfel_library_internal name component)
       install(TARGETS ${name}-static EXPORT ${name}-static DESTINATION lib${LIB_SUFFIX})
     endif(WIN32)
     install(EXPORT ${name}-static DESTINATION ${export_install_path}
-            NAMESPACE tfel:: FILE ${name}StaticConfig.cmake)
+            NAMESPACE tfel:: FILE ${name}StaticTargets.cmake
+            EXPORT_LINK_INTERFACE_LIBRARIES)
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${name}StaticConfig.cmake.in)
+      set(_package_config_file ${CMAKE_CURRENT_SOURCE_DIR}/${name}StaticConfig.cmake.in)
+    else()
+      set(_package_config_file ${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake.in)
+      file(WRITE ${_package_config_file}
+           "@PACKAGE_INIT@\n"
+           "\n"
+          "include(\"\${CMAKE_CURRENT_LIST_DIR}/${name}StaticTargets.cmake\")")
+    endif()
+    # generate the config file that includes the exports
+    configure_package_config_file(${_package_config_file}
+                                  "${CMAKE_CURRENT_BINARY_DIR}/${name}StaticConfig.cmake"
+                                  INSTALL_DESTINATION ${export_install_path}
+                                  NO_SET_AND_CHECK_MACRO
+                                  NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${name}StaticConfig.cmake"
+            DESTINATION ${export_install_path})
     target_compile_options (${name}-static PRIVATE "${TFEL_CXX_FLAGS}")
   endif(enable-static)
 endfunction(tfel_library_internal)
@@ -443,24 +488,13 @@ endfunction(python_module_base)
 function(python_lib_module name package)
   python_module_base(${package}_${name} ${name} ${ARGN})
   if(TFEL_APPEND_SUFFIX)
-    if(WIN32)
-      install(TARGETS py_${package}_${name}
-        DESTINATION bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}_${TFEL_SUFFIX_FOR_PYTHON_MODULES}
-        COMPONENT python_bindings)
-    else(WIN32)
-      install(TARGETS py_${package}_${name}
-        DESTINATION lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}_${TFEL_SUFFIX_FOR_PYTHON_MODULES}
-        COMPONENT python_bindings)
-    endif(WIN32)
+    install(TARGETS py_${package}_${name}
+      DESTINATION ${TFEL_PYTHON_SITE_PACKAGES_DIR}/${package}_${TFEL_SUFFIX_FOR_PYTHON_MODULES}
+      COMPONENT python_bindings)
   else(TFEL_APPEND_SUFFIX)
-    if(WIN32)
-      install(TARGETS py_${package}_${name}
-        DESTINATION bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}
-        COMPONENT python_bindings)
-    else(WIN32)
-      install(TARGETS py_${package}_${name}        DESTINATION lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}
-        COMPONENT python_bindings)
-    endif(WIN32)
+    install(TARGETS py_${package}_${name}
+       DESTINATION ${TFEL_PYTHON_SITE_PACKAGES_DIR}/${package}
+       COMPONENT python_bindings)
   endif(TFEL_APPEND_SUFFIX)
 endfunction(python_lib_module)
 
@@ -518,15 +552,9 @@ function(tfel_python_script_base dir)
     else(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
       set(python_script "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}")
     endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
-    if(WIN32)
-      install(PROGRAMS ${python_script}
-        DESTINATION bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${dir}/
-        COMPONENT python_bindings)
-    else(WIN32)
-      install(PROGRAMS ${python_script}
-        DESTINATION lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${dir}/
-        COMPONENT python_bindings)
-    endif(WIN32)
+    install(PROGRAMS ${python_script}
+       DESTINATION ${TFEL_PYTHON_SITE_PACKAGES_DIR}/${dir}/
+       COMPONENT python_bindings)
   endforeach(pyscript ${ARGN})
 endfunction(tfel_python_script_base)
 

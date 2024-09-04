@@ -1,9 +1,9 @@
 /*!
- * \file   tests/Math/stensor_eigenvectors2.cxx
+ * \file   tests/Math/stensor_eigenvectors3.cxx
  * \brief
- * \author Thomas Helfer
- * \date   03 jui 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \author Maxence Wangermez
+ * \date   13/02/2024
+ * \copyright Copyright (C) 2006-2024 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -105,6 +105,7 @@ void test2() {
   using namespace tfel::math;
   using namespace tfel::math::internals;
   std::cout << "Start test2" << std::endl;
+
   T vp1;
   T vp2;
   T vp3;
@@ -165,6 +166,7 @@ void test3() {
   using namespace tfel::math;
   using namespace tfel::math::internals;
   std::cout << "Start test3" << std::endl;
+
   T vp1;
   T vp2;
   T vp3;
@@ -227,7 +229,6 @@ void test3() {
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   using namespace tfel::math;
-
   init_floating_point_exceptions();
 
 #ifdef TFEL_VERBOSE

@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATH_STENSORCONCEPTIO_HXX
 
 #include <ostream>
+#include "TFEL/Math/Forward/stensor.hxx"
 #include "TFEL/Math/Stensor/StensorConcept.hxx"
 
 namespace tfel::math {

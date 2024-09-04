@@ -12,4 +12,4 @@ part of the computation.
   const real p_    = 0.5*(p+p_1);
   s = s_1 + coef1*exp(coef2-p_)*(Bu-Bu_1);
 } // end of function compute
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

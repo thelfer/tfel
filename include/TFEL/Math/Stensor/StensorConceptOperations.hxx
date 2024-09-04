@@ -117,9 +117,9 @@ namespace tfel::math {
    */
   template <StensorConcept T1, StensorConcept T2>
   TFEL_HOST_DEVICE constexpr BinaryOperationResult<T1, T2, OpDotProduct>
-  operator|(const T1&, const T2&) noexcept requires(
-      (getSpaceDimension<T1>() == getSpaceDimension<T2>()) &&
-      (!isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>()));
+  operator|(const T1&, const T2&) noexcept
+    requires((getSpaceDimension<T1>() == getSpaceDimension<T2>()) &&
+             (!isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>()));
 
 }  // end of namespace tfel::math
 

@@ -282,15 +282,15 @@ namespace castem {
         bData.setCASTEMBehaviourDataGradients(STRAN);
         iData.setCASTEMIntegrationDataGradients(DSTRAN);
       }  // end of exe
-         /*!
-          * \param[out] b      : b
-          * \param[in]  STRAN  : driving variable at the beginning of the
-          *                     time step
-          * \param[in]  DSTRAN : driving variable at the end of the
-          *                      time step or driving variable increment
-          * \param[in]  sfeh   : function handling the stress-free expansion
-          *                      at the beginning of the time step
-          */
+      /*!
+       * \param[out] b      : b
+       * \param[in]  STRAN  : driving variable at the beginning of the
+       *                     time step
+       * \param[in]  DSTRAN : driving variable at the end of the
+       *                      time step or driving variable increment
+       * \param[in]  sfeh   : function handling the stress-free expansion
+       *                      at the beginning of the time step
+       */
       TFEL_CASTEM_INLINE static void exe(BV &b,
                                          const CastemReal *const STRAN,
                                          const CastemReal *const DSTRAN,
@@ -298,7 +298,7 @@ namespace castem {
         b.setCASTEMBehaviourDataGradients(STRAN);
         b.setCASTEMIntegrationDataGradients(DSTRAN);
       }  // end of exe
-    };   // end of struct GradientInitialiserWithoutStressFreeExpansion
+    };  // end of struct GradientInitialiserWithoutStressFreeExpansion
 
     /*!
      * An helper structure which is used to compute the stiffness
@@ -314,7 +314,7 @@ namespace castem {
         CastemComputeStiffnessTensor<type, H, Traits::stype, buas>::exe(
             data.getStiffnessTensor(), props);
       }  // end of exe
-    };   // end of struct StiffnessTensorInitializer
+    };  // end of struct StiffnessTensorInitializer
 
     /*!
      * An helper structure which is used to compute the thermal
@@ -329,7 +329,7 @@ namespace castem {
             type, H, CastemTraits<BV>::stype>::
             exe(props, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
-    };   // end of struct ThermalExpansionCoefficientTensorInitializer
+    };  // end of struct ThermalExpansionCoefficientTensorInitializer
 
     /*!
      * an helper class which don't do any initialisation

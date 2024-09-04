@@ -51,6 +51,7 @@ struct StensorComputeEigenvectors final : public tfel::tests::TestCase {
     this->check<EigenSolver::FSESHYBRIDEIGENSOLVER>();
     this->check<EigenSolver::FSESANALYTICALEIGENSOLVER>();
     this->check<EigenSolver::SCHERZINGEREIGENSOLVER>();
+    this->check<EigenSolver::HARARIEIGENSOLVER>();
     return this->result;
   }  // end of execute
 

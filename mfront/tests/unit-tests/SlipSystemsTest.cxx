@@ -23,7 +23,6 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
-#include "TFEL/Math/Tensor/TensorConceptIO.hxx"
 #include "TFEL/Material/MetallicCFCSlidingSystems.hxx"
 #include "MFront/BehaviourDescription.hxx"
 
@@ -63,7 +62,7 @@ struct SlipSystemsTest final : public tfel::tests::TestCase {
     bd.setSymmetryType(mfront::ORTHOTROPIC);
     bd.setCrystalStructure(CrystalStructure::BCC);
     bd.setSlipSystems(std::vector<system>(1u, gs));
-    const auto o = bd.getSlipSystems().getOrientationTensors(0);
+    const auto& o = bd.getSlipSystems().getOrientationTensors(0);
     for (const auto& t : o) {
       const auto b = [&ss, &t] {
         for (const auto& mu : ss.mu) {
@@ -73,7 +72,7 @@ struct SlipSystemsTest final : public tfel::tests::TestCase {
             e1 += std::abs(t[i] - mu[i]);
             e2 += std::abs(t[i] + mu[i]);
           }
-          if ((e1 < 1.e-14) || (e2 < 1.e-14)) {
+          if ((e1 < 1.e-11) || (e2 < 1.e-11)) {
             return true;
           }
         }

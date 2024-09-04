@@ -25,6 +25,7 @@
 #include "MFront/VariableDescription.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
+#include "MFront/DocumentationGeneratorBase.hxx"
 #include "MFront/BehaviourDocumentationGenerator.hxx"
 
 namespace mfront {
@@ -100,71 +101,11 @@ namespace mfront {
     return out.str();
   }
 
-  static void writeStandardLatexMacros(std::ostream& os) {
-    os << "\\newcommand{\\tensor}[1]{\\underline{#1}}\n"
-       << "\\newcommand{\\tensorq}[1]{\\underline{\\mathbf{#1}}}\n"
-       << "\\newcommand{\\ust}[1]{\\underset{\\tilde{}}{\\mathbf{#1}}}\n"
-       << "\\newcommand{\\transpose}[1]{#1^{\\mathop{T}}}\n"
-       << "\\newcommand{\\tsigma}{\\underline{\\sigma}}\n"
-       << "\\newcommand{\\sigmaeq}{\\sigma_{\\mathrm{eq}}}\n"
-       << "\\newcommand{\\epsilonth}{\\epsilon^{\\mathrm{th}}}\n"
-       << "\\newcommand{\\tepsilonto}{\\underline{\\epsilon}^{\\mathrm{to}}}\n"
-       << "\\newcommand{\\tepsilonel}{\\underline{\\epsilon}^{\\mathrm{el}}}\n"
-       << "\\newcommand{\\tepsilonth}{\\underline{\\epsilon}^{\\mathrm{th}}}\n"
-       << "\\newcommand{\\tepsilonvis}{\\underline{\\epsilon}^{\\mathrm{vis}}}"
-          "\n"
-       << "\\newcommand{\\tdepsilonvis}{\\underline{\\dot{\\epsilon}}^{"
-          "\\mathrm{vis}}}\n"
-       << "\\newcommand{\\tepsilonp}{\\underline{\\epsilon}^{\\mathrm{p}}}\n"
-       << "\\newcommand{\\tdepsilonp}{\\underline{\\dot{\\epsilon}}^{\\mathrm{"
-          "p}}}\n"
-       << "\\newcommand{\\trace}[1]{\\mathrm{tr}\\paren{#1}}\n"
-       << "\\newcommand{\\Frac}[2]{{\\displaystyle \\frac{\\displaystyle "
-          "#1}{\\displaystyle #2}}}\n"
-       << "\\newcommand{\\deriv}[2]{{\\displaystyle \\frac{\\displaystyle "
-          "\\partial #1}{\\displaystyle \\partial #2}}}\n"
-       << "\\newcommand{\\dtot}{\\mathrm{d}}\n"
-       << "\\newcommand{\\paren}[1]{\\left(#1\\right)}\n"
-       << "\\newcommand{\\bts}[1]{\\left.#1\\right|_{t}}\n"
-       << "\\newcommand{\\mts}[1]{\\left.#1\\right|_{t+\\theta\\,\\Delta\\,t}}"
-          "\n"
-       << "\\newcommand{\\ets}[1]{\\left.#1\\right|_{t+\\Delta\\,t}}\n\n";
-  }  // end of writeStandardLatexMacros
-
-  /*!
-   * internal structure gathering data from mechanical behaviour
-   * description
-   */
-  struct Data {
-    using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
-    Data();
-    Data(Data&&) noexcept;
-    Data(const Data&);
-    Data& operator=(Data&&);
-    Data& operator=(const Data&);
-    ~Data() noexcept;
-    std::string name;
-    std::string type;
-    std::string description;
-    //! specific description per modelling hypothesis
-    std::map<Hypothesis, std::string> descriptions;
-    std::string externalName;
-    std::vector<Hypothesis> hypotheses;
-    unsigned short arraySize;
-  };
-
-  Data::Data() = default;
-  Data::Data(Data&&) noexcept = default;
-  Data::Data(const Data&) = default;
-  Data& Data::operator=(Data&&) = default;
-  Data& Data::operator=(const Data&) = default;
-  Data::~Data() noexcept = default;
-
-  static void getData(std::vector<Data>& data,
-                      const BehaviourDescription& mb,
-                      const VariableDescriptionContainer& (BehaviourData::*m)()
-                          const,
-                      const tfel::material::ModellingHypothesis::Hypothesis h) {
+  static void getData(
+      std::vector<BehaviourDocumentationGenerator::VariableInformation>& data,
+      const BehaviourDescription& mb,
+      const VariableDescriptionContainer& (BehaviourData::*m)() const,
+      const tfel::material::ModellingHypothesis::Hypothesis h) {
     const auto& d = mb.getBehaviourData(h);
     const auto& mdata = (d.*m)();
     for (auto pv = mdata.begin(); pv != mdata.end(); ++pv) {
@@ -177,7 +118,7 @@ namespace mfront {
         }
       }
       if (pd == data.end()) {
-        data.push_back(Data());
+        data.push_back(BehaviourDocumentationGenerator::VariableInformation());
         pd = data.end();
         --pd;
         pd->name = pv->name;
@@ -226,13 +167,14 @@ namespace mfront {
     }
   }  // end of
 
-  static std::vector<Data> getData(
-      const BehaviourDescription& mb,
-      const VariableDescriptionContainer& (BehaviourData::*m)() const) {
+  static std::vector<BehaviourDocumentationGenerator::VariableInformation>
+  getData(const BehaviourDescription& mb,
+          const VariableDescriptionContainer& (BehaviourData::*m)() const) {
     using namespace tfel::material;
     using namespace tfel::glossary;
     const auto& glossary = Glossary::getGlossary();
-    auto data = std::vector<Data>{};
+    auto data =
+        std::vector<BehaviourDocumentationGenerator::VariableInformation>{};
     const auto& dh = mb.getDistinctModellingHypotheses();
     for (const auto& h : dh) {
       getData(data, mb, m, h);
@@ -294,12 +236,14 @@ namespace mfront {
     return data;
   }
 
-  static void printData(std::ostream& os,
-                        const BehaviourDescription& mb,
-                        const std::string& title,
-                        const std::vector<Data>& data,
-                        const bool standalone,
-                        const std::string& language = "english") {
+  static void printData(
+      std::ostream& os,
+      const BehaviourDescription& mb,
+      const std::string& title,
+      const std::vector<BehaviourDocumentationGenerator::VariableInformation>&
+          data,
+      const bool standalone,
+      const std::string& language = "english") {
     using namespace tfel::material;
     if (data.empty()) {
       return;
@@ -361,34 +305,36 @@ namespace mfront {
         os << "\t+ " << map_at(l, "description") << ": " << d.description
            << '\n';
       }
-      for (const auto& h : d.hypotheses) {
-        if (mb.isParameterName(h, d.name)) {
-          if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-            os << "\t+ " << map_at(l, "default value") << ": ";
-          } else {
-            os << "\t+ "
-               << map_at(l, "default value for") + " " +
-                      ModellingHypothesis::toString(h) + ": ";
-          }
-          if (d.type == "int") {
-            os << mb.getIntegerParameterDefaultValue(h, d.name);
-          } else if (d.type == "ushort") {
-            os << mb.getUnsignedShortParameterDefaultValue(h, d.name);
-          } else {
-            const auto& p =
-                mb.getBehaviourData(h).getParameters().getVariable(d.name);
-            if (p.arraySize == 1u) {
-              os << mb.getFloattingPointParameterDefaultValue(h, d.name);
+      if (!areParametersTreatedAsStaticVariables(mb)) {
+        for (const auto& h : d.hypotheses) {
+          if (mb.isParameterName(h, d.name)) {
+            if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+              os << "\t+ " << map_at(l, "default value") << ": ";
             } else {
-              for (unsigned short i = 0; i != p.arraySize;) {
-                os << mb.getFloattingPointParameterDefaultValue(h, d.name, i);
-                if (++i != p.arraySize) {
-                  os << " ";
+              os << "\t+ "
+                 << map_at(l, "default value for") + " " +
+                        ModellingHypothesis::toString(h) + ": ";
+            }
+            if (d.type == "int") {
+              os << mb.getIntegerParameterDefaultValue(h, d.name);
+            } else if (d.type == "ushort") {
+              os << mb.getUnsignedShortParameterDefaultValue(h, d.name);
+            } else {
+              const auto& p =
+                  mb.getBehaviourData(h).getParameters().getVariable(d.name);
+              if (p.arraySize == 1u) {
+                os << mb.getFloattingPointParameterDefaultValue(h, d.name);
+              } else {
+                for (unsigned short i = 0; i != p.arraySize;) {
+                  os << mb.getFloattingPointParameterDefaultValue(h, d.name, i);
+                  if (++i != p.arraySize) {
+                    os << " ";
+                  }
                 }
               }
             }
+            os << '\n';
           }
-          os << '\n';
         }
       }
       // codes blocks referring to the current variable
@@ -469,136 +415,15 @@ namespace mfront {
       const char* const* const argv,
       std::shared_ptr<AbstractBehaviourDSL> d,
       const std::string& f)
-      : tfel::utilities::ArgumentParserBase<BehaviourDocumentationGenerator>(
-            argc, argv),
-        dsl(d),
-        file(f),
-        otype(BehaviourDocumentationGenerator::FULL) {
-    this->registerCommandLineCallBacks();
-    this->parseArguments();
+
+      : DocumentationGeneratorBase(argc, argv, f), dsl(d) {
     // registring interfaces
     if (!this->interfaces.empty()) {
       dsl->setInterfaces(this->interfaces);
     }
   }  // end of BehaviourDocumentationGenerator::BehaviourDocumentationGenerator
 
-  void BehaviourDocumentationGenerator::registerCommandLineCallBacks() {
-    using Parser =
-        tfel::utilities::ArgumentParserBase<BehaviourDocumentationGenerator>;
-    Parser::registerNewCallBack("--verbose",
-                                &BehaviourDocumentationGenerator::treatVerbose,
-                                "set verbose output", true);
-    this->registerNewCallBack(
-        "--dsl-option", &BehaviourDocumentationGenerator::treatDSLOption,
-        "allow to define options passed to domain specific languages", true);
-    this->registerNewCallBack(
-        "--material-property-dsl-option",
-        &BehaviourDocumentationGenerator::treatMaterialPropertyDSLOption,
-        "allow to define options passed to domain specific languages related "
-        "to material properties",
-        true);
-    this->registerNewCallBack(
-        "--behaviour-dsl-option",
-        &BehaviourDocumentationGenerator::treatBehaviourDSLOption,
-        "allow to define options passed to domain specific languages related "
-        "to behaviours",
-        true);
-    this->registerNewCallBack(
-        "--model-dsl-option",
-        &BehaviourDocumentationGenerator::treatModelDSLOption,
-        "allow to define options passed to domain specific languages related "
-        "to models",
-        true);
-    this->registerNewCallBack(
-        "--dsl-options-file",
-        &BehaviourDocumentationGenerator::treatDSLOptionsFile,
-        "allow to define options passed to domain specific languages thanks to "
-        "an external file in a JSON-like format",
-        true);
-    this->registerNewCallBack(
-        "--material-property-dsl-options-file",
-        &BehaviourDocumentationGenerator::treatMaterialPropertyDSLOptionsFile,
-        "allow to define options passed to domain specific languages related "
-        "to material properties thanks to an external file in a JSON-like "
-        "format",
-        true);
-    this->registerNewCallBack(
-        "--behaviour-dsl-options-file",
-        &BehaviourDocumentationGenerator::treatBehaviourDSLOptionsFile,
-        "allow to define options passed to domain specific languages related "
-        "to behaviours thanks to an external file in a JSON-like format",
-        true);
-    this->registerNewCallBack(
-        "--model-dsl-options-file",
-        &BehaviourDocumentationGenerator::treatModelDSLOptionsFile,
-        "allow to define options passed to domain specific languages related "
-        "to models thanks to an external file in a JSON-like format",
-        true);
-    Parser::registerNewCallBack(
-        "--unicode-output",
-        &BehaviourDocumentationGenerator::treatUnicodeOutput,
-        "allow/disallow unicode output", true);
-    Parser::registerNewCallBack(
-        "--include", "-I", &BehaviourDocumentationGenerator::treatSearchPath,
-        "add a new path at the beginning of the search paths", true);
-    Parser::registerNewCallBack(
-        "--search-path", &BehaviourDocumentationGenerator::treatSearchPath,
-        "add a new path at the beginning of the search paths", true);
-    this->registerNewCallBack(
-        "--madnex-search-path",
-        &BehaviourDocumentationGenerator::treatMadnexSearchPath,
-        "add a mandex file to the search paths", true);
-    Parser::registerCallBack(
-        "--standalone",
-        CallBack("generate a standalone document (false by default)",
-                 [this]() noexcept { this->standalone = true; }, false));
-    Parser::registerNewCallBack("--web",
-                                &BehaviourDocumentationGenerator::treatWeb,
-                                "output a web version of the file");
-    Parser::registerCallBack(
-        "--std-output", "--",
-        CallBack("print the output ont the standard output stream",
-                 [this]() noexcept { this->std_output = true; }, false));
-  }  // end of BehaviourDocumentationGenerator::registerCommandLineCallBacks
-
-  void BehaviourDocumentationGenerator::treatUnknownArgument() {
-    if (!MFrontBase::treatUnknownArgumentBase()) {
-#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
-      ArgumentParserBase<
-          BehaviourDocumentationGenerator>::treatUnknownArgument();
-#else
-      auto a = static_cast<const std::string&>(
-          this->getCurrentCommandLineArgument());
-      std::cerr << "mfront : unsupported option '" << a << '\'' << std::endl;
-      exit(EXIT_FAILURE);
-#endif /* __CYGWIN__ */
-    }
-  }  // end of BehaviourDocumentationGenerator::treatUnknownArgument
-
-  const tfel::utilities::Argument&
-  BehaviourDocumentationGenerator::getCurrentCommandLineArgument() const {
-    return *(this->currentArgument);
-  }
-
-  std::string BehaviourDocumentationGenerator::getVersionDescription() const {
-    return MFrontHeader::getHeader();
-  }  // end of BehaviourDocumentationGenerator::getVersionDescription
-
-  std::string BehaviourDocumentationGenerator::getUsageDescription() const {
-    std::string usage("Usage : ");
-    usage += this->programName;
-    usage += " [options] [files]";
-    return usage;
-  }  // end of BehaviourDocumentationGenerator::getUsageDescription
-
-  void BehaviourDocumentationGenerator::treatWeb() {
-    tfel::raise_if(this->otype != FULL,
-                   "BehaviourDocumentationGenerator::treatWeb: "
-                   "output type already specified");
-    this->otype = WEB;
-  }  // end of BehaviourDocumentationGenerator::treatWeb
-
-  void BehaviourDocumentationGenerator::exe() {
+  void BehaviourDocumentationGenerator::exe() const {
     if (getVerboseMode() >= VERBOSE_LEVEL2) {
       getLogStream() << "Treating file '" << this->file << "'\n";
     }
@@ -626,7 +451,7 @@ namespace mfront {
                          name + ".txt'");
       return output_file;
     }();
-    writeStandardLatexMacros(out);
+    DocumentationGeneratorBase::writeStandardLatexMacros(out);
     if (this->otype == FULL) {
       this->writeFullOutput(out, mb, fd);
     } else if (this->otype == WEB) {
@@ -661,7 +486,7 @@ namespace mfront {
     if (!fd.date.empty()) {
       out << fd.date;
     } else {
-      out << "(unspecified)";
+      out << "(unspecified)\n";
     }
     if (mb.hasAttribute(BehaviourData::algorithm)) {
       out << "* algorithm: "
@@ -678,7 +503,7 @@ namespace mfront {
         }
       }
     } else {
-      out << "No description specified";
+      out << "No description specified\n";
     }
     //
     std::ifstream f(this->file);
@@ -689,9 +514,9 @@ namespace mfront {
     out << '\n'
         << "## Source code\n"
         << '\n'
-        << "~~~~ {#" << mb.getClassName() << " .cpp .numberLines}\n"
+        << "~~~~{#" << mb.getClassName() << " .cpp .numberLines}\n"
         << f.rdbuf() << '\n'
-        << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+        << "~~~~\n"
         << '\n';
   }  // end of BehaviourDocumentationGenerator::writeWebOutput
 
@@ -772,9 +597,11 @@ namespace mfront {
               getData(mb, &BehaviourData::getExternalStateVariables),
               this->standalone);
     out << '\n';
-    if (mb.hasParameters()) {
-      printData(out, mb, "Parameters",
-                getData(mb, &BehaviourData::getParameters), this->standalone);
+    if (!areParametersTreatedAsStaticVariables(mb)) {
+      if (mb.hasParameters()) {
+        printData(out, mb, "Parameters",
+                  getData(mb, &BehaviourData::getParameters), this->standalone);
+      }
     }
     out << '\n';
     printData(out, mb, "Local variables",
@@ -789,5 +616,20 @@ namespace mfront {
   }  // end of BehaviourDocumentationGenerator::writeFullOutput
 
   BehaviourDocumentationGenerator::~BehaviourDocumentationGenerator() = default;
+
+  BehaviourDocumentationGenerator::VariableInformation::VariableInformation() =
+      default;
+  BehaviourDocumentationGenerator::VariableInformation::VariableInformation(
+      VariableInformation&&) noexcept = default;
+  BehaviourDocumentationGenerator::VariableInformation::VariableInformation(
+      const VariableInformation&) = default;
+  BehaviourDocumentationGenerator::VariableInformation&
+  BehaviourDocumentationGenerator::VariableInformation::operator=(
+      VariableInformation&&) = default;
+  BehaviourDocumentationGenerator::VariableInformation&
+  BehaviourDocumentationGenerator::VariableInformation::operator=(
+      const VariableInformation&) = default;
+  BehaviourDocumentationGenerator::VariableInformation::
+      ~VariableInformation() noexcept = default;
 
 }  // end of namespace mfront

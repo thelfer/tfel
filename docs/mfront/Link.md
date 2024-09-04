@@ -12,5 +12,5 @@ variable.
 // explicit link with libm.so
 // (not necessary in pratice)
 @Link "-lm";
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 

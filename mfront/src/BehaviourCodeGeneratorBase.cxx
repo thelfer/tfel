@@ -768,8 +768,8 @@ namespace mfront {
       std::vector<std::string>& tmpnames,
       const Hypothesis h,
       const ModelDescription& md,
-      const std::string& vo,
-      const std::string& vs,
+      const std::vector<std::string>& outputVariables,
+      const std::vector<std::string>& inputVariables,
       const std::string& bn) const {
     auto throw_if = [this](const bool b, const std::string& m) {
       if (b) {
@@ -783,14 +783,16 @@ namespace mfront {
       } else if (d == 1) {
         out << "this->" << v;
       } else {
-        throw_if(true, "invalid depth for the temperature '" + v +
+        throw_if(true, "invalid depth for the variable '" + v +
                            "' "
                            "in model '" +
                            md.className + "'");
       }
     };
     const auto& bdata = this->bd.getBehaviourData(h);
-    throw_if(md.outputs.size() != 1u,
+    throw_if(md.outputs.size() != outputVariables.size(),
+             "invalid number of outputs for model '" + md.className + "'");
+    throw_if(md.outputs.size() != inputVariables.size(),
              "invalid number of outputs for model '" + md.className + "'");
     throw_if(!md.constantMaterialProperties.empty(),
              "constant material properties are not supported yet");
@@ -799,16 +801,34 @@ namespace mfront {
     const auto& f = md.functions[0];
     throw_if(f.modifiedVariables.empty(),
              "no modified variable for function '" + f.name + "'");
-    throw_if(f.modifiedVariables.size() != 1u,
+    throw_if(f.modifiedVariables.size() != outputVariables.size(),
              "invalid number of functions in model '" + md.className + "'");
     throw_if(f.name.empty(), "unnamed function");
     throw_if((f.usedVariables.empty()) && (!f.useTimeIncrement),
              "no used variable for function '" + f.name + "'");
     const auto sm = getTemporaryVariableName(tmpnames, this->bd, bn);
-    out << "// updating " << vs << "\n"
-        << "mfront::" << md.className << "<NumericType> " << sm << ";\n"
-        << "" << sm << ".setOutOfBoundsPolicy(this->policy);\n"
-        << "this->" << vo << " = " << sm << "." << f.name << "(";
+    if (inputVariables.size() == 1) {
+      out << "// updating " << inputVariables[0] << "\n";
+    }
+    out << "mfront::" << md.className << "<NumericType> " << sm << ";\n"
+        << "" << sm << ".setOutOfBoundsPolicy(this->policy);\n";
+    if (md.outputs.size() == 1) {
+      out << "this->" << outputVariables[0] << " = " << sm << "." << f.name
+          << "(";
+    } else {
+      // modified variables can be in a different order than the outputs
+      out << sm << "." << f.name << "(";
+      for (const auto& mv : f.modifiedVariables) {
+        const auto pb = md.outputs.begin();
+        const auto p =
+            std::find_if(pb, md.outputs.end(),
+                         [&mv](const auto& vout) { return vout.name == mv; });
+        throw_if(p == md.outputs.end(),
+                 "internal error: modified variable '" + mv +
+                     "' was not found in the outputs of the model");
+        out << "this->" << outputVariables[p - pb] << ", ";
+      }
+    }
     const auto args = [&f] {
       auto a = std::vector<std::string>{};
       for (const auto& uv : f.usedVariables) {
@@ -824,29 +844,38 @@ namespace mfront {
     for (auto pa = std::begin(args); pa != std::end(args);) {
       if (*pa == "dt") {
         out << "this->dt";
-        ++pa;
+        if (++pa != std::end(args)) {
+          out << ",";
+        }
         continue;
       }
       const auto a = md.decomposeVariableName(*pa);
       const auto& ea = md.getVariableDescription(a.first).getExternalName();
-      if (ea == bdata.getExternalName(vs)) {
-        throw_if(a.second != 1, "invalid depth for variable '" + a.first +
-                                    "' "
-                                    "in model '" +
-                                    md.className + "'");
-        out << "this->" << vs;
-      } else if (std::find(std::begin(asvn), std::end(asvn), ea) !=
-                 std::end(asvn)) {
-        const auto& av =
-            bdata.getAuxiliaryStateVariableDescriptionByExternalName(ea);
-        throw_if(!av.getAttribute<bool>("ComputedByExternalModel", false),
-                 "only auxiliary state variable computed by a model are "
-                 "allowed here");
-        write_variable(av.name, a.second);
-      } else {
-        const auto& en =
-            bdata.getExternalStateVariableDescriptionByExternalName(ea);
-        write_variable(en.name, a.second);
+      auto treated = false;
+      for (const auto& vs : inputVariables) {
+        if (ea == bdata.getExternalName(vs)) {
+          throw_if(a.second != 1, "invalid depth for variable '" + a.first +
+                                      "' "
+                                      "in model '" +
+                                      md.className + "'");
+          out << "this->" << vs;
+          treated = true;
+          break;
+        }
+      }
+      if (!treated) {
+        if (std::find(std::begin(asvn), std::end(asvn), ea) != std::end(asvn)) {
+          const auto& av =
+              bdata.getAuxiliaryStateVariableDescriptionByExternalName(ea);
+          throw_if(!av.getAttribute<bool>("ComputedByExternalModel", false),
+                   "only auxiliary state variable computed by a model are "
+                   "allowed here");
+          write_variable(av.name, a.second);
+        } else {
+          const auto& en =
+              bdata.getExternalStateVariableDescriptionByExternalName(ea);
+          write_variable(en.name, a.second);
+        }
       }
       if (++pa != std::end(args)) {
         out << ",";
@@ -1174,12 +1203,33 @@ namespace mfront {
       os << "ThermalExpansionCoefficientTensor A;\n";
     }
     for (const auto& mv : this->bd.getMainVariables()) {
-      if (Gradient::isIncrementKnown(mv.first)) {
-        os << mv.first.type << " " << mv.first.name << ";\n\n";
-      } else {
-        os << mv.first.type << " " << mv.first.name << "0;\n\n";
+      if (mv.first.arraySize != mv.second.arraySize) {
+        tfel::raise(
+            "BehaviourCodeGeneratorBase::writeBehaviourDataDefaultMembers: "
+            "the array size of the gradient '" +
+            mv.first.name +
+            "' is "
+            "different from the array size of the thermodynamic force '" +
+            mv.second.name + "'");
       }
-      os << mv.second.type << " " << mv.second.name << ";\n\n";
+      if (mv.first.arraySize == 1) {
+        if (Gradient::isIncrementKnown(mv.first)) {
+          os << mv.first.type << " " << mv.first.name << ";\n\n";
+        } else {
+          os << mv.first.type << " " << mv.first.name << "0;\n\n";
+        }
+        os << mv.second.type << " " << mv.second.name << ";\n\n";
+      } else {
+        if (Gradient::isIncrementKnown(mv.first)) {
+          os << "tfel::math::fsarray<" << mv.first.arraySize << ", "
+             << mv.first.type << "> " << mv.first.name << ";\n\n";
+        } else {
+          os << "tfel::math::fsarray<" << mv.first.arraySize << ", "
+             << mv.first.type << "> " << mv.first.name << "0;\n\n";
+        }
+        os << "tfel::math::fsarray<" << mv.second.arraySize << ", "
+           << mv.second.type << "> " << mv.second.name << ";\n\n";
+      }
     }
   }
 
@@ -1903,14 +1953,9 @@ namespace mfront {
          << "using namespace std;\n"
          << "using namespace tfel::math;\n";
       for (const auto& m : em) {
-        if (m.outputs.size() == 1) {
-          const auto vn = m.outputs[0].name;
+        for (const auto& output : m.outputs) {
+          const auto vn = output.name;
           os << "this->" << vn << " += this->d" << vn << ";\n";
-        } else {
-          this->throwRuntimeError(
-              "BehaviourCodeGeneratorBase::"
-              "writeBehaviourUpdateAuxiliaryStateVariables",
-              "only models with one output are supported");
         }
       }
       if (this->bd.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
@@ -2037,13 +2082,15 @@ namespace mfront {
     os << "this->updateIntegrationVariables();\n"
        << "this->updateStateVariables();\n"
        << "this->updateAuxiliaryStateVariables();\n";
-    for (const auto& v :
-         this->bd.getBehaviourData(h).getPersistentVariables()) {
-      this->writePhysicalBoundsChecks(os, v, false);
-    }
-    for (const auto& v :
-         this->bd.getBehaviourData(h).getPersistentVariables()) {
-      this->writeBoundsChecks(os, v, false);
+    if (!areRuntimeChecksDisabled(this->bd)) {
+      for (const auto& v :
+           this->bd.getBehaviourData(h).getPersistentVariables()) {
+        this->writePhysicalBoundsChecks(os, v, false);
+      }
+      for (const auto& v :
+           this->bd.getBehaviourData(h).getPersistentVariables()) {
+        this->writeBoundsChecks(os, v, false);
+      }
     }
     if (!this->bd.getTangentOperatorBlocks().empty()) {
       if (hasUserDefinedTangentOperatorCode(this->bd, h)) {
@@ -2198,22 +2245,23 @@ namespace mfront {
       for (const auto& b : blocks) {
         const auto& v1 = b.first;
         const auto& v2 = b.second;
-        if ((v1.arraySize != 1u) || (v2.arraySize != 1u)) {
-          break;
-        }
-        const auto bn = this->bd.getTangentOperatorBlockName(b);
-        if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
-            (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
-          append(bn + "(Dt[" + o.asString() + "])");
-        } else {
-          if (o.isNull()) {
-            append(bn + "(Dt.begin())");
+        if ((v1.arraySize == 1u) && (v2.arraySize == 1u)) {
+          const auto bn = this->bd.getTangentOperatorBlockName(b);
+          if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
+              (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
+            append(bn + "(Dt[" + o.asString() + "])");
           } else {
-            append(bn + "(Dt.begin()+" + o.asString() + ")");
+            if (o.isNull()) {
+              append(bn + "(Dt.begin())");
+            } else {
+              append(bn + "(Dt.begin()+" + o.asString() + ")");
+            }
           }
         }
-        o += SupportedTypes::TypeSize::getDerivativeSize(v1.getTypeSize(),
-                                                         v2.getTypeSize());
+        const auto block_size = SupportedTypes::TypeSize::getDerivativeSize(
+            SupportedTypes::getTypeSize(v1.type),
+            SupportedTypes::getTypeSize(v2.type));
+        o += (v1.arraySize) * (v2.arraySize) * block_size;
       }
     }
     return init;
@@ -2235,14 +2283,16 @@ namespace mfront {
       this->writeBehaviourParameterInitialisation(os, h);
       // calling models
       for (const auto& m : this->bd.getModelsDescriptions()) {
-        if (m.outputs.size() == 1) {
-          const auto vn = m.outputs[0].name;
-          this->writeModelCall(os, tmpnames, h, m, "d" + vn, vn, "em");
+        auto inputs = std::vector<std::string>{};
+        auto outputs = std::vector<std::string>{};
+        for (const auto& vout : m.outputs) {
+          inputs.push_back(vout.name);
+          outputs.push_back("d" + vout.name);
+        }
+        this->writeModelCall(os, tmpnames, h, m, outputs, inputs, "em");
+        for (const auto& output : m.outputs) {
+          const auto vn = output.name;
           os << "this->d" << vn << " -= this->" << vn << ";\n";
-        } else {
-          this->throwRuntimeError(
-              "BehaviourDSLCommon::writeBehaviourInitializeMethod",
-              "only models with one output are supported yet");
         }
       }
       this->writeBehaviourLocalVariablesInitialisation(os, h);
@@ -2850,7 +2900,9 @@ namespace mfront {
           os << "dl0_l0[1]+=this->" << vs << ";\n"
              << "dl0_l0[0]+=real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n"
              << "dl0_l0[2]+=real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n";
-          this->writeModelCall(os, tmpnames, h, md, vs, vs, "sfeh");
+          this->writeModelCall(os, tmpnames, h, md,
+                               std::vector<std::string>(1u, vs),
+                               std::vector<std::string>(1u, vs), "sfeh");
           os << "dl1_l0[1]+=this->" << vs << ";\n"
              << "dl1_l0[0]+=real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n"
              << "dl1_l0[2]+=real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n";
@@ -2898,7 +2950,9 @@ namespace mfront {
             os << "dl0_l0[0]+=(this->" << vs << ")/2;\n"
                << "dl0_l0[2]+=(this->" << vs << ")/2;\n";
           }
-          this->writeModelCall(os, tmpnames, h, md, vs, vs, "sfeh");
+          this->writeModelCall(os, tmpnames, h, md,
+                               std::vector<std::string>(1u, vs),
+                               std::vector<std::string>(1u, vs), "sfeh");
           if ((h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRESS)) {
@@ -2927,7 +2981,9 @@ namespace mfront {
                 "invalid number of outputs for model '" + md.className + "'");
             const auto vs = md.className + "_" + md.outputs[0].name;
             os << "dl0_l0[" << c << "]+=this->" << vs << ";\n";
-            this->writeModelCall(os, tmpnames, h, md, vs, vs, "sfeh");
+            this->writeModelCall(os, tmpnames, h, md,
+                                 std::vector<std::string>(1u, vs),
+                                 std::vector<std::string>(1u, vs), "sfeh");
             os << "dl1_l0[" << c << "]+=this->" << vs << ";\n";
           } else if (!sfe.is<BehaviourData::NullExpansion>()) {
             throw_if(true, "internal error, unsupported stress free expansion");
@@ -2992,7 +3048,9 @@ namespace mfront {
           os << "dl0_l0[0]+=this->" << vs << ";\n"
              << "dl0_l0[1]+=this->" << vs << ";\n"
              << "dl0_l0[2]+=this->" << vs << ";\n";
-          this->writeModelCall(os, tmpnames, h, md, vs, vs, "sfeh");
+          this->writeModelCall(os, tmpnames, h, md,
+                               std::vector<std::string>(1u, vs),
+                               std::vector<std::string>(1u, vs), "sfeh");
           os << "dl1_l0[0]+=this->" << vs << ";\n"
              << "dl1_l0[1]+=this->" << vs << ";\n"
              << "dl1_l0[2]+=this->" << vs << ";\n";
@@ -3026,7 +3084,9 @@ namespace mfront {
           os << "dl0_l0[0]+=this->" << vs << "/3;\n"
              << "dl0_l0[1]+=this->" << vs << "/3;\n"
              << "dl0_l0[2]+=this->" << vs << "/3;\n";
-          this->writeModelCall(os, tmpnames, h, md, vs, vs, "sfeh");
+          this->writeModelCall(os, tmpnames, h, md,
+                               std::vector<std::string>(1u, vs),
+                               std::vector<std::string>(1u, vs), "sfeh");
           os << "dl1_l0[0]+=this->" << vs << "/3;\n"
              << "dl1_l0[1]+=this->" << vs << "/3;\n"
              << "dl1_l0[2]+=this->" << vs << "/3;\n";
@@ -3090,14 +3150,15 @@ namespace mfront {
     // calling models
     auto tmpnames = std::vector<std::string>{};
     for (const auto& m : this->bd.getModelsDescriptions()) {
-      if (m.outputs.size() == 1) {
-        const auto vn = m.outputs[0].name;
-        this->writeModelCall(os, tmpnames, h, m, "d" + vn, vn, "em");
-        os << "this->d" << vn << " -= this->" << vn << ";\n";
-      } else {
-        this->throwRuntimeError(
-            "BehaviourCodeGeneratorBase::writeBehaviourInitializeMethod",
-            "only models with one output are supported yet");
+      auto inputs = std::vector<std::string>{};
+      auto outputs = std::vector<std::string>{};
+      for (const auto& v : m.outputs) {
+        inputs.push_back(v.name);
+        outputs.push_back("d" + v.name);
+      }
+      this->writeModelCall(os, tmpnames, h, m, outputs, inputs, "em");
+      for (const auto& v : m.outputs) {
+        os << "this->d" << v.name << " -= this->" << v.name << ";\n";
       }
     }
     //
@@ -4586,7 +4647,7 @@ namespace mfront {
       return;
     }
     const auto& blocks = this->bd.getTangentOperatorBlocks();
-    os << "//! Tangent operator;\n"
+    os << "//! \\brief tangent operator;\n"
        << "TangentOperator Dt;\n";
     if (this->bd.hasTrivialTangentOperatorStructure()) {
       tfel::raise_if(
@@ -4596,34 +4657,73 @@ namespace mfront {
           "error");
       if (this->bd.getBehaviourType() !=
           BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-        os << "//! alias to the tangent operator;\n"
+        os << "//! \\brief alias to the tangent operator;\n"
            << "TangentOperator& "
            << this->bd.getTangentOperatorBlockName(blocks.front()) << ";\n";
       }
       return;
     }
     // write blocks
+    auto o = SupportedTypes::TypeSize{};
     for (const auto& b : blocks) {
       const auto& v1 = b.first;
       const auto& v2 = b.second;
-      if ((v1.arraySize != 1u) || (v2.arraySize != 1u)) {
-        break;
-      }
       const auto bn = this->bd.getTangentOperatorBlockName(b);
-      if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
-          (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
-        if (this->bd.useQt()) {
-          os << "typename tfel::math::MakeQuantityReferenceType<"
-             << "tfel::math::derivative_type<" << v1.type << "," << v2.type
-             << ">>::type " << bn << ";\n";
+      const auto block_size = SupportedTypes::TypeSize::getDerivativeSize(
+          SupportedTypes::getTypeSize(v1.type),
+          SupportedTypes::getTypeSize(v2.type));
+      if ((v1.arraySize == 1u) && (v2.arraySize == 1u)) {
+        if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
+            (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
+          if (this->bd.useQt()) {
+            os << "typename tfel::math::MakeQuantityReferenceType<"
+               << "tfel::math::derivative_type<" << v1.type << "," << v2.type
+               << ">>::type " << bn << ";\n";
+          } else {
+            os << "tfel::math::derivative_type<" << v1.type << "," << v2.type
+               << ">& " << bn << ";\n";
+          }
         } else {
-          os << "tfel::math::derivative_type<" << v1.type << "," << v2.type
-             << ">& " << bn << ";\n";
+          os << "tfel::math::View<tfel::math::derivative_type<" << v1.type
+             << "," << v2.type << ">> " << bn << ";\n";
         }
+      } else if ((v1.arraySize == 1u) || (v2.arraySize == 1u)) {
+        os << "/*!\n"
+           << " * \\return the derivative of " << v1.name << " with respect "
+           << v2.name << "\n"
+           << " * \\param[in] mfront_idx: array index relative to " << v1.name
+           << "\n"
+           << " */\n"
+           << "auto " << bn << "(const ushort mfront_idx) noexcept {\n"
+           << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
+           << ", " << v2.type << ">>(this->Dt.data() + ";
+        if (!o.isNull()) {
+          os << o << " + ";
+        }
+        os << "mfront_idx * " << block_size << ");\n"
+           << "}\n";
       } else {
-        os << "tfel::math::View<tfel::math::derivative_type<" << v1.type << ","
-           << v2.type << ">> " << bn << ";\n";
+        os << "/*!\n"
+           << " * \\return the derivative of " << v1.name << " with respect "
+           << v2.name << "\n"
+           << " * \\param[in] mfront_idx: array index relative to " << v1.name
+           << "\n"
+           << " * \\param[in] mfront_idx2: array index relative to " << v2.name
+           << "\n"
+           << " */\n"
+           << "decltype(auto) " << bn
+           << "(const ushort mfront_idx, const ushort mfront_idx2) noexcept "
+           << "{\n"
+           << "return tfel::math::map<tfel::math::derivative_type<" << v1.type
+           << ", " << v2.type << ">>(this->Dt.data() + ";
+        if (!o.isNull()) {
+          os << o << " + ";
+        }
+        os << "(" << v2.arraySize << " * mfront_idx + mfront_idx2) * "
+           << block_size << ");\n"
+           << "}\n";
       }
+      o += (v1.arraySize) * (v2.arraySize) * block_size;
     }
   }  // end of writeBehaviourTangentOperator()
 
@@ -4718,16 +4818,35 @@ namespace mfront {
     this->checkIntegrationDataFile(os);
     os << "protected: \n\n";
     for (const auto& v : this->bd.getMainVariables()) {
+      if (v.first.arraySize != v.second.arraySize) {
+        tfel::raise(
+            "BehaviourCodeGeneratorBase::writeIntegrationDataDefaultMembers: "
+            "the array size of the gradient '" +
+            v.first.name +
+            "' is "
+            "different from the array size of the thermodynamic force '" +
+            v.second.name + "'");
+      }
       if (Gradient::isIncrementKnown(v.first)) {
         os << "/*!\n"
            << " * \\brief " << v.first.name << " increment\n"
-           << " */\n"
-           << v.first.type << " d" << v.first.name << ";\n\n";
+           << " */\n";
+        if (v.first.arraySize == 1u) {
+          os << v.first.type << " d" << v.first.name << ";\n\n";
+        } else {
+          os << v.first.type << " d" << v.first.name << "[" << v.first.arraySize
+             << "];\n\n";
+        }
       } else {
         os << "/*!\n"
            << " * \\brief " << v.first.name << " at the end of the time step\n"
-           << " */\n"
-           << v.first.type << " " << v.first.name << "1;\n\n";
+           << " */\n";
+        if (v.first.arraySize == 1u) {
+          os << v.first.type << " " << v.first.name << "1;\n\n";
+        } else {
+          os << v.first.type << " " << v.first.name << "1[" << v.first.arraySize
+             << "];\n\n";
+        }
       }
     }
     os << "/*!\n"

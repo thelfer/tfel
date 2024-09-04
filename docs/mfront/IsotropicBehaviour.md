@@ -5,4 +5,4 @@ this symmetry is the default one, this keyword is seldom used.
 
 ~~~~{.cpp}
 @IsotropicBehaviour;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

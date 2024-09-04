@@ -18,4 +18,4 @@ except the first:
 
 ~~~~{.cpp}
 @Behaviour Norton;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

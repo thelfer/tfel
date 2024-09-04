@@ -287,10 +287,10 @@ namespace mfront {
                             *   to specific positions. This option
                             *   is meant to be used internally and
                             *   is not accessible from a mfront file*/
-    };                     // end of enum Mode
-                           /*!
-                            * \brief position of the inserted code
-                            */
+    };  // end of enum Mode
+    /*!
+     * \brief position of the inserted code
+     */
     enum Position { AT_BEGINNING, BODY, AT_END };  // end of enum Mode
                                                    /*!
                                                     * Some dsl may want to avoid the user to declare a variable with

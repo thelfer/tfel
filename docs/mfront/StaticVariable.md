@@ -9,4 +9,4 @@ an equal sign and its value.
 
 ~~~~{.cpp}
 @StaticVariable real A = 1.234e56;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

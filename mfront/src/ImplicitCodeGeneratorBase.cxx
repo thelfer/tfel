@@ -612,8 +612,8 @@ namespace mfront {
          << "return false;\n"
          << "}\n";
       auto cr = SupportedTypes::TypeSize{};  // current row
-      auto cc = SupportedTypes::TypeSize{};  // current column
       for (const auto& iv1 : isvs) {
+        auto cc = SupportedTypes::TypeSize{};  // current column
         for (const auto& iv2 : isvs) {
           if (std::find_if(invert_jacobian_blocks.begin(),
                            invert_jacobian_blocks.end(),
@@ -633,9 +633,10 @@ namespace mfront {
           derivative_view.derivative_row_position = cr;
           derivative_view.derivative_column_position = cc;
           this->writeDerivativeView(os, derivative_view);
-          // update the row position
+          // update the column position
           cc += mfront::getTypeSize(iv2);
         }
+        // update the row position
         cr += mfront::getTypeSize(iv1);
       }
     }
@@ -1115,11 +1116,13 @@ namespace mfront {
       os << "this->computeFinalThermodynamicForces();\n";
     }
     os << "this->updateAuxiliaryStateVariables();\n";
-    for (const auto& v : d.getPersistentVariables()) {
-      this->writePhysicalBoundsChecks(os, v, false);
-    }
-    for (const auto& v : d.getPersistentVariables()) {
-      this->writeBoundsChecks(os, v, false);
+    if (!areRuntimeChecksDisabled(this->bd)) {
+      for (const auto& v : d.getPersistentVariables()) {
+        this->writePhysicalBoundsChecks(os, v, false);
+      }
+      for (const auto& v : d.getPersistentVariables()) {
+        this->writeBoundsChecks(os, v, false);
+      }
     }
     if (!this->bd.getTangentOperatorBlocks().empty()) {
       os << "if(smt!=NOSTIFFNESSREQUESTED){\n";

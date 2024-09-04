@@ -44,7 +44,11 @@ endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 if(HAVE_FORTRAN)
   # we associate clang with the gnu fortran compiler
-  include(cmake/modules/gnu-fortran-compiler.cmake)
+  if("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "IntelLLVM")
+    set(INTEL_FORTRAN_COMPILER ON)
+  else()
+    include(cmake/modules/gnu-fortran-compiler.cmake)
+  endif()
 endif(HAVE_FORTRAN)
 
 option(enable-libcxx "use LLVM C++ Standard library" OFF)

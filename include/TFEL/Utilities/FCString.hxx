@@ -133,17 +133,19 @@ namespace tfel::utilities {
     //! \return the actual size of the string
     std::size_t size() const;
     //! \return an iterator past-the end of the string
-    typename std::array<CharT, N + 1>::iterator end();
+    auto end() -> typename std::array<CharT, N + 1>::iterator;
     //! \return an iterator past-the end of the string
-    typename std::array<CharT, N + 1>::const_iterator end() const;
+    auto end() const -> typename std::array<CharT, N + 1>::const_iterator;
     //! \return an iterator past-the end of the string
-    typename std::array<CharT, N + 1>::const_iterator cend() const;
+    auto cend() const -> typename std::array<CharT, N + 1>::const_iterator;
     //! \return an reverse iterator at the end of the string
-    typename std::array<CharT, N + 1>::reverse_iterator rbegin();
+    auto rbegin() -> typename std::array<CharT, N + 1>::reverse_iterator;
     //! \return an reverse iterator at the end of the string
-    typename std::array<CharT, N + 1>::const_reverse_iterator rbegin() const;
+    auto rbegin() const ->
+        typename std::array<CharT, N + 1>::const_reverse_iterator;
     //! \return an reverse iterator at the end of the string
-    typename std::array<CharT, N + 1>::const_reverse_iterator crbegin() const;
+    auto crbegin() const ->
+        typename std::array<CharT, N + 1>::const_reverse_iterator;
     //! \return the last character of the string
     CharT& back();
     //! \return the last character of the string

@@ -126,8 +126,8 @@ namespace tfel::math::anderson {
   }
 
   template <typename Field>
-  auto scalar_product(const Field& f1, const Field& f2)
-      -> decltype(f1[0] * f2[0]) {
+  auto scalar_product(const Field& f1,
+                      const Field& f2) -> decltype(f1[0] * f2[0]) {
     using value_type = typename Field::value_type;
     auto r = value_type{};
     for (decltype(f1.size()) i = 0; i != f1.size(); ++i) {
