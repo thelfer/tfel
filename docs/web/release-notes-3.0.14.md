@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 3.0.14 of the
 
 # Issues fixed
 
+## Issue 620:[clang] Add specification of C++ exceptions model on Windows
+
+For more details, see <https://github.com/thelfer/tfel/issues/620>.
+
 ## Issue 619: [fortran] Add support for the `ifx` fortran compiler
 
 For more details, see <https://github.com/thelfer/tfel/issues/619>.
