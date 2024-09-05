@@ -1,3 +1,7 @@
+if(WIN32)
+  tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "EHsc")
+endif(WIN32)
+
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Weverything")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wno-padded")
 tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS  "Wno-documentation")
