@@ -80,55 +80,39 @@ namespace tfel::math::internals {
                                     const real,
                                     const real,
                                     const real);
-private:
 
-/*!
+   private:
+    /*!
      * \brief computes the first eigen value of a real symmetric 3x3 matrix
      *    [ A  D  E ]
      *    [ D  B  F ]
      *    [ E  F  C ]
      * \param[out] vp: eigen values
-     * \param[in]  A:  component of the matrix
-     * \param[in]  B:  component of the matrix
-     * \param[in]  C:  component of the matrix
-     * \param[in]  D:  component of the matrix
-     * \param[in]  E:  component of the matrix
-     * \param[in]  F:  component of the matrix
+     * \param[in] devM: deviatoric matrix
+     * \param[in] tr: trace of the matrix
      */
     static void computeFirstEigenValue(tvector<3u, real>&,
-                                       const real,
-                                       const real,
-                                       const real,
-                                       const real,
-                                       const real,
+                                       const tmatrix<3u, 3u, real>&,
                                        const real);
 
-/*!
-     * \brief computes the first eigen vector 
-     * of a real symmetric 3x3 matrix A, associated 
-     * with the eigen value stored in vp[0] and 
-     * stores in the first column of m 
+    /*!
+     * \brief computes the first eigen vector
+     * of a real symmetric 3x3 matrix A, associated
+     * with the eigen value stored in vp[0] and
+     * stores in the first column of m
      *     [ A  D  E ]
      * A = [ D  B  F ]
      *     [ E  F  C ]
-     * The vectors s1 and s2 of [1] are also stored 
+     * The vectors s1 and s2 of [1] are also stored
      * in columns two and three of m
      * \param[out] vp: eigen values
      * \param[out] m:  m[0]: first ev, m[1] and m[2]: orthogonal subspace
-     * \param[in]  A:  component of the matrix
-     * \param[in]  B:  component of the matrix
-     * \param[in]  C:  component of the matrix
-     * \param[in]  D:  component of the matrix
-     * \param[in]  E:  component of the matrix
-     * \param[in]  F:  component of the matrix
+     * \param[in] devM: deviatoric matrix
+     * \param[in] tr: trace of the matrix
      */
     static void computeProjectionBasis(tvector<3u, real>&,
                                        tmatrix<3u, 3u, real>&,
-                                       const real,
-                                       const real,
-                                       const real,
-                                       const real,
-                                       const real,
+                                       const tmatrix<3u, 3u, real>&,
                                        const real);
   };
 

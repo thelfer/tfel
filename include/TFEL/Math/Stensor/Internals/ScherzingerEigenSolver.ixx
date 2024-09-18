@@ -36,32 +36,21 @@ namespace tfel::math::internals {
 
   template <typename real>
   void ScherzingerEigensolver3x3<real>::computeFirstEigenValue(
-      tvector<3u, real>& vp,
-      const real A,
-      const real B,
-      const real C,
-      const real D,
-      const real E,
-      const real F) {
+      tvector<3u, real>& vp, const tmatrix<3u, 3u, real>& devM, const real tr) {
     constexpr auto one = real{1};
-    constexpr const auto one_half = one / 2;
-    constexpr const auto one_third = one / 3;
-
-    // compute the deviatoric part of M : dev(M)
-    const auto I1 = A + B + C;
-    const auto tr = one_third * I1;
+    constexpr auto one_half = one / 2;
+    constexpr auto one_third = one / 3;
 
     // compute second invariant : 1/2*tr(dev(M)*dev(M))
-    const auto trMdMd = ((A - tr) * (A - tr) + D * D + E * E) +
-                        (D * D + (B - tr) * (B - tr) + F * F) +
-                        (E * E + F * F + (C - tr) * (C - tr));
+    const auto trMdMd = (devM(0, 0) * devM(0, 0) + devM(0, 1) * devM(0, 1) +
+                         devM(0, 2) * devM(0, 2)) +
+                        (devM(0, 1) * devM(0, 1) + devM(1, 1) * devM(1, 1) +
+                         devM(1, 2) * devM(1, 2)) +
+                        (devM(0, 2) * devM(0, 2) + devM(1, 2) * devM(1, 2) +
+                         devM(2, 2) * devM(2, 2));
     const auto J2 = one_half * trMdMd;
 
     if (abs(J2) > std::numeric_limits<real>::epsilon()) {
-      // compute third invariant : det(dev(M))
-      const auto devM = tmatrix<3u, 3u, real>{A - tr, D,      E,  //
-                                              D,      B - tr, F,  //
-                                              E,      F,      C - tr};
       const auto J3 = det(devM);
 
       const auto alpha = [&]() -> real {
@@ -89,24 +78,17 @@ namespace tfel::math::internals {
   void ScherzingerEigensolver3x3<real>::computeProjectionBasis(
       tvector<3u, real>& vp,
       tmatrix<3u, 3u, real>& m,
-      const real A,
-      const real B,
-      const real C,
-      const real D,
-      const real E,
-      const real F) {
+      const tmatrix<3u, 3u, real>& devM,
+      const real tr) {
     constexpr auto one = real{1};
     constexpr const auto one_third = one / 3;
 
-    // compute the deviatoric part of M : dev(M)
-    const auto I1 = A + B + C;
-    const auto tr = one_third * I1;
-
     const auto eta = vp[0] - tr;
     const auto fc = tr + eta;
-    const auto r = tmatrix<3u, 3u, real>{A - fc, D,      E,  //
-                                         D,      B - fc, F,  //
-                                         E,      F,      C - fc};
+    const auto r = tmatrix<3u, 3u, real>{
+        devM(0, 0) - fc, devM(0, 1),      devM(0, 2),  //
+        devM(0, 1),      devM(1, 1) - fc, devM(1, 2),  //
+        devM(0, 2),      devM(1, 2),      devM(2, 2) - fc};
 
     const auto listNormr =
         tvector<3u, real>{norm(r.template column_view<0u>()),  //
@@ -194,8 +176,8 @@ namespace tfel::math::internals {
                                             D,      B - tr, F,  //
                                             E,      F,      C - tr};
 
-    ScherzingerEigensolver3x3::computeFirstEigenValue(vp, A, B, C, D, E, F);
-    ScherzingerEigensolver3x3::computeProjectionBasis(vp, m, A, B, C, D, E, F);
+    ScherzingerEigensolver3x3::computeFirstEigenValue(vp, devM, tr);
+    ScherzingerEigensolver3x3::computeProjectionBasis(vp, m, devM, tr);
 
     const tvector<3u, real> s1 = m.template column_view<1u>();
     const tvector<3u, real> s2 = m.template column_view<2u>();
