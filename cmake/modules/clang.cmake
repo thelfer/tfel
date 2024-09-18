@@ -1,3 +1,7 @@
+if(WIN32)
+  tfel_add_cxx_compiler_flag_if_available(VISIBILITY_FLAGS "EHsc")
+endif(WIN32)
+
 tfel_add_cxx_compiler_flag_if_available(COMPILER_WARNINGS  "Weverything")
 tfel_add_cxx_compiler_flag_if_available(COMPILER_WARNINGS  "Wno-c++98-compat-pedantic")
 tfel_add_cxx_compiler_flag_if_available(COMPILER_WARNINGS  "Wno-padded")
