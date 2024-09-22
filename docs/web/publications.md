@@ -13,6 +13,7 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @machado_alves_da_fonseca_viscoplastic_2024
     @ribeiro_nogueira_eikonal_2024
     @bary_mesoscale_2024
     @barani_assessing_2024
@@ -34,7 +35,7 @@ nocite: |
     @simo_novel_2024
     @singh_irradiation_2024
     @loiseau_formulation_2023
-	@thuillet_modelisation_2023
+    @thuillet_modelisation_2023
     @wang_modelling_2023
     @fokam_implementation_2023
     @bacquaert_standard_2023
