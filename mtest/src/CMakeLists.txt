@@ -192,14 +192,15 @@ if(enable-static)
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
-  target_link_libraries(TFELMTest-static PUBLIC
-    MFrontLogStream-static
-    TFELMaterial-static
-    TFELMathParser-static
-    TFELMath-static
-    TFELSystem-static
-    TFELTests-static
-    TFELConfig-static)
+  target_link_libraries(TFELMTest-static
+    PUBLIC
+    tfel::MFrontLogStream-static
+    tfel::TFELMaterial-static
+    tfel::TFELMathParser-static
+    tfel::TFELMath-static
+    tfel::TFELSystem-static
+    tfel::TFELTests-static
+    tfel::TFELConfig-static)
   if(TFEL_HAVE_MADNEX)
     target_compile_definitions(TFELMTest-static
       PUBLIC MTEST_HAVE_MADNEX)

@@ -54,22 +54,22 @@ target_include_directories(TFELSystem
    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 if(TFEL_DL_LIBRARY)
   target_link_libraries(TFELSystem 
-	PUBLIC TFELException
+	PUBLIC tfel::TFELException
     PRIVATE ${TFEL_DL_LIBRARY}
     PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 else(TFEL_DL_LIBRARY)
   if((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
     if(Threads_FOUND)
       target_link_libraries(TFELSystem 
-		PUBLIC TFELException
+		PUBLIC tfel::TFELException
 		PRIVATE Threads::Threads)
     else(Threads_FOUND)
       target_link_libraries(TFELSystem
-		                        PUBLIC TFELException)
+        PUBLIC tfel::TFELException)
     endif(Threads_FOUND)
   else((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
     target_link_libraries(TFELSystem
-		                      PUBLIC TFELException)
+      PUBLIC tfel::TFELException)
   endif((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
 endif(TFEL_DL_LIBRARY)
 if(enable-static)
@@ -82,22 +82,22 @@ if(enable-static)
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
   if(TFEL_DL_LIBRARY)
     target_link_libraries(TFELSystem-static 
-    PUBLIC TFELException-static
+    PUBLIC tfel::TFELException-static
       PRIVATE ${TFEL_DL_LIBRARY}
       PRIVATE ${CMAKE_THREAD_LIBS_INIT})
   else(TFEL_DL_LIBRARY)
     if((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
       if(Threads_FOUND)
         target_link_libraries(TFELSystem-static 
-      PUBLIC TFELException -static
-      PRIVATE Threads::Threads)
+          PUBLIC tfel::TFELException-static
+          PRIVATE Threads::Threads)
       else(Threads_FOUND)
         target_link_libraries(TFELSystem-static
-      PUBLIC TFELException-static)
+      PUBLIC tfel::TFELException-static)
       endif(Threads_FOUND)
     else((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
       target_link_libraries(TFELSystem-static
-      PUBLIC TFELException-static)
+        PUBLIC TFELException-static)
     endif((NOT i586-mingw32msvc_COMPILER) AND (NOT i686-w64-mingw32_COMPILER))
   endif(TFEL_DL_LIBRARY)
 endif(enable-static)
