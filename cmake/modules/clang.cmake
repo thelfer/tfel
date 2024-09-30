@@ -31,8 +31,10 @@ else(enable-fast-math)
   tfel_enable_cxx_compiler_flag(OPTIMISATION_FLAGS2 "ffast-math")
 endif(enable-fast-math)
 
-tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility=hidden")
-tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility-inlines-hidden")
+if(NOT WIN32)
+  tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility=hidden")
+  tfel_enable_cxx_compiler_flag(VISIBILITY_FLAGS "fvisibility-inlines-hidden")
+endif(NOT WIN32)
 
 set(OPTIMISATION_FLAGS "-DTFEL_NO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 
