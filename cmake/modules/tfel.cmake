@@ -6,11 +6,12 @@ function(tfel_add_c_cxx_definitions define)
 endfunction(tfel_add_c_cxx_definitions)
 
 macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
+  set(VERSION "${tfel_version_major}.${tfel_version_minor}.${tfel_version_patch}")
   project("tfel"
            HOMEPAGE_URL "https://thelfer.github.io/tfel/web/index.html"
-           LANGUAGES C CXX)
+           LANGUAGES C CXX
+           VERSION "${VERSION}")
   set(PACKAGE_NAME "tfel")
-  set(VERSION "${tfel_version_major}.${tfel_version_minor}.${tfel_version_patch}")
 
   if(TFEL_APPEND_VERSION OR TFEL_VERSION_FLAVOUR)
     set(TFEL_APPEND_SUFFIX ON)
@@ -24,10 +25,13 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   set(TFEL_VERSION_PATCH "${tfel_version_patch}")
 
   set(TFEL_VERSION "${VERSION}")
+  if(TFEL_DEVELOPMENT_VERSION)
+    set(TFEL_VERSION "${VERSION}-dev")
+  endif(TFEL_DEVELOPMENT_VERSION)
+
   if(TFEL_VERSION_FLAVOUR)
-    set(TFEL_VERSION "${VERSION}-${TFEL_VERSION_FLAVOUR}")
+    set(TFEL_VERSION "${TFEL_VERSION}-${TFEL_VERSION_FLAVOUR}")
   else(TFEL_VERSION_FLAVOUR)
-    set(TFEL_VERSION "${VERSION}")
   endif(TFEL_VERSION_FLAVOUR)
   tfel_add_c_cxx_definitions("VERSION=\"${TFEL_VERSION}\"")
   
@@ -49,6 +53,18 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   if(LIB_SUFFIX)
     tfel_add_c_cxx_definitions("LIB_SUFFIX=\"${LIB_SUFFIX}\"")
   endif(LIB_SUFFIX)
+
+  write_basic_package_version_file(
+    "${PROJECT_BINARY_DIR}/tfel-config-version.cmake"
+    VERSION "${VERSION}"
+    COMPATIBILITY SameMinorVersion)
+  if(TFEL_APPEND_SUFFIX)
+    set(export_install_path "share/tfel-${TFEL_SUFFIX}/cmake")
+  else(TFEL_APPEND_SUFFIX)
+    set(export_install_path "share/tfel/cmake")
+  endif(TFEL_APPEND_SUFFIX)
+  install(FILES "${PROJECT_BINARY_DIR}/tfel-config-version.cmake"
+    DESTINATION "${export_install_path}")
 endmacro(tfel_project)
 
 set(CPACK_COMPONENTS_ALL core mfront mtest mfm)
