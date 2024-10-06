@@ -13,6 +13,7 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @nagel_hierarchical_2024
     @machado_alves_da_fonseca_viscoplastic_2024
     @ribeiro_nogueira_eikonal_2024
     @bary_mesoscale_2024
@@ -30,6 +31,7 @@ nocite: |
     @senac_yield_2024
     @helfer_new_2024
     @jamond_manta_2024
+    @beccantini_europlexus_2022
     @valmalle_dic_2024
     @lorenzo_exploring_2024
     @simo_novel_2024
