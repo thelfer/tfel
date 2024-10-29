@@ -15,7 +15,12 @@
 
 # Equivalent stress
 
-## Hosford equivalent stress{#sec:hosford}
+## Hosford equivalent stress{#sec:hosford}for an ellipsoid whose semi-axis lengths are a,b,c
+   * embedded in an isotropic matrix (young,nu). 
+   * It returns an object of type st2tost2, which is the fourth-order Eshelby tensor, in a basis which is adapted to the ellipsoid :
+   * see Eshelby.ixx for the details. The basis IS NOT RELATED to the given order of the values a,b,c
+   * These expressions can be found in Torquato 2002 Random Heterogeneous Materials for the axisymetric ellipsoid
+   * and in Eshelby 1957 for other cases.
 
 The header `TFEL/Material/Hosford1972YieldCriterion.hxx` introduces
 three functions which are meant to compute the Hosford equivalent
@@ -376,5 +381,53 @@ If we were to model plates, a appropriate convention is the following:
 By definition, this convention, named `Plate` in `MFront` is only valid
 for \(3D\), \(2D\) plane stress, \(2D\) plane strain and \(2D\)
 generalized plane strain modelling hypotheses.
+
+# Homogeneisation
+
+## Eshelby tensor
+The header `TFEL/Material/Eshelby.hxx` introduces
+the function EshelbyTensor which computes the Eshelby tensor
+of an ellipsoid.
+If we consider a constant stress-free strain \(\tenseur \varepsilon^\mathrm{T}\)
+filling an ellipsoidal volume embedded in an infinite homogeneous medium whose
+elasticity is \(\tenseur C_0\), the strain tensor inside the ellipsoid is given by
+
+\(\tenseur \varepsilon=\tenseur S_0:\tenseur \varepsilon^\mathrm{T}\).
+
+where \(\tenseur S_0\) is the Eshelby tensor.
+Note that it is related to the Hill tensor (\tenseur P_0\) by
+
+\(\tenseur P_0=\tenseur S_0:\tenseur C_0^{-1}\)
+
+which gives the strain tensor inside the ellipsoid as a function of the
+polarization tensor \(\tenseur \tau = -\tenseur C_0:\tenseur \varepsilon^\mathrm{T}\) : 
+
+\(\tenseur \varepsilon=-\tenseur P_0:\tenseur \tau\).
+
+The function EshelbyTensor computes the Eshelby tensor of an ellipsoid
+whose semi-axis lengths are a,b,c, embedded in an isotropic
+matrix. It returns an object of type st2tost2<3u,real>, which is the
+fourth-order Eshelby tensor, in a basis which is adapted to the ellipsoid.
+The expressions can be found in Torquato, Random Heterogeneous Materials (2002)
+for the axisymetric ellipsoid and in Eshelby (1957) for other cases.
+
+## Strain localisation tensors
+The header `TFEL/Material/Eshelby.hxx` also introduces
+three functions that compute the strain localisation tensor of an ellipsoid.
+If we consider an ellipsoid whose elasticity is \(\tenseur C_i\), embedded
+in an infinite homogeneous medium whose elasticity is \(\tenseur C_0\),
+submitted to a external uniform strain field at infinity \(\tenseur E\),
+the strain field within the ellipsoid is uniform and given by
+
+\(\tenseur \varepsilon = \tenseur A:\tenseur E\)
+
+where \(\tenseur A \) is the localisation tensor.
+
+Three functions are implemented for the different possible shapes :
+GeneralEllipsoidLocalisationTensor, AxisymEllipsoidLocalisationTensor
+and SphereLocalisationTensor. 
+The ellipsoid is parametrized by its semi-axis lengths \(a,b,c\) but also
+by its axis orientations.
+The functions then return the localisation tensors taking into account the orientations.
 
 <!-- Local IspellDict: english -->

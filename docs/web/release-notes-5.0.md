@@ -329,3 +329,7 @@ For more details, see <https://github.com/thelfer/tfel/issues/476>
 ## Issue 370: [tfel-utilities] Support for `C++` digit separator
 
 For more details, see <https://github.com/thelfer/tfel/issues/370>
+
+## Issue 632: [tfel-material] add-computations-of-the-eshelby-tensors 
+
+For more details, see <https://github.com/thelfer/tfel/issues/632>
