@@ -17,8 +17,8 @@
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Material/StiffnessTensor.hxx"
 
-namespace tfel::material {
-
+namespace tfel::material
+{
   /*!
    * This function builds the Eshelby tensor for an ellipsoid whose semi-axis lengths are a,b,c
    * embedded in an isotropic matrix (young,nu). 
@@ -93,6 +93,7 @@ namespace tfel::material {
       const real&,
       const real&);
       
+      //These functions may exist somewhere but I did not find them !
       template <typename real>
   TFEL_HOST_DEVICE const std::array<int,3> sort_ind(const real&, const real&, const real&);
   
