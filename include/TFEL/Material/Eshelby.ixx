@@ -216,8 +216,8 @@ namespace tfel::material
 	using namespace tfel::math;
 	st2tost2<3u,StressType> C = C_i-C_0;
 	const auto invC0 = invert(C_0);
-	const auto Pr = typename Expr<st2tost2<3u,real>, ST2toST2ST2toST2ProductExpr<3u>>::Expr(invC0,C);
-	const auto PPr = typename Expr<st2tost2<3u,real>, ST2toST2ST2toST2ProductExpr<3u>>::Expr(S0,Pr);
+	const auto Pr = invC0 * C;
+	const auto PPr = S0 * Pr;
 	const auto A = invert(st2tost2<3u,real>::Id()+PPr);
 	return A;
   };//end of function SphereLocalisationTensor
