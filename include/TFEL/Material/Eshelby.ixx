@@ -236,7 +236,19 @@ namespace tfel::material
 	using namespace tfel::material;
 	const auto n_3=VectProd<real>(n_1,n_2);
 	const tfel::math::rotation_matrix<real> r={n_1[0],n_1[1],n_1[2],n_2[0],n_2[1],n_2[2],n_3[0],n_3[1],n_3[2]};
-	return change_basis(S0,r);
+	const auto S0_basis = change_basis(S0,r);
+	tfel::math::st2tost2<3u,StressType> C_0;
+	using namespace tfel::material;
+	static constexpr auto value = StiffnessTensorAlterationCharacteristic::UNALTERED;
+	computeIsotropicStiffnessTensorII<3u,value,StressType,real>(C_0,young,nu);
+	using namespace tfel::math;
+	st2tost2<3u,StressType> C = C_i-C_0;
+	const auto invC0 = invert(C_0);
+	const auto Pr = typename Expr<st2tost2<3u,real>, ST2toST2ST2toST2ProductExpr<3u>>::Expr(invC0,C);
+	const auto PPr = typename Expr<st2tost2<3u,real>, ST2toST2ST2toST2ProductExpr<3u>>::Expr(S0_basis,Pr);
+	const auto A = invert(st2tost2<3u,real>::Id()+PPr);
+	return A;
+	
    };//end of function EllipsoidLocalisationTensor
       
       			 			     			 
@@ -252,7 +264,18 @@ namespace tfel::material
 	const auto n_1=VectProd<real>(n_2,n_a);
 	const auto S0 = tfel::material::ComputeEshelbyTensor<3u, real>::EshelbyTensorAxisym(nu,e);
 	const tfel::math::rotation_matrix<real> r={n_1[0],n_1[1],n_1[2],n_2[0],n_2[1],n_2[2],n_a[0],n_a[1],n_a[2]};
-	return change_basis(S0,r);
+	const auto S0_basis = change_basis(S0,r);
+	tfel::math::st2tost2<3u,StressType> C_0;
+	using namespace tfel::material;
+	static constexpr auto value = StiffnessTensorAlterationCharacteristic::UNALTERED;
+	computeIsotropicStiffnessTensorII<3u,value,StressType,real>(C_0,young,nu);
+	using namespace tfel::math;
+	st2tost2<3u,StressType> C = C_i-C_0;
+	const auto invC0 = invert(C_0);
+	const auto Pr = typename Expr<st2tost2<3u,real>, ST2toST2ST2toST2ProductExpr<3u>>::Expr(invC0,C);
+	const auto PPr = typename Expr<st2tost2<3u,real>, ST2toST2ST2toST2ProductExpr<3u>>::Expr(S0_basis,Pr);
+	const auto A = invert(st2tost2<3u,real>::Id()+PPr);
+	return A;
    };//end of function AxisymEllipsoidLocalisationTensor
    
 }  // end of namespace tfel::material
