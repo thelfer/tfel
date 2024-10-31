@@ -31,8 +31,8 @@ namespace tfel::material
 	      	EshelbyTensorSphere(const real& nu)
 	      	{
 	      		const auto zero = real{0};
-		      	const auto J=real{(5.*nu-1.)/15/(1-nu)};
-			const auto I=real{2*(4.-5.*nu)/15/(1-nu)};
+		      	const auto J=(5*nu-1)/15/(1-nu);
+			const auto I=2*(4-5*nu)/15/(1-nu);
 			return {I+J, J, J, 	  zero, zero, zero,
 				J, I+J, J, 	  zero, zero, zero,
 				J, J, I+J, 	  zero, zero, zero,
