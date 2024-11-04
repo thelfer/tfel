@@ -33,7 +33,7 @@ namespace tfel::material
    * param 4 : semi-axis of ellipsoid in direction 3
    */
      template <typename real>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,real> EshelbyTensor(
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> EshelbyTensor(
       const real&,
       const real&,
       const real&,

@@ -46,7 +46,16 @@ namespace tfel::material
 		/*
 		* This function q_ is needed just for the axisymmetric ellipsoid
 		*/
-	      	TFEL_HOST_DEVICE static real q_(const real& e) {if (e<1-eps) return e/tfel::math::power<3,2>(1-e*e)*(acos(e)-e*sqrt(1-e*e)); else if (e>1+eps) return e/tfel::math::power<3,2>(e*e-1)*(e*sqrt(e*e-1)-acosh(e)); else return 2/3;};
+	      	TFEL_HOST_DEVICE static real q_(const real& e)
+	      	{
+	      		if (e<1-eps) 
+	      		{return e/tfel::math::power<3,2>(1-e*e)*(std::acos(e)-e*std::sqrt(1-e*e));
+	      		}
+	      		else if (e>1+eps) 
+	      		{return e/tfel::math::power<3,2>(e*e-1)*(e*std::sqrt(e*e-1)-std::acosh(e));
+	      		}
+	      		return real{2}/3;
+	      	};
 		
 		/* AxisymmetricalEshelbyTensor is relative to an axisymmetric ellipsoid which has two equal semi-axes and another semi-axis which is different
 		* The arguments are nu and the aspect ratio e of the ellipsoid (e>1 : prolate, e<1 : oblate)
@@ -168,7 +177,7 @@ namespace tfel::material
     	     						     		    		  
   //The function EshelbyTensor (see .hxx)
   template <typename real>
-  const tfel::math::st2tost2<3u, real> EshelbyTensor(const real& nu, const real& a, const real& b, const real& c)
+  tfel::math::st2tost2<3u, real> EshelbyTensor(const real& nu, const real& a, const real& b, const real& c)
   {
   	static constexpr auto eps = std::numeric_limits<real>::epsilon();
     	if ((std::abs(a-b)<eps) and (std::abs(b-c)<eps) and (std::abs(a-c)<eps))
@@ -238,8 +247,8 @@ namespace tfel::material
 	using namespace tfel::math;
 	st2tost2<3u,StressType> C = C_i-C_0;
 	const auto invC0 = invert(C_0);
-	const auto Pr = typename Expr<st2tost2<3u,real>, ST2toST2ST2toST2ProductExpr<3u>>::Expr(invC0,C);
-	const auto PPr = typename Expr<st2tost2<3u,real>, ST2toST2ST2toST2ProductExpr<3u>>::Expr(S0_basis,Pr);
+	const auto Pr = invC0*C;
+	const auto PPr = S0_basis*Pr;
 	const auto A = invert(st2tost2<3u,real>::Id()+PPr);
 	return A;
 	
@@ -266,8 +275,8 @@ namespace tfel::material
 	using namespace tfel::math;
 	st2tost2<3u,StressType> C = C_i-C_0;
 	const auto invC0 = invert(C_0);
-	const auto Pr = typename Expr<st2tost2<3u,real>, ST2toST2ST2toST2ProductExpr<3u>>::Expr(invC0,C);
-	const auto PPr = typename Expr<st2tost2<3u,real>, ST2toST2ST2toST2ProductExpr<3u>>::Expr(S0_basis,Pr);
+	const auto Pr = invC0*C;
+	const auto PPr = S0_basis*Pr;
 	const auto A = invert(st2tost2<3u,real>::Id()+PPr);
 	return A;
    };//end of function AxisymmetricalEllipsoidLocalisationTensor

@@ -153,6 +153,19 @@ The results of those tests are reported on Tables
 better compromise between accuracy and numerical efficiency than the
 default `TFEL` solver.
 
+# New `TFEL/Material` features
+
+## Homogenization
+
+The function `EshelbyTensor` computes the Eshelby tensor of an ellipsoid
+whose semi-axis lengths are `a`, `b`, `c`, embedded in an isotropic
+matrix.
+
+Three functions also compute the strain localisation tensor of an ellipsoid embedded
+in an isotropic matrix and submitted to an external uniform strain field :
+`GeneralEllipsoidLocalisationTensor`, `AxisymmetricalEllipsoidLocalisationTensor`
+and `SphereLocalisationTensor`.
+
 # MFront
 
 ## Improvements to the `MaterialProperty` DSL
@@ -330,6 +343,3 @@ For more details, see <https://github.com/thelfer/tfel/issues/476>
 
 For more details, see <https://github.com/thelfer/tfel/issues/370>
 
-## Issue 632: [tfel-material] add-computations-of-the-eshelby-tensors 
-
-For more details, see <https://github.com/thelfer/tfel/issues/632>

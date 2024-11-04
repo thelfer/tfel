@@ -404,8 +404,8 @@ The function `EshelbyTensor` computes the Eshelby tensor of an ellipsoid
 whose semi-axis lengths are `a`, `b`, `c`, embedded in an isotropic
 matrix. It returns an object of `type st2tost2<3u,real>`, which is the
 fourth-order Eshelby tensor, in a basis which is adapted to the ellipsoid.
-The expressions can be found in Torquato, Random Heterogeneous Materials (2002)
-for the axisymetric ellipsoid and in Eshelby (1957) for other cases.
+The expressions can be found in [@torquato_2002]
+for the axisymmetric ellipsoid and in [@eshelby_1957] for other cases.
 
 ## Strain localisation tensors
 
@@ -421,8 +421,8 @@ the strain field within the ellipsoid is uniform and given by
 where \(\tenseur A \) is the localisation tensor.
 
 Three functions are implemented for the different possible shapes :
-GeneralEllipsoidLocalisationTensor, AxisymEllipsoidLocalisationTensor
-and SphereLocalisationTensor. 
+`GeneralEllipsoidLocalisationTensor`, `AxisymmetricalEllipsoidLocalisationTensor`
+and `SphereLocalisationTensor`. 
 The ellipsoid is parametrized by its semi-axis lengths \(a,b,c\) but also
 by its axis orientations.
 The functions then return the localisation tensors taking into account the orientations.
