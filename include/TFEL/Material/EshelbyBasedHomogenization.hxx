@@ -104,7 +104,7 @@ namespace tfel::material {
    * param 1,2 : young, nu : parameters of isotropic matrix
    * param 3 : f : volumic fraction 
    * param 4 : C_i : st2tost2<3u,real> elastic tensor of inclusions (the same for all inclusions). May be anisotropic.
-   * param 5 : n_a : vector<real>,  direction of the principal axis which has a fixed orientation
+   * param 5 : n_a : tfel::math::tvector<3u,real>,  direction of the principal axis which has a fixed orientation
    * param 6 : a : length of semi-axis which has a fixed orientation n_a
    * param 7,8 : b,c : lengths of the other semi-axes
    */
@@ -114,7 +114,7 @@ namespace tfel::material {
       const real&,
       const real&,
       const tfel::math::st2tost2<3u,StressType>&,
-      const std::vector<real>&,
+      const tfel::math::tvector<3u,real>&,
       const real&,
       const real&,
       const real&);
@@ -126,9 +126,9 @@ namespace tfel::material {
    * param 1,2 : young, nu : parameters of isotropic matrix
    * param 3 : f : volumic fraction 
    * param 4 : C_i : st2tost2<3u,real> elastic tensor of inclusions (the same for all inclusions). May be anisotropic.
-   * param 5 : n_a : vector<real>,  direction of the principal axis whose length is a
+   * param 5 : n_a : tfel::math::tvector<3u,real>,  direction of the principal axis whose length is a
    * param 6 : a : length of semi-axis relative to the direction n_a
-   * param 7 : n_b : vector<real>,  direction of the principal axis whose length is b
+   * param 7 : n_b : tfel::math::tvector<3u,real>,  direction of the principal axis whose length is b
    * param 8 : b : length of semi-axis relative to the direction n_b
    * param 9 : c : length of the remaining semi-axis
    */
@@ -138,9 +138,9 @@ namespace tfel::material {
       const real&,
       const real&,
       const tfel::math::st2tost2<3u,StressType>&,
-      const std::vector<real>&,
+      const tfel::math::tvector<3u,real>&,
       const real&,
-      const std::vector<real>&,
+      const tfel::math::tvector<3u,real>&,
       const real&,
       const real&);
       
@@ -168,7 +168,7 @@ namespace tfel::material {
       const real&,
       const real&,
       const tfel::math::st2tost2<3u,StressType>&,
-      const std::vector<real>&,
+      const tfel::math::tvector<3u,real>&,
       const real&,
       const real&,
       const real&);
@@ -183,9 +183,9 @@ namespace tfel::material {
       const real&,
       const real&,
       const tfel::math::st2tost2<3u,StressType>&,
-      const std::vector<real>&,
+      const tfel::math::tvector<3u,real>&,
       const real&,
-      const std::vector<real>&,
+      const tfel::math::tvector<3u,real>&,
       const real&,
       const real&);
       
