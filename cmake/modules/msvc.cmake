@@ -1,6 +1,5 @@
 include(cmake/modules/OptimizeForArchitecture.cmake)
 
-tfel_enable_cxx_compiler_flag(COMPILER_CXXFLAGS "MD")
 tfel_enable_cxx_compiler_flag(COMPILER_CXXFLAGS "EHsc")
 tfel_enable_cxx_compiler_flag(COMPILER_CXXFLAGS "utf-8")
 
