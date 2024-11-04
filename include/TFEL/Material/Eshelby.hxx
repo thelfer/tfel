@@ -19,6 +19,22 @@
 
 namespace tfel::material
 {
+
+
+ template <typename real>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> EshelbyTensorSphere(const real&);
+      
+   template <typename real>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> AxisymmetricalEshelbyTensor(
+      const real&,
+      const real&);
+      
+  template <typename real, typename LengthType>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> EshelbyTensorGeneral(
+      const LengthType&,
+      const LengthType&,
+      const LengthType&,
+      const real&);
   /*!
    * This function builds the Eshelby tensor for an ellipsoid whose semi-axis lengths are a,b,c
    * embedded in an isotropic matrix (young,nu). 
@@ -62,10 +78,10 @@ namespace tfel::material
       const real&,
       const tfel::math::st2tost2<3u, StressType>&,
       const tfel::math::tvector<3u,real>&,
-      const real&,
+      const LengthType&,
       const tfel::math::tvector<3u,real>&,
-      const real&,
-      const real&);
+      const LengthType&,
+      const LengthType&);
       
      /*
       * The same function as GeneralEllipsoidLocalisationTensor for the case of an axisymmetric ellipsoid
@@ -86,17 +102,14 @@ namespace tfel::material
   TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,real> SphereLocalisationTensor(
       const StressType&,
       const real&,
-      const tfel::math::st2tost2<3u, StressType>&,
-      const tfel::math::tvector<3u,real>&,
-      const LengthType&,
-      const tfel::math::tvector<3u,real>&,
-      const LengthType&,
-      const LengthType&);
+      const tfel::math::st2tost2<3u, StressType>&);
       
       
       template <typename LengthType>
   TFEL_HOST_DEVICE const std::array<int,3> sort_ind(const LengthType&, const LengthType&, const LengthType&);
   
+  template<typename real>
+   TFEL_HOST_DEVICE static real q_(const real&);
 
 }  // end of namespace tfel::material
 

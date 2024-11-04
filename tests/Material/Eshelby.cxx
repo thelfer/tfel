@@ -60,7 +60,7 @@ struct EshelbyTest final : public tfel::tests::TestCase {
     const auto a =length{1};
     const auto b = length{0.5};
     const auto c = length{0.501};
-    const auto S = tfel::material::EshelbyTensor(nu,a,b,c);
+    const auto S = tfel::material::EshelbyTensor<real,length>(nu,a,b,c);
     static constexpr auto value =
         tfel::material::StiffnessTensorAlterationCharacteristic::UNALTERED;
     tfel::math::st2tost2<3u,stress> C_i;
@@ -69,7 +69,7 @@ struct EshelbyTest final : public tfel::tests::TestCase {
     const tfel::math::tvector<3u,real> n_b = {1.,0.,0.};
     using namespace tfel::material;
     //const auto A = SphereLocalisationTensor<real,stress>(young,nu,C_i);
-    const auto A = GeneralEllipsoidLocalisationTensor<real,stress>(young,nu,C_i,n_a,a,n_b,b,c);
+    const auto A = GeneralEllipsoidLocalisationTensor<real,stress,length>(young,nu,C_i,n_a,a,n_b,b,c);
     //const auto A = AxisymEllipsoidLocalisationTensor<real,stress>(young,nu,C_i,n_a,a/b);
     for (const auto& i : {0,1,2,3,4,5}){
     	for (const auto& j : {0,1,2,3,4,5}){
