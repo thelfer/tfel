@@ -73,13 +73,13 @@ namespace tfel::material
 			const auto e21=e2-1;
 			const auto u2nu=1-2*nu;
 			const auto q=q_(e);
-			const auto S11 = 3/(8*(1-nu))*e2/e21+q/4/(1-nu)*(u2nu-9/4/e21);
-			const auto S12= 1/4/(1-nu)*(e2/2/e21-q*(u2nu+3/4/e21));
-			const auto S13= 1/2/(1-nu)*(-e2/e21+q/2*(3*e2/e21-u2nu));
-			const auto S31= 1/2/(1-nu)*(-u2nu-1/e21+q*(u2nu+3/2/e21));
-			const auto S33= 1/2/(1-nu)*(u2nu+(3*e2-1)/e21-q*(u2nu+3*e2/e21));
-			const auto S44= 2/4/(1-nu)*(e2/2/e21+q*(u2nu-3/4/e21));
-			const auto S55= 2/4/(1-nu)*(u2nu-(e2+1)/e21-q/2*(u2nu-3*(e2+1)/e21));
+			const auto S11 = 3/(8*(1-nu))*e2/e21+q/4/(1-nu)*(u2nu-9/e21/4);
+			const auto S12= 1/(1-nu)/4*(e2/2/e21-q*(u2nu+3/e21/4));
+			const auto S13= 1/(1-nu)/2*(-e2/e21+q/2*(3*e2/e21-u2nu));
+			const auto S31= 1/(1-nu)/2*(-u2nu-1/e21+q*(u2nu+3/e21/2));
+			const auto S33= 1/(1-nu)/2*(u2nu+(3*e2-1)/e21-q*(u2nu+3*e2/e21));
+			const auto S44= 2/(1-nu)/4*(e2/2/e21+q*(u2nu-3/e21/4));
+			const auto S55= 2/(1-nu)/4*(u2nu-(e2+1)/e21-q/2*(u2nu-3*(e2+1)/e21));
 			return {S11, S12, S13, 	  zero, zero, zero,
 				S12, S11, S13, 	  zero, zero, zero,
 				S31, S31, S33, 	  zero, zero, zero,
@@ -109,7 +109,7 @@ namespace tfel::material
 			const auto a2=a*a;
 		    	const auto b2=b*b;
 		    	const auto c2=c*c;
-		    	const auto Q = 3/8/M_PI/(1-nu);
+		    	const auto Q = 3/M_PI/8/(1-nu);
 		    	const auto R = (1-2*nu)/8/M_PI/(1-nu);
 		    	const auto k = sqrt(a2-b2)/sqrt(a2-c2);
 		    	const auto theta = asin(sqrt(1-c2/a2));
@@ -128,7 +128,7 @@ namespace tfel::material
 			
 			const auto S11 = Q*a2*Iaa+R*Ia;
 			const auto S12 = Q*b2*Iab-R*Ia;
-			const auto S44 = 2*Q/2*(a2+b2)*Iab+R/2*(Ia+Ib);
+			const auto S44 = 2*(Q/2*(a2+b2)*Iab+R/2*(Ia+Ib));
 			const auto S22 = Q*b2*Ibb+R*Ib;
 			const auto S21 = Q*a2*Iab-R*Ib;
 			const auto S13 = Q*c2*Iac-R*Ia;
@@ -136,8 +136,8 @@ namespace tfel::material
 			const auto S33 = Q*c2*Icc+R*Ic;
 			const auto S23 = Q*c2*Ibc-R*Ib;
 			const auto S32 = Q*b2*Ibc-R*Ic;
-			const auto S55 = 2*Q/2*(a2+c2)*Iac+R/2*(Ia+Ic);
-			const auto S66 = 2*Q/2*(b2+c2)*Ibc+R/2*(Ib+Ic);
+			const auto S55 = 2*(Q/2*(a2+c2)*Iac+R/2*(Ia+Ic));
+			const auto S66 = 2*(Q/2*(b2+c2)*Ibc+R/2*(Ib+Ic));
 			
 			const auto zero = real{0};
 			return {S11, S12, S13, 	  zero, zero, zero,
