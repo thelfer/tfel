@@ -63,7 +63,6 @@ struct EshelbyTest final : public tfel::tests::TestCase {
     const auto S = tfel::material::EshelbyTensor(nu,a,b,c);
     static constexpr auto value =
         tfel::material::StiffnessTensorAlterationCharacteristic::UNALTERED;
-    std::cout << S(0,0) << '\n';
     tfel::math::st2tost2<3u,stress> C_i;
     tfel::material::computeIsotropicStiffnessTensorII<3u,value,stress,real>(C_i,young_i,nu_i);
     const tfel::math::tvector<3u,real> n_a = {0.,0.,1.};
