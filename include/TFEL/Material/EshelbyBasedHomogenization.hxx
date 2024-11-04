@@ -86,15 +86,15 @@ namespace tfel::material {
    * param 4 : C_i : st2tost2<3u,real> elastic tensor of inclusions (the same for all inclusions). May be anisotropic.
    * param 5,6,7 : a,b,c : lengths of semi-axes of the ellipsoids (the same triplet for all ellipsoids). Can be ordered in any way.
    */
-     template <typename real, typename StressType>
+   template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> IsotropicDiluteScheme(
       const StressType&,
       const real&,
       const real&,
       const tfel::math::st2tost2<3u,StressType>&,
-      const real&,
-      const real&,
-      const real&);
+      const LengthType&,
+      const LengthType&,
+      const LengthType&);
       
       
      /*!
@@ -108,16 +108,16 @@ namespace tfel::material {
    * param 6 : a : length of semi-axis which has a fixed orientation n_a
    * param 7,8 : b,c : lengths of the other semi-axes
    */
-     template <typename real, typename StressType>
+    template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> PlanarIsotropicDiluteScheme(
       const StressType&,
       const real&,
       const real&,
       const tfel::math::st2tost2<3u,StressType>&,
       const tfel::math::tvector<3u,real>&,
-      const real&,
-      const real&,
-      const real&);
+      const LengthType&,
+      const LengthType&,
+      const LengthType&);
       
      /*!
    * Dilute scheme with a unique orientation of ellipsoids : all principal axes have a fixed orientation.
@@ -132,72 +132,72 @@ namespace tfel::material {
    * param 8 : b : length of semi-axis relative to the direction n_b
    * param 9 : c : length of the remaining semi-axis
    */
-     template <typename real, typename StressType>
+     template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> OrientedDiluteScheme(
       const StressType&,
       const real&,
       const real&,
       const tfel::math::st2tost2<3u,StressType>&,
       const tfel::math::tvector<3u,real>&,
-      const real&,
+      const LengthType&,
       const tfel::math::tvector<3u,real>&,
-      const real&,
-      const real&);
+      const LengthType&,
+      const LengthType&);
       
       /*!
    * Mori-Tanaka scheme with isotropic distribution of orientations of ellipsoids
    * the parameters are the same as for IsotropicDiluteScheme
    */      
-     template <typename real, typename StressType>
+     template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> IsotropicMoriTanakaScheme(
       const StressType&,
       const real&,
       const real&,
       const tfel::math::st2tost2<3u,StressType>&,
-      const real&,
-      const real&,
-      const real&);
+      const LengthType&,
+      const LengthType&,
+      const LengthType&);
       
       /*!
    * Mori-Tanaka scheme with a "planar isotropic" distribution of ellipsoids
    * Parameters are the same as for PlanarIsotropicDiluteScheme
    */
-    template <typename real, typename StressType>
+    template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> PlanarIsotropicMoriTanakaScheme(
       const StressType&,
       const real&,
       const real&,
       const tfel::math::st2tost2<3u,StressType>&,
       const tfel::math::tvector<3u,real>&,
-      const real&,
-      const real&,
-      const real&);
+      const LengthType&,
+      const LengthType&,
+      const LengthType&);
       
     /*!
    * Mori-Tanaka scheme with a unique orientation of ellipsoids.
    * Parameters are the same as for OrientedDiluteScheme
    */
-     template <typename real, typename StressType>
+    template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> OrientedMoriTanakaScheme(
       const StressType&,
       const real&,
       const real&,
       const tfel::math::st2tost2<3u,StressType>&,
       const tfel::math::tvector<3u,real>&,
-      const real&,
+      const LengthType&,
       const tfel::math::tvector<3u,real>&,
-      const real&,
-      const real&);
+      const LengthType&,
+      const LengthType&);
       
       /*
       * A voir si on ajoute ce schéma
       */
-     template <typename real, typename StressType>
+     template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,real> PonteCastanedaWillisScheme(
       const StressType&,
-      const real&,
-      const real&,
-      const real&);
+      const LengthType&,
+      const LengthType&,
+      const LengthType&);
 
 }  // end of namespace tfel::material
 
