@@ -32,11 +32,11 @@ namespace tfel::material
    * param 3 :semi-axis of ellipsoid in direction 2
    * param 4 : semi-axis of ellipsoid in direction 3
    */
-     template <typename real>
+     template <typename real, typename LengthType>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> EshelbyTensor(
-      const real&,
-      const real&,
-      const real&,
+      const LengthType&,
+      const LengthType&,
+      const LengthType&,
       const real&);
       
   /*!
@@ -56,7 +56,7 @@ namespace tfel::material
    * param 7 : b : length of semi-axis relative to the direction n_b
    * param 8 : c : length of the remaining semi-axis
    */
-     template <typename real, typename StressType>
+     template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,real> GeneralEllipsoidLocalisationTensor(
       const StressType&,
       const real&,
@@ -88,14 +88,14 @@ namespace tfel::material
       const real&,
       const tfel::math::st2tost2<3u, StressType>&,
       const tfel::math::tvector<3u,real>&,
-      const real&,
+      const LengthType&,
       const tfel::math::tvector<3u,real>&,
-      const real&,
-      const real&);
+      const LengthType&,
+      const LengthType&);
       
-      //These functions may exist somewhere but I did not find them !
-      template <typename real>
-  TFEL_HOST_DEVICE const std::array<int,3> sort_ind(const real&, const real&, const real&);
+      
+      template <typename LengthType>
+  TFEL_HOST_DEVICE const std::array<int,3> sort_ind(const LengthType&, const LengthType&, const LengthType&);
   
 
 }  // end of namespace tfel::material

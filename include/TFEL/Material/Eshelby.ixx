@@ -22,7 +22,7 @@ namespace tfel::material
      * \brief a structure in charge of computing the Eshelby tensor
      * \tparam real: numeric type
      */
-	template <unsigned short N,typename real>
+	template <unsigned short N,typename real, typename LengthType>
 	struct ComputeEshelbyTensor
 	{
 		/* Just Eshelby tensor of a sphere
@@ -93,8 +93,8 @@ namespace tfel::material
 		* The function returns the Eshelby tensor in the basis (e1,e2,e3) where e1 (resp. e2, e3) is aligned with axis whose length is a (resp. b, c)
 		* The formulae come from Eshelby, The determination of the elastic field..., 1957.
 		*/    						  
-		TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u, real>
-		EshelbyTensorGeneral(const real& nu, const real& a, const real& b, const real& c)
+		TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u, real, LengthType>
+		EshelbyTensorGeneral(const real& nu, const LengthType& a, const LengthType& b, const LengthType& c)
 		{
 			// if (abs(a-b)<value(eps)){
 			//	the formulae must be adapted in the limit case a->b
@@ -154,8 +154,8 @@ namespace tfel::material
   /*
   * A simple function that takes a,b,c and returns the indices of the values (a,b,c) sorted from the biggest to the smallest 
   */
-  template <typename real>
-  const std::array<int,3> sort_ind(const real& a, const real& b, const real& c)
+  template <typename LengthType>
+  const std::array<int,3> sort_ind(const LengthType& a, const LengthType& b, const LengthType& c)
   {
 	if ((a>b) and (a>c))
 	{
@@ -176,32 +176,32 @@ namespace tfel::material
   
     	     						     		    		  
   //The function EshelbyTensor (see .hxx)
-  template <typename real>
-  tfel::math::st2tost2<3u, real> EshelbyTensor(const real& nu, const real& a, const real& b, const real& c)
+  template <typename real, typename LengthType>
+  tfel::math::st2tost2<3u, real> EshelbyTensor(const real& nu, const LengthType& a, const LengthType& b, const LengthType& c)
   {
   	static constexpr auto eps = std::numeric_limits<real>::epsilon();
     	if ((std::abs(a-b)<eps) and (std::abs(b-c)<eps) and (std::abs(a-c)<eps))
-    	{return tfel::material::ComputeEshelbyTensor<3u, real>::EshelbyTensorSphere(nu);}
+    	{return tfel::material::ComputeEshelbyTensor<3u, real, LengthType>::EshelbyTensorSphere(nu);}
     	else if ((std::abs(a-b)>eps) and (std::abs(b-c)<eps))
     	{
-    		const auto EshBase=tfel::material::ComputeEshelbyTensor<3u, real>::AxisymmetricalEshelbyTensor(nu,a/b);
+    		const auto EshBase=tfel::material::ComputeEshelbyTensor<3u, real, LengthType>::AxisymmetricalEshelbyTensor(nu,a/b);
     		return EshBase;
     	}
     	else if ((std::abs(b-a)>eps) and (std::abs(a-c)<eps))
     	{
-    		const auto EshBase=tfel::material::ComputeEshelbyTensor<3u, real>::AxisymmetricalEshelbyTensor(nu,b/a);
+    		const auto EshBase=tfel::material::ComputeEshelbyTensor<3u, real, LengthType>::AxisymmetricalEshelbyTensor(nu,b/a);
     		return EshBase;
     	}
     	else if ((std::abs(c-b)>eps) and (std::abs(a-b)<eps))
     	{
-    		const auto EshBase=tfel::material::ComputeEshelbyTensor<3u, real>::AxisymmetricalEshelbyTensor(nu,c/b);
+    		const auto EshBase=tfel::material::ComputeEshelbyTensor<3u, real, LengthType>::AxisymmetricalEshelbyTensor(nu,c/b);
     		return EshBase;
     	}
     	else
     	{	
-    		const std::array<real,3> abc_={a,b,c};
-    		const auto sig=sort_ind<real>(a,b,c);
-    		const auto EshBase=tfel::material::ComputeEshelbyTensor<3u, real>::EshelbyTensorGeneral(nu,abc_[sig[0]],abc_[sig[1]],abc_[sig[2]]);
+    		const std::array<LengthType,3> abc_={a,b,c};
+    		const auto sig=sort_ind<LengthType>(a,b,c);
+    		const auto EshBase=tfel::material::ComputeEshelbyTensor<3u, real, LengthType>::EshelbyTensorGeneral(nu,abc_[sig[0]],abc_[sig[1]],abc_[sig[2]]);
     		return EshBase;
     	}
   };//end of function EshelbyTensor;
@@ -211,7 +211,7 @@ namespace tfel::material
   TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,real> SphereLocalisationTensor(const StressType& young, const real& nu,
   	const tfel::math::st2tost2<3u,StressType>& C_i)
   {
-	const auto S0 = tfel::material::ComputeEshelbyTensor<3u, real>::EshelbyTensorSphere(nu);
+	const auto S0 = tfel::material::ComputeEshelbyTensor<3u, real, LengthType>::EshelbyTensorSphere(nu);
 	tfel::math::st2tost2<3u,StressType> C_0;
 	using namespace tfel::material;
 	static constexpr auto value = StiffnessTensorAlterationCharacteristic::UNALTERED;
@@ -225,14 +225,14 @@ namespace tfel::material
 	return A;
   };//end of function SphereLocalisationTensor
      			 			     			 
-   template <typename real, typename StressType>
+   template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,real> GeneralEllipsoidLocalisationTensor(const StressType& young, const real& nu, const tfel::math::st2tost2<3u,StressType>& C_i,
-        const tfel::math::tvector<3u,real>& n_a, const real& a, const tfel::math::tvector<3u,real>& n_b, const real& b, const real& c)
+        const tfel::math::tvector<3u,real>& n_a, const LengthType& a, const tfel::math::tvector<3u,real>& n_b, const LengthType& b, const LengthType& c)
    {
     	const auto n_c=tfel::math::cross_product<real>(n_a,n_b);
-    	const std::array<real,3> abc_={a,b,c};
+    	const std::array<LengthType,3> abc_={a,b,c};
 	const auto sig=sort_ind(a,b,c);
-	const auto S0 = tfel::material::ComputeEshelbyTensor<3u, real>::EshelbyTensorGeneral(nu,abc_[sig[0]],abc_[sig[1]],abc_[sig[2]]);
+	const auto S0 = tfel::material::ComputeEshelbyTensor<3u, real,LengthType>::EshelbyTensorGeneral(nu,abc_[sig[0]],abc_[sig[1]],abc_[sig[2]]);
 	const std::array<tfel::math::tvector<3u,real>,3> nabc_={n_a,n_b,n_c};
 	const auto n_1=nabc_[sig[0]];
 	const auto n_2=nabc_[sig[1]];
@@ -265,7 +265,7 @@ namespace tfel::material
 	using namespace tfel::math;
 	const auto n_2 = cross_product<real>(n_a,n_);
 	const auto n_1= cross_product<real>(n_2,n_a);
-	const auto S0 = tfel::material::ComputeEshelbyTensor<3u, real>::AxisymmetricalEshelbyTensor(nu,e);
+	const auto S0 = tfel::material::ComputeEshelbyTensor<3u, real,LengthType>::AxisymmetricalEshelbyTensor(nu,e);
 	const tfel::math::rotation_matrix<real> r={n_1[0],n_1[1],n_1[2],n_2[0],n_2[1],n_2[2],n_a[0],n_a[1],n_a[2]};
 	const auto S0_basis = change_basis(S0,r);
 	tfel::math::st2tost2<3u,StressType> C_0;

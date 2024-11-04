@@ -12,6 +12,7 @@ macro(tests_material test_arg)
 endmacro(tests_material)
 
 tests_material(Lame)
+tests_material(Eshelby)
 tests_material(boundsCheck)
 tests_material(OrthotropicAxesConventionTest)
 tests_material(AbaqusTangentOperator)
