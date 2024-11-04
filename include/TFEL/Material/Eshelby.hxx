@@ -24,7 +24,7 @@ namespace tfel::material
    * embedded in an isotropic matrix (young,nu). 
    * It returns an object of type st2tost2, which is the fourth-order Eshelby tensor, in a basis which is adapted to the ellipsoid :
    * see Eshelby.ixx for the details. The basis IS NOT RELATED to the given order of the values a,b,c
-   * These expressions can be found in Torquato 2002 Random Heterogeneous Materials for the axisymetric ellipsoid
+   * These expressions can be found in Torquato 2002 Random Heterogeneous Materials for the axisymmetric ellipsoid
    * and in Eshelby 1957 for other cases.
    * \tparam    real: underlying type
    * param 1 : nu
@@ -50,9 +50,9 @@ namespace tfel::material
    * \tparam    real: underlying type
    * param 1,2 : young,nu : parameters of the isotropic matrix
    * param 3 : st2tost2<3u,real> C_i : elastic tensor of the ellipsoid (may be anisotropic).
-   * param 4 : n_a : vector<real>,  direction of the principal axis whose length is a
+   * param 4 : n_a : tfel::math::tvector<3u,real>,  direction of the principal axis whose length is a
    * param 5 : a : length of semi-axis relative to the direction n_a
-   * param 6: n_b : vector<real>,  direction of the principal axis whose length is b
+   * param 6: n_b : tfel::math::tvector<3u,real>,  direction of the principal axis whose length is b
    * param 7 : b : length of semi-axis relative to the direction n_b
    * param 8 : c : length of the remaining semi-axis
    */
@@ -61,22 +61,22 @@ namespace tfel::material
       const StressType&,
       const real&,
       const tfel::math::st2tost2<3u, StressType>&,
-      const std::vector<real>&,
+      const tfel::math::tvector<3u,real>&,
       const real&,
-      const std::vector<real>&,
+      const tfel::math::tvector<3u,real>&,
       const real&,
       const real&);
       
      /*
-      * The same function as GeneralEllipsoidLocalisationTensor for the case of an axisymetric ellipsoid
+      * The same function as GeneralEllipsoidLocalisationTensor for the case of an axisymmetric ellipsoid
       * The geometrical parameters are now n_a, the axis of the ellipsoid, and the aspect ratio e=a/b
       */
      template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,real> AxisymEllipsoidLocalisationTensor(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,real> AxisymmetricalEllipsoidLocalisationTensor(
       const StressType&,
       const real&,
       const tfel::math::st2tost2<3u, StressType>&,
-      const std::vector<real>&,
+      const tfel::math::tvector<3u,real>&,
       const real&);
       
       /*
@@ -87,18 +87,15 @@ namespace tfel::material
       const StressType&,
       const real&,
       const tfel::math::st2tost2<3u, StressType>&,
-      const std::vector<real>&,
+      const tfel::math::tvector<3u,real>&,
       const real&,
-      const std::vector<real>&,
+      const tfel::math::tvector<3u,real>&,
       const real&,
       const real&);
       
       //These functions may exist somewhere but I did not find them !
       template <typename real>
   TFEL_HOST_DEVICE const std::array<int,3> sort_ind(const real&, const real&, const real&);
-  
-      template <typename real>
-  TFEL_HOST_DEVICE const std::vector<real> VectProd(const std::vector<real>&, const std::vector<real>&);
   
 
 }  // end of namespace tfel::material
