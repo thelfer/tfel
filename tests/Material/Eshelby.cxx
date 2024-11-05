@@ -52,34 +52,122 @@ struct EshelbyTest final : public tfel::tests::TestCase {
     using length =
         typename tfel::config::Types<1u, NumericType, use_qt>::length;
     using real = NumericType;
-    //constexpr auto eps = 10 * std::numeric_limits<stress>::epsilon();
     const auto young = stress{1e9};
     const auto nu = real{0.3};
     const auto young_i = stress{150e9};
     const auto nu_i = real{0.3};
-    const auto a =length{1};
-    const auto b = length{0.5};
-    const auto c = length{0.501};
-    const auto S = tfel::material::EshelbyTensor<real,length>(nu,a,b,c);
+    //tests the Eshelby tensor functions
+    using namespace tfel::material;
+    if (true) {const auto S = EshelbyTensorSphere(nu);}
+    
+    if (true) {const auto S1 = AxisymmetricalEshelbyTensor(nu,real{0.5});
+    const auto S2 = AxisymmetricalEshelbyTensor(nu,real{10});
+    const auto S3 = AxisymmetricalEshelbyTensor(nu,real{1});}
+    
+    if (true) {const auto S = EshelbyTensorGeneral(nu,length{1},length{3},length{2});}
+    
+    if (true) {const auto S1 = EshelbyTensor<real,length>(nu,length{1},length{3},length{2});
+    const auto S2 = EshelbyTensor<real,length>(nu,length{1},length{1},length{2});
+    const auto S3 = EshelbyTensor<real,length>(nu,length{1},length{1},length{1});}
+    
+    //must return a warning
+    //const auto S = EshelbyTensorSphere(real{1});
+    //const auto S = AxisymmetricalEshelbyTensor(nu,real{0});
+    //const auto S = AxisymmetricalEshelbyTensor(nu,real{-10});
+    //const auto S = EshelbyTensorGeneral(nu,length{-1},length{3},length{2});
+    //const auto S = EshelbyTensor<real,length>(nu,length{-1},length{-1},length{1});
+    
+    //These functions must return the same thing
+    if (true) {const auto S1 = EshelbyTensorSphere(nu);
+    const auto S2 = AxisymmetricalEshelbyTensor(nu,real{1});
+    const auto S3 = EshelbyTensor<real,length>(nu,length{2},length{2},length{2});
+    const auto S4 = EshelbyTensorGeneral(nu,length{3},length{3},length{3});
+    bool value = true;
+    for (int i :{0,1,2,3,4,5}){
+    	for (int j:{0,1,2,3,4,5}){
+    		value = value and (S1(i,j)==S2(i,j));
+    		//std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
+    		value = value and (S1(i,j)==S3(i,j));
+    		//std::cout << "13" << value << '\n';
+    		value = value and (S1(i,j)==S4(i,j));
+    		//std::cout << "14" << value << '\n';
+    	};
+    };
+    std::cout <<value << '\n';}
+    
+    if (true) {const auto S1 = AxisymmetricalEshelbyTensor(nu,real{10});
+    const auto S2 = EshelbyTensorGeneral(nu,length{30},length{3},length{3});
+    const auto S3 = EshelbyTensor<real,length>(nu,length{3},length{3},length{30});
+    bool value = true;
+    for (int i :{0,1,2,3,4,5}){
+    	for (int j:{0,1,2,3,4,5}){
+    		value = value and (S1(i,j)==S2(i,j));
+    		value = value and (S1(i,j)==S3(i,j));
+    	};
+    };
+    
+    std::cout << value << '\n';}
+    
+    //These functions must return a very similar thing
+    
+    
+    
+    
+    
+
+    //tests the localisation tensor functions
     static constexpr auto value =
         tfel::material::StiffnessTensorAlterationCharacteristic::UNALTERED;
     tfel::math::st2tost2<3u,stress> C_i;
     tfel::material::computeIsotropicStiffnessTensorII<3u,value,stress,real>(C_i,young_i,nu_i);
     const tfel::math::tvector<3u,real> n_a = {0.,0.,1.};
     const tfel::math::tvector<3u,real> n_b = {1.,0.,0.};
+    const auto a =length{1};
+    const auto b =length{3};
+    const auto c =length{0.2};
     using namespace tfel::material;
-    //const auto A = SphereLocalisationTensor<real,stress>(young,nu,C_i);
-    const auto A = GeneralEllipsoidLocalisationTensor<real,stress,length>(young,nu,C_i,n_a,a,n_b,b,c);
-    //const auto A = AxisymEllipsoidLocalisationTensor<real,stress>(young,nu,C_i,n_a,a/b);
-    for (const auto& i : {0,1,2,3,4,5}){
-    	for (const auto& j : {0,1,2,3,4,5}){
-    		std::cout << i << " " << j << " " << A(i,j) << '\n';
-    					     };
-    					 };
-    //constexpr auto l_ref = young * nu / ((1 + nu) * (1 - 2 * nu));
-    //constexpr auto m_ref = young / (2 * (1 + nu));
-    //TFEL_TESTS_STATIC_ASSERT(my_abs(l - l_ref) < eps);
-    //TFEL_TESTS_STATIC_ASSERT(my_abs(m - m_ref) < eps);
+    
+    if (true) {const auto A1 = SphereLocalisationTensor<real,stress>(young,nu,C_i);
+    const auto A2 = AxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,C_i,n_a,a/b);
+    const auto A3 = GeneralEllipsoidLocalisationTensor<real,stress,length>(young,nu,C_i,n_a,a,n_b,b,c);}
+    
+    //must return a warning
+    //const auto A = SphereLocalisationTensor<real,stress>(young,real{1},C_i);
+    //const auto A = AxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,C_i,n_a,real{0});
+    //const auto A = GeneralEllipsoidLocalisationTensor<real,stress,length>(young,nu,C_i,n_a,a,n_b,length{0},c);
+    
+    //These functions must return the same thing
+    if (true) {const auto S1 = SphereLocalisationTensor<real,stress>(young,nu,C_i);
+    const auto S2 = AxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,C_i,n_a,length{2}/length{2});
+    const auto S3 = GeneralEllipsoidLocalisationTensor<real,stress,length>(young,nu,C_i,n_a,length{2},n_b,length{2},length{2});
+    bool value = true;
+    for (int i :{0,1,2,3,4,5}){
+    	for (int j:{0,1,2,3,4,5}){
+    		value = value and (S1(i,j)==S2(i,j));
+    		value = value and (S1(i,j)==S3(i,j));
+    	};
+    };
+    
+    std::cout << value << '\n';}
+    
+    if (true) {const auto S1 = AxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,C_i,n_a,length{20}/length{2});
+    const auto S2 = GeneralEllipsoidLocalisationTensor<real,stress,length>(young,nu,C_i,n_a,length{20},n_b,length{2},length{2});
+    bool value = true;
+    for (int i :{0,1,2,3,4,5}){
+    	for (int j:{0,1,2,3,4,5}){
+    		value = value and (S1(i,j)==S2(i,j));
+    		//std::cout << S1(i,j) <<" " << i<< " " << j<< " " << S2(i,j) << value << '\n';
+    	};
+    };
+    
+    std::cout << value << '\n';}
+    
+    //These functions must return a very similar thing
+
+
+	
+
+
   }
 };  // end of struct EshelbyTest
 
