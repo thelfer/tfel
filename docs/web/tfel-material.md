@@ -1,6 +1,18 @@
-% The TFEL/Material library
-% Thomas Helfer
-% 19/12/2017
+---
+title: The TFEL/Material library
+author: Thomas Helfer, Antoine Martin
+date: 04/11/2024
+lang: en-EN
+link-citations: true
+colorlinks: true
+geometry:
+  - margin=2cm
+papersize: a4
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\absvalue}[1]{{\left|#1\right|}}
 \newcommand{\Frac}[2]{\displaystyle\frac{\displaystyle #1}{\displaystyle #2}}
@@ -388,17 +400,23 @@ If we consider a constant stress-free strain \(\tenseur \varepsilon^\mathrm{T}\)
 filling an ellipsoidal volume embedded in an infinite homogeneous medium whose
 elasticity is \(\tenseur C_0\), the strain tensor inside the ellipsoid is given by
 
-\(\tenseur \varepsilon=\tenseur S_0:\tenseur \varepsilon^\mathrm{T}\).
+\[
+\tenseur \varepsilon=\tenseur S_0:\tenseur \varepsilon^\mathrm{T}
+\].
 
 where \(\tenseur S_0\) is the Eshelby tensor.
-Note that it is related to the Hill tensor (\tenseur P_0\) by
+Note that it is related to the Hill tensor \(\tenseur P_0\) by
 
-\(\tenseur P_0=\tenseur S_0:\tenseur C_0^{-1}\)
+\[
+\tenseur P_0=\tenseur S_0:\tenseur C_0^{-1}
+\]
 
 which gives the strain tensor inside the ellipsoid as a function of the
 polarization tensor \(\tenseur \tau = -\tenseur C_0:\tenseur \varepsilon^\mathrm{T}\) : 
 
-\(\tenseur \varepsilon=-\tenseur P_0:\tenseur \tau\).
+\[
+\tenseur \varepsilon=-\tenseur P_0:\tenseur \tau
+\].
 
 The function `EshelbyTensor` computes the Eshelby tensor of an ellipsoid
 whose semi-axis lengths are `a`, `b`, `c`, embedded in an isotropic
@@ -408,6 +426,7 @@ The expressions can be found in [@torquato_2002]
 for the axisymmetric ellipsoid and in [@eshelby_1957] for other cases.
 
 ## Strain localisation tensors
+<<<<<<< HEAD
 
 The header `Eshelby.hxx` also introduces
 three functions that compute the strain localisation tensor of an ellipsoid.
@@ -415,16 +434,35 @@ If we consider an ellipsoid whose elasticity is \(\tenseur C_i\), embedded
 in an infinite homogeneous medium whose elasticity is \(\tenseur C_0\),
 submitted to a external uniform strain field at infinity \(\tenseur E\),
 the strain field within the ellipsoid is uniform and given by
+=======
+>>>>>>> 632-tfel-material-add-computations-of-the-eshelby-tensors
 
-\(\tenseur \varepsilon = \tenseur A:\tenseur E\)
+The header `Eshelby.hxx` also introduces three functions that compute
+the strain localisation tensor of an ellipsoid. If we consider an
+ellipsoid whose elasticity is \(\tenseur C_i\), embedded in an infinite
+homogeneous medium whose elasticity is \(\tenseur C_0\), submitted to a
+external uniform strain field at infinity \(\tenseur E\), the strain
+field within the ellipsoid is uniform and given by
+
+\[
+\tenseur \varepsilon = \tenseur A:\tenseur E
+\]
 
 where \(\tenseur A \) is the localisation tensor.
 
 Three functions are implemented for the different possible shapes :
 `GeneralEllipsoidLocalisationTensor`, `AxisymmetricalEllipsoidLocalisationTensor`
 and `SphereLocalisationTensor`. 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 632-tfel-material-add-computations-of-the-eshelby-tensors
 The ellipsoid is parametrized by its semi-axis lengths \(a,b,c\) but also
 by its axis orientations.
-The functions then return the localisation tensors taking into account the orientations.
+
+The functions then return the localisation tensors taking into account
+the orientations.
+
+# References
 
 <!-- Local IspellDict: english -->

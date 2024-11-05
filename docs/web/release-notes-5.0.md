@@ -166,6 +166,11 @@ in an isotropic matrix and submitted to an external uniform strain field :
 `GeneralEllipsoidLocalisationTensor`, `AxisymmetricalEllipsoidLocalisationTensor`
 and `SphereLocalisationTensor`.
 
+<<<<<<< HEAD
+=======
+See [this page](tfel-material.html) for a detailed description.
+
+>>>>>>> 632-tfel-material-add-computations-of-the-eshelby-tensors
 # MFront
 
 ## Improvements to the `MaterialProperty` DSL
