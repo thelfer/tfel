@@ -33,7 +33,7 @@ namespace tfel::material {
     		using namespace tfel::material;
     		if ((a==b) and (b==c)){A = SphereLocalisationTensor<real,StressType>(young,nu,C_i);}
     		else if (a==b){const auto A_=AxisymmetricalEllipsoidLocalisationTensor<real,StressType>(young,nu,C_i,n_1,c/a);
-    			const auto A1111= 9*A_(1,1)/20+A_(0,0)/5+(A_(1,2)+A_(2,1)+2*A_(5,5))/24+2*(A_(2,0)+A_(0,2)+2*A_(4,4))/15;
+    			const auto A1111= 8*A_(1,1)/15+A_(0,0)/5+2*(A_(2,0)+A_(0,2)+2*A_(4,4))/15;
     			const auto A1122= 3*A_(1,1)/20+A_(0,0)/15+41*A_(1,2)/72+49*A_(0,1)/180+19*A_(1,0)/180-11*2*A_(3,3)/180-2*A_(5,5)/24;
     			const auto G=A1111-A1122;
     			const auto ka=(A1111+2*A1122)/3;
@@ -41,7 +41,7 @@ namespace tfel::material {
     			A=3*ka*st2tost2<3u,real>::J()+G*st2tost2<3u,real>::K();
     			      }
     		else if (a==c){const auto A_=AxisymmetricalEllipsoidLocalisationTensor<real,StressType>(young,nu,C_i,n_1,b/a);
-	    		const auto A1111= 9*A_(1,1)/20+A_(0,0)/5+(A_(1,2)+A_(2,1)+2*A_(5,5))/24+2*(A_(2,0)+A_(0,2)+2*A_(4,4))/15;
+	    		const auto A1111= 8*A_(1,1)/15+A_(0,0)/5+2*(A_(2,0)+A_(0,2)+2*A_(4,4))/15;
     			const auto A1122= 3*A_(1,1)/20+A_(0,0)/15+41*A_(1,2)/72+49*A_(0,1)/180+19*A_(1,0)/180-11*2*A_(3,3)/180-2*A_(5,5)/24;
     			const auto G=A1111-A1122;
     			const auto ka=(A1111+2*A1122)/3;
@@ -49,20 +49,22 @@ namespace tfel::material {
     			A=3*ka*st2tost2<3u,real>::J()+G*st2tost2<3u,real>::K();
     			      }
     		else if (b==c){const auto A_=AxisymmetricalEllipsoidLocalisationTensor<real,StressType>(young,nu,C_i,n_1,a/b);
-	    		const auto A1111= 9*A_(1,1)/20+A_(0,0)/5+(A_(1,2)+A_(2,1)+2*A_(5,5))/24+2*(A_(2,0)+A_(0,2)+2*A_(4,4))/15;
-    			const auto A1122= 3*A_(1,1)/20+A_(0,0)/15+41*A_(1,2)/72+49*A_(0,1)/180+19*A_(1,0)/180-11*2*A_(3,3)/180-2*A_(5,5)/24;
+	    		const auto A1111= 8*A_(1,1)/15+A_(0,0)/5+2*(A_(2,0)+A_(0,2)+2*A_(4,4))/15;
+    			//const auto A1122= 3*A_(1,1)/20+A_(0,0)/15+A_(1,2)/4+4*A_(0,1)/15+A_(1,0)/10-2*A_(3,3)/15-2*A_(5,5)/24;
+    			//const auto A1122=A_(0,0)/15+11*A_(1,1)/60+7*A_(0,1)/24+4*A_(1,0)/15-2*A_(3,3)/24+37*A_(1,2)/120;
+    			const auto A1122=A_(0,0)/15+A_(1,1)/15+4*A_(0,1)/15+A_(1,0)/10-2*A_(3,3)/15+A_(1,2)/3;
     			const auto G=A1111-A1122;
     			const auto ka=(A1111+2*A1122)/3;
-    			std::cout << A1111 << '\n';
+    			std::cout << A1122 << '\n';
     			using namespace tfel::math;
     			A=3*ka*st2tost2<3u,real>::J()+G*st2tost2<3u,real>::K();
     			      }
     		else {const auto A_ = GeneralEllipsoidLocalisationTensor<real,StressType,LengthType>(young,nu,C_i,n_1,a,n_2,b,c);
-    			const auto A1111= A_(0,0)/5+A_(1,1)/5+A_(2,2)/5+7*(A_(0,1)+A_(1,0)+2*A_(3,3))/80+(A_(0,2)+A_(2,0)+2*A_(4,4))/15+(A_(1,2)+A_(2,1)+2*A_(5,5))/15;
+    			const auto A1111= A_(0,0)/5+A_(1,1)/5+A_(2,2)/5+(A_(0,1)+A_(1,0)+2*A_(3,3))/15+(A_(0,2)+A_(2,0)+2*A_(4,4))/15+(A_(1,2)+A_(2,1)+2*A_(5,5))/15;
     			const auto A1122= A_(0,0)/15+A_(1,1)/5+A_(2,2)/15+19*A_(0,1)/120-2*A_(3,3)/120+2*A_(1,0)/15+19*A_(2,1)/120-2*A_(5,5)/24+A_(1,2)/15+2*A_(2,0)/15-2*A_(4,4)/30+2*A_(0,2)/15;
     			const auto G=A1111-A1122;
     			const auto ka=(A1111+2*A1122)/3;
-    			std::cout << A1111 << '\n';
+    			std::cout << A1122 << '\n';
     			using namespace tfel::math;
     			A=3*ka*st2tost2<3u,real>::J()+G*st2tost2<3u,real>::K();
     		     };
