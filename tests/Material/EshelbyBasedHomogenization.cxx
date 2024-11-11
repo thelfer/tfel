@@ -52,41 +52,72 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     using real = NumericType;
     using length =
         typename tfel::config::Types<1u, NumericType, use_qt>::length;
+    using namespace tfel::material;
     //constexpr auto eps = 10 * std::numeric_limits<stress>::epsilon();
     const auto young = stress{1e9};
     const auto nu = real{0.3};
     const auto young_i = stress{150e9};
     const auto nu_i = real{0.3};
-    const auto a =length{0.4};
+    const auto a = length{0.4};
     const auto b = length{0.3};
-    const auto c = length{0.3};
-    const auto S = tfel::material::EshelbyTensor<real,length>(nu,a,b,c);
+    const auto c = length{0.2};
+    const auto f = real{0.5};
     static constexpr auto value =
         tfel::material::StiffnessTensorAlterationCharacteristic::UNALTERED;
     tfel::math::st2tost2<3u,stress> C_i;
     tfel::material::computeIsotropicStiffnessTensorII<3u,value,stress,real>(C_i,young_i,nu_i);
     const tfel::math::tvector<3u,real> n_a = {0.,0.,1.};
     const tfel::math::tvector<3u,real> n_b = {1.,0.,0.};
+    const auto A = computeSphereLocalisationTensor<real,stress>(young,nu,C_i);
+    
+    //tests the scheme functions
     using namespace tfel::material;
-    //const auto A = SphereLocalisationTensor<real,stress>(young,nu,C_i);
-    const auto Chom = IsotropicDiluteScheme<real,stress,length>(young,nu,real{0.5},C_i,a,b,c);
-    //const auto Chom2 = SphereDiluteScheme<real,stress>(young,nu,real{0.5},C_i);
-    const auto Chom2 = IsotropicDiluteScheme<real,stress,length>(young,nu,real{0.5},C_i,a,b,length{0.3001});
-    const auto nuhom = Chom(0,1)/(Chom(0,1)+Chom(0,0));
-    const auto Ehom = (1+nuhom)*(Chom(0,0)-Chom(0,1));
-    std::cout << Ehom.getValue() << nuhom << '\n';
-    const auto nuhom2 = Chom2(0,1)/(Chom2(0,1)+Chom2(0,0));
-    const auto Ehom2 = (1+nuhom2)*(Chom2(0,0)-Chom2(0,1));
-    std::cout << Ehom2.getValue() << nuhom2 << '\n';
-    //for (const auto& i : {0,1,2,3,4,5}){
-    //	for (const auto& j : {0,1,2,3,4,5}){
-    //		std::cout << i << " " << j << " " << Chom(i,j).getValue() << '\n';
-    //					     };
-    //					 };
-    //constexpr auto l_ref = young * nu / ((1 + nu) * (1 - 2 * nu));
-    //constexpr auto m_ref = young / (2 * (1 + nu));
-    //TFEL_TESTS_STATIC_ASSERT(my_abs(l - l_ref) < eps);
-    //TFEL_TESTS_STATIC_ASSERT(my_abs(m - m_ref) < eps);
+    if (true) {const auto Chom1 = diluteScheme<real,stress>(young,nu,f,C_i,A);
+    const auto Chom2 = moriTanakaScheme<real,stress>(young,nu,f,C_i,A);
+    const auto Chom3 = sphereDiluteScheme<real,stress>(young,nu,f,C_i);
+    const auto Chom4 = sphereMoriTanakaScheme<real,stress>(young,nu,f,C_i);
+    const auto Chom5 = isotropicDiluteScheme<real,stress>(young,nu,f,C_i,a,b,c);
+    const auto Chom6 = transverseIsotropicDiluteScheme<real,stress>(young,nu,f,C_i,n_a,a,b,c);
+    const auto Chom7 = orientedDiluteScheme<real,stress>(young,nu,f,C_i,n_a,a,n_b,b,c);
+    const auto Chom8 = isotropicMoriTanakaScheme<real,stress>(young,nu,f,C_i,a,b,c);
+    const auto Chom9 = transverseIsotropicMoriTanakaScheme<real,stress>(young,nu,f,C_i,n_a,a,b,c);
+    const auto Chom10 = orientedMoriTanakaScheme<real,stress>(young,nu,f,C_i,n_a,a,n_b,b,c);
+    }
+    
+    //must return a warning
+    if (true) {//const auto Chom1 = diluteScheme<real,stress>(stress{-1},nu,f,C_i,A);
+    //const auto Chom2 = moriTanakaScheme<real,stress>(young,real{2},f,C_i,A);
+    //const auto Chom3 = sphereDiluteScheme<real,stress>(young,nu,real{2},C_i);
+    //const auto Chom4 = isotropicDiluteScheme<real,stress>(young,nu,f,C_i,length{-2},b,c);
+    const tfel::math::tvector<3u,real> n_0= {0.,0.,0.};
+    //const auto Chom5 = transverseIsotropicDiluteScheme<real,stress>(young,nu,f,C_i,n_0,a,b,c);
+    const tfel::math::tvector<3u,real> n_ = {0.,std::sqrt(2)/2,std::sqrt(2)/2};
+    //const auto Chom6 = orientedDiluteScheme<real,stress>(young,nu,f,C_i,n_a,a,n_,b,c);
+    //const auto Chom7 = isotropicMoriTanakaScheme<real,stress>(young,nu,f,C_i,a,length{-1},c);
+    //const auto Chom8 = transverseIsotropicMoriTanakaScheme<real,stress>(young,nu,f,C_i,n_0,a,b,c);
+    //const auto Chom9 = orientedMoriTanakaScheme<real,stress>(young,nu,f,C_i,n_a,a,n_,b,c);
+    }
+    
+
+    //These functions must return the same thing
+    if (true){
+    //const auto nuhom1 = Chom(0,1)/(Chom(0,1)+Chom(0,0));
+    //const auto Ehom1 = (1+nuhom)*(Chom(0,0)-Chom(0,1));
+    //const auto nuhom2 = Chom2(0,1)/(Chom2(0,1)+Chom2(0,0));
+    //const auto Ehom2 = (1+nuhom2)*(Chom2(0,0)-Chom2(0,1));
+    //bool value = true;
+    //value = value and (Ehom1==Ehom2)
+    //std::cout <<value << '\n';
+    }
+
+    //These functions must return a very similar thing
+    
+    
+    
+    
+    
+    
+    
   }
 };  // end of struct EshelbyBasedHomogenizationTest
 

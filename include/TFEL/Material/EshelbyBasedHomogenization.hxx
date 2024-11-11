@@ -20,16 +20,17 @@
 
 namespace tfel::material {
    /*!
-   * General Dilute scheme knowing the localisator
+   * This function gives the homogenized stiffness for a dilute scheme, knowing the strain localisation tensor.
    * \tparam real: underlying type
-   * \returns an object of type st2tost2, which is the homogenized stiffness tensor, assuming that the mean localisation tensor A is given in parameter
-   * param 1,2 : young, nu : parameters of isotropic matrix
-   * param 3 : f : volumic fraction 
-   * param 4 : C_i : st2tost2<3u,real> elastic tensor of spheres (the same for all spheres). May be anisotropic.
-   * param 5 : A : mean localisation tensor on inclusions
+   * \tparam StressType: type of the elastic constants related to the matrix and the inclusions
+   * \return an object of type st2tost2<3u,StressType>
+   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
+   * \param [in] f: volumic fraction of inclusions
+   * \param [in] C_i: elastic tensor of the inclusions (may be anisotropic).
+   * \param [in] A: mean strain localisation tensor of inclusions
    */
    template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> DiluteScheme(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> diluteScheme(
       const StressType&,
       const real&,
       const real&,
@@ -37,57 +38,72 @@ namespace tfel::material {
       const tfel::math::st2tost2<3u,real>&);
       
  /*!
-   * General Mori-Tanaka scheme knowing the localisator
+   * This function gives the homogenized stiffness for a Mori-Tanaka scheme knowing the strain localisation tensor.
    * \tparam real: underlying type
-   * \returns an object of type st2tost2, which is the homogenized stiffness tensor, assuming that the mean localisation tensor A is given in parameter
-   * param 1,2 : young, nu : parameters of isotropic matrix
-   * param 3 : f : volumic fraction 
-   * param 4 : C_i : st2tost2<3u,real> elastic tensor of spheres (the same for all spheres). May be anisotropic.
-   * param 5 : A : mean localisation tensor on inclusions (this tensor is the same as the one given in DiluteScheme)
+   * \tparam StressType: type of the elastic constants related to the matrix and the inclusions
+   * \return an object of type st2tost2<3u,StressType>
+   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
+   * \param [in] f: volumic fraction of inclusions
+   * \param [in] C_i: elastic tensor of the inclusions (may be anisotropic).
+   * \param [in] A: mean strain localisation tensor of inclusions
    */
   template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> MoriTanakaScheme(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> moriTanakaScheme(
       const StressType&,
       const real&,
       const real&,
       const tfel::math::st2tost2<3u,StressType>&,
       const tfel::math::st2tost2<3u,real>&);
       
-      /*!
-   * Dilute scheme for spheres
-   * Same parameters as for DiluteScheme, except A
+    /*!
+   * This function gives the homogenized stiffness for a dilute scheme, for spheres
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix and the spheres
+   * \return an object of type st2tost2<3u,StressType>
+   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
+   * \param [in] f: volumic fraction of spheres
+   * \param [in] C_i: elastic tensor of the spheres (may be anisotropic).
    */
   template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> SphereDiluteScheme(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> sphereDiluteScheme(
       const StressType&,
       const real&,
       const real&,
       const tfel::math::st2tost2<3u,StressType>&);
 
-
-/*!
-   * Mori-Tanaka scheme for spheres
-   * Same parameters as for MoriTanakaScheme, except A
-   */
-  template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> SphereMoriTanakaScheme(
-      const StressType&,
-      const real&,
-      const real&,
-      const tfel::math::st2tost2<3u,StressType>&);
-      
 
   /*!
-   * Dilute scheme with isotropic distribution of orientations of ellipsoids
+   * This function gives the homogenized stiffness for a Mori-Tanaka scheme, for spheres
    * \tparam real: underlying type
-   * \returns an object of type st2tost2, which is the homogenized stiffness tensor
-   * param 1,2 : young, nu : parameters of isotropic matrix
-   * param 3 : f : volumic fraction 
-   * param 4 : C_i : st2tost2<3u,real> elastic tensor of inclusions (the same for all inclusions). May be anisotropic.
-   * param 5,6,7 : a,b,c : lengths of semi-axes of the ellipsoids (the same triplet for all ellipsoids). Can be ordered in any way.
+   * \tparam StressType: type of the elastic constants related to the matrix and the spheres
+   * \return an object of type st2tost2<3u,StressType>
+   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
+   * \param [in] f: volumic fraction of spheres
+   * \param [in] C_i: elastic tensor of the spheres (may be anisotropic).
+   */
+  template <typename real, typename StressType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> sphereMoriTanakaScheme(
+      const StressType&,
+      const real&,
+      const real&,
+      const tfel::math::st2tost2<3u,StressType>&);
+      
+
+   /*!
+   * This function gives the homogenized stiffness for a dilute scheme, for an isotropic distribution of ellipsoids
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix and the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoids
+   * \return an object of type st2tost2<3u,StressType>
+   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
+   * \param [in] f: volumic fraction of ellipsoids
+   * \param [in] C_i: elastic tensor of the ellipsoids (may be anisotropic).
+   * \param[in] a: length of the first semi-axis
+   * \param[in] b: length of the second semi-axis
+   * \param[in] c: length of the third semi-axis
    */
    template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> IsotropicDiluteScheme(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> isotropicDiluteScheme(
       const StressType&,
       const real&,
       const real&,
@@ -96,20 +112,23 @@ namespace tfel::material {
       const LengthType&,
       const LengthType&);
       
-      
+     
      /*!
-   * Dilute scheme with a "planar isotropic" distribution of ellipsoids : one principal axis (the same principal axis for all ellipsoids) is oriented in a fixed direction n. The distribution of the other axes are in the plane normal to n, and the distribution of these axes inside this plane is isotropic.
+   * This function gives the homogenized stiffness for a dilute scheme, for a transverse isotropic distribution of ellipsoids. One principal axis (the same principal axis for all ellipsoids) is oriented in a fixed direction n. The distribution of the other axes are in the plane normal to n, and the distribution of these axes inside this plane is isotropic.
    * \tparam real: underlying type
-   * \returns an object of type st2tost2, which is the homogenized stiffness tensor
-   * param 1,2 : young, nu : parameters of isotropic matrix
-   * param 3 : f : volumic fraction 
-   * param 4 : C_i : st2tost2<3u,real> elastic tensor of inclusions (the same for all inclusions). May be anisotropic.
-   * param 5 : n_a : tfel::math::tvector<3u,real>,  direction of the principal axis which has a fixed orientation
-   * param 6 : a : length of semi-axis which has a fixed orientation n_a
-   * param 7,8 : b,c : lengths of the other semi-axes
+   * \tparam StressType: type of the elastic constants related to the matrix and the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoids
+   * \return an object of type st2tost2<3u,StressType>
+   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
+   * \param [in] f: volumic fraction of ellipsoids
+   * \param [in] C_i: elastic tensor of the ellipsoids (may be anisotropic).
+   * \param [in] n_a: direction of the principal axis which has a fixed orientation and a semi-length \f$a\f$
+   * \param[in] a: length of semi-axis relative to the direction \f$n_a\f$
+   * \param[in] b: length of the second semi-axis
+   * \param[in] c: length of the third semi-axis
    */
     template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> PlanarIsotropicDiluteScheme(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> transverseIsotropicDiluteScheme(
       const StressType&,
       const real&,
       const real&,
@@ -118,22 +137,24 @@ namespace tfel::material {
       const LengthType&,
       const LengthType&,
       const LengthType&);
-      
+     
      /*!
-   * Dilute scheme with a unique orientation of ellipsoids : all principal axes have a fixed orientation.
+   * This function gives the homogenized stiffness for a dilute scheme, for a distribution of oriented ellipsoids : all principal axes have the same fixed orientation.
    * \tparam real: underlying type
-   * \returns an object of type st2tost2, which is the homogenized stiffness tensor
-   * param 1,2 : young, nu : parameters of isotropic matrix
-   * param 3 : f : volumic fraction 
-   * param 4 : C_i : st2tost2<3u,real> elastic tensor of inclusions (the same for all inclusions). May be anisotropic.
-   * param 5 : n_a : tfel::math::tvector<3u,real>,  direction of the principal axis whose length is a
-   * param 6 : a : length of semi-axis relative to the direction n_a
-   * param 7 : n_b : tfel::math::tvector<3u,real>,  direction of the principal axis whose length is b
-   * param 8 : b : length of semi-axis relative to the direction n_b
-   * param 9 : c : length of the remaining semi-axis
-   */
+   * \tparam StressType: type of the elastic constants related to the matrix and the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoids
+   * \return an object of type st2tost2<3u,StressType>
+   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
+   * \param [in] f: volumic fraction of ellipsoids
+   * \param [in] C_i: elastic tensor of the ellipsoids (may be anisotropic).
+   * \param [in] n_a: direction of the principal axis whose semi-length is \f$a\f$
+   * \param[in] a: length of semi-axis relative to the direction \f$n_a\f$
+   * \param [in] n_b: direction of the principal axis whose semi-length is \f$b\f$
+   * \param[in] b: length of the semi-axis relative to the direction \f$n_b\f$
+   * \param[in] c: length of the third semi-axis
+   */ 
      template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> OrientedDiluteScheme(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> orientedDiluteScheme(
       const StressType&,
       const real&,
       const real&,
@@ -141,44 +162,74 @@ namespace tfel::material {
       const tfel::math::tvector<3u,real>&,
       const LengthType&,
       const tfel::math::tvector<3u,real>&,
+      const LengthType&,
+      const LengthType&);
+      
+  /*!
+   * This function gives the homogenized stiffness for a Mori-Tanaka scheme, for an isotropic distribution of ellipsoids
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix and the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoids
+   * \return an object of type st2tost2<3u,StressType>
+   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
+   * \param [in] f: volumic fraction of ellipsoids
+   * \param [in] C_i: elastic tensor of the ellipsoids (may be anisotropic).
+   * \param[in] a: length of the first semi-axis
+   * \param[in] b: length of the second semi-axis
+   * \param[in] c: length of the third semi-axis
+   */
+     template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> isotropicMoriTanakaScheme(
+      const StressType&,
+      const real&,
+      const real&,
+      const tfel::math::st2tost2<3u,StressType>&,
+      const LengthType&,
+      const LengthType&,
+      const LengthType&);
+      
+   /*!
+   * This function gives the homogenized stiffness for a Mori-Tanaka scheme, for a transverse isotropic distribution of ellipsoids. One principal axis (the same principal axis for all ellipsoids) is oriented in a fixed direction n. The distribution of the other axes are in the plane normal to n, and the distribution of these axes inside this plane is isotropic.
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix and the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoids
+   * \return an object of type st2tost2<3u,StressType>
+   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
+   * \param [in] f: volumic fraction of ellipsoids
+   * \param [in] C_i: elastic tensor of the ellipsoids (may be anisotropic).
+   * \param [in] n_a: direction of the principal axis which has a fixed orientation and a semi-length \f$a\f$
+   * \param[in] a: length of semi-axis relative to the direction \f$n_a\f$
+   * \param[in] b: length of the second semi-axis
+   * \param[in] c: length of the third semi-axis
+   */
+    template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> transverseIsotropicMoriTanakaScheme(
+      const StressType&,
+      const real&,
+      const real&,
+      const tfel::math::st2tost2<3u,StressType>&,
+      const tfel::math::tvector<3u,real>&,
+      const LengthType&,
       const LengthType&,
       const LengthType&);
       
       /*!
-   * Mori-Tanaka scheme with isotropic distribution of orientations of ellipsoids
-   * the parameters are the same as for IsotropicDiluteScheme
-   */      
-     template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> IsotropicMoriTanakaScheme(
-      const StressType&,
-      const real&,
-      const real&,
-      const tfel::math::st2tost2<3u,StressType>&,
-      const LengthType&,
-      const LengthType&,
-      const LengthType&);
-      
-      /*!
-   * Mori-Tanaka scheme with a "planar isotropic" distribution of ellipsoids
-   * Parameters are the same as for PlanarIsotropicDiluteScheme
-   */
+   * This function gives the homogenized stiffness for a Mori-Tanaka scheme, for a distribution of oriented ellipsoids : all principal axes have the same fixed orientation.
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix and the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoids
+   * \return an object of type st2tost2<3u,StressType>
+   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
+   * \param [in] f: volumic fraction of ellipsoids
+   * \param [in] C_i: elastic tensor of the ellipsoids (may be anisotropic).
+   * \param [in] n_a: direction of the principal axis whose semi-length is \f$a\f$
+   * \param[in] a: length of semi-axis relative to the direction \f$n_a\f$
+   * \param [in] n_b: direction of the principal axis whose semi-length is \f$b\f$
+   * \param[in] b: length of the semi-axis relative to the direction \f$n_b\f$
+   * \param[in] c: length of the third semi-axis
+   */ 
     template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> PlanarIsotropicMoriTanakaScheme(
-      const StressType&,
-      const real&,
-      const real&,
-      const tfel::math::st2tost2<3u,StressType>&,
-      const tfel::math::tvector<3u,real>&,
-      const LengthType&,
-      const LengthType&,
-      const LengthType&);
-      
-    /*!
-   * Mori-Tanaka scheme with a unique orientation of ellipsoids.
-   * Parameters are the same as for OrientedDiluteScheme
-   */
-    template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> OrientedMoriTanakaScheme(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> orientedMoriTanakaScheme(
       const StressType&,
       const real&,
       const real&,
@@ -186,16 +237,6 @@ namespace tfel::material {
       const tfel::math::tvector<3u,real>&,
       const LengthType&,
       const tfel::math::tvector<3u,real>&,
-      const LengthType&,
-      const LengthType&);
-      
-      /*
-      * A voir si on ajoute ce schéma
-      */
-     template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,real> PonteCastanedaWillisScheme(
-      const StressType&,
-      const LengthType&,
       const LengthType&,
       const LengthType&);
 
