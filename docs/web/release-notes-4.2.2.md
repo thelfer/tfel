@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 4.2.2 of the
 
 # Issues fixed
 
+## Issue 627: add aliases for libraries
+
+For more details, see <https://github.com/thelfer/tfel/issues/627>
+
 ## Issue 581: [C++ interface] Fix support of quantities in `checkBounds`
 
 For more details, see <https://github.com/thelfer/tfel/issues/581>

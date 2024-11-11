@@ -52,10 +52,10 @@ target_include_directories(MTestFileGenerator
    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(MTestFileGenerator
-  PUBLIC TFELMaterial
-  PUBLIC TFELMath
-  PUBLIC TFELUtilities
-  PUBLIC TFELException)
+  PUBLIC tfel::TFELMaterial
+  PUBLIC tfel::TFELMath
+  PUBLIC tfel::TFELUtilities
+  PUBLIC tfel::TFELException)
 if(enable-static)
     target_include_directories(MTestFileGenerator-static
     PUBLIC 
@@ -63,10 +63,10 @@ if(enable-static)
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
     $<INSTALL_INTERFACE:include>)
   target_link_libraries(MTestFileGenerator-static
-    PUBLIC TFELMaterial
-    PUBLIC TFELMath
-    PUBLIC TFELUtilities
-    PUBLIC TFELException)
+    PUBLIC tfel::TFELMaterial
+    PUBLIC tfel::TFELMath
+    PUBLIC tfel::TFELUtilities
+    PUBLIC tfel::TFELException)
 endif(enable-static)
 
 # TFELMFront
@@ -526,20 +526,32 @@ if(HAVE_CASTEM)
 endif(HAVE_CASTEM)
 
 target_link_libraries(TFELMFront
-  PUBLIC MFrontLogStream
-  PUBLIC TFELMaterial        PUBLIC TFELMathParser
-  PUBLIC TFELMathCubicSpline PUBLIC TFELMath
-  PUBLIC TFELSystem          PUBLIC TFELUtilities
-  PUBLIC TFELUnicodeSupport  PUBLIC TFELGlossary 
-  PUBLIC TFELException       PUBLIC TFELConfig)
+  PUBLIC
+  tfel::MFrontLogStream
+  tfel::TFELMaterial
+  tfel::TFELMathParser
+  tfel::TFELMathCubicSpline
+  tfel::TFELMath
+  tfel::TFELSystem
+  tfel::TFELUtilities
+  tfel::TFELGlossary 
+  tfel::TFELUnicodeSupport
+  tfel::TFELException
+  tfel::TFELConfig)
 if(enable-static)
   target_link_libraries(TFELMFront-static
-    PUBLIC MFrontLogStream-static
-    PUBLIC TFELMaterial-static        PUBLIC TFELMathParser-static
-    PUBLIC TFELMathCubicSpline-static PUBLIC TFELMath-static
-    PUBLIC TFELSystem-static          PUBLIC TFELUtilities-static
-    PUBLIC TFELUnicodeSupport-static  PUBLIC TFELGlossary-static
-    PUBLIC TFELException-static       PUBLIC TFELConfig-static)
+    PUBLIC
+    tfel::MFrontLogStream-static
+    tfel::TFELMaterial-static
+    tfel::TFELMathParser-static
+    tfel::TFELMathCubicSpline-static
+    tfel::TFELMath-static
+    tfel::TFELSystem-static
+    tfel::TFELUtilities-static
+    tfel::TFELUnicodeSupport-static
+    tfel::TFELGlossary-static
+    tfel::TFELException-static
+    tfel::TFELConfig-static)
 endif(enable-static)
 
 if(UNIX)
@@ -589,9 +601,11 @@ endif(TFEL_HAVE_MADNEX)
 add_executable(mfront main.cxx)
 set_property(TARGET mfront PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 target_link_libraries(mfront
-  TFELMFront 
-  MFrontLogStream
-  TFELSystem TFELUtilities)
+  PUBLIC
+  tfel::TFELMFront 
+  tfel::MFrontLogStream
+  tfel::TFELSystem
+  tfel::TFELUtilities)
 if(TFEL_APPEND_SUFFIX)
   set_target_properties(mfront
     PROPERTIES OUTPUT_NAME "mfront-${TFEL_SUFFIX}")

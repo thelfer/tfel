@@ -26,21 +26,26 @@ target_include_directories(TFELCheck
    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tfel-check/include>
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELCheck
-  TFELMathCubicSpline TFELMathParser
-  TFELMath TFELUtilities TFELSystem
-  TFELConfig)
+  PUBLIC
+  tfel::TFELMathCubicSpline
+  tfel::TFELMathParser
+  tfel::TFELMath
+  tfel::TFELUtilities
+  tfel::TFELSystem
+  tfel::TFELConfig)
 if(enable-static)
   target_include_directories(TFELCheck-static
      PUBLIC 
      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tfel-check/include>
      $<INSTALL_INTERFACE:include>)
   target_link_libraries(TFELCheck-static
-    TFELMathCubicSpline-static
-    TFELMathParser-static
-    TFELMath-static
-    TFELUtilities-static
-    TFELSystem-static
-    TFELConfig-static)
+    PUBLIC
+    tfel::TFELMathCubicSpline-static
+    tfel::TFELMathParser-static
+    tfel::TFELMath-static
+    tfel::TFELUtilities-static
+    tfel::TFELSystem-static
+    tfel::TFELConfig-static)
 endif(enable-static)
 
 add_executable(tfel-check tfel-check.cxx)

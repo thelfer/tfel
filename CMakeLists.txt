@@ -1,16 +1,9 @@
-# Remove when CMake >= 2.8.4 is required
-set(CMAKE_LEGACY_CYGWIN_WIN32 0) 
-cmake_minimum_required(VERSION 2.4)
+cmake_minimum_required(VERSION 3.10)
 cmake_policy(SET CMP0005 OLD)
 cmake_policy(SET CMP0022 NEW)
-
-if(CMAKE_VERSION VERSION_GREATER 3.0.0)
-  cmake_policy(SET CMP0026 OLD)
-endif(CMAKE_VERSION VERSION_GREATER 3.0.0)
-if(CMAKE_VERSION VERSION_GREATER 3.1.0)
-  cmake_policy(SET CMP0053 OLD)
-  cmake_policy(SET CMP0054 NEW)
-endif(CMAKE_VERSION VERSION_GREATER 3.1.0)
+cmake_policy(SET CMP0026 OLD)
+cmake_policy(SET CMP0053 OLD)
+cmake_policy(SET CMP0054 NEW)
 if(CMAKE_VERSION VERSION_GREATER 3.14.0)
   cmake_policy(SET CMP0083 NEW)  
   include(CheckPIESupported)
@@ -43,7 +36,8 @@ include(cmake/modules/tfel.cmake)
 include(cmake/modules/autotools.cmake)
 
 #major and minor version
-tfel_project(5 0 "0-dev")
+set(TFEL_DEVELOPMENT_VERSION ON)
+tfel_project(5 0 "0")
 set(PACKAGE_BUGREPORT "tfel-contact@cea.fr")
 
 # load the list of rounding modes defined by the IEEE754 standard

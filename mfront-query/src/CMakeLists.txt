@@ -9,7 +9,11 @@ set_property(TARGET mfront-query PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 target_include_directories(mfront-query 
   PRIVATE "${PROJECT_SOURCE_DIR}/mfront-query/include")
 target_link_libraries(mfront-query
-  PUBLIC TFELMFront MFrontLogStream TFELSystem TFELUtilities)
+  PUBLIC
+  tfel::TFELMFront
+  tfel::MFrontLogStream
+  tfel::TFELSystem
+  tfel::TFELUtilities)
 if(TFEL_APPEND_SUFFIX)
   set_target_properties(mfront-query
     PROPERTIES OUTPUT_NAME "mfront-query-${TFEL_SUFFIX}")
