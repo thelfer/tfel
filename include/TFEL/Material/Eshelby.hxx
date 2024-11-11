@@ -16,6 +16,7 @@
 
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Material/StiffnessTensor.hxx"
+#include <stdexcept>
 
 namespace tfel::material
 {

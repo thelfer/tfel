@@ -16,6 +16,7 @@
 
 #include <cmath>
 #include <numbers>
+#include <stdexcept>
 
 namespace tfel::material
 {
@@ -23,6 +24,8 @@ namespace tfel::material
 	TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real>
 	computeSphereEshelbyTensor(const real& nu)
 	{
+		assert(nu<=0.5);
+		assert(nu>=-1);
 		const auto zero = real{0};
 	      	const auto J=(5*nu-1)/15/(1-nu);
 		const auto I=2*(4-5*nu)/15/(1-nu);
@@ -40,50 +43,50 @@ namespace tfel::material
 	TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real>
 	computeAxisymmetricalEshelbyTensor(const real& nu, const real& e)
 	{
-		static constexpr auto eps = std::numeric_limits<real>::epsilon();
+		assert(nu<=0.5);
+		assert(nu>=-1);
+		assert(e>0);
+    		static constexpr auto eps = std::numeric_limits<real>::epsilon();
 		if (abs(e-1)<eps)
 		{
 			return computeSphereEshelbyTensor<real>(nu);
 		}
-		else
+		const auto zero = real{0};
+		const auto e2=e*e;
+		const auto e21=e2-1;
+		const auto u2nu=1-2*nu;
+		const auto q= [e](){
+      		   if (e<1)  {
+      		       return e/tfel::math::power<3,2>(1-e*e)*(std::acos(e)-e*std::sqrt(1-e*e));
+      		   }
+      		   else if (e>1) {
+		       return e/tfel::math::power<3,2>(e*e-1)*(e*std::sqrt(e*e-1)-std::acosh(e));
+		   }
+		   return real{2}/3;
+      	        }();
+		const auto S11 = 3/(8*(1-nu))*e2/e21+q/4/(1-nu)*(u2nu-9/e21/4);
+		const auto S12= 1/(1-nu)/4*(e2/2/e21-q*(u2nu+3/e21/4));
+		const auto S13= 1/(1-nu)/2*(-e2/e21+q/2*(3*e2/e21-u2nu));
+		const auto S31= 1/(1-nu)/2*(-u2nu-1/e21+q*(u2nu+3/e21/2));
+		const auto S33= 1/(1-nu)/2*(u2nu+(3*e2-1)/e21-q*(u2nu+3*e2/e21));
+		const auto S44= 2/(1-nu)/4*(e2/2/e21+q*(u2nu-3/e21/4));
+		const auto S55= 2/(1-nu)/4*(u2nu-(e2+1)/e21-q/2*(u2nu-3*(e2+1)/e21));
+		const tfel::math::st2tost2<3u, real> S= {S11, S12, S13,    zero, zero, zero,
+							 S12, S11, S13,    zero, zero, zero,
+							 S31, S31, S33,    zero, zero, zero,
+							 zero, zero, zero, S44,  zero, zero,
+							 zero, zero, zero, zero, S55,  zero,
+							 zero, zero, zero, zero, zero, S55};
+		if (e>1)
 		{
-			const auto zero = real{0};
-			const auto e2=e*e;
-			const auto e21=e2-1;
-			const auto u2nu=1-2*nu;
-			const auto q= [e](){
-	      		   if (e<1)  {
-	      		       return e/tfel::math::power<3,2>(1-e*e)*(std::acos(e)-e*std::sqrt(1-e*e));
-	      		   }
-	      		   else if (e>1) {
-			       return e/tfel::math::power<3,2>(e*e-1)*(e*std::sqrt(e*e-1)-std::acosh(e));
-			   }
-			   return real{2}/3;
-	      	        }();
-			const auto S11 = 3/(8*(1-nu))*e2/e21+q/4/(1-nu)*(u2nu-9/e21/4);
-			const auto S12= 1/(1-nu)/4*(e2/2/e21-q*(u2nu+3/e21/4));
-			const auto S13= 1/(1-nu)/2*(-e2/e21+q/2*(3*e2/e21-u2nu));
-			const auto S31= 1/(1-nu)/2*(-u2nu-1/e21+q*(u2nu+3/e21/2));
-			const auto S33= 1/(1-nu)/2*(u2nu+(3*e2-1)/e21-q*(u2nu+3*e2/e21));
-			const auto S44= 2/(1-nu)/4*(e2/2/e21+q*(u2nu-3/e21/4));
-			const auto S55= 2/(1-nu)/4*(u2nu-(e2+1)/e21-q/2*(u2nu-3*(e2+1)/e21));
-			const tfel::math::st2tost2<3u, real> S= {S11, S12, S13,    zero, zero, zero,
-								 S12, S11, S13,    zero, zero, zero,
-								 S31, S31, S33,    zero, zero, zero,
-								 zero, zero, zero, S44,  zero, zero,
-								 zero, zero, zero, zero, S55,  zero,
-								 zero, zero, zero, zero, zero, S55};
-			if (e>1)
-			{
-				using namespace tfel::math;
-				const tvector<3u,real> n_1 = {0.,0.,1.};
-				const tvector<3u,real> n_2 = {0.,-1.,0.};
-				const tvector<3u,real> n_3 = {1.,0.,0.};
-				const rotation_matrix<real> r={n_1[0],n_1[1],n_1[2],n_2[0],n_2[1],n_2[2],n_3[0],n_3[1],n_3[2]};
-				return change_basis(S,r);
-			}
-			return S;
-		};
+			using namespace tfel::math;
+			const tvector<3u,real> n_1 = {0.,0.,1.};
+			const tvector<3u,real> n_2 = {0.,-1.,0.};
+			const tvector<3u,real> n_3 = {1.,0.,0.};
+			const rotation_matrix<real> r={n_1[0],n_1[1],n_1[2],n_2[0],n_2[1],n_2[2],n_3[0],n_3[1],n_3[2]};
+			return change_basis(S,r);
+		}
+		return S;
 	};//end of function computeAxisymmetricalEshelbyTensor
 
 
@@ -92,6 +95,11 @@ namespace tfel::material
 	TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real>
 	computeEshelbyTensor(const real& nu, const LengthType& a, const LengthType& b, const LengthType& c)
 	{
+		assert(nu<=0.5);
+		assert(nu>=-1);
+		assert(a>LengthType{0});
+		assert(b>LengthType{0});
+		assert(c>LengthType{0});
 		static constexpr auto eps = std::numeric_limits<real>::epsilon();
 		const std::array<LengthType,3> abc_={a,b,c};
 		const auto sig=sort_ind<LengthType>(a,b,c);
@@ -158,7 +166,6 @@ namespace tfel::material
 			zero, zero, zero, S44,  zero, zero,
 			zero, zero, zero, zero, S55,  zero,
 			zero, zero, zero, zero, zero, S66};
-		
 	};//end of function computeEshelbyTensor
          
   	
@@ -188,6 +195,9 @@ namespace tfel::material
 	TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> computeSphereLocalisationTensor(const StressType& young, const real& nu,
 	const tfel::math::st2tost2<3u,StressType>& C_i)
 	{
+		assert(nu<=0.5);
+		assert(nu>=-1);
+		assert(young>StressType{0});
 		const auto S0 = computeSphereEshelbyTensor<real>(nu);
 		tfel::math::st2tost2<3u,StressType> C_0;
 		static constexpr auto value = StiffnessTensorAlterationCharacteristic::UNALTERED;
@@ -205,11 +215,22 @@ namespace tfel::material
 	TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> computeEllipsoidLocalisationTensor(const StressType& young, const real& nu, const tfel::math::st2tost2<3u,StressType>& C_i,
 	const tfel::math::tvector<3u,real>& n_a, const LengthType& a, const tfel::math::tvector<3u,real>& n_b, const LengthType& b, const LengthType& c)
 	{
-		const auto n_c=tfel::math::cross_product<real>(n_a,n_b);
+		assert(nu<=0.5);
+		assert(nu>=-1);
+		assert(young>StressType{0});
+		assert(a>LengthType{0});
+		assert(b>LengthType{0});
+		assert(c>LengthType{0});
+		assert(tfel::math::ieee754::fpclassify(tfel::math::VectorVectorDotProduct::exe<real,tfel::math::tvector<3u,real>,tfel::math::tvector<3u,real>>(n_a,n_b)) == FP_ZERO);
+		assert((n_a[0]!=0)||(n_a[1]!=0)||(n_a[2]!=0));
+		assert((n_b[0]!=0)||(n_b[1]!=0)||(n_b[2]!=0));
+		const auto n_a_=n_a/norm(n_a);
+    		const auto n_b_=n_b/norm(n_b);
+		const auto n_c_=tfel::math::cross_product<real>(n_a_,n_b_);
 		const std::array<LengthType,3> abc_={a,b,c};
 		const auto sig=sort_ind<LengthType>(a,b,c);
 		const auto S0 = computeEshelbyTensor<real,LengthType>(nu,abc_[sig[0]],abc_[sig[1]],abc_[sig[2]]);
-		const std::array<tfel::math::tvector<3u,real>,3> nabc_={n_a,n_b,n_c};
+		const std::array<tfel::math::tvector<3u,real>,3> nabc_={n_a_,n_b_,n_c_};
 		const auto n_1=nabc_[sig[0]];
 		const auto n_2=nabc_[sig[1]];
 		using namespace tfel::math;
@@ -233,22 +254,28 @@ namespace tfel::material
 	TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> computeAxisymmetricalEllipsoidLocalisationTensor(const StressType& young, const real& nu, const tfel::math::st2tost2<3u,StressType>& C_i,
 	const tfel::math::tvector<3u,real>& n_a, const real& e)
 	{
+		assert(nu<=0.5);
+		assert(nu>=-1);
+		assert(young>StressType{0});
+		assert(e>0);
+		assert((n_a[0]!=0)||(n_a[1]!=0)||(n_a[2]!=0));
+		const auto n_a_=n_a/norm(n_a);
 		tfel::math::tvector<3u,real> n_;
 		if ((tfel::math::ieee754::fpclassify(n_a[1]) != FP_ZERO)||(tfel::math::ieee754::fpclassify(n_a[2]) != FP_ZERO)){n_ = {1.,0.,0.};}
 		else {n_ = {0.,1.,0.}; };
-		const auto n_b=cross_product<real>(n_a,n_);
-		const auto n_c=cross_product<real>(n_a,n_b);
+		const auto n_b_=cross_product<real>(n_a_,n_);
+		const auto n_c_=cross_product<real>(n_a_,n_b_);
 		tfel::math::tvector<3u,real> n_1;
 		tfel::math::tvector<3u,real> n_2;
 		if (e<1)
 		{
-			n_1=n_b;
-			n_2=n_c;
+			n_1=n_b_;
+			n_2=n_c_;
 		}
 		else
 		{
-			n_1=n_a;
-			n_2=n_b;
+			n_1=n_a_;
+			n_2=n_b_;
 		};
 		using namespace tfel::math;
 		const auto n_3=cross_product<real>(n_1,n_2);

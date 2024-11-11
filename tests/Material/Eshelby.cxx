@@ -62,19 +62,24 @@ struct EshelbyTest final : public tfel::tests::TestCase {
     
     if (true) {const auto S1 = computeAxisymmetricalEshelbyTensor(nu,real{0.5});
     const auto S2 = computeAxisymmetricalEshelbyTensor(nu,real{10});
-    const auto S3 = computeAxisymmetricalEshelbyTensor(nu,real{1});}
-    if (true) {const auto S = computeEshelbyTensor(nu,lg{1},lg{3},lg{2});}
+    const auto S3 = computeAxisymmetricalEshelbyTensor(nu,real{1});
+    }
+    
+    if (true) {const auto S = computeEshelbyTensor(nu,lg{1},lg{3},lg{2});
+    }
     
     if (true) {const auto S1 = computeEshelbyTensor(nu,lg{1},lg{3},lg{2});
     const auto S2 = computeEshelbyTensor(nu,lg{1},lg{1},lg{2});
-    const auto S3 = computeEshelbyTensor(nu,lg{1},lg{1},lg{1});}
+    const auto S3 = computeEshelbyTensor(nu,lg{1},lg{1},lg{1});
+    }
     
     //must return a warning
-    //const auto S = computeSphereEshelbyTensor(real{1});
-    //const auto S = computeAxisymmetricalEshelbyTensor(nu,real{0});
-    //const auto S = computeAxisymmetricalEshelbyTensor(nu,real{-10});
-    //const auto S = computeEshelbyTensor(nu,length{-1},length{3},length{2});
-    //const auto S = computeEshelbyTensor<real,length>(nu,length{-1},length{-1},length{1});
+    if (true) {//const auto S1 = computeSphereEshelbyTensor(real{1});
+    //const auto S2 = computeAxisymmetricalEshelbyTensor(nu,real{0});
+    //const auto S3 = computeAxisymmetricalEshelbyTensor(nu,real{-10});
+    //const auto S4 = computeEshelbyTensor<real,lg>(nu,lg{-1},lg{3},lg{2});
+    //const auto S5 = computeEshelbyTensor<real,lg>(nu,lg{-1},lg{-1},lg{1});
+    }
     
     //These functions must return the same thing
     if (true) {const auto S1 = computeSphereEshelbyTensor(nu);
@@ -124,16 +129,24 @@ struct EshelbyTest final : public tfel::tests::TestCase {
     const auto a =lg{1};
     const auto b =lg{3};
     const auto c =lg{0.2};
-    using namespace tfel::material;
     
     if (true) {const auto A1 = computeSphereLocalisationTensor<real,stress>(young,nu,C_i);
     const auto A2 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,C_i,n_a,a/b);
-    const auto A3 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,C_i,n_a,a,n_b,b,c);}
+    const auto A3 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,C_i,n_a,a,n_b,b,c);
+    }
     
     //must return a warning
-    //const auto A = computeSphereLocalisationTensor<real,stress>(young,real{1},C_i);
-    //const auto A = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,C_i,n_a,real{0});
-    //const auto A = computeEllipsoidLocalisationTensor<real,stress,length>(young,nu,C_i,n_a,a,n_b,length{0},c);
+    if (true) {//const auto A1 = computeSphereLocalisationTensor<real,stress>(young,real{1},C_i);
+    //const auto A2 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,C_i,n_a,real{0});
+    //const tfel::math::tvector<3u,real> n_0 = {0.,0.,0.};
+    //const auto A3 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,C_i,n_0,real{1});
+    //const auto A4 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(stress{-1},nu,C_i,n_a,real{1});
+    //const auto A5 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,C_i,n_a,a,n_b,lg{0},c);
+    //const tfel::math::tvector<3u,real> n_ = {0.,std::sqrt(2)/2,std::sqrt(2)/2};
+    //const auto A6 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,C_i,n_a,a,n_,b,c);
+    //const tfel::math::tvector<3u,real> n__ = {0.,0.,0.};
+    //const auto A7 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,C_i,n_a,a,n__,b,c);
+    }
     
     //These functions must return the same thing
     if (true) {const auto A1 = computeSphereLocalisationTensor<real,stress>(young,nu,C_i);
