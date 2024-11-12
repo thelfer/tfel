@@ -142,6 +142,8 @@ install_header(TFEL/Math/Forward st2tot2.hxx)
 install_header(TFEL/Math/Forward st2tost2.hxx)
 install_header(TFEL/Math/Forward Expr.hxx)
 
+install_header(TFEL/Math types.hxx)
+install_header(TFEL/Math types.ixx)
 install_header(TFEL/Math/Bindings atlas.hxx)
 install_header(TFEL/Math fsarray.hxx)
 install_header(TFEL/Math runtime_array.hxx)
