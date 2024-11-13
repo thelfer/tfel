@@ -21,6 +21,7 @@
 #include <cassert>
 #include <iostream>
 #include "TFEL/Math/qt.hxx"
+#include "TFEL/Config/TFELTypes.hxx"
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"

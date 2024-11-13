@@ -35,7 +35,7 @@ namespace tfel::math::internals {
     using type = T&;
   };
 
-  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  template <UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
   struct MakeViewReference<Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
     using type = qt_ref<UnitType, ValueType>;
@@ -47,7 +47,7 @@ namespace tfel::math::internals {
     using type = const T&;
   };
 
-  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  template <UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
   struct MakeConstViewReference<
       Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
@@ -307,53 +307,47 @@ namespace tfel::math {
     using type = std::remove_cv_t<MappedType>;
   };  // end of struct ResultOfEvaluation
 
-  //! \brief view to a scalar
-  template <typename ScalarType>
-  using scalar_view = std::conditional_t<
-      isScalar<ScalarType>(),
-      std::conditional_t<
-          std::is_const_v<ScalarType>,
-          std::conditional_t<
-              isQuantity<ScalarType>(),
-              const qt_ref<typename QuantityTraits<ScalarType>::UnitType,
-                           typename QuantityTraits<ScalarType>::ValueType>,
-              const ScalarType&>,
-          std::conditional_t<
-              isQuantity<ScalarType>(),
-              qt_ref<typename QuantityTraits<ScalarType>::UnitType,
-                     typename QuantityTraits<ScalarType>::ValueType>,
-              ScalarType&>>,
-      tfel::meta::InvalidType>;
+  namespace internals {
 
-  template <typename ScalarType>
-  TFEL_HOST_DEVICE constexpr scalar_view<ScalarType> map(
-      base_type<ScalarType>* const p)  //
-    requires(isScalar<ScalarType>())
-  {
+    template<ScalarConcept ScalarType, bool isQt>
+    struct ScalarViewImplementation{
+      using type = std::conditional_t<
+	std::is_const_v<ScalarType>,const ScalarType&, ScalarType&>;
+    };
+
+    template<ScalarConcept ScalarType>
+    struct ScalarViewImplementation<ScalarType, true>{
+      using type = std::conditional_t<
+	std::is_const_v<ScalarType>,
+	const qt_ref<typename QuantityTraits<std::decay_t<ScalarType>>::UnitType,
+		     typename QuantityTraits<std::decay_t<ScalarType>>::ValueType>,
+	qt_ref<typename QuantityTraits<std::decay_t<ScalarType>>::UnitType,
+	       typename QuantityTraits<std::decay_t<ScalarType>>::ValueType>>;
+    };
+    
+  }
+  
+  //! \brief view to a scalar
+  template <ScalarConcept ScalarType>
+  using scalar_view = typename internals::ScalarViewImplementation<ScalarType, isQuantity<ScalarType>()>::type;
+
+  template <ScalarConcept ScalarType>
+  TFEL_HOST_DEVICE constexpr scalar_view<ScalarType> map(base_type<ScalarType>* const p) {
     return scalar_view<ScalarType>(*p);
   }  // end of map
 
-  template <typename ScalarType>
-  TFEL_HOST_DEVICE constexpr scalar_view<ScalarType> map(
-      base_type<ScalarType>& v)
-    requires(isScalar<ScalarType>())
-  {
+  template <ScalarConcept ScalarType>
+  TFEL_HOST_DEVICE constexpr scalar_view<ScalarType> map(base_type<ScalarType>& v) {
     return scalar_view<ScalarType>(v);
   }  // end of map
 
-  template <typename ScalarType>
-  TFEL_HOST_DEVICE constexpr scalar_view<const ScalarType>  //
-  map(const base_type<ScalarType>* const p)
-    requires(isScalar<ScalarType>())
-  {
+  template <ScalarConcept ScalarType>
+  TFEL_HOST_DEVICE constexpr scalar_view<const ScalarType> map(const base_type<ScalarType>* const p) {
     return scalar_view<const ScalarType>(*p);
   }  // end of map
 
-  template <typename ScalarType>
-  TFEL_HOST_DEVICE constexpr scalar_view<const ScalarType> map(
-      const base_type<ScalarType>& v)
-    requires(isScalar<ScalarType>())
-  {
+  template <ScalarConcept ScalarType>
+  TFEL_HOST_DEVICE constexpr scalar_view<const ScalarType> map(const base_type<ScalarType>& v) {
     return scalar_view<const ScalarType>(v);
   }  // end of map
 
