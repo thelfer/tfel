@@ -20,7 +20,26 @@
 
 namespace tfel::material
 {
-
+  /*!
+   * This function builds the Eshelby tensor of a circular cylinder embedded in an isotropic matrix, considering a PLANE STRAIN modelling hypothesis
+   * \return an object of type st2tost2<2u,real>
+   * \tparam real: underlying type
+   * \param[in] nu: Poisson's ratio of the matrix
+   */
+ template <typename real>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<2u,real> computeCircularCylinderEshelbyTensor(const real&);
+  
+   /*!
+   * This function builds the Eshelby tensor of an elliptic cylinder embedded in an isotropic matrix, considering a PLANE STRAIN modelling hypothesis
+   * The function returns the Eshelby tensor in the basis (e1,e2) where e1 corresponds to the biggest axis
+   * \return an object of type st2tost2<2u,real>
+   * \tparam real: underlying type
+   * \param[in] nu: Poisson's ratio of the matrix
+   * \param[in] e: aspect ratio of the elliptic basis
+   */
+ template <typename real>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<2u,real> computeEllipticCylinderEshelbyTensor(const real&, const real&);
+  
   /*!
    * This function builds the Eshelby tensor of a sphere embedded in an isotropic matrix.
    * \return an object of type st2tost2<3u,real>

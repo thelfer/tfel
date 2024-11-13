@@ -20,6 +20,68 @@
 
 namespace tfel::material
 {
+
+	template <typename real>
+	TFEL_HOST_DEVICE static tfel::math::st2tost2<2u, real>
+	computeCircularCylinderEshelbyTensor(const real& nu)
+	{
+		assert(nu<=0.5);
+		assert(nu>=-1);
+		using namespace tfel::math;
+		const auto zero = real{0};
+	    	const auto Q = 3/(1-nu)/8;
+	    	const auto R = (1-2*nu)/8/(1-nu);
+		
+		const auto S11 = Q+2*R;
+		const auto S12 = Q/3-2*R;
+		const auto S44 = 2*(Q/3+2*R);
+		const auto S13 = 2*Q/3-2*R;
+		return {S11,  S12,  S13,   zero, 
+			S12,  S11,  S13,   zero, 
+			zero, zero, zero,  zero,
+			zero, zero, zero,  S44};
+	};//end of function computeCircularCylinderEshelbyTensor
+	
+	
+	template <typename real>
+	TFEL_HOST_DEVICE static tfel::math::st2tost2<2u, real>
+	computeEllipticCylinderEshelbyTensor(const real& nu,const real& e)
+	{
+		assert(nu<=0.5);
+		assert(nu>=-1);
+		assert(e>0);
+		const auto zero = real{0};
+		const auto e2=e*e;
+	    	const auto Q = 3/(1-nu)/8;
+	    	const auto R = (1-2*nu)/8/(1-nu);
+	    	
+	    	const auto Ia = 4/(1+e);
+	    	const auto Ib = 4*e/(1+e);
+		const auto a2Iab = 4*e2/(e+1)/(e+1)/3;
+		const auto a2Iaa = real{4}/3-a2Iab;
+		const auto b2Iab = 4/(e+1)/(e+1)/3;
+		const auto b2Ibb = real{4}/3-b2Iab;
+		
+		const auto S11 = Q*a2Iaa+R*Ia;
+		const auto S12 = Q*b2Iab-R*Ia;
+		const auto S44 = 2*(Q/2*(a2Iab+b2Iab)+R/2*(Ia+Ib));
+		const auto S22 = Q*b2Ibb+R*Ib;
+		const auto S21 = Q*a2Iab-R*Ib;
+		const auto S13 = Q*Ia/3-R*Ia;
+		const auto S23 = Q*Ib/3-R*Ib;
+		if (e>1){
+			return {S11,  S12,  S13,   zero, 
+				S21,  S22,  S23,   zero, 
+				zero, zero, zero,  zero,
+				zero, zero, zero,  S44};
+		}
+		return {S22,  S21,  S23,   zero, 
+			S12,  S11,  S13,   zero, 
+			zero, zero, zero,  zero,
+			zero, zero, zero,  S44};
+	};//end of function computeEllipticCylinderEshelbyTensor
+	
+	
 	template <typename real>
 	TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real>
 	computeSphereEshelbyTensor(const real& nu)
@@ -27,14 +89,10 @@ namespace tfel::material
 		assert(nu<=0.5);
 		assert(nu>=-1);
 		const auto zero = real{0};
-	      	const auto J=(5*nu-1)/15/(1-nu);
-		const auto I=2*(4-5*nu)/15/(1-nu);
-		return {I+J, J, J, 	  zero, zero, zero,
-			J, I+J, J, 	  zero, zero, zero,
-			J, J, I+J, 	  zero, zero, zero,
-			zero, zero, zero, I,  zero, zero,
-			zero, zero, zero, zero, I,  zero,
-			zero, zero, zero, zero, zero, I};
+	      	const auto a=(5*nu-1)/15/(1-nu);
+		const auto b=2*(4-5*nu)/15/(1-nu);
+		using namespace tfel::math;
+		return (a/3+b)*st2tost2<3u,real>::J()+b*st2tost2<3u,real>::K();
 	};//end of function computeSphereEshelbyTensor
 	
 	
@@ -190,6 +248,8 @@ namespace tfel::material
 		};
 	};//end of sort_ind
   
+    		
+    		
     														   
 	template <typename real, typename StressType>
 	TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> computeSphereLocalisationTensor(const StressType& young, const real& nu,
