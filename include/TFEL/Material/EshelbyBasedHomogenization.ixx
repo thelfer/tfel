@@ -269,7 +269,7 @@ namespace tfel::material {
 			tfel::reportContractViolation("f<0 or f>1");
 		};
     	const auto A = EllipsoidMeanLocalisator<3u,real,StressType,LengthType>::Isotropic(young, nu, C_i, a, b, c);
-  	return compiuteDiluteScheme<real,StressType>(young,nu,f,C_i,A);
+  	return computeDiluteScheme<real,StressType>(young,nu,f,C_i,A);
   };
 											       								       
   template <typename real, typename StressType, typename LengthType>
@@ -284,7 +284,7 @@ namespace tfel::material {
    };
 
   template <typename real, typename StressType,typename LengthType>
-  const tfel::math::st2tost2<3u, StressType> computedOrientedDiluteScheme(const StressType& young, const real& nu, const real& f, const tfel::math::st2tost2<3u,StressType>& C_i,
+  const tfel::math::st2tost2<3u, StressType> computeOrientedDiluteScheme(const StressType& young, const real& nu, const real& f, const tfel::math::st2tost2<3u,StressType>& C_i,
                                                             const tfel::math::tvector<3u,real>& n_a, const LengthType& a, const tfel::math::tvector<3u,real>& n_b,
                                                             const LengthType& b, const LengthType& c)
    {
