@@ -163,8 +163,8 @@ matrix.
 
 Three functions also compute the strain localisation tensor of an ellipsoid embedded
 in an isotropic matrix and submitted to an external uniform strain field :
-`GeneralEllipsoidLocalisationTensor`, `AxisymmetricalEllipsoidLocalisationTensor`
-and `SphereLocalisationTensor`.
+`computeGeneralEllipsoidLocalisationTensor`, `computeAxisymmetricalEllipsoidLocalisationTensor`
+and `computeSphereLocalisationTensor`.
 
 # MFront
 
