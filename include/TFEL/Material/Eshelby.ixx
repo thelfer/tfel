@@ -20,21 +20,84 @@
 
 namespace tfel::material
 {
+
+	template <typename real>
+	TFEL_HOST_DEVICE static tfel::math::st2tost2<2u, real>
+	computeCircularCylinderEshelbyTensor(const real& nu)
+	{
+		if ((nu>0.5)||(nu<-1)){
+			tfel::reportContractViolation("nu>0.5 or nu<-1");
+		};
+		using namespace tfel::math;
+		const auto zero = real{0};
+	    	const auto Q = 3/(1-nu)/8;
+	    	const auto R = (1-2*nu)/8/(1-nu);
+		
+		const auto S11 = Q+2*R;
+		const auto S12 = Q/3-2*R;
+		const auto S44 = 2*(Q/3+2*R);
+		const auto S13 = 2*Q/3-2*R;
+		return {S11,  S12,  S13,   zero, 
+			S12,  S11,  S13,   zero, 
+			zero, zero, zero,  zero,
+			zero, zero, zero,  S44};
+	};//end of function computeCircularCylinderEshelbyTensor
+	
+	
+	template <typename real>
+	TFEL_HOST_DEVICE static tfel::math::st2tost2<2u, real>
+	computeEllipticCylinderEshelbyTensor(const real& nu,const real& e)
+	{
+		if ((nu>0.5)||(nu<-1)){
+			tfel::reportContractViolation("nu>0.5 or nu<-1");
+		};
+		if (not(e>0)){
+			tfel::reportContractViolation("e<=0");
+		};
+		const auto zero = real{0};
+		const auto e2=e*e;
+	    	const auto Q = 3/(1-nu)/8;
+	    	const auto R = (1-2*nu)/8/(1-nu);
+	    	
+	    	const auto Ia = 4/(1+e);
+	    	const auto Ib = 4*e/(1+e);
+		const auto a2Iab = 4*e2/(e+1)/(e+1)/3;
+		const auto a2Iaa = real{4}/3-a2Iab;
+		const auto b2Iab = 4/(e+1)/(e+1)/3;
+		const auto b2Ibb = real{4}/3-b2Iab;
+		
+		const auto S11 = Q*a2Iaa+R*Ia;
+		const auto S12 = Q*b2Iab-R*Ia;
+		const auto S44 = 2*(Q/2*(a2Iab+b2Iab)+R/2*(Ia+Ib));
+		const auto S22 = Q*b2Ibb+R*Ib;
+		const auto S21 = Q*a2Iab-R*Ib;
+		const auto S13 = Q*Ia/3-R*Ia;
+		const auto S23 = Q*Ib/3-R*Ib;
+		if (e>1){
+			return {S11,  S12,  S13,   zero, 
+				S21,  S22,  S23,   zero, 
+				zero, zero, zero,  zero,
+				zero, zero, zero,  S44};
+		}
+		return {S22,  S21,  S23,   zero, 
+			S12,  S11,  S13,   zero, 
+			zero, zero, zero,  zero,
+			zero, zero, zero,  S44};
+	};//end of function computeEllipticCylinderEshelbyTensor
+	
+	
 	template <typename real>
 	TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real>
 	computeSphereEshelbyTensor(const real& nu)
 	{
-		assert(nu<=0.5);
-		assert(nu>=-1);
+		if ((nu>0.5)||(nu<-1)){
+			tfel::reportContractViolation("nu>0.5 or nu<-1");
+		};
 		const auto zero = real{0};
-	      	const auto J=(5*nu-1)/15/(1-nu);
-		const auto I=2*(4-5*nu)/15/(1-nu);
-		return {I+J, J, J, 	  zero, zero, zero,
-			J, I+J, J, 	  zero, zero, zero,
-			J, J, I+J, 	  zero, zero, zero,
-			zero, zero, zero, I,  zero, zero,
-			zero, zero, zero, zero, I,  zero,
-			zero, zero, zero, zero, zero, I};
+	      	const auto a=(5*nu-1)/15/(1-nu);
+		const auto b=2*(4-5*nu)/15/(1-nu);
+		using namespace tfel::math;
+		return (a/3+b)*st2tost2<3u,real>::J()+b*st2tost2<3u,real>::K();
 	};//end of function computeSphereEshelbyTensor
 	
 	
@@ -43,9 +106,12 @@ namespace tfel::material
 	TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real>
 	computeAxisymmetricalEshelbyTensor(const real& nu, const real& e)
 	{
-		assert(nu<=0.5);
-		assert(nu>=-1);
-		assert(e>0);
+		if ((nu>0.5)||(nu<-1)){
+			tfel::reportContractViolation("nu>0.5 or nu<-1");
+		};
+		if (not(e>0)){
+			tfel::reportContractViolation("e<=0");
+		};
     		static constexpr auto eps = std::numeric_limits<real>::epsilon();
 		if (abs(e-1)<eps)
 		{
@@ -83,26 +149,58 @@ namespace tfel::material
 			const tvector<3u,real> n_1 = {0.,0.,1.};
 			const tvector<3u,real> n_2 = {0.,-1.,0.};
 			const tvector<3u,real> n_3 = {1.,0.,0.};
-			const rotation_matrix<real> r={n_1[0],n_1[1],n_1[2],n_2[0],n_2[1],n_2[2],n_3[0],n_3[1],n_3[2]};
+			const rotation_matrix<real> r={n_1[0],n_1[1],n_1[2],
+						       n_2[0],n_2[1],n_2[2],
+						       n_3[0],n_3[1],n_3[2]};
 			return change_basis(S,r);
 		}
 		return S;
 	};//end of function computeAxisymmetricalEshelbyTensor
 
 
+  namespace internals{
+	/*!
+	* This function takes a,b,c and returns the indices of the lengths (a,b,c) sorted from the biggest to the smallest
+	* \return an object of type std::array<int,3>
+	* \tparam LengthType: type of the lengths
+	* \param[in] nu: Poisson's ratio of the matrix
+	*/
+	template <typename LengthType>
+	TFEL_HOST_DEVICE std::array<int,3> sortEllipsoidLengths(const LengthType& a, const LengthType& b, const LengthType& c)
+	{
+		if ((a>b) and (a>c))
+		{
+			if (b>c) return {0,1,2};
+			else return {0,2,1};
+		}
+		else if ((b>a) and (b>c))
+		{
+			if (a>c) return {1,0,2};
+			else return {1,2,0};
+		}
+		else
+		{
+			if (a>b) return {2,0,1};
+			else return {2,1,0}; 
+		};
+	};//end of sortEllipsoidLengths
+  }// end of namespace internal
+    		
+		
 		
 	template <typename real,typename LengthType>				  
 	TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real>
 	computeEshelbyTensor(const real& nu, const LengthType& a, const LengthType& b, const LengthType& c)
 	{
-		assert(nu<=0.5);
-		assert(nu>=-1);
-		assert(a>LengthType{0});
-		assert(b>LengthType{0});
-		assert(c>LengthType{0});
+		if ((nu>0.5)||(nu<-1)){
+			tfel::reportContractViolation("nu>0.5 or nu<-1");
+		};
+		if (not((a>LengthType{0}) and (b>LengthType{0}) and (c>LengthType{0}))){
+			tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
+		};
 		static constexpr auto eps = std::numeric_limits<real>::epsilon();
 		const std::array<LengthType,3> abc_={a,b,c};
-		const auto sig=sort_ind<LengthType>(a,b,c);
+		const auto sig=internals::sortEllipsoidLengths<LengthType>(a,b,c);
 		const auto a_=abc_[sig[0]];
 		const auto b_=abc_[sig[1]];
 		const auto c_=abc_[sig[2]];
@@ -168,36 +266,15 @@ namespace tfel::material
 			zero, zero, zero, zero, zero, S66};
 	};//end of function computeEshelbyTensor
          
-  	
-	
-	template <typename LengthType>
-	TFEL_HOST_DEVICE std::array<int,3> sort_ind(const LengthType& a, const LengthType& b, const LengthType& c)
-	{
-		if ((a>b) and (a>c))
-		{
-			if (b>c) return {0,1,2};
-			else return {0,2,1};
-		}
-		else if ((b>a) and (b>c))
-		{
-			if (a>c) return {1,0,2};
-			else return {1,2,0};
-		}
-		else
-		{
-			if (a>b) return {2,0,1};
-			else return {2,1,0}; 
-		};
-	};//end of sort_ind
-  
+    		
     														   
 	template <typename real, typename StressType>
 	TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> computeSphereLocalisationTensor(const StressType& young, const real& nu,
 	const tfel::math::st2tost2<3u,StressType>& C_i)
 	{
-		assert(nu<=0.5);
-		assert(nu>=-1);
-		assert(young>StressType{0});
+		if (not(young>StressType{0})){
+			tfel::reportContractViolation("E<=0");
+		};
 		const auto S0 = computeSphereEshelbyTensor<real>(nu);
 		tfel::math::st2tost2<3u,StressType> C_0;
 		static constexpr auto value = StiffnessTensorAlterationCharacteristic::UNALTERED;
@@ -215,27 +292,38 @@ namespace tfel::material
 	TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> computeEllipsoidLocalisationTensor(const StressType& young, const real& nu, const tfel::math::st2tost2<3u,StressType>& C_i,
 	const tfel::math::tvector<3u,real>& n_a, const LengthType& a, const tfel::math::tvector<3u,real>& n_b, const LengthType& b, const LengthType& c)
 	{
-		assert(nu<=0.5);
-		assert(nu>=-1);
-		assert(young>StressType{0});
-		assert(a>LengthType{0});
-		assert(b>LengthType{0});
-		assert(c>LengthType{0});
-		assert(tfel::math::ieee754::fpclassify(tfel::math::VectorVectorDotProduct::exe<real,tfel::math::tvector<3u,real>,tfel::math::tvector<3u,real>>(n_a,n_b)) == FP_ZERO);
-		assert((n_a[0]!=0)||(n_a[1]!=0)||(n_a[2]!=0));
-		assert((n_b[0]!=0)||(n_b[1]!=0)||(n_b[2]!=0));
+		if ((nu>0.5)||(nu<-1)){
+			tfel::reportContractViolation("nu>0.5 or nu<-1");
+		};
+		if (not(young>StressType{0})){
+			tfel::reportContractViolation("E<=0");
+		};
+		if (not((a>LengthType{0}) and (b>LengthType{0}) and (c>LengthType{0}))){
+			tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
+		};
+		if (not(tfel::math::ieee754::fpclassify(tfel::math::VectorVectorDotProduct::exe<real,tfel::math::tvector<3u,real>,tfel::math::tvector<3u,real>>(n_a,n_b)) == FP_ZERO)){
+			tfel::reportContractViolation("n_a and n_b not normals");
+		};
+		if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO){
+			tfel::reportContractViolation("n_a is null");
+		};
+		if (tfel::math::ieee754::fpclassify(norm(n_b)) == FP_ZERO){
+			tfel::reportContractViolation("n_b is null");
+		};
 		const auto n_a_=n_a/norm(n_a);
     		const auto n_b_=n_b/norm(n_b);
 		const auto n_c_=tfel::math::cross_product<real>(n_a_,n_b_);
 		const std::array<LengthType,3> abc_={a,b,c};
-		const auto sig=sort_ind<LengthType>(a,b,c);
+		const auto sig=internals::sortEllipsoidLengths<LengthType>(a,b,c);
 		const auto S0 = computeEshelbyTensor<real,LengthType>(nu,abc_[sig[0]],abc_[sig[1]],abc_[sig[2]]);
 		const std::array<tfel::math::tvector<3u,real>,3> nabc_={n_a_,n_b_,n_c_};
 		const auto n_1=nabc_[sig[0]];
 		const auto n_2=nabc_[sig[1]];
 		using namespace tfel::math;
 		const auto n_3=cross_product<real>(n_1,n_2);
-		const rotation_matrix<real> r={n_1[0],n_1[1],n_1[2],n_2[0],n_2[1],n_2[2],n_3[0],n_3[1],n_3[2]};
+		const rotation_matrix<real> r={n_1[0],n_1[1],n_1[2],
+					       n_2[0],n_2[1],n_2[2],
+					       n_3[0],n_3[1],n_3[2]};
 		const auto S0_basis = change_basis(S0,r);
 		tfel::math::st2tost2<3u,StressType> C_0;
 		static constexpr auto value = StiffnessTensorAlterationCharacteristic::UNALTERED;
@@ -254,11 +342,18 @@ namespace tfel::material
 	TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> computeAxisymmetricalEllipsoidLocalisationTensor(const StressType& young, const real& nu, const tfel::math::st2tost2<3u,StressType>& C_i,
 	const tfel::math::tvector<3u,real>& n_a, const real& e)
 	{
-		assert(nu<=0.5);
-		assert(nu>=-1);
-		assert(young>StressType{0});
-		assert(e>0);
-		assert((n_a[0]!=0)||(n_a[1]!=0)||(n_a[2]!=0));
+		if ((nu>0.5)||(nu<-1)){
+			tfel::reportContractViolation("nu>0.5 or nu<-1");
+		};
+		if (not(young>StressType{0})){
+			tfel::reportContractViolation("E<=0");
+		};
+		if (not(e>0)){
+			tfel::reportContractViolation("e<=0");
+		};
+		if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO){
+			tfel::reportContractViolation("n_a is null");
+		};
 		const auto n_a_=n_a/norm(n_a);
 		tfel::math::tvector<3u,real> n_;
 		if ((tfel::math::ieee754::fpclassify(n_a[1]) != FP_ZERO)||(tfel::math::ieee754::fpclassify(n_a[2]) != FP_ZERO)){n_ = {1.,0.,0.};}

@@ -59,6 +59,7 @@ nocite: |
     @zhang_modeling_2023
     @siedel_approche_2023
     @soleilhet_numerical_2023
+    @helfer_mfem-mgis-mfront_2022
     @onimus_polycrystalline_2022
     @mollens_development_2022
     @draup_development_2022

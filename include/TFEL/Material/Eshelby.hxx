@@ -20,7 +20,26 @@
 
 namespace tfel::material
 {
-
+  /*!
+   * This function builds the Eshelby tensor of a circular cylinder embedded in an isotropic matrix, considering a PLANE STRAIN modelling hypothesis
+   * \return an object of type st2tost2<2u,real>
+   * \tparam real: underlying type
+   * \param[in] nu: Poisson's ratio of the matrix
+   */
+ template <typename real>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<2u,real> computeCircularCylinderEshelbyTensor(const real&);
+  
+   /*!
+   * This function builds the Eshelby tensor of an elliptic cylinder embedded in an isotropic matrix, considering a PLANE STRAIN modelling hypothesis
+   * The function returns the Eshelby tensor in the basis (e1,e2) where e1 corresponds to the biggest axis
+   * \return an object of type st2tost2<2u,real>
+   * \tparam real: underlying type
+   * \param[in] nu: Poisson's ratio of the matrix
+   * \param[in] e: aspect ratio of the elliptic basis
+   */
+ template <typename real>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<2u,real> computeEllipticCylinderEshelbyTensor(const real&, const real&);
+  
   /*!
    * This function builds the Eshelby tensor of a sphere embedded in an isotropic matrix.
    * \return an object of type st2tost2<3u,real>
@@ -131,15 +150,7 @@ namespace tfel::material
       const real&,
       const tfel::math::st2tost2<3u, StressType>&);
       
-   /*!
-    * This function takes a,b,c and returns the indices of the lengths (a,b,c) sorted from the biggest to the smallest
-    * \return an object of type std::array<int,3>
-    * \tparam LengthType: type of the lengths
-    * \param[in] nu: Poisson's ratio of the matrix
-    */
-    template <typename LengthType>
-  TFEL_HOST_DEVICE std::array<int,3> sort_ind(const LengthType&, const LengthType&, const LengthType&);
-
+   
 }  // end of namespace tfel::material
 
 #include "TFEL/Material/Eshelby.ixx"

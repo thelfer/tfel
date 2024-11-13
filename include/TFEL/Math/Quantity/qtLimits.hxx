@@ -22,7 +22,7 @@ namespace std {
   /*!
    * \brief partial specialisation for quantities
    */
-  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+  template <tfel::math::UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
   struct numeric_limits<
       tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     static constexpr bool is_specialized =
