@@ -157,7 +157,7 @@ default `TFEL` solver.
 
 ## Homogenization
 
-The function `EshelbyTensor` computes the Eshelby tensor of an ellipsoid
+The function `computeEshelbyTensor` computes the Eshelby tensor of an ellipsoid
 whose semi-axis lengths are `a`, `b`, `c`, embedded in an isotropic
 matrix.
 
