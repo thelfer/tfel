@@ -150,15 +150,7 @@ namespace tfel::material
       const real&,
       const tfel::math::st2tost2<3u, StressType>&);
       
-   /*!
-    * This function takes a,b,c and returns the indices of the lengths (a,b,c) sorted from the biggest to the smallest
-    * \return an object of type std::array<int,3>
-    * \tparam LengthType: type of the lengths
-    * \param[in] nu: Poisson's ratio of the matrix
-    */
-    template <typename LengthType>
-  TFEL_HOST_DEVICE std::array<int,3> sort_ind(const LengthType&, const LengthType&, const LengthType&);
-
+   
 }  // end of namespace tfel::material
 
 #include "TFEL/Material/Eshelby.ixx"
