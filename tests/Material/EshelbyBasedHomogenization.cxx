@@ -72,7 +72,7 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     
     //tests the scheme functions
     using namespace tfel::material;
-    if (true) {const auto Chom1 = computeDiluteScheme<real,stress>(young,nu,f,C_i,A);
+    {const auto Chom1 = computeDiluteScheme<real,stress>(young,nu,f,C_i,A);
     const auto Chom2 = computeMoriTanakaScheme<real,stress>(young,nu,f,C_i,A);
     const auto Chom3 = computeSphereDiluteScheme<real,stress>(young,nu,f,C_i);
     const auto Chom4 = computeSphereMoriTanakaScheme<real,stress>(young,nu,f,C_i);
@@ -85,7 +85,7 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     }
     
     //must return a warning
-    if (true) {//const auto Chom1 = computeDiluteScheme<real,stress>(stress{-1},nu,f,C_i,A);
+    {//const auto Chom1 = computeDiluteScheme<real,stress>(stress{-1},nu,f,C_i,A);
     //const auto Chom2 = computeMoriTanakaScheme<real,stress>(young,real{2},f,C_i,A);
     //const auto Chom3 = computeSphereDiluteScheme<real,stress>(young,nu,real{2},C_i);
     //const auto Chom4 = computeIsotropicDiluteScheme<real,stress>(young,nu,f,C_i,length{-2},b,c);
@@ -100,7 +100,7 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     
 
     //These functions must return the same thing
-    if (true){
+    {
     //const auto nuhom1 = Chom(0,1)/(Chom(0,1)+Chom(0,0));
     //const auto Ehom1 = (1+nuhom)*(Chom(0,0)-Chom(0,1));
     //const auto nuhom2 = Chom2(0,1)/(Chom2(0,1)+Chom2(0,0));
