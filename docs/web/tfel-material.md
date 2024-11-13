@@ -379,10 +379,10 @@ generalized plane strain modelling hypotheses.
 
 # Homogeneisation
 
-## Eshelby tensor
+## Eshelby tensors
 
 The header `Eshelby.hxx` introduces
-the function `EshelbyTensor` which computes the Eshelby tensor
+the function `computeEshelbyTensor` which computes the Eshelby tensor
 of an ellipsoid.
 If we consider a constant stress-free strain \(\tenseur \varepsilon^\mathrm{T}\)
 filling an ellipsoidal volume embedded in an infinite homogeneous medium whose
@@ -400,12 +400,16 @@ polarization tensor \(\tenseur \tau = -\tenseur C_0:\tenseur \varepsilon^\mathrm
 
 \(\tenseur \varepsilon=-\tenseur P_0:\tenseur \tau\).
 
-The function `EshelbyTensor` computes the Eshelby tensor of an ellipsoid
+The function `computeEshelbyTensor` computes the Eshelby tensor of an ellipsoid
 whose semi-axis lengths are `a`, `b`, `c`, embedded in an isotropic
 matrix. It returns an object of `type st2tost2<3u,real>`, which is the
 fourth-order Eshelby tensor, in a basis which is adapted to the ellipsoid.
 The expressions can be found in [@torquato_2002]
 for the axisymmetric ellipsoid and in [@eshelby_1957] for other cases.
+
+There is also `computeSphereEshelbyTensor`, `computeAxisymmetricalEshelbyTensor`,
+and also `computeCircularCylinderEshelbyTensor` and `computeEllipticCylinderEshelbyTensor`
+for plane strain elasticity.
 
 ## Strain localisation tensors
 
@@ -421,10 +425,18 @@ the strain field within the ellipsoid is uniform and given by
 where \(\tenseur A \) is the localisation tensor.
 
 Three functions are implemented for the different possible shapes :
-`GeneralEllipsoidLocalisationTensor`, `AxisymmetricalEllipsoidLocalisationTensor`
-and `SphereLocalisationTensor`. 
+`computeEllipsoidLocalisationTensor`, `computeAxisymmetricalEllipsoidLocalisationTensor`
+and `computeSphereLocalisationTensor`. 
 The ellipsoid is parametrized by its semi-axis lengths \(a,b,c\) but also
 by its axis orientations.
 The functions then return the localisation tensors taking into account the orientations.
+
+## Homogenization schemes
+
+Different schemes are implemented and return the homogenized stiffness of the material.
+The scheme available are Mori-Tanaka scheme and dilute scheme.
+
+If a distribution of ellipsoids is considered, three types of distributions
+are considered : isotropic, transverse isotropic and with unique orientation.
 
 <!-- Local IspellDict: english -->

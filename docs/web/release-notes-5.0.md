@@ -1,6 +1,6 @@
 ---
 title: Release notes of the 5.0 version of `TFEL`, `MFront` and `MTest`
-author: Thomas Helfer, Maxence Wangermez
+author: Thomas Helfer, Maxence Wangermez, Antoine Martin
 date: 2024
 lang: en-EN
 numbersections: true
@@ -157,14 +157,30 @@ default `TFEL` solver.
 
 ## Homogenization
 
+### Ellipsoidal inclusion embedded in isotropic matrix
+
 The function `computeEshelbyTensor` computes the Eshelby tensor of an ellipsoid
 whose semi-axis lengths are `a`, `b`, `c`, embedded in an isotropic
-matrix.
+matrix. There is also `computeSphereEshelbyTensor`, `computeAxisymmetricalEshelbyTensor`,
+and also `computeCircularCylinderEshelbyTensor` and `computeEllipticCylinderEshelbyTensor`
+for plane strain elasticity.
 
 Three functions also compute the strain localisation tensor of an ellipsoid embedded
 in an isotropic matrix and submitted to an external uniform strain field :
-`computeGeneralEllipsoidLocalisationTensor`, `computeAxisymmetricalEllipsoidLocalisationTensor`
+`computeEllipsoidLocalisationTensor`, `computeAxisymmetricalEllipsoidLocalisationTensor`
 and `computeSphereLocalisationTensor`.
+
+### Homogenization schemes
+
+Different schemes are implemented and return the homogenized stiffness of the material.
+The available functions are `computeMoriTanakaScheme`, `computeDiluteScheme`,
+computeSphereDiluteScheme, computeSphereMoriTanakaScheme.
+If a distribution of ellipsoids is considered, three types of distributions
+are considered. The corresponding functions are `computeIsotropicDiluteScheme`,
+`computeTransverseIsotropicDiluteScheme`, `computeOrientedDiluteScheme`,
+`computeIsotropicMoriTanakaScheme`, `computeTransverseIsotropicMoriTanakaScheme`
+and `computeOrientedMoriTanakaScheme`.
+
 
 # MFront
 
