@@ -72,30 +72,30 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     
     //tests the scheme functions
     using namespace tfel::material;
-    if (true) {const auto Chom1 = diluteScheme<real,stress>(young,nu,f,C_i,A);
-    const auto Chom2 = moriTanakaScheme<real,stress>(young,nu,f,C_i,A);
-    const auto Chom3 = sphereDiluteScheme<real,stress>(young,nu,f,C_i);
-    const auto Chom4 = sphereMoriTanakaScheme<real,stress>(young,nu,f,C_i);
-    const auto Chom5 = isotropicDiluteScheme<real,stress>(young,nu,f,C_i,a,b,c);
-    const auto Chom6 = transverseIsotropicDiluteScheme<real,stress>(young,nu,f,C_i,n_a,a,b,c);
-    const auto Chom7 = orientedDiluteScheme<real,stress>(young,nu,f,C_i,n_a,a,n_b,b,c);
-    const auto Chom8 = isotropicMoriTanakaScheme<real,stress>(young,nu,f,C_i,a,b,c);
-    const auto Chom9 = transverseIsotropicMoriTanakaScheme<real,stress>(young,nu,f,C_i,n_a,a,b,c);
-    const auto Chom10 = orientedMoriTanakaScheme<real,stress>(young,nu,f,C_i,n_a,a,n_b,b,c);
+    if (true) {const auto Chom1 = computeDiluteScheme<real,stress>(young,nu,f,C_i,A);
+    const auto Chom2 = computeMoriTanakaScheme<real,stress>(young,nu,f,C_i,A);
+    const auto Chom3 = computeSphereDiluteScheme<real,stress>(young,nu,f,C_i);
+    const auto Chom4 = computeSphereMoriTanakaScheme<real,stress>(young,nu,f,C_i);
+    const auto Chom5 = computeIsotropicDiluteScheme<real,stress>(young,nu,f,C_i,a,b,c);
+    const auto Chom6 = computeTransverseIsotropicDiluteScheme<real,stress>(young,nu,f,C_i,n_a,a,b,c);
+    const auto Chom7 = computeOrientedDiluteScheme<real,stress>(young,nu,f,C_i,n_a,a,n_b,b,c);
+    const auto Chom8 = computeIsotropicMoriTanakaScheme<real,stress>(young,nu,f,C_i,a,b,c);
+    const auto Chom9 = computeTransverseIsotropicMoriTanakaScheme<real,stress>(young,nu,f,C_i,n_a,a,b,c);
+    const auto Chom10 = computeOrientedMoriTanakaScheme<real,stress>(young,nu,f,C_i,n_a,a,n_b,b,c);
     }
     
     //must return a warning
-    if (true) {//const auto Chom1 = diluteScheme<real,stress>(stress{-1},nu,f,C_i,A);
-    //const auto Chom2 = moriTanakaScheme<real,stress>(young,real{2},f,C_i,A);
-    //const auto Chom3 = sphereDiluteScheme<real,stress>(young,nu,real{2},C_i);
-    //const auto Chom4 = isotropicDiluteScheme<real,stress>(young,nu,f,C_i,length{-2},b,c);
+    if (true) {//const auto Chom1 = computeDiluteScheme<real,stress>(stress{-1},nu,f,C_i,A);
+    //const auto Chom2 = computeMoriTanakaScheme<real,stress>(young,real{2},f,C_i,A);
+    //const auto Chom3 = computeSphereDiluteScheme<real,stress>(young,nu,real{2},C_i);
+    //const auto Chom4 = computeIsotropicDiluteScheme<real,stress>(young,nu,f,C_i,length{-2},b,c);
     const tfel::math::tvector<3u,real> n_0= {0.,0.,0.};
-    //const auto Chom5 = transverseIsotropicDiluteScheme<real,stress>(young,nu,f,C_i,n_0,a,b,c);
+    //const auto Chom5 = computeTransverseIsotropicDiluteScheme<real,stress>(young,nu,f,C_i,n_0,a,b,c);
     const tfel::math::tvector<3u,real> n_ = {0.,std::sqrt(2)/2,std::sqrt(2)/2};
-    //const auto Chom6 = orientedDiluteScheme<real,stress>(young,nu,f,C_i,n_a,a,n_,b,c);
-    //const auto Chom7 = isotropicMoriTanakaScheme<real,stress>(young,nu,f,C_i,a,length{-1},c);
-    //const auto Chom8 = transverseIsotropicMoriTanakaScheme<real,stress>(young,nu,f,C_i,n_0,a,b,c);
-    //const auto Chom9 = orientedMoriTanakaScheme<real,stress>(young,nu,f,C_i,n_a,a,n_,b,c);
+    //const auto Chom6 = computeOrientedDiluteScheme<real,stress>(young,nu,f,C_i,n_a,a,n_,b,c);
+    //const auto Chom7 = computeIsotropicMoriTanakaScheme<real,stress>(young,nu,f,C_i,a,length{-1},c);
+    //const auto Chom8 = computeTransverseIsotropicMoriTanakaScheme<real,stress>(young,nu,f,C_i,n_0,a,b,c);
+    //const auto Chom9 = computeOrientedMoriTanakaScheme<real,stress>(young,nu,f,C_i,n_a,a,n_,b,c);
     }
     
 

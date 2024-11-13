@@ -30,7 +30,7 @@ namespace tfel::material {
    * \param [in] A: mean strain localisation tensor of inclusions
    */
    template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> diluteScheme(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeDiluteScheme(
       const StressType&,
       const real&,
       const real&,
@@ -48,7 +48,7 @@ namespace tfel::material {
    * \param [in] A: mean strain localisation tensor of inclusions
    */
   template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> moriTanakaScheme(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeMoriTanakaScheme(
       const StressType&,
       const real&,
       const real&,
@@ -65,7 +65,7 @@ namespace tfel::material {
    * \param [in] C_i: elastic tensor of the spheres (may be anisotropic).
    */
   template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> sphereDiluteScheme(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeSphereDiluteScheme(
       const StressType&,
       const real&,
       const real&,
@@ -82,7 +82,7 @@ namespace tfel::material {
    * \param [in] C_i: elastic tensor of the spheres (may be anisotropic).
    */
   template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> sphereMoriTanakaScheme(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeSphereMoriTanakaScheme(
       const StressType&,
       const real&,
       const real&,
@@ -103,7 +103,7 @@ namespace tfel::material {
    * \param[in] c: length of the third semi-axis
    */
    template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> isotropicDiluteScheme(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeIsotropicDiluteScheme(
       const StressType&,
       const real&,
       const real&,
@@ -128,7 +128,7 @@ namespace tfel::material {
    * \param[in] c: length of the third semi-axis
    */
     template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> transverseIsotropicDiluteScheme(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeTransverseIsotropicDiluteScheme(
       const StressType&,
       const real&,
       const real&,
@@ -154,7 +154,7 @@ namespace tfel::material {
    * \param[in] c: length of the third semi-axis
    */ 
      template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> orientedDiluteScheme(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeOrientedDiluteScheme(
       const StressType&,
       const real&,
       const real&,
@@ -179,7 +179,7 @@ namespace tfel::material {
    * \param[in] c: length of the third semi-axis
    */
      template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> isotropicMoriTanakaScheme(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeIsotropicMoriTanakaScheme(
       const StressType&,
       const real&,
       const real&,
@@ -203,7 +203,7 @@ namespace tfel::material {
    * \param[in] c: length of the third semi-axis
    */
     template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> transverseIsotropicMoriTanakaScheme(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeTransverseIsotropicMoriTanakaScheme(
       const StressType&,
       const real&,
       const real&,
@@ -229,7 +229,7 @@ namespace tfel::material {
    * \param[in] c: length of the third semi-axis
    */ 
     template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> orientedMoriTanakaScheme(
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeOrientedMoriTanakaScheme(
       const StressType&,
       const real&,
       const real&,
