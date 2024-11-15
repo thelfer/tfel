@@ -194,20 +194,15 @@ private:
     const auto nu_i = real{0.3};
     
     using namespace tfel::material;
-
-    static constexpr auto value =
-        tfel::material::StiffnessTensorAlterationCharacteristic::UNALTERED;
-    tfel::math::st2tost2<3u,stress> C_i;
-    tfel::material::computeIsotropicStiffnessTensorII<3u,value,stress,real>(C_i,young_i,nu_i);
     const tfel::math::tvector<3u,real> n_a = {0.,0.,1.};
     const tfel::math::tvector<3u,real> n_b = {1.,0.,0.};
     const auto a =lg{1};
     const auto b =lg{3};
     const auto c =lg{0.2};
     
-    {const auto A1 = computeSphereLocalisationTensor<real,stress>(young,nu,C_i);
-    const auto A2 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,C_i,n_a,a/b);
-    const auto A3 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,C_i,n_a,a,n_b,b,c);
+    {const auto A1 = computeSphereLocalisationTensor<real,stress>(young,nu,young_i,nu_i);
+    const auto A2 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,a/b);
+    const auto A3 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n_b,b,c);
     } 
   };
   
@@ -226,10 +221,6 @@ private:
     const auto young_i = stress{150e9};
     const auto nu_i = real{0.3};
     
-    static constexpr auto value =
-        tfel::material::StiffnessTensorAlterationCharacteristic::UNALTERED;
-    tfel::math::st2tost2<3u,stress> C_i;
-    tfel::material::computeIsotropicStiffnessTensorII<3u,value,stress,real>(C_i,young_i,nu_i);
     const tfel::math::tvector<3u,real> n_a = {0.,0.,1.};
     const tfel::math::tvector<3u,real> n_b = {1.,0.,0.};
     const tfel::math::tvector<3u,real> n_0 = {0.,0.,0.};
@@ -241,13 +232,13 @@ private:
     const auto c =lg{0.2};
     
     using namespace tfel::material;
-    {//const auto A1 = computeSphereLocalisationTensor<real,stress>(young,real{1},C_i);
-    //const auto A2 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,C_i,n_a,real{0});
-    //const auto A3 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,C_i,n_0,real{1});
-    //const auto A4 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(stress{-1},nu,C_i,n_a,real{1});
-    //const auto A5 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,C_i,n_a,a,n_b,lg{0},c);
-    //const auto A6 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,C_i,n_a,a,n_,b,c);
-    //const auto A7 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,C_i,n_a,a,n__,b,c);
+    {//const auto A1 = computeSphereLocalisationTensor<real,stress>(young,real{1},young_i,nu_i);
+    //const auto A2 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,real{0});
+    //const auto A3 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_0,real{1});
+    //const auto A4 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(stress{-1},nu,young_i,nu_i,n_a,real{1});
+    //const auto A5 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n_b,lg{0},c);
+    //const auto A6 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n_,b,c);
+    //const auto A7 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n__,b,c);
     }
   };
   
@@ -267,17 +258,13 @@ private:
     const auto young_i = stress{150e9};
     const auto nu_i = real{0.3};
     
-    static constexpr auto value =
-        tfel::material::StiffnessTensorAlterationCharacteristic::UNALTERED;
-    tfel::math::st2tost2<3u,stress> C_i;
-    tfel::material::computeIsotropicStiffnessTensorII<3u,value,stress,real>(C_i,young_i,nu_i);
     const tfel::math::tvector<3u,real> n_a = {0.,0.,1.};
     const tfel::math::tvector<3u,real> n_b = {1.,0.,0.};
     
     using namespace tfel::material;
-    {const auto A1 = computeSphereLocalisationTensor<real,stress>(young,nu,C_i);
-    const auto A2 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,C_i,n_a,lg{2}/lg{2});
-    const auto A3 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,C_i,n_a,lg{2},n_b,lg{2},lg{2});
+    {const auto A1 = computeSphereLocalisationTensor<real,stress>(young,nu,young_i,nu_i);
+    const auto A2 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,lg{2}/lg{2});
+    const auto A3 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,lg{2},n_b,lg{2},lg{2});
     bool value = true;
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
@@ -291,8 +278,8 @@ private:
     }
     else{std::cout << "Localisation 3d does not work" << '\n';};
     }
-    {const auto A1 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,C_i,n_a,lg{20}/lg{2});
-    const auto A2 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,C_i,n_a,lg{20},n_b,lg{2},lg{2});
+    {const auto A1 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,lg{20}/lg{2});
+    const auto A2 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,lg{20},n_b,lg{2},lg{2});
     bool value = true;
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){

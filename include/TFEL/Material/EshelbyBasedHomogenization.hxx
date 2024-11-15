@@ -19,6 +19,62 @@
 
 
 namespace tfel::material {
+ /*!
+   * This function gives the Voigt homogenized stiffness
+   * \tparam N: number of phases
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants
+   * \return an object of type st2tost2<3u,StressType>
+   * \param [in] f_list: list of volumic fractions of each phase
+   * \param [in] C_list: list of elastic stiffnesses of each phase (may be anisotropic)
+   */
+   template <unsigned int N,typename real, typename StressType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeVoigtStiffness(
+      tfel::math::tvector<N,real>&,
+      const tfel::math::tvector<N,tfel::math::st2tost2<3u,StressType>>&);
+
+  /*!
+   * This function gives the Reuss homogenized stiffness
+   * \tparam N: number of phases
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants
+   * \return an object of type st2tost2<3u,StressType>
+   * \param [in] f_list: list of volumic fractions of each phase
+   * \param [in] C_list: list of elastic stiffnesses of each phase (may be anisotropic)
+   */
+   template <unsigned int N,typename real, typename StressType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeReussStiffness(
+      tfel::math::tvector<N,real>&,
+      const tfel::math::tvector<N,tfel::math::st2tost2<3u,StressType>>&);
+      
+  /*!
+   * This function gives the Lower Hashin Shtrikman Bound stiffness
+   * \tparam N: number of phases
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants
+   * \return an object of type st2tost2<3u,StressType>
+   * \param [in] f_list: list of volumic fractions of each phase
+   * \param [in] C_list: list of elastic stiffnesses of each phase (may be anisotropic)
+   */
+   template <unsigned int N,typename real, typename StressType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeLowerHSBoundStiffness(
+      tfel::math::tvector<N,real>&,
+      const tfel::math::tvector<N,tfel::math::st2tost2<3u,StressType>>&);
+      
+    /*!
+   * This function gives the Upper Hashin Shtrikman Bound stiffness
+   * \tparam N: number of phases
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants
+   * \return an object of type st2tost2<3u,StressType>
+   * \param [in] f_list: list of volumic fractions of each phase
+   * \param [in] C_list: list of elastic stiffnesses of each phase (may be anisotropic)
+   */
+   template <unsigned int N,typename real, typename StressType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeUpperHSBoundStiffness(
+      tfel::math::tvector<N,real>&,
+      const tfel::math::tvector<N,tfel::math::st2tost2<3u,StressType>>&);
+      
    /*!
    * This function gives the homogenized stiffness for a dilute scheme, knowing the strain localisation tensor.
    * \tparam real: underlying type
@@ -26,7 +82,7 @@ namespace tfel::material {
    * \return an object of type st2tost2<3u,StressType>
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of inclusions
-   * \param [in] C_i: elastic tensor of the inclusions (may be anisotropic).
+   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the inclusions
    * \param [in] A: mean strain localisation tensor of inclusions
    */
    template <typename real, typename StressType>
@@ -34,7 +90,8 @@ namespace tfel::material {
       const StressType&,
       const real&,
       const real&,
-      const tfel::math::st2tost2<3u,StressType>&,
+      const StressType&,
+      const real&,
       const tfel::math::st2tost2<3u,real>&);
       
  /*!
@@ -44,7 +101,7 @@ namespace tfel::material {
    * \return an object of type st2tost2<3u,StressType>
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of inclusions
-   * \param [in] C_i: elastic tensor of the inclusions (may be anisotropic).
+   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the inclusions
    * \param [in] A: mean strain localisation tensor of inclusions
    */
   template <typename real, typename StressType>
@@ -52,62 +109,66 @@ namespace tfel::material {
       const StressType&,
       const real&,
       const real&,
-      const tfel::math::st2tost2<3u,StressType>&,
+      const StressType&,
+      const real&,
       const tfel::math::st2tost2<3u,real>&);
       
     /*!
-   * This function gives the homogenized stiffness for a dilute scheme, for spheres
+   * This function gives the homogenized moduli for a dilute scheme, for spheres
    * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix and the spheres
-   * \return an object of type st2tost2<3u,StressType>
+   * \return an object of type std::pair<StressType,real>
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of spheres
-   * \param [in] C_i: elastic tensor of the spheres (may be anisotropic).
+   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the inclusions
    */
   template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeSphereDiluteScheme(
+  TFEL_HOST_DEVICE const std::pair<StressType,real> computeSphereDiluteScheme(
       const StressType&,
       const real&,
       const real&,
-      const tfel::math::st2tost2<3u,StressType>&);
+      const StressType&,
+      const real&);
 
 
   /*!
-   * This function gives the homogenized stiffness for a Mori-Tanaka scheme, for spheres
+   * This function gives the homogenized moduli for a Mori-Tanaka scheme, for spheres
    * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix and the spheres
-   * \return an object of type st2tost2<3u,StressType>
+   * \return an object of type std::pair<StressType,real>
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of spheres
-   * \param [in] C_i: elastic tensor of the spheres (may be anisotropic).
+   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the inclusions
    */
   template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeSphereMoriTanakaScheme(
+  TFEL_HOST_DEVICE const std::pair<StressType,real> computeSphereMoriTanakaScheme(
       const StressType&,
       const real&,
       const real&,
-      const tfel::math::st2tost2<3u,StressType>&);
+      const StressType&,
+      const real&);
       
 
    /*!
-   * This function gives the homogenized stiffness for a dilute scheme, for an isotropic distribution of ellipsoids
+   * This function gives the homogenized moduli for a dilute scheme, for an isotropic distribution of ellipsoids
    * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix and the ellipsoids
    * \tparam LengthType: type of the dimensions of the ellipsoids
-   * \return an object of type st2tost2<3u,StressType>
+   * \return an object of type std::pair<StressType,real>
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of ellipsoids
-   * \param [in] C_i: elastic tensor of the ellipsoids (may be anisotropic).
+   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the inclusions
    * \param[in] a: length of the first semi-axis
    * \param[in] b: length of the second semi-axis
    * \param[in] c: length of the third semi-axis
    */
    template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeIsotropicDiluteScheme(
+  TFEL_HOST_DEVICE const std::pair<StressType,real> computeIsotropicDiluteScheme(
       const StressType&,
       const real&,
       const real&,
-      const tfel::math::st2tost2<3u,StressType>&,
+      const StressType&,
+      const real&,
       const LengthType&,
       const LengthType&,
       const LengthType&);
@@ -121,7 +182,7 @@ namespace tfel::material {
    * \return an object of type st2tost2<3u,StressType>
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of ellipsoids
-   * \param [in] C_i: elastic tensor of the ellipsoids (may be anisotropic).
+   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the inclusions
    * \param [in] n_a: direction of the principal axis which has a fixed orientation and a semi-length \f$a\f$
    * \param[in] a: length of semi-axis relative to the direction \f$n_a\f$
    * \param[in] b: length of the second semi-axis
@@ -132,7 +193,8 @@ namespace tfel::material {
       const StressType&,
       const real&,
       const real&,
-      const tfel::math::st2tost2<3u,StressType>&,
+      const StressType&,
+      const real&,
       const tfel::math::tvector<3u,real>&,
       const LengthType&,
       const LengthType&,
@@ -146,7 +208,7 @@ namespace tfel::material {
    * \return an object of type st2tost2<3u,StressType>
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of ellipsoids
-   * \param [in] C_i: elastic tensor of the ellipsoids (may be anisotropic).
+   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the inclusions
    * \param [in] n_a: direction of the principal axis whose semi-length is \f$a\f$
    * \param[in] a: length of semi-axis relative to the direction \f$n_a\f$
    * \param [in] n_b: direction of the principal axis whose semi-length is \f$b\f$
@@ -158,7 +220,8 @@ namespace tfel::material {
       const StressType&,
       const real&,
       const real&,
-      const tfel::math::st2tost2<3u,StressType>&,
+      const StressType&,
+      const real&,
       const tfel::math::tvector<3u,real>&,
       const LengthType&,
       const tfel::math::tvector<3u,real>&,
@@ -166,24 +229,25 @@ namespace tfel::material {
       const LengthType&);
       
   /*!
-   * This function gives the homogenized stiffness for a Mori-Tanaka scheme, for an isotropic distribution of ellipsoids
+   * This function gives the homogenized moduli for a Mori-Tanaka scheme, for an isotropic distribution of ellipsoids
    * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix and the ellipsoids
    * \tparam LengthType: type of the dimensions of the ellipsoids
-   * \return an object of type st2tost2<3u,StressType>
+   * \return an object of type std::pair<StressType,real>
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of ellipsoids
-   * \param [in] C_i: elastic tensor of the ellipsoids (may be anisotropic).
+   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the inclusions
    * \param[in] a: length of the first semi-axis
    * \param[in] b: length of the second semi-axis
    * \param[in] c: length of the third semi-axis
    */
      template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeIsotropicMoriTanakaScheme(
+  TFEL_HOST_DEVICE const std::pair<StressType,real> computeIsotropicMoriTanakaScheme(
       const StressType&,
       const real&,
       const real&,
-      const tfel::math::st2tost2<3u,StressType>&,
+      const StressType&,
+      const real&,
       const LengthType&,
       const LengthType&,
       const LengthType&);
@@ -196,7 +260,7 @@ namespace tfel::material {
    * \return an object of type st2tost2<3u,StressType>
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of ellipsoids
-   * \param [in] C_i: elastic tensor of the ellipsoids (may be anisotropic).
+   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the inclusions
    * \param [in] n_a: direction of the principal axis which has a fixed orientation and a semi-length \f$a\f$
    * \param[in] a: length of semi-axis relative to the direction \f$n_a\f$
    * \param[in] b: length of the second semi-axis
@@ -207,7 +271,8 @@ namespace tfel::material {
       const StressType&,
       const real&,
       const real&,
-      const tfel::math::st2tost2<3u,StressType>&,
+      const StressType&,
+      const real&,
       const tfel::math::tvector<3u,real>&,
       const LengthType&,
       const LengthType&,
@@ -221,7 +286,7 @@ namespace tfel::material {
    * \return an object of type st2tost2<3u,StressType>
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of ellipsoids
-   * \param [in] C_i: elastic tensor of the ellipsoids (may be anisotropic).
+   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the inclusions
    * \param [in] n_a: direction of the principal axis whose semi-length is \f$a\f$
    * \param[in] a: length of semi-axis relative to the direction \f$n_a\f$
    * \param [in] n_b: direction of the principal axis whose semi-length is \f$b\f$
@@ -233,7 +298,8 @@ namespace tfel::material {
       const StressType&,
       const real&,
       const real&,
-      const tfel::math::st2tost2<3u,StressType>&,
+      const StressType&,
+      const real&,
       const tfel::math::tvector<3u,real>&,
       const LengthType&,
       const tfel::math::tvector<3u,real>&,

@@ -97,7 +97,7 @@ namespace tfel::material
    * \tparam StressType: type of the elastic constants related to the matrix and the ellipsoid
    * \tparam LengthType: type of the dimensions of the ellipsoid
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
-   * \param [in] C_i: elastic tensor of the ellipsoid (may be anisotropic).
+   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the inclusions
    * \param [in] n_a: direction of the principal axis whose length is \f$a\f$
    * \param [in] a: length of semi-axis relative to the direction \f$n_a\f$
    * \param [in] n_b: direction of the principal axis whose length is \f$b\f$
@@ -108,7 +108,8 @@ namespace tfel::material
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> computeEllipsoidLocalisationTensor(
       const StressType&,
       const real&,
-      const tfel::math::st2tost2<3u, StressType>&,
+      const StressType&,
+      const real&,
       const tfel::math::tvector<3u,real>&,
       const LengthType&,
       const tfel::math::tvector<3u,real>&,
@@ -123,7 +124,7 @@ namespace tfel::material
    * \tparam    real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix and the ellipsoid
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
-   * \param [in] C_i: elastic tensor of the ellipsoid (may be anisotropic).
+   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the inclusions
    * \param [in] n_a: direction of the axis of the ellipsoid (whose semi-length is \f$a\f$)
    * \param [in] a: length of semi-axis relative to the direction \f$n_a\f$
    */
@@ -131,7 +132,8 @@ namespace tfel::material
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> computeAxisymmetricalEllipsoidLocalisationTensor(
       const StressType&,
       const real&,
-      const tfel::math::st2tost2<3u, StressType>&,
+      const StressType&,
+      const real&,
       const tfel::math::tvector<3u,real>&,
       const real&);
       
@@ -142,13 +144,14 @@ namespace tfel::material
    * \tparam    real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix and the ellipsoid
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
-   * \param [in] C_i: elastic tensor of the sphere (may be anisotropic).
+   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the inclusions
    */
     template <typename real, typename StressType>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> computeSphereLocalisationTensor(
       const StressType&,
       const real&,
-      const tfel::math::st2tost2<3u, StressType>&);
+      const StressType&,
+      const real&);
       
    
 }  // end of namespace tfel::material
