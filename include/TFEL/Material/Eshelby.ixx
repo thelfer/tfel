@@ -184,7 +184,7 @@ namespace tfel::material
 			else return {2,1,0}; 
 		};
 	};//end of sortEllipsoidLengths
-  }// end of namespace internal
+  }// end of namespace internals
     		
 		
 		
@@ -266,7 +266,6 @@ namespace tfel::material
 			zero, zero, zero, zero, zero, S66};
 	};//end of function computeEshelbyTensor
          
-    		
     														   
 	template <typename real, typename StressType>
 	TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> computeSphereLocalisationTensor(const StressType& young, const real& nu,
