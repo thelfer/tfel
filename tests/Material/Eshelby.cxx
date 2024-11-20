@@ -40,6 +40,9 @@ struct EshelbyTest final : public tfel::tests::TestCase {
     this->template compile_Eshelby_tensors<double, true>();
     this->template errors_Eshelby_tensors<double, true>();
     this->template test_Eshelby_tensors<double, true>();
+    this->template test_Eshelby_limits<float, true>();
+    this->template test_Eshelby_limits<double, true>();
+    this->template test_Eshelby_limits<long double, true>();
     this->template compile_localisation_tensors<double, true>();
     this->template errors_localisation_tensors<double, true>();
     this->template test_localisation_tensors<double, true>();
@@ -101,7 +104,7 @@ private:
     }
  };
     
-//must return a warning
+//must return an error
 private:
   template <typename NumericType, bool use_qt>
   void errors_Eshelby_tensors() {
@@ -120,7 +123,6 @@ private:
   };
     
  
- //These functions must return the same thing : the value displayed must be one
   private:
   template <typename NumericType, bool use_qt>
   void test_Eshelby_tensors() {
@@ -132,10 +134,10 @@ private:
     
     
     using namespace tfel::material;
+     //AxisymmetricalEshelbyTensor with e=1 is equal to SphereEshelbyTensor and also equal to EshelbyTensor(2,2,2)
     {const auto S1 = computeSphereEshelbyTensor(nu);
     const auto S2 = computeAxisymmetricalEshelbyTensor(nu,real{1});
-    const auto S3 = computeEshelbyTensor(nu,lg{1},lg{2},lg{2});
-    const auto S4 = computeEshelbyTensor(nu,lg{3},lg{3},lg{3});
+    const auto S3 = computeEshelbyTensor(nu,lg{2},lg{2},lg{2});
     bool value = true;
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
@@ -143,8 +145,6 @@ private:
     		//std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
     		value = value and (std::abs(S1(i,j)-S3(i,j))<eps);
     		//std::cout << "13" << value << '\n';
-    		value = value and (std::abs(S1(i,j)-S4(i,j))<eps);
-    		//std::cout << "14" << value << '\n';
     	};
     };
    if (value){
@@ -153,6 +153,7 @@ private:
     else{std::cout << "Eshelby 3d does not work" << '\n';};
     }
     
+    //AxisymmetricalEshelbyTensor with e=10 is equal to EshelbyTensor(30,3,3) or EshelbyTensor(3,3,30)
     {const auto S1 = computeAxisymmetricalEshelbyTensor(nu,real{10});
     const auto S2 = computeEshelbyTensor(nu,lg{30},lg{3},lg{3});
     const auto S3 = computeEshelbyTensor(nu,lg{3},lg{3},lg{30});
@@ -168,13 +169,71 @@ private:
     }
     else{std::cout << "Eshelby 3d bis does not work" << '\n';};
     }
-    
-    //These functions must return a very similar thing
-    
+    };
     
     
+     private:
+  template <typename NumericType, bool use_qt>
+  void test_Eshelby_limits() {
+    using lg =
+        typename tfel::config::Types<1u, NumericType, use_qt>::length;
+    using real = NumericType;
+    static constexpr auto eps = std::numeric_limits<real>::epsilon();
+    const auto nu = real{0.3};
     
     
+    using namespace tfel::material;    
+     //AxisymmetricalEshelbyTensor when e is near 1 must be near SphereEshelbyTensor (there is a numerical instability that we propose to manage)
+    {const auto S1 = computeSphereEshelbyTensor(nu);
+    tfel::math::st2tost2<3u,real> S2;
+    if (std::numeric_limits<float>::epsilon()==eps){
+    	S2 = computeAxisymmetricalEshelbyTensor(nu,real{1.001});
+    }
+    else if (std::numeric_limits<double>::epsilon()==eps){
+    	S2 = computeAxisymmetricalEshelbyTensor(nu,real{1.000001});
+    }
+    else if (std::numeric_limits<long double>::epsilon()==eps){
+    	S2= computeAxisymmetricalEshelbyTensor(nu,real{1.0000001});
+    };
+    bool value = true;
+    for (int i :{0,1,2,3,4,5}){
+    	for (int j:{0,1,2,3,4,5}){
+    		value = value and (std::abs(S1(i,j)-S2(i,j))<eps);
+    		//std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
+    	};
+    };
+    if (value){
+    std::cout << "Eshelby 3d near sphere ok" << '\n';
+    }
+    else{std::cout << "Eshelby 3d near sphere does not work" << '\n';};
+    }
+    
+    
+    //EshelbyTensor when a is near b must be near AxisymmetricalEshelbyTensor (there is a numerical instability that we propose to manage)
+    {const auto S1 = computeAxisymmetricalEshelbyTensor(nu,real{10});
+    tfel::math::st2tost2<3u,real> S2;
+    if (std::numeric_limits<float>::epsilon()==eps){
+    	S2 = computeEshelbyTensor(nu,lg{1.05},lg{1},lg{10});
+    }
+    else if (std::numeric_limits<double>::epsilon()==eps){
+    	S2 = computeEshelbyTensor(nu,lg{1.0005},lg{1},lg{10});
+    }
+    else if (std::numeric_limits<long double>::epsilon()==eps){
+    	S2= computeEshelbyTensor(nu,lg{1.00005},lg{1},lg{10});
+    };
+
+    bool value = true;
+    for (int i :{0,1,2,3,4,5}){
+    	for (int j:{0,1,2,3,4,5}){
+    		value = value and (std::abs(S1(i,j)-S2(i,j))<eps);
+    		//std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
+    	};
+    };
+    if (value){
+    std::cout << "Eshelby 3d near axisymmetry ok" << '\n';
+    }
+    else{std::cout << "Eshelby 3d near axisymmetry does not work" << '\n';};
+    }
     
  };
  
@@ -263,8 +322,8 @@ private:
     
     using namespace tfel::material;
     {const auto A1 = computeSphereLocalisationTensor<real,stress>(young,nu,young_i,nu_i);
-    const auto A2 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,lg{2}/lg{2});
-    const auto A3 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,lg{2},n_b,lg{2},lg{2});
+    const auto A2 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,1);
+    const auto A3 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,lg{2},n_b,lg{2.00000001},lg{2.00001});
     bool value = true;
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
@@ -278,8 +337,8 @@ private:
     }
     else{std::cout << "Localisation 3d does not work" << '\n';};
     }
-    {const auto A1 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,lg{20}/lg{2});
-    const auto A2 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,lg{20},n_b,lg{2},lg{2});
+    {const auto A1 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,lg{20}/lg{2.0001});
+    const auto A2 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,lg{20},n_b,lg{2},lg{2.0001});
     bool value = true;
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
@@ -292,14 +351,6 @@ private:
     }
     else{std::cout << "Localisation 3d bis does not work" << '\n';};
     }
-    
-    
-    //These functions must return a very similar thing
-
-
-
-
-
 
   };
   

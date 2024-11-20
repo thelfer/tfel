@@ -23,7 +23,7 @@ namespace tfel::material {
    {
 	static constexpr auto eps = std::numeric_limits<real>::epsilon();
 
-	TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u, real>
+	TFEL_HOST_DEVICE static const std::pair<real,real>
       	Isotropic(const StressType& young, const real& nu, const StressType& young_i, const real& nu_i,
                   const LengthType& a, const LengthType& b, const LengthType& c)
         {	
@@ -38,41 +38,31 @@ namespace tfel::material {
 		};
         	const tfel::math::tvector<3u,real> n_1 = {1.,0.,0.};
     		const tfel::math::tvector<3u,real> n_2 = {0.,1.,0.};
-    		tfel::math::st2tost2<3u,real> A;
-    		if ((a==b) and (b==c)){A = computeSphereLocalisationTensor<real,StressType>(young,nu,young_i,nu_i);}
-    		else if (a==b){const auto A_=computeAxisymmetricalEllipsoidLocalisationTensor<real,StressType>(young,nu,young_i,nu_i,n_1,c/a);
+    		real mu;
+    		real ka;
+    		if ((a==b) and (b==c)){
+    			const auto A = computeSphereLocalisationTensor<real,StressType>(young,nu,young_i,nu_i);
+    			mu=A(3,3)/2;
+    			ka=A(0,0)-4*mu/3;
+    		}
+    		else if ((a==b)||(a==c)||(b==c)){	
+    			tfel::math::st2tost2<3u,real> A_;
+    			if (a==b){A_=computeAxisymmetricalEllipsoidLocalisationTensor<real,StressType>(young,nu,young_i,nu_i,n_1,c/a);}
+    			else if (a==c){A_=computeAxisymmetricalEllipsoidLocalisationTensor<real,StressType>(young,nu,young_i,nu_i,n_1,b/a);}
+    			else{A_=computeAxisymmetricalEllipsoidLocalisationTensor<real,StressType>(young,nu,young_i,nu_i,n_1,a/b);};
     			const auto A1111= 8*A_(1,1)/15+A_(0,0)/5+2*(A_(2,0)+A_(0,2)+2*A_(4,4))/15;
     			const auto A1122= A_(1,1)/15+A_(0,0)/15+A_(1,2)/3+4*A_(0,1)/15+4*A_(1,0)/15-2*A_(3,3)/15;
-    			const auto G=A1111-A1122;
-    			const auto ka=(A1111+2*A1122)/3;
-    			using namespace tfel::math;
-    			A=3*ka*st2tost2<3u,real>::J()+G*st2tost2<3u,real>::K();
-    			      }
-    		else if (a==c){const auto A_=computeAxisymmetricalEllipsoidLocalisationTensor<real,StressType>(young,nu,young_i,nu_i,n_1,b/a);
-	    		const auto A1111= 8*A_(1,1)/15+A_(0,0)/5+2*(A_(2,0)+A_(0,2)+2*A_(4,4))/15;
-    			const auto A1122= A_(1,1)/15+A_(0,0)/15+A_(1,2)/3+4*A_(0,1)/15+4*A_(1,0)/15-2*A_(3,3)/15;
-    			const auto G=A1111-A1122;
-    			const auto ka=(A1111+2*A1122)/3;
-    			using namespace tfel::math;
-    			A=3*ka*st2tost2<3u,real>::J()+G*st2tost2<3u,real>::K();
-    			      }
-    		else if (b==c){const auto A_=computeAxisymmetricalEllipsoidLocalisationTensor<real,StressType>(young,nu,young_i,nu_i,n_1,a/b);
-	    		const auto A1111= 8*A_(1,1)/15+A_(0,0)/5+2*(A_(2,0)+A_(0,2)+2*A_(4,4))/15;
-    			const auto A1122= A_(1,1)/15+A_(0,0)/15+A_(1,2)/3+4*A_(0,1)/15+4*A_(1,0)/15-2*A_(3,3)/15;
-    			const auto G=A1111-A1122;
-    			const auto ka=(A1111+2*A1122)/3;
-    			using namespace tfel::math;
-    			A=3*ka*st2tost2<3u,real>::J()+G*st2tost2<3u,real>::K();
-    			      }
-    		else {const auto A_ = computeEllipsoidLocalisationTensor<real,StressType,LengthType>(young,nu,young_i,nu_i,n_1,a,n_2,b,c);
+    			mu=(A1111-A1122)/2;
+    			ka=(A1111+2*A1122)/3;
+    		}
+    		else{
+    			const auto A_ = computeEllipsoidLocalisationTensor<real,StressType,LengthType>(young,nu,young_i,nu_i,n_1,a,n_2,b,c);
     			const auto A1111= A_(0,0)/5+A_(1,1)/5+A_(2,2)/5+(A_(0,1)+A_(1,0)+2*A_(3,3))/15+(A_(0,2)+A_(2,0)+2*A_(4,4))/15+(A_(1,2)+A_(2,1)+2*A_(5,5))/15;
     			const auto A1122= A_(0,0)/15+A_(1,1)/15+A_(2,2)/15+2*A_(0,1)/15-2*A_(3,3)/30+2*A_(1,0)/15+2*A_(2,1)/15-2*A_(5,5)/30+2*A_(1,2)/15+2*A_(2,0)/15-2*A_(4,4)/30+2*A_(0,2)/15;
-    			const auto G=A1111-A1122;
-    			const auto ka=(A1111+2*A1122)/3;
-    			using namespace tfel::math;
-    			A=3*ka*st2tost2<3u,real>::J()+G*st2tost2<3u,real>::K();
-    		     };
-		return A;
+    			mu=(A1111-A1122)/2;
+    			ka=(A1111+2*A1122)/3;
+    		};
+		return {ka,mu};
          };//end of Isotropic
         
         TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u, real>
@@ -301,10 +291,18 @@ namespace tfel::material {
 	if ((f<0)||(f>1)){
 			tfel::reportContractViolation("f<0 or f>1");
 		};
-    	const auto A = EllipsoidMeanLocalisator<3u,real,StressType,LengthType>::Isotropic(young, nu, young_i,nu_i, a, b, c);
-  	const auto Chom = computeDiluteScheme<real,StressType>(young,nu,f,young_i,nu_i,A);
-  	const auto nuhom = Chom(0,1)/(Chom(0,0)+Chom(0,1));
-  	const auto Ehom = Chom(0,0)/(1-nuhom)*(1+nuhom)*(1-2*nuhom);
+	
+    	const auto pair = EllipsoidMeanLocalisator<3u,real,StressType,LengthType>::Isotropic(young, nu, young_i,nu_i, a, b, c);
+    	const auto ka=std::get<0>(pair);
+    	const auto mu=std::get<1>(pair);
+    	const auto k0=young/3/(1-2*nu);
+  	const auto mu0=young/2/(1+nu);
+  	const auto k_i=young_i/3/(1-2*nu_i);
+  	const auto mu_i=young_i/2/(1+nu_i);
+  	const auto muhom=mu0+2*f*(mu_i-mu0)*mu;
+  	const auto khom=k0+3*f*(k_i-k0)*ka;
+	const auto nuhom = (3*khom-2*muhom)/(2*muhom+6*khom);
+  	const auto Ehom = 2*muhom*(1+nuhom);
   	return {Ehom,nuhom};
   };
 											       								       
@@ -338,10 +336,17 @@ namespace tfel::material {
 	if ((f<0)||(f>1)){
 			tfel::reportContractViolation("f<0 or f>1");
 		};
-        const auto A = EllipsoidMeanLocalisator<3u,real,StressType,LengthType>::Isotropic(young, nu, young_i,nu_i, a, b, c);
-        const auto Chom = computeMoriTanakaScheme<real,StressType>(young,nu,f,young_i,nu_i,A); 
-        const auto nuhom = Chom(0,1)/(Chom(0,0)+Chom(0,1));
-  	const auto Ehom = Chom(0,0)/(1-nuhom)*(1+nuhom)*(1-2*nuhom);
+        const auto pair = EllipsoidMeanLocalisator<3u,real,StressType,LengthType>::Isotropic(young, nu, young_i,nu_i, a, b, c);
+        const auto ka=std::get<0>(pair);
+    	const auto mu=std::get<1>(pair);
+    	const auto k0=young/3/(1-2*nu);
+  	const auto mu0=young/2/(1+nu);
+  	const auto k_i=young_i/3/(1-2*nu_i);
+  	const auto mu_i=young_i/2/(1+nu_i);
+  	const auto muhom=mu0+f*(mu_i-mu0)*mu/(f*mu+(1-f)/2);
+  	const auto khom=k0+f*(k_i-k0)*ka/(ka*f+(1-f)/3);
+	const auto nuhom = (3*khom-2*muhom)/(2*muhom+6*khom);
+  	const auto Ehom = 2*muhom*(1+nuhom);
   	return {Ehom,nuhom};                                                       
   };
 													     

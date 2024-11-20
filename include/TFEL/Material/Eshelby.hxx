@@ -57,14 +57,17 @@ namespace tfel::material
    * \tparam real: underlying type
    * \param[in] nu: Poisson's ratio of the matrix
    * \param[in] e: aspect ratio of the ellipsoid (e>1 : prolate, e<1 : oblate)
+   * \param[in] precf, precd, precld: default arguments which aim at preventing the numerical instability of the formula when the ellipsoid is almost a sphere. When the absolute value of (e-1) is below precf (resp. precd, precld) for real=float (resp. real= double, long double), the returned tensor is computeSphereEshelbyTensor(nu).
    * 
    * The expressions can be found in Torquato, Random Heterogeneous Materials (2002).
    */
    template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> computeAxisymmetricalEshelbyTensor(
-      const real&,
-      const real&);
-
+     const real&,
+     const real&,
+     const real = real{8e-3},
+     const real = real{1.5e-4},
+     const real = real{1e-5});
 
    /*!
    * This function builds the Eshelby tensor of a general ellipsoid embedded in an isotropic matrix.
@@ -76,6 +79,7 @@ namespace tfel::material
    * \param[in] a: length of the first semi-axis
    * \param[in] b: length of the second semi-axis
    * \param[in] c: length of the third semi-axis
+   * \param[in] precf, precd, precld: default arguments which aim at preventing the numerical instability of the formula when the ellipsoid is almost axisymmetrical. When the absolute value of (a-b)/c (or (a-c)/b or (b-c)/a) is below precf (resp. precd, precld) for real=float (resp. real= double, long double), the returned tensor is computeAxisymmetricalEshelbyTensor.
    * 
    * The expressions for the case of three distinct semi-axes can be found in Eshelby (1957).
    */
@@ -84,7 +88,10 @@ namespace tfel::material
       const real&,
       const LengthType&,
       const LengthType&,
-      const LengthType&);
+      const LengthType&,
+      const real = real{8e-3},
+      const real = real{1.5e-4},
+      const real = real{1e-5});
       
   /*!
    * This function builds the strain localisation tensor of a general ellipsoid
