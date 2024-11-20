@@ -17,6 +17,7 @@
 #include <cmath>
 #include <numbers>
 #include <stdexcept>
+#include <typeinfo>
 
 namespace tfel::material
 {
@@ -104,7 +105,7 @@ namespace tfel::material
 
 	template <typename real>
 	TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real>
-	computeAxisymmetricalEshelbyTensor(const real& nu, const real& e)
+	computeAxisymmetricalEshelbyTensor(const real& nu, const real& e, const real precf, const real precd, const real precld)
 	{
 		if ((nu>0.5)||(nu<-1)){
 			tfel::reportContractViolation("nu>0.5 or nu<-1");
@@ -112,11 +113,16 @@ namespace tfel::material
 		if (not(e>0)){
 			tfel::reportContractViolation("e<=0");
 		};
-    		static constexpr auto eps = std::numeric_limits<real>::epsilon();
-		if (abs(e-1)<eps)
+		static constexpr auto eps = std::numeric_limits<real>::epsilon();
+    		const auto precision = [eps,precf,precd,precld](){
+    			if (eps==std::numeric_limits<float>::epsilon()){return precf;}
+    			else if (eps==std::numeric_limits<double>::epsilon()){return precd;}
+    			return precld;
+    		}();
+		if (std::abs(e-1)<precision)
 		{
 			return computeSphereEshelbyTensor<real>(nu);
-		}
+		};
 		const auto zero = real{0};
 		const auto e2=e*e;
 		const auto e21=e2-1;
@@ -190,7 +196,7 @@ namespace tfel::material
 		
 	template <typename real,typename LengthType>				  
 	TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real>
-	computeEshelbyTensor(const real& nu, const LengthType& a, const LengthType& b, const LengthType& c)
+	computeEshelbyTensor(const real& nu, const LengthType& a, const LengthType& b, const LengthType& c, const real precf, const real precd, const real precld)
 	{
 		if ((nu>0.5)||(nu<-1)){
 			tfel::reportContractViolation("nu>0.5 or nu<-1");
@@ -199,28 +205,30 @@ namespace tfel::material
 			tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
 		};
 		static constexpr auto eps = std::numeric_limits<real>::epsilon();
+		const auto precision = [eps,precf,precd,precld](){
+    			if (eps==std::numeric_limits<float>::epsilon()){return precf;}
+    			else if (eps==std::numeric_limits<double>::epsilon()){return precd;}
+    			return precld;
+    		}();
+		if(std::abs((b-a)/c)<precision||std::abs((a-c)/b)<precision||std::abs((b-c)/a)<precision){
+			if (std::abs((b-a)/c)<precision)
+			{
+				return computeAxisymmetricalEshelbyTensor<real>(nu,c/b);
+			}
+			else if (std::abs((a-c)/b)<precision)
+			{
+				return computeAxisymmetricalEshelbyTensor<real>(nu,b/a);
+			}
+			else if (std::abs((b-c)/a)<precision)
+			{
+				return computeAxisymmetricalEshelbyTensor<real>(nu,a/b);
+			}
+		}
 		const std::array<LengthType,3> abc_={a,b,c};
 		const auto sig=internals::sortEllipsoidLengths<LengthType>(a,b,c);
 		const auto a_=abc_[sig[0]];
 		const auto b_=abc_[sig[1]];
 		const auto c_=abc_[sig[2]];
-		
-		if ((tfel::math::ieee754::fpclassify(a_-b_) == FP_ZERO) and (tfel::math::ieee754::fpclassify(c_-b_) == FP_ZERO))
-		{
-			return computeSphereEshelbyTensor<real>(nu);
-		}
-		else if ((tfel::math::ieee754::fpclassify(a_-b_) != FP_ZERO) and (tfel::math::ieee754::fpclassify(c_-b_) == FP_ZERO))
-		{
-			return computeAxisymmetricalEshelbyTensor<real>(nu,a_/b_);
-		}
-		else if ((tfel::math::ieee754::fpclassify(a_-b_) != FP_ZERO) and (tfel::math::ieee754::fpclassify(c_-a_) == FP_ZERO))
-		{
-			return computeAxisymmetricalEshelbyTensor<real>(nu,b_/a_);
-		}
-		else if ((tfel::math::ieee754::fpclassify(c_-b_) != FP_ZERO) and (tfel::math::ieee754::fpclassify(a_-b_) == FP_ZERO))
-		{
-			return computeAxisymmetricalEshelbyTensor<real>(nu,c_/b_);
-		}
 		
 		constexpr auto pi = std::numbers::pi_v<real>;
 		const auto a2=a_*a_;
@@ -266,7 +274,6 @@ namespace tfel::material
 			zero, zero, zero, zero, zero, S66};
 	};//end of function computeEshelbyTensor
          
-    		
     														   
 	template <typename real, typename StressType>
 	TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> computeSphereLocalisationTensor(const StressType& young, const real& nu,
@@ -275,19 +282,19 @@ namespace tfel::material
 		if (not(young>StressType{0})){
 			tfel::reportContractViolation("E<=0");
 		};
-		const auto S0 = computeSphereEshelbyTensor<real>(nu);
-		tfel::math::st2tost2<3u,StressType> C_0;
-		static constexpr auto value = StiffnessTensorAlterationCharacteristic::UNALTERED;
-		computeIsotropicStiffnessTensorII<3u,value,StressType,real>(C_0,young,nu);
-		tfel::math::st2tost2<3u,StressType> C_i;
-		computeIsotropicStiffnessTensorII<3u,value,StressType,real>(C_i,young_i,nu_i);
+		if ((nu>0.5)||(nu<-1)){
+			tfel::reportContractViolation("nu>0.5 or nu<-1");
+		};
+		const auto kaS=(1+nu)/9/(1-nu);
+		const auto muS=2*(4-5*nu)/30/(1-nu);
+		const auto k0=young/3/(1-2*nu);
+	  	const auto mu0=young/2/(1+nu);
+	  	const auto k_i=young_i/3/(1-2*nu_i);
+	  	const auto mu_i=young_i/2/(1+nu_i);
+		const auto mu=1/(2+4*muS*(mu_i-mu0)/mu0);
+		const auto ka=1/(3+9*kaS*(k_i-k0)/k0);
 		using namespace tfel::math;
-		const st2tost2<3u,StressType> C = C_i-C_0;
-		const auto invC0 = invert(C_0);
-		const auto Pr = invC0 * C;
-		const auto PPr = S0 * Pr;
-		const auto A = invert(st2tost2<3u,real>::Id()+PPr);
-		return A;
+		return 3*ka*st2tost2<3u,real>::J()+2*mu*st2tost2<3u,real>::K();
 	};//end of function SphereLocalisationTensor
      			 			     			 
 	template <typename real, typename StressType, typename LengthType>
