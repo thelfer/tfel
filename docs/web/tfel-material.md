@@ -404,12 +404,21 @@ The function `computeEshelbyTensor` computes the Eshelby tensor of an ellipsoid
 whose semi-axis lengths are `a`, `b`, `c`, embedded in an isotropic
 matrix. It returns an object of `type st2tost2<3u,real>`, which is the
 fourth-order Eshelby tensor, in a basis which is adapted to the ellipsoid.
-The expressions can be found in [@torquato_2002]
-for the axisymmetric ellipsoid and in [@eshelby_1957] for other cases.
 
 There is also `computeSphereEshelbyTensor`, `computeAxisymmetricalEshelbyTensor`,
 and also `computeCircularCylinderEshelbyTensor` and `computeEllipticCylinderEshelbyTensor`
 for plane strain elasticity.
+
+The expressions can be found in [@torquato_2002]
+for the axisymmetrical ellipsoid and in [@eshelby_1957] for other cases.
+
+When two axes are very close, the formulas for three different axes are numerically instable,
+hence a parameter is introduced to switch to the formulas suited for the perfect
+axisymmetrical case. This parameter can be modified by the user, it is called \(\texttt{precf}\)
+when using \(\texttt{float}\), \(\texttt{precd}\) for \(\texttt{double}\), and \(\texttt{precld}\)
+for \(\texttt{long double}\).
+In the same way, the formulas for the axisymmetrical case are instable when the aspect
+ratio is near one, so a parameter allows to switch to the formula for a sphere.
 
 ## Strain localisation tensors
 
@@ -435,8 +444,14 @@ The functions then return the localisation tensors taking into account the orien
 
 Different schemes are implemented and return the homogenized stiffness of the material.
 The scheme available are Mori-Tanaka scheme and dilute scheme.
+The available functions are `computeMoriTanakaScheme`, `computeDiluteScheme`,
+computeSphereDiluteScheme, computeSphereMoriTanakaScheme.
 
 If a distribution of ellipsoids is considered, three types of distributions
 are considered : isotropic, transverse isotropic and with unique orientation.
+The corresponding functions are `computeIsotropicDiluteScheme`,
+`computeTransverseIsotropicDiluteScheme`, `computeOrientedDiluteScheme`,
+`computeIsotropicMoriTanakaScheme`, `computeTransverseIsotropicMoriTanakaScheme`
+and `computeOrientedMoriTanakaScheme`.
 
 <!-- Local IspellDict: english -->
