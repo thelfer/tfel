@@ -36,7 +36,7 @@ namespace tfel::material
 for general anisotropic elastic solids. The computation is inspired from Renaud Masson's library micmac.
    */
   template <typename real, typename LengthType, typename StressType>
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> computeAnisotropicEshelbyTensor(
+  TFEL_HOST_DEVICE static tfel::math::st2tost2<3u,real> computeAnisotropicEshelbyTensor(
       const tfel::math::st2tost2<3u,StressType>&,
       const LengthType&,
       const LengthType&,
