@@ -377,7 +377,8 @@ namespace tfel::material {
   };  
   
   }//end of namespace elasticity
-  }//end of namespace homogenization											     
+  }//end of namespace homogenization
+
 }  // end of namespace tfel::material
 
 #endif /* LIB_TFEL_MATERIAL_ESHELBYBASEDHOMOGENIZATION_IXX */

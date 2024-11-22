@@ -21,7 +21,7 @@
 namespace tfel::material {  
 
  namespace homogenization{
-  namespace elasticity{   
+  namespace elasticity{
    /*!
    * This function gives the homogenized stiffness for a dilute scheme, knowing the strain localisation tensor.
    * \tparam real: underlying type
