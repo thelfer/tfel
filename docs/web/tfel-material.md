@@ -379,6 +379,9 @@ generalized plane strain modelling hypotheses.
 
 # Homogeneisation
 
+The homogenization functions are part of the namespace `tfel::material::homogenization`.
+A specialization for elasticity is defined: `tfel::material::homogenization::elasticity`.
+
 ## Eshelby tensors
 
 The header `Eshelby.hxx` introduces

@@ -18,7 +18,10 @@
 #include "TFEL/Material/Eshelby.hxx"
 
 
-namespace tfel::material {     
+namespace tfel::material {  
+
+ namespace homogenization{
+  namespace elasticity{   
    /*!
    * This function gives the homogenized stiffness for a dilute scheme, knowing the strain localisation tensor.
    * \tparam real: underlying type
@@ -249,6 +252,9 @@ namespace tfel::material {
       const tfel::math::tvector<3u,real>&,
       const LengthType&,
       const LengthType&);
+      
+    }//end of namespace elasticity
+  }//end of namespace homogenization
 
 }  // end of namespace tfel::material
 

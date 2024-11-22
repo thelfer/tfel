@@ -64,15 +64,16 @@ struct EshelbyTest final : public tfel::tests::TestCase {
     const auto nu = real{0.3};
     
     //These functions must return the same thing
-    using namespace tfel::material;
-    {const auto S1 = computeCircularCylinderEshelbyTensor(nu);
-    const auto S2 = computeEllipticCylinderEshelbyTensor(nu,real{1});
+    using namespace tfel::material::homogenization::elasticity;
+    {const auto S2d_1 = computeCircularCylinderEshelbyTensor(nu);
+    const auto S2d_2 = computeEllipticCylinderEshelbyTensor(nu,real{1});
     for (int i :{0,1,2,3}){
     	for (int j:{0,1,2,3}){
-    		TFEL_TESTS_ASSERT(std::abs(S(i,j)-S2(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(S2d_1(i,j)-S2d_2(i,j))<eps);
     		//std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
     	};
     };
+    }
  };
  
 //tests compilation of the Eshelby tensor functions
@@ -84,12 +85,12 @@ private:
     using real = NumericType;
     const auto nu = real{0.3};
 
-    using namespace tfel::material;
+    using namespace tfel::material::homogenization::elasticity;
     {const auto S = computeSphereEshelbyTensor(nu);}
     
-    {const auto S1 = computeAxisymmetricalEshelbyTensor(nu,real{0.5});
-    const auto S2 = computeAxisymmetricalEshelbyTensor(nu,real{10});
-    const auto S3 = computeAxisymmetricalEshelbyTensor(nu,real{1});
+    {const auto S1 = computeAxisymmetricalEshelbyTensor<real>(nu,real{0.5});
+    const auto S2 = computeAxisymmetricalEshelbyTensor<real>(nu,real{10});
+    const auto S3 = computeAxisymmetricalEshelbyTensor<real>(nu,real{1});
     }
     
     {const auto S1 = computeEshelbyTensor(nu,lg{1},lg{3},lg{2});
@@ -107,7 +108,7 @@ private:
     using real = NumericType;
     const auto nu = real{0.3};
     
-    using namespace tfel::material;
+    using namespace tfel::material::homogenization::elasticity;
     {//const auto S1 = computeSphereEshelbyTensor(real{1});
     //const auto S2 = computeAxisymmetricalEshelbyTensor(nu,real{0});
     //const auto S3 = computeAxisymmetricalEshelbyTensor(nu,real{-10});
@@ -127,29 +128,29 @@ private:
     const auto nu = real{0.3};
     
     
-    using namespace tfel::material;
+    using namespace tfel::material::homogenization::elasticity;
      //AxisymmetricalEshelbyTensor with e=1 is equal to SphereEshelbyTensor and also equal to EshelbyTensor(2,2,2)
-    {const auto S1 = computeSphereEshelbyTensor(nu);
-    const auto S2 = computeAxisymmetricalEshelbyTensor(nu,real{1});
-    const auto S3 = computeEshelbyTensor(nu,lg{2},lg{2},lg{2});
+    {const auto SSphere_1 = computeSphereEshelbyTensor(nu);
+    const auto SSphere_2 = computeAxisymmetricalEshelbyTensor(nu,real{1});
+    const auto SSphere_3 = computeEshelbyTensor(nu,lg{2},lg{2},lg{2});
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
-    		TFEL_TESTS_ASSERT(std::abs(S1(i,j)-S2(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(SSphere_1(i,j)-SSphere_2(i,j))<eps);
     		//std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
-    		TFEL_TESTS_ASSERT(std::abs(S1(i,j)-S3(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(SSphere_1(i,j)-SSphere_3(i,j))<eps);
     		//std::cout << "13" << value << '\n';
     	};
     };
-    
+    }
     //AxisymmetricalEshelbyTensor with e=10 is equal to EshelbyTensor(30,3,3) or EshelbyTensor(3,3,30)
-    {const auto S1 = computeAxisymmetricalEshelbyTensor(nu,real{10});
-    const auto S2 = computeEshelbyTensor(nu,lg{30},lg{3},lg{3});
-    const auto S3 = computeEshelbyTensor(nu,lg{3},lg{3},lg{30});
+    {const auto SAxis_1 = computeAxisymmetricalEshelbyTensor(nu,real{10});
+    const auto SAxis_2 = computeEshelbyTensor(nu,lg{30},lg{3},lg{3});
+    const auto SAxis_3 = computeEshelbyTensor(nu,lg{3},lg{3},lg{30});
     bool value = true;
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
-    		TFEL_TESTS_ASSERT(std::abs(S1(i,j)-S2(i,j))<eps);
-    		TFEL_TESTS_ASSERT(std::abs(S1(i,j)-S3(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(SAxis_1(i,j)-SAxis_2(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(SAxis_1(i,j)-SAxis_3(i,j))<eps);
     	};
     };
     }
@@ -166,22 +167,22 @@ private:
     const auto nu = real{0.3};
     
     
-    using namespace tfel::material;    
+    using namespace tfel::material::homogenization::elasticity; 
      //AxisymmetricalEshelbyTensor when e is near 1 must be near SphereEshelbyTensor (there is a numerical instability that we propose to manage)
-    {const auto S1 = computeSphereEshelbyTensor(nu);
-    tfel::math::st2tost2<3u,real> S2;
+    {const auto SSphere_lim_1 = computeSphereEshelbyTensor(nu);
+    tfel::math::st2tost2<3u,real> SSphere_lim_2;
     if (std::numeric_limits<float>::epsilon()==eps){
-    	S2 = computeAxisymmetricalEshelbyTensor(nu,real{1.001});
+    	SSphere_lim_2 = computeAxisymmetricalEshelbyTensor(nu,real{1.001});
     }
     else if (std::numeric_limits<double>::epsilon()==eps){
-    	S2 = computeAxisymmetricalEshelbyTensor(nu,real{1.000001});
+    	SSphere_lim_2 = computeAxisymmetricalEshelbyTensor(nu,real{1.000001});
     }
     else if (std::numeric_limits<long double>::epsilon()==eps){
-    	S2= computeAxisymmetricalEshelbyTensor(nu,real{1.0000001});
+    	SSphere_lim_2= computeAxisymmetricalEshelbyTensor(nu,real{1.0000001});
     };
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
-    		TFEL_TESTS_ASSERT(std::abs(S1(i,j)-S2(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(SSphere_lim_1(i,j)-SSphere_lim_2(i,j))<eps);
     		//std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
     	};
     };
@@ -189,21 +190,21 @@ private:
     
     
     //EshelbyTensor when a is near b must be near AxisymmetricalEshelbyTensor (there is a numerical instability that we propose to manage)
-    {const auto S1 = computeAxisymmetricalEshelbyTensor(nu,real{10});
-    tfel::math::st2tost2<3u,real> S2;
+    {const auto SAxis_lim_1 = computeAxisymmetricalEshelbyTensor(nu,real{10});
+    tfel::math::st2tost2<3u,real> SAxis_lim_2;
     if (std::numeric_limits<float>::epsilon()==eps){
-    	S2 = computeEshelbyTensor(nu,lg{1.05},lg{1},lg{10});
+    	SAxis_lim_2 = computeEshelbyTensor(nu,lg{1.05},lg{1},lg{10});
     }
     else if (std::numeric_limits<double>::epsilon()==eps){
-    	S2 = computeEshelbyTensor(nu,lg{1.0005},lg{1},lg{10});
+    	SAxis_lim_2 = computeEshelbyTensor(nu,lg{1.0005},lg{1},lg{10});
     }
     else if (std::numeric_limits<long double>::epsilon()==eps){
-    	S2= computeEshelbyTensor(nu,lg{1.00005},lg{1},lg{10});
+    	SAxis_lim_2= computeEshelbyTensor(nu,lg{1.00005},lg{1},lg{10});
     };
 
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
-    		TFEL_TESTS_ASSERT(std::abs(S1(i,j)-S2(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(SAxis_lim_1(i,j)-SAxis_lim_2(i,j))<eps);
     		//std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
     	};
     };
@@ -226,7 +227,7 @@ private:
     const auto young_i = stress{150e9};
     const auto nu_i = real{0.3};
     
-    using namespace tfel::material;
+    using namespace tfel::material::homogenization::elasticity;
     const tfel::math::tvector<3u,real> n_a = {0.,0.,1.};
     const tfel::math::tvector<3u,real> n_b = {1.,0.,0.};
     const auto a =lg{1};
@@ -264,7 +265,7 @@ private:
     const auto b =lg{3};
     const auto c =lg{0.2};
     
-    using namespace tfel::material;
+    using namespace tfel::material::homogenization::elasticity;
     {//const auto A1 = computeSphereLocalisationTensor<real,stress>(young,real{1},young_i,nu_i);
     //const auto A2 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,real{0});
     //const auto A3 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_0,real{1});
@@ -294,23 +295,23 @@ private:
     const tfel::math::tvector<3u,real> n_a = {0.,0.,1.};
     const tfel::math::tvector<3u,real> n_b = {1.,0.,0.};
     
-    using namespace tfel::material;
-    {const auto A1 = computeSphereLocalisationTensor<real,stress>(young,nu,young_i,nu_i);
-    const auto A2 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,1);
-    const auto A3 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,lg{2},n_b,lg{2.00000001},lg{2.00001});
+    using namespace tfel::material::homogenization::elasticity;
+    {const auto ASphere_1 = computeSphereLocalisationTensor<real,stress>(young,nu,young_i,nu_i);
+    const auto ASphere_2 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,1);
+    const auto ASphere_3 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,lg{2},n_b,lg{2.00000001},lg{2.00001});
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
-    		TFEL_TESTS_ASSERT(std::abs(A1(i,j)-A2(i,j))<eps);
-    		TFEL_TESTS_ASSERT(std::abs(A1(i,j)-A3(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(ASphere_1(i,j)-ASphere_2(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(ASphere_1(i,j)-ASphere_3(i,j))<eps);
     	};
     };
     }
-    {const auto A1 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,lg{20}/lg{2.0001});
-    const auto A2 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,lg{20},n_b,lg{2},lg{2.0001});
+    {const auto AAxis_1 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,lg{20}/lg{2.0001});
+    const auto AAxis_2 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,lg{20},n_b,lg{2},lg{2.0001});
     bool value = true;
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
-    		TFEL_TESTS_ASSERT(std::abs(A1(i,j)-A2(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(AAxis_1(i,j)-AAxis_2(i,j))<eps);
     		//std::cout << A1(i,j) <<" " << i<< " " << j<< " " << A2(i,j) << value << '\n';
     	};
     };

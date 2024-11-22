@@ -157,6 +157,10 @@ default `TFEL` solver.
 
 ## Homogenization
 
+The homogenization functions are part of the namespace `tfel::material::homogenization`.
+A specialization for elasticity is defined: `tfel::material::homogenization::elasticity`,
+in prevision of further homogenization developments in other physics.
+
 ### Ellipsoidal inclusion embedded in isotropic matrix
 
 The function `computeEshelbyTensor` computes the Eshelby tensor of an ellipsoid

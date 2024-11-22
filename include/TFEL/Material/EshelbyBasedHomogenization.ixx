@@ -18,6 +18,9 @@
 
 namespace tfel::material {
 
+  namespace homogenization{
+  namespace elasticity{
+
    template <unsigned short N,typename real, typename StressType, typename LengthType>
    struct EllipsoidMeanLocalisator
    {
@@ -372,7 +375,9 @@ namespace tfel::material {
         const auto A = EllipsoidMeanLocalisator<3u,real,StressType,LengthType>::Oriented(young, nu, young_i,nu_i, n_a, a, n_b, b, c);
         return computeMoriTanakaScheme<real,StressType>(young,nu,f,young_i,nu_i,A);
   };  
-											     
+  
+  }//end of namespace elasticity
+  }//end of namespace homogenization											     
 }  // end of namespace tfel::material
 
 #endif /* LIB_TFEL_MATERIAL_ESHELBYBASEDHOMOGENIZATION_IXX */
