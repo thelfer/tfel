@@ -67,18 +67,12 @@ struct EshelbyTest final : public tfel::tests::TestCase {
     using namespace tfel::material;
     {const auto S1 = computeCircularCylinderEshelbyTensor(nu);
     const auto S2 = computeEllipticCylinderEshelbyTensor(nu,real{1});
-    bool value = true;
     for (int i :{0,1,2,3}){
     	for (int j:{0,1,2,3}){
-    		value = value and (std::abs(S1(i,j)-S2(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(S(i,j)-S2(i,j))<eps);
     		//std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
     	};
     };
-    if (value){
-    std::cout << "Eshelby 2d ok" << '\n';
-    }
-    else{std::cout << "Eshelby 2d does not work" << '\n';};
-    }
  };
  
 //tests compilation of the Eshelby tensor functions
@@ -138,20 +132,14 @@ private:
     {const auto S1 = computeSphereEshelbyTensor(nu);
     const auto S2 = computeAxisymmetricalEshelbyTensor(nu,real{1});
     const auto S3 = computeEshelbyTensor(nu,lg{2},lg{2},lg{2});
-    bool value = true;
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
-    		value = value and (std::abs(S1(i,j)-S2(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(S1(i,j)-S2(i,j))<eps);
     		//std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
-    		value = value and (std::abs(S1(i,j)-S3(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(S1(i,j)-S3(i,j))<eps);
     		//std::cout << "13" << value << '\n';
     	};
     };
-   if (value){
-    std::cout << "Eshelby 3d ok" << '\n';
-    }
-    else{std::cout << "Eshelby 3d does not work" << '\n';};
-    }
     
     //AxisymmetricalEshelbyTensor with e=10 is equal to EshelbyTensor(30,3,3) or EshelbyTensor(3,3,30)
     {const auto S1 = computeAxisymmetricalEshelbyTensor(nu,real{10});
@@ -160,14 +148,10 @@ private:
     bool value = true;
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
-    		value = value and (std::abs(S1(i,j)-S2(i,j))<eps);
-    		value = value and (std::abs(S1(i,j)-S3(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(S1(i,j)-S2(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(S1(i,j)-S3(i,j))<eps);
     	};
     };
-    if (value){
-    std::cout << "Eshelby 3d bis ok" << '\n';
-    }
-    else{std::cout << "Eshelby 3d bis does not work" << '\n';};
     }
     };
     
@@ -195,17 +179,12 @@ private:
     else if (std::numeric_limits<long double>::epsilon()==eps){
     	S2= computeAxisymmetricalEshelbyTensor(nu,real{1.0000001});
     };
-    bool value = true;
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
-    		value = value and (std::abs(S1(i,j)-S2(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(S1(i,j)-S2(i,j))<eps);
     		//std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
     	};
     };
-    if (value){
-    std::cout << "Eshelby 3d near sphere ok" << '\n';
-    }
-    else{std::cout << "Eshelby 3d near sphere does not work" << '\n';};
     }
     
     
@@ -222,17 +201,12 @@ private:
     	S2= computeEshelbyTensor(nu,lg{1.00005},lg{1},lg{10});
     };
 
-    bool value = true;
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
-    		value = value and (std::abs(S1(i,j)-S2(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(S1(i,j)-S2(i,j))<eps);
     		//std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
     	};
     };
-    if (value){
-    std::cout << "Eshelby 3d near axisymmetry ok" << '\n';
-    }
-    else{std::cout << "Eshelby 3d near axisymmetry does not work" << '\n';};
     }
     
  };
@@ -324,32 +298,22 @@ private:
     {const auto A1 = computeSphereLocalisationTensor<real,stress>(young,nu,young_i,nu_i);
     const auto A2 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,1);
     const auto A3 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,lg{2},n_b,lg{2.00000001},lg{2.00001});
-    bool value = true;
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
-    		value = value and (std::abs(A1(i,j)-A2(i,j))<eps);
-    		value = value and (std::abs(A1(i,j)-A3(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(A1(i,j)-A2(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(A1(i,j)-A3(i,j))<eps);
     	};
     };
-    
-    if (value){
-    std::cout << "Localisation 3d ok" << '\n';
-    }
-    else{std::cout << "Localisation 3d does not work" << '\n';};
     }
     {const auto A1 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,lg{20}/lg{2.0001});
     const auto A2 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,lg{20},n_b,lg{2},lg{2.0001});
     bool value = true;
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
-    		value = value and (std::abs(A1(i,j)-A2(i,j))<eps);
+    		TFEL_TESTS_ASSERT(std::abs(A1(i,j)-A2(i,j))<eps);
     		//std::cout << A1(i,j) <<" " << i<< " " << j<< " " << A2(i,j) << value << '\n';
     	};
     };
-    if (value){
-    std::cout <<"Localisation 3d bis ok"<<'\n';
-    }
-    else{std::cout << "Localisation 3d bis does not work" << '\n';};
     }
 
   };

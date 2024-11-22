@@ -95,16 +95,11 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     const auto E3=std::get<0>(pair3);
     const auto nu3=std::get<1>(pair3);
     
-    bool value = true;
     std::cout << (E2-E0).getValue() << " " << eps << '\n';
-    value = value and (my_abs(E0-E2)<stress{eps});
-    value = value and (my_abs(nu0-nu2)<eps);
-    value = value and (my_abs(E1-E3)<stress{eps});
-    value = value and (my_abs(nu1-nu3)<eps);
-    if (value){
-    std::cout << "Mori-Tanaka and Dilute Scheme for spheres 3d ok" << '\n';
-    }
-    else{std::cout << "Mori-Tanaka and Dilute Scheme for spheres 3d does not work" << '\n';};
+    TFEL_TESTS_ASSERT(my_abs(E0-E2)<stress{eps});
+    TFEL_TESTS_ASSERT(my_abs(nu0-nu2)<eps);
+    TFEL_TESTS_ASSERT(my_abs(E1-E3)<stress{eps});
+    TFEL_TESTS_ASSERT(my_abs(nu1-nu3)<eps);
     };
 
  private:
@@ -140,8 +135,7 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
      private:
   template <typename real, typename stress, typename length>
   void test3() {
-    {bool value = true;
-    constexpr auto eps = 10 * std::numeric_limits<real>::epsilon();
+    {constexpr auto eps = 10 * std::numeric_limits<real>::epsilon();
     using namespace tfel::material;
     const auto young = stress{1e9};
     const auto nu = real{0.3};
@@ -171,20 +165,15 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     const auto nu3 = (3*ka3-2*mu3)/(2*mu3+6*ka3);
     const auto E3 = 2*mu3*(1+nu3);
     
-    value = value and (my_abs(E0-E1)<stress{eps});
+    TFEL_TESTS_ASSERT(my_abs(E0-E1)<stress{eps});
     std::cout << (E0-E1).getValue() << " "<< eps << '\n';
-    value = value and (my_abs(nu0-nu1)<eps);
-    value = value and (my_abs(E0-E2)<stress{eps});
+    TFEL_TESTS_ASSERT(my_abs(nu0-nu1)<eps);
+    TFEL_TESTS_ASSERT(my_abs(E0-E2)<stress{eps});
     std::cout << (E2-E0).getValue() << " "<< eps << '\n';
-    value = value and (my_abs(nu0-nu2)<eps);
-    value = value and (my_abs(E0-E3)<stress{eps});
+    TFEL_TESTS_ASSERT(my_abs(nu0-nu2)<eps);
+    TFEL_TESTS_ASSERT(my_abs(E0-E3)<stress{eps});
     std::cout << (E0-E3).getValue() << " "<< eps << '\n';
-    value = value and (my_abs(nu0-nu3)<eps);
-    
-    if (value){
-    std::cout << "Dilute Scheme test 1 ok" << '\n';
-    }
-    else{std::cout << "Dilute scheme test 1 does not work" << '\n';};
+    TFEL_TESTS_ASSERT(my_abs(nu0-nu3)<eps);
     }
     };
     
@@ -192,8 +181,7 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
         private:
   template <typename real, typename stress, typename length>
   void test4() {
-    {bool value = true;
-    constexpr auto eps = 100*std::sqrt( std::numeric_limits<real>::epsilon());
+    {constexpr auto eps = 100*std::sqrt( std::numeric_limits<real>::epsilon());
     using namespace tfel::material;
     const auto young = stress{1e9};
     const auto nu = real{0.3};
@@ -216,14 +204,10 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     const auto ka3=(Chom3(0,0)+2*Chom3(0,1))/3;
     const auto nu3 = (3*ka3-2*mu3)/(2*mu3+6*ka3);
     const auto E3 = 2*mu3*(1+nu3);
-    value = value and (my_abs(E2-E3)<stress{eps});
-    value = value and (my_abs(nu2-nu3)<eps);
+    TFEL_TESTS_ASSERT(my_abs(E2-E3)<stress{eps});
+    TFEL_TESTS_ASSERT(my_abs(nu2-nu3)<eps);
     //std::cout << (E2-E3).getValue() << " "<< eps << '\n';
    
-    if (value){
-    std::cout << "Dilute Scheme test 2 ok" << '\n';
-    }
-    else{std::cout << "Dilute scheme test 2 does not work" << '\n';};
     }
     };
     
@@ -231,8 +215,7 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
      private:
   template <typename real, typename stress, typename length>
   void test5() {
-    {bool value = true;
-    constexpr auto eps = 10 * std::numeric_limits<real>::epsilon();
+    {constexpr auto eps = 10 * std::numeric_limits<real>::epsilon();
     using namespace tfel::material;
     const auto young = stress{1e9};
     const auto nu = real{0.3};
@@ -262,21 +245,16 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     const auto nu3 = (3*ka3-2*mu3)/(2*mu3+6*ka3);
     const auto E3 = 2*mu3*(1+nu3);
     
-    value = value and (my_abs(E0-E1)<stress{eps});
+    TFEL_TESTS_ASSERT(my_abs(E0-E1)<stress{eps});
     std::cout << (E0-E1).getValue() << " "<< eps << '\n';
-    value = value and (my_abs(nu0-nu1)<eps);
-    value = value and (my_abs(E0-E2)<stress{eps});
+    TFEL_TESTS_ASSERT(my_abs(nu0-nu1)<eps);
+    TFEL_TESTS_ASSERT(my_abs(E0-E2)<stress{eps});
     std::cout << (E2-E0).getValue() << " "<< eps << '\n';
-    value = value and (my_abs(nu0-nu2)<eps);
-    value = value and (my_abs(E0-E3)<stress{eps});
+    TFEL_TESTS_ASSERT(my_abs(nu0-nu2)<eps);
+    TFEL_TESTS_ASSERT(my_abs(E0-E3)<stress{eps});
     std::cout << (E0-E3).getValue() << " "<< eps << '\n';
-    value = value and (my_abs(nu0-nu3)<eps);
+    TFEL_TESTS_ASSERT(my_abs(nu0-nu3)<eps);
     //std::cout << value << '\n';
-    
-    if (value){
-    std::cout << "MoriTanaka Scheme test ok" << '\n';
-    }
-    else{std::cout << "MoriTanaka scheme test does not work" << '\n';};
     }
     };
     
@@ -284,8 +262,7 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
      private:
   template <typename real, typename stress, typename length>
   void test6() {
-    {bool value = true;
-    constexpr auto eps = 100*std::sqrt(std::numeric_limits<real>::epsilon());
+    {constexpr auto eps = 100*std::sqrt(std::numeric_limits<real>::epsilon());
     using namespace tfel::material;
     const auto young = stress{1e9};
     const auto nu = real{0.3};
@@ -318,27 +295,22 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     const auto E4=std::get<0>(pair4);
     const auto nu4=std::get<1>(pair4);
     
-    value = value and (my_abs(E1-E0)<stress{10*eps});
+    TFEL_TESTS_ASSERT(my_abs(E1-E0)<stress{10*eps});
     //std::cout << (E0-E1).getValue() << " "<< E1.getValue() << '\n';
     //std::cout << value << '\n';
-    value = value and (my_abs(nu1-nu0)<eps);
-    value = value and (my_abs(E1-E2)<stress{10*eps});
+    TFEL_TESTS_ASSERT(my_abs(nu1-nu0)<eps);
+    TFEL_TESTS_ASSERT(my_abs(E1-E2)<stress{10*eps});
     //std::cout << E0.getValue() << " "<< E2.getValue() << '\n';
     //std::cout << value << '\n';
-    value = value and (my_abs(nu1-nu2)<eps);
-    value = value and (my_abs(E1-E3)<stress{10*eps});
+    TFEL_TESTS_ASSERT(my_abs(nu1-nu2)<eps);
+    TFEL_TESTS_ASSERT(my_abs(E1-E3)<stress{10*eps});
     //std::cout << E0.getValue() << " "<< E3.getValue() << '\n';
     //std::cout << value << '\n';
-    value = value and (my_abs(nu1-nu3)<eps);
-    value = value and (my_abs(E1-E4)<stress{10*eps});
+    TFEL_TESTS_ASSERT(my_abs(nu1-nu3)<eps);
+    TFEL_TESTS_ASSERT(my_abs(E1-E4)<stress{10*eps});
     //std::cout << E3.getValue() << " "<< E4.getValue() << '\n';
     //std::cout << value << '\n';
-    value = value and (my_abs(nu1-nu4)<eps);
-    
-    if (value){
-    std::cout << "Isotropic Dilute Scheme test ok" << '\n';
-    }
-    else{std::cout << "Isotropic Dilute Scheme test does not work" << '\n';};
+    TFEL_TESTS_ASSERT(my_abs(nu1-nu4)<eps);
     }
     };
     
@@ -346,8 +318,7 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
   private:
   template <typename real, typename stress, typename length>
   void test7() {
-    {bool value = true;
-    constexpr auto eps = 100*std::sqrt(std::numeric_limits<real>::epsilon());
+    {constexpr auto eps = 100*std::sqrt(std::numeric_limits<real>::epsilon());
     using namespace tfel::material;
     const auto young = stress{1e9};
     const auto nu = real{0.3};
@@ -372,9 +343,9 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     const auto nu1 = (3*ka1-2*mu1)/(2*mu1+6*ka1);
     const auto E1 = 2*mu1*(1+nu1);
     
-    value = value and (my_abs(E1-E0)<stress{10*eps});
+    TFEL_TESTS_ASSERT(my_abs(E1-E0)<stress{10*eps});
     //std::cout << (E0-E1).getValue() << " "<< eps << '\n';
-    value = value and (my_abs(nu1-nu0)<eps);
+    TFEL_TESTS_ASSERT(my_abs(nu1-nu0)<eps);
     
      //TransverseIsotropicDiluteScheme when a is near b must be near TransverseIsotropicDiluteScheme when a=b 
     const auto Chom2 = computeTransverseIsotropicDiluteScheme<real,stress,length>(young,nu,f,young_i,nu_i,n_a,a,a,c);
@@ -389,15 +360,9 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     const auto nu3 = (3*ka3-2*mu3)/(2*mu3+6*ka3);
     const auto E3 = 2*mu3*(1+nu3);
 
-    value = value and (my_abs(E2-E3)<stress{10*eps});
+    TFEL_TESTS_ASSERT(my_abs(E2-E3)<stress{10*eps});
     //std::cout << (E2-E3).getValue() << " "<< value << '\n';
-    value = value and (my_abs(nu2-nu3)<eps);
- 
-    
-    if (value){
-    std::cout << "Transverse Isotropic Dilute Scheme test ok" << '\n';
-    }
-    else{std::cout << "Transverse Isotropic Dilute Scheme test does not work" << '\n';};
+    TFEL_TESTS_ASSERT(my_abs(nu2-nu3)<eps);
     }
     };
     
