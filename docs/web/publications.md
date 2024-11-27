@@ -32,7 +32,6 @@ nocite: |
     @senac_yield_2024
     @helfer_new_2024
     @jamond_manta_2024
-    @beccantini_europlexus_2022
     @valmalle_dic_2024
     @lorenzo_exploring_2024
     @simo_novel_2024
@@ -59,6 +58,7 @@ nocite: |
     @zhang_modeling_2023
     @siedel_approche_2023
     @soleilhet_numerical_2023
+    @beccantini_europlexus_2022
     @helfer_mfem-mgis-mfront_2022
     @onimus_polycrystalline_2022
     @mollens_development_2022
