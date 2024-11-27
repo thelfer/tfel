@@ -152,6 +152,8 @@ defined in by local variable and to update the auxiliary variable in
 the `@UpdateAuxiliaryStateVariables` code block. The previous trick can
 be used in this case in a straightforward manner.
 
+
+<!--
 ## Homotopy
 
 In Equation @eq:tangent_operator:implicit_system, the parameter `theta`
@@ -212,7 +214,7 @@ f_{p} = \mts{\seq}-R\paren{\mts{p}}
 In this case, the derivatives \(f_{p}\) with respect to the internal
 state variables are null for \(\theta=0\).
 
-
+-->
 
 # Computation of the consistent tangent operator
 

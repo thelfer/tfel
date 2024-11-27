@@ -1,6 +1,6 @@
 ---
 title: Release notes of the 5.0 version of `TFEL`, `MFront` and `MTest`
-author: Thomas Helfer, Maxence Wangermez
+author: Thomas Helfer, Maxence Wangermez, Antoine Martin
 date: 2024
 lang: en-EN
 numbersections: true
@@ -152,6 +152,39 @@ The results of those tests are reported on Tables
 @tbl:comp_eigensolvers_long_double. The Harari eigen solver offers a
 better compromise between accuracy and numerical efficiency than the
 default `TFEL` solver.
+
+# New `TFEL/Material` features
+
+## Homogenization
+
+The homogenization functions are part of the namespace `tfel::material::homogenization`.
+A specialization for elasticity is defined: `tfel::material::homogenization::elasticity`,
+in prevision of further homogenization developments in other physics.
+
+### Ellipsoidal inclusion embedded in isotropic matrix
+
+The function `computeEshelbyTensor` computes the Eshelby tensor of an ellipsoid
+whose semi-axis lengths are `a`, `b`, `c`, embedded in an isotropic
+matrix. There is also `computeSphereEshelbyTensor`, `computeAxisymmetricalEshelbyTensor`,
+and also `computeCircularCylinderEshelbyTensor` and `computeEllipticCylinderEshelbyTensor`
+for plane strain elasticity.
+
+Three functions also compute the strain localisation tensor of an ellipsoid embedded
+in an isotropic matrix and submitted to an external uniform strain field :
+`computeEllipsoidLocalisationTensor`, `computeAxisymmetricalEllipsoidLocalisationTensor`
+and `computeSphereLocalisationTensor`.
+
+### Homogenization schemes
+
+Different schemes are implemented and return the homogenized stiffness of the material.
+The available functions are `computeMoriTanakaScheme`, `computeDiluteScheme`,
+computeSphereDiluteScheme, computeSphereMoriTanakaScheme.
+If a distribution of ellipsoids is considered, three types of distributions
+are considered. The corresponding functions are `computeIsotropicDiluteScheme`,
+`computeTransverseIsotropicDiluteScheme`, `computeOrientedDiluteScheme`,
+`computeIsotropicMoriTanakaScheme`, `computeTransverseIsotropicMoriTanakaScheme`
+and `computeOrientedMoriTanakaScheme`.
+
 
 # MFront
 
@@ -329,3 +362,4 @@ For more details, see <https://github.com/thelfer/tfel/issues/476>
 ## Issue 370: [tfel-utilities] Support for `C++` digit separator
 
 For more details, see <https://github.com/thelfer/tfel/issues/370>
+
