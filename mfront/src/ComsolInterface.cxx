@@ -267,7 +267,8 @@ namespace mfront {
         << "const tfel::math::stensor<3u,double> e0(stran);\n"
         << "tfel::math::stensor<3u,double> e1(e);\n"
         << "tfel::math::stensor<3u,double> eto;\n"
-        << "tfel::math::stensor<3u,double> deto;\n";
+        << "tfel::math::stensor<3u,double> deto;\n"
+        << "tfel::math::fsarray<6u,double> sig;\n";
     if (!d.getPersistentVariables().empty()) {
       out << "Behaviour b(&dt, &T, mprops, statev);\n";
     } else {
@@ -277,7 +278,14 @@ namespace mfront {
         << "e1[3] *= cste;\n"
         << "e1[4] *= cste;\n"
         << "e1[5] *= cste;\n"
-        << "std::swap(e1[3],e1[5]);\n";
+        << "std::swap(e1[3],e1[5]);\n"
+        << "// convert sig in TFEL conventions\n"
+        << "sig[0] = s[0];\n"
+        << "sig[1] = s[1];\n"
+        << "sig[2] = s[2];\n"
+        << "sig[3] = s[5];\n"
+        << "sig[4] = s[4];\n"
+        << "sig[5] = s[3];\n";
     if (bd.requiresStressFreeExpansionTreatment(h)) {
       out << "// stress free expansion\n"
           << "auto s = StressFreeExpansionType{};\n"
@@ -286,7 +294,8 @@ namespace mfront {
           << "const auto& s1 = s.second;\n"
           << "eto  = e0-s0;\n"
           << "deto = e1-e0-(s1-s0);\n";
-    } else {
+    }
+    else {
       out << "eto  = e0;\n"
           << "deto = e1-e0;\n";
     }
@@ -298,9 +307,12 @@ namespace mfront {
         << "deto[4] *= cste;\n"
         << "deto[5] *= cste;\n"
         << "b.setCOMSOLBehaviourDataGradients(eto.begin());\n"
+        << "b.setCOMSOLBehaviourDataThermodynamicForces(sig.data());\n"
         << "b.setCOMSOLIntegrationDataGradients(deto.begin());\n"
         << "b.setOutOfBoundsPolicy(p);\n"
-        << "b.initialize();\n"
+        << "if(!b.initialize()){\n"
+        << "return -1;\n"
+        << "}\n"
         << "b.checkBounds();\n"
         << "const auto smflag = Behaviour::STANDARDTANGENTOPERATOR;\n"
         << "const auto smt = Behaviour::CONSISTENTTANGENTOPERATOR;\n"
@@ -320,9 +332,9 @@ namespace mfront {
         << "}\n"
         << "rdt = std::min(atsf.second, rdt);\n";
     if (!d.getPersistentVariables().empty()) {
-      out << "b.COMSOLexportStateData(s,statev);\n";
+      out << "b.COMSOLexportStateData(s, statev);\n";
     } else {
-      out << "b.COMSOLexportStateData(s,nullptr);\n";
+      out << "b.COMSOLexportStateData(s, nullptr);\n";
     }
     out << "std::swap(s[3],s[5]);\n"
         << "const auto& K = b.getTangentOperator();\n"
