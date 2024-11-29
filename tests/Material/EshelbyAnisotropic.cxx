@@ -37,13 +37,9 @@ struct EshelbyAnisotropicTest final : public tfel::tests::TestCase {
       : tfel::tests::TestCase("TFEL/Material", "EshelbyAnisotropic") {}  // end of EshelbyAnisotropicTest
   
   tfel::tests::TestResult execute() override {
-    this->template compile_Eshelby_tensors<double, true>();
-    this->template errors_Eshelby_tensors<double, true>();
-    this->template test_Eshelby_tensors<double, true>();
-    //this->template test1<long double, false>();
-    //this->template test1<float, true>();
-    //this->template test1<double, true>();
-    //this->template test1<long double, true>();
+    this->template compile<double, true>();
+    this->template errors<double, true>();
+    this->template test_Eshelby<double, true>();
     return this->result;
   }
 
@@ -51,7 +47,7 @@ struct EshelbyAnisotropicTest final : public tfel::tests::TestCase {
 //tests compilation of the Eshelby tensor functions
 private:
   template <typename NumericType, bool use_qt>
-  void compile_Eshelby_tensors() {
+  void compile() {
     using lg =
         typename tfel::config::Types<1u, NumericType, use_qt>::length;
     using real = NumericType;
@@ -74,7 +70,7 @@ private:
 //must return a warning
 private:
   template <typename NumericType, bool use_qt>
-  void errors_Eshelby_tensors() {
+  void errors() {
     using lg =
         typename tfel::config::Types<1u, NumericType, use_qt>::length;
     using real = NumericType;
@@ -93,26 +89,31 @@ private:
  //These functions must return the same thing : the value displayed must be one
   private:
   template <typename NumericType, bool use_qt>
-  void test_Eshelby_tensors() {
-    using lg =
-        typename tfel::config::Types<1u, NumericType, use_qt>::length;
+  void test_Eshelby() {
     using real = NumericType;
+    using lg =
+        typename tfel::config::Types<1u, real, use_qt>::length;
+    using stress =
+         typename tfel::config::Types<1u, real, use_qt>::stress;
+    
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
-    const auto nu = real{0.3};
-    
-    
+    const auto nu = real{0.2};
+    const auto young=stress{150e2};
+    tfel::math::st2tost2<3u,stress> C_0;
     using namespace tfel::material;
+    static constexpr auto value = StiffnessTensorAlterationCharacteristic::UNALTERED;
+    computeIsotropicStiffnessTensorII<3u,value,stress,real>(C_0,young,nu);
     {const auto S1 = computeSphereEshelbyTensor(nu);
-    const auto S2 = computeAxisymmetricalEshelbyTensor(nu,real{1});
+    const auto S2 = computeAnisotropicEshelbyTensor<real,stress,lg>(C_0,lg{1},lg{2},lg{2});
     const auto S3 = computeEshelbyTensor(nu,lg{1},lg{2},lg{2});
     const auto S4 = computeEshelbyTensor(nu,lg{3},lg{3},lg{3});
     bool value = true;
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
-    		value = value and (std::abs(S1(i,j)-S2(i,j))<eps);
+    		//value = value and (std::abs(S1(i,j)-S2(i,j))<eps);
     		//std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
-    		value = value and (std::abs(S1(i,j)-S3(i,j))<eps);
-    		//std::cout << "13" << value << '\n';
+    		value = value and (std::abs(S2(i,j)-S3(i,j))<eps);
+    		std::cout << S2(i,j)<<"  " << value << " " << S3(i,j) << '\n';
     		value = value and (std::abs(S1(i,j)-S4(i,j))<eps);
     		//std::cout << "14" << value << '\n';
     	};
