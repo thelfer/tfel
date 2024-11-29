@@ -21,6 +21,8 @@
 namespace tfel::material
 {
 
+namespace homogenization{
+     namespace elasticity{
 
    /*!
    * This function builds the Hill tensor of a general ellipsoid embedded in an ANISOTROPIC matrix.
@@ -67,6 +69,9 @@ for general anisotropic elastic solids. The computation is inspired from Renaud 
       const LengthType&,
       const LengthType&,
       const LengthType&);
+      
+        }//end of namespace elasticity
+   }//end of namespace homogenization
       
 } // end of namespace tfel::material
 

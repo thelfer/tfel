@@ -48,6 +48,7 @@ struct EshelbyAnisotropicTest final : public tfel::tests::TestCase {
 private:
   template <typename NumericType, bool use_qt>
   void compile() {
+  using namespace tfel::material::homogenization::elasticity;
     using lg =
         typename tfel::config::Types<1u, NumericType, use_qt>::length;
     using real = NumericType;
@@ -71,6 +72,7 @@ private:
 private:
   template <typename NumericType, bool use_qt>
   void errors() {
+  using namespace tfel::material::homogenization::elasticity;
     using lg =
         typename tfel::config::Types<1u, NumericType, use_qt>::length;
     using real = NumericType;
@@ -90,6 +92,7 @@ private:
   private:
   template <typename NumericType, bool use_qt>
   void test_Eshelby() {
+  using namespace tfel::material::homogenization::elasticity;
     using real = NumericType;
     using lg =
         typename tfel::config::Types<1u, real, use_qt>::length;

@@ -22,6 +22,10 @@
 
 namespace tfel::material
 {
+
+namespace homogenization{
+     namespace elasticity{
+     
 	namespace internals{
 	
 		template<typename real>
@@ -139,6 +143,9 @@ namespace tfel::material
 											       const LengthType& a, const LengthType& b, const LengthType& c){
 		return computeAnisotropicHillTensor<real,StressType,LengthType>(C,a,b,c)*C;
 	};
+	
+        }//end of namespace elasticity
+   }//end of namespace homogenization
 
 }//end of tfel::material
 
