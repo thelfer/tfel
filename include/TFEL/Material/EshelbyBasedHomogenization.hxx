@@ -18,63 +18,10 @@
 #include "TFEL/Material/Eshelby.hxx"
 
 
-namespace tfel::material {
- /*!
-   * This function gives the Voigt homogenized stiffness
-   * \tparam N: number of phases
-   * \tparam real: underlying type
-   * \tparam StressType: type of the elastic constants
-   * \return an object of type st2tost2<3u,StressType>
-   * \param [in] f_list: list of volumic fractions of each phase
-   * \param [in] C_list: list of elastic stiffnesses of each phase (may be anisotropic)
-   */
-   template <unsigned int N,typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeVoigtStiffness(
-      tfel::math::tvector<N,real>&,
-      const tfel::math::tvector<N,tfel::math::st2tost2<3u,StressType>>&);
+namespace tfel::material {  
 
-  /*!
-   * This function gives the Reuss homogenized stiffness
-   * \tparam N: number of phases
-   * \tparam real: underlying type
-   * \tparam StressType: type of the elastic constants
-   * \return an object of type st2tost2<3u,StressType>
-   * \param [in] f_list: list of volumic fractions of each phase
-   * \param [in] C_list: list of elastic stiffnesses of each phase (may be anisotropic)
-   */
-   template <unsigned int N,typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeReussStiffness(
-      tfel::math::tvector<N,real>&,
-      const tfel::math::tvector<N,tfel::math::st2tost2<3u,StressType>>&);
-      
-  /*!
-   * This function gives the Lower Hashin Shtrikman Bound stiffness
-   * \tparam N: number of phases
-   * \tparam real: underlying type
-   * \tparam StressType: type of the elastic constants
-   * \return an object of type st2tost2<3u,StressType>
-   * \param [in] f_list: list of volumic fractions of each phase
-   * \param [in] C_list: list of elastic stiffnesses of each phase (may be anisotropic)
-   */
-   template <unsigned int N,typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeLowerHSBoundStiffness(
-      tfel::math::tvector<N,real>&,
-      const tfel::math::tvector<N,tfel::math::st2tost2<3u,StressType>>&);
-      
-    /*!
-   * This function gives the Upper Hashin Shtrikman Bound stiffness
-   * \tparam N: number of phases
-   * \tparam real: underlying type
-   * \tparam StressType: type of the elastic constants
-   * \return an object of type st2tost2<3u,StressType>
-   * \param [in] f_list: list of volumic fractions of each phase
-   * \param [in] C_list: list of elastic stiffnesses of each phase (may be anisotropic)
-   */
-   template <unsigned int N,typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u,StressType> computeUpperHSBoundStiffness(
-      tfel::math::tvector<N,real>&,
-      const tfel::math::tvector<N,tfel::math::st2tost2<3u,StressType>>&);
-      
+ namespace homogenization{
+  namespace elasticity{
    /*!
    * This function gives the homogenized stiffness for a dilute scheme, knowing the strain localisation tensor.
    * \tparam real: underlying type
@@ -305,6 +252,9 @@ namespace tfel::material {
       const tfel::math::tvector<3u,real>&,
       const LengthType&,
       const LengthType&);
+      
+    }//end of namespace elasticity
+  }//end of namespace homogenization
 
 }  // end of namespace tfel::material
 

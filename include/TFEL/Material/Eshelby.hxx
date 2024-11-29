@@ -20,6 +20,10 @@
 
 namespace tfel::material
 {
+
+namespace homogenization{
+     namespace elasticity{
+
   /*!
    * This function builds the Eshelby tensor of a circular cylinder embedded in an isotropic matrix, considering a PLANE STRAIN modelling hypothesis
    * \return an object of type st2tost2<2u,real>
@@ -160,7 +164,9 @@ namespace tfel::material
       const StressType&,
       const real&);
       
-   
+      }//end of namespace elasticity
+   }//end of namespace homogenization
+
 }  // end of namespace tfel::material
 
 #include "TFEL/Material/Eshelby.ixx"
