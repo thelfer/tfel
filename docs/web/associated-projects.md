@@ -17,8 +17,8 @@ eqnPrefixTemplate: "($$i$$)"
 
 ![](img/VoidsGrowth.png "Simulation of Void growth")
 
-`Cast3M` is a finite element tool box for structural and fluid mechanics
-developped by `CEA`: <http://www-cast3m.cea.fr/>. `MFront` is packaged
+`Cast3M` is a finite element toolbox for structural and fluid mechanics
+developed by `CEA`: <http://www-cast3m.cea.fr/>. `MFront` is packaged
 with `Cast3M` since 2019.
 
 The interface to this solver is described on [this page](castem.html).
@@ -28,7 +28,7 @@ The interface to this solver is described on [this page](castem.html).
 ![](img/AMITEX_FFTP_sig1.png "Polycrystals computation based on FFT")
 
 `AMITEX_FFTP` is a massively parallel mechanical solver based on the
-Fast-Fourier Transform developped by `CEA`:
+Fast-Fourier Transform developed by `CEA`:
 <https://amitexfftp.github.io/AMITEX/>
 
 The interface to this solver is described on [this page](amitex.html).
@@ -38,7 +38,7 @@ The interface to this solver is described on [this page](amitex.html).
 ![](img/VeRCoRs.png "Simulation of the VeRCoRs mock-up of a nuclear building")
 
 `code_aster` is a massively parallel finite element mechanical solver
-developped by `EDF`: <https://www.code-aster.org>. The `Salome-Meca`
+developed by `EDF`: <https://www.code-aster.org>. The `Salome-Meca`
 platform packages the `code_aster` in a suite of state-of-the-art pre-
 and post-processing tools. `MFront` is packaged with `code_aster` since
 2015.

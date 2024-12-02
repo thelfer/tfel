@@ -135,15 +135,15 @@ Voici un exemple très simple d’intégration implicite de ce modèle avec
 ### Description ligne par ligne
 
 Un fichier commence généralement par une partie déclarative décrivant
-l’algorithme utilisé pour la résolution, le nom du comportement (ici
-),puis la liste des propriétés matériau utilisées. On fournit ensuite le
+l’algorithme utilisé pour la résolution, le nom du comportement,
+puis la liste des propriétés matériau utilisées. On fournit ensuite le
 nom des variables internes, et la description des équations du système à
 résoudre.
 
 -   la ligne $1$ précise que nous allons utiliser une méthode
     d’intégration implicite ;
 -   la ligne $2$ donne le nom de la loi ;
--   la ligne $3$ précise que l’on utilise un algorithme de avec
+-   la ligne $3$ précise que l’on utilise un algorithme avec
     jacobienne numérique ;
 -   la ligne $5$ demande le calcul de la matrice d’élasticité  ;
 -   les lignes $7$ et $8$ définissent les propriétés matériau de la
@@ -152,7 +152,7 @@ résoudre.
     variable interne `eel` (tenseur déformation élastique
     $\tepsilonel$) est prédéfinie par MFront;
 -   les lignes $16$ à $24$ définissent les équations à résoudre ; la
-    convention de nom est la suivante : pour chaque variale interne `x`,
+    convention de nom est la suivante : pour chaque variable interne `x`,
     l’incrément est noté `dx`, et l’équation correspondante `fx` ;
 -   la ligne $17$ demande le calcul de la norme de Von Mises ;
 -   les lignes $18$ à $21$ correspondent au calcul de la direction
@@ -217,7 +217,7 @@ De plus, l’outil MTest permet d’effectuer très facilement des
 simulations sur point matériel, permettant de calculer la réponse à des
 sollicitations en contraintes ou en déformations.
 
-MTest, couplé à un logiciel d’optimisation comme , permet de plus
+MTest, couplé à un logiciel d’optimisation, permet de plus
 d’effectuer le recalage des propriétés matériau. Le fichier de données
 de MTest (nommé ici `norton.mtest`) se présente de la façon suivante :
 

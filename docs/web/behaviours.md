@@ -49,15 +49,15 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Overview
 
-Versatility of general purpose mechanical solver mainly relies on its
+The versatility of a general purpose mechanical solver mainly relies on its
 ability to let the user define the material behaviour. `MFront`
 provides a high level language to write mechanical behaviours.
 
-It can be compared to the `ZebFront` tool developped by the Centre des
+It can be compared to the `ZebFront` tool developed by the Centre des
 Matériaux de Mines ParisTech as part of the Zset software
 [see @foerch_polymorphic_1997;@besson_object-oriented_1998-1;@northwest_numerics_and_modeling_inc._zebfront_2014]. One
 major difference between `ZebFront` and `MFront` is the programming
-techniques used: `ZebFront` mostly relies on object oriented
+techniques used: `ZebFront` mostly relies on object-oriented
 techniques where `MFront` relies on generic programming leading to
 almost orthogonal design choices.
 
@@ -67,8 +67,8 @@ models.
 
 ## Mechanical behaviour role
 
-We now precise the role of the mechanical behaviours in standard
-displacement-based finite element solver
+We now specify the role of the mechanical behaviour in standard
+displacement-based finite element solvers
 [see @zienkiewicz_finite_1977;@besson_mecanique_2001;@edf_algorithme_2013]. For
 the sake of simplicity, we only treat the case of small strain
 behaviours for the rest of this document.
@@ -76,20 +76,20 @@ behaviours for the rest of this document.
 At each time step, the following resolution procedure is used:
 
 1. a prediction of the displacement is made. Such a prediction may use
-  the derivate of the stress tensor with respect of the strain tensor
+  the derivative of the stress tensor with respect to the strain tensor
   \(\deriv{\tsigma}{\tepsilonto}\) or an approximation of it. This
   prediction step will not be discussed in this article but can also
   be handled by behaviour implementations made with `MFront`;
-2. an iterative process similar to the Newton-Raphson algorithm used
+2. an iterative process similar to the Newton-Raphson algorithm is used
   to find a displacement that will satisfy the mechanical
   equilibrium. Given an estimation of the displacement at the end the
   time step, one computes at each integration point an estimation of
   the increment of the deformation tensor \(\Delta\,\tepsilonto\). The
   mechanical behaviour is then called and provides an associated
   estimation of the stress tensor \(\tsigma\) and the values of some
-  internal state variables \(Y_{i}\). In the solver requires it, the
+  internal state variables \(Y_{i}\). If the solver requires it, the
   mechanical behaviour may also provide an estimation of the tangent
-  consistant operator \(\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}\)
+  consistent operator \(\deriv{\Delta\,\tsigma}{\Delta\,\tepsilonto}\)
   (see @simo_consistent_1985) which is used to estimate a more
   accurate displacement field.
 
@@ -100,7 +100,7 @@ A mechanical behaviour can thus be viewed as functional:
 \mathcal{F}\paren{\bts{\tsigma},\bts{Y_{i}},\Delta\,\tepsilonto,\Delta\,t,\ldots}
 \]
 
-The dots \(\ldots\) means that the behaviour may also depend of
+The dots \(\ldots\) means that the behaviour may also depend on
 external state variables evolutions with time, namely the temperature,
 the irradiation damage, and so on.
 
@@ -143,7 +143,7 @@ The generated code represent a total amount of \(1\,512\) lines of
 1. optimised implementations of the behaviour for various modelling
   hypotheses (axisymmetrical generalised plane strain, plane strain,
   plane stress, generalised plane strain, axisymmetry, tridimensional)
-  thanks to template metaprogramming and template specialisations. An
+  thanks to template metaprogramming and template specializations. A
   small overview of the programming techniques used can be found
   in the description of the [TFEL/Math library](tfel-math.html).
 2. the computation of the prediction operator;
@@ -152,7 +152,7 @@ The generated code represent a total amount of \(1\,512\) lines of
   sake of simplicity, no glossary name was specified in this example).
   This mechanism is typically used by solvers based on the [`MGIS`
   libray](https://thelfer.github.io/mgis/web/index.html) appropriately
-  call the behaviour;
+  calling the behaviour;
 4. the computation of a tangent matrix operator (various choice are
   possible: elastic, secant, consistent);
 5. dynamically loadable functions allowing the user to change various
@@ -168,12 +168,12 @@ The generated code represent a total amount of \(1\,512\) lines of
 Local divergence of the implicit algorithm can be handled through an
 appropriate substepping procedure. This feature is not enabled by
 default, but appropriate keywords gives to the end user explicit
-control on this procedure.
+control over this procedure.
 
 ### Finite strain strategies
 
 If not handled directly by the calling code, appropriate pre- and
-post-processings allowing the use of small strain behaviours in finite
+post-processing allowing the use of small strain behaviours in finite
 strain computations can be generated. Two lagrangian finite strain
 strategies are currently available:
 
@@ -189,7 +189,7 @@ strategies are currently available:
   of the logarithmic strains has several advantages:
    i.  it preserves the small-strain classical meaning of the variables,
        which is truly appreciated by engineers;
-   ii. it may can also be used for arbitrary complex models (kinematic
+   ii. it can also be used for arbitrary complex models (kinematic
        hardening, initial or induced anisotropy, etc.).
 
 The following figure shows how our example can be used to model a
@@ -200,7 +200,7 @@ notched specimen under a tensile test:
 In this case, the material parameters \(H\) and \(\sigma_{0}\) of the
 behaviour must be identified on tests implying finite strains. As an
 additional remark, the results found using logarithmic strains were
-remarkably closed to those obtained by the classical formulation based
+remarkably close to those obtained by the classical formulation based
 on an \(F_{e}\,F_{p}\) decomposition proposed by Simo and Miehe (see
 @simo_associative_1992) (that was also implemented using `MFront`).
 
@@ -211,7 +211,7 @@ Apart from the domain specific languages dealing with isotropic
 previous paragraph, `MFront` also provides several general-purpose
 domain specific languages:
 
-1. the `Default` domain specific language allows the user the
+1. the `Default` domain specific language allows the user to
   write its own integration algorithm. This is very useful for
   explicit behaviours such as the classical \nom{Tvergaard} cohesive
   zone model [see @tvergaard_effect_1990].
@@ -268,7 +268,7 @@ creep law for anisotropic materials is given below:
 ~~~~ {#OrthotropicCreep .cpp .numberLines}
 @DSL    RungeKutta;              // domain specific language
 @Behaviour OrthotropicCreep;     // name of the behaviour
-@OrthotropicBehaviour;           // treating an orthotropic behaviou
+@OrthotropicBehaviour;           // treating an orthotropic behaviour
 @RequireStiffnessTensor;         // requires the stiffness tensor to be computed
 @StateVariable Stensor evp;      // viscoplastic strain
 @StateVariable strain p;         // Equivalent viscoplastic strain
@@ -384,17 +384,17 @@ Several algorithms are available to solve the previous implicit system:
   algorithm is as easy as using the domain specific languages based on
   `RungeKutta` algorithm. It can be considered as a first step toward an
   implicit implementation with an analytical jacobian matrix.
-- `Broyden` algorithms which do not require to computation of the
+- `Broyden` algorithms which do not require the computation of the
   jacobian matrix: these algorithms update an approximation of the
   jacobian matrix (first Broyden algorithm) or its inverse (second
   Broyden algorithm) at each iteration. The first Broyden algorithm can
-  sometimes be interesting as one may compute analitically some part of
+  sometimes be interesting as one may compute analytically some part of
   the jacobian matrix and let the algorithm compute the other parts. If
   the computation of those other parts takes a significant amount of CPU
-  time, this algorithm can in same cases outperfom the Newton-Raphson
+  time, this algorithm can in same cases outperform the Newton-Raphson
   algorithm.
 - `PowellDogLeg_XX` algorithm, where `XX` is one of the previous
-  algorithm. Those trust-region algorithms implements the classical
+  algorithm. Those trust-region algorithms implement the classical
   Powell dogleg method [see @chen_modification_1981] to improve the
   robustness of the resolution.
 

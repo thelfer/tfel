@@ -12,9 +12,9 @@ The easiest way to introduce behaviour bricks is to shortly describe the
 example of the `StandardElasticity` brick. This brick applies to strain
 based mechanical behaviours. It assumes:
 
-- that the total strain is split in an elastic part and a inelastic
+- that the total strain is split in an elastic part and an inelastic
   part.
-- that the stress are related to the elastic strain through the Hooke
+- that the stress is related to the elastic strain through the Hooke
   law.
 - that the total strain only appears in the equation associated with the
   split of the strain.
@@ -28,7 +28,7 @@ provide:
 - Automatic support for plane stress and generalized plane stress
   modelling hypotheses (definitions of the axial strain as an
   additional state variables and the associated equation enforcing the
-  plane stess condition).
+  plane stress condition).
 - Automatic addition of the "standard" terms associated
   with the elastic strain state variable.
 
@@ -60,7 +60,7 @@ The following brick are available:
   the development of the `StandardElastoViscplasticity` brick, has made
   the `StandardElasticity` brick a kind of special case of the
   `StandardElastoViscoplasticity` where the stress potential is limited
-  to the Hooke' one and no inelastic flow is allowed. As such, most
+  to the Hooke's one and no inelastic flow is allowed. As such, most
   information concerning the `StandardElasticity` brick can be found on
   the page dedicated to the [Hooke stress
   potential](HookeStressPotential.html). In particular, all options passed to
