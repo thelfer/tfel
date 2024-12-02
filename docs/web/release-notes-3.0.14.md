@@ -22,7 +22,11 @@ The page describes the new functionalities of Version 3.0.14 of the
 
 # Issues fixed
 
-## Issue 610 [cmake] better support for using `TFEL` as a `CPM` dependency
+## Issue 619: [fortran] Add support for the `ifx` fortran compiler
+
+For more details, see <https://github.com/thelfer/tfel/issues/619>.
+
+## Issue 610: [cmake] better support for using `TFEL` as a `CPM` dependency
 
 For more details, see <https://github.com/thelfer/tfel/issues/610>.
 

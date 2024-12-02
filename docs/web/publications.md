@@ -13,6 +13,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @rapanakis_cross-anisotropic_2024
+    @nagel_hierarchical_2024
+    @machado_alves_da_fonseca_viscoplastic_2024
+    @ribeiro_nogueira_eikonal_2024
     @bary_mesoscale_2024
     @barani_assessing_2024
     @bernaud_pleiades_2024
@@ -26,12 +30,16 @@ nocite: |
     @scherer_tensile_2024
     @vedrine_role_2024
     @senac_yield_2024
+    @helfer_new_2024
+    @jamond_manta_2024
     @valmalle_dic_2024
     @lorenzo_exploring_2024
     @simo_novel_2024
     @singh_irradiation_2024
+    @gicquel_polycrystalline_2023
+    @gicquel_developpement_2023
     @loiseau_formulation_2023
-	@thuillet_modelisation_2023
+    @thuillet_modelisation_2023
     @wang_modelling_2023
     @fokam_implementation_2023
     @bacquaert_standard_2023
@@ -50,6 +58,9 @@ nocite: |
     @zhang_modeling_2023
     @siedel_approche_2023
     @soleilhet_numerical_2023
+    @beccantini_europlexus_2022
+    @helfer_mfem-mgis-mfront_2022
+    @onimus_polycrystalline_2022
     @mollens_development_2022
     @draup_development_2022
     @fokam_implantation_2022

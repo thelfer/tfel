@@ -19,7 +19,7 @@
 
 namespace tfel::math::stdfunctions {
 
-  template <int N, typename Unit>
+  template <int N, UnitConcept Unit>
   TFEL_MATH_INLINE tfel::math::
       qt<typename tfel::math::internals::PowerUnit<N, 1u, Unit>::type, float>
       power(const tfel::math::qt<Unit, float> x) {
@@ -30,7 +30,7 @@ namespace tfel::math::stdfunctions {
     return Res(Implementation::exe(x.getValue()));
   }
 
-  template <int N, typename Unit>
+  template <int N, UnitConcept Unit>
   TFEL_MATH_INLINE tfel::math::
       qt<typename tfel::math::internals::PowerUnit<N, 1u, Unit>::type, double>
       power(const tfel::math::qt<Unit, double> x) {
@@ -41,7 +41,7 @@ namespace tfel::math::stdfunctions {
     return Res(Implementation::exe(x.getValue()));
   }
 
-  template <int N, typename Unit>
+  template <int N, UnitConcept Unit>
   TFEL_MATH_INLINE tfel::math::qt<
       typename tfel::math::internals::PowerUnit<N, 1u, Unit>::type,
       long double>
@@ -54,7 +54,7 @@ namespace tfel::math::stdfunctions {
     return Res(Implementation::exe(x.getValue()));
   }
 
-  template <int N, typename Unit>
+  template <int N, UnitConcept Unit>
   TFEL_MATH_INLINE tfel::math::qt<
       typename tfel::math::internals::PowerUnit<N, 1u, Unit>::type,
       Complex<float>>
@@ -67,7 +67,7 @@ namespace tfel::math::stdfunctions {
     return Res(Implementation::exe(x.getValue()));
   }
 
-  template <int N, typename Unit>
+  template <int N, UnitConcept Unit>
   TFEL_MATH_INLINE tfel::math::qt<
       typename tfel::math::internals::PowerUnit<N, 1u, Unit>::type,
       Complex<double>>
@@ -80,7 +80,7 @@ namespace tfel::math::stdfunctions {
     return Res(Implementation::exe(x.getValue()));
   }
 
-  template <int N, typename Unit>
+  template <int N, UnitConcept Unit>
   TFEL_MATH_INLINE tfel::math::qt<
       typename tfel::math::internals::PowerUnit<N, 1u, Unit>::type,
       Complex<long double>>
@@ -93,7 +93,7 @@ namespace tfel::math::stdfunctions {
     return Res(Implementation::exe(x.getValue()));
   }
 
-  template <int N, unsigned int D, typename Unit>
+  template <int N, unsigned int D, UnitConcept Unit>
   TFEL_MATH_INLINE tfel::math::
       qt<typename tfel::math::internals::PowerUnit<N, D, Unit>::type, float>
       power(const tfel::math::qt<Unit, float> x) {
@@ -104,7 +104,7 @@ namespace tfel::math::stdfunctions {
     return Res(Implementation::exe(x.getValue()));
   }
 
-  template <int N, unsigned int D, typename Unit>
+  template <int N, unsigned int D, UnitConcept Unit>
   TFEL_MATH_INLINE tfel::math::
       qt<typename tfel::math::internals::PowerUnit<N, D, Unit>::type, double>
       power(const tfel::math::qt<Unit, double> x) {
@@ -115,7 +115,7 @@ namespace tfel::math::stdfunctions {
     return Res(Implementation::exe(x.getValue()));
   }
 
-  template <int N, unsigned int D, typename Unit>
+  template <int N, unsigned int D, UnitConcept Unit>
   TFEL_MATH_INLINE tfel::math::qt<
       typename tfel::math::internals::PowerUnit<N, D, Unit>::type,
       long double>
@@ -128,7 +128,7 @@ namespace tfel::math::stdfunctions {
     return Res(Implementation::exe(x.getValue()));
   }
 
-  template <int N, unsigned int D, typename Unit>
+  template <int N, unsigned int D, UnitConcept Unit>
   TFEL_MATH_INLINE tfel::math::qt<
       typename tfel::math::internals::PowerUnit<N, D, Unit>::type,
       tfel::math::Complex<float>>
@@ -141,7 +141,7 @@ namespace tfel::math::stdfunctions {
     return Res(Implementation::exe(x.getValue()));
   }
 
-  template <int N, unsigned int D, typename Unit>
+  template <int N, unsigned int D, UnitConcept Unit>
   TFEL_MATH_INLINE tfel::math::qt<
       typename tfel::math::internals::PowerUnit<N, D, Unit>::type,
       tfel::math::Complex<double>>
@@ -154,7 +154,7 @@ namespace tfel::math::stdfunctions {
     return Res(Implementation::exe(x.getValue()));
   }
 
-  template <int N, unsigned int D, typename Unit>
+  template <int N, unsigned int D, UnitConcept Unit>
   TFEL_MATH_INLINE tfel::math::qt<
       typename tfel::math::internals::PowerUnit<N, D, Unit>::type,
       tfel::math::Complex<long double>>
@@ -174,7 +174,7 @@ namespace tfel::math {
   template <int N, unsigned int D>
   struct Power;
 
-  template <typename Unit, int N, unsigned int D>
+  template <UnitConcept Unit, int N, unsigned int D>
   class TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit, float>, Power<N, D>> {
    public:
     typedef qt<typename tfel::math::internals::PowerUnit<N, D, Unit>::type,
@@ -182,7 +182,7 @@ namespace tfel::math {
         type;
   };
 
-  template <typename Unit, int N, unsigned int D>
+  template <UnitConcept Unit, int N, unsigned int D>
   class TFEL_VISIBILITY_LOCAL UnaryResultType<qt<Unit, double>, Power<N, D>> {
    public:
     typedef qt<typename tfel::math::internals::PowerUnit<N, D, Unit>::type,
@@ -190,7 +190,7 @@ namespace tfel::math {
         type;
   };
 
-  template <typename Unit, int N, unsigned int D>
+  template <UnitConcept Unit, int N, unsigned int D>
   class TFEL_VISIBILITY_LOCAL
       UnaryResultType<qt<Unit, long double>, Power<N, D>> {
    public:
@@ -199,7 +199,7 @@ namespace tfel::math {
         type;
   };
 
-  template <typename Unit, int N, unsigned int D>
+  template <UnitConcept Unit, int N, unsigned int D>
   class TFEL_VISIBILITY_LOCAL
       UnaryResultType<qt<Unit, Complex<float>>, Power<N, D>> {
    public:
@@ -208,7 +208,7 @@ namespace tfel::math {
         type;
   };
 
-  template <typename Unit, int N, unsigned int D>
+  template <UnitConcept Unit, int N, unsigned int D>
   class TFEL_VISIBILITY_LOCAL
       UnaryResultType<qt<Unit, Complex<double>>, Power<N, D>> {
    public:
@@ -217,7 +217,7 @@ namespace tfel::math {
         type;
   };
 
-  template <typename Unit, int N, unsigned int D>
+  template <UnitConcept Unit, int N, unsigned int D>
   class TFEL_VISIBILITY_LOCAL
       UnaryResultType<qt<Unit, Complex<long double>>, Power<N, D>> {
    public:

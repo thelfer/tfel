@@ -27,27 +27,18 @@ function(add_mfront_generated_source lib interface ext file)
     add_custom_command(
       OUTPUT  "${mfront_output}"
       COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELMFront>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:MFrontLogStream>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELMaterial>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELNUMODIS>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELMathParser>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELGlossary>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELSystem>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELUtilities>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELException>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELConfig>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELUnicodeSupport>;%PATH%"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELMFront>;\
+$<TARGET_FILE_DIR:MFrontLogStream>;\
+$<TARGET_FILE_DIR:TFELMaterial>;\
+$<TARGET_FILE_DIR:TFELNUMODIS>;\
+$<TARGET_FILE_DIR:TFELMathParser>;\
+$<TARGET_FILE_DIR:TFELGlossary>;\
+$<TARGET_FILE_DIR:TFELSystem>;\
+$<TARGET_FILE_DIR:TFELUtilities>;\
+$<TARGET_FILE_DIR:TFELException>;\
+$<TARGET_FILE_DIR:TFELConfig>;\
+$<TARGET_FILE_DIR:TFELUnicodeSupport>;\
+%PATH%"
       COMMAND "${mfront_executable}"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
       ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"

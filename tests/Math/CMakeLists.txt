@@ -119,6 +119,7 @@ tests_math(ComputeNumericalDerivativeTest)
 tests_math(LinearInterpolationTest)
 tests_math(CubicSplineInterpolationTest)
 tests_math(matrix)
+tests_math(types)
 
 tests_math3(levenberg-marquardt4)
 

@@ -1,15 +1,21 @@
 include(CMakePackageConfigHelpers)
 
+# function add the given definition to the C and C++ preprocessor
+function(tfel_add_c_cxx_definitions define)
+  add_compile_definitions("$<$<COMPILE_LANGUAGE:C,CXX>:${define}>")
+endfunction(tfel_add_c_cxx_definitions)
+
 macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
+  set(VERSION "${tfel_version_major}.${tfel_version_minor}.${tfel_version_patch}")
   project("tfel"
            HOMEPAGE_URL "https://thelfer.github.io/tfel/web/index.html"
-           LANGUAGES C CXX)
+           LANGUAGES C CXX
+           VERSION "${VERSION}")
   set(PACKAGE_NAME "tfel")
-  set(VERSION "${tfel_version_major}.${tfel_version_minor}.${tfel_version_patch}")
 
   if(TFEL_APPEND_VERSION OR TFEL_VERSION_FLAVOUR)
     set(TFEL_APPEND_SUFFIX ON)
-    add_definitions("-DTFEL_APPEND_SUFFIX")
+    tfel_add_c_cxx_definitions("TFEL_APPEND_SUFFIX")
   endif(TFEL_APPEND_VERSION OR TFEL_VERSION_FLAVOUR)
 
   set(TFEL_WEBSITE "http://tfel.sourceforce.net")
@@ -19,20 +25,23 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   set(TFEL_VERSION_PATCH "${tfel_version_patch}")
 
   set(TFEL_VERSION "${VERSION}")
+  if(TFEL_DEVELOPMENT_VERSION)
+    set(TFEL_VERSION "${VERSION}-dev")
+  endif(TFEL_DEVELOPMENT_VERSION)
+
   if(TFEL_VERSION_FLAVOUR)
-    set(TFEL_VERSION "${VERSION}-${TFEL_VERSION_FLAVOUR}")
+    set(TFEL_VERSION "${TFEL_VERSION}-${TFEL_VERSION_FLAVOUR}")
   else(TFEL_VERSION_FLAVOUR)
-    set(TFEL_VERSION "${VERSION}")
   endif(TFEL_VERSION_FLAVOUR)
-  add_definitions("-DVERSION=\\\"\"${TFEL_VERSION}\"\\\"")
+  tfel_add_c_cxx_definitions("VERSION=\"${TFEL_VERSION}\"")
   
   if(TFEL_APPEND_VERSION)
     set(TFEL_SUFFIX "${TFEL_VERSION}")
-    add_definitions("-DTFEL_SUFFIX=\\\"\"${TFEL_SUFFIX}\"\\\"")
+    tfel_add_c_cxx_definitions("TFEL_SUFFIX=\"${TFEL_SUFFIX}\"")
   else(TFEL_APPEND_VERSION)
     if(TFEL_VERSION_FLAVOUR)
       set(TFEL_SUFFIX "${TFEL_VERSION_FLAVOUR}")
-      add_definitions("-DTFEL_SUFFIX=\\\"\"${TFEL_SUFFIX}\"\\\"")
+      tfel_add_c_cxx_definitions("TFEL_SUFFIX=\"${TFEL_SUFFIX}\"")
     endif(TFEL_VERSION_FLAVOUR)
   endif(TFEL_APPEND_VERSION)
 
@@ -42,8 +51,20 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   endif(TFEL_SUFFIX)
   
   if(LIB_SUFFIX)
-    add_definitions("-DLIB_SUFFIX=\\\"\"${LIB_SUFFIX}\"\\\"")
+    tfel_add_c_cxx_definitions("LIB_SUFFIX=\"${LIB_SUFFIX}\"")
   endif(LIB_SUFFIX)
+
+  write_basic_package_version_file(
+    "${PROJECT_BINARY_DIR}/tfel-config-version.cmake"
+    VERSION "${VERSION}"
+    COMPATIBILITY SameMinorVersion)
+  if(TFEL_APPEND_SUFFIX)
+    set(export_install_path "share/tfel-${TFEL_SUFFIX}/cmake")
+  else(TFEL_APPEND_SUFFIX)
+    set(export_install_path "share/tfel/cmake")
+  endif(TFEL_APPEND_SUFFIX)
+  install(FILES "${PROJECT_BINARY_DIR}/tfel-config-version.cmake"
+    DESTINATION "${export_install_path}")
 endmacro(tfel_project)
 
 set(CPACK_COMPONENTS_ALL core mfront mtest mfm)
@@ -146,6 +167,7 @@ function(tfel_library_internal name component)
     message(FATAL_ERROR "tfel_library_internal : no source specified")
   endif(${ARGC} LESS 2)
   add_library(${name} ${ARGN})
+  add_library(tfel::${name} ALIAS ${name})
   if(TFEL_APPEND_SUFFIX)
     set(export_install_path "share/tfel-${TFEL_SUFFIX}/cmake")
   else(TFEL_APPEND_SUFFIX)
@@ -191,6 +213,7 @@ function(tfel_library_internal name component)
           DESTINATION ${export_install_path})
   if(enable-static)
     add_library(${name}-static STATIC ${ARGN})
+    add_library(tfel::${name}-static ALIAS ${name}-static)
     if(TFEL_APPEND_SUFFIX)
       set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}-{TFEL_SUFFIX}")
     else(TFEL_APPEND_SUFFIX)
@@ -289,27 +312,19 @@ macro(add_mfront_behaviour_generated_source lib interface dir intrinsic_source f
     add_custom_command(
       OUTPUT  ${output_files}
       COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELMFront>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:MFrontLogStream>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELMaterial>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELNUMODIS>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELMathParser>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELGlossary>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELSystem>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELUtilities>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELException>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELConfig>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELUnicodeSupport>;%PATH%"
+      ARGS "PATH=\
+$<TARGET_FILE_DIR:TFELMFront>;\
+$<TARGET_FILE_DIR:MFrontLogStream>;\
+$<TARGET_FILE_DIR:TFELMaterial>;\
+$<TARGET_FILE_DIR:TFELNUMODIS>;\
+$<TARGET_FILE_DIR:TFELMathParser>;\
+$<TARGET_FILE_DIR:TFELGlossary>;\
+$<TARGET_FILE_DIR:TFELSystem>;\
+$<TARGET_FILE_DIR:TFELUtilities>;\
+$<TARGET_FILE_DIR:TFELException>;\
+$<TARGET_FILE_DIR:TFELConfig>;\
+$<TARGET_FILE_DIR:TFELUnicodeSupport>;\
+%PATH%"
       COMMAND "${mfront_executable}"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/models"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
@@ -372,27 +387,19 @@ macro(mfront_dependencies lib)
       add_custom_command(
 	OUTPUT  "src/${source}-mfront.cxx"
 	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELMFront>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:MFrontLogStream>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELMaterial>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELNUMODIS>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELMathParser>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELGlossary>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELSystem>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELUtilities>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELException>;%PATH%"
-    COMMAND "set"
-    ARGS "PATH=$<TARGET_FILE_DIR:TFELConfig>;%PATH%"
-    COMMAND "set"
-    ARGS "PATH=$<TARGET_FILE_DIR:TFELUnicodeSupport>;%PATH%"
+	ARGS "PATH=\
+$<TARGET_FILE_DIR:TFELMFront>;\
+$<TARGET_FILE_DIR:MFrontLogStream>;\
+$<TARGET_FILE_DIR:TFELMaterial>;\
+$<TARGET_FILE_DIR:TFELNUMODIS>;\
+$<TARGET_FILE_DIR:TFELMathParser>;\
+$<TARGET_FILE_DIR:TFELGlossary>;\
+$<TARGET_FILE_DIR:TFELSystem>;\
+$<TARGET_FILE_DIR:TFELUtilities>;\
+$<TARGET_FILE_DIR:TFELException>;\
+$<TARGET_FILE_DIR:TFELConfig>;\
+$<TARGET_FILE_DIR:TFELUnicodeSupport>;\
+%PATH%"
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
 	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"

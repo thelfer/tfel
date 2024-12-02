@@ -73,16 +73,16 @@ target_include_directories(TFELMathCubicSpline
    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELMathCubicSpline
-	PUBLIC TFELMath
-    PUBLIC TFELException)
+   PUBLIC tfel::TFELMath
+   PUBLIC tfel::TFELException)
 if(enable-static)
     target_include_directories(TFELMathCubicSpline-static
       PUBLIC 
       $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
       $<INSTALL_INTERFACE:include>)
     target_link_libraries(TFELMathCubicSpline-static
-        PUBLIC TFELMath-static
-        PUBLIC TFELException-static)
+        PUBLIC tfel::TFELMath-static
+        PUBLIC tfel::TFELException-static)
 endif(enable-static)
     
 tfel_library(TFELMathKriging ${TFELMathKriging_SOURCES})
@@ -91,16 +91,16 @@ target_include_directories(TFELMathKriging
    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELMathKriging
-    PUBLIC TFELMath
-    PUBLIC TFELException)
+    PUBLIC tfel::TFELMath
+    PUBLIC tfel::TFELException)
 if(enable-static)
     target_include_directories(TFELMathKriging-static
         PUBLIC 
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>)
     target_link_libraries(TFELMathKriging-static
-        PUBLIC TFELMath-static
-        PUBLIC TFELException-static)
+        PUBLIC tfel::TFELMath-static
+        PUBLIC tfel::TFELException-static)
 endif(enable-static)
     
 tfel_library(TFELMathParser ${TFELMathParser_SOURCES})
@@ -111,10 +111,10 @@ target_include_directories(TFELMathParser
    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELMathParser
-	PUBLIC TFELMathKriging
-        PUBLIC TFELMath
-	PUBLIC TFELException
-	PUBLIC TFELUnicodeSupport)
+	PUBLIC tfel::TFELMathKriging
+        PUBLIC tfel::TFELMath
+	PUBLIC tfel::TFELException
+	PUBLIC tfel::TFELUnicodeSupport)
 if(enable-static)
     target_include_directories(TFELMathParser-static
       PUBLIC 
@@ -122,9 +122,8 @@ if(enable-static)
       $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
       $<INSTALL_INTERFACE:include>)
     target_link_libraries(TFELMathParser-static
-        PUBLIC TFELMathKriging-static
-        PUBLIC TFELMath-static
-        PUBLIC TFELException-static
-        PUBLIC TFELUnicodeSupport-static)
+        PUBLIC tfel::TFELMathKriging-static
+        PUBLIC tfel::TFELMath-static
+        PUBLIC tfel::TFELException-static
+        PUBLIC tfel::TFELUnicodeSupport-static)
 endif(enable-static)
-    
