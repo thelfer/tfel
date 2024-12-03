@@ -256,6 +256,7 @@ set(TFELMFront_SOURCES
     IsotropicHardeningRuleFactory.cxx
     StrainRateSensitivityFactor.cxx
     StrainRateSensitivityFactorFactory.cxx
+    CowperSymondsStrainRateSensitivityFactor.cxx
     KinematicHardeningRule.cxx
     KinematicHardeningRuleBase.cxx
     PragerKinematicHardeningRule.cxx

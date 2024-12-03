@@ -191,7 +191,7 @@ install_mfront_header(MFront/BehaviourBrick StrainRateSensitiveIsotropicHardenin
 install_mfront_header(MFront/BehaviourBrick IsotropicHardeningRuleFactory.hxx)
 install_mfront_header(MFront/BehaviourBrick StrainRateSensitivityFactor.hxx)
 install_mfront_header(MFront/BehaviourBrick StrainRateSensitivityFactorFactory.hxx)
-
+install_mfront_header(MFront/BehaviourBrick CowperSymondsStrainRateSensitivityFactor.hxx)
 install_mfront_header(MFront/BehaviourBrick KinematicHardeningRule.hxx)
 install_mfront_header(MFront/BehaviourBrick KinematicHardeningRuleBase.hxx)
 install_mfront_header(MFront/BehaviourBrick PragerKinematicHardeningRule.hxx)

@@ -15,6 +15,7 @@
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/BehaviourBrick/StrainRateSensitivityFactor.hxx"
 #include "MFront/BehaviourBrick/StrainRateSensitivityFactorFactory.hxx"
+#include "MFront/BehaviourBrick/CowperSymondsStrainRateSensitivityFactor.hxx"
 
 namespace mfront::bbrick {
 
@@ -26,8 +27,7 @@ namespace mfront::bbrick {
   std::vector<std::string>
   StrainRateSensitivityFactorFactory::getRegistredStrainRateSensitivityFactors() const {
     return getKeys(this->generators);
-  }  // end of
-     // StrainRateSensitivityFactorFactory::getRegistredStrainRateSensitivityFactors
+  }  // end of getRegistredStrainRateSensitivityFactors
 
   void StrainRateSensitivityFactorFactory::addGenerator(const std::string& n,
                                                    const Generator& g) {
@@ -52,10 +52,9 @@ namespace mfront::bbrick {
   }  // end of generate
 
   StrainRateSensitivityFactorFactory::StrainRateSensitivityFactorFactory() {
-    //     this->addGenerator("Linear", []() {
-    //       return
-    //       std::make_shared<bbrick::LinearStrainRateSensitivityFactor>();
-    //     });
+    this->addGenerator("CowperSymonds", []() {
+      return std::make_shared<bbrick::CowperSymondsStrainRateSensitivityFactor>();
+    });
   }  // end of StrainRateSensitivityFactorFactory
 
   StrainRateSensitivityFactorFactory::~StrainRateSensitivityFactorFactory() = default;
