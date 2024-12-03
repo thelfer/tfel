@@ -492,7 +492,7 @@ namespace tfel::math {
         tfel::math::internals::DerivativeViewFromTinyMatrixImplementation<
             isScalar<FunctionType>(), isScalar<VariableType>(), FunctionType,
             VariableType>;
-    return Implementation::template exe(m, i, j);
+    return Implementation::exe(m, i, j);
   }  // end of map_derivative
 
 }  // namespace tfel::math
