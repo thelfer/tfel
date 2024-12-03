@@ -75,7 +75,7 @@ namespace tfel::system {
     if (this->eptr != nullptr) {
       this->rethrow();
     }
-    if (!this->result_has_value()) {
+    if (!this->result.has_value()) {
       ThreadedTaskResultBase::throwBadCastException();
     }
     return *(this->result);
