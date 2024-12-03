@@ -389,7 +389,9 @@ namespace tfel::material
 		using namespace tfel::math;
 		const auto n_3=cross_product<real>(n_1,n_2);
 		const auto S0 = computeAxisymmetricalEshelbyTensor<real>(nu,e);
-		const tfel::math::rotation_matrix<real> r={n_1[0],n_1[1],n_1[2],n_2[0],n_2[1],n_2[2],n_3[0],n_3[1],n_3[2]};
+		const tfel::math::rotation_matrix<real> r={n_1[0],n_1[1],n_1[2],
+							   n_2[0],n_2[1],n_2[2],
+							   n_3[0],n_3[1],n_3[2]};
 		const auto S0_basis = change_basis(S0,r);
 		tfel::math::st2tost2<3u,StressType> C_0;
 		static constexpr auto value = StiffnessTensorAlterationCharacteristic::UNALTERED;

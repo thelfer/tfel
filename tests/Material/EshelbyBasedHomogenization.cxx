@@ -319,9 +319,9 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     const auto nu = real{0.3};
     const auto young_i = stress{150e9};
     const auto nu_i = real{0.2};
-    const auto a = length{0.4};
-    const auto b = length{0.3};
-    const auto c = length{0.2};
+    const auto a = length{1};
+    const auto b = length{0.5};
+    const auto c = length{0.1};
     const auto f = real{0.5};
     const tfel::math::tvector<3u,real> n_a = {0.,0.,1.};
     const tfel::math::tvector<3u,real> n_b = {1.,0.,0.};
@@ -339,7 +339,7 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     const auto ETI_DS_1 = 2*mu1*(1+nuTI_DS_1);
     
     TFEL_TESTS_ASSERT(my_abs(ETI_DS_1-ETI_DS_0)<stress{10*eps});
-    //std::cout << (E0-E1).getValue() << " "<< eps << '\n';
+    std::cout << (ETI_DS_1).getValue() << " "<< eps << '\n';
     TFEL_TESTS_ASSERT(my_abs(nuTI_DS_1-nuTI_DS_0)<eps);
     
      //TransverseIsotropicDiluteScheme when a is near b must be near TransverseIsotropicDiluteScheme when a=b 

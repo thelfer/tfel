@@ -18,6 +18,7 @@
 #include <limits>
 #include <cstdlib>
 #include <iostream>
+#include <typeinfo>
 #include "TFEL/Config/TFELTypes.hxx"
 #include "TFEL/Math/qt.hxx"
 #include "TFEL/Material/Eshelby.hxx"
@@ -297,7 +298,7 @@ private:
     
     using namespace tfel::material::homogenization::elasticity;
     {const auto ASphere_1 = computeSphereLocalisationTensor<real,stress>(young,nu,young_i,nu_i);
-    const auto ASphere_2 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,1);
+    const auto ASphere_2 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,real{1});
     const auto ASphere_3 = computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,lg{2},n_b,lg{2.00000001},lg{2.00001});
     for (int i :{0,1,2,3,4,5}){
     	for (int j:{0,1,2,3,4,5}){
@@ -317,6 +318,23 @@ private:
     };
     }
 
+    //this test checks that the rotation of the principal axis of the axisymmetrical ellipsoid in the direction n_aa is ok :
+    // A_nnnn when n=n_aa is much bigger than A_tttt where t=n_bb
+    // 
+    {const tfel::math::tvector<3u,real> n_aa = {std::sqrt(2)/2,0.,std::sqrt(2)/2};
+    const tfel::math::tvector<3u,real> n_bb = {-std::sqrt(2)/2,0.,std::sqrt(2)/2};
+    const auto dem=real{1}/2;
+    const tfel::math::stensor<3u,real> n_aa_n_aa = {dem,0.,dem,0.,dem,0.};
+    const tfel::math::stensor<3u,real> n_bb_n_bb = {dem,0.,dem,0.,-dem,0.};
+    
+    const auto Arot1 = computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_aa,real{20});
+    const auto Annnn= n_aa_n_aa*(Arot1*n_aa_n_aa);
+    const auto Atttt= n_bb_n_bb*(Arot1*n_bb_n_bb);
+    const auto Attnn= n_bb_n_bb*(Arot1*n_aa_n_aa);
+    //std::cout << Atttt(0) << Annnn(0) << Attnn(0) << std::endl;
+    TFEL_TESTS_ASSERT(Annnn(0)-5*Atttt(0)>0);
+    } 
+ 
   };
   
   

@@ -113,6 +113,9 @@ namespace homogenization{
 	template<typename real,typename StressType, typename LengthType>
 	TFEL_HOST_DEVICE tfel::math::st2tost2<3u,typename tfel::math::invert_type<StressType>> computeAnisotropicHillTensor(const tfel::math::st2tost2<3u,StressType>& C,
 											       const LengthType& a, const LengthType& b, const LengthType& c){
+		if (not((a>LengthType{0}) and (b>LengthType{0}) and (c>LengthType{0}))){
+			tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
+		};
 		const std::array<LengthType,3> abc_={a,b,c};
 		const auto sig=internals::sortEllipsoidLengths<LengthType>(a,b,c);
 		const auto a_=abc_[sig[0]];
@@ -143,6 +146,54 @@ namespace homogenization{
 											       const LengthType& a, const LengthType& b, const LengthType& c){
 		return computeAnisotropicHillTensor<real,StressType,LengthType>(C,a,b,c)*C;
 	};
+	
+	
+	template <typename real, typename StressType, typename LengthType>
+	TFEL_HOST_DEVICE tfel::math::st2tost2<3u,real> computeAnisotropicLocalisationTensor(const tfel::math::st2tost2<3u,StressType>& C_0_glob, const tfel::math::st2tost2<3u,StressType>& C_i_loc,
+											const tfel::math::tvector<3u,real>& n_a,const LengthType& a, const tfel::math::tvector<3u,real>& n_b,
+											const LengthType& b, const LengthType& c){
+		
+		if (not((a>LengthType{0}) and (b>LengthType{0}) and (c>LengthType{0}))){
+			tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
+		};
+		if (not(tfel::math::ieee754::fpclassify(tfel::math::VectorVectorDotProduct::exe<real,tfel::math::tvector<3u,real>,tfel::math::tvector<3u,real>>(n_a,n_b)) == FP_ZERO)){
+			tfel::reportContractViolation("n_a and n_b not normals");
+		};
+		if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO){
+			tfel::reportContractViolation("n_a is null");
+		};
+		if (tfel::math::ieee754::fpclassify(norm(n_b)) == FP_ZERO){
+			tfel::reportContractViolation("n_b is null");
+		};
+		const auto n_a_=n_a/norm(n_a);
+    		const auto n_b_=n_b/norm(n_b);
+		const auto n_c_=tfel::math::cross_product<real>(n_a_,n_b_);
+		const std::array<LengthType,3> abc_={a,b,c};
+		const auto sig=internals::sortEllipsoidLengths<LengthType>(a,b,c);
+		using namespace tfel::math;
+		const std::array<tfel::math::tvector<3u,real>,3> nabc_={n_a_,n_b_,n_c_};
+		const auto n_1=nabc_[sig[0]];
+		const auto n_2=nabc_[sig[1]];
+		const auto n_3=cross_product<real>(n_1,n_2);
+		const rotation_matrix<real> r_glob_sorted={n_1[0],n_2[0],n_3[0],
+					       n_1[1],n_2[1],n_3[1],
+					       n_1[2],n_2[2],n_3[2]};
+		const rotation_matrix<real> r_glob_loc={n_a_[0],n_b_[0],n_c_[0],
+					       n_a_[1],n_b_[1],n_c_[1],
+					       n_a_[2],n_b_[2],n_c_[2]};
+		const rotation_matrix<real> r_sorted_glob = transpose(r_glob_sorted);
+		const rotation_matrix<real> r_loc_glob = transpose(r_glob_loc);
+		const auto C_0_sorted=StressType(1)*change_basis(C_0_glob/StressType(1),r_glob_sorted);
+		const auto P_0_sorted = computeAnisotropicHillTensor<real,StressType,LengthType>(C_0_sorted,abc_[sig[0]],abc_[sig[1]],abc_[sig[2]]);
+		const auto P_0_glob = change_basis(P_0_sorted*StressType(1),r_sorted_glob)/StressType(1);
+		const auto C_i_glob=change_basis(C_i_loc/StressType(1),r_loc_glob)*StressType(1);
+		const st2tost2<3u,StressType> C = C_i_glob-C_0_glob;
+		const auto Pr = P_0_glob*C;
+		const auto A = invert(st2tost2<3u,real>::Id()+Pr);
+		return A;
+	};
+	
+	
 	
         }//end of namespace elasticity
    }//end of namespace homogenization
