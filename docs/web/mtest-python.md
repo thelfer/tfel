@@ -122,7 +122,7 @@ b = mtest.Behaviour('aster','libAsterBehaviour.so','asterplasticity','PlaneStrai
 
 ## Methods available
 
-The following methods are avaiable:
+The following methods are available:
 
 - `getBehaviourType`: Return the behaviour type. The value returned
   has the following meaning:
@@ -279,13 +279,13 @@ the beginning and at the end of the time step.
 
 The `MTestCurrentState` class provides the following fields:
 
-- `u_1`: values of the unknows (driving variables and lagrange
+- `u_1`: values of the unknowns (driving variables and lagrange
   multipliers) at the beginning of the previous time step. This
   information is used for extrapolation the unknowns evolution over
   the time step.
-- `u0`: values of the unknows (driving variables and lagrange
+- `u0`: values of the unknowns (driving variables and lagrange
   multipliers) at the beginning of the current time step.
-- `u1`: values of the unknows (driving variables and lagrange
+- `u1`: values of the unknowns (driving variables and lagrange
   multipliers) at the end of the current time step.
 - `s_1`: values of the forces (thermodynamic forces and dual of the
   lagrange multipliers) at the beginning of the previous time step.
@@ -426,15 +426,15 @@ cases handled by `MTest`, in the current and future versions of
 
 The `StudyCurrentState` provides the following fields:
 
-- `u_1`: values of the unknows (driving variables and lagrange
+- `u_1`: values of the unknowns (driving variables and lagrange
   multipliers) at the beginning of the previous time step. This
   information is used for extrapolation the unknowns evolution over
   the time step.
-- `u0`: values of the unknows (driving variables and lagrange
+- `u0`: values of the unknowns (driving variables and lagrange
   multipliers) at the beginning of the current time step.
-- `u1`: values of the unknows (driving variables and lagrange
+- `u1`: values of the unknowns (driving variables and lagrange
   multipliers) at the end of the current time step.
-- `u10`: values of the unknows (driving variables and lagrange
+- `u10`: values of the unknowns (driving variables and lagrange
   multipliers) at the previous iteration.
 - `period`: total number of time steps done so far.
 - `iterations`: total number of iterations done so far.
@@ -559,7 +559,7 @@ p = max([cs.getInternalStateVariableValue('EquivalentPlasticStrain') for cs in s
 
 #### Modifying the values of the internal state variables
 
-Sometimes, it can be usefull to modify the values of the internal
+Sometimes, it can be useful to modify the values of the internal
 state variables during the computation. This can
 
 The internal state variables are stored in the `iv_1`, `iv0` and `iv1`

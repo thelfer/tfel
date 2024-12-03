@@ -4,7 +4,7 @@
 
 
 ![Interfaces allows the creation of a source code which is specific to the targeted language or solver](img/Interfaces.svg
- "Interfaces allows the creation of a source code which is specific to
+ "Interfaces allow the creation of a source code which is specific to
  the targeted language or solver")
 
 # Rationale
@@ -14,7 +14,7 @@ solver or language in which it will be used. On the other hand, one
 shall also strive to make the use of the generated code as natural and
 as efficient as possible.
 
-To achieve those goals, we have introduced in `MFront` the concept of
+To achieve these goals, we have introduced in `MFront` the concept of
 interfaces.
 
 <!-- # Interfaces for material properties -->

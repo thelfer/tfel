@@ -6,15 +6,15 @@
 [`Apache Subversion`](https://subversion.apache.org/) open source
 version control system held on a `CEA` private server. `CEA`
 traditional partners (`EDF` and `Areva`) can request an account on
-this server to access the `TFEL` repository).
+this server to access the `TFEL` repository.
 
 As we do wish that many people get involved in `TFEL/MFront` usage and
-development, the `subversion` repository used by CEA and EDF is alo
-synchronized with a public `githbub` repository:
+development, the `subversion` repository used by CEA and EDF is also
+synchronized with a public `GitHub` repository:
 
 <https://github.com/thelfer/tfel>
 
-All the branches, commit description and history of TFEL are
+All the branches, commit descriptions and history of TFEL are
 available. This repository is *read-only*. 
 
 # Access Subversion repository (read/write)
@@ -25,8 +25,8 @@ The `TFEL` repository is accessible at:
 This server is used for historical and practical reasons.
 
 This server is not meant to receive a wide number of contributors, so
-the access is currently restricted. Access can be granted to the
-[PLEIADES project manger](mailto:tfel-contact@cea.fr).
+the access is currently restricted. Access can be granted by the
+[PLEIADES project manager](mailto:tfel-contact@cea.fr).
 
 We may consider moving to another server if the number of contributors
 grows significantly.

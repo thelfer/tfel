@@ -24,7 +24,7 @@ abstract: |
   Compared to behaviours, which often requires to solve a system of
   ordinary differential equations to describe the evolution of the state
   variables describing the material, material properties are conceptually
-  much simplier. However, their implementations, while straightforward,
+  much simpler. However, their implementations, while straightforward,
   allow to introduce some key concepts of `MFront`, making a perfect
   introduction for beginners.
   
@@ -51,8 +51,8 @@ the current thermodynamical state of the material.
 Compared to behaviours, which often require to solve a system of
 ordinary differential equations to describe the evolution of the state
 variables describing the material, material properties are conceptually
-much simpler. However, their implementations, while straightforward,
-allow to introduce some key concepts of `MFront`, making a perfect
+much simpler. However, their implementation, while straightforward,
+allows to introduce some key concepts of `MFront`, making it a perfect
 introduction for beginners.
 
 This tutorial considers the example of the Young's modulus of uranium
@@ -88,7 +88,7 @@ This code is assumed to be in a standard text file called
 > **About editing `MFront` files**
 >
 > Most text editors have special modes for `C++` highlighting and we
-> strongly recommand to associate files with the extension `.mfront` with `C++` mode.
+> strongly recommend to associate files with the extension `.mfront` with `C++` mode.
 >
 > Note that an experimental text editor called `tfel-editor` with specific
 > support for `MFront` is also available here: 
@@ -107,7 +107,7 @@ interface, the `YoungModulus.mfront` can now be used to generate a
    $ mfront --interface=python YoungModulus.mfront
    ~~~~
 
-   `MFront` will generally generate two sub-directory named  respectively
+   `MFront` will generally generate two subdirectory named  respectively
    `include` and `src`.
 2. Compile the generated sources in shared libraries (here a single 
    `python` module):
@@ -371,8 +371,8 @@ plt.show()
 
 ## Changing the name of the output
 
-`res` is a poor name for the ouput variable. It can be changed using the
-`@Ouput` keyword as follows:
+`res` is a poor name for the output variable. It can be changed using the
+`@Output` keyword as follows:
 
 ~~~~{.cxx}
 @Output E;
@@ -395,7 +395,7 @@ At this stage, the function barely works, but can be used very
 inappropriately. For example, one may request the value of the Young's
 modulus for a negative temperature, something which in our opinion shall
 lead to an error to indicate to the user that something very wrong is
-happening their code.
+happening in their code.
 
 Indeed, many quantities are intrinsically bounded. In our example, the
 temperature (in Kelvin) can't be negative and the porosity shall be
@@ -413,18 +413,19 @@ follows:
 where the `*` character means infinity (and is followed by an
 open-bracket).
 
-A violation of the physical bounds is __always__ a cause for the calculation stop and the return of an error.
+A violation of the physical bounds is __always__ a cause for the calculation to 
+stop and the return of an error.
 
 ### Standard bounds
 
 Another issue is the fact that the considered material property is only
-reliable on a limited range of temperature and porosity. Outside of this
+reliable over a limited range of temperature and porosity. Outside of this
 domain of validity, the prediction may become inaccurate.
 
 This domain of validity is described in `MFront` by (standard) bounds,
 introduced by the `@Bounds` keyword.
 
-In our example, the prediction are considered reliable for temperatures
+In our example, the prediction is considered reliable for temperatures
 in the range \([273.15:2610.15]\):
 
 ~~~~{.cxx}
@@ -438,7 +439,7 @@ an out-of-bounds evaluation:
 - `Warning`: the user shall be informed but the computation is performed
   as usual. How the user is informed depends on the interface
   considered,
-- `Strict`: the computation are stopped and an error is reported. The
+- `Strict`: the computation is stopped and an error is reported. The
   mechanism used to stop the computation depends on the interface
   considered.
 
@@ -477,8 +478,8 @@ follows:
 >   This option shall only be specified on the command line.
 > ~~~~
 
-We do not recommend to hard coding DSL options in the source file as
-`MFront` files must be sharable across different users which may have
+We do not recommend hard coding DSL options in the source file as
+`MFront` files must be shareable across different users which may have
 different needs.
 
 #### Changing the default policy with command line -
@@ -501,16 +502,16 @@ Note that a double-quote is required here to pass a string option.
 > in safety critical studies.
 >
 > Consider a nuclear fuel performance code which delivers a set of
-> well-qualified material properties to its users. The developpers
-> of the fuel performance code must guarantee the proper the usage
+> well-qualified material properties to its users. The developers
+> of the fuel performance code must guarantee the proper usage
 > of their code. In particular, the material properties must be
 > used inside their validity domain. A `Strict` policy may be
 > a convenient choice.
 >
 > Users shall thus not be able to use the code outside
-> its validation domain without explicit stating it in their input
-> files using a specific keyword. In this case, the developpers of
-> the fuel performance code are no more responsible of the results
+> its validation domain without explicitly stating it in their input
+> files using a specific keyword. In this case, the developers of
+> the fuel performance code are no longer responsible for the results
 > obtained and may explicitly state it in the result files by
 > a warning (for example).
 
@@ -593,17 +594,17 @@ If this option is set to `false`, the environment variable
 
 ## Documenting the variables for the calling solvers
 
-The names of the inputs variables are very generic and not
+The names of the input variables are very generic and not
 self-explanatory. For example, nothing indicates to the reader that `f`
 stands for the porosity of the material. More precisely, `MFront`
-exports information about the material property that can be used by the
-calling solver. Among others, these information include the name of the
-inputs and the name of the output, as well as description of those
+exports information about the material properties that can be used by the
+calling solver. Among others, this information includes the name of the
+inputs and the name of the output, as well as a description of those
 variables.
 
 To emphasize this point, let us consider a handy tool called
 [`mfront-query`](mfront-query.html) which can be used to request all
-kind of information about an `MFront` file from the command line. Using
+kinds of information about an `MFront` file from the command line. Using
 `mfront-query` to list the inputs of this implementation leads to this
 disappointing and unuseful result:
 
@@ -621,9 +622,9 @@ the solver that will use it.
 
 ### About using explicit variable names
 
-A first idea to solve this issue would be to used explicit variable
+A first idea to solve this issue would be to use explicit variable
 names such as `Temperature` or `Porosity`, instead of `T` and `f`
-respectively. However, this solution rapidely becomes cumbersome in
+respectively. However, this solution rapidly becomes cumbersome in
 practice. We do not recommend this solution.
 
 ### About standard C++ comments
@@ -697,7 +698,7 @@ $ mfront-query --inputs YoungModulus.mfront
 
 ## Parameters
 
-Sensitivity analysis, uncertainties propagations, re-identification,
+Sensitivity analysis, uncertainty propagation, re-identification,
 require to be able to modify the coefficients of the material property.
 
 `MFront` introduces the concept of *parameters*: a parameter is a
@@ -741,7 +742,7 @@ This file has the following structure:
 ~~~~
 
 For example, the file `UO2_YoungModulus_Martin1989-parameters.txt` may
-looks like:
+look like:
 
 ~~~~{.bash}
 # new material parameters
@@ -793,8 +794,8 @@ $ mfront --obuild --interface=python                            \
          UO2_YoungModulus_Martini1989.mfront
 ~~~~
 
-This option has mostly been introduced to let solver developpers have
-control on the users ability to modify parameters of well-qualified
+This option has mostly been introduced to let solver developers have
+control over the users' ability to modify parameters of well-qualified
 material properties: if such parameter is modified, strict
 quality assurance of the solver is compromised.
  
@@ -831,8 +832,8 @@ For example, those information can be added as follows:
 
 ~~~~{.cxx}
 @Author   T. Helfer;  // author name
-@Date     04/04/2014; // implentation date
-@Description          // detailled description
+@Date     04/04/2014; // implementation date
+@Description          // detailed description
 {
   The elastic constants of polycrystalline UO2 and
   (U, Pu) mixed oxides: a review and recommendations
@@ -841,7 +842,7 @@ For example, those information can be added as follows:
 };
 ~~~~
 
-Those information will be exported by `MFront` and can be retrieved by
+This information will be exported by `MFront` and can be retrieved by
 the calling solver.
 
 ## Explicit coding: add types and quantity support {#sec:mfront:material_properties:types}
@@ -896,8 +897,8 @@ The keyword `@UseQT` allows the usage of quantities, i.e. floating
 point values associated with units. Quantities allow the compiler to
 perform *dimensional analysis* at compile-time.
 
-It must clearly emphasized that quantities are only used *inside* the
-body of the function and does not change the interface of the generated
+It must be clearly emphasized that quantities are only used *inside* the
+body of the function and do not change the interface of the generated
 functions.
 
 Note that quantities are implemented by the `TFEL/Math` library and
@@ -1093,7 +1094,7 @@ This class has the following core interface:
 - `getValue` which evaluates the material property for the values of the
   arguments set by the `setVariableValue` method,
 - `getParametersNames`, which returns the names of the parameters of
-  material property,
+  the material property,
 - `setParameter` which allows to change the value of a parameter.
 
 As described in the next paragraph, several convenient methods and
@@ -1141,7 +1142,7 @@ E = young_modulus({'Temperature': 562, 'Porosity': 0.1})
 ## The `mfm` utility
 
 Once a shared library has been generated by `MFront`, it is convenient
-to be able to analyse its content rapidly. This can be done in `python`
+to be able to analyze its content rapidly. This can be done in `python`
 and `C++` using the `tfel::system::ExternalLibraryManager` class.
 
 The `mfm` utility is a small command-line program built on top of the
@@ -1172,7 +1173,7 @@ Moreover, different implementation or compilation options are described as well 
 ## About the analysis of errors generated by `MFront` or the `C++` compiler {#sec:mfront:material_properties:compiling_errors}
 
 As described in Section @sec:mfront:material_properties:compiling, the
-`MFront` file is first parsed, interperted by `MFront` and used to
+`MFront` file is first parsed, interpreted by `MFront` and used to
 generate a set of `C++` source files. In a second step, those `C++`
 source files are compiled by a `C++` compiler into a shared library.
 
@@ -1266,14 +1267,14 @@ except the first:
 ### Name of the generated functions or classes
 
 The names of the generated functions or classes depend on the law name
-as specifified with the `@Law` keyword but may also include the
+as specified with the `@Law` keyword but may also include the
 material name, as specified by the `@MaterialLaw` keyword.
 ~~~~
 
 ### Example of an error generated by the `C++` compiler
 
 Assume that one forgets to declare the porosity \(f\). This error will
-not detected by `MFront` but by the `C++` compiler as illustrated below:
+not be detected by `MFront` but by the `C++` compiler as illustrated below:
 
 ~~~~{.bash}
 $ mfront --interface=python YoungModulus.mfront 

@@ -70,7 +70,7 @@ For historical reasons, the `castem` interface also has an alias named
 > For technical reasons, the interfaces `castem` and `castem21` can't be
 > used in the same directory.
 
-A french version of this document is available [here](castem-fr.html).
+A French version of this document is available [here](castem-fr.html).
 
 This document has been written using `Cast3M` greater than 2014. We
 will assume working in a standard `POSIX` environment. The shell used
@@ -108,7 +108,7 @@ Three directories are created, respectively called `include`, `src`,
 `castem`. Only the `src` and `castem` directories have interest for
 the end-user:
 
-- the `src` directory contains the a shared library called
+- the `src` directory contains a shared library called
   `libUmatBehaviour.so`.
 - the `castem` directory contains an example of how to use the
   generated behaviour for each modelling hypothesis supported.
@@ -268,13 +268,13 @@ The following keywords are specific to the `Cast3M` interface:
 - `@CastemMaximumSubStepping` (or `@UMATMaximumSubStepping`). This
   keyword is followed by a strictly positive integer which indicates the
   maximum number of sub steps allowed. Any value greater that \(5\) is
-  not reasonnable, as it would lead to reduction by a factor of at most
+  not reasonable, as it would lead to reduction by a factor of at most
   \(2^{5}\) (i.e. \(32\)) of the initial time step.
 - `@CastemDoSubSteppingOnInvalidResults` (or
   `@UMATDoSubSteppingOnInvalidResults`). This keyword is followed by a
   boolean. If true, invalid results will lead to a sub step. By default,
-  invalid results does not lead to a substeps. Invalid results are
-  debious results according to user defined criteria in the
+  invalid results does not lead to a substep. Invalid results are
+  dubious results according to user defined criteria in the
   `@APosterioriTimeStepScalingFactor` code block.
 - `@CastemFiniteStrainStrategy` (or `@UMATFiniteStrainStrategy`). This
   keyword is followed by a string. This keyword is only valid for

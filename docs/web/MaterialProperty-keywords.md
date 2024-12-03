@@ -11,7 +11,7 @@ The `@Author` keyword is used to give the name of the person who wrote
 the `mfront` file.
 
 All the following words are appended to the author's name up to a
-final semi-colon.
+final semicolon.
 
 Note: The name of the person who formulated the material property,
 behaviour or model shall be given in the description section (see the
@@ -36,7 +36,7 @@ the '*' character.
 
 ## Effect
 
-What happens if a variable if found to be out of its bounds depends on
+What happens if a variable is found to be out of its bounds depends on
 the interface used. Most interfaces let the user choose one of three
 following policies:
 
@@ -68,7 +68,7 @@ The list of available dsl's is returned by the `--list-dsl` option of
 $ mfront --list-dsl
 ~~~~
 
-As the time of writting this notice, the following dsl's are available:
+As the time of writing this notice, the following dsl's are available:
 
 - `DefaultDSL`: this parser is the most generic one as it does not
   make any restriction on the behaviour or the integration method that
@@ -86,7 +86,7 @@ As the time of writting this notice, the following dsl's are available:
   theta method. Unlike `Implicit`, the elastic strain is not
   automatically defined as a state variable.
 - `ImplicitFiniteStrain`: this parser provides a generic integrator
-  based on a theta method..
+  based on a theta method.
 - `IsotropicMisesCreep`: this parser is used for standard creep
   behaviours of the form \(\dot{p}=f(s)\) where \(p\) is the equivalent
   creep strain and \(s\) the equivalent mises stress.
@@ -110,7 +110,7 @@ As the time of writting this notice, the following dsl's are available:
 
 ## DSL options
 
-A DSL' behaviour may be changed using options defined either in the
+A DSL's behaviour may be changed using options defined either in the
 `MFront` file using a JSON-like syntax or as a command line
 argument.
 
@@ -166,13 +166,13 @@ The following options are available for all DSLs:
 - `parameters_as_static_variables` (boolean), which states if parameters
   shall be treated as static variables.
 - `parameters_initialization_from_file` (boolean), which states if
-  parameters can be modified from a external state file. This feature is
+  parameters can be modified from an external state file. This feature is
   only implemented by a few interfaces and is enabled by default.
 - `default_out_of_bounds_policy` (string), which selects the default out
   of bounds policy. Allowed values ar `None` (the default), `Warning` or
   `Strict`.
 - `out_of_bounds_policy_runtime_modification` (boolean), which states if
-  the out of bounds policy can be changed at runtime. By default, this
+  the out-of-bounds policy can be changed at runtime. By default, this
   option is `true`.
 
 
@@ -198,7 +198,7 @@ The `@Date` keyword allows the user to precise when the mfront file
 was written.
 
 All the following words are appended to the date up to a final
-semi-colon.
+semicolon.
 
 ## Example
 
@@ -292,7 +292,7 @@ The `@Interface` keyword let the user specify interfaces to be
 used. The keyword is followed by a list of interface name, separated
 by commas.
 
-Using this keyword is considered a bad pratice. The user shall use the
+Using this keyword is considered a bad practice. The user shall use the
 `--interface` command line argument to specify which interface shall
 be used.
 
@@ -310,7 +310,7 @@ The keyword `@Law` is not documented yet
 # The `@Library` keyword
 
 The `@Library` keyword let the user specify part of the generated
-libary name. This keyword is followed by the name of library.
+library name. This keyword is followed by the name of library.
 
 This name must be a valid C++ identifier. The following characters are
 legal as the first character of an identifier, or any subsequent
@@ -385,7 +385,7 @@ except the first:
 
 The `@MaterialLaw` keyword imports the definition of a material law
 defined in a mfront file and compiles, as part of the current library,
-an function using the `mfront` interface. This function is available
+a function using the `mfront` interface. This function is available
 in every standard code blocks.
 
 The `@MaterialLaw` keyword is followed by a string or an array of
@@ -453,7 +453,7 @@ represented by the '*' character.
 
 ## Effect
 
-In implicit schemes, if physical bounds are set on a integration
+In implicit schemes, if physical bounds are set on an integration
 variable, this variable is bounded to satisfy them during the internal
 iterations.
 
@@ -533,11 +533,11 @@ an equal sign and its value.
 # The `@UnitSystem` keyword
 
 The `@UnitSystem` keyword declares that the state variables, external
-state variables an parameters are expressed in a given unit system. In
+state variables and parameters are expressed in a given unit system. In
 the current version of `MFront`, the only supported unit system is the
 international system of units, denoted `SI`.
 
-One advantage of declaring an unit system is that physical bounds of
+One advantage of declaring a unit system is that physical bounds of
 variables associated with a glossary entry can automatically be declared
 by `MFront`.
 

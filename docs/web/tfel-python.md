@@ -18,10 +18,10 @@ Three classes standing for symmetric tensors are available:
 The standard mathematical operations are defined:
 
 - addition of two symmetric tensors.
-- substraction of two symmetric tensors.
+- subtraction of two symmetric tensors.
 - multiplication by scalar.
 - in-place addition by a symmetric tensor.
-- in-place substraction by a symmetric tensor.
+- in-place subtraction by a symmetric tensor.
 - in-place multiplication by scalar.
 - in-place division by scalar.
 
@@ -57,8 +57,6 @@ The following functions are available:
 
 The `computeHosfordStress` function, which compute the Hosford
 equivalent stress, is available.
-
-The following 
 
 ## Bindings related to the Barlat equivalent stress
 

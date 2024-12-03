@@ -399,7 +399,7 @@ where
 * \(t_{0}\) is the reference time;
 * \(t\) is the current time.
 
-In pratice, this integral is computed incrementally as follows: 
+In practice, this integral is computed incrementally as follows: 
 \[
 \average{T}\paren{t+dt,\vec{r}} \approx \Frac{1}{t+dt-t_{0}}\left[\paren{t-t_{0}}\,\average{T}\paren{t,\vec{r}}+\Frac{dt}{2}\left[T\paren{t,\vec{r}}+T\paren{t+dt,\vec{r}}\right]\right]
 \]
@@ -463,7 +463,7 @@ This temperature is defined as follows:\[\average{T}\paren{t} =\Frac{1}{t-t_{0}}
 
 ## Notes 
 
-In pratice, the computation of the spatial integral is done using standard finite element operations and the time integral is performed incrementally using a trapezoidal rule.
+In practice, the computation of the spatial integral is done using standard finite element operations and the time integral is performed incrementally using a trapezoidal rule.
 
 # The `MeanTemperature` entry
 
@@ -480,7 +480,7 @@ This temperature is defined as follows:\[\average{T}\paren{t}  = \Frac{1}{\int_{
 
 ## Notes 
 
-In pratice, the computation of this integral is done using standard finite element operations.
+In practice, the computation of this integral is done using standard finite element operations.
 
 # The `NeutronFluence` entry
 

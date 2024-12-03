@@ -40,7 +40,7 @@ The code integrates extensive knowledge and know-how based on more than
 30 years of national and international research and feedback in the
 framework of nuclear materials under irradiation. It is part of the
 PLEIADES platform jointly developed by EDF and CEA, and validated on an
-extensive data base including more than 900 irradiated fuel rods
+extensive database including more than 900 irradiated fuel rods
 examination and validation results.
 
 # Material properties
@@ -63,14 +63,14 @@ The second argument contains the arguments of the material property.
 The third argument gives the number of arguments.
 
 The fourth argument specify the policy used when an argument or the
-output is out of this bounds.
+output is out of these bounds.
 
 ## Error handling {#sec:error_handling}
 
 On error, the returned value is `Not A Number` (`Nan`).
 
 Full diagnostic is available in the `CyranoOutputStatus` structure. See
-the [doxygen documentation](html/struct_cyrano_output_status.html)).
+the [doxygen documentation](html/struct_cyrano_output_status.html).
 
 ## Out of bounds policy
 
@@ -80,11 +80,11 @@ policies. Three policies are declared:
 - `CYRANO_NONE_POLICY`: with this policy, nothing is done if the
   arguments are out of their bounds (checks are not even performed).
 - `CYRANO_WARNING_POLICY`: with this policy, checks on the arguments are
-  performed. If one argument if out of its bounds, this will be reported
+  performed. If one argument is out of its bounds, this will be reported
   in the output status and an appropriate error message will be
   reported. The computations are however performed.
 - `CYRANO_STRICT_POLICY`: With this policy, checks on the arguments are
-  performed. If one argument if out of its bounds, this will be reported
+  performed. If one argument is out of its bounds, this will be reported
   in the output status and an appropriate error message will be
   reported.
 
@@ -129,7 +129,7 @@ small strain mono-dimensional code to support finite strain modelling.
 
 ### Kinematic and mechanical equilibrium
 
-This approach relies on the the fact that the direct link between the
+This approach relies on the fact that the direct link between the
 deformation gradient \(\tns{F}\) and the linearized strain
 \(\tepsilonto\) in monodimensional modelling:
 
@@ -189,7 +189,7 @@ where \(R\) is the actual radius and \(H\) is the actual height. Thus,
 where \(u_{r}\) is the radial displacement, \(R_{0}\) is the initial
 radius and \(\epsilonto_{zz}\) is the axial strain.
 
-This relations are exactly the same as in small strain analysis, except
+These relations are exactly the same as in small strain analysis, except
 for the dependency of \(S\) with the actual radius which adds additional
 terms to the stiffness matrix.
 
@@ -217,7 +217,7 @@ where:
 - \(S^{c}_{i}\) is the internal surface of the upper cap in the current
   geometry, defined by \(S^{c}_{i}=\pi\,R_{i}^{2}\).
 - \(S^{c}_{e}\) is the external surface of the upper cap in the current
-  geometry, defined by \(S^{c}_{e}=\pi\,R_{e}^{2}\)..
+  geometry, defined by \(S^{c}_{e}=\pi\,R_{e}^{2}\).
 
 Here, the pressure is assumed constant over the time step : the
 sensibility with the geometrical changes is neglected. Dependency of the
@@ -302,7 +302,7 @@ by the `StandardElasticity` and `StandardViscoplasticity` bricks.
 > 
 > Most stress potentials provide a `computeElasticPrediction` method.
 > Under the generalised plane stress hypothesis and using the
-> logarithmic strain, this method becomes non linear. The total axial
+> logarithmic strain, this method becomes non-linear. The total axial
 > logarithmic strain is computed so that:
 > \[
 > \exp\paren{

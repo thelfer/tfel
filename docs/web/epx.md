@@ -44,7 +44,7 @@ The following features are currently available:
     `MieheApelLambrechtLogarithmicStrain` strategies (see
     @edf_loi_2013;@miehe_anisotropic_2002)
 - `Europlexus` is able to analyse the generated library to get
-  helpfull information about the mechanical behaviour:
+  helpful information about the mechanical behaviour:
   + number and name of material properties
   + number, names and type of internal state variables
   + number and names external variables

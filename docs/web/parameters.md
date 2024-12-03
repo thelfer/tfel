@@ -53,7 +53,7 @@ few shortcomings (compared to material properties).
 # Defining a parameter
 
 Parameters are defined with the `@Parameter` keyword. The following
-syntax are allowed:
+syntaxes are allowed:
 
 ~~~~~{#parameters .cpp}
 @Parameter real dmax1 =  0.98; // initialisation by assignment syntax
@@ -124,8 +124,8 @@ value.
 
 This functionality is illustrated below:
 
-![Defintion of parameters through an external file](img/parameters.svg
- "Defintion of parameters through an external file")
+![Definition of parameters through an external file](img/parameters.svg
+ "Definition of parameters through an external file")
 
 # Querying information about parameters in `mfront-query`
 

@@ -35,7 +35,7 @@ The `TFEL` project provides two tools to ease developers' life:
 
 # Using `tfel-config`
 
-The `tfel-config` utility provides many informations useful for
+The `tfel-config` utility provides much information useful for
 compiling projects based on the `TFEL` libraries. This utility is used
 internally by `MFront` (see [this
 page](compiling-mfront-shared-libraries.html) for details).
@@ -131,7 +131,7 @@ Note that those packages import targets in the `tfel::` namespace.
 
 ## Example of usage
 
-The following `CMakeLists.txt` file declares a simple executable relying
+The following `CMakeLists.txt` file declares a simple executable relying on
 the `TFELMathCubicSpline` library:
 
 ~~~~{.cmake}

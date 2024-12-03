@@ -14,12 +14,12 @@ eqnPrefixTemplate: "($$i$$)"
 This page provides several links to available documentations regarding
 `TFEL` and `MFront`, which are fairly detailed. Unfortunately, most of
 these materials are written in French. They also mostly refer to
-versions `2.0.x`, and thus do not describe .
+versions `2.0.x`, and thus do not describe the latest available version.
 
 For a new (English speaking) user, we would highly recommend:
 
-- Read the **reference paper** @helfer_introducing_2015. Altough this
-  paper covers versions `2.0.x`, it gives an good general overiew of
+- Read the **reference paper** @helfer_introducing_2015. Although this
+  paper covers versions `2.0.x`, it gives an good general overview of
   `TFEL` and `MFront`'s abilities.
 - Read the [`getting-started` page](getting-started.html).
 - Read the page dedicated to second and fourth order tensors,
@@ -28,10 +28,10 @@ For a new (English speaking) user, we would highly recommend:
   implementations of various classical mechanical behaviours. Those
   implementations are kept up-to-date to use the latest developments
   and techniques introduced in `TFEL` and `MFront`.
-- If none of the implementation described in the gallery match the user
+- If none of the implementations described in the gallery match the user
   need, one may have a look at the implementations provided in the
   `mfront/tests/behaviours` directory in the sources. Beware that those
-  implementations are not updated on purpose to ensure back-ward
+  implementations are not updated on purpose to ensure backward
   compatibility. Most of them can be simplified by using
   [bricks](BehaviourBricks.html).
 - Finally, you may want to have a look at the documentation of the
