@@ -10,6 +10,7 @@
 
 #include <vector>
 #include "MFront/BehaviourBrick/IsotropicHardeningRule.hxx"
+#include "MFront/BehaviourBrick/StrainRateSensitivityFactor.hxx"
 
 namespace mfront::bbrick {
 
@@ -55,11 +56,10 @@ namespace mfront::bbrick {
     ~StrainRateSensitiveIsotropicHardeningRule() override;
 
    protected:
-    //! \brief isotropic hardening rules
+    //! \brief rate independant isotropic hardening rules
     std::vector<std::shared_ptr<IsotropicHardeningRule>> ihrs;
-    //     BehaviourDescription::MaterialProperty E;
-    //     BehaviourDescription::MaterialProperty dp0_dt;
-    //     BehaviourDescription::MaterialProperty C;
+    //! \brief rate sensitivity factor
+    std::shared_ptr<StrainRateSensitivityFactor> rsf;
   };  // end of struct StrainRateSensitiveIsotropicHardeningRule
 
 }  // end of namespace mfront::bbrick

@@ -17,6 +17,7 @@
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/IsotropicHardeningRuleFactory.hxx"
+#include "MFront/BehaviourBrick/StrainRateSensitivityFactorFactory.hxx"
 #include "MFront/BehaviourBrick/StrainRateSensitiveIsotropicHardeningRule.hxx"
 
 namespace mfront::bbrick {
@@ -107,20 +108,28 @@ namespace mfront::bbrick {
           this->ihrs.push_back(ihr);
         }
       } else if (e.first == "rate_sensitivity_factor") {
-          const auto ds = getDataStructure(e.first, e.second);
-          if (getVerboseMode() >= VERBOSE_DEBUG) {
-            getLogStream() << "adding rate sensitivity factor '" << ds.name
-                           << "'" << std::endl;
-          }
-          //           auto& rf = IsotropicHardeningRuleFactory::getFactory();
-          //           this->rsf = rf.generate(ds.name);
-          //           this->rsf->initialize(bd, dsl, id, "", ds.data);
+        const auto ds = getDataStructure(e.first, e.second);
+        if (getVerboseMode() >= VERBOSE_DEBUG) {
+          getLogStream() << "adding rate sensitivity factor '" << ds.name << "'"
+                         << std::endl;
+        }
+        if (this->rsf != nullptr) {
+          raise(
+              "a rate independant isotropic hardening rule "
+              "has already been defined");
+        }
+        auto& rf = StrainRateSensitivityFactorFactory::getFactory();
+        this->rsf = rf.generate(ds.name);
+        this->rsf->initialize(bd, dsl, id, "", ds.data);
       } else {
         raise("invalid option '" + e.first + "'");
       }
     }
     if (this->ihrs.empty()) {
       raise("no rate independant isotropic hardening rule defined");
+    }
+    if (this->rsf == nullptr) {
+      raise("no strain rate sensitivity factor defined");
     }
     const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
@@ -166,8 +175,9 @@ namespace mfront::bbrick {
                                     getIsotropicHardeningRuleId(id, idx));
       ++idx;
     }
+    c += this->rsf->computeStrainRateSensitivityFactor(bd, fid, id);
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
-    c += "const auto " + R + " = ";
+    c += "const auto " + R + " = (";
     bool first = true;
     for (int idx = 0; idx != static_cast<int>(this->ihrs.size()); ++idx) {
       const auto Rid = getIsotropicHardeningRuleValue("R", fid, id, idx);
@@ -177,7 +187,10 @@ namespace mfront::bbrick {
       c += Rid;
       first = false;
     }
-    c += ";\n";
+    c += ") * (";
+    const auto Rs = id.empty() ? "Rs" + fid : "Rs" + fid + "_" + id;
+    c += Rs;
+    c += ");\n";
     return c;
   }  // end of computeElasticLimit
 
@@ -192,8 +205,10 @@ namespace mfront::bbrick {
           bd, fid, getIsotropicHardeningRuleId(id, idx));
       ++idx;
     }
+    c += this->rsf->computeStrainRateSensitivityFactorAndDerivative(bd, fid, id);
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
-    c += "const auto " + R + " = ";
+    const auto Rs = id.empty() ? "Rs" + fid : "Rs" + fid + "_" + id;
+    c += "const auto " + R + " = (";
     bool first = true;
     for (int idx = 0; idx != static_cast<int>(this->ihrs.size()); ++idx) {
       const auto Rid = getIsotropicHardeningRuleValue("R", fid, id, idx);
@@ -203,9 +218,12 @@ namespace mfront::bbrick {
       c += Rid;
       first = false;
     }
-    c += ";\n";
+    c += ") * (";
+    c += Rs;
+    c += ");\n";
     const auto dR = "d" + R + "_ddp" + fid;
-    c += "const auto " + dR + " = ";
+    const auto dRs = "d" + Rs + "_ddp" + fid;
+    c += "const auto " + dR + " = (";
     first = true;
     for (int idx = 0; idx != static_cast<int>(this->ihrs.size()); ++idx) {
       const auto Rid = getIsotropicHardeningRuleValue("R", fid, id, idx);
@@ -216,7 +234,17 @@ namespace mfront::bbrick {
       c += dRid;
       first = false;
     }
-    c += ";\n";
+    c += ") * " + Rs + " + (";
+    first = true;
+    for (int idx = 0; idx != static_cast<int>(this->ihrs.size()); ++idx) {
+      const auto Rid = getIsotropicHardeningRuleValue("R", fid, id, idx);
+      if (!first) {
+        c += " + ";
+      }
+      c += Rid;
+      first = false;
+    }
+    c += ") * " + dRs + ";\n";
     return c;
   }  // end of computeElasticLimitAndDerivative
 
@@ -229,6 +257,7 @@ namespace mfront::bbrick {
       ihr->endTreatment(bd, dsl, fid, getIsotropicHardeningRuleId(id, idx));
       ++idx;
     }
+    this->rsf->endTreatment(bd, dsl, fid, id);
   }  // end of endTreatment
 
   StrainRateSensitiveIsotropicHardeningRule::

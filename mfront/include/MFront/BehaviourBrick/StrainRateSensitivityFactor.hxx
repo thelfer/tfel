@@ -73,23 +73,13 @@ namespace mfront::bbrick {
                             const std::string&,
                             const DataMap&) = 0;
     /*!
-     * \brief return the code computing the initial radius.
-     * The code defines a variable named "Rel"+fid+"_"+id
-     * \param[in] bd: behaviour description
-     * \param[in] fid: flow id
-     * \param[in] id: identifier
-     */
-    virtual std::string computeElasticPrediction(const BehaviourDescription&,
-                                                 const std::string&,
-                                                 const std::string&) const = 0;
-    /*!
      * \brief return the code computing the radius of the elastic limit.
      * The code defines a variable named "R"+fid+"_"+id
      * \param[in] bd: behaviour description
      * \param[in] fid: flow id
      * \param[in] id: identifier
      */
-    virtual std::string computeElasticLimit(const BehaviourDescription&,
+    virtual std::string computeStrainRateSensitivityFactor(const BehaviourDescription&,
                                             const std::string&,
                                             const std::string&) const = 0;
     /*!
@@ -100,7 +90,7 @@ namespace mfront::bbrick {
      * \param[in] fid: flow id
      * \param[in] id: identifier
      */
-    virtual std::string computeElasticLimitAndDerivative(
+    virtual std::string computeStrainRateSensitivityFactorAndDerivative(
         const BehaviourDescription&,
         const std::string&,
         const std::string&) const = 0;
