@@ -16,6 +16,7 @@
 #include "MFront/BehaviourBrick/StrainRateSensitivityFactor.hxx"
 #include "MFront/BehaviourBrick/StrainRateSensitivityFactorFactory.hxx"
 #include "MFront/BehaviourBrick/CowperSymondsStrainRateSensitivityFactor.hxx"
+#include "MFront/BehaviourBrick/JohnsonCookStrainRateSensitivityFactor.hxx"
 
 namespace mfront::bbrick {
 
@@ -54,6 +55,9 @@ namespace mfront::bbrick {
   StrainRateSensitivityFactorFactory::StrainRateSensitivityFactorFactory() {
     this->addGenerator("CowperSymonds", []() {
       return std::make_shared<bbrick::CowperSymondsStrainRateSensitivityFactor>();
+    });
+    this->addGenerator("JohnsonCook", []() {
+      return std::make_shared<bbrick::JohnsonCookStrainRateSensitivityFactor>();
     });
   }  // end of StrainRateSensitivityFactorFactory
 
