@@ -37,7 +37,7 @@
 
 @LocalVariable stress Fel;
 
-@StaticVariable real   p_eps = 1.e-13;
+@StaticVariable real p_eps = 1.e-13;
 @StaticVariable real seq_eps = 1.e-13;
 
 /* Initialize constants within the iterative scheme */

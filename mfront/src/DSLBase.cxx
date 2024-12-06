@@ -1076,7 +1076,6 @@ namespace mfront {
       this->throwRuntimeError("DSLBase::treatStaticVar",
                               "type given is not valid.");
     }
-    ++(this->current);
     this->checkNotEndOfFile("DSLBase::treatStaticVar",
                             "Cannot read variable name.");
     const auto name = this->current->value;
