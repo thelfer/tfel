@@ -18,10 +18,7 @@
 #include <stdexcept>
 #include <typeinfo>
 
-namespace tfel::material {
-
-  namespace homogenization {
-    namespace elasticity {
+namespace tfel::material::homogenization::elasticity{
 
       template <typename real>
       TFEL_HOST_DEVICE static tfel::math::st2tost2<2u, real>
@@ -435,9 +432,7 @@ namespace tfel::material {
         const auto A = invert(st2tost2<3u, real>::Id() + PPr);
         return A;
       };  // end of function computeAxisymmetricalEllipsoidLocalisationTensor
-    }  // end of namespace elasticity
-  }  // end of namespace homogenization
 
-}  // end of namespace tfel::material
+}  // end of namespace tfel::material::homogenization::elasticity
 
 #endif /* LIB_TFEL_MATERIAL_ESHELBY_IXX */

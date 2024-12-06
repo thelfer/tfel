@@ -17,10 +17,7 @@
 #include "TFEL/Material/StiffnessTensor.hxx"
 #include <stdexcept>
 
-namespace tfel::material {
-
-  namespace homogenization {
-    namespace elasticity {
+namespace tfel::material::homogenization::elasticity{
 
       /*!
        * This function builds the Eshelby tensor of a circular cylinder embedded
@@ -180,10 +177,8 @@ namespace tfel::material {
                                       const StressType&,
                                       const real&);
 
-    }  // end of namespace elasticity
-  }  // end of namespace homogenization
 
-}  // end of namespace tfel::material
+}  // end of namespace tfel::material::homogenization::elasticity
 
 #include "TFEL/Material/Eshelby.ixx"
 

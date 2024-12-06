@@ -17,10 +17,7 @@
 #include <numbers>
 #include <stdexcept>
 
-namespace tfel::material {
-
-  namespace homogenization {
-    namespace elasticity {
+namespace tfel::material::homogenization::elasticity{
 
       namespace internals {
 
@@ -99,7 +96,7 @@ namespace tfel::material {
                                      unsigned short int l) {
           const int I = vi(i, j);
           const int J = vi(k, l);
-          real fac = real(1);
+          auto fac = real(1);
           constexpr auto icste = tfel::math::Cste<real>::isqrt2;
           if (I > 2) {
             fac *= icste;
@@ -119,7 +116,7 @@ namespace tfel::material {
                                      Type Aijkl) {
           const int I = vi(i, j);
           const int J = vi(k, l);
-          real fac = real(1);
+          auto fac = real(1);
           constexpr auto cste = tfel::math::Cste<real>::sqrt2;
           if (I > 2) {
             fac *= cste;
@@ -139,7 +136,7 @@ namespace tfel::material {
                                          unsigned short int j,
                                          Type Aij) {
           const int I = vi(i, j);
-          real fac = real(1);
+          auto fac = real(1);
           constexpr auto cste = tfel::math::Cste<real>::sqrt2;
           if (I > 2) {
             fac *= cste;
@@ -152,7 +149,7 @@ namespace tfel::material {
                                          unsigned short int i,
                                          unsigned short int j) {
           const int I = vi(i, j);
-          real fac = real(1);
+          auto fac = real(1);
           constexpr auto icste = tfel::math::Cste<real>::isqrt2;
           if (I > 2) {
             fac *= icste;
@@ -326,9 +323,7 @@ namespace tfel::material {
         return A;
       };
 
-    }  // end of namespace elasticity
-  }  // end of namespace homogenization
-
-}  // namespace tfel::material
+  
+}  // namespace tfel::material::homogenization::elasticity
 
 #endif /* LIB_TFEL_MATERIAL_ESHELBYANISOTROPIC_IXX */

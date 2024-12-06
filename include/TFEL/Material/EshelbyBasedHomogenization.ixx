@@ -15,10 +15,7 @@
 
 #include <cmath>
 
-namespace tfel::material {
-
-  namespace homogenization {
-    namespace elasticity {
+namespace tfel::material::homogenization::elasticity{
 
       template <unsigned short N,
                 typename real,
@@ -547,9 +544,7 @@ namespace tfel::material {
                                                          nu_i, A);
       };
 
-    }  // end of namespace elasticity
-  }  // end of namespace homogenization
 
-}  // end of namespace tfel::material
+}  // end of namespace tfel::material::homogenization::elasticity
 
 #endif /* LIB_TFEL_MATERIAL_ESHELBYBASEDHOMOGENIZATION_IXX */

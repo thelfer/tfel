@@ -17,11 +17,7 @@
 #include "TFEL/Material/StiffnessTensor.hxx"
 #include <stdexcept>
 
-namespace tfel::material {
-
-  namespace homogenization {
-    namespace elasticity {
-
+namespace tfel::material::homogenization::elasticity{
       // TODO 2D
       /*!
        * This function builds the Hill tensor of a general 2d ellipse embedded
@@ -135,10 +131,9 @@ namespace tfel::material {
           const LengthType&,
           const std::size_t max_it = 12);
 
-    }  // end of namespace elasticity
-  }  // end of namespace homogenization
+ 
 
-}  // end of namespace tfel::material
+}  // end of namespace tfel::material::homogenization:elasticity
 
 #include "TFEL/Material/EshelbyAnisotropic.ixx"
 
