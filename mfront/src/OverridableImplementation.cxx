@@ -208,7 +208,7 @@ namespace mfront {
     }();
     auto r = file.getRoot();
     // check if paths already exists
-    for (const auto p : getPaths(i)) {
+    for (const auto& p : getPaths(i)) {
       if (madnex::exists(r, p)) {
         tfel::raise(
             "mfront::writeMadnexFile: "
