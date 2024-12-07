@@ -29,15 +29,6 @@
 
 namespace mfront {
 
-  // map::at() is missing in ekopath standard library
-  template <typename Map>
-  static typename Map::mapped_type map_at(const Map& m,
-                                          const typename Map::key_type& k) {
-    const auto p = m.find(k);
-    tfel::raise_if(p == m.end(), "map_at : unknown key '" + k + "'");
-    return p->second;
-  }
-
   void DocumentationGeneratorBase::writeStandardLatexMacros(std::ostream& os) {
     os << "\\newcommand{\\tensor}[1]{\\underline{#1}}\n"
        << "\\newcommand{\\tensorq}[1]{\\underline{\\mathbf{#1}}}\n"

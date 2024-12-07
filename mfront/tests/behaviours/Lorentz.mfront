@@ -30,7 +30,7 @@ nu.setGlossaryName("PoissonRatio");
   const real trn = trace(np);
   // force thermodynamique associé à l'endommagement
   bool bloading = false;
-  Stensor dd_dde(real(0));
+  //  Stensor dd_dde(real(0));
   if (d < 0.99) {
     const real y = mu * (pp | pp) + 0.5 * lambda * trp * trp;
     if ((y >= k * g / (1 + g)) && (y <= k * (1 + g) / g)) {

@@ -19,6 +19,7 @@
 #include "MFront/BehaviourBrick/PowerIsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/LinearIsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/UserDefinedIsotropicHardeningRule.hxx"
+#include "MFront/BehaviourBrick/StrainRateSensitiveIsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/IsotropicHardeningRuleFactory.hxx"
 
 namespace mfront::bbrick {
@@ -74,6 +75,10 @@ namespace mfront::bbrick {
     });
     this->addGenerator("UserDefined", []() {
       return std::make_shared<bbrick::UserDefinedIsotropicHardeningRule>();
+    });
+    this->addGenerator("StrainRateSensitive", []() {
+      return std::make_shared<
+          bbrick::StrainRateSensitiveIsotropicHardeningRule>();
     });
   }  // end of IsotropicHardeningRuleFactory
 

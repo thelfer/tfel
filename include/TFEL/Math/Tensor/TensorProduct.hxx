@@ -98,6 +98,8 @@ namespace tfel::math {
           return (this->a(0)) * (this->b(3)) + (this->a(3)) * (this->b(1));
         case 4:
           return (this->a(1)) * (this->b(4)) + (this->a(4)) * (this->b(0));
+      default:
+	break;
       }
       return T(0);
     }  // end of operator()
@@ -148,6 +150,8 @@ namespace tfel::math {
         case 8: /* a2*b8+a6*b3+a8*b1 */
           return (this->a(2)) * (this->b(8)) + (this->a(6)) * (this->b(3)) +
                  (this->a(8)) * (this->b(1));
+      default:
+	break;
       }
       return T(0);
     }  // end of operator()
