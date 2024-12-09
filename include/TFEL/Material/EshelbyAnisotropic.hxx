@@ -54,14 +54,17 @@ namespace tfel::material::homogenization::elasticity{
       /*!
        * This function builds the Hill tensor of a general ellipsoid embedded in
        * an ANISOTROPIC matrix. The function returns the Hill tensor in the
-       * basis (e1,e2,e3) where e1 (resp. e2, e3) is aligned with the axis with
-       * the first (resp. the second and third) biggest length \return an object
+       * global basis \return an object
        * of type st2tost2<3u,tfel::math::invert_type<StressType>> \tparam real:
        * underlying type \tparam LengthType: type of the dimensions of the
        * ellipsoid \tparam StressType: type of the elastic constants \param[in]
-       * C: stiffness tensor of the matrix \param[in] a: length of the first
-       * semi-axis \param[in] b: length of the second semi-axis \param[in] c:
-       * length of the third semi-axis \param[in] max_it: maximal number of iterations
+       * C: stiffness tensor of the matrix in the global basis
+       * \param [in] n_a: direction of the principal axis whose length is
+       * \f$a\f$ \param [in] a: length of semi-axis relative to the direction
+       * \f$n_a\f$ \param [in] n_b: direction of the principal axis whose length
+       * is \f$b\f$ \param [in] b: length of semi-axis relative to the direction
+       * \f$n_b\f$ \param [in] c: length of the remaining semi-axis
+       * \param[in] max_it: maximal number of iterations
        * for integration
        *
        */
@@ -70,7 +73,9 @@ namespace tfel::material::homogenization::elasticity{
           3u,
           typename tfel::math::invert_type<StressType>>
       computeAnisotropicHillTensor(const tfel::math::st2tost2<3u, StressType>&,
+                                   const tfel::math::tvector<3u, real>&,
                                    const LengthType&,
+                                   const tfel::math::tvector<3u, real>&,
                                    const LengthType&,
                                    const LengthType&,
                                    const std::size_t max_it = 12);
@@ -78,13 +83,18 @@ namespace tfel::material::homogenization::elasticity{
       /*!
        * This function builds the Eshelby tensor of a general ellipsoid embedded
        * in an ANISOTROPIC matrix. The function returns the Eshelby tensor in
-       * the basis (e1,e2,e3) where e1 (resp. e2, e3) is aligned with the axis
-       * with the first (resp. the second and third) biggest length \return an
-       * object of type st2tost2<3u,real> \tparam real: underlying type \tparam
-       * LengthType: type of the dimensions of the ellipsoid \tparam StressType:
-       * type of the elastic constants \param[in] C: stiffness tensor of the
-       * matrix \param[in] a: length of the first semi-axis \param[in] b: length
-       * of the second semi-axis \param[in] c: length of the third semi-axis
+       * the global basi
+       * \return an object of type st2tost2<3u,real>
+       * \tparam real: underlying type
+       * \tparam LengthType: type of the dimensions of the ellipsoid
+       * \tparam StressType: type of the elastic constants
+       * \param[in] C: stiffness tensor of the
+       * matrix in the global basis
+       * \param [in] n_a: direction of the principal axis whose length is
+       * \f$a\f$ \param [in] a: length of semi-axis relative to the direction
+       * \f$n_a\f$ \param [in] n_b: direction of the principal axis whose length
+       * is \f$b\f$ \param [in] b: length of semi-axis relative to the direction
+       * \f$n_b\f$ \param [in] c: length of the remaining semi-axis
        * \param[in] max_it: maximal number of iterations for integration
        *
        */
@@ -92,9 +102,11 @@ namespace tfel::material::homogenization::elasticity{
       TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real>
       computeAnisotropicEshelbyTensor(
           const tfel::math::st2tost2<3u, StressType>&,
-          const LengthType&,
-          const LengthType&,
-          const LengthType&,
+          const tfel::math::tvector<3u, real>&,
+            const LengthType&,
+            const tfel::math::tvector<3u, real>&,
+            const LengthType&,
+            const LengthType&,
           const std::size_t max_it = 12);
 
       /*!
@@ -112,7 +124,8 @@ namespace tfel::material::homogenization::elasticity{
        * ellipsoid \tparam LengthType: type of the dimensions of the ellipsoid
        * \param[in] C_0_glob: stiffness tensor of the matrix in the GLOBAL basis
        * \param[in] C_i_loc: stiffness tensor of the inclusion in the LOCAL
-       * basis \param [in] n_a: direction of the principal axis whose length is
+       * basis, which is the basis (n_a,n_b,n_c)
+       * \param [in] n_a: direction of the principal axis whose length is
        * \f$a\f$ \param [in] a: length of semi-axis relative to the direction
        * \f$n_a\f$ \param [in] n_b: direction of the principal axis whose length
        * is \f$b\f$ \param [in] b: length of semi-axis relative to the direction

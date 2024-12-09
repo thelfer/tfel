@@ -34,14 +34,14 @@ namespace tfel::material::homogenization::elasticity{
             const LengthType& c) {
           if ((nu > 0.5) || (nu < -1)) {
             tfel::reportContractViolation("nu>0.5 or nu<-1");
-          };
+          }
           if (not(young > StressType{0})) {
             tfel::reportContractViolation("E<=0");
-          };
+          }
           if (not((a > LengthType{0}) and (b > LengthType{0}) and
                   (c > LengthType{0}))) {
             tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
-          };
+          }
           const tfel::math::tvector<3u, real> n_1 = {1., 0., 0.};
           const tfel::math::tvector<3u, real> n_2 = {0., 1., 0.};
           real mu;
@@ -65,7 +65,7 @@ namespace tfel::material::homogenization::elasticity{
               A_ = computeAxisymmetricalEllipsoidLocalisationTensor<real,
                                                                     StressType>(
                   young, nu, young_i, nu_i, n_1, a / b);
-            };
+            }
             const auto A1111 = 8 * A_(1, 1) / 15 + A_(0, 0) / 5 +
                                2 * (A_(2, 0) + A_(0, 2) + 2 * A_(4, 4)) / 15;
             const auto A1122 = A_(1, 1) / 15 + A_(0, 0) / 15 + A_(1, 2) / 3 +
@@ -88,9 +88,9 @@ namespace tfel::material::homogenization::elasticity{
                 2 * A_(2, 0) / 15 - 2 * A_(4, 4) / 30 + 2 * A_(0, 2) / 15;
             mu = (A1111 - A1122) / 2;
             ka = (A1111 + 2 * A1122) / 3;
-          };
+          }
           return {ka, mu};
-        };  // end of Isotropic
+        }  // end of Isotropic
 
         TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u, real>
         TransverseIsotropic(const StressType& young,
@@ -103,24 +103,24 @@ namespace tfel::material::homogenization::elasticity{
                             const LengthType& c) {
           if ((nu > 0.5) || (nu < -1)) {
             tfel::reportContractViolation("nu>0.5 or nu<-1");
-          };
+          }
           if (not(young > StressType{0})) {
             tfel::reportContractViolation("E<=0");
-          };
+          }
           if (not((a > LengthType{0}) and (b > LengthType{0}) and
                   (c > LengthType{0}))) {
             tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
-          };
+          }
           if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
             tfel::reportContractViolation("n_a is null");
-          };
+          }
           using namespace tfel::math;
           tvector<3u, real> n_;
           if ((n_a[1] != 0.) || (n_a[2] != 0.)) {
             n_ = {1., 0., 0.};
           } else {
             n_ = {0., 1., 0.};
-          };
+          }
           const auto n_2 = cross_product(n_a, n_);
           const auto n_3 = cross_product(n_a, n_2);
           const tvector<3u, real> n_x = {1., 0., 0.};
@@ -153,7 +153,7 @@ namespace tfel::material::homogenization::elasticity{
               A_ = computeEllipsoidLocalisationTensor<real, StressType,
                                                       LengthType>(
                   young, nu, young_i, nu_i, n_z, a, n_x, b, c);
-            };
+            }
             const auto A11 = 3 * (A_(0, 0) + A_(1, 1)) / 8 +
                              (A_(0, 1) + A_(1, 0) + 2 * A_(3, 3)) / 8;
             const auto A22 = A11;
@@ -180,9 +180,9 @@ namespace tfel::material::homogenization::elasticity{
                                              n_3[0], n_3[1], n_3[2],
                                              n_a[0], n_a[1], n_a[2]};
             A = change_basis(A_moy, r);
-          };
+          }
           return A;
-        };  // end of TransverseIsotropic
+        }  // end of TransverseIsotropic
 
         TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u, real> Oriented(
             const StressType& young,
@@ -196,27 +196,27 @@ namespace tfel::material::homogenization::elasticity{
             const LengthType& c) {
           if ((nu > 0.5) || (nu < -1)) {
             tfel::reportContractViolation("nu>0.5 or nu<-1");
-          };
+          }
           if (not(young > StressType{0})) {
             tfel::reportContractViolation("E<=0");
-          };
+          }
           if (not((a > LengthType{0}) and (b > LengthType{0}) and
                   (c > LengthType{0}))) {
             tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
-          };
+          }
           if (not(tfel::math::ieee754::fpclassify(
                       tfel::math::VectorVectorDotProduct::exe<
                           real, tfel::math::tvector<3u, real>,
                           tfel::math::tvector<3u, real>>(n_a, n_b)) ==
                   FP_ZERO)) {
             tfel::reportContractViolation("n_a and n_b not normals");
-          };
+          }
           if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
             tfel::reportContractViolation("n_a is null");
-          };
+          }
           if (tfel::math::ieee754::fpclassify(norm(n_b)) == FP_ZERO) {
             tfel::reportContractViolation("n_b is null");
-          };
+          }
           using namespace tfel::math;
           st2tost2<3u, real> A;
           if ((a == b) and (b == c)) {
@@ -239,9 +239,9 @@ namespace tfel::material::homogenization::elasticity{
             A = computeEllipsoidLocalisationTensor<real, StressType,
                                                    LengthType>(
                 young, nu, young_i, nu_i, n_a, a, n_b, b, c);
-          };
+          }
           return A;
-        };  // end of Oriented
+        }  // end of Oriented
 
       };  // end of struct EllipsoidMeanLocalisator ;
 
@@ -255,19 +255,19 @@ namespace tfel::material::homogenization::elasticity{
                           const tfel::math::st2tost2<3u, real>& A) {
         if ((nu > 0.5) || (nu < -1)) {
           tfel::reportContractViolation("nu>0.5 or nu<-1");
-        };
+        }
         if (not(young > StressType{0})) {
           tfel::reportContractViolation("E<=0");
-        };
+        }
         if ((f < 0) || (f > 1)) {
           tfel::reportContractViolation("f<0 or f>1");
-        };
+        }
         if ((nu_i > 0.5) || (nu_i < -1)) {
           tfel::reportContractViolation("nu_i>0.5 or nu_i<-1");
-        };
+        }
         if (not(young_i > StressType{0})) {
           tfel::reportContractViolation("E_i<=0");
-        };
+        }
         using namespace tfel::math;
         st2tost2<3u, StressType> C_0;
         static constexpr auto value =
@@ -280,7 +280,7 @@ namespace tfel::material::homogenization::elasticity{
         const auto C = C_i - C_0;
         const auto Pr = C * A;
         return C_0 + f * Pr;
-      };  // end of DiluteScheme
+      }  // end of DiluteScheme
 
       template <typename real, typename StressType>
       TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
@@ -292,19 +292,19 @@ namespace tfel::material::homogenization::elasticity{
                               const tfel::math::st2tost2<3u, real>& A) {
         if ((nu > 0.5) || (nu < -1)) {
           tfel::reportContractViolation("nu>0.5 or nu<-1");
-        };
+        }
         if (not(young > StressType{0})) {
           tfel::reportContractViolation("E<=0");
-        };
+        }
         if ((f < 0) || (f > 1)) {
           tfel::reportContractViolation("f<0 or f>1");
-        };
+        }
         if ((nu_i > 0.5) || (nu_i < -1)) {
           tfel::reportContractViolation("nu_i>0.5 or nu_i<-1");
-        };
+        }
         if (not(young_i > StressType{0})) {
           tfel::reportContractViolation("E_i<=0");
-        };
+        }
         using namespace tfel::math;
         st2tost2<3u, StressType> C_0;
         static constexpr auto value =
@@ -319,7 +319,7 @@ namespace tfel::material::homogenization::elasticity{
         const auto inv = invert(f * A + (1 - f) * st2tost2<3u, real>::Id());
         const auto PPr = Pr * inv;
         return C_0 + f * PPr;
-      };  // end of MoriTanakaScheme
+      }  // end of MoriTanakaScheme
 
       template <typename real, typename StressType>
       TFEL_HOST_DEVICE const std::pair<StressType, real>
@@ -330,13 +330,13 @@ namespace tfel::material::homogenization::elasticity{
                                 const real& nu_i) {
         if ((nu > 0.5) || (nu < -1)) {
           tfel::reportContractViolation("nu>0.5 or nu<-1");
-        };
+        }
         if (not(young > StressType{0})) {
           tfel::reportContractViolation("E<=0");
-        };
+        }
         if ((f < 0) || (f > 1)) {
           tfel::reportContractViolation("f<0 or f>1");
-        };
+        }
 
         const auto k0 = young / 3 / (1 - 2 * nu);
         const auto mu0 = young / 2 / (1 + nu);
@@ -361,13 +361,13 @@ namespace tfel::material::homogenization::elasticity{
                                     const real& nu_i) {
         if ((nu > 0.5) || (nu < -1)) {
           tfel::reportContractViolation("nu>0.5 or nu<-1");
-        };
+        }
         if (not(young > StressType{0})) {
           tfel::reportContractViolation("E<=0");
-        };
+        }
         if ((f < 0) || (f > 1)) {
           tfel::reportContractViolation("f<0 or f>1");
-        };
+        }
         const auto k0 = young / 3 / (1 - 2 * nu);
         const auto mu0 = young / 2 / (1 + nu);
         const auto k_i = young_i / 3 / (1 - 2 * nu_i);
@@ -397,7 +397,7 @@ namespace tfel::material::homogenization::elasticity{
           const LengthType& c) {
         if ((f < 0) || (f > 1)) {
           tfel::reportContractViolation("f<0 or f>1");
-        };
+        }
 
         const auto pair =
             EllipsoidMeanLocalisator<3u, real, StressType,
@@ -430,7 +430,7 @@ namespace tfel::material::homogenization::elasticity{
           const LengthType& c) {
         if ((f < 0) || (f > 1)) {
           tfel::reportContractViolation("f<0 or f>1");
-        };
+        }
         const auto A =
             EllipsoidMeanLocalisator<3u, real, StressType,
                                      LengthType>::TransverseIsotropic(young, nu,
@@ -455,7 +455,7 @@ namespace tfel::material::homogenization::elasticity{
           const LengthType& c) {
         if ((f < 0) || (f > 1)) {
           tfel::reportContractViolation("f<0 or f>1");
-        };
+        }
         const auto A =
             EllipsoidMeanLocalisator<3u, real, StressType,
                                      LengthType>::Oriented(young, nu, young_i,
@@ -477,7 +477,7 @@ namespace tfel::material::homogenization::elasticity{
           const LengthType& c) {
         if ((f < 0) || (f > 1)) {
           tfel::reportContractViolation("f<0 or f>1");
-        };
+        }
         const auto pair =
             EllipsoidMeanLocalisator<3u, real, StressType,
                                      LengthType>::Isotropic(young, nu, young_i,
@@ -509,7 +509,7 @@ namespace tfel::material::homogenization::elasticity{
           const LengthType& c) {
         if ((f < 0) || (f > 1)) {
           tfel::reportContractViolation("f<0 or f>1");
-        };
+        }
         const auto A =
             EllipsoidMeanLocalisator<3u, real, StressType,
                                      LengthType>::TransverseIsotropic(young, nu,
@@ -534,7 +534,7 @@ namespace tfel::material::homogenization::elasticity{
                                       const LengthType& c) {
         if ((f < 0) || (f > 1)) {
           tfel::reportContractViolation("f<0 or f>1");
-        };
+        }
         const auto A =
             EllipsoidMeanLocalisator<3u, real, StressType,
                                      LengthType>::Oriented(young, nu, young_i,
