@@ -4,7 +4,7 @@
 
 \newcommand{\mol}{\mathrm{mol}}
 
-Various physical constants now available. The values are extracted from: <http://physics.nist.gov/cuu/Constants/index.htm>
+Various physical constants are now available. The values are extracted from: <http://physics.nist.gov/cuu/Constants/index.htm>
 
 |   Symbol  |       Description         |          Value               |        Unit            |
 |-----------+---------------------------+------------------------------+------------------------|

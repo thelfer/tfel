@@ -38,25 +38,11 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
       : tfel::tests::TestCase("TFEL/Material", "EshelbyBasedHomogenization") {
   }  // end of EshelbyBasedHomogenizationTest
   tfel::tests::TestResult execute() override {
-    using namespace tfel::material;
+
     using real = double;
     constexpr bool qt = true;
     using stress = typename tfel::config::Types<1u, real, qt>::stress;
     using length = typename tfel::config::Types<1u, real, qt>::length;
-    const auto young = stress{1e9};
-    const auto nu = real{0.3};
-    const auto young_i = stress{150e9};
-    const auto nu_i = real{0.2};
-    const auto a = length{0.4};
-    const auto b = length{0.3};
-    const auto c = length{0.2};
-    const auto f = real{0.5};
-    const tfel::math::tvector<3u, real> n_a = {0., 0., 1.};
-    const tfel::math::tvector<3u, real> n_b = {1., 0., 0.};
-    const auto A =
-        homogenization::elasticity::computeSphereLocalisationTensor<real,
-                                                                    stress>(
-            young, nu, young_i, nu_i);
 
     this->template test1<real, stress, length>();
     this->template errors<real, stress, length>();

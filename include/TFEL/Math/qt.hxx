@@ -385,7 +385,11 @@ namespace tfel::math {
       const Quantity<UnitType2, ValueType2, OwnershipPolicy2>& b) noexcept {
     static_assert(std::is_same_v<UnitType, UnitType2>,
                   "invalid operation (unmatched unit)");
-    return a.getValue() == b.getValue();
+    if constexpr (std::floating_point<UnitType>){ 
+      return tfel::math::ieee754::fpclassify(a.getValue() - b.getValue()) == FP_ZERO;
+    } else {
+      return a.getValue() == b.getValue();
+    }
   }
 
   template <UnitConcept UnitType,

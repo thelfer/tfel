@@ -38,7 +38,7 @@ namespace mtest {
   }  // end of makeDeepCopy
 
   bool StudyCurrentState::getFailureStatus() const {
-    for (const auto& failure_status : this->failure_criterion_status) {
+    for (const auto failure_status : this->failure_criterion_status) {
       if (failure_status) {
         return true;
       }

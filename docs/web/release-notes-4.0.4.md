@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 4.0.4 of the
 
 # Issues fixed
 
+## Issue 648: Compilation with `clang-19` fails
+
+For more details, see <https://github.com/thelfer/tfel/issues/648>
+
 ## Issue 615: [mfront] [c++-interface] Missing declaration of the `PhysicalConstants` class
 
 For more details, see <https://github.com/thelfer/tfel/issues/615>

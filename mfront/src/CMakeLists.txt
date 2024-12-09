@@ -251,8 +251,13 @@ set(TFELMFront_SOURCES
     SwiftIsotropicHardeningRule.cxx
     VoceIsotropicHardeningRule.cxx
     DataIsotropicHardeningRule.cxx
+    StrainRateSensitiveIsotropicHardeningRule.cxx
     UserDefinedIsotropicHardeningRule.cxx
     IsotropicHardeningRuleFactory.cxx
+    StrainRateSensitivityFactor.cxx
+    StrainRateSensitivityFactorFactory.cxx
+    CowperSymondsStrainRateSensitivityFactor.cxx
+    JohnsonCookStrainRateSensitivityFactor.cxx
     KinematicHardeningRule.cxx
     KinematicHardeningRuleBase.cxx
     PragerKinematicHardeningRule.cxx

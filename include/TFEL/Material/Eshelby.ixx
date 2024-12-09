@@ -101,11 +101,13 @@ namespace tfel::material::homogenization::elasticity {
       tfel::reportContractViolation("e<=0");
     }
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
+
     const auto precision = [eps, precf, precd, precld]() {
       if (eps == std::numeric_limits<float>::epsilon()) {
         return precf;
       } else if (eps == std::numeric_limits<double>::epsilon()) {
         return precd;
+
       }
       return precld;
     }();
@@ -203,11 +205,13 @@ namespace tfel::material::homogenization::elasticity {
       tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
     }
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
+
     const auto precision = [eps, precf, precd, precld]() {
       if (eps == std::numeric_limits<float>::epsilon()) {
         return precf;
       } else if (eps == std::numeric_limits<double>::epsilon()) {
         return precd;
+
       }
       return precld;
     }();

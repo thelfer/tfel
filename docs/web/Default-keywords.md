@@ -19,7 +19,7 @@ The `@Author` keyword is used to give the name of the person who wrote
 the `mfront` file.
 
 All the following words are appended to the author's name up to a
-final semi-colon.
+final semicolon.
 
 Note: The name of the person who formulated the material property,
 behaviour or model shall be given in the description section (see the
@@ -55,7 +55,7 @@ name(s) of the variable(s) declared, separated by commas.
 
 # The `@AxialGrowth` keyword
 
-The `@AxialGrowth` keyword let the user specify an linear stress free
+The `@AxialGrowth` keyword let the user specify a linear stress-free
 expansion:
 
 - along the second direction of orthotropy if the default orthotropic axes
@@ -137,7 +137,7 @@ the '*' character.
 
 ## Effect
 
-What happens if a variable if found to be out of its bounds depends on
+What happens if a variable is found to be out of its bounds depends on
 the interface used. Most interfaces let the user choose one of three
 following policies:
 
@@ -172,10 +172,10 @@ The `@Coef` keyword is a deprecated synonymous of
 # The `@ComputeStiffnessTensor` keyword
 
 The `ComputeStiffnessTensor` keyword is used to define the elastic
-stiffness tensor based on the elastic material properites given as an
-array of entries. After this array, a semi-colon is expected.
+stiffness tensor based on the elastic material properties given as an
+array of entries. After this array, a semicolon is expected.
 
-This array is used to automatically used to declared the elastic
+This array is used to automatically declare the elastic
 material properties of the behaviour (see the
 `@ElasticMaterialProperties` keyword for details).
 
@@ -223,7 +223,7 @@ automatic computation of the tensors `D` and `D_tdt` which
 respectively refer to the stiffness tensor at \(t+\theta\,dt\) and
 \(t+dt\).
 
-In an explicit scheme, this this keyword leads to the definition of
+In an explicit scheme, this keyword leads to the definition of
 the stiffness tensor which is automatically updated if this tensor
 evolves during the time step.
 
@@ -242,7 +242,7 @@ allows the user to define an arbitrary expansion.
 
 The code block is meant to **update** two symmetric tensors `dl0_l0`
 and `dl1_l0` which respectively stands for the value of the expansion
-at the begin and at the end of the time step.
+at the beginning and at the end of the time step.
 
 ## Note
 
@@ -251,7 +251,7 @@ at the begin and at the end of the time step.
   used, if any (in this case, the user have to refer the interface
   documentation).
 - Local variables can't be used in a `@ComputeStressFreeExpansion`
-  block, because stress free expansion are computed before the
+  block, because stress-free expansion are computed before the
   initialisation of those variables.
 
 ## Example
@@ -277,7 +277,7 @@ The `ComputeThermalExansion` keyword is followed either by a material
 property description or an array of material descriptions (othotropic
 behaviours) giving the mean linear thermal expansion coefficient.
 
-A material decription is either a floatting point number, a formula or
+A material decription is either a floating point number, a formula or
 the name of an external MFront file.
 
 The thermal expansion is computed as follows:
@@ -375,7 +375,7 @@ The list of available dsl's is returned by the `--list-dsl` option of
 $ mfront --list-dsl
 ~~~~
 
-As the time of writting this notice, the following dsl's are available:
+As the time of writing this notice, the following dsl's are available:
 
 - `DefaultDSL`: this parser is the most generic one as it does not
   make any restriction on the behaviour or the integration method that
@@ -393,7 +393,7 @@ As the time of writting this notice, the following dsl's are available:
   theta method. Unlike `Implicit`, the elastic strain is not
   automatically defined as a state variable.
 - `ImplicitFiniteStrain`: this parser provides a generic integrator
-  based on a theta method..
+  based on a theta method.
 - `IsotropicMisesCreep`: this parser is used for standard creep
   behaviours of the form \(\dot{p}=f(s)\) where \(p\) is the equivalent
   creep strain and \(s\) the equivalent mises stress.
@@ -417,7 +417,7 @@ As the time of writting this notice, the following dsl's are available:
 
 ## DSL options
 
-A DSL' behaviour may be changed using options defined either in the
+A DSL's behaviour may be changed using options defined either in the
 `MFront` file using a JSON-like syntax or as a command line
 argument.
 
@@ -473,13 +473,13 @@ The following options are available for all DSLs:
 - `parameters_as_static_variables` (boolean), which states if parameters
   shall be treated as static variables.
 - `parameters_initialization_from_file` (boolean), which states if
-  parameters can be modified from a external state file. This feature is
+  parameters can be modified from an external state file. This feature is
   only implemented by a few interfaces and is enabled by default.
 - `default_out_of_bounds_policy` (string), which selects the default out
   of bounds policy. Allowed values ar `None` (the default), `Warning` or
   `Strict`.
 - `out_of_bounds_policy_runtime_modification` (boolean), which states if
-  the out of bounds policy can be changed at runtime. By default, this
+  the out-of-bounds policy can be changed at runtime. By default, this
   option is `true`.
 
 
@@ -505,7 +505,7 @@ The `@Date` keyword allows the user to precise when the mfront file
 was written.
 
 All the following words are appended to the date up to a final
-semi-colon.
+semicolon.
 
 ## Example
 
@@ -552,7 +552,7 @@ on the mean free path of the dislocations of a specific system can be
 defined though the `@DislocationsMeanFreePathInteractionMatrix`
 keyword.
 
-This keyword follows the same conventions than the
+This keyword follows the same conventions as the
 `@InteractionMatrix` keyword. In particular, the structure of the
 matrix is fully described in the description of `@InteractionMatrix`.
 
@@ -623,7 +623,7 @@ array size after the external state variable name.
 
 ## External names
 
-It is recommended to associate to a external state variable a glossary
+It is recommended to associate to an external state variable a glossary
 or an entry name through the methods `setGlossaryName` or
 `setEntryName` respectively.
 
@@ -636,12 +636,12 @@ or an entry name through the methods `setGlossaryName` or
 
 # The `@GlidingSystem` keyword
 
-An synonymous of `@SlipSystem`.
+A synonym of `@SlipSystem`.
 See `@SlipSystem` for details.
 
 # The `@GlidingSystems` keyword
 
-An synonymous of `@SlipSystems`.
+A synonym of `@SlipSystems`.
 See `@SlipSystems` for details.
 
 # The `@Import` keyword
@@ -702,8 +702,8 @@ The keyword `@Initialize` is not documented yet
 
 The `@InitializeFunction` keyword introduces a code block that can be
 used to initialize internal state variables at the very beginning of the
-computation. Initalize functions may have user so-called
-*initialize funtion variables*.
+computation. Initialize functions may have user so-called
+*initialize function variables*.
 
 In this version, only the `generic` interface generates functions
 associated with initialize functions (See Section
@@ -755,7 +755,7 @@ variables, etc.), initialize function variables can be defined after the
 first code block. However, care must be taken to declare initialize
 function variables **before** their use in an initialize function.
 
-Note that an initialize function variable can be used in differents
+Note that an initialize function variable can be used in different
 initialize function.
 
 # The `@InitializeLocalVariables` keyword
@@ -815,7 +815,7 @@ The following conventions apply:
 # The `@InteractionMatrix` keyword
 
 The `@InteractionMatrix` keyword let the user specify an interaction
-matrix. By convention, this matrix is associated with harderning.
+matrix. By convention, this matrix is associated with hardening.
 
 The interaction matrix associated with the effects of the dislocations
 on the mean free path of the dislocations of a specific system can be
@@ -890,7 +890,7 @@ The `@Interface` keyword let the user specify interfaces to be
 used. The keyword is followed by a list of interface name, separated
 by commas.
 
-Using this keyword is considered a bad pratice. The user shall use the
+Using this keyword is considered a bad practice. The user shall use the
 `--interface` command line argument to specify which interface shall
 be used.
 
@@ -968,7 +968,7 @@ behaviour.
 # The `@Library` keyword
 
 The `@Library` keyword let the user specify part of the generated
-libary name. This keyword is followed by the name of library.
+library name. This keyword is followed by the name of library.
 
 This name must be a valid C++ identifier. The following characters are
 legal as the first character of an identifier, or any subsequent
@@ -1052,7 +1052,7 @@ except the first:
 
 The `@MaterialLaw` keyword imports the definition of a material law
 defined in a mfront file and compiles, as part of the current library,
-an function using the `mfront` interface. This function is available
+a function using the `mfront` interface. This function is available
 in every standard code blocks.
 
 The `@MaterialLaw` keyword is followed by a string or an array of
@@ -1158,7 +1158,7 @@ The `@MinimalTimeStepScalingFactor` let the user define the default
 value of the `minimal_time_step_scaling_factor` parameter.
 
 This parameter defines the minimal value by which the time step will
-be reduce in case of non convergence or when the time step is rejected
+be reduced in case of non convergence or when the time step is rejected
 by one of the `@APrioriTimeStepScalingFactor` or
 `@APosterioriTimeStepScalingFactor` code blocks.
 
@@ -1194,7 +1194,7 @@ be used like external state variables*.
 ## Note
 
 In the behaviour, the names of the variables described by the model
-are the same than in the model.
+are the same as in the model.
  
 The entry/glossary names of those variables shall be defined in the
 model.
@@ -1286,7 +1286,7 @@ represented by the '*' character.
 
 ## Effect
 
-In implicit schemes, if physical bounds are set on a integration
+In implicit schemes, if physical bounds are set on an integration
 variable, this variable is bounded to satisfy them during the internal
 iterations.
 
@@ -1307,13 +1307,13 @@ of the integration depending on the nature of the variable.
 The `@PostProcessing` keyword introduces a code block that can be used
 to perform computations independently of the behaviour integration.
 
-The outputs of post-processings are stored in so-called *post-processing
+The outputs of post-processing are stored in so-called *post-processing
 variables*. See the `@PostProcessingVariable` for details.
 
-Post-processings are typically meant to be called at the end of a time
+Post-processing is typically meant to be called at the end of a time
 step, when the equilibrium has been reached.
 
-Because post-processings are called independently of the behaviour
+Because post-processing is called independently of the behaviour
 integration step, special care to the meaning of the variables must be
 taken:
 
@@ -1332,7 +1332,7 @@ time step as usual.
 
 For the gradients and external state variables have their values at the
 end of the time step. Their values at the beginning of the time step are
-avaiable in the `initial_state` data structure (if defined). Their
+available in the `initial_state` data structure (if defined). Their
 increments have their usual values.
 
 > **About initialisation of local variables**
@@ -1361,7 +1361,7 @@ strain at the end of the time step:
 Post-processing variables are introduced by the
 `@PostProcessingVariable` keyword.
 
-Post-processing variables are only defined in post-processings, and
+Post-processing variables are only defined in post-processing, and
 can't be used in the other code blocks.
 
 Contrary most variables (internal state variables, external state
@@ -1369,8 +1369,8 @@ variables, etc.), post-processing variables can be defined after the
 first code block. However, care must be taken to declare post-processing
 variables **before** their use in a post-processing.
 
-Note that a post-processing variable can be used in differents
-post-processings. Typically, one may compute the principal strains in a
+Note that a post-processing variable can be used in different
+post-processing. Typically, one may compute the principal strains in a
 dedicated post-processing and in a post-processing computing the
 principal strains and the strain eigen vectors.
 
@@ -1490,7 +1490,7 @@ be computed by the calling code. This generally means that some extra
 material properties will be introduced and handled by the interface
 before the behaviour integration.
 
-By default, the stiffness tensor will have the same symmetry than the
+By default, the stiffness tensor will have the same symmetry as the
 behaviour (see `@IsotropicElasticBehaviour` to change this in the case
 of an orthotropic behaviour).
 
@@ -1508,7 +1508,7 @@ code. This generally means that some extra material properties will be
 introduced and handled by the interface before the behaviour
 integration.
 
-The thermal expansion tensor will have the same symmetry than the
+The thermal expansion tensor will have the same symmetry as the
 behaviour. For example, for an isotropic behaviour, the thermal
 expansion tensor will be proportional to the identity. For an
 orthotropic behaviour, the thermal expansion tensor is diagonal and
@@ -1520,12 +1520,12 @@ expressed in the material frame.
 
 # The `@SlidingSystem` keyword
 
-An synonymous of `@SlipSystem`.
+A synonym of `@SlipSystem`.
 See `@SlipSystem` for details.
 
 # The `@SlidingSystems` keyword
 
-An synonymous of `@SlipSystems`.
+A synonym of `@SlipSystems`.
 See `@SlipSystems` for details.
 
 # The `@SlipSystem` keyword
@@ -1613,7 +1613,7 @@ $ mfront-query --help-behaviour-queries-list |grep slip
 ~~~~
 
 The `--slip-systems-by-index` query gives the index associated to a
-given slip system, which is helpfull for postprocessing purposes. For
+given slip system, which is helpful for postprocessing purposes. For
 this example:
 
 ~~~~{.sh}
@@ -1638,7 +1638,7 @@ Concerning the orientation tensors, the following queries are
 available:
 
 - `--orientation-tensors`: list all the orientation tensors, sorted by
-  family".
+  family.
 - `--orientation-tensors-by-index`: list all the orientation tensors.
 - `--orientation-tensors-by-slip-system`: list all the orientation
   tensors.
@@ -1649,7 +1649,7 @@ Concerning the Schmid factors, the following queries are
 available:
 
 - `--schmid-factors`: list all the Schmid factors, sorted by
-  family".
+  family.
 - `--schmid-factors-by-index`: list all the Schmid factors.
 
 ~~~~{.sh}
@@ -1661,7 +1661,7 @@ quote to avoid interpretation by the shell.
 
 # The `@SlipSystems` keyword
 
-The `@SlipSystems` can be use to define several families of slip
+The `@SlipSystems` can be used to define several families of slip
 systems. This keyword is followed by an array defining the various
 slip systems. The user can refer to the description of the
 `@SlipSystem` keyword for a detailed description.
@@ -1670,7 +1670,7 @@ slip systems. The user can refer to the description of the
 
 The `@Sources` keyword let the user define a code block that will be
 integrated in the generated sources of a behaviour. This allows the
-user to implement their own classes or functions. This declarations of
+user to implement their own classes or functions. These declarations of
 such classes or functions can be made in a code block introduced by
 the `@Includes` keyword.
 
@@ -1809,7 +1809,7 @@ Two options can be specified:
 If requested, the auxiliary state variables `saved_strain_measure` and
 `saved_dual_stress` are updated at the beginning of the
 `@UpdateAuxiliaryStateVariables` code block. For orthotropic behaviours,
-it is worth mentionning that those variables are expressed in the
+it is worth mentioning that those variables are expressed in the
 material frame.
 
 ## Note
@@ -1835,7 +1835,7 @@ material frame.
 # The `@Swelling` keyword
 
 The `@Swelling` keyword allow the user to specify that an additional
-stress free expansion must be taken into account.
+stress-free expansion must be taken into account.
 
 This keyword has the following options:
 
@@ -1845,12 +1845,12 @@ This keyword has the following options:
   linear change (\(\displaystyle\frac{\Delta\,l}{l_{0}}\))
 
 The `@Swelling` keyword is then followed by one or three definition of
-stress free expansion.
+stress-free expansion.
 
-If one stress free expansion is defined, the swelling is computed as
+If one stress-free expansion is defined, the swelling is computed as
 an isotropic second order tensor.
 
-If three stress free expansions are defined, the swelling is computed
+If three stress-free expansions are defined, the swelling is computed
 as a diagonal second order tensor:
 \[
 s =
@@ -1863,7 +1863,7 @@ s =
 \right)
 \]
 
-A stress free expansion is either defined by:
+A stress-free expansion is either defined by:
 
 - A string pointing to a mfront model.
 - `0`, which allow the definition of a null swelling.
@@ -1871,9 +1871,9 @@ A stress free expansion is either defined by:
 
 ## Notes
 
-A null swelling is not allowed when only one stress free expansion
+A null swelling is not allowed when only one stress-free expansion
 
-The definition of three stress free expansion is only valid for
+The definition of three stress-free expansion is only valid for
 orthotropic behaviours and is not compatible with the `Volume` option.
 
 ## Examples
@@ -1892,7 +1892,7 @@ variables, the stresses and the auxiliary state variables (see the
 `@UpdateAuxiliaryStateVariables` keyword) have been updated.
 
 The kind of tangent operator requested is given by variable named
-`smt` (stiffness matrix type). As the time of writting this notice,
+`smt` (stiffness matrix type). As the time of writing this notice,
 the possible values for `smt` are the following:
 
 - `ELASTIC`: the elastic operator is requested (undamaged).
@@ -1931,11 +1931,11 @@ the possible values for `smt` are the following:
 # The `@UnitSystem` keyword
 
 The `@UnitSystem` keyword declares that the state variables, external
-state variables an parameters are expressed in a given unit system. In
+state variables a parameters are expressed in a given unit system. In
 the current version of `MFront`, the only supported unit system is the
 international system of units, denoted `SI`.
 
-One advantage of declaring an unit system is that physical bounds of
+One advantage of declaring a unit system is that physical bounds of
 variables associated with a glossary entry can automatically be declared
 by `MFront`.
 
@@ -1962,10 +1962,10 @@ variables are not updated.
 In Runge-Kutta domain specific languages, the code declared by
 `UpdateAuxiliaryStateVariables` is called after each successful time
 step. Keep in mind that most Runge-Kutta algorithms performs internal
-substeppings: in this case, the code declared by
+substepping: in this case, the code declared by
 `UpdateAuxiliaryStateVariables` may be called several time during the
 behaviour integration. An additional variable called `dt_`, which is
-lower than the total time step increment `dt` if substeppings is
+lower than the total time step increment `dt` if substepping is
 performed, gives the current time increment. The external state
 variables are set to their values at the current date.
 

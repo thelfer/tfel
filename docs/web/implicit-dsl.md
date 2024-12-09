@@ -48,7 +48,7 @@ where \(t\) is not meant to describe an explicit dependency to the time
 but rather a placeholder for variables whose evolutions are known
 (those variables are called external state variables in `MFront`).
 
-[^1]: In `MFront`, the integration variables refers to variables which
+[^1]: In `MFront`, the integration variables refer to variables which
   are part of the implicit systems, i.e. variables the increments of
   which are the solutions of the implicit system. A state variable,
   declared with `@StateVariable` keyword, is saved from one step to the
@@ -57,7 +57,7 @@ but rather a placeholder for variables whose evolutions are known
   keyword, is also saved from one step to the other, but is not added to
   the list of the integration variables. The `@IntegrationVariable`
   keyword allows to append a variable to the integration variables but
-  its value wil not be saved from one step to the other.
+  its value will not be saved from one step to the other.
 
 The following notations are used:
 
@@ -71,8 +71,8 @@ The following notations are used:
   \ets{\vec{Y}}=\bts{\vec{Y}}+\Delta\,\vec{Y}
   \]
 
-An implicit scheme turns this ordinary differential equation into a non
-linear system of equations whose unknowns are is increment
+An implicit scheme turns this ordinary differential equation into a 
+non-linear system of equations whose unknown is the increment
 \(\Delta\,Y\) over a time step \(\Delta\,t\):
 
 \[
@@ -87,7 +87,7 @@ F\paren{\Delta\,\vec{Y},\Delta\,\tepsilonto}=0
 \]{#eq:tangent_operator:implicit_system}
 
 Equation @eq:tangent_operator:implicit_system implicitly defines \(\Delta\,\vec{Y}\) as
-an implicit function of the increment of the increment of the strain
+an implicit function of the increment of the strain
 tensor \(\Delta\tepsilonto\) and may be rewritten as:
 
 \[
@@ -110,7 +110,7 @@ The following algorithms are available:
 - `LevenbergMarquardt`
 - `LevenbergMarquardt_NumericalJacobian`
 
-Thoses algorithms are described in the documention of the [`TFEL/Math`
+Those algorithms are described in the documentation of the [`TFEL/Math`
 library](tfel-math.html). The main steps of those algorithms and the
 associated code blocks are depicted in Figure
 @fig:mfront:implicit-dsl:resolution_steps.
@@ -124,7 +124,7 @@ once the convergence is reached.
 
 However, if the jacobian matrix is computed numerically (at least
 partially), such updates could be wrong, because they can be based
-on the perturbated values of the unknowns. 
+on the perturbed values of the unknowns. 
 
 Since `TFEL 3.1`, this can be circumvented by testing the value of the
 `perturbatedSystemEvaluation` boolean value as follows:
@@ -147,8 +147,8 @@ Since `TFEL 3.1`, this can be circumvented by testing the value of the
 ~~~~
 
 In many cases, rather than updating auxiliary variables during the
-Newton iterations, it can be more pratical to compute its increment,
-defined in by local variable and to update the auxiliary variable in
+Newton iterations, it can be more practical to compute its increment,
+defined by a local variable and to update the auxiliary variable in
 the `@UpdateAuxiliaryStateVariables` code block. The previous trick can
 be used in this case in a straightforward manner.
 
@@ -165,7 +165,7 @@ as follows:
 F\paren{\Delta\,\vec{Y}\paren{\theta},\theta}=0
 \]{#eq:mfront:implicit_dsl:homotopy}
 
-Using the implicit function theorem, one can evaluate the sensibility of
+Using the implicit function theorem, one can evaluate the sensitivity of
 the solution with respect to \(\theta\) as follows:
 
 \[
@@ -180,7 +180,7 @@ jacobian is invertible which is the requirements of most algorithms
 available.
 
 Equation @eq:mfront:implicit_dsl:homotopy2 could be integrated using an
-explicit algorithm and theorically find
+explicit algorithm and theoretically find
 \(\Delta\,\vec{Y}\paren{\theta}\) to the Implicit System
 @eq:tangent_operator:implicit_system if \(\Delta\,\vec{Y}\paren{0}\) is
 known.
@@ -195,7 +195,7 @@ known.
 > \]{#eq:mfront:implicit_dsl:homotopy3}
 
 For time dependent behaviours, Equation @eq:mfront:implicit_dsl:homotopy
-is trival to solve for \(\theta=0\), \(\Delta\,\vec{Y}\paren{0}\)
+is trivial to solve for \(\theta=0\), \(\Delta\,\vec{Y}\paren{0}\)
 corresponds to the fully explicit Euler approximation:
 
 \[
@@ -238,7 +238,7 @@ tensor \(\Delta\tepsilonto\) and may be rewritten as:
 \]{#eq:tangent_operator:small_strain:implicit_system2}
 
 
-The stress tensor \(\tsigma\) are assumed to be an explicit function of
+The stress tensor \(\tsigma\) is assumed to be an explicit function of
 the integration variables \(\ets{\vec{Y}}\) at the end of the time step
 and the total strain \(\ets{\tepsilonto}\) at the end of time step:
 
@@ -292,7 +292,7 @@ several practical disadvantages:
   example, most small strain behaviours are based on the Hooke law,
   which means that the stress \(\tsigma\) only depends on the elastic
   strain \(\tepsilonel\). In many behaviours, the elastic strain
-  \(\tepsilonel\) are only a small subset of the integration
+  \(\tepsilonel\) is only a small subset of the integration
   variables \(\vec{Y}\).
 - It requires to invert the jacobian matrix.
 - The matrix \(\deriv{\vec{F}}{\Delta\,\tepsilonto}\) is also usually sparse.
@@ -301,7 +301,7 @@ several practical disadvantages:
 
 Hence, a computation of the consistent tangent based on Equation
 @eq:tangent_operator:consistent_tangent_operator may imply a significant
-performance hit which can be avoided in many most common cases, as
+performance hit which can be avoided in most common cases, as
 discussed in the following section.
 
 ### Simplication of the Equation @eq:tangent_operator:consistent_tangent_operator in common cases
@@ -367,7 +367,7 @@ bricks in `MFront` are built
 
 Thanks to Equation @eq:tangent_operator:common_cases:dF_ddeto, one sees
 that the product \(-J^{-1}\,\deriv{\vec{F}}{\Delta\,\tepsilonto}\) only
-contains the the \(6\) first columns of the \(J^{-1}\). This allows
+contains the \(6\) first columns of the \(J^{-1}\). This allows
 identifying \(\derivtot{\Delta\,\tepsilonel}{\Delta\,\tepsilonto}\) with
 the \(6\times 6\) upper-left submatrx of \(J^{-1}\). Let
 \(J_{\tepsilonel}^{-1}\) this submatrix:
@@ -432,8 +432,8 @@ standard damaging law of the form
     Dt = (1 - d) * De * iJe - ((De * eel) ^ iJd);
 ~~~~
 
-[^2]: This assumes that the damage \(d\) is the second integration variables.
-[^3]: This code uses the fact the state variables have been updated to
+[^2]: This assumes that the damage \(d\) is the second integration variable.
+[^3]: This code uses the fact that state variables have been updated to
   their values at the end of the time step before the call to
   `@TangentOperator` code block.
 
