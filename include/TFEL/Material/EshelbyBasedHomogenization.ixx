@@ -17,7 +17,13 @@
 
 namespace tfel::material::homogenization::elasticity{
 
-
+  	template <unsigned short N,
+                typename real,
+                typename StressType,
+                typename LengthType>
+      struct EllipsoidMeanLocalisator {
+        static constexpr auto eps = std::numeric_limits<real>::epsilon();
+        
         TFEL_HOST_DEVICE static const std::pair<real, real> Isotropic(
             const StressType& young,
             const real& nu,
