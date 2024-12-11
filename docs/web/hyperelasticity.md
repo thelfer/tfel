@@ -1,4 +1,4 @@
-% How to implement an hyperelastic behaviour in MFront
+% How to implement a hyperelastic behaviour in MFront
 % Thomas Helfer
 % 15/12/2016
 
@@ -63,7 +63,7 @@ The derivative of the invariants are classically given by:
 \begin{aligned}
 \deriv{I_{1}}{\C} &= \tenseur{I}\\
 \deriv{I_{2}}{\C} &= I_{1}\,\tenseur{I}-\C\\
-\deriv{I_{3}}{\C} &= \C^{2}-I_{1}\,C+I_{2}\,\tenseur{I} \\
+\deriv{I_{3}}{\C} &= \C^{2}-I_{1}\,\C+I_{2}\,\tenseur{I} \\
 \end{aligned}
 \right.
 \]
@@ -74,7 +74,7 @@ The second derivative of the invariants are given by:
 \[
 \left\{
 \begin{aligned}
-\sderiv{I_{1}}{\C} &= 0\\
+\sderiv{I_{1}}{\C} &= \tenseur{0}\\
 \sderiv{I_{2}}{\C} &= \tenseur{I}\otimes\tenseur{I}-\tenseurq{I}\\
 \end{aligned}
 \right.
@@ -89,9 +89,9 @@ The \(\sderiv{I_{3}}{\C}\) term can be computed using the
 
 # A second class of hyperelastic behaviours
 
-More precisely, we consider an hyperelastic behaviour whose
-potential \(W\) is decomposed in an volumetric part \(W^{\text{v}}\)
-and an isochoric part \(W^{\text{i}}\):
+More precisely, we consider a hyperelastic behaviour whose
+potential \(W\) is decomposed in an volumetric part \(W^{v}\)
+and an isochoric part \(W^{i}\):
 
 \[
 W\paren{\C}=W^{v}\paren{J}+W^{i}\paren{\bar{I}_{1},\bar{I}_{2}}
@@ -183,7 +183,7 @@ The general expression of the second Piola-Kirchhoff stress is:
 \]
 
 where \(\S^{v}=2\,\deriv{W^{v}}{\C}\) is the
-volumetric part of the the second Piola-Kirchhoff stress and
+volumetric part of the second Piola-Kirchhoff stress and
 \(\S^{i}=2\,\deriv{W^{i}}{\C}\) is the isochoric
 part.
 
@@ -217,7 +217,7 @@ By chain rule, we have:
 The second derivative is also straightforward:
 \[
 \begin{aligned}
-\sderiv{\S^{i}}{C}=&
+\sderiv{\S^{i}}{\C}=&
 2\,\sderiv{W^{i}}{\bar{I}_{1}}\,\deriv{\bar{I}_{1}}{\C}\otimes\deriv{\bar{I}_{1}}{\C}+
 2\,{\displaystyle \frac{\displaystyle \partial^{2} W^{i}}{\partial \bar{I}_{1}\partial \bar{I}_{2}}}\,\deriv{\bar{I}_{1}}{\C}\otimes\deriv{\bar{I}_{2}}{\C}+
 2\,\deriv{W^{i}}{\bar{I}_{1}}\sderiv{\bar{I}_{1}}{\C}+\\
@@ -235,9 +235,6 @@ developments is available on a [dedicated page](signorini.html).
 #  Odgen Hyperelastic behaviours
 
 We now consider another class of hyperelastic behaviour of the form:
-More precisely, we consider an hyperelastic behaviour whose
-potential \(W\) is decomposed in an volumetric part \(W^{\text{v}}\)
-and an isochoric part \(W^{\text{i}}\):
 
 \[
 W\paren{\C}=W^{v}\paren{J}+\bar{W}^{i}\paren{\bar{\lambda}_{1},\bar{\lambda}_{2},\bar{\lambda}_{3}}
@@ -266,8 +263,8 @@ Odgen-type form:
 
 with \(f\paren{\lambda_{1},\lambda_{2},\lambda_{3}}=\lambda_{1}^{\alpha_{p}/2}+\lambda_{2}^{\alpha_{p}/2}+\lambda_{3}^{\alpha_{p}/2}\)
 
-Let us focus on the contribution \(\S_{p}^{i}\) of
-\(W^{i}_{p}\) to the second Piola Kirchoff stress:
+Let us focus on the contribution of \(W^{i}_{p}\) to the
+second Piola-Kirchhoff stress \(\S_{p}^{i}\):
 \[
 \begin{aligned}
 \S_{p}^{i}=2\,\deriv{\bar{W}^{i}_{p}}{\C}=
@@ -277,7 +274,7 @@ Let us focus on the contribution \(\S_{p}^{i}\) of
 \]
 
 The associated contribution to the consistent tangent operator is
-given the derivative of \(\S_{p}^{i}\) with respect to the right Cauchy
+given by the derivative of \(\S_{p}^{i}\) with respect to the right Cauchy
 tensor \(\C\):
 
 \[
@@ -296,11 +293,11 @@ In this expression, we have:
 \]
 
 where \(\paren{\tenseur{n}_{i}}_{i\in \{1,2,3\}}\) are the
-eigentenseurs of the right Cauchy tensor.
+eigentensors of the right Cauchy tensor.
 
-Computing \(\sderiv{f}{\C}\) is a non trivial task as one have to take
+Computing \(\sderiv{f}{\C}\) is a non trivial task as one has to take
 care of the cases where two eigenvalues are equal and repeatedly use
-the Hospital rule to pass to the limit. For this reason, it is much
+L'Hospital's rule to pass to the limit. For this reason, it is much
 easier to use the `computeIsotropicFunctionAndDerivative` static
 method of the `stensor` class.
 
