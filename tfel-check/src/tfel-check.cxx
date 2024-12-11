@@ -86,6 +86,16 @@ namespace tfel::check {
     }
   }  // end of declareTFELComponents
 
+  static void declareTFELExecutables(ConfigurationManager& c) {
+    // for (const std::string& e : {"mfront", "mtest", "mfront-doc",
+    //                             "mfm-test-generator", "mfront-query"}) {
+    //   c.addSubstitution('@' + e + '@', tfel::getTFELExecutableName(e), false);
+    // }
+#ifdef TFEL_PYTHON_EXECUTABLE
+    c.addSubstitution("@python@", TFEL_PYTHON_EXECUTABLE, false);
+#endif /* */
+  }  // end of declareTFELExecutables
+
   /*!
    * \brief main entry point
    */
@@ -206,6 +216,9 @@ namespace tfel::check {
     this->setArguments(argc, argv);
     this->registerArgumentCallBacks();
     this->parseArguments();
+    // this is done after argument parsing to allow the user to modify default
+    // executables' names
+    declareTFELExecutables(this->configurations);
   }  // end of TFELCheck::TFELCheck
 
   int TFELCheck::execute() {
