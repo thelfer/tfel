@@ -20,6 +20,8 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 3.0.14 of the
 `TFEL` project.
 
+This version was released on December 11, 2024.
+
 # Issues fixed
 
 ## Issue 619: [fortran] Add support for the `ifx` fortran compiler

@@ -19,6 +19,17 @@ eqnPrefixTemplate: "($$i$$)"
 
 \newcommand{\tenseur}[1]{\underline{#1}}
 
+<--!
+Ubuntu 22.04 LTS | gcc   11.4.0   | 100%
+                 | clang 18.1.8   |  99%
+                 | clang 19.1.0   |  99%
+                 | intel 2024.2.1 |  99%
+Fedora 41        | gcc   14.2.1   | 100%
+                 | clang 17.0.6   |  99%
+Debian 12        [ gcc   12.2.0   | 100%
+Ubuntu 24.04 LTS | gcc   13.2.0   | 100%
+-->
+
 # New `TFEL/Utilities` features
 
 ## Support for `C++` digit separator in `CxxTokenizer`
