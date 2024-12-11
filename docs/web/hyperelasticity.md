@@ -90,7 +90,7 @@ The \(\sderiv{I_{3}}{\C}\) term can be computed using the
 # A second class of hyperelastic behaviours
 
 More precisely, we consider a hyperelastic behaviour whose
-potential \(W\) is decomposed in an volumetric part \(W^{v}\)
+potential \(W\) is decomposed into a volumetric part \(W^{v}\)
 and an isochoric part \(W^{i}\):
 
 \[
