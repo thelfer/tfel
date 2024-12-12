@@ -1098,11 +1098,14 @@ options:
 
 ## List of rate sensitivity factors {#sec:rate_sensitivity_factors}
 
-### Cowper-Symonds's rate sensitivity factors
+### Cowper-Symonds's rate sensitivity factor
 
 \[
 R_{rs}\paren{\dot{p}}=1+A\,\left(\frac{\dot{p}}{\dot{p}_{0}}\right)^{n}
 \]
+
+When the exponent \(n\) is lower than one, the following regularised
+version, based on the user defined value \(R_{\epsilon}\) is available:
 
 \[
 R_{rs}\paren{\dot{p}}=1+
@@ -1114,8 +1117,7 @@ A\,\left(\frac{\dot{p}}{\dot{p}_{0}}\right)^{n} &&\text{if}&&\dot{p}\geq\dot{p}_
 \right.
 \]
 
-
-### Johnson-Cook's rate sensitivity factors
+### Johnson-Cook's rate sensitivity factor
 
 \[
 R_{rs}\paren{\dot{p}}=1+
