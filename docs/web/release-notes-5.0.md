@@ -25,14 +25,14 @@ There are currently \(20\,315\) unit tests.
 | Operating system | Compiler           |   Configuration        | Successful Tests |
 | :--------------: | :----------------: | :--------------------: | :--------------: |
 | Ubuntu 22.04 LTS | gcc   11.4.0       |   Release              |       100%       |
-|                  | gcc   11.4.0       |   Release + fast-math  |        99%       |
-|                  | gcc   11.4.0       |   Debug                |        99%       |
-|                  | clang 18.1.8       |   Release              |        99%       |
-|                  | clang 19.1.0       |   Release              |        99%       |
+|                  | gcc   11.4.0       |   Release + fast-math  |       100%       |
+|                  | gcc   11.4.0       |   Debug                |       100%       |
+|                  | clang 18.1.8       |   Release              |       100%       |
+|                  | clang 19.1.0       |   Release              |       100%       |
 |                  | clang 19.1.0       |   Debug                |       100%       |
 |                  | intel 2024.2.1     |   Release              |        99%       |
 | Fedora 41        | gcc   14.2.1       |   Release              |       100%       |
-|                  | clang 17.0.6       |   Release              |        99%       |
+|                  | clang 17.0.6       |   Release              |       100%       |
 | Debian 12        | gcc   12.2.0       |   Release              |       100%       |
 | Ubuntu 24.04 LTS | gcc   13.2.0       |   Release              |       100%       |
 | Mac Os           | gcc                |   Release              |       100%       |
