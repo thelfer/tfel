@@ -458,51 +458,25 @@ function(mfront_model_check_library lib interface)
   mfront_check_library_base(${lib} ${interface} "models" OFF ${ARGN})
 endfunction(mfront_model_check_library)
 
-function(python_module_base fullname name)
+function(python_module_base fullname)
     if(${ARGC} LESS 1)
     message(FATAL_ERROR "python_lib_module : no source specified")
   endif(${ARGC} LESS 1)
-  add_library(py_${fullname} MODULE ${ARGN})
-  if(WIN32)
-    set_target_properties(py_${fullname} PROPERTIES
-      COMPILE_FLAGS "-DHAVE_ROUND")
-    set_target_properties(py_${fullname} PROPERTIES SUFFIX ".pyd")
-  elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set_target_properties(py_${fullname} PROPERTIES SUFFIX ".so")
-  endif(WIN32)
-  set_target_properties(py_${fullname} PROPERTIES PREFIX "")
-  set_target_properties(py_${fullname} PROPERTIES OUTPUT_NAME ${name})
-  target_include_directories(py_${fullname}
-    PRIVATE "${PROJECT_SOURCE_DIR}/bindings/python/include"
-    PRIVATE "${PROJECT_SOURCE_DIR}/include")
-  target_include_directories(py_${fullname}
-    SYSTEM
-    PRIVATE "${Boost_INCLUDE_DIRS}"
-    PRIVATE "${PYTHON_INCLUDE_DIRS}")
-  if(python-static-interpreter-workaround)
-    if(APPLE)
-      target_link_options(py_${fullname}
-        PRIVATE "-undefined" "dynamic_lookup")
-    endif(APPLE)
-  endif(python-static-interpreter-workaround)
+  pybind11_add_module(${name} ${ARGN})
 endfunction(python_module_base)
 
 function(python_lib_module name package)
-  python_module_base(${package}_${name} ${name} ${ARGN})
+  python_module_base(${name} ${ARGN})
   if(TFEL_APPEND_SUFFIX)
-    install(TARGETS py_${package}_${name}
+    install(TARGETS ${name}
       DESTINATION ${TFEL_PYTHON_SITE_PACKAGES_DIR}/${package}_${TFEL_SUFFIX_FOR_PYTHON_MODULES}
       COMPONENT python_bindings)
   else(TFEL_APPEND_SUFFIX)
-    install(TARGETS py_${package}_${name}
+    install(TARGETS ${name}
        DESTINATION ${TFEL_PYTHON_SITE_PACKAGES_DIR}/${package}
        COMPONENT python_bindings)
   endif(TFEL_APPEND_SUFFIX)
 endfunction(python_lib_module)
-
-function(std_python_module name)
-  python_lib_module(${name} std ${ARGN})
-endfunction(std_python_module)
 
 function(tfel_python_module name)
   python_lib_module(${name} tfel ${ARGN})

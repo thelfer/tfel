@@ -11,31 +11,31 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 #ifdef TFEL_NUMPY_SUPPORT
 #include "TFEL/Numpy/InitNumpy.hxx"
 #endif /* TFEL_NUMPY_SUPPORT */
 
-void declareTFELMathVector();
-void declaretvector();
-void declarestensor();
-void declarest2tost2();
-void declareEvaluator();
+// void declareTFELMathVector();
+// void declaretvector();
+void declarestensor(pybind11::module_&);
+// void declarest2tost2();
+// void declareEvaluator();
 
 #ifdef TFEL_NUMPY_SUPPORT
-void declareAccelerationAlgorithms();
+// void declareAccelerationAlgorithms();
 #endif /* TFEL_NUMPY_SUPPORT */
 
-BOOST_PYTHON_MODULE(math) {
+PYBIND11_MODULE(math, m) {
 #ifdef TFEL_NUMPY_SUPPORT
   tfel::numpy::initializeNumPy();
 #endif /* TFEL_NUMPY_SUPPORT */
-  declaretvector();
-  declarestensor();
-  declarest2tost2();
-  declareTFELMathVector();
-  declareEvaluator();
+       //   declaretvector();
+  declarestensor(m);
+//   declarest2tost2();
+//   declareTFELMathVector();
+//   declareEvaluator();
 #ifdef TFEL_NUMPY_SUPPORT
-  declareAccelerationAlgorithms();
+//  declareAccelerationAlgorithms();
 #endif /* TFEL_NUMPY_SUPPORT */
 }
