@@ -86,6 +86,12 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   StandardElastoViscoPlasticityPlasticityTest20_nj
   StandardElastoViscoPlasticityPlasticityTest21
   StandardElastoViscoPlasticityPlasticityTest21_nj
+  StandardElastoViscoPlasticityPlasticityTest22
+  StandardElastoViscoPlasticityPlasticityTest22_nj
+  StandardElastoViscoPlasticityPlasticityTest23
+  StandardElastoViscoPlasticityPlasticityTest23_nj
+  StandardElastoViscoPlasticityPlasticityTest24
+  StandardElastoViscoPlasticityPlasticityTest24_nj
   StandardElastoViscoPlasticityIsotropicDamageHookeLaw
   StandardElastoViscoPlasticityIsotropicDamageHookeLaw_nj
   StandardElastoViscoPlasticityIsotropicDamageHookeLaw2
@@ -125,7 +131,13 @@ if(enable-mfront-quantity-tests)
     StandardElastoViscoPlasticityPlasticityTest20_qt
     StandardElastoViscoPlasticityPlasticityTest20_qt_nj
     StandardElastoViscoPlasticityPlasticityTest21_qt
-    StandardElastoViscoPlasticityPlasticityTest21_qt_nj)
+    StandardElastoViscoPlasticityPlasticityTest21_qt_nj
+    StandardElastoViscoPlasticityPlasticityTest22_qt
+    StandardElastoViscoPlasticityPlasticityTest22_qt_nj
+    StandardElastoViscoPlasticityPlasticityTest23_qt
+    StandardElastoViscoPlasticityPlasticityTest23_qt_nj
+    StandardElastoViscoPlasticityPlasticityTest24_qt
+    StandardElastoViscoPlasticityPlasticityTest24_qt_nj)
 endif(enable-mfront-quantity-tests)
 
 function(generictest_standardelastovicoplasticitybrick test_name test_file library_name behaviour_name)
