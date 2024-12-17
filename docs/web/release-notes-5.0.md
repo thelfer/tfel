@@ -20,7 +20,24 @@ eqnPrefixTemplate: "($$i$$)"
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\paren}[1]{{\left(#1\right)}}
 
-There are currently \(20\,315\) unit tests.
+The page describes the new functionalities of Version 5.0.0 of the
+`TFEL` project.
+
+Version 5.0.0 has been released on December, 17th 2024. This version
+inherits from the bug fixes of:
+
+- Version [3.0.14](release-notes-3.0.14.html),
+- Version [3.1.14](release-notes-3.1.14.html),
+- Version [3.2.11](release-notes-3.2.11.html),
+- Version [3.3.6](release-notes-3.3.6.html).
+- Version [3.4.7](release-notes-3.4.7.html).
+- Version [4.0.4](release-notes-4.0.4.html).
+- Version [4.1.3](release-notes-4.1.3.html).
+- Version [4.2.2](release-notes-4.2.2.html).
+
+# Tested configurations
+
+There are currently \(20\,576\) unit tests.
 
 | Operating system | Compiler           |   Configuration        | Successful Tests |
 | :--------------: | :----------------: | :--------------------: | :--------------: |
