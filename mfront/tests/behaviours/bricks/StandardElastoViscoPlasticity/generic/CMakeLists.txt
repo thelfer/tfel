@@ -86,6 +86,12 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   StandardElastoViscoPlasticityPlasticityTest20_nj
   StandardElastoViscoPlasticityPlasticityTest21
   StandardElastoViscoPlasticityPlasticityTest21_nj
+  StandardElastoViscoPlasticityPlasticityTest22
+  StandardElastoViscoPlasticityPlasticityTest22_nj
+  StandardElastoViscoPlasticityPlasticityTest23
+  StandardElastoViscoPlasticityPlasticityTest23_nj
+  StandardElastoViscoPlasticityPlasticityTest24
+  StandardElastoViscoPlasticityPlasticityTest24_nj
   StandardElastoViscoPlasticityIsotropicDamageHookeLaw
   StandardElastoViscoPlasticityIsotropicDamageHookeLaw_nj
   StandardElastoViscoPlasticityIsotropicDamageHookeLaw2
@@ -125,7 +131,13 @@ if(enable-mfront-quantity-tests)
     StandardElastoViscoPlasticityPlasticityTest20_qt
     StandardElastoViscoPlasticityPlasticityTest20_qt_nj
     StandardElastoViscoPlasticityPlasticityTest21_qt
-    StandardElastoViscoPlasticityPlasticityTest21_qt_nj)
+    StandardElastoViscoPlasticityPlasticityTest21_qt_nj
+    StandardElastoViscoPlasticityPlasticityTest22_qt
+    StandardElastoViscoPlasticityPlasticityTest22_qt_nj
+    StandardElastoViscoPlasticityPlasticityTest23_qt
+    StandardElastoViscoPlasticityPlasticityTest23_qt_nj
+    StandardElastoViscoPlasticityPlasticityTest24_qt
+    StandardElastoViscoPlasticityPlasticityTest24_qt_nj)
 endif(enable-mfront-quantity-tests)
 
 function(generictest_standardelastovicoplasticitybrick test_name test_file library_name behaviour_name)
@@ -188,7 +200,7 @@ function(generictest_standardelastovicoplasticitybrick test_name test_file libra
 endfunction(generictest_standardelastovicoplasticitybrick)
 
 generictest_standardelastovicoplasticitybrick(GursonTvergaardNeedleman1982-test1
-	GursonTvergaardNeedleman1982-test1
+    GursonTvergaardNeedleman1982-test1
     MFrontStandardElastoViscoPlasticityBrickBehaviours
     GursonTvergaardNeedleman1982 GursonTvergaardNeedleman1982-test1.ref)
 generictest_standardelastovicoplasticitybrick(GursonTvergaardNeedleman1982-test2
@@ -220,3 +232,47 @@ foreach(id RANGE 18 21)
       "DataIsotropicHardeningRuleTest-${id}.ref")
   endif(enable-mfront-quantity-tests)
 endforeach()
+
+foreach(final_time 0.05 0.5 5 50 500 5000)
+  generictest_standardelastovicoplasticitybrick("CowperSymondsRateSensitivityFactor-${final_time}"
+     "RateSensitivityFactorTest-${final_time}"
+     MFrontStandardElastoViscoPlasticityBrickBehaviours
+     "StandardElastoViscoPlasticityPlasticityTest22"
+     "CowperSymondsRateSensitivityFactorTest-${final_time}.ref")
+  generictest_standardelastovicoplasticitybrick("CowperSymondsRateSensitivityFactor_nj-${final_time}"
+     "RateSensitivityFactorTest-${final_time}"
+     MFrontStandardElastoViscoPlasticityBrickBehaviours
+     "StandardElastoViscoPlasticityPlasticityTest22_nj"
+     "CowperSymondsRateSensitivityFactorTest-${final_time}.ref")
+  generictest_standardelastovicoplasticitybrick("CowperSymondsRateSensitivityFactor_qt-${final_time}"
+     "RateSensitivityFactorTest-${final_time}"
+     MFrontStandardElastoViscoPlasticityBrickBehaviours3
+     "StandardElastoViscoPlasticityPlasticityTest22_qt"
+     "CowperSymondsRateSensitivityFactorTest-${final_time}.ref")
+  generictest_standardelastovicoplasticitybrick("CowperSymondsRateSensitivityFactor_qt_nj-${final_time}"
+     "RateSensitivityFactorTest-${final_time}"
+     MFrontStandardElastoViscoPlasticityBrickBehaviours3
+     "StandardElastoViscoPlasticityPlasticityTest22_qt_nj"
+     "CowperSymondsRateSensitivityFactorTest-${final_time}.ref")
+  generictest_standardelastovicoplasticitybrick("JohnsonCookRateSensitivityFactor-${final_time}"
+     "RateSensitivityFactorTest-${final_time}"
+     MFrontStandardElastoViscoPlasticityBrickBehaviours
+     "StandardElastoViscoPlasticityPlasticityTest24"
+     "JohnsonCookRateSensitivityFactorTest-${final_time}.ref")
+  generictest_standardelastovicoplasticitybrick("JohnsonCookRateSensitivityFactor_nj-${final_time}"
+     "RateSensitivityFactorTest-${final_time}"
+     MFrontStandardElastoViscoPlasticityBrickBehaviours
+     "StandardElastoViscoPlasticityPlasticityTest24_nj"
+     "JohnsonCookRateSensitivityFactorTest-${final_time}.ref")
+  generictest_standardelastovicoplasticitybrick("JohnsonCookRateSensitivityFactor_qt-${final_time}"
+     "RateSensitivityFactorTest-${final_time}"
+     MFrontStandardElastoViscoPlasticityBrickBehaviours3
+     "StandardElastoViscoPlasticityPlasticityTest24_qt"
+     "JohnsonCookRateSensitivityFactorTest-${final_time}.ref")
+  generictest_standardelastovicoplasticitybrick("JohnsonCookRateSensitivityFactor_qt_nj-${final_time}"
+     "RateSensitivityFactorTest-${final_time}"
+     MFrontStandardElastoViscoPlasticityBrickBehaviours3
+     "StandardElastoViscoPlasticityPlasticityTest24_qt_nj"
+     "JohnsonCookRateSensitivityFactorTest-${final_time}.ref")
+endforeach()
+

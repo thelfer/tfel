@@ -1,0 +1,10 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ @behaviour@;
+
+@ExternalStateVariable 'Temperature' 293.15;
+@ImposedStrain 'EXX' {
+  0 : 0, 500 : 5e-1
+};
+@Times {0, 500 in 100};
+@Test<file> @reference_file@ 'SXX'   8 1e-1;
