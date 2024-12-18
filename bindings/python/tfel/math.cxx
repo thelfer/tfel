@@ -12,30 +12,20 @@
  */
 
 #include <pybind11/pybind11.h>
-#ifdef TFEL_NUMPY_SUPPORT
-#include "TFEL/Numpy/InitNumpy.hxx"
-#endif /* TFEL_NUMPY_SUPPORT */
 
 // void declareTFELMathVector();
-// void declaretvector();
+void declaretvector(pybind11::module_&);
 void declarestensor(pybind11::module_&);
-// void declarest2tost2();
-// void declareEvaluator();
+void declarest2tost2(pybind11::module_&);
+void declareEvaluator(pybind11::module_&);
 
-#ifdef TFEL_NUMPY_SUPPORT
 // void declareAccelerationAlgorithms();
-#endif /* TFEL_NUMPY_SUPPORT */
 
 PYBIND11_MODULE(math, m) {
-#ifdef TFEL_NUMPY_SUPPORT
-  tfel::numpy::initializeNumPy();
-#endif /* TFEL_NUMPY_SUPPORT */
-       //   declaretvector();
+  declaretvector(m);
   declarestensor(m);
-//   declarest2tost2();
+  declarest2tost2(m);
 //   declareTFELMathVector();
-//   declareEvaluator();
-#ifdef TFEL_NUMPY_SUPPORT
+  declareEvaluator(m);
 //  declareAccelerationAlgorithms();
-#endif /* TFEL_NUMPY_SUPPORT */
 }

@@ -11,17 +11,14 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
-
+#include <pybind11/pybind11.h>
 #include "TFEL/Tests/TestResult.hxx"
 
-void declareTestResult();
+void declareTestResult(pybind11::module_&);
 
-void declareTestResult() {
-  using namespace boost;
-  using namespace boost::python;
+void declareTestResult(pybind11::module_& m) {
   using namespace tfel::tests;
-  class_<TestResult>("TestResult")
+  pybind11::class_<TestResult>(m, "TestResult")
       .def("success", &TestResult::success)
       .def("duration", &TestResult::duration);
 

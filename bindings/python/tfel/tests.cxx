@@ -11,12 +11,12 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 
-void declareTestResult();
-void declareXMLTestOutput();
+void declareTestResult(pybind11::module_&);
+void declareXMLTestOutput(pybind11::module_&);
 
-BOOST_PYTHON_MODULE(tests) {
-  declareTestResult();
-  declareXMLTestOutput();
+PYBIND11_MODULE(tests, m) {
+  declareTestResult(m);
+  declareXMLTestOutput(m);
 }

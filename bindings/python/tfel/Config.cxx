@@ -6,12 +6,11 @@
  */
 
 #include <string>
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 #include "TFEL/Config/GetTFELVersion.h"
 
-void declareConfig();
+void declareConfig(pybind11::module_&);
 
-void declareConfig() {
-  using namespace boost::python;
-  def("getTFELVersion", ::getTFELVersion);
+void declareConfig(pybind11::module_& m) {
+  m.def("getTFELVersion", ::getTFELVersion);
 }  // end of declareConfig

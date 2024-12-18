@@ -11,17 +11,15 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
-
+#include <pybind11/pybind11.h>
 #include "TFEL/Tests/XMLTestOutput.hxx"
 
-void declareXMLTestOutput();
+void declareXMLTestOutput(pybind11::module_&);
 
-void declareXMLTestOutput() {
-  using namespace boost;
-  using namespace boost::python;
+void declareXMLTestOutput(pybind11::module_& m) {
   using namespace tfel::tests;
-  class_<XMLTestOutput, noncopyable>("XMLTestOutput", init<std::string>())
+  pybind11::class_<XMLTestOutput>(m, "XMLTestOutput")
+      .def(pybind11::init<std::string>())
       .def("beginTestSuite", &XMLTestOutput::beginTestSuite)
       .def("endTestSuite", &XMLTestOutput::endTestSuite)
       .def("addTest", &XMLTestOutput::addTest);

@@ -20,7 +20,18 @@
 template <unsigned short N>
 static void declarestensor(pybind11::module_& m, const char* const n) {
   using stensor = tfel::math::stensor<N, double>;
-  pybind11::class_<stensor>(m, n)
+  pybind11::class_<stensor>(m, n, pybind11::buffer_protocol())
+      .def_buffer([](stensor& s) -> pybind11::buffer_info {
+        return pybind11::buffer_info(
+            s.data(),       /* Pointer to buffer */
+            sizeof(double), /* Size of one scalar */
+            pybind11::format_descriptor<double>::format(), /* Python
+                                                       struct-style format
+                                                       descriptor */
+            1,          /* Number of dimensions */
+            {s.size()}, /* Buffer dimensions */
+            {sizeof(double)});
+      })
       .def(pybind11::init<>())
       .def(pybind11::init<double>())
       .def("__repr__",
@@ -91,7 +102,7 @@ static tfel::math::stensor<3u, double> makeStensor3D(
   return {std::get<0>(s), std::get<1>(s), std::get<2>(s), 0., 0., 0.};
 }
 
-void declarestensor();
+void declarestensor(pybind11::module_& m);
 
 void declarestensor(pybind11::module_& m) {
   using namespace tfel::math;
@@ -111,6 +122,6 @@ void declarestensor(pybind11::module_& m) {
   m.def("makeStensor2D", makeStensor2D);
   m.def("makeStensor3D", makeStensor3D);
   declarestensor<1u>(m, "Stensor1D");
-  //   declarestensor<2u>("Stensor2D");
-  //   declarestensor<3u>("Stensor3D");
+  declarestensor<2u>(m, "Stensor2D");
+  declarestensor<3u>(m, "Stensor3D");
 }  // end of declarestensor

@@ -12,7 +12,6 @@
  */
 
 #include <string>
-
 #include "TFEL/Math/vector.hxx"
 #include "TFEL/Python/VectorConverter.hxx"
 

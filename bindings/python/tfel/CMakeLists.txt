@@ -31,27 +31,26 @@
 #  endif(TFEL_USES_CONAN)
 #endif(TFEL_NUMPY_SUPPORT)
 #
-#tfel_python_module(_tfel
-#  tfel.cxx
-#  Config.cxx
-#  PhysicalConstants.cxx)
-#target_link_libraries(py_tfel__tfel
-#  PRIVATE TFELConfig ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
-#
-#tfel_python_module(tests tests.cxx
-#  TestResult.cxx
-#  XMLTestOutput.cxx)
-#target_link_libraries(py_tfel_tests
-#  PRIVATE TFELTests ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
+tfel_python_module(_tfel
+  tfel.cxx
+  Config.cxx
+  PhysicalConstants.cxx)
+target_link_libraries(_tfel
+  PRIVATE TFELConfig ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
+
+tfel_python_module(tests tests.cxx
+  TestResult.cxx
+  XMLTestOutput.cxx)
+target_link_libraries(tests
+  PRIVATE TFELTests ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
 #
 #if(NOT WIN32)
-#tfel_python_module(utilities utilities.cxx
+tfel_python_module(utilities utilities.cxx
 #  Data.cxx
-#  TextData.cxx)
-#target_link_libraries(py_tfel_utilities
-#  PRIVATE TFELUtilities ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
-#endif(NOT WIN32)
-#
+  TextData.cxx)
+target_link_libraries(utilities
+  PRIVATE TFELUtilities ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
+
 #tfel_python_module(glossary
 #  pyglossary.cxx
 #  Glossary.cxx
@@ -61,11 +60,12 @@
 
 set(TFEL_PYTHON_MATH_MODULE_SOURCES
   math.cxx
-  stensor.cxx)
+  tvector.cxx
+  stensor.cxx
+  st2tost2.cxx
+  Evaluator.cxx)
 
 #  vector.cxx
-#  tvector.cxx
-#  stensor.cxx
 #  st2tost2.cxx
 #  Evaluator.cxx)
 #if(TFEL_NUMPY_SUPPORT)
