@@ -1,7 +1,7 @@
 /*!
- * \file   PythonGlossary.cxx
+ * \file   Glossary.cxx
  * \author Thomas Helfer
- * \date   09/06/14
+ * \date   18/12/2024
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -10,259 +10,150 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
-
+#include <pybind11/pybind11.h>
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 
-void declareGlossary() {
-  using namespace boost;
-  using namespace boost::python;
+void declareGlossary(pybind11::module_&);
+
+void declareGlossary(pybind11::module_& m) {
   using namespace tfel::glossary;
-  class_<Glossary, noncopyable>("Glossary", no_init)
-      .def("getGlossary", Glossary::getGlossary,
-           return_value_policy<reference_existing_object>())
-      .staticmethod("getGlossary")
+  pybind11::class_<Glossary>(m, "Glossary")
+      .def_static("getGlossary", Glossary::getGlossary,
+                  pybind11::return_value_policy::reference)
       .def("contains", &Glossary::contains)
-      .def_readonly("AxialDeformationGradient",
-                    &Glossary::AxialDeformationGradient,
-                    "the axial component of the deformation gradient")
-      .def_readonly("AxialGrowth", &Glossary::AxialGrowth,
-                    "axial growth under irradiation")
-      .def_readonly("AxialStrain", &Glossary::AxialStrain, "the axial strain")
-      .def_readonly("AxialStress", &Glossary::AxialStress, "the axial stress")
-      .def_readonly(
-          "B10BurnUp", &Glossary::B10BurnUp,
-          "the burn-up of an absorant material containing \\(\\mbox{}^{10}B\\)")
-      .def_readonly("Broken", &Glossary::Broken, "a material failure indicator")
-      .def_readonly("BulkModulus", &Glossary::BulkModulus,
-                    "the bulk modulus of an isotropic material")
-      .def_readonly("BurnUp_AtPercent", &Glossary::BurnUp_AtPercent,
-                    "the burn-up in at.%")
-      .def_readonly("BurnUp_MWJperTm", &Glossary::BurnUp_MWJperTm,
-                    "the burn-up in MegaWattJour per tons of metals")
-      .def_readonly("CohesiveForce", &Glossary::CohesiveForce,
-                    "cohesive force for cohesize zone models")
-      .def_readonly("ConvectiveHeatTransferCoefficient",
-                    &Glossary::ConvectiveHeatTransferCoefficient,
-                    "the heat transfer coefficient by convection")
-      .def_readonly("CrossSectionArea", &Glossary::CrossSectionArea, "??")
-      .def_readonly("CylindricalStress", &Glossary::CylindricalStress,
-                    "the stress in the cylindrical frame")
-      .def_readonly("Damage", &Glossary::Damage,
-                    "the damage, generally between 0 (sound material) and 1 "
-                    "(broken material)")
-      .def_readonly("DeformationGradient", &Glossary::DeformationGradient,
-                    "gradient of the transformation")
-      .def_readonly("Displacement", &Glossary::Displacement, "the displacement")
-      .def_readonly("DualStress", &Glossary::DualStress,
-                    "the dual stress of the strain measure")
-      .def_readonly("ElasticStrain", &Glossary::ElasticStrain,
-                    "The elastic strain")
-      .def_readonly("Emissivity", &Glossary::Emissivity,
-                    "the emissivity of the surface of a material is its "
-                    "effectiveness in emitting energy as thermal radiation")
-      .def_readonly("EquivalentPlasticStrain",
-                    &Glossary::EquivalentPlasticStrain,
-                    "the equivalent plastic strain")
-      .def_readonly(
-          "EquivalentStrain", &Glossary::EquivalentStrain,
-          "the sum of all plastic and viscoplastic equivalent strains")
-      .def_readonly("EquivalentViscoplasticStrain",
-                    &Glossary::EquivalentViscoplasticStrain,
-                    "the equivalent viscoplastic strain")
-      .def_readonly("FastNeutronFluence_01MeV",
-                    &Glossary::FastNeutronFluence_01MeV,
-                    "the fast neutron fluence, where the limit for fast "
-                    "neutron is 0.1 MeV")
-      .def_readonly(
-          "FastNeutronFluence_1MeV", &Glossary::FastNeutronFluence_1MeV,
-          "the fast neutron fluence, where the limit for fast neutron is 1 MeV")
-      .def_readonly("FastNeutronFlux_01MeV", &Glossary::FastNeutronFlux_01MeV,
-                    "the fast neutron fluence")
-      .def_readonly("FastNeutronFlux_1MeV", &Glossary::FastNeutronFlux_1MeV,
-                    "the fast neutron fluence")
-      .def_readonly("FirstAxisSecondMomentArea",
-                    &Glossary::FirstAxisSecondMomentArea, "??")
-      .def_readonly("FirstLameCoefficient", &Glossary::FirstLameCoefficient,
-                    "the first Lamé's coefficient of an isotropic material")
-      .def_readonly("FissionDensity", &Glossary::FissionDensity,
-                    "the fission density")
-      .def_readonly("GaseousSwelling", &Glossary::GaseousSwelling,
-                    "swelling du to gazeous fission products")
-      .def_readonly("GrainSize", &Glossary::GrainSize, "the grain size")
-      .def_readonly("HeatFlux", &Glossary::HeatFlux,
-                    "the heat flux, generally in the current configuration.")
-      .def_readonly(
-          "HeatTransferCoefficient", &Glossary::HeatTransferCoefficient,
-          "the heat transfer coefficient is the proportionality constant "
-          "between the heat flux and the temperature difference")
-      .def_readonly("HillStress", &Glossary::HillStress,
-                    "the Hill equivalent stress")
-      .def_readonly("HydrostaticPressure", &Glossary::HydrostaticPressure,
-                    "the hydrostatic pressure, defined as the third of the "
-                    "trace of the stress tensor")
-      .def_readonly("IrradiationDamage", &Glossary::IrradiationDamage,
-                    "the irradiation damage, measure by the mean number of "
-                    "displacements of each atoms")
-      .def_readonly("IrradiationInducedSwelling",
-                    &Glossary::IrradiationInducedSwelling,
-                    "swelling du to irradiation damage")
-      .def_readonly("IrradiationSwelling", &Glossary::IrradiationSwelling,
-                    "swelling du to irradiation damage")
-      .def_readonly("IrradiationTemperature", &Glossary::IrradiationTemperature,
-                    "the mean temperature (in time) of the temperature during "
-                    "the irradiation")
-      .def_readonly("KelvinTemperature", &Glossary::KelvinTemperature,
-                    "the temperature")
-      .def_readonly("MassDensity", &Glossary::MassDensity, "the mass density")
-      .def_readonly("MeanBurnUp_AtPercent", &Glossary::MeanBurnUp_AtPercent,
-                    "the spatial average of the  burn-up in at.%")
-      .def_readonly("MeanBurnUp_MWJperTm", &Glossary::MeanBurnUp_MWJperTm,
-                    "the spatial average of the  burn-up in MegaWattJour per "
-                    "tons of metals")
-      .def_readonly(
-          "MeanIrradiationTemperature", &Glossary::MeanIrradiationTemperature,
-          "The mean temperature  in time over a given domain \\(\\Omega\\)")
-      .def_readonly("MeanTemperature", &Glossary::MeanTemperature,
-                    "The mean temperature over a given domain \\(\\Omega\\)")
-      .def_readonly("NeutronFluence", &Glossary::NeutronFluence,
-                    "the neutron fluence")
-      .def_readonly("NeutronFlux", &Glossary::NeutronFlux, "the neutron flux")
-      .def_readonly("NormalStiffness", &Glossary::NormalStiffness,
-                    "the normal elastic stiffness for a cohesive zone model")
-      .def_readonly("NumberOfMoles", &Glossary::NumberOfMoles,
-                    "the amount of substance")
-      .def_readonly("OpeningDisplacement", &Glossary::OpeningDisplacement,
-                    "opening displacement in cohesive zone models")
-      .def_readonly("OrthotropicAxisX1", &Glossary::OrthotropicAxisX1,
-                    "the first coordinate of the vector giving the first axis "
-                    "of orthotropy")
-      .def_readonly("OrthotropicAxisX2", &Glossary::OrthotropicAxisX2,
-                    "the first coordinate of the vector giving the second axis "
-                    "of orthotropy")
-      .def_readonly("OrthotropicAxisY1", &Glossary::OrthotropicAxisY1,
-                    "the second coordinate of the vector giving the first axis "
-                    "of orthotropy")
-      .def_readonly("OrthotropicAxisY2", &Glossary::OrthotropicAxisY2,
-                    "the second coordinate of the vector giving the second "
-                    "axis of orthotropy")
-      .def_readonly("OrthotropicAxisZ1", &Glossary::OrthotropicAxisZ1,
-                    "the third coordinate of the vector giving the first axis "
-                    "of orthotropy")
-      .def_readonly("OrthotropicAxisZ2", &Glossary::OrthotropicAxisZ2,
-                    "the third coordinate of the vector giving the second axis "
-                    "of orthotropy")
-      .def_readonly("PlasticStrain", &Glossary::PlasticStrain,
-                    "The plastic strain")
-      .def_readonly("PlateWidth", &Glossary::PlateWidth, "??")
-      .def_readonly("PoissonRatio", &Glossary::PoissonRatio,
-                    "the Poisson ratio of an isotropic material")
-      .def_readonly("PoissonRatio12", &Glossary::PoissonRatio12,
-                    "the Poisson's coefficient between the first and second "
-                    "directions of orthotropy")
-      .def_readonly("PoissonRatio13", &Glossary::PoissonRatio13,
-                    "the Poisson's coefficient between the first and third "
-                    "directions of orthotropy")
-      .def_readonly("PoissonRatio23", &Glossary::PoissonRatio23,
-                    "the Poisson's coefficient between the second and third "
-                    "directions of orthotropy")
-      .def_readonly("Porosity", &Glossary::Porosity, "Porosity of the material")
-      .def_readonly("PorosityIncreaseDueToInelasticFlow",
-                    &Glossary::PorosityIncreaseDueToInelasticFlow,
-                    "Part of the porosity increase du to inelastic flow")
-      .def_readonly("PorosityIncreaseDueToNucleation",
-                    &Glossary::PorosityIncreaseDueToNucleation,
-                    "Part of the porosity increase du to nucleation")
-      .def_readonly("PowerDensity", &Glossary::PowerDensity,
-                    "the power density, generally in the current configuration")
-      .def_readonly("Pressure", &Glossary::Pressure, "the pressure of a gaz")
-      .def_readonly("PrincipalStress1", &Glossary::PrincipalStress1,
-                    "the first principal stress")
-      .def_readonly("PrincipalStress2", &Glossary::PrincipalStress2,
-                    "the third principal stress")
-      .def_readonly("PrincipalStress3", &Glossary::PrincipalStress3,
-                    "the third principal stress")
-      .def_readonly("SecondAxisSecondMomentArea",
-                    &Glossary::SecondAxisSecondMomentArea, "??")
-      .def_readonly("ShearModulus", &Glossary::ShearModulus,
-                    "the shear modulus of an isotropic material")
-      .def_readonly("ShearModulus12", &Glossary::ShearModulus12,
-                    "the shear moduls between the first and second directions "
-                    "of orthotropy")
-      .def_readonly("ShearModulus13", &Glossary::ShearModulus13,
-                    "the shear moduls between the first and third directions "
-                    "of orthotropy")
-      .def_readonly("ShearModulus23", &Glossary::ShearModulus23,
-                    "the shear moduls between the second and third directions "
-                    "of orthotropy")
-      .def_readonly("SolidSwelling", &Glossary::SolidSwelling,
-                    "swelling du to solid fission products")
-      .def_readonly("SpecificHeat", &Glossary::SpecificHeat,
-                    "the specific heat")
-      .def_readonly("SphericalStress", &Glossary::SphericalStress,
-                    "the stress in a spherical frame")
-      .def_readonly("Strain", &Glossary::Strain, "the strain tensor")
-      .def_readonly("StrainMeasure", &Glossary::StrainMeasure,
-                    "a generic entry for a strain measure (for instance, the "
-                    "Henky strain or the Green-Lagrange strain)")
-      .def_readonly("Stress", &Glossary::Stress, "the stress tensor")
-      .def_readonly("Swelling", &Glossary::Swelling, "an imposed swelling")
-      .def_readonly(
-          "TangentialStiffness", &Glossary::TangentialStiffness,
-          "the tangential elastic stiffness for a cohesive zone model")
-      .def_readonly("Temperature", &Glossary::Temperature, "the temperature")
-      .def_readonly(
-          "TemperatureGradient", &Glossary::TemperatureGradient,
-          "the temperature gradient, generally in the current configuration")
-      .def_readonly("ThermalConductivity", &Glossary::ThermalConductivity,
-                    "the thermal conductivity of an isotropic material")
-      .def_readonly("ThermalConductivity1", &Glossary::ThermalConductivity1,
-                    "the thermal conductivity of an orthotropic material along "
-                    "the first axis of orthotropy")
-      .def_readonly("ThermalConductivity2", &Glossary::ThermalConductivity2,
-                    "the thermal conductivity of an orthotropic material along "
-                    "the second axis of orthotropy")
-      .def_readonly("ThermalConductivity3", &Glossary::ThermalConductivity3,
-                    "the thermal conductivity of an orthotropic material along "
-                    "the third axis of orthotropy")
-      .def_readonly("ThermalExpansion", &Glossary::ThermalExpansion,
-                    "the mean thermal expansion coefficient")
-      .def_readonly("ThermalExpansion1", &Glossary::ThermalExpansion1,
-                    "the mean thermal expansion coefficient along the first "
-                    "orthotropy direction")
-      .def_readonly("ThermalExpansion2", &Glossary::ThermalExpansion2,
-                    "the mean thermal expansion coefficient along the second "
-                    "orthotropy direction")
-      .def_readonly("ThermalExpansion3", &Glossary::ThermalExpansion3,
-                    "the mean thermal expansion coefficient along the third "
-                    "orthotropy direction")
-      .def_readonly("TorsionConstant", &Glossary::TorsionConstant, "??")
-      .def_readonly("TrescaStress", &Glossary::TrescaStress,
-                    "the Tresca equivalent stress")
-      .def_readonly("UltimateTensileStrength",
-                    &Glossary::UltimateTensileStrength,
-                    "the maximum stress that a material can withstand while "
-                    "being stretched or pulled before breaking")
-      .def_readonly("ViscoplasticStrain", &Glossary::ViscoplasticStrain,
-                    "The viscoplatic strain")
-      .def_readonly(
-          "VolumetricStrain", &Glossary::VolumetricStrain,
-          "the volumetric strain, defined as the trace of the strain tensor")
-      .def_readonly("VonMisesStress", &Glossary::VonMisesStress,
-                    "the von Mises equivalent stress")
-      .def_readonly("YieldStrength", &Glossary::YieldStrength,
-                    "the stress corresponding to the yield point at which the "
-                    "material begins to deform plastically")
-      .def_readonly("YoungModulus", &Glossary::YoungModulus,
-                    "the Young's modulus of an isotropic material")
-      .def_readonly("YoungModulus1", &Glossary::YoungModulus1,
-                    "the Young's modulus of an isotropic material along the "
-                    "first direction of orthotropy")
-      .def_readonly("YoungModulus2", &Glossary::YoungModulus2,
-                    "the Young's modulus of an isotropic material along the "
-                    "second direction of orthotropy")
-      .def_readonly("YoungModulus3", &Glossary::YoungModulus3,
-                    "the Young's modulus of an isotropic material along the "
-                    "third direction of orthotropy");
+      .def_readonly_static("AxialDeformationGradient",
+                           &Glossary::AxialDeformationGradient)
+      .def_readonly_static("AxialGrowth", &Glossary::AxialGrowth)
+      .def_readonly_static("AxialStrain", &Glossary::AxialStrain)
+      .def_readonly_static("AxialStress", &Glossary::AxialStress)
+      .def_readonly_static("B10BurnUp", &Glossary::B10BurnUp)
+      .def_readonly_static("Broken", &Glossary::Broken)
+      .def_readonly_static("BulkModulus", &Glossary::BulkModulus)
+      .def_readonly_static("BurnUp_AtPercent", &Glossary::BurnUp_AtPercent)
+      .def_readonly_static("BurnUp_MWJperTm", &Glossary::BurnUp_MWJperTm)
+      .def_readonly_static("CohesiveForce", &Glossary::CohesiveForce)
+      .def_readonly_static("ConvectiveHeatTransferCoefficient",
+                           &Glossary::ConvectiveHeatTransferCoefficient)
+      .def_readonly_static("CrossSectionArea", &Glossary::CrossSectionArea)
+      .def_readonly_static("CylindricalStress", &Glossary::CylindricalStress)
+      .def_readonly_static("Damage", &Glossary::Damage)
+      .def_readonly_static("DeformationGradient",
+                           &Glossary::DeformationGradient)
+      .def_readonly_static("Displacement", &Glossary::Displacement)
+      .def_readonly_static("DualStress", &Glossary::DualStress)
+      .def_readonly_static("ElasticStrain", &Glossary::ElasticStrain)
+      .def_readonly_static("Emissivity", &Glossary::Emissivity)
+      .def_readonly_static("EquivalentPlasticStrain",
+                           &Glossary::EquivalentPlasticStrain)
+      .def_readonly_static("EquivalentStrain", &Glossary::EquivalentStrain)
+      .def_readonly_static("EquivalentViscoplasticStrain",
+                           &Glossary::EquivalentViscoplasticStrain)
+      .def_readonly_static("FastNeutronFluence_01MeV",
+                           &Glossary::FastNeutronFluence_01MeV)
+      .def_readonly_static("FastNeutronFluence_1MeV",
+                           &Glossary::FastNeutronFluence_1MeV)
+      .def_readonly_static("FastNeutronFlux_01MeV",
+                           &Glossary::FastNeutronFlux_01MeV)
+      .def_readonly_static("FastNeutronFlux_1MeV",
+                           &Glossary::FastNeutronFlux_1MeV)
+      .def_readonly_static("FirstAxisSecondMomentArea",
+                           &Glossary::FirstAxisSecondMomentArea)
+      .def_readonly_static("FirstLameCoefficient",
+                           &Glossary::FirstLameCoefficient)
+      .def_readonly_static("FissionDensity", &Glossary::FissionDensity)
+      .def_readonly_static("GaseousSwelling", &Glossary::GaseousSwelling)
+      .def_readonly_static("GrainSize", &Glossary::GrainSize)
+      .def_readonly_static("HeatFlux", &Glossary::HeatFlux)
+      .def_readonly_static("HeatTransferCoefficient",
+                           &Glossary::HeatTransferCoefficient)
+      .def_readonly_static("HillStress", &Glossary::HillStress)
+      .def_readonly_static("HydrostaticPressure",
+                           &Glossary::HydrostaticPressure)
+      .def_readonly_static("IrradiationDamage", &Glossary::IrradiationDamage)
+      .def_readonly_static("IrradiationInducedSwelling",
+                           &Glossary::IrradiationInducedSwelling)
+      .def_readonly_static("IrradiationSwelling",
+                           &Glossary::IrradiationSwelling)
+      .def_readonly_static("IrradiationTemperature",
+                           &Glossary::IrradiationTemperature)
+      .def_readonly_static("KelvinTemperature", &Glossary::KelvinTemperature)
+      .def_readonly_static("MassDensity", &Glossary::MassDensity)
+      .def_readonly_static("MeanBurnUp_AtPercent",
+                           &Glossary::MeanBurnUp_AtPercent)
+      .def_readonly_static("MeanBurnUp_MWJperTm",
+                           &Glossary::MeanBurnUp_MWJperTm)
+      .def_readonly_static("MeanIrradiationTemperature",
+                           &Glossary::MeanIrradiationTemperature)
+      .def_readonly_static("MeanTemperature", &Glossary::MeanTemperature)
+      .def_readonly_static("NeutronFluence", &Glossary::NeutronFluence)
+      .def_readonly_static("NeutronFlux", &Glossary::NeutronFlux)
+      .def_readonly_static("NormalStiffness", &Glossary::NormalStiffness)
+      .def_readonly_static("NumberOfMoles", &Glossary::NumberOfMoles)
+      .def_readonly_static("OpeningDisplacement",
+                           &Glossary::OpeningDisplacement)
+      .def_readonly_static("OrthotropicAxisX1", &Glossary::OrthotropicAxisX1)
+      .def_readonly_static("OrthotropicAxisX2", &Glossary::OrthotropicAxisX2)
+      .def_readonly_static("OrthotropicAxisY1", &Glossary::OrthotropicAxisY1)
+      .def_readonly_static("OrthotropicAxisY2", &Glossary::OrthotropicAxisY2)
+      .def_readonly_static("OrthotropicAxisZ1", &Glossary::OrthotropicAxisZ1)
+      .def_readonly_static("OrthotropicAxisZ2", &Glossary::OrthotropicAxisZ2)
+      .def_readonly_static("PlasticStrain", &Glossary::PlasticStrain)
+      .def_readonly_static("PlateWidth", &Glossary::PlateWidth)
+      .def_readonly_static("PoissonRatio", &Glossary::PoissonRatio)
+      .def_readonly_static("PoissonRatio12", &Glossary::PoissonRatio12)
+      .def_readonly_static("PoissonRatio13", &Glossary::PoissonRatio13)
+      .def_readonly_static("PoissonRatio23", &Glossary::PoissonRatio23)
+      .def_readonly_static("Porosity", &Glossary::Porosity)
+      .def_readonly_static("PorosityIncreaseDueToInelasticFlow",
+                           &Glossary::PorosityIncreaseDueToInelasticFlow)
+      .def_readonly_static("PorosityIncreaseDueToNucleation",
+                           &Glossary::PorosityIncreaseDueToNucleation)
+      .def_readonly_static("PowerDensity", &Glossary::PowerDensity)
+      .def_readonly_static("Pressure", &Glossary::Pressure)
+      .def_readonly_static("PrincipalStress1", &Glossary::PrincipalStress1)
+      .def_readonly_static("PrincipalStress2", &Glossary::PrincipalStress2)
+      .def_readonly_static("PrincipalStress3", &Glossary::PrincipalStress3)
+      .def_readonly_static("SecondAxisSecondMomentArea",
+                           &Glossary::SecondAxisSecondMomentArea)
+      .def_readonly_static("ShearModulus", &Glossary::ShearModulus)
+      .def_readonly_static("ShearModulus12", &Glossary::ShearModulus12)
+      .def_readonly_static("ShearModulus13", &Glossary::ShearModulus13)
+      .def_readonly_static("ShearModulus23", &Glossary::ShearModulus23)
+      .def_readonly_static("SolidSwelling", &Glossary::SolidSwelling)
+      .def_readonly_static("SpecificHeat", &Glossary::SpecificHeat)
+      .def_readonly_static("SphericalStress", &Glossary::SphericalStress)
+      .def_readonly_static("Strain", &Glossary::Strain)
+      .def_readonly_static("StrainMeasure", &Glossary::StrainMeasure)
+      .def_readonly_static("Stress", &Glossary::Stress)
+      .def_readonly_static("Swelling", &Glossary::Swelling)
+      .def_readonly_static("TangentialStiffness",
+                           &Glossary::TangentialStiffness)
+      .def_readonly_static("Temperature", &Glossary::Temperature)
+      .def_readonly_static("TemperatureGradient",
+                           &Glossary::TemperatureGradient)
+      .def_readonly_static("ThermalConductivity",
+                           &Glossary::ThermalConductivity)
+      .def_readonly_static("ThermalConductivity1",
+                           &Glossary::ThermalConductivity1)
+      .def_readonly_static("ThermalConductivity2",
+                           &Glossary::ThermalConductivity2)
+      .def_readonly_static("ThermalConductivity3",
+                           &Glossary::ThermalConductivity3)
+      .def_readonly_static("ThermalExpansion", &Glossary::ThermalExpansion)
+      .def_readonly_static("ThermalExpansion1", &Glossary::ThermalExpansion1)
+      .def_readonly_static("ThermalExpansion2", &Glossary::ThermalExpansion2)
+      .def_readonly_static("ThermalExpansion3", &Glossary::ThermalExpansion3)
+      .def_readonly_static("TorsionConstant", &Glossary::TorsionConstant)
+      .def_readonly_static("TrescaStress", &Glossary::TrescaStress)
+      .def_readonly_static("UltimateTensileStrength",
+                           &Glossary::UltimateTensileStrength)
+      .def_readonly_static("ViscoplasticStrain", &Glossary::ViscoplasticStrain)
+      .def_readonly_static("VolumetricStrain", &Glossary::VolumetricStrain)
+      .def_readonly_static("VonMisesStress", &Glossary::VonMisesStress)
+      .def_readonly_static("YieldStrength", &Glossary::YieldStrength)
+      .def_readonly_static("YoungModulus", &Glossary::YoungModulus)
+      .def_readonly_static("YoungModulus1", &Glossary::YoungModulus1)
+      .def_readonly_static("YoungModulus2", &Glossary::YoungModulus2)
+      .def_readonly_static("YoungModulus3", &Glossary::YoungModulus3);
 }
