@@ -1,3 +1,4 @@
+
 /*!
  * \file  bindings/python/tfel/glossary.cxx
  * \brief
@@ -11,13 +12,12 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 
-void declareGlossaryEntry();
+void declareGlossaryEntry(pybind11::module_&);
+void declareGlossary(pybind11::module_&);
 
-void declareGlossary();
-
-BOOST_PYTHON_MODULE(glossary) {
-  declareGlossaryEntry();
-  declareGlossary();
+PYBIND11_MODULE(glossary, m) {
+  declareGlossaryEntry(m);
+  declareGlossary(m);
 }

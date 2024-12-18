@@ -51,12 +51,12 @@ tfel_python_module(utilities utilities.cxx
 target_link_libraries(utilities
   PRIVATE TFELUtilities ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
 
-#tfel_python_module(glossary
-#  pyglossary.cxx
-#  Glossary.cxx
-#  GlossaryEntry.cxx)
-#target_link_libraries(py_tfel_glossary
-#  PRIVATE TFELGlossary ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
+tfel_python_module(glossary
+  pyglossary.cxx
+  Glossary.cxx
+  GlossaryEntry.cxx)
+target_link_libraries(glossary
+  PRIVATE TFELGlossary ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
 
 set(TFEL_PYTHON_MATH_MODULE_SOURCES
   math.cxx
