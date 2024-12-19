@@ -22,7 +22,9 @@ void declareMaterialPropertyDSL(pybind11::module_&);
 
 void declareMaterialPropertyDSL(pybind11::module_& m) {
   using namespace mfront;
-  pybind11::class_<MaterialPropertyDSL, AbstractDSL>(m, "MaterialPropertyDSL")
+  pybind11::class_<MaterialPropertyDSL, AbstractDSL,
+                   std::shared_ptr<MaterialPropertyDSL>>(m,
+                                                         "MaterialPropertyDSL")
       .def("getMaterialPropertyDescription",
            &MaterialPropertyDSL::getMaterialPropertyDescription,
            pybind11::return_value_policy::reference);

@@ -13,6 +13,7 @@
  */
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include <TFEL/System/ProcessManager.hxx>
 
 struct ProcessManagerCommandWrapper final

@@ -12,6 +12,7 @@
  */
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Config/TFELConfig.hxx"
 
 void declarePhysicalConstants(pybind11::module_& m);

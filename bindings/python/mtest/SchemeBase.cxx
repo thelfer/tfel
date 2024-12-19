@@ -12,7 +12,8 @@
  */
 
 #include <string>
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Raise.hxx"
 #include "MTest/SchemeBase.hxx"
 #include "MTest/StudyCurrentState.hxx"
@@ -94,13 +95,11 @@ static void SchemeBase_printOutput(mtest::SchemeBase& s,
   s.printOutput(t, scs, true);
 }
 
-void declareSchemeBase();
+void declareSchemeBase(pybind11::module_&);
 
-void declareSchemeBase() {
+void declareSchemeBase(pybind11::module_& m) {
   using namespace mtest;
-
-  boost::python::class_<SchemeBase, boost::noncopyable>("SchemeBase",
-                                                        boost::python::no_init)
+  pybind11::class_<SchemeBase>(m, "SchemeBase")
       .def("setDescription", &SchemeBase::setDescription,
            "This method describes the test  which is implemented "
            "in a mtest file.\n"

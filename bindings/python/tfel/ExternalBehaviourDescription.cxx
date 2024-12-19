@@ -1,3 +1,4 @@
+
 /*!
  * \file  bindings/python/tfel/ExternalBehaviourDescription.cxx
  * \brief
@@ -12,6 +13,7 @@
  */
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/System/ExternalBehaviourDescription.hxx"
 
 static std::vector<std::string> get_emps_epts(

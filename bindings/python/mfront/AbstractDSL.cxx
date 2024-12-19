@@ -58,7 +58,7 @@ void declareAbstractDSL(pybind11::module_& m) {
       .value("MATERIALPROPERTYDSL", AbstractDSL::MATERIALPROPERTYDSL)
       .value("BEHAVIOURDSL", AbstractDSL::BEHAVIOURDSL)
       .value("MODELDSL", AbstractDSL::MODELDSL);
-  pybind11::class_<AbstractDSL>(m, "AbstractDSL")
+  pybind11::class_<AbstractDSL, std::shared_ptr<AbstractDSL>>(m, "AbstractDSL")
       .def("getTargetType", &AbstractDSL::getTargetType)
       .def("getMaterialKnowledgeDescription",
            &AbstractDSL::getMaterialKnowledgeDescription,

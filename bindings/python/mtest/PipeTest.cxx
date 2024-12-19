@@ -14,8 +14,8 @@
 #include <cmath>
 #include <memory>
 #include <limits>
-#include <boost/python.hpp>
-
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Raise.hxx"
 #include "MTest/Evolution.hxx"
 #include "MTest/StudyCurrentState.hxx"
@@ -24,12 +24,12 @@
 #include "MTest/PipeProfileHandler.hxx"
 #include "MTest/PipeTest.hxx"
 
-static boost::python::tuple PipeTest_computeMinimumAndMaximumValues(
+static pybind11::tuple PipeTest_computeMinimumAndMaximumValues(
     const mtest::PipeTest& t,
     const mtest::StudyCurrentState& s,
     const std::string& n) {
   const auto r = t.computeMinimumAndMaximumValues(s, n);
-  return boost::python::make_tuple(r.first, r.second);
+  return pybind11::make_tuple(r.first, r.second);
 }  // end of PipeTest_computeMinimumAndMaximumValues
 
 static void PipeTest_setMandrelRadiusEvolution(mtest::PipeTest& t,
@@ -160,14 +160,15 @@ static void PipeTest_setElementType(mtest::PipeTest& t, const std::string& e) {
   }
 }  // end of PipeTest_setElementType
 
-void declarePipeTest();
+void declarePipeTest(pybind11::module_&);
 
-void declarePipeTest() {
+void declarePipeTest(pybind11::module_& m) {
+  using namespace pybind11::literals;
   using namespace mtest;
   tfel::tests::TestResult (PipeTest::*pm)() = &PipeTest::execute;
   void (PipeTest::*pm2)(StudyCurrentState&, SolverWorkSpace&, const real,
                         const real) const = &PipeTest::execute;
-  boost::python::enum_<mtest::PipeTest::Configuration>("PipeTestConfiguration")
+  pybind11::enum_<mtest::PipeTest::Configuration>(m, "PipeTestConfiguration")
       .value("INTIAL_CONFIGURATION",
              mtest::PipeTest::Configuration::INTIAL_CONFIGURATION)
       .value("Intial_Configuration",
@@ -176,7 +177,7 @@ void declarePipeTest() {
              mtest::PipeTest::Configuration::CURRENT_CONFIGURATION)
       .value("Current_Configuration",
              mtest::PipeTest::Configuration::CURRENT_CONFIGURATION);
-  boost::python::enum_<mtest::PipeTest::FailurePolicy>("PipeTestFailurePolicy")
+  pybind11::enum_<mtest::PipeTest::FailurePolicy>(m, "PipeTestFailurePolicy")
       .value("REPORTONLY", mtest::PipeTest::FailurePolicy::REPORTONLY)
       .value("STOPCOMPUTATION", mtest::PipeTest::FailurePolicy::STOPCOMPUTATION)
       .value("FREEZESTATEUNTILENDOFCOMPUTATION",
@@ -189,8 +190,7 @@ void declarePipeTest() {
              mtest::PipeTest::FailurePolicy::FREEZESTATEUNTILENDOFCOMPUTATION)
       .value("FreezeState",
              mtest::PipeTest::FailurePolicy::FREEZESTATEUNTILENDOFCOMPUTATION);
-  boost::python::class_<PipeTest, boost::noncopyable,
-                        boost::python::bases<SingleStructureScheme>>("PipeTest")
+  pybind11::class_<PipeTest, SingleStructureScheme>(m, "PipeTest")
       .def("setInnerRadius", &PipeTest::setInnerRadius)
       .def("setOuterRadius", &PipeTest::setOuterRadius)
       .def("setNumberOfElements", &PipeTest::setNumberOfElements)
@@ -319,8 +319,6 @@ void declarePipeTest() {
            PipeTest_computeMinimumAndMaximumValues)
       .def("setGasEquationOfState", &PipeTest::setGasEquationOfState)
       .def("getMesh", &PipeTest::getMesh,
-           boost::python::return_value_policy<
-               boost::python::copy_const_reference>(),
            "This method returns the underlying mesh")
       .def("completeInitialisation", &PipeTest::completeInitialisation,
            "complete the initialisation. This method must be called once. This "
@@ -329,7 +327,6 @@ void declarePipeTest() {
            "add a failure criterion.")
       .def("setFailurePolicy", &PipeTest::setFailurePolicy,
            "set the failure policy.")
-      .def("addOxidationModel", &PipeTest::addOxidationModel,
-           (boost::python::arg("library"), "model", "boundary"),
-           "add an oxidation model.");
+      .def("addOxidationModel", &PipeTest::addOxidationModel, "library"_a,
+           "model"_a, "boundary"_a, "add an oxidation model.");
 }

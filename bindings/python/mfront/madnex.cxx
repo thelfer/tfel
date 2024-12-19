@@ -6,6 +6,7 @@
  */
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 #ifdef MFRONT_HAVE_MADNEX
 #include "Madnex/File.hxx"

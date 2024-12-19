@@ -13,6 +13,7 @@
  */
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Material/Hosford1972YieldCriterion.hxx"
 
 template <unsigned short N>

@@ -7,6 +7,7 @@
 
 #include <string>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Config/GetTFELVersion.h"
 
 void declareConfig(pybind11::module_&);

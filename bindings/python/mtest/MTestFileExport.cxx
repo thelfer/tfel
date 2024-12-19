@@ -11,7 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MTest/MTestFileExport.hxx"
 
 static void mtest_write(const mtest::TestDescription& m, const std::string& f) {
@@ -23,9 +24,11 @@ static void mtest_loadMTestFileContent(mtest::TestDescription& d,
   mtest::loadMTestFileContent(d, f);
 }  // end of mtest_loadMTestFileContent
 
-void declareMTestFileExport() {
+void declareMTestFileExport(pybind11::module_&);
+
+void declareMTestFileExport(pybind11::module_&m) {
   //
-  boost::python::class_<mtest::TestDescription>("TestDescription")
+  pybind11::class_<mtest::TestDescription>(m, "TestDescription")
       .def_readwrite("name", &mtest::TestDescription::name)
       .def_readwrite("scheme", &mtest::TestDescription::scheme)
       .def_readwrite("author", &mtest::TestDescription::author)
@@ -34,7 +37,7 @@ void declareMTestFileExport() {
       .def_readwrite("behaviour", &mtest::TestDescription::behaviour)
       .def_readwrite("material", &mtest::TestDescription::material);
   //
-  boost::python::def("loadMTestFileContent", mtest_loadMTestFileContent);
-  boost::python::def("write", mtest_write);
+  m.def("loadMTestFileContent", mtest_loadMTestFileContent);
+  m.def("write", mtest_write);
 
 }  // end of declareMTestFileExport

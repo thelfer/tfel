@@ -12,6 +12,7 @@
  */
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Material/CrystalStructure.hxx"
 
 void declareCrystalStructure(pybind11::module_&);

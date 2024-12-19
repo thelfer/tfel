@@ -11,12 +11,12 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
-
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MTest/MTest.hxx"
 #include "MTest/MTestParser.hxx"
 
-void declareMTestParser();
+void declareMTestParser(pybind11::module_&);
 
 static void execute(mtest::MTestParser& p,
                     mtest::MTest& m,
@@ -39,11 +39,9 @@ static void execute3(mtest::MTestParser& p,
   p.execute(m, f, e, s);
 }
 
-void declareMTestParser() {
-  using namespace boost;
-  using namespace boost::python;
+void declareMTestParser(pybind11::module_& m) {
   using namespace mtest;
-  class_<MTestParser, noncopyable>("MTestParser")
+  pybind11::class_<MTestParser>(m, "MTestParser")
       .def("execute", execute)
       .def("execute", execute2)
       .def("execute", execute3)

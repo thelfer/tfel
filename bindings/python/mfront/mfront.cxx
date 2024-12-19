@@ -49,11 +49,11 @@ static pybind11::object getDSL(const std::string& f) {
   auto dsl = mfront::MFrontBase::getDSL(f);
   if (dsl->getTargetType() == mfront::AbstractDSL::MATERIALPROPERTYDSL) {
     auto b = std::dynamic_pointer_cast<mfront::MaterialPropertyDSL>(dsl);
-    tfel::raise_if(!b, "getDSL: invalid dsl implementation");
+    tfel::raise_if(b.get() == nullptr, "getDSL: invalid dsl implementation");
     return pybind11::cast(b);
   } else if (dsl->getTargetType() == mfront::AbstractDSL::BEHAVIOURDSL) {
     auto b = std::dynamic_pointer_cast<mfront::AbstractBehaviourDSL>(dsl);
-    tfel::raise_if(!b, "getDSL: invalid dsl implementation");
+    tfel::raise_if(b.get() == nullptr, "getDSL: invalid dsl implementation");
     return pybind11::cast(b);
   }
   return pybind11::cast(dsl);

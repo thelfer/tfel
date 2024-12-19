@@ -12,6 +12,7 @@
  */
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Material/OutOfBoundsPolicy.hxx"
 
 void declareOutOfBoundsPolicy(pybind11::module_&);

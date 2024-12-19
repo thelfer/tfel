@@ -11,10 +11,10 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 
-void declareMFMTestGeneratorFileExport();
+void declareMFMTestGeneratorFileExport(pybind11::module_&);
 
-BOOST_PYTHON_MODULE(_mfm_test_generator) {
-  declareMFMTestGeneratorFileExport();
+PYBIND11_MODULE(_mfm_test_generator, m) {
+  declareMFMTestGeneratorFileExport(m);
 }
