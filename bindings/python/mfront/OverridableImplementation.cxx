@@ -11,12 +11,13 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MFront/OverridableImplementation.hxx"
 
-void declareOverridableImplementation();
+void declareOverridableImplementation(pybind11::module_&);
 
-void declareOverridableImplementation() {
+void declareOverridableImplementation(pybind11::module_& m) {
   auto write_ptr =
       static_cast<void (*)(const mfront::OverridableImplementation&,
                            const std::string&)>(mfront::write);
@@ -25,8 +26,9 @@ void declareOverridableImplementation() {
                            const std::string&, const std::string&)>(
           mfront::write);
 
-  boost::python::class_<mfront::OverridableImplementation>(
-      "OverridableImplementation", boost::python::init<std::string>())
+  pybind11::class_<mfront::OverridableImplementation>(
+      m, "OverridableImplementation")
+      .def(pybind11::init<std::string>())
       .def(
           "overrideAuthor",
           +[](mfront::OverridableImplementation& i, const std::string& a) {
@@ -104,7 +106,7 @@ void declareOverridableImplementation() {
            "return the name of the material. This name can be inherited "
            "from the overriden implementation or overriden");
 
-  boost::python::def(
+  m.def(
       "getDestinationPathInMadnexFile",
       static_cast<std::string (*)(const mfront::OverridableImplementation&)>(
           mfront::getDestinationPathInMadnexFile),
@@ -112,20 +114,20 @@ void declareOverridableImplementation() {
       return the path where an overridable implementation will be written in a madnex file.
       )");
 
-  boost::python::def("write", write_ptr,
-                     R"(
-                     export an overridable implementation to a file
-                     
-                     o: OverridableImplementation
-                     f: generated file
-                     )");
-  boost::python::def("write", write_ptr2,
-                     R"(
-                     export an overridable implementation to a file using a template file
-                     
-                     o: OverridableImplementation
-                     t: template file
-                     f: generated file
-                     )");
+  m.def("write", write_ptr,
+        R"(
+        export an overridable implementation to a file
+        o: OverridableImplementation
+        f: generated file
+        )");
+  m.def("write", write_ptr2,
+        R"(
+        export an overridable implementation to a file using a template file
+        
+        
+        o: OverridableImplementation
+        t: template file
+        f: generated file
+        )");
 
 }  // end of declareOverridableImplementation

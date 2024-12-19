@@ -11,35 +11,27 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
-#include "TFEL/Python/MapConverter.hxx"
+#include <pybind11/pybind11.h>
 #include "MFront/MaterialKnowledgeAttribute.hxx"
 
 template <typename T>
-static void add_def(
-    boost::python::class_<mfront::MaterialKnowledgeAttribute>& w,
-    const std::string& n) {
-  using namespace boost::python;
+static void add_def(pybind11::class_<mfront::MaterialKnowledgeAttribute>& w,
+                    const std::string& n) {
   using namespace mfront;
   bool (MaterialKnowledgeAttribute::*is_ptr)() const =
       &MaterialKnowledgeAttribute::is<T>;
   const T& (MaterialKnowledgeAttribute::*get_ptr)() const =
       &MaterialKnowledgeAttribute::get<T>;
-  w.def(("is" + n).c_str(), is_ptr)
-      .def(("get" + n).c_str(), get_ptr,
-           return_value_policy<copy_const_reference>());
+  w.def(("is" + n).c_str(), is_ptr).def(("get" + n).c_str(), get_ptr);
 }
 
-void declareMaterialKnowledgeAttribute();
+void declareMaterialKnowledgeAttribute(pybind11::module_&);
 
-void declareMaterialKnowledgeAttribute() {
-  using namespace boost::python;
+void declareMaterialKnowledgeAttribute(pybind11::module_& m) {
   using namespace mfront;
-  using namespace tfel::python;
-  class_<MaterialKnowledgeAttribute> w("MaterialKnowledgeAttribute");
+  pybind11::class_<MaterialKnowledgeAttribute> w(m,
+                                                 "MaterialKnowledgeAttribute");
   add_def<bool>(w, "Bool");
   add_def<unsigned short>(w, "UnsignedShort");
   add_def<std::string>(w, "String");
-
-  initializeMapConverter<std::string, MaterialKnowledgeAttribute>();
 }

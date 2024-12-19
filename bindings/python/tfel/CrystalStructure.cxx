@@ -11,14 +11,14 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 #include "TFEL/Material/CrystalStructure.hxx"
 
-void declareCrystalStructure();
+void declareCrystalStructure(pybind11::module_&);
 
-void declareCrystalStructure() {
+void declareCrystalStructure(pybind11::module_& m) {
   using tfel::material::CrystalStructure;
-  boost::python::enum_<CrystalStructure>("CrystalStructure")
+  pybind11::enum_<CrystalStructure>(m, "CrystalStructure")
       .value("Cubic", CrystalStructure::Cubic)
       .value("FCC", CrystalStructure::FCC)
       .value("HCP", CrystalStructure::HCP);

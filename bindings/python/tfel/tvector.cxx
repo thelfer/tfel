@@ -81,6 +81,7 @@ static void declaretvector(pybind11::module_& m, const char* const n) {
       .def(pybind11::self *= double())
       .def(pybind11::self /= double())
       .def("__neg__", [](const tvector& v) -> tvector { return -v; });
+
 }
 
 void declaretvector(pybind11::module_& m);

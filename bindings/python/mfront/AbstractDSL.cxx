@@ -1,3 +1,4 @@
+
 /*!
  * \file   bindings/python/mfront/AbstractDSL.cxx
  * \brief
@@ -13,9 +14,8 @@
 
 #include <set>
 #include <memory>
-#include "TFEL/Python/SharedPtr.hxx"
-#include <boost/python.hpp>
-
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MFront/MaterialKnowledgeDescription.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
@@ -50,27 +50,27 @@ static void analyseFile3(mfront::AbstractDSL& dsl,
   dsl.analyseFile(f, args, s);
 }
 
-void declareAbstractDSL() {
-  using namespace boost::python;
+void declareAbstractDSL(pybind11::module_&);
+
+void declareAbstractDSL(pybind11::module_& m) {
   using namespace mfront;
-  enum_<AbstractDSL::DSLTarget>("DSLTarget")
+  pybind11::enum_<AbstractDSL::DSLTarget>(m, "DSLTarget")
       .value("MATERIALPROPERTYDSL", AbstractDSL::MATERIALPROPERTYDSL)
       .value("BEHAVIOURDSL", AbstractDSL::BEHAVIOURDSL)
       .value("MODELDSL", AbstractDSL::MODELDSL);
-  class_<AbstractDSL, std::shared_ptr<AbstractDSL>, boost::noncopyable>(
-      "AbstractDSL", no_init)
+  pybind11::class_<AbstractDSL>(m, "AbstractDSL")
       .def("getTargetType", &AbstractDSL::getTargetType)
       .def("getMaterialKnowledgeDescription",
            &AbstractDSL::getMaterialKnowledgeDescription,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getFileDescription", &AbstractDSL::getFileDescription,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("analyseFile", analyseFile1)
       .def("analyseFile", analyseFile2)
       .def("analyseFile", analyseFile3)
       .def("analyseString", &AbstractDSL::analyseString)
       .def("getTargetsDescription", &AbstractDSL::getTargetsDescription,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("generateOutputFiles", &AbstractDSL::generateOutputFiles)
       .def("setInterfaces", &setInterfaces)
       .def("getKeywordsList", &getKeywordsList);

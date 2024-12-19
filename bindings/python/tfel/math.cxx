@@ -13,19 +13,18 @@
 
 #include <pybind11/pybind11.h>
 
-// void declareTFELMathVector();
+void declareTFELMathVector(pybind11::module_&);
 void declaretvector(pybind11::module_&);
 void declarestensor(pybind11::module_&);
 void declarest2tost2(pybind11::module_&);
 void declareEvaluator(pybind11::module_&);
-
-// void declareAccelerationAlgorithms();
+void declareAccelerationAlgorithms(pybind11::module_&);
 
 PYBIND11_MODULE(math, m) {
   declaretvector(m);
   declarestensor(m);
   declarest2tost2(m);
-//   declareTFELMathVector();
+  declareTFELMathVector(m);
   declareEvaluator(m);
-//  declareAccelerationAlgorithms();
+  declareAccelerationAlgorithms(m);
 }

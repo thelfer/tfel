@@ -1,3 +1,4 @@
+
 /*!
  * \file  bindings/python/tfel/ModellingHypothesis.cxx
  * \brief
@@ -11,17 +12,14 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
-#include "TFEL/Python/VectorConverter.hxx"
+#include <pybind11/pybind11.h>
 #include "TFEL/Material/ModellingHypothesis.hxx"
 
-void declareModellingHypothesis();
+void declareModellingHypothesis(pybind11::module_&);
 
-void declareModellingHypothesis() {
-  using namespace boost::python;
+void declareModellingHypothesis(pybind11::module_& m) {
   using namespace tfel::material;
-  using namespace tfel::python;
-  enum_<ModellingHypothesis::Hypothesis>("ModellingHypothesis")
+  pybind11::enum_<ModellingHypothesis::Hypothesis>(m, "ModellingHypothesis")
       .value("AXISYMMETRICALGENERALISEDPLANESTRAIN",
              ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)
       .value("AXISYMMETRICALGENERALISEDPLANESTRESS",
@@ -33,5 +31,4 @@ void declareModellingHypothesis() {
              ModellingHypothesis::GENERALISEDPLANESTRAIN)
       .value("TRIDIMENSIONAL", ModellingHypothesis::TRIDIMENSIONAL)
       .value("UNDEFINEDHYPOTHESIS", ModellingHypothesis::UNDEFINEDHYPOTHESIS);
-  initializeVectorConverter<std::vector<ModellingHypothesis::Hypothesis>>();
 }

@@ -11,13 +11,14 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 #include "MFront/FileDescription.hxx"
 
-void declareFileDescription() {
-  using namespace boost::python;
+void declareFileDescription(pybind11::module_&);
+
+void declareFileDescription(pybind11::module_& m) {
   using namespace mfront;
-  class_<mfront::FileDescription>("FileDescription")
+  pybind11::class_<mfront::FileDescription>(m, "FileDescription")
       .def_readwrite("fileName", &mfront::FileDescription::fileName)
       .def_readwrite("authorName", &mfront::FileDescription::authorName)
       .def_readwrite("date", &mfront::FileDescription::date)

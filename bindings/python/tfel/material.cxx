@@ -1,3 +1,4 @@
+
 /*!
  * \file  bindings/python/tfel/material.cxx
  * \brief
@@ -11,20 +12,20 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 
-void declareModellingHypothesis();
-void declareOutOfBoundsPolicy();
-void declareCrystalStructure();
-void declarePiPlane();
-void declareHosford();
-void declareBarlat();
+void declareModellingHypothesis(pybind11::module_&);
+void declareOutOfBoundsPolicy(pybind11::module_&);
+void declareCrystalStructure(pybind11::module_&);
+void declarePiPlane(pybind11::module_&);
+void declareHosford(pybind11::module_&);
+void declareBarlat(pybind11::module_&);
 
-BOOST_PYTHON_MODULE(material) {
-  declareModellingHypothesis();
-  declareOutOfBoundsPolicy();
-  declareCrystalStructure();
-  declarePiPlane();
-  declareHosford();
-  declareBarlat();
+PYBIND11_MODULE(material, m) {
+  declareModellingHypothesis(m);
+  declareOutOfBoundsPolicy(m);
+  declareCrystalStructure(m);
+  declarePiPlane(m);
+  declareHosford(m);
+  declareBarlat(m);
 }

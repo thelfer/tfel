@@ -11,7 +11,7 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 #include "TFEL/System/ExternalBehaviourDescription.hxx"
 
 static std::vector<std::string> get_emps_epts(
@@ -49,25 +49,23 @@ static std::vector<std::string> get_evs(
   return d.evnames;
 }
 
-void declareExternalBehaviourDescription();
+void declareExternalBehaviourDescription(pybind11::module_&);
 
-void declareExternalBehaviourDescription() {
-  using namespace boost;
-  using namespace boost::python;
+void declareExternalBehaviourDescription(pybind11::module_& m) {
   using namespace tfel::system;
 
-  class_<ExternalBehaviourDescription,
-         bases<ExternalMaterialKnowledgeDescription>>(
-      "ExternalBehaviourDescription", init<>())
-      .def(init<std::string, std::string, std::string>())
-      .add_property("elastic_material_properties_epts", &get_emps_epts)
-      .add_property("linear_thermal_expansion_coefficients_epts",
-                    &get_themps_epts)
-      .add_property("mpnames", &get_mps)
-      .add_property("ivnames", &get_ivs)
-      .add_property("ivtypes", &get_ivs_types)
-      .add_property("evnames", &get_evs)
-      .add_property("evtypes", &get_evs_types)
+  pybind11::class_<ExternalBehaviourDescription,
+                   ExternalMaterialKnowledgeDescription>(
+      m, "ExternalBehaviourDescription")
+      .def(pybind11::init<>())
+      .def(pybind11::init<std::string, std::string, std::string>())
+      .def_property_readonly("elastic_material_properties_epts", &get_emps_epts)
+      .def_property_readonly("linear_thermal_expansion_coefficients_epts", &get_themps_epts)
+      .def_property_readonly("mpnames", &get_mps)
+      .def_property_readonly("ivnames", &get_ivs)
+      .def_property_readonly("ivtypes", &get_ivs_types)
+      .def_property_readonly("evnames", &get_evs)
+      .def_property_readonly("evtypes", &get_evs_types)
       .def_readonly("btype", &ExternalBehaviourDescription::btype)
       .def_readonly("stype", &ExternalBehaviourDescription::stype)
       .def_readonly("etype", &ExternalBehaviourDescription::etype)

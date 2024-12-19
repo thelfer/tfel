@@ -1,3 +1,4 @@
+
 /*!
  * \file   bindings/python/tfel/PiPlane.cxx
  * \brief
@@ -11,7 +12,8 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Material/PiPlane.hxx"
 
 template <unsigned short N>
@@ -20,22 +22,22 @@ static std::tuple<double, double> projectOnPiPlane(
   return tfel::material::projectOnPiPlane(s);
 }  // end of projectOnPiPlane
 
-void declarePiPlane();
-void declarePiPlane() {
+void declarePiPlane(pybind11::module_&);
+
+void declarePiPlane(pybind11::module_& m) {
   std::tuple<double, double> (*p1)(const double, const double, const double) =
       tfel::material::projectOnPiPlane;
-  boost::python::def("buildFromPiPlane",
-                     &tfel::material::buildFromPiPlane<double>,
-                     "return a tuple containing the three eigenvalues "
-                     "of the stress corresponding to the given "
-                     "point in the pi-plane");
-  boost::python::def("projectOnPiPlane", p1,
-                     "project a stress state, defined its "
-                     "three eigenvalues, on the pi-plane");
-  boost::python::def("projectOnPiPlane", projectOnPiPlane<1u>,
-                     "project a 1D stress tensor on the pi-plane");
-  boost::python::def("projectOnPiPlane", projectOnPiPlane<2u>,
-                     "project a 2D stress tensor on the pi-plane");
-  boost::python::def("projectOnPiPlane", projectOnPiPlane<3u>,
-                     "project a 3D stress tensor on the pi-plane");
+  m.def("buildFromPiPlane", &tfel::material::buildFromPiPlane<double>,
+        "return a tuple containing the three eigenvalues "
+        "of the stress corresponding to the given "
+        "point in the pi-plane");
+  m.def("projectOnPiPlane", p1,
+        "project a stress state, defined its "
+        "three eigenvalues, on the pi-plane");
+  m.def("projectOnPiPlane", projectOnPiPlane<1u>,
+        "project a 1D stress tensor on the pi-plane");
+  m.def("projectOnPiPlane", projectOnPiPlane<2u>,
+        "project a 2D stress tensor on the pi-plane");
+  m.def("projectOnPiPlane", projectOnPiPlane<3u>,
+        "project a 3D stress tensor on the pi-plane");
 }

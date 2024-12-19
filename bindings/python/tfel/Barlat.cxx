@@ -11,7 +11,7 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 #include "TFEL/Material/Barlat2004YieldCriterion.hxx"
 
 template <unsigned short N>
@@ -38,13 +38,16 @@ static double computeBarlatStress(const tfel::math::stensor<N, double>& s,
   return tfel::material::computeBarlatStress(s, l1, l2, a, e);
 }  // end of computeBarlatStress
 
-void declareBarlat();
-void declareBarlat() {
-  using namespace boost::python;
-  def("makeBarlatLinearTransformation1D", &makeBarlatLinearTransformation<1u>);
-  def("makeBarlatLinearTransformation2D", &makeBarlatLinearTransformation<2u>);
-  def("makeBarlatLinearTransformation3D", &makeBarlatLinearTransformation<3u>);
-  def("computeBarlatStress", &computeBarlatStress<1u>);
-  def("computeBarlatStress", &computeBarlatStress<2u>);
-  def("computeBarlatStress", &computeBarlatStress<3u>);
+void declareBarlat(pybind11::module_&);
+
+void declareBarlat(pybind11::module_& m) {
+  m.def("makeBarlatLinearTransformation1D",
+        &makeBarlatLinearTransformation<1u>);
+  m.def("makeBarlatLinearTransformation2D",
+        &makeBarlatLinearTransformation<2u>);
+  m.def("makeBarlatLinearTransformation3D",
+        &makeBarlatLinearTransformation<3u>);
+  m.def("computeBarlatStress", &computeBarlatStress<1u>);
+  m.def("computeBarlatStress", &computeBarlatStress<2u>);
+  m.def("computeBarlatStress", &computeBarlatStress<3u>);
 }

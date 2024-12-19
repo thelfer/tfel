@@ -1,3 +1,4 @@
+
 /*!
  * \file   Hosford.cxx
  * \brief
@@ -11,7 +12,7 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 #include "TFEL/Material/Hosford1972YieldCriterion.hxx"
 
 template <unsigned short N>
@@ -21,10 +22,10 @@ static double computeHosfordStress(const tfel::math::stensor<N, double>& s,
   return tfel::material::computeHosfordStress(s, a, e);
 }  // end of computeHosfordStress
 
-void declareHosford();
-void declareHosford() {
-  using namespace boost::python;
-  def("computeHosfordStress", &computeHosfordStress<1u>);
-  def("computeHosfordStress", &computeHosfordStress<2u>);
-  def("computeHosfordStress", &computeHosfordStress<3u>);
+void declareHosford(pybind11::module_&);
+
+void declareHosford(pybind11::module_& m) {
+  m.def("computeHosfordStress", &computeHosfordStress<1u>);
+  m.def("computeHosfordStress", &computeHosfordStress<2u>);
+  m.def("computeHosfordStress", &computeHosfordStress<3u>);
 }

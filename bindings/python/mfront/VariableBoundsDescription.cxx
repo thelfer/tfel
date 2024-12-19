@@ -11,20 +11,21 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MFront/VariableDescription.hxx"
 
-void declareVariableBoundsDescription();
-void declareVariableBoundsDescription() {
-  using namespace boost::python;
-  using namespace mfront;
+void declareVariableBoundsDescription(pybind11::module_&);
 
-  enum_<VariableBoundsDescription::BoundsType>("VariableBoundsTypes")
+void declareVariableBoundsDescription(pybind11::module_& m) {
+  using namespace mfront;
+  pybind11::enum_<VariableBoundsDescription::BoundsType>(m,
+                                                         "VariableBoundsTypes")
       .value("LOWER", VariableBoundsDescription::LOWER)
       .value("UPPER", VariableBoundsDescription::UPPER)
       .value("LOWERANDUPPER", VariableBoundsDescription::LOWERANDUPPER);
 
-  class_<VariableBoundsDescription>("VariableBoundsDescription")
+  pybind11::class_<VariableBoundsDescription>(m, "VariableBoundsDescription")
       .def_readwrite("boundsType", &VariableBoundsDescription::boundsType)
       .def_readwrite("lineNumber", &VariableBoundsDescription::lineNumber)
       .def_readwrite("component", &VariableBoundsDescription::component)

@@ -17,6 +17,6 @@ void declareData(pybind11::module_&);
 void declareTextData(pybind11::module_&);
 
 PYBIND11_MODULE(utilities, m) {
-//  declareData(m);
+  declareData(m);
   declareTextData(m);
 }

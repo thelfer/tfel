@@ -11,16 +11,15 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MFront/DSLFactory.hxx"
 
-void declareDSLFactory() {
-  using namespace boost::python;
+void declareDSLFactory(pybind11::module_& m) {
   using namespace mfront;
-  class_<DSLFactory, boost::noncopyable>("DSLFactory", no_init)
-      .def("getDSLFactory", DSLFactory::getDSLFactory,
-           return_value_policy<reference_existing_object>())
-      .staticmethod("getDSLFactory")
+  pybind11::class_<DSLFactory>(m, "DSLFactory")
+      .def_static("getDSLFactory", DSLFactory::getDSLFactory,
+                  pybind11::return_value_policy::reference)
       .def("createNewParser", &DSLFactory::createNewDSL)
       .def("createNewDSL", &DSLFactory::createNewDSL);
 }
