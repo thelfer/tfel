@@ -11,12 +11,13 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MTest/SolverWorkSpace.hxx"
 
-void declareSolverWorkSpace();
+void declareSolverWorkSpace(pybind11::module_&);
 
-void declareSolverWorkSpace() {
-  boost::python::class_<mtest::SolverWorkSpace, boost::noncopyable>(
-      "SolverWorkSpace");
+void declareSolverWorkSpace(pybind11::module_& m) {
+  pybind11::class_<mtest::SolverWorkSpace>(m, "SolverWorkSpace")
+      .def(pybind11::init<>());
 }

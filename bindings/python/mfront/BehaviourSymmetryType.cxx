@@ -11,13 +11,16 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MFront/BehaviourSymmetryType.hxx"
 
-void declareBehaviourSymmetryType();
-void declareBehaviourSymmetryType() {
-  boost::python::enum_<mfront::BehaviourSymmetryType>("BehaviourSymmetryType")
+void declareBehaviourSymmetryType(pybind11::module_&);
+
+void declareBehaviourSymmetryType(pybind11::module_& m) {
+  pybind11::enum_<mfront::BehaviourSymmetryType>(m,
+
+ "BehaviourSymmetryType")
       .value("ISOTROPIC", mfront::BehaviourSymmetryType::ISOTROPIC)
       .value("ORTHOTROPIC", mfront::BehaviourSymmetryType::ORTHOTROPIC);
-
 }  // end of declareBehaviourSymmetryType

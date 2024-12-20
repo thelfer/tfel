@@ -11,12 +11,12 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 
-void declareData();
-void declareTextData();
+void declareData(pybind11::module_&);
+void declareTextData(pybind11::module_&);
 
-BOOST_PYTHON_MODULE(utilities) {
-  declareData();
-  declareTextData();
+PYBIND11_MODULE(utilities, m) {
+  declareData(m);
+  declareTextData(m);
 }

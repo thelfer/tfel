@@ -11,12 +11,12 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 
-void declareConfig();
-void declarePhysicalConstants();
+void declareConfig(pybind11::module_&);
+void declarePhysicalConstants(pybind11::module_&);
 
-BOOST_PYTHON_MODULE(_tfel) {
-  declareConfig();
-  declarePhysicalConstants();
+PYBIND11_MODULE(_tfel, m) {
+  declareConfig(m);
+//  declarePhysicalConstants(m);
 }

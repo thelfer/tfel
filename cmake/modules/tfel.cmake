@@ -1,3 +1,4 @@
+
 include(CMakePackageConfigHelpers)
 
 # function add the given definition to the C and C++ preprocessor
@@ -459,32 +460,21 @@ function(mfront_model_check_library lib interface)
 endfunction(mfront_model_check_library)
 
 function(python_module_base fullname name)
-    if(${ARGC} LESS 1)
+  if(${ARGC} LESS 1)
     message(FATAL_ERROR "python_lib_module : no source specified")
   endif(${ARGC} LESS 1)
   add_library(py_${fullname} MODULE ${ARGN})
-  if(WIN32)
-    set_target_properties(py_${fullname} PROPERTIES
-      COMPILE_FLAGS "-DHAVE_ROUND")
-    set_target_properties(py_${fullname} PROPERTIES SUFFIX ".pyd")
-  elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set_target_properties(py_${fullname} PROPERTIES SUFFIX ".so")
-  endif(WIN32)
+  target_link_libraries(py_${fullname} PRIVATE pybind11::module pybind11::lto pybind11::windows_extras)
+  pybind11_extension(py_${fullname})
+  if(NOT MSVC AND NOT ${CMAKE_BUILD_TYPE} MATCHES Debug|RelWithDebInfo)
+    # Strip unnecessary sections of the binary on Linux/macOS
+    pybind11_strip(py_${fullname})
+  endif()
   set_target_properties(py_${fullname} PROPERTIES PREFIX "")
   set_target_properties(py_${fullname} PROPERTIES OUTPUT_NAME ${name})
-  target_include_directories(py_${fullname}
-    PRIVATE "${PROJECT_SOURCE_DIR}/bindings/python/include"
-    PRIVATE "${PROJECT_SOURCE_DIR}/include")
-  target_include_directories(py_${fullname}
-    SYSTEM
-    PRIVATE "${Boost_INCLUDE_DIRS}"
-    PRIVATE "${PYTHON_INCLUDE_DIRS}")
-  if(python-static-interpreter-workaround)
-    if(APPLE)
-      target_link_options(py_${fullname}
-        PRIVATE "-undefined" "dynamic_lookup")
-    endif(APPLE)
-  endif(python-static-interpreter-workaround)
+  set_target_properties(py_${fullname} PROPERTIES
+    CXX_VISIBILITY_PRESET "hidden"
+    CUDA_VISIBILITY_PRESET "hidden")
 endfunction(python_module_base)
 
 function(python_lib_module name package)
@@ -499,10 +489,6 @@ function(python_lib_module name package)
        COMPONENT python_bindings)
   endif(TFEL_APPEND_SUFFIX)
 endfunction(python_lib_module)
-
-function(std_python_module name)
-  python_lib_module(${name} std ${ARGN})
-endfunction(std_python_module)
 
 function(tfel_python_module name)
   python_lib_module(${name} tfel ${ARGN})

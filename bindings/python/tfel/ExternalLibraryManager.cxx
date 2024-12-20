@@ -11,10 +11,11 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/System/ExternalLibraryManager.hxx"
 
-void declareExternalLibraryManager();
+void declareExternalLibraryManager(pybind11::module_&);
 
 static void ELM_loadLibrary(tfel::system::ExternalLibraryManager& elm,
                             const std::string& n) {
@@ -72,9 +73,7 @@ static void ELM_setDoubleParameter2(tfel::system::ExternalLibraryManager& elm,
   elm.setParameter(l, n, h, p, v);
 }
 
-void declareExternalLibraryManager() {
-  using namespace boost;
-  using namespace boost::python;
+void declareExternalLibraryManager(pybind11::module_& m) {
   using namespace tfel::system;
   using ELM = tfel::system::ExternalLibraryManager;
 
@@ -142,10 +141,9 @@ void declareExternalLibraryManager() {
       const std::string&, const std::string&, const std::string&) =
       &ELM::getUpperPhysicalBound;
 
-  class_<ELM, noncopyable>("ExternalLibraryManager", no_init)
-      .def("getExternalLibraryManager", ELM::getExternalLibraryManager,
-           return_value_policy<reference_existing_object>())
-      .staticmethod("getExternalLibraryManager")
+  pybind11::class_<ELM>(m, "ExternalLibraryManager")
+      .def_static("getExternalLibraryManager", ELM::getExternalLibraryManager,
+                  pybind11::return_value_policy::reference)
       .def("loadLibrary", ELM_loadLibrary)
       .def("getAuthor", &ELM::getAuthor)
       .def("getDate", &ELM::getDate)

@@ -13,18 +13,19 @@
 
 #include <set>
 #include <memory>
-#include "TFEL/Python/SharedPtr.hxx"
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/MaterialPropertyDSL.hxx"
 
-void declareMaterialPropertyDSL();
-void declareMaterialPropertyDSL() {
-  using namespace boost::python;
+void declareMaterialPropertyDSL(pybind11::module_&);
+
+void declareMaterialPropertyDSL(pybind11::module_& m) {
   using namespace mfront;
-  class_<MaterialPropertyDSL, std::shared_ptr<MaterialPropertyDSL>,
-         bases<AbstractDSL>, boost::noncopyable>("MaterialPropertyDSL", no_init)
+  pybind11::class_<MaterialPropertyDSL, AbstractDSL,
+                   std::shared_ptr<MaterialPropertyDSL>>(m,
+                                                         "MaterialPropertyDSL")
       .def("getMaterialPropertyDescription",
            &MaterialPropertyDSL::getMaterialPropertyDescription,
-           return_internal_reference<>());
+           pybind11::return_value_policy::reference);
 }

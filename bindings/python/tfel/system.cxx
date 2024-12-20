@@ -1,3 +1,4 @@
+
 /*!
  * \file  bindings/python/tfel/system.cxx
  * \brief
@@ -11,23 +12,24 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
-#ifndef _WIN32
-void declareProcessManagerCommand();
-#endif /* _WIN32 */
-void declareExternalLibraryManager();
-void declareLibraryInformation();
-void declareExternalMaterialKnowledgeDescription();
-void declareExternalMaterialPropertyDescription();
-void declareExternalBehaviourDescription();
+#include <pybind11/pybind11.h>
 
-BOOST_PYTHON_MODULE(system) {
 #ifndef _WIN32
-  declareProcessManagerCommand();
+void declareProcessManagerCommand(pybind11::module_&);
 #endif /* _WIN32 */
-  declareLibraryInformation();
-  declareExternalLibraryManager();
-  declareExternalMaterialKnowledgeDescription();
-  declareExternalMaterialPropertyDescription();
-  declareExternalBehaviourDescription();
+void declareExternalLibraryManager(pybind11::module_&);
+void declareLibraryInformation(pybind11::module_&);
+void declareExternalMaterialKnowledgeDescription(pybind11::module_&);
+void declareExternalMaterialPropertyDescription(pybind11::module_&);
+void declareExternalBehaviourDescription(pybind11::module_&);
+
+PYBIND11_MODULE(system, m) {
+#ifndef _WIN32
+  declareProcessManagerCommand(m);
+#endif /* _WIN32 */
+  declareLibraryInformation(m);
+  declareExternalLibraryManager(m);
+  declareExternalMaterialKnowledgeDescription(m);
+  declareExternalMaterialPropertyDescription(m);
+  declareExternalBehaviourDescription(m);
 }

@@ -1,3 +1,4 @@
+
 /*!
  * \file   bindings/python/mfront/MaterialPropertyDescription.cxx
  * \brief
@@ -13,7 +14,8 @@
 
 #include <set>
 #include <memory>
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Raise.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 
@@ -49,20 +51,20 @@ static std::string MaterialPropertyDescription_getClassName(
   return md.className;
 }
 
-void declareMaterialPropertyDescription();
-void declareMaterialPropertyDescription() {
-  using namespace boost::python;
-  using namespace mfront;
+void declareMaterialPropertyDescription(pybind11::module_&);
 
-  class_<MaterialPropertyDescription>("MaterialPropertyDescription")
+void declareMaterialPropertyDescription(pybind11::module_& m) {
+  using namespace mfront;
+  pybind11::class_<MaterialPropertyDescription>(m,
+                                                "MaterialPropertyDescription")
       .def("getInputs", MaterialPropertyDescription_getInputs,
-           return_internal_reference<>(),
+           pybind11::return_value_policy::reference,
            "returns the inputs of the material property")
       .def("getParameters", MaterialPropertyDescription_getParameters,
-           return_internal_reference<>(),
+           pybind11::return_value_policy::reference,
            "returns the parameters of the material property")
       .def("getOutput", MaterialPropertyDescription_getOutput,
-           return_internal_reference<>(),
+           pybind11::return_value_policy::reference,
            "returns the output of the material property")
       .def("getLawName", MaterialPropertyDescription_getLawName,
            "returns the name of material property")

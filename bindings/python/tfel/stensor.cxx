@@ -11,86 +11,77 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <sstream>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/operators.h>
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Stensor/StensorConceptIO.hxx"
 
 template <unsigned short N>
-static double& stensor_getitem(tfel::math::stensor<N, double>& v,
-                               const unsigned short i) {
-  return v[i];
-}
-
-template <unsigned short N>
-static void stensor_setitem(tfel::math::stensor<N, double>& v,
-                            const unsigned short i,
-                            const double vi) {
-  v[i] = vi;
-}
-
-template <unsigned short N>
-static std::string stensor_str(const tfel::math::stensor<N, double>& v) {
-  std::ostringstream os;
-  os << v;
-  return os.str();
-}
-
-template <unsigned short N, typename scalar>
-static tfel::math::stensor<N, double> stensor_idiv(
-    tfel::math::stensor<N, double>& v, const scalar s) {
-  v /= s;
-  return v;
-}
-
-template <unsigned short N>
-static tfel::math::stensor<N, double> stensor_add(
-    const tfel::math::stensor<N, double>& v1,
-    const tfel::math::stensor<N, double>& v2) {
-  return v1 + v2;
-}
-
-template <unsigned short N>
-static tfel::math::stensor<N, double> stensor_sub(
-    const tfel::math::stensor<N, double>& v1,
-    const tfel::math::stensor<N, double>& v2) {
-  return v1 - v2;
-}
-
-template <unsigned short N, typename scalar>
-static tfel::math::stensor<N, double> stensor_mul(
-    const tfel::math::stensor<N, double>& v1, const scalar s) {
-  return s * v1;
-}
-
-template <unsigned short N>
-static void declarestensor(const char* const n) {
-  using namespace boost;
-  using namespace boost::python;
-  using boost::python::iterator;
+static void declarestensor(pybind11::module_& m, const char* const n) {
   using stensor = tfel::math::stensor<N, double>;
-
-  class_<stensor>(n, init<>())
-      .def(init<double>())
-      .def("__getitem__", &stensor_getitem<N>,
-           return_value_policy<copy_non_const_reference>())
-      .def("__setitem__", &stensor_setitem<N>, with_custodian_and_ward<1, 2>())
-      .def("__iter__", iterator<stensor>())
-      .def("__str__", stensor_str<N>)
-      .def("__add__", stensor_add<N>)
-      .def("__sub__", stensor_sub<N>)
-      .def("__mul__", stensor_mul<N, double>)
-      .def("__mul__", stensor_mul<N, int>)
-      .def(self += self)
-      .def(self -= self)
-      .def(self *= double())
-#if PY_MAJOR_VERSION >= 3
-      .def("__itruediv__", stensor_idiv<N, double>)
-      .def("__itruediv__", stensor_idiv<N, int>)
-#else  /* PY_MAJOR_VERSION >= 3 */
-      .def(self /= double())
-      .def(self /= int())
-#endif /* PY_MAJOR_VERSION >= 3 */
-      ;
+  pybind11::class_<stensor>(m, n, pybind11::buffer_protocol())
+      .def_buffer([](stensor& s) -> pybind11::buffer_info {
+        return pybind11::buffer_info(
+            s.data(),       /* Pointer to buffer */
+            sizeof(double), /* Size of one scalar */
+            pybind11::format_descriptor<double>::format(), /* Python
+                                                       struct-style format
+                                                       descriptor */
+            1,          /* Number of dimensions */
+            {s.size()}, /* Buffer dimensions */
+            {sizeof(double)});
+      })
+      .def(pybind11::init<>())
+      .def(pybind11::init<double>())
+    .def("__len__", [](const stensor& s){return s.size();})
+      .def("__repr__",
+           [](const stensor& s) {
+             std::ostringstream os;
+             os << s;
+             return os.str();
+           })
+      .def("__getitem__",
+           [](const stensor& s, const unsigned short idx) {
+             if (idx >= s.size()) {
+               tfel::raise<std::range_error>(
+                   "invalid index '" + std::to_string(static_cast<int>(idx)) +
+                   "'");
+             }
+             return s[idx];
+           })
+      .def("__setitem__",
+           [](stensor& s, const unsigned short idx, const double v) {
+             if (idx >= s.size()) {
+               tfel::raise<std::range_error>(
+                   "invalid index '" + std::to_string(static_cast<int>(idx)) +
+                   "'");
+             }
+             s[idx] = v;
+           })
+      .def(
+          "__iter__",
+          [](const stensor& s) {
+            return pybind11::make_iterator(s.begin(), s.end());
+          },
+          pybind11::keep_alive<0,
+                               1>())  // keep object alive while iterator exists
+      .def("__add__",
+           [](const stensor& a, const stensor& b) -> stensor { return a + b; })
+      .def("__sub__",
+           [](const stensor& a, const stensor& b) -> stensor { return a - b; })
+      .def("__mul__",
+           [](const stensor& a, const double b) -> stensor { return a * b; })
+      .def("__mul__",
+           [](const double a, const stensor& b) -> stensor { return a * b; })
+      .def("__div__",
+           [](const stensor& a, const double b) -> stensor { return a / b; })
+      .def(pybind11::self += pybind11::self)
+      .def(pybind11::self -= pybind11::self)
+      .def(pybind11::self *= double())
+      .def(pybind11::self /= double())
+      .def("__neg__", [](const stensor& s) -> stensor { return -s; });
 }
 
 template <unsigned short N>
@@ -113,10 +104,9 @@ static tfel::math::stensor<3u, double> makeStensor3D(
   return {std::get<0>(s), std::get<1>(s), std::get<2>(s), 0., 0., 0.};
 }
 
-void declarestensor();
+void declarestensor(pybind11::module_& m);
 
-void declarestensor() {
-  using namespace boost::python;
+void declarestensor(pybind11::module_& m) {
   using namespace tfel::math;
   double (*tresca1D)(const stensor<1u, double>&) = stensor_tresca<1u>;
   double (*tresca2D)(const stensor<2u, double>&) = stensor_tresca<2u>;
@@ -124,16 +114,16 @@ void declarestensor() {
   double (*sigmaeq1D)(const stensor<1u, double>&) = sigmaeq;
   double (*sigmaeq2D)(const stensor<2u, double>&) = sigmaeq;
   double (*sigmaeq3D)(const stensor<3u, double>&) = sigmaeq;
-  def("tresca", tresca1D);
-  def("tresca", tresca2D);
-  def("tresca", tresca3D);
-  def("sigmaeq", sigmaeq1D);
-  def("sigmaeq", sigmaeq2D);
-  def("sigmaeq", sigmaeq3D);
-  def("makeStensor1D", makeStensor1D);
-  def("makeStensor2D", makeStensor2D);
-  def("makeStensor3D", makeStensor3D);
-  declarestensor<1u>("Stensor1D");
-  declarestensor<2u>("Stensor2D");
-  declarestensor<3u>("Stensor3D");
+  m.def("tresca", tresca1D);
+  m.def("tresca", tresca2D);
+  m.def("tresca", tresca3D);
+  m.def("sigmaeq", sigmaeq1D);
+  m.def("sigmaeq", sigmaeq2D);
+  m.def("sigmaeq", sigmaeq3D);
+  m.def("makeStensor1D", makeStensor1D);
+  m.def("makeStensor2D", makeStensor2D);
+  m.def("makeStensor3D", makeStensor3D);
+  declarestensor<1u>(m, "Stensor1D");
+  declarestensor<2u>(m, "Stensor2D");
+  declarestensor<3u>(m, "Stensor3D");
 }  // end of declarestensor

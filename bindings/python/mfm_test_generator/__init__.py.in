@@ -1,2 +1,1 @@
-import std
 from ._mfm_test_generator import *

@@ -1,0 +1,3 @@
+@Requires{"tfel::python"};
+@Command "@python@ chaboche.py";
+@Command "@python@ chaboche-2.py";
