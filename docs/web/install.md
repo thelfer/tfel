@@ -118,12 +118,10 @@ suite are officially supported:
 
 `TFEL` has been designed to have no dependencies to third parties
 libraries with the very exception of the
-[Boost.Python](http://www.boost.org) library used to create the
-optional bindings for the [`Python`](https://www.python.org/)
-language.
+[pybind11](https://github.com/pybind/pybind11) library used to create
+optional bindings for the [`Python`](https://www.python.org/) language.
 
 ## Third party tools
-
 
 The best way to build the `TFEL` is to use the
 [`cmake`](http://www.cmake.org/) build system (see this
@@ -196,8 +194,8 @@ Various other options can be passed to `cmake`:
   `-Denable-python=ON` option.
 - To enable bindings for the [`Python`](https://www.python.org/)
   language, notably for the `MTest` tool, one may use the
-  `-Denable-python-bindings=ON` option. This requires the
-  [Boost.Python](http://www.boost.org) to be available.
+  `-Denable-python-bindings=ON` option. This requires
+  [pybind11](https://github.com/pybind/pybind11) to be available.
 
 Some default compiler settings are detected by `cmake`, depending on
 your system. To explicitly specify the compilers to be used, one may
@@ -368,11 +366,11 @@ project](https://github.com/thelfer/MFrontGenericInterfaceSupport/issues),
 e.g. with `OpenGeoSys`, `FEniCS`, `MoFEM`, etc...
 
 The compilation requires that `gcc`, `git` and `python3` are installed,
-as well as the python module `numpy` and the `libboost` library to build
+as well as the python module `numpy` and the `pybind11` library to build
 the `python` bindings. Those packages can be installed using:
 
 ~~~~{.sh}
-$ sudo apt install python3 python3-numpy libboost-all-dev cmake g++ gfortran
+$ sudo apt install python3 python3-numpy pybind11-dev cmake g++ gfortran
 ~~~~
 
 The next step is to get the `TFEL` source code:

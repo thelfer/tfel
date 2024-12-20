@@ -65,17 +65,6 @@ Options
   pandoc is found)
 - `enable-fast-math`: use advance options to optimize code further.
   Compiler can then ignore IEEE 754 compatibility
-- `enable-broken-boost-python-module-visibility-handling`: workaround a
-  bug in boost python which occurs on FreeBSD+clang. See
-  https://github.com/boostorg/python/issues/173 for details
-- `python-static-interpreter-workaround: a workaround to handle the fact
-  the conda' python interpreter is statically linked, which causes
-  issues on Mac Os. See for details
-  https://github.com/ContinuumIO/anaconda-issues/issues/9078. A proper
-  solution may only appear with CMake 3.15 with the `Python::module`
-  target, see https://gitlab.kitware.com/cmake/cmake/issues/18100. Until
-  this version is widely available, this flag proposes a hack. Use with
-  care.
 - `enable-glibcxx-debug`: use the debug version of the STL implemented
   by the GLIB
 - `enable-testing`: enables tests. ON by default.

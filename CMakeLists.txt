@@ -299,11 +299,6 @@ option(enable-python "enable python support" OFF)
 option(enable-python-bindings "enable  python bindings support" OFF)
 option(enable-numpy-support
   "enable numpy support. This option has no effect if python bindings are disabled" ON)
-option(enable-broken-boost-python-module-visibility-handling
-  "workaround a bug in boost python which occurs on FreeBSD+clang. See https://github.com/boostorg/python/issues/173 for details" OFF)
-
-option(python-static-interpreter-workaround
-  "a workaround to handle the fact the conda' python interpreter is statically linked, which causes issues on Mac Os. See for details https://github.com/ContinuumIO/anaconda-issues/issues/9078. A proper solution may only appear with CMake 3.15 with the `Python::module` target, see https://gitlab.kitware.com/cmake/cmake/issues/18100. Until this version is widely available, this flag proposes a hack. Use with care." OFF)
  
 if(enable-python OR enable-python-bindings)
   find_package(PythonLibs REQUIRED)
@@ -353,7 +348,6 @@ if(enable-python)
 endif(enable-python)
 
 #python bindings
-# (declared after python to search boost python)
 if(enable-python-bindings)
   if(NOT HAVE_PYTHON)
     message(FATAL_ERROR "python not found. python is mandatory for python bindings.")

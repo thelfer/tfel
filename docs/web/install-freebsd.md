@@ -1,6 +1,8 @@
-% Installing `TFEL/MFront` on `FreeBSD`
-% Thomas Helfer
-% 5/11/2017
+---
+title: Installing `TFEL/MFront` on `FreeBSD`
+author: Thomas Helfer
+date: 20/12/2024
+---
 
 <div id="slideshow">
   <ul class="slides">
@@ -20,16 +22,4 @@ The recommended compiler on `FreeBSD` is `clang`.
 
 # `python` bindings
 
-The `python` bindings shall work as expected. Beware to use a version
-of the `boost` python library build for the `python` library that you
-intend to use.
-
-## `FreeBSD 11.1` and `boost` version `1.65.1`
-
-On `FreeBSD 11.1`, `boost` version `1.65.1` has a bug that prevents
-the `init` function of modules from being exported.  See
-https://github.com/boostorg/python/issues/173 for details.
-
-You can workaround this issue by setting the following flag when
- invoking `cmake`:
- `-Denable-broken-boost-python-module-visibility-handling=ON`.
+The `python` bindings shall work as expected..
