@@ -15,11 +15,19 @@
 #include <pybind11/stl.h>
 #include "MFront/DSLFactory.hxx"
 
+static auto createNewDSL(mfront::DSLFactory& f, const std::string& n){
+  return f.createNewDSL(n, {});
+}
+
+void declareDSLFactory(pybind11::module_&);
+
 void declareDSLFactory(pybind11::module_& m) {
   using namespace mfront;
   pybind11::class_<DSLFactory>(m, "DSLFactory")
       .def_static("getDSLFactory", DSLFactory::getDSLFactory,
                   pybind11::return_value_policy::reference)
+      .def("createNewParser", &createNewDSL)
+      .def("createNewDSL", &createNewDSL)
       .def("createNewParser", &DSLFactory::createNewDSL)
       .def("createNewDSL", &DSLFactory::createNewDSL);
 }

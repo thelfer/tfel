@@ -1,0 +1,9 @@
+@Requires{"tfel::python", "mfront::behaviour::castem_interface"};
+@Command "@mfront@ --interface=castem Elasticity.mfront";
+@Command "@mfront@ --obuild";
+@Command "@python@ pipe-1.py";
+@Command "@python@ pipe-2.py";
+
+@Precision 1e-12;
+@Test "pipe-1.ref" "pipe-1.res" 2 3 4 5 6;
+@Test "pipe-1.ref" "pipe-2.res" 2 3 4 5 6;
