@@ -136,8 +136,9 @@ included in the project:
 7. [Open a Pull Request](https://help.github.com/articles/using-pull-requests/)
     with a clear title and description.
 
-**IMPORTANT**: By submitting a patch, you agree to allow the project owners to
-license your work under the the terms of the *LGPL License*.
+**IMPORTANT**: By submitting a patch, you agree to allow the project
+owners to license your work under the the terms of the *GPL License*
+with runtime exceptions.
 
 <!--
 This file is merely a copy of the `CONTRIBUTING.md` file of the
