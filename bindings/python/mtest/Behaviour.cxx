@@ -207,6 +207,9 @@ void declareBehaviour(pybind11::module_& m) {
       .def("getGradientsSize", &Behaviour::getGradientsSize,
            "Return the size of a vector able to contain "
            "all the components of the driving variables")
+      .def("getDrivingVariablesSize", &Behaviour::getGradientsSize,
+           "Return the size of a vector able to contain "
+           "all the components of the driving variables")
       .def("getThermodynamicForcesSize", &Behaviour::getThermodynamicForcesSize,
            "Return the size of a vector able to contain "
            "all the components of the thermodynamic forces")
@@ -221,10 +224,15 @@ void declareBehaviour(pybind11::module_& m) {
            "Return the components suffixes of a tensor")
       .def("getGradientsComponents", &Behaviour::getGradientsComponents,
            "Return the components of the driving variables")
+      .def("getDrivingVariablesComponents", &Behaviour::getGradientsComponents,
+           "Return the components of the driving variables")
       .def("getThermodynamicForcesComponents",
            &Behaviour::getThermodynamicForcesComponents,
            "Return the components of the thermodynamic forces")
       .def("getGradientComponentPosition",
+           &Behaviour::getGradientComponentPosition,
+           "Return the position of the component of a driving variable")
+      .def("getDrivingVariableComponentPosition",
            &Behaviour::getGradientComponentPosition,
            "Return the position of the component of a driving variable")
       .def("getThermodynamicForceComponentPosition",

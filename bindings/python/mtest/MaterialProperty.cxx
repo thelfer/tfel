@@ -83,9 +83,12 @@ void declareMaterialProperty(pybind11::module_& m) {
            "set the value of a parameter")
       .def("getValue", &MaterialProperty::getValue,
            "evaluate the material property")
-      .def("getValue", getValue1, "evaluate the material property")
-      .def("getValue", &MaterialProperty_getValue,
+      .def("getValue", MaterialProperty_getValue,
            "evaluate the material property")
+      .def("getValue", getValue1, "evaluate the material property")
+      .def("getValue", getValue2, "evaluate the material property")
+      .def("getValue", getValue3, "evaluate the material property")
+      .def("getValue", getValue4, "evaluate the material property")
       .def("__call__", getValue1, "evaluate the material property")
       .def("__call__", MaterialProperty_getValue,
            "evaluate the material property")

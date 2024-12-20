@@ -20,6 +20,7 @@ void declareTestResult(pybind11::module_&);
 void declareTestResult(pybind11::module_& m) {
   using namespace tfel::tests;
   pybind11::class_<TestResult>(m, "TestResult")
+      .def(pybind11::init<>())
       .def("success", &TestResult::success)
       .def("duration", &TestResult::duration);
 

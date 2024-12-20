@@ -36,7 +36,8 @@ static void declaretvector(pybind11::module_& m, const char* const n) {
       })
       .def(pybind11::init<>())
       .def(pybind11::init<double>())
-      .def("__repr__",
+    .def("__len__", [](const tvector& v){return v.size();})
+    .def("__repr__",
            [](const tvector& v) {
              std::ostringstream os;
              os << v;

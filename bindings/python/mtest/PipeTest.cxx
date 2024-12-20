@@ -191,6 +191,7 @@ void declarePipeTest(pybind11::module_& m) {
       .value("FreezeState",
              mtest::PipeTest::FailurePolicy::FREEZESTATEUNTILENDOFCOMPUTATION);
   pybind11::class_<PipeTest, SingleStructureScheme>(m, "PipeTest")
+      .def(pybind11::init<>())
       .def("setInnerRadius", &PipeTest::setInnerRadius)
       .def("setOuterRadius", &PipeTest::setOuterRadius)
       .def("setNumberOfElements", &PipeTest::setNumberOfElements)
