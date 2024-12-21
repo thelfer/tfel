@@ -5,7 +5,7 @@ function(test_pymfront test)
     COMMAND ${PYTHON_EXECUTABLE} pymfront${test}.py)
   if(CMAKE_CONFIGURATION_TYPES)
     set_tests_properties(pymfront${test}_py
-      PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python;$<TARGET_FILE_DIR:py_std__stl_vector>;$<TARGET_FILE_DIR:py_tfel_tests;$<TARGET_FILE_DIR:py_mfront__mfront>")
+      PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python;$<TARGET_FILE_DIR:py_tfel_tests;$<TARGET_FILE_DIR:py_mfront__mfront>")
   else(CMAKE_CONFIGURATION_TYPES)
     set_tests_properties(pymfront${test}_py
       PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python")
@@ -18,7 +18,7 @@ function(test_pymfront_mp interface library function)
   if(CMAKE_CONFIGURATION_TYPES)
     set_property(TEST pymfront_material_properties_${interface}_py
       PROPERTY ENVIRONMENT
-      PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python;$<TARGET_FILE_DIR:py_std__stl_vector>;$<TARGET_FILE_DIR:py_tfel_tests;$<TARGET_FILE_DIR:py_mfront__mfront>
+      PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python;$<TARGET_FILE_DIR:py_tfel_tests;$<TARGET_FILE_DIR:py_mfront__mfront>
       MFRONT_MATERIAL_PROPERTY_LIBRARY=${library}
       MFRONT_MATERIAL_PROPERTY_FUNCTION=${function})
   else(CMAKE_CONFIGURATION_TYPES)
@@ -36,7 +36,7 @@ function(test_pymtest_bv file library)
   if(CMAKE_CONFIGURATION_TYPES)
     set_property(TEST pymtest_behaviours_${file}_py
       PROPERTY ENVIRONMENT
-      PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python;$<TARGET_FILE_DIR:py_std__stl_vector>;$<TARGET_FILE_DIR:py_tfel_tests;$<TARGET_FILE_DIR:py_mtest__mtest>
+      PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python;$<TARGET_FILE_DIR:py_tfel_tests;$<TARGET_FILE_DIR:py_mtest__mtest>
       MTEST_BEHAVIOUR_LIBRARY=${library})
   else(CMAKE_CONFIGURATION_TYPES)
     set_property(TEST pymtest_behaviours_${file}_py
