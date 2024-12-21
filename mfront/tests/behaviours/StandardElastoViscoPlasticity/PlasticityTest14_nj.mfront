@@ -1,0 +1,28 @@
+@DSL       Implicit;
+@Behaviour PlasticityTest14_nj;
+@Author    Thomas Helfer;
+@Description{
+  A simple implementation of a perfect
+  plasticity behaviour using the
+  Cazacu 2001 yield criterion.
+};
+
+@ModellingHypotheses {Tridimensional,PlaneStress};
+@OrthotropicBehaviour<Plate>;
+
+@Algorithm NewtonRaphson_NumericalJacobian;
+@Epsilon 1.e-16;
+@PerturbationValueForNumericalJacobianComputation 1.e-8;
+@Theta 1;
+
+@Brick "StandardElastoViscoPlasticity" {
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},  //
+  inelastic_flow : "Plastic" {
+    criterion : "Cazacu 2001" {
+      a : {0.586, 1.05, 0.823, 0.96, 1, 1},
+      b : {1.44, 0.061, -1.302, -0.281, -0.375, 1, 1, 1, 1, 0.445, 1},
+      c : 1.285
+    },
+    isotropic_hardening : "Linear" {R0 : 150e6}
+  }
+};

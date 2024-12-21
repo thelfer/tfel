@@ -452,7 +452,7 @@ function(mfront_behaviour_check_library lib interface)
 endfunction(mfront_behaviour_check_library)
 
 function(mfront_behaviour_brick_check_library lib dir interface)
-  mfront_check_library_base(${lib} ${interface} "behaviours/bricks/${dir}" ON ${ARGN})
+  mfront_check_library_base(${lib} ${interface} "behaviours/${dir}" ON ${ARGN})
 endfunction(mfront_behaviour_brick_check_library)
 
 function(mfront_model_check_library lib interface)
