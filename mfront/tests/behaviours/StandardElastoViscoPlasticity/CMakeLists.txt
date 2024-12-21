@@ -1,0 +1,210 @@
+add_subdirectory(castem)
+add_subdirectory(generic)
+
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+  Test1.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+  Test2.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+  Test3.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+  Test4.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+  Test5.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+  Test6.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest2.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest2_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest3.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest3_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest4.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest4_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest5.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest5_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest6.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest6_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest7.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest7_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest8.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest8_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest9.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	NortonTest9_nj.mfront)
+
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	HyperbolicSineTest.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	HyperbolicSineTest_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	HyperbolicSineTest2.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	HyperbolicSineTest2_nj.mfront)
+
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	OrthotropicNortonTest.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	OrthotropicNortonTest_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	OrthotropicNortonTest_na.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	OrthotropicNortonTest_nanj.mfront)
+
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest_na.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest_nanj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest2.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest2_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest3.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest3_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest4.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest4_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest5.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest5_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest6.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest6_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest7.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest7_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest8.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest8_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest9.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest9_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest9_na.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest9_nanj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest10.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest10_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest10_na.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest10_nanj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest11.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest11_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest11_na.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest11_nanj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest12.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest12_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest12_na.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest12_nanj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest13.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest13_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest13_na.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest13_nanj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest14.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest14_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest14_na.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest14_nanj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest15.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest15_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest15_na.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest15_nanj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest16.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest16_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest17.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PlasticityTest17_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+  HarmonicSumOfNortonHoffViscoplasticFlowsTest.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+  HarmonicSumOfNortonHoffViscoplasticFlowsTest_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+  HarmonicSumOfNortonHoffViscoplasticFlowsTest2.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+  HarmonicSumOfNortonHoffViscoplasticFlowsTest2_nj.mfront)
+
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	 IsotropicDamageHookeLaw.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	 IsotropicDamageHookeLaw_nj.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	 IsotropicDamageHookeLaw2.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+  IsotropicDamageHookeLaw2_nj.mfront)
+
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	ChuNeedleman1980StrainBasedNucleationModelTest.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	ChuNeedleman1980StressBasedNucleationModelTest.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PowerLawStrainBasedNucleationModelTest.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+	PowerLawStressBasedNucleationModelTest.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+        ElasticContributionToPorosityGrowth.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+        GursonTvergaardNeedleman1982.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+        RousselierTanguyBesson2002.mfront)
+
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+        UserDefinedViscoplasticityTest.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+        UserDefinedViscoplasticityTest2.mfront)
+install_mfront_data(tests/behaviours/bricks/StandardElastoViscoPlasticity
+        UserDefinedViscoplasticityTest3.mfront)
+      

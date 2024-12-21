@@ -1,0 +1,15 @@
+@DSL Implicit;
+@Behaviour NortonTest2;
+@Author Thomas Helfer;
+@Date 31/03/2018;
+
+@ModellingHypotheses {".+"};
+
+@Epsilon 1.e-16;
+@Theta 1;
+
+@Brick "StandardElastoViscoPlasticity" {
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Norton" {criterion : "Mises", K : 89e6, n : 3.2},
+  inelastic_flow : "Norton" {criterion : "Mises", K : 123e6, n : 3.2}
+};
