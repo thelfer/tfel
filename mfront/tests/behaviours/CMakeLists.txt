@@ -1,5 +1,11 @@
 add_subdirectory(unit-tests)
-add_subdirectory(bricks)
+# bricks
+add_subdirectory(StandardElasticity)
+add_subdirectory(StandardElastoViscoPlasticity)
+add_subdirectory(FiniteStrainSingleCrystal)
+add_subdirectory(DDIF2)
+
+# tests related to specific interfaces or algorithms
 add_subdirectory(generic)
 if(HAVE_CASTEM)
   add_subdirectory(castem)
