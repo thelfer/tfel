@@ -52,7 +52,7 @@ void declareTargetsDescription(pybind11::module_& m) {
              auto os = std::ostringstream{};
              os << l;
              return os.str();
-           })
-      .def("describes", mfront::describes);
+           });
+  m.def("describes", mfront::describes);
   m.def("mergeTargetsDescription", mfront::describes);
 }
