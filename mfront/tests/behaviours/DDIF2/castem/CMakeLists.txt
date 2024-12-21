@@ -53,11 +53,11 @@ macro(castemtest_ddif2brick test_arg behaviour)
     endforeach(rm ${IEEE754_ROUNDING_MODES})
     if(TFEL_APPEND_SUFFIX)
       install(FILES ${file}
-	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/bricks/DDIF2/castem"
+	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/DDIF2/castem"
 	COMPONENT mtest)
     else(TFEL_APPEND_SUFFIX)
       install(FILES ${file}
-	DESTINATION "share/doc/mfront/tests/behaviours/bricks/DDIF2/castem"
+	DESTINATION "share/doc/mfront/tests/behaviours/DDIF2/castem"
 	COMPONENT mtest)
     endif(TFEL_APPEND_SUFFIX)
   endif(HAVE_CASTEM)

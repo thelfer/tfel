@@ -190,11 +190,11 @@ function(generictest_standardelastovicoplasticitybrick test_name test_file libra
   endforeach(mh ${_MODELLING_HYPOTHESES})
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
-      DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/bricks/generic"
+      DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/generic"
       COMPONENT mtest)
   else(TFEL_APPEND_SUFFIX)
     install(FILES ${file}
-      DESTINATION "share/doc/mfront/tests/behaviours/bricks/generic"
+      DESTINATION "share/doc/mfront/tests/behaviours/generic"
       COMPONENT mtest)
   endif(TFEL_APPEND_SUFFIX)
 endfunction(generictest_standardelastovicoplasticitybrick)

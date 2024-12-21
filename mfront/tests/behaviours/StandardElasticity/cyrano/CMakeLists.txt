@@ -66,11 +66,11 @@ macro(cyranotest_standardelasticitybrick test_arg behaviour)
     endforeach(rm ${IEEE754_ROUNDING_MODES})
     if(TFEL_APPEND_SUFFIX)
       install(FILES ${file}
-	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/bricks/StandardElasticity/cyrano/"
+	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/StandardElasticity/cyrano/"
 	COMPONENT mtest)
     else(TFEL_APPEND_SUFFIX)
       install(FILES ${file}
-	DESTINATION "share/doc/mfront/tests/behaviours/bricks/StandardElasticity/cyrano/"
+	DESTINATION "share/doc/mfront/tests/behaviours/StandardElasticity/cyrano/"
 	COMPONENT mtest)
     endif(TFEL_APPEND_SUFFIX)
   endif(HAVE_CYRANO)

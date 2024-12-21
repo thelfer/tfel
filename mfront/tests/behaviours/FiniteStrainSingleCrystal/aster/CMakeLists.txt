@@ -39,11 +39,11 @@ macro(astertest_finitestrainsinglecrystalbrick test_arg behaviour)
     endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
     if(TFEL_APPEND_SUFFIX)
       install(FILES ${file}
-	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/bricks/FiniteStrainSingleCrystal/aster/"
+	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/FiniteStrainSingleCrystal/aster/"
 	COMPONENT mtest)
     else(TFEL_APPEND_SUFFIX)
       install(FILES ${file}
-	DESTINATION "share/doc/mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/aster/"
+	DESTINATION "share/doc/mfront/tests/behaviours/FiniteStrainSingleCrystal/aster/"
 	COMPONENT mtest)
     endif(TFEL_APPEND_SUFFIX)
   endif(HAVE_ASTER)

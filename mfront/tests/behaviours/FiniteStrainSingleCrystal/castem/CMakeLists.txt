@@ -55,11 +55,11 @@ macro(castemtest_finitestrainsinglecrystalbrick test_arg behaviour)
     endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
     if(TFEL_APPEND_SUFFIX)
       install(FILES ${file}
-	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/bricks/FiniteStrainSingleCrystal/castem/"
+	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/FiniteStrainSingleCrystal/castem/"
 	COMPONENT mtest)
     else(TFEL_APPEND_SUFFIX)
       install(FILES ${file}
-	DESTINATION "share/doc/mfront/tests/behaviours/bricks/FiniteStrainSingleCrystal/castem/"
+	DESTINATION "share/doc/mfront/tests/behaviours/FiniteStrainSingleCrystal/castem/"
 	COMPONENT mtest)
     endif(TFEL_APPEND_SUFFIX)
   endif(HAVE_CASTEM)

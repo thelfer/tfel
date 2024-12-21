@@ -178,11 +178,11 @@ function(castemtest_standardelastovicoplasticitybrick test_arg behaviour_name)
     endforeach(mh ${_MODELLING_HYPOTHESES})
     if(TFEL_APPEND_SUFFIX)
       install(FILES ${file}
-	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem"
+	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/StandardElastoViscoPlasticity/castem"
 	COMPONENT mtest)
     else(TFEL_APPEND_SUFFIX)
       install(FILES ${file}
-	DESTINATION "share/doc/mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem"
+	DESTINATION "share/doc/mfront/tests/behaviours/StandardElastoViscoPlasticity/castem"
 	COMPONENT mtest)
     endif(TFEL_APPEND_SUFFIX)
   endif(HAVE_CASTEM)

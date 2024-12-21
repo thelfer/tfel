@@ -1,5 +1,5 @@
 add_subdirectory(castem)
 add_subdirectory(aster)
 
-install_mfront_data(tests/behavioursbricks/FiniteStrainSingleCrystal FiniteStrainSingleCrystal.mfront)
-install_mfront_data(tests/behavioursbricks/FiniteStrainSingleCrystal FiniteStrainSingleCrystal_NumericalJacobian.mfront)
+install_mfront_data(tests/behaviours/FiniteStrainSingleCrystal FiniteStrainSingleCrystal.mfront)
+install_mfront_data(tests/behaviours/FiniteStrainSingleCrystal FiniteStrainSingleCrystal_NumericalJacobian.mfront)
