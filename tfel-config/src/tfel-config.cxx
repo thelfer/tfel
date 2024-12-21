@@ -572,8 +572,15 @@ int main(const int argc, const char* const* const argv) {
       if (cxx_standard != nullptr) {
         std::cout << cxx_standard << " ";
       } else {
-#if (defined __GNUC__) || (defined __clang__) || (defined __INTEL_COMPILER)
+#if (defined __GNUC__)
         std::cout << "-std=c++20 ";
+#endif
+#if (defined __clang__) || (defined __INTEL_COMPILER)
+#if defined _WIN32 || defined _WIN64
+        std::cout << "-Qstd=c++20 ";
+#else
+        std::cout << "-std=c++20 ";
+#endif
 #endif
       }
     }
