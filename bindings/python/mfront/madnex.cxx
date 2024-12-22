@@ -20,7 +20,7 @@ void declareMadnexSupport() {
                                       const madnex::MFrontImplementation& i) {
     auto f = madnex::File(fn, H5F_ACC_RDWR);
     auto r = f.getRoot();
-    auto g = madnex::openGroup(r, fn);
+    auto g = madnex::openGroup(r, gn);
     madnex::write(g, i);
   };
 
