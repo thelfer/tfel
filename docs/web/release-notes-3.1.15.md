@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 3.1.15 of the
 
 # Issues fixed
 
+## Issue 671: [python] python module extension is incorrect
+
+For more details, see <https://github.com/thelfer/tfel/issues/671>.
+
 ## Issue 663: [tfel-utilities] Fix `FCString::strnlen`
 
 For more details, see <https://github.com/thelfer/tfel/issues/663>.
