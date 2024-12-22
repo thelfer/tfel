@@ -1,2 +1,13 @@
-import std_@TFEL_SUFFIX_FOR_PYTHON_MODULES@
+if os.name == 'nt':
+    if "TFELHOME" in os.environ:
+        tfelhome = os.environ["TFELHOME"]
+    else:
+        import pathlib
+        # remove \python...\site_packages\tfel\__init__.py
+        tfelhome = pathlib.Path(*pathlib.Path(__file__).parts[0:-4])
+        os.environ["TFELHOME"] = str(tfelhome)
+
+    print(f"{tfelhome}")
+    os.add_dll_directory(tfelhome)
+
 from ._mfm_test_generator import *

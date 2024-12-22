@@ -1,4 +1,3 @@
-import std_@TFEL_SUFFIX_FOR_PYTHON_MODULES@
 import tfel_@TFEL_SUFFIX_FOR_PYTHON_MODULES@.material
 from ._mfront import *
 
