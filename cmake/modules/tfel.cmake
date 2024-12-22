@@ -525,16 +525,16 @@ function(tfel_python_script_base dir)
   foreach(pyscript ${ARGN})
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
       if(TFEL_APPEND_SUFFIX)
-	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.version.in")
-	  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.version.in"
-	    "${CMAKE_CURRENT_BINARY_DIR}/${pyscript}" @ONLY)
-	else(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.version.in")
-	  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in"
-	    "${CMAKE_CURRENT_BINARY_DIR}/${pyscript}" @ONLY)
-	endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.version.in")
+	      if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.version.in")
+	        configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.version.in"
+	                       "${CMAKE_CURRENT_BINARY_DIR}/${pyscript}" @ONLY)
+	      else(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.version.in")
+	        configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in"
+	                       "${CMAKE_CURRENT_BINARY_DIR}/${pyscript}" @ONLY)
+	      endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.version.in")
       else(TFEL_APPEND_SUFFIX)
-	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in"
-	  "${CMAKE_CURRENT_BINARY_DIR}/${pyscript}" @ONLY)
+	      configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in"
+	                     "${CMAKE_CURRENT_BINARY_DIR}/${pyscript}" @ONLY)
       endif(TFEL_APPEND_SUFFIX)
       set(python_script "${CMAKE_CURRENT_BINARY_DIR}/${pyscript}")
     else(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
