@@ -24,6 +24,18 @@ Python bindings are now generated using the
 
 # Issues fixed
 
+## Issue 667: Reduce the size of files paths in sources to fit in `Windows`'s `MAX_PATH` limit
+
+For more details, see <https://github.com/thelfer/tfel/issues/667>
+
+## Issue 666: [doc] Add CONTRIBUTING file, remove devel.md
+
+For more details, see <https://github.com/thelfer/tfel/issues/666>
+
+## Issue 654: Add PowerShell environment script
+
+For more details, see <https://github.com/thelfer/tfel/issues/654>
+
 ## Issue 294: [python-bindings] Evaluate port to `pybind`
 
 For more details, see <https://github.com/thelfer/tfel/issues/293>
