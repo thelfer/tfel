@@ -296,7 +296,7 @@ namespace mfront {
       if (l.suffix != LibraryDescription::getDefaultLibrarySuffix(
                           t.system, t.libraryType)) {
         m << "set_target_properties(" << l.name << '\n'
-          << "PROPERTIES SUFFIX " << l.suffix << ")\n";
+          << "PROPERTIES SUFFIX ." << l.suffix << ")\n";
       }
       if (!l.ldflags.empty()) {
         m << "set_target_properties(" << l.name << '\n'
