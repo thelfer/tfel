@@ -17,12 +17,22 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+# Known incompatibilities
+
+When compiling with option `TFEL_APPEND_VERSION` set to `true` or
+when defining the string variable `TFEL_VERSION_FLAVOUR`, the
+`python` modules are now modified to reflect those information.
+
 # Python bindings
 
 Python bindings are now generated using the
 [`pybind11`](https://github.com/pybind/pybind11) library.
 
 # Issues fixed
+
+## Issue 672: [python bindings] fix python modules names when `TFEL_APPEND_VERSION` or `TFEL_VERSION_FLAVOUR` is defined
+
+For more details, see <https://github.com/thelfer/tfel/issues/672>
 
 ## Issue 667: Reduce the size of files paths in sources to fit in `Windows`'s `MAX_PATH` limit
 

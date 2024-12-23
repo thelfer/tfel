@@ -13,6 +13,9 @@
  */
 
 #include <pybind11/pybind11.h>
+#include "TFEL/Macros.hxx"
+
+#define TFEL_SYSTEM_MODULE_NAME TFEL_PP_JOIN(system_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
 #ifndef _WIN32
 void declareProcessManagerCommand(pybind11::module_&);
@@ -23,7 +26,11 @@ void declareExternalMaterialKnowledgeDescription(pybind11::module_&);
 void declareExternalMaterialPropertyDescription(pybind11::module_&);
 void declareExternalBehaviourDescription(pybind11::module_&);
 
+#ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
+PYBIND11_MODULE(TFEL_SYSTEM_MODULE_NAME, m) {
+#else
 PYBIND11_MODULE(system, m) {
+#endif
 #ifndef _WIN32
   declareProcessManagerCommand(m);
 #endif /* _WIN32 */

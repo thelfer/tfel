@@ -3,9 +3,8 @@ try:
     import unittest2 as unittest
 except ImportError:
     import unittest
-import tfel.material
-import mtest
 
+import @mtest_python_module@ as mtest
 
 class SmallStrainTridimensionalBehaviourWrapper(unittest.TestCase):
     def test(self):
@@ -37,7 +36,6 @@ class SmallStrainTridimensionalBehaviourWrapper(unittest.TestCase):
         self.assertTrue(isvs[4] == 'ElasticStrainXZ')
         self.assertTrue(isvs[5] == 'ElasticStrainYZ')
         self.assertTrue(isvs[6] == 'p')
-
 
 if __name__ == '__main__':
     unittest.main()

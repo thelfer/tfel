@@ -12,11 +12,18 @@
  */
 
 #include <pybind11/pybind11.h>
+#include "TFEL/Macros.hxx"
+
+#define TFEL_MODULE_NAME TFEL_PP_JOIN(_tfel_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
 void declareConfig(pybind11::module_&);
 void declarePhysicalConstants(pybind11::module_&);
 
+#ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
+PYBIND11_MODULE(TFEL_MODULE_NAME, m) {
+#else
 PYBIND11_MODULE(_tfel, m) {
+#endif
   declareConfig(m);
-//  declarePhysicalConstants(m);
+  declarePhysicalConstants(m);
 }

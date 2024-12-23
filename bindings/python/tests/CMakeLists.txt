@@ -1,3 +1,20 @@
+if(TFEL_APPEND_SUFFIX)
+  set(tfel_system_python_module "tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}.system_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+  set(tfel_material_python_module "tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}.material_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+  set(mfront_python_module "mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+  set(mtest_python_module "mtest_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+else(TFEL_APPEND_SUFFIX)
+  set(tfel_system_python_module "tfel.system")
+  set(tfel_material_python_module "tfel.material")
+  set(mfront_python_module "mfront")
+  set(mtest_python_module "mtest")
+endif(TFEL_APPEND_SUFFIX)
+
+configure_file(behaviour-constructors.py.in behaviour-constructors.py @ONLY)
+configure_file(small-strain-tridimensional-behaviour-wrapper.py.in
+               small-strain-tridimensional-behaviour-wrapper.py @ONLY)
+configure_file(material-properties.py.in material-properties.py @ONLY)
+
 function(test_pymfront test)
   configure_file(pymfront${test}.py.in
     pymfront${test}.py @ONLY)
@@ -14,7 +31,7 @@ endfunction(test_pymfront)
 
 function(test_pymfront_mp interface library function)
   add_test(NAME pymfront_material_properties_${interface}_py
-    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/material-properties.py)
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/material-properties.py)
   if(CMAKE_CONFIGURATION_TYPES)
     set_property(TEST pymfront_material_properties_${interface}_py
       PROPERTY ENVIRONMENT
@@ -32,7 +49,7 @@ endfunction(test_pymfront_mp)
 
 function(test_pymtest_bv file library)
   add_test(NAME pymtest_behaviours_${file}_py
-    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${file}.py)
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/${file}.py)
   if(CMAKE_CONFIGURATION_TYPES)
     set_property(TEST pymtest_behaviours_${file}_py
       PROPERTY ENVIRONMENT

@@ -12,6 +12,9 @@
  */
 
 #include <pybind11/pybind11.h>
+#include "TFEL/Macros.hxx"
+
+#define TFEL_MATH_MODULE_NAME TFEL_PP_JOIN(math_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
 void declareTFELMathVector(pybind11::module_&);
 void declaretvector(pybind11::module_&);
@@ -20,7 +23,11 @@ void declarest2tost2(pybind11::module_&);
 void declareEvaluator(pybind11::module_&);
 void declareAccelerationAlgorithms(pybind11::module_&);
 
+#ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
+PYBIND11_MODULE(TFEL_MATH_MODULE_NAME, m) {
+#else
 PYBIND11_MODULE(math, m) {
+#endif
   declaretvector(m);
   declarestensor(m);
   declarest2tost2(m);

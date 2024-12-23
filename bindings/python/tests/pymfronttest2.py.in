@@ -3,8 +3,8 @@ try:
 except ImportError:
     import unittest
 
-from tfel.material import ModellingHypothesis
-import mfront
+from @tfel_material_python_module@ import ModellingHypothesis
+import @mfront_python_module@ as mfront
 
 class PyMFrontTest2(unittest.TestCase):
 

@@ -13,11 +13,18 @@
  */
 
 #include <pybind11/pybind11.h>
+#include "TFEL/Macros.hxx"
+
+#define TFEL_GLOSSARY_MODULE_NAME TFEL_PP_JOIN(glossary_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
 void declareGlossaryEntry(pybind11::module_&);
 void declareGlossary(pybind11::module_&);
 
+#ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
+PYBIND11_MODULE(TFEL_GLOSSARY_MODULE_NAME, m) {
+#else
 PYBIND11_MODULE(glossary, m) {
+#endif
   declareGlossaryEntry(m);
   declareGlossary(m);
 }

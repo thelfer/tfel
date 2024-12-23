@@ -4,8 +4,7 @@ try:
 except ImportError:
     import unittest
 
-import tfel.system
-
+import @tfel_system_python_module@ as tfel_system
 
 class PyMFrontMaterialProperty(unittest.TestCase):
     def test_elm(self):
@@ -15,7 +14,7 @@ class PyMFrontMaterialProperty(unittest.TestCase):
         l = os.environ['MFRONT_MATERIAL_PROPERTY_LIBRARY']
         mp = os.environ['MFRONT_MATERIAL_PROPERTY_FUNCTION']
 
-        elm = tfel.system.ExternalLibraryManager.getExternalLibraryManager()
+        elm = tfel_system.ExternalLibraryManager.getExternalLibraryManager()
 
         names = elm.getMaterialPropertyVariables(l, mp)
         self.assertTrue(len(names) == 1)
@@ -38,7 +37,7 @@ class PyMFrontMaterialProperty(unittest.TestCase):
 
         l = os.environ['MFRONT_MATERIAL_PROPERTY_LIBRARY']
         mp = os.environ['MFRONT_MATERIAL_PROPERTY_FUNCTION']
-        emp = tfel.system.ExternalMaterialPropertyDescription(l, mp)
+        emp = tfel_system.ExternalMaterialPropertyDescription(l, mp)
 
         self.assertTrue(emp.author == "T . Helfer")
         self.assertTrue(emp.date == "2008 - 11 - 17")

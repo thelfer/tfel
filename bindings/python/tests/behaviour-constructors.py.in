@@ -3,13 +3,13 @@ try:
     import unittest2 as unittest
 except ImportError:
     import unittest
-import tfel.material
-import mtest
 
+from @tfel_material_python_module@ import ModellingHypothesis
+import @mtest_python_module@ as mtest
 
 class BehaviourConstructors(unittest.TestCase):
     def test1(self):
-        h = tfel.material.ModellingHypothesis.TRIDIMENSIONAL
+        h = ModellingHypothesis.TRIDIMENSIONAL
         l = os.environ['MTEST_BEHAVIOUR_LIBRARY']
         b = mtest.Behaviour('generic', l, 'ImplicitNorton', h)
         self.checkBehaviour(b)
@@ -39,7 +39,6 @@ class BehaviourConstructors(unittest.TestCase):
         self.assertTrue(len(isvs) == 2)
         self.assertTrue(isvs[0] == 'ElasticStrain')
         self.assertTrue(isvs[1] == 'p')
-
 
 if __name__ == '__main__':
     unittest.main()

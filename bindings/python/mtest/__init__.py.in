@@ -11,6 +11,8 @@ if os.name == 'nt':
         os.environ["TFELHOME"] = str(tfelhome)
     os.add_dll_directory(tfelhome)
 
+import tfel.tests
+import tfel.math
 from ._mtest import *
 
 def generateMaterialPropertyReferenceFile(library,

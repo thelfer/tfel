@@ -14,6 +14,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include "TFEL/Raise.hxx"
+#include "TFEL/Macros.hxx"
 #include "MFront/InitDSLs.hxx"
 #include "MFront/MFrontBase.hxx"
 #include "MFront/InitInterfaces.hxx"
@@ -21,6 +22,8 @@
 #include "MFront/MaterialPropertyDSL.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/PathSpecifier.hxx"
+
+#define MFRONT_MODULE_NAME TFEL_PP_JOIN(_mfront_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
 void declareMadnexSupport(pybind11::module_&);
 void declareAbstractDSL(pybind11::module_&);
@@ -59,7 +62,11 @@ static pybind11::object getDSL(const std::string& f) {
   return pybind11::cast(dsl);
 }
 
+#ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
+PYBIND11_MODULE(MFRONT_MODULE_NAME, m) {
+#else
 PYBIND11_MODULE(_mfront, m) {
+#endif
   using namespace pybind11::literals;
   using GetImplementationsPathsPtr = std::vector<std::string> (*)(
       const std::string&, const std::string&, const std::string&,
