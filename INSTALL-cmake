@@ -80,7 +80,7 @@ cmake usefull variables
 - `ZSET_INSTALL_PATH`: specify where the ZSET sofware has been
   installed
 - `CMAKE_TOOLCHAIN_FILE`: specify a tool chain file
-- `TFEL_SVN_REVISION`: tfel-svn revision
+- `TFEL_GIT_HASH`: git revision
 - `Python_ADDITIONAL_VERSIONS`: select the `python` version to use.
   Note that only the major and minor version of python shall be passed,
   not the revision version or the detection fails.
@@ -89,6 +89,16 @@ cmake usefull variables
   support of `madnex` files. This path is usually given by
   `$MADNEX_PREFIX/share/madnex/cmake/` where `MADNEX_PREFIX` is the
   installation directory of the `Madnex` library.
+- `TFEL_APPEND_VERSION`: append the `TFEL` version to the libraries
+  names and `python` modules (except if the
+  `unversioned-python-module-names` option is set to `OFF`) .
+- `TFEL_VERSION_FLAVOUR`: append the given string to the libraries names
+  and `python` modules (except if the `unversioned-python-module-names`
+  option is set to `OFF`). Typical values for `TFEL_VERSION_FLAVOUR` are
+  `release` and `debug`.
+- `unversioned-python-module-names`: if set to `ON`, do not modify
+  the names of the `python` modules if `TFEL_APPEND_VERSION` is
+  set to `ON` or if `TFEL_VERSION_FLAVOUR` is set.
 - `TFEL_DL_LIBRARY`: set the path the `dl` library. This library can
   sometimes not be found when using non default compilers (eg. the PGI
   compiler).

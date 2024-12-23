@@ -19,9 +19,11 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Known incompatibilities
 
-When compiling with option `TFEL_APPEND_VERSION` set to `true` or
-when defining the string variable `TFEL_VERSION_FLAVOUR`, the
-`python` modules are now modified to reflect those information.
+When compiling with option `TFEL_APPEND_VERSION` set to `ON` or when
+defining the string variable `TFEL_VERSION_FLAVOUR`, the `python`
+modules are now modified to reflect those information. This old
+behaviour can be restored by setting the
+`unversioned-python-module-names` option to `OFF`.
 
 # `tfel-config`
 
@@ -44,6 +46,10 @@ Python bindings are now generated using the
 [`pybind11`](https://github.com/pybind/pybind11) library.
 
 # Issues fixed
+
+## Issue 674: [python-bindings] Add option to disable the modication of the names of  python modules by the `TFEL_APPEND_VERSION` and `TFEL_VERSION_FLAVOUR`
+
+For more details, see <https://github.com/thelfer/tfel/issues/674>
 
 ## Issue 673: [tfel-config] Add the ability to define an environment variable associated with the `TFEL`'s version and flavour
 

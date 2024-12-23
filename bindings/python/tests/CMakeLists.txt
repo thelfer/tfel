@@ -1,14 +1,14 @@
-if(TFEL_APPEND_SUFFIX)
+if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
   set(tfel_system_python_module "tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}.system_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
   set(tfel_material_python_module "tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}.material_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
   set(mfront_python_module "mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
   set(mtest_python_module "mtest_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
-else(TFEL_APPEND_SUFFIX)
+else(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
   set(tfel_system_python_module "tfel.system")
   set(tfel_material_python_module "tfel.material")
   set(mfront_python_module "mfront")
   set(mtest_python_module "mtest")
-endif(TFEL_APPEND_SUFFIX)
+endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
 
 configure_file(behaviour-constructors.py.in behaviour-constructors.py @ONLY)
 configure_file(small-strain-tridimensional-behaviour-wrapper.py.in

@@ -14,6 +14,7 @@ set(TFEL_VERSION_FLAVOUR "" CACHE STRING
   "Append a flavour to the version number")
 option(TFEL_APPEND_VERSION
   "append TFEL version number to all libraries, executables and directories" OFF)
+
 option(BUILD_SHARED_LIBS  "enable shared libraries" ON)
 if(NOT BUILD_SHARED_LIBS)
   set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -297,6 +298,10 @@ endif(GNUPLOT_FOUND)
 #python
 option(enable-python "enable python support" OFF)
 option(enable-python-bindings "enable  python bindings support" OFF)
+option(unversioned-python-module-names
+"if enabled, do not reflect the version and flavour information. \
+This option has no effect if the python bindings are not enabled and if none \
+TFEL_APPEND_VERSION or TFEL_VERSION_FLAVOUR variables is set " OFF)
 option(enable-numpy-support
   "enable numpy support. This option has no effect if python bindings are disabled" ON)
  
@@ -349,6 +354,7 @@ endif(enable-python)
 
 #python bindings
 if(enable-python-bindings)
+  include(cmake/modules/tfel-python-modules.cmake)
   if(NOT HAVE_PYTHON)
     message(FATAL_ERROR "python not found. python is mandatory for python bindings.")
   endif(NOT HAVE_PYTHON)
