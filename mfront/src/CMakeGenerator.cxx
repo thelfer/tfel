@@ -40,6 +40,7 @@
 #endif
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 #include "MFront/MFrontHeader.hxx"
@@ -150,21 +151,13 @@ namespace mfront {
       << "if(TFEL_INSTALL_PATH)\n"
       << "  set(TFELHOME \"${TFEL_INSTALL_PATH}\")\n"
       << "else(TFEL_INSTALL_PATH)\n"
-      << "  set(TFELHOME $ENV{TFELHOME})\n"
+      << "  set(TFELHOME \"" + tfel::getInstallPath() + "\")\n"
       << "endif(TFEL_INSTALL_PATH)\n"
+      << "\n"
+      << "find_program(TFEL_CONFIG  " << tfel::getTFELConfigExecutableName()
+      << " \"${TFELHOME}/bin\")\n"
+      << "message(STATUS \"tfel-config         : ${TFEL_CONFIG}\")\n"
       << "\n";
-#ifdef TFEL_APPEND_SUFFIX
-    m << "find_program(TFEL_CONFIG  tfel-config-" TFEL_SUFFIX
-         " \"${TFELHOME}/bin\")\n";
-#else  /* TFEL_APPEND_SUFFIX */
-    m << "find_program(TFEL_CONFIG  tfel-config \"${TFELHOME}/bin\")\n";
-#endif /* TFEL_APPEND_SUFFIX */
-    m << "message(STATUS \"tfel-config         : ${TFEL_CONFIG}\")\n"
-      << "\n";
-    // << "spawn(TFEL_INCLUDE_PATH ${TFEL_CONFIG} \"--include-path\")\n"
-    // << "spawn(TFEL_LIBRARY_PATH ${TFEL_CONFIG} \"--library-path\")\n"
-    // << "spawn(TFEL_COMPILER_FLAGS ${TFEL_CONFIG}\n"
-    // << "  \"--cppflags\" \"--compiler-flags\")\n"
     switch (o.olevel) {
       case GeneratorOptions::LEVEL2:
         m << "spawn(TFEL_OFLAGS ${TFEL_CONFIG} \"--oflags\" \"--oflags2\")\n";

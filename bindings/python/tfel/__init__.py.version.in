@@ -1,7 +1,10 @@
 import os
 
 if os.name == 'nt':
-    if "TFELHOME" in os.environ:
+    versioned_tfelhome="TFELHOME_@TFEL_VERSION@".replace(".", "_").replace("-", "_")
+    if versioned_tfelhome in os.environ:
+        tfelhome = os.environ[versioned_tfelhome]
+    elif "TFELHOME" in os.environ:
         tfelhome = os.environ["TFELHOME"]
     else:
         import pathlib

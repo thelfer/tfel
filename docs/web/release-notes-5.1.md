@@ -25,7 +25,19 @@ modules are now modified to reflect those information. This old
 behaviour can be restored by setting the
 `unversioned-python-module-names` option to `OFF`.
 
-# `tfel-config`
+# New features in the `TFEL` libraries
+
+## Environment
+
+This version now supports a new environment variable to specify the
+`TFEL` installation directory that always supersedes the `TFELHOME`
+environment variable. The name of this variable depends on the version
+of the project, the fact that a development version has been compiled
+and the flavour (optionally specified with the `cmake` variable
+`TFEL_VERSION_FLAVOUR`). The name of this variable can be retrieved with
+the `--tfel-home` option of `tfel-config` described below.
+
+## `tfel-config`
 
 On `Windows`, the `--registry-key` option returns the registry key which
 is used to determine the TFEL's installation path.
@@ -33,11 +45,11 @@ is used to determine the TFEL's installation path.
 The `--tfel-home` option returns the environment variable in which the
 TFEL's installation path shall be defined. 
 
-## Example of usage
+### Example of usage
 
 ~~~~
-$ tfel-config-5.1.0-dev-release --tfel-home
-TFELHOME_5_1_0_dev_release
+$ tfel-config-5.2.0-dev-release --tfel-home
+TFELHOME_5_2_0_dev_release
 ~~~~
 
 # Python bindings
@@ -46,6 +58,10 @@ Python bindings are now generated using the
 [`pybind11`](https://github.com/pybind/pybind11) library.
 
 # Issues fixed
+
+## Issue 676: Always prefer the versioned `TFELHOME` environment variable
+
+For more details, see <https://github.com/thelfer/tfel/issues/676>
 
 ## Issue 674: [python-bindings] Add option to disable the modication of the names of  python modules by the `TFEL_APPEND_VERSION` and `TFEL_VERSION_FLAVOUR`
 

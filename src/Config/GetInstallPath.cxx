@@ -50,6 +50,23 @@ namespace tfel {
   }
 #endif
 
+  static std::string getTFELHOMEWithVersionEnvironmentVariable() {
+    auto replace_all = [](std::string_view c, const char c1) -> std::string {
+      std::string s(c);
+      std::string::size_type p = 0u;
+      if (s.empty()) {
+        return "";
+      }
+      while ((p = s.find(c1, p)) != std::string::npos) {
+        s[p] = '_';
+        p += 1u;
+      }
+      return s;
+    };
+    const std::string tmp = replace_all("TFELHOME-" VERSION, '-');
+    return replace_all(tmp, '.');
+  }
+
   static std::string handleSpace(const std::string& p) {
 #if (defined _WIN32 || defined _WIN64) && \
     (defined __MINGW32__ || defined __MINGW64__)
@@ -77,6 +94,14 @@ namespace tfel {
       }
     }
 #endif
+
+    const auto tfelhome_with_version =
+        getTFELHOMEWithVersionEnvironmentVariable();
+    const char* const path_with_version = getenv(tfelhome_with_version.c_str());
+    if (path_with_version != nullptr) {
+      return handleSpace(path_with_version);
+    }
+
     const auto* const path = ::getenv("TFELHOME");
     if (path != nullptr) {
       return handleSpace(path);
