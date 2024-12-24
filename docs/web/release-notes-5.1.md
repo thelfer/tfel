@@ -23,7 +23,7 @@ When compiling with option `TFEL_APPEND_VERSION` set to `ON` or when
 defining the string variable `TFEL_VERSION_FLAVOUR`, the `python`
 modules are now modified to reflect those information. This old
 behaviour can be restored by setting the
-`unversioned-python-module-names` option to `OFF`.
+`unversioned-python-module-names` option to `ON`.
 
 # New features in the `TFEL` libraries
 
@@ -39,17 +39,41 @@ the `--tfel-home` option of `tfel-config` described below.
 
 ## `tfel-config`
 
+### `--registry-key` option
+
 On `Windows`, the `--registry-key` option returns the registry key which
 is used to determine the TFEL's installation path.
+
+### `--tfel-home` option
 
 The `--tfel-home` option returns the environment variable in which the
 TFEL's installation path shall be defined. 
 
-### Example of usage
+#### Example of usage
 
 ~~~~
 $ tfel-config-5.2.0-dev-release --tfel-home
 TFELHOME_5_2_0_dev_release
+~~~~
+
+### `--python-module-suffix` option
+
+This option return the suffix of the `python` module. Such suffix is not
+empty only the following conditions are met:
+
+- `TFEL` has been compiled with option `TFEL_APPEND_VERSION` set to `ON` and or
+  with the string variable `TFEL_VERSION_FLAVOUR` defined,
+- the `unversioned-python-module-names` option has been set to `ON` (the
+  default value if `OFF`).
+
+The option `--python-module-suffix` is only available if the python
+bindings is available.
+
+#### Example of usage
+
+~~~~
+$ tfel-config-5.1.0-release --python-module-suffix
+5_1_0_release
 ~~~~
 
 # Python bindings
@@ -58,6 +82,10 @@ Python bindings are now generated using the
 [`pybind11`](https://github.com/pybind/pybind11) library.
 
 # Issues fixed
+
+## Issue 677:[tfel-config] add a python-module-suffix option
+
+For more details, see <https://github.com/thelfer/tfel/issues/677>
 
 ## Issue 676: Always prefer the versioned `TFELHOME` environment variable
 

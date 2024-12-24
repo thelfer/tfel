@@ -20,9 +20,13 @@
 #include <stdexcept>
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Macros.hxx"
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Config/GetInstallPath-defines.hxx"
 #include "tfel-config.hxx"
+
+#define MACRO_AS_STRING(s) MACRO_AS_STRING_IMPL(s)
+#define MACRO_AS_STRING_IMPL(s) #s
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #ifndef NOMINMAX
@@ -500,6 +504,16 @@ int main(const int argc, const char* const* const argv) {
     registerCallBack(
         "--python-version", [] { std::cout << PYTHON_VERSION << " "; },
         "print the python version used to build the python bindings.");
+    registerCallBack(
+        "--python-module-suffix",
+        [] {
+#ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
+          std::cout << MACRO_AS_STRING(TFEL_SUFFIX_FOR_PYTHON_MODULES) << " ";
+#else  /* TFEL_SUFFIX_FOR_PYTHON_MODULES */
+        std::cout << " ";
+#endif /* TFEL_SUFFIX_FOR_PYTHON_MODULES */
+        },
+        "print the suffix of the python modules, if any.");
 #endif /* TFEL_PYTHON_BINDINGS */
     registerCallBack(
         "--madnex-support",
