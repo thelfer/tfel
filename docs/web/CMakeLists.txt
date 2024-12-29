@@ -246,7 +246,7 @@ if(TFEL_APPEND_SUFFIX)
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
   install(FILES 404.html apple-touch-icon-precomposed.png 
-    CHANGELOG.md CONTRIBUTING.md crossdomain.xml favicon.ico
+    CHANGELOG.md contributing.md crossdomain.xml favicon.ico
     humans.txt LICENSE.md README.md robots.txt TODO.md
     DESTINATION share/doc/tfel-${TFEL_SUFFIX}/web
     COMPONENT website)
@@ -256,7 +256,7 @@ else(TFEL_APPEND_SUFFIX)
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
   install(FILES 404.html apple-touch-icon-precomposed.png 
-    CHANGELOG.md CONTRIBUTING.md crossdomain.xml favicon.ico
+    CHANGELOG.md contributing.md crossdomain.xml favicon.ico
     humans.txt LICENSE.md README.md robots.txt TODO.md
     DESTINATION share/doc/tfel/web
     COMPONENT website)
