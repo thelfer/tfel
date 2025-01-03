@@ -7,13 +7,13 @@
 
 # Overview
 
-`MFront` comes with an handy easy-to-use tool called `MTest`. This
+`MFront` comes with a handy and easy-to-use tool called `MTest`. This
 tool handles two types of computations:
 
 - The description of a single material point.
-- The description of a pipe, submitted to variaous kinds of loadings.
+- The description of a pipe, subject to various kinds of loadings.
 
-From various benchmarcks, this tool has been found much faster (from
+From various benchmarks, this tool has been found much faster (from
 ten to several hundred times depending on the test case) than using a
 full-fledged finite element solver such as `Cast3M` or `Code_Aster`.
 
@@ -61,7 +61,7 @@ this keyword is specific to the simulation of a pipe, use
 
 `MTest` can test the local behaviour of a material, by imposing
 independent constraints on each component of the driving variables (or
-deformation gradient or or the stress. It equivalent to the
+deformation gradient or the stress). It is equivalent to the
 `SIMU_POINT_MAT` operator available within the `Code-Aster` finite
 element solver [@edf_macro-commande_2013] or to the `SiDoLo` software
 [@pilvin_sidolo_2003].
@@ -72,7 +72,7 @@ shear tests driven by stresses or deformations, pipe loaded by
 internal or external pressure, \nom{Satoh} test, etc.
 
 `MTest` generates a text file containing the evolution of the strains
-(for small strains behaviours), the stresses an the state variables
+(for small strains behaviours), the stresses and the state variables
 during the loading history. Other `MTest` functionalities include:
 
 - the ability to test all the behaviours handled by `MFront` (small
@@ -94,15 +94,15 @@ during the loading history. Other `MTest` functionalities include:
   variables) to reference or analytical results. `MTest` automatically
   generates XML file using the [JUnit](http://junit.org) format. Those
   files can be used for reporting using the
-  [Jenkins continuous integration application](http://jenkins-ci.org/)
-  This functionality is central in the assurance quality procedure of
+  [Jenkins continuous integration application](http://jenkins-ci.org/).
+  This functionality is central in the quality assurance procedure of
   `MFront`.
 
 Through an appropriate option, a behaviour implementation generated
 through `MFront` may create an `MTest` file in case of integration
-failure: this `MTest` file only describe the failed time step with
+failure: this `MTest` file only describes the failed time step with
 the appropriate initial conditions. This feature is particularly
-useful to analyse the failure of large simulations which may happen
+useful to analyze the failure of large simulations which may happen
 after several hours of computations.
 
 ## Example
@@ -256,7 +256,7 @@ In case of failure, three policies can be selected using the
   policy, one can thus only approach the failure time, but never go
   beyond.
 - `FreezeState` (or `FreezeStateUntilEndOfComputation`): if a failure is
-  detected, the state of the structure is freezed and do not evolve. No
+  detected, the state of the structure is frozen and does not evolve. No
   equilibrium is performed, the behaviour is no more called and `PipeTest`
   will output the same results again and again until the end of
   computation. This option may be useful when optimizing material
@@ -286,7 +286,7 @@ An oxidation model must define an internal state variable named
 state variables passed to an oxidation model are computed on the
 boundary on which the model is defined.
 
-The definition of a least one oxidation model automatically defines an
+The definition of at least one oxidation model automatically defines an
 evolution named `OxidationStatus` which states if an integration point
 is inside an oxidation layer.
 

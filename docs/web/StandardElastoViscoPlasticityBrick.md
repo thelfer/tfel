@@ -1049,6 +1049,87 @@ This isotropic hardening rule can be parametrised using three entries:
 };
 ~~~~
 
+### Strain rate sensitive isotropic hardening rule
+
+The `StrainRateSensitive` isotropic hardening rule is defined by:
+\[
+ R\paren{p, \dot{p}} = R_{0}\paren{p}\,R_{rs}\paren{\dot{p}},
+\]
+
+where:
+
+- \(R_{0}\paren{p}\) is the yield radius corresponding to an infinitly
+  slow loading. It can be built by summing any isotropic hardening rule
+  already implemented in the `StandardElastoViscoPlasticity\ brick.
+- \(R_{rs}\paren{\dot{p}}\) is a correction describing the strain rate
+  sensitivity. \(R_{rs}\paren{0}\) must be equal to 1.
+
+This isotropic hardening rule can be parametrised using the following
+options:
+
+- `rate_independent_isotropic_hardening`: this option introduces a
+  contribution to \(R_{0}\paren{p}\). This option can be repeated
+  multiple times.
+- `rate_sensitivity_factor`: this option introduces the rate sensivity
+  factor \(R_{rs}\paren{\dot{p}}\). The list of available rate sensivity
+  factors is given in section @sec:rate_sensitivity_factors.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 210e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "StrainRateSensitive" {
+      rate_independent_isotropic_hardening :
+          "Swift" {R0 : "alpha * Ks * (p0s ** ns)", p0 : "p0s", n : "ns"},
+      rate_independent_isotropic_hardening : "Voce" {
+        R0 : "(1 - alpha) * Q1 * (1 - Q2)",
+        Rinf : "(1 - alpha) * Q1",
+        b : "Q3"
+      },
+      rate_sensitivity_factor :
+          "CowperSymonds" {dp0 : "dp0cs", n : "ncs", Rs_eps : 1e-8}
+    }
+  }
+};
+~~~~
+
+## List of rate sensitivity factors {#sec:rate_sensitivity_factors}
+
+### Cowper-Symonds's rate sensitivity factor
+
+\[
+R_{rs}\paren{\dot{p}}=1+A\,\left(\frac{\dot{p}}{\dot{p}_{0}}\right)^{n}
+\]
+
+When the exponent \(n\) is lower than one, the following regularised
+version, based on the user defined value \(R_{\epsilon}\) is available:
+
+\[
+R_{rs}\paren{\dot{p}}=1+
+\left\{
+\begin{aligned}
+R_{\epsilon}\,\left(\frac{\dot{p}}{\dot{p}_{\epsilon}}\right) &&\text{if}&&\dot{p}<\dot{p}_{\epsilon}\\
+A\,\left(\frac{\dot{p}}{\dot{p}_{0}}\right)^{n} &&\text{if}&&\dot{p}\geq\dot{p}_{\epsilon}
+\end{aligned}
+\right.
+\]
+
+### Johnson-Cook's rate sensitivity factor
+
+\[
+R_{rs}\paren{\dot{p}}=1+
+\left\{
+\begin{aligned}
+0                                         &&\text{if}&&\dot{p}<\dot{p}_{0}\\
+A\,\log\left(\frac{\dot{p}}{\dot{p}_{0}}\right)&&\text{if}&&\dot{p}\geq\dot{p}_{0}
+\end{aligned}
+\right.
+\]
+
+
 ## List of available kinematic hardening rules
 
 ### The `Prager` kinematic hardening rule

@@ -48,8 +48,7 @@ pandoc_html(install-windows-Cast3M2017 "--toc")
 pandoc_html(install-windows-VisualStudio)
 pandoc_html(packages)
 pandoc_html(about)
-pandoc_html(svn)
-pandoc_html(devel)
+pandoc_html(contributing)
 pandoc_html(libraries_usage  "--toc" "--toc-depth=3")
 pandoc_html(mtest)
 pandoc_html(mtest-python "--toc" "--toc-depth=3")
@@ -153,6 +152,7 @@ pandoc_html(release-notes-3.2.7 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2.8 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2.9 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2.10 "--toc" "--toc-depth=2")
+pandoc_html(release-notes-3.2.11 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.3   "--toc" "--toc-depth=2" "--number-sections" "-c css/slideshow.css")
 pandoc_html(release-notes-3.3.1   "--toc" "--toc-depth=2" "--number-sections" "-c css/slideshow.css")
 pandoc_html(release-notes-3.3.2   "--toc" "--toc-depth=2" "--number-sections" "-c css/slideshow.css")
@@ -167,6 +167,7 @@ pandoc_html(release-notes-3.4.3   "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(release-notes-3.4.4   "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(release-notes-3.4.5   "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(release-notes-3.4.6   "--toc" "--toc-depth=2" "--number-sections")
+pandoc_html(release-notes-3.4.7   "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(release-notes-4.0   "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(release-notes-4.0.1 "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(release-notes-4.0.2 "--toc" "--toc-depth=2" "--number-sections")
@@ -177,9 +178,11 @@ pandoc_html(release-notes-4.1.1 "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(release-notes-4.1.2 "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(release-notes-4.1.3 "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(release-notes-4.2   "--toc" "--toc-depth=2" "--number-sections")
-pandoc_html(release-notes-4.2.1   "--toc" "--toc-depth=2" "--number-sections")
-pandoc_html(release-notes-4.2.2   "--toc" "--toc-depth=2" "--number-sections")
-pandoc_html(release-notes-5.0   "--toc" "--toc-depth=2" "--number-sections")
+pandoc_html(release-notes-4.2.1  "--toc" "--toc-depth=2" "--number-sections")
+pandoc_html(release-notes-4.2.2  "--toc" "--toc-depth=2" "--number-sections")
+pandoc_html(release-notes-5.0    "--toc" "--toc-depth=2" "--number-sections")
+pandoc_html(release-notes-5.0.1  "--toc" "--toc-depth=2" "--number-sections")
+pandoc_html(release-notes-5.1    "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(theory  "--toc" "--toc-depth=2")
 pandoc_html(tensors "--toc" "--toc-depth=2" "--number-sections")
 pandoc_html(tfel-physical-constants "--toc" "--toc-depth=2")
@@ -243,7 +246,7 @@ if(TFEL_APPEND_SUFFIX)
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
   install(FILES 404.html apple-touch-icon-precomposed.png 
-    CHANGELOG.md CONTRIBUTING.md crossdomain.xml favicon.ico
+    CHANGELOG.md contributing.md crossdomain.xml favicon.ico
     humans.txt LICENSE.md README.md robots.txt TODO.md
     DESTINATION share/doc/tfel-${TFEL_SUFFIX}/web
     COMPONENT website)
@@ -253,7 +256,7 @@ else(TFEL_APPEND_SUFFIX)
     COMPONENT website
     PATTERN ".svn" EXCLUDE)
   install(FILES 404.html apple-touch-icon-precomposed.png 
-    CHANGELOG.md CONTRIBUTING.md crossdomain.xml favicon.ico
+    CHANGELOG.md contributing.md crossdomain.xml favicon.ico
     humans.txt LICENSE.md README.md robots.txt TODO.md
     DESTINATION share/doc/tfel/web
     COMPONENT website)

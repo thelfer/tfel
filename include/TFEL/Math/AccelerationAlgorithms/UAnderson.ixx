@@ -29,7 +29,7 @@ namespace tfel::math {
   // uO,uN: Old and new displacement field
   template <typename Field, typename real>
   void UAnderson<Field, real>::newIter(Field*& uO, Field*& uN) {
-    using size_type = typename AndersonBase<Field, real>::size_type;
+    using index_type = typename AndersonBase<Field, real>::size_type;
     // Matrice upgrade
     if (this->n < this->size()) {
       ++(this->n);
@@ -56,11 +56,11 @@ namespace tfel::math {
     if (this->n == this->size()) {
       this->cM.shift();
       uN = this->u[0];
-      for (size_type i = 0; i < this->n - 1; ++i) {
+      for (index_type i = 0; i < this->n - 1; ++i) {
         this->u[i] = this->u[i + 1];
       }
       this->u[this->n - 1] = uN;
-      for (size_type i = 0; i < this->n - 1; ++i) {
+      for (index_type i = 0; i < this->n - 1; ++i) {
         this->D[i] = this->D[i + 1];
       }
       this->D[this->n - 1] = uO;

@@ -1,3 +1,4 @@
+
 /*!
  * \file  bindings/python/tfel/material.cxx
  * \brief
@@ -11,20 +12,27 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include "TFEL/Macros.hxx"
 
-void declareModellingHypothesis();
-void declareOutOfBoundsPolicy();
-void declareCrystalStructure();
-void declarePiPlane();
-void declareHosford();
-void declareBarlat();
+#define TFEL_MATERIAL_MODULE_NAME TFEL_PP_JOIN(material_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
-BOOST_PYTHON_MODULE(material) {
-  declareModellingHypothesis();
-  declareOutOfBoundsPolicy();
-  declareCrystalStructure();
-  declarePiPlane();
-  declareHosford();
-  declareBarlat();
+void declareModellingHypothesis(pybind11::module_&);
+void declareOutOfBoundsPolicy(pybind11::module_&);
+void declareCrystalStructure(pybind11::module_&);
+void declarePiPlane(pybind11::module_&);
+void declareHosford(pybind11::module_&);
+void declareBarlat(pybind11::module_&);
+
+#ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
+PYBIND11_MODULE(TFEL_MATERIAL_MODULE_NAME, m) {
+#else
+PYBIND11_MODULE(material, m) {
+#endif
+  declareModellingHypothesis(m);
+  declareOutOfBoundsPolicy(m);
+  declareCrystalStructure(m);
+  declarePiPlane(m);
+  declareHosford(m);
+  declareBarlat(m);
 }

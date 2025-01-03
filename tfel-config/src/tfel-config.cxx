@@ -20,9 +20,13 @@
 #include <stdexcept>
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Macros.hxx"
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Config/GetInstallPath-defines.hxx"
 #include "tfel-config.hxx"
+
+#define MACRO_AS_STRING(s) MACRO_AS_STRING_IMPL(s)
+#define MACRO_AS_STRING_IMPL(s) #s
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #ifndef NOMINMAX
@@ -85,6 +89,12 @@ static void listOptions(std::ostream&);
 
 static CallBacksContainer callBacksContainer;
 static bool quiet_failure = false;
+
+#if defined _WIN32 || defined _WIN64
+static bool registry_key = false;
+#endif /* defined _WIN32 || defined _WIN64 */
+
+static bool tfel_home = false;
 static bool compilerflags = false;
 static bool debugflags = false;
 static bool oflags0 = false;
@@ -118,14 +128,17 @@ static bool zmat = false;
 static bool lsystem = false;
 
 #if defined _WIN32 || defined _WIN64
+
+static std::string getRegistryKey() { return "TFELHOME-" VERSION; }
+
 static bool getValueInRegistry(std::string& value) {
   using namespace std;
   HKEY hKey;
   char szBuffer[512];
   DWORD dwBufferSize = sizeof(szBuffer);
   LONG nError;
-  LONG lRes =
-      RegOpenKeyEx(HKEY_CLASSES_ROOT, "TFELHOME-" VERSION, 0, KEY_READ, &hKey);
+  LONG lRes = RegOpenKeyEx(HKEY_CLASSES_ROOT, getRegistryKey().c_str(), 0,
+                           KEY_READ, &hKey);
   if (ERROR_SUCCESS != lRes) {
     return false;
   }
@@ -138,9 +151,27 @@ static bool getValueInRegistry(std::string& value) {
   }
   return false;
 }
-#endif
+#endif defined _WIN32 || defined _WIN64
+
+static std::string getTFELHOMEWithVersionEnvironmentVariable() {
+  auto replace_all = [](std::string_view c, const char c1) -> std::string {
+    std::string s(c);
+    std::string::size_type p = 0u;
+    if (s.empty()) {
+      return "";
+    }
+    while ((p = s.find(c1, p)) != std::string::npos) {
+      s[p] = '_';
+      p += 1u;
+    }
+    return s;
+  };
+  const std::string tmp = replace_all("TFELHOME-" VERSION, '-');
+  return replace_all(tmp, '.');
+}
 
 static std::string getTFELHOME() {
+
 #if defined _WIN32 || defined _WIN64
   // check in the registry (installation through NSIS)
   std::string rpath;
@@ -149,6 +180,12 @@ static std::string getTFELHOME() {
   }
 #endif
 
+  const auto tfelhome_with_version =
+      getTFELHOMEWithVersionEnvironmentVariable();
+  const char* const path_with_version = getenv(tfelhome_with_version.c_str());
+  if (path_with_version != nullptr) {
+    return handleSpace(path_with_version);
+  }
   const char* const path = getenv("TFELHOME");
   if (path != nullptr) {
     return handleSpace(path);
@@ -158,7 +195,7 @@ static std::string getTFELHOME() {
   throw(
       std::runtime_error("tfel-config getTFELHOME: "
                          "no TFELHOME registry key defined "
-                         "and no TFEHOME environment "
+                         "and no TFELHOME environment "
                          "variable defined"));
 #else
   return "";
@@ -303,6 +340,18 @@ int main(const int argc, const char* const* const argv) {
     registerCallBack(
         "--quiet-failure", [] { /*do nothing*/ },
         "quietly fails without error message");
+
+#if defined _WIN32 || defined _WIN64
+    registerCallBack(
+        "--registry-key", [] { registry_key = true; },
+        "returns the registry key used to determine the "
+        "TFEL's installation path");
+#endif /* defined _WIN32 || defined _WIN64 */
+
+    registerCallBack(
+        "--tfel-home", [] { tfel_home = true; },
+        "returns the environment variable in which the TFEL's installation "
+        "path shall be defined");
     registerCallBack(
         "--compiler-flags", [] { compilerflags = true; },
         "return TFEL's recommended compiler flags.");
@@ -331,7 +380,8 @@ int main(const int argc, const char* const* const argv) {
         "--cppflags", [] { cppflags = true; }, "return preprocessor flags.");
     registerCallBack(
         "--ldflags", [] { ldflags = true; }, "return linking flags.");
-    registerCallBack("--libs", [] { ldflags = true; }, "return linking flags.");
+    registerCallBack(
+        "--libs", [] { ldflags = true; }, "return linking flags.");
     registerCallBack(
         "--include-path", [] { incspath = true; },
         "return the path to the `TFEL` headers.");
@@ -347,7 +397,8 @@ int main(const int argc, const char* const* const argv) {
         "--castem", [] { castem = true; }, "request flags for castem.");
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ZMAT
-    registerCallBack("--zmat", [] { zmat = true; }, "request flags for zmat.");
+    registerCallBack(
+        "--zmat", [] { zmat = true; }, "request flags for zmat.");
 #endif /* HAVE_ZMAT */
     registerCallBack(
         "--exceptions", [] { exceptions = true; },
@@ -453,6 +504,16 @@ int main(const int argc, const char* const* const argv) {
     registerCallBack(
         "--python-version", [] { std::cout << PYTHON_VERSION << " "; },
         "print the python version used to build the python bindings.");
+    registerCallBack(
+        "--python-module-suffix",
+        [] {
+#ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
+          std::cout << MACRO_AS_STRING(TFEL_SUFFIX_FOR_PYTHON_MODULES) << " ";
+#else  /* TFEL_SUFFIX_FOR_PYTHON_MODULES */
+        std::cout << " ";
+#endif /* TFEL_SUFFIX_FOR_PYTHON_MODULES */
+        },
+        "print the suffix of the python modules, if any.");
 #endif /* TFEL_PYTHON_BINDINGS */
     registerCallBack(
         "--madnex-support",
@@ -485,6 +546,16 @@ int main(const int argc, const char* const* const argv) {
         treatUnknownOption(*p2);
       }
       (*(p->second.first))();
+    }
+
+#if defined _WIN32 || defined _WIN64
+    if (registry_key) {
+      std::cout << getRegistryKey() << " ";
+    }
+#endif /* defined _WIN32 || defined _WIN64 */
+
+    if (tfel_home) {
+      std::cout << getTFELHOMEWithVersionEnvironmentVariable() << " ";
     }
 
     if (cppflags) {
@@ -572,8 +643,15 @@ int main(const int argc, const char* const* const argv) {
       if (cxx_standard != nullptr) {
         std::cout << cxx_standard << " ";
       } else {
-#if (defined __GNUC__) || (defined __clang__) || (defined __INTEL_COMPILER)
+#if (defined __GNUC__)
         std::cout << "-std=c++20 ";
+#endif
+#if (defined __clang__) || (defined __INTEL_COMPILER)
+#if defined _WIN32 || defined _WIN64
+        std::cout << "-Qstd=c++20 ";
+#else
+        std::cout << "-std=c++20 ";
+#endif
 #endif
       }
     }

@@ -11,7 +11,9 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <sstream>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MFront/LibraryDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
 
@@ -30,24 +32,27 @@ TargetsDescription_getLibraries(mfront::TargetsDescription& t) {
   return t.libraries;
 }  // end of TargetsDescription_getLibraries
 
-void declareTargetsDescription() {
-  using namespace boost::python;
+void declareTargetsDescription(pybind11::module_&);
+
+void declareTargetsDescription(pybind11::module_& m) {
   using namespace mfront;
   using LibraryAccess =
       LibraryDescription& (TargetsDescription::*)(const std::string&);
-  class_<mfront::TargetsDescription>("TargetsDescription")
+  pybind11::class_<mfront::TargetsDescription>(m, "TargetsDescription")
       .def("getLibrary",
            static_cast<LibraryAccess>(&TargetsDescription::getLibrary),
-           arg("library"), return_internal_reference<>())
-      .add_property("headers", TargetsDescription_getHeaders,
+           pybind11::arg("library"))
+      .def_property("headers", TargetsDescription_getHeaders,
                     TargetsDescription_setHeaders)
-      .def("getLibraries", TargetsDescription_getLibraries,
-           return_internal_reference<>())
-      .add_property("libraries", make_function(&TargetsDescription_getLibraries,
-                                               return_internal_reference<>()))
-      //
+      .def("getLibraries", TargetsDescription_getLibraries)
+      .def_property_readonly("libraries", &TargetsDescription_getLibraries)
       .def_readwrite("specific_targets", &TargetsDescription::specific_targets)
-      .def(self_ns::str(self_ns::self));
-  def("describes", mfront::describes);
-  def("mergeTargetsDescription", mfront::describes);
+      .def("__repr__",
+           [](const TargetsDescription& l) {
+             auto os = std::ostringstream{};
+             os << l;
+             return os.str();
+           });
+  m.def("describes", mfront::describes);
+  m.def("mergeTargetsDescription", mfront::describes);
 }

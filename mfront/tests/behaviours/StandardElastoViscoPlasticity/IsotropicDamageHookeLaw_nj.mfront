@@ -1,0 +1,22 @@
+@DSL Implicit;
+@Behaviour IsotropicDamageHookeLaw_nj;
+@Author Thomas Helfer;
+@Date 2/05/2018;
+
+@ModellingHypotheses {".+"};
+@Algorithm NewtonRaphson_NumericalJacobian;
+@PerturbationValueForNumericalJacobianComputation 1.e-8;
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "IsotropicDamage" {
+    young_modulus : 150e9,
+    poisson_ratio : 0.3
+  }
+};
+
+@ExternalStateVariable real di;
+di.setEntryName("ImposedDamage");
+
+@Integrator{
+  fd = d+dd-di-ddi;
+}

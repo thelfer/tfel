@@ -73,6 +73,8 @@ namespace tfel::math {
             throw(TensorInvalidIndexException());
           }
           return this->s(5) * icste;
+      default:
+	break;
       }
       throw(TensorInvalidIndexException());
     }  // end of operator() const

@@ -11,94 +11,85 @@
  * project under specific licensing conditions.
  */
 
+
 #include <memory>
 #include <stdexcept>
-#include "TFEL/Python/SharedPtr.hxx"
-#include <boost/python.hpp>
-#include <boost/python/suite/indexing/map_indexing_suite.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/Data.hxx"
 
 template <typename T>
-static bool is(const boost::python::object& o) {
-  boost::python::extract<T> e(o);
-  return e.check();
+static bool is(const pybind11::object& o) {
+  return pybind11::isinstance<T>(o);
 }
 
-static boost::python::object convert_data_to_python_object(
+static pybind11::object convert_data_to_python_object(
     const tfel::utilities::Data& d) {
-  using namespace boost::python;
   using namespace tfel::utilities;
   if (d.is<int>()) {
-    return object(d.get<int>());
+    return pybind11::cast(d.get<int>());
   } else if (d.is<double>()) {
-    return object(d.get<double>());
+    return pybind11::cast(d.get<double>());
   } else if (d.is<std::string>()) {
-    return object(d.get<std::string>());
+    return pybind11::cast(d.get<std::string>());
   } else if (d.is<std::vector<Data>>()) {
-    return object(d.get<std::vector<Data>>());
-  } else if (d.is<DataMap>()) {
-    return object(d.get<DataMap>());
+    return pybind11::cast(d.get<std::vector<Data>>());
   }
-  tfel::raise(
-      "convert_data_to_python_object: "
-      "unsupported conversion");
+  if (!d.is<DataMap>()) {
+    tfel::raise(
+        "convert_data_to_python_object: "
+        "unsupported conversion");
+  }
+  return pybind11::cast(d.get<DataMap>());
 }  // end of convert_data_to_python_object
 
 static void convert_python_object_to_data(tfel::utilities::Data& d,
-                                          const boost::python::object& o) {
-  using namespace boost::python;
-  using namespace tfel::utilities;
-  using boost::python::dict;
-  using boost::python::list;
+                                          const pybind11::object& o) {
+  using tfel::utilities::Data;
   if (is<int>(o)) {
-    d = Data(boost::python::extract<int>(o)());
+    d = Data(pybind11::cast<int>(o));
   } else if (is<double>(o)) {
-    d = Data(boost::python::extract<double>(o)());
-  } else if (is<std::string>(o)) {
-    d = Data(boost::python::extract<std::string>(o)());
-  } else {
+    d = Data(pybind11::cast<double>(o));
+  }
+  if (!is<std::string>(o)) {
     tfel::raise(
         "convert_python_object_to_data: "
         "unsupported conversion");
   }
+  d = Data(pybind11::cast<std::string>(o));
 }  // end of convert_python_object_to_data
 
-static std::shared_ptr<tfel::utilities::Data> convert_python_object_to_data_ptr(
-    const boost::python::object& o) {
-  auto d = std::make_shared<tfel::utilities::Data>();
+static std::unique_ptr<tfel::utilities::Data> convert_python_object_to_data_ptr(
+    const pybind11::object& o) {
+  auto d = std::make_unique<tfel::utilities::Data>();
   convert_python_object_to_data(*d, o);
   return d;
 }  // end of convert_python_object_to_data_ptr
 
-template <typename T>
-static void data_add_def(boost::python::class_<tfel::utilities::Data>& w,
-                         const std::string& n) {
-  using namespace boost::python;
-  using namespace tfel::utilities;
-  bool (Data::*is_ptr)() const = &Data::is<T>;
-  const T& (Data::*get_ptr)() const = &Data::get<T>;
-  w.def(("is" + n).c_str(), is_ptr)
-      .def(("get" + n).c_str(), get_ptr,
-           return_value_policy<copy_const_reference>());
-}
+  template <typename T>
+  static void data_add_def(pybind11::class_<tfel::utilities::Data> & w,
+                           const std::string& n) {
+    using namespace tfel::utilities;
+    bool (Data::*is_ptr)() const = &Data::is<T>;
+    const T& (Data::*get_ptr)() const = &Data::get<T>;
+    w.def(("is" + n).c_str(), is_ptr).def(("get" + n).c_str(), get_ptr);
+  }
 
-void declareData();
+  void declareData(pybind11::module_&);
 
-void declareData() {
-  using namespace boost::python;
-  using namespace tfel::utilities;
-  class_<Data> w("Data");
-  w.def("get", convert_data_to_python_object)
-      .def("__init__", make_constructor(convert_python_object_to_data_ptr));
-  data_add_def<int>(w, "Int");
-  data_add_def<double>(w, "Double");
-  data_add_def<std::string>(w, "String");
-  data_add_def<std::vector<Data>>(w, "DataVector");
-  data_add_def<DataMap>(w, "DataMap");
-
-  class_<DataMap>("DataMap").def(map_indexing_suite<DataMap>());
-  class_<std::vector<Data>>("DataVector")
-      .def(vector_indexing_suite<std::vector<Data>>());
-}
+  void declareData(pybind11::module_ & m) {
+    using namespace tfel::utilities;
+    pybind11::class_<Data> w(m, "Data");
+    w.def("get", convert_data_to_python_object);
+    w.def(pybind11::init(&convert_python_object_to_data_ptr));
+    data_add_def<int>(w, "Int");
+    data_add_def<double>(w, "Double");
+    data_add_def<std::string>(w, "String");
+    data_add_def<std::vector<Data>>(w, "DataVector");
+    data_add_def<DataMap>(w, "DataMap");
+    //
+    //    class_<DataMap>("DataMap").def(map_indexing_suite<DataMap>());
+    //    class_<std::vector<Data>>("DataVector")
+    //        .def(vector_indexing_suite<std::vector<Data>>());
+  }

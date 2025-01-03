@@ -11,7 +11,7 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 #include "MFMTestGenerator/MFMTestGeneratorFileExport.hxx"
 
 static void mfmtg_write(const mfmtg::TestDescription& m, const std::string& f) {
@@ -23,9 +23,9 @@ static void mfmtg_loadMFMTestGeneratorFileContent(mfmtg::TestDescription& d,
   mfmtg::loadMFMTestGeneratorFileContent(d, f);
 }  // end of mfmtg_loadMFMTestGeneratorFileContent
 
-void declareMFMTestGeneratorFileExport() {
+void declareMFMTestGeneratorFileExport(pybind11::module_& m) {
   //
-  boost::python::class_<mfmtg::TestDescription>("TestDescription")
+  pybind11::class_<mfmtg::TestDescription>(m, "TestDescription")
       .def_readwrite("name", &mfmtg::TestDescription::name)
       .def_readwrite("author", &mfmtg::TestDescription::author)
       .def_readwrite("date", &mfmtg::TestDescription::date)
@@ -33,8 +33,8 @@ void declareMFMTestGeneratorFileExport() {
       .def_readwrite("behaviour", &mfmtg::TestDescription::behaviour)
       .def_readwrite("material", &mfmtg::TestDescription::material);
   //
-  boost::python::def("loadMFMTestGeneratorFileContent",
-                     mfmtg_loadMFMTestGeneratorFileContent);
-  boost::python::def("write", mfmtg_write);
+  m.def("loadMFMTestGeneratorFileContent",
+        mfmtg_loadMFMTestGeneratorFileContent);
+  m.def("write", mfmtg_write);
 
 }  // end of declareMFMTestGeneratorFileExport

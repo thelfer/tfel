@@ -21,7 +21,7 @@ The latest version of this document is always available at
 
 > **Note** `TFEL` is a part of the
 > [`code-aster`](http://www.code-aster.org/) (>12.03) and
-> [`Salome-Meca`](www.code-aster.org/) (> 2015.1) packages: no extra
+> [`Salome-Meca`](http://www.code-aster.org/) (> 2015.1) packages: no extra
 > installation is required if you use one of these products*
 
 > **Note** `TFEL` is available as a `spack` package.
@@ -42,9 +42,9 @@ The latest version of this document is always available at
 > ~~~~
 
 It refers to the **current development sources**, instructions for
-specific released versions are included with the sources and detailled
+specific released versions are included with the sources and detailed
 in the `INSTALL` and the `INSTALL-cmake` files located at the root
-directory of the sources).
+directory of the sources.
 
 This document describes the generic installation procedure for `TFEL`
 from the sources on posix-compliant systems. Please note that the main
@@ -53,7 +53,7 @@ other posix-compliant operating systems, notably `FreeBSD`, is
 lacking, although compilation and unit testing is known to work. A
 page dedicated to `FreeBSD` is available [here](install-freebsd.html).
 
-The installation on [Windows plateform](http://windows.microsoft.com)
+The installation on [Windows platform](http://windows.microsoft.com)
 is described in the following pages:
 
 - [Installation based on `cmake` and `Visual Studio`](install-windows-VisualStudio.html).
@@ -62,7 +62,7 @@ is described in the following pages:
   requiring `Cast3M` to be installed.
 - [Installation on [Windows](http://windows.microsoft.com) in the [`MSYS2`](https://www.msys2.org/) environment](install-windows-msys.html).
 
-The creation of binary packages are detailled [here](packages.html). 
+The creation of binary packages are detailed [here](packages.html). 
 
 A quick way of installing `TFEL` on `Ubuntu` systems is given in Section
 @sec:QuickUbuntu.
@@ -89,8 +89,8 @@ The optional parameters of `cmake` allows you to:
 - *specify the interfaces to be build*
 
 The rest of this document is dedicated to giving all the details
-related to the installation process. For completeness, we will broke
-the installation procedure into five steps:
+related to the installation process. For completeness, we will break
+the installation procedure down into five steps:
 
 - Checking for available prerequisites
 - Downloading the source
@@ -117,18 +117,16 @@ suite are officially supported:
 ## Third party libraries
 
 `TFEL` has been designed to have no dependencies to third parties
-libraries to the very exception of the
-[Boost.Python](http://www.boost.org) library used to create the
-optional bindings for the [`Python`](https://www.python.org/)
-language.
+libraries with the very exception of the
+[pybind11](https://github.com/pybind/pybind11) library used to create
+optional bindings for the [`Python`](https://www.python.org/) language.
 
 ## Third party tools
 
-
-The better way to build the `TFEL` is to use the
+The best way to build the `TFEL` is to use the
 [`cmake`](http://www.cmake.org/) build system (see this
 [section](#using-the-cmake-build-system)). *We only support `cmake`
-version greater than \(2.8\)*.
+versions greater than \(2.8\)*.
 
 To build `TFEL` documentation, one may need:
 
@@ -136,12 +134,12 @@ To build `TFEL` documentation, one may need:
   (reference manual in pdf format). The author uses the
   [texlive](https://www.tug.org/texlive/) distribution available with
   major Linux distributions.
-- the [doxygen](http://www.stack.nl/~dimitri/doxygen/) tool (code
-  source documentation)
+- the [doxygen](http://www.stack.nl/~dimitri/doxygen/) tool (source 
+  code documentation)
 
 # Downloading the source
 
-Official releases sources can be downloaded on [`TFEL` github
+Official releases sources can be downloaded on [`TFEL` GitHub
 page](https://github.com/thelfer/tfel/releases) (see the Download entry
 of the navigation bar).
 
@@ -166,7 +164,7 @@ Both `$srcdir` and `$prefix` must contain an *absolute* path.
 
 The use of the `cmake` build system is described in depth in the
 `INSTALL-cmake` file that is located in the top directory of `TFEL`
-sources. *We only support `cmake` version greater than \(2.8\)*, so
+sources. *We only support `cmake` versions greater than \(2.8\)*, so
 please check the version available on your system:
 
 ~~~~ {#cmake-version .bash}
@@ -196,8 +194,8 @@ Various other options can be passed to `cmake`:
   `-Denable-python=ON` option.
 - To enable bindings for the [`Python`](https://www.python.org/)
   language, notably for the `MTest` tool, one may use the
-  `-Denable-python-bindings=ON` option. This requires the
-  [Boost.Python](http://www.boost.org) to be available.
+  `-Denable-python-bindings=ON` option. This requires
+  [pybind11](https://github.com/pybind/pybind11) to be available.
 
 Some default compiler settings are detected by `cmake`, depending on
 your system. To explicitly specify the compilers to be used, one may
@@ -223,7 +221,7 @@ boolean options:
 - `enable-doxygen-doc`, which enables or disables the generation of the
   doxygen documentation (disabled by default)
 - `enable-reference-doc`, which enables or disables the reference
-  documentation generation (enabled by default if `latex` of `pandoc` is
+  documentation generation (enabled by default if `latex` or `pandoc` is
   found)
 - `enable-website`, which enables or disables the generation of the
   `TFEL` website (enabled by default if `pandoc` is found)
@@ -246,14 +244,14 @@ names of:
 - The executables.
 - The libraries.
 - The python modules. Note that, to comply with `python` restriction
-  on module' names, the characters `.` and `-` are replace by `_` and
+  on modules' names, the characters `.` and `-` are replace by `_` and
   that only the first level modules are affected.
 - The directories in the `share` folder.
 
-The headers are installed in a subforder named `TFEL-${TVEL_VERSION}`.
+The headers are installed in a subfolder named `TFEL-${TVEL_VERSION}`.
 
 For example, if the `TFEL` version is `3.0.2-dev`, using
-`TFEL_APPEND_VERSION` opion will generate:
+`TFEL_APPEND_VERSION` option will generate:
 
 - The `mfront-3.0.2-dev` executable.
 - The `libTFELMaterial-3.0.2-dev.so` library.
@@ -266,7 +264,7 @@ directory.
 
 ### Specifying a version flavour
 
-The `TFEL_VERSION_FLAVOUR` let the user define a string that will be
+The `TFEL_VERSION_FLAVOUR` lets the user define a string that will be
 used to modify the names of executables, libraries and so on (see the
 previous paragraph for details).
 
@@ -320,14 +318,14 @@ Again, compilation time can be reduced using the `-j` option of the
 ## Building the documentation
 
 If a valid [LaTeX](http://www.latex-project.org) distribution is
-available, reference manuals can be build through:
+available, reference manuals can be built through:
 
 ~~~~ {#building-pdf .bash}
 $ make doc-pdf
 ~~~~
 
 If the [doxygen](http://www.stack.nl/~dimitri/doxygen/) tool is
-available, code source documentation can be build through:
+available, code source documentation can be built through:
 
 ~~~~ {#building-html .bash}
 $ make doc-html
@@ -335,13 +333,13 @@ $ make doc-html
 
 If [`pandoc`](http://johnmacfarlane.net/pandoc/index.html) is build
 and if you are using the `cmake` build system, the previous command
-will also install a local version of the `TFEL` web site.
+will also install a local version of the `TFEL` website.
 
 ~~~~ {#building-website .bash}
 $ make website
 ~~~~
 
-All the documentation will be build with the following command:
+All the documentation will be built with the following command:
 
 ~~~~ {#building-html .bash}
 $ make doc
@@ -356,23 +354,23 @@ To install `TFEL` binaries and libraries in the directory pointed by
 $ make install
 ~~~~
 
-The previous command also installs the documentation if build.
+The previous command also installs the documentation if built.
 
 # A Quick installation procedure on `Ubuntu` {#sec:QuickUbuntu}
 
 The following steps show a quick way of installing `TFEL` on `Ubuntu`
 systems. The configuration described in this section only compiles the
-`generic` interface, which makes suitable for use with solvers using the
+`generic` interface, which makes it suitable for use with solvers using the
 [`MFrontGenericInterfaceSupport`
 project](https://github.com/thelfer/MFrontGenericInterfaceSupport/issues),
 e.g. with `OpenGeoSys`, `FEniCS`, `MoFEM`, etc...
 
 The compilation requires that `gcc`, `git` and `python3` are installed,
-as well as the python module `numpy` and the `libboost` library to build
+as well as the python module `numpy` and the `pybind11` library to build
 the `python` bindings. Those packages can be installed using:
 
 ~~~~{.sh}
-$ sudo apt install python3 python3-numpy libboost-all-dev cmake g++ gfortran
+$ sudo apt install python3 python3-numpy pybind11-dev cmake g++ gfortran
 ~~~~
 
 The next step is to get the `TFEL` source code:
@@ -428,7 +426,7 @@ global alias names for them.
 
 <!-- 
 # Windows MINGW
--- >
+-->
 
 <!-- Local IspellDict: english -->
 

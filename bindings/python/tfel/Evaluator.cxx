@@ -11,13 +11,14 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/operators.h>
 #include "TFEL/Math/Evaluator.hxx"
 
-void declareEvaluator();
+void declareEvaluator(pybind11::module_& m);
 
-void declareEvaluator() {
-  using namespace boost::python;
+void declareEvaluator(pybind11::module_& m) {
   using tfel::math::Evaluator;
   double (Evaluator::*ptr1)() const = &Evaluator::operator();
   double (Evaluator::*ptr2)(const std::map<std::string, double>&) =
@@ -27,7 +28,8 @@ void declareEvaluator() {
       &Evaluator::getValue;
   void (Evaluator::*ptr5)(const std::string&, const double) =
       &Evaluator::setVariableValue;
-  class_<Evaluator>("Evaluator", init<std::string>())
+  pybind11::class_<Evaluator>(m, "Evaluator")
+      .def(pybind11::init<std::string>())
       .def("__call__", ptr1, "evaluates the formula")
       .def("__call__", ptr2, "evaluates the formula")
       .def("getValue", ptr3, "evaluates the formula")

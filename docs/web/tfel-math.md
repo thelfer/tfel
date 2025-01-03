@@ -45,7 +45,7 @@ features:
   i.e. as close as possible to the mathematical expressions. Section
   @sec:tfel_math:math_objects is devoted to describe this linear
   algebra engine.
-- The `TFEL/Math` library provides efficient and robust non linear
+- The `TFEL/Math` library provides efficient and robust non-linear
   solvers for small sized problems described in Section
   @sec:tfel_math:non_linear_solvers.
 
@@ -54,7 +54,7 @@ features:
 The mathematical objects provided by the `TFEL/Math` library are based
 on scalar values which can be standard `C++` numeric types (`float`,
 `double` or `long double`), or so-called quantities, i.e. an object
-describing a value with an unit. The later allows to distinguish
+describing a value with a unit. The latter allows to distinguish
 physical quantities such as a strain from a stress and prevent illegal
 operations between them. Quantities are described in depth in Section
 @sec:tfel_math:quantities.
@@ -84,21 +84,21 @@ represent derivatives of two mathematical objects. Currently, the number
 of operations allowed by this generic class is rather limited and will
 be extended as needed in future versions.
 
-The main concepts behing the implementation of the mathematical objects
+The main concepts behind the implementation of the mathematical objects
 are described in Section @sec:tfel_math:tensorial_objects.
 
 ## Quantities {#sec:tfel_math:quantities}
 
 Quantities were introduced in `TFEL/Math` following ideas of the book D.
 Abrahams and A. Gurstovoy [@abrahams_cxx_2004] to allow dimensional
-analysis at compile time. Basically, a quantity is the combinaison of a
-value and an unit. The type of the value is called the base type of the
+analysis at compile time. Basically, a quantity is the combination of a
+value and a unit. The type of the value is called the base type of the
 quantity.
 
 The unit is encrypted in a type called `Unit` so that the `C++`
 type-system can be used to detect at compile-time (without
 runtime-checks) if operations are legal. According to the International
-System of Units (SI), an unit is decomposed along \(7\) basic units
+System of Units (SI), a unit is decomposed along \(7\) basic units
 which are the mass (kg), the length (l), the time (s), the electric
 current (A), the temperature (K), the luminous intensity (cd) and the
 amount of substance (mole). To be able to describe fractional unit, such
@@ -108,7 +108,7 @@ integers. The `TFEL/Math` library provides some convenient aliases for
 the most common units.
 
 The `NoUnit` unit is a special case where all those integers are set to
-0 for the numerator parts and 1 (by convention) for the denomiator
+0 for the numerator parts and 1 (by convention) for the denominator
 parts.
 
 ### The `qt` class
@@ -135,7 +135,7 @@ compile-time.
 
 The library also provides two wrapper classes called `qt_ref` and
 `const_qt_ref` which allows to wrap a value into an object which acts
-respectively as an mutable an immutable quantity, as illustrated in the
+respectively as a mutable or an immutable quantity, as illustrated in the
 following code sample:
 
 ~~~~{.cxx}
@@ -151,7 +151,7 @@ constexpr auto value = [] ()constexpr {
 TFEL_TESTS_STATIC_ASSERT(std::abs(value - 200.) < eps);
 ~~~~
 
-While a bit contrieved, this example shows that the `qt_ref` class can
+While a bit contrived, this example shows that the `qt_ref` class can
 also be used in a `constexpr` context.
 
 The `qt_ref` and `const_qt_ref` classes are parametrized by two template
@@ -172,7 +172,7 @@ value associated with the quantity is handled.
 
 ### Operations on quantities
 
-Common operations on quantities, such as additions, substraction,
+Common operations on quantities, such as additions, subtraction,
 multiplications, division and negations are supported.
 
 Scaling and multiplication by a standard numeric value works as
@@ -237,7 +237,7 @@ const auto norm = power<1,2>(s2);
 
 This section first introduces the notion of array policy and indexing
 policy which describes respectively how data are handled (stored) and
-how those data are accesssed.
+how those data are accessed.
 
 Common objects of rank \(1\) are then defined, including tiny vectors,
 symmetric tensors and unsymmetric tensors. Higher order objects are
@@ -246,7 +246,7 @@ defined recursively as derivative of objects of lower ranks.
 ### Description of the `ArrayPolicy` concept
 
 Array policies describes how data are handled and accessed. For the
-latter, the description of the access partern is delegated to an
+latter, the description of the access pattern is delegated to an
 indexing policy which will be described later in Section
 @sec:tfel_math:indexing_policies. Thus, this section mostly focuses
 on how array policies describe how the data are handled.
@@ -256,11 +256,11 @@ A class matching the `ArrayPolicy` concept must provide:
 - An alias to a type called `value_type` which corresponds to the
   logical type hold by the array (see below).
 - An alias to a type called `const_value_type` which corresponds to a
-  constant value to a an object of the logical type hold by the array.
+  constant value to an object of the logical type hold by the array.
 - An alias to a type called `storage_type` which is the type actually
   stored in memory.
 - An alias to a type called `reference` which is the type returned by
-  the non-constant access operators of the array. A object of the
+  the non-constant access operators of the array. An object of the
   `reference` type must be convertible and assignable to a `value_type`
   object and provide the following operators:
   - `operator=(const other_type&)`
@@ -271,11 +271,11 @@ A class matching the `ArrayPolicy` concept must provide:
 
   where `other_type` denotes for each operator a type for which the
   considered operator in the `value_type` class is valid.
-- An alias to a type calle `const_reference` which is the type returned
-  by the constant access operators of the array. A object of the
+- An alias to a type called `const_reference` which is the type returned
+  by the constant access operators of the array. An object of the
   `const_reference` type must be convertible and assignable to a
   `value_type` object.
-- A static function called `make_const_reference` which turns a a
+- A static function called `make_const_reference` which turns a
   constant reference to a `storage_type` object into a `const_reference`
   object.
 - A static function called `make_reference` which turns a reference to a
@@ -294,8 +294,8 @@ It is worth illustrating those concepts in two commonly used cases:
 The `StandardArrayPolicy` class is based in the following statements:
 
 - `storage_type` is the same as `value_type`.
-- `reference` is the same as as `value_type&`.
-- `const_reference` is the same as as `const value_type&`.
+- `reference` is the same as `value_type&`.
+- `const_reference` is the same as `const value_type&`.
 - `make_reference` is trivial an only returns a const reference to the
   stored value.
 - `make_const_reference` is trivial an only returns an immutable
@@ -351,7 +351,7 @@ A class matching the `IndexingPolicy` concept must provide:
 - A static boolean data member called `hasFixedSizes`. If this data
   member is `true`, the class must be stateless, i.e. empty.
 - A static boolean data member called `areDataContiguous` which states
-  if the data are continous
+  if the data is continuous
 - A member function called `size` which takes no argument returning the
   number of data values accessible by the indexing policy. This member
   function must be `constexpr` if `hasFixedSizes` is true.
@@ -385,14 +385,14 @@ if we start from the first element of the submatrix.
 This formula is implemented by the `getIndex` method of the
 `FixedSizeRowMajorMatrixIndexingPolicy` which is used by many classes
 provide by the library, such as `tmatrix` (matrices whose size is known
-at compile time), `st2tost2`, `t2tot2`, etc.. and views to those objects
+at compile time), `st2tost2`, `t2tot2`, etc. and views to those objects
 in a matrix.
 
 ### Higher order indexing policies for fixed-size mathematical objects
 
-Let us consider an mathematical object \(o_{3}\) resulting from the
-derivation of an mathematical object \(o_{1}\) of arity \(a_{1}\) with
-respect to an mathematical object \(o_{2}\) of arity \(a_{2}\).
+Let us consider a mathematical object \(o_{3}\) resulting from the
+derivation of a mathematical object \(o_{1}\) of arity \(a_{1}\) with
+respect to a mathematical object \(o_{2}\) of arity \(a_{2}\).
 \(o_{3}\) has an arity of \(a_{1}+a_{2}\).
 
 The storage of those objects are described respectively by the indexing
@@ -424,7 +424,7 @@ The library is based on a few low rank mathematical objects:
   parametrized by the size of the vector and the value hold.
 - `stensor`: a symmetric tensor. This template class is parametrized by
   the space dimension and the scalar type.
-- `tensor`: a unsymmetric tensor. This template class is parametrized by
+- `tensor`: an unsymmetric tensor. This template class is parametrized by
   the space dimension and the scalar type.
 
 All those objects are represented by objects of rank one using a
@@ -443,7 +443,7 @@ represented as follows:
   \end{pmatrix}^{T}
 \]
 
-This notations has the property that the contracted product of two
+This notation has the property that the contracted product of two
 symmetric tensors is the scalar product of this vector form (hence the
 \(\sqrt{2}\)).
 
@@ -477,18 +477,18 @@ versions of the library.
 Fourth order tensors can be defined as derivatives of two tensors or as
 linear mappings from the second order tensors to second order tensors.
 
-As there are two kinds of second order tensors (i.e. symmetric and non
-symmetric tensors), there are four kinds of fourth order tensors defined
+As there are two kinds of second order tensors (i.e. symmetric and
+non-symmetric tensors), there are four kinds of fourth order tensors defined
 in the `TFEL/Math` library, which satisfy the following concepts:
 
 - `ST2toST2Concept`: linear mapping from symmetric tensors to
   symmetric tensors.
-- `ST2toT2Concept`: linear mapping from symmetric tensors to non
+- `ST2toT2Concept`: linear mapping from symmetric tensors to
+  non-symmetric tensors.
+- `T2toST2Concept`: linear mapping from non-symmetric tensors to
   symmetric tensors.
-- `T2toST2Concept`: linear mapping from non symmetric tensors to
-  symmetric tensors.
-- `T2toT2Concept`: linear mapping from non symmetric tensors to
-  non symmetric tensors.
+- `T2toT2Concept`: linear mapping from non-symmetric tensors to
+  non-symmetric tensors.
 
 An end user will mostly use the following implementations of those
 concepts: `st2tost2`, `st2tot2`, `t2tost2` and `t2tot2`
@@ -631,7 +631,7 @@ Views allows to map memory area to mathematical objets.
 > **Typical usage of views in `MFront`**
 >
 > A typical usage of views is given by the example of the integration of
-> a behaviour using an implicit scheme. In such a scheme, a non linear
+> a behaviour using an implicit scheme. In such a scheme, a non-linear
 > solver tries to determine the increments \(\Delta\,Y\) of a set of
 > internal state variables packed in a vector \(Y\) which are the zero of
 > residual denoted \(F\). The derivative of the residual \(F\) with respect
@@ -744,11 +744,11 @@ The result of this operation is the matrix:
 \end{pmatrix}
 \]
 
-# Solvers for fixed size non linear systems {#sec:tfel_math:non_linear_solvers}
+# Solvers for fixed size non-linear systems {#sec:tfel_math:non_linear_solvers}
 
-The `TFEL/Math` library provides several non linear solvers which are
+The `TFEL/Math` library provides several non-linear solvers which are
 mainly used by `MFront` implicit schemes. Those solvers mostly targets
-systems of small size and focuse on robustness and flexibility. Each
+systems of small size and focus on robustness and flexibility. Each
 solver implements a classical algorithm by also provides several
 customisation points which allows to create many variants of this basic
 algorithms.
@@ -804,7 +804,7 @@ struct NewtonRaphsonSolver
 };  // end of struct NewtonRaphsonSolver
 ~~~~
 
-which solves the non linear system:
+which solves the non-linear system:
 
 \[
 \vec{f}\paren{x,y} = 
@@ -842,7 +842,7 @@ which provides two main methods `solveNonLinearSystem` and
 `solveNonLinearSystem2` for the end users and many methods that can be
 overloaded to customize the behaviour of the algorithm.
 
-In pratice, the `NewtonRaphsonSolver` class presented in the previous
+In practice, the `NewtonRaphsonSolver` class presented in the previous
 example inherits from `TinyNewtonRaphson` `Solver<2u, double,
 NewtonRaphsonSolver>` which itself inherits from
 `TinyNonLinearSolverBase<2u, double, NewtonRaphsonSolver>`.
@@ -857,7 +857,7 @@ NewtonRaphsonSolver>` which itself inherits from
 > required by the solver. The default value of this template parameter
 > allocates those data members on the stack.
 
-While a bit contrieved, this design ensures that all algorithms share
+While a bit contrived, this design ensures that all algorithms share
 the same customization points, a constraint which is not easy to enforce
 when relying on CRTP (compared to standard approach based on virtual
 calls).
@@ -891,7 +891,7 @@ The `TinyNonLinearSolverBase` class provides the following data members:
 - `epsilon`: criterion value
 - `iterMax`: maximum number of iterations.
 
-It is worth metionning that a few variables must be initalized, by the
+It is worth mentioning that a few variables must be initialized, by the
 base class before calling this method, such as:
 
 - The initial estimate of the unknowns. The method `processNewEstimate`
@@ -921,7 +921,7 @@ method thus has no default implementation.
 
 This flowchart also shows that the `solveNonLinearSystem` method has
 many customization points which either defines the underlying algorithm
-and or that can be use to enhance directly affects the performance and
+and or that can be used to enhance directly affects the performance and
 the robustness of the algorithm:
 
 - `executeInitialisationTaskBeforeBeginningOfCoreAlgorithm` which is
@@ -943,7 +943,7 @@ the robustness of the algorithm:
   along the search direction returned by the `computeNewCorrection`
   method.
 - `processNewEstimate`: this method is meant to update variables
-  dependant on the current estimate of the unknowns.
+  depending on the current estimate of the unknowns.
 - By convention, the `computeNewCorrection` method may use the following
   helper methods:
   - `updateOrCheckJacobian`: This method can be used to compute the
@@ -955,7 +955,7 @@ the robustness of the algorithm:
     decomposition is used (implemented by the `TinyMatrixSolve` class).
 
 The algorithm also provides methods which are meant to display
-informations about the state of the resolution:
+information about the state of the resolution:
 
 - `reportInvalidResidualEvaluation` which is called method when the
   evaluation of the residual failed or when the norm of the residual is
@@ -968,7 +968,7 @@ available but are called in the `solveNonLinearMethod`.
 
 > **Usage in `MFront`**
 > 
-> It is worth hilighting how the implicit DSL's provided by `MFront`
+> It is worth highlighting how the implicit DSL's provided by `MFront`
 > may override those methods:
 > 
 > - The `computeResidual` method first computes the thermodynamic forces
@@ -1007,9 +1007,9 @@ one is that the current estimate of the unknowns are unphysical, leading
 to a failure in the evaluation of the residual.
 
 The `solveNonLinearSystem` method implements a simple algorithm which
-can be seen as a hand crafted line search method which greatly improve
-the robustness of the non linear solvers. When used correctly, this
-method may also be used to increase the performances of the non linear
+can be seen as a handcrafted line search method which greatly improve
+the robustness of the non-linear solvers. When used correctly, this
+method may also be used to increase the performances of the non-linear
 solvers (i.e. reduce the total number of iterations).
 
 !["Flowchart for the resolution of non linear systems proposed by the `solveNonLinearSystem` of the `TinyNonLinearSolverBase` class"](img/tfel-math/solveNonLinearSystem.svg){width=100%}
@@ -1023,7 +1023,7 @@ several times to find a suitable estimate of the unknowns.
 Of course, this only works a correction is known, i.e. if the
 `has_delta_zeros` flag is `true`. Otherwise, this means that the initial
 guess of the unknowns is incorrect. In this case, we just divide this
-initial guess by zero. This choice may seem arbitrary but does makes
+initial guess by zero. This choice may seem arbitrary but does make
 sense in most cases of `MFront` implicit schemes where the unknowns are
 almost always the increment of the state variables: if we divide the
 increments of the state variables, their estimates at the middle of the
@@ -1036,10 +1036,10 @@ the initial guess of the unknowns in `MFront` is simply a null vector.
 The user may specify an initial guess for the unknowns using the
 `@Predictor` code block, although this is seldom used.
 
-> **Pratical importance**
+> **Practical importance**
 >
 > While very simple, the strategy described in this section is in
-> practice extremly powerful and can be used to easily build very
+> practice extremely powerful and can be used to easily build very
 > robust and efficient algorithms based on physical considerations.
 > Let us consider a few example:
 > 
@@ -1051,11 +1051,11 @@ The user may specify an initial guess for the unknowns using the
 >   an unphysical viscoplastic strain rate. This is particularly
 >   useful with viscoplastic behaviour having an exponential
 >   sensitivity to the stress.
-> - If one considers a plasic behaviour yield surface with sharp
+> - If one considers a plastic behaviour yield surface with sharp
 >   corners, such as the approximations of the Mohr-Coulomb
 >   criterion given by Abbo and Sloan [@Abbo1995;@Nagel2016], the
 >   solver may fail because the flow direction may oscillate
->   between too iterations. Too solve this issue, we can simply
+>   between too iterations. To solve this issue, we can simply
 >   reject iterations that lead to a large change in the flow
 >   direction.
 >
@@ -1069,7 +1069,7 @@ method to describe multi-surface plasticity. The active-set method makes
 *a priori* assumptions on which plastic mechanisms are active and solve
   the non-linear equations with those assumptions. After convergence,
   those assumptions are checked and some mechanisms may be activated or
-  desactivated and the non linear solver is restarted. The activation of
+  deactivated and the non-linear solver is restarted. The activation of
   a plastic mechanism can lead the `computeResidual` method to fail (as
   described earlier, rejecting steps leading to a prediction well beyond
   the current plastic limit is generally a good strategy). The trouble

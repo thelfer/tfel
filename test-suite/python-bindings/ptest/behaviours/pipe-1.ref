@@ -1,0 +1,8 @@
+# first  column : time
+# second column : inner radius
+# third  column : outer radius
+# fourth column : inner radius displacement
+# fifth  column : outer radius displacement
+# sixth  column : axial displacement
+0 0.0042 0.0047 0 0 0
+1 0.004197607771692 0.0046976692030723 -2.3922283080116e-06 -2.3307969277267e-06 0.00017477752808989

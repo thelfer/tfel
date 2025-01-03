@@ -11,29 +11,36 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include "TFEL/Macros.hxx"
 #include "MTest/RoundingMode.hxx"
 #include "MTest/SolverOptions.hxx"
 
-void declareMaterialProperty();
-void declareBehaviour();
-void declareSchemeBase();
-void declareSingleStructureScheme();
-void declareConstraint();
-void declareMTest();
-void declareMTestParser();
-void declarePipeMesh();
-void declarePipeTest();
-void declareCurrentState();
-void declareStructureCurrentState();
-void declareStudyCurrentState();
-void declareSolverWorkSpace();
-void declareMFrontLogStream();
-void declareMTestFileExport();
+#define MTEST_MODULE_NAME TFEL_PP_JOIN(_mtest_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
-BOOST_PYTHON_MODULE(_mtest) {
-  boost::python::enum_<mtest::StiffnessUpdatingPolicy>(
-      "StiffnessUpdatingPolicy")
+void declareMaterialProperty(pybind11::module_&);
+void declareBehaviour(pybind11::module_&);
+void declareSchemeBase(pybind11::module_&);
+void declareSingleStructureScheme(pybind11::module_&);
+void declareConstraint(pybind11::module_&);
+void declareMTest(pybind11::module_&);
+void declareMTestParser(pybind11::module_&);
+void declarePipeMesh(pybind11::module_&);
+void declarePipeTest(pybind11::module_&);
+void declareCurrentState(pybind11::module_&);
+void declareStructureCurrentState(pybind11::module_&);
+void declareStudyCurrentState(pybind11::module_&);
+void declareSolverWorkSpace(pybind11::module_&);
+void declareMFrontLogStream(pybind11::module_&);
+void declareMTestFileExport(pybind11::module_&);
+
+#ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
+PYBIND11_MODULE(MTEST_MODULE_NAME, m) {
+#else
+PYBIND11_MODULE(_mtest, m) {
+#endif
+  pybind11::enum_<mtest::StiffnessUpdatingPolicy>(m, "StiffnessUpdatingPolicy")
       .value("CONSTANTSTIFFNESS",
              mtest::StiffnessUpdatingPolicy::CONSTANTSTIFFNESS)
       .value("CONSTANTSTIFFNESSBYPERIOD",
@@ -41,7 +48,7 @@ BOOST_PYTHON_MODULE(_mtest) {
       .value("UPDATEDSTIFFNESSMATRIX",
              mtest::StiffnessUpdatingPolicy::UPDATEDSTIFFNESSMATRIX);
 
-  boost::python::enum_<mtest::PredictionPolicy>("PredictionPolicy")
+  pybind11::enum_<mtest::PredictionPolicy>(m, "PredictionPolicy")
       .value("NOPREDICTION", mtest::PredictionPolicy::NOPREDICTION)
       .value("LINEARPREDICTION", mtest::PredictionPolicy::LINEARPREDICTION)
       .value("ELASTICPREDICTION", mtest::PredictionPolicy::ELASTICPREDICTION)
@@ -50,7 +57,7 @@ BOOST_PYTHON_MODULE(_mtest) {
       .value("TANGENTOPERATORPREDICTION",
              mtest::PredictionPolicy::TANGENTOPERATORPREDICTION);
 
-  boost::python::enum_<mtest::StiffnessMatrixType>("StiffnessMatrixType")
+  pybind11::enum_<mtest::StiffnessMatrixType>(m, "StiffnessMatrixType")
       .value("NOSTIFFNESS", mtest::StiffnessMatrixType::NOSTIFFNESS)
       .value("ELASTIC", mtest::StiffnessMatrixType::ELASTIC)
       .value("SECANTOPERATOR", mtest::StiffnessMatrixType::SECANTOPERATOR)
@@ -58,24 +65,24 @@ BOOST_PYTHON_MODULE(_mtest) {
       .value("CONSISTENTTANGENTOPERATOR",
              mtest::StiffnessMatrixType::CONSISTENTTANGENTOPERATOR);
 
-  declareMaterialProperty();
-  declareBehaviour();
-  declareCurrentState();
-  declareStructureCurrentState();
-  declareStudyCurrentState();
-  declareSolverWorkSpace();
-  declareMTestParser();
-  declareSchemeBase();
-  declareSingleStructureScheme();
-  declareConstraint();
-  declareMTest();
-  declarePipeMesh();
-  declarePipeTest();
-  declareMFrontLogStream();
-  declareMTestFileExport();
+  declareMaterialProperty(m);
+  declareBehaviour(m);
+  declareCurrentState(m);
+  declareStructureCurrentState(m);
+  declareStudyCurrentState(m);
+  declareSolverWorkSpace(m);
+  declareMTestParser(m);
+  declareSchemeBase(m);
+  declareSingleStructureScheme(m);
+  declareConstraint(m);
+  declareMTest(m);
+  declarePipeMesh(m);
+  declarePipeTest(m);
+  declareMFrontLogStream(m);
+  declareMTestFileExport(m);
 
   void (*ptr)(const std::string&) = mtest::setRoundingMode;
   void (*ptr2)() = mtest::setRoundingMode;
-  boost::python::def("setRoundingMode", ptr);
-  boost::python::def("setRoundingMode", ptr2);
+  m.def("setRoundingMode", ptr);
+  m.def("setRoundingMode", ptr2);
 }

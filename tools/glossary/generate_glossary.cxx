@@ -1,3 +1,4 @@
+
 /*!
  * \file  tools/glossary/generate_glossary.cxx
  * \brief
@@ -783,9 +784,9 @@ void generateBoostPythonBindings(const GlossaryTokenizer& tokenizer) {
   // python bindings
   psrc
       << "/*!\n"
-      << " * \\file   PythonGlossary.cxx\n"
+      << " * \\file   bindings/python/tfel/Glossary.cxx\n"
       << " * \\author Thomas Helfer\n"
-      << " * \\date   09/06/14\n"
+      << " * \\date   18/12/2024\n"
       << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights\n"
       << " * reserved.\n"
       << " * This project is publicly released under either the GNU GPL "
@@ -794,29 +795,24 @@ void generateBoostPythonBindings(const GlossaryTokenizer& tokenizer) {
       << " * with the sources of TFEL. CEA or EDF may also distribute this\n"
       << " * project under specific licensing conditions.\n"
       << " */\n"
+
       << '\n'
-      << "#include<boost/python.hpp>\n"
-      << '\n'
+      << "#include <pybind11/pybind11.h>\n"
       << "#include\"TFEL/Glossary/Glossary.hxx\"\n"
       << "#include\"TFEL/Glossary/GlossaryEntry.hxx\"\n"
       << '\n'
-      << "void\ndeclareGlossary()\n"
+      << "void\ndeclareGlossary(pybind11::module_&);\n"
+      << "\n"
+      << "void\ndeclareGlossary(pybind11::module_& m)\n"
       << "{\n"
-      << "using namespace boost;\n"
-      << "using namespace boost::python;\n"
       << "using namespace tfel::glossary;\n"
-      << "class_<Glossary,noncopyable>(\"Glossary\",no_init)\n"
-      << ".def(\"getGlossary\",Glossary::getGlossary,\n"
-      << "return_value_policy<reference_existing_object>())\n"
-      << ".staticmethod(\"getGlossary\")\n"
+      << "pybind11::class_<Glossary>(m, \"Glossary\")\n"
+      << ".def_static(\"getGlossary\",Glossary::getGlossary,\n"
+      << "pybind11::return_value_policy::reference)\n"
       << ".def(\"contains\",&Glossary::contains)\n";
   for (auto p = tokenizer.begin(); p != tokenizer.end(); ++p) {
-    psrc << ".def_readonly(\"" << p->key << "\",&Glossary::" << p->key;
-    const auto& d = replace_all(p->short_description, "\\", "\\\\");
-    if (!d.empty()) {
-      psrc << ",\n\"" << d << "\"";
-    }
-    psrc << ")\n";
+    psrc << ".def_readonly_static(\"" << p->key << "\",&Glossary::" << p->key
+         << ")\n";
   }
   psrc << ";\n\n"
        << "}\n";

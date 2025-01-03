@@ -180,7 +180,7 @@ const auto l1 = makeBarlatLinearTransformation<3>(c_12,c_21,c_13,c_31,
 > \end{pmatrix}
 > \]
 > 
-> Therefore, if one wants to uses coeficients \(c^{B}\) given
+> Therefore, if one wants to use coefficients \(c^{B}\) given
 > by Barlat, one shall call this function as follows:
 > 
 > ~~~~{.cpp}
@@ -191,8 +191,8 @@ const auto l1 = makeBarlatLinearTransformation<3>(c_12,c_21,c_13,c_31,
 The `TFEL/Material` library also provide an overload of the
 `makeBarlatLinearTransformation` which template parameters are the
 modelling hypothesis and the orthotropic axis conventions. The purpose
-of this overload is to swap appriopriate coefficients to get a
-consistent definition of the linear transforamtions for all the
+of this overload is to swap appropriate coefficients to get a
+consistent definition of the linear transformations for all the
 modelling hypotheses.
 
 # General functionalities
@@ -251,7 +251,7 @@ approximations that have been implemented and that can be evaluated in a
 The `computeApproximateInverseLangevinFunction` computes one
 approximation of the inverse Langevin function and the
 `computeApproximateInverseLangevinFunctionAndDerivative` function
-computes ne approximation of the inverse Langevin function and its
+computes an approximation of the inverse Langevin function and its
 derivative. These functions have two template parameters: the
 approximation selected and the numeric type to be used. By default, the
 `JEDYNAK_2015` approximation is used and the numeric type can be deduced
@@ -321,7 +321,7 @@ vectors:
 \]
 
 This plane is used to characterize the iso-values of equivalent
-stresses which are not sensitive to the hydrostatic pression.
+stresses which are not sensitive to the hydrostatic pressure.
 
 Various functions are available:
 
@@ -333,7 +333,7 @@ Various functions are available:
 # Orthotropic axes convention
 
 Most finite element solver can't have a unique definition of the
-orthotropic axes  valied for all the modelling hypotheses.
+orthotropic axes valid for all the modelling hypotheses.
 
 For example, one can define a pipe using the following axes
 definition:
@@ -366,7 +366,7 @@ This convention is only valid for \(3D\), \(2D\) axysymmetric, \(1D\)
 ![The `Plate` orthotropic axes convention](img/plate.svg "The `Plate`
   orthotropic axes convention"){width=50%}
 
-If we were to model plates, a appropriate convention is the following:
+If we were to model plates, an appropriate convention is the following:
 
 - The first material axis is the rolling direction
 - The second material axis is the in plane direction perpendicular to

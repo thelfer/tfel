@@ -11,9 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include "TFEL/Python/VectorConverter.hxx"
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MFront/CompiledTargetDescriptionBase.hxx"
 
 #define COMPILEDTARGETDESCRIPTIONBASE_ADDPROPERTY_HELPERFUNCTIONS(X)     \
@@ -27,8 +26,8 @@
     t.X = h;                                                             \
   }                                                                      \
   static void CompiledTargetDescriptionBase_addProperty##X(              \
-      boost::python::class_<mfront::CompiledTargetDescriptionBase>& w) { \
-    w.add_property(#X, CompiledTargetDescriptionBase_get##X,             \
+      pybind11::class_<mfront::CompiledTargetDescriptionBase>& w) {      \
+    w.def_property(#X, CompiledTargetDescriptionBase_get##X,             \
                    CompiledTargetDescriptionBase_set##X);                \
   }
 
@@ -43,17 +42,16 @@ COMPILEDTARGETDESCRIPTIONBASE_ADDPROPERTY_HELPERFUNCTIONS(link_libraries)
 COMPILEDTARGETDESCRIPTIONBASE_ADDPROPERTY_HELPERFUNCTIONS(deps)
 COMPILEDTARGETDESCRIPTIONBASE_ADDPROPERTY_HELPERFUNCTIONS(ldflags)
 
-void declareCompiledTargetDescriptionBase() {
-  using namespace boost::python;
-  using namespace mfront;
+void declareCompiledTargetDescriptionBase(pybind11::module_&);
 
-  class_<CompiledTargetDescriptionBase> w("CompiledTargetDescriptionBase",
-                                          no_init);
-  w.def(init<std::string, std::string, std::string>())
+void declareCompiledTargetDescriptionBase(pybind11::module_& m) {
+  using namespace mfront;
+  pybind11::class_<CompiledTargetDescriptionBase> w(
+      m, "CompiledTargetDescriptionBase");
+  w.def(pybind11::init<std::string, std::string, std::string>())
       .def_readonly("name", &CompiledTargetDescriptionBase::name)
       .def_readonly("prefix", &CompiledTargetDescriptionBase::prefix)
       .def_readonly("suffix", &CompiledTargetDescriptionBase::suffix);
-
   COMPILEDTARGETDESCRIPTIONBASE_ADDPROPERTY(w, sources);
   COMPILEDTARGETDESCRIPTIONBASE_ADDPROPERTY(w, cppflags);
   COMPILEDTARGETDESCRIPTIONBASE_ADDPROPERTY(w, include_directories);

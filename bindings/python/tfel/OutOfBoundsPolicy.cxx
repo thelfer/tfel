@@ -11,16 +11,15 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
-
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Material/OutOfBoundsPolicy.hxx"
 
-void declareOutOfBoundsPolicy();
+void declareOutOfBoundsPolicy(pybind11::module_&);
 
-void declareOutOfBoundsPolicy() {
-  using namespace boost::python;
+void declareOutOfBoundsPolicy(pybind11::module_& m) {
   using namespace tfel::material;
-  enum_<OutOfBoundsPolicy>("OutOfBoundsPolicy")
+  pybind11::enum_<OutOfBoundsPolicy>(m, "OutOfBoundsPolicy")
       .value("Strict", Strict)
       .value("Warning", Warning)
       .value("None", None);

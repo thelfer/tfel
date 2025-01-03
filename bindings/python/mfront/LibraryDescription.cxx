@@ -1,3 +1,4 @@
+
 /*!
  * \file   bindings/python/mfront/LibraryDescription.cxx
  * \brief
@@ -11,9 +12,9 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include "TFEL/Python/VectorConverter.hxx"
+#include <sstream>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MFront/LibraryDescription.hxx"
 
 static std::vector<std::string> LibraryDescription_get_epts(
@@ -26,28 +27,31 @@ static void LibraryDescription_set_epts(mfront::LibraryDescription& t,
   t.epts = h;
 }
 
-void declareLibraryDescription() {
-  using namespace boost::python;
-  using namespace mfront;
+void declareLibraryDescription(pybind11::module_&);
 
-  enum_<LibraryDescription::LibraryType>("LibraryType")
+void declareLibraryDescription(pybind11::module_& m) {
+  using namespace mfront;
+  pybind11::enum_<LibraryDescription::LibraryType>(m, "LibraryType")
       .value("SHARED_LIBRARY", LibraryDescription::SHARED_LIBRARY)
       .value("MODULE", LibraryDescription::MODULE);
 
-  class_<LibraryDescription, bases<CompiledTargetDescriptionBase>> w(
-      "LibraryDescription", no_init);
-  w.def(init<std::string, std::string, std::string,
-             LibraryDescription::LibraryType>())
+  pybind11::class_<LibraryDescription, CompiledTargetDescriptionBase> w(
+      m, "LibraryDescription");
+  w.def(pybind11::init<std::string, std::string, std::string,
+                       LibraryDescription::LibraryType>())
       .def_readonly("type", &LibraryDescription::type)
-      .def(self_ns::str(self_ns::self));
-
-  w.add_property("epts", LibraryDescription_get_epts,
+      .def("__repr__", [](const LibraryDescription& l) {
+        auto os = std::ostringstream{};
+        os << l;
+        return os.str();
+      });
+  w.def_property("epts", LibraryDescription_get_epts,
                  LibraryDescription_set_epts);
 
-  def("convert", convert);
-  def("mergeLibraryDescription", mergeLibraryDescription);
+  m.def("convert", convert);
+  m.def("mergeLibraryDescription", mergeLibraryDescription);
 
-  class_<std::vector<LibraryDescription>>("LibraryDescriptionVector")
-      .def("__iter__", iterator<std::vector<LibraryDescription>>())
-      .def("__len__", &std::vector<LibraryDescription>::size);
+  //   class_<std::vector<LibraryDescription>>("LibraryDescriptionVector")
+  //       .def("__iter__", iterator<std::vector<LibraryDescription>>())
+  //       .def("__len__", &std::vector<LibraryDescription>::size);
 }

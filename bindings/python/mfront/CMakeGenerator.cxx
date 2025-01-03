@@ -11,7 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MFront/TargetsDescription.hxx"
 #include "MFront/GeneratorOptions.hxx"
 #include "MFront/CMakeGenerator.hxx"
@@ -96,13 +97,11 @@ void CMakeGenerator::callCMake1(const std::string& tn) {
   mfront::callCMake(tn);
 }
 
-void declareCMakeGenerator();
+void declareCMakeGenerator(pybind11::module_&);
 
-void declareCMakeGenerator() {
-  using namespace boost::python;
+void declareCMakeGenerator(pybind11::module_& m) {
   using namespace mfront;
-
-  class_<CMakeGenerator>("CMakeGenerator")
+  pybind11::class_<CMakeGenerator>(m, "CMakeGenerator")
       .def("generate", &CMakeGenerator::generate0,
            "generate the `CMake.mfront` file")
       .def("generate", &CMakeGenerator::generate1,

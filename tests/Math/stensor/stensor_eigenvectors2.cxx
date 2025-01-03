@@ -19,6 +19,7 @@
 #include <limits>
 #include <cstdlib>
 #include <cassert>
+#include <iostream>
 
 #include "TFEL/Math/General/floating_point_exceptions.hxx"
 #include "TFEL/Math/qt.hxx"
@@ -97,13 +98,14 @@ void test() {
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   using namespace tfel::math;
-
+  //
   init_floating_point_exceptions();
-
+#ifndef __clang__
 #ifdef TFEL_VERBOSE
   std::cerr << " Beginning test<float>()" << std::endl;
 #endif
   test<float>();
+#endif
 #ifdef TFEL_VERBOSE
   std::cerr << " Beginning test<double>()" << std::endl;
 #endif

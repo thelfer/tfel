@@ -1,3 +1,5 @@
+
+
 /*!
  * \file  bindings/python/tfel/ExternalMaterialPropertyDescription.cxx
  * \brief
@@ -11,7 +13,8 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/System/ExternalMaterialPropertyDescription.hxx"
 
 static std::vector<std::string> get_args(
@@ -24,23 +27,21 @@ static std::vector<std::string> get_parameters(
   return d.parameters;
 }
 
-void declareExternalMaterialPropertyDescription();
+void declareExternalMaterialPropertyDescription(pybind11::module_&);
 
-void declareExternalMaterialPropertyDescription() {
-  using namespace boost;
-  using namespace boost::python;
+void declareExternalMaterialPropertyDescription(pybind11::module_& m) {
   using namespace tfel::system;
-
-  class_<ExternalMaterialPropertyDescription,
-         bases<ExternalMaterialKnowledgeDescription>>(
-      "ExternalMaterialPropertyDescription", init<>())
-      .def(init<std::string, std::string>())
+  pybind11::class_<ExternalMaterialPropertyDescription,
+                   ExternalMaterialKnowledgeDescription>(
+      m, "ExternalMaterialPropertyDescription")
+      .def(pybind11::init<>())
+      .def(pybind11::init<std::string, std::string>())
       .def_readonly("law", &ExternalMaterialPropertyDescription::law)
       .def_readonly("material_property",
                     &ExternalMaterialPropertyDescription::material_property)
       .def_readonly("output", &ExternalMaterialPropertyDescription::output)
-      .add_property("arguments", &get_args)
-      .add_property("parameters", &get_parameters)
+      .def_property_readonly("arguments", &get_args)
+      .def_property_readonly("parameters", &get_parameters)
       .def("hasBounds", &ExternalMaterialPropertyDescription::hasBounds)
       .def("hasLowerBound", &ExternalMaterialPropertyDescription::hasLowerBound)
       .def("hasUpperBound", &ExternalMaterialPropertyDescription::hasUpperBound)
