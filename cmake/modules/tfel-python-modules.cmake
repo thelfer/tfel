@@ -16,7 +16,11 @@ function(python_module_base fullname name)
     message(FATAL_ERROR "python_lib_module : no source specified")
   endif(${ARGC} LESS 1)
   add_library(py_${fullname} MODULE ${ARGN})
-  target_link_libraries(py_${fullname} PRIVATE pybind11::module pybind11::lto pybind11::windows_extras)
+  target_link_libraries(py_${fullname} PRIVATE
+    pybind11::module pybind11::windows_extras)
+  if(TARGET pybind11::lto)
+    target_link_libraries(py_${fullname} PRIVATE pybind11::lto)
+  endif(TARGET pybind11::lto)
   pybind11_extension(py_${fullname})
   if(NOT MSVC AND NOT ${CMAKE_BUILD_TYPE} MATCHES Debug|RelWithDebInfo)
     # Strip unnecessary sections of the binary on Linux/macOS
