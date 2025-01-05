@@ -59,6 +59,31 @@ namespace mfront {
 
     bool isTemperatureIncrementSupported() const override;
 
+    /*!
+     * \brief write the implementation of the `init` function
+     * \param[in, out] out: output stream
+     * \param[in] bd: behaviour description
+     */
+    virtual void writeInitFunctionImplementation(
+        std::ostream &, const BehaviourDescription &) const;
+    /*!
+     * \brief write the implementation of the `eval` function
+     * \param[in, out] out: output stream
+     * \param[in] bd: behaviour description
+     * \param[in] name: name of behaviour's implementation
+     */
+    virtual void writeEvalFunctionImplementation(std::ostream &,
+                                                 const BehaviourDescription &,
+                                                 const std::string &) const;
+    /*!
+     * \brief write the implementation of the `cleanup` function
+     * \param[in, out] out: output stream
+     * \param[in] bd: behaviour description
+     * \param[in] name: name of behaviour's implementation
+     */
+    virtual void writeCleanUpFunctionImplementation(
+        std::ostream &, const BehaviourDescription &) const;
+
   };  // end of struct ComsolInterface
 
 }  // end of namespace mfront

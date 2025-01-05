@@ -74,7 +74,9 @@ namespace mfront {
             "ComsolInterface::getTargetsDescription: "
             "unsupported modelling hypothesis");
       }
-      insert_if(l.epts, this->getFunctionNameBasis(name));
+      insert_if(l.epts, "init");
+      insert_if(l.epts, "eval");
+      insert_if(l.epts, "cleanup");
     }
   }  // end of ComsolInterface::getTargetsDescription
 
@@ -142,29 +144,30 @@ namespace mfront {
     this->writeSetParametersFunctionsDeclarations(out, bd, name);
     this->writeSetOutOfBoundsPolicyFunctionDeclaration(out, name);
 
-    if (!d.getPersistentVariables().empty()) {
-      out << "MFRONT_SHAREDOBJ int\n"
-          << this->getFunctionNameBasis(name)
-          << "(const double * const, // strain\n"
-          << "double * const, // stress\n"
-          << "double * const, // tangent operator\n"
-          << "const int * const, // number of material properties\n"
-          << "const double *const, // material properties\n"
-          << "const int *const, // number of strain components\n"
-          << "double *const, // strain at the beginning of the time step\n"
-          << "const int *const, // number of state variables\n"
-          << "double *const);// state variables\n\n";
-    } else {
-      out << "MFRONT_SHAREDOBJ int\n"
-          << this->getFunctionNameBasis(name)
-          << "(const double * const, // strain\n"
-          << "double * const, // stress\n"
-          << "double * const, // tangent operator\n"
-          << "const int * const, // number of material properties\n"
-          << "const double *const, // material properties\n"
-          << "const int *const, // number of strain components\n"
-          << "double *const); // strain at the beginning of the time step\n\n";
-    }
+    out << "MFRONT_SHAREDOBJ int init(const int *const, "
+        << "// number of material model parameters\n"
+        << "const int *const, // number of user-defined state vectors\n"
+        << "const int *const, // user-defined state vector sizes\n"
+        << "const int *const, // size of error message output argument\n"
+        << "const int *const, // number of string array arguments\n"
+        << "char *const); // Error message argument, output, optional\n\n";
+
+    out << "MFRONT_SHAREDOBJ int eval(const double * const, "
+        << "// strain at the end of the time step\n"
+        << "double * const, // stress\n"
+        << "double * const, // tangent operator\n"
+        << "const int * const, // number of material properties\n"
+        << "const double *const, // material properties\n"
+        << "const int *const, // number of strain components\n"
+        << "double *const, // strain at the beginning of the time step\n"
+        << "const int *const, // number of stress components\n"
+        << "double *const, // stress at the beginning of the time step\n"
+        << "const int *const, // number of state variables\n"
+        << "double *const, // state variables\n"
+        << "char *); // error message\n\n";
+
+    out << "MFRONT_SHAREDOBJ int cleanup(char *const); "
+        << "// error message argument, output, optional\n\n";
 
     out << "#ifdef __cplusplus\n"
         << "}\n"
@@ -187,7 +190,8 @@ namespace mfront {
 
     //     this->getExtraSrcIncludes(out, mb);
     //
-    out << "#include\"TFEL/Math/General/MathConstants.hxx\"\n"
+    out << "#include <algorithm>\n"
+        << "#include\"TFEL/Math/General/MathConstants.hxx\"\n"
         << "#include\"TFEL/Math/stensor.hxx\"\n"
         << "#include\"TFEL/Material/OutOfBoundsPolicy.hxx\"\n"
         << "#include\"TFEL/Material/" << bd.getClassName() << ".hxx\"\n";
@@ -209,30 +213,83 @@ namespace mfront {
     //
     this->writeSetParametersFunctionsImplementations(out, bd, name);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out, bd, name);
+    //
+    this->writeInitFunctionImplementation(out, bd);
+    this->writeEvalFunctionImplementation(out, bd, name);
+    this->writeCleanUpFunctionImplementation(out, bd);
+    //
+    out << "} // end of extern \"C\"\n";
+    out.close();
+  }  // end of ComsolInterface::endTreatment
 
+  void ComsolInterface::writeInitFunctionImplementation(
+      std::ostream& out, const BehaviourDescription& bd) const {
+    constexpr auto h = ModellingHypothesis::TRIDIMENSIONAL;
+    const auto& d = bd.getBehaviourData(h);
+    // note the temperature is supposed to be given by the last material
+    // property
+    const auto nprops =
+        d.getMaterialProperties().getTypeSize().getValueForDimension(3) + 1;
+    //
+    out << "MFRONT_SHAREDOBJ int init(const int * const nProps,\n"
+        << "const int *const nStateVectors,\n"
+        << "const int *const stateVectorsSizes,\n"
+        << "const int *const eMsgSize,\n"
+        << "const int *const nOptionalStrings,\n"
+        << "char *const emsg){\n"
+        << "if (*nProps != " << nprops << " ){\n"
+        << "return 1;\n"
+        << "}\n";
     if (!d.getPersistentVariables().empty()) {
-      out << "MFRONT_SHAREDOBJ int\n"
-          << this->getFunctionNameBasis(name)  //
-          << "(const double * const e,\n"
-          << "double * const s,\n"
-          << "double * const D,\n"
-          << "const int * const nprops,\n"
-          << "const double *const mprops,\n"
-          << "const int *const nstran,\n"
-          << "double *const stran,\n"
-          << "const int *const nstatv,\n"
-          << "double *const statev){\n";
+      out << "if (*nStateVectors != 3){\n"
+          << "return 2;\n"
+          << "}\n";
     } else {
-      out << "MFRONT_SHAREDOBJ int\n"
-          << this->getFunctionNameBasis(name)  //
-          << "(const double * const e,\n"
-          << "double * const s,\n"
-          << "double * const D,\n"
-          << "const int * const nprops,\n"
-          << "const double *const mprops,\n"
-          << "const int *const nstran,\n"
-          << "double *const stran){\n";
+      out << "if (*nStateVectors != 2){\n"
+          << "return 2;\n"
+          << "}\n";
     }
+    out << "if (stateVectorsSizes[0] != 6){\n"
+        << "return 2;\n"
+        << "}\n"
+        << "if (stateVectorsSizes[1] != 6){\n"
+        << "return 2;\n"
+        << "}\n";
+    if (!d.getPersistentVariables().empty()) {
+      const auto nstatv =
+          d.getPersistentVariables().getTypeSize().getValueForDimension(3);
+      out << "if (stateVectorsSizes[2] != " << nstatv << "){\n"
+          << "return 2;\n"
+          << "}\n";
+    }
+    out << "if(*nOptionalStrings == 0){\n"
+        << "return 3;\n"
+        << "}\n"
+        << "return 0;\n"
+        << "}\n";
+  }  // end of writeInitFunctionImplementation
+
+  void ComsolInterface::writeEvalFunctionImplementation(
+      std::ostream& out,
+      const BehaviourDescription& bd,
+      const std::string& name) const {
+    constexpr auto h = ModellingHypothesis::TRIDIMENSIONAL;
+    const auto& d = bd.getBehaviourData(h);
+    out << "MFRONT_SHAREDOBJ int\n"
+        << "eval(const double * const e,\n"
+        << "double * const s,\n"
+        << "double * const D,\n"
+        << "const int * const nprops,\n"
+        << "const double *const mprops,\n"
+        << "const int *const nstran,\n"
+        << "double *const stran,\n"
+        << "const int *const nstress,\n"
+        << "double *const stress,\n";
+    if (!d.getPersistentVariables().empty()) {
+      out << "const int *const nstatv,\n"
+          << "double *const statev,\n";
+    }
+    out << "char * const emsg){\n";
     out << "using tfel::material::ModellingHypothesis;\n"
         << "using Behaviour = tfel::material::" << bd.getClassName()
         << "<ModellingHypothesis::TRIDIMENSIONAL, double, "
@@ -248,7 +305,10 @@ namespace mfront {
     out << "if (*nprops != " << nprops << " ){\n"
         << "return 1;\n"
         << "}\n"
-        << "if (*nstran!= 6){\n"
+        << "if (*nstran != 6){\n"
+        << "return 2;\n"
+        << "}\n"
+        << "if (*nstress != 6){\n"
         << "return 2;\n"
         << "}\n";
     if (!d.getPersistentVariables().empty()) {
@@ -294,8 +354,7 @@ namespace mfront {
           << "const auto& s1 = s.second;\n"
           << "eto  = e0-s0;\n"
           << "deto = e1-e0-(s1-s0);\n";
-    }
-    else {
+    } else {
       out << "eto  = e0;\n"
           << "deto = e1-e0;\n";
     }
@@ -339,16 +398,21 @@ namespace mfront {
     out << "std::swap(s[3],s[5]);\n"
         << "const auto& K = b.getTangentOperator();\n"
         << "std::copy(K.begin(),K.end(), D);\n"
-        << "tfel::fsalgo::copy<6>::exe(e1.begin(),stran);\n"
+        << "tfel::fsalgo::copy<6>::exe(e1.begin(), stran);\n"
+        << "tfel::fsalgo::copy<6>::exe(s, stress);\n"
         << "} catch(...){\n"
         << "return -1;\n"
         << "}\n"
         << "return rdt < 0.99 ? -1 : 0;\n"
-        << "} // end of " << this->getFunctionNameBasis(name) << "\n\n";
+        << "} // end of eval\n\n";
+  }  // end of writeEvalFunctionImplementation
 
-    out << "} // end of extern \"C\"\n";
-    out.close();
-  }  // end of ComsolInterface::endTreatment
+  void ComsolInterface::writeCleanUpFunctionImplementation(
+      std::ostream& out, const BehaviourDescription&) const {
+    out << "MFRONT_SHAREDOBJ int cleanup(char *){\n"
+        << "return 0;\n"
+        << "} // end of cleanup\n\n";
+  }  // end of writeCleanUpFunctionImplementation
 
   bool ComsolInterface::areExternalStateVariablesSupported() const {
     return false;
@@ -360,14 +424,15 @@ namespace mfront {
 
   std::string ComsolInterface::getLibraryName(
       const BehaviourDescription& bd) const {
+    const auto name = bd.getClassName();
     if (bd.getLibrary().empty()) {
       if (!bd.getMaterialName().empty()) {
-        return this->getInterfaceName() + bd.getMaterialName();
+        return this->getInterfaceName() + bd.getMaterialName() + "-" + name;
       } else {
-        return this->getInterfaceName() + "Behaviour";
+        return this->getInterfaceName() + "Behaviour" + "-" + name;
       }
     }
-    return this->getInterfaceName() + bd.getLibrary();
+    return this->getInterfaceName() + bd.getLibrary() + "-" + name;
   }  // end of ComsolInterface::getLibraryName
 
   std::string ComsolInterface::getFunctionNameBasis(
