@@ -1,3 +1,4 @@
+
 /*!
  * \file   mfront/include/MFront/BehaviourDSLCommon.hxx
  * \brief
@@ -239,114 +240,6 @@ namespace mfront {
      * \param[in]  s : allow specialisation
      */
     virtual void readCodeBlockOptions(CodeBlockOptions&, const bool);
-    //     /*!
-    //      * \brief read the next code block and adds it tho the mechanical
-    //      * behaviour
-    //      * \param[in] child : a pointer to this
-    //      * \param[in] n     : name of the method read
-    //      * \param[in] m     : modifier
-    //      * \param[in] b     : add "this->" in front of variables
-    //      * \param[in] s     : allow specialisation
-    //      */
-    //     template <typename T, typename T2>
-    //     CodeBlockOptions treatCodeBlock(T&,
-    //                                     const std::string&,
-    //                                     std::string (T2::*)(const Hypothesis,
-    //                                                         const
-    //                                                         std::string&,
-    //                                                         const bool),
-    //                                     const bool,
-    //                                     const bool);
-    //     /*!
-    //      * \brief read the next code block and adds it tho the mechanical
-    //      * behaviour
-    //      * \param[in] child : a pointer to this
-    //      * \param[in] n     : name of the method read
-    //      * \param[in] m     : modifier
-    //      * \param[in] b     : add "this->" in front of variables
-    //      */
-    //     template <typename T, typename T2>
-    //     void treatCodeBlock(T&,
-    //                         const CodeBlockOptions&,
-    //                         const std::string&,
-    //                         std::string (T2::*)(const Hypothesis,
-    //                                             const std::string&,
-    //                                             const bool),
-    //                         const bool);
-    //     /*!
-    //      * \brief read the next code block and adds it tho the mechanical
-    //      * behaviour
-    //      * \param[in] child : a pointer to this
-    //      * \param[in] n     : name of the method read
-    //      * \param[in] m     : modifier
-    //      * \param[in] a     : word analyser
-    //      * \param[in] b     : add "this->" in front of variables
-    //      * \param[in] s     : allow specialisation
-    //      */
-    //     template <typename T, typename T2, typename T3>
-    //     CodeBlockOptions treatCodeBlock(
-    //         T&,
-    //         const std::string&,
-    //         std::string (T2::*)(const Hypothesis, const std::string&, const
-    //         bool), void (T3::*)(const Hypothesis, const std::string&), const
-    //         bool, const bool);
-    //     /*!
-    //      * \brief read the next code block and adds it tho the mechanical
-    //      * behaviour
-    //      * \param[in] child : a pointer to this
-    //      * \param[in] n     : name of the method read
-    //      * \param[in] m     : modifier
-    //      * \param[in] a     : word analyser
-    //      * \param[in] b     : add "this->" in front of variables
-    //      * \param[in] s     : allow specialisation
-    //      */
-    //     template <typename T, typename T2, typename T3>
-    //     void treatCodeBlock(T&,
-    //                         const CodeBlockOptions&,
-    //                         const std::string&,
-    //                         std::string (T2::*)(const Hypothesis,
-    //                                             const std::string&,
-    //                                             const bool),
-    //                         void (T3::*)(const Hypothesis, const
-    //                         std::string&), const bool);
-    //     /*!
-    //      * \brief read the next code block and adds it tho the mechanical
-    //      * behaviour
-    //      * \param[in] child : a pointer to this
-    //      * \param[in] n1    : name of the first method read
-    //      * \param[in] n2    : name of the second method read
-    //      * \param[in] m1    : modifier
-    //      * \param[in] m2    : modifier
-    //      * \param[in] b     : add "this->" in front of variables
-    //      * \param[in] s     : allow specialisation
-    //      */
-    //     template <typename T, typename T2>
-    //     CodeBlockOptions treatCodeBlock(
-    //         T&,
-    //         const std::string&,
-    //         const std::string&,
-    //         std::string (T2::*)(const Hypothesis, const std::string&, const
-    //         bool), std::string (T2::*)(const Hypothesis, const std::string&,
-    //         const bool), const bool, const bool);
-    //     /*!
-    //      * \brief read the next code block and adds it tho the mechanical
-    //      * behaviour
-    //      * \param[in] child : a pointer to this
-    //      * \param[in] n1    : name of the first method read
-    //      * \param[in] n2    : name of the second method read
-    //      * \param[in] m1    : modifier
-    //      * \param[in] m2    : modifier
-    //      * \param[in] b     : add "this->" in front of variables
-    //      */
-    //     template <typename T, typename T2>
-    //     void treatCodeBlock(
-    //         T&,
-    //         const CodeBlockOptions&,
-    //         const std::string&,
-    //         const std::string&,
-    //         std::string (T2::*)(const Hypothesis, const std::string&, const
-    //         bool), std::string (T2::*)(const Hypothesis, const std::string&,
-    //         const bool), const bool);
     /*!
      * \brief read the next code block and adds it tho the mechanical
      * behaviour
@@ -630,8 +523,16 @@ namespace mfront {
      * \brief get a model description from an mfront file
      * \param[in] m: file
      * \return a model description
+     * \note the class name associated with the model is automatically
+     * reserved.
      */
     virtual ModelDescription getModelDescription(const std::string&);
+    /*!
+     * \brief get a behaviour description from an mfront file
+     * \param[in] m: file
+     * \return a behaviour description
+     */
+    virtual BehaviourDescription getBehaviourDescription(const std::string&);
     //! \brief treat the `@Private` keyword
     void treatPrivate() override;
     //! \brief treat the `@Members` keyword
@@ -714,6 +615,8 @@ namespace mfront {
     virtual void treatRequireThermalExpansionCoefficientTensor();
     //! \brief handle the `@Behaviour` keyword
     virtual void treatBehaviour();
+    //! \brief handle the `@BehaviourVariable` keyword
+    virtual void treatBehaviourVariable();
     //! \brief handle the `@Interface` keyword
     virtual void treatInterface();
     //! \brief handle the `@StateVariable` keyword

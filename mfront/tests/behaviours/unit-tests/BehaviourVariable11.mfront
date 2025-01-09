@@ -1,0 +1,10 @@
+@DSL Default;
+@Behaviour BehaviourVariable11;
+@Description{
+  "Invalid external names prefix"
+}
+
+@BehaviourVariable b1{
+  file : "Plasticity.mfront",  //
+  external_names_prefix : "1"
+};

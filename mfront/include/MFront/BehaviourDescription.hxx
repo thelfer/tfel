@@ -274,10 +274,12 @@ namespace mfront {
      * declaration of user defined variables
      */
     bool allowsNewUserDefinedVariables() const;
-    //! \brief check and complete the physical bounds of variables
-    void checkAndCompletePhysicalBoundsDeclaration();
-    //! \brief disallow the declaration of user defined variables
-    void disallowNewUserDefinedVariables();
+    /*!
+     * \brief complete the declaration of variables
+     * \note the modelling hypotheses must be defined before calling
+     * this method.
+     */
+    void completeVariableDeclaration();
     //! \brief set if dynamically allocated vectors are allowed
     void areDynamicallyAllocatedVectorsAllowed(const bool);
     //! \return true if dynamically allocated vectors are allowed
@@ -931,12 +933,17 @@ namespace mfront {
      * \param[in] s: registration status
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the external state
-     * variables to the default data and to all the specialisations
+     * variable to the default data and to all the specialisations
      */
     void addExternalStateVariable(
         const Hypothesis,
         const VariableDescription&,
         const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    /*!
+     * \brief add a behaviour variable
+     * \param[in] v: behaviour variable added
+     */
+    void addBehaviourVariable(const BehaviourVariableDescription&);
     /*!
      * \brief add initialize  variables
      * \param[in] h: modelling hypothesis
@@ -1652,6 +1659,8 @@ namespace mfront {
     ~BehaviourDescription() override;
 
    private:
+    //! \brief check and complete the physical bounds of variables
+    void checkAndCompletePhysicalBoundsDeclaration();
     /*!
      * \brief throw an exception saying that no attribute with the
      * given name exists
@@ -1947,8 +1956,15 @@ namespace mfront {
     bool useDefaultTangentOperatorBlocks = true;
     //! integration schemes
     IntegrationScheme ischeme = UNDEFINEDINTEGRATIONSCHEME;
-    //! list of material laws used
+    //! \brief list of material laws used
     std::vector<std::string> materialLaws;
+    /*!
+     * \brief list of behaviour variables waiting to be treated
+     * \note this intermediate structure is required since
+     * the behaviour variables can only be added to behaviour data
+     * when modelling hypothesis are defined
+     */
+    std::vector<BehaviourVariableDescription> behaviourVariablesCandidates;
     /*!
      * Support for dynamically allocated vectors is not allowed in all
      * dsl's. A dsl may change this value to disable the use of

@@ -1,3 +1,4 @@
+
 /*!
  * \file   mfront/src/BehaviourDSLCommon.cxx
  * \brief
@@ -52,6 +53,7 @@
 #include "MFront/MFrontModelInterface.hxx"
 #include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
 #include "MFront/AbstractBehaviourCodeGenerator.hxx"
+#include "MFront/BehaviourVariableDescription.hxx"
 #include "MFront/BehaviourDSLCommon.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
@@ -157,6 +159,7 @@ namespace mfront {
     add("@Library", &BehaviourDSLCommon::treatLibrary);
     add("@Profiling", &BehaviourDSLCommon::treatProfiling);
     add("@Behaviour", &BehaviourDSLCommon::treatBehaviour);
+    add("@BehaviourVariable", &BehaviourDSLCommon::treatBehaviourVariable);
     add("@StrainMeasure", &BehaviourDSLCommon::treatStrainMeasure);
     add("@Author", &BehaviourDSLCommon::treatAuthor);
     add("@Date", &BehaviourDSLCommon::treatDate);
@@ -931,6 +934,61 @@ namespace mfront {
     return md;
   }  // end of getModelDescription
 
+  BehaviourDescription BehaviourDSLCommon::getBehaviourDescription(
+      const std::string& f) {
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << "BehaviourDSLCommon::getBehaviourDescription: "
+                     << "treating file '" << f << "'\n";
+    }
+    //
+    const auto path = SearchPathsHandler::search(f);
+    // a simple test to fix Issue #524
+    const auto adsl = MFrontBase::getDSL(path);
+    if (adsl->getTargetType() != AbstractDSL::BEHAVIOURDSL) {
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::getBehaviourDescription",
+          "error while treating file '" + f +
+              "'.\nThis file is not handled by the Behaviour DSL");
+    }
+    //
+    auto dsl = dynamic_pointer_cast<AbstractBehaviourDSL>(adsl);
+    if (dsl.get() == nullptr) {
+      this->throwRuntimeError("BehaviourDSLCommon::getBehaviourDescription",
+                              "internal error while treating file '" + f +
+                                  "(The DSL associated with this file is not "
+                                  "convertible to an AbstractBehaviourDSL)\n");
+    }
+    // getting informations the source files
+    try {
+      dsl->analyseFile(path, {}, {});
+      const auto t = dsl->getTargetsDescription();
+      if (!t.specific_targets.empty()) {
+        this->throwRuntimeError("BehaviourDSLCommon::getBehaviourDescription",
+                                "error while treating file '" + f +
+                                    "'.\nSpecific targets are not supported");
+      }
+      for (const auto& h : t.headers) {
+        this->appendToIncludes("#include\"" + h + "\"");
+      }
+      this->atds.push_back(std::move(t));
+#pragma message("check what this line do")
+      //      this->mb.addExternalMFrontFile(path, {"mfront"});
+    } catch (std::exception& e) {
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::getBehaviourDescription",
+          "error while treating file '" + f + "'\n" + std::string(e.what()));
+    } catch (...) {
+      this->throwRuntimeError("BehaviourDSLCommon::getBehaviourDescription",
+                              "error while treating file '" + f + "'");
+    }
+    const auto& bd = dsl->getBehaviourDescription();
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << "BehaviourDSLCommon::getBehaviourDescription: "
+                     << "end of file '" << f << "' treatment\n";
+    }
+    return bd;
+  }  // end of getBehaviourDescription
+
   void BehaviourDSLCommon::declareMainVariables() {
     decltype(this->gradients.size()) n =
         std::min(this->gradients.size(), this->thermodynamic_forces.size());
@@ -1136,7 +1194,7 @@ namespace mfront {
   void BehaviourDSLCommon::disableVariableDeclaration() {
     if (this->mb.allowsNewUserDefinedVariables()) {
       this->completeVariableDeclaration();
-      this->mb.disallowNewUserDefinedVariables();
+      this->mb.completeVariableDeclaration();
     }
   }  // end of disableVariableDeclaration
 
@@ -1173,11 +1231,12 @@ namespace mfront {
       }
       this->mb.setModellingHypotheses(dmh);
     }
-    const auto& mh = this->mb.getModellingHypotheses();
     // treating bricks
     for (const auto& pb : this->bricks) {
       pb->completeVariableDeclaration();
     }
+    //
+    const auto& mh = this->mb.getModellingHypotheses();
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       auto& log = getLogStream();
       log << "behaviour '" << this->mb.getClassName()
@@ -1190,105 +1249,6 @@ namespace mfront {
         log << '\n';
       }
     }
-    // time step scaling factors
-    if (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                               "minimal_time_step_scaling_factor")) {
-      VariableDescription e("real", "minimal_time_step_scaling_factor", 1u, 0u);
-      e.description = "minimal value for the time step scaling factor";
-      this->mb.addParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS, e,
-                            BehaviourData::ALREADYREGISTRED);
-      this->mb.setParameterDefaultValue(
-          ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-          "minimal_time_step_scaling_factor", 0.1);
-      this->mb.setEntryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                            "minimal_time_step_scaling_factor",
-                            "minimal_time_step_scaling_factor");
-    }
-    if (!this->mb.hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                               "maximal_time_step_scaling_factor")) {
-      VariableDescription e("real", "maximal_time_step_scaling_factor", 1u, 0u);
-      e.description = "maximal value for the time step scaling factor";
-      this->mb.addParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS, e,
-                            BehaviourData::ALREADYREGISTRED);
-      this->mb.setParameterDefaultValue(
-          ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-          "maximal_time_step_scaling_factor",
-          std::numeric_limits<double>::max());
-      this->mb.setEntryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                            "maximal_time_step_scaling_factor",
-                            "maximal_time_step_scaling_factor");
-    }
-    // incompatible options
-    if ((this->mb.getAttribute(BehaviourDescription::computesStiffnessTensor,
-                               false)) &&
-        (this->mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,
-                               false))) {
-      this->throwRuntimeError(
-          "BehaviourDSLCommon::completeVariableDeclaration",
-          "internal error, incompatible options for stiffness tensor");
-    }
-    // check of stiffness tensor requirement
-    if ((this->mb.getBehaviourType() ==
-         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-        (this->mb.getBehaviourType() ==
-         BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
-      if ((mh.find(ModellingHypothesis::PLANESTRESS) != mh.end()) ||
-          (mh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) !=
-           mh.end())) {
-        if (this->mb.getAttribute(BehaviourDescription::requiresStiffnessTensor,
-                                  false)) {
-          if (!this->mb.hasAttribute(
-                  BehaviourDescription::requiresUnAlteredStiffnessTensor)) {
-            this->throwRuntimeError(
-                "BehaviourDSLCommon::completeVariableDeclaration",
-                "No option was given to the '@RequireStiffnessTensor' "
-                "keyword.\n"
-                "For plane stress hypotheses, it is required to precise "
-                "whether "
-                "the expected stiffness tensor is 'Altered' (the plane stress "
-                "hypothesis is taken into account) or 'UnAltered' (the "
-                "stiffness "
-                "tensor is the same as in plane strain)");
-          }
-        }
-      }
-    }
-    if (this->mb.getSymmetryType() == mfront::ORTHOTROPIC) {
-      // if no orthotropic axes convention is defined, one can't compute
-      // stiffness tensor, thermal expansion or stress free expansion
-      // correctly, except for the 3D modelling hypothesis
-      for (const auto h : this->mb.getDistinctModellingHypotheses()) {
-        if (((this->mb.areElasticMaterialPropertiesDefined()) &&
-             (this->mb.getElasticMaterialProperties().size() == 9u)) ||
-            ((this->mb.areThermalExpansionCoefficientsDefined()) &&
-             (this->mb.getThermalExpansionCoefficients().size() == 3u)) ||
-            (this->mb.isStressFreeExansionAnisotropic(h))) {
-          if (this->mb.getOrthotropicAxesConvention() ==
-              OrthotropicAxesConvention::DEFAULT) {
-            // in this case, only tridimensional case is supported
-            if (h != ModellingHypothesis::TRIDIMENSIONAL) {
-              this->throwRuntimeError(
-                  "BehaviourDSLCommon::completeVariableDeclaration",
-                  "An orthotropic axes convention must be choosen when "
-                  "using one of @ComputeStiffnessTensor, "
-                  "@ComputeThermalExpansion, @Swelling, @AxilalGrowth keywords "
-                  "in behaviours which "
-                  "shall be valid in other modelling hypothesis than "
-                  "'Tridimensional'. This message was triggered because "
-                  "either the thermal expansion or to the stiffness tensor "
-                  "is orthotropic.\n"
-                  "Either restrict the validity of the behaviour to "
-                  "'Tridimensional' (see @ModellingHypothesis) or "
-                  "choose and orthotropic axes convention as on option "
-                  "to the @OrthotropicBehaviour keyword");
-            }
-          }
-        }
-      }
-    }
-    // complete the declaration of physical bounds
-    this->mb.checkAndCompletePhysicalBoundsDeclaration();
-    //
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream()
           << "BehaviourDSLCommon::completeVariableDeclaration: end\n";
@@ -2670,6 +2630,122 @@ namespace mfront {
     }
   }  // end of treatBehaviour
 
+  void BehaviourDSLCommon::treatBehaviourVariable() {
+    using namespace tfel::utilities;
+    const auto mname = "BehaviourVariableDSLCommon::treatBehaviourVariable";
+
+
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatBehaviourVariable");
+    const auto lineNumber = this->current->line;
+    const auto sname = this->current->value;
+    const auto bname = tfel::unicode::getMangledString(sname);
+
+    if (!isValidUserDefinedVariableName(bname)) {
+      this->throwRuntimeError(mname, "invalid variable name '" + bname + "'");
+    }
+    ++(this->current);
+    auto options = [this]() {
+      if ((this->current != this->tokens.end()) &&
+          (this->current->value == "{")) {
+        auto o = DataParsingOptions{};
+        return Data::read(this->current, this->tokens.end(), o).get<DataMap>();
+      }
+      return DataMap();
+    }();
+    this->readSpecifiedToken(mname, ";");
+    //
+    auto validator =
+        DataMapValidator{}
+            .addDataTypeValidator<std::string>("file")
+            .addDataTypeValidator<std::string>("variables_prefix")
+            .addDataTypeValidator<std::string>("variables_suffix")
+            .addDataTypeValidator<std::string>("external_names_prefix")
+            .addDataTypeValidator<std::string>("external_names_suffix")
+            .addDataTypeValidator<bool>("store_gradients")
+            .addDataTypeValidator<bool>("store_thermodynamic_forces")
+            .addDataTypeValidator<std::vector<Data>>(
+                "shared_material_properties")
+            .addDataTypeValidator<std::vector<Data>>(
+                "shared_external_state_variables")
+        ;
+    validator.validate(options);
+    //
+    auto extract_regex_vector =
+        [this, &options,
+         mname](const std::string_view& n) -> std::vector<std::regex> {
+      if (!options.contains(n)) {
+        return {};
+      }
+      auto r = std::vector<std::regex>{};
+      const auto& values = get<std::vector<Data>>(options, n);
+      r.reserve(values.size());
+      for (const auto& v : values) {
+        if (!v.is<std::string>()) {
+          this->throwRuntimeError(mname, "can't convert option '" +
+                                             std::string{n} +
+                                             "' to a vector of strings");
+        }
+        try {
+          r.emplace_back(get<std::string>(v));
+        } catch (std::exception& e) {
+          this->throwRuntimeError(
+              mname, "failed to compile '" + get<std::string>(v) +
+                         "' as a regular expression: " + std::string{e.what()});
+        }
+      }
+      return r;
+    };
+    const auto& file = get<std::string>(options, "file");
+    //
+    const auto v_prefix = get_if<std::string>(options, "variables_prefix", "");
+    const auto v_suffix = get_if<std::string>(options, "variables_suffix", "");
+    const auto enames_prefix =
+        get_if<std::string>(options, "external_names_prefix", "");
+    const auto enames_suffix =
+        get_if<std::string>(options, "external_names_suffix", "");
+    if ((!v_prefix.empty()) && (!isValidUserDefinedVariableName(v_prefix))) {
+      tfel::raise("invalid variables prefix '" + v_prefix + "'");
+    }
+    if ((!v_suffix.empty()) && (!isValidUserDefinedVariableName(v_suffix))) {
+      tfel::raise("invalid variables suffix '" + v_suffix + "'");
+    }
+    if ((!enames_prefix.empty()) &&
+        (!isValidUserDefinedVariableName(enames_prefix))) {
+      tfel::raise("invalid external names prefix '" + enames_prefix + "'");
+    }
+    if ((!enames_suffix.empty()) &&
+        (!isValidUserDefinedVariableName(enames_suffix))) {
+      tfel::raise("invalid external names suffix '" + enames_suffix + "'");
+    }
+    //
+    auto d = BehaviourVariableDescription{
+        .file = file,
+        .symbolic_form = sname,
+        .name = bname,
+        .description =
+            [this] {
+              if (!this->currentComment.empty()) {
+                return this->currentComment;
+              }
+              return std::string{};
+            }(),
+        .line_number = lineNumber,
+        .variables_prefix = v_prefix,
+        .variables_suffix = v_suffix,
+        .external_names_prefix = enames_prefix,
+        .external_names_suffix = enames_suffix,
+        .store_gradients = get_if<bool>(options, "store_gradients", true),
+        .store_thermodynamic_forces =
+            get_if<bool>(options, "store_thermodynamic_forces", true),
+        .shared_material_properties =
+            extract_regex_vector("shared_material_properties"),
+        .shared_external_state_variables =
+            extract_regex_vector("shared_external_state_variables"),
+        .behaviour = this->getBehaviourDescription(file)};
+    // registring the behaviour variable
+    this->mb.addBehaviourVariable(d);
+  }  // end of treatBehaviourVariable
+
   void BehaviourDSLCommon::readStringList(std::vector<std::string>& cont) {
     this->checkNotEndOfFile("BehaviourDSLCommon::readStringList",
                             "Cannot read interface name.");
@@ -2814,6 +2890,7 @@ namespace mfront {
         };
     this->treatCodeBlock(BehaviourData::Integrator, m, true, true);
   }  // end of treatIntegrator
+
 
   void BehaviourDSLCommon::treatAPosterioriTimeStepScalingFactor() {
     std::function<std::string(const Hypothesis, const std::string&, const bool)>

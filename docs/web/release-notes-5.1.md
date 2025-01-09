@@ -76,10 +76,26 @@ $ tfel-config-5.1.0-release --python-module-suffix
 5_1_0_release
 ~~~~
 
-# Python bindings
+## Python bindings
 
 Python bindings are now generated using the
 [`pybind11`](https://github.com/pybind/pybind11) library.
+
+# New features in `MFront`
+
+## Calling an external behaviour: the `@BehaviourVariable` keyword
+
+```cxx
+@BehaviourVariable first_phase_plastic_behaviour {
+  file: "Plasticity.mfront",
+  variables_suffix: "1",
+  external_names_prefix: "FirstPhase",
+  store_gradients: true,
+  store_thermodynamic_forces: true,
+  shared_material_properties: {".+"},
+  shared_external_state_variables: {".+"}
+};
+```
 
 # Issues fixed
 

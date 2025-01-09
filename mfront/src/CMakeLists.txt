@@ -1,3 +1,4 @@
+
 configure_file(${PROJECT_SOURCE_DIR}/mfront/src/MFrontHeader.cxx.in
                ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
@@ -107,6 +108,7 @@ set(TFELMFront_SOURCES
     BehaviourDescription.cxx
     VariableDescriptionBase.cxx
     VariableDescription.cxx
+    BehaviourVariableDescription.cxx
     StaticVariableDescription.cxx
     VariableBoundsDescription.cxx
     BehaviourDSLCommon.cxx

@@ -28,6 +28,7 @@
 #include "MFront/PerformanceProfiling.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/ModelDescription.hxx"
+#include "MFront/BehaviourVariableDescription.hxx"
 #include "MFront/BehaviourData.hxx"
 
 namespace mfront {
@@ -554,6 +555,34 @@ namespace mfront {
     this->addVariable(this->externalStateVariables, v, s, true);
   }  // end of addExternalStateVariable
 
+  void BehaviourData::addBehaviourVariable(
+      const BehaviourVariableDescription& v) {
+    if ((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables)) &&
+        (!this->getAttribute<bool>(
+            BehaviourData::allowsNewUserDefinedVariables))) {
+      const auto cbn = this->getCodeBlockNames();
+      tfel::raise_if(
+          cbn.empty(),
+          "BehaviourData::addBehaviourVariable: can't add variable '" + v.name +
+              "' of type '" + v.behaviour.getClassName() +
+              "', no more variable can be defined. This may mean that "
+              "the parser does not expect you to add variables");
+      auto cbs = std::string{};
+      for (const auto& n : cbn) {
+        cbs += "\n- " + n;
+      }
+      tfel::raise("BehaviourData::addBehaviourVariable: can't add variable '" +
+                  v.name + "' of type '" + v.behaviour.getClassName() +
+                  "', no more variable can be defined. This may mean that "
+                  "you already declared a block of code (or that the dsl "
+                  "does not expect you to add variables for whatever reason). "
+                  "This is the list of code blocks defined:" +
+                  cbs);
+    }
+    //    this->checkBehaviourVariableCompatibility(v);
+    this->behaviourVariables.push_back(v);
+  }  // end of addBehaviourVariable
+
   void BehaviourData::addLocalVariable(const VariableDescription& v,
                                        const RegistrationStatus s) {
     this->addVariable(this->localVariables, v, s, false, true);
@@ -1030,14 +1059,14 @@ namespace mfront {
           const std::string& n) {
     this->pupirv.insert(n);
   }  // end of
-     // BehaviourData::declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
+     // declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution
 
   const std::set<std::string>& BehaviourData::
       getExternalStateVariablesDeclaredProbablyUnusableInPurelyImplicitResolution()
           const {
     return this->pupirv;
   }  // end of
-     // BehaviourData::getExternalStateVariablesDeclaredProbablyUnusableInPurelyImplicitResolution
+     // getExternalStateVariablesDeclaredProbablyUnusableInPurelyImplicitResolution
 
   void BehaviourData::addVariable(VariableDescriptionContainer& c,
                                   const VariableDescription& v,
@@ -1911,7 +1940,66 @@ namespace mfront {
     return initialize_methods;
   }  // end of getUserDefinedInitializeCodeBlocksNames
 
-  void BehaviourData::finalizeVariablesDeclaration() {
+  void BehaviourData::finalizeVariablesDeclaration(const Hypothesis h) {
+    //
+    for (const auto& bv : this->behaviourVariables) {
+      auto checkVariableCompatibility = [&bv](const VariableDescription& v1,  //
+                                              const VariableDescription& v2) {
+        auto report = [&v1, &v2, &bv](const std::string_view& reason) {
+          tfel::raise("The shared variable '" + v2.name +
+                      "' declared by behaviour variable '" + bv.name +
+                      "' is not compatible with the variable declared by the "
+                      "calling behaviour: " +
+                      std::string{reason});
+        };
+        if (v1.getVariableTypeIdentifier() != v2.getVariableTypeIdentifier()) {
+          report("unmatched type ('" + v1.type + "' vs '" + v2.type + "')");
+        }
+        if (v1.arraySize != v2.arraySize) {
+          report("unmatched array size (" + std::to_string(v1.arraySize) +
+                 " vs " + std::to_string(v2.arraySize) + ")");
+        }
+        if ((v1.hasGlossaryName()) && (v2.hasGlossaryName())) {
+          if (v1.getExternalName() != v2.getExternalName()) {
+            report("unmatched external names ('" + v1.getExternalName() +
+                   "' vs '" + v2.getExternalName() + "')");
+          }
+        }
+      };
+      for (const auto& mp : getSharedMaterialProperties(bv, h)) {
+        try {
+          if (this->isMaterialPropertyName(mp.name)) {
+            const auto& cmp =
+                this->getMaterialProperties().getVariable(mp.name);
+            checkVariableCompatibility(cmp, mp);
+          } else {
+            this->addMaterialProperty(mp, BehaviourData::UNREGISTRED);
+          }
+        } catch (std::exception& e) {
+          tfel::raise("Error while treating shared material property '" +
+                      mp.name + "' from behaviour '" + bv.name + "' of type '" +
+                      bv.behaviour.getClassName() + "'. " +
+                      std::string{e.what()});
+        }
+      }
+      for (const auto& esv : getSharedExternalStateVariables(bv, h)) {
+        try {
+          if (this->isExternalStateVariableName(esv.name)) {
+            const auto& cesv =
+                this->getExternalStateVariables().getVariable(esv.name);
+            checkVariableCompatibility(cesv, esv);
+          } else {
+            this->addExternalStateVariable(esv, BehaviourData::UNREGISTRED);
+          }
+        } catch (std::exception& e) {
+          tfel::raise("Error while treating shared external state variable '" +
+                      esv.name + "' from behaviour '" + bv.name +
+                      "' of type '" + bv.behaviour.getClassName() + "'. " +
+                      std::string{e.what()});
+        }
+      }
+    }
+    //
     auto check = [](const VariableDescription& v) {
       if (v.getTypeFlag() != SupportedTypes::SCALAR) {
         tfel::raise(

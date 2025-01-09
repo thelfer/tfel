@@ -1,0 +1,9 @@
+@DSL Default;
+@Behaviour BehaviourVariable1;
+@Description{
+  "Try to define a behaviour variable from an nonexistent file"
+}
+
+@BehaviourVariable b1 {
+  file: "Plasticty.mfront"
+};

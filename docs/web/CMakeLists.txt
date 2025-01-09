@@ -33,6 +33,7 @@ add_custom_target(website)
 add_dependencies(doc website)
 
 pandoc_html(index "-c css/slideshow.css")
+pandoc_html(behaviour-variable)
 pandoc_html(initializers)
 pandoc_html(post-processings)
 pandoc_html(associated-projects "--toc")

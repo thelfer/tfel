@@ -19,7 +19,7 @@
 #include <vector>
 #include <string>
 #include <memory>
-
+#include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/CodeBlock.hxx"
 #include "MFront/VariableDescription.hxx"
@@ -34,6 +34,7 @@ namespace mfront {
 
   // forward declaration
   struct ModelDescription;
+  struct BehaviourVariableDescription;
 
   /*!
    * This structure gathers various behaviour characteristic
@@ -42,6 +43,10 @@ namespace mfront {
   struct MFRONT_VISIBILITY_EXPORT BehaviourData
       : public MaterialKnowledgeDescription,
         private SupportedTypes {
+    //! \brief a simple alias
+    using ModellingHypothesis = tfel::material::ModellingHypothesis;
+    //! \brief a simple alias
+    using Hypothesis = ModellingHypothesis::Hypothesis;
     /*
      * normalised code block names
      * \note code block name begins with an upper case
@@ -657,6 +662,11 @@ namespace mfront {
     void addExternalStateVariable(const VariableDescription&,
                                   const RegistrationStatus);
     /*!
+     * \brief add a behaviour variable
+     * \param[in] v : variable description
+     */
+    void addBehaviourVariable(const BehaviourVariableDescription&);
+    /*!
      * \brief add a : variable
      * \param[in] v : variable description
      * \param[in] s : registration status
@@ -988,10 +998,10 @@ namespace mfront {
         const std::string&) const;
     /*!
      * \brief method that shall be called when all variables are declared.
-     *
+     * \param[in] h: modelling hypothesis
      * This method overrides variables by parameters
      */
-    void finalizeVariablesDeclaration();
+    void finalizeVariablesDeclaration(const Hypothesis);
     //! \brief destructor
     ~BehaviourData() override;
 
@@ -1107,6 +1117,8 @@ namespace mfront {
     VariableDescriptionContainer localVariables;
     //! \brief parameters of the behaviour
     VariableDescriptionContainer parameters;
+    //! \brief list of registred behaviour variables
+    std::vector<BehaviourVariableDescription> behaviourVariables;
     //! \brief registred initialize variables
     VariableDescriptionContainer initializeVariables;
     //! \brief registred post-processing variables
