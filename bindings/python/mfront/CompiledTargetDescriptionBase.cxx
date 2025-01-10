@@ -15,20 +15,20 @@
 #include <pybind11/stl.h>
 #include "MFront/CompiledTargetDescriptionBase.hxx"
 
-#define COMPILEDTARGETDESCRIPTIONBASE_ADDPROPERTY_HELPERFUNCTIONS(X)     \
-  static std::vector<std::string> CompiledTargetDescriptionBase_get##X(  \
-      const mfront::CompiledTargetDescriptionBase& t) {                  \
-    return t.X;                                                          \
-  }                                                                      \
-  static void CompiledTargetDescriptionBase_set##X(                      \
-      mfront::CompiledTargetDescriptionBase& t,                          \
-      const std::vector<std::string>& h) {                               \
-    t.X = h;                                                             \
-  }                                                                      \
-  static void CompiledTargetDescriptionBase_addProperty##X(              \
-      pybind11::class_<mfront::CompiledTargetDescriptionBase>& w) {      \
-    w.def_property(#X, CompiledTargetDescriptionBase_get##X,             \
-                   CompiledTargetDescriptionBase_set##X);                \
+#define COMPILEDTARGETDESCRIPTIONBASE_ADDPROPERTY_HELPERFUNCTIONS(X)    \
+  static std::vector<std::string> CompiledTargetDescriptionBase_get##X( \
+      const mfront::CompiledTargetDescriptionBase& t) {                 \
+    return t.X;                                                         \
+  }                                                                     \
+  static void CompiledTargetDescriptionBase_set##X(                     \
+      mfront::CompiledTargetDescriptionBase& t,                         \
+      const std::vector<std::string>& h) {                              \
+    t.X = h;                                                            \
+  }                                                                     \
+  static void CompiledTargetDescriptionBase_addProperty##X(             \
+      pybind11::class_<mfront::CompiledTargetDescriptionBase>& w) {     \
+    w.def_property(#X, CompiledTargetDescriptionBase_get##X,            \
+                   CompiledTargetDescriptionBase_set##X);               \
   }
 
 #define COMPILEDTARGETDESCRIPTIONBASE_ADDPROPERTY(X, Y) \

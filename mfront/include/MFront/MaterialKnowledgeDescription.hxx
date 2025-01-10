@@ -88,15 +88,15 @@ namespace mfront {
      * \param[in] n : name
      */
     template <typename T>
-    T& getAttribute(const std::string_view)
-      requires(isMaterialKnowledgeAttributeType<T>());
+    T& getAttribute(const std::string_view) requires(
+        isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
     template <typename T>
     const T& getAttribute(const std::string_view) const
-      requires(isMaterialKnowledgeAttributeType<T>());
+        requires(isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return the attribute with the given name
      * \param[in] n: name
@@ -104,7 +104,7 @@ namespace mfront {
      */
     template <typename T>
     T getAttribute(const std::string_view, const T&) const
-      requires(isMaterialKnowledgeAttributeType<T>());
+        requires(isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return all the attribute registred
      * \param[in] n : name

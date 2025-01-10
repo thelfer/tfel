@@ -57,8 +57,8 @@ namespace tfel::material {
         return "st2tost2";
       case FiniteStrainBehaviourTangentOperatorBase::DPK1_DF:
         return "t2tot2";
-    default:
-      break;
+      default:
+        break;
     }
     raise(
         "getFiniteStrainBehaviourTangentOperatorFlagType : "
@@ -98,8 +98,8 @@ namespace tfel::material {
         return "DT_DELOG";
       case FiniteStrainBehaviourTangentOperatorBase::DPK1_DF:
         return "DPK1_DF";
-    default:
-      break;
+      default:
+        break;
     }
     raise(
         "convertFiniteStrainBehaviourTangentOperatorFlagToString : "
@@ -154,8 +154,8 @@ namespace tfel::material {
       case FiniteStrainBehaviourTangentOperatorBase::DPK1_DF:
         return "derivative of the first Piola-Kirchhoff stress "
                "with respect to the deformation gradident";
-    default:
-      break;
+      default:
+        break;
     }
     tfel::raise(
         "getFiniteStrainBehaviourTangentOperatorDescription : "

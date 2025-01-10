@@ -106,7 +106,8 @@ void declareBehaviourData(pybind11::module_& m) {
            &BehaviourData::isExternalStateVariableName)
       .def("isExternalStateVariableIncrementName",
            &BehaviourData::isExternalStateVariableIncrementName)
-      .def("getVariableDescription", ptr, pybind11::return_value_policy::reference)
+      .def("getVariableDescription", ptr,
+           pybind11::return_value_policy::reference)
       .def("getVariableDescriptionByExternalName",
            &BehaviourData::getVariableDescriptionByExternalName,
            pybind11::return_value_policy::reference)

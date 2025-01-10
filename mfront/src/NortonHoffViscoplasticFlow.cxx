@@ -142,7 +142,8 @@ namespace mfront::bbrick {
     auto c = std::string{};
     if (this->ihrs.empty()) {
       if (!this->Ksf.empty()) {
-        c += "if(seq" + id + " > (this->Ksf" + id + ") * (this->K" + id + ")){\n";
+        c += "if(seq" + id + " > (this->Ksf" + id + ") * (this->K" + id +
+             ")){\n";
         c += "return false;\n";
         c += "}\n";
       }

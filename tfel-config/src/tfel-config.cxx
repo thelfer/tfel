@@ -171,7 +171,6 @@ static std::string getTFELHOMEWithVersionEnvironmentVariable() {
 }
 
 static std::string getTFELHOME() {
-
 #if defined _WIN32 || defined _WIN64
   // check in the registry (installation through NSIS)
   std::string rpath;
@@ -510,7 +509,7 @@ int main(const int argc, const char* const* const argv) {
 #ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
           std::cout << MACRO_AS_STRING(TFEL_SUFFIX_FOR_PYTHON_MODULES) << " ";
 #else  /* TFEL_SUFFIX_FOR_PYTHON_MODULES */
-        std::cout << " ";
+          std::cout << " ";
 #endif /* TFEL_SUFFIX_FOR_PYTHON_MODULES */
         },
         "print the suffix of the python modules, if any.");

@@ -95,7 +95,7 @@ namespace tfel::check {
 #ifdef TFEL_PYTHON_EXECUTABLE
     c.addSubstitution("@python@", TFEL_PYTHON_EXECUTABLE, false);
 #endif /* */
-  }  // end of declareTFELExecutables
+  }    // end of declareTFELExecutables
 
   /*!
    * \brief main entry point

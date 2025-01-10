@@ -106,11 +106,10 @@ void declareOverridableImplementation(pybind11::module_& m) {
            "return the name of the material. This name can be inherited "
            "from the overriden implementation or overriden");
 
-  m.def(
-      "getDestinationPathInMadnexFile",
-      static_cast<std::string (*)(const mfront::OverridableImplementation&)>(
-          mfront::getDestinationPathInMadnexFile),
-      R"(
+  m.def("getDestinationPathInMadnexFile",
+        static_cast<std::string (*)(const mfront::OverridableImplementation&)>(
+            mfront::getDestinationPathInMadnexFile),
+        R"(
       return the path where an overridable implementation will be written in a madnex file.
       )");
 

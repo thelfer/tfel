@@ -50,10 +50,10 @@ namespace tfel::meta {
      * Can only be called if B defines a random access iterator.
      */
     template <typename B>
-    static Small Test(const Subs<B>)
-      requires(IsSameType<typename std::iterator_traits<
-                              typename B::iterator>::iterator_category,
-                          std::random_access_iterator_tag>::cond);
+    static Small Test(const Subs<B>) requires(
+        IsSameType<typename std::iterator_traits<
+                       typename B::iterator>::iterator_category,
+                   std::random_access_iterator_tag>::cond);
     /*
      * A Test fonction which returns a Big.
      * It is called only if B does not defines a random access iterator.

@@ -170,7 +170,7 @@ namespace cyrano {
         b.setCYRANOBehaviourDataGradients(eto);
         b.setCYRANOIntegrationDataGradients(deto);
       }  // end of exe
-    };  // end of struct GradientInitialiserWithoutStressFreeExpansion
+    };   // end of struct GradientInitialiserWithoutStressFreeExpansion
 
     /*!
      * An helper structure which is used to compute the stiffness
@@ -185,7 +185,7 @@ namespace cyrano {
         CyranoComputeStiffnessTensor<Traits::stype>::exe(
             data.getStiffnessTensor(), props);
       }  // end of exe
-    };  // end of struct StiffnessOperatorInitializer
+    };   // end of struct StiffnessOperatorInitializer
 
     /*!
      * An helper structure which is used to compute the thermal
@@ -201,7 +201,7 @@ namespace cyrano {
         CyranoComputeThermalExpansionCoefficientTensor<H, Traits::stype>::exe(
             props + o, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
-    };  // end of struct ThermalExpansionCoefficientTensorInitializer
+    };   // end of struct ThermalExpansionCoefficientTensorInitializer
 
     /*!
      * an helper class which don't do any initialisation

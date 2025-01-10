@@ -47,12 +47,11 @@ void declareTargetsDescription(pybind11::module_& m) {
       .def("getLibraries", TargetsDescription_getLibraries)
       .def_property_readonly("libraries", &TargetsDescription_getLibraries)
       .def_readwrite("specific_targets", &TargetsDescription::specific_targets)
-      .def("__repr__",
-           [](const TargetsDescription& l) {
-             auto os = std::ostringstream{};
-             os << l;
-             return os.str();
-           });
+      .def("__repr__", [](const TargetsDescription& l) {
+        auto os = std::ostringstream{};
+        os << l;
+        return os.str();
+      });
   m.def("describes", mfront::describes);
   m.def("mergeTargetsDescription", mfront::describes);
 }

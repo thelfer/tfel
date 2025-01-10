@@ -15,7 +15,7 @@
 #include <pybind11/stl.h>
 #include "MFront/DSLFactory.hxx"
 
-static auto createNewDSL(mfront::DSLFactory& f, const std::string& n){
+static auto createNewDSL(mfront::DSLFactory& f, const std::string& n) {
   return f.createNewDSL(n, {});
 }
 

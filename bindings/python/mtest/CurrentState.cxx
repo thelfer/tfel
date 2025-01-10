@@ -191,25 +191,31 @@ void declareCurrentState(pybind11::module_& m) {
            "- 1 means that we request the  value at the end of the current "
            "time step");
 
-  pybind11::class_<tfel::math::vector<mtest::CurrentState>>(m, "CurrentStateVector")
-    .def("__len__", [](const tfel::math::vector<mtest::CurrentState>& v){return v.size();})
-    .def("__getitem__",
-	 [](const tfel::math::vector<mtest::CurrentState>& v, const unsigned short idx) {
-	   if (idx >= v.size()) {
-	     tfel::raise<std::range_error>(
-					   "invalid index '" + std::to_string(static_cast<int>(idx)) +
-					   "'");
-	   }
-	   return v[idx];
-	 }, pybind11::return_value_policy::reference)
-    .def(
-	 "__iter__",
-	 [](const tfel::math::vector<mtest::CurrentState>& v) {
-	   return pybind11::make_iterator(v.begin(), v.end());
-	 },
-	 pybind11::keep_alive<0,
-	 1>())  // keep object alive while iterator exists
+  pybind11::class_<tfel::math::vector<mtest::CurrentState>>(
+      m, "CurrentStateVector")
+      .def("__len__",
+           [](const tfel::math::vector<mtest::CurrentState>& v) {
+             return v.size();
+           })
+      .def(
+          "__getitem__",
+          [](const tfel::math::vector<mtest::CurrentState>& v,
+             const unsigned short idx) {
+            if (idx >= v.size()) {
+              tfel::raise<std::range_error>(
+                  "invalid index '" + std::to_string(static_cast<int>(idx)) +
+                  "'");
+            }
+            return v[idx];
+          },
+          pybind11::return_value_policy::reference)
+      .def(
+          "__iter__",
+          [](const tfel::math::vector<mtest::CurrentState>& v) {
+            return pybind11::make_iterator(v.begin(), v.end());
+          },
+          pybind11::keep_alive<0,
+                               1>())  // keep object alive while iterator exists
 
-    ;
-
+      ;
 }

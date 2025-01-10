@@ -81,9 +81,8 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr void computePushForwardDerivative(
       ST2toST2ResultType& r,
       const TensorType& F) noexcept  //
-    requires(tfel::typetraits::IsFundamentalNumericType<
-             numeric_type<TensorType>>::cond)
-  {
+      requires(tfel::typetraits::IsFundamentalNumericType<
+               numeric_type<TensorType>>::cond) {
     constexpr auto N = getSpaceDimension<ST2toST2ResultType>();
     static_assert(getSpaceDimension<TensorType>() == N);
     using value_type = numeric_type<ST2toST2ResultType>;

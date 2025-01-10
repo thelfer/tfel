@@ -18,7 +18,6 @@
 
 void declareGlossaryEntry(pybind11::module_&);
 
-
 void declareGlossaryEntry(pybind11::module_& m) {
   using namespace tfel::glossary;
   pybind11::class_<GlossaryEntry>(m, "GlossaryEntry")

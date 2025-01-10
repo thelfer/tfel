@@ -36,7 +36,7 @@ namespace mfront::bbrick {
       return mp;
     };
     mfront::bbrick::check(d, this->getOptions());
-      this->A = get_mp("A", "real", "A");
+    this->A = get_mp("A", "real", "A");
     this->dp0 = get_mp("dp0", "strainrate", "dp0");
     const auto Rs = id.empty() ? "Rs" + fid : "Rs" + fid + "_" + id;
     const auto dRs = "d" + Rs + "_ddp" + fid;
@@ -68,7 +68,8 @@ namespace mfront::bbrick {
     c += "if(" + dpn + " < (" + dp0n + " * (this->dt))){\n";
     c += "  return real{1};\n";
     c += "}\n";
-    c += "return 1 + ("+An+") * std::log(" + dpn + " / (" + dp0n + " * (this->dt)));\n";
+    c += "return 1 + (" + An + ") * std::log(" + dpn + " / (" + dp0n +
+         " * (this->dt)));\n";
     c += "}();\n";
     return c;
   }  // end of computeStrainRateSensitivityFactor
@@ -103,8 +104,7 @@ namespace mfront::bbrick {
     // computation of the material properties
     std::ostringstream mps;
     if (!this->A.is<BehaviourDescription::ConstantMaterialProperty>()) {
-      const auto An =
-	StrainRateSensitivityFactor::getVariableId("A", fid, id);
+      const auto An = StrainRateSensitivityFactor::getVariableId("A", fid, id);
       mps << "this->" + An + " = ";
       dsl.writeMaterialPropertyEvaluation(mps, this->A, mts);
       mps << ";\n";

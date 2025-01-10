@@ -111,6 +111,6 @@ namespace mfmtg {
     static_cast<void>(d);
     tfel::raise("write: unsupported file extension '" + ext + "'");
 #endif /* MADNEX_MFM_TEST_GENERATOR_TEST_SUPPORT */
-  }  // end of write
+  }    // end of write
 
 }  // namespace mfmtg

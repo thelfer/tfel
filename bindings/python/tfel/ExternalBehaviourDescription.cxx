@@ -62,7 +62,8 @@ void declareExternalBehaviourDescription(pybind11::module_& m) {
       .def(pybind11::init<>())
       .def(pybind11::init<std::string, std::string, std::string>())
       .def_property_readonly("elastic_material_properties_epts", &get_emps_epts)
-      .def_property_readonly("linear_thermal_expansion_coefficients_epts", &get_themps_epts)
+      .def_property_readonly("linear_thermal_expansion_coefficients_epts",
+                             &get_themps_epts)
       .def_property_readonly("mpnames", &get_mps)
       .def_property_readonly("ivnames", &get_ivs)
       .def_property_readonly("ivtypes", &get_ivs_types)

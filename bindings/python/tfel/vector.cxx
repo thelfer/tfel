@@ -35,7 +35,7 @@ void declareTFELMathVector(pybind11::module_& m) {
       })
       .def(pybind11::init<>())
       .def(pybind11::init<double>())
-    .def("__len__", [](const vector& v){return v.size();})
+      .def("__len__", [](const vector& v) { return v.size(); })
       .def("__repr__",
            [](const vector& v) {
              std::ostringstream os;

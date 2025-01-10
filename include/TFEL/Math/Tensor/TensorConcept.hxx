@@ -44,8 +44,8 @@ namespace tfel::math {
    */
   template <typename T>
   concept TensorConcept =
-      (std::is_same_v<typename std::decay_t<T>::ConceptTag, TensorTag>) &&  //
-      (requires(const T t, const unsigned short i) { t[i]; }) &&            //
+      (std::is_same_v<typename std::decay_t<T>::ConceptTag, TensorTag>)&&  //
+      (requires(const T t, const unsigned short i) { t[i]; }) &&           //
       (requires(const T t, const unsigned short i) { t(i); });
 
   //! forward declaration

@@ -26,7 +26,7 @@ static void mtest_loadMTestFileContent(mtest::TestDescription& d,
 
 void declareMTestFileExport(pybind11::module_&);
 
-void declareMTestFileExport(pybind11::module_&m) {
+void declareMTestFileExport(pybind11::module_& m) {
   //
   pybind11::class_<mtest::TestDescription>(m, "TestDescription")
       .def_readwrite("name", &mtest::TestDescription::name)

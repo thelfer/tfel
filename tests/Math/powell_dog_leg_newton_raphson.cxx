@@ -83,7 +83,7 @@ struct PowellDogLegNewtonRaphsonSolver2
     J = 2 * x;
     return true;
   }  // end of computFdF
-};  // end of struct PowellDogLegNewtonRaphsonSolver2
+};   // end of struct PowellDogLegNewtonRaphsonSolver2
 
 struct PowellDogLegNewtonRaphsonSolver3
     : public tfel::math::TinyPowellDogLegNewtonRaphsonSolver<
@@ -110,7 +110,7 @@ struct PowellDogLegNewtonRaphsonSolver3
          -200 * x(0), 100.};
     return true;
   }  // end of computFdF
-};  // end of struct PowellDogLegNewtonRaphsonSolver3
+};   // end of struct PowellDogLegNewtonRaphsonSolver3
 
 struct TinyPowellDogLegNewtonRaphsonSolverTest final
     : public tfel::tests::TestCase {

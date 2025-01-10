@@ -292,7 +292,7 @@ namespace mfront {
                             *   to specific positions. This option
                             *   is meant to be used internally and
                             *   is not accessible from a mfront file*/
-    };  // end of enum Mode
+    };                     // end of enum Mode
     /*!
      * \brief position of the inserted code
      */

@@ -49,7 +49,7 @@ namespace tfel::math {
    */
   template <typename T>
   concept T2toT2Concept =
-      (std::is_same_v<typename std::decay_t<T>::ConceptTag, T2toT2Tag>) &&  //
+      (std::is_same_v<typename std::decay_t<T>::ConceptTag, T2toT2Tag>)&&  //
       (requires(const T t, const unsigned short i, const unsigned short j) {
         t(i, j);
       });

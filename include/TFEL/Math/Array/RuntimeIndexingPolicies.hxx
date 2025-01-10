@@ -118,7 +118,7 @@ namespace tfel::math {
     static constexpr bool haveTheSameMemoryLayout() {
       return true;
     }  // end of haveTheSameMemoryLayout
-  };  // end of struct IndexingPolicyCompatiblityCheck
+  };   // end of struct IndexingPolicyCompatiblityCheck
 
   /*!
    * \brief an indexing policy suitable for runtime matrices

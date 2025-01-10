@@ -391,8 +391,8 @@ namespace aster {
         }
         return 0;
       }  // end of CallBehaviour::exe
-    };  // end of struct CallBehaviour
-  };  // end of struct AsterInterface
+    };   // end of struct CallBehaviour
+  };     // end of struct AsterInterface
 
 }  // end of namespace aster
 

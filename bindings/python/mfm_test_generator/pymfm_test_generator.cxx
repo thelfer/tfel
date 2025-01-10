@@ -14,7 +14,8 @@
 #include <pybind11/pybind11.h>
 #include "TFEL/Macros.hxx"
 
-#define MFM_TEST_GENERATOR_MODULE_NAME TFEL_PP_JOIN(_mfm_test_generator_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
+#define MFM_TEST_GENERATOR_MODULE_NAME \
+  TFEL_PP_JOIN(_mfm_test_generator_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
 void declareMFMTestGeneratorFileExport(pybind11::module_&);
 

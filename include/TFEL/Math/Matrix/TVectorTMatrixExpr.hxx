@@ -29,9 +29,11 @@
 
 namespace tfel::math {
 
-  template <unsigned short N, unsigned short M, VectorConcept A, MatrixConcept B>
+  template <unsigned short N,
+            unsigned short M,
+            VectorConcept A,
+            MatrixConcept B>
   struct TVectorTMatrixExpr : public ExprBase {
-
     using RunTimeProperties = EmptyRunTimeProperties;
     using Result = BinaryOperationResult<A, B, OpMult>;
 
