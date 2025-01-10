@@ -68,7 +68,7 @@ namespace tfel::math::internals {
         }
       }
     }  // end of exe
-  };  // end of struct SortEigenVectors<2u>
+  };   // end of struct SortEigenVectors<2u>
   //! \brief partial specialisation of the `SortEigenVectors` in 3D
   template <>
   struct SortEigenVectors<3u> {
@@ -127,7 +127,7 @@ namespace tfel::math::internals {
            m2(1, idx(0)), m2(1, idx(1)), m2(1, idx(2)),
            m2(2, idx(0)), m2(2, idx(1)), m2(2, idx(2))};
     }  // end of exe
-  };  // end of struct SortEigenVectors<3u>
+  };   // end of struct SortEigenVectors<3u>
 
 }  // end of namespace tfel::math::internals
 

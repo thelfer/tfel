@@ -201,8 +201,8 @@ namespace mfront {
       os << "return MechanicalBehaviour<" << btype
          << ",hypothesis, NumericType,false>::SUCCESS;\n";
     }
-      os << "}\n\n";
-    }
+    os << "}\n\n";
+  }
 
   void IsotropicStrainHardeningMisesCreepCodeGenerator::
       writeBehaviourComputeTangentOperator(std::ostream& os,

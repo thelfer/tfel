@@ -570,7 +570,7 @@ namespace mtest {
       }
     }
     this->addTest(t, test_name);
-  }  // end of appendTestFromMadnexFile
+  }    // end of appendTestFromMadnexFile
 #endif /* MADNEX_MTEST_TEST_SUPPORT */
 
   void MTestMain::treatMadnexInputFile(const std::string& i) {
@@ -627,7 +627,7 @@ namespace mtest {
         "MTestMain::treatMadnexInputFile: "
         "madnex support is not available");
 #endif /* MADNEX_MTEST_TEST_SUPPORT */
-  }  // end of treatMadnexInputFile
+  }    // end of treatMadnexInputFile
 
   void MTestMain::treatStandardInputFile(const std::string& i) {
 #ifdef MTEST_HAVE_MADNEX

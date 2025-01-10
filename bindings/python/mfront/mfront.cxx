@@ -23,7 +23,8 @@
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/PathSpecifier.hxx"
 
-#define MFRONT_MODULE_NAME TFEL_PP_JOIN(_mfront_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
+#define MFRONT_MODULE_NAME \
+  TFEL_PP_JOIN(_mfront_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
 void declareMadnexSupport(pybind11::module_&);
 void declareAbstractDSL(pybind11::module_&);

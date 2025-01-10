@@ -2856,8 +2856,8 @@ namespace mfront {
           << "tfel::material::ModellingHypothesisToSpaceDimension<H>;\n";
     }
     if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      out << "static " << constexpr_c
-          << " ModellingHypothesis::Hypothesis H = " << "ModellingHypothesis::"
+      out << "static " << constexpr_c << " ModellingHypothesis::Hypothesis H = "
+          << "ModellingHypothesis::"
           << ModellingHypothesis::toUpperCaseString(h) << ";\n";
     }
     if (mb.isModel()) {

@@ -69,8 +69,8 @@ namespace tfel::math::anderson {
                           const unsigned char n);
 
   template <typename Field>
-  auto scalar_product(const Field& f1,
-                      const Field& f2) -> decltype(f1[0] * f2[0]);
+  auto scalar_product(const Field& f1, const Field& f2)
+      -> decltype(f1[0] * f2[0]);
 
 }  // end of namespace tfel::math::anderson
 

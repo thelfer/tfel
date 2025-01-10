@@ -62,9 +62,9 @@ namespace mfront {
     const auto use_qt =
         (areQuantitiesSupported && useQuantities(mpd)) ? "true" : "false";
     for (const auto& a : getScalarTypeAliases()) {
-      os << "using " << a
-         << " [[maybe_unused]] = " << "typename tfel::config::ScalarTypes<"
-         << numeric_type << ", " << use_qt << ">::" << a << ";\n";
+      os << "using " << a << " [[maybe_unused]] = "
+         << "typename tfel::config::ScalarTypes<" << numeric_type << ", "
+         << use_qt << ">::" << a << ";\n";
     }
   }  // end of writeScalarStandardTypedefs
 

@@ -14,7 +14,8 @@
 #include <pybind11/pybind11.h>
 #include "TFEL/Macros.hxx"
 
-#define TFEL_MATH_MODULE_NAME TFEL_PP_JOIN(math_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
+#define TFEL_MATH_MODULE_NAME \
+  TFEL_PP_JOIN(math_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
 void declareTFELMathVector(pybind11::module_&);
 void declaretvector(pybind11::module_&);

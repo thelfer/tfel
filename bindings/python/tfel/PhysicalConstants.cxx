@@ -92,7 +92,6 @@ void declarePhysicalConstants(pybind11::module_& m) {
       .def_readonly_static("R", &PhysicalConstants::MolarGasConstant)
       .def_readonly_static("StefanBoltzmannConstant",
                            &PhysicalConstants::StefanBoltzmannConstant)
-      .def_readonly_static("s", &PhysicalConstants::StefanBoltzmannConstant)
-      ;
+      .def_readonly_static("s", &PhysicalConstants::StefanBoltzmannConstant);
 
 }  // end of declarePhysicalConstants

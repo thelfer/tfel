@@ -142,7 +142,7 @@ namespace tfel::math {
     static constexpr bool haveTheSameMemoryLayout() {
       return Stride1 == Stride2;
     }  // end of haveTheSameMemoryLayout
-  };  // end of struct IndexingPolicyCompatiblityCheck
+  };   // end of struct IndexingPolicyCompatiblityCheck
 
   /*!
    * \brief an indexing policy suitable for fixed sized matrices
@@ -232,7 +232,7 @@ namespace tfel::math {
     static constexpr bool haveTheSameMemoryLayout() {
       return Stride1 == Stride2;
     }  // end of haveTheSameMemoryLayout
-  };  // end of struct IndexingPoliciesCompatiblityCheck
+  };   // end of struct IndexingPoliciesCompatiblityCheck
 
   /*!
    * \brief an indexing policy build as the cartesian product of the two

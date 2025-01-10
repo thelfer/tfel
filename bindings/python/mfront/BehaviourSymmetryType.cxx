@@ -20,7 +20,7 @@ void declareBehaviourSymmetryType(pybind11::module_&);
 void declareBehaviourSymmetryType(pybind11::module_& m) {
   pybind11::enum_<mfront::BehaviourSymmetryType>(m,
 
- "BehaviourSymmetryType")
+                                                 "BehaviourSymmetryType")
       .value("ISOTROPIC", mfront::BehaviourSymmetryType::ISOTROPIC)
       .value("ORTHOTROPIC", mfront::BehaviourSymmetryType::ORTHOTROPIC);
 }  // end of declareBehaviourSymmetryType

@@ -833,7 +833,7 @@ namespace tfel {
        */
       static std::string getName(void) { return std::string("EllipticCreep"); }
     };  // end of struct Name
-  }  // end of namespace utilities
+  }     // end of namespace utilities
 }  // end of namespace tfel
 
 #endif /* LIB_TFELMATERIAL_ELLIPTICCREEP_HXX_ */

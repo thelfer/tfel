@@ -15,7 +15,8 @@
 #include <pybind11/pybind11.h>
 #include "TFEL/Macros.hxx"
 
-#define TFEL_SYSTEM_MODULE_NAME TFEL_PP_JOIN(system_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
+#define TFEL_SYSTEM_MODULE_NAME \
+  TFEL_PP_JOIN(system_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
 #ifndef _WIN32
 void declareProcessManagerCommand(pybind11::module_&);

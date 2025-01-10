@@ -11,7 +11,6 @@
  * project under specific licensing conditions.
  */
 
-
 #include <memory>
 #include <stdexcept>
 #include <pybind11/pybind11.h>
@@ -67,29 +66,29 @@ static std::unique_ptr<tfel::utilities::Data> convert_python_object_to_data_ptr(
   return d;
 }  // end of convert_python_object_to_data_ptr
 
-  template <typename T>
-  static void data_add_def(pybind11::class_<tfel::utilities::Data> & w,
-                           const std::string& n) {
-    using namespace tfel::utilities;
-    bool (Data::*is_ptr)() const = &Data::is<T>;
-    const T& (Data::*get_ptr)() const = &Data::get<T>;
-    w.def(("is" + n).c_str(), is_ptr).def(("get" + n).c_str(), get_ptr);
-  }
+template <typename T>
+static void data_add_def(pybind11::class_<tfel::utilities::Data>& w,
+                         const std::string& n) {
+  using namespace tfel::utilities;
+  bool (Data::*is_ptr)() const = &Data::is<T>;
+  const T& (Data::*get_ptr)() const = &Data::get<T>;
+  w.def(("is" + n).c_str(), is_ptr).def(("get" + n).c_str(), get_ptr);
+}
 
-  void declareData(pybind11::module_&);
+void declareData(pybind11::module_&);
 
-  void declareData(pybind11::module_ & m) {
-    using namespace tfel::utilities;
-    pybind11::class_<Data> w(m, "Data");
-    w.def("get", convert_data_to_python_object);
-    w.def(pybind11::init(&convert_python_object_to_data_ptr));
-    data_add_def<int>(w, "Int");
-    data_add_def<double>(w, "Double");
-    data_add_def<std::string>(w, "String");
-    data_add_def<std::vector<Data>>(w, "DataVector");
-    data_add_def<DataMap>(w, "DataMap");
-    //
-    //    class_<DataMap>("DataMap").def(map_indexing_suite<DataMap>());
-    //    class_<std::vector<Data>>("DataVector")
-    //        .def(vector_indexing_suite<std::vector<Data>>());
-  }
+void declareData(pybind11::module_& m) {
+  using namespace tfel::utilities;
+  pybind11::class_<Data> w(m, "Data");
+  w.def("get", convert_data_to_python_object);
+  w.def(pybind11::init(&convert_python_object_to_data_ptr));
+  data_add_def<int>(w, "Int");
+  data_add_def<double>(w, "Double");
+  data_add_def<std::string>(w, "String");
+  data_add_def<std::vector<Data>>(w, "DataVector");
+  data_add_def<DataMap>(w, "DataMap");
+  //
+  //    class_<DataMap>("DataMap").def(map_indexing_suite<DataMap>());
+  //    class_<std::vector<Data>>("DataVector")
+  //        .def(vector_indexing_suite<std::vector<Data>>());
+}

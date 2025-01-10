@@ -293,7 +293,8 @@ namespace mfront {
     for (const auto& q : sq) {
       this->registerCallBack(
           q.first,
-          CallBack(q.second, [this] { this->treatStandardQuery(); }, false));
+          CallBack(
+              q.second, [this] { this->treatStandardQuery(); }, false));
     }
     const std::vector<std::pair<const char*, const char*>> sq2 = {
         {"--attribute-type", "display an attribute type"},
@@ -332,7 +333,8 @@ namespace mfront {
     for (const auto& q : sq2) {
       this->registerCallBack(
           q.first,
-          CallBack(q.second, [this] { this->treatStandardQuery2(); }, true));
+          CallBack(
+              q.second, [this] { this->treatStandardQuery2(); }, true));
     }
   }  // end of registerCommandLineCallBacks
 

@@ -17,9 +17,8 @@
 namespace mfront {
 
   template <typename T>
-  T& VariableDescription::getAttribute(const std::string& n)
-    requires(isVariableAttribute<T>)
-  {
+  T& VariableDescription::getAttribute(const std::string& n) requires(
+      isVariableAttribute<T>) {
     auto p = this->attributes.find(n);
     if (p == this->attributes.end()) {
       p = this->attributes.insert({n, VariableAttribute(T())}).first;
@@ -29,8 +28,7 @@ namespace mfront {
 
   template <typename T>
   const T& VariableDescription::getAttribute(const std::string& n) const
-    requires(isVariableAttribute<T>)
-  {
+      requires(isVariableAttribute<T>) {
     auto p = this->attributes.find(n);
     if (p == this->attributes.end()) {
       VariableDescription::throwUndefinedAttribute(n);
@@ -40,8 +38,7 @@ namespace mfront {
 
   template <typename T>
   T VariableDescription::getAttribute(const std::string& n, const T& v) const
-    requires(isVariableAttribute<T>)
-  {
+      requires(isVariableAttribute<T>) {
     auto p = this->attributes.find(n);
     if (p != this->attributes.end()) {
       return p->second.template get<T>();

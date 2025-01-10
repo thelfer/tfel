@@ -164,8 +164,8 @@ namespace mfront::bbrick {
       c += "if(" + dpn + " < " + delta_p_epsn + "){\n";
       c += "   return " + initial_slope_n + ";\n";
       c += "}\n";
-      c += "return " + nn + " * (" + Rs + " - 1) / std::max(strain(" + dpn + "), " +
-           delta_p_epsn + ");\n";
+      c += "return " + nn + " * (" + Rs + " - 1) / std::max(strain(" + dpn +
+           "), " + delta_p_epsn + ");\n";
     } else {
       c += "return " + nn + " * (" + Rs + " - 1) / std::max(strain(" + dpn +
            "), static_cast<strain>(this->epsilon));\n";

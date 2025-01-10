@@ -35,7 +35,7 @@ static void declarestensor(pybind11::module_& m, const char* const n) {
       })
       .def(pybind11::init<>())
       .def(pybind11::init<double>())
-    .def("__len__", [](const stensor& s){return s.size();})
+      .def("__len__", [](const stensor& s) { return s.size(); })
       .def("__repr__",
            [](const stensor& s) {
              std::ostringstream os;

@@ -14,7 +14,8 @@
 #include <pybind11/pybind11.h>
 #include "TFEL/Macros.hxx"
 
-#define TFEL_UTILITIES_MODULE_NAME TFEL_PP_JOIN(utilities_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
+#define TFEL_UTILITIES_MODULE_NAME \
+  TFEL_PP_JOIN(utilities_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
 void declareData(pybind11::module_&);
 void declareTextData(pybind11::module_&);

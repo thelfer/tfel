@@ -18,7 +18,7 @@ namespace tfel::math {
    * - the exposed types have the same space dimension at the argument
    * - the exposed types use quantities if the argument does.
    *
-   * A typical usage of this class is to deduce the types of the arguments of 
+   * A typical usage of this class is to deduce the types of the arguments of
    * a method from the type of one of the argument.
    */
   template <MathObjectConcept Type>
@@ -26,8 +26,8 @@ namespace tfel::math {
                                           base_type<numeric_type<Type>>,
                                           isQuantity<numeric_type<Type>>()> {};
   /*!
-   * \brief this struct exposes standard scalar types compatible with its argument.
-   * The exposed types use quantities if the argument does.
+   * \brief this struct exposes standard scalar types compatible with its
+   * argument. The exposed types use quantities if the argument does.
    *
    * Let us consider the following function:
    *
@@ -42,9 +42,9 @@ namespace tfel::math {
    * satisfies the `ScalarConcept` concept. Here, the type of the second
    * parameter is deduced for `StressType`:
    *
-   * - if `StressType` matches `qt<Stress, NumericType>`, `nu` must have the type
-   *   `qt<NoUnit, NumericType>`, where `NumericType` is a plain old floatting point
-   *   type such as `double`, `float` or `long double`.
+   * - if `StressType` matches `qt<Stress, NumericType>`, `nu` must have the
+   * type `qt<NoUnit, NumericType>`, where `NumericType` is a plain old
+   * floatting point type such as `double`, `float` or `long double`.
    * - if `StressType` matches `double`, `nu` must have the type `double`.
    */
   template <ScalarConcept Type>
@@ -54,11 +54,11 @@ namespace tfel::math {
 
   /*!
    * \brief this function checks if the given type matches the given unit if it
-   * built on top of a quantity. If the given type is built on a plain old scalar
-   * type, this function always returns true.
+   * built on top of a quantity. If the given type is built on a plain old
+   * scalar type, this function always returns true.
    *
-   * This function allows to add requirements on a template parameter of a function.
-   * Let us consider the following function:
+   * This function allows to add requirements on a template parameter of a
+   * function. Let us consider the following function:
    *
    * \code
    * template <tfel::math::ScalarConcept StressType>
@@ -69,13 +69,13 @@ namespace tfel::math {
    *      tfel::math::checkUnitCompatibility<tfel::math::Stress, StressType>());
    * \endcode
    *
-   * Thanks to the `checkUnitCompatibility` function, this function only compiles if
-   * `StressType` either:
+   * Thanks to the `checkUnitCompatibility` function, this function only
+   * compiles if `StressType` either:
    *
-   * - maches `qt<Stress, NumericType>`, where `NumericType` is a plain old floatting point
-   *   type such as `double`, `float` or `long double`.
+   * - maches `qt<Stress, NumericType>`, where `NumericType` is a plain old
+   * floatting point type such as `double`, `float` or `long double`.
    * - is a is a plain old floatting point type.
-   * 
+   *
    * \tparam Unit: unit used for the test
    * \tparam T: tested type
    */

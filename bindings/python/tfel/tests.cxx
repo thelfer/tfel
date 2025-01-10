@@ -14,7 +14,8 @@
 #include <pybind11/pybind11.h>
 #include "TFEL/Macros.hxx"
 
-#define TFEL_TESTS_MODULE_NAME TFEL_PP_JOIN(tests_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
+#define TFEL_TESTS_MODULE_NAME \
+  TFEL_PP_JOIN(tests_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
 void declareTestResult(pybind11::module_&);
 void declareXMLTestOutput(pybind11::module_&);
