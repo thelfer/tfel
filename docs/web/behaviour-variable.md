@@ -2,6 +2,8 @@
 title: Calling behaviours inside behaviours using the `@BehaviourVariable` keyword
 author: Thomas Helfer, Antoine Martin
 date: 08/01/2025
+geometry: a4paper
+fontsize: 12pt
 ---
 
 Calling other behaviours from a behaviour is useful in many situations

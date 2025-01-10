@@ -20,7 +20,6 @@ namespace mfront {
   }  // end of addPrefixAndSuffix
 
   static VariableDescriptionContainer selectSharedVariables(
-      const BehaviourVariableDescription& d,
       const VariableDescriptionContainer& variables,
       const std::vector<std::regex>& filters) {
     auto r = VariableDescriptionContainer{};
@@ -97,7 +96,7 @@ namespace mfront {
       const BehaviourVariableDescription& d,
       const BehaviourVariableDescription::Hypothesis& h) {
     const auto& bd = d.behaviour.getBehaviourData(h);
-    return selectSharedVariables(d, bd.getMaterialProperties(),
+    return selectSharedVariables(bd.getMaterialProperties(),
                                  d.shared_material_properties);
   }  // end of getSharedMaterialProperties
 
@@ -113,7 +112,7 @@ namespace mfront {
       const BehaviourVariableDescription& d,
       const BehaviourVariableDescription::Hypothesis& h) {
     const auto& bd = d.behaviour.getBehaviourData(h);
-    return selectSharedVariables(d, bd.getExternalStateVariables(),
+    return selectSharedVariables(bd.getExternalStateVariables(),
                                  d.shared_external_state_variables);
   }  // end of getSharedExternalStateVariables
 
