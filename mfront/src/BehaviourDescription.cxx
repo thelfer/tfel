@@ -1927,8 +1927,7 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "BehaviourDescription::setHypotheses: " + m);
     };
-    auto update_hypotheses = [this,
-                              throw_if](const std::set<Hypothesis>& nmhs) {
+    auto update_hypotheses = [this](const std::set<Hypothesis>& nmhs) {
       if (this->overriden_hypotheses.empty()) {
         this->hypotheses = nmhs;
       } else {
