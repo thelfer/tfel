@@ -38,7 +38,6 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
       : tfel::tests::TestCase("TFEL/Material", "EshelbyBasedHomogenization") {
   }  // end of EshelbyBasedHomogenizationTest
   tfel::tests::TestResult execute() override {
-
     using real = double;
     constexpr bool qt = true;
     using stress = typename tfel::config::Types<1u, real, qt>::stress;

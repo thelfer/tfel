@@ -102,14 +102,13 @@ namespace tfel::material::homogenization::elasticity {
     }
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
 
-    const auto precision = [eps, precf, precd, precld]() {
-      if (eps == std::numeric_limits<float>::epsilon()) {
-        return precf;
-      } else if (eps == std::numeric_limits<double>::epsilon()) {
+    const auto precision = [precf, precd, precld]() {
+      if (typeid(real) == typeid(long double)) {
+        return precld;
+      } else if (typeid(real) == typeid(double)) {
         return precd;
-
       }
-      return precld;
+      return precf;
     }();
     if (std::abs(e - 1) < precision) {
       return computeSphereEshelbyTensor<real>(nu);
@@ -206,14 +205,13 @@ namespace tfel::material::homogenization::elasticity {
     }
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
 
-    const auto precision = [eps, precf, precd, precld]() {
-      if (eps == std::numeric_limits<float>::epsilon()) {
-        return precf;
-      } else if (eps == std::numeric_limits<double>::epsilon()) {
+    const auto precision = [precf, precd, precld]() {
+      if (typeid(real) == typeid(long double)) {
+        return precld;
+      } else if (typeid(real) == typeid(double)) {
         return precd;
-
       }
-      return precld;
+      return precf;
     }();
     if (std::abs((b - a) / c) < precision ||
         std::abs((a - c) / b) < precision ||

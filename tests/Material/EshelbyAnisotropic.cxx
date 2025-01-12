@@ -40,6 +40,7 @@ struct EshelbyAnisotropicTest final : public tfel::tests::TestCase {
   tfel::tests::TestResult execute() override {
     this->template errors<double, true>();
     this->template test_Eshelby<double, true>();
+    this->template test_Eshelby2D<double, true>();
     this->template test_localisator<double, true>();
     return this->result;
   }
@@ -75,8 +76,7 @@ struct EshelbyAnisotropicTest final : public tfel::tests::TestCase {
     using lg = typename tfel::config::Types<1u, real, use_qt>::length;
     using stress = typename tfel::config::Types<1u, real, use_qt>::stress;
 
-    static constexpr auto eps =
-        std::sqrt(std::numeric_limits<real>::epsilon());
+    static constexpr auto eps = std::sqrt(std::numeric_limits<real>::epsilon());
     const auto nu = real{0.3};
     const auto young = stress{150e9};
     const tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
@@ -87,20 +87,20 @@ struct EshelbyAnisotropicTest final : public tfel::tests::TestCase {
         StiffnessTensorAlterationCharacteristic::UNALTERED;
     computeIsotropicStiffnessTensorII<3u, value, stress, real>(C_0, young, nu);
     const auto S1 = computeAnisotropicEshelbyTensor<real, stress, lg>(
-        C_0, n_a,lg{3}, n_b,lg{2}, lg{1},14);
+        C_0, n_a, lg{3}, n_b, lg{2}, lg{1}, 14);
     const auto S2 = computeEshelbyTensor(nu, lg{1}, lg{2}, lg{3});
     const auto S3 = computeEshelbyTensor(nu, lg{2}, lg{3}, lg{1});
     for (int i : {0, 1, 2, 3, 4, 5}) {
       for (int j : {0, 1, 2, 3, 4, 5}) {
         TFEL_TESTS_ASSERT(std::abs(S1(i, j) - S2(i, j)) < eps);
         TFEL_TESTS_ASSERT(std::abs(S1(i, j) - S3(i, j)) < eps);
-        //std::cout << S1(i,j)-S2(i,j)<< " "<< eps<<'\n';
-        //std::cout << S1(i,j)-S3(i,j) << " "<< eps<<'\n';
+        // std::cout << S1(i,j)-S2(i,j)<< " "<< eps<<'\n';
+        // std::cout << S1(i,j)-S3(i,j) << " "<< eps<<'\n';
       };
     };
 
     const auto SAxi1 = computeAnisotropicEshelbyTensor<real, stress, lg>(
-        C_0, n_a,lg{30},n_b, lg{3}, lg{3},14);
+        C_0, n_a, lg{30}, n_b, lg{3}, lg{3}, 14);
     const auto SAxi2 = computeEshelbyTensor(nu, lg{30}, lg{3}, lg{3});
     for (int i : {0, 1, 2, 3, 4, 5}) {
       for (int j : {0, 1, 2, 3, 4, 5}) {
@@ -110,7 +110,7 @@ struct EshelbyAnisotropicTest final : public tfel::tests::TestCase {
     };
 
     const auto SSph1 = computeAnisotropicEshelbyTensor<real, stress, lg>(
-        C_0, n_a,lg{3},n_b, lg{3}, lg{3},14);
+        C_0, n_a, lg{3}, n_b, lg{3}, lg{3}, 14);
     const auto SSph2 = computeEshelbyTensor(nu, lg{30}, lg{30}, lg{30});
     for (int i : {0, 1, 2, 3, 4, 5}) {
       for (int j : {0, 1, 2, 3, 4, 5}) {
@@ -120,6 +120,47 @@ struct EshelbyAnisotropicTest final : public tfel::tests::TestCase {
     };
 
   };  // end of test_Eshelby
+
+private:
+  template <typename NumericType, bool use_qt>
+  void test_Eshelby2D() {
+    using namespace tfel::material::homogenization::elasticity;
+    using real = NumericType;
+    using lg = typename tfel::config::Types<1u, real, use_qt>::length;
+    using stress = typename tfel::config::Types<1u, real, use_qt>::stress;
+
+    static constexpr auto eps = std::sqrt(std::numeric_limits<real>::epsilon());
+    const auto nu = real{0.3};
+    const auto young = stress{150e9};
+    const tfel::math::tvector<2u, real> n_a = {1., 0.};
+    const tfel::math::tvector<2u, real> n_b = {0., 1.};
+    tfel::math::st2tost2<2u, stress> C_0;
+    using namespace tfel::material;
+    static constexpr auto value =
+        StiffnessTensorAlterationCharacteristic::UNALTERED;
+    computeIsotropicStiffnessTensorII<2u, value, stress, real>(C_0, young, nu);
+    const auto S2D1 = compute2DAnisotropicEshelbyTensor<real, stress, lg>(
+        C_0, n_a, lg{3}, lg{2}, 14);
+    const auto S2D2 = computeEllipticCylinderEshelbyTensor(nu, real{1.5});
+    for (int i : {0, 1, 2, 3}) {
+      for (int j : {0, 1, 2, 3}) {
+        TFEL_TESTS_ASSERT(std::abs(S2D1(i, j) - S2D2(i, j)) < eps);
+        // std::cout << S1(i,j)-S2(i,j)<< " "<< eps<<'\n';
+      };
+    };
+
+
+    const auto S2DSph1 = compute2DAnisotropicEshelbyTensor<real, stress, lg>(
+        C_0, n_a, lg{3}, lg{3}, 14);
+    const auto S2DSph2 = computeCircularCylinderEshelbyTensor(nu);
+    for (int i : {0, 1, 2, 3}) {
+      for (int j : {0, 1, 2, 3}) {
+        TFEL_TESTS_ASSERT(std::abs(S2DSph1(i, j) - S2DSph2(i, j)) < eps);
+        // std::cout << SSph1(i,j)-SSph2(i,j) << " "<< eps <<'\n';
+      };
+    };
+
+  };  // end of test_Eshelby2D
 
  private:
   template <typename NumericType, bool use_qt>
@@ -157,6 +198,8 @@ struct EshelbyAnisotropicTest final : public tfel::tests::TestCase {
     };
 
   };  // end of test_localisator
+
+  
 
 };  // end of struct EshelbyAnisotropicTest
 
