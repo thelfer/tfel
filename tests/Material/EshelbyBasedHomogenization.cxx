@@ -42,7 +42,7 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     constexpr bool qt = true;
     using stress = typename tfel::config::Types<1u, real, qt>::stress;
     using length = typename tfel::config::Types<1u, real, qt>::length;
-
+    
     this->template test1<real, stress, length>();
     this->template errors<real, stress, length>();
     this->template test3<real, stress, length>();
@@ -52,6 +52,7 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     this->template test7<real, stress, length>();
     return this->result;
   }
+
 
  private:
   template <typename real, typename stress, typename length>
