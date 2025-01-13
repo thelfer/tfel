@@ -151,7 +151,7 @@ static bool getValueInRegistry(std::string& value) {
   }
   return false;
 }
-#endif defined _WIN32 || defined _WIN64
+#endif /* defined _WIN32 || defined _WIN64 */
 
 static std::string getTFELHOMEWithVersionEnvironmentVariable() {
   auto replace_all = [](std::string_view c, const char c1) -> std::string {
