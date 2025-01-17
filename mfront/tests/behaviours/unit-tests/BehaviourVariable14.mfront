@@ -1,0 +1,13 @@
+@DSL Default;
+@Behaviour BehaviourVariable14;
+@Description{
+  "Calling an external behaviour with "
+  "uses the strain in @InitLocalVariables"
+}
+
+@BehaviourVariable b1{
+  file : "InvalidExternalBehaviour1.mfront",
+  store_gradients: false,
+  store_thermodynamic_forces: false,
+  shared_external_state_variables: {".+"}
+};

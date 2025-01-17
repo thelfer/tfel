@@ -181,6 +181,16 @@ namespace mfront {
   std::tuple<std::string, bool, unsigned short>
   extractVariableNameAndArrayPosition(const std::string&);
 
+  /*!
+   * \return true if the next tokens are '<safe>', false otherwise
+   * \param[in,out] p  : current position in the stream
+   * \param[in]     pe : end of the stream
+   */
+  MFRONT_VISIBILITY_EXPORT
+  bool readSafeOptionTypeIfPresent(
+      tfel::utilities::CxxTokenizer::const_iterator&,
+      const tfel::utilities::CxxTokenizer::const_iterator);
+
 }  // namespace mfront
 
 #include "MFront/MFrontUtilities.ixx"

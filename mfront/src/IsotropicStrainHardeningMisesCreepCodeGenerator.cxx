@@ -160,6 +160,15 @@ namespace mfront {
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     }
+    os << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+("
+       << this->bd.getClassName() << "::theta)*(this->deto)));\n"
+       << "this->seq_e = sigmaeq(this->se);\n"
+       << "if(this->seq_e> 0.01 * (this->young) * "
+       << "std::numeric_limits<NumericType>::epsilon()){\n"
+       << "this->n = 3 * (this->se)/(2 * this->seq_e);\n"
+       << "} else {\n"
+       << "this->n = StrainStensor(strain(0));\n"
+       << "}\n";
     os << "if(!this->NewtonIntegration()){\n";
     if (this->bd.useQt()) {
       os << "return MechanicalBehaviour<" << btype
@@ -236,21 +245,6 @@ namespace mfront {
        << "return true;\n"
        << "}\n\n";
   }
-
-  void IsotropicStrainHardeningMisesCreepCodeGenerator::
-      writeBehaviourParserSpecificInitializeMethodPart(std::ostream& os,
-                                                       const Hypothesis) const {
-    this->checkBehaviourFile(os);
-    os << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+("
-       << this->bd.getClassName() << "::theta)*(this->deto)));\n"
-       << "this->seq_e = sigmaeq(this->se);\n"
-       << "if(this->seq_e> 0.01 * (this->young) * "
-       << "std::numeric_limits<NumericType>::epsilon()){\n"
-       << "this->n = 3 * (this->se)/(2 * this->seq_e);\n"
-       << "} else {\n"
-       << "this->n = StrainStensor(strain(0));\n"
-       << "}\n";
-  }  // end of writeBehaviourParserSpecificInitializeMethodPart
 
   IsotropicStrainHardeningMisesCreepCodeGenerator::
       ~IsotropicStrainHardeningMisesCreepCodeGenerator() = default;

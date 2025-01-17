@@ -82,7 +82,8 @@ namespace mfront {
     bool useQt() const override;
     void disableQuantitiesUsageIfNotAlreadySet() override;
     void addExternalMFrontFile(const std::string&,
-                               const std::vector<std::string>&) override;
+                               const std::vector<std::string>&,
+                               const tfel::utilities::DataMap&) override;
     void treatUnknownKeyword() override;
     void reserveName(const std::string&) override;
     bool isNameReserved(const std::string&) const override;

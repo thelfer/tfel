@@ -1,4 +1,3 @@
-
 /*!
  * \file   mfront/src/BehaviourDSLCommon.cxx
  * \brief
@@ -38,6 +37,7 @@
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/PedanticMode.hxx"
 #include "MFront/MFrontLogStream.hxx"
@@ -79,6 +79,12 @@ namespace mfront {
                 automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable)
         .addDataTypeValidator<std::string>(
             BehaviourDescription::modellingHypothesis)
+        .addDataTypeValidator<std::string>(
+            BehaviourDescription::internalNamespace)
+        .addDataTypeValidator<bool>(
+            BehaviourDescription::defaultConstructor)
+        .addDataTypeValidator<bool>(
+            BehaviourDescription::finalClass)
         .addDataTypeValidator<std::vector<tfel::utilities::Data>>(
             BehaviourDescription::modellingHypotheses);
   }  // end of getDSLOptionsValidator
@@ -120,7 +126,10 @@ namespace mfront {
              BehaviourDescription::
                  automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable,
              BehaviourDescription::modellingHypothesis,
-             BehaviourDescription::modellingHypotheses})),
+             BehaviourDescription::modellingHypotheses,
+             BehaviourDescription::defaultConstructor,
+             BehaviourDescription::finalClass,
+             BehaviourDescription::internalNamespace})),
         explicitlyDeclaredUsableInPurelyImplicitResolution(false) {
     //
     using MemberFunc = void (BehaviourDSLCommon::*)();
@@ -701,8 +710,10 @@ namespace mfront {
   }  // end of getBehaviourDescription
 
   void BehaviourDSLCommon::addExternalMFrontFile(
-      const std::string& f, const std::vector<std::string>& vinterfaces) {
-    this->mb.addExternalMFrontFile(f, vinterfaces);
+      const std::string& f,
+      const std::vector<std::string>& vinterfaces,
+      const tfel::utilities::DataMap& dsl_options) {
+    this->mb.addExternalMFrontFile(f, vinterfaces, dsl_options);
   }  // end of addExternalMFrontFile
 
   const MaterialKnowledgeDescription&
@@ -916,7 +927,7 @@ namespace mfront {
         this->appendToIncludes("#include\"" + h + "\"");
       }
       this->atds.push_back(std::move(t));
-      this->mb.addExternalMFrontFile(path, {"mfront"});
+      this->mb.addExternalMFrontFile(path, {"mfront"}, {});
     } catch (std::exception& e) {
       this->throwRuntimeError(
           "BehaviourDSLCommon::getModelDescription",
@@ -942,8 +953,13 @@ namespace mfront {
     }
     //
     const auto path = SearchPathsHandler::search(f);
+    const auto dsl_options = tfel::utilities::DataMap{
+        {BehaviourDescription::defaultConstructor, true},
+        {BehaviourDescription::finalClass, false},
+        {BehaviourDescription::internalNamespace,
+         std::string{"mfront_internal_behaviours"}}};
     // a simple test to fix Issue #524
-    const auto adsl = MFrontBase::getDSL(path);
+    const auto adsl = MFrontBase::getDSL(path, dsl_options);
     if (adsl->getTargetType() != AbstractDSL::BEHAVIOURDSL) {
       this->throwRuntimeError(
           "BehaviourDSLCommon::getBehaviourDescription",
@@ -971,8 +987,11 @@ namespace mfront {
         this->appendToIncludes("#include\"" + h + "\"");
       }
       this->atds.push_back(std::move(t));
-#pragma message("check what this line do")
-      //      this->mb.addExternalMFrontFile(path, {"mfront"});
+      if (dsl->getCodeGenerator()->isSrcFileRequired()) {
+        insert_if(this->additional_libraries_sources,
+                  dsl->getBehaviourDescription().getSrcFileName());
+      }
+      this->mb.addExternalMFrontFile(path, {"mfront"}, dsl_options);
     } catch (std::exception& e) {
       this->throwRuntimeError(
           "BehaviourDSLCommon::getBehaviourDescription",
@@ -1178,15 +1197,15 @@ namespace mfront {
     }
     if (g->isSrcFileRequired()) {
       for (auto& l : this->td.libraries) {
-        insert_if(this->td.getLibrary(l.name).sources, g->getSrcFileName());
+        insert_if(this->td.getLibrary(l.name).sources, this->mb.getSrcFileName());
       }
     }
-    insert_if(this->td.headers, g->getBehaviourFileName());
-    insert_if(this->td.headers, g->getBehaviourDataFileName());
-    insert_if(this->td.headers, g->getIntegrationDataFileName());
+    insert_if(this->td.headers, this->mb.getBehaviourFileName());
+    insert_if(this->td.headers, this->mb.getBehaviourDataFileName());
+    insert_if(this->td.headers, this->mb.getIntegrationDataFileName());
     if (this->mb.areSlipSystemsDefined()) {
-      insert_if(this->td.headers, g->getSlipSystemHeaderFileName());
-      insert_if(this->td.headers, g->getSlipSystemImplementationFileName());
+      insert_if(this->td.headers, this->mb.getSlipSystemHeaderFileName());
+      insert_if(this->td.headers, this->mb.getSlipSystemImplementationFileName());
     }
     this->completeTargetsDescription();
   }
@@ -1305,6 +1324,12 @@ namespace mfront {
     //
     for (const auto& pb : this->bricks) {
       pb->endTreatment();
+    }
+    //
+    if (getWarningMode()) {
+      for (const auto h : this->mb.getDistinctModellingHypotheses()) {
+        reportWarning(checkInitializeMethods(this->mb, h));
+      }
     }
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing: end\n";
@@ -1443,6 +1468,9 @@ namespace mfront {
           }
         }
       }
+      //
+      reportWarning(checkInitializeMethods(this->mb, h));
+      //
       performPedanticChecks(md, md.getMaterialProperties(), "material property",
                             members, true, false, true);
       const auto& ivs = getIntegrationVariables(md);
@@ -1483,7 +1511,8 @@ namespace mfront {
 
   void BehaviourDSLCommon::generateOutputFiles() {
     for (const auto& em : this->mb.getExternalMFrontFiles()) {
-      this->callMFront(em.second, {em.first});
+      this->callMFront({em.first}, std::get<0>(em.second),
+                       std::get<1>(em.second));
     }
     const auto g = this->getCodeGenerator();
     g->generateOutputFiles(this->getModellingHypothesesToBeTreated());
@@ -2706,7 +2735,8 @@ namespace mfront {
     if ((!v_prefix.empty()) && (!isValidUserDefinedVariableName(v_prefix))) {
       tfel::raise("invalid variables prefix '" + v_prefix + "'");
     }
-    if ((!v_suffix.empty()) && (!isValidUserDefinedVariableName(v_suffix))) {
+    if ((!v_suffix.empty()) &&
+        (!isValidUserDefinedVariableName("v" + v_suffix))) {
       tfel::raise("invalid variables suffix '" + v_suffix + "'");
     }
     if ((!enames_prefix.empty()) &&
@@ -2714,7 +2744,7 @@ namespace mfront {
       tfel::raise("invalid external names prefix '" + enames_prefix + "'");
     }
     if ((!enames_suffix.empty()) &&
-        (!isValidUserDefinedVariableName(enames_suffix))) {
+        (!isValidUserDefinedVariableName("v" + enames_suffix))) {
       tfel::raise("invalid external names suffix '" + enames_suffix + "'");
     }
     //

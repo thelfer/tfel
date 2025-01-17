@@ -18,6 +18,7 @@
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "MFront/MFrontHeader.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/AbstractDSL.hxx"
 #include "MFront/VariableDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
@@ -168,8 +169,22 @@ namespace mfront {
         CallBack(
             "don't melt librairies sources",
             [this]() noexcept { this->melt_sources = false; }, false));
-    this->registerNewCallBack(
-        "--warning", "-W", &QueryHandlerBase::treatWarning, "print warnings");
+    this->registerCallBack(
+        "--warning", "-W",
+        CallBack(
+            "enable warnings", [this]() noexcept { setWarningMode(true); },
+            false));
+    this->registerNewCallBack("--report-warnings",
+                              &QueryHandlerBase::treatReportWarnings,
+                              "print warnings", true);
+    this->registerCallBack(
+        "-Werror",
+        CallBack(
+            "turn warnings into errors",
+            [this]() noexcept { setWarningErrorMode(true); }, false));
+    this->registerNewCallBack("--warning-error",
+                              &QueryHandlerBase::treatWarningError,
+                              "turn warnings into errors", true);
     this->registerNewCallBack("--pedantic", &QueryHandlerBase::treatPedantic,
                               "print pedantic warning message");
     this->registerNewCallBack("--interface", &QueryHandlerBase::treatInterface,

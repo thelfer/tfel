@@ -50,9 +50,11 @@ macro(mfront_query_test args mfront_file file)
   MATH(EXPR MFRONT_QUERY_TEST_ID "${MFRONT_QUERY_TEST_ID}+1")
 endmacro(mfront_query_test)
 
-mfront_query_test("--material-properties" "Norton.mfront"
+mfront_query_test("--material-properties"
+  "Norton.mfront"
   "mfront-query-norton-material-properites.ref")
-mfront_query_test("--slip-systems-by-index" "FiniteStrainSingleCrystal/FiniteStrainSingleCrystal.mfront"
+mfront_query_test("--slip-systems-by-index"
+  "FiniteStrainSingleCrystal/FiniteStrainSingleCrystal.mfront"
   "mfront-query-finitestrainsinglecrystal.ref")
 # mfront_query_test("--state-variables" "Norton.mfront"
 #   "mfront-query-norton-material-properites.ref")

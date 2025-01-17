@@ -300,7 +300,8 @@ namespace mfront {
                     allowsParametersInitializationFromFile(md), false);
     // exernal files
     for (const auto& efiles : md.getExternalMFrontFiles()) {
-      bd.addExternalMFrontFile(efiles.first, efiles.second);
+      bd.addExternalMFrontFile(efiles.first, std::get<0>(efiles.second),
+                               std::get<1>(efiles.second));
     }
     //
     bd.setBehaviourName(md.modelName);

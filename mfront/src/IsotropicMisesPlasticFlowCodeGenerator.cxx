@@ -50,7 +50,6 @@ namespace mfront {
        << "using std::vector;\n";
     writeMaterialLaws(os, this->bd.getMaterialLaws());
     os << this->bd.getCode(h, BehaviourData::FlowRule) << "return true;\n}\n\n";
-
     os << "bool NewtonIntegration(){\n"
        << "constexpr auto newton_epsilon = "
           "100*std::numeric_limits<strain>::epsilon();\n"
@@ -170,6 +169,15 @@ namespace mfront {
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     }
+    os << "this->se=(real{2})*(this->mu)*(tfel::math::deviator(this->eel+("
+       << this->bd.getClassName() << "::theta)*(this->deto)));\n"
+       << "this->seq_e = sigmaeq(this->se);\n"
+       << "if(this->seq_e > 100 * (this->young) * "
+       << "std::numeric_limits<NumericType>::epsilon()){\n"
+       << "this->n = 3 * (this->se)/(2 * (this->seq_e));\n"
+       << "} else {\n"
+       << "this->n = StrainStensor(strain(0));\n"
+       << "}\n";
     os << "if(!this->NewtonIntegration()){\n";
     if (this->bd.useQt()) {
       os << "return MechanicalBehaviour<" << btype
@@ -247,21 +255,6 @@ namespace mfront {
        << "return true;\n"
        << "}\n\n";
   }  // end of writeBehaviourComputeTangentOperator
-
-  void IsotropicMisesPlasticFlowCodeGenerator::
-      writeBehaviourParserSpecificInitializeMethodPart(std::ostream& os,
-                                                       const Hypothesis) const {
-    this->checkBehaviourFile(os);
-    os << "this->se=(real{2})*(this->mu)*(tfel::math::deviator(this->eel+("
-       << this->bd.getClassName() << "::theta)*(this->deto)));\n"
-       << "this->seq_e = sigmaeq(this->se);\n"
-       << "if(this->seq_e > 100 * (this->young) * "
-       << "std::numeric_limits<NumericType>::epsilon()){\n"
-       << "this->n = 3 * (this->se)/(2 * (this->seq_e));\n"
-       << "} else {\n"
-       << "this->n = StrainStensor(strain(0));\n"
-       << "}\n";
-  }  // end of writeBehaviourParserSpecificInitializeMethodPart
 
   IsotropicMisesPlasticFlowCodeGenerator::
       ~IsotropicMisesPlasticFlowCodeGenerator() = default;

@@ -238,7 +238,7 @@ namespace mfront {
     }
     m << "\n";
     for (const auto& l : t.libraries) {
-      if (l.name == "MFrontMaterialLaw") {
+      if ((l.name == "MFrontMaterialLaw") || (l.name == "MFrontBehaviour")) {
         continue;
       }
       // cppflags

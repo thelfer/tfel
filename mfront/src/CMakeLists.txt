@@ -90,6 +90,7 @@ set(TFELMFront_SOURCES
     LibraryDescription.cxx
     ExecutableDescription.cxx
     SpecificTargetDescription.cxx
+    MFrontWarningMode.cxx
     MFrontDebugMode.cxx
     PedanticMode.cxx
     MFrontLock.cxx
@@ -186,6 +187,7 @@ set(TFELMFront_SOURCES
     IsotropicMisesCreepCodeGenerator.cxx
     MultipleIsotropicMisesFlowsCodeGenerator.cxx
     MFrontMaterialPropertyInterface.cxx
+    MFrontBehaviourInterface.cxx
     CMaterialPropertyInterfaceBase.cxx
     CMaterialPropertyInterface.cxx
     CppMaterialPropertyInterface.cxx

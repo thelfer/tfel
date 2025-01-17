@@ -26,6 +26,7 @@
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 #include "MFront/DSLUtilities.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/NonLinearSystemSolver.hxx"
 #include "MFront/NonLinearSystemSolverBase.hxx"
@@ -559,10 +560,31 @@ namespace mfront {
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("ImplicitDSLBase::treatEpsilon",
                             "Cannot read epsilon value.");
+    const auto safe = this->readSafeOptionTypeIfPresent();
     const auto epsilon = this->readDouble();
     if (epsilon < 0) {
       this->throwRuntimeError("ImplicitDSLBase::treatEpsilon",
                               "Epsilon value must be positive.");
+    }
+    if ((!safe) && (epsilon < 1e-18)) {
+      auto converter = std::ostringstream{};
+      converter << std::scientific << epsilon;
+      reportWarning(
+          "the choosen default value for the convergence threshold could be "
+          "too stringent (" +
+          converter.str() +
+          "). You may want to consider a more stringent value (1e-14 "
+          "is generally a good choice).");
+    }
+    if ((!safe) && (epsilon > 1e-12)) {
+      auto converter = std::ostringstream{};
+      converter << std::scientific << epsilon;
+      reportWarning(
+          "the choosen default value for the convergence threshold could be "
+          "too loose (" +
+          converter.str() +
+          "). You may want to consider a more stringent value (1e-14 "
+          "is generally a good choice).");
     }
     this->readSpecifiedToken("ImplicitDSLBase::treatEpsilon", ";");
     VariableDescription e("NumericType", "\u03B5", "epsilon", 1u, 0u);
@@ -585,6 +607,7 @@ namespace mfront {
   void
   ImplicitDSLBase::treatPerturbationValueForNumericalJacobianComputation() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto safe = this->readSafeOptionTypeIfPresent();
     this->checkNotEndOfFile(
         "ImplicitDSLBase::"
         "treatPerturbationValueForNumericalJacobianComputation",
@@ -595,6 +618,30 @@ namespace mfront {
           "ImplicitDSLBase::"
           "treatPerturbationValueForNumericalJacobianComputation",
           "Epsilon value must be positive.");
+    }
+    if ((!safe) && (epsilon < 1e-10)) {
+      auto converter = std::ostringstream{};
+      converter << std::scientific << epsilon;
+      reportWarning(
+          "The chosen default value of the perturbuation used "
+          "to compute a numerical approximation of the jacobian by a "
+          "centered finite difference scheme is generally too "
+          "low (" +
+          converter.str() +
+          "). You may want to consider an higher value (1e-8 is a good "
+          "choice).");
+    }
+    if ((!safe) && (epsilon > 1e-2)) {
+      auto converter = std::ostringstream{};
+      converter << std::scientific << epsilon;
+      reportWarning(
+          "The chosen default value of the perturbuation used "
+          "to compute a numerical approximation of the jacobian by a "
+          "centered finite difference scheme is generally too "
+          "high (" +
+          converter.str() +
+          "). You may want to consider an higher value (1e-8 is a good "
+          "choice).");
     }
     this->readSpecifiedToken(
         "ImplicitDSLBase::"
@@ -848,6 +895,8 @@ namespace mfront {
         };
     this->treatCodeBlock(BehaviourData::ComputeFinalThermodynamicForces, m,
                          true, true);
+    if (getWarningMode()) {
+    }
   }  // end of treatComputeFinalThermodynamicForces
 
   void ImplicitDSLBase::readTangentOperatorCodeBlock(const CodeBlockOptions& o,
@@ -1219,6 +1268,11 @@ namespace mfront {
       this->mb.addParameter(uh, e, BehaviourData::ALREADYREGISTRED);
       this->mb.setEntryName(uh, "epsilon", "epsilon");
       this->mb.setParameterDefaultValue(uh, "epsilon", 1.e-8);
+      reportWarning(
+          "using the default value for the convergence threshold (1e-8). "
+          "This value is generally considered too loose. You may "
+          "want to consider a more stringent value (1e-14 is a good choice). "
+          "See the `@Epsilon` keyword for details");
     }
     if (!this->mb.hasParameter(uh, "theta")) {
       VariableDescription tv("NumericType", "\u03B8", "theta", 1u, 0u);
@@ -1241,6 +1295,20 @@ namespace mfront {
             "approximation of the jacobian";
         this->mb.addParameter(uh, v, BehaviourData::ALREADYREGISTRED);
         this->mb.setParameterDefaultValue(uh, nje, eps);
+        if (eps < 1.e-10) {
+          auto converter = std::ostringstream{};
+          converter << std::scientific << eps;
+          reportWarning(
+              "using " + converter.str() +
+              " (which is 0.1 times the default value for the convergence "
+              "threshold) as the default value of the perturbuation used "
+              "to compute a numerical approximation of the jacobian by a "
+              "centered finite difference scheme. This value is generally too "
+              "low. You may want to consider an higher value (1e-8 is a good "
+              "choice). See the "
+              "`@PerturbationValueForNumericalJacobianComputation` keyword for "
+              "details");
+        }
       }
     }
     if (!this->mb.hasParameter(uh, "iterMax")) {

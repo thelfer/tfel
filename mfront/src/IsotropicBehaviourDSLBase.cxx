@@ -18,6 +18,7 @@
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/MFrontLogStream.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/IsotropicBehaviourDSLBase.hxx"
 
@@ -146,12 +147,33 @@ namespace mfront {
 
   void IsotropicBehaviourDSLBase::treatEpsilon() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto safe = this->readSafeOptionTypeIfPresent();
     this->checkNotEndOfFile("IsotropicBehaviourDSLBase::treatEpsilon",
                             "cannot read epsilon value");
     const auto epsilon = tfel::utilities::convert<double>(this->current->value);
     if (epsilon < 0) {
       this->throwRuntimeError("IsotropicBehaviourDSLBase::treatEpsilon",
                               "Epsilon value must be positive");
+    }
+    if ((!safe) && (epsilon < 1e-18)) {
+      auto converter = std::ostringstream{};
+      converter << std::scientific << epsilon;
+      reportWarning(
+          "the choosen default value for the convergence threshold could be "
+          "too stringent (" +
+          converter.str() +
+          "). You may want to consider a more stringent value (1e-14 "
+          "is generally a good choice).");
+    }
+    if ((!safe) && (epsilon > 1e-12)) {
+      auto converter = std::ostringstream{};
+      converter << std::scientific << epsilon;
+      reportWarning(
+          "the choosen default value for the convergence threshold could be "
+          "too loose (" +
+          converter.str() +
+          "). You may want to consider a more stringent value (1e-14 "
+          "is generally a good choice).");
     }
     ++(this->current);
     this->readSpecifiedToken("IsotropicBehaviourDSLBase::treatEpsilon", ";");
@@ -289,6 +311,11 @@ namespace mfront {
           h, VariableDescription("real", "\u03B5", "epsilon", 1u, 0u),
           BehaviourData::ALREADYREGISTRED);
       this->mb.setParameterDefaultValue(h, "epsilon", 1.e-8);
+      reportWarning(
+          "using the default value for the convergence threshold. "
+          "This value is generally considered too loose. You may "
+          "want to consider a more stringent value (1e-14 is a good choice). "
+          "See the `@Epsilon` keyword for details");
     }
     if (!this->mb.hasParameter(h, "iterMax")) {
       unsigned short iterMax = 100u;
@@ -303,6 +330,7 @@ namespace mfront {
   }  // end of IsotropicBehaviourDSLBase::completeVariableDeclaration
 
   void IsotropicBehaviourDSLBase::endsInputFileProcessing() {
+    BehaviourDSLCommon::endsInputFileProcessing();
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       auto& log = getLogStream();
       log << "IsotropicBehaviourDSLBase::endsInputFileProcessing: begin\n";

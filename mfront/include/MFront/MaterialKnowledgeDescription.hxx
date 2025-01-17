@@ -1,3 +1,4 @@
+
 /*!
  * \file  mfront/include/MFront/MaterialKnowledgeDescription.hxx
  * \brief
@@ -15,10 +16,12 @@
 #define LIB_MFRONT_MATERIALKNOWLEDGEDESCRIPTION_HXX
 
 #include <map>
+#include <tuple>
 #include <string>
 #include <vector>
 #include <optional>
 #include <string_view>
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Material/OutOfBoundsPolicy.hxx"
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/MaterialKnowledgeAttribute.hxx"
@@ -119,10 +122,12 @@ namespace mfront {
      * \param[in] interfaces: list of interfaces used to treat the file
      */
     void addExternalMFrontFile(const std::string_view,
-                               const std::vector<std::string>&);
+                               const std::vector<std::string>&,
+                               const tfel::utilities::DataMap&);
     //! \return the external `MFront` files
-    const std::map<std::string,               // file path
-                   std::vector<std::string>,  // list of interfaces
+    const std::map<std::string,                          // file path
+                   std::tuple<std::vector<std::string>,  // list of interfaces
+                              tfel::utilities::DataMap>,  // DSL options
                    std::less<>>&
     getExternalMFrontFiles() const;
     /*!
@@ -151,11 +156,14 @@ namespace mfront {
     /*!
      * \brief external mfront files
      * - key: mfront file name (full path)
-     * - value: list of interfaces to be used
+     * - value: list of interfaces to be used and DSL options
      * This list of external mfront files will be used to generate the
      * associated sources.
      */
-    std::map<std::string, std::vector<std::string>, std::less<>>
+    std::map<std::string,
+             std::tuple<std::vector<std::string>,         // list of interfaces
+                        tfel::utilities::DataMap>,  // DSL options
+             std::less<>>
         externalMFrontFiles;
   };  // end of struct MaterialKnowledgeDescription
 

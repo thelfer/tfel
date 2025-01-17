@@ -17,6 +17,7 @@
 #include "MFront/ModelInterfaceProxy.hxx"
 
 #include "MFront/MFrontMaterialPropertyInterface.hxx"
+#include "MFront/MFrontBehaviourInterface.hxx"
 #include "MFront/GenericMaterialPropertyInterface.hxx"
 #include "MFront/GenericBehaviourInterface.hxx"
 #include "MFront/GenericModelInterface.hxx"
@@ -110,6 +111,7 @@ namespace mfront {
 #endif /* HAVE_FORTRAN */
 
     MaterialPropertyInterfaceProxy<MFrontMaterialPropertyInterface> mLawProxy;
+    BehaviourInterfaceProxy<MFrontBehaviourInterface> mBehaviourProxy;
 
     MaterialPropertyInterfaceProxy<ExcelMaterialPropertyInternalInterface>
         excelInternalLawProxy;

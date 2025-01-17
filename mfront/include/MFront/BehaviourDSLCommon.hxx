@@ -35,7 +35,6 @@ namespace mfront {
   // forward declarations
   struct AbstractBehaviourInterface;
   struct AbstractBehaviourBrick;
-  struct AbstractBehaviourCodeGenerator;
 
   /*!
    * \return if the given name is valid
@@ -182,9 +181,6 @@ namespace mfront {
      * \param[in] opts: options passed to the DSL
      */
     BehaviourDSLCommon(const DSLOptions&);
-    //! \return a suitable code generator
-    virtual std::unique_ptr<AbstractBehaviourCodeGenerator> getCodeGenerator()
-        const = 0;
     //
     void writeMaterialPropertyEvaluation(
         std::ostream&,
@@ -193,7 +189,8 @@ namespace mfront {
         const override;
     //
     void addExternalMFrontFile(const std::string&,
-                               const std::vector<std::string>&) override;
+                               const std::vector<std::string>&,
+                               const tfel::utilities::DataMap&) override;
     const MaterialKnowledgeDescription& getMaterialKnowledgeDescription()
         const override;
     std::vector<DSLOptionDescription> getDSLOptions() const override;

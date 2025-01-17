@@ -1,0 +1,4 @@
+@DSL Implicit;
+@Behaviour WarningTest3;
+@Brick StandardElasticity;
+@Epsilon<safe> 1'000;

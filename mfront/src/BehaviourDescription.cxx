@@ -20,7 +20,9 @@
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Math/Evaluator.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/PedanticMode.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/LocalDataStructure.hxx"
 #include "MFront/ModelDescription.hxx"
@@ -39,6 +41,11 @@ namespace mfront {
       "modelling_hypothesis";
   const char* const BehaviourDescription::modellingHypotheses =
       "modelling_hypotheses";
+  const char* const BehaviourDescription::defaultConstructor =
+      "default_constructor";
+  const char* const BehaviourDescription::finalClass = "final";
+  const char* const BehaviourDescription::internalNamespace =
+      "internal_namespace";
 
   static MaterialPropertyDescription buildMaterialPropertyDescription(
       const BehaviourDescription::ConstantMaterialProperty& mp,
@@ -393,6 +400,24 @@ namespace mfront {
     return {a, b};
   }  // end of decomposeTangentOperatorBlock
 
+  static std::string makeCamelCase(std::string_view s) {
+    const auto words = tfel::utilities::tokenize(s, '_', false);
+    auto upperCaseFirstLetter = [](const std::string& w) -> std::string {
+      if (w.empty()) {
+        return {};
+      }
+      if (w == "mfront") {
+        return "MFront";
+      }
+      return makeUpperCase(w.substr(0, 1)) + makeLowerCase(w.substr(1));
+    };
+    auto r = std::string{};
+    for (const auto& w : words) {
+      r += upperCaseFirstLetter(w);
+    }
+    return r;
+  }  // end of makeCamelCase
+
   const char* const BehaviourDescription::requiresStiffnessTensor =
       "requiresStiffnessTensor";
 
@@ -420,24 +445,24 @@ namespace mfront {
       const tfel::utilities::DataMap& opts) {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     //
-    if ((opts.count(BehaviourDescription::modellingHypothesis) != 0) &&
-        (opts.count(BehaviourDescription::modellingHypotheses) != 0)) {
+    if ((opts.contains(BehaviourDescription::modellingHypothesis)) &&
+        (opts.contains(BehaviourDescription::modellingHypotheses))) {
       tfel::raise(
           "BehaviourDescription::BehaviourDescription: "
           "can't specify both options '" +
           std::string{BehaviourDescription::modellingHypothesis} + "' and '" +
           std::string{BehaviourDescription::modellingHypotheses} + "'");
     }
-    if (opts.count(BehaviourDescription::modellingHypothesis) != 0) {
+    if (opts.contains(BehaviourDescription::modellingHypothesis)) {
       this->overriden_hypotheses.insert(ModellingHypothesis::fromString(
           opts.at(BehaviourDescription::modellingHypothesis)
               .get<std::string>()));
     }
-    if (opts.count(BehaviourDescription::modellingHypotheses) != 0) {
+    if (opts.contains(BehaviourDescription::modellingHypotheses)) {
       const auto& mhs = opts.at(BehaviourDescription::modellingHypotheses)
                             .get<std::vector<tfel::utilities::Data>>();
       for (const auto& h : mhs) {
-        if (h.is<std::string>()) {
+        if (!h.is<std::string>()) {
           tfel::raise(
               "BehaviourDescription::BehaviourDescription: "
               "invalid data type in option '" +
@@ -446,6 +471,46 @@ namespace mfront {
         this->overriden_hypotheses.insert(
             ModellingHypothesis::fromString(h.get<std::string>()));
       }
+    }
+    if (opts.contains(BehaviourDescription::defaultConstructor)) {
+      const auto& opt = opts.at(BehaviourDescription::defaultConstructor);
+      if (!opt.is<bool>()) {
+        tfel::raise(
+            "BehaviourDescription::BehaviourDescription: "
+            "invalid data type in option '" +
+            std::string{BehaviourDescription::defaultConstructor} + "'");
+      }
+      this->setAttribute(BehaviourDescription::defaultConstructor,
+                         opt.get<bool>(), false);
+    }
+    if (opts.contains(BehaviourDescription::finalClass)) {
+      const auto& opt = opts.at(BehaviourDescription::finalClass);
+      if (!opt.is<bool>()) {
+        tfel::raise(
+            "BehaviourDescription::BehaviourDescription: "
+            "invalid data type in option '" +
+            std::string{BehaviourDescription::finalClass} + "'");
+      }
+      this->setAttribute(BehaviourDescription::finalClass, opt.get<bool>(),
+                         false);
+    }
+    if (opts.contains(BehaviourDescription::internalNamespace)) {
+      const auto& ns_opt = opts.at(BehaviourDescription::internalNamespace);
+      if (!ns_opt.is<std::string>()) {
+        tfel::raise(
+            "BehaviourDescription::BehaviourDescription: "
+            "invalid data type in option '" +
+            std::string{BehaviourDescription::internalNamespace} + "'");
+      }
+      const auto& ns = ns_opt.get<std::string>();
+      if (!tfel::utilities::CxxTokenizer::isValidIdentifier(ns)) {
+        tfel::raise(
+            "BehaviourDescription::BehaviourDescription: "
+            "invalid namespace space '" +
+            ns + "' given in option '" +
+            std::string{BehaviourDescription::internalNamespace} + "'");
+      }
+      this->setAttribute(BehaviourDescription::internalNamespace, ns, false);
     }
     // override parameters
     const auto oparameters =
@@ -470,6 +535,96 @@ namespace mfront {
 
   BehaviourDescription::BehaviourDescription(const BehaviourDescription&) =
       default;
+
+  bool BehaviourDescription::shallDefineDefaultConstructor() const {
+    if (!this->hasAttribute(BehaviourDescription::defaultConstructor)) {
+      return false;
+    }
+    return this->getAttribute<bool>(BehaviourDescription::defaultConstructor);
+  }  // end of shallDefineDefaultConstructor
+
+  bool BehaviourDescription::isFinal() const {
+    if (!this->hasAttribute(BehaviourDescription::finalClass)) {
+      return true;
+    }
+    return this->getAttribute<bool>(BehaviourDescription::finalClass);
+  }  // end of isFinal
+
+  std::string BehaviourDescription::getInternalNamespace() const {
+    if (!this->hasAttribute(BehaviourDescription::internalNamespace)) {
+      return {};
+    }
+    const auto& ns = this->getAttribute<std::string>(
+        BehaviourDescription::internalNamespace);
+    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(ns)) {
+      tfel::raise(
+          "BehaviourDescription::getInternalNamespace: "
+          "invalid namespace space '" +
+          ns + "' given in option '" +
+          std::string{BehaviourDescription::internalNamespace} + "'");
+    }
+    return ns;
+  }
+
+  std::string BehaviourDescription::getBehaviourFileName() const {
+    const auto ns = this->getInternalNamespace();
+    if (!ns.empty()) {
+      return "TFEL/Material/" + makeCamelCase(ns) + '/' + this->getClassName() +
+             ".hxx";
+    }
+    return "TFEL/Material/" + this->getClassName() + ".hxx";
+  }  // end of getBehaviourFileName
+
+  std::string BehaviourDescription::getBehaviourDataFileName() const {
+    const auto ns = this->getInternalNamespace();
+    if (!ns.empty()) {
+      return "TFEL/Material/" + makeCamelCase(ns) + '/' + this->getClassName() +
+             "BehaviourData.hxx";
+    }
+    return "TFEL/Material/" + this->getClassName() + "BehaviourData.hxx";
+  }  // end of getBehaviourDataFileName
+
+  std::string BehaviourDescription::getIntegrationDataFileName() const {
+    const auto ns = this->getInternalNamespace();
+    if (!ns.empty()) {
+      return "TFEL/Material/" + makeCamelCase(ns) + '/' + this->getClassName() +
+             "IntegrationData.hxx";
+    }
+    return "TFEL/Material/" + this->getClassName() + "IntegrationData.hxx";
+  }  // end of getIntegrationDataFileName
+
+  std::string BehaviourDescription::getSlipSystemHeaderFileName() const {
+    if (!this->areSlipSystemsDefined()) {
+      return "";
+    }
+    const auto ns = this->getInternalNamespace();
+    if (!ns.empty()) {
+      return "TFEL/Material/" + makeCamelCase(ns) + '/' + this->getClassName() +
+             "SlipSystems.hxx";
+    }
+    return "TFEL/Material/" + this->getClassName() + "SlipSystems.hxx";
+  }  // end of getSlipSystemHeaderFileName
+
+  std::string BehaviourDescription::getSlipSystemImplementationFileName()
+      const {
+    if (!this->areSlipSystemsDefined()) {
+      return "";
+    }
+    const auto ns = this->getInternalNamespace();
+    if (!ns.empty()) {
+      return "TFEL/Material/" + makeCamelCase(ns) + '/' + this->getClassName() +
+             "SlipSystems.ixx";
+    }
+    return "TFEL/Material/" + this->getClassName() + "SlipSystems.ixx";
+  }  // end of getSlipSystemImplementationFileName
+
+  std::string BehaviourDescription::getSrcFileName() const {
+    const auto ns = this->getInternalNamespace();
+    if (!ns.empty()) {
+      return makeCamelCase(ns) + '/' + this->getClassName() + ".cxx";
+    }
+    return this->getClassName() + ".cxx";
+  }  // end of getSrcFileName
 
   bool BehaviourDescription::isModel() const noexcept {
     if (this->getBehaviourType() != BehaviourDescription::GENERALBEHAVIOUR) {
@@ -777,6 +932,14 @@ namespace mfront {
                    "BehaviourDescription::getClassName: "
                    "class name not defined");
     return this->className;
+  }  // end of getClassName
+
+  std::string BehaviourDescription::getFullClassName() const {
+    const auto ns = this->getInternalNamespace();
+    if (!ns.empty()) {
+      return "::tfel::material::" + ns + "::" + this->getClassName();
+    }
+    return "::tfel::material::" + this->getClassName();
   }  // end of getClassName
 
   void BehaviourDescription::appendToIncludes(const std::string& c) {
@@ -1396,6 +1559,31 @@ namespace mfront {
     }
     return false;
   }  // end of isGradientName
+
+  bool BehaviourDescription::isNameOfAGradientAtTheBeginningOfTheTimeStep(
+      const std::string& n) const {
+    for (const auto& v : this->getMainVariables()) {
+      const auto& g = v.first;
+      if ((!Gradient::isIncrementKnown(g)) && (g.name + "0" == n)) {
+        return true;
+      }
+      if ((Gradient::isIncrementKnown(g)) && (g.name == n)) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of isGradientIncrementName
+
+  bool BehaviourDescription::isNameOfAGradientAtTheEndOfTheTimeStep(
+      const std::string& n) const {
+    for (const auto& v : this->getMainVariables()) {
+      const auto& g = v.first;
+      if ((!Gradient::isIncrementKnown(g)) && (g.name + "1" == n)) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of isGradientIncrementName
 
   bool BehaviourDescription::isGradientIncrementName(
       const std::string& n) const {
@@ -2193,8 +2381,8 @@ namespace mfront {
         } catch (std::exception& e) {
           tfel::raise("Error while treating saved gradient '" + g.name +
                       "' from behaviour '" + bv.name + "' of type '" +
-                      bv.behaviour.getClassName() +
-                      "'\n" + std::string{e.what()});
+                      bv.behaviour.getClassName() + "'\n" +
+                      std::string{e.what()});
         }
       }
       if (bv.store_thermodynamic_forces) {
@@ -2204,20 +2392,21 @@ namespace mfront {
         } catch (std::exception& e) {
           tfel::raise("Error while treating saved gradient '" + th.name +
                       "' from behaviour '" + bv.name + "' of type '" +
-                      bv.behaviour.getClassName() +
-                      "'\n" + std::string{e.what()});
+                      bv.behaviour.getClassName() + "'\n" +
+                      std::string{e.what()});
         }
       }
     }
     // material properties
     for (const auto& mp : getUnSharedMaterialProperties(bv, h)) {
       try {
-        bd.addMaterialProperty(mp, BehaviourData::UNREGISTRED);
+        bd.addMaterialProperty(applyNamesChanges(bv, mp),
+                               BehaviourData::UNREGISTRED);
       } catch (std::exception& e) {
         tfel::raise("Error while treating unshared material property '" +
                     mp.name + "' from behaviour '" + bv.name + "' of type '" +
-                    bv.behaviour.getClassName() +
-                    "'\n" + std::string{e.what()});
+                    bv.behaviour.getClassName() + "'\n" +
+                    std::string{e.what()});
       }
     }
     // all persistent variables are turned into auxiliary state variables
@@ -2229,19 +2418,20 @@ namespace mfront {
       } catch (std::exception& e) {
         tfel::raise("Error while treating state variable '" + isv.name +
                     "' from behaviour '" + bv.name + "' of type '" +
-                    bv.behaviour.getClassName() +
-                    "'\n" + std::string{e.what()});
+                    bv.behaviour.getClassName() + "'\n" +
+                    std::string{e.what()});
       }
     }
     // external state variables
     for (const auto& esv : getUnSharedExternalStateVariables(bv, h)) {
       try {
-        bd.addExternalStateVariable(esv, BehaviourData::UNREGISTRED);
+        bd.addExternalStateVariable(applyNamesChanges(bv, esv),
+                                    BehaviourData::UNREGISTRED);
       } catch (std::exception& e) {
         tfel::raise("Error while treating external state variable '" +
                     esv.name + "' from behaviour '" + bv.name + "' of type '" +
-                    bv.behaviour.getClassName() +
-                    "'\n" + std::string{e.what()});
+                    bv.behaviour.getClassName() + "'\n" +
+                    std::string{e.what()});
       }
     }
   }  // end of completeVariablesDeclarations
@@ -2292,8 +2482,8 @@ namespace mfront {
       if (getVerboseMode() >= VERBOSE_DEBUG) {
         auto& log = getLogStream();
         log << "BehaviourDescription::addBehaviourVariable: "
-            << "the addition of behaviour variable '" << v.name
-            << "' of type '" << v.behaviour.getClassName() 
+            << "the addition of behaviour variable '" << v.name << "' of type '"
+            << v.behaviour.getClassName()
             << "' is delayed up to when the modelling hypotheses "
             << "are defined'\n";
       }
@@ -2309,37 +2499,35 @@ namespace mfront {
     }
     // time step scaling factors
     if (!this->hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                               "minimal_time_step_scaling_factor")) {
+                            "minimal_time_step_scaling_factor")) {
       VariableDescription e("real", "minimal_time_step_scaling_factor", 1u, 0u);
       e.description = "minimal value for the time step scaling factor";
       this->addParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS, e,
-                            BehaviourData::ALREADYREGISTRED);
-      this->setParameterDefaultValue(
-          ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-          "minimal_time_step_scaling_factor", 0.1);
+                         BehaviourData::ALREADYREGISTRED);
+      this->setParameterDefaultValue(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                                     "minimal_time_step_scaling_factor", 0.1);
       this->setEntryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                            "minimal_time_step_scaling_factor",
-                            "minimal_time_step_scaling_factor");
+                         "minimal_time_step_scaling_factor",
+                         "minimal_time_step_scaling_factor");
     }
     if (!this->hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                               "maximal_time_step_scaling_factor")) {
+                            "maximal_time_step_scaling_factor")) {
       VariableDescription e("real", "maximal_time_step_scaling_factor", 1u, 0u);
       e.description = "maximal value for the time step scaling factor";
       this->addParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS, e,
-                            BehaviourData::ALREADYREGISTRED);
-      this->setParameterDefaultValue(
-          ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-          "maximal_time_step_scaling_factor",
-          std::numeric_limits<double>::max());
+                         BehaviourData::ALREADYREGISTRED);
+      this->setParameterDefaultValue(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                                     "maximal_time_step_scaling_factor",
+                                     std::numeric_limits<double>::max());
       this->setEntryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                            "maximal_time_step_scaling_factor",
-                            "maximal_time_step_scaling_factor");
+                         "maximal_time_step_scaling_factor",
+                         "maximal_time_step_scaling_factor");
     }
     // incompatible options
     if ((this->getAttribute(BehaviourDescription::computesStiffnessTensor,
-                               false)) &&
+                            false)) &&
         (this->getAttribute(BehaviourDescription::requiresStiffnessTensor,
-                               false))) {
+                            false))) {
       tfel::raise(
           "BehaviourDescription::completeVariableDeclaration: "
           "internal error, incompatible options for stiffness tensor");
@@ -2353,7 +2541,7 @@ namespace mfront {
           (this->hypotheses.contains(
               ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS))) {
         if (this->getAttribute(BehaviourDescription::requiresStiffnessTensor,
-                                  false)) {
+                               false)) {
           if (!this->hasAttribute(
                   BehaviourDescription::requiresUnAlteredStiffnessTensor)) {
             tfel::raise(
@@ -3561,5 +3749,48 @@ namespace mfront {
     const auto hn = BehaviourDescription::ModellingHypothesis::toString(h);
     return bd.getClassName() + hn + "-parameters.txt";
   }  // end of getParametersFileName
+
+  std::vector<std::string> checkInitializeMethods(
+      const BehaviourDescription& bd,
+      const BehaviourDescription::Hypothesis h,
+      const CheckInitializeMethodsOptions& opts) {
+    auto r = std::vector<std::string>{};
+    auto check = [&r, &bd, &h, &opts](const std::string& n) {
+      if (!bd.hasCode(h, n)) {
+        return;
+      }
+      const auto& cb = bd.getCodeBlock(h, n);
+      for (const auto& m : cb.members) {
+        if (opts.checkGradientsAtTheBeginningOfTheTimeStep) {
+          if (bd.isNameOfAGradientAtTheBeginningOfTheTimeStep(m)) {
+            r.push_back("checkInitializeMethods: the code block '" + n +
+                        "' shall not use gradient '" + m + "'");
+          }
+        }
+        if (opts.checkGradientsAtTheEndOfTheTimeStep) {
+          if (bd.isNameOfAGradientAtTheEndOfTheTimeStep(m)) {
+            r.push_back("checkInitializeMethods: the code block '" + n +
+                        "' shall not use gradient '" + m + "'");
+          }
+        }
+        if (opts.checkGradientsIncrements) {
+          if (bd.isGradientIncrementName(m)) {
+            r.push_back("checkInitializeMethods: the code block '" + n +
+                        "' shall not use gradient increment '" + m + "'");
+          }
+        }
+        if (opts.checkThermodynamicForcesAtTheBeginningOfTheTimeStep) {
+          if (bd.isThermodynamicForceName(m)) {
+            r.push_back("checkInitializeMethods: the code block '" + n +
+                        "' shall not use thermodynamic force '" + m + "'");
+          }
+        }
+      }
+    };
+    check(BehaviourData::BeforeInitializeLocalVariables);
+    check(BehaviourData::InitializeLocalVariables);
+    check(BehaviourData::AfterInitializeLocalVariables);
+    return r;
+  }
 
 }  // end of namespace mfront

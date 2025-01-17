@@ -20,6 +20,7 @@
 #include "TFEL/Math/Evaluator.hxx"
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/PerformanceProfiling.hxx"
 #include "MFront/DSLUtilities.hxx"
@@ -30,6 +31,7 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/ModelDescription.hxx"
+#include "MFront/BehaviourVariableDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/MFrontMaterialPropertyInterface.hxx"
@@ -39,6 +41,24 @@
 
 namespace mfront {
 
+  static std::string makeCamelCase(std::string_view s) {
+    const auto words = tfel::utilities::tokenize(s, '_', false);
+    auto upperCaseFirstLetter = [](const std::string& w) -> std::string {
+      if (w.empty()) {
+        return {};
+      }
+      if (w == "mfront") {
+        return "MFront";
+      }
+      return makeUpperCase(w.substr(0, 1)) + makeLowerCase(w.substr(1));
+    };
+    auto r = std::string{};
+    for (const auto& w : words) {
+      r += upperCaseFirstLetter(w);
+    }
+    return r;
+  }  // end of makeCamelCase
+  
   /*!
    * \return a temporary name which has not been reserved. This
    * method shall be used to get a temporary name at a
@@ -110,36 +130,37 @@ namespace mfront {
     tfel::raise(msg);
   }  // end of throwRuntimeError
 
-  std::string BehaviourCodeGeneratorBase::getBehaviourFileName() const {
-    return "TFEL/Material/" + this->bd.getClassName() + ".hxx";
-  }  // end of getBehaviourFileName
+  void BehaviourCodeGeneratorBase::writeHeaderGuardBegin(std::ostream& os,
+                                                         const std::string& cn,
+                                                         const bool b) const {
+    const auto ns = this->bd.getInternalNamespace();
 
-  std::string BehaviourCodeGeneratorBase::getBehaviourDataFileName() const {
-    return "TFEL/Material/" + this->bd.getClassName() + "BehaviourData.hxx";
-  }  // end of getBehaviourDataFileName
-
-  std::string BehaviourCodeGeneratorBase::getIntegrationDataFileName() const {
-    return "TFEL/Material/" + this->bd.getClassName() + "IntegrationData.hxx";
-  }  // end of getIntegrationDataFileName
-
-  std::string BehaviourCodeGeneratorBase::getSlipSystemHeaderFileName() const {
-    if (!this->bd.areSlipSystemsDefined()) {
-      return "";
+    const auto suffix = b ? "HXX" : "IXX";
+    if (!ns.empty()) {
+      const auto tmp = makeUpperCase(ns + '_' + cn);
+      os << "#ifndef LIB_TFEL_MATERIAL_" << tmp << '_' << suffix << "\n"
+         << "#define LIB_TFEL_MATERIAL_" << tmp << '_' << suffix << "\n\n";
+    } else {
+      os << "#ifndef LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << '_' << suffix
+         << "\n"
+         << "#define LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << '_' << suffix
+         << "\n\n";
     }
-    return "TFEL/Material/" + this->bd.getClassName() + "SlipSystems.hxx";
-  }  // end of getSlipSystemHeaderFileName
+  }
 
-  std::string BehaviourCodeGeneratorBase::getSlipSystemImplementationFileName()
-      const {
-    if (!this->bd.areSlipSystemsDefined()) {
-      return "";
+  void BehaviourCodeGeneratorBase::writeHeaderGuardEnd(std::ostream& os,
+                                                       const std::string& cn,
+                                                       const bool b) const {
+    const auto ns = this->bd.getInternalNamespace();
+    const auto suffix = b ? "HXX" : "IXX";
+    if (!ns.empty()) {
+      const auto tmp = makeUpperCase(ns + '_' + cn);
+      os << "#endif /* LIB_TFEL_MATERIAL_" << tmp << '_' << suffix << "*/\n";
+    } else {
+      os << "#endif /* LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << '_' << suffix
+         << " */\n";
     }
-    return "TFEL/Material/" + this->bd.getClassName() + "SlipSystems.ixx";
-  }  // end of getSlipSystemImplementationFileName
-
-  std::string BehaviourCodeGeneratorBase::getSrcFileName() const {
-    return this->bd.getClassName() + ".cxx";
-  }  // end of getSrcFileName
+  }
 
   bool BehaviourCodeGeneratorBase::isSrcFileRequired() const {
     const auto profiling =
@@ -157,35 +178,38 @@ namespace mfront {
     tfel::system::systemCall::mkdir("include");
     tfel::system::systemCall::mkdir("include/TFEL/");
     tfel::system::systemCall::mkdir("include/TFEL/Material");
+    const auto ns = this->bd.getInternalNamespace();
+    if (!ns.empty()) {
+      tfel::system::systemCall::mkdir("include/TFEL/Material/" +
+                                      makeCamelCase(ns));
+      tfel::system::systemCall::mkdir("src/" + makeCamelCase(ns));
+    }
     //! generating sources du to external material properties and models
-    std::ofstream behaviourFile("include/" + this->getBehaviourFileName());
+    std::ofstream behaviourFile("include/" + this->bd.getBehaviourFileName());
     std::ofstream behaviourDataFile("include/" +
-                                    this->getBehaviourDataFileName());
+                                    this->bd.getBehaviourDataFileName());
     std::ofstream integrationDataFile("include/" +
-                                      this->getIntegrationDataFileName());
+                                      this->bd.getIntegrationDataFileName());
     behaviourFile.precision(14);
     behaviourDataFile.precision(14);
     integrationDataFile.precision(14);
     if (!behaviourFile) {
       this->throwRuntimeError("BehaviourCodeGeneratorBase::generateOutputFiles",
                               "unable to open '" +
-                                  this->getBehaviourFileName() +
-                                  "' "
-                                  "for writing output file");
+			      this->bd.getBehaviourFileName() +
+                                  "' for writing output file");
     }
     if (!behaviourDataFile) {
       this->throwRuntimeError("BehaviourCodeGeneratorBase::generateOutputFiles",
                               "unable to open '" +
-                                  this->getBehaviourDataFileName() +
-                                  "' "
-                                  "for writing output file");
+                                  this->bd.getBehaviourDataFileName() +
+                                  "' for writing output file");
     }
     if (!integrationDataFile) {
       this->throwRuntimeError("BehaviourCodeGeneratorBase::generateOutputFiles",
                               "unable to open '" +
-                                  this->getIntegrationDataFileName() +
-                                  "' "
-                                  "for writing output file");
+			      this->bd.getIntegrationDataFileName() +
+                                  "' for writing output file");
     }
     auto write_classes = [this, &behaviourFile, &behaviourDataFile,
                           &integrationDataFile](const Hypothesis h) {
@@ -239,11 +263,11 @@ namespace mfront {
     this->writeBehaviourFileEnd(behaviourFile);
     // Generating behaviour's source file
     if (this->isSrcFileRequired()) {
-      std::ofstream srcFile("src/" + this->getSrcFileName());
+      std::ofstream srcFile("src/" + this->bd.getSrcFileName());
       if (!srcFile) {
         this->throwRuntimeError(
             "BehaviourCodeGeneratorBase::generateOutputFiles",
-            "unable to open '" + this->getSrcFileName() +
+            "unable to open '" + this->bd.getSrcFileName() +
                 "' for writing output file");
       }
       srcFile.precision(14);
@@ -325,10 +349,7 @@ namespace mfront {
     const auto nb = sss.getNumberOfSlipSystemsFamilies();
     const auto ims = sss.getInteractionMatrixStructure();
     const auto cn = this->bd.getClassName() + "SlipSystems";
-    tfel::system::systemCall::mkdir("include");
-    tfel::system::systemCall::mkdir("include/TFEL/");
-    tfel::system::systemCall::mkdir("include/TFEL/Material");
-    auto file = "include/" + this->getSlipSystemHeaderFileName();
+    auto file = "include/" + this->bd.getSlipSystemHeaderFileName();
     std::ofstream out(file);
     throw_if(!out, "can't open file '" + file + "'");
     out.exceptions(std::ios::badbit | std::ios::failbit);
@@ -346,9 +367,8 @@ namespace mfront {
       out << "* \\date   " << this->fd.date << '\n';
     }
     out << " */\n\n";
-    out << "#ifndef LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_HXX\n"
-        << "#define LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_HXX\n\n"
-        << "#if (defined _WIN32 || defined _WIN64)\n"
+    this->writeHeaderGuardBegin(out, cn, true);
+    out << "#if (defined _WIN32 || defined _WIN64)\n"
         << "#ifdef min\n"
         << "#undef min\n"
         << "#endif /* min */\n"
@@ -362,9 +382,9 @@ namespace mfront {
         << "#include\"TFEL/Raise.hxx\"\n"
         << "#include\"TFEL/Math/tvector.hxx\"\n"
         << "#include\"TFEL/Math/stensor.hxx\"\n"
-        << "#include\"TFEL/Math/tensor.hxx\"\n\n"
-        << "namespace tfel::material{\n\n"
-        << "template<typename real>\n"
+        << "#include\"TFEL/Math/tensor.hxx\"\n\n";
+    this->writeNamespaceBegin(out);
+    out << "template<typename real>\n"
         << "struct " << cn << '\n'
         << "{\n"
         << "//! a simple alias\n"
@@ -494,12 +514,13 @@ namespace mfront {
         << "//! a simple alias\n"
         << "template<typename real>\n"
         << "using " << this->bd.getClassName() << "GlidingSystems "
-        << "= " << cn << "<real>;\n\n"
-        << "} // end of namespace tfel::material\n\n"
-        << "#include\"TFEL/Material/" << cn << ".ixx\"\n\n"
-        << "#endif /* LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_HXX */\n";
+        << "= " << cn << "<real>;\n\n";
+    this->writeNamespaceEnd(out);
+    out << "#include\"" << this->bd.getSlipSystemImplementationFileName()
+        << "\"\n\n";
+    this->writeHeaderGuardEnd(out, cn, true);
     out.close();
-    file = "include/" + this->getSlipSystemImplementationFileName();
+    file = "include/" + this->bd.getSlipSystemImplementationFileName();
     out.open(file);
     throw_if(!out, "can't open file '" + file + "'");
     out.exceptions(std::ios::badbit | std::ios::failbit);
@@ -518,11 +539,10 @@ namespace mfront {
       out << "* \\date   " << this->fd.date << '\n';
     }
     out << " */\n\n";
-    out << "#ifndef LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_IXX\n"
-        << "#define LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_IXX\n\n"
-        << "#include\"TFEL/Math/General/MathConstants.hxx\"\n\n"
-        << "namespace tfel::material{\n\n"
-        << "template<typename real>\n"
+    this->writeHeaderGuardBegin(out, cn, false);
+    out << "#include\"TFEL/Math/General/MathConstants.hxx\"\n\n";
+    this->writeNamespaceBegin(out);
+    out << "template<typename real>\n"
         << "const " << cn << "<real>&\n"
         << cn << "<real>::getSlidingSystems(){\n"
         << "static const " << cn << " i;\n"
@@ -757,10 +777,11 @@ namespace mfront {
         out << '\n';
       }
     }
+
     out << "};\n"
-        << "} // end of buildInteractionMatrix\n\n"
-        << "} // end of namespace tfel::material\n\n"
-        << "#endif /* LIB_TFEL_MATERIAL_" << makeUpperCase(cn) << "_IXX */\n";
+        << "} // end of buildInteractionMatrix\n\n";
+    this->writeNamespaceEnd(out);
+    this->writeHeaderGuardEnd(out, cn, false);
   }
 
   void BehaviourCodeGeneratorBase::writeModelCall(
@@ -855,9 +876,7 @@ namespace mfront {
       for (const auto& vs : inputVariables) {
         if (ea == bdata.getExternalName(vs)) {
           throw_if(a.second != 1, "invalid depth for variable '" + a.first +
-                                      "' "
-                                      "in model '" +
-                                      md.className + "'");
+                                      "' in model '" + md.className + "'");
           out << "this->" << vs;
           treated = true;
           break;
@@ -940,7 +959,12 @@ namespace mfront {
       this->throwRuntimeError("BehaviourCodeGeneratorBase::writeNamespaceBegin",
                               "output file is not valid");
     }
-    file << "namespace tfel::material{\n\n";
+    const auto ns = this->bd.getInternalNamespace();
+    if (!ns.empty()) {
+      file << "namespace tfel::material::" << ns << "{\n\n";
+    } else {
+      file << "namespace tfel::material{\n\n";
+    }
   }
 
   void BehaviourCodeGeneratorBase::writeNamespaceEnd(std::ostream& file) const {
@@ -948,7 +972,12 @@ namespace mfront {
       this->throwRuntimeError("BehaviourCodeGeneratorBase::writeNamespaceEnd",
                               "output file is not valid");
     }
-    file << "} // end of namespace tfel::material\n\n";
+    const auto ns = this->bd.getInternalNamespace();
+    if (!ns.empty()) {
+      file << "} // end of namespace tfel::material::" << ns << "\n\n";
+    } else {
+      file << "} // end of namespace tfel::material\n\n";
+    }
   }
 
   void BehaviourCodeGeneratorBase::writeTypeAliases(std::ostream& file) const {
@@ -1037,7 +1066,7 @@ namespace mfront {
       std::ostream& os) const {
     this->checkBehaviourDataFile(os);
     os << "/*!\n"
-       << "* \\file   " << this->getBehaviourDataFileName() << '\n'
+       << "* \\file   " << this->bd.getBehaviourDataFileName() << '\n'
        << "* \\brief  this file implements the " << this->bd.getClassName()
        << "BehaviourData class.\n"
        << "*         File generated by " << MFrontHeader::getVersionName()
@@ -1055,17 +1084,15 @@ namespace mfront {
   void BehaviourCodeGeneratorBase::writeBehaviourDataFileHeaderBegin(
       std::ostream& os) const {
     this->checkBehaviourDataFile(os);
-    os << "#ifndef LIB_TFELMATERIAL_" << makeUpperCase(this->bd.getClassName())
-       << "_BEHAVIOUR_DATA_HXX\n";
-    os << "#define LIB_TFELMATERIAL_" << makeUpperCase(this->bd.getClassName())
-       << "_BEHAVIOUR_DATA_HXX\n\n";
+    const auto cn = this->bd.getClassName() + "_behaviour_data";
+    this->writeHeaderGuardBegin(os, cn, true);
   }
 
   void BehaviourCodeGeneratorBase::writeBehaviourDataFileHeaderEnd(
       std::ostream& os) const {
     this->checkBehaviourDataFile(os);
-    os << "#endif /* LIB_TFELMATERIAL_"
-       << makeUpperCase(this->bd.getClassName()) << "_BEHAVIOUR_DATA_HXX */\n";
+    const auto cn = this->bd.getClassName() + "_behaviour_data";
+    this->writeHeaderGuardEnd(os, cn, true);
   }
 
   static bool hasVariableOfType(const BehaviourData& bd,
@@ -1436,7 +1463,8 @@ namespace mfront {
       std::ostream& os) const {
     this->checkBehaviourDataFile(os);
     os << "//! \\brief forward declaration\n"
-       << "template<ModellingHypothesis::Hypothesis hypothesis,typename,bool>\n"
+       << "template<ModellingHypothesis::Hypothesis "
+          "hypothesis,typename,bool>\n"
        << "class " << this->bd.getClassName() << "BehaviourData;\n\n"
        << "//! \\brief forward declaration\n"
        << "template<ModellingHypothesis::Hypothesis hypothesis, "
@@ -1539,7 +1567,7 @@ namespace mfront {
       std::ostream& os) const {
     this->checkBehaviourDataFile(os);
     os << "}; // end of " << this->bd.getClassName() << "BehaviourData"
-       << "class\n\n";
+       << " class\n\n";
   }
 
   void BehaviourCodeGeneratorBase::writeBehaviourDataMaterialProperties(
@@ -1758,11 +1786,13 @@ namespace mfront {
     }
     os << "*/\n";
     const auto btype = this->bd.getBehaviourTypeFlag();
+    const auto final_specifier = this->bd.isFinal() ? "final" : "";
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       if (this->bd.useQt()) {
         os << "template<ModellingHypothesis::Hypothesis hypothesis, "
            << "typename NumericType, bool use_qt>\n"
-           << "struct " << this->bd.getClassName() << " final\n"
+           << "struct " << this->bd.getClassName() << " " << final_specifier
+           << "\n"
            << ": public MechanicalBehaviour<" << btype
            << ",hypothesis, NumericType, use_qt>,\n";
         if (this->bd.getAttribute(BehaviourData::profiling, false)) {
@@ -1777,7 +1807,7 @@ namespace mfront {
         os << "template<ModellingHypothesis::Hypothesis hypothesis,"
            << "typename NumericType>\n";
         os << "struct " << this->bd.getClassName()
-           << "<hypothesis, NumericType, false> final\n";
+           << "<hypothesis, NumericType, false> " << final_specifier << "\n";
         os << ": public MechanicalBehaviour<" << btype
            << ",hypothesis, NumericType, false>,\n";
         if (this->bd.getAttribute(BehaviourData::profiling, false)) {
@@ -1794,7 +1824,7 @@ namespace mfront {
         os << "template<typename NumericType,bool use_qt>\n";
         os << "struct " << this->bd.getClassName() << "<ModellingHypothesis::"
            << ModellingHypothesis::toUpperCaseString(h)
-           << ", NumericType, use_qt> final\n";
+           << ", NumericType, use_qt> " << final_specifier << "\n";
         os << ": public MechanicalBehaviour<" << btype
            << ",ModellingHypothesis::"
            << ModellingHypothesis::toUpperCaseString(h)
@@ -1815,7 +1845,7 @@ namespace mfront {
         os << "template<typename NumericType>\n";
         os << "struct " << this->bd.getClassName() << "<ModellingHypothesis::"
            << ModellingHypothesis::toUpperCaseString(h)
-           << ", NumericType, false> final\n";
+           << ", NumericType, false> " << final_specifier << "\n";
         os << ": public MechanicalBehaviour<" << btype
            << ",ModellingHypothesis::"
            << ModellingHypothesis::toUpperCaseString(h)
@@ -1858,7 +1888,7 @@ namespace mfront {
       std::ostream& os) const {
     this->checkBehaviourFile(os);
     os << "/*!\n"
-       << "* \\file   " << this->getBehaviourFileName() << '\n'
+       << "* \\file   " << this->bd.getBehaviourFileName() << '\n'
        << "* \\brief  "
        << "this file implements the " << this->bd.getClassName()
        << " Behaviour.\n"
@@ -1877,17 +1907,15 @@ namespace mfront {
   void BehaviourCodeGeneratorBase::writeBehaviourFileHeaderBegin(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
-    os << "#ifndef LIB_TFELMATERIAL_" << makeUpperCase(this->bd.getClassName())
-       << "_HXX\n"
-       << "#define LIB_TFELMATERIAL_" << makeUpperCase(this->bd.getClassName())
-       << "_HXX\n\n";
+    const auto cn = this->bd.getClassName();
+    this->writeHeaderGuardBegin(os, cn, true);
   }
 
   void BehaviourCodeGeneratorBase::writeBehaviourFileHeaderEnd(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
-    os << "#endif /* LIB_TFELMATERIAL_"
-       << makeUpperCase(this->bd.getClassName()) << "_HXX */\n";
+    const auto cn = this->bd.getClassName();
+    this->writeHeaderGuardEnd(os, cn, true);
   }
 
   void BehaviourCodeGeneratorBase::writeBehaviourClassEnd(
@@ -1994,7 +2022,8 @@ namespace mfront {
        << "* \\brief Update the dissipated energy at end of the time step\n"
        << "* \\param[in] Psi_d: dissipated energy at end of the time step\n"
        << "*/\n"
-       << "TFEL_HOST_DEVICE void computeDissipatedEnergy(stress& Psi_d) const";
+       << "TFEL_HOST_DEVICE void computeDissipatedEnergy(stress& Psi_d) "
+          "const";
     if (this->bd.hasCode(h, BehaviourData::ComputeDissipatedEnergy)) {
       os << "{\n"
          << "using namespace std;\n"
@@ -2011,7 +2040,8 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     os << "/*!\n"
        << "* \\brief compute the sound velocity\n"
-       << "* \\param[in] rho_m0: mass density in the reference configuration\n"
+       << "* \\param[in] rho_m0: mass density in the reference "
+          "configuration\n"
        << "*/\n";
     if (this->bd.hasCode(h, BehaviourData::ComputeSpeedOfSound)) {
       const auto vs = tfel::unicode::getMangledString("vₛ");
@@ -2046,10 +2076,10 @@ namespace mfront {
        << "*/\n";
     if (!this->bd.getTangentOperatorBlocks().empty()) {
       os << "[[nodiscard]] IntegrationResult\n"
-         << "integrate(const SMFlag smflag, const SMType smt) override{\n";
+         << "integrate(const SMFlag smflag, const SMType smt) override final{\n";
     } else {
       os << "[[nodiscard]] IntegrationResult\n"
-         << "integrate(const SMFlag, const SMType) override{\n";
+         << "integrate(const SMFlag, const SMType) override final{\n";
     }
     os << "using namespace std;\n"
        << "using namespace tfel::math;\n";
@@ -2063,7 +2093,8 @@ namespace mfront {
            BehaviourDescription::GENERALBEHAVIOUR)) {
         if (this->bd.useQt()) {
           os << "raise_if(smflag!=MechanicalBehaviour<" << btype
-             << ",hypothesis, NumericType, use_qt>::STANDARDTANGENTOPERATOR,\n"
+             << ",hypothesis, NumericType, "
+                "use_qt>::STANDARDTANGENTOPERATOR,\n"
              << "\"invalid tangent operator flag\");\n";
         } else {
           os << "raise_if(smflag!=MechanicalBehaviour<" << btype
@@ -2125,9 +2156,11 @@ namespace mfront {
   void BehaviourCodeGeneratorBase::writeBehaviourDisabledConstructors(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
-    os << "//! \\brief Default constructor (disabled)\n"
-       << this->bd.getClassName() << "() =delete ;\n"
-       << "//! \\brief Copy constructor (disabled)\n"
+    if (!this->bd.shallDefineDefaultConstructor()) {
+      os << "//! \\brief Default constructor (disabled)\n"
+         << this->bd.getClassName() << "() =delete ;\n";
+    }
+    os << "//! \\brief Copy constructor (disabled)\n"
        << this->bd.getClassName() << "(const " << this->bd.getClassName()
        << "&) = delete;\n"
        << "//! \\brief Assignement operator (disabled)\n"
@@ -2301,6 +2334,12 @@ namespace mfront {
     // initializers
     const auto& init = this->getBehaviourConstructorsInitializers(h);
     // writing constructors
+    if (this->bd.shallDefineDefaultConstructor()) {
+      os << "//! \\brief default constructor\n"
+         << this->bd.getClassName() << "()\n : " << init << "\n{";
+      write_body();
+      os << "}\n\n";
+    }
     os << "/*!\n"
        << "* \\brief Constructor\n"
        << "*/\n";
@@ -2447,32 +2486,38 @@ namespace mfront {
       if (ua) {
         if (this->bd.getOrthotropicAxesConvention() ==
             OrthotropicAxesConvention::PIPE) {
-          out << "tfel::material::computeOrthotropicStiffnessTensor<hypothesis,"
+          out << "tfel::material::computeOrthotropicStiffnessTensor<"
+                 "hypothesis,"
               << "StiffnessTensorAlterationCharacteristic::UNALTERED,"
               << "OrthotropicAxesConvention::PIPE>(" << D << ",";
         } else if (this->bd.getOrthotropicAxesConvention() ==
                    OrthotropicAxesConvention::PLATE) {
-          out << "tfel::material::computeOrthotropicStiffnessTensor<hypothesis,"
+          out << "tfel::material::computeOrthotropicStiffnessTensor<"
+                 "hypothesis,"
               << "StiffnessTensorAlterationCharacteristic::UNALTERED,"
               << "OrthotropicAxesConvention::PLATE>(" << D << ",";
         } else {
-          out << "tfel::material::computeOrthotropicStiffnessTensor<hypothesis,"
+          out << "tfel::material::computeOrthotropicStiffnessTensor<"
+                 "hypothesis,"
               << "StiffnessTensorAlterationCharacteristic::UNALTERED,"
               << "OrthotropicAxesConvention::DEFAULT>(" << D << ",";
         }
       } else {
         if (this->bd.getOrthotropicAxesConvention() ==
             OrthotropicAxesConvention::PIPE) {
-          out << "tfel::material::computeOrthotropicStiffnessTensor<hypothesis,"
+          out << "tfel::material::computeOrthotropicStiffnessTensor<"
+                 "hypothesis,"
               << "StiffnessTensorAlterationCharacteristic::ALTERED,"
               << "OrthotropicAxesConvention::PIPE>(" << D << ",";
         } else if (this->bd.getOrthotropicAxesConvention() ==
                    OrthotropicAxesConvention::PLATE) {
-          out << "tfel::material::computeOrthotropicStiffnessTensor<hypothesis,"
+          out << "tfel::material::computeOrthotropicStiffnessTensor<"
+                 "hypothesis,"
               << "StiffnessTensorAlterationCharacteristic::ALTERED,"
               << "OrthotropicAxesConvention::PLATE>(" << D << ",";
         } else {
-          out << "tfel::material::computeOrthotropicStiffnessTensor<hypothesis,"
+          out << "tfel::material::computeOrthotropicStiffnessTensor<"
+                 "hypothesis,"
               << "StiffnessTensorAlterationCharacteristic::ALTERED,"
               << "OrthotropicAxesConvention::DEFAULT>(" << D << ",";
         }
@@ -3162,6 +3207,50 @@ namespace mfront {
       }
     }
     //
+    const auto& md = this->bd.getBehaviourData(h);
+    for (const auto& b : md.getBehaviourVariables()) {
+      const auto warnings = checkInitializeMethods(
+          b.behaviour, h,
+          {.checkGradientsAtTheBeginningOfTheTimeStep = true,
+           .checkGradientsAtTheEndOfTheTimeStep = true,
+           .checkGradientsIncrements = true,
+           .checkThermodynamicForcesAtTheBeginningOfTheTimeStep = true});
+      if (!warnings.empty()) {
+        auto msg =
+            "BehaviourCodeGeneratorBase::writeBehaviourInitializeMethods: "
+            "error while treating behavour variable '" +
+            b.name + "'.";
+        for (const auto& w : warnings) {
+          msg += "\n" + w;
+        }
+        tfel::raise(msg);
+      }
+      for (const auto& mp : getSharedMaterialProperties(b, h)) {
+        os << b.name << ". " << mp.name << " = this->" << mp.name << ";\n";
+      }
+      for (const auto& mp : getUnSharedMaterialProperties(b, h)) {
+        const auto nmp = applyNamesChanges(b, mp);
+        os << b.name << ". " << mp.name << " = this->" << nmp.name << ";\n";
+      }
+      for (const auto& esv : getSharedExternalStateVariables(b, h)) {
+        os << b.name << ". " << esv.name << " = this->" << esv.name << ";\n";
+        os << b.name << ". d" << esv.name << " = this->d" << esv.name << ";\n";
+      }
+      for (const auto& esv : getUnSharedExternalStateVariables(b, h)) {
+        const auto nesv = applyNamesChanges(b, esv);
+        os << b.name << ". " << esv.name << " = this->" << nesv.name << ";\n";
+        os << b.name << ". d" << esv.name << " = this->d" << nesv.name << ";\n";
+      }
+      for (const auto& isv :
+           b.behaviour.getBehaviourData(h).getPersistentVariables()) {
+        const auto nisv = applyNamesChanges(b, isv);
+        os << b.name << ". " << isv.name << " = this->" << nisv.name << ";\n";
+      }
+      os << "if(!this->" << b.name << ".initialize()){\n"
+         << "return false;\n"
+         << "}\n";
+    }
+    //
     if (this->bd.hasCode(h, BehaviourData::BeforeInitializeLocalVariables)) {
       if (this->bd.getAttribute(BehaviourData::profiling, false)) {
         writeStandardPerformanceProfilingBegin(
@@ -3315,7 +3404,8 @@ namespace mfront {
     os << "/*!\n"
        << "* \\return the modelling hypothesis\n"
        << "*/\n"
-       << "constexpr ModellingHypothesis::Hypothesis\ngetModellingHypothesis() "
+       << "constexpr "
+          "ModellingHypothesis::Hypothesis\ngetModellingHypothesis() "
           "const{\n"
        << "return hypothesis;\n"
        << "} // end of getModellingHypothesis\n\n";
@@ -3328,6 +3418,33 @@ namespace mfront {
     this->writeVariablesDeclarations(os, md.getLocalVariables(), "", "",
                                      this->fd.fileName, false);
     os << '\n';
+    for (const auto& b : md.getBehaviourVariables()) {
+      const auto wrapper = b.behaviour.getClassName() + "Wrapper_" + b.name;
+      const auto bn = [this, &b] {
+        if (this->bd.useQt()) {
+          return b.behaviour.getFullClassName() +
+                 "<hypothesis, NumericType, use_qt>";
+        }
+        return b.behaviour.getFullClassName() +
+               "<hypothesis, NumericType, false>";
+      }();
+      os << "struct " << wrapper << " final\n: " << bn << "\n"
+         << "{\n"
+         << "//! \\brief default constructor\n"
+         << wrapper << "()\n"
+         << ": " << bn << "(){\n"
+         << "}\n"
+         << "//! \\brief copy constructor\n"
+         << wrapper << "(const " << wrapper << "&) = delete;\n"
+         << "//! \\brief move constructor\n"
+         << wrapper << "(" << wrapper << "&&) = delete;\n"
+         << "//! \\brief destructor\n"
+         << "~"<<wrapper << "() = default;\n"
+         << "private:\n"
+         << "friend class " << this->bd.getClassName() << ";\n"
+         << "};\n";
+      os << wrapper << " " << b.name << ";\n";
+    }
   }
 
   void BehaviourCodeGeneratorBase::writeBehaviourIntegrationVariables(
@@ -3653,8 +3770,8 @@ namespace mfront {
     if (this->bd.getAttribute<bool>(BehaviourData::profiling, false)) {
       os << "#include\"MFront/BehaviourProfiler.hxx\"\n";
     }
-    os << "#include\"" << this->getBehaviourDataFileName() << "\"\n"
-       << "#include\"" << this->getIntegrationDataFileName() << "\"\n";
+    os << "#include\"" << this->bd.getBehaviourDataFileName() << "\"\n"
+       << "#include\"" << this->bd.getIntegrationDataFileName() << "\"\n";
     os << '\n';
   }
 
@@ -3813,28 +3930,29 @@ namespace mfront {
     os << "/*!\n"
        << "* Partial specialisation for " << this->bd.getClassName() << ".\n"
        << "*/\n";
+    const auto cn = this->bd.getFullClassName();
     if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
       if (this->bd.useQt()) {
         os << "template<ModellingHypothesis::Hypothesis hypothesis, "
            << "typename NumericType,bool use_qt>\n"
-           << "class MechanicalBehaviourTraits<" << this->bd.getClassName()
+           << "class MechanicalBehaviourTraits<" << cn
            << "<hypothesis, NumericType, use_qt> >\n";
       } else {
         os << "template<ModellingHypothesis::Hypothesis hypothesis, "
            << "typename NumericType>\n"
-           << "class MechanicalBehaviourTraits<" << this->bd.getClassName()
+           << "class MechanicalBehaviourTraits<" << cn
            << "<hypothesis, NumericType, false> >\n";
       }
     } else {
       if (this->bd.useQt()) {
         os << "template<typename NumericType,bool use_qt>\n"
-           << "class MechanicalBehaviourTraits<" << this->bd.getClassName()
+           << "class MechanicalBehaviourTraits<" << cn
            << "<ModellingHypothesis::"
            << ModellingHypothesis::toUpperCaseString(h)
            << ", NumericType, use_qt> >\n";
       } else {
         os << "template<typename NumericType>\n"
-           << "class MechanicalBehaviourTraits<" << this->bd.getClassName()
+           << "class MechanicalBehaviourTraits<" << cn
            << "<ModellingHypothesis::"
            << ModellingHypothesis::toUpperCaseString(h)
            << ", NumericType, false> >\n";
@@ -4197,8 +4315,10 @@ namespace mfront {
   void BehaviourCodeGeneratorBase::writeBehaviourFileEnd(
       std::ostream& os) const {
     this->checkBehaviourFile(os);
-    this->writeBehaviourTraits(os);
     this->writeNamespaceEnd(os);
+    os << "namespace tfel::material{\n\n";
+    this->writeBehaviourTraits(os);
+    os << "} // end of namespace tfel::material\n\n";
     this->writeBehaviourFileHeaderEnd(os);
   }  // end of writeBehaviourFileBegin
 
@@ -4243,9 +4363,8 @@ namespace mfront {
           "defined");
     }
     if (!hasUserDefinedPredictionOperatorCode(this->bd, h)) {
-      os << "[[nodiscard]] IntegrationResult computePredictionOperator(const "
-            "SMFlag,const "
-            "SMType) override{\n"
+      os << "[[nodiscard]] IntegrationResult computePredictionOperator("
+         << "const SMFlag, const SMType) override final{\n"
          << "tfel::raise(\"" << this->bd.getClassName()
          << "::computePredictionOperator: \"\n"
          << "\"unsupported prediction operator flag\");\n"
@@ -4355,9 +4474,8 @@ namespace mfront {
           }
         }
         os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult "
-              "computePredictionOperator(const "
-              "SMFlag "
-              "smflag,const SMType smt) override{\n"
+           << "computePredictionOperator(const SMFlag smflag, "
+           << "const SMType smt) override final{\n"
            << "using namespace std;\n"
            << "switch(smflag){\n";
         for (const auto& t : tos) {
@@ -4376,7 +4494,7 @@ namespace mfront {
     } else {
       os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult\n"
          << "computePredictionOperator(const SMFlag smflag,const SMType smt) "
-            "override{\n"
+         << "override final{\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using std::vector;\n";
@@ -4559,7 +4677,7 @@ namespace mfront {
       std::ostream& os) const {
     this->checkBehaviourFile(os);
     os << "TFEL_HOST_DEVICE real getMinimalTimeStepScalingFactor() const "
-          "noexcept override{\n"
+          "noexcept override final{\n"
           "  return this->minimal_time_step_scaling_factor;\n"
           "}\n\n";
   }
@@ -4570,7 +4688,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     os << "TFEL_HOST_DEVICE std::pair<bool, real>\n"
           "computeAPrioriTimeStepScalingFactor(const real "
-          "current_time_step_scaling_factor) const override{\n"
+          "current_time_step_scaling_factor) const override final{\n"
           "const auto time_scaling_factor = "
           "this->computeAPrioriTimeStepScalingFactorII();\n"
           "return {time_scaling_factor.first,\n"
@@ -4607,7 +4725,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     os << "TFEL_HOST_DEVICE std::pair<bool, real>\n"
           "computeAPosterioriTimeStepScalingFactor(const real "
-          "current_time_step_scaling_factor) const override{\n"
+          "current_time_step_scaling_factor) const override final{\n"
           "const auto time_scaling_factor = "
           "this->computeAPosterioriTimeStepScalingFactorII();\n"
           "return {time_scaling_factor.first,\n"
@@ -4740,7 +4858,7 @@ namespace mfront {
       std::ostream& os) const {
     this->checkIntegrationDataFile(os);
     os << "/*!\n";
-    os << "* \\file   " << this->getIntegrationDataFileName() << '\n';
+    os << "* \\file   " << this->bd.getIntegrationDataFileName() << '\n';
     os << "* \\brief  "
        << "this file implements the " << this->bd.getClassName()
        << "IntegrationData"
@@ -4761,18 +4879,15 @@ namespace mfront {
   void BehaviourCodeGeneratorBase::writeIntegrationDataFileHeaderBegin(
       std::ostream& os) const {
     this->checkIntegrationDataFile(os);
-    os << "#ifndef LIB_TFELMATERIAL_" << makeUpperCase(this->bd.getClassName())
-       << "_INTEGRATION_DATA_HXX\n"
-       << "#define LIB_TFELMATERIAL_" << makeUpperCase(this->bd.getClassName())
-       << "_INTEGRATION_DATA_HXX\n\n";
+    const auto cn = this->bd.getClassName() + "_integration_data";
+    this->writeHeaderGuardBegin(os, cn, true);
   }
 
   void BehaviourCodeGeneratorBase::writeIntegrationDataFileHeaderEnd(
       std::ostream& os) const {
     this->checkIntegrationDataFile(os);
-    os << "#endif /* LIB_TFELMATERIAL_"
-       << makeUpperCase(this->bd.getClassName())
-       << "_INTEGRATION_DATA_HXX */\n";
+    const auto cn = this->bd.getClassName() + "_integration_data";
+    this->writeHeaderGuardEnd(os, cn, true);
   }
 
   void BehaviourCodeGeneratorBase::writeIntegrationDataStandardTFELIncludes(
@@ -5267,7 +5382,7 @@ namespace mfront {
   void BehaviourCodeGeneratorBase::writeSrcFileHeader(std::ostream& os) const {
     this->checkSrcFile(os);
     os << "/*!\n"
-       << "* \\file   " << this->getSrcFileName() << '\n'
+       << "* \\file   " << this->bd.getSrcFileName() << '\n'
        << "* \\brief  "
        << "this file implements the " << this->bd.getClassName()
        << " Behaviour.\n"
@@ -5289,9 +5404,9 @@ namespace mfront {
          << "#include<stdexcept>\n\n";
     }
     os << "#include\"TFEL/Raise.hxx\"\n"
-       << "#include\"" << this->getBehaviourDataFileName() << "\"\n"
-       << "#include\"" << this->getIntegrationDataFileName() << "\"\n"
-       << "#include\"" << this->getBehaviourFileName() << "\"\n\n";
+       << "#include\"" << this->bd.getBehaviourDataFileName() << "\"\n"
+       << "#include\"" << this->bd.getIntegrationDataFileName() << "\"\n"
+       << "#include\"" << this->bd.getBehaviourFileName() << "\"\n\n";
   }  // end of writeSrcFileHeader()
 
   void BehaviourCodeGeneratorBase::writeSrcFileUserDefinedCode(

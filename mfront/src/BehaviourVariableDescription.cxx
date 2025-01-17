@@ -41,7 +41,6 @@ namespace mfront {
   }  // end of selectSharedVariables
 
   static VariableDescriptionContainer selectUnSharedVariables(
-      const BehaviourVariableDescription& d,
       const VariableDescriptionContainer& variables,
       const std::vector<std::regex>& filters) {
     auto r = VariableDescriptionContainer{};
@@ -56,7 +55,7 @@ namespace mfront {
         return false;
       }();
       if (!shared) {
-        r.push_back(applyNamesChanges(d, v));
+        r.push_back(v);
       }
     }
     return r;
@@ -104,7 +103,7 @@ namespace mfront {
       const BehaviourVariableDescription& d,
       const BehaviourVariableDescription::Hypothesis& h) {
     const auto& bd = d.behaviour.getBehaviourData(h);
-    return selectUnSharedVariables(d, bd.getMaterialProperties(),
+    return selectUnSharedVariables(bd.getMaterialProperties(),
                                    d.shared_material_properties);
   }  // end of getUnSharedMaterialProperties
 
@@ -120,7 +119,7 @@ namespace mfront {
       const BehaviourVariableDescription& d,
       const BehaviourVariableDescription::Hypothesis& h) {
     const auto& bd = d.behaviour.getBehaviourData(h);
-    return selectUnSharedVariables(d, bd.getExternalStateVariables(),
+    return selectUnSharedVariables(bd.getExternalStateVariables(),
                                    d.shared_external_state_variables);
   }  // end of getUnSharedExternalStateVariables
 

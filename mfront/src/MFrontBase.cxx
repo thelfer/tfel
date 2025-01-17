@@ -30,6 +30,7 @@
 #include "MFront/SearchPathsHandler.hxx"
 #include "MFront/PedanticMode.hxx"
 #include "MFront/MFrontLogStream.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/DSLUtilities.hxx"
@@ -463,7 +464,41 @@ namespace mfront {
 
   void MFrontBase::treatPedantic() { setPedanticMode(true); }
 
-  void MFrontBase::treatWarning() {}
+  void MFrontBase::treatReportWarnings() {
+    const auto& o = this->getCurrentCommandLineArgument().getOption();
+    if (o.empty()) {
+      setWarningMode(true);
+    } else {
+      if (o == "true") {
+        setWarningMode(true);
+      } else if (o == "false") {
+        setWarningMode(false);
+      } else {
+        tfel::raise(
+            "MFrontBase::treatReportWarnings: "
+            "unknown option '" +
+            o + "'");
+      }
+    }
+  } // end of treatReportWarnings
+
+  void MFrontBase::treatWarningError() {
+    const auto& o = this->getCurrentCommandLineArgument().getOption();
+    if (o.empty()) {
+      setWarningErrorMode(true);
+    } else {
+      if (o == "true") {
+        setWarningErrorMode(true);
+      } else if (o == "false") {
+        setWarningErrorMode(false);
+      } else {
+        tfel::raise(
+            "MFrontBase::treatWarningError: "
+            "unknown option '" +
+            o + "'");
+      }
+    }
+  } // end of treatWarningError
 
   void MFrontBase::treatDebug() { setDebugMode(true); }
 

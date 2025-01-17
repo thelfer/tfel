@@ -83,6 +83,34 @@ Python bindings are now generated using the
 
 # New features in `MFront`
 
+## Warnings
+
+Many warnings have been added to detect potential misuses of `MFront` or
+known bad practices.
+
+### Warnings added to all DSLs
+
+### Warnings added to isotropic DSLs
+
+### Warnings added to implicit DSLs
+
+## New command line arguments
+
+The following command line arguments are now supported:
+
+- `--report-warnings`: this command line argument enables or disables
+  the reporting of warnings:
+  - `--report-warnings` or `--report-warnings=true` enable the reporting
+    of warnings (which is the default behaviour of `MFront`).
+  - `--report-warnings=false` disables the reporting of warnings.
+- `--warning-error`: this command line argument allows to treat warnings
+  as errors.
+  - `--warning-error` or `--warning-error=true` turns warnings into
+    errors.
+  - `--warning-error=false` does not turn warnings into errors (which is
+    the default behaviour of `MFront`).
+- `-Werror` is equivalent to `--warning-error=true`.
+
 ## Calling an external behaviour: the `@BehaviourVariable` keyword
 
 ```cxx
@@ -96,6 +124,25 @@ Python bindings are now generated using the
   shared_external_state_variables: {".+"}
 };
 ```
+
+# New features in `mfront-query`
+
+## New command line arguments
+
+The following command line arguments are now supported:
+
+- `--report-warnings`: this command line argument enables or disables
+  the reporting of warnings:
+  - `--report-warnings` or `--report-warnings=true` enable the reporting
+    of warnings (which is the default behaviour of `mfront-query`).
+  - `--report-warnings=false` disables the reporting of warnings.
+- `--warning-error`: this command line argument allows to treat warnings
+  as errors.
+  - `--warning-error` or `--warning-error=true` turns warnings into
+    errors.
+  - `--warning-error=false` does not turn warnings into errors (which is
+    the default behaviour of `mfront-query`).
+- `-Werror` is equivalent to `--warning-error=true`.
 
 # Issues fixed
 

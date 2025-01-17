@@ -63,7 +63,8 @@ namespace mfront {
    protected:
     //
     void addExternalMFrontFile(const std::string&,
-                               const std::vector<std::string>&) override;
+                               const std::vector<std::string>&,
+                               const tfel::utilities::DataMap&) override;
     DSLOptions buildDSLOptions() const override;
     void disableQuantitiesUsageIfNotAlreadySet() override;
     bool useQt() const override;

@@ -134,7 +134,7 @@ namespace mfront {
        << "* \\brief Integrate behaviour law over the time step\n"
        << "*/\n"
        << "[[nodiscard]] IntegrationResult\n"
-       << "integrate(const SMFlag smflag,const SMType smt) override{\n"
+       << "integrate(const SMFlag smflag,const SMType smt) override final{\n"
        << "using namespace std;\n";
     if (this->bd.useQt()) {
       os << "if(smflag!=MechanicalBehaviour<" << btype
@@ -147,7 +147,17 @@ namespace mfront {
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     }
-    os << "if(!this->NewtonIntegration()){\n";
+    os << "this->se=2 * (this->mu) * ("
+       << "tfel::math::deviator(this->eel + (this->theta) * (this->deto)));\n"
+       << "this->seq_e = sigmaeq(this->se);\n"
+       << "if (this->seq_e > \n"
+       << "real(0.01) * (this->young) * "
+       << "std::numeric_limits<real>::epsilon()){\n"
+       << "this->n = 3*(this->se)/(2*this->seq_e);\n"
+       << "} else {\n"
+       << "this->n = StrainStensor(strain(0));\n"
+       << "}\n"
+       << "if(!this->NewtonIntegration()){\n";
     if (this->bd.useQt()) {
       os << "return MechanicalBehaviour<" << btype
          << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
@@ -222,21 +232,6 @@ namespace mfront {
        << "return true;\n"
        << "}\n\n";
   }
-
-  void IsotropicMisesCreepCodeGenerator::
-      writeBehaviourParserSpecificInitializeMethodPart(std::ostream& os,
-                                                       const Hypothesis) const {
-    this->checkBehaviourFile(os);
-    os << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+(this->theta)*"
-          "(this->deto)));\n"
-       << "this->seq_e = sigmaeq(this->se);\n"
-       << "if(this->seq_e> real(0.01)*(this->young) * std::numeric_limits<"
-          "real>::epsilon()){\n"
-       << "this->n = 3*(this->se)/(2*this->seq_e);\n"
-       << "} else {\n"
-       << "this->n = StrainStensor(strain(0));\n"
-       << "}\n";
-  }  // end of writeBehaviourParserSpecificInitializeMethodPart
 
   IsotropicMisesCreepCodeGenerator::~IsotropicMisesCreepCodeGenerator() =
       default;

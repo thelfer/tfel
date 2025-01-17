@@ -45,6 +45,7 @@
 #include "MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx"
 #include "MFront/ModelInterfaceFactory.hxx"
 #include "MFront/MFrontLock.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/CMakeGenerator.hxx"
@@ -440,8 +441,20 @@ namespace mfront {
                               "set debug mode, i.e. remove references to "
                               "initial file and add information about the "
                               "local convergence of the integration algorithm");
-    this->registerNewCallBack("--warning", "-W", &MFront::treatWarning,
-                              "print warnings");
+    this->registerCallBack(
+        "--warning", "-W",
+        CallBack(
+            "enable warnings", [this]() noexcept { setWarningMode(true); },
+            false));
+    this->registerNewCallBack("--report-warnings", &MFront::treatReportWarnings,
+                              "print warnings", true);
+    this->registerCallBack(
+        "-Werror",
+        CallBack(
+            "turn warnings into errors",
+            [this]() noexcept { setWarningErrorMode(true); }, false));
+    this->registerNewCallBack("--warning-error", &MFront::treatWarningError,
+                              "turn warnings into errors", true);
     this->registerNewCallBack("--pedantic", &MFront::treatPedantic,
                               "print pedantic warning message");
     this->registerNewCallBack("--interface", "-i", &MFront::treatInterface,
@@ -768,11 +781,12 @@ namespace mfront {
   }    // end of void MFront::treatDefFile
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
 
-  TargetsDescription MFront::treatFile(const std::string& f) const {
+  TargetsDescription MFront::treatFile(
+      const std::string& f, const tfel::utilities::DataMap& dsl_options) const {
     if (getVerboseMode() >= VERBOSE_LEVEL2) {
       getLogStream() << "Treating file: '" << f << "'" << std::endl;
     }
-    auto dsl = MFrontBase::getDSL(f);
+    auto dsl = MFrontBase::getDSL(f, dsl_options);
     if (!this->interfaces.empty()) {
       dsl->setInterfaces(this->interfaces);
     }
@@ -964,7 +978,8 @@ namespace mfront {
             log << "The following libraries have been built :\n";
           }
           for (const auto& l : this->targets.libraries) {
-            if (l.name == "MFrontMaterialLaw") {
+            if ((l.name == "MFrontMaterialLaw") ||
+                (l.name == "MFrontBehaviours")) {
               continue;
             }
             log << "- " << l.prefix << l.name << "." << l.suffix << " : ";

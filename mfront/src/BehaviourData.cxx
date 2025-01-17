@@ -781,6 +781,11 @@ namespace mfront {
     return this->localVariables;
   }  // end of getLocalVariables
 
+  const std::vector<BehaviourVariableDescription>&
+  BehaviourData::getBehaviourVariables() const {
+    return this->behaviourVariables;
+  }  // end of getBehaviourVariables
+
   bool BehaviourData::isUsableInPurelyImplicitResolution() const {
     return this->usableInPurelyImplicitResolution;
   }  // end of isUsableInPurelyImplicitResolution

@@ -405,6 +405,9 @@ namespace mfront {
     const VariableDescriptionContainer& getExternalStateVariables() const;
     //! \return all local variables
     const VariableDescriptionContainer& getLocalVariables() const;
+    //! \return all behaviour variables
+    const std::vector<BehaviourVariableDescription>& getBehaviourVariables()
+        const;
     //! \return all parameter variables
     const VariableDescriptionContainer& getParameters() const;
     /*!

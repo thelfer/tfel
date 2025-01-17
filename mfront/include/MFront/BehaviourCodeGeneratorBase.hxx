@@ -44,12 +44,6 @@ namespace mfront {
                                const BehaviourInterfaceMap&);
     //
     void generateOutputFiles(const std::set<Hypothesis>&) override;
-    std::string getBehaviourFileName() const override;
-    std::string getBehaviourDataFileName() const override;
-    std::string getIntegrationDataFileName() const override;
-    std::string getSlipSystemHeaderFileName() const override;
-    std::string getSlipSystemImplementationFileName() const override;
-    std::string getSrcFileName() const override;
     bool isSrcFileRequired() const override;
     //! \brief destructor
     ~BehaviourCodeGeneratorBase() override;
@@ -109,6 +103,14 @@ namespace mfront {
                                             const bool) const;
 
     virtual void writeIncludes(std::ostream&) const;
+
+    virtual void writeHeaderGuardBegin(std::ostream& ,
+                                       const std::string& ,
+                                       const bool) const;
+
+    virtual void writeHeaderGuardEnd(std::ostream&,
+                                     const std::string&,
+                                     const bool) const;
 
     virtual void writeNamespaceBegin(std::ostream&) const;
 
@@ -581,9 +583,9 @@ namespace mfront {
      * \param[in]  h:   hypothesis
      * \param[in]  md:  model description
      * \param[in]  outputVariables: names of the variables containing the
-     * results \param[in]  inputVariables: names of the variables containing the
-     * values of the variables modified by the model at the beginning of the
-     * time step \param[in]  bn:  base name for temporary variable
+     * results \param[in]  inputVariables: names of the variables containing
+     * the values of the variables modified by the model at the beginning of
+     * the time step \param[in]  bn:  base name for temporary variable
      *
      * \pre the size of the input variables must be equal to the size of the
      * output variables
@@ -603,7 +605,7 @@ namespace mfront {
     const BehaviourDescription& bd;
     //! \brief list of registred interfaces, indexed by their name
     const BehaviourInterfaceMap& interfaces;
-  };  // end of BehaviourCodeGeneratorBase
+    };  // end of BehaviourCodeGeneratorBase
 
 }  // end of namespace mfront
 

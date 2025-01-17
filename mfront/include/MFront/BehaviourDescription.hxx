@@ -66,6 +66,12 @@ namespace mfront {
     static const char* const modellingHypothesis;
     //! \brief standard option
     static const char* const modellingHypotheses;
+    //! \brief standard option and attribute
+    static const char* const internalNamespace;
+    //! \brief standard option and attribute
+    static const char* const defaultConstructor;
+    //! \brief standard option and attribute
+    static const char* const finalClass;
     //! \brief a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! \brief a simple alias
@@ -335,6 +341,39 @@ namespace mfront {
     //! \return the class name
     const std::string& getClassName() const;
     /*!
+     * \return the class name qualified with the namespaces in which it is
+     * defined
+     */
+    std::string getFullClassName() const;
+    //! \return if the generated class shall define the default constructor
+    bool shallDefineDefaultConstructor() const;
+    //! \return if the generated class shall be declared final
+    bool isFinal() const;
+    /*!
+     * \return the internal namespace in which the behaviour class shall be
+     * defined.
+     * \note The returned value can be empty.
+     */
+    std::string getInternalNamespace() const;
+    //! \return the name of the behaviour file
+    std::string getBehaviourFileName() const;
+    //! \return the name of the behaviour data file
+    std::string getBehaviourDataFileName() const;
+    //! \return the name of the integration data file
+    std::string getIntegrationDataFileName() const;
+    /*!
+     * \return the name of the header file describing the slip systems,
+     * if declared
+     */
+    std::string getSlipSystemHeaderFileName() const;
+    /*!
+     * \return the name of the header file implementing the description of the
+     * the slip systems, if declared
+     */
+    std::string getSlipSystemImplementationFileName() const;
+    //! \return the name of the source file
+    std::string getSrcFileName() const;
+    /*!
      * \return a class describing the input of a material property
      * \param[in] n: variable name
      * \param[in] b: if true, the modelling hypotheses must be
@@ -581,6 +620,10 @@ namespace mfront {
     bool isGradientName(const std::string&) const;
 
     bool isGradientIncrementName(const std::string&) const;
+
+    bool isNameOfAGradientAtTheBeginningOfTheTimeStep(const std::string&) const;
+
+    bool isNameOfAGradientAtTheEndOfTheTimeStep(const std::string&) const;
 
     bool isThermodynamicForceName(const std::string&) const;
     //! \return the behaviour type
@@ -2012,6 +2055,27 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT void checkIsStrictlyNegative(
       const BehaviourDescription::MaterialProperty&);
+
+  struct CheckInitializeMethodsOptions {
+    bool checkGradientsAtTheBeginningOfTheTimeStep = false;
+    bool checkGradientsAtTheEndOfTheTimeStep = true;
+    bool checkGradientsIncrements = true;
+    bool checkThermodynamicForcesAtTheBeginningOfTheTimeStep = false;
+  };
+
+  /*!
+   * \brief this function checks if any of the code block
+   * `BeforeInitializeLocalVariables`, `InitializeLocalVariables` or
+   * `AfterInitializeLocalVariables` uses a variable in the given list.
+   * \param[in] bd: behaviour description
+   * \param[in] h: modelling hypothesis
+   * \param[in] opts: modelling hypothesis
+   * \return warnings describining the variables used
+   */
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string> checkInitializeMethods(
+      const BehaviourDescription&,
+      const BehaviourDescription::Hypothesis,
+      const CheckInitializeMethodsOptions& = {});
 
 }  // end of namespace mfront
 

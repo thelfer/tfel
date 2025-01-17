@@ -277,7 +277,8 @@ namespace mfront {
     }
     //! generating sources du to external material properties and models
     for (const auto& em : this->md.getExternalMFrontFiles()) {
-      this->callMFront(em.second, {em.first});
+      this->callMFront({em.first}, std::get<0>(em.second),
+                       std::get<1>(em.second));
     }
     //! generating sources by the interfaces
     for (const auto& i : this->interfaces) {
@@ -1077,8 +1078,10 @@ namespace mfront {
   }  // end of appendToSources
 
   void ModelDSLCommon::addExternalMFrontFile(
-      const std::string& f, const std::vector<std::string>& vinterfaces) {
-    this->md.addExternalMFrontFile(f, vinterfaces);
+      const std::string& f,
+      const std::vector<std::string>& vinterfaces,
+      const tfel::utilities::DataMap& dsl_options) {
+    this->md.addExternalMFrontFile(f, vinterfaces, dsl_options);
   }  // end of addExternalMFrontFile
 
   const MaterialKnowledgeDescription&
