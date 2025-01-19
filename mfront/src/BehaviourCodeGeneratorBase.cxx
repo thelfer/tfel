@@ -2314,21 +2314,6 @@ namespace mfront {
          << "using std::vector;\n";
       writeMaterialLaws(os, this->bd.getMaterialLaws());
       this->writeBehaviourParameterInitialisation(os, h);
-      // calling models
-      for (const auto& m : this->bd.getModelsDescriptions()) {
-        auto inputs = std::vector<std::string>{};
-        auto outputs = std::vector<std::string>{};
-        for (const auto& vout : m.outputs) {
-          inputs.push_back(vout.name);
-          outputs.push_back("d" + vout.name);
-        }
-        this->writeModelCall(os, tmpnames, h, m, outputs, inputs, "em");
-        for (const auto& output : m.outputs) {
-          const auto vn = output.name;
-          os << "this->d" << vn << " -= this->" << vn << ";\n";
-        }
-      }
-      this->writeBehaviourLocalVariablesInitialisation(os, h);
     };
     this->checkBehaviourFile(os);
     // initializers
@@ -3184,6 +3169,71 @@ namespace mfront {
   void BehaviourCodeGeneratorBase::writeBehaviourInitializeMethods(
       std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
+    const auto& md = this->bd.getBehaviourData(h);
+    for (const auto& b : md.getBehaviourVariables()) {
+      const auto warnings = checkInitializeMethods(
+          b.behaviour, h,
+          {.checkGradientsAtTheBeginningOfTheTimeStep = true,
+           .checkGradientsAtTheEndOfTheTimeStep = true,
+           .checkGradientsIncrements = true,
+           .checkThermodynamicForcesAtTheBeginningOfTheTimeStep = true});
+      if (!warnings.empty()) {
+        auto msg =
+            "BehaviourCodeGeneratorBase::writeBehaviourInitializeMethods: "
+            "error while treating behavour variable '" +
+            b.name + "'.";
+        for (const auto& w : warnings) {
+          msg += "\n" + w;
+        }
+        tfel::raise(msg);
+      }
+      const auto wrapper = b.behaviour.getClassName() + "Wrapper_" + b.name;
+      os << "/*!\n"
+         << " * \\ brief initialize the behaviour variable " << b.name << "\n"
+         << " */\n"
+         << "[[nodiscard]] TFEL_HOST_DEVICE bool "
+         << "initialize(const " << wrapper << "&){\n";
+      if (b.store_gradients) {
+        for (const auto& [g, th] : b.behaviour.getMainVariables()) {
+          static_cast<void>(th);
+          const auto ng = applyNamesChanges(b, g);
+          os << "this->" << b.name << ". " << g.name  //
+             << " = this->" << ng.name << ";\n";
+        }
+      }
+      if (b.store_thermodynamic_forces) {
+        for (const auto& [g, th] : b.behaviour.getMainVariables()) {
+          static_cast<void>(th);
+          const auto nth = applyNamesChanges(b, th);
+          os << "this->" << b.name << ". " << th.name  //
+             << " = this->" << nth.name << ";\n";
+        }
+      }
+      for (const auto& mp : getSharedMaterialProperties(b, h)) {
+        os << "this->" << b.name << ". " << mp.name << " = this->" << mp.name << ";\n";
+      }
+      for (const auto& mp : getUnSharedMaterialProperties(b, h)) {
+        const auto nmp = applyNamesChanges(b, mp);
+        os << "this->" << b.name << ". " << mp.name << " = this->" << nmp.name << ";\n";
+      }
+      for (const auto& esv : getSharedExternalStateVariables(b, h)) {
+        os << "this->" << b.name << ". " << esv.name << " = this->" << esv.name << ";\n";
+        os << "this->" << b.name << ". d" << esv.name << " = this->d" << esv.name << ";\n";
+      }
+      for (const auto& esv : getUnSharedExternalStateVariables(b, h)) {
+        const auto nesv = applyNamesChanges(b, esv);
+        os << "this->" << b.name << ". " << esv.name << " = this->" << nesv.name << ";\n";
+        os << "this->" << b.name << ". d" << esv.name << " = this->d" << nesv.name << ";\n";
+      }
+      for (const auto& isv :
+           b.behaviour.getBehaviourData(h).getPersistentVariables()) {
+        const auto nisv = applyNamesChanges(b, isv);
+        os << "this->" << b.name << ". " << isv.name << " = this->" << nisv.name << ";\n";
+      }
+      os << "this->" << b.name << ". dt = this->dt;\n";
+      os << "return this->" << b.name << ".initialize();\n"
+         << "}\n\n";
+    }
     os << "/*!\n"
        << " * \\ brief initialize the behaviour with user code\n"
        << " */\n"
@@ -3206,47 +3256,10 @@ namespace mfront {
         os << "this->d" << v.name << " -= this->" << v.name << ";\n";
       }
     }
+    this->writeBehaviourLocalVariablesInitialisation(os, h);
     //
-    const auto& md = this->bd.getBehaviourData(h);
     for (const auto& b : md.getBehaviourVariables()) {
-      const auto warnings = checkInitializeMethods(
-          b.behaviour, h,
-          {.checkGradientsAtTheBeginningOfTheTimeStep = true,
-           .checkGradientsAtTheEndOfTheTimeStep = true,
-           .checkGradientsIncrements = true,
-           .checkThermodynamicForcesAtTheBeginningOfTheTimeStep = true});
-      if (!warnings.empty()) {
-        auto msg =
-            "BehaviourCodeGeneratorBase::writeBehaviourInitializeMethods: "
-            "error while treating behavour variable '" +
-            b.name + "'.";
-        for (const auto& w : warnings) {
-          msg += "\n" + w;
-        }
-        tfel::raise(msg);
-      }
-      for (const auto& mp : getSharedMaterialProperties(b, h)) {
-        os << b.name << ". " << mp.name << " = this->" << mp.name << ";\n";
-      }
-      for (const auto& mp : getUnSharedMaterialProperties(b, h)) {
-        const auto nmp = applyNamesChanges(b, mp);
-        os << b.name << ". " << mp.name << " = this->" << nmp.name << ";\n";
-      }
-      for (const auto& esv : getSharedExternalStateVariables(b, h)) {
-        os << b.name << ". " << esv.name << " = this->" << esv.name << ";\n";
-        os << b.name << ". d" << esv.name << " = this->d" << esv.name << ";\n";
-      }
-      for (const auto& esv : getUnSharedExternalStateVariables(b, h)) {
-        const auto nesv = applyNamesChanges(b, esv);
-        os << b.name << ". " << esv.name << " = this->" << nesv.name << ";\n";
-        os << b.name << ". d" << esv.name << " = this->d" << nesv.name << ";\n";
-      }
-      for (const auto& isv :
-           b.behaviour.getBehaviourData(h).getPersistentVariables()) {
-        const auto nisv = applyNamesChanges(b, isv);
-        os << b.name << ". " << isv.name << " = this->" << nisv.name << ";\n";
-      }
-      os << "if(!this->" << b.name << ".initialize()){\n"
+      os << "if(!this->initialize(" << b.name << ")){\n"
          << "return false;\n"
          << "}\n";
     }

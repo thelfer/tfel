@@ -30,6 +30,14 @@ namespace mfront {
     this->reserveName("NewtonIntegration");
     // main variables
     this->mb.declareAsASmallStrainStandardBehaviour();
+    // intermediate temperature
+    const auto* const Topt = BehaviourDescription::
+        automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
+    if (this->mb.getAttribute<bool>(Topt)) {
+      // temperature at the midle of the time step
+      const auto T_ = VariableDescription("temperature", "T_", 1u, 0u);
+      this->mb.addLocalVariable(h, T_);
+    }
     // material symmetry
     this->mb.setSymmetryType(mfront::ISOTROPIC);
     this->mb.setElasticSymmetryType(mfront::ISOTROPIC);
@@ -39,13 +47,6 @@ namespace mfront {
     this->reserveName("theta");
     this->reserveName("\u03B8");
     this->reserveName("iterMax");
-    // intermediate temperature
-    const auto* const Topt = BehaviourDescription::
-        automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
-    if (this->mb.getAttribute<bool>(Topt)) {
-      const auto T_ = VariableDescription("temperature", "T_", 1u, 0u);
-      this->mb.addLocalVariable(h, T_);
-    }
     // Call Back
     this->registerNewCallBack(
         "@UsableInPurelyImplicitResolution",
@@ -274,6 +275,18 @@ namespace mfront {
       log << "IsotropicBehaviourDSLBase::completeVariableDeclaration : begin\n";
     }
     BehaviourDSLCommon::completeVariableDeclaration();
+    // intermediate temperature
+    const auto* const Topt = BehaviourDescription::
+        automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
+    if (this->mb.getAttribute<bool>(Topt)) {
+      CodeBlock initLocalVars;
+      initLocalVars.code = "this->T_ = this->T + (" + this->getClassName() +
+                           "::theta) * (this->dT);\n";
+      this->mb.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                       BehaviourData::BeforeInitializeLocalVariables,
+                       initLocalVars, BehaviourData::CREATEORAPPEND,
+                       BehaviourData::BODY);
+    }
     add_lv(this->mb, "stress", "\u03BB", "lambda",
            Glossary::FirstLameCoefficient,
            "first Lamé coefficient at t+theta*dt");
@@ -330,23 +343,11 @@ namespace mfront {
   }  // end of IsotropicBehaviourDSLBase::completeVariableDeclaration
 
   void IsotropicBehaviourDSLBase::endsInputFileProcessing() {
-    BehaviourDSLCommon::endsInputFileProcessing();
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       auto& log = getLogStream();
       log << "IsotropicBehaviourDSLBase::endsInputFileProcessing: begin\n";
     }
-    const auto* const Topt = BehaviourDescription::
-        automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
-    if (this->mb.getAttribute<bool>(Topt)) {
-      // temperature at the midle of the time step
-      CodeBlock initLocalVars;
-      initLocalVars.code = "this->T_ = this->T + (" + this->getClassName() +
-                           "::theta) * (this->dT);\n";
-      this->mb.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                       BehaviourData::BeforeInitializeLocalVariables,
-                       initLocalVars, BehaviourData::CREATEORAPPEND,
-                       BehaviourData::BODY);
-    }
+    BehaviourDSLCommon::endsInputFileProcessing();
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       auto& log = getLogStream();
       log << "IsotropicBehaviourDSLBase::endsInputFileProcessing: end\n";
