@@ -1,5 +1,6 @@
 add_subdirectory(unit-tests)
 # bricks
+add_subdirectory(BehaviourVariables)
 add_subdirectory(StandardElasticity)
 add_subdirectory(StandardElastoViscoPlasticity)
 add_subdirectory(FiniteStrainSingleCrystal)

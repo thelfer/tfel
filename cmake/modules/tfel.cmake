@@ -321,6 +321,7 @@ $<TARGET_FILE_DIR:TFELConfig>;\
 $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
 %PATH%"
       COMMAND "${mfront_executable}"
+      ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/${dir}"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/models"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
@@ -332,6 +333,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
       add_custom_command(
     	OUTPUT  ${output_files}
 	COMMAND "${mfront_executable}"
+        ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/${dir}"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/models"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
@@ -343,6 +345,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
       if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
 	add_test(NAME mfront-${file}-${interface}
 	  COMMAND ${mfront_executable}
+	  --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/${dir}
 	  --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/models
 	  --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours
 	  --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties

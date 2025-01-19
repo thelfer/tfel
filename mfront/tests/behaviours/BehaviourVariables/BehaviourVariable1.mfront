@@ -1,0 +1,25 @@
+@DSL Default;
+@Behaviour BehaviourVariable1;
+
+@BehaviourVariable b1 {
+  file: "BehaviourVariablePlasticity.mfront",
+  variables_suffix: "1",
+  external_names_prefix: "FirstPhase",
+  store_gradients: true,
+  store_thermodynamic_forces: true,
+  shared_external_state_variables: {".+"}
+};
+
+@Integrator{
+  b1.deto = deto;
+  const auto r = b1.integrate(smflag, smt);
+  if (!r) {
+    return false;
+  }
+  // updating the stress
+  sig = b1.sig;
+}
+
+@TangentOperator {
+  Dt = b1.getTangentOperator();
+}
