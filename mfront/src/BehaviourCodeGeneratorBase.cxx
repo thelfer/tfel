@@ -2207,8 +2207,9 @@ namespace mfront {
        << " */\n";
     if (allowRuntimeModificationOfTheOutOfBoundsPolicy(this->bd)) {
       os << "TFEL_HOST_DEVICE void\n"
-         << "setOutOfBoundsPolicy(const OutOfBoundsPolicy policy_value){\n"
-         << "  this->policy = policy_value;\n"
+         << "setOutOfBoundsPolicy(const OutOfBoundsPolicy "
+         << "mfront_policy_value){\n"
+         << "  this->policy = mfront_policy_value;\n"
          << "} // end of setOutOfBoundsPolicy\n\n";
     } else {
       os << "TFEL_HOST_DEVICE void\n"
@@ -3223,7 +3224,8 @@ namespace mfront {
          << " * \\ brief initialize the behaviour variable " << b.name << "\n"
          << " */\n"
          << "[[nodiscard]] TFEL_HOST_DEVICE bool "
-         << "initialize(const " << wrapper << "&){\n";
+         << "initialize(const " << wrapper << "&){\n"
+         << "this->" << b.name << ".setOutOfBoundsPolicy(this->policy);\n";
       if (b.store_gradients) {
         for (const auto& [g, th] : b.behaviour.getMainVariables()) {
           static_cast<void>(th);
