@@ -600,7 +600,6 @@ namespace mfront {
     //! \brief additional linker flags
     std::vector<std::string> ldflags;
     //! \brief additional libraries's sources
-#pragma message "I don't like this"
     std::vector<std::string> additional_libraries_sources;
     //! \brief additional link libraries
     std::vector<std::string> link_libraries;

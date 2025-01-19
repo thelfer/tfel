@@ -2692,6 +2692,7 @@ namespace mfront {
             .addDataTypeValidator<std::string>("external_names_suffix")
             .addDataTypeValidator<bool>("store_gradients")
             .addDataTypeValidator<bool>("store_thermodynamic_forces")
+            .addDataTypeValidator<bool>("automatically_save_state_variables")
             .addDataTypeValidator<std::vector<Data>>(
                 "shared_material_properties")
             .addDataTypeValidator<std::vector<Data>>(
@@ -2764,13 +2765,15 @@ namespace mfront {
         .variables_suffix = v_suffix,
         .external_names_prefix = enames_prefix,
         .external_names_suffix = enames_suffix,
-        .store_gradients = get_if<bool>(options, "store_gradients", true),
-        .store_thermodynamic_forces =
-            get_if<bool>(options, "store_thermodynamic_forces", true),
         .shared_material_properties =
             extract_regex_vector("shared_material_properties"),
         .shared_external_state_variables =
             extract_regex_vector("shared_external_state_variables"),
+        .store_gradients = get_if<bool>(options, "store_gradients", true),
+        .store_thermodynamic_forces =
+            get_if<bool>(options, "store_thermodynamic_forces", true),
+        .automatically_save_state_variables =
+            get_if<bool>(options, "automatically_save_state_variables", true),
         .behaviour = this->getBehaviourDescription(file)};
     // registring the behaviour variable
     this->mb.addBehaviourVariable(d);

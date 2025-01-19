@@ -1970,31 +1970,62 @@ namespace mfront {
 
   void BehaviourCodeGeneratorBase::writeBehaviourUpdateAuxiliaryStateVariables(
       std::ostream& os, const Hypothesis h) const {
-    os << "/*!\n"
-       << "* \\brief Update auxiliary state variables at end of integration\n"
-       << "*/\n"
-       << "TFEL_HOST_DEVICE void updateAuxiliaryStateVariables()";
-    const auto& em = this->bd.getModelsDescriptions();
-    if ((this->bd.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) ||
-        (!em.empty())) {
-      os << "{\n"
-         << "using namespace std;\n"
-         << "using namespace tfel::math;\n";
-      for (const auto& m : em) {
-        for (const auto& output : m.outputs) {
-          const auto vn = output.name;
-          os << "this->" << vn << " += this->d" << vn << ";\n";
+    const auto& md = this->bd.getBehaviourData(h);
+    for (const auto& b : md.getBehaviourVariables()) {
+      const auto wrapper = getBehaviourWrapperClassName(b);
+      os << "/*!\n"
+         << "* \\brief Update auxiliary state variables at end of integration\n"
+         << "*/\n"
+         << "TFEL_HOST_DEVICE void "
+         << "updateAuxiliaryStateVariables(" << wrapper << "&){\n";
+      if (b.store_gradients) {
+        for (const auto& [g, th] : b.behaviour.getMainVariables()) {
+          static_cast<void>(th);
+          const auto ng = applyNamesChanges(b, g);
+          os << "this->" << ng.name << " = "
+             << "this->" << b.name << ". " << g.name << ";\n";
         }
       }
-      if (this->bd.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
-        writeMaterialLaws(os, this->bd.getMaterialLaws());
-        os << this->bd.getCode(h, BehaviourData::UpdateAuxiliaryStateVariables)
-           << "\n";
+      if (b.store_thermodynamic_forces) {
+        for (const auto& [g, th] : b.behaviour.getMainVariables()) {
+          static_cast<void>(th);
+          const auto nth = applyNamesChanges(b, th);
+          os << "this->" << nth.name << " = "
+             << "this->" << b.name << ". " << th.name << ";\n";
+        }
       }
-      os << "}\n\n";
-    } else {
-      os << "\n{}\n\n";
+      for (const auto& isv :
+           b.behaviour.getBehaviourData(h).getPersistentVariables()) {
+        const auto nisv = applyNamesChanges(b, isv);
+        os << "this->" << nisv.name << " = "
+           << "this->" << b.name << ". " << isv.name << ";\n";
+      }
+      os << "}\n";
     }
+    os << "/*!\n"
+       << " * \\brief Update auxiliary state variables at end of integration\n"
+       << " */\n"
+       << "TFEL_HOST_DEVICE void updateAuxiliaryStateVariables()"
+       << "{\n"
+       << "using namespace std;\n"
+       << "using namespace tfel::math;\n";
+    writeMaterialLaws(os, this->bd.getMaterialLaws());
+    for (const auto& m : this->bd.getModelsDescriptions()) {
+      for (const auto& output : m.outputs) {
+        const auto vn = output.name;
+        os << "this->" << vn << " += this->d" << vn << ";\n";
+      }
+    }
+    for (const auto& b : md.getBehaviourVariables()) {
+      if (b.automatically_save_state_variables) {
+        os << "this->updateAuxiliaryStateVariables(" << b.name << ");\n";
+      }
+    }
+    if (this->bd.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
+      os << this->bd.getCode(h, BehaviourData::UpdateAuxiliaryStateVariables)
+         << "\n";
+    }
+    os << "}\n\n";
   }  // end of writeBehaviourUpdateAuxiliaryStateVariables
 
   void BehaviourCodeGeneratorBase::writeBehaviourComputeInternalEnergy(
@@ -3187,7 +3218,7 @@ namespace mfront {
         }
         tfel::raise(msg);
       }
-      const auto wrapper = b.behaviour.getClassName() + "Wrapper_" + b.name;
+      const auto wrapper = getBehaviourWrapperClassName(b);
       os << "/*!\n"
          << " * \\ brief initialize the behaviour variable " << b.name << "\n"
          << " */\n"
@@ -3432,7 +3463,7 @@ namespace mfront {
                                      this->fd.fileName, false);
     os << '\n';
     for (const auto& b : md.getBehaviourVariables()) {
-      const auto wrapper = b.behaviour.getClassName() + "Wrapper_" + b.name;
+      const auto wrapper = getBehaviourWrapperClassName(b);
       const auto bn = [this, &b] {
         if (this->bd.useQt()) {
           return b.behaviour.getFullClassName() +
@@ -3455,7 +3486,7 @@ namespace mfront {
          << "~"<<wrapper << "() = default;\n"
          << "private:\n"
          << "friend class " << this->bd.getClassName() << ";\n"
-         << "};\n";
+         << "};\n\n";
       os << wrapper << " " << b.name << ";\n";
     }
   }

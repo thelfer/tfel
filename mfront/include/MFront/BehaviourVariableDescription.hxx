@@ -57,16 +57,6 @@ namespace mfront {
      */
     std::string external_names_suffix;
     /*!
-     * \brief flag stating if the gradients of the behaviour
-     * variable shall be stored in dedicated auxiliary state variables
-     */
-    bool store_gradients;
-    /*!
-     * \brief flag stating if the thermodynamic forces of the behaviour
-     * variable shall be stored in dedicated auxiliary state variables
-     */
-    bool store_thermodynamic_forces;
-    /*!
      * \brief list of regular expressions allowing to select the material
      * properties that shall be shared with the behaviour using the behaviour
      * variable
@@ -78,6 +68,25 @@ namespace mfront {
      * behaviour variable
      */
     std::vector<std::regex> shared_external_state_variables;
+    /*!
+     * \brief flag stating if the gradients of the behaviour
+     * variable shall be stored in dedicated auxiliary state variables
+     */
+    bool store_gradients = true;
+    /*!
+     * \brief flag stating if the thermodynamic forces of the behaviour
+     * variable shall be stored in dedicated auxiliary state variables
+     */
+    bool store_thermodynamic_forces = true;
+    /*!
+     * \brief flag stating if the the state variables associated with this
+     * behaviour variable shall automatically be updated in
+     * the `updateAuxiliaryStateVariables` method.
+     * If false, the user is responsible for updating the state variables,
+     * for instance by calling `updateAuxiliaryStateVariables` with
+     * the behaviour variable as argument.
+     */
+    bool automatically_save_state_variables = true;
     //! \brief behaviour description
     BehaviourDescription behaviour;
   };  // end of BehaviourVariableDescription
@@ -108,9 +117,8 @@ namespace mfront {
    * \param[in] h: modelling hypothesis
    */
   MFRONT_VISIBILITY_EXPORT VariableDescriptionContainer
-  getSharedMaterialProperties(
-      const BehaviourVariableDescription&,
-      const BehaviourVariableDescription::Hypothesis&);
+  getSharedMaterialProperties(const BehaviourVariableDescription&,
+                              const BehaviourVariableDescription::Hypothesis&);
   /*!
    * \brief return the list of external state variables which are
    * not shared with the behaviour using the behaviour variable
@@ -131,6 +139,12 @@ namespace mfront {
   getSharedExternalStateVariables(
       const BehaviourVariableDescription&,
       const BehaviourVariableDescription::Hypothesis&);
+  /*!
+   * \return the name of behaviour wrapper class
+   * \param[in] d: behaviour variable description
+   */
+  MFRONT_VISIBILITY_EXPORT std::string getBehaviourWrapperClassName(
+      const BehaviourVariableDescription&);
 
 }  // end of namespace mfront
 

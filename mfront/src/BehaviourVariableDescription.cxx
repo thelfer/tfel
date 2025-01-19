@@ -123,4 +123,9 @@ namespace mfront {
                                    d.shared_external_state_variables);
   }  // end of getUnSharedExternalStateVariables
 
+  std::string getBehaviourWrapperClassName(
+      const BehaviourVariableDescription& d) {
+    return d.behaviour.getClassName() + "Wrapper_" + d.name;
+  }  // end of getBehaviourWrapperClassName
+
 }  // end of namespace mfront
