@@ -145,18 +145,18 @@ private:
     for (int i : {0, 1, 2, 3}) {
       for (int j : {0, 1, 2, 3}) {
         TFEL_TESTS_ASSERT(std::abs(S2D1(i, j) - S2D2(i, j)) < eps);
-        // std::cout << S1(i,j)-S2(i,j)<< " "<< eps<<'\n';
+        //std::cout << S2D1(i,j) <<" " <<S2D2(i,j)<< " "<< eps<<'\n';
       };
     };
 
 
-    const auto S2DSph1 = compute2DAnisotropicEshelbyTensor<real, stress, lg>(
+    const auto S2DCir1 = compute2DAnisotropicEshelbyTensor<real, stress, lg>(
         C_0, n_a, lg{3}, lg{3}, 14);
-    const auto S2DSph2 = computeCircularCylinderEshelbyTensor(nu);
+    const auto S2DCir2 = computeCircularCylinderEshelbyTensor(nu);
     for (int i : {0, 1, 2, 3}) {
       for (int j : {0, 1, 2, 3}) {
-        TFEL_TESTS_ASSERT(std::abs(S2DSph1(i, j) - S2DSph2(i, j)) < eps);
-        // std::cout << SSph1(i,j)-SSph2(i,j) << " "<< eps <<'\n';
+        TFEL_TESTS_ASSERT(std::abs(S2DCir1(i, j) - S2DCir2(i, j)) < eps);
+        //std::cout << i <<" " << j <<" " << S2DCir1(i,j) <<" " << S2DCir2(i,j) << " "<< eps <<'\n';
       };
     };
 

@@ -55,7 +55,7 @@ namespace tfel::material::homogenization::elasticity {
         error = std::abs(I0 - I1);
       }
       return I1;
-    };
+    }
 
     template <typename real>
     TFEL_HOST_DEVICE auto dblintegrate(
@@ -70,7 +70,7 @@ namespace tfel::material::homogenization::elasticity {
                                  d, max_it);
       };
       return integrate1D<real>(f_, a, b, max_it);
-    };
+    }
 
     TFEL_HOST_DEVICE int vi(unsigned short int i, unsigned short int j) {
       if ((i == 0) and (j == 0)) {
@@ -86,7 +86,7 @@ namespace tfel::material::homogenization::elasticity {
       } else if (((i == 1) and (j == 2)) || ((i == 2) and (j == 1))) {
         return 5;
       }
-    };
+    }
 
     template <unsigned short int N,typename Type, typename real>
     TFEL_HOST_DEVICE Type
@@ -106,7 +106,7 @@ namespace tfel::material::homogenization::elasticity {
         fac *= icste;
       };
       return fac * A(I, J);
-    };
+    }
 
     template <unsigned short int N,typename Type, typename real>
     TFEL_HOST_DEVICE void setST2toST2Component(
@@ -127,10 +127,7 @@ namespace tfel::material::homogenization::elasticity {
         fac *= cste;
       };
       A(I, J) = fac * Aijkl;
-      if (I != J) {
-        A(J, I) = A(I, J);
-      };
-    };
+    }
 
     template <unsigned short int N,typename Type, typename real>
     TFEL_HOST_DEVICE void setStensorComponent(tfel::math::stensor<N, Type>& A,
@@ -144,7 +141,7 @@ namespace tfel::material::homogenization::elasticity {
         fac *= cste;
       };
       A(I) = fac * Aij;
-    };
+    }
 
     template <unsigned short int N, typename Type, typename real>
     TFEL_HOST_DEVICE Type
@@ -158,13 +155,13 @@ namespace tfel::material::homogenization::elasticity {
         fac *= icste;
       };
       return fac * A(I);
-    };
+    }
 
     template <unsigned short int N,typename real, typename StressType>
-    TFEL_HOST_DEVICE tfel::math::stensor<N, real> Acoustic(
+    TFEL_HOST_DEVICE tfel::math::tmatrix<N,N, real> Acoustic(
         const tfel::math::st2tost2<N, StressType>& C,
         const tfel::math::tvector<N, real>& X) {
-      tfel::math::stensor<N, real> A;
+      tfel::math::tmatrix<N,N, real> A;
       for (int i = 0; i < N; i++)
         for (int k = i; k < N; k++) {
           real A_ik = real(0);
@@ -174,10 +171,13 @@ namespace tfel::material::homogenization::elasticity {
                   real((getST2toST2Component<N,StressType, real>(C, i, j, k, l)) /
                        StressType(1) * X[j] * X[l]);
             }
-          setStensorComponent<N,real, real>(A, i, k, A_ik);
+          A(i,k)=A_ik;
+          if (i!=k){
+            A(k,i)=A_ik;
+          }
         }
       return A;
-    };
+    }
 
     template <typename real, typename StressType, typename LengthType>
     TFEL_HOST_DEVICE real
@@ -193,16 +193,16 @@ namespace tfel::material::homogenization::elasticity {
       const tfel::math::tvector<2u, real> X = {
           std::cos(theta) / a * LengthType(1),
           std::sin(theta) / b * LengthType(1)};
-      const auto A_inv =Acoustic<2u,real, StressType>(C, X);
-          tfel::math::invert(Acoustic<2u,real, StressType>(C, X));
+      auto A_inv = Acoustic<2u,real, StressType>(C, X);
+      tfel::math::TinyMatrixInvert<2u,real>::exe(A_inv);
       const auto Mijkl =
-          (getStensorComponent<2u,real, real>(A_inv, j, k) * X[i] * X[l] +
-           getStensorComponent<2u,real, real>(A_inv, i, k) * X[j] * X[l] +
-           getStensorComponent<2u,real, real>(A_inv, j, l) * X[i] * X[k] +
-           getStensorComponent<2u,real, real>(A_inv, i, l) * X[j] * X[k]) /
+          (A_inv(j, k) * X[i] * X[l] +
+           A_inv(i, k) * X[j] * X[l] +
+           A_inv(j, l) * X[i] * X[k] +
+           A_inv(i, l) * X[j] * X[k]) /
           4;
       return Mijkl / 2 / pi;
-    };
+    }
 
     template <typename real, typename StressType, typename LengthType>
     TFEL_HOST_DEVICE real p_ijkl(const tfel::math::st2tost2<3u, StressType>& C,
@@ -220,17 +220,18 @@ namespace tfel::material::homogenization::elasticity {
           std::sin(theta) * std::cos(phi) / a * LengthType(1),
           std::sin(theta) * std::sin(phi) / b * LengthType(1),
           std::cos(theta) / c * LengthType(1)};
-      const auto A_inv = tfel::math::invert(Acoustic<3u,real, StressType>(C, X));
+      auto A_inv = Acoustic<3u,real, StressType>(C, X);
+      tfel::math::TinyMatrixInvert<3u,real>::exe(A_inv);
       const auto Mijkl =
-          (getStensorComponent<3u,real, real>(A_inv, j, k) * X[i] * X[l] +
-           getStensorComponent<3u,real, real>(A_inv, i, k) * X[j] * X[l] +
-           getStensorComponent<3u,real, real>(A_inv, j, l) * X[i] * X[k] +
-           getStensorComponent<3u,real, real>(A_inv, i, l) * X[j] * X[k]) /
+          (A_inv(j, k) * X[i] * X[l] +
+          A_inv(i, k) * X[j] * X[l] +
+          A_inv(j, l) * X[i] * X[k] +
+          A_inv(i, l) * X[j] * X[k]) /
           4;
       return Mijkl * std::sin(theta) / 4 / pi;
-    };
+    }
 
-  };  // end of namespace internals
+  }  // end of namespace internals
 
   template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE static tfel::math::
@@ -238,14 +239,14 @@ namespace tfel::material::homogenization::elasticity {
       compute2DAnisotropicHillTensor(
           const tfel::math::st2tost2<2u, StressType> &C, const
           tfel::math::tvector<2u, real>& n_a, const LengthType &a, const
-          LengthType &b, const std::size_t max_it){ if (not((a > LengthType{0}) and (b >
-          LengthType{0}))) {
+          LengthType &b, const std::size_t max_it){
+    if (not((a > LengthType{0}) and (b > LengthType{0}))) {
       tfel::reportContractViolation("a<=0 or b<=0");
     };
     if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
       tfel::reportContractViolation("n_a is null");
     };
-      using namespace tfel::math;
+    using namespace tfel::math;
     const auto n_a_ = n_a / norm(n_a);
     tfel::math::tvector<2u, real> n_b_ ;
     if (n_a_[1]!=real(0)) {
@@ -270,19 +271,17 @@ namespace tfel::material::homogenization::elasticity {
           for (int l = k; l < 2; l++) {
             const int I = internals::vi(i, j);
             const int J = internals::vi(k, l);
-            if (I <= J) {
-              const auto p_ = [C,a,b, i, j, k, l](const real &theta){
+            const auto p_ = [C,a,b, i, j, k, l](const real &theta){
                 return internals::p_ijkl_2D<real, StressType>(
                     C,a,b,theta, i, j, k, l);
-              };
-              const auto int_p = compliance(internals::integrate1D<real>(
+            };
+            const auto int_p = compliance(internals::integrate1D<real>(
                   p_, zero, 2 * pi, max_it));
-              internals::setST2toST2Component<2u,compliance, real>(P, i, j, k,
+            internals::setST2toST2Component<2u,compliance, real>(P, i, j, k,
               l, int_p);
-            }
           }
     return change_basis(P *StressType(1), r_loc_glob)/ StressType(1);
-          };
+    }
 
   template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE
@@ -333,20 +332,18 @@ namespace tfel::material::homogenization::elasticity {
           for (int l = k; l < 3; l++) {
             const int I = internals::vi(i, j);
             const int J = internals::vi(k, l);
-            if (I <= J) {
-              const auto p_ = [C_loc, a, b, c, i, j, k, l](const real& theta,
+            const auto p_ = [C_loc, a, b, c, i, j, k, l](const real& theta,
                                                            const real& phi) {
                 return internals::p_ijkl<real, StressType, LengthType>(
                     C_loc, theta, phi, a, b, c, i, j, k, l);
-              };
-              const auto int_p = compliance(internals::dblintegrate<real>(
-                  p_, zero, pi, zero, 2 * pi, max_it));
-              internals::setST2toST2Component<3u,compliance, real>(P, i, j, k, l,
-                                                                int_p);
             };
+            const auto int_p = compliance(internals::dblintegrate<real>(
+                  p_, zero, pi, zero, 2 * pi, max_it));
+            internals::setST2toST2Component<3u,compliance, real>(P, i, j, k, l,
+                                                                int_p);
           }
     return change_basis(P *StressType(1), r_loc_glob)/ StressType(1);
-  };
+  }
 
   template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
@@ -360,7 +357,7 @@ namespace tfel::material::homogenization::elasticity {
     return computeAnisotropicHillTensor<real, StressType, LengthType>(
                C, n_a, a, n_b, b, c, max_it) *
            C;
-  };
+  }
 
   template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE tfel::math::st2tost2<2u, real>
@@ -372,7 +369,7 @@ namespace tfel::material::homogenization::elasticity {
     return compute2DAnisotropicHillTensor<real, StressType, LengthType>(
                C, n_a, a, b, max_it) *
            C;
-  };
+  }
 
   template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
@@ -415,7 +412,7 @@ namespace tfel::material::homogenization::elasticity {
     const auto Pr = P_0_glob * C;
     const auto A = invert(st2tost2<3u, real>::Id() + Pr);
     return A;
-  };
+  }
 
    template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE tfel::math::st2tost2<2u, real>
@@ -451,7 +448,7 @@ namespace tfel::material::homogenization::elasticity {
     const auto Pr = P_0_glob * C;
     const auto A = invert(st2tost2<2u, real>::Id() + Pr);
     return A;
-  };
+  }
 
 }  // namespace tfel::material::homogenization::elasticity
 
