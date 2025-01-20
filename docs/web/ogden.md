@@ -21,7 +21,7 @@
 \newcommand{\diJb}{\deriv{\iJb}{I_{3}}}
 \newcommand{\sdiJb}{\sderiv{\iJb}{I_{3}}}
 
-This page describe how to implement the Ogden hyperelastic behaviour.
+This page describes how to implement the Ogden hyperelastic behaviour.
 
 The whole implementation is available here:
 [Ogden.mfront](./gallery/hyperelasticity/Ogden.mfront)
@@ -29,7 +29,7 @@ The whole implementation is available here:
 This implementation is compatible with `TFEL` version `3.1` which has
 introduced several overloaded versions of the
 `computeIsotropicFunction` and `computeIsotropicFunctionDerivative`
-methods which reduce the number of evaluation of the `pow` function.
+methods which reduce the number of evaluations of the `pow` function.
 
 An implementation compatible with `TFEL` version `3.0` is available
 here:
@@ -38,7 +38,7 @@ here:
 # Description
 
 Let \(\C\) be the right Cauchy tensor. The three invariants of \(\C\)
- are defined by:
+are defined as:
 \[
 \left\{
 \begin{aligned}
@@ -49,11 +49,11 @@ I_{3} &= \det\paren{\C}
 \right.
 \]
 
-\(J\) is the determinant of deformation gradient (\(J=\sqrt{I_{3}}\))
+\(J\) is the determinant of the deformation gradient (\(J=\sqrt{I_{3}}\))
 
 The Ogden hyperelastic behaviour is described by a decoupled potential
-\(W\) decomposed in an volumetric part \(W^{\text{v}}\) and an
-isochoric part \(W^{\text{i}}\):
+\(W\) decomposed into a volumetric part \(W^{v}\) and an
+isochoric part \(\bar{W}^{i}\):
 
 \[
 W\paren{\C}=W^{v}\paren{J}+\bar{W}^{i}\paren{\bar{\lambda}_{1},\bar{\lambda}_{2},\bar{\lambda}_{3}}
@@ -64,15 +64,15 @@ where:
 - \(\paren{\bar{\lambda}_{i}}_{i\in \{1,2,3\}}\) are the eigenvalues
   of the isochoric right Cauchy tensor
   \(\tenseur{\bar{C}}\). \(\paren{\bar{\lambda}_{i}}_{i\in
-  \{1,2,3\}}\) are defined by: \(\bar{\lambda}_{i}=\iJb\,\lambda_{i}\)
+  \{1,2,3\}}\) are defined as: \(\bar{\lambda}_{i}=\iJb\,\lambda_{i}\)
 - \(\lambda_{i}\) are the right Cauchy stress tensor \(\C\)
 - \(\iJb=I_{3}^{-1/3}\)
 - \(\tenseur{\bar{C}}=J^{-2/3}\,\C = I_{3}^{-1/3}\,\C = \iJb\,\C\)
 
-**A general derivation of the stress and of the consistent tangent
-operator for this kind of hyperelastic behaviours is described
+**A general derivation of the stress and the consistent tangent
+operator for these kinds of hyperelastic behaviours is described
 [here](hyperelasticity.html).** The reader shall refer to this page
-for intermediate computations that won't be detailled here.
+for intermediate computations that won't be detailed here.
 
 For our implementation, we choose \(W^{v}\) as follows: 
 \[
@@ -103,7 +103,7 @@ The general expression of the second Piola-Kirchhoff stress is:
 \]
 
 where \(\S^{v}=2\,\deriv{W^{v}}{\C}\) is the
-volumetric part of the the second Piola-Kirchhoff stress and
+volumetric part of the second Piola-Kirchhoff stress and
 \(\S^{i}=2\,\deriv{W^{i}}{\C}\) is the isochoric
 part.
 
@@ -159,7 +159,7 @@ Then we compute the right Cauchy tensor \(\C\):
 const auto C  = computeRightCauchyGreenTensor(F1);
 ~~~~~
 
-For the computation of the invariants of \(\C\) and theirs
+For the computation of the invariants of \(\C\) and their
 derivatives, we need to compute \(\C^{2}\). Since the multiplication
 of two symmetric tensors leads to a non symmetric tensors, we use the
 special function `square` which is a more efficient equivalent of
@@ -190,10 +190,10 @@ const auto dI2_dC = I1*id-C;
 
 > At this stage, \(\deriv{I_{2}}{\C}\) is not evaluated: the
 > associated variable `dI2_dC` is an evaluation tree that stores the
-> computation that will be performed latter. This is an essential
-> optimization techniques used in `MFront` to achieve optimal
+> computation that will be performed later. This is an essential
+> optimization technique used in `MFront` to achieve optimal
 > performances. If we wanted or needed to explicitly evaluate, we
-> could either use the `eval` function or explicitly precise the type
+> could either use the `eval` function or explicitly specify the type
 > of `dI2_dC`.
 
 The derivative \(\deriv{I_{3}}{\C}\) of the third invariant is given
@@ -210,9 +210,9 @@ const auto I3      = J*J;
 const auto dI3_dC  = computeDeterminantDerivative(C);
 ~~~~~
 
-### Computation of the volumetric part of the second Piola Kirchhoff stress
+### Computation of the volumetric part of the second Piola-Kirchhoff stress
 
-The volumetric part of the second Piola Kirchhoff stress \(\S^{v}\) is
+The volumetric part of the second Piola-Kirchhoff stress \(\S^{v}\) is
 given by:
 \[
 \S^{v} = \Frac{1}{J}\,\deriv{W^{v}}{J}\,\deriv{I_{3}}{\C}
@@ -232,9 +232,9 @@ const StressStensor Sv = dPv_dJ/J*dI3_dC;
 
 Here, we have explicitly given the type of `Sv` to force its evaluation.
 
-### Computation of the isochoric part of the second Piola Kirchhoff stress
+### Computation of the isochoric part of the second Piola-Kirchhoff stress
 
-By chain rule, one have:
+By chain rule, one has:
 \[
 \begin{aligned}
 \S^{i}=2\,\deriv{\bar{W}^{i}}{\C}=
@@ -250,7 +250,7 @@ use the various methods provided by the `TFEL` library to evaluate
 static methods of the `Stensor` class.
 
 First, we need to compute \(\iJb\) and its derivatives. To minimize
-the number of call to the `pow` function, we also compute
+the number of calls to the `pow` function, we also compute
 \(\iJb^{a-2}\):
 
 ~~~~~{.cpp}
@@ -298,7 +298,7 @@ const StressStensor Si = mu*c*iJb*((fv*diJb_dC+(iJb/a)*df_dC));
 ### Computation of the Cauchy stress
 
 The function `convertSecondPiolaKirchhoffStressToCauchyStress`
-converts the second Piola Kirchhoff stress to the Cauchy stress using
+converts the second Piola-Kirchhoff stress to the Cauchy stress using
 the deformation gradient. It is used as follows:
 
 ~~~~{.cpp}
@@ -307,7 +307,7 @@ sig = convertSecondPiolaKirchhoffStressToCauchyStress(Sv+Si,F1);
 
 ## Computation of the consistent tangent operator
 
-The most direct expression the consistent tangent operator is given by
+The most direct expression of the consistent tangent operator is given by
 \(\deriv{\S}{\C}\). We let `MFront` make the appropriate conversion to
 the consistent tangent operator expected by the solver.
 
@@ -342,7 +342,7 @@ Here:
 \sderiv{W^{v}}{J}=K
 \]
 
-Those expression are straightforward to implement:
+Those expressions are straightforward to implement:
 
 ~~~~{.cpp}
 const auto d2Pv_dJ2 = K;
@@ -352,7 +352,7 @@ dS_dC = ((d2Pv_dJ2-dPv_dJ/J)/(2*I3)*(dI3_dC^dI3_dC)
 
 ### Computation of the isochoric part of the consistent tangent operator
 
-As detailled [here](hyperelasticity.html), the expression of
+As detailed [here](hyperelasticity.html), the expression of
 \(\deriv{S^{i}}{\C}\) is given by:
 
 \[

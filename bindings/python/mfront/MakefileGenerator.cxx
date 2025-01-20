@@ -11,7 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MFront/TargetsDescription.hxx"
 #include "MFront/GeneratorOptions.hxx"
 #include "MFront/MakefileGenerator.hxx"
@@ -96,13 +97,11 @@ void MakefileGenerator::callMake1(const std::string& tn) {
   mfront::callMake(tn);
 }
 
-void declareMakefileGenerator();
+void declareMakefileGenerator(pybind11::module_&);
 
-void declareMakefileGenerator() {
-  using namespace boost::python;
+void declareMakefileGenerator(pybind11::module_& m) {
   using namespace mfront;
-
-  class_<MakefileGenerator>("MakefileGenerator")
+  pybind11::class_<MakefileGenerator>(m, "MakefileGenerator")
       .def("generate", &MakefileGenerator::generate0,
            "generate the `Makefile.mfront` file")
       .def("generate", &MakefileGenerator::generate1,

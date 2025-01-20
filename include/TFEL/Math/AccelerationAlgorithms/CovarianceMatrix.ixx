@@ -37,8 +37,10 @@ namespace tfel::math::anderson {
   void CovarianceMatrix<real>::resize(const size_type n) {
     this->Nmax = n;
     if (this->Nmax) {
-      this->C.resize((this->Nmax * (this->Nmax + 1)) / 2);
-      this->a.resize((this->Nmax * (this->Nmax - 1)) / 2);
+      this->C.resize(
+          static_cast<size_type>((this->Nmax * (this->Nmax + 1)) / 2));
+      this->a.resize(
+          static_cast<size_type>((this->Nmax * (this->Nmax - 1)) / 2));
       this->ne.resize(this->Nmax);
     }
   }

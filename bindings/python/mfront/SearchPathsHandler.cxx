@@ -11,27 +11,21 @@
  * project under specific licensing conditions.
  */
 
-#include "boost/python.hpp"
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MFront/SearchPathsHandler.hxx"
 
-void declareSearchPathsHandler();
-void declareSearchPathsHandler() {
-  using namespace boost;
-  using namespace boost::python;
+void declareSearchPathsHandler(pybind11::module_&);
+
+void declareSearchPathsHandler(pybind11::module_& m) {
   using mfront::SearchPathsHandler;
-  class_<SearchPathsHandler, noncopyable>("SearchPathsHandler", no_init)
-      .def("addSearchPaths", &SearchPathsHandler::addSearchPaths,
-           "Add new search paths. Multiple paths are separated by "
-           "commas under unices systems and by semicolons under "
-           "Windows systems")
-      .staticmethod("addSearchPaths")
-      .def("search", &SearchPathsHandler::search,
-           "search a file and return the path to it if found.")
-      .staticmethod("search")
-      .def("getSearchPaths", &SearchPathsHandler::getSearchPaths,
-           "return all the registred search paths.")
-      .staticmethod("getSearchPaths");
-
-  //  SearchPathsHandler& getSearchPathsHandler();
-
+  pybind11 ::class_<SearchPathsHandler>(m, "SearchPathsHandler")
+      .def_static("addSearchPaths", &SearchPathsHandler::addSearchPaths,
+                  "Add new search paths. Multiple paths are separated by "
+                  "commas under unices systems and by semicolons under "
+                  "Windows systems")
+      .def_static("search", &SearchPathsHandler::search,
+                  "search a file and return the path to it if found.")
+      .def_static("getSearchPaths", &SearchPathsHandler::getSearchPaths,
+                  "return all the registred search paths.");
 }  // end of declareSearchPathsHandler

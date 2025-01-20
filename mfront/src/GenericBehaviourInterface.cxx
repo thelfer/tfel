@@ -373,7 +373,7 @@ namespace mfront {
            << "const mfront_gb_size_type);\n\n";
       }
     }  // end of for (const auto h : mhs)
-  }  // end of writeRotationFunctionsDeclarations
+  }    // end of writeRotationFunctionsDeclarations
 
   static void writeRotationMatrixDefinition(std::ostream& os, const bool b) {
     os << "const auto r = [&rv]() -> tfel::math::tmatrix<3,3,mfront::gb::real> "

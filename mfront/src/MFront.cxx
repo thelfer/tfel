@@ -308,7 +308,7 @@ namespace mfront {
 #if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
   void MFront::treatWin32() {
     this->opts.sys = "win32";
-  }  // end of MFront::treatWin32
+  }    // end of MFront::treatWin32
 #endif /* __CYGWIN__ */
 
   void MFront::registerArgumentCallBacks() {
@@ -640,7 +640,7 @@ namespace mfront {
     this->registerNewCallBack("--win32", &MFront::treatWin32,
                               "specify that the target system is win32");
 #endif /* __CYGWIN__ */
-  }  // end of MFront::registerArgumentCallBacks
+  }    // end of MFront::registerArgumentCallBacks
 
   MFront::MFront() = default;
 
@@ -765,7 +765,7 @@ namespace mfront {
                      "empty library specified.");
       this->defs.insert(l);
     }
-  }  // end of void MFront::treatDefFile
+  }    // end of void MFront::treatDefFile
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
 
   TargetsDescription MFront::treatFile(const std::string& f) const {
@@ -852,7 +852,7 @@ namespace mfront {
       std::copy(l.epts.begin(), l.epts.end(),
                 std::ostream_iterator<std::string>(def, "\n"));
     }
-  }  // end of MFront::generateDefsFile
+  }    // end of MFront::generateDefsFile
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
 
   void MFront::writeTargetsDescription() const {

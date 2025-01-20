@@ -118,7 +118,7 @@ namespace ansys {
         return i.exe(d);
       }
     };  // end of struct CallBehaviour2
-  };  // end of struct AnsysInterface
+  };    // end of struct AnsysInterface
 
 }  // end of namespace ansys
 

@@ -1,5 +1,4 @@
-import std
-from tfel.system import ExternalLibraryManager
+from @tfel_system_python_module@ import ExternalLibraryManager
 
 class Behaviour:
     """The class Behaviour gathers information about a behaviour for a

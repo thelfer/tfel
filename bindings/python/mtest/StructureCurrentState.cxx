@@ -11,7 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MTest/CurrentState.hxx"
 #include "MTest/StructureCurrentState.hxx"
 
@@ -20,11 +21,11 @@ static tfel::math::vector<mtest::CurrentState>& get_istates(
   return scs.istates;
 }
 
-void declareStructureCurrentState();
+void declareStructureCurrentState(pybind11::module_&);
 
-void declareStructureCurrentState() {
-  using namespace boost::python;
-  class_<mtest::StructureCurrentState>("StructureCurrentState")
-      .add_property("istates",
-                    make_function(&get_istates, return_internal_reference<>()));
+void declareStructureCurrentState(pybind11::module_& m) {
+  pybind11::class_<mtest::StructureCurrentState>(m, "StructureCurrentState")
+      .def(pybind11::init<>())
+      .def_property_readonly("istates", get_istates,
+                             pybind11::return_value_policy::reference);
 }  // end of declareStructureCurrentState

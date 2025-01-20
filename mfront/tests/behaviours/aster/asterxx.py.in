@@ -3,7 +3,7 @@ try:
 except ImportError:
     import unittest
 
-from mfront.umatxx import Behaviour
+from @mfront_umatxx_python_module@ import Behaviour
 
 class Asterxx(unittest.TestCase):
 

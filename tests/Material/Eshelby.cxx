@@ -111,10 +111,12 @@ struct EshelbyTest final : public tfel::tests::TestCase {
 
     using namespace tfel::material::homogenization::elasticity;
     {  // const auto S1 = computeSphereEshelbyTensor(real{1});
+
        // const auto S2 = computeAxisymmetricalEshelbyTensor(nu,real{0});
        // const auto S3 = computeAxisymmetricalEshelbyTensor(nu,real{-10});
        // const auto S4 = computeEshelbyTensor<real,lg>(nu,lg{-1},lg{3},lg{2});
        // const auto S5 = computeEshelbyTensor<real,lg>(nu,lg{-1},lg{-1},lg{1});
+
     }
   };
 
@@ -270,6 +272,7 @@ struct EshelbyTest final : public tfel::tests::TestCase {
     using namespace tfel::material::homogenization::elasticity;
     {  // const auto A1 =
        // computeSphereLocalisationTensor<real,stress>(young,real{1},young_i,nu_i);
+
        // const auto A2 =
        // computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,real{0});
        // const auto A3 =
@@ -282,6 +285,7 @@ struct EshelbyTest final : public tfel::tests::TestCase {
        // computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n_,b,c);
        // const auto A7 =
        // computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n__,b,c);
+
     }
   };
 
@@ -298,6 +302,7 @@ struct EshelbyTest final : public tfel::tests::TestCase {
     const auto nu = real{0.3};
     const auto young_i = stress{150e9};
     const auto nu_i = real{0.3};
+
 
     const tfel::math::tvector<3u, real> n_a = {0., 0., 1.};
     const tfel::math::tvector<3u, real> n_b = {1., 0., 0.};
@@ -359,6 +364,7 @@ struct EshelbyTest final : public tfel::tests::TestCase {
       const auto Attnn = n_bb_n_bb * (Arot1 * n_aa_n_aa);
       // std::cout << Atttt(0) << Annnn(0) << Attnn(0) << std::endl;
       TFEL_TESTS_ASSERT(Annnn(0) - 5 * Atttt(0) > 0);
+
     }
   };
 

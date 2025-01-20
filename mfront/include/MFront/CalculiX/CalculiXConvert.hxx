@@ -44,7 +44,7 @@ namespace calculix {
                            const CalculiXReal* const v) {
       tfel::fsalgo::copy<9u>::exe(v, F.begin());
     }  // end of exe
-  };  // end of struct ImportGradients
+  };   // end of struct ImportGradients
   /*!
    * \brief class defining the convertion from calculix to mfront for
    * thermodynamic forces
@@ -60,7 +60,7 @@ namespace calculix {
                            const CalculiXReal* const v) {
       tfel::fsalgo::copy<6u>::exe(v, s.begin());
     }  // end of exe
-  };  // end of struct ImportThermodynamicForces
+  };   // end of struct ImportThermodynamicForces
   /*!
    * \brief class defining the convertion from mfront to calculix for
    * thermodynamic forces
@@ -76,7 +76,7 @@ namespace calculix {
                            const tfel::math::stensor<3u, T>& s) {
       tfel::fsalgo::copy<6u>::exe(s.begin(), v);
     }  // end of exe
-  };  // end of struct ExportThermodynamicForces
+  };   // end of struct ExportThermodynamicForces
 
 }  // end of namespace calculix
 

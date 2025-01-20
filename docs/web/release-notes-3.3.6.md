@@ -17,6 +17,9 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+This version was released on December 11, 2024 along with Versions
+3.0.14, 3.1.14, 3.2.11 and inherits from all fixes from those releases.
+
 # Issues fixed
 
 ## Issue 597: Using the elastic material properties exported the behaviour is broken for orthotropic behaviours in the `Cast3M` interface

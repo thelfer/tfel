@@ -124,7 +124,7 @@ namespace calculix {
         i.exe(d);
       }
     };  // end of struct CallBehaviour2
-  };  // end of struct CalculiXInterface
+  };    // end of struct CalculiXInterface
 
 }  // end of namespace calculix
 

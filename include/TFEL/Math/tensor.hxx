@@ -165,7 +165,7 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr void exportToBaseTypeArray(const tensor<N, T>&,
                                                         const auto) noexcept
-    requires(isScalar<T>());
+      requires(isScalar<T>());
   /*!
    * \return the invert of a tensor
    * \param[in] t : tensor to be inverted

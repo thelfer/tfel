@@ -11,9 +11,10 @@
  * project under specific licensing conditions.
  */
 
-#include "TFEL/Python/SharedPtr.hxx"
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Raise.hxx"
+#include "TFEL/Macros.hxx"
 #include "MFront/InitDSLs.hxx"
 #include "MFront/MFrontBase.hxx"
 #include "MFront/InitInterfaces.hxx"
@@ -22,108 +23,83 @@
 #include "MFront/AbstractBehaviourDSL.hxx"
 #include "MFront/PathSpecifier.hxx"
 
-#ifdef _MSC_VER
-// explicit specialisation to fix a bug in Visual Studio 2015 update 3
-namespace boost {
-  template <>
-  const volatile mfront::BehaviourDescription*
-  get_pointer<const volatile mfront::BehaviourDescription>(
-      const volatile mfront::BehaviourDescription* c) {
-    return c;
-  }
-  template <>
-  const volatile mfront::AbstractBehaviourDSL*
-  get_pointer<const volatile mfront::AbstractBehaviourDSL>(
-      const volatile mfront::AbstractBehaviourDSL* c) {
-    return c;
-  }
-  template <>
-  const volatile mfront::AbstractDSL*
-  get_pointer<const volatile mfront::AbstractDSL>(
-      const volatile mfront::AbstractDSL* c) {
-    return c;
-  }
-  template <>
-  const volatile mfront::BehaviourData*
-  get_pointer<const volatile mfront::BehaviourData>(
-      const volatile mfront::BehaviourData* c) {
-    return c;
-  }
-}  // namespace boost
-#endif /* _MSC_VER */
+#define MFRONT_MODULE_NAME \
+  TFEL_PP_JOIN(_mfront_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
-void declareMadnexSupport();
-void declareAbstractDSL();
-void declareDSLFactory();
-void declareFileDescription();
-void declareCompiledTargetDescriptionBase();
-void declareLibraryDescription();
-void declareTargetsDescription();
-void declareMaterialPropertyDSL();
-void declareAbstractBehaviourDSL();
-void declareBehaviourSymmetryType();
-void declareVariableBoundsDescription();
-void declareVariableDescription();
-void declareMaterialKnowledgeAttribute();
-void declareBehaviourData();
-void declareMaterialPropertyDescription();
-void declareBehaviourDescription();
-void declareSearchPathsHandler();
-void declareGeneratorOptions();
-void declareMakefileGenerator();
-void declareCMakeGenerator();
-void declareOverridableImplementation();
+void declareMadnexSupport(pybind11::module_&);
+void declareAbstractDSL(pybind11::module_&);
+void declareDSLFactory(pybind11::module_&);
+void declareFileDescription(pybind11::module_&);
+void declareCompiledTargetDescriptionBase(pybind11::module_&);
+void declareLibraryDescription(pybind11::module_&);
+void declareTargetsDescription(pybind11::module_&);
+void declareMaterialPropertyDSL(pybind11::module_&);
+void declareAbstractBehaviourDSL(pybind11::module_&);
+void declareBehaviourSymmetryType(pybind11::module_&);
+void declareVariableBoundsDescription(pybind11::module_&);
 
-static boost::python::object getDSL(const std::string& f) {
+void declareVariableDescription(pybind11::module_&);
+void declareMaterialKnowledgeAttribute(pybind11::module_&);
+void declareBehaviourData(pybind11::module_&);
+void declareMaterialPropertyDescription(pybind11::module_&);
+void declareBehaviourDescription(pybind11::module_&);
+void declareSearchPathsHandler(pybind11::module_&);
+void declareGeneratorOptions(pybind11::module_&);
+void declareMakefileGenerator(pybind11::module_&);
+void declareCMakeGenerator(pybind11::module_&);
+void declareOverridableImplementation(pybind11::module_&);
+
+static pybind11::object getDSL(const std::string& f) {
   auto dsl = mfront::MFrontBase::getDSL(f);
   if (dsl->getTargetType() == mfront::AbstractDSL::MATERIALPROPERTYDSL) {
     auto b = std::dynamic_pointer_cast<mfront::MaterialPropertyDSL>(dsl);
-    tfel::raise_if(!b, "getDSL: invalid dsl implementation");
-    return boost::python::object(b);
+    tfel::raise_if(b.get() == nullptr, "getDSL: invalid dsl implementation");
+    return pybind11::cast(b);
   } else if (dsl->getTargetType() == mfront::AbstractDSL::BEHAVIOURDSL) {
     auto b = std::dynamic_pointer_cast<mfront::AbstractBehaviourDSL>(dsl);
-    tfel::raise_if(!b, "getDSL: invalid dsl implementation");
-    return boost::python::object(b);
+    tfel::raise_if(b.get() == nullptr, "getDSL: invalid dsl implementation");
+    return pybind11::cast(b);
   }
-  return boost::python::object(dsl);
+  return pybind11::cast(dsl);
 }
 
-BOOST_PYTHON_MODULE(_mfront) {
+#ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
+PYBIND11_MODULE(MFRONT_MODULE_NAME, m) {
+#else
+PYBIND11_MODULE(_mfront, m) {
+#endif
+  using namespace pybind11::literals;
   using GetImplementationsPathsPtr = std::vector<std::string> (*)(
       const std::string&, const std::string&, const std::string&,
       const std::string&, const std::string&);
   GetImplementationsPathsPtr ptr = mfront::getImplementationsPaths;
-  boost::python::def("initDSLs", mfront::initDSLs);
-  boost::python::def("initInterfaces", mfront::initInterfaces);
-  boost::python::def("getDSL", getDSL);
-  boost::python::def(
-      "getImplementationsPaths", ptr,
-      (boost::python::args("file"), boost::python::args("material") = "",
-       boost::python::args("material_property") = "",
-       boost::python::args("behaviour") = "",
-       boost::python::args("model") = ""));
-  declareMadnexSupport();
-  declareDSLFactory();
-  declareAbstractDSL();
-  declareFileDescription();
-  declareCompiledTargetDescriptionBase();
-  declareLibraryDescription();
-  declareTargetsDescription();
-  declareOverridableImplementation();
+  m.def("initDSLs", mfront::initDSLs);
+  m.def("initInterfaces", mfront::initInterfaces);
+  m.def("getDSL", getDSL);
+  m.def("getImplementationsPaths", ptr, "file"_a, "material"_a = "",
+        "material_property"_a = "", "behaviour"_a = "", "model"_a = "");
+  declareMadnexSupport(m);
+  declareAbstractDSL(m);
+  declareDSLFactory(m);
+  declareFileDescription(m);
+  declareCompiledTargetDescriptionBase(m);
+  declareLibraryDescription(m);
+  declareTargetsDescription(m);
+  declareOverridableImplementation(m);
+  declareMaterialKnowledgeAttribute(m);
   // material properties
-  declareMaterialPropertyDSL();
-  declareMaterialPropertyDescription();
+  declareMaterialPropertyDSL(m);
+  declareMaterialPropertyDescription(m);
   // behaviours
-  declareAbstractBehaviourDSL();
-  declareMaterialKnowledgeAttribute();
-  declareVariableBoundsDescription();
-  declareVariableDescription();
-  declareBehaviourData();
-  declareBehaviourSymmetryType();
-  declareBehaviourDescription();
-  declareSearchPathsHandler();
+  declareAbstractBehaviourDSL(m);
+  declareVariableBoundsDescription(m);
+  declareVariableDescription(m);
+  declareBehaviourData(m);
+  declareBehaviourSymmetryType(m);
+  declareBehaviourDescription(m);
+  declareSearchPathsHandler(m);
   // generators
-  declareGeneratorOptions();
-  declareMakefileGenerator();
-  declareCMakeGenerator();
+  declareGeneratorOptions(m);
+  declareMakefileGenerator(m);
+  declareCMakeGenerator(m);
 }

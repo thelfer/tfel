@@ -11,21 +11,21 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Utilities/TextData.hxx"
 
-void declareTextData();
+void declareTextData(pybind11::module_&);
 
-void declareTextData() {
-  using namespace boost::python;
+void declareTextData(pybind11::module_& m) {
   using namespace tfel::utilities;
 
   std::vector<double> (TextData::*getColumn)(const Token::size_type) const =
       &TextData::getColumn;
 
-  class_<TextData, boost::noncopyable>("TextData", no_init)
-      .def(init<std::string>())
-      .def(init<std::string, std::string>())
+  pybind11::class_<TextData>(m, "TextData")
+      .def(pybind11::init<std::string>())
+      .def(pybind11::init<std::string, std::string>())
       .def("getColumn", getColumn);
 
 }  // end of declaretvector

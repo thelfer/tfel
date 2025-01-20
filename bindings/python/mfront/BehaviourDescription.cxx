@@ -1,3 +1,4 @@
+
 /*!
  * \file   bindings/python/mfront/BehaviourDescription.cxx
  * \brief
@@ -13,7 +14,8 @@
 
 #include <set>
 #include <memory>
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourDescription.hxx"
 
@@ -164,27 +166,21 @@ static bool BehaviourDescription_hasAttribute(
   return d.hasAttribute(s);
 }  // end of
 
-void declareBehaviourDescription();
-void declareBehaviourDescription() {
-  using namespace boost::python;
-  using namespace mfront;
+void declareBehaviourDescription(pybind11::module_&);
 
-  class_<BehaviourDescription>("BehaviourDescription")
+void declareBehaviourDescription(pybind11::module_& m) {
+  using namespace mfront;
+  pybind11::class_<BehaviourDescription>(m, "BehaviourDescription")
       .def("setBehaviourName", &BehaviourDescription::setBehaviourName)
-      .def("getBehaviourName", &BehaviourDescription::getBehaviourName,
-           return_value_policy<copy_const_reference>())
+      .def("getBehaviourName", &BehaviourDescription::getBehaviourName)
       .def("setDSLName", &BehaviourDescription::setDSLName)
-      .def("getDSLName", &BehaviourDescription::getDSLName,
-           return_value_policy<copy_const_reference>())
+      .def("getDSLName", &BehaviourDescription::getDSLName)
       .def("setMaterialName", &BehaviourDescription::setMaterialName)
-      .def("getMaterialName", &BehaviourDescription::getMaterialName,
-           return_value_policy<copy_const_reference>())
+      .def("getMaterialName", &BehaviourDescription::getMaterialName)
       .def("setLibrary", &BehaviourDescription::setLibrary)
-      .def("getLibrary", &BehaviourDescription::getLibrary,
-           return_value_policy<copy_const_reference>())
+      .def("getLibrary", &BehaviourDescription::getLibrary)
       .def("setClassName", &BehaviourDescription::setClassName)
-      .def("getClassName", &BehaviourDescription::getClassName,
-           return_value_policy<copy_const_reference>())
+      .def("getClassName", &BehaviourDescription::getClassName)
       .def("areModellingHypothesesDefined",
            &BehaviourDescription::areModellingHypothesesDefined)
       .def("isModellingHypothesisSupported",
@@ -194,7 +190,7 @@ void declareBehaviourDescription() {
       .def("setModellingHypotheses", setModellingHypotheses1)
       .def("setModellingHypotheses", setModellingHypotheses2)
       .def("getBehaviourData", &BehaviourDescription::getBehaviourData,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("hasAttribute", &BehaviourDescription_hasAttribute)
       .def("getSymmetryType", &BehaviourDescription::getSymmetryType)
       .def("getElasticSymmetryType",
@@ -218,8 +214,7 @@ void declareBehaviourDescription() {
            "return the crystal structure")
       .def("setCrystalStructure", &BehaviourDescription::setCrystalStructure,
            "set the crystal structure")
-      .def("getAttributes", &BehaviourDescription::getAttributes,
-           return_value_policy<copy_const_reference>())
+      .def("getAttributes", &BehaviourDescription::getAttributes)
       .def("isStrainMeasureDefined",
            &BehaviourDescription::isStrainMeasureDefined,
            "return if a strain measure has been defined")

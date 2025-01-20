@@ -1,3 +1,4 @@
+
 /*!
  * \file  bindings/python/tfel/ProcessManagerCommand.cxx
  * \brief
@@ -11,36 +12,32 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
-
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include <TFEL/System/ProcessManager.hxx>
 
 struct ProcessManagerCommandWrapper final
-    : tfel::system::ProcessManager::Command,
-      boost::python::wrapper<tfel::system::ProcessManager::Command> {
+    : tfel::system::ProcessManager::Command {
   bool execute(const tfel::system::ProcessManager::StreamId,
                const tfel::system::ProcessManager::StreamId) override final;
   ~ProcessManagerCommandWrapper() override;
 };  // end of struct Command
 
 bool ProcessManagerCommandWrapper::execute(
-    const tfel::system::ProcessManager::StreamId i,
-    const tfel::system::ProcessManager::StreamId o) {
-  return this->get_override("execute")(i, o);
+    const tfel::system::ProcessManager::StreamId in,
+    const tfel::system::ProcessManager::StreamId out) {
+  using namespace tfel::system;
+  using CommandClass = ProcessManager::Command;
+  PYBIND11_OVERRIDE_PURE(bool, CommandClass, execute, in, out);
 }  // end of ProcessManagerCommandWrapper::execute
 
 ProcessManagerCommandWrapper::~ProcessManagerCommandWrapper() = default;
 
-void declareProcessManagerCommand();
+void declareProcessManagerCommand(pybind11::module_&);
 
-void declareProcessManagerCommand() {
-  using namespace std;
-  using namespace boost;
-  using namespace boost::python;
+void declareProcessManagerCommand(pybind11::module_& m) {
   using namespace tfel::system;
-
-  class_<ProcessManagerCommandWrapper, boost::noncopyable>(
-      "ProcessManagerCommand")
-      .def("execute", pure_virtual(&ProcessManager::Command::execute));
-
+  pybind11::class_<ProcessManager::Command, ProcessManagerCommandWrapper>(
+      m, "ProcessManagerCommand")
+      .def("execute", &ProcessManager::Command::execute);
 }  // end of declarestensor

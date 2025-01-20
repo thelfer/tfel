@@ -1,0 +1,4 @@
+@Requires{"tfel::python", "mfront::behaviour::aster_interface"};
+@Command "@mfront@ --interface=aster Plasticity.mfront";
+@Command "@mfront@ --obuild";
+@Command "@python@ test-behaviour.py";

@@ -16,6 +16,7 @@
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Material/Eshelby.hxx"
 
+
 namespace tfel::material::homogenization::elasticity {
    /*!
    * This function gives the Voigt stiffness

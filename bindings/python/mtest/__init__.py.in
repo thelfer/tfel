@@ -1,4 +1,21 @@
 from __future__ import division
+import os
+
+if os.name == 'nt':
+    versioned_tfelhome="TFELHOME_@TFEL_VERSION@".replace(".", "_").replace("-", "_")
+    if versioned_tfelhome in os.environ:
+        tfelhome = os.environ[versioned_tfelhome]
+    elif "TFELHOME" in os.environ:
+        tfelhome = os.environ["TFELHOME"]
+    else:
+        import pathlib
+        # remove \python...\site_packages\tfel\__init__.py
+        tfelhome = pathlib.Path(*pathlib.Path(__file__).parts[0:-4])
+        os.environ["TFELHOME"] = str(tfelhome)
+    os.add_dll_directory(tfelhome)
+
+import tfel.tests
+import tfel.math
 from ._mtest import *
 
 def generateMaterialPropertyReferenceFile(library,

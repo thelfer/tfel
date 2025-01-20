@@ -216,8 +216,9 @@ namespace tfel::math {
   template <TensorConcept TensorType1, TensorConcept TensorType2>
   TFEL_HOST_DEVICE constexpr auto operator|(const TensorType1&,
                                             const TensorType2&) noexcept
-    requires(!isInvalid<
-             BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>());
+      requires(
+          !isInvalid<
+              BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>());
 
 }  // end of namespace tfel::math
 

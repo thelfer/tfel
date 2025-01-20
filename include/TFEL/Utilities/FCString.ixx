@@ -25,7 +25,7 @@ namespace tfel::utilities {
 
   template <std::size_t N, typename CharT>
   CStringNarrowedView<N, CharT> narrow(const CharT* s) {
-    return {s};
+    return {.value = s};
   }
 
   template <std::size_t N, typename CharT, typename Traits>
@@ -244,7 +244,7 @@ namespace tfel::utilities {
   std::size_t basic_fcstring<N, CharT, Traits>::strnlen(const CharT* s) {
     constexpr auto e = '\0';
     auto i = size_t{};
-    while ((s[i] != e) && (i != N + 1)) {
+    while ((i != N + 1) && (s[i] != e)) {
       ++i;
     }
     return i;

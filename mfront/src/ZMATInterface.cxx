@@ -214,8 +214,8 @@ namespace mfront {
   }  // edn of ZMATInterface::getModellingHypothesesToBeTreated
 
   std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
-  ZMATInterface::buildMaterialPropertiesList(
-      const BehaviourDescription& bd, const Hypothesis h) const override {
+  ZMATInterface::buildMaterialPropertiesList(const BehaviourDescription& bd,
+                                             const Hypothesis h) const {
     const auto opts = BuildMaterialPropertiesListOptions{
         .useMaterialPropertiesToBuildStiffnessTensor = false,
         .useMaterialPropertiesToBuildThermalExpansionCoefficientTensor = false};

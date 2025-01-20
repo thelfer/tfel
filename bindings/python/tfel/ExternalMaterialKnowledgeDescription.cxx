@@ -1,3 +1,4 @@
+
 /*!
  * \file  bindings/python/tfel/ExternalMaterialKnowledgeDescription.cxx
  * \brief
@@ -11,19 +12,18 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/System/ExternalMaterialKnowledgeDescription.hxx"
 
-void declareExternalMaterialKnowledgeDescription();
+void declareExternalMaterialKnowledgeDescription(pybind11::module_&);
 
-void declareExternalMaterialKnowledgeDescription() {
-  using namespace boost;
-  using namespace boost::python;
+void declareExternalMaterialKnowledgeDescription(pybind11::module_& m) {
   using namespace tfel::system;
-
-  class_<ExternalMaterialKnowledgeDescription>(
-      "ExternalMaterialKnowledgeDescription", init<>())
-      .def(init<std::string, std::string>())
+  pybind11::class_<ExternalMaterialKnowledgeDescription>(
+      m, "ExternalMaterialKnowledgeDescription")
+      .def(pybind11::init<>())
+      .def(pybind11::init<std::string, std::string>())
       .def_readonly("library", &ExternalMaterialKnowledgeDescription::library)
       .def_readonly("entry_point",
                     &ExternalMaterialKnowledgeDescription::entry_point)

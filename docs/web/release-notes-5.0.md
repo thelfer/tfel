@@ -18,6 +18,44 @@ eqnPrefixTemplate: "($$i$$)"
 ---
 
 \newcommand{\tenseur}[1]{\underline{#1}}
+\newcommand{\paren}[1]{{\left(#1\right)}}
+
+The page describes the new functionalities of Version 5.0.0 of the
+`TFEL` project.
+
+Version 5.0.0 has been released on December, 17th 2024. This version
+inherits from the bug fixes of:
+
+- Version [3.0.14](release-notes-3.0.14.html),
+- Version [3.1.14](release-notes-3.1.14.html),
+- Version [3.2.11](release-notes-3.2.11.html),
+- Version [3.3.6](release-notes-3.3.6.html).
+- Version [3.4.7](release-notes-3.4.7.html).
+- Version [4.0.4](release-notes-4.0.4.html).
+- Version [4.1.3](release-notes-4.1.3.html).
+- Version [4.2.2](release-notes-4.2.2.html).
+
+# Tested configurations
+
+There are currently \(20\,576\) unit tests.
+
+| Operating system | Compiler           |   Configuration        | Successful Tests |
+| :--------------: | :----------------: | :--------------------: | :--------------: |
+| Ubuntu 22.04 LTS | gcc   11.4.0       |   Release              |       100%       |
+|                  | gcc   11.4.0       |   Release + fast-math  |       100%       |
+|                  | gcc   11.4.0       |   Debug                |       100%       |
+|                  | clang 18.1.8       |   Release              |       100%       |
+|                  | clang 19.1.0       |   Release              |       100%       |
+|                  | clang 19.1.0       |   Debug                |       100%       |
+|                  | intel 2024.2.1     |   Release              |        99%       |
+| Fedora 41        | gcc   14.2.1       |   Release              |       100%       |
+|                  | clang 17.0.6       |   Release              |       100%       |
+| Debian 12        | gcc   12.2.0       |   Release              |       100%       |
+| Ubuntu 24.04 LTS | gcc   13.2.0       |   Release              |       100%       |
+| Mac Os           | gcc                |   Release              |       100%       |
+| Windows 10       | Visual Studio 2022 |   Release              |        95%       |
+
+Versions of `clang` prior to Version \(17\) are known not to work.
 
 # New `TFEL/Utilities` features
 
@@ -59,16 +97,14 @@ const auto m2 = tmatrix<2u, 2u, int>{4, -1,  //
 const auto m3 = m1 * m2;
 ~~~~
 
-## Symmetric tensor eigen values and eigen vectors
+## New solver  eigen solver {#sec:tfel-5.0.0:tfel-math:eigensolvers}
 
-- New eigen solvers have been introduced.
-
-### New eigen solvers{#sec:tfel-5.0.0:tfel-math:eigensolvers}
-
-New eigen solver based on Harari analytical solution have been introduced for symmetric tensors. The
-computation of eigen values is done with Harari's algorithm [@harari_computation_2023] and the
-computation of eigen vectors is done with the default eigen solver for symmetric tensors of `TFEL`. Such
-computations are more efficient and more accurate than the default `TFEL` algorithm.
+A new eigen solver based on Harari's analytical solution have been
+introduced for symmetric tensors. The computation of eigen values is
+done with Harari's algorithm [@harari_computation_2023] and the
+computation of eigen vectors is done with the default eigen solver for
+symmetric tensors of `TFEL`. Such computations are more efficient and
+more accurate than the default `TFEL` algorithm.
 
 Those algorithms are available in 3D. For 2D symmetric tensors, we
 fall back to some default algorithm as described below.
@@ -244,6 +280,85 @@ T.setGlossaryName("Temperature");
   interpolation : "linear"
 };
 ~~~~
+
+## Improvements to the `StandardElastoViscoPlasticity` brick
+
+### Strain rate sensitive isotropic hardening rule
+
+The `StrainRateSensitive` isotropic hardening rule is defined by:
+\[
+ R\paren{p, \dot{p}} = R_{0}\paren{p}\,R_{rs}\paren{\dot{p}},
+\]
+
+where:
+
+- \(R_{0}\paren{p}\) is the yield radius corresponding to an infinitly
+  slow loading. It can be built by summing any isotropic hardening rule
+  already implemented in the `StandardElastoViscoPlasticity\ brick.
+- \(R_{rs}\paren{\dot{p}}\) is a correction describing the strain rate
+  sensitivity. \(R_{rs}\paren{0}\) must be equal to 1.
+
+This isotropic hardening rule can be parametrised using the following
+options:
+
+- `rate_independent_isotropic_hardening`: this option introduces a
+  contribution to \(R_{0}\paren{p}\). This option can be repeated
+  multiple times.
+- `rate_sensitivity_factor`: this option introduces the rate sensivity
+  factor \(R_{rs}\paren{\dot{p}}\). The list of available rate sensivity
+  factors is given in section @sec:rate_sensitivity_factors.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 210e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "StrainRateSensitive" {
+      rate_independent_isotropic_hardening :
+          "Swift" {R0 : "alpha * Ks * (p0s ** ns)", p0 : "p0s", n : "ns"},
+      rate_independent_isotropic_hardening : "Voce" {
+        R0 : "(1 - alpha) * Q1 * (1 - Q2)",
+        Rinf : "(1 - alpha) * Q1",
+        b : "Q3"
+      },
+      rate_sensitivity_factor :
+          "CowperSymonds" {dp0 : "dp0cs", n : "ncs", Rs_eps : 1e-8}
+    }
+  }
+};
+~~~~
+
+#### List of rate sensitivity factors {#sec:rate_sensitivity_factors}
+
+- Cowper-Symonds's rate sensitivity factor:
+  \[
+  R_{rs}\paren{\dot{p}}=1+A\,\left(\frac{\dot{p}}{\dot{p}_{0}}\right)^{n}
+  \]
+  When the exponent \(n\) is lower than one, the following regularised
+  version, based on the user defined value \(R_{\epsilon}\) is available:
+  \[
+  R_{rs}\paren{\dot{p}}=1+
+  \left\{
+    \begin{aligned}
+    R_{\epsilon}\,\left(\frac{\dot{p}}{\dot{p}_{\epsilon}}\right) &&\text{if}&&\dot{p}<\dot{p}_{\epsilon}\\
+    A\,\left(\frac{\dot{p}}{\dot{p}_{0}}\right)^{n} &&\text{if}&&\dot{p}\geq\dot{p}_{\epsilon}
+   \end{aligned}
+  \right.
+  \]
+  where \(\dot{p}_{\epsilon}\) is such that \(R_{\epsilon} = A\,\left(\frac{\dot{p}_{\epsilon}}{\dot{p}_{0}}\right)^{n}\)
+
+- Johnson-Cook's rate sensitivity factor:
+  \[
+  R_{rs}\paren{\dot{p}}=1+
+  \left\{
+    \begin{aligned}
+    0 &&\text{if}&&\dot{p}<\dot{p}_{0}\\
+    A\,\log\left(\frac{\dot{p}}{\dot{p}_{0}}\right)&&\text{if}&&\dot{p}\geq\dot{p}_{0}
+    \end{aligned}
+  \right.
+  \]
 
 ## New DSL options
 

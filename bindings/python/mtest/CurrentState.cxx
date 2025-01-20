@@ -11,12 +11,12 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MTest/Behaviour.hxx"
 #include "MTest/CurrentState.hxx"
-#include "TFEL/Python/VectorConverter.hxx"
 
 #define TFEL_PYTHON_CURRENTSTATEGETTER(X)                     \
   static tfel::math::vector<mtest::real> CurrentState_get##X( \
@@ -38,41 +38,7 @@ TFEL_PYTHON_CURRENTSTATEGETTER(iv1)
 TFEL_PYTHON_CURRENTSTATEGETTER(esv0)
 TFEL_PYTHON_CURRENTSTATEGETTER(desv)
 
-static tfel::math::vector<mtest::CurrentState>::iterator v_begin(
-    tfel::math::vector<mtest::CurrentState>& s) {
-  return s.begin();
-}
-
-static tfel::math::vector<mtest::CurrentState>::iterator v_end(
-    tfel::math::vector<mtest::CurrentState>& s) {
-  return s.end();
-}
-
-static void v_setitem(
-    tfel::math::vector<mtest::CurrentState>& s,
-    const tfel::math::vector<mtest::CurrentState>::size_type i,
-    const mtest::CurrentState& v) {
-  tfel::raise_if<std::out_of_range>(i >= s.size(),
-                                    "tfel::math::vector<mtest::CurrentState>"
-                                    "::operator[]: invalid_index");
-  s[i] = v;
-}
-
-static mtest::CurrentState& v_getitem(
-    tfel::math::vector<mtest::CurrentState>& s,
-    const tfel::math::vector<mtest::CurrentState>::size_type i) {
-  tfel::raise_if<std::out_of_range>(i >= s.size(),
-                                    "tfel::math::vector<mtest::CurrentState>"
-                                    "::operator[]: invalid_index");
-  return s[i];
-}
-
-static auto v_size(const tfel::math::vector<mtest::CurrentState>& v)
-    -> decltype(v.end() - v.begin()) {
-  return v.end() - v.begin();
-}
-
-static boost::python::object getInternalStateVariableValue(
+static pybind11::object getInternalStateVariableValue(
     const mtest::CurrentState& s, const std::string& n, const int i) {
   auto throw_if = [](const bool b, const std::string& m) {
     tfel::raise_if(b, "mtest::getInternalStateVariableValue: " + m);
@@ -113,24 +79,20 @@ static boost::python::object getInternalStateVariableValue(
     return s.iv1;
   }();
   if (type == 0) {
-    return boost::python::object(iv[pos]);
+    return pybind11::cast(iv[pos]);
   }
-  return boost::python::object(
+  return pybind11::cast(
       std::vector<mtest::real>(iv.begin() + pos, iv.begin() + pos + size));
 }
 
-static boost::python::object getInternalStateVariableValue(
+static pybind11::object getInternalStateVariableValue(
     const mtest::CurrentState& s, const std::string& n) {
   return getInternalStateVariableValue(s, n, 1);
 }  // end of getInternalStateVariableValue
 
-void declareCurrentState();
+void declareCurrentState(pybind11::module_&);
 
-void declareCurrentState() {
-  using namespace boost;
-  using namespace boost::python;
-  using namespace tfel::python;
-
+void declareCurrentState(pybind11::module_& m) {
   void (*ptr)(mtest::CurrentState&, const std::string&, const mtest::real) =
       mtest::setInternalStateVariableValue;
   void (*ptr2)(mtest::CurrentState&, const std::string&,
@@ -141,25 +103,25 @@ void declareCurrentState() {
   void (*ptr4)(mtest::CurrentState&, const std::string&,
                const std::vector<mtest::real>&, const int) =
       mtest::setInternalStateVariableValue;
-  object (*ptr5)(const mtest::CurrentState&, const std::string&) =
+  pybind11::object (*ptr5)(const mtest::CurrentState&, const std::string&) =
       ::getInternalStateVariableValue;
-  object (*ptr6)(const mtest::CurrentState&, const std::string&, const int) =
-      ::getInternalStateVariableValue;
+  pybind11::object (*ptr6)(const mtest::CurrentState&, const std::string&,
+                           const int) = ::getInternalStateVariableValue;
 
-  class_<mtest::CurrentState>("CurrentState")
-      .add_property("s_1", CurrentState_gets_1)
-      .add_property("s0", CurrentState_gets0)
-      .add_property("s1", CurrentState_gets1)
-      .add_property("e0", CurrentState_gete0)
-      .add_property("e1", CurrentState_gete1)
-      .add_property("e_th0", CurrentState_gete_th0)
-      .add_property("e_th1", CurrentState_gete_th1)
-      .add_property("mprops1", CurrentState_getmprops1)
-      .add_property("iv_1", CurrentState_getiv_1)
-      .add_property("iv0", CurrentState_getiv0)
-      .add_property("iv1", CurrentState_getiv1)
-      .add_property("evs0", CurrentState_getesv0)
-      .add_property("desv", CurrentState_getdesv)
+  pybind11::class_<mtest::CurrentState>(m, "CurrentState")
+      .def_property_readonly("s_1", CurrentState_gets_1)
+      .def_property_readonly("s0", CurrentState_gets0)
+      .def_property_readonly("s1", CurrentState_gets1)
+      .def_property_readonly("e0", CurrentState_gete0)
+      .def_property_readonly("e1", CurrentState_gete1)
+      .def_property_readonly("e_th0", CurrentState_gete_th0)
+      .def_property_readonly("e_th1", CurrentState_gete_th1)
+      .def_property_readonly("mprops1", CurrentState_getmprops1)
+      .def_property_readonly("iv_1", CurrentState_getiv_1)
+      .def_property_readonly("iv0", CurrentState_getiv0)
+      .def_property_readonly("iv1", CurrentState_getiv1)
+      .def_property_readonly("evs0", CurrentState_getesv0)
+      .def_property_readonly("desv", CurrentState_getdesv)
       .def_readonly("position", &mtest::CurrentState::position)
       .def("setInternalStateVariableValue", ptr,
            "set the value of a scalar internal state variable\n"
@@ -229,10 +191,31 @@ void declareCurrentState() {
            "- 1 means that we request the  value at the end of the current "
            "time step");
 
-  class_<tfel::math::vector<mtest::CurrentState>>("CurrentStateVector")
-      .def("__iter__",
-           boost::python::range<return_internal_reference<>>(&v_begin, &v_end))
-      .def("__len__", &v_size)
-      .def("__getitem__", &v_getitem, return_internal_reference<>())
-      .def("__setitem__", &v_setitem);
+  pybind11::class_<tfel::math::vector<mtest::CurrentState>>(
+      m, "CurrentStateVector")
+      .def("__len__",
+           [](const tfel::math::vector<mtest::CurrentState>& v) {
+             return v.size();
+           })
+      .def(
+          "__getitem__",
+          [](const tfel::math::vector<mtest::CurrentState>& v,
+             const unsigned short idx) {
+            if (idx >= v.size()) {
+              tfel::raise<std::range_error>(
+                  "invalid index '" + std::to_string(static_cast<int>(idx)) +
+                  "'");
+            }
+            return v[idx];
+          },
+          pybind11::return_value_policy::reference)
+      .def(
+          "__iter__",
+          [](const tfel::math::vector<mtest::CurrentState>& v) {
+            return pybind11::make_iterator(v.begin(), v.end());
+          },
+          pybind11::keep_alive<0,
+                               1>())  // keep object alive while iterator exists
+
+      ;
 }

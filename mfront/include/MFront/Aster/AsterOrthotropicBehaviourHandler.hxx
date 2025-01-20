@@ -171,7 +171,7 @@ namespace aster {
                       STATEV, STRESS, op, sfeh);
       handler.exe(DDSOE, STRESS, STATEV, nullptr);
     }  // end of AsterOrthotropicBehaviourHander<1u,Behaviour>::exe
-  };  // end of struct AsterOrthotropicBehaviourHander<1u,Behaviour>
+  };   // end of struct AsterOrthotropicBehaviourHander<1u,Behaviour>
 
   template <
       tfel::material::ModellingHypothesis::Hypothesis H,
@@ -226,7 +226,7 @@ namespace aster {
         m.rotateTangentOperatorBackward(DDSOE);
       }
     }  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>::exe
-  };  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
+  };   // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
 
   template <
       template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
@@ -286,7 +286,7 @@ namespace aster {
         m.rotateTangentOperatorBackward(DDSOE);
       }
     }  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>::exe
-  };  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
+  };   // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
 
   template <
       tfel::material::ModellingHypothesis::Hypothesis H,
@@ -404,7 +404,7 @@ namespace aster {
                       STRESS, op, sfeh);
       handler.exe(DDSOE, STRESS, STATEV, F1);
     }  // end of AsterOrthotropicBehaviourHander<1u,Behaviour>::exe
-  };  // end of struct AsterOrthotropicBehaviourHander<1u,Behaviour>
+  };   // end of struct AsterOrthotropicBehaviourHander<1u,Behaviour>
 
   template <
       tfel::material::ModellingHypothesis::Hypothesis H,
@@ -459,7 +459,7 @@ namespace aster {
         m.rotateTangentOperatorBackward(DDSOE);
       }
     }  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>::exe
-  };  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
+  };   // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
 
   template <
       template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
@@ -519,7 +519,7 @@ namespace aster {
         m.rotateTangentOperatorBackward(DDSOE);
       }
     }  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>::exe
-  };  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
+  };   // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
 
   template <
       tfel::material::ModellingHypothesis::Hypothesis H,

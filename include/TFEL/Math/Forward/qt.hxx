@@ -419,7 +419,9 @@ namespace tfel::math {
     template <typename T>
     struct IsQuantity : std::false_type {};
 
-    template <UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
+    template <UnitConcept UnitType,
+              typename ValueType,
+              typename OwnershipPolicy>
     struct IsQuantity<Quantity<UnitType, ValueType, OwnershipPolicy>>
         : std::true_type {};
 

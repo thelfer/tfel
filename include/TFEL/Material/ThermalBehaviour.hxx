@@ -32,7 +32,7 @@ namespace tfel::material {
     typedef ThermalBehaviourData<N, NumType, use_qt> ThermalBehaviourData;
 
    public:
-    virtual ~ThermalBehaviour() {};
+    virtual ~ThermalBehaviour(){};
   };
 
 }  // end of namespace tfel::material

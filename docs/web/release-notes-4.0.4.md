@@ -20,6 +20,15 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 4.0.4 of the
 `TFEL` project.
 
+Version 4.0.4 has been released on December, 11th 2024. This version
+inherits from the bug fixes of:
+
+- Version [3.0.14](release-notes-3.0.14.html),
+- Version [3.1.14](release-notes-3.1.14.html),
+- Version [3.2.11](release-notes-3.2.11.html),
+- Version [3.3.6](release-notes-3.3.6.html).
+- Version [3.4.7](release-notes-3.4.7.html).
+
 # Issues fixed
 
 ## Issue 648: Compilation with `clang-19` fails

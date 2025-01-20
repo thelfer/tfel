@@ -1,3 +1,4 @@
+
 /*!
  * \file   bindings/python/mfront/BehaviourData.cxx
  * \brief
@@ -13,7 +14,8 @@
 
 #include <set>
 #include <memory>
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MFront/BehaviourData.hxx"
 
 static std::string getStringAttribute(const mfront::BehaviourData& d,
@@ -49,45 +51,44 @@ static std::vector<std::string> getVariablesNames(
   return {n.begin(), n.end()};
 }
 
-void declareBehaviourData();
-void declareBehaviourData() {
-  using namespace boost::python;
-  using namespace mfront;
+void declareBehaviourData(pybind11::module_&);
 
+void declareBehaviourData(pybind11::module_& m) {
+  using namespace mfront;
   const VariableDescription& (BehaviourData::*ptr)(const std::string&) const =
       &BehaviourData::getVariableDescription;
 
-  class_<BehaviourData>("BehaviourData")
+  pybind11::class_<BehaviourData>(m, "BehaviourData")
       .def("getMaterialProperties", &BehaviourData::getMaterialProperties,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getPersistentVariables", &BehaviourData::getPersistentVariables,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getIntegrationVariables", &BehaviourData::getIntegrationVariables,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getStateVariables", &BehaviourData::getStateVariables,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getAuxiliaryStateVariables",
            &BehaviourData::getAuxiliaryStateVariables,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getExternalStateVariables",
            &BehaviourData::getExternalStateVariables,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getLocalVariables", &BehaviourData::getLocalVariables,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getParameters", &BehaviourData::getParameters,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getAuxiliaryStateVariables",
            &BehaviourData::getAuxiliaryStateVariables,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getPersistentVariableDescription",
            &BehaviourData::getPersistentVariableDescription,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getIntegrationVariableDescription",
            &BehaviourData::getIntegrationVariableDescription,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getStateVariableDescription",
            &BehaviourData::getStateVariableDescription,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("isMemberUsedInCodeBlocks", &BehaviourData::isMemberUsedInCodeBlocks)
       .def("isMaterialPropertyName", &BehaviourData::isMaterialPropertyName)
       .def("isLocalVariableName", &BehaviourData::isLocalVariableName)
@@ -105,40 +106,41 @@ void declareBehaviourData() {
            &BehaviourData::isExternalStateVariableName)
       .def("isExternalStateVariableIncrementName",
            &BehaviourData::isExternalStateVariableIncrementName)
-      .def("getVariableDescription", ptr, return_internal_reference<>())
+      .def("getVariableDescription", ptr,
+           pybind11::return_value_policy::reference)
       .def("getVariableDescriptionByExternalName",
            &BehaviourData::getVariableDescriptionByExternalName,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getPersistentVariableDescription",
            &BehaviourData::getPersistentVariableDescription,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getPersistentVariableDescriptionByExternalName",
            &BehaviourData::getPersistentVariableDescriptionByExternalName,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getIntegrationVariableDescription",
            &BehaviourData::getIntegrationVariableDescription,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getIntegrationVariableDescriptionByExternalName",
            &BehaviourData::getIntegrationVariableDescriptionByExternalName,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getStateVariableDescription",
            &BehaviourData::getStateVariableDescription,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getStateVariableDescriptionByExternalName",
            &BehaviourData::getStateVariableDescriptionByExternalName,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getAuxiliaryStateVariableDescription",
            &BehaviourData::getAuxiliaryStateVariableDescription,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getAuxiliaryStateVariableDescriptionByExternalName",
            &BehaviourData::getAuxiliaryStateVariableDescriptionByExternalName,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getExternalStateVariableDescription",
            &BehaviourData::getExternalStateVariableDescription,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("getExternalStateVariableDescriptionByExternalName",
            &BehaviourData::getExternalStateVariableDescriptionByExternalName,
-           return_internal_reference<>())
+           pybind11::return_value_policy::reference)
       .def("isParameterName", &BehaviourData::isParameterName)
       .def("isStaticVariableName", &BehaviourData::isStaticVariableName)
       .def("hasGlossaryName", &BehaviourData::hasGlossaryName)
@@ -159,8 +161,7 @@ void declareBehaviourData() {
       .def("getUnsignedShortAttribute", getUnsignedShortAttribute)
       .def("getStringAttribute", getStringAttribute)
       .def("getBooleanAttribute", getBooleanAttribute)
-      .def("getAttributes", &BehaviourData::getAttributes,
-           return_value_policy<copy_const_reference>())
+      .def("getAttributes", &BehaviourData::getAttributes)
       .def("reserveName", &BehaviourData::reserveName)
       .def("registerMemberName", &BehaviourData::registerMemberName)
       .def("registerStaticMemberName", &BehaviourData::registerStaticMemberName)

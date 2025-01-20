@@ -1,0 +1,6 @@
+/* Generating MFront behaviour and material properties */
+
+@Requires{"tfel::python", "mfront::behaviour::castem_interface"};
+@Command "@mfront@ --interface=castem VanadiumAlloy_YoungModulus_SRMA.mfront";
+@Command "@mfront@ --obuild";
+@Command "@python@ test-mp.py";

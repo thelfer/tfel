@@ -106,7 +106,7 @@ namespace mfront::bbrick {
         StrainRateSensitivityFactor::getVariableId("dp0", fid, id);
     const auto nn = StrainRateSensitivityFactor::getVariableId("E", fid, id);
     const auto dpn = "dp" + fid;
-    auto c = "const auto " + Rs + " = [&](){\n";
+    auto c = "const auto " + Rs + " = [&]() -> real {\n";
     c += "if(" + dpn + " < strain{0}){\n";
     c += "  return real{1};\n";
     c += "}\n";
@@ -147,7 +147,7 @@ namespace mfront::bbrick {
     const auto nn = StrainRateSensitivityFactor::getVariableId("E", fid, id);
     const auto dpn = "dp" + fid;
     auto c = this->computeStrainRateSensitivityFactor(bd, fid, id);
-    c += "const auto " + dRs + " = [&](){\n";
+    c += "const auto " + dRs + " = [&]() -> real {\n";
     c += "if(" + dpn + " < strain{0}){\n";
     c += "  return real{};\n";
     c += "}\n";
@@ -164,11 +164,11 @@ namespace mfront::bbrick {
       c += "if(" + dpn + " < " + delta_p_epsn + "){\n";
       c += "   return " + initial_slope_n + ";\n";
       c += "}\n";
-      c += "return " + nn + " * (" + Rs + " - 1) / std::max(" + dpn + ", " +
-           delta_p_epsn + ");\n";
+      c += "return " + nn + " * (" + Rs + " - 1) / std::max(strain(" + dpn +
+           "), " + delta_p_epsn + ");\n";
     } else {
-      c += "return " + nn + " * (" + Rs + " - 1) / std::max(" + dpn +
-           ", this->epsilon);\n";
+      c += "return " + nn + " * (" + Rs + " - 1) / std::max(strain(" + dpn +
+           "), static_cast<strain>(this->epsilon));\n";
     }
     c += "}();\n";
     return c;

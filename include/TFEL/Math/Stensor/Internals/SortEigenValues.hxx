@@ -61,7 +61,7 @@ namespace tfel::math::internals {
         }
       }
     }  // end of exe
-  };  // end of struct SortEigenValues<2u>
+  };   // end of struct SortEigenValues<2u>
   //! \brief partial specialisation of the `SortEigenValues` in 3D
   template <>
   struct SortEigenValues<3u> {
@@ -96,7 +96,7 @@ namespace tfel::math::internals {
         swap_if_lesser(vp1, vp2);
       }
     }  // end of exe
-  };  // end of struct SortEigenValues<3u>
+  };   // end of struct SortEigenValues<3u>
 
 }  // end of namespace tfel::math::internals
 

@@ -191,7 +191,6 @@ The following methods are available:
 Here is a first example of the `MTest` class usage:
 
 ~~~~ {.python}
-import std
 import tfel.tests
 from mtest import *
 
@@ -361,7 +360,6 @@ in depth below.
 Here is an example:
 
 ~~~~ {.python}
-import std
 import tfel.tests
 from mtest import PipeTest,StudyCurrentState,SolverWorkSpace, \
     setVerboseMode, VerboseLevel

@@ -11,19 +11,20 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/System/LibraryInformation.hxx"
 
-void declareLibraryInformation();
+void declareLibraryInformation(pybind11::module_&);
 
-void declareLibraryInformation() {
+void declareLibraryInformation(pybind11::module_& m) {
   using tfel::system::LibraryInformation;
   std::vector<std::string> (LibraryInformation::*ptr1)() =
       &LibraryInformation::symbols;
   std::vector<std::string> (LibraryInformation::*ptr2)(const std::string&) =
       &LibraryInformation::symbols;
-  boost::python::class_<LibraryInformation>("LibraryInformation",
-                                            boost::python::init<std::string>())
+  pybind11::class_<LibraryInformation>(m, "LibraryInformation")
+      .def(pybind11::init<std::string>())
       .def("sections", &LibraryInformation::sections)
       .def("symbols", ptr1)
       .def("symbols", ptr2);

@@ -115,7 +115,7 @@ namespace abaqus {
         i.exe(d);
       }
     };  // end of struct CallBehaviour2
-  };  // end of struct AbaqusInterface
+  };    // end of struct AbaqusInterface
 
 }  // end of namespace abaqus
 

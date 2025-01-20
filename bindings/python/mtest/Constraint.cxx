@@ -11,61 +11,38 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
-#include <boost/python/stl_iterator.hpp>
-#include <boost/python/make_constructor.hpp>
-#include <boost/python/raw_function.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Raise.hxx"
 #include "MTest/Constraint.hxx"
 
-static mtest::ConstraintOptions makeConstraintOptions(
-    const boost::python::tuple a, const boost::python::dict d) {
-  tfel::raise_if(boost::python::len(a) != 0, "no unamed argument expected");
-  const auto keys = d.keys();
-  const auto values = d.values();
-  boost::python::stl_input_iterator<boost::python::object> pk(keys);
-  boost::python::stl_input_iterator<boost::python::object> pv(values);
-  boost::python::stl_input_iterator<boost::python::object> pe;
+static mtest::ConstraintOptions makeConstraintOptions(const pybind11::tuple a,
+                                                      const pybind11::dict d) {
+  tfel::raise_if(pybind11::len(a) != 0, "no unamed argument expected");
   mtest::ConstraintOptions opts;
-  while (pk != pe) {
-    boost::python::extract<std::string> kc(*pk);
-    tfel::raise_if(!kc.check(), "makeConstraintOptions: invalid type for key");
-    const auto k = kc();
+  for (const auto& [key, value] : d) {
+    const auto k = pybind11::cast<std::string>(key);
     if (k == "active") {
-      boost::python::extract<bool> vc(*pv);
-      tfel::raise_if(!vc.check(),
-                     "makeConstraintOptions: invalid value type for "
-                     "key 'active', expected a boolean value");
-      opts.active = vc();
+      opts.active = pybind11::cast<bool>(value);
     } else if (k == "activating_events") {
-      boost::python::extract<std::vector<std::string>> vc(*pv);
-      tfel::raise_if(!vc.check(),
-                     "makeConstraintOptions: invalid value type for "
-                     "key 'activating_events', expected a list of strings");
-      opts.activating_events = vc();
+      opts.activating_events = pybind11::cast<std::vector<std::string>>(value);
     } else if (k == "desactivating_events") {
-      boost::python::extract<std::vector<std::string>> vc(*pv);
-      tfel::raise_if(!vc.check(),
-                     "makeConstraintOptions: invalid value type for "
-                     "key 'desactivating_events', expected a list of strings");
-      opts.desactivating_events = vc();
+      opts.desactivating_events =
+          pybind11::cast<std::vector<std::string>>(value);
     } else {
       tfel::raise("unexpected key '" + k + "'");
     }
-    ++pk;
-    ++pv;
   }
   return opts;
 }  // end of makeConstraintOptions
 
-void declareConstraint();
-void declareConstraint() {
-  boost::python::class_<mtest::ConstraintOptions>("ConstraintOptions")
-      .add_property("active", &mtest::ConstraintOptions::active)
-      .add_property("activating_events",
+void declareConstraint(pybind11::module_&);
+void declareConstraint(pybind11::module_& m) {
+  pybind11::class_<mtest::ConstraintOptions>(m, "ConstraintOptions")
+      .def_readonly("active", &mtest::ConstraintOptions::active)
+      .def_readonly("activating_events",
                     &mtest::ConstraintOptions::activating_events)
-      .add_property("desactivating_events",
+      .def_readonly("desactivating_events",
                     &mtest::ConstraintOptions::desactivating_events);
-  boost::python::def("makeConstraintOptions",
-                     boost::python::raw_function(makeConstraintOptions));
+  m.def("makeConstraintOptions", makeConstraintOptions);
 }  // end of declareConstraints

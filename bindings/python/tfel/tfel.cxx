@@ -11,12 +11,19 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include "TFEL/Macros.hxx"
 
-void declareConfig();
-void declarePhysicalConstants();
+#define TFEL_MODULE_NAME TFEL_PP_JOIN(_tfel_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
-BOOST_PYTHON_MODULE(_tfel) {
-  declareConfig();
-  declarePhysicalConstants();
+void declareConfig(pybind11::module_&);
+void declarePhysicalConstants(pybind11::module_&);
+
+#ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
+PYBIND11_MODULE(TFEL_MODULE_NAME, m) {
+#else
+PYBIND11_MODULE(_tfel, m) {
+#endif
+  declareConfig(m);
+  declarePhysicalConstants(m);
 }

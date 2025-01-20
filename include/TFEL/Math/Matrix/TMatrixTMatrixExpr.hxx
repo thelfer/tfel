@@ -39,7 +39,6 @@ namespace tfel::math {
             MatrixConcept A,
             MatrixConcept B>
   struct TMatrixTMatrixExpr : public ExprBase {
-
     using RunTimeProperties = EmptyRunTimeProperties;
     using Result = BinaryOperationResult<A, B, OpMult>;
 
@@ -85,7 +84,7 @@ namespace tfel::math {
       const MType& m;          //! reference to the underlying matrix
       const unsigned short i;  //! row index
       unsigned short j = 0;    //! current column
-    };  // end of struc RowConstIterator
+    };                         // end of struc RowConstIterator
 
     struct ColumnConstIterator {
       using MType = std::decay_t<B>;
