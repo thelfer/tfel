@@ -2733,19 +2733,23 @@ namespace mfront {
     const auto enames_suffix =
         get_if<std::string>(options, "external_names_suffix", "");
     if ((!v_prefix.empty()) && (!isValidUserDefinedVariableName(v_prefix))) {
-      tfel::raise("invalid variables prefix '" + v_prefix + "'");
+      this->throwRuntimeError(mname,
+                              "invalid variables prefix '" + v_prefix + "'");
     }
     if ((!v_suffix.empty()) &&
         (!isValidUserDefinedVariableName("v" + v_suffix))) {
-      tfel::raise("invalid variables suffix '" + v_suffix + "'");
+      this->throwRuntimeError(mname,
+                              "invalid variables suffix '" + v_suffix + "'");
     }
     if ((!enames_prefix.empty()) &&
         (!isValidUserDefinedVariableName(enames_prefix))) {
-      tfel::raise("invalid external names prefix '" + enames_prefix + "'");
+      this->throwRuntimeError(
+          mname, "invalid external names prefix '" + enames_prefix + "'");
     }
     if ((!enames_suffix.empty()) &&
         (!isValidUserDefinedVariableName("v" + enames_suffix))) {
-      tfel::raise("invalid external names suffix '" + enames_suffix + "'");
+      this->throwRuntimeError(
+          mname, "invalid external names suffix '" + enames_suffix + "'");
     }
     //
     auto d = BehaviourVariableDescription{
@@ -2775,6 +2779,27 @@ namespace mfront {
             options, "automatically_save_associated_auxiliary_state_variables",
             true),
         .behaviour = this->getBehaviourDescription(file)};
+    // some restrictions of the behaviours
+    if (d.behaviour.getAttribute(BehaviourDescription::requiresStiffnessTensor,
+                                 false)) {
+      this->throwRuntimeError(
+          mname,
+          "behaviour requiring the stiffness tensor are not supported yet");
+    }
+    if (d.behaviour.getAttribute(
+            BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+            false)) {
+      this->throwRuntimeError(mname,
+                              "behaviour requiring the thermal expansion "
+                              "coefficient tensor are not supported yet");
+    }
+    for (const auto h : d.behaviour.getDistinctModellingHypotheses()) {
+      if (d.behaviour.requiresStressFreeExpansionTreatment(h)) {
+        this->throwRuntimeError(
+            mname,
+            "behaviour compute stress free expansion are not supported yet");
+      }
+    }
     // registring the behaviour variable
     this->mb.addBehaviourVariable(d);
   }  // end of treatBehaviourVariable
