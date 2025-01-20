@@ -1,5 +1,5 @@
 /*!
- * \file   tests/Material/Eshelby.cxx
+ * \file   tests/Material/AnisotropicEshelbyTensor.cxx
  * \brief
  * \author Thomas Helfer
  * \date   22/06/2021
@@ -20,8 +20,8 @@
 #include <iostream>
 #include "TFEL/Config/TFELTypes.hxx"
 #include "TFEL/Math/qt.hxx"
-#include "TFEL/Material/Eshelby.hxx"
-#include "TFEL/Material/EshelbyAnisotropic.hxx"
+#include "TFEL/Material/IsotropicEshelbyTensor.hxx"
+#include "TFEL/Material/AnisotropicEshelbyTensor.hxx"
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
@@ -32,10 +32,10 @@ static constexpr T my_abs(const T& v) noexcept {
   return v < T(0) ? -v : v;
 }
 
-struct EshelbyAnisotropicTest final : public tfel::tests::TestCase {
-  EshelbyAnisotropicTest()
-      : tfel::tests::TestCase("TFEL/Material", "EshelbyAnisotropic") {
-  }  // end of EshelbyAnisotropicTest
+struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
+  AnisotropicEshelbyTensorTest()
+      : tfel::tests::TestCase("TFEL/Material", "AnisotropicEshelbyTensor") {
+  }  // end of AnisotropicEshelbyTensorTest
 
   tfel::tests::TestResult execute() override {
     this->template errors<double, true>();
@@ -201,14 +201,14 @@ private:
 
   
 
-};  // end of struct EshelbyAnisotropicTest
+};  // end of struct AnisotropicEshelbyTensorTest
 
-TFEL_TESTS_GENERATE_PROXY(EshelbyAnisotropicTest, "EshelbyAnisotropic");
+TFEL_TESTS_GENERATE_PROXY(AnisotropicEshelbyTensorTest, "AnisotropicEshelbyTensor");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("EshelbyAnisotropic.xml");
+  m.addXMLTestOutput("AnisotropicEshelbyTensor.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }  // end of main

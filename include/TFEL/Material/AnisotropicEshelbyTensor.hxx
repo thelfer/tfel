@@ -1,5 +1,5 @@
 /*!
- * \file   include/TFEL/Material/EshelbyAnisotropic.hxx
+ * \file   include/TFEL/Material/AnisotropicEshelbyTensor.hxx
  * \author Antoine Martin
  * \date   18 November 2024
  * \brief  This file declares the Eshelby tensor for an ellipsoidal inclusion
@@ -10,8 +10,8 @@
  * distribute this project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATERIAL_ESHELBYANISOTROPIC_HXX
-#define LIB_TFEL_MATERIAL_ESHELBYANISOTROPIC_HXX
+#ifndef LIB_TFEL_MATERIAL_ANISOTROPICESHELBYTENSOR_HXX
+#define LIB_TFEL_MATERIAL_ANISOTROPICESHELBYTENSOR_HXX
 
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Material/StiffnessTensor.hxx"
@@ -186,6 +186,6 @@ namespace tfel::material::homogenization::elasticity {
 
 }  // namespace tfel::material::homogenization::elasticity
 
-#include "TFEL/Material/EshelbyAnisotropic.ixx"
+#include "TFEL/Material/AnisotropicEshelbyTensor.ixx"
 
-#endif /* LIB_TFEL_MATERIAL_ESHELBYANISOTROPIC_HXX */
+#endif /* LIB_TFEL_MATERIAL_ANISOTROPICESHELBYTENSOR_HXX */

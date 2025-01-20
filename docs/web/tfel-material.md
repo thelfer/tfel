@@ -384,7 +384,7 @@ A specialization for elasticity is defined: `tfel::material::homogenization::ela
 
 ## Eshelby tensors
 
-The header `Eshelby.hxx` introduces
+The header `IsotropicEshelbyTensor.hxx` introduces
 the function `computeEshelbyTensor` which computes the Eshelby tensor
 of an ellipsoid.
 If we consider a constant stress-free strain \(\tenseur \varepsilon^\mathrm{T}\)
@@ -427,10 +427,11 @@ When \(\tenseur C_0\) is anisotropic, the Eshelby tensor can be computed
 with `computeAnisotropicEshelbyTensor` in 3D and `compute2DAnisotropicEshelbyTensor`
 in 2D. There are also `computeAnisotropicHillTensor`, `compute2DAnisotropicHillTensor`,
 and also `computeAnisotropicLocalisationTensor` and `compute2DAnisotropicLocalisationTensor`.
+These functions are introduced by the header `AnisotropicEshelbyTensor.hxx`.
 
 ## Strain localisation tensors
 
-The header `Eshelby.hxx` also introduces
+The header `IsotropicEshelbyTensor.hxx` also introduces
 three functions that compute the strain localisation tensor of an ellipsoid.
 If we consider an ellipsoid whose elasticity is \(\tenseur C_i\), embedded
 in an infinite homogeneous medium whose elasticity is \(\tenseur C_0\),
@@ -453,7 +454,7 @@ The functions then return the localisation tensors taking into account the orien
 Different schemes are implemented and return the homogenized stiffness of the material.
 The scheme available are Mori-Tanaka scheme and dilute scheme.
 The available functions are `computeMoriTanakaScheme`, `computeDiluteScheme`,
-computeSphereDiluteScheme, computeSphereMoriTanakaScheme.
+`computeSphereDiluteScheme`, `computeSphereMoriTanakaScheme`.
 
 If a distribution of ellipsoids is considered, three types of distributions
 are considered : isotropic, transverse isotropic and with unique orientation.
