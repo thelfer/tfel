@@ -294,8 +294,16 @@ namespace mfront {
     virtual void writePhysicalBoundsChecks(std::ostream&,
                                            const VariableDescription&,
                                            const bool) const;
-
+    /*!
+     * \brief write the disabled constructors
+     * \param[in] os: output stream
+     */
     virtual void writeBehaviourDisabledConstructors(std::ostream&) const;
+    /*!
+     * \brief write the assignement operators
+     * \param[in] os: output stream
+     */
+    virtual void writeBehaviourDisabledAssignementOperators(std::ostream&) const;
 
     virtual void writeBehaviourConstructors(std::ostream&,
                                             const Hypothesis) const;
@@ -446,18 +454,21 @@ namespace mfront {
         std::ostream&, const Hypothesis) const;
     /*!
      * \brief write the computeInternalEnergy method
+     * \param[in] os: output stream
      * \param[in] h: modelling hypothesis
      */
     virtual void writeBehaviourComputeInternalEnergy(std::ostream&,
                                                      const Hypothesis) const;
     /*!
      * \brief write the computeDissipatedEnergy method
+     * \param[in] os: output stream
      * \param[in] h: modelling hypothesis
      */
     virtual void writeBehaviourComputeDissipatedEnergy(std::ostream&,
                                                        const Hypothesis) const;
     /*!
      * \brief write the computeSpeedOfSound method
+     * \param[in] os: output stream
      * \param[in] h: modelling hypothesis
      */
     virtual void writeBehaviourComputeSpeedOfSound(std::ostream&,
@@ -469,39 +480,69 @@ namespace mfront {
                                           const Hypothesis) const;
     /*!
      * \brief write the computeAPrioriTimeStepsScalingFactor method
+     * \param[in] os: output stream
+     * \param[in] h: modelling hypothesis
      */
     virtual void writeBehaviourComputeAPrioriTimeStepScalingFactor(
         std::ostream&) const;
     /*!
      * \brief write the computeAPrioriTimeStepsScalingFactorII method
+     * \param[in] os: output stream
+     * \param[in] h: modelling hypothesis
      */
     virtual void writeBehaviourComputeAPrioriTimeStepScalingFactorII(
         std::ostream&, const Hypothesis) const;
     /*!
      * \brief write the computeAPosterioriTimeStepsScalingFactor method
+     * \param[in] os: output stream
      */
     virtual void writeBehaviourComputeAPosterioriTimeStepScalingFactor(
         std::ostream&) const;
     /*!
      * \brief write the computeAPosterioriTimeStepsScalingFactorII method
+     * \param[in] os: output stream
+     * \param[in] h: modelling hypothesis
      */
     virtual void writeBehaviourComputeAPosterioriTimeStepScalingFactorII(
         std::ostream&, const Hypothesis) const;
-
+    /*!
+     * \param[in] os: output stream
+     * \param[in] h: modelling hypothesis
+     */
     virtual void writeBehaviourUpdateExternalStateVariables(
         std::ostream&, const Hypothesis) const;
-
+    /*!
+     * \param[in] os: output stream
+     * \param[in] h: modelling hypothesis
+     */
     virtual void writeBehaviourInitializeFunctions(std::ostream&,
                                                    const Hypothesis) const;
-
+    /*!
+     * \param[in] os: output stream
+     * \param[in] h: modelling hypothesis
+     */
     virtual void writeBehaviourPostProcessings(std::ostream&,
                                                const Hypothesis) const;
-
+    /*!
+     * \brief write the methods associated with the behaviour variables
+     * \param[in] os: output stream
+     * \param[in] h: modelling hypothesis
+     */
+    virtual void writeBehaviourBehaviourVariablesMethods(
+        std::ostream&, const Hypothesis) const;
+    /*!
+     * \param[in] os: output stream
+     * \param[in] h: modelling hypothesis
+     */
     virtual void writeBehaviourOutputOperator(std::ostream&,
                                               const Hypothesis) const;
-
+    /*!
+     * \param[in] os: output stream
+     */
     virtual void writeBehaviourDestructor(std::ostream&) const;
-
+    /*!
+     * \param[in] os: output stream
+     */
     virtual void writeBehaviourTraits(std::ostream&) const;
 
     /*!

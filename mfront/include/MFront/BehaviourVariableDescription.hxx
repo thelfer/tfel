@@ -79,14 +79,14 @@ namespace mfront {
      */
     bool store_thermodynamic_forces = true;
     /*!
-     * \brief flag stating if the the state variables associated with this
-     * behaviour variable shall automatically be updated in
-     * the `updateAuxiliaryStateVariables` method.
-     * If false, the user is responsible for updating the state variables,
-     * for instance by calling `updateAuxiliaryStateVariables` with
-     * the behaviour variable as argument.
+     * \brief flag stating if the persistent variables, gradients (if
+     * `stored_gradients` is true) or thermodynamic forces (if
+     * `stored_thermodynamic_forces` is true) associated with this behaviour
+     * variable shall automatically be updated in the
+     * `updateAuxiliaryStateVariables` method. If false, the user is responsible
+     * for updating these auxiliary state variables.
      */
-    bool automatically_save_state_variables = true;
+    bool automatically_save_associated_auxiliary_state_variables = true;
     //! \brief behaviour description
     BehaviourDescription behaviour;
   };  // end of BehaviourVariableDescription

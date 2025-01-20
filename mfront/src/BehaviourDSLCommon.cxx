@@ -81,10 +81,8 @@ namespace mfront {
             BehaviourDescription::modellingHypothesis)
         .addDataTypeValidator<std::string>(
             BehaviourDescription::internalNamespace)
-        .addDataTypeValidator<bool>(
-            BehaviourDescription::defaultConstructor)
-        .addDataTypeValidator<bool>(
-            BehaviourDescription::finalClass)
+        .addDataTypeValidator<bool>(BehaviourDescription::defaultConstructor)
+        .addDataTypeValidator<bool>(BehaviourDescription::finalClass)
         .addDataTypeValidator<std::vector<tfel::utilities::Data>>(
             BehaviourDescription::modellingHypotheses);
   }  // end of getDSLOptionsValidator
@@ -1197,7 +1195,8 @@ namespace mfront {
     }
     if (g->isSrcFileRequired()) {
       for (auto& l : this->td.libraries) {
-        insert_if(this->td.getLibrary(l.name).sources, this->mb.getSrcFileName());
+        insert_if(this->td.getLibrary(l.name).sources,
+                  this->mb.getSrcFileName());
       }
     }
     insert_if(this->td.headers, this->mb.getBehaviourFileName());
@@ -1205,7 +1204,8 @@ namespace mfront {
     insert_if(this->td.headers, this->mb.getIntegrationDataFileName());
     if (this->mb.areSlipSystemsDefined()) {
       insert_if(this->td.headers, this->mb.getSlipSystemHeaderFileName());
-      insert_if(this->td.headers, this->mb.getSlipSystemImplementationFileName());
+      insert_if(this->td.headers,
+                this->mb.getSlipSystemImplementationFileName());
     }
     this->completeTargetsDescription();
   }
@@ -2663,7 +2663,6 @@ namespace mfront {
     using namespace tfel::utilities;
     const auto mname = "BehaviourVariableDSLCommon::treatBehaviourVariable";
 
-
     this->checkNotEndOfFile("BehaviourDSLCommon::treatBehaviourVariable");
     const auto lineNumber = this->current->line;
     const auto sname = this->current->value;
@@ -2692,12 +2691,12 @@ namespace mfront {
             .addDataTypeValidator<std::string>("external_names_suffix")
             .addDataTypeValidator<bool>("store_gradients")
             .addDataTypeValidator<bool>("store_thermodynamic_forces")
-            .addDataTypeValidator<bool>("automatically_save_state_variables")
+            .addDataTypeValidator<bool>(
+                "automatically_save_associated_auxiliary_state_variables")
             .addDataTypeValidator<std::vector<Data>>(
                 "shared_material_properties")
             .addDataTypeValidator<std::vector<Data>>(
-                "shared_external_state_variables")
-        ;
+                "shared_external_state_variables");
     validator.validate(options);
     //
     auto extract_regex_vector =
@@ -2772,8 +2771,9 @@ namespace mfront {
         .store_gradients = get_if<bool>(options, "store_gradients", true),
         .store_thermodynamic_forces =
             get_if<bool>(options, "store_thermodynamic_forces", true),
-        .automatically_save_state_variables =
-            get_if<bool>(options, "automatically_save_state_variables", true),
+        .automatically_save_associated_auxiliary_state_variables = get_if<bool>(
+            options, "automatically_save_associated_auxiliary_state_variables",
+            true),
         .behaviour = this->getBehaviourDescription(file)};
     // registring the behaviour variable
     this->mb.addBehaviourVariable(d);
@@ -2923,7 +2923,6 @@ namespace mfront {
         };
     this->treatCodeBlock(BehaviourData::Integrator, m, true, true);
   }  // end of treatIntegrator
-
 
   void BehaviourDSLCommon::treatAPosterioriTimeStepScalingFactor() {
     std::function<std::string(const Hypothesis, const std::string&, const bool)>

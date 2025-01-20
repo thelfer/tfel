@@ -20,6 +20,11 @@
   sig = b1.sig;
 }
 
+@UpdateAuxiliaryStateVariables {
+eel1 = b1.eel;
+
+}
+
 @TangentOperator {
   Dt = b1.getTangentOperator();
 }
