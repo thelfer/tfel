@@ -1,5 +1,5 @@
 /*!
- * \file   tests/Material/EshelbyBasedHomogenization.cxx
+ * \file   tests/Material/LinearHomogenizationSchemes.cxx
  * \brief
  * \author Antoine Martin
  * \date   25/10/2024
@@ -22,7 +22,7 @@
 #include "TFEL/Config/TFELTypes.hxx"
 #include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
-#include "TFEL/Material/EshelbyBasedHomogenization.hxx"
+#include "TFEL/Material/LinearHomogenizationSchemes.hxx"
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
@@ -33,10 +33,10 @@ static constexpr T my_abs(const T& v) noexcept {
   return v < T(0) ? -v : v;
 }
 
-struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
-  EshelbyBasedHomogenizationTest()
-      : tfel::tests::TestCase("TFEL/Material", "EshelbyBasedHomogenization") {
-  }  // end of EshelbyBasedHomogenizationTest
+struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
+  LinearHomogenizationSchemesTest()
+      : tfel::tests::TestCase("TFEL/Material", "LinearHomogenizationSchemes") {
+  }  // end of LinearHomogenizationSchemesTest
   tfel::tests::TestResult execute() override {
     using real = double;
     constexpr bool qt = true;
@@ -399,15 +399,15 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     }
   }
 
-};  // end of struct EshelbyBasedHomogenizationTest
+};  // end of struct LinearHomogenizationSchemesTest
 
-TFEL_TESTS_GENERATE_PROXY(EshelbyBasedHomogenizationTest,
-                          "EshelbyBasedHomogenization");
+TFEL_TESTS_GENERATE_PROXY(LinearHomogenizationSchemesTest,
+                          "LinearHomogenizationSchemes");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("EshelbyBasedHomogenization.xml");
+  m.addXMLTestOutput("LinearHomogenizationSchemes.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }  // end of main

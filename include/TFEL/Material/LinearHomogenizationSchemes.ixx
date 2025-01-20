@@ -1,5 +1,5 @@
 /*!
- * \file   include/TFEL/Material/EshelbyBasedHomogenization.ixx
+ * \file   include/TFEL/Material/LinearHomogenizationSchemes.ixx
  * \author Antoine Martin
  * \date   24 October 2024
  * \brief  This file defines some homogenization schemes based on solution of
@@ -10,8 +10,8 @@
  * specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATERIAL_ESHELBYBASEDHOMOGENIZATION_IXX
-#define LIB_TFEL_MATERIAL_ESHELBYBASEDHOMOGENIZATION_IXX
+#ifndef LIB_TFEL_MATERIAL_LINEARHOMOGENIZATIONSCHEMES_IXX
+#define LIB_TFEL_MATERIAL_LINEARHOMOGENIZATIONSCHEMES_IXX
 
 #include <cmath>
 
@@ -550,4 +550,4 @@ namespace tfel::material::homogenization::elasticity {
 
 }  // end of namespace tfel::material::homogenization::elasticity
 
-#endif /* LIB_TFEL_MATERIAL_ESHELBYBASEDHOMOGENIZATION_IXX */
+#endif /* LIB_TFEL_MATERIAL_LINEARHOMOGENIZATIONSCHEMES_IXX */

@@ -11,7 +11,7 @@ macro(tests_material test_arg)
     TFELUtilities TFELException TFELTests)
 endmacro(tests_material)
 
-tests_material(EshelbyBasedHomogenization)
+tests_material(LinearHomogenizationSchemes)
 tests_material(IsotropicEshelbyTensor)
 tests_material(Lame)
 tests_material(AnisotropicEshelbyTensor)
