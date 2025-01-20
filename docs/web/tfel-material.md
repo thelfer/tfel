@@ -423,6 +423,11 @@ for `long double`.
 In the same way, the formulas for the axisymmetrical case are instable when the aspect
 ratio is near one, so a parameter allows to switch to the formula for a sphere.
 
+When \(\tenseur C_0\) is anisotropic, the Eshelby tensor can be computed
+with `computeAnisotropicEshelbyTensor` in 3D and `compute2DAnisotropicEshelbyTensor`
+in 2D. There are also `computeAnisotropicHillTensor`, `compute2DAnisotropicHillTensor`,
+and also `computeAnisotropicLocalisationTensor` and `compute2DAnisotropicLocalisationTensor`.
+
 ## Strain localisation tensors
 
 The header `Eshelby.hxx` also introduces
