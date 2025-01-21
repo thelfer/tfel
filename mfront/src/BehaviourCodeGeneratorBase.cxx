@@ -3443,7 +3443,7 @@ namespace mfront {
     this->writeVariablesDeclarations(os, md.getLocalVariables(), "", "",
                                      this->fd.fileName, false);
     os << '\n';
-    for (const auto& b : md.getBehaviourVariables()) {
+    auto write_wrapper = [this, &os](const BehaviourVariableDescription& b) {
       const auto wrapper = getBehaviourWrapperClassName(b);
       const auto bn = [this, &b] {
         if (this->bd.useQt()) {
@@ -3470,7 +3470,32 @@ namespace mfront {
          << "private:\n"
          << "friend class " << this->bd.getClassName() << ";\n"
          << "};\n\n";
+    };
+    for (const auto& b : md.getBehaviourVariables()) {
+      const auto wrapper = getBehaviourWrapperClassName(b);
+      write_wrapper(b);
       os << wrapper << " " << b.name << ";\n";
+    }
+    for (const auto& b : md.getBehaviourVariableFactories()) {
+      const auto wrapper = getBehaviourWrapperClassName(b);
+      const auto factory = getBehaviourVariableFactoryClassName(b);
+      write_wrapper(b);
+      os << "struct " << factory << " final\n"
+         << "{\n"
+         << factory << "(const " << this->bd.getClassName()
+         << "& mfront_behaviour_reference_argument)\n"
+         << ": mfront_behaviour_reference("
+         << "mfront_behaviour_reference_argument)\n"
+         << "{}\n"
+         << "[[nodiscard]] " << wrapper << " make(){\n"
+         << "return " << wrapper << "{};\n"
+         << "} // end of make\n"
+         << "private:\n"
+         << "const " << this->bd.getClassName()
+         << "& mfront_behaviour_reference;\n"
+         << "};\n\n"
+         << factory << " " << b.name << " = " << factory << "{*this};\n"
+         << "friend class " << factory << ";\n";
     }
   }
 
@@ -4880,7 +4905,7 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     const auto& md = this->bd.getBehaviourData(h);
     // initialize
-    for (const auto& b : md.getBehaviourVariables()) {
+    auto write_initialize = [&os, h](const BehaviourVariableDescription& b) {
       const auto warnings = checkInitializeMethods(
           b.behaviour, h,
           {.checkGradientsAtTheBeginningOfTheTimeStep = true,
@@ -4902,13 +4927,15 @@ namespace mfront {
          << " * \\ brief initialize the behaviour variable " << b.name << "\n"
          << " */\n"
          << "[[nodiscard]] TFEL_HOST_DEVICE bool "
-         << "initialize(const " << wrapper << "&){\n"
-         << "this->" << b.name << ".setOutOfBoundsPolicy(this->policy);\n";
+         << "initialize(" << wrapper << "& mfront_behaviour_variable_" << b.name
+         << ") const {\n"
+         << "mfront_behaviour_variable_" << b.name
+         << ".setOutOfBoundsPolicy(this->policy);\n";
       if (b.store_gradients) {
         for (const auto& [g, th] : b.behaviour.getMainVariables()) {
           static_cast<void>(th);
           const auto ng = applyNamesChanges(b, g);
-          os << "this->" << b.name << ". " << g.name  //
+          os << "mfront_behaviour_variable_" << b.name << ". " << g.name  //
              << " = this->" << ng.name << ";\n";
         }
       }
@@ -4916,48 +4943,56 @@ namespace mfront {
         for (const auto& [g, th] : b.behaviour.getMainVariables()) {
           static_cast<void>(th);
           const auto nth = applyNamesChanges(b, th);
-          os << "this->" << b.name << ". " << th.name  //
+          os << "mfront_behaviour_variable_" << b.name << ". " << th.name  //
              << " = this->" << nth.name << ";\n";
         }
       }
       for (const auto& mp : getSharedMaterialProperties(b, h)) {
-        os << "this->" << b.name << ". " << mp.name << " = this->" << mp.name
-           << ";\n";
+        os << "mfront_behaviour_variable_" << b.name << ". " << mp.name
+           << " = this->" << mp.name << ";\n";
       }
       for (const auto& mp : getUnSharedMaterialProperties(b, h)) {
         const auto nmp = applyNamesChanges(b, mp);
-        os << "this->" << b.name << ". " << mp.name << " = this->" << nmp.name
-           << ";\n";
+        os << "mfront_behaviour_variable_" << b.name << ". " << mp.name
+           << " = this->" << nmp.name << ";\n";
       }
       for (const auto& esv : getSharedExternalStateVariables(b, h)) {
-        os << "this->" << b.name << ". " << esv.name << " = this->" << esv.name
-           << ";\n";
-        os << "this->" << b.name << ". d" << esv.name << " = this->d"
-           << esv.name << ";\n";
+        os << "mfront_behaviour_variable_" << b.name << ". " << esv.name
+           << " = this->" << esv.name << ";\n";
+        os << "mfront_behaviour_variable_" << b.name << ". d" << esv.name
+           << " = this->d" << esv.name << ";\n";
       }
       for (const auto& esv : getUnSharedExternalStateVariables(b, h)) {
         const auto nesv = applyNamesChanges(b, esv);
-        os << "this->" << b.name << ". " << esv.name << " = this->" << nesv.name
-           << ";\n";
-        os << "this->" << b.name << ". d" << esv.name << " = this->d"
-           << nesv.name << ";\n";
+        os << "mfront_behaviour_variable_" << b.name << ". " << esv.name
+           << " = this->" << nesv.name << ";\n";
+        os << "mfront_behaviour_variable_" << b.name << ". d" << esv.name
+           << " = this->d" << nesv.name << ";\n";
       }
       for (const auto& isv :
            b.behaviour.getBehaviourData(h).getPersistentVariables()) {
         const auto nisv = applyNamesChanges(b, isv);
-        os << "this->" << b.name << ". " << isv.name << " = this->" << nisv.name
-           << ";\n";
+        os << "mfront_behaviour_variable_" << b.name << ". " << isv.name
+           << " = this->" << nisv.name << ";\n";
       }
-      os << "this->" << b.name << ". dt = this->dt;\n";
-      os << "return this->" << b.name << ".initialize();\n"
+      os << "mfront_behaviour_variable_" << b.name << ". dt = this->dt;\n";
+      os << "return mfront_behaviour_variable_" << b.name << ".initialize();\n"
          << "}\n\n";
+    };
+    for (const auto& b : md.getBehaviourVariables()) {
+      write_initialize(b);
+    }
+    for (const auto& b : md.getBehaviourVariableFactories()) {
+      write_initialize(b);
     }
     // reset
-    for (const auto& b : md.getBehaviourVariables()) {
+    auto write_reset = [this, &os, h](const BehaviourVariableDescription& b) {
       const auto wrapper = getBehaviourWrapperClassName(b);
       os << "//! \\brief reset the behaviour variable\n"
-         << "[[nodiscard]] TFEL_HOST_DEVICE bool reset(" << wrapper << "&){\n"
-         << "if(!this->initialize(this->" << b.name << ")){\n"
+         << "[[nodiscard]] TFEL_HOST_DEVICE bool reset(" << wrapper
+         << "& mfront_behaviour_variable_" << b.name << "){\n"
+         << "if(!this->initialize(mfront_behaviour_variable_" << b.name
+         << ")){\n"
          << "return false;\n"
          << "}\n";
       for (const auto& v :
@@ -4969,73 +5004,93 @@ namespace mfront {
                            : v.type;
         if (flag == SupportedTypes::SCALAR) {
           if (v.arraySize == 1u) {
-            os << "this->" << b.name << ". d" << n  //
+            os << "mfront_behaviour_variable_" << b.name << ". d" << n  //
                << " = " << t << "(0);\n";
           } else {
             if (this->bd.useDynamicallyAllocatedVector(v.arraySize)) {
-              os << "std::fill(this->" << b.name << ". d" << n << ".begin(), "
-                 << "this->" << b.name << ". d" << n << ".end(), "  //
-                 << t << "(0));\n";
+              os << "std::fill(mfront_behaviour_variable_" << b.name << ". d"
+                 << n << ".begin(), mfront_behaviour_variable_" << b.name
+                 << ". d" << n << ".end(), " << t << "(0));\n";
             } else {
-              os << "tfel::fsalgo::fill<" << v.arraySize << ">(this->" << b.name
-                 << ". d" << n << ".begin(), " << t << "(0));\n";
+              os << "tfel::fsalgo::fill<" << v.arraySize
+                 << ">(mfront_behaviour_variable_" << b.name << ". d" << n
+                 << ".begin(), " << t << "(0));\n";
             }
           }
         } else {
           const auto traits = "MathObjectTraits<" + t + ">";
           if (v.arraySize == 1u) {
-            os << "this->" << b.name << ". d" << n << " = "  //
+            os << "mfront_behaviour_variable_" << b.name << ". d" << n << " = "
                << t << "(typename tfel::math::" + traits + "::NumType(0));\n";
           } else {
             if (this->bd.useDynamicallyAllocatedVector(v.arraySize)) {
-              os << "std::fill(this->" << b.name << ". d" << n
-                 << ".begin(), "                                    //
-                 << "this->" << b.name << ". d" << n << ".end(), "  //
-                 << t << "(typename tfel::math::" << traits
-                 << "::NumType(0)));\n";
-            } else {
-              os << "tfel::fsalgo::fill<" << v.arraySize << ">(this->" << b.name
-                 << ". d" << n << ".begin(), " << t
+              os << "std::fill(mfront_behaviour_variable_" << b.name << ". d"
+                 << n << ".begin(), mfront_behaviour_variable_" << b.name
+                 << ". d" << n << ".end(), " << t
                  << "(typename tfel::math::" << traits << "::NumType(0)));\n";
+            } else {
+              os << "tfel::fsalgo::fill<" << v.arraySize
+                 << ">(mfront_behaviour_variable_" << b.name << ". d" << n
+                 << ".begin(), " << t << "(typename tfel::math::" << traits
+                 << "::NumType(0)));\n";
             }
           }
         }
       }
       os << "return true;\n"
             "}\n\n";
+    };
+    for (const auto& b : md.getBehaviourVariables()) {
+      write_reset(b);
+    }
+    for (const auto& b : md.getBehaviourVariableFactories()) {
+      write_reset(b);
     }
     // updateAuxiliaryStateVariables
+    auto write_update_auxiliary_state_variables =
+        [&os, h](const BehaviourVariableDescription& b) {
+          const auto wrapper = getBehaviourWrapperClassName(b);
+          os << "/*!\n"
+             << "* \\brief update auxiliary state variables at end of "
+                "integration\n"
+             << "*/\n"
+             << "TFEL_HOST_DEVICE void "
+             << "updateAuxiliaryStateVariables(" << wrapper
+             << "& mfront_behaviour_variable_" << b.name << "){\n";
+          if (b.store_gradients) {
+            for (const auto& [g, th] : b.behaviour.getMainVariables()) {
+              static_cast<void>(th);
+              const auto ng = applyNamesChanges(b, g);
+              os << "this->" << ng.name << " = "
+                 << "mfront_behaviour_variable_" << b.name << ". " << g.name
+                 << " + "
+                 << "mfront_behaviour_variable_" << b.name << ". d" << g.name
+                 << ";\n";
+            }
+          }
+          if (b.store_thermodynamic_forces) {
+            for (const auto& [g, th] : b.behaviour.getMainVariables()) {
+              static_cast<void>(th);
+              const auto nth = applyNamesChanges(b, th);
+              os << "this->" << nth.name << " = "
+                 << "mfront_behaviour_variable_" << b.name << ". " << th.name
+                 << ";\n";
+            }
+          }
+          for (const auto& isv :
+               b.behaviour.getBehaviourData(h).getPersistentVariables()) {
+            const auto nisv = applyNamesChanges(b, isv);
+            os << "this->" << nisv.name << " = "
+               << "mfront_behaviour_variable_" << b.name << ". " << isv.name
+               << ";\n";
+          }
+          os << "}\n";
+        };
     for (const auto& b : md.getBehaviourVariables()) {
-      const auto wrapper = getBehaviourWrapperClassName(b);
-      os << "/*!\n"
-         << "* \\brief Update auxiliary state variables at end of integration\n"
-         << "*/\n"
-         << "TFEL_HOST_DEVICE void "
-         << "updateAuxiliaryStateVariables(" << wrapper << "&){\n";
-      if (b.store_gradients) {
-        for (const auto& [g, th] : b.behaviour.getMainVariables()) {
-          static_cast<void>(th);
-          const auto ng = applyNamesChanges(b, g);
-          os << "this->" << ng.name << " = "
-             << "this->" << b.name << ". " << g.name << " + "
-             << "this->" << b.name << ". d" << g.name << ";\n";
-        }
-      }
-      if (b.store_thermodynamic_forces) {
-        for (const auto& [g, th] : b.behaviour.getMainVariables()) {
-          static_cast<void>(th);
-          const auto nth = applyNamesChanges(b, th);
-          os << "this->" << nth.name << " = "
-             << "this->" << b.name << ". " << th.name << ";\n";
-        }
-      }
-      for (const auto& isv :
-           b.behaviour.getBehaviourData(h).getPersistentVariables()) {
-        const auto nisv = applyNamesChanges(b, isv);
-        os << "this->" << nisv.name << " = "
-           << "this->" << b.name << ". " << isv.name << ";\n";
-      }
-      os << "}\n";
+      write_update_auxiliary_state_variables(b);
+    }
+    for (const auto& b : md.getBehaviourVariableFactories()) {
+      write_update_auxiliary_state_variables(b);
     }
   }  // end of writeBehaviourBehaviourVariablesMethods
 

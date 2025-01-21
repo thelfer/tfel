@@ -1,7 +1,7 @@
 @DSL Default;
-@Behaviour BehaviourVariable1;
+@Behaviour BehaviourVariableFactory1;
 
-@BehaviourVariable b1 {
+@BehaviourVariableFactory f1 {
   file: "BehaviourVariablePlasticity.mfront",
   variables_suffix: "1",
   external_names_prefix: "FirstPhase",
@@ -10,7 +10,12 @@
   shared_external_state_variables: {".+"}
 };
 
+@ProvidesTangentOperator;
 @Integrator{
+  auto b1 = f1.make();
+  if (!initialize(b1)) {
+    return false;
+  }
   b1.deto = deto;
   const auto r = b1.integrate(smflag, smt);
   if (!r) {
@@ -18,14 +23,8 @@
   }
   // updating the stress
   sig = b1.sig;
-}
-
-@UpdateAuxiliaryStateVariables {
-eel1 = b1.eel;
-
-}
-
-@TangentOperator {
-  static_cast<void>(smt);
-  Dt = b1.getTangentOperator();
+  if (computeTangentOperator_) {
+    Dt = b1.getTangentOperator();
+  }
+  updateAuxiliaryStateVariables(b1);
 }

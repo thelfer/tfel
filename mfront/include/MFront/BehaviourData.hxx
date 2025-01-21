@@ -408,6 +408,9 @@ namespace mfront {
     //! \return all behaviour variables
     const std::vector<BehaviourVariableDescription>& getBehaviourVariables()
         const;
+    //! \return all behaviour variables factories
+    const std::vector<BehaviourVariableDescription>&
+    getBehaviourVariableFactories() const;
     //! \return all parameter variables
     const VariableDescriptionContainer& getParameters() const;
     /*!
@@ -669,6 +672,11 @@ namespace mfront {
      * \param[in] v : variable description
      */
     void addBehaviourVariable(const BehaviourVariableDescription&);
+    /*!
+     * \brief add a behaviour variable factory
+     * \param[in] v : variable description
+     */
+    void addBehaviourVariableFactory(const BehaviourVariableDescription&);
     /*!
      * \brief add a : variable
      * \param[in] v : variable description
@@ -1120,8 +1128,10 @@ namespace mfront {
     VariableDescriptionContainer localVariables;
     //! \brief parameters of the behaviour
     VariableDescriptionContainer parameters;
-    //! \brief list of registred behaviour variables
+    //! \brief list of registred behaviour variables factories
     std::vector<BehaviourVariableDescription> behaviourVariables;
+    //! \brief list of registred behaviour variable factories
+    std::vector<BehaviourVariableDescription> behaviourVariableFactories;
     //! \brief registred initialize variables
     VariableDescriptionContainer initializeVariables;
     //! \brief registred post-processing variables

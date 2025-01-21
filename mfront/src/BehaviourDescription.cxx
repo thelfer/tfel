@@ -2206,6 +2206,10 @@ namespace mfront {
       this->addBehaviourVariable(bv);
     }
     this->behaviourVariablesCandidates.clear();
+    for (const auto& bv : this->behaviourVariableFactoriesCandidates) {
+      this->addBehaviourVariableFactory(bv);
+    }
+    this->behaviourVariableFactoriesCandidates.clear();
   }  // end of setModellingHypotheses
 
   const std::vector<ModelDescription>&
@@ -2490,6 +2494,62 @@ namespace mfront {
       this->behaviourVariablesCandidates.push_back(v);
     }
   }  // end of addBehaviourVariable
+
+  void BehaviourDescription::addBehaviourVariableFactory(
+      const BehaviourVariableDescription& v) {
+    if (!this->allowsNewUserDefinedVariables()) {
+      tfel::raise(
+          "BehaviourDescription::addBehaviourVariableFactory: "
+          "adding new variables is no more allowed.");
+    }
+    if (this->areModellingHypothesesDefined()) {
+      if (getVerboseMode() >= VERBOSE_DEBUG) {
+        auto& log = getLogStream();
+        log << "BehaviourDescription::addBehaviourVariableFactory: "
+            << "adding behaviour variable '" << v.name
+            << "' for behaviour of type '" << v.behaviour.getClassName()
+            << "'\n";
+      }
+      // check compatibility with the modelling hypotheses of the behaviour
+      const auto& v_hypotheses = v.behaviour.getModellingHypotheses();
+      const auto& v_distinct_hypotheses = getDistinctModellingHypotheses();
+      for (const auto& h : this->hypotheses) {
+        if (!v_hypotheses.contains(h)) {
+          tfel::raise(
+              "BehaviourDescription::addBehaviourVariableFactory: "
+              "hypothesis '" +
+              ModellingHypothesis::toString(h) +
+              "' is not supported by behaviour variable factory '" + v.name +
+              "' of type '" + v.behaviour.getClassName() + "'");
+        }
+        if (v_distinct_hypotheses.contains(h)) {
+          this->specialize(h);
+        }
+      }
+      // now adding everything that we need
+      constexpr auto uh = Hypothesis::UNDEFINEDHYPOTHESIS;
+      if (!this->areAllMechanicalDataSpecialised()) {
+        completeVariablesDeclarations(this->d, v, uh);
+      }
+      for (auto& md : this->sd) {
+        completeVariablesDeclarations(*(md.second), v, md.first);
+      }
+      this->d.addBehaviourVariableFactory(v);
+      for (auto& md : this->sd) {
+        md.second->addBehaviourVariableFactory(v);
+      }
+    } else {
+      if (getVerboseMode() >= VERBOSE_DEBUG) {
+        auto& log = getLogStream();
+        log << "BehaviourDescription::addBehaviourVariableFactory: "
+            << "the addition of behaviour variable factory '" << v.name
+            << "' for behaviour of type '" << v.behaviour.getClassName()
+            << "' is delayed up to when the modelling hypotheses "
+            << "are defined'\n";
+      }
+      this->behaviourVariableFactoriesCandidates.push_back(v);
+    }
+  }  // end of addBehaviourVariableFactory
 
   void BehaviourDescription::completeVariableDeclaration() {
     if (!this->areModellingHypothesesDefined()) {

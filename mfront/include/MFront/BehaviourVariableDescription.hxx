@@ -145,6 +145,12 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT std::string getBehaviourWrapperClassName(
       const BehaviourVariableDescription&);
+  /*!
+   * \return the name of behaviour variable factory class
+   * \param[in] d: behaviour variable description
+   */
+  MFRONT_VISIBILITY_EXPORT std::string getBehaviourVariableFactoryClassName(
+      const BehaviourVariableDescription&);
 
 }  // end of namespace mfront
 

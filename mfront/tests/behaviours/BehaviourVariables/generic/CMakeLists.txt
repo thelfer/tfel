@@ -1,6 +1,8 @@
 mfront_behaviour_brick_check_library(MFrontGenericBehaviourVariableTestsBehaviours
    BehaviourVariables generic
-   BehaviourVariable1)
+   BehaviourVariable1
+   BehaviourVariableFactory1
+   BehaviourVariableFactory2)
 
 macro(generictest_behaviourvariable test_arg behaviour)
     set(_REFERENCE_FILE )
@@ -44,3 +46,5 @@ macro(generictest_behaviourvariable test_arg behaviour)
 endmacro(generictest_behaviourvariable)
 
 generictest_behaviourvariable(behaviour_variable1 BehaviourVariable1 plasticity.ref)
+generictest_behaviourvariable(behaviour_variable_factory1 BehaviourVariableFactory1 plasticity.ref)
+generictest_behaviourvariable(behaviour_variable_factory1 BehaviourVariableFactory2 plasticity.ref)

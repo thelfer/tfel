@@ -579,9 +579,39 @@ namespace mfront {
                   "This is the list of code blocks defined:" +
                   cbs);
     }
-    //    this->checkBehaviourVariableCompatibility(v);
     this->behaviourVariables.push_back(v);
   }  // end of addBehaviourVariable
+
+  void BehaviourData::addBehaviourVariableFactory(
+      const BehaviourVariableDescription& v) {
+    if ((this->hasAttribute(BehaviourData::allowsNewUserDefinedVariables)) &&
+        (!this->getAttribute<bool>(
+            BehaviourData::allowsNewUserDefinedVariables))) {
+      const auto cbn = this->getCodeBlockNames();
+      tfel::raise_if(
+          cbn.empty(),
+          "BehaviourData::addBehaviourVariableFactory: can't add  behaviour "
+          "variable factory '" +
+              v.name + "' for behaviour of type '" +
+              v.behaviour.getClassName() +
+              "', no more variable can be defined. This may mean that "
+              "the parser does not expect you to add variables");
+      auto cbs = std::string{};
+      for (const auto& n : cbn) {
+        cbs += "\n- " + n;
+      }
+      tfel::raise(
+          "BehaviourData::addBehaviourVariableFactory: can't add behaviour "
+          "variable factory '" +
+          v.name + "' for behaviour of type '" + v.behaviour.getClassName() +
+          "', no more variable can be defined. This may mean that "
+          "you already declared a block of code (or that the dsl "
+          "does not expect you to add variables for whatever reason). "
+          "This is the list of code blocks defined:" +
+          cbs);
+    }
+    this->behaviourVariableFactories.push_back(v);
+  }  // end of addBehaviourVariableFactory
 
   void BehaviourData::addLocalVariable(const VariableDescription& v,
                                        const RegistrationStatus s) {
@@ -785,6 +815,11 @@ namespace mfront {
   BehaviourData::getBehaviourVariables() const {
     return this->behaviourVariables;
   }  // end of getBehaviourVariables
+
+  const std::vector<BehaviourVariableDescription>&
+  BehaviourData::getBehaviourVariableFactories() const {
+    return this->behaviourVariableFactories;
+  }  // end of getBehaviourVariableFactories
 
   bool BehaviourData::isUsableInPurelyImplicitResolution() const {
     return this->usableInPurelyImplicitResolution;

@@ -167,6 +167,7 @@ namespace mfront {
     add("@Profiling", &BehaviourDSLCommon::treatProfiling);
     add("@Behaviour", &BehaviourDSLCommon::treatBehaviour);
     add("@BehaviourVariable", &BehaviourDSLCommon::treatBehaviourVariable);
+    add("@BehaviourVariableFactory", &BehaviourDSLCommon::treatBehaviourVariableFactory);
     add("@StrainMeasure", &BehaviourDSLCommon::treatStrainMeasure);
     add("@Author", &BehaviourDSLCommon::treatAuthor);
     add("@Date", &BehaviourDSLCommon::treatDate);
@@ -2659,7 +2660,8 @@ namespace mfront {
     }
   }  // end of treatBehaviour
 
-  void BehaviourDSLCommon::treatBehaviourVariable() {
+  BehaviourVariableDescription
+  BehaviourDSLCommon::readBehaviourVariableDescription() {
     using namespace tfel::utilities;
     const auto mname = "BehaviourVariableDSLCommon::treatBehaviourVariable";
 
@@ -2794,9 +2796,19 @@ namespace mfront {
                               "coefficient tensor are not supported yet");
     }
     this->reserveName(getBehaviourWrapperClassName(d));
-    // registring the behaviour variable
-    this->mb.addBehaviourVariable(d);
+    this->reserveName("mfront_behaviour_variable_" + d.name);
+    return d;
+  } // end of readBehaviourVariableDescription
+
+  void BehaviourDSLCommon::treatBehaviourVariable() {
+    this->mb.addBehaviourVariable(this->readBehaviourVariableDescription());
   }  // end of treatBehaviourVariable
+
+  void BehaviourDSLCommon::treatBehaviourVariableFactory() {
+    auto d = this->readBehaviourVariableDescription();
+    this->reserveName(getBehaviourVariableFactoryClassName(d));
+    this->mb.addBehaviourVariableFactory(std::move(d));
+  }  // end of treatBehaviourVariableFactory
 
   void BehaviourDSLCommon::readStringList(std::vector<std::string>& cont) {
     this->checkNotEndOfFile("BehaviourDSLCommon::readStringList",

@@ -988,6 +988,11 @@ namespace mfront {
      */
     void addBehaviourVariable(const BehaviourVariableDescription&);
     /*!
+     * \brief add a behaviour variable factory
+     * \param[in] v: behaviour variable added
+     */
+    void addBehaviourVariableFactory(const BehaviourVariableDescription&);
+    /*!
      * \brief add initialize  variables
      * \param[in] h: modelling hypothesis
      * \param[in] v: initialize  variables added
@@ -2008,6 +2013,14 @@ namespace mfront {
      * when modelling hypothesis are defined
      */
     std::vector<BehaviourVariableDescription> behaviourVariablesCandidates;
+    /*!
+     * \brief list of behaviour variable factories waiting to be treated
+     * \note this intermediate structure is required since
+     * the behaviour variables can only be added to behaviour data
+     * when modelling hypothesis are defined
+     */
+    std::vector<BehaviourVariableDescription>
+        behaviourVariableFactoriesCandidates;
     /*!
      * Support for dynamically allocated vectors is not allowed in all
      * dsl's. A dsl may change this value to disable the use of

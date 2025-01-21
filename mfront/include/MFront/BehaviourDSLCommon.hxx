@@ -397,6 +397,8 @@ namespace mfront {
     virtual std::string tangentOperatorVariableModifier(const Hypothesis,
                                                         const std::string&,
                                                         const bool);
+    //! \brief read the description of a behaviour variable
+    virtual BehaviourVariableDescription readBehaviourVariableDescription();
     /*!
      * \brief extract a material property from a token. If the token
      * is a string, it is interpred as a mfront file name. Otherwise,
@@ -614,6 +616,8 @@ namespace mfront {
     virtual void treatBehaviour();
     //! \brief handle the `@BehaviourVariable` keyword
     virtual void treatBehaviourVariable();
+    //! \brief handle the `@BehaviourVariableFactory` keyword
+    virtual void treatBehaviourVariableFactory();
     //! \brief handle the `@Interface` keyword
     virtual void treatInterface();
     //! \brief handle the `@StateVariable` keyword
