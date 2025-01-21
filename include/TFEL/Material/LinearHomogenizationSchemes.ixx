@@ -236,28 +236,6 @@ namespace tfel::material::homogenization::elasticity {
   };  // end of struct EllipsoidMeanLocalisator ;
 
 
-  template <unsigned int N, typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeVoigtStiffness(const std::array<real,N> &tab_f,
-                      const std::array<tfel::math::st2tost2<3u, StressType>,N> &tab_C){
-    tfel::math::st2tost2<3u,StressType> C_V=tab_f[0]*tab_C[0];
-    for (int i=1;i<N;i++){
-      C_V+=tab_f[i]*tab_C[i];
-    }
-    return C_V;
-  }
-
-  template <unsigned int N, typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeReussStiffness(const std::array<real,N> &tab_f,
-                      const std::array<tfel::math::st2tost2<3u, StressType>,N> &tab_C){
-    tfel::math::st2tost2<3u,tfel::math::invert_type<StressType>> S_R=tab_f[0]*invert(tab_C[0]);
-    for (int i=1;i<N;i++){
-      S_R+=tab_f[i]*invert(tab_C[i]);
-    }
-    return invert(S_R);
-  }
-
   template <typename real, typename StressType>
   TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
   computeDiluteScheme(const StressType& young,
