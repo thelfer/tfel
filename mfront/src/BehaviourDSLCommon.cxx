@@ -2793,13 +2793,7 @@ namespace mfront {
                               "behaviour requiring the thermal expansion "
                               "coefficient tensor are not supported yet");
     }
-    for (const auto h : d.behaviour.getDistinctModellingHypotheses()) {
-      if (d.behaviour.requiresStressFreeExpansionTreatment(h)) {
-        this->throwRuntimeError(
-            mname,
-            "behaviour compute stress free expansion are not supported yet");
-      }
-    }
+    this->reserveName(getBehaviourWrapperClassName(d));
     // registring the behaviour variable
     this->mb.addBehaviourVariable(d);
   }  // end of treatBehaviourVariable
@@ -3052,6 +3046,7 @@ namespace mfront {
     this->reserveName("initial_geometry_reference_temperature");
     this->mb.registerMemberName(h, "computeThermodynamicForces");
     this->mb.registerMemberName(h, "computeFinalThermodynamicForces");
+    this->mb.registerMemberName(h, "computeStressFreeStrain");
     this->mb.registerMemberName(h, "computeStressFreeExpansion");
     this->mb.registerMemberName(h, "computeInternalEnergy");
     this->mb.registerMemberName(h, "computeDissipatedEnergy");
@@ -3086,7 +3081,11 @@ namespace mfront {
     this->reserveName("smflag");
     this->reserveName("dl0_l0");
     this->reserveName("dl1_l0");
-    this->reserveName("dl01_l0");
+    this->reserveName("mfront_dl0_l0");
+    this->reserveName("mfront_dl1_l0");
+    this->reserveName("mfront_dl01_l0");
+    this->reserveName("mfront_sfs_bts");
+    this->reserveName("mfront_sfs_ets");
     this->reserveName("alpha_Ti");
     this->reserveName("alpha0_Ti");
     this->reserveName("alpha1_Ti");

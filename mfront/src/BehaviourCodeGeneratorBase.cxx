@@ -58,7 +58,7 @@ namespace mfront {
     }
     return r;
   }  // end of makeCamelCase
-  
+
   /*!
    * \return a temporary name which has not been reserved. This
    * method shall be used to get a temporary name at a
@@ -196,7 +196,7 @@ namespace mfront {
     if (!behaviourFile) {
       this->throwRuntimeError("BehaviourCodeGeneratorBase::generateOutputFiles",
                               "unable to open '" +
-			      this->bd.getBehaviourFileName() +
+                                  this->bd.getBehaviourFileName() +
                                   "' for writing output file");
     }
     if (!behaviourDataFile) {
@@ -208,7 +208,7 @@ namespace mfront {
     if (!integrationDataFile) {
       this->throwRuntimeError("BehaviourCodeGeneratorBase::generateOutputFiles",
                               "unable to open '" +
-			      this->bd.getIntegrationDataFileName() +
+                                  this->bd.getIntegrationDataFileName() +
                                   "' for writing output file");
     }
     auto write_classes = [this, &behaviourFile, &behaviourDataFile,
@@ -2076,7 +2076,8 @@ namespace mfront {
        << "*/\n";
     if (!this->bd.getTangentOperatorBlocks().empty()) {
       os << "[[nodiscard]] IntegrationResult\n"
-         << "integrate(const SMFlag smflag, const SMType smt) override final{\n";
+         << "integrate(const SMFlag smflag, const SMType smt) override "
+            "final{\n";
     } else {
       os << "[[nodiscard]] IntegrationResult\n"
          << "integrate(const SMFlag, const SMType) override final{\n";
@@ -2175,9 +2176,9 @@ namespace mfront {
        << this->bd.getClassName() << "& operator = (const "
        << this->bd.getClassName() << "&) = default;\n\n"
        << "//! \\brief assignement operator (disabled)\n"
-       << this->bd.getClassName() << "& operator = ("
-       << this->bd.getClassName() << "&&) = default;\n\n";
-  } // end of writeBehaviourDisabledAssignementOperators
+       << this->bd.getClassName() << "& operator = (" << this->bd.getClassName()
+       << "&&) = default;\n\n";
+  }  // end of writeBehaviourDisabledAssignementOperators
 
   void BehaviourCodeGeneratorBase::writeBehaviourSetOutOfBoundsPolicy(
       std::ostream& os) const {
@@ -2776,9 +2777,9 @@ namespace mfront {
     const auto Tref = "this->thermal_expansion_reference_temperature";
     const auto T = (t == "t") ? "this->T" : "this->T+this->dT";
     if (t == "t") {
-      out << "dl0_l0";
+      out << "mfront_dl0_l0";
     } else {
-      out << "dl1_l0";
+      out << "mfront_dl1_l0";
     }
     out << "[" << c << "] += 1/(1+alpha" << suffix
         << "_Ti * (this->initial_geometry_reference_temperature-" << Tref
@@ -2809,12 +2810,12 @@ namespace mfront {
       const auto i = b ? "1" : "0";
       const auto T = b ? "this->T+this->dT" : "this->T";
       if (cmp.name.empty()) {
-        out << "dl" << i << "_l0"
+        out << "mfront_dl" << i << "_l0"
             << "[" << c << "] += " << cmp.value << "/(1+" << cmp.value
             << "*(this->initial_geometry_reference_temperature-" << Tref << "))"
             << "*(" << T << "-this->initial_geometry_reference_temperature);\n";
       } else {
-        out << "dl" << i << "_l0"
+        out << "mfront_dl" << i << "_l0"
             << "[" << c << "] += (this->" << cmp.name << ")/(1+(this->"
             << cmp.name << ")*(this->initial_geometry_reference_temperature-"
             << Tref << "))"
@@ -2850,22 +2851,69 @@ namespace mfront {
       }
     }
     this->checkBehaviourFile(os);
-    os << "void\n"
+    const auto type = this->bd.getBehaviourType();
+    if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+      os << "std::pair<StrainStensor, StrainStensor> "
+            "computeStressFreeStrain(){\n";
+      if (bd.isStrainMeasureDefined()) {
+        const auto ms = bd.getStrainMeasure();
+        if ((ms == BehaviourDescription::LINEARISED) ||
+            (ms == BehaviourDescription::GREENLAGRANGE)) {
+          os << "return this->computeStressFreeExpansion();\n";
+        } else if (ms == BehaviourDescription::HENCKY) {
+          os << "const auto mfront_dl01_l0 = "
+             << "this->computeStressFreeExpansion();"
+             << "auto mfront_sfs_bts = StrainStensor{strain(0)};\n"
+             << "auto mfront_sfs_ets = StrainStensor{strain(0)};\n"
+             << "mfront_sfs_bts[0] = "
+             << "strain(std::log1p(mfront_dl01_l0.first[0]));\n"
+             << "mfront_sfs_bts[1] = "
+             << "strain(std::log1p(mfront_dl01_l0.first[1]));\n"
+             << "mfront_sfs_bts[2] = "
+             << "strain(std::log1p(mfront_dl01_l0.first[2]));\n"
+             << "mfront_sfs_ets[0] = "
+             << "strain(std::log1p(mfront_dl01_l0.second[0]));\n"
+             << "mfront_sfs_ets[1] = "
+             << "strain(std::log1p(mfront_dl01_l0.second[1]));\n"
+             << "mfront_sfs_ets[2] = "
+             << "strain(std::log1p(mfront_dl01_l0.second[2]));\n"
+             << "return {mfront_sfs_bts, mfront_sfs_ets};\n";
+        } else {
+          throw_if(true, "unsupported finite strain strategy");
+        }
+      } else {
+        os << "return this->computeStressFreeExpansion();\n";
+      }
+      os << "}\n\n";
+    }
+    os << "[[nodiscard]] std::pair<StressFreeExpansionType, "
+       << "StressFreeExpansionType>\n"
+       << "computeStressFreeExpansion()\n{\n"
+       << "auto mfront_dl01_l0 = "
+       << "std::pair<StressFreeExpansionType, StressFreeExpansionType>{};\n"
+       << "this->computeStressFreeExpansion(mfront_dl01_l0);\n"
+       << "return mfront_dl01_l0;\n"
+       << "}\n\n"
+       << "void\n"
        << "computeStressFreeExpansion(std::pair<StressFreeExpansionType,"
-          "StressFreeExpansionType>& dl01_l0)\n{\n";
-    os << "using namespace std;\n";
-    os << "using namespace tfel::math;\n";
-    os << "using std::vector;\n";
+       << "StressFreeExpansionType>& mfront_dl01_l0)\n{\n"
+       << "using namespace std;\n"
+       << "using namespace tfel::math;\n"
+       << "using std::vector;\n";
     writeMaterialLaws(os, this->bd.getMaterialLaws());
-    os << "auto& dl0_l0 = dl01_l0.first;\n";
-    os << "auto& dl1_l0 = dl01_l0.second;\n";
-    os << "dl0_l0 = StressFreeExpansionType(typename "
+    os << "auto& mfront_dl0_l0 = mfront_dl01_l0.first;\n";
+    os << "auto& mfront_dl1_l0 = mfront_dl01_l0.second;\n";
+    os << "mfront_dl0_l0 = StressFreeExpansionType(typename "
           "StressFreeExpansionType::value_type(0));\n";
-    os << "dl1_l0 = StressFreeExpansionType(typename "
+    os << "mfront_dl1_l0 = StressFreeExpansionType(typename "
           "StressFreeExpansionType::value_type(0));\n";
     if (this->bd.hasCode(h, BehaviourData::ComputeStressFreeExpansion)) {
-      os << this->bd.getCode(h, BehaviourData::ComputeStressFreeExpansion)
-         << '\n';
+      os << "{\n"
+         << "auto& dl0_l0 = mfront_dl0_l0;\n"
+         << "auto& dl1_l0 = mfront_dl1_l0;\n"
+         << this->bd.getCode(h, BehaviourData::ComputeStressFreeExpansion)
+         << '\n'
+         << "}\n";
     }
     if (this->bd.areThermalExpansionCoefficientsDefined()) {
       const auto& acs = this->bd.getThermalExpansionCoefficients();
@@ -2877,15 +2925,15 @@ namespace mfront {
           this->writeThermalExpansionCoefficientsComputations(os, acs.front());
           this->writeThermalExpansionComputation(os, "t", "0");
         }
-        os << "dl0_l0[1] += dl0_l0[0];\n"
-           << "dl0_l0[2] += dl0_l0[0];\n";
+        os << "mfront_dl0_l0[1] += mfront_dl0_l0[0];\n"
+           << "mfront_dl0_l0[2] += mfront_dl0_l0[0];\n";
         if (a.is<BehaviourDescription::ConstantMaterialProperty>()) {
           eval(os, a, "0", true);
         } else {
           this->writeThermalExpansionComputation(os, "t_dt", "0");
         }
-        os << "dl1_l0[1] += dl1_l0[0];\n"
-           << "dl1_l0[2] += dl1_l0[0];\n";
+        os << "mfront_dl1_l0[1] += mfront_dl1_l0[0];\n"
+           << "mfront_dl1_l0[2] += mfront_dl1_l0[0];\n";
       } else if (acs.size() == 3u) {
         throw_if(this->bd.getSymmetryType() != mfront::ORTHOTROPIC,
                  "invalid number of thermal expansion coefficients");
@@ -2925,29 +2973,35 @@ namespace mfront {
         // direction of orthotropy.
         if (s.sfe.is<BehaviourData::SFED_ESV>()) {
           const auto ev = s.sfe.get<BehaviourData::SFED_ESV>().vname;
-          os << "dl0_l0[1]+=this->" << ev << ";\n"
-             << "dl0_l0[0]+=real(1)/std::sqrt(1+this->" << ev << ")-real(1);\n"
-             << "dl0_l0[2]+=real(1)/std::sqrt(1+this->" << ev << ")-real(1);\n"
-             << "dl1_l0[1]+=this->" << ev << "+this->d" << ev << ";\n"
-             << "dl1_l0[0]+=real(1)/std::sqrt(1+this->" << ev << "+this->d"
-             << ev << ")-real(1);\n"
-             << "dl1_l0[2]+=real(1)/std::sqrt(1+this->" << ev << "+this->d"
-             << ev << ")-real(1);\n";
+          os << "mfront_dl0_l0[1]+=this->" << ev << ";\n"
+             << "mfront_dl0_l0[0]+=real(1)/std::sqrt(1+this->" << ev
+             << ")-real(1);\n"
+             << "mfront_dl0_l0[2]+=real(1)/std::sqrt(1+this->" << ev
+             << ")-real(1);\n"
+             << "mfront_dl1_l0[1]+=this->" << ev << "+this->d" << ev << ";\n"
+             << "mfront_dl1_l0[0]+=real(1)/std::sqrt(1+this->" << ev
+             << "+this->d" << ev << ")-real(1);\n"
+             << "mfront_dl1_l0[2]+=real(1)/std::sqrt(1+this->" << ev
+             << "+this->d" << ev << ")-real(1);\n";
         } else if (s.sfe.is<std::shared_ptr<ModelDescription>>()) {
           const auto& md = *(s.sfe.get<std::shared_ptr<ModelDescription>>());
           throw_if(
               md.outputs.size() != 1u,
               "invalid number of outputs for model '" + md.className + "'");
           const auto vs = md.className + "_" + md.outputs[0].name;
-          os << "dl0_l0[1]+=this->" << vs << ";\n"
-             << "dl0_l0[0]+=real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n"
-             << "dl0_l0[2]+=real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n";
+          os << "mfront_dl0_l0[1]+=this->" << vs << ";\n"
+             << "mfront_dl0_l0[0]+=real(1)/std::sqrt(1+this->" << vs
+             << ")-real(1);\n"
+             << "mfront_dl0_l0[2]+=real(1)/std::sqrt(1+this->" << vs
+             << ")-real(1);\n";
           this->writeModelCall(os, tmpnames, h, md,
                                std::vector<std::string>(1u, vs),
                                std::vector<std::string>(1u, vs), "sfeh");
-          os << "dl1_l0[1]+=this->" << vs << ";\n"
-             << "dl1_l0[0]+=real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n"
-             << "dl1_l0[2]+=real(1)/std::sqrt(1+this->" << vs << ")-real(1);\n";
+          os << "mfront_dl1_l0[1]+=this->" << vs << ";\n"
+             << "mfront_dl1_l0[0]+=real(1)/std::sqrt(1+this->" << vs
+             << ")-real(1);\n"
+             << "mfront_dl1_l0[2]+=real(1)/std::sqrt(1+this->" << vs
+             << ")-real(1);\n";
         } else {
           throw_if(true, "internal error, unsupported stress free expansion");
         }
@@ -2966,18 +3020,22 @@ namespace mfront {
                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
               (h ==
                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)) {
-            os << "dl0_l0[0]+=this->" << ev << "/2;\n"
-               << "dl0_l0[2]+=this->" << ev << "/2;\n"
-               << "dl1_l0[0]+=(this->" << ev << "+this->d" << ev << ")/2;\n"
-               << "dl1_l0[2]+=(this->" << ev << "+this->d" << ev << ")/2;\n";
+            os << "mfront_dl0_l0[0]+=this->" << ev << "/2;\n"
+               << "mfront_dl0_l0[2]+=this->" << ev << "/2;\n"
+               << "mfront_dl1_l0[0]+=(this->" << ev << "+this->d" << ev
+               << ")/2;\n"
+               << "mfront_dl1_l0[2]+=(this->" << ev << "+this->d" << ev
+               << ")/2;\n";
           }
           if ((h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRESS)) {
-            os << "dl0_l0[0]+=this->" << ev << "/2;\n"
-               << "dl0_l0[1]+=this->" << ev << "/2;\n"
-               << "dl1_l0[0]+=(this->" << ev << "+this->d" << ev << ")/2;\n"
-               << "dl1_l0[1]+=(this->" << ev << "+this->d" << ev << ")/2;\n";
+            os << "mfront_dl0_l0[0]+=this->" << ev << "/2;\n"
+               << "mfront_dl0_l0[1]+=this->" << ev << "/2;\n"
+               << "mfront_dl1_l0[0]+=(this->" << ev << "+this->d" << ev
+               << ")/2;\n"
+               << "mfront_dl1_l0[1]+=(this->" << ev << "+this->d" << ev
+               << ")/2;\n";
           }
         } else if (s.sfe.is<std::shared_ptr<ModelDescription>>()) {
           const auto& md = *(s.sfe.get<std::shared_ptr<ModelDescription>>());
@@ -2989,8 +3047,8 @@ namespace mfront {
                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) ||
               (h ==
                ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN)) {
-            os << "dl0_l0[0]+=(this->" << vs << ")/2;\n"
-               << "dl0_l0[2]+=(this->" << vs << ")/2;\n";
+            os << "mfront_dl0_l0[0]+=(this->" << vs << ")/2;\n"
+               << "mfront_dl0_l0[2]+=(this->" << vs << ")/2;\n";
           }
           this->writeModelCall(os, tmpnames, h, md,
                                std::vector<std::string>(1u, vs),
@@ -2998,8 +3056,8 @@ namespace mfront {
           if ((h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRAIN) ||
               (h == ModellingHypothesis::PLANESTRESS)) {
-            os << "dl0_l0[0]+=(this->" << vs << ")/2;\n"
-               << "dl0_l0[1]+=(this->" << vs << ")/2;\n";
+            os << "mfront_dl0_l0[0]+=(this->" << vs << ")/2;\n"
+               << "mfront_dl0_l0[1]+=(this->" << vs << ")/2;\n";
           }
         } else {
           throw_if(true, "internal error, unsupported stress free expansion");
@@ -3013,8 +3071,8 @@ namespace mfront {
                          const char* const c) {
           if (sfe.is<BehaviourData::SFED_ESV>()) {
             const auto& ev = sfe.get<BehaviourData::SFED_ESV>().vname;
-            os << "dl0_l0[" << c << "]+=this->" << ev << ";\n";
-            os << "dl1_l0[" << c << "]+=this->" << ev << "+this->d" << ev
+            os << "mfront_dl0_l0[" << c << "]+=this->" << ev << ";\n";
+            os << "mfront_dl1_l0[" << c << "]+=this->" << ev << "+this->d" << ev
                << ";\n";
           } else if (sfe.is<std::shared_ptr<ModelDescription>>()) {
             const auto& md = *(sfe.get<std::shared_ptr<ModelDescription>>());
@@ -3022,11 +3080,11 @@ namespace mfront {
                 md.outputs.size() != 1u,
                 "invalid number of outputs for model '" + md.className + "'");
             const auto vs = md.className + "_" + md.outputs[0].name;
-            os << "dl0_l0[" << c << "]+=this->" << vs << ";\n";
+            os << "mfront_dl0_l0[" << c << "]+=this->" << vs << ";\n";
             this->writeModelCall(os, tmpnames, h, md,
                                  std::vector<std::string>(1u, vs),
                                  std::vector<std::string>(1u, vs), "sfeh");
-            os << "dl1_l0[" << c << "]+=this->" << vs << ";\n";
+            os << "mfront_dl1_l0[" << c << "]+=this->" << vs << ";\n";
           } else if (!sfe.is<BehaviourData::NullExpansion>()) {
             throw_if(true, "internal error, unsupported stress free expansion");
           }
@@ -3058,12 +3116,15 @@ namespace mfront {
         throw_if(this->bd.getSymmetryType() != mfront::ORTHOTROPIC,
                  "orthotropic stress free expansion is only supported "
                  "for orthotropic behaviours");
-        os << "dl0_l0[0]+=this->" << ev << "[0];\n"
-           << "dl0_l0[1]+=this->" << ev << "[1];\n"
-           << "dl0_l0[2]+=this->" << ev << "[2];\n"
-           << "dl1_l0[0]+=this->" << ev << "[0]+this->d" << ev << "[0];\n"
-           << "dl1_l0[1]+=this->" << ev << "[1]+this->d" << ev << "[1];\n"
-           << "dl1_l0[2]+=this->" << ev << "[2]+this->d" << ev << "[2];\n";
+        os << "mfront_dl0_l0[0]+=this->" << ev << "[0];\n"
+           << "mfront_dl0_l0[1]+=this->" << ev << "[1];\n"
+           << "mfront_dl0_l0[2]+=this->" << ev << "[2];\n"
+           << "mfront_dl1_l0[0]+=this->" << ev << "[0]+this->d" << ev
+           << "[0];\n"
+           << "mfront_dl1_l0[1]+=this->" << ev << "[1]+this->d" << ev
+           << "[1];\n"
+           << "mfront_dl1_l0[2]+=this->" << ev << "[2]+this->d" << ev
+           << "[2];\n";
       } else if (d.is<BehaviourData::IsotropicStressFreeExpansion>()) {
         throw_if((this->bd.getBehaviourType() !=
                   BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
@@ -3075,27 +3136,27 @@ namespace mfront {
                  "null swelling is not supported here");
         if (s.sfe.is<BehaviourData::SFED_ESV>()) {
           const auto ev = s.sfe.get<BehaviourData::SFED_ESV>().vname;
-          os << "dl0_l0[0]+=this->" << ev << ";\n"
-             << "dl0_l0[1]+=this->" << ev << ";\n"
-             << "dl0_l0[2]+=this->" << ev << ";\n"
-             << "dl1_l0[0]+=this->" << ev << "+this->d" << ev << ";\n"
-             << "dl1_l0[1]+=this->" << ev << "+this->d" << ev << ";\n"
-             << "dl1_l0[2]+=this->" << ev << "+this->d" << ev << ";\n";
+          os << "mfront_dl0_l0[0]+=this->" << ev << ";\n"
+             << "mfront_dl0_l0[1]+=this->" << ev << ";\n"
+             << "mfront_dl0_l0[2]+=this->" << ev << ";\n"
+             << "mfront_dl1_l0[0]+=this->" << ev << "+this->d" << ev << ";\n"
+             << "mfront_dl1_l0[1]+=this->" << ev << "+this->d" << ev << ";\n"
+             << "mfront_dl1_l0[2]+=this->" << ev << "+this->d" << ev << ";\n";
         } else if (s.sfe.is<std::shared_ptr<ModelDescription>>()) {
           const auto& md = *(s.sfe.get<std::shared_ptr<ModelDescription>>());
           throw_if(
               md.outputs.size() != 1u,
               "invalid number of outputs for model '" + md.className + "'");
           const auto vs = md.className + "_" + md.outputs[0].name;
-          os << "dl0_l0[0]+=this->" << vs << ";\n"
-             << "dl0_l0[1]+=this->" << vs << ";\n"
-             << "dl0_l0[2]+=this->" << vs << ";\n";
+          os << "mfront_dl0_l0[0]+=this->" << vs << ";\n"
+             << "mfront_dl0_l0[1]+=this->" << vs << ";\n"
+             << "mfront_dl0_l0[2]+=this->" << vs << ";\n";
           this->writeModelCall(os, tmpnames, h, md,
                                std::vector<std::string>(1u, vs),
                                std::vector<std::string>(1u, vs), "sfeh");
-          os << "dl1_l0[0]+=this->" << vs << ";\n"
-             << "dl1_l0[1]+=this->" << vs << ";\n"
-             << "dl1_l0[2]+=this->" << vs << ";\n";
+          os << "mfront_dl1_l0[0]+=this->" << vs << ";\n"
+             << "mfront_dl1_l0[1]+=this->" << vs << ";\n"
+             << "mfront_dl1_l0[2]+=this->" << vs << ";\n";
         } else {
           throw_if(true, "internal error, unsupported stress free expansion");
         }
@@ -3111,27 +3172,30 @@ namespace mfront {
                  "null swelling is not supported here");
         if (s.sfe.is<BehaviourData::SFED_ESV>()) {
           const auto ev = s.sfe.get<BehaviourData::SFED_ESV>().vname;
-          os << "dl0_l0[0]+=this->" << ev << "/3;\n"
-             << "dl0_l0[1]+=this->" << ev << "/3;\n"
-             << "dl0_l0[2]+=this->" << ev << "/3;\n"
-             << "dl1_l0[0]+=(this->" << ev << "+this->d" << ev << ")/3;\n"
-             << "dl1_l0[1]+=(this->" << ev << "+this->d" << ev << ")/3;\n"
-             << "dl1_l0[2]+=(this->" << ev << "+this->d" << ev << ")/3;\n";
+          os << "mfront_dl0_l0[0]+=this->" << ev << "/3;\n"
+             << "mfront_dl0_l0[1]+=this->" << ev << "/3;\n"
+             << "mfront_dl0_l0[2]+=this->" << ev << "/3;\n"
+             << "mfront_dl1_l0[0]+=(this->" << ev << "+this->d" << ev
+             << ")/3;\n"
+             << "mfront_dl1_l0[1]+=(this->" << ev << "+this->d" << ev
+             << ")/3;\n"
+             << "mfront_dl1_l0[2]+=(this->" << ev << "+this->d" << ev
+             << ")/3;\n";
         } else if (s.sfe.is<std::shared_ptr<ModelDescription>>()) {
           const auto& md = *(s.sfe.get<std::shared_ptr<ModelDescription>>());
           throw_if(
               md.outputs.size() != 1u,
               "invalid number of outputs for model '" + md.className + "'");
           const auto vs = md.className + "_" + md.outputs[0].name;
-          os << "dl0_l0[0]+=this->" << vs << "/3;\n"
-             << "dl0_l0[1]+=this->" << vs << "/3;\n"
-             << "dl0_l0[2]+=this->" << vs << "/3;\n";
+          os << "mfront_dl0_l0[0]+=this->" << vs << "/3;\n"
+             << "mfront_dl0_l0[1]+=this->" << vs << "/3;\n"
+             << "mfront_dl0_l0[2]+=this->" << vs << "/3;\n";
           this->writeModelCall(os, tmpnames, h, md,
                                std::vector<std::string>(1u, vs),
                                std::vector<std::string>(1u, vs), "sfeh");
-          os << "dl1_l0[0]+=this->" << vs << "/3;\n"
-             << "dl1_l0[1]+=this->" << vs << "/3;\n"
-             << "dl1_l0[2]+=this->" << vs << "/3;\n";
+          os << "mfront_dl1_l0[0]+=this->" << vs << "/3;\n"
+             << "mfront_dl1_l0[1]+=this->" << vs << "/3;\n"
+             << "mfront_dl1_l0[2]+=this->" << vs << "/3;\n";
         } else {
           throw_if(true, "internal error, unsupported stress free expansion");
         }
@@ -3146,18 +3210,18 @@ namespace mfront {
           OrthotropicAxesConvention::PIPE) {
         os << "tfel::material::convertStressFreeExpansionStrain<hypothesis,"
               "tfel::material::OrthotropicAxesConvention::"
-              "PIPE>(dl0_l0);\n"
+              "PIPE>(mfront_dl0_l0);\n"
            << "tfel::material::convertStressFreeExpansionStrain<hypothesis,"
               "tfel::material::OrthotropicAxesConvention::"
-              "PIPE>(dl1_l0);\n";
+              "PIPE>(mfront_dl1_l0);\n";
       } else if (this->bd.getOrthotropicAxesConvention() ==
                  OrthotropicAxesConvention::PLATE) {
         os << "tfel::material::convertStressFreeExpansionStrain<hypothesis,"
               "tfel::material::OrthotropicAxesConvention::"
-              "PLATE>(dl0_l0);\n"
+              "PLATE>(mfront_dl0_l0);\n"
            << "tfel::material::convertStressFreeExpansionStrain<hypothesis,"
               "tfel::material::OrthotropicAxesConvention::"
-              "PLATE>(dl1_l0);\n";
+              "PLATE>(mfront_dl1_l0);\n";
       } else {
         throw_if(this->bd.getOrthotropicAxesConvention() !=
                      OrthotropicAxesConvention::DEFAULT,
@@ -3402,7 +3466,7 @@ namespace mfront {
          << "//! \\brief move assignement\n"
          << wrapper << "& operator=(" << wrapper << "&&) = default;\n"
          << "//! \\brief destructor\n"
-         << "~"<<wrapper << "() = default;\n"
+         << "~" << wrapper << "() = default;\n"
          << "private:\n"
          << "friend class " << this->bd.getClassName() << ";\n"
          << "};\n\n";
@@ -4857,25 +4921,32 @@ namespace mfront {
         }
       }
       for (const auto& mp : getSharedMaterialProperties(b, h)) {
-        os << "this->" << b.name << ". " << mp.name << " = this->" << mp.name << ";\n";
+        os << "this->" << b.name << ". " << mp.name << " = this->" << mp.name
+           << ";\n";
       }
       for (const auto& mp : getUnSharedMaterialProperties(b, h)) {
         const auto nmp = applyNamesChanges(b, mp);
-        os << "this->" << b.name << ". " << mp.name << " = this->" << nmp.name << ";\n";
+        os << "this->" << b.name << ". " << mp.name << " = this->" << nmp.name
+           << ";\n";
       }
       for (const auto& esv : getSharedExternalStateVariables(b, h)) {
-        os << "this->" << b.name << ". " << esv.name << " = this->" << esv.name << ";\n";
-        os << "this->" << b.name << ". d" << esv.name << " = this->d" << esv.name << ";\n";
+        os << "this->" << b.name << ". " << esv.name << " = this->" << esv.name
+           << ";\n";
+        os << "this->" << b.name << ". d" << esv.name << " = this->d"
+           << esv.name << ";\n";
       }
       for (const auto& esv : getUnSharedExternalStateVariables(b, h)) {
         const auto nesv = applyNamesChanges(b, esv);
-        os << "this->" << b.name << ". " << esv.name << " = this->" << nesv.name << ";\n";
-        os << "this->" << b.name << ". d" << esv.name << " = this->d" << nesv.name << ";\n";
+        os << "this->" << b.name << ". " << esv.name << " = this->" << nesv.name
+           << ";\n";
+        os << "this->" << b.name << ". d" << esv.name << " = this->d"
+           << nesv.name << ";\n";
       }
       for (const auto& isv :
            b.behaviour.getBehaviourData(h).getPersistentVariables()) {
         const auto nisv = applyNamesChanges(b, isv);
-        os << "this->" << b.name << ". " << isv.name << " = this->" << nisv.name << ";\n";
+        os << "this->" << b.name << ". " << isv.name << " = this->" << nisv.name
+           << ";\n";
       }
       os << "this->" << b.name << ". dt = this->dt;\n";
       os << "return this->" << b.name << ".initialize();\n"

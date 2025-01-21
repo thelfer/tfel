@@ -125,7 +125,7 @@ namespace mfront {
 
   std::string getBehaviourWrapperClassName(
       const BehaviourVariableDescription& d) {
-    return d.behaviour.getClassName() + "Wrapper_" + d.name;
+    return "MFront" + d.behaviour.getClassName() + "Wrapper_" + d.name;
   }  // end of getBehaviourWrapperClassName
 
 }  // end of namespace mfront

@@ -34,7 +34,7 @@ share some variables (material properties, external state variables).
 In this example, since no material property is declared as shared, the
 calling behaviour will create one material property for each material
 property declared in the behaviour `Plasticity` (see the
-`shared_material_properties option below for details on how to declare
+`shared_material_properties` option below for details on how to declare
 shared material properties). To avoid conflicts, the names and external
 names of this new material properties are modified using the options
 `variables_prefix`, `variables_suffix`, `external_names_prefix` or
@@ -78,11 +78,11 @@ Dt = b1.getTangentOperator();
 - `file`: name of the `MFront` file in which the behaviour is defined.
   This entry is required.
 - `variables_prefix`: prefix added in front of the variable names
-  associated with the behaviour variable in the calling behaviour.
-- `variables_prefix`: prefix added to variables that are not shared with
+  associated with the behaviour variable in the calling behaviour. The
+  prefix is added to variables that are not shared with
   the calling behaviour.
-- `variables_suffix`: suffix added to variables that are not shared with
-  the calling behaviour.
+- `variables_suffix`: suffix added at the end of the names of
+   variables that are not shared with the calling behaviour.
 - `external_names_prefix`: prefix added to external names of variables
   that are not shared with the calling behaviour.
 - `external_names_suffix`: suffix added to external names of variables
@@ -106,30 +106,76 @@ Dt = b1.getTangentOperator();
 
 ## Treatment of the gradients or thermodynamic variables of the behaviour variable
 
-If the `store_gradients` option is set to `true`, an associated
-auxiliary state variable is automatically declared by the calling
-behaviour for each gradient of the behaviour variable. These auxiliary
-state variables are obtained by applying the transformation rules on
-names and external names.
+Setting the `store_gradients` option to `true`, which is the default
+value, has the following effects:
 
-If the `store_gradients` option is set to `true`, the gradients of the
-behaviour variables are automatically initialized using the values of
-the associated auxiliary state variable.
+- an associated auxiliary state variable is automatically declared by
+  the calling behaviour for each gradient of the behaviour variable.
+  These auxiliary state variables are obtained by applying the
+  transformation rules on names and external names.
+- the `initialize/reset` methods associated with this behaviour variable
+  (see bellow) will automatically initialize the gradients using the
+  associated auxiliary state variables. Note that the `initialize`
+  method associated with this behaviour variable is automatically called
+  by the main `initialize` method of the calling behaviour (which is
+  always called).
+- the `updateAuxiliaryStateVariables` method associated with this
+  behaviour variable (see bellow) stores the values of the gradients at
+  the end of the time step in the associated auxiliary state variables.
+  Note that if the
+  `automatically_save_associated_auxiliary_state_variables` option is
+  set to true, the `updateAuxiliaryStateVariables` method associated
+  with this behaviour variable is called inside the main
+  `updateAuxiliaryStateVariables` method of the calling behaviour.
 
-If the `store_gradients` option is set to `true`, the values of the
-associated auxiliary state variable are automatically updated using the
-values of the gradient of the behaviour variable plus its increment in
-the `updateAuxiliaryStateVariables` method of the calling behaviour.
+If the `store_gradients` option to `false`, the calling behaviour is
+responsible for setting the gradients at the beginning of the time step
+and either their increments or their values at the end of the time step,
+depending on the case.
 
 The `store_thermodynamic_forces` option has a similar role for
 thermodynamic forces.
 
-If the `automatically_save_associated_auxiliary_state_variables` option
-is set to true, gradients (if `stored_gradients` is true) or
-thermodynamic forces (if `stored_thermodynamic_forces` is true) of the
-behaviour variable are automatically saved in the associated auxiliary
-state variables at the beginning of the `updateAuxiliaryStateVariables`
-method of the calling behaviour.
+### Note on orthotropic behaviours
+
+If the called behaviour is orthotropic, the gradients and thermodynamic
+forces must be defined in the material frame associated with the
+behaviour variable. The calling behaviour is responsible for making the
+appropriate rotations.
+
+### Note on the strain measures
+
+If the called behaviour is based on a strain measure, then the calling
+behaviour is responsible for consistently initializing the strain at the
+beginning of the time step (in particular if `store_gradients` is set to
+`false`), the thermodynamic forces (in particular if
+`store_thermodynamic_forces` is set to `false`) and the strain
+increment.
+
+### Note on stress free strains
+
+Strain based Behaviours requires special care if the called behaviour
+declares stress free expansions (volumetric swelling, thermal expansion,
+etc.). In the case, the called behaviour exposes a method called
+`computeStressFreeStrain` that shall only be called **after** the
+initialization of the behaviour. This method returns a pair containing
+the stress free strains at the beginning of the time step and at the end
+of the time step. 
+
+Assuming that the calling behaviour wants to assign a total strain
+increment `deto_b1`, the method `computeStressFreeStrain` can be used as
+follows:
+
+~~~~{.cxx}
+// assuming that the behaviour is able to compute the thermal strains
+const auto [eth_bts, eth_ets] = b1.computeStressFreeStrain();
+b1.deto = deto_b1 - eth_ets + eth_bts;
+~~~~
+
+Note that these stress free strains are:
+
+- defined consistently with the strain measure used,
+- defined in the material frame associated with the behaviour variable.
 
 ## Treatment of the persistent variables of the behaviour variable
 
@@ -175,28 +221,36 @@ gradients, local variables, etc..).
 
 ## Initialization of the behaviour variable
 
-The `initialize` method of the behaviour variable is automatically
-called in the `initialize` method of the calling behaviour after
-initializing the material properties, external state variables,
-persistent variables, gradients and thermodynamic forces.
-
-## Reinitializing a behaviour variable
-
-A behaviour variable can be initialized again by a specialized version
-of the `initialize` method which takes the behaviour variable as its
-only argument, as follows:
+A specialized version of the `initialize` method which takes the
+behaviour variable as its only argument is automatically defined and can
+be called as follows:
 
 ~~~~{.cxx}
 initialize(b1);
 ~~~~
 
-This method initializes the persistent variables to the values of the
-associated auxiliary state variables, and does the same thing for
-gradients and thermodynamic forces depending on the values of the
-`store_gradients` and `store_thermodynamic_forces` options.
+This method initializes:
+
+- the persistent variables of the behaviour variable to the values of
+  the associated auxiliary state variables, and does the same thing for
+  gradients and thermodynamic forces depending on the values of the
+  `store_gradients` and `store_thermodynamic_forces` options.
+- the time increment with the value of the time increment of the calling
+  behaviour.
+
+This method is automatically called by the main `initialize` method of
+the calling behaviour (which is always called) after initializing the
+material properties, external state variables, persistent variables of
+the behaviour variables.
+
+## Reinitializing and resetting a behaviour variable
+
+The `initialize` method associated with a behaviour variable can be
+called several times. This might be useful to integrate this behaviour
+variable several times.
 
 However, this does not guarantee that calling the integration of the
-behaviour variable will results in the same result as some internal
+behaviour variable will lead to the same result as some internal
 variables may have evolved.
 
 In particular, the increment of the integration variables will not
@@ -208,14 +262,85 @@ To initialize the behaviour and zero the increment of the integration
 variables , one may call the `reset` method instead:
 
 ~~~~{.cxx}
-reset(b1); // calls initialize and zeros integration variables increments
+reset(b1); // calls initialize and zeros integration variable increments
 ~~~~
 
-> Note that even the `reset` method does not the absolute guarantee that
-> calling the integration of the behaviour variable will results in the
+> Note that even the `reset` method does not absolutely guarantee that
+> calling the integration of the behaviour variable will lead to the
 > same result as some internal variables may have evolved. This will probably
-> the case assuming that the implementation of the called behaviour does not
-> make any strange things internally.
+> be the case assuming that the implementation of the called behaviour does
+> not make any strange things internally.
+
+## Integration
+
+The `integrate` method performs the integration of the behaviour
+variable.
+
+Note that this method must be called after having the gradients at the
+beginning of the time step (see also the `store_gradients` option for
+details), the thermodynamic forces at the beginning of the time step
+(see also the `store_thermodynamic_forces` option for details), and
+either the gradients at the end of the time step or their increments
+depending on the case.
+
+The `integrate` method takes two arguments:
+
+- one value of the enumeration `SMFlag` defined in the
+  `TangentOperatorTraits` class associated with the
+  behaviour. The class `TangentOperatorTraits` is templated by the
+  behaviour type:
+  - If the behaviour type is not
+    `MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR`,
+    then the enumeration `SMFlag` only contains one value
+    `STANDARDTANGENTOPERATOR`;
+  - If the behaviour type is
+    `MechanicalBehaviourBase::STANDARDFINITESTRAINBEHAVIOUR`,
+    then the values of the enumeration `SMFlag` are described in the
+    `FiniteStrainBehaviourTangentOperatorBase` class.
+- one value of the enumeration `SMType` defined in the class
+  `MechanicalBehaviourBase` which is a base class of all
+  behaviours generated by `MFront` (even non mechanical behaviours).
+  This enumeration defines the following values:
+
+  - `ELASTIC`,
+  - `SECANTOPERATOR`,
+  - `TANGENTOPERATOR`,
+  - `CONSISTENTTANGENTOPERATOR`,
+  - `NOSTIFFNESSREQUESTED`
+
+Here is an example on how to call the integrate method of a behaviour
+variable which is not a standard finite strain behaviour: 
+
+~~~~{.cxx}
+constexpr auto b1_smflag = TangentOperatorTraits<
+    MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR>::
+    STANDARDTANGENTOPERATOR;
+const auto r = b1.integrate(b1_smflag, CONSISTENTTANGENTOPERATOR);
+~~~~
+
+The `integrate` method returns `IntegrationResult` object which is
+implicitly convertible to a boolean. This boolean is `true` if the
+integration succeeded.
+
+## Retrieving the tangent operator
+
+The tangent operator computed by the `integrate` method can be retrieved
+using the `getTangentOperator` method. If the `integrate` method did not
+compute the tangent operator (i.e. if the value `NOSTIFFNESSREQUESTED`
+was passed as the second argument), the result is undefined.
+
+### Note on orthotropic behaviours
+
+If the called behaviour is orthotropic, the tangent operator is defined
+in the material frame associated with the behaviour variable. The
+calling behaviour is responsible for making the appropriate rotations.
+
+### Note on the strain measures
+
+If the called behaviour is based on a strain measure, the tangent
+operator relates the dual stress and the strain measure. The calling
+behaviour is responsible for making the appropriate conversions, if
+required.
 
 ## Updating the auxiliary state variables associated with a behaviour variable
 
@@ -225,8 +350,8 @@ controls if the auxiliary state variables associated with a behaviour
 variable are automatically saved.
 
 If this option is `false`, the author of the calling behaviour is
-responible for updating thos state variables by hand. This task can
-deleguated to a specialized version of the
+responsible for updating those state variables by hand. This task can
+be deleguated to a specialized version of the
 `updateAuxiliaryStateVariables` method which takes the behaviour
 variable as its only argument, as follows:
 
