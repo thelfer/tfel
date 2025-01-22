@@ -325,8 +325,7 @@ namespace mfront {
 
   BehaviourData::BehaviourData() {
     this->registerMemberName("dt");
-    // symbolic value
-    this->reserveName("\u0394t");
+    this->registerMemberName("\u0394t");
   }  // end of BehaviourData
 
   BehaviourData::BehaviourData(const BehaviourData&) = default;

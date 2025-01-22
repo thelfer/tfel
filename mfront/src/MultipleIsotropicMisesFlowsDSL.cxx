@@ -244,6 +244,7 @@ namespace mfront {
           return this->flowRuleVariableModifier(h, sv, b);
         };
     this->treatCodeBlock(opts, cname.str(), m, true);
+    this->checkFlowRule(cname.str());
     flow.flowRule =
         this->mb.getCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS, cname.str());
     this->flows.push_back(flow);

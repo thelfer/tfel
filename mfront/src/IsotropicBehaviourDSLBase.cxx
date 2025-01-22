@@ -84,7 +84,7 @@ namespace mfront {
     // a defaut version of the prediction operator is always provided
     this->mb.setAttribute(h, BehaviourData::hasPredictionOperator, true);
     this->mb.setIntegrationScheme(BehaviourDescription::SPECIFICSCHEME);
-  }  // end of IsotropicBehaviourDSLBase::IsotropicBehaviourDSLBase
+  }  // end of IsotropicBehaviourDSLBase
 
   BehaviourDSLDescription
   IsotropicBehaviourDSLBase::getBehaviourDSLDescription() const {
@@ -105,7 +105,7 @@ namespace mfront {
     d.allowStiffnessTensorDefinition = false;
     d.minimalMFrontFileBody = "@FlowRule{}\n\n";
     return d;
-  }  // end of IsotropicBehaviourDSLBase::getBehaviourDSLDescription
+  }  // end of getBehaviourDSLDescription
 
   void IsotropicBehaviourDSLBase::getSymbols(
       std::map<std::string, std::string>& symbols,
@@ -121,11 +121,9 @@ namespace mfront {
         getIncrementSymbol(symbols, mv.first);
       }
     }
-    if (n != BehaviourData::FlowRule) {
-      mfront::getIncrementSymbols(symbols, d.getExternalStateVariables());
-      mfront::addSymbol(symbols, "\u0394t", "dt");
-    }
-  }  // end of IsotropicBehaviourDSLBase::getSymbols
+    mfront::getIncrementSymbols(symbols, d.getExternalStateVariables());
+    mfront::addSymbol(symbols, "\u0394t", "dt");
+  }  // end of getSymbols
 
   double IsotropicBehaviourDSLBase::getDefaultThetaValue() const { return 0.5; }
 
@@ -145,7 +143,7 @@ namespace mfront {
         h, VariableDescription("real", "\u03B8", "theta", 1u, 0u),
         BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h, "theta", v);
-  }  // end of IsotropicBehaviourDSLBase::treatTheta
+  }  // end of treatTheta
 
   void IsotropicBehaviourDSLBase::treatEpsilon() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -197,7 +195,7 @@ namespace mfront {
     this->mb.addParameter(h, VariableDescription("ushort", "iterMax", 1u, 0u),
                           BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h, "iterMax", iterMax);
-  }  // end of IsotropicBehaviourDSLBase::treatIterMax
+  }  // end of treatIterMax
 
   std::string IsotropicBehaviourDSLBase::flowRuleVariableModifier(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
@@ -218,7 +216,7 @@ namespace mfront {
       return "this->" + var;
     }
     return var;
-  }  // end of IsotropicBehaviourDSLBase::flowRuleVariableModifier
+  }  // end of flowRuleVariableModifier
 
   void IsotropicBehaviourDSLBase::checkFlowRule(std::string_view n) const {
     auto warnings = std::vector<std::string>{};
@@ -240,6 +238,9 @@ namespace mfront {
       for (const auto& m : c.members) {
         if (m == "theta") {
           report_unexpected("the 'theta' parameter");
+        }
+        if (m == "iterMax") {
+          report_unexpected("the 'iterMax' parameter");
         }
         if (m == "dt") {
           report_unexpected("the time increment 'dt'");
@@ -263,7 +264,7 @@ namespace mfront {
             };
     this->treatCodeBlock(BehaviourData::FlowRule, modifier, true, false);
     this->checkFlowRule(BehaviourData::FlowRule);
-  }  // end of IsotropicBehaviourDSLBase::treatFlowRule
+  }  // end of treatFlowRule
 
   void IsotropicBehaviourDSLBase::treatExternalStateVariable() {
     VariableDescriptionContainer ev;
@@ -283,7 +284,7 @@ namespace mfront {
       this->mb.setCode(elem, BehaviourData::BeforeInitializeLocalVariables, ib,
                        BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
     }
-  }  // end of IsotropicBehaviourDSLBase::treatExternalStateVariable
+  }  // end of treatExternalStateVariable
 
   void IsotropicBehaviourDSLBase::completeVariableDeclaration() {
     using namespace tfel::glossary;
@@ -378,7 +379,7 @@ namespace mfront {
       auto& log = getLogStream();
       log << "IsotropicBehaviourDSLBase::completeVariableDeclaration: end\n";
     }
-  }  // end of IsotropicBehaviourDSLBase::completeVariableDeclaration
+  }  // end of completeVariableDeclaration
 
   void IsotropicBehaviourDSLBase::endsInputFileProcessing() {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
@@ -390,7 +391,7 @@ namespace mfront {
       auto& log = getLogStream();
       log << "IsotropicBehaviourDSLBase::endsInputFileProcessing: end\n";
     }
-  }  // end of IsotropicBehaviourDSLBase::endsInputFileProcessing
+  }  // end of endsInputFileProcessing
 
   IsotropicBehaviourDSLBase::~IsotropicBehaviourDSLBase() = default;
 
