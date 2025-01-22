@@ -170,6 +170,12 @@ namespace mfront {
             "don't melt librairies sources",
             [this]() noexcept { this->melt_sources = false; }, false));
     this->registerCallBack(
+        "--ignore-safe",
+        CallBack(
+            "ignore the safe options for keywords or code blocks",
+            [this]() noexcept { setIgnoreSafeOptionForWarnings(true); },
+            false));
+    this->registerCallBack(
         "--warning", "-W",
         CallBack(
             "enable warnings", [this]() noexcept { setWarningMode(true); },

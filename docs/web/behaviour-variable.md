@@ -122,5 +122,3 @@ options are available:
   The `shared_external_state_variables` does the same for external state
   variables. Those options are not required.
 
-# Usage of behaviour variables
-

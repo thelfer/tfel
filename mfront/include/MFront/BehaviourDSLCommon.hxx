@@ -167,14 +167,16 @@ namespace mfront {
       CodeBlockOptions& operator=(CodeBlockOptions&&) = default;
       CodeBlockOptions& operator=(const CodeBlockOptions&) = default;
       ~CodeBlockOptions();
-      //! position where the code block will be inserted (body by defaut)
+      //! \brief position where the code block will be inserted (body by defaut)
       Position p;
-      //! insertion mode (create or append by default)
+      //! \brief insertion mode (create or append by default)
       Mode m;
-      //! list of hypothesis
+      //! \brief list of hypothesis
       std::set<Hypothesis> hypotheses;
-      //! list of untreated options
+      //! \brief list of untreated options
       std::vector<tfel::utilities::Token> untreated;
+      //! \brief flag stating if potential warnings shall be ignored
+      bool safe = false;
     };
     /*!
      * \brief constructor

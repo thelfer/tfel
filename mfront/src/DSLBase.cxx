@@ -309,7 +309,7 @@ namespace mfront {
   bool DSLBase::readSafeOptionTypeIfPresent() {
     return ::mfront::readSafeOptionTypeIfPresent(this->current,
                                                  this->tokens.end());
-  } // end of readSafeOptionTypeIfPresent
+  }  // end of readSafeOptionTypeIfPresent
 
   void DSLBase::readNextBlock(CodeBlock& res1,
                               CodeBlock& res2,

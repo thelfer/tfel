@@ -83,16 +83,75 @@ Python bindings are now generated using the
 
 # New features in `MFront`
 
+This version introduces the following main features in `MFront`:
+
+- warnings on  potential misuses or known bad practices,
+- the ability to call other behaviour from a behaviour.
+
 ## Warnings
 
 Many warnings have been added to detect potential misuses of `MFront` or
 known bad practices.
 
+### Activating and desactivating warnings
+
+Reporting warnings is activated by default and can be disabled by
+passing the command line argument `--report-warnings=false` to `MFront`.
+
+Warnings are associated with keywords and code blocks. Warnings can be
+disabled by appending the `safe` option to them. For instance, in an
+implicit DSL, specifying a convergence threshold greater than
+\(10^{-10}\) is considered to loose in most cases and thus triggers a
+warning. This warning can be disabled as follows:
+
+~~~~{.cxx}
+@Epsilon<safe> 1;
+~~~~
+
+This `safe` option can be ignored by passing the `--ignore-safe` command
+line argument to `MFront`. This argument is useful when analysing an
+existing file (written by another person) to question implementation
+choices.
+
 ### Warnings added to all DSLs
 
 ### Warnings added to isotropic DSLs
 
+#### Warnings related to the convergence threshold
+
+- using the default value of the convergence threshold
+- specifying a value of the convergence threshold too low
+- specifying a value of the convergence threshold too high
+
 ### Warnings added to implicit DSLs
+
+#### Warnings related to the convergence threshold
+
+- using the default value of the convergence threshold
+- specifying a value of the convergence threshold too low
+- specifying a value of the convergence threshold too high
+
+#### Warnings related to the perturbation value used to compute a numerical approximation of the jacobian
+
+#### Warnings related to the convergence threshold
+
+- using the default value
+- specifying a value too low
+- specifying a value too high
+
+## Calling an external behaviour: the `@BehaviourVariable` keyword
+
+```cxx
+@BehaviourVariable first_phase_plastic_behaviour {
+  file: "Plasticity.mfront",
+  variables_suffix: "1",
+  external_names_prefix: "FirstPhase",
+  store_gradients: true,
+  store_thermodynamic_forces: true,
+  shared_material_properties: {".+"},
+  shared_external_state_variables: {".+"}
+};
+```
 
 ## New command line arguments
 
@@ -110,20 +169,8 @@ The following command line arguments are now supported:
   - `--warning-error=false` does not turn warnings into errors (which is
     the default behaviour of `MFront`).
 - `-Werror` is equivalent to `--warning-error=true`.
-
-## Calling an external behaviour: the `@BehaviourVariable` keyword
-
-```cxx
-@BehaviourVariable first_phase_plastic_behaviour {
-  file: "Plasticity.mfront",
-  variables_suffix: "1",
-  external_names_prefix: "FirstPhase",
-  store_gradients: true,
-  store_thermodynamic_forces: true,
-  shared_material_properties: {".+"},
-  shared_external_state_variables: {".+"}
-};
-```
+- `-ignore-safe` allows to ignore the `safe` option of keywords and code
+  blocks.
 
 # New features in `mfront-query`
 

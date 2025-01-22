@@ -442,6 +442,12 @@ namespace mfront {
                               "initial file and add information about the "
                               "local convergence of the integration algorithm");
     this->registerCallBack(
+        "--ignore-safe",
+        CallBack(
+            "ignore the safe options for keywords or code blocks",
+            [this]() noexcept { setIgnoreSafeOptionForWarnings(true); },
+            false));
+    this->registerCallBack(
         "--warning", "-W",
         CallBack(
             "enable warnings", [this]() noexcept { setWarningMode(true); },

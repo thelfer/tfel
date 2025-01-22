@@ -143,6 +143,8 @@ namespace mfront {
   void MultipleIsotropicMisesFlowsDSL::treatFlowRule() {
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     FlowHandler flow;
+    auto opts = CodeBlockOptions{};
+    this->readCodeBlockOptions(opts, false);
     this->checkNotEndOfFile("MultipleIsotropicMisesFlowsDSL::treatFlowRule",
                             "Expected flow rule name.");
     if (this->current->value == "Plasticity") {
@@ -241,7 +243,7 @@ namespace mfront {
         m = [this](const Hypothesis h, const std::string& sv, const bool b) {
           return this->flowRuleVariableModifier(h, sv, b);
         };
-    this->treatCodeBlock(cname.str(), m, true, false);
+    this->treatCodeBlock(opts, cname.str(), m, true);
     flow.flowRule =
         this->mb.getCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS, cname.str());
     this->flows.push_back(flow);

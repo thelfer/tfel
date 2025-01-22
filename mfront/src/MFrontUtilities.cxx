@@ -21,6 +21,7 @@
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/VariableBoundsDescription.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontUtilities.hxx"
 
 namespace mfront {
@@ -231,6 +232,9 @@ namespace mfront {
     CxxTokenizer::readSpecifiedToken(m, "<", p, pe);
     CxxTokenizer::readSpecifiedToken(m, "safe",p,pe);
     CxxTokenizer::readSpecifiedToken(m, ">", p, pe);
+    if (ignoreSafeOptionForWarnings()) {
+      return false;
+    }
     return true;
   }
 

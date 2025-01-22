@@ -18,23 +18,36 @@
 
 namespace mfront {
 
-  static bool& getMFrontWarningMode() {
+  static bool& getMFrontWarningMode() noexcept {
     static bool b = true;
     return b;
   }
 
-  bool getWarningMode() { return getMFrontWarningMode(); }
+  bool getWarningMode() noexcept { return getMFrontWarningMode(); }
 
-  void setWarningMode(const bool b) { getMFrontWarningMode() = b; }
+  void setWarningMode(const bool b) noexcept { getMFrontWarningMode() = b; }
 
-  static bool& getMFrontWarningErrorMode() {
+  static bool& getIgnoreSafeOption() noexcept {
     static bool b = false;
     return b;
   }
 
-  bool getWarningErrorMode() { return getMFrontWarningErrorMode(); }
+  bool ignoreSafeOptionForWarnings() noexcept { return getIgnoreSafeOption(); }
 
-  void setWarningErrorMode(const bool b) { getMFrontWarningErrorMode() = b; }
+  void setIgnoreSafeOptionForWarnings(const bool b) noexcept {
+    getIgnoreSafeOption() = b;
+  }
+
+  static bool& getMFrontWarningErrorMode() noexcept {
+    static bool b = false;
+    return b;
+  }
+
+  bool getWarningErrorMode() noexcept { return getMFrontWarningErrorMode(); }
+
+  void setWarningErrorMode(const bool b) noexcept {
+    getMFrontWarningErrorMode() = b;
+  }
 
   void reportWarning(std::string_view msg){
     if ((!getWarningMode()) || (msg.empty())) {
@@ -47,7 +60,7 @@ namespace mfront {
     }
   } // end of reportWarning
 
-  MFRONT_VISIBILITY_EXPORT void reportWarning(const std::vector<std::string>& warnings) {
+  void reportWarning(const std::vector<std::string>& warnings) {
     if ((!getWarningMode()) || (warnings.empty())) {
       return;
     }
@@ -62,6 +75,6 @@ namespace mfront {
     } else {
       getLogStream() << msg << '\n';
     }
-  }
+  } // end of reportWarning
 
 }  // end of namespace mfront

@@ -510,7 +510,10 @@ namespace mfront {
     const auto beg = this->current;
     for (const auto h : o.hypotheses) {
       this->current = beg;
-      const auto c = this->readNextBlock(h, n, m, a, b);
+      auto c = this->readNextBlock(h, n, m, a, b);
+      if (o.safe) {
+        c.attributes[CodeBlock::safe] = true;
+      }
       this->mb.setCode(h, n, c, o.m, o.p);
     }
   }  // end of treatCodeBlock
@@ -525,7 +528,10 @@ namespace mfront {
     const auto beg = this->current;
     for (const auto h : o.hypotheses) {
       this->current = beg;
-      const auto c = this->readNextBlock(h, n, m, b);
+      auto c = this->readNextBlock(h, n, m, b);
+      if (o.safe) {
+        c.attributes[CodeBlock::safe] = true;
+      }
       this->mb.setCode(h, n, c, o.m, o.p);
     }
   }  // end of treatCodeBlock
@@ -549,8 +555,7 @@ namespace mfront {
     option.mn = md.getRegistredMembersNames();
     option.smn = md.getRegistredStaticMembersNames();
     this->getSymbols(option.symbols, h, n);
-    const auto& c = this->readNextBlock(option);
-    return c;
+    return this->readNextBlock(option);
   }  // end of readNextBlock
 
   CodeBlock BehaviourDSLCommon::readNextBlock(
@@ -569,8 +574,7 @@ namespace mfront {
     option.mn = md.getRegistredMembersNames();
     option.smn = md.getRegistredStaticMembersNames();
     this->getSymbols(option.symbols, h, n);
-    const auto c = this->readNextBlock(option);
-    return c;
+    return this->readNextBlock(option);
   }  // end of readNextBlock
 
   BehaviourDSLCommon::CodeBlockOptions BehaviourDSLCommon::treatCodeBlock(
@@ -582,7 +586,6 @@ namespace mfront {
           std::string(const Hypothesis, const std::string&, const bool)> m2,
       const bool b,
       const bool s) {
-    using std::shared_ptr;
     CodeBlockOptions o;
     this->readCodeBlockOptions(o, s);
     this->treatUnsupportedCodeBlockOptions(o);
@@ -606,6 +609,10 @@ namespace mfront {
       this->current = beg;
       CodeBlock c1;
       CodeBlock c2;
+      if (o.safe) {
+        c1.attributes[CodeBlock::safe] = true;
+        c2.attributes[CodeBlock::safe] = true;
+      }
       CodeBlockParserOptions o1;
       o1.qualifyStaticVariables = b;
       o1.qualifyMemberVariables = b;
@@ -817,7 +824,13 @@ namespace mfront {
     this->readList(options, "BehaviourDSLCommon::readCodeBlockOptions", "<",
                    ">", true);
     for (const auto& t : options) {
-      if (t.value == "Append") {
+      if ((t.value == "Safe") || (t.value == "safe")) {
+        if (o.safe) {
+          this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions",
+                                  "safe option already specificed");
+        }
+        o.safe = true;
+      } else if (t.value == "Append") {
         if (cmode) {
           this->throwRuntimeError("BehaviourDSLCommon::readCodeBlockOptions",
                                   "insertion mode already specificed");

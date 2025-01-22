@@ -3820,6 +3820,9 @@ namespace mfront {
         return;
       }
       const auto& cb = bd.getCodeBlock(h, n);
+      if (isSafe(cb)) {
+        return;
+      }
       for (const auto& m : cb.members) {
         if (opts.checkGradientsAtTheBeginningOfTheTimeStep) {
           if (bd.isNameOfAGradientAtTheBeginningOfTheTimeStep(m)) {
