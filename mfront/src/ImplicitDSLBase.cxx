@@ -46,11 +46,11 @@ namespace mfront {
     // parsers
     this->mb.areDynamicallyAllocatedVectorsAllowed(false);
     // parameters
-    this->reserveName("epsilon");
-    this->reserveName("\u03B5");
-    this->reserveName("theta");
-    this->reserveName("\u03B8");
-    this->reserveName("iterMax");
+    this->mb.registerMemberName(uh, "epsilon");
+    this->mb.registerMemberName(uh, "\u03B5");
+    this->mb.registerMemberName(uh, "theta");
+    this->mb.registerMemberName(uh, "\u03B8");
+    this->mb.registerMemberName(uh, "iterMax");
     this->reserveName("numerical_jacobian_epsilon");
     this->reserveName("maximum_increment_value_per_iteration");
     this->reserveName("jacobianComparisonCriterion");

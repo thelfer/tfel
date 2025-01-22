@@ -117,6 +117,18 @@ choices.
 
 ### Warnings added to isotropic DSLs
 
+#### Warnings related to the implementation of the flow rule(s)
+
+A warning is reported if the implementation of the flow rule(s)
+contains:
+
+- the time increment `dt`,
+- the strain `eto` at the beginning of the time step,
+- the strain increment `deto`,
+- the stress `sig`,
+- the `theta` parameter,
+- the increment of the external state variable.
+
 #### Warnings related to the convergence threshold
 
 - using the default value of the convergence threshold

@@ -12,6 +12,7 @@
  * project under specific licensing conditions.
  */
 
+#include <vector>
 #include <sstream>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
@@ -26,7 +27,7 @@ namespace mfront {
 
   IsotropicBehaviourDSLBase::IsotropicBehaviourDSLBase(const DSLOptions& opts)
       : BehaviourDSLBase<IsotropicBehaviourDSLBase>(opts) {
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->reserveName("NewtonIntegration");
     // main variables
     this->mb.declareAsASmallStrainStandardBehaviour();
@@ -42,11 +43,11 @@ namespace mfront {
     this->mb.setSymmetryType(mfront::ISOTROPIC);
     this->mb.setElasticSymmetryType(mfront::ISOTROPIC);
     // parameters
-    this->reserveName("epsilon");
-    this->reserveName("\u03B5");
-    this->reserveName("theta");
-    this->reserveName("\u03B8");
-    this->reserveName("iterMax");
+    this->mb.registerMemberName(h, "epsilon");
+    this->mb.registerMemberName(h, "\u03B5");
+    this->mb.registerMemberName(h, "theta");
+    this->mb.registerMemberName(h, "\u03B8");
+    this->mb.registerMemberName(h, "iterMax");
     // Call Back
     this->registerNewCallBack(
         "@UsableInPurelyImplicitResolution",
@@ -129,7 +130,7 @@ namespace mfront {
   double IsotropicBehaviourDSLBase::getDefaultThetaValue() const { return 0.5; }
 
   void IsotropicBehaviourDSLBase::treatTheta() {
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("IsotropicBehaviourDSLBase::treatTheta",
                             "Cannot read theta value.");
     const auto v = tfel::utilities::convert<double>(this->current->value);
@@ -219,12 +220,49 @@ namespace mfront {
     return var;
   }  // end of IsotropicBehaviourDSLBase::flowRuleVariableModifier
 
+  void IsotropicBehaviourDSLBase::checkFlowRule(std::string_view n) const {
+    auto warnings = std::vector<std::string>{};
+    for (const auto h : this->mb.getDistinctModellingHypotheses()) {
+      auto report = [&warnings, h](const std::string& msg) {
+        warnings.push_back(
+            msg + ". This warning can be disabled by using the <safe> option.");
+      };
+      auto report_unexpected = [&report, &n](std::string_view v) {
+        report("using " + std::string{v} + " in the body of the '" +
+               std::string{n} +
+               "' code block is unexpected and can be a mistake");
+      };
+      const auto& d = this->mb.getBehaviourData(h);
+      const auto& c = d.getCodeBlock(std::string{n});
+      if (isSafe(c)) {
+        continue;
+      }
+      for (const auto& m : c.members) {
+        if (m == "theta") {
+          report_unexpected("the 'theta' parameter");
+        }
+        if (m == "dt") {
+          report_unexpected("the time increment 'dt'");
+        }
+        if ((this->mb.isGradientName(m)) ||
+            (this->mb.isGradientIncrementName(m)) ||
+            (this->mb.isThermodynamicForceName(m)) ||
+            (d.isIntegrationVariableIncrementName(m))) {
+          report_unexpected("variable '" + m + "'");
+        }
+      }
+    }
+    reportWarning(warnings);
+  }
+
   void IsotropicBehaviourDSLBase::treatFlowRule() {
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
-        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
-          return this->flowRuleVariableModifier(h, sv, b);
-        };
-    this->treatCodeBlock(BehaviourData::FlowRule, m, true, false);
+        modifier =
+            [this](const Hypothesis h, const std::string& sv, const bool b) {
+              return this->flowRuleVariableModifier(h, sv, b);
+            };
+    this->treatCodeBlock(BehaviourData::FlowRule, modifier, true, false);
+    this->checkFlowRule(BehaviourData::FlowRule);
   }  // end of IsotropicBehaviourDSLBase::treatFlowRule
 
   void IsotropicBehaviourDSLBase::treatExternalStateVariable() {

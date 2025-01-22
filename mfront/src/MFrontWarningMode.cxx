@@ -67,6 +67,7 @@ namespace mfront {
     auto p = warnings.begin();
     auto pe = warnings.end();
     auto msg = "[warning]: " + *p;
+    ++p;
     for (; p != pe; ++p) {
       msg += "\n[warning]: " + *p;
     }
