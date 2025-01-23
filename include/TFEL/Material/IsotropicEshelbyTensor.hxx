@@ -17,7 +17,6 @@
 #include "TFEL/Material/StiffnessTensor.hxx"
 #include <stdexcept>
 
-
 namespace tfel::material::homogenization::elasticity {
 
   /*!
@@ -177,7 +176,6 @@ namespace tfel::material::homogenization::elasticity {
                                   const real&,
                                   const StressType&,
                                   const real&);
-
 
 }  // end of namespace tfel::material::homogenization::elasticity
 

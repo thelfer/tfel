@@ -18,7 +18,7 @@
 #include <stdexcept>
 
 namespace tfel::material::homogenization::elasticity {
- 
+
   /*!
    * This function builds the Hill tensor of a general 2d ellipse embedded
    * in an ANISOTROPIC matrix.  The
@@ -31,16 +31,17 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] C: stiffness tensor of the matrix
    * \param [in] n_a: direction of the principal axis whose length is
    * \f$a\f$ \param [in] a: length of semi-axis relative to the direction
-   * \f$n_a\f$ \param [in] b: length of semi-axis relative to the other direction
-   * \param[in] max_it: maximal number of iterations for integration
+   * \f$n_a\f$ \param [in] b: length of semi-axis relative to the other
+   * direction \param[in] max_it: maximal number of iterations for integration
    */
   template <typename real, typename StressType>
-  TFEL_HOST_DEVICE static tfel::math::
-      st2tost2<2u, typename tfel::math::invert_type<StressType>>
-      compute2DAnisotropicHillTensor(
-          const tfel::math::st2tost2<2u, StressType>&, const real&,const std::size_t max_it = 12);
+  TFEL_HOST_DEVICE static tfel::math::st2tost2<
+      2u,
+      typename tfel::math::invert_type<StressType>>
+  compute2DAnisotropicHillTensor(const tfel::math::st2tost2<2u, StressType>&,
+                                 const real&,
+                                 const std::size_t max_it = 12);
 
-  
   /*!
    * This function builds the Eshelby tensor of a general 2d ellipse
    * embedded in an ANISOTROPIC matrix. The
@@ -54,13 +55,14 @@ namespace tfel::material::homogenization::elasticity {
    * tensor of the matrix
    * * \param [in] n_a: direction of the principal axis whose length is
    * \f$a\f$ \param [in] a: length of semi-axis relative to the direction
-   * \f$n_a\f$ \param [in] b: length of semi-axis relative to the other direction
-   * \param[in] max_it: maximal number of iterations for integration
+   * \f$n_a\f$ \param [in] b: length of semi-axis relative to the other
+   * direction \param[in] max_it: maximal number of iterations for integration
    */
   template <typename real, typename StressType>
   TFEL_HOST_DEVICE static tfel::math::st2tost2<2u, real>
   compute2DAnisotropicEshelbyTensor(const tfel::math::st2tost2<2u, StressType>&,
-                                    const real&,const std::size_t max_it = 12);
+                                    const real&,
+                                    const std::size_t max_it = 12);
 
   /*!
    * This function builds the Hill tensor of a general ellipsoid embedded in
@@ -153,8 +155,7 @@ namespace tfel::material::homogenization::elasticity {
       const LengthType&,
       const std::size_t max_it = 12);
 
-
-/*!
+  /*!
    * This function builds the strain localisation tensor of a general 2d ellipse
    * embedded in an ANISOTROPIC matrix. The localisation tensor
    * \f$A\f$ is defined as follows : \f[\epsilon = A:E_0\f] where \f$E_0\f$
@@ -165,14 +166,14 @@ namespace tfel::material::homogenization::elasticity {
    * \return an object of type
    * st2tost2<2u,real>, which is the fourth-order localisation tensor
    * \f$A\f$ in the GLOBAL BASIS \tparam real: underlying type \tparam
-   * StressType: type of the elastic constants 
+   * StressType: type of the elastic constants
    * \param[in] C_0_glob: stiffness tensor of the matrix in the GLOBAL basis
    * \param[in] C_i_loc: stiffness tensor of the inclusion in the LOCAL
    * basis, which is the basis related to \f$n_a\f$
    * \param [in] n_a: direction of the principal axis whose length is
    * \f$a\f$ \param [in] a: length of semi-axis relative to the direction
-   * \f$n_a\f$ \param [in] b: length of semi-axis relative to the other direction
-   * \param[in] max_it: maximal number of iterations for integration
+   * \f$n_a\f$ \param [in] b: length of semi-axis relative to the other
+   * direction \param[in] max_it: maximal number of iterations for integration
    */
   template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
