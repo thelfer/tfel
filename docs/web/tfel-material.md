@@ -452,7 +452,7 @@ The functions then return the localisation tensors taking into account the orien
 ## Homogenization schemes
 
 Different schemes are implemented and return the homogenized stiffness of the material.
-These schemes are introduced by the header `LinearHomogenizationSchemes`.
+These schemes are introduced by the header `LinearHomogenizationSchemes.hxx`.
 The scheme available are Mori-Tanaka scheme and dilute scheme.
 The available functions are `computeMoriTanakaScheme`, `computeDiluteScheme`,
 `computeSphereDiluteScheme`, `computeSphereMoriTanakaScheme`.
@@ -463,5 +463,12 @@ The corresponding functions are `computeIsotropicDiluteScheme`,
 `computeTransverseIsotropicDiluteScheme`, `computeOrientedDiluteScheme`,
 `computeIsotropicMoriTanakaScheme`, `computeTransverseIsotropicMoriTanakaScheme`
 and `computeOrientedMoriTanakaScheme`.
+
+## Homogenization bounds
+
+Different bounds are implemented and are introduced by the header
+`LinearHomogenizationBounds.hxx`.
+The available bounds are `computeVoigtStiffness`, 
+`computeReussStiffness`, and `computeIsotropicHashinShtrikmanBounds`.
 
 <!-- Local IspellDict: english -->

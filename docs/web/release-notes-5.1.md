@@ -90,7 +90,8 @@ and also `computeAnisotropicLocalisationTensor` and `compute2DAnisotropicLocalis
 ### Homogenization bounds
 
 Different homogenization bounds are implemented.
-The available functions are `computeVoigtStiffness`, `computeReussStiffness`.
+The available functions are `computeVoigtStiffness`, `computeReussStiffness`,
+`computeIsotropicHashinShtrikmanBounds`.
 
 
 

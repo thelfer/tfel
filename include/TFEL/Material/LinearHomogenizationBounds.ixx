@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Material/LinearHomogenizationBounds.ixx
  * \author Antoine Martin
- * \date   24 October 2024
+ * \date   23 January 2025
  * \brief  This file defines some homogenization schemes based on solution of
  * Eshelby problem. \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All
  * rights reserved. This project is publicly released under either the GNU GPL
@@ -14,6 +14,7 @@
 #define LIB_TFEL_MATERIAL_LINEARHOMOGENIZATIONBOUNDS_IXX
 
 #include <cmath>
+#include "TFEL/FSAlgorithm/max_element.hxx"
 
 namespace tfel::material::homogenization::elasticity {
 
@@ -40,22 +41,47 @@ namespace tfel::material::homogenization::elasticity {
   }
   
   template <unsigned short int d, unsigned int N, typename real, typename StressType>
-  TFEL_HOST_DEVICE const std::pair<StressType, real>
+  TFEL_HOST_DEVICE const std::pair<std::pair<StressType, StressType>, std::pair<StressType, StressType>>
   computeIsotropicHashinShtrikmanBounds(const std::array<real,N> &tab_f,
-                      const std::array<StressType,N> &tab_E,
-                      const std::array<real,N> &tab_nu){
-                      
+                      const std::array<StressType,N> &tab_K,
+                      const std::array<StressType,N> &tab_mu){
+       std::array<StressType,N> tab_H;          
+       for (int i=0;i<N;i++){
+       	tab_H[i]=tab_mu[i]*(real(d)*tab_K[i]/2+(d+1)*(d-2)*tab_mu[i]/real(d))/(tab_K[i]+2*tab_mu[i]);
+       }
+       using namespace tfel::fsalgo;
+       auto K_max=*max_element<N>::exe(tab_K.begin());
+       auto K_min=*min_element<N>::exe(tab_K.begin());
+       auto mu_max=*max_element<N>::exe(tab_mu.begin());
+       auto mu_min=*min_element<N>::exe(tab_mu.begin());
+       auto H_max=*max_element<N>::exe(tab_H.begin());
+       auto H_min=*min_element<N>::exe(tab_H.begin());
+       auto K_star_min=2*(d-1)/real(d)*mu_min;
+       auto K_star_max=2*(d-1)/real(d)*mu_max;
+       auto mu_star_min=H_min;
+       auto mu_star_max=H_max;
+       using compliance = tfel::math::invert_type<StressType>;
+       StressType Ke_U;
+       StressType mue_U;
+       StressType Ke_L;
+       StressType mue_L;
+       compliance Ce_U;
+       compliance Ne_U;
+       compliance Ce_L;
+       compliance Ne_L;
+       for (int i=0;i<N;i++){
+       	Ce_L+=tab_f[i]/(K_star_min+tab_K[i]);
+       	Ne_L+=tab_f[i]/(mu_star_min+tab_mu[i]);
+       	Ce_U+=tab_f[i]/(K_star_max+tab_K[i]);
+       	Ne_U+=tab_f[i]/(mu_star_max+tab_mu[i]);
+       }
+       Ke_L=1/Ce_L-K_star_min;
+       mue_L=1/Ne_L-mu_star_min;
+       Ke_U=1/Ce_U-K_star_max;
+       mue_U=1/Ne_U-mu_star_max;
+       
+       return {{Ke_L,mue_L},{Ke_U,mue_U}};
    }
-                      
-   template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const std::pair<StressType, real>
-  computeThreePointMiltonBounds(const std::array<real,2> &tab_f,
-                      const std::array<StressType,2> &tab_E,
-                      const std::array<real,2> &tab_nu){
-                      
-                                          
-  }
-
 
   
 
