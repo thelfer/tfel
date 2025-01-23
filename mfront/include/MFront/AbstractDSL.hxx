@@ -110,6 +110,11 @@ namespace mfront {
      */
     virtual void endsInputFileProcessing() = 0;
     /*!
+     * \brief method called after processing the input file processing.
+     * \note This method shall be called *after* the `endsInputFileProcessing`.
+     */
+    virtual void makeConsistencyChecks() const = 0;
+    /*!
      * \return the target description
      * \note This method shall be called *after* the `analyseFile` or
      * `analyseString` methods.

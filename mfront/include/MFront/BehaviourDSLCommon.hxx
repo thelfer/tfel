@@ -1,4 +1,5 @@
 
+
 /*!
  * \file   mfront/include/MFront/BehaviourDSLCommon.hxx
  * \brief
@@ -78,6 +79,8 @@ namespace mfront {
     void analyseString(const std::string&) override;
 
     void endsInputFileProcessing() override;
+
+    void makeConsistencyChecks() const override;
     /*!
      * \brief method called when a new gradient or a new thermodynamic force is
      * defined. It declares as many pair of gradient and thermodynamic force as

@@ -150,6 +150,7 @@ namespace mfront {
     this->importFile(fileName_, ecmds, s);
     // Adding some stuff
     this->endsInputFileProcessing();
+    this->makeConsistencyChecks();
     //
     for (const auto& i : this->interfaces) {
       i.second->getTargetsDescription(this->td, md);

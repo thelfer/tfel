@@ -19,6 +19,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <string_view>
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/CodeBlock.hxx"
@@ -537,6 +538,7 @@ namespace mfront {
      */
     bool isStressFreeExansionAnisotropic() const;
     /*!
+
      * \return the registred stress free expansion descriptions
      */
     const std::vector<StressFreeExpansionDescription>&
@@ -815,22 +817,22 @@ namespace mfront {
      * \return the code block associated with the given name
      * \param[in] n : name
      */
-    const CodeBlock& getCodeBlock(const std::string&) const;
+    const CodeBlock& getCodeBlock(std::string_view) const;
     /*!
      * \return the code block associated with the given name
      * \param[in] n  : name
      * \param[in] cn : behaviour class name
      * \param[in] b  : add profiling information
      */
-    std::string getCode(const std::string&,
-                        const std::string&,
+    std::string getCode(std::string_view,
+                        std::string_view,
                         const bool) const;
     /*!
      * \return true if a code block associated with the given name has
      * been defined
      * \param[in] n : name
      */
-    bool hasCode(const std::string&) const;
+    bool hasCode(std::string_view) const;
     /*!
      * \return true a glossary was associated with the given
      * variable.
@@ -1107,7 +1109,7 @@ namespace mfront {
      */
     std::set<std::string> pupirv;
     //! \brief registred code blocks
-    std::map<std::string, CodeBlocksAggregator> cblocks;
+    std::map<std::string, CodeBlocksAggregator, std::less<>> cblocks;
     //! \brief registred initialize functions
     std::map<std::string, CodeBlock> initialize_functions;
     //! \brief registred post-processings

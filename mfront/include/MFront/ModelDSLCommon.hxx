@@ -54,6 +54,7 @@ namespace mfront {
     void overrideByAParameter(const std::string&, const double) override;
     std::map<std::string, double> getOverridenParameters() const override;
     void endsInputFileProcessing() override;
+    void makeConsistencyChecks() const override;
     void generateOutputFiles() override;
     void setInterfaces(const std::set<std::string>&) override;
     //! \brief destructor

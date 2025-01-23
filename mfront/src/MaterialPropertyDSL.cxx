@@ -243,10 +243,13 @@ namespace mfront {
   }  // end of doPedanticChecks
 
   void MaterialPropertyDSL::endsInputFileProcessing() {
+  }  // end of endsInputFileProcessing
+
+  void MaterialPropertyDSL::makeConsistencyChecks() const{
     if (getPedanticMode()) {
       this->doPedanticChecks();
     }
-  }  // end of endsInputFileProcessing
+  } // end of makeConsistencyChecks
 
   void MaterialPropertyDSL::registerNewCallBack(const std::string& keyword,
                                                 const MemberFuncPtr ptr) {
@@ -922,6 +925,7 @@ namespace mfront {
       const std::map<std::string, std::string>& s) {
     this->importFile(fileName_, ecmds, s);
     this->endsInputFileProcessing();
+    this->makeConsistencyChecks();
     for (const auto& i : this->interfaces) {
       i.second->getTargetsDescription(this->td, this->md);
     }

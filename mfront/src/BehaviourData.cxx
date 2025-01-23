@@ -1,3 +1,4 @@
+
 /*!
  * \file   mfront/src/BehaviourData.cxx
  *
@@ -1419,17 +1420,17 @@ namespace mfront {
     pc->second.set(c, p, b);
   }  // end of setCode
 
-  const CodeBlock& BehaviourData::getCodeBlock(const std::string& n) const {
+  const CodeBlock& BehaviourData::getCodeBlock(std::string_view n) const {
     auto p = this->cblocks.find(n);
     tfel::raise_if(p == this->cblocks.end(),
                    "BehaviourData::getCode: "
                    "no code block associated with '" +
-                       n + "'");
+                       std::string{n} + "'");
     return p->second.get();
   }  // end of getCodeBlock
 
-  std::string BehaviourData::getCode(const std::string& n,
-                                     const std::string& cn,
+  std::string BehaviourData::getCode(std::string_view n,
+                                     std::string_view cn,
                                      const bool b) const {
     if (!b) {
       return this->getCodeBlock(n).code;
@@ -1441,7 +1442,7 @@ namespace mfront {
     return out.str();
   }  // end of getCode
 
-  bool BehaviourData::hasCode(const std::string& n) const {
+  bool BehaviourData::hasCode(std::string_view n) const {
     return this->cblocks.find(n) != this->cblocks.end();
   }
 

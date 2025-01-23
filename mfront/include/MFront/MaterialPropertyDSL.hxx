@@ -69,6 +69,7 @@ namespace mfront {
                     const std::vector<std::string>&,
                     const std::map<std::string, std::string>&) override;
     void endsInputFileProcessing() override;
+    void makeConsistencyChecks() const override;
     //! \brief destructor
     ~MaterialPropertyDSL() override;
 

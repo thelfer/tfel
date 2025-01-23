@@ -1,3 +1,4 @@
+
 /*!
  * \file   mfront/include/MFront/ImplicitDSLBase.hxx
  * \brief  This file declares the ImplicitDSLBase class
@@ -100,9 +101,10 @@ namespace mfront {
     void readTangentOperatorCodeBlock(const CodeBlockOptions&,
                                       const std::string&) override;
 
-    void completeVariableDeclaration() override;
 
+    void completeVariableDeclaration() override;
     void endsInputFileProcessing() override;
+    void makeConsistencyChecks() const override;
     //! \brief treat the `@Theta` keyword
     virtual void treatTheta();
     //! \brief treat the `@IterMax` keyword
@@ -151,6 +153,13 @@ namespace mfront {
      */
     bool isCallableVariable(const Hypothesis,
                             const std::string&) const override;
+
+    /*!
+     * \brief performs some check on the given code block computing
+     * thermodynamic forces
+     * \param[in] n: code block name
+     */
+    void checkComputeThermodynamicForcesBlock(std::string_view n) const;
 
     // let the BehaviourDSLBase access specific keywords
     friend struct BehaviourDSLBase<ImplicitDSLBase>;

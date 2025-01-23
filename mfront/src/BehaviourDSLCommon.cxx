@@ -1201,6 +1201,7 @@ namespace mfront {
     this->importFile(fileName_, ecmds, s);
     // Adding some stuff
     this->endsInputFileProcessing();
+    this->makeConsistencyChecks();
     // setting the name of the output files
     // targets description
     const auto g = this->getCodeGenerator();
@@ -1332,12 +1333,18 @@ namespace mfront {
       }
     }
     //
-    if (getPedanticMode()) {
-      this->doPedanticChecks();
-    }
     //
     for (const auto& pb : this->bricks) {
       pb->endTreatment();
+    }
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing: end\n";
+    }
+  }  // end of endsInputFileProcessing
+
+  void BehaviourDSLCommon::makeConsistencyChecks() const {
+    if (getPedanticMode()) {
+      this->doPedanticChecks();
     }
     //
     if (getWarningMode()) {
@@ -1345,10 +1352,7 @@ namespace mfront {
         reportWarning(checkInitializeMethods(this->mb, h));
       }
     }
-    if (getVerboseMode() >= VERBOSE_DEBUG) {
-      getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing: end\n";
-    }
-  }  // end of endsInputFileProcessing
+  }  // end of makeConsistencyChecks
 
   /*!
    * \return the "true" integration variables (state variables are excluded)

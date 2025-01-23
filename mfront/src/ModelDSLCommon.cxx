@@ -128,11 +128,13 @@ namespace mfront {
     }
     // complete the declaration of physical bounds
     this->md.checkAndCompletePhysicalBoundsDeclaration();
+  }  // end of endsInputFileProcessing
 
+  void ModelDSLCommon::makeConsistencyChecks() const{
     if (getPedanticMode()) {
       this->doPedanticChecks();
     }
-  }  // end of endsInputFileProcessing
+  }
 
   bool ModelDSLCommon::useQt() const {
     return this->md.use_qt.has_value() ? *(this->md.use_qt) : false;

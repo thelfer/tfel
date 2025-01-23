@@ -886,6 +886,8 @@ namespace mfront {
         BehaviourData::ComputeThermodynamicForces,
         BehaviourData::ComputeFinalThermodynamicForcesCandidate,  //
         m1, m2, true, true);
+    this->checkComputeThermodynamicForcesBlock(
+        BehaviourData::ComputeThermodynamicForces);
   }  // end of treatComputeThermodynamicForces
 
   void ImplicitDSLBase::treatComputeFinalThermodynamicForces() {
@@ -895,8 +897,8 @@ namespace mfront {
         };
     this->treatCodeBlock(BehaviourData::ComputeFinalThermodynamicForces, m,
                          true, true);
-    if (getWarningMode()) {
-    }
+    this->checkComputeThermodynamicForcesBlock(
+        BehaviourData::ComputeFinalThermodynamicForces);
   }  // end of treatComputeFinalThermodynamicForces
 
   void ImplicitDSLBase::readTangentOperatorCodeBlock(const CodeBlockOptions& o,
@@ -1161,6 +1163,56 @@ namespace mfront {
     }
   }  // end of treatNumericallyComputedJacobianBlocks
 
+  void ImplicitDSLBase::checkComputeThermodynamicForcesBlock(
+      std::string_view n) const {
+    auto warnings = std::vector<std::string>{};
+    for (const auto h : this->mb.getDistinctModellingHypotheses()) {
+      auto report = [&warnings, h](const std::string& msg) {
+        warnings.push_back(
+            msg + ". This warning can be disabled by using the <safe> option.");
+      };
+      auto report_unexpected = [&report, &n](std::string_view v) {
+        report("using " + std::string{v} + " in the body of the '" +
+               std::string{n} +
+               "' code block is unexpected and can be a mistake");
+      };
+      const auto& d = this->mb.getBehaviourData(h);
+      if (!d.hasCode(std::string{n})) {
+        continue;
+      }
+      const auto& c = d.getCodeBlock(std::string{n});
+      if (isSafe(c)) {
+        continue;
+      }
+      for (const auto& m : c.members) {
+        if (m == "theta") {
+          report_unexpected("the 'theta' parameter");
+        }
+        if (m == "iterMax") {
+          report_unexpected("the 'iterMax' parameter");
+        }
+        if (m == "dt") {
+          report_unexpected("the time increment 'dt'");
+        }
+        if ((this->mb.isGradientIncrementName(m)) ||
+            (d.isIntegrationVariableIncrementName(m)) ||
+            (d.isExternalStateVariableIncrementName(m))) {
+          report_unexpected("variable '" + m + "'");
+        }
+      }
+      for (const auto& [g, th] : this->mb.getMainVariables()) {
+        static_cast<void>(g);
+        if (!c.members.contains(th.name)) {
+          report(
+              "the body of the '" + std::string{n} +
+              "' code block is expected to modify the thermodynamic force '" +
+              th.name + "'");
+        }
+      }
+    }
+    reportWarning(warnings);
+  }  // end of checkComputeThermodynamicForcesBlock
+
   void ImplicitDSLBase::completeVariableDeclaration() {
     using namespace tfel::glossary;
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
@@ -1241,6 +1293,7 @@ namespace mfront {
             this->mb.areMaterialPropertiesConstantDuringTheTimeStep(ht.c)
                 ? VariableDescription("tfel::math::st2tost2<N,real>&", hn, 1u,
                                       0u)
+
                 : VariableDescription("tfel::math::st2tost2<N,real>", hn, 1u,
                                       0u);
         H_tdt.description =
@@ -1295,20 +1348,9 @@ namespace mfront {
             "approximation of the jacobian";
         this->mb.addParameter(uh, v, BehaviourData::ALREADYREGISTRED);
         this->mb.setParameterDefaultValue(uh, nje, eps);
-        if (eps < 1.e-10) {
-          auto converter = std::ostringstream{};
-          converter << std::scientific << eps;
-          reportWarning(
-              "using " + converter.str() +
-              " (which is 0.1 times the default value for the convergence "
-              "threshold) as the default value of the perturbuation used "
-              "to compute a numerical approximation of the jacobian by a "
-              "centered finite difference scheme. This value is generally too "
-              "low. You may want to consider an higher value (1e-8 is a good "
-              "choice). See the "
-              "`@PerturbationValueForNumericalJacobianComputation` keyword for "
-              "details");
-        }
+        this->mb.setAttribute(
+            uh, "usesDefaultPerturbationValueForNumericalJacobianComputation",
+            true);
       }
     }
     if (!this->mb.hasParameter(uh, "iterMax")) {
@@ -1396,7 +1438,7 @@ namespace mfront {
         this->throwRuntimeError("ImplicitDSLBase::endsInputFileProcessing", m);
       }
     };
-    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     BehaviourDSLCommon::endsInputFileProcessing();
     // Supported modelling hypothesis
     const auto mh = this->mb.getDistinctModellingHypotheses();
@@ -1503,7 +1545,53 @@ namespace mfront {
     }
     // minimal tangent operator
     this->setMinimalTangentOperator();
-  }  // end of endsInputFileProcessing()
+  }  // end of endsInputFileProcessing
+
+  void ImplicitDSLBase::makeConsistencyChecks() const{
+    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    BehaviourDSLCommon::makeConsistencyChecks();
+    //
+    if (this->mb.getAttribute(
+            uh, "usesDefaultPerturbationValueForNumericalJacobianComputation",
+            false)) {
+      const auto isComputeNumericalJacobianUsed = [this] {
+        for (const auto h : this->mb.getDistinctModellingHypotheses()) {
+          const auto& d = this->mb.getBehaviourData(h);
+          for (const auto& cn : d.getCodeBlockNames()) {
+            const auto& cb = d.getCodeBlock(cn);
+            if (cb.members.contains("computeNumericalJacobian")) {
+              return true;
+            }
+          }
+        }
+        return false;
+      }();
+      if ((isComputeNumericalJacobianUsed) ||
+          (this->solver->requiresNumericalJacobian()) ||
+          (this->mb.hasAttribute(uh,
+                                 BehaviourData::compareToNumericalJacobian))) {
+        const auto eps = this->mb.getFloattingPointParameterDefaultValue(
+            uh, "numerical_jacobian_epsilon");
+        if (eps < 1.e-10) {
+          auto converter = std::ostringstream{};
+          converter << std::scientific << eps;
+          reportWarning(
+              "using " + converter.str() +
+              " (which is 0.1 times the default value for the convergence "
+              "threshold) as the default value of the perturbuation used "
+              "to compute a numerical approximation of the jacobian by a "
+              "centered finite difference scheme. This value is generally "
+              "too "
+              "low. You may want to consider an higher value (1e-8 is a "
+              "good "
+              "choice). See the "
+              "`@PerturbationValueForNumericalJacobianComputation` keyword "
+              "for "
+              "details");
+        }
+      }
+    }
+  } // end of makeConsistencyChecks
 
   void ImplicitDSLBase::getSymbols(std::map<std::string, std::string>& symbols,
                                    const Hypothesis h,
