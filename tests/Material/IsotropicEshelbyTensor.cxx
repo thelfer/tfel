@@ -72,10 +72,10 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
         for (int j : {0, 1, 2, 3}) {
           TFEL_TESTS_ASSERT(std::abs(S2d_1(i, j) - S2d_2(i, j)) < eps);
           // std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
-        };
-      };
+        }
+      }
     }
-  };
+  }
 
   // tests compilation of the Eshelby tensor functions
  private:
@@ -99,7 +99,7 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       const auto S2 = computeEshelbyTensor(nu, lg{1}, lg{1}, lg{2});
       const auto S3 = computeEshelbyTensor(nu, lg{1}, lg{1}, lg{1});
     }
-  };
+  }
 
   // must return an error
  private:
@@ -112,13 +112,12 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     using namespace tfel::material::homogenization::elasticity;
     {  // const auto S1 = computeSphereEshelbyTensor(real{1});
 
-       // const auto S2 = computeAxisymmetricalEshelbyTensor(nu,real{0});
-       // const auto S3 = computeAxisymmetricalEshelbyTensor(nu,real{-10});
-       // const auto S4 = computeEshelbyTensor<real,lg>(nu,lg{-1},lg{3},lg{2});
-       // const auto S5 = computeEshelbyTensor<real,lg>(nu,lg{-1},lg{-1},lg{1});
-
+      // const auto S2 = computeAxisymmetricalEshelbyTensor(nu,real{0});
+      // const auto S3 = computeAxisymmetricalEshelbyTensor(nu,real{-10});
+      // const auto S4 = computeEshelbyTensor<real,lg>(nu,lg{-1},lg{3},lg{2});
+      // const auto S5 = computeEshelbyTensor<real,lg>(nu,lg{-1},lg{-1},lg{1});
     }
-  };
+  }
 
  private:
   template <typename NumericType, bool use_qt>
@@ -141,8 +140,8 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
           // std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
           TFEL_TESTS_ASSERT(std::abs(SSphere_1(i, j) - SSphere_3(i, j)) < eps);
           // std::cout << "13" << value << '\n';
-        };
-      };
+        }
+      }
     }
     // AxisymmetricalEshelbyTensor with e=10 is equal to EshelbyTensor(30,3,3)
     // or EshelbyTensor(3,3,30)
@@ -155,10 +154,10 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
         for (int j : {0, 1, 2, 3, 4, 5}) {
           TFEL_TESTS_ASSERT(std::abs(SAxis_1(i, j) - SAxis_2(i, j)) < eps);
           TFEL_TESTS_ASSERT(std::abs(SAxis_1(i, j) - SAxis_3(i, j)) < eps);
-        };
-      };
+        }
+      }
     }
-  };
+  }
 
  private:
   template <typename NumericType, bool use_qt>
@@ -187,8 +186,8 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
           TFEL_TESTS_ASSERT(
               std::abs(SSphere_lim_1(i, j) - SSphere_lim_2(i, j)) < eps);
           // std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
-        };
-      };
+        }
+      }
     }
 
     // EshelbyTensor when a is near b must be near AxisymmetricalEshelbyTensor
@@ -209,10 +208,10 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
           TFEL_TESTS_ASSERT(std::abs(SAxis_lim_1(i, j) - SAxis_lim_2(i, j)) <
                             eps);
           // std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
-        };
-      };
+        }
+      }
     }
-  };
+  }
 
   // tests compilation of localisation tensor functions
  private:
@@ -243,7 +242,7 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       const auto A3 = computeEllipsoidLocalisationTensor<real, stress, lg>(
           young, nu, young_i, nu_i, n_a, a, n_b, b, c);
     }
-  };
+  }
 
   // must return a warning
  private:
@@ -273,21 +272,20 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     {  // const auto A1 =
        // computeSphereLocalisationTensor<real,stress>(young,real{1},young_i,nu_i);
 
-       // const auto A2 =
-       // computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,real{0});
-       // const auto A3 =
-       // computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_0,real{1});
-       // const auto A4 =
-       // computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(stress{-1},nu,young_i,nu_i,n_a,real{1});
-       // const auto A5 =
-       // computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n_b,lg{0},c);
-       // const auto A6 =
-       // computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n_,b,c);
-       // const auto A7 =
-       // computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n__,b,c);
-
+      // const auto A2 =
+      // computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,real{0});
+      // const auto A3 =
+      // computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_0,real{1});
+      // const auto A4 =
+      // computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(stress{-1},nu,young_i,nu_i,n_a,real{1});
+      // const auto A5 =
+      // computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n_b,lg{0},c);
+      // const auto A6 =
+      // computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n_,b,c);
+      // const auto A7 =
+      // computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n__,b,c);
     }
-  };
+  }
 
   // These functions must return the same thing
  private:
@@ -302,7 +300,6 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     const auto nu = real{0.3};
     const auto young_i = stress{150e9};
     const auto nu_i = real{0.3};
-
 
     const tfel::math::tvector<3u, real> n_a = {0., 0., 1.};
     const tfel::math::tvector<3u, real> n_b = {1., 0., 0.};
@@ -322,8 +319,8 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
         for (int j : {0, 1, 2, 3, 4, 5}) {
           TFEL_TESTS_ASSERT(std::abs(ASphere_1(i, j) - ASphere_2(i, j)) < eps);
           TFEL_TESTS_ASSERT(std::abs(ASphere_1(i, j) - ASphere_3(i, j)) < eps);
-        };
-      };
+        }
+      }
     }
     {
       const auto AAxis_1 =
@@ -337,8 +334,8 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
           TFEL_TESTS_ASSERT(std::abs(AAxis_1(i, j) - AAxis_2(i, j)) < eps);
           // std::cout << A1(i,j) <<" " << i<< " " << j<< " " << A2(i,j) <<
           // value << '\n';
-        };
-      };
+        }
+      }
     }
 
     // this test checks that the rotation of the principal axis of the
@@ -364,11 +361,10 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       const auto Attnn = n_bb_n_bb * (Arot1 * n_aa_n_aa);
       // std::cout << Atttt(0) << Annnn(0) << Attnn(0) << std::endl;
       TFEL_TESTS_ASSERT(Annnn(0) - 5 * Atttt(0) > 0);
-
     }
-  };
+  }
 
-};  // end of struct IsotropicEshelbyTensorTest
+}; // end of struct IsotropicEshelbyTensorTest
 
 TFEL_TESTS_GENERATE_PROXY(IsotropicEshelbyTensorTest, "IsotropicEshelbyTensor");
 

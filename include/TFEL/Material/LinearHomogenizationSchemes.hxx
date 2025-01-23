@@ -16,37 +16,7 @@
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Material/IsotropicEshelbyTensor.hxx"
 
-
 namespace tfel::material::homogenization::elasticity {
-   /*!
-   * This function gives the Voigt stiffness
-   * \tparam real: underlying type
-   * \tparam StressType: type of the elastic constants related to the phases
-   * \tparam N: number of phases
-   * \return an object of type st2tost2<3u,StressType>
-   * \param [in] tab_f: std::array<real,N> of volumic fractions of phases
-   * \param [in] tab_C: std::array<st2tost2<3u,StressType>,N> of stiffness tensors of phases
-   */
-  template <unsigned int N, typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeVoigtStiffness(const std::array<real,N>&,
-                      const std::array<tfel::math::st2tost2<3u, StressType>,N>&);
-
-
-   /*!
-   * This function gives the Reuss stiffness
-   * \tparam real: underlying type
-   * \tparam StressType: type of the elastic constants related to the phases
-   * \tparam N: number of phases
-   * \return an object of type st2tost2<3u,StressType>
-   * \param [in] tab_f: std::array<real,N> of volumic fractions of phases
-   * \param [in] tab_C: std::array<st2tost2<3u,StressType>,N> of stiffness tensors of phases
-   */
-  template <unsigned int N, typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeReussStiffness(const std::array<real,N>&,
-                      const std::array<tfel::math::st2tost2<3u, StressType>,N>&);
-
 
   /*!
    * This function gives the homogenized stiffness for a dilute scheme,

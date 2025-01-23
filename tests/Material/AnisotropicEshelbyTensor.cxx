@@ -66,7 +66,7 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     // computeAnisotropicEshelbyTensor<real,stress,lg>(C_0,n_a,lg{0},n_b,lg{30},lg{3});
     // const auto S1 =
     // computeAnisotropicEshelbyTensor<real,stress,lg>(C_0,n_a,lg{-2},n_b,lg{30},lg{3});
-  };
+  }
 
  private:
   template <typename NumericType, bool use_qt>
@@ -96,8 +96,8 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
         TFEL_TESTS_ASSERT(std::abs(S1(i, j) - S3(i, j)) < eps);
         // std::cout << S1(i,j)-S2(i,j)<< " "<< eps<<'\n';
         // std::cout << S1(i,j)-S3(i,j) << " "<< eps<<'\n';
-      };
-    };
+      }
+    }
 
     const auto SAxi1 = computeAnisotropicEshelbyTensor<real, stress, lg>(
         C_0, n_a, lg{30}, n_b, lg{3}, lg{3}, 14);
@@ -106,8 +106,8 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       for (int j : {0, 1, 2, 3, 4, 5}) {
         TFEL_TESTS_ASSERT(std::abs(SAxi1(i, j) - SAxi2(i, j)) < eps);
         // std::cout << SAxi1(i,j)-SAxi2(i,j) << " "<< eps <<'\n';
-      };
-    };
+      }
+    }
 
     const auto SSph1 = computeAnisotropicEshelbyTensor<real, stress, lg>(
         C_0, n_a, lg{3}, n_b, lg{3}, lg{3}, 14);
@@ -116,12 +116,12 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       for (int j : {0, 1, 2, 3, 4, 5}) {
         TFEL_TESTS_ASSERT(std::abs(SSph1(i, j) - SSph2(i, j)) < eps);
         // std::cout << SSph1(i,j)-SSph2(i,j) << " "<< eps <<'\n';
-      };
-    };
+      }
+    }
 
-  };  // end of test_Eshelby
+  } // end of test_Eshelby
 
-private:
+ private:
   template <typename NumericType, bool use_qt>
   void test_Eshelby2D() {
     using namespace tfel::material::homogenization::elasticity;
@@ -145,10 +145,9 @@ private:
     for (int i : {0, 1, 2, 3}) {
       for (int j : {0, 1, 2, 3}) {
         TFEL_TESTS_ASSERT(std::abs(S2D1(i, j) - S2D2(i, j)) < eps);
-        //std::cout << S2D1(i,j) <<" " <<S2D2(i,j)<< " "<< eps<<'\n';
-      };
-    };
-
+        // std::cout << S2D1(i,j) <<" " <<S2D2(i,j)<< " "<< eps<<'\n';
+      }
+    }
 
     const auto S2DCir1 = compute2DAnisotropicEshelbyTensor<real, stress, lg>(
         C_0, n_a, lg{3}, lg{3}, 14);
@@ -156,11 +155,12 @@ private:
     for (int i : {0, 1, 2, 3}) {
       for (int j : {0, 1, 2, 3}) {
         TFEL_TESTS_ASSERT(std::abs(S2DCir1(i, j) - S2DCir2(i, j)) < eps);
-        //std::cout << i <<" " << j <<" " << S2DCir1(i,j) <<" " << S2DCir2(i,j) << " "<< eps <<'\n';
-      };
-    };
+        // std::cout << i <<" " << j <<" " << S2DCir1(i,j) <<" " << S2DCir2(i,j)
+        // << " "<< eps <<'\n';
+      }
+    }
 
-  };  // end of test_Eshelby2D
+  } // end of test_Eshelby2D
 
  private:
   template <typename NumericType, bool use_qt>
@@ -194,16 +194,15 @@ private:
       for (int j : {0, 1, 2, 3, 4, 5}) {
         TFEL_TESTS_ASSERT(std::abs(AAxis_0(i, j) - AAxis_1(i, j)) < eps);
         // std::cout << AAxis_0(i,j)-AAxis_1(i,j) << " "<< eps<<'\n';
-      };
-    };
+      }
+    }
 
-  };  // end of test_localisator
-
-  
+  }  // end of test_localisator
 
 };  // end of struct AnisotropicEshelbyTensorTest
 
-TFEL_TESTS_GENERATE_PROXY(AnisotropicEshelbyTensorTest, "AnisotropicEshelbyTensor");
+TFEL_TESTS_GENERATE_PROXY(AnisotropicEshelbyTensorTest,
+                          "AnisotropicEshelbyTensor");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
