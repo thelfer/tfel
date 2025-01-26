@@ -1,7 +1,12 @@
---- title: Release notes of the 5.1 version of `TFEL`, `MFront` and
-  `MTest` author: Thomas Helfer, Antoine Martin date: 2025 lang: en-EN
-  numbersections: true documentclass: article from:
-  markdown+tex_math_single_backslash geometry:
+---
+title: Release notes of the 5.1 version of `TFEL`, `MFront` and `MTest`
+author: Thomas Helfer, Antoine Martin
+date: 2025
+lang: en-EN
+numbersections: true
+documentclass: article
+from: markdown+tex_math_single_backslash
+geometry:
   - margin=2cm
 papersize: a4
 link-citations: true
