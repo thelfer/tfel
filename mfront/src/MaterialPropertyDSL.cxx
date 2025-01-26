@@ -76,6 +76,8 @@ namespace mfront {
     this->registerNewCallBack(";", &MaterialPropertyDSL::treatLonelySeparator);
     this->registerNewCallBack("@UseQt", &MaterialPropertyDSL::treatUseQt);
     this->registerNewCallBack("@Link", &MaterialPropertyDSL::treatLink);
+    this->registerNewCallBack("@TFELLibraries",
+                              &MaterialPropertyDSL::treatTFELLibraries);
     this->registerNewCallBack("@MaterialLaw",
                               &MaterialPropertyDSL::treatMaterialLaw);
     this->registerNewCallBack("@MFront", &MaterialPropertyDSL::treatMFront);
@@ -592,7 +594,7 @@ namespace mfront {
         this->md.appendToIncludes("#include \"TFEL/Math/CubicSpline.hxx\"");
         insert_if(this->link_directories,
                   "$(shell " + tfel_config + " --library-path)");
-        insert_if(this->link_libraries,
+       insert_if(this->link_libraries,
                   "$(shell " + tfel_config +
                       " --library-dependency --math-cubic-spline)");
         this->md.f.used_inputs.insert(v.name);

@@ -224,10 +224,6 @@ namespace mfront {
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, "abaqusexplicit" + name + ".cxx");
     d.headers.push_back("MFront/Abaqus/abaqusexplicit" + name + ".hxx");
     insert_if(l.link_directories,

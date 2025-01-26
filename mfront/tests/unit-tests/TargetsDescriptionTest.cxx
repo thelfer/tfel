@@ -133,7 +133,7 @@ struct TargetsDescriptionTest final : public tfel::tests::TestCase {
                       "VanadiumAlloy_PoissonRatio_SRMA.cxx");
     TFEL_TESTS_ASSERT(l1.sources.at(1) ==
                       "VanadiumAlloy_YoungModulus_SRMA.cxx");
-    TFEL_TESTS_ASSERT(l1.cppflags.empty());
+    TFEL_TESTS_ASSERT(l1.cppflags.size() == 1u);
     TFEL_TESTS_ASSERT(l1.ldflags.size() == 1u);
     TFEL_TESTS_ASSERT(l1.ldflags.at(0) == "-lm");
     TFEL_TESTS_ASSERT(l1.epts.size() == 4u);
@@ -152,8 +152,8 @@ struct TargetsDescriptionTest final : public tfel::tests::TestCase {
                       "VanadiumAlloy_PoissonRatio_SRMA-java.cxx");
     TFEL_TESTS_ASSERT(l2.sources.at(1) ==
                       "VanadiumAlloy_YoungModulus_SRMA-java.cxx");
-    TFEL_TESTS_ASSERT(l2.cppflags.size() == 1u);
-    TFEL_TESTS_ASSERT(l2.cppflags.at(0) ==
+    TFEL_TESTS_ASSERT(l2.cppflags.size() == 2u);
+    TFEL_TESTS_ASSERT(l2.cppflags.at(1) ==
                       " -I/usr/lib/jvm/default-java/include "
                       "-I/usr/lib/jvm/default-java/include "
                       "-I/usr/lib/jvm/default-java/include");
