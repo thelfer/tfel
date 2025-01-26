@@ -412,8 +412,6 @@ namespace mfront {
         ((!bd.getLibrary().empty()) ? bd.getLibrary() : "") + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
 #if CYRANO_ARCH == 64
     insert_if(l.cppflags, "-DCYRANO_ARCH=64");
 #elif CYRANO_ARCH == 32
@@ -421,8 +419,6 @@ namespace mfront {
 #else
 #error "CyranoInterface::getGlobalIncludes : unsuported architecture"
 #endif
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, "cyrano" + name + ".cxx");
     insert_if(l.epts, this->getFunctionNameBasis(name));
     insert_if(d.headers, "MFront/Cyrano/cyrano" + name + ".hxx");

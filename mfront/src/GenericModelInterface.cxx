@@ -536,10 +536,6 @@ namespace mfront {
     const auto name = md.library + md.className;
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = td.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, name + "-generic.cxx");
     td.headers.push_back("MFront/GenericModel/" + name + "-generic.hxx");
     insert_if(l.link_directories,

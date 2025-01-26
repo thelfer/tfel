@@ -524,6 +524,8 @@ namespace mfront {
     virtual void treatMaterialLaw();
     //! \brief handle the `@Link` keyword
     virtual void treatLink();
+    //! \brief handle the `@TFELLibraries` keyword
+    virtual void treatTFELLibraries();
     //! \brief handle the `@Author` keyword
     virtual void treatAuthor();
     //! \brief handle the `@Data` keyword

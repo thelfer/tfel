@@ -163,6 +163,7 @@ namespace mfront {
     add("@Initialize", &BehaviourDSLCommon::treatInitialize);
     add("@MFront", &BehaviourDSLCommon::treatMFront);
     add("@Link", &BehaviourDSLCommon::treatLink);
+    add("@TFELLibraries", &BehaviourDSLCommon::treatTFELLibraries);
     add("@Includes", &BehaviourDSLCommon::treatIncludes);
     add("@Members", &BehaviourDSLCommon::treatMembers);
     add("@UnitSystem", &BehaviourDSLCommon::treatUnitSystem);

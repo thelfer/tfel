@@ -1469,8 +1469,6 @@ namespace mfront {
     const auto name = this->getBehaviourName(bd);
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
 #ifdef CASTEM_CPPFLAGS
     insert_if(l.cppflags, CASTEM_CPPFLAGS);
 #endif /* CASTEM_CPPFLAGS */
@@ -1488,8 +1486,6 @@ namespace mfront {
     }
 #endif /* CASTEM_ROOT */
 #endif /* LOCAL_CASTEM_HEADER_FILE */
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, "umat" + name + ".cxx");
     insert_if(d.headers, "MFront/Castem/umat" + name + ".hxx");
     insert_if(l.link_directories,
