@@ -750,8 +750,6 @@ namespace mfront {
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
 #if ASTER_ARCH == 64
     insert_if(l.cppflags, "-DASTER_ARCH=64");
 #elif ASTER_ARCH == 32
@@ -759,8 +757,6 @@ namespace mfront {
 #else
 #error "AsterInterface::getGlobalIncludes : unsuported architecture"
 #endif
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, "aster" + name + ".cxx");
     d.headers.push_back("MFront/Aster/aster" + name + ".hxx");
     insert_if(l.link_libraries, tfel::getLibraryInstallName("AsterInterface"));

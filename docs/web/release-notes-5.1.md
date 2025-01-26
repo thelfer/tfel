@@ -1,12 +1,7 @@
----
-title: Release notes of the 5.1 version of `TFEL`, `MFront` and `MTest`
-author: Thomas Helfer, Antoine Martin
-date: 2025
-lang: en-EN
-numbersections: true
-documentclass: article
-from: markdown+tex_math_single_backslash
-geometry:
+--- title: Release notes of the 5.1 version of `TFEL`, `MFront` and
+  `MTest` author: Thomas Helfer, Antoine Martin date: 2025 lang: en-EN
+  numbersections: true documentclass: article from:
+  markdown+tex_math_single_backslash geometry:
   - margin=2cm
 papersize: a4
 link-citations: true
@@ -37,7 +32,7 @@ and the flavour (optionally specified with the `cmake` variable
 `TFEL_VERSION_FLAVOUR`). The name of this variable can be retrieved with
 the `--tfel-home` option of `tfel-config` described below.
 
-## `tfel-config`
+## `tfel-config` {#sec:tfel_5.1:tfel_config}
 
 ### `--registry-key` option
 
@@ -68,6 +63,22 @@ empty only the following conditions are met:
 
 The option `--python-module-suffix` is only available if the python
 bindings is available.
+
+### `--config`
+
+This option requests flags associated with the `TFELConfig` library.
+
+### `--mfront-log-stream`
+
+This option requests flags associated with the `MFrontLogStream` library.
+
+### `--mfront`
+
+This option requests flags associated with the `TFELMFront` library.
+
+### `--mtest`
+
+This option requests flags associated with the `TFELMTest` library.
 
 #### Example of usage
 
@@ -203,7 +214,40 @@ The following command line arguments are now supported:
     the default behaviour of `mfront-query`).
 - `-Werror` is equivalent to `--warning-error=true`.
 
+## New keywords
+
+### `@TFELLibraries`
+
+The `@TFELLibraries` keyword let the user specify TFEL libraries to link
+with. This keyword must be followed by an array of strings.
+
+The following libraries are available: `Config`, `Exception`,
+`Glossary`, `Tests`, `UnicodeSupport`, `Utilities`, `System`, `Math`,
+`MathCubicSpline`, `MathKriging`, `MathParser`, `NUMODIS`, `Material`,
+`MFront`, `MTest`.
+
+#### Example of usage
+
+~~~~{.cpp}
+@TFELLibraries {"MathParser"};
+~~~~
+
 # Issues fixed
+
+## Issue 685: [tfel-config] Add support for `TFELConfig`, `TFELMFront` and `TFELMTest`
+
+This feature is described in Section @sec:tfel_5.1:tfel_config.
+
+For more details, see <https://github.com/thelfer/tfel/issues/685>
+
+## Issue 684: [mfront] Add support for `@Includes`, `@Link` and `@TFELLibraries` to the `Model\ DSL
+
+For more details, see <https://github.com/thelfer/tfel/issues/684>
+
+## Issue 683: Using `TFEL` librairies in material properties
+
+
+For more details, see <https://github.com/thelfer/tfel/issues/683>
 
 ## Issue 677:[tfel-config] add a python-module-suffix option
 

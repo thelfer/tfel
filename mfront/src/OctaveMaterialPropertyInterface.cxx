@@ -197,7 +197,6 @@ namespace mfront {
       cmd += mkoctfile;
     }
     cmd += " $(INCLUDES) -L../src/";
-    cmd += " $(shell " + tfel_config + " --cppflags --compiler-flags)";
     cmd += " $(shell " + tfel_config + " --includes)";
     cmd += " " + name + ".cpp";
     auto& res = td.specific_targets;

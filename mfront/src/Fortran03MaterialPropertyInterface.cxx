@@ -92,10 +92,6 @@ namespace mfront {
     const auto name = this->getSrcFileName(mpd.material, mpd.className);
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, name + ".cxx");
 #if !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.link_libraries, "m");

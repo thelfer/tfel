@@ -23,6 +23,7 @@
 #endif /* MFRONT_HAVE_MADNEX */
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Math/IntegerEvaluator.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
@@ -920,6 +921,40 @@ namespace mfront {
       insert_if(this->ldflags, l);
     }
   }  // end of treatLink
+
+  void DSLBase::treatTFELLibraries() {
+    const auto nlink = readStringOrArrayOfString("DSLBase::treatTFELLibraries");
+    this->readSpecifiedToken("DSLBase::treatTFELLibraries", ";");
+    //
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
+    insert_if(this->link_directories,
+              "$(shell " + tfel_config + " --library-path)");
+    const auto lmap = std::map<std::string, std::string>{
+        {"Exception", "--exceptions"},
+        {"Glossary", "--glossary"},
+        {"Material", "--material"},
+        {"MathCubicSpline", "--math-cubic-spline"},
+        {"MathKriging", "--math-kriging"},
+        {"MathParser", "--math-parser"},
+        {"Math", "--math"},
+        {"NUMODIS", "--numodis"},
+        {"System", "--system"},
+        {"Tests", "--tests"},
+        {"UnicodeSupport", "--unicode-support"},
+        {"Utilities", "--utilities"},
+        {"Config", "--config"},
+        {"MFront", "--mfront"},
+        {"MTest", "--mtest"}};
+    for (const auto& l : nlink) {
+      if (!lmap.contains(l)) {
+        this->throwRuntimeError("DSLBase::treatTFELLibraries",
+                                "unknown TFEL library '" + l + "'");
+      }
+      insert_if(this->link_libraries, "$(shell " + tfel_config +
+                                          " --library-dependency " +
+                                          lmap.at(l) + ")");
+    }
+  }  // end of treatTFELLibraries
 
   void DSLBase::callMFront(const std::vector<std::string>& files,
                            const std::vector<std::string>& interfaces,

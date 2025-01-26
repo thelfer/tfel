@@ -121,10 +121,6 @@ namespace mfront {
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     // the jni part
     insert_if(l.cppflags, TFEL_JAVA_INCLUDES);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, name + "-java.cxx");
     if (this->package.empty()) {
       insert_if(l.epts, getJavaClassName(mpd) + "." + mpd.law);
