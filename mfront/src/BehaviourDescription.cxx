@@ -436,7 +436,7 @@ namespace mfront {
       const auto& mhs = opts.at(BehaviourDescription::modellingHypotheses)
                             .get<std::vector<tfel::utilities::Data>>();
       for (const auto& h : mhs) {
-        if (h.is<std::string>()) {
+        if (!h.is<std::string>()) {
           tfel::raise(
               "BehaviourDescription::BehaviourDescription: "
               "invalid data type in option '" +
