@@ -2257,20 +2257,6 @@ namespace mfront {
          << "using std::vector;\n";
       writeMaterialLaws(os, this->bd.getMaterialLaws());
       this->writeBehaviourParameterInitialisation(os, h);
-      // calling models
-      for (const auto& m : this->bd.getModelsDescriptions()) {
-        auto inputs = std::vector<std::string>{};
-        auto outputs = std::vector<std::string>{};
-        for (const auto& vout : m.outputs) {
-          inputs.push_back(vout.name);
-          outputs.push_back("d" + vout.name);
-        }
-        this->writeModelCall(os, tmpnames, h, m, outputs, inputs, "em");
-        for (const auto& output : m.outputs) {
-          const auto vn = output.name;
-          os << "this->d" << vn << " -= this->" << vn << ";\n";
-        }
-      }
       this->writeBehaviourLocalVariablesInitialisation(os, h);
     };
     this->checkBehaviourFile(os);
