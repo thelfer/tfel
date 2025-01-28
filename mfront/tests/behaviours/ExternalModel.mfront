@@ -1,0 +1,9 @@
+@DSL Model;
+@Model ExternalModel;
+
+@StateVariable real x;
+x.setDepth(1);
+
+@Function Compute {
+  x = x_1 * (2 -  dt) / (2 +  dt);
+}
