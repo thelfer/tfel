@@ -20,7 +20,10 @@
 namespace mfront {
 
   struct RungeKuttaDSLBase : public BehaviourDSLBase<RungeKuttaDSLBase> {
-    static std::string getDescription(void);
+    //! \brief code block name
+    static const char* const RungeKuttaUpdateAuxiliaryStateVariables;
+    //! \return a generic description of DSL based on this class
+    static std::string getDescription();
     //! constructor
     RungeKuttaDSLBase();
     //! destructor

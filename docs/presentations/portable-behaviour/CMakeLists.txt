@@ -3,7 +3,7 @@
    DEPENDS   ${CMAKE_CURRENT_SOURCE_DIR}/portability.md
    COMMAND   ${PANDOC}
    ARGS      -s -f markdown+tex_math_single_backslash
-   ARGS      --bibliography=${CMAKE_CURRENT_SOURCE_DIR}/bibliography.bib --filter pandoc-citeproc
+   ARGS      --bibliography=${CMAKE_CURRENT_SOURCE_DIR}/bibliography.bib --citeproc
    ARGS      --slide-level 1 --toc --mathjax -i -t revealjs -V theme:beige
    ARGS      -H ${CMAKE_CURRENT_SOURCE_DIR}/mysettings.css
    ARGS      ${CMAKE_CURRENT_SOURCE_DIR}/portability.md -o portability.html)

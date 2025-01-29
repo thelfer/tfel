@@ -657,6 +657,16 @@ namespace mfront {
         return "(" + var + "+(this->theta)*d" + var + ")";
       }
     }
+    if (d.isAuxiliaryStateVariableName(var)){
+      const auto& v = d.getAuxiliaryStateVariables().getVariable(var);
+      if (v.getAttribute<bool>("ComputedByExternalModel", false)) {
+        if (addThisPtr) {
+          return "(this->" + var + "+(this->theta)*(this->d" + var + "))";
+        } else {
+          return "(" + var + "+(this->theta)*d" + var + ")";
+        }
+      }
+    }
     if (d.isIntegrationVariableName(var)) {
       if (this->mb.hasAttribute(h, var + "_normalisation_factor")) {
         const auto& nf = this->mb.getAttribute<std::string>(
@@ -695,6 +705,16 @@ namespace mfront {
         return "(this->" + var + "+this->d" + var + ")";
       } else {
         return "(" + var + "+d" + var + ")";
+      }
+    }
+    if (d.isAuxiliaryStateVariableName(var)){
+      const auto& v = d.getAuxiliaryStateVariables().getVariable(var);
+      if (v.getAttribute<bool>("ComputedByExternalModel", false)){
+        if (addThisPtr) {
+          return "(this->" + var + "+this->d" + var + ")";
+        } else {
+          return "(" + var + "+d" + var + ")";
+        }
       }
     }
     if ((d.isExternalStateVariableIncrementName(var)) || (var == "dT")) {
