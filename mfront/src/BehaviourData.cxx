@@ -1,4 +1,3 @@
-
 /*!
  * \file   mfront/src/BehaviourData.cxx
  *
@@ -510,14 +509,20 @@ namespace mfront {
     }
   }  // end of addStateVariable
 
-  void BehaviourData::addAuxiliaryStateVariable(const VariableDescription& v,
-                                                const RegistrationStatus s) {
+  void BehaviourData::addAuxiliaryStateVariable(
+      const VariableDescription& v,
+      const RegistrationStatus s) {
     this->addVariable(this->auxiliaryStateVariables, v, s, false);
     if (s == FORCEREGISTRATION) {
       this->addVariable(this->persistentVariables, v, ALREADYREGISTRED, false,
                         true);
     } else {
       this->addVariable(this->persistentVariables, v, ALREADYREGISTRED, false);
+    }
+    if (v.getAttribute<bool>("ComputedByExternalModel", false)) {
+      const auto dv =
+          VariableDescription{v.type, "d" + v.name, v.arraySize, v.lineNumber};
+      this->addLocalVariable(dv, s);
     }
   }  // end of addAuxiliaryStateVariable
 
@@ -810,6 +815,19 @@ namespace mfront {
   const VariableDescriptionContainer& BehaviourData::getLocalVariables() const {
     return this->localVariables;
   }  // end of getLocalVariables
+
+  const BehaviourVariableDescription&
+  BehaviourData::getBehaviourVariableFactory(const std::string& n) const {
+    for (const auto& f : this->getBehaviourVariableFactories()) {
+      if (n == getBehaviourVariableFactoryClassName(f)) {
+        return f;
+      }
+    }
+    tfel::raise(
+        "BehaviourData::getBehaviourVariableFactory: "
+        "no behaviour variable factory named '" +
+        n + "'");
+  }  // end of getBehaviourVariableFactory
 
   const std::vector<BehaviourVariableDescription>&
   BehaviourData::getBehaviourVariables() const {

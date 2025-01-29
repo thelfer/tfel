@@ -2206,13 +2206,15 @@ namespace mfront {
       this->addBehaviourVariable(bv);
     }
     this->behaviourVariablesCandidates.clear();
-    for (const auto& bv : this->behaviourVariableFactoriesCandidates) {
-      this->addBehaviourVariableFactory(bv);
+    for (const auto& [bv, isExternalModel] : this->behaviourVariableFactoriesCandidates) {
+      this->addBehaviourVariableFactory(bv, isExternalModel);
     }
     this->behaviourVariableFactoriesCandidates.clear();
   }  // end of setModellingHypotheses
 
-  const std::vector<ModelDescription>&
+  const std::vector<std::variant<
+      ModelDescription,
+      BehaviourDescription::ExternalModelBasedOnBehaviourVariableFactory>>&
   BehaviourDescription::getModelsDescriptions() const {
     return this->models;
   }  // end of getModelsDescriptions
@@ -2220,13 +2222,18 @@ namespace mfront {
   void BehaviourDescription::addModelDescription(const ModelDescription& md) {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     for (auto ov : md.outputs) {
-      VariableDescription dov{ov.type, "d" + ov.name, ov.arraySize,
-                              ov.lineNumber};
       ov.setAttribute("ComputedByExternalModel", true, false);
       this->addAuxiliaryStateVariable(uh, ov, BehaviourData::UNREGISTRED);
-      this->addLocalVariable(uh, dov, BehaviourData::UNREGISTRED);
     }
     this->models.push_back(md);
+  }  // end of addModelDescription
+
+  void BehaviourDescription::addModelDescription(
+      const BehaviourVariableDescription& md) {
+    const auto fname = getBehaviourVariableFactoryClassName(md);
+    this->addBehaviourVariableFactory(md, true);
+    this->models.push_back(
+        ExternalModelBasedOnBehaviourVariableFactory{.factory = fname});
   }  // end of addModelDescription
 
   void BehaviourDescription::addMaterialProperties(
@@ -2375,7 +2382,8 @@ namespace mfront {
   static void completeVariablesDeclarations(
       BehaviourData& bd,
       const BehaviourVariableDescription& bv,
-      const BehaviourDescription::Hypothesis h) {
+      const BehaviourDescription::Hypothesis h,
+      const bool isExternalModel) {
     // gradients and thermodynamic forces
     for (const auto& [g, th] : bv.behaviour.getMainVariables()) {
       if (bv.store_gradients) {
@@ -2417,8 +2425,11 @@ namespace mfront {
     for (const auto& isv :
          bv.behaviour.getBehaviourData(h).getPersistentVariables()) {
       try {
-        bd.addAuxiliaryStateVariable(applyNamesChanges(bv, isv),
-                                     BehaviourData::UNREGISTRED);
+        auto nisv = applyNamesChanges(bv, isv);
+        if (isExternalModel) {
+          nisv.setAttribute("ComputedByExternalModel", true, false);
+        }
+        bd.addAuxiliaryStateVariable(nisv, BehaviourData::UNREGISTRED);
       } catch (std::exception& e) {
         tfel::raise("Error while treating state variable '" + isv.name +
                     "' from behaviour '" + bv.name + "' of type '" +
@@ -2473,10 +2484,10 @@ namespace mfront {
       // now adding everything that we need
       constexpr auto uh = Hypothesis::UNDEFINEDHYPOTHESIS;
       if (!this->areAllMechanicalDataSpecialised()) {
-        completeVariablesDeclarations(this->d, v, uh);
+        completeVariablesDeclarations(this->d, v, uh, false);
       }
       for (auto& md : this->sd) {
-        completeVariablesDeclarations(*(md.second), v, md.first);
+        completeVariablesDeclarations(*(md.second), v, md.first, false);
       }
       this->d.addBehaviourVariable(v);
       for (auto& md : this->sd) {
@@ -2496,7 +2507,13 @@ namespace mfront {
   }  // end of addBehaviourVariable
 
   void BehaviourDescription::addBehaviourVariableFactory(
-      const BehaviourVariableDescription& v) {
+      const BehaviourVariableDescription& v){
+    this->addBehaviourVariableFactory(v, false);
+  }
+
+  void BehaviourDescription::addBehaviourVariableFactory(
+      const BehaviourVariableDescription& v,
+      const bool isExternalModel) {
     if (!this->allowsNewUserDefinedVariables()) {
       tfel::raise(
           "BehaviourDescription::addBehaviourVariableFactory: "
@@ -2529,10 +2546,11 @@ namespace mfront {
       // now adding everything that we need
       constexpr auto uh = Hypothesis::UNDEFINEDHYPOTHESIS;
       if (!this->areAllMechanicalDataSpecialised()) {
-        completeVariablesDeclarations(this->d, v, uh);
+        completeVariablesDeclarations(this->d, v, uh, isExternalModel);
       }
       for (auto& md : this->sd) {
-        completeVariablesDeclarations(*(md.second), v, md.first);
+        completeVariablesDeclarations(*(md.second), v, md.first,
+                                      isExternalModel);
       }
       this->d.addBehaviourVariableFactory(v);
       for (auto& md : this->sd) {
@@ -2547,7 +2565,7 @@ namespace mfront {
             << "' is delayed up to when the modelling hypotheses "
             << "are defined'\n";
       }
-      this->behaviourVariableFactoriesCandidates.push_back(v);
+      this->behaviourVariableFactoriesCandidates.push_back({v, isExternalModel});
     }
   }  // end of addBehaviourVariableFactory
 

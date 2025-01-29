@@ -409,6 +409,13 @@ namespace mfront {
     //! \return all behaviour variables
     const std::vector<BehaviourVariableDescription>& getBehaviourVariables()
         const;
+    /*!
+     * \return the behaviour variable factory whose class name matches the
+     * argument
+     * \param[in] n: behaviour variable factory' class name
+     */
+    const BehaviourVariableDescription& getBehaviourVariableFactory(
+        const std::string&) const;
     //! \return all behaviour variables factories
     const std::vector<BehaviourVariableDescription>&
     getBehaviourVariableFactories() const;
@@ -824,9 +831,7 @@ namespace mfront {
      * \param[in] cn : behaviour class name
      * \param[in] b  : add profiling information
      */
-    std::string getCode(std::string_view,
-                        std::string_view,
-                        const bool) const;
+    std::string getCode(std::string_view, std::string_view, const bool) const;
     /*!
      * \return true if a code block associated with the given name has
      * been defined

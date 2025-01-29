@@ -181,6 +181,29 @@ contains:
 };
 ```
 
+### Behaviour variable factories
+
+### Extension of the `@Model` keyword
+
+In previous versions, the `@Model` keyword allowed to call from a
+behaviour point-wise models using the historical `Model` DSL.
+
+The `@Model` keyword now allows to use point-wise models implemented
+using the following DSLs: `DefaultModel`, `RungeKuttaModel` and
+`ImplicitModel`. In this case, a behaviour variable factory is
+automatically associated with the point-wise models which shares all its
+material properties and external state variables with the calling
+behaviour. Every persistent variables of the point-wise model are
+declared as auxiliary state variables. For each persistent variable of
+the point-wise model, a local variable meant to contain the increment of
+this variable over the time step is declared.
+
+Point-wise models are called at the initialization stage of the
+behaviour. The auxiliary state variables associated with the point-wise
+models are updated at beginning of the `updateAuxiliarySateVariables`
+method **before** any user defined code (see the
+`@UpdateAuxiliaryStateVariables` keyword).
+
 ## New command line arguments
 
 The following command line arguments are now supported:
@@ -251,7 +274,6 @@ For more details, see <https://github.com/thelfer/tfel/issues/684>
 
 ## Issue 683: Using `TFEL` librairies in material properties
 
-
 For more details, see <https://github.com/thelfer/tfel/issues/683>
 
 ## Issue 677:[tfel-config] add a python-module-suffix option
@@ -285,6 +307,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/666>
 ## Issue 654: Add PowerShell environment script
 
 For more details, see <https://github.com/thelfer/tfel/issues/654>
+
+## Issue 640: [mfront] Only point-wise models defined by `Model` DSL can be embedded in behaviours using the `@Model` keyword 
+
+For more details, see <https://github.com/thelfer/tfel/issues/640>
 
 ## Issue 294: [python-bindings] Evaluate port to `pybind`
 

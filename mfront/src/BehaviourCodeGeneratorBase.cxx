@@ -1970,6 +1970,8 @@ namespace mfront {
 
   void BehaviourCodeGeneratorBase::writeBehaviourUpdateAuxiliaryStateVariables(
       std::ostream& os, const Hypothesis h) const {
+    using ExternalModel =
+        BehaviourDescription::ExternalModelBasedOnBehaviourVariableFactory;
     os << "/*!\n"
        << " * \\brief Update auxiliary state variables at end of integration\n"
        << " */\n"
@@ -1979,9 +1981,22 @@ namespace mfront {
        << "using namespace tfel::math;\n";
     writeMaterialLaws(os, this->bd.getMaterialLaws());
     for (const auto& m : this->bd.getModelsDescriptions()) {
-      for (const auto& output : m.outputs) {
-        const auto vn = output.name;
-        os << "this->" << vn << " += this->d" << vn << ";\n";
+      if (std::holds_alternative<ModelDescription>(m)) {
+        const auto& md = std::get<ModelDescription>(m);
+        for (const auto& output : md.outputs) {
+          const auto vn = output.name;
+          os << "this->" << vn << " += this->d" << vn << ";\n";
+        }
+      } else {
+        const auto& md = std::get<ExternalModel>(m);
+        const auto& f =
+            this->bd.getBehaviourData(h).getBehaviourVariableFactory(
+                md.factory);
+        for (const auto& v :
+             f.behaviour.getBehaviourData(h).getPersistentVariables()) {
+          const auto vn = v.name;
+          os << "this->" << vn << " += this->d" << vn << ";\n";
+        }
       }
     }
     const auto& md = this->bd.getBehaviourData(h);
@@ -2334,7 +2349,11 @@ namespace mfront {
     // writing constructors
     if (this->bd.shallDefineDefaultConstructor()) {
       os << "//! \\brief default constructor\n"
-         << this->bd.getClassName() << "()\n : " << init << "\n{";
+         << this->bd.getClassName() << "()";
+      if (!init.empty()) {
+        os << "\n: " << init;
+      }
+      os << "\n{";
       write_body();
       os << "}\n\n";
     }
@@ -3244,6 +3263,8 @@ namespace mfront {
 
   void BehaviourCodeGeneratorBase::writeBehaviourInitializeMethods(
       std::ostream& os, const Hypothesis h) const {
+    using ExternalModel =
+        BehaviourDescription::ExternalModelBasedOnBehaviourVariableFactory;
     this->checkBehaviourFile(os);
     os << "/*!\n"
        << " * \\ brief initialize the behaviour with user code\n"
@@ -3256,15 +3277,39 @@ namespace mfront {
     // calling models
     auto tmpnames = std::vector<std::string>{};
     for (const auto& m : this->bd.getModelsDescriptions()) {
-      auto inputs = std::vector<std::string>{};
-      auto outputs = std::vector<std::string>{};
-      for (const auto& v : m.outputs) {
-        inputs.push_back(v.name);
-        outputs.push_back("d" + v.name);
-      }
-      this->writeModelCall(os, tmpnames, h, m, outputs, inputs, "em");
-      for (const auto& v : m.outputs) {
-        os << "this->d" << v.name << " -= this->" << v.name << ";\n";
+      if (std::holds_alternative<ModelDescription>(m)) {
+        const auto& md = std::get<ModelDescription>(m);
+        auto inputs = std::vector<std::string>{};
+        auto outputs = std::vector<std::string>{};
+        for (const auto& v : md.outputs) {
+          inputs.push_back(v.name);
+          outputs.push_back("d" + v.name);
+        }
+        this->writeModelCall(os, tmpnames, h, md, outputs, inputs, "em");
+        for (const auto& v : md.outputs) {
+          os << "this->d" << v.name << " -= this->" << v.name << ";\n";
+        }
+      } else {
+        const auto& md =std::get<ExternalModel>(m);
+        const auto mv =
+            this->bd.getBehaviourData(h).getBehaviourVariableFactory(
+                md.factory);
+        const auto instance = mv.name + "_instance";
+        os << "auto " << instance << " = " << mv.name << ".make();\n"
+           << "if(!this->initialize(" << instance << ")){\n"
+           << "return false;\n"
+           << "}\n"
+           << "if(!" << instance << ". integrate("
+           << "::tfel::material::TangentOperatorTraits<::tfel::"
+           << "material::MechanicalBehaviourBase::GENERALBEHAVIOUR>::"
+           << "STANDARDTANGENTOPERATOR, NOSTIFFNESSREQUESTED)){\n"
+           << "return false;\n"
+           << "}\n";
+        for (const auto& v :
+             mv.behaviour.getBehaviourData(h).getPersistentVariables()) {
+          os << "this->d" << v.name << " = " << instance << ". " << v.name
+             << " - this->" << v.name << ";\n";
+        }
       }
     }
     this->writeBehaviourLocalVariablesInitialisation(os, h);

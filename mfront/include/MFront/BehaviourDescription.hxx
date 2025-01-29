@@ -135,6 +135,11 @@ namespace mfront {
       //! \brief description of a material property
       std::shared_ptr<MaterialPropertyDescription> mpd;
     };
+    //! \brief structure describing a model based on a behaviour factory
+    struct ExternalModelBasedOnBehaviourVariableFactory {
+      //! \brief name of the behaviour variable factory
+      std::string factory;
+    };
     //! \brief list of supported material properties types
     using MaterialPropertyTypes =
         tfel::meta::GenerateTypeList<ConstantMaterialProperty,
@@ -478,6 +483,12 @@ namespace mfront {
      */
     void addModelDescription(const ModelDescription&);
     /*!
+     * \brief add a model description based on an already declared behaviour
+     * variable factory.
+     * \param[in] md: model description
+     */
+    void addModelDescription(const BehaviourVariableDescription&);
+    /*!
      * add a local data structure
      * \param[in] lds: local data structure
      * \param[in] s: registration status
@@ -729,7 +740,10 @@ namespace mfront {
     bool isMaterialPropertyDependantOnStateVariables(
         const MaterialProperty&) const;
     //! \return registred models
-    const std::vector<ModelDescription>& getModelsDescriptions() const;
+    const std::vector<
+        std::variant<ModelDescription,
+                     ExternalModelBasedOnBehaviourVariableFactory>>&
+    getModelsDescriptions() const;
     /*!
      * \brief set the elastic material properties
      * \param[in] emps: elastic material properties
@@ -1733,6 +1747,14 @@ namespace mfront {
      */
     BehaviourData& getBehaviourData2(const Hypothesis);
     /*!
+     * \brief add a behaviour variable factory
+     * \param[in] v: behaviour variable added
+     * \param[in] isExternalModel: flag stating if the factory is associated
+     * with an external model
+     */
+    void addBehaviourVariableFactory(const BehaviourVariableDescription&,
+                                     const bool);
+    /*!
      * \call the behaviour data associated with the given hypothesis
      * \param[in] h: modelling hypothesis
      * \param[in] m: behaviour data method
@@ -1962,14 +1984,10 @@ namespace mfront {
      * must be defined.
      */
     std::vector<MaterialProperty> thermalExpansionCoefficients;
-    /*!
-     * elastic material properties
-     * For isotropic   behaviours, only two elastic material properties must be
-     * defined.
-     * For orthotropic behaviours, two or nine elastic material properties must
-     * be defined.
-     */
-    std::vector<ModelDescription> models;
+    //! \brief list of registred models
+    std::vector<std::variant<ModelDescription,
+                             ExternalModelBasedOnBehaviourVariableFactory>>
+        models;
     //! \brief slip systems
     std::optional<SlipSystemsDescription> gs;
     //! \brief list of all Hill tensors defined
@@ -2017,9 +2035,10 @@ namespace mfront {
      * \brief list of behaviour variable factories waiting to be treated
      * \note this intermediate structure is required since
      * the behaviour variables can only be added to behaviour data
-     * when modelling hypothesis are defined
+     * when modelling hypothesis are defined. The second member of the pair
+     * indicates if the factory is associated with an external model
      */
-    std::vector<BehaviourVariableDescription>
+    std::vector<std::pair<BehaviourVariableDescription, bool>>
         behaviourVariableFactoriesCandidates;
     /*!
      * Support for dynamically allocated vectors is not allowed in all

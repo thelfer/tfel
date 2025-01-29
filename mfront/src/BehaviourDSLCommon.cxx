@@ -1117,9 +1117,49 @@ namespace mfront {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "BehaviourDSLCommon::treatModel: begin\n";
     }
-    auto md = this->getModelDescription(
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatModel");
+    const auto lineNumber = this->current->line;
+    const auto f = SearchPathsHandler::search(
         this->readString("BehaviourDSLCommon::treatModel"));
-    this->mb.addModelDescription(md);
+    const auto adsl = MFrontBase::getDSL(f);
+    if (adsl->getTargetType() == AbstractDSL::MODELDSL) {
+      auto md = this->getModelDescription(f);
+      this->mb.addModelDescription(md);
+    } else {
+      auto md = this->getBehaviourDescription(f);
+      if (!md.isModel()) {
+        this->throwRuntimeError(
+            "BehaviourDSLCommon::treatModel",
+            "file path '" + f + "' does not describe a model");
+      }
+      const auto name = "mfront_external_model_" + md.getClassName();
+      auto d = BehaviourVariableDescription{
+          .file = f,
+          .symbolic_form = name,
+          .name = name,
+          .description =
+              [this] {
+                if (!this->currentComment.empty()) {
+                  return this->currentComment;
+                }
+                return std::string{};
+              }(),
+          .line_number = lineNumber,
+          .variables_prefix = "",
+          .variables_suffix = "",
+          .external_names_prefix = "",
+          .external_names_suffix = "",
+          .shared_material_properties = {std::regex{".+"}},
+          .shared_external_state_variables = {std::regex{".+"}},
+          .store_gradients = false,
+          .store_thermodynamic_forces = false,
+          .automatically_save_associated_auxiliary_state_variables = false,
+          .behaviour = std::move(md)};
+      const auto fname = getBehaviourVariableFactoryClassName(d);
+      this->reserveName(fname);
+      this->reserveName(fname + "_instance");
+      this->mb.addModelDescription(d);
+    }
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "BehaviourDSLCommon::treatModel: end\n";
     }

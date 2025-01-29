@@ -205,4 +205,6 @@ install_mfront_data(tests/behaviours ProfilerTest2.mfront)
 install_mfront_data(tests/behaviours ProfilerTest3.mfront)
 install_mfront_data(tests/behaviours ExternalModelCaller.mfront)
 install_mfront_data(tests/behaviours ExternalModel.mfront)
+install_mfront_data(tests/behaviours ExternalModelCaller2.mfront)
+install_mfront_data(tests/behaviours ExternalModel2.mfront)
 

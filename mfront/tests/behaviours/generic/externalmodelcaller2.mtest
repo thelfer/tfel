@@ -1,0 +1,9 @@
+@Author HELFER Thomas;
+@Date   28/01/2025;
+@MaximumNumberOfSubSteps 1;
+@ModellingHypothesis 'Tridimensional';
+@Model<generic> @library@ 'ExternalModelCaller2';
+@InternalStateVariable 'x' 1;
+@ExternalStateVariable 'Temperature' 293.15 ;
+@Times{0, 1 in 10};
+@Test<file> @reference_file@ 'x' 2 1e-12;
