@@ -21,6 +21,7 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/PerformanceProfiling.hxx"
 #include "MFront/SupportedTypes.hxx"
+#include "MFront/RungeKuttaDSLBase.hxx"
 #include "MFront/RungeKuttaCodeGeneratorBase.hxx"
 
 namespace mfront {
@@ -84,6 +85,15 @@ namespace mfront {
                    dv.name + "1-this->" + dv.name + "0)*"
             << t << ";\n";
         }
+      }
+    }
+    for (const auto& v : d.getAuxiliaryStateVariables()) {
+      if (!v.getAttribute<bool>("ComputedByExternalModel", false)) {
+        continue;
+      }
+      if (uvs.find(v.name) != uvs.end()) {
+        f << "this->" << v.name << "_ = this->" << v.name << "+(this->d"
+          << v.name << ")*" << t << ";\n";
       }
     }
     for (const auto& v : d.getExternalStateVariables()) {
@@ -196,6 +206,14 @@ namespace mfront {
       if (uvs.find(dv.name) != uvs.end()) {
         writeExternalVariableCurrentValue2(f, dv.name, p,
                                            Gradient::isIncrementKnown(dv));
+      }
+    }
+    for (const auto& v : d.getAuxiliaryStateVariables()) {
+      if (!v.getAttribute<bool>("ComputedByExternalModel", false)) {
+        continue;
+      }
+      if (uvs.find(v.name) != uvs.end()) {
+        writeExternalVariableCurrentValue2(f, v.name, p, true);
       }
     }
     for (const auto& v : d.getExternalStateVariables()) {
@@ -338,7 +356,10 @@ namespace mfront {
 
   void RungeKuttaCodeGeneratorBase::writeBehaviourUpdateAuxiliaryStateVariables(
       std::ostream& os, const Hypothesis h) const {
-    if (this->bd.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
+    BehaviourCodeGeneratorBase::writeBehaviourUpdateAuxiliaryStateVariables(os,
+                                                                            h);
+    if (this->bd.hasCode(
+            h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       os << "/*!\n"
          << "* \\brief Update auxiliary state variables at end of integration\n"
          << "*/\n"
@@ -349,7 +370,8 @@ namespace mfront {
          << "using namespace std;\n"
          << "using namespace tfel::math;\n";
       writeMaterialLaws(os, this->bd.getMaterialLaws());
-      os << this->bd.getCode(h, BehaviourData::UpdateAuxiliaryStateVariables)
+      os << this->bd.getCode(
+                h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)
          << '\n'
          << "}\n\n";
     }
@@ -385,7 +407,7 @@ namespace mfront {
       writeReturnFailure(os, this->bd);
       os << "}\n";
     }
-    if (d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)) {
+    if (d.hasCode(RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
   }  // end of writeBehaviourEulerIntegrator
@@ -456,7 +478,7 @@ namespace mfront {
       writeReturnFailure(os, this->bd);
       os << "}\n";
     }
-    if (d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)) {
+    if (d.hasCode(RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
   }  // end of writeBehaviourRK2Integrator
@@ -994,7 +1016,7 @@ namespace mfront {
       writeReturnFailure(os, this->bd);
       os << "}\n";
     }
-    if (d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)) {
+    if (d.hasCode(RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
     os << "t += dt_;\n"
@@ -1603,7 +1625,8 @@ namespace mfront {
       writeReturnFailure(os, this->bd);
       os << "}\n";
     }
-    if (this->bd.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
+    if (this->bd.hasCode(
+            h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
     os << "t += dt_;\n"
@@ -2011,7 +2034,8 @@ namespace mfront {
       writeReturnFailure(os, this->bd);
       os << "}\n";
     }
-    if (this->bd.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
+    if (this->bd.hasCode(
+            h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
     os << "t += dt_;\n"
@@ -2176,7 +2200,8 @@ namespace mfront {
       writeReturnFailure(os, this->bd);
       os << "}\n";
     }
-    if (this->bd.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
+    if (this->bd.hasCode(
+            h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
   }  // end of writeBehaviourRK4Integrator
@@ -2193,15 +2218,16 @@ namespace mfront {
        << "*/\n"
        << "[[nodiscard]] IntegrationResult\n";
     if (this->bd.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
-      os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
+      os << "integrate(const SMFlag smflag,const SMType smt) override final{\n";
     } else {
       if ((this->bd.getBehaviourType() ==
            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
           (this->bd.getBehaviourType() ==
            BehaviourDescription::COHESIVEZONEMODEL)) {
-        os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
+        os << "integrate(const SMFlag smflag, const SMType smt) "
+           << "override final{\n";
       } else {
-        os << "integrate(const SMFlag,const SMType smt) override{\n";
+        os << "integrate(const SMFlag, const SMType smt) override final{\n";
       }
     }
     os << "using namespace std;\n"
@@ -2247,6 +2273,7 @@ namespace mfront {
               "This shall not happen at this stage."
               " Please contact MFront developper to help them debug this.");
     }
+    os << "this->updateAuxiliaryStateVariables();\n";
     for (const auto& v : d.getPersistentVariables()) {
       this->writePhysicalBoundsChecks(os, v, false);
     }
