@@ -133,6 +133,12 @@ choices.
 
 ### Warnings added to isotropic DSLs
 
+#### Warnings related to the convergence threshold
+
+- using the default value of the convergence threshold
+- specifying a value of the convergence threshold too low
+- specifying a value of the convergence threshold too high
+
 #### Warnings related to the implementation of the flow rule(s)
 
 A warning is reported if the implementation of the flow rule(s)
@@ -158,6 +164,37 @@ contains:
 - using the default value of the convergence threshold
 - specifying a value of the convergence threshold too low
 - specifying a value of the convergence threshold too high
+
+#### Warnings related to the computation of the thermodynamic forces
+
+- using the \(\theta\) (i.e. `theta`) or the `iterMax` parameter.
+- using the time increment \(\Delta\, t\).
+- using the increment of a gradient, integration variable or external
+  state variable, or the increment of an auxiliary state variable
+  computed by a point-wise model (see the `@Model` keyword).
+- using an auxiliary state variable which is not computed by a point-wise model.
+
+### Warnings added to interfaces
+
+#### Warnings added to the `Cast3M` interface
+
+- using a maximum number of substepping greater than 3.
+- not restricting the following keywords to the `Cast3M` interface,
+  which is a portability issue as the behaviour can't be compiled with
+  other interfaces: `@CastemGenerateMTestFileOnFailure`,
+  `@UMATGenerateMTestFileOnFailure`, `@CastemUseTimeSubStepping`,
+  `@UMATUseTimeSubStepping`, `@CastemMaximumSubStepping`,
+  `@UMATMaximumSubStepping`, `@CastemDoSubSteppingOnInvalidResults`,
+  `@UMATDoSubSteppingOnInvalidResults`, `@CastemFiniteStrainStrategy`,
+  `@UMATFiniteStrainStrategy`, `@CastemFiniteStrainStrategies` and
+  `@UMATFiniteStrainStrategies`.
+
+#### Warnings added to the `generic` interface
+
+- not restricting the keyword
+  `@GenericInterfaceGenerateMTestFileOnFailure` to the `generic`
+  interface, which is a portability issue as the behaviour can't be
+  compiled with other interfaces.
 
 #### Warnings related to the perturbation value used to compute a numerical approximation of the jacobian
 
@@ -261,6 +298,35 @@ The following libraries are available: `Config`, `Exception`,
 ~~~~
 
 # Issues fixed
+
+￼
+## Issue #697: [cyrano] Add a warning when the maximum number of sub steppings is too high
+
+For more details, see <https://github.com/thelfer/tfel/issues/697>
+
+## Issue #696: [calculix-interface] add support for the `@GenerateMTestFileOnFailure` keyword
+
+For more details, see <https://github.com/thelfer/tfel/issues/696>
+
+## Issue #695: [aster-interface] add support for the `@GenerateMTestFileOnFailure` keyword
+
+For more details, see <https://github.com/thelfer/tfel/issues/695>
+
+## Issue #694: [ansys-interface] add support for the `@GenerateMTestFileOnFailure` keyword
+
+For more details, see <https://github.com/thelfer/tfel/issues/694>
+
+## Issue #692: [mfront] add warning when interface specific keywords are not restricted to the corresponding interface
+
+For more details, see <https://github.com/thelfer/tfel/issues/692>
+
+## Issue #690: [castem] Add a warning when the maximum number of sub steppings is too high
+
+For more details, see <https://github.com/thelfer/tfel/issues/690>
+
+## Issue #689: [implicit-dsl] Add warning when using auxiliary state variables (not computed by external point-wise models) in `@ComputeStress` and `@ComputeFinalStress`
+
+For more details, see <https://github.com/thelfer/tfel/issues/689>
 
 ## Issue 685: [tfel-config] Add support for `TFELConfig`, `TFELMFront` and `TFELMTest`
 

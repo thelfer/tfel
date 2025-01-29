@@ -41,6 +41,7 @@
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/DSLUtilities.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
@@ -86,6 +87,15 @@ namespace mfront {
       throw_if(key != "@Package", "unsupported key '" + key + "'");
     }
     if (key == "@Package") {
+      if (i.empty()) {
+        reportWarning("keyword '" + key +
+                      "' is used without being restricted to the " +
+                      this->getName() +
+                      " interface, which could be a portability "
+                      "issue. Please add [" +
+                      this->getName() + "] after the keyword (i.e. replace '" +
+                      key + "' by '" + key + "[" + this->getName() + "]')");
+      }
       throw_if(!this->package.empty(), "package name already defined");
       throw_if(current == end, "unexpected end of file");
       const auto p = current->value;

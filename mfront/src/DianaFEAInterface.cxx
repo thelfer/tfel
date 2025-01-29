@@ -21,6 +21,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/MFrontUtilities.hxx"
@@ -104,6 +105,17 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "DianaFEAInterface::treatKeyword: " + m);
     };
+    auto check_interface_restriction = [this, &i, &k] {
+      if (i.empty()) {
+        reportWarning("keyword '" + k +
+                      "' is used without being restricted to the " +
+                      this->getName() +
+                      " interface, which could be a portability "
+                      "issue. Please add [" +
+                      this->getName() + "] after the keyword (i.e. replace '" +
+                      k + "' by '" + k + "[" + this->getName() + "]')");
+      }
+    };
     if (!i.empty()) {
       if (std::find(i.begin(), i.end(), this->getName()) != i.end()) {
         const auto keys =
@@ -117,6 +129,9 @@ namespace mfront {
     }
     if ((k == "@DianaFEAGenerateMTestFileOnFailure") ||
         (k == "@GenerateMTestFileOnFailure")) {
+      if (k == "@DianaFEAGenerateMTestFileOnFailure") {
+        check_interface_restriction();
+      }
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(k, current, end));
       return {true, current};

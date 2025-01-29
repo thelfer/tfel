@@ -257,10 +257,8 @@ namespace mfront {
       if (std::find(i.begin(), i.end(), this->getName()) == i.end()) {
         return {false, current};
       }
-      tfel::raise(
-          "LSDYNAInterface::treatKeyword: "
-          "unsupported key '" +
-          key + "'");
+      tfel::raise("LSDYNAInterface::treatKeyword: unsupported key '" + key +
+                  "'");
     }
     return {false, current};
   }  // end of LSDYNAInterface::treatKeyword

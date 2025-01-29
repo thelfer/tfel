@@ -169,10 +169,8 @@ namespace mfront {
       tokens_iterator current,
       const tokens_iterator) {
     if (std::find(i.begin(), i.end(), this->getName()) != i.end()) {
-      tfel::raise(
-          "ZMATInterface::treatKeyword: "
-          "unsupported keyword '" +
-          key + "'");
+      tfel::raise("ZMATInterface::treatKeyword: unsupported keyword '" + key +
+                  "'");
     }
     return {false, current};
   }

@@ -21,6 +21,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
@@ -82,9 +83,21 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "AsterInterface::treatKeyword : " + m);
     };
+    auto check_interface_restriction = [this, &i, &key] {
+      if (i.empty()) {
+        reportWarning("keyword '" + key +
+                      "' is used without being restricted to the " +
+                      this->getName() +
+                      " interface, which could be a portability "
+                      "issue. Please add [" +
+                      this->getName() + "] after the keyword (i.e. replace '" +
+                      key + "' by '" + key + "[" + this->getName() + "]')");
+      }
+    };
     if (!i.empty()) {
       if (std::find(i.begin(), i.end(), this->getName()) != i.end()) {
         throw_if((key != "@AsterGenerateMTestFileOnFailure") &&
+                     (key != "@GenerateMTestFileOnFailure") &&
                      (key != "@AsterCompareToNumericalTangentOperator") &&
                      (key != "@AsterTangentOperatorComparisonCriterium") &&
                      (key != "@AsterTangentOperatorComparisonCriterion") &&
@@ -97,18 +110,24 @@ namespace mfront {
         return {false, current};
       }
     }
-    if (key == "@AsterGenerateMTestFileOnFailure") {
+    if ((key == "@AsterGenerateMTestFileOnFailure") ||
+        (key == "@GenerateMTestFileOnFailure")) {
+      if (key == "@AsterGenerateMTestFileOnFailure") {
+        check_interface_restriction();
+      }
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(key, current, end));
       return {true, current};
     }
     if (key == "@AsterCompareToNumericalTangentOperator") {
+      check_interface_restriction();
       this->compareToNumericalTangentOperator =
           this->readBooleanValue(key, current, end);
       return make_pair(true, current);
     }
     if ((key == "@AsterTangentOperatorComparisonCriterium") ||
         (key == "@AsterTangentOperatorComparisonCriterion")) {
+      check_interface_restriction();
       throw_if(
           !this->compareToNumericalTangentOperator,
           "comparison to tangent operator is not enabled at this stage.\n"
@@ -124,6 +143,7 @@ namespace mfront {
       return {true, current};
     }
     if (key == "@AsterStrainPerturbationValue") {
+      check_interface_restriction();
       throw_if(!this->compareToNumericalTangentOperator,
                "time stepping is not enabled at this stage.\n"
                "Use the @AsterUseTimeSubStepping directive before "
@@ -137,15 +157,18 @@ namespace mfront {
       return {true, current};
     }
     if (key == "@AsterSaveTangentOperator") {
+      check_interface_restriction();
       bd.setAttribute(AsterInterface::saveTangentOperator,
                       this->readBooleanValue(key, current, end), false);
       return {true, current};
     }
     if (key == "@AsterErrorReport") {
+      check_interface_restriction();
       this->errorReport = this->readBooleanValue(key, current, end);
       return {true, current};
     }
     if (key == "@AsterFiniteStrainFormulation") {
+      check_interface_restriction();
       throw_if(bd.getBehaviourType() !=
                    BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR,
                "the '@AsterFiniteStrainFormulation' is only valid "

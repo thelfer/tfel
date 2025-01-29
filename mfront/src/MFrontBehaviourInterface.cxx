@@ -29,11 +29,15 @@ namespace mfront {
 
   std::pair<bool, MFrontBehaviourInterface::tokens_iterator>
   MFrontBehaviourInterface::treatKeyword(BehaviourDescription &,
-                                         const std::string &,
-                                         const std::vector<std::string> &,
-                                         tokens_iterator,
+                                         const std::string &k,
+                                         const std::vector<std::string> &i,
+                                         tokens_iterator current,
                                          const tokens_iterator) {
-    return {};
+    tfel::raise_if(std::find(i.begin(), i.end(), "mfront") != i.end(),
+                   "MFrontMaterialPropertyInterface::treatKeyword: "
+                   "unsupported key '" +
+                       k + "'");
+    return {false, current};
   }  // end of treatKeyword
 
   bool MFrontBehaviourInterface::isBehaviourConstructorRequired(

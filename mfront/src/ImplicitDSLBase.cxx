@@ -1219,6 +1219,20 @@ namespace mfront {
             (d.isExternalStateVariableIncrementName(m))) {
           report_unexpected("variable '" + m + "'");
         }
+        if (d.isAuxiliaryStateVariableName(m)) {
+          const auto& v = d.getAuxiliaryStateVariables().getVariable(m);
+          if (!v.getAttribute<bool>("ComputedByExternalModel", false)) {
+            report_unexpected("variable '" + m + "'");
+          }
+        }
+        for (const auto& v : d.getAuxiliaryStateVariables()) {
+          if (!v.getAttribute<bool>("ComputedByExternalModel", false)) {
+            continue;
+          }
+          if ("d" + v.name == m) {
+            report_unexpected("variable '" + m + "'");
+          }
+        }
       }
       for (const auto& [g, th] : this->mb.getMainVariables()) {
         static_cast<void>(g);
