@@ -38,6 +38,9 @@ namespace std {
 
 namespace mfront {
 
+  const char* const RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables =
+      "RungeKuttaUpdateAuxiliaryStateVariables";
+
   static std::set<std::string> getVariablesUsedDuringIntegration(
       const BehaviourDescription& mb, const RungeKuttaDSLBase::Hypothesis h) {
     const auto& d = mb.getBehaviourData(h);
@@ -96,6 +99,15 @@ namespace mfront {
                    dv.name + "1-this->" + dv.name + "0)*"
             << t << ";\n";
         }
+      }
+    }
+    for (const auto& v : d.getAuxiliaryStateVariables()) {
+      if (!v.getAttribute<bool>("ComputedByExternalModel", false)) {
+        continue;
+      }
+      if (uvs.find(v.name) != uvs.end()) {
+        f << "this->" << v.name << "_ = this->" << v.name << "+(this->d"
+          << v.name << ")*" << t << ";\n";
       }
     }
     for (const auto& v : d.getExternalStateVariables()) {
@@ -210,6 +222,14 @@ namespace mfront {
                                            Gradient::isIncrementKnown(dv));
       }
     }
+    for (const auto& v : d.getAuxiliaryStateVariables()) {
+      if (!v.getAttribute<bool>("ComputedByExternalModel", false)) {
+        continue;
+      }
+      if (uvs.find(v.name) != uvs.end()) {
+        writeExternalVariableCurrentValue2(f, v.name, p, true);
+      }
+    }
     for (const auto& v : d.getExternalStateVariables()) {
       if (uvs.find(v.name) != uvs.end()) {
         writeExternalVariableCurrentValue2(f, v.name, p, true);
@@ -310,7 +330,7 @@ namespace mfront {
   }  // end of RungeKuttaDSLBase::getCodeBlockTemplate
 
   void RungeKuttaDSLBase::treatUpdateAuxiliaryStateVariables() {
-    this->treatCodeBlock(*this, BehaviourData::UpdateAuxiliaryStateVariables,
+    this->treatCodeBlock(*this, RungeKuttaUpdateAuxiliaryStateVariables,
                          &RungeKuttaDSLBase::standardModifier, true, true);
   }  // end of RungeKuttaDSLBase::treatUpdateAuxiliaryStateVarBase
 
@@ -332,6 +352,35 @@ namespace mfront {
         return var + "_";
       }
     }
+    if (d.isAuxiliaryStateVariableName(var)) {
+      const auto& v = d.getAuxiliaryStateVariables().getVariable(var);
+      if (v.getAttribute<bool>("ComputedByExternalModel", false)) {
+        if (addThisPtr) {
+          return "this->" + var + "_";
+        } else {
+          return var + "_";
+        }
+      }
+    }
+    auto treat_variable_rate =
+        [addThisPtr, &var](const VariableDescription& v) -> std::string {
+      if (v.arraySize > 1) {
+        if (addThisPtr) {
+          return "(real(1)/(this->dt)) * (this->" + var + ")";
+        }
+        return "(real(1)/(this->dt)) * " + var;
+      }
+      if (addThisPtr) {
+        return "(this->" + var + ")/(this->dt)";
+      }
+      return "(" + var + ")/(this->dt)";
+    };
+    for (const auto& v : d.getAuxiliaryStateVariables()) {
+      if ((v.getAttribute<bool>("ComputedByExternalModel", false)) &&
+          (var == "d" + v.name)) {
+        return treat_variable_rate(v);
+      }
+    }
     if (var == "dT") {
       this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
           h, var.substr(1));
@@ -345,19 +394,7 @@ namespace mfront {
       this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
           h, var.substr(1));
       const auto& v = d.getExternalStateVariables().getVariable(var.substr(1));
-      if (v.arraySize > 1) {
-        if (addThisPtr) {
-          return "(real(1)/(this->dt)) * (this->" + var + ")";
-        } else {
-          return "(real(1)/(this->dt)) * " + var;
-        }
-      } else {
-        if (addThisPtr) {
-          return "(this->" + var + ")/(this->dt)";
-        } else {
-          return "(" + var + ")/(this->dt)";
-        }
-      }
+      return treat_variable_rate(v);
     }
     if (addThisPtr) {
       return "this->" + var;
@@ -374,6 +411,26 @@ namespace mfront {
         return "this->" + var + "+this->d" + var;
       } else {
         return var + "+d" + var;
+      }
+    }
+    if (d.isAuxiliaryStateVariableName(var)) {
+      const auto& v = d.getAuxiliaryStateVariables().getVariable(var);
+      if (v.getAttribute<bool>("ComputedByExternalModel", false)) {
+        if (addThisPtr) {
+          return "this->" + var + "+this->d" + var;
+        } else {
+          return var + " + d" + var;
+        }
+      }
+    }
+    for (const auto& v : d.getAuxiliaryStateVariables()) {
+      if ((v.getAttribute<bool>("ComputedByExternalModel", false)) &&
+          (var == "d" + v.name)) {
+        if (addThisPtr) {
+          return "(this->" + var + ")/(this->dt)";
+        } else {
+          return "(" + var + ")/(this->dt)";
+        }
       }
     }
     if ((d.isExternalStateVariableIncrementName(var)) || (var == "dT") ||
@@ -619,6 +676,7 @@ namespace mfront {
       const auto& d = this->mb.getBehaviourData(h);
       // creating local variables
       const auto& ivs = d.getStateVariables();
+      const auto& aivs = d.getAuxiliaryStateVariables();
       const auto& evs = d.getExternalStateVariables();
       for (const auto& iv : ivs) {
         for (unsigned short i = 0u; i != n; ++i) {
@@ -637,6 +695,24 @@ namespace mfront {
           this->mb.addLocalVariable(
               h,
               VariableDescription(iv.type, currentVarName, iv.arraySize, 0u));
+        }
+        const auto currentVarName = iv.name + "_";
+        if (getVerboseMode() >= VERBOSE_DEBUG) {
+          auto& log = getLogStream();
+          log << "registring variable '" << currentVarName << "'";
+          if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+            log << " for default hypothesis\n";
+          } else {
+            log << " for the '" << ModellingHypothesis::toString(h)
+                << "' hypothesis\n";
+          }
+        }
+        this->mb.addLocalVariable(
+            h, VariableDescription(iv.type, currentVarName, iv.arraySize, 0u));
+      }
+      for (const auto& iv : aivs) {
+        if (!iv.getAttribute<bool>("ComputedByExternalModel", false)) {
+          continue;
         }
         const auto currentVarName = iv.name + "_";
         if (getVerboseMode() >= VERBOSE_DEBUG) {
@@ -895,7 +971,9 @@ namespace mfront {
 
   void RungeKuttaDSLBase::writeBehaviourUpdateAuxiliaryStateVariables(
       std::ostream& os, const Hypothesis h) const {
-    if (this->mb.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
+    BehaviourDSLCommon::writeBehaviourUpdateAuxiliaryStateVariables(os, h);
+    if (this->mb.hasCode(
+            h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       os << "/*!\n"
          << "* \\brief Update auxiliary state variables at end of integration\n"
          << "*/\n"
@@ -906,7 +984,8 @@ namespace mfront {
          << "using namespace std;\n"
          << "using namespace tfel::math;\n";
       writeMaterialLaws(os, this->mb.getMaterialLaws());
-      os << this->mb.getCode(h, BehaviourData::UpdateAuxiliaryStateVariables)
+      os << this->mb.getCode(
+                h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)
          << '\n'
          << "}\n\n";
     }
@@ -944,7 +1023,7 @@ namespace mfront {
       os << "// update the thermodynamic forces\n"
          << "this->computeFinalThermodynamicForces();\n";
     }
-    if (d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)) {
+    if (d.hasCode(RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
   }  // end of writeBehaviourEulerIntegrator
@@ -1021,7 +1100,7 @@ namespace mfront {
       os << "// update the thermodynamic forces\n"
          << "this->computeFinalThermodynamicForces();\n";
     }
-    if (d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)) {
+    if (d.hasCode(RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
   }  // end of writeBehaviourRK2Integrator
@@ -1580,7 +1659,7 @@ namespace mfront {
       os << "// update the thermodynamic forces\n"
          << "this->computeFinalThermodynamicForces();\n";
     }
-    if (d.hasCode(BehaviourData::UpdateAuxiliaryStateVariables)) {
+    if (d.hasCode(RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
     os << "t += dt_;\n"
@@ -1995,7 +2074,8 @@ namespace mfront {
     if (!this->mb.getMainVariables().empty()) {
       os << "this->computeFinalThermodynamicForces();\n";
     }
-    if (this->mb.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
+    if (this->mb.hasCode(
+            h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
     os << "t += dt_;\n"
@@ -2400,7 +2480,8 @@ namespace mfront {
     if (!this->mb.getMainVariables().empty()) {
       os << "this->computeFinalThermodynamicForces();\n";
     }
-    if (this->mb.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
+    if (this->mb.hasCode(
+            h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
     os << "t += dt_;\n"
@@ -2579,7 +2660,8 @@ namespace mfront {
       os << "// update the thermodynamic forces\n"
          << "this->computeFinalThermodynamicForces();\n";
     }
-    if (this->mb.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
+    if (this->mb.hasCode(
+            h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       os << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
   }  // end of RungeKuttaDSLBase::writeBehaviourRK4Integrator
@@ -2596,15 +2678,16 @@ namespace mfront {
        << "*/\n"
        << "IntegrationResult\n";
     if (this->mb.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
-      os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
+      os << "integrate(const SMFlag smflag,const SMType smt) override final{\n";
     } else {
       if ((this->mb.getBehaviourType() ==
            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
           (this->mb.getBehaviourType() ==
            BehaviourDescription::COHESIVEZONEMODEL)) {
-        os << "integrate(const SMFlag smflag,const SMType smt) override{\n";
+        os << "integrate(const SMFlag smflag,const SMType smt) "
+           << "override final{\n";
       } else {
-        os << "integrate(const SMFlag,const SMType smt) override{\n";
+        os << "integrate(const SMFlag,const SMType smt) override final{\n";
       }
     }
     os << "using namespace std;\n"
@@ -2649,6 +2732,7 @@ namespace mfront {
               "This shall not happen at this stage."
               " Please contact MFront developper to help them debug this.");
     }
+    os << "this->updateAuxiliaryStateVariables();\n";
     for (const auto& v : d.getPersistentVariables()) {
       this->writePhysicalBoundsChecks(os, v, false);
     }
