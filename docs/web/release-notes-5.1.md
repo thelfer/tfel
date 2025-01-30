@@ -52,8 +52,8 @@ TFEL's installation path shall be defined.
 #### Example of usage
 
 ~~~~
-$ tfel-config-5.2.0-dev-release --tfel-home
-TFELHOME_5_2_0_dev_release
+$ tfel-config-5.1.0-dev-release --tfel-home
+TFELHOME_5_1_0_dev_release
 ~~~~
 
 ### `--python-module-suffix` option
