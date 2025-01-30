@@ -199,15 +199,26 @@ namespace mfront {
 
   std::string IsotropicBehaviourDSLBase::flowRuleVariableModifier(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
-    if ((this->mb.isExternalStateVariableName(h, var)) ||
-        (this->mb.isStateVariableName(h, var))) {
+    const auto& d = this->mb.getBehaviourData(h);
+    if ((d.isExternalStateVariableName(var)) ||
+        (d.isStateVariableName(var))) {
       if (addThisPtr) {
         return "this->" + var + "_";
       } else {
         return var + "_";
       }
     }
-    if ((this->mb.isExternalStateVariableIncrementName(h, var)) ||
+    if (d.isAuxiliaryStateVariableName(var)){
+      const auto& v = d.getAuxiliaryStateVariables().getVariable(var);
+      if (v.getAttribute<bool>("ComputedByExternalModel", false)) {
+        if (addThisPtr) {
+          return "(this->" + var + " + (this->theta) * (this->d" + var + "))";
+        } else {
+          return "(" + var + " + (this->theta) * d" + var + ")";
+        }
+      }
+    }
+    if ((d.isExternalStateVariableIncrementName(var)) ||
         (var == "dT")) {
       this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
           h, var.substr(1));
