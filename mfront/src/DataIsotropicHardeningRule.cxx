@@ -31,9 +31,13 @@ namespace mfront::bbrick {
     const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto dR = "d" + R + "_ddp" + fid;
+    const auto f = "mfront_interpolation_value_" + R ;
+    const auto df = "mfront_interpolation_derivative_value_" + R;
     bd.reserveName(uh, Rel);
     bd.reserveName(uh, R);
     bd.reserveName(uh, dR);
+    bd.reserveName(uh, f);
+    bd.reserveName(uh, df);
   }  // end of initialize
 
   std::vector<OptionDescription> DataIsotropicHardeningRule::getOptions()
@@ -147,14 +151,18 @@ namespace mfront::bbrick {
       os << v.second;
       m += "return {stress{" + os.str() + "}, stress{0}};\n";
     } else {
+      const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
+      const auto f = "mfront_interpolation_value_" + R;
+      const auto df = "mfront_interpolation_derivative_value_" + R ;
       m += writeLinearInterpolationValues(*this, args);
-      m += "return ";
+      m += "const auto [" + f + ", " + df + "] =";
       m += "tfel::math::computeLinearInterpolationAndDerivative<";
       m += etype_value;
       m += ">(";
       m += args.abscissae_name + ", ";
       m += args.ordinates_name + ", ";
       m += "mfront_arg_p);\n";
+      m += "return {" + f + ", (this->theta) * " + df + "};\n";
     }
     m += "}\n";
     bd.appendToIncludes("#include \"TFEL/Math/LinearInterpolation.hxx\"");

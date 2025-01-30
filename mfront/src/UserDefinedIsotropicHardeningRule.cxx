@@ -209,7 +209,7 @@ namespace mfront::bbrick {
     } else {
       const auto dR = std::dynamic_pointer_cast<tfel::math::Evaluator>(
           this->R.differentiate("p"));
-      c += dR->getCxxFormula(m);
+      c += "(this->theta) * (" + dR->getCxxFormula(m) + ")";
     }
     c += ";\n";
     return c;
