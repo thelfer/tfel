@@ -50,6 +50,7 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
     this->template test5<real, stress, length>();
     this->template test6<real, stress, length>();
     this->template test7<real, stress, length>();
+    this->template test8<real, stress, length>();
     return this->result;
   }
 
@@ -396,6 +397,34 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       // std::cout << (E2-E3).getValue() << " "<< value << '\n';
       TFEL_TESTS_ASSERT(my_abs(nuTI_DS_2 - nuTI_DS_3) < eps);
     }
+  }
+  
+  
+  private:
+  template <typename real, typename stress, typename length>
+  void test8() {
+      constexpr auto eps = 100 * tfel::math::constexpr_fct::sqrt(
+                                     std::numeric_limits<real>::epsilon());
+      using namespace tfel::material::homogenization::elasticity;
+      const auto young = stress{1e9};
+      const auto seps=young*eps;
+      const auto nu = real{0.3};
+      const auto young_i = stress{150e9};
+      const auto nu_i = real{0.2};
+      const auto a = length{0.4};
+      const auto b = length{0.3};
+      const auto c = length{0.2};
+      const auto f = real{0.5};
+      const tfel::math::tvector<3u, real> n_a = {0., 0., 1.};
+      //    const tfel::math::tvector<3u,real> n_b = {1.,0.,0.};
+      // Self Consistent Scheme
+      const auto pair =
+        computeSphereSelfConsistentScheme<real, stress>(young, nu, f, young_i, nu_i);
+    const auto ESphere_SC = std::get<0>(pair);
+    const auto nuSphere_SC = std::get<1>(pair);
+
+      //TFEL_TESTS_ASSERT(my_abs(ESphere_SC - ESphere_) < seps);
+      //TFEL_TESTS_ASSERT(my_abs(nuSphere_SC - nuSphere_) < seps);
   }
 
 };  // end of struct LinearHomogenizationSchemesTest
