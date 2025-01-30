@@ -256,6 +256,12 @@ namespace mfront {
         if (m == "dt") {
           report_unexpected("the time increment 'dt'");
         }
+        if (d.isAuxiliaryStateVariableName(m)) {
+          const auto& v = d.getAuxiliaryStateVariables().getVariable(m);
+          if (!v.getAttribute<bool>("ComputedByExternalModel", false)) {
+            report_unexpected("variable '" + m + "'");
+          }
+        }
         if ((this->mb.isGradientName(m)) ||
             (this->mb.isGradientIncrementName(m)) ||
             (this->mb.isThermodynamicForceName(m)) ||

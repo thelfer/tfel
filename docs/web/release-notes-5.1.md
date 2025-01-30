@@ -149,7 +149,9 @@ contains:
 - the strain increment `deto`,
 - the stress `sig`,
 - the `theta` parameter,
-- the increment of the external state variable.
+- the increment of the external state variable,
+- an auxiliary state variable not computed by an external point-wise
+  model (see the `@Model` keyword).
 
 #### Warnings related to the convergence threshold
 
@@ -298,6 +300,10 @@ The following libraries are available: `Config`, `Exception`,
 ~~~~
 
 # Issues fixed
+
+## Issue 702:  [mfront] Add a warning if an auxiliary state variable not computed by an external point-wise model is used in a `@FlowRule` block in isotropic DSLs
+
+For more details, see <https://github.com/thelfer/tfel/issues/702>
 
 ￼
 ## Issue #697: [cyrano] Add a warning when the maximum number of sub steppings is too high

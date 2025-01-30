@@ -90,4 +90,5 @@ mfront_unit_test(WarningTest29            WARNING_ERROR WILL_FAIL)
 mfront_unit_test(WarningTest30            WARNING_ERROR WILL_FAIL)
 mfront_unit_test(WarningTest31            WARNING_ERROR WILL_FAIL)
 mfront_unit_test(WarningTest32            WARNING_ERROR WILL_FAIL)
-
+mfront_unit_test(WarningTest33            WARNING_ERROR WILL_FAIL)
+mfront_unit_test(WarningTest34            WARNING_ERROR)
