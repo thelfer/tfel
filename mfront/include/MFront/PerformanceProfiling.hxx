@@ -1,3 +1,4 @@
+
 /*!
  * \file  mfront/include/MFront/PerformanceProfiling.hxx
  * \brief
@@ -11,11 +12,12 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONTPERFORMANCEPROFILING_HXX
-#define LIB_MFRONTPERFORMANCEPROFILING_HXX
+#ifndef LIB_MFRONT_PERFORMANCEPROFILING_HXX
+#define LIB_MFRONT_PERFORMANCEPROFILING_HXX
 
 #include <iosfwd>
 #include <string>
+#include <string_view>
 
 namespace mfront {
 
@@ -27,9 +29,9 @@ namespace mfront {
    * \param[in]  s  : time temporary variable suffix
    */
   void writeStandardPerformanceProfiling(std::ostream&,
-                                         const std::string&,
-                                         const std::string&,
-                                         const std::string& = "");
+                                         std::string_view,
+                                         std::string_view,
+                                         std::string_view = "");
   /*!
    * \brief : an helper function writing the beginning of a
    * performance measurement
@@ -39,9 +41,9 @@ namespace mfront {
    * \param[in]  s  : time temporary variable suffix
    */
   void writeStandardPerformanceProfilingBegin(std::ostream&,
-                                              const std::string&,
-                                              const std::string&,
-                                              const std::string& = "");
+                                              std::string_view,
+                                              std::string_view,
+                                              std::string_view = "");
   /*!
    * \brief : an helper function writing the end of a
    * performance measurement
@@ -51,4 +53,4 @@ namespace mfront {
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONTPERFORMANCEPROFILING_HXX */
+#endif /* LIB_MFRONT_PERFORMANCEPROFILING_HXX */

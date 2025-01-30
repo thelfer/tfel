@@ -1,0 +1,10 @@
+@DSL DefaultModel{
+  parameters_as_static_variables: true
+};
+@Model ExternalModel2;
+
+@AuxiliaryStateVariable real x;
+
+@Integrator {
+  x *= (2 - dt) / (2 + dt);
+}

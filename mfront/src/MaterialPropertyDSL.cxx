@@ -245,10 +245,13 @@ namespace mfront {
   }  // end of doPedanticChecks
 
   void MaterialPropertyDSL::endsInputFileProcessing() {
+  }  // end of endsInputFileProcessing
+
+  void MaterialPropertyDSL::makeConsistencyChecks() const{
     if (getPedanticMode()) {
       this->doPedanticChecks();
     }
-  }  // end of endsInputFileProcessing
+  } // end of makeConsistencyChecks
 
   void MaterialPropertyDSL::registerNewCallBack(const std::string& keyword,
                                                 const MemberFuncPtr ptr) {
@@ -924,6 +927,7 @@ namespace mfront {
       const std::map<std::string, std::string>& s) {
     this->importFile(fileName_, ecmds, s);
     this->endsInputFileProcessing();
+    this->makeConsistencyChecks();
     for (const auto& i : this->interfaces) {
       i.second->getTargetsDescription(this->td, this->md);
     }
@@ -944,8 +948,10 @@ namespace mfront {
   }  // end of disableQuantitiesUsageIfNotAlreadySet
 
   void MaterialPropertyDSL::addExternalMFrontFile(
-      const std::string& f, const std::vector<std::string>& vinterfaces) {
-    this->md.addExternalMFrontFile(f, vinterfaces);
+      const std::string& f,
+      const std::vector<std::string>& vinterfaces,
+      const tfel::utilities::DataMap& dsl_options) {
+    this->md.addExternalMFrontFile(f, vinterfaces, dsl_options);
   }  // end of addExternalMFrontFile
 
   const MaterialKnowledgeDescription&
@@ -974,7 +980,8 @@ namespace mfront {
     }
     //! generating sources du to external material properties and models
     for (const auto& em : this->md.getExternalMFrontFiles()) {
-      this->callMFront(em.second, {em.first});
+      this->callMFront({em.first}, std::get<0>(em.second),
+                       std::get<1>(em.second));
     }
     // calling interfaces
     for (const auto& i : this->interfaces) {

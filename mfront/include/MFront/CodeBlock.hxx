@@ -34,6 +34,8 @@ namespace mfront {
         std::vector<VariableDescription>,
         std::vector<std::pair<VariableDescription, VariableDescription>>>;
     //! \brief standard attribute name
+    static const char* const safe;
+    //! \brief standard attribute name
     static const char* const requires_jacobian_decomposition;
     //! \brief standard attribute name
     static const char* const uses_get_partial_jacobian_invert;
@@ -117,6 +119,15 @@ namespace mfront {
    */
   template <typename T>
   T getAttribute(const CodeBlock&, const std::string&, const T&);
+
+  /*!
+   * \return if the code block has been declare safe, i.e. all warnings shall be
+   * ignored.
+   * \note if the ignoreSafe returns `true`, this method always returns
+   * `false`.
+   * \note if the safe attribute is not defined, this method returns false.
+   */
+  MFRONT_VISIBILITY_EXPORT bool isSafe(const CodeBlock&) noexcept;
 
 }  // end of namespace mfront
 

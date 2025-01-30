@@ -12,12 +12,14 @@
  * project under specific licensing conditions.
  */
 
+#include <vector>
 #include <sstream>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/MFrontLogStream.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/IsotropicBehaviourDSLBase.hxx"
 
@@ -25,26 +27,27 @@ namespace mfront {
 
   IsotropicBehaviourDSLBase::IsotropicBehaviourDSLBase(const DSLOptions& opts)
       : BehaviourDSLBase<IsotropicBehaviourDSLBase>(opts) {
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->reserveName("NewtonIntegration");
     // main variables
     this->mb.declareAsASmallStrainStandardBehaviour();
-    // material symmetry
-    this->mb.setSymmetryType(mfront::ISOTROPIC);
-    this->mb.setElasticSymmetryType(mfront::ISOTROPIC);
-    // parameters
-    this->reserveName("epsilon");
-    this->reserveName("\u03B5");
-    this->reserveName("theta");
-    this->reserveName("\u03B8");
-    this->reserveName("iterMax");
     // intermediate temperature
     const auto* const Topt = BehaviourDescription::
         automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
     if (this->mb.getAttribute<bool>(Topt)) {
+      // temperature at the midle of the time step
       const auto T_ = VariableDescription("temperature", "T_", 1u, 0u);
       this->mb.addLocalVariable(h, T_);
     }
+    // material symmetry
+    this->mb.setSymmetryType(mfront::ISOTROPIC);
+    this->mb.setElasticSymmetryType(mfront::ISOTROPIC);
+    // parameters
+    this->mb.registerMemberName(h, "epsilon");
+    this->mb.registerMemberName(h, "\u03B5");
+    this->mb.registerMemberName(h, "theta");
+    this->mb.registerMemberName(h, "\u03B8");
+    this->mb.registerMemberName(h, "iterMax");
     // Call Back
     this->registerNewCallBack(
         "@UsableInPurelyImplicitResolution",
@@ -81,7 +84,7 @@ namespace mfront {
     // a defaut version of the prediction operator is always provided
     this->mb.setAttribute(h, BehaviourData::hasPredictionOperator, true);
     this->mb.setIntegrationScheme(BehaviourDescription::SPECIFICSCHEME);
-  }  // end of IsotropicBehaviourDSLBase::IsotropicBehaviourDSLBase
+  }  // end of IsotropicBehaviourDSLBase
 
   BehaviourDSLDescription
   IsotropicBehaviourDSLBase::getBehaviourDSLDescription() const {
@@ -102,7 +105,7 @@ namespace mfront {
     d.allowStiffnessTensorDefinition = false;
     d.minimalMFrontFileBody = "@FlowRule{}\n\n";
     return d;
-  }  // end of IsotropicBehaviourDSLBase::getBehaviourDSLDescription
+  }  // end of getBehaviourDSLDescription
 
   void IsotropicBehaviourDSLBase::getSymbols(
       std::map<std::string, std::string>& symbols,
@@ -118,16 +121,14 @@ namespace mfront {
         getIncrementSymbol(symbols, mv.first);
       }
     }
-    if (n != BehaviourData::FlowRule) {
-      mfront::getIncrementSymbols(symbols, d.getExternalStateVariables());
-      mfront::addSymbol(symbols, "\u0394t", "dt");
-    }
-  }  // end of IsotropicBehaviourDSLBase::getSymbols
+    mfront::getIncrementSymbols(symbols, d.getExternalStateVariables());
+    mfront::addSymbol(symbols, "\u0394t", "dt");
+  }  // end of getSymbols
 
   double IsotropicBehaviourDSLBase::getDefaultThetaValue() const { return 0.5; }
 
   void IsotropicBehaviourDSLBase::treatTheta() {
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->checkNotEndOfFile("IsotropicBehaviourDSLBase::treatTheta",
                             "Cannot read theta value.");
     const auto v = tfel::utilities::convert<double>(this->current->value);
@@ -142,16 +143,37 @@ namespace mfront {
         h, VariableDescription("real", "\u03B8", "theta", 1u, 0u),
         BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h, "theta", v);
-  }  // end of IsotropicBehaviourDSLBase::treatTheta
+  }  // end of treatTheta
 
   void IsotropicBehaviourDSLBase::treatEpsilon() {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    const auto safe = this->readSafeOptionTypeIfPresent();
     this->checkNotEndOfFile("IsotropicBehaviourDSLBase::treatEpsilon",
                             "cannot read epsilon value");
     const auto epsilon = tfel::utilities::convert<double>(this->current->value);
     if (epsilon < 0) {
       this->throwRuntimeError("IsotropicBehaviourDSLBase::treatEpsilon",
                               "Epsilon value must be positive");
+    }
+    if ((!safe) && (epsilon < 1e-18)) {
+      auto converter = std::ostringstream{};
+      converter << std::scientific << epsilon;
+      reportWarning(
+          "the choosen default value for the convergence threshold could be "
+          "too stringent (" +
+          converter.str() +
+          "). You may want to consider a more stringent value (1e-14 "
+          "is generally a good choice).");
+    }
+    if ((!safe) && (epsilon > 1e-12)) {
+      auto converter = std::ostringstream{};
+      converter << std::scientific << epsilon;
+      reportWarning(
+          "the choosen default value for the convergence threshold could be "
+          "too loose (" +
+          converter.str() +
+          "). You may want to consider a more stringent value (1e-14 "
+          "is generally a good choice).");
     }
     ++(this->current);
     this->readSpecifiedToken("IsotropicBehaviourDSLBase::treatEpsilon", ";");
@@ -173,7 +195,7 @@ namespace mfront {
     this->mb.addParameter(h, VariableDescription("ushort", "iterMax", 1u, 0u),
                           BehaviourData::ALREADYREGISTRED);
     this->mb.setParameterDefaultValue(h, "iterMax", iterMax);
-  }  // end of IsotropicBehaviourDSLBase::treatIterMax
+  }  // end of treatIterMax
 
   std::string IsotropicBehaviourDSLBase::flowRuleVariableModifier(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
@@ -194,15 +216,55 @@ namespace mfront {
       return "this->" + var;
     }
     return var;
-  }  // end of IsotropicBehaviourDSLBase::flowRuleVariableModifier
+  }  // end of flowRuleVariableModifier
+
+  void IsotropicBehaviourDSLBase::checkFlowRule(std::string_view n) const {
+    auto warnings = std::vector<std::string>{};
+    for (const auto h : this->mb.getDistinctModellingHypotheses()) {
+      auto report = [&warnings, h](const std::string& msg) {
+        warnings.push_back(
+            msg + ". This warning can be disabled by using the <safe> option.");
+      };
+      auto report_unexpected = [&report, &n](std::string_view v) {
+        report("using " + std::string{v} + " in the body of the '" +
+               std::string{n} +
+               "' code block is unexpected and can be a mistake");
+      };
+      const auto& d = this->mb.getBehaviourData(h);
+      const auto& c = d.getCodeBlock(std::string{n});
+      if (isSafe(c)) {
+        continue;
+      }
+      for (const auto& m : c.members) {
+        if (m == "theta") {
+          report_unexpected("the 'theta' parameter");
+        }
+        if (m == "iterMax") {
+          report_unexpected("the 'iterMax' parameter");
+        }
+        if (m == "dt") {
+          report_unexpected("the time increment 'dt'");
+        }
+        if ((this->mb.isGradientName(m)) ||
+            (this->mb.isGradientIncrementName(m)) ||
+            (this->mb.isThermodynamicForceName(m)) ||
+            (d.isIntegrationVariableIncrementName(m))) {
+          report_unexpected("variable '" + m + "'");
+        }
+      }
+    }
+    reportWarning(warnings);
+  }
 
   void IsotropicBehaviourDSLBase::treatFlowRule() {
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
-        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
-          return this->flowRuleVariableModifier(h, sv, b);
-        };
-    this->treatCodeBlock(BehaviourData::FlowRule, m, true, false);
-  }  // end of IsotropicBehaviourDSLBase::treatFlowRule
+        modifier =
+            [this](const Hypothesis h, const std::string& sv, const bool b) {
+              return this->flowRuleVariableModifier(h, sv, b);
+            };
+    this->treatCodeBlock(BehaviourData::FlowRule, modifier, true, false);
+    this->checkFlowRule(BehaviourData::FlowRule);
+  }  // end of treatFlowRule
 
   void IsotropicBehaviourDSLBase::treatExternalStateVariable() {
     VariableDescriptionContainer ev;
@@ -222,7 +284,7 @@ namespace mfront {
       this->mb.setCode(elem, BehaviourData::BeforeInitializeLocalVariables, ib,
                        BehaviourData::CREATEORAPPEND, BehaviourData::AT_END);
     }
-  }  // end of IsotropicBehaviourDSLBase::treatExternalStateVariable
+  }  // end of treatExternalStateVariable
 
   void IsotropicBehaviourDSLBase::completeVariableDeclaration() {
     using namespace tfel::glossary;
@@ -252,6 +314,18 @@ namespace mfront {
       log << "IsotropicBehaviourDSLBase::completeVariableDeclaration : begin\n";
     }
     BehaviourDSLCommon::completeVariableDeclaration();
+    // intermediate temperature
+    const auto* const Topt = BehaviourDescription::
+        automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
+    if (this->mb.getAttribute<bool>(Topt)) {
+      CodeBlock initLocalVars;
+      initLocalVars.code = "this->T_ = this->T + (" + this->getClassName() +
+                           "::theta) * (this->dT);\n";
+      this->mb.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                       BehaviourData::BeforeInitializeLocalVariables,
+                       initLocalVars, BehaviourData::CREATEORAPPEND,
+                       BehaviourData::BODY);
+    }
     add_lv(this->mb, "stress", "\u03BB", "lambda",
            Glossary::FirstLameCoefficient,
            "first Lamé coefficient at t+theta*dt");
@@ -289,6 +363,11 @@ namespace mfront {
           h, VariableDescription("real", "\u03B5", "epsilon", 1u, 0u),
           BehaviourData::ALREADYREGISTRED);
       this->mb.setParameterDefaultValue(h, "epsilon", 1.e-8);
+      reportWarning(
+          "using the default value for the convergence threshold. "
+          "This value is generally considered too loose. You may "
+          "want to consider a more stringent value (1e-14 is a good choice). "
+          "See the `@Epsilon` keyword for details");
     }
     if (!this->mb.hasParameter(h, "iterMax")) {
       unsigned short iterMax = 100u;
@@ -300,30 +379,19 @@ namespace mfront {
       auto& log = getLogStream();
       log << "IsotropicBehaviourDSLBase::completeVariableDeclaration: end\n";
     }
-  }  // end of IsotropicBehaviourDSLBase::completeVariableDeclaration
+  }  // end of completeVariableDeclaration
 
   void IsotropicBehaviourDSLBase::endsInputFileProcessing() {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       auto& log = getLogStream();
       log << "IsotropicBehaviourDSLBase::endsInputFileProcessing: begin\n";
     }
-    const auto* const Topt = BehaviourDescription::
-        automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
-    if (this->mb.getAttribute<bool>(Topt)) {
-      // temperature at the midle of the time step
-      CodeBlock initLocalVars;
-      initLocalVars.code = "this->T_ = this->T + (" + this->getClassName() +
-                           "::theta) * (this->dT);\n";
-      this->mb.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
-                       BehaviourData::BeforeInitializeLocalVariables,
-                       initLocalVars, BehaviourData::CREATEORAPPEND,
-                       BehaviourData::BODY);
-    }
+    BehaviourDSLCommon::endsInputFileProcessing();
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       auto& log = getLogStream();
       log << "IsotropicBehaviourDSLBase::endsInputFileProcessing: end\n";
     }
-  }  // end of IsotropicBehaviourDSLBase::endsInputFileProcessing
+  }  // end of endsInputFileProcessing
 
   IsotropicBehaviourDSLBase::~IsotropicBehaviourDSLBase() = default;
 

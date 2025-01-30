@@ -54,6 +54,7 @@ namespace mfront {
     void overrideByAParameter(const std::string&, const double) override;
     std::map<std::string, double> getOverridenParameters() const override;
     void endsInputFileProcessing() override;
+    void makeConsistencyChecks() const override;
     void generateOutputFiles() override;
     void setInterfaces(const std::set<std::string>&) override;
     //! \brief destructor
@@ -63,7 +64,8 @@ namespace mfront {
    protected:
     //
     void addExternalMFrontFile(const std::string&,
-                               const std::vector<std::string>&) override;
+                               const std::vector<std::string>&,
+                               const tfel::utilities::DataMap&) override;
     DSLOptions buildDSLOptions() const override;
     void disableQuantitiesUsageIfNotAlreadySet() override;
     bool useQt() const override;

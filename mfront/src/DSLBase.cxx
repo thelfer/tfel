@@ -32,6 +32,7 @@
 
 #include "MFront/MFront.hxx"
 #include "MFront/PedanticMode.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/SupportedTypes.hxx"
 #include "MFront/DSLBase.hxx"
 #include "MFront/SearchPathsHandler.hxx"
@@ -305,6 +306,11 @@ namespace mfront {
   }  // end of getTargetsDescription
 
   DSLBase::~DSLBase() = default;
+
+  bool DSLBase::readSafeOptionTypeIfPresent() {
+    return ::mfront::readSafeOptionTypeIfPresent(this->current,
+                                                 this->tokens.end());
+  }  // end of readSafeOptionTypeIfPresent
 
   void DSLBase::readNextBlock(CodeBlock& res1,
                               CodeBlock& res2,
@@ -950,14 +956,15 @@ namespace mfront {
     }
   }  // end of treatTFELLibraries
 
-  void DSLBase::callMFront(const std::vector<std::string>& interfaces,
-                           const std::vector<std::string>& files) {
+  void DSLBase::callMFront(const std::vector<std::string>& files,
+                           const std::vector<std::string>& interfaces,
+                           const tfel::utilities::DataMap& dsl_options) {
     MFront m;
     for (const auto& i : interfaces) {
       m.setInterface(i);
     }
     for (const auto& f : files) {
-      mergeTargetsDescription(this->td, m.treatFile(f), false);
+      mergeTargetsDescription(this->td, m.treatFile(f, dsl_options), false);
     }
   }  // end of callMFront
 
@@ -978,7 +985,7 @@ namespace mfront {
     this->readSpecifiedToken("DSLBase::treatMfront", "}");
     this->readSpecifiedToken("DSLBase::treatMfront", ";");
     for (const auto& f : vfiles) {
-      this->addExternalMFrontFile(f, vinterfaces);
+      this->addExternalMFrontFile(f, vinterfaces, {});
     }
   }  // end of treatMfront
 
@@ -1074,7 +1081,7 @@ namespace mfront {
           ".hxx\"");
       this->addMaterialLaw(mname);
       this->atds.push_back(std::move(t));
-      this->addExternalMFrontFile(path, {"mfront"});
+      this->addExternalMFrontFile(path, {"mfront"}, {});
     } catch (std::exception& e) {
       this->throwRuntimeError(
           "DSLBase::handleMaterialPropertyDescription",
@@ -1098,9 +1105,10 @@ namespace mfront {
 
   void DSLBase::treatLonelySeparator() {
     if (getPedanticMode()) {
-      getLogStream() << this->fd.fileName << ":" << this->current->line << ":"
-                     << this->current->offset
-                     << ": warning: extra ‘;’ [-pedantic]\n";
+      auto msg = std::ostringstream{};
+      msg << this->fd.fileName << ":" << this->current->line << ":"
+          << this->current->offset << ": warning: extra ‘;’ [-pedantic]\n";
+      reportWarning(msg.str());
     }
   }  // end of treatLonelySperator
 
@@ -1361,6 +1369,9 @@ namespace mfront {
     for (auto& l : this->td.libraries) {
       l.ldflags.insert(l.ldflags.end(), this->ldflags.begin(),
                        this->ldflags.end());
+      l.sources.insert(l.sources.end(),
+                       this->additional_libraries_sources.begin(),
+                       this->additional_libraries_sources.end());
       l.link_libraries.insert(l.link_libraries.end(),
                               this->link_libraries.begin(),
                               this->link_libraries.end());

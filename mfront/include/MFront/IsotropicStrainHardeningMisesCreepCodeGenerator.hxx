@@ -35,8 +35,6 @@ namespace mfront {
     ~IsotropicStrainHardeningMisesCreepCodeGenerator() override;
 
    protected:
-    void writeBehaviourParserSpecificInitializeMethodPart(
-        std::ostream&, const Hypothesis) const override;
     void writeBehaviourParserSpecificMembers(std::ostream&,
                                              const Hypothesis) const override;
     void writeBehaviourIntegrator(std::ostream&,

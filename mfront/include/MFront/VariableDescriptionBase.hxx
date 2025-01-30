@@ -1,3 +1,4 @@
+
 /*!
  * \file   mfront/include/MFront/VariableDescriptionBase.hxx
  * \brief  This file declares the VariableDescriptionBase class
@@ -80,16 +81,18 @@ namespace mfront {
      *  this field holds the type contained by the array.
      */
     std::string type;
-    //! symbolic representation of the variable
+    //! \brief symbolic representation of the variable
     std::string symbolic_form;
-    //! name of the variable
+    //! \brief name of the variable
     std::string name;
-    //! description
+    //! \brief description
     std::string description;
-    //! if the variable has been declared as an array, this field
-    //  contains a value greater than 1
+    /*!
+     * \brief if the variable has been declared as an array, this field
+     * contains a value greater than 1
+     */
     unsigned short arraySize;
-    //! line at wich the variable has been declared
+    //! \brief line at wich the variable has been declared
     size_t lineNumber;
   };  // end of struct VariableDescriptionBase
 

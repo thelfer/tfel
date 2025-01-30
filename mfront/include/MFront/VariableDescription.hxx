@@ -193,10 +193,20 @@ namespace mfront {
      */
     void setGlossaryName(const std::string&);
     /*!
+     * \brief associate a new glossary name to the variable
+     * \param[in] g: glossary name
+     */
+    void resetGlossaryName(const std::string&);
+    /*!
      * \brief associate an entry name to the variable
      * \param[in] e: entry name
      */
     void setEntryName(const std::string&);
+    /*!
+     * \brief associate a new entry name to the variable
+     * \param[in] e: entry name
+     */
+    void resetEntryName(const std::string&);
     //! \return true if the variable has a glossary name
     bool hasGlossaryName() const;
     //! \return true if the variable has a glossary name

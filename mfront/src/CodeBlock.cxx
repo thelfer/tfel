@@ -13,9 +13,11 @@
 
 #include "TFEL/Raise.hxx"
 #include "MFront/CodeBlock.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 
 namespace mfront {
 
+  const char* const CodeBlock::safe = "safe";
   const char* const CodeBlock::requires_jacobian_decomposition =
       "requires_jacobian_decomposition";
   const char* const CodeBlock::uses_get_partial_jacobian_invert =
@@ -53,5 +55,12 @@ namespace mfront {
   CodeBlock& CodeBlock::operator=(CodeBlock&&) = default;
   CodeBlock& CodeBlock::operator=(const CodeBlock&) = default;
   CodeBlock::~CodeBlock() = default;
+
+  bool isSafe(const CodeBlock& cb) noexcept {
+    if (ignoreSafeOptionForWarnings()) {
+      return false;
+    }
+    return getAttribute<bool>(cb, CodeBlock::safe, false);
+  }  // end of isSafe
 
 }  // end of namespace mfront

@@ -21,6 +21,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/MFrontUtilities.hxx"
@@ -288,11 +289,23 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "CalculiXInterface::treatKeyword: " + m);
     };
+    auto check_interface_restriction = [&i, &k] {
+      if (i.empty()) {
+        reportWarning(
+            "keyword '" + k +
+            "' is used without being restricted "
+            "to the `generic` interface, which could be a portability "
+            "issue. Please add [generic] after the "
+            "keyword (i.e. replace '" +
+            k + "' by '" + k + "[generic]')");
+      }
+    };
     if (!i.empty()) {
       if (std::find(i.begin(), i.end(), this->getName()) != i.end()) {
         const auto keys =
             std::vector<std::string>{"@CalculiXFiniteStrainStrategy",
-                                     "@CalculiXGenerateMTestFileOnFailure"};
+                                     "@CalculiXGenerateMTestFileOnFailure",
+                                     "@GenerateMTestFileOnFailure"};
         throw_if(std::find(keys.begin(), keys.end(), k) == keys.end(),
                  "unsupported key '" + k + "'");
       } else {
@@ -300,6 +313,7 @@ namespace mfront {
       }
     }
     if (k == "@CalculiXFiniteStrainStrategy") {
+      check_interface_restriction();
       throw_if(bd.hasAttribute(CalculiXInterface::finiteStrainStrategy),
                "a finite strain strategy has already been defined");
       throw_if(current == end, "unexpected end of file");
@@ -311,7 +325,11 @@ namespace mfront {
       checkFiniteStrainStrategyDefinitionConsistency(bd, fs);
       bd.setAttribute(CalculiXInterface::finiteStrainStrategy, fs, false);
       return {true, current};
-    } else if (k == "@CalculiXGenerateMTestFileOnFailure") {
+    } else if ((k == "@CalculiXGenerateMTestFileOnFailure") ||
+               (k == "@GenerateMTestFileOnFailure")) {
+      if (k == "@CalculiXGenerateMTestFileOnFailure") {
+        check_interface_restriction();
+      }
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(k, current, end));
       return {true, current};

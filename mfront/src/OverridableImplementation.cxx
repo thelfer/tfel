@@ -81,7 +81,9 @@ namespace mfront {
     return this->source;
   }  // end of getSourceFilePath
 
-  const std::map<std::string, std::vector<std::string>, std::less<>>&
+  const std::map<std::string,
+                 std::tuple<std::vector<std::string>, tfel::utilities::DataMap>,
+                 std::less<>>&
   OverridableImplementation::getExternalMFrontFiles() const {
     return this->dsl->getMaterialKnowledgeDescription()
         .getExternalMFrontFiles();

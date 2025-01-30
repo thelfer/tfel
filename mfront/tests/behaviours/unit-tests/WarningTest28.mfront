@@ -1,0 +1,19 @@
+@DSL Implicit;
+@Behaviour WarningTest28;
+@Description {
+  "print a warning for using the increment "
+  "of an internal state variable in @ComputeFinalStress"
+}
+
+@Epsilon 1e-15;
+
+@ComputeFinalStress {
+  constexpr auto id = Stensor::Id();
+  constexpr auto l = computeLambda(150e9, 0.3);
+  constexpr auto mu = computeMu(150e9, 0.3);
+  sig = yg * tr(eel) * Id + 2 * mu * (eel + deel);
+}
+
+@Integrator {
+  feel -= deto;
+}

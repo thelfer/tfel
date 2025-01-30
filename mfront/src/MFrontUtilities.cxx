@@ -21,6 +21,7 @@
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/VariableBoundsDescription.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontUtilities.hxx"
 
 namespace mfront {
@@ -218,5 +219,23 @@ namespace mfront {
     throw_if(p != pe, "invalid variable name '" + n + "'");
     return std::make_tuple(r, true, i);
   }  // end of extractVariableNameAndArrayPosition
+
+  bool readSafeOptionTypeIfPresent(
+      tfel::utilities::CxxTokenizer::const_iterator& p,
+      const tfel::utilities::CxxTokenizer::const_iterator pe) {
+    using tfel::utilities::CxxTokenizer;
+    const auto m = "readSafeOptionTypeIfPresent";
+    CxxTokenizer::checkNotEndOfLine(m, p, pe);
+    if (p->value != "<") {
+      return false;
+    }
+    CxxTokenizer::readSpecifiedToken(m, "<", p, pe);
+    CxxTokenizer::readSpecifiedToken(m, "safe",p,pe);
+    CxxTokenizer::readSpecifiedToken(m, ">", p, pe);
+    if (ignoreSafeOptionForWarnings()) {
+      return false;
+    }
+    return true;
+  }
 
 }  // end of namespace mfront

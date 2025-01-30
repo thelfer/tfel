@@ -17,6 +17,7 @@
 #include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/System/System.hxx"
 
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/FileDescription.hxx"
@@ -74,6 +75,17 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "AbaqusExplicitInterface::treatKeyword: " + m);
     };
+    auto check_interface_restriction = [this, &i, &key] {
+      if (i.empty()) {
+        reportWarning("keyword '" + key +
+                      "' is used without being restricted to the " +
+                      this->getName() +
+                      " interface, which could be a portability "
+                      "issue. Please add [" +
+                      this->getName() + "] after the keyword (i.e. replace '" +
+                      key + "' by '" + key + "[" + this->getName() + "]')");
+      }
+    };
     if (!i.empty()) {
       if (std::find(i.begin(), i.end(), this->getName()) == i.end()) {
         return {false, current};
@@ -85,7 +97,12 @@ namespace mfront {
                "unsupported key '" +
                    key + "'");
     }
+    const auto keys = AbaqusInterfaceBase::getCommonKeywords();
+    if (std::find(keys.begin(), keys.end(), key) != keys.end()) {
+      check_interface_restriction();
+    }
     if (key == "@AbaqusExplicitParallelizationPolicy") {
+      check_interface_restriction();
       throw_if(bd.hasAttribute("AbaqusExplicit::ParallelizationPolicy"),
                "parallelization policy already defined");
       throw_if((current->value != "None") && (current->value != "ThreadPool"),

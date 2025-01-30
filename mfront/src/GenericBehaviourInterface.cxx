@@ -16,6 +16,7 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/System/System.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/LibraryDescription.hxx"
@@ -995,11 +996,23 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "GenericBehaviourInterface::treatKeyword: " + m);
     };
+    auto check_interface_restriction = [&i, &k] {
+      if (i.empty()) {
+        reportWarning(
+            "keyword '" + k +
+            "' is used without being restricted "
+            "to the `generic` interface, which could be a portability "
+            "issue. Please add [generic] after the "
+            "keyword (i.e. replace '" +
+            k + "' by '" + k + "[generic]')");
+      }
+    };
     if (!i.empty()) {
       if (std::find(i.begin(), i.end(), this->getName()) != i.end()) {
         const auto keys = std::vector<std::string>{
             {"@GenericInterfaceGenerateMTestFileOnFailure",
-             "@GenerateMTestFileOnFailure"}};
+             "@GenerateMTestFileOnFailure", "@SelectedModellingHypothesis",
+             "@SelectedModellingHypotheses"}};
         throw_if(std::find(keys.begin(), keys.end(), k) == keys.end(),
                  "unsupported key '" + k + "'");
       } else {
@@ -1008,6 +1021,9 @@ namespace mfront {
     }
     if ((k == "@GenericInterfaceGenerateMTestFileOnFailure") ||
         (k == "@GenerateMTestFileOnFailure")) {
+      if (k == "@GenericInterfaceGenerateMTestFileOnFailure") {
+        check_interface_restriction();
+      }
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(k, current, end));
       return {true, current};
@@ -1851,13 +1867,6 @@ namespace mfront {
       std::ostream& os,
       const BehaviourDescription& bd,
       const Hypothesis h) const {
-    auto throw_if = [](const bool b, const char* msg) {
-      if (b) {
-        tfel::raise(
-            "GenericBehaviourInterface::writeBehaviourConstructorBody: " +
-            std::string(msg));
-      }
-    };
     // setting driving variables and thermodynamic forces
     const auto type = bd.getBehaviourType();
     auto odv = SupportedTypes::TypeSize{};
@@ -1946,36 +1955,10 @@ namespace mfront {
       odv += s;
     }
     if (bd.requiresStressFreeExpansionTreatment(h)) {
-      os << "std::pair<StressFreeExpansionType,StressFreeExpansionType> "
-            "mgb_dl01_l0;\n"
-         << "this->computeStressFreeExpansion(mgb_dl01_l0);\n";
       if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-        if (bd.isStrainMeasureDefined()) {
-          const auto ms = bd.getStrainMeasure();
-          if ((ms == BehaviourDescription::LINEARISED) ||
-              (ms == BehaviourDescription::GREENLAGRANGE)) {
-            os << "this->eto  -= mgb_dl01_l0.first;\n"
-               << "this->deto -= mgb_dl01_l0.second-mgb_dl01_l0.first;\n";
-          } else if (ms == BehaviourDescription::HENCKY) {
-            os << "this->eto[0]  -= strain(std::log(1+mgb_dl01_l0.first[0]));\n"
-               << "this->eto[1]  -= strain(std::log(1+mgb_dl01_l0.first[1]));\n"
-               << "this->eto[2]  -= strain(std::log(1+mgb_dl01_l0.first[2]));\n"
-               << "this->deto[0] -= "
-                  "strain(std::log((1+mgb_dl01_l0.second[0])/"
-                  "(1+mgb_dl01_l0.first[0])));\n"
-               << "this->deto[1] -= "
-                  "strain(std::log((1+mgb_dl01_l0.second[1])/"
-                  "(1+mgb_dl01_l0.first[1])));\n"
-               << "this->deto[2] -= "
-                  "strain(std::log((1+mgb_dl01_l0.second[2])/"
-                  "(1+mgb_dl01_l0.first[2])));\n";
-          } else {
-            throw_if(true, "unsupported finite strain strategy");
-          }
-        } else {
-          os << "this->eto  -= mgb_dl01_l0.first;\n"
-             << "this->deto -= mgb_dl01_l0.second-mgb_dl01_l0.first;\n";
-        }
+        os << "const auto mgb_sfs = this->computeStressFreeStrain();\n"
+           << "this->eto  -= mgb_sfs.first;\n"
+           << "this->deto -= mgb_sfs.second - mgb_sfs.first;\n";
       }
     }
   }  // end of writeBehaviourConstructorBody
