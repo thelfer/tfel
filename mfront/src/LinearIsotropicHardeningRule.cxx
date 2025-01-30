@@ -128,7 +128,7 @@ namespace mfront {
         }
         c += "(this->" + Hn + ")*";
         c += "(this->" + pn + "+(this->theta)*(this->d" + pn + "));\n";
-        c += "const auto " + dR + " = this->" + Hn + ";\n";
+        c += "const auto " + dR + " = (this->theta) * (this->" + Hn + ");\n";
       } else {
         c += ";\n";
         c += "const auto " + dR + " = stress(0);\n";
