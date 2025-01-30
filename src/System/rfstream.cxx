@@ -60,7 +60,7 @@ namespace tfel::system {
     if (*(this->get()) == -1) {
       return;
     }
-    if (this->unique()) {
+    if (this->use_count() == 1) {
       if (::close(*(this->get())) == -1) {
         systemCall::throwSystemError(
             "rfstream::close: failed to "
