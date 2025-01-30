@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 3.0.15 of the
 
 # Issues fixed
 
+## Issue 699: [mfront] Auxiliary state variables computed by external point wise models are not taken into account correctly in `@FlowRule` in isotropic DSLs
+
+For more details, see <https://github.com/thelfer/tfel/issues/699>.
+
 ## Issue 691: `[python-bindings]` Fix the definition of `TFEL_PYTHON_LIBS` in Versions 3.0.x and 3.1.x
 
 For more details, see <https://github.com/thelfer/tfel/issues/691>.
