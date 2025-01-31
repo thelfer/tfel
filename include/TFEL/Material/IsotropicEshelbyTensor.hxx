@@ -181,4 +181,4 @@ namespace tfel::material::homogenization::elasticity {
 
 #include "TFEL/Material/IsotropicEshelbyTensor.ixx"
 
-#endif /* LIB_TFEL_MATERIAL_ESHELBY_HXX */
+#endif /* LIB_TFEL_MATERIAL_ISOTROPICESHELBYTENSOR_HXX */
