@@ -1,5 +1,5 @@
 /*!
- * \file   tests/Material/EshelbyBasedHomogenization.cxx
+ * \file   tests/Material/LinearHomogenizationSchemes.cxx
  * \brief
  * \author Antoine Martin
  * \date   25/10/2024
@@ -22,7 +22,7 @@
 #include "TFEL/Config/TFELTypes.hxx"
 #include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
-#include "TFEL/Material/EshelbyBasedHomogenization.hxx"
+#include "TFEL/Material/LinearHomogenizationSchemes.hxx"
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
@@ -33,22 +33,23 @@ static constexpr T my_abs(const T& v) noexcept {
   return v < T(0) ? -v : v;
 }
 
-struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
-  EshelbyBasedHomogenizationTest()
-      : tfel::tests::TestCase("TFEL/Material", "EshelbyBasedHomogenization") {
-  }  // end of EshelbyBasedHomogenizationTest
+struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
+  LinearHomogenizationSchemesTest()
+      : tfel::tests::TestCase("TFEL/Material", "LinearHomogenizationSchemes") {
+  }  // end of LinearHomogenizationSchemesTest
   tfel::tests::TestResult execute() override {
     using real = double;
     constexpr bool qt = true;
     using stress = typename tfel::config::Types<1u, real, qt>::stress;
     using length = typename tfel::config::Types<1u, real, qt>::length;
+
     this->template test1<real, stress, length>();
-    this->template errors<real, stress, length>();
     this->template test3<real, stress, length>();
     this->template test4<real, stress, length>();
     this->template test5<real, stress, length>();
     this->template test6<real, stress, length>();
     this->template test7<real, stress, length>();
+    this->template test8<real, stress, length>();
     return this->result;
   }
 
@@ -97,37 +98,6 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(my_abs(nuSphere_DS_0 - nuSphere_DS_2) < eps);
     TFEL_TESTS_ASSERT(my_abs(ESphere_MT_1 - ESphere_MT_3) < stress{seps});
     TFEL_TESTS_ASSERT(my_abs(nuSphere_MT_1 - nuSphere_MT_3) < eps);
-  }
-
- private:
-  template <typename real, typename stress, typename length>
-  void errors() {
-    // using namespace tfel::material::homogenization::elasticity;
-    //   const auto nu = real{0.3};
-    //   const auto young_i = stress{150e9};
-    //   const auto nu_i = real{0.2};
-    //   //    const auto A =
-    //   computeSphereLocalisationTensor<real,stress>(young,nu,young_i,nu_i);
-    //   const auto a = length{0.4};
-    //   const auto b = length{0.3};
-    //   const auto c = length{0.2};
-    //   const auto f = real{0.5};
-    //   const tfel::math::tvector<3u,real> n_a = {0.,0.,1.};
-    //   const tfel::math::tvector<3u,real> n_b = {1.,0.,0.};
-    //   //must return an error
-    //   {//computeDiluteScheme<real,stress>(stress{-1},nu,f,young_i,nu_i,A);
-    //   //computeMoriTanakaScheme<real,stress>(young,real{2},f,young_i,nu_i,A);
-    //   //computeSphereDiluteScheme<real,stress>(young,nu,real{2},young_i,nu_i);
-    //   //computeIsotropicDiluteScheme<real,stress>(young,nu,f,young_i,nu_i,length{-2},b,c);
-    //   const tfel::math::tvector<3u,real> n_0= {0.,0.,0.};
-    //   //computeTransverseIsotropicDiluteScheme<real,stress>(young,nu,f,young_i,nu_i,n_0,a,b,c);
-    //   const tfel::math::tvector<3u,real> n_ =
-    //   {0.,std::sqrt(2)/2,std::sqrt(2)/2};
-    //   //computeOrientedDiluteScheme<real,stress>(young,nu,f,young_i,nu_i,n_a,a,n_,b,c);
-    //   //computeIsotropicMoriTanakaScheme<real,stress>(young,nu,f,young_i,nu_i,a,length{-1},c);
-    //   //computeTransverseIsotropicMoriTanakaScheme<real,stress>(young,nu,f,young_i,nu_i,n_0,a,b,c);
-    //   //computeOrientedMoriTanakaScheme<real,stress>(young,nu,f,young_i,nu_i,n_a,a,n_,b,c);
-    //   }
   }
 
  private:
@@ -396,16 +366,44 @@ struct EshelbyBasedHomogenizationTest final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(my_abs(nuTI_DS_2 - nuTI_DS_3) < eps);
     }
   }
+  
+  
+  private:
+  template <typename real, typename stress, typename length>
+  void test8() {
+      constexpr auto eps = 100 * tfel::math::constexpr_fct::sqrt(
+                                     std::numeric_limits<real>::epsilon());
+      using namespace tfel::material::homogenization::elasticity;
+      const auto young = stress{1e9};
+      const auto seps=young*eps;
+      const auto nu = real{0.3};
+      const auto young_i = stress{150e9};
+      const auto nu_i = real{0.2};
+      const auto a = length{0.4};
+      const auto b = length{0.3};
+      const auto c = length{0.2};
+      const auto f = real{0.5};
+      const tfel::math::tvector<3u, real> n_a = {0., 0., 1.};
+      //    const tfel::math::tvector<3u,real> n_b = {1.,0.,0.};
+      // Self Consistent Scheme
+      const auto pair =
+        computeSphereSelfConsistentScheme<real, stress>(young, nu, f, young_i, nu_i);
+    const auto ESphere_SC = std::get<0>(pair);
+    const auto nuSphere_SC = std::get<1>(pair);
 
-};  // end of struct EshelbyBasedHomogenizationTest
+      //TFEL_TESTS_ASSERT(my_abs(ESphere_SC - ESphere_) < seps);
+      //TFEL_TESTS_ASSERT(my_abs(nuSphere_SC - nuSphere_) < seps);
+  }
 
-TFEL_TESTS_GENERATE_PROXY(EshelbyBasedHomogenizationTest,
-                          "EshelbyBasedHomogenization");
+};  // end of struct LinearHomogenizationSchemesTest
+
+TFEL_TESTS_GENERATE_PROXY(LinearHomogenizationSchemesTest,
+                          "LinearHomogenizationSchemes");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("EshelbyBasedHomogenization.xml");
+  m.addXMLTestOutput("LinearHomogenizationSchemes.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }  // end of main

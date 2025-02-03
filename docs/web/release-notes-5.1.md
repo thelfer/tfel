@@ -92,6 +92,23 @@ $ tfel-config-5.1.0-release --python-module-suffix
 5_1_0_release
 ~~~~
 
+# New `TFEL/Material` features
+
+## Homogenization
+
+### Ellipsoidal inclusion embedded in anisotropic matrix
+
+When \(\tenseur C_0\) is anisotropic, the Eshelby tensor can be computed
+with `computeAnisotropicEshelbyTensor` in 3D and `computePlainStrainAnisotropicEshelbyTensor`
+in 2D. There are also `computeAnisotropicHillTensor`, `computePlainStrainAnisotropicHillTensor`,
+and also `computeAnisotropicLocalisationTensor` and `computePlainStrainAnisotropicLocalisationTensor`.
+
+### Homogenization bounds
+
+Different homogenization bounds are implemented.
+The available functions are `computeVoigtStiffness`, `computeReussStiffness`,
+`computeIsotropicHashinShtrikmanBounds`.
+
 ## Python bindings
 
 Python bindings are now generated using the

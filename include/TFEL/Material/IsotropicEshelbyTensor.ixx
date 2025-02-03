@@ -1,5 +1,5 @@
 /*!
- * \file   include/TFEL/Material/Eshelby.ixx
+ * \file   include/TFEL/Material/IsotropicEshelbyTensor.ixx
  * \author Antoine Martin
  * \date   15 October 2024
  * \brief  This file defines the Eshelby tensor for an ellipsoidal inclusion
@@ -10,8 +10,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATERIAL_ESHELBY_IXX
-#define LIB_TFEL_MATERIAL_ESHELBY_IXX
+#ifndef LIB_TFEL_MATERIAL_ISOTROPICESHELBYTENSOR_IXX
+#define LIB_TFEL_MATERIAL_ISOTROPICESHELBYTENSOR_IXX
 
 #include <cmath>
 #include <numbers>
@@ -23,7 +23,7 @@ namespace tfel::material::homogenization::elasticity {
   template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<2u, real>
   computeCircularCylinderEshelbyTensor(const real& nu) {
-    if ((nu > 0.5) || (nu < -1)) {
+    if ((nu > real(0.5)) || (nu < real(-1))) {
       tfel::reportContractViolation("nu>0.5 or nu<-1");
     }
     using namespace tfel::math;
@@ -42,10 +42,10 @@ namespace tfel::material::homogenization::elasticity {
   template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<2u, real>
   computeEllipticCylinderEshelbyTensor(const real& nu, const real& e) {
-    if ((nu > 0.5) || (nu < -1)) {
+    if ((nu > real(0.5)) || (nu < real(-1))) {
       tfel::reportContractViolation("nu>0.5 or nu<-1");
     }
-    if (not(e > 0)) {
+    if (not(e > real(0))) {
       tfel::reportContractViolation("e<=0");
     }
     const auto zero = real{0};
@@ -67,7 +67,7 @@ namespace tfel::material::homogenization::elasticity {
     const auto S21 = Q * a2Iab - R * Ib;
     const auto S13 = Q * Ia / 3 - R * Ia;
     const auto S23 = Q * Ib / 3 - R * Ib;
-    if (e > 1) {
+    if (e > real(1)) {
       return {S11,  S12,  S13,  zero, S21,  S22,  S23,  zero,
               zero, zero, zero, zero, zero, zero, zero, S44};
     }
@@ -78,7 +78,7 @@ namespace tfel::material::homogenization::elasticity {
   template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real> computeSphereEshelbyTensor(
       const real& nu) {
-    if ((nu > 0.5) || (nu < -1)) {
+    if ((nu > real(0.5)) || (nu < real(-1))) {
       tfel::reportContractViolation("nu>0.5 or nu<-1");
     }
     const auto a = (1 + nu) / 3 / (1 - nu);
@@ -94,18 +94,20 @@ namespace tfel::material::homogenization::elasticity {
                                      const real precf,
                                      const real precd,
                                      const real precld) {
-    if ((nu > 0.5) || (nu < -1)) {
+    if ((nu > real(0.5)) || (nu < real(-1))) {
       tfel::reportContractViolation("nu>0.5 or nu<-1");
     }
-    if (not(e > 0)) {
+    if (not(e > real(0))) {
       tfel::reportContractViolation("e<=0");
     }
-    static constexpr auto eps = std::numeric_limits<real>::epsilon();
+
     const auto precision = [precf, precd, precld]() {
-      if (eps == std::numeric_limits<tfel::math::base_type<real>>::epsilon()) {
-        return precf;
+      if (typeid(real) == typeid(long double)) {
+        return precld;
+      } else if (typeid(real) == typeid(double)) {
+        return precd;
       }
-      return precld;
+      return precf;
     }();
     if (std::abs(e - 1) < precision) {
       return computeSphereEshelbyTensor<real>(nu);
@@ -193,19 +195,21 @@ namespace tfel::material::homogenization::elasticity {
       const real precf,
       const real precd,
       const real precld) {
-    if ((nu > 0.5) || (nu < -1)) {
+    if ((nu > real(0.5)) || (nu < real(-1))) {
       tfel::reportContractViolation("nu>0.5 or nu<-1");
     }
     if (not((a > LengthType{0}) and (b > LengthType{0}) and
             (c > LengthType{0}))) {
       tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
     }
-    static constexpr auto eps = std::numeric_limits<real>::epsilon();
+
     const auto precision = [precf, precd, precld]() {
-      if (eps == std::numeric_limits<real>::epsilon()) {
-        return precf;
+      if (typeid(real) == typeid(long double)) {
+        return precld;
+      } else if (typeid(real) == typeid(double)) {
+        return precd;
       }
-      return precld;
+      return precf;
     }();
     if (std::abs((b - a) / c) < precision ||
         std::abs((a - c) / b) < precision ||
@@ -278,7 +282,7 @@ namespace tfel::material::homogenization::elasticity {
     if (not(young > StressType{0})) {
       tfel::reportContractViolation("E<=0");
     }
-    if ((nu > 0.5) || (nu < -1)) {
+    if ((nu > real(0.5)) || (nu < real(-1))) {
       tfel::reportContractViolation("nu>0.5 or nu<-1");
     }
     const auto kaS = (1 + nu) / 9 / (1 - nu);
@@ -304,7 +308,7 @@ namespace tfel::material::homogenization::elasticity {
                                      const tfel::math::tvector<3u, real>& n_b,
                                      const LengthType& b,
                                      const LengthType& c) {
-    if ((nu > 0.5) || (nu < -1)) {
+    if ((nu > real(0.5)) || (nu < real(-1))) {
       tfel::reportContractViolation("nu>0.5 or nu<-1");
     }
     if (not(young > StressType{0})) {
@@ -368,7 +372,7 @@ namespace tfel::material::homogenization::elasticity {
       const real& nu_i,
       const tfel::math::tvector<3u, real>& n_a,
       const real& e) {
-    if ((nu > 0.5) || (nu < -1)) {
+    if ((nu > real(0.5)) || (nu < real(-1))) {
       tfel::reportContractViolation("nu>0.5 or nu<-1");
     }
     if (not(young > StressType{0})) {
@@ -424,4 +428,4 @@ namespace tfel::material::homogenization::elasticity {
 
 }  // end of namespace tfel::material::homogenization::elasticity
 
-#endif /* LIB_TFEL_MATERIAL_ESHELBY_IXX */
+#endif /* LIB_TFEL_MATERIAL_ISOTROPICESHELBYTENSOR_IXX */
