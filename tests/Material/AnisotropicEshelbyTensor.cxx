@@ -38,34 +38,10 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
   }  // end of AnisotropicEshelbyTensorTest
 
   tfel::tests::TestResult execute() override {
-    this->template errors<double, true>();
     this->template test_Eshelby<double, true>();
     this->template test_Eshelby2D<double, true>();
     this->template test_localisator<double, true>();
     return this->result;
-  }
-
-  // must return a warning
- private:
-  template <typename NumericType, bool use_qt>
-  void errors() {
-    using namespace tfel::material::homogenization::elasticity;
-    using lg = typename tfel::config::Types<1u, NumericType, use_qt>::length;
-    using real = NumericType;
-    using stress = typename tfel::config::Types<1u, real, use_qt>::stress;
-    const auto nu = real{0.3};
-    const auto young = stress{150e9};
-    tfel::math::st2tost2<3u, stress> C_0;
-    const tfel::math::tvector<3u, real> n_a = {0., 0., 1.};
-    const tfel::math::tvector<3u, real> n_b = {1., 0., 0.};
-    using namespace tfel::material;
-    static constexpr auto value =
-        StiffnessTensorAlterationCharacteristic::UNALTERED;
-    computeIsotropicStiffnessTensorII<3u, value, stress, real>(C_0, young, nu);
-    // const auto S1 =
-    // computeAnisotropicEshelbyTensor<real,stress,lg>(C_0,n_a,lg{0},n_b,lg{30},lg{3});
-    // const auto S1 =
-    // computeAnisotropicEshelbyTensor<real,stress,lg>(C_0,n_a,lg{-2},n_b,lg{30},lg{3});
   }
 
  private:
@@ -119,7 +95,7 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       }
     }
 
-  } // end of test_Eshelby
+  }  // end of test_Eshelby
 
  private:
   template <typename NumericType, bool use_qt>
@@ -133,14 +109,14 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     const auto nu = real{0.3};
     const auto young = stress{150e9};
     const tfel::math::tvector<2u, real> n_a = {1., 0.};
-    const tfel::math::tvector<2u, real> n_b = {0., 1.};
     tfel::math::st2tost2<2u, stress> C_0;
     using namespace tfel::material;
     static constexpr auto value =
         StiffnessTensorAlterationCharacteristic::UNALTERED;
     computeIsotropicStiffnessTensorII<2u, value, stress, real>(C_0, young, nu);
-    const auto S2D1 = compute2DAnisotropicEshelbyTensor<real, stress, lg>(
-        C_0, n_a, lg{3}, lg{2}, 14);
+    const auto S2D1 =
+        computePlainStrainAnisotropicEshelbyTensor<real, stress, lg>(
+            C_0, n_a, lg{3}, lg{2}, 14);
     const auto S2D2 = computeEllipticCylinderEshelbyTensor(nu, real{1.5});
     for (int i : {0, 1, 2, 3}) {
       for (int j : {0, 1, 2, 3}) {
@@ -149,8 +125,9 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       }
     }
 
-    const auto S2DCir1 = compute2DAnisotropicEshelbyTensor<real, stress, lg>(
-        C_0, n_a, lg{3}, lg{3}, 14);
+    const auto S2DCir1 =
+        computePlainStrainAnisotropicEshelbyTensor<real, stress, lg>(
+            C_0, n_a, lg{3}, lg{3}, 14);
     const auto S2DCir2 = computeCircularCylinderEshelbyTensor(nu);
     for (int i : {0, 1, 2, 3}) {
       for (int j : {0, 1, 2, 3}) {
@@ -160,7 +137,7 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       }
     }
 
-  } // end of test_Eshelby2D
+  }  // end of test_Eshelby2D
 
  private:
   template <typename NumericType, bool use_qt>

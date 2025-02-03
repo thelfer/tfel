@@ -83,9 +83,9 @@ $ tfel-config-5.1.0-release --python-module-suffix
 ### Ellipsoidal inclusion embedded in anisotropic matrix
 
 When \(\tenseur C_0\) is anisotropic, the Eshelby tensor can be computed
-with `computeAnisotropicEshelbyTensor` in 3D and `compute2DAnisotropicEshelbyTensor`
-in 2D. There are also `computeAnisotropicHillTensor`, `compute2DAnisotropicHillTensor`,
-and also `computeAnisotropicLocalisationTensor` and `compute2DAnisotropicLocalisationTensor`.
+with `computeAnisotropicEshelbyTensor` in 3D and `computePlainStrainAnisotropicEshelbyTensor`
+in 2D. There are also `computeAnisotropicHillTensor`, `computePlainStrainAnisotropicHillTensor`,
+and also `computeAnisotropicLocalisationTensor` and `computePlainStrainAnisotropicLocalisationTensor`.
 
 
 # Python bindings

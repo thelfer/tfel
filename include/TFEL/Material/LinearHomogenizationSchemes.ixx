@@ -116,7 +116,8 @@ namespace tfel::material::homogenization::elasticity {
       }
       using namespace tfel::math;
       tvector<3u, real> n_;
-      if ((n_a[1] != 0.) || (n_a[2] != 0.)) {
+      if ((tfel::math::ieee754::fpclassify(n_a[1]) != FP_ZERO) ||
+          (tfel::math::ieee754::fpclassify(n_a[2]) != FP_ZERO)) {
         n_ = {1., 0., 0.};
       } else {
         n_ = {0., 1., 0.};
