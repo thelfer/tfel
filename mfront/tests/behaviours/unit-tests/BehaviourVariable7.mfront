@@ -1,0 +1,16 @@
+@DSL Default;
+@Behaviour BehaviourVariable7;
+@Description{
+  "Try to share a material property with incompatible glossary name"
+}
+
+@MaterialProperty stress young;
+young.setGlossaryName("PoissonRatio");
+
+@BehaviourVariable b1{
+  file : "Plasticity.mfront",
+  store_gradients : false,
+  store_thermodynamic_forces : false,
+  shared_material_properties: {"YoungModulus"},
+  shared_external_state_variables : {".+"}
+};

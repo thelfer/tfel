@@ -1,3 +1,4 @@
+
 /*!
  * \file   mfront/include/MFront/DSLUtilities.hxx
  * \brief
@@ -309,9 +310,9 @@ namespace mfront {
   MFRONT_VISIBILITY_EXPORT void writeExportDirectives(std::ostream&,
                                                       const bool = true);
 
-  MFRONT_VISIBILITY_EXPORT std::string makeUpperCase(const std::string_view);
+  MFRONT_VISIBILITY_EXPORT std::string makeUpperCase(std::string_view);
 
-  MFRONT_VISIBILITY_EXPORT std::string makeLowerCase(const std::string_view);
+  MFRONT_VISIBILITY_EXPORT std::string makeLowerCase(std::string_view);
   /*!
    * \brief add the given symbol.
    * \param[in,out] symbols: mapping between a symbol and a replacement string

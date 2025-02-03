@@ -1,0 +1,19 @@
+@DSL IsotropicPlasticMisesFlow;
+@Behaviour InvalidExternalBehaviour2;
+
+@Epsilon 1e-14;
+
+@MaterialProperty stress H;
+@MaterialProperty stress s0;
+
+@LocalVariable StrainStensor eto0;
+
+@InitLocalVariables {
+  eto0 = eto;
+}
+
+@FlowRule {
+  f = seq - H * p - s0;
+  df_dseq = 1;
+  df_dp = -H;
+}

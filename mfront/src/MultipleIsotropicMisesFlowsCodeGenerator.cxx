@@ -295,7 +295,7 @@ namespace mfront {
        << "* \\brief Integrate behaviour law over the time step\n"
        << "*/\n"
        << "[[nodiscard]] IntegrationResult\n"
-       << "integrate(const SMFlag smflag,const SMType smt) override{\n"
+       << "integrate(const SMFlag smflag,const SMType smt) override final{\n"
        << "using namespace std;\n";
     if (this->bd.useQt()) {
       os << "if(smflag!=MechanicalBehaviour<" << btype
@@ -308,6 +308,25 @@ namespace mfront {
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     }
+    os << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+("
+       << this->bd.getClassName() << "::theta)*(this->deto)));\n"
+       << "this->seq_e = sigmaeq(this->se);\n";
+    n = 0;
+    for (const auto& f : this->flows) {
+      if (f.hasSpecificTheta) {
+        os << "StressStensor se" << n
+           << "=2*(this->mu)*(tfel::math::deviator(this->eel+(";
+        os << f.theta << ")*(this->deto)));\n";
+        os << "this->seq_e" << n << " = sigmaeq(se" << n << ");\n";
+      }
+      ++n;
+    }
+    os << "if(this->seq_e > 100 * (this->young) * "
+       << "std::numeric_limits<NumericType>::epsilon()){\n"
+       << "this->n = 3 * (this->se) / (2 * this->seq_e);\n"
+       << "} else {\n"
+       << "this->n = StrainStensor(strain(0));\n"
+       << "}\n";
     os << "if(!this->NewtonIntegration()){\n";
     if (this->bd.useQt()) {
       os << "return MechanicalBehaviour<" << btype
@@ -379,31 +398,6 @@ namespace mfront {
        << "return false;\n"
        << "}\n\n";
   }
-
-  void MultipleIsotropicMisesFlowsCodeGenerator::
-      writeBehaviourParserSpecificInitializeMethodPart(std::ostream& os,
-                                                       const Hypothesis) const {
-    this->checkBehaviourFile(os);
-    os << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+("
-       << this->bd.getClassName() << "::theta)*(this->deto)));\n"
-       << "this->seq_e = sigmaeq(this->se);\n";
-    unsigned short n = 0;
-    for (const auto& f : this->flows) {
-      if (f.hasSpecificTheta) {
-        os << "StressStensor se" << n
-           << "=2*(this->mu)*(tfel::math::deviator(this->eel+(";
-        os << f.theta << ")*(this->deto)));\n";
-        os << "this->seq_e" << n << " = sigmaeq(se" << n << ");\n";
-      }
-      ++n;
-    }
-    os << "if(this->seq_e > 100 * (this->young) * "
-       << "std::numeric_limits<NumericType>::epsilon()){\n"
-       << "this->n = 3 * (this->se) / (2 * this->seq_e);\n"
-       << "} else {\n"
-       << "this->n = StrainStensor(strain(0));\n"
-       << "}\n";
-  }  // end of writeBehaviourParserSpecificInitializeMethodPart
 
   MultipleIsotropicMisesFlowsCodeGenerator::
       ~MultipleIsotropicMisesFlowsCodeGenerator() = default;

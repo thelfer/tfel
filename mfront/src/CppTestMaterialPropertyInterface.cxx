@@ -15,6 +15,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include "TFEL/Raise.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/FileDescription.hxx"
@@ -60,6 +61,15 @@ namespace mfront {
                          key + "'");
     }
     if (key == "@TestBounds") {
+      if (i.empty()) {
+        reportWarning("keyword '" + key +
+                      "' is used without being restricted to the " +
+                      this->getName() +
+                      " interface, which could be a portability "
+                      "issue. Please add [" +
+                      this->getName() + "] after the keyword (i.e. replace '" +
+                      key + "' by '" + key + "[" + this->getName() + "]')");
+      }
       return registerTestBounds(p, pe);
     }
     return {false, p};

@@ -257,10 +257,8 @@ namespace mfront {
       if (std::find(i.begin(), i.end(), this->getName()) == i.end()) {
         return {false, current};
       }
-      tfel::raise(
-          "LSDYNAInterface::treatKeyword: "
-          "unsupported key '" +
-          key + "'");
+      tfel::raise("LSDYNAInterface::treatKeyword: unsupported key '" + key +
+                  "'");
     }
     return {false, current};
   }  // end of LSDYNAInterface::treatKeyword
@@ -271,10 +269,6 @@ namespace mfront {
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, "lsdyna" + name + ".cxx");
     d.headers.push_back("MFront/LSDYNA/lsdyna" + name + ".hxx");
     insert_if(l.link_directories,

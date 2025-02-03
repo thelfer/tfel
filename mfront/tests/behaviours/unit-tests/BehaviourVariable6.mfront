@@ -1,0 +1,11 @@
+@DSL Default;
+@Behaviour BehaviourVariable6;
+@Description{
+  "Try to store the stress of a behaviour variable without changing its name"
+}
+
+@BehaviourVariable b1{
+  file : "Plasticity.mfront",
+  store_gradients : false,
+  store_thermodynamic_forces : true
+};

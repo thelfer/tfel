@@ -161,8 +161,10 @@ namespace mfront {
     virtual void treatBehaviourDSLOptionsFile();
     //! \brief treat the `--model-dsl-options-file` command line option
     virtual void treatModelDSLOptionsFile();
-    //! \brief treat the `--warning` command line option
-    virtual void treatWarning();
+    //! \brief treat the `--report-warnings` command line option
+    virtual void treatReportWarnings();
+    //! \brief treat the `--warning-error` command line option
+    virtual void treatWarningError();
     //! \brief treat the `--debug` command line option
     virtual void treatDebug();
     //! \brief treat the `--pedantic` command line option

@@ -125,9 +125,10 @@ namespace mfront {
     //! \return the material name
     std::string getMaterial() const;
     //! \return the external `MFront` files
-    const std::map<std::string,               // file path
-                   std::vector<std::string>,  // list of interfaces
-                   std::less<>>&
+    const std::map<
+        std::string,  // file path
+        std::tuple<std::vector<std::string>, tfel::utilities::DataMap>,
+        std::less<>>&
     getExternalMFrontFiles() const;
     //! \brief destructor
     ~OverridableImplementation();

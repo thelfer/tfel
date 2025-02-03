@@ -1,0 +1,12 @@
+@DSL RungeKuttaModel;
+@Model ExternalModelCaller3;
+@Model "ExternalModel.mfront";
+
+@Algorithm rk54;
+@Epsilon 1e-8;
+
+@StateVariable real x2;
+
+@Derivative  {
+  dx2 = -x2;
+}

@@ -1,3 +1,4 @@
+
 /*!
  * \file   mfront/src/DSLUtilities.cxx
  * \brief
@@ -645,7 +646,7 @@ namespace mfront {
        << "#endif /* MFRONT_EXPORT_ARRAY_OF_SYMBOLS*/\n\n";
   }  // end of writeExportDirectives
 
-  std::string makeUpperCase(const std::string_view n) {
+  std::string makeUpperCase(std::string_view n) {
     std::string s(n);
     auto p = n.begin();
     auto p2 = s.begin();
@@ -655,7 +656,7 @@ namespace mfront {
     return s;
   }  // end of makeUpperCase
 
-  std::string makeLowerCase(const std::string_view n) {
+  std::string makeLowerCase(std::string_view n) {
     std::string s(n);
     auto p = n.begin();
     auto p2 = s.begin();

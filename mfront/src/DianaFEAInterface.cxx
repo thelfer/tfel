@@ -21,6 +21,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/MFrontUtilities.hxx"
@@ -104,6 +105,17 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "DianaFEAInterface::treatKeyword: " + m);
     };
+    auto check_interface_restriction = [this, &i, &k] {
+      if (i.empty()) {
+        reportWarning("keyword '" + k +
+                      "' is used without being restricted to the " +
+                      this->getName() +
+                      " interface, which could be a portability "
+                      "issue. Please add [" +
+                      this->getName() + "] after the keyword (i.e. replace '" +
+                      k + "' by '" + k + "[" + this->getName() + "]')");
+      }
+    };
     if (!i.empty()) {
       if (std::find(i.begin(), i.end(), this->getName()) != i.end()) {
         const auto keys =
@@ -117,6 +129,9 @@ namespace mfront {
     }
     if ((k == "@DianaFEAGenerateMTestFileOnFailure") ||
         (k == "@GenerateMTestFileOnFailure")) {
+      if (k == "@DianaFEAGenerateMTestFileOnFailure") {
+        check_interface_restriction();
+      }
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(k, current, end));
       return {true, current};
@@ -355,10 +370,6 @@ namespace mfront {
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, "DianaFEA" + name + ".cxx");
     d.headers.push_back("MFront/DianaFEA/DianaFEA" + name + ".hxx");
     insert_if(l.link_directories,

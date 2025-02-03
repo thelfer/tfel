@@ -1,0 +1,5 @@
+add_subdirectory(generic)
+
+install_mfront_data(tests/behaviours/BehaviourVariable BehaviourVariable1.mfront)
+install_mfront_data(tests/behaviours/BehaviourVariable BehaviourVariableFactory1.mfront)
+install_mfront_data(tests/behaviours/BehaviourVariable BehaviourVariablePlasticity.mfront)

@@ -17,7 +17,10 @@ endif(NOT REFERENCE_FILE)
 
 # run the test program, capture the stdout/stderr and the result var
 execute_process(
-  COMMAND ${TEST_PROGRAM} --unicode-output=false ${TEST_ARGS} ${MFRONT_FILE}
+  COMMAND ${TEST_PROGRAM}
+  --unicode-output=false
+  --report-warnings=false
+  ${TEST_ARGS} ${MFRONT_FILE}
   OUTPUT_FILE ${TEST_OUTPUT}
   ERROR_VARIABLE TEST_ERROR
   RESULT_VARIABLE TEST_RESULT)

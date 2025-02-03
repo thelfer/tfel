@@ -1,0 +1,16 @@
+@DSL Default;
+@Behaviour BehaviourVariable2;
+@Description{
+  "Try to share a material property with inconsistent array size"
+}
+
+@MaterialProperty stress young[2];
+young.setGlossaryName("YoungModulus");
+
+@BehaviourVariable b1{
+  file : "Plasticity.mfront",
+  store_gradients : false,
+  store_thermodynamic_forces : false,
+  shared_material_properties : {"YoungModulus"},
+  shared_external_state_variables : {".+"}
+};

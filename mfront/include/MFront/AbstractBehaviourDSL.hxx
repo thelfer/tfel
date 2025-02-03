@@ -31,6 +31,7 @@ namespace mfront {
   // forward declarations
   struct AbstractBehaviourInterface;
   struct MaterialPropertyDescription;
+  struct AbstractBehaviourCodeGenerator;
 
   //! \brief interface class for all domain specific languages associated with
   //! behaviours.
@@ -53,6 +54,9 @@ namespace mfront {
     virtual BehaviourDSLDescription getBehaviourDSLDescription() const = 0;
     //! \return the behaviour description
     virtual const BehaviourDescription& getBehaviourDescription() const = 0;
+    //! \return a suitable code generator
+    virtual std::unique_ptr<AbstractBehaviourCodeGenerator> getCodeGenerator()
+        const = 0;
     /*!
      * \brief add the given material properties
      * \param[in] mps: material properties

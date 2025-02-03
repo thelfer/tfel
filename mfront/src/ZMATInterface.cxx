@@ -169,10 +169,8 @@ namespace mfront {
       tokens_iterator current,
       const tokens_iterator) {
     if (std::find(i.begin(), i.end(), this->getName()) != i.end()) {
-      tfel::raise(
-          "ZMATInterface::treatKeyword: "
-          "unsupported keyword '" +
-          key + "'");
+      tfel::raise("ZMATInterface::treatKeyword: unsupported keyword '" + key +
+                  "'");
     }
     return {false, current};
   }
@@ -1765,15 +1763,11 @@ namespace mfront {
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
     insert_if(l.cppflags, "$(shell " + tfel_config + " --zmat)");
 #pragma message("Linux specific")
     insert_if(l.cppflags, "-DLinux");
     insert_if(l.cppflags, "-DLinux_64");
     insert_if(l.cppflags, "-D_REENTRANT");
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(d.headers, "MFront/ZMAT/ZMAT" + name + ".hxx");
     insert_if(l.sources, "ZMAT" + name + ".cxx");
     insert_if(l.epts, bd.getClassName());

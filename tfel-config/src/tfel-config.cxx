@@ -107,6 +107,7 @@ static bool cppflags = false;
 static bool libsdeps = false;
 static bool libspath = false;
 static bool ldflags = false;
+static bool config = false;
 static bool exceptions = false;
 static bool math = false;
 static bool mathCubicSpline = false;
@@ -118,7 +119,10 @@ static bool glossary = false;
 static bool numodis = false;
 static bool material = false;
 static bool tests = false;
-static bool mfront_profiling = false;
+static bool mfront = false;
+static bool mfrontLogStream = false;
+static bool mfrontProfiling = false;
+static bool mtest = false;
 #ifdef HAVE_CASTEM
 static bool castem = false;
 #endif /* HAVE_CASTEM */
@@ -151,7 +155,7 @@ static bool getValueInRegistry(std::string& value) {
   }
   return false;
 }
-#endif defined _WIN32 || defined _WIN64
+#endif /* defined _WIN32 || defined _WIN64 */
 
 static std::string getTFELHOMEWithVersionEnvironmentVariable() {
   auto replace_all = [](std::string_view c, const char c1) -> std::string {
@@ -315,7 +319,11 @@ static void listLibraries(const char* p) {
     }
 #endif /* TFEL_APPEND_SUFFIX*/
   };
-  display_if(mfront_profiling, "MFrontProfiling");
+  display_if(config, "TFELConfig");
+  display_if(mfront, "TFELMFront");
+  display_if(mfrontLogStream, "MFrontLogStream");
+  display_if(mfrontProfiling, "MFrontProfiling");
+  display_if(mtest, "TFELMTest");
   display_if(material, "TFELMaterial");
   display_if(mathParser, "TFELMathParser");
   display_if(mathCubicSpline, "TFELMathCubicSpline");
@@ -444,15 +452,54 @@ int main(const int argc, const char* const* const argv) {
     registerCallBack(
         "--numodis", [] { numodis = true; }, "request flags for TFELNUMODIS.");
     registerCallBack(
-        "--mfront-profiling", [] { mfront_profiling = true; },
-        "request flags for libMFrontProfiling.");
+        "--config", [] { config = true; }, "request flags for TFELConfig.");
+    registerCallBack(
+        "--mfront",
+        [] {
+          material = true;
+          mathParser = true;
+          mathCubicSpline = true;
+          math = true;
+          lsystem = true;
+          utilities = true;
+          glossary = true;
+          unicodeSupport = true;
+          exceptions = true;
+          config = true;
+          mfrontLogStream = true;
+          mfront = true;
+        },
+        "request flags for TFELMFront.");
+    registerCallBack(
+        "--mfront-log-stream", [] { mfrontLogStream = true; },
+        "request flags for MFrontLogStream.");
+    registerCallBack(
+        "--mtest",
+        [] {
+          mfrontLogStream = true;
+          material = true;
+          mathParser = true;
+          math = true;
+          lsystem = true;
+          utilities = true;
+          exceptions = true;
+          tests = true;
+          config = true;
+          mtest = true;
+        },
+        "request flags for TFELMTest.");
+    registerCallBack(
+        "--mfront-profiling", [] { mfrontProfiling = true; },
+        "request flags for MFrontProfiling.");
     registerCallBack(
         "--all",
         [] {
-          exceptions = math = numodis = material = true;
+          config = exceptions = math = numodis = material = true;
           utilities = glossary = lsystem = tests = true;
           unicodeSupport = true;
-          mfront_profiling = true;
+          mfrontProfiling = true;
+          mfrontLogStream = true;
+          mfront = mtest = true;
         },
         "request flags for all librairies.");
     registerCallBack("--version", &treatVersion,

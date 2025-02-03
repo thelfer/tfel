@@ -24,6 +24,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
@@ -328,6 +329,16 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "CastemInterface::treatKeyword : " + m);
     };
+    auto check_interface_restriction = [&i, &key] {
+      if (i.empty()) {
+        reportWarning("keyword '" + key +
+                      "' is used without being restricted "
+                      "to the `Cast3M` interface, which could be a portability "
+                      "issue. Please add [castem] after the "
+                      "keyword (i.e. replace '" +
+                      key + "' by '" + key + "[castem]')");
+      }
+    };
     if (!i.empty()) {
       if ((std::find(i.begin(), i.end(), this->getName()) != i.end()) ||
           (std::find(i.begin(), i.end(), "umat") != i.end()) ||
@@ -354,32 +365,44 @@ namespace mfront {
     if ((key == "@CastemGenerateMTestFileOnFailure") ||
         (key == "@UMATGenerateMTestFileOnFailure") ||
         (key == "@GenerateMTestFileOnFailure")) {
+      if (key == "@GenerateMTestFileOnFailure") {
+        check_interface_restriction();
+      }
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(key, current, end));
       return {true, current};
     } else if ((key == "@CastemUseTimeSubStepping") ||
                (key == "@UMATUseTimeSubStepping")) {
+      check_interface_restriction();
       bd.setAttribute(CastemInterface::useTimeSubStepping,
                       this->readBooleanValue(key, current, end), false);
       return {true, current};
     } else if ((key == "@CastemMaximumSubStepping") ||
                (key == "@UMATMaximumSubStepping")) {
+      check_interface_restriction();
       throw_if(
           !bd.getAttribute<bool>(CastemInterface::useTimeSubStepping, false),
           "time sub stepping is not enabled at this stage.\n"
           "Use the @CastemUseTimeSubStepping directive before "
           "@CastemMaximumSubStepping");
       throw_if(current == end, "unexpected end of file");
+      const bool safe = readSafeOptionTypeIfPresent(current, end);
       const auto mss = CxxTokenizer::readUnsignedInt(current, end);
-      bd.setAttribute(CastemInterface::maximumSubStepping,
-                      static_cast<unsigned short>(mss), false);
+      if ((mss > 3) && (!safe)) {
+        reportWarning("the maximum number of substeps specified is to high (" +
+                      std::to_string(mss) +
+                      "). It is recommended to allow at most 3 substeps.");
+      }
       throw_if(current == end, "unexpected end of file");
       throw_if(current->value != ";",
                "expected ';', read '" + current->value + '\'');
       ++(current);
+      bd.setAttribute(CastemInterface::maximumSubStepping,
+                      static_cast<unsigned short>(mss), false);
       return {true, current};
     } else if ((key == "@CastemDoSubSteppingOnInvalidResults") ||
                (key == "@UMATDoSubSteppingOnInvalidResults")) {
+      check_interface_restriction();
       throw_if(
           !bd.getAttribute<bool>(CastemInterface::useTimeSubStepping, false),
           "time sub stepping is not enabled at this stage.\n"
@@ -390,6 +413,7 @@ namespace mfront {
       return {true, current};
     } else if ((key == "@CastemFiniteStrainStrategy") ||
                (key == "@UMATFiniteStrainStrategy")) {
+      check_interface_restriction();
       throw_if(bd.hasAttribute(CastemInterface::finiteStrainStrategies),
                "at least one strategy has already been defined");
       throw_if(current == end, "unexpected end of file");
@@ -403,6 +427,7 @@ namespace mfront {
       return {true, current};
     } else if ((key == "@CastemFiniteStrainStrategies") ||
                (key == "@UMATFiniteStrainStrategies")) {
+      check_interface_restriction();
       throw_if(bd.hasAttribute(CastemInterface::finiteStrainStrategies),
                "at least one strategy has already been defined");
       auto fss = std::vector<std::string>{};
@@ -1469,8 +1494,6 @@ namespace mfront {
     const auto name = this->getBehaviourName(bd);
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
 #ifdef CASTEM_CPPFLAGS
     insert_if(l.cppflags, CASTEM_CPPFLAGS);
 #endif /* CASTEM_CPPFLAGS */
@@ -1488,8 +1511,6 @@ namespace mfront {
     }
 #endif /* CASTEM_ROOT */
 #endif /* LOCAL_CASTEM_HEADER_FILE */
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, "umat" + name + ".cxx");
     insert_if(d.headers, "MFront/Castem/umat" + name + ".hxx");
     insert_if(l.link_directories,

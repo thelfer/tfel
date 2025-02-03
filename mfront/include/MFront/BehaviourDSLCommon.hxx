@@ -1,3 +1,5 @@
+
+
 /*!
  * \file   mfront/include/MFront/BehaviourDSLCommon.hxx
  * \brief
@@ -34,7 +36,6 @@ namespace mfront {
   // forward declarations
   struct AbstractBehaviourInterface;
   struct AbstractBehaviourBrick;
-  struct AbstractBehaviourCodeGenerator;
 
   /*!
    * \return if the given name is valid
@@ -78,6 +79,8 @@ namespace mfront {
     void analyseString(const std::string&) override;
 
     void endsInputFileProcessing() override;
+
+    void makeConsistencyChecks() const override;
     /*!
      * \brief method called when a new gradient or a new thermodynamic force is
      * defined. It declares as many pair of gradient and thermodynamic force as
@@ -167,23 +170,22 @@ namespace mfront {
       CodeBlockOptions& operator=(CodeBlockOptions&&) = default;
       CodeBlockOptions& operator=(const CodeBlockOptions&) = default;
       ~CodeBlockOptions();
-      //! position where the code block will be inserted (body by defaut)
+      //! \brief position where the code block will be inserted (body by defaut)
       Position p;
-      //! insertion mode (create or append by default)
+      //! \brief insertion mode (create or append by default)
       Mode m;
-      //! list of hypothesis
+      //! \brief list of hypothesis
       std::set<Hypothesis> hypotheses;
-      //! list of untreated options
+      //! \brief list of untreated options
       std::vector<tfel::utilities::Token> untreated;
+      //! \brief flag stating if potential warnings shall be ignored
+      bool safe = false;
     };
     /*!
      * \brief constructor
      * \param[in] opts: options passed to the DSL
      */
     BehaviourDSLCommon(const DSLOptions&);
-    //! \return a suitable code generator
-    virtual std::unique_ptr<AbstractBehaviourCodeGenerator> getCodeGenerator()
-        const = 0;
     //
     void writeMaterialPropertyEvaluation(
         std::ostream&,
@@ -192,7 +194,8 @@ namespace mfront {
         const override;
     //
     void addExternalMFrontFile(const std::string&,
-                               const std::vector<std::string>&) override;
+                               const std::vector<std::string>&,
+                               const tfel::utilities::DataMap&) override;
     const MaterialKnowledgeDescription& getMaterialKnowledgeDescription()
         const override;
     std::vector<DSLOptionDescription> getDSLOptions() const override;
@@ -239,114 +242,6 @@ namespace mfront {
      * \param[in]  s : allow specialisation
      */
     virtual void readCodeBlockOptions(CodeBlockOptions&, const bool);
-    //     /*!
-    //      * \brief read the next code block and adds it tho the mechanical
-    //      * behaviour
-    //      * \param[in] child : a pointer to this
-    //      * \param[in] n     : name of the method read
-    //      * \param[in] m     : modifier
-    //      * \param[in] b     : add "this->" in front of variables
-    //      * \param[in] s     : allow specialisation
-    //      */
-    //     template <typename T, typename T2>
-    //     CodeBlockOptions treatCodeBlock(T&,
-    //                                     const std::string&,
-    //                                     std::string (T2::*)(const Hypothesis,
-    //                                                         const
-    //                                                         std::string&,
-    //                                                         const bool),
-    //                                     const bool,
-    //                                     const bool);
-    //     /*!
-    //      * \brief read the next code block and adds it tho the mechanical
-    //      * behaviour
-    //      * \param[in] child : a pointer to this
-    //      * \param[in] n     : name of the method read
-    //      * \param[in] m     : modifier
-    //      * \param[in] b     : add "this->" in front of variables
-    //      */
-    //     template <typename T, typename T2>
-    //     void treatCodeBlock(T&,
-    //                         const CodeBlockOptions&,
-    //                         const std::string&,
-    //                         std::string (T2::*)(const Hypothesis,
-    //                                             const std::string&,
-    //                                             const bool),
-    //                         const bool);
-    //     /*!
-    //      * \brief read the next code block and adds it tho the mechanical
-    //      * behaviour
-    //      * \param[in] child : a pointer to this
-    //      * \param[in] n     : name of the method read
-    //      * \param[in] m     : modifier
-    //      * \param[in] a     : word analyser
-    //      * \param[in] b     : add "this->" in front of variables
-    //      * \param[in] s     : allow specialisation
-    //      */
-    //     template <typename T, typename T2, typename T3>
-    //     CodeBlockOptions treatCodeBlock(
-    //         T&,
-    //         const std::string&,
-    //         std::string (T2::*)(const Hypothesis, const std::string&, const
-    //         bool), void (T3::*)(const Hypothesis, const std::string&), const
-    //         bool, const bool);
-    //     /*!
-    //      * \brief read the next code block and adds it tho the mechanical
-    //      * behaviour
-    //      * \param[in] child : a pointer to this
-    //      * \param[in] n     : name of the method read
-    //      * \param[in] m     : modifier
-    //      * \param[in] a     : word analyser
-    //      * \param[in] b     : add "this->" in front of variables
-    //      * \param[in] s     : allow specialisation
-    //      */
-    //     template <typename T, typename T2, typename T3>
-    //     void treatCodeBlock(T&,
-    //                         const CodeBlockOptions&,
-    //                         const std::string&,
-    //                         std::string (T2::*)(const Hypothesis,
-    //                                             const std::string&,
-    //                                             const bool),
-    //                         void (T3::*)(const Hypothesis, const
-    //                         std::string&), const bool);
-    //     /*!
-    //      * \brief read the next code block and adds it tho the mechanical
-    //      * behaviour
-    //      * \param[in] child : a pointer to this
-    //      * \param[in] n1    : name of the first method read
-    //      * \param[in] n2    : name of the second method read
-    //      * \param[in] m1    : modifier
-    //      * \param[in] m2    : modifier
-    //      * \param[in] b     : add "this->" in front of variables
-    //      * \param[in] s     : allow specialisation
-    //      */
-    //     template <typename T, typename T2>
-    //     CodeBlockOptions treatCodeBlock(
-    //         T&,
-    //         const std::string&,
-    //         const std::string&,
-    //         std::string (T2::*)(const Hypothesis, const std::string&, const
-    //         bool), std::string (T2::*)(const Hypothesis, const std::string&,
-    //         const bool), const bool, const bool);
-    //     /*!
-    //      * \brief read the next code block and adds it tho the mechanical
-    //      * behaviour
-    //      * \param[in] child : a pointer to this
-    //      * \param[in] n1    : name of the first method read
-    //      * \param[in] n2    : name of the second method read
-    //      * \param[in] m1    : modifier
-    //      * \param[in] m2    : modifier
-    //      * \param[in] b     : add "this->" in front of variables
-    //      */
-    //     template <typename T, typename T2>
-    //     void treatCodeBlock(
-    //         T&,
-    //         const CodeBlockOptions&,
-    //         const std::string&,
-    //         const std::string&,
-    //         std::string (T2::*)(const Hypothesis, const std::string&, const
-    //         bool), std::string (T2::*)(const Hypothesis, const std::string&,
-    //         const bool), const bool);
     /*!
      * \brief read the next code block and adds it tho the mechanical
      * behaviour
@@ -507,6 +402,8 @@ namespace mfront {
     virtual std::string tangentOperatorVariableModifier(const Hypothesis,
                                                         const std::string&,
                                                         const bool);
+    //! \brief read the description of a behaviour variable
+    virtual BehaviourVariableDescription readBehaviourVariableDescription();
     /*!
      * \brief extract a material property from a token. If the token
      * is a string, it is interpred as a mfront file name. Otherwise,
@@ -630,8 +527,16 @@ namespace mfront {
      * \brief get a model description from an mfront file
      * \param[in] m: file
      * \return a model description
+     * \note the class name associated with the model is automatically
+     * reserved.
      */
     virtual ModelDescription getModelDescription(const std::string&);
+    /*!
+     * \brief get a behaviour description from an mfront file
+     * \param[in] m: file
+     * \return a behaviour description
+     */
+    virtual BehaviourDescription getBehaviourDescription(const std::string&);
     //! \brief treat the `@Private` keyword
     void treatPrivate() override;
     //! \brief treat the `@Members` keyword
@@ -714,6 +619,10 @@ namespace mfront {
     virtual void treatRequireThermalExpansionCoefficientTensor();
     //! \brief handle the `@Behaviour` keyword
     virtual void treatBehaviour();
+    //! \brief handle the `@BehaviourVariable` keyword
+    virtual void treatBehaviourVariable();
+    //! \brief handle the `@BehaviourVariableFactory` keyword
+    virtual void treatBehaviourVariableFactory();
     //! \brief handle the `@Interface` keyword
     virtual void treatInterface();
     //! \brief handle the `@StateVariable` keyword

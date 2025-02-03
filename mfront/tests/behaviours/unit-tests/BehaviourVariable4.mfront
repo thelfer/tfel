@@ -1,0 +1,15 @@
+@DSL Default;
+@Behaviour BehaviourVariable4;
+@Description{
+  "Try to share a material property with inconsistent type"
+}
+
+@MaterialProperty StressStensor H;
+
+@BehaviourVariable b1{
+  file : "Plasticity.mfront",
+  store_gradients : false,
+  store_thermodynamic_forces : false,
+  shared_material_properties: {"H"},
+  shared_external_state_variables: {".+"}
+};

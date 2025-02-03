@@ -36,24 +36,6 @@ namespace mfront {
      * \param[in] mhs: modelling hypotheses to be treated
      */
     virtual void generateOutputFiles(const std::set<Hypothesis>&) = 0;
-    //! \return the name of the behaviour file
-    virtual std::string getBehaviourFileName() const = 0;
-    //! \return the name of the behaviour data file
-    virtual std::string getBehaviourDataFileName() const = 0;
-    //! \return the name of the integration data file
-    virtual std::string getIntegrationDataFileName() const = 0;
-    /*!
-     * \return the name of the header file describing the slip systems,
-     * if declared
-     */
-    virtual std::string getSlipSystemHeaderFileName() const = 0;
-    /*!
-     * \return the name of the header file implementing the description of the
-     * the slip systems, if declared
-     */
-    virtual std::string getSlipSystemImplementationFileName() const = 0;
-    //! \return the name of the source file
-    virtual std::string getSrcFileName() const = 0;
     /*!
      * \brief write the call to a material property
      * \param[out] out: output stream

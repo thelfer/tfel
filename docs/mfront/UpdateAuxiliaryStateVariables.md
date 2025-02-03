@@ -1,11 +1,13 @@
-The `UpdateAuxiliaryStateVariables` introduces a code block meant to
+The `@UpdateAuxiliaryStateVariables` introduces a code block meant to
 update the auxiliary state variables after integration.
 
-In implicit domain specific languages, the code declared by
-`UpdateAuxiliaryStateVariables` is called once the integration
-variables (including state variables) and stresses (see the
-`@ComputeFinalStress` keyword) have been updated. The external state
-variables are not updated.
+In the `Default` and `Implicit` domain specific languages, the code
+declared by `UpdateAuxiliaryStateVariables` is called once the
+integration variables (including state variables) and stresses (see the
+`@ComputeFinalStress` keyword) have been updated. If external point-wise
+models were declared (see the `@Model` keyword), the associated
+auxiliary states are also updated. The external state variables are not
+updated.
 
 In Runge-Kutta domain specific languages, the code declared by
 `UpdateAuxiliaryStateVariables` is called after each successful time
@@ -14,8 +16,10 @@ substeppings: in this case, the code declared by
 `UpdateAuxiliaryStateVariables` may be called several time during the
 behaviour integration. An additional variable called `dt_`, which is
 lower than the total time step increment `dt` if substeppings is
-performed, gives the current time increment. The external state
-variables are set to their values at the current date.
+performed, gives the current time increment. If external point-wise
+models were declared (see the `@Model` keyword), the associated
+auxiliary states are set to their values at the current date. The
+external state variables are set to their values at the current date.
 
 ## Example (Implicit dsl)
 

@@ -30,6 +30,9 @@ namespace mfront {
     this->registerNewCallBack("@Parser", &Child::treatDSL);
     this->registerNewCallBack("@Model", &Child::treatModel);
     this->registerNewCallBack("@Material", &Child::treatMaterial);
+    this->registerNewCallBack("@Includes", &Child::treatIncludes);
+    this->registerNewCallBack("@Link", &Child::treatLink);
+    this->registerNewCallBack("@TFELLibraries", &Child::treatTFELLibraries);
     this->registerNewCallBack("@Author", &Child::treatAuthor);
     this->registerNewCallBack("@Date", &Child::treatDate);
     this->registerNewCallBack("@UnitSystem", &Child::treatUnitSystem);
@@ -150,6 +153,7 @@ namespace mfront {
     this->importFile(fileName_, ecmds, s);
     // Adding some stuff
     this->endsInputFileProcessing();
+    this->makeConsistencyChecks();
     //
     for (const auto& i : this->interfaces) {
       i.second->getTargetsDescription(this->td, md);
