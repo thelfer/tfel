@@ -11,18 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#include <numpy/ndarrayobject.h>
 #include <boost/python/numpy.hpp>
 #include "TFEL/Numpy/InitNumpy.hxx"
-
-#if PY_MAJOR_VERSION == 2
-static void wrapInitializeNumPy() { import_array(); }
-#else
-static void* wrapInitializeNumPy() {
-  import_array();
-  return nullptr;
-}
-#endif
 
 namespace tfel {
 
@@ -31,7 +21,6 @@ namespace tfel {
     void initializeNumPy() {
       Py_Initialize();
       boost::python::numpy::initialize();
-      ::wrapInitializeNumPy();
     }  // end of initializeNumPy
 
   }  // end of namespace numpy
