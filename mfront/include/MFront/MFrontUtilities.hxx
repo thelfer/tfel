@@ -23,6 +23,7 @@
 #include <initializer_list>
 
 #include "TFEL/Utilities/CxxTokenizer.hxx"
+#include "TFEL/Utilities/Data.hxx"
 #include "MFront/MFrontConfig.hxx"
 
 namespace mfront {
@@ -153,6 +154,19 @@ namespace mfront {
    */
   template <>
   MFRONT_VISIBILITY_EXPORT std::vector<std::string> read(
+      tfel::utilities::CxxTokenizer::const_iterator&,
+      const tfel::utilities::CxxTokenizer::const_iterator);
+  /*!
+   * \brief read a data map from a stream created by the
+   * CxxTokenizer class
+   * \param[in,out] p  : current position in the stream
+   * \param[in]     pe : end of the stream
+   * \return the DataMap read.
+   * If this function succeed, p points past the last token treated.
+   * If this function fails,   p is unchanged.
+   */
+  template <>
+  MFRONT_VISIBILITY_EXPORT tfel::utilities::DataMap read(
       tfel::utilities::CxxTokenizer::const_iterator&,
       const tfel::utilities::CxxTokenizer::const_iterator);
   /*!

@@ -1,0 +1,9 @@
+@DSL IsotropicPlasticMisesFlow;
+@Behaviour Plasticity5;
+@Author Helfer Thomas;
+@Date 31 / 01 / 23;
+
+@Epsilon 1e-15;
+@UseQt true;
+
+@IsotropicHardeningRule "Voce" {R0 : 125e6, Rinf : 500e6, b : 20};

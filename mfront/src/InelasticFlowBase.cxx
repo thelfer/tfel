@@ -306,7 +306,7 @@ namespace mfront::bbrick {
       if (this->ihrs.size() != 1) {
         const auto Rel = "Rel" + id;
         const auto R = "R" + id;
-        const auto dR = "d" + R + "_ddp" + id;
+        const auto dR = "d" + R + "_dp" + id;
         bd.reserveName(uh, Rel);
         bd.reserveName(uh, R);
         bd.reserveName(uh, dR);

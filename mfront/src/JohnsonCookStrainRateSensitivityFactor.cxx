@@ -39,7 +39,7 @@ namespace mfront::bbrick {
     this->A = get_mp("A", "real", "A");
     this->dp0 = get_mp("dp0", "strainrate", "dp0");
     const auto Rs = id.empty() ? "Rs" + fid : "Rs" + fid + "_" + id;
-    const auto dRs = "d" + Rs + "_ddp" + fid;
+    const auto dRs = "d" + Rs + "_dp" + fid;
     bd.reserveName(uh, Rs);
     bd.reserveName(uh, dRs);
   }  // end of initialize
@@ -80,7 +80,7 @@ namespace mfront::bbrick {
           const std::string& fid,
           const std::string& id) const {
     const auto Rs = id.empty() ? "Rs" + fid : "Rs" + fid + "_" + id;
-    const auto dRs = "d" + Rs + "_ddp" + fid;
+    const auto dRs = "d" + Rs + "_dp" + fid;
     const auto An = StrainRateSensitivityFactor::getVariableId("A", fid, id);
     const auto dp0n =
         StrainRateSensitivityFactor::getVariableId("dp0", fid, id);

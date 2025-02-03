@@ -17,10 +17,15 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontWarningMode.hxx"
+#include "MFront/MFrontUtilities.hxx"
 #include "MFront/DSLUtilities.hxx"
+#include "MFront/BehaviourBrick/BrickUtilities.hxx"
+#include "MFront/BehaviourBrick/IsotropicHardeningRule.hxx"
+#include "MFront/BehaviourBrick/IsotropicHardeningRuleFactory.hxx"
 #include "MFront/IsotropicBehaviourDSLBase.hxx"
 
 namespace mfront {
@@ -64,6 +69,12 @@ namespace mfront {
     this->registerNewCallBack(
         "@ElasticMaterialProperties",
         &IsotropicBehaviourDSLBase::treatElasticMaterialProperties);
+    this->registerNewCallBack(
+        "@IsotropicHardeningRule",
+        &IsotropicBehaviourDSLBase::treatIsotropicHardeningRule);
+    this->registerNewCallBack(
+        "@IsotropicHardeningRules",
+        &IsotropicBehaviourDSLBase::treatIsotropicHardeningRules);
     this->disableCallBack("@Brick");
     this->disableCallBack("@StateVar");
     this->disableCallBack("@StateVariable");
@@ -200,15 +211,14 @@ namespace mfront {
   std::string IsotropicBehaviourDSLBase::flowRuleVariableModifier(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
-    if ((d.isExternalStateVariableName(var)) ||
-        (d.isStateVariableName(var))) {
+    if ((d.isExternalStateVariableName(var)) || (d.isStateVariableName(var))) {
       if (addThisPtr) {
         return "this->" + var + "_";
       } else {
         return var + "_";
       }
     }
-    if (d.isAuxiliaryStateVariableName(var)){
+    if (d.isAuxiliaryStateVariableName(var)) {
       const auto& v = d.getAuxiliaryStateVariables().getVariable(var);
       if (v.getAttribute<bool>("ComputedByExternalModel", false)) {
         if (addThisPtr) {
@@ -218,8 +228,7 @@ namespace mfront {
         }
       }
     }
-    if ((d.isExternalStateVariableIncrementName(var)) ||
-        (var == "dT")) {
+    if ((d.isExternalStateVariableIncrementName(var)) || (var == "dT")) {
       this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
           h, var.substr(1));
     }
@@ -283,6 +292,154 @@ namespace mfront {
     this->checkFlowRule(BehaviourData::FlowRule);
   }  // end of treatFlowRule
 
+  bool IsotropicBehaviourDSLBase::allowMultipleFlowRules() const {
+    return false;
+  }  // end of allowMultipleFlowRules
+
+  std::size_t IsotropicBehaviourDSLBase::getNumberOfFlowRules() const {
+    return 1;
+  }  // end of getNumberOfFlowRules
+
+  static std::size_t extractFlowId(const tfel::utilities::DataMap& opts,
+                                   const bool allowMultipleFlowRules) {
+    auto extract = [&opts] {
+      if (!is<int>(opts, "flow_id")) {
+        tfel::raise("the 'flow_id' parameter is not an integer");
+      }
+      return opts.at("flow_id").get<int>();
+    };
+    if (!allowMultipleFlowRules) {
+      if (opts.contains("flow_id")) {
+        const auto id = extract();
+        if (id != 0) {
+          tfel::raise(
+              "the (optional) 'flow_id' parameter shall be egal to zero when "
+              "only one flow rule is allowed");
+        }
+      }
+      return 0;
+    }
+    if (!opts.contains("flow_id")) {
+      tfel::raise("no 'flow_id' parameter specified");
+    }
+    const auto id = extract();
+    if (id < 0) {
+      tfel::raise("invalid value for the 'flow_id' parameter ('" +
+                  std::to_string(id) + "')");
+    }
+    return static_cast<std::size_t>(id);
+  }
+  void IsotropicBehaviourDSLBase::treatIsotropicHardeningRule() {
+    const auto name = this->readString(
+        "IsotropicBehaviourDSLBase::treatIsotropicHardeningRule");
+    this->checkNotEndOfFile(
+        "IsotropicBehaviourDSLBase::treatIsotropicHardeningRule");
+    const auto opts =
+        read<tfel::utilities::DataMap>(this->current, this->tokens.end());
+    this->readSpecifiedToken(
+        "IsotropicBehaviourDSLBase::treatIsotropicHardeningRule", ";");
+    //
+    const auto flow_id = extractFlowId(opts, this->allowMultipleFlowRules());
+    if (!this->ihrs[flow_id].empty()) {
+      this->throwRuntimeError(
+          "IsotropicBehaviourDSLBase::treatIsotropicHardeningRule",
+          "an isotropic hardening rule has already been defined for flow '" +
+              std::to_string(flow_id) + "'");
+    }
+    //
+    auto& rf = ::mfront::bbrick::IsotropicHardeningRuleFactory::getFactory();
+    const auto ihr = rf.generate(name);
+    if (this->allowMultipleFlowRules()) {
+      ihr->initialize(this->mb, *this, std::to_string(flow_id), "",
+                      tfel::utilities::remove(opts, {"flow_id"}));
+    } else {
+      ihr->initialize(this->mb, *this, "", "",
+                      tfel::utilities::remove(opts, {"flow_id"}));
+    }
+    this->ihrs[flow_id].push_back(ihr);
+  }  // end of treatIsotropicHardeningRule
+
+  void IsotropicBehaviourDSLBase::treatIsotropicHardeningRules() {
+    this->checkNotEndOfFile(
+        "IsotropicBehaviourDSLBase::treatIsotropicHardeningRules");
+    const auto opts = [this] {
+      auto o = tfel::utilities::DataParsingOptions{};
+      o.allowMultipleKeysInMap = true;
+      const auto data =
+          tfel::utilities::Data::read(this->current, this->tokens.end(), o);
+      if (data.empty()) {
+        return tfel::utilities::DataMap{};
+      }
+      if (!data.is<tfel::utilities::DataMap>()) {
+        this->throwRuntimeError(
+            "IsotropicBehaviourDSLBase::treatIsotropicHardeningRules",
+            "expected to read a map");
+      }
+      return data.get<tfel::utilities::DataMap>();
+    }();
+    this->readSpecifiedToken(
+        "IsotropicBehaviourDSLBase::treatIsotropicHardeningRules", ";");
+    for (const auto& [k, v] : opts) {
+      static_cast<void>(v);
+      if ((k != "flow_id") && (k != "isotropic_hardening")) {
+        this->throwRuntimeError(
+            "IsotropicBehaviourDSLBase::treatIsotropicHardeningRules",
+            "unexpected entry '" + k +
+                "'. Valid entries are 'flow_id' and 'isotropic_hardening'.");
+      }
+    }
+    if (!opts.contains("isotropic_hardening")) {
+      this->throwRuntimeError(
+          "IsotropicBehaviourDSLBase::treatIsotropicHardeningRules",
+          "no isotropic hardening rule defined.");
+    }
+    const auto flow_id = extractFlowId(opts, this->allowMultipleFlowRules());
+    if (!this->ihrs[flow_id].empty()) {
+      this->throwRuntimeError(
+          "IsotropicBehaviourDSLBase::treatIsotropicHardeningRules",
+          "an isotropic hardening rule has already been defined for flow '" +
+              std::to_string(flow_id) + "'");
+    }
+    auto getDataStructure = [this](const tfel::utilities::Data& ds) {
+      if (ds.is<std::string>()) {
+        tfel::utilities::DataStructure nds;
+        nds.name = ds.get<std::string>();
+        return nds;
+      }
+      if (!ds.is<tfel::utilities::DataStructure>()) {
+        this->throwRuntimeError(
+            "IsotropicBehaviourDSLBase::treatIsotropicHardeningRules",
+            "invalid data type for entry 'isotropic_hardening'");
+      }
+      return ds.get<tfel::utilities::DataStructure>();
+    };  // end of getDataStructure
+    auto& rf = ::mfront::bbrick::IsotropicHardeningRuleFactory::getFactory();
+    const auto& rules = opts.at("isotropic_hardening");
+    if (rules.is<std::vector<tfel::utilities::Data>>()) {
+      for (const auto& ird : rules.get<std::vector<tfel::utilities::Data>>()) {
+        const auto ds = getDataStructure(ird);
+        const auto ihr = rf.generate(ds.name);
+        if (this->allowMultipleFlowRules()) {
+          ihr->initialize(this->mb, *this, std::to_string(flow_id),
+                          std::to_string(this->ihrs[flow_id].size()), ds.data);
+        } else {
+          ihr->initialize(this->mb, *this, "",
+                          std::to_string(this->ihrs[flow_id].size()), ds.data);
+        }
+        this->ihrs[flow_id].push_back(ihr);
+      }
+    } else {
+      const auto ds = getDataStructure(rules);
+      const auto ihr = rf.generate(ds.name);
+      if (this->allowMultipleFlowRules()) {
+        ihr->initialize(this->mb, *this, std::to_string(flow_id), "", ds.data);
+      } else {
+        ihr->initialize(this->mb, *this, "", "", ds.data);
+      }
+      this->ihrs[flow_id].push_back(ihr);
+    }
+  }  // end of treatIsotropicHardeningRules
+
   void IsotropicBehaviourDSLBase::treatExternalStateVariable() {
     VariableDescriptionContainer ev;
     std::set<Hypothesis> h;
@@ -325,7 +482,7 @@ namespace mfront {
         }
       }
     };
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       auto& log = getLogStream();
       log << "IsotropicBehaviourDSLBase::completeVariableDeclaration : begin\n";
@@ -362,39 +519,41 @@ namespace mfront {
              "Poisson ratio at t+dt");
     } else {
       this->mb.addMaterialProperty(
-          h, VariableDescription("stress", "young", 1u, 0u));
-      this->mb.setGlossaryName(h, "young", "YoungModulus");
+          uh, VariableDescription("stress", "young", 1u, 0u));
+      this->mb.setGlossaryName(uh, "young", "YoungModulus");
       this->mb.addMaterialProperty(
-          h, VariableDescription("real", "\u03BD", "nu", 1u, 0u));
-      this->mb.setGlossaryName(h, "nu", "PoissonRatio");
+          uh, VariableDescription("real", "\u03BD", "nu", 1u, 0u));
+      this->mb.setGlossaryName(uh, "nu", "PoissonRatio");
     }
-    if (!this->mb.hasParameter(h, "theta")) {
+    if (!this->mb.hasParameter(uh, "theta")) {
       this->mb.addParameter(
-          h, VariableDescription("real", "\u03B8", "theta", 1u, 0u),
+          uh, VariableDescription("real", "\u03B8", "theta", 1u, 0u),
           BehaviourData::ALREADYREGISTRED);
-      this->mb.setParameterDefaultValue(h, "theta",
+      this->mb.setParameterDefaultValue(uh, "theta",
                                         this->getDefaultThetaValue());
     }
-    if (!this->mb.hasParameter(h, "epsilon")) {
+    if (!this->mb.hasParameter(uh, "epsilon")) {
       this->mb.addParameter(
-          h, VariableDescription("real", "\u03B5", "epsilon", 1u, 0u),
+          uh, VariableDescription("real", "\u03B5", "epsilon", 1u, 0u),
           BehaviourData::ALREADYREGISTRED);
-      this->mb.setParameterDefaultValue(h, "epsilon", 1.e-8);
+      this->mb.setParameterDefaultValue(uh, "epsilon", 1.e-8);
       reportWarning(
           "using the default value for the convergence threshold. "
           "This value is generally considered too loose. You may "
           "want to consider a more stringent value (1e-14 is a good choice). "
           "See the `@Epsilon` keyword for details");
     }
-    if (!this->mb.hasParameter(h, "iterMax")) {
+    if (!this->mb.hasParameter(uh, "iterMax")) {
       unsigned short iterMax = 100u;
-      this->mb.addParameter(h, VariableDescription("ushort", "iterMax", 1u, 0u),
+      this->mb.addParameter(uh,
+                            VariableDescription("ushort", "iterMax", 1u, 0u),
                             BehaviourData::ALREADYREGISTRED);
-      this->mb.setParameterDefaultValue(h, "iterMax", iterMax);
+      this->mb.setParameterDefaultValue(uh, "iterMax", iterMax);
     }
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       auto& log = getLogStream();
-      log << "IsotropicBehaviourDSLBase::completeVariableDeclaration: end\n";
+      log << "IsotropicBehaviourDSLBase::completeVariableDeclaration: "
+             "end\n";
     }
   }  // end of completeVariableDeclaration
 
@@ -404,6 +563,68 @@ namespace mfront {
       log << "IsotropicBehaviourDSLBase::endsInputFileProcessing: begin\n";
     }
     BehaviourDSLCommon::endsInputFileProcessing();
+    // isotropic hardening rules
+    for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
+      auto add_ihrs = [this, h](
+                          const std::string& cname, const std::string& id,
+                          const std::vector<std::shared_ptr<
+                              mfront::bbrick::IsotropicHardeningRule>>& lihrs) {
+        auto i = CodeBlock{};
+        i.code = computeElasticLimitAndDerivative(this->mb, lihrs, id);
+        if (!id.empty()) {
+          i.code += "const auto R = R" + id + ";\n";
+          i.code += "const auto dR_dp = dR" + id + "_dp" + id + ";\n";
+        }
+        this->mb.setCode(h, cname, i, BehaviourData::CREATEORAPPEND,
+                         BehaviourData::AT_BEGINNING);
+      };
+      auto& d = this->mb.getBehaviourData(h);
+      if (this->allowMultipleFlowRules()) {
+        for (const auto& [id, lihrs] : this->ihrs) {
+          if (id + 1 > IsotropicBehaviourDSLBase::getNumberOfFlowRules()) {
+            this->throwRuntimeError(
+                "IsotropicBehaviourDSLBase::completeVariableDeclaration",
+                "no flow rule associated with flow id '" + std::to_string(id) +
+                    "'");
+          }
+          if (lihrs.size() == 1) {
+            lihrs[0]->endTreatment(this->mb, *this, "", "");
+          } else {
+            auto n = std::size_t{};
+            for (auto& ihr : lihrs) {
+              ihr->endTreatment(this->mb, *this, "", std::to_string(n));
+              ++n;
+            }
+          }
+          const auto cname = BehaviourData::BeforeFlowRule + std::to_string(id);
+          add_ihrs(cname, std::to_string(id), lihrs);
+        }
+      } else {
+        if (this->ihrs.size() != 0) {
+          if ((this->ihrs.size() != 1) || (!this->ihrs.contains(0))) {
+            this->throwRuntimeError(
+                "IsotropicBehaviourDSLBase::completeVariableDeclaration",
+                "internal error (inconsistent isotropic hardening");
+          }
+          if (this->ihrs.at(0).size() == 1) {
+            this->ihrs.at(0)[0]->endTreatment(this->mb, *this, "", "");
+          } else {
+            auto n = std::size_t{};
+            for (auto& ihr : this->ihrs.at(0)) {
+              ihr->endTreatment(this->mb, *this, "", std::to_string(n));
+              ++n;
+            }
+          }
+          if (!d.hasCode(BehaviourData::FlowRule)) {
+            this->throwRuntimeError(
+                "IsotropicBehaviourDSLBase::completeVariableDeclaration",
+                "no flow rule defined");
+          }
+          add_ihrs(BehaviourData::BeforeFlowRule, "", this->ihrs.at(0));
+        }
+      }
+    }
+    //
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       auto& log = getLogStream();
       log << "IsotropicBehaviourDSLBase::endsInputFileProcessing: end\n";

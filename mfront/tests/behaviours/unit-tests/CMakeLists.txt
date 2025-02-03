@@ -92,3 +92,8 @@ mfront_unit_test(WarningTest31            WARNING_ERROR WILL_FAIL)
 mfront_unit_test(WarningTest32            WARNING_ERROR WILL_FAIL)
 mfront_unit_test(WarningTest33            WARNING_ERROR WILL_FAIL)
 mfront_unit_test(WarningTest34            WARNING_ERROR)
+
+mfront_unit_test(Plasticity1)
+mfront_unit_test(Plasticity2 WILL_FAIL)
+mfront_unit_test(MultipleFlows1 WILL_FAIL)
+mfront_unit_test(MultipleFlows2 WILL_FAIL)

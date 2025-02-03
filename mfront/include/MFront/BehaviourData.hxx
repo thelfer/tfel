@@ -55,6 +55,8 @@ namespace mfront {
     //! \brief standard code name
     static const char* const UserDefinedInitializeCodeBlock;
     //! \brief standard code name
+    static const char* const BeforeFlowRule;
+    //! \brief standard code name
     static const char* const FlowRule;
     //! \brief standard code name
     static const char* const BeforeInitializeLocalVariables;

@@ -25,6 +25,14 @@ modules are now modified to reflect those information. This old
 behaviour can be restored by setting the
 `unversioned-python-module-names` option to `ON`.
 
+## Internal API changes
+
+`IsotropicHardeningRule::computeElasticLimitAndDerivative` now returns
+the derivative of the elastic limit (computed at the middle of the time
+step) with respect to the equivalent plastic strain at the middle of the
+time step rather than the derivative with respect to the increment of
+the equivalent plastic strain.
+
 # New features in the `TFEL` libraries
 
 ## Environment

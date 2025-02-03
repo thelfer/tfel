@@ -561,7 +561,7 @@ namespace mfront::bbrick {
       const auto id = std::to_string(i);
       c += ihrs[i]->computeElasticLimitAndDerivative(bd, fid, id);
       const auto Ri = "R" + fid + "_" + id;
-      const auto dRi = "d" + Ri + "_ddp" + fid;
+      const auto dRi = "d" + Ri + "_dp" + fid;
       R += Ri;
       dR += dRi;
       if (++i != ihrs.size()) {
@@ -570,7 +570,7 @@ namespace mfront::bbrick {
       }
     }
     c += "const auto R" + fid + " = " + R + ";\n";
-    c += "const auto dR" + fid + "_ddp" + fid + " = " + dR + ";\n";
+    c += "const auto dR" + fid + "_dp" + fid + " = " + dR + ";\n";
     return c;
   }  // end of computeElasticLimitAndDerivative
 

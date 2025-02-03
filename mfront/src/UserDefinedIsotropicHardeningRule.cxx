@@ -105,7 +105,7 @@ namespace mfront::bbrick {
     //
     const auto Rel_id = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
     const auto R_id = id.empty() ? "R" + fid : "R" + fid + "_" + id;
-    const auto dR_id = "d" + R_id + "_ddp" + fid;
+    const auto dR_id = "d" + R_id + "_dp" + fid;
     bd.reserveName(uh, Rel_id);
     bd.reserveName(uh, R_id);
     bd.reserveName(uh, dR_id);
@@ -184,7 +184,7 @@ namespace mfront::bbrick {
       const std::string& fid,
       const std::string& id) const {
     const auto R_id = id.empty() ? "R" + fid : "R" + fid + "_" + id;
-    const auto dR_id = "d" + R_id + "_ddp" + fid;
+    const auto dR_id = "d" + R_id + "_dp" + fid;
     const auto m = getVariablesMap(
         this->R, this->mps, bd, fid, id,
         "(this->p" + fid + "+(this->theta) * (this->dp" + fid + "))");

@@ -35,7 +35,7 @@ namespace mfront {
 
   void
   MultipleIsotropicMisesFlowsCodeGenerator::writeBehaviourParserSpecificMembers(
-      std::ostream& os, const Hypothesis) const {
+      std::ostream& os, const Hypothesis h) const {
     const auto has_plastic_flow = [this] {
       for (auto p = this->flows.begin(); p != this->flows.end(); ++p) {
         if (p->flow == FlowHandler::PlasticFlow) {
@@ -69,6 +69,10 @@ namespace mfront {
       os << "using namespace tfel::material;\n";
       os << "using std::vector;\n";
       writeMaterialLaws(os, this->bd.getMaterialLaws());
+      const auto flow_id = std::to_string(n);
+      if (this->bd.hasCode(h, BehaviourData::BeforeFlowRule + flow_id)) {
+        os << this->bd.getCode(h, BehaviourData::BeforeFlowRule + flow_id);
+      }
       os << p->flowRule << '\n';
       os << "}\n\n";
     }

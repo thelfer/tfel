@@ -44,7 +44,7 @@ namespace mfront::bbrick {
     }
     const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
-    const auto dR = "d" + R + "_ddp" + fid;
+    const auto dR = "d" + R + "_dp" + fid;
     bd.reserveName(uh, Rel);
     bd.reserveName(uh, R);
     bd.reserveName(uh, dR);
@@ -113,7 +113,7 @@ namespace mfront::bbrick {
       const std::string& fid,
       const std::string& id) const {
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
-    const auto dR = "d" + R + "_ddp" + fid;
+    const auto dR = "d" + R + "_dp" + fid;
     const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
     const auto Hn = IsotropicHardeningRule::getVariableId("H", fid, id);
     const auto pn = "p" + fid;

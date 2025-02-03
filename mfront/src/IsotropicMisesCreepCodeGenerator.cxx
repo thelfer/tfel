@@ -40,6 +40,9 @@ namespace mfront {
        << "using namespace tfel::material;\n"
        << "using std::vector;\n";
     writeMaterialLaws(os, this->bd.getMaterialLaws());
+    if (this->bd.hasCode(h, BehaviourData::BeforeFlowRule)) {
+      os << this->bd.getCode(h, BehaviourData::BeforeFlowRule);
+    }
     os << this->bd.getCode(h, BehaviourData::FlowRule) << "return true;\n}\n\n"
        << "bool NewtonIntegration(){\n"
        << "constexpr auto newton_epsilon = "

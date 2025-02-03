@@ -433,6 +433,16 @@ namespace tfel::utilities {
     return r;
   }
 
+  DataMap remove(const DataMap& m, const std::vector<std::string>& names) {
+    auto r = DataMap();
+    for (const auto& [k, v] : m) {
+      if (std::find(names.begin(), names.end(), k) == names.end()) {
+        r.insert({k, v});
+      }
+    }
+    return r;
+  }
+
   DataMap merge(const DataMap& m1, const DataMap& m2, const bool b) {
     auto r = m1;
     if (b) {
