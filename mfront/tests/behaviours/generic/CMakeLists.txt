@@ -106,6 +106,9 @@ set(mfront_tests_SOURCES
   BerveillerZaouiPolyCrystal
   BerveillerZaouiPolyCrystal_DD_CC
   BerveillerZaouiPolyCrystal_DD_CFC
+  ExternalModelCaller
+  ExternalModelCaller2
+  ExternalModelCaller3
   PolyCrystals
   PolyCrystals_DD_CC
   PolyCrystals_DD_CFC
@@ -724,6 +727,9 @@ test_generic(axialgrowth)
 test_generic(axialgrowth2)
 test_generic(axialgrowth3)
 test_generic(relocationtest)
+test_generic(externalmodelcaller ExternalModelCallerTest.ref)
+test_generic(externalmodelcaller2 ExternalModelCallerTest.ref)
+test_generic(externalmodelcaller3 ExternalModelCallerTest.ref)
 # test_generic(parametertest)
 # test_generic(parametertest2)
 

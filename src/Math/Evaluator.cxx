@@ -252,6 +252,8 @@ namespace tfel::math {
         return std::make_shared<PowerFunction<15>>(e);
       case 16:
         return std::make_shared<PowerFunction<16>>(e);
+    default:
+      break;
     }
     return std::make_shared<GeneralPowerFunction>(e, n);
   }  // end of makePowerFunctionExpression

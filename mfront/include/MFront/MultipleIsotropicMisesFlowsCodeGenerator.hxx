@@ -38,8 +38,6 @@ namespace mfront {
     ~MultipleIsotropicMisesFlowsCodeGenerator() override;
 
    protected:
-    void writeBehaviourParserSpecificInitializeMethodPart(
-        std::ostream&, const Hypothesis) const override;
     void writeBehaviourParserSpecificMembers(std::ostream&,
                                              const Hypothesis) const override;
     void writeBehaviourParserSpecificIncludes(std::ostream&) const override;

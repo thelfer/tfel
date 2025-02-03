@@ -20,6 +20,7 @@
 #include <tuple>
 #include <memory>
 #include <string>
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/CodeBlock.hxx"
@@ -202,7 +203,8 @@ namespace mfront {
      * \param[in] interfaces: list of interfaces used to treat the file
      */
     virtual void addExternalMFrontFile(const std::string&,
-                                       const std::vector<std::string>&) = 0;
+                                       const std::vector<std::string>&,
+                                       const tfel::utilities::DataMap&) = 0;
     // \return options for child DSL (DSL called by this DSL)
     virtual DSLOptions buildDSLOptions() const = 0;
     /*!
@@ -365,6 +367,8 @@ namespace mfront {
     std::string readType();
     //! \brief read a C++ type if present
     std::optional<std::string> readVariableTypeIfPresent();
+    //! \return true if the next tokens are '<safe>', false otherwise
+    bool readSafeOptionTypeIfPresent();
     /*!
      * \return the size of an array of variables, or 1 if the variable are not
      * defined as an array.
@@ -466,11 +470,13 @@ namespace mfront {
     std::pair<std::string, VariableBoundsDescription> readVariableBounds();
     /*!
      * call mfront in a subprocess
-     * \param[in] interfaces : list of interfaces
      * \param[in] files      : list of files
+     * \param[in] interfaces : list of interfaces
+     * \param[in] dsl_options: DSL options
      */
     virtual void callMFront(const std::vector<std::string>&,
-                            const std::vector<std::string>&);
+                            const std::vector<std::string>&,
+                            const tfel::utilities::DataMap&);
     /*!
      * \brief This function handles a material property treated as a
      * dependency of the current file.
@@ -524,6 +530,8 @@ namespace mfront {
     virtual void treatMaterialLaw();
     //! \brief handle the `@Link` keyword
     virtual void treatLink();
+    //! \brief handle the `@TFELLibraries` keyword
+    virtual void treatTFELLibraries();
     //! \brief handle the `@Author` keyword
     virtual void treatAuthor();
     //! \brief handle the `@Data` keyword
@@ -593,6 +601,8 @@ namespace mfront {
     TargetsDescription td;
     //! \brief additional linker flags
     std::vector<std::string> ldflags;
+    //! \brief additional libraries's sources
+    std::vector<std::string> additional_libraries_sources;
     //! \brief additional link libraries
     std::vector<std::string> link_libraries;
     //! \brief additional link directories

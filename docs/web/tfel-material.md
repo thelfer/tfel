@@ -424,9 +424,8 @@ In the same way, the formulas for the axisymmetrical case are instable when the 
 ratio is near one, so a parameter allows to switch to the formula for a sphere.
 
 When \(\tenseur C_0\) is anisotropic, the Eshelby tensor can be computed
-with `computeAnisotropicEshelbyTensor` in 3D and `compute2DAnisotropicEshelbyTensor`
-in 2D. There are also `computeAnisotropicHillTensor`, `compute2DAnisotropicHillTensor`,
-and also `computeAnisotropicLocalisationTensor` and `compute2DAnisotropicLocalisationTensor`.
+with `computeAnisotropicEshelbyTensor` in 3D and `computePlainStrainAnisotropicEshelbyTensor`
+in 2D. There are also `computeAnisotropicHillTensor` and `computePlainStrainAnisotropicHillTensor`.
 These functions are introduced by the header `AnisotropicEshelbyTensor.hxx`.
 
 ## Strain localisation tensors
@@ -448,6 +447,8 @@ and `computeSphereLocalisationTensor`.
 The ellipsoid is parametrized by its semi-axis lengths \(a,b,c\) but also
 by its axis orientations.
 The functions then return the localisation tensors taking into account the orientations.
+There are also, when the medium is anisotropic, `computeAnisotropicLocalisationTensor` and `computePlainStrainAnisotropicLocalisationTensor`. These functions are introduced by the header
+`AnisotropicEshelbyTensor.hxx`.
 
 ## Homogenization schemes
 

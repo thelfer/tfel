@@ -16,12 +16,12 @@
 #define LIB_TFEL_SYSTEM_RFSTREAM_HXX
 
 #include <string>
+#include <memory>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 
 #include "TFEL/Config/TFELConfig.hxx"
-#include <memory>
 #include "TFEL/System/stream_traits.hxx"
 #include "TFEL/System/basic_rstream.hxx"
 

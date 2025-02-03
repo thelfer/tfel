@@ -1,0 +1,3 @@
+@DSL Implicit;
+@Behaviour WarningTest1;
+@Brick StandardElasticity;

@@ -85,6 +85,18 @@ namespace mfront {
     this->glossaryName = glossary.getGlossaryEntry(g).getKey();
   }  // end of VariableDescription::setGlossaryName
 
+  void VariableDescription::resetGlossaryName(const std::string& g) {
+    using tfel::glossary::Glossary;
+    const auto& glossary = Glossary::getGlossary();
+    if(!glossary.contains(g)){
+      tfel::raise("VariableDescription::resetGlossaryName: '" + g +
+                  "' is not a glossary name");
+    }
+    this->glossaryName.reset();
+    this->entryName.reset();
+    this->setGlossaryName(g);
+  }  // end of resetGlossaryName
+
   void VariableDescription::setEntryName(const std::string& e) {
     using tfel::glossary::Glossary;
     auto throw_if = [](const bool b, const std::string& m) {
@@ -102,6 +114,12 @@ namespace mfront {
                  this->name + "'");
     this->entryName = e;
   }  // end of VariableDescription::setEntryName
+
+  void VariableDescription::resetEntryName(const std::string& g) {
+    this->glossaryName.reset();
+    this->entryName.reset();
+    this->setEntryName(g);
+  }  // end of resetEntryName
 
   bool VariableDescription::hasGlossaryName() const {
     return this->glossaryName.has_value();

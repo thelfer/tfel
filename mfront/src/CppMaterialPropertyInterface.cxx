@@ -209,10 +209,6 @@ namespace mfront {
                                            : mpd.material + "_" + mpd.className;
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, name + "-cxx.cxx");
     insert_if(d.headers, getHeaderFileName(name));
 #if !((defined _WIN32) && (defined _MSC_VER))

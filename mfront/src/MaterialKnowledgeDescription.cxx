@@ -96,13 +96,17 @@ namespace mfront {
   }  // end of getAttributes
 
   void MaterialKnowledgeDescription::addExternalMFrontFile(
-      const std::string_view f, const std::vector<std::string>& interfaces) {
+      const std::string_view f,
+      const std::vector<std::string>& interfaces,
+      const tfel::utilities::DataMap& dsl_options) {
     const auto p = this->externalMFrontFiles.find(f);
     if (p == this->externalMFrontFiles.end()) {
-      this->externalMFrontFiles.insert({std::string{f}, interfaces});
+      this->externalMFrontFiles.insert(
+          {std::string{f}, {interfaces, dsl_options}});
     } else {
+#pragma message("treat DSL options")
       std::copy_if(interfaces.begin(), interfaces.end(),
-                   std::back_inserter(p->second),
+                   std::back_inserter(std::get<0>(p->second)),
                    [&interfaces](const std::string& i) {
                      return std::find(interfaces.begin(), interfaces.end(),
                                       i) == interfaces.end();
@@ -110,7 +114,9 @@ namespace mfront {
     }
   }  // end of addExternalMFrontFile
 
-  const std::map<std::string, std::vector<std::string>, std::less<>>&
+  const std::map<std::string,
+                 std::tuple<std::vector<std::string>, tfel::utilities::DataMap>,
+                 std::less<>>&
   MaterialKnowledgeDescription::getExternalMFrontFiles() const {
     return this->externalMFrontFiles;
   }  // end of getExternalMFrontFiles

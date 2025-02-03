@@ -16,6 +16,7 @@
 #define LIB_MFRONTISOTROPICBEHAVIOURPARSERBASE_HXX
 
 #include <string>
+#include <string_view>
 
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/BehaviourDSLBase.hxx"
@@ -57,6 +58,12 @@ namespace mfront {
     virtual std::string flowRuleVariableModifier(const Hypothesis,
                                                  const std::string&,
                                                  const bool);
+
+    /*!
+     * \brief performs some check on the given code block describing a flow rule
+     * \param[in] n: code block name
+     */
+    virtual void checkFlowRule(std::string_view) const;
 
    private:
     friend struct BehaviourDSLBase<IsotropicBehaviourDSLBase>;

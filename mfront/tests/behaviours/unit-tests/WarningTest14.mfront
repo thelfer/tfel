@@ -1,0 +1,17 @@
+@DSL IsotropicPlasticMisesFlow;
+@Behaviour WarningTest14;
+@Description {
+  "print as warning because sig is used in the body of @FlowRule"
+}
+
+@Epsilon 1e-12;
+
+@MaterialProperty stress H;
+@MaterialProperty stress s0;
+
+@FlowRule {
+  sig;
+  f = seq - H * p - s0;
+  df_dseq = 1;
+  df_dp = -H;
+}

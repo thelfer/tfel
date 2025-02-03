@@ -1,0 +1,10 @@
+@DSL Default;
+@Behaviour BehaviourVariable8;
+@Description{
+  "Invalid variables prefix"
+}
+
+@BehaviourVariable b1{
+  file : "Plasticity.mfront",
+  variables_prefix : "1"
+};

@@ -36,6 +36,7 @@
 #include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/System/System.hxx"
 
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/DSLUtilities.hxx"
@@ -68,6 +69,15 @@ namespace mfront {
       throw_if(key != "@Module", "unsupported key '" + key + "'");
     }
     if (key == "@Module") {
+      if (i.empty()) {
+        reportWarning("keyword '" + key +
+                      "' is used without being restricted to the " +
+                      this->getName() +
+                      " interface, which could be a portability "
+                      "issue. Please add [" +
+                      this->getName() + "] after the keyword (i.e. replace '" +
+                      key + "' by '" + key + "[" + this->getName() + "]')");
+      }
       throw_if(!this->module.empty(), "module name already defined");
       throw_if(current == end, "unexpected end of file");
       const auto p = current->value;
@@ -92,10 +102,6 @@ namespace mfront {
     const auto name = this->getSrcFileName(mpd.material, mpd.className);
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, name + ".cxx");
 #if !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.link_libraries, "m");

@@ -1,0 +1,10 @@
+@DSL Default;
+@Behaviour BehaviourVariable13;
+@Description{
+  "Invalid external names suffix"
+}
+
+@BehaviourVariable b1{
+  file : "Plasticity.mfront",  //
+  external_names_suffix: "#"
+};
