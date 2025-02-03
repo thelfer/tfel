@@ -296,29 +296,6 @@ namespace tfel::material::homogenization::elasticity {
                                   const tfel::math::tvector<3u, real>&,
                                   const LengthType&,
                                   const LengthType&);
-                                  
-   /*!
-   * This function gives the homogenized stiffness for a self-consistent scheme
-   * and spherical inclusions
-   * \tparam real: underlying type
-   * \tparam StressType: type of the elastic constants related to the matrix
-   * and the inclusions \return an object of type std::pair<StressType,real>
-   * which is homogenized Young modulus and homogenized Poisson ratio
-   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
-   * \param [in] f: volumic fraction of inclusions
-   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the
-   * inclusions
-   * \param [in] max_iter: maximum number of iterations for computing
-   * self-consistent approximation, default value = 1000
-   */
-  template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const std::pair<StressType,real>
-  computeSphereSelfConsistentScheme(const StressType&,
-                          const real&,
-                          const real&,
-                          const StressType&,
-                          const real&,
-                          const int = 1000);
 
 }  // end of namespace tfel::material::homogenization::elasticity
 
