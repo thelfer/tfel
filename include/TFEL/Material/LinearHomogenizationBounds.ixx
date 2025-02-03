@@ -50,8 +50,6 @@ namespace tfel::material::homogenization::elasticity {
        	tab_H[i]=tab_mu[i]*(real(d)*tab_K[i]/2+(d+1)*(d-2)*tab_mu[i]/real(d))/(tab_K[i]+2*tab_mu[i]);
        }
        using namespace tfel::fsalgo;
-       auto K_max=*max_element<N>::exe(tab_K.begin());
-       auto K_min=*min_element<N>::exe(tab_K.begin());
        auto mu_max=*max_element<N>::exe(tab_mu.begin());
        auto mu_min=*min_element<N>::exe(tab_mu.begin());
        auto H_max=*max_element<N>::exe(tab_H.begin());
@@ -65,10 +63,10 @@ namespace tfel::material::homogenization::elasticity {
        StressType mue_U;
        StressType Ke_L;
        StressType mue_L;
-       compliance Ce_U;
-       compliance Ne_U;
-       compliance Ce_L;
-       compliance Ne_L;
+       compliance Ce_U = compliance(0);
+       compliance Ne_U = compliance(0);
+       compliance Ce_L = compliance(0);
+       compliance Ne_L = compliance(0);
        for (int i=0;i<N;i++){
        	Ce_L+=tab_f[i]/(K_star_min+tab_K[i]);
        	Ne_L+=tab_f[i]/(mu_star_min+tab_mu[i]);

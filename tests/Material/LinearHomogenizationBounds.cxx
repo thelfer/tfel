@@ -41,8 +41,7 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
     using real = double;
     constexpr bool qt = true;
     using stress = typename tfel::config::Types<1u, real, qt>::stress;
-    using length = typename tfel::config::Types<1u, real, qt>::length;
-    
+   
     this->template testHS_3D<real, stress>();
     this->template testHS_2D<real, stress>();
     

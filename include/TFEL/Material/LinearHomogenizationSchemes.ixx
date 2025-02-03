@@ -236,7 +236,6 @@ namespace tfel::material::homogenization::elasticity {
 
   };  // end of struct EllipsoidMeanLocalisator ;
 
-
   template <typename real, typename StressType>
   TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
   computeDiluteScheme(const StressType& young,
@@ -526,40 +525,6 @@ namespace tfel::material::homogenization::elasticity {
     return computeMoriTanakaScheme<real, StressType>(young, nu, f, young_i,
                                                      nu_i, A);
   }
-  
-  
-  template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const std::pair<StressType,real>
-  computeSphereSelfConsistentScheme(const StressType &young,
-                          const real &nu,
-                          const real &f,
-                          const StressType &young_i,
-                          const real &nu_i,
-                          const int max_iter){
-   static constexpr auto eps = std::numeric_limits<real>::epsilon();
-   auto young_hom=young;
-   auto nu_hom=nu;
-   tfel::math::st2tost2<3u, real> A;
-   auto err1 = real(1);
-   auto err2 = real(1);
-   auto young_=young_hom;
-   auto nu_=nu_hom;
-   int iter=0;
-   while ((err1>eps || err2>eps) && iter<max_iter){
-   	A=computeSphereLocalisationTensor(young_hom, nu_hom, young_i, nu_i);
-   	const auto C_hom=computeDiluteScheme(young_hom,nu_hom,f,young_i,nu_i,A);
-   	const auto mu_hom = (C_hom(0,0) - C_hom(0,1)) / 2;
-        const auto ka_hom = (C_hom(0,0) + 2 * C_hom(0,1)) / 3;
-        nu_hom = (3 * ka_hom - 2 * mu_hom) / (2 * mu_hom + 6 * ka_hom);
-        young_hom = 2 * mu_hom * (1 + nu_hom);
-        err1=(young_hom-young_)/young;
-        err2=(nu_hom-nu_)/nu;
-        young_=young_hom;
-        nu_=nu_hom;
-        iter++;
-   }
-   return {young_hom,nu_hom};                        
-   }
 
 }  // end of namespace tfel::material::homogenization::elasticity
 
