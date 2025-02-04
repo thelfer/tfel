@@ -578,21 +578,33 @@ namespace mfront {
           const auto b = mpd.output.getPhysicalBounds();
           if (b.boundsType == VariableBoundsDescription::LOWER) {
             os << "if(" << mpd.output.name << " < " << cast_start
-               << b.lowerBound << cast_end << "){\n"
-               << "return std::nan(\"\");\n"
-               << "}\n";
+               << b.lowerBound << cast_end << "){\n";
+            if (use_qt) {
+              os << "return " << mpd.output.type << "{std::nan(\"\")};\n";
+            } else {
+              os << "return std::nan(\"\");\n";
+            }
+            os << "}\n";
           } else if (b.boundsType == VariableBoundsDescription::UPPER) {
             os << "if(" << mpd.output.name << " > " << cast_start
-               << b.upperBound << cast_end << "){\n"
-               << "return std::nan(\"\");\n"
-               << "}\n";
+               << b.upperBound << cast_end << "){\n";
+            if (use_qt) {
+              os << "return " << mpd.output.type << "{std::nan(\"\")};\n";
+            } else {
+              os << "return std::nan(\"\");\n";
+            }
+            os << "}\n";
           } else {
             os << "if((" << mpd.output.name << " < " << cast_start
                << b.lowerBound << cast_end << ")||"
                << "(" << mpd.output.name << " > " << cast_start << b.upperBound
-               << cast_end << ")){\n"
-               << "return std::nan(\"\");\n"
-               << "}\n";
+               << cast_end << ")){\n";
+            if (use_qt) {
+              os << "return " << mpd.output.type << "{std::nan(\"\")};\n";
+            } else {
+              os << "return std::nan(\"\");\n";
+            }
+            os << "}\n";
           }
         }
       }
