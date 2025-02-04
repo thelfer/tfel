@@ -190,7 +190,7 @@ namespace mfront {
                           ? mpd.className
                           : mpd.material + "_" + mpd.className;
     const auto target = "../octave/" + name + ".oct";
-    std::string cmd = "@cd ../octave/ && CXXFLAGS=\"$(CXXFLAGS) -std=c++17\" ";
+    std::string cmd = "@cd ../octave/ && CXXFLAGS=\"$(CXXFLAGS) -std=c++20\" ";
     if (mkoctfile == nullptr) {
       cmd += "mkoctfile";
     } else {
