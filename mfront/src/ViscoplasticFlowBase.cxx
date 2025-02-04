@@ -66,8 +66,8 @@ namespace mfront::bbrick {
           this->sc->isNormalDeviatoric());
       if (!this->ihrs.empty()) {
         c += "dfp" + id + "_ddp" + id + " += ";
-        c += "(this->dt) * dvp" + id + "_dseqe" + id + "*dR" + id + "_ddp" +
-             id + ";\n";
+        c += "(this->dt) * dvp" + id + "_dseqe" + id + " * (this->theta) * dR" +
+             id + "_dp" + id + ";\n";
       }
       if (this->describesStrainHardeningExplicitly()) {
         c += "dfp" + id + "_ddp" + id + " -= ";

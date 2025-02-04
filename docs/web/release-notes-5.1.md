@@ -25,6 +25,14 @@ modules are now modified to reflect those information. This old
 behaviour can be restored by setting the
 `unversioned-python-module-names` option to `ON`.
 
+## Internal API changes
+
+`IsotropicHardeningRule::computeElasticLimitAndDerivative` now returns
+the derivative of the elastic limit (computed at the middle of the time
+step) with respect to the equivalent plastic strain at the middle of the
+time step rather than the derivative with respect to the increment of
+the equivalent plastic strain.
+
 # New features in the `TFEL` libraries
 
 ## Environment
@@ -52,8 +60,8 @@ TFEL's installation path shall be defined.
 #### Example of usage
 
 ~~~~
-$ tfel-config-5.2.0-dev-release --tfel-home
-TFELHOME_5_2_0_dev_release
+$ tfel-config-5.1.0-dev-release --tfel-home
+TFELHOME_5_1_0_dev_release
 ~~~~
 
 ### `--python-module-suffix` option
@@ -262,6 +270,54 @@ The following command line arguments are now supported:
 - `-ignore-safe` allows to ignore the `safe` option of keywords and code
   blocks.
 
+## New features in isotropic DSLs
+
+### Predefined isotropic hardening rules
+
+The `@IsotropicHardeningRule` and `@IsotropicHardeningRules` allow to
+use the isotropic hardening rules available in the
+[`StandardElastoViscoPlasticity`
+brick](StandardElastoViscoPlasticityBrick.html).
+
+#### Example of usage
+
+~~~~{.cxx}
+@IsotropicHardeningRule "Voce" {flow_id : 0, R0 : 125e6, Rinf : 500e6, b : 20};
+~~~~
+
+~~~~{.cxx}
+@IsotropicHardeningRules{
+  flow_id : 0,
+  isotropic_hardening : "Voce" {R0 : 125e6, Rinf : 500e6, b : 20},
+  isotropic_hardening : "Linear" {R0 : 50e6}
+};
+~~~~
+
+#### Automatic declaration of the flow rule in the `IsotropicPlasticMisesFlow` DSL
+
+If an isotropic hardening rule is defined in the
+`IsotropicPlasticMisesFlow` DSL, and if no flow rule is defined, the
+following flow rule is automatically defined:
+
+~~~~{.cxx}
+@FlowRule {
+  f = seq - R;
+  df_dseq = 1;
+  df_dp = -dR_dp;
+}
+~~~~
+
+#### Available isotropic hardening rules
+
+The following flow rules are currently available: `Data`, `Linear`,
+`Power`, `StrainRateSensitive`, `Swift`, `UserDefined`, and `Voce`.
+
+This list can be retrieved as follows:
+
+~~~~{.bash}
+$ mfront --list-isotropic-hardening-rules
+~~~~
+
 # New features in `mfront-query`
 
 ## New command line arguments
@@ -300,6 +356,10 @@ The following libraries are available: `Config`, `Exception`,
 ~~~~
 
 # Issues fixed
+
+## Issue 661: [mfront] Allow to use isotropic hardening rules in isotropic DSLs
+
+For more details, see <https://github.com/thelfer/tfel/issues/661>
 
 ## Issue 702:  [mfront] Add a warning if an auxiliary state variable not computed by an external point-wise model is used in a `@FlowRule` block in isotropic DSLs
 

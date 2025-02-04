@@ -1,0 +1,14 @@
+@DSL IsotropicPlasticMisesFlow;
+@Behaviour Plasticity7;
+@Author Helfer Thomas;
+@Date 23 / 11 / 06;
+
+@Epsilon 1e-15;
+@UseQt true;
+
+@ElasticMaterialProperties{150.e9, 0.3};
+
+@IsotropicHardeningRules{
+  isotropic_hardening : "Linear" {R0 : 51e6, H : 51e9},
+  isotropic_hardening : "Linear" {R0 : 51e6, H : 51e9}
+};

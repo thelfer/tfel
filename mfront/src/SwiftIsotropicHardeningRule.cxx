@@ -46,7 +46,7 @@ namespace mfront::bbrick {
     this->n = get_mp("n", "real", "E");
     const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
-    const auto dR = "d" + R + "_ddp" + fid;
+    const auto dR = "d" + R + "_dp" + fid;
     bd.reserveName(uh, Rel);
     bd.reserveName(uh, R);
     bd.reserveName(uh, dR);
@@ -101,7 +101,7 @@ namespace mfront::bbrick {
       const std::string& fid,
       const std::string& id) const {
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
-    const auto dR = "d" + R + "_ddp" + fid;
+    const auto dR = "d" + R + "_dp" + fid;
     const auto R0n = IsotropicHardeningRule::getVariableId("R0", fid, id);
     const auto p0n = IsotropicHardeningRule::getVariableId("p0", fid, id);
     const auto nn = IsotropicHardeningRule::getVariableId("E", fid, id);
@@ -111,7 +111,7 @@ namespace mfront::bbrick {
     c += "pow((this->" + pn + "+(this->theta)*(this->d" + pn + ")+this->" +
          p0n + ")/(this->" + p0n + "),this->" + nn + ") : this->" + R0n + ";\n";
     c += "const auto " + dR + " = ";
-    c += "(this->theta)*(this->" + nn + ")*" + R + "/(std::max(this->" + pn +
+    c += "(this->" + nn + ") * " + R + "/(std::max(this->" + pn +
          "+(this->theta)*(this->d" + pn + ")+this->" + p0n + ",this->" + p0n +
          "));\n";
     return c;

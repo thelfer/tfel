@@ -525,9 +525,15 @@ namespace mfront {
         using namespace tfel::utilities;
         DataParsingOptions o;
         o.allowMultipleKeysInMap = true;
-        const auto opts =
-            Data::read(this->current, this->tokens.end(), o).get<DataMap>();
-        return opts;
+        const auto opts = Data::read(this->current, this->tokens.end(), o);
+        if (opts.empty()) {
+          return DataMap{};
+        }
+        if (!opts.is<DataMap>()) {
+          this->throwRuntimeError("ImplicitDSLBase::treatAlgorithm",
+                                  "expected to read a string");
+        }
+        return opts.get<DataMap>();
       }();
       this->setNonLinearSolver(
           std::make_shared<UserDefinedNonLinearSystemSolver>(d), "UserDefined");

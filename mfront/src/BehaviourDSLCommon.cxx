@@ -1622,8 +1622,8 @@ namespace mfront {
                             "Expected ';' or options.");
     const auto opts = [this] {
       if (this->current->value == "{") {
-        return tfel::utilities::Data::read(this->current, this->tokens.end())
-            .get<tfel::utilities::DataMap>();
+        return read<tfel::utilities::DataMap>(this->current,
+                                              this->tokens.end());
       }
       return tfel::utilities::DataMap{};
     }();
@@ -1844,9 +1844,17 @@ namespace mfront {
           (this->current->value == "{")) {
         DataParsingOptions o;
         o.allowMultipleKeysInMap = true;
-        return Data::read(this->current, this->tokens.end(), o).get<DataMap>();
+        const auto data = Data::read(this->current, this->tokens.end(), o);
+        if (data.empty()) {
+          return DataMap{};
+        }
+        if (!data.is<DataMap>()) {
+          this->throwRuntimeError("BehaviourDSLCommon::treatBrick",
+                                  "expected to read a map");
+        }
+        return data.get<DataMap>();
       }
-      return DataMap();
+      return DataMap{};
     }();
     const auto br = f.get(b, *this, this->mb);
     br->initialize(parameters, d);
@@ -2000,8 +2008,7 @@ namespace mfront {
     const auto& acs = this->readMaterialPropertyOrArrayOfMaterialProperties(m);
     this->checkNotEndOfFile(m);
     if (this->current->value == "{") {
-      const auto data =
-          Data::read(this->current, this->tokens.end()).get<DataMap>();
+      const auto data = read<DataMap>(this->current, this->tokens.end());
       throw_if(data.size() != 1u,
                "invalid number of data. "
                "Only the 'reference_temperature' is expected");
@@ -2735,10 +2742,9 @@ namespace mfront {
     auto options = [this]() {
       if ((this->current != this->tokens.end()) &&
           (this->current->value == "{")) {
-        auto o = DataParsingOptions{};
-        return Data::read(this->current, this->tokens.end(), o).get<DataMap>();
+        return read<DataMap>(this->current, this->tokens.end());
       }
-      return DataMap();
+      return DataMap{};
     }();
     this->readSpecifiedToken(mname, ";");
     //

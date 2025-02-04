@@ -300,6 +300,13 @@ namespace tfel::utilities {
    */
   TFELUTILITIES_VISIBILITY_EXPORT DataMap
   extract(const DataMap&, const std::vector<std::string>&);
+  /*!
+   * \return a data map containing only data that does not match the given names
+   * \param[in] m: data map
+   * \param[in] names: list of names of data to be removed
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT DataMap
+  remove(const DataMap&, const std::vector<std::string>&);
 
   /*!
    * \return the data map resulting from the merge of two data maps.

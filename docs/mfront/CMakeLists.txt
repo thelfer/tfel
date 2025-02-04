@@ -1,3 +1,4 @@
+
 macro(install_mfront_desc file)
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}.md
@@ -88,6 +89,8 @@ install_mfront_desc(InitializeFunction)
 install_mfront_desc(InitializeFunctionVariable)
 install_mfront_desc(IsotropicBehaviour)
 install_mfront_desc(IsotropicElasticBehaviour)
+install_mfront_desc(IsotropicHardeningRule)
+install_mfront_desc(IsotropicHardeningRules)
 install_mfront_desc(IterMax)
 install_mfront_desc(JacobianComparisonCriterion)
 install_mfront_desc(JacobianComparisonCriterium)
