@@ -36,6 +36,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/InitDSLs.hxx"
 #include "MFront/InitInterfaces.hxx"
 #include "MFront/MFrontHeader.hxx"
@@ -485,6 +486,12 @@ int main(const int argc, const char* const* const argv) {
   using namespace mfront;
   initDSLs();
   initInterfaces();
+  // disabling warnings report by default as it may pollute the ouput of
+  // mfront-query warnings report can be enabled by passing
+  // --report-warnings=true
+  setWarningMode(false);
+  //
+
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
   const auto bg = [argv, argc] {
     for (auto a = argv; a != argv + argc; ++a) {

@@ -31,7 +31,7 @@ eqnPrefixTemplate: "($$i$$)"
 \newcommand{\dtot}{{{\mathrm{d}}}}
 \newcommand{\paren}[1]{{\left(#1\right)}}
 
-This article shows how to implement an orthotropic plastic behaviour
+This article shows how to implement an isotropic plastic behaviour
 with isotropic linear hardening in `MFront`.
 
 The implementation is available [here](gallery/plasticity/IsotropicLinearHardeningPlasticity.mfront).
