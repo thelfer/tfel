@@ -169,7 +169,7 @@ Its deviatoric part is denoted \(\mts{\tenseur{s}^{\mathrm{tr}}}\):
 Taking the von Mises norm of both side of Equation @eq:isotropic_linear_harderning:trial_stress yields:
 
 \[
-\paren{\Frac{2}{3}\,\mts{\sigmaeq}+\theta\,\Delta\,p}\,\sqrt{\Frac{3}{2}\,\mts{\tenseur{n}}\,\colon\mts{\tenseur{n}}} = \mts{\sigmaeq^{\mathrm{tr}}}
+\paren{\Frac{2}{3}\,\mts{\sigmaeq}+2\,\mts{\mu}\,\theta\,\Delta\,p}\,\sqrt{\Frac{3}{2}\,\mts{\tenseur{n}}\,\colon\mts{\tenseur{n}}} = \mts{\sigmaeq^{\mathrm{tr}}}
 \]
 
 where \(\mts{\sigmaeq^{\mathrm{tr}}}\) is the so-called trial equivalent
