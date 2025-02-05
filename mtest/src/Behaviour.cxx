@@ -162,6 +162,19 @@ namespace mtest::internals {
     return getArrayVariableSize(v, h);
   }
 
+  static bool isScalarVariableType(int& v) {
+    const auto type = extractAndShift(v, 3);
+    if (type == 0) {
+      return true;
+    } else if (type == 4) {
+      // derivative type
+      const auto b1 = isScalarVariableType(v);
+      const auto b2 = isScalarVariableType(v);
+      return b1 && b2;
+    }
+    return false;
+  }
+
   static std::vector<std::string> getVariableComponents(int&, const Behaviour&);
 
   static std::vector<std::string> getTinyVectorVariableComponents(
@@ -569,6 +582,11 @@ namespace mtest {
     }
     tfel::raise("buildValueExtractor: no variable name '" + n + "'");
   }  // end of buildValueExtractor
+
+  bool isScalarVariableType(const int t) {
+    auto id = t;
+    return mtest::internals::isScalarVariableType(id);
+  } // end of isScalarVariableType
 
   size_t getVariableSize(const int t, const Behaviour::Hypothesis h) {
     auto id = t;
