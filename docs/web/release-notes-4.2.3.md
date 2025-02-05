@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 4.2.3 of the
 
 # Issues fixed
 
+## Issue 714: [octave-interface] fix support for bounds on output when quantities are used
+
+For more details, see <https://github.com/thelfer/tfel/issues/714>
+
 ## Issue 710: [mfront] fix support for bounds on output when quantities are used in C based interfaces
 
 For more details, see <https://github.com/thelfer/tfel/issues/710>
