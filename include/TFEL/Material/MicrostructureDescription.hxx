@@ -14,34 +14,24 @@
 #define LIB_TFEL_MATERIAL_MICROSTRUCTUREDESCRIPTION_HXX
 
 #include "TFEL/Math/st2tost2.hxx"
+#include <stdexcept>
 
-namespace tfel::material::homogenization {
-
-  /*!
-   * This struct defines an inclusion. An inclusion is viewed as a geometrical
-   * object without physical information.
-   * \tparam unsigned short int: dimension
-   * \tparam real: underlying type
-   * \tparam LengthType: type of the lengths related to the inclusion
-   */
-  template <unsigned short int N, typename real, typename LengthType>
-  struct Inclusion {};
+namespace tfel::material::homogenization::elasticity {
 
   /*!
-   * This struct defines a (2d or 3d) ellipsoid as a child of Inclusion
+   * This struct defines a (2d or 3d) ellipsoid.
    * \tparam unsigned short int: dimension
    * \tparam real: underlying type
    * \tparam LengthType: type of the lengths
    */
   template <unsigned short int N, typename real, typename LengthType>
-  struct Ellipsoid : public Inclusion<N, real, LengthType> {
+  struct Ellipsoid {
     std::array<LengthType, N> axes_semiLengths;
     std::array<tfel::math::tvector<N, real>, N - 1>
         axes_orientations;  // doivent être perpendiculaires
     Ellipsoid(std::array<LengthType, N> semiLengths,
               std::array<tfel::math::tvector<N, real>, N - 1> orientations)
-        : Inclusion<N, real, LengthType>(),
-          axes_semiLengths(semiLengths),
+        : axes_semiLengths(semiLengths),
           axes_orientations(orientations){};
     ~Ellipsoid(){};
   };
@@ -92,15 +82,13 @@ namespace tfel::material::homogenization {
 
   /*!
    * This struct defines a phase. A phase is defined
-   * by physical information (stiffness, thermal
-   * conductivity) \tparam unsigned short int: dimension \tparam real:
-   * underlying type \tparam StressType:
-   * type of the elastic constants \tparam .....: type of the thermal
-   * conductivities // NOT DEFINED YET
+   * by physical information (stiffness)
+   * \tparam unsigned short int: dimension
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants
    */
   template <unsigned short int N, typename real, typename StressType>
   struct Phase {
-    // tfel::math::ConductivityTensor<N,real,TemperatureType> conductivity;
     tfel::math::st2tost2<N, StressType> stiffness;
     // check if stiffnessTensor is symetric ?
     Phase(tfel::math::st2tost2<N, StressType> C) : stiffness(C){};
@@ -109,10 +97,10 @@ namespace tfel::material::homogenization {
 
   /*!
    * This struct defines a matrix phase, which is just an alias of Phase.
-   * \tparam unsigned short int: dimension \tparam real:
-   * underlying type \tparam StressType: type of the elastic constants related
-   * to the inclusion \tparam .....: type of the thermal conductivities // NOT
-   * DEFINED YET
+   * \tparam unsigned short int: dimension
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related
+   * to the inclusion
    */
   template <unsigned short int N, typename real, typename StressType>
   struct MatrixPhase : public Phase<N, real, StressType> {
@@ -123,24 +111,25 @@ namespace tfel::material::homogenization {
 
   /*!
    * This struct defines an inclusion phase as a child of Phase, with a volumic
-   * fraction, an object of type Inclusion, and information about distribution
-   * of centers and orientations. \tparam unsigned short int: dimension \tparam
-   * real: underlying type \tparam LengthType: type of the lengths related to
-   * the inclusion \tparam StressType: type of the elastic constants related to
-   * the inclusion \tparam .....: type of the thermal conductivities // NOT
-   * DEFINED YET
+   * fraction, an object of type Ellipsoid, and information about distribution
+   * of centers and orientations.
+   * \tparam unsigned short int: dimension
+   * \tparam real: underlying type
+   * \tparam LengthType: type of the lengths related to the inclusion
+   * \tparam StressType: type of the elastic constants related to
+   * the inclusion
    */
   template <unsigned short int N,
             typename real,
             typename LengthType,
             typename StressType>
   struct InclusionPhase : public Phase<N, real, StressType> {
-    Inclusion<N, real, LengthType> inclusion;
+    Ellipsoid<N, real, LengthType> inclusion;
     real fraction;
     // CenterDistribution<N, real> centerDistribution;
     // OrientationDistribution<N, real> orientationDistribution;
     InclusionPhase(tfel::math::st2tost2<N, StressType> C,
-                   Inclusion<N, real, LengthType> inc,
+                   Ellipsoid<N, real, LengthType> inc,
                    real frac)
         : Phase<N, real, StressType>(C), inclusion(inc), fraction(frac){};
     ~InclusionPhase(){};
@@ -155,7 +144,7 @@ namespace tfel::material::homogenization {
             typename StressType>
   struct Grain : public InclusionPhase<N, real, LengthType, StressType> {
     Grain(tfel::math::st2tost2<N, StressType> C,
-          Inclusion<N, real, LengthType> inc,
+          Ellipsoid<N, real, LengthType> inc,
           real frac)
         : InclusionPhase<N, real, LengthType, StressType>(C, inc, frac){};
     ~Grain(){};
@@ -167,7 +156,6 @@ namespace tfel::material::homogenization {
    * \tparam real: underlying type
    * \tparam LengthType: type of the lengths related to the inclusion
    * \tparam StressType: type of the elastic constants related to the inclusion
-   * \tparam .....: type of the thermal conductivities // NOT DEFINED YET
    */
   template <unsigned short int N,
             typename real,
@@ -176,27 +164,20 @@ namespace tfel::material::homogenization {
   struct Microstructure {};
 
   /*!
-   * This class defines a matrix-inclusion microstructure as a child of
+   * This struct defines a matrix-inclusion microstructure as a child of
    * Microstructure. This type of microstructure is viewed as an array of
-   * InclusionPhase, with a matrixPhase. \tparam unsigned
-   * short int: dimension \tparam real: underlying type \tparam LengthType: type
-   * of the lengths related to the inclusion \tparam StressType: type of the
-   * elastic constants related to the inclusion \tparam .....: type of the
-   * thermal conductivities // NOT DEFINED YET
+   * InclusionPhase, with a matrixPhase.
+   * \tparam unsigned short int: dimension
+   * \tparam real: underlying type
+   * \tparam LengthType: type of the lengths related to the inclusion
+   * \tparam StressType: type of the elastic constants related to the inclusion
    */
   template <unsigned short int N,
             typename real,
             typename LengthType,
             typename StressType>
-  class MatrixInclusionMicrostructure
+  struct MatrixInclusionMicrostructure
       : public Microstructure<N, real, LengthType, StressType> {
-    unsigned int number_of_phases;
-    real matrix_fraction;
-    std::vector<InclusionPhase<N, real, LengthType, StressType>>
-        inclusionPhases;
-    MatrixPhase<N, real, StressType> matrixPhase;
-
-   public:
     MatrixInclusionMicrostructure(MatrixPhase<N, real, StressType> matrix)
         : Microstructure<N, real, LengthType, StressType>(),
           number_of_phases(1),
@@ -234,7 +215,7 @@ namespace tfel::material::homogenization {
         };
         (this->number_of_phases)--;
         (this->matrix_fraction) -= (this->inclusionPhases[i]).fraction;
-        (this->inclusionPhases).erase((this->inclusionPhases).begin()+i);
+        (this->inclusionPhases).erase((this->inclusionPhases).begin() + i);
         return 1;
       };
     };
@@ -255,31 +236,34 @@ namespace tfel::material::homogenization {
     InclusionPhase<N, real, LengthType, StressType> get_inclusionPhase(
         unsigned int i) {
       if ((this->number_of_phases) < i + 2) {
-        tfel::reportContractViolation("there are less phases than what you think !");
-      };
+        tfel::reportContractViolation(
+            "there are less phases than what you think !");
+      }
       return ((this->inclusionPhases)[i]);
     };
-    // stiffnessDistribution ??
+    // stiffnessDistribution ?
+
+   private:
+    unsigned int number_of_phases;
+    real matrix_fraction;
+    std::vector<InclusionPhase<N, real, LengthType, StressType>>
+        inclusionPhases;
+    MatrixPhase<N, real, StressType> matrixPhase;
   };
 
   /*!
-   * This class defines a polycrystal as a child of Microstructure. A
-   * polycrystal is viewed as a vector of Grain. \tparam unsigned short
-   * int: dimension \tparam real: underlying type \tparam LengthType: type of
-   * the lengths related to the inclusion \tparam StressType: type of the
-   * elastic constants related to the inclusion \tparam .....: type of the
-   * thermal conductivities // NOT DEFINED YET
+   * This struct defines a polycrystal as a child of Microstructure. A
+   * polycrystal is viewed as a vector of Grain.
+   * \tparam unsigned short int: dimension
+   * \tparam real: underlying type
+   * \tparam LengthType: type of the lengths related to the inclusion
+   * \tparam StressType: type of the elastic constants related to the inclusion
    */
   template <unsigned short int N,
             typename real,
             typename LengthType,
             typename StressType>
-  class Polycrystal : public Microstructure<N, real, LengthType, StressType> {
-    unsigned int number_of_grains;
-    real total_fraction;
-    std::vector<Grain<N, real, LengthType, StressType>> grains;
-
-   public:
+  struct Polycrystal : public Microstructure<N, real, LengthType, StressType> {
     Polycrystal()
         : Microstructure<N, real, LengthType, StressType>(),
           number_of_grains(0),
@@ -313,16 +297,14 @@ namespace tfel::material::homogenization {
         };
         (this->number_of_grains)--;
         (this->total_fraction) -= (this->grains[i]).fraction;
-        (this->grains).erase((this->grains).begin()+i);  // TOOODDOOOO
+        (this->grains).erase((this->grains).begin() + i);  // TOOODDOOOO
       };
       return 1;
     };
 
     unsigned int get_number_of_grains() { return (this->number_of_grains); };
 
-    real get_total_fraction() {
-      return (this->total_fraction);
-    };
+    real get_total_fraction() { return (this->total_fraction); };
 
     std::vector<Grain<N, real, LengthType, StressType>> get_grains() {
       return (this->grains);
@@ -330,14 +312,20 @@ namespace tfel::material::homogenization {
 
     Grain<N, real, LengthType, StressType> get_grain(unsigned int i) {
       if ((this->number_of_grains) < i + 1) {
-        tfel::reportContractViolation("there are less phases than what you think !");
-      };
+        tfel::reportContractViolation(
+            "there are less phases than what you think !");
+      }
       return ((this->grains)[i]);
     };
+
+   private:
+    unsigned int number_of_grains;
+    real total_fraction;
+    std::vector<Grain<N, real, LengthType, StressType>> grains;
   };
   // conditions sur la centerDistribution et sur orientationDistribution
   // stiffnessDistribution ??
 
-}  // end of namespace tfel::material::homogenization
+}  // end of namespace tfel::material::homogenization::elasticity
 
 #endif /* LIB_TFEL_MATERIAL_MICROSTRUCTUREDESCRIPTION_HXX */

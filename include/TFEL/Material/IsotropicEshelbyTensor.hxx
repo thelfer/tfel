@@ -15,7 +15,6 @@
 
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Material/StiffnessTensor.hxx"
-#include <stdexcept>
 
 namespace tfel::material::homogenization::elasticity {
 
@@ -122,20 +121,47 @@ namespace tfel::material::homogenization::elasticity {
    * infinity, and \f$\epsilon\f$ is the strain tensor solution of Eshelby
    * problem for the ellipsoid. The ellipsoid also has a specific
    * orientation given by the vectors \f$n_a\f$, \f$n_b\f$.
+   * The elasticity \f$C_i\f$ is specified in the global basis.
    * \return an object of type st2tost2, which is the fourth-order localisation
    * tensor \f$A\f$
+   * \return an object of type st2tost2
    * \tparam real: underlying type
    * \tparam StressType: type of
    * the elastic constants related to the matrix and the ellipsoid
    * \tparam LengthType: type of the dimensions of the ellipsoid
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
-   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the
-   * inclusions
+   * \param [in] C_i: elasticity of the inclusions
    * \param [in] n_a: direction of the principal axis whose length is \f$a\f$
    * \param [in] a: length of semi-axis relative to the direction \f$n_a\f$
    * \param [in] n_b: direction of the principal axis whose length is \f$b\f$
    * \param [in] b: length of semi-axis relative to the direction \f$n_b\f$
    * \param [in] c: length of the remaining semi-axis
+   */
+  template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
+  computeAnisotropicEllipsoidLocalisationTensor(
+      const StressType&,
+      const real&,
+      const tfel::math::st2tost2<3u, StressType>&,
+      const tfel::math::tvector<3u, real>&,
+      const LengthType&,
+      const tfel::math::tvector<3u, real>&,
+      const LengthType&,
+      const LengthType&);
+
+  /*!
+   * This function does the same as
+   * computeAnisotropicEllipsoidLocalisationTensor when the elasticity of the
+   * ellipsoid is isotropic. \return an object of type st2tost2 \tparam real:
+   * underlying type \tparam StressType: type of the elastic constants related
+   * to the matrix and the ellipsoid \tparam LengthType: type of the dimensions
+   * of the ellipsoid \param [in] young,nu: Young modulus and Poisson's ratio of
+   * the matrix \param [in] young_i,nu_i: Young modulus and Poisson's ratio of
+   * the inclusions \param [in] n_a: direction of the principal axis whose
+   * length is \f$a\f$ \param [in] a: length of semi-axis relative to the
+   * direction \f$n_a\f$ \param [in] n_b: direction of the principal axis whose
+   * length is \f$b\f$ \param [in] b: length of semi-axis relative to the
+   * direction \f$n_b\f$ \param [in] c: length of the remaining semi-axis
    */
   template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
@@ -151,7 +177,7 @@ namespace tfel::material::homogenization::elasticity {
 
   /*!
    * This function builds the strain localisation tensor of an
-   * axisymmetrical ellipsoid with a general elasticity, embedded in an
+   * axisymmetrical ellipsoid with an isotropic elasticity, embedded in an
    * isotropic matrix. The ellipsoid also has a specific orientation given
    * by the vector \f$n_a\f$, axis of the ellipsoid, whose semi-length is
    * \f$a\f$.
@@ -179,7 +205,7 @@ namespace tfel::material::homogenization::elasticity {
 
   /*!
    * This function builds the strain localisation tensor of a sphere
-   * with a general elasticity, embedded in an isotropic matrix.
+   * with an isotropic elasticity, embedded in an isotropic matrix.
    * \return an object of type st2tost2
    * \tparam    real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix

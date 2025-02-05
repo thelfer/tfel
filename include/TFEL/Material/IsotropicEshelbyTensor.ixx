@@ -299,15 +299,15 @@ namespace tfel::material::homogenization::elasticity {
 
   template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
-  computeEllipsoidLocalisationTensor(const StressType& young,
-                                     const real& nu,
-                                     const StressType& young_i,
-                                     const real& nu_i,
-                                     const tfel::math::tvector<3u, real>& n_a,
-                                     const LengthType& a,
-                                     const tfel::math::tvector<3u, real>& n_b,
-                                     const LengthType& b,
-                                     const LengthType& c) {
+  computeAnisotropicEllipsoidLocalisationTensor(
+      const StressType& young,
+      const real& nu,
+      const tfel::math::st2tost2<3u, StressType>& C_i,
+      const tfel::math::tvector<3u, real>& n_a,
+      const LengthType& a,
+      const tfel::math::tvector<3u, real>& n_b,
+      const LengthType& b,
+      const LengthType& c) {
     if ((nu > real(0.5)) || (nu < real(-1))) {
       tfel::reportContractViolation("nu>0.5 or nu<-1");
     }
@@ -351,9 +351,6 @@ namespace tfel::material::homogenization::elasticity {
         StiffnessTensorAlterationCharacteristic::UNALTERED;
     computeIsotropicStiffnessTensorII<3u, value, StressType, real>(C_0, young,
                                                                    nu);
-    tfel::math::st2tost2<3u, StressType> C_i;
-    computeIsotropicStiffnessTensorII<3u, value, StressType, real>(C_i, young_i,
-                                                                   nu_i);
     using namespace tfel::math;
     const st2tost2<3u, StressType> C = C_i - C_0;
     const auto invC0 = invert(C_0);
@@ -361,6 +358,26 @@ namespace tfel::material::homogenization::elasticity {
     const auto PPr = S0_basis * Pr;
     const auto A = invert(st2tost2<3u, real>::Id() + PPr);
     return A;
+  }  // end of function computeAnisotropicEllipsoidLocalisationTensor
+
+  template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
+  computeEllipsoidLocalisationTensor(const StressType& young,
+                                     const real& nu,
+                                     const StressType& young_i,
+                                     const real& nu_i,
+                                     const tfel::math::tvector<3u, real>& n_a,
+                                     const LengthType& a,
+                                     const tfel::math::tvector<3u, real>& n_b,
+                                     const LengthType& b,
+                                     const LengthType& c) {
+    static constexpr auto value =
+        StiffnessTensorAlterationCharacteristic::UNALTERED;
+    tfel::math::st2tost2<3u, StressType> C_i;
+    computeIsotropicStiffnessTensorII<3u, value, StressType, real>(C_i, young_i,
+                                                                   nu_i);
+    return computeAnisotropicEllipsoidLocalisationTensor<real,StressType,LengthType>(young, nu, C_i, n_a, a,
+                                                         n_b, b, c);
   }  // end of function computeEllipsoidLocalisationTensor
 
   template <typename real, typename StressType>

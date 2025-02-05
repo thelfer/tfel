@@ -1,5 +1,5 @@
 /*!
- * \file   tests/Material/MicrostructureDescription.cxx
+ * \file   tests/Material/MicrostructureLinearHomogenization.cxx
  * \brief
  * \author Antoine Martin
  * \date   23 January 2025
@@ -23,6 +23,7 @@
 #include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include "TFEL/Material/MicrostructureDescription.hxx"
+#include "TFEL/Material/MicrostructureLinearHomogenization.ixx"
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
@@ -33,10 +34,10 @@ static constexpr T my_abs(const T& v) noexcept {
   return v < T(0) ? -v : v;
 }
 
-struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
-  MicrostructureDescriptionTest()
-      : tfel::tests::TestCase("TFEL/Material", "MicrostructureDescription") {
-  }  // end of MicrostructureDescriptionTest
+struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCase {
+  MicrostructureLinearHomogenizationTest()
+      : tfel::tests::TestCase("TFEL/Material", "MicrostructureLinearHomogenization") {
+  }  // end of MicrostructureLinearHomogenizationTest
 
   tfel::tests::TestResult execute() override {
     using real = double;
@@ -54,27 +55,34 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
  private:
   template <typename real, typename stress, typename length>
   void test_matrix_inclusion() {
-    using namespace tfel::material::homogenization;
+    using namespace tfel::material::homogenization::elasticity;
     length a = length(1);
     length b = length(2);
     length c = length(3);
     tfel::math::tvector<3u, real> n_a = {1, 0, 0};
     tfel::math::tvector<3u, real> n_b = {0, 1, 0};
     Ellipsoid<3u, real, length> ellipsoid1({a, b, c}, {n_a, n_b});
+    Ellipsoid<3u, real, length> ellipsoid2({a, c, c}, {n_a, n_b});
 
-    const auto young = stress{1e9};
-    const auto nu = real(0.2);
+    const auto young0 = stress{1e9};
+    const auto nu0 = real(0.2);
+    const auto youngi = stress{150e9};
+    const auto nui = real(0.3);
     tfel::math::st2tost2<3u, stress> C_0;
     static constexpr auto value =
         tfel::material::StiffnessTensorAlterationCharacteristic::UNALTERED;
     tfel::material::computeIsotropicStiffnessTensorII<3u, value, stress, real>(
-        C_0, young, nu);
+        C_0, young0, nu0);
 
-    InclusionPhase<3u, real, length, stress> inclusionPhase1(C_0, ellipsoid1,
-                                                             real(0.1));
+    tfel::math::st2tost2<3u, stress> C_i;
+    tfel::material::computeIsotropicStiffnessTensorII<3u, value, stress, real>(
+        C_i, youngi, nui);
+
+    InclusionPhase<3u, real, length, stress> inclusionPhase1(C_i, ellipsoid1,
+                                                             real(0.01));
     
-    InclusionPhase<3u, real, length, stress> inclusionPhase2(C_0, ellipsoid1,
-                                                             real(0.2));
+    InclusionPhase<3u, real, length, stress> inclusionPhase2(C_i, ellipsoid2,
+                                                             real(0.02));
     
     MatrixPhase<3u, real, stress> matrix1(C_0);
     MatrixInclusionMicrostructure<3u, real, length, stress> micro1(matrix1);
@@ -88,23 +96,19 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
     std::cout << micro1.get_number_of_phases() << std::endl;
     auto phase1=micro1.get_inclusionPhase(0);
     std::cout<<phase1.fraction<<std::endl;
-    micro1.removeInclusionPhase(0);
-    
-    auto phase2=micro1.get_inclusionPhase(0);
-    std::cout<<phase2.fraction<<std::endl;
-    
-    
-    
-    //     TFEL_TESTS_ASSERT(my_abs(K_L - K_Lbis) < seps);
-    //     TFEL_TESTS_ASSERT(my_abs(mu_L - mu_Lbis) < seps);
-    //     TFEL_TESTS_ASSERT(my_abs(K_U - K_Ubis) < seps);
-    //     TFEL_TESTS_ASSERT(my_abs(mu_U - mu_Ubis) < seps);
+    //micro1.removeInclusionPhase(0);
+    //auto phase2=micro1.get_inclusionPhase(0);
+    //std::cout<<phase2.fraction<<std::endl;
+    tfel::math::stensor<3u,real> E={1,0,0,0,0,0};
+    HomogenizationScheme<3u, real, length, stress> h_s=computeDilute<3u, real, length, stress>(micro1,E,true);
+    auto Chom=h_s.homogenized_stiffness;
+    std::cout << Chom(0,0).getValue() << std::endl;
   };
 
  private:
   template <typename real, typename stress, typename length>
   void test_polycrystal() {
-    using namespace tfel::material::homogenization;
+    using namespace tfel::material::homogenization::elasticity;
     length a = length(1);
     length b = length(2);
     length c = length(3);
@@ -132,25 +136,19 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
     auto grain3=crystal.get_grain(0);
     std::cout<<grain3.fraction<<std::endl;
     crystal.removeGrain(1);
-    
     auto phase2=crystal.get_grain(0);
     std::cout<<phase2.fraction<<std::endl;
-    //     TFEL_TESTS_ASSERT(my_abs(K_L - K_Lbis) < seps);
-    //     TFEL_TESTS_ASSERT(my_abs(mu_L - mu_Lbis) < seps);
-    //     TFEL_TESTS_ASSERT(my_abs(K_U - K_Ubis) < seps);
-    //     TFEL_TESTS_ASSERT(my_abs(mu_U - mu_Ubis) < seps);
-    //   }
   };
 
-};  // end of struct MicrostructureDescriptionTest
+};  // end of struct MicrostructureLinearHomogenizationTest
 
-TFEL_TESTS_GENERATE_PROXY(MicrostructureDescriptionTest,
-                          "MicrostructureDescription");
+TFEL_TESTS_GENERATE_PROXY(MicrostructureLinearHomogenizationTest,
+                          "MicrostructureLinearHomogenization");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {
   auto& m = tfel::tests::TestManager::getTestManager();
   m.addTestOutput(std::cout);
-  m.addXMLTestOutput("MicrostructureDescription.xml");
+  m.addXMLTestOutput("MicrostructureLinearHomogenization.xml");
   return m.execute().success() ? EXIT_SUCCESS : EXIT_FAILURE;
 }  // end of main
