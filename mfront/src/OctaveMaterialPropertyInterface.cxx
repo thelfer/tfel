@@ -37,7 +37,8 @@ namespace mfront {
       std::ostream& out,
       const VariableDescription& v,
       const std::string& name,
-      const VariableDescriptionContainer::size_type nbr) {
+      const VariableDescriptionContainer::size_type nbr,
+      const bool use_qt) {
     if (!v.hasBounds()) {
       return;
     }
@@ -53,11 +54,16 @@ namespace mfront {
         "\"OCTAVE_OUT_OF_BOUNDS_POLICY\");\n"
         "#endif /* OCTAVE_MAJOR_VERSION */\n";
     if (b.boundsType == VariableBoundsDescription::LOWER) {
-      out << "if(" << v.name << " < " << b.lowerBound << "){\n"
-          << get_out_of_bounds_policy  //
+      if (use_qt) {
+        out << "if(" << v.name << " < " << v.type << "{" << b.lowerBound
+            << "}){\n";
+      } else {
+        out << "if(" << v.name << " < " << b.lowerBound << "){\n";
+      }
+      out << get_out_of_bounds_policy  //
           << "if(mfront_policy.is_defined()){\n"
           << "if(mfront_policy.is_string()){\n"
-          << "string msg(\"" << name << ": " << v.name
+          << "std::string msg(\"" << name << ": " << v.name
           << " is below its lower bound.\");\n"
           << "if(mfront_policy.string_value()==\"STRICT\"){\n"
           << "error(\"%s\\n\", msg.c_str());\n"
@@ -71,12 +77,17 @@ namespace mfront {
           << "return " << nbr << ";\n"
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-      out << "if(" << v.name << " < " << b.lowerBound << "){\n"
-          << get_out_of_bounds_policy  //
+      if(use_qt){
+        out << "if(" << v.name << " > " << v.type << "{" << b.upperBound
+            << "}){\n";
+      } else {
+        out << "if(" << v.name << " > " << b.upperBound << "){\n";
+      }
+       out   << get_out_of_bounds_policy  //
           << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\");\n"
           << "if(mfront_policy.is_defined()){\n"
           << "if(mfront_policy.is_string()){\n"
-          << "string msg(\"" << name << ": \"" << v.name
+          << "std::string msg(\"" << name << ": \"" << v.name
           << " is over its upper bound.\");\n"
           << "if(mfront_policy.string_value()==\"STRICT\"){\n"
           << "error(\"%s\\n\", msg.c_str());\n"
@@ -87,12 +98,19 @@ namespace mfront {
           << "return " << nbr << ";\n"
           << "}\n";
     } else {
-      out << "if((" << v.name << " < " << b.lowerBound << ")||"
-          << "(" << v.name << " > " << b.upperBound << ")){\n"
-          << get_out_of_bounds_policy  //
+      if (use_qt) {
+        out << "if((" << v.name << " < " << v.type << "{" << b.lowerBound
+            << "})||"
+            << "(" << v.name << " > " << v.type << "{" << b.upperBound
+            << "})){\n";
+      } else {
+        out << "if((" << v.name << " < " << b.lowerBound << ")||"
+            << "(" << v.name << " > " << b.upperBound << ")){\n";
+      }
+      out << get_out_of_bounds_policy  //
           << "if(mfront_policy.is_defined()){\n"
           << "if(mfront_policy.is_string()){\n"
-          << "string msg(\"" << name << ": " << v.name
+          << "std::string msg(\"" << name << ": " << v.name
           << " is out of its bounds.\");\n"
           << "if(mfront_policy.string_value()==\"STRICT\"){\n"
           << "error(\"%s\\n\", msg.c_str());\n"
@@ -111,31 +129,59 @@ namespace mfront {
       std::ostream& out,
       const VariableDescription& v,
       const std::string& name,
-      const VariableDescriptionContainer::size_type nbr) {
+      const VariableDescriptionContainer::size_type nbr,
+      const bool use_qt) {
     if (!v.hasPhysicalBounds()) {
       return;
     }
     const auto& b = v.getPhysicalBounds();
     if (b.boundsType == VariableBoundsDescription::LOWER) {
-      out << "if(" << v.name << " < " << b.lowerBound << "){\n";
+      if (use_qt) {
+        out << "if(" << v.name << " < " << v.type << "{" << b.lowerBound
+            << "}){\n";
+      } else {
+        out << "if(" << v.name << " < " << b.lowerBound << "){\n";
+      }
       out << "error(\"%s\\n\", \"" << name << ": " << v.name
           << " is below its physical lower bound.\");\n";
       out << "return -" << nbr << ";\n";
       out << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-      out << "if(" << v.name << " > " << b.upperBound << "){\n";
+      if (use_qt) {
+        out << "if(" << v.name << " > " << v.type << "{" << b.upperBound
+            << "}){\n";
+      } else {
+        out << "if(" << v.name << " > " << b.upperBound << "){\n";
+      }
       out << "error(\"%s\\n\", \"" << name << ": " << v.name
           << " is over its physical upper bound.\");\n";
       out << "return -" << nbr << ";\n";
       out << "}\n";
     } else {
-      out << "if((" << v.name << " < " << b.lowerBound << ")||"
-          << "(" << v.name << " > " << b.upperBound << ")){\n";
-      out << "if(" << v.name << " < " << b.lowerBound << "){\n";
+      if (use_qt) {
+        out << "if((" << v.name << " < " << v.type << "{" << b.lowerBound
+            << "})||"
+            << "(" << v.name << " > " << v.type << "{" << b.upperBound
+            << "})){\n";
+      } else {
+        out << "if((" << v.name << " < " << b.lowerBound << ")||"
+            << "(" << v.name << " > " << b.upperBound << ")){\n";
+      }
+      if (use_qt) {
+        out << "if(" << v.name << " < " << v.type << "{" << b.lowerBound
+            << "}){\n";
+      } else {
+        out << "if(" << v.name << " < " << b.lowerBound << "){\n";
+      }
       out << "error(\"%s\\n\", \"" << name << ": " << v.name
           << " is below its physical lower bound.\");\n";
       out << "}\n";
-      out << "if(" << v.name << " > " << b.upperBound << "){\n";
+      if (use_qt) {
+        out << "if(" << v.name << " > " << v.type << "{" << b.upperBound
+            << "}){\n";
+      } else {
+        out << "if(" << v.name << " > " << b.upperBound << "){\n";
+      }
       out << "error(\"%s\\n\", \"" << name << ": " << v.name
           << " is over its physical upper bound.\");\n";
       out << "}\n";
@@ -335,8 +381,8 @@ namespace mfront {
         << "error(\"%s\\n\", \"" << name << ": unsupported C++ exception\");\n"
         << "return 0;\n"
         << "}\n";
-    writePhysicalBoundsChecks(out, mpd.output, name, 0);
-    writeBoundsChecks(out, mpd.output, name, 0);
+    writePhysicalBoundsChecks(out, mpd.output, name, 0, useQuantities(mpd));
+    writeBoundsChecks(out, mpd.output, name, 0, useQuantities(mpd));
     //
     if (useQuantities(mpd)) {
       out << "return " << mpd.output.name << ".getValue();\n";
@@ -360,7 +406,7 @@ namespace mfront {
         for (const auto& i : mpd.inputs) {
           const auto nbr =
               CMaterialPropertyInterfaceBase::getVariableNumber(mpd, i.name);
-          writePhysicalBoundsChecks(out, i, name, nbr);
+          writePhysicalBoundsChecks(out, i, name, nbr, false);
         }
       }
       if (hasBounds(mpd.inputs)) {
@@ -368,7 +414,7 @@ namespace mfront {
         for (const auto& i : mpd.inputs) {
           const auto nbr =
               CMaterialPropertyInterfaceBase::getVariableNumber(mpd, i.name);
-          writeBoundsChecks(out, i, name, nbr);
+          writeBoundsChecks(out, i, name, nbr, false);
         }
       }
       out << "return 0;\n"
