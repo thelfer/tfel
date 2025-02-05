@@ -384,7 +384,7 @@ A specialization for elasticity is defined: `tfel::material::homogenization::ela
 
 ## Eshelby tensors
 
-The header `Eshelby.hxx` introduces
+The header `IsotropicEshelbyTensor.hxx` introduces
 the function `computeEshelbyTensor` which computes the Eshelby tensor
 of an ellipsoid.
 If we consider a constant stress-free strain \(\tenseur \varepsilon^\mathrm{T}\)
@@ -423,9 +423,14 @@ for `long double`.
 In the same way, the formulas for the axisymmetrical case are instable when the aspect
 ratio is near one, so a parameter allows to switch to the formula for a sphere.
 
+When \(\tenseur C_0\) is anisotropic, the Eshelby tensor can be computed
+with `computeAnisotropicEshelbyTensor` in 3D and `computePlainStrainAnisotropicEshelbyTensor`
+in 2D. There are also `computeAnisotropicHillTensor` and `computePlainStrainAnisotropicHillTensor`.
+These functions are introduced by the header `AnisotropicEshelbyTensor.hxx`.
+
 ## Strain localisation tensors
 
-The header `Eshelby.hxx` also introduces
+The header `IsotropicEshelbyTensor.hxx` also introduces
 three functions that compute the strain localisation tensor of an ellipsoid.
 If we consider an ellipsoid whose elasticity is \(\tenseur C_i\), embedded
 in an infinite homogeneous medium whose elasticity is \(\tenseur C_0\),
@@ -442,13 +447,16 @@ and `computeSphereLocalisationTensor`.
 The ellipsoid is parametrized by its semi-axis lengths \(a,b,c\) but also
 by its axis orientations.
 The functions then return the localisation tensors taking into account the orientations.
+There are also, when the medium is anisotropic, `computeAnisotropicLocalisationTensor` and `computePlainStrainAnisotropicLocalisationTensor`. These functions are introduced by the header
+`AnisotropicEshelbyTensor.hxx`.
 
 ## Homogenization schemes
 
 Different schemes are implemented and return the homogenized stiffness of the material.
+These schemes are introduced by the header `LinearHomogenizationSchemes`.
 The scheme available are Mori-Tanaka scheme and dilute scheme.
 The available functions are `computeMoriTanakaScheme`, `computeDiluteScheme`,
-computeSphereDiluteScheme, computeSphereMoriTanakaScheme.
+`computeSphereDiluteScheme`, `computeSphereMoriTanakaScheme`.
 
 If a distribution of ellipsoids is considered, three types of distributions
 are considered : isotropic, transverse isotropic and with unique orientation.
