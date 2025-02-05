@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 4.1.4 of the
 
 # Issues fixed
 
+## Issue 716: [`mtest`] scalar variables defined using derivative_type are not properly handled
+
+For more details, see <https://github.com/thelfer/tfel/issues/716>.
+
 ## Issue 681: [mfront] External models (declared by `@Model`) are evaluated twice
 
-For more details, see <https://github.com/thelfer/tfel/issues/681.
+For more details, see <https://github.com/thelfer/tfel/issues/681>.
