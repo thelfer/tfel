@@ -378,6 +378,11 @@ namespace mtest {
    */
   MTEST_VISIBILITY_EXPORT std::function<real(const CurrentState&)>
   buildValueExtractor(const Behaviour&, const std::string&);
+  /*!
+   * \return if the kind type corresponds to a scalar
+   * \param[in] t: variable type
+   */
+  MTEST_VISIBILITY_EXPORT bool isScalarVariableType(const int);
 
   /*!
    * \return the size of a variable

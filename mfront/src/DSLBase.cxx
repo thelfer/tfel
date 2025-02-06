@@ -1301,8 +1301,8 @@ namespace mfront {
     ++(this->current);
     this->checkNotEndOfFile("DSLBase::treatDSL", "expected ';'");
     if (this->current->value == "{") {
-      const auto o = tfel::utilities::DataParsingOptions{};
-      tfel::utilities::Data::read(this->current, this->tokens.end(), o);
+      std::ignore =
+          read<tfel::utilities::DataMap>(this->current, this->tokens.end());
     }
     this->readSpecifiedToken("DSLBase::treatDSL", ";");
   }  // end of treatDSL

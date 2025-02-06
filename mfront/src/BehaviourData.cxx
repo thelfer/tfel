@@ -35,6 +35,7 @@ namespace mfront {
 
   const char* const BehaviourData::UserDefinedInitializeCodeBlock =
       "UserDefinedInitializeCodeBlock";
+  const char* const BehaviourData::BeforeFlowRule = "BeforeFlowRule";
   const char* const BehaviourData::FlowRule = "FlowRule";
   const char* const BehaviourData::BeforeInitializeLocalVariables =
       "BeforeInitializeLocalVariables";
@@ -313,7 +314,7 @@ namespace mfront {
   void BehaviourData::CodeBlocksAggregator::check() const {
     tfel::raise_if(!this->is_mutable,
                    "BehaviourData::CodeBlocksAggregator::set: "
-                   "can't modifiy a code block");
+                   "can't modify a code block");
   }  // end of CodeBlocksAggregator::check
 
   const CodeBlock& BehaviourData::CodeBlocksAggregator::get() const {

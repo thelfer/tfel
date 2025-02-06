@@ -537,8 +537,7 @@ namespace mfront {
 
   void MaterialPropertyDSL::treatDataWithoutInput() {
     using namespace tfel::utilities;
-    const auto opts =
-        Data::read(this->current, this->tokens.end()).get<DataMap>();
+    const auto opts = read<DataMap>(this->current, this->tokens.end());
     for (const auto& [k, v] : opts) {
       if (k != "value") {
         this->throwRuntimeError("MaterialPropertyDSL::treatData",
@@ -564,7 +563,7 @@ namespace mfront {
     auto& body = this->md.f.body;
     const auto& v = this->md.inputs[0];
     const auto idata = SingleVariableInterpolatedData::extract(
-        Data::read(this->current, this->tokens.end()).get<DataMap>());
+        read<DataMap>(this->current, this->tokens.end()));
     if (idata.itype == SingleVariableInterpolatedData::LINEAR_INTERPOLATION) {
       if (idata.values.size() == 1) {
         const auto value = idata.values.begin()->second;
@@ -766,7 +765,7 @@ namespace mfront {
     throw_if(openedBrackets != 0,
              "parenthesis still opened at the end of function");
     throw_if(this->md.f.body.empty(), "empty function");
-    throw_if(!this->md.f.modified, "function does not modifiy output.");
+    throw_if(!this->md.f.modified, "function does not modify output.");
   }  // end of treatFunction
 
   void MaterialPropertyDSL::treatMethod() {

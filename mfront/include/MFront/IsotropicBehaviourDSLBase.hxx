@@ -15,11 +15,21 @@
 #ifndef LIB_MFRONTISOTROPICBEHAVIOURPARSERBASE_HXX
 #define LIB_MFRONTISOTROPICBEHAVIOURPARSERBASE_HXX
 
+#include <map>
+#include <vector>
+#include <memory>
 #include <string>
 #include <string_view>
 
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/BehaviourDSLBase.hxx"
+
+namespace mfront::bbrick {
+
+  // forward declarations
+  struct IsotropicHardeningRule;
+  
+}  // namespace mfront::bbrick
 
 namespace mfront {
 
@@ -40,21 +50,33 @@ namespace mfront {
 
    protected:
     void treatExternalStateVariable() override;
-
     void completeVariableDeclaration() override;
-
     void endsInputFileProcessing() override;
-
+    //! \return if multiple flow rules are allowed.
+    virtual bool allowMultipleFlowRules() const;
+    /*!
+     * \brief return the number of flow rules.
+     * \note this information is only meaningful after processing the input file
+     */
+    virtual std::size_t getNumberOfFlowRules() const;
+    //! \brief return the default value of the theta parameter
     virtual double getDefaultThetaValue() const;
-
+    //! \brief treat the `@FlowRule` keyword
     virtual void treatFlowRule();
-
+    //! \brief treat the `@Theta` keyword
     virtual void treatTheta();
-
+    //! \brief treat the `@Epsilon` keyword
     virtual void treatEpsilon();
-
+    //! \brief treat the `@IterMax` keyword
     virtual void treatIterMax();
-
+    //! \brief treat the `@IsotropicHardeningRule` keyword
+    virtual void treatIsotropicHardeningRule();
+    //! \brief treat the `@IsotropicHardeningRules` keyword
+    virtual void treatIsotropicHardeningRules();
+    /*!
+     * \brief method used to modify the variables when analysing @FlowRule
+     * blocks
+     */
     virtual std::string flowRuleVariableModifier(const Hypothesis,
                                                  const std::string&,
                                                  const bool);
@@ -64,6 +86,12 @@ namespace mfront {
      * \param[in] n: code block name
      */
     virtual void checkFlowRule(std::string_view) const;
+
+    //! \brief isotropic hardening rules sorted by flow rules
+    std::map<
+        std::size_t,
+        std::vector<std::shared_ptr<::mfront::bbrick::IsotropicHardeningRule>>>
+        ihrs;
 
    private:
     friend struct BehaviourDSLBase<IsotropicBehaviourDSLBase>;

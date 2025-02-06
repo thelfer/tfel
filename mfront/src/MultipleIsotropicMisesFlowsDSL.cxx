@@ -140,6 +140,14 @@ namespace mfront {
     return "";
   }  // end of getCodeBlockTemplate
 
+  bool MultipleIsotropicMisesFlowsDSL::allowMultipleFlowRules() const {
+    return true;
+  }  // end of allowMultipleFlowRules
+
+  std::size_t MultipleIsotropicMisesFlowsDSL::getNumberOfFlowRules() const{
+    return this->flows.size();
+  }  // end of getNumberOfFlowRules
+
   void MultipleIsotropicMisesFlowsDSL::treatFlowRule() {
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     FlowHandler flow;

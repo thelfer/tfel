@@ -98,6 +98,23 @@ namespace mfront {
     return r;
   }  // end of read
 
+  template <>
+  tfel::utilities::DataMap read(
+      tfel::utilities::CxxTokenizer::const_iterator& p,
+      const tfel::utilities::CxxTokenizer::const_iterator pe) {
+    auto c = p;
+    auto d = tfel::utilities::Data::read(c, pe);
+    if (d.empty()) {
+      p = c;
+      return tfel::utilities::DataMap{};
+    }
+    if (!d.is<tfel::utilities::DataMap>()) {
+      tfel::raise("data read is not a DataMap");
+    }
+    p = c;
+    return d.get<tfel::utilities::DataMap>();
+  } // end of read
+
   std::pair<std::string, VariableBoundsDescription> readVariableBounds(
       tfel::utilities::CxxTokenizer::const_iterator& p,
       const tfel::utilities::CxxTokenizer::const_iterator pe) {

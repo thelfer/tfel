@@ -43,7 +43,11 @@ namespace mfront {
        << "using namespace tfel::material;\n"
        << "using std::vector;\n";
     writeMaterialLaws(os, this->bd.getMaterialLaws());
-    os << this->bd.getCode(h, BehaviourData::FlowRule) << "return true;\n}\n\n"
+    if (this->bd.hasCode(h, BehaviourData::BeforeFlowRule)) {
+      os << this->bd.getCode(h, BehaviourData::BeforeFlowRule);
+    }
+    os << this->bd.getCode(h, BehaviourData::FlowRule) << "return true;\n"
+       << "}\n\n"
        << "bool NewtonIntegration(){\n"
        << "bool converge=false;\n"
        << "strain newton_f;\n"

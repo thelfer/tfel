@@ -1,0 +1,10 @@
+add_subdirectory(generic)
+
+install_mfront_data(tests/behaviours/IsotropicDSLs Plasticity1.mfront)
+install_mfront_data(tests/behaviours/IsotropicDSLs Plasticity2.mfront)
+install_mfront_data(tests/behaviours/IsotropicDSLs Plasticity3.mfront)
+install_mfront_data(tests/behaviours/IsotropicDSLs Plasticity4.mfront)
+install_mfront_data(tests/behaviours/IsotropicDSLs Plasticity5.mfront)
+install_mfront_data(tests/behaviours/IsotropicDSLs MultipleFlows1.mfront)
+install_mfront_data(tests/behaviours/IsotropicDSLs MultipleFlows2.mfront)
+install_mfront_data(tests/behaviours/IsotropicDSLs MultipleFlows3.mfront)

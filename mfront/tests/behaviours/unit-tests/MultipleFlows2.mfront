@@ -1,0 +1,23 @@
+@DSL MultipleIsotropicMisesFlows;
+@Behaviour MultipleFlows2;
+@Author Helfer Thomas;
+@Date 31 / 01 / 25;
+@Description{
+  "This test fails because an invalid flow id is specified in "
+  "@IsotropicHardeningRule"
+}
+
+@Epsilon 1e-15;
+@UseQt true;
+@Theta 1;
+
+@IsotropicHardeningRules{
+  flow_id : 1,
+  isotropic_hardening : "Voce" {R0 : 125e6, Rinf : 500e6, b : 20}
+};
+
+@FlowRule Plasticity {
+  f = seq - R;
+  df_dseq = 1;
+  df_dp = -dR_dp;
+}
