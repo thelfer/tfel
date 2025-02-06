@@ -111,6 +111,12 @@ with `computeAnisotropicEshelbyTensor` in 3D and `computePlainStrainAnisotropicE
 in 2D. There are also `computeAnisotropicHillTensor`, `computePlainStrainAnisotropicHillTensor`,
 and also `computeAnisotropicLocalisationTensor` and `computePlainStrainAnisotropicLocalisationTensor`.
 
+### Homogenization bounds
+
+Different homogenization bounds are implemented.
+The available functions are `computeVoigtStiffness`, `computeReussStiffness`,
+`computeIsotropicHashinShtrikmanBounds`.
+
 ## Python bindings
 
 Python bindings are now generated using the

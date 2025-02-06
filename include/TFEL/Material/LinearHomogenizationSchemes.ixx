@@ -234,7 +234,7 @@ namespace tfel::material::homogenization::elasticity {
       return A;
     }  // end of Oriented
 
-  };  // end of struct EllipsoidMeanLocalisator
+  };  // end of struct EllipsoidMeanLocalisator ;
 
   template <typename real, typename StressType>
   TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
