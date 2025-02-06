@@ -28,6 +28,7 @@ namespace mfront {
     std::string getCodeBlockTemplate(
         const std::string&,
         const MFrontTemplateGenerationOptions&) const override;
+    void endsInputFileProcessing() override;
     //! \brief default destructor
     ~DefaultDSLBase() override;
 
@@ -41,6 +42,12 @@ namespace mfront {
     //
     virtual void treatProvidesTangentOperator();
     virtual void treatProvidesSymmetricTangentOperator();
+    /*!
+     * \brief perform checks of the Integrator code block
+     * \param[in] h: modelling hypothesis
+     */
+    virtual void checkIntegratorBlock(const Hypothesis) const;
+
   };  // end of struct DefaultDSLBase
 
 }  // end of namespace mfront

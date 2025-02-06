@@ -1,4 +1,4 @@
-@Parser Implicit;
+@DSL Implicit;
 @Behaviour ViscoChaboche;
 
 @StateVariable strain    p;

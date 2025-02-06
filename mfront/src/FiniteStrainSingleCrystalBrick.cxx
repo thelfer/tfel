@@ -369,6 +369,7 @@ namespace mfront {
                      BehaviourData::CREATE, BehaviourData::AT_BEGINNING);
     // tangent operator
     CodeBlock to;
+    to.members.insert("Dt");
     if (idsl.getSolver().usesJacobian()) {
       to.attributes["requires_jacobian_decomposition"] = true;
       to.attributes["uses_get_partial_jacobian_invert"] = true;

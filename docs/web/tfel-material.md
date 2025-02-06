@@ -389,7 +389,7 @@ the function `computeEshelbyTensor` which computes the Eshelby tensor
 of an ellipsoid.
 If we consider a constant stress-free strain \(\tenseur \varepsilon^\mathrm{T}\)
 filling an ellipsoidal volume embedded in an infinite homogeneous medium whose
-elasticity is \(\tenseur C_0\), the strain tensor inside the ellipsoid is given by
+elasticity is \(\tenseurq{C}_0\), the strain tensor inside the ellipsoid is given by
 
 \(\tenseur \varepsilon=\tenseur S_0:\tenseur \varepsilon^\mathrm{T}\).
 

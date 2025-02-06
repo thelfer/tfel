@@ -1,0 +1,12 @@
+@DSL DefaultCZM;
+@Behaviour WarningTest58;
+@Description {
+  "This test checks that no warning is reported if "
+  "the opening displacement and the cohesive force "
+  "are used in @Integrator."
+}
+
+@Integrator {
+  du;
+  t;
+}

@@ -389,6 +389,7 @@ namespace mfront::bbrick {
     const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
     bd.checkVariablePosition("eel", "IntegrationVariable", 0u);
     CodeBlock to;
+    to.members.insert("Dt");
     if (idsl.getSolver().usesJacobian()) {
       to.attributes["requires_jacobian_decomposition"] = true;
       to.attributes["uses_get_partial_jacobian_invert"] = true;
@@ -412,11 +413,11 @@ namespace mfront::bbrick {
       to.code += "  this->Dt = " + ge + " * " + D + ";\n";
       if (idsl.getSolver().usesJacobian()) {
         to.code += "} else if (smt == CONSISTENTTANGENTOPERATOR){\n";
-        to.code += "  Stensor4 Je;\n";
-        to.code += "  Stensor  Jd;\n";
-        to.code += "  getPartialJacobianInvert(Je,Jd);\n";
-        to.code += "  Dt = " + ge + " * (" + D + ") * Je - ";
-        to.code += "  (((" + D + ")*(this->eel)) ^ (Jd));\n";
+        to.code += "  Stensor4 mfront_Je;\n";
+        to.code += "  Stensor  mfront_Jd;\n";
+        to.code += "  getPartialJacobianInvert(mfront_Je, mfront_Jd);\n";
+        to.code += "  this->Dt = " + ge + " * (" + D + ") * mfront_Je - ";
+        to.code += "  (((" + D + ")*(this->eel)) ^ (mfront_Jd));\n";
       }
       to.code += "} else {\n";
       to.code += "  return false;\n";
@@ -496,6 +497,7 @@ namespace mfront::bbrick {
                          m);
     };
     CodeBlock to;
+    to.members.insert({"Dt", "d"});
     // modelling hypotheses supported by the behaviour
     const auto bmh = bd.getModellingHypotheses();
     const std::string de = "min(this->d, this->damage_thresold)";
@@ -524,10 +526,10 @@ namespace mfront::bbrick {
                    "stiffness tensor");
         }
       }
-      const std::string D =
-          bd.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)
-              ? "this->D"
-              : "this->D_tdt";
+      const auto rst =
+          bd.getAttribute(BehaviourDescription::requiresStiffnessTensor, false);
+      const std::string D = rst ? "this->D" : "this->D_tdt";
+      to.members.insert(rst ? "D" : "D_tdt");
       to.code += "if(smt == ELASTIC){\n";
       to.code += "  this->Dt = " + D + ";\n";
       to.code += "} else if(smt == SECANTOPERATOR){\n";
@@ -542,6 +544,9 @@ namespace mfront::bbrick {
         const std::string lambda =
             b ? "this->sebdata.lambda" : "this->lambda_tdt";
         const std::string mu = b ? "this->sebdata.mu" : "this->mu_tdt";
+        if (!b) {
+          to.members.insert({"lambda_tdt", "mu_tdt"});
+        }
         to.code += "if(smt==ELASTIC){\n";
         to.code +=
             "computeAlteredElasticStiffness<hypothesis, NumericType>::exe(Dt," +
@@ -559,6 +564,7 @@ namespace mfront::bbrick {
         throw_if(!bd.getAttribute<bool>(
                      BehaviourDescription::computesStiffnessTensor, false),
                  "orthotropic behaviour shall require the stiffness tensor");
+        to.members.insert("D_tdt");
         to.code += "if(smt == ELASTIC){\n";
         to.code += "  this->Dt = this->D_tdt;\n";
         to.code += "} else if(smt == SECANTOPERATOR){\n";

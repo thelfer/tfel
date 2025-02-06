@@ -1,0 +1,11 @@
+@DSL DefaultFiniteStrain;
+@Behaviour WarningTest47;
+@Description {
+  "This test checks that a warning is reported if "
+  "the deformation gradient at the end of the time "
+  "step is no used in @Integrator."
+}
+
+@Integrator {
+  sig;
+}

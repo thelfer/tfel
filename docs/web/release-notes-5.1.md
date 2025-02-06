@@ -17,6 +17,8 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+\newcommand{\tenseurq}[1]{\underline{\underline{\mathbf{#1}}}}
+
 # Known incompatibilities
 
 When compiling with option `TFEL_APPEND_VERSION` set to `ON` or when
@@ -106,10 +108,13 @@ $ tfel-config-5.1.0-release --python-module-suffix
 
 ### Ellipsoidal inclusion embedded in anisotropic matrix
 
-When \(\tenseur C_0\) is anisotropic, the Eshelby tensor can be computed
-with `computeAnisotropicEshelbyTensor` in 3D and `computePlainStrainAnisotropicEshelbyTensor`
-in 2D. There are also `computeAnisotropicHillTensor`, `computePlainStrainAnisotropicHillTensor`,
-and also `computeAnisotropicLocalisationTensor` and `computePlainStrainAnisotropicLocalisationTensor`.
+When \(\tenseuq{C}_0\) is anisotropic, the Eshelby tensor can be
+computed with `computeAnisotropicEshelbyTensor` in 3D and
+`computePlainStrainAnisotropicEshelbyTensor` in 2D. There are also
+`computeAnisotropicHillTensor`,
+`computePlainStrainAnisotropicHillTensor`, and also
+`computeAnisotropicLocalisationTensor` and
+`computePlainStrainAnisotropicLocalisationTensor`.
 
 ### Homogenization bounds
 
@@ -155,6 +160,33 @@ existing file (written by another person) to question implementation
 choices.
 
 ### Warnings added to all DSLs
+
+### Warnings added to the DSLs of the `Default` family
+
+- check that the increments of all gradients are used in the
+  `@Integrator` code block.
+- check that the all thermodynamic forces are used in the
+  `@Integrator` code block.
+- check that the increment of all state variables are used in the
+  `@Integrator` code block.
+- check that all auxiliary state variables are used in the `@Integrator`
+  code block or in `UpdateAuxiliaryStateVariable` code block.
+- check that the consistent tangent operator `Dt` or all the tangent
+  operator blocks are used in the `@PredictionOperator` code block, if
+  defined.
+- check that the consistent tangent operator `Dt` or all the tangent
+  operator blocks are used in the `@TangentOperator` code block, if
+  defined.
+- check that the consistent tangent operator `Dt` or all the tangent
+  operator blocks are used in the `@Integrator` code block if the
+  implementation declares that the `@Integrator` computes it (using any
+  of the `@ProvidesTangentOperator` and
+  `@ProvidesSymmetricTangentOperator`) keywords).
+- check that neither the consistent tangent operator `Dt` and any of the
+  tangent operator blocks are used in the `@Integrator` code block if a
+  `@TangentOperator` code block has been declared or if the
+  implementation has not stated that it shall compute the consistent
+  tangent operator.
 
 ### Warnings added to isotropic DSLs
 

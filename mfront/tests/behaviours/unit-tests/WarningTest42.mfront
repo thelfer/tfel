@@ -1,0 +1,13 @@
+@Behaviour WarningTest42;
+@Description {
+  "This test checks that a warning is reported if Dt is not used "
+  "in @TangentOperator."
+}
+
+@Integrator {
+  deto;
+  sig;
+}
+
+@TangentOperator{
+}

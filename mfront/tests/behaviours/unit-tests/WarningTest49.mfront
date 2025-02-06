@@ -1,0 +1,15 @@
+@DSL DefaultFiniteStrain;
+@Behaviour WarningTest49;
+@Description {
+  "This test checks that no warning is reported if "
+  "the tangent operator is used in @TangentOperator."
+}
+
+@Integrator {
+  F1;
+  sig;
+}
+
+@TangentOperator<DS_DC> {
+  Dt;
+}

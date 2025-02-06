@@ -1721,6 +1721,19 @@ namespace mfront {
     ~BehaviourDescription() override;
 
    private:
+    /*!
+     * \brief add a new main variable
+     * \param[in] g: gradient
+     * \param[in] th: thermodynamic force
+     * \param[in] registerGradientGlossaryName: register the glossary name
+     * assocated with the gradient.
+     * \param[in] registerTangentOperatorBlock: register the tangent operator
+     * block.
+     */
+    void addMainVariable2(const Gradient&,
+                          const ThermodynamicForce&,
+                          const bool,
+                          const bool);
     //! \brief check and complete the physical bounds of variables
     void checkAndCompletePhysicalBoundsDeclaration();
     /*!
@@ -2108,6 +2121,15 @@ namespace mfront {
       const BehaviourDescription&,
       const BehaviourDescription::Hypothesis,
       const CheckInitializeMethodsOptions& = {});
+  /*!
+   * \return a list of the consistent tangent operator blocks, separated by a
+   * comma.
+   * \param[in] bd: behaviour description
+   * \param[in] tblocks: list of tangent operator blocks
+   */
+  MFRONT_VISIBILITY_EXPORT std::string makeTangentOperatorBlocksList(
+      const BehaviourDescription&,
+      const std::vector<std::pair<VariableDescription, VariableDescription>>&);
 
 }  // end of namespace mfront
 

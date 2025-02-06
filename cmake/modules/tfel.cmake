@@ -18,7 +18,7 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
     tfel_add_c_cxx_definitions("TFEL_APPEND_SUFFIX")
   endif(TFEL_APPEND_VERSION OR TFEL_VERSION_FLAVOUR)
 
-  set(TFEL_WEBSITE "http://tfel.sourceforce.net")
+  set(TFEL_WEBSITE "http://thelfer.github.io/tfel/web/index.html")
   # the version number.
   set(TFEL_VERSION_MAJOR "${tfel_version_major}")
   set(TFEL_VERSION_MINOR "${tfel_version_minor}")

@@ -167,7 +167,8 @@ namespace mfront {
     add("@Profiling", &BehaviourDSLCommon::treatProfiling);
     add("@Behaviour", &BehaviourDSLCommon::treatBehaviour);
     add("@BehaviourVariable", &BehaviourDSLCommon::treatBehaviourVariable);
-    add("@BehaviourVariableFactory", &BehaviourDSLCommon::treatBehaviourVariableFactory);
+    add("@BehaviourVariableFactory",
+        &BehaviourDSLCommon::treatBehaviourVariableFactory);
     add("@StrainMeasure", &BehaviourDSLCommon::treatStrainMeasure);
     add("@Author", &BehaviourDSLCommon::treatAuthor);
     add("@Date", &BehaviourDSLCommon::treatDate);
@@ -1374,10 +1375,34 @@ namespace mfront {
       }
     }
     //
-    //
     for (const auto& pb : this->bricks) {
       pb->endTreatment();
     }
+    //
+    for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
+      if (this->mb.getBehaviourType() ==
+          BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+        // all available tangent operators for finite strain behaviours
+        for (const auto& t :
+             tfel::material::getFiniteStrainBehaviourTangentOperatorFlags()) {
+          const auto cto_name =
+              std::string(BehaviourData::ComputeTangentOperator) + '-' +
+              convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
+          if (this->mb.hasCode(h, cto_name)) {
+            const auto& cto = this->mb.getCodeBlock(h, cto_name);
+            this->checkTangentOperatorBlock(cto_name, cto);
+          }
+        }
+      } else {
+        if (this->mb.hasCode(h, BehaviourData::ComputeTangentOperator)) {
+          const auto& cto =
+              this->mb.getCodeBlock(h, BehaviourData::ComputeTangentOperator);
+          this->checkTangentOperatorBlock(BehaviourData::ComputeTangentOperator,
+                                          cto);
+        }
+      }
+    }
+    //
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing: end\n";
     }
@@ -2862,7 +2887,7 @@ namespace mfront {
     this->reserveName(getBehaviourWrapperClassName(d));
     this->reserveName("mfront_behaviour_variable_" + d.name);
     return d;
-  } // end of readBehaviourVariableDescription
+  }  // end of readBehaviourVariableDescription
 
   void BehaviourDSLCommon::treatBehaviourVariable() {
     this->mb.addBehaviourVariable(this->readBehaviourVariableDescription());
@@ -3767,6 +3792,7 @@ namespace mfront {
                << "return false;\n"
                << "}\n";
           tangentOperator.code = code.str();
+          tangentOperator.members.insert({"Dt", "D"});
           this->mb.setCode(h, BehaviourData::ComputeTangentOperator,
                            tangentOperator, BehaviourData::CREATEBUTDONTREPLACE,
                            BehaviourData::BODY);
@@ -4058,6 +4084,96 @@ namespace mfront {
   BehaviourDSLCommon::getBehaviourInterfaces() const {
     return this->interfaces;
   }  // end of getBehaviourInterfaces
+
+  void BehaviourDSLCommon::checkTangentOperatorBlock(const std::string& cname,
+                                                     const CodeBlock& c) const {
+    if (isSafe(c)) {
+      return;
+    }
+    if (this->mb.getBehaviourType() ==
+        BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+      if (!c.members.contains("Dt")) {
+        reportWarning("the variable 'Dt' is not used in the '" + cname +
+                      "' code block.");
+      }
+      return;
+    }
+    if (this->mb.getBehaviourType() ==
+        BehaviourDescription::COHESIVEZONEMODEL) {
+      const auto uses_Dt = c.members.contains("Dt");
+      const auto uses_Dt_c =
+          c.members.contains("Dt_nn") || c.members.contains("Dt_tt") ||
+          c.members.contains("Dt_tn") || c.members.contains("Dt_nt");
+      if ((!uses_Dt) && (!uses_Dt_c)) {
+        reportWarning("the variable 'Dt' is not used in the '" + cname +
+                      "' code block, nor its block decomposition ('Dt_nn', "
+                      "'Dt_tt', 'Dt_tn', 'Dt_nt').");
+      }
+      if ((uses_Dt) && (uses_Dt_c)) {
+        reportWarning(
+            "both the variable 'Dt' and some parts of its block decomposition "
+            "('Dt_nn', 'Dt_tt', 'Dt_tn', 'Dt_nt') are used in the '" +
+            cname + "' code block. This is unexpected.");
+      }
+      if (uses_Dt_c) {
+        if (!c.members.contains("Dt_nn")) {
+          reportWarning(
+              "some parts of its block decomposition of the tangent operator "
+              "are used in the '" +
+              cname + "' code block, but not 'Dt_nn'). This is unexpected.");
+        }
+        if (!c.members.contains("Dt_tt")) {
+          reportWarning(
+              "some parts of its block decomposition of the tangent operator "
+              "are used in the '" +
+              cname + "' code block, but not 'Dt_tt'). This is unexpected.");
+        }
+      }
+      return;
+    }
+    auto used_tblocks =
+        std::vector<std::pair<VariableDescription, VariableDescription>>{};
+    auto unused_tblocks =
+        std::vector<std::pair<VariableDescription, VariableDescription>>{};
+    const auto& tblocks = this->mb.getTangentOperatorBlocks();
+    for (const auto& tblock : tblocks) {
+      const auto bn = this->mb.getTangentOperatorBlockName(tblock);
+      if (c.members.contains(bn)) {
+        used_tblocks.push_back(tblock);
+      } else {
+        unused_tblocks.push_back(tblock);
+      }
+    }
+    const auto uses_Dt = c.members.contains("Dt");
+    if ((!this->mb.hasTrivialTangentOperatorStructure()) && (uses_Dt)) {
+      reportWarning(
+          "the consistent tangent operator has a non trivial structure so "
+          "using directly the variable 'Dt' in the '" +
+          cname + "' code block is unexpected.");
+    }
+    if ((!uses_Dt) && (used_tblocks.empty())) {
+      reportWarning(
+          "nor the variable 'Dt' or any of the tangent operator blocks "
+          "(" +
+          makeTangentOperatorBlocksList(this->mb, unused_tblocks) +
+          ") is used in the '" + cname + "' code block.");
+    }
+    if ((uses_Dt) && (!used_tblocks.empty())) {
+      reportWarning(
+          "both the variable 'Dt' and some tangent operator blocks (" +
+          makeTangentOperatorBlocksList(this->mb, used_tblocks) +
+          ") are used in the '" + cname +
+          "' code block, which is unexepected.");
+    }
+    if ((!used_tblocks.empty()) && (!unused_tblocks.empty())) {
+      reportWarning("some tangent operator blocks (" +
+                    makeTangentOperatorBlocksList(this->mb, used_tblocks) +
+                    ") are used while other are not (" +
+                    makeTangentOperatorBlocksList(this->mb, unused_tblocks) +
+                    ") in the '" + cname +
+                    "' code block, which is unexepected.");
+    }
+  }  // end of checkTangentOperatorBlock
 
   BehaviourDSLCommon::~BehaviourDSLCommon() = default;
 
