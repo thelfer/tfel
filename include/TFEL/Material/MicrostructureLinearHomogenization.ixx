@@ -28,7 +28,6 @@ namespace tfel::math {
         s += A(i, j) * B(i, j);
       }
     return s;
-    std::cout << "dim " << N << "size " << size << std::endl;
   }
 }  // namespace tfel::math
 
@@ -92,10 +91,11 @@ namespace tfel::material::homogenization::elasticity {
    * \tparam unsigned short int: dimension \tparam
    * real: underlying type \tparam LengthType: type of the lengths related to
    * the inclusion \tparam StressType: type of the elastic constants related to
-   * the inclusion \return an object of type HomogenizationScheme 
+   * the inclusion \return an object of type HomogenizationScheme
    * \param[in] micro: MatrixInclusionMicrostructure
    * \param[in] E: uniform strain loading
-   * \param[in] mat_iso: boolean which precises if the matrix is considered isotropic
+   * \param[in] mat_iso: boolean which precises if the matrix is considered
+   * isotropic
    */
   template <unsigned short int N,
             typename real,
@@ -111,7 +111,7 @@ namespace tfel::material::homogenization::elasticity {
     const auto C0 = phase0.stiffness;
     StressType E0;
     real nu0;
-    if (mat_iso==true) {
+    if (mat_iso == true) {
       const auto kappa0 =
           StressType(1) *
           tfel::math::quad_product<N, real>(tfel::math::st2tost2<N, real>::J(),
@@ -129,11 +129,15 @@ namespace tfel::material::homogenization::elasticity {
     const auto f0 = micro.get_matrix_fraction();
     HomogenizationScheme<N, real, LengthType, StressType> h_s;
     auto Chom = C0;
+    using compliance = typename tfel::math::invert_type<StressType>;
     std::vector<tfel::math::stensor<N, real>> strains = {E};
+    std::vector<tfel::math::st2tost2<N, real>> localisators = {
+        tfel::math::st2tost2<N, real>::Id()};
+    std::vector<tfel::math::st2tost2<N, compliance>> hill_tensors = {};
     std::vector<tfel::math::stensor<N, StressType>> stresses = {C0 * E};
     std::vector<tfel::math::st2tost2<N, real>> strain_sm = {E ^ E};
-    //std::vector<tfel::math::st2tost2<N, StressType>> stress_sm = 
-    //    {};  // PROBLEMMMEE DEEE TYPPPEEE
+    // std::vector<tfel::math::st2tost2<N, StressType>> stress_sm =
+    //     {};  // PROBLEMMMEE DEEE TYPPPEEE
     for (unsigned int i = 0; i < np - 1; i++) {
       auto phasei = phases[i];
       auto Ci = phasei.stiffness;
@@ -145,43 +149,82 @@ namespace tfel::material::homogenization::elasticity {
       auto n_a = inc_i.axes_orientations[0];
       auto n_b = inc_i.axes_orientations[1];
       tfel::math::st2tost2<N, real> Ai;
+      tfel::math::st2tost2<N, compliance> Pi;
       // ATTENTTION 2D !!!
       if (N == 3u) {
-        if (mat_iso==true) {
+        if (mat_iso == true) {
           // ATTENTION C_i base globale
           Ai = computeAnisotropicEllipsoidLocalisationTensor<real, StressType,
                                                              LengthType>(
               E0, nu0, Ci, n_a, ai, n_b, bi, ci);
+          const auto Si = computeEshelbyTensor(nu0, ai, bi, ci, real{8e-3},
+                                               real{1.5e-4}, real{1e-5});
+          Pi = Si * invert(C0);
         } else {
           Ai = computeAnisotropicLocalisationTensor<real, StressType,
                                                     LengthType>(
               C0, Ci, n_a, ai, n_b, bi, ci, 12);
+          Pi = computeAnisotropicHillTensor<real, StressType, LengthType>(
+              C0, n_a, ai, n_b, bi, ci, 12);
         }
       }
       Chom += fi * (Ci - C0) * Ai;
       strains.push_back(Ai * E);
+      localisators.push_back(Ai);
+      hill_tensors.push_back(Pi);
       stresses.push_back(Ci * Ai * E);
     }
     h_s.homogenized_stiffness = Chom;
     h_s.mean_strains = strains;
     h_s.mean_stresses = stresses;
 
-    // if (mat_iso){
-    //   for (unsigned int r=0;r<np;r++){
-    //     auto ArE=strains[r];
-    //   tfel::math::st2tost2<N, real> epsepsr=(ArE)^(ArE);
-      
-    //   for (unsigned int R=0;R<np-1;R++){
-    //     auto CR=phases[R].stiffness;
-    //     auto D_Rr=dAR/dCr;
-    //   auto S_Rr=E*((Cr*ArE)+())*E;
-    //     epsepsr+=phases[R].fraction*S_Rr;
-    //   }
-    //   strain_sm.push_back(epsepsr);
-    //   }
-    // }
+    if (mat_iso) {
+      for (unsigned int r = 1; r < np; r++) {
+        const auto ArE = strains[r];
+        const auto Ar = localisators[r];
+        tfel::math::st2tost2<N, real> epsepsr = (ArE) ^ (ArE);
+        const auto Cr = phases[r - 1].stiffness;
+        const auto K = Ar * Ar;
+        const auto P0r = hill_tensors[r - 1];
+        const auto size = tfel::math::StensorDimeToSize<N>::value;
+        std::cout << "dim " << N << "size " << size << std::endl;
+        for (int i = 0; i < size; i++)
+          for (int j = i; j < size; j++)
+            for (int k = 0; k < size; k++)
+              for (int l = k; l < size; l++) {
+                const auto epsepsr_ijkl =
+                    internals::getST2toST2Component<N, real, real>(epsepsr, i,
+                                                                   j, k, l);
+                tfel::math::st2tost2<N, real> D_ijkl;
+                for (int S = 0; S < size; S++)
+                  for (int T = S; T < size; T++)
+                    for (int O = 0; O < size; O++)
+                      for (int P = O; P < size; P++) {
+                        const auto P0_STij =
+                            internals::getST2toST2Component<N, compliance,
+                                                            real>(P0r, S, T, i,
+                                                                  j);
+                        const auto K_klOP =
+                            internals::getST2toST2Component<N, real, real>(
+                                K, k, l, O, P);
+                        const real D_STOPijkl = P0_STij/compliance(1) * K_klOP;
+                        internals::setST2toST2Component<N, real, real>(
+                            D_ijkl, S, T, O, P, D_STOPijkl);
+                      }
+                tfel::math::stensor<N, real> T1=  D_ijkl * E;
+                tfel::math::stensor<N, real> T2=  (Cr/StressType(1)) * ArE;
+                const real S_ijkl =
+                    2 * tfel::math::symmetric_product<
+                            tfel::math::stensor<N, real>,
+                            tfel::math::stensor<N, real>>(T1,T2);
+                internals::setST2toST2Component<N, real, real>(
+                    epsepsr, i, j, k, l, epsepsr_ijkl + S_ijkl);
+              }
+        strain_sm.push_back(epsepsr);
+      }
+    }
     h_s.strain_second_moments = strain_sm;
-    //h_s.stress_second_moments = stress_sm;
+    // h_s.stress_second_moments = stress_sm;
     return h_s;
   };
 
@@ -199,7 +242,8 @@ namespace tfel::material::homogenization::elasticity {
             typename StressType>
   HomogenizationScheme<N, real, LengthType, StressType> computeSelfConsistent(
       Polycrystal<N, real, LengthType, StressType> crystal,
-      tfel::math::stensor<N, real> E, bool mat_iso) {
+      tfel::math::stensor<N, real> E,
+      bool mat_iso) {
     const auto np = crystal.get_number_of_grains();
     const auto grains = crystal.get_grains();
     const auto f0 = crystal.get_total_fraction();
