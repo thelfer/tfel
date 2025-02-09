@@ -1653,6 +1653,19 @@ namespace mfront {
 
    private:
     /*!
+     * \brief add a new main variable
+     * \param[in] g: gradient
+     * \param[in] th: thermodynamic force
+     * \param[in] registerGradientGlossaryName: register the glossary name
+     * assocated with the gradient.
+     * \param[in] registerTangentOperatorBlock: register the tangent operator
+     * block.
+     */
+    void addMainVariable2(const Gradient&,
+                          const ThermodynamicForce&,
+                          const bool,
+                          const bool);
+    /*!
      * \brief throw an exception saying that no attribute with the
      * given name exists
      */
