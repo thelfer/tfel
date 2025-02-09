@@ -161,6 +161,9 @@ choices.
 
 ### Warnings added to all DSLs
 
+- check that the consistent tangentor operator of all the relevant
+  blocks are used in `@TangentOperator`.
+
 ### Warnings added to the DSLs of the `Default` family
 
 - check that the increments of all gradients are used in the
@@ -405,6 +408,11 @@ The following libraries are available: `Config`, `Exception`,
 ~~~~
 
 # Issues fixed
+
+## Issue 717: [mfront] Add warning if the increment of a state variable is not used in @Integrator for the Implicit DSLs and the Default DSLs
+￼
+
+For more details, see <https://github.com/thelfer/tfel/issues/717>
 
 ## Issue 661: [mfront] Allow to use isotropic hardening rules in isotropic DSLs
 
