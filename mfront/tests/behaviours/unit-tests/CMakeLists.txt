@@ -128,6 +128,8 @@ mfront_unit_test(WarningTest67            WARNING_ERROR WILL_FAIL)
 mfront_unit_test(WarningTest68            WARNING_ERROR)
 mfront_unit_test(WarningTest69            WARNING_ERROR)
 mfront_unit_test(WarningTest70            WARNING_ERROR WILL_FAIL)
+mfront_unit_test(WarningTest71            WARNING_ERROR WILL_FAIL)
+mfront_unit_test(WarningTest72            WARNING_ERROR WILL_FAIL)
 
 mfront_unit_test(Plasticity1)
 mfront_unit_test(Plasticity2 WILL_FAIL)
