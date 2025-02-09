@@ -1561,10 +1561,23 @@ namespace mfront {
      */
     void getSymbols(std::map<std::string, std::string>&,
                     const Hypothesis) const;
-    //! destructor
+    //! \brief destructor
     ~BehaviourDescription() override;
 
    private:
+    /*!
+     * \brief add a new main variable
+     * \param[in] g: gradient
+     * \param[in] th: thermodynamic force
+     * \param[in] registerGradientGlossaryName: register the glossary name
+     * assocated with the gradient.
+     * \param[in] registerTangentOperatorBlock: register the tangent operator
+     * block.
+     */
+    void addMainVariable2(const Gradient&,
+                          const ThermodynamicForce&,
+                          const bool,
+                          const bool);
     //! a simple alias (std::optional is not yet available)
     template <typename T>
     using optional = tfel::utilities::GenType<T>;
