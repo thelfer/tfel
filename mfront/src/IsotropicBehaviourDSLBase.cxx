@@ -30,8 +30,21 @@
 
 namespace mfront {
 
+  const char* const IsotropicBehaviourDSLBase::useStressUpdateAlgorithm =
+      "use_stress_update_algorithm";
+
+  tfel::utilities::DataMapValidator
+  IsotropicBehaviourDSLBase::getDSLOptionsValidator() {
+    auto validator =
+        BehaviourDSLBase<IsotropicBehaviourDSLBase>::getDSLOptionsValidator();
+    validator.addDataTypeValidator<bool>(
+        IsotropicBehaviourDSLBase::useStressUpdateAlgorithm);
+    return validator;
+  }
+
   IsotropicBehaviourDSLBase::IsotropicBehaviourDSLBase(const DSLOptions& opts)
-      : BehaviourDSLBase<IsotropicBehaviourDSLBase>(opts) {
+      : BehaviourDSLBase<IsotropicBehaviourDSLBase>(tfel::utilities::extract(
+            opts, {IsotropicBehaviourDSLBase::useStressUpdateAlgorithm})) {
     constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->reserveName("NewtonIntegration");
     // main variables
@@ -43,6 +56,17 @@ namespace mfront {
       // temperature at the midle of the time step
       const auto T_ = VariableDescription("temperature", "T_", 1u, 0u);
       this->mb.addLocalVariable(h, T_);
+    }
+    this->mb.setAttribute(
+        IsotropicBehaviourDSLBase::useStressUpdateAlgorithm,
+        get_if(opts, IsotropicBehaviourDSLBase::useStressUpdateAlgorithm,
+               false),
+        true);
+    if (!this->mb.getAttribute(
+            IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
+      this->mb.addStateVariable(
+          h, VariableDescription("StrainStensor", "εᵉˡ", "eel", 1u, 0u));
+      this->mb.setGlossaryName(h, "eel", "ElasticStrain");
     }
     // material symmetry
     this->mb.setSymmetryType(mfront::ISOTROPIC);

@@ -1,3 +1,4 @@
+
 /*!
  * \file   mfront/include/MFront/IsotropicBehaviourDSLBase.hxx
  * \brief
@@ -28,13 +29,22 @@ namespace mfront::bbrick {
 
   // forward declarations
   struct IsotropicHardeningRule;
-  
+
 }  // namespace mfront::bbrick
 
 namespace mfront {
 
   struct MFRONT_VISIBILITY_EXPORT IsotropicBehaviourDSLBase
       : public BehaviourDSLBase<IsotropicBehaviourDSLBase> {
+    /*!
+     * \brief attribute name
+     *
+     * If this attribute is set to true, the elastic strain is not defined and
+     * the stress is computed incrementally.
+     */
+    static const char* const useStressUpdateAlgorithm;
+    //! \return a validator for the options passed to the DSL
+    static tfel::utilities::DataMapValidator getDSLOptionsValidator();
     /*!
      * \brief constructor
      *\param[in] opts: options passed to the DSL

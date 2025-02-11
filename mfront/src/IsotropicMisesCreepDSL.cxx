@@ -38,10 +38,7 @@ namespace mfront {
     // Default state vars
     this->reserveName("mfront_internal_ccto_tmp_1");
     this->reserveName("mfront_internal_3_mu_theta");
-    this->mb.addStateVariable(
-        h, VariableDescription("StrainStensor", "εᵉˡ", "eel", 1u, 0u));
     this->mb.addStateVariable(h, VariableDescription("strain", "p", 1u, 0u));
-    this->mb.setGlossaryName(h, "eel", "ElasticStrain");
     this->mb.setGlossaryName(h, "p", "EquivalentViscoplasticStrain");
     // default local vars
     this->mb.addLocalVariable(h,
