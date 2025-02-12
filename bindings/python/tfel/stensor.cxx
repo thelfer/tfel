@@ -22,6 +22,7 @@ template <unsigned short N>
 static void declarestensor(pybind11::module_& m, const char* const n) {
   using stensor = tfel::math::stensor<N, double>;
   pybind11::class_<stensor>(m, n, pybind11::buffer_protocol())
+      .def_static("zero", &stensor::zero)
       .def_buffer([](stensor& s) -> pybind11::buffer_info {
         return pybind11::buffer_info(
             s.data(),       /* Pointer to buffer */
