@@ -102,6 +102,19 @@ $ tfel-config-5.1.0-release --python-module-suffix
 5_1_0_release
 ~~~~
 
+# New `TFEL/Math` features
+
+## A `zero` method to create tensorial objects {#sec:tfel_5_1:zero}
+
+A static method named `zero` is now available to create fixed-size
+tensorial objects.
+
+### Example of usage
+
+~~~~{.cxx}
+constexpr auto s = stensor<2u, double>::zero();
+~~~~
+
 # New `TFEL/Material` features
 
 ## Homogenization
@@ -408,6 +421,12 @@ The following libraries are available: `Config`, `Exception`,
 ~~~~
 
 # Issues fixed
+
+## Issue 721: [tfel-math] Add a `zero` method to create tensorial objects
+
+This feature is described in Section @sec:tfel_5_1:zero.
+
+For more details, see <https://github.com/thelfer/tfel/issues/721>
 
 ## Issue 717: [mfront] Add warning if the increment of a state variable is not used in @Integrator for the Implicit DSLs and the Default DSLs
 ￼
