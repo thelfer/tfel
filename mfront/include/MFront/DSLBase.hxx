@@ -1,4 +1,3 @@
-
 /*!
  * \file   mfront/include/MFront/DSLBase.hxx
  * \brief

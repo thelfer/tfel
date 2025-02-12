@@ -43,7 +43,7 @@ namespace mfront {
   }
 
   IsotropicBehaviourDSLBase::IsotropicBehaviourDSLBase(const DSLOptions& opts)
-      : BehaviourDSLBase<IsotropicBehaviourDSLBase>(tfel::utilities::extract(
+      : BehaviourDSLBase<IsotropicBehaviourDSLBase>(tfel::utilities::remove(
             opts, {IsotropicBehaviourDSLBase::useStressUpdateAlgorithm})) {
     constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->reserveName("NewtonIntegration");
