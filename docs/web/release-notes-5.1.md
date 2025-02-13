@@ -18,6 +18,15 @@ eqnPrefixTemplate: "($$i$$)"
 ---
 
 \newcommand{\tenseurq}[1]{\underline{\underline{\mathbf{#1}}}}
+\newcommand{\paren}[1]{{\left(#1\right)}}
+\newcommand{\tenseur}[1]{\underline{#1}}
+\newcommand{\tepsilonto}{\tenseur{\varepsilon}^{\mathrm{to}}}
+\newcommand{\tsigma}{\underline{\sigma}}
+\newcommand{\trace}[1]{{\mathrm{tr}\paren{#1}}}
+\newcommand{\bts}[1]{{\left.#1\right|_{t}}}
+\newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
+\newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
+
 
 # Known incompatibilities
 
@@ -337,6 +346,31 @@ The following command line arguments are now supported:
 
 ## New features in isotropic DSLs
 
+### Stress update algorithm
+
+Isotropic DSLs all introduced the elastic strain as a state variable.
+When the elastic material properties are now to be constant in time,
+then the Hooke law can be written in an incremental form
+\[
+\ets{\tsigma}=\bts{\tsigma}+\lambda\,\trace{\Delta\,\tepsilonto}+2\,\mu\,\paren{\Delta\,\tepsilonto-\Delta\,p\,\mts{n}}
+\]
+where \(\lambda\) and \(\mu\) are the first Lamé's coefficient and the
+shear modulus, \(\Delta\,p\) is the increment of the equivalent plastic
+strain and \(\mts{n}\) the flow direction at the middle of the time
+step.
+
+The `use_stress_update_algorithm` DSL option prevents the declaration of
+the elastic strain and switches to this incremental form to compute the
+stress.
+
+#### Example of usage
+
+~~~~{.cxx}
+@DSL IsotropicStrainHardeningMisesCreep{
+  use_stress_update_algorithm : true
+};
+~~~~
+
 ### Predefined isotropic hardening rules
 
 The `@IsotropicHardeningRule` and `@IsotropicHardeningRules` allow to
@@ -432,6 +466,10 @@ For more details, see <https://github.com/thelfer/tfel/issues/721>
 ￼
 
 For more details, see <https://github.com/thelfer/tfel/issues/717>
+
+## Issue 698: [mfront] Add a stress update option which would not use the elastic strain as a state variable in Isotropic DSLs
+
+For more details, see <https://github.com/thelfer/tfel/issues/698>
 
 ## Issue 661: [mfront] Allow to use isotropic hardening rules in isotropic DSLs
 

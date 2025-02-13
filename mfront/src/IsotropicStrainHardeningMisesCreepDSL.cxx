@@ -38,10 +38,7 @@ namespace mfront {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("IsotropicStrainHardeningMisesCreep");
     // Default state vars
-    this->mb.addStateVariable(
-        h, VariableDescription("StrainStensor", "εᵉˡ", "eel", 1u, 0u));
     this->mb.addStateVariable(h, VariableDescription("strain", "p", 1u, 0u));
-    this->mb.setGlossaryName(h, "eel", "ElasticStrain");
     this->mb.setGlossaryName(h, "p", "EquivalentViscoplasticStrain");
     // default local vars
     this->reserveName("mfront_internal_3_mu");
