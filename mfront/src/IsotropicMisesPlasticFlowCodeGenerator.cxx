@@ -217,14 +217,14 @@ namespace mfront {
     if (this->bd.getAttribute(
             IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
       os << "this->sig += "
-         << "(this->lambda_tdt) * trace(this->deto) * StrainStensor::Id() + "
-         << "2 * (this->mu_tdt) * ("
-         << "deviator(this->deto) - (this->dp) * (this->n));\n";
+         << "(this->lambda_tdt) * trace(this->deto) * Stensor::Id() + "
+         << "2 * (this->mu_tdt) * (this->deto - (this->dp) * (this->n));\n";
     } else {
       os << "this->sig = "
-         << "(this->lambda_tdt) * trace(this->eel) * StrainStensor::Id() + "
+         << "(this->lambda_tdt) * trace(this->eel) * Stensor::Id() + "
          << "2 * (this->mu_tdt) * (this->eel);\n";
     }
+
     os << "this->updateAuxiliaryStateVariables();\n";
     if (!areRuntimeChecksDisabled(this->bd)) {
       for (const auto& v : d.getPersistentVariables()) {
