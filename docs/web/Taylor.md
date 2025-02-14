@@ -1,4 +1,4 @@
-% Implémentation du schéma d'homogénéisation de Taylor pour des comportements non-linéaires 
+% Implementation of Taylor/Voigt homogenization scheme with a BehaviourVariable
 % Helfer Thomas/Martin Antoine
 % February 6, 2025
 
@@ -28,39 +28,36 @@
 \newcommand{\mts}[1]{\left.#1\right|_{t+\theta\,\Delta\,t}}
 \newcommand{\ets}[1]{\left.#1\right|_{t+\Delta\,t}}
 
-# Le schéma d'homogénéisation de Taylor
+# Taylor homogenization scheme
 
-Le schéma de Taylor/Voigt fait l'hypothèse d'une déformation uniforme $\tenseur E$
-dans toutes les phases. La contrainte effective $\tenseur \Sigma$, définie comme la moyenne des contraintes
-dans le volume élémentaire représentatif (VER), est ainsi égale à:
+Taylor/Voigt scheme makes the hypothesis of a uniform strain $\tenseur E$
+on all phases. Macroscopic stress $\tenseur \Sigma$, is defined as the average of local stresses:
   \begin{aligned}
     \tenseur \Sigma   &= \sum_{i=1}^{N}f_i\,\tsigma^i (\tenseur E) \\
   \end{aligned}
-où $N$ est le nombre de phases, $f_i$ est la fraction volumique de la phase $i$ et $\tsigma^i$ est la contrainte dans la phase $i$ (donnée par une loi de comportement non-linéaire).
-Par ailleurs, l'opérateur tangent macroscopique est égal à:
+where $N$ is the number of phases, $f_i$ is the volume fraction of phase $i$ and $\tsigma^i$ is the strain field in phase $i$ (given by the behaviour law).
+The macroscopic tangent operator is given by
   \begin{aligned}
     \dfrac{\D \tenseur \Sigma}{\D \tenseur E}   &= \sum_{i=1}^{N}f_i\,\dfrac{\D \tsigma^i}{\D \varepsilon^i}(\tenseur E) \\
   \end{aligned}
 
-# Implémentation dans MFront
+# Implementation in MFront
 
-Il est possible d'implémenter ce schéma d'homogénéisation à travers un `Behaviour`.
-Ce `Behaviour` doit faire appel aux lois de comportement de chaque phase.
-Ainsi, une solution intéressante consiste à utiliser une `BehaviourVariable`.
+It is possible to implement this homogenization scheme through a `Behaviour`.
+This `Behaviour` must call the behaviour laws of each phase.
+So, an interesting solution is to use a `BehaviourVariable`.
 
-## Création des lois de comportement sur chaque phase avec `@BehaviourVariable`
+## Creation of the `@BehaviourVariable`
 
-La première étape consiste à créer des variables qui permettront de calculer, sur chaque phase
-la contrainte locale en fonction de la déformation locale, et également l'opérateur tangent local en fonction
-de la déformation locale. En somme, il s'agit de pouvoir appeler facilement un `Behaviour` local dans le `Behaviour`
-macroscopique. Ces `Behaviour` doivent être implémentés au préalable dans des fichiers `.mfront`
-auxiliaires.
+First step consists in creating variables which will allow to compute, on each phase,
+the local stress as a function of the local strain, and the local tangent operator as a function
+of the local strain. In short, it's about being able to easily call a local `Behaviour` in the macroscopic `Behaviour`.
+These local `Behaviour` must be implemented before in `.mfront` files.
 
-Pour l'exemple, et pour simplifier, on supposera que l'on a 2 phases dont le comportement
-est élastoplastique avec une critère de Von Mises à écrouissage isotrope linéaire. Les modules d'écrouissage et limites
-d'élasticité sont différents entre les phases. Ce comportement est implémenté dans le fichier
-`Plasticity.mfront`, avec comme paramètres, la limite d'élasticité
-et le module d'écrouissage.
+For the sake of simplicity, we will assume that we have 2 phases whose behaviour
+is elastoplastic with a Von Mises criterion with linear isotropic hardening. Material parameters
+are different between the phases. This behaviour is implemented in the file
+`Plasticity.mfront`, with the yield stress and hardening modulus as parameters.
 
 ~~~~ {#Plasticity .cpp .numberLines}
 @DSL IsotropicPlasticMisesFlow;
@@ -78,21 +75,17 @@ et le module d'écrouissage.
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Ensuite, dans le fichier `Taylor.mfront`,
-on travaillera avec le `DSL` `Default` :
+Then, in `Taylor.mfront`,
+we use the `Default` `DSL`:
 
 ~~~~ {#Taylor .cpp .numberLines}
 @DSL Default;
 @Behaviour Taylor;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-La création de `BehaviourVariable` se fait de la manière suivante :
+Creation of `BehaviourVariable` is done as follows:
 
 ~~~~ {#Taylor .cpp .numberLines}
-@Includes{
-#include "MFront/GenericBehaviour/BehaviourData.hxx"
-}
-
 @BehaviourVariable b1 {
 file: "Plasticity.mfront",
 variables_suffix: "1",
@@ -101,34 +94,32 @@ shared_external_state_variables: {".+"}
 };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+- the `@BehaviourVariable` block creates
+a variable named `b1`, representing our behaviour law on phase $1$.
+- the file implementing the behaviour law of phase $1$ is specified by line $2$.
+- the variables of the behaviour law can be used
+with the name used by the implemented `Behaviour`, with an added suffix,
+here $1$ for phase $1$. For example, we can use
+`eto1`, the total strain of phase $1$, or `sig1` for the
+stress, and the same is true for other variables, e.g.
+`eel1` or `p1` for the cumulative plastic strain.
+- the name of the variables outside, that is to say for example in
+the finite element code calling `MFront`, will have an added prefix
+`FirstPhase`, as specified by line $4$.
 
-- La ligne $2$ permet d'utiliser le mot clé `@BehaviourVariable`.
-- le bloc `@BehaviourVariable` crée
-une variable nommée `b1`, représentant notre loi de comportement sur la phase $1$.
-- le fichier implémentant la loi de comportement de la phase $1$ est précisé par la ligne $6$.
-- en ce qui concerne les variables de la loi de comportement, celles-ci
-seront reprises avec le nom utilisé par le `Behaviour` implémenté,
-en ajoutant un suffixe, ici $1$ pour la phase $1$. On pourra par exemple utiliser
-`eto1`, la déformation totale de la phase $1$, ou encore `sig1` pour la
-contrainte, et c'est la même chose pour les autres variables, par exemple
-`eel1` ou `p1` pour la déformation plastique cumulée.
-- le nom des variables à l'extérieur, c'est-à-dire par exemple dans
-le code aux éléments finis appelant `MFront`, se verra ajouté le préfixe
-`FirstPhase`, comme précisé par la ligne $8$.
+For more details on using `@BehaviourVariable`,
+the reader can see the [documentation of BehaviourVariable](behaviour-variable.html)
 
-Pour plus de détails sur l'utilisation de `@BehaviourVariable`,
-on se reportera à la [documentation de BehaviourVariable](behaviour-variable.html)
+Finally, it will be necessary to create 2 `@BehaviourVariable`
+for the 2 phases.
 
-Bien sûr, il faudra créer autant de `@BehaviourVariable`
-qu'il y a de phases.
+## Implementation of Taylor scheme
 
-## Intégration des lois de comportement et implémentation du schéma de Taylor
-
-Après avoir définis les `BehaviourVariable`, on peut
-implémenter le bloc `@Integrator`. Avant ce bloc,
-On précise que l'opérateur tangent sera calculé à l'intérieur du
-bloc `@Integrator`, étant donné sa forme très simple,
-dans le cas du schéma de Taylor. Ceci se fait via `@ProvidesTangentOperator`.
+After having defined the `BehaviourVariable`, we can
+implement the `@Integrator` block. Before this block,
+We specify that the tangent operator will be calculated inside the
+`@Integrator` block, given its very simple form,
+in the case of the Taylor scheme. This is done via `@ProvidesTangentOperator`.
 
 ~~~~ {#Integrator .cpp .numberLines}
 @ProvidesTangentOperator;
@@ -156,51 +147,46 @@ dans le cas du schéma de Taylor. Ceci se fait via `@ProvidesTangentOperator`.
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-On peut voir que l'on commence par intégrer les lois de comportement
-sur chaque phase.
-Regardons la phase $1$ :
+We can see that we start by integrating the local behaviour.
+Let's look on the first phase:
 
-- la ligne $4$ précise l'incrément de déformation sur la phase $1$,
-en l'occurrence identique à l'incrément de la déformation
-macroscopique `deto`. Par ailleurs, `b1.eto` est automatiquement initialisé à `eto1`
-avant l'intégration du comportement `b1`. Ceci est automatique, et correspond
-à l'appel de `initialize(b1)` avant d'intégrer.
-- l'intégration du comportement de la phase $1$ se fait via la ligne
-$7$ avec la méthode `integrate` qui prend deux arguments (voir la documentation
-de `@BehaviourVariable` pour plus de précisions. `r1` est un booléen qui
-vaut $1$ si l'intégration s'est bien déroulée.
-- on récupère l'opérateur tangent via la méthode `getTangentOperator`.
+- line $4$ specifies the strain increment on phase $1$,
+in this case identical to the macroscopic strain increment `deto`.
+Furthermore, `b1.eto` is automatically initialized to `eto1`
+before the integration of behaviour `b1`. This is automatic, and corresponds
+to call `initialize(b1)` before integration.
+- the integration of behaviour `b1` is done via line
+$7$ with the `integrate` method which takes two arguments (see the documentation
+from `@BehaviourVariable` for more details). `r1` is a boolean which
+is $1$ if the integration went well.
+- we retrieve the tangent operator via the `getTangentOperator` method.
 
-Une fois l'intégration des lois de comportement effectuée
-sur chaque phase, il est nécessaire de mettre à jour les variables
-auxiliaires associées à chaque `@BehaviourVariable`. Ceci est
-réalisé aux lignes $16$ et $17$ avec la fonction `updateAuxiliaryStateVariables`.
-Cela permet de mettre à jour `eto1` (resp. `sig1`) à la déformation (resp. contrainte)
-obtenue en fin d'intégration
-du comportement `b1`, et de même pour les autres variables
-comme `eel1` ou `p1`. Il en est de même pour la phase 2.
+Once local integrations have been carried out,
+it is necessary to update the auxiliary variables
+associated with each `@BehaviourVariable`. This is
+done on lines $16$ and $17$ with the `updateAuxiliaryStateVariables` function.
+This updates `eto1` (resp. `sig1`) to the strain (resp. stress)
+obtained at the end of the integration of `b1`, and the same for the other variables
+like `eel1` or `p1`. The same goes for `b2`.
 
-Enfin, le calcul de la contrainte macroscopique est donné
-par la loi de Taylor (moyenne des contraintes locales)
-à la ligne $19$, et le calcul de l'opérateur tangent
-est également donné par la loi de Taylor, aux lignes suivantes.
+Finally, the computation of macroscopic stress is given
+by Taylor scheme (average of local stresses)
+at line $19$, and the macroscopic tangent operator
+is computed in the sequel.
 
-A noter que la propriété suivante avait été définie avant
-le bloc d'intégration :
+Note that the following property had been defined before
+the `@Integrator` block:
 
 ~~~~ {#fraction .cpp .numberLines}
 @MaterialProperty real f;
 f.setEntryName("FirstPhaseFraction");
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# Résultats
+# Results
 
-On utilise ici MTest pour effectuer des
-simulations sur point matériel, en simulant un test de traction
-uniforme.
+We then use `MTest` to simulate a uniaxial tensile test.
 
-Le fichier MTest
-(nommé ici `Taylor.mtest`) se présente de la façon suivante :
+MTest file (`Taylor.mtest`) is the following:
 
 ~~~~ {#Taylor_mtest .mtest .numberLines}
 @ModellingHypothesis 'Tridimensional';
@@ -219,19 +205,19 @@ Le fichier MTest
 @Times {0, 1 in 200};
 ~~~~~~~~~~~~~~
 
-La contrainte axiale macroscopique, ainsi que la contrainte axiale dans chaque phase sont
-représentées en fonction de la déformation axiale macroscopique (uniforme dans le VER):
+Macroscopic and local stresses are represented
+below as functions of the uniform axial strain:
 
-![Contraintes locales et macroscopique en fonction de la déformation macroscopique, traction uniaxiale, schéma de Taylor](./img/Taylor_test.png)
+![Local and macroscopic stresses as function of the uniform axial strain, uniaxial tensile test, Taylor scheme](./img/Taylor_test.png)
 
-On peut voir, comme attendu, que la contrainte macroscopique
-est une moyenne des contraintes dans les phases. Quand la limite
-d'élasticité la plus petite est atteinte, la phase correspondante
-plastifie. Le module tangent macroscopique s'en trouve diminué, ce
-qui se répercute sur la contrainte macroscopique.
-L'autre phase plastifie plus tard. Même si son évolution reste
-élastique, on peut voir que sa contrainte axiale est également
-impactée par la plastification de l'autre phase, à cause des déformations
-non axiales plastiques apparues dans cette dernière.
+We can see, as expected, that the macroscopic stress
+is an average of the local stresses. When the lowest yield
+stress is reached, the corresponding phase becomes plastic.
+The macroscopic tangent module is then reduced, which has repercussions
+on the macroscopic stress.
+The other phase becomes plastic later. Even if its evolution remains
+elastic, we can see that its axial stress is also
+impacted by the plastic transition of the other phase, because of the
+non-axial plastic strains appeared in this latter phase.
 
 <!-- Local IspellDict: english -->

@@ -1,4 +1,4 @@
-% Implémentation du schéma d'homogénéisation de Sachs pour des comportements non-linéaires 
+% Implementation of Sachs/Reuss homogenization scheme with a BehaviourVariable
 % Helfer Thomas/Martin Antoine
 % February 6, 2025
 
@@ -29,29 +29,28 @@
 \newcommand{\mts}[1]{\left.#1\right|_{t+\theta\,\Delta\,t}}
 \newcommand{\ets}[1]{\left.#1\right|_{t+\Delta\,t}}
 
-# Le schéma d'homogénéisation de Sachs
+# Sachs homogenization scheme
 
-Le schéma de Sachs/Reuss fait l'hypothèse d'une contrainte uniforme $\tenseur \Sigma$
-dans toutes les phases:
+Sachs/Reuss scheme makes the hypothesis of a uniform stress $\tenseur \Sigma$ in the heterogeneous material:
   \begin{aligned}
     \tsigma^i &= \tenseur \Sigma \\
   \end{aligned}
-où $\tsigma^i$ est la contrainte dans la phase $i$.
-La déformation effective $\tenseur E$ est définie comme la moyenne des déformations
+where $\tsigma^i$ stress field in phase $i$.
+The macroscopic strain $\tenseur E$ is defined as the average of strain field:
 dans le volume élémentaire représentatif (VER) :
   \begin{aligned}
     \tenseur E &= \sum_{i=1}^{N}f_i\,\tenseur \varepsilon^i \\
   \end{aligned}
-où $N$ est le nombre de phases, $f_i$ est la fraction volumique de la phase $i$ et $\tenseur \varepsilon^i$ est la déformation dans la phase $i$ (donnée par une loi de comportement non-linéaire).
-Par ailleurs, l'opérateur tangent macroscopique est égal à:
+where $N$ is the number of phases, $f_i$ is the volume fraction of phase $i$ and $\tenseur \varepsilon^i$ is the strain field in phase $i$ (given by the behaviour law).
+We can show that the macroscopic tangent operator is given by
   \begin{aligned}
     \dfrac{\D \tenseur \Sigma}{\D \tenseur E}   &= \left(\deriv{\tenseur E}{\tenseur \Sigma}\right)^{-1}=\left(\sum_{i=1}^{N}f_i\,\deriv{\tepsilon^i}{\tenseur \Sigma}\right)^{-1}=\left(\sum_{i=1}^{N}f_i\,\left(\deriv{\tsigma^i}{\tepsilon^i}\right)^{-1}\right)^{-1}\\
   \end{aligned}
   
-# Résolution du système non linéaire
+# Resolution of the non-linear system
 
-On discrétise l'intervalle de temps considéré et on cherche à un instant donné les incréments des variables.
-Le problème à résoudre est le suivant :
+The time interval is discretized and the unknowns are the increments of the variables.
+The problem to solve is the following:
 
 $\left\{
 \begin{aligned}
@@ -59,12 +58,12 @@ $\left\{
 &\Delta\tenseur E-\sum_{i=1}^{N}f_i\,\Delta\tepsilon^i = 0\\
   \end{aligned}\right.$
 
-avec comme inconnues les incréments $\Delta\tepsilon^i$ et $\Delta \tenseur \Sigma$,
-et $\theta$ peut être précisé par l'utilisateur.
-On peut utiliser l'algorithme de Newton-Raphson pour résoudre ce sytème non-linéaire.
-Dans MFront, le `DSL` `Implicit` permet de résoudre ce type d'équation
-de manière simple. Il nous faut seulement préciser les résidus, ainsi que la jacobienne.
-Les résidus sont
+whose unknowns are $\Delta\tepsilon^i$ and $\Delta \tenseur \Sigma$.
+We will use a Newton-Raphson algorithm to solve this system.
+
+In `MFront`, we will do that with the `Implicit` `DSL`. We only have to precise the residues
+and the jacobian matrix.
+The residues are given by
 
 $\left\{
 \begin{aligned}
@@ -72,7 +71,8 @@ $\left\{
 &f_{\tenseur E} = \Delta\tenseur E-\sum_{i=1}^{N}f_i\,\Delta\tepsilon^i
   \end{aligned}\right.$
   
- où $\sigma_{0}$ est un paramètre qui permet de rendre homogènes en dimension et en ordre de grandeur les résidus. La jacobienne est donnée par:
+where $\sigma_{0}$ is a parameter that give the same dimension and magnitude to the residues.
+The jacobian matrix is:
   
  $\left\{
 \begin{aligned}
@@ -82,25 +82,25 @@ $\left\{
 &\deriv{f_{\tenseur E}}{\Delta\tenseur \Sigma} = \tenseurq{0}
   \end{aligned}\right.$
 
-# Implémentation dans MFront
+# Implementation in MFront
 
-Comme pour le schéma de Taylor, nous allons utiliser les `BehaviourVariable`
-pour l'intégration des comportements locaux.
-L'intégration du comportement global, qui nécessite de résoudre une équation
-non-linéaire, se fera avec le `DSL` `Implicit`.
+As for Taylor's scheme, we will use `BehaviourVariable`
+for the integration of local behaviours.
+The integration of global behavior, which requires solving a non-linear equation,
+will be done with the `Implicit` `DSL`.
 
-L'étape de création des variables qui permettent d'intégrer le comportement sur chaque phase
-se fait de la même manière que ce qui a été décrit pour le [schéma de Taylor](Taylor.html).
-Les `Behaviour` doivent être implémentés au préalable dans des fichiers `.mfront`
-auxiliaires.
+The step of creating a `BehaviourVariable` which allows the behaviour to be integrated on each phase
+is done in the same way as what was described for [Taylor scheme](Taylor.html).
+The corresponding local behaviours must be implemented before in `.mfront`
+auxiliary files.
 
-Pour l'exemple, et pour simplifier, on supposera que l'on a 2 phases dont le comportement
-est élastoplastique avec un critère de Von Mises à écrouissage isotrope linéaire. Les modules d'écrouissage et limites
-d'élasticité sont différents entre les phases et le comportement est implémenté dans un fichier
+For the example, and for simplicity, we will assume that we have 2 phases whose behaviour
+is elastoplastic with a Von Mises criterion with linear isotropic hardening. Material parameters
+are different between phases and the behaviour is implemented in a file
 `Plasticity.mfront`.
 
-Dans le fichier `Sachs.mfront`,
-on travaillera avec le `DSL` `Implicit`, avec un algorithme de Newton-Raphson :
+In `Sachs.mfront`,
+we use an `Implicit` `DSL`, with a Newton-Raphson algorithm:
 
 ~~~~ {#Sachs .cpp .numberLines}
 @DSL Implicit;
@@ -111,13 +111,9 @@ on travaillera avec le `DSL` `Implicit`, avec un algorithme de Newton-Raphson :
 @Theta 1;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-On rappelle la syntaxe pour créer une `BehaviourVariable` :
+Here is the creation of a `BehaviourVariable` :
 
 ~~~~ {#Sachs .cpp .numberLines}
-@Includes{
-#include "MFront/GenericBehaviour/BehaviourData.hxx"
-}
-
 @BehaviourVariable b1 {
 file: "Plasticity.mfront",
 variables_suffix: "1",
@@ -127,33 +123,37 @@ shared_external_state_variables: {".+"}
 };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A noter ici, on rajoute la ligne `store_gradients: false,` car on veut 
-définir la variable `eto1` comme `StateVariable`. Dans le cas du schéma de Taylor,
-l'option `store_gradients` était égale à `true`, ce qui avait le même
-effet que d'écrire `@AuxiliaryStateVariable StrainStensor eto1;` ce que nous ne voulons pas ici.
-Il en est de même pour la phase 2.
+Note here, we add the line `store_gradients: false,` because we want 
+define the variable `eto1` as `StateVariable`. In the case of Taylor scheme,
+the `store_gradients` option was equal to `true`, which had the same
+effect than writing `@AuxiliaryStateVariable StrainStensor eto1;`
+which we don't want here. The same goes for phase 2.
 
-Les `StateVariable` sont l'incrément de contrainte macroscopique d'une part et les incréments de déformations locales d'autre part :
+Local strain increments are defined as `StateVariable`, and
+macroscopic stress is defined as `IntegrationVariable`. Indeed,
+this latter stress does not necessitate to be saved from a time step
+to the other, because there is also a variable `sig` defined.
 
 ~~~~ {#State .cpp .numberLines}
 @StateVariable StrainStensor eto2;
 eto2.setEntryName("SecondPhaseTotalStrain");
 @StateVariable StrainStensor eto1;
 eto1.setEntryName("FirstPhaseTotalStrain");
-@StateVariable StressStensor Sig;
+
+@IntegrationVariable StressStensor Sig;
 Sig.setEntryName("MacroscopicStress");
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Ayant besoin des inverses des opérateurs tangents de chaque phase
-pour le calcul de l'opérateur tangent macroscopique,
-on définit des variables locales :
+Given that the tangent operators of each phase
+are needed for the computation of the macroscopic tangent operator,
+we define local variables:
 
 ~~~~ {#Local .cpp .numberLines}
-@LocalVariable StiffnessTensor iDt1;
-@LocalVariable StiffnessTensor iDt2;
+@LocalVariable StiffnessTensor Dt1;
+@LocalVariable StiffnessTensor Dt2;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-L'implémentation du bloc `@Integrator` est la suivante: 
+Implementation of the `@Integrator` block is the following: 
 
 ~~~~ {#Integrator .cpp .numberLines}
 @Integrator{
@@ -161,33 +161,24 @@ L'implémentation du bloc `@Integrator` est la suivante:
   b1.deto=deto1;
   constexpr auto b1_smflag = TangentOperatorTraits<MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
   const auto r1 = b1.integrate(b1_smflag,CONSISTENTTANGENTOPERATOR);
-  StiffnessTensor Dt1 = b1.getTangentOperator();
-  iDt1= invert(Dt1);
+  Dt1 = b1.getTangentOperator();
   
   initialize(b2);
   b2.deto=deto2;
   constexpr auto b2_smflag = TangentOperatorTraits<MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
   const auto r2 = b2.integrate(b2_smflag,CONSISTENTTANGENTOPERATOR);
-  StiffnessTensor Dt2 = b2.getTangentOperator();
-  iDt2= invert(Dt2);
+  Dt2 = b2.getTangentOperator();
   
-  auto dsig1 =b1.sig-sig1;
-  auto dsig2 =b2.sig-sig2;
+  auto dsig1 =theta*(b1.sig-sig1);
+  auto dsig2 =theta*(b2.sig-sig2);
   
   feto1=(dSig-dsig1)/sig_0;
   feto2=(dSig-dsig2)/sig_0;
   fSig=deto-(1-f)*deto1-f*deto2;
   auto Id=st2tost2<3u,real>::Id();
-  auto Null= {0,0,0,0,0,0,
-  	      0,0,0,0,0,0,
-    	      0,0,0,0,0,0,
-  	      0,0,0,0,0,0,
-  	      0,0,0,0,0,0,
-       	      0,0,0,0,0,0};
+  auto Null= Stensor4{real{}};
   dfeto1_ddeto1 = -theta/sig_0*Dt1;
-  dfeto1_ddeto2 = Null;
   dfeto1_ddSig = Id/sig_0;
-  dfeto2_ddeto1 = Null;
   dfeto2_ddeto2 = -theta/sig_0*Dt2;
   dfeto2_ddSig = Id/sig_0;
   dfSig_ddeto1 = -(1-f)*Id;
@@ -196,37 +187,35 @@ L'implémentation du bloc `@Integrator` est la suivante:
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-On peut voir que l'on commence par l'intégration des lois de comportement
-sur chaque phase. Cependant, par rapport au schéma de Taylor,
-on rajoute `initialize(b1)` et `initialize(b2)` avant l'intégration. En effet, ceci permet
-d'initialiser `b1.eto` à `eto1` et `b2.eto` à `eto2`. Ceci était automatique
-dans le cas du schéma de Taylor, mais ici, comme l'option `store_gradients`
-est `false` pour les deux phases, ce n'est plus automatique.
-Par ailleurs, le gradient `b1.deto` est initialisé à `deto1`, qui est l'incrément
-de la `StateVariable` `eto1` (celui-ci sera mis à jour à chaque itération du Newton-Raphson).
+We can see that we start with the integration of the local behaviours.
+However, compared to Taylor's scheme,
+we add `initialize(b1)` and `initialize(b2)` before the integration. In fact, this allows
+to initialize `b1.eto` to `eto1` and `b2.eto` to `eto2`. This was automatic
+in the case of Taylor scheme, but here, as the `store_gradients` option
+is `false` for both phases, it is no more automatic.
+Furthermore, the gradient `b1.deto` is initialized to `deto1`, which is the increment
+of the `StateVariable` `eto1` (which will be updated at each iteration of the Newton-Raphson).
 
-On récupère au passage l'opérateur tangent sur chaque phase, et on sauvegarde
-son inverse.
+We also recover the tangent operator on each phase.
 
-Ensuite, on indique les résidus et la jacobienne.
-Pour définir les résidus `feto1` et `feto2`, on a besoin des
-incréments de contrainte `dsig1` et `dsig2`, que l'on obtient
-grâce aux contraintes locales en fin d'intégration, `b1.sig`
-et `b2.sig`. Les contraintes `sig1` et `sig2` sont les valeurs
-des contraintes en début d'intégration. Elles sont égales
-aux contraintes en fin de pas de temps précédent. En effet,
-le bloc `@UpdateAuxiliaryStateVariables` est appelé en fin de pas
-de temps et `sig1` est automatiquement mis à jour à `b1.sig`,
-et de même `sig2` est mis à jour à `b2.sig`.
+Then, we indicate the residues and the Jacobian.
+To define the residues `feto1` and `feto2`, we need the
+stress increments `dsig1` (resp. `dsig2`), which we obtain
+as a difference between the stress `b1.sig` (resp. `b2.sig`) obtained at the end
+of the local integration, and the local stress `sig1` (resp. `sig2`)
+before the integration.
+`sig1` (resp. `sig2`) must then be updated latter, at the end of the time step,
+to `b1.sig` (resp. b2.sig).
+It is done when the `@UpdateAuxiliaryStateVariables` block is called.
 
-Attention : si l'instruction `updateAuxiliaryStateVariables(b1);`
-est donnée dans le bloc `@Integrator`, alors la mise à jour de
-la contrainte `sig1` aura lieu non pas à la fin du pas de temps,
-mais à la fin de chaque itération du Newton-Raphson, ce que nous ne voulons
-pas ici.
+Warning: if the instruction `updateAuxiliaryStateVariables(b1);`
+is given in the `@Integrator` block, then the update of
+`sig1` to `b1.sig` will not take place at the end of the time step,
+but at the end of each iteration of the Newton-Raphson, what we don't want
+here.
  
-A noter que les paramètres suivants avaient été définis avant
-le bloc d'intégration :
+Note that the following parameters had been defined before
+the integrator block:
 
 ~~~~ {#fraction .cpp .numberLines}
 @Parameter stress sig_0=1e11;
@@ -235,34 +224,33 @@ le bloc d'intégration :
 f.setEntryName("FirstPhaseFraction");
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Enfin, la contrainte macroscopique est donnée par le bloc
-suivant :
+Finally, macroscopic stress is given by
 
 ~~~~ {#FinalStress .cpp .numberLines}
 @ComputeFinalStress{
-sig = Sig;
+sig += dSig;
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-et l'opérateur tangent est implémenté dans le bloc
-suivant :
+Note that `Sig` is not saved from a time step to the other,
+so that its value shall not be used to compute `sig`, but we use
+its increment `dSig` instead.
+
+Finally, macroscopic tangent operator is given by
 
 ~~~~ {#TangentOperator .cpp .numberLines}
 @TangentOperator{
+  auto iDt1= invert(Dt1);
+  auto iDt2= invert(Dt2);
   Dt = invert(f*iDt1+(1-f)*iDt2);
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-qui utilise la formule du schéma de Sachs exposé plus haut.
+# Results
 
-# Résultats
+We here use MTest to simulate a uniaxial tensile test.
 
-On utilise ici MTest pour effectuer des
-simulations sur point matériel, en simulant un test de traction
-uniforme.
-
-Le fichier MTest
-(nommé ici `Sachs.mtest`) se présente de la façon suivante :
+MTest file (`Sachs.mtest`) is the following:
 
 ~~~~ {#Sachs_mtest .mtest .numberLines}
 @ModellingHypothesis 'Tridimensional';
@@ -281,20 +269,22 @@ Le fichier MTest
 @Times {0.,1 in 50};
 ~~~~~~~~~~~~~~
 
-La contrainte axiale (uniforme dans le VER) est représentée ci-dessous
-en fonction de la déformation axiale macroscopique d'une part, en fonction
-de la déformation de la phase 1 et en fonction de la déformation de la phase
+The axial stress (uniform in the VER) is shown below
+as a function of the macroscopic axial strain, as a function
+of the axial strain of phase 1, and as a function of axial strain of phase
 2.
 
-![Contrainte macroscopique en fonction des déformations locales et macroscopique, traction uniaxiale, schéma de Sachs](./img/Sachs_test.png)
+![Macroscopic stress as a function of local and macroscopic strains, uniaxial tensile test, Sachs scheme](./img/Sachs_test.png)
 
-On peut voir, comme attendu, que si l'on se place à un état de contrainte
-donnée, la déformation macroscopique est une moyenne
-des déformations locales.
-Quand la contrainte macroscopique
-atteint la limite d'élasticité d'une des phases, la phase en question plastifie,
-et cela se répercute sur la déformation macroscopique.
-La plastification de la seconde phase apparaît ensuite.
+We can see, as expected, that at a given stress value, the macroscopic strain is an average
+of local strains.
+When the macroscopic stress
+reaches the yield stress of one of the phases, the evolution of this phase
+becomes plastic,
+and this has repercussions on the macroscopic strain and on the other phase.
+The second phase becomes plastic later.
+
+
 
 
 <!-- Local IspellDict: english -->
