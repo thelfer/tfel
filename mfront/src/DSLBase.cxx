@@ -329,6 +329,7 @@ namespace mfront {
                const TokensContainer::const_iterator n) {
           if ((n == this->tokens.end()) || (n->line != c->line)) {
             return;
+
           }
           const auto csize = [&c] {
             if ((c->flag == Token::String) || (c->flag == Token::Char)) {
@@ -341,8 +342,8 @@ namespace mfront {
             r += std::string(d, ' ');
           }
         };
-    const auto& smn = options.smn;
-    const auto& mn = options.mn;
+    const auto& smn = options.static_member_names;
+    const auto& mn = options.member_names;
     const auto& delim1 = options.delim1;
     const auto& delim2 = options.delim2;
     const auto addThisPtr = options.qualifyMemberVariables;

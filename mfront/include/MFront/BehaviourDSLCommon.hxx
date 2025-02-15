@@ -257,6 +257,7 @@ namespace mfront {
     /*!
      * \brief read the next code block and adds it tho the mechanical
      * behaviour
+     * \param[in] o     : options
      * \param[in] n     : name of the method read
      * \param[in] m     : modifier
      * \param[in] b     : add "this->" in front of variables
@@ -285,11 +286,11 @@ namespace mfront {
     /*!
      * \brief read the next code block and adds it tho the mechanical
      * behaviour
+     * \param[in] o     : options
      * \param[in] n     : name of the method read
      * \param[in] m     : modifier
      * \param[in] a     : word analyser
      * \param[in] b     : add "this->" in front of variables
-     * \param[in] s     : allow specialisation
      */
     void treatCodeBlock(
         const CodeBlockOptions&,

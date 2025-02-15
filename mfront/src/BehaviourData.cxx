@@ -217,6 +217,8 @@ namespace mfront {
     this->cblock.staticMembers.insert(c.staticMembers.begin(),
                                       c.staticMembers.end());
     this->cblock.members.insert(c.members.begin(), c.members.end());
+    this->cblock.block_variables.insert(c.block_variables.begin(),
+                                        c.block_variables.end());
     for (const auto& a : c.attributes) {
       if (this->cblock.attributes.count(a.first) != 0) {
         auto& ca = this->cblock.attributes[a.first];

@@ -85,6 +85,15 @@ namespace mfront {
     std::set<std::string> staticMembers;
     //! \brief members used in the block
     std::set<std::string> members;
+    /*!
+     * \brief variables defined by the DSL in this block that are effectively
+     * used.
+     *
+     * For instance, in isotropic DSLs, if an isotropic hardening rule is
+     * defined, two variables named R and dR_dp will be defined and shall be
+     * used in code blocks introduced by the @FlowRule keyword.
+     */
+    std::set<std::string> block_variables;
     //! \brief variable attributes
     std::map<std::string, Attribute> attributes;
   };  // end of struct CodeBlock

@@ -155,9 +155,11 @@ namespace mfront {
        */
       std::map<std::string, std::string> symbols;
       //! \brief member names
-      std::set<std::string> mn;
+      std::set<std::string> member_names;
       //! \brief static member names
-      std::set<std::string> smn;
+      std::set<std::string> static_member_names;
+      //! \brief variables defined by the DSL in this code block
+      std::set<std::string> block_variables_names;
       //! \brief modifier applied to variables
       std::shared_ptr<VariableModifier> modifier;
       //! \brief analyser applied to variables

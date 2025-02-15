@@ -38,6 +38,8 @@ namespace mfront {
     ~IsotropicMisesCreepDSL() override;
 
    protected:
+    bool handleStrainHardening() const override;
+    //
     std::unique_ptr<AbstractBehaviourCodeGenerator> getCodeGenerator()
         const override;
   };

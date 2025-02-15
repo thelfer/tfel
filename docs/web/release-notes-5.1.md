@@ -235,6 +235,23 @@ contains:
 - an auxiliary state variable not computed by an external point-wise
   model (see the `@Model` keyword).
 
+> **Note**
+>
+> Using the increment of the external state variable and the
+> time increment to compute the rate of an external state variable can be
+> legitimate, but it is better to compute this rate in @InitLocalVariables
+> and take into account the fact that the `Cast3M` solver may
+> set the time increment to zero when activating is forced convergence
+> algorithm.
+
+A warning is reported if the implementation of the flow rule(s) does not
+contain:
+
+- `f` and its derivative `df_dseq`,
+- `df_dp` when required,
+- `R` and `dR_dp` is an isotropic harderning rule has been defined for
+  this flow rule.
+
 #### Warnings related to the convergence threshold
 
 - using the default value of the convergence threshold

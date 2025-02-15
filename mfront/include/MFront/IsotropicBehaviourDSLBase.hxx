@@ -1,3 +1,4 @@
+
 /*!
  * \file   mfront/include/MFront/IsotropicBehaviourDSLBase.hxx
  * \brief
@@ -89,13 +90,24 @@ namespace mfront {
     virtual std::string flowRuleVariableModifier(const Hypothesis,
                                                  const std::string&,
                                                  const bool);
-
     /*!
      * \brief performs some check on the given code block describing a flow rule
      * \param[in] n: code block name
+     * \param[in] id: flow id
+     * \param[in] is_df_dp_required: check if the df_dp shall be used
      */
-    virtual void checkFlowRule(std::string_view) const;
-
+    virtual void checkFlowRule(std::string_view,
+                               const std::size_t,
+                               const bool) const;
+    /*!
+     * \return if the DSLs allows a dependency of the yield surface or the
+     * viscoplastic strain rate to the equivalent plastic strain
+     */
+    virtual bool handleStrainHardening() const;
+    //! \return the analyser of the @FlowRule code block
+    virtual std::function<
+        void(CodeBlock&, const Hypothesis, const std::string&)>
+    getFlowRuleAnalyser(const std::size_t) const;
     //! \brief isotropic hardening rules sorted by flow rules
     std::map<
         std::size_t,
@@ -103,6 +115,7 @@ namespace mfront {
         ihrs;
 
    private:
+
     friend struct BehaviourDSLBase<IsotropicBehaviourDSLBase>;
 
   };  // end of class IsotropicBehaviourDSLBase
