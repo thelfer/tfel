@@ -20,12 +20,13 @@
 #include <iostream>
 #include "TFEL/Config/TFELTypes.hxx"
 #include "TFEL/Math/qt.hxx"
+#include "TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include "TFEL/Material/IsotropicEshelbyTensor.hxx"
 #include "TFEL/Material/AnisotropicEshelbyTensor.hxx"
+#include "TFEL/Material/StiffnessTensor.hxx"
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
-#include "TFEL/Material/StiffnessTensor.hxx"
 
 template <typename T>
 static constexpr T my_abs(const T& v) noexcept {
@@ -51,8 +52,7 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     using real = NumericType;
     using lg = typename tfel::config::Types<1u, real, use_qt>::length;
     using stress = typename tfel::config::Types<1u, real, use_qt>::stress;
-
-    static constexpr auto eps = std::sqrt(std::numeric_limits<real>::epsilon());
+    static constexpr auto eps = tfel::math::constexpr_fct::sqrt(std::numeric_limits<real>::epsilon());
     const auto nu = real{0.3};
     const auto young = stress{150e9};
     const tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
@@ -104,8 +104,7 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     using real = NumericType;
     using lg = typename tfel::config::Types<1u, real, use_qt>::length;
     using stress = typename tfel::config::Types<1u, real, use_qt>::stress;
-
-    static constexpr auto eps = std::sqrt(std::numeric_limits<real>::epsilon());
+    static constexpr auto eps = tfel::math::constexpr_fct::sqrt(std::numeric_limits<real>::epsilon());
     const auto nu = real{0.3};
     const auto young = stress{150e9};
     const tfel::math::tvector<2u, real> n_a = {1., 0.};
@@ -147,7 +146,7 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     using lg = typename tfel::config::Types<1u, real, use_qt>::length;
     using stress = typename tfel::config::Types<1u, real, use_qt>::stress;
 
-    static constexpr auto eps = std::sqrt(std::numeric_limits<real>::epsilon());
+    static constexpr auto eps = tfel::math::constexpr_fct::sqrt(std::numeric_limits<real>::epsilon());
     const auto nu = real{0.3};
     const auto young = stress{1e9};
     const auto young_i = stress{150e9};

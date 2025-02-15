@@ -2336,7 +2336,7 @@ namespace mfront {
   void BehaviourCodeGeneratorBase::writeBehaviourConstructors(
       std::ostream& os, const Hypothesis h) const {
     auto tmpnames = std::vector<std::string>{};
-    auto write_body = [this, &os, &tmpnames, h] {
+    auto write_body = [this, &os, h] {
       os << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using std::vector;\n";
@@ -3511,9 +3511,9 @@ namespace mfront {
          << "//! \\brief move assignement\n"
          << wrapper << "& operator=(" << wrapper << "&&) = default;\n"
          << "//! \\brief destructor\n"
-         << "~" << wrapper << "() = default;\n"
+         << "~" << wrapper << "() override = default;\n"
          << "private:\n"
-         << "friend class " << this->bd.getClassName() << ";\n"
+         << "friend struct " << this->bd.getClassName() << ";\n"
          << "};\n\n";
     };
     for (const auto& b : md.getBehaviourVariables()) {
@@ -3540,7 +3540,7 @@ namespace mfront {
          << "& mfront_behaviour_reference;\n"
          << "};\n\n"
          << factory << " " << b.name << " = " << factory << "{*this};\n"
-         << "friend class " << factory << ";\n";
+         << "friend struct " << factory << ";\n";
     }
   }
 
