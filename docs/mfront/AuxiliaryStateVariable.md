@@ -9,4 +9,4 @@ name(s) of the variable(s) declared, separated by commas.
 @AuxiliaryStateVariables strain p;
 // symmetric tensors auxiliary state variable
 @AuxiliaryStateVariables StrainStensor evp,evp2;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

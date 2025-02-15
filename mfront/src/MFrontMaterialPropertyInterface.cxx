@@ -62,10 +62,6 @@ namespace mfront {
     const auto header = this->getHeaderFileName(mpd.material, mpd.className);
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     if (!header.empty()) {
       insert_if(d.headers, header + ".hxx");
     }
@@ -130,6 +126,10 @@ namespace mfront {
       std::ostream&,
       const MaterialPropertyDescription&,
       const FileDescription&) const {}  // end of writeFileDescriptionSymbols
+
+  void MFrontMaterialPropertyInterface::writeValidatorSymbol(
+      std::ostream&, const MaterialPropertyDescription&) const {
+  }  // end of writeValidatorSymbol
 
   void MFrontMaterialPropertyInterface::writeBuildIdentifierSymbol(
       std::ostream&, const MaterialPropertyDescription&) const {

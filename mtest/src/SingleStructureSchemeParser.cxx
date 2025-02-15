@@ -349,7 +349,7 @@ namespace mtest {
     } else {
       const int type = b->getInternalStateVariableType(ivs[0]);
       bool uniform = false;
-      if (type == 0) {
+      if (isScalarVariableType(type)) {
         uniform = p->value != "{";
       } else {
         tfel::raise_if(
@@ -405,7 +405,7 @@ namespace mtest {
     if (b1) {
       // full name of the external state variable
       const auto type = t.getBehaviour()->getExternalStateVariableType(n);
-      if (type == 0) {
+      if (isScalarVariableType(type)) {
         t.setExternalStateVariable(n, this->parseEvolution(t, evt, p), true);
       } else {
         const auto& components =
@@ -444,7 +444,7 @@ namespace mtest {
       SingleStructureScheme& t, tokens_iterator& p, const std::string& n) {
     const auto& b = *(t.getBehaviour());
     const auto type = b.getInternalStateVariableType(n);
-    if (type == 0) {
+    if (isScalarVariableType(type)) {
       t.setInternalStateVariableInitialValue(n, this->readDouble(t, p));
     } else {
       const auto s =

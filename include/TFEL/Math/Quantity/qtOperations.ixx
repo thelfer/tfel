@@ -18,7 +18,8 @@ namespace tfel::math {
 
 #define TFEL_MATH_QT_SCALAR_OPERATIONS_IMPL(X)                                 \
                                                                                \
-  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  template <UnitConcept UnitType, typename ValueType,                          \
+            typename OwnershipPolicy>                                          \
   constexpr qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type> \
   operator+(const Quantity<UnitType, ValueType, OwnershipPolicy>& a,           \
             const X& b) noexcept {                                             \
@@ -26,7 +27,8 @@ namespace tfel::math {
     return a.getValue() + b;                                                   \
   }                                                                            \
                                                                                \
-  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  template <UnitConcept UnitType, typename ValueType,                          \
+            typename OwnershipPolicy>                                          \
   constexpr qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type> \
   operator+(                                                                   \
       const X& a,                                                              \
@@ -35,7 +37,8 @@ namespace tfel::math {
     return a + b.getValue();                                                   \
   }                                                                            \
                                                                                \
-  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  template <UnitConcept UnitType, typename ValueType,                          \
+            typename OwnershipPolicy>                                          \
   constexpr qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type> \
   operator-(const Quantity<UnitType, ValueType, OwnershipPolicy>& a,           \
             const X& b) noexcept {                                             \
@@ -43,7 +46,8 @@ namespace tfel::math {
     return a.getValue() - b;                                                   \
   }                                                                            \
                                                                                \
-  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  template <UnitConcept UnitType, typename ValueType,                          \
+            typename OwnershipPolicy>                                          \
   constexpr qt<NoUnit, typename tfel::typetraits::Promote<ValueType, X>::type> \
   operator-(                                                                   \
       const X& a,                                                              \
@@ -53,7 +57,8 @@ namespace tfel::math {
   }                                                                            \
                                                                                \
   /* Multiplication by a scalar */                                             \
-  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  template <UnitConcept UnitType, typename ValueType,                          \
+            typename OwnershipPolicy>                                          \
   constexpr qt<UnitType,                                                       \
                typename tfel::typetraits::Promote<ValueType, X>::type>         \
   operator*(const Quantity<UnitType, ValueType, OwnershipPolicy>& a,           \
@@ -64,7 +69,8 @@ namespace tfel::math {
     return result((a.getValue()) * b);                                         \
   }                                                                            \
                                                                                \
-  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  template <UnitConcept UnitType, typename ValueType,                          \
+            typename OwnershipPolicy>                                          \
   constexpr qt<UnitType,                                                       \
                typename tfel::typetraits::Promote<ValueType, X>::type>         \
   operator*(                                                                   \
@@ -76,7 +82,8 @@ namespace tfel::math {
     return result(b * (a.getValue()));                                         \
   }                                                                            \
                                                                                \
-  template <typename UnitType, typename ValueType, typename OwnershipPolicy>   \
+  template <UnitConcept UnitType, typename ValueType,                          \
+            typename OwnershipPolicy>                                          \
   constexpr qt<UnitType,                                                       \
                typename tfel::typetraits::Promote<ValueType, X>::type>         \
   operator/(const Quantity<UnitType, ValueType, OwnershipPolicy>& a,           \
@@ -87,7 +94,8 @@ namespace tfel::math {
     return result((a.getValue()) / b);                                         \
   }                                                                            \
                                                                                \
-  template <typename ValueType, typename UnitType, typename OwnershipPolicy>   \
+  template <typename ValueType, UnitConcept UnitType,                          \
+            typename OwnershipPolicy>                                          \
   constexpr qt<                                                                \
       typename tfel::math::internals::SubstractUnit<NoUnit, UnitType>::type,   \
       typename tfel::typetraits::Promote<ValueType, X>::type>                  \

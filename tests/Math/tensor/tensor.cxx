@@ -260,7 +260,7 @@ struct TensorTest5_3D final : public tfel::tests::TestCase {
     for (unsigned short i = 0; i != t.size(); ++i) {
       t[i] = exp(cos(real(i)));
     }
-    const TensorConcept<tensor<3u, real>>& t_c = t;
+    const TensorConceptBase<tensor<3u, real>>& t_c = t;
     TFEL_TESTS_ASSERT((abs(t_c(0, 0) - exp(cos(real(0)))) < eps));
     TFEL_TESTS_ASSERT((abs(t_c(1, 1) - exp(cos(real(1)))) < eps));
     TFEL_TESTS_ASSERT((abs(t_c(2, 2) - exp(cos(real(2)))) < eps));
@@ -287,7 +287,7 @@ struct TensorTest6 final : public tfel::tests::TestCase {
     for (unsigned short i = 0; i != t.size(); ++i) {
       t[i] = exp(cos(real(i)));
     }
-    const TensorConcept<tensor<3u, real>>& t_c = t;
+    const TensorConceptBase<tensor<3u, real>>& t_c = t;
     TFEL_TESTS_ASSERT((abs(t_c(0, 0) - exp(cos(real(0)))) < eps));
     TFEL_TESTS_ASSERT((abs(t_c(1, 1) - exp(cos(real(1)))) < eps));
     TFEL_TESTS_ASSERT((abs(t_c(2, 2) - exp(cos(real(2)))) < eps));

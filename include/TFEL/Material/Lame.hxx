@@ -20,6 +20,7 @@
 
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Config/TFELTypes.hxx"
+#include "TFEL/Math/types.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
 
 namespace tfel::material {
@@ -30,41 +31,28 @@ namespace tfel::material {
   /*
    * \brief compute the first Lame's coefficient
    */
-  template <typename NumericType>
-  TFEL_HOST_DEVICE constexpr NumericType computeLambda(
-      const NumericType& young, const NumericType& nu) noexcept {
-    return nu * young / ((1 + nu) * (1 - 2 * nu));
-  }
-
-  /*
-   * \brief compute the first Lame's coefficient
-   */
-  template <typename NumericType>
-  TFEL_HOST_DEVICE constexpr tfel::math::qt<tfel::math::Stress, NumericType>
-  computeLambda(
-      const tfel::math::qt<tfel::math::Stress, NumericType>& young,
-      const tfel::math::qt<tfel::math::NoUnit, NumericType>& nu) noexcept {
+  template <tfel::math::ScalarConcept StressType>
+  TFEL_HOST_DEVICE constexpr StressType computeLambda(
+      const StressType& young,
+      const typename tfel::math::ScalarTypeRebind<StressType>::real&
+          nu) noexcept
+      requires(tfel::math::checkUnitCompatibility<tfel::math::Stress,
+                                                  StressType>()) {
     return nu * young / ((1 + nu) * (1 - 2 * nu));
   }
 
   /*
    * \brief compute the second Lame's coefficient
    */
-  template <typename NumericType>
-  TFEL_HOST_DEVICE constexpr NumericType computeMu(
-      const NumericType& young, const NumericType& nu) noexcept {
+  template <tfel::math::ScalarConcept StressType>
+  TFEL_HOST_DEVICE constexpr StressType computeMu(
+      const StressType& young,
+      const typename tfel::math::ScalarTypeRebind<StressType>::real&
+          nu) noexcept
+      requires(tfel::math::checkUnitCompatibility<tfel::math::Stress,
+                                                  StressType>()) {
     return young / (2 * (1 + nu));
-  }
-
-  /*
-   * \brief compute the second Lame's coefficient
-   */
-  template <typename NumericType>
-  TFEL_HOST_DEVICE constexpr tfel::math::qt<tfel::math::Stress, NumericType>
-  computeMu(const tfel::math::qt<tfel::math::Stress, NumericType>& young,
-            const tfel::math::qt<tfel::math::NoUnit, NumericType>& nu) {
-    return young / (2 * (1 + nu));
-  }
+  }  // end of computeMu
 
   /*!
    * \class ComputeElasticStiffnessBase

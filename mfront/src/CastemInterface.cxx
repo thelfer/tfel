@@ -24,6 +24,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
@@ -328,6 +329,16 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "CastemInterface::treatKeyword : " + m);
     };
+    auto check_interface_restriction = [&i, &key] {
+      if (i.empty()) {
+        reportWarning("keyword '" + key +
+                      "' is used without being restricted "
+                      "to the `Cast3M` interface, which could be a portability "
+                      "issue. Please add [castem] after the "
+                      "keyword (i.e. replace '" +
+                      key + "' by '" + key + "[castem]')");
+      }
+    };
     if (!i.empty()) {
       if ((std::find(i.begin(), i.end(), this->getName()) != i.end()) ||
           (std::find(i.begin(), i.end(), "umat") != i.end()) ||
@@ -354,32 +365,44 @@ namespace mfront {
     if ((key == "@CastemGenerateMTestFileOnFailure") ||
         (key == "@UMATGenerateMTestFileOnFailure") ||
         (key == "@GenerateMTestFileOnFailure")) {
+      if (key == "@GenerateMTestFileOnFailure") {
+        check_interface_restriction();
+      }
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(key, current, end));
       return {true, current};
     } else if ((key == "@CastemUseTimeSubStepping") ||
                (key == "@UMATUseTimeSubStepping")) {
+      check_interface_restriction();
       bd.setAttribute(CastemInterface::useTimeSubStepping,
                       this->readBooleanValue(key, current, end), false);
       return {true, current};
     } else if ((key == "@CastemMaximumSubStepping") ||
                (key == "@UMATMaximumSubStepping")) {
+      check_interface_restriction();
       throw_if(
           !bd.getAttribute<bool>(CastemInterface::useTimeSubStepping, false),
           "time sub stepping is not enabled at this stage.\n"
           "Use the @CastemUseTimeSubStepping directive before "
           "@CastemMaximumSubStepping");
       throw_if(current == end, "unexpected end of file");
+      const bool safe = readSafeOptionTypeIfPresent(current, end);
       const auto mss = CxxTokenizer::readUnsignedInt(current, end);
-      bd.setAttribute(CastemInterface::maximumSubStepping,
-                      static_cast<unsigned short>(mss), false);
+      if ((mss > 3) && (!safe)) {
+        reportWarning("the maximum number of substeps specified is to high (" +
+                      std::to_string(mss) +
+                      "). It is recommended to allow at most 3 substeps.");
+      }
       throw_if(current == end, "unexpected end of file");
       throw_if(current->value != ";",
                "expected ';', read '" + current->value + '\'');
       ++(current);
+      bd.setAttribute(CastemInterface::maximumSubStepping,
+                      static_cast<unsigned short>(mss), false);
       return {true, current};
     } else if ((key == "@CastemDoSubSteppingOnInvalidResults") ||
                (key == "@UMATDoSubSteppingOnInvalidResults")) {
+      check_interface_restriction();
       throw_if(
           !bd.getAttribute<bool>(CastemInterface::useTimeSubStepping, false),
           "time sub stepping is not enabled at this stage.\n"
@@ -390,6 +413,7 @@ namespace mfront {
       return {true, current};
     } else if ((key == "@CastemFiniteStrainStrategy") ||
                (key == "@UMATFiniteStrainStrategy")) {
+      check_interface_restriction();
       throw_if(bd.hasAttribute(CastemInterface::finiteStrainStrategies),
                "at least one strategy has already been defined");
       throw_if(current == end, "unexpected end of file");
@@ -403,6 +427,7 @@ namespace mfront {
       return {true, current};
     } else if ((key == "@CastemFiniteStrainStrategies") ||
                (key == "@UMATFiniteStrainStrategies")) {
+      check_interface_restriction();
       throw_if(bd.hasAttribute(CastemInterface::finiteStrainStrategies),
                "at least one strategy has already been defined");
       auto fss = std::vector<std::string>{};
@@ -1469,8 +1494,6 @@ namespace mfront {
     const auto name = this->getBehaviourName(bd);
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
 #ifdef CASTEM_CPPFLAGS
     insert_if(l.cppflags, CASTEM_CPPFLAGS);
 #endif /* CASTEM_CPPFLAGS */
@@ -1488,8 +1511,6 @@ namespace mfront {
     }
 #endif /* CASTEM_ROOT */
 #endif /* LOCAL_CASTEM_HEADER_FILE */
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, "umat" + name + ".cxx");
     insert_if(d.headers, "MFront/Castem/umat" + name + ".hxx");
     insert_if(l.link_directories,
@@ -1777,7 +1798,7 @@ namespace mfront {
               "CastemInterface::buildMaterialPropertiesList: "
               "incompatible offset for material "
               "property '" +
-                  mp.name + "' (aka '" + mp1.name +
+                  mp.name + "' (aka '" + mp1.getExternalName() +
                   "'). "
                   "This is one pitfall of the umat interface. "
                   "To by-pass this limitation, you may want to "
@@ -2373,6 +2394,92 @@ namespace mfront {
     }
   }
 
+  void CastemInterface::writeGibianeMappingComments(
+      std::ostream& out,
+      const Hypothesis h,
+      const VariableDescriptionContainer& v) const {
+    for (const auto& pv : v) {
+      const auto flag = SupportedTypes::getTypeFlag(pv.type);
+      std::string tmp;
+      tmp += "** - ";
+      if (flag == SupportedTypes::SCALAR) {
+        if (pv.arraySize == 1) {
+          tmp += pv.getExternalName();
+          tmp += ": " + treatScalar(pv.name) + "\n";
+        } else {
+          for (unsigned short j = 0; j != pv.arraySize; ++j) {
+            tmp += pv.getExternalName();
+            tmp += ": " + treatScalar(pv.name, j) + "\n";
+          }
+        }
+      } else if (flag == SupportedTypes::TVECTOR) {
+        if (pv.arraySize == 1) {
+          tmp += pv.getExternalName();
+          tmp += ": " + treatTVector(h, pv.name);
+        } else {
+          for (unsigned short j = 0; j != pv.arraySize; ++j) {
+            tmp += pv.getExternalName();
+            tmp += ": " + treatTVector(h, pv.name, j) + "\n";
+          }
+        }
+      } else if (flag == SupportedTypes::STENSOR) {
+        if (pv.arraySize == 1) {
+          tmp += pv.getExternalName();
+          tmp += ": " + treatStensor(h, pv.name) + "\n";
+        } else {
+          for (unsigned short j = 0; j != pv.arraySize; ++j) {
+            tmp += pv.getExternalName();
+            tmp += ": " + treatStensor(h, pv.name, j) + "\n";
+          }
+        }
+      } else if (flag == SupportedTypes::TENSOR) {
+        if (pv.arraySize == 1) {
+          tmp += pv.getExternalName();
+          tmp += ": " + treatTensor(h, pv.name) + "\n";
+        } else {
+          for (unsigned short j = 0; j != pv.arraySize; ++j) {
+            tmp += pv.getExternalName();
+            tmp += ": " + treatTensor(h, pv.name, j) + "\n";
+          }
+        }
+      } else {
+        tfel::raise(
+            "CastemInterface::writeVariableDescriptionContainerToGibiane: "
+            "internal error, tag unsupported");
+      }
+      out << tmp;
+    }
+  }
+
+  void CastemInterface::writeGibianeMappingComments(
+      std::ostream& out,
+      const std::pair<std::vector<BehaviourMaterialProperty>,
+                      SupportedTypes::TypeSize>& mprops) const {
+    auto throw_if = [](const bool c, const std::string& msg) {
+      tfel::raise_if(c,
+                     "checkFiniteStrainStrategyDefinitionConsistency "
+                     "(CastemInterface): " +
+                         msg);
+    };
+    for (const auto& pm : mprops.first) {
+      const auto flag = SupportedTypes::getTypeFlag(pm.type);
+      throw_if(flag != SupportedTypes::SCALAR,
+               "material properties shall be scalars");
+      std::string tmp;
+      tmp += "** - ";
+      if (pm.arraySize == 1) {
+        tmp += pm.getExternalName();
+        tmp += ": " + treatScalar(pm.name) + "\n";
+      } else {
+        for (unsigned short j = 0; j != pm.arraySize; ++j) {
+          tmp += pm.getExternalName();
+          tmp += treatScalar(pm.name, j) + "\n";
+        }
+      }
+      out << tmp;
+    }
+  }
+
   void CastemInterface::writeGibianeInstruction(std::ostream& out,
                                                 const std::string& i) const {
     std::istringstream in(i);
@@ -2450,6 +2557,10 @@ namespace mfront {
       out << "** 'OPTION' 'DIMENSION' " << getSpaceDimension(h)
           << " 'MODELISER' " << mo.at(h) << " ;\n\n";
     }
+
+    out << "** List of material properties:\n**\n";
+    this->writeGibianeMappingComments(out, mprops);
+
     std::ostringstream mcoel;
     mcoel << "coel = 'MOTS' ";
     for (auto pm = mprops.first.cbegin(); pm != mprops.first.cend();) {
@@ -2457,10 +2568,10 @@ namespace mfront {
       throw_if(flag != SupportedTypes::SCALAR,
                "material properties shall be scalars");
       if (pm->arraySize == 1) {
-        mcoel << treatScalar(pm->var_name);
+        mcoel << treatScalar(pm->name);
       } else {
         for (unsigned short j = 0; j != pm->arraySize;) {
-          mcoel << treatScalar(pm->var_name, j);
+          mcoel << treatScalar(pm->name, j);
           if (++j != pm->arraySize) {
             mcoel << " ";
           }
@@ -2473,7 +2584,11 @@ namespace mfront {
     mcoel << ";";
     writeGibianeInstruction(out, mcoel.str());
     out << '\n';
+
     if (!persistentVarsHolder.empty()) {
+      out << "** List of state variables:\n**\n";
+      this->writeGibianeMappingComments(out, h, persistentVarsHolder);
+
       std::ostringstream mstatev;
       mstatev << "statev = 'MOTS' ";
       this->writeVariableDescriptionContainerToGibiane(mstatev, h,
@@ -2482,6 +2597,10 @@ namespace mfront {
       writeGibianeInstruction(out, mstatev.str());
       out << '\n';
     }
+
+    std::ostringstream mappingexternalStateVarsComment;
+    out << "** List of external state variables:\n**\n";
+    this->writeGibianeMappingComments(out, h, externalStateVarsHolder);
     std::ostringstream mparam;
     mparam << "params = 'MOTS' 'T'";
     if (!externalStateVarsHolder.empty()) {
@@ -2496,7 +2615,7 @@ namespace mfront {
     std::ostringstream mmod;
     mmod << "MO = 'MODELISER' v 'MECANIQUE' 'ELASTIQUE' ";
     if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
-      mmod << "'ORTHOTROPE'";
+      mmod << "'ORTHOTROPE' ";
     }
     mmod << nonlin << "\n"
          << "'LIB_LOI' 'lib" + this->getLibraryName(bd) + ".so'\n"
@@ -2530,12 +2649,12 @@ namespace mfront {
         }
       }
       if (pm->arraySize == 1) {
-        tmp = treatScalar(pm->var_name);
-        mi << tmp << " x" << makeLowerCase(pm->var_name);
+        tmp = treatScalar(pm->name);
+        mi << tmp << " x" << makeLowerCase(pm->name);
       } else {
         for (unsigned short j = 0; j != pm->arraySize;) {
-          tmp = treatScalar(pm->var_name, j);
-          mi << tmp << " x" << makeLowerCase(pm->var_name) << j;
+          tmp = treatScalar(pm->name, j);
+          mi << tmp << " x" << makeLowerCase(pm->name) << j;
           if (++j != pm->arraySize) {
             mi << " ";
           }

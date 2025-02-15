@@ -16,7 +16,7 @@
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
-#include "MFront/StandardBehaviourInterface.hxx"
+#include "MFront/BehaviourInterfaceBase.hxx"
 #include "MFront/CastemMaterialPropertyInterface.hxx"
 #include "MFront/CastemInterface.hxx"
 #include "MFront/CastemSymbolsGenerator.hxx"
@@ -27,28 +27,28 @@ namespace mfront {
 
   void CastemSymbolsGenerator::writeMainVariablesSymbols(
       std::ostream&,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription&,
       const std::string&) const {
   }  // end of CastemSymbolsGenerator::writeMainVariablesSymbols
 
   void CastemSymbolsGenerator::writeBehaviourTypeSymbols(
       std::ostream&,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription&,
       const std::string&) const {
   }  // end of CastemSymbolsGenerator::writeBehaviourTypeSymbols
 
   void CastemSymbolsGenerator::writeBehaviourKinematicSymbols(
       std::ostream&,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription&,
       const std::string&) const {
   }  // end of CastemSymbolsGenerator::writeBehaviourKinematicSymbols
 
   void CastemSymbolsGenerator::writeAdditionalSymbols(
       std::ostream&,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription&,
       const FileDescription&,
       const std::string&,
@@ -57,7 +57,7 @@ namespace mfront {
 
   void CastemSymbolsGenerator::writeSpecificSymbols(
       std::ostream& os,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& bd,
       const FileDescription&,
       const std::string& name) const {

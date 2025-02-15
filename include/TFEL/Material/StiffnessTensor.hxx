@@ -21,7 +21,19 @@
 
 namespace tfel::material {
 
-  //! a small enumerattion
+  /*!
+   * \brief enumeration describing how stifness tensors must be computed:
+   * - in the `UNALTERED` case, the modelling hypothesis is not taken into
+   * account.
+   * - in the `ALTERED` case, the modelling hypothesis is taken into account.
+   *
+   * The modelling hypotesis is only meaningful when plane stress is taken into
+   * account:
+   * - in the `UNALTERED` case, the same stiffness tensor than in generalized
+   *   plane strain is returned.
+   * - in the `ALTERED` case, the stiffness tensor if the effective stiffness
+   *   tensor obtained by eliminating the effect of axial strain.
+   */
   enum struct StiffnessTensorAlterationCharacteristic {
     UNALTERED,
     ALTERED
@@ -68,7 +80,7 @@ namespace tfel::material {
                              StressType>&,
         const tfel::math::st2tost2<
             ModellingHypothesisToSpaceDimension<H>::value,
-            StressType>&);
+            StressType>&) noexcept;
   };
   /*!
    * \brief compute the altered stiffness tensor from the unaltered
@@ -83,7 +95,7 @@ namespace tfel::material {
     template <typename StressType>
     TFEL_HOST_DEVICE static constexpr void exe(
         tfel::math::st2tost2<2u, StressType>&,
-        const tfel::math::st2tost2<2u, StressType>&);
+        const tfel::math::st2tost2<2u, StressType>&) noexcept;
   };
 
   /*!
@@ -96,7 +108,9 @@ namespace tfel::material {
             typename StressType,
             typename RealType>
   TFEL_HOST_DEVICE constexpr void computeIsotropicStiffnessTensorII(
-      tfel::math::st2tost2<N, StressType>&, const StressType, const RealType);
+      tfel::math::st2tost2<N, StressType>&,
+      const StressType,
+      const RealType) noexcept;
   /*!
    * \param[out] D: stiffness tensor
    * \param[in]  yg1:  young modulus in the first direction
@@ -123,7 +137,7 @@ namespace tfel::material {
       const RealType,
       const StressType,
       const StressType,
-      const StressType);
+      const StressType) noexcept;
 
   /*!
    * \param[out] D:  stiffness tensor
@@ -138,7 +152,7 @@ namespace tfel::material {
       tfel::math::st2tost2<ModellingHypothesisToSpaceDimension<H>::value,
                            StressType>&,
       const StressType,
-      const RealType);
+      const RealType) noexcept;
   /*!
    * \param[out] D: stiffness tensor
    * \param[in]  yg1:  young modulus in the first direction
@@ -166,7 +180,7 @@ namespace tfel::material {
       const RealType,
       const StressType,
       const StressType,
-      const StressType);
+      const StressType) noexcept;
 
   /*!
    * \param[out] D: stiffness tensor
@@ -196,7 +210,7 @@ namespace tfel::material {
       const RealType,
       const StressType,
       const StressType,
-      const StressType);
+      const StressType) noexcept;
 
 }  // end of namespace tfel::material
 

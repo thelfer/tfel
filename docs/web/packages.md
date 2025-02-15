@@ -1,9 +1,12 @@
-% Creating packages for TFEL/MFront
-% Helfer Thomas
-% October 31, 2014
+---
+title: Creating packages for TFEL/MFront
+author: Thomas Helfer
+date: October 31, 2014
+lang: en_EN
+---
 
 The latest version of this document is always available at
-<http://tfel.sourceforge.net/packages.html>.
+<https://thelfer.github.io/tfel/web/packages.html>.
 
 This document describes how to generate packages for `TFEL`. It relies
 on the instructions given [here](install.html) to build `TFEL` from
@@ -24,11 +27,9 @@ By portable, we mean binaries that can be executed on machines:
   the compilation all flags leading to specific processor
   instructions, such as the `sse` instructions.
 - the same environment. This most notably means:
-
-	- the same compiler version. The reason for this restriction is
-      explained below.
-	- the same version of `python` and `boost-python` libraries if the
-	  `python` bindings are enabled).
+ - the same compiler version. The reason for this restriction is
+   explained below.
+ - the same version of `python` if the `python` bindings are enabled.
 
 However, using portable binaries does not affect the fact that
 `MFront` will try to generate the most effective code for you
@@ -61,7 +62,7 @@ The various other options that can be passed to `cmake` are described
 $ cmake [options] -Denable-portable-build=ON
 $ make
 $ cpack -G [GENERATOR_NAME]
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 The list of available generators are given by the `cpack --help`
 command:

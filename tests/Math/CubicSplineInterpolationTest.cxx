@@ -146,7 +146,8 @@ struct CubicSplineInterpolationTest final : public tfel::tests::TestCase {
 #endif /* __clang__ */
   }
   void test4() {
-#if (not defined __INTEL_COMPILER) && (not defined __clang__)
+#if (not defined __INTEL_COMPILER) && (not defined __clang__) && \
+    (not defined _MSC_VER)
     using time = tfel::math::qt<tfel::math::Time, double>;
     using stress = tfel::math::qt<tfel::math::Stress, double>;
     using stressrate = tfel::math::derivative_type<stress, time>;

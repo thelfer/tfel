@@ -27,10 +27,10 @@ specific test cases.
   describing a test case, the generator generates the input file for its
   target.
 
-This utility thus proceeds by following those three steps:
+This utility thus proceeds by following these three steps:
 
 1. The input file, written in a JSON-like format, is read.
-2. The extracted data are passed to the the test case specified in the
+2. The extracted data is passed to the test case specified in the
   input file. The test case interprets the data in a form ready to be
   used by generators.
 3. The generators are called.
@@ -69,7 +69,7 @@ It associates the name to a value as follows:
 name: "ssna303"
 ~~~~
 
-A value can be a string, a floatting-point value, a integer, a boolean,
+A value can be a string, a floating-point value, an integer, a boolean,
 an evolution and a list of times. Values are separated by a comma `,`.
 
 ### Times
@@ -90,7 +90,8 @@ times : {
 ~~~~
 The `file` field gives the name of the external file. The `values`
 field can be:
-  - a positive integer specifying in which column the times values are
+
+  - a positive integer specifying in which column the time values are
     read.
   - a string giving a formula allowing to interpret the external
     files. For example, the formula `$1*60` multiplies the first
@@ -123,7 +124,7 @@ be a positive integer or a formula).
 ### Variables expected by standard test case
 
 Test cases shall inherit from the `TestCaseBase` class which expects the
-follwing variables to be defined:
+following variables to be defined:
 
 - `name` (type `string`, mandatory): name associated with the test case.
 - `times` (type `Times`, mandatory): list of times.

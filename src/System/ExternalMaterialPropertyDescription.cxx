@@ -108,10 +108,12 @@ namespace tfel::system {
       ExternalMaterialPropertyDescription&&) = default;
   ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription(
       const ExternalMaterialPropertyDescription&) = default;
-  ExternalMaterialPropertyDescription& ExternalMaterialPropertyDescription::
-  operator=(const ExternalMaterialPropertyDescription&) = default;
-  ExternalMaterialPropertyDescription& ExternalMaterialPropertyDescription::
-  operator=(ExternalMaterialPropertyDescription&&) = default;
+  ExternalMaterialPropertyDescription&
+  ExternalMaterialPropertyDescription::operator=(
+      const ExternalMaterialPropertyDescription&) = default;
+  ExternalMaterialPropertyDescription&
+  ExternalMaterialPropertyDescription::operator=(
+      ExternalMaterialPropertyDescription&&) = default;
   ExternalMaterialPropertyDescription::~ExternalMaterialPropertyDescription() =
       default;
 

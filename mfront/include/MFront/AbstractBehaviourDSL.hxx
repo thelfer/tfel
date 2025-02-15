@@ -28,12 +28,13 @@
 
 namespace mfront {
 
-  // forward declaration
+  // forward declarations
+  struct AbstractBehaviourInterface;
   struct MaterialPropertyDescription;
+  struct AbstractBehaviourCodeGenerator;
 
-  /*!
-   * Interface class for all domain specific languages.
-   */
+  //! \brief interface class for all domain specific languages associated with
+  //! behaviours.
   struct MFRONT_VISIBILITY_EXPORT AbstractBehaviourDSL
       : public virtual AbstractDSL {
     //! a simple alias
@@ -46,10 +47,16 @@ namespace mfront {
     using Hypothesis = ModellingHypothesis::Hypothesis;
     //! \return the target of the dsl
     DSLTarget getTargetType() const override final;
+    //! \return the declared behaviour interfaces
+    virtual std::map<std::string, std::shared_ptr<AbstractBehaviourInterface>>
+    getBehaviourInterfaces() const = 0;
     //! \return a description of the DSL
     virtual BehaviourDSLDescription getBehaviourDSLDescription() const = 0;
     //! \return the behaviour description
     virtual const BehaviourDescription& getBehaviourDescription() const = 0;
+    //! \return a suitable code generator
+    virtual std::unique_ptr<AbstractBehaviourCodeGenerator> getCodeGenerator()
+        const = 0;
     /*!
      * \brief add the given material properties
      * \param[in] mps: material properties
@@ -154,7 +161,7 @@ namespace mfront {
      * `@ModellingHypothesis` or `@ModellingHypotheses` keywords.
      */
     virtual bool isModellingHypothesisSupported(const Hypothesis) const = 0;
-    //! destructor
+    //! \brief destructor
     ~AbstractBehaviourDSL() override;
   };
 

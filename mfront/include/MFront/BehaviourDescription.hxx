@@ -66,6 +66,12 @@ namespace mfront {
     static const char* const modellingHypothesis;
     //! \brief standard option
     static const char* const modellingHypotheses;
+    //! \brief standard option and attribute
+    static const char* const internalNamespace;
+    //! \brief standard option and attribute
+    static const char* const defaultConstructor;
+    //! \brief standard option and attribute
+    static const char* const finalClass;
     //! \brief a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! \brief a simple alias
@@ -101,10 +107,10 @@ namespace mfront {
       GREENLAGRANGE,
       HENCKY
     };  // end of enum StrainMeasure
-        /*!
-         * \brief this structure holds the value of a constant material
-         * property
-         */
+    /*!
+     * \brief this structure holds the value of a constant material
+     * property
+     */
     struct ConstantMaterialProperty {
       //! \brief parameter name associated with the material property
       std::string name;
@@ -121,13 +127,18 @@ namespace mfront {
       //! \brief description of a material property
       std::string f;
     };  // end of AnalyticMaterialProperty
-        /*!
-         * \brief this structure holds the value of a material
-         * property defined through an mfront file
-         */
+    /*!
+     * \brief this structure holds the value of a material
+     * property defined through an mfront file
+     */
     struct ExternalMFrontMaterialProperty {
       //! \brief description of a material property
       std::shared_ptr<MaterialPropertyDescription> mpd;
+    };
+    //! \brief structure describing a model based on a behaviour factory
+    struct ExternalModelBasedOnBehaviourVariableFactory {
+      //! \brief name of the behaviour variable factory
+      std::string factory;
     };
     //! \brief list of supported material properties types
     using MaterialPropertyTypes =
@@ -274,10 +285,12 @@ namespace mfront {
      * declaration of user defined variables
      */
     bool allowsNewUserDefinedVariables() const;
-    //! \brief check and complete the physical bounds of variables
-    void checkAndCompletePhysicalBoundsDeclaration();
-    //! \brief disallow the declaration of user defined variables
-    void disallowNewUserDefinedVariables();
+    /*!
+     * \brief complete the declaration of variables
+     * \note the modelling hypotheses must be defined before calling
+     * this method.
+     */
+    void completeVariableDeclaration();
     //! \brief set if dynamically allocated vectors are allowed
     void areDynamicallyAllocatedVectorsAllowed(const bool);
     //! \return true if dynamically allocated vectors are allowed
@@ -332,6 +345,39 @@ namespace mfront {
     void setClassName(const std::string&);
     //! \return the class name
     const std::string& getClassName() const;
+    /*!
+     * \return the class name qualified with the namespaces in which it is
+     * defined
+     */
+    std::string getFullClassName() const;
+    //! \return if the generated class shall define the default constructor
+    bool shallDefineDefaultConstructor() const;
+    //! \return if the generated class shall be declared final
+    bool isFinal() const;
+    /*!
+     * \return the internal namespace in which the behaviour class shall be
+     * defined.
+     * \note The returned value can be empty.
+     */
+    std::string getInternalNamespace() const;
+    //! \return the name of the behaviour file
+    std::string getBehaviourFileName() const;
+    //! \return the name of the behaviour data file
+    std::string getBehaviourDataFileName() const;
+    //! \return the name of the integration data file
+    std::string getIntegrationDataFileName() const;
+    /*!
+     * \return the name of the header file describing the slip systems,
+     * if declared
+     */
+    std::string getSlipSystemHeaderFileName() const;
+    /*!
+     * \return the name of the header file implementing the description of the
+     * the slip systems, if declared
+     */
+    std::string getSlipSystemImplementationFileName() const;
+    //! \return the name of the source file
+    std::string getSrcFileName() const;
     /*!
      * \return a class describing the input of a material property
      * \param[in] n: variable name
@@ -436,6 +482,12 @@ namespace mfront {
      * \param[in] md: model description
      */
     void addModelDescription(const ModelDescription&);
+    /*!
+     * \brief add a model description based on an already declared behaviour
+     * variable factory.
+     * \param[in] md: model description
+     */
+    void addModelDescription(const BehaviourVariableDescription&);
     /*!
      * add a local data structure
      * \param[in] lds: local data structure
@@ -580,6 +632,10 @@ namespace mfront {
 
     bool isGradientIncrementName(const std::string&) const;
 
+    bool isNameOfAGradientAtTheBeginningOfTheTimeStep(const std::string&) const;
+
+    bool isNameOfAGradientAtTheEndOfTheTimeStep(const std::string&) const;
+
     bool isThermodynamicForceName(const std::string&) const;
     //! \return the behaviour type
     BehaviourType getBehaviourType() const;
@@ -684,7 +740,10 @@ namespace mfront {
     bool isMaterialPropertyDependantOnStateVariables(
         const MaterialProperty&) const;
     //! \return registred models
-    const std::vector<ModelDescription>& getModelsDescriptions() const;
+    const std::vector<
+        std::variant<ModelDescription,
+                     ExternalModelBasedOnBehaviourVariableFactory>>&
+    getModelsDescriptions() const;
     /*!
      * \brief set the elastic material properties
      * \param[in] emps: elastic material properties
@@ -931,12 +990,22 @@ namespace mfront {
      * \param[in] s: registration status
      *
      * \note if h is UNDEFINEDHYPOTHESIS, add the external state
-     * variables to the default data and to all the specialisations
+     * variable to the default data and to all the specialisations
      */
     void addExternalStateVariable(
         const Hypothesis,
         const VariableDescription&,
         const BehaviourData::RegistrationStatus = BehaviourData::UNREGISTRED);
+    /*!
+     * \brief add a behaviour variable
+     * \param[in] v: behaviour variable added
+     */
+    void addBehaviourVariable(const BehaviourVariableDescription&);
+    /*!
+     * \brief add a behaviour variable factory
+     * \param[in] v: behaviour variable added
+     */
+    void addBehaviourVariableFactory(const BehaviourVariableDescription&);
     /*!
      * \brief add initialize  variables
      * \param[in] h: modelling hypothesis
@@ -1653,6 +1722,21 @@ namespace mfront {
 
    private:
     /*!
+     * \brief add a new main variable
+     * \param[in] g: gradient
+     * \param[in] th: thermodynamic force
+     * \param[in] registerGradientGlossaryName: register the glossary name
+     * assocated with the gradient.
+     * \param[in] registerTangentOperatorBlock: register the tangent operator
+     * block.
+     */
+    void addMainVariable2(const Gradient&,
+                          const ThermodynamicForce&,
+                          const bool,
+                          const bool);
+    //! \brief check and complete the physical bounds of variables
+    void checkAndCompletePhysicalBoundsDeclaration();
+    /*!
      * \brief throw an exception saying that no attribute with the
      * given name exists
      */
@@ -1675,6 +1759,14 @@ namespace mfront {
      * \param[in] h: modelling hypothesis
      */
     BehaviourData& getBehaviourData2(const Hypothesis);
+    /*!
+     * \brief add a behaviour variable factory
+     * \param[in] v: behaviour variable added
+     * \param[in] isExternalModel: flag stating if the factory is associated
+     * with an external model
+     */
+    void addBehaviourVariableFactory(const BehaviourVariableDescription&,
+                                     const bool);
     /*!
      * \call the behaviour data associated with the given hypothesis
      * \param[in] h: modelling hypothesis
@@ -1905,14 +1997,10 @@ namespace mfront {
      * must be defined.
      */
     std::vector<MaterialProperty> thermalExpansionCoefficients;
-    /*!
-     * elastic material properties
-     * For isotropic   behaviours, only two elastic material properties must be
-     * defined.
-     * For orthotropic behaviours, two or nine elastic material properties must
-     * be defined.
-     */
-    std::vector<ModelDescription> models;
+    //! \brief list of registred models
+    std::vector<std::variant<ModelDescription,
+                             ExternalModelBasedOnBehaviourVariableFactory>>
+        models;
     //! \brief slip systems
     std::optional<SlipSystemsDescription> gs;
     //! \brief list of all Hill tensors defined
@@ -1947,8 +2035,24 @@ namespace mfront {
     bool useDefaultTangentOperatorBlocks = true;
     //! integration schemes
     IntegrationScheme ischeme = UNDEFINEDINTEGRATIONSCHEME;
-    //! list of material laws used
+    //! \brief list of material laws used
     std::vector<std::string> materialLaws;
+    /*!
+     * \brief list of behaviour variables waiting to be treated
+     * \note this intermediate structure is required since
+     * the behaviour variables can only be added to behaviour data
+     * when modelling hypothesis are defined
+     */
+    std::vector<BehaviourVariableDescription> behaviourVariablesCandidates;
+    /*!
+     * \brief list of behaviour variable factories waiting to be treated
+     * \note this intermediate structure is required since
+     * the behaviour variables can only be added to behaviour data
+     * when modelling hypothesis are defined. The second member of the pair
+     * indicates if the factory is associated with an external model
+     */
+    std::vector<std::pair<BehaviourVariableDescription, bool>>
+        behaviourVariableFactoriesCandidates;
     /*!
      * Support for dynamically allocated vectors is not allowed in all
      * dsl's. A dsl may change this value to disable the use of
@@ -1996,6 +2100,36 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT void checkIsStrictlyNegative(
       const BehaviourDescription::MaterialProperty&);
+
+  struct CheckInitializeMethodsOptions {
+    bool checkGradientsAtTheBeginningOfTheTimeStep = false;
+    bool checkGradientsAtTheEndOfTheTimeStep = true;
+    bool checkGradientsIncrements = true;
+    bool checkThermodynamicForcesAtTheBeginningOfTheTimeStep = false;
+  };
+
+  /*!
+   * \brief this function checks if any of the code block
+   * `BeforeInitializeLocalVariables`, `InitializeLocalVariables` or
+   * `AfterInitializeLocalVariables` uses a variable in the given list.
+   * \param[in] bd: behaviour description
+   * \param[in] h: modelling hypothesis
+   * \param[in] opts: modelling hypothesis
+   * \return warnings describining the variables used
+   */
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string> checkInitializeMethods(
+      const BehaviourDescription&,
+      const BehaviourDescription::Hypothesis,
+      const CheckInitializeMethodsOptions& = {});
+  /*!
+   * \return a list of the consistent tangent operator blocks, separated by a
+   * comma.
+   * \param[in] bd: behaviour description
+   * \param[in] tblocks: list of tangent operator blocks
+   */
+  MFRONT_VISIBILITY_EXPORT std::string makeTangentOperatorBlocksList(
+      const BehaviourDescription&,
+      const std::vector<std::pair<VariableDescription, VariableDescription>>&);
 
 }  // end of namespace mfront
 

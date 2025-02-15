@@ -32,22 +32,21 @@ namespace tfel::math {
    * \pre PPType must implement the StensorConcept
    * \pre StensorType must implement the StensorConcept
    */
-  template <typename DPPType, typename PPType, typename StensorType>
-  std::enable_if_t<
-      (implementsST2toST2Concept<DPPType>() &&
-       implementsStensorConcept<PPType>() &&
-       implementsStensorConcept<StensorType>() &&
-       getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<StensorType>() == 1u &&
-       isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
-       isAssignableTo<base_type<numeric_type<StensorType>>,
-                      numeric_type<DPPType>>()),
-      void>
-  computeStensorPositivePartAndDerivative(DPPType&,
-                                          PPType&,
-                                          const StensorType&,
-                                          const numeric_type<StensorType>);
+  template <ST2toST2Concept DPPType,
+            StensorConcept PPType,
+            StensorConcept StensorType>
+  void computeStensorPositivePartAndDerivative(
+      DPPType&,
+      PPType&,
+      const StensorType&,
+      const numeric_type<StensorType>)  //
+      requires(
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 1u &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DPPType>>());
 
   /*!
    * \brief compute the decomposition of a symmetric tensor in its
@@ -62,22 +61,21 @@ namespace tfel::math {
    * \pre PPType must implement the StensorConcept
    * \pre StensorType must implement the StensorConcept
    */
-  template <typename DPPType, typename PPType, typename StensorType>
-  std::enable_if_t<
-      (implementsST2toST2Concept<DPPType>() &&
-       implementsStensorConcept<PPType>() &&
-       implementsStensorConcept<StensorType>() &&
-       getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<StensorType>() == 2u &&
-       isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
-       isAssignableTo<base_type<numeric_type<StensorType>>,
-                      numeric_type<DPPType>>()),
-      void>
-  computeStensorPositivePartAndDerivative(DPPType&,
-                                          PPType&,
-                                          const StensorType&,
-                                          const numeric_type<StensorType>);
+  template <ST2toST2Concept DPPType,
+            StensorConcept PPType,
+            StensorConcept StensorType>
+  void computeStensorPositivePartAndDerivative(
+      DPPType&,
+      PPType&,
+      const StensorType&,
+      const numeric_type<StensorType>)  //
+      requires(
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 2u &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DPPType>>());
 
   /*!
    * \brief compute the decomposition of a symmetric tensor in its
@@ -92,22 +90,21 @@ namespace tfel::math {
    * \pre PPType must implement the StensorConcept
    * \pre StensorType must implement the StensorConcept
    */
-  template <typename DPPType, typename PPType, typename StensorType>
-  std::enable_if_t<
-      (implementsST2toST2Concept<DPPType>() &&
-       implementsStensorConcept<PPType>() &&
-       implementsStensorConcept<StensorType>() &&
-       getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<StensorType>() == 3u &&
-       isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
-       isAssignableTo<base_type<numeric_type<StensorType>>,
-                      numeric_type<DPPType>>()),
-      void>
-  computeStensorPositivePartAndDerivative(DPPType&,
-                                          PPType&,
-                                          const StensorType&,
-                                          const numeric_type<StensorType>);
+  template <ST2toST2Concept DPPType,
+            StensorConcept PPType,
+            StensorConcept StensorType>
+  void computeStensorPositivePartAndDerivative(
+      DPPType&,
+      PPType&,
+      const StensorType&,
+      const numeric_type<StensorType>)  //
+      requires(
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 3u &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DPPType>>());
   /*!
    * \brief compute the decomposition of a symmetric tensor in a
    * positive and negative parts and their derivatives.
@@ -128,36 +125,30 @@ namespace tfel::math {
    * \pre NPType must implement the StensorConcept
    * \pre StensorType must implement the StensorConcept
    */
-  template <typename DPPType,
-            typename DNPType,
-            typename PPType,
-            typename NPType,
-            typename StensorType>
-  typename std::enable_if<
-      (implementsST2toST2Concept<DPPType>() &&
-       implementsST2toST2Concept<DNPType>() &&
-       implementsStensorConcept<PPType>() &&
-       implementsStensorConcept<NPType>() &&
-       implementsStensorConcept<StensorType>() &&
-       getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<StensorType>() == 1u &&
-       isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
-       isAssignableTo<numeric_type<StensorType>, numeric_type<NPType>>() &&
-       isAssignableTo<base_type<numeric_type<StensorType>>,
-                      numeric_type<DPPType>>() &&
-       isAssignableTo<base_type<numeric_type<StensorType>>,
-                      numeric_type<DNPType>>()),
-      void>::type
-  computeStensorDecompositionInPositiveAndNegativeParts(
+  template <ST2toST2Concept DPPType,
+            ST2toST2Concept DNPType,
+            StensorConcept PPType,
+            StensorConcept NPType,
+            StensorConcept StensorType>
+  void computeStensorDecompositionInPositiveAndNegativeParts(
       DPPType&,
       DNPType&,
       PPType&,
       NPType&,
       const StensorType&,
-      const numeric_type<StensorType>);
+      const numeric_type<StensorType>)  //
+      requires(
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 1u &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<NPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DPPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DNPType>>());
 
   /*!
    * \brief compute the decomposition of a symmetric tensor in a
@@ -179,36 +170,30 @@ namespace tfel::math {
    * \pre NPType must implement the StensorConcept
    * \pre StensorType must implement the StensorConcept
    */
-  template <typename DPPType,
-            typename DNPType,
-            typename PPType,
-            typename NPType,
-            typename StensorType>
-  typename std::enable_if<
-      (implementsST2toST2Concept<DPPType>() &&
-       implementsST2toST2Concept<DNPType>() &&
-       implementsStensorConcept<PPType>() &&
-       implementsStensorConcept<NPType>() &&
-       implementsStensorConcept<StensorType>() &&
-       getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<StensorType>() == 2u &&
-       isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
-       isAssignableTo<numeric_type<StensorType>, numeric_type<NPType>>() &&
-       isAssignableTo<base_type<numeric_type<StensorType>>,
-                      numeric_type<DPPType>>() &&
-       isAssignableTo<base_type<numeric_type<StensorType>>,
-                      numeric_type<DNPType>>()),
-      void>::type
-  computeStensorDecompositionInPositiveAndNegativeParts(
+  template <ST2toST2Concept DPPType,
+            ST2toST2Concept DNPType,
+            StensorConcept PPType,
+            StensorConcept NPType,
+            StensorConcept StensorType>
+  void computeStensorDecompositionInPositiveAndNegativeParts(
       DPPType&,
       DNPType&,
       PPType&,
       NPType&,
       const StensorType&,
-      const numeric_type<StensorType>);
+      const numeric_type<StensorType>)  //
+      requires(
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 2u &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<NPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DPPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DNPType>>());
 
   /*!
    * \brief compute the decomposition of a symmetric tensor in a
@@ -230,36 +215,30 @@ namespace tfel::math {
    * \pre NPType must implement the StensorConcept
    * \pre StensorType must implement the StensorConcept
    */
-  template <typename DPPType,
-            typename DNPType,
-            typename PPType,
-            typename NPType,
-            typename StensorType>
-  typename std::enable_if<
-      (implementsST2toST2Concept<DPPType>() &&
-       implementsST2toST2Concept<DNPType>() &&
-       implementsStensorConcept<PPType>() &&
-       implementsStensorConcept<NPType>() &&
-       implementsStensorConcept<StensorType>() &&
-       getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
-       getSpaceDimension<StensorType>() == 3u &&
-       isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
-       isAssignableTo<numeric_type<StensorType>, numeric_type<NPType>>() &&
-       isAssignableTo<base_type<numeric_type<StensorType>>,
-                      numeric_type<DPPType>>() &&
-       isAssignableTo<base_type<numeric_type<StensorType>>,
-                      numeric_type<DNPType>>()),
-      void>::type
-  computeStensorDecompositionInPositiveAndNegativeParts(
+  template <ST2toST2Concept DPPType,
+            ST2toST2Concept DNPType,
+            StensorConcept PPType,
+            StensorConcept NPType,
+            StensorConcept StensorType>
+  void computeStensorDecompositionInPositiveAndNegativeParts(
       DPPType&,
       DNPType&,
       PPType&,
       NPType&,
       const StensorType&,
-      const numeric_type<StensorType>);
+      const numeric_type<StensorType>)  //
+      requires(
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 3u &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<NPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DPPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DNPType>>());
 
 }  // end of namespace tfel::math
 

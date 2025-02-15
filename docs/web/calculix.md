@@ -26,7 +26,7 @@ different interfaces:
 - The  native `CalculiX` interface.
 - The `ABAQUS` `umat` routines for linear materials (small strain
   analyses).
-- The `ABAQUSNL` `umat` routines for non linear materials (finite
+- The `ABAQUSNL` `umat` routines for non-linear materials (finite
   strain analyses).
 
 There are two ways of introducing user-defined mechanical behavior:
@@ -87,14 +87,14 @@ The following library has been built :
 
 The `libCALCULIXBEHAVIOUR.so` is generated in the `src`
 subdirectory. This library shall be copied in a location where the
-dynamic loade can find it. Another solution is to add the `src`
+dynamic load can find it. Another solution is to add the `src`
 directory to the `LD_LIBRARY_PATH` as follows:
 
 ~~~~{.bash}
 $ export LD_LIBRARY_PATH=$(pwd)/src:$LD_LIBRARY_PATH
 ~~~~
 
-An template for the behaviour declaration has been generated in the
+A template for the behaviour declaration has been generated in the
 `calculix` subdirectory.
 
 ~~~~{.fortran}
@@ -131,7 +131,7 @@ name of the library and the name of the function must be
 upper-cased**. This is due to the way `CalculiX` interprets the input
 file.
 
-The material name can optionally ends with an identifier beginning by
+The material name can optionally end with an identifier beginning by
 the `@` character. This character can be followed by any character and
 is used to declare two distinct materials based on the same external
 behaviour having different material coefficients. For example, the
@@ -156,7 +156,7 @@ external behaviour:
 In finite strain, `CalculiX` replaces the linearised strain by the
 Green-Lagrange strain and interprets the output of the behaviour as
 the second Piola-Kirchhoff stress. This allows small strain behaviours
-to be used in the context of finite rotations and this procedures is
+to be used in the context of finite rotations and this procedure is
 equivalent to the `FiniteRotationSmallStrain` introduced by `MFront`
 in most interfaces. However, this procedure is said to be limited to
 small strain because the trace of the Green-Lagrange strain is not
@@ -167,7 +167,7 @@ be *isochoric*.
 
 The situation is quite different in the `ABAQUSNL` interface where the
 Hencky strain (logarithmic strain) is used (see below): the trace of
-the logarithimc strain is directly linked to the change of volume.
+the logarithmic strain is directly linked to the change of volume.
 
 This situation is also different from the strategy used in
 `Abaqus/Standard` which tries to integrate the behaviour in rate form
@@ -281,7 +281,7 @@ Thus, the material name to be used is:
 > ~~~~~
 >
 
-> Another solution is to desactive checks (for `TFEL` greater than
+> Another solution is to deactive checks (for `TFEL` greater than
 > 3.1) like this:
 >
 > ~~~~~{.bash}
@@ -352,7 +352,7 @@ E, S
 >
 > `MFront` generates an example showing how to use the behaviour in
 > `Abaqus/Standard`. Such example names each state variables, which is
-> usefull for post-processing. However this feature is currently not
+> useful for post-processing. However, this feature is currently not
 > supported by `CalculiX`.
 
 # Known issues
@@ -370,7 +370,7 @@ material.
 The same remarks applies to the number of the material properties
 (`NPROPS` argument).
 
-This issue can be circumvent by disabling checks in `MFront`:
+This issue can be circumvented by disabling checks in `MFront`:
 
 > ~~~~~{.bash}
 > $ mfront --obuild -D MFRONT_ABAQUS_NORUNTIMECHECKS --interface=abaqus SaintVenantKirchhoffElasticity.mfront
@@ -390,7 +390,7 @@ circumvent this issue.
 
 ![](img/CalculiXBenchmarkSmallStrain.png "")
 
-This example describes an tensile test on an AE specimen using an
+This example describes a tensile test on an AE specimen using an
 [isotropic linear hardening plasticity behaviour](gallery/plasticity/IsotropicLinearKinematicHardeningPlasticity.mfront)
 depicted on the previous figure.
 
@@ -404,14 +404,14 @@ following table:
 |user	| 7m40.572s  | 7m59.904s |
 |sys	| 0m4.180s   | 0m6.676s  |
 
-Those figures shows that using the `MFront` implementation is
+Those figures show that using the `MFront` implementation is
 \(4.9\%\) slower. Using the `callgrind` profiling tool of `valgrind`
-framework, one can see that more time is spend in looking for function
+framework, one can see that more time is spent in looking for function
 `calculix_searchExternalBehaviours` than in the behaviour integration:
 \(2.65\%\) of the time vs \(1.66\%\) !
 
-This is du to the mostly non intrusive way of introducing external
-behaviours in `CalculiX`. This additional cost could totally disapear
+This is du to the mostly non-intrusive way of introducing external
+behaviours in `CalculiX`. This additional cost could totally disappear
 with a more clever and intrusive development.
 
 If those 2.65% are removed from the total computational time, the

@@ -12,40 +12,42 @@
  */
 
 #include <ostream>
-
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/PerformanceProfiling.hxx"
 
 namespace mfront {
 
   void writeStandardPerformanceProfiling(std::ostream& os,
-                                         const std::string& c,
-                                         const std::string& v,
-                                         const std::string& s) {
-    using namespace std;
-    const string tn =
-        s.empty() ? "mfront_local_timer" : "mfront_local_timer_" + s;
-    os << "mfront::BehaviourProfiler::Timer " << tn << "(" << c
-       << "Profiler::getProfiler(),"
-       << "mfront::BehaviourProfiler::" << makeUpperCase(v) << ");" << endl;
-  }  // end of BehaviourDSLCommon::writeStandardPerformanceProfiling
+                                         std::string_view c,
+                                         std::string_view v,
+                                         std::string_view s) {
+    os << "mfront::BehaviourProfiler::Timer ";
+    if (!s.empty()) {
+      os << "mfront_local_timer_" << s;
+    } else {
+      os << "mfront_local_timer";
+    }
+    os << "(" << c << "Profiler::getProfiler(),"
+       << "mfront::BehaviourProfiler::" << makeUpperCase(v) << ");\n";
+  }  // end of writeStandardPerformanceProfiling
 
   void writeStandardPerformanceProfilingBegin(std::ostream& os,
-                                              const std::string& c,
-                                              const std::string& v,
-                                              const std::string& s) {
-    using namespace std;
-    const string tn =
-        s.empty() ? "mfront_local_timer" : "mfront_local_timer_" + s;
-    os << "{" << endl
-       << "mfront::BehaviourProfiler::Timer " << tn << "(" << c
-       << "Profiler::getProfiler(),"
-       << "mfront::BehaviourProfiler::" << makeUpperCase(v) << ");" << endl;
-  }  // end of BehaviourDSLCommon::writeStandardPerformanceProfilingBegin
+                                              std::string_view c,
+                                              std::string_view v,
+                                              std::string_view s) {
+    os << "{\n"
+       << "mfront::BehaviourProfiler::Timer ";
+    if (!s.empty()) {
+      os << "mfront_local_timer_" << s;
+    } else {
+      os << "mfront_local_timer";
+    }
+    os << "(" << c << "Profiler::getProfiler(),"
+       << "mfront::BehaviourProfiler::" << makeUpperCase(v) << ");\n";
+  }  // end of writeStandardPerformanceProfilingBegin
 
   void writeStandardPerformanceProfilingEnd(std::ostream& os) {
-    using namespace std;
-    os << "}" << endl;
-  }  // end of BehaviourDSLCommon::writeStandardPerformanceProfilingEnd
+    os << "}\n";
+  }  // end of writeStandardPerformanceProfilingEnd
 
 }  // end of namespace mfront

@@ -30,6 +30,7 @@
 #include "MFront/SearchPathsHandler.hxx"
 #include "MFront/PedanticMode.hxx"
 #include "MFront/MFrontLogStream.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/DSLUtilities.hxx"
@@ -43,12 +44,14 @@ namespace mfront {
 
   std::shared_ptr<AbstractDSL> MFrontBase::getDSL(
       const tfel::utilities::CxxTokenizer::const_iterator ptb,
-      const tfel::utilities::CxxTokenizer::const_iterator pte) {
+      const tfel::utilities::CxxTokenizer::const_iterator pte,
+      const tfel::utilities::DataMap& dsl_options) {
     using namespace tfel::system;
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "MFrontBase::getDSL: " + m);
     };
-    auto dsl_options = tfel::utilities::DataMap{};
+    // local dsl options
+    auto ldsl_options = dsl_options;
     const auto& global_options =
         GlobalDomainSpecificLanguageOptionsManager::get();
     auto& dslFactory = DSLFactory::getDSLFactory();
@@ -76,8 +79,14 @@ namespace mfront {
         throw_if(pt == pte, "unexpected end of file (exepected dsl name)");
         if (pt->value == "{") {
           const auto o = tfel::utilities::DataParsingOptions{};
-          dsl_options = tfel::utilities::Data::read(pt, pte, o)
-                            .get<tfel::utilities::DataMap>();
+          const auto opts = [&o, &pt, &pte] {
+            const auto options = tfel::utilities::Data::read(pt, pte, o);
+            if (options.empty()) {
+              return tfel::utilities::DataMap{};
+            }
+            return options.get<tfel::utilities::DataMap>();
+          }();
+          ldsl_options = tfel::utilities::merge(ldsl_options, opts, false);
         }
         throw_if(pt == pte,
                  "unexpected end of file (exepected ';' or library name)");
@@ -107,23 +116,23 @@ namespace mfront {
       }
       try {
         // first try to get the target type of the DSL
-        dsl = dslFactory.createNewDSL(dslName, dsl_options);
+        dsl = dslFactory.createNewDSL(dslName, ldsl_options);
         const auto t = dsl->getTargetType();
         if (t == AbstractDSL::MATERIALPROPERTYDSL) {
           dsl = dslFactory.createNewDSL(
               dslName, tfel::utilities::merge(
                            global_options.getMaterialPropertyDSLOptions(),
-                           dsl_options, true));
+                           ldsl_options, true));
         } else if (t == AbstractDSL::BEHAVIOURDSL) {
           dsl = dslFactory.createNewDSL(
               dslName,
               tfel::utilities::merge(global_options.getBehaviourDSLOptions(),
-                                     dsl_options, true));
+                                     ldsl_options, true));
         } else if (t == AbstractDSL::MODELDSL) {
           dsl = dslFactory.createNewDSL(
               dslName,
               tfel::utilities::merge(global_options.getModelDSLOptions(),
-                                     dsl_options, true));
+                                     ldsl_options, true));
         } else {
           tfel::raise("MFrontBase::getDSL: unsupported DSL target type");
         }
@@ -142,7 +151,8 @@ namespace mfront {
     return dsl;
   }  // end of getDSL
 
-  std::shared_ptr<AbstractDSL> MFrontBase::getDSL(const std::string& f) {
+  std::shared_ptr<AbstractDSL> MFrontBase::getDSL(
+      const std::string& f, const tfel::utilities::DataMap& dsl_options) {
     tfel::utilities::CxxTokenizer file;
     if ((tfel::utilities::starts_with(f, "madnex:")) ||
         (tfel::utilities::starts_with(f, "mdnx:")) ||
@@ -154,13 +164,13 @@ namespace mfront {
                                           std::get<2>(path), std::get<3>(path));
       file.parseString(impl.source);
 #else  /* HAVE_MANDEX */
-      tfel::raise("DSLBase::openFile: madnex support was not enabled");
+      tfel::raise("DSLBase::getDSL: madnex support was not enabled");
 #endif /* HAVE_MANDEX */
     } else {
       file.openFile(f);
     }
     file.stripComments();
-    auto dsl = MFrontBase::getDSL(file.cbegin(), file.cend());
+    auto dsl = MFrontBase::getDSL(file.cbegin(), file.cend(), dsl_options);
     if ((tfel::utilities::starts_with(f, "madnex:")) ||
         (tfel::utilities::starts_with(f, "mdnx:")) ||
         (tfel::utilities::starts_with(f, "edf:"))) {
@@ -194,7 +204,7 @@ namespace mfront {
         }
       }
 #else  /* HAVE_MANDEX */
-      tfel::raise("DSLBase::openFile: madnex support was not enabled");
+      tfel::raise("DSLBase::getDSL: madnex support was not enabled");
 #endif /* HAVE_MANDEX */
     }
     return dsl;
@@ -457,7 +467,41 @@ namespace mfront {
 
   void MFrontBase::treatPedantic() { setPedanticMode(true); }
 
-  void MFrontBase::treatWarning() {}
+  void MFrontBase::treatReportWarnings() {
+    const auto& o = this->getCurrentCommandLineArgument().getOption();
+    if (o.empty()) {
+      setWarningMode(true);
+    } else {
+      if (o == "true") {
+        setWarningMode(true);
+      } else if (o == "false") {
+        setWarningMode(false);
+      } else {
+        tfel::raise(
+            "MFrontBase::treatReportWarnings: "
+            "unknown option '" +
+            o + "'");
+      }
+    }
+  }  // end of treatReportWarnings
+
+  void MFrontBase::treatWarningError() {
+    const auto& o = this->getCurrentCommandLineArgument().getOption();
+    if (o.empty()) {
+      setWarningErrorMode(true);
+    } else {
+      if (o == "true") {
+        setWarningErrorMode(true);
+      } else if (o == "false") {
+        setWarningErrorMode(false);
+      } else {
+        tfel::raise(
+            "MFrontBase::treatWarningError: "
+            "unknown option '" +
+            o + "'");
+      }
+    }
+  }  // end of treatWarningError
 
   void MFrontBase::treatDebug() { setDebugMode(true); }
 
@@ -508,8 +552,8 @@ namespace mfront {
     t.parseString('{' + std::string{std::istreambuf_iterator<char>{ifs}, {}} +
                   '}');
     auto b = t.begin();
-    const auto data = tfel::utilities::Data::read(b, t.end());
-    for (const auto& d : data.get<tfel::utilities::DataMap>()) {
+    const auto data = read<tfel::utilities::DataMap>(b, t.end());
+    for (const auto& d : data) {
       callback(d.first, d.second);
     }
   }  // end of parseDSLOptionsFile

@@ -47,7 +47,10 @@ namespace mtest {
     using namespace tfel::math;
     using namespace tfel::material;
     // compute material properties and state variables
-    s.prepare(scs, t, dt);
+    const auto ri = s.prepare(scs, t, dt);
+    if (!ri.first) {
+      return ri;
+    }
     // packaging step
     if (scs.period == 1) {
       if (!s.doPackagingStep(scs)) {
@@ -80,7 +83,10 @@ namespace mtest {
     using size_type = matrix<real>::size_type;
     auto& u1 = scs.u1;
     // compute material properties and state variables
-    s.prepare(scs, t, dt);
+    const auto ri = s.prepare(scs, t, dt);
+    if (!ri.first) {
+      return ri;
+    }
     // initializing the acceleration algorithm
     if (o.aa != nullptr) {
       o.aa->preExecuteTasks();

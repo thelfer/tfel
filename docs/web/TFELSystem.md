@@ -64,8 +64,10 @@ This page mostly discusses four classes:
   `ExternalMaterialKnowledgeDescription` class, gathers generic metadata
   about a behaviour.
 
+<!--
 For complete documentation of those classes, the reader may refer to the
 [doxygen documentation](http://tfel.sourceforge.net/doxygen/index.html).
+-->
 
 > **About the `mtest::Behaviour` class**
 >

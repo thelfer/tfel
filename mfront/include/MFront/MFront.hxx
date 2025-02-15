@@ -20,6 +20,7 @@
 #include <vector>
 #include <iosfwd>
 
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/ArgumentParserBase.hxx"
 #include "MFront/MFrontBase.hxx"
 #include "MFront/MFrontConfig.hxx"
@@ -45,9 +46,11 @@ namespace mfront {
     /*!
      * \brief treat a file (analyse and generate output files)
      * \param[in] f : file name
+     * \param[in] dsl_options : options passed to the domain specific language
      * \return the target's description
      */
-    virtual TargetsDescription treatFile(const std::string &) const;
+    virtual TargetsDescription treatFile(
+        const std::string &, const tfel::utilities::DataMap & = {}) const;
     //! \brief execute MFront process
     virtual void exe();
     //! \brief destructor

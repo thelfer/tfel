@@ -25,7 +25,7 @@ namespace mfront {
    */
   struct PleiadesModelInterface : public AbstractModelInterface {
     //! default constructor
-    PleiadesModelInterface();
+    PleiadesModelInterface() noexcept;
     //! \return the name of the interface
     static std::string getName(void);
 

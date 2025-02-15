@@ -27,13 +27,13 @@ namespace tfel::check {
 
   struct TFELCHECK_VISIBILITY_EXPORT PCLogger {
     //! a simple alias
-    using driver = std::shared_ptr<PCILogDriver>;
+    using Driver = std::shared_ptr<PCILogDriver>;
     //! \brief default constructor
     PCLogger();
     /*!
      * \param[in] logDriver
      */
-    PCLogger(const driver&);
+    PCLogger(const Driver&);
     //! \brief move constructor
     PCLogger(PCLogger&&);
     //! \brief copy constructor
@@ -56,7 +56,7 @@ namespace tfel::check {
      * ...
      * log.addDriver(new PCTextDriver())
      */
-    void addDriver(driver logDriver);
+    void addDriver(Driver logDriver);
 
     /*!
      * \brief add a log message to all log outputs
@@ -100,7 +100,7 @@ namespace tfel::check {
     void terminate();
 
    private:
-    std::vector<driver> drivers;
+    std::vector<Driver> drivers;
   };
 
 }  // end of namespace tfel::check

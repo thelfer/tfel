@@ -1,3 +1,4 @@
+
 /*!
  * \file  mfront/include/MFront/MaterialKnowledgeDescription.hxx
  * \brief
@@ -15,10 +16,12 @@
 #define LIB_MFRONT_MATERIALKNOWLEDGEDESCRIPTION_HXX
 
 #include <map>
+#include <tuple>
 #include <string>
 #include <vector>
 #include <optional>
 #include <string_view>
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Material/OutOfBoundsPolicy.hxx"
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/MaterialKnowledgeAttribute.hxx"
@@ -31,12 +34,16 @@ namespace mfront {
   struct MFRONT_VISIBILITY_EXPORT MaterialKnowledgeDescription {
     //! \brief standard option and attribute name
     static const char* const defaultOutOfBoundsPolicy;
+    //! \brief standard option and attribute name
+    static const char* const disableRuntimeChecks;
     //! \brief standard option name
     static const char* const runtimeModificationOfTheOutOfBoundsPolicy;
     //! \brief attribute name
     static const char* const parametersAsStaticVariables;
     //! \brief attribute name
     static const char* const initializeParametersFromFile;
+    //! \brief attribute name
+    static const char* const validator;
     //! \brief attribute name
     static const char* const buildIdentifier;
     /*!
@@ -84,23 +91,23 @@ namespace mfront {
      * \param[in] n : name
      */
     template <typename T>
-    std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), T&> getAttribute(
-        const std::string_view);
+    T& getAttribute(const std::string_view) requires(
+        isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
     template <typename T>
-    std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), const T&>
-    getAttribute(const std::string_view) const;
+    const T& getAttribute(const std::string_view) const
+        requires(isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return the attribute with the given name
      * \param[in] n: name
      * \param[in] v: default value if the attribute is not defined
      */
     template <typename T>
-    std::enable_if_t<isMaterialKnowledgeAttributeType<T>(), T> getAttribute(
-        const std::string_view, const T&) const;
+    T getAttribute(const std::string_view, const T&) const
+        requires(isMaterialKnowledgeAttributeType<T>());
     /*!
      * \return all the attribute registred
      * \param[in] n : name
@@ -115,10 +122,12 @@ namespace mfront {
      * \param[in] interfaces: list of interfaces used to treat the file
      */
     void addExternalMFrontFile(const std::string_view,
-                               const std::vector<std::string>&);
+                               const std::vector<std::string>&,
+                               const tfel::utilities::DataMap&);
     //! \return the external `MFront` files
-    const std::map<std::string,               // file path
-                   std::vector<std::string>,  // list of interfaces
+    const std::map<std::string,                           // file path
+                   std::tuple<std::vector<std::string>,   // list of interfaces
+                              tfel::utilities::DataMap>,  // DSL options
                    std::less<>>&
     getExternalMFrontFiles() const;
     /*!
@@ -147,14 +156,32 @@ namespace mfront {
     /*!
      * \brief external mfront files
      * - key: mfront file name (full path)
-     * - value: list of interfaces to be used
+     * - value: list of interfaces to be used and DSL options
      * This list of external mfront files will be used to generate the
      * associated sources.
      */
-    std::map<std::string, std::vector<std::string>, std::less<>>
+    std::map<std::string,
+             std::tuple<std::vector<std::string>,   // list of interfaces
+                        tfel::utilities::DataMap>,  // DSL options
+             std::less<>>
         externalMFrontFiles;
   };  // end of struct MaterialKnowledgeDescription
 
+  /*!
+   * \brief set if runtime checks shall be disabled
+   * \param[out] d: material knowledge description
+   * \param[in] b: boolean
+   */
+  MFRONT_VISIBILITY_EXPORT void setDisableRuntimeChecks(
+      MaterialKnowledgeDescription&, const bool);
+  /*!
+   * \brief this function returns the value of the
+   * `MaterialKnowledgeDescription::disableRuntimeChecks`
+   * attribute if it is defined, `false` otherwise.
+   * \param[in] d: material knowledge description
+   */
+  MFRONT_VISIBILITY_EXPORT bool areRuntimeChecksDisabled(
+      const MaterialKnowledgeDescription&);
   /*!
    * \brief set the default out of bounds policy
    * \param[out] d: material knowledge description

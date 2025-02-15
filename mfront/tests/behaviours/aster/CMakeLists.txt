@@ -1,3 +1,19 @@
+if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+  set(tfel_tests_python_module "tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}.tests_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+  set(tfel_math_python_module "tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}.math_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+  set(tfel_material_python_module "tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}.material_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+  set(mfront_python_module "mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+  set(mfront_umatxx_python_module "mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES}.umatxx_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+  set(mtest_python_module "mtest_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+else(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+  set(tfel_tests_python_module "tfel.tests")
+  set(tfel_math_python_module "tfel.math")
+  set(tfel_material_python_module "tfel.material")
+  set(mfront_python_module "mfront")
+  set(mfront_umatxx_python_module "mfront.umatxx")
+  set(mtest_python_module "mtest")
+endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+
 configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCrystalsAngles.txt"
     PolyCrystalsAngles.txt @ONLY)
 configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCrystalsAngles-30.txt"

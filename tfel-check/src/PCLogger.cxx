@@ -26,9 +26,9 @@ namespace tfel::check {
   PCLogger& PCLogger::operator=(const PCLogger&) = default;
   PCLogger::~PCLogger() = default;
 
-  PCLogger::PCLogger(const driver& logDriver) { this->addDriver(logDriver); }
+  PCLogger::PCLogger(const Driver& logDriver) { this->addDriver(logDriver); }
 
-  void PCLogger::addDriver(driver logDriver) {
+  void PCLogger::addDriver(Driver logDriver) {
     this->drivers.push_back(logDriver);
   }
 

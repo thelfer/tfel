@@ -1,0 +1,18 @@
+@DSL IsotropicPlasticMisesFlow;
+@Behaviour WarningTest20;
+@Description {
+  "print a warning because iterMax is used in the body of "
+  "@FlowRule"
+}
+
+@Epsilon 1e-12;
+
+@MaterialProperty stress H;
+@MaterialProperty stress s0;
+
+@FlowRule {
+  iterMax;
+  f = seq - H * p - s0;
+  df_dseq = 1;
+  df_dp = -H;
+}

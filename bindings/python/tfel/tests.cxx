@@ -11,12 +11,20 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include "TFEL/Macros.hxx"
 
-void declareTestResult();
-void declareXMLTestOutput();
+#define TFEL_TESTS_MODULE_NAME \
+  TFEL_PP_JOIN(tests_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
-BOOST_PYTHON_MODULE(tests) {
-  declareTestResult();
-  declareXMLTestOutput();
+void declareTestResult(pybind11::module_&);
+void declareXMLTestOutput(pybind11::module_&);
+
+#ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
+PYBIND11_MODULE(TFEL_TESTS_MODULE_NAME, m) {
+#else
+PYBIND11_MODULE(tests, m) {
+#endif
+  declareTestResult(m);
+  declareXMLTestOutput(m);
 }

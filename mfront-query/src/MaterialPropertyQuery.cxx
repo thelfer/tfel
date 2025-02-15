@@ -68,12 +68,14 @@ namespace mfront {
     for (const auto& q : sq) {
       this->registerCallBack(
           q.first,
-          CallBack(q.second, [this] { this->treatStandardQuery(); }, false));
+          CallBack(
+              q.second, [this] { this->treatStandardQuery(); }, false));
     }
     this->registerCallBack(
         "--parameter-default-value",
-        CallBack("display the default value of a parameter",
-                 [this] { this->treatParameterDefaultValue(); }, true));
+        CallBack(
+            "display the default value of a parameter",
+            [this] { this->treatParameterDefaultValue(); }, true));
     // bounds
     auto has_bounds = [this] {
       const auto& q = this->getCurrentCommandLineArgument();
@@ -183,6 +185,9 @@ namespace mfront {
     this->queries.push_back(
         {"parameter-default-value",
          [pn](const FileDescription&, const MaterialPropertyDescription& mpd) {
+           if (areParametersTreatedAsStaticVariables(mpd)) {
+             return;
+           }
            const auto& p = findByExternalName(mpd.parameters, pn);
            if (p == mpd.parameters.end()) {
              tfel::raise_if(!p->hasAttribute(VariableDescription::defaultValue),
@@ -299,15 +304,19 @@ namespace mfront {
       this->queries.push_back(
           {"parameters",
            [](const FileDescription&, const MaterialPropertyDescription& mpd) {
-             for (const auto& p : mpd.parameters) {
-               QueryHandlerBase::displayVariable(p);
+             if (!areParametersTreatedAsStaticVariables(mpd)) {
+               for (const auto& p : mpd.parameters) {
+                 QueryHandlerBase::displayVariable(p);
+               }
              }
            }});
     } else if (qn == "--parameters-file") {
       this->queries.push_back(
           {"parameters-file",
            [](const FileDescription&, const MaterialPropertyDescription& mpd) {
-             std::cout << mfront::getParametersFileName(mpd) << '\n';
+             if (!areParametersTreatedAsStaticVariables(mpd)) {
+               std::cout << mfront::getParametersFileName(mpd) << '\n';
+             }
            }});
     } else {
       tfel::raise(

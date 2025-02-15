@@ -13,13 +13,42 @@
 
 #include <vector>
 #include <memory>
-#include <boost/python.hpp>
-#include <boost/python/numpy.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/numpy.h>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Math/vector.hxx"
-#include "TFEL/Numpy/ndarray.hxx"
 #include "TFEL/Math/AccelerationAlgorithms/UAnderson.hxx"
 #include "TFEL/Math/AccelerationAlgorithms/FAnderson.hxx"
+
+static void check(const pybind11::array_t<double>& a) {
+  const auto info = a.request();
+  /* Some basic validation checks ... */
+  if (info.format != pybind11::format_descriptor<double>::format()) {
+    tfel::raise("incompatible format: expected a double array!");
+  }
+  if (info.ndim != 1) {
+    tfel::raise("incompatible buffer dimension!");
+  }
+}
+
+static auto size(const pybind11::array_t<double>& a) {
+  check(a);
+  const auto info = a.request();
+  return static_cast<tfel::math::vector<double>::size_type>(info.shape[0]);
+}
+
+static auto data(const pybind11::array_t<double>& a) {
+  check(a);
+  const auto info = a.request();
+  return static_cast<const double*>(info.ptr);
+}
+
+static auto data(pybind11::array_t<double>& a) {
+  check(a);
+  const auto info = a.request();
+  return static_cast<double*>(info.ptr);
+}
 
 /*!
  * \brief a simple wrapper around the UAnderson class.
@@ -42,29 +71,30 @@ struct UAndersonAccelerationAlgorithm {
   /*!
    * \brief must be called at the beginning of each time step
    */
-  void initialize(const boost::python::numpy::ndarray& u) {
-    const auto s = tfel::numpy::get_size(u);
+  void initialize(const pybind11::array_t<double>& u) {
+    check(u);
+    const auto s = size(u);
     if (!this->a) {
       this->a = std::unique_ptr<UAnderson>(
           new UAnderson([s] { return new tfel::math::vector<double>(s); }));
       this->a->setAnderson(this->nfields, this->period);
     }
     this->a->restart(this->uO, this->uN);
-    const auto* const b = tfel::numpy::get_data(u);
+    const auto* const b = data(u);
     *(this->uO) = tfel::math::vector<double>(b, b + s);
   }
   /*!
    * \brief must be called at the beginning of each time step
    * \param[in] u1: current estimate
    */
-  void accelerate(boost::python::numpy::ndarray& u1) {
+  void accelerate(pybind11::array_t<double>& u1) {
     if (!this->a) {
       tfel::raise(
           "UAndersonAccelerationAlgorithm::accelerate: "
           "the `initialize` method has not been called");
     }
-    const auto s = tfel::numpy::get_size(u1);
-    auto* b = tfel::numpy::get_data(u1);
+    const auto s = size(u1);
+    auto* b = data(u1);
     if ((this->uO->size() != s) || (this->uN->size() != s)) {
       tfel::raise(
           "UAndersonAccelerationAlgorithm::accelerate: "
@@ -110,8 +140,8 @@ struct FAndersonAccelerationAlgorithm {
   /*!
    * \brief must be called at the beginning of each time step
    */
-  void initialize(const boost::python::numpy::ndarray& u) {
-    const auto s = tfel::numpy::get_size(u);
+  void initialize(const pybind11::array_t<double>& u) {
+    const auto s = size(u);
     if (!this->a) {
       this->a = std::unique_ptr<FAnderson>(
           new FAnderson([s] { return new tfel::math::vector<double>(s); }));
@@ -123,22 +153,21 @@ struct FAndersonAccelerationAlgorithm {
    * \brief must be called at the beginning of each time step
    * \param[in] u1: current estimate
    */
-  void accelerate(boost::python::numpy::ndarray& u1,
-                  const boost::python::numpy::ndarray& r) {
+  void accelerate(pybind11::array_t<double>& u1,
+                  const pybind11::array_t<double>& r) {
     if (!this->a) {
       tfel::raise(
           "FAndersonAccelerationAlgorithm::accelerate: "
           "the `initialize` method has not been called");
     }
-    const auto s = tfel::numpy::get_size(u1);
-    if ((s != tfel::numpy::get_size(r)) || (this->uO->size() != s) ||
-        (this->uN->size() != s)) {
+    const auto s = size(u1);
+    if ((s != size(r)) || (this->uO->size() != s) || (this->uN->size() != s)) {
       tfel::raise(
           "FAndersonAccelerationAlgorithm::accelerate: "
           "unmatched sizes");
     }
-    auto* b = tfel::numpy::get_data(u1);
-    auto* br = tfel::numpy::get_data(r);
+    auto* b = data(u1);
+    auto* br = data(r);
     *(this->uN) = tfel::math::vector<double>(b, b + s);
     *(this->Df) = tfel::math::vector<double>(br, br + s);
     this->a->newIter(this->uO, this->uN, this->Df);
@@ -161,16 +190,16 @@ struct FAndersonAccelerationAlgorithm {
   const size_type period;
 };  // end of FAndersonAccelerationAlgorithm
 
-void declareAccelerationAlgorithms();
+void declareAccelerationAlgorithms(pybind11::module_&);
 
-void declareAccelerationAlgorithms() {
+void declareAccelerationAlgorithms(pybind11::module_& m) {
   using size_type = UAndersonAccelerationAlgorithm::size_type;
-  boost::python::class_<UAndersonAccelerationAlgorithm, boost::noncopyable>(
-      "UAnderson", boost::python::init<size_type, size_type>())
+  pybind11::class_<UAndersonAccelerationAlgorithm>(m, "UAnderson")
+      .def(pybind11::init<size_type, size_type>())
       .def("initialize", &UAndersonAccelerationAlgorithm::initialize)
       .def("accelerate", &UAndersonAccelerationAlgorithm::accelerate);
-  boost::python::class_<FAndersonAccelerationAlgorithm, boost::noncopyable>(
-      "FAnderson", boost::python::init<size_type, size_type>())
+  pybind11::class_<FAndersonAccelerationAlgorithm>(m, "FAnderson")
+      .def(pybind11::init<size_type, size_type>())
       .def("initialize", &FAndersonAccelerationAlgorithm::initialize)
       .def("accelerate", &FAndersonAccelerationAlgorithm::accelerate);
 }  // end of declareAccelerationAlgorithms

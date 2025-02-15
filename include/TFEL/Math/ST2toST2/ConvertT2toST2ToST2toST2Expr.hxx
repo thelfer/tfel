@@ -26,12 +26,10 @@ namespace tfel::math {
   template <unsigned short N>
   struct ConvertT2toST2ToST2toST2Expr;
 
-  /*!
-   * Partial specialisation for 1D stensor
-   */
-  template <typename ST2toST2ResultType>
+  //! \brief partial specialisation in 1D
+  template <ST2toST2Concept ST2toST2ResultType>
   struct Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<1u>>
-      : public ST2toST2Concept<
+      : public ST2toST2ConceptBase<
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<1u>>>,
         public array_holder<9u, numeric_type<ST2toST2ResultType>> {
     static_assert(getSpaceDimension<ST2toST2ResultType>() == 1u);
@@ -42,10 +40,9 @@ namespace tfel::math {
     /*!
      * \param[in] A : t2tost2 to be converted
      */
-    template <typename T2toST2Type>
-    Expr(const T2toST2Type& A) {
+    template <T2toST2Concept T2toST2Type>
+    TFEL_HOST_DEVICE constexpr Expr(const T2toST2Type& A) noexcept {
       using tfel::fsalgo::copy;
-      static_assert(implementsT2toST2Concept<T2toST2Type>());
       static_assert(getSpaceDimension<ST2toST2ResultType>() ==
                     getSpaceDimension<T2toST2Type>());
       static_assert(isAssignableTo<numeric_type<T2toST2Type>,
@@ -57,8 +54,8 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    const value_type& operator()(const unsigned short i,
-                                 const unsigned short j) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 3 + j];
     }  // end of operator()
     /*!
@@ -66,18 +63,15 @@ namespace tfel::math {
      * In this case, the number of lines and columns
      * are deduced from the template parameter
      */
-    RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
-  };  // end of struct Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<1u>
-      // >
+  };  // end of Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<1u>>
 
-  /*!
-   * Partial specialisation for 2D stensor
-   */
-  template <typename ST2toST2ResultType>
+  //! \brief partial specialisation in 2D
+  template <ST2toST2Concept ST2toST2ResultType>
   struct Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<2u>>
-      : public ST2toST2Concept<
+      : public ST2toST2ConceptBase<
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<2u>>>,
         public array_holder<16u, numeric_type<ST2toST2ResultType>> {
     //! a simple check
@@ -89,9 +83,8 @@ namespace tfel::math {
     /*!
      * \param[in] A : t2tost2 to be converted
      */
-    template <typename T2toST2Type>
-    Expr(const T2toST2Type& A) {
-      static_assert(implementsT2toST2Concept<T2toST2Type>());
+    template <T2toST2Concept T2toST2Type>
+    TFEL_HOST_DEVICE constexpr Expr(const T2toST2Type& A) noexcept {
       static_assert(getSpaceDimension<ST2toST2ResultType>() ==
                     getSpaceDimension<T2toST2Type>());
       static_assert(isAssignableTo<numeric_type<T2toST2Type>,
@@ -120,8 +113,8 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    const value_type& operator()(const unsigned short i,
-                                 const unsigned short j) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 4 + j];
     }  // end of operator()
     /*!
@@ -129,18 +122,15 @@ namespace tfel::math {
      * In this case, the number of lines and columns
      * are deduced from the template parameter
      */
-    RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
-  };  // end of struct Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<2u>
-      // >
+  };  // end of Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<2u>>
 
-  /*!
-   * Partial specialisation for 3D stensor
-   */
-  template <typename ST2toST2ResultType>
+  //! \brief partial specialisation in 3D
+  template <ST2toST2Concept ST2toST2ResultType>
   struct Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<3u>>
-      : public ST2toST2Concept<
+      : public ST2toST2ConceptBase<
             Expr<ST2toST2ResultType, ConvertT2toST2ToST2toST2Expr<3u>>>,
         public array_holder<36u, numeric_type<ST2toST2ResultType>> {
     static_assert(getSpaceDimension<ST2toST2ResultType>() == 3u);
@@ -151,9 +141,8 @@ namespace tfel::math {
     /*!
      * \param[in] A : t2tost2 to be converted
      */
-    template <typename T2toST2Type>
-    Expr(const T2toST2Type& A) {
-      static_assert(implementsT2toST2Concept<T2toST2Type>());
+    template <T2toST2Concept T2toST2Type>
+    TFEL_HOST_DEVICE constexpr Expr(const T2toST2Type& A) noexcept {
       static_assert(getSpaceDimension<ST2toST2ResultType>() ==
                     getSpaceDimension<T2toST2Type>());
       static_assert(isAssignableTo<numeric_type<T2toST2Type>,
@@ -202,8 +191,8 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    const value_type& operator()(const unsigned short i,
-                                 const unsigned short j) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 6 + j];
     }  // end of operator()
     /*!
@@ -211,11 +200,10 @@ namespace tfel::math {
      * In this case, the number of lines and columns
      * are deduced from the template parameter
      */
-    RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
-  };  // end of struct Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<3u>
-      // >
+  };  // end of Expr<ST2toST2ResultType,ConvertT2toST2ToST2toST2Expr<3u>>
 
 }  // end of namespace tfel::math
 

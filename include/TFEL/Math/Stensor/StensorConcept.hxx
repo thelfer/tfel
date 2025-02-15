@@ -12,6 +12,7 @@
 #ifndef LIB_TFEL_MATH_STENSORCONCEPT_HXX
 #define LIB_TFEL_MATH_STENSORCONCEPT_HXX 1
 
+#include <concepts>
 #include <type_traits>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/Metaprogramming/Implements.hxx"
@@ -33,89 +34,73 @@ namespace tfel::math {
    * \brief Helper class to characterise stensors.
    */
   struct StensorTag {};  // end of StensorTag
-
+  /*!
+   * \brief an helper class that simply exposes publically a member named
+   * ConceptTag as an alias to StensorTag.
+   *
+   * The main reason for this alias is to properly implement the `ConceptRebind`
+   * metafunction.
+   */
   template <typename T>
-  struct StensorConcept {
+  struct StensorConceptBase {
+    //! \brief an alias to StensorTag
     using ConceptTag = StensorTag;
-
-   protected:
-    constexpr StensorConcept() = default;
-    constexpr StensorConcept(StensorConcept&&) = default;
-    constexpr StensorConcept(const StensorConcept&) = default;
-    constexpr StensorConcept& operator=(const StensorConcept&) = default;
-    ~StensorConcept() = default;
   };
 
   /*!
-   * \brief an helper function which returns if the given type implements the
-   * `StensorConcept`.
-   * \tparam StensorType: type tested
+   * \brief definition of the StensorConcept
+   * a class matching the stensor concept must expose the `StensorTag` and have
+   * access operators.
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr bool implementsStensorConcept() {
-    return tfel::meta::implements<StensorType, StensorConcept>();
-  }  // end of implementsStensorConcept
+  template <typename T>
+  concept StensorConcept =
+      (std::is_same_v<typename std::decay_t<T>::ConceptTag, StensorTag>)&&  //
+      (requires(const T t, const unsigned short i) { t[i]; }) &&            //
+      (requires(const T t, const unsigned short i) { t(i); });
 
-  //! \brief a simple alias for backward compatibility with versions prior
-  //! to 4.0
-  template <typename StensorType>
-  using StensorTraits =
-      std::conditional_t<implementsStensorConcept<StensorType>(),
-                         MathObjectTraits<StensorType>,
-                         MathObjectTraits<tfel::meta::InvalidType>>;
-
-  //! \brief a simple alias for backward compatibility with versions prior
-  //! to 4.0
-  template <typename StensorType>
-  using StensorNumType =
-      std::conditional_t<implementsStensorConcept<StensorType>(),
-                         numeric_type<StensorType>,
-                         MathObjectTraits<tfel::meta::InvalidType>>;
-
-  //! partial specialisation for symmetric tensors
+  //! \brief partial specialisation for symmetric tensors
   template <typename Type>
   struct ConceptRebind<StensorTag, Type> {
     //! \brief a simple alias
-    using type = StensorConcept<Type>;
+    using type = StensorConceptBase<Type>;
   };
+
   /*!
    * \return the sum of the absolute values of all components of a symmetric
    * tensor
    * \param[in] s: symmetric tensor
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE TFEL_HOST_DEVICE constexpr std::enable_if_t<
-      implementsStensorConcept<StensorType>(),
-      typename tfel::typetraits::AbsType<numeric_type<StensorType>>::type>
-  abs(const StensorType&);
+  TFEL_HOST_DEVICE constexpr auto abs(const StensorConcept auto&) noexcept;
   /*!
    * \return the trace of a symmetric tensor
    * \param[in] s: symmetric tensor
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE TFEL_HOST_DEVICE constexpr std::enable_if_t<
-      implementsStensorConcept<StensorType>(),
-      numeric_type<StensorType>>
-  trace(const StensorType&);
+  TFEL_HOST_DEVICE constexpr auto trace(const StensorConcept auto&) noexcept;
   /*!
    * \return the von Mises stress of a symmetric tensor
    * \param[in] s: symmetric tensor
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE2
-      TFEL_HOST_DEVICE constexpr std::enable_if_t<
-          implementsStensorConcept<StensorType>(),
-          numeric_type<StensorType>>
-      sigmaeq(const StensorType&);
+  TFEL_HOST_DEVICE constexpr auto sigmaeq(const StensorConcept auto&) noexcept;
   /*!
    * \return the deviator of a symmetric tensor
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE TFEL_HOST_DEVICE constexpr std::enable_if_t<
-      implementsStensorConcept<StensorType>(),
-      EvaluationResult<StensorType>>
-  deviator(const StensorType&);
-
+  TFEL_HOST_DEVICE constexpr auto deviator(const StensorConcept auto&) noexcept;
+  /*!
+   * \brief compute the derivative of the determinant with respect
+   * to its argument.
+   * \param[out] dJ: determinant derivative
+   * \param[in]  s: argument
+   */
+  TFEL_HOST_DEVICE constexpr auto computeDeterminantDerivative(
+      StensorConcept auto&, const StensorConcept auto&) noexcept;
+  /*!
+   * \brief compute the derivative of the determinant with respect
+   * to its argument.
+   * \param[out] dJ: determinant derivative
+   * \param[in]  s:  argument
+   */
+  TFEL_HOST_DEVICE constexpr auto computeDeviatorDeterminantDerivative(
+      StensorConcept auto&, const StensorConcept auto&) noexcept;
   /*!
    * \brief return the size of a symmetric tensor for the given
    * dimension
@@ -123,36 +108,38 @@ namespace tfel::math {
    */
   TFEL_HOST TFELMATH_VISIBILITY_EXPORT unsigned short getStensorSize(
       const unsigned short);
+
   /*!
-   * \brief compute the derivative of the determinant with respect
-   * to its argument.
-   * \param[out] dJ: determinant derivative
-   * \param[in]  s: argument
+   * \brief a simple alias for backward compatibility with versions prior
+   * to 4.0
    */
-  template <typename StensorResultType, typename StensorType>
-  TFEL_HOST_DEVICE TFEL_HOST_DEVICE constexpr std::enable_if_t<
-      (implementsStensorConcept<StensorResultType>() &&
-       implementsStensorConcept<StensorType>() &&
-       isAssignableTo<typename ComputeUnaryResult<numeric_type<StensorType>,
-                                                  Power<2>>::Result,
-                      numeric_type<StensorResultType>>()),
-      void>
-  computeDeterminantDerivative(StensorResultType&, const StensorType&);
+  template <typename StensorType>
+  using StensorTraits =
+      std::conditional_t<StensorConcept<StensorType>,
+                         MathObjectTraits<StensorType>,
+                         MathObjectTraits<tfel::meta::InvalidType>>;
+
   /*!
-   * \brief compute the derivative of the determinant with respect
-   * to its argument.
-   * \param[out] dJ: determinant derivative
-   * \param[in]  s:  argument
+   * \brief a simple alias for backward compatibility with versions prior
+   * to 4.0
    */
-  template <typename StensorResultType, typename StensorType>
-  TFEL_HOST_DEVICE TFEL_HOST_DEVICE constexpr std::enable_if_t<
-      (implementsStensorConcept<StensorResultType>() &&
-       implementsStensorConcept<StensorType>() &&
-       isAssignableTo<typename ComputeUnaryResult<numeric_type<StensorType>,
-                                                  Power<2>>::Result,
-                      numeric_type<StensorResultType>>()),
-      void>
-  computeDeviatorDeterminantDerivative(StensorResultType&, const StensorType&);
+  template <typename StensorType>
+  using StensorNumType =
+      std::conditional_t<StensorConcept<StensorType>,
+                         numeric_type<StensorType>,
+                         MathObjectTraits<tfel::meta::InvalidType>>;
+
+  /*!
+   * \brief an helper function which returns if the given type implements the
+   * `StensorConcept`.
+   * \tparam StensorType: type tested
+   * \note function given for backward compatibility with versions prior
+   * to 5.0
+   */
+  template <typename StensorType>
+  [[deprecated]] TFEL_HOST_DEVICE constexpr bool implementsStensorConcept() {
+    return StensorConcept<StensorType>;
+  }  // end of implementsStensorConcept
 
 }  // end of namespace tfel::math
 

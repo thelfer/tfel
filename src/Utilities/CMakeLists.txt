@@ -5,12 +5,17 @@ tfel_library(TFELUtilities
   Token.cxx
   Data.cxx
   CxxKeywords.cxx
-  TerminalColors.cxx
   CxxTokenizerOptions.cxx
   CxxTokenizer.cxx
   Argument.cxx
   ArgumentParser.cxx)
 target_include_directories(TFELUtilities
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
+if(enable-static)
+  target_include_directories(TFELUtilities-static
+    PUBLIC 
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>)
+endif(enable-static)

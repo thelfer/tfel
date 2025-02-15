@@ -34,19 +34,12 @@ namespace mtest {
    * \brief structure describing a cubic element for pipes
    */
   struct PipeCubicElement {
-#ifndef _MSC_VER
     // value of the Gauss points position in the reference element
     static constexpr real pg_radii[4] = {-0.861136311594053, -0.339981043584856,
                                          0.339981043584856, 0.861136311594053};
     // Gauss point weight
     static constexpr real wg[4] = {0.347854845137454, 0.652145154862546,
                                    0.652145154862546, 0.347854845137454};
-#else  /* _MSC_VER */
-    // value of the Gauss points position in the reference element
-    static const real pg_radii[4];
-    // Gauss point weight
-    static const real wg[4];
-#endif /* _MSC_VER */
     /*!
      * \return the integral value of the given values at integration
      * points.
@@ -117,15 +110,9 @@ namespace mtest {
         const size_t);
 
    private:
-#ifndef _MSC_VER
     static constexpr real one_third = real{1} / real{3};
     static constexpr real cste = real{9} / real{16};
     static constexpr real cste2 = real{27} / real{16};
-#else  /* _MSC_VER */
-    static const real one_third;
-    static const real cste;
-    static const real cste2;
-#endif /* _MSC_VER */
     static constexpr inline real jacobian(
         const real, const real, const real, const real, const real);
     static constexpr inline real sf0(const real);

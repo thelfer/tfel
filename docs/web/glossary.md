@@ -200,7 +200,7 @@ This entry describes the emissivity of the surface of a material is its effectiv
 
 
 * units:
-  *SI: kg.m.T^{−3}
+  no units specified
 * type: scalar
 
 # The `EquivalentPlasticStrain` entry
@@ -399,7 +399,7 @@ where
 * \(t_{0}\) is the reference time;
 * \(t\) is the current time.
 
-In pratice, this integral is computed incrementally as follows: 
+In practice, this integral is computed incrementally as follows: 
 \[
 \average{T}\paren{t+dt,\vec{r}} \approx \Frac{1}{t+dt-t_{0}}\left[\paren{t-t_{0}}\,\average{T}\paren{t,\vec{r}}+\Frac{dt}{2}\left[T\paren{t,\vec{r}}+T\paren{t+dt,\vec{r}}\right]\right]
 \]
@@ -463,7 +463,7 @@ This temperature is defined as follows:\[\average{T}\paren{t} =\Frac{1}{t-t_{0}}
 
 ## Notes 
 
-In pratice, the computation of the spatial integral is done using standard finite element operations and the time integral is performed incrementally using a trapezoidal rule.
+In practice, the computation of the spatial integral is done using standard finite element operations and the time integral is performed incrementally using a trapezoidal rule.
 
 # The `MeanTemperature` entry
 
@@ -480,7 +480,7 @@ This temperature is defined as follows:\[\average{T}\paren{t}  = \Frac{1}{\int_{
 
 ## Notes 
 
-In pratice, the computation of this integral is done using standard finite element operations.
+In practice, the computation of this integral is done using standard finite element operations.
 
 # The `NeutronFluence` entry
 
@@ -872,7 +872,7 @@ This entry describes the thermal conductivity of an isotropic material.
 
 
 * units:
-  *SI: W.m^{-1}
+  *SI: W.m^{-1}.K^{-1}
 * type: scalar
 
 # The `ThermalConductivity1` entry
@@ -881,7 +881,7 @@ This entry describes the thermal conductivity of an orthotropic material along t
 
 
 * units:
-  *SI: W.m^{-1}
+  *SI: W.m^{-1}.K^{-1}
 * type: scalar
 
 # The `ThermalConductivity2` entry
@@ -890,7 +890,7 @@ This entry describes the thermal conductivity of an orthotropic material along t
 
 
 * units:
-  *SI: W.m^{-1}
+  *SI: W.m^{-1}.K^{-1}
 * type: scalar
 
 # The `ThermalConductivity3` entry
@@ -899,7 +899,7 @@ This entry describes the thermal conductivity of an orthotropic material along t
 
 
 * units:
-  *SI: W.m^{-1}
+  *SI: W.m^{-1}.K^{-1}
 * type: scalar
 
 # The `ThermalExpansion` entry

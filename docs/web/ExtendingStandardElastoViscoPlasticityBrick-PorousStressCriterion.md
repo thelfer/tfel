@@ -231,7 +231,7 @@ Michel and Suquet' hollow sphere stress criterion. In a new directory,
 we just follow the steps given by the previous paragraph:
 
 ~~~~{.sh}
-wget http://tfel.sourceforge.net/scripts/generate-porous.sh
+wget https://thelfer.github.io/tfel/web/scripts/generate-porous.sh
 chmod +x generate-porous.sh
 ./generate-porous.sh
 ~~~~

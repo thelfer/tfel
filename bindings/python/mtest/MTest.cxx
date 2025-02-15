@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
-
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Raise.hxx"
 #include "MTest/MTest.hxx"
 #include "MTest/Evolution.hxx"
@@ -619,6 +619,13 @@ static mtest::MTestCurrentState MTestCurrentState_copy(
   return src;
 }
 
+static mtest::MTestCurrentState MTestCurrentState_makeDeepCopy(
+    const mtest::MTestCurrentState& src) {
+  auto copy = mtest::MTestCurrentState{src};
+  static_cast<mtest::StudyCurrentState&>(copy) = src.makeDeepCopy();
+  return copy;
+}
+
 static void MTest_setRotationMatrix1(
     mtest::MTest& t,
     const std::vector<std::vector<mtest::real>>& m,
@@ -727,7 +734,7 @@ static void setInternalStateVariableValue2(mtest::MTestCurrentState& t,
   setInternalStateVariableValue4(t, n, v, 1);
 }
 
-static boost::python::object getInternalStateVariableValue1(
+static pybind11::object getInternalStateVariableValue1(
     const mtest::MTestCurrentState& t, const std::string& n, const int i) {
   auto throw_if = [](const bool b, const std::string& m) {
     tfel::raise_if(b, "mtest::getInternalStateVariableValue: " + m);
@@ -773,13 +780,13 @@ static boost::python::object getInternalStateVariableValue1(
     return s.iv1;
   }();
   if (type == 0) {
-    return boost::python::object(iv[pos]);
+    return pybind11::cast(iv[pos]);
   }
-  return boost::python::object(
+  return pybind11::cast(
       std::vector<mtest::real>(iv.begin() + pos, iv.begin() + pos + size));
 }
 
-static boost::python::object getInternalStateVariableValue2(
+static pybind11::object getInternalStateVariableValue2(
     const mtest::MTestCurrentState& s, const std::string& n) {
   return getInternalStateVariableValue1(s, n, 1);
 }  // end of getInternalStateVariableValue
@@ -823,35 +830,35 @@ static void MTest_addEvent(mtest::MTest& m,
   m.addEvent(n, std::vector<mtest::real>(1u, t));
 }  // end of MTest_addEvent
 
-void declareMTest();
+void declareMTest(pybind11::module_&);
 
-void declareMTest() {
-  using namespace boost;
-  using namespace boost::python;
+void declareMTest(pybind11::module_& m) {
+  using namespace pybind11::literals;
   using namespace mtest;
-  using boost::python::arg;
   using tfel::tests::TestResult;
 
-  class_<MTestCurrentState, bases<StudyCurrentState>>("MTestCurrentState")
+  pybind11::class_<MTestCurrentState, StudyCurrentState>(m, "MTestCurrentState")
+      .def(pybind11::init<>())
       .def("copy", &MTestCurrentState_copy)
-      .add_property("u_1", MTestCurrentState_getu_1)
-      .add_property("u0", MTestCurrentState_getu0)
-      .add_property("u1", MTestCurrentState_getu1)
-      .add_property("s_1", MTestCurrentState_gets_1)
-      .add_property("s0", MTestCurrentState_gets0)
-      .add_property("s1", MTestCurrentState_gets1)
-      .add_property("e0", MTestCurrentState_gete0)
-      .add_property("e1", MTestCurrentState_gete1)
-      .add_property("e_th0", MTestCurrentState_gete_th0)
-      .add_property("e_th1", MTestCurrentState_gete_th1)
-      .add_property("mprops1", MTestCurrentState_getmprops1)
-      .add_property("iv_1", MTestCurrentState_getiv_1)
-      .add_property("iv0", MTestCurrentState_getiv0)
-      .add_property("iv1", MTestCurrentState_getiv1)
-      .add_property("evs0", MTestCurrentState_getesv0)
-      .add_property("desv", MTestCurrentState_getdesv)
-      .add_property("dt_1", MTestCurrentState_getdt_1)
-      .add_property("Tref", MTestCurrentState_getTref)
+      .def("makeDeepCopy", &MTestCurrentState_makeDeepCopy)
+      .def_property_readonly("u_1", MTestCurrentState_getu_1)
+      .def_property_readonly("u0", MTestCurrentState_getu0)
+      .def_property_readonly("u1", MTestCurrentState_getu1)
+      .def_property_readonly("s_1", MTestCurrentState_gets_1)
+      .def_property_readonly("s0", MTestCurrentState_gets0)
+      .def_property_readonly("s1", MTestCurrentState_gets1)
+      .def_property_readonly("e0", MTestCurrentState_gete0)
+      .def_property_readonly("e1", MTestCurrentState_gete1)
+      .def_property_readonly("e_th0", MTestCurrentState_gete_th0)
+      .def_property_readonly("e_th1", MTestCurrentState_gete_th1)
+      .def_property_readonly("mprops1", MTestCurrentState_getmprops1)
+      .def_property_readonly("iv_1", MTestCurrentState_getiv_1)
+      .def_property_readonly("iv0", MTestCurrentState_getiv0)
+      .def_property_readonly("iv1", MTestCurrentState_getiv1)
+      .def_property_readonly("evs0", MTestCurrentState_getesv0)
+      .def_property_readonly("desv", MTestCurrentState_getdesv)
+      .def_property_readonly("dt_1", MTestCurrentState_getdt_1)
+      .def_property_readonly("Tref", MTestCurrentState_getTref)
       .def("setInternalStateVariableValue", ::setInternalStateVariableValue,
            "set the value of a scalar internal state variable\n"
            "\n"
@@ -925,7 +932,8 @@ void declareMTest() {
   void (MTest::*pm3)(StudyCurrentState&, SolverWorkSpace&, const real,
                      const real) = &MTest::execute;
 
-  class_<MTest, noncopyable, bases<SingleStructureScheme>>("MTest")
+  pybind11::class_<MTest, SingleStructureScheme>(m, "MTest")
+      .def(pybind11::init<>())
       .def("execute", pm)
       .def("execute", pm2)
       .def("execute", pm3)
@@ -949,7 +957,7 @@ void declareMTest() {
       .def("setStressEpsilon", MTest_setStressEpsilon)
       .def("setCohesiveForceEpsilon", MTest_setCohesiveForceEpsilon)
       .def(
-          "setImposedStress", MTest_setImposedStress1, (arg("name"), "values"),
+          "setImposedStress", MTest_setImposedStress1, "name"_a, "values"_a,
           "This method specify the constant evolution of a stresses "
           "component.\n"
           "* The first parameter (string) is the name of the choosen "
@@ -964,8 +972,8 @@ void declareMTest() {
           "* The second parameter (double) is the constant value "
           "of the selected stresses component.")
       .def(
-          "setImposedStress", MTest_setImposedStress1b,
-          (arg("name"), "values", "options"),
+          "setImposedStress", MTest_setImposedStress1b, "name"_a, "values"_a,
+          "options"_a,
           "This method specify the constant evolution of a stresses "
           "component.\n"
           "* The first parameter (string) is the name of the choosen "
@@ -980,7 +988,7 @@ void declareMTest() {
           "* The second parameter (double) is the constant value "
           "of the selected stresses component.")
       .def(
-          "setImposedStress", MTest_setImposedStress2, (arg("name"), "values"),
+          "setImposedStress", MTest_setImposedStress2, "name"_a, "values"_a,
           "This method specify the linear evolution of a stresses component.\n"
           "* The first parameter (string) is the name of the choosen "
           "stresses component. The allowed components (see the "
@@ -999,8 +1007,8 @@ void declareMTest() {
           "the returned value will be the one from the nearest "
           "association available.")
       .def(
-          "setImposedStress", MTest_setImposedStress2b,
-          (arg("name"), "values", "options"),
+          "setImposedStress", MTest_setImposedStress2b, "name"_a, "values"_a,
+          "options"_a,
           "This method specify the linear evolution of a stresses component.\n"
           "* The first parameter (string) is the name of the choosen "
           "stresses component. The allowed components (see the "
@@ -1018,24 +1026,24 @@ void declareMTest() {
           "given in the array. Should a time be out of the array, "
           "the returned value will be the one from the nearest "
           "association available.")
-      .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce1,
-           (arg("name"), "values"))
-      .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce1b,
-           (arg("name"), "values", "options"))
-      .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce2,
-           (arg("name"), "values"))
-      .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce2b,
-           (arg("name"), "values", "options"))
+      .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce1, "name"_a,
+           "values"_a)
+      .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce1b, "name"_a,
+           "values"_a, "options"_a)
+      .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce2, "name"_a,
+           "values"_a)
+      .def("setImposedCohesiveForce", MTest_setImposedCohesiveForce2b, "name"_a,
+           "values"_a, "options"_a)
       .def("setImposedThermodynamicForce", MTest_setImposedThermodynamicForce1,
-           (arg("name"), "values"))
+           "name"_a, "values"_a)
       .def("setImposedThermodynamicForce", MTest_setImposedThermodynamicForce1b,
-           (arg("name"), "values", "options"))
+           "name"_a, "values"_a, "options"_a)
       .def("setImposedThermodynamicForce", MTest_setImposedThermodynamicForce2,
-           (arg("name"), "values"))
+           "name"_a, "values"_a)
       .def("setImposedThermodynamicForce", MTest_setImposedThermodynamicForce2b,
-           (arg("name"), "values", "options"))
+           "name"_a, "values"_a, "options"_a)
       .def("setNonLinearConstraint", MTest_setNonLinearConstraint1,
-           (arg("constraint"), "normalisation_policy"),
+           "constraint"_a, "normalisation_policy"_a,
            "This method add a non linear constraint "
            "on driving variables or thermodynamic forces.\n"
            "The normalisation policy can have one of the following values:\n"
@@ -1047,7 +1055,7 @@ void declareMTest() {
            "stating that the constraint is of the order "
            "of magnitude of the thermodynamic force'\n")
       .def("setNonLinearConstraint", MTest_setNonLinearConstraint1b,
-           (arg("constraint"), "normalisation_policy", "options"),
+           "constraint"_a, "normalisation_policy"_a, "options"_a,
            "This method add a non linear constraint "
            "on driving variables or thermodynamic forces.\n"
            "The normalisation policy can have one of the following values:\n"
@@ -1059,7 +1067,7 @@ void declareMTest() {
            "stating that the constraint is of the order "
            "of magnitude of the thermodynamic force'\n")
       .def(
-          "setImposedStrain", MTest_setImposedStrain1, (arg("name"), "values"),
+          "setImposedStrain", MTest_setImposedStrain1, "name"_a, "values"_a,
           "This method specify the constant evolution of a strains component.\n"
           "* The first parameter (string) is the name of the choosen "
           "strains component. The allowed components (see the "
@@ -1073,8 +1081,8 @@ void declareMTest() {
           "* The second parameter (double) is the constant value "
           "of the selected strains component.")
       .def(
-          "setImposedStrain", MTest_setImposedStrain1b,
-          (arg("name"), "values", "options"),
+          "setImposedStrain", MTest_setImposedStrain1b, "name"_a, "values"_a,
+          "options"_a,
           "This method specify the constant evolution of a strains component.\n"
           "* The first parameter (string) is the name of the choosen "
           "strains component. The allowed components (see the "
@@ -1087,7 +1095,7 @@ void declareMTest() {
           "- Tridimensional                       :  EXX EYY EZZ EXY EXZ EYZ\n"
           "* The second parameter (double) is the constant value "
           "of the selected strains component.")
-      .def("setImposedStrain", MTest_setImposedStrain2, (arg("name"), "values"),
+      .def("setImposedStrain", MTest_setImposedStrain2, "name"_a, "values"_a,
            "This method specify the linear evolution of a strains component.\n"
            "* The first parameter (string) is the name of the choosen "
            "strains component. The allowed components (see the "
@@ -1105,8 +1113,8 @@ void declareMTest() {
            "given in the array. Should a time be out of the array, "
            "the returned value will be the one from the nearest "
            "association available.")
-      .def("setImposedStrain", MTest_setImposedStrain2b,
-           (arg("name"), "values", "options"),
+      .def("setImposedStrain", MTest_setImposedStrain2b, "name"_a, "values"_a,
+           "options"_a,
            "This method specify the linear evolution of a strains component.\n"
            "* The first parameter (string) is the name of the choosen "
            "strains component. The allowed components (see the "
@@ -1125,7 +1133,7 @@ void declareMTest() {
            "the returned value will be the one from the nearest "
            "association available.")
       .def("setImposedDeformationGradient",
-           MTest_setImposedDeformationGradient1, (arg("name"), "values"),
+           MTest_setImposedDeformationGradient1, "name"_a, "values"_a,
            "This method specify the constant evolution of a deformation "
            "gradient component.\n"
            "* The first parameter (string) is the name of the choosen "
@@ -1141,8 +1149,8 @@ void declareMTest() {
            "* The second parameter (double) is the constant value "
            "of the selected deformation gradient component.")
       .def("setImposedDeformationGradient",
-           MTest_setImposedDeformationGradient1b,
-           (arg("name"), "values", "options"),
+           MTest_setImposedDeformationGradient1b, "name"_a, "values"_a,
+           "options"_a,
            "This method specify the constant evolution of a deformation "
            "gradient component.\n"
            "* The first parameter (string) is the name of the choosen "
@@ -1158,7 +1166,7 @@ void declareMTest() {
            "* The second parameter (double) is the constant value "
            "of the selected deformation gradient component.")
       .def("setImposedDeformationGradient",
-           MTest_setImposedDeformationGradient2, (arg("name"), "values"),
+           MTest_setImposedDeformationGradient2, "name"_a, "values"_a,
            "This method specify the linear evolution of a deformation "
            "gradient component.\n"
            "* The first parameter (string) is the name of the choosen "
@@ -1179,8 +1187,8 @@ void declareMTest() {
            "the returned value will be the one from the nearest "
            "association available.")
       .def("setImposedDeformationGradient",
-           MTest_setImposedDeformationGradient2b,
-           (arg("name"), "values", "options"),
+           MTest_setImposedDeformationGradient2b, "name"_a, "values"_a,
+           "options"_a,
            "This method specify the linear evolution of a deformation "
            "gradient component.\n"
            "* The first parameter (string) is the name of the choosen "
@@ -1201,23 +1209,23 @@ void declareMTest() {
            "the returned value will be the one from the nearest "
            "association available.")
       .def("setImposedOpeningDisplacement",
-           MTest_setImposedOpeningDisplacement1, (arg("name"), "values"))
+           MTest_setImposedOpeningDisplacement1, "name"_a, "values"_a)
       .def("setImposedOpeningDisplacement",
-           MTest_setImposedOpeningDisplacement1b,
-           (arg("name"), "values", "options"))
+           MTest_setImposedOpeningDisplacement1b, "name"_a, "values"_a,
+           "options"_a)
       .def("setImposedOpeningDisplacement",
-           MTest_setImposedOpeningDisplacement2, (arg("name"), "values"))
+           MTest_setImposedOpeningDisplacement2, "name"_a, "values"_a)
       .def("setImposedOpeningDisplacement",
-           MTest_setImposedOpeningDisplacement2b,
-           (arg("name"), "values", "options"))
-      .def("setImposedGradient", MTest_setImposedGradient1,
-           (arg("name"), "values"))
-      .def("setImposedGradient", MTest_setImposedGradient1b,
-           (arg("name"), "values", "options"))
-      .def("setImposedGradient", MTest_setImposedGradient2,
-           (arg("name"), "values"))
-      .def("setImposedGradient", MTest_setImposedGradient2b,
-           (arg("name"), "values", "options"))
+           MTest_setImposedOpeningDisplacement2b, "name"_a, "values"_a,
+           "options"_a)
+      .def("setImposedGradient", MTest_setImposedGradient1, "name"_a,
+           "values"_a)
+      .def("setImposedGradient", MTest_setImposedGradient1b, "name"_a,
+           "values"_a, "options"_a)
+      .def("setImposedGradient", MTest_setImposedGradient2, "name"_a,
+           "values"_a)
+      .def("setImposedGradient", MTest_setImposedGradient2b, "name"_a,
+           "values"_a, "options"_a)
       .def("setScalarInternalStateVariableInitialValue",
            &MTest::setScalarInternalStateVariableInitialValue)
       .def("setRotationMatrix", &MTest_setRotationMatrix1,

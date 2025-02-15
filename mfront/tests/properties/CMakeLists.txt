@@ -27,27 +27,18 @@ function(add_mfront_generated_source lib interface ext file)
     add_custom_command(
       OUTPUT  "${mfront_output}"
       COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELMFront>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:MFrontLogStream>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELMaterial>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELNUMODIS>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELMathParser>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELGlossary>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELSystem>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELUtilities>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELException>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELConfig>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELUnicodeSupport>;%PATH%"
+      ARGS "PATH=$<TARGET_FILE_DIR:TFELMFront>;\
+$<TARGET_FILE_DIR:MFrontLogStream>;\
+$<TARGET_FILE_DIR:TFELMaterial>;\
+$<TARGET_FILE_DIR:TFELNUMODIS>;\
+$<TARGET_FILE_DIR:TFELMathParser>;\
+$<TARGET_FILE_DIR:TFELGlossary>;\
+$<TARGET_FILE_DIR:TFELSystem>;\
+$<TARGET_FILE_DIR:TFELUtilities>;\
+$<TARGET_FILE_DIR:TFELException>;\
+$<TARGET_FILE_DIR:TFELConfig>;\
+$<TARGET_FILE_DIR:TFELUnicodeSupport>;\
+%PATH%"
       COMMAND "${mfront_executable}"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
       ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
@@ -86,6 +77,7 @@ function(mfront_check_library lib interface ext)
   add_library(${lib} EXCLUDE_FROM_ALL
     ${${lib}_SOURCES}
     ${${lib}_ADDITIONAL_SOURCES})
+  target_link_libraries(${lib} PRIVATE TFELException)
   set_target_properties(${lib} PROPERTIES
       COMPILE_FLAGS "-DMFRONT_COMPILING")
   add_dependencies(check ${lib})
@@ -101,6 +93,7 @@ function(mfront_check_module lib interface ext)
   add_library(${lib} MODULE EXCLUDE_FROM_ALL
     ${${lib}_SOURCES}
     ${${lib}_ADDITIONAL_SOURCES})
+  target_link_libraries(${lib} PRIVATE TFELException)
   set_target_properties(${lib} PROPERTIES
       COMPILE_FLAGS "-DMFRONT_COMPILING")
   add_dependencies(check ${lib})
@@ -150,7 +143,17 @@ set(mfront_SOURCES
   T91MartensiticSteel_Rinf_ROUX2007
   T91MartensiticSteel_ThermalExpansion_ROUX2007
   T91MartensiticSteel_YieldStress_ROUX2007
-  T91MartensiticSteel_YoungModulus_ROUX2007)
+  T91MartensiticSteel_YoungModulus_ROUX2007
+  LinearDataInterpolationTest
+  LinearDataInterpolationTest2
+  LinearDataInterpolationTest3
+  LinearDataInterpolationTest4
+  LinearDataInterpolationTest5
+  CubicSplineDataInterpolationTest
+  CubicSplineDataInterpolationTest2
+  CubicSplineDataInterpolationTest3
+  CubicSplineDataInterpolationTest4
+  CubicSplineDataInterpolationTest5)
 
 mfront_dependencies(MFrontMaterialProperties-generic
   MaterialLawDSLOptionsTest
@@ -158,8 +161,8 @@ mfront_dependencies(MFrontMaterialProperties-generic
   VanadiumAlloy_PoissonRatio_SRMA)
 mfront_check_module(MFrontMaterialProperties-generic generic "generic" ${mfront_SOURCES})
 target_include_directories(MFrontMaterialProperties-generic
-  PRIVATE "${CMAKE_SOURCE_DIR}/include"
-  PRIVATE "${CMAKE_SOURCE_DIR}/mfront/include"
+  PRIVATE "${PROJECT_SOURCE_DIR}/include"
+  PRIVATE "${PROJECT_SOURCE_DIR}/mfront/include"
   PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
 
 mfront_dependencies(MFrontMaterialProperties
@@ -168,7 +171,7 @@ mfront_dependencies(MFrontMaterialProperties
   VanadiumAlloy_PoissonRatio_SRMA)
 mfront_check_library(MFrontMaterialProperties c "" ${mfront_SOURCES})
 target_include_directories(MFrontMaterialProperties
-  PRIVATE "${CMAKE_SOURCE_DIR}/include"
+  PRIVATE "${PROJECT_SOURCE_DIR}/include"
   PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
 
 if(HAVE_CASTEM)
@@ -178,7 +181,7 @@ if(HAVE_CASTEM)
     VanadiumAlloy_PoissonRatio_SRMA)
   mfront_check_module(MFrontMaterialProperties-castem castem "castem" ${mfront_SOURCES})
   target_include_directories(MFrontMaterialProperties-castem
-    PRIVATE "${CMAKE_SOURCE_DIR}/include"
+    PRIVATE "${PROJECT_SOURCE_DIR}/include"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
   if(WIN32)
     if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
@@ -193,7 +196,7 @@ mfront_dependencies(MFrontMaterialProperties-cxx
   VanadiumAlloy_PoissonRatio_SRMA)
 mfront_check_library(MFrontMaterialProperties-cxx cxx cxx ${mfront_SOURCES})
 target_include_directories(MFrontMaterialProperties-cxx
-  PRIVATE "${CMAKE_SOURCE_DIR}/include"
+  PRIVATE "${PROJECT_SOURCE_DIR}/include"
   PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
@@ -208,7 +211,7 @@ if(HAVE_FORTRAN)
     VanadiumAlloy_PoissonRatio_SRMA)
   mfront_check_library(MFrontMaterialProperties-fortran fortran "fortran" ${mfront_SOURCES})
   target_include_directories(MFrontMaterialProperties-fortran
-    PRIVATE "${CMAKE_SOURCE_DIR}/include"
+    PRIVATE "${PROJECT_SOURCE_DIR}/include"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
   if(WIN32)
     if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")

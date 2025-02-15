@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATERIAL_GURSON_1975_HXX
-#define LIB_TFEL_MATERIAL_GURSON_1975_HXX
+#ifndef LIB_TFEL_MATERIAL_GURSON_TVERGAARD_NEEDLEMAN_1982_STRESS_CRITERION_HXX
+#define LIB_TFEL_MATERIAL_GURSON_TVERGAARD_NEEDLEMAN_1982_STRESS_CRITERION_HXX
 
 #include <iosfwd>
 #include "TFEL/Math/stensor.hxx"
@@ -165,4 +165,5 @@ namespace tfel::material {
 
 #include "TFEL/Material/GursonTvergaardNeedleman1982StressCriterion.ixx"
 
-#endif /* LIB_TFEL_MATERIAL_GURSON_1975_HXX */
+#endif /* LIB_TFEL_MATERIAL_GURSON_TVERGAARD_NEEDLEMAN_1982_STRESS_CRITERION_HXX \
+        */

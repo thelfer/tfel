@@ -23,9 +23,9 @@ namespace tfel::math::internals {
 
   template <int N, unsigned int D>
   struct TFEL_VISIBILITY_LOCAL PowerGenerator {
-    template <typename T>
-    static constexpr T exe(const T& x) {
-      return std::pow(x, static_cast<T>(N) / static_cast<T>(D));
+    TFEL_HOST_DEVICE static auto exe(const std::floating_point auto x) {
+      return std::pow(
+          x, static_cast<decltype(x)>(N) / static_cast<decltype(x)>(D));
     }
   };
 
@@ -37,8 +37,7 @@ namespace tfel::math::internals {
 
   template <unsigned int N, unsigned int M>
   struct TFEL_VISIBILITY_LOCAL PowerPosImpl {
-    template <typename T>
-    static constexpr T exe(const T& x) {
+    TFEL_HOST_DEVICE static auto exe(const std::floating_point auto x) {
       const auto tmp = PowerPos<N>::exe(x);
       const auto tmp2 = PowerPos<M>::exe(x);
       return tmp * tmp * tmp * tmp * tmp2;
@@ -47,8 +46,7 @@ namespace tfel::math::internals {
 
   template <unsigned int N>
   struct TFEL_VISIBILITY_LOCAL PowerPosImpl<N, 0u> {
-    template <typename T>
-    static constexpr T exe(const T& x) {
+    TFEL_HOST_DEVICE static auto exe(const std::floating_point auto x) {
       const auto tmp = PowerPos<N>::exe(x);
       return tmp * tmp * tmp * tmp;
     }
@@ -56,48 +54,42 @@ namespace tfel::math::internals {
 
   template <unsigned int M>
   struct TFEL_VISIBILITY_LOCAL PowerPosImpl<0u, M> {
-    template <typename T>
-    static constexpr T exe(const T& x) {
+    TFEL_HOST_DEVICE static auto exe(const std::floating_point auto x) {
       return PowerPos<M>::exe(x);
     }
   };
 
   template <>
   struct TFEL_VISIBILITY_LOCAL PowerPosImpl<0u, 0u> {
-    template <typename T>
-    static constexpr T exe(const T&) {
-      return {1};
+    TFEL_HOST_DEVICE static auto exe(const std::floating_point auto x) {
+      return static_cast<decltype(x)>(1);
     }
   };
 
   template <>
   struct TFEL_VISIBILITY_LOCAL PowerPos<0u> {
-    template <typename T>
-    static constexpr T exe(const T&) {
-      return {1};
+    TFEL_HOST_DEVICE static auto exe(const std::floating_point auto x) {
+      return static_cast<decltype(x)>(1);
     }
   };
 
   template <>
   struct TFEL_VISIBILITY_LOCAL PowerPos<1u> {
-    template <typename T>
-    static constexpr T exe(const T& x) {
+    TFEL_HOST_DEVICE static auto exe(const std::floating_point auto x) {
       return x;
     }
   };
 
   template <>
   struct TFEL_VISIBILITY_LOCAL PowerPos<2u> {
-    template <typename T>
-    static constexpr T exe(const T& x) {
+    TFEL_HOST_DEVICE static auto exe(const std::floating_point auto x) {
       return x * x;
     }
   };
 
   template <>
   struct TFEL_VISIBILITY_LOCAL PowerPos<3u> {
-    template <typename T>
-    static constexpr T exe(const T& x) {
+    TFEL_HOST_DEVICE static auto exe(const std::floating_point auto x) {
       return x * x * x;
     }
   };
@@ -108,22 +100,20 @@ namespace tfel::math::internals {
    */
   template <int N>
   struct TFEL_VISIBILITY_LOCAL PowerNeg {
-    template <typename T>
-    static constexpr T exe(const T& x) {
+    TFEL_HOST_DEVICE static auto exe(const std::floating_point auto x) {
       static_assert(N < 0, "invalid exponent");
       constexpr auto opposite = static_cast<unsigned int>(-N);
-      constexpr auto one = T{1};
+      constexpr auto one = static_cast<decltype(x)>(1);
       return PowerPos<opposite>::exe(one / x);
     }
   };
 
   template <int N>
   struct TFEL_VISIBILITY_LOCAL PowerSqrtNeg {
-    template <typename T>
-    static constexpr T exe(const T& x) {
+    TFEL_HOST_DEVICE static auto exe(const std::floating_point auto x) {
       static_assert(N < 0, "invalid exponent");
       constexpr auto opposite = static_cast<unsigned int>(-N);
-      constexpr auto one = T{1};
+      constexpr auto one = static_cast<decltype(x)>(1);
       return std::sqrt(PowerPos<opposite>::exe(one / x));
     }
   };
@@ -139,8 +129,7 @@ namespace tfel::math::internals {
      * \result std::sqrt(power<N>(x))
      * \param x: variable whose square root of the power N must be computed
      */
-    template <typename T>
-    static constexpr T exe(const T& x) {
+    TFEL_HOST_DEVICE static auto exe(const std::floating_point auto x) {
       return std::sqrt(PowerPos<N>::exe(x));
     }
   };
@@ -150,8 +139,8 @@ namespace tfel::math::internals {
 
   template <int N>
   class TFEL_VISIBILITY_LOCAL PowerImplSelector<N, 1u> {
-    static constexpr unsigned short AbsN =
-        static_cast<unsigned short>((N < 0) ? -N : N);
+    static constexpr unsigned int AbsN =
+        static_cast<unsigned int>((N < 0) ? -N : N);
 
     using PowerImplSpe =
         std::conditional_t<(N < 0), PowerNeg<N>, PowerPos<AbsN>>;
@@ -163,8 +152,8 @@ namespace tfel::math::internals {
 
   template <int N>
   class TFEL_VISIBILITY_LOCAL PowerImplSelector<N, 2u> {
-    static constexpr unsigned short AbsN =
-        static_cast<unsigned short>((N < 0) ? -N : N);
+    static constexpr unsigned int AbsN =
+        static_cast<unsigned int>((N < 0) ? -N : N);
 
     using PowerImplSpe =
         std::conditional_t<(N < 0),
@@ -197,26 +186,14 @@ namespace tfel::math::internals {
 
 namespace tfel::math {
 
-  /*!
-   * \brief computes the power of x
-   * \tparam N: exponent
-   * \result pow(x,N)
-   * \param x: variable power to be calculated
-   */
-  template <int N, typename T>
-  constexpr std::enable_if_t<std::is_floating_point_v<T>, T> power(const T x) {
+  template <int N>
+  TFEL_HOST_DEVICE auto power(const std::floating_point auto x) noexcept {
     return tfel::math::internals::PowerImplSelector<N, 1u>::type::exe(x);
   }
 
-  /*!
-   * \brief computes the power of x with a rational exponent
-   * \tparam N: exponent numerator
-   * \tparam M: exponent denumerator
-   * \result pow(x,N/D)
-   * \param x: variable power to be calculated
-   */
-  template <int N, unsigned int D, typename T>
-  constexpr std::enable_if_t<std::is_floating_point_v<T>, T> power(const T x) {
+  template <int N, unsigned int D>
+  TFEL_HOST_DEVICE auto power(const std::floating_point auto x) noexcept
+      requires(D != 0) {
     return tfel::math::internals::PowerImplSelector<N, D>::type::exe(x);
   }
 

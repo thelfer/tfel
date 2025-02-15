@@ -42,6 +42,9 @@ namespace std {
 
 namespace mfront {
 
+  const char* const RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables =
+      "RungeKuttaUpdateAuxiliaryStateVariables";
+
   RungeKuttaDSLBase::RungeKuttaDSLBase(const DSLOptions& opts)
       : BehaviourDSLBase<RungeKuttaDSLBase>(opts) {
     // parameters
@@ -150,9 +153,10 @@ namespace mfront {
         m = [this](const Hypothesis h, const std::string& sv, const bool b) {
           return this->standardModifier(h, sv, b);
         };
-    this->treatCodeBlock(BehaviourData::UpdateAuxiliaryStateVariables,  //
-                         m, true, true);
-  }  // end of treatUpdateAuxiliaryStateVarBase
+    this->treatCodeBlock(
+        RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables,  //
+        m, true, true);
+  }  // end of treatUpdateAuxiliaryStateVariables
 
   void RungeKuttaDSLBase::treatComputeFinalThermodynamicForces() {
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
@@ -176,6 +180,35 @@ namespace mfront {
         return var + "_";
       }
     }
+    if (d.isAuxiliaryStateVariableName(var)) {
+      const auto& v = d.getAuxiliaryStateVariables().getVariable(var);
+      if (v.getAttribute<bool>("ComputedByExternalModel", false)) {
+        if (addThisPtr) {
+          return "this->" + var + "_";
+        } else {
+          return var + "_";
+        }
+      }
+    }
+    auto treat_variable_rate =
+        [addThisPtr, &var](const VariableDescription& v) -> std::string {
+      if (v.arraySize > 1) {
+        if (addThisPtr) {
+          return "(real(1)/(this->dt)) * (this->" + var + ")";
+        }
+        return "(real(1)/(this->dt)) * " + var;
+      }
+      if (addThisPtr) {
+        return "(this->" + var + ")/(this->dt)";
+      }
+      return "(" + var + ")/(this->dt)";
+    };
+    for (const auto& v : d.getAuxiliaryStateVariables()) {
+      if ((v.getAttribute<bool>("ComputedByExternalModel", false)) &&
+          (var == "d" + v.name)) {
+        return treat_variable_rate(v);
+      }
+    }
     if (var == "dT") {
       this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
           h, var.substr(1));
@@ -189,19 +222,7 @@ namespace mfront {
       this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
           h, var.substr(1));
       const auto& v = d.getExternalStateVariables().getVariable(var.substr(1));
-      if (v.arraySize > 1) {
-        if (addThisPtr) {
-          return "(real(1)/(this->dt)) * (this->" + var + ")";
-        } else {
-          return "(real(1)/(this->dt)) * " + var;
-        }
-      } else {
-        if (addThisPtr) {
-          return "(this->" + var + ")/(this->dt)";
-        } else {
-          return "(" + var + ")/(this->dt)";
-        }
-      }
+      return treat_variable_rate(v);
     }
     if (addThisPtr) {
       return "this->" + var;
@@ -218,6 +239,26 @@ namespace mfront {
         return "this->" + var + "+this->d" + var;
       } else {
         return var + "+d" + var;
+      }
+    }
+    if (d.isAuxiliaryStateVariableName(var)) {
+      const auto& v = d.getAuxiliaryStateVariables().getVariable(var);
+      if (v.getAttribute<bool>("ComputedByExternalModel", false)) {
+        if (addThisPtr) {
+          return "this->" + var + "+this->d" + var;
+        } else {
+          return var + " + d" + var;
+        }
+      }
+    }
+    for (const auto& v : d.getAuxiliaryStateVariables()) {
+      if ((v.getAttribute<bool>("ComputedByExternalModel", false)) &&
+          (var == "d" + v.name)) {
+        if (addThisPtr) {
+          return "(this->" + var + ")/(this->dt)";
+        } else {
+          return "(" + var + ")/(this->dt)";
+        }
       }
     }
     if ((d.isExternalStateVariableIncrementName(var)) || (var == "dT") ||
@@ -523,6 +564,7 @@ namespace mfront {
       const auto& d = this->mb.getBehaviourData(h);
       // creating local variables
       const auto& ivs = d.getStateVariables();
+      const auto& aivs = d.getAuxiliaryStateVariables();
       const auto& evs = d.getExternalStateVariables();
       for (const auto& iv : ivs) {
         for (unsigned short i = 0u; i != n; ++i) {
@@ -541,6 +583,24 @@ namespace mfront {
           this->mb.addLocalVariable(
               h,
               VariableDescription(iv.type, currentVarName, iv.arraySize, 0u));
+        }
+        const auto currentVarName = iv.name + "_";
+        if (getVerboseMode() >= VERBOSE_DEBUG) {
+          auto& log = getLogStream();
+          log << "registring variable '" << currentVarName << "'";
+          if (h == ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+            log << " for default hypothesis\n";
+          } else {
+            log << " for the '" << ModellingHypothesis::toString(h)
+                << "' hypothesis\n";
+          }
+        }
+        this->mb.addLocalVariable(
+            h, VariableDescription(iv.type, currentVarName, iv.arraySize, 0u));
+      }
+      for (const auto& iv : aivs) {
+        if (!iv.getAttribute<bool>("ComputedByExternalModel", false)) {
+          continue;
         }
         const auto currentVarName = iv.name + "_";
         if (getVerboseMode() >= VERBOSE_DEBUG) {

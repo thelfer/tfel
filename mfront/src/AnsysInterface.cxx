@@ -22,6 +22,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/MFrontUtilities.hxx"
@@ -633,7 +634,7 @@ namespace mfront {
             << "' modelling hypothesis\n";
         out << "/com, List of material properties\n";
         for (const auto& mp : mps.first) {
-          out << "/com, -" << mp.name << "\n";
+          out << "/com, -" << mp.getExternalName() << "\n";
         }
         out << "tb,user,<mat_id>,<number of temperatures>,"
             << msize.getValueForModellingHypothesis(h) << "\n"
@@ -677,6 +678,17 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "AnsysInterface::treatKeyword: " + m);
     };
+    auto check_interface_restriction = [this, &i, &key] {
+      if (i.empty()) {
+        reportWarning("keyword '" + key +
+                      "' is used without being restricted to the " +
+                      this->getName() +
+                      " interface, which could be a portability "
+                      "issue. Please add [" +
+                      this->getName() + "] after the keyword (i.e. replace '" +
+                      key + "' by '" + key + "[" + this->getName() + "]')");
+      }
+    };
     if (!i.empty()) {
       if (std::find(i.begin(), i.end(), this->getName()) != i.end()) {
         auto keys = {"@AnsysFiniteStrainStrategy",
@@ -684,7 +696,8 @@ namespace mfront {
                      "@AnsysCompareToNumericalTangentOperator",
                      "@AnsysTangentOperatorComparisonCriterium",
                      "@AnsysTangentOperatorComparisonCriterion",
-                     "@AnsysStrainPerturbationValue"};
+                     "@AnsysStrainPerturbationValue",
+                     "@GenerateMTestFileOnFailure"};
         throw_if(std::find(keys.begin(), keys.end(), key) == keys.end(),
                  "unsupported key '" + key + "'");
       } else {
@@ -692,6 +705,7 @@ namespace mfront {
       }
     }
     if (key == "@AnsysFiniteStrainStrategy") {
+      check_interface_restriction();
       throw_if(bd.hasAttribute(AnsysInterface::finiteStrainStrategy),
                "a finite strain strategy has already been defined");
       throw_if(current == end, "unexpected end of file");
@@ -709,16 +723,22 @@ namespace mfront {
       bd.setAttribute(AnsysInterface::finiteStrainStrategy, fs, false);
       return {true, current};
     }
-    if (key == "@AnsysGenerateMTestFileOnFailure") {
+    if ((key == "@AnsysGenerateMTestFileOnFailure") ||
+        (key == "@GenerateMTestFileOnFailure")) {
+      if (key == "@AnsysGenerateMTestFileOnFailure") {
+        check_interface_restriction();
+      }
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(key, current, end));
       return {true, current};
     } else if (key == "@AnsysCompareToNumericalTangentOperator") {
+      check_interface_restriction();
       this->compareToNumericalTangentOperator =
           this->readBooleanValue(key, current, end);
       return make_pair(true, current);
     } else if ((key == "@AnsysTangentOperatorComparisonCriterium") ||
                (key == "@AnsysTangentOperatorComparisonCriterion")) {
+      check_interface_restriction();
       throw_if(
           !this->compareToNumericalTangentOperator,
           "comparison to tangent operator is not enabled at this stage.\n"
@@ -733,6 +753,7 @@ namespace mfront {
       ++(current);
       return {true, current};
     } else if (key == "@AnsysStrainPerturbationValue") {
+      check_interface_restriction();
       throw_if(!this->compareToNumericalTangentOperator,
                "time stepping is not enabled at this stage.\n"
                "Use the @AnsysUseTimeSubStepping directive before "
@@ -1703,10 +1724,6 @@ namespace mfront {
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, "ansys" + name + ".cxx");
     d.headers.push_back("MFront/Ansys/ansys" + name + ".hxx");
     insert_if(l.link_directories,

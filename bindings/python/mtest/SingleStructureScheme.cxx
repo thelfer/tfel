@@ -12,7 +12,8 @@
  */
 
 #include <tuple>
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Raise.hxx"
 #include "MTest/Behaviour.hxx"
 #include "MTest/Evolution.hxx"
@@ -197,9 +198,10 @@ static int SingleStructureScheme_getBehaviourKinematic(
   return 4;
 }  // end of SingleStructureScheme_getBehaviourKinematic
 
-void declareSingleStructureScheme();
+void declareSingleStructureScheme(pybind11::module_&);
 
-void declareSingleStructureScheme() {
+void declareSingleStructureScheme(pybind11::module_& m) {
+  using namespace pybind11::literals;
   using namespace mtest;
   using Parameters = SingleStructureScheme::Parameters;
   void (SingleStructureScheme::*ptr1)(const std::string&, const std::string&,
@@ -209,9 +211,8 @@ void declareSingleStructureScheme() {
                                       const std::string&, const std::string&,
                                       const Parameters&) =
       &SingleStructureScheme::setBehaviour;
-  boost::python::class_<SingleStructureScheme, boost::noncopyable,
-                        boost::python::bases<SchemeBase>>(
-      "SingleStructureScheme", boost::python::no_init)
+  pybind11::class_<SingleStructureScheme, SchemeBase>(m,
+                                                      "SingleStructureScheme")
       .def("getBehaviour",
            static_cast<std::shared_ptr<Behaviour> (SingleStructureScheme::*)()>(
                &SingleStructureScheme::getBehaviour))
@@ -298,8 +299,7 @@ void declareSingleStructureScheme() {
            "implementations throw an exception which is caught "
            "by 'MTest'.")
       .def("setMaterialProperty", SingleStructureScheme_setMaterialProperty,
-           (boost::python::arg("name"), "value",
-            boost::python::arg("check") = true),
+           "name"_a, "value"_a, "check"_a = true,
            "This method defines a constant material property.\n"
            "* The first argument (string) is the selected material "
            "property. Only the mechanical properties defined by the "
@@ -312,8 +312,7 @@ void declareSingleStructureScheme() {
            "* The second argument (double) is the constant value of "
            "the selected material property.")
       .def("setMaterialProperty", SingleStructureScheme_setMaterialProperty2,
-           (boost::python::arg("name"), "value",
-            boost::python::arg("check") = true),
+           "name"_a, "value"_a, "check"_a = true,
            "This method defines a function material property.\n"
            "* The first argument (string) is the selected material "
            "property. Only the mechanical properties defined by the "
@@ -327,8 +326,7 @@ void declareSingleStructureScheme() {
            "to represent the behaviour of the selected material "
            "property.")
       .def("setMaterialProperty", SingleStructureScheme_setMaterialProperty3,
-           (boost::python::arg("name"), "value", "function",
-            boost::python::arg("check") = true),
+           "name"_a, "function"_a, "check"_a = true,
            "This method defines a function material property.\n"
            "* The first argument (string) is the selected material "
            "property. Only the mechanical properties defined by the "
@@ -342,9 +340,8 @@ void declareSingleStructureScheme() {
            "to represent the behaviour of the selected material "
            "property.")
       .def("setCastemMaterialProperty",
-           SingleStructureScheme_setCastemMaterialProperty,
-           (boost::python::arg("name"), boost::python::arg("library"),
-            boost::python::arg("function"), boost::python::arg("check") = true),
+           SingleStructureScheme_setCastemMaterialProperty, "name"_a,
+           "library"_a, "function"_a, "check"_a = true,
            "This method defines a castem material property.\n"
            "* The first argument (string) is the selected material "
            "property. Only the mechanical properties defined by the "
@@ -360,9 +357,8 @@ void declareSingleStructureScheme() {
            "* The third argument (string) is the name of the "
            "function.")
       .def("setExternalStateVariable",
-           SingleStructureScheme_setExternalStateVariable,
-           (boost::python::arg("name"), "value",
-            boost::python::arg("check") = true),
+           SingleStructureScheme_setExternalStateVariable, "name"_a, "value"_a,
+           "check"_a = true,
            "This method specify the constant evolution of an "
            "external state variable.\n"
            "* The first argument (string) is the name of the "
@@ -371,9 +367,8 @@ void declareSingleStructureScheme() {
            "* The second argument (double) is the constant value "
            "of the selected external state variable.")
       .def("setExternalStateVariable",
-           SingleStructureScheme_setExternalStateVariable2,
-           (boost::python::arg("name"), "value",
-            boost::python::arg("check") = true),
+           SingleStructureScheme_setExternalStateVariable2, "name"_a, "value"_a,
+           "check"_a = true,
            "This method specify the linear evolution of an "
            "external state variable.\n"
            "* The first argument (string) is the name of the "
@@ -387,9 +382,8 @@ void declareSingleStructureScheme() {
            "the returned value will be the one from the nearest "
            "association available.")
       .def("setExternalStateVariable",
-           SingleStructureScheme_setExternalStateVariable3,
-           (boost::python::arg("name"), "value", "function",
-            boost::python::arg("check") = true),
+           SingleStructureScheme_setExternalStateVariable3, "name"_a,
+           "function"_a, "check"_a = true,
            "This method specify the complex evolution of an "
            "external state variable.\n"
            "* The first argument (string) is the name of the "
@@ -400,18 +394,14 @@ void declareSingleStructureScheme() {
            "state variable. The string will be interpreted as a "
            "function of time (represented by the variable 't' in "
            "the string).")
-      .def("addReal", SingleStructureScheme_addEvolution,
-           (boost::python::arg("name"), "value",
-            boost::python::arg("b1") = true, boost::python::arg("b2") = true))
-      .def("addEvolution", SingleStructureScheme_addEvolution,
-           (boost::python::arg("name"), "value",
-            boost::python::arg("b1") = true, boost::python::arg("b2") = true))
-      .def("addEvolution", SingleStructureScheme_addEvolution2,
-           (boost::python::arg("name"), "value",
-            boost::python::arg("b1") = true, boost::python::arg("b2") = true))
-      .def("addEvolution", SingleStructureScheme_addEvolution3,
-           (boost::python::arg("name"), "value", "function",
-            boost::python::arg("b1") = true, boost::python::arg("b2") = true))
+      .def("addReal", SingleStructureScheme_addEvolution, "name"_a, "value"_a,
+           "b1"_a = true, "b2"_a = true)
+      .def("addEvolution", SingleStructureScheme_addEvolution, "name"_a,
+           "value"_a, "b1"_a = true, "b2"_a = true)
+      .def("addEvolution", SingleStructureScheme_addEvolution2, "name"_a,
+           "value"_a, "b1"_a = true, "b2"_a = true)
+      .def("addEvolution", SingleStructureScheme_addEvolution3, "name"_a,
+           "function"_a, "b1"_a = true, "b2"_a = true)
       .def("setInternalStateVariableInitialValue",
            SingleStructureScheme_setInternalStateVariableInitialValue1,
            "This method allow to specify the initial  value of an "

@@ -1,0 +1,12 @@
+@DSL DefaultCZM;
+@Behaviour WarningTest66;
+@Description {
+  "This test checks that a warning is reported if "
+  "the normal component of the cohesive force is used in "
+  "@Integrator and not its tangential component."
+}
+
+@Integrator {
+  du;
+  t_n;
+}

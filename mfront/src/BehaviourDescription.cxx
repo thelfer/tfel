@@ -20,10 +20,13 @@
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Math/Evaluator.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/PedanticMode.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/LocalDataStructure.hxx"
 #include "MFront/ModelDescription.hxx"
+#include "MFront/BehaviourVariableDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/DSLBase.hxx"
 #include "MFront/BehaviourDescription.hxx"
@@ -38,6 +41,11 @@ namespace mfront {
       "modelling_hypothesis";
   const char* const BehaviourDescription::modellingHypotheses =
       "modelling_hypotheses";
+  const char* const BehaviourDescription::defaultConstructor =
+      "default_constructor";
+  const char* const BehaviourDescription::finalClass = "final";
+  const char* const BehaviourDescription::internalNamespace =
+      "internal_namespace";
 
   static MaterialPropertyDescription buildMaterialPropertyDescription(
       const BehaviourDescription::ConstantMaterialProperty& mp,
@@ -392,6 +400,24 @@ namespace mfront {
     return {a, b};
   }  // end of decomposeTangentOperatorBlock
 
+  static std::string makeCamelCase(std::string_view s) {
+    const auto words = tfel::utilities::tokenize(s, '_', false);
+    auto upperCaseFirstLetter = [](const std::string& w) -> std::string {
+      if (w.empty()) {
+        return {};
+      }
+      if (w == "mfront") {
+        return "MFront";
+      }
+      return makeUpperCase(w.substr(0, 1)) + makeLowerCase(w.substr(1));
+    };
+    auto r = std::string{};
+    for (const auto& w : words) {
+      r += upperCaseFirstLetter(w);
+    }
+    return r;
+  }  // end of makeCamelCase
+
   const char* const BehaviourDescription::requiresStiffnessTensor =
       "requiresStiffnessTensor";
 
@@ -419,24 +445,24 @@ namespace mfront {
       const tfel::utilities::DataMap& opts) {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     //
-    if ((opts.count(BehaviourDescription::modellingHypothesis) != 0) &&
-        (opts.count(BehaviourDescription::modellingHypotheses) != 0)) {
+    if ((opts.contains(BehaviourDescription::modellingHypothesis)) &&
+        (opts.contains(BehaviourDescription::modellingHypotheses))) {
       tfel::raise(
           "BehaviourDescription::BehaviourDescription: "
           "can't specify both options '" +
           std::string{BehaviourDescription::modellingHypothesis} + "' and '" +
           std::string{BehaviourDescription::modellingHypotheses} + "'");
     }
-    if (opts.count(BehaviourDescription::modellingHypothesis) != 0) {
+    if (opts.contains(BehaviourDescription::modellingHypothesis)) {
       this->overriden_hypotheses.insert(ModellingHypothesis::fromString(
           opts.at(BehaviourDescription::modellingHypothesis)
               .get<std::string>()));
     }
-    if (opts.count(BehaviourDescription::modellingHypotheses) != 0) {
+    if (opts.contains(BehaviourDescription::modellingHypotheses)) {
       const auto& mhs = opts.at(BehaviourDescription::modellingHypotheses)
                             .get<std::vector<tfel::utilities::Data>>();
       for (const auto& h : mhs) {
-        if (h.is<std::string>()) {
+        if (!h.is<std::string>()) {
           tfel::raise(
               "BehaviourDescription::BehaviourDescription: "
               "invalid data type in option '" +
@@ -445,6 +471,46 @@ namespace mfront {
         this->overriden_hypotheses.insert(
             ModellingHypothesis::fromString(h.get<std::string>()));
       }
+    }
+    if (opts.contains(BehaviourDescription::defaultConstructor)) {
+      const auto& opt = opts.at(BehaviourDescription::defaultConstructor);
+      if (!opt.is<bool>()) {
+        tfel::raise(
+            "BehaviourDescription::BehaviourDescription: "
+            "invalid data type in option '" +
+            std::string{BehaviourDescription::defaultConstructor} + "'");
+      }
+      this->setAttribute(BehaviourDescription::defaultConstructor,
+                         opt.get<bool>(), false);
+    }
+    if (opts.contains(BehaviourDescription::finalClass)) {
+      const auto& opt = opts.at(BehaviourDescription::finalClass);
+      if (!opt.is<bool>()) {
+        tfel::raise(
+            "BehaviourDescription::BehaviourDescription: "
+            "invalid data type in option '" +
+            std::string{BehaviourDescription::finalClass} + "'");
+      }
+      this->setAttribute(BehaviourDescription::finalClass, opt.get<bool>(),
+                         false);
+    }
+    if (opts.contains(BehaviourDescription::internalNamespace)) {
+      const auto& ns_opt = opts.at(BehaviourDescription::internalNamespace);
+      if (!ns_opt.is<std::string>()) {
+        tfel::raise(
+            "BehaviourDescription::BehaviourDescription: "
+            "invalid data type in option '" +
+            std::string{BehaviourDescription::internalNamespace} + "'");
+      }
+      const auto& ns = ns_opt.get<std::string>();
+      if (!tfel::utilities::CxxTokenizer::isValidIdentifier(ns)) {
+        tfel::raise(
+            "BehaviourDescription::BehaviourDescription: "
+            "invalid namespace space '" +
+            ns + "' given in option '" +
+            std::string{BehaviourDescription::internalNamespace} + "'");
+      }
+      this->setAttribute(BehaviourDescription::internalNamespace, ns, false);
     }
     // override parameters
     const auto oparameters =
@@ -470,6 +536,96 @@ namespace mfront {
   BehaviourDescription::BehaviourDescription(const BehaviourDescription&) =
       default;
 
+  bool BehaviourDescription::shallDefineDefaultConstructor() const {
+    if (!this->hasAttribute(BehaviourDescription::defaultConstructor)) {
+      return false;
+    }
+    return this->getAttribute<bool>(BehaviourDescription::defaultConstructor);
+  }  // end of shallDefineDefaultConstructor
+
+  bool BehaviourDescription::isFinal() const {
+    if (!this->hasAttribute(BehaviourDescription::finalClass)) {
+      return true;
+    }
+    return this->getAttribute<bool>(BehaviourDescription::finalClass);
+  }  // end of isFinal
+
+  std::string BehaviourDescription::getInternalNamespace() const {
+    if (!this->hasAttribute(BehaviourDescription::internalNamespace)) {
+      return {};
+    }
+    const auto& ns = this->getAttribute<std::string>(
+        BehaviourDescription::internalNamespace);
+    if (!tfel::utilities::CxxTokenizer::isValidIdentifier(ns)) {
+      tfel::raise(
+          "BehaviourDescription::getInternalNamespace: "
+          "invalid namespace space '" +
+          ns + "' given in option '" +
+          std::string{BehaviourDescription::internalNamespace} + "'");
+    }
+    return ns;
+  }
+
+  std::string BehaviourDescription::getBehaviourFileName() const {
+    const auto ns = this->getInternalNamespace();
+    if (!ns.empty()) {
+      return "TFEL/Material/" + makeCamelCase(ns) + '/' + this->getClassName() +
+             ".hxx";
+    }
+    return "TFEL/Material/" + this->getClassName() + ".hxx";
+  }  // end of getBehaviourFileName
+
+  std::string BehaviourDescription::getBehaviourDataFileName() const {
+    const auto ns = this->getInternalNamespace();
+    if (!ns.empty()) {
+      return "TFEL/Material/" + makeCamelCase(ns) + '/' + this->getClassName() +
+             "BehaviourData.hxx";
+    }
+    return "TFEL/Material/" + this->getClassName() + "BehaviourData.hxx";
+  }  // end of getBehaviourDataFileName
+
+  std::string BehaviourDescription::getIntegrationDataFileName() const {
+    const auto ns = this->getInternalNamespace();
+    if (!ns.empty()) {
+      return "TFEL/Material/" + makeCamelCase(ns) + '/' + this->getClassName() +
+             "IntegrationData.hxx";
+    }
+    return "TFEL/Material/" + this->getClassName() + "IntegrationData.hxx";
+  }  // end of getIntegrationDataFileName
+
+  std::string BehaviourDescription::getSlipSystemHeaderFileName() const {
+    if (!this->areSlipSystemsDefined()) {
+      return "";
+    }
+    const auto ns = this->getInternalNamespace();
+    if (!ns.empty()) {
+      return "TFEL/Material/" + makeCamelCase(ns) + '/' + this->getClassName() +
+             "SlipSystems.hxx";
+    }
+    return "TFEL/Material/" + this->getClassName() + "SlipSystems.hxx";
+  }  // end of getSlipSystemHeaderFileName
+
+  std::string BehaviourDescription::getSlipSystemImplementationFileName()
+      const {
+    if (!this->areSlipSystemsDefined()) {
+      return "";
+    }
+    const auto ns = this->getInternalNamespace();
+    if (!ns.empty()) {
+      return "TFEL/Material/" + makeCamelCase(ns) + '/' + this->getClassName() +
+             "SlipSystems.ixx";
+    }
+    return "TFEL/Material/" + this->getClassName() + "SlipSystems.ixx";
+  }  // end of getSlipSystemImplementationFileName
+
+  std::string BehaviourDescription::getSrcFileName() const {
+    const auto ns = this->getInternalNamespace();
+    if (!ns.empty()) {
+      return makeCamelCase(ns) + '/' + this->getClassName() + ".cxx";
+    }
+    return this->getClassName() + ".cxx";
+  }  // end of getSrcFileName
+
   bool BehaviourDescription::isModel() const noexcept {
     if (this->getBehaviourType() != BehaviourDescription::GENERALBEHAVIOUR) {
       return false;
@@ -482,15 +638,6 @@ namespace mfront {
     return this->getAttribute(h, BehaviourData::allowsNewUserDefinedVariables,
                               true);
   }  // end of allowNewsUserDefinedVariables
-
-  void BehaviourDescription::disallowNewUserDefinedVariables() {
-    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    this->d.finalizeVariablesDeclaration();
-    for (const auto& bd : this->sd) {
-      bd.second->finalizeVariablesDeclaration();
-    }
-    this->setAttribute(uh, BehaviourData::allowsNewUserDefinedVariables, false);
-  }  // end of disallowNewUserDefinedVariables
 
   void BehaviourDescription::checkAndCompletePhysicalBoundsDeclaration() {
     if (this->hasUnitSystem()) {
@@ -785,6 +932,14 @@ namespace mfront {
                    "BehaviourDescription::getClassName: "
                    "class name not defined");
     return this->className;
+  }  // end of getClassName
+
+  std::string BehaviourDescription::getFullClassName() const {
+    const auto ns = this->getInternalNamespace();
+    if (!ns.empty()) {
+      return "::tfel::material::" + ns + "::" + this->getClassName();
+    }
+    return "::tfel::material::" + this->getClassName();
   }  // end of getClassName
 
   void BehaviourDescription::appendToIncludes(const std::string& c) {
@@ -1167,7 +1322,6 @@ namespace mfront {
   }  // end of declareAsGenericBehaviour
 
   void BehaviourDescription::declareAsASmallStrainStandardBehaviour() {
-    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     tfel::raise_if(
         !this->type.empty(),
         "BehaviourDescription::declareAsASmallStrainStandardBehaviour: "
@@ -1181,18 +1335,13 @@ namespace mfront {
     eto.setGlossaryName("Strain");
     ThermodynamicForce sig("StressStensor", "\u03C3", "sig");
     sig.setGlossaryName("Stress");
-    this->mvariables.push_back({eto, sig});
+    this->addMainVariable2(eto, sig, true, true);
     this->type = BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR;
-    this->registerMemberName(h, "eto");
-    this->registerMemberName(h, "deto");
-    this->registerMemberName(h, "sig");
-    this->registerGlossaryName(h, "eto", "Strain");
-    this->registerGlossaryName(h, "sig", "Stress");
   }  // end of declareAsASmallStrainStandardBehaviour
 
   void BehaviourDescription::declareAsAFiniteStrainStandardBehaviour(
       const bool b) {
-    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     tfel::raise_if(
         !this->type.empty(),
         "BehaviourDescription::declareAsAFiniteStrainStandardBehaviour: "
@@ -1206,21 +1355,17 @@ namespace mfront {
     Gradient::setIsIncrementKnownAttribute(F, false);
     ThermodynamicForce sig("StressStensor", "\u03C3", "sig");
     sig.setGlossaryName("Stress");
-    this->mvariables.push_back({F, sig});
-    this->type = BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR;
     if (b) {
-      this->registerMemberName(h, "F");
-      this->registerMemberName(h, "dF");
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      this->registerMemberName(uh, "F");
+      this->registerMemberName(uh, "dF");
     }
-    this->registerMemberName(h, "F0");
-    this->registerMemberName(h, "F1");
-    this->registerMemberName(h, "sig");
-    this->registerGlossaryName(h, "F1", "DeformationGradient");
-    this->registerGlossaryName(h, "sig", "Stress");
+    this->addMainVariable2(F, sig, false, false);
+    this->registerGlossaryName(uh, "F1", "DeformationGradient");
+    this->type = BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR;
   }
 
   void BehaviourDescription::declareAsACohesiveZoneModel() {
-    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     tfel::raise_if(!this->type.empty(),
                    "BehaviourDescription::declareAsACohesiveZoneModel: "
                    "behaviour type has already been defined");
@@ -1232,13 +1377,8 @@ namespace mfront {
     Gradient::setIsIncrementKnownAttribute(u, true);
     ThermodynamicForce t("ForceTVector", "t");
     t.setGlossaryName("CohesiveForce");
-    this->mvariables.push_back({u, t});
+    this->addMainVariable2(u, t, true, true);
     this->type = BehaviourDescription::COHESIVEZONEMODEL;
-    this->registerMemberName(h, "u");
-    this->registerMemberName(h, "du");
-    this->registerMemberName(h, "t");
-    this->registerGlossaryName(h, "u", "OpeningDisplacement");
-    this->registerGlossaryName(h, "t", "CohesiveForce");
   }
 
   void BehaviourDescription::addLocalDataStructure(
@@ -1284,26 +1424,42 @@ namespace mfront {
 
   void BehaviourDescription::addMainVariable(const Gradient& g,
                                              const ThermodynamicForce& f) {
-    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     tfel::raise_if(
         this->getBehaviourType() != BehaviourDescription::GENERALBEHAVIOUR,
-        "BehaviourDescription::addMainVariables: "
+        "BehaviourDescription::addMainVariable: "
         "one can not add a main variable if the behaviour "
         "don't have a general behaviour type");
     tfel::raise_if(
         !this->allowsNewUserDefinedVariables(),
-        "BehaviourDescription::addMainVariables: "
+        "BehaviourDescription::addMainVariable: "
         "new variables are can't be defined after the first code block.");
+    this->addMainVariable2(g, f, true, true);
+  }
+
+  void BehaviourDescription::addMainVariable2(
+      const Gradient& g,
+      const ThermodynamicForce& f,
+      const bool registerGradientGlossaryName,
+      const bool registerTangentOperatorBlock) {
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if (g.arraySize != f.arraySize) {
+      tfel::raise(
+          "BehaviourDescription::addMainVariable2: "
+          "the gradient '" +
+          g.name + "' and the thermodynamic force '" + f.name +
+          "' must have the same array size (" + std::to_string(g.arraySize) +
+          " vs " + std::to_string(f.arraySize) + ")");
+    }
     for (const auto& v : this->mvariables) {
       tfel::raise_if(g.name == v.first.name,
-                     "BehaviourDescription::addMainVariables: "
-                     "a driving variable '" +
+                     "BehaviourDescription::addMainVariable2: "
+                     "a gradient named '" +
                          g.name +
                          "' has "
                          "already been declared");
       tfel::raise_if(f.name == v.second.name,
-                     "BehaviourDescription::addMainVariables: "
-                     "a driving variable '" +
+                     "BehaviourDescription::addMainVariable2: "
+                     "a thermodynamic force named '" +
                          f.name +
                          "' has "
                          "already been declared");
@@ -1315,7 +1471,7 @@ namespace mfront {
       this->registerMemberName(h, g.name + "0");
       this->registerMemberName(h, g.name + "1");
     }
-    if (g.hasGlossaryName()) {
+    if ((g.hasGlossaryName()) && (registerGradientGlossaryName)) {
       this->registerGlossaryName(h, g.name, g.getExternalName());
     }
     if (g.hasEntryName()) {
@@ -1328,7 +1484,14 @@ namespace mfront {
     if (f.hasEntryName()) {
       this->registerEntryName(h, f.name, f.getExternalName());
     }
-    this->registerMemberName(h, this->getTangentOperatorBlockName({f, g}));
+    if (registerTangentOperatorBlock) {
+      this->registerMemberName(h, this->getTangentOperatorBlockName({f, g}));
+      for (const auto& [g2, thf2] : this->mvariables) {
+        this->registerMemberName(h, this->getTangentOperatorBlockName({f, g2}));
+        this->registerMemberName(h,
+                                 this->getTangentOperatorBlockName({thf2, g}));
+      }
+    }
     this->mvariables.push_back({g, f});
   }  // end of addMainVariables
 
@@ -1357,7 +1520,7 @@ namespace mfront {
                      [&n](const value_type& v) { return v.first.name == n; });
     tfel::raise_if(p == this->mvariables.end(),
                    "BehaviourDescription::getGradient: "
-                   "unknown driving variable '" +
+                   "unknown gradient '" +
                        n + "'");
     return p->first;
   }  // end of getGradient
@@ -1370,7 +1533,7 @@ namespace mfront {
                      [&n](const value_type& v) { return v.second.name == n; });
     tfel::raise_if(p == this->mvariables.end(),
                    "BehaviourDescription::getGradient: "
-                   "unknown driving variable '" +
+                   "unknown thermodynamic force '" +
                        n + "'");
     return p->second;
   }  // end of getThermodynamicForce
@@ -1396,6 +1559,31 @@ namespace mfront {
     }
     return false;
   }  // end of isGradientName
+
+  bool BehaviourDescription::isNameOfAGradientAtTheBeginningOfTheTimeStep(
+      const std::string& n) const {
+    for (const auto& v : this->getMainVariables()) {
+      const auto& g = v.first;
+      if ((!Gradient::isIncrementKnown(g)) && (g.name + "0" == n)) {
+        return true;
+      }
+      if ((Gradient::isIncrementKnown(g)) && (g.name == n)) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of isGradientIncrementName
+
+  bool BehaviourDescription::isNameOfAGradientAtTheEndOfTheTimeStep(
+      const std::string& n) const {
+    for (const auto& v : this->getMainVariables()) {
+      const auto& g = v.first;
+      if ((!Gradient::isIncrementKnown(g)) && (g.name + "1" == n)) {
+        return true;
+      }
+    }
+    return false;
+  }  // end of isGradientIncrementName
 
   bool BehaviourDescription::isGradientIncrementName(
       const std::string& n) const {
@@ -1927,8 +2115,7 @@ namespace mfront {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "BehaviourDescription::setHypotheses: " + m);
     };
-    auto update_hypotheses = [this,
-                              throw_if](const std::set<Hypothesis>& nmhs) {
+    auto update_hypotheses = [this](const std::set<Hypothesis>& nmhs) {
       if (this->overriden_hypotheses.empty()) {
         this->hypotheses = nmhs;
       } else {
@@ -2014,9 +2201,21 @@ namespace mfront {
                  "supported modelling hypotheses have already been declared");
       }
     }
+    //
+    for (const auto& bv : this->behaviourVariablesCandidates) {
+      this->addBehaviourVariable(bv);
+    }
+    this->behaviourVariablesCandidates.clear();
+    for (const auto& [bv, isExternalModel] :
+         this->behaviourVariableFactoriesCandidates) {
+      this->addBehaviourVariableFactory(bv, isExternalModel);
+    }
+    this->behaviourVariableFactoriesCandidates.clear();
   }  // end of setModellingHypotheses
 
-  const std::vector<ModelDescription>&
+  const std::vector<std::variant<
+      ModelDescription,
+      BehaviourDescription::ExternalModelBasedOnBehaviourVariableFactory>>&
   BehaviourDescription::getModelsDescriptions() const {
     return this->models;
   }  // end of getModelsDescriptions
@@ -2024,13 +2223,18 @@ namespace mfront {
   void BehaviourDescription::addModelDescription(const ModelDescription& md) {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     for (auto ov : md.outputs) {
-      VariableDescription dov{ov.type, "d" + ov.name, ov.arraySize,
-                              ov.lineNumber};
       ov.setAttribute("ComputedByExternalModel", true, false);
       this->addAuxiliaryStateVariable(uh, ov, BehaviourData::UNREGISTRED);
-      this->addLocalVariable(uh, dov, BehaviourData::UNREGISTRED);
     }
     this->models.push_back(md);
+  }  // end of addModelDescription
+
+  void BehaviourDescription::addModelDescription(
+      const BehaviourVariableDescription& md) {
+    const auto fname = getBehaviourVariableFactoryClassName(md);
+    this->addBehaviourVariableFactory(md, true);
+    this->models.push_back(
+        ExternalModelBasedOnBehaviourVariableFactory{.factory = fname});
   }  // end of addModelDescription
 
   void BehaviourDescription::addMaterialProperties(
@@ -2175,6 +2379,307 @@ namespace mfront {
     mptr f = &BehaviourData::addExternalStateVariable;
     this->addVariable(h, v, s, f);
   }
+
+  static void completeVariablesDeclarations(
+      BehaviourData& bd,
+      const BehaviourVariableDescription& bv,
+      const BehaviourDescription::Hypothesis h,
+      const bool isExternalModel) {
+    // gradients and thermodynamic forces
+    for (const auto& [g, th] : bv.behaviour.getMainVariables()) {
+      if (bv.store_gradients) {
+        try {
+          bd.addAuxiliaryStateVariable(applyNamesChanges(bv, g),
+                                       BehaviourData::UNREGISTRED);
+        } catch (std::exception& e) {
+          tfel::raise("Error while treating saved gradient '" + g.name +
+                      "' from behaviour '" + bv.name + "' of type '" +
+                      bv.behaviour.getClassName() + "'\n" +
+                      std::string{e.what()});
+        }
+      }
+      if (bv.store_thermodynamic_forces) {
+        try {
+          bd.addAuxiliaryStateVariable(applyNamesChanges(bv, th),
+                                       BehaviourData::UNREGISTRED);
+        } catch (std::exception& e) {
+          tfel::raise("Error while treating saved gradient '" + th.name +
+                      "' from behaviour '" + bv.name + "' of type '" +
+                      bv.behaviour.getClassName() + "'\n" +
+                      std::string{e.what()});
+        }
+      }
+    }
+    // material properties
+    for (const auto& mp : getUnSharedMaterialProperties(bv, h)) {
+      try {
+        bd.addMaterialProperty(applyNamesChanges(bv, mp),
+                               BehaviourData::UNREGISTRED);
+      } catch (std::exception& e) {
+        tfel::raise("Error while treating unshared material property '" +
+                    mp.name + "' from behaviour '" + bv.name + "' of type '" +
+                    bv.behaviour.getClassName() + "'\n" +
+                    std::string{e.what()});
+      }
+    }
+    // all persistent variables are turned into auxiliary state variables
+    for (const auto& isv :
+         bv.behaviour.getBehaviourData(h).getPersistentVariables()) {
+      try {
+        auto nisv = applyNamesChanges(bv, isv);
+        if (isExternalModel) {
+          nisv.setAttribute("ComputedByExternalModel", true, false);
+        }
+        bd.addAuxiliaryStateVariable(nisv, BehaviourData::UNREGISTRED);
+      } catch (std::exception& e) {
+        tfel::raise("Error while treating state variable '" + isv.name +
+                    "' from behaviour '" + bv.name + "' of type '" +
+                    bv.behaviour.getClassName() + "'\n" +
+                    std::string{e.what()});
+      }
+    }
+    // external state variables
+    for (const auto& esv : getUnSharedExternalStateVariables(bv, h)) {
+      try {
+        bd.addExternalStateVariable(applyNamesChanges(bv, esv),
+                                    BehaviourData::UNREGISTRED);
+      } catch (std::exception& e) {
+        tfel::raise("Error while treating external state variable '" +
+                    esv.name + "' from behaviour '" + bv.name + "' of type '" +
+                    bv.behaviour.getClassName() + "'\n" +
+                    std::string{e.what()});
+      }
+    }
+  }  // end of completeVariablesDeclarations
+
+  void BehaviourDescription::addBehaviourVariable(
+      const BehaviourVariableDescription& v) {
+    if (!this->allowsNewUserDefinedVariables()) {
+      tfel::raise(
+          "BehaviourDescription::addBehaviourVariable: "
+          "adding new variables is no more allowed.");
+    }
+    if (this->areModellingHypothesesDefined()) {
+      if (getVerboseMode() >= VERBOSE_DEBUG) {
+        auto& log = getLogStream();
+        log << "BehaviourDescription::addBehaviourVariable: "
+            << "adding behaviour variable '" << v.name << "' of type '"
+            << v.behaviour.getClassName() << "'\n";
+      }
+      // check compatibility with the modelling hypotheses of the behaviour
+      const auto& v_hypotheses = v.behaviour.getModellingHypotheses();
+      const auto& v_distinct_hypotheses = getDistinctModellingHypotheses();
+      for (const auto& h : this->hypotheses) {
+        if (!v_hypotheses.contains(h)) {
+          tfel::raise(
+              "BehaviourDescription::addBehaviourVariable: "
+              "hypothesis '" +
+              ModellingHypothesis::toString(h) +
+              "' is not supported by behaviour variable '" + v.name +
+              "' of type '" + v.behaviour.getClassName() + "'");
+        }
+        if (v_distinct_hypotheses.contains(h)) {
+          this->specialize(h);
+        }
+      }
+      // now adding everything that we need
+      constexpr auto uh = Hypothesis::UNDEFINEDHYPOTHESIS;
+      if (!this->areAllMechanicalDataSpecialised()) {
+        completeVariablesDeclarations(this->d, v, uh, false);
+      }
+      for (auto& md : this->sd) {
+        completeVariablesDeclarations(*(md.second), v, md.first, false);
+      }
+      this->d.addBehaviourVariable(v);
+      for (auto& md : this->sd) {
+        md.second->addBehaviourVariable(v);
+      }
+    } else {
+      if (getVerboseMode() >= VERBOSE_DEBUG) {
+        auto& log = getLogStream();
+        log << "BehaviourDescription::addBehaviourVariable: "
+            << "the addition of behaviour variable '" << v.name << "' of type '"
+            << v.behaviour.getClassName()
+            << "' is delayed up to when the modelling hypotheses "
+            << "are defined'\n";
+      }
+      this->behaviourVariablesCandidates.push_back(v);
+    }
+  }  // end of addBehaviourVariable
+
+  void BehaviourDescription::addBehaviourVariableFactory(
+      const BehaviourVariableDescription& v) {
+    this->addBehaviourVariableFactory(v, false);
+  }
+
+  void BehaviourDescription::addBehaviourVariableFactory(
+      const BehaviourVariableDescription& v, const bool isExternalModel) {
+    if (!this->allowsNewUserDefinedVariables()) {
+      tfel::raise(
+          "BehaviourDescription::addBehaviourVariableFactory: "
+          "adding new variables is no more allowed.");
+    }
+    if (this->areModellingHypothesesDefined()) {
+      if (getVerboseMode() >= VERBOSE_DEBUG) {
+        auto& log = getLogStream();
+        log << "BehaviourDescription::addBehaviourVariableFactory: "
+            << "adding behaviour variable '" << v.name
+            << "' for behaviour of type '" << v.behaviour.getClassName()
+            << "'\n";
+      }
+      // check compatibility with the modelling hypotheses of the behaviour
+      const auto& v_hypotheses = v.behaviour.getModellingHypotheses();
+      const auto& v_distinct_hypotheses = getDistinctModellingHypotheses();
+      for (const auto& h : this->hypotheses) {
+        if (!v_hypotheses.contains(h)) {
+          tfel::raise(
+              "BehaviourDescription::addBehaviourVariableFactory: "
+              "hypothesis '" +
+              ModellingHypothesis::toString(h) +
+              "' is not supported by behaviour variable factory '" + v.name +
+              "' of type '" + v.behaviour.getClassName() + "'");
+        }
+        if (v_distinct_hypotheses.contains(h)) {
+          this->specialize(h);
+        }
+      }
+      // now adding everything that we need
+      constexpr auto uh = Hypothesis::UNDEFINEDHYPOTHESIS;
+      if (!this->areAllMechanicalDataSpecialised()) {
+        completeVariablesDeclarations(this->d, v, uh, isExternalModel);
+      }
+      for (auto& md : this->sd) {
+        completeVariablesDeclarations(*(md.second), v, md.first,
+                                      isExternalModel);
+      }
+      this->d.addBehaviourVariableFactory(v);
+      for (auto& md : this->sd) {
+        md.second->addBehaviourVariableFactory(v);
+      }
+    } else {
+      if (getVerboseMode() >= VERBOSE_DEBUG) {
+        auto& log = getLogStream();
+        log << "BehaviourDescription::addBehaviourVariableFactory: "
+            << "the addition of behaviour variable factory '" << v.name
+            << "' for behaviour of type '" << v.behaviour.getClassName()
+            << "' is delayed up to when the modelling hypotheses "
+            << "are defined'\n";
+      }
+      this->behaviourVariableFactoriesCandidates.push_back(
+          {v, isExternalModel});
+    }
+  }  // end of addBehaviourVariableFactory
+
+  void BehaviourDescription::completeVariableDeclaration() {
+    if (!this->areModellingHypothesesDefined()) {
+      tfel::raise(
+          "BehaviourDescription::completeVariableDeclaration: "
+          "modelling hypotheses must be defined before calling this method");
+    }
+    // time step scaling factors
+    if (!this->hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                            "minimal_time_step_scaling_factor")) {
+      VariableDescription e("real", "minimal_time_step_scaling_factor", 1u, 0u);
+      e.description = "minimal value for the time step scaling factor";
+      this->addParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS, e,
+                         BehaviourData::ALREADYREGISTRED);
+      this->setParameterDefaultValue(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                                     "minimal_time_step_scaling_factor", 0.1);
+      this->setEntryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                         "minimal_time_step_scaling_factor",
+                         "minimal_time_step_scaling_factor");
+    }
+    if (!this->hasParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                            "maximal_time_step_scaling_factor")) {
+      VariableDescription e("real", "maximal_time_step_scaling_factor", 1u, 0u);
+      e.description = "maximal value for the time step scaling factor";
+      this->addParameter(ModellingHypothesis::UNDEFINEDHYPOTHESIS, e,
+                         BehaviourData::ALREADYREGISTRED);
+      this->setParameterDefaultValue(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                                     "maximal_time_step_scaling_factor",
+                                     std::numeric_limits<double>::max());
+      this->setEntryName(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
+                         "maximal_time_step_scaling_factor",
+                         "maximal_time_step_scaling_factor");
+    }
+    // incompatible options
+    if ((this->getAttribute(BehaviourDescription::computesStiffnessTensor,
+                            false)) &&
+        (this->getAttribute(BehaviourDescription::requiresStiffnessTensor,
+                            false))) {
+      tfel::raise(
+          "BehaviourDescription::completeVariableDeclaration: "
+          "internal error, incompatible options for stiffness tensor");
+    }
+    // check of stiffness tensor requirement
+    if ((this->getBehaviourType() ==
+         BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
+        (this->getBehaviourType() ==
+         BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR)) {
+      if ((this->hypotheses.contains(ModellingHypothesis::PLANESTRESS)) ||
+          (this->hypotheses.contains(
+              ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS))) {
+        if (this->getAttribute(BehaviourDescription::requiresStiffnessTensor,
+                               false)) {
+          if (!this->hasAttribute(
+                  BehaviourDescription::requiresUnAlteredStiffnessTensor)) {
+            tfel::raise(
+                "BehaviourDescription::completeVariableDeclaration: "
+                "No option was given to the '@RequireStiffnessTensor' "
+                "keyword.\n"
+                "For plane stress hypotheses, it is required to precise "
+                "whether "
+                "the expected stiffness tensor is 'Altered' (the plane stress "
+                "hypothesis is taken into account) or 'UnAltered' (the "
+                "stiffness "
+                "tensor is the same as in plane strain)");
+          }
+        }
+      }
+    }
+    if (this->getSymmetryType() == mfront::ORTHOTROPIC) {
+      // if no orthotropic axes convention is defined, one can't compute
+      // stiffness tensor, thermal expansion or stress free expansion
+      // correctly, except for the 3D modelling hypothesis
+      for (const auto h : this->getDistinctModellingHypotheses()) {
+        if (((this->areElasticMaterialPropertiesDefined()) &&
+             (this->getElasticMaterialProperties().size() == 9u)) ||
+            ((this->areThermalExpansionCoefficientsDefined()) &&
+             (this->getThermalExpansionCoefficients().size() == 3u)) ||
+            (this->isStressFreeExansionAnisotropic(h))) {
+          if (this->getOrthotropicAxesConvention() ==
+              OrthotropicAxesConvention::DEFAULT) {
+            // in this case, only tridimensional case is supported
+            if (h != ModellingHypothesis::TRIDIMENSIONAL) {
+              tfel::raise(
+                  "BehaviourDescription::completeVariableDeclaration: "
+                  "an orthotropic axes convention must be choosen when "
+                  "using one of @ComputeStiffnessTensor, "
+                  "@ComputeThermalExpansion, @Swelling, @AxilalGrowth keywords "
+                  "in behaviours which "
+                  "shall be valid in other modelling hypothesis than "
+                  "'Tridimensional'. This message was triggered because "
+                  "either the thermal expansion or to the stiffness tensor "
+                  "is orthotropic.\n"
+                  "Either restrict the validity of the behaviour to "
+                  "'Tridimensional' (see @ModellingHypothesis) or "
+                  "choose and orthotropic axes convention as on option "
+                  "to the @OrthotropicBehaviour keyword");
+            }
+          }
+        }
+      }
+    }
+    // complete the declaration of physical bounds
+    this->checkAndCompletePhysicalBoundsDeclaration();
+    //
+    const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    this->d.finalizeVariablesDeclaration(uh);
+    for (const auto& bd : this->sd) {
+      bd.second->finalizeVariablesDeclaration(bd.first);
+    }
+    this->setAttribute(uh, BehaviourData::allowsNewUserDefinedVariables, false);
+  }  // end of completeVariableDeclaration
 
   void BehaviourDescription::addInitializeFunctionVariables(
       const Hypothesis h, const VariableDescriptionContainer& v) {
@@ -3323,5 +3828,65 @@ namespace mfront {
     const auto hn = BehaviourDescription::ModellingHypothesis::toString(h);
     return bd.getClassName() + hn + "-parameters.txt";
   }  // end of getParametersFileName
+
+  std::vector<std::string> checkInitializeMethods(
+      const BehaviourDescription& bd,
+      const BehaviourDescription::Hypothesis h,
+      const CheckInitializeMethodsOptions& opts) {
+    auto r = std::vector<std::string>{};
+    auto check = [&r, &bd, &h, &opts](const std::string& n) {
+      if (!bd.hasCode(h, n)) {
+        return;
+      }
+      const auto& cb = bd.getCodeBlock(h, n);
+      if (isSafe(cb)) {
+        return;
+      }
+      for (const auto& m : cb.members) {
+        if (opts.checkGradientsAtTheBeginningOfTheTimeStep) {
+          if (bd.isNameOfAGradientAtTheBeginningOfTheTimeStep(m)) {
+            r.push_back("the code block '" + n + "' shall not use gradient '" +
+                        m + "'");
+          }
+        }
+        if (opts.checkGradientsAtTheEndOfTheTimeStep) {
+          if (bd.isNameOfAGradientAtTheEndOfTheTimeStep(m)) {
+            r.push_back("the code block '" + n + "' shall not use gradient '" +
+                        m + "'");
+          }
+        }
+        if (opts.checkGradientsIncrements) {
+          if (bd.isGradientIncrementName(m)) {
+            r.push_back("the code block '" + n +
+                        "' shall not use gradient increment '" + m + "'");
+          }
+        }
+        if (opts.checkThermodynamicForcesAtTheBeginningOfTheTimeStep) {
+          if (bd.isThermodynamicForceName(m)) {
+            r.push_back("the code block '" + n +
+                        "' shall not use thermodynamic force '" + m + "'");
+          }
+        }
+      }
+    };
+    check(BehaviourData::BeforeInitializeLocalVariables);
+    check(BehaviourData::InitializeLocalVariables);
+    check(BehaviourData::AfterInitializeLocalVariables);
+    return r;
+  }
+
+  std::string makeTangentOperatorBlocksList(
+      const BehaviourDescription& bd,
+      const std::vector<std::pair<VariableDescription, VariableDescription>>&
+          tblocks) {
+    auto r = std::string{};
+    for (auto p = tblocks.begin(); p != tblocks.end();) {
+      r += '\'' + bd.getTangentOperatorBlockName(*p) + '\'';
+      if (++p != tblocks.end()) {
+        r += ", ";
+      }
+    }
+    return r;
+  }  // end of makeTangentOperatorBlocksList
 
 }  // end of namespace mfront

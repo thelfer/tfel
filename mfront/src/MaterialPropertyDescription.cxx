@@ -306,6 +306,17 @@ namespace mfront {
     }
   }  // end of addMaterialLaw
 
+  bool MaterialPropertyDescription::hasParameter(const std::string& v) const {
+    return this->parameters.contains(v);
+  }  // end of hasParameter
+
+  bool MaterialPropertyDescription::hasParameters() const {
+    if (!this->parameters.empty()) {
+      return true;
+    }
+    return false;
+  }  // end of hasParameters
+
   void MaterialPropertyDescription::reserveName(const std::string& n) {
     tfel::raise_if(!this->reservedNames.insert(n).second,
                    "MaterialPropertyDescription::reserveName: "

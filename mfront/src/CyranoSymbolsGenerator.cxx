@@ -16,7 +16,7 @@
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
-#include "MFront/StandardBehaviourInterface.hxx"
+#include "MFront/BehaviourInterfaceBase.hxx"
 #include "MFront/CyranoMaterialPropertyInterface.hxx"
 #include "MFront/CyranoSymbolsGenerator.hxx"
 
@@ -26,7 +26,7 @@ namespace mfront {
 
   void CyranoSymbolsGenerator::writeSpecificSymbols(
       std::ostream& os,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& bd,
       const FileDescription&,
       const std::string& name) const {
@@ -64,7 +64,7 @@ namespace mfront {
 
   void CyranoSymbolsGenerator::writeAdditionalSymbols(
       std::ostream&,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription&,
       const FileDescription&,
       const std::string&,
@@ -73,7 +73,7 @@ namespace mfront {
 
   void CyranoSymbolsGenerator::writeBehaviourTypeSymbols(
       std::ostream& os,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& bd,
       const std::string& name) const {
     const auto bt = [&bd] {
@@ -108,7 +108,7 @@ namespace mfront {
 
   void CyranoSymbolsGenerator::writeBehaviourKinematicSymbols(
       std::ostream& os,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& bd,
       const std::string& name) const {
     const auto bk = [&bd] {

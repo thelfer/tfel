@@ -15,44 +15,38 @@
 #define LIB_TFEL_MATH_T2TOST2_CONCEPT_IXX 1
 
 #include "TFEL/Math/General/MathConstants.hxx"
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
-#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
 
 namespace tfel::math {
 
-  template <typename T2toST2Type>
-  typename std::enable_if<
-      implementsT2toST2Concept<T2toST2Type>(),
-      typename tfel::typetraits::AbsType<numeric_type<T2toST2Type>>::type>::type
-  abs(const T2toST2Type& v) {
+  TFEL_HOST_DEVICE constexpr auto abs(const T2toST2Concept auto& t) noexcept {
+    using T2toST2Type = decltype(t);
     using NumType = numeric_type<T2toST2Type>;
     using AbsNumType = typename tfel::typetraits::AbsType<NumType>::type;
-    AbsNumType a(0);
+    auto a = AbsNumType{};
     constexpr auto ssize =
         StensorDimeToSize<getSpaceDimension<T2toST2Type>()>::value;
     constexpr auto tsize =
         TensorDimeToSize<getSpaceDimension<T2toST2Type>()>::value;
     for (unsigned short i = 0; i < ssize; ++i) {
       for (unsigned short j = 0; j < tsize; ++j) {
-        a += abs(v(i, j));
+        a += abs(t(i, j));
       }
     }
     return a;
-  }
+  }  // end of abs
 
-  template <typename T2toST2ResultType,
-            typename StensorType,
-            typename TensorType>
-  typename std::enable_if<implementsT2toST2Concept<T2toST2ResultType>() &&
-                              implementsStensorConcept<StensorType>() &&
-                              implementsTensorConcept<TensorType>() &&
-                              tfel::typetraits::IsFundamentalNumericType<
-                                  numeric_type<TensorType>>::cond &&
-                              isAssignableTo<numeric_type<StensorType>,
-                                             numeric_type<T2toST2ResultType>>(),
-                          void>::type
+  template <T2toST2Concept T2toST2ResultType,
+            StensorConcept StensorType,
+            TensorConcept TensorType>
+  TFEL_HOST_DEVICE constexpr void
   computePushForwardDerivativeWithRespectToDeformationGradient(
-      T2toST2ResultType& dTdF, const StensorType& S, const TensorType& F) {
+      T2toST2ResultType& dTdF,
+      const StensorType& S,
+      const TensorType& F) noexcept  //
+      requires(tfel::typetraits::IsFundamentalNumericType<
+               numeric_type<TensorType>>::cond&&
+                   isAssignableTo<numeric_type<StensorType>,
+                                  numeric_type<T2toST2ResultType>>()) {
     using value_type = numeric_type<T2toST2ResultType>;
     constexpr auto N = getSpaceDimension<T2toST2ResultType>();
     static_assert(getSpaceDimension<StensorType>() == N);
@@ -150,15 +144,17 @@ namespace tfel::math {
     }
   }  // end of computePushForwardDerivativeWithRespectToDeformationGradient
 
-  template <typename T2toST2ResultType,
-            typename T2toST2Type,
-            typename StensorType,
-            typename TensorType>
-  typename std::enable_if<
-      implementsT2toST2Concept<T2toST2ResultType>() &&
-          implementsT2toST2Concept<T2toST2Type>() &&
-          implementsStensorConcept<StensorType>() &&
-          implementsTensorConcept<TensorType>() &&
+  template <T2toST2Concept T2toST2ResultType,
+            T2toST2Concept T2toST2Type,
+            StensorConcept StensorType,
+            TensorConcept TensorType>
+  TFEL_HOST_DEVICE constexpr void
+  computeCauchyStressDerivativeFromKirchhoffStressDerivative(
+      T2toST2ResultType& ds,
+      const T2toST2Type& dt_K,
+      const StensorType& s,
+      const TensorType& F) noexcept  //
+      requires(
           getSpaceDimension<T2toST2ResultType>() ==
               getSpaceDimension<T2toST2Type>() &&
           getSpaceDimension<T2toST2ResultType>() ==
@@ -170,27 +166,23 @@ namespace tfel::math {
           isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
                                                       numeric_type<StensorType>,
                                                       OpPlus>::Result,
-                         numeric_type<T2toST2ResultType>>(),
-      void>::type
-  computeCauchyStressDerivativeFromKirchhoffStressDerivative(
-      T2toST2ResultType& ds,
-      const T2toST2Type& dt_K,
-      const StensorType& s,
-      const TensorType& F) {
+                         numeric_type<T2toST2ResultType>>()) {
     const auto iJ = 1 / det(F);
     const auto dJ = computeDeterminantDerivative(F);
     ds = iJ * (dt_K - (s ^ dJ));
   }
 
-  template <typename T2toST2ResultType,
-            typename T2toST2Type,
-            typename StensorType,
-            typename TensorType>
-  typename std::enable_if<
-      implementsT2toST2Concept<T2toST2ResultType>() &&
-          implementsT2toST2Concept<T2toST2Type>() &&
-          implementsStensorConcept<StensorType>() &&
-          implementsTensorConcept<TensorType>() &&
+  template <T2toST2Concept T2toST2ResultType,
+            T2toST2Concept T2toST2Type,
+            StensorConcept StensorType,
+            TensorConcept TensorType>
+  TFEL_HOST_DEVICE constexpr void
+  computeKirchhoffStressDerivativeFromCauchyStressDerivative(
+      T2toST2ResultType& dt_K,
+      const T2toST2Type& ds,
+      const StensorType& s,
+      const TensorType& F) noexcept  //
+      requires(
           getSpaceDimension<T2toST2ResultType>() ==
               getSpaceDimension<T2toST2Type>() &&
           getSpaceDimension<T2toST2ResultType>() ==
@@ -202,13 +194,7 @@ namespace tfel::math {
           isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
                                                       numeric_type<StensorType>,
                                                       OpPlus>::Result,
-                         numeric_type<T2toST2ResultType>>(),
-      void>::type
-  computeKirchhoffStressDerivativeFromCauchyStressDerivative(
-      T2toST2ResultType& dt_K,
-      const T2toST2Type& ds,
-      const StensorType& s,
-      const TensorType& F) {
+                         numeric_type<T2toST2ResultType>>()) {
     const auto J = det(F);
     const auto dJ = computeDeterminantDerivative(F);
     dt_K = J * ds + (s ^ dJ);

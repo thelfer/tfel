@@ -20,6 +20,7 @@
 #include <tuple>
 #include <memory>
 #include <string>
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/CodeBlock.hxx"
@@ -70,9 +71,13 @@ namespace mfront {
     //! \brief standard option name
     static const char* const initializationFromFileOption;
     //! \brief standard option name
+    static const char* const validatorOption;
+    //! \brief standard option name
     static const char* const buildIdentifierOption;
     //! \brief standard option
     static const char* const overridingParameters;
+    //! \brief standard option name
+    static const char* const disableRuntimeChecksOption;
     //! \return a validator for the options passed to the DSL
     static tfel::utilities::DataMapValidator getDSLOptionsValidator();
     //
@@ -111,12 +116,12 @@ namespace mfront {
        */
       virtual ~VariableModifier();
     };  // end of struct VariableModifier
-        /*!
-         * \brief An helper structure used by the DSLBase class to modify the
-         * code provided by the user.
-         *
-         * These modifiers are called when the parser encounters variables.
-         */
+    /*!
+     * \brief An helper structure used by the DSLBase class to modify the
+     * code provided by the user.
+     *
+     * These modifiers are called when the parser encounters variables.
+     */
     struct MFRONT_VISIBILITY_EXPORT WordAnalyser {
       /*!
        * \param[in] cb : code block being treated
@@ -150,9 +155,11 @@ namespace mfront {
        */
       std::map<std::string, std::string> symbols;
       //! \brief member names
-      std::set<std::string> mn;
+      std::set<std::string> member_names;
       //! \brief static member names
-      std::set<std::string> smn;
+      std::set<std::string> static_member_names;
+      //! \brief variables defined by the DSL in this code block
+      std::set<std::string> block_variables_names;
       //! \brief modifier applied to variables
       std::shared_ptr<VariableModifier> modifier;
       //! \brief analyser applied to variables
@@ -198,7 +205,8 @@ namespace mfront {
      * \param[in] interfaces: list of interfaces used to treat the file
      */
     virtual void addExternalMFrontFile(const std::string&,
-                                       const std::vector<std::string>&) = 0;
+                                       const std::vector<std::string>&,
+                                       const tfel::utilities::DataMap&) = 0;
     // \return options for child DSL (DSL called by this DSL)
     virtual DSLOptions buildDSLOptions() const = 0;
     /*!
@@ -246,6 +254,13 @@ namespace mfront {
      * \param[in] d: description
      */
     virtual void overrideDescription(const std::string&);
+    /*!
+     * \brief specify the unit system of the `MFront` implementation before
+     * parsing the `MFront` source file. Any unit system specified with the
+     * `@UnitSystem` keyword will be ignored.
+     * \param[in] s: unit system
+     */
+    virtual void overrideUnitSystem(const std::string&);
     /*!
      * \brief specify that the given variable must be overriden by a parameter.
      * \param[in] n: variable name
@@ -354,6 +369,8 @@ namespace mfront {
     std::string readType();
     //! \brief read a C++ type if present
     std::optional<std::string> readVariableTypeIfPresent();
+    //! \return true if the next tokens are '<safe>', false otherwise
+    bool readSafeOptionTypeIfPresent();
     /*!
      * \return the size of an array of variables, or 1 if the variable are not
      * defined as an array.
@@ -455,11 +472,13 @@ namespace mfront {
     std::pair<std::string, VariableBoundsDescription> readVariableBounds();
     /*!
      * call mfront in a subprocess
-     * \param[in] interfaces : list of interfaces
      * \param[in] files      : list of files
+     * \param[in] interfaces : list of interfaces
+     * \param[in] dsl_options: DSL options
      */
     virtual void callMFront(const std::vector<std::string>&,
-                            const std::vector<std::string>&);
+                            const std::vector<std::string>&,
+                            const tfel::utilities::DataMap&);
     /*!
      * \brief This function handles a material property treated as a
      * dependency of the current file.
@@ -513,6 +532,8 @@ namespace mfront {
     virtual void treatMaterialLaw();
     //! \brief handle the `@Link` keyword
     virtual void treatLink();
+    //! \brief handle the `@TFELLibraries` keyword
+    virtual void treatTFELLibraries();
     //! \brief handle the `@Author` keyword
     virtual void treatAuthor();
     //! \brief handle the `@Data` keyword
@@ -556,9 +577,7 @@ namespace mfront {
     virtual void registerIntegerConstant(const std::string&,
                                          const size_t,
                                          const int);
-    /*!
-     * \brief extract a double from the current token
-     */
+    //! \brief extract a double from the current token
     double readDouble();
     //! \brief destructor
     ~DSLBase() override;
@@ -584,6 +603,12 @@ namespace mfront {
     TargetsDescription td;
     //! \brief additional linker flags
     std::vector<std::string> ldflags;
+    //! \brief additional libraries's sources
+    std::vector<std::string> additional_libraries_sources;
+    //! \brief additional link libraries
+    std::vector<std::string> link_libraries;
+    //! \brief additional link directories
+    std::vector<std::string> link_directories;
     //! \brief auxiliary target descriptions
     std::vector<TargetsDescription> atds;
     //! \brief current position in the input stream
@@ -608,6 +633,8 @@ namespace mfront {
     std::string overriden_date;
     //! \brief overriden description
     std::string overriden_description;
+    //! \brief overriden unit system
+    std::string overriden_unit_system;
   };  // end of class DSLBase
 
 }  // end of namespace mfront

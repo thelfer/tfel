@@ -14,6 +14,7 @@
 #include <ostream>
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
+#include "MFront/IsotropicBehaviourDSLBase.hxx"
 #include "MFront/IsotropicMisesPlasticFlowCodeGenerator.hxx"
 
 namespace mfront {
@@ -49,23 +50,26 @@ namespace mfront {
        << "using namespace tfel::material;\n"
        << "using std::vector;\n";
     writeMaterialLaws(os, this->bd.getMaterialLaws());
+    if (this->bd.hasCode(h, BehaviourData::BeforeFlowRule)) {
+      os << this->bd.getCode(h, BehaviourData::BeforeFlowRule);
+    }
     os << this->bd.getCode(h, BehaviourData::FlowRule) << "return true;\n}\n\n";
-
     os << "bool NewtonIntegration(){\n"
        << "constexpr auto newton_epsilon = "
           "100*std::numeric_limits<strain>::epsilon();\n"
-       << "const auto mu_3_theta = 3*(" << this->bd.getClassName()
-       << "::theta)*(this->mu);\n"
+       << "const auto mfront_internal_3_mu_theta = 3*("
+       << this->bd.getClassName() << "::theta)*(this->mu);\n"
        << "bool converge=false;\n"
        << "strain newton_f;\n"
        << "strain newton_df;\n"
        << "auto newton_ddp = strain{}\n; // previous correction of the Newton "
           "algorithm\n"
-       << "real surf;\n"
+       << "real mfront_internal_surf;\n"
        << "unsigned int iter = 0u;\n"
        << "this->p_=this->p+this->dp;\n"
        << "while((converge==false) && (iter<this->iterMax)){\n"
-       << "this->seq = std::max(this->seq_e-mu_3_theta*(this->dp), "
+       << "this->seq = "
+          "std::max(this->seq_e-mfront_internal_3_mu_theta*(this->dp), "
           "stress(0));\n"
        << "const auto compute_flow_r = this->computeFlow();\n"
        << "if(!((compute_flow_r)&&\n"
@@ -80,18 +84,19 @@ namespace mfront {
     }
     os << "if(iter==0u){\n"
        << "// probably an elastic prediction\n"
-       << "newton_ddp = (this->seq_e / mu_3_theta) / 2;\n"
+       << "newton_ddp = (this->seq_e / mfront_internal_3_mu_theta) / 2;\n"
        << "} // end of if(iter==0u)\n"
        << "this->dp += newton_ddp;\n"
        << "this->p_  = this->p + (this->theta)*(this->dp);\n"
        << "iter+=1;\n"
        << "} else {\n"
-       << "surf = (this->f)/(this->young);\n"
-       << "if(((surf>newton_epsilon)&&((this->dp)>=strain(0)))||"
+       << "mfront_internal_surf = (this->f)/(this->young);\n"
+       << "if(((mfront_internal_surf>newton_epsilon)&&((this->dp)>=strain(0)))|"
+          "|"
        << "   ((this->dp)>newton_epsilon)){\n"
-       << "newton_f  = surf;\n"
+       << "newton_f  = mfront_internal_surf;\n"
        << "newton_df = ((this->theta)*(this->df_dp)"
-       << "-mu_3_theta*(this->df_dseq))/(this->young);\n"
+       << "-mfront_internal_3_mu_theta*(this->df_dseq))/(this->young);\n"
        << "} else {\n"
        << "newton_f  =(this->dp);\n"
        << "newton_df = real(1.);\n"
@@ -120,7 +125,7 @@ namespace mfront {
          << "<< iter << \": invalid jacobian on the first iteration\\n\";\n";
     }
     os << "// probably an elastic prediction\n"
-       << "newton_ddp = (this->seq_e / mu_3_theta) / 2;\n"
+       << "newton_ddp = (this->seq_e / mfront_internal_3_mu_theta) / 2;\n"
        << "} // end of if(iter==0u)\n"
        << "this->dp += newton_ddp;\n"
        << "this->p_  = this->p + (this->theta)*(this->dp);\n"
@@ -168,6 +173,14 @@ namespace mfront {
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     }
+    this->writeBehaviourIntegratorPreprocessingStep(os);
+    os << "this->seq_e = sigmaeq(this->se);\n"
+       << "if(this->seq_e > 100 * (this->young) * "
+       << "std::numeric_limits<NumericType>::epsilon()){\n"
+       << "this->n = 3 * (this->se)/(2 * (this->seq_e));\n"
+       << "} else {\n"
+       << "this->n = StrainStensor(strain(0));\n"
+       << "}\n";
     os << "if(!this->NewtonIntegration()){\n";
     if (this->bd.useQt()) {
       os << "return MechanicalBehaviour<" << btype
@@ -187,18 +200,15 @@ namespace mfront {
          << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n"
-       << "}\n"
-       << "this->deel = this->deto-(this->dp)*(this->n);\n"
-       << "this->updateStateVariables();\n"
-       << "this->sig  = "
-          "(this->lambda_tdt)*trace(this->eel)*StrainStensor::Id()+2*(this->mu_"
-          "tdt)*(this->eel);\n"
-       << "this->updateAuxiliaryStateVariables();\n";
-    for (const auto& v : d.getPersistentVariables()) {
-      this->writePhysicalBoundsChecks(os, v, false);
-    }
-    for (const auto& v : d.getPersistentVariables()) {
-      this->writeBoundsChecks(os, v, false);
+       << "}\n";
+    this->writeBehaviourIntegratorPostprocessingStep(os);
+    if (!areRuntimeChecksDisabled(this->bd)) {
+      for (const auto& v : d.getPersistentVariables()) {
+        this->writePhysicalBoundsChecks(os, v, false);
+      }
+      for (const auto& v : d.getPersistentVariables()) {
+        this->writeBoundsChecks(os, v, false);
+      }
     }
     if (this->bd.useQt()) {
       os << "return MechanicalBehaviour<" << btype
@@ -224,13 +234,14 @@ namespace mfront {
           "NumericType>::exe(this->Dt,this->lambda_tdt,this-"
           ">mu_tdt);\n"
        << "if(this->dp>prec){\n"
-       << "const auto ccto_tmp_1 =  this->dp/this->seq_e;\n"
+       << "const auto mfront_internal_ccto_tmp_1 =  this->dp/this->seq_e;\n"
        << "const auto& M = st2tost2<N, NumericType>::M();\n"
        << "this->Dt += "
-          "-4*(this->mu_tdt)*(this->mu)*(this->theta)*(ccto_tmp_1*M-(ccto_tmp_"
-          "1-this->df_dseq/"
-          "((this->theta)*(3*(this->mu)*(this->df_dseq)-(this->df_dp))))*(("
-          "this->n)^(this->n)));\n"
+       << "-4*(this->mu_tdt)*(this->mu)*(this->theta)*"
+       << "(mfront_internal_ccto_tmp_1 * M-"
+       << "(mfront_internal_ccto_tmp_1-this->df_dseq/"
+       << "((this->theta)*(3*(this->mu)*(this->df_dseq)-(this->df_dp))))*(("
+       << "this->n)^(this->n)));\n"
        << "}\n"
        << "} else if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
        << "computeElasticStiffness<N, "
@@ -242,21 +253,6 @@ namespace mfront {
        << "return true;\n"
        << "}\n\n";
   }  // end of writeBehaviourComputeTangentOperator
-
-  void IsotropicMisesPlasticFlowCodeGenerator::
-      writeBehaviourParserSpecificInitializeMethodPart(std::ostream& os,
-                                                       const Hypothesis) const {
-    this->checkBehaviourFile(os);
-    os << "this->se=(real{2})*(this->mu)*(tfel::math::deviator(this->eel+("
-       << this->bd.getClassName() << "::theta)*(this->deto)));\n"
-       << "this->seq_e = sigmaeq(this->se);\n"
-       << "if(this->seq_e > 100 * (this->young) * "
-       << "std::numeric_limits<NumericType>::epsilon()){\n"
-       << "this->n = 3 * (this->se)/(2 * (this->seq_e));\n"
-       << "} else {\n"
-       << "this->n = StrainStensor(strain(0));\n"
-       << "}\n";
-  }  // end of writeBehaviourParserSpecificInitializeMethodPart
 
   IsotropicMisesPlasticFlowCodeGenerator::
       ~IsotropicMisesPlasticFlowCodeGenerator() = default;

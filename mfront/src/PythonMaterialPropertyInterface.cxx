@@ -105,10 +105,6 @@ namespace mfront {
     } else {
       insert_if(l.cppflags, TFEL_PYTHON_INCLUDES);
     }
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
 #if !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.link_libraries, "m");
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
@@ -357,6 +353,7 @@ namespace mfront {
 
     // mfront metadata
     writeFileDescriptionSymbols(srcFile, name, fd);
+    writeValidatorSymbol(srcFile, name, mpd);
     writeBuildIdentifierSymbol(srcFile, name, mpd);
     writeEntryPointSymbol(srcFile, name);
     writeTFELVersionSymbol(srcFile, name);
@@ -364,7 +361,8 @@ namespace mfront {
     writeInterfaceSymbol(srcFile, name, "Python");
     writeLawSymbol(srcFile, name, mpd.material);
     writeMaterialSymbol(srcFile, name, mpd.material);
-    writeMaterialKnowledgeTypeSymbol(srcFile, name, MATERIALPROPERTY);
+    writeMaterialKnowledgeTypeSymbol(srcFile, name,
+                                     MaterialKnowledgeType::MATERIALPROPERTY);
     writeParametersSymbols(srcFile, name, mpd);
     // parameters
     if ((!areParametersTreatedAsStaticVariables(mpd)) &&
@@ -375,7 +373,7 @@ namespace mfront {
               << "const double v"
               << "){\n";
       for (const auto& p : mpd.parameters) {
-        srcFile << "if(strcmp(\"" << p.name << "\",p)==0){\n"
+        srcFile << "if(strcmp(\"" << p.name << "\",p) == 0){\n"
                 << "python::" << hn << "::get" << hn << "()." << p.name
                 << " = v;\n"
                 << "return 1;\n"
@@ -435,21 +433,23 @@ namespace mfront {
       }
       srcFile << ")){\nreturn NULL;\n}\n";
     }
-    if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
-      srcFile << "#ifndef PYTHON_NO_BOUNDS_CHECK\n";
-      if (hasPhysicalBounds(mpd.inputs)) {
-        srcFile << "// treating physical bounds\n";
-        for (const auto& i : mpd.inputs) {
-          writePhysicalBounds(srcFile, name, i);
+    if (!areRuntimeChecksDisabled(mpd)) {
+      if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
+        srcFile << "#ifndef PYTHON_NO_BOUNDS_CHECK\n";
+        if (hasPhysicalBounds(mpd.inputs)) {
+          srcFile << "// treating physical bounds\n";
+          for (const auto& i : mpd.inputs) {
+            writePhysicalBounds(srcFile, name, i);
+          }
         }
-      }
-      if (hasBounds(mpd.inputs)) {
-        srcFile << "// treating standard bounds\n";
-        for (const auto& i : mpd.inputs) {
-          writeBounds(srcFile, mpd, name, i);
+        if (hasBounds(mpd.inputs)) {
+          srcFile << "// treating standard bounds\n";
+          for (const auto& i : mpd.inputs) {
+            writeBounds(srcFile, mpd, name, i);
+          }
         }
+        srcFile << "#endif /* PYTHON_NO_BOUNDS_CHECK */\n";
       }
-      srcFile << "#endif /* PYTHON_NO_BOUNDS_CHECK */\n";
     }
     if (useQuantities(mpd)) {
       srcFile << "auto " << output.name << " = " << output.type << "{};\n";
@@ -463,17 +463,19 @@ namespace mfront {
         << "} catch(...){\n"
         << "  return throwPythonRuntimeException(\"unknown C++ exception\");\n"
         << "}\n";
-    if ((hasPhysicalBounds(mpd.output)) || (hasBounds(mpd.output))) {
-      srcFile << "#ifndef PYTHON_NO_BOUNDS_CHECK\n";
-      if (hasPhysicalBounds(mpd.output)) {
-        srcFile << "// treating physical bounds\n";
-        writePhysicalBounds(srcFile, name, mpd.output);
+    if (!areRuntimeChecksDisabled(mpd)) {
+      if ((hasPhysicalBounds(mpd.output)) || (hasBounds(mpd.output))) {
+        srcFile << "#ifndef PYTHON_NO_BOUNDS_CHECK\n";
+        if (hasPhysicalBounds(mpd.output)) {
+          srcFile << "// treating physical bounds\n";
+          writePhysicalBounds(srcFile, name, mpd.output);
+        }
+        if (hasBounds(mpd.output)) {
+          srcFile << "// treating standard bounds\n";
+          writeBounds(srcFile, mpd, name, mpd.output);
+        }
+        srcFile << "#endif /* PYTHON_NO_BOUNDS_CHECK */\n";
       }
-      if (hasBounds(mpd.output)) {
-        srcFile << "// treating standard bounds\n";
-        writeBounds(srcFile, mpd, name, mpd.output);
-      }
-      srcFile << "#endif /* PYTHON_NO_BOUNDS_CHECK */\n";
     }
     srcFile << "return Py_BuildValue(\"d\"," << output.name << ");\n"
             << "} // end of " << name << "\n\n"

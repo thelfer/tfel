@@ -15,4 +15,4 @@ hypotheses. The list of jacobian blocks is given as an array.
 
 ~~~~ {#NumericallyComputedJacobianBlocks .cpp}
 @NumericallyComputedJacobianBlocks {dfp_ddeel,dfeel_ddeel};
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

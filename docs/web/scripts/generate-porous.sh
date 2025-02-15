@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-URL_BASE=http://tfel.sourceforge.net
+URL_BASE=https://thelfer.github.io/tfel/web/
 AUTHOR="Thomas Helfer, Jérémy Hure, Mohamed Shokeir"
 DATE="20/07/2020"
 CRITERION=MichelAndSuquet1992HollowSphereTest

@@ -66,8 +66,8 @@ namespace mfront::bbrick {
           this->sc->isNormalDeviatoric());
       if (!this->ihrs.empty()) {
         c += "dfp" + id + "_ddp" + id + " += ";
-        c += "(this->dt) * dvp" + id + "_dseqe" + id + "*dR" + id + "_ddp" +
-             id + ";\n";
+        c += "(this->dt) * dvp" + id + "_dseqe" + id + " * (this->theta) * dR" +
+             id + "_dp" + id + ";\n";
       }
       if (this->describesStrainHardeningExplicitly()) {
         c += "dfp" + id + "_ddp" + id + " -= ";
@@ -76,8 +76,8 @@ namespace mfront::bbrick {
       auto kid = decltype(khrs.size()){};
       for (const auto& khr : khrs) {
         c += khr->generateImplicitEquationDerivatives(
-            "p",
-            "(this->dt) * dvp" + id + "_dseqe " + id + " * dseq" + id + "_ds" +
+            "p" + id,
+            "(this->dt) * dvp" + id + "_dseqe" + id + " * dseq" + id + "_ds" +
                 id,
             id, std::to_string(kid));
         ++kid;

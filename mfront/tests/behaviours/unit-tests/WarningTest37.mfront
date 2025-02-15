@@ -1,0 +1,8 @@
+@Behaviour WarningTest37;
+@Description {
+  "This test checks that a warning is reported if sig is not used in "
+  "@Integrator."
+}
+@Integrator {
+  deto;
+}

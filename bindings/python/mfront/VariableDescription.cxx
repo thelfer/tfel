@@ -11,9 +11,9 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MFront/VariableDescription.hxx"
-#include "TFEL/Python/VectorConverter.hxx"
 
 static mfront::VariableDescriptionContainer::size_type
 VariableDescriptionContainer_size(
@@ -21,11 +21,11 @@ VariableDescriptionContainer_size(
   return v.size();
 }
 
-void declareVariableDescription();
-void declareVariableDescription() {
-  using namespace boost::python;
+void declareVariableDescription(pybind11::module_&);
+
+void declareVariableDescription(pybind11::module_& m) {
   using namespace mfront;
-  class_<VariableDescriptionBase>("VariableDescriptionBase")
+  pybind11::class_<VariableDescriptionBase>(m, "VariableDescriptionBase")
       .def_readwrite("type", &VariableDescriptionBase::type)
       .def_readwrite("name", &VariableDescriptionBase::name)
       .def_readwrite("description", &VariableDescriptionBase::description)
@@ -39,7 +39,7 @@ void declareVariableDescription() {
   const VariableBoundsDescription& (VariableDescription::*getBounds_1)() const =
       &VariableDescription::getBounds;
   const VariableBoundsDescription& (VariableDescription::*getBounds_2)(
-      const unsigned short)const = &VariableDescription::getBounds;
+      const unsigned short) const = &VariableDescription::getBounds;
   void (VariableDescription::*setBounds_1)(const VariableBoundsDescription&) =
       &VariableDescription::setBounds;
   void (VariableDescription::*setBounds_2)(const VariableBoundsDescription&,
@@ -52,7 +52,7 @@ void declareVariableDescription() {
   const VariableBoundsDescription& (VariableDescription::*getPhysicalBounds_1)()
       const = &VariableDescription::getPhysicalBounds;
   const VariableBoundsDescription& (VariableDescription::*getPhysicalBounds_2)(
-      const unsigned short)const = &VariableDescription::getPhysicalBounds;
+      const unsigned short) const = &VariableDescription::getPhysicalBounds;
   void (VariableDescription::*setPhysicalBounds_1)(
       const VariableBoundsDescription&) =
       &VariableDescription::setPhysicalBounds;
@@ -60,15 +60,15 @@ void declareVariableDescription() {
       const VariableBoundsDescription&, const unsigned short) =
       &VariableDescription::setPhysicalBounds;
 
-  class_<VariableDescription, bases<VariableDescriptionBase>>(
-      "VariableDescription")
+  pybind11::class_<VariableDescription, VariableDescriptionBase>(
+      m, "VariableDescription")
       .def("hasBounds", hasBounds_1,
            "Return true if the bounds of the variable has already been set")
       .def("hasBounds", hasBounds_2,
            "Return true if the bounds of the variable has already been set")
-      .def("getBounds", getBounds_1, return_internal_reference<>(),
+      .def("getBounds", getBounds_1, pybind11::return_value_policy::reference,
            "Return the physical bounds of the variable")
-      .def("getBounds", getBounds_2, return_internal_reference<>(),
+      .def("getBounds", getBounds_2, pybind11::return_value_policy::reference,
            "Return the physical bounds of the variable")
       .def("setBounds", setBounds_1, "Set the physical bounds of the variable")
       .def("setBounds", setBounds_2, "Set the physical bounds of the variable")
@@ -79,10 +79,10 @@ void declareVariableDescription() {
            "Return true if the physical bounds of the variable has already "
            "been set")
       .def("getPhysicalBounds", getPhysicalBounds_1,
-           return_internal_reference<>(),
+           pybind11::return_value_policy::reference,
            "Get the physical bounds of the variable")
       .def("getPhysicalBounds", getPhysicalBounds_2,
-           return_internal_reference<>(),
+           pybind11::return_value_policy::reference,
            "Get the physical bounds of the variable")
       .def("setPhysicalBounds", setPhysicalBounds_1,
            "Set the physical bounds of the variable")
@@ -93,15 +93,21 @@ void declareVariableDescription() {
       .def("setEntryName", &VariableDescription::setEntryName,
            "Set the entry name")
       .def("getExternalName", &VariableDescription::getExternalName,
-           return_value_policy<copy_const_reference>(),
            "Return the external name")
       .def("hasGlossaryName", &VariableDescription::hasGlossaryName,
            "Return true if the variable has a glossary name")
       .def("hasEntryName", &VariableDescription::hasEntryName,
            "Return true if the variable has a entry name");
 
-  class_<VariableDescriptionContainer>("VariableDescriptionContainer")
-      .def("__iter__", iterator<VariableDescriptionContainer>())
+  pybind11::class_<VariableDescriptionContainer>(m,
+                                                 "VariableDescriptionContainer")
+      .def(
+          "__iter__",
+          [](const VariableDescriptionContainer& v) {
+            return pybind11::make_iterator(v.begin(), v.end());
+          },
+          pybind11::keep_alive<0,
+                               1>())  // keep object alive while iterator exists
       .def("__len__", VariableDescriptionContainer_size)
       .def("contains", &VariableDescriptionContainer::contains);
 }

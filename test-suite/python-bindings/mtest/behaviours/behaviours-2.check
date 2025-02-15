@@ -1,0 +1,9 @@
+@Requires{"tfel::python", "mfront::behaviour::castem_interface"};
+@Command "@mfront@ --interface=castem Tvergaard.mfront";
+@Command "@mfront@ --obuild";
+@Command "@python@ tvergaard-1.py";
+@Command "@python@ tvergaard-2.py";
+// tests
+@Precision 1e-5;
+@Test "castemtvergaard.ref" "castemtvergaard.res" 5;
+@Test "castemtvergaard-2.ref" "castemtvergaard-2.res" 5;

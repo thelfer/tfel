@@ -21,11 +21,28 @@
 namespace tfel::math {
 
   /*!
+   * \brief class allocating on the stack a workspace usable by the
+   * `TinyBroydenSolver2` class.
+   * \tparam N: size of the system of non linear equations.
+   * \tparam NumericType: numeric type.
+   */
+  template <unsigned short N, typename NumericType>
+  struct StackAllocatedTinyBroyden2SolverWorkspace
+      : public StackAllocatedTinyNonLinearSolverWorkspace<N, NumericType> {
+    //! \brief residual of the previous iterations
+    tvector<N, NumericType> fzeros_1;
+    //! \brief approximation of the invert of the jacobian matrix
+    tmatrix<N, N, NumericType> inv_jacobian;
+  };
+
+  /*!
    * \brief A class based on the curiously recurring template pattern (CRTP)
    * to solve system of non linear equations using the second Broyden algorithm.
    * \tparam N: size of the system of non linear equations.
    * \tparam NumericType: numeric type.
    * \tparam Child: base class.
+   * \tparam ExternalWorkSpace: class containing data members used by the
+   * solver.
    *
    * By default, the `Child` class must:
    *
@@ -38,8 +55,13 @@ namespace tfel::math {
    * the residual, i.e. the data member `fzeros` using the current estimate of
    * the solution, i.e. the data member `zeros`.
    */
-  template <unsigned short N, typename NumericType, typename Child>
-  struct TinyBroyden2Solver : TinyNonLinearSolverBase<N, NumericType, Child> {
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename> typename ExternalWorkSpace =
+                StackAllocatedTinyBroyden2SolverWorkspace>
+  struct TinyBroyden2Solver
+      : TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace> {
     //
     static_assert(N != 0, "invalid size");
     static_assert(std::is_floating_point_v<NumericType>,
@@ -60,12 +82,6 @@ namespace tfel::math {
     TFEL_HOST_DEVICE bool computeNewCorrection();
     //! \brief destructor
     ~TinyBroyden2Solver() noexcept = default;
-
-   protected:
-    //! \brief residual of the previous iterations
-    tvector<N, NumericType> fzeros_1;
-    //! \brief approximation of the invert of the jacobian matrix
-    tmatrix<N, N, NumericType> inv_jacobian;
   };
 
 }  // end of namespace tfel::math

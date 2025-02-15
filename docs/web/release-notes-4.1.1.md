@@ -17,6 +17,13 @@ secPrefixTemplate: "$$i$$"
 eqnPrefixTemplate: "($$i$$)"
 ---
 
+Version 4.1.1 has been released on November, 28th 2023. This version
+inherits from the bug fixes of Versions
+[3.0.12](release-notes-3.0.12.html), [3.1.12](release-notes-3.1.12.html)
+[3.2.9](release-notes-3.2.9.html), [3.4.5](release-notes-3.4.5.html) and
+[4.0.2](release-notes-4.0.2.html).
+
+
 # Issues fixed
 
 ## Issue 404: [mfront] Invalid treatments of variables bounds in the `Cast3M` and `generic` interfaces for models

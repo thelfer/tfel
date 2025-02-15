@@ -15,7 +15,6 @@
 #define LIB_TFEL_MATH_COMPUTEUNARYRESULT_HXX
 
 #include <type_traits>
-
 #include "TFEL/Math/General/UnaryResultType.hxx"
 #include "TFEL/Math/General/ComputeObjectTag.hxx"
 

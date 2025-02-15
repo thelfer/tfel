@@ -43,10 +43,10 @@ automatically.
 ## Example
 
 ~~~~{.cpp}
-// standard way
-@RotationMatrix {{0,1,0},
-                 {1,0,0},
-                 {0,0,1}};
+// standard way (rotate vectors by an angle θ about the z-axis)
+@RotationMatrix {{cos,-sin, 0},
+                 {sin, cos, 0},
+                 { 0 ,  0 , 1}};
 ~~~~
 
 ~~~~{.cpp}
@@ -55,8 +55,8 @@ automatically.
 ~~~~
 
 ~~~~{.cpp}
-// using directions in 3D
-@RotationMatrix<Direction> {{0,1,0},{1,0,0}};
+// using directions in 3D (rotate vectors by an angle θ about the z-axis)
+@RotationMatrix<Direction> {{cos,sin,0},{-sin,cos,0}};
 ~~~~
 
 ~~~~{.cpp}

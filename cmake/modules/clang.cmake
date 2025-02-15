@@ -1,3 +1,7 @@
+if(WIN32)
+  tfel_add_cxx_compiler_flag_if_available(VISIBILITY_FLAGS "EHsc")
+endif(WIN32)
+
 tfel_add_cxx_compiler_flag_if_available(COMPILER_WARNINGS  "Weverything")
 tfel_add_cxx_compiler_flag_if_available(COMPILER_WARNINGS  "Wno-c++98-compat-pedantic")
 tfel_add_cxx_compiler_flag_if_available(COMPILER_WARNINGS  "Wno-padded")
@@ -29,8 +33,11 @@ else(enable-fast-math)
   tfel_add_cxx_compiler_flag_if_available(OPTIMISATION_FLAGS2 "ffast-math")
 endif(enable-fast-math)
 
+if(NOT WIN32)
 tfel_add_cxx_compiler_flag_if_available(VISIBILITY_FLAGS "fvisibility=hidden")
 tfel_add_cxx_compiler_flag_if_available(VISIBILITY_FLAGS "fvisibility-inlines-hidden")
+# tfel_add_cxx_compiler_flag_if_available(COMPILER_CXXFLAGS "MD")
+endif(NOT WIN32)
 
 set(OPTIMISATION_FLAGS "-DTFEL_NO_RUNTIME_CHECK_BOUNDS ${OPTIMISATION_FLAGS}")
 
@@ -44,7 +51,11 @@ endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 if(HAVE_FORTRAN)
   # we associate clang with the gnu fortran compiler
-  include(cmake/modules/gnu-fortran-compiler.cmake)
+  if("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "IntelLLVM")
+    set(INTEL_FORTRAN_COMPILER ON)
+  else()
+    include(cmake/modules/gnu-fortran-compiler.cmake)
+  endif()
 endif(HAVE_FORTRAN)
 
 option(enable-libcxx "use LLVM C++ Standard library" OFF)

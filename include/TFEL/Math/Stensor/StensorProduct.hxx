@@ -25,11 +25,8 @@
 
 namespace tfel::math {
 
-  template <typename A, typename B>
+  template <StensorConcept A, StensorConcept B>
   class TFEL_VISIBILITY_LOCAL StensorProductExprBase : public ExprBase {
-    static_assert(implementsStensorConcept<A>());
-    static_assert(implementsStensorConcept<B>());
-
     typedef typename ComputeBinaryResult<std::decay_t<A>,
                                          std::decay_t<B>,
                                          OpMult>::Result Result;
@@ -73,8 +70,8 @@ namespace tfel::math {
     }
 
     TFEL_MATH_INLINE
-    BinaryOperationResult<tfel::meta::result_of<A, size_type>,
-                          tfel::meta::result_of<B, size_type>,
+    BinaryOperationResult<std::invoke_result_t<A, size_type>,
+                          std::invoke_result_t<B, size_type>,
                           OpMult>
     operator()(const size_type i) const {
       return (this->a(i)) * (this->b(i));
@@ -94,8 +91,8 @@ namespace tfel::math {
     }
 
     TFEL_MATH_INLINE
-    BinaryOperationResult<tfel::meta::result_of<A, size_type>,
-                          tfel::meta::result_of<B, size_type>,
+    BinaryOperationResult<std::invoke_result_t<A, size_type>,
+                          std::invoke_result_t<B, size_type>,
                           OpMult>
     operator()(const size_type i) const {
       typedef typename StensorProductExprBase<A, B>::NumType T;
@@ -131,8 +128,8 @@ namespace tfel::math {
     }
 
     TFEL_MATH_INLINE
-    BinaryOperationResult<tfel::meta::result_of<A, size_type>,
-                          tfel::meta::result_of<B, size_type>,
+    BinaryOperationResult<std::invoke_result_t<A, size_type>,
+                          std::invoke_result_t<B, size_type>,
                           OpMult>
     operator()(const size_type i) const {
       typedef typename StensorProductExprBase<A, B>::NumType T;

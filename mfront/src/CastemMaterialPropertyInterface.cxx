@@ -73,10 +73,6 @@ namespace mfront {
     const auto name = this->getCastemFunctionName(mpd);
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     insert_if(l.cppflags, CASTEM_CPPFLAGS);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, this->getSourceFileName(name));
 #if !((defined _WIN32) && (defined _MSC_VER))
     insert_if(l.link_libraries, "m");
@@ -125,8 +121,7 @@ namespace mfront {
           << "cerr << \"" << name << ": " << v.name
           << " is below its physical lower bound (\"\n << " << v.name
           << " << \"<" << b.lowerBound << ").\\n\";\n"
-          << "return nan(\"" << name << ": " << v.name
-          << " is not physically valid.\");\n"
+          << "return std::nan(\"\");\n"
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
       out << "if(" << v.name << " > " << v.type << "(" << b.upperBound
@@ -134,8 +129,7 @@ namespace mfront {
           << "cerr << \"" << name << ": " << v.name
           << " is below its physical upper bound (\"\n << " << v.name
           << " << \">" << b.upperBound << ").\\n\";\n"
-          << "return nan(\"" << name << ": " << v.name
-          << " is not physically valid.\");\n"
+          << "return std::nan(\"\");\n"
           << "}\n";
     } else {
       out << "if((" << v.name << " < " << v.type << "(" << b.lowerBound
@@ -150,8 +144,7 @@ namespace mfront {
           << " is over its physical upper bound (\"\n << " << v.name
           << " << \">" << b.upperBound << ").\\n\";\n"
           << "}\n"
-          << "return nan(\"" << name << ": " << v.name
-          << " is not physically valid.\");\n"
+          << "return std::nan(\"\");\n"
           << "}\n";
     }
   }  // end of writePhysicalBounds
@@ -191,8 +184,7 @@ namespace mfront {
           << ")){\n"
           << get_policy  //
           << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
-          << "return nan(\"" << name << ": " << v.name
-          << " is out of bounds.\");\n"
+          << "return std::nan(\"\");\n"
           << "} else if (::strcmp(mfront_policy,\"WARNING\")==0){\n"
           << "cerr << \"" << name << ": " << v.name
           << " is below its lower bound (\"\n << " << v.name << " << \"<"
@@ -207,8 +199,7 @@ namespace mfront {
           << "cerr << \"" << name << ": " << v.name
           << " is over its upper bound (\"\n << " << v.name << " << \">"
           << b.upperBound << ").\\n\";\n"
-          << "return nan(\"" << name << ": " << v.name
-          << " is out of bounds.\");\n"
+          << "return std::nan(\"\");\n"
           << "} else if (::strcmp(mfront_policy,\"WARNING\")==0){\n"
           << "cerr << \"" << name << ": " << v.name
           << " is over its upper bound (\"\n << " << v.name << " << \">"
@@ -231,8 +222,7 @@ namespace mfront {
           << " is over its upper bound (\"\n << " << v.name << " << \">"
           << b.upperBound << ").\\n\";\n"
           << "}\n"
-          << "return nan(\"" << name << ": " << v.name
-          << " is out of bounds.\");\n"
+          << "return std::nan(\"\");\n"
           << "} else if (::strcmp(mfront_policy,\"WARNING\")==0){\n"
           << "if(" << v.name << " < " << v.type << "(" << b.lowerBound
           << ")){\n"
@@ -370,6 +360,7 @@ namespace mfront {
     writeFileDescriptionSymbols(out, name, fd);
     writeVariablesNamesSymbol(out, name, mpd);
     writeVariablesBoundsSymbols(out, name, mpd);
+    writeValidatorSymbol(out, name, mpd);
     writeBuildIdentifierSymbol(out, name, mpd);
     writeEntryPointSymbol(out, name);
     writeTFELVersionSymbol(out, name);
@@ -377,7 +368,8 @@ namespace mfront {
     writeInterfaceSymbol(out, name, "Castem");
     writeLawSymbol(out, name, mpd.law);
     writeMaterialSymbol(out, name, mpd.material);
-    writeMaterialKnowledgeTypeSymbol(out, name, MATERIALPROPERTY);
+    writeMaterialKnowledgeTypeSymbol(out, name,
+                                     MaterialKnowledgeType::MATERIALPROPERTY);
     writeParametersSymbols(out, name, mpd);
     exportStringSymbol(
         out, name + "_src",
@@ -408,13 +400,15 @@ namespace mfront {
     out << ")\n{\n";
     writeBeginningOfMaterialPropertyBody(out, mpd, fd, "double", true);
     // parameters
-    if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
-      const auto hn = getMaterialPropertyParametersHandlerClassName(name);
-      out << "if(!castem::" << hn << "::get" << hn << "().ok){\n"
-          << "return std::nan(castem::" << name
-          << "MaterialPropertyHandler::get" << name
-          << "MaterialPropertyHandler().msg.c_str());\n"
-          << "}\n";
+    if (!areRuntimeChecksDisabled(mpd)) {
+      if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
+        const auto hn = getMaterialPropertyParametersHandlerClassName(name);
+        out << "if(!castem::" << hn << "::get" << hn << "().ok){\n"
+            << "std::cerr << castem::" << hn << "::get" << hn
+            << "().msg.c_str() << '\\n';\n"
+            << "return std::nan(\"\");\n"
+            << "}\n";
+      }
     }
     writeAssignMaterialPropertyParameters(out, mpd, name, "real", "castem");
     //
@@ -434,36 +428,53 @@ namespace mfront {
       }
     }
     out << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
-    if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
-      out << "#ifndef NO_CASTEM_BOUNDS_CHECK\n";
-    }
-    if (hasPhysicalBounds(mpd.inputs)) {
-      out << "// treating physical bounds\n";
-      for (const auto& i : mpd.inputs) {
-        writePhysicalBounds(out, name, i);
+    if (!areRuntimeChecksDisabled(mpd)) {
+      if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
+        out << "#ifndef NO_CASTEM_BOUNDS_CHECK\n";
       }
-    }
-    if (hasBounds(mpd.inputs)) {
-      out << "// treating standard bounds\n";
-      for (const auto& i : mpd.inputs) {
-        writeBounds(out, mpd, name, i);
-      }
-    }
-    if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
-      out << "#endif /* NO_CASTEM_BOUNDS_CHECK */\n";
-    }
-    out << function.body;
-    if ((mpd.output.hasPhysicalBounds()) || (mpd.output.hasBounds())) {
-      out << "#ifndef NO_CASTEM_BOUNDS_CHECK\n";
-      if (mpd.output.hasPhysicalBounds()) {
+      if (hasPhysicalBounds(mpd.inputs)) {
         out << "// treating physical bounds\n";
-        writePhysicalBounds(out, name, mpd.output);
+        for (const auto& i : mpd.inputs) {
+          writePhysicalBounds(out, name, i);
+        }
       }
-      if (mpd.output.hasBounds()) {
-        out << "// treating bounds\n";
-        writeBounds(out, mpd, name, mpd.output);
+      if (hasBounds(mpd.inputs)) {
+        out << "// treating standard bounds\n";
+        for (const auto& i : mpd.inputs) {
+          writeBounds(out, mpd, name, i);
+        }
       }
-      out << "#endif /* NO_CASTEM_BOUNDS_CHECK */\n";
+      if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
+        out << "#endif /* NO_CASTEM_BOUNDS_CHECK */\n";
+      }
+    }
+    out << "try{\n";
+    out << function.body;
+    out << "#ifndef NO_CASTEM_ERROR_OUTPUT\n"
+        << "} catch(std::exception& e){\n"
+        << "std::cerr << \"" << name << ": \" << e.what() << '\\n';\n"
+        << "return std::nan(\"\");\n"
+        << "#endif  /* NO_CASTEM_ERROR_OUTPUT */\n"
+        << "} catch(...){\n"
+        << "#ifndef NO_CASTEM_ERROR_OUTPUT\n"
+        << "std::cerr << \"" << name
+        << ": unsupported C++ exception\" << '\\n';\n"
+        << "#endif  /* NO_CASTEM_ERROR_OUTPUT */\n"
+        << "return std::nan(\"\");\n"
+        << "}\n";
+    if (!areRuntimeChecksDisabled(mpd)) {
+      if ((mpd.output.hasPhysicalBounds()) || (mpd.output.hasBounds())) {
+        out << "#ifndef NO_CASTEM_BOUNDS_CHECK\n";
+        if (mpd.output.hasPhysicalBounds()) {
+          out << "// treating physical bounds\n";
+          writePhysicalBounds(out, name, mpd.output);
+        }
+        if (mpd.output.hasBounds()) {
+          out << "// treating bounds\n";
+          writeBounds(out, mpd, name, mpd.output);
+        }
+        out << "#endif /* NO_CASTEM_BOUNDS_CHECK */\n";
+      }
     }
     if (useQuantities(mpd)) {
       out << "return " << mpd.output.name << ".getValue();\n";

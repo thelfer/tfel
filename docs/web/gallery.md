@@ -31,7 +31,7 @@ behaviour. This framework is described
 - [This page](sovs.html) describes how to implement the
   Skorohold-Olevsky Viscous Sintering (SOVS) model.
 - [This page](LoadInducedThermalStrainBehaviourTorelli2018.html)
-  describes how to implement Torelli' behaviour describing the load
+  describes how to implement Torelli's behaviour describing the load
   induced thermal strain in concrete.
 - [This page](Burger_EDF_CIWAP_2021.html) describes the implementation
   of the `̀Burger_EDF_CIWAP_2021` which aims at modelling the following
@@ -41,11 +41,11 @@ behaviour. This framework is described
     - Basic creep
     - Drying creep
 
-## Non linear elasticity
+## Non-linear elasticity
 
-- [A non linear elastic behaviour that mimics the Ramberg-Osgood plastic
+- [A non-linear elastic behaviour that mimics the Ramberg-Osgood plastic
   behaviour on monotonic
-  loadings](RambergOsgoodNonLinearElasticity.html) (usefull in fracture
+  loadings](RambergOsgoodNonLinearElasticity.html) (useful in fracture
   analysis
 
 ## Damage
@@ -66,7 +66,7 @@ behaviour. This framework is described
   behaviour) is described [here](iwan.html).
 - The implementation of a perfect plastic behaviour based on the
   Hosford equivalent stress is described [here](hosford.html).
-- The implementation of the Barlat' Yld2004-18p behaviour is described
+- The implementation of the Barlat Yld2004-18p behaviour is described
   [here](barlat-yld2004.html).
 - The implementation of a perfect plastic behaviour based on the
   Green yield criterion is described [here](greenplasticity.html).
@@ -80,7 +80,7 @@ behaviour. This framework is described
 
 - [Hayhurst](gallery/viscoplasticity/Hayhurst.mfront)
 - [ChabocheViscoplasticity](gallery/viscoplasticity/ChabocheViscoplasticity.mfront)
-- The implementation of an an isotropic plastic behaviour with several
+- The implementation of an isotropic plastic behaviour with several
   kinematic variables following the Amstrong-Frederic evolution law is
   described
   [here](isotropicplasticityamstrongfrederickinematichardening.html)
@@ -96,7 +96,7 @@ behaviour. This framework is described
 ### PolyCrystal
 
 - The description of the implementation of a polycrystal behaviour
-  based on the Berveiller-Zaoui homogeneisation scheme using an
+  based on the Berveiller-Zaoui homogenisation scheme using an
   explicit scheme is available
   [here](ExplicitBerveillerZaouiPolyCrystals.html)
 -->

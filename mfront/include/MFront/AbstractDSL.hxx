@@ -33,9 +33,7 @@ namespace mfront {
   // forward declaration
   struct MaterialPropertyDescription;
 
-  /*!
-   * Interface class for all domain specific languages.
-   */
+  //! \brief interface class for all domain specific languages.
   struct MFRONT_VISIBILITY_EXPORT AbstractDSL {
     //! \brief a simple alias
     using DSLOptions = tfel::utilities::DataMap;
@@ -111,6 +109,11 @@ namespace mfront {
      * `analyseString` methods.
      */
     virtual void endsInputFileProcessing() = 0;
+    /*!
+     * \brief method called after processing the input file processing.
+     * \note This method shall be called *after* the `endsInputFileProcessing`.
+     */
+    virtual void makeConsistencyChecks() const = 0;
     /*!
      * \return the target description
      * \note This method shall be called *after* the `analyseFile` or

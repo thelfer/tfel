@@ -19,8 +19,27 @@
 
 namespace tfel::math {
 
-  template <unsigned short N, typename NumericType, typename Child>
-  bool TinyNonLinearSolverBase<N, NumericType, Child>::solveNonLinearSystem2() {
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
+  template <typename... ExternalWorkSpaceArguments>
+  TFEL_HOST_DEVICE
+  TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
+      TinyNonLinearSolverBase(ExternalWorkSpaceArguments&&... args) noexcept
+      : ExternalWorkSpace<N, NumericType>(
+            std::forward<ExternalWorkSpaceArguments>(args)...) {
+  }  // end of TinyNonLinearSolverBase
+
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
+  TFEL_HOST_DEVICE bool
+  TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
+      solveNonLinearSystem2() noexcept {
     auto& child = static_cast<Child&>(*this);
     auto converged = false;
     child.executeInitialisationTaskBeforeBeginningOfCoreAlgorithm();
@@ -58,14 +77,19 @@ namespace tfel::math {
     return false;
   }  // end of solveNonLinearSystem2
 
-  template <unsigned short N, typename NumericType, typename Child>
-  bool TinyNonLinearSolverBase<N, NumericType, Child>::solveNonLinearSystem() {
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
+  TFEL_HOST_DEVICE bool
+  TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
+      solveNonLinearSystem() noexcept {
     constexpr auto one_half = NumericType(1) / 2;
     auto& child = static_cast<Child&>(*this);
     child.reportBeginningOfResolution();
-    this->iter =
-        typename TinyNonLinearSolverBase<N, NumericType,
-                                         Child>::iteration_number_type{};
+    this->iter = typename TinyNonLinearSolverBase<
+        N, NumericType, Child, ExternalWorkSpace>::iteration_number_type{};
     this->is_delta_zeros_defined = false;
     child.executeInitialisationTaskBeforeResolution();
     while (this->iter != this->iterMax) {
@@ -89,10 +113,17 @@ namespace tfel::math {
     return false;
   }  // end of solve
 
-  template <unsigned short N, typename NumericType, typename Child>
-  bool TinyNonLinearSolverBase<N, NumericType, Child>::solveLinearSystem(
-      tfel::math::tmatrix<N, N, NumericType>& m,
-      tfel::math::tvector<N, NumericType>& v) const noexcept {
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
+  template <MatrixConcept FixedSizeMatrixType,
+            VectorConcept FixedSizeVectorType>
+  TFEL_HOST_DEVICE bool
+  TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
+      solveLinearSystem(FixedSizeMatrixType& m,
+                        FixedSizeVectorType& v) const noexcept {
     return TinyMatrixSolve<N, NumericType, false>::exe(m, v);
   }  // end of solveLinearSystem
 

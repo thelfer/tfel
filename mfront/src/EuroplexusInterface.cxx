@@ -20,6 +20,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
@@ -214,6 +215,17 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "EuroplexusInterface::treatKeyword: " + m);
     };
+    auto check_interface_restriction = [this, &i, &key] {
+      if (i.empty()) {
+        reportWarning("keyword '" + key +
+                      "' is used without being restricted to the " +
+                      this->getName() +
+                      " interface, which could be a portability "
+                      "issue. Please add [" +
+                      this->getName() + "] after the keyword (i.e. replace '" +
+                      key + "' by '" + key + "[" + this->getName() + "]')");
+      }
+    };
     if (!i.empty()) {
       if (std::find(i.begin(), i.end(), this->getName()) != i.end()) {
         throw_if((key != "@EuroplexusFiniteStrainStrategy") &&
@@ -228,6 +240,7 @@ namespace mfront {
     }
     if ((key == "@EuroplexusFiniteStrainStrategy") ||
         (key == "@EPXFiniteStrainStrategy")) {
+      check_interface_restriction();
       throw_if(bd.hasAttribute(EuroplexusInterface::finiteStrainStrategy),
                "a finite strain strategy has already been defined");
       throw_if(current == end, "unexpected end of file");
@@ -247,6 +260,9 @@ namespace mfront {
     } else if ((key == "@EuroplexusGenerateMTestFileOnFailure") ||
                (key == "@EPXGenerateMTestFileOnFailure") ||
                (key == "@GenerateMTestFileOnFailure")) {
+      if (key != "@GenerateMTestFileOnFailure") {
+        check_interface_restriction();
+      }
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(key, current, end));
       return {true, current};
@@ -478,14 +494,14 @@ namespace mfront {
           << "!! material properties\n";
       for (const auto& mp : buildMaterialPropertiesList(mb, h).first) {
         throw_if(SupportedTypes::getTypeFlag(mp.type) != SupportedTypes::SCALAR,
-                 "material property '" + mp.name +
+                 "material property '" + mp.getExternalName() +
                      "' is not a scalar. "
                      "This is not supported yet");
         if (mp.arraySize == 1u) {
-          out << "MATP '" << mp.name << "' ???\n";
+          out << "MATP '" << mp.getExternalName() << "' ???\n";
         } else {
           for (unsigned short i = 0; i != mp.arraySize; ++i) {
-            out << "MATP '" << mp.name << '[' << i << "]' ???\n";
+            out << "MATP '" << mp.getExternalName() << '[' << i << "]' ???\n";
           }
         }
       }
@@ -865,10 +881,6 @@ namespace mfront {
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, "epx" + name + ".cxx");
     d.headers.push_back("MFront/Europlexus/europlexus" + name + ".hxx");
     insert_if(l.link_directories,

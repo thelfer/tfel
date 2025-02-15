@@ -348,7 +348,84 @@ where:
 
 ## Multiplication of second order tensors
 
-### Derivatives
+Second order tensors can be multiplied using the `*` operator. Note that
+multiplying two symmetric tensors results in a non symmetric tensor.
+
+### Derivatives of the product of two symmetric tensors
+
+Let \(\tenseur{a}\) and \(\tenseur{b}\) two symmetric tensors and
+\(\tenseur{c}\) their products.
+
+The derivative \(\deriv{\tenseur{c}}{\tenseur{a}}\) is an object of the
+`st2tot2` type, i.e. a linear transformation of a symmetric tensor to a
+non symmetric tensor. It can be computed using the `st2tot2::tpld`
+method (tensor product left derivative) as follows:
+
+~~~~cxx
+const auto dc_da = st2tot2<N,real>::tpld(b);
+~~~~
+
+Note that the `st2tot2::tpld` method takes the tensor \(\tenseur{b}\)
+as its argument.
+
+If \(\tenseur{a}\) is a function of another symmetric tensor
+\(\tenseur{d}\), the derivative \(\deriv{\tenseur{c}}{\tenseur{d}}\) can
+be computed by chain rule:
+
+~~~~cxx
+const auto dc_dd = st2tot2<N,real>::tpld(b) * da_dd;
+~~~~
+
+However, as \(\deriv{\tenseur{c}}{\tenseur{a}}\) is a fourth order tensor
+with many zeros, this operation may be inefficient. A specialisation of
+the `st2tot2::tpld` method has thus been introduced and can be used as
+follows:
+
+~~~~cxx
+const auto dc_dd = st2tot2<N,real>::tpld(b, da_dd);
+~~~~
+
+The derivative \(\deriv{\tenseur{c}}{\tenseur{b}}\) can be computed in a
+similar manner using the `st2tot2::tprd` method (tensor product right
+derivative).
+
+### Derivatives of the product of two non symmetric tensors
+
+Let \(\tns{a}\) and \(\tns{b}\) two non symmetric tensors and
+\(\tns{c}\) their products.
+
+The derivative \(\deriv{\tns{c}}{\tns{a}}\) is an object of the
+`t2tot2` type, i.e. a linear transformation of a non symmetric tensor to a
+non symmetric tensor. It can be computed using the `st2tost2::tpld`
+method (tensor product left derivative) as follows:
+
+~~~~cxx
+const auto dc_da = st2tost2<N,real>::tpld(b);
+~~~~
+
+Note that the `t2tot2::tpld` method takes the tensor \(\tns{b}\)
+as its argument.
+
+If \(\tns{a}\) is a function of another non symmetric tensor
+\(\tns{d}\), the derivative \(\deriv{\tns{c}}{\tns{d}}\) can
+be computed by chain rule:
+
+~~~~cxx
+const auto dc_dd = t2tot2<N,real>::tpld(b) * da_dd;
+~~~~
+
+However, as \(\deriv{\tns{c}}{\tns{a}}\) is a fourth order tensor
+with many zeros, this operation may be inefficient. A specialisation of
+the `t2tot2::tpld` method has thus been introduced and can be used as
+follows:
+
+~~~~cxx
+const auto dc_dd = t2tot2<N,real>::tpld(b, da_dd);
+~~~~
+
+The derivative \(\deriv{\tns{c}}{\tns{b}}\) can be computed in a
+similar manner using the `t2tot2::tprd` method (tensor product right
+derivative).
 
 ## Symmetric product of two symmetric second order tensors
 

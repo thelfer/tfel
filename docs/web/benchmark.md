@@ -6,13 +6,13 @@
 
 ## Fuel performance codes based on the `Cast3M` finite element solver
 
-Numerous performances assessments were made within the PLEIADES
+Numerous performance assessments were made within the PLEIADES
 platform : replacing fortran implementations by their `MFront`
 counterparts led to significant improvements, from \(30\%\) to
 \(50\%\) of the total computational times of some fuel performance
 codes developed in the platform.
 
-This improvements were mainly due to fact that the behaviour
+These improvements were mainly due to fact that the behaviour
 integration schemes changed from explicit Runge-Kutta schemes to
 implicit ones. The main benefit of `MFront` was to grant users an easier
 access to the implicit schemes.
@@ -25,7 +25,7 @@ generalised plane strain, highly specialised and efficient
 implementations of mechanical behaviours were developed in `Cyrano3`
 fuel performance code [see @thouvenin_edf_2010] for both isotropic and
 orthotropic materials : numerical integration boils down to solving a
-scalar non linear equation in both cases and provides the consistent
+scalar non-linear equation in both cases and provides the consistent
 tangent operator.
 
 The figure below compares the total computational times of a native
@@ -64,7 +64,7 @@ FCC single crystal viscoplasticity                                       `Ìmpli
 2D specimen with displacement boundary conditions                        			                      
 from EBSD experiment                                                                                     
 																	     
-FCC homogeneized polycrystals 30 grains                                 `Runge-Kutta 4/5`                  \(9s67\) vs \(8s22\)          ![](img/Behaviour-img8.png)
+FCC homogenized polycrystals 30 grains                                 `Runge-Kutta 4/5`                  \(9s67\) vs \(8s22\)          ![](img/Behaviour-img8.png)
 [see @berveiller_extension_1978;@edf_comportements_2013-1],
  unit testing
 
@@ -83,18 +83,18 @@ implementations to the ones generated with `MFront`, generally using
 an implicit scheme in both cases. Without discussing the very details
 of each test performed, several general conclusions can be drawn:
 
-- native implementations offers superior performances in the case of
+- native implementations offer superior performances in the case of
   simple explicit behaviours (Mazars damaging behaviour
   [see @mazars_new_2014]) in the case of isotropic behaviours that can be
-  reduce to one scalar equations [see @chaboche_integration_1996]. For
+  reduced to one scalar equations [see @chaboche_integration_1996]. For
   explicit behaviours, the difference will be reduced by the
   development of an optimised treatment of `MFront` behaviours. In the
   second case, the difference can be explained by the fact that the
   Code-Aster implementations uses the Brent algorithm
   [see @brent_algorithms_1973] which clearly outperforms the standard
   Newton method. The availability of this algorithm in `MFront` is
-  planed.
--  for more complex behaviours, `MFront` implementation are on par
+  planned.
+-  for more complex behaviours, `MFront` implementation is on par
   or outperforms the native implementations.
 
 For a given behaviour, the development time was found significantly

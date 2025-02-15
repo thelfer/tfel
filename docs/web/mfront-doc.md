@@ -5,8 +5,8 @@
 # Description
 
 `mfront-doc` allows the user to extract the documentation out of
-`MFront` file. `mfront-doc` generates files in `pandoc`
-[markdown format](http://pandoc.org/demo/example9/pandocs-markdown.html). Those
+`MFront` files. `mfront-doc` generates files in `pandoc`
+[markdown format](http://pandoc.org/demo/example9/pandocs-markdown.html). These
 files can be processed using [`pandoc`](http://pandoc.org/) and be
 converted to one of the many file format supported by
 [`pandoc`](http://pandoc.org/), including
@@ -19,8 +19,8 @@ OpenOffice/LibreOffice
 Two kinds of documentations can be generated from `mfront-doc`:
 
 - The `web` documentation generates a file containing a shorter
-  description of the `MFront` file followed by the content of intial
-  file. This documentation is usefull for creating web pages
+  description of the `MFront` file followed by the content of the initial
+  file. This documentation is useful for creating web pages
   describing the content of a material management project.
 - The `full` documentation gives a full description of the `MFront`
   file. It contains in particular the whole description of the inputs

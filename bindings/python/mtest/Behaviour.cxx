@@ -11,9 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#include "TFEL/Python/SharedPtr.hxx"
-#include <boost/python.hpp>
-#include <boost/python/make_constructor.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MTest/Behaviour.hxx"
 #include "MTest/LogarithmicStrain1DBehaviourWrapper.hxx"
@@ -138,58 +137,53 @@ static int Behaviour_getBehaviourKinematic(const mtest::Behaviour& b) {
   return 4;
 }  // end of Behaviour_getBehaviourKinematic
 
-void declareBehaviour() {
-  namespace bp = boost::python;
+void declareBehaviour(pybind11::module_&);
+
+void declareBehaviour(pybind11::module_& m) {
+  using namespace pybind11::literals;
   using mtest::Behaviour;
-  bp::class_<std::shared_ptr<Behaviour>>("Behaviour")
-      .def("__init__", bp::make_constructor(Behaviour::getBehaviour),
+  pybind11::class_<Behaviour, std::shared_ptr<Behaviour>>(m, "Behaviour")
+      .def(pybind11::init(&Behaviour::getBehaviour),
            "This constructor has the following arguments:\n"
            "- i(std::string): interface\n"
            "- l(std::string): library\n"
            "- f(std::string): function\n"
            "- d(tfel::utilities::Data): parameters\n"
            "- h(tfel::material::ModellingHypothesis): modelling hypothesis\n")
-      .def("__init__",
-           bp::make_constructor(
-               getBehaviour1, bp::default_call_policies(),
-               (bp::arg("interface") = "", bp::arg("library"),
-                bp::arg("function"), bp::arg("parameters"),
-                bp::arg("hypothesis"), bp::arg("wrapper") = "")),
+      .def(pybind11::init(&getBehaviour1), "interface"_a = "", "library"_a,
+           "function"_a, "parameters"_a, "hypothesis"_a, "wrapper"_a = "",
            "This constructor has the following arguments:\n"
            "- i(std::string): interface\n"
            "- l(std::string): library\n"
            "- f(std::string): function\n"
            "- d(tfel::utilities::Data): parameters\n"
            "- h(std::string): modelling hypothesis\n")
-      .def("__init__", bp::make_constructor(getBehaviour2),
+      .def(pybind11::init(&getBehaviour2),
            "This constructor has the following arguments:\n"
            "- i(std::string): interface\n"
            "- l(std::string): library\n"
            "- f(std::string): function\n"
            "- h(tfel::material::ModellingHypothesis): modelling hypothesis\n")
-      .def("__init__",
-           bp::make_constructor(getBehaviour3, bp::default_call_policies(),
-                                (bp::arg("interface") = "", bp::arg("library"),
-                                 bp::arg("function"), bp::arg("hypothesis"),
-                                 bp::arg("wrapper") = "")),
+      .def(pybind11::init(&getBehaviour3), "interface"_a = "", "library"_a,
+           "function"_a, "hypothesis"_a, "wrapper"_a = "",
            "This constructor has the following arguments:\n"
            "- i(std::string): interface\n"
            "- l(std::string): library\n"
            "- f(std::string): function\n"
            "- h(std::string): modelling hypothesis\n"
            "- w(std::string): wrapper\n")
-      .def("__init__", bp::make_constructor(getBehaviour4),
+      .def(pybind11::init(&getBehaviour4),
            "This constructor has the following arguments:\n"
            "- l(std::string): library\n"
            "- f(std::string): function\n"
            "- d(tfel::utilities::Data): parameters\n"
            "- h(std::string): modelling hypothesis\n")
-      .def("__init__", bp::make_constructor(getBehaviour5),
+      .def(pybind11::init(&getBehaviour5),
            "This constructor has the following arguments:\n"
            "- l(std::string): library\n"
            "- f(std::string): function\n"
            "- h(tfel::material::ModellingHypothesis): modelling hypothesis\n")
-      .def("__init__", bp::make_constructor(getBehaviour6),
+      .def(pybind11::init(&getBehaviour6),
            "This constructor has the following arguments:\n"
            "- l(std::string): library\n"
            "- f(std::string): function\n"
@@ -213,6 +207,9 @@ void declareBehaviour() {
       .def("getGradientsSize", &Behaviour::getGradientsSize,
            "Return the size of a vector able to contain "
            "all the components of the driving variables")
+      .def("getDrivingVariablesSize", &Behaviour::getGradientsSize,
+           "Return the size of a vector able to contain "
+           "all the components of the driving variables")
       .def("getThermodynamicForcesSize", &Behaviour::getThermodynamicForcesSize,
            "Return the size of a vector able to contain "
            "all the components of the thermodynamic forces")
@@ -227,10 +224,15 @@ void declareBehaviour() {
            "Return the components suffixes of a tensor")
       .def("getGradientsComponents", &Behaviour::getGradientsComponents,
            "Return the components of the driving variables")
+      .def("getDrivingVariablesComponents", &Behaviour::getGradientsComponents,
+           "Return the components of the driving variables")
       .def("getThermodynamicForcesComponents",
            &Behaviour::getThermodynamicForcesComponents,
            "Return the components of the thermodynamic forces")
       .def("getGradientComponentPosition",
+           &Behaviour::getGradientComponentPosition,
+           "Return the position of the component of a driving variable")
+      .def("getDrivingVariableComponentPosition",
            &Behaviour::getGradientComponentPosition,
            "Return the position of the component of a driving variable")
       .def("getThermodynamicForceComponentPosition",

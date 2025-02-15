@@ -15,7 +15,7 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/BehaviourDescription.hxx"
-#include "MFront/StandardBehaviourInterface.hxx"
+#include "MFront/BehaviourInterfaceBase.hxx"
 #include "MFront/AbaqusExplicitInterface.hxx"
 #include "MFront/AbaqusExplicitSymbolsGenerator.hxx"
 
@@ -25,7 +25,7 @@ namespace mfront {
 
   void AbaqusExplicitSymbolsGenerator::writeAdditionalSymbols(
       std::ostream&,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription&,
       const FileDescription&,
       const std::string&,
@@ -33,7 +33,7 @@ namespace mfront {
 
   void AbaqusExplicitSymbolsGenerator::writeSpecificSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const FileDescription&,
       const std::string& name) const {
@@ -61,7 +61,7 @@ namespace mfront {
 
   void AbaqusExplicitSymbolsGenerator::writeBehaviourTypeSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
     const auto s = i.getFunctionNameBasis(name) + "_BehaviourType";
@@ -85,7 +85,7 @@ namespace mfront {
 
   void AbaqusExplicitSymbolsGenerator::writeBehaviourKinematicSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface& i,
+      const BehaviourInterfaceBase& i,
       const BehaviourDescription& mb,
       const std::string& name) const {
     const auto s = i.getFunctionNameBasis(name) + "_BehaviourKinematic";

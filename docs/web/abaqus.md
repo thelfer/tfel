@@ -86,7 +86,7 @@ following:
 - For `Abaqus/Standard`, small strain isotropic behaviour can be used
   in finite strain analyses "out of the box". However, if a behaviour
   is meant to be used only for finite strain analyses, we recommend
-  using **one one of the finite strain strategies available** (See the
+  using **one of the finite strain strategies available** (See the
   `@AbaqusFiniteStrainStrategy` keyword and the section dedicated to
   finite strain strategies below). The `Native` finite strain strategy
   will use the `Abaqus/Standard` functionalities to integrate the
@@ -136,14 +136,14 @@ When compiling mechanical behaviours with the `Abaqus/Standard` and/or
 
 The user must launch `Abaqus/Standard` or `Abaqus/Explicit` with one
 of the previous generic files as an external user file. Those files
-handles the loading of `MFront` shared libraries *using the material
+handle the loading of `MFront` shared libraries *using the material
 name*: the name of the material shall thus define the function to be
 called and the library in which this function is implemented.
 
 The function name includes the modelling hypothesis, see below. An
-identifier can *optionnaly* be added to reuse the same behaviour for
+identifier can *optionally* be added to reuse the same behaviour for
 several material (with different material properties for instance). The
-identifier is discarded in the `umat.cpp`, `vumat-sp.cpp` and and
+identifier is discarded in the `umat.cpp`, `vumat-sp.cpp` and
 `vumat-dp.cpp` files.
 
 Thus, the material name in `Abaqus/Standard` and `Abaqus/Explicit` is
@@ -264,7 +264,7 @@ usub_lib_dir='<path_to_mfront_generated_libraries>:<path_to_mfront>/lib'
 
 The last line define a set of paths where shared libraries will be
 searched for, which is useful if one does not want to install `TFEL`
-and `MFront` on in system wide path (such as `/usr/`) or modify the
+and `MFront` on in system-wide path (such as `/usr/`) or modify the
 `LD_LIBRARY_PATH` environment variable. One can also specify a shared
 directory (on a NFS file system for example) to access material
 behaviours shared among a team of colleagues.
@@ -331,7 +331,7 @@ For orthotropic behaviours, there are two orthotropy management policy
 
 For `Abaqus/Standard`, small and finite strain behaviours are
 supported. **For orthotropic finite strain behaviours, one must use
-the `MFront` orthotropy management policy**. The reason of this
+the `MFront` orthotropy management policy**. The reason of these
 choices is given below.
 
 For `Abaqus/Explicit`, only finite strain are supported. Small strain
@@ -436,7 +436,7 @@ The second strategy is particularly suited for metals, as
 incompressible flows are characterized by a deviatoric logarithmic
 strain tensor, which is the exact transposition of the property used
 in small strain behaviours to handle plastic incompressibility. This
-means that all valid consistutive equations for small strain
+means that all valid constitutive equations for small strain
 behaviours can be automatically reused in finite strain analysis. This
 does *not* mean that a behaviour identified under the small strain
 assumptions can be directly used in a finite strain analysis: the
@@ -521,7 +521,7 @@ In `Abaqus/Standard`, the stored energy is returned in the `SSE` output
 and the dissipated energy is returned in the `SPD` output.
 
 In `Abaqus/Explicit`, the stored energy is returned in the
-`enerInternNew` variable and the the dissipated energy is returned in
+`enerInternNew` variable and the dissipated energy is returned in
 the `enerInelasNew` output.
 
 ### A
@@ -671,6 +671,6 @@ of the \(\Cspin\) moduli is awkward and is not currently supported by
 The previous relation can be used to relate to other moduli. See the
 section describing the isotropic case for details.
 
-# Biblography
+# Bibliography
 
 <!-- Local IspellDict: english -->

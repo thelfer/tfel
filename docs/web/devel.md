@@ -12,7 +12,7 @@ The root of the `svn` repository is split in three directories:
   **stable**: one shall be able to create a new version of `TFEL` out of
   `trunk` at any time. New or experimental features shall be added in
   dedicated subdirectories of the `branches` directory described below.
-  Note that many engineers at `CEA` works with the `trunk` in their daily
+  Note that many engineers at `CEA` work with the `trunk` in their daily
   work, so committing to `trunk` requires special care. 
 - `tags`, used to fix a new official version of `TFEL`. Once created,
   subdirectories in the `tags` repository can not be modified.
@@ -28,7 +28,7 @@ is the preferred build system, the support for the `autotools` is
 still mandatory.
 
 New developments shall compile with both build systems. However, new
-tests can only be added in the `cmake` builds system but required
+tests can only be added in the `cmake` build system but required
 files shall be distributed in source package created with the
 `autotools`. This is the case for mechanical behaviours tests.
 
@@ -38,7 +38,7 @@ can be invoked as follows:
 
 ~~~~ {#check_all .bash}
 $ $SRCDIR/check_all [-j $NBPROCS]
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 where `SRCDIR` is the path to the source directory. The `-j` option
 allows the user to specify the number of jobs that the `make` command

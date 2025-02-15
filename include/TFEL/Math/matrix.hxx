@@ -29,7 +29,7 @@ namespace tfel::math {
    */
   template <typename ValueType>
   struct matrix
-      : VectorConcept<matrix<ValueType>>,
+      : MatrixConceptBase<matrix<ValueType>>,
         GenericRuntimeArray<matrix<ValueType>,
                             RuntimeRowMajorMatrixArrayPolicy<ValueType>> {
     //! \brief a simple alias
@@ -38,10 +38,20 @@ namespace tfel::math {
                             RuntimeRowMajorMatrixArrayPolicy<ValueType>>;
     // inheriting constructors
     TFEL_MATH_RUNTIME_ARRAY_DEFAULT_METHODS(matrix, GenericRuntimeArrayBase);
-    //!
+    /*!
+     * \brief constructor
+     * \param[in] n: number of rows
+     * \param[in] m: number of columns
+     * \param[in] v: defaut values
+     */
     matrix(const typename matrix::size_type,
            const typename matrix::size_type,
            const ValueType& = ValueType{});
+    /*!
+     * \brief constructor from intricated initializer list
+     * \param[in] values: values
+     */
+    matrix(const std::initializer_list<std::initializer_list<ValueType>>&);
     // inheriting GenericRuntimeArray' access operators
     using GenericRuntimeArrayBase::operator();
     //! \brief resize the matrix
@@ -49,9 +59,17 @@ namespace tfel::math {
                 const typename matrix::size_type,
                 const ValueType& = ValueType{});
     //
-    typename matrix::size_type getNbRows() const;
+    typename matrix<ValueType>::size_type getNbRows() const;
     //
-    typename matrix::size_type getNbCols() const;
+    typename matrix<ValueType>::size_type getNbCols() const;
+    /*!
+     * \brief constructor from intricated initializer list
+     * \param[in] values: values
+     */
+    template <typename ValueType2>
+    matrix& operator=(
+        const std::initializer_list<std::initializer_list<
+            ValueType2>>&) requires(isAssignableTo<ValueType2, ValueType2>());
     /*!
      * \brief swap two matrixs
      * \param[in,out] the other matrix
@@ -70,6 +88,16 @@ namespace tfel::math {
     //! \brief destructor
     ~matrix() noexcept;
   };
+
+  /*!
+   * \brief class template argument deduction
+   * \tparam ValueType: numeric type
+   * \tparam M: number of columns
+   * \tparam d: sizes of the arrays, that must be all equal to M
+   */
+  template <typename ValueType>
+  matrix(const std::initializer_list<std::initializer_list<ValueType>>&)
+      -> matrix<ValueType>;
 
 }  // end of namespace tfel::math
 

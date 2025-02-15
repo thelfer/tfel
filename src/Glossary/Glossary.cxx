@@ -4,9 +4,9 @@
  * \date   09/06/14
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence with
- * linking exception or the CECILL-A licence. A copy of thoses licences are
- * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence
+ * or the CECILL-A licence. A copy of thoses licences are delivered
+ * with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -344,14 +344,14 @@ namespace tfel::glossary {
       "Emissivity",
       Glossary::names + 18,
       Glossary::names + 19,
-      "SI:kg.m.T^{−3}",
+      "",
       "scalar",
       "the emissivity of the surface of a material is its effectiveness in "
       "emitting energy as thermal radiation",
       "" /* no 'description' defined */,
       "" /* no 'notes' defined */,
       "SI:0",
-      "");
+      "SI:1");
 
   const GlossaryEntry Glossary::EquivalentPlasticStrain(
       "EquivalentPlasticStrain",
@@ -1187,7 +1187,7 @@ namespace tfel::glossary {
       "ThermalConductivity",
       Glossary::names + 85,
       Glossary::names + 86,
-      "SI:W.m^{-1}",
+      "SI:W.m^{-1}.K^{-1}",
       "scalar",
       "the thermal conductivity of an isotropic material",
       "" /* no 'description' defined */,
@@ -1199,7 +1199,7 @@ namespace tfel::glossary {
       "ThermalConductivity1",
       Glossary::names + 86,
       Glossary::names + 87,
-      "SI:W.m^{-1}",
+      "SI:W.m^{-1}.K^{-1}",
       "scalar",
       "the thermal conductivity of an orthotropic material along the first "
       "axis of orthotropy",
@@ -1212,7 +1212,7 @@ namespace tfel::glossary {
       "ThermalConductivity2",
       Glossary::names + 87,
       Glossary::names + 88,
-      "SI:W.m^{-1}",
+      "SI:W.m^{-1}.K^{-1}",
       "scalar",
       "the thermal conductivity of an orthotropic material along the second "
       "axis of orthotropy",
@@ -1225,7 +1225,7 @@ namespace tfel::glossary {
       "ThermalConductivity3",
       Glossary::names + 88,
       Glossary::names + 89,
-      "SI:W.m^{-1}",
+      "SI:W.m^{-1}.K^{-1}",
       "scalar",
       "the thermal conductivity of an orthotropic material along the third "
       "axis of orthotropy",

@@ -174,7 +174,7 @@ namespace tfel::utilities {
       }
     }
     CxxTokenizer::readSpecifiedToken("Data::read_vector", "}", p, pe);
-    return std::move(v);
+    return v;
   }
 
   Data Data::read_map(CxxTokenizer::const_iterator& p,
@@ -214,7 +214,7 @@ namespace tfel::utilities {
     }
     DataMap r;
     tfel::utilities::read_map(r, p, pe, opts);
-    return std::move(r);
+    return r;
   }
 
   Data Data::read(CxxTokenizer::const_iterator& p,
@@ -294,8 +294,7 @@ namespace tfel::utilities {
     using return_type = bool;
     // default implementation
     template <typename T1, typename T2>
-    static typename std::enable_if<!std::is_same<T1, T2>::value, bool>::type
-    apply(const T1&, const T2&) {
+    static bool apply(const T1&, const T2&) requires(!std::is_same_v<T1, T2>) {
       return false;
     }  // end of apply
     static bool apply(const std::string& x1, const std::string& x2) {
@@ -429,6 +428,16 @@ namespace tfel::utilities {
       const auto p = m.find(n);
       if (p != m.end()) {
         r.insert(*p);
+      }
+    }
+    return r;
+  }
+
+  DataMap remove(const DataMap& m, const std::vector<std::string>& names) {
+    auto r = DataMap();
+    for (const auto& [k, v] : m) {
+      if (std::find(names.begin(), names.end(), k) == names.end()) {
+        r.insert({k, v});
       }
     }
     return r;

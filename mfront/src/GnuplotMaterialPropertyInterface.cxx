@@ -16,6 +16,7 @@
 #include <stdexcept>
 
 #include "TFEL/Raise.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
@@ -88,6 +89,17 @@ namespace mfront {
       const std::vector<std::string>& i,
       tokens_iterator current,
       const tokens_iterator endTokens) {
+    auto check_interface_restriction = [this, &i, &key] {
+      if (i.empty()) {
+        reportWarning("keyword '" + key +
+                      "' is used without being restricted to the " +
+                      this->getName() +
+                      " interface, which could be a portability "
+                      "issue. Please add [" +
+                      this->getName() + "] after the keyword (i.e. replace '" +
+                      key + "' by '" + key + "[" + this->getName() + "]')");
+      }
+    };
     if (std::find(i.begin(), i.end(), "gnuplot") != i.end()) {
       tfel::raise_if((key != "@TestBounds") && (key != "@Graph"),
                      "GnuplotMaterialPropertyInterface::treatKeyword: "
@@ -95,8 +107,10 @@ namespace mfront {
                          key + "'");
     }
     if (key == "@TestBounds") {
+      check_interface_restriction();
       return registerTestBounds(current, endTokens);
     } else if (key == "@Graph") {
+      check_interface_restriction();
       return registerGraph(current, endTokens);
     }
     return {false, current};

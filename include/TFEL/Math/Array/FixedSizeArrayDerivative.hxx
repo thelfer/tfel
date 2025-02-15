@@ -77,16 +77,15 @@ namespace tfel::math {
   /*!
    * \brief partial specialisation of the `ConceptRebind` class for array
    * derivative.
+   * \tparam Array1Tag: tag of function
+   * \tparam Array2Tag: tag of variable
    * \tparam ArrayDerivativeType: type of the array derivative
    */
-  template <typename ArrayDerivativeType>
-  struct ConceptRebind<
-      FixedSizeArrayDerivativeTag<
-          typename ComputeObjectTag<typename FixedSizeArrayDerivativeTraits<
-              ArrayDerivativeType>::type1>::type,
-          typename ComputeObjectTag<typename FixedSizeArrayDerivativeTraits<
-              ArrayDerivativeType>::type2>::type>,
-      ArrayDerivativeType> {
+  template <typename Array1Tag,
+            typename Array2Tag,
+            typename ArrayDerivativeType>
+  struct ConceptRebind<FixedSizeArrayDerivativeTag<Array1Tag, Array2Tag>,
+                       ArrayDerivativeType> {
     //! \brief a simple alias
     using type = FixedSizeArrayDerivativeConcept<ArrayDerivativeType>;
   };
@@ -128,7 +127,7 @@ namespace tfel::math {
     //! \brief derivatived array
     using type1 = Array1;
     //! \brief array used to derivate the first array
-    using type2 = Array1;
+    using type2 = Array2;
   };  // end of struct FixedSizeArrayDerivativeTraits
   /*!
    * \brief partial specialisation of the `FixedSizeArrayDerivativeTraits`
@@ -143,7 +142,7 @@ namespace tfel::math {
     //! \brief derivatived array
     using type1 = Array1;
     //! \brief array used to derivate the first array
-    using type2 = Array1;
+    using type2 = Array2;
   };  // end of struct FixedSizeArrayDerivativeTraits
 
   /*!
@@ -158,7 +157,7 @@ namespace tfel::math {
     //! \brief derivatived array
     using type1 = Array1;
     //! \brief array used to derivate the first array
-    using type2 = Array1;
+    using type2 = Array2;
   };  // end of struct FixedSizeArrayDerivativeTraits
   /*!
    * \brief partial specialisation of the `MathObjectTraits` class.

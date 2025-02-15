@@ -1,21 +1,5 @@
+
 macro(install_mfront_desc file)
-  # if(HAVE_PANDOC)
-  #   ADD_CUSTOM_COMMAND(
-  #     OUTPUT    ${file}.html
-  #     DEPENDS   ${CMAKE_CURRENT_SOURCE_DIR}/${file}.md
-  #     DEPENDS   ${PROJECT_SOURCE_DIR}/docs/web/mfront-template.html
-  #     DEPENDS   ${PROJECT_SOURCE_DIR}/docs/web/css/main.css
-  #     COMMAND   ${PANDOC}
-  #     ARGS      -f markdown-markdown_in_html_blocks+tex_math_single_backslash
-  #     ARGS      --mathjax
-  #     ARGS      ${ARGN}
-  #     ARGS      ${CMAKE_CURRENT_SOURCE_DIR}/${file}.md -o ${file}.html)
-  #   add_custom_target(mfront-${file}-html ALL DEPENDS ${file}.html)
-  #   add_dependencies(website mfront-${file}-html)
-  #   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}.html
-  #     DESTINATION share/doc/tfel/web/mfront
-  #     COMPONENT website)
-  # endif(HAVE_PANDOC)
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}.md
       DESTINATION share/doc/mfront-${TFEL_SUFFIX}
@@ -27,21 +11,6 @@ macro(install_mfront_desc file)
 endmacro(install_mfront_desc file)
 
 macro(install_mfront_desc2 directory file)
-  # if(HAVE_PANDOC)
-  #   ADD_CUSTOM_COMMAND(
-  #     OUTPUT    ${file}-${directory}.html
-  #     DEPENDS   ${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${file}.md
-  #     COMMAND   ${PANDOC}
-  #     ARGS      -f markdown-markdown_in_html_blocks+tex_math_single_backslash
-  #     ARGS      --mathjax
-  #     ARGS      ${ARGN}
-  #     ARGS      ${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${file}.md -o ${file}-${directory}.html)
-  # add_custom_target(mfront-${file}-${directory}-html ALL DEPENDS ${file}-${directory}.html)
-  # add_dependencies(website mfront-${file}-${directory}-html)
-  #   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}-${directory}.html
-  #     DESTINATION share/doc/tfel/web/mfront/${directory}/${file}.html
-  #     COMPONENT website)
-  # endif(HAVE_PANDOC)
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${directory}/${file}.md
       DESTINATION share/doc/mfront-${TFEL_SUFFIX}/${directory}
@@ -53,6 +22,24 @@ macro(install_mfront_desc2 directory file)
   endif(TFEL_APPEND_SUFFIX)
 endmacro(install_mfront_desc2 directory file)
 
+macro(install_mfront_desc3 directory1 directory2 file)
+  if(TFEL_APPEND_SUFFIX)
+    install(FILES ${directory1}/${file}.md
+      DESTINATION share/doc/mfront-${TFEL_SUFFIX}/${directory1}
+      COMPONENT mfront)
+    install(FILES ${directory1}/${file}.md
+      DESTINATION share/doc/mfront-${TFEL_SUFFIX}/${directory2}
+      COMPONENT mfront)
+  else(TFEL_APPEND_SUFFIX)
+    install(FILES ${directory1}/${file}.md
+      DESTINATION share/doc/mfront/${directory1}
+      COMPONENT mfront)
+    install(FILES ${directory1}/${file}.md
+      DESTINATION share/doc/mfront/${directory2}
+      COMPONENT mfront)
+  endif(TFEL_APPEND_SUFFIX)
+endmacro(install_mfront_desc3 directory file)
+
 install_mfront_desc(AdditionalConvergenceChecks)
 install_mfront_desc(AdditionalTangentOperatorBlock)
 install_mfront_desc(AdditionalTangentOperatorBlocks)
@@ -62,6 +49,8 @@ install_mfront_desc(AuxiliaryStateVar)
 install_mfront_desc(AuxiliaryStateVariable)
 install_mfront_desc(AxialGrowth)
 install_mfront_desc(Behaviour)
+install_mfront_desc(BehaviourVariable)
+install_mfront_desc(BehaviourVariableFactory)
 install_mfront_desc(Bounds)
 install_mfront_desc(Brick)
 install_mfront_desc(Coef)
@@ -100,6 +89,8 @@ install_mfront_desc(InitializeFunction)
 install_mfront_desc(InitializeFunctionVariable)
 install_mfront_desc(IsotropicBehaviour)
 install_mfront_desc(IsotropicElasticBehaviour)
+install_mfront_desc(IsotropicHardeningRule)
+install_mfront_desc(IsotropicHardeningRules)
 install_mfront_desc(IterMax)
 install_mfront_desc(JacobianComparisonCriterion)
 install_mfront_desc(JacobianComparisonCriterium)
@@ -154,12 +145,13 @@ install_mfront_desc(UseQt)
 
 install_mfront_desc2(Implicit HillTensor)
 
-install_mfront_desc2(MaterialLaw Constant)
-install_mfront_desc2(MaterialLaw Function)
-install_mfront_desc2(MaterialLaw Input)
-install_mfront_desc2(MaterialLaw Law)
-install_mfront_desc2(MaterialLaw MFront)
-install_mfront_desc2(MaterialLaw Output)
+install_mfront_desc3(MaterialLaw MaterialProperty Constant)
+install_mfront_desc3(MaterialLaw MaterialProperty Data)
+install_mfront_desc3(MaterialLaw MaterialProperty Function)
+install_mfront_desc3(MaterialLaw MaterialProperty Input)
+install_mfront_desc3(MaterialLaw MaterialProperty Law)
+install_mfront_desc3(MaterialLaw MaterialProperty MFront)
+install_mfront_desc3(MaterialLaw MaterialProperty Output)
 
 install_mfront_desc2(Model ConstantMaterialProperty)
 install_mfront_desc2(Model Domain)
@@ -171,6 +163,16 @@ install_mfront_desc2(Model GlobalParameter)
 install_mfront_desc2(Model LocalParameter)
 install_mfront_desc2(Model Model)
 install_mfront_desc2(Model Output)
+install_mfront_desc2(Default Integrator)
+install_mfront_desc2(ImplicitGenericBehaviour Integrator)
+install_mfront_desc2(DefaultCZM Integrator)
+install_mfront_desc2(DefaultGenericBehaviour Integrator)
+install_mfront_desc2(Implicit Integrator)
+install_mfront_desc2(ImplicitFiniteStrain Integrator)
+install_mfront_desc2(ImplicitII Integrator)
+install_mfront_desc2(Model Integrator)
+install_mfront_desc2(ImplicitCZM Integrator)
+install_mfront_desc2(DefaultFiniteStrain Integrator)
 
 install_mfront_desc2(bricks StandardElasticity)
 install_mfront_desc2(bricks DDIF2)

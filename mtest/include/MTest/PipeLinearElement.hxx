@@ -34,7 +34,6 @@ namespace mtest {
    * \brief structure describing a linear element for pipes
    */
   struct PipeLinearElement {
-#ifndef _MSC_VER
     // absolute value of the Gauss points position in the reference
     // element
     static constexpr real abs_pg =
@@ -43,15 +42,6 @@ namespace mtest {
     static constexpr real pg_radii[2] = {-abs_pg, abs_pg};
     // Gauss point weight
     static constexpr real wg = real(1);
-#else  /* _MSC_VER */
-    // absolute value of the Gauss points position in the reference
-    // element
-    static const real abs_pg;
-    // value of the Gauss points position in the reference element
-    static const real pg_radii[2];
-    // Gauss point weight
-    static const real wg;
-#endif /* _MSC_VER */
     /*!
      * \return the integral value of the given values at integration
      * points.

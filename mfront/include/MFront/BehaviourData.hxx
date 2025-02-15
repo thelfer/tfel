@@ -19,7 +19,8 @@
 #include <vector>
 #include <string>
 #include <memory>
-
+#include <string_view>
+#include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/CodeBlock.hxx"
 #include "MFront/VariableDescription.hxx"
@@ -34,6 +35,7 @@ namespace mfront {
 
   // forward declaration
   struct ModelDescription;
+  struct BehaviourVariableDescription;
 
   /*!
    * This structure gathers various behaviour characteristic
@@ -42,12 +44,18 @@ namespace mfront {
   struct MFRONT_VISIBILITY_EXPORT BehaviourData
       : public MaterialKnowledgeDescription,
         private SupportedTypes {
+    //! \brief a simple alias
+    using ModellingHypothesis = tfel::material::ModellingHypothesis;
+    //! \brief a simple alias
+    using Hypothesis = ModellingHypothesis::Hypothesis;
     /*
      * normalised code block names
      * \note code block name begins with an upper case
      */
     //! \brief standard code name
     static const char* const UserDefinedInitializeCodeBlock;
+    //! \brief standard code name
+    static const char* const BeforeFlowRule;
     //! \brief standard code name
     static const char* const FlowRule;
     //! \brief standard code name
@@ -288,9 +296,9 @@ namespace mfront {
                             *   is meant to be used internally and
                             *   is not accessible from a mfront file*/
     };                     // end of enum Mode
-                           /*!
-                            * \brief position of the inserted code
-                            */
+    /*!
+     * \brief position of the inserted code
+     */
     enum Position { AT_BEGINNING, BODY, AT_END };  // end of enum Mode
                                                    /*!
                                                     * Some dsl may want to avoid the user to declare a variable with
@@ -400,6 +408,19 @@ namespace mfront {
     const VariableDescriptionContainer& getExternalStateVariables() const;
     //! \return all local variables
     const VariableDescriptionContainer& getLocalVariables() const;
+    //! \return all behaviour variables
+    const std::vector<BehaviourVariableDescription>& getBehaviourVariables()
+        const;
+    /*!
+     * \return the behaviour variable factory whose class name matches the
+     * argument
+     * \param[in] n: behaviour variable factory' class name
+     */
+    const BehaviourVariableDescription& getBehaviourVariableFactory(
+        const std::string&) const;
+    //! \return all behaviour variables factories
+    const std::vector<BehaviourVariableDescription>&
+    getBehaviourVariableFactories() const;
     //! \return all parameter variables
     const VariableDescriptionContainer& getParameters() const;
     /*!
@@ -526,6 +547,7 @@ namespace mfront {
      */
     bool isStressFreeExansionAnisotropic() const;
     /*!
+
      * \return the registred stress free expansion descriptions
      */
     const std::vector<StressFreeExpansionDescription>&
@@ -656,6 +678,16 @@ namespace mfront {
      */
     void addExternalStateVariable(const VariableDescription&,
                                   const RegistrationStatus);
+    /*!
+     * \brief add a behaviour variable
+     * \param[in] v : variable description
+     */
+    void addBehaviourVariable(const BehaviourVariableDescription&);
+    /*!
+     * \brief add a behaviour variable factory
+     * \param[in] v : variable description
+     */
+    void addBehaviourVariableFactory(const BehaviourVariableDescription&);
     /*!
      * \brief add a : variable
      * \param[in] v : variable description
@@ -794,22 +826,20 @@ namespace mfront {
      * \return the code block associated with the given name
      * \param[in] n : name
      */
-    const CodeBlock& getCodeBlock(const std::string&) const;
+    const CodeBlock& getCodeBlock(std::string_view) const;
     /*!
      * \return the code block associated with the given name
      * \param[in] n  : name
      * \param[in] cn : behaviour class name
      * \param[in] b  : add profiling information
      */
-    std::string getCode(const std::string&,
-                        const std::string&,
-                        const bool) const;
+    std::string getCode(std::string_view, std::string_view, const bool) const;
     /*!
      * \return true if a code block associated with the given name has
      * been defined
      * \param[in] n : name
      */
-    bool hasCode(const std::string&) const;
+    bool hasCode(std::string_view) const;
     /*!
      * \return true a glossary was associated with the given
      * variable.
@@ -988,10 +1018,10 @@ namespace mfront {
         const std::string&) const;
     /*!
      * \brief method that shall be called when all variables are declared.
-     *
+     * \param[in] h: modelling hypothesis
      * This method overrides variables by parameters
      */
-    void finalizeVariablesDeclaration();
+    void finalizeVariablesDeclaration(const Hypothesis);
     //! \brief destructor
     ~BehaviourData() override;
 
@@ -1086,7 +1116,7 @@ namespace mfront {
      */
     std::set<std::string> pupirv;
     //! \brief registred code blocks
-    std::map<std::string, CodeBlocksAggregator> cblocks;
+    std::map<std::string, CodeBlocksAggregator, std::less<>> cblocks;
     //! \brief registred initialize functions
     std::map<std::string, CodeBlock> initialize_functions;
     //! \brief registred post-processings
@@ -1107,6 +1137,10 @@ namespace mfront {
     VariableDescriptionContainer localVariables;
     //! \brief parameters of the behaviour
     VariableDescriptionContainer parameters;
+    //! \brief list of registred behaviour variables factories
+    std::vector<BehaviourVariableDescription> behaviourVariables;
+    //! \brief list of registred behaviour variable factories
+    std::vector<BehaviourVariableDescription> behaviourVariableFactories;
     //! \brief registred initialize variables
     VariableDescriptionContainer initializeVariables;
     //! \brief registred post-processing variables

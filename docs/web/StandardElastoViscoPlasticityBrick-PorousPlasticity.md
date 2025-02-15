@@ -96,7 +96,7 @@ The purpose of this work is twofold:
 - Propose a robust fully implicit algorithm which can handle thresholds
   of nucleation laws and material failure.
 - Extend the [`StandardElastoViscoPlasticity`
-  brick](http://tfel.sourceforge.net/StandardElastoViscoPlasticityBrick.html)
+  brick](https://thelfer.github.io/tfel/web/StandardElastoViscoPlasticityBrick.html)
   to this class of behaviours, allowing a declarative syntax similar as:
 
 ~~~~{.cxx}
@@ -160,7 +160,7 @@ constitutive laws:
 Section @sec:mfront:porous_plasticity:standardelastoviscoplasticitybrick
 discusses the design choices made for the extension of `MFront`'
 [`StandardElastoViscoPlasticity`
-brick](http://tfel.sourceforge.net/StandardElastoViscoPlasticityBrick.html).
+brick](https://thelfer.github.io/tfel/web/StandardElastoViscoPlasticityBrick.html).
 
 Section @sec:mfront:porous_plasticity:verifications is devoted to unit
 tests and verifications.
@@ -181,7 +181,7 @@ gives the derivatives of some common porous stress criteria.
 Appendix @sec:mfront:porous_plasticity:regul describes a regularization of the effective porosity in the Gurson-Tvergaard-Needleman stress criterion.
 
 Appendix @sec:mfront:porous_plasticity:castem details some numerical tricks to improve the robustness of finite element simulations performed with `Cast3M` using the constitutive laws from the extended [`StandardElastoViscoPlasticity`
-brick](http://tfel.sourceforge.net/StandardElastoViscoPlasticityBrick.html).
+brick](https://thelfer.github.io/tfel/web/StandardElastoViscoPlasticityBrick.html).
 
 Appendix @sec:porosity_evolution_options is dedicated to the description
 of the various options that can be declared in the `porosity_evolution`
@@ -1414,7 +1414,7 @@ of all models have been verified with respect to the numerical jacobian.
 ## Axisymmetric tensile tests simulations
 
 In this scope, the [`StandardElastoViscoPlasticity`
-brick](http://tfel.sourceforge.net/StandardElastoViscoPlasticityBrick.html)
+brick](https://thelfer.github.io/tfel/web/StandardElastoViscoPlasticityBrick.html)
 is tested using the finite elements software
 [`Cast3M`](http://www-cast3m.cea.fr/). The Gurson-Tvergaard-Needleman
 stress criterion is used to model the ductile failure of Notched Tensile
@@ -1479,7 +1479,7 @@ parameters to smoothly follow the crack propagation modelled by the
 sudden force drop. Such improvements depends on the finite element
 solver used and must not be confused with the robustness of the
 [`StandardElastoViscoPlasticity`
-brick](http://tfel.sourceforge.net/StandardElastoViscoPlasticityBrick.html).
+brick](https://thelfer.github.io/tfel/web/StandardElastoViscoPlasticityBrick.html).
 
 Moreover, the evolution of the porosity was monitored during the
 simulation to observe the failure of elements that reached the critical

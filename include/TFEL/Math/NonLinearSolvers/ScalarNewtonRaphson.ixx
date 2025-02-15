@@ -83,7 +83,9 @@ namespace tfel::math {
             // step back
             x -= dx / 2;
             b.iterate(x);
-            std::tie(fv, dfv) = f(x);
+            const auto r = f(x);
+            fv = std::get<0>(r);
+            dfv = std::get<1>(r);
           }
         }
       }
@@ -93,7 +95,9 @@ namespace tfel::math {
       if (!converged) {
         x += dx;
         b.iterate(x);
-        std::tie(fv, dfv) = f(x);
+        const auto r = f(x);
+        fv = std::get<0>(r);
+        dfv = std::get<1>(r);
         ++i;
       }
     }

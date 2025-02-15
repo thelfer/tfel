@@ -248,6 +248,46 @@ namespace tfel::math {
    */
   typedef GenerateUnit<1, 0, -3, 0, 0, 0, 0>::type HeatFluxDensity;  // kg.s-3
 
+  namespace internal {
+
+    template <typename T>
+    struct UnitConceptImplementation : std::false_type {};
+
+    template <int N1,
+              int N2,
+              int N3,
+              int N4,
+              int N5,
+              int N6,
+              int N7,
+              unsigned int D1,
+              unsigned int D2,
+              unsigned int D3,
+              unsigned int D4,
+              unsigned int D5,
+              unsigned int D6,
+              unsigned int D7>
+    struct UnitConceptImplementation<
+        Unit<std::integral_constant<int, N1>,
+             std::integral_constant<int, N2>,
+             std::integral_constant<int, N3>,
+             std::integral_constant<int, N4>,
+             std::integral_constant<int, N5>,
+             std::integral_constant<int, N6>,
+             std::integral_constant<int, N7>,
+             std::integral_constant<unsigned int, D1>,
+             std::integral_constant<unsigned int, D2>,
+             std::integral_constant<unsigned int, D3>,
+             std::integral_constant<unsigned int, D4>,
+             std::integral_constant<unsigned int, D5>,
+             std::integral_constant<unsigned int, D6>,
+             std::integral_constant<unsigned int, D7>>> : std::true_type {};
+
+  }  // namespace internal
+
+  template <typename T>
+  concept UnitConcept = internal::UnitConceptImplementation<T>::value;
+
   /*
    * \class Quantity
    * \brief This class describes numbers with unit.
@@ -261,8 +301,8 @@ namespace tfel::math {
    * \author Thomas Helfer
    * \date   06 Jun 2006
    */
-  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
-  struct Quantity;
+  template <UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
+  struct [[nodiscard]] Quantity;
 
   /*!
    * \brief an helper structure to retrieve the underlying numeric type and
@@ -277,7 +317,7 @@ namespace tfel::math {
   };
 
   //! \brief partial specialisation for quantities.
-  template <typename QuantityUnitType,
+  template <UnitConcept QuantityUnitType,
             typename QuantityValueType,
             typename QuantityOwnershipPolicy>
   struct QuantityTraits<
@@ -289,14 +329,14 @@ namespace tfel::math {
   };
 
   //! \brief a simple alias
-  template <typename UnitType, typename ValueType = double>
+  template <UnitConcept UnitType, typename ValueType = double>
   using qt = Quantity<UnitType,
                       ValueType,
                       tfel::math::internals::QuantityValueOwnershipPolicy<
                           ValueType,
                           std::is_same_v<UnitType, NoUnit>>>;
   //! \brief a simple alias
-  template <typename UnitType, typename ValueType = double>
+  template <UnitConcept UnitType, typename ValueType = double>
   using qt_ref =
       Quantity<UnitType,
                ValueType,
@@ -304,7 +344,7 @@ namespace tfel::math {
                    ValueType,
                    std::is_same_v<UnitType, NoUnit>>>;
   //! \brief a simple alias
-  template <typename UnitType, typename ValueType = double>
+  template <UnitConcept UnitType, typename ValueType = double>
   using const_qt_ref =
       Quantity<UnitType,
                ValueType,
@@ -319,7 +359,7 @@ namespace tfel::math {
     using type = tfel::meta::InvalidType;
   };
   //! \brief partial specialisation for quantities
-  template <typename UnitType, typename ValueType>
+  template <UnitConcept UnitType, typename ValueType>
   struct MakeQuantityReferenceType<qt<UnitType, ValueType>> {
     //! \brief result
     using type = qt_ref<UnitType, ValueType>;
@@ -373,25 +413,15 @@ namespace tfel::math {
                             D6,
                             D7>::type,
       typename tfel::math::internals::MakeQuantityValueType<ValueType>::type>;
-  //! \brief cast the value to the base type
-  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
-  TFEL_HOST_DEVICE constexpr ValueType& base_type_cast(
-      Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept {
-    return v.getValue();
-  }
-  //! \brief cast the value to the base type
-  template <typename UnitType, typename ValueType, typename OwnershipPolicy>
-  TFEL_HOST_DEVICE constexpr const ValueType& base_type_cast(
-      const Quantity<UnitType, ValueType, OwnershipPolicy>& v) noexcept {
-    return v.getValue();
-  }
 
   namespace internals {
 
     template <typename T>
     struct IsQuantity : std::false_type {};
 
-    template <typename UnitType, typename ValueType, typename OwnershipPolicy>
+    template <UnitConcept UnitType,
+              typename ValueType,
+              typename OwnershipPolicy>
     struct IsQuantity<Quantity<UnitType, ValueType, OwnershipPolicy>>
         : std::true_type {};
 

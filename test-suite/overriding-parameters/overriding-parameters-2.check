@@ -1,16 +1,8 @@
 @Command "@mfront@ --obuild --interface=generic --dsl-options-file=options.json  Plasticity.mfront";
-@Command
-    "@mfront-query@ --unicode-output=false --parameters "
+@Command "@mfront-query@ --unicode-output=false --parameters "
     "--dsl-options-file=options.json Plasticity.mfront" {
-      expected_output :
-          {"- minimal_time_step_scaling_factor: minimal value for the time step scaling factor",
-           "- maximal_time_step_scaling_factor: maximal value for the time step scaling factor",
-           "- theta",    //
-           "- epsilon",  //
-           "- iterMax",  //
-           "- Temperature (T): the temperature",
-           "- dTemperature (dT): increment of variable 'Temperature' over the time step"}
-    };
+      empty_output: true
+};
 @Command "@mfront-query@ --external-state-variables --dsl-options-file=options.json  Plasticity.mfront"{
   empty_output: true
 };

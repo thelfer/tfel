@@ -42,7 +42,7 @@ be modified using the `ExternalLibraryManager` class (See Section @???).
 > **Note: link with the `cyrano` interface for material properties**
 >
 > The `generic` interface for material properties is very similar to the
-> `cyrano` interface. In pratice, both interfaces shares a common base
+> `cyrano` interface. In practice, both interfaces shares a common base
 > class (called `GenericMaterialPropertyInterfaceBase`).
 
 ### The `mfront_gmp_OutputStatus` structure

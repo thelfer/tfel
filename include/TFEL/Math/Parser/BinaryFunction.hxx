@@ -52,7 +52,7 @@ namespace tfel::math::parser {
      */
     StandardBinaryFunction(const char* const,
                            const std::shared_ptr<Expr>,
-                           const std::shared_ptr<Expr>);
+                           const std::shared_ptr<Expr>) noexcept;
     //
     bool isConstant() const override;
     bool dependsOnVariable(const std::vector<double>::size_type) const override;

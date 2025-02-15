@@ -21,7 +21,7 @@ namespace tfel::math::parser {
 
   ConditionalExpr::ConditionalExpr(const std::shared_ptr<LogicalExpr> c_,
                                    const std::shared_ptr<Expr> a_,
-                                   const std::shared_ptr<Expr> b_)
+                                   const std::shared_ptr<Expr> b_) noexcept
       : c(c_), a(a_), b(b_) {}  // end of ConditionalExpr::ConditionalExpr
 
   bool ConditionalExpr::isConstant() const {

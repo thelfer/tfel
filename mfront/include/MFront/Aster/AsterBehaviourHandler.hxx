@@ -221,19 +221,19 @@ namespace aster {
     };  // end of struct DoNothingInitializer
 
     struct TFEL_VISIBILITY_LOCAL Error {
-      TFEL_ASTER_INLINE
-      Error(const AsterReal *const,
-            const AsterReal *const,
-            const AsterReal *const,
-            const AsterReal *const,
-            const AsterReal *const,
-            const AsterReal *const,
-            const AsterReal *const,
-            const AsterReal *const,
-            const AsterReal *const,
-            const AsterReal *const,
-            const tfel::material::OutOfBoundsPolicy,
-            const StressFreeExpansionHandler &) {}  // end of Error
+      TFEL_ASTER_INLINE Error(const AsterReal *const,
+                              const AsterReal *const,
+                              const AsterReal *const,
+                              const AsterReal *const,
+                              const AsterReal *const,
+                              const AsterReal *const,
+                              const AsterReal *const,
+                              const AsterReal *const,
+                              const AsterReal *const,
+                              const AsterReal *const,
+                              const tfel::material::OutOfBoundsPolicy,
+                              const StressFreeExpansionHandler &) {
+      }  // end of Error
 
       TFEL_ASTER_INLINE void exe(AsterReal *const,
                                  AsterReal *const,
@@ -242,7 +242,7 @@ namespace aster {
         throw(AsterInvalidModellingHypothesis());
       }  // end of Error::exe
 
-    };  // end of struct Error
+    };  // namespace aster
 
     template <const bool bs,  // requires StiffnessOperator
               const bool ba>  // requires ThermalExpansionCoefficientTensor
@@ -474,8 +474,7 @@ namespace aster {
                                              NSTATV);
       }
     }  // end of checkNSTATV
-
-  };  // end of struct AsterBehaviourHandler
+  };   // end of struct AsterBehaviourHandler
 
 }  // end of namespace aster
 

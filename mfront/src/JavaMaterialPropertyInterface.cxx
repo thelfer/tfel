@@ -41,6 +41,7 @@
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/DSLUtilities.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
@@ -86,6 +87,15 @@ namespace mfront {
       throw_if(key != "@Package", "unsupported key '" + key + "'");
     }
     if (key == "@Package") {
+      if (i.empty()) {
+        reportWarning("keyword '" + key +
+                      "' is used without being restricted to the " +
+                      this->getName() +
+                      " interface, which could be a portability "
+                      "issue. Please add [" +
+                      this->getName() + "] after the keyword (i.e. replace '" +
+                      key + "' by '" + key + "[" + this->getName() + "]')");
+      }
       throw_if(!this->package.empty(), "package name already defined");
       throw_if(current == end, "unexpected end of file");
       const auto p = current->value;
@@ -121,10 +131,6 @@ namespace mfront {
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     // the jni part
     insert_if(l.cppflags, TFEL_JAVA_INCLUDES);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, name + "-java.cxx");
     if (this->package.empty()) {
       insert_if(l.epts, getJavaClassName(mpd) + "." + mpd.law);
@@ -327,6 +333,7 @@ namespace mfront {
     writeVariablesBoundsSymbols(srcFile, name, mpd);
     // mfront metadata
     writeFileDescriptionSymbols(srcFile, name, fd);
+    writeValidatorSymbol(srcFile, name, mpd);
     writeBuildIdentifierSymbol(srcFile, name, mpd);
     writeEntryPointSymbol(srcFile, name);
     writeTFELVersionSymbol(srcFile, name);
@@ -334,7 +341,8 @@ namespace mfront {
     writeInterfaceSymbol(srcFile, name, "Java");
     writeLawSymbol(srcFile, name, mpd.material);
     writeMaterialSymbol(srcFile, name, mpd.material);
-    writeMaterialKnowledgeTypeSymbol(srcFile, name, MATERIALPROPERTY);
+    writeMaterialKnowledgeTypeSymbol(srcFile, name,
+                                     MaterialKnowledgeType::MATERIALPROPERTY);
     // java
     srcFile << "JNIEXPORT jdouble JNICALL\n";
     if (this->package.empty()) {

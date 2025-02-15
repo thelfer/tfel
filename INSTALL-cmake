@@ -1,3 +1,4 @@
+
 Basic Installation
 ==================
 
@@ -31,9 +32,6 @@ Options
 =======
 
 - `enable-static`: compiles static libraries
-- `enable-eigen`: allows support for eigen linear solvers
-- `enable-mkl`: allows support for linear solvers provided by the Math
-  Kernel Library
 - `enable-fortran`: enables fortran support
 - `enable-python`: enables python support
 - `enable-numpy-support: enables numpy support. This is activated by
@@ -68,17 +66,6 @@ Options
   pandoc is found)
 - `enable-fast-math`: use advance options to optimize code further.
   Compiler can then ignore IEEE 754 compatibility
-- `enable-broken-boost-python-module-visibility-handling`: workaround a
-  bug in boost python which occurs on FreeBSD+clang. See
-  https://github.com/boostorg/python/issues/173 for details
-- `python-static-interpreter-workaround: a workaround to handle the fact
-  the conda' python interpreter is statically linked, which causes
-  issues on Mac Os. See for details
-  https://github.com/ContinuumIO/anaconda-issues/issues/9078. A proper
-  solution may only appear with CMake 3.15 with the `Python::module`
-  target, see https://gitlab.kitware.com/cmake/cmake/issues/18100. Until
-  this version is widely available, this flag proposes a hack. Use with
-  care.
 - `enable-glibcxx-debug`: use the debug version of the STL implemented
   by the GLIB
 - `enable-testing`: enables tests. ON by default.
@@ -94,7 +81,7 @@ cmake usefull variables
 - `ZSET_INSTALL_PATH`: specify where the ZSET sofware has been
   installed
 - `CMAKE_TOOLCHAIN_FILE`: specify a tool chain file
-- `TFEL_SVN_REVISION`: tfel-svn revision
+- `TFEL_GIT_HASH`: git revision
 - `Python_ADDITIONAL_VERSIONS`: select the `python` version to use.
   Note that only the major and minor version of python shall be passed,
   not the revision version or the detection fails.
@@ -103,6 +90,16 @@ cmake usefull variables
   support of `madnex` files. This path is usually given by
   `$MADNEX_PREFIX/share/madnex/cmake/` where `MADNEX_PREFIX` is the
   installation directory of the `Madnex` library.
+- `TFEL_APPEND_VERSION`: append the `TFEL` version to the libraries
+  names and `python` modules (except if the
+  `unversioned-python-module-names` option is set to `OFF`) .
+- `TFEL_VERSION_FLAVOUR`: append the given string to the libraries names
+  and `python` modules (except if the `unversioned-python-module-names`
+  option is set to `OFF`). Typical values for `TFEL_VERSION_FLAVOUR` are
+  `release` and `debug`.
+- `unversioned-python-module-names`: if set to `ON`, do not modify
+  the names of the `python` modules if `TFEL_APPEND_VERSION` is
+  set to `ON` or if `TFEL_VERSION_FLAVOUR` is set.
 - `TFEL_DL_LIBRARY`: set the path the `dl` library. This library can
   sometimes not be found when using non default compilers (eg. the PGI
   compiler).
@@ -114,6 +111,8 @@ cmake usefull variables
   `CXXFLAGS` environment variables to build `TFEL`
 - `BUILD_SHARED_LIBS`: Builds shared libraries (`ON` by default). Set to
   `OFF` to build static libraries instead.
+- `pandoc_reference_filter`: path to the reference filter used by `pandoc`.
+  Currently, both `pandoc-crossref` and `pandoc-xnos` have been tested
 
 cmake typical usage
 ===================

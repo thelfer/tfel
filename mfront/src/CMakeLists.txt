@@ -1,3 +1,4 @@
+
 configure_file(${PROJECT_SOURCE_DIR}/mfront/src/MFrontHeader.cxx.in
                ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
@@ -6,22 +7,38 @@ mfront_library(MFrontLogStream
   MFrontLogStream.cxx)
 target_include_directories(MFrontLogStream
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
+if(enable-static)
+  target_include_directories(MFrontLogStream-static
+    PUBLIC 
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>)
+endif(enable-static)
 
 # MFrontLogProfiling
 mfront_library(MFrontProfiling
   BehaviourProfiler.cxx)
 target_include_directories(MFrontProfiling
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:include>)
 if(UNIX AND (NOT APPLE) AND (NOT HAIKU) AND (NOT (CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")))
    target_link_libraries(MFrontProfiling PRIVATE rt)
 endif(UNIX AND (NOT APPLE) AND (NOT HAIKU) AND (NOT (CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")))
-
+if(enable-static)
+  target_include_directories(MFrontProfiling-static
+    PUBLIC 
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>)
+  if(UNIX AND (NOT APPLE) AND (NOT HAIKU) AND (NOT (CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")))
+    target_link_libraries(MFrontProfiling-static PRIVATE rt)
+  endif(UNIX AND (NOT APPLE) AND (NOT HAIKU) AND (NOT (CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")))
+endif(enable-static)
 # MTestFileGenerator
 mfront_library(MTestFileGenerator
   MTestFileGeneratorBase.cxx
@@ -32,14 +49,26 @@ mfront_library(MTestFileGenerator
   GenericBehaviourFiniteStrainMTestFileGenerator.cxx)
 target_include_directories(MTestFileGenerator
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
    $<INSTALL_INTERFACE:include>)
 target_link_libraries(MTestFileGenerator
-  PUBLIC TFELMaterial
-  PUBLIC TFELMath
-  PUBLIC TFELUtilities
-  PUBLIC TFELException)
+  PUBLIC tfel::TFELMaterial
+  PUBLIC tfel::TFELMath
+  PUBLIC tfel::TFELUtilities
+  PUBLIC tfel::TFELException)
+if(enable-static)
+    target_include_directories(MTestFileGenerator-static
+    PUBLIC 
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+    $<INSTALL_INTERFACE:include>)
+  target_link_libraries(MTestFileGenerator-static
+    PUBLIC tfel::TFELMaterial
+    PUBLIC tfel::TFELMath
+    PUBLIC tfel::TFELUtilities
+    PUBLIC tfel::TFELException)
+endif(enable-static)
 
 # TFELMFront
 
@@ -61,6 +90,7 @@ set(TFELMFront_SOURCES
     LibraryDescription.cxx
     ExecutableDescription.cxx
     SpecificTargetDescription.cxx
+    MFrontWarningMode.cxx
     MFrontDebugMode.cxx
     PedanticMode.cxx
     MFrontLock.cxx
@@ -69,6 +99,7 @@ set(TFELMFront_SOURCES
     InitInterfaces.cxx
     InitDSLs.cxx
     DSLFactory.cxx
+    DataInterpolationUtilities.cxx
     Gradient.cxx
     ThermodynamicForce.cxx
     LawFunction.cxx
@@ -78,6 +109,7 @@ set(TFELMFront_SOURCES
     BehaviourDescription.cxx
     VariableDescriptionBase.cxx
     VariableDescription.cxx
+    BehaviourVariableDescription.cxx
     StaticVariableDescription.cxx
     VariableBoundsDescription.cxx
     BehaviourDSLCommon.cxx
@@ -155,6 +187,7 @@ set(TFELMFront_SOURCES
     IsotropicMisesCreepCodeGenerator.cxx
     MultipleIsotropicMisesFlowsCodeGenerator.cxx
     MFrontMaterialPropertyInterface.cxx
+    MFrontBehaviourInterface.cxx
     CMaterialPropertyInterfaceBase.cxx
     CMaterialPropertyInterface.cxx
     CppMaterialPropertyInterface.cxx
@@ -164,7 +197,7 @@ set(TFELMFront_SOURCES
     ExcelMaterialPropertyInternalInterface.cxx
     MFrontModelInterface.cxx
     BehaviourMaterialProperty.cxx
-    StandardBehaviourInterface.cxx
+    BehaviourInterfaceBase.cxx
     SymbolsGenerator.cxx
     UMATInterfaceBase.cxx
     GenericMaterialPropertyInterfaceBase.cxx
@@ -178,8 +211,8 @@ set(TFELMFront_SOURCES
     StressPotential.cxx
     HookeStressPotentialBase.cxx
     HookeStressPotential.cxx
-    IsotropicDamageHookeStressPotentialBase.cxx
-    IsotropicDamageHookeStressPotential.cxx
+    ScalarDamageHookeStressPotentialBase.cxx
+    ScalarDamageHookeStressPotential.cxx
     DDIF2StressPotential.cxx
     StressPotentialFactory.cxx
     InelasticFlow.cxx
@@ -223,8 +256,13 @@ set(TFELMFront_SOURCES
     SwiftIsotropicHardeningRule.cxx
     VoceIsotropicHardeningRule.cxx
     DataIsotropicHardeningRule.cxx
+    StrainRateSensitiveIsotropicHardeningRule.cxx
     UserDefinedIsotropicHardeningRule.cxx
     IsotropicHardeningRuleFactory.cxx
+    StrainRateSensitivityFactor.cxx
+    StrainRateSensitivityFactorFactory.cxx
+    CowperSymondsStrainRateSensitivityFactor.cxx
+    JohnsonCookStrainRateSensitivityFactor.cxx
     KinematicHardeningRule.cxx
     KinematicHardeningRuleBase.cxx
     PragerKinematicHardeningRule.cxx
@@ -474,24 +512,57 @@ endif(HAVE_CYRANO)
 mfront_library(TFELMFront ${TFELMFront_SOURCES})
 target_include_directories(TFELMFront
    PUBLIC 
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
-   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
    $<INSTALL_INTERFACE:include>)
+if(enable-static)
+  target_include_directories(TFELMFront-static
+    PUBLIC 
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+    $<INSTALL_INTERFACE:include>)
+endif(enable-static)
 if(HAVE_CASTEM)
   if(CASTEHOME)
     target_include_directories(TFELMFront 
       PRIVATE "${CASTEMHOME}/include"
       PRIVATE "${CASTEMHOME}/include/c")
+    if(enable-static)
+      target_include_directories(TFELMFront-static 
+        PRIVATE "${CASTEMHOME}/include"
+        PRIVATE "${CASTEMHOME}/include/c")
+    endif(enable-static)
   endif(CASTEHOME)
 endif(HAVE_CASTEM)
 
 target_link_libraries(TFELMFront
-  PUBLIC MFrontLogStream
-  PUBLIC TFELMaterial        PUBLIC TFELMathParser
-  PUBLIC TFELMathCubicSpline PUBLIC TFELMath
-  PUBLIC TFELSystem          PUBLIC TFELUtilities
-  PUBLIC TFELUnicodeSupport  PUBLIC TFELGlossary 
-  PUBLIC TFELException       PUBLIC TFELConfig)
+  PUBLIC
+  tfel::MFrontLogStream
+  tfel::TFELMaterial
+  tfel::TFELMathParser
+  tfel::TFELMathCubicSpline
+  tfel::TFELMath
+  tfel::TFELSystem
+  tfel::TFELUtilities
+  tfel::TFELGlossary 
+  tfel::TFELUnicodeSupport
+  tfel::TFELException
+  tfel::TFELConfig)
+if(enable-static)
+  target_link_libraries(TFELMFront-static
+    PUBLIC
+    tfel::MFrontLogStream-static
+    tfel::TFELMaterial-static
+    tfel::TFELMathParser-static
+    tfel::TFELMathCubicSpline-static
+    tfel::TFELMath-static
+    tfel::TFELSystem-static
+    tfel::TFELUtilities-static
+    tfel::TFELUnicodeSupport-static
+    tfel::TFELGlossary-static
+    tfel::TFELException-static
+    tfel::TFELConfig-static)
+endif(enable-static)
 
 if(UNIX)
   if(NOT HAIKU)
@@ -502,9 +573,22 @@ if(UNIX)
       target_link_libraries(TFELMFront
       	PRIVATE -pthread PRIVATE ${TFEL_DL_LIBRARY})
     endif(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
+    if(enable-static)
+      if(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
+        target_link_libraries(TFELMFront-static
+        PRIVATE ${TFEL_DL_LIBRARY})
+      else(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
+        target_link_libraries(TFELMFront-static
+          PRIVATE -pthread PRIVATE ${TFEL_DL_LIBRARY})
+      endif(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
+    endif(enable-static)
   else(NOT HAIKU)
     target_link_libraries(TFELMFront
       PRIVATE ${TFEL_DL_LIBRARY})
+    if(enable-static)
+      target_link_libraries(TFELMFront-static
+        PRIVATE ${TFEL_DL_LIBRARY})
+    endif(enable-static)
   endif(NOT HAIKU)
 else(UNIX)
 endif(UNIX)
@@ -514,15 +598,24 @@ if(TFEL_HAVE_MADNEX)
     PUBLIC MFRONT_HAVE_MADNEX)
   target_link_libraries(TFELMFront
     PRIVATE madnex::Madnex)
+  if(enable-static)
+    target_compile_definitions(TFELMFront-static
+      PUBLIC MFRONT_HAVE_MADNEX)
+    target_link_libraries(TFELMFront-static
+      PRIVATE madnex::Madnex)  
+  endif(enable-static)
 endif(TFEL_HAVE_MADNEX)
 
 # MFront
 
 add_executable(mfront main.cxx)
+set_property(TARGET mfront PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 target_link_libraries(mfront
-  TFELMFront 
-  MFrontLogStream
-  TFELSystem TFELUtilities)
+  PUBLIC
+  tfel::TFELMFront 
+  tfel::MFrontLogStream
+  tfel::TFELSystem
+  tfel::TFELUtilities)
 if(TFEL_APPEND_SUFFIX)
   set_target_properties(mfront
     PROPERTIES OUTPUT_NAME "mfront-${TFEL_SUFFIX}")

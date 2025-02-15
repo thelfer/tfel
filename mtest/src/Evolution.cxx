@@ -10,7 +10,7 @@
  * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
-#include <iostream>
+
 #include <string>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"

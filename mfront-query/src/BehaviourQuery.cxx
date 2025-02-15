@@ -38,6 +38,32 @@
 
 namespace mfront {
 
+  static void displayDefaultParameterValue(const BehaviourData& bd,
+                                           const VariableDescription& p) {
+    const auto& n = p.name;
+    if (p.getTypeFlag() == mfront::SupportedTypes::SCALAR) {
+      if (p.arraySize == 1) {
+        std::cout << bd.getFloattingPointParameterDefaultValue(n) << '\n';
+      } else {
+        for (unsigned short i = 0; i != p.arraySize;) {
+          std::cout << bd.getFloattingPointParameterDefaultValue(n, i);
+          if (++i != p.arraySize) {
+            std::cout << " ";
+          }
+        }
+        std::cout << '\n';
+      }
+    } else if (p.type == "int") {
+      std::cout << bd.getIntegerParameterDefaultValue(n) << '\n';
+    } else if (p.type == "ushort") {
+      std::cout << bd.getUnsignedShortParameterDefaultValue(n) << '\n';
+    } else {
+      tfel::raise(
+          "displayDefaultParameterValue: "
+          "unsupported parameter type");
+    }
+  }  // end of displayDefaultParameterValue
+
   static const MaterialKnowledgeAttribute& getAttribute(
       const std::string& n,
       const BehaviourDescription& d,
@@ -152,8 +178,9 @@ namespace mfront {
     //
     this->registerCallBack(
         "--modelling-hypothesis",
-        CallBack("select a modelling hypothesis",
-                 [this] { this->treatModellingHypothesis(); }, true));
+        CallBack(
+            "select a modelling hypothesis",
+            [this] { this->treatModellingHypothesis(); }, true));
     // standard queries
     const std::vector<std::pair<const char*, const char*>> sq = {
         {"--behaviour-name", "show the behaviour name"},
@@ -266,7 +293,8 @@ namespace mfront {
     for (const auto& q : sq) {
       this->registerCallBack(
           q.first,
-          CallBack(q.second, [this] { this->treatStandardQuery(); }, false));
+          CallBack(
+              q.second, [this] { this->treatStandardQuery(); }, false));
     }
     const std::vector<std::pair<const char*, const char*>> sq2 = {
         {"--attribute-type", "display an attribute type"},
@@ -305,7 +333,8 @@ namespace mfront {
     for (const auto& q : sq2) {
       this->registerCallBack(
           q.first,
-          CallBack(q.second, [this] { this->treatStandardQuery2(); }, true));
+          CallBack(
+              q.second, [this] { this->treatStandardQuery2(); }, true));
     }
   }  // end of registerCommandLineCallBacks
 
@@ -559,14 +588,12 @@ namespace mfront {
                             "no slip system defined");
              const auto& ssd = d.getSlipSystems();
              const auto nss = ssd.getNumberOfSlipSystemsFamilies();
-             auto r = size_t{};
              for (size_t i = 0; i != nss; ++i) {
                const auto os = ssd.getOrientationTensors(i);
                const auto ss = ssd.getSlipSystems(i);
                for (decltype(ss.size()) j = 0; j != ss.size(); ++j) {
                  cout << "- " << to_string(ss[j]) << ": " << to_string(os[j])
                       << '\n';
-                 ++r;
                }
              }
            }});
@@ -613,14 +640,12 @@ namespace mfront {
                             "no slip system defined");
              const auto& ssd = d.getSlipSystems();
              const auto nss = ssd.getNumberOfSlipSystemsFamilies();
-             auto r = size_t{};
              for (size_t i = 0; i != nss; ++i) {
                const auto os = ssd.getClimbTensors(i);
                const auto ss = ssd.getSlipSystems(i);
                for (decltype(ss.size()) j = 0; j != ss.size(); ++j) {
                  cout << "- " << to_string(ss[j]) << ": " << to_string(os[j])
                       << '\n';
-                 ++r;
                }
              }
            }});
@@ -787,6 +812,11 @@ namespace mfront {
           }
           cout << endl;
         }
+        if (areParametersTreatedAsStaticVariables(bd)) {
+          for (const auto& v : d.getParameters()) {
+            QueryHandlerBase::displayVariable(v);
+          }
+        }
       };
       this->queries.emplace_back("static-variables", nq);
     } else if (qn == "--auxiliary-state-variables") {
@@ -823,9 +853,16 @@ namespace mfront {
                                  this->generateVariablesListQuery<
                                      &BehaviourData::getLocalVariables>());
     } else if (qn == "--parameters") {
-      this->queries.emplace_back(
-          "parameters",
-          this->generateVariablesListQuery<&BehaviourData::getParameters>());
+      auto nq = [](const FileDescription&, const BehaviourDescription& bd,
+                   const Hypothesis h) {
+        if (!areParametersTreatedAsStaticVariables(bd)) {
+          const auto& d = bd.getBehaviourData(h);
+          for (const auto& v : d.getParameters()) {
+            QueryHandlerBase::displayVariable(v);
+          }
+        }
+      };
+      this->queries.emplace_back("parameters", nq);
     } else if (qn == "--attributes") {
       this->queries.push_back(
           {"attributes", [](const FileDescription&,
@@ -912,10 +949,12 @@ namespace mfront {
           {"parameters-file",
            [](const FileDescription&, const BehaviourDescription& d,
               const Hypothesis h) {
-             if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-               cout << mfront::getParametersFileName(d, h) << '\n';
-             } else {
-               cout << mfront::getParametersFileName(d) << '\n';
+             if (!areParametersTreatedAsStaticVariables(d)) {
+               if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
+                 cout << mfront::getParametersFileName(d, h) << '\n';
+               } else {
+                 cout << mfront::getParametersFileName(d) << '\n';
+               }
              }
            }});
     } else {
@@ -1066,44 +1105,37 @@ namespace mfront {
     } else if (qn == "--parameter-type") {
       auto l = [o](const FileDescription&, const BehaviourDescription& d,
                    const Hypothesis h) {
-        const auto& bd = d.getBehaviourData(h);
-        const auto& p = bd.getParameterDescriptionByExternalName(o);
-        cout << p.type << '\n';
+        if (!areParametersTreatedAsStaticVariables(d)) {
+          const auto& bd = d.getBehaviourData(h);
+          const auto& p = bd.getParameterDescriptionByExternalName(o);
+          cout << p.type << '\n';
+        }
       };
       this->queries.push_back({"parameter-type", l});
     } else if (qn == "--parameter-default-value") {
       auto l = [o](const FileDescription&, const BehaviourDescription& d,
                    const Hypothesis h) {
+        if (areParametersTreatedAsStaticVariables(d)) {
+          return;
+        }
         const auto& bd = d.getBehaviourData(h);
         const auto& p = bd.getParameterDescriptionByExternalName(o);
-        const auto& n = p.name;
-        if (p.getTypeFlag() == mfront::SupportedTypes::SCALAR) {
-          if (p.arraySize == 1) {
-            cout << bd.getFloattingPointParameterDefaultValue(n) << '\n';
-          } else {
-            for (unsigned short i = 0; i != p.arraySize;) {
-              cout << bd.getFloattingPointParameterDefaultValue(n, i);
-              if (++i != p.arraySize) {
-                cout << " ";
-              }
-            }
-            cout << '\n';
-          }
-        } else if (p.type == "int") {
-          cout << bd.getIntegerParameterDefaultValue(n) << '\n';
-        } else if (p.type == "ushort") {
-          cout << bd.getUnsignedShortParameterDefaultValue(n) << '\n';
-        } else {
-          tfel::raise(
-              "Behaviour::treatStandardQuery2 : "
-              "unsupported parameter type");
-        }
+        displayDefaultParameterValue(bd, p);
       };
       this->queries.push_back({"parameter-default-value", l});
     } else if (qn == "--static-variable-value") {
       auto l = [o](const FileDescription&, const BehaviourDescription& d,
                    const Hypothesis h) {
         const auto& bd = d.getBehaviourData(h);
+        if (areParametersTreatedAsStaticVariables(d)) {
+          const auto& parameters = bd.getParameters();
+          const auto p = findByExternalName(parameters, o);
+          if (p != parameters.end()) {
+            const auto& v = parameters.getVariableByExternalName(o);
+            displayDefaultParameterValue(bd, v);
+            return;
+          }
+        }
         for (const auto& sv : bd.getStaticVariables()) {
           if (sv.name == o) {
             std::cout << sv.value << '\n';

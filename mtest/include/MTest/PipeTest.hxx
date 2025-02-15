@@ -412,6 +412,16 @@ namespace mtest {
                                  const unsigned short,
                                  const real);
     /*!
+     * \brief add a test comparing to results given by an evolution
+     * to the computed ones
+     * \param[in] n: named of the variable tested
+     * \param[in] ev: evolution
+     * \param[in] e: criterion value
+     */
+    virtual void addIntegralTest(const std::string&,
+                                 const std::shared_ptr<Evolution>,
+                                 const real);
+    /*!
      * \brief add a test comparing to results stored in a reference
      * file to the computed ones
      * \param[in] n: named of the variable tested
@@ -464,6 +474,11 @@ namespace mtest {
      * \param[in] bp : pointer to the behaviour
      */
     void checkBehaviourConsistency(const std::shared_ptr<Behaviour>&) override;
+    /*!
+     * \brief check that the tested variable is meaningful
+     * \param[in] n: named of the variable tested
+     */
+    void checkIntegralTestArgument(const std::string&) const;
 
    private:
     //! \brief a simple alias

@@ -2,7 +2,7 @@
 % Thomas Helfer
 % 30/08/2017
 
-`mfm` is a tool that allow querying a library about the entry points
+`mfm` is a tool that allows querying a library about the entry points
 defined by `MFront`. Depending on the interface, an entry point can be
 a class name, a function, a name of an entity that will be registered
 in an abstract factory when the library is loaded, etc...

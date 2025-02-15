@@ -84,8 +84,8 @@ namespace tfel::material {
      * \param[in] c:  setting
      * \param[in] F1: deformation gradient
      */
-    TFEL_HOST_DEVICE LogarithmicStrainHandler(const Setting,
-                                              const DeformationGradient &);
+    TFEL_HOST_DEVICE LogarithmicStrainHandler(
+        const Setting, const DeformationGradient &) noexcept;
     /*!
      * \brief update the axial deformation gradient
      * \param[in] Fzz: axial deformation gradient
@@ -350,7 +350,7 @@ namespace tfel::material {
     TFEL_HOST_DEVICE void convertToAbaqusTangentModuli(
         stress *const, const stress *const) const;
     //! \brief return the deformation gradient
-    const DeformationGradient &getDeformationGradient() const;
+    TFEL_HOST_DEVICE const DeformationGradient &getDeformationGradient() const;
 
    protected:
     //! deformation gradient
@@ -362,8 +362,9 @@ namespace tfel::material {
      * \param[in] m: eigenvectors of the right Cauchy-Green tensor
      * \param[in] F: deformation gradient
      */
-    static tfel::math::tvector<4u, tfel::math::stensor<2u, real>> getNTensors(
-        const tfel::math::tmatrix<3u, 3u, real> &);
+    TFEL_HOST_DEVICE static tfel::math::tvector<4u,
+                                                tfel::math::stensor<2u, real>>
+    getNTensors(const tfel::math::tmatrix<3u, 3u, real> &);
     /*!
      * \brief compute the M tensors in the Eulerian setting.
      * \param[in] m: eigenvectors of the right Cauchy-Green tensor

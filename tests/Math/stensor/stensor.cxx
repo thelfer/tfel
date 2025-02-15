@@ -39,22 +39,17 @@ int main() {
   assert(abs(v4(0) + 4) < 1.e-14);
   assert(abs(v4(1) + 1) < 1.e-14);
   assert(abs(v4(2) + 25) < 1.e-14);
-  // const auto v5 = v1-v2;
-  // static_assert(std::is_same<UnaryResultType<double,OpNeg>::type,double>::value,
-  // 		"unary operation result is not valid");
-  // static_assert(std::is_same<UnaryComputeBinaryOperationResult<StensorTag,UnaryOperatorTag,
-  // 		stensor<1u,double>,OpNeg>::type,
-  // 		stensor<1u,double>>::value,
-  // 		"unary operation result is not valid");
-  // static_assert(std::is_same<UnaryComputeBinaryOperationResult<StensorTag,UnaryOperatorTag,
-  // 		stensor1,OpNeg>::type,stensor1>::value,
-  // 		"unary operation result is not valid");
-  // static_assert(std::is_same<UnaryResultType<std::decay<decltype(v5)>::type,OpNeg>::type,stensor1>::value,
-  // 		"unary operation result is not valid");
-  // static_assert(!IsInvalid<UnaryResultType<std::decay<decltype(v5)>::type,OpNeg>::type>::cond,
-  // 		"unary operation result is not valid");
-  // static_assert(isUnaryOperationResultTypeValid<decltype(v5),OpNeg>::value,
-  // 		"unary operation result is not valid");
-  //  const auto v6 = -v5;
+  //
+  constexpr stensor s = {1, 2, 3};
+  static_assert(std::is_same_v<decltype(s), const stensor<1, int>>);
+  static_assert(s[0] == 1);
+  static_assert(s[1] == 2);
+  static_assert(s[2] == 3);
+  //
+  constexpr auto zero = stensor<2u, int>::zero();
+  static_assert(zero[0] == 0);
+  static_assert(zero[1] == 0);
+  static_assert(zero[2] == 0);
+  static_assert(zero[3] == 0);
   return EXIT_SUCCESS;
 }

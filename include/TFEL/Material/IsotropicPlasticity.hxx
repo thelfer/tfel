@@ -43,14 +43,8 @@ namespace tfel::material {
    * \note this function is a simple wrapper around the
    * `tfel::math::computeDeviatorDeterminantDerivative` function.
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
-      tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-                          typename tfel::math::ComputeUnaryResult<
-                              tfel::math::numeric_type<StensorType>,
-                              tfel::math::Power<2>>::Result>>::type
-  computeJ3Derivative(const StensorType&);
+  TFEL_HOST_DEVICE constexpr auto computeJ3Derivative(
+      const tfel::math::StensorConcept auto&);
   /*!
    * \brief Let \f$\underline{s}\f$ be a symmetric tensor and
    * \f$J_{3}\f$ be the determinant of \f$\underline{s}'\f$ the
@@ -73,14 +67,8 @@ namespace tfel::material {
    * `tfel::math::computeDeviatorDeterminantSecondDerivative`
    * function.
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::typetraits::IsScalar<
-              tfel::math::numeric_type<StensorType>>::cond,
-      tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-                           tfel::math::numeric_type<StensorType>>>::type
-  computeJ3SecondDerivative(const StensorType&);
+  TFEL_HOST_DEVICE constexpr auto computeJ3SecondDerivative(
+      const tfel::math::StensorConcept auto&);
 
 }  // end of namespace tfel::material
 

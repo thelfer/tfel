@@ -12,8 +12,8 @@ eqnPrefixTemplate: "($$i$$)"
 ---
 
 `tfel-check` is a tool designed to launch unit-tests and provide tools
-to test the outputs. `tfel-check` mostly targets scientific application
-which does not have in-house abilities to compare their results to
+to test the outputs. `tfel-check` mostly targets scientific applications
+which do not have in-house ability to compare their results to
 reference results.
 
 # Overview
@@ -103,21 +103,21 @@ entering directory '/tmp/madnex'
 
 This command produces several files:
 
-- `tfel-check.log`: this file contains the ouptut of `tfel-check`. This
+- `tfel-check.log`: this file contains the output of `tfel-check`. This
   file is created in the directory where `tfel-check` has been invoked.
 - `madnex.checklog`: this file contains a summary of the execution of
   the commands and test described in the `madnex.check` file. A similar
   file is created for each file considered by `tfel-check`.
 - Three files `madnex-Exec-1.out`, `madnex-Exec-2.out` and
   `madnex-Exec-3.out` associated to the three commands listed in the
-  `madnex.check` file. Those files contains the output of each commands
+  `madnex.check` file. Those files contain the output of each command
   and the execution time of the command.
 - `TEST-madnex.xml` is an `XML` file conforming the `JUnit` standard
   that summarises the results and which is suitable for the integration
   of the test case in the [`jenkins` automation
   server](https://www.jenkins.io/).
 
-If the requirements are not met, the executation and the tests are
+If the requirements are not met, the execution and the tests are
 marked as skipped:
 
 ~~~~{.bash}
@@ -173,7 +173,7 @@ The second line compiles the behaviour.
 The third one launches the `Cast3M` simulation. This line assumes that a
 substitution string for the `@castem@` pattern has been defined.
 
-The fifth line specify an absolute criterion to compare the current
+The fifth line specifies an absolute criterion to compare the current
 results to the reference ones. The last line defines the test to be
 performed: the values of the second column of the two specified files
 are compared using an absolute criteria.
@@ -226,7 +226,7 @@ This keyword has the following options:
   of a command. This option must be defined as a map with two entries:
   - `value`: the expected value
   - `criterion_value`: the criterion value used to test the output
-- `output_validation_regex`, which allows to specifiy a regular
+- `output_validation_regex`, which allows to specify a regular
   expression which shall validate the output of the command. The output
   of the command is concatenated in a single string for the test.
 - `shall_fail`: a boolean stating if the command shall succeed or fail.
@@ -342,4 +342,4 @@ automatically declared.
 
 Those substitutions are declared after reading the configuration files
 and after parsing the command line arguments, so those default
-substitutions can be overriden by the user.
+substitutions can be overridden by the user.

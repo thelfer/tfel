@@ -1,0 +1,16 @@
+@DSL IsotropicPlasticMisesFlow;
+@Behaviour WarningTest33;
+
+@Epsilon 1e-14;
+
+@MaterialProperty stress H;
+@MaterialProperty stress s0;
+
+@AuxiliaryStateVariable real test;
+
+@FlowRule {
+  test;
+  f = seq - H * p - s0;
+  df_dseq = 1;
+  df_dp = -H;
+}

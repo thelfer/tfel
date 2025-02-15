@@ -11,10 +11,18 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include "TFEL/Macros.hxx"
 
-void declareMFMTestGeneratorFileExport();
+#define MFM_TEST_GENERATOR_MODULE_NAME \
+  TFEL_PP_JOIN(_mfm_test_generator_, TFEL_SUFFIX_FOR_PYTHON_MODULES)
 
-BOOST_PYTHON_MODULE(_mfm_test_generator) {
-  declareMFMTestGeneratorFileExport();
+void declareMFMTestGeneratorFileExport(pybind11::module_&);
+
+#ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
+PYBIND11_MODULE(MFM_TEST_GENERATOR_MODULE_NAME, m) {
+#else
+PYBIND11_MODULE(_mfm_test_generator, m) {
+#endif
+  declareMFMTestGeneratorFileExport(m);
 }

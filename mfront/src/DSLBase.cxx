@@ -13,8 +13,8 @@
  */
 
 #include <cctype>
-#include <iterator>
 #include <sstream>
+#include <iterator>
 #include <stdexcept>
 #include <algorithm>
 
@@ -23,6 +23,7 @@
 #endif /* MFRONT_HAVE_MADNEX */
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Math/IntegerEvaluator.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
@@ -31,6 +32,7 @@
 
 #include "MFront/MFront.hxx"
 #include "MFront/PedanticMode.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/SupportedTypes.hxx"
 #include "MFront/DSLBase.hxx"
 #include "MFront/SearchPathsHandler.hxx"
@@ -67,8 +69,10 @@ namespace mfront {
   const char* const DSLBase::initializationFromFileOption =
       "parameters_initialization_from_file";
   const char* const DSLBase::overridingParameters = "overriding_parameters";
-
+  const char* const DSLBase::validatorOption = "validator";
   const char* const DSLBase::buildIdentifierOption = "build_identifier";
+  const char* const DSLBase::disableRuntimeChecksOption =
+      "disable_runtime_checks";
 
   bool isValidMaterialName(std::string_view n) {
     return tfel::utilities::CxxTokenizer::isValidIdentifier(n, true);
@@ -90,6 +94,8 @@ namespace mfront {
             DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption)
         .addDataTypeValidator<bool>(DSLBase::parametersAsStaticVariablesOption)
         .addDataTypeValidator<bool>(DSLBase::initializationFromFileOption)
+        .addDataTypeValidator<bool>(DSLBase::disableRuntimeChecksOption)
+        .addDataTypeValidator<std::string>(DSLBase::validatorOption)
         .addDataTypeValidator<std::string>(DSLBase::buildIdentifierOption)
         .addDataTypeValidator<tfel::utilities::DataMap>(
             DSLBase::overridingParameters);
@@ -106,11 +112,14 @@ namespace mfront {
 
   void DSLBase::handleDSLOptions(MaterialKnowledgeDescription& d,
                                  const DSLOptions& opts) {
+    if (opts.count(DSLBase::disableRuntimeChecksOption) != 0) {
+      const auto opt = opts.at(DSLBase::disableRuntimeChecksOption).get<bool>();
+      setDisableRuntimeChecks(d, opt);
+    }
     if (opts.count(DSLBase::defaultOutOfBoundsPolicyOption) != 0) {
       const auto opt =
           opts.at(DSLBase::defaultOutOfBoundsPolicyOption).get<std::string>();
-      d.setAttribute(MaterialKnowledgeDescription::defaultOutOfBoundsPolicy,
-                     opt, false);
+      setDefaultOutOfBoundsPolicy(d, opt);
     }
     if (opts.count(DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption) !=
         0) {
@@ -134,6 +143,11 @@ namespace mfront {
                      b, false);
     }
     //
+    if (opts.count(DSLBase::validatorOption) != 0) {
+      const auto id = opts.at(DSLBase::validatorOption).get<std::string>();
+      d.setAttribute(MaterialKnowledgeDescription::validator, id, false);
+    }
+    //
     if (opts.count(DSLBase::buildIdentifierOption) != 0) {
       const auto id =
           opts.at(DSLBase::buildIdentifierOption).get<std::string>();
@@ -147,13 +161,17 @@ namespace mfront {
         MaterialKnowledgeDescription::defaultOutOfBoundsPolicy, "None");
     const auto build_id = d.getAttribute<std::string>(
         MaterialKnowledgeDescription::buildIdentifier, "");
-    return {{DSLBase::defaultOutOfBoundsPolicyOption, policy},
+    const auto validator = d.getAttribute<std::string>(
+        MaterialKnowledgeDescription::validator, "");
+    return {{DSLBase::disableRuntimeChecksOption, areRuntimeChecksDisabled(d)},
+            {DSLBase::defaultOutOfBoundsPolicyOption, policy},
             {DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption,
              allowRuntimeModificationOfTheOutOfBoundsPolicy(d)},
             {DSLBase::parametersAsStaticVariablesOption,
              areParametersTreatedAsStaticVariables(d)},
             {DSLBase::initializationFromFileOption,
              allowsParametersInitializationFromFile(d)},
+            {DSLBase::validatorOption, validator},
             {DSLBase::buildIdentifierOption, build_id},
             {DSLBase::overridingParameters, tfel::utilities::DataMap{}}};
   }  // end of buildCommonOptions
@@ -165,7 +183,11 @@ namespace mfront {
 
   std::vector<AbstractDSL::DSLOptionDescription> DSLBase::getDSLOptions()
       const {
-    return {{DSLBase::defaultOutOfBoundsPolicyOption,
+    return {{DSLBase::disableRuntimeChecksOption,
+             "boolean stating if interfaces shall remove as much runtime "
+             "checks as possible. Those checks include the treatment of "
+             "standard and physical bounds for instance."},
+            {DSLBase::defaultOutOfBoundsPolicyOption,
              "string specifying the default out of bounds policy. Allowed "
              "values are `None`, `Warning`, `Strict`"},
             {DSLBase::runtimeModificationOfTheOutOfBoundsPolicyOption,
@@ -238,6 +260,9 @@ namespace mfront {
       if (!impl.metadata.description.empty()) {
         this->overrideDescription(impl.metadata.description);
       }
+      if (!impl.metadata.unit_system.empty()) {
+        this->overrideUnitSystem(impl.metadata.unit_system);
+      }
       for (const auto& p : impl.parameters) {
         this->overrideByAParameter(p.first, p.second);
       }
@@ -282,6 +307,11 @@ namespace mfront {
 
   DSLBase::~DSLBase() = default;
 
+  bool DSLBase::readSafeOptionTypeIfPresent() {
+    return ::mfront::readSafeOptionTypeIfPresent(this->current,
+                                                 this->tokens.end());
+  }  // end of readSafeOptionTypeIfPresent
+
   void DSLBase::readNextBlock(CodeBlock& res1,
                               CodeBlock& res2,
                               const CodeBlockParserOptions& o1,
@@ -311,8 +341,8 @@ namespace mfront {
             r += std::string(d, ' ');
           }
         };
-    const auto& smn = options.smn;
-    const auto& mn = options.mn;
+    const auto& smn = options.static_member_names;
+    const auto& mn = options.member_names;
     const auto& delim1 = options.delim1;
     const auto& delim2 = options.delim2;
     const auto addThisPtr = options.qualifyMemberVariables;
@@ -892,14 +922,49 @@ namespace mfront {
     }
   }  // end of treatLink
 
-  void DSLBase::callMFront(const std::vector<std::string>& interfaces,
-                           const std::vector<std::string>& files) {
+  void DSLBase::treatTFELLibraries() {
+    const auto nlink = readStringOrArrayOfString("DSLBase::treatTFELLibraries");
+    this->readSpecifiedToken("DSLBase::treatTFELLibraries", ";");
+    //
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
+    insert_if(this->link_directories,
+              "$(shell " + tfel_config + " --library-path)");
+    const auto lmap = std::map<std::string, std::string>{
+        {"Exception", "--exceptions"},
+        {"Glossary", "--glossary"},
+        {"Material", "--material"},
+        {"MathCubicSpline", "--math-cubic-spline"},
+        {"MathKriging", "--math-kriging"},
+        {"MathParser", "--math-parser"},
+        {"Math", "--math"},
+        {"NUMODIS", "--numodis"},
+        {"System", "--system"},
+        {"Tests", "--tests"},
+        {"UnicodeSupport", "--unicode-support"},
+        {"Utilities", "--utilities"},
+        {"Config", "--config"},
+        {"MFront", "--mfront"},
+        {"MTest", "--mtest"}};
+    for (const auto& l : nlink) {
+      if (!lmap.contains(l)) {
+        this->throwRuntimeError("DSLBase::treatTFELLibraries",
+                                "unknown TFEL library '" + l + "'");
+      }
+      insert_if(this->link_libraries, "$(shell " + tfel_config +
+                                          " --library-dependency " +
+                                          lmap.at(l) + ")");
+    }
+  }  // end of treatTFELLibraries
+
+  void DSLBase::callMFront(const std::vector<std::string>& files,
+                           const std::vector<std::string>& interfaces,
+                           const tfel::utilities::DataMap& dsl_options) {
     MFront m;
     for (const auto& i : interfaces) {
       m.setInterface(i);
     }
     for (const auto& f : files) {
-      mergeTargetsDescription(this->td, m.treatFile(f), false);
+      mergeTargetsDescription(this->td, m.treatFile(f, dsl_options), false);
     }
   }  // end of callMFront
 
@@ -920,7 +985,7 @@ namespace mfront {
     this->readSpecifiedToken("DSLBase::treatMfront", "}");
     this->readSpecifiedToken("DSLBase::treatMfront", ";");
     for (const auto& f : vfiles) {
-      this->addExternalMFrontFile(f, vinterfaces);
+      this->addExternalMFrontFile(f, vinterfaces, {});
     }
   }  // end of treatMfront
 
@@ -1016,7 +1081,7 @@ namespace mfront {
           ".hxx\"");
       this->addMaterialLaw(mname);
       this->atds.push_back(std::move(t));
-      this->addExternalMFrontFile(path, {"mfront"});
+      this->addExternalMFrontFile(path, {"mfront"}, {});
     } catch (std::exception& e) {
       this->throwRuntimeError(
           "DSLBase::handleMaterialPropertyDescription",
@@ -1040,9 +1105,10 @@ namespace mfront {
 
   void DSLBase::treatLonelySeparator() {
     if (getPedanticMode()) {
-      getLogStream() << this->fd.fileName << ":" << this->current->line << ":"
-                     << this->current->offset
-                     << ": warning: extra ‘;’ [-pedantic]\n";
+      auto msg = std::ostringstream{};
+      msg << this->fd.fileName << ":" << this->current->line << ":"
+          << this->current->offset << ": warning: extra ‘;’ [-pedantic]\n";
+      reportWarning(msg.str());
     }
   }  // end of treatLonelySperator
 
@@ -1091,6 +1157,15 @@ namespace mfront {
     this->setDescription(d);
   }  // end of overrideAuthorName
 
+  void DSLBase::overrideUnitSystem(const std::string& d) {
+    if (!this->overriden_unit_system.empty()) {
+      this->throwRuntimeError("DSLBase::overrideUnitSystem",
+                              "the author is already overriden");
+    }
+    this->overriden_unit_system = d;
+    this->setUnitSystem(d);
+  }  // end of overrideUnitSystem
+
   void DSLBase::treatMaterial() {
     const auto& m = this->readOnlyOneToken();
     if (this->overriden_material.empty()) {
@@ -1107,7 +1182,9 @@ namespace mfront {
 
   void DSLBase::treatUnitSystem() {
     const auto& m = this->readOnlyOneToken();
-    this->setUnitSystem(m);
+    if (this->overriden_unit_system.empty()) {
+      this->setUnitSystem(m);
+    }
   }  // end of treatUnitSystem
 
   void DSLBase::setAuthor(const std::string& a) {
@@ -1224,8 +1301,8 @@ namespace mfront {
     ++(this->current);
     this->checkNotEndOfFile("DSLBase::treatDSL", "expected ';'");
     if (this->current->value == "{") {
-      const auto o = tfel::utilities::DataParsingOptions{};
-      tfel::utilities::Data::read(this->current, this->tokens.end(), o);
+      std::ignore =
+          read<tfel::utilities::DataMap>(this->current, this->tokens.end());
     }
     this->readSpecifiedToken("DSLBase::treatDSL", ";");
   }  // end of treatDSL
@@ -1233,13 +1310,7 @@ namespace mfront {
   void DSLBase::treatStaticVar() {
     this->checkNotEndOfFile("DSLBase::treatStaticVar",
                             "Cannot read type of static variable.");
-    const auto type = this->current->value;
-    if (!this->isValidIdentifier(type, false)) {
-      --(this->current);
-      this->throwRuntimeError("DSLBase::treatStaticVar",
-                              "type given is not valid.");
-    }
-    ++(this->current);
+    const auto type = this->readType();
     this->checkNotEndOfFile("DSLBase::treatStaticVar",
                             "Cannot read variable name.");
     const auto sname = this->current->value;
@@ -1298,6 +1369,15 @@ namespace mfront {
     for (auto& l : this->td.libraries) {
       l.ldflags.insert(l.ldflags.end(), this->ldflags.begin(),
                        this->ldflags.end());
+      l.sources.insert(l.sources.end(),
+                       this->additional_libraries_sources.begin(),
+                       this->additional_libraries_sources.end());
+      l.link_libraries.insert(l.link_libraries.end(),
+                              this->link_libraries.begin(),
+                              this->link_libraries.end());
+      l.link_directories.insert(l.link_directories.end(),
+                                this->link_directories.begin(),
+                                this->link_directories.end());
     }
     // merging auxiliary target description
     auto atd = TargetsDescription();
@@ -1320,6 +1400,8 @@ namespace mfront {
     }
     mergeTargetsDescription(this->td, atd, false);
     this->ldflags.clear();
+    this->link_libraries.clear();
+    this->link_directories.clear();
     this->atds.clear();
   }  // end of completeTargetsDescription
 

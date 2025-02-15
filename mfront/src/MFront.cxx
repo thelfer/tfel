@@ -22,7 +22,6 @@
 #include <sstream>
 #include <cstring>
 #include <string>
-#include <cerrno>
 #include <memory>
 
 #include "TFEL/Raise.hxx"
@@ -46,6 +45,7 @@
 #include "MFront/BehaviourBrick/KinematicHardeningRuleFactory.hxx"
 #include "MFront/ModelInterfaceFactory.hxx"
 #include "MFront/MFrontLock.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/CMakeGenerator.hxx"
@@ -441,8 +441,23 @@ namespace mfront {
                               "set debug mode, i.e. remove references to "
                               "initial file and add information about the "
                               "local convergence of the integration algorithm");
-    this->registerNewCallBack("--warning", "-W", &MFront::treatWarning,
-                              "print warnings");
+    this->registerCallBack(
+        "--ignore-safe",
+        CallBack(
+            "ignore the safe options for keywords or code blocks",
+            []() noexcept { setIgnoreSafeOptionForWarnings(true); }, false));
+    this->registerCallBack(
+        "--warning", "-W",
+        CallBack(
+            "enable warnings", []() noexcept { setWarningMode(true); }, false));
+    this->registerNewCallBack("--report-warnings", &MFront::treatReportWarnings,
+                              "print warnings", true);
+    this->registerCallBack(
+        "-Werror", CallBack(
+                       "turn warnings into errors",
+                       []() noexcept { setWarningErrorMode(true); }, false));
+    this->registerNewCallBack("--warning-error", &MFront::treatWarningError,
+                              "turn warnings into errors", true);
     this->registerNewCallBack("--pedantic", &MFront::treatPedantic,
                               "print pedantic warning message");
     this->registerNewCallBack("--interface", "-i", &MFront::treatInterface,
@@ -468,8 +483,9 @@ namespace mfront {
                               "flags and build libraries",
                               true);
     this->registerCallBack(
-        "-g", CallBack("add debugging symbols",
-                       [this] { this->opts.debugFlags = true; }, false));
+        "-g", CallBack(
+                  "add debugging symbols",
+                  [this]() noexcept { this->opts.debugFlags = true; }, false));
     this->registerNewCallBack(
         "--target", "-t", &MFront::treatTarget,
         "generate build file and build the specified target", true);
@@ -483,15 +499,15 @@ namespace mfront {
     this->registerNewCallBack("--generator", "-G", &MFront::treatGenerator,
                               "choose build system", true);
 
-    this->registerCallBack(
-        "--list-material-property-interfaces",
-        CallBack("list available material property interfaces",
-                 [] {
-                   auto& mpif = MaterialPropertyInterfaceFactory::
-                       getMaterialPropertyInterfaceFactory();
-                   displayList(mpif.getRegistredInterfaces());
-                 },
-                 false));
+    this->registerCallBack("--list-material-property-interfaces",
+                           CallBack(
+                               "list available material property interfaces",
+                               [] {
+                                 auto& mpif = MaterialPropertyInterfaceFactory::
+                                     getMaterialPropertyInterfaceFactory();
+                                 displayList(mpif.getRegistredInterfaces());
+                               },
+                               false));
     this->registerCallBack(
         "--list-behaviour-interfaces",
         CallBack(
@@ -504,34 +520,34 @@ namespace mfront {
             false));
     this->registerCallBack(
         "--list-model-interfaces",
-        CallBack("list available model interfaces",
-                 [] {
-                   auto& mif =
-                       ModelInterfaceFactory::getModelInterfaceFactory();
-                   displayList(mif.getRegistredInterfaces());
-                 },
-                 false));
+        CallBack(
+            "list available model interfaces",
+            [] {
+              auto& mif = ModelInterfaceFactory::getModelInterfaceFactory();
+              displayList(mif.getRegistredInterfaces());
+            },
+            false));
     // stress potentials
     this->registerCallBack(
         "--list-stress-potentials",
-        CallBack("list available stress potentials",
-                 [] {
-                   auto& spf =
-                       mfront::bbrick::StressPotentialFactory::getFactory();
-                   displayList("stress-potentials",
-                               spf.getRegistredStressPotentials());
-                 },
-                 false));
+        CallBack(
+            "list available stress potentials",
+            [] {
+              auto& spf = mfront::bbrick::StressPotentialFactory::getFactory();
+              displayList("stress-potentials",
+                          spf.getRegistredStressPotentials());
+            },
+            false));
     this->registerCallBack(
         "--help-stress-potential",
-        CallBack("display the help associated with the given stress potential",
-                 [this] {
-                   const auto& sp = this->currentArgument->getOption();
-                   const auto fp =
-                       getDocumentationFilePath("stress-potentials", sp);
-                   displayHelpFile(fp, "stress potential", sp);
-                 },
-                 true));
+        CallBack(
+            "display the help associated with the given stress potential",
+            [this] {
+              const auto& sp = this->currentArgument->getOption();
+              const auto fp = getDocumentationFilePath("stress-potentials", sp);
+              displayHelpFile(fp, "stress potential", sp);
+            },
+            true));
     // inelastic flows
     this->registerCallBack(
         "--list-inelastic-flows",
@@ -544,14 +560,14 @@ namespace mfront {
             false));
     this->registerCallBack(
         "--help-inelastic-flow",
-        CallBack("display the help associated with the given inelastic flow",
-                 [this] {
-                   const auto& sp = this->currentArgument->getOption();
-                   const auto fp =
-                       getDocumentationFilePath("inelastic-flows", sp);
-                   displayHelpFile(fp, "inelastic flow", sp);
-                 },
-                 true));
+        CallBack(
+            "display the help associated with the given inelastic flow",
+            [this] {
+              const auto& sp = this->currentArgument->getOption();
+              const auto fp = getDocumentationFilePath("inelastic-flows", sp);
+              displayHelpFile(fp, "inelastic flow", sp);
+            },
+            true));
     // stress criteria
     this->registerCallBack(
         "--list-stress-criteria",
@@ -564,14 +580,14 @@ namespace mfront {
             false));
     this->registerCallBack(
         "--help-stress-criterion",
-        CallBack("display the help associated with the given stress criterion",
-                 [this] {
-                   const auto& sp = this->currentArgument->getOption();
-                   const auto fp =
-                       getDocumentationFilePath("stress-criteria", sp);
-                   displayHelpFile(fp, "stress criterion", sp);
-                 },
-                 true));
+        CallBack(
+            "display the help associated with the given stress criterion",
+            [this] {
+              const auto& sp = this->currentArgument->getOption();
+              const auto fp = getDocumentationFilePath("stress-criteria", sp);
+              displayHelpFile(fp, "stress criterion", sp);
+            },
+            true));
     // isotropic hardening rule
     this->registerCallBack(
         "--list-isotropic-hardening-rules",
@@ -586,15 +602,16 @@ namespace mfront {
             false));
     this->registerCallBack(
         "--help-isotropic-hardening-rule",
-        CallBack("display the help associated with the given isotropic "
-                 "hardening rule",
-                 [this] {
-                   const auto& sp = this->currentArgument->getOption();
-                   const auto fp = getDocumentationFilePath(
-                       "isotropic-hardening-rules", sp);
-                   displayHelpFile(fp, "isotropic hardening rule", sp);
-                 },
-                 true));
+        CallBack(
+            "display the help associated with the given isotropic "
+            "hardening rule",
+            [this] {
+              const auto& sp = this->currentArgument->getOption();
+              const auto fp =
+                  getDocumentationFilePath("isotropic-hardening-rules", sp);
+              displayHelpFile(fp, "isotropic hardening rule", sp);
+            },
+            true));
     // kinematic hardening rule
     this->registerCallBack(
         "--list-kinematic-hardening-rules",
@@ -609,24 +626,26 @@ namespace mfront {
             false));
     this->registerCallBack(
         "--help-kinematic-hardening-rule",
-        CallBack("display the help associated with the given kinematic "
-                 "hardening rule",
-                 [this] {
-                   const auto& sp = this->currentArgument->getOption();
-                   const auto fp = getDocumentationFilePath(
-                       "kinematic-hardening-rules", sp);
-                   displayHelpFile(fp, "kinematic hardening rule", sp);
-                 },
-                 true));
+        CallBack(
+            "display the help associated with the given kinematic "
+            "hardening rule",
+            [this] {
+              const auto& sp = this->currentArgument->getOption();
+              const auto fp =
+                  getDocumentationFilePath("kinematic-hardening-rules", sp);
+              displayHelpFile(fp, "kinematic hardening rule", sp);
+            },
+            true));
 
     this->registerCallBack(
         "--list-behaviour-bricks",
-        CallBack("list available behaviour bricks",
-                 [] {
-                   auto& bbf = BehaviourBrickFactory::getFactory();
-                   displayList("bricks", bbf.getRegistredBricks());
-                 },
-                 false));
+        CallBack(
+            "list available behaviour bricks",
+            [] {
+              auto& bbf = BehaviourBrickFactory::getFactory();
+              displayList("bricks", bbf.getRegistredBricks());
+            },
+            false));
 #if (defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
     this->registerNewCallBack("--nodeps", &MFront::treatNoDeps,
                               "don't generate compilation dependencies");
@@ -765,11 +784,12 @@ namespace mfront {
   }    // end of void MFront::treatDefFile
 #endif /* (defined _WIN32 || defined _WIN64 ||defined __CYGWIN__) */
 
-  TargetsDescription MFront::treatFile(const std::string& f) const {
+  TargetsDescription MFront::treatFile(
+      const std::string& f, const tfel::utilities::DataMap& dsl_options) const {
     if (getVerboseMode() >= VERBOSE_LEVEL2) {
       getLogStream() << "Treating file: '" << f << "'" << std::endl;
     }
-    auto dsl = MFrontBase::getDSL(f);
+    auto dsl = MFrontBase::getDSL(f, dsl_options);
     if (!this->interfaces.empty()) {
       dsl->setInterfaces(this->interfaces);
     }
@@ -961,7 +981,8 @@ namespace mfront {
             log << "The following libraries have been built :\n";
           }
           for (const auto& l : this->targets.libraries) {
-            if (l.name == "MFrontMaterialLaw") {
+            if ((l.name == "MFrontMaterialLaw") ||
+                (l.name == "MFrontBehaviours")) {
               continue;
             }
             log << "- " << l.prefix << l.name << "." << l.suffix << " : ";

@@ -20,5 +20,5 @@ of the integration depending on the nature of the variable.
 ~~~~{.cpp}
 // a temperature (in Kelvin) can't be negative
 @PhysicalBounds T in [0:*[;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 

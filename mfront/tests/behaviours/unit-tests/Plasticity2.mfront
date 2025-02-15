@@ -1,0 +1,15 @@
+@DSL IsotropicPlasticMisesFlow;
+@Behaviour Plasticity1;
+@Author Helfer Thomas;
+@Date 31 / 01 / 25;
+
+@Epsilon 1e-15;
+@UseQt true;
+
+@IsotropicHardeningRule "Voce" {flow_id : 1, R0 : 125e6, Rinf : 500e6, b : 20};
+
+@FlowRule {
+  f = seq - R;
+  df_dseq = 1;
+  df_dp = -dR_dp;
+}

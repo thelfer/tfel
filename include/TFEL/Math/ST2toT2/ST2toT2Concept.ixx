@@ -14,26 +14,20 @@
 #ifndef LIB_TFEL_MATH_ST2TOT2_CONCEPT_IXX
 #define LIB_TFEL_MATH_ST2TOT2_CONCEPT_IXX 1
 
-#include "TFEL/Math/Tensor/TensorSizeToDime.hxx"
-#include "TFEL/Math/Stensor/StensorSizeToDime.hxx"
-
 namespace tfel::math {
 
-  template <typename ST2toT2Type>
-  typename std::enable_if<
-      implementsST2toT2Concept<ST2toT2Type>(),
-      typename tfel::typetraits::AbsType<numeric_type<ST2toT2Type>>::type>::type
-  abs(const ST2toT2Type& v) {
+  TFEL_HOST_DEVICE constexpr auto abs(const ST2toT2Concept auto& t) noexcept {
+    using ST2toT2Type = decltype(t);
     using NumType = numeric_type<ST2toT2Type>;
     using AbsNumType = typename tfel::typetraits::AbsType<NumType>::type;
     constexpr auto tsize =
         TensorDimeToSize<getSpaceDimension<ST2toT2Type>()>::value;
     constexpr auto ssize =
         StensorDimeToSize<getSpaceDimension<ST2toT2Type>()>::value;
-    AbsNumType a(0);
+    auto a = AbsNumType{};
     for (unsigned short i = 0; i < tsize; ++i) {
       for (unsigned short j = 0; j < ssize; ++j) {
-        a += abs(v(i, j));
+        a += abs(t(i, j));
       }
     }
     return a;

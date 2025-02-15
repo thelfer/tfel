@@ -149,7 +149,7 @@ struct StandardElastoViscoPlasticityBrickTest final
  private:
   void check(const std::string& s) {
     auto& f = mfront::DSLFactory::getDSLFactory();
-    auto dsl = f.createNewParser("Implicit");
+    auto dsl = f.createNewDSL("Implicit");
     try {
       dsl->analyseString(s);
     } catch (std::runtime_error& e) {

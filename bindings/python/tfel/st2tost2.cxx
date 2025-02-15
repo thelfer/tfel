@@ -11,53 +11,89 @@
  * project under specific licensing conditions.
  */
 
-#include <boost/python.hpp>
-
+#include <sstream>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/operators.h>
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx"
 
 template <unsigned short N>
-static double& st2tost2_getitem(tfel::math::st2tost2<N, double>& v,
-                                const unsigned short i,
-                                const unsigned short j) {
-  return v(i, j);
+static void declarest2tost2(pybind11::module_& m, const char* const n) {
+  using st2tost2 = tfel::math::st2tost2<N, double>;
+  pybind11::class_<st2tost2>(m, n, pybind11::buffer_protocol())
+      .def_static("zero", &st2tost2::zero)
+      .def_buffer([](st2tost2& s) -> pybind11::buffer_info {
+        return pybind11::buffer_info(
+            s.data(),       /* Pointer to buffer */
+            sizeof(double), /* Size of one scalar */
+            pybind11::format_descriptor<double>::format(), /* Python
+                                                       struct-style format
+                                                       descriptor */
+            2,                      /* Number of dimensions */
+            {s.size(0), s.size(1)}, /* Buffer dimensions */
+            {s.size(1) * sizeof(double), sizeof(double)});
+      })
+      .def(pybind11::init<>())
+      .def(pybind11::init<double>())
+      .def("__repr__",
+           [](const st2tost2& s) {
+             std::ostringstream os;
+             os << s;
+             return os.str();
+           })
+      .def("__getitem__",
+           [](const st2tost2& s, const unsigned short r,
+              const unsigned short c) {
+             if ((r >= s.size(0)) && (c >= s.size(1))) {
+               tfel::raise<std::range_error>(
+                   "invalid index '(" + std::to_string(static_cast<int>(r)) +
+                   ", " + std::to_string(static_cast<int>(c)) + "'");
+             }
+             return s(r, c);
+           })
+      .def("__setitem__",
+           [](st2tost2& s, const unsigned short r, const unsigned short c,
+              const double v) {
+             if ((r >= s.size(0)) && (c >= s.size(1))) {
+               tfel::raise<std::range_error>(
+                   "invalid index '(" + std::to_string(static_cast<int>(r)) +
+                   ", " + std::to_string(static_cast<int>(c)) + "'");
+             }
+             s(r, c) = v;
+           })
+      .def(
+          "__iter__",
+          [](const st2tost2& s) {
+            return pybind11::make_iterator(s.begin(), s.end());
+          },
+          pybind11::keep_alive<0,
+                               1>())  // keep object alive while iterator exists
+      .def("__add__",
+           [](const st2tost2& a, const st2tost2& b) -> st2tost2 {
+             return a + b;
+           })
+      .def("__sub__",
+           [](const st2tost2& a, const st2tost2& b) -> st2tost2 {
+             return a - b;
+           })
+      .def("__mul__",
+           [](const st2tost2& a, const double b) -> st2tost2 { return a * b; })
+      .def("__mul__",
+           [](const double a, const st2tost2& b) -> st2tost2 { return a * b; })
+      .def("__div__",
+           [](const st2tost2& a, const double b) -> st2tost2 { return a / b; })
+      .def(pybind11::self += pybind11::self)
+      .def(pybind11::self -= pybind11::self)
+      .def(pybind11::self *= double())
+      .def(pybind11::self /= double())
+      .def("__neg__", [](const st2tost2& s) -> st2tost2 { return -s; });
 }
 
-template <unsigned short N>
-static void st2tost2_setitem(tfel::math::st2tost2<N, double>& v,
-                             const unsigned short i,
-                             const unsigned short j,
-                             const double vi) {
-  v(i, j) = vi;
-}
-
-template <unsigned short N>
-static std::string st2tost2_str(const tfel::math::st2tost2<N, double>& v) {
-  std::ostringstream os;
-  os << v;
-  return os.str();
-}
-
-template <unsigned short N>
-static void declarest2tost2(const char* const n) {
-  using namespace boost;
-  using namespace boost::python;
+void declarest2tost2(pybind11::module_&);
+void declarest2tost2(pybind11::module_& m) {
   using namespace tfel::math;
-  using boost::python::iterator;
-  class_<st2tost2<N, double>>(n, init<>())
-      .def(init<double>())
-      .def("__getitem__", &st2tost2_getitem<N>,
-           return_value_policy<copy_non_const_reference>())
-      .def("__setitem__", &st2tost2_setitem<N>, with_custodian_and_ward<1, 2>())
-      .def("__iter__", iterator<st2tost2<N, double>>())
-      .def("__str__", st2tost2_str<N>);
-}  // end of declarest2tost2
-
-void declarest2tost2();
-void declarest2tost2() {
-  using namespace boost::python;
-  using namespace tfel::math;
-  declarest2tost2<1u>("ST2toST21D");
-  declarest2tost2<2u>("ST2toST22D");
-  declarest2tost2<3u>("ST2toST23D");
+  declarest2tost2<1u>(m, "ST2toST21D");
+  declarest2tost2<2u>(m, "ST2toST22D");
+  declarest2tost2<3u>(m, "ST2toST23D");
 }  // end of declarest2tost2

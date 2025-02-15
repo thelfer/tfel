@@ -162,6 +162,19 @@ namespace mtest::internals {
     return getArrayVariableSize(v, h);
   }
 
+  static bool isScalarVariableType(int& v) {
+    const auto type = extractAndShift(v, 3);
+    if (type == 0) {
+      return true;
+    } else if (type == 4) {
+      // derivative type
+      const auto b1 = isScalarVariableType(v);
+      const auto b2 = isScalarVariableType(v);
+      return b1 && b2;
+    }
+    return false;
+  }
+
   static std::vector<std::string> getVariableComponents(int&, const Behaviour&);
 
   static std::vector<std::string> getTinyVectorVariableComponents(
@@ -547,28 +560,35 @@ namespace mtest {
     auto p = std::find(enames.begin(), enames.end(), n);
     if (p != enames.end()) {
       const auto pos = static_cast<unsigned short>(p - enames.begin());
-      return [pos](const CurrentState& s) { return s.e1[pos]; };
+      return [pos](const CurrentState& s) noexcept { return s.e1[pos]; };
     }
     const auto snames = b.getThermodynamicForcesComponents();
     p = std::find(snames.begin(), snames.end(), n);
     if (p != snames.end()) {
       const auto pos = static_cast<unsigned short>(p - snames.begin());
-      return [pos](const CurrentState& s) { return s.s1[pos]; };
+      return [pos](const CurrentState& s) noexcept { return s.s1[pos]; };
     }
     const auto isvnames = b.expandInternalStateVariablesNames();
     p = std::find(isvnames.begin(), isvnames.end(), n);
     if (p != isvnames.end()) {
       const auto pos = static_cast<unsigned short>(p - isvnames.begin());
-      return [pos](const CurrentState& s) { return s.iv1[pos]; };
+      return [pos](const CurrentState& s) noexcept { return s.iv1[pos]; };
     }
     const auto esvnames = b.getExternalStateVariablesNames();
     p = std::find(esvnames.begin(), esvnames.end(), n);
     if (p != esvnames.end()) {
       const auto pos = static_cast<unsigned short>(p - esvnames.begin());
-      return [pos](const CurrentState& s) { return s.esv0[pos] + s.desv[pos]; };
+      return [pos](const CurrentState& s) noexcept {
+        return s.esv0[pos] + s.desv[pos];
+      };
     }
     tfel::raise("buildValueExtractor: no variable name '" + n + "'");
   }  // end of buildValueExtractor
+
+  bool isScalarVariableType(const int t) {
+    auto id = t;
+    return mtest::internals::isScalarVariableType(id);
+  }  // end of isScalarVariableType
 
   size_t getVariableSize(const int t, const Behaviour::Hypothesis h) {
     auto id = t;

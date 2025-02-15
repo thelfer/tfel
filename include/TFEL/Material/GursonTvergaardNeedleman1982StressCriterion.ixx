@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATERIAL_GURSON_1975_IXX
-#define LIB_TFEL_MATERIAL_GURSON_1975_IXX
+#ifndef LIB_TFEL_MATERIAL_GURSON_TVERGAARD_NEEDLEMAN_1982_STRESS_CRITERION_IXX
+#define LIB_TFEL_MATERIAL_GURSON_TVERGAARD_NEEDLEMAN_1982_STRESS_CRITERION_IXX
 
 #include <cmath>
 #include <tuple>
@@ -261,4 +261,5 @@ namespace tfel::material {
 
 }  // end of namespace tfel::material
 
-#endif /* LIB_TFEL_MATERIAL_GURSON_1975_IXX */
+#endif /* LIB_TFEL_MATERIAL_GURSON_TVERGAARD_NEEDLEMAN_1982_STRESS_CRITERION_IXX \
+        */

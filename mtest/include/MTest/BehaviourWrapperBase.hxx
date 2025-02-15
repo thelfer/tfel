@@ -25,7 +25,7 @@ namespace mtest {
    * Following the facade design pattern, the wrapper forwards the calls to the
    * wrapped behaviour.
    */
-  struct BehaviourWrapperBase : public Behaviour {
+  struct MTEST_VISIBILITY_EXPORT BehaviourWrapperBase : public Behaviour {
     /*!
      * \brief constructor
      * \param[in] wb : wrapped behaviour

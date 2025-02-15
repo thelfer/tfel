@@ -21,7 +21,7 @@ namespace tfel::math {
 
   //! \brief a class representing array of dynamic size.
   template <typename ValueType>
-  struct runtime_array;
+  struct [[nodiscard]] runtime_array;
 
   /*!
    * \brief Partial specialisation for `runtime_array`.

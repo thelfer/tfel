@@ -6,10 +6,9 @@ try:
 except ImportError:
     import unittest
 
-import std
-import tfel.math
-import tfel.tests
-from mtest import *
+import @tfel_tests_python_module@
+import @tfel_math_python_module@
+from @mtest_python_module@ import *
 
 class ViscoChabochMemoNRad(unittest.TestCase):
 

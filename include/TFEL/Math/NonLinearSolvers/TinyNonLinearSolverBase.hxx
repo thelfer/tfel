@@ -20,11 +20,30 @@
 namespace tfel::math {
 
   /*!
+   * \brief base class for allocating on the stack a workspace
+   * usable by the solvers derived from
+   * `TinyNonLinearSolverBase` class.
+   * \tparam N: size of the system of non linear equations.
+   * \tparam NumericType: numeric type.
+   */
+  template <unsigned short N, typename NumericType>
+  struct StackAllocatedTinyNonLinearSolverWorkspace {
+    //! \brief residual vector
+    tvector<N, NumericType> fzeros;
+    //! \brief current estimate of the unknowns
+    tvector<N, NumericType> zeros;
+    //! \brief current correction
+    tvector<N, NumericType> delta_zeros;
+  };
+
+  /*!
    * \brief A base class for algorithms dedicated to solve finite sized system
    * of non linear equations.
    * \tparam N: size of the system of non linear equations.
    * \tparam NumericType: numeric type.
    * \tparam Child: base class.
+   * \tparam ExternalWorkSpace: class containing data members used by the
+   * solver.
    *
    * By default, the `Child` class must:
    *
@@ -61,8 +80,12 @@ namespace tfel::math {
    * be overloaded by the `Child` class to report the failure of the computation
    * of a new correction.
    */
-  template <unsigned short N, typename NumericType, typename Child>
-  struct TinyNonLinearSolverBase {
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename> typename ExternalWorkSpace =
+                StackAllocatedTinyNonLinearSolverWorkspace>
+  struct TinyNonLinearSolverBase : public ExternalWorkSpace<N, NumericType> {
     //
     static_assert(N != 0, "invalid size");
     static_assert(std::is_floating_point_v<NumericType>,
@@ -71,6 +94,13 @@ namespace tfel::math {
     using iteration_number_type = unsigned short;
     //! \brief default constructor
     TinyNonLinearSolverBase() = default;
+    /*!
+     * \brief constructor used to initialize the external workspace
+     * \param[in] args: arguments forwarded to the external workspace
+     */
+    template <typename... ExternalWorkSpaceArguments>
+    TFEL_HOST_DEVICE TinyNonLinearSolverBase(
+        ExternalWorkSpaceArguments&&...) noexcept;
     //! \brief default constructor
     TinyNonLinearSolverBase(TinyNonLinearSolverBase&) noexcept = default;
     //! \brief default constructor
@@ -106,14 +136,14 @@ namespace tfel::math {
      *
      * \return true on success
      */
-    TFEL_HOST_DEVICE bool solveNonLinearSystem();
+    TFEL_HOST_DEVICE bool solveNonLinearSystem() noexcept;
     /*!
      * \brief solve the non linear problem. This method is called by the
      * `solveNonLinearSystem` and must contain the core of the resolution
      * algorithm.
      * \return true on success
      */
-    TFEL_HOST_DEVICE bool solveNonLinearSystem2();
+    TFEL_HOST_DEVICE bool solveNonLinearSystem2() noexcept;
     /*!
      * \brief this method is called at the beginning of the
      * `solveNonLinearSystem` method.
@@ -141,8 +171,8 @@ namespace tfel::math {
      * \brief check the convergence of the method
      * \param[in] e: current error
      */
-    TFEL_HOST_DEVICE constexpr bool checkConvergence(const NumericType e) const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr bool checkConvergence(
+        const NumericType e) const noexcept {
       return e < this->epsilon;
     }
     /*!
@@ -151,9 +181,10 @@ namespace tfel::math {
      * \param[in] m: matrix
      * \param[in,out] v: right hand side on input, solution on output
      */
+    template <MatrixConcept FixedSizeMatrixType,
+              VectorConcept FixedSizeVectorType>
     TFEL_HOST_DEVICE bool solveLinearSystem(
-        tfel::math::tmatrix<N, N, NumericType>&,
-        tfel::math::tvector<N, NumericType>&) const noexcept;
+        FixedSizeMatrixType&, FixedSizeVectorType&) const noexcept;
     /*!
      * \brief update the jacobian matrix if required.
      *
@@ -186,15 +217,15 @@ namespace tfel::math {
      */
     TFEL_HOST_DEVICE constexpr void processNewEstimate() noexcept {}
     //! \brief method called when the resolution begins
-    TFEL_HOST_DEVICE constexpr void reportBeginningOfResolution() const
-        noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportBeginningOfResolution()
+        const noexcept {}
     //! \brief method called when the resolution succeeds
     TFEL_HOST_DEVICE constexpr void reportSuccess() const noexcept {}
     //! \brief method called when the resolution fails
     TFEL_HOST_DEVICE constexpr void reportFailure() const noexcept {}
     //! \brief method called when the evaluation of the residual failed.
-    TFEL_HOST_DEVICE constexpr void reportInvalidResidualEvaluation() const
-        noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportInvalidResidualEvaluation()
+        const noexcept {}
     //! \brief method called when the computation of a new correction failed.
     TFEL_HOST_DEVICE constexpr void reportNewCorrectionComputationFailure()
         const noexcept {}
@@ -204,12 +235,6 @@ namespace tfel::math {
      */
     TFEL_HOST_DEVICE constexpr void reportStandardIteration(
         const NumericType) const noexcept {}
-    //! \brief residual vector
-    tvector<N, NumericType> fzeros;
-    //! \brief current estimate of the unknowns
-    tvector<N, NumericType> zeros;
-    //! \brief current correction
-    tvector<N, NumericType> delta_zeros;
     //! \brief criterion value
     NumericType epsilon;
     /*!

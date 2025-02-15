@@ -29,7 +29,7 @@
      * \param const X&, the source                               \
      */                                                          \
     TFEL_INLINE void set##Y(const X& src) {                      \
-      static_cast<Child*>(this)->template set<X>(src);           \
+      static_cast<Child*>(this)->template set<const X&>(src);    \
     }                                                            \
     /*                                                           \
      * get an object of type X.                                  \
@@ -82,7 +82,7 @@ namespace tfel::utilities::internals {
      * \param const std::string&, the source
      */
     TFEL_INLINE void setString(const std::string& src) {
-      static_cast<Child*>(this)->template set<std::string>(src);
+      static_cast<Child*>(this)->template set<const std::string&>(src);
     }
     /*
      * get an object of type std::string.

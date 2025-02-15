@@ -8,4 +8,4 @@ by specialisation.
 
 ~~~~{.cpp}
 @Domains {"MATRIX","CLADDING"};
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

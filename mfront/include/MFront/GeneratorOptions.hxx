@@ -15,12 +15,13 @@
 #define LIB_MFRONT_GENERATOROPTIONS_HXX
 
 #include <string>
+#include <vector>
 #include "MFront/MFrontConfig.hxx"
 
 namespace mfront {
 
   /*!
-   * a data structure holding options passed to generators
+   * \brief a data structure holding options passed to generators
    */
   struct MFRONT_VISIBILITY_EXPORT GeneratorOptions {
     /*!
@@ -61,7 +62,11 @@ namespace mfront {
     GeneratorOptions& operator=(GeneratorOptions&&) noexcept;
     //! \brief destructor
     ~GeneratorOptions();
-    //! targeted operating system
+    //! \brief include paths
+    std::vector<std::string> include_paths;
+    //! \brief library paths
+    std::vector<std::string> library_paths;
+    //! \brief targeted operating system
 #if ((defined(_WIN32) || defined(_WIN64)) && (!defined(__CYGWIN__)))
     std::string sys = "win32";
 #elif defined __CYGWIN__

@@ -20,9 +20,9 @@
 namespace tfel::math {
 
   // Serialisation operator
-  template <typename ST2toT2Type>
-  std::enable_if_t<implementsST2toT2Concept<ST2toT2Type>(), std::ostream&>
-  operator<<(std::ostream& os, const ST2toT2Type& s) {
+  TFEL_HOST std::ostream& operator<<(std::ostream& os,
+                                     const ST2toT2Concept auto& t) {
+    using ST2toT2Type = decltype(t);
     constexpr auto N = getSpaceDimension<ST2toT2Type>();
     constexpr auto stensor_size = StensorDimeToSize<N>::value;
     constexpr auto tensor_size = TensorDimeToSize<N>::value;
@@ -34,7 +34,7 @@ namespace tfel::math {
         os << "[";
       }
       for (unsigned short j = 0; j < stensor_size;) {
-        os << s(i, j);
+        os << t(i, j);
         if (++j != stensor_size) {
           os << ",";
         }

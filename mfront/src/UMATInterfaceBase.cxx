@@ -1119,6 +1119,7 @@ namespace mfront {
       }
       return name;
     }();
+    out << "try{\n";
     if (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
       out << "mfront::UmatSmallStrainMTestFileGenerator mg(\""
           << makeLowerCase(this->getInterfaceName()) << "\",\""
@@ -1164,19 +1165,21 @@ namespace mfront {
                      "in mtest file generation");
       if (m.arraySize == 1u) {
         if (offset == 0) {
-          out << "mg.addMaterialProperty(\"" << m.name << "\",*(PROPS));\n";
+          out << "mg.addMaterialProperty(\"" << m.getExternalName()
+              << "\",*(PROPS));\n";
         } else {
-          out << "mg.addMaterialProperty(\"" << m.name << "\",*(PROPS+"
-              << offset << "));\n";
+          out << "mg.addMaterialProperty(\"" << m.getExternalName()
+              << "\",*(PROPS+" << offset << "));\n";
         }
         ++offset;
       } else {
         for (unsigned short s = 0; s != m.arraySize; ++s, ++offset) {
           if (offset == 0) {
-            out << "mg.addMaterialProperty(\"" << m.name << "[" << s
-                << "]\",*(PROPS));\n";
+            out << "mg.addMaterialProperty(\"" << m.getExternalName() << "["
+                << s << "]\",*(PROPS));\n";
           } else {
-            out << "mg.addMaterialProperty(\"" << m.name << "[" << s << "]\","
+            out << "mg.addMaterialProperty(\"" << m.getExternalName() << "["
+                << s << "]\","
                 << "*(PROPS+" << offset << "));\n";
           }
         }
@@ -1251,7 +1254,13 @@ namespace mfront {
     out << "mg.generate(\"" + name + "\");\n"
         << "static_cast<void>(TVectorSize); // remove gcc warning\n"
         << "static_cast<void>(StensorSize); // remove gcc warning\n"
-        << "static_cast<void>(TensorSize);  // remove gcc warning\n";
+        << "static_cast<void>(TensorSize);  // remove gcc warning\n"
+        << "} catch(std::exception& mtest_generation_exception){\n"
+        << "std::cerr << \"MTest file generation failed: \" << "
+        << "mtest_generation_exception.what() << \"\\n\";\n"
+        << "} catch(...){\n"
+        << "std::cerr << \"MTest file generation failed\\n\";"
+        << "}\n";
   }  // end of generateMTestFileForHypothesis();
 
   void UMATInterfaceBase::writeMTestFileGeneratorSetRotationMatrix(

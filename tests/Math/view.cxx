@@ -23,6 +23,7 @@
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
+#include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/stensor.hxx"
 #include "TFEL/Math/Array/View.hxx"
 #include "TFEL/Math/Array/ViewsArray.hxx"
@@ -171,6 +172,16 @@ struct StensorViewTest final : public tfel::tests::TestCase {
                                   View<stensor<2u, double>, ipolicy>,  //
                                   ViewArrayPolicy<double, ipolicy>>>));
   }
+  void constexpr_test3() {
+    using namespace tfel::math;
+    using time = qt<Time, double>;
+    static_assert(std::same_as<scalar_view<float>, float&>);
+    static_assert(std::same_as<scalar_view<const float>, const float&>);
+    static_assert(std::same_as<scalar_view<time>, qt_ref<Time, double>>);
+    static_assert(
+        std::same_as<scalar_view<const time>, const qt_ref<Time, double>>);
+  }
+
   //! \brief an helper method to check values
   void check0() {
     for (const auto& v : this->array) {

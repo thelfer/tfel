@@ -15,26 +15,25 @@
 #define LIB_TFEL_MATH_ST2TOT2ST2TOST2PRODUCTEXPR_HXX
 
 #include "TFEL/Config/TFELConfig.hxx"
-
 #include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
 #include "TFEL/Math/ST2toT2/ST2toT2Concept.hxx"
 #include "TFEL/Math/ST2toST2/ST2toST2Concept.hxx"
 
 namespace tfel::math {
 
-  //! Empty structure used for partial specialisation of the
-  //! Expr class
+  /*!
+   * \brief empty structure used for partial specialisation of the
+   * Expr class
+   */
   template <unsigned short N>
   struct TFEL_VISIBILITY_LOCAL ST2toT2ST2toST2ProductExpr {
   };  // end of struct ST2toT2ST2toST2ProductExpr
 
-  /*!
-   * Partial specialisation
-   */
-  template <typename ST2toT2ResultType>
+  //! \brief partial specialisation in 1D
+  template <ST2toT2Concept ST2toT2ResultType>
   struct TFEL_VISIBILITY_LOCAL
       Expr<ST2toT2ResultType, ST2toT2ST2toST2ProductExpr<1u>>
-      : public ST2toT2Concept<
+      : public ST2toT2ConceptBase<
             Expr<ST2toT2ResultType, ST2toT2ST2toST2ProductExpr<1u>>>,
         public array_holder<
             TensorDimeToSize<getSpaceDimension<ST2toT2ResultType>()>::value *
@@ -50,10 +49,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename ST2toT2Type, typename ST2toST2Type2>
-    TFEL_MATH_INLINE Expr(const ST2toT2Type& a, const ST2toST2Type2& b) {
-      static_assert(implementsST2toT2Concept<ST2toT2Type>());
-      static_assert(implementsST2toST2Concept<ST2toST2Type2>());
+    template <ST2toT2Concept ST2toT2Type, ST2toST2Concept ST2toST2Type2>
+    TFEL_HOST_DEVICE constexpr Expr(const ST2toT2Type& a,
+                                    const ST2toST2Type2& b) noexcept {
       static_assert(getSpaceDimension<ST2toT2Type>() == 1u);
       static_assert(getSpaceDimension<ST2toST2Type2>() == 1u);
       this->v[0] = a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0) + a(0, 2) * b(2, 0);
@@ -71,25 +69,21 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_MATH_INLINE const value_type& operator()(
-        const unsigned short i, const unsigned short j) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 3 + j];
     }  // end of operator()
-    /*!
-     * \return the runtime properties
-     */
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    //! \return the runtime properties
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<ST2toT2ResultType,ST2toT2ST2toST2ProductExpr>
 
-  /*!
-   * Partial specialisation
-   */
-  template <typename ST2toT2ResultType>
+  //! \brief partial specialisation in 2D
+  template <ST2toT2Concept ST2toT2ResultType>
   struct TFEL_VISIBILITY_LOCAL
       Expr<ST2toT2ResultType, ST2toT2ST2toST2ProductExpr<2u>>
-      : public ST2toT2Concept<
+      : public ST2toT2ConceptBase<
             Expr<ST2toT2ResultType, ST2toT2ST2toST2ProductExpr<2u>>>,
         public array_holder<
             TensorDimeToSize<getSpaceDimension<ST2toT2ResultType>()>::value *
@@ -105,10 +99,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename ST2toT2Type, typename ST2toST2Type2>
-    TFEL_MATH_INLINE Expr(const ST2toT2Type& a, const ST2toST2Type2& b) {
-      static_assert(implementsST2toT2Concept<ST2toT2Type>());
-      static_assert(implementsST2toST2Concept<ST2toST2Type2>());
+    template <ST2toT2Concept ST2toT2Type, ST2toST2Concept ST2toST2Type2>
+    TFEL_HOST_DEVICE constexpr Expr(const ST2toT2Type& a,
+                                    const ST2toST2Type2& b) noexcept {
       static_assert(getSpaceDimension<ST2toT2Type>() == 2u);
       static_assert(getSpaceDimension<ST2toST2Type2>() == 2u);
       this->v[0] = a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0) + a(0, 2) * b(2, 0) +
@@ -157,25 +150,21 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_MATH_INLINE const value_type& operator()(
-        const unsigned short i, const unsigned short j) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 4 + j];
     }  // end of operator()
-    /*!
-     * \return the runtime properties
-     */
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    //! \return the runtime properties
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<ST2toT2ResultType,ST2toT2ST2toST2ProductExpr>
 
-  /*!
-   * Partial specialisation
-   */
-  template <typename ST2toT2ResultType>
+  //! \brief partial specialisation in 3D
+  template <ST2toT2Concept ST2toT2ResultType>
   struct TFEL_VISIBILITY_LOCAL
       Expr<ST2toT2ResultType, ST2toT2ST2toST2ProductExpr<3u>>
-      : public ST2toT2Concept<
+      : public ST2toT2ConceptBase<
             Expr<ST2toT2ResultType, ST2toT2ST2toST2ProductExpr<3u>>>,
         public array_holder<
             TensorDimeToSize<getSpaceDimension<ST2toT2ResultType>()>::value *
@@ -191,10 +180,9 @@ namespace tfel::math {
      * \param[in] a : first term of the product
      * \param[in] b : second term of the product
      */
-    template <typename ST2toT2Type, typename ST2toST2Type2>
-    TFEL_MATH_INLINE Expr(const ST2toT2Type& a, const ST2toST2Type2& b) {
-      static_assert(implementsST2toT2Concept<ST2toT2Type>());
-      static_assert(implementsST2toST2Concept<ST2toST2Type2>());
+    template <ST2toT2Concept ST2toT2Type, ST2toST2Concept ST2toST2Type2>
+    TFEL_HOST_DEVICE constexpr Expr(const ST2toT2Type& a,
+                                    const ST2toST2Type2& b) noexcept {
       static_assert(getSpaceDimension<ST2toT2Type>() == 3u);
       static_assert(getSpaceDimension<ST2toST2Type2>() == 3u);
       this->v[0] = a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0) + a(0, 2) * b(2, 0) +
@@ -311,14 +299,12 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_MATH_INLINE const value_type& operator()(
-        const unsigned short i, const unsigned short j) const {
+    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+        const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 6 + j];
     }  // end of operator()
-    /*!
-     * \return the runtime properties
-     */
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    //! \return the runtime properties
+    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
   };  // end of struct Expr<ST2toT2ResultType,ST2toT2ST2toST2ProductExpr>

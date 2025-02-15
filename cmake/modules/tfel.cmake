@@ -1,45 +1,65 @@
+include(CMakePackageConfigHelpers)
+
+# function add the given definition to the C and C++ preprocessor
+function(tfel_add_c_cxx_definitions define)
+  add_compile_definitions("$<$<COMPILE_LANGUAGE:C,CXX>:${define}>")
+endfunction(tfel_add_c_cxx_definitions)
+
 macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
-  project("tfel")
-  set(PACKAGE_NAME "tfel")
   set(VERSION "${tfel_version_major}.${tfel_version_minor}.${tfel_version_patch}")
+  project("tfel"
+           HOMEPAGE_URL "https://thelfer.github.io/tfel/web/index.html"
+           LANGUAGES C CXX
+           VERSION "${VERSION}")
+  set(PACKAGE_NAME "tfel")
 
   if(TFEL_APPEND_VERSION OR TFEL_VERSION_FLAVOUR)
     set(TFEL_APPEND_SUFFIX ON)
-    add_definitions("-DTFEL_APPEND_SUFFIX")
+    tfel_add_c_cxx_definitions("TFEL_APPEND_SUFFIX")
   endif(TFEL_APPEND_VERSION OR TFEL_VERSION_FLAVOUR)
 
-  set(TFEL_WEBSITE "http://tfel.sourceforce.net")
+  set(TFEL_WEBSITE "http://thelfer.github.io/tfel/web/index.html")
   # the version number.
   set(TFEL_VERSION_MAJOR "${tfel_version_major}")
   set(TFEL_VERSION_MINOR "${tfel_version_minor}")
   set(TFEL_VERSION_PATCH "${tfel_version_patch}")
 
   set(TFEL_VERSION "${VERSION}")
+  if(TFEL_DEVELOPMENT_VERSION)
+    set(TFEL_VERSION "${VERSION}-dev")
+  endif(TFEL_DEVELOPMENT_VERSION)
+
   if(TFEL_VERSION_FLAVOUR)
-    set(TFEL_VERSION "${VERSION}-${TFEL_VERSION_FLAVOUR}")
+    set(TFEL_VERSION "${TFEL_VERSION}-${TFEL_VERSION_FLAVOUR}")
   else(TFEL_VERSION_FLAVOUR)
-    set(TFEL_VERSION "${VERSION}")
   endif(TFEL_VERSION_FLAVOUR)
-  add_definitions("-DVERSION=\\\"\"${TFEL_VERSION}\"\\\"")
+  tfel_add_c_cxx_definitions("VERSION=\"${TFEL_VERSION}\"")
   
   if(TFEL_APPEND_VERSION)
     set(TFEL_SUFFIX "${TFEL_VERSION}")
-    add_definitions("-DTFEL_SUFFIX=\\\"\"${TFEL_SUFFIX}\"\\\"")
+    tfel_add_c_cxx_definitions("TFEL_SUFFIX=\"${TFEL_SUFFIX}\"")
   else(TFEL_APPEND_VERSION)
     if(TFEL_VERSION_FLAVOUR)
       set(TFEL_SUFFIX "${TFEL_VERSION_FLAVOUR}")
-      add_definitions("-DTFEL_SUFFIX=\\\"\"${TFEL_SUFFIX}\"\\\"")
+      tfel_add_c_cxx_definitions("TFEL_SUFFIX=\"${TFEL_SUFFIX}\"")
     endif(TFEL_VERSION_FLAVOUR)
   endif(TFEL_APPEND_VERSION)
-
-  if(TFEL_SUFFIX)
-    string(REPLACE "." "_" TFEL_SUFFIX_FOR_PYTHON_MODULES "${TFEL_SUFFIX}")
-    string(REPLACE "-" "_" TFEL_SUFFIX_FOR_PYTHON_MODULES "${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
-  endif(TFEL_SUFFIX)
   
   if(LIB_SUFFIX)
-    add_definitions("-DLIB_SUFFIX=\\\"\"${LIB_SUFFIX}\"\\\"")
+    tfel_add_c_cxx_definitions("LIB_SUFFIX=\"${LIB_SUFFIX}\"")
   endif(LIB_SUFFIX)
+
+  write_basic_package_version_file(
+    "${PROJECT_BINARY_DIR}/tfel-config-version.cmake"
+    VERSION "${VERSION}"
+    COMPATIBILITY SameMinorVersion)
+  if(TFEL_APPEND_SUFFIX)
+    set(export_install_path "share/tfel-${TFEL_SUFFIX}/cmake")
+  else(TFEL_APPEND_SUFFIX)
+    set(export_install_path "share/tfel/cmake")
+  endif(TFEL_APPEND_SUFFIX)
+  install(FILES "${PROJECT_BINARY_DIR}/tfel-config-version.cmake"
+    DESTINATION "${export_install_path}")
 endmacro(tfel_project)
 
 set(CPACK_COMPONENTS_ALL core mfront mtest mfm)
@@ -142,6 +162,7 @@ function(tfel_library_internal name component)
     message(FATAL_ERROR "tfel_library_internal : no source specified")
   endif(${ARGC} LESS 2)
   add_library(${name} ${ARGN})
+  add_library(tfel::${name} ALIAS ${name})
   if(TFEL_APPEND_SUFFIX)
     set(export_install_path "share/tfel-${TFEL_SUFFIX}/cmake")
   else(TFEL_APPEND_SUFFIX)
@@ -166,9 +187,28 @@ function(tfel_library_internal name component)
       COMPONENT ${component})
   endif(WIN32)
   install(EXPORT ${name} DESTINATION ${export_install_path}
-          NAMESPACE tfel:: FILE ${name}Config.cmake)
+          EXPORT_LINK_INTERFACE_LIBRARIES
+          NAMESPACE tfel:: FILE ${name}Targets.cmake)
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${name}Config.cmake.in)
+    set(_package_config_file ${CMAKE_CURRENT_SOURCE_DIR}/${name}Config.cmake.in)
+  else()
+    set(_package_config_file ${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake.in)
+    file(WRITE ${_package_config_file}
+         "@PACKAGE_INIT@\n"
+         "\n"
+         "include(\"\${CMAKE_CURRENT_LIST_DIR}/${name}Targets.cmake\")")
+  endif()
+  # generate the config file that includes the exports
+  configure_package_config_file(${_package_config_file}
+                                "${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake"
+                                INSTALL_DESTINATION ${export_install_path}
+                                NO_SET_AND_CHECK_MACRO
+                                NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake"
+          DESTINATION ${export_install_path})
   if(enable-static)
     add_library(${name}-static STATIC ${ARGN})
+    add_library(tfel::${name}-static ALIAS ${name}-static)
     if(TFEL_APPEND_SUFFIX)
       set_target_properties(${name}-static PROPERTIES OUTPUT_NAME "${name}-{TFEL_SUFFIX}")
     else(TFEL_APPEND_SUFFIX)
@@ -192,7 +232,25 @@ function(tfel_library_internal name component)
       install(TARGETS ${name}-static EXPORT ${name}-static DESTINATION lib${LIB_SUFFIX})
     endif(WIN32)
     install(EXPORT ${name}-static DESTINATION ${export_install_path}
-            NAMESPACE tfel:: FILE ${name}StaticConfig.cmake)
+            NAMESPACE tfel:: FILE ${name}StaticTargets.cmake
+            EXPORT_LINK_INTERFACE_LIBRARIES)
+    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${name}StaticConfig.cmake.in)
+      set(_package_config_file ${CMAKE_CURRENT_SOURCE_DIR}/${name}StaticConfig.cmake.in)
+    else()
+      set(_package_config_file ${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake.in)
+      file(WRITE ${_package_config_file}
+           "@PACKAGE_INIT@\n"
+           "\n"
+          "include(\"\${CMAKE_CURRENT_LIST_DIR}/${name}StaticTargets.cmake\")")
+    endif()
+    # generate the config file that includes the exports
+    configure_package_config_file(${_package_config_file}
+                                  "${CMAKE_CURRENT_BINARY_DIR}/${name}StaticConfig.cmake"
+                                  INSTALL_DESTINATION ${export_install_path}
+                                  NO_SET_AND_CHECK_MACRO
+                                  NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${name}StaticConfig.cmake"
+            DESTINATION ${export_install_path})
     target_compile_options (${name}-static PRIVATE "${TFEL_CXX_FLAGS}")
   endif(enable-static)
 endfunction(tfel_library_internal)
@@ -249,28 +307,21 @@ macro(add_mfront_behaviour_generated_source lib interface dir intrinsic_source f
     add_custom_command(
       OUTPUT  ${output_files}
       COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELMFront>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:MFrontLogStream>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELMaterial>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELNUMODIS>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELMathParser>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELGlossary>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELSystem>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELUtilities>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELException>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELConfig>;%PATH%"
-      COMMAND "set"
-      ARGS "PATH=$<TARGET_FILE_DIR:TFELUnicodeSupport>;%PATH%"
+      ARGS "PATH=\
+$<TARGET_FILE_DIR:TFELMFront>;\
+$<TARGET_FILE_DIR:MFrontLogStream>;\
+$<TARGET_FILE_DIR:TFELMaterial>;\
+$<TARGET_FILE_DIR:TFELNUMODIS>;\
+$<TARGET_FILE_DIR:TFELMathParser>;\
+$<TARGET_FILE_DIR:TFELGlossary>;\
+$<TARGET_FILE_DIR:TFELSystem>;\
+$<TARGET_FILE_DIR:TFELUtilities>;\
+$<TARGET_FILE_DIR:TFELException>;\
+$<TARGET_FILE_DIR:TFELConfig>;\
+$<TARGET_FILE_DIR:TFELUnicodeSupport>;\
+%PATH%"
       COMMAND "${mfront_executable}"
+      ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/${dir}"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/models"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
@@ -282,6 +333,7 @@ macro(add_mfront_behaviour_generated_source lib interface dir intrinsic_source f
       add_custom_command(
     	OUTPUT  ${output_files}
 	COMMAND "${mfront_executable}"
+        ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/${dir}"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/models"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
@@ -293,6 +345,7 @@ macro(add_mfront_behaviour_generated_source lib interface dir intrinsic_source f
       if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
 	add_test(NAME mfront-${file}-${interface}
 	  COMMAND ${mfront_executable}
+	  --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/${dir}
 	  --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/models
 	  --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours
 	  --search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties
@@ -332,27 +385,19 @@ macro(mfront_dependencies lib)
       add_custom_command(
 	OUTPUT  "src/${source}-mfront.cxx"
 	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELMFront>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:MFrontLogStream>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELMaterial>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELNUMODIS>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELMathParser>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELGlossary>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELSystem>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELUtilities>;%PATH%"
-	COMMAND "set"
-	ARGS "PATH=$<TARGET_FILE_DIR:TFELException>;%PATH%"
-    COMMAND "set"
-    ARGS "PATH=$<TARGET_FILE_DIR:TFELConfig>;%PATH%"
-    COMMAND "set"
-    ARGS "PATH=$<TARGET_FILE_DIR:TFELUnicodeSupport>;%PATH%"
+	ARGS "PATH=\
+$<TARGET_FILE_DIR:TFELMFront>;\
+$<TARGET_FILE_DIR:MFrontLogStream>;\
+$<TARGET_FILE_DIR:TFELMaterial>;\
+$<TARGET_FILE_DIR:TFELNUMODIS>;\
+$<TARGET_FILE_DIR:TFELMathParser>;\
+$<TARGET_FILE_DIR:TFELGlossary>;\
+$<TARGET_FILE_DIR:TFELSystem>;\
+$<TARGET_FILE_DIR:TFELUtilities>;\
+$<TARGET_FILE_DIR:TFELException>;\
+$<TARGET_FILE_DIR:TFELConfig>;\
+$<TARGET_FILE_DIR:TFELUnicodeSupport>;\
+%PATH%"
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
 	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
@@ -404,136 +449,10 @@ function(mfront_behaviour_check_library lib interface)
 endfunction(mfront_behaviour_check_library)
 
 function(mfront_behaviour_brick_check_library lib dir interface)
-  mfront_check_library_base(${lib} ${interface} "behaviours/bricks/${dir}" ON ${ARGN})
+  mfront_check_library_base(${lib} ${interface} "behaviours/${dir}" ON ${ARGN})
 endfunction(mfront_behaviour_brick_check_library)
 
 function(mfront_model_check_library lib interface)
   mfront_check_library_base(${lib} ${interface} "models" OFF ${ARGN})
 endfunction(mfront_model_check_library)
 
-function(python_module_base fullname name)
-    if(${ARGC} LESS 1)
-    message(FATAL_ERROR "python_lib_module : no source specified")
-  endif(${ARGC} LESS 1)
-  add_library(py_${fullname} MODULE ${ARGN})
-  if(WIN32)
-    set_target_properties(py_${fullname} PROPERTIES
-      COMPILE_FLAGS "-DHAVE_ROUND")
-    set_target_properties(py_${fullname} PROPERTIES SUFFIX ".pyd")
-  elseif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set_target_properties(py_${fullname} PROPERTIES SUFFIX ".so")
-  endif(WIN32)
-  set_target_properties(py_${fullname} PROPERTIES PREFIX "")
-  set_target_properties(py_${fullname} PROPERTIES OUTPUT_NAME ${name})
-  target_include_directories(py_${fullname}
-    PRIVATE "${PROJECT_SOURCE_DIR}/bindings/python/include"
-    PRIVATE "${PROJECT_SOURCE_DIR}/include")
-  target_include_directories(py_${fullname}
-    SYSTEM
-    PRIVATE "${Boost_INCLUDE_DIRS}"
-    PRIVATE "${PYTHON_INCLUDE_DIRS}")
-  if(python-static-interpreter-workaround)
-    if(APPLE)
-      target_link_options(py_${fullname}
-        PRIVATE "-undefined" "dynamic_lookup")
-    endif(APPLE)
-  endif(python-static-interpreter-workaround)
-endfunction(python_module_base)
-
-function(python_lib_module name package)
-  python_module_base(${package}_${name} ${name} ${ARGN})
-  if(TFEL_APPEND_SUFFIX)
-    if(WIN32)
-      install(TARGETS py_${package}_${name}
-        DESTINATION bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}_${TFEL_SUFFIX_FOR_PYTHON_MODULES}
-        COMPONENT python_bindings)
-    else(WIN32)
-      install(TARGETS py_${package}_${name}
-        DESTINATION lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}_${TFEL_SUFFIX_FOR_PYTHON_MODULES}
-        COMPONENT python_bindings)
-    endif(WIN32)
-  else(TFEL_APPEND_SUFFIX)
-    if(WIN32)
-      install(TARGETS py_${package}_${name}
-        DESTINATION bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}
-        COMPONENT python_bindings)
-    else(WIN32)
-      install(TARGETS py_${package}_${name}        DESTINATION lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}
-        COMPONENT python_bindings)
-    endif(WIN32)
-  endif(TFEL_APPEND_SUFFIX)
-endfunction(python_lib_module)
-
-function(std_python_module name)
-  python_lib_module(${name} std ${ARGN})
-endfunction(std_python_module)
-
-function(tfel_python_module name)
-  python_lib_module(${name} tfel ${ARGN})
-endfunction(tfel_python_module)
-
-function(mfront_python_module name)
-  python_lib_module(${name} mfront ${ARGN})
-  set(fullname "mfront_${name}")
-  target_include_directories(py_${fullname}
-    PRIVATE "${PROJECT_SOURCE_DIR}/mfront/include")
-endfunction(mfront_python_module)
-
-function(mtest_python_module name)
-  python_lib_module(${name} mtest ${ARGN})
-  set(fullname "mtest_${name}")
-  target_include_directories(py_${fullname}
-    PRIVATE "${PROJECT_SOURCE_DIR}/mtest/include"
-    PRIVATE "${PROJECT_SOURCE_DIR}/mfront/include")
-endfunction(mtest_python_module)
-
-function(mfm_test_generator_python_module name)
-  python_lib_module(${name} mfm_test_generator ${ARGN})
-  set(fullname "mfm_test_generator_${name}")
-  target_include_directories(py_${fullname}
-    PRIVATE "${PROJECT_SOURCE_DIR}/mfm-test-generator/include"
-    PRIVATE "${PROJECT_SOURCE_DIR}/mtest/include"
-    PRIVATE "${PROJECT_SOURCE_DIR}/mfront/include")
-endfunction(mfm_test_generator_python_module)
-
-function(tfel_python_script_base dir)
-  if(${ARGC} LESS 1)
-    message(FATAL_ERROR "tfel_python_script_base : no script specified")
-  endif(${ARGC} LESS 1)
-  foreach(pyscript ${ARGN})
-    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
-      if(TFEL_APPEND_SUFFIX)
-	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.version.in")
-	  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.version.in"
-	    "${CMAKE_CURRENT_BINARY_DIR}/${pyscript}" @ONLY)
-	else(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.version.in")
-	  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in"
-	    "${CMAKE_CURRENT_BINARY_DIR}/${pyscript}" @ONLY)
-	endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.version.in")
-      else(TFEL_APPEND_SUFFIX)
-	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in"
-	  "${CMAKE_CURRENT_BINARY_DIR}/${pyscript}" @ONLY)
-      endif(TFEL_APPEND_SUFFIX)
-      set(python_script "${CMAKE_CURRENT_BINARY_DIR}/${pyscript}")
-    else(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
-      set(python_script "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}")
-    endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
-    if(WIN32)
-      install(PROGRAMS ${python_script}
-        DESTINATION bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${dir}/
-        COMPONENT python_bindings)
-    else(WIN32)
-      install(PROGRAMS ${python_script}
-        DESTINATION lib${LIB_SUFFIX}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${dir}/
-        COMPONENT python_bindings)
-    endif(WIN32)
-  endforeach(pyscript ${ARGN})
-endfunction(tfel_python_script_base)
-
-function(tfel_python_script dir)
-  if(TFEL_APPEND_SUFFIX)
-    tfel_python_script_base(${dir}_${TFEL_SUFFIX_FOR_PYTHON_MODULES} ${ARGN})
-  else(TFEL_APPEND_SUFFIX)
-    tfel_python_script_base(${dir} ${ARGN})
-  endif(TFEL_APPEND_SUFFIX)
-endfunction(tfel_python_script)

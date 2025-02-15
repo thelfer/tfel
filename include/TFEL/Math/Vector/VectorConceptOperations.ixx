@@ -17,21 +17,18 @@
 
 namespace tfel::math {
 
-  template <typename T1, typename T2>
-  std::enable_if_t<IsVectorVectorOperationValid<T1, T2, OpDotProduct>::cond,
-                   BinaryOperationResult<T1, T2, OpDotProduct>>
-  operator|(const T1& a, const T2& b) {
+  template <VectorConcept T1, VectorConcept T2>
+  TFEL_HOST_DEVICE constexpr auto operator|(const T1& a, const T2& b) requires(
+      !isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>()) {
     typedef BinaryOperationResult<T1, T2, OpDotProduct> Result;
     typedef BinaryOperationHandler<T1, T2, OpDotProduct> Handle;
     return Handle::template exe<Result, T1, T2>(a, b);
   }
 
-  template <typename T1>
-  std::enable_if_t<IsEuclidianNormValid<T1>::cond,
-                   typename tfel::typetraits::RealPartType<
-                       BinaryOperationResult<T1, T1, OpDotProduct>>::type>
-  norm(const T1& v) {
-    return std::sqrt(real(v | v));
+  template <VectorConcept T1>
+  TFEL_HOST_DEVICE auto norm(const T1& v) requires(
+      !isInvalid<BinaryOperationResult<T1, T1, OpDotProduct>>()) {
+    return power<1, 2>(real(v | v));
   }
 
 }  // end of namespace tfel::math

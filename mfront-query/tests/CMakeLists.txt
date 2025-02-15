@@ -9,7 +9,7 @@ macro(mfront_query_test args mfront_file file)
 	COMMAND ${CMAKE_COMMAND}
 	-D TEST_PROGRAM=$<TARGET_FILE:mfront-query>
 	-D TEST_ARGS=${args}
-	-D MFRONT_FILE=${CMAKE_SOURCE_DIR}/mfront/tests/behaviours/${mfront_file}
+	-D MFRONT_FILE=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/${mfront_file}
 	-D TEST_OUTPUT=mfront-query-result-${MFRONT_QUERY_TEST_ID}.txt
 	-D REFERENCE_FILE=${CMAKE_CURRENT_SOURCE_DIR}/references/${file}
 	-P ${CMAKE_CURRENT_SOURCE_DIR}/mfront-query.cmake
@@ -29,7 +29,7 @@ macro(mfront_query_test args mfront_file file)
       COMMAND ${CMAKE_COMMAND}
       -D TEST_PROGRAM=$<TARGET_FILE:mfront-query>
       -D TEST_ARGS=${args}
-      -D MFRONT_FILE=${CMAKE_SOURCE_DIR}/mfront/tests/behaviours/${mfront_file}
+      -D MFRONT_FILE=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/${mfront_file}
       -D TEST_OUTPUT=mfront-query-result-${MFRONT_QUERY_TEST_ID}.txt
       -D REFERENCE_FILE=${CMAKE_CURRENT_SOURCE_DIR}/references/${file}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/mfront-query.cmake )
@@ -43,16 +43,18 @@ macro(mfront_query_test args mfront_file file)
   #     -D TEST_PROGRAM=${mfront_query}
   # # ${PROJECT_BINARY_DIR}/mfront-query/src/mfront-query${CMAKE_EXECUTABLE_SUFFIX}
   #     -D TEST_ARGS=${args}
-  #     -D MFRONT_FILE=${CMAKE_SOURCE_DIR}/mfront/tests/behaviours/${mfront_file}
+  #     -D MFRONT_FILE=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/${mfront_file}
   #     -D TEST_OUTPUT=mfront-query-result-${MFRONT_QUERY_TEST_ID}.txt
   #     -D REFERENCE_FILE=${CMAKE_CURRENT_SOURCE_DIR}/references/${file}
   #     -P ${CMAKE_CURRENT_SOURCE_DIR}/mfront-query.cmake )
   MATH(EXPR MFRONT_QUERY_TEST_ID "${MFRONT_QUERY_TEST_ID}+1")
 endmacro(mfront_query_test)
 
-mfront_query_test("--material-properties" "Norton.mfront"
+mfront_query_test("--material-properties"
+  "Norton.mfront"
   "mfront-query-norton-material-properites.ref")
-mfront_query_test("--slip-systems-by-index" "bricks/FiniteStrainSingleCrystal/FiniteStrainSingleCrystal.mfront"
+mfront_query_test("--slip-systems-by-index"
+  "FiniteStrainSingleCrystal/FiniteStrainSingleCrystal.mfront"
   "mfront-query-finitestrainsinglecrystal.ref")
 # mfront_query_test("--state-variables" "Norton.mfront"
 #   "mfront-query-norton-material-properites.ref")

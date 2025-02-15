@@ -25,7 +25,7 @@ namespace tfel::math::parser {
   struct ConditionalExpr final : public Expr {
     ConditionalExpr(const std::shared_ptr<LogicalExpr>,
                     const std::shared_ptr<Expr>,
-                    const std::shared_ptr<Expr>);
+                    const std::shared_ptr<Expr>) noexcept;
     //
     bool isConstant() const override;
     bool dependsOnVariable(const std::vector<double>::size_type) const override;

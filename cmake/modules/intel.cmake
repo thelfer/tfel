@@ -14,7 +14,7 @@ else(${DIAG_DISABLE_FLAG_AVAILABLE})
 endif(${DIAG_DISABLE_FLAG_AVAILABLE})
 
 tfel_add_cxx_compiler_flag_if_available(OPTIMISATION_FLAGS_MARCH "xHost")
-tfel_add_cxx_compiler_flag_if_available(CMAKE_CXX_FLAGS    "ipo")
+tfel_add_cxx_compiler_flag_if_available(TFEL_CMAKE_CXX_FLAGS     "ipo")
 
 tfel_add_cxx_compiler_flag_if_available(VISIBILITY_FLAGS "fvisibility=hidden")
 tfel_add_cxx_compiler_flag_if_available(VISIBILITY_FLAGS "fvisibility-inlines-hidden")
@@ -31,6 +31,8 @@ endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
 if(HAVE_FORTRAN)
   if("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "Intel")
+    set(INTEL_FORTRAN_COMPILER ON)
+  elseif("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "IntelLLVM")
     set(INTEL_FORTRAN_COMPILER ON)
   else("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "Intel")
     include(cmake/modules/gnu-fortran-compiler.cmake)

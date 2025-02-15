@@ -19,4 +19,4 @@ will be 0.1.
 
 ~~~~ {#MinimalTimeStepScalingFactor .cpp}
 @MinimalTimeStepScalingFactor 0.5;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~

@@ -114,11 +114,10 @@ namespace tfel::utilities {
     //! a simple alias
     using CallBack = std::function<void(const Data&)>;
     //! constructor from a value
-    template <typename T1,
-              std::enable_if_t<tfel::meta::TLCountNbrOfT<std::decay_t<T1>,
-                                                         DataTypes>::value == 1,
-                               bool> = true>
-    TFEL_INLINE Data(T1&& v) : GenTypeBase<DataTypes>(std::forward<T1>(v)) {}
+    template <typename T1>
+    TFEL_INLINE Data(T1&& v) requires(
+        tfel::meta::TLCountNbrOfT<std::decay_t<T1>, DataTypes>::value == 1)
+        : GenTypeBase<DataTypes>(std::forward<T1>(v)) {}
     /*!
      * \brief read a JSON-like structure
      * \return the values read
@@ -226,10 +225,8 @@ namespace tfel::utilities {
                                        const DataValidator&);
     //!
     template <typename T1>
-    std::enable_if_t<
-        tfel::meta::TLCountNbrOfT<std::decay_t<T1>, DataTypes>::value == 1,
-        DataMapValidator&>
-    addDataTypeValidator(const std::string& k);
+    DataMapValidator& addDataTypeValidator(const std::string& k) requires(
+        tfel::meta::TLCountNbrOfT<std::decay_t<T1>, DataTypes>::value == 1);
     //! \brief validate a data-map
     void validate(const DataMap&) const;
     //! \brief destructor
@@ -303,6 +300,13 @@ namespace tfel::utilities {
    */
   TFELUTILITIES_VISIBILITY_EXPORT DataMap
   extract(const DataMap&, const std::vector<std::string>&);
+  /*!
+   * \return a data map containing only data that does not match the given names
+   * \param[in] m: data map
+   * \param[in] names: list of names of data to be removed
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT DataMap
+  remove(const DataMap&, const std::vector<std::string>&);
 
   /*!
    * \return the data map resulting from the merge of two data maps.

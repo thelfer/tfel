@@ -14,6 +14,7 @@
 #include <ostream>
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
+#include "MFront/IsotropicBehaviourDSLBase.hxx"
 #include "MFront/MultipleIsotropicMisesFlowsCodeGenerator.hxx"
 
 namespace mfront {
@@ -35,7 +36,7 @@ namespace mfront {
 
   void
   MultipleIsotropicMisesFlowsCodeGenerator::writeBehaviourParserSpecificMembers(
-      std::ostream& os, const Hypothesis) const {
+      std::ostream& os, const Hypothesis h) const {
     const auto has_plastic_flow = [this] {
       for (auto p = this->flows.begin(); p != this->flows.end(); ++p) {
         if (p->flow == FlowHandler::PlasticFlow) {
@@ -69,6 +70,10 @@ namespace mfront {
       os << "using namespace tfel::material;\n";
       os << "using std::vector;\n";
       writeMaterialLaws(os, this->bd.getMaterialLaws());
+      const auto flow_id = std::to_string(n);
+      if (this->bd.hasCode(h, BehaviourData::BeforeFlowRule + flow_id)) {
+        os << this->bd.getCode(h, BehaviourData::BeforeFlowRule + flow_id);
+      }
       os << p->flowRule << '\n';
       os << "}\n\n";
     }
@@ -89,7 +94,7 @@ namespace mfront {
     for (auto p = this->flows.begin(); p != this->flows.end(); ++p, ++n) {
       if (p->hasSpecificTheta) {
         std::ostringstream otheta;
-        otheta << "mu_3_theta" << n;
+        otheta << "mfront_internal_3_mu_theta" << n;
         os << "stress " + otheta.str() + " = 3*(real(";
         os << p->theta << "))*(this->mu);\n";
       } else {
@@ -98,7 +103,7 @@ namespace mfront {
     }
 
     if (genericTheta) {
-      os << "stress mu_3_theta = 3*(";
+      os << "stress mfront_internal_3_mu_theta = 3*(";
       os << this->bd.getClassName() << "::theta)*(this->mu);\n";
     }
     os << "unsigned int iter=0u;\n"
@@ -117,11 +122,11 @@ namespace mfront {
       if (p->hasSpecificTheta) {
         std::ostringstream otheta;
         os << "this->seq = std::max(this->seq_e" << n << "-";
-        otheta << "mu_3_theta" << n << "*(";
+        otheta << "mfront_internal_3_mu_theta" << n << "*(";
         os << otheta.str();
       } else {
         os << "this->seq = std::max(this->seq_e-";
-        os << "mu_3_theta*(";
+        os << "mfront_internal_3_mu_theta*(";
       }
       auto p2 = this->flows.begin();
       unsigned short n2 = 0u;
@@ -150,20 +155,21 @@ namespace mfront {
             os << "newton_df(" << n << "," << n << ")";
             if (p->hasSpecificTheta) {
               os << " = ((real(" << p->theta << "))*(this->df_dp" << n << ")"
-                 << "-mu_3_theta" << n << "*(this->df_dseq" << n
+                 << "-mfront_internal_3_mu_theta" << n << "*(this->df_dseq" << n
                  << "))/(this->young);\n";
             } else {
               os << " = ((" << this->bd.getClassName()
                  << "::theta)*(this->df_dp" << n << ")"
-                 << "-mu_3_theta*(this->df_dseq" << n << "))/(this->young);\n";
+                 << "-mfront_internal_3_mu_theta*(this->df_dseq" << n
+                 << "))/(this->young);\n";
             }
           } else {
             os << "newton_df(" << n << "," << n2 << ")";
             if (p->hasSpecificTheta) {
-              os << " = -mu_3_theta" << n << "*(this->df_dseq" << n
-                 << ")/(this->young);\n";
+              os << " = -mfront_internal_3_mu_theta" << n << "*(this->df_dseq"
+                 << n << ")/(this->young);\n";
             } else {
-              os << " = -mu_3_theta*(this->df_dseq" << n
+              os << " = -mfront_internal_3_mu_theta*(this->df_dseq" << n
                  << ")/(this->young);\n";
             }
           }
@@ -187,9 +193,9 @@ namespace mfront {
            << ")*(this->dt);\n";
         os << "newton_df(" << n << "," << n << ") = 1+";
         if (p->hasSpecificTheta) {
-          os << "mu_3_theta" << n;
+          os << "mfront_internal_3_mu_theta" << n;
         } else {
-          os << "mu_3_theta";
+          os << "mfront_internal_3_mu_theta";
         }
         os << "*(this->df_dseq" << n << ")*(this->dt);\n";
         for (p2 = this->flows.begin(), n2 = 0; p2 != this->flows.end();
@@ -197,9 +203,9 @@ namespace mfront {
           if (p2 != p) {
             os << "newton_df(" << n << "," << n2 << ") = ";
             if (p->hasSpecificTheta) {
-              os << "mu_3_theta" << n;
+              os << "mfront_internal_3_mu_theta" << n;
             } else {
-              os << "mu_3_theta";
+              os << "mfront_internal_3_mu_theta";
             }
             os << "*(this->df_dseq" << n << ")*(this->dt);\n";
           }
@@ -219,9 +225,9 @@ namespace mfront {
         }
         os << "*(this->df_dp" << n << ")-";
         if (p->hasSpecificTheta) {
-          os << "mu_3_theta" << n;
+          os << "mfront_internal_3_mu_theta" << n;
         } else {
-          os << "mu_3_theta";
+          os << "mfront_internal_3_mu_theta";
         }
         os << "*(this->df_dseq" << n << "));\n";
         for (p2 = this->flows.begin(), n2 = 0; p2 != this->flows.end();
@@ -229,9 +235,9 @@ namespace mfront {
           if (p2 != p) {
             os << "newton_df(" << n << "," << n2 << ") = ";
             if (p->hasSpecificTheta) {
-              os << "mu_3_theta" << n;
+              os << "mfront_internal_3_mu_theta" << n;
             } else {
-              os << "mu_3_theta";
+              os << "mfront_internal_3_mu_theta";
             }
             os << "*(this->df_dseq" << n << ")*(this->dt);\n";
           }
@@ -294,7 +300,7 @@ namespace mfront {
        << "* \\brief Integrate behaviour law over the time step\n"
        << "*/\n"
        << "[[nodiscard]] IntegrationResult\n"
-       << "integrate(const SMFlag smflag,const SMType smt) override{\n"
+       << "integrate(const SMFlag smflag,const SMType smt) override final{\n"
        << "using namespace std;\n";
     if (this->bd.useQt()) {
       os << "if(smflag!=MechanicalBehaviour<" << btype
@@ -307,6 +313,37 @@ namespace mfront {
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     }
+    this->writeBehaviourIntegratorPreprocessingStep(os);
+    os << "this->seq_e = sigmaeq(this->se);\n";
+    n = 0;
+    for (const auto& f : this->flows) {
+      if (f.hasSpecificTheta) {
+        if (this->bd.getAttribute(
+                IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
+          if (this->shallComputeTheElasticStrain()) {
+            os << "const StressStensor mfront_se" << n << " = "
+               << "2 * (this->mu) * (tfel::math::deviator(mfront_eel_bts + ("
+               << f.theta << ") * (this->deto)));\n";
+          } else {
+            os << "const StressStensor mfront_se" << n << " = "
+               << "tfel::math::deviator(this->sig) + "
+               << "2 * (this->mu) * (" << f.theta << ") * (this->deto);\n";
+          }
+        } else {
+          os << "const StressStensor mfront_se" << n << " = "
+             << "2 * (this->mu) * (tfel::math::deviator(this->eel + ("
+             << f.theta << ") * (this->deto)));\n";
+        }
+        os << "this->seq_e" << n << " = sigmaeq(mfront_se" << n << ");\n";
+      }
+      ++n;
+    }
+    os << "if(this->seq_e > 100 * (this->young) * "
+       << "std::numeric_limits<NumericType>::epsilon()){\n"
+       << "this->n = 3 * (this->se) / (2 * this->seq_e);\n"
+       << "} else {\n"
+       << "this->n = StrainStensor(strain(0));\n"
+       << "}\n";
     os << "if(!this->NewtonIntegration()){\n";
     if (this->bd.useQt()) {
       os << "return MechanicalBehaviour<" << btype
@@ -338,18 +375,15 @@ namespace mfront {
          << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n"
-       << "}\n"
-       << "this->deel = this->deto-dp*(this->n);\n"
-       << "this->updateStateVariables();\n"
-       << "this->sig  = "
-          "(this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*("
-          "this->eel);\n"
-       << "this->updateAuxiliaryStateVariables();\n";
-    for (const auto& v : d.getPersistentVariables()) {
-      this->writePhysicalBoundsChecks(os, v, false);
-    }
-    for (const auto& v : d.getPersistentVariables()) {
-      this->writeBoundsChecks(os, v, false);
+       << "}\n";
+    this->writeBehaviourIntegratorPostprocessingStep(os);
+    if (!areRuntimeChecksDisabled(this->bd)) {
+      for (const auto& v : d.getPersistentVariables()) {
+        this->writePhysicalBoundsChecks(os, v, false);
+      }
+      for (const auto& v : d.getPersistentVariables()) {
+        this->writeBoundsChecks(os, v, false);
+      }
     }
     if (this->bd.useQt()) {
       os << "return MechanicalBehaviour<" << btype
@@ -376,31 +410,6 @@ namespace mfront {
        << "return false;\n"
        << "}\n\n";
   }
-
-  void MultipleIsotropicMisesFlowsCodeGenerator::
-      writeBehaviourParserSpecificInitializeMethodPart(std::ostream& os,
-                                                       const Hypothesis) const {
-    this->checkBehaviourFile(os);
-    os << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+("
-       << this->bd.getClassName() << "::theta)*(this->deto)));\n"
-       << "this->seq_e = sigmaeq(this->se);\n";
-    unsigned short n = 0;
-    for (const auto& f : this->flows) {
-      if (f.hasSpecificTheta) {
-        os << "StressStensor se" << n
-           << "=2*(this->mu)*(tfel::math::deviator(this->eel+(";
-        os << f.theta << ")*(this->deto)));\n";
-        os << "this->seq_e" << n << " = sigmaeq(se" << n << ");\n";
-      }
-      ++n;
-    }
-    os << "if(this->seq_e > 100 * (this->young) * "
-       << "std::numeric_limits<NumericType>::epsilon()){\n"
-       << "this->n = 3 * (this->se) / (2 * this->seq_e);\n"
-       << "} else {\n"
-       << "this->n = StrainStensor(strain(0));\n"
-       << "}\n";
-  }  // end of writeBehaviourParserSpecificInitializeMethodPart
 
   MultipleIsotropicMisesFlowsCodeGenerator::
       ~MultipleIsotropicMisesFlowsCodeGenerator() = default;

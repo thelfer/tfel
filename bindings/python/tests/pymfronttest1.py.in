@@ -3,7 +3,7 @@ try:
 except ImportError:
     import unittest
 
-import mfront
+import @mfront_python_module@ as mfront
 
 class PyMFrontTest1(unittest.TestCase):
 

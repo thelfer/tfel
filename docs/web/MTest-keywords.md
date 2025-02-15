@@ -4,10 +4,10 @@
 # The `@AccelerationAlgorithm` keyword
 
 The `@AccelerationAlgorithm` keyword is used to give the name of the
-acceeleration algorithm used to accelerate the convergence toward
+acceleration algorithm used to accelerate the convergence toward
 equilibrium.
 
-The follwing algorithm are available:
+The following algorithm are available:
 
 - `Cast3M`
 - `Secant`
@@ -44,7 +44,7 @@ The `@Author` keyword is used give the name of the person who wrote
 the mtest file.
 
 All the following words are appended to the author's name up to a
-final semi-colon.
+final semicolon.
 
 ## Example:
 
@@ -98,7 +98,7 @@ This keyword is followed by a positive number.
 
 # The `@CohesiveForce` keyword
 
-The `@CohesiveForce` let the user specifiy the inital value of the
+The `@CohesiveForce` let the user specify the initial value of the
 cohesive forces.
 
 This keyword is followed by an array. The size of this array must be
@@ -118,15 +118,15 @@ The global algorithm uses two criteria to check if a satisfying
 equilibrium has been found: one on opening displacements, the other on
 cohesive forces.
 
-This criterium on cohesive forces checks that the residual of the
-Newton algorithm is low enought. By default, this value is equal to
+This criterion on cohesive forces checks that the residual of the
+Newton algorithm is low enough. By default, this value is equal to
 1.e-3, which is a convenient value if cohesive force are expressed in
 Newton.
 
-The `@CohesiveEpsilon` let the user specifiy the criterium value used
-for the criterium on cohesive force.
+The `@CohesiveEpsilon` let the user specify the criterion value used
+for the criterion on cohesive force.
 
-It is followed by the criterium value.
+It is followed by the criterion value.
 
 ## Example
 
@@ -147,7 +147,7 @@ approximation can be adjusted by the
 
 The value used for to compare the tangent operator given by the behaviour to a
 numerical approximation can be adjusted by the
-`@TangentOperatorComparisonCriterium`.
+`@TangentOperatorComparisoncriterion`.
 
 ## Example
 
@@ -161,7 +161,7 @@ The `@Date` keyword allows the user to precise when the mtest file was
 written.
 
 All the following words are appended to the date up to a final
-semi-colon.
+semicolon.
 
 ## Example
 
@@ -171,11 +171,11 @@ semi-colon.
 
 # The `@DeformationGradient` keyword
 
-The `@DeformationGradient` let the user specifiy the inital value of
+The `@DeformationGradient` let the user specify the initial value of
 the deformation gradient.
 
 This keyword is followed by an array. The size of this array must be
-equal to the number of components of (non symmetric) tensors for the
+equal to the number of components of (non-symmetric) tensors for the
 modelling hypothesis considered (see the `@ModellingHypothesis`
 keyword).
 
@@ -191,14 +191,14 @@ The global algorithm uses two criteria to check if a satisfying
 equilibrium has been found: one on deformation gradient, the other on
 stresses.
 
-This criterium on the deformation gradient checks if two successives
-estimate of the strains are close enough.  By default, the criterium
+This criterion on the deformation gradient checks if two successive
+estimate of the strains are close enough.  By default, the criterion
 value used is 1.e-12;
 
-The `@SDeformationGradient` let the user specifiy the criterium value used
-for the criterium on strains.
+The `@SDeformationGradient` let the user specify the criterion value used
+for the criterion on strains.
 
-It is followed by the criterium value.
+It is followed by the criterion value.
 
 ## Example
 
@@ -237,17 +237,17 @@ The `@Evolution` specifies a function of time.
 
 This keyword may have one option, which is the way the evolution will
 be defined. Two values are accepted: `evolution` and `function`. If no
-option is specified, the `evolution` option is choosen.
+option is specified, the `evolution` option is chosen.
 
 After the option, the name of evolution, which shall be given as
 string, is expected.
 
 If the `evolution` option has been selected, the user may specify a
 constant evolution by simply giving its value. Otherwise, complex
-evolutions can be build using a associative array where the key is the
-time and the value the value of the evolution. Between two times, the
-values will be interpolated linearly. Prior the first declared time
-given, the value corresponding the this first time is used. After the
+evolutions can be build using an associative array where the key is the
+time and the value of the evolution. Between two times, the
+values will be interpolated linearly. Prior to the first declared time
+given, the value corresponding to this first time is used. After the
 last time given, the value corresponding this last time is used.
 
 If the `function` option has been selected, a string is expected which
@@ -283,17 +283,17 @@ which is generally defined by default by behaviour interfaces.
 
 This keyword may have one option, which is the way the evolution will
 be defined. Two values are accepted: `evolution` and `function`. If no
-option is specified, the `evolution` option is choosen.
+option is specified, the `evolution` option is chosen.
 
 After the option, the name of the external state variable, which shall
 be given as string, is expected.
 
 If the `evolution` option has been selected, the user may specify a
 constant evolution by simply giving its value. Otherwise, complex
-evolutions can be build using a associative array where the key is the
-time and the value the value of the evolution. Between two times, the
-values will be interpolated linearly. Prior the first declared time
-given, the value corresponding the this first time is used. After the
+evolutions can be build using an associative array where the key is the
+time and the value of the evolution. Between two times, the
+values will be interpolated linearly. Prior to the first declared time
+given, the value corresponding to this first time is used. After the
 last time given, the value corresponding this last time is used.
 
 If the `function` option has been selected, a string is expected which
@@ -348,7 +348,7 @@ of a component of the strains.
 
 This keyword may have one option, which is the way the evolution will
 be defined. Two values are accepted: `evolution` and `function`. If no
-option is specified, the `evolution` option is choosen.
+option is specified, the `evolution` option is chosen.
 
 After the option, the name of the component of the strains, which
 shall be given as string, is expected.
@@ -366,10 +366,10 @@ accepted:
 
 If the `evolution` option has been selected, the user may specify a
 constant evolution by simply giving its value. Otherwise, complex
-evolutions can be build using a associative array where the key is the
-time and the value the value of the evolution. Between two times, the
-values will be interpolated linearly. Prior the first declared time
-given, the value corresponding the this first time is used. After the
+evolutions can be build using an associative array where the key is the
+time and the value of the evolution. Between two times, the
+values will be interpolated linearly. Prior to the first declared time
+given, the value corresponding to this first time is used. After the
 last time given, the value corresponding this last time is used.
 
 If the `function` option has been selected, a string is expected which
@@ -424,10 +424,10 @@ accepted:
 
 If the `evolution` option has been selected, the user may specify a
 constant evolution by simply giving its value. Otherwise, complex
-evolutions can be build using a associative array where the key is the
-time and the value the value of the evolution. Between two times, the
-values will be interpolated linearly. Prior the first declared time
-given, the value corresponding the this first time is used. After the
+evolutions can be build using an associative array where the key is the
+time and the value of the evolution. Between two times, the
+values will be interpolated linearly. Prior to the first declared time
+given, the value corresponding to this first time is used. After the
 last time given, the value corresponding this last time is used.
 
 If the `function` option has been selected, a string is expected which
@@ -474,7 +474,7 @@ parameter of the behaviour.
 
 # The `@InternalStateVariable` keyword
 
-The `@InternalStateVariable` keyword defines the inital value of a
+The `@InternalStateVariable` keyword defines the initial value of a
 state variable.
 
 This keyword must be followed by the name of the internal state
@@ -708,7 +708,7 @@ The keyword `@ResidualFilePrecision` is not documented yet
 
 # The `@RotationMatrix` keyword
 
-The `@RotationMatrix` let the user specifiy a rotation matrix, so that
+The `@RotationMatrix` let the user specify a rotation matrix, so that
 the principal directions of the material are different from those used
 for the resolution and the boundary conditions.
 
@@ -725,7 +725,7 @@ matrix.
 
 # The `@StiffnessMatrixType` keyword
 
-The `@StiffnessMatrixType` keyword let the user specifiy choose type
+The `@StiffnessMatrixType` keyword let the user specify choose type
 of stiffness matrix that shall be given by the mechanical behaviour
 and that will be used by the resolution algorithm.
 
@@ -752,7 +752,7 @@ This keyword is not yet implemented.
 
 # The `@Strain` keyword
 
-The `@Strain` let the user specifiy the inital value of the strains.
+The `@Strain` let the user specify the initial value of the strains.
 
 This keyword is followed by an array. The size of this array must be
 equal to the number of components of symmetric tensors for the
@@ -783,14 +783,14 @@ varepsilon_{xx},\varepsilon_{yy},\varepsilon_{zz},\sqrt{2}\,\varepsilon_{xy},\sq
 The global algorithm uses two criteria to check if a satisfying
 equilibrium has been found: one on strains, the other on stresses.
 
-This criterium on strains checks if two successives estimate of the
-strains are close enough.  By default, the criterium value used is
+This criterion on strains checks if two successive estimate of the
+strains are close enough.  By default, the criterion value used is
 1.e-12;
 
-The `@StrainEpsilon` let the user specifiy the criterium value used
-for the criterium on strains.
+The `@StrainEpsilon` let the user specify the criterion value used
+for the criterion on strains.
 
-It is followed by the criterium value.
+It is followed by the criterion value.
 
 ## Example
 
@@ -800,7 +800,7 @@ It is followed by the criterium value.
 
 # The `@Stress` keyword
 
-The `@Stress` let the user specifiy the inital value of the stresses.
+The `@Stress` let the user specify the initial value of the stresses.
 
 This keyword is followed by an array. The size of this array must be
 equal to the number of components of symmetric tensors for the
@@ -821,14 +821,14 @@ keyword).
 The global algorithm uses two criteria to check if a satisfying
 equilibrium has been found: one on strains, the other on stresses.
 
-This criterium on stresses checks that the residual of the Newton
-Algorithm is low enought. By default, this value is equal to 1.e-3,
+This criterion on stresses checks that the residual of the Newton
+Algorithm is low enough. By default, this value is equal to 1.e-3,
 which is a convenient value if stresses are expressed in Pa.
 
-The `@StressEpsilon` keyword let the user specifiy the criterium value
-used for the criterium on stressess.
+The `@StressEpsilon` keyword let the user specify the criterion value
+used for the criterion on stresses.
 
-It is followed by the criterium value.
+It is followed by the criterion value.
 
 ## Example
 
@@ -836,9 +836,9 @@ It is followed by the criterium value.
 @StressEpsilon 1.e2;
 ~~~~~~~~
 
-# The `@TangentOperatorComparisonCriterium` keyword
+# The `@TangentOperatorComparisoncriterion` keyword
 
-The keyword `@TangentOperatorComparisonCriterium` is not documented yet
+The keyword `@TangentOperatorComparisoncriterion` is not documented yet
 
 # The `@Test` keyword
 
@@ -848,27 +848,27 @@ executed at the end of each time step.
 
 This keyword is followed by the type of the test.
 
-If the type of the test is `function`, two syntaxs are allowed. In the
+If the type of the test is `function`, two syntaxes are allowed. In the
 first one, three arguments are expected: the name of the tested
-variable, a function of time given the exepected value, a criterium
+variable, a function of time given the expected value, a criterion
 value used for the comparison. In the second syntax, two arguments are
-exepected: an map which associates the name of a tested variable to a
+expected: a map which associates the name of a tested variable to a
 function of time given the expected value of this variable and a
-criterium value used for the comparison. The functions may explicitly
-depend of time through the variable `t`.
+criterion value used for the comparison. The functions may explicitly
+depend on time through the variable `t`.
 
 If the type of the test is `file`, the expected values are read in the
 columns of a text file. The name of the text file shall be given and
-then two syntaxs are allowed. In the first one, three arguments are
+then two syntaxes are allowed. In the first one, three arguments are
 expected: the name of the tested variable, a column number and a
-criterium value used for the comparison. In the second syntax, two
-arguments are exepected: an map which associates the name of a tested
-variable to a column number and a criterium value used for the
-comparison. In each cases, the values given by the n+1 line shall
-corresponds the values expected after the n period.
+criterion value used for the comparison. In the second syntax, two
+arguments are expected: a map which associates the name of a tested
+variable to a column number and a criterion value used for the
+comparison. In each case, the values given by the n+1 line shall
+correspond to the values expected after the n period.
 
-The comparisons are made using an absolute criterium.  The names of
-the componenents of the strains begins with E. The name of the
+The comparisons are made using an absolute criterion.  The names of
+the components of the strains begins with E. The name of the
 components of the stresses begins with S. The name of the components
 of symmetric tensor internal state variables begins with the name of
 the internal state variables. The name of the components of symmetric
@@ -919,7 +919,7 @@ The keyword `@ThermodynamicForceEpsilon` is not documented yet
 The `@Times` keywords let the user specify a list of times used for
 the computations.
 
-This keywords is followed by an array describing intervals of
+This keyword is followed by an array describing intervals of
 times. By default, one time step is used to go from a given time to
 the next one. The keyword 'in' allows the user to divide an interval
 into a given number of smaller intervals.
@@ -933,7 +933,7 @@ the `@ImposedStress` and the `@ExternalStateVariable` keywords).
 ## Note
 
 In case of non convergence, the algorithm handles time sub
-steppings. See the `@MaximumNumberOfSubSteps` for details.
+stepping. See the `@MaximumNumberOfSubSteps` for details.
 
 ## Example
 

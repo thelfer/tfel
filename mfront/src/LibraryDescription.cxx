@@ -15,6 +15,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include "TFEL/Raise.hxx"
+#include "TFEL/Config/GetInstallPath.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/LibraryDescription.hxx"
@@ -138,8 +139,13 @@ namespace mfront {
                                          const std::string& p,
                                          const std::string& s,
                                          const LibraryType t)
-      : CompiledTargetDescriptionBase(n, p, s),
-        type(t) {}  // end of LibraryDescription::LibraryDescription
+      : CompiledTargetDescriptionBase(n, p, s), type(t) {
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
+    insert_if(this->cppflags,
+              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
+    insert_if(this->include_directories,
+              "$(shell " + tfel_config + " --include-path)");
+  }  // end of LibraryDescription::LibraryDescription
 
   LibraryDescription::LibraryDescription(const LibraryDescription&) = default;
   LibraryDescription::LibraryDescription(LibraryDescription&&) = default;

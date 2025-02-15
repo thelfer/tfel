@@ -116,22 +116,10 @@ namespace tfel::utilities {
         public tfel::utilities::internals::StdVariantFromTypeList<List>::type {
     // a simple check
     static_assert(tfel::meta::TLElementsAreUnique<List>::cond);
-
-    /*!
-     * \brief a simple wrapper around std::enable_if
-     * \tparam T: tested type which must belong to List for the requirement
-     * to hold true \tparam R: result
-     */
-    template <typename T, typename R = T>
-    using count =
-        typename tfel::meta::TLCountNbrOfT<typename std::decay<T>::type, List>;
-    /*!
-     * \brief a simple wrapper around std::enable_if
-     * \tparam T: tested type which must belong to List for the requirement to
-     * hold true \tparam R: result
-     */
-    template <typename T, typename R = T>
-    using type_check = typename std::enable_if<count<T>::value == 1, R>::type;
+    //! \brief a variable checking if the given type is valid
+    template <typename T>
+    static constexpr bool isValidType =
+        tfel::meta::TLCountNbrOfT<typename std::decay<T>::type, List>::value;
     //! \brief a simple alias
     using variant =
         typename tfel::utilities::internals::StdVariantFromTypeList<List>::type;
@@ -142,15 +130,16 @@ namespace tfel::utilities {
     //! \brief copy constructor
     GenTypeBase(const GenTypeBase &) = default;
     //! \brief constructor from a value
-    template <typename T1, typename = type_check<T1, void>>
-    GenTypeBase(T1 &&value) : variant(std::forward<T1>(value)) {}
+    template <typename T1>
+    GenTypeBase(T1 &&value) requires(isValidType<T1>)
+        : variant(std::forward<T1>(value)) {}
     // \brief assignement operator
     GenTypeBase &operator=(GenTypeBase &&) = default;
     // \brief assignement operator
     GenTypeBase &operator=(const GenTypeBase &) = default;
     // \brief assignement operator from a value
-    template <typename T1, typename = type_check<T1, void>>
-    GenTypeBase &operator=(T1 &&value) {
+    template <typename T1>
+    GenTypeBase &operator=(T1 &&value) requires(isValidType<T1>) {
       variant::operator=(std::forward<T1>(value));
       return *this;
     }
@@ -170,23 +159,23 @@ namespace tfel::utilities {
      * \pre   T1 must be a type that the GenType can hold.
      */
     template <typename T1>
-    TFEL_INLINE type_check<T1, void> set(T1 &&src) {
+    TFEL_INLINE void set(T1 &&src) requires(isValidType<T1>) {
       this->operator=(std::forward<T1>(src));
     }
     //
     template <typename T1>
-    TFEL_INLINE type_check<T1, bool> is() const {
+    TFEL_INLINE bool is() const requires(isValidType<T1>) {
       return std::holds_alternative<T1>(*this);
     }
     //! \return the value hold by the `GenTypeBase`.
     template <typename T1>
-    TFEL_INLINE type_check<T1, const T1 &> get() const {
+    TFEL_INLINE const T1 &get() const requires(isValidType<T1>) {
       tfel::raise_if<GenTypeCastError>(!this->template is<T1>());
       return std::get<T1>(*this);
     }
     //! \return the value hold by the `GenTypeBase`.
     template <typename T1>
-    TFEL_INLINE type_check<T1, T1 &> get() {
+    TFEL_INLINE T1 &get() requires(isValidType<T1>) {
       tfel::raise_if<GenTypeCastError>(!this->template is<T1>());
       return std::get<T1>(*this);
     }
@@ -195,10 +184,10 @@ namespace tfel::utilities {
 
    protected:
     //! \brief clear the GenType
-    TFEL_INLINE void clear() { this->operator=(std::monostate()); }
+    TFEL_INLINE void clear() { variant::operator=(std::monostate()); }
     //! \brief set the value of the GenType.
     template <typename T1>
-    TFEL_INLINE type_check<T1, void> set_uninitialised() {
+    TFEL_INLINE void set_uninitialised() requires(isValidType<T1>) {
       this->operator=(T1());
     }
   };

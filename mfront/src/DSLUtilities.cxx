@@ -1,3 +1,4 @@
+
 /*!
  * \file   mfront/src/DSLUtilities.cxx
  * \brief
@@ -410,6 +411,14 @@ namespace mfront {
     exportStringSymbol(os, std::string{n} + "_description", description);
   }  // end of writeFileDescriptionSymbols
 
+  void writeValidatorSymbol(std::ostream& os,
+                            const std::string_view n,
+                            const MaterialKnowledgeDescription& d) {
+    const auto validator = d.getAttribute<std::string>(
+        MaterialKnowledgeDescription::validator, "");
+    exportStringSymbol(os, std::string{n} + "_validator", validator);
+  }  // end of writeValidatorSymbols
+
   void writeBuildIdentifierSymbol(std::ostream& os,
                                   const std::string_view n,
                                   const MaterialKnowledgeDescription& d) {
@@ -474,11 +483,11 @@ namespace mfront {
                                         const std::string_view n,
                                         const MaterialKnowledgeType& t) {
     const auto s = [&t] {
-      if (t == MATERIALPROPERTY) {
+      if (t == MaterialKnowledgeType::MATERIALPROPERTY) {
         return 0;
-      } else if (t == BEHAVIOUR) {
+      } else if (t == MaterialKnowledgeType::BEHAVIOUR) {
         return 1;
-      } else if (t == MODEL) {
+      } else if (t == MaterialKnowledgeType::MODEL) {
         return 2;
       } else {
         tfel::raise(
@@ -637,7 +646,7 @@ namespace mfront {
        << "#endif /* MFRONT_EXPORT_ARRAY_OF_SYMBOLS*/\n\n";
   }  // end of writeExportDirectives
 
-  std::string makeUpperCase(const std::string_view n) {
+  std::string makeUpperCase(std::string_view n) {
     std::string s(n);
     auto p = n.begin();
     auto p2 = s.begin();
@@ -647,7 +656,7 @@ namespace mfront {
     return s;
   }  // end of makeUpperCase
 
-  std::string makeLowerCase(const std::string_view n) {
+  std::string makeLowerCase(std::string_view n) {
     std::string s(n);
     auto p = n.begin();
     auto p2 = s.begin();

@@ -1,0 +1,22 @@
+@DSL DefaultGenericBehaviour;
+@Behaviour WarningTest54;
+@Description {
+  "This test checks that a warning is reported if "
+  "Dt is used in @TangentOperator."
+}
+
+@Gradient real a;
+@ThermodynamicForce real b;
+@Gradient real c;
+@ThermodynamicForce real d;
+
+@Integrator {
+  da;
+  b;
+  dc;
+  d;
+}
+
+@TangentOperator {
+  Dt;
+}

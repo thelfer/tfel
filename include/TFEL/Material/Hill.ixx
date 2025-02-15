@@ -305,15 +305,15 @@ namespace tfel::material {
                                                            H_M, H_N);
       }  // end of exe
     };   // end of struct ComputeHillTensor
-         /*!
-          * \brief partial specialisation of the `ComputeHillTensor`
-          * class for the:
-          * - `OrthotropicAxesConvention::PLATE` orthotropic axes
-          *   convention.
-          * - `ModellingHypothesis::PLANESTRESS` modelling hypothesis.
-          *
-          * \tparam real: numeric type
-          */
+    /*!
+     * \brief partial specialisation of the `ComputeHillTensor`
+     * class for the:
+     * - `OrthotropicAxesConvention::PLATE` orthotropic axes
+     *   convention.
+     * - `ModellingHypothesis::PLANESTRESS` modelling hypothesis.
+     *
+     * \tparam real: numeric type
+     */
     template <typename real>
     struct ComputeHillTensor<tfel::material::ModellingHypothesis::PLANESTRESS,
                              tfel::material::OrthotropicAxesConvention::PLATE,
@@ -338,15 +338,15 @@ namespace tfel::material {
                                                            H_M, H_N);
       }  // end of exe
     };   // end of struct ComputeHillTensor
-         /*!
-          * \brief partial specialisation of the `ComputeHillTensor`
-          * class for the:
-          * - `OrthotropicAxesConvention::PLATE` orthotropic axes
-          *   convention.
-          * - `ModellingHypothesis::PLANESTRAIN` modelling hypothesis.
-          *
-          * \tparam real: numeric type
-          */
+    /*!
+     * \brief partial specialisation of the `ComputeHillTensor`
+     * class for the:
+     * - `OrthotropicAxesConvention::PLATE` orthotropic axes
+     *   convention.
+     * - `ModellingHypothesis::PLANESTRAIN` modelling hypothesis.
+     *
+     * \tparam real: numeric type
+     */
     template <typename real>
     struct ComputeHillTensor<tfel::material::ModellingHypothesis::PLANESTRAIN,
                              tfel::material::OrthotropicAxesConvention::PLATE,
@@ -371,15 +371,15 @@ namespace tfel::material {
                                                            H_M, H_N);
       }  // end of exe
     };   // end of struct ComputeHillTensor
-         /*!
-          * \brief partial specialisation of the `ComputeHillTensor`
-          * class for the:
-          * - `OrthotropicAxesConvention::PLATE` orthotropic axes
-          *   convention.
-          * - `ModellingHypothesis::GENERALISEDPLANESTRAIN` modelling hypothesis.
-          *
-          * \tparam real: numeric type
-          */
+    /*!
+     * \brief partial specialisation of the `ComputeHillTensor`
+     * class for the:
+     * - `OrthotropicAxesConvention::PLATE` orthotropic axes
+     *   convention.
+     * - `ModellingHypothesis::GENERALISEDPLANESTRAIN` modelling hypothesis.
+     *
+     * \tparam real: numeric type
+     */
     template <typename real>
     struct ComputeHillTensor<
         tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,

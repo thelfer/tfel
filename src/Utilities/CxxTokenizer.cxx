@@ -11,7 +11,6 @@
  * project under specific licensing conditions.
  */
 
-#include <iostream>
 #include <algorithm>
 #include <array>
 #include <cctype>
@@ -506,7 +505,8 @@ namespace tfel::utilities {
       }
     }
     throw_if((p != pe) && (*p == '.'), "invalid number");
-    this->tokens.emplace_back(std::string{b, p}, n, o, Token::Number);
+    this->tokens.emplace_back(replace_all(std::string{b, p}, "\'", ""), n, o,
+                              Token::Number);
     const auto d = p - b;
     p = b;
     advance(o, p, d);
@@ -1173,8 +1173,8 @@ namespace tfel::utilities {
     CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readDouble",
                                     "expected number", p, pe);
     raise_if(p->flag != Token::Number,
-             "CxxTokenizer::readInt: given value is not a number (read " +
-                 p->value + ")");
+             "CxxTokenizer::readDouble: given value is not a number (read '" +
+                 p->value + "')");
     const auto value = [&p] {
       auto v = p->value;
       replace_all(v, '\'', "");

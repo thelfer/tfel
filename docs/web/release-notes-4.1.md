@@ -724,7 +724,7 @@ option defined on the command-line overwrites the option defined in the
 
 ~~~~{.cxx}
 $ mfront --obuild --interface=generic    \
-    --behaviour-dsls-options-file=options.json \
+    --behaviour-dsl-options-file=options.json \
     Plasticity.mfront
 ~~~~
 

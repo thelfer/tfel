@@ -1,0 +1,13 @@
+@Behaviour WarningTest45;
+@Description {
+  "This test checks that a warning is reported if "
+  "the increment of all the state variables is not used in "
+  "@Integrator."
+}
+
+@StateVariable real p;
+
+@Integrator {
+  deto;
+  sig;
+}

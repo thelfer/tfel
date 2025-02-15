@@ -32,6 +32,10 @@ namespace mfront {
   //! \brief structure standing for a standard (non static) variable
   struct MFRONT_VISIBILITY_EXPORT VariableDescription
       : public VariableDescriptionBase {
+    //
+    template <typename T>
+    static constexpr bool isVariableAttribute =
+        tfel::meta::TLCountNbrOfT<T, VariableAttributeTypes>::value == 1;
     //! \brief standard attribute name
     static const char* const depth;
     //! \brief standard attribute name
@@ -110,19 +114,14 @@ namespace mfront {
      * \param[in] n : name
      */
     template <typename T>
-    typename std::enable_if<
-        tfel::meta::TLCountNbrOfT<T, VariableAttributeTypes>::value == 1,
-        T&>::type
-    getAttribute(const std::string&);
+    T& getAttribute(const std::string&) requires(isVariableAttribute<T>);
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
     template <typename T>
-    typename std::enable_if<
-        tfel::meta::TLCountNbrOfT<T, VariableAttributeTypes>::value == 1,
-        const T&>::type
-    getAttribute(const std::string&) const;
+    const T& getAttribute(const std::string&) const
+        requires(isVariableAttribute<T>);
     /*!
      * \return the attribute with the given name or the given default
      * value if the variable does not exists
@@ -130,10 +129,8 @@ namespace mfront {
      * \param[in] v : value
      */
     template <typename T>
-    typename std::enable_if<
-        tfel::meta::TLCountNbrOfT<T, VariableAttributeTypes>::value == 1,
-        T>::type
-    getAttribute(const std::string&, const T&) const;
+    T getAttribute(const std::string&, const T&) const
+        requires(isVariableAttribute<T>);
     /*!
      * \return all the attribute registred
      * \param[in] n : name
@@ -196,10 +193,20 @@ namespace mfront {
      */
     void setGlossaryName(const std::string&);
     /*!
+     * \brief associate a new glossary name to the variable
+     * \param[in] g: glossary name
+     */
+    void resetGlossaryName(const std::string&);
+    /*!
      * \brief associate an entry name to the variable
      * \param[in] e: entry name
      */
     void setEntryName(const std::string&);
+    /*!
+     * \brief associate a new entry name to the variable
+     * \param[in] e: entry name
+     */
+    void resetEntryName(const std::string&);
     //! \return true if the variable has a glossary name
     bool hasGlossaryName() const;
     //! \return true if the variable has a glossary name

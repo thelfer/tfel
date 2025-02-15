@@ -1,0 +1,15 @@
+@DSL DefaultCZM;
+@Behaviour WarningTest69;
+@Description {
+  "This test checks that no warning is reported if "
+  "the diagonal parts of the decomposition of the consistent tangent operator "
+  "are used in @Integrator."
+}
+
+@ProvidesTangentOperator;
+@Integrator {
+  du;
+  t;
+  Dt_nn;
+  Dt_tt;
+}

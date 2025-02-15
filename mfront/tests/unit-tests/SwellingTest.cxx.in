@@ -83,7 +83,7 @@ struct SwellingTest final
  private:
   void check(const std::string& s){
     auto& f = mfront::DSLFactory::getDSLFactory();
-    auto dsl = f.createNewParser("DefaultDSL");
+    auto dsl = f.createNewDSL("DefaultDSL");
     try{
       dsl->analyseString(s);
     }

@@ -53,6 +53,8 @@ namespace mfront {
     //
     friend struct MultipleIsotropicMisesFlowsCodeGenerator;
 
+    bool allowMultipleFlowRules() const override;
+    std::size_t getNumberOfFlowRules() const override;
     void treatFlowRule() override;
 
     struct FlowHandler {

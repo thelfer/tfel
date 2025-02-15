@@ -20,6 +20,7 @@
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/SupportedTypes.hxx"
+#include "MFront/VariableDescription.hxx"
 
 namespace mfront {
 
@@ -38,51 +39,28 @@ namespace mfront {
    * between the data given by the solver and the ones needed by the
    * interface.
    */
-  struct MFRONT_VISIBILITY_EXPORT BehaviourMaterialProperty {
+  struct MFRONT_VISIBILITY_EXPORT BehaviourMaterialProperty
+      : VariableDescription {
     //! a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! a simple alias
     using Hypothesis = ModellingHypothesis::Hypothesis;
     /*!
      * constructor
-     * \param[in] t : type
-     * \param[in] n : name
-     * \param[in] v : usual variable name
-     * \param[in] a : array size
+     * \param[in] v : variable description
      * \param[in] o : offset
      * \param[in] d : dummy variable
      */
-    BehaviourMaterialProperty(const std::string&,
-                              const std::string&,
-                              const std::string&,
-                              const unsigned short,
+    BehaviourMaterialProperty(const VariableDescription&,
                               const SupportedTypes::TypeSize,
                               const bool);
-    BehaviourMaterialProperty(const BehaviourMaterialProperty&) = default;
-    BehaviourMaterialProperty(BehaviourMaterialProperty&&) = default;
-    BehaviourMaterialProperty& operator=(const BehaviourMaterialProperty&) =
-        default;
-    BehaviourMaterialProperty& operator=(BehaviourMaterialProperty&&) = default;
+    BehaviourMaterialProperty(const BehaviourMaterialProperty&);
+    BehaviourMaterialProperty(BehaviourMaterialProperty&&);
+    BehaviourMaterialProperty& operator=(const BehaviourMaterialProperty&);
+    BehaviourMaterialProperty& operator=(BehaviourMaterialProperty&&);
     ~BehaviourMaterialProperty();
     //! \return if the material property is scalar
     bool isScalar() const;
-    /*!
-     *  Type of the variable.
-     *  If the variable has been declared as an array (see below),
-     *  this field holds the type contained by the array.
-     */
-    std::string type;
-    /*!
-     * \brief glossary name of the material property
-     */
-    std::string name;
-    /*!
-     * \brief variable name of the material property
-     */
-    std::string var_name;
-    //! if the variable has been declared as an array, this field
-    //  contains a value greater than 1
-    unsigned short arraySize;
     /*!
      * offset of the variable in the indirection map
      */
@@ -99,17 +77,37 @@ namespace mfront {
   };  // end of struct BehaviourMaterialProperty
 
   /*!
+   * \brief help structure defining the options
+   * of the buildMaterialPropertiesList
+   * function
+   */
+  struct BuildMaterialPropertiesListOptions {
+    /*!
+     * \brief boolean stating if material properties are used to build the
+     * stiffness tensor
+     */
+    const bool useMaterialPropertiesToBuildStiffnessTensor;
+    /*!
+     * \brief boolean stating if material properties are used to build the
+     * thermal expansion coefficient tensor
+     */
+    const bool useMaterialPropertiesToBuildThermalExpansionCoefficientTensor;
+  };
+
+  /*!
    * \return a pair which first member gives the position of the
    * material properties in the values given through the interface
    * and whose second members is an offset giving the number of
    * imposed material properties.
    * \param[in] mb: behaviour description
    * \param[in] mh: modelling hypotheses
+   * \param[in] opts: options
    */
   std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
   buildMaterialPropertiesList(
       const BehaviourDescription&,
-      const std::set<BehaviourMaterialProperty::Hypothesis>&);
+      const std::set<BehaviourMaterialProperty::Hypothesis>&,
+      const BuildMaterialPropertiesListOptions&);
   /*!
    * \return a pair which first member gives the position of the
    * material properties in the values given through the interface
@@ -117,12 +115,14 @@ namespace mfront {
    * imposed material properties.
    * \param[in] mb: behaviour description
    * \param[in] h:  modelling hypothesis
+   * \param[in] opts: options
    */
   MFRONT_VISIBILITY_EXPORT
   std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
   buildMaterialPropertiesList(
       const BehaviourDescription&,
-      const tfel::material::ModellingHypothesis::Hypothesis);
+      const tfel::material::ModellingHypothesis::Hypothesis,
+      const BuildMaterialPropertiesListOptions&);
   /*!
    * \brief append a variable to material property list
    * \param[out] l: list of material properties

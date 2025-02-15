@@ -180,7 +180,7 @@ const auto l1 = makeBarlatLinearTransformation<3>(c_12,c_21,c_13,c_31,
 > \end{pmatrix}
 > \]
 > 
-> Therefore, if one wants to uses coeficients \(c^{B}\) given
+> Therefore, if one wants to use coefficients \(c^{B}\) given
 > by Barlat, one shall call this function as follows:
 > 
 > ~~~~{.cpp}
@@ -191,8 +191,8 @@ const auto l1 = makeBarlatLinearTransformation<3>(c_12,c_21,c_13,c_31,
 The `TFEL/Material` library also provide an overload of the
 `makeBarlatLinearTransformation` which template parameters are the
 modelling hypothesis and the orthotropic axis conventions. The purpose
-of this overload is to swap appriopriate coefficients to get a
-consistent definition of the linear transforamtions for all the
+of this overload is to swap appropriate coefficients to get a
+consistent definition of the linear transformations for all the
 modelling hypotheses.
 
 # General functionalities
@@ -251,7 +251,7 @@ approximations that have been implemented and that can be evaluated in a
 The `computeApproximateInverseLangevinFunction` computes one
 approximation of the inverse Langevin function and the
 `computeApproximateInverseLangevinFunctionAndDerivative` function
-computes ne approximation of the inverse Langevin function and its
+computes an approximation of the inverse Langevin function and its
 derivative. These functions have two template parameters: the
 approximation selected and the numeric type to be used. By default, the
 `JEDYNAK_2015` approximation is used and the numeric type can be deduced
@@ -321,7 +321,7 @@ vectors:
 \]
 
 This plane is used to characterize the iso-values of equivalent
-stresses which are not sensitive to the hydrostatic pression.
+stresses which are not sensitive to the hydrostatic pressure.
 
 Various functions are available:
 
@@ -332,16 +332,17 @@ Various functions are available:
 
 # Orthotropic axes convention
 
-Most finite element solver can't have a uniq definition of the
-orthotropic axes for all the modelling hypotheses.
+Most finite element solver can't have a unique definition of the
+orthotropic axes valid for all the modelling hypotheses.
 
 For example, one can define a pipe using the following axes
 definition:
 
 - \(\left(rr,zz,tt,...\right)\) in \(3D\), \(2D\) axysymmetric, \(1D\)
-  axisymmetric generalised plane strain or generalised plane stress.
-- \(\left(rr,tt,zz,...\right)\) in \(2D\) plane stress, strain,
-  generalized plane strain.
+  axisymmetric generalised plane strain or \(1D\)
+  axisymmetric generalised plane stress.
+- \(\left(rr,tt,zz,...\right)\) in \(2D\) plane stress, \(2D\) plane
+  strain and \(2D\) generalized plane strain.
 
 ![The `Pipe` orthotropic axes convention for \(3D\), \(2D\)
   axysymmetric, \(1D\) axisymmetric generalised plane strain or
@@ -352,81 +353,123 @@ definition:
   (left) and \(2D\) plane stress, strain, generalized plane strain
   (right)"){width=50%}
 
-With those conventions, the axial direction is either the second or
-the third material axis, a fact that must be taken into account when
-defining the stiffness tensor, the Hill tensor(s), the thermal
-expansion, etc.
-
-![The `Plate` orthotropic axes convention](img/plate.svg "The `Plate`
-  orthotropic axes convention"){width=50%}
-
-If we were to model plates, a appropriate convention is the following:
-
-- The first material axis is the rolling direction
-- The second material axis is the in plane direction perpendicular to
-  the rolling direction (transverse direction).
-- The third material axis is the normal to the plate.
+With those conventions, named `Pipe` in `MFront`, the axial direction is
+either the second or the third material axis, a fact that must be taken
+into account when defining the stiffness tensor, the Hill tensor(s), the
+thermal expansion, etc.
 
 This convention is only valid for \(3D\), \(2D\) axysymmetric, \(1D\)
   axisymmetric generalised plane strain or generalised plane stress.
 - \(\left(rr,tt,zz,...\right)\) in \(2D\) plane stress, strain,
   generalized plane strain.
 
-![The `Pipe` orthotropic axes convention for \(3D\), \(2D\)
-  axysymmetric, \(1D\) axisymmetric generalised plane strain or
-  generalised plane stress (left) and \(2D\) plane stress, strain,
-  generalized plane strain (right)](img/pipe.svg "The `Pipe`
-  orthotropic axes convention for \(3D\), \(2D\) axysymmetric, \(1D\)
-  axisymmetric generalised plane strain or generalised plane stress
-  (left) and \(2D\) plane stress, strain, generalized plane strain
-  (right)"){width=50%}
-
-With those conventions, the axial direction is either the second or
-the third material axis, a fact that must be taken into account when
-defining the stiffness tensor, the Hill tensor(s), the thermal
-expansion, etc.
-
 ![The `Plate` orthotropic axes convention](img/plate.svg "The `Plate`
   orthotropic axes convention"){width=50%}
 
-If we were to model plates, a appropriate convention is the following:
+If we were to model plates, an appropriate convention is the following:
 
 - The first material axis is the rolling direction
 - The second material axis is the in plane direction perpendicular to
   the rolling direction (transverse direction).
 - The third material axis is the normal to the plate.
 
-This convention is only valid for 
-\(3D\), \(2D\) axysymmetric, \(1D\)
-  axisymmetric generalised plane strain or generalised plane stress.
-- \(\left(rr,tt,zz,...\right)\) in \(2D\) plane stress, strain,
-  generalized plane strain.
+By definition, this convention, named `Plate` in `MFront` is only valid
+for \(3D\), \(2D\) plane stress, \(2D\) plane strain and \(2D\)
+generalized plane strain modelling hypotheses.
 
-![The `Pipe` orthotropic axes convention for \(3D\), \(2D\)
-  axysymmetric, \(1D\) axisymmetric generalised plane strain or
-  generalised plane stress (left) and \(2D\) plane stress, strain,
-  generalized plane strain (right)](img/pipe.svg "The `Pipe`
-  orthotropic axes convention for \(3D\), \(2D\) axysymmetric, \(1D\)
-  axisymmetric generalised plane strain or generalised plane stress
-  (left) and \(2D\) plane stress, strain, generalized plane strain
-  (right)"){width=50%}
+# Homogeneisation
 
-With those conventions, the axial direction is either the second or
-the third material axis, a fact that must be taken into account when
-defining the stiffness tensor, the Hill tensor(s), the thermal
-expansion, etc.
+The homogenization functions are part of the namespace `tfel::material::homogenization`.
+A specialization for elasticity is defined: `tfel::material::homogenization::elasticity`.
 
-![The `Plate` orthotropic axes convention](img/plate.svg "The `Plate`
-  orthotropic axes convention"){width=50%}
+## Eshelby tensors
 
-If we were to model plates, a appropriate convention is the following:
+The header `IsotropicEshelbyTensor.hxx` introduces
+the function `computeEshelbyTensor` which computes the Eshelby tensor
+of an ellipsoid.
+If we consider a constant stress-free strain \(\tenseur \varepsilon^\mathrm{T}\)
+filling an ellipsoidal volume embedded in an infinite homogeneous medium whose
+elasticity is \(\tenseurq{C}_0\), the strain tensor inside the ellipsoid is given by
 
-- The first material axis is the rolling direction
-- The second material axis is the in plane direction perpendicular to
-  the rolling direction (transverse direction).
-- The third material axis is the normal to the plate.
+\(\tenseur \varepsilon=\tenseur S_0:\tenseur \varepsilon^\mathrm{T}\).
 
-By definition, this convention is only valid for \(3D\), \(2D\) plane
-stress, strain and generalized plane strain modelling hypotheses.
+where \(\tenseur S_0\) is the Eshelby tensor.
+Note that it is related to the Hill tensor (\tenseur P_0\) by
+
+\(\tenseur P_0=\tenseur S_0:\tenseur C_0^{-1}\)
+
+which gives the strain tensor inside the ellipsoid as a function of the
+polarization tensor \(\tenseur \tau = -\tenseur C_0:\tenseur \varepsilon^\mathrm{T}\) : 
+
+\(\tenseur \varepsilon=-\tenseur P_0:\tenseur \tau\).
+
+The function `computeEshelbyTensor` computes the Eshelby tensor of an ellipsoid
+whose semi-axis lengths are `a`, `b`, `c`, embedded in an isotropic
+matrix. It returns an object of `type st2tost2<3u,real>`, which is the
+fourth-order Eshelby tensor, in a basis which is adapted to the ellipsoid.
+
+There is also `computeSphereEshelbyTensor`, `computeAxisymmetricalEshelbyTensor`,
+and also `computeCircularCylinderEshelbyTensor` and `computeEllipticCylinderEshelbyTensor`
+for plane strain elasticity.
+
+The expressions can be found in [@torquato_2002]
+for the axisymmetrical ellipsoid and in [@eshelby_1957] for other cases.
+
+When two axes are very close, the formulas for three different axes are numerically instable,
+hence a parameter is introduced to switch to the formulas suited for the perfect
+axisymmetrical case. This parameter can be modified by the user, it is called `precf`
+when using `float`, `precd` for `double`, and `precld`.
+for `long double`.
+In the same way, the formulas for the axisymmetrical case are instable when the aspect
+ratio is near one, so a parameter allows to switch to the formula for a sphere.
+
+When \(\tenseur C_0\) is anisotropic, the Eshelby tensor can be computed
+with `computeAnisotropicEshelbyTensor` in 3D and `computePlainStrainAnisotropicEshelbyTensor`
+in 2D. There are also `computeAnisotropicHillTensor` and `computePlainStrainAnisotropicHillTensor`.
+These functions are introduced by the header `AnisotropicEshelbyTensor.hxx`.
+
+## Strain localisation tensors
+
+The header `IsotropicEshelbyTensor.hxx` also introduces
+three functions that compute the strain localisation tensor of an ellipsoid.
+If we consider an ellipsoid whose elasticity is \(\tenseur C_i\), embedded
+in an infinite homogeneous medium whose elasticity is \(\tenseur C_0\),
+submitted to a external uniform strain field at infinity \(\tenseur E\),
+the strain field within the ellipsoid is uniform and given by
+
+\(\tenseur \varepsilon = \tenseur A:\tenseur E\)
+
+where \(\tenseur A \) is the localisation tensor.
+
+Three functions are implemented for the different possible shapes :
+`computeEllipsoidLocalisationTensor`, `computeAxisymmetricalEllipsoidLocalisationTensor`
+and `computeSphereLocalisationTensor`. 
+The ellipsoid is parametrized by its semi-axis lengths \(a,b,c\) but also
+by its axis orientations.
+The functions then return the localisation tensors taking into account the orientations.
+There are also, when the medium is anisotropic, `computeAnisotropicLocalisationTensor` and `computePlainStrainAnisotropicLocalisationTensor`. These functions are introduced by the header
+`AnisotropicEshelbyTensor.hxx`.
+
+## Homogenization schemes
+
+Different schemes are implemented and return the homogenized stiffness of the material.
+These schemes are introduced by the header `LinearHomogenizationSchemes.hxx`.
+The scheme available are Mori-Tanaka scheme and dilute scheme.
+The available functions are `computeMoriTanakaScheme`, `computeDiluteScheme`,
+`computeSphereDiluteScheme`, `computeSphereMoriTanakaScheme`.
+
+If a distribution of ellipsoids is considered, three types of distributions
+are considered : isotropic, transverse isotropic and with unique orientation.
+The corresponding functions are `computeIsotropicDiluteScheme`,
+`computeTransverseIsotropicDiluteScheme`, `computeOrientedDiluteScheme`,
+`computeIsotropicMoriTanakaScheme`, `computeTransverseIsotropicMoriTanakaScheme`
+and `computeOrientedMoriTanakaScheme`.
+
+## Homogenization bounds
+
+Different bounds are implemented and are introduced by the header
+`LinearHomogenizationBounds.hxx`.
+The available bounds are `computeVoigtStiffness`, 
+`computeReussStiffness`, and `computeIsotropicHashinShtrikmanBounds`.
 
 <!-- Local IspellDict: english -->

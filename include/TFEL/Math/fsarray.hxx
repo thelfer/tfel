@@ -58,7 +58,7 @@ namespace tfel::math {
   template <unsigned short N, typename ValueType = double>
   struct fsarray : GenericFixedSizeArray<fsarray<N, ValueType>,
                                          FixedSizeVectorPolicy<N, ValueType>>,
-                   ArrayConcept<fsarray<N, ValueType>> {
+                   ArrayConceptBase<fsarray<N, ValueType>> {
     //! \brief default constructor
     constexpr fsarray() noexcept = default;
     //! \brief move constructor
@@ -77,6 +77,10 @@ namespace tfel::math {
     using GenericFixedSizeArray<fsarray<N, ValueType>,
                                 FixedSizeVectorPolicy<N, ValueType>>::operator=;
   };  // end of fsarray
+
+  // class template argument deduction
+  template <typename... T>
+  fsarray(T&&... t) -> fsarray<sizeof...(T), std::common_type_t<T...>>;
 
   /*!
    * \tparam N: arrray size

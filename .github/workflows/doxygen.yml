@@ -1,0 +1,40 @@
+name: Doxygen
+
+on:
+  push:
+    branches: [ 468-doc-automatically-deploy-the-doxygen-documents-to-github-pages ]
+  pull_request:
+    branches: [ 468-doc-automatically-deploy-the-doxygen-documents-to-github-pages ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+
+  doc-html:
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+
+    - uses: actions/checkout@v2
+    
+    - name: Install Doxygen
+      run: sudo apt-get install doxygen graphviz -y
+      shell: bash
+    
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -Denable-doxygen-doc=ON
+    
+    - name: Generate doxygen
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target doc-html 
+
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        personal_token: ${{ secrets.DEPLOY_TO_THELFER_GITHUB_IO }}
+        publish_branch: master
+        publish_dir: ${{github.workspace}}/build/docs/doxygen/html/ 
+        external_repository: thelfer/thelfer.github.io
+        destination_dir: tfel/doxygen/

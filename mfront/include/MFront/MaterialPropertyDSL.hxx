@@ -12,8 +12,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONTMATERIALLAWPARSER_HXX
-#define LIB_MFRONTMATERIALLAWPARSER_HXX
+#ifndef LIB_MATERIALPROPERTYDSL_HXX
+#define LIB_MATERIALPROPERTYDSL_HXX
 
 #include <set>
 #include <string>
@@ -46,8 +46,7 @@ namespace mfront {
      *\param[in] opts: options passed to the DSL
      */
     MaterialPropertyDSL(const DSLOptions&);
-    //! \brief return the description of the material property treated by the
-    //! DSL
+    //! \return the description of the material property treated by the DSL
     virtual const MaterialPropertyDescription& getMaterialPropertyDescription()
         const;
     //
@@ -70,6 +69,7 @@ namespace mfront {
                     const std::vector<std::string>&,
                     const std::map<std::string, std::string>&) override;
     void endsInputFileProcessing() override;
+    void makeConsistencyChecks() const override;
     //! \brief destructor
     ~MaterialPropertyDSL() override;
 
@@ -83,7 +83,8 @@ namespace mfront {
     bool useQt() const override;
     void disableQuantitiesUsageIfNotAlreadySet() override;
     void addExternalMFrontFile(const std::string&,
-                               const std::vector<std::string>&) override;
+                               const std::vector<std::string>&,
+                               const tfel::utilities::DataMap&) override;
     void treatUnknownKeyword() override;
     void reserveName(const std::string&) override;
     bool isNameReserved(const std::string&) const override;
@@ -119,6 +120,12 @@ namespace mfront {
     virtual void treatLaw();
     //! \brief treat the `@Function` keyword
     virtual void treatFunction();
+    //! \brief treat the `@Data` keyword
+    virtual void treatData();
+    //! \brief auxiliary method to treat constant data
+    void treatDataWithoutInput();
+    //! \brief auxiliary method to treat data for one input
+    void treatDataWithOneInput();
     /*!
      * treat the setGlossaryName and the setEntryName method for
      * inputs or output.
@@ -164,4 +171,4 @@ namespace mfront {
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONTMATERIALLAWPARSER_HXX */
+#endif /* LIB_MATERIALPROPERTYDSL_HXX */

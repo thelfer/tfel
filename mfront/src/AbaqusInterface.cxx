@@ -22,6 +22,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/MFrontUtilities.hxx"
@@ -248,6 +249,17 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "AbaqusInterface::treatKeyword: " + m);
     };
+    auto check_interface_restriction = [this, &i, &k] {
+      if (i.empty()) {
+        reportWarning("keyword '" + k +
+                      "' is used without being restricted to the " +
+                      this->getName() +
+                      " interface, which could be a portability "
+                      "issue. Please add [" +
+                      this->getName() + "] after the keyword (i.e. replace '" +
+                      k + "' by '" + k + "[" + this->getName() + "]')");
+      }
+    };
     if (!i.empty()) {
       if (std::find(i.begin(), i.end(), this->getName()) != i.end()) {
         auto keys = AbaqusInterfaceBase::getCommonKeywords();
@@ -263,6 +275,10 @@ namespace mfront {
         return {false, current};
       }
     }
+    const auto keys = AbaqusInterfaceBase::getCommonKeywords();
+    if (std::find(keys.begin(), keys.end(), k) != keys.end()) {
+      check_interface_restriction();
+    }
     const auto r =
         AbaqusInterfaceBase::treatCommonKeywords(bd, k, current, end);
     if (r.first) {
@@ -270,16 +286,21 @@ namespace mfront {
     }
     if ((k == "@AbaqusGenerateMTestFileOnFailure") ||
         (k == "@GenerateMTestFileOnFailure")) {
+      if (k != "@GenerateMTestFileOnFailure") {
+        check_interface_restriction();
+      }
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(k, current, end));
       return {true, current};
     } else if (k == "@AbaqusCompareToNumericalTangentOperator") {
+      check_interface_restriction();
       checkCompareToNumericalTangentOperatorConsistency(bd);
       this->compareToNumericalTangentOperator =
           this->readBooleanValue(k, current, end);
       return make_pair(true, current);
     } else if ((k == "@AbaqusTangentOperatorComparisonCriterium") ||
                (k == "@AbaqusTangentOperatorComparisonCriterion")) {
+      check_interface_restriction();
       throw_if(
           !this->compareToNumericalTangentOperator,
           "comparison to tangent operator is not enabled at this stage.\n"
@@ -295,6 +316,7 @@ namespace mfront {
       ++(current);
       return {true, current};
     } else if (k == "@AbaqusStrainPerturbationValue") {
+      check_interface_restriction();
       throw_if(!this->compareToNumericalTangentOperator,
                "time stepping is not enabled at this stage.\n"
                "Use the @AbaqusUseTimeSubStepping directive before "
@@ -1321,10 +1343,6 @@ namespace mfront {
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, "abaqus" + name + ".cxx");
     d.headers.push_back("MFront/Abaqus/abaqus" + name + ".hxx");
     insert_if(l.link_directories,

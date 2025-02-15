@@ -20,7 +20,7 @@ namespace mfront {
    * \brief a simple structure describing the type of material
    * knowledge treated.
    */
-  enum MaterialKnowledgeType {
+  enum class MaterialKnowledgeType {
     MATERIALPROPERTY = 0,
     BEHAVIOUR = 1,
     MODEL = 2

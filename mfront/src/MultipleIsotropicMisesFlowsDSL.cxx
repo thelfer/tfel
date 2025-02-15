@@ -1,3 +1,4 @@
+
 /*!
  * \file   mfront/src/MultipleIsotropicMisesFlowsDSL.cxx
  * \brief
@@ -45,13 +46,10 @@ namespace mfront {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("MultipleIsotropicMisesFlows");
     // Default state vars
-    this->mb.addStateVariable(
-        h, VariableDescription("StrainStensor", "εᵉˡ", "eel", 1u, 0u));
     this->mb.addStateVariable(h, VariableDescription("strain", "p", 1u, 0u));
-    this->mb.setGlossaryName(h, "eel", "ElasticStrain");
     this->mb.setGlossaryName(h, "p", "EquivalentStrain");
     // default local vars
-    this->reserveName("mu_3_theta");
+    this->reserveName("mfront_internal_3_mu_theta");
     this->reserveName("surf");
     this->reserveName("jacobian_inversion_succeeded");
     this->mb.addLocalVariable(
@@ -140,9 +138,19 @@ namespace mfront {
     return "";
   }  // end of getCodeBlockTemplate
 
+  bool MultipleIsotropicMisesFlowsDSL::allowMultipleFlowRules() const {
+    return true;
+  }  // end of allowMultipleFlowRules
+
+  std::size_t MultipleIsotropicMisesFlowsDSL::getNumberOfFlowRules() const {
+    return this->flows.size();
+  }  // end of getNumberOfFlowRules
+
   void MultipleIsotropicMisesFlowsDSL::treatFlowRule() {
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     FlowHandler flow;
+    auto opts = CodeBlockOptions{};
+    this->readCodeBlockOptions(opts, false);
     this->checkNotEndOfFile("MultipleIsotropicMisesFlowsDSL::treatFlowRule",
                             "Expected flow rule name.");
     if (this->current->value == "Plasticity") {
@@ -225,7 +233,7 @@ namespace mfront {
                                 "Could not read theta value (read '" +
                                     this->current->value + "').");
       }
-      otheta << "mu_3_theta" << this->flows.size();
+      otheta << "mfront_internal_3_mu_theta" << this->flows.size();
       ose << "se" << this->flows.size();
       oseq_e << "seq_e" << this->flows.size();
       this->reserveName(ose.str());
@@ -236,12 +244,36 @@ namespace mfront {
       flow.hasSpecificTheta = false;
     }
     std::ostringstream cname;
-    cname << BehaviourData::FlowRule << flows.size() << '\n';
+    cname << BehaviourData::FlowRule << this->flows.size() << '\n';
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
         m = [this](const Hypothesis h, const std::string& sv, const bool b) {
           return this->flowRuleVariableModifier(h, sv, b);
         };
-    this->treatCodeBlock(cname.str(), m, true, false);
+    const auto has_ihr = this->ihrs.contains(this->flows.size());
+    auto analyser = [this, &flow, has_ihr](CodeBlock& c, const Hypothesis,
+                                           const std::string& cv) {
+      if ((cv == "f") || (cv == "df_dseq")) {
+        c.block_variables.insert(cv);
+      }
+      if (cv == "df_dp") {
+        if (flow.flow == FlowHandler::CreepFlow) {
+          this->throwRuntimeError(
+              "MultipleIsotropicMisesFlowsDSL::treatFlowRule",
+              "the derivative 'df_dp' shall not be used in a flow rule "
+              "defining a creep flow.");
+        } else {
+          c.block_variables.insert(cv);
+        }
+      }
+      if (has_ihr) {
+        if ((cv == "R") || (cv == "dR_dp")) {
+          c.block_variables.insert(cv);
+        }
+      }
+    };
+    this->treatCodeBlock(opts, cname.str(), m, analyser, true);
+    this->checkFlowRule(cname.str(), this->flows.size(),
+                        flow.flow != FlowHandler::CreepFlow);
     flow.flowRule =
         this->mb.getCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS, cname.str());
     this->flows.push_back(flow);

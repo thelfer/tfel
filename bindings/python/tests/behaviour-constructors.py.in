@@ -1,0 +1,44 @@
+import os
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
+
+from @tfel_material_python_module@ import ModellingHypothesis
+import @mtest_python_module@ as mtest
+
+class BehaviourConstructors(unittest.TestCase):
+    def test1(self):
+        h = ModellingHypothesis.TRIDIMENSIONAL
+        l = os.environ['MTEST_BEHAVIOUR_LIBRARY']
+        b = mtest.Behaviour('generic', l, 'ImplicitNorton', h)
+        self.checkBehaviour(b)
+
+    def test2(self):
+        l = os.environ['MTEST_BEHAVIOUR_LIBRARY']
+        b = mtest.Behaviour('generic', l, 'ImplicitNorton', 'Tridimensional')
+        self.checkBehaviour(b)
+
+    def test3(self):
+        l = os.environ['MTEST_BEHAVIOUR_LIBRARY']
+        b = mtest.Behaviour(interface='generic',
+                            library=l,
+                            function='ImplicitNorton',
+                            hypothesis='PlaneStrain')
+        self.checkBehaviour(b)
+
+    def test4(self):
+        l = os.environ['MTEST_BEHAVIOUR_LIBRARY']
+        b = mtest.Behaviour(library=l,
+                            function='ImplicitNorton',
+                            hypothesis='PlaneStrain')
+        self.checkBehaviour(b)
+
+    def checkBehaviour(self, b):
+        isvs = b.getInternalStateVariablesNames()
+        self.assertTrue(len(isvs) == 2)
+        self.assertTrue(isvs[0] == 'ElasticStrain')
+        self.assertTrue(isvs[1] == 'p')
+
+if __name__ == '__main__':
+    unittest.main()

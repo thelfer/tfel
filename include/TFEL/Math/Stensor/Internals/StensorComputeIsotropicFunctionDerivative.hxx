@@ -31,20 +31,17 @@ namespace tfel::math::internals {
      * \param[in]  eps: criterion value used to judge if two eigenvalues are
      * equals
      */
-    template <typename ST2toST2Type,
+    template <ST2toST2Concept ST2toST2Type,
               typename Function,
               typename FunctionDerivative,
               typename T>
-    static
-        typename std::enable_if<(implementsST2toST2Concept<ST2toST2Type>()) &&
-                                    (getSpaceDimension<ST2toST2Type>() == 1u),
-                                void>::type
-        exe2(ST2toST2Type& d,
-             const Function&,
-             const FunctionDerivative& df,
-             const tvector<3u, T>& vp,
-             const rotation_matrix<T>&,
-             const T) {
+    static void exe2(ST2toST2Type& d,
+                     const Function&,
+                     const FunctionDerivative& df,
+                     const tvector<3u, T>& vp,
+                     const rotation_matrix<T>&,
+                     const T)  //
+        requires(getSpaceDimension<ST2toST2Type>() == 1u) {
       using real = numeric_type<ST2toST2Type>;
       constexpr auto zero = real(0);
       d(0, 0) = df(vp[0]);
@@ -54,27 +51,27 @@ namespace tfel::math::internals {
       d(2, 2) = df(vp[2]);
       d(2, 0) = d(2, 1) = zero;
     }  // end of exe
-       /*!
-        * compute the derivative of an isotropic function
-        * \param[out] d:   result
-        * \param[in]  f:   function values
-        * \param[in]  df:  values of the derivative of the function
-        * \param[in]  vp:  eigen values
-        * \param[in]  m:   eigenvectors
-        * \param[in]  eps: criterion value used to judge if two eigenvalues are
-        * equals
-        */
-    template <typename ST2toST2Type, typename T1, typename T2, typename T3>
-    static
-        typename std::enable_if<(implementsST2toST2Concept<ST2toST2Type>()) &&
-                                    (getSpaceDimension<ST2toST2Type>() == 1u),
-                                void>::type
-        exe(ST2toST2Type& d,
-            const tvector<3u, T1>&,
-            const tvector<3u, T2>& df,
-            const tvector<3u, T3>&,
-            const tmatrix<3u, 3u, base_type<T3>>&,
-            const T3) {
+    /*!
+     * compute the derivative of an isotropic function
+     * \param[out] d:   result
+     * \param[in]  f:   function values
+     * \param[in]  df:  values of the derivative of the function
+     * \param[in]  vp:  eigen values
+     * \param[in]  m:   eigenvectors
+     * \param[in]  eps: criterion value used to judge if two eigenvalues are
+     * equals
+     */
+    template <ST2toST2Concept ST2toST2Type,
+              typename T1,
+              typename T2,
+              typename T3>
+    static void exe(ST2toST2Type& d,
+                    const tvector<3u, T1>&,
+                    const tvector<3u, T2>& df,
+                    const tvector<3u, T3>&,
+                    const tmatrix<3u, 3u, base_type<T3>>&,
+                    const T3)  //
+        requires(getSpaceDimension<ST2toST2Type>() == 1u) {
       using real = numeric_type<ST2toST2Type>;
       constexpr auto zero = real(0);
       d(0, 0) = df[0];
@@ -98,17 +95,17 @@ namespace tfel::math::internals {
      * \param[in]  eps: criterion value used to judge if two eigenvalues are
      * equals
      */
-    template <typename ST2toST2Type, typename T1, typename T2, typename T3>
-    static
-        typename std::enable_if<(implementsST2toST2Concept<ST2toST2Type>()) &&
-                                    (getSpaceDimension<ST2toST2Type>() == 2u),
-                                void>::type
-        exe(ST2toST2Type& d,
-            const tvector<3u, T1>& f,
-            const tvector<3u, T2>& df,
-            const tvector<3u, T3>& vp,
-            const tmatrix<3u, 3u, base_type<T3>>& m,
-            const T3 eps) {
+    template <ST2toST2Concept ST2toST2Type,
+              typename T1,
+              typename T2,
+              typename T3>
+    static void exe(ST2toST2Type& d,
+                    const tvector<3u, T1>& f,
+                    const tvector<3u, T2>& df,
+                    const tvector<3u, T3>& vp,
+                    const tmatrix<3u, 3u, base_type<T3>>& m,
+                    const T3 eps)  //
+        requires(getSpaceDimension<ST2toST2Type>() == 2u) {
       using real = numeric_type<ST2toST2Type>;
       using base = base_type<real>;
       using tvector = tfel::math::tvector<3u, real>;
@@ -138,20 +135,17 @@ namespace tfel::math::internals {
      * \param[in]  eps: criterion value used to judge if two eigenvalues are
      * equals
      */
-    template <typename ST2toST2Type,
+    template <ST2toST2Concept ST2toST2Type,
               typename T,
               typename Function,
               typename FunctionDerivative>
-    static
-        typename std::enable_if<(implementsST2toST2Concept<ST2toST2Type>()) &&
-                                    (getSpaceDimension<ST2toST2Type>() == 2u),
-                                void>::type
-        exe2(ST2toST2Type& d,
-             const Function& f,
-             const FunctionDerivative& df,
-             const tvector<3u, T>& vp,
-             const rotation_matrix<T>& m,
-             const T eps) {
+    static void exe2(ST2toST2Type& d,
+                     const Function& f,
+                     const FunctionDerivative& df,
+                     const tvector<3u, T>& vp,
+                     const rotation_matrix<T>& m,
+                     const T eps)  //
+        requires(getSpaceDimension<ST2toST2Type>() == 2u) {
       const auto fv = map(f, vp);
       const auto dfv = map(df, vp);
       StensorComputeIsotropicFunctionDerivative::exe(d, fv, dfv, vp, m, eps);
@@ -170,17 +164,17 @@ namespace tfel::math::internals {
      * \param[in]  eps: criterion value used to judge if two eigenvalues are
      * equals
      */
-    template <typename ST2toST2Type, typename T1, typename T2, typename T3>
-    static
-        typename std::enable_if<(implementsST2toST2Concept<ST2toST2Type>()) &&
-                                    (getSpaceDimension<ST2toST2Type>() == 3u),
-                                void>::type
-        exe(ST2toST2Type& d,
-            const tvector<3u, T1>& f,
-            const tvector<3u, T2>& df,
-            const tvector<3u, T3>& vp,
-            const tmatrix<3u, 3u, base_type<T3>>& m,
-            const T3 eps) {
+    template <ST2toST2Concept ST2toST2Type,
+              typename T1,
+              typename T2,
+              typename T3>
+    static void exe(ST2toST2Type& d,
+                    const tvector<3u, T1>& f,
+                    const tvector<3u, T2>& df,
+                    const tvector<3u, T3>& vp,
+                    const tmatrix<3u, 3u, base_type<T3>>& m,
+                    const T3 eps)  //
+        requires(getSpaceDimension<ST2toST2Type>() == 3u) {
       using real = numeric_type<ST2toST2Type>;
       using base = base_type<real>;
       using tvector = tfel::math::tvector<3u, real>;
@@ -248,30 +242,27 @@ namespace tfel::math::internals {
             f[0] * dn0 + f[1] * dn1 + f[2] * dn2;
       }
     }  // end of exe
-       /*!
-        * compute the derivative of an isotropic function
-        * \param[out] d:   result
-        * \param[in]  f:   function
-        * \param[in]  df:  derivative of the function
-        * \param[in]  vp:  eigen values
-        * \param[in]  m:   eigenvectors
-        * \param[in]  eps: criterion value used to judge if two eigenvalues are
-        * equals
-        */
-    template <typename ST2toST2Type,
+    /*!
+     * compute the derivative of an isotropic function
+     * \param[out] d:   result
+     * \param[in]  f:   function
+     * \param[in]  df:  derivative of the function
+     * \param[in]  vp:  eigen values
+     * \param[in]  m:   eigenvectors
+     * \param[in]  eps: criterion value used to judge if two eigenvalues are
+     * equals
+     */
+    template <ST2toST2Concept ST2toST2Type,
               typename T,
               typename Function,
               typename FunctionDerivative>
-    static
-        typename std::enable_if<(implementsST2toST2Concept<ST2toST2Type>()) &&
-                                    (getSpaceDimension<ST2toST2Type>() == 3u),
-                                void>::type
-        exe2(ST2toST2Type& d,
-             const Function& f,
-             const FunctionDerivative& df,
-             const tvector<3u, T>& vp,
-             const rotation_matrix<T>& m,
-             const T eps) {
+    static void exe2(ST2toST2Type& d,
+                     const Function& f,
+                     const FunctionDerivative& df,
+                     const tvector<3u, T>& vp,
+                     const rotation_matrix<T>& m,
+                     const T eps)  //
+        requires(getSpaceDimension<ST2toST2Type>() == 3u) {
       const auto fv = map(f, vp);
       const auto dfv = map(df, vp);
       StensorComputeIsotropicFunctionDerivative::exe(d, fv, dfv, vp, m, eps);

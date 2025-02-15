@@ -368,19 +368,21 @@ namespace mfront {
           writePhysicalBoundsChecks(os, v, v.name + "_1", "1u", false, false);
         }
       };
-      for (const auto& mv : f.usedVariables) {
-        const auto [n, vdepth] = md.decomposeVariableName(mv);
-        if (md.outputs.contains(n)) {
-          const auto& v = md.outputs.getVariable(n);
-          write_physical_bounds(v, v.name, vdepth);
+      if (!areRuntimeChecksDisabled(md)) {
+        for (const auto& mv : f.usedVariables) {
+          const auto [n, vdepth] = md.decomposeVariableName(mv);
+          if (md.outputs.contains(n)) {
+            const auto& v = md.outputs.getVariable(n);
+            write_physical_bounds(v, v.name, vdepth);
+          }
+          if (md.inputs.contains(n)) {
+            const auto& v = md.inputs.getVariable(n);
+            write_physical_bounds(v, v.name, vdepth);
+          }
         }
-        if (md.inputs.contains(n)) {
-          const auto& v = md.inputs.getVariable(n);
-          write_physical_bounds(v, v.name, vdepth);
+        for (const auto& p : md.parameters) {
+          write_physical_bounds(p, p.name, 0u);
         }
-      }
-      for (const auto& p : md.parameters) {
-        write_physical_bounds(p, p.name, 0u);
       }
       //
       auto write_bounds = [&os, &raise](const VariableDescription& v,
@@ -398,19 +400,21 @@ namespace mfront {
           writeBoundsChecks(os, v, v.name + "_1", "1u", "policy", false, false);
         }
       };
-      for (const auto& mv : f.usedVariables) {
-        const auto [n, vdepth] = md.decomposeVariableName(mv);
-        if (md.outputs.contains(n)) {
-          const auto& v = md.outputs.getVariable(n);
-          write_bounds(v, v.name, vdepth);
+      if (!areRuntimeChecksDisabled(md)) {
+        for (const auto& mv : f.usedVariables) {
+          const auto [n, vdepth] = md.decomposeVariableName(mv);
+          if (md.outputs.contains(n)) {
+            const auto& v = md.outputs.getVariable(n);
+            write_bounds(v, v.name, vdepth);
+          }
+          if (md.inputs.contains(n)) {
+            const auto& v = md.inputs.getVariable(n);
+            write_bounds(v, v.name, vdepth);
+          }
         }
-        if (md.inputs.contains(n)) {
-          const auto& v = md.inputs.getVariable(n);
-          write_bounds(v, v.name, vdepth);
+        for (const auto& p : md.parameters) {
+          write_bounds(p, p.name, 0u);
         }
-      }
-      for (const auto& p : md.parameters) {
-        write_bounds(p, p.name, 0u);
       }
       //
       os << f.body << '\n';
@@ -532,10 +536,6 @@ namespace mfront {
     const auto name = md.library + md.className;
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = td.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, name + "-generic.cxx");
     td.headers.push_back("MFront/GenericModel/" + name + "-generic.hxx");
     insert_if(l.link_directories,

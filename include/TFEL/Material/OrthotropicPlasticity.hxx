@@ -24,7 +24,7 @@
 namespace tfel::material {
 
   //! a simple alias
-  template <typename StensorType>
+  template <tfel::math::StensorConcept StensorType>
   using J2OCoefficients =
       tfel::math::tvector<6u, tfel::math::base_type<StensorType>>;
   /*!
@@ -41,12 +41,9 @@ namespace tfel::material {
    * \param[in] s: stress tensor
    * \param[in] a: coefficients
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if_t<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
-      tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
-                                       tfel::math::Power<2>>>::type
-  computeJ2O(const StensorType&, const J2OCoefficients<StensorType>&);
+  template <tfel::math::StensorConcept StensorType>
+  TFEL_HOST_DEVICE constexpr auto computeJ2O(
+      const StensorType&, const J2OCoefficients<StensorType>&);
   /*!
    * \brief compute \f$J_{2}^{O}\f$ the orthotropic generalization
    * of the third invariant of the deviatoric part of the stress
@@ -66,19 +63,16 @@ namespace tfel::material {
    * \param[in] a5: fifth coefficient
    * \param[in] a6: sixth coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 1u,
-      tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
-                                       tfel::math::Power<2>>>::type
-  computeJ2O(const StensorType&,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
+      TFEL_HOST_DEVICE
+      constexpr auto computeJ2O(const StensorType&,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>);
   /*!
    * \brief compute \f$J_{2}^{O}\f$ the orthotropic generalization
    * of the third invariant of the deviatoric part of the stress
@@ -98,19 +92,16 @@ namespace tfel::material {
    * \param[in] a5: fifth coefficient
    * \param[in] a6: sixth coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 2u,
-      tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
-                                       tfel::math::Power<2>>>::type
-  computeJ2O(const StensorType&,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
+      TFEL_HOST_DEVICE
+      constexpr auto computeJ2O(const StensorType&,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>);
   /*!
    * \brief compute \f$J_{2}^{O}\f$ the orthotropic generalization
    * of the third invariant of the deviatoric part of the stress
@@ -130,19 +121,16 @@ namespace tfel::material {
    * \param[in] a5: fifth coefficient
    * \param[in] a6: sixth coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 3u,
-      tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
-                                       tfel::math::Power<2>>>::type
-  computeJ2O(const StensorType&,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
+      TFEL_HOST_DEVICE
+      constexpr auto computeJ2O(const StensorType&,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>);
   /*!
    * \brief compute the derivative \f$\frac{\partial
    * J_{2}^{O}}{\partial \underline{s}}\f$ of \f$J_{2}^{O}\f$ with respect
@@ -161,12 +149,9 @@ namespace tfel::material {
    * \param[in] s: stress tensor
    * \param[in] a: coefficients
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
-      tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-                          tfel::math::numeric_type<StensorType>>>::type
-  computeJ2ODerivative(const StensorType&, const J2OCoefficients<StensorType>&);
+  template <tfel::math::StensorConcept StensorType>
+  TFEL_HOST_DEVICE constexpr auto computeJ2ODerivative(
+      const StensorType&, const J2OCoefficients<StensorType>&);
   /*!
    * \brief compute the derivative \f$\frac{\partial
    * J_{2}^{O}}{\partial \underline{s}}\f$ of \f$J_{2}^{O}\f$ with respect
@@ -190,19 +175,16 @@ namespace tfel::material {
    * \param[in] a5: fifth coefficient
    * \param[in] a6: sixth coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 1u,
-      tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-                          tfel::math::numeric_type<StensorType>>>::type
-  computeJ2ODerivative(const StensorType&,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ2ODerivative(
+          const StensorType&,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>);
   /*!
    * \brief compute the derivative \f$\frac{\partial
    * J_{2}^{O}}{\partial \underline{s}}\f$ of \f$J_{2}^{O}\f$ with respect
@@ -226,19 +208,16 @@ namespace tfel::material {
    * \param[in] a5: fifth coefficient
    * \param[in] a6: sixth coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 2u,
-      tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-                          tfel::math::numeric_type<StensorType>>>::type
-  computeJ2ODerivative(const StensorType&,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ2ODerivative(
+          const StensorType&,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>);
   /*!
    * \brief compute the derivative \f$\frac{\partial
    * J_{2}^{O}}{\partial \underline{s}}\f$ of \f$J_{2}^{O}\f$ with respect
@@ -262,19 +241,16 @@ namespace tfel::material {
    * \param[in] a5: fifth coefficient
    * \param[in] a6: sixth coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 3u,
-      tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-                          tfel::math::numeric_type<StensorType>>>::type
-  computeJ2ODerivative(const StensorType&,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ2ODerivative(
+          const StensorType&,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>);
   /*!
    * \brief compute the derivative \f$\frac{\partial^{2}
    * J_{2}^{O}}{\partial^{2} \underline{s}}\f$ of \f$J_{2}^{O}\f$ with respect
@@ -293,16 +269,9 @@ namespace tfel::material {
    * \param[in] s: stress tensor
    * \param[in] a: coefficients
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
-      tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-                           tfel::math::BinaryOperationResult<
-                               tfel::math::base_type<StensorType>,
-                               tfel::math::numeric_type<StensorType>,
-                               tfel::math::OpDiv>>>::type
-  computeJ2OSecondDerivative(const StensorType&,
-                             const J2OCoefficients<StensorType>&);
+  template <tfel::math::StensorConcept StensorType>
+  TFEL_HOST_DEVICE constexpr auto computeJ2OSecondDerivative(
+      const StensorType&, const J2OCoefficients<StensorType>&);
   /*!
    * \brief compute the derivative \f$\frac{\partial^{2}
    * J_{2}^{O}}{\partial^{2} \underline{s}}\f$ of \f$J_{2}^{O}\f$ with respect
@@ -326,22 +295,16 @@ namespace tfel::material {
    * \param[in] a5: fifth coefficient
    * \param[in] a6: sixth coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 1u,
-      tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-                           tfel::math::BinaryOperationResult<
-                               tfel::math::base_type<StensorType>,
-                               tfel::math::numeric_type<StensorType>,
-                               tfel::math::OpDiv>>>::type
-  computeJ2OSecondDerivative(const StensorType&,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ2OSecondDerivative(
+          const StensorType&,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>);
   /*!
    * \brief compute the derivative \f$\frac{\partial^{2}
    * J_{2}^{O}}{\partial^{2} \underline{s}}\f$ of \f$J_{2}^{O}\f$ with respect
@@ -365,22 +328,16 @@ namespace tfel::material {
    * \param[in] a5: fifth coefficient
    * \param[in] a6: sixth coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 2u,
-      tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-                           tfel::math::BinaryOperationResult<
-                               tfel::math::base_type<StensorType>,
-                               tfel::math::numeric_type<StensorType>,
-                               tfel::math::OpDiv>>>::type
-  computeJ2OSecondDerivative(const StensorType&,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ2OSecondDerivative(
+          const StensorType&,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>);
   /*!
    * \brief compute the derivative \f$\frac{\partial^{2}
    * J_{2}^{O}}{\partial^{2} \underline{s}}\f$ of \f$J_{2}^{O}\f$ with respect
@@ -404,25 +361,19 @@ namespace tfel::material {
    * \param[in] a5: fifth coefficient
    * \param[in] a6: sixth coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 3u,
-      tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-                           tfel::math::BinaryOperationResult<
-                               tfel::math::base_type<StensorType>,
-                               tfel::math::numeric_type<StensorType>,
-                               tfel::math::OpDiv>>>::type
-  computeJ2OSecondDerivative(const StensorType&,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ2OSecondDerivative(
+          const StensorType&,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>);
 
   //! a simple alias
-  template <typename StensorType>
+  template <tfel::math::StensorConcept StensorType>
   using J3OCoefficients =
       tfel::math::tvector<11u, tfel::math::base_type<StensorType>>;
   /*!
@@ -448,12 +399,9 @@ namespace tfel::material {
    * \param[in] s: stress tensor
    * \param[in] b: coefficients
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
-      tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
-                                       tfel::math::Power<3>>>::type
-  computeJ3O(const StensorType&, const J3OCoefficients<StensorType>&);
+  template <tfel::math::StensorConcept StensorType>
+  TFEL_HOST_DEVICE constexpr auto computeJ3O(
+      const StensorType&, const J3OCoefficients<StensorType>&);
   /*!
    * \brief compute \f$J_{3}^{O}\f$ the orthotropic generalization
    * of the third invariant of the deviatoric part of the stress
@@ -486,24 +434,21 @@ namespace tfel::material {
    * \param[in] b10: tenth coefficient
    * \param[in] b11: eleventh coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 1u,
-      tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
-                                       tfel::math::Power<3>>>::type
-  computeJ3O(const StensorType&,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
+      TFEL_HOST_DEVICE
+      constexpr auto computeJ3O(const StensorType&,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>);
   /*!
    * \brief compute \f$J_{3}^{O}\f$ the orthotropic generalization
    * of the third invariant of the deviatoric part of the stress
@@ -536,24 +481,21 @@ namespace tfel::material {
    * \param[in] b10: tenth coefficient
    * \param[in] b11: eleventh coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 2u,
-      tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
-                                       tfel::math::Power<3>>>::type
-  computeJ3O(const StensorType&,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
+      TFEL_HOST_DEVICE
+      constexpr auto computeJ3O(const StensorType&,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>);
   /*!
    * \brief compute \f$J_{3}^{O}\f$ the orthotropic generalization
    * of the third invariant of the deviatoric part of the stress
@@ -586,24 +528,21 @@ namespace tfel::material {
    * \param[in] b10: tenth coefficient
    * \param[in] b11: eleventh coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 3u,
-      tfel::math::UnaryOperationResult<tfel::math::numeric_type<StensorType>,
-                                       tfel::math::Power<3>>>::type
-  computeJ3O(const StensorType&,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>,
-             const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
+      TFEL_HOST_DEVICE
+      constexpr auto computeJ3O(const StensorType&,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>);
   /*!
    * \brief compute the derivative \f$\frac{\partial
    * J_{3}^{O}}{\partial \underline{s}}\f$ of \f$J_{3}^{O}\f$ with
@@ -632,14 +571,9 @@ namespace tfel::material {
    * \param[in] s: stress tensor
    * \param[in] b: coefficients
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
-      tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-                          tfel::math::UnaryOperationResult<
-                              tfel::math::numeric_type<StensorType>,
-                              tfel::math::Power<2>>>>::type
-  computeJ3ODerivative(const StensorType&, const J3OCoefficients<StensorType>&);
+  template <tfel::math::StensorConcept StensorType>
+  TFEL_HOST_DEVICE constexpr auto computeJ3ODerivative(
+      const StensorType&, const J3OCoefficients<StensorType>&);
   /*!
    * \brief compute the derivative \f$\frac{\partial
    * J_{3}^{O}}{\partial \underline{s}}\f$ of \f$J_{3}^{O}\f$ with
@@ -678,26 +612,21 @@ namespace tfel::material {
    * \param[in] b10: tenth coefficient
    * \param[in] b11: eleventh coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 1u,
-      tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-                          tfel::math::UnaryOperationResult<
-                              tfel::math::numeric_type<StensorType>,
-                              tfel::math::Power<2>>>>::type
-  computeJ3ODerivative(const StensorType&,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ3ODerivative(
+          const StensorType&,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>);
   /*!
    * \brief compute the derivative \f$\frac{\partial
    * J_{3}^{O}}{\partial \underline{s}}\f$ of \f$J_{3}^{O}\f$ with
@@ -736,26 +665,21 @@ namespace tfel::material {
    * \param[in] b10: tenth coefficient
    * \param[in] b11: eleventh coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 2u,
-      tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-                          tfel::math::UnaryOperationResult<
-                              tfel::math::numeric_type<StensorType>,
-                              tfel::math::Power<2>>>>::type
-  computeJ3ODerivative(const StensorType&,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ3ODerivative(
+          const StensorType&,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>);
   /*!
    * \brief compute the derivative \f$\frac{\partial
    * J_{3}^{O}}{\partial \underline{s}}\f$ of \f$J_{3}^{O}\f$ with
@@ -794,26 +718,21 @@ namespace tfel::material {
    * \param[in] b10: tenth coefficient
    * \param[in] b11: eleventh coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 3u,
-      tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
-                          tfel::math::UnaryOperationResult<
-                              tfel::math::numeric_type<StensorType>,
-                              tfel::math::Power<2>>>>::type
-  computeJ3ODerivative(const StensorType&,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>,
-                       const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ3ODerivative(
+          const StensorType&,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>);
 
   /*!
    * \brief compute the second derivative \f$\frac{\partial^{2}
@@ -843,13 +762,9 @@ namespace tfel::material {
    * \param[in] s: stress tensor
    * \param[in] b: coefficients
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond,
-      tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-                           tfel::math::numeric_type<StensorType>>>::type
-  computeJ3OSecondDerivative(const StensorType&,
-                             const J3OCoefficients<StensorType>&);
+  template <tfel::math::StensorConcept StensorType>
+  TFEL_HOST_DEVICE constexpr auto computeJ3OSecondDerivative(
+      const StensorType&, const J3OCoefficients<StensorType>&);
   /*!
    * \brief compute the derivative \f$\frac{\partial^{2}
    * J_{3}^{O}}{\partial^{2} \underline{s}}\f$ of \f$J_{3}^{O}\f$ with
@@ -888,24 +803,21 @@ namespace tfel::material {
    * \param[in] b10: tenth coefficient
    * \param[in] b11: eleventh coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 1u,
-      tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-                           tfel::math::numeric_type<StensorType>>>::type
-  computeJ3OSecondDerivative(const StensorType&,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ3OSecondDerivative(
+          const StensorType&,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>);
   /*!
    * \brief compute the derivative \f$\frac{\partial^{2}
    * J_{3}^{O}}{\partial^{2} \underline{s}}\f$ of \f$J_{3}^{O}\f$ with
@@ -944,24 +856,21 @@ namespace tfel::material {
    * \param[in] b10: tenth coefficient
    * \param[in] b11: eleventh coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 2u,
-      tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-                           tfel::math::numeric_type<StensorType>>>::type
-  computeJ3OSecondDerivative(const StensorType&,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ3OSecondDerivative(
+          const StensorType&,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>);
   /*!
    * \brief compute the derivative \f$\frac{\partial^{2}
    * J_{3}^{O}}{\partial^{2} \underline{s}}\f$ of \f$J_{3}^{O}\f$ with
@@ -1000,24 +909,21 @@ namespace tfel::material {
    * \param[in] b10: tenth coefficient
    * \param[in] b11: eleventh coefficient
    */
-  template <typename StensorType>
-  TFEL_HOST_DEVICE constexpr typename std::enable_if<
-      tfel::meta::Implements<StensorType, tfel::math::StensorConcept>::cond &&
-          tfel::math::getSpaceDimension<StensorType>() == 3u,
-      tfel::math::st2tost2<tfel::math::getSpaceDimension<StensorType>(),
-                           tfel::math::numeric_type<StensorType>>>::type
-  computeJ3OSecondDerivative(const StensorType&,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>,
-                             const tfel::math::base_type<StensorType>);
+  template <tfel::math::StensorConcept StensorType>
+  requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ3OSecondDerivative(
+          const StensorType&,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>);
 
 }  // end of namespace tfel::material
 

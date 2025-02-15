@@ -12,6 +12,7 @@
  */
 
 #include <ostream>
+#include "MFront/IsotropicBehaviourDSLBase.hxx"
 #include "MFront/IsotropicBehaviourCodeGeneratorBase.hxx"
 
 namespace mfront {
@@ -57,7 +58,8 @@ namespace mfront {
         return this->bd.getClassName() + "::" + i.name;
       } else {
         this->throwRuntimeError(
-            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+            "IsotropicBehaviourCodeGenerator::"
+            "writeBehaviourLocalVariablesInitialisation",
             "unsupported input type for variable '" + i.name + "'");
       }
     };
@@ -65,7 +67,8 @@ namespace mfront {
       const auto& emps = this->bd.getElasticMaterialProperties();
       if (emps.size() != 2u) {
         this->throwRuntimeError(
-            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+            "IsotropicBehaviourCodeGenerator::"
+            "writeBehaviourLocalVariablesInitialisation",
             "invalid number of material properties");
       }
       if (!emps[0].is<BehaviourDescription::ConstantMaterialProperty>()) {
@@ -137,9 +140,9 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     const auto btype = this->bd.getBehaviourTypeFlag();
     if (!this->bd.hasCode(h, BehaviourData::ComputePredictionOperator)) {
-      os << "TFEL_HOST_DEVICE [[nodiscard]] IntegrationResult\n"
+      os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult\n"
          << "computePredictionOperator(const SMFlag smflag, const SMType smt) "
-            "override{\n";
+         << "override final {\n";
       os << "using namespace std;\n";
       if (this->bd.useQt()) {
         os << "if(smflag!=MechanicalBehaviour<" << btype
@@ -169,6 +172,116 @@ namespace mfront {
                                                                           h);
     }
   }  // end of writeBehaviourComputePredictionOperator
+
+  bool IsotropicBehaviourCodeGeneratorBase::shallComputeTheElasticStrain()
+      const {
+    if (!this->bd.getAttribute(
+            IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
+      return false;
+    }
+    if (!this->bd.areElasticMaterialPropertiesDefined()) {
+      return false;
+    }
+    const auto& emps = this->bd.getElasticMaterialProperties();
+    if (emps.size() != 2u) {
+      this->throwRuntimeError(
+          "IsotropicMisesCreepCodeGenerator::writeBehaviourIntegrator",
+          "invalid number of material properties");
+    }
+    return (!this->bd.isMaterialPropertyConstantDuringTheTimeStep(emps[0])) ||
+           (!this->bd.isMaterialPropertyConstantDuringTheTimeStep(emps[1]));
+  }  // end of shallComputeTheElasticStrain
+
+  void IsotropicBehaviourCodeGeneratorBase::
+      writeBehaviourIntegratorPreprocessingStep(std::ostream& os) const {
+    if (this->bd.getAttribute(
+            IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
+      if (this->shallComputeTheElasticStrain()) {
+        using Modifier =
+            std::function<std::string(const MaterialPropertyInput&)>;
+        Modifier bts = [this](const MaterialPropertyInput& i) -> std::string {
+          if ((i.category == MaterialPropertyInput::TEMPERATURE) ||
+              (i.category == MaterialPropertyInput::
+                                 AUXILIARYSTATEVARIABLEFROMEXTERNALMODEL) ||
+              (i.category == MaterialPropertyInput::EXTERNALSTATEVARIABLE) ||
+              (i.category == MaterialPropertyInput::MATERIALPROPERTY) ||
+              (i.category == MaterialPropertyInput::PARAMETER)) {
+            return "this->" + i.name;
+          } else if (i.category == MaterialPropertyInput::STATICVARIABLE) {
+            return this->bd.getClassName() + "::" + i.name;
+          } else {
+            this->throwRuntimeError(
+                "IsotropicMisesCreepCodeGenerator::writeBehaviourIntegrator",
+                "unsupported input type for variable '" + i.name + "'");
+          }
+        };
+        const auto& emps = this->bd.getElasticMaterialProperties();
+        if (emps.size() != 2u) {
+          this->throwRuntimeError(
+              "IsotropicMisesCreepCodeGenerator::writeBehaviourIntegrator",
+              "invalid number of material properties");
+        }
+        if (!this->bd.isMaterialPropertyConstantDuringTheTimeStep(emps[0])) {
+          this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[0], bts);
+          os << "const auto mfront_young_bts = stress(";
+          this->writeMaterialPropertyEvaluation(os, emps[0], bts);
+          os << ");\n";
+        } else {
+          os << "const auto mfront_young_bts = this->young;";
+        }
+        if (!this->bd.isMaterialPropertyConstantDuringTheTimeStep(emps[1])) {
+          this->writeMaterialPropertyCheckBoundsEvaluation(os, emps[1], bts);
+          os << "const auto mfront_nu_bts = stress(";
+          this->writeMaterialPropertyEvaluation(os, emps[1], bts);
+          os << ");\n";
+        } else {
+          os << "const auto mfront_nu_bts = this->nu;";
+        }
+        os << "const auto mfront_eel_bts = eval("
+           << "-mfront_nu_bts / mfront_young_bts * trace(this->sig) * "
+           << "Stensor::Id()"
+           << "+ (1+mfront_nu_bts) / mfront_young_bts * (this->sig));\n"
+           << "this->se = 2 * (this->mu) * ("
+           << "tfel::math::deviator(mfront_eel_bts + (this->theta) * "
+              "(this->deto)));\n";
+      } else {
+        os << "this->se =  tfel::math::deviator(this->sig + "
+           << "2 * (this->mu) * (this->theta) * (this->deto));\n";
+      }
+    } else {
+      os << "this->se = 2 * (this->mu) * ("
+         << "tfel::math::deviator(this->eel + (this->theta) * "
+            "(this->deto)));\n";
+    }
+  }  // end of writeBehaviourIntegratorPreprocessingStep
+
+  void IsotropicBehaviourCodeGeneratorBase::
+      writeBehaviourIntegratorPostprocessingStep(std::ostream& os) const {
+    if (!this->bd.getAttribute(
+            IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
+      os << "this->deel = this->deto - (this->dp) * (this->n);\n";
+    }
+    os << "this->updateStateVariables();\n";
+    if (this->bd.getAttribute(
+            IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
+      if (this->shallComputeTheElasticStrain()) {
+        os << "const auto mfront_eel_ets = "
+           << "eval(mfront_eel_bts + this->deto - (this->dp) * (this->n));\n"
+           << "this->sig = "
+           << "(this->lambda_tdt) * trace(mfront_eel_ets) * Stensor::Id() + "
+           << "2 * (this->mu_tdt) * (mfront_eel_ets);\n";
+      } else {
+        os << "this->sig += "
+           << "(this->lambda_tdt) * trace(this->deto) * Stensor::Id() + "
+           << "2 * (this->mu_tdt) * (this->deto - (this->dp) * (this->n));\n";
+      }
+    } else {
+      os << "this->sig = "
+         << "(this->lambda_tdt) * trace(this->eel) * Stensor::Id() + "
+         << "2 * (this->mu_tdt) * (this->eel);\n";
+    }
+    os << "this->updateAuxiliaryStateVariables();\n";
+  }  // end of writeBehaviourIntegratorPostocessingStep
 
   void
   IsotropicBehaviourCodeGeneratorBase::writeBehaviourComputeTangentOperator(

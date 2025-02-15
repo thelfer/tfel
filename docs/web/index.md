@@ -51,8 +51,8 @@ of the `TFEL` library. Those languages cover three kinds of material
 knowledge:
 
 - [material properties](material-properties.html) (for instance the
-  Young modulus, the thermal conductivity, etc.)
-- [mechanical behaviours](behaviours.html). Numerical performances of
+  Young's modulus, the thermal conductivity, etc.)
+- [mechanical behaviours](behaviours.html). Numerical performance of
   generated mechanical behaviours were given a particular
   attention. [Various benchmarks](benchmarks.html) show that `MFront`
   implementations are competitive with native implementations
@@ -86,7 +86,7 @@ A set of interfaces are provided for various solvers:
 - the [`ZeBuLoN`](http://www.zset-software.com/products/zebulon)
   finite element solver. This interface is described [here](zmat.html).
 - the `TMFFT` and the
-  [`AMITEX_FFTP`](http://www.maisondelasimulation.fr/projects/amitex/html/)
+  [`AMITEX_FFTP`](https://amitexfftp.github.io/AMITEX/)
   Fast Fourier Transform solvers developed internally at
   [CEA](http://www.cea.fr/english-portal "Commissariat à l'énergie
   atomique"). Note that
@@ -96,7 +96,7 @@ A set of interfaces are provided for various solvers:
   [`Cast3M`](http://www-cast3m.cea.fr) finite element solver.
 
 For material properties, various interfaces are also provided and
-covers the following languages `C`, `C++`, `python`, `fortran`, etc.
+cover the following languages: `C`, `C++`, `python`, `fortran`, etc.
 
 # History
 

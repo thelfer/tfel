@@ -467,64 +467,70 @@ namespace mfront {
              << "{mfront_STATEV[" << pos << "]};\n";
         }
       }
-      auto write_physical_bounds = [&os, &raise](const VariableDescription& v,
-                                                 const std::string& n,
-                                                 const unsigned short vdepth) {
-        if (!v.hasPhysicalBounds()) {
-          return;
+      if (!areRuntimeChecksDisabled(md)) {
+        auto write_physical_bounds = [&os, &raise](
+                                         const VariableDescription& v,
+                                         const std::string& n,
+                                         const unsigned short vdepth) {
+          if (!v.hasPhysicalBounds()) {
+            return;
+          }
+          if (!v.isScalar()) {
+            raise("error while treating physical bounds of variable '" +
+                  v.name + "' (only scalar variable are supported)");
+          }
+          writePhysicalBoundsChecks(os, v, n, "1u", false, false);
+          if (vdepth == 1u) {
+            writePhysicalBoundsChecks(os, v, v.name + "_1", "1u", false, false);
+          }
+        };
+        for (const auto& mv : f.usedVariables) {
+          const auto [n, vdepth] = md.decomposeVariableName(mv);
+          if (md.outputs.contains(n)) {
+            const auto& v = md.outputs.getVariable(n);
+            write_physical_bounds(v, v.name, vdepth);
+          }
+          if (md.inputs.contains(n)) {
+            const auto& v = md.inputs.getVariable(n);
+            write_physical_bounds(v, v.name, vdepth);
+          }
         }
-        if (!v.isScalar()) {
-          raise("error while treating physical bounds of variable '" + v.name +
-                "' (only scalar variable are supported)");
+        for (const auto& p : md.parameters) {
+          write_physical_bounds(p, p.name, 0u);
         }
-        writePhysicalBoundsChecks(os, v, n, "1u", false, false);
-        if (vdepth == 1u) {
-          writePhysicalBoundsChecks(os, v, v.name + "_1", "1u", false, false);
-        }
-      };
-      for (const auto& mv : f.usedVariables) {
-        const auto [n, vdepth] = md.decomposeVariableName(mv);
-        if (md.outputs.contains(n)) {
-          const auto& v = md.outputs.getVariable(n);
-          write_physical_bounds(v, v.name, vdepth);
-        }
-        if (md.inputs.contains(n)) {
-          const auto& v = md.inputs.getVariable(n);
-          write_physical_bounds(v, v.name, vdepth);
-        }
-      }
-      for (const auto& p : md.parameters) {
-        write_physical_bounds(p, p.name, 0u);
       }
       //
-      auto write_bounds = [&os, &raise](const VariableDescription& v,
-                                        const std::string& n,
-                                        const unsigned short vdepth) {
-        if (!v.hasBounds()) {
-          return;
+      if (!areRuntimeChecksDisabled(md)) {
+        auto write_bounds = [&os, &raise](const VariableDescription& v,
+                                          const std::string& n,
+                                          const unsigned short vdepth) {
+          if (!v.hasBounds()) {
+            return;
+          }
+          if (!v.isScalar()) {
+            raise("error while treating bounds of variable '" + v.name +
+                  "' (only scalar variable are supported)");
+          }
+          writeBoundsChecks(os, v, n, "1u", "policy", false, false);
+          if (vdepth == 1u) {
+            writeBoundsChecks(os, v, v.name + "_1", "1u", "policy", false,
+                              false);
+          }
+        };
+        for (const auto& mv : f.usedVariables) {
+          const auto [n, vdepth] = md.decomposeVariableName(mv);
+          if (md.outputs.contains(n)) {
+            const auto& v = md.outputs.getVariable(n);
+            write_bounds(v, v.name, vdepth);
+          }
+          if (md.inputs.contains(n)) {
+            const auto& v = md.inputs.getVariable(n);
+            write_bounds(v, v.name, vdepth);
+          }
         }
-        if (!v.isScalar()) {
-          raise("error while treating bounds of variable '" + v.name +
-                "' (only scalar variable are supported)");
+        for (const auto& p : md.parameters) {
+          write_bounds(p, p.name, 0u);
         }
-        writeBoundsChecks(os, v, n, "1u", "policy", false, false);
-        if (vdepth == 1u) {
-          writeBoundsChecks(os, v, v.name + "_1", "1u", "policy", false, false);
-        }
-      };
-      for (const auto& mv : f.usedVariables) {
-        const auto [n, vdepth] = md.decomposeVariableName(mv);
-        if (md.outputs.contains(n)) {
-          const auto& v = md.outputs.getVariable(n);
-          write_bounds(v, v.name, vdepth);
-        }
-        if (md.inputs.contains(n)) {
-          const auto& v = md.inputs.getVariable(n);
-          write_bounds(v, v.name, vdepth);
-        }
-      }
-      for (const auto& p : md.parameters) {
-        write_bounds(p, p.name, 0u);
       }
       //
       os << f.body << '\n';
@@ -689,8 +695,6 @@ namespace mfront {
     const auto name = md.library + md.className;
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = td.getLibrary(lib);
-    insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
 #ifdef CASTEM_CPPFLAGS
     insert_if(l.cppflags, CASTEM_CPPFLAGS);
 #endif /* CASTEM_CPPFLAGS */
@@ -708,8 +712,6 @@ namespace mfront {
     }
 #endif /* CASTEM_ROOT */
 #endif /* LOCAL_CASTEM_HEADER_FILE */
-    insert_if(l.include_directories,
-              "$(shell " + tfel_config + " --include-path)");
     insert_if(l.sources, name + "-castem.cxx");
     td.headers.push_back("MFront/CastemModel/" + name + "-castem.hxx");
     insert_if(l.link_directories,

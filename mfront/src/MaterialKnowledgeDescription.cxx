@@ -12,11 +12,14 @@
  */
 
 #include <algorithm>
+#include <iterator>
 #include "TFEL/Raise.hxx"
 #include "MFront/MaterialKnowledgeDescription.hxx"
 
 namespace mfront {
 
+  const char* const MaterialKnowledgeDescription::disableRuntimeChecks =
+      "disable_runtime_checks";
   const char* const MaterialKnowledgeDescription::defaultOutOfBoundsPolicy =
       "default_out_of_bounds_policy";
   const char* const
@@ -26,6 +29,7 @@ namespace mfront {
       "parameters_as_static_variables";
   const char* const MaterialKnowledgeDescription::initializeParametersFromFile =
       "parameters_initialization_from_file";
+  const char* const MaterialKnowledgeDescription::validator = "validator";
   const char* const MaterialKnowledgeDescription::buildIdentifier =
       "build_identifier";
 
@@ -92,13 +96,17 @@ namespace mfront {
   }  // end of getAttributes
 
   void MaterialKnowledgeDescription::addExternalMFrontFile(
-      const std::string_view f, const std::vector<std::string>& interfaces) {
+      const std::string_view f,
+      const std::vector<std::string>& interfaces,
+      const tfel::utilities::DataMap& dsl_options) {
     const auto p = this->externalMFrontFiles.find(f);
     if (p == this->externalMFrontFiles.end()) {
-      this->externalMFrontFiles.insert({std::string{f}, interfaces});
+      this->externalMFrontFiles.insert(
+          {std::string{f}, {interfaces, dsl_options}});
     } else {
+#pragma message("treat DSL options")
       std::copy_if(interfaces.begin(), interfaces.end(),
-                   std::back_inserter(p->second),
+                   std::back_inserter(std::get<0>(p->second)),
                    [&interfaces](const std::string& i) {
                      return std::find(interfaces.begin(), interfaces.end(),
                                       i) == interfaces.end();
@@ -106,7 +114,9 @@ namespace mfront {
     }
   }  // end of addExternalMFrontFile
 
-  const std::map<std::string, std::vector<std::string>, std::less<>>&
+  const std::map<std::string,
+                 std::tuple<std::vector<std::string>, tfel::utilities::DataMap>,
+                 std::less<>>&
   MaterialKnowledgeDescription::getExternalMFrontFiles() const {
     return this->externalMFrontFiles;
   }  // end of getExternalMFrontFiles
@@ -151,6 +161,11 @@ namespace mfront {
                    policy, false);
   }  // end of setDefaultOutOfBoundsPolicy
 
+  void setDisableRuntimeChecks(MaterialKnowledgeDescription& d, const bool b) {
+    d.setAttribute(MaterialKnowledgeDescription::disableRuntimeChecks, b,
+                   false);
+  }  // end of setDisableRuntimeChecks
+
   tfel::material::OutOfBoundsPolicy getDefaultOutOfBoundsPolicy(
       const MaterialKnowledgeDescription& d) {
     const auto policy = d.getAttribute<std::string>(
@@ -166,6 +181,11 @@ namespace mfront {
     }
     return tfel::material::None;
   }  // end of getDefaultOutOfBoundsPolicy
+
+  bool areRuntimeChecksDisabled(const MaterialKnowledgeDescription& d) {
+    return d.getAttribute<bool>(
+        MaterialKnowledgeDescription::disableRuntimeChecks, false);
+  }  // end of getDisableRuntimeChecks
 
   std::string getDefaultOutOfBoundsPolicyAsString(
       const MaterialKnowledgeDescription& d) {

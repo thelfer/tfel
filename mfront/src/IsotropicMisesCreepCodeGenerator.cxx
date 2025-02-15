@@ -1,3 +1,4 @@
+
 /*!
  * \file   mfront/src/IsotropicMisesCreepCodeGenerator.cxx
  * \brief
@@ -40,19 +41,25 @@ namespace mfront {
        << "using namespace tfel::material;\n"
        << "using std::vector;\n";
     writeMaterialLaws(os, this->bd.getMaterialLaws());
+    if (this->bd.hasCode(h, BehaviourData::BeforeFlowRule)) {
+      os << this->bd.getCode(h, BehaviourData::BeforeFlowRule);
+    }
     os << this->bd.getCode(h, BehaviourData::FlowRule) << "return true;\n}\n\n"
        << "bool NewtonIntegration(){\n"
        << "constexpr auto newton_epsilon = "
-          "100*std::numeric_limits<strain>::epsilon();\n"
+       << "100*std::numeric_limits<strain>::epsilon();\n"
        << "bool converged=false;\n"
        << "strain newton_f;\n"
        << "strain newton_df;\n"
-       << "auto newton_ddp = strain{}; // previous correction of the Newton "
-          "algorithm\n"
-       << "const auto mu_3_theta = 3*(this->theta)*(this->mu);\n"
+       << "// previous correction of the Newton algorithm\n"
+       << "auto newton_ddp = strain{};\n"
+       << "const auto mfront_internal_3_mu_theta = "
+       << "3 * (this->theta) * (this->mu);\n"
        << "unsigned int iter=0;\n";
     os << "while((converged==false)&&(iter<(this->iterMax))){\n"
-       << "this->seq = std::max(this->seq_e-mu_3_theta*(this->dp),stress(0));\n"
+       << "this->seq = "
+          "std::max(this->seq_e-mfront_internal_3_mu_theta*(this->dp),stress(0)"
+          ");\n"
        << "const auto compute_flow_r = this->computeFlow();\n"
        << "if(!((compute_flow_r)&&\n"
        << "(tfel::math::ieee754::isfinite(this->f))&&\n"
@@ -65,13 +72,14 @@ namespace mfront {
     }
     os << "if(iter==0u){\n"
        << "// probably an elastic prediction\n"
-       << "newton_ddp = (this->seq_e / mu_3_theta) / 2;\n"
+       << "newton_ddp = (this->seq_e / mfront_internal_3_mu_theta) / 2;\n"
        << "} // end of if(iter==0u)\n"
        << "this->dp += newton_ddp;\n"
        << "iter+=1;\n"
        << "} else {"
        << "newton_f  = this->dp - (this->f)*(this->dt);\n"
-       << "newton_df = 1+mu_3_theta*(this->df_dseq)*(this->dt);\n"
+       << "newton_df = "
+          "1+mfront_internal_3_mu_theta*(this->df_dseq)*(this->dt);\n"
        << "if(tfel::math::abs(newton_df) > newton_epsilon){\n"
        << "newton_ddp = -newton_f/newton_df;\n"
        << "this->dp += newton_ddp;\n"
@@ -96,7 +104,7 @@ namespace mfront {
          << "<< iter << \": invalid jacobian on the first iteration\\n\";\n";
     }
     os << "// probably an elastic prediction\n"
-       << "newton_ddp = (this->seq_e / mu_3_theta) / 2;\n"
+       << "newton_ddp = (this->seq_e / mfront_internal_3_mu_theta) / 2;\n"
        << "} // end of if(iter==0u)\n"
        << "this->dp += newton_ddp;\n"
        << "iter+=1;\n"
@@ -130,7 +138,7 @@ namespace mfront {
        << "* \\brief Integrate behaviour law over the time step\n"
        << "*/\n"
        << "[[nodiscard]] IntegrationResult\n"
-       << "integrate(const SMFlag smflag,const SMType smt) override{\n"
+       << "integrate(const SMFlag smflag,const SMType smt) override final{\n"
        << "using namespace std;\n";
     if (this->bd.useQt()) {
       os << "if(smflag!=MechanicalBehaviour<" << btype
@@ -143,7 +151,16 @@ namespace mfront {
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     }
-    os << "if(!this->NewtonIntegration()){\n";
+    this->writeBehaviourIntegratorPreprocessingStep(os);
+    os << "this->seq_e = sigmaeq(this->se);\n"
+       << "if (this->seq_e > \n"
+       << "real(0.01) * (this->young) * "
+       << "std::numeric_limits<real>::epsilon()){\n"
+       << "this->n = 3*(this->se)/(2*this->seq_e);\n"
+       << "} else {\n"
+       << "this->n = StrainStensor(strain(0));\n"
+       << "}\n"
+       << "if(!this->NewtonIntegration()){\n";
     if (this->bd.useQt()) {
       os << "return MechanicalBehaviour<" << btype
          << ",hypothesis, NumericType,use_qt>::FAILURE;\n";
@@ -162,18 +179,15 @@ namespace mfront {
          << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n"
-       << "}\n"
-       << "this->deel = this->deto-(this->dp)*(this->n);\n"
-       << "this->updateStateVariables();\n"
-       << "this->sig  = "
-          "(this->lambda_tdt)*trace(this->eel)*StrainStensor::Id()+2*(this->mu_"
-          "tdt)*(this->eel);\n"
-       << "this->updateAuxiliaryStateVariables();\n";
-    for (const auto& v : d.getPersistentVariables()) {
-      this->writePhysicalBoundsChecks(os, v, false);
-    }
-    for (const auto& v : d.getPersistentVariables()) {
-      this->writeBoundsChecks(os, v, false);
+       << "}\n";
+    this->writeBehaviourIntegratorPostprocessingStep(os);
+    if (!areRuntimeChecksDisabled(this->bd)) {
+      for (const auto& v : d.getPersistentVariables()) {
+        this->writePhysicalBoundsChecks(os, v, false);
+      }
+      for (const auto& v : d.getPersistentVariables()) {
+        this->writeBoundsChecks(os, v, false);
+      }
     }
     if (this->bd.useQt()) {
       os << "return MechanicalBehaviour<" << btype
@@ -198,10 +212,11 @@ namespace mfront {
        << "if(this->seq_e > real(0.01)*(this->young) *std::numeric_limits<"
           "real>::epsilon()){\n"
        << "constexpr auto M = st2tost2<N, NumericType>::M();\n"
-       << "const auto ccto_tmp_1 =  this->dp/this->seq_e;\n"
+       << "const auto mfront_internal_ccto_tmp_1 =  this->dp/this->seq_e;\n"
        << "this->Dt += "
-          "-4*(this->mu_tdt)*(this->mu)*(this->theta)*(ccto_tmp_1*M-(ccto_tmp_"
-          "1-this->df_dseq*(this->dt)/"
+          "-4*(this->mu_tdt)*(this->mu)*(this->theta)*"
+       << "(mfront_internal_ccto_tmp_1*M-(mfront_internal_ccto_tmp_1-this->df_"
+          "dseq*(this->dt)/"
           "(1+3*(this->mu)*(this->theta)*(this->dt)*this->df_dseq))*((this->n)^"
           "(this->n)));\n"
        << "}\n"
@@ -215,21 +230,6 @@ namespace mfront {
        << "return true;\n"
        << "}\n\n";
   }
-
-  void IsotropicMisesCreepCodeGenerator::
-      writeBehaviourParserSpecificInitializeMethodPart(std::ostream& os,
-                                                       const Hypothesis) const {
-    this->checkBehaviourFile(os);
-    os << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+(this->theta)*"
-          "(this->deto)));\n"
-       << "this->seq_e = sigmaeq(this->se);\n"
-       << "if(this->seq_e> real(0.01)*(this->young) * std::numeric_limits<"
-          "real>::epsilon()){\n"
-       << "this->n = 3*(this->se)/(2*this->seq_e);\n"
-       << "} else {\n"
-       << "this->n = StrainStensor(strain(0));\n"
-       << "}\n";
-  }  // end of writeBehaviourParserSpecificInitializeMethodPart
 
   IsotropicMisesCreepCodeGenerator::~IsotropicMisesCreepCodeGenerator() =
       default;

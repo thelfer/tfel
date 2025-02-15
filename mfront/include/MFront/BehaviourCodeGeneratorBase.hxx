@@ -44,12 +44,6 @@ namespace mfront {
                                const BehaviourInterfaceMap&);
     //
     void generateOutputFiles(const std::set<Hypothesis>&) override;
-    std::string getBehaviourFileName() const override;
-    std::string getBehaviourDataFileName() const override;
-    std::string getIntegrationDataFileName() const override;
-    std::string getSlipSystemHeaderFileName() const override;
-    std::string getSlipSystemImplementationFileName() const override;
-    std::string getSrcFileName() const override;
     bool isSrcFileRequired() const override;
     //! \brief destructor
     ~BehaviourCodeGeneratorBase() override;
@@ -57,6 +51,14 @@ namespace mfront {
    protected:
     //! \brief a simple alias
     using OrthotropicAxesConvention = tfel::material::OrthotropicAxesConvention;
+
+    /*!
+     * \brief a method checking if the given gradient and the thermodynamic
+     * forces have the same array size. \param[in] m: name of the calling method
+     * \param[in] mv: main variable
+     */
+    static void checkArraySizeOfMainVariables(
+        const std::string_view, const std::pair<Gradient, ThermodynamicForce>&);
     /*!
      * \brief throw an std::runtime_error
      * \param[in] m: calling method name
@@ -101,6 +103,14 @@ namespace mfront {
                                             const bool) const;
 
     virtual void writeIncludes(std::ostream&) const;
+
+    virtual void writeHeaderGuardBegin(std::ostream&,
+                                       const std::string&,
+                                       const bool) const;
+
+    virtual void writeHeaderGuardEnd(std::ostream&,
+                                     const std::string&,
+                                     const bool) const;
 
     virtual void writeNamespaceBegin(std::ostream&) const;
 
@@ -284,8 +294,17 @@ namespace mfront {
     virtual void writePhysicalBoundsChecks(std::ostream&,
                                            const VariableDescription&,
                                            const bool) const;
-
+    /*!
+     * \brief write the disabled constructors
+     * \param[in] os: output stream
+     */
     virtual void writeBehaviourDisabledConstructors(std::ostream&) const;
+    /*!
+     * \brief write the assignement operators
+     * \param[in] os: output stream
+     */
+    virtual void writeBehaviourDisabledAssignementOperators(
+        std::ostream&) const;
 
     virtual void writeBehaviourConstructors(std::ostream&,
                                             const Hypothesis) const;
@@ -436,18 +455,21 @@ namespace mfront {
         std::ostream&, const Hypothesis) const;
     /*!
      * \brief write the computeInternalEnergy method
+     * \param[in] os: output stream
      * \param[in] h: modelling hypothesis
      */
     virtual void writeBehaviourComputeInternalEnergy(std::ostream&,
                                                      const Hypothesis) const;
     /*!
      * \brief write the computeDissipatedEnergy method
+     * \param[in] os: output stream
      * \param[in] h: modelling hypothesis
      */
     virtual void writeBehaviourComputeDissipatedEnergy(std::ostream&,
                                                        const Hypothesis) const;
     /*!
      * \brief write the computeSpeedOfSound method
+     * \param[in] os: output stream
      * \param[in] h: modelling hypothesis
      */
     virtual void writeBehaviourComputeSpeedOfSound(std::ostream&,
@@ -459,39 +481,69 @@ namespace mfront {
                                           const Hypothesis) const;
     /*!
      * \brief write the computeAPrioriTimeStepsScalingFactor method
+     * \param[in] os: output stream
+     * \param[in] h: modelling hypothesis
      */
     virtual void writeBehaviourComputeAPrioriTimeStepScalingFactor(
         std::ostream&) const;
     /*!
      * \brief write the computeAPrioriTimeStepsScalingFactorII method
+     * \param[in] os: output stream
+     * \param[in] h: modelling hypothesis
      */
     virtual void writeBehaviourComputeAPrioriTimeStepScalingFactorII(
         std::ostream&, const Hypothesis) const;
     /*!
      * \brief write the computeAPosterioriTimeStepsScalingFactor method
+     * \param[in] os: output stream
      */
     virtual void writeBehaviourComputeAPosterioriTimeStepScalingFactor(
         std::ostream&) const;
     /*!
      * \brief write the computeAPosterioriTimeStepsScalingFactorII method
+     * \param[in] os: output stream
+     * \param[in] h: modelling hypothesis
      */
     virtual void writeBehaviourComputeAPosterioriTimeStepScalingFactorII(
         std::ostream&, const Hypothesis) const;
-
+    /*!
+     * \param[in] os: output stream
+     * \param[in] h: modelling hypothesis
+     */
     virtual void writeBehaviourUpdateExternalStateVariables(
         std::ostream&, const Hypothesis) const;
-
+    /*!
+     * \param[in] os: output stream
+     * \param[in] h: modelling hypothesis
+     */
     virtual void writeBehaviourInitializeFunctions(std::ostream&,
                                                    const Hypothesis) const;
-
+    /*!
+     * \param[in] os: output stream
+     * \param[in] h: modelling hypothesis
+     */
     virtual void writeBehaviourPostProcessings(std::ostream&,
                                                const Hypothesis) const;
-
+    /*!
+     * \brief write the methods associated with the behaviour variables
+     * \param[in] os: output stream
+     * \param[in] h: modelling hypothesis
+     */
+    virtual void writeBehaviourBehaviourVariablesMethods(
+        std::ostream&, const Hypothesis) const;
+    /*!
+     * \param[in] os: output stream
+     * \param[in] h: modelling hypothesis
+     */
     virtual void writeBehaviourOutputOperator(std::ostream&,
                                               const Hypothesis) const;
-
+    /*!
+     * \param[in] os: output stream
+     */
     virtual void writeBehaviourDestructor(std::ostream&) const;
-
+    /*!
+     * \param[in] os: output stream
+     */
     virtual void writeBehaviourTraits(std::ostream&) const;
 
     /*!
@@ -572,18 +624,20 @@ namespace mfront {
      * \param[in,out] tmpnames: temporary names
      * \param[in]  h:   hypothesis
      * \param[in]  md:  model description
-     * \param[in]  vo:  name of the variable containing the result
-     * \param[in]  vs:  name of the variable containing the value of the
-     *                  variable modified by the model at the beginning
-     *                  of the time step
-     * \param[in]  bn:  base name for temporary variable
+     * \param[in]  outputVariables: names of the variables containing the
+     * results \param[in]  inputVariables: names of the variables containing
+     * the values of the variables modified by the model at the beginning of
+     * the time step \param[in]  bn:  base name for temporary variable
+     *
+     * \pre the size of the input variables must be equal to the size of the
+     * output variables
      */
     virtual void writeModelCall(std::ostream&,
                                 std::vector<std::string>&,
                                 const Hypothesis,
                                 const ModelDescription&,
-                                const std::string&,
-                                const std::string&,
+                                const std::vector<std::string>&,
+                                const std::vector<std::string>&,
                                 const std::string&) const;
     //! \brief write the header files declaring the slip systems
     virtual void generateSlipSystemsFiles();

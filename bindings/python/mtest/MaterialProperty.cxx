@@ -11,9 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#include "TFEL/Python/SharedPtr.hxx"
-#include <boost/python.hpp>
-#include <boost/python/make_constructor.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/System/ExternalLibraryManager.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MTest/MaterialProperty.hxx"
@@ -41,8 +40,9 @@ static mtest::real MaterialProperty_getValue(
   return mtest::getValue(mp, values);
 }  // end of MaterialProperty_getValue
 
-void declareMaterialProperty() {
-  using boost::python::class_;
+void declareMaterialProperty(pybind11::module_&);
+
+void declareMaterialProperty(pybind11::module_& m) {
   using mtest::MaterialProperty;
 
   void (MaterialProperty::*setValue1)(const std::string&, const mtest::real) =
@@ -60,17 +60,14 @@ void declareMaterialProperty() {
       &mtest::getValue;
   mtest::real (*getValue4)(MaterialProperty&) = &mtest::getValue;
 
-  class_<std::shared_ptr<MaterialProperty>>("MaterialProperty")
-      .def("__init__",
-           boost::python::make_constructor(
-               MaterialProperty_getMaterialProperty1),
+  pybind11::class_<MaterialProperty, std::shared_ptr<MaterialProperty>>(
+      m, "MaterialProperty")
+      .def(pybind11::init(&MaterialProperty_getMaterialProperty1),
            "This constructor has the following arguments:\n"
            "- i(std::string): interface\n"
            "- l(std::string): library\n"
            "- f(std::string): function\n")
-      .def("__init__",
-           boost::python::make_constructor(
-               MaterialProperty_getMaterialProperty2),
+      .def(pybind11::init(&MaterialProperty_getMaterialProperty2),
            "This constructor has the following arguments:\n"
            "- l(std::string): library\n"
            "- f(std::string): function\n")
@@ -86,9 +83,12 @@ void declareMaterialProperty() {
            "set the value of a parameter")
       .def("getValue", &MaterialProperty::getValue,
            "evaluate the material property")
-      .def("getValue", getValue1, "evaluate the material property")
-      .def("getValue", &MaterialProperty_getValue,
+      .def("getValue", MaterialProperty_getValue,
            "evaluate the material property")
+      .def("getValue", getValue1, "evaluate the material property")
+      .def("getValue", getValue2, "evaluate the material property")
+      .def("getValue", getValue3, "evaluate the material property")
+      .def("getValue", getValue4, "evaluate the material property")
       .def("__call__", getValue1, "evaluate the material property")
       .def("__call__", MaterialProperty_getValue,
            "evaluate the material property")

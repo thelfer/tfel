@@ -14,7 +14,7 @@
 #include <ostream>
 #include "TFEL/Raise.hxx"
 #include "MFront/BehaviourDescription.hxx"
-#include "MFront/StandardBehaviourInterface.hxx"
+#include "MFront/BehaviourInterfaceBase.hxx"
 #include "MFront/LSDYNASymbolsGenerator.hxx"
 
 namespace mfront {
@@ -23,7 +23,7 @@ namespace mfront {
 
   void LSDYNASymbolsGenerator::writeAdditionalSymbols(
       std::ostream&,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription&,
       const FileDescription&,
       const std::string&,
@@ -32,7 +32,7 @@ namespace mfront {
 
   void LSDYNASymbolsGenerator::writeBehaviourTypeSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription& mb,
       const std::string& name) const {
     //     out << "MFRONT_SHAREDOBJ unsigned short " <<
@@ -59,7 +59,7 @@ namespace mfront {
 
   void LSDYNASymbolsGenerator::writeBehaviourKinematicSymbols(
       std::ostream& out,
-      const StandardBehaviourInterface&,
+      const BehaviourInterfaceBase&,
       const BehaviourDescription& mb,
       const std::string& name) const {
     //     out << "MFRONT_SHAREDOBJ unsigned short " <<

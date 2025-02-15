@@ -21,6 +21,7 @@
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/VariableBoundsDescription.hxx"
+#include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontUtilities.hxx"
 
 namespace mfront {
@@ -95,6 +96,23 @@ namespace mfront {
     }
     p = c;
     return r;
+  }  // end of read
+
+  template <>
+  tfel::utilities::DataMap read(
+      tfel::utilities::CxxTokenizer::const_iterator& p,
+      const tfel::utilities::CxxTokenizer::const_iterator pe) {
+    auto c = p;
+    auto d = tfel::utilities::Data::read(c, pe);
+    if (d.empty()) {
+      p = c;
+      return tfel::utilities::DataMap{};
+    }
+    if (!d.is<tfel::utilities::DataMap>()) {
+      tfel::raise("data read is not a DataMap");
+    }
+    p = c;
+    return d.get<tfel::utilities::DataMap>();
   }  // end of read
 
   std::pair<std::string, VariableBoundsDescription> readVariableBounds(
@@ -218,5 +236,23 @@ namespace mfront {
     throw_if(p != pe, "invalid variable name '" + n + "'");
     return std::make_tuple(r, true, i);
   }  // end of extractVariableNameAndArrayPosition
+
+  bool readSafeOptionTypeIfPresent(
+      tfel::utilities::CxxTokenizer::const_iterator& p,
+      const tfel::utilities::CxxTokenizer::const_iterator pe) {
+    using tfel::utilities::CxxTokenizer;
+    const auto m = "readSafeOptionTypeIfPresent";
+    CxxTokenizer::checkNotEndOfLine(m, p, pe);
+    if (p->value != "<") {
+      return false;
+    }
+    CxxTokenizer::readSpecifiedToken(m, "<", p, pe);
+    CxxTokenizer::readSpecifiedToken(m, "safe", p, pe);
+    CxxTokenizer::readSpecifiedToken(m, ">", p, pe);
+    if (ignoreSafeOptionForWarnings()) {
+      return false;
+    }
+    return true;
+  }
 
 }  // end of namespace mfront

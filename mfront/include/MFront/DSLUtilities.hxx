@@ -1,3 +1,4 @@
+
 /*!
  * \file   mfront/include/MFront/DSLUtilities.hxx
  * \brief
@@ -164,6 +165,16 @@ namespace mfront {
       std::ostream&, const std::string_view, const FileDescription&);
 
   /*!
+   * \brief write a symbol associated with the validator.
+   * \param[out] os: output stream
+   * \param[in]  n: entry point name
+   * \param[in] d: description
+   */
+  MFRONT_VISIBILITY_EXPORT void writeValidatorSymbol(
+      std::ostream&,
+      const std::string_view,
+      const MaterialKnowledgeDescription&);
+  /*!
    * \brief write a symbol associated with the build identifier.
    * \param[out] os: output stream
    * \param[in]  n: entry point name
@@ -299,9 +310,9 @@ namespace mfront {
   MFRONT_VISIBILITY_EXPORT void writeExportDirectives(std::ostream&,
                                                       const bool = true);
 
-  MFRONT_VISIBILITY_EXPORT std::string makeUpperCase(const std::string_view);
+  MFRONT_VISIBILITY_EXPORT std::string makeUpperCase(std::string_view);
 
-  MFRONT_VISIBILITY_EXPORT std::string makeLowerCase(const std::string_view);
+  MFRONT_VISIBILITY_EXPORT std::string makeLowerCase(std::string_view);
   /*!
    * \brief add the given symbol.
    * \param[in,out] symbols: mapping between a symbol and a replacement string

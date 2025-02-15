@@ -18,28 +18,26 @@
 #include "TFEL/Math/Matrix/MatrixConcept.hxx"
 #include "TFEL/Math/Stensor/StensorConcept.hxx"
 
-template <class T>
-void function(const tfel::math::VectorConcept<T>&);
+void function(const tfel::math::VectorConcept auto&);
 
-template <class T>
-void function(const tfel::math::VectorConcept<T>&,
-              const typename tfel::math::MathObjectTraits<T>::NumType,
-              const typename tfel::math::MathObjectTraits<T>::NumType,
-              const typename tfel::math::MathObjectTraits<T>::NumType,
-              const typename tfel::math::MathObjectTraits<T>::NumType,
+template <tfel::math::VectorConcept VectorType>
+void function(const VectorType&,
+              const tfel::math::numeric_type<VectorType>,
+              const tfel::math::numeric_type<VectorType>,
+              const tfel::math::numeric_type<VectorType>,
+              const tfel::math::numeric_type<VectorType>,
               const unsigned int);
 
-template <class T>
-void function(const tfel::math::MatrixConcept<T>&,
-              const typename tfel::math::MathObjectTraits<T>::NumType,
-              const typename tfel::math::MathObjectTraits<T>::NumType,
-              const typename tfel::math::MathObjectTraits<T>::NumType,
-              const typename tfel::math::MathObjectTraits<T>::NumType,
-              const typename tfel::math::MathObjectTraits<T>::NumType,
+template <tfel::math::MatrixConcept MatrixType>
+void function(const MatrixType&,
+              const tfel::math::numeric_type<MatrixType>,
+              const tfel::math::numeric_type<MatrixType>,
+              const tfel::math::numeric_type<MatrixType>,
+              const tfel::math::numeric_type<MatrixType>,
+              const tfel::math::numeric_type<MatrixType>,
               const unsigned int);
 
-template <class T>
-void function(const tfel::math::StensorConcept<T>&);
+void function(const tfel::math::StensorConcept auto&);
 
 #include "function_unary_tests.ixx"
 

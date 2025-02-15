@@ -15,6 +15,7 @@ configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCry
     PolyCrystalsAngles-30.txt @ONLY)
 
 set(mfront_tests_SOURCES
+  DigitSeparatorTest
   MaterialPropertiesBoundsCheck
   StateVariablesBoundsCheck
   ExternalStateVariablesBoundsCheck
@@ -46,6 +47,7 @@ set(mfront_tests_SOURCES
   DruckerPragerEcroLinDefault
   Norton
   Norton2
+  Norton5
   DDIF2
   Norton_Euler Norton_rk2
   Norton_rk4   Norton_rk42
@@ -81,6 +83,7 @@ set(mfront_tests_SOURCES
   StrainHardeningCreep
   StrainHardeningCreep2
   StrainHardeningCreep4
+  StrainHardeningCreep6
   Lorentz
   Lorentz2
   Mazars
@@ -105,6 +108,9 @@ set(mfront_tests_SOURCES
   BerveillerZaouiPolyCrystal
   BerveillerZaouiPolyCrystal_DD_CC
   BerveillerZaouiPolyCrystal_DD_CFC
+  ExternalModelCaller
+  ExternalModelCaller2
+  ExternalModelCaller3
   PolyCrystals
   PolyCrystals_DD_CC
   PolyCrystals_DD_CFC
@@ -149,7 +155,9 @@ set(mfront_tests_SOURCES
   MiehePhaseFieldDisplacementDeviatoricSplit
   ProfilerTest
   ProfilerTest2
-  ProfilerTest3)
+  ProfilerTest3
+  ArrayOfScalarGradients
+  ArrayOfStensorGradients)
 
 if(enable-mfront-quantity-tests)
   list(APPEND mfront_tests_SOURCES
@@ -162,6 +170,8 @@ if(enable-mfront-quantity-tests)
        Norton4
        Plasticity
        Plasticity4
+       Plasticity5
+       Plasticity6
        PlasticityWithoutAutomaticTemperatureDeclaration
        StrainHardeningCreep3
        StrainHardeningCreep5
@@ -523,9 +533,10 @@ test_generic(orthotropicelasticity6-24)
 test_generic(orthotropiccreep)
 test_generic(orthotropiccreep-rk42)
 test_generic(orthotropiccreep-rkCastem)
-# test_generic(strainhardeningcreep)
-# test_generic(strainhardeningcreep2)
-# test_generic(strainhardeningcreep3)
+test_generic(strainhardeningcreep)
+test_generic(strainhardeningcreep2)
+test_generic(strainhardeningcreep3)
+test_generic(strainhardeningcreep6)
 # test_generic(plasticity)
 # test_generic(plasisocin)
 # test_generic(viscoplasisocin)
@@ -721,8 +732,12 @@ test_generic(axialgrowth)
 test_generic(axialgrowth2)
 test_generic(axialgrowth3)
 test_generic(relocationtest)
+test_generic(externalmodelcaller ExternalModelCallerTest.ref)
+test_generic(externalmodelcaller2 ExternalModelCallerTest.ref)
+test_generic(externalmodelcaller3 ExternalModelCallerTest.ref)
 # test_generic(parametertest)
 # test_generic(parametertest2)
+test_generic(norton5)
 
 # test_generic(elasticmaterialpropertiesboundschecktest
 #   NO_XML_OUTPUT WILL_FAIL)
@@ -766,6 +781,8 @@ if(enable-mfront-quantity-tests)
   test_generic_fs(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-2D)
   test_generic_fs(mieheapellambrechtlogarithmicstrainelasticity-uniaxialloading-3-3D)
   test_generic(plasticity plasticity.ref)
+  test_generic(plasticity5 plasticity.ref)
+  test_generic(plasticity6)
   test_generic(plasticity_without_temperature_declaration plasticity.ref)
   test_generic(TensorialExternalStateVariableTest)
 endif(enable-mfront-quantity-tests)

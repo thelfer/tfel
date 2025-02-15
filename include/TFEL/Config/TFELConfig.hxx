@@ -336,17 +336,21 @@
  */
 #define TFEL_CONSTEXPR constexpr
 
-#ifdef __CUDACC__
+#if (defined __CUDACC__) || (defined __HIPCC__)
 #ifndef TFEL_DEVICE
 #define TFEL_DEVICE __device__
 #endif /* TFEL_DEVICE */
 #ifndef TFEL_HOST
 #define TFEL_HOST __host__
 #endif /* TFEL_HOST */
-#ifdef __CUDA_ARCH__
+#if (defined __CUDA_ARCH__) || (defined __HIP_DEVICE_COMPILE__)
 #define TFEL_NO_REPORT_CONTRACT_VIOLATION 1
-#endif /* __CUDA_ARCH__ */
-#endif /* __CUDACC__ */
+#endif /* (defined __CUDA_ARCH__) || (defined __HIP_DEVICE_COMPILE__) */
+#endif /* (defined __CUDACC__) || (defined __HIPCC__) */
+
+#if defined(__clang__) && defined(__CUDA__) && defined(__CUDA_ARCH__)
+#define TFEL_NO_REPORT_CONTRACT_VIOLATION 1
+#endif
 
 #ifdef SYCL_LANGUAGE_VERSION
 // FIXME: as June 2023, we were not able to use __SYCL_DEVICE_ONLY__ of OpenSycl

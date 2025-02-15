@@ -29,8 +29,16 @@ namespace mtest {
   StudyCurrentState& StudyCurrentState::operator=(StudyCurrentState&&) =
       default;
 
+  StudyCurrentState StudyCurrentState::makeDeepCopy() const {
+    StudyCurrentState copy(*this);
+    for (auto& [n, state] : copy.s) {
+      state = std::make_shared<StructureCurrentState>(state->makeDeepCopy());
+    }
+    return copy;
+  }  // end of makeDeepCopy
+
   bool StudyCurrentState::getFailureStatus() const {
-    for (const auto& failure_status : this->failure_criterion_status) {
+    for (const auto failure_status : this->failure_criterion_status) {
       if (failure_status) {
         return true;
       }
@@ -62,8 +70,8 @@ namespace mtest {
     this->failure_criterion_status.resize(n, false);
   }  // end of setNumberOfFailureCriterionStatus
 
-  std::size_t StudyCurrentState::getNumberOfFailureCriterionStatus() const
-      noexcept {
+  std::size_t StudyCurrentState::getNumberOfFailureCriterionStatus()
+      const noexcept {
     return this->failure_criterion_status.size();
   }  // end of getNumberOfFailureCriterionStatus
 

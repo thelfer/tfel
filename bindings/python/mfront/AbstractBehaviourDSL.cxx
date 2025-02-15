@@ -1,3 +1,4 @@
+
 /*!
  * \file   bindings/python/mfront/AbstractBehaviourDSL.cxx
  * \brief
@@ -13,19 +14,19 @@
 
 #include <set>
 #include <memory>
-#include "TFEL/Python/SharedPtr.hxx"
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
 
-void declareAbstractBehaviourDSL();
-void declareAbstractBehaviourDSL() {
-  using namespace boost::python;
+void declareAbstractBehaviourDSL(pybind11::module_&);
+
+void declareAbstractBehaviourDSL(pybind11::module_& m) {
   using namespace mfront;
-  class_<AbstractBehaviourDSL, std::shared_ptr<AbstractBehaviourDSL>,
-         bases<AbstractDSL>, boost::noncopyable>("AbstractBehaviourDSL",
-                                                 no_init)
+  pybind11::class_<AbstractBehaviourDSL, AbstractDSL,
+                   std::shared_ptr<AbstractBehaviourDSL>>(
+      m, "AbstractBehaviourDSL")
       .def("getBehaviourDescription",
            &AbstractBehaviourDSL::getBehaviourDescription,
-           return_internal_reference<>());
+           pybind11::return_value_policy::reference);
 }

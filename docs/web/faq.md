@@ -16,31 +16,29 @@ eqnPrefixTemplate: "($$i$$)"
 There are various ways of getting help, including this FAQ.
 
 The main source is the `TFEL` website:
-<http://tfel.sourceforge.net/>. In particular, one may want to read
+<https://thelfer.github.io/tfel/web/>. In particular, one may want to read
 the pages dedicated to:
 
 - the documentation (see also the various entries in the FAQ below):
-  <http://tfel.sourceforge.net/documentation.html>
+  <https://thelfer.github.io/tfel/web/documentation.html>
 - the installation process (see also the dedicated entry in the FAQ
-  below): <http://tfel.sourceforge.net/documentation.html>
+  below): <https://thelfer.github.io/tfel/web/documentation.html>
 
 If none of the resources available is satisfying, one may want to use:
 
-- the `TFEL` forums: <https://sourceforge.net/p/tfel/discussion>
-- the user mailing list:
-  [tfel-discuss@lists.sourceforge.net](mailto:tfel-discuss@lists.sourceforge.net)
-- the `TFEL` official mail adress to contact the developpers:
+- the `TFEL` forums: <https://github.com/thelfer/tfel/discussions>
+- the `TFEL` bug report: <https://github.com/thelfer/tfel/issues>
+- the `TFEL` official mail address to contact the developers:
   [tfel-contact@cea.fr](tfel-contact@cea.fr).
 
-We recommend using the forums and the mailing list for general
-questions, as our answers can hopefully also be of any help to other
-users.
+We recommend using the forums for general questions, as our answers can
+hopefully also be of any help to other users.
 
 # Documentation
 
-There are various kind of documents available, covering a wide range
+There are various kinds of documents available, covering a wide range
 of questions. This section describes some of them, but documentation
-about specific part of the `TFEL` project, such as `MFront`, is
+about specific parts of the `TFEL` project, such as `MFront`, is
 described in the associated sections.
 
 ## TFEL/Math
@@ -64,21 +62,21 @@ The installation process is fully described in the following pages:
 
 - [install.html](install.hml): this document describes the generic
   installation procedure for `TFEL` from the sources on
-  posix-compliant systems. Please note that the main systems on which
+  posix-compliant systems. Please note that the main system on which
   `TFEL` was developed is `Linux`. Extensive testing on other
   posix-compliant operating systems, notably `FreeBSD`, is lacking,
   although compilation and unit testing is known to work.
 - A page dedicated to `FreeBSD` is available
   [here](install-freebsd.html).
 - The installation on
-  [Windows plateform](http://windows.microsoft.com) is described in the
+  [Windows platform](http://windows.microsoft.com) is described in the
   following pages:
     - [Installation based on `cmake` and `Visual Studio`](install-windows-VisualStudio.html).
     - [Installation based on `cmake` and `MinGW` (as packaged with `Cast3M` `2017`)](install-windows-Cast3M2017.html).
 	  This tutorial can easily be adapted to other versions of
 	  `MinGW`, without requiring `Cast3M` to be installed.
     - [Installation based on `MSYS`](install-windows-msys.html).
-- The creation of binary packages are detailled [here](packages.html). 
+- The creation of binary packages are detailed [here](packages.html). 
 
 ## Which build systems shall I use (`autotools` or `cmake`)
 
@@ -111,18 +109,18 @@ With this option, the `mfront` binary and all the `TFEL` shared
 libraries will be "portable" (will not include CPU specific
 instructions).
 
-However, most of the times, the shared libraries produced by `MFront`
+However, most of the time, the shared libraries produced by `MFront`
 will be executed on the machine on which they will be used. For this
-reasons, the default behaviour of `mfront` is to use flags like
+reason, the default behaviour of `mfront` is to use flags like
 `-march=native` when compiling the libraries (This can be disabled by
 selecting `--obuild=level0`).
 
-Thus, we test the availability of this flag whether or not
+Thus, we test the availability of this flag whether
 `-Denable-portable-build=ON` is used.  Thus, a message such as
 `--enabling flag 'march=native'` barely states that this option is
 supported by the compiler.
 
-The best way to know if this option was taken into account is check
+The best way to know if this option was taken into account is to check
 the flags used to compile TFEL, as follows:
 
 ~~~~{.sh}
@@ -171,8 +169,8 @@ which is meant to be simple and expressive.
 
 Most solvers offers entry points to add user defined mechanical
 behaviours. The most common one is `UMAT`, which is part of the
-`Abaqus/Standard` solver. In this case, the process of supporting new
-a solver is fairly easy and we are ready to help setting it
+`Abaqus/Standard` solver. In this case, the process of supporting a new
+solver is fairly easy, and we are ready to help setting it
 up. However, extensive testing can be a long and tedious task: again,
 we are ready to help by providing advice, test cases and reference
 solutions.
@@ -213,7 +211,7 @@ provided by the `Implicit DSL`:
 $ mfront --help-keywords=Implicit
 ~~~~
 
-Using `pandoc`, this can be turned into an web page or a `PDF`
+Using `pandoc`, this can be turned into a webpage or a `PDF`
 document, as follows:
 
 ~~~~{.sh}
@@ -230,11 +228,11 @@ of mechanical behaviour are covered in depth, including the
 description of the algorithm used. See [this page](gallery.html) for
 details.
 
-### My newly implemented behaviour do not converge, what can I do ?
+### My newly implemented behaviour does not converge, what can I do ?
 
-Let us point that, there is no general guidelines, most troubles are
-behaviour specific. However, here are some advises to may help
-you. Note that those advises are worth considered during the
+Let us point that, there are no general guidelines, most troubles are
+behaviour specific. However, here are some advises that may help
+you. Note that those advises are worth considering during the
 behaviour implementation, before "real-world tests".
 
 The first thing to do is to identify the trouble.
@@ -244,7 +242,7 @@ appends after a noticeable amount of time, it is worth enabling the
 generation of a `MTest` file on failure. This feature is for example
 supported by the `castem` (`Cast3M`), `aster` and `cyrano` interfaces.
 
-I thus assume that your are using `MTest`.
+I thus assume that you are using `MTest`.
 
 You can use `--debug` command line option when compiling the `MFront`
 file. This will print some information about convergence at
@@ -269,7 +267,7 @@ you must check your units.
 In the second case, the trouble may be related to your implementation
 of the Jacobian matrix (assuming you are using an `Implicit` scheme
 with analytical jacobian). In this case, it is worth comparing your
-jacobian to a numericall one (see `@CompareToNumericalJaobian`). As
+jacobian to a numerical one (see `@CompareToNumericalJaobian`). As
 this comparison is CPU intensive, please consider specifying this
 keyword in the command line rather than in your implementation to
 avoid forgetting removing it in your real-world tests:
@@ -281,7 +279,7 @@ $ mfront --obuild --interface=castem --@CompareToNumericalJacobian=true norton.m
 Spurious oscillations may also be caused by an ill-conditioned system,
 see the `setNormalisationFactor` method.
 
-#### `NaN` propagation.
+#### `NaN` propagation
 
 In this case, you may want to build your `MFront` libraries with
 debugging symbols. This can be done by defining the `CXXFLAGS`
@@ -312,10 +310,10 @@ $ gdb --args mtest -fpe norton.mtest
 ~~~~~~~~~~~~~~~~~~~
 
 You must type `r` in `gdb` to start the computations. The `-fpe`
-command line option will cause the program to fail a the invalid
+command line option will cause the program to fail at the invalid
 operation and `gdb` will show you which line causes the
 trouble. Beware that this line may be in the generated code. In this
-case, this information will not be useful and you shall return to
+case, this information will not be useful, and you shall return to
 manual search of the problem.
 
 ### What are the variable types available in `MFront`
@@ -354,21 +352,21 @@ Finally, for tensor values, `MFront` introduces these `typedef`:
 An up-to-date list of all aliases automatically defined by `MFront` is
 available on the [following page](mfront-types.html).
 
-You can also directly use to types provided by the `TFEL`
+You can also directly use the types provided by the `TFEL`
 library. The most interesting ones for the end user are:
 
 - `tvector<N,Type>` (fixed sized vector)
 - `stensor<N,Type>` (symmetric tensor)
-- `tensor<N,Type>`  (non symmetric tensor)
+- `tensor<N,Type>`  (non-symmetric tensor)
 - `tmatrix<N,M,Type>` (fixed sized matrix)
 - `st2tost2<N,Type>` (linear application changing a symmetric
   tensor to a symmetric tensor)
 - `st2tot2<N,Type>` (linear application changing a symmetric
-  tensor to a non symmetric tensor)
-- `t2tost2<N,Type>` (linear application changing a non
-  symmetric tensor to a symmetric tensor)
-- `t2tot2<N,Type>` (linear application changing a non
-  symmetric tensor to a non symmetric tensor)
+  tensor to a non-symmetric tensor)
+- `t2tost2<N,Type>` (linear application changing a 
+  non-symmetric tensor to a symmetric tensor)
+- `t2tot2<N,Type>` (linear application changing a 
+  non-symmetric tensor to a non-symmetric tensor)
 
 where `N` is the size for vectors, the number of rows for matrices and
 the spatial dimension for the other types. `M` is the number of
@@ -388,7 +386,7 @@ introduced the associated types.
 
 ### Orthotropic axes convention
 
-Most finite element solver can't have a uniq definition of the
+Most finite element solver can't have a unique definition of the
 orthotropic axes for all the modelling hypotheses.
 
 For example, one can define a pipe using the following axes

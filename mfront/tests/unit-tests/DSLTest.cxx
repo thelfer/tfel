@@ -188,7 +188,7 @@ struct DSLTest final : public tfel::tests::TestCase {
  private:
   void check(const std::string& n, const std::string& s) {
     auto& f = mfront::DSLFactory::getDSLFactory();
-    auto dsl = f.createNewParser(n);
+    auto dsl = f.createNewDSL(n);
     try {
       dsl->analyseString(s);
     } catch (std::runtime_error& e) {

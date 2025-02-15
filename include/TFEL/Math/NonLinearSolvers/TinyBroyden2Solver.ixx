@@ -18,8 +18,13 @@
 
 namespace tfel::math {
 
-  template <unsigned short N, typename NumericType, typename Child>
-  void TinyBroyden2Solver<N, NumericType, Child>::updateOrCheckJacobian() {
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
+  void TinyBroyden2Solver<N, NumericType, Child, ExternalWorkSpace>::
+      updateOrCheckJacobian() {
     if (this->iter == 0) {
       return;
     }
@@ -34,8 +39,13 @@ namespace tfel::math {
     }
   }  // end of updateOrCheckJacobian
 
-  template <unsigned short N, typename NumericType, typename Child>
-  bool TinyBroyden2Solver<N, NumericType, Child>::computeNewCorrection() {
+  template <unsigned short N,
+            typename NumericType,
+            typename Child,
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
+  bool TinyBroyden2Solver<N, NumericType, Child, ExternalWorkSpace>::
+      computeNewCorrection() {
     auto& child = static_cast<Child&>(*this);
     child.updateOrCheckJacobian();
     this->delta_zeros = -(this->inv_jacobian) * (this->fzeros);

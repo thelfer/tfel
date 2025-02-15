@@ -52,7 +52,7 @@ This page shows:
   header file.
 - how the implementation finally looks like once introduced in the
   [`StandardElastoViscoplasticity`
-  brick](http://tfel.sourceforge.net/StandardElastoViscoPlasticityBrick.html)
+  brick](https://thelfer.github.io/tfel/web/StandardElastoViscoPlasticityBrick.html)
 
 # Description of the behaviour
 
@@ -96,11 +96,11 @@ K(\theta) = \begin{cases}
 
 \[
 \begin{aligned}
-	A &= - \frac{1}{\sqrt{3}} \sin \phi \mathrm{sign \theta} \sin \theta_\mathrm{T} - B \mathrm{sign \theta} \sin \theta_\mathrm{T} - C \sin^2 3\theta_\mathrm{T} + \cos \theta_\mathrm{T}\\
+	A &= - \frac{1}{\sqrt{3}} \sin \phi \mathrm{sign \theta} \sin \theta_\mathrm{T} - B \mathrm{sign \theta} \sin 3\,\theta_\mathrm{T} - C \sin^2 3\theta_\mathrm{T} + \cos \theta_\mathrm{T}\\
 	%
-	B &= \frac{\mathrm{sign \theta} \sin 6\theta_\mathrm{T} \left( \cos \theta_\mathrm{T} - \frac{1}{\sqrt{3} \sin \phi \mathrm{sign \theta} \sin \theta_\mathrm{T}} \right) - 6 \cos 6\theta_\mathrm{T} \left( \mathrm{sign \theta}  \sin \theta_\mathrm{T} + \frac{1}{\sqrt{3} \sin \phi \cos \theta_\mathrm{T}} \right) }{18 \cos^3 3 \theta_\mathrm{T}}\\
+	B &= \frac{\mathrm{sign \theta} \sin 6\theta_\mathrm{T} \left( \cos \theta_\mathrm{T} - \frac{1}{\sqrt{3}} \sin \phi \mathrm{sign \theta} \sin \theta_\mathrm{T} \right) - 6 \cos 6\theta_\mathrm{T} \left( \mathrm{sign \theta}  \sin \theta_\mathrm{T} + \frac{1}{\sqrt{3}} \sin \phi \cos \theta_\mathrm{T} \right) }{18 \cos^3 3 \theta_\mathrm{T}}\\
   %
-  C &= \frac{-\cos 3 \theta_\mathrm{T} \left( \cos \theta_\mathrm{T} - \frac{1}{\sqrt{3} \sin \phi \mathrm{sign \theta} \sin \theta_\mathrm{T}} \right) - 3 \mathrm{sign \theta} \sin 3 \theta_\mathrm{T} \left( \mathrm{sign \theta}  \sin \theta_\mathrm{T} + \frac{1}{\sqrt{3} \sin \phi \cos \theta_\mathrm{T}} \right) }{18 \cos^3 3 \theta_\mathrm{T}}
+  C &= \frac{-\cos 3 \theta_\mathrm{T} \left( \cos \theta_\mathrm{T} - \frac{1}{\sqrt{3}} \sin \phi \mathrm{sign \theta} \sin \theta_\mathrm{T} \right) - 3 \mathrm{sign \theta} \sin 3 \theta_\mathrm{T} \left( \mathrm{sign \theta}  \sin \theta_\mathrm{T} + \frac{1}{\sqrt{3}} \sin \phi \cos \theta_\mathrm{T} \right) }{18 \cos^3 3 \theta_\mathrm{T}}
 \end{aligned}
 \]{#eq:Sloan}
 
@@ -146,11 +146,11 @@ K_G(\theta) = \begin{cases}
 
 \[
 \begin{aligned}
-	A_G &= - \frac{1}{\sqrt{3}} \sin \psi \mathrm{sign \theta} \sin \theta_\mathrm{T} - B \mathrm{sign \theta} \sin \theta_\mathrm{T} - C \sin^2 3\theta_\mathrm{T} + \cos \theta_\mathrm{T}\\
+	A_G &= - \frac{1}{\sqrt{3}} \sin \psi \mathrm{sign \theta} \sin \theta_\mathrm{T} - B \mathrm{sign \theta} \sin 3\theta_\mathrm{T} - C \sin^2 3\theta_\mathrm{T} + \cos \theta_\mathrm{T}\\
 	%
-	B_G &= \frac{\mathrm{sign \theta} \sin 6\theta_\mathrm{T} \left( \cos \theta_\mathrm{T} - \frac{1}{\sqrt{3} \sin \psi \mathrm{sign \theta} \sin \theta_\mathrm{T}} \right) - 6 \cos 6\theta_\mathrm{T} \left( \mathrm{sign \theta}  \sin \theta_\mathrm{T} + \frac{1}{\sqrt{3} \sin \psi \cos \theta_\mathrm{T}} \right) }{18 \cos^3 3 \theta_\mathrm{T}}\\
+	B_G &= \frac{\mathrm{sign \theta} \sin 6\theta_\mathrm{T} \left( \cos \theta_\mathrm{T} - \frac{1}{\sqrt{3}} \sin \psi \mathrm{sign \theta} \sin \theta_\mathrm{T} \right) - 6 \cos 6\theta_\mathrm{T} \left( \mathrm{sign \theta}  \sin \theta_\mathrm{T} + \frac{1}{\sqrt{3}} \sin \psi \cos \theta_\mathrm{T} \right) }{18 \cos^3 3 \theta_\mathrm{T}}\\
   %
-  C_G &= \frac{-\cos 3 \theta_\mathrm{T} \left( \cos \theta_\mathrm{T} - \frac{1}{\sqrt{3} \sin \psi \mathrm{sign \theta} \sin \theta_\mathrm{T}} \right) - 3 \mathrm{sign \theta} \sin 3 \theta_\mathrm{T} \left( \mathrm{sign \theta}  \sin \theta_\mathrm{T} + \frac{1}{\sqrt{3} \sin \psi \cos \theta_\mathrm{T}} \right) }{18 \cos^3 3 \theta_\mathrm{T}}
+  C_G &= \frac{-\cos 3 \theta_\mathrm{T} \left( \cos \theta_\mathrm{T} - \frac{1}{\sqrt{3}} \sin \psi \mathrm{sign \theta} \sin \theta_\mathrm{T} \right) - 3 \mathrm{sign \theta} \sin 3 \theta_\mathrm{T} \left( \mathrm{sign \theta}  \sin \theta_\mathrm{T} + \frac{1}{\sqrt{3}} \sin \psi \cos \theta_\mathrm{T} \right) }{18 \cos^3 3 \theta_\mathrm{T}}
 \end{aligned}
 \]
 

@@ -16,7 +16,7 @@ mfront_python_module(_mfront mfront.cxx
   VariableBoundsDescription.cxx
   VariableDescription.cxx
   BehaviourData.cxx
-  BehaviourSymmetryType
+  BehaviourSymmetryType.cxx
   BehaviourDescription.cxx
   SearchPathsHandler.cxx
   GeneratorOptions.cxx

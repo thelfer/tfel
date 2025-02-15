@@ -233,13 +233,14 @@ struct TensorProductCheck final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(abs(nr[i] - r[i]) < 1.e-14);
     }
   }
-  template <typename TensorType, typename TensorType2>
-  void checkDiadicProduct(const TensorType& t1, const TensorType2& t2) {
+  template <typename GenericTensorType, typename GenericTensorType2>
+  void checkDiadicProduct(const GenericTensorType& t1,
+                          const GenericTensorType2& t2) {
     using namespace std;
     using namespace tfel::math;
     using std::vector;
-    typedef typename ResultType<TensorType, TensorType2, OpDiadicProduct>::type
-        Result;
+    using Result =
+        result_type<GenericTensorType, GenericTensorType2, OpDiadicProduct>;
     const Result r = t1 ^ t2;
     vector<double> nr(getSize(t1) * getSize(t2));
     for (unsigned short i = 0; i != getSize(t1); ++i) {

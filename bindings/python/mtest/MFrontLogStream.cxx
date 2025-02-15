@@ -12,8 +12,8 @@
  */
 
 #include <stdexcept>
-#include <boost/python.hpp>
-
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "TFEL/Raise.hxx"
 #include "MFront/MFrontLogStream.hxx"
 
@@ -37,16 +37,14 @@ static void pySetVerboseMode(const std::string& m) {
   }
 }
 
-void declareMFrontLogStream();
+void declareMFrontLogStream(pybind11::module_&);
 
-void declareMFrontLogStream() {
-  using namespace boost;
-  using namespace boost::python;
+void declareMFrontLogStream(pybind11::module_& m) {
   using namespace mfront;
 
   void (*ptr)(const VerboseLevel) = setVerboseMode;
 
-  enum_<VerboseLevel>("VerboseLevel")
+  pybind11::enum_<VerboseLevel>(m, "VerboseLevel")
       .value("VERBOSE_QUIET", VERBOSE_QUIET)
       .value("VERBOSE_LEVEL0", VERBOSE_LEVEL0)
       .value("VERBOSE_LEVEL1", VERBOSE_LEVEL1)
@@ -55,6 +53,6 @@ void declareMFrontLogStream() {
       .value("VERBOSE_DEBUG", VERBOSE_DEBUG)
       .value("VERBOSE_FULL", VERBOSE_FULL);
 
-  def("setVerboseMode", ptr);
-  def("setVerboseMode", pySetVerboseMode);
+  m.def("setVerboseMode", ptr);
+  m.def("setVerboseMode", pySetVerboseMode);
 }

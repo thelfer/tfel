@@ -291,14 +291,15 @@ namespace mtest {
       set_emp("PoissonRatio23", 4);
       set_emp("PoissonRatio13", 5);
       if ((h == ModellingHypothesis::PLANESTRAIN) ||
+          (h == ModellingHypothesis::PLANESTRESS) ||
           (h == ModellingHypothesis::AXISYMMETRICAL) ||
           (h == ModellingHypothesis::GENERALISEDPLANESTRAIN) ||
           (h == ModellingHypothesis::TRIDIMENSIONAL)) {
-        set_emp("ShearModulus12", 3);
+        set_emp("ShearModulus12", 6);
       }
       if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-        set_emp("ShearModulus23", 4);
-        set_emp("ShearModulus13", 5);
+        set_emp("ShearModulus23", 7);
+        set_emp("ShearModulus13", 8);
       }
     } else {
       tfel::raise(

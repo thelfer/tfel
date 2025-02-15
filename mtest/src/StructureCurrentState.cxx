@@ -35,6 +35,15 @@ namespace mtest {
 
   StructureCurrentState::~StructureCurrentState() = default;
 
+  StructureCurrentState StructureCurrentState::makeDeepCopy() const {
+    StructureCurrentState copy(*this);
+    for (auto& [m, cs] : copy.model_states) {
+      static_cast<void>(m);
+      cs = std::make_shared<CurrentState>(*cs);
+    }
+    return copy;
+  }  // end of makeDeepCopy
+
   void StructureCurrentState::setBehaviour(
       const std::shared_ptr<Behaviour>& p) {
     tfel::raise_if(this->b != nullptr,

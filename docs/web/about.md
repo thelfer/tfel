@@ -47,7 +47,7 @@
 
 # Tools
 
-The `TFEL/MFront` web site was build using the following tools:
+The `TFEL/MFront` website was built using the following tools:
 
 - [pandoc](http://johnmacfarlane.net/pandoc/index.html)
 - [HTML5 Boilerplate](http://html5boilerplate.com)
