@@ -1,3 +1,4 @@
+
 /*!
  * \file   mfront/include/MFront/IsotropicBehaviourCodeGeneratorBase.hxx
  * \brief
@@ -40,6 +41,32 @@ namespace mfront {
         std::ostream&, const Hypothesis) const override;
     void writeBehaviourComputeTangentOperator(std::ostream&,
                                               const Hypothesis) const override;
+    /*!
+     * \brief this method returns if the elastic strain at the beginning of the
+     * time step shall be computed from the stress at the beginning of the time
+     * step and if the elastic strain at the end of the time step is required.
+     *
+     * This method returns true if the stress update algorithm is used and the
+     * elastic material properties are defined and non constant.
+     */
+    virtual bool shallComputeTheElasticStrain() const;
+    /*!
+     * \brief this method writes the computation of deviatoric part of the trial
+     * stress, the normal. If required, it also write the computation of the
+     * elastic strain at the beginning of the time step.
+     *
+     * \param[in] os: output stream
+     */
+    virtual void writeBehaviourIntegratorPreprocessingStep(std::ostream&) const;
+    /*!
+     * \brief this method writes the computation of final stress.  If required,
+     * it also write the computation of the elastic strain at the end of the
+     * time step.
+     *
+     * \param[in] os: output stream
+     */
+    virtual void writeBehaviourIntegratorPostprocessingStep(
+        std::ostream&) const;
   };  // end of IsotropicBehaviourCodeGeneratorBase
 
 }  // end of namespace mfront

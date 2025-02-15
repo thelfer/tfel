@@ -512,9 +512,8 @@ namespace mfront {
     }
   }  // end of addStateVariable
 
-  void BehaviourData::addAuxiliaryStateVariable(
-      const VariableDescription& v,
-      const RegistrationStatus s) {
+  void BehaviourData::addAuxiliaryStateVariable(const VariableDescription& v,
+                                                const RegistrationStatus s) {
     this->addVariable(this->auxiliaryStateVariables, v, s, false);
     if (s == FORCEREGISTRATION) {
       this->addVariable(this->persistentVariables, v, ALREADYREGISTRED, false,

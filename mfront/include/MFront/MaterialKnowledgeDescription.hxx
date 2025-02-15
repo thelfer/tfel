@@ -125,8 +125,8 @@ namespace mfront {
                                const std::vector<std::string>&,
                                const tfel::utilities::DataMap&);
     //! \return the external `MFront` files
-    const std::map<std::string,                          // file path
-                   std::tuple<std::vector<std::string>,  // list of interfaces
+    const std::map<std::string,                           // file path
+                   std::tuple<std::vector<std::string>,   // list of interfaces
                               tfel::utilities::DataMap>,  // DSL options
                    std::less<>>&
     getExternalMFrontFiles() const;
@@ -161,7 +161,7 @@ namespace mfront {
      * associated sources.
      */
     std::map<std::string,
-             std::tuple<std::vector<std::string>,         // list of interfaces
+             std::tuple<std::vector<std::string>,   // list of interfaces
                         tfel::utilities::DataMap>,  // DSL options
              std::less<>>
         externalMFrontFiles;

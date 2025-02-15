@@ -3290,7 +3290,7 @@ namespace mfront {
           os << "this->d" << v.name << " -= this->" << v.name << ";\n";
         }
       } else {
-        const auto& md =std::get<ExternalModel>(m);
+        const auto& md = std::get<ExternalModel>(m);
         const auto mv =
             this->bd.getBehaviourData(h).getBehaviourVariableFactory(
                 md.factory);

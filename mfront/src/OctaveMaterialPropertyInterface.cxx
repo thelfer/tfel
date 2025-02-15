@@ -77,13 +77,13 @@ namespace mfront {
           << "return " << nbr << ";\n"
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-      if(use_qt){
+      if (use_qt) {
         out << "if(" << v.name << " > " << v.type << "{" << b.upperBound
             << "}){\n";
       } else {
         out << "if(" << v.name << " > " << b.upperBound << "){\n";
       }
-       out   << get_out_of_bounds_policy  //
+      out << get_out_of_bounds_policy  //
           << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\");\n"
           << "if(mfront_policy.is_defined()){\n"
           << "if(mfront_policy.is_string()){\n"

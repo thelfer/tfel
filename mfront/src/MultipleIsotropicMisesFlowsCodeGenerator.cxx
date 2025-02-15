@@ -313,30 +313,28 @@ namespace mfront {
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     }
-    if (this->bd.getAttribute(
-            IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
-      os << "this->se =  tfel::math::deviator(this->sig + "
-         << "2 * (this->mu) * (this->theta) * (this->deto));\n";
-    } else {
-      os << "this->se = 2 * (this->mu) * ("
-         << "tfel::math::deviator(this->eel + (this->theta) * "
-            "(this->deto)));\n";
-    }
+    this->writeBehaviourIntegratorPreprocessingStep(os);
     os << "this->seq_e = sigmaeq(this->se);\n";
     n = 0;
     for (const auto& f : this->flows) {
       if (f.hasSpecificTheta) {
         if (this->bd.getAttribute(
                 IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
-          os << "const StressStensor se" << n << " = "
-             << "tfel::math::deviator(this->sig) + "
-             << "2 * (this->mu) * (" << f.theta << ") * (this->deto);\n";
+          if (this->shallComputeTheElasticStrain()) {
+            os << "const StressStensor mfront_se" << n << " = "
+               << "2 * (this->mu) * (tfel::math::deviator(mfront_eel_bts + ("
+               << f.theta << ") * (this->deto)));\n";
+          } else {
+            os << "const StressStensor mfront_se" << n << " = "
+               << "tfel::math::deviator(this->sig) + "
+               << "2 * (this->mu) * (" << f.theta << ") * (this->deto);\n";
+          }
         } else {
-          os << "const StressStensor se" << n << " = "
+          os << "const StressStensor mfront_se" << n << " = "
              << "2 * (this->mu) * (tfel::math::deviator(this->eel + ("
              << f.theta << ") * (this->deto)));\n";
         }
-        os << "this->seq_e" << n << " = sigmaeq(se" << n << ");\n";
+        os << "this->seq_e" << n << " = sigmaeq(mfront_se" << n << ");\n";
       }
       ++n;
     }
@@ -378,22 +376,7 @@ namespace mfront {
     }
     os << "}\n"
        << "}\n";
-    if (!this->bd.getAttribute(
-            IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
-      os << "this->deel = this->deto - (this->dp) * (this->n);\n";
-    }
-    os << "this->updateStateVariables();\n";
-    if (this->bd.getAttribute(
-            IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
-      os << "this->sig += "
-         << "(this->lambda_tdt) * trace(this->deto) * Stensor::Id() + "
-         << "2 * (this->mu_tdt) * (this->deto - (this->dp) * (this->n));\n";
-    } else {
-      os << "this->sig = "
-         << "(this->lambda_tdt) * trace(this->eel) * Stensor::Id() + "
-         << "2 * (this->mu_tdt) * (this->eel);\n";
-    }
-    os << "this->updateAuxiliaryStateVariables();\n";
+    this->writeBehaviourIntegratorPostprocessingStep(os);
     if (!areRuntimeChecksDisabled(this->bd)) {
       for (const auto& v : d.getPersistentVariables()) {
         this->writePhysicalBoundsChecks(os, v, false);

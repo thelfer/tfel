@@ -473,6 +473,10 @@ The following libraries are available: `Config`, `Exception`,
 
 # Issues fixed
 
+## Issue 724: [mfront] Add support for non constant elastic properties in the stress update algorithm of the isotropic DSLs
+
+For more details, see <https://github.com/thelfer/tfel/issues/724>
+
 ## Issue 721: [tfel-math] Add a `zero` method to create tensorial objects
 
 This feature is described in Section @sec:tfel_5_1:zero.

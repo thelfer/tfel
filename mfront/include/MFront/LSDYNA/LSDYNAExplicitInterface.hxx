@@ -102,7 +102,7 @@ namespace lsdyna {
         b.computeInternalEnergy(Psi_s);
         e = Psi_s / rho;
       }
-    };
+    };  // namespace lsdyna
     //! structure in charge of calling the computeDissipatedEnergy method
     struct TFEL_VISIBILITY_LOCAL DissipatedEnergyComputer {
       TFEL_LSDYNA_INLINE static void exe(T& e, const BV& b, const T& rho) {

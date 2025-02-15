@@ -56,8 +56,9 @@ namespace mfront {
   //! \return if the safe option for keywords or code blocks shall be ignored
   MFRONT_VISIBILITY_EXPORT bool ignoreSafeOptionForWarnings() noexcept;
   //! \brief set if the safe option for keywords or code blocks shall be ignored
-  MFRONT_VISIBILITY_EXPORT void setIgnoreSafeOptionForWarnings(const bool) noexcept;
+  MFRONT_VISIBILITY_EXPORT void setIgnoreSafeOptionForWarnings(
+      const bool) noexcept;
 
-  }  // namespace mfront
+}  // namespace mfront
 
 #endif /* LIB_MFRONT_MFRONTWARNINGMODE_HXX */

@@ -1,3 +1,4 @@
+
 /*!
  * \file   mfront/src/IsotropicMisesCreepCodeGenerator.cxx
  * \brief
@@ -14,7 +15,6 @@
 #include <ostream>
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
-#include "MFront/IsotropicBehaviourDSLBase.hxx"
 #include "MFront/IsotropicMisesCreepCodeGenerator.hxx"
 
 namespace mfront {
@@ -47,14 +47,14 @@ namespace mfront {
     os << this->bd.getCode(h, BehaviourData::FlowRule) << "return true;\n}\n\n"
        << "bool NewtonIntegration(){\n"
        << "constexpr auto newton_epsilon = "
-          "100*std::numeric_limits<strain>::epsilon();\n"
+       << "100*std::numeric_limits<strain>::epsilon();\n"
        << "bool converged=false;\n"
        << "strain newton_f;\n"
        << "strain newton_df;\n"
-       << "auto newton_ddp = strain{}; // previous correction of the Newton "
-          "algorithm\n"
+       << "// previous correction of the Newton algorithm\n"
+       << "auto newton_ddp = strain{};\n"
        << "const auto mfront_internal_3_mu_theta = "
-          "3*(this->theta)*(this->mu);\n"
+       << "3 * (this->theta) * (this->mu);\n"
        << "unsigned int iter=0;\n";
     os << "while((converged==false)&&(iter<(this->iterMax))){\n"
        << "this->seq = "
@@ -151,15 +151,7 @@ namespace mfront {
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     }
-    if (this->bd.getAttribute(
-            IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
-      os << "this->se =  tfel::math::deviator(this->sig + "
-         << "2 * (this->mu) * (this->theta) * (this->deto));\n";
-    } else {
-      os << "this->se = 2 * (this->mu) * ("
-         << "tfel::math::deviator(this->eel + (this->theta) * "
-            "(this->deto)));\n";
-    }
+    this->writeBehaviourIntegratorPreprocessingStep(os);
     os << "this->seq_e = sigmaeq(this->se);\n"
        << "if (this->seq_e > \n"
        << "real(0.01) * (this->young) * "
@@ -188,22 +180,7 @@ namespace mfront {
     }
     os << "}\n"
        << "}\n";
-    if (!this->bd.getAttribute(
-            IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
-      os << "this->deel = this->deto - (this->dp) * (this->n);\n";
-    }
-    os << "this->updateStateVariables();\n";
-    if (this->bd.getAttribute(
-            IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
-      os << "this->sig += "
-         << "(this->lambda_tdt) * trace(this->deto) * Stensor::Id() + "
-         << "2 * (this->mu_tdt) * (this->deto - (this->dp) * (this->n));\n";
-    } else {
-      os << "this->sig = "
-         << "(this->lambda_tdt) * trace(this->eel) * Stensor::Id() + "
-         << "2 * (this->mu_tdt) * (this->eel);\n";
-    }
-    os << "this->updateAuxiliaryStateVariables();\n";
+    this->writeBehaviourIntegratorPostprocessingStep(os);
     if (!areRuntimeChecksDisabled(this->bd)) {
       for (const auto& v : d.getPersistentVariables()) {
         this->writePhysicalBoundsChecks(os, v, false);
@@ -211,16 +188,16 @@ namespace mfront {
       for (const auto& v : d.getPersistentVariables()) {
         this->writeBoundsChecks(os, v, false);
       }
-      }
-      if (this->bd.useQt()) {
-        os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType,use_qt>::SUCCESS;\n";
-      } else {
-        os << "return MechanicalBehaviour<" << btype
-           << ",hypothesis, NumericType,false>::SUCCESS;\n";
-      }
-      os << "}\n\n";
     }
+    if (this->bd.useQt()) {
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType,use_qt>::SUCCESS;\n";
+    } else {
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType,false>::SUCCESS;\n";
+    }
+    os << "}\n\n";
+  }
 
   void IsotropicMisesCreepCodeGenerator::writeBehaviourComputeTangentOperator(
       std::ostream& os, const Hypothesis) const {

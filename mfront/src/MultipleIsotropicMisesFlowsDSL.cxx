@@ -142,7 +142,7 @@ namespace mfront {
     return true;
   }  // end of allowMultipleFlowRules
 
-  std::size_t MultipleIsotropicMisesFlowsDSL::getNumberOfFlowRules() const{
+  std::size_t MultipleIsotropicMisesFlowsDSL::getNumberOfFlowRules() const {
     return this->flows.size();
   }  // end of getNumberOfFlowRules
 
@@ -273,11 +273,11 @@ namespace mfront {
     };
     this->treatCodeBlock(opts, cname.str(), m, analyser, true);
     this->checkFlowRule(cname.str(), this->flows.size(),
-			flow.flow != FlowHandler::CreepFlow);
+                        flow.flow != FlowHandler::CreepFlow);
     flow.flowRule =
         this->mb.getCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS, cname.str());
     this->flows.push_back(flow);
-    }  // end of treatFlowRule
+  }  // end of treatFlowRule
 
   MultipleIsotropicMisesFlowsDSL::~MultipleIsotropicMisesFlowsDSL() = default;
 

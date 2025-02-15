@@ -79,9 +79,7 @@ namespace mfront {
       const std::string &) const {}  // end of writeBehaviourConstructorHeader
 
   void MFrontBehaviourInterface::writeBehaviourConstructorBody(
-      std::ostream &,
-      const BehaviourDescription &,
-      const Hypothesis) const {
+      std::ostream &, const BehaviourDescription &, const Hypothesis) const {
   }  // end of writeBehaviourConstructorBody
 
   void MFrontBehaviourInterface::writeBehaviourDataConstructor(

@@ -1,0 +1,19 @@
+@DSL IsotropicPlasticMisesFlow{use_stress_update_algorithm : true};
+@Behaviour Plasticity6;
+@Author Thomas Helfer;
+@Date 15 / 02 / 2025;
+
+@Epsilon 1e-15;
+@UseQt true;
+
+@Parameter temperature Ta = 2e3;
+@Parameter stress s0 = 1e9;
+s0.setGlossaryName("YieldStrength");
+
+@ElasticMaterialProperties{"150e9*(1-T/Ta)", 0.3};
+
+@FlowRule {
+  f = seq - s0;
+  df_dseq = 1;
+  df_dp = stress{};
+}

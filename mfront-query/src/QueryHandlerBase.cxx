@@ -173,21 +173,18 @@ namespace mfront {
         "--ignore-safe",
         CallBack(
             "ignore the safe options for keywords or code blocks",
-            []() noexcept { setIgnoreSafeOptionForWarnings(true); },
-            false));
+            []() noexcept { setIgnoreSafeOptionForWarnings(true); }, false));
     this->registerCallBack(
         "--warning", "-W",
         CallBack(
-            "enable warnings", []() noexcept { setWarningMode(true); },
-            false));
+            "enable warnings", []() noexcept { setWarningMode(true); }, false));
     this->registerNewCallBack("--report-warnings",
                               &QueryHandlerBase::treatReportWarnings,
                               "print warnings", true);
     this->registerCallBack(
-        "-Werror",
-        CallBack(
-            "turn warnings into errors",
-            []() noexcept { setWarningErrorMode(true); }, false));
+        "-Werror", CallBack(
+                       "turn warnings into errors",
+                       []() noexcept { setWarningErrorMode(true); }, false));
     this->registerNewCallBack("--warning-error",
                               &QueryHandlerBase::treatWarningError,
                               "turn warnings into errors", true);

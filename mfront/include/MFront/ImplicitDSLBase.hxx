@@ -101,7 +101,6 @@ namespace mfront {
     void readTangentOperatorCodeBlock(const CodeBlockOptions&,
                                       const std::string&) override;
 
-
     void completeVariableDeclaration() override;
     void endsInputFileProcessing() override;
     void makeConsistencyChecks() const override;

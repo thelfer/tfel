@@ -588,7 +588,7 @@ namespace mtest {
   bool isScalarVariableType(const int t) {
     auto id = t;
     return mtest::internals::isScalarVariableType(id);
-  } // end of isScalarVariableType
+  }  // end of isScalarVariableType
 
   size_t getVariableSize(const int t, const Behaviour::Hypothesis h) {
     auto id = t;

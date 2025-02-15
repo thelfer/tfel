@@ -113,7 +113,7 @@ namespace mfront {
     }
     p = c;
     return d.get<tfel::utilities::DataMap>();
-  } // end of read
+  }  // end of read
 
   std::pair<std::string, VariableBoundsDescription> readVariableBounds(
       tfel::utilities::CxxTokenizer::const_iterator& p,
@@ -247,7 +247,7 @@ namespace mfront {
       return false;
     }
     CxxTokenizer::readSpecifiedToken(m, "<", p, pe);
-    CxxTokenizer::readSpecifiedToken(m, "safe",p,pe);
+    CxxTokenizer::readSpecifiedToken(m, "safe", p, pe);
     CxxTokenizer::readSpecifiedToken(m, ">", p, pe);
     if (ignoreSafeOptionForWarnings()) {
       return false;

@@ -1,4 +1,3 @@
-
 /*!
  * \file   mfront/include/MFront/IsotropicBehaviourDSLBase.hxx
  * \brief
@@ -94,6 +93,7 @@ namespace mfront {
      * \brief performs some check on the given code block describing a flow rule
      * \param[in] n: code block name
      * \param[in] id: flow id
+
      * \param[in] is_df_dp_required: check if the df_dp shall be used
      */
     virtual void checkFlowRule(std::string_view,
@@ -115,7 +115,6 @@ namespace mfront {
         ihrs;
 
    private:
-
     friend struct BehaviourDSLBase<IsotropicBehaviourDSLBase>;
 
   };  // end of class IsotropicBehaviourDSLBase

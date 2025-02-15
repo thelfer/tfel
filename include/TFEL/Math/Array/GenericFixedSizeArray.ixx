@@ -20,12 +20,12 @@ namespace tfel::math {
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
   TFEL_HOST_DEVICE constexpr Child
-  GenericFixedSizeArray<Child, ArrayPolicy, N>::zero(){
+  GenericFixedSizeArray<Child, ArrayPolicy, N>::zero() {
     constexpr auto null_value =
         typename GenericFixedSizeArray<Child, ArrayPolicy, N>::value_type{};
     auto c = Child{null_value};
     return c;
-  } // end of zero
+  }  // end of zero
 
   template <typename Child,
             typename ArrayPolicy,

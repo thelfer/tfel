@@ -141,7 +141,7 @@ namespace mfront {
     d.minimalMFrontFileBody = "@FlowRule{}\n\n";
     return d;
   }  // end of getBehaviourDSLDescription
-  
+
   bool IsotropicBehaviourDSLBase::handleStrainHardening() const { return true; }
 
   void IsotropicBehaviourDSLBase::getSymbols(
@@ -306,7 +306,8 @@ namespace mfront {
             (d.isIntegrationVariableIncrementName(m))) {
           report_unexpected("variable '" + m + "'");
         }
-      } // end of for(const auto& m : c.members)
+      }  // end of for(const auto& m : c.members)
+
       if (!c.block_variables.contains("f")) {
         report("'f' is not used");
       }
@@ -334,7 +335,9 @@ namespace mfront {
     reportWarning(warnings);
   }  // end of checkFlowRule
 
-  std::function<void(CodeBlock&, const IsotropicBehaviourDSLBase::Hypothesis, const std::string&)>
+  std::function<void(CodeBlock&,
+                     const IsotropicBehaviourDSLBase::Hypothesis,
+                     const std::string&)>
   IsotropicBehaviourDSLBase::getFlowRuleAnalyser(
       const std::size_t flow_id) const {
     const auto has_ihr = this->ihrs.contains(flow_id);
@@ -357,7 +360,7 @@ namespace mfront {
         }
       }
     };
-  } // end of getFlowRuleAnalyser
+  }  // end of getFlowRuleAnalyser
 
   void IsotropicBehaviourDSLBase::treatFlowRule() {
     auto modifier = [this](const Hypothesis h, const std::string& sv,
@@ -603,6 +606,24 @@ namespace mfront {
              "Poisson ratio at t+theta*dt");
       add_lv(this->mb, "real", "\u03BD\u2091\u209C\u209B", "nu_tdt", "",
              "Poisson ratio at t+dt");
+      if (this->mb.getAttribute(
+              IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
+        const auto& emps = this->mb.getElasticMaterialProperties();
+        if (emps.size() != 2u) {
+          this->throwRuntimeError(
+              "IsotropicBehaviourCodeGenerator::"
+              "writeBehaviourLocalVariablesInitialisation",
+              "invalid number of material properties");
+        }
+        if (!((this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[0])) &&
+              (this->mb.isMaterialPropertyConstantDuringTheTimeStep(
+                  emps[1])))) {
+          this->reserveName("mfront_eel_bts");
+          this->reserveName("mfront_eel_ets");
+          this->reserveName("mfront_young_bts");
+          this->reserveName("mfront_nu_bts");
+        }
+      }
     } else {
       this->mb.addMaterialProperty(
           uh, VariableDescription("stress", "young", 1u, 0u));

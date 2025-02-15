@@ -746,7 +746,7 @@ namespace mfront {
         return "(" + var + "+(this->theta)*d" + var + ")";
       }
     }
-    if (d.isAuxiliaryStateVariableName(var)){
+    if (d.isAuxiliaryStateVariableName(var)) {
       const auto& v = d.getAuxiliaryStateVariables().getVariable(var);
       if (v.getAttribute<bool>("ComputedByExternalModel", false)) {
         if (addThisPtr) {
@@ -796,9 +796,9 @@ namespace mfront {
         return "(" + var + "+d" + var + ")";
       }
     }
-    if (d.isAuxiliaryStateVariableName(var)){
+    if (d.isAuxiliaryStateVariableName(var)) {
       const auto& v = d.getAuxiliaryStateVariables().getVariable(var);
-      if (v.getAttribute<bool>("ComputedByExternalModel", false)){
+      if (v.getAttribute<bool>("ComputedByExternalModel", false)) {
         if (addThisPtr) {
           return "(this->" + var + "+this->d" + var + ")";
         } else {
@@ -1587,7 +1587,7 @@ namespace mfront {
     this->setMinimalTangentOperator();
   }  // end of endsInputFileProcessing
 
-  void ImplicitDSLBase::makeConsistencyChecks() const{
+  void ImplicitDSLBase::makeConsistencyChecks() const {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     BehaviourDSLCommon::makeConsistencyChecks();
     //
@@ -1631,7 +1631,7 @@ namespace mfront {
         }
       }
     }
-  } // end of makeConsistencyChecks
+  }  // end of makeConsistencyChecks
 
   void ImplicitDSLBase::getSymbols(std::map<std::string, std::string>& symbols,
                                    const Hypothesis h,
