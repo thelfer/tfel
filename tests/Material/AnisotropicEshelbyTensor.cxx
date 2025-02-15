@@ -28,11 +28,6 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
-template <typename T>
-static constexpr T my_abs(const T& v) noexcept {
-  return v < T(0) ? -v : v;
-}
-
 struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
   AnisotropicEshelbyTensorTest()
       : tfel::tests::TestCase("TFEL/Material", "AnisotropicEshelbyTensor") {

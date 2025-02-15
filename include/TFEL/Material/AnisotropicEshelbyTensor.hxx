@@ -36,7 +36,7 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] max_it: maximal number of iterations for integration
    */
   template <typename real, typename StressType>
-  TFEL_HOST_DEVICE static tfel::math::st2tost2<
+  TFEL_HOST_DEVICE tfel::math::st2tost2<
       2u,
       typename tfel::math::invert_type<StressType>>
   computePlainStrainAnisotropicHillTensor(const tfel::math::st2tost2<2u, StressType>&,
@@ -61,7 +61,7 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] max_it: maximal number of iterations for integration
    */
   template <typename real, typename StressType>
-  TFEL_HOST_DEVICE static tfel::math::st2tost2<2u, real>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<2u, real>
   computePlainStrainAnisotropicEshelbyTensor(const tfel::math::st2tost2<2u, StressType>&,
                                     const real&,
                                     const std::size_t max_it = 12);
@@ -83,7 +83,7 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] max_it: maximal number of iterations for integration
    */
   template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE static tfel::math::
+  TFEL_HOST_DEVICE tfel::math::
       st2tost2<3u, typename tfel::math::invert_type<StressType>>
       computeAnisotropicHillTensor(const tfel::math::st2tost2<3u, StressType>&,
                                    const tfel::math::tvector<3u, real>&,
@@ -110,7 +110,7 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] max_it: maximal number of iterations for integration
    */
   template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
   computeAnisotropicEshelbyTensor(const tfel::math::st2tost2<3u, StressType>&,
                                   const tfel::math::tvector<3u, real>&,
                                   const LengthType&,
