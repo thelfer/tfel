@@ -37,3 +37,9 @@ For more details, see <https://github.com/thelfer/tfel/issues/688>.
 ## Issue 687: [mfront] Treatment of the point wise models in the DSL `RungeKutta` is broken
 
 For more details, see <https://github.com/thelfer/tfel/issues/687>.
+
+## Issue 203: Add support to `pandoc-xnos`
+￼
+
+￼
+For more details, see <https://github.com/thelfer/tfel/issues/203>.
