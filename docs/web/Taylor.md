@@ -28,6 +28,14 @@
 \newcommand{\mts}[1]{\left.#1\right|_{t+\theta\,\Delta\,t}}
 \newcommand{\ets}[1]{\left.#1\right|_{t+\Delta\,t}}
 
+We present here an implementation of Taylor homogenization scheme [@taylor_1938] using `BehaviourVariable` keyword.
+This implementation allows using arbitrary local behaviours on each phase.
+
+This tutorial first recalls the presentation of `Taylor` scheme, which is the generalization
+of Voigt scheme for non-linear behaviours. The derivation is very simple and allows to
+compute the tangent operator without resolving any non-linear problem. The local tangent operators
+are however needed.
+
 # Taylor homogenization scheme
 
 Taylor/Voigt scheme makes the hypothesis of a uniform strain $\tenseur E$

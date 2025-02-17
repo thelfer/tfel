@@ -29,6 +29,17 @@
 \newcommand{\mts}[1]{\left.#1\right|_{t+\theta\,\Delta\,t}}
 \newcommand{\ets}[1]{\left.#1\right|_{t+\Delta\,t}}
 
+We present here an implementation of Sachs homogenization scheme [@sachs_1928] using `BehaviourVariable` keyword.
+This implementation allows using arbitrary local behaviours on each phase, providing that
+the local tangent operators are always invertible.
+
+This tutorial first recalls the presentation of `Sachs` scheme, which introduces the unknown
+stress, uniform in the composite material. This unknown leads to an unusual stress-driven problem,
+and here the residues of the non-linear system are scaled with a reference stress, in order that
+the Jacobian matrix remains well-conditioned.
+This matrix remains theoretically invertible for some conditions on local behaviours (positive work
+hardening, no damage...).
+
 # Sachs homogenization scheme
 
 Sachs/Reuss scheme makes the hypothesis of a uniform stress $\tenseur \Sigma$ in the heterogeneous material:
