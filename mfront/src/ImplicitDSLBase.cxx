@@ -1468,7 +1468,7 @@ namespace mfront {
     for (const auto& iJb : jacobian_invert_blocks) {
       this->mb.reserveName(uh, iJb);
     }
-  }  // end of completeVariableDeclaration()
+  }  // end of completeVariableDeclaration
 
   void ImplicitDSLBase::endsInputFileProcessing() {
     using namespace tfel::glossary;
@@ -1590,6 +1590,20 @@ namespace mfront {
   void ImplicitDSLBase::makeConsistencyChecks() const {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     BehaviourDSLCommon::makeConsistencyChecks();
+    // check that no the increment of integration variables is not used in
+    // @InitLocalVariables
+    for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
+      const auto& d = this->mb.getBehaviourData(h);
+      const auto& cb = d.getCodeBlock(BehaviourData::InitializeLocalVariables);
+      for (const auto& v : d.getIntegrationVariables()) {
+        if (cb.members.contains("d" + v.name)) {
+          reportWarning("increment of integration variable '" + v.name +
+                        "' is used in the '" +
+                        std::string{BehaviourData::InitializeLocalVariables} +
+                        "' code block. This is unexpected.");
+        }
+      }
+    }
     //
     if (this->mb.getAttribute(
             uh, "usesDefaultPerturbationValueForNumericalJacobianComputation",
@@ -1621,13 +1635,10 @@ namespace mfront {
               "threshold) as the default value of the perturbuation used "
               "to compute a numerical approximation of the jacobian by a "
               "centered finite difference scheme. This value is generally "
-              "too "
-              "low. You may want to consider an higher value (1e-8 is a "
-              "good "
-              "choice). See the "
+              "too low. You may want to consider an higher value (1e-8 is a "
+              "good choice). See the "
               "`@PerturbationValueForNumericalJacobianComputation` keyword "
-              "for "
-              "details");
+              "for details.");
         }
       }
     }

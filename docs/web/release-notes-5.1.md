@@ -275,6 +275,10 @@ contain:
   computed by a point-wise model (see the `@Model` keyword).
 - using an auxiliary state variable which is not computed by a point-wise model.
 
+#### Warnings to `@InitializeLocalVariables`
+
+- using the increment of an integration variable.
+
 ### Warnings added to interfaces
 
 #### Warnings added to the `Cast3M` interface
