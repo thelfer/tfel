@@ -26,7 +26,6 @@
 \newcommand{\paren}[1]{\left(#1\right)}
 \newcommand{\nom}[1]{\textsc{#1}}
 \newcommand{\bts}[1]{\left.#1\right|_{t}}
-\newcommand{\mts}[1]{\left.#1\right|_{t+\theta\,\Delta\,t}}
 \newcommand{\ets}[1]{\left.#1\right|_{t+\Delta\,t}}
 
 We present here an implementation of Sachs homogenization scheme [@sachs_1928] using `BehaviourVariable` keyword.
@@ -65,7 +64,7 @@ The problem to solve is the following:
 
 $\left\{
 \begin{aligned}
-&\Delta\tenseur \Sigma - \Delta\tsigma^i(\tepsilon^i+\theta\Delta\tepsilon^i) = 0 \qquad \forall i\\
+&\Delta\tenseur \Sigma - \Delta\tsigma^i\left(\tepsilon^i,\Delta\tepsilon^i\right)= 0 \qquad \forall i\\
 &\Delta\tenseur E-\sum_{i=1}^{N}f_i\,\Delta\tepsilon^i = 0\\
   \end{aligned}\right.$
 
@@ -78,7 +77,7 @@ The residues are given by
 
 $\left\{
 \begin{aligned}
-&f_{\tepsilon^i} =\left(\Delta\tenseur \Sigma - \Delta\tsigma^i(\tepsilon^i+\theta\Delta\tepsilon^i)\right)/\sigma_{0} \qquad \forall i\\
+&f_{\tepsilon^i} =\left(\Delta\tenseur \Sigma - \Delta\tsigma^i\left(\tepsilon^i,\Delta\tepsilon^i\right)\right)/\sigma_{0} \qquad \forall i\\
 &f_{\tenseur E} = \Delta\tenseur E-\sum_{i=1}^{N}f_i\,\Delta\tepsilon^i
   \end{aligned}\right.$
   
@@ -87,7 +86,7 @@ The jacobian matrix is:
   
  $\left\{
 \begin{aligned}
-&\deriv{f_{\tepsilon^i}}{\Delta\tepsilon^j} =- \delta_{ij}\frac{\theta}{\sigma_0}\deriv{\tsigma^j}{\tepsilon^j}(\tepsilon^j+\theta\Delta\tepsilon^j) \qquad \forall i,j\\
+&\deriv{f_{\tepsilon^i}}{\Delta\tepsilon^j} =- \delta_{ij}\frac{1}{\sigma_0}\deriv{\tsigma^j}{\tepsilon^j}\left(\tepsilon^i,\Delta\tepsilon^i\right) \qquad \forall i,j\\
 &\deriv{f_{\tepsilon^i}}{\Delta\tenseur \Sigma} = \tenseurq{I}/\sigma_{0} \qquad \forall i\\
 &\deriv{f_{\tenseur E}}{\Delta\tepsilon^i} = -f_i\,\tenseurq{I} \qquad \forall i\\
 &\deriv{f_{\tenseur E}}{\Delta\tenseur \Sigma} = \tenseurq{0}
@@ -119,7 +118,6 @@ we use an `Implicit` `DSL`, with a Newton-Raphson algorithm:
 
 @Algorithm NewtonRaphson;
 @Epsilon 1.e-14;
-@Theta 1;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Here is the creation of a `BehaviourVariable` :
@@ -129,6 +127,7 @@ Here is the creation of a `BehaviourVariable` :
 file: "Plasticity.mfront",
 variables_suffix: "1",
 store_gradients: false,
+store_thermodynamic_forces: false,
 external_names_prefix: "FirstPhase",
 shared_external_state_variables: {".+"}
 };
@@ -139,6 +138,9 @@ define the variable `eto1` as `StateVariable`. In the case of Taylor scheme,
 the `store_gradients` option was equal to `true`, which had the same
 effect than writing `@AuxiliaryStateVariable StrainStensor eto1;`
 which we don't want here. The same goes for phase 2.
+We also write `store_thermodynamic_forces: false,` because
+here the macroscopic stress is equal to the local
+stress.
 
 Local strain increments are defined as `StateVariable`, and
 macroscopic stress is defined as `IntegrationVariable`. Indeed,
@@ -180,17 +182,17 @@ Implementation of the `@Integrator` block is the following:
   const auto r2 = b2.integrate(b2_smflag,CONSISTENTTANGENTOPERATOR);
   Dt2 = b2.getTangentOperator();
   
-  auto dsig1 =theta*(b1.sig-sig1);
-  auto dsig2 =theta*(b2.sig-sig2);
+  auto dsig1 =b1.sig-sig;
+  auto dsig2 =b2.sig-sig;
   
   feto1=(dSig-dsig1)/sig_0;
   feto2=(dSig-dsig2)/sig_0;
   fSig=deto-(1-f)*deto1-f*deto2;
   auto Id=st2tost2<3u,real>::Id();
   auto Null= Stensor4{real{}};
-  dfeto1_ddeto1 = -theta/sig_0*Dt1;
+  dfeto1_ddeto1 = -Dt1/sig_0;
   dfeto1_ddSig = Id/sig_0;
-  dfeto2_ddeto2 = -theta/sig_0*Dt2;
+  dfeto2_ddeto2 = -Dt2/sig_0;
   dfeto2_ddSig = Id/sig_0;
   dfSig_ddeto1 = -(1-f)*Id;
   dfSig_ddeto2 = -f*Id;
@@ -199,31 +201,36 @@ Implementation of the `@Integrator` block is the following:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We can see that we start with the integration of the local behaviours.
+
 However, compared to Taylor's scheme,
-we add `initialize(b1)` and `initialize(b2)` before the integration. In fact, this allows
-to initialize `b1.eto` to `eto1` and `b2.eto` to `eto2`. This was automatic
+we add `initialize(b1)` (resp. `initialize(b2)`) before the integration.
+In fact, it is equivalent to:
+
+~~~~ {#init .cpp .numberLines}
+b1.eel=eel1;
+b1.p=p1;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(and it also ensures `b1.eto=eto1`).
+It was done automatically
 in the case of Taylor scheme, but here, as the `store_gradients` option
 is `false` for both phases, it is no more automatic.
-Furthermore, the gradient `b1.deto` is initialized to `deto1`, which is the increment
-of the `StateVariable` `eto1` (which will be updated at each iteration of the Newton-Raphson).
+Furthermore, the gradient `b1.deto` (resp. `b2.deto`) is initialized to `deto1` (resp. `deto2`), which is the increment
+of the `StateVariable` `eto1` (resp. `eto2`) (which will be updated at each iteration of the Newton-Raphson).
 
 We also recover the tangent operator on each phase.
 
 Then, we indicate the residues and the Jacobian.
-To define the residues `feto1` and `feto2`, we need the
+To define the residues `feto1` (resp. `feto2`), we need the
 stress increments `dsig1` (resp. `dsig2`), which we obtain
 as a difference between the stress `b1.sig` (resp. `b2.sig`) obtained at the end
-of the local integration, and the local stress `sig1` (resp. `sig2`)
-before the integration.
-`sig1` (resp. `sig2`) must then be updated latter, at the end of the time step,
-to `b1.sig` (resp. b2.sig).
-It is done when the `@UpdateAuxiliaryStateVariables` block is called.
+of the local integration, and the stress `sig` (resp. `sig`).
 
 Warning: if the instruction `updateAuxiliaryStateVariables(b1);`
 is given in the `@Integrator` block, then the update of
-`sig1` to `b1.sig` will not take place at the end of the time step,
-but at the end of each iteration of the Newton-Raphson, what we don't want
-here.
+`eel1` to `b1.eel` and `p1` to `b1.p` will take place at the end of each iteration of the Newton-Raphson (which
+will be incorrect),
+and not at the end of the time step (which is correct).
  
 Note that the following parameters had been defined before
 the integrator block:

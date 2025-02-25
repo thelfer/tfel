@@ -41,12 +41,12 @@ are however needed.
 Taylor/Voigt scheme makes the hypothesis of a uniform strain $\tenseur E$
 on all phases. Macroscopic stress $\tenseur \Sigma$, is defined as the average of local stresses:
   \begin{aligned}
-    \tenseur \Sigma   &= \sum_{i=1}^{N}f_i\,\tsigma^i (\tenseur E) \\
+    \tenseur \Sigma   (\tenseur E)&= \sum_{i=1}^{N}f_i\,\tsigma^i (\tenseur E) \\
   \end{aligned}
 where $N$ is the number of phases, $f_i$ is the volume fraction of phase $i$ and $\tsigma^i$ is the strain field in phase $i$ (given by the behaviour law).
 The macroscopic tangent operator is given by
   \begin{aligned}
-    \dfrac{\D \tenseur \Sigma}{\D \tenseur E}   &= \sum_{i=1}^{N}f_i\,\dfrac{\D \tsigma^i}{\D \varepsilon^i}(\tenseur E) \\
+    \dfrac{\D \tenseur \Sigma}{\D \tenseur E}   (\tenseur E)&= \sum_{i=1}^{N}f_i\,\dfrac{\D \tsigma^i}{\D \varepsilon^i}(\tenseur E) \\
   \end{aligned}
 
 # Implementation in MFront

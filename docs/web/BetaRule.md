@@ -11,10 +11,14 @@
 \newcommand{\tsigma}{\underline{\sigma}}
 \newcommand{\dtsigma}{\Delta{\underline{\sigma}}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
+\newcommand{\tSigma}{\underline{\Sigma}}
+\newcommand{\dtSigma}{\Delta{\underline{\Sigma}}}
 
 \newcommand{\tepsilonto}{\underline{\epsilon}^{\mathrm{to}}}
+\newcommand{\dtepsilonto}{\Delta\underline{\epsilon}^{\mathrm{to}}}
 \newcommand{\tepsilon}{\underline{\epsilon}}
 \newcommand{\tepsilonel}{\underline{\epsilon}^{\mathrm{el}}}
+\newcommand{\dtepsilonel}{\Delta\underline{\epsilon}^{\mathrm{el}}}
 \newcommand{\tEel}{\underline{E}^{\mathrm{el}}}
 \newcommand{\dtEel}{\Delta\underline{E}^{\mathrm{el}}}
 
@@ -36,42 +40,40 @@ This tutorial explains how to implement Cailletaud's $\beta$-rule [@cailletaud_p
 in the context of elasto-viscoplastic composites using an arbitrary local flow function.
 In this tutorial, a local behaviour of Meric-Cailletaud type [@meric_single_1991] is proposed.
 
-Here, the implementation of this homogenization scheme requires the derivative of the local flow function.
-This derivative is obtained via the integration of a local `Behaviour`, which
-gives the local viscoplastic strain-rate as a function of the local stress.
-Hence, in `MFront` implementation, this `Behaviour` sees the local stress as a
-`gradient`, and the viscoplastic strain-rate as a `thermodynamic_force`, which is unusual.
-Finally, local flow rules are used in the global behaviour of the composite as `BehaviourVariable`.
+Here, the implementation of this homogenization scheme requires the derivative of the local
+viscoplastic strain, that we obtain with the local tangent operator via the integration of a
+local `Behaviour`.
 
 We first recall Cailletaud's $\beta$-rule and present the non-linear system derived from it.
-We then implement it in `MFront` and explain how to implement the local flow rules as `Behaviour`.
+We then implement it in `MFront` and explain how to use the keyword `@BehaviourVariable`
+for the integration of the local behaviours.
 
 # Theoretical background
 
 ## Cailletaud's beta rule
 
+We consider a composite made of $N$ phases indexed by $i$.
 Cailletaud's $\beta$-rule was proposed in the context of elasto-viscoplastic composites for which
 strain partition is assumed:
 \begin{aligned}
-  \tepsilonto=\tepsilonel+\tepsilonvp \\
+  \tepsilonto_i=\tepsilonel_i+\tepsilonvp_i \\
 \end{aligned}
-where the strain $\tepsilonel$ is given by Hooke's law:
+where the strain $\tepsilonel_i$ is given by Hooke's law:
 \begin{aligned}
-  \tepsilonel=\tenseurq S\dbldot\tsigma \\
+  \tepsilonel_i=\tenseurq S_i\dbldot\tsigma_i \\
 \end{aligned}
-where $\tenseurq S$ is a fourth-rank compliance tensor (which will be supposed uniform in the sequel)
-and $\tsigma$ is the stress field; and  where the viscoplastic strain
-$\tepsilonvp$ is given by the following flow rule:
+where $\tenseurq S_i$ is a fourth-rank compliance tensor
+and $\tsigma_i$ is the stress field; and  where the viscoplastic strain
+$\tepsilonvp_i$ is given by the following flow rule:
 \begin{aligned}
-  \tdepsilonvp=f(\tsigma) \\
+  \tdepsilonvp_i=f_i(\tsigma_i) \\
 \end{aligned}
-where $f$ is a non-linear function.
+where $f_i$ is a non-linear function.
 
-We consider then a composite made of $N$ phases indexed by $i$ which checked the above rules.
-
-The macroscopic strain field is defined as
+Assuming that $\phi_i$ is volume fraction of phase $i$,
+the macroscopic strain field is defined as
 \begin{aligned}
-\tenseur E= \sum_\alpha f_i \tepsilonto_i \\
+\tenseur E= \sum_\alpha \phi_i \tepsilonto_i \\
 \end{aligned}
 and is given as a parameter.
 
@@ -83,48 +85,44 @@ whose evolution is given by
 \end{aligned}
 where $D\in\reals$ is a parameter and
 \begin{aligned}
-  ||\tdepsilonvp_i||=\sqrt{\dfrac 23 \tdepsilonvp_i\dbldot\tdepsilonvp_i} \\
+  ||\tdepsilonvp_i||=\sqrt{\dfrac 23 \tdepsilonvp_i\dbldot\tdepsilonvp_i}. \\
 \end{aligned}
-The stress is also given by the localisation relation:
+The localisation relation is also proposed:
 \begin{aligned}
- \tsigma_i= \tenseurq C\dbldot\tenseur E^{\mathrm{el}} + c\,(\tenseur B-\tenseur\beta_i) \\
+ \tsigma_i= \tSigma + c\,(\tenseur B-\tenseur\beta_i) \\
 \end{aligned}
-where $\tenseurq C=\tenseurq S^{-1}$, $c$ is a real parameter, $\tenseur B$ is a macroscopic
+where $c$ is a real parameter, $\tenseur B$ is a macroscopic
 variable:
 \begin{aligned}
-\tenseur B= \sum_i f_i\tenseur\beta_i\\
+\tenseur B= \sum_i \phi_i\tenseur\beta_i\\
 \end{aligned}
-and $\tenseur E^{\mathrm{el}}$ is
+and $\tSigma$ is the macroscopic stress, which verifies (by averaging the localisation relation)
 \begin{aligned}
-\tenseur E^{\mathrm{el}}= \sum_i f_i\tepsilonel_i\\
+\tSigma= \sum_i \phi_i\tsigma_i\\
 \end{aligned}
 
 ## Resolution of the non-linear system
 
-We discretize the time interval and look for the increment of the variables. The non-linear system
-to solve is then:
+We discretize the time interval and look for the increment of the variables.
+We choose $\dtepsilonto_i$, $\dtbeta_i$ and $\dtSigma$ as unknowns of our non-linear
+system:
 
 $\left\{
 \begin{aligned}
-&\dtEel-\Delta\tenseur E+\sum_{i=1}^{N}f_i\,\Delta\tepsilonvp_i = 0\\
-&\Delta\tepsilonvp_i - \Delta t\,f(\tsigma_i+\theta\Delta\tsigma_i) = 0\qquad\forall i\\
-&\Delta\tenseur\beta_i - \Delta\tepsilonvp_i+D\,||\Delta\tepsilonvp_i||\,(\tenseur\beta_i+\theta\Delta\tenseur\beta_i)=0\qquad\forall i\\
-  \end{aligned}\right.$
-
-whose unknowns are $\dtEel$, $\Delta\tepsilonvp_i$, and $\Delta \tenseur\beta_i$,
-and the following variables are introduced:
-$\left\{
-\begin{aligned}
-&\Delta\tsigma_i = \tenseurq C\dbldot\Delta\tenseur E^{\mathrm{el}}  + c\,(\Delta\tenseur B-\Delta\tenseur\beta_i) \qquad\forall i\\
-&\Delta\tenseur B = \sum_{i=1}^{N}f_i\,\Delta\tenseur\beta_i\\
+&\sum_{i=1}^{N}\phi_i\,\dtepsilonto_i - \Delta\tenseur E = 0\\
+&\dtsigma_i\left(\tepsilonto_i,\dtepsilonto_i\right)-\dtSigma  - c\,(\Delta\tenseur B-\Delta\tenseur\beta_i) = 0\qquad\forall i\\
+&\Delta\tenseur\beta_i - \Delta\tepsilonvp_i\left(\tepsilonto_i,\dtepsilonto_i\right)+ D\,||\Delta\tepsilonvp_i\left(\tepsilonto_i,\dtepsilonto_i\right)||\,(\tenseur\beta_i+\theta\Delta\tenseur\beta_i)=0\qquad\forall i\\
   \end{aligned}\right.$
   
-Note that the local total and elastic strains can be computed via
-$\left\{
-\begin{aligned}
-&\tepsilonto_i = \tepsilonel_i+\tepsilonvp_i \qquad\forall i\\
-&\tepsilonel_i = \tenseurq S\dbldot\tsigma_i\qquad \forall i\\
-  \end{aligned}\right.$
+where the following auxiliary variable is introduced:
+
+$\begin{aligned}
+&\Delta\tenseur B = \sum_{i=1}^{N}\phi_i\,\Delta\tenseur\beta_i\\
+  \end{aligned}$
+and where $\dtsigma_i\left(\tepsilonto_i,\dtepsilonto_i\right)$ and $\Delta\tepsilonvp_i\left(\tepsilonto_i,\dtepsilonto_i\right)$
+are obtained with the integration of the local behaviours.
+Note that the local elastic strain can also be computed with
+this local integration.
 
 To solve this non-linear problem in `MFront`, we use
 the `Implicit` `DSL` ([see doc](./implicit-dsl.html)). We only have to precise the residues and the Jacobian matrix.
@@ -132,149 +130,70 @@ The residues are:
 
 $\left\{
 \begin{aligned}
-&f_{\tEel}=\dtEel-\Delta\tenseur E+\sum_{i=1}^{N}f_i\,\Delta\tepsilonvp_i\\
-&f_{\tepsilonvp_i} =\Delta\tepsilonvp_i - \Delta t\,f(\tsigma_i+\theta\Delta\tsigma_i) \qquad \forall i\\
-&f_{\tbeta_i} =\Delta\tenseur\beta_i - \Delta\tepsilonvp_i+D\,||\Delta\tepsilonvp_i||\,(\tenseur\beta_i+\theta\Delta\tenseur\beta_i) \qquad \forall i\\
+&f_{\tenseur E}=\sum_{i=1}^{N}\phi_i\,\dtepsilonto_i - \Delta\tenseur E\\
+&f_{\tepsilonto_i} =\frac{1}{\sigma_0}\left[\dtsigma_i\left(\tepsilonto_i,\dtepsilonto_i\right)-\dtSigma  - c\,(\Delta\tenseur B-\Delta\tenseur\beta_i)\right] \qquad \forall i\\
+&f_{\tbeta_i} =\Delta\tenseur\beta_i - \Delta\tepsilonvp_i\left(\tepsilonto_i,\dtepsilonto_i\right)+D\,||\Delta\tepsilonvp_i\left(\tepsilonto_i,\dtepsilonto_i\right)||\,(\tenseur\beta_i+\theta\Delta\tenseur\beta_i) \qquad \forall i\\
     \end{aligned}\right.$
     
- We see the presence of the term $f(\tsigma_i+\theta\Delta\tsigma_i)$ which will be provided by an auxiliary `Behaviour` in `MFront`.
+where $\sigma_{0}$ is a parameter that give the same dimension and magnitude to the residues.
 The jacobian matrix is given by
   
  $\left\{
 \begin{aligned}
-&\deriv{f_{\tEel}}{\dtEel} = \tenseurq I\\
-&\deriv{f_{\tEel}}{\Delta\tepsilonvp_j} = f_j\,\tenseurq I\qquad \forall j\\
-&\deriv{f_{\tEel}}{\dtbeta_j} = \tenseurq 0\qquad \forall j\\
-&\deriv{f_{\tepsilonvp_i}}{\dtEel} = -\theta\,\Delta t\,\mts{\deriv{f}{\tsigma}}\dbldot\tenseurq C \qquad \forall i\\
-&\deriv{f_{\tepsilonvp_i}}{\dtepsilonvp_j} = \delta_{ij}\,\tenseurq I\qquad\forall i,j\\
-&\deriv{f_{\tepsilonvp_i}}{\Delta \tenseur\beta_j} = c\,(\delta_{ij}-f_j)\theta \Delta t\,\mts{\deriv{f}{\tsigma}}\qquad \forall i,j\\
-&\deriv{f_{\tbeta_i}}{\dtEel} = \tenseurq 0\qquad \forall i\\
-&\deriv{f_{\tbeta_i}}{\dtepsilonvp_j} = -\delta_{ij}\,\tenseurq I+D\,(\tenseur\beta_i+\theta\Delta\tenseur\beta_i)\otimes\deriv{||\Delta\tepsilonvp_i||}{\dtepsilonvp_j}\qquad \forall i,j\\
+&\deriv{f_{\tenseur E}}{\dtSigma} = \tenseurq 0\\
+&\deriv{f_{\tenseur E}}{\Delta\tepsilonto_j} = \phi_j\tenseurq I\qquad \forall j\\
+&\deriv{f_{\tenseur E}}{\dtbeta_j} = \tenseurq 0\qquad \forall j\\
+&\deriv{f_{\tepsilonto_i}}{\dtSigma} = -\frac{1}{\sigma_0}\tenseurq I\qquad \forall i\\
+&\deriv{f_{\tepsilonto_i}}{\dtepsilonto_j} = \frac{\delta_{ij}}{\sigma_0}\,\deriv{\tsigma_j}{\tepsilonto_j}\left(\tepsilonto_j,\dtepsilonto_j\right)\qquad\forall i,j\\
+&\deriv{f_{\tepsilonto_i}}{\dtbeta_j} = \frac{c}{\sigma_0}\,(\delta_{ij}-\phi_j)\tenseurq I\qquad \forall i,j\\
+&\deriv{f_{\tbeta_i}}{\dtSigma} = \tenseurq 0\qquad \forall i\\
+&\deriv{f_{\tbeta_i}}{\dtepsilonto_j} = -\delta_{ij}\,\deriv{\tsigma_j}{\tepsilonto_j}\left(\tepsilonto_j,\dtepsilonto_j\right)+D\,(\tenseur\beta_i+\theta\Delta\tenseur\beta_i)\otimes\deriv{||\dtepsilonvp_i||}{\dtepsilonto_j}\qquad \forall i,j\\
 &\deriv{f_{\tbeta_i}}{\dtbeta_j} = \left(1+\theta\,D\,||\Delta\tepsilonvp_i||\right)\,\delta_{ij}\,\tenseurq I \qquad \forall i,j\\
   \end{aligned}\right.$
   
-  and $\mts{\deriv{f}{\tsigma}}$ is a notation for $\deriv{f}{\tsigma}(\tsigma_i+\theta\Delta\tsigma_i)$. This term will be provided as the tangent operator of the auxiliary `Behaviour`, in `MFront`.
+  where $||\dtepsilonvp_i||$ is used for $||\dtepsilonvp_i\left(\tepsilonto_i,\dtepsilonto_i\right)||$. Moreover,
   
-  Moreover, $\deriv{||\dtepsilonvp_i||}{\dtepsilonvp_j}=\frac 23\delta_{ij}\Frac{\dtepsilonvp_i}{||\dtepsilonvp_i||}$. This last term must be regularized when $||\dtepsilonvp_i||=0$.
+  $\left\{
+  \begin{aligned}
+  \deriv{||\dtepsilonvp_i||}{\dtepsilonto_j}&=\frac 23\delta_{ij}\Frac{\dtepsilonvp_i}{||\dtepsilonvp_i||}\dbldot\deriv{\dtepsilonvp_i}{\dtepsilonto_j}\left(\tepsilonto_i,\dtepsilonto_i\right)\\
+  &=\frac 23\delta_{ij}\Frac{\dtepsilonvp_i}{||\dtepsilonvp_i||}\dbldot\left(\deriv{\dtepsilonto_i}{\dtepsilonto_j}-\deriv{\dtepsilonel_i}{\dtepsilonto_j}\right)\\
+  &=\frac 23\delta_{ij}\Frac{\dtepsilonvp_i}{||\dtepsilonvp_i||}\dbldot\left(\delta_{ij}\tenseurq I-\delta_{ij}\tenseurq S_j\dbldot\deriv{\dtsigma_j}{\dtepsilonto_j}\right)\\
+  \end{aligned}\right.$
+  
+ We can see the term $\deriv{\dtsigma_j}{\dtepsilonto_j}$, that will be provided by the local integration.
 
 ## Consistent tangent operator
 
-We can also compute the tangent operator with the method already explained
+We can also compute the tangent operator with a method similar as the method explained
 in the [Implicit DSL](./implicit-dsl.html) documentation. We define $\Delta Y$ such as
 \begin{aligned}
-\Delta G_i = (\dtepsilonvp_i, \dtbeta_i)\\
-\Delta Y = (\dtEel,\Delta G_1,...,\Delta G_N)\\
+\Delta G_i = (\dtepsilonto_i, \dtbeta_i)\\
+\Delta Y = (\dtSigma,\Delta G_1,...,\Delta G_N)\\
 \end{aligned}
-and $H_i=(f_{\tepsilonvp_i},f_{\tbeta_i})$ and $F=(f_{\tEel},H_1,...,H_N)$ so that
+and $H_i=(f_{\tepsilonto_i},f_{\tbeta_i})$ and $F=(f_{\tenseur E},H_1,...,H_N)$ so that
 \begin{aligned}
   F(\Delta\tenseur E,\Delta Y(\Delta\tenseur E))&=0\\
  \end{aligned}
- Hence, as explained in the documentation, $\deriv{\dtEel}{\Delta\tenseur E}$ can be retrieved
- from the $6\times 6$ upper-left submatrix of $\mathbf{J}^{-1}$ where $\mathbf{J}=\deriv{F}{\Delta Y}$ is the Jacobian
+ Hence, the following equality is still verified:
+ 
+ \begin{aligned}
+  \deriv{\Delta Y}{\Delta\tenseur E}&=-\mathbf{J}^{-1}\cdot\deriv{F}{\Delta \tenseur E}\\
+ \end{aligned}
+ 
+ where $\mathbf{J}=\deriv{F}{\Delta Y}$ is the Jacobian
  of the system.
  
- We can then compute $\deriv{\dtEel}{\Delta\tenseur E}$ and obtain the tangent operator from the following equation:
- \begin{aligned}
-  \deriv{\Sigma}{\tenseur E}=\tenseurq C\dbldot\deriv{\dtEel}{\Delta\tenseur E}
- \end{aligned}
+ Given the form of $\deriv{F}{\Delta \tenseur E}$, $\deriv{\dtSigma}{\Delta\tenseur E}$ can be retrieved
+ from the $6\times 6$ upper-left submatrix of $\mathbf{J}^{-1}$. 
+ 
  
 # Implementation in MFront
 
-The implementation requires the computation of the local flow rule.
-This derivative is obtained via the integration of a local `Behaviour`, which
-gives the local viscoplastic strain-rate as a function of the local stress.
-Hence, in `MFront` implementation, this `Behaviour` sees the local stress as a
-`gradient`, and the viscoplastic strain-rate as a `thermodynamic_force`, which is unusual.
-Finally, local flow rules are used in the global behaviour of the composite as `BehaviourVariable`.
+The implementation requires the integration of the local behaviours.
+These are carried out via the `@BehaviourVariable` keyword. 
 
-All files `MericCailletaud.mfront`, `BetaRule.mfront` and `BetaRule.mtest` can be downloaded [here](./downloads/BetaRule.zip).
+All files `MericCailletaudSingleCrystalViscoPlasticity.mfront`, `BetaRule.mfront` and `BetaRule.mtest` can be downloaded [here](./downloads/BetaRule.zip).
 
-## Implementation of the flow functions and its derivatives
-
-In order to implement Cailletaud's $\beta$-rule with arbitrary local flow functions, we implement
-these flow functions as `Behaviour` in auxiliary `.mfront` files.
-This is a bit unusual because the `gradients` of these local `Behaviour` are the local stresses,
-and its `thermodynamic_force` are the viscoplastic strain rates. It will lead to a syntax like `b1.deto=sig_1`
-in the sequel.
-
-The flow rule chosen for the example is of Méric-Cailletaud type, and is described and
-implemented [here](./MericCailletaudSingleCrystalPlasticity.html). The `Behaviour` that
-we proposed, which represents the flow rule, differs a little from this previous tutorial
-because the `thermodynamic_force` returned by the `Behaviour` is the viscoplastic strain-rate.
-
-First, there is no more elastic strain in this local `Behaviour` and
-the `@Brick StandardElasticity` block must be removed.
-
-The only integration variables are the viscoplastic slips $\gamma_i$.
-The equivalent visco-plastic slips $p_i$ and the backstrain $\alpha_i$
-are conserved as `AuxiliaryStateVariable`:
-
-~~~~ {#MericCailletaud .cpp .numberLines}
-@StateVariable strain g[Nss];
-g.setEntryName("ViscoplasticSlip");
-
-@AuxiliaryStateVariable strain p[Nss];
-p.setEntryName("EquivalentViscoplasticSlip");
-
-@AuxiliaryStateVariable strain a[Nss];
-a.setEntryName("BackStrain");
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The shear stresses $\tau_i$ are obtained via the projection of the stress
-on each slip system. But now, this stress is no more than the `gradient` of
-the `Behaviour`, named `eto`. This leads to the following definition for
-`tau`:
-
-~~~~ {#MericCailletaud .cpp .numberLines}
-const auto tau = (eto+theta*deto) | ss.mus[i];
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-instead of:
-
-~~~~ {#MericCailletaud .cpp .numberLines}
-const auto tau = sig | ss.mus[i];
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-as it was [initially implemented](./MericCailletaudSingleCrystalPlasticity.html).
-
-The `@UpdateAuxiliaryStateVariables` block remains the same as in the initial
-implementation. However, the block `@ComputeFinalStress` must be added.
-This final stress `sig` is in reality the viscoplastic strain-rate $\tdepsilonvp$,
-which is computed by summing the slip rates along each slip system.
-
-~~~~ {#MericCailletaud .cpp .numberLines}
-@ComputeFinalStress{
-  using size_type = unsigned short;
-  const auto& ss = MericCailletaudSlipSystems<real>::getSlipSystems();
-  sig=Stensor{real{}};
-  for (size_type i = 0; i != Nss; ++i) {
-    sig+=dg[i]*ss.mus[i]/dtemps;
-  }
-}
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-We note here the presence of `dtemps` which permits to return a strain rate.
-It is not really important here because the `Behaviour` could also return
-an increment of strain.
-
-Finally, we need the `@TangentOperator` block, which provides the derivative
-$\deriv{f}{\tsigma}$ needed for the global `Behaviour`.
-
-~~~~ {#MericCailletaud .cpp .numberLines}
-@TangentOperator{
-  using size_type = unsigned short;
-  const auto& ss = MericCailletaudSlipSystems<real>::getSlipSystems();
-  Dt=Stensor4{real{}};
-  auto iJ=matrix;
-  for (size_type i = 0; i != Nss; ++i) {
-    auto dgi_dsig=Stensor{real{}};
-    for (size_type j = 0; j != Nss; ++j) {
-      dgi_dsig+=dv_[j]*iJ(i,j)*ss.mus[j];
-    }
-    Dt+= ss.mus[i]^dgi_dsig;
-  }
-}
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ## Implementation of Cailletaud's beta rule
 
@@ -284,7 +203,7 @@ The `@BehaviourVariable` is used to call the local flow rules:
 
 ~~~~ {#BetaRule .cpp .numberLines}
 @BehaviourVariable b1 {
-  file: "MericCailletaud.mfront",
+  file: "MericCailletaudSingleCrystalViscoPlasticity.mfront",
   variables_suffix: "1",
   store_gradients: false,
   store_thermodynamic_forces: false,
@@ -293,60 +212,81 @@ The `@BehaviourVariable` is used to call the local flow rules:
 };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We note that the `gradients` and `thermodynamic_forces` are not
-stored because the `StateVariable` `evp1` (resp. `evp2`) are
-defined, and because the `AuxiliaryStateVariable` `sig_1` (resp. `sig_2`)
-are defined. 
+We note that the `gradients` are not
+stored because the `StateVariable` `eto1` (resp. `eto2`) are
+defined. 
 
-...
+The integration of the local behaviour is performed as 
+follows:
 
+~~~~ {#BetaRule .cpp .numberLines}
+  initialize(b1);
+  b1.eto=eto1;
+  b1.deto=deto1;
+  constexpr auto b1_smflag = TangentOperatorTraits<MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
+  const auto r1 = b1.integrate(b1_smflag,CONSISTENTTANGENTOPERATOR);
+  StiffnessTensor Dt1 = b1.getTangentOperator();
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+and the following variables are stored:
 
+~~~~ {#BetaRule .cpp .numberLines}
+  auto dsig1=b1.sig-sig1;
+  auto deel1=b1.eel-eel1;
+  auto devp1=deto1-deel1;
+  auto ndevp_1=sqrt(real(2)/3*devp1|devp1);
+  auto beta_mts_1=beta1+theta*dbeta1;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The same goes for phase 2.
 Here are the residues:
 
 ~~~~ {#BetaRule .cpp .numberLines}
   //residues
-  fevp1 = devp1-dt*f_sigm_1;
-  fevp2 = devp2-dt*f_sigm_2;
+  auto dB=(1-f)*dbeta1+f*dbeta2;
+  fSig = -deto+ (1-f)*deto1+f*deto2;
+  feto1 = (dsig1-dSig-c*(dB-dbeta1))/sig_0;
+  feto2 = (dsig2-dSig-c*(dB-dbeta2))/sig_0;
   fbeta1 = dbeta1-devp1+DD*ndevp_1*beta_mts_1;
   fbeta2 = dbeta2-devp2+DD*ndevp_2*beta_mts_2;
-  feel = deel-deto+ (1-f)*devp1+f*devp2;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 and the terms of the analytical jacobian:
 
 ~~~~ {#BetaRule .cpp .numberLines}
   //jacobian matrix
-  dfeel_ddevp1 = (1-f)*Id;
-  dfeel_ddevp2 = f*Id;
+  auto Null = Stensor4{real{}};
+  dfSig_ddSig=Null;
+  dfSig_ddeto1 = (1-f)*Id;
+  dfSig_ddeto2 = f*Id;
   
-  dfevp1_ddbeta1 = c*f*theta*dt*df_dsigm_1;
-  dfevp1_ddbeta2 = -c*f*theta*dt*df_dsigm_1;
-  dfevp2_ddbeta1 = -c*(1-f)*theta*dt*df_dsigm_2;
-  dfevp2_ddbeta2 = -c*(f-1)*theta*dt*df_dsigm_2;
-   
-  dfevp1_ddeel = -theta*dt*df_dsigm_1*C;
-  dfevp2_ddeel = -theta*dt*df_dsigm_2*C;
+  dfeto1_ddSig = -Id/sig_0;
+  dfeto2_ddSig = -Id/sig_0;
   
-  dfbeta1_ddevp1 = -Id + 2*DD/3*Stensor4(beta_mts_1^devp1)/max(ndevp_1,eeps);
-  dfbeta2_ddevp2 = -Id + 2*DD/3*Stensor4(beta_mts_2^devp2)/max(ndevp_2,eeps);
+  dfeto1_ddeto1 = Dt1/sig_0;
+  dfeto2_ddeto2 = Dt2/sig_0;
+  
+  dfeto1_ddbeta1 = c/sig_0*f*Id;
+  dfeto1_ddbeta2 = -c/sig_0*f*Id;
+  dfeto2_ddbeta1 = c/sig_0*(f-1)*Id;
+  dfeto2_ddbeta2 = c/sig_0*(1-f)*Id;
+  
+  dfbeta1_ddeto1 = -Dt1 + 2*DD/3*Stensor4(beta_mts_1^devp1)*Stensor4(Id-S*Dt1)/max(ndevp_1,eeps);
+  dfbeta2_ddeto2 = -Dt2 + 2*DD/3*Stensor4(beta_mts_2^devp2)*Stensor4(Id-S*Dt2)/max(ndevp_2,eeps);
   
   dfbeta1_ddbeta1 =Id+ theta*DD*ndevp_1*Id;
   dfbeta2_ddbeta2 =Id+ theta*DD*ndevp_2*Id;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-...
-
 The computation of the stress and of the tangent operator is straightforward:
 
 ~~~~ {#BetaRule .cpp .numberLines}
 @ComputeFinalStress{
-  sig += C*deel;
+  sig += dSig;
 }
 
 @TangentOperator{
-  Dt=C*iJ_eel_eel;
-  auto Id=Stensor4::Id();
+  Dt=iJ_Sig_Sig;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
