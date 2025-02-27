@@ -17,6 +17,7 @@
 #include <numbers>
 #include <stdexcept>
 #include <typeinfo>
+#include "TFEL/Math/General/IEEE754.hxx"
 
 namespace tfel::material::homogenization::elasticity {
 
