@@ -87,6 +87,9 @@ namespace tfel {
       string::size_type pos = ps;
       string::size_type p;
       r.clear();
+      if (s.empty()) {
+        return;
+      }
       if (!s1.empty()) {
         p = s.find(s1, pos);
         while (p != string::npos) {
