@@ -55,89 +55,116 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
  private:
   template <typename real, typename stress, typename length>
   void test_matrix_inclusion() {
+  static constexpr auto eps = std::numeric_limits<real>::epsilon();
     using namespace tfel::material::homogenization::elasticity;
-    length a = length(1);
-    length b = length(2);
-    length c = length(3);
+    length a = length(10);
+    length b = length(1);
+    length c = length(1);
     tfel::math::tvector<3u, real> n_a = {1, 0, 0};
     tfel::math::tvector<3u, real> n_b = {0, 1, 0};
-    Ellipsoid<3u, real, length> ellipsoid1({a, b, c}, {n_a, n_b});
-    Ellipsoid<3u, real, length> ellipsoid2({a, c, c}, {n_a, n_b});
-
+    
     const auto young0 = stress{1e9};
+    const auto seps=young0*eps;
     const auto nu0 = real(0.2);
-    const auto youngi = stress{150e9};
+    const auto youngi = stress{10e9};
     const auto nui = real(0.3);
     tfel::math::st2tost2<3u, stress> C_0;
     static constexpr auto value =
         tfel::material::StiffnessTensorAlterationCharacteristic::UNALTERED;
     tfel::material::computeIsotropicStiffnessTensorII<3u, value, stress, real>(
         C_0, young0, nu0);
-
     tfel::math::st2tost2<3u, stress> C_i;
     tfel::material::computeIsotropicStiffnessTensorII<3u, value, stress, real>(
         C_i, youngi, nui);
-
-    InclusionPhase<3u, real, length, stress> inclusionPhase1(C_i, ellipsoid1,
-                                                             real(0.01));
+    Ellipsoid<length> ellipsoid1(a,b,c);
+    Spheroid<length> spheroid1(a,c);
+    IsotropicDistribution<3u,real,stress,length> distrib1(ellipsoid1,real(0.5),C_0);
+    unsigned short int index = 0;
+    TransverseIsotropicDistribution<real,stress,length> distrib2(spheroid1,real(0.02),C_i,n_a,index);                 
+    //IsotropicDistribution<3u,real,stress,length> distrib2(ellipsoid1,real(0.5),C_i);
+    //OrientedDistribution<3u,real,stress,length> distrib2(spheroid1,real(0.02),C_i,n_a,n_b); 
     
-    InclusionPhase<3u, real, length, stress> inclusionPhase2(C_i, ellipsoid2,
-                                                             real(0.02));
+    MatrixInclusionMicrostructure<3u, real, length, stress> micro1(C_0);
+    micro1.addInclusionPhase(distrib1);
+    micro1.addInclusionPhase(distrib2);
     
-    MatrixPhase<3u, real, stress> matrix1(C_0);
-    MatrixInclusionMicrostructure<3u, real, length, stress> micro1(matrix1);
-    std::cout << micro1.get_matrix_fraction() << std::endl;
-    std::cout << micro1.get_number_of_phases() << std::endl;
-    micro1.addInclusionPhase(inclusionPhase1);
-    std::cout << micro1.get_matrix_fraction() << std::endl;
-    std::cout << micro1.get_number_of_phases() << std::endl;
-     micro1.addInclusionPhase(inclusionPhase2);
-    std::cout << micro1.get_matrix_fraction() << std::endl;
-    std::cout << micro1.get_number_of_phases() << std::endl;
-    auto phase1=micro1.get_inclusionPhase(0);
-    std::cout<<phase1.fraction<<std::endl;
-    //micro1.removeInclusionPhase(0);
-    //auto phase2=micro1.get_inclusionPhase(0);
-    //std::cout<<phase2.fraction<<std::endl;
     tfel::math::stensor<3u,real> E={1,0,0,0,0,0};
-    HomogenizationScheme<3u, real, length, stress> h_s=computeDilute<3u, real, length, stress>(micro1,E,true);
-    auto Chom=h_s.homogenized_stiffness;
-    std::cout << Chom(0,0).getValue() << std::endl;
+    auto zs=stress(0);
+    tfel::math::stensor<3u,stress> P={zs,zs,zs,zs,zs,zs};
+    std::vector<tfel::math::stensor<3u,stress>> polarizations = {P,P,P};
+    auto h_s_1=computeDilute<3u, real, length, stress>(micro1,polarizations,false,E,true);
+    auto Chom_DS_iso=h_s_1.homogenized_stiffness;
+    //auto h_s_2=computeDilute<3u, real, length, stress>(micro1,polarizations,false,E,false);
+    //auto Chom_DS_non_iso=h_s_2.homogenized_stiffness;
+    //for (int i=0;i<6;i++)
+    //for (int j=0;j<6;j++){
+    //  TFEL_TESTS_ASSERT(my_abs(Chom_DS_iso(i,j)- Chom_DS_non_iso(i,j)) < stress{seps});
+    //}
+    
+    HomogenizationScheme<3u, real, length, stress> h_s_MT1=computeMoriTanaka<3u, real, length, stress>(micro1,polarizations,false,E,true);
+    auto Chom_MT_iso=h_s_MT1.homogenized_stiffness;
+    //HomogenizationScheme<3u, real, length, stress> h_s_MT2=computeMoriTanaka<3u, real, length, stress>(micro1,polarizations,false,E,true);
+    //auto Chom_MT_non_iso=h_s_MT2.homogenized_stiffness;
+    //for (int i=0;i<6;i++)
+    //for (int j=0;j<6;j++){
+    //  TFEL_TESTS_ASSERT(my_abs(Chom_MT_iso(i,j)- Chom_MT_non_iso(i,j)) < stress{seps});
+    //}
+    std::cout<< Chom_MT_iso(0,0).getValue() <<" " <<Chom_DS_iso(0,0).getValue()<<std::endl;
   };
 
  private:
   template <typename real, typename stress, typename length>
   void test_polycrystal() {
+  static constexpr auto eps = std::numeric_limits<real>::epsilon();
     using namespace tfel::material::homogenization::elasticity;
-    length a = length(1);
-    length b = length(2);
+    length a = length(2);
+    length b = length(1);
     length c = length(3);
     tfel::math::tvector<3u, real> n_a = {1, 0, 0};
     tfel::math::tvector<3u, real> n_b = {0, 1, 0};
-    Ellipsoid<3u, real, length> ellipsoid1({a, b, c}, {n_a, n_b});
+    tfel::math::tvector<3u, real> n_c = {0, 0, 1};
+    
+    tfel::math::tvector<3u, real> n_a_ = {std::sqrt(2)/2, std::sqrt(2)/2, 0};
+    tfel::math::tvector<3u, real> n_b_ = {-std::sqrt(2)/2, std::sqrt(2)/2, 0};
+    Ellipsoid<length> ellipsoid1(a,b,c);
 
-    const auto young = stress{1e9};
-    const auto nu = real(0.2);
+    const auto young0 = stress{1e9};
+    const auto seps=young0*eps;
+    const auto nu0 = real(0.2);
+    const auto youngi = stress{10e9};
+    const auto nui = real(0.3);
     tfel::math::st2tost2<3u, stress> C_0;
     static constexpr auto value =
         tfel::material::StiffnessTensorAlterationCharacteristic::UNALTERED;
     tfel::material::computeIsotropicStiffnessTensorII<3u, value, stress, real>(
-        C_0, young, nu);
-
-    Grain<3u, real, length, stress> grain1(C_0, ellipsoid1, real(0.3));
-
-    Grain<3u, real, length, stress> grain2(C_0, ellipsoid1, real(0.2));
+        C_0, young0, nu0);
+    tfel::math::st2tost2<3u, stress> C_i;
+    tfel::material::computeIsotropicStiffnessTensorII<3u, value, stress, real>(
+        C_i, youngi, nui);
+        
+    GrainPhase<3u,real,stress,length> grain1(real(0.33),C_0,ellipsoid1, n_a, n_b);
+    GrainPhase<3u, real, stress,length> grain2(real(0.33),C_i, ellipsoid1, n_a_, n_b_);
+    GrainPhase<3u, real, stress,length> grain3(real(0.34),C_i, ellipsoid1, n_a, n_c);
 
     Polycrystal<3u, real, length, stress> crystal;
     crystal.addGrain(grain1);
     crystal.addGrain(grain2);
-    std::cout << crystal.get_total_fraction() << std::endl;
-    std::cout << crystal.get_number_of_grains() << std::endl;
-    auto grain3=crystal.get_grain(0);
-    std::cout<<grain3.fraction<<std::endl;
-    crystal.removeGrain(1);
-    auto phase2=crystal.get_grain(0);
-    std::cout<<phase2.fraction<<std::endl;
+    crystal.addGrain(grain3);
+    
+    tfel::math::stensor<3u,real> E={1,0,0,0,0,0};
+    auto zs=stress(0);
+    tfel::math::stensor<3u,stress> P={zs,zs,zs,zs,zs,zs};
+    std::vector<tfel::math::stensor<3u,stress>> polarizations = {P,P};
+    //auto h_s_SC1=computeSelfConsistent<3u, real, length, stress>(crystal,polarizations,false,E,true,200);
+    //auto Chom_SC_iso=h_s_SC1.homogenized_stiffness;
+    auto h_s_SC2=computeSelfConsistent<3u, real, length, stress>(crystal,polarizations,false,E,false,60,8);
+    auto Chom_SC_non_iso=h_s_SC2.homogenized_stiffness;
+    //for (int i=0;i<6;i++)
+    //for (int j=0;j<6;j++){
+    //  TFEL_TESTS_ASSERT(my_abs(Chom_SC_iso(i,j)- Chom_SC_non_iso(i,j)) < stress{1000000*seps});
+    //  std::cout<<i<<" "<<j<<" "<< (Chom_SC_iso(i,j)-Chom_SC_non_iso(i,j)).getValue()<<" "<<eps<<std::endl;
+    //}
+    
   };
 
 };  // end of struct MicrostructureLinearHomogenizationTest

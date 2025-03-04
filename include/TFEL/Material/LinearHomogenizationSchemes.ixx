@@ -23,7 +23,7 @@ namespace tfel::material::homogenization::elasticity {
             typename LengthType>
   struct EllipsoidMeanLocalisator {
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
-
+    
     TFEL_HOST_DEVICE static const std::pair<real, real> Isotropic(
         const StressType& young,
         const real& nu,
@@ -201,9 +201,7 @@ namespace tfel::material::homogenization::elasticity {
         tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
       }
       if (not(tfel::math::ieee754::fpclassify(
-                  tfel::math::VectorVectorDotProduct::exe<
-                      real, tfel::math::tvector<3u, real>,
-                      tfel::math::tvector<3u, real>>(n_a, n_b)) == FP_ZERO)) {
+                  n_a|n_b) == FP_ZERO)) {
         tfel::reportContractViolation("n_a and n_b not normals");
       }
       if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {

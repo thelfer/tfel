@@ -273,6 +273,7 @@ namespace tfel::material::homogenization::elasticity {
             zero, S55,  zero, zero, zero, zero, zero, zero, S66};
   }  // end of function computeEshelbyTensor
 
+
   template <typename real, typename StressType>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
   computeSphereLocalisationTensor(const StressType& young,
@@ -299,7 +300,7 @@ namespace tfel::material::homogenization::elasticity {
 
   template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
-  computeAnisotropicEllipsoidLocalisationTensor(
+  computeGeneralEllipsoidLocalisationTensor(
       const StressType& young,
       const real& nu,
       const tfel::math::st2tost2<3u, StressType>& C_i,
@@ -343,6 +344,7 @@ namespace tfel::material::homogenization::elasticity {
     const auto n_2 = nabc_[sig[1]];
     using namespace tfel::math;
     const auto n_3 = cross_product<real>(n_1, n_2);
+    //r is the global basis expressed in the local sorted basis (n1,n2,n3)
     const rotation_matrix<real> r = {n_1[0], n_1[1], n_1[2], n_2[0], n_2[1],
                                      n_2[2], n_3[0], n_3[1], n_3[2]};
     const auto S0_basis = change_basis(S0, r);
@@ -352,13 +354,20 @@ namespace tfel::material::homogenization::elasticity {
     computeIsotropicStiffnessTensorII<3u, value, StressType, real>(C_0, young,
                                                                    nu);
     using namespace tfel::math;
-    const st2tost2<3u, StressType> C = C_i - C_0;
+    //r_glob_loc is the local basis (na,nb,nc) expressed in the global basis.
+    const rotation_matrix<real> r_glob_loc = {n_a_[0], n_b_[0], n_c_[0],
+                                              n_a_[1], n_b_[1], n_c_[1],
+                                              n_a_[2], n_b_[2], n_c_[2]};
+    const rotation_matrix<real> r_loc_glob = transpose(r_glob_loc);
+    const auto C_i_glob =
+        change_basis(C_i / StressType(1), r_loc_glob) * StressType(1);
+    const st2tost2<3u, StressType> C = C_i_glob - C_0;
     const auto invC0 = invert(C_0);
     const auto Pr = invC0 * C;
     const auto PPr = S0_basis * Pr;
     const auto A = invert(st2tost2<3u, real>::Id() + PPr);
     return A;
-  }  // end of function computeAnisotropicEllipsoidLocalisationTensor
+  }  // end of function computeGeneralEllipsoidLocalisationTensor
 
   template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
@@ -376,7 +385,7 @@ namespace tfel::material::homogenization::elasticity {
     tfel::math::st2tost2<3u, StressType> C_i;
     computeIsotropicStiffnessTensorII<3u, value, StressType, real>(C_i, young_i,
                                                                    nu_i);
-    return computeAnisotropicEllipsoidLocalisationTensor<real,StressType,LengthType>(young, nu, C_i, n_a, a,
+    return computeGeneralEllipsoidLocalisationTensor<real,StressType,LengthType>(young, nu, C_i, n_a, a,
                                                          n_b, b, c);
   }  // end of function computeEllipsoidLocalisationTensor
 

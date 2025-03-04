@@ -114,16 +114,18 @@ namespace tfel::material::homogenization::elasticity {
       const real = real{1e-5});
 
   /*!
-   * This function builds the strain localisation tensor of a general
-   * ellipsoid with a general elasticity, embedded in an isotropic matrix.
+   * The function computeGeneralEllipsoidLocalisationTensor builds the strain localisation tensor of a general
+   * ellipsoid with a general elasticity (which can be anisotropic), embedded in an isotropic matrix.
+   * This function was created for polycrystal whose elasticity is anisotropic (but the matrix
+   * is assumed isotropic).
    * The localisation tensor \f$A\f$ is defined as follows : \f[\epsilon =
    * A:E_0\f] where \f$E_0\f$ is the uniform strain tensor imposed at
    * infinity, and \f$\epsilon\f$ is the strain tensor solution of Eshelby
    * problem for the ellipsoid. The ellipsoid also has a specific
-   * orientation given by the vectors \f$n_a\f$, \f$n_b\f$.
-   * The elasticity \f$C_i\f$ is specified in the global basis.
+   * orientation given by the vectors \f$n_a\f$, \f$n_b\f$, which provides a direct local basis \f$(n_a,n_b,n_c)\f$.
+   * The elasticity \f$C_i\f$ is specified in this local basis.
    * \return an object of type st2tost2, which is the fourth-order localisation
-   * tensor \f$A\f$
+   * tensor \f$A\f$ (in the global basis).
    * \return an object of type st2tost2
    * \tparam real: underlying type
    * \tparam StressType: type of
@@ -139,7 +141,7 @@ namespace tfel::material::homogenization::elasticity {
    */
   template <typename real, typename StressType, typename LengthType>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
-  computeAnisotropicEllipsoidLocalisationTensor(
+  computeGeneralEllipsoidLocalisationTensor(
       const StressType&,
       const real&,
       const tfel::math::st2tost2<3u, StressType>&,
@@ -151,7 +153,7 @@ namespace tfel::material::homogenization::elasticity {
 
   /*!
    * This function does the same as
-   * computeAnisotropicEllipsoidLocalisationTensor when the elasticity of the
+   * computeGeneralEllipsoidLocalisationTensor when the elasticity of the
    * ellipsoid is isotropic. \return an object of type st2tost2 \tparam real:
    * underlying type \tparam StressType: type of the elastic constants related
    * to the matrix and the ellipsoid \tparam LengthType: type of the dimensions
