@@ -39,7 +39,7 @@ namespace mfront {
        << "mfront::BehaviourProfiler::Timer ";
     if (!s.empty()) {
       os << "mfront_local_timer_" << s;
-    } else{
+    } else {
       os << "mfront_local_timer";
     }
     os << "(" << c << "Profiler::getProfiler(),"

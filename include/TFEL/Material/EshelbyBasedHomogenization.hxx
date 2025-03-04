@@ -15,5 +15,4 @@
 
 #include "TFEL/Material/LinearHomogenizationSchemes.hxx"
 
-
 #endif /* LIB_TFEL_MATERIAL_ESHELBYBASEDHOMOGENIZATION_HXX */

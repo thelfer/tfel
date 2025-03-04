@@ -316,8 +316,8 @@ namespace mtest {
         return MechanicalBehaviourBase::FINITESTRAINKINEMATIC_F_CAUCHY;
       case 4:
         return MechanicalBehaviourBase::FINITESTRAINKINEMATIC_ETO_PK1;
-    default:
-      break;
+      default:
+        break;
     }
     tfel::raise(
         "StandardBehaviourBase::getBehaviourKinematic: "

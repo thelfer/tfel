@@ -14,6 +14,8 @@
 #include <ostream>
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
+#include "MFront/IsotropicBehaviourDSLBase.hxx"
+
 #include "MFront/IsotropicStrainHardeningMisesCreepCodeGenerator.hxx"
 
 namespace mfront {
@@ -43,7 +45,11 @@ namespace mfront {
        << "using namespace tfel::material;\n"
        << "using std::vector;\n";
     writeMaterialLaws(os, this->bd.getMaterialLaws());
-    os << this->bd.getCode(h, BehaviourData::FlowRule) << "return true;\n}\n\n"
+    if (this->bd.hasCode(h, BehaviourData::BeforeFlowRule)) {
+      os << this->bd.getCode(h, BehaviourData::BeforeFlowRule);
+    }
+    os << this->bd.getCode(h, BehaviourData::FlowRule) << "return true;\n"
+       << "}\n\n"
        << "bool NewtonIntegration(){\n"
        << "bool converge=false;\n"
        << "strain newton_f;\n"
@@ -160,9 +166,8 @@ namespace mfront {
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     }
-    os << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+("
-       << this->bd.getClassName() << "::theta)*(this->deto)));\n"
-       << "this->seq_e = sigmaeq(this->se);\n"
+    this->writeBehaviourIntegratorPreprocessingStep(os);
+    os << "this->seq_e = sigmaeq(this->se);\n"
        << "if(this->seq_e> 0.01 * (this->young) * "
        << "std::numeric_limits<NumericType>::epsilon()){\n"
        << "this->n = 3 * (this->se)/(2 * this->seq_e);\n"
@@ -188,13 +193,8 @@ namespace mfront {
          << ",hypothesis, NumericType, false>::FAILURE;\n";
     }
     os << "}\n"
-       << "}\n"
-       << "this->deel = this->deto-(this->dp)*(this->n);\n"
-       << "this->updateStateVariables();\n"
-       << "this->sig  = "
-          "(this->lambda_tdt)*trace(this->eel)*StrainStensor::Id()+2*(this->mu_"
-          "tdt)*(this->eel);\n"
-       << "this->updateAuxiliaryStateVariables();\n";
+       << "}\n";
+    this->writeBehaviourIntegratorPostprocessingStep(os);
     if (!areRuntimeChecksDisabled(this->bd)) {
       for (const auto& v : d.getPersistentVariables()) {
         this->writePhysicalBoundsChecks(os, v, false);

@@ -24,7 +24,8 @@ namespace tfel::math {
   //! Expr class
   template <unsigned short N>
   struct TFEL_VISIBILITY_LOCAL ST2toST2ST2toST2ProductExpr {
-  };  // end of struct ST2toST2ST2toST2ProductExpr
+  };  // end of struct
+      // ST2toST2ST2toST2ProductExpr
 
   /*!
    * Partial specialisation

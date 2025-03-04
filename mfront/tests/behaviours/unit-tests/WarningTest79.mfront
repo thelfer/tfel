@@ -1,0 +1,18 @@
+@DSL IsotropicPlasticMisesFlow;
+@Behaviour WarningTest79;
+@Description {
+  "This test checks that a warning is reported "
+  "if dR_dp is not used in @FlowRule when"
+  "an isotropic hardening rule is defined."
+}
+
+@Epsilon 1e-14;
+
+@IsotropicHardeningRule "Linear" {R0 : 150e6, H : 2e9};
+
+@FlowRule{
+  f;
+  df_dseq;
+  df_dp;
+  R;
+}

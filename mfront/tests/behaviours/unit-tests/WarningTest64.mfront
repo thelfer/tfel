@@ -1,0 +1,13 @@
+@DSL DefaultCZM;
+@Behaviour WarningTest64;
+@Description {
+  "This test checks that a warning is reported if "
+  "the cohesive force and its normal component are both used in "
+  "@Integrator."
+}
+
+@Integrator {
+  du;
+  t;
+  t_n;
+}

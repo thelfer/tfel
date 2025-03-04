@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 5.0.1 of the
  
 # Issues fixed
 
+## Issue 703: [octave] set `C++` standard to 20 when calling `mkoctfile`
+
+For more details, see <https://github.com/thelfer/tfel/issues/703>
+
 ## Issue 664: compilation of the `ZMAT` interface  fails
 
 For more details, see <https://github.com/thelfer/tfel/issues/664>

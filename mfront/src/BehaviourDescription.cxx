@@ -1322,7 +1322,6 @@ namespace mfront {
   }  // end of declareAsGenericBehaviour
 
   void BehaviourDescription::declareAsASmallStrainStandardBehaviour() {
-    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     tfel::raise_if(
         !this->type.empty(),
         "BehaviourDescription::declareAsASmallStrainStandardBehaviour: "
@@ -1336,18 +1335,13 @@ namespace mfront {
     eto.setGlossaryName("Strain");
     ThermodynamicForce sig("StressStensor", "\u03C3", "sig");
     sig.setGlossaryName("Stress");
-    this->mvariables.push_back({eto, sig});
+    this->addMainVariable2(eto, sig, true, true);
     this->type = BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR;
-    this->registerMemberName(h, "eto");
-    this->registerMemberName(h, "deto");
-    this->registerMemberName(h, "sig");
-    this->registerGlossaryName(h, "eto", "Strain");
-    this->registerGlossaryName(h, "sig", "Stress");
   }  // end of declareAsASmallStrainStandardBehaviour
 
   void BehaviourDescription::declareAsAFiniteStrainStandardBehaviour(
       const bool b) {
-    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     tfel::raise_if(
         !this->type.empty(),
         "BehaviourDescription::declareAsAFiniteStrainStandardBehaviour: "
@@ -1361,21 +1355,17 @@ namespace mfront {
     Gradient::setIsIncrementKnownAttribute(F, false);
     ThermodynamicForce sig("StressStensor", "\u03C3", "sig");
     sig.setGlossaryName("Stress");
-    this->mvariables.push_back({F, sig});
-    this->type = BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR;
     if (b) {
-      this->registerMemberName(h, "F");
-      this->registerMemberName(h, "dF");
+      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+      this->registerMemberName(uh, "F");
+      this->registerMemberName(uh, "dF");
     }
-    this->registerMemberName(h, "F0");
-    this->registerMemberName(h, "F1");
-    this->registerMemberName(h, "sig");
-    this->registerGlossaryName(h, "F1", "DeformationGradient");
-    this->registerGlossaryName(h, "sig", "Stress");
+    this->addMainVariable2(F, sig, false, false);
+    this->registerGlossaryName(uh, "F1", "DeformationGradient");
+    this->type = BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR;
   }
 
   void BehaviourDescription::declareAsACohesiveZoneModel() {
-    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     tfel::raise_if(!this->type.empty(),
                    "BehaviourDescription::declareAsACohesiveZoneModel: "
                    "behaviour type has already been defined");
@@ -1387,13 +1377,8 @@ namespace mfront {
     Gradient::setIsIncrementKnownAttribute(u, true);
     ThermodynamicForce t("ForceTVector", "t");
     t.setGlossaryName("CohesiveForce");
-    this->mvariables.push_back({u, t});
+    this->addMainVariable2(u, t, true, true);
     this->type = BehaviourDescription::COHESIVEZONEMODEL;
-    this->registerMemberName(h, "u");
-    this->registerMemberName(h, "du");
-    this->registerMemberName(h, "t");
-    this->registerGlossaryName(h, "u", "OpeningDisplacement");
-    this->registerGlossaryName(h, "t", "CohesiveForce");
   }
 
   void BehaviourDescription::addLocalDataStructure(
@@ -1439,19 +1424,27 @@ namespace mfront {
 
   void BehaviourDescription::addMainVariable(const Gradient& g,
                                              const ThermodynamicForce& f) {
-    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     tfel::raise_if(
         this->getBehaviourType() != BehaviourDescription::GENERALBEHAVIOUR,
-        "BehaviourDescription::addMainVariables: "
+        "BehaviourDescription::addMainVariable: "
         "one can not add a main variable if the behaviour "
         "don't have a general behaviour type");
     tfel::raise_if(
         !this->allowsNewUserDefinedVariables(),
-        "BehaviourDescription::addMainVariables: "
+        "BehaviourDescription::addMainVariable: "
         "new variables are can't be defined after the first code block.");
+    this->addMainVariable2(g, f, true, true);
+  }
+
+  void BehaviourDescription::addMainVariable2(
+      const Gradient& g,
+      const ThermodynamicForce& f,
+      const bool registerGradientGlossaryName,
+      const bool registerTangentOperatorBlock) {
+    constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if (g.arraySize != f.arraySize) {
       tfel::raise(
-          "BehaviourDescription::addMainVariables: "
+          "BehaviourDescription::addMainVariable2: "
           "the gradient '" +
           g.name + "' and the thermodynamic force '" + f.name +
           "' must have the same array size (" + std::to_string(g.arraySize) +
@@ -1459,14 +1452,14 @@ namespace mfront {
     }
     for (const auto& v : this->mvariables) {
       tfel::raise_if(g.name == v.first.name,
-                     "BehaviourDescription::addMainVariables: "
-                     "a driving variable '" +
+                     "BehaviourDescription::addMainVariable2: "
+                     "a gradient named '" +
                          g.name +
                          "' has "
                          "already been declared");
       tfel::raise_if(f.name == v.second.name,
-                     "BehaviourDescription::addMainVariables: "
-                     "a driving variable '" +
+                     "BehaviourDescription::addMainVariable2: "
+                     "a thermodynamic force named '" +
                          f.name +
                          "' has "
                          "already been declared");
@@ -1478,7 +1471,7 @@ namespace mfront {
       this->registerMemberName(h, g.name + "0");
       this->registerMemberName(h, g.name + "1");
     }
-    if (g.hasGlossaryName()) {
+    if ((g.hasGlossaryName()) && (registerGradientGlossaryName)) {
       this->registerGlossaryName(h, g.name, g.getExternalName());
     }
     if (g.hasEntryName()) {
@@ -1491,7 +1484,14 @@ namespace mfront {
     if (f.hasEntryName()) {
       this->registerEntryName(h, f.name, f.getExternalName());
     }
-    this->registerMemberName(h, this->getTangentOperatorBlockName({f, g}));
+    if (registerTangentOperatorBlock) {
+      this->registerMemberName(h, this->getTangentOperatorBlockName({f, g}));
+      for (const auto& [g2, thf2] : this->mvariables) {
+        this->registerMemberName(h, this->getTangentOperatorBlockName({f, g2}));
+        this->registerMemberName(h,
+                                 this->getTangentOperatorBlockName({thf2, g}));
+      }
+    }
     this->mvariables.push_back({g, f});
   }  // end of addMainVariables
 
@@ -2206,7 +2206,8 @@ namespace mfront {
       this->addBehaviourVariable(bv);
     }
     this->behaviourVariablesCandidates.clear();
-    for (const auto& [bv, isExternalModel] : this->behaviourVariableFactoriesCandidates) {
+    for (const auto& [bv, isExternalModel] :
+         this->behaviourVariableFactoriesCandidates) {
       this->addBehaviourVariableFactory(bv, isExternalModel);
     }
     this->behaviourVariableFactoriesCandidates.clear();
@@ -2507,13 +2508,12 @@ namespace mfront {
   }  // end of addBehaviourVariable
 
   void BehaviourDescription::addBehaviourVariableFactory(
-      const BehaviourVariableDescription& v){
+      const BehaviourVariableDescription& v) {
     this->addBehaviourVariableFactory(v, false);
   }
 
   void BehaviourDescription::addBehaviourVariableFactory(
-      const BehaviourVariableDescription& v,
-      const bool isExternalModel) {
+      const BehaviourVariableDescription& v, const bool isExternalModel) {
     if (!this->allowsNewUserDefinedVariables()) {
       tfel::raise(
           "BehaviourDescription::addBehaviourVariableFactory: "
@@ -2565,7 +2565,8 @@ namespace mfront {
             << "' is delayed up to when the modelling hypotheses "
             << "are defined'\n";
       }
-      this->behaviourVariableFactoriesCandidates.push_back({v, isExternalModel});
+      this->behaviourVariableFactoriesCandidates.push_back(
+          {v, isExternalModel});
     }
   }  // end of addBehaviourVariableFactory
 
@@ -3844,25 +3845,25 @@ namespace mfront {
       for (const auto& m : cb.members) {
         if (opts.checkGradientsAtTheBeginningOfTheTimeStep) {
           if (bd.isNameOfAGradientAtTheBeginningOfTheTimeStep(m)) {
-            r.push_back("checkInitializeMethods: the code block '" + n +
-                        "' shall not use gradient '" + m + "'");
+            r.push_back("the code block '" + n + "' shall not use gradient '" +
+                        m + "'");
           }
         }
         if (opts.checkGradientsAtTheEndOfTheTimeStep) {
           if (bd.isNameOfAGradientAtTheEndOfTheTimeStep(m)) {
-            r.push_back("checkInitializeMethods: the code block '" + n +
-                        "' shall not use gradient '" + m + "'");
+            r.push_back("the code block '" + n + "' shall not use gradient '" +
+                        m + "'");
           }
         }
         if (opts.checkGradientsIncrements) {
           if (bd.isGradientIncrementName(m)) {
-            r.push_back("checkInitializeMethods: the code block '" + n +
+            r.push_back("the code block '" + n +
                         "' shall not use gradient increment '" + m + "'");
           }
         }
         if (opts.checkThermodynamicForcesAtTheBeginningOfTheTimeStep) {
           if (bd.isThermodynamicForceName(m)) {
-            r.push_back("checkInitializeMethods: the code block '" + n +
+            r.push_back("the code block '" + n +
                         "' shall not use thermodynamic force '" + m + "'");
           }
         }
@@ -3873,5 +3874,19 @@ namespace mfront {
     check(BehaviourData::AfterInitializeLocalVariables);
     return r;
   }
+
+  std::string makeTangentOperatorBlocksList(
+      const BehaviourDescription& bd,
+      const std::vector<std::pair<VariableDescription, VariableDescription>>&
+          tblocks) {
+    auto r = std::string{};
+    for (auto p = tblocks.begin(); p != tblocks.end();) {
+      r += '\'' + bd.getTangentOperatorBlockName(*p) + '\'';
+      if (++p != tblocks.end()) {
+        r += ", ";
+      }
+    }
+    return r;
+  }  // end of makeTangentOperatorBlocksList
 
 }  // end of namespace mfront

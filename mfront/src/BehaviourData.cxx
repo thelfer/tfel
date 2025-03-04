@@ -35,6 +35,7 @@ namespace mfront {
 
   const char* const BehaviourData::UserDefinedInitializeCodeBlock =
       "UserDefinedInitializeCodeBlock";
+  const char* const BehaviourData::BeforeFlowRule = "BeforeFlowRule";
   const char* const BehaviourData::FlowRule = "FlowRule";
   const char* const BehaviourData::BeforeInitializeLocalVariables =
       "BeforeInitializeLocalVariables";
@@ -216,6 +217,8 @@ namespace mfront {
     this->cblock.staticMembers.insert(c.staticMembers.begin(),
                                       c.staticMembers.end());
     this->cblock.members.insert(c.members.begin(), c.members.end());
+    this->cblock.block_variables.insert(c.block_variables.begin(),
+                                        c.block_variables.end());
     for (const auto& a : c.attributes) {
       if (this->cblock.attributes.count(a.first) != 0) {
         auto& ca = this->cblock.attributes[a.first];
@@ -313,7 +316,7 @@ namespace mfront {
   void BehaviourData::CodeBlocksAggregator::check() const {
     tfel::raise_if(!this->is_mutable,
                    "BehaviourData::CodeBlocksAggregator::set: "
-                   "can't modifiy a code block");
+                   "can't modify a code block");
   }  // end of CodeBlocksAggregator::check
 
   const CodeBlock& BehaviourData::CodeBlocksAggregator::get() const {
@@ -509,9 +512,8 @@ namespace mfront {
     }
   }  // end of addStateVariable
 
-  void BehaviourData::addAuxiliaryStateVariable(
-      const VariableDescription& v,
-      const RegistrationStatus s) {
+  void BehaviourData::addAuxiliaryStateVariable(const VariableDescription& v,
+                                                const RegistrationStatus s) {
     this->addVariable(this->auxiliaryStateVariables, v, s, false);
     if (s == FORCEREGISTRATION) {
       this->addVariable(this->persistentVariables, v, ALREADYREGISTRED, false,

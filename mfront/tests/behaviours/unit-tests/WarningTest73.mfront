@@ -1,0 +1,14 @@
+@DSL IsotropicPlasticMisesFlow;
+@Behaviour WarningTest73;
+@Description {
+  "This test checks that no warning is reported "
+  "if f, df_dseq and df_dp are used in @FlowRule."
+}
+
+@Epsilon 1e-14;
+
+@FlowRule{
+  f;
+  df_dseq;
+  df_dp;
+}

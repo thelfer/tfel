@@ -104,8 +104,8 @@ namespace mfront {
 
     virtual void writeIncludes(std::ostream&) const;
 
-    virtual void writeHeaderGuardBegin(std::ostream& ,
-                                       const std::string& ,
+    virtual void writeHeaderGuardBegin(std::ostream&,
+                                       const std::string&,
                                        const bool) const;
 
     virtual void writeHeaderGuardEnd(std::ostream&,
@@ -303,7 +303,8 @@ namespace mfront {
      * \brief write the assignement operators
      * \param[in] os: output stream
      */
-    virtual void writeBehaviourDisabledAssignementOperators(std::ostream&) const;
+    virtual void writeBehaviourDisabledAssignementOperators(
+        std::ostream&) const;
 
     virtual void writeBehaviourConstructors(std::ostream&,
                                             const Hypothesis) const;
@@ -646,7 +647,7 @@ namespace mfront {
     const BehaviourDescription& bd;
     //! \brief list of registred interfaces, indexed by their name
     const BehaviourInterfaceMap& interfaces;
-    };  // end of BehaviourCodeGeneratorBase
+  };  // end of BehaviourCodeGeneratorBase
 
 }  // end of namespace mfront
 

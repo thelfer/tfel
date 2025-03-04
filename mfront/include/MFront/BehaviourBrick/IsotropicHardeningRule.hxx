@@ -83,8 +83,8 @@ namespace mfront::bbrick {
                                                  const std::string&,
                                                  const std::string&) const = 0;
     /*!
-     * \brief return the code computing the radius of the elastic limit.
-     * The code defines a variable named "R"+fid+"_"+id
+     * \brief return the code computing the radius of the elastic limit  at the
+     * middle of the time step. The code defines a variable named "R"+fid+"_"+id
      * \param[in] bd: behaviour description
      * \param[in] fid: flow id
      * \param[in] id: identifier
@@ -93,9 +93,13 @@ namespace mfront::bbrick {
                                             const std::string&,
                                             const std::string&) const = 0;
     /*!
-     * \brief return the code computing the radius of the elastic limit.
+     * \brief return the code computing the radius of the elastic limit and its
+     * derivative with respect to the equivalent plastic strain at the middle of
+     * the time step.
+     *
      * The code defines two variables named "R"+fid+"_"+id and
-     * "dR"+fid+"_"+id+"ddp"+fid+"_"+id.
+     * "dR"+fid+"_"+id+"dp"+fid+"_"+id.
+     *
      * \param[in] bd: behaviour description
      * \param[in] fid: flow id
      * \param[in] id: identifier

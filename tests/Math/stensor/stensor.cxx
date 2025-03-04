@@ -45,5 +45,11 @@ int main() {
   static_assert(s[0] == 1);
   static_assert(s[1] == 2);
   static_assert(s[2] == 3);
+  //
+  constexpr auto zero = stensor<2u, int>::zero();
+  static_assert(zero[0] == 0);
+  static_assert(zero[1] == 0);
+  static_assert(zero[2] == 0);
+  static_assert(zero[3] == 0);
   return EXIT_SUCCESS;
 }

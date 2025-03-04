@@ -167,7 +167,8 @@ namespace mfront {
     add("@Profiling", &BehaviourDSLCommon::treatProfiling);
     add("@Behaviour", &BehaviourDSLCommon::treatBehaviour);
     add("@BehaviourVariable", &BehaviourDSLCommon::treatBehaviourVariable);
-    add("@BehaviourVariableFactory", &BehaviourDSLCommon::treatBehaviourVariableFactory);
+    add("@BehaviourVariableFactory",
+        &BehaviourDSLCommon::treatBehaviourVariableFactory);
     add("@StrainMeasure", &BehaviourDSLCommon::treatStrainMeasure);
     add("@Author", &BehaviourDSLCommon::treatAuthor);
     add("@Date", &BehaviourDSLCommon::treatDate);
@@ -553,8 +554,8 @@ namespace mfront {
     option.qualifyMemberVariables = b;
     option.modifier = vm;
     option.analyser = wa;
-    option.mn = md.getRegistredMembersNames();
-    option.smn = md.getRegistredStaticMembersNames();
+    option.member_names = md.getRegistredMembersNames();
+    option.static_member_names = md.getRegistredStaticMembersNames();
     this->getSymbols(option.symbols, h, n);
     return this->readNextBlock(option);
   }  // end of readNextBlock
@@ -572,8 +573,8 @@ namespace mfront {
     option.qualifyStaticVariables = b;
     option.qualifyMemberVariables = b;
     option.modifier = vm;
-    option.mn = md.getRegistredMembersNames();
-    option.smn = md.getRegistredStaticMembersNames();
+    option.member_names = md.getRegistredMembersNames();
+    option.static_member_names = md.getRegistredStaticMembersNames();
     this->getSymbols(option.symbols, h, n);
     return this->readNextBlock(option);
   }  // end of readNextBlock
@@ -618,15 +619,15 @@ namespace mfront {
       o1.qualifyStaticVariables = b;
       o1.qualifyMemberVariables = b;
       o1.modifier = std::make_shared<StandardVariableModifier>(h, m1);
-      o1.mn = md.getRegistredMembersNames();
-      o1.smn = md.getRegistredStaticMembersNames();
+      o1.member_names = md.getRegistredMembersNames();
+      o1.static_member_names = md.getRegistredStaticMembersNames();
       this->getSymbols(o1.symbols, h, n1);
       CodeBlockParserOptions o2;
       o2.qualifyStaticVariables = b;
       o2.qualifyMemberVariables = b;
       o2.modifier = std::make_shared<StandardVariableModifier>(h, m2);
-      o2.mn = md.getRegistredMembersNames();
-      o2.smn = md.getRegistredStaticMembersNames();
+      o2.member_names = md.getRegistredMembersNames();
+      o2.static_member_names = md.getRegistredStaticMembersNames();
       this->getSymbols(o2.symbols, h, n1);
       this->readNextBlock(c1, c2, o1, o2);
       this->mb.setCode(h, n1, c1, o.m, o.p);
@@ -1374,10 +1375,34 @@ namespace mfront {
       }
     }
     //
-    //
     for (const auto& pb : this->bricks) {
       pb->endTreatment();
     }
+    //
+    for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
+      if (this->mb.getBehaviourType() ==
+          BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+        // all available tangent operators for finite strain behaviours
+        for (const auto& t :
+             tfel::material::getFiniteStrainBehaviourTangentOperatorFlags()) {
+          const auto cto_name =
+              std::string(BehaviourData::ComputeTangentOperator) + '-' +
+              convertFiniteStrainBehaviourTangentOperatorFlagToString(t);
+          if (this->mb.hasCode(h, cto_name)) {
+            const auto& cto = this->mb.getCodeBlock(h, cto_name);
+            this->checkTangentOperatorBlock(cto_name, cto);
+          }
+        }
+      } else {
+        if (this->mb.hasCode(h, BehaviourData::ComputeTangentOperator)) {
+          const auto& cto =
+              this->mb.getCodeBlock(h, BehaviourData::ComputeTangentOperator);
+          this->checkTangentOperatorBlock(BehaviourData::ComputeTangentOperator,
+                                          cto);
+        }
+      }
+    }
+    //
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing: end\n";
     }
@@ -1622,8 +1647,8 @@ namespace mfront {
                             "Expected ';' or options.");
     const auto opts = [this] {
       if (this->current->value == "{") {
-        return tfel::utilities::Data::read(this->current, this->tokens.end())
-            .get<tfel::utilities::DataMap>();
+        return read<tfel::utilities::DataMap>(this->current,
+                                              this->tokens.end());
       }
       return tfel::utilities::DataMap{};
     }();
@@ -1677,8 +1702,8 @@ namespace mfront {
       auto used_post_processing_variables = std::vector<VariableDescription>{};
       this->current = beg;
       CodeBlockParserOptions o;
-      o.mn = d.getRegistredMembersNames();
-      o.smn = d.getRegistredStaticMembersNames();
+      o.member_names = d.getRegistredMembersNames();
+      o.static_member_names = d.getRegistredStaticMembersNames();
       o.qualifyStaticVariables = true;
       o.qualifyMemberVariables = true;
       o.analyser = std::make_shared<StandardWordAnalyser>(
@@ -1727,8 +1752,8 @@ namespace mfront {
           std::vector<VariableDescription>{};
       this->current = beg;
       CodeBlockParserOptions o;
-      o.mn = d.getRegistredMembersNames();
-      o.smn = d.getRegistredStaticMembersNames();
+      o.member_names = d.getRegistredMembersNames();
+      o.static_member_names = d.getRegistredStaticMembersNames();
       o.qualifyStaticVariables = true;
       o.qualifyMemberVariables = true;
       o.analyser = std::make_shared<StandardWordAnalyser>(
@@ -1765,8 +1790,8 @@ namespace mfront {
       const auto& d = this->mb.getBehaviourData(h);
       this->current = beg;
       CodeBlockParserOptions o;
-      o.mn = d.getRegistredMembersNames();
-      o.smn = d.getRegistredStaticMembersNames();
+      o.member_names = d.getRegistredMembersNames();
+      o.static_member_names = d.getRegistredStaticMembersNames();
       o.qualifyStaticVariables = true;
       o.qualifyMemberVariables = true;
       o.modifier = std::make_shared<StandardVariableModifier>(
@@ -1785,8 +1810,8 @@ namespace mfront {
       const auto& d = this->mb.getBehaviourData(h);
       this->current = beg;
       CodeBlockParserOptions o;
-      o.mn = d.getRegistredMembersNames();
-      o.smn = d.getRegistredStaticMembersNames();
+      o.member_names = d.getRegistredMembersNames();
+      o.static_member_names = d.getRegistredStaticMembersNames();
       o.qualifyStaticVariables = true;
       o.qualifyMemberVariables = true;
       o.modifier = std::make_shared<StandardVariableModifier>(
@@ -1844,9 +1869,17 @@ namespace mfront {
           (this->current->value == "{")) {
         DataParsingOptions o;
         o.allowMultipleKeysInMap = true;
-        return Data::read(this->current, this->tokens.end(), o).get<DataMap>();
+        const auto data = Data::read(this->current, this->tokens.end(), o);
+        if (data.empty()) {
+          return DataMap{};
+        }
+        if (!data.is<DataMap>()) {
+          this->throwRuntimeError("BehaviourDSLCommon::treatBrick",
+                                  "expected to read a map");
+        }
+        return data.get<DataMap>();
       }
-      return DataMap();
+      return DataMap{};
     }();
     const auto br = f.get(b, *this, this->mb);
     br->initialize(parameters, d);
@@ -2000,8 +2033,7 @@ namespace mfront {
     const auto& acs = this->readMaterialPropertyOrArrayOfMaterialProperties(m);
     this->checkNotEndOfFile(m);
     if (this->current->value == "{") {
-      const auto data =
-          Data::read(this->current, this->tokens.end()).get<DataMap>();
+      const auto data = read<DataMap>(this->current, this->tokens.end());
       throw_if(data.size() != 1u,
                "invalid number of data. "
                "Only the 'reference_temperature' is expected");
@@ -2735,10 +2767,9 @@ namespace mfront {
     auto options = [this]() {
       if ((this->current != this->tokens.end()) &&
           (this->current->value == "{")) {
-        auto o = DataParsingOptions{};
-        return Data::read(this->current, this->tokens.end(), o).get<DataMap>();
+        return read<DataMap>(this->current, this->tokens.end());
       }
-      return DataMap();
+      return DataMap{};
     }();
     this->readSpecifiedToken(mname, ";");
     //
@@ -2856,7 +2887,7 @@ namespace mfront {
     this->reserveName(getBehaviourWrapperClassName(d));
     this->reserveName("mfront_behaviour_variable_" + d.name);
     return d;
-  } // end of readBehaviourVariableDescription
+  }  // end of readBehaviourVariableDescription
 
   void BehaviourDSLCommon::treatBehaviourVariable() {
     this->mb.addBehaviourVariable(this->readBehaviourVariableDescription());
@@ -3761,6 +3792,7 @@ namespace mfront {
                << "return false;\n"
                << "}\n";
           tangentOperator.code = code.str();
+          tangentOperator.members.insert({"Dt", "D"});
           this->mb.setCode(h, BehaviourData::ComputeTangentOperator,
                            tangentOperator, BehaviourData::CREATEBUTDONTREPLACE,
                            BehaviourData::BODY);
@@ -4052,6 +4084,96 @@ namespace mfront {
   BehaviourDSLCommon::getBehaviourInterfaces() const {
     return this->interfaces;
   }  // end of getBehaviourInterfaces
+
+  void BehaviourDSLCommon::checkTangentOperatorBlock(const std::string& cname,
+                                                     const CodeBlock& c) const {
+    if (isSafe(c)) {
+      return;
+    }
+    if (this->mb.getBehaviourType() ==
+        BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+      if (!c.members.contains("Dt")) {
+        reportWarning("the variable 'Dt' is not used in the '" + cname +
+                      "' code block.");
+      }
+      return;
+    }
+    if (this->mb.getBehaviourType() ==
+        BehaviourDescription::COHESIVEZONEMODEL) {
+      const auto uses_Dt = c.members.contains("Dt");
+      const auto uses_Dt_c =
+          c.members.contains("Dt_nn") || c.members.contains("Dt_tt") ||
+          c.members.contains("Dt_tn") || c.members.contains("Dt_nt");
+      if ((!uses_Dt) && (!uses_Dt_c)) {
+        reportWarning("the variable 'Dt' is not used in the '" + cname +
+                      "' code block, nor its block decomposition ('Dt_nn', "
+                      "'Dt_tt', 'Dt_tn', 'Dt_nt').");
+      }
+      if ((uses_Dt) && (uses_Dt_c)) {
+        reportWarning(
+            "both the variable 'Dt' and some parts of its block decomposition "
+            "('Dt_nn', 'Dt_tt', 'Dt_tn', 'Dt_nt') are used in the '" +
+            cname + "' code block. This is unexpected.");
+      }
+      if (uses_Dt_c) {
+        if (!c.members.contains("Dt_nn")) {
+          reportWarning(
+              "some parts of its block decomposition of the tangent operator "
+              "are used in the '" +
+              cname + "' code block, but not 'Dt_nn'). This is unexpected.");
+        }
+        if (!c.members.contains("Dt_tt")) {
+          reportWarning(
+              "some parts of its block decomposition of the tangent operator "
+              "are used in the '" +
+              cname + "' code block, but not 'Dt_tt'). This is unexpected.");
+        }
+      }
+      return;
+    }
+    auto used_tblocks =
+        std::vector<std::pair<VariableDescription, VariableDescription>>{};
+    auto unused_tblocks =
+        std::vector<std::pair<VariableDescription, VariableDescription>>{};
+    const auto& tblocks = this->mb.getTangentOperatorBlocks();
+    for (const auto& tblock : tblocks) {
+      const auto bn = this->mb.getTangentOperatorBlockName(tblock);
+      if (c.members.contains(bn)) {
+        used_tblocks.push_back(tblock);
+      } else {
+        unused_tblocks.push_back(tblock);
+      }
+    }
+    const auto uses_Dt = c.members.contains("Dt");
+    if ((!this->mb.hasTrivialTangentOperatorStructure()) && (uses_Dt)) {
+      reportWarning(
+          "the consistent tangent operator has a non trivial structure so "
+          "using directly the variable 'Dt' in the '" +
+          cname + "' code block is unexpected.");
+    }
+    if ((!uses_Dt) && (used_tblocks.empty())) {
+      reportWarning(
+          "nor the variable 'Dt' or any of the tangent operator blocks "
+          "(" +
+          makeTangentOperatorBlocksList(this->mb, unused_tblocks) +
+          ") is used in the '" + cname + "' code block.");
+    }
+    if ((uses_Dt) && (!used_tblocks.empty())) {
+      reportWarning(
+          "both the variable 'Dt' and some tangent operator blocks (" +
+          makeTangentOperatorBlocksList(this->mb, used_tblocks) +
+          ") are used in the '" + cname +
+          "' code block, which is unexepected.");
+    }
+    if ((!used_tblocks.empty()) && (!unused_tblocks.empty())) {
+      reportWarning("some tangent operator blocks (" +
+                    makeTangentOperatorBlocksList(this->mb, used_tblocks) +
+                    ") are used while other are not (" +
+                    makeTangentOperatorBlocksList(this->mb, unused_tblocks) +
+                    ") in the '" + cname +
+                    "' code block, which is unexepected.");
+    }
+  }  // end of checkTangentOperatorBlock
 
   BehaviourDSLCommon::~BehaviourDSLCommon() = default;
 

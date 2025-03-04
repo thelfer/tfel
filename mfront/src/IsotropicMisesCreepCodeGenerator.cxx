@@ -1,3 +1,4 @@
+
 /*!
  * \file   mfront/src/IsotropicMisesCreepCodeGenerator.cxx
  * \brief
@@ -40,17 +41,20 @@ namespace mfront {
        << "using namespace tfel::material;\n"
        << "using std::vector;\n";
     writeMaterialLaws(os, this->bd.getMaterialLaws());
+    if (this->bd.hasCode(h, BehaviourData::BeforeFlowRule)) {
+      os << this->bd.getCode(h, BehaviourData::BeforeFlowRule);
+    }
     os << this->bd.getCode(h, BehaviourData::FlowRule) << "return true;\n}\n\n"
        << "bool NewtonIntegration(){\n"
        << "constexpr auto newton_epsilon = "
-          "100*std::numeric_limits<strain>::epsilon();\n"
+       << "100*std::numeric_limits<strain>::epsilon();\n"
        << "bool converged=false;\n"
        << "strain newton_f;\n"
        << "strain newton_df;\n"
-       << "auto newton_ddp = strain{}; // previous correction of the Newton "
-          "algorithm\n"
+       << "// previous correction of the Newton algorithm\n"
+       << "auto newton_ddp = strain{};\n"
        << "const auto mfront_internal_3_mu_theta = "
-          "3*(this->theta)*(this->mu);\n"
+       << "3 * (this->theta) * (this->mu);\n"
        << "unsigned int iter=0;\n";
     os << "while((converged==false)&&(iter<(this->iterMax))){\n"
        << "this->seq = "
@@ -147,9 +151,8 @@ namespace mfront {
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     }
-    os << "this->se=2 * (this->mu) * ("
-       << "tfel::math::deviator(this->eel + (this->theta) * (this->deto)));\n"
-       << "this->seq_e = sigmaeq(this->se);\n"
+    this->writeBehaviourIntegratorPreprocessingStep(os);
+    os << "this->seq_e = sigmaeq(this->se);\n"
        << "if (this->seq_e > \n"
        << "real(0.01) * (this->young) * "
        << "std::numeric_limits<real>::epsilon()){\n"
@@ -176,13 +179,8 @@ namespace mfront {
          << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n"
-       << "}\n"
-       << "this->deel = this->deto-(this->dp)*(this->n);\n"
-       << "this->updateStateVariables();\n"
-       << "this->sig  = "
-          "(this->lambda_tdt)*trace(this->eel)*StrainStensor::Id()+2*(this->mu_"
-          "tdt)*(this->eel);\n"
-       << "this->updateAuxiliaryStateVariables();\n";
+       << "}\n";
+    this->writeBehaviourIntegratorPostprocessingStep(os);
     if (!areRuntimeChecksDisabled(this->bd)) {
       for (const auto& v : d.getPersistentVariables()) {
         this->writePhysicalBoundsChecks(os, v, false);

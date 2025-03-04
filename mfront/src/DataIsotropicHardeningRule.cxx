@@ -30,7 +30,7 @@ namespace mfront::bbrick {
     //
     const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
-    const auto dR = "d" + R + "_ddp" + fid;
+    const auto dR = "d" + R + "_dp" + fid;
     bd.reserveName(uh, Rel);
     bd.reserveName(uh, R);
     bd.reserveName(uh, dR);
@@ -84,7 +84,7 @@ namespace mfront::bbrick {
       const std::string& id) const {
     const auto local_id = id.empty() ? fid : fid + "_" + id;
     const auto R = "R" + local_id;
-    const auto dR = "d" + R + "_ddp" + fid;
+    const auto dR = "d" + R + "_dp" + fid;
     const auto p = "this->p" + fid + " + (this->theta) * (this->dp" + fid + ")";
     return "const auto [" + R + ", " + dR + "]" +  //
            " = this->mfront_computeYieldRadiusAndDerivative" + local_id + "(" +

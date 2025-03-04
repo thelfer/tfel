@@ -1,0 +1,13 @@
+@DSL DefaultCZM;
+@Behaviour WarningTest70;
+@Description {
+  "This test checks that a warning is reported if "
+  "the consistent tangent operator nor any of its part is not used in "
+  "@Integrator."
+}
+
+@ProvidesTangentOperator;
+@Integrator {
+  du;
+  t;
+}

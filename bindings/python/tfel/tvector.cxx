@@ -23,6 +23,7 @@ template <unsigned short N>
 static void declaretvector(pybind11::module_& m, const char* const n) {
   using tvector = tfel::math::tvector<N, double>;
   pybind11::class_<tvector>(m, n, pybind11::buffer_protocol())
+      .def_static("zero", &tvector::zero)
       .def_buffer([](tvector& v) -> pybind11::buffer_info {
         return pybind11::buffer_info(
             v.data(),       /* Pointer to buffer */

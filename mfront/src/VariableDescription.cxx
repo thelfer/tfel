@@ -88,7 +88,7 @@ namespace mfront {
   void VariableDescription::resetGlossaryName(const std::string& g) {
     using tfel::glossary::Glossary;
     const auto& glossary = Glossary::getGlossary();
-    if(!glossary.contains(g)){
+    if (!glossary.contains(g)) {
       tfel::raise("VariableDescription::resetGlossaryName: '" + g +
                   "' is not a glossary name");
     }

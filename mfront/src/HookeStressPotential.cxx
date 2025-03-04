@@ -337,6 +337,7 @@ namespace mfront::bbrick {
     const auto& idsl = dynamic_cast<const ImplicitDSLBase&>(dsl);
     bd.checkVariablePosition("eel", "IntegrationVariable", 0u);
     CodeBlock to;
+    to.members.insert("Dt");
     if (idsl.getSolver().usesJacobian()) {
       to.attributes["requires_jacobian_decomposition"] = true;
       to.attributes["uses_get_partial_jacobian_invert"] = true;
@@ -428,6 +429,7 @@ namespace mfront::bbrick {
           b, "HookeStressPotential::addGenericPredictionOperatorSupport: " + m);
     };
     CodeBlock to;
+    to.members.insert("Dt");
     // modelling hypotheses supported by the behaviour
     const auto bmh = bd.getModellingHypotheses();
     if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
@@ -474,10 +476,12 @@ namespace mfront::bbrick {
         const std::string lambda =
             b ? "this->sebdata.lambda" : "this->lambda_tdt";
         const std::string mu = b ? "this->sebdata.mu" : "this->mu_tdt";
+        if (b) {
+          to.members.insert({"lambda_tdt", "mu_tdt"});
+        }
         to.code =
             "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
-            "  "
-            "computeAlteredElasticStiffness<hypothesis, stress>::exe(Dt," +
+            " computeAlteredElasticStiffness<hypothesis, stress>::exe(Dt," +
             lambda + "," + mu +
             ");\n"
             "} else {\n"
@@ -487,6 +491,7 @@ namespace mfront::bbrick {
         throw_if(!bd.getAttribute<bool>(
                      BehaviourDescription::computesStiffnessTensor, false),
                  "orthotropic behaviour shall require the stiffness tensor");
+        to.members.insert("D_tdt");
         to.code =
             "if((smt==ELASTIC)||(smt==SECANTOPERATOR)){\n"
             "  this->Dt = this->D_tdt;\n"

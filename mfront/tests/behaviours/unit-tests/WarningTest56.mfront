@@ -1,0 +1,25 @@
+@DSL DefaultGenericBehaviour;
+@Behaviour WarningTest56;
+@Description {
+  "This test checks that a warning is reported if "
+  "one of the explicitly declared tangent operator blocks "
+  "is not used in @TangentOperator."
+}
+
+@Gradient real a;
+@ThermodynamicForce real b;
+@Gradient real c;
+@ThermodynamicForce real d;
+
+@TangentOperatorBlocks {db_dda, db_ddc};
+
+@Integrator {
+  da;
+  b;
+  dc;
+  d;
+}
+
+@TangentOperator {
+  db_ddc;
+}

@@ -22,6 +22,7 @@ template <unsigned short N>
 static void declarest2tost2(pybind11::module_& m, const char* const n) {
   using st2tost2 = tfel::math::st2tost2<N, double>;
   pybind11::class_<st2tost2>(m, n, pybind11::buffer_protocol())
+      .def_static("zero", &st2tost2::zero)
       .def_buffer([](st2tost2& s) -> pybind11::buffer_info {
         return pybind11::buffer_info(
             s.data(),       /* Pointer to buffer */

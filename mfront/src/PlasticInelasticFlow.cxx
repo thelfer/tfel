@@ -137,7 +137,7 @@ namespace mfront::bbrick {
     }();
     auto c = std::string{};
     if (b) {
-      const auto dR_ddp = "dR" + id + "_ddp" + id;
+      const auto dR_dp = "dR" + id + "_dp" + id;
       const auto dfp_ddp = "dfp" + id + "_ddp" + id;
       c += computeElasticLimitAndDerivative(bd, this->ihrs, id);
       c += damping;
@@ -146,15 +146,15 @@ namespace mfront::bbrick {
           bd, "strain", "p" + id, dseq_ds + "/(" + snf + ")",
           this->sc->isNormalDeviatoric());
       c += "if(" + seq + "<" + sp.getEquivalentStressLowerBound(bd) + "){\n";
-      c += "if(" + dR_ddp + " > stress{0}){\n";
-      c += dfp_ddp + " = -1*std::max(real(1.e-12),(" + dR_ddp + ")/(" + snf +
-           "));\n";
+      c += "if(" + dR_dp + " > stress{0}){\n";
+      c += dfp_ddp + " = -1*std::max(real(1.e-12),((this->theta) * " + dR_dp +
+           ")/(" + snf + "));\n";
       c += "} else {\n";
-      c += dfp_ddp + " = -1*std::min(-real(1.e-12),(" + dR_ddp + ")/(" + snf +
-           "));\n";
+      c += dfp_ddp + " = -1*std::min(-real(1.e-12),((this->theta) * (" + dR_dp +
+           "))/(" + snf + "));\n";
       c += "}\n";
       c += "} else {\n";
-      c += dfp_ddp + " = -(" + dR_ddp + ") / (" + snf + ");\n";
+      c += dfp_ddp + " = -((this->theta) * " + dR_dp + ") / (" + snf + ");\n";
       c += "}\n";
       auto kid = decltype(khrs.size()){};
       for (const auto& khr : khrs) {

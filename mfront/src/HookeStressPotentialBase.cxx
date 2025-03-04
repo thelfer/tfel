@@ -686,6 +686,7 @@ namespace mfront::bbrick {
         "(this->" +
         std::string{HookeStressPotentialBase::residualStiffnessFactor} + ")";
     CodeBlock to;
+    to.members.insert("Dt");
     to.code += "if(" + broken_test + "){\n";
     if ((bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
                          false)) ||

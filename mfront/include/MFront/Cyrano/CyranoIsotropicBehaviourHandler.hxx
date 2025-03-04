@@ -67,7 +67,7 @@ namespace cyrano {
       Handler handler(DTIME, STRAN, DSTRAN, TEMP, DTEMP, PROPS, PREDEF, DPRED,
                       STATEV, STRESS, sfeh, op);
       handler.exe(DDSOE, STRESS, STATEV);
-    }  // end of CyranoIsotropicBehaviourHandler::exe
+    }  // namespace cyrano
   };
 
 }  // namespace cyrano

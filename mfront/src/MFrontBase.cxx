@@ -79,11 +79,14 @@ namespace mfront {
         throw_if(pt == pte, "unexpected end of file (exepected dsl name)");
         if (pt->value == "{") {
           const auto o = tfel::utilities::DataParsingOptions{};
-          ldsl_options =
-              tfel::utilities::merge(ldsl_options,
-                                     tfel::utilities::Data::read(pt, pte, o)
-                                         .get<tfel::utilities::DataMap>(),
-                                     false);
+          const auto opts = [&o, &pt, &pte] {
+            const auto options = tfel::utilities::Data::read(pt, pte, o);
+            if (options.empty()) {
+              return tfel::utilities::DataMap{};
+            }
+            return options.get<tfel::utilities::DataMap>();
+          }();
+          ldsl_options = tfel::utilities::merge(ldsl_options, opts, false);
         }
         throw_if(pt == pte,
                  "unexpected end of file (exepected ';' or library name)");
@@ -480,7 +483,7 @@ namespace mfront {
             o + "'");
       }
     }
-  } // end of treatReportWarnings
+  }  // end of treatReportWarnings
 
   void MFrontBase::treatWarningError() {
     const auto& o = this->getCurrentCommandLineArgument().getOption();
@@ -498,7 +501,7 @@ namespace mfront {
             o + "'");
       }
     }
-  } // end of treatWarningError
+  }  // end of treatWarningError
 
   void MFrontBase::treatDebug() { setDebugMode(true); }
 
@@ -549,8 +552,8 @@ namespace mfront {
     t.parseString('{' + std::string{std::istreambuf_iterator<char>{ifs}, {}} +
                   '}');
     auto b = t.begin();
-    const auto data = tfel::utilities::Data::read(b, t.end());
-    for (const auto& d : data.get<tfel::utilities::DataMap>()) {
+    const auto data = read<tfel::utilities::DataMap>(b, t.end());
+    for (const auto& d : data) {
       callback(d.first, d.second);
     }
   }  // end of parseDSLOptionsFile

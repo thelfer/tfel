@@ -125,15 +125,15 @@ namespace mfront::bbrick {
                                                    const StressPotential&,
                                                    const std::string&,
                                                    const bool) const = 0;
-    //! stress criterion
+    //! \brief stress criterion
     std::shared_ptr<StressCriterion> sc;
-    //! flow criterion
+    //! \brief flow criterion
     std::shared_ptr<StressCriterion> fc;
-    //! isotropic hardening rules
+    //! \brief isotropic hardening rules
     std::vector<std::shared_ptr<IsotropicHardeningRule>> ihrs;
-    //! kinematic hardening rules
+    //! \brief kinematic hardening rules
     std::vector<std::shared_ptr<KinematicHardeningRule>> khrs;
-    //! Effect of the porosity on the flow rule.
+    //! \brief Effect of the porosity on the flow rule.
     PorosityEffectOnFlowRule porosity_effect_on_equivalent_plastic_strain =
         UNDEFINED_POROSITY_EFFECT_ON_EQUIVALENT_PLASTIC_STRAIN;
     //! \brief algorithm used to handle the porosity evolution

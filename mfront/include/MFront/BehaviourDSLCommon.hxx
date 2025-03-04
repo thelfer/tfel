@@ -1,5 +1,3 @@
-
-
 /*!
  * \file   mfront/include/MFront/BehaviourDSLCommon.hxx
  * \brief
@@ -259,6 +257,7 @@ namespace mfront {
     /*!
      * \brief read the next code block and adds it tho the mechanical
      * behaviour
+     * \param[in] o     : options
      * \param[in] n     : name of the method read
      * \param[in] m     : modifier
      * \param[in] b     : add "this->" in front of variables
@@ -287,11 +286,11 @@ namespace mfront {
     /*!
      * \brief read the next code block and adds it tho the mechanical
      * behaviour
+     * \param[in] o     : options
      * \param[in] n     : name of the method read
      * \param[in] m     : modifier
      * \param[in] a     : word analyser
      * \param[in] b     : add "this->" in front of variables
-     * \param[in] s     : allow specialisation
      */
     void treatCodeBlock(
         const CodeBlockOptions&,
@@ -755,6 +754,13 @@ namespace mfront {
     setComputeFinalThermodynamicForcesFromComputeFinalThermodynamicForcesCandidateIfNecessary();
     //! \brief perform pedantic checks
     virtual void doPedanticChecks() const;
+    /*!
+     * \brief performs common checks on a code block computing the consistent
+     * tangent operator or the tangent operator blocks
+     * \param[in] cname: name of the code block
+     * \param[in] c: code block
+     */
+    void checkTangentOperatorBlock(const std::string&, const CodeBlock&) const;
     //! \brief behaviour description
     BehaviourDescription mb;
     //! \brief registred bricks

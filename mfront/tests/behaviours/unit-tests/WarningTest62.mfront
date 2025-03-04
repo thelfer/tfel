@@ -1,0 +1,13 @@
+@DSL DefaultCZM;
+@Behaviour WarningTest62;
+@Description {
+  "This test checks that a warning is reported if "
+  "the normal component of the opening displacement is used in "
+  "@Integrator and not its tangential component."
+}
+
+@Integrator {
+  du_n;
+  t_n;
+  t_t;
+}

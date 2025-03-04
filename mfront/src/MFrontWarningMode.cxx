@@ -49,7 +49,7 @@ namespace mfront {
     getMFrontWarningErrorMode() = b;
   }
 
-  void reportWarning(std::string_view msg){
+  void reportWarning(std::string_view msg) {
     if ((!getWarningMode()) || (msg.empty())) {
       return;
     }
@@ -58,7 +58,7 @@ namespace mfront {
     } else {
       getLogStream() << "[warning]: " << msg << '\n';
     }
-  } // end of reportWarning
+  }  // end of reportWarning
 
   void reportWarning(const std::vector<std::string>& warnings) {
     if ((!getWarningMode()) || (warnings.empty())) {
@@ -76,6 +76,6 @@ namespace mfront {
     } else {
       getLogStream() << msg << '\n';
     }
-  } // end of reportWarning
+  }  // end of reportWarning
 
 }  // end of namespace mfront

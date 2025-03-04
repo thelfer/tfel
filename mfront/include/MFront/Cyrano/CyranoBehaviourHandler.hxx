@@ -243,7 +243,7 @@ namespace cyrano {
         throw(CyranoInvalidDimension(Traits::getName(), 1u));
       }  // end of Error::exe
 
-    };  // end of struct Error
+    };  // namespace cyrano
 
     template <const bool bs,  // requires StiffnessOperator
               const bool ba>  // requires ThermalExpansionCoefficientTensor
@@ -647,8 +647,7 @@ namespace cyrano {
                                              NSTATV);
       }
     }  // end of checkNSTATV
-
-  };  // end of struct CyranoBehaviourHandler
+  };   // end of struct CyranoBehaviourHandler
 
 }  // end of namespace cyrano
 

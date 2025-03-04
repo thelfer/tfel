@@ -40,10 +40,7 @@ namespace mfront {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("IsotropicMisesPlasticFlow");
     // Default state vars
-    this->mb.addStateVariable(
-        h, VariableDescription("StrainStensor", "εᵉˡ", "eel", 1u, 0u));
     this->mb.addStateVariable(h, VariableDescription("strain", "p", 1u, 0u));
-    this->mb.setGlossaryName(h, "eel", "ElasticStrain");
     this->mb.setGlossaryName(h, "p", "EquivalentPlasticStrain");
     // default local vars
     this->reserveName("mfront_internal_3_mu_theta");
@@ -105,14 +102,22 @@ namespace mfront {
   }
 
   void IsotropicMisesPlasticFlowDSL::endsInputFileProcessing() {
-    IsotropicBehaviourDSLBase::endsInputFileProcessing();
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    if (!this->mb.hasCode(h, BehaviourData::FlowRule)) {
-      this->throwRuntimeError(
-          "IsotropicMisesCreepDSL::"
-          "endsInputFileProcessing",
-          "no flow rule defined");
+    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    if (!this->mb.hasCode(uh, BehaviourData::FlowRule)) {
+      if (this->ihrs.empty()) {
+        this->throwRuntimeError(
+            "IsotropicMisesCreepDSL::endsInputFileProcessing",
+            "no flow rule and no hardening rule defined");
+      }
+      auto c = CodeBlock{};
+      c.code = "f = seq - R;\n";
+      c.code += "df_dseq = 1;\n";
+      c.code += "df_dp = -dR_dp;\n";
+      this->mb.setCode(uh, BehaviourData::FlowRule, c,
+                       BehaviourData::CREATEORAPPEND,
+                       BehaviourData::AT_BEGINNING);
     }
+    IsotropicBehaviourDSLBase::endsInputFileProcessing();
   }  // end of endsInputFileProcessing
 
   IsotropicMisesPlasticFlowDSL::~IsotropicMisesPlasticFlowDSL() = default;

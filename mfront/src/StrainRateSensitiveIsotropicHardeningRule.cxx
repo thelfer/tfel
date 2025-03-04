@@ -133,7 +133,7 @@ namespace mfront::bbrick {
     }
     const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
-    const auto dR = "d" + R + "_ddp" + fid;
+    const auto dR = "d" + R + "_dp" + fid;
     bd.reserveName(uh, Rel);
     bd.reserveName(uh, R);
     bd.reserveName(uh, dR);
@@ -222,13 +222,13 @@ namespace mfront::bbrick {
     c += ") * (";
     c += Rs;
     c += ");\n";
-    const auto dR = "d" + R + "_ddp" + fid;
-    const auto dRs = "d" + Rs + "_ddp" + fid;
+    const auto dR = "d" + R + "_dp" + fid;
+    const auto dRs = "d" + Rs + "_dp" + fid;
     c += "const auto " + dR + " = (";
     first = true;
     for (int idx = 0; idx != static_cast<int>(this->ihrs.size()); ++idx) {
       const auto Rid = getIsotropicHardeningRuleValue("R", fid, id, idx);
-      const auto dRid = "d" + Rid + "_ddp" + fid;
+      const auto dRid = "d" + Rid + "_dp" + fid;
       if (!first) {
         c += " + ";
       }

@@ -341,8 +341,8 @@ namespace mfront {
             r += std::string(d, ' ');
           }
         };
-    const auto& smn = options.smn;
-    const auto& mn = options.mn;
+    const auto& smn = options.static_member_names;
+    const auto& mn = options.member_names;
     const auto& delim1 = options.delim1;
     const auto& delim2 = options.delim2;
     const auto addThisPtr = options.qualifyMemberVariables;
@@ -1301,8 +1301,8 @@ namespace mfront {
     ++(this->current);
     this->checkNotEndOfFile("DSLBase::treatDSL", "expected ';'");
     if (this->current->value == "{") {
-      const auto o = tfel::utilities::DataParsingOptions{};
-      tfel::utilities::Data::read(this->current, this->tokens.end(), o);
+      std::ignore =
+          read<tfel::utilities::DataMap>(this->current, this->tokens.end());
     }
     this->readSpecifiedToken("DSLBase::treatDSL", ";");
   }  // end of treatDSL
