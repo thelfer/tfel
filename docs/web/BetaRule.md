@@ -125,7 +125,7 @@ Note that the local elastic strain can also be computed with
 this local integration.
 
 To solve this non-linear problem in `MFront`, we use
-the `Implicit` `DSL` ([see doc](./implicit-dsl.html)). We only have to precise the residues and the Jacobian matrix.
+the `ImplicitII` `DSL` (because we do not consider `\tepsilonel` as an integration variable). We only have to precise the residues and the Jacobian matrix.
 The residues are:
 
 $\left\{
@@ -190,27 +190,43 @@ and $H_i=(f_{\tepsilonto_i},f_{\tbeta_i})$ and $F=(f_{\tenseur E},H_1,...,H_N)$ 
 # Implementation in MFront
 
 The implementation requires the integration of the local behaviours.
-These are carried out via the `@BehaviourVariable` keyword. 
+These are carried out via the `@BehaviourVariable` keyword.
+The implementation of the local behaviour is explained [here](./MericCailletaudSingleCrystalPlasticity.html).
 
 All files `MericCailletaudSingleCrystalViscoPlasticity.mfront`, `BetaRule.mfront` and `BetaRule.mtest` can be downloaded [here](./downloads/BetaRule.zip).
 
 
 ## Implementation of Cailletaud's beta rule
 
-The implementation of the global `Behaviour` is straightforward.
 For the example, we assume that the composites is made of only 2 phases.
-The `@BehaviourVariable` is used to call the local flow rules:
+We hence define the integration variables:
+
+~~~~ {#BetaRule .cpp .numberLines}
+@StateVariable Stensor Sig;
+Sig.setEntryName("MacroscopicStress");
+@StateVariable Stensor eto1;
+eto1.setEntryName("FirstPhaseTotalStrain");
+@StateVariable Stensor eto2;
+eto2.setEntryName("SecondPhaseTotalStrain");
+@StateVariable Stensor beta1;
+beta1.setEntryName("FirstPhaseBetaStrain");
+@StateVariable Stensor beta2;
+beta2.setEntryName("SecondPhaseBetaStrain");
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+and we define the local behaviours with `@BehaviourVariable`:
 
 ~~~~ {#BetaRule .cpp .numberLines}
 @BehaviourVariable b1 {
-  file: "MericCailletaudSingleCrystalViscoPlasticity.mfront",
-  variables_suffix: "1",
-  store_gradients: false,
-  store_thermodynamic_forces: false,
-  external_names_prefix: "FirstPhase",
-  shared_external_state_variables: {".+"}
+file: "MericCailletaudSingleCrystalViscoPlasticity.mfront",
+variables_suffix: "1",
+store_gradients: false,
+external_names_prefix: "FirstPhase",
+shared_external_state_variables: {".+"}
 };
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(the same for phase 2).
 
 We note that the `gradients` are not
 stored because the `StateVariable` `eto1` (resp. `eto2`) are
@@ -271,8 +287,8 @@ and the terms of the analytical jacobian:
   dfeto2_ddbeta1 = c/sig_0*(f-1)*Id;
   dfeto2_ddbeta2 = c/sig_0*(1-f)*Id;
   
-  dfbeta1_ddeto1 = -Dt1 + 2*DD/3*Stensor4(beta_mts_1^devp1)*Stensor4(Id-S*Dt1)/max(ndevp_1,eeps);
-  dfbeta2_ddeto2 = -Dt2 + 2*DD/3*Stensor4(beta_mts_2^devp2)*Stensor4(Id-S*Dt2)/max(ndevp_2,eeps);
+  dfbeta1_ddeto1 = -(Id-S*Dt1) + 2*DD/3*Stensor4(beta_mts_1^devp1)*Stensor4(Id-S*Dt1)/max(ndevp_1,eeps);
+  dfbeta2_ddeto2 = -(Id-S*Dt2) + 2*DD/3*Stensor4(beta_mts_2^devp2)*Stensor4(Id-S*Dt2)/max(ndevp_2,eeps);
   
   dfbeta1_ddbeta1 =Id+ theta*DD*ndevp_1*Id;
   dfbeta2_ddbeta2 =Id+ theta*DD*ndevp_2*Id;
@@ -286,9 +302,15 @@ The computation of the stress and of the tangent operator is straightforward:
 }
 
 @TangentOperator{
-  Dt=iJ_Sig_Sig;
+  Stensor4 iJs;
+  getPartialJacobianInvert(iJs);
+  Dt=iJs;
+}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Note that `getPartialJacobianInvert(iJs)` permits to obtain the 6x6 left-upper part of the
+inverse of the Jacobian. The left-upper part is associated with the first
+integration variable declared (here `Sig`). 
 
 # Results
 
@@ -296,8 +318,7 @@ We used `MTest` to carry out
 simulations of an uniaxial tensile test
 (the file is available in the [archive](downloads/BetaRule.zip)).
 
-.....
 
-![Hey]
+![Macroscopic stress as a function of local strain, uniaxial tensile test, Cailletaud's beta rule](./img/Cailletaud.png)
 
 <!-- Local IspellDict: english -->
