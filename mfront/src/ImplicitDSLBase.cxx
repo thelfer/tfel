@@ -1594,13 +1594,16 @@ namespace mfront {
     // @InitLocalVariables
     for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
       const auto& d = this->mb.getBehaviourData(h);
-      const auto& cb = d.getCodeBlock(BehaviourData::InitializeLocalVariables);
-      for (const auto& v : d.getIntegrationVariables()) {
-        if (cb.members.contains("d" + v.name)) {
-          reportWarning("increment of integration variable '" + v.name +
-                        "' is used in the '" +
-                        std::string{BehaviourData::InitializeLocalVariables} +
-                        "' code block. This is unexpected.");
+      if (d.hasCode(BehaviourData::InitializeLocalVariables)) {
+        const auto& cb =
+            d.getCodeBlock(BehaviourData::InitializeLocalVariables);
+        for (const auto& v : d.getIntegrationVariables()) {
+          if (cb.members.contains("d" + v.name)) {
+            reportWarning("increment of integration variable '" + v.name +
+                          "' is used in the '" +
+                          std::string{BehaviourData::InitializeLocalVariables} +
+                          "' code block. This is unexpected.");
+          }
         }
       }
     }

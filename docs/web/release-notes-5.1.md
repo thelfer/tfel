@@ -1,3 +1,4 @@
+
 ---
 title: Release notes of the 5.1 version of `TFEL`, `MFront` and `MTest`
 author: Thomas Helfer, Antoine Martin
@@ -476,6 +477,10 @@ The following libraries are available: `Config`, `Exception`,
 ~~~~
 
 # Issues fixed
+
+## Issue 708: Add support for hardening modes when `libc++` is used
+
+For more details, see <https://github.com/thelfer/tfel/issues/708>
 
 ## Issue 724: [mfront] Add support for non constant elastic properties in the stress update algorithm of the isotropic DSLs
 

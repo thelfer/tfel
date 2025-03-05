@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 3.0.15 of the
 
 # Issues fixed
 
+## Issue 728: [tfel-utilities] find replace_all when passing an empty `string_view`
+
+For more details, see <https://github.com/thelfer/tfel/issues/728>.
+
 ## Issue 699: [mfront] Auxiliary state variables computed by external point wise models are not taken into account correctly in `@FlowRule` in isotropic DSLs
 
 For more details, see <https://github.com/thelfer/tfel/issues/699>.

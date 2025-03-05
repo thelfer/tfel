@@ -74,3 +74,8 @@ if(enable-sanitize-options)
   tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=safe-stack")
 endif(enable-sanitize-options)
 
+option(enable-libcxx-hardening-mode "enable LLVM C++ Standard library hardening mode" OFF)
+
+if(enable-libcxx-hardening-mode)
+  add_definitions("-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG")
+endif(enable-libcxx-hardening-mode)
