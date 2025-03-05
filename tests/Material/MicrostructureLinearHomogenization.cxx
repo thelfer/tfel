@@ -157,7 +157,7 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     std::vector<tfel::math::stensor<3u,stress>> polarizations = {P,P};
     //auto h_s_SC1=computeSelfConsistent<3u, real, length, stress>(crystal,polarizations,false,E,true,200);
     //auto Chom_SC_iso=h_s_SC1.homogenized_stiffness;
-    auto h_s_SC2=computeSelfConsistent<3u, real, length, stress>(crystal,polarizations,false,E,false,60,8);
+    auto h_s_SC2=computeSelfConsistent<3u, real, length, stress>(crystal,polarizations,false,E,false,20,6);
     auto Chom_SC_non_iso=h_s_SC2.homogenized_stiffness;
     //for (int i=0;i<6;i++)
     //for (int j=0;j<6;j++){
