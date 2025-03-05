@@ -1048,7 +1048,8 @@ namespace mfront {
            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
           (this->bd.getBehaviourType() ==
            BehaviourDescription::COHESIVEZONEMODEL)) {
-        os << "integrate(const SMFlag smflag,const SMType smt) override final{\n";
+        os << "integrate(const SMFlag smflag,const SMType smt) override "
+              "final{\n";
       } else {
         os << "integrate(const SMFlag,const SMType smt) override final{\n";
       }

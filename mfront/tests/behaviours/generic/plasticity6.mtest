@@ -1,0 +1,13 @@
+@Author HELFER Thomas;
+@Date   15/02/2025;
+
+@ModellingHypothesis 'Tridimensional';
+@Behaviour<generic> @library@ 'Plasticity6';
+@ExternalStateVariable<function> 'Temperature' '400 + 50 * sin(t)';
+@Real 'Ta' 2e3;
+@Evolution<function> 'E' '150e9 * (1 - Temperature / Ta)';
+
+@ImposedStrain 'EXX' {0 : 0, 1 : 1e-3};
+@Times {0, 1 in 10};
+
+@Test<function> 'SXX' 'E * EXX' 1e-2;

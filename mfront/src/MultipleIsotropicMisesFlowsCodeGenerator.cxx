@@ -14,6 +14,7 @@
 #include <ostream>
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
+#include "MFront/IsotropicBehaviourDSLBase.hxx"
 #include "MFront/MultipleIsotropicMisesFlowsCodeGenerator.hxx"
 
 namespace mfront {
@@ -312,16 +313,28 @@ namespace mfront {
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     }
-    os << "this->se=2*(this->mu)*(tfel::math::deviator(this->eel+("
-       << this->bd.getClassName() << "::theta)*(this->deto)));\n"
-       << "this->seq_e = sigmaeq(this->se);\n";
+    this->writeBehaviourIntegratorPreprocessingStep(os);
+    os << "this->seq_e = sigmaeq(this->se);\n";
     n = 0;
     for (const auto& f : this->flows) {
       if (f.hasSpecificTheta) {
-        os << "StressStensor se" << n
-           << "=2*(this->mu)*(tfel::math::deviator(this->eel+(";
-        os << f.theta << ")*(this->deto)));\n";
-        os << "this->seq_e" << n << " = sigmaeq(se" << n << ");\n";
+        if (this->bd.getAttribute(
+                IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
+          if (this->shallComputeTheElasticStrain()) {
+            os << "const StressStensor mfront_se" << n << " = "
+               << "2 * (this->mu) * (tfel::math::deviator(mfront_eel_bts + ("
+               << f.theta << ") * (this->deto)));\n";
+          } else {
+            os << "const StressStensor mfront_se" << n << " = "
+               << "tfel::math::deviator(this->sig) + "
+               << "2 * (this->mu) * (" << f.theta << ") * (this->deto);\n";
+          }
+        } else {
+          os << "const StressStensor mfront_se" << n << " = "
+             << "2 * (this->mu) * (tfel::math::deviator(this->eel + ("
+             << f.theta << ") * (this->deto)));\n";
+        }
+        os << "this->seq_e" << n << " = sigmaeq(mfront_se" << n << ");\n";
       }
       ++n;
     }
@@ -362,13 +375,8 @@ namespace mfront {
          << ",hypothesis, NumericType,false>::FAILURE;\n";
     }
     os << "}\n"
-       << "}\n"
-       << "this->deel = this->deto-dp*(this->n);\n"
-       << "this->updateStateVariables();\n"
-       << "this->sig  = "
-          "(this->lambda)*trace(this->eel)*StrainStensor::Id()+2*(this->mu)*("
-          "this->eel);\n"
-       << "this->updateAuxiliaryStateVariables();\n";
+       << "}\n";
+    this->writeBehaviourIntegratorPostprocessingStep(os);
     if (!areRuntimeChecksDisabled(this->bd)) {
       for (const auto& v : d.getPersistentVariables()) {
         this->writePhysicalBoundsChecks(os, v, false);

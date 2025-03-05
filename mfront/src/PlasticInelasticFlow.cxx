@@ -150,8 +150,8 @@ namespace mfront::bbrick {
       c += dfp_ddp + " = -1*std::max(real(1.e-12),((this->theta) * " + dR_dp +
            ")/(" + snf + "));\n";
       c += "} else {\n";
-      c += dfp_ddp + " = -1*std::min(-real(1.e-12),((this->theta) * (" +
-           dR_dp + "))/(" + snf + "));\n";
+      c += dfp_ddp + " = -1*std::min(-real(1.e-12),((this->theta) * (" + dR_dp +
+           "))/(" + snf + "));\n";
       c += "}\n";
       c += "} else {\n";
       c += dfp_ddp + " = -((this->theta) * " + dR_dp + ") / (" + snf + ");\n";

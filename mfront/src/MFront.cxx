@@ -445,20 +445,17 @@ namespace mfront {
         "--ignore-safe",
         CallBack(
             "ignore the safe options for keywords or code blocks",
-            [this]() noexcept { setIgnoreSafeOptionForWarnings(true); },
-            false));
+            []() noexcept { setIgnoreSafeOptionForWarnings(true); }, false));
     this->registerCallBack(
         "--warning", "-W",
         CallBack(
-            "enable warnings", [this]() noexcept { setWarningMode(true); },
-            false));
+            "enable warnings", []() noexcept { setWarningMode(true); }, false));
     this->registerNewCallBack("--report-warnings", &MFront::treatReportWarnings,
                               "print warnings", true);
     this->registerCallBack(
-        "-Werror",
-        CallBack(
-            "turn warnings into errors",
-            [this]() noexcept { setWarningErrorMode(true); }, false));
+        "-Werror", CallBack(
+                       "turn warnings into errors",
+                       []() noexcept { setWarningErrorMode(true); }, false));
     this->registerNewCallBack("--warning-error", &MFront::treatWarningError,
                               "turn warnings into errors", true);
     this->registerNewCallBack("--pedantic", &MFront::treatPedantic,

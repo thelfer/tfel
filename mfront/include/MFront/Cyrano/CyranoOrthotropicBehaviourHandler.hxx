@@ -69,9 +69,8 @@ namespace cyrano {
       Handler handler(DTIME, STRAN, DSTRAN, TEMP, DTEMP, PROPS, PREDEF, DPRED,
                       STATEV, STRESS, sfeh, op);
       handler.exe(DDSOE, STRESS, STATEV);
-    }  // end of CyranoOrthotropicBehaviourHander<1u,Behaviour>::exe
-
-  };  // end of struct CyranoOrthotropicBehaviourHander<1u,Behaviour>
+    }  // namespace cyrano
+  };   // end of struct CyranoOrthotropicBehaviourHander<1u,Behaviour>
 
 }  // end of namespace cyrano
 

@@ -247,11 +247,11 @@ namespace mfront {
   void MaterialPropertyDSL::endsInputFileProcessing() {
   }  // end of endsInputFileProcessing
 
-  void MaterialPropertyDSL::makeConsistencyChecks() const{
+  void MaterialPropertyDSL::makeConsistencyChecks() const {
     if (getPedanticMode()) {
       this->doPedanticChecks();
     }
-  } // end of makeConsistencyChecks
+  }  // end of makeConsistencyChecks
 
   void MaterialPropertyDSL::registerNewCallBack(const std::string& keyword,
                                                 const MemberFuncPtr ptr) {
@@ -596,7 +596,7 @@ namespace mfront {
         this->md.appendToIncludes("#include \"TFEL/Math/CubicSpline.hxx\"");
         insert_if(this->link_directories,
                   "$(shell " + tfel_config + " --library-path)");
-       insert_if(this->link_libraries,
+        insert_if(this->link_libraries,
                   "$(shell " + tfel_config +
                       " --library-dependency --math-cubic-spline)");
         this->md.f.used_inputs.insert(v.name);

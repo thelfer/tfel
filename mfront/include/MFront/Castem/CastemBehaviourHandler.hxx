@@ -375,7 +375,7 @@ namespace castem {
         return;
       }  // end of Error::exe
 
-    };  // end of struct Error
+    };  // namespace castem
 
     template <const bool bs,  // requires StiffnessTensor
               const bool ba>  // requires ThermalExpansionCoefficientTensor
@@ -938,8 +938,7 @@ namespace castem {
                                              NSTATV);
       }
     }  // end of checkNSTATV
-
-  };  // end of struct CastemBehaviourHandler
+  };   // end of struct CastemBehaviourHandler
 
 }  // end of namespace castem
 

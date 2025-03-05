@@ -483,7 +483,7 @@ namespace mfront {
             o + "'");
       }
     }
-  } // end of treatReportWarnings
+  }  // end of treatReportWarnings
 
   void MFrontBase::treatWarningError() {
     const auto& o = this->getCurrentCommandLineArgument().getOption();
@@ -501,7 +501,7 @@ namespace mfront {
             o + "'");
       }
     }
-  } // end of treatWarningError
+  }  // end of treatWarningError
 
   void MFrontBase::treatDebug() { setDebugMode(true); }
 

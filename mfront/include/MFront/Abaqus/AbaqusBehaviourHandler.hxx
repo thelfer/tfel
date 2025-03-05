@@ -141,7 +141,7 @@ namespace abaqus {
         b.setABAQUSBehaviourDataGradients(STRAN);
         b.setABAQUSIntegrationDataGradients(DSTRAN);
       }  // end of exe
-    };   // end of struct GradientInitialiserWithoutStressFreeExpansion
+    };   // namespace abaqus
 
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer {
       typedef typename BV::BehaviourData BData;
@@ -329,8 +329,7 @@ namespace abaqus {
         throwInvalidTensorSize(Traits::getName(), ntens, size);
       }
     }  // end of checkNSTATV
-
-  };  // end of struct AbaqusBehaviourHandler
+  };   // end of struct AbaqusBehaviourHandler
 
 }  // end of namespace abaqus
 

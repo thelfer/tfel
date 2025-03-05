@@ -554,8 +554,8 @@ namespace mfront {
     option.qualifyMemberVariables = b;
     option.modifier = vm;
     option.analyser = wa;
-    option.mn = md.getRegistredMembersNames();
-    option.smn = md.getRegistredStaticMembersNames();
+    option.member_names = md.getRegistredMembersNames();
+    option.static_member_names = md.getRegistredStaticMembersNames();
     this->getSymbols(option.symbols, h, n);
     return this->readNextBlock(option);
   }  // end of readNextBlock
@@ -573,8 +573,8 @@ namespace mfront {
     option.qualifyStaticVariables = b;
     option.qualifyMemberVariables = b;
     option.modifier = vm;
-    option.mn = md.getRegistredMembersNames();
-    option.smn = md.getRegistredStaticMembersNames();
+    option.member_names = md.getRegistredMembersNames();
+    option.static_member_names = md.getRegistredStaticMembersNames();
     this->getSymbols(option.symbols, h, n);
     return this->readNextBlock(option);
   }  // end of readNextBlock
@@ -619,15 +619,15 @@ namespace mfront {
       o1.qualifyStaticVariables = b;
       o1.qualifyMemberVariables = b;
       o1.modifier = std::make_shared<StandardVariableModifier>(h, m1);
-      o1.mn = md.getRegistredMembersNames();
-      o1.smn = md.getRegistredStaticMembersNames();
+      o1.member_names = md.getRegistredMembersNames();
+      o1.static_member_names = md.getRegistredStaticMembersNames();
       this->getSymbols(o1.symbols, h, n1);
       CodeBlockParserOptions o2;
       o2.qualifyStaticVariables = b;
       o2.qualifyMemberVariables = b;
       o2.modifier = std::make_shared<StandardVariableModifier>(h, m2);
-      o2.mn = md.getRegistredMembersNames();
-      o2.smn = md.getRegistredStaticMembersNames();
+      o2.member_names = md.getRegistredMembersNames();
+      o2.static_member_names = md.getRegistredStaticMembersNames();
       this->getSymbols(o2.symbols, h, n1);
       this->readNextBlock(c1, c2, o1, o2);
       this->mb.setCode(h, n1, c1, o.m, o.p);
@@ -1702,8 +1702,8 @@ namespace mfront {
       auto used_post_processing_variables = std::vector<VariableDescription>{};
       this->current = beg;
       CodeBlockParserOptions o;
-      o.mn = d.getRegistredMembersNames();
-      o.smn = d.getRegistredStaticMembersNames();
+      o.member_names = d.getRegistredMembersNames();
+      o.static_member_names = d.getRegistredStaticMembersNames();
       o.qualifyStaticVariables = true;
       o.qualifyMemberVariables = true;
       o.analyser = std::make_shared<StandardWordAnalyser>(
@@ -1752,8 +1752,8 @@ namespace mfront {
           std::vector<VariableDescription>{};
       this->current = beg;
       CodeBlockParserOptions o;
-      o.mn = d.getRegistredMembersNames();
-      o.smn = d.getRegistredStaticMembersNames();
+      o.member_names = d.getRegistredMembersNames();
+      o.static_member_names = d.getRegistredStaticMembersNames();
       o.qualifyStaticVariables = true;
       o.qualifyMemberVariables = true;
       o.analyser = std::make_shared<StandardWordAnalyser>(
@@ -1790,8 +1790,8 @@ namespace mfront {
       const auto& d = this->mb.getBehaviourData(h);
       this->current = beg;
       CodeBlockParserOptions o;
-      o.mn = d.getRegistredMembersNames();
-      o.smn = d.getRegistredStaticMembersNames();
+      o.member_names = d.getRegistredMembersNames();
+      o.static_member_names = d.getRegistredStaticMembersNames();
       o.qualifyStaticVariables = true;
       o.qualifyMemberVariables = true;
       o.modifier = std::make_shared<StandardVariableModifier>(
@@ -1810,8 +1810,8 @@ namespace mfront {
       const auto& d = this->mb.getBehaviourData(h);
       this->current = beg;
       CodeBlockParserOptions o;
-      o.mn = d.getRegistredMembersNames();
-      o.smn = d.getRegistredStaticMembersNames();
+      o.member_names = d.getRegistredMembersNames();
+      o.static_member_names = d.getRegistredStaticMembersNames();
       o.qualifyStaticVariables = true;
       o.qualifyMemberVariables = true;
       o.modifier = std::make_shared<StandardVariableModifier>(

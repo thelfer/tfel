@@ -30,8 +30,21 @@
 
 namespace mfront {
 
+  const char* const IsotropicBehaviourDSLBase::useStressUpdateAlgorithm =
+      "use_stress_update_algorithm";
+
+  tfel::utilities::DataMapValidator
+  IsotropicBehaviourDSLBase::getDSLOptionsValidator() {
+    auto validator =
+        BehaviourDSLBase<IsotropicBehaviourDSLBase>::getDSLOptionsValidator();
+    validator.addDataTypeValidator<bool>(
+        IsotropicBehaviourDSLBase::useStressUpdateAlgorithm);
+    return validator;
+  }
+
   IsotropicBehaviourDSLBase::IsotropicBehaviourDSLBase(const DSLOptions& opts)
-      : BehaviourDSLBase<IsotropicBehaviourDSLBase>(opts) {
+      : BehaviourDSLBase<IsotropicBehaviourDSLBase>(tfel::utilities::remove(
+            opts, {IsotropicBehaviourDSLBase::useStressUpdateAlgorithm})) {
     constexpr auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->reserveName("NewtonIntegration");
     // main variables
@@ -43,6 +56,17 @@ namespace mfront {
       // temperature at the midle of the time step
       const auto T_ = VariableDescription("temperature", "T_", 1u, 0u);
       this->mb.addLocalVariable(h, T_);
+    }
+    this->mb.setAttribute(
+        IsotropicBehaviourDSLBase::useStressUpdateAlgorithm,
+        get_if(opts, IsotropicBehaviourDSLBase::useStressUpdateAlgorithm,
+               false),
+        true);
+    if (!this->mb.getAttribute(
+            IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
+      this->mb.addStateVariable(
+          h, VariableDescription("StrainStensor", "εᵉˡ", "eel", 1u, 0u));
+      this->mb.setGlossaryName(h, "eel", "ElasticStrain");
     }
     // material symmetry
     this->mb.setSymmetryType(mfront::ISOTROPIC);
@@ -117,6 +141,8 @@ namespace mfront {
     d.minimalMFrontFileBody = "@FlowRule{}\n\n";
     return d;
   }  // end of getBehaviourDSLDescription
+
+  bool IsotropicBehaviourDSLBase::handleStrainHardening() const { return true; }
 
   void IsotropicBehaviourDSLBase::getSymbols(
       std::map<std::string, std::string>& symbols,
@@ -238,10 +264,13 @@ namespace mfront {
     return var;
   }  // end of flowRuleVariableModifier
 
-  void IsotropicBehaviourDSLBase::checkFlowRule(std::string_view n) const {
+  void IsotropicBehaviourDSLBase::checkFlowRule(
+      std::string_view n,
+      const std::size_t id,
+      const bool is_df_dp_required) const {
     auto warnings = std::vector<std::string>{};
     for (const auto h : this->mb.getDistinctModellingHypotheses()) {
-      auto report = [&warnings, h](const std::string& msg) {
+      auto report = [&warnings](const std::string& msg) {
         warnings.push_back(
             msg + ". This warning can be disabled by using the <safe> option.");
       };
@@ -277,19 +306,78 @@ namespace mfront {
             (d.isIntegrationVariableIncrementName(m))) {
           report_unexpected("variable '" + m + "'");
         }
+      }  // end of for(const auto& m : c.members)
+
+      if (!c.block_variables.contains("f")) {
+        report("'f' is not used");
+      }
+      if (!c.block_variables.contains("df_dseq")) {
+        report("'df_dseq' is not used");
+      }
+      if (is_df_dp_required) {
+        if (!c.block_variables.contains("df_dp")) {
+          report("'df_dp' is not used");
+        }
+      }
+      if (this->ihrs.contains(id)) {
+        if (!c.block_variables.contains("R")) {
+          report(
+              "the value of the yield surface 'R' "
+              "defined by an isotropic hardening rule is not used");
+        }
+        if (!c.block_variables.contains("dR_dp")) {
+          report(
+              "the value of the derivative of the yield surface 'dR_dp' "
+              "defined by an isotropic hardening rule is not used");
+        }
       }
     }
     reportWarning(warnings);
-  }
+  }  // end of checkFlowRule
+
+  std::function<void(CodeBlock&,
+                     const IsotropicBehaviourDSLBase::Hypothesis,
+                     const std::string&)>
+  IsotropicBehaviourDSLBase::getFlowRuleAnalyser(
+      const std::size_t flow_id) const {
+    const auto has_ihr = this->ihrs.contains(flow_id);
+    return [this, has_ihr](CodeBlock& c, const Hypothesis,
+                           const std::string& cv) {
+      if ((cv == "f") || (cv == "df_dseq")) {
+        c.block_variables.insert(cv);
+      }
+      if (cv == "df_dp") {
+        if (!this->handleStrainHardening()) {
+          this->throwRuntimeError("IsotropicBehaviourDSLBase::treatFlowRule",
+                                  "the derivative 'df_dp' shall not be used.");
+        } else {
+          c.block_variables.insert(cv);
+        }
+      }
+      if (has_ihr) {
+        if ((cv == "R") || (cv == "dR_dp")) {
+          c.block_variables.insert(cv);
+        }
+      }
+    };
+  }  // end of getFlowRuleAnalyser
 
   void IsotropicBehaviourDSLBase::treatFlowRule() {
-    std::function<std::string(const Hypothesis, const std::string&, const bool)>
-        modifier =
-            [this](const Hypothesis h, const std::string& sv, const bool b) {
-              return this->flowRuleVariableModifier(h, sv, b);
-            };
-    this->treatCodeBlock(BehaviourData::FlowRule, modifier, true, false);
-    this->checkFlowRule(BehaviourData::FlowRule);
+    auto modifier = [this](const Hypothesis h, const std::string& sv,
+                           const bool b) {
+      return this->flowRuleVariableModifier(h, sv, b);
+    };
+    const auto flow_id = [this]() -> std::size_t {
+      if (this->allowMultipleFlowRules()) {
+        return this->getNumberOfFlowRules();
+      }
+      return 0;
+    }();
+    auto analyser = this->getFlowRuleAnalyser(flow_id);
+    this->treatCodeBlock(BehaviourData::FlowRule, modifier, analyser, true,
+                         false);
+    this->checkFlowRule(BehaviourData::FlowRule, flow_id,
+                        this->handleStrainHardening());
   }  // end of treatFlowRule
 
   bool IsotropicBehaviourDSLBase::allowMultipleFlowRules() const {
@@ -328,7 +416,8 @@ namespace mfront {
                   std::to_string(id) + "')");
     }
     return static_cast<std::size_t>(id);
-  }
+  }  // end of extractFlowId
+
   void IsotropicBehaviourDSLBase::treatIsotropicHardeningRule() {
     const auto name = this->readString(
         "IsotropicBehaviourDSLBase::treatIsotropicHardeningRule");
@@ -517,6 +606,24 @@ namespace mfront {
              "Poisson ratio at t+theta*dt");
       add_lv(this->mb, "real", "\u03BD\u2091\u209C\u209B", "nu_tdt", "",
              "Poisson ratio at t+dt");
+      if (this->mb.getAttribute(
+              IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
+        const auto& emps = this->mb.getElasticMaterialProperties();
+        if (emps.size() != 2u) {
+          this->throwRuntimeError(
+              "IsotropicBehaviourCodeGenerator::"
+              "writeBehaviourLocalVariablesInitialisation",
+              "invalid number of material properties");
+        }
+        if (!((this->mb.isMaterialPropertyConstantDuringTheTimeStep(emps[0])) &&
+              (this->mb.isMaterialPropertyConstantDuringTheTimeStep(
+                  emps[1])))) {
+          this->reserveName("mfront_eel_bts");
+          this->reserveName("mfront_eel_ets");
+          this->reserveName("mfront_young_bts");
+          this->reserveName("mfront_nu_bts");
+        }
+      }
     } else {
       this->mb.addMaterialProperty(
           uh, VariableDescription("stress", "young", 1u, 0u));

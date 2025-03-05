@@ -287,7 +287,7 @@ namespace mfront {
     if ((k == "@AbaqusGenerateMTestFileOnFailure") ||
         (k == "@GenerateMTestFileOnFailure")) {
       if (k != "@GenerateMTestFileOnFailure") {
-      check_interface_restriction();
+        check_interface_restriction();
       }
       this->setGenerateMTestFileOnFailureAttribute(
           bd, this->readBooleanValue(k, current, end));

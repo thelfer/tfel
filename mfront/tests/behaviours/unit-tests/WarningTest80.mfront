@@ -1,0 +1,13 @@
+@DSL IsotropicMisesCreep;
+@Behaviour WarningTest80;
+@Description {
+  "This test checks that no warning is reported "
+  "if f and df_dseq areused in @FlowRule."
+}
+
+@Epsilon 1e-14;
+
+@FlowRule{
+  f;
+  df_dseq;
+}

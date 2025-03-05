@@ -108,6 +108,8 @@ namespace tfel::math {
     static_assert(N >= getArrayPolicyMinimalDataSize<ArrayPolicy>(),
                   "specified container size is lower than "
                   "the minimal container size");
+    //! \return a new instance of the Child class filled with null values
+    TFEL_HOST_DEVICE static constexpr Child zero();
     //! \brief default constructor
     TFEL_HOST_DEVICE constexpr GenericFixedSizeArray() noexcept;
     //! \brief copy constructor

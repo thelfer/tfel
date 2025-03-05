@@ -72,7 +72,7 @@ namespace tfel::material::homogenization::elasticity {
       return integrate1D<real>(f_, a, b, max_it);
     }
 
-    TFEL_HOST_DEVICE int vi(unsigned short int i, unsigned short int j) {
+    static TFEL_HOST_DEVICE int vi(unsigned short int i, unsigned short int j) {
       if ((i == 0) and (j == 0)) {
         return 0;
       } else if ((i == 1) and (j == 1)) {
@@ -103,10 +103,10 @@ namespace tfel::material::homogenization::elasticity {
       constexpr auto icste = tfel::math::Cste<real>::isqrt2;
       if (I > 2) {
         fac *= icste;
-      };
+      }
       if (J > 2) {
         fac *= icste;
-      };
+      }
       return fac * A(I, J);
     }
 
@@ -123,10 +123,10 @@ namespace tfel::material::homogenization::elasticity {
       constexpr auto cste = tfel::math::Cste<real>::sqrt2;
       if (I > 2) {
         fac *= cste;
-      };
+      }
       if (J > 2) {
         fac *= cste;
-      };
+      }
       A(I, J) = fac * Aijkl;
     }
 
@@ -140,7 +140,7 @@ namespace tfel::material::homogenization::elasticity {
       constexpr auto cste = tfel::math::Cste<real>::sqrt2;
       if (I > 2) {
         fac *= cste;
-      };
+      }
       A(I) = fac * Aij;
     }
 
@@ -154,7 +154,7 @@ namespace tfel::material::homogenization::elasticity {
       constexpr auto icste = tfel::math::Cste<real>::isqrt2;
       if (I > 2) {
         fac *= icste;
-      };
+      }
       return fac * A(I);
     }
 
@@ -241,10 +241,10 @@ namespace tfel::material::homogenization::elasticity {
           const std::size_t max_it) {
     if (not((a > LengthType{0}) and (b > LengthType{0}))) {
       tfel::reportContractViolation("a<=0 or b<=0");
-    };
+    }
     if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
       tfel::reportContractViolation("n_a is null");
-    };
+    }
     using namespace tfel::math;
     const auto n_a_ = n_a / norm(n_a);
     tfel::math::tvector<2u, real> n_b_;
@@ -291,19 +291,19 @@ namespace tfel::material::homogenization::elasticity {
     if (not((a > LengthType{0}) and (b > LengthType{0}) and
             (c > LengthType{0}))) {
       tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
-    };
+    }
     if (not(tfel::math::ieee754::fpclassify(
                 tfel::math::VectorVectorDotProduct::exe<
                     real, tfel::math::tvector<3u, real>,
                     tfel::math::tvector<3u, real>>(n_a, n_b)) == FP_ZERO)) {
       tfel::reportContractViolation("n_a and n_b not normals");
-    };
+    }
     if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
       tfel::reportContractViolation("n_a is null");
-    };
+    }
     if (tfel::math::ieee754::fpclassify(norm(n_b)) == FP_ZERO) {
       tfel::reportContractViolation("n_b is null");
-    };
+    }
     using namespace tfel::math;
     const auto n_a_ = n_a / norm(n_a);
     const auto n_b_ = n_b / norm(n_b);
@@ -381,13 +381,13 @@ namespace tfel::material::homogenization::elasticity {
                     real, tfel::math::tvector<3u, real>,
                     tfel::math::tvector<3u, real>>(n_a, n_b)) == FP_ZERO)) {
       tfel::reportContractViolation("n_a and n_b not normals");
-    };
+    }
     if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
       tfel::reportContractViolation("n_a is null");
-    };
+    }
     if (tfel::math::ieee754::fpclassify(norm(n_b)) == FP_ZERO) {
       tfel::reportContractViolation("n_b is null");
-    };
+    }
     const auto n_a_ = n_a / norm(n_a);
     const auto n_b_ = n_b / norm(n_b);
     const auto n_c_ = tfel::math::cross_product<real>(n_a_, n_b_);
@@ -419,7 +419,7 @@ namespace tfel::material::homogenization::elasticity {
       const std::size_t max_it) {
     if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
       tfel::reportContractViolation("n_a is null");
-    };
+    }
     const auto n_a_ = n_a / norm(n_a);
     tfel::math::tvector<2u, real> n_b_;
     if (n_a_[1] != real(0)) {

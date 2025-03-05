@@ -139,8 +139,7 @@ namespace mfront {
                                          const std::string& p,
                                          const std::string& s,
                                          const LibraryType t)
-      : CompiledTargetDescriptionBase(n, p, s),
-        type(t) {
+      : CompiledTargetDescriptionBase(n, p, s), type(t) {
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     insert_if(this->cppflags,
               "$(shell " + tfel_config + " --cppflags --compiler-flags)");

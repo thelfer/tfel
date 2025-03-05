@@ -36,12 +36,12 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] max_it: maximal number of iterations for integration
    */
   template <typename real, typename StressType>
-  TFEL_HOST_DEVICE static tfel::math::st2tost2<
-      2u,
-      typename tfel::math::invert_type<StressType>>
-  computePlainStrainAnisotropicHillTensor(const tfel::math::st2tost2<2u, StressType>&,
-                                 const real&,
-                                 const std::size_t max_it = 12);
+  TFEL_HOST_DEVICE
+      tfel::math::st2tost2<2u, typename tfel::math::invert_type<StressType>>
+      computePlainStrainAnisotropicHillTensor(
+          const tfel::math::st2tost2<2u, StressType>&,
+          const real&,
+          const std::size_t max_it = 12);
 
   /*!
    * This function builds the Eshelby tensor of a general 2d ellipse
@@ -61,10 +61,11 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] max_it: maximal number of iterations for integration
    */
   template <typename real, typename StressType>
-  TFEL_HOST_DEVICE static tfel::math::st2tost2<2u, real>
-  computePlainStrainAnisotropicEshelbyTensor(const tfel::math::st2tost2<2u, StressType>&,
-                                    const real&,
-                                    const std::size_t max_it = 12);
+  TFEL_HOST_DEVICE tfel::math::st2tost2<2u, real>
+  computePlainStrainAnisotropicEshelbyTensor(
+      const tfel::math::st2tost2<2u, StressType>&,
+      const real&,
+      const std::size_t max_it = 12);
 
   /*!
    * This function builds the Hill tensor of a general ellipsoid embedded in
@@ -83,8 +84,8 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] max_it: maximal number of iterations for integration
    */
   template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE static tfel::math::
-      st2tost2<3u, typename tfel::math::invert_type<StressType>>
+  TFEL_HOST_DEVICE
+      tfel::math::st2tost2<3u, typename tfel::math::invert_type<StressType>>
       computeAnisotropicHillTensor(const tfel::math::st2tost2<3u, StressType>&,
                                    const tfel::math::tvector<3u, real>&,
                                    const LengthType&,
@@ -110,7 +111,7 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] max_it: maximal number of iterations for integration
    */
   template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
   computeAnisotropicEshelbyTensor(const tfel::math::st2tost2<3u, StressType>&,
                                   const tfel::math::tvector<3u, real>&,
                                   const LengthType&,

@@ -1488,7 +1488,8 @@ namespace mfront {
       this->registerMemberName(h, this->getTangentOperatorBlockName({f, g}));
       for (const auto& [g2, thf2] : this->mvariables) {
         this->registerMemberName(h, this->getTangentOperatorBlockName({f, g2}));
-        this->registerMemberName(h, this->getTangentOperatorBlockName({thf2, g}));
+        this->registerMemberName(h,
+                                 this->getTangentOperatorBlockName({thf2, g}));
       }
     }
     this->mvariables.push_back({g, f});
@@ -2205,7 +2206,8 @@ namespace mfront {
       this->addBehaviourVariable(bv);
     }
     this->behaviourVariablesCandidates.clear();
-    for (const auto& [bv, isExternalModel] : this->behaviourVariableFactoriesCandidates) {
+    for (const auto& [bv, isExternalModel] :
+         this->behaviourVariableFactoriesCandidates) {
       this->addBehaviourVariableFactory(bv, isExternalModel);
     }
     this->behaviourVariableFactoriesCandidates.clear();
@@ -2506,13 +2508,12 @@ namespace mfront {
   }  // end of addBehaviourVariable
 
   void BehaviourDescription::addBehaviourVariableFactory(
-      const BehaviourVariableDescription& v){
+      const BehaviourVariableDescription& v) {
     this->addBehaviourVariableFactory(v, false);
   }
 
   void BehaviourDescription::addBehaviourVariableFactory(
-      const BehaviourVariableDescription& v,
-      const bool isExternalModel) {
+      const BehaviourVariableDescription& v, const bool isExternalModel) {
     if (!this->allowsNewUserDefinedVariables()) {
       tfel::raise(
           "BehaviourDescription::addBehaviourVariableFactory: "
@@ -2564,7 +2565,8 @@ namespace mfront {
             << "' is delayed up to when the modelling hypotheses "
             << "are defined'\n";
       }
-      this->behaviourVariableFactoriesCandidates.push_back({v, isExternalModel});
+      this->behaviourVariableFactoriesCandidates.push_back(
+          {v, isExternalModel});
     }
   }  // end of addBehaviourVariableFactory
 

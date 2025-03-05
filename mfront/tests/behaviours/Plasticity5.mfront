@@ -1,0 +1,16 @@
+@DSL IsotropicPlasticMisesFlow{
+  use_stress_update_algorithm : true,
+  automatic_declaration_of_the_temperature_as_first_external_state_variable :
+      false
+};
+@Behaviour Plasticity5;
+@Author Thomas Helfer;
+@Date 12 / 02 / 2025;
+@UseQt true;
+@Epsilon 1e-14;
+@Theta 1;
+
+@MaterialProperty stress Hv;
+@MaterialProperty stress s0;
+
+@IsotropicHardeningRule "Linear" {H : "Hv", R0 : "s0"};

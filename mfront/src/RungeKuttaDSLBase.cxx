@@ -180,7 +180,7 @@ namespace mfront {
         return var + "_";
       }
     }
-    if (d.isAuxiliaryStateVariableName(var)){
+    if (d.isAuxiliaryStateVariableName(var)) {
       const auto& v = d.getAuxiliaryStateVariables().getVariable(var);
       if (v.getAttribute<bool>("ComputedByExternalModel", false)) {
         if (addThisPtr) {
@@ -222,7 +222,7 @@ namespace mfront {
       this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
           h, var.substr(1));
       const auto& v = d.getExternalStateVariables().getVariable(var.substr(1));
-        return treat_variable_rate(v);
+      return treat_variable_rate(v);
     }
     if (addThisPtr) {
       return "this->" + var;
@@ -241,7 +241,7 @@ namespace mfront {
         return var + "+d" + var;
       }
     }
-    if (d.isAuxiliaryStateVariableName(var)){
+    if (d.isAuxiliaryStateVariableName(var)) {
       const auto& v = d.getAuxiliaryStateVariables().getVariable(var);
       if (v.getAttribute<bool>("ComputedByExternalModel", false)) {
         if (addThisPtr) {

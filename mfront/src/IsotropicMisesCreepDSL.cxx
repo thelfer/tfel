@@ -1,3 +1,4 @@
+
 /*!
  * \file   mfront/src/IsotropicMisesCreepDSL.cxx
  * \brief
@@ -35,13 +36,13 @@ namespace mfront {
       : IsotropicBehaviourDSLBase(opts) {
     const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     this->mb.setDSLName("IsotropicMisesCreepDSL");
+    //
+    this->disableCallBack("@IsotropicHardeningRule");
+    this->disableCallBack("@IsotropicHardeningRules");
     // Default state vars
     this->reserveName("mfront_internal_ccto_tmp_1");
     this->reserveName("mfront_internal_3_mu_theta");
-    this->mb.addStateVariable(
-        h, VariableDescription("StrainStensor", "εᵉˡ", "eel", 1u, 0u));
     this->mb.addStateVariable(h, VariableDescription("strain", "p", 1u, 0u));
-    this->mb.setGlossaryName(h, "eel", "ElasticStrain");
     this->mb.setGlossaryName(h, "p", "EquivalentViscoplasticStrain");
     // default local vars
     this->mb.addLocalVariable(h,
@@ -62,6 +63,8 @@ namespace mfront {
     this->mb.setAttribute(
         h, BehaviourData::isConsistentTangentOperatorSymmetric, true);
   }
+
+  bool IsotropicMisesCreepDSL::handleStrainHardening() const { return false; }
 
   std::unique_ptr<AbstractBehaviourCodeGenerator>
   IsotropicMisesCreepDSL::getCodeGenerator() const {

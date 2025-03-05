@@ -130,7 +130,7 @@ namespace mfront {
     this->md.checkAndCompletePhysicalBoundsDeclaration();
   }  // end of endsInputFileProcessing
 
-  void ModelDSLCommon::makeConsistencyChecks() const{
+  void ModelDSLCommon::makeConsistencyChecks() const {
     if (getPedanticMode()) {
       this->doPedanticChecks();
     }

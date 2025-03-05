@@ -15,5 +15,4 @@
 
 #include "TFEL/Material/IsotropicEshelbyTensor.hxx"
 
-
 #endif /* LIB_TFEL_MATERIAL_ESHELBY_HXX */
