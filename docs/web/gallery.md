@@ -92,13 +92,13 @@ behaviour. This framework is described
   under the small and finite strain assumptions are described
   [here](MericCailletaudSingleCrystalPlasticity.html)
 
-<!--
-### PolyCrystal
+### Homogeneisation
 
+- [Sachs](Sachs.html) and [Taylor](Taylor.html)
 - The description of the implementation of a polycrystal behaviour
   based on the Berveiller-Zaoui homogenisation scheme using an
   explicit scheme is available
   [here](ExplicitBerveillerZaouiPolyCrystals.html)
--->
+- [\(\beta\)-rule](BetaRule.html)
 
 <!-- Local IspellDict: english -->

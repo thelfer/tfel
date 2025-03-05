@@ -194,7 +194,6 @@ The implementation of the local behaviour is explained [here](./MericCailletaudS
 
 All files `MericCailletaudSingleCrystalViscoPlasticity.mfront`, `BetaRule.mfront` and `BetaRule.mtest` can be downloaded [here](./downloads/BetaRule.zip).
 
-
 ## Implementation of Cailletaud's beta rule
 
 For the example, we assume that the composites is made of only 2 phases.
@@ -211,7 +210,7 @@ eto2.setEntryName("SecondPhaseTotalStrain");
 beta1.setEntryName("FirstPhaseBetaStrain");
 @StateVariable Stensor beta2;
 beta2.setEntryName("SecondPhaseBetaStrain");
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 and we define the local behaviours with `@BehaviourVariable`:
 
@@ -223,7 +222,7 @@ store_gradients: false,
 external_names_prefix: "FirstPhase",
 shared_external_state_variables: {".+"}
 };
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 (the same for phase 2).
 
@@ -241,7 +240,7 @@ follows:
   constexpr auto b1_smflag = TangentOperatorTraits<MechanicalBehaviourBase::STANDARDSTRAINBASEDBEHAVIOUR>::STANDARDTANGENTOPERATOR;
   const auto r1 = b1.integrate(b1_smflag,CONSISTENTTANGENTOPERATOR);
   StiffnessTensor Dt1 = b1.getTangentOperator();
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 and the following variables are stored:
 
@@ -251,7 +250,7 @@ and the following variables are stored:
   auto devp1=deto1-deel1;
   auto ndevp_1=sqrt(real(2)/3*devp1|devp1);
   auto beta_mts_1=beta1+theta*dbeta1;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 The same goes for phase 2.
 Here are the residues:
@@ -264,7 +263,7 @@ Here are the residues:
   feto2 = (dsig2-dSig-c*(dB-dbeta2))/sig_0;
   fbeta1 = dbeta1-devp1+DD*ndevp_1*beta_mts_1;
   fbeta2 = dbeta2-devp2+DD*ndevp_2*beta_mts_2;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 and the terms of the analytical jacobian:
 
@@ -291,7 +290,7 @@ and the terms of the analytical jacobian:
   
   dfbeta1_ddbeta1 =Id+ theta*DD*ndevp_1*Id;
   dfbeta2_ddbeta2 =Id+ theta*DD*ndevp_2*Id;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 Note that `S1` and `S2` are the compliance tensors of each phase and
 were defined by the elastic coefficients of each phase.
@@ -307,7 +306,7 @@ The computation of the stress and of the tangent operator is straightforward:
   getPartialJacobianInvert(iJs);
   Dt=iJs;
 }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 Note that `getPartialJacobianInvert(iJs)` permits to obtain the 6x6 left-upper part of the
 inverse of the Jacobian. The left-upper part is associated with the first
