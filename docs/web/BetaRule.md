@@ -40,9 +40,8 @@ This tutorial explains how to implement Cailletaud's $\beta$-rule [@cailletaud_p
 in the context of elasto-viscoplastic composites using an arbitrary local flow function.
 In this tutorial, a local behaviour of Meric-Cailletaud type [@meric_single_1991] is proposed.
 
-Here, the implementation of this homogenization scheme requires the derivative of the local
-viscoplastic strain, that we obtain with the local tangent operator via the integration of a
-local `Behaviour`.
+Here, the implementation of this homogenization scheme requires the local tangent operators,
+obtained via the integration of a local `Behaviour`.
 
 We first recall Cailletaud's $\beta$-rule and present the non-linear system derived from it.
 We then implement it in `MFront` and explain how to use the keyword `@BehaviourVariable`
@@ -125,7 +124,7 @@ Note that the local elastic strain can also be computed with
 this local integration.
 
 To solve this non-linear problem in `MFront`, we use
-the `ImplicitII` `DSL` (because we do not consider `\tepsilonel` as an integration variable). We only have to precise the residues and the Jacobian matrix.
+the `ImplicitII` `DSL` (because we do not consider $\tepsilonel$ as an integration variable). We only have to precise the residues and the Jacobian matrix.
 The residues are:
 
 $\left\{
@@ -287,13 +286,15 @@ and the terms of the analytical jacobian:
   dfeto2_ddbeta1 = c/sig_0*(f-1)*Id;
   dfeto2_ddbeta2 = c/sig_0*(1-f)*Id;
   
-  dfbeta1_ddeto1 = -(Id-S*Dt1) + 2*DD/3*Stensor4(beta_mts_1^devp1)*Stensor4(Id-S*Dt1)/max(ndevp_1,eeps);
-  dfbeta2_ddeto2 = -(Id-S*Dt2) + 2*DD/3*Stensor4(beta_mts_2^devp2)*Stensor4(Id-S*Dt2)/max(ndevp_2,eeps);
+  dfbeta1_ddeto1 = -(Id-S1*Dt1) + 2*DD/3*Stensor4(beta_mts_1^devp1)*Stensor4(Id-S1*Dt1)/max(ndevp_1,eeps);
+  dfbeta2_ddeto2 = -(Id-S2*Dt2) + 2*DD/3*Stensor4(beta_mts_2^devp2)*Stensor4(Id-S2*Dt2)/max(ndevp_2,eeps);
   
   dfbeta1_ddbeta1 =Id+ theta*DD*ndevp_1*Id;
   dfbeta2_ddbeta2 =Id+ theta*DD*ndevp_2*Id;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Note that `S1` and `S2` are the compliance tensors of each phase and
+were defined by the elastic coefficients of each phase.
 The computation of the stress and of the tangent operator is straightforward:
 
 ~~~~ {#BetaRule .cpp .numberLines}
@@ -310,15 +311,40 @@ The computation of the stress and of the tangent operator is straightforward:
 
 Note that `getPartialJacobianInvert(iJs)` permits to obtain the 6x6 left-upper part of the
 inverse of the Jacobian. The left-upper part is associated with the first
-integration variable declared (here `Sig`). 
+integration variable declared (here `Sig`).
 
 # Results
 
 We used `MTest` to carry out
-simulations of an uniaxial tensile test
+simulations of an uniaxial tensile test on a two-grain polycrystal.
+The first phase is stiffer than the second, and we also choose for the
+example a different Norton exponent between the phases.
+The following values are given by the `mtest` file:
+
+~~~~ {#BetaRule .mtest .numberLines}
+@ModellingHypothesis 'Tridimensional';
+@Behaviour<Generic> 'src/libBehaviour.so' 'BetaRuleBehaviour';
+@MaterialProperty<constant> 'FirstPhaseFraction' 0.5;
+@MaterialProperty<constant> 'E_1'               208000;
+@MaterialProperty<constant> 'nu_1'               0.3;
+@MaterialProperty<constant> 'mu_1'               80000;
+@MaterialProperty<constant> 'E_2'               104000;
+@MaterialProperty<constant> 'nu_2'               0.3;
+@MaterialProperty<constant> 'mu_2'               40000;
+@MaterialProperty<constant> 'tau01'               36.;
+@MaterialProperty<constant> 'tau02'               25.;
+@MaterialProperty<constant> 'n1'               10.;
+@MaterialProperty<constant> 'n2'               5.;
+@ExternalStateVariable 'Temperature' 293.15;
+@ImposedStrain 'EXX' {0 : 0, 5 :1e-2};
+@Times {0, 3 in 400};
+~~~~~~~~~~~~~~
+
+Note that the elastic behaviours are isotropic for the example.
 (the file is available in the [archive](downloads/BetaRule.zip)).
+We plotted here the macroscopic and local behaviours ($\tsigma_i$ as
+a function of $\tepsilon_i$).
 
-
-![Macroscopic stress as a function of local strain, uniaxial tensile test, Cailletaud's beta rule](./img/Cailletaud.png)
+![Macroscopic stress as a function of local strain, uniaxial tensile test, Cailletaud's beta rule](./img/BetaRule.png)
 
 <!-- Local IspellDict: english -->
