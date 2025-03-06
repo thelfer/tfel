@@ -1,3 +1,4 @@
+
 ---
 title: Release notes of the 5.1 version of `TFEL`, `MFront` and `MTest`
 author: Thomas Helfer, Antoine Martin
@@ -488,6 +489,10 @@ of tangent operator of the local behaviours. The implementation
 shows how to use any behaviour law on each phase.
 
 # Issues fixed
+
+## Issue 708: Add support for hardening modes when `libc++` is used
+
+For more details, see <https://github.com/thelfer/tfel/issues/708>
 
 ## Issue 724: [mfront] Add support for non constant elastic properties in the stress update algorithm of the isotropic DSLs
 

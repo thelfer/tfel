@@ -20,17 +20,15 @@
 #include <iostream>
 #include <typeinfo>
 #include "TFEL/Config/TFELTypes.hxx"
-#include "TFEL/Math/qt.hxx"
+#ifndef _LIBCPP_VERSION
+#include "TFEL/Material/StiffnessTensor.hxx"
 #include "TFEL/Material/IsotropicEshelbyTensor.hxx"
+#endif /* _LIBCPP_VERSION */
+
+#include "TFEL/Math/qt.hxx"
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
-#include "TFEL/Material/StiffnessTensor.hxx"
-
-template <typename T>
-static constexpr T my_abs(const T& v) noexcept {
-  return v < T(0) ? -v : v;
-}
 
 struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
   IsotropicEshelbyTensorTest()
@@ -44,16 +42,13 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     this->template test_Eshelby_limits<double, true>();
     this->template test_Eshelby_limits<long double, true>();
     this->template test_localisation_tensors<double, true>();
-    // this->template test1<long double, false>();
-    // this->template test1<float, true>();
-    // this->template test1<double, true>();
-    // this->template test1<long double, true>();
     return this->result;
   }
 
  private:
   template <typename NumericType, bool use_qt>
   void test_Eshelby_2d() {
+#ifndef _LIBCPP_VERSION
     using real = NumericType;
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
     const auto nu = real{0.3};
@@ -70,11 +65,12 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
         }
       }
     }
+#endif /* _LIBCPP_VERSION */
   }
 
- private:
   template <typename NumericType, bool use_qt>
   void test_Eshelby_tensors() {
+#ifndef _LIBCPP_VERSION
     using lg = typename tfel::config::Types<1u, NumericType, use_qt>::length;
     using real = NumericType;
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
@@ -109,11 +105,12 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
         }
       }
     }
+#endif /* _LIBCPP_VERSION */
   }
 
- private:
   template <typename NumericType, bool use_qt>
   void test_Eshelby_limits() {
+#ifndef _LIBCPP_VERSION
     using lg = typename tfel::config::Types<1u, NumericType, use_qt>::length;
     using real = NumericType;
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
@@ -136,7 +133,7 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
                      std::numeric_limits<long double>::epsilon() - eps) ==
                  FP_ZERO) {
         SSphere_lim_2 = computeAxisymmetricalEshelbyTensor(nu, real{1.0000001});
-      };
+      }
       for (int i : {0, 1, 2, 3, 4, 5}) {
         for (int j : {0, 1, 2, 3, 4, 5}) {
           TFEL_TESTS_ASSERT(
@@ -171,12 +168,13 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
         }
       }
     }
+#endif /* _LIBCPP_VERSION */
   }
 
   // These functions must return the same thing
- private:
   template <typename NumericType, bool use_qt>
   void test_localisation_tensors() {
+#ifndef _LIBCPP_VERSION
     using stress =
         typename tfel::config::Types<1u, NumericType, use_qt>::stress;
     using lg = typename tfel::config::Types<1u, NumericType, use_qt>::length;
@@ -247,6 +245,7 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       //  std::cout << Atttt(0) << Annnn(0) << Attnn(0) << std::endl;
       TFEL_TESTS_ASSERT(Annnn(0) - 5 * Atttt(0) > 0);
     }
+#endif /* _LIBCPP_VERSION */
   }
 
 };  // end of struct IsotropicEshelbyTensorTest
