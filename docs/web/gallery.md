@@ -94,11 +94,14 @@ behaviour. This framework is described
 
 ### Homogeneisation
 
-- [Sachs](Sachs.html) and [Taylor](Taylor.html)
+- The implementation of [Sachs scheme](Sachs.html) and [Taylor scheme](Taylor.html)
+  show how to implement basic homogenized bounds with any behaviour laws on the
+  phases using `@BehaviourVariable`.
 - The description of the implementation of a polycrystal behaviour
   based on the Berveiller-Zaoui homogenisation scheme using an
-  explicit scheme is available
+  explicit scheme is available.
   [here](ExplicitBerveillerZaouiPolyCrystals.html)
-- [\(\beta\)-rule](BetaRule.html)
+- [\(\beta\)-rule](BetaRule.html) can also be implemented with
+  `@BehaviourVariable` and hence any behaviour law on each phase.
 
 <!-- Local IspellDict: english -->

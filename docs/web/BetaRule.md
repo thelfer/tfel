@@ -80,7 +80,7 @@ In this context, the proposition of Cailletaud is to
 introduce an internal variable $\tenseur\beta_i$ on each phase,
 whose evolution is given by
 \begin{aligned}
- \tdbeta_i= \tdepsilonvp_i-D\,||\tdepsilonvp_i||\,\tdbeta_i \\
+ \tdbeta_i= \tdepsilonvp_i-D\,||\tdepsilonvp_i||\,\tbeta_i \\
 \end{aligned}
 where $D\in\reals$ is a parameter and
 \begin{aligned}
