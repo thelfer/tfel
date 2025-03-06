@@ -102,13 +102,15 @@ namespace tfel::material::homogenization::elasticity {
     }
 
     const auto precision = [precf, precd, precld]() {
-      if (typeid(real) == typeid(long double)) {
+      if constexpr (std::same_as<tfel::math::base_type<real>, long double>){
         return precld;
-      } else if (typeid(real) == typeid(double)) {
+      } else if constexpr (std::same_as<tfel::math::base_type<real>, double>){
         return precd;
+      } else {
+        return precf;
       }
-      return precf;
     }();
+    
     if (std::abs(e - 1) < precision) {
       return computeSphereEshelbyTensor<real>(nu);
     }
@@ -204,12 +206,13 @@ namespace tfel::material::homogenization::elasticity {
     }
 
     const auto precision = [precf, precd, precld]() {
-      if (typeid(real) == typeid(long double)) {
+      if constexpr (std::same_as<tfel::math::base_type<real>, long double>){
         return precld;
-      } else if (typeid(real) == typeid(double)) {
+      } else if constexpr (std::same_as<tfel::math::base_type<real>, double>){
         return precd;
+      } else {
+        return precf;
       }
-      return precf;
     }();
     if (std::abs((b - a) / c) < precision ||
         std::abs((a - c) / b) < precision ||
