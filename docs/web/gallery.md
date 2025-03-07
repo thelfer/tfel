@@ -103,11 +103,12 @@ behaviour. This framework is described
   [here](ExplicitBerveillerZaouiPolyCrystals.html)
 - [\(\beta\)-rule](BetaRule.html) can also be implemented with
   `@BehaviourVariable` and hence any behaviour law on each phase.
-  
+
 # Material Law
 
 ## Homogeneisation
 
  - The implementation of linear homogenization schemes in 3d elasticity
    for biphasic media is described [here](BiphasicLinearHomogenization.html).
+
 <!-- Local IspellDict: english -->
