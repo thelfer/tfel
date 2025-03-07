@@ -231,7 +231,7 @@ namespace tfel::material::homogenization::elasticity {
     const auto b_ = abc_[sig[1]];
     const auto c_ = abc_[sig[2]];
 
-    constexpr auto pi = std::numbers::pi_v<real>;
+    constexpr real pi = std::numbers::pi_v<long double>;
     const auto a2 = a_ * a_;
     const auto b2 = b_ * b_;
     const auto c2 = c_ * c_;
