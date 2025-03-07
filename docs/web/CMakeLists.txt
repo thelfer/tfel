@@ -6,7 +6,7 @@ macro(pandoc_html file)
     DEPENDS   ${CMAKE_CURRENT_SOURCE_DIR}/css/main.css
     COMMAND   ${PANDOC}
     ARGS      -f markdown-markdown_in_html_blocks+tex_math_single_backslash+grid_tables
-    ARGS      --filter ${PANDOC_REFERENCE_FILTER} -M crossrefYaml=${CMAKE_CURRENT_SOURCE_DIR}/pandoc-crossref.yaml
+    ARGS      --filter ${PANDOC_REFERENCE_FILTER} -M crossrefYaml=${CMAKE_CURRENT_SOURCE_DIR}/pandoc-crossref.yaml    
     ARGS      --bibliography=${CMAKE_CURRENT_SOURCE_DIR}/bibliography.bib --citeproc
     ARGS      --template=${CMAKE_CURRENT_SOURCE_DIR}/mfront-template.html
     ARGS      --csl=${CMAKE_CURRENT_SOURCE_DIR}/iso690-numeric-en.csl
@@ -106,6 +106,7 @@ pandoc_html(signorini "--toc" "--toc-depth=2" "-c css/slideshow.css")
 pandoc_html(ogden "--toc" "--toc-depth=2")
 pandoc_html(iwan "--toc" "--toc-depth=2")
 pandoc_html(hyperviscoelasticity "--toc" "--toc-depth=2")
+pandoc_html(BiphasicLinearHomogenization "--toc" "--toc-depth=2")
 pandoc_html(IsotropicLinearHardeningPlasticity "--toc" "--toc-depth=2")
 pandoc_html(orthotropiclinearhardeningplasticity "--toc" "--toc-depth=2")
 pandoc_html(physical-constants)
