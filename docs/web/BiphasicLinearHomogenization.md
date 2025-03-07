@@ -66,12 +66,18 @@ is defined as an input, which can be 0 for dilute scheme, 1 for Mori-Tanaka...
 (`f` is the volume fraction of inclusion phase).
 
 ~~~~ {#biphasic .cpp .numberLines}
-@Input real scheme;
-@Input stress E0;
-@Input real nu0;
-@Input stress Ei;
-@Input real nui;
-@Input real f;
+@StateVariable real scheme;
+scheme.setEntryName("HomogenizationScheme");
+@StateVariable stress E0;
+E0.setEntryName("MatrixYoungModulus");
+@StateVariable real nu0;
+nu0.setEntryName("MatrixPoissonRatio");
+@StateVariable stress Ei;
+Ei.setEntryName("InclusionYoungModulus");
+@StateVariable real nui;
+nui.setEntryName("InclusionPoissonRatio");
+@StateVariable real f;
+f.setEntryName("InclusionVolumeFraction");
 ~~~~
 
 It is important not to forget the header files that must be included:
@@ -85,7 +91,7 @@ It is important not to forget the header files that must be included:
 }
 ~~~~
 
-Note that `@TFELLibraries` permits to include any `TFEL` library.
+Note that `@TFELLibraries` lets the user specify a `TFEL` library to link with.
 The header `LinearHomogenizationSchemes.hxx` is needed for dilute scheme
 and Mori-Tanaka scheme, whereas here `LinearHomogenizationBounds.hxx`
 will be used for computing upper Hashin-Shtrikman (HS) bound. It is indeed known that
@@ -188,13 +194,24 @@ a `real` parameter `distrib` to let the user choose the distribution of ellipsoi
 transverse isotropic, or oriented. We also introduce the semi-lengths `a`,`b`,`c` of the ellipsoid.
 
 ~~~~ {#biphasic .cpp .numberLines}
-@Input real distrib;
-@Input stress E0;
-@Input real nu0;
-@Input stress Ei;
-@Input real nui;
-@Input real f;
-@Input length a,b,c;
+@StateVariable real distrib;
+distrib.setEntryName("TypeOfDistribution");
+@StateVariable stress E0;
+E0.setEntryName("MatrixYoungModulus");
+@StateVariable real nu0;
+nu0.setEntryName("MatrixPoissonRatio");
+@StateVariable stress Ei;
+Ei.setEntryName("InclusionYoungModulus");
+@StateVariable real nui;
+nui.setEntryName("InclusionPoissonRatio");
+@StateVariable real f;
+f.setEntryName("InclusionVolumeFraction");
+@StateVariable length a;
+a.setEntryName("FirstSemiLength");
+@StateVariable length b;
+b.setEntryName("SecondSemiLength");
+@StateVariable length c;
+c.setEntryName("ThirdSemiLength");
 ~~~~
 
 Note that the orientation for the oriented case will be fixed in the `mfront` file,
