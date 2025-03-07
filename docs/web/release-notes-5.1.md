@@ -476,6 +476,18 @@ The following libraries are available: `Config`, `Exception`,
 @TFELLibraries {"MathParser"};
 ~~~~
 
+## New tutorials
+
+New tutorials on implementation of homogenization schemes
+for biphasic linear elastic media are available in the gallery.
+
+New tutorials on implementation of homogenization schemes
+in non-linear elasticity are available in the gallery: Taylor scheme,
+Sachs scheme, $\beta$-rule. These tutorials use the 
+keyword `@BehaviourVariable` for the integration and the computation
+of tangent operator of the local behaviours. The implementation
+shows how to use any behaviour law on each phase.
+
 # Issues fixed
 
 ## Issue 708: Add support for hardening modes when `libc++` is used
