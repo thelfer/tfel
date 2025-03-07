@@ -22,16 +22,20 @@
 #include "TFEL/Config/TFELTypes.hxx"
 #include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
+#include "TFEL/Material/StiffnessTensor.hxx"
+#ifndef _LIBCPP_VERSION
 #include "TFEL/Material/LinearHomogenizationSchemes.hxx"
+#endif /* _LIBCPP_VERSION */
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
-#include "TFEL/Material/StiffnessTensor.hxx"
 
+#ifndef _LIBCPP_VERSION
 template <typename T>
 static constexpr T my_abs(const T& v) noexcept {
   return v < T(0) ? -v : v;
 }
+#endif /* _LIBCPP_VERSION */
 
 struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
   LinearHomogenizationSchemesTest()
@@ -55,6 +59,7 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
  private:
   template <typename real, typename stress, typename length>
   void test1() {
+#ifndef _LIBCPP_VERSION
     // tests computeDiluteScheme and computeMoriTanakaScheme for spheres
     // comparing to computeSphereDiluteScheme and computeSphereMoriTanakaScheme
     using namespace tfel::material::homogenization::elasticity;
@@ -97,11 +102,12 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(my_abs(nuSphere_DS_0 - nuSphere_DS_2) < eps);
     TFEL_TESTS_ASSERT(my_abs(ESphere_MT_1 - ESphere_MT_3) < stress{seps});
     TFEL_TESTS_ASSERT(my_abs(nuSphere_MT_1 - nuSphere_MT_3) < eps);
+#endif /* _LIBCPP_VERSION */
   }
 
- private:
   template <typename real, typename stress, typename length>
   void test3() {
+#ifndef _LIBCPP_VERSION
     {
       constexpr auto eps = 100 * tfel::math::constexpr_fct::sqrt(
                                      std::numeric_limits<real>::epsilon());
@@ -150,11 +156,12 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       // std::cout << (ESphere_0-ESphere_3).getValue() << " "<< eps << '\n';
       TFEL_TESTS_ASSERT(my_abs(nuSphere_0 - nuSphere_3) < eps);
     }
+#endif /* _LIBCPP_VERSION */
   }
 
- private:
   template <typename real, typename stress, typename length>
   void test4() {
+#ifndef _LIBCPP_VERSION
     {
       constexpr auto eps = 100 * tfel::math::constexpr_fct::sqrt(
                                      std::numeric_limits<real>::epsilon());
@@ -187,11 +194,12 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(my_abs(nuTI_DS_2 - nuTI_DS_3) < eps);
       // std::cout << (E2-E3).getValue() << " "<< eps << '\n';
     }
+#endif /* _LIBCPP_VERSION */
   }
 
- private:
   template <typename real, typename stress, typename length>
   void test5() {
+#ifndef _LIBCPP_VERSION
     {
       using namespace tfel::material::homogenization::elasticity;
       constexpr auto eps = 10 * std::numeric_limits<real>::epsilon();
@@ -242,11 +250,12 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       // '\n';
       TFEL_TESTS_ASSERT(my_abs(nuSphere_MT_0 - nuSphere_MT_3) < eps);
     }
+#endif /* _LIBCPP_VERSION */
   }
 
- private:
   template <typename real, typename stress, typename length>
   void test6() {
+#ifndef _LIBCPP_VERSION
     {
       constexpr auto eps = 100 * tfel::math::constexpr_fct::sqrt(
                                      std::numeric_limits<real>::epsilon());
@@ -301,11 +310,12 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       // std::cout << E3.getValue() << " "<< E4.getValue() << '\n';
       TFEL_TESTS_ASSERT(my_abs(nuI_DS_1 - nuI_DS_4) < eps);
     }
+#endif /* _LIBCPP_VERSION */    
   }
 
- private:
   template <typename real, typename stress, typename length>
   void test7() {
+#ifndef _LIBCPP_VERSION
     {
       constexpr auto eps = 100 * tfel::math::constexpr_fct::sqrt(
                                      std::numeric_limits<real>::epsilon());
@@ -364,6 +374,7 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       // std::cout << (E2-E3).getValue() << " "<< value << '\n';
       TFEL_TESTS_ASSERT(my_abs(nuTI_DS_2 - nuTI_DS_3) < eps);
     }
+#endif /* _LIBCPP_VERSION */
   }
 
 };  // end of struct LinearHomogenizationSchemesTest

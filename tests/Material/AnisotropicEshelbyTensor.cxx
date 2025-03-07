@@ -21,8 +21,10 @@
 #include "TFEL/Config/TFELTypes.hxx"
 #include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
+#ifndef _LIBCPP_VERSION
 #include "TFEL/Material/IsotropicEshelbyTensor.hxx"
 #include "TFEL/Material/AnisotropicEshelbyTensor.hxx"
+#endif /* _LIBCPP_VERSION */
 #include "TFEL/Material/StiffnessTensor.hxx"
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
@@ -43,6 +45,7 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
  private:
   template <typename NumericType, bool use_qt>
   void test_Eshelby() {
+#ifndef _LIBCPP_VERSION
     using namespace tfel::material::homogenization::elasticity;
     using real = NumericType;
     using lg = typename tfel::config::Types<1u, real, use_qt>::length;
@@ -90,12 +93,12 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
         // std::cout << SSph1(i,j)-SSph2(i,j) << " "<< eps <<'\n';
       }
     }
-
+#endif /* _LIBCPP_VERSION */
   }  // end of test_Eshelby
 
- private:
   template <typename NumericType, bool use_qt>
   void test_Eshelby2D() {
+#ifndef _LIBCPP_VERSION
     using namespace tfel::material::homogenization::elasticity;
     using real = NumericType;
     using lg = typename tfel::config::Types<1u, real, use_qt>::length;
@@ -132,12 +135,12 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
         // << " "<< eps <<'\n';
       }
     }
-
+#endif /* _LIBCPP_VERSION */
   }  // end of test_Eshelby2D
 
- private:
   template <typename NumericType, bool use_qt>
   void test_localisator() {
+#ifndef _LIBCPP_VERSION
     using namespace tfel::material::homogenization::elasticity;
     using real = NumericType;
     using lg = typename tfel::config::Types<1u, real, use_qt>::length;
@@ -170,7 +173,7 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
         // std::cout << AAxis_0(i,j)-AAxis_1(i,j) << " "<< eps<<'\n';
       }
     }
-
+#endif /* _LIBCPP_VERSION */
   }  // end of test_localisator
 
 };  // end of struct AnisotropicEshelbyTensorTest

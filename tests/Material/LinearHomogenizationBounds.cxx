@@ -22,16 +22,20 @@
 #include "TFEL/Config/TFELTypes.hxx"
 #include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
+#include "TFEL/Material/StiffnessTensor.hxx"
+#ifndef _LIBCPP_VERSION
 #include "TFEL/Material/LinearHomogenizationBounds.hxx"
+#endif /* _LIBCPP_VERSION */
 #include "TFEL/Tests/TestCase.hxx"
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
-#include "TFEL/Material/StiffnessTensor.hxx"
 
+#ifndef _LIBCPP_VERSION
 template <typename T>
 static constexpr T my_abs(const T& v) noexcept {
   return v < T(0) ? -v : v;
 }
+#endif /* _LIBCPP_VERSION */
 
 struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
   LinearHomogenizationBoundsTest()
@@ -51,6 +55,7 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
  private:
   template <typename real, typename stress>
   void testHS_3D() {
+#ifndef _LIBCPP_VERSION
     // we just compare a direct formula for two phases and the function for N=2
     // phases
     using namespace tfel::material::homogenization::elasticity;
@@ -111,11 +116,13 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(my_abs(mu_L - mu_Lbis) < seps);
     TFEL_TESTS_ASSERT(my_abs(K_U - K_Ubis) < seps);
     TFEL_TESTS_ASSERT(my_abs(mu_U - mu_Ubis) < seps);
+#endif /* _LIBCPP_VERSION */
   }
 
  private:
   template <typename real, typename stress>
   void testHS_2D() {
+#ifndef _LIBCPP_VERSION
     // we just compare a direct formula for two phases and the function for N=2
     // phases
     using namespace tfel::material::homogenization::elasticity;
@@ -176,6 +183,7 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(my_abs(mu_L - mu_Lbis) < seps);
     TFEL_TESTS_ASSERT(my_abs(K_U - K_Ubis) < seps);
     TFEL_TESTS_ASSERT(my_abs(mu_U - mu_Ubis) < seps);
+#endif /* _LIBCPP_VERSION */
   }
 };  // end of struct LinearHomogenizationBoundsTest
 
