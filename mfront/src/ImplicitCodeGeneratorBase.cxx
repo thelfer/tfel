@@ -121,7 +121,7 @@ namespace mfront {
     const auto dr = d.derivative_row_position;
     const auto dc = d.derivative_column_position;
     if ((v1.arraySize == 1u) && (v2.arraySize == 1u)) {
-      os << "auto " << d.derivative_name << " = tfel::math::map_derivative<"
+      os << "auto&& " << d.derivative_name << " = tfel::math::map_derivative<"
          << dr << ", " << dc << ", " << v1.type << ", " << v2.type << ">("
          << d.matrix_name << ");\n";
     } else if ((v1.arraySize != 1u) && (v2.arraySize == 1u)) {
