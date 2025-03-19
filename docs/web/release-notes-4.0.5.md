@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 4.0.5 of the
 
 # Issues fixed
 
+## Issue 738: `getIntegrationVariablesDerivatives` is broken for scalar gradients
+
+For more details, see <https://github.com/thelfer/tfel/issues/738>
+
 ## Issue 703: `std::shared_ptr::unique` has been removed in `C++20`
 
 For more details, see <https://github.com/thelfer/tfel/issues/703>
