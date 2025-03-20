@@ -45,12 +45,15 @@ set(PACKAGE_BUGREPORT "tfel-contact@cea.fr")
 include(cmake/modules/ieee754.cmake)
 
 # check for the fenv package
+option(enable-use-fenv "enable usage of the fenv package" ON)
+if(enable-use-fenv)
 include(CheckIncludeFiles)
 check_include_files(fenv.h HAVE_FENV_H)
 if(HAVE_FENV_H)
   tfel_add_c_cxx_definitions("HAVE_FENV")
 endif(HAVE_FENV_H)
-
+endif(enable-use-fenv)
+  
 option(enable-include-what-you-use
   "enable include-what-you-use diagnostics" OFF)
 if(enable-include-what-you-use)
