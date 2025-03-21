@@ -1,3 +1,4 @@
+
 add_subdirectory(unit-tests)
 # bricks
 add_subdirectory(IsotropicDSLs)
@@ -212,4 +213,5 @@ install_mfront_data(tests/behaviours ExternalModel.mfront)
 install_mfront_data(tests/behaviours ExternalModelCaller2.mfront)
 install_mfront_data(tests/behaviours ExternalModel2.mfront)
 install_mfront_data(tests/behaviours ExternalModelCaller3.mfront)
+install_mfront_data(tests/behaviours PoroElasticity.mfront)
 install_mfront_data(tests/behaviours PoroPlasticity.mfront)

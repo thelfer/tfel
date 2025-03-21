@@ -158,6 +158,7 @@ set(mfront_tests_SOURCES
   ProfilerTest3
   ArrayOfScalarGradients
   ArrayOfStensorGradients
+  PoroElasticity
   PoroPlasticity)
 
 if(enable-mfront-quantity-tests)
@@ -739,6 +740,8 @@ test_generic(externalmodelcaller3 ExternalModelCallerTest.ref)
 # test_generic(parametertest)
 # test_generic(parametertest2)
 test_generic(norton5)
+
+test_generic(PoroElasticity)
 test_generic(PoroPlasticity PoroPlasticity.ref)
 
 # test_generic(elasticmaterialpropertiesboundschecktest

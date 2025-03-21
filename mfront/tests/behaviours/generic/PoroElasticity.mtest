@@ -1,0 +1,16 @@
+@XMLOutputFile @xml_output@;
+@Behaviour @library@ 'PoroElasticity';
+
+@MaximumNumberOfSubSteps 1;
+@GradientEpsilon 1e-10;
+
+@MaterialProperty<constant> 'k' 100.e6;
+@MaterialProperty<constant> 'mu' 100.e6;
+@MaterialProperty<constant> 'biot' 1.;
+@MaterialProperty<constant> 'Nbiot' 100.e6;
+@ExternalStateVariable 'Temperature' {0:0};
+@ImposedThermodynamicForce 'PorosityChange' {0:0};
+
+//@ImposedGradient 'PressureChange' {0:0};
+@ImposedGradient 'StrainXX' {0:0, 1:-1e-2};
+@Times {0, 1 in 100};
