@@ -1,4 +1,3 @@
-
 macro(install_mfront_desc file)
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}.md
