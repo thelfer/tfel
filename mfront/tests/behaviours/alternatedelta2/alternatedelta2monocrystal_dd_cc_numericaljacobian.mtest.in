@@ -8,7 +8,7 @@
 @AccelerationAlgorithm 'AlternateDelta2';
 
 @ModellingHypothesis 'Tridimensional';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatmonocrystal_dd_cc_numericaljacobian';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatmonocrystal_dd_cc_numericaljacobian';
 
 // Material properties
 @MaterialProperty<constant> 'PoissonRatio12' 0.35;

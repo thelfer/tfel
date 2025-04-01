@@ -5,8 +5,8 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ELASTICITY_3D';
-@MaterialProperty<castem>   'YoungModulus' '@MFrontMaterialPropertiesCastemBuildPath@' 'Inconel600_YoungModulus';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'ELASTICITY_3D';
+@MaterialProperty<castem>   'YoungModulus' '$<TARGET_FILE:MFrontMaterialProperties-castem>' 'Inconel600_YoungModulus';
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 
 @Real 'T0' 400.;

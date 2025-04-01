@@ -6,7 +6,7 @@
  */
 
 @AccelerationAlgorithm 'IronsTuck';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainelasticity2';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatlogarithmicstrainelasticity2';
 
 @DeformationGradientEpsilon 2.e-11;
 @StressEpsilon 2.e3;

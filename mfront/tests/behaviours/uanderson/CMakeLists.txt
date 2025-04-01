@@ -56,8 +56,9 @@ macro(test_uanderson test_arg)
       endif(TFEL_APPEND_SUFFIX)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
-    get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
-    get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
+    configure_file(uanderson${test_arg}.mtest.in uanderson${test_arg}.mtest.in2 @ONLY)
+    file(GENERATE OUTPUT uanderson${test_arg}.mtest
+                  INPUT ${CMAKE_CURRENT_BINARY_DIR}/uanderson${test_arg}.mtest.in2)
     configure_file(uanderson${test_arg}.mtest.in
       uanderson${test_arg}.mtest @ONLY)
     if(_NO_XML_OUTPUT)

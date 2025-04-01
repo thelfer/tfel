@@ -1,7 +1,7 @@
 @Author  Thomas Helfer;
 @Date    1/01/2018;
 
-@Behaviour<calculix> '@MFrontCalculiXBehavioursBuildPath@' 'PARAMETERTEST2';
+@Behaviour<calculix> '$<TARGET_FILE:MFrontCalculiXBehaviours>' 'PARAMETERTEST2';
 @ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
 
 @Parameter 'ArrayOfParameters[0]' 15;

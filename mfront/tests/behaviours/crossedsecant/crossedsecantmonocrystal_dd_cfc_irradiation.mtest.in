@@ -10,7 +10,7 @@
 @Real 'young' 'G*2.6';
 
 @AccelerationAlgorithm 'CrossedSecant';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatmonocrystal_dd_cfc_irradiation';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatmonocrystal_dd_cfc_irradiation';
 
 @MaterialProperty<constant> 'YoungModulus1'     'young';
 @MaterialProperty<constant> 'YoungModulus2'     'young';

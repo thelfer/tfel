@@ -6,7 +6,7 @@
 };
 
 @AccelerationAlgorithm 'Cast3M';
-@Behaviour<epx> '@MFrontEuroplexusBehavioursBuildPath@' 'AxialGrowth';
+@Behaviour<epx> '$<TARGET_FILE:MFrontEuroplexusBehaviours>' 'AxialGrowth';
 
 @Real 'E1'   '7.8e+10';
 @Real 'E2'   '2.64233e+11';

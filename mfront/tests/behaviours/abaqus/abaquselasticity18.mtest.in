@@ -5,7 +5,7 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ELASTICITY2_3D';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'ELASTICITY2_3D';
 
 @Real 'E'  150.e9;
 @Real 'nu'   0.3333;

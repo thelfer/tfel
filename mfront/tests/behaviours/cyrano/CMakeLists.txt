@@ -127,8 +127,9 @@ macro(test_cyrano test_arg)
     else(CMAKE_CONFIGURATION_TYPES)
       set(test "cyrano${test_arg}_${rm}_mtest")
       set(file "cyrano${test_arg}-${rm}.mtest")
-      get_property(MFrontCyranoBehavioursBuildPath TARGET MFrontCyranoBehaviours PROPERTY LOCATION_${conf})
-      configure_file(cyrano${test_arg}.mtest.in ${file} @ONLY)
+      configure_file(cyrano${test_arg}.mtest.in cyrano${test_arg}.mtest.in2 @ONLY)
+      file(GENERATE OUTPUT ${file}
+                    INPUT ${CMAKE_CURRENT_BINARY_DIR}/cyrano${test_arg}.mtest.in2)
       if(_NO_XML_OUTPUT)
 	add_test(NAME ${test}
 	  COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=false --result-file-output=false ${file})

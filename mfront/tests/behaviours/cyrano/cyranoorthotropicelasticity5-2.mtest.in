@@ -9,7 +9,7 @@
 @MaximumNumberOfSubSteps 1;
 @AccelerationAlgorithm 'Cast3M';
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStress';
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoorthotropicelastic5';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranoorthotropicelastic5';
 
 @ExternalStateVariable 'Temperature' 293.15;
 @ExternalStateVariable 'AxialStress' 0;

@@ -7,7 +7,7 @@
 
 @MaximumNumberOfSubSteps 1;
 
-@Behaviour<calculix> '@MFrontCalculiXBehavioursBuildPath@' 'LOGARITHMICSTRAINNORTONCREEP';
+@Behaviour<calculix> '$<TARGET_FILE:MFrontCalculiXBehaviours>' 'LOGARITHMICSTRAINNORTONCREEP';
 @DrivingVariableEpsilon 4.e-8;
 @StressEpsilon          2.e3;
 

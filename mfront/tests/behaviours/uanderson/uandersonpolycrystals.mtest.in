@@ -9,7 +9,7 @@
 @Real 'nu'    0.3;
 @Real 'G'     'young/2.6';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatpolycrystals';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatpolycrystals';
 
 @StiffnessMatrixType 'Elastic' ;
 

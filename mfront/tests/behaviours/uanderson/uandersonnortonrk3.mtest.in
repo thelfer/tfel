@@ -10,7 +10,7 @@
 @PredictionPolicy 'ElasticPrediction';
 @AccelerationAlgorithm 'UAnderson';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatnortonrk3';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatnortonrk3';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'A' 8.e-67;

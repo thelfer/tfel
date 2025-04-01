@@ -7,7 +7,7 @@
 
 @AccelerationAlgorithm 'Crossed2Delta';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatchaboche';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatchaboche';
 @StrainEpsilon '3e-7';
 @StressEpsilon '145200.*3e-7';
 

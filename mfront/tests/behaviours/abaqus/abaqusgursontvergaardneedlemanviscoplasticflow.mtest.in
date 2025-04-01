@@ -1,7 +1,7 @@
 @Author Jeremy Hure;
 @Date 10 Février 2014;
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'GURSONTVERGAARDNEEDLEMANVISCOPLASTICFLOW_NUMERICALJACOBIAN_3D';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'GURSONTVERGAARDNEEDLEMANVISCOPLASTICFLOW_NUMERICALJACOBIAN_3D';
 
 @MaterialProperty<constant> 'YoungModulus' 200000.;
 @MaterialProperty<constant> 'PoissonRatio' 0.3;

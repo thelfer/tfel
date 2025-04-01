@@ -6,7 +6,7 @@
  */
 
 @AccelerationAlgorithm 'FAnderson';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainelasticity2';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatlogarithmicstrainelasticity2';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

@@ -6,7 +6,7 @@
  */
 
 @AccelerationAlgorithm 'Cast3M';
-@Behaviour<epx> '@MFrontEuroplexusBehavioursBuildPath@' 'FiniteRotationSmallStrainElasticity2';
+@Behaviour<epx> '$<TARGET_FILE:MFrontEuroplexusBehaviours>' 'FiniteRotationSmallStrainElasticity2';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

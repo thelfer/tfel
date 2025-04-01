@@ -6,7 +6,7 @@
  */
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<castem,LogarithmicStrain1D> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity';
+@Behaviour<castem,LogarithmicStrain1D> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatelasticity';
 
 @Real 'E'  150.e9;
 @Real 'nu'   0.3333;

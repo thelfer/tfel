@@ -1,5 +1,5 @@
 @AccelerationAlgorithm 'FAnderson';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatgeneralizedmaxwell';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatgeneralizedmaxwell';
 
 @MaterialProperty<constant> 'YoungModulus' 5.e9;
 @MaterialProperty<constant> 'PoissonRatio'  0.25;

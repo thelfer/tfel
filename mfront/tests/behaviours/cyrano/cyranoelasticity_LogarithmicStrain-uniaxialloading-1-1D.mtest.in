@@ -6,7 +6,7 @@
  */
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranologarithmicstrainelasticity';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranologarithmicstrainelasticity';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

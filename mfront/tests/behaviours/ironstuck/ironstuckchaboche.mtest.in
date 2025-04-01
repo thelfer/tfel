@@ -7,7 +7,7 @@
 
 @AccelerationAlgorithm 'IronsTuck';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatchaboche';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatchaboche';
 
 @Parameter 'epsilon' 1.e-15;
 

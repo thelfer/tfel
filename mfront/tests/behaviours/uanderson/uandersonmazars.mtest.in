@@ -5,7 +5,7 @@
  * \brief  17 avril 2013
  */
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatmazars';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatmazars';
 @MaterialProperty<constant> 'YoungModulus'     3.2e10; 
 @MaterialProperty<constant> 'PoissonRatio'     0.2;    
 @MaterialProperty<constant> 'Ac' 1.15;

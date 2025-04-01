@@ -16,7 +16,7 @@
 @ModellingHypothesis 'PlaneStress';
 @PredictionPolicy 'LinearPrediction';
 @AccelerationAlgorithm 'FAnderson';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitorthotropiccreep2';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatimplicitorthotropiccreep2';
 @StressEpsilon 1.e-2;
 
 @Real 'young' 100e9;

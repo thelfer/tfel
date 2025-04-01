@@ -6,7 +6,7 @@
 };
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<castem,LogarithmicStrain1D> '@MFrontCastemBehavioursBuildPath@' 'umatorthotropicelastic';
+@Behaviour<castem,LogarithmicStrain1D> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatorthotropicelastic';
 
 @Real 'E1'   '7.8e+10';
 @Real 'E2'   '2.64233e+11';

@@ -6,7 +6,7 @@
 };
 
 @MaximumNumberOfSubSteps 1;
-@Behaviour<ansys> '@MFrontAnsysBehavioursBuildPath@' 'InitializationFailureTest_3D';
+@Behaviour<ansys> '$<TARGET_FILE:MFrontAnsysBehaviours>' 'InitializationFailureTest_3D';
 @ExternalStateVariable 'Temperature' 293.15;
 
 @Times {0., 1};

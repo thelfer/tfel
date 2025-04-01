@@ -10,7 +10,7 @@
 
 @ModellingHypothesis 'Axisymmetrical';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatellipticcreep';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatellipticcreep';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

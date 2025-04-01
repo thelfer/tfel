@@ -5,7 +5,7 @@
   "account for an orthotropic material."
 };
 
-@Behaviour<calculix> '@MFrontCalculiXBehavioursBuildPath@' 'ORTHOTROPICELASTIC2';
+@Behaviour<calculix> '$<TARGET_FILE:MFrontCalculiXBehaviours>' 'ORTHOTROPICELASTIC2';
 
 @Real 'E1'   '7.8e+10';
 @Real 'E2'   '2.64233e+11';

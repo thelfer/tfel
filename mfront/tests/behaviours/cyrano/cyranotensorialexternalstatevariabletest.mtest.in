@@ -6,7 +6,7 @@
 
 @MaximumNumberOfSubSteps 1;
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranotensorialexternalstatevariabletest';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranotensorialexternalstatevariabletest';
 
 // material properties
 @MaterialProperty<constant> 'YoungModulus' 150e9;

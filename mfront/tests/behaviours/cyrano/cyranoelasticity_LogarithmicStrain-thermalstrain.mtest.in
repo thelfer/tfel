@@ -6,7 +6,7 @@
  */
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranologarithmicstrainelasticity4';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranologarithmicstrainelasticity4';
 
 @Real 'E'  150.e9;
 @Real 'nu'   0.3333;

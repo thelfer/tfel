@@ -2,7 +2,7 @@
 @Date 10 Février 2014;
 
 @StiffnessMatrixType 'ConsistentTangentOperator';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatgursontvergaardneedlemanviscoplasticflow_numericaljacobian';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatgursontvergaardneedlemanviscoplasticflow_numericaljacobian';
 
 @MaterialProperty<constant> 'YoungModulus' 200000.;
 @MaterialProperty<constant> 'PoissonRatio' 0.3;

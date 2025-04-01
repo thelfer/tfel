@@ -5,7 +5,7 @@
  * \brief 08 octobre 2014
  */
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatpolycrystals_dd_cc';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatpolycrystals_dd_cc';
 @StiffnessMatrixType 'Elastic' ;
 
 @MaterialProperty<constant> 'YoungModulus1' 233705.0;

@@ -1,5 +1,5 @@
 @MaximumNumberOfSubSteps 1;
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatgurson';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatgurson';
 @AccelerationAlgorithm 'FAnderson';
 
 // Material properties

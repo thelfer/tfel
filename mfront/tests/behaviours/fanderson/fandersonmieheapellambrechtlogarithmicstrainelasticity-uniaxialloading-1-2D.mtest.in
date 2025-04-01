@@ -7,7 +7,7 @@
 
 @ModellingHypothesis 'Axisymmetrical';
 @AccelerationAlgorithm 'FAnderson';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainelasticity';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatlogarithmicstrainelasticity';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

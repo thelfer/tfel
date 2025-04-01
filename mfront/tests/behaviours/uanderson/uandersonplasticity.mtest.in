@@ -9,7 +9,7 @@
 @AccelerationAlgorithm 'UAnderson';
 
 @Real 'Hy'  '102e9'; // H is used internally for the Heavyside function
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatplasticity';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatplasticity';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'H'                'Hy';

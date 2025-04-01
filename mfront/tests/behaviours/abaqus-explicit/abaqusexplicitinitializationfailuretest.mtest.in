@@ -6,7 +6,7 @@
 };
 
 @MaximumNumberOfSubSteps 1;
-@Behaviour<abaqus_explicit> '@MFrontAbaqusExplicitBehavioursBuildPath@' 'INITIALIZATIONFAILURETEST_3D';
+@Behaviour<abaqus_explicit> '$<TARGET_FILE:MFrontAbaqusExplicitBehaviours>' 'INITIALIZATIONFAILURETEST_3D';
 @ExternalStateVariable 'Temperature' 293.15;
 
 @ImposedDrivingVariable 'FXY' 0.;

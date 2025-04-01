@@ -12,7 +12,7 @@
 
 @AccelerationAlgorithm 'UAnderson';
 @ModellingHypothesis 'GeneralisedPlaneStrain';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatsaintvenantkirchhoffelasticity';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatsaintvenantkirchhoffelasticity';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

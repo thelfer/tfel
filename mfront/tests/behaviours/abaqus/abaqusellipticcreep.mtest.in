@@ -9,7 +9,7 @@
 
 @ModellingHypothesis 'Axisymmetrical';
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ELLIPTICCREEP_AXIS';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'ELLIPTICCREEP_AXIS';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

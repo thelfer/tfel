@@ -6,7 +6,7 @@
  */
 
 @UseCastemAccelerationAlgorithm true;
-@Behaviour<epx> '@MFrontEuroplexusBehavioursBuildPath@' 'LogarithmicStrainElasticity';
+@Behaviour<epx> '$<TARGET_FILE:MFrontEuroplexusBehaviours>' 'LogarithmicStrainElasticity';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

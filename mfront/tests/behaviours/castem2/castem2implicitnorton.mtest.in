@@ -7,7 +7,7 @@
 
 @PredictionPolicy 'LinearPrediction';
 @StiffnessMatrixType 'ConsistentTangentOperator';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitnorton';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatimplicitnorton';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

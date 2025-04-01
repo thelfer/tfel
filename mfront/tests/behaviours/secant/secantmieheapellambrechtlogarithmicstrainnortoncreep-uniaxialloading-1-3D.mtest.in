@@ -8,7 +8,7 @@
 @AccelerationAlgorithm 'Secant';
 @MaximumNumberOfSubSteps 1;
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainnortoncreep';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatlogarithmicstrainnortoncreep';
 @DrivingVariableEpsilon 2.e-8;
 @StressEpsilon          3.e3;
 

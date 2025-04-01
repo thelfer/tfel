@@ -6,7 +6,7 @@
 };
 
 @ModellingHypothesis 'PlaneStress';
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ABAQUSORTHOTROPICELASTIC_PSTRESS';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'ABAQUSORTHOTROPICELASTIC_PSTRESS';
 
 @Real 'E1'   '7.8e+10';
 @Real 'E2'   '2.64233e+11';

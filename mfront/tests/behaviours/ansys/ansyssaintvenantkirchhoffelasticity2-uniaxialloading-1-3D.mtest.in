@@ -5,7 +5,7 @@
  * \brief  26 nov. 2013
  */
 
-@Behaviour<ansys> '@MFrontAnsysBehavioursBuildPath@' 'SaintVenantKirchhoffElasticity2_3D';
+@Behaviour<ansys> '$<TARGET_FILE:MFrontAnsysBehaviours>' 'SaintVenantKirchhoffElasticity2_3D';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

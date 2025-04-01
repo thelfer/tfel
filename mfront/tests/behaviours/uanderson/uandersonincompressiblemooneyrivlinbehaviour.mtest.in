@@ -6,7 +6,7 @@
  */
 
 @AccelerationAlgorithm 'UAnderson';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatincompressiblemooneyrivlinbehaviour';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatincompressiblemooneyrivlinbehaviour';
 
 @Real 'C_1' '0.183';
 @Real 'C_2' '0.0034';

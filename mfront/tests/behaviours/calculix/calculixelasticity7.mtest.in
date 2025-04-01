@@ -5,7 +5,7 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<calculix> '@MFrontCalculiXBehavioursBuildPath@' 'ELASTICITY';
+@Behaviour<calculix> '$<TARGET_FILE:MFrontCalculiXBehaviours>' 'ELASTICITY';
 
 @Real 'E'  150.e9;
 @Real 'nu'   0.3333;

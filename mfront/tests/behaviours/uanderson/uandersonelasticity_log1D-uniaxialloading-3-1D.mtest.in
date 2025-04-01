@@ -7,7 +7,7 @@
 
 @AccelerationAlgorithm 'UAnderson';
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity_log1d';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatelasticity_log1d';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

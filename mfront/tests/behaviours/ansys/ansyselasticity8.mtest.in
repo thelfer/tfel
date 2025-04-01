@@ -5,7 +5,7 @@
   "account for an orthotropic material."
 };
 
-@Behaviour<ansys> '@MFrontAnsysBehavioursBuildPath@' 'OrthotropicElastic_3D';
+@Behaviour<ansys> '$<TARGET_FILE:MFrontAnsysBehaviours>' 'OrthotropicElastic_3D';
 @Real 'E'  100.e9;
 @Real 'nu'   0.3;
 @Real 'a'    2.e-5;

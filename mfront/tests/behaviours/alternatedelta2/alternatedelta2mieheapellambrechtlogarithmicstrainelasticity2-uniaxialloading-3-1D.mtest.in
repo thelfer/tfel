@@ -7,7 +7,7 @@
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
 @AccelerationAlgorithm 'AlternateDelta2';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainelasticity2';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatlogarithmicstrainelasticity2';
 @StressEpsilon 1.e-4;
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;

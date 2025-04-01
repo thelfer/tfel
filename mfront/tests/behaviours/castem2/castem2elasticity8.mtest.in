@@ -8,7 +8,7 @@
 @PredictionPolicy 'ElasticPrediction';
 @StiffnessMatrixType 'ConsistentTangentOperator';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatorthotropicelastic';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatorthotropicelastic';
 @Real 'E'  100.e9;
 @Real 'nu'   0.3;
 @Real 'a'    2.e-5;

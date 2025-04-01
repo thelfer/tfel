@@ -8,7 +8,7 @@
 @MaximumNumberOfSubSteps 1;
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
 
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoellipticcreep';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranoellipticcreep';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @InternalStateVariable 'Porosity' 0.;

@@ -6,7 +6,7 @@
  */
 
 @MaximumNumberOfSubSteps 1;
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'LOGARITHMICSTRAINELASTICITY2_3D';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'LOGARITHMICSTRAINELASTICITY2_3D';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

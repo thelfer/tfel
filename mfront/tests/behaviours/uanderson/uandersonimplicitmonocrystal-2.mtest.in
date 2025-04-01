@@ -9,7 +9,7 @@
  */
 
 @ModellingHypothesis 'Tridimensional';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitmonocrystal';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatimplicitmonocrystal';
 @MaximumNumberOfSubSteps 1;
 
 // Material properties

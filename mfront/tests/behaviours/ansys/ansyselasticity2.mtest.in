@@ -5,7 +5,7 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<ansys> '@MFrontAnsysBehavioursBuildPath@' 'Elasticity_3D';
+@Behaviour<ansys> '$<TARGET_FILE:MFrontAnsysBehaviours>' 'Elasticity_3D';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

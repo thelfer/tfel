@@ -8,7 +8,7 @@
 
 @MaximumNumberOfSubSteps 1;
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranomaterialpropertiesboundscheck';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranomaterialpropertiesboundscheck';
 @OutOfBoundsPolicy 'Strict';
 @MaterialProperty<constant> 'YoungModulus'   50.e9;
 @MaterialProperty<constant> 'PoissonRatio'    0.3;

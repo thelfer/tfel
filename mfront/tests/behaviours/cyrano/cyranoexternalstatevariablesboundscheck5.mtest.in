@@ -8,7 +8,7 @@
 
 @MaximumNumberOfSubSteps 1;
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoexternalstatevariablesboundscheck';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranoexternalstatevariablesboundscheck';
 @OutOfBoundsPolicy 'Strict';
 
 @ExternalStateVariable 'Temperature' 293.15;

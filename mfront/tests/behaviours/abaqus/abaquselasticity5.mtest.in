@@ -5,7 +5,7 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ORTHOTROPICELASTIC_3D';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'ORTHOTROPICELASTIC_3D';
 @MaterialProperty<constant> 'YoungModulus1'     100.e9;
 @MaterialProperty<constant> 'YoungModulus2'     100.e9;
 @MaterialProperty<constant> 'YoungModulus3'     100.e9;

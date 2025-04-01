@@ -7,7 +7,7 @@
 };
 
 @MaximumNumberOfSubSteps 1;
-@Behaviour<ansys> '@MFrontAnsysBehavioursBuildPath@' 'MaterialPropertiesBoundsCheck_3D';
+@Behaviour<ansys> '$<TARGET_FILE:MFrontAnsysBehaviours>' 'MaterialPropertiesBoundsCheck_3D';
 @OutOfBoundsPolicy 'None';
 @MaterialProperty<constant> 'YoungModulus'  150.e9;
 @MaterialProperty<constant> 'PoissonRatio'   1;

@@ -6,7 +6,7 @@
  */
 
 @AccelerationAlgorithm 'Cast3M';
-@Behaviour<abaqus_explicit> '@MFrontAbaqusExplicitBehavioursBuildPath@' 'SAINTVENANTKIRCHHOFFELASTICITY2_3D';
+@Behaviour<abaqus_explicit> '$<TARGET_FILE:MFrontAbaqusExplicitBehaviours>' 'SAINTVENANTKIRCHHOFFELASTICITY2_3D';
 @MaterialProperty<constant> 'MassDensity'  15000.;
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;

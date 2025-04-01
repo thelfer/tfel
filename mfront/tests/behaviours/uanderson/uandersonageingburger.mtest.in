@@ -1,5 +1,5 @@
 @AccelerationAlgorithm 'UAnderson';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatageingburger';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatageingburger';
 
 @MaterialProperty<constant> 'YoungModulus' 31000. ; 
 @MaterialProperty<constant> 'PoissonRatio'    0.2 ;    

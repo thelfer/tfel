@@ -5,7 +5,7 @@
 @MaximumNumberOfSubSteps 1;
 @ModellingHypothesis 'Axisymmetrical';
 
-@Behaviour<abaqus_explicit> '@MFrontAbaqusExplicitBehavioursBuildPath@' 'IMPLICITSIMOMIEHEELASTOPLASTICITY_AXIS';
+@Behaviour<abaqus_explicit> '$<TARGET_FILE:MFrontAbaqusExplicitBehaviours>' 'IMPLICITSIMOMIEHEELASTOPLASTICITY_AXIS';
 @MaterialProperty<constant> 'YoungModulus'     200.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'ThermalExpansion'   0.;

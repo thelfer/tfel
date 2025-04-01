@@ -6,7 +6,7 @@
  */
 
 @StiffnessMatrixType 'ConsistentTangentOperator';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatelasticity';
 
 @Real 'E'  150.e9;
 @Real 'nu'   0.3333;

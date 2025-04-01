@@ -9,7 +9,7 @@
 @PredictionPolicy 'LinearPrediction';
 @AccelerationAlgorithm 'FAnderson';
 @ModellingHypothesis 'PlaneStress';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitnorton4';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatimplicitnorton4';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

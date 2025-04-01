@@ -14,7 +14,7 @@
  };
 
 @ModellingHypothesis 'PlaneStress';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitnorton2';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatimplicitnorton2';
 
 @MaximumNumberOfSubSteps   1;
 @AccelerationAlgorithm 'UAnderson';

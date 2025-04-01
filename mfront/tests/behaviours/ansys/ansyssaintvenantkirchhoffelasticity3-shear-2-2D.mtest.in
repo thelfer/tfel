@@ -6,7 +6,7 @@
  */
 
 @ModellingHypothesis 'Axisymmetrical';
-@Behaviour<ansys> '@MFrontAnsysBehavioursBuildPath@' 'SaintVenantKirchhoffElasticity3_axis';
+@Behaviour<ansys> '$<TARGET_FILE:MFrontAnsysBehaviours>' 'SaintVenantKirchhoffElasticity3_axis';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

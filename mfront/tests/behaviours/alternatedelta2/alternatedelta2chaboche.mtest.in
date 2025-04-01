@@ -8,7 +8,7 @@
 @AccelerationAlgorithm 'AlternateDelta2';
 @MaximumNumberOfSubSteps 1.;
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatchaboche';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatchaboche';
 @Parameter 'epsilon' 1e-16;
 @StrainEpsilon '1e-8';
 @StressEpsilon '145200.*1e-8';

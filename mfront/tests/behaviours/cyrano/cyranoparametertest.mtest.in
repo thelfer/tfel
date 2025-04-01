@@ -2,7 +2,7 @@
 @Date    1/01/2018;
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoparametertest';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranoparametertest';
 @ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
 
 @Parameter 'YoungModulus' 100e9;

@@ -6,7 +6,7 @@
 };
 
 @ModellingHypothesis 'PlaneStress';
-@Behaviour<ansys> '@MFrontAnsysBehavioursBuildPath@' 'OrthotropicElastic_pstress';
+@Behaviour<ansys> '$<TARGET_FILE:MFrontAnsysBehaviours>' 'OrthotropicElastic_pstress';
 
 @Real 'E1'   '7.8e+10';
 @Real 'E2'   '2.64233e+11';

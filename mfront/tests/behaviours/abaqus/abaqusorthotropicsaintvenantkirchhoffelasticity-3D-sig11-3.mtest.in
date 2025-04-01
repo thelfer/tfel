@@ -6,7 +6,7 @@
 };
 
 @MaximumNumberOfSubSteps 1;
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ORTHOTROPICSAINTVENANTKIRCHHOFFELASTICITY_3D';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'ORTHOTROPICSAINTVENANTKIRCHHOFFELASTICITY_3D';
 @StressEpsilon 1;
 
 @ImposedDeformationGradient 'FXX' {0.:1.,1.:1.4};

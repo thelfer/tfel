@@ -6,7 +6,7 @@
  };
 
 @StiffnessMatrixType 'ConsistentTangentOperator';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatorthotropicelastic';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatorthotropicelastic';
 @MaterialProperty<constant> 'YoungModulus1'     100.e9;
 @MaterialProperty<constant> 'YoungModulus2'     300.e9;
 @MaterialProperty<constant> 'YoungModulus3'     100.e9;

@@ -5,7 +5,7 @@
 }
 
 @ModellingHypothesis 'Axisymmetrical';
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ELASTICITY_AXIS';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'ELASTICITY_AXIS';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

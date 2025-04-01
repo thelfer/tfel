@@ -7,7 +7,7 @@
 
 @PredictionPolicy 'LinearPrediction';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitnorton2';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatimplicitnorton2';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

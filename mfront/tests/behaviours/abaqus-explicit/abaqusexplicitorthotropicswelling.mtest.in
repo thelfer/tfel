@@ -6,7 +6,7 @@
 };
 
 @AccelerationAlgorithm 'Cast3M';
-@Behaviour<abaqus_explicit> '@MFrontAbaqusExplicitBehavioursBuildPath@' 'ORTHOTROPICSWELLING_3D';
+@Behaviour<abaqus_explicit> '$<TARGET_FILE:MFrontAbaqusExplicitBehaviours>' 'ORTHOTROPICSWELLING_3D';
 
 @Real 'E1'   '7.8e+10';
 @Real 'E2'   '2.64233e+11';

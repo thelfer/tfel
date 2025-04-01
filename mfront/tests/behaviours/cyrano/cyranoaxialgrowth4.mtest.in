@@ -6,7 +6,7 @@
 };
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoaxialgrowth3';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranoaxialgrowth3';
 
 @Real 'E1'   '7.8e+10';
 @Real 'E2'   '2.64233e+11';

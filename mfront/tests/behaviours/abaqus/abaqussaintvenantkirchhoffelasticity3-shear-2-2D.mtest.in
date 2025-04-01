@@ -6,7 +6,7 @@
  */
 
 @ModellingHypothesis 'Axisymmetrical';
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'SAINTVENANTKIRCHHOFFELASTICITY3_AXIS';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'SAINTVENANTKIRCHHOFFELASTICITY3_AXIS';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

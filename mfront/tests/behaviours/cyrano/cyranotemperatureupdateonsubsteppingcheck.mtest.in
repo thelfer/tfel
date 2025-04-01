@@ -7,7 +7,7 @@
 
 @MaximumNumberOfSubSteps 1;
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranotemperatureupdateonsubsteppingcheck';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranotemperatureupdateonsubsteppingcheck';
 
 @Real 'Ti' 293.15;
 @Real 'Te' 1223.15;

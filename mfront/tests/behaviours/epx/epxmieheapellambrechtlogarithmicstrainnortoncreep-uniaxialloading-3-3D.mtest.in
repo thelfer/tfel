@@ -8,7 +8,7 @@
 @UseCastemAccelerationAlgorithm true;
 @MaximumNumberOfSubSteps 1;
 
-@Behaviour<epx> '@MFrontEuroplexusBehavioursBuildPath@' 'LogarithmicStrainNortonCreep';
+@Behaviour<epx> '$<TARGET_FILE:MFrontEuroplexusBehaviours>' 'LogarithmicStrainNortonCreep';
 @DrivingVariableEpsilon 4.e-8;
 @StressEpsilon          3.5e3;
 

@@ -8,7 +8,7 @@
 @AccelerationAlgorithm 'AlternateDelta2';
 @MaximumNumberOfSubSteps 1;
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainnortoncreep';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatlogarithmicstrainnortoncreep';
 @DrivingVariableEpsilon 5.e-8;
 @StressEpsilon          3.e3;
 

@@ -9,7 +9,7 @@
 @MaximumNumberOfSubSteps 1;
 @ModellingHypothesis 'Axisymmetrical';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitsimomieheelastoplasticity';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatimplicitsimomieheelastoplasticity';
 @MaterialProperty<constant> 'YoungModulus'     200.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 's_y' 200e6;

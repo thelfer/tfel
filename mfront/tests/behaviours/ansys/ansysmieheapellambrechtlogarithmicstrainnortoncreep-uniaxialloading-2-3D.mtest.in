@@ -6,7 +6,7 @@
  */
 
 @MaximumNumberOfSubSteps 1;
-@Behaviour<ansys> '@MFrontAnsysBehavioursBuildPath@' 'LogarithmicStrainNortonCreep_3D';
+@Behaviour<ansys> '$<TARGET_FILE:MFrontAnsysBehaviours>' 'LogarithmicStrainNortonCreep_3D';
 @DrivingVariableEpsilon 4.e-8;
 @StressEpsilon          2.e3;
 

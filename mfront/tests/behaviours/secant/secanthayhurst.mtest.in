@@ -7,7 +7,7 @@
 
 @AccelerationAlgorithm 'Secant';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umathayhurst';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umathayhurst';
 @MaterialProperty<constant> 'YoungModulus'      1.45000E5;
 @MaterialProperty<constant> 'PoissonRatio'         0.3;
 @MaterialProperty<constant> 'K'          9.691              ;

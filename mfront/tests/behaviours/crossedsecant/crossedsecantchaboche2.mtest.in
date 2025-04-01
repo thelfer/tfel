@@ -7,7 +7,7 @@
 
 @AccelerationAlgorithm 'CrossedSecant';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatchaboche2';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatchaboche2';
 @StrainEpsilon 1e-8;
 @StressEpsilon  1;
 

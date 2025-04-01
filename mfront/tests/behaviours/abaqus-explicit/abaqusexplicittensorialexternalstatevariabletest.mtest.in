@@ -6,7 +6,7 @@
 
 @MaximumNumberOfSubSteps 1;
 @ModellingHypothesis 'Tridimensional';
-@Behaviour<abaqus_explicit> '@MFrontAbaqusExplicitBehavioursBuildPath@' 'TENSORIALEXTERNALSTATEVARIABLETEST_3D';
+@Behaviour<abaqus_explicit> '$<TARGET_FILE:MFrontAbaqusExplicitBehaviours>' 'TENSORIALEXTERNALSTATEVARIABLETEST_3D';
 
 // material properties
 @MaterialProperty<constant> 'YoungModulus' 150e9;

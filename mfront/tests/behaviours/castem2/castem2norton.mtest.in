@@ -9,7 +9,7 @@
 
 @ModellingHypothesis 'Axisymmetrical';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatnorton';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatnorton';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'MassDensity'        0.;

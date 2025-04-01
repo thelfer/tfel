@@ -5,7 +5,7 @@
  * \brief  23 mai 2013
  */
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'BURGER_3D';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'BURGER_3D';
 @MaterialProperty<constant> 'YoungModulus'  31000. ; 
 @MaterialProperty<constant> 'PoissonRatio'   0.3 ;    
 

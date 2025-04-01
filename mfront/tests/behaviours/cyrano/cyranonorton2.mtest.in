@@ -9,7 +9,7 @@
 
 @PredictionPolicy 'ElasticPrediction';
 
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranonorton';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranonorton';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @Real 'A' 8.e-67;

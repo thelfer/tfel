@@ -7,7 +7,7 @@
 
 @MaximumNumberOfSubSteps 1;
 @AccelerationAlgorithm 'FAnderson';
-@Behaviour<castem> '@MFrontCastemBehavioursBuildPath@' 'umatorthotropicsaintvenantkirchhoffelasticity';
+@Behaviour<castem> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatorthotropicsaintvenantkirchhoffelasticity';
 
 @MaterialProperty<constant> 'YoungModulus1'  '7.8e+10';
 @MaterialProperty<constant> 'YoungModulus2'  '2.64233e+11';

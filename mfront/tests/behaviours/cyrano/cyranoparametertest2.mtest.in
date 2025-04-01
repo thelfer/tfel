@@ -2,7 +2,7 @@
 @Date    1/01/2018;
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoparametertest2';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranoparametertest2';
 @ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
 
 @Parameter 'ArrayOfParameters[0]' 15;

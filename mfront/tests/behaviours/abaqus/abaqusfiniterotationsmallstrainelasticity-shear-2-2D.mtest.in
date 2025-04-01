@@ -6,7 +6,7 @@
  */
 
 @ModellingHypothesis 'PlaneStrain';
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'FINITEROTATIONSMALLSTRAINELASTICITY_PSTRAIN';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'FINITEROTATIONSMALLSTRAINELASTICITY_PSTRAIN';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

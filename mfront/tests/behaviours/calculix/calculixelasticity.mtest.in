@@ -5,7 +5,7 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<calculix> '@MFrontCalculiXBehavioursBuildPath@' 'ELASTICITY';
+@Behaviour<calculix> '$<TARGET_FILE:MFrontCalculiXBehaviours>' 'ELASTICITY';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

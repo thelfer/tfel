@@ -1,7 +1,7 @@
 @Author Jeremy Hure;
 @Date 10 Février 2014;
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatgursontvergaardneedlemanplasticflow_numericaljacobian';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatgursontvergaardneedlemanplasticflow_numericaljacobian';
 
 @MaterialProperty<constant> 'YoungModulus' 200000.;
 @MaterialProperty<constant> 'PoissonRatio' 0.3;

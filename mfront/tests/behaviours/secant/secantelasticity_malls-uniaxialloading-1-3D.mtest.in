@@ -7,7 +7,7 @@
 
 @AccelerationAlgorithm 'Secant';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity_malls';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatelasticity_malls';
 @StressEpsilon 1e2;
 
 @MaterialProperty<constant> 'YoungModulus'     215.e9;

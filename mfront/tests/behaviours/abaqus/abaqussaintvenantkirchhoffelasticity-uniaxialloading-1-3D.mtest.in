@@ -5,7 +5,7 @@
  * \brief  26 nov. 2013
  */
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'SAINTVENANTKIRCHHOFFELASTICITY_3D';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'SAINTVENANTKIRCHHOFFELASTICITY_3D';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

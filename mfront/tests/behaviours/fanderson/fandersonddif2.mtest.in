@@ -8,7 +8,7 @@
 @MaximumNumberOfSubSteps 1;
 @AccelerationAlgorithm 'FAnderson';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatddif2';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatddif2';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'ThermalExpansion'   0.;

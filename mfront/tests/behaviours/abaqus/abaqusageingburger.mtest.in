@@ -1,4 +1,4 @@
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'AGEINGBURGER_3D';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'AGEINGBURGER_3D';
 
 @MaterialProperty<constant> 'YoungModulus' 31000. ; 
 @MaterialProperty<constant> 'PoissonRatio'    0.2 ;    

@@ -7,7 +7,7 @@
 };
 
 @MaximumNumberOfSubSteps 1;
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'MATERIALPROPERTIESBOUNDSCHECK_3D';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'MATERIALPROPERTIESBOUNDSCHECK_3D';
 @OutOfBoundsPolicy 'Warning';
 @MaterialProperty<constant> 'YoungModulus'   50.e9;
 @MaterialProperty<constant> 'PoissonRatio'    0.3;

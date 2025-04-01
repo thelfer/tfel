@@ -6,8 +6,8 @@
  */
 
 @StiffnessMatrixType 'ConsistentTangentOperator';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity';
-@MaterialProperty<castem>   'YoungModulus' '@MFrontMaterialPropertiesCastemBuildPath@' 'Inconel600_YoungModulus';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatelasticity';
+@MaterialProperty<castem>   'YoungModulus' '$<TARGET_FILE:MFrontMaterialProperties-castem>' 'Inconel600_YoungModulus';
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'MassDensity'        0.;
 @MaterialProperty<constant> 'ThermalExpansion'   0.;

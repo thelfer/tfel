@@ -7,7 +7,7 @@
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
 @StiffnessMatrixType 'ConsistentTangentOperator';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatfiniterotationsmallstrainelasticity2';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatfiniterotationsmallstrainelasticity2';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

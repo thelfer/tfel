@@ -7,7 +7,7 @@
 
 @StiffnessMatrixType 'ConsistentTangentOperator';
 @MaximumNumberOfSubSteps 1;
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'LOGARITHMICSTRAINNORTONCREEP_3D';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'LOGARITHMICSTRAINNORTONCREEP_3D';
 @DrivingVariableEpsilon 5.e-8;
 @StressEpsilon          2.e3;
 

@@ -6,7 +6,7 @@
  */
 
 @ModellingHypothesis 'Tridimensional';
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'MONOCRYSTAL_DD_CC_IRRADIATION_3D';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'MONOCRYSTAL_DD_CC_IRRADIATION_3D';
 
 // Material properties
 @MaterialProperty<constant> 'DeltaG_0' 0.84;

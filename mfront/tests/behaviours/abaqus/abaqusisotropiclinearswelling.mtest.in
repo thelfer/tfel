@@ -5,7 +5,7 @@
   "taken into account."
 };
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ISOTROPICLINEARSWELLING_3D';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'ISOTROPICLINEARSWELLING_3D';
 
 @MaterialProperty<constant> 'YoungModulus' 150.e9;
 @MaterialProperty<constant> 'PoissonRatio'   0.3;

@@ -10,7 +10,7 @@
 @AccelerationAlgorithm 'Steffensen';
 @MaximumNumberOfSubSteps 1;
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainnortoncreep';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatlogarithmicstrainnortoncreep';
 @DrivingVariableEpsilon 1.e-10;
 @StressEpsilon          2.e3;
 

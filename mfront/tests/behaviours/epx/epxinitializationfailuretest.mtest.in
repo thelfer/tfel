@@ -6,7 +6,7 @@
 };
 
 @MaximumNumberOfSubSteps 1;
-@Behaviour<epx> '@MFrontEuroplexusBehavioursBuildPath@' 'InitializationFailureTest';
+@Behaviour<epx> '$<TARGET_FILE:MFrontEuroplexusBehaviours>' 'InitializationFailureTest';
 @ExternalStateVariable 'Temperature' 293.15;
 
 @ImposedDeformationGradient 'FYX' 0.;

@@ -12,7 +12,7 @@
 @Real 'nu'    0.3;
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoorthotropiccreep';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranoorthotropiccreep';
 @MaterialProperty<constant> 'YoungModulus1'     'young';
 @MaterialProperty<constant> 'YoungModulus2'     'young';
 @MaterialProperty<constant> 'YoungModulus3'     'young';

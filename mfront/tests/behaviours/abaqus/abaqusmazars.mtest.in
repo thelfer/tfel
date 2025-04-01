@@ -7,7 +7,7 @@
 
 @MaximumNumberOfSubSteps 1;
 @AccelerationAlgorithm 'Cast3M';
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'MAZARS_3D';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'MAZARS_3D';
 @MaterialProperty<constant> 'YoungModulus'     3.2e10; 
 @MaterialProperty<constant> 'PoissonRatio'     0.2;    
 

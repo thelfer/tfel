@@ -10,7 +10,7 @@
 
 @Real 'Y'  150.e9;
 @Real 'nu' 0.3;
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatnorton';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatnorton';
 @MaterialProperty<constant> 'YoungModulus'      'Y';
 @MaterialProperty<constant> 'PoissonRatio'      'nu';
 @Real 'A' 8.e-67;

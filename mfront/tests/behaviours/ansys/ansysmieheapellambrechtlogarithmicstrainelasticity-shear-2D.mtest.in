@@ -6,7 +6,7 @@
  */
 
 @ModellingHypothesis 'Axisymmetrical';
-@Behaviour<ansys> '@MFrontAnsysBehavioursBuildPath@' 'LogarithmicStrainElasticity_axis';
+@Behaviour<ansys> '$<TARGET_FILE:MFrontAnsysBehaviours>' 'LogarithmicStrainElasticity_axis';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

@@ -33,9 +33,9 @@ macro(test_alternatedelta2 test_arg)
       endif(TFEL_APPEND_SUFFIX)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
-    get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
-    configure_file(alternatedelta2${test_arg}.mtest.in
-      alternatedelta2${test_arg}.mtest @ONLY)
+    configure_file(alternatedelta2${test_arg}.mtest.in alternatedelta2${test_arg}.mtest.in2 @ONLY)
+    file(GENERATE OUTPUT alternatedelta2${test_arg}.mtest
+                  INPUT ${CMAKE_CURRENT_BINARY_DIR}/alternatedelta2${test_arg}.mtest.in2)
     add_test(NAME alternatedelta2${test_arg}_mtest
       COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false alternatedelta2${test_arg}.mtest)
     set_tests_properties(alternatedelta2${test_arg}_mtest

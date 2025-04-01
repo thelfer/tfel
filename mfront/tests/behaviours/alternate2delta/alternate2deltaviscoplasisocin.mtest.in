@@ -3,7 +3,7 @@
 
 @AccelerationAlgorithm 'Alternate2Delta';
 @MaximumNumberOfSubSteps 1 ;
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatviscoplasisocin';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatviscoplasisocin';
 
 @MaterialProperty<constant> 'YoungModulus' 200000.;
 @MaterialProperty<constant> 'PoissonRatio' 0.3;

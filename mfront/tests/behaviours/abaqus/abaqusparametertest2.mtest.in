@@ -1,7 +1,7 @@
 @Author  Thomas Helfer;
 @Date    1/01/2018;
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'PARAMETERTEST2_3D';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'PARAMETERTEST2_3D';
 @ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
 
 @Parameter 'ArrayOfParameters[0]' 15;

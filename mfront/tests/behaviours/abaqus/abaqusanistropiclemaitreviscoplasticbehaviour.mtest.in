@@ -5,7 +5,7 @@
  * \brief  11 avril 2014
  */
 
-@Behaviour<abaqus> '@MFrontAbaqusBehavioursBuildPath@' 'ANISTROPICLEMAITREVISCOPLASTICBEHAVIOUR_3D';
+@Behaviour<abaqus> '$<TARGET_FILE:MFrontAbaqusBehaviours>' 'ANISTROPICLEMAITREVISCOPLASTICBEHAVIOUR_3D';
 
 @MaterialProperty<constant> 'YoungModulus' 80000.;
 @MaterialProperty<constant> 'PoissonRatio' 0.35;

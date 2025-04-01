@@ -8,7 +8,7 @@
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
 @MaximumNumberOfSubSteps 1;
 
-@Behaviour<cyrano,LogarithmicStrain1D> '@MFrontCyranoBehavioursBuildPath@' 'cyranonorton';
+@Behaviour<cyrano,LogarithmicStrain1D> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranonorton';
 @StrainEpsilon 1.e-10;
 @StressEpsilon 2.e3;
 

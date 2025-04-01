@@ -39,7 +39,7 @@ struct LibraryInformationCastemTest final
 
   tfel::tests::TestResult execute() override
   {
-    const auto l = "@MFrontCastemBehavioursBuildPath@";
+    const auto l = "$<TARGET_FILE:MFrontCastemBehaviours>";
     auto ld = tfel::system::LibraryInformation(l);
     auto b = std::vector<std::string>{};
     const auto ss = ld.symbols();

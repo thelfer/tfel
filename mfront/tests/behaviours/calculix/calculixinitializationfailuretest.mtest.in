@@ -6,7 +6,7 @@
 };
 
 @MaximumNumberOfSubSteps 1;
-@Behaviour<calculix> '@MFrontCalculiXBehavioursBuildPath@' 'INITIALIZATIONFAILURETEST';
+@Behaviour<calculix> '$<TARGET_FILE:MFrontCalculiXBehaviours>' 'INITIALIZATIONFAILURETEST';
 @ExternalStateVariable 'Temperature' 293.15;
 
 @Times {0., 1};

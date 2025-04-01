@@ -5,7 +5,7 @@
  * \brief  26 nov. 2013
  */
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatfiniterotationsmallstrainelasticity';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatfiniterotationsmallstrainelasticity';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

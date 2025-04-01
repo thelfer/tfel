@@ -5,7 +5,7 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umattvergaard';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umattvergaard';
 @MaterialProperty<constant> 'NormalStiffness'              2.e16;
 @MaterialProperty<constant> 'TangentialStiffness'          2.e16;
 @MaterialProperty<constant> 'UltimateTensileStrength'     200.e6;

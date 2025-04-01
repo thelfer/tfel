@@ -6,7 +6,7 @@
  */
 
 @AccelerationAlgorithm 'Cast3M';
-@Behaviour<epx> '@MFrontEuroplexusBehavioursBuildPath@' 'SaintVenantKirchhoffElasticity3';
+@Behaviour<epx> '$<TARGET_FILE:MFrontEuroplexusBehaviours>' 'SaintVenantKirchhoffElasticity3';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

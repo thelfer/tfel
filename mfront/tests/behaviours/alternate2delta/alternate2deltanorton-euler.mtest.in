@@ -9,7 +9,7 @@
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatnorton_euler';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatnorton_euler';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 @MaterialProperty<constant> 'A' 8.e-67;

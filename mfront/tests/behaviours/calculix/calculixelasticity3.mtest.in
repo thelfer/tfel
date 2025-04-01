@@ -5,8 +5,8 @@
  * \brief  09 avril 2013
  */
 
-@Behaviour<calculix> '@MFrontCalculiXBehavioursBuildPath@' 'ELASTICITY';
-@MaterialProperty<castem>   'YoungModulus' '@MFrontMaterialPropertiesCastemBuildPath@' 'Inconel600_YoungModulus';
+@Behaviour<calculix> '$<TARGET_FILE:MFrontCalculiXBehaviours>' 'ELASTICITY';
+@MaterialProperty<castem>   'YoungModulus' '$<TARGET_FILE:MFrontMaterialProperties-castem>' 'Inconel600_YoungModulus';
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 
 @Real 'T0' 400.;

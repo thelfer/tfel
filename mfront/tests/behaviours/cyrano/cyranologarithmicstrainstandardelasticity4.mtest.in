@@ -8,7 +8,7 @@
 
 @MaximumNumberOfSubSteps   1;
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStress';
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranologarithmicstrainstandardelasticity4';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranologarithmicstrainstandardelasticity4';
 
 @ExternalStateVariable 'Temperature' 293.15;
 @ExternalStateVariable 'AxialStress' {0.:0,1:10e9};

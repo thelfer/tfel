@@ -9,7 +9,7 @@
 
 @MaximumNumberOfSubSteps 1;
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoelasticmaterialpropertiesboundschecktest';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranoelasticmaterialpropertiesboundschecktest';
 
 @ExternalStateVariable 'Temperature' {0:293.15,3600.:400};
 

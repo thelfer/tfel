@@ -8,7 +8,7 @@
 @AccelerationAlgorithm 'Alternate2Delta';
 @StiffnessMatrixType 'Elastic';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlorentz';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatlorentz';
 
 @StrainEpsilon 1.e-11;
 @StressEpsilon 1.e-1;

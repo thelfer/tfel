@@ -7,7 +7,7 @@
 
 @AccelerationAlgorithm 'CrossedSecant';
 @ModellingHypothesis 'PlaneStress';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatincompressibleplanestressgornetdesmoratbehaviour';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatincompressibleplanestressgornetdesmoratbehaviour';
 @StressEpsilon 1.e-9;
 
 @Real 'C_1' '0.183';

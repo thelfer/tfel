@@ -33,9 +33,9 @@ macro(test_steffensen test_arg)
       endif(TFEL_APPEND_SUFFIX)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
-    get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
-    configure_file(steffensen${test_arg}.mtest.in
-      steffensen${test_arg}.mtest @ONLY)
+    configure_file(steffensen${test_arg}.mtest.in steffensen${test_arg}.mtest.in2 @ONLY)
+    file(GENERATE OUTPUT steffensen${test_arg}.mtest
+                  INPUT ${CMAKE_CURRENT_BINARY_DIR}/steffensen${test_arg}.mtest.in2)
     add_test(NAME steffensen${test_arg}_mtest
       COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false steffensen${test_arg}.mtest)
     set_tests_properties(steffensen${test_arg}_mtest

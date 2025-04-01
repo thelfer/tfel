@@ -7,7 +7,7 @@
 
 @MaximumNumberOfSubSteps 1;
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoinitializationfailuretest';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranoinitializationfailuretest';
 @ExternalStateVariable 'Temperature' 293.15;
 
 @Times {0., 1};

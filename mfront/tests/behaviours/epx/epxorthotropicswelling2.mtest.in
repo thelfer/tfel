@@ -6,7 +6,7 @@
 };
 
 @AccelerationAlgorithm 'Cast3M';
-@Behaviour<epx> '@MFrontEuroplexusBehavioursBuildPath@' 'OrthotropicSwelling2';
+@Behaviour<epx> '$<TARGET_FILE:MFrontEuroplexusBehaviours>' 'OrthotropicSwelling2';
 
 @Real 'E1'   '7.8e+10';
 @Real 'E2'   '2.64233e+11';

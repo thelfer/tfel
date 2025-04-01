@@ -9,7 +9,7 @@
 @MaximumNumberOfSubSteps 1;
 @ModellingHypothesis 'Axisymmetrical';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicitnorton3';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatimplicitnorton3';
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

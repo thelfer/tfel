@@ -7,7 +7,7 @@
 
 @AccelerationAlgorithm 'CrossedSecant';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatimplicithayhurst';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatimplicithayhurst';
 @MaterialProperty<constant> 'YoungModulus'      1.45000E5;
 @MaterialProperty<constant> 'PoissonRatio'         0.3;
 @MaterialProperty<constant> 'MassDensity'        7800.0;

@@ -18,7 +18,7 @@
 @MaximumNumberOfSubSteps   1;
 
 @ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStress';
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoimplicitnorton3';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranoimplicitnorton3';
 
 @MaterialProperty<constant> 'YoungModulus'     150.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;

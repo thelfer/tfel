@@ -7,7 +7,7 @@
 
 @AccelerationAlgorithm 'UAnderson';
 @ModellingHypothesis 'Axisymmetrical';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity_malls';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatelasticity_malls';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 

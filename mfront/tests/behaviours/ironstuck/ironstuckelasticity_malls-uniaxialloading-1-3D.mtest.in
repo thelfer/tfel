@@ -7,7 +7,7 @@
 
 @MaximumNumberOfSubSteps 1;
 @AccelerationAlgorithm 'IronsTuck';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity_malls';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatelasticity_malls';
 @DeformationGradientEpsilon 5.e-11;
 @StressEpsilon 2.e3;
 

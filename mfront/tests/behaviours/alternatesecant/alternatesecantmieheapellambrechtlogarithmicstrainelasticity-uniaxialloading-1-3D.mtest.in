@@ -6,7 +6,7 @@
  */
 
 @AccelerationAlgorithm 'AlternateSecant';
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatlogarithmicstrainelasticity';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatlogarithmicstrainelasticity';
 
 @StressEpsilon 1.e2;
 

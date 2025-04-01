@@ -1,7 +1,7 @@
 @Author Jeremy Hure;
 @Date 08 Aout 2013;
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatviscoplasisocin';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatviscoplasisocin';
 @StiffnessMatrixType 'ConsistentTangentOperator';
 
 @MaterialProperty<constant> 'YoungModulus' 200000.;

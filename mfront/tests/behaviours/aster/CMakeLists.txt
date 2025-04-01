@@ -204,9 +204,9 @@ function(test_aster test_arg)
 endfunction(test_aster)
 
 macro(test_aster_python test)
-  get_property(MFrontAsterBehavioursBuildPath TARGET MFrontAsterBehaviours PROPERTY LOCATION)
-  configure_file(aster${test}.py.in
-    aster${test}.py @ONLY)
+  configure_file(aster${test}.py.in aster${test}.py.in2 @ONLY)
+  file(GENERATE OUTPUT aster${test}.py
+                INPUT ${CMAKE_CURRENT_BINARY_DIR}/aster${test}.py.in2)
   add_test(NAME aster${test}_py
     COMMAND ${PYTHON_EXECUTABLE} aster${test}.py)
   set_tests_properties(aster${test}_py
@@ -460,6 +460,7 @@ test_aster(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D
 test_aster(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D
            REFERENCE_FILE logarithmicstrainnortoncreepuniaxialtesting.ref)
 
+message(STATUS "Something needs to be done")
 if(enable-python-bindings)
   test_aster_python(xx)
   test_aster_python(viscochaboche-memo-nrad)

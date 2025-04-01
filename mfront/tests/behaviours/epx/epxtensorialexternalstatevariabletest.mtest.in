@@ -6,7 +6,7 @@
 
 @MaximumNumberOfSubSteps 1;
 @ModellingHypothesis 'Tridimensional';
-@Behaviour<epx> '@MFrontEuroplexusBehavioursBuildPath@' 'TensorialExternalStateVariableTest';
+@Behaviour<epx> '$<TARGET_FILE:MFrontEuroplexusBehaviours>' 'TensorialExternalStateVariableTest';
 
 // material properties
 @MaterialProperty<constant> 'YoungModulus' 150e9;

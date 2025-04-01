@@ -8,7 +8,7 @@
 @ModellingHypothesis 'Axisymmetrical';
 @UseCastemAccelerationAlgorithm true;
 @MaximumNumberOfSubSteps 1;
-@Behaviour<abaqus_explicit> '@MFrontAbaqusExplicitBehavioursBuildPath@' 'LOGARITHMICSTRAINELASTICITY_AXIS';
+@Behaviour<abaqus_explicit> '$<TARGET_FILE:MFrontAbaqusExplicitBehaviours>' 'LOGARITHMICSTRAINELASTICITY_AXIS';
 @StressEpsilon 1.e-4;
 @MaterialProperty<constant> 'MassDensity'  15000.;
 @MaterialProperty<constant> 'YoungModulus'     215.e9;

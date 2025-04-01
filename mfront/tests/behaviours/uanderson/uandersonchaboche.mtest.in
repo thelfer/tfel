@@ -7,7 +7,7 @@
 
 @AccelerationAlgorithm 'UAnderson';
 
-@Behaviour<umat> '@MFrontCastemBehavioursBuildPath@' 'umatchaboche';
+@Behaviour<umat> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatchaboche';
 @MaterialProperty<constant> 'YoungModulus' 145200. ; 
 @MaterialProperty<constant> 'PoissonRatio'  0.3 ;    
 @MaterialProperty<constant> 'ThermalExpansion' 0. ; 

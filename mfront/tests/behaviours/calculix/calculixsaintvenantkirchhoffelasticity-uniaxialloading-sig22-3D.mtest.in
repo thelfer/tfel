@@ -10,7 +10,7 @@
   "The results are compared to analytical solutions."
 };
 
-@Behaviour<calculix> '@MFrontCalculiXBehavioursBuildPath@' 'SAINTVENANTKIRCHHOFFELASTICITY';
+@Behaviour<calculix> '$<TARGET_FILE:MFrontCalculiXBehaviours>' 'SAINTVENANTKIRCHHOFFELASTICITY';
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 
