@@ -5,6 +5,8 @@
  * \date   21/03/2016
  */
 
+#include "omi_for_c.h"
+
 #include<iostream>
 #include<cstdlib>
 
@@ -103,14 +105,6 @@ typedef void * libptr;
 #endif /* HAVE_STD_MUTEX */
 #endif
 
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-#define VUMATFCT  vumat
-#define VUMATFCT2 vumat2
-#else
-#define VUMATFCT  vumat_
-#define VUMATFCT2 vumat2_
-#endif
-
 #if (defined _WIN32) && (!defined _WIN64)
 typedef int    fortran_string_size;
 #elif defined _WIN64
@@ -157,8 +151,8 @@ typedef  void (*vumatptr)(const abaqus_int *const,
 			  const abaqus_real*,
 			  const fortran_string_size);
 
-extern "C" {
-  void VUMATFCT(const abaqus_int *const,
+extern "C" void FOR_NAME(vumat, VUMAT)(
+         const abaqus_int *const,
 	       const abaqus_int *const,
 	       const abaqus_int *const,
 	       const abaqus_int *const,
@@ -193,7 +187,8 @@ extern "C" {
 	       const abaqus_real*,
 	       const fortran_string_size);
 
-  void VUMATFCT2(const abaqus_int *const,
+extern "C" void FOR_NAME(vumat2, VUMAT2)(
+    const abaqus_int *const,
 		const abaqus_int *const,
 		const abaqus_int *const,
 		const abaqus_int *const,
@@ -227,7 +222,6 @@ extern "C" {
 		const abaqus_real*,
 		const abaqus_real*,
 		const fortran_string_size);
-}
 
 struct LibrariesHandler
   : public std::map<std::string,libptr>
@@ -418,9 +412,8 @@ static vumatptr load(const char* n){
   return NULLPTR(vumatptr);
 }
 
-extern "C" {
-
-  void VUMATFCT(const abaqus_int *const nblock,
+extern "C" void FOR_NAME(vumat, VUMAT)(
+    const abaqus_int *const nblock,
 		const abaqus_int *const ndir,
 		const abaqus_int *const nshr,
 		const abaqus_int *const nstatev,
@@ -493,4 +486,3 @@ extern "C" {
     
   } // end of vumat_
   
-} // end of extern "C"

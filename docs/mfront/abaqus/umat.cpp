@@ -5,6 +5,8 @@
  * \date   21/03/2016
  */
 
+#include "omi_for_c.h"
+
 #include<iostream>
 #include<cstdlib>
 
@@ -103,14 +105,6 @@ typedef void * libptr;
 #endif /* HAVE_STD_MUTEX */
 #endif
 
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-#define UMATFCT  umat
-#define UMATFCT2 umat2
-#else
-#define UMATFCT  umat_
-#define UMATFCT2 umat2_
-#endif
-
 #if (defined _WIN32) && (!defined _WIN64)
 typedef int    fortran_string_size;
 #elif defined _WIN64
@@ -161,8 +155,8 @@ typedef  void (*umatptr)(abaqus_real *const,
 			 abaqus_int  *const,
 			 const int);
 
-extern "C" {
-  void UMATFCT(abaqus_real *const,
+extern "C" void FOR_NAME(umat, UMAT)(
+         abaqus_real *const,
 	       abaqus_real *const,
 	       abaqus_real *const,
 	       abaqus_real *const,
@@ -201,7 +195,8 @@ extern "C" {
 	       abaqus_int  *const,
 	       const fortran_string_size);
 
-  void UMATFCT2(abaqus_real *const,
+extern "C" void FOR_NAME(umat2, UMAT2)(
+    abaqus_real *const,
 		abaqus_real *const,
 		abaqus_real *const,
 		abaqus_real *const,
@@ -239,7 +234,6 @@ extern "C" {
 		const abaqus_int  *const,
 		abaqus_int  *const,
 		const fortran_string_size);
-}
 
 struct LibrariesHandler
   : public std::map<std::string,libptr>
@@ -429,9 +423,8 @@ static umatptr load(const char* n){
   return NULLPTR(umatptr);
 }
 
-extern "C" {
-
-  void UMATFCT(abaqus_real *const STRESS,
+extern "C" void FOR_NAME(umat, UMAT)(
+         abaqus_real *const STRESS,
 	       abaqus_real *const STATEV,
 	       abaqus_real *const DDSDDE,
 	       abaqus_real *const SSE,
@@ -504,8 +497,6 @@ extern "C" {
     
   } // end of umat_
   
-} // end of extern "C"
-
 // int main(void){
 //   char n[80] = {'\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
 // 		'\0','\0','\0','\0','\0','\0','\0','\0','\0','\0',
