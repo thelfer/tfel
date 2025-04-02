@@ -102,15 +102,15 @@ struct MTestParserTest final : public tfel::tests::TestCase {
     this->check("@UnsignedIntegerParameter 'espilon' 1.e-8;");
 // tests requiring the definition of a behaviour
 #ifdef HAVE_CASTEM
-    this->check("@MFrontCastemBehavioursBuildPath@", "umat");
-    this->check2("@MFrontCastemBehavioursBuildPath@", "umat");
+    this->check("$<TARGET_FILE:MFrontCastemBehaviours>", "umat");
+    this->check2("$<TARGET_FILE:MFrontCastemBehaviours>", "umat");
 #endif
 #ifdef HAVE_ASTER
-    this->check("@MFrontAsterBehavioursBuildPath@", "aster");
-    this->check2("@MFrontCastemBehavioursBuildPath@", "umat");
+    this->check("$<TARGET_FILE:MFrontAsterBehaviours>", "aster");
+    this->check2("$<TARGET_FILE:MFrontCastemBehaviours>", "umat");
 #endif
 #ifdef HAVE_CYRANO
-    this->check("@MFrontCyranoBehavioursBuildPath@", "cyrano",
+    this->check("$<TARGET_FILE:MFrontCyranoBehaviours>", "cyrano",
                 "@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';");
 #endif
     return this->result;

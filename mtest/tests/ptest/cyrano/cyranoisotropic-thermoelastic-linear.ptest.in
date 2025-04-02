@@ -8,7 +8,7 @@
 @InnerPressureEvolution 20.e5;
 @OuterPressureEvolution 15.e6;
 
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranoelasticity';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranoelasticity';
 @MaterialProperty<constant> 'YoungModulus' 84.e9;
 @MaterialProperty<constant> 'PoissonRatio' 0.37;
 @MaterialProperty<constant> 'ThermalExpansion' 7.e-6;

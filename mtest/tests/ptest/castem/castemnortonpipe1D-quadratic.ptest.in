@@ -24,7 +24,7 @@
 @StiffnessMatrixType 'ConsistentTangentOperator';
 
 // mechanical behaviours
-@Behaviour<castem> '@MFrontCastemBehavioursBuildPath@' 'umatnorton_log1d';
+@Behaviour<castem> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatnorton_log1d';
 @MaterialProperty<constant> 'YoungModulus' 70e9;
 @MaterialProperty<constant> 'PoissonRatio' 0.3;
 @MaterialProperty<constant> 'A' 5.e-10;

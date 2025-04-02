@@ -208,7 +208,7 @@ macro(test_aster_python test)
   file(GENERATE OUTPUT aster${test}.py
                 INPUT ${CMAKE_CURRENT_BINARY_DIR}/aster${test}.py.in2)
   add_test(NAME aster${test}_py
-    COMMAND ${PYTHON_EXECUTABLE} aster${test}.py)
+    COMMAND ${Python_EXECUTABLE} aster${test}.py)
   set_tests_properties(aster${test}_py
     PROPERTIES DEPENDS MFrontAsterBehaviours)
   if(CMAKE_CONFIGURATION_TYPES)
@@ -460,7 +460,6 @@ test_aster(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-2-3D
 test_aster(mieheapellambrechtlogarithmicstrainnortoncreep-uniaxialloading-3-3D
            REFERENCE_FILE logarithmicstrainnortoncreepuniaxialtesting.ref)
 
-message(STATUS "Something needs to be done")
 if(enable-python-bindings)
   test_aster_python(xx)
   test_aster_python(viscochaboche-memo-nrad)

@@ -12,7 +12,7 @@
 @ResidualEpsilon 1.;
 @StiffnessMatrixType 'ConsistentTangentOperator';
 
-@Behaviour<cyrano> '@MFrontCyranoBehavioursBuildPath@' 'cyranonorton_log1d';
+@Behaviour<cyrano> '$<TARGET_FILE:MFrontCyranoBehaviours>' 'cyranonorton_log1d';
 @Parameter 'theta' 1;
 @MaterialProperty<constant> 'YoungModulus' 70e9;
 @MaterialProperty<constant> 'PoissonRatio' 0.3;

@@ -37,20 +37,10 @@ if(CMAKE_CONFIGURATION_TYPES)
     add_dependencies(check MTestParserTest_${conf})
   endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
 else(CMAKE_CONFIGURATION_TYPES)
-  if(HAVE_CASTEM)
-    get_property(MFrontCastemBehavioursBuildPath
-      TARGET MFrontCastemBehaviours PROPERTY LOCATION)
-  endif(HAVE_CASTEM)
-  if(HAVE_ASTER)
-    get_property(MFrontAsterBehavioursBuildPath
-      TARGET MFrontAsterBehaviours PROPERTY LOCATION)
-  endif(HAVE_ASTER)
-  if(HAVE_CYRANO)
-    get_property(MFrontCyranoBehavioursBuildPath
-      TARGET MFrontCyranoBehaviours PROPERTY LOCATION)
-  endif(HAVE_CYRANO)
   configure_file("${PROJECT_SOURCE_DIR}/mtest/tests/unit-tests/MTestParserTest.cxx.in"
-    ${PROJECT_BINARY_DIR}/mtest/tests/unit-tests/MTestParserTest.cxx @ONLY)
+    ${PROJECT_BINARY_DIR}/mtest/tests/unit-tests/MTestParserTest.cxx.in2 @ONLY)
+  file(GENERATE OUTPUT "${PROJECT_BINARY_DIR}/mtest/tests/unit-tests/MTestParserTest.cxx"
+                INPUT  "${PROJECT_BINARY_DIR}/mtest/tests/unit-tests/MTestParserTest.cxx.in2" )
   add_executable(MTestParserTest EXCLUDE_FROM_ALL
     ${PROJECT_BINARY_DIR}/mtest/tests/unit-tests/MTestParserTest.cxx)
   add_test(NAME MTestParserTest COMMAND MTestParserTest)

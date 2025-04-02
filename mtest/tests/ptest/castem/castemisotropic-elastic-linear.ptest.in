@@ -5,7 +5,7 @@
 @AxialLoading 'None';
 @PerformSmallStrainAnalysis true;
 
-@Behaviour<castem> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity';
+@Behaviour<castem> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatelasticity';
 @MaterialProperty<constant> 'YoungModulus' 150e9;
 @MaterialProperty<constant> 'PoissonRatio' 0.3;
 

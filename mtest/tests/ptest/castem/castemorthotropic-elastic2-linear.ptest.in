@@ -11,7 +11,7 @@
 @PerformSmallStrainAnalysis true;
 @AxialLoading 'ImposedAxialForce';
 
-@Behaviour<castem> '@MFrontCastemBehavioursBuildPath@' 'umatorthotropicelastic';
+@Behaviour<castem> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatorthotropicelastic';
 @MaterialProperty<constant> 'YoungModulus1' 170.e9;
 @MaterialProperty<constant> 'YoungModulus2' 100.e9;
 @MaterialProperty<constant> 'YoungModulus3' 130.e9;

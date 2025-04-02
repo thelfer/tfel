@@ -742,9 +742,10 @@ test_castem(temperatureupdateonsubsteppingcheck)
 macro(test_castem_cxx test_arg)
   if(CMAKE_CONFIGURATION_TYPES)
     foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-      get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
-      configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx.in"
-	${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}_${conf}.cxx @ONLY)
+    configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx.in"
+                   "${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}_${conf}.cxx.in2" @ONLY)
+    file(GENERATE OUTPUT "${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}_${conf}.cxx"
+                  INPUT  "${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}_${conf}.cxx.in2")
       add_executable(${test_arg}_${conf} EXCLUDE_FROM_ALL
 	${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}_${conf}.cxx)
       add_test(NAME ${test_arg}_${conf}
@@ -763,8 +764,10 @@ macro(test_castem_cxx test_arg)
       add_dependencies(check ${test_arg}_${conf})
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
-    file(GENERATE OUTPUT ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx
-                  INPUT  "${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx.in")
+    configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx.in"
+                   "${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx.in2" @ONLY)
+    file(GENERATE OUTPUT "${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx"
+                  INPUT  "${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx.in2")
     add_executable(${test_arg} EXCLUDE_FROM_ALL
       ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx)
     add_test(NAME ${test_arg} COMMAND ${test_arg})

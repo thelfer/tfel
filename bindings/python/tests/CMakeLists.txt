@@ -19,7 +19,7 @@ function(test_pymfront test)
   configure_file(pymfront${test}.py.in
     pymfront${test}.py @ONLY)
   add_test(NAME pymfront${test}_py
-    COMMAND ${PYTHON_EXECUTABLE} pymfront${test}.py)
+    COMMAND ${Python_EXECUTABLE} pymfront${test}.py)
   if(CMAKE_CONFIGURATION_TYPES)
     set_tests_properties(pymfront${test}_py
       PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python;$<TARGET_FILE_DIR:py_tfel_tests;$<TARGET_FILE_DIR:py_mfront__mfront>")
@@ -31,7 +31,7 @@ endfunction(test_pymfront)
 
 function(test_pymfront_mp interface library function)
   add_test(NAME pymfront_material_properties_${interface}_py
-    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/material-properties.py)
+    COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/material-properties.py)
   if(CMAKE_CONFIGURATION_TYPES)
     set_property(TEST pymfront_material_properties_${interface}_py
       PROPERTY ENVIRONMENT
@@ -49,7 +49,7 @@ endfunction(test_pymfront_mp)
 
 function(test_pymtest_bv file library)
   add_test(NAME pymtest_behaviours_${file}_py
-    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/${file}.py)
+    COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/${file}.py)
   if(CMAKE_CONFIGURATION_TYPES)
     set_property(TEST pymtest_behaviours_${file}_py
       PROPERTY ENVIRONMENT

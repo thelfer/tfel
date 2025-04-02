@@ -192,7 +192,7 @@ function(castemtest_standardelastovicoplasticitybrick_python test)
   configure_file(castemtest_standardelastovicoplasticitybrick_python_${test}.py.in
     castemtest_standardelastovicoplasticitybrick_python_${test}.py @ONLY)
   add_test(NAME castemtest_standardelastovicoplasticitybrick_python_${test}_py
-    COMMAND ${PYTHON_EXECUTABLE} castemtest_standardelastovicoplasticitybrick_python_${test}.py)
+    COMMAND ${Python_EXECUTABLE} castemtest_standardelastovicoplasticitybrick_python_${test}.py)
   set_tests_properties(castemtest_standardelastovicoplasticitybrick_python_${test}_py
     PROPERTIES DEPENDS MFrontCastemStandardElastoViscoPlasticityBrickBehaviours)
   if(CMAKE_CONFIGURATION_TYPES)

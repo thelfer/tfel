@@ -7,7 +7,7 @@
 @FillingPressure      1.e5;
 @FillingTemperature 293.15;
 
-@Behaviour<castem> '@MFrontCastemBehavioursBuildPath@' 'umatelasticity';
+@Behaviour<castem> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatelasticity';
 @MaterialProperty<constant> 'YoungModulus' 150e9;
 @MaterialProperty<constant> 'PoissonRatio' 0.3;
 @ExternalStateVariable 'Temperature' {0:293.15,1:693.15};

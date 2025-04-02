@@ -12,7 +12,7 @@
 @ResidualEpsilon 1.;
 @StiffnessMatrixType 'ConsistentTangentOperator';
 
-@Behaviour<castem> '@MFrontCastemBehavioursBuildPath@' 'umatnorton_log1d';
+@Behaviour<castem> '$<TARGET_FILE:MFrontCastemBehaviours>' 'umatnorton_log1d';
 @Parameter 'theta' 1;
 @MaterialProperty<constant> 'YoungModulus' 70e9;
 @MaterialProperty<constant> 'PoissonRatio' 0.3;

@@ -14,14 +14,13 @@ if(HAVE_FORTRAN)
     if(CMAKE_CONFIGURATION_TYPES)
       foreach(conf ${CMAKE_CONFIGURATION_TYPES})
 	set(file "${CMAKE_CURRENT_SOURCE_DIR}/castemumat${test_arg}.mtest")
-	get_property(CastemUmatLibraryPath TARGET CastemUmat PROPERTY LOCATION_${conf})
 	if(_NO_XML_OUTPUT)
 	  add_test(NAME castemumat${test_arg}_${conf}_mtest
-	    COMMAND mtest --verbose=level0 --xml-output=false --result-file-output=false --@CASTEMUMATLIBRARY@="${CastemUmatLibraryPath}" ${file}
+	    COMMAND mtest --verbose=level0 --xml-output=false --result-file-output=false --@CASTEMUMATLIBRARY@="$<TARGET_FILE:CastemUmat>" ${file}
 	    CONFIGURATIONS ${conf})
 	else(_NO_XML_OUTPUT)
 	  add_test(NAME castemumat${test_arg}_${conf}_mtest
-	    COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false --@CASTEMUMATLIBRARY@="${CastemUmatLibraryPath}" ${file}
+	    COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false --@CASTEMUMATLIBRARY@="$<TARGET_FILE:CastemUmat>" ${file}
 	    CONFIGURATIONS ${conf})
 	endif(_NO_XML_OUTPUT)
 	if(_WILL_FAIL)
@@ -49,13 +48,12 @@ if(HAVE_FORTRAN)
 	endif(TFEL_APPEND_SUFFIX)
       endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
     else(CMAKE_CONFIGURATION_TYPES)
-      get_property(CastemUmatLibraryPath TARGET CastemUmat PROPERTY LOCATION_${conf})
       if(_NO_XML_OUTPUT)
 	add_test(NAME castemumat${test_arg}_mtest
-	  COMMAND mtest --verbose=level0 --xml-output=false --result-file-output=false --@CASTEMUMATLIBRARY@="${CastemUmatLibraryPath}" ${CMAKE_CURRENT_SOURCE_DIR}/castemumat${test_arg}.mtest)
+	  COMMAND mtest --verbose=level0 --xml-output=false --result-file-output=false --@CASTEMUMATLIBRARY@="$<TARGET_FILE:CastemUmat>" ${CMAKE_CURRENT_SOURCE_DIR}/castemumat${test_arg}.mtest)
       else(_NO_XML_OUTPUT)
 	add_test(NAME castemumat${test_arg}_mtest
-	  COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false --@CASTEMUMATLIBRARY@="${CastemUmatLibraryPath}" ${CMAKE_CURRENT_SOURCE_DIR}/castemumat${test_arg}.mtest)
+	  COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false --@CASTEMUMATLIBRARY@="$<TARGET_FILE:CastemUmat>" ${CMAKE_CURRENT_SOURCE_DIR}/castemumat${test_arg}.mtest)
       endif(_NO_XML_OUTPUT)
       if(_WILL_FAIL)
 	set_tests_properties(castemumat${test_arg}_mtest

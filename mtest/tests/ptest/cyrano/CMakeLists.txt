@@ -51,9 +51,9 @@ macro(cyranoptest test_arg)
       endif(TFEL_APPEND_SUFFIX)
     endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
   else(CMAKE_CONFIGURATION_TYPES)
-    get_property(MFrontCyranoBehavioursBuildPath TARGET MFrontCyranoBehaviours PROPERTY LOCATION_${conf})
-    configure_file(cyrano${test_arg}.ptest.in
-      cyrano${test_arg}.ptest @ONLY)
+    configure_file(cyrano${test_arg}.ptest.in cyrano${test_arg}.ptest.in2 @ONLY)
+    file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/cyrano${test_arg}.ptest
+                  INPUT  ${CMAKE_CURRENT_BINARY_DIR}/cyrano${test_arg}.ptest.in2)
     if(_NO_XML_OUTPUT)
       add_test(NAME cyrano${test_arg}_ptest
 	COMMAND mtest --verbose=level0 --xml-output=false --result-file-output=false cyrano${test_arg}.ptest)
