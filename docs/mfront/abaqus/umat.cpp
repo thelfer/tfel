@@ -5,8 +5,6 @@
  * \date   21/03/2016
  */
 
-#include "omi_for_c.h"
-
 #include<iostream>
 #include<cstdlib>
 
@@ -27,6 +25,8 @@
 #define NULLPTR(X) static_cast<X>(0)
 #endif /* __cplusplus >= 201103L */
 
+#include "omi_for_c.h"
+
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -39,6 +39,7 @@
 #ifdef max
 #undef max
 #endif
+
 typedef HINSTANCE__*  libptr;
 
 #ifndef HAVE_STD_MUTEX
