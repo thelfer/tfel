@@ -15,8 +15,6 @@
 #define _USE_MATH_DEFINES
 #endif
 
-#include <iostream>
-
 #include <map>
 #include <cmath>
 #include <string>
