@@ -1,7 +1,8 @@
 ## Makefile.am -- Process this file with automake to produce a Makefile.in file.
 
-AM_CPPFLAGS = -I$(top_srcdir)/include            \
-	      -I$(top_srcdir)/mfront/include     \
+AM_CPPFLAGS = -I$(top_srcdir)/include                   \
+	      -I$(top_srcdir)/mfront/include            \
+	      -I$(top_srcdir)/mfront/tests/unit-tests/  \
 	      -I$(top_srcdir)/docs/mfront/abaqus
 
 if WITH_TESTS

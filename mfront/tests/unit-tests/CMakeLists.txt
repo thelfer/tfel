@@ -1,4 +1,5 @@
 include_directories("${PROJECT_SOURCE_DIR}/include"
+  "${CMAKE_CURRENT_SOURCE_DIR}"
   "${PROJECT_SOURCE_DIR}/docs/mfront/abaqus")
 include_directories("${PROJECT_SOURCE_DIR}/mfront/include")
 link_directories("${PROJECT_BINARY_DIR}/src/Material"
