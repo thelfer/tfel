@@ -22,6 +22,11 @@ The page describes the new functionalities of Version 3.0.15 of the
 
 # Issues fixed
 
+## Issue 742: Abaqus interface issue with Abaqus 2024
+￼
+
+For more details, see <https://github.com/thelfer/tfel/issues/742>.
+
 ## Issue 728: [tfel-utilities] find replace_all when passing an empty `string_view`
 
 For more details, see <https://github.com/thelfer/tfel/issues/728>.
