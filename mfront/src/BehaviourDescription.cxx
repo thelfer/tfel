@@ -11,6 +11,8 @@
  * project under specific licensing conditions.
  */
 
+#include <iostream>
+
 #include <string>
 #include <sstream>
 #include <stdexcept>
@@ -2971,8 +2973,10 @@ namespace mfront {
       const auto& flags = SupportedTypes::getTypeFlags();
       for (const auto& v : variables) {
         const auto pf = flags.find(v.type);
-        if (pf->second == SupportedTypes::TVECTOR) {
-          b1 = true;
+	if (pf != flags.end()) {
+          if (pf->second == SupportedTypes::TVECTOR) {
+            b1 = true;
+          }
         }
         if (v.arraySize > 1) {
           if (this->useDynamicallyAllocatedVector(v.arraySize)) {
