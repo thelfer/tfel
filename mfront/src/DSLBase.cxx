@@ -161,9 +161,18 @@ namespace mfront {
     // substitutions
     const auto pe = s.end();
     for (auto& t : this->tokens) {
-      auto p = s.find(t.value);
-      if (p != pe) {
-        t.value = p->second;
+      if (t.flag == tfel::utilities::Token::String) {
+        auto delim = t.value.at(0);
+        auto contents = t.value.substr(1, t.value.size() - 2);
+        for (const auto& [k, v] : s) {
+          contents = tfel::utilities::replace_all(contents, k, v);
+        }
+        t.value = delim + contents + delim;
+      } else {
+        auto p = s.find(t.value);
+        if (p != pe) {
+          t.value = p->second;
+        }
       }
     }
     // treating external commands
