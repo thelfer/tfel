@@ -670,44 +670,19 @@ test_castem(elasticmaterialpropertiesboundschecktest
 test_castem(temperatureupdateonsubsteppingcheck)
 
 function(test_castem_cxx test_arg)
-  if(CMAKE_CONFIGURATION_TYPES)
-    foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-    configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx.in"
-                   "${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}_${conf}.cxx.in2" @ONLY)
-    file(GENERATE OUTPUT "${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}_${conf}.cxx"
-                  INPUT  "${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}_${conf}.cxx.in2")
-      add_executable(${test_arg}_${conf} EXCLUDE_FROM_ALL
-	${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}_${conf}.cxx)
-      add_test(NAME ${test_arg}_${conf}
-	COMMAND ${test_arg}_${conf}
-	CONFIGURATIONS ${conf})
-      if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-	set_property(TEST ${test_arg}_${conf}
-          PROPERTY DEPENDS "MFrontCastemBehaviours"
-    	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
-      elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-	set_property(TEST ${test_arg}_${conf}
-          PROPERTY DEPENDS "MFrontCastemBehaviours")
-      endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-      target_link_libraries(${test_arg}_${conf}
-	TFELGlossary TFELSystem TFELUtilities TFELTests TFELException)
-      add_dependencies(check ${test_arg}_${conf})
-    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-  else(CMAKE_CONFIGURATION_TYPES)
-    configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx.in"
-                   "${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx.in2" @ONLY)
-    file(GENERATE OUTPUT "${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx"
-                  INPUT  "${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx.in2")
-    add_executable(${test_arg} EXCLUDE_FROM_ALL
+  configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx.in"
+                 "${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx" @ONLY)
+  add_executable(${test_arg} EXCLUDE_FROM_ALL
       ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx)
-    add_test(NAME ${test_arg} COMMAND ${test_arg})
-    target_link_libraries(${test_arg}
+  add_test(NAME ${test_arg} COMMAND ${test_arg})
+  set_property(TEST ${test_arg}
+               PROPERTY ENVIRONMENT MFrontCastemBehavioursBuildPath=$<TARGET_FILE:MFrontCastemBehaviours>)
+  target_link_libraries(${test_arg}
       TFELGlossary TFELSystem TFELUtilities TFELTests TFELException)
-    set_tests_properties(${test_arg}
+  set_tests_properties(${test_arg}
       PROPERTIES DEPENDS MFrontCastemBehaviours)
-    add_dependencies(check ${test_arg})
-  endif(CMAKE_CONFIGURATION_TYPES)
+  add_dependencies(check ${test_arg})
 endfunction(test_castem_cxx)
 
-#test_castem_cxx(UMATExternalBehaviourDescription)
-#test_castem_cxx(LibraryInformationCastemTest)
+test_castem_cxx(UMATExternalBehaviourDescription)
+test_castem_cxx(LibraryInformationCastemTest)

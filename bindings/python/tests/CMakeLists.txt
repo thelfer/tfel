@@ -16,51 +16,37 @@ configure_file(small-strain-tridimensional-behaviour-wrapper.py.in
 configure_file(material-properties.py.in material-properties.py @ONLY)
 
 function(test_pymfront test)
-  configure_file(pymfront${test}.py.in
-    pymfront${test}.py @ONLY)
-  add_test(NAME pymfront${test}_py
-    COMMAND ${Python_EXECUTABLE} pymfront${test}.py)
-  if(CMAKE_CONFIGURATION_TYPES)
-    set_tests_properties(pymfront${test}_py
-      PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python;$<TARGET_FILE_DIR:py_tfel_tests;$<TARGET_FILE_DIR:py_mfront__mfront>")
-  else(CMAKE_CONFIGURATION_TYPES)
+  if(NOT CMAKE_CONFIGURATION_TYPES)
+    configure_file(pymfront${test}.py.in
+      pymfront${test}.py @ONLY)
+    add_test(NAME pymfront${test}_py
+      COMMAND ${Python_EXECUTABLE} pymfront${test}.py)
     set_tests_properties(pymfront${test}_py
       PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python")
-  endif(CMAKE_CONFIGURATION_TYPES)
+  endif(NOT CMAKE_CONFIGURATION_TYPES)
 endfunction(test_pymfront)
 
 function(test_pymfront_mp interface library function)
-  add_test(NAME pymfront_material_properties_${interface}_py
-    COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/material-properties.py)
-  if(CMAKE_CONFIGURATION_TYPES)
-    set_property(TEST pymfront_material_properties_${interface}_py
-      PROPERTY ENVIRONMENT
-      PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python;$<TARGET_FILE_DIR:py_tfel_tests;$<TARGET_FILE_DIR:py_mfront__mfront>
-      MFRONT_MATERIAL_PROPERTY_LIBRARY=${library}
-      MFRONT_MATERIAL_PROPERTY_FUNCTION=${function})
-  else(CMAKE_CONFIGURATION_TYPES)
+  if(NOT CMAKE_CONFIGURATION_TYPES)
+    add_test(NAME pymfront_material_properties_${interface}_py
+      COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/material-properties.py)
     set_property(TEST pymfront_material_properties_${interface}_py
       PROPERTY ENVIRONMENT
       PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python
       MFRONT_MATERIAL_PROPERTY_LIBRARY=${library}
       MFRONT_MATERIAL_PROPERTY_FUNCTION=${function})      
-  endif(CMAKE_CONFIGURATION_TYPES)
+  endif(NOT CMAKE_CONFIGURATION_TYPES)
 endfunction(test_pymfront_mp)
 
 function(test_pymtest_bv file library)
-  add_test(NAME pymtest_behaviours_${file}_py
-    COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/${file}.py)
-  if(CMAKE_CONFIGURATION_TYPES)
-    set_property(TEST pymtest_behaviours_${file}_py
-      PROPERTY ENVIRONMENT
-      PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python;$<TARGET_FILE_DIR:py_tfel_tests;$<TARGET_FILE_DIR:py_mtest__mtest>
-      MTEST_BEHAVIOUR_LIBRARY=${library})
-  else(CMAKE_CONFIGURATION_TYPES)
+  if(NOT CMAKE_CONFIGURATION_TYPES)
+    add_test(NAME pymtest_behaviours_${file}_py
+      COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/${file}.py)
     set_property(TEST pymtest_behaviours_${file}_py
       PROPERTY ENVIRONMENT
       PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python
       MTEST_BEHAVIOUR_LIBRARY=${library})      
-  endif(CMAKE_CONFIGURATION_TYPES)
+  endif(NOT CMAKE_CONFIGURATION_TYPES)
 endfunction(test_pymtest_bv)
 
 if(HAVE_ASTER)

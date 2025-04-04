@@ -6,10 +6,8 @@
  */
 
 @ModellingHypothesis 'Axisymmetrical';
-@MaximumNumberOfSubSteps 1;
 @UseCastemAccelerationAlgorithm true;
 @Behaviour<abaqus_explicit> @library@ 'LOGARITHMICSTRAINELASTICITY2_AXIS';
-@StressEpsilon 1.e-4;
 @MaterialProperty<constant> 'MassDensity'  15000.;
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;

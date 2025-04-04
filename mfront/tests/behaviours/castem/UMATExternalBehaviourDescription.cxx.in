@@ -47,7 +47,9 @@ namespace std {
 
 struct UMATBehaviourDescriptionTest final : public tfel::tests::TestCase {
   UMATBehaviourDescriptionTest()
-      : tfel::tests::TestCase("TFEL/System", "UMATBehaviourDescriptionTest") {
+    : tfel::tests::TestCase("TFEL/System", "UMATBehaviourDescriptionTest"),
+      library([]{const auto e = ::getenv("MFrontCastemBehavioursBuildPath");
+	  return e == nullptr ? std::string{} : e;}()) {
   }  // end of UMATBehaviourDescriptionTest
 
   tfel::tests::TestResult execute() override {
@@ -68,7 +70,7 @@ struct UMATBehaviourDescriptionTest final : public tfel::tests::TestCase {
   void test1() {
     using namespace tfel::glossary;
     const auto b = ExternalBehaviourDescription{
-        "$<TARGET_FILE:MFrontCastemBehaviours>", "umatnorton", "PlaneStrain"};
+        this->library, "umatnorton", "PlaneStrain"};
     // should small strain behaviour
     TFEL_TESTS_ASSERT(b.tfel_version == "@TFEL_VERSION@");
     // should small strain behaviour
@@ -98,7 +100,7 @@ struct UMATBehaviourDescriptionTest final : public tfel::tests::TestCase {
       bool ok = false;
       try {
         const auto b = ExternalBehaviourDescription{
-            "$<TARGET_FILE:MFrontCastemBehaviours>", "unknown", "PlaneStrain"};
+            this->library, "unknown", "PlaneStrain"};
       } catch (runtime_error&) {
         ok = true;
       }
@@ -108,7 +110,7 @@ struct UMATBehaviourDescriptionTest final : public tfel::tests::TestCase {
       bool ok = false;
       try {
         const auto b = ExternalBehaviourDescription{
-            "$<TARGET_FILE:MFrontCastemBehaviours>", "umatnorton", "PlaneStress"};
+            this->library, "umatnorton", "PlaneStress"};
       } catch (runtime_error&) {
         ok = true;
       }
@@ -122,7 +124,7 @@ struct UMATBehaviourDescriptionTest final : public tfel::tests::TestCase {
     using namespace std;
     using namespace tfel::glossary;
     const auto b = ExternalBehaviourDescription{
-        "$<TARGET_FILE:MFrontCastemBehaviours>", "umatnorton_log1d",
+        this->library, "umatnorton_log1d",
         "AxisymmetricalGeneralisedPlaneStrain"};
     // should finite strain behaviour
     TFEL_TESTS_ASSERT(b.btype == 2u);
@@ -158,7 +160,7 @@ struct UMATBehaviourDescriptionTest final : public tfel::tests::TestCase {
     using namespace std;
     using namespace tfel::glossary;
     const auto b = ExternalBehaviourDescription{
-        "$<TARGET_FILE:MFrontCastemBehaviours>", "umatfinitestrainsinglecrystal",
+        this->library, "umatfinitestrainsinglecrystal",
         "Tridimensional"};
     // should finite strain behaviour
     TFEL_TESTS_ASSERT(b.btype == 2u);
@@ -197,12 +199,14 @@ struct UMATBehaviourDescriptionTest final : public tfel::tests::TestCase {
   void test5() {
     using namespace tfel::system;
     auto& elm = ExternalLibraryManager::getExternalLibraryManager();
-    const auto l = "$<TARGET_FILE:MFrontCastemBehaviours>";
+    const auto l = this->library;
     const auto f = "umatnorton_log1d";
     const auto mh = elm.getSupportedModellingHypotheses(l, f);
     TFEL_TESTS_ASSERT(mh.size() == 1u);
     TFEL_TESTS_ASSERT(mh.at(0) == "AxisymmetricalGeneralisedPlaneStrain");
   }
+private:
+  const std::string library;
 };
 
 TFEL_TESTS_GENERATE_PROXY(UMATBehaviourDescriptionTest,

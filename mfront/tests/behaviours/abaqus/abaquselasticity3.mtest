@@ -6,7 +6,7 @@
  */
 
 @Behaviour<abaqus> @library@ 'ELASTICITY_3D';
-@MaterialProperty<castem>   'YoungModulus' '$<TARGET_FILE:MFrontMaterialProperties-castem>' 'Inconel600_YoungModulus';
+@MaterialProperty<castem>   'YoungModulus' @mplibrary@ 'Inconel600_YoungModulus';
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
 
 @Real 'T0' 400.;

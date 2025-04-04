@@ -7,9 +7,8 @@
 
 @ModellingHypothesis 'Axisymmetrical';
 @UseCastemAccelerationAlgorithm true;
-@MaximumNumberOfSubSteps 1;
 @Behaviour<abaqus_explicit> @library@ 'LOGARITHMICSTRAINELASTICITY_AXIS';
-@StressEpsilon 1.e-4;
+@StressEpsilon 1e-4;
 @MaterialProperty<constant> 'MassDensity'  15000.;
 @MaterialProperty<constant> 'YoungModulus'     215.e9;
 @MaterialProperty<constant> 'PoissonRatio'       0.3;
@@ -30,7 +29,7 @@
 
 @Test<function> {'SRR':'0','STT':'0'} 1.e-3;
 @Test<function> {'SZZ':'Tzz/J'}       1.e-3;
-@Test<function> {'SRZ':'0'}           1.e-3;
+@Test<function> {'SRZ':'0'}           1.e-4;
 @Test<function> {'FRR': 'sqrt(exp(2*err))','FTT': 'sqrt(exp(2*ett))'} 1.e-10;
 @Test<function> {'FRZ': '0', 'FZR':'0'} 1.e-10;
 

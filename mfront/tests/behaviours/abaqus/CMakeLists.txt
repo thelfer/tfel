@@ -231,6 +231,9 @@ test_abaqus(externalstatevariablesboundscheck5
 
 test_abaqus(elasticity)
 test_abaqus(elasticity2)
+if(HAVE_CASTEM)
+  test_abaqus(elasticity3)
+endif(HAVE_CASTEM)
 test_abaqus(elasticity4)
 test_abaqus(elasticity5)
 test_abaqus(elasticity6)
