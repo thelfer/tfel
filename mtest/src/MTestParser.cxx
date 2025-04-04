@@ -42,6 +42,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Math/General/IEEE754.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Utilities/TerminalColors.hxx"
 #include "TFEL/Utilities/GenTypeBase.hxx"
 #include "MFront/MFrontLogStream.hxx"
@@ -77,12 +78,21 @@ namespace mtest {
     // substitutions
     const auto pe = s.end();
     for (auto& token : this->tokens) {
-      auto p = s.find(token.value);
-      if (p != pe) {
-        token.value = p->second;
-        if (((p->second.front() == '\'') && (p->second.back() == '\'')) ||
-            ((p->second.front() == '"') && (p->second.back() == '"'))) {
-          token.flag = tfel::utilities::Token::String;
+      if (token.flag == tfel::utilities::Token::String) {
+        auto delim = token.value.at(0);
+        auto contents = token.value.substr(1, token.value.size() - 2);
+        for (const auto& [k, v] : s) {
+          contents = tfel::utilities::replace_all(contents, k, v);
+        }
+        token.value = delim + contents + delim;
+      } else {
+        auto p = s.find(token.value);
+        if (p != pe) {
+          token.value = p->second;
+          if (((p->second.front() == '\'') && (p->second.back() == '\'')) ||
+              ((p->second.front() == '"') && (p->second.back() == '"'))) {
+            token.flag = tfel::utilities::Token::String;
+          }
         }
       }
     }
