@@ -87,9 +87,9 @@ macro(test_cyrano test_arg)
       message(FATAL_ERROR "test_cyrano: unsupported option '${_ARG}'")
     endif()
   endforeach(_ARG ${ARGN})
+  set(file "${CMAKE_CURRENT_SOURCE_DIR}/cyrano${test_arg}.mtest")
   foreach(rm ${IEEE754_ROUNDING_MODES})
     set(test "cyrano${test_arg}_${rm}_mtest")
-    set(file "${CMAKE_CURRENT_SOURCE_DIR}/cyrano${test_arg}.mtest")
     set(_mtest_args)
     list(APPEND _mtest_args --rounding-direction-mode=${rm} )
     list(APPEND _mtest_args --verbose=level0)
@@ -109,16 +109,16 @@ macro(test_cyrano test_arg)
        set_property(TEST ${test}
                     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
     endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-    if(TFEL_APPEND_SUFFIX)
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-        DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/cyrano"
-        COMPONENT mtest)
-    else(TFEL_APPEND_SUFFIX)
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-        DESTINATION "share/doc/mfront/tests/behaviours/cyrano"
-        COMPONENT mtest)
-    endif(TFEL_APPEND_SUFFIX)
   endforeach(rm ${IEEE754_ROUNDING_MODES})
+  if(TFEL_APPEND_SUFFIX)
+    install(FILES ${file}
+      DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/cyrano"
+      COMPONENT mtest)
+  else(TFEL_APPEND_SUFFIX)
+    install(FILES ${file}
+      DESTINATION "share/doc/mfront/tests/behaviours/cyrano"
+      COMPONENT mtest)
+  endif(TFEL_APPEND_SUFFIX)
 endmacro(test_cyrano)
 
 test_cyrano(materialpropertiesboundscheck

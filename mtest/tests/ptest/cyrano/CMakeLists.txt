@@ -26,11 +26,11 @@ function(cyranoptest test_arg)
     set_tests_properties(cyrano${test_arg}_ptest PROPERTIES WILL_FAIL true)
   endif(_WILL_FAIL)
   if(TFEL_APPEND_SUFFIX)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_test_file}
+    install(FILES ${_test_file}
       DESTINATION "share/doc/mtest-${TFEL_SUFFIX}/tests/ptest/behaviours/cyrano"
       COMPONENT mtest)
   else(TFEL_APPEND_SUFFIX)
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_test_file}
+      install(FILES ${_test_file}
 	      DESTINATION "share/doc/mtest/tests/ptest/behaviours/cyrano"
               COMPONENT mtest)
   endif(TFEL_APPEND_SUFFIX)

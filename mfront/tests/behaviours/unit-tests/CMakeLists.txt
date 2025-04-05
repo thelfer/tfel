@@ -1,4 +1,3 @@
-
 macro(mfront_unit_test file)
   set(_WILL_FAIL )
   set(_WARNING_ERROR )

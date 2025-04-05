@@ -22,11 +22,11 @@ function(test_castem2 test_arg)
        PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
     endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
     if(TFEL_APPEND_SUFFIX)
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+      install(FILES ${file}
         DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/castem2"
         COMPONENT mtest)
     else(TFEL_APPEND_SUFFIX)
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+      install(FILES ${file}
         DESTINATION "share/doc/mfront/tests/behaviours/castem2"
         COMPONENT mtest)
     endif(TFEL_APPEND_SUFFIX)
