@@ -4,19 +4,13 @@ configure_file(aster.tex.in
 ADD_CUSTOM_COMMAND(
   OUTPUT    aster.pdf
   DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/aster.tex.in
-  COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+  COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
   ARGS      -interaction=batchmode
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
   ARGS      aster.tex
-  COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+  COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
   ARGS      -interaction=batchmode
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
   ARGS      aster.tex
-  #    COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
+  #    COMMAND   BSTINPUTS=${abs_top_srcdir}/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
   #    ARGS      -terse aster
   COMMAND   ${MAKEINDEX_COMPILER}
   ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist aenv.idx
@@ -26,19 +20,13 @@ ADD_CUSTOM_COMMAND(
   ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist amkeys.idx
   COMMAND   ${MAKEINDEX_COMPILER}
   ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist atfel.idx
-  COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+  COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
   ARGS      -interaction=batchmode
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
   ARGS      aster.tex
-  COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+  COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
   ARGS      -interaction=batchmode
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
   ARGS      aster.tex
-  COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
+  COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${DVIPS_CONVERTER}
   ARGS      -R0 aster.dvi
   COMMAND   ${PS2PDF_CONVERTER}
   ARGS      aster.ps

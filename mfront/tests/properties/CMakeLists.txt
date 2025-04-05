@@ -2,17 +2,7 @@ add_subdirectory(interfaces)
 
 function(add_mfront_generated_source lib interface ext file)
   set(mfront_file   "${CMAKE_CURRENT_SOURCE_DIR}/${file}.mfront")
-  if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-    set(mfront_executable "$<TARGET_FILE:mfront>")
-  else(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-    # retrieve the old behaviour for debian squeeze's version of cmake
-    # does not work with configurations
-    if(WIN32)
-      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront.exe")
-    else(WIN32)
-      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
-    endif(WIN32)
-  endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
+  set(mfront_executable "$<TARGET_FILE:mfront>")
   if("${interface}" STREQUAL "c")
     set(mfront_output "src/${file}.cxx")
   else("${interface}" STREQUAL "c")
@@ -42,7 +32,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
       COMMAND "${mfront_executable}"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
       ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
-      DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+      DEPENDS mfront
       DEPENDS "${mfront_file}"
       COMMENT "mfront source ${mfront_file}")
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
@@ -51,7 +41,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
       COMMAND "${mfront_executable}"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
       ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
-      DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+      DEPENDS mfront
       DEPENDS "${mfront_file}"
       COMMENT "mfront source ${mfront_file}")
     if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
