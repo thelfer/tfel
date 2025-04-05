@@ -5,15 +5,15 @@ if(HAVE_LATEX)
   ADD_CUSTOM_COMMAND(
     OUTPUT    tfel-2.0.3.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/tfel-2.0.3.tex.in
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${PDFLATEX_COMPILER}
+    COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${PDFLATEX_COMPILER}
     ARGS      -interaction=batchmode tfel-2.0.3.tex
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${PDFLATEX_COMPILER}
+    COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${PDFLATEX_COMPILER}
     ARGS      -interaction=batchmode tfel-2.0.3.tex
-    COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
+    COMMAND   BSTINPUTS=${abs_top_srcdir}/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
     ARGS      -terse tfel-2.0.3
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${PDFLATEX_COMPILER}
+    COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${PDFLATEX_COMPILER}
     ARGS      -interaction=batchmode tfel-2.0.3.tex
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${PDFLATEX_COMPILER}
+    COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${PDFLATEX_COMPILER}
     ARGS      -interaction=batchmode tfel-2.0.3.tex
     COMMENT   "tfel-2.0.3.pdf")
 

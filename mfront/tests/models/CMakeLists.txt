@@ -1,20 +1,19 @@
 add_subdirectory(interfaces)
 
+set(mfront_tests_SOURCES
+  B4C_ConcentrationModel
+  SiC_IrradiationSwellingModel_GoFaster
+  UO2_Shrinkage_RAPHAEL2008
+  Zircaloy4_AxialGrowth_BISON2014
+  NickelAlloyPK33_ThermalExpansion_MechAlloy33
+  FastNeutronFluence
+  NeutronFluence)
+
 macro(mfront_model)
   if(${ARGC} LESS 1)
     message(FATAL_ERROR "mfront_model: no source specified")
   endif(${ARGC} LESS 1)
-  if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-    set(mfront_executable "$<TARGET_FILE:mfront>")
-  else(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-    # retrieve the old behaviour for debian squeeze's version of cmake
-    # does not work with configurations
-    if(WIN32)
-      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront.exe")
-    else(WIN32)
-      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
-    endif(WIN32)
-  endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
+  set(mfront_executable "$<TARGET_FILE:mfront>")
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(mfront_flags "--debug")
   else(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -49,7 +48,7 @@ macro(mfront_model)
 	ARGS "PATH=$<TARGET_FILE_DIR:TFELUnicodeSupport>;%PATH%"
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${mfront_source}"
-	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+	DEPENDS mfront
 	DEPENDS "${mfront_source}"
 	COMMENT "treating mfront source ${source}.mfront")
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
@@ -57,7 +56,7 @@ macro(mfront_model)
 	OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/include/MFront/${source}.hxx"
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${mfront_source}"
-	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+	DEPENDS mfront
 	DEPENDS "${mfront_source}"
 	COMMENT "treating mfront source ${source}.mfront")
       file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generation-test)
@@ -74,13 +73,7 @@ macro(mfront_model)
   endforeach(source)
 endmacro(mfront_model)
 
-mfront_model(B4C_ConcentrationModel
-  SiC_IrradiationSwellingModel_GoFaster
-  UO2_Shrinkage_RAPHAEL2008
-  Zircaloy4_AxialGrowth_BISON2014
-  NickelAlloyPK33_ThermalExpansion_MechAlloy33
-  FastNeutronFluence
-  NeutronFluence)
+mfront_model(${mfront_tests_SOURCES})
 
 # a simple macro
 macro(tests_model test_arg)

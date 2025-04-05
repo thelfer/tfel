@@ -10,7 +10,7 @@ if(TFEL_NUMPY_SUPPORT)
   target_include_directories(TFELNumpySupport
     SYSTEM
     PUBLIC "${Boost_INCLUDE_DIRS}"
-    PUBLIC "${PYTHON_INCLUDE_DIRS}")
+    PUBLIC "${Python_INCLUDE_DIRS}")
   if(NUMPY_INCLUDE_DIRS) 
     target_include_directories(TFELNumpySupport
       SYSTEM
@@ -18,7 +18,7 @@ if(TFEL_NUMPY_SUPPORT)
   endif(NUMPY_INCLUDE_DIRS)
   if(TFEL_USES_CONAN)
     target_link_libraries(TFELNumpySupport
-      ${CONAN_LIBS} ${PYTHON_LIBRARIES})
+      ${CONAN_LIBS} ${Python_LIBRARIES})
   else(TFEL_USES_CONAN)
     if(python-static-interpreter-workaround)
       if(APPLE)
@@ -26,8 +26,8 @@ if(TFEL_NUMPY_SUPPORT)
       endif(APPLE)
     endif(python-static-interpreter-workaround)
     target_link_libraries(TFELNumpySupport
-    PUBLIC ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY}
-    ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
+                          PUBLIC ${Boost_NUMPY_LIBRARY} ${Boost_PYTHON_LIBRARY}
+                          ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
   endif(TFEL_USES_CONAN)
 endif(TFEL_NUMPY_SUPPORT)
 

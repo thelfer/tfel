@@ -1,3 +1,19 @@
+if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+  set(tfel_tests_python_module "tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}.tests_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+  set(tfel_math_python_module "tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}.math_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+  set(tfel_material_python_module "tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}.material_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+  set(mfront_python_module "mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+  set(mfront_umatxx_python_module "mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES}.umatxx_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+  set(mtest_python_module "mtest_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+else(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+  set(tfel_tests_python_module "tfel.tests")
+  set(tfel_math_python_module "tfel.math")
+  set(tfel_material_python_module "tfel.material")
+  set(mfront_python_module "mfront")
+  set(mfront_umatxx_python_module "mfront.umatxx")
+  set(mtest_python_module "mtest")
+endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+
 configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCrystalsAngles.txt"
     PolyCrystalsAngles.txt @ONLY)
 configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCrystalsAngles-30.txt"
@@ -111,111 +127,91 @@ if(WIN32)
   endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 endif(WIN32)
 
+function(set_aster_test_properties test)
+  foreach(rm ${IEEE754_ROUNDING_MODES})
+    set(dependencies )
+    list(APPEND dependencies MFrontAsterBehaviours)
+    list(APPEND dependencies mtest)
+    if(HAVE_CASTEM)
+      list(APPEND dependencies MFrontMaterialProperties-castem)
+    endif(HAVE_CASTEM)
+    if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+      set_property(TEST ${test}
+        PROPERTY DEPENDS ${dependencies}
+        PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
+    elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+      set_property(TEST ${test} PROPERTY DEPENDS ${dependencies})
+    endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  endforeach(rm ${IEEE754_ROUNDING_MODES})
+endfunction(set_aster_test_properties)
 
-macro(test_aster test_arg)
-  set(_NO_XML_OUTPUT )
-  set(_WILL_FAIL )
+function(install_aster_test_file file)
+  if(TFEL_APPEND_SUFFIX)
+    install(FILES ${file}
+      DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/aster"
+      COMPONENT mtest)
+  else(TFEL_APPEND_SUFFIX)
+    install(FILES ${file}
+      DESTINATION "share/doc/mfront/tests/behaviours/aster"
+      COMPONENT mtest)
+  endif(TFEL_APPEND_SUFFIX)
+endfunction(install_aster_test_file)
+
+function(test_aster test_arg)
+  set(_XML_OUTPUT "true")
+  set(_REFERENCE_FILE )
   foreach(_ARG ${ARGN})
     if ( ${_ARG} MATCHES NO_XML_OUTPUT )
-      set ( _NO_XML_OUTPUT ON)
+      set ( _XML_OUTPUT "false")
     elseif ( ${_ARG} MATCHES WILL_FAIL)
       set ( _WILL_FAIL ON)
     else()
-      message(FATAL_ERROR "test_aster: unsupported option '${_ARG}'")
+      set(_REFERENCE_FILE "${_ARG}")
     endif()
   endforeach(_ARG ${ARGN})
+  set(file "${CMAKE_CURRENT_SOURCE_DIR}/aster${test_arg}.mtest")
   foreach(rm ${IEEE754_ROUNDING_MODES})
-    if(CMAKE_CONFIGURATION_TYPES)
-      foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-	set(test "aster${test_arg}_${rm}_${conf}_mtest")
-	set(file "aster${test_arg}-${rm}-${conf}.mtest")
-	get_property(MFrontAsterBehavioursBuildPath TARGET MFrontAsterBehaviours PROPERTY LOCATION_${conf})
-	if(HAVE_CASTEM)
-	  get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
-	endif(HAVE_CASTEM)
-	configure_file(aster${test_arg}.mtest.in
-	  ${file} @ONLY)
-	if(_NO_XML_OUTPUT)
-	  add_test(NAME ${test}
-	    CONFIGURATIONS ${conf}
-	    COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=false --result-file-output=false ${file})
-	else(_NO_XML_OUTPUT)
-	  add_test(NAME ${test}
-	    CONFIGURATIONS ${conf}
-	    COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false ${file})
-	endif(_NO_XML_OUTPUT)
-	if(_WILL_FAIL)
-	  set_tests_properties(${test}
-	    PROPERTIES WILL_FAIL true)
-	endif(_WILL_FAIL)
-	if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-          set_property(TEST ${test}
-            PROPERTY DEPENDS MFrontAsterBehaviours MFrontMaterialProperties-aster mtest
-	    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
-	elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-          set_property(TEST ${test}
-            PROPERTY DEPENDS MFrontAsterBehaviours MFrontMaterialProperties-castem mtest)
-	endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-	if(TFEL_APPEND_SUFFIX)
-	  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	    DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/aster"
-	    COMPONENT mtest)
-	else(TFEL_APPEND_SUFFIX)
-	  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	    DESTINATION "share/doc/mfront/tests/behaviours/aster"
-	    COMPONENT mtest)
-	endif(TFEL_APPEND_SUFFIX)
-      endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-    else(CMAKE_CONFIGURATION_TYPES)
-      set(test "aster${test_arg}_${rm}_mtest")
-      set(file "aster${test_arg}-${rm}.mtest")
-      get_property(MFrontAsterBehavioursBuildPath TARGET MFrontAsterBehaviours PROPERTY LOCATION)
-      if(HAVE_CASTEM)
-	get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION)
-      endif(HAVE_CASTEM)
-      configure_file(aster${test_arg}.mtest.in ${file} @ONLY)
-      if(_NO_XML_OUTPUT)
-	add_test(NAME ${test}
-	  COMMAND mtest  --rounding-direction-mode=${rm} --verbose=level0 --xml-output=false --result-file-output=false ${file})
-      else(_NO_XML_OUTPUT)
-	add_test(NAME ${test}
-	  COMMAND mtest  --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false ${file})
-      endif(_NO_XML_OUTPUT)
-      if(_WILL_FAIL)
-	set_tests_properties(${test}
-	  PROPERTIES WILL_FAIL true)
-      endif(_WILL_FAIL)
-      set_tests_properties(${test}
-	PROPERTIES DEPENDS MFrontAsterBehaviours)
-      set_tests_properties(${test}
-	PROPERTIES DEPENDS mtest)
-      if(TFEL_APPEND_SUFFIX)
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	  DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/aster"
-	  COMPONENT mtest)
-      else(TFEL_APPEND_SUFFIX)
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	  DESTINATION "share/doc/mfront/tests/behaviours/aster"
-	  COMPONENT mtest)
-      endif(TFEL_APPEND_SUFFIX)
-    endif(CMAKE_CONFIGURATION_TYPES)
+    set(mtest_args )
+    list(APPEND mtest_args --rounding-direction-mode=${rm})
+    list(APPEND mtest_args --verbose=level0)
+    list(APPEND mtest_args --xml-output=${_XML_OUTPUT})
+    list(APPEND mtest_args --@XMLOutputFile="${test_arg}-${rm}.xml")
+    list(APPEND mtest_args --@library@="$<TARGET_FILE:MFrontAsterBehaviours>")
+    list(APPEND mtest_args --@top_srcdir@=${PROJECT_SOURCE_DIR})
+    list(APPEND mtest_args ${file})
+    if(HAVE_CASTEM)
+      list(APPEND mtest_args --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>")
+    endif(HAVE_CASTEM)
+    if(_REFERENCE_FILE)
+      set(rfile "${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/${_REFERENCE_FILE}")
+      list(APPEND mtest_args --@reference_file@="${rfile}")
+    endif(_REFERENCE_FILE)
+    add_test(NAME aster-${test_arg}_${rm}_mtest
+             COMMAND mtest ${mtest_args})
+    if(_WILL_FAIL)
+      set_tests_properties(aster-${test_arg}_${rm}_mtest
+	PROPERTIES WILL_FAIL true)
+    endif(_WILL_FAIL)
+    set_aster_test_properties("aster-${test_arg}_${rm}_mtest")
   endforeach(rm ${IEEE754_ROUNDING_MODES})
-endmacro(test_aster)
+  install_aster_test_file("${file}")
+endfunction(test_aster)
 
 macro(test_aster_python test)
-  configure_file(aster${test}.py.in
-    aster${test}.py @ONLY)
-  add_test(NAME aster${test}_py
-    COMMAND ${PYTHON_EXECUTABLE} aster${test}.py)
-  set_tests_properties(aster${test}_py
-    PROPERTIES DEPENDS MFrontAsterBehaviours)
-  if(CMAKE_CONFIGURATION_TYPES)
+  if(NOT CMAKE_CONFIGURATION_TYPES)
+    configure_file(aster${test}.py.in aster${test}.py.in2 @ONLY)
+    file(GENERATE OUTPUT aster${test}.py
+                  INPUT ${CMAKE_CURRENT_BINARY_DIR}/aster${test}.py.in2)
+    add_test(NAME aster${test}_py
+      COMMAND ${Python_EXECUTABLE} aster${test}.py)
     set_tests_properties(aster${test}_py
-      PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python;$<TARGET_FILE_DIR:py_std__stl_vector>;$<TARGET_FILE_DIR:py_tfel_tests>")
-  else(CMAKE_CONFIGURATION_TYPES)
+      PROPERTIES DEPENDS MFrontAsterBehaviours)
+    set(python_env)
+    list(APPEND python_env "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python")
+    list(APPEND python_env "MFrontAsterBehavioursBuildPath=$<TARGET_FILE:MFrontAsterBehaviours>")
     set_tests_properties(aster${test}_py
-      PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python")
-  endif(CMAKE_CONFIGURATION_TYPES)
+      PROPERTIES ENVIRONMENT "${python_env}")
+  endif(NOT CMAKE_CONFIGURATION_TYPES)
 endmacro(test_aster_python)
 
 test_aster(materialpropertiesboundscheck
@@ -241,17 +237,6 @@ test_aster(elasticity)
 test_aster(elasticity2)
 if(HAVE_CASTEM)
   test_aster(elasticity3)
-  foreach(rm ${IEEE754_ROUNDING_MODES})
-    if(CMAKE_CONFIGURATION_TYPES)
-      foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-	set_tests_properties(asterelasticity3_${rm}_${conf}_mtest
-	  PROPERTIES DEPENDS MFrontMaterialProperties-castem)
-      endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-    else(CMAKE_CONFIGURATION_TYPES)
-      set_tests_properties(asterelasticity3_${rm}_mtest
-	PROPERTIES DEPENDS MFrontMaterialProperties-castem)
-    endif(CMAKE_CONFIGURATION_TYPES)
-  endforeach(rm ${IEEE754_ROUNDING_MODES})
 endif(HAVE_CASTEM)
 test_aster(elasticity4)
 test_aster(elasticity5)

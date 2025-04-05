@@ -1,0 +1,18 @@
+@InnerRadius 4.2e-3;
+@OuterRadius 4.7e-3;
+@NumberOfElements 10;
+@ElementType 'Linear';
+@AxialLoading 'None';
+@PerformSmallStrainAnalysis true;
+
+@Behaviour<cyrano> @library@ 'cyranoelasticity';
+@MaterialProperty<constant> 'YoungModulus' 150e9;
+@MaterialProperty<constant> 'PoissonRatio'   0.3;
+@ExternalStateVariable 'Temperature' 293.15;
+
+@InnerPressureEvolution 1.5e6;
+@OuterPressureEvolution<evolution> {0:1.5e6,1:10e6};
+
+@Times {0,1};
+
+@Profile 'pipe.res' {'SRR','STT','SZZ'};

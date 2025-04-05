@@ -131,7 +131,6 @@ pandoc_html(release-notes-3.2   "--toc" "--toc-depth=2" "--number-sections" "-c 
 pandoc_html(release-notes-3.2.1 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2.2 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2.3 "--toc" "--toc-depth=2")
-pandoc_html(release-notes-3.2.3 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2.4 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2.5 "--toc" "--toc-depth=2")
 pandoc_html(release-notes-3.2.6 "--toc" "--toc-depth=2")
