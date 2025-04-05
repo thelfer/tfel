@@ -17,7 +17,7 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
     tfel_add_c_cxx_definitions("TFEL_APPEND_SUFFIX")
   endif(TFEL_APPEND_VERSION OR TFEL_VERSION_FLAVOUR)
 
-  set(TFEL_WEBSITE "http://tfel.sourceforce.net")
+  set(TFEL_WEBSITE "http://thelfer.github.io/tfel/web/index.html")
   # the version number.
   set(TFEL_VERSION_MAJOR "${tfel_version_major}")
   set(TFEL_VERSION_MINOR "${tfel_version_minor}")
@@ -271,17 +271,7 @@ macro(add_mfront_behaviour_generated_source lib interface dir intrinsic_source f
   else ("${interface}" STREQUAL "generic")
     set(iprefix "${interface}")
   endif("${interface}" STREQUAL "generic")
-  if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-    set(mfront_executable "$<TARGET_FILE:mfront>")
-  else(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-    # retrieve the old behaviour for debian squeeze's version of cmake
-    # does not work with configurations
-    if(WIN32)
-      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront.exe")
-    else(WIN32)
-      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
-    endif(WIN32)
-  endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
+  set(mfront_executable "$<TARGET_FILE:mfront>")
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(mfront_flags "--debug")
   else(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -297,6 +287,7 @@ macro(add_mfront_behaviour_generated_source lib interface dir intrinsic_source f
       OUTPUT  ${output_files}
       COMMAND "set"
       ARGS "PATH=\
+$<TARGET_FILE_DIR:TFELMFront>;\
 $<TARGET_FILE_DIR:MFrontLogStream>;\
 $<TARGET_FILE_DIR:TFELMaterial>;\
 $<TARGET_FILE_DIR:TFELNUMODIS>;\
@@ -313,7 +304,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
       ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
-      DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+      DEPENDS mfront
       DEPENDS "${mfront_file}"
       COMMENT "treating mfront source ${file}.mfront")
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
@@ -324,7 +315,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
 	ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
-	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+	DEPENDS mfront
 	DEPENDS "${mfront_file}"
 	COMMENT "treating mfront source ${file}.mfront")
       file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generation-test)
@@ -350,17 +341,7 @@ macro(mfront_dependencies lib)
     message(FATAL_ERROR "mfront_dependencies : no source specified")
   endif(${ARGC} LESS 1)
   foreach(source ${ARGN})
-    if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-      set(mfront_executable "$<TARGET_FILE:mfront>")
-    else(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-      # retrieve the old behaviour for debian squeeze's version of cmake
-      # does not work with configurations
-      if(WIN32)
-	set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront.exe")
-      else(WIN32)
-	set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
-      endif(WIN32)
-    endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
+    set(mfront_executable "$<TARGET_FILE:mfront>")
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
       set(mfront_flags "--debug")
     else(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -385,7 +366,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
 %PATH%"
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
-	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+	DEPENDS mfront
 	DEPENDS "${mfront_file}"
 	COMMENT "treating mfront source ${source}.mfront")
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
@@ -393,7 +374,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
 	OUTPUT  "src/${source}-mfront.cxx"
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
-	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+	DEPENDS mfront
 	DEPENDS "${mfront_file}"
 	COMMENT "treating mfront source ${source}.mfront")
       # add_test(NAME mfront-${source}-mfront COMMAND
@@ -461,7 +442,7 @@ function(python_module_base fullname name)
   target_include_directories(py_${fullname}
     SYSTEM
     PRIVATE "${Boost_INCLUDE_DIRS}"
-    PRIVATE "${PYTHON_INCLUDE_DIRS}")
+    PRIVATE "${Python_INCLUDE_DIRS}")
   if(python-static-interpreter-workaround)
     if(APPLE)
       target_link_options(py_${fullname}

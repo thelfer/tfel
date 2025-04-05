@@ -1,0 +1,48 @@
+/*! 
+ * \file   castemnortonrk2-rk54.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  09 avril 2013
+ */
+
+@ModellingHypothesis 'Axisymmetrical';
+
+@PredictionPolicy 'ElasticPrediction';
+@AccelerationAlgorithm 'AlternateSecant';
+
+@Behaviour<umat> @library@ 'umatnortonrk2';
+@MaterialProperty<constant> 'YoungModulus'     150.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+@MaterialProperty<constant> 'A' 8.e-67;
+@MaterialProperty<constant> 'E' 8.2;
+
+@Real 'srr' 20.e6;
+@ImposedStress 'SRR' 'srr';
+// Initial value of the elastic strain
+@Real 'EELRR0' 0.00013333333333333333;
+@Real 'EELZZ0' -0.00004;
+@InternalStateVariable 'ElasticStrain' {'EELRR0','EELZZ0','EELZZ0',0.};
+// Initial value of the total strain
+@Strain {'EELRR0','EELZZ0','EELZZ0',0.};
+// Initial value of the stresses
+@Stress {'srr',0.,0.,0.};
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Real 'tmax' 2500;
+@Times {0.,100. in 100, 'tmax' in 1000};
+
+// tests on strains
+// note: EquivalentViscoplasticStrain is known at 1.e-12 (defaut value
+// for @StrainEpsilon), thus we may expect the strain to be known at
+// '3.6*1.e-9'. If pratice, things are a bit better but not much
+// better.
+@Test<function> 'ERR' 'EELRR0+A*SRR**E*t'     1.e-9;
+@Test<function> 'EZZ' 'EELZZ0-0.5*A*SRR**E*t' 1.e-10;
+@Test<function> 'ETT' 'EELZZ0-0.5*A*SRR**E*t' 1.e-10;
+@Test<function> 'ERZ' '0.'                    1.e-10;
+// tests on internal state variables
+@Test<function> 'ElasticStrainRR' 'EELRR0'  1.e-12;
+@Test<function> 'ElasticStrainZZ' 'EELZZ0'  1.e-12;
+@Test<function> 'ElasticStrainTT' 'EELZZ0'  1.e-12;
+@Test<function> 'ElasticStrainRZ' '0.'      1.e-12;

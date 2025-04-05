@@ -1,0 +1,14 @@
+@Author Thomas Helfer;
+@Date   24/08/2022;
+@Description{
+  This test checks that an initialization failure
+  is correctly taken into account
+};
+
+@MaximumNumberOfSubSteps 1;
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
+@Behaviour<cyrano> @library@ 'cyranoinitializationfailuretest';
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0., 1};
+
