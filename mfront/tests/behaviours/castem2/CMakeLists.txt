@@ -1,94 +1,41 @@
-if(CASTEMHOME)
-  include_directories(
-    "${CASTEMHOME}/include"
-    "${CASTEMHOME}/include/c")
-endif(CASTEMHOME)
-
-include_directories(
-  "${CASTEMHOME}/include"
-  "${PROJECT_SOURCE_DIR}/include"
-  "${PROJECT_SOURCE_DIR}/mfront/include"
-  "${CMAKE_CURRENT_BINARY_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/mfront/src"
-                 "${PROJECT_BINARY_DIR}/src/Material"
-                 "${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception")
-macro(test_castem2 test_arg)
+function(test_castem2 test_arg)
   foreach(rm ${IEEE754_ROUNDING_MODES})
-    if(CMAKE_CONFIGURATION_TYPES)
-      foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-	set(test "castem2${test_arg}_${rm}_${conf}_mtest")
-	set(file "castem2${test_arg}-${rm}-${conf}.mtest")
-	get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
-	if(HAVE_CASTEM)
-	  get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
-	endif(HAVE_CASTEM)
-	configure_file(castem2${test_arg}.mtest.in ${file} @ONLY)
-	add_test(NAME ${test}
-	  CONFIGURATIONS ${conf}
-	  COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file})
-	if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-          set_property(TEST ${test}
-            PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest"
-	    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$ENV{PATH}")
-	elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-          set_property(TEST ${test}
-            PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
-	endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-	if(TFEL_APPEND_SUFFIX)
-	  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	    DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/castem2"
-	    CONFIGURATIONS ${conf}
-	    COMPONENT mtest)
-	else(TFEL_APPEND_SUFFIX)
-	  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	    DESTINATION "share/doc/mfront/tests/behaviours/castem2"
-	    CONFIGURATIONS ${conf}
-	    COMPONENT mtest)
-	endif(TFEL_APPEND_SUFFIX)
-      endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-    else(CMAKE_CONFIGURATION_TYPES)
-      set(test "castem2${test_arg}_${rm}_mtest")
-      set(file "castem2${test_arg}-${rm}.mtest")
-      get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
-      if(HAVE_CASTEM)
-	get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION)
-      endif(HAVE_CASTEM)
-      configure_file(castem2${test_arg}.mtest.in ${file} @ONLY)
-      add_test(NAME ${test}
-	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file})
-      set_tests_properties(${test} PROPERTIES DEPENDS MFrontCastemBehaviours)
-      set_tests_properties(${test} PROPERTIES DEPENDS mtest)
-      if(TFEL_APPEND_SUFFIX)
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	  DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/castem2"
-	  COMPONENT mtest)
-      else(TFEL_APPEND_SUFFIX)
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	  DESTINATION "share/doc/mfront/tests/behaviours/castem2"
-	  COMPONENT mtest)
-      endif(TFEL_APPEND_SUFFIX)
-    endif(CMAKE_CONFIGURATION_TYPES)
+    set(test "castem2${test_arg}_${rm}_mtest")
+    set(file "${CMAKE_CURRENT_SOURCE_DIR}/castem2${test_arg}.mtest")
+    set(_mtest_args)
+    list(APPEND _mtest_args --rounding-direction-mode=${rm} )
+    list(APPEND _mtest_args --verbose=level0)
+    list(APPEND _mtest_args --result-file-output=false)
+    list(APPEND _mtest_args --@interface@=umat)
+    list(APPEND _mtest_args --@library@="$<TARGET_FILE:MFrontCastemBehaviours>")
+    list(APPEND _mtest_args --@top_srcdir@=${PROJECT_SOURCE_DIR})
+    list(APPEND _mtest_args --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>")
+    list(APPEND _mtest_args --@reference_file@="${_REFERENCE_FILE}")
+    if(_NO_XML_OUTPUT)
+      list(APPEND _mtest_args --xml-output=false)
+    else(_NO_XML_OUTPUT)
+      list(APPEND _mtest_args --xml-output=true)
+    endif(_NO_XML_OUTPUT)
+    add_test(NAME ${test} COMMAND mtest ${_mtest_args} ${file})
+    if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+     set_property(TEST ${test}
+       PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$ENV{PATH}")
+    endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    if(TFEL_APPEND_SUFFIX)
+      install(FILES ${file}
+        DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/castem2"
+        COMPONENT mtest)
+    else(TFEL_APPEND_SUFFIX)
+      install(FILES ${file}
+        DESTINATION "share/doc/mfront/tests/behaviours/castem2"
+        COMPONENT mtest)
+    endif(TFEL_APPEND_SUFFIX)
   endforeach(rm ${IEEE754_ROUNDING_MODES})
-endmacro(test_castem2)
+endfunction(test_castem2)
 
 test_castem2(elasticity)
 test_castem2(elasticity2)
-if(HAVE_CASTEM)
-  test_castem2(elasticity3)
-  foreach(rm ${IEEE754_ROUNDING_MODES})
-    if(CMAKE_CONFIGURATION_TYPES)
-      foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-	set_tests_properties(castem2elasticity3_${rm}_${conf}_mtest
-	  PROPERTIES DEPENDS MFrontMaterialProperties-castem)
-      endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-    else(CMAKE_CONFIGURATION_TYPES)
-      set_tests_properties(castem2elasticity3_${rm}_mtest
-	PROPERTIES DEPENDS MFrontMaterialProperties-castem)
-    endif(CMAKE_CONFIGURATION_TYPES)
-  endforeach(rm ${IEEE754_ROUNDING_MODES})
-endif(HAVE_CASTEM)
+test_castem2(elasticity3)
 test_castem2(elasticity4)
 test_castem2(elasticity5)
 test_castem2(elasticity6)

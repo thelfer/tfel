@@ -1,49 +1,48 @@
-include_directories("${PROJECT_SOURCE_DIR}/bindings/python/include")
-include_directories("${PROJECT_SOURCE_DIR}/include")
-include_directories(SYSTEM "${Boost_INCLUDE_DIRS}")
-include_directories(SYSTEM "${PYTHON_INCLUDE_DIRS}")
-
-link_directories("${PROJECT_BINARY_DIR}/src/Exception")
-link_directories("${PROJECT_BINARY_DIR}/src/Utilities")
-link_directories("${PROJECT_BINARY_DIR}/src/Math")
-link_directories("${PROJECT_BINARY_DIR}/src/System")
-link_directories("${PROJECT_BINARY_DIR}/src/Glossary")
-link_directories("${PROJECT_BINARY_DIR}/src/Tests")
-link_directories("${Boost_LIBRARY_DIRS}")
-link_directories("${PYTHON_LIBRARY_PATH}")
-
 tfel_python_module(_tfel tfel.cxx
   PhysicalConstants.cxx)
+target_link_libraries(py_tfel__tfel
+  PRIVATE ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
 
 tfel_python_module(tests tests.cxx
   TestResult.cxx
   XMLTestOutput.cxx)
-target_link_libraries(py_tfel_tests TFELTests)
+target_link_libraries(py_tfel_tests
+  PRIVATE TFELTests ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
 
 if(NOT WIN32)
 tfel_python_module(utilities utilities.cxx
   Data.cxx
   TextData.cxx)
-target_link_libraries(py_tfel_utilities TFELUtilities)
+target_link_libraries(py_tfel_utilities
+  PRIVATE TFELUtilities ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
 endif(NOT WIN32)
 
 tfel_python_module(glossary
   pyglossary.cxx
   Glossary.cxx
   GlossaryEntry.cxx)
-target_link_libraries(py_tfel_glossary TFELGlossary)
+target_link_libraries(py_tfel_glossary
+  PRIVATE TFELGlossary ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
 
-tfel_python_module(math math.cxx
+set(TFEL_PYTHON_MATH_MODULE_SOURCES
+  math.cxx
   vector.cxx
   tvector.cxx
   stensor.cxx)
-target_link_libraries(py_tfel_math TFELMath)
+tfel_python_module(math ${TFEL_PYTHON_MATH_MODULE_SOURCES})
+target_link_libraries(py_tfel_math
+   PRIVATE TFELMath TFELMathParser TFELException
+   ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
 
 tfel_python_module(material
   material.cxx
   ModellingHypothesis.cxx
   OutOfBoundsPolicy.cxx
   CrystalStructure.cxx)
+target_link_libraries(py_tfel_material
+  PRIVATE
+  TFELMaterial TFELMath TFELException
+  ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
 
 if(NOT WIN32)
   tfel_python_module(system system.cxx
@@ -58,6 +57,8 @@ else(NOT WIN32)
     ExternalBehaviourDescription.cxx)
 endif(NOT WIN32)
 target_link_libraries(py_tfel_system
-  TFELSystem)
+  PRIVATE
+  TFELSystem
+  ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
 
 tfel_python_script(tfel __init__.py)

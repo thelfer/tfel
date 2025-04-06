@@ -1,0 +1,56 @@
+@Author Helfer Thomas;
+@Date  29/02/2016;
+@Description{
+  "This test checks that the stiffness tensor "
+  "is correctly computed for an "
+  "orthotropic material."
+  "The orthotropic behaviour uses the 'Pipe' "
+  "orthotropic axes convention. This means that "
+  "the direction 2 and 3 are interchanged "
+  "with respect to three dimensional modelling."
+};
+
+@ModellingHypothesis 'PlaneStrain';
+@Behaviour<umat> @library@ 'umatorthotropicelastic5';
+
+// Material properties for the three dimensional cases
+@Real 'E1'   '7.8e+10';
+@Real 'E2'   '2.64233e+11';
+@Real 'E3'   '3.32e+11';
+@Real 'nu12' '0.13';
+@Real 'nu13' '0.18';
+@Real 'nu23' '0.24';
+@Real 'G12'  '4.8e+10';
+@Real 'G13'  '7.8e+10';
+@Real 'G23'  '1.16418e+11';
+
+// Material properties taking into account that the the direction 2
+// and 3 are inverchanged
+@MaterialProperty<constant> 'YoungModulus1'     'E1';
+@MaterialProperty<constant> 'YoungModulus2'     'E3';
+@MaterialProperty<constant> 'YoungModulus3'     'E2';
+@MaterialProperty<constant> 'PoissonRatio12'    'nu13';
+@MaterialProperty<constant> 'PoissonRatio13'    'nu12';
+@MaterialProperty<constant> 'PoissonRatio23'    'nu23*E3/E2';
+@MaterialProperty<constant> 'ShearModulus12'    'G13';
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@ImposedStrain<function> 'EXX' '1.e-3*sin(t/900.)';
+
+@Times {0.,3600 in 20};
+
+@Real 'S11' '1/E1';
+@Real 'S22' '1/E2';
+@Real 'S33' '1/E3';
+@Real 'S12' '-nu12/E1';
+@Real 'S13' '-nu13/E1';
+@Real 'S23' '-nu23/E2';
+
+// stresses
+@Test<function> 'SXX' 'S22/(S11*S22-S12*S12)*EXX'  1.e-3;
+@Test<function> {'SYY':'0'}  1.e-3;
+@Test<function> {'SZZ':'-S12/(S11*S22-S12*S12)*EXX'}  1.e-3;
+// // strains
+@Test<function> 'EYY' '(S13*S22-S23*S12)/(S11*S22-S12*S12)*EXX'  1.e-12;
+@Test<function> {'EZZ':'0','EXY':'0'} 1.e-12;

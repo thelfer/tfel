@@ -1,7 +1,3 @@
-include_directories("${PROJECT_SOURCE_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/Exception")
-
 set(TFELMath_SOURCES
     MathException.cxx
     LUException.cxx
@@ -55,22 +51,39 @@ set(TFELMathParser_SOURCES
     Variable.cxx)
 
 tfel_library(TFELMath ${TFELMath_SOURCES})
+target_include_directories(TFELMath
+   PUBLIC 
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELMath
-                      TFELException)
+	PUBLIC TFELException)
 
 tfel_library(TFELMathCubicSpline ${TFELMathCubicSpline_SOURCES})
+target_include_directories(TFELMath
+   PUBLIC 
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELMathCubicSpline
-		      TFELMath
-                      TFELException)
+	PUBLIC TFELMath
+    PUBLIC TFELException)
 
 tfel_library(TFELMathKriging ${TFELMathKriging_SOURCES})
+target_include_directories(TFELMath
+   PUBLIC 
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELMathKriging
-		      TFELMath
-                      TFELException)
+    PUBLIC TFELMath
+    PUBLIC TFELException)
 
 tfel_library(TFELMathParser ${TFELMathParser_SOURCES})
 add_dependencies(TFELMathParser TFELMath)
+target_include_directories(TFELMath
+   PUBLIC 
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELMathParser
-		      TFELMathKriging
-                      TFELMath
-		      TFELException)
+	PUBLIC TFELMathKriging
+    PUBLIC TFELMath
+	PUBLIC TFELException
+	PUBLIC TFELPhysicalConstants)

@@ -1,16 +1,3 @@
-include_directories("${PROJECT_SOURCE_DIR}/include"
-                    "${PROJECT_SOURCE_DIR}/mfront/include"
-		    "${PROJECT_SOURCE_DIR}/mtest/include")
-link_directories("${PROJECT_BINARY_DIR}/mtest/src"
-		 "${PROJECT_BINARY_DIR}/mfront/src"
-		 "${PROJECT_BINARY_DIR}/src/Material"
-                 "${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/System"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception"
-                 "${PROJECT_BINARY_DIR}/src/Tests"
-		 "${PROJECT_BINARY_DIR}/src/Config")
-
 set(TFELMTest_SOURCES
   RoundingMode.cxx
   Study.cxx
@@ -158,7 +145,14 @@ set(TFELMTest_LDADD
 endif(HAVE_CYRANO)
 
 mtest_library(TFELMTest ${TFELMTest_SOURCES})
-target_link_libraries(TFELMTest ${TFELMTest_LDADD})
+target_include_directories(TFELMTest
+   PUBLIC 
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mtest/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>)
+
+target_link_libraries(TFELMTest PUBLIC ${TFELMTest_LDADD})
 
 add_executable(mtest MTestMain.cxx)
 set_property(TARGET mtest PROPERTY POSITION_INDEPENDENT_CODE TRUE)

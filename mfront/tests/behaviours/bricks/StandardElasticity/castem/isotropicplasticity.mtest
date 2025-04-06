@@ -8,7 +8,6 @@
 @XMLOutputFile @xml_output@;
 @ModellingHypothesis 'PlaneStress';
 @OutputFilePrecision 12;
-@UseCastemAccelerationAlgorithm true;
 
 @Real 'Hy'  '102e9'; // H is used internally for the Heavyside function
 @Behaviour<umat> @library@ @behaviour@;

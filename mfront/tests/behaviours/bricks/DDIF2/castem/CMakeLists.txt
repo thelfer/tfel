@@ -1,20 +1,9 @@
-include_directories(
-  "${PROJECT_SOURCE_DIR}/include"
-  "${PROJECT_SOURCE_DIR}/mfront/include"
-  "${CMAKE_CURRENT_BINARY_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/mfront/src"
-                 "${PROJECT_BINARY_DIR}/src/Material"
-                 "${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception")
-
 if(HAVE_CASTEM)
   mfront_behaviour_brick_check_library(MFrontCastemDDIF2BrickBehaviours
     DDIF2 umat
     DDIF2 DDIF2_2 DDIF2_3 DDIF2_4 DDIF2_5 DDIF2_6)
   target_link_libraries(MFrontCastemDDIF2BrickBehaviours
-    CastemInterface MFrontProfiling TFELMaterial
-    TFELMath TFELUtilities TFELException)
+    PRIVATE CastemInterface)
 endif(HAVE_CASTEM)
 
 macro(castemtest_ddif2brick test_arg behaviour)
@@ -51,10 +40,10 @@ macro(castemtest_ddif2brick test_arg behaviour)
       if((CMAKE_HOST_WIN32) AND (NOT MSYS))
 	set_property(TEST brick${test_arg}_${behaviour}_${rm}_mtest
 	  PROPERTY DEPENDS "MFrontCastemDDIF2BrickBehaviours MFrontMaterialProperties-castem mtest"
-	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$ENV{PATH}")
+	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$ENV{PATH}")
 	set_property(TEST brick${test_arg}_${behaviour}_consistenttangentoperator_${rm}_mtest
 	  PROPERTY DEPENDS "MFrontCastemDDIF2BrickBehaviours MFrontMaterialProperties-castem mtest"
-	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$ENV{PATH}")
+	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$ENV{PATH}")
       elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
 	set_property(TEST brick${test_arg}_${behaviour}_${rm}_mtest
 	  PROPERTY DEPENDS "MFrontCastemDDIF2BrickBehaviours MFrontMaterialProperties-castem mtest")
