@@ -34,12 +34,14 @@ struct LibraryInformationCastemTest final
   : public tfel::tests::TestCase
 {
   LibraryInformationCastemTest()
-    : tfel::tests::TestCase("TFEL/System","LibraryInformationCastemTest")
+    : tfel::tests::TestCase("TFEL/System","LibraryInformationCastemTest"),
+      library([]{const auto e = ::getenv("MFrontCastemBehavioursBuildPath");
+	  return e == nullptr ? std::string{} : e;}())
   {} // end of LibraryInformationCastemTest
 
   tfel::tests::TestResult execute() override
   {
-    const auto l = "@MFrontCastemBehavioursBuildPath@";
+    const auto l = this->library;
     auto ld = tfel::system::LibraryInformation(l);
     auto b = std::vector<std::string>{};
     const auto ss = ld.symbols();
@@ -102,9 +104,11 @@ struct LibraryInformationCastemTest final
 	  "umatmonocrystal_dd_cc_numericaljacobian","umatelasticity6","umatplasticity",
 	  "umatimplicitnorton_levenbergmarquardt","umatcompressibleneohookeanbehaviour"}){
       TFEL_TESTS_ASSERT(std::find(b.begin(),b.end(),n)!=b.end());
-    };
+    }
     return this->result;
   } // end of execute
+private:
+  const std::string library;
 };
   
 TFEL_TESTS_GENERATE_PROXY(LibraryInformationCastemTest,

@@ -1,0 +1,48 @@
+@Author Helfer Thomas;
+@Date  29/02/2016;
+@Description{
+  "This test checks that the stiffness tensor "
+  "is correctly computed for an "
+  "orthotropic material."
+  "The orthotropic behaviour uses the 'Pipe' "
+  "orthotropic axes convention. This means that "
+  "the direction 2 and 3 are interchanged "
+  "with respect to three dimensional modelling."
+};
+
+@ModellingHypothesis 'Axisymmetrical';
+@Behaviour<umat> @library@ 'umatorthotropicelastic6';
+
+// Material properties for the three dimensional cases
+@Real 'E1'   '7.8e+10';
+@Real 'E2'   '2.64233e+11';
+@Real 'E3'   '3.32e+11';
+@Real 'nu12' '0.13';
+@Real 'nu13' '0.18';
+@Real 'nu23' '0.24';
+@Real 'G12'  '4.8e+10';
+@Real 'G13'  '7.8e+10';
+@Real 'G23'  '1.16418e+11';
+
+// Material properties taking into account that the the direction 2
+// and 3 are inverchanged
+@MaterialProperty<constant> 'YoungModulus1'     'E1';
+@MaterialProperty<constant> 'YoungModulus2'     'E2';
+@MaterialProperty<constant> 'YoungModulus3'     'E3';
+@MaterialProperty<constant> 'PoissonRatio12'    'nu12';
+@MaterialProperty<constant> 'PoissonRatio13'    'nu13';
+@MaterialProperty<constant> 'PoissonRatio23'    'nu23';
+@MaterialProperty<constant> 'ShearModulus12'    'G12';
+
+@ExternalStateVariable 'Temperature' 293.15;
+@ImposedStrain<function> 'EZZ' '1.e-3*sin(t/900.)';
+
+@Times {0.,3600 in 20};
+
+// stresses
+@Test<function> 'SZZ' 'E2*EZZ'  1.e-3;
+@Test<function> {'SRR':'0','STT':'0'}  1.e-3;
+// strains
+@Test<function> 'ERR' '-nu12*(E2/E1)*EZZ'  1.e-12;
+@Test<function> 'ETT' '-nu23*EZZ'  1.e-12;
+@Test<function> 'ERZ' '0.' 1.e-12;

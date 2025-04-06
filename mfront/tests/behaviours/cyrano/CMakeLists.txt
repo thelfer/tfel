@@ -1,13 +1,3 @@
-include_directories(
-  "${PROJECT_SOURCE_DIR}/include"
-  "${PROJECT_SOURCE_DIR}/mfront/include"
-  "${CMAKE_CURRENT_BINARY_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/mfront/src"
-                 "${PROJECT_BINARY_DIR}/src/Material"
-                 "${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception")
-
 set(mfront_tests_SOURCES
   MaterialPropertiesBoundsCheck
   ExternalStateVariablesBoundsCheck
@@ -74,12 +64,7 @@ mfront_dependencies(MFrontCyranoBehaviours
 
 mfront_behaviour_check_library(MFrontCyranoBehaviours cyrano ${mfront_tests_SOURCES})
 target_link_libraries(MFrontCyranoBehaviours
-  CyranoInterface
-  MFrontProfiling
-  TFELMaterial
-  TFELMath
-  TFELUtilities
-  TFELException)
+  PRIVATE CyranoInterface)
 
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
@@ -100,72 +85,38 @@ macro(test_cyrano test_arg)
       message(FATAL_ERROR "test_cyrano: unsupported option '${_ARG}'")
     endif()
   endforeach(_ARG ${ARGN})
+  set(file "${CMAKE_CURRENT_SOURCE_DIR}/cyrano${test_arg}.mtest")
   foreach(rm ${IEEE754_ROUNDING_MODES})
-    if(CMAKE_CONFIGURATION_TYPES)
-      foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-	set(test "cyrano${test_arg}_${rm}_${conf}_mtest")
-	set(file "cyrano${test_arg}-${rm}-${conf}.mtest")
-	get_property(MFrontCyranoBehavioursBuildPath TARGET MFrontCyranoBehaviours PROPERTY LOCATION_${conf})
-	configure_file(cyrano${test_arg}.mtest.in
-	  ${file} @ONLY)
-	if(_NO_XML_OUTPUT)
-	  add_test(NAME ${test}
-	    CONFIGURATIONS ${conf}
-	    COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=false --result-file-output=false ${file})
-	else(_NO_XML_OUTPUT)
-	  add_test(NAME ${test}
-	    CONFIGURATIONS ${conf}
-	    COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false ${file})
-	endif(_NO_XML_OUTPUT)
-	if(_WILL_FAIL)
-	  set_tests_properties(${test} PROPERTIES WILL_FAIL true)
-	endif(_WILL_FAIL)
-	if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-          set_property(TEST ${test}
-            PROPERTY DEPENDS MFrontCyranoBehaviours mtest
-	    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
-	elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-          set_property(TEST ${test} PROPERTY DEPENDS MFrontCyranBehaviours mtest)
-	endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-	if(TFEL_APPEND_SUFFIX)
-	  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	    DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/cyrano"
-	    COMPONENT mtest)
-	else(TFEL_APPEND_SUFFIX)
-	  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	    DESTINATION "share/doc/mfront/tests/behaviours/cyrano"
-	    COMPONENT mtest)
-	endif(TFEL_APPEND_SUFFIX)
-      endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-    else(CMAKE_CONFIGURATION_TYPES)
-      set(test "cyrano${test_arg}_${rm}_mtest")
-      set(file "cyrano${test_arg}-${rm}.mtest")
-      get_property(MFrontCyranoBehavioursBuildPath TARGET MFrontCyranoBehaviours PROPERTY LOCATION_${conf})
-      configure_file(cyrano${test_arg}.mtest.in ${file} @ONLY)
-      if(_NO_XML_OUTPUT)
-	add_test(NAME ${test}
-	  COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=false --result-file-output=false ${file})
-      else(_NO_XML_OUTPUT)
-	add_test(NAME ${test}
-	  COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false ${file})
-      endif(_NO_XML_OUTPUT)
-      if(_WILL_FAIL)
-	set_tests_properties(${test} PROPERTIES WILL_FAIL true)
-      endif(_WILL_FAIL)
-      set_tests_properties(${test} PROPERTIES DEPENDS MFrontCyranoBehaviours)
-      set_tests_properties(${test}
-	PROPERTIES DEPENDS mtest)
-      if(TFEL_APPEND_SUFFIX)
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	  DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/cyrano"
-	  COMPONENT mtest)
-      else(TFEL_APPEND_SUFFIX)
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	  DESTINATION "share/doc/mfront/tests/behaviours/cyrano"
-	  COMPONENT mtest)
-      endif(TFEL_APPEND_SUFFIX)
-    endif(CMAKE_CONFIGURATION_TYPES)
+    set(test "cyrano${test_arg}_${rm}_mtest")
+    set(_mtest_args)
+    list(APPEND _mtest_args --rounding-direction-mode=${rm} )
+    list(APPEND _mtest_args --verbose=level0)
+    list(APPEND _mtest_args --result-file-output=false)
+    list(APPEND _mtest_args --@library@="$<TARGET_FILE:MFrontCyranoBehaviours>")
+    list(APPEND _mtest_args --@top_srcdir@=${PROJECT_SOURCE_DIR})
+    if(_NO_XML_OUTPUT)
+      list(APPEND _mtest_args --xml-output=false)
+    else(_NO_XML_OUTPUT)
+      list(APPEND _mtest_args --xml-output=true)
+    endif(_NO_XML_OUTPUT)
+    add_test(NAME ${test} COMMAND mtest ${_mtest_args} ${file})
+    if(_WILL_FAIL)
+      set_tests_properties(${test} PROPERTIES WILL_FAIL true)
+    endif(_WILL_FAIL)
+    if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+       set_property(TEST ${test}
+                    PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$ENV{PATH}")
+    endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
   endforeach(rm ${IEEE754_ROUNDING_MODES})
+  if(TFEL_APPEND_SUFFIX)
+    install(FILES ${file}
+      DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/cyrano"
+      COMPONENT mtest)
+  else(TFEL_APPEND_SUFFIX)
+    install(FILES ${file}
+      DESTINATION "share/doc/mfront/tests/behaviours/cyrano"
+      COMPONENT mtest)
+  endif(TFEL_APPEND_SUFFIX)
 endmacro(test_cyrano)
 
 test_cyrano(materialpropertiesboundscheck
@@ -181,19 +132,10 @@ test_cyrano(materialpropertiesboundscheck7)
 test_cyrano(materialpropertiesboundscheck8 
   NO_XML_OUTPUT WILL_FAIL)
 foreach(rm ${IEEE754_ROUNDING_MODES})
-  if(CMAKE_CONFIGURATION_TYPES)
-    foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-      set_tests_properties(cyranomaterialpropertiesboundscheck6_${rm}_${conf}_mtest
-	PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=NONE")
-      set_tests_properties(cyranomaterialpropertiesboundscheck8_${rm}_${conf}_mtest
-	PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=STRICT")
-    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-  else(CMAKE_CONFIGURATION_TYPES)
-    set_tests_properties(cyranomaterialpropertiesboundscheck6_${rm}_mtest
-      PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=NONE")
-    set_tests_properties(cyranomaterialpropertiesboundscheck8_${rm}_mtest
-      PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=STRICT")
-  endif(CMAKE_CONFIGURATION_TYPES)
+  set_tests_properties(cyranomaterialpropertiesboundscheck6_${rm}_mtest
+    PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=NONE")
+  set_tests_properties(cyranomaterialpropertiesboundscheck8_${rm}_mtest
+    PROPERTIES ENVIRONMENT "CYRANO_OUT_OF_BOUNDS_POLICY=STRICT")
 endforeach(rm ${IEEE754_ROUNDING_MODES})
 
 test_cyrano(externalstatevariablesboundscheck

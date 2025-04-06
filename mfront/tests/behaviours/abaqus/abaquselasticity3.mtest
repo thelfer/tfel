@@ -1,0 +1,30 @@
+/*! 
+ * \file   elasticity3.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  09 avril 2013
+ */
+
+@Behaviour<abaqus> @library@ 'ELASTICITY_3D';
+@MaterialProperty<castem>   'YoungModulus' @mplibrary@ 'Inconel600_YoungModulus';
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+
+@Real 'T0' 400.;
+@Real 'T1' 523.;
+@ExternalStateVariable<function> 'Temperature' '(T1-T0)*sin(t/900.)+T0';
+
+@Real 'sxx' 50.e6;
+@ImposedStress 'SXX' 'sxx';
+// Initial value of the total strain
+@Strain {0.000239466253465591,
+         -7.18398760396772e-05,
+         -7.18398760396772e-05,
+         0.,0.,0.};
+@Stress {'sxx',0.,0.,0.,0.,0.};
+
+@Times {0.,0.1,3600 in 20};
+
+@Test<function> {'EXX':'SXX/YoungModulus',
+                 'EYY':'-PoissonRatio*SXX/YoungModulus',
+                 'EZZ':'-PoissonRatio*SXX/YoungModulus',
+                 'EXY':'0.','EXZ':'0.','EYZ':'0.'} 1.e-12;

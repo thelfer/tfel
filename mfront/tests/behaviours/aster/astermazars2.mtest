@@ -1,0 +1,34 @@
+/*! 
+ * \file   mazars2.mtest
+ * \brief
+ * \author Helfer Thomas/Jean Michel Proix
+ * \brief  03/07/2013
+ */
+
+@ModellingHypothesis 'PlaneStress';
+@StiffnessMatrixType 'SecantOperator';
+
+@Behaviour<aster> @library@ 'astermazars';
+@MaterialProperty<constant> 'YoungModulus'     3.2e10; 
+@MaterialProperty<constant> 'PoissonRatio'     0.2;    
+
+@MaterialProperty<constant> 'Ac' 1.15;
+@MaterialProperty<constant> 'At' 0.8;
+@MaterialProperty<constant> 'Bc' 1391.3;
+@MaterialProperty<constant> 'Bt' 10000.;
+@MaterialProperty<constant> 'k'  0.7;
+@MaterialProperty<constant> 'ed0' 9.375e-5;
+
+@ExternalStateVariable 'Temperature' 293.15;
+@ImposedStrain 'EXX' {0.:0.,1.0: 5.0e-04};
+@ImposedStrain 'EYY' {0.:0.,1.0:-1.0e-04};
+
+@Times {0.,1.0 in 10};
+
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/mazars-aster.ref'
+            {'SXX':3,'SYY':4} 5.e0;
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/mazars-aster.ref'
+            {'EXX':9,'EYY':10} 1.e-10;
+@Test<file> '@top_srcdir@/mfront/tests/behaviours/references/mazars-aster.ref'
+            'd' 15 1.e-6;
+

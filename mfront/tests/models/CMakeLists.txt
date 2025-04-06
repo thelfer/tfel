@@ -1,24 +1,10 @@
-include_directories(
-  "${PROJECT_SOURCE_DIR}/include"
-  "${CMAKE_CURRENT_BINARY_DIR}/include")
-
 add_subdirectory(interfaces)
 
 macro(mfront_model)
   if(${ARGC} LESS 1)
     message(FATAL_ERROR "mfront_model: no source specified")
   endif(${ARGC} LESS 1)
-  if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-    set(mfront_executable "$<TARGET_FILE:mfront>")
-  else(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-    # retrieve the old behaviour for debian squeeze's version of cmake
-    # does not work with configurations
-    if(WIN32)
-      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront.exe")
-    else(WIN32)
-      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
-    endif(WIN32)
-  endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
+  set(mfront_executable "$<TARGET_FILE:mfront>")
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(mfront_flags "--debug")
   else(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -55,7 +41,7 @@ macro(mfront_model)
 	ARGS "PATH=$<TARGET_FILE_DIR:TFELUnicodeSupport>;%PATH%"
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${mfront_source}"
-	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+	DEPENDS mfront
 	DEPENDS "${mfront_source}"
 	COMMENT "treating mfront source ${source}.mfront")
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
@@ -63,7 +49,7 @@ macro(mfront_model)
 	OUTPUT  "${CMAKE_CURRENT_BINARY_DIR}/include/MFront/${source}.hxx"
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${mfront_source}"
-	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+	DEPENDS mfront
 	DEPENDS "${mfront_source}"
 	COMMENT "treating mfront source ${source}.mfront")
       file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generation-test)
@@ -97,7 +83,10 @@ macro(tests_model test_arg)
     set_property(TEST ${test_arg}
       PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMath>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")
   endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  target_link_libraries(${test_arg} TFELMaterial TFELMath TFELTests TFELPhysicalConstants)
+  target_include_directories(${test_arg}
+    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
+  target_link_libraries(${test_arg}
+    TFELMaterial TFELMath TFELTests TFELPhysicalConstants)
 endmacro(tests_model)
 
 tests_model(test_model)

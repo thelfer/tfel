@@ -1,0 +1,32 @@
+/*! 
+ * \file   castemincompressibleplanestressgornetdesmoratbehaviouruniaxialtesting.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  09 avril 2013
+ */
+
+@AccelerationAlgorithm 'CrossedSecant';
+@ModellingHypothesis 'PlaneStress';
+@Behaviour<umat> @library@ 'umatincompressibleplanestressgornetdesmoratbehaviour';
+@StressEpsilon 1.e-9;
+
+@Real 'C_1' '0.183';
+@Real 'C_2' '0.0034';
+@Real 'E'   '3*(2*(C_1+C_2))';
+
+@MaterialProperty<constant> 'YoungModulus'    '20000*E';
+@MaterialProperty<constant> 'PoissonRatio'     0.49999;
+@MaterialProperty<constant> 'H1' '0.142236';
+@MaterialProperty<constant> 'H2' '1.5854659e-2';
+@MaterialProperty<constant> 'H3' '3.4946541e-4';
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+
+@ImposedDeformationGradient 'FYY' {0:1,1:9};
+@ImposedDeformationGradient 'FXY' 0;
+@ImposedDeformationGradient 'FYX' 0;
+
+@Times {0.,1 in 20};
+
+@Test<function> 'SYY' '2*(FYY**2 - 1/FYY)*(H1*exp(H3*(FYY**2+2/FYY-3)**2)+3*H2/(FYY*sqrt(2*FYY+1/FYY**2)))' 1.e-8;
+@Test<function> {'SXX':'0','SZZ':'0.','SXY':'0.'} 1.e-7;
