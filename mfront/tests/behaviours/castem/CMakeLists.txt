@@ -184,7 +184,7 @@ if(WIN32)
   endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 endif(WIN32)
 
-macro(test_castem test_arg)
+function(test_castem test_arg)
   set(_NO_XML_OUTPUT )
   set(_WILL_FAIL )
   set(_EXPECT_ADDITIONAL_ENVIRONMENT )
@@ -228,116 +228,46 @@ macro(test_castem test_arg)
     set(_REFERENCE_FILE "${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/${_REFERENCE_FILE}")
   endif(_REFERENCE_FILE)
   foreach(rm ${IEEE754_ROUNDING_MODES})
-    if(CMAKE_CONFIGURATION_TYPES)
-      foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-	set(test "castem${test_arg}_${rm}_${conf}_mtest")
-        set(file "${CMAKE_CURRENT_SOURCE_DIR}/castem${test_arg}.mtest")
-	if(_NO_XML_OUTPUT)
-	  add_test(NAME ${test}
-	    COMMAND mtest --rounding-direction-mode=${rm}
-	    --verbose=level0
-	    --xml-output=false
-	    --result-file-output=false
-        --@interface@=umat
-        --@library@="$<TARGET_FILE:MFrontCastemBehaviours>"
-	    --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
-	    --@reference_file@="${_REFERENCE_FILE}"
-	    ${file}
-	    CONFIGURATIONS ${conf})
-	else(_NO_XML_OUTPUT)
-	  add_test(NAME ${test}
-	    COMMAND mtest
-	    --rounding-direction-mode=${rm}
-	    --verbose=level0
-	    --xml-output=true
-	    --result-file-output=false ${file}
-        --@interface@=umat
-        --@library@="$<TARGET_FILE:MFrontCastemBehaviours>"
-	    --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
-	    --@reference_file@="${_REFERENCE_FILE}"
-	    CONFIGURATIONS ${conf})
-	endif(_NO_XML_OUTPUT)
-	if(_WILL_FAIL)
-	  set_tests_properties(${test}
-	    PROPERTIES WILL_FAIL true)
-	endif(_WILL_FAIL)
-	if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-          set_property(TEST ${test}
-            PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
-          set_property(TEST ${test}	    
-	    PROPERTY ENVIRONMENT
-	    ${_ADDITIONAL_ENVIRONMENT}
-	    "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
-	elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-	  if(_ADDITIONAL_ENVIRONMENT)
-            set_property(TEST ${test} PROPERTY ENVIRONMENT ${_ADDITIONAL_ENVIRONMENT})
-	  endif(_ADDITIONAL_ENVIRONMENT)
-          set_property(TEST ${test}
-            PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
-	endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-	if(TFEL_APPEND_SUFFIX)
-	  install(FILES ${file}
-	    DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/castem"
-	    CONFIGURATIONS ${conf}
-	    COMPONENT mtest)
-	else(TFEL_APPEND_SUFFIX)
-	  install(FILES ${file}
-	    DESTINATION "share/doc/mfront/tests/behaviours/castem"
-	    CONFIGURATIONS ${conf}
-	    COMPONENT mtest)
-	endif(TFEL_APPEND_SUFFIX)
-      endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-    else(CMAKE_CONFIGURATION_TYPES)
-      set(test "castem${test_arg}_${rm}_mtest")
-      set(file "${CMAKE_CURRENT_SOURCE_DIR}/castem${test_arg}.mtest")
-      if(_NO_XML_OUTPUT)
-	add_test(NAME ${test}
-	  COMMAND mtest
-	  --rounding-direction-mode=${rm}
-	  --verbose=level0
-	  --xml-output=false
-	  --result-file-output=false
-      --@interface@=umat
-      --@library@="$<TARGET_FILE:MFrontCastemBehaviours>"
-	  --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
-	  --@reference_file@="${_REFERENCE_FILE}"
-	  ${file})
-      else(_NO_XML_OUTPUT)
-	add_test(NAME ${test}
-	  COMMAND mtest
-	  --rounding-direction-mode=${rm}
-	  --verbose=level0
-	  --xml-output=true
-	  --result-file-output=false
-      --@interface@=umat
-      --@library@="$<TARGET_FILE:MFrontCastemBehaviours>"
-	  --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
-      --@reference_file@="${_REFERENCE_FILE}"
-	  ${file})
-      endif(_NO_XML_OUTPUT)
-      if(_WILL_FAIL)
-	set_tests_properties(${test} PROPERTIES WILL_FAIL true)
-      endif(_WILL_FAIL)
+    set(test "castem${test_arg}_${rm}_mtest")
+    set(file "${CMAKE_CURRENT_SOURCE_DIR}/castem${test_arg}.mtest")
+    set(_mtest_args)
+    list(APPEND _mtest_args --rounding-direction-mode=${rm} )
+    list(APPEND _mtest_args --verbose=level0)
+    list(APPEND _mtest_args --result-file-output=false)
+    list(APPEND _mtest_args --@interface@=umat)
+    list(APPEND _mtest_args --@library@="$<TARGET_FILE:MFrontCastemBehaviours>")
+    list(APPEND _mtest_args --@top_srcdir@=${PROJECT_SOURCE_DIR})
+    list(APPEND _mtest_args --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>")
+    list(APPEND _mtest_args --@reference_file@="${_REFERENCE_FILE}")
+    if(_NO_XML_OUTPUT)
+      list(APPEND _mtest_args --xml-output=false)
+    else(_NO_XML_OUTPUT)
+      list(APPEND _mtest_args --xml-output=true)
+    endif(_NO_XML_OUTPUT)
+    add_test(NAME ${test} COMMAND mtest ${_mtest_args} ${file})
+    if(_WILL_FAIL)
+      set_tests_properties(${test} PROPERTIES WILL_FAIL true)
+    endif(_WILL_FAIL)
+    if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+      set_property(TEST ${test}        
+         PROPERTY ENVIRONMENT ${_ADDITIONAL_ENVIRONMENT}
+        "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$ENV{PATH}")
+    else((CMAKE_HOST_WIN32) AND (NOT MSYS))
       if(_ADDITIONAL_ENVIRONMENT)
         set_property(TEST ${test} PROPERTY ENVIRONMENT ${_ADDITIONAL_ENVIRONMENT})
       endif(_ADDITIONAL_ENVIRONMENT)
-      set_property(TEST ${test}
-	PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
-      if(_ADDITIONAL_ENVIRONMENT_VARIABLES)
-         set_property(TEST ${test} PROPERTY ENVIRONMENT "${_ADDITIONAL_ENVIRONMENT_VARIABLES}")
-      endif(_ADDITIONAL_ENVIRONMENT_VARIABLES)
-      if(TFEL_APPEND_SUFFIX)
-	install(FILES ${file}
-	  DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/castem"
-	  COMPONENT mtest)
-      else(TFEL_APPEND_SUFFIX)
-	install(FILES ${file}
-	  DESTINATION "share/doc/mfront/tests/behaviours/castem"
-	  COMPONENT mtest)
-      endif(TFEL_APPEND_SUFFIX)
-    endif(CMAKE_CONFIGURATION_TYPES)
+    endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    if(TFEL_APPEND_SUFFIX)
+      install(FILES ${file}
+        DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/castem"
+        COMPONENT mtest)
+    else(TFEL_APPEND_SUFFIX)
+      install(FILES ${file}
+        DESTINATION "share/doc/mfront/tests/behaviours/castem"
+        COMPONENT mtest)
+    endif(TFEL_APPEND_SUFFIX)
   endforeach(rm ${IEEE754_ROUNDING_MODES})
-endmacro(test_castem)
+endfunction(test_castem)
 
 test_castem(materialpropertiesboundscheck
   NO_XML_OUTPUT WILL_FAIL)
@@ -733,43 +663,20 @@ test_castem(elasticmaterialpropertiesboundschecktest
   NO_XML_OUTPUT WILL_FAIL)
 test_castem(temperatureupdateonsubsteppingcheck)
 
-macro(test_castem_cxx test_arg)
-  if(CMAKE_CONFIGURATION_TYPES)
-    foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-      get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
-      configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx.in"
-	${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}_${conf}.cxx @ONLY)
-      add_executable(${test_arg}_${conf} EXCLUDE_FROM_ALL
-	${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}_${conf}.cxx)
-      add_test(NAME ${test_arg}_${conf}
-	COMMAND ${test_arg}_${conf}
-	CONFIGURATIONS ${conf})
-      if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-	set_property(TEST ${test_arg}_${conf}
-          PROPERTY DEPENDS "MFrontCastemBehaviours"
-    	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$<TARGET_FILE_DIR:TFELUnicodeSupport>\;$ENV{PATH}")
-      elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-	set_property(TEST ${test_arg}_${conf}
-          PROPERTY DEPENDS "MFrontCastemBehaviours")
-      endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-      target_link_libraries(${test_arg}_${conf}
-	TFELGlossary TFELSystem TFELUtilities TFELTests TFELException)
-      add_dependencies(check ${test_arg}_${conf})
-    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-  else(CMAKE_CONFIGURATION_TYPES)
-    get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
-    configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx.in"
-      ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx @ONLY)
-    add_executable(${test_arg} EXCLUDE_FROM_ALL
+function(test_castem_cxx test_arg)
+  configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx.in"
+                 "${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx" @ONLY)
+  add_executable(${test_arg} EXCLUDE_FROM_ALL
       ${PROJECT_BINARY_DIR}/mfront/tests/behaviours/castem/${test_arg}.cxx)
-    add_test(NAME ${test_arg} COMMAND ${test_arg})
-    target_link_libraries(${test_arg}
+  add_test(NAME ${test_arg} COMMAND ${test_arg})
+  set_property(TEST ${test_arg}
+               PROPERTY ENVIRONMENT MFrontCastemBehavioursBuildPath=$<TARGET_FILE:MFrontCastemBehaviours>)
+  target_link_libraries(${test_arg}
       TFELGlossary TFELSystem TFELUtilities TFELTests TFELException)
-    set_tests_properties(${test_arg}
+  set_tests_properties(${test_arg}
       PROPERTIES DEPENDS MFrontCastemBehaviours)
-    add_dependencies(check ${test_arg})
-  endif(CMAKE_CONFIGURATION_TYPES)
-endmacro(test_castem_cxx)
+  add_dependencies(check ${test_arg})
+endfunction(test_castem_cxx)
 
 test_castem_cxx(UMATExternalBehaviourDescription)
 test_castem_cxx(LibraryInformationCastemTest)

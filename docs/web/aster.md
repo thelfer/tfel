@@ -1,5 +1,5 @@
 ---
-title: `MFront` interface for `code_aster`
+title: MFront interface for code_aster
 author: Thomas Helfer
 date: 2020
 lang: en-EN
