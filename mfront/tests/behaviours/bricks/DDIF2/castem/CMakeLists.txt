@@ -1,20 +1,9 @@
-include_directories(
-  "${PROJECT_SOURCE_DIR}/include"
-  "${PROJECT_SOURCE_DIR}/mfront/include"
-  "${CMAKE_CURRENT_BINARY_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/mfront/src"
-                 "${PROJECT_BINARY_DIR}/src/Material"
-                 "${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception")
-
 if(HAVE_CASTEM)
   mfront_behaviour_brick_check_library(MFrontCastemDDIF2BrickBehaviours
     DDIF2 umat
     DDIF2 DDIF2_2 DDIF2_3 DDIF2_4 DDIF2_5 DDIF2_6)
   target_link_libraries(MFrontCastemDDIF2BrickBehaviours
-    CastemInterface MFrontProfiling TFELMaterial
-    TFELMath TFELUtilities TFELException)
+    PRIVATE CastemInterface)
 endif(HAVE_CASTEM)
 
 macro(castemtest_ddif2brick test_arg behaviour)

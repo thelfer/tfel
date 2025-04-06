@@ -1,0 +1,20 @@
+@Author Thomas Helfer;
+@Date 13/01/2018;
+@Description{
+  "This test checks that the behaviour integration fails "
+  "because the temperature exceed the physical bounds "
+  "of the material properties computing the "
+  "Young modulus."
+};
+
+@MaximumNumberOfSubSteps 1;
+@Behaviour<umat> @library@ 'umatelasticmaterialpropertiesboundschecktest';
+@MaterialProperty<constant> 'YoungModulus'     150.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:400};
+
+@Real 'e0' 1.e-3;
+@ImposedStrain<function> 'EXX' 'e0*sin(t/900.)';
+
+@Times {0.,3600 in 1};

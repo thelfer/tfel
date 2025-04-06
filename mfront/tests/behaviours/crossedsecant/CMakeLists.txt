@@ -1,71 +1,87 @@
-include_directories(
-  "${CASTEMHOME}/include"
-  "${PROJECT_SOURCE_DIR}/include"
-  "${PROJECT_SOURCE_DIR}/mfront/include"
-  "${CMAKE_CURRENT_BINARY_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/mfront/src"
-                 "${PROJECT_BINARY_DIR}/src/Material"
-                 "${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception")
-
 configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCrystalsAngles.txt"
     PolyCrystalsAngles.txt @ONLY)
 
-macro(test_crossedsecant test_arg)
-  if(CMAKE_CONFIGURATION_TYPES)
-    foreach(conf ${CMAKE_CONFIGURATION_TYPES})
-      set(file "crossedsecant${test_arg}-${conf}.mtest")
-      get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
-      get_property(MFrontMaterialPropertiesCastemBuildPath TARGET MFrontMaterialProperties-castem PROPERTY LOCATION_${conf})
-      configure_file(crossedsecant${test_arg}.mtest.in
-	${file} @ONLY)
-      add_test(NAME crossedsecant${test_arg}_${conf}_mtest
-	CONFIGURATIONS ${conf}
-	COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false ${file})
-      if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-        set_property(TEST crossedsecant${test_arg}_${conf}_mtest
-          PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest"
-	  PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$ENV{PATH}")
-      elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-        set_property(TEST crossedsecant${test_arg}_${conf}_mtest
-          PROPERTY DEPENDS "MFrontCastemBehaviours MFrontMaterialProperties-castem mtest")
-      endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-      if(TFEL_APPEND_SUFFIX)
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	  DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/crossedsecant"
-	  CONFIGURATIONS ${conf}
-	  COMPONENT mtest)
-      else(TFEL_APPEND_SUFFIX)
-	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	  DESTINATION "share/doc/mfront/tests/behaviours/crossedsecant"
-	  CONFIGURATIONS ${conf}
-	  COMPONENT mtest)
-      endif(TFEL_APPEND_SUFFIX)
-    endforeach(conf ${CMAKE_CONFIGURATION_TYPES})
-  else(CMAKE_CONFIGURATION_TYPES)
-    get_property(MFrontCastemBehavioursBuildPath TARGET MFrontCastemBehaviours PROPERTY LOCATION_${conf})
-    configure_file(crossedsecant${test_arg}.mtest.in
-      crossedsecant${test_arg}.mtest @ONLY)
-    add_test(NAME crossedsecant${test_arg}_mtest
-      COMMAND mtest --verbose=level0 --xml-output=true --result-file-output=false crossedsecant${test_arg}.mtest)
-    set_tests_properties(crossedsecant${test_arg}_mtest
-      PROPERTIES DEPENDS MFrontCastemBehaviours)
-    set_tests_properties(crossedsecant${test_arg}_mtest
-      PROPERTIES DEPENDS MFrontMaterialProperties-castem)
-    set_tests_properties(crossedsecant${test_arg}_mtest
-      PROPERTIES DEPENDS mtest)
-    if(TFEL_APPEND_SUFFIX)
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/crossedsecant${test_arg}.mtest
-	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/crossedsecant"
-	COMPONENT mtest)
-    else(TFEL_APPEND_SUFFIX)
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/crossedsecant${test_arg}.mtest
-	DESTINATION "share/doc/mfront/tests/behaviours/crossedsecant"
-	COMPONENT mtest)
-    endif(TFEL_APPEND_SUFFIX)
-  endif(CMAKE_CONFIGURATION_TYPES)
-endmacro(test_crossedsecant)
+function(test_crossedsecant test_arg)
+  set(_NO_XML_OUTPUT )
+  set(_WILL_FAIL )
+  set(_EXPECT_ADDITIONAL_ENVIRONMENT )
+  set(_ADDITIONAL_ENVIRONMENT )
+  set(_EXPECT_REFERENCE_FILE)
+  set(_REFERENCE_FILE )
+  foreach(_ARG ${ARGN})
+    if(_EXPECT_ADDITIONAL_ENVIRONMENT)
+      if(_ADDITIONAL_ENVIRONMENT)
+	message(FATAL_ERROR "test_crossedsecant: environment already set")
+      endif(_ADDITIONAL_ENVIRONMENT)
+      set(_ADDITIONAL_ENVIRONMENT "${_ARG}")
+      set(_EXPECT_ADDITIONAL_ENVIRONMENT )
+    elseif(_EXPECT_REFERENCE_FILE)
+      if(_REFERENCE_FILE)
+	message(FATAL_ERROR "test_crossedsecant: reference file already set")
+      endif(_REFERENCE_FILE)
+      set(_REFERENCE_FILE "${_ARG}")
+      set(_EXPECT_REFERENCE_FILE )
+    else()
+      if ( ${_ARG} MATCHES NO_XML_OUTPUT )
+	set ( _NO_XML_OUTPUT ON)
+      elseif ( ${_ARG} MATCHES WILL_FAIL)
+	set ( _WILL_FAIL ON)
+      elseif ( ${_ARG} MATCHES ENVIRONMENT)
+	set(_EXPECT_ADDITIONAL_ENVIRONMENT ON)
+      elseif ( ${_ARG} MATCHES REFERENCE_FILE)
+	set(_EXPECT_REFERENCE_FILE ON)
+      else()
+	message(FATAL_ERROR "test_crossedsecant: unsupported option '${_ARG}'")
+      endif()
+    endif()
+  endforeach(_ARG ${ARGN})
+  if(_EXPECT_ADDITIONAL_ENVIRONMENT)
+    message(FATAL_ERROR "test_crossedsecant: expected environment variable")
+  endif()
+  if(_EXPECT_REFERENCE_FILE)
+    message(FATAL_ERROR "test_crossedsecant: expected reference file")
+  endif()
+  if(_REFERENCE_FILE)
+    set(_REFERENCE_FILE "${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/${_REFERENCE_FILE}")
+  endif(_REFERENCE_FILE)
+  set(test "crossedsecant${test_arg}_mtest")
+  set(file "${CMAKE_CURRENT_SOURCE_DIR}/crossedsecant${test_arg}.mtest")
+  set(_mtest_args)
+  list(APPEND _mtest_args --verbose=level0)
+  list(APPEND _mtest_args --result-file-output=false)
+  list(APPEND _mtest_args --@interface@=umat)
+  list(APPEND _mtest_args --@library@="$<TARGET_FILE:MFrontCastemBehaviours>")
+  list(APPEND _mtest_args --@top_srcdir@=${PROJECT_SOURCE_DIR})
+  list(APPEND _mtest_args --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>")
+  list(APPEND _mtest_args --@reference_file@="${_REFERENCE_FILE}")
+  if(_NO_XML_OUTPUT)
+    list(APPEND _mtest_args --xml-output=false)
+  else(_NO_XML_OUTPUT)
+    list(APPEND _mtest_args --xml-output=true)
+  endif(_NO_XML_OUTPUT)
+  add_test(NAME ${test} COMMAND mtest ${_mtest_args} ${file})
+  if(_WILL_FAIL)
+    set_tests_properties(${test} PROPERTIES WILL_FAIL true)
+  endif(_WILL_FAIL)
+  if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    set_property(TEST ${test}        
+       PROPERTY ENVIRONMENT ${_ADDITIONAL_ENVIRONMENT}
+      "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$ENV{PATH}")
+  else((CMAKE_HOST_WIN32) AND (NOT MSYS))
+    if(_ADDITIONAL_ENVIRONMENT)
+      set_property(TEST ${test} PROPERTY ENVIRONMENT ${_ADDITIONAL_ENVIRONMENT})
+    endif(_ADDITIONAL_ENVIRONMENT)
+  endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  if(TFEL_APPEND_SUFFIX)
+    install(FILES ${file}
+      DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/crossedsecant"
+      COMPONENT mtest)
+  else(TFEL_APPEND_SUFFIX)
+    install(FILES ${file}
+      DESTINATION "share/doc/mfront/tests/behaviours/crossedsecant"
+      COMPONENT mtest)
+  endif(TFEL_APPEND_SUFFIX)
+endfunction(test_crossedsecant)
 
 test_crossedsecant(chaboche2)
 test_crossedsecant(chaboche)

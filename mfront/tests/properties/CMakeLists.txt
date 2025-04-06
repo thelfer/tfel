@@ -1,22 +1,8 @@
 add_subdirectory(interfaces)
 
-include_directories("${CMAKE_CURRENT_BINARY_DIR}/include")
-include_directories("${PROJECT_SOURCE_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/src/Tests")
-
-macro(add_mfront_generated_source lib interface ext file)
+function(add_mfront_generated_source lib interface ext file)
   set(mfront_file   "${CMAKE_CURRENT_SOURCE_DIR}/${file}.mfront")
-  if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-    set(mfront_executable "$<TARGET_FILE:mfront>")
-  else(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-    # retrieve the old behaviour for debian squeeze's version of cmake
-    # does not work with configurations
-    if(WIN32)
-      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront.exe")
-    else(WIN32)
-      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
-    endif(WIN32)
-  endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
+  set(mfront_executable "$<TARGET_FILE:mfront>")
   if("${interface}" STREQUAL "c")
     set(mfront_output "src/${file}.cxx")
   else("${interface}" STREQUAL "c")
@@ -55,7 +41,7 @@ macro(add_mfront_generated_source lib interface ext file)
       COMMAND "${mfront_executable}"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
       ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
-      DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+      DEPENDS mfront
       DEPENDS "${mfront_file}"
       COMMENT "mfront source ${mfront_file}")
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
@@ -64,7 +50,7 @@ macro(add_mfront_generated_source lib interface ext file)
       COMMAND "${mfront_executable}"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
       ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
-      DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+      DEPENDS mfront
       DEPENDS "${mfront_file}"
       COMMENT "mfront source ${mfront_file}")
     if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
@@ -77,23 +63,38 @@ macro(add_mfront_generated_source lib interface ext file)
 	WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generation-test")
     endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
   endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-  set(${lib}_SOURCES ${mfront_output} ${${lib}_SOURCES})
-endmacro(add_mfront_generated_source)
+  set(${lib}_SOURCES ${mfront_output} ${${lib}_SOURCES} PARENT_SCOPE)
+endfunction(add_mfront_generated_source)
 
-macro(mfront_check_library lib interface ext)
+function(mfront_check_library lib interface ext)
   if(${ARGC} LESS 1)
     message(FATAL_ERROR "mfront_library : no source specified")
   endif(${ARGC} LESS 1)
   foreach(source ${ARGN})
     add_mfront_generated_source(${lib} ${interface} "${ext}" ${source})
   endforeach(source)
-  add_library(${lib} SHARED EXCLUDE_FROM_ALL
+  add_library(${lib} EXCLUDE_FROM_ALL
     ${${lib}_SOURCES}
     ${${lib}_ADDITIONAL_SOURCES})
   set_target_properties(${lib} PROPERTIES
       COMPILE_FLAGS "-DMFRONT_COMPILING")
   add_dependencies(check ${lib})
-endmacro(mfront_check_library)
+endfunction(mfront_check_library)
+
+function(mfront_check_module lib interface ext)
+  if(${ARGC} LESS 1)
+    message(FATAL_ERROR "mfront_library : no source specified")
+  endif(${ARGC} LESS 1)
+  foreach(source ${ARGN})
+    add_mfront_generated_source(${lib} ${interface} "${ext}" ${source})
+  endforeach(source)
+  add_library(${lib} MODULE EXCLUDE_FROM_ALL
+    ${${lib}_SOURCES}
+    ${${lib}_ADDITIONAL_SOURCES})
+  set_target_properties(${lib} PROPERTIES
+      COMPILE_FLAGS "-DMFRONT_COMPILING")
+  add_dependencies(check ${lib})
+endfunction(mfront_check_module)
 
 set(mfront_SOURCES
   ErrnoHandlingCheck
@@ -145,12 +146,18 @@ mfront_dependencies(MFrontMaterialProperties
   VanadiumAlloy_YoungModulus_SRMA
   VanadiumAlloy_PoissonRatio_SRMA)
 mfront_check_library(MFrontMaterialProperties c "" ${mfront_SOURCES})
+target_include_directories(MFrontMaterialProperties
+  PRIVATE "${PROJECT_SOURCE_DIR}/include"
+  PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
 
 if(HAVE_CASTEM)
   mfront_dependencies(MFrontMaterialProperties-castem
     VanadiumAlloy_YoungModulus_SRMA
     VanadiumAlloy_PoissonRatio_SRMA)
-  mfront_check_library(MFrontMaterialProperties-castem castem "castem" ${mfront_SOURCES})
+  mfront_check_module(MFrontMaterialProperties-castem castem "castem" ${mfront_SOURCES})
+  target_include_directories(MFrontMaterialProperties-castem
+    PRIVATE "${PROJECT_SOURCE_DIR}/include"
+    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
   if(WIN32)
     if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
       set_target_properties(MFrontMaterialProperties-castem PROPERTIES LINK_FLAGS "-Wl,--kill-at")
@@ -162,6 +169,9 @@ mfront_dependencies(MFrontMaterialProperties-cxx
   VanadiumAlloy_YoungModulus_SRMA
   VanadiumAlloy_PoissonRatio_SRMA)
 mfront_check_library(MFrontMaterialProperties-cxx cxx cxx ${mfront_SOURCES})
+target_include_directories(MFrontMaterialProperties-cxx
+  PRIVATE "${PROJECT_SOURCE_DIR}/include"
+  PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     set_target_properties(MFrontMaterialProperties-cxx PROPERTIES LINK_FLAGS "-Wl,--kill-at")
@@ -173,6 +183,9 @@ if(HAVE_FORTRAN)
     VanadiumAlloy_YoungModulus_SRMA
     VanadiumAlloy_PoissonRatio_SRMA)
   mfront_check_library(MFrontMaterialProperties-fortran fortran "fortran" ${mfront_SOURCES})
+  target_include_directories(MFrontMaterialProperties-fortran
+    PRIVATE "${PROJECT_SOURCE_DIR}/include"
+    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
   if(WIN32)
     if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
       set_target_properties(MFrontMaterialProperties-fortran PROPERTIES LINK_FLAGS "-Wl,--kill-at")
@@ -181,17 +194,21 @@ if(HAVE_FORTRAN)
 endif(HAVE_FORTRAN)
 
 add_executable(test-c EXCLUDE_FROM_ALL test-c.c)
+target_include_directories(test-c
+  PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
+target_link_libraries(test-c MFrontMaterialProperties)
 add_test(NAME test-c COMMAND test-c)
 add_dependencies(check test-c)
 add_dependencies(test-c MFrontMaterialProperties)
-target_link_libraries(test-c MFrontMaterialProperties)
 
 add_executable(test-cxx EXCLUDE_FROM_ALL test-cxx.cxx)
+target_include_directories(test-cxx
+  PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
+target_link_libraries(test-cxx MFrontMaterialProperties-cxx
+  TFELTests)
 add_test(NAME test-cxx COMMAND test-cxx)
 add_dependencies(check test-cxx)
 add_dependencies(test-cxx MFrontMaterialProperties-cxx)
-target_link_libraries(test-cxx MFrontMaterialProperties-cxx
-  TFELTests)
 if((CMAKE_HOST_WIN32) AND (NOT MSYS))
   set_property(TEST test-cxx
                PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELTests>\;$ENV{PATH}")

@@ -1,6 +1,4 @@
-include_directories(${PROJECT_SOURCE_DIR}/include)
-
-tfel_library(TFELNUMODIS SHARED
+tfel_library(TFELNUMODIS
   BCC.cxx
   Crystallo.cxx
   Cubic.cxx
@@ -16,3 +14,7 @@ tfel_library(TFELNUMODIS SHARED
   AnalyseJunction.cxx
   FrankRead.cxx
   TripleNode.cxx)
+target_include_directories(TFELNUMODIS
+   PUBLIC 
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>)

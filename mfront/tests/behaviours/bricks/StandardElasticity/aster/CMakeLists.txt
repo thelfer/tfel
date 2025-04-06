@@ -1,20 +1,9 @@
-include_directories(
-  "${PROJECT_SOURCE_DIR}/include"
-  "${PROJECT_SOURCE_DIR}/mfront/include"
-  "${CMAKE_CURRENT_BINARY_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/mfront/src"
-                 "${PROJECT_BINARY_DIR}/src/Material"
-                 "${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception")
-
 if(HAVE_ASTER)
   mfront_behaviour_brick_check_library(MFrontAsterStandardElasticityBrickBehaviours
     StandardElasticity aster
     SingleCrystal_DD_FCC)
   target_link_libraries(MFrontAsterStandardElasticityBrickBehaviours
-    AsterInterface MFrontProfiling TFELMaterial
-    TFELMath TFELUtilities TFELException)
+    PRIVATE AsterInterface)
 endif(HAVE_ASTER)
 
 macro(astertest_standardelasticitybrick test_arg behaviour)

@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
+import os
 import math
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
 
-import std
-import tfel.math
-import tfel.tests
-from mtest import *
+import @tfel_tests_python_module@
+import @tfel_math_python_module@
+from @mtest_python_module@ import *
 
 class ViscoChabochMemoNRad(unittest.TestCase):
 
@@ -68,7 +68,7 @@ class ViscoChabochMemoNRad(unittest.TestCase):
         m = MTest()
         setVerboseMode(VerboseLevel.VERBOSE_QUIET)
         m.setPredictionPolicy(PredictionPolicy.LINEARPREDICTION)
-        m.setBehaviour('aster','@MFrontAsterBehavioursBuildPath@','asterviscomemonrad');
+        m.setBehaviour('aster', os.environ['MFrontAsterBehavioursBuildPath'],'asterviscomemonrad');
         m.setMaterialProperty('PoissonRatio',0.3)
         m.setMaterialProperty('YoungModulus',205000.0)
         m.setMaterialProperty('C1inf', 182400.)
@@ -108,8 +108,6 @@ class ViscoChabochMemoNRad(unittest.TestCase):
         f = open('output.txt', 'w')
         for i in range(len(ltime)):
             f.write('{0} {1} {2}\n'.format(ltime[i],SXX[i],SXY[i]))
-
-        self.assertEqual(10, 7 + 3)
 
 if __name__ == '__main__':
     unittest.main()

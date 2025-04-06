@@ -1,16 +1,3 @@
-include_directories(
-  "${PROJECT_SOURCE_DIR}/include"
-  "${PROJECT_SOURCE_DIR}/mfront/include"
-  "${CMAKE_CURRENT_BINARY_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/mfront/src"
-  "${PROJECT_BINARY_DIR}/src/Glossary"
-  "${PROJECT_BINARY_DIR}/src/Material"
-  "${PROJECT_BINARY_DIR}/src/Math"
-  "${PROJECT_BINARY_DIR}/src/Utilities"
-  "${PROJECT_BINARY_DIR}/src/System"
-  "${PROJECT_BINARY_DIR}/src/Tests"
-  "${PROJECT_BINARY_DIR}/src/Exception")
-
 configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCrystalsAngles.txt"
     PolyCrystalsAngles.txt @ONLY)
 configure_file("${PROJECT_SOURCE_DIR}/mfront/tests/behaviours/references/PolyCrystalsAngles-30.txt"
@@ -181,14 +168,8 @@ mfront_dependencies(MFrontGenericBehaviours
   T91MartensiticSteel_YoungModulus_ROUX2007
   YoungModulusBoundsCheckTest)
   
-mfront_behaviour_check_library(MFrontGenericBehaviours generic  ${mfront_tests_SOURCES})
-
-target_link_libraries(MFrontGenericBehaviours
-  MFrontProfiling
-  TFELMaterial
-  TFELMath
-  TFELUtilities
-  TFELException)
+mfront_behaviour_check_library(MFrontGenericBehaviours generic
+  ${mfront_tests_SOURCES})
 
 if(WIN32)
   if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
@@ -197,55 +178,140 @@ if(WIN32)
   endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 endif(WIN32)
 
+function(set_generic_test_properties test)
+  foreach(rm ${IEEE754_ROUNDING_MODES})
+    if((CMAKE_HOST_WIN32) AND (NOT MSYS))
+      set_property(TEST ${test}
+        PROPERTY DEPENDS "MFrontGenericBehaviours MFrontMaterialProperties-castem mtest"
+        PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$ENV{PATH}")
+    elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+      set_property(TEST ${test}
+        PROPERTY DEPENDS "MFrontGenericBehaviours MFrontMaterialProperties-castem mtest")
+    endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+  endforeach(rm ${IEEE754_ROUNDING_MODES})
+endfunction(set_generic_test_properties)
+
+function(install_generic_test_file file)
+  if(TFEL_APPEND_SUFFIX)
+    install(FILES ${file}
+      DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem"
+      COMPONENT mtest)
+  else(TFEL_APPEND_SUFFIX)
+    install(FILES ${file}
+      DESTINATION "share/doc/mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem"
+      COMPONENT mtest)
+  endif(TFEL_APPEND_SUFFIX)
+endfunction(install_generic_test_file)
+
 function(test_generic test_arg)
-  if(HAVE_CASTEM)
-    set(_REFERENCE_FILE )
-    foreach(_ARG ${ARGN})
-      if ( ${_ARG} MATCHES WILL_FAIL)
-	set ( _WILL_FAIL ON)
-      else()
-        set(_REFERENCE_FILE "${_ARG}")
-      endif()
-    endforeach(_ARG ${ARGN})
-    set(file "${CMAKE_CURRENT_SOURCE_DIR}/${test_arg}.mtest")
+  set(_XML_OUTPUT "true")
+  set(_REFERENCE_FILE )
+  foreach(_ARG ${ARGN})
+    if ( ${_ARG} MATCHES NO_XML_OUTPUT )
+      set ( _XML_OUTPUT "false")
+    elseif ( ${_ARG} MATCHES WILL_FAIL)
+      set ( _WILL_FAIL ON)
+    else()
+      set(_REFERENCE_FILE "${_ARG}")
+    endif()
+  endforeach(_ARG ${ARGN})
+  set(file "${CMAKE_CURRENT_SOURCE_DIR}/${test_arg}.mtest")
+  foreach(rm ${IEEE754_ROUNDING_MODES})
+    set(mtest_args )
+    list(APPEND mtest_args --rounding-direction-mode=${rm})
+    list(APPEND mtest_args --verbose=level0)
+    list(APPEND mtest_args --xml-output=${_XML_OUTPUT})
+    list(APPEND mtest_args --@library@="$<TARGET_FILE:MFrontGenericBehaviours>")
+    list(APPEND mtest_args --@xml_output@="${test_arg}-${rm}.xml")
+    list(APPEND mtest_args ${file})
+    if(HAVE_CASTEM)
+      list(APPEND mtest_args --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>")
+    endif(HAVE_CASTEM)
+    if(_REFERENCE_FILE)
+      set(rfile "${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}")
+      list(APPEND mtest_args --@reference_file@="${rfile}")
+    endif(_REFERENCE_FILE)
+    add_test(NAME generic-${test_arg}_${rm}_mtest
+             COMMAND mtest ${mtest_args})
+    if(_WILL_FAIL)
+      set_tests_properties(generic-${test_arg}_${rm}_mtest
+	PROPERTIES WILL_FAIL true)
+    endif(_WILL_FAIL)
+    set_generic_test_properties("generic-${test_arg}_${rm}_mtest")
+  endforeach(rm ${IEEE754_ROUNDING_MODES})
+  install_generic_test_file("${file}")
+endfunction(test_generic)
+
+function(test_generic_fs test_arg)
+  set(_XML_OUTPUT "true")
+  set(_REFERENCE_FILE )
+  foreach(_ARG ${ARGN})
+    if ( ${_ARG} MATCHES NO_XML_OUTPUT )
+      set ( _XML_OUTPUT "false")
+    elseif ( ${_ARG} MATCHES WILL_FAIL)
+      set ( _WILL_FAIL ON)
+    else()
+      set(_REFERENCE_FILE "${_ARG}")
+    endif()
+  endforeach(_ARG ${ARGN})
+  set(file "${CMAKE_CURRENT_SOURCE_DIR}/${test_arg}.mtest")
+  foreach(ss ${MFRONT_GENERIC_INTERFACES_STRESS_MEASURES})
+  foreach(tgo ${MFRONT_GENERIC_INTERFACES_TANGENT_OPERATORS})
     foreach(rm ${IEEE754_ROUNDING_MODES})
       if(NOT _REFERENCE_FILE)
-        add_test(NAME generic-${test_arg}_${rm}_mtest
-  	  COMMAND mtest --rounding-direction-mode=${rm}
-          --verbose=level0 --xml-output=true
-          --result-file-output=false
-          --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
-	  --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
-          --@xml_output@="${test_arg}-${rm}.xml" ${file})
+	if(HAVE_CASTEM)
+	  add_test(NAME generic-${test_arg}_${ss}_${tgo}_${rm}_mtest
+  	    COMMAND mtest --rounding-direction-mode=${rm}
+            --verbose=level0 --xml-output=${_XML_OUTPUT}
+            --result-file-output=false
+            --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
+	    --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
+	    --@stress_measure@=${ss}
+	    --@tangent_operator@=${tgo}
+            --@xml_output@="${test_arg}-${rm}.xml" ${file})
+	else(HAVE_CASTEM)
+	  add_test(NAME generic-${test_arg}_${ss}_${tgo}_${rm}_mtest
+  	    COMMAND mtest --rounding-direction-mode=${rm}
+            --verbose=level0 --xml-output=${_XML_OUTPUT}
+            --result-file-output=false
+            --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
+	    --@stress_measure@=${ss}
+	    --@tangent_operator@=${tgo}
+            --@xml_output@="${test_arg}-${rm}.xml" ${file})
+	endif(HAVE_CASTEM)
       else(NOT _REFERENCE_FILE)
-        set(rfile "${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}")
-        add_test(NAME generic-${test_arg}_${rm}_mtest
-          COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0 --xml-output=true --result-file-output=false
-          --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
-	  --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
-          --@xml_output@="${test_arg}-${rm}.xml"
-          --@reference_file@="${rfile}" ${file})
+	set(rfile "${top_srcdir}/mfront/tests/behaviours/references/${_REFERENCE_FILE}")
+	if(HAVE_CASTEM)
+	  add_test(NAME generic-${test_arg}_${ss}_${tgo}_${rm}_mtest
+            COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0
+	    --xml-output=${_XML_OUTPUT} --result-file-output=false
+            --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
+	    --@mplibrary@="$<TARGET_FILE:MFrontMaterialProperties-castem>"
+	    --@stress_measure@=${ss}
+	    --@tangent_operator@=${tgo}
+            --@xml_output@="${test_arg}-${rm}.xml"
+            --@reference_file@="${rfile}" ${file})
+	else(HAVE_CASTEM)
+	  add_test(NAME generic-${test_arg}_${ss}_${tgo}_${rm}_mtest
+            COMMAND mtest --rounding-direction-mode=${rm} --verbose=level0
+	    --xml-output=${_XML_OUTPUT} --result-file-output=false
+            --@library@="$<TARGET_FILE:MFrontGenericBehaviours>"
+	    --@stress_measure@=${ss}
+	    --@tangent_operator@=${tgo}
+            --@xml_output@="${test_arg}-${rm}.xml"
+            --@reference_file@="${rfile}" ${file})
+	endif(HAVE_CASTEM)
       endif(NOT _REFERENCE_FILE)
-      if((CMAKE_HOST_WIN32) AND (NOT MSYS))
-        set_property(TEST generic-${test_arg}_${rm}_mtest
-          PROPERTY DEPENDS "MFrontGenericBehaviours MFrontMaterialProperties-castem mtest"
-          PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:TFELMTest>\;$<TARGET_FILE_DIR:TFELMFront>\;$<TARGET_FILE_DIR:MFrontLogStream>\;$<TARGET_FILE_DIR:TFELMaterial>\;$<TARGET_FILE_DIR:TFELNUMODIS>\;$<TARGET_FILE_DIR:TFELMathParser>\;$<TARGET_FILE_DIR:TFELGlossary>\;$<TARGET_FILE_DIR:TFELSystem>\;$<TARGET_FILE_DIR:TFELUtilities>\;$<TARGET_FILE_DIR:TFELException>\;$<TARGET_FILE_DIR:TFELTests>\;$<TARGET_FILE_DIR:TFELConfig>\;$<TARGET_FILE_DIR:TFELPhysicalConstants>\;$ENV{PATH}")
-      elseif((CMAKE_HOST_WIN32) AND (NOT MSYS))
-        set_property(TEST generic-${test_arg}_${rm}_mtest
-          PROPERTY DEPENDS "MFrontGenericBehaviours MFrontMaterialProperties-castem mtest")
-      endif((CMAKE_HOST_WIN32) AND (NOT MSYS))
+      if(_WILL_FAIL)
+	set_tests_properties(generic-${test_arg}_${ss}_${tgo}_${rm}_mtest
+	  PROPERTIES WILL_FAIL true)
+      endif(_WILL_FAIL)
+      set_generic_test_properties("generic-${test_arg}_${ss}_${tgo}_${rm}_mtest")
     endforeach(rm ${IEEE754_ROUNDING_MODES})
-    if(TFEL_APPEND_SUFFIX)
-      install(FILES ${file}
-	DESTINATION "share/doc/mfront-${TFEL_SUFFIX}/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem"
-	COMPONENT mtest)
-    else(TFEL_APPEND_SUFFIX)
-      install(FILES ${file}
-	DESTINATION "share/doc/mfront/tests/behaviours/bricks/StandardElastoViscoPlasticity/castem"
-	COMPONENT mtest)
-    endif(TFEL_APPEND_SUFFIX)
-  endif(HAVE_CASTEM)
-endfunction(test_generic)
+  endforeach(tgo ${MFRONT_GENERIC_INTERFACES_TANGENT_OPERATORS})
+  endforeach(ss ${MFRONT_GENERIC_INTERFACES_STRESS_MEASURES})
+  install_generic_test_file("${file}")
+endfunction(test_generic_fs)
 
 # test_generic(materialpropertiesboundscheck
 #   NO_XML_OUTPUT WILL_FAIL)

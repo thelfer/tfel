@@ -10,37 +10,25 @@ ADD_CUSTOM_COMMAND(
   DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/Champs.tex
   DEPENDS    ${CMAKE_CURRENT_BINARY_DIR}/mfront.tex
   DEPENDS    ${PROJECT_BINARY_DIR}/docs/mfront/glossary.tex
-  COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+  COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
   ARGS      -interaction=batchmode
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
   ARGS      mfront.tex
-  COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+  COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
   ARGS      -interaction=batchmode
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
   ARGS      mfront.tex
-  COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
+  COMMAND   BSTINPUTS=${abs_top_srcdir}/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
   ARGS      -terse mfront
   COMMAND   ${MAKEINDEX_COMPILER}
   ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist env.idx
   COMMAND   ${MAKEINDEX_COMPILER}
   ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist mkeys.idx
-  COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+  COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
   ARGS      -interaction=batchmode
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
   ARGS      mfront.tex
-  COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+  COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
   ARGS      -interaction=batchmode
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
   ARGS      mfront.tex
-  COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
+  COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${DVIPS_CONVERTER}
   ARGS      -R0 mfront.dvi
   COMMAND   ${PS2PDF_CONVERTER}
   ARGS      mfront.ps

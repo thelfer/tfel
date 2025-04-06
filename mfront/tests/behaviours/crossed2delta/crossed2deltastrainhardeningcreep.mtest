@@ -1,0 +1,39 @@
+@Author Helfer Thomas;
+@Date   09 avril 2013;
+@Description{
+  "Essai de fluage sur un matériau modéliser"
+  "par une loi de type Lemaître (loi viscoplastique "
+  "avec écroussage)."
+  "Vérification de la réponse fournie par "
+  "une loi générée par l'analyseur "
+  "IsotropicStrainHardeningMisesCreep de mfront."
+  "Comparaison à la solution analytique."
+};
+
+@ModellingHypothesis 'Axisymmetrical';
+@AccelerationAlgorithm 'Crossed2Delta';
+
+@Behaviour<umat> @library@ 'umatstrainhardeningcreep';
+@MaterialProperty<constant> 'YoungModulus'     150.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+@MaterialProperty<constant> 'A'  8.e-40;
+@MaterialProperty<constant> 'Ns' 4.2;
+@MaterialProperty<constant> 'Np' 1.37;
+
+@Real 'srr' -20e6;
+@ImposedStress 'SRR' 'srr';
+// Initial value of the elastic strain
+@Real 'EELRR0' 'srr/YoungModulus';
+@Real 'EELZZ0' '-EELRR0*PoissonRatio';
+@InternalStateVariable 'ElasticStrain' {'EELRR0','EELZZ0','EELZZ0',0.};
+// Initial value of the total strain
+@Strain {'EELRR0','EELZZ0','EELZZ0',0.};
+// Initial value of the total stresses
+@Stress {'srr',0.,0.,0.};
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0.,10. in 200, 100. in 30,3600 in 20};
+
+@Real 'p0' 1.e-6;
+@Test<function> 'EquivalentViscoplasticStrain' '(p0**(Np+1)+(Np+1)*A*abs(srr)**Ns*t)**(1/(Np+1))-p0' 1.e-5;
