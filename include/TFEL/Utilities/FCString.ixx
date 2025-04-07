@@ -25,7 +25,7 @@ namespace tfel::utilities {
 
   template <std::size_t N, typename CharT>
   CStringNarrowedView<N, CharT> narrow(const CharT* s) {
-    return {s};
+    return {.value = s};
   }
 
   template <std::size_t N, typename CharT, typename Traits>
