@@ -46,7 +46,6 @@ set(TFEL_PYTHON_MATH_MODULE_SOURCES
   st2tost2.cxx
   Evaluator.cxx)
 
-
 tfel_python_module(math ${TFEL_PYTHON_MATH_MODULE_SOURCES})
 target_link_libraries(py_tfel_math
    PRIVATE TFELMath TFELMathParser TFELException

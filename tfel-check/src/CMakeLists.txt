@@ -1,12 +1,6 @@
-include_directories("${PROJECT_SOURCE_DIR}/include")
-include_directories("${PROJECT_SOURCE_DIR}/tfel-check/include")
-link_directories("${PROJECT_BINARY_DIR}/src/Utilities"
-  "${PROJECT_BINARY_DIR}/src/System"
-  "${PROJECT_BINARY_DIR}/src/Math")
-
 tfel_library(TFELCheck
   Configuration.cxx
-    ConfigurationManager.cxx
+  ConfigurationManager.cxx
   PCILogDriver.cxx
   PCJUnitDriver.cxx
   PCLogger.cxx
@@ -27,18 +21,37 @@ tfel_library(TFELCheck
   MixedComparison.cxx
   AreaComparison.cxx
   Test.cxx)
-
+target_include_directories(TFELCheck
+   PUBLIC 
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tfel-check/include>
+   $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELCheck
   TFELMathCubicSpline TFELMathParser
-  TFELMath TFELUtilities TFELSystem)
+  TFELMath TFELUtilities TFELSystem
+  TFELConfig)
+if(enable-static)
+  target_include_directories(TFELCheck-static
+     PUBLIC 
+     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tfel-check/include>
+     $<INSTALL_INTERFACE:include>)
+  target_link_libraries(TFELCheck-static
+    TFELMathCubicSpline-static
+    TFELMathParser-static
+    TFELMath-static
+    TFELUtilities-static
+    TFELSystem-static
+    TFELConfig-static)
+endif(enable-static)
 
 add_executable(tfel-check tfel-check.cxx)
 set_property(TARGET tfel-check PROPERTY POSITION_INDEPENDENT_CODE TRUE)
+
 target_link_libraries(tfel-check
   TFELCheck TFELUtilities TFELSystem)
 if(TFEL_APPEND_SUFFIX)
   set_target_properties(tfel-check
     PROPERTIES OUTPUT_NAME "tfel-check-${TFEL_SUFFIX}")
 endif(TFEL_APPEND_SUFFIX)
-  install(TARGETS tfel-check DESTINATION bin
-    COMPONENT core)
+
+install(TARGETS tfel-check DESTINATION bin
+  COMPONENT core)

@@ -302,10 +302,6 @@ if(enable-python OR enable-python-bindings)
       set(TFEL_PYTHON_SITE_PACKAGES_DIR "lib${LIB_SUFFIX}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
     endif(WIN32)
   endif(NOT TFEL_PYTHON_SITE_PACKAGES_DIR)
-  if(enable-numpy-support)
-    message(STATUS "Numpy version         ${Python_NumPy_VERSION}")
-    message(STATUS "Numpy header path     ${Python_NumPy_INCLUDE_DIRS}")
-  endif(enable-numpy-support)
 endif(enable-python OR enable-python-bindings)
 
 #some checks
@@ -415,27 +411,27 @@ if(enable-python-bindings)
   if(TFEL_USES_CONAN)
     if(NOT python-static-interpreter-workaround)
       set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
-        ${CONAN_LIBS} ${PYTHON_LIBRARIES})
+        ${CONAN_LIBS} ${Python_LIBRARIES})
     else(python-static-interpreter-workaround)
       if(APPLE)
         set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
           ${CONAN_LIBS})
       else(APPLE)
         set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
-          ${CONAN_LIBS} ${PYTHON_LIBRARIES})
+          ${CONAN_LIBS} ${Python_LIBRARIES})
       endif(APPLE)
     endif()
   else(TFEL_USES_CONAN)
     if(NOT python-static-interpreter-workaround)
       set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
-        ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
+        ${Boost_PYTHON_LIBRARY} ${Python_LIBRARIES})
     else()
       if(APPLE)
         set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
           ${Boost_PYTHON_LIBRARY})
       else(APPLE)
         set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
-          ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
+          ${Boost_PYTHON_LIBRARY} ${Python_LIBRARIES})
       endif(APPLE)
     endif()
   endif(TFEL_USES_CONAN)
