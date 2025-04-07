@@ -130,7 +130,6 @@ function(test_calculix test_arg)
   endforeach(rm ${IEEE754_ROUNDING_MODES})
 endfunction(test_calculix)
 
-
 test_calculix(elasticity)
 test_calculix(elasticity2)
 if(HAVE_CASTEM)

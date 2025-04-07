@@ -1,0 +1,27 @@
+name: Windows MinGW build
+on:
+  push:
+    branches: [ rliv-3.2 ]
+  pull_request:
+    branches: [ rliv-3.2 ]
+
+jobs:
+  msys2-ucrt64:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: git mingw-w64-ucrt-x86_64-gnuplot mingw-w64-ucrt-x86_64-gcc-libgfortran mingw-w64-ucrt-x86_64-gcc-fortran mingw-w64-ucrt-x86_64-cc mingw-w64-ucrt-x86_64-cc mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-ninja
+      - name: CI-Build
+        run: |
+          mkdir build
+          cd build
+          cmake -GNinja -DCMAKE_BUILD_TYPE=Release -Denable-python=OFF -Denable-python-bindings=OFF -Denable-aster=ON -Denable-abaqus=ON -Denable-ansys=ON -Denable-europlexus=ON -Denable-zmat=OFF -Denable-cyrano=ON -Denable-calculix=ON -Denable-comsol=ON -Denable-diana-fea=ON -Denable-lsdyna=ON -Denable-cxx-17=ON -Denable-portable-build=ON -Denable-reference-doc=OFF -Denable-testing=OFF ..
+          cmake --build . -j $(nproc)
+          
