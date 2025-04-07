@@ -42,8 +42,12 @@ if(HAVE_CASTEM)
     TestComputeElasticPrediction2
     IsotropicPlasticity)
   target_link_libraries(MFrontCastemBehaviourBricks
-    CastemInterface MFrontProfiling TFELMaterial
-    TFELMath TFELUtilities TFELException)
+    PUBLIC CastemInterface
+    PUBLIC MFrontProfiling
+    PUBLIC TFELMaterial
+    PUBLIC TFELMath
+    PUBLIC TFELUtilities
+    PUBLIC TFELException)
 endif(HAVE_CASTEM)
 
 macro(castemtest_brick test_arg behaviour)

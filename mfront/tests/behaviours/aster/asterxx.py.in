@@ -1,9 +1,10 @@
+import os
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
 
-from mfront.umatxx import Behaviour
+from @mfront_umatxx_python_module@ import Behaviour
 
 class Asterxx(unittest.TestCase):
 
@@ -11,7 +12,7 @@ class Asterxx(unittest.TestCase):
         Np=30
         Nss=12
 
-        b = Behaviour("Tridimensional","@MFrontAsterBehavioursBuildPath@",
+        b = Behaviour("Tridimensional", os.environ['MFrontAsterBehavioursBuildPath'],
 		      "asterpolycrystals")
         mpnames=b.getMaterialPropertiesNames()
         ivnames=b.getInternalStateVariablesNames()

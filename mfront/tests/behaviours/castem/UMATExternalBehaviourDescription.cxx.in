@@ -49,11 +49,12 @@ struct UMATBehaviourDescriptionTest final
   : public tfel::tests::TestCase
 {
   UMATBehaviourDescriptionTest()
-    : tfel::tests::TestCase("TFEL/System","UMATBehaviourDescriptionTest")
-  {} // end of UMATBehaviourDescriptionTest
+    : tfel::tests::TestCase("TFEL/System", "UMATBehaviourDescriptionTest"),
+      library([]{const auto e = ::getenv("MFrontCastemBehavioursBuildPath");
+	  return e == nullptr ? std::string{} : e;}()) {
+  }  // end of UMATBehaviourDescriptionTest
 
-  tfel::tests::TestResult
-  execute() override
+  tfel::tests::TestResult execute() override
   {
     this->test1();
     this->test2();
@@ -70,8 +71,8 @@ struct UMATBehaviourDescriptionTest final
   void test1(){
     using namespace std;
     using namespace tfel::glossary;
-    const auto b = ExternalBehaviourDescription{"@MFrontCastemBehavioursBuildPath@",
-						"umatnorton","PlaneStrain"};
+    const auto b = ExternalBehaviourDescription{
+        this->library, "umatnorton", "PlaneStrain"};
     // should small strain behaviour
     TFEL_TESTS_ASSERT(b.btype==1u);
     // behaviour shall be isotropic
@@ -96,21 +97,21 @@ struct UMATBehaviourDescriptionTest final
     using namespace std;
     {
       bool ok = false;
-      try{
-	const auto b = ExternalBehaviourDescription{"@MFrontCastemBehavioursBuildPath@",
-						    "unknown","PlaneStrain"};
-      } catch(runtime_error&){
-	ok = true;
+      try {
+        const auto b = ExternalBehaviourDescription{
+            this->library, "unknown", "PlaneStrain"};
+      } catch (runtime_error&) {
+        ok = true;
       }
       this->registerResult("check throw on undefined behaviour",ok);
     }
     {
       bool ok = false;
-      try{
-	const auto b = ExternalBehaviourDescription{"@MFrontCastemBehavioursBuildPath@",
-						    "umatnorton","PlaneStress"};
-      } catch(runtime_error&){
-	ok = true;
+      try {
+        const auto b = ExternalBehaviourDescription{
+            this->library, "umatnorton", "PlaneStress"};
+      } catch (runtime_error&) {
+        ok = true;
       }
       this->registerResult("check throw on unsupported hypothesis",ok);
     }
@@ -121,8 +122,9 @@ struct UMATBehaviourDescriptionTest final
   void test3(){
     using namespace std;
     using namespace tfel::glossary;
-    const auto b = ExternalBehaviourDescription{"@MFrontCastemBehavioursBuildPath@",
-						"umatnorton_log1d","AxisymmetricalGeneralisedPlaneStrain"};
+    const auto b = ExternalBehaviourDescription{
+        this->library, "umatnorton_log1d",
+        "AxisymmetricalGeneralisedPlaneStrain"};
     // should finite strain behaviour
     TFEL_TESTS_ASSERT(b.btype==2u);
     // should have ETO/PK1 kinematic
@@ -155,8 +157,9 @@ struct UMATBehaviourDescriptionTest final
   void test4(){
     using namespace std;
     using namespace tfel::glossary;
-    const auto b = ExternalBehaviourDescription{"@MFrontCastemBehavioursBuildPath@",
-						"umatfinitestrainsinglecrystal","Tridimensional"};
+    const auto b = ExternalBehaviourDescription{
+        this->library, "umatfinitestrainsinglecrystal",
+        "Tridimensional"};
     // should finite strain behaviour
     TFEL_TESTS_ASSERT(b.btype==2u);
     // should have standard kinematic
@@ -193,12 +196,14 @@ struct UMATBehaviourDescriptionTest final
   void test5(){
     using namespace tfel::system;
     auto& elm = ExternalLibraryManager::getExternalLibraryManager();
-    const auto l = "@MFrontCastemBehavioursBuildPath@";
+    const auto l = this->library;
     const auto f = "umatnorton_log1d";
     const auto mh = elm.getSupportedModellingHypotheses(l,f);
     TFEL_TESTS_ASSERT(mh.size()==1u);
     TFEL_TESTS_ASSERT(mh.at(0)=="AxisymmetricalGeneralisedPlaneStrain");
   }
+private:
+  const std::string library;
 };
   
 TFEL_TESTS_GENERATE_PROXY(UMATBehaviourDescriptionTest,

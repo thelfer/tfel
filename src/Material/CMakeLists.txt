@@ -1,8 +1,3 @@
-include_directories("${PROJECT_SOURCE_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception")
-
 set(TFELMaterial_SOURCES
     DDIF2Base.cxx
     BoundsCheck.cxx
@@ -11,7 +6,11 @@ set(TFELMaterial_SOURCES
     FiniteStrainBehaviourTangentOperator.cxx)
 
 tfel_library(TFELMaterial ${TFELMaterial_SOURCES})
+target_include_directories(TFELMaterial
+   PUBLIC 
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>)
 target_link_libraries(TFELMaterial
-                      TFELMath
-                      TFELUtilities
-                      TFELException)
+	PUBLIC TFELMath
+	PUBLIC TFELUtilities
+	PUBLIC TFELException)

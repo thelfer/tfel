@@ -1,5 +1,3 @@
-include_directories("${PROJECT_SOURCE_DIR}/include")
-
 set(TFELUtilities_SOURCES
     StringAlgorithms.cxx
     TextData.cxx
@@ -13,3 +11,7 @@ set(TFELUtilities_SOURCES
     ArgumentParser.cxx)
 
 tfel_library(TFELUtilities ${TFELUtilities_SOURCES})
+target_include_directories(TFELUtilities
+   PUBLIC 
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>)

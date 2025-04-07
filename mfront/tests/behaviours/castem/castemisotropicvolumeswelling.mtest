@@ -1,0 +1,26 @@
+@Author Helfer Thomas;
+@Date  06/08/2016;
+@Description{
+  "This test checks that an isotropic swelling is correctly "
+  "taken into account."
+};
+
+@Behaviour<umat> @library@ 'umatisotropicvolumeswelling';
+
+@MaterialProperty<constant> 'YoungModulus' 150.e9;
+@MaterialProperty<constant> 'PoissonRatio'   0.3;
+
+@ExternalStateVariable 'Temperature' 293.15;
+@ExternalStateVariable 'VolumeSwelling' {0:0,3600:1.e-2};
+
+@ImposedStrain 'EXX' 0.;
+@ImposedStrain 'EYY' 0.;
+@ImposedStrain 'EZZ' 0.;
+
+@Times {0.,3600 in 20};
+
+@Test<function> 'SXX' '-YoungModulus/(1-2*PoissonRatio)*VolumeSwelling/3'  1.e-3;
+@Test<function> 'SYY' '-YoungModulus/(1-2*PoissonRatio)*VolumeSwelling/3'  1.e-3;
+@Test<function> 'SZZ' '-YoungModulus/(1-2*PoissonRatio)*VolumeSwelling/3'  1.e-3;
+@Test<function> {'EXY':'0.','EXZ':'0.','EYZ':'0.'} 1.e-12;
+@Test<function> {'SXY':'0.','SXZ':'0.','SYZ':'0.'} 1.e-2;

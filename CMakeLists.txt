@@ -1,13 +1,9 @@
-# Remove when CMake >= 2.8.4 is required
-set(CMAKE_LEGACY_CYGWIN_WIN32 0) 
-cmake_minimum_required(VERSION 2.4)
-cmake_policy(SET CMP0005 OLD)
-if(CMAKE_VERSION VERSION_GREATER 3.0.0)
-  cmake_policy(SET CMP0026 OLD)
-endif(CMAKE_VERSION VERSION_GREATER 3.0.0)
-if(CMAKE_VERSION VERSION_GREATER 3.1.0)
-  cmake_policy(SET CMP0054 NEW)
-endif(CMAKE_VERSION VERSION_GREATER 3.1.0)
+cmake_minimum_required(VERSION 3.10)
+cmake_policy(SET CMP0022 NEW)
+cmake_policy(SET CMP0054 NEW)
+if(CMAKE_VERSION VERSION_GREATER 3.29.0)
+  cmake_policy(SET CMP0167 NEW)  
+endif(CMAKE_VERSION VERSION_GREATER 3.29.0)
 if(CMAKE_VERSION VERSION_GREATER 3.14.0)
   cmake_policy(SET CMP0083 NEW)  
   include(CheckPIESupported)
@@ -27,9 +23,9 @@ include(cmake/modules/autotools.cmake)
 
 #major and minor version
 tfel_project(3 0 "15-dev")
-set(PACKAGE_BUGREPORT "tfel-contact@cea.fr")
 set(CMAKE_CXX_STANDARD 11)
 set(CXX_STANDARD_REQUIRED ON)
+set(PACKAGE_BUGREPORT "tfel-contact@cea.fr")
 
 # check for the fenv package
 include(CheckIncludeFiles)
@@ -41,21 +37,23 @@ endif(HAVE_FENV_H)
 find_package(Threads)
 
 if(UNIX)
-  # This is used in mtest tests files
-  set(TFEL_LOCAL_LIBRARY_PREFIX "./")
-  # Looking for libdl...
-  if((${CMAKE_SYSTEM_NAME} MATCHES "Linux") OR
-     (${CMAKE_SYSTEM_NAME} MATCHES "Darwin"))
-   find_library(TFEL_DL_LIBRARY
-     NAMES dl)
-   if(NOT TFEL_DL_LIBRARY)
-     MESSAGE(FATAL_ERROR "the libdl library not found")
-   endif(NOT TFEL_DL_LIBRARY)
-  else((${CMAKE_SYSTEM_NAME} MATCHES "Linux") OR
+  if(NOT TFEL_DL_LIBRARY)
+    # This is used in mtest tests files
+    set(TFEL_LOCAL_LIBRARY_PREFIX "./")
+    # Looking for libdl...
+    if((${CMAKE_SYSTEM_NAME} MATCHES "Linux") OR
+	(${CMAKE_SYSTEM_NAME} MATCHES "Darwin"))
+      find_library(TFEL_DL_LIBRARY
+	NAMES dl)
+      if(NOT TFEL_DL_LIBRARY)
+	MESSAGE(FATAL_ERROR "the libdl library not found. You may want to set the `TFEL_DL_LIBRARY` manually")
+      endif(NOT TFEL_DL_LIBRARY)
+    else((${CMAKE_SYSTEM_NAME} MATCHES "Linux") OR
+	(${CMAKE_SYSTEM_NAME} MATCHES "Darwin"))
+      set(TFEL_DL_LIBRARY "")
+    endif((${CMAKE_SYSTEM_NAME} MATCHES "Linux") OR
       (${CMAKE_SYSTEM_NAME} MATCHES "Darwin"))
-    set(TFEL_DL_LIBRARY "")
-  endif((${CMAKE_SYSTEM_NAME} MATCHES "Linux") OR
-    (${CMAKE_SYSTEM_NAME} MATCHES "Darwin"))
+  endif(NOT TFEL_DL_LIBRARY)
 else(UNIX)
   set(TFEL_LOCAL_LIBRARY_PREFIX "")
   set(TFEL_DL_LIBRARY "")
@@ -219,20 +217,32 @@ else()
 endif()
  
 if(enable-python OR enable-python-bindings)
-  find_package(PythonLibs   REQUIRED)
+  find_package(Python REQUIRED COMPONENTS Interpreter Development)
   set(HAVE_PYTHON ON)
   tfel_add_c_cxx_definitions("HAVE_PYTHON=1")
-  tfel_add_c_cxx_definitions("TFEL_PYTHON_INCLUDES=\"-I${PYTHON_INCLUDE_DIRS}\"")
-  get_filename_component(PYTHON_LIBRARY_PATH ${PYTHON_LIBRARIES} PATH)
-  get_filename_component(PYTHON_LIBRARY_FULL ${PYTHON_LIBRARIES} NAME)
+  tfel_add_c_cxx_definitions("TFEL_PYTHON_INCLUDES=\"-I${Python_INCLUDE_DIRS}\"")
+  get_filename_component(PYTHON_LIBRARY_PATH ${Python_LIBRARIES} PATH)
+  get_filename_component(PYTHON_LIBRARY_FULL ${Python_LIBRARIES} NAME)
   string(REGEX REPLACE "lib(.+)\\.(.+)$" "\\1" PYTHON_LIBRARY ${PYTHON_LIBRARY_FULL})
-  tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBS=\"-L${PYTHON_LIBRARY_PATH} -l${PYTHON_LIBRARY}\"")
-  message(STATUS "found python          ${PYTHONLIBS_VERSION_STRING}")
-  message(STATUS "python include path   ${PYTHON_INCLUDE_DIRS}")
+  tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBRARY_PATH=\"${PYTHON_LIBRARY_PATH}\"")
+  tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBRARY=\"${PYTHON_LIBRARY}\"")
+  if(MSVC)
+    tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBS=\"${PYTHON_LIBRARY_PATH}\${PYTHON_LIBRARY}\"")
+  else(MSVC)
+    tfel_add_c_cxx_definitions("TFEL_PYTHON_LIBS=\"-L${PYTHON_LIBRARY_PATH} -l${PYTHON_LIBRARY}\"")
+  endif(MSVC) 
+  message(STATUS "found python          ${Python_VERSION}")
+  message(STATUS "python include path   ${Python_INCLUDE_DIRS}")
   message(STATUS "python libraries path ${PYTHON_LIBRARY_PATH}")
   message(STATUS "python library        ${PYTHON_LIBRARY}")
-  find_package(PythonInterp ${PYTHONLIBS_VERSION_STRING} REQUIRED)
-  message(STATUS "python interpreter    ${PYTHON_EXECUTABLE}")
+  message(STATUS "python interpreter    ${Python_EXECUTABLE}")
+  if(NOT TFEL_PYTHON_SITE_PACKAGES_DIR)
+    if(WIN32)
+      set(TFEL_PYTHON_SITE_PACKAGES_DIR "bin/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
+    else(WIN32)
+      set(TFEL_PYTHON_SITE_PACKAGES_DIR "lib${LIB_SUFFIX}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
+    endif(WIN32)
+  endif(NOT TFEL_PYTHON_SITE_PACKAGES_DIR)
 endif(enable-python OR enable-python-bindings)
 
 #some checks
@@ -340,31 +350,11 @@ if(enable-python-bindings)
     set(TFEL_NUMPY_SUPPORT ON)
   endif(Boost_NUMPY_FOUND)
   if(TFEL_USES_CONAN)
-    if(NOT python-static-interpreter-workaround)
-      set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
-        ${CONAN_LIBS} ${PYTHON_LIBRARIES})
-    else(python-static-interpreter-workaround)
-      if(APPLE)
-        set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
-          ${CONAN_LIBS})
-      else(APPLE)
-        set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
-          ${CONAN_LIBS} ${PYTHON_LIBRARIES})
-      endif(APPLE)
-    endif()
+    set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
+        ${CONAN_LIBS} ${Python_LIBRARIES})
   else(TFEL_USES_CONAN)
-    if(NOT python-static-interpreter-workaround)
-      set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
-        ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
-    else()
-      if(APPLE)
-        set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
-          ${Boost_PYTHON_LIBRARY})
-      else(APPLE)
-        set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
-          ${Boost_PYTHON_LIBRARY} ${PYTHON_LIBRARIES})
-      endif(APPLE)
-    endif()
+    set(TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES
+      ${Boost_PYTHON_LIBRARY} ${Python_LIBRARIES})
   endif(TFEL_USES_CONAN)
   if(DEFINED TFEL_TMP_BUILD_SHARED_LIBS)
     unset(TFEL_TMP_BUILD_SHARED_LIBS)

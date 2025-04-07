@@ -1,7 +1,9 @@
-include_directories("${PROJECT_SOURCE_DIR}/include")
-link_directories("${PROJECT_BINARY_DIR}/src/Utilities")
-
 tfel_library(TFELGlossary
   GlossaryEntry.cxx
   Glossary.cxx)
-target_link_libraries(TFELGlossary TFELUtilities)
+target_link_libraries(TFELGlossary
+	PRIVATE TFELUtilities)
+target_include_directories(TFELGlossary
+   PUBLIC 
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>)

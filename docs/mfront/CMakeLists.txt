@@ -1,21 +1,4 @@
 macro(install_mfront_desc file)
-  # if(HAVE_PANDOC)
-  #   ADD_CUSTOM_COMMAND(
-  #     OUTPUT    ${file}.html
-  #     DEPENDS   ${CMAKE_CURRENT_SOURCE_DIR}/${file}.md
-  #     DEPENDS   ${PROJECT_SOURCE_DIR}/docs/web/mfront-template.html
-  #     DEPENDS   ${PROJECT_SOURCE_DIR}/docs/web/css/main.css
-  #     COMMAND   ${PANDOC}
-  #     ARGS      -f markdown-markdown_in_html_blocks+tex_math_single_backslash
-  #     ARGS      --mathjax
-  #     ARGS      ${ARGN}
-  #     ARGS      ${CMAKE_CURRENT_SOURCE_DIR}/${file}.md -o ${file}.html)
-  #   add_custom_target(mfront-${file}-html ALL DEPENDS ${file}.html)
-  #   add_dependencies(website mfront-${file}-html)
-  #   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}.html
-  #     DESTINATION share/doc/tfel/web/mfront
-  #     COMPONENT website)
-  # endif(HAVE_PANDOC)
   if(TFEL_APPEND_VERSION)
     install(FILES ${file}.md
       DESTINATION share/doc/mfront-${TFEL_VERSION}
@@ -27,21 +10,6 @@ macro(install_mfront_desc file)
 endmacro(install_mfront_desc file)
 
 macro(install_mfront_desc2 directory file)
-  # if(HAVE_PANDOC)
-  #   ADD_CUSTOM_COMMAND(
-  #     OUTPUT    ${file}-${directory}.html
-  #     DEPENDS   ${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${file}.md
-  #     COMMAND   ${PANDOC}
-  #     ARGS      -f markdown-markdown_in_html_blocks+tex_math_single_backslash
-  #     ARGS      --mathjax
-  #     ARGS      ${ARGN}
-  #     ARGS      ${CMAKE_CURRENT_SOURCE_DIR}/${directory}/${file}.md -o ${file}-${directory}.html)
-  # add_custom_target(mfront-${file}-${directory}-html ALL DEPENDS ${file}-${directory}.html)
-  # add_dependencies(website mfront-${file}-${directory}-html)
-  #   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}-${directory}.html
-  #     DESTINATION share/doc/tfel/web/mfront/${directory}/${file}.html
-  #     COMPONENT website)
-  # endif(HAVE_PANDOC)
   if(TFEL_APPEND_VERSION)
     install(FILES ${directory}/${file}.md
       DESTINATION share/doc/mfront-${TFEL_VERSION}/${directory}

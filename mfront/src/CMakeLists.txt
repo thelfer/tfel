@@ -1,21 +1,3 @@
-include_directories("${PROJECT_SOURCE_DIR}/include"
-                    "${PROJECT_SOURCE_DIR}/mfront/include")
-if(HAVE_CASTEM)
-  if(CASTEHOME)
-    include_directories("${CASTEMHOME}/include")
-    include_directories("${CASTEMHOME}/include/c")
-  endif(CASTEHOME)
-endif(HAVE_CASTEM)
-
-link_directories("${PROJECT_BINARY_DIR}/mfront/src"
-                 "${PROJECT_BINARY_DIR}/src/Material"
-                 "${PROJECT_BINARY_DIR}/src/Math"
-                 "${PROJECT_BINARY_DIR}/src/System"
-                 "${PROJECT_BINARY_DIR}/src/Glossary"
-                 "${PROJECT_BINARY_DIR}/src/Utilities"
-                 "${PROJECT_BINARY_DIR}/src/Exception"
-		 "${PROJECT_BINARY_DIR}/src/Config")
-
 configure_file(${PROJECT_SOURCE_DIR}/mfront/src/MFrontHeader.cxx.in
                ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
@@ -23,14 +5,24 @@ configure_file(${PROJECT_SOURCE_DIR}/mfront/src/MFrontHeader.cxx.in
 
 mfront_library(MFrontLogStream
   MFrontLogStream.cxx)
+target_include_directories(MFrontLogStream
+   PUBLIC 
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>)
 
 # MFrontLogProfiling
 
 mfront_library(MFrontProfiling
   BehaviourProfiler.cxx)
-if(UNIX AND (NOT APPLE))
-  target_link_libraries(MFrontProfiling rt)
-endif(UNIX AND (NOT APPLE))
+target_include_directories(MFrontProfiling
+   PUBLIC 
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<INSTALL_INTERFACE:include>)
+if(UNIX AND (NOT APPLE) AND (NOT HAIKU) AND (NOT (CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")))
+   target_link_libraries(MFrontProfiling PRIVATE rt)
+endif(UNIX AND (NOT APPLE) AND (NOT HAIKU) AND (NOT (CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")))
 
 # TFELMFront
 
@@ -260,22 +252,39 @@ if(HAVE_CYRANO)
 endif(HAVE_CYRANO)
 
 mfront_library(TFELMFront ${TFELMFront_SOURCES})
+target_include_directories(TFELMFront
+   PUBLIC 
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<INSTALL_INTERFACE:include>)
+if(HAVE_CASTEM)
+  if(CASTEHOME)
+    target_include_directories(TFELMFront 
+      PRIVATE "${CASTEMHOME}/include"
+      PRIVATE "${CASTEMHOME}/include/c")
+  endif(CASTEHOME)
+endif(HAVE_CASTEM)
+
+target_link_libraries(TFELMFront
+  PUBLIC MFrontLogStream
+  PUBLIC TFELMaterial       PUBLIC TFELMathParser
+  PUBLIC TFELSystem         PUBLIC TFELUtilities
+  PUBLIC TFELGlossary       PUBLIC TFELException
+  PUBLIC TFELConfig)
 
 if(UNIX)
-  target_link_libraries(TFELMFront
-    MFrontLogStream
-    TFELMaterial TFELMathParser
-    TFELSystem   TFELUtilities
-    TFELGlossary TFELException
-    TFELConfig
-    -pthread ${TFEL_DL_LIBRARY})
-else(UNIX)
-  target_link_libraries(TFELMFront
-    MFrontLogStream
-    TFELMaterial TFELMathParser
-    TFELSystem   TFELUtilities
-    TFELGlossary TFELException
-    TFELConfig)
+  if(NOT HAIKU)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
+      target_link_libraries(TFELMFront
+	    PRIVATE ${TFEL_DL_LIBRARY})
+    else(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
+      target_link_libraries(TFELMFront
+      	PRIVATE -pthread PRIVATE ${TFEL_DL_LIBRARY})
+    endif(CMAKE_CXX_COMPILER_ID STREQUAL "PGI")
+  else(NOT HAIKU)
+    target_link_libraries(TFELMFront
+      PRIVATE ${TFEL_DL_LIBRARY})
+  endif(NOT HAIKU)
 endif(UNIX)
 
 # MTestFileGenerator
@@ -284,11 +293,16 @@ mfront_library(MTestFileGenerator
   MTestFileGeneratorBase.cxx
   UmatSmallStrainMTestFileGenerator.cxx
   UmatFiniteStrainMTestFileGenerator.cxx)
+target_include_directories(MTestFileGenerator
+   PUBLIC 
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<INSTALL_INTERFACE:include>)
 target_link_libraries(MTestFileGenerator
-  TFELMaterial
-  TFELMath
-  TFELUtilities
-  TFELException)
+  PUBLIC TFELMaterial
+  PUBLIC TFELMath
+  PUBLIC TFELUtilities
+  PUBLIC TFELException)
 
 # MFront
 
@@ -296,7 +310,7 @@ add_executable(mfront main.cxx)
 set_property(TARGET mfront PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 if(TFEL_APPEND_VERSION)
   set_target_properties(mfront
-    PROPERTIES OUTPUT_NAME "mfront-${TFEL_VERSION}")
+ PROPERTIES OUTPUT_NAME "mfront-${TFEL_VERSION}")
 endif(TFEL_APPEND_VERSION)
 target_link_libraries(mfront
   TFELMFront 
@@ -320,9 +334,10 @@ if(TFEL_APPEND_VERSION)
     PROPERTIES OUTPUT_NAME "mfront-query-${TFEL_VERSION}")
 endif(TFEL_APPEND_VERSION)
 target_link_libraries(mfront-query
-  TFELMFront 
-  MFrontLogStream
-  TFELSystem TFELUtilities)
+  PUBLIC TFELMFront 
+  PUBLIC MFrontLogStream
+  PUBLIC TFELSystem
+  PUBLIC TFELUtilities)
 install(TARGETS mfront-query DESTINATION bin
   COMPONENT mfront)
 
@@ -335,8 +350,9 @@ if(TFEL_APPEND_VERSION)
     PROPERTIES OUTPUT_NAME "mfront-doc-${TFEL_VERSION}")
 endif(TFEL_APPEND_VERSION)
 target_link_libraries(mfront-doc
-  TFELMFront 
-  MFrontLogStream
-  TFELSystem TFELUtilities)
+  PUBLIC TFELMFront 
+  PUBLIC MFrontLogStream
+  PUBLIC TFELSystem
+  PUBLIC TFELUtilities)
 install(TARGETS mfront-doc DESTINATION bin
   COMPONENT mfront)

@@ -6,33 +6,17 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
   ADD_CUSTOM_COMMAND(
     OUTPUT    ptest.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/ptest.tex.in
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${PDFLATEX_COMPILER}
+    COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${PDFLATEX_COMPILER}
     ARGS      -interaction=batchmode
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
     ARGS       ptest.tex
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${PDFLATEX_COMPILER}
+    COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${PDFLATEX_COMPILER}
     ARGS      -interaction=batchmode
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
     ARGS       ptest.tex
-# COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
-# ARGS      -terse ptest
-# COMMAND   ${MAKEINDEX_COMPILER}
-# ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist mkeys.idx
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${PDFLATEX_COMPILER}
+    COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${PDFLATEX_COMPILER}
     ARGS      -interaction=batchmode
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
     ARGS       ptest.tex
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${PDFLATEX_COMPILER}
+    COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${PDFLATEX_COMPILER}
     ARGS      -interaction=batchmode
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
     ARGS       ptest.tex
     COMMENT   "ptest.pdf")
   

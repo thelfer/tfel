@@ -4,26 +4,14 @@ if(HAVE_LATEX)
     ADD_CUSTOM_COMMAND(
       OUTPUT    ${doc}.pdf
       DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/${doc}.tex.in
-      COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${PDFLATEX_COMPILER}
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tutorial
+      COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${PDFLATEX_COMPILER}
       ARGS      -interaction=batchmode ${doc}.tex
-      COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
+      COMMAND   BSTINPUTS=${abs_top_srcdir}/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
       ARGS      -terse ${doc}
-      COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${PDFLATEX_COMPILER}
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tutorial
+      COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${PDFLATEX_COMPILER}
       ARGS      -interaction=batchmode ${doc}.tex
       ${doc}.tex
-      COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${PDFLATEX_COMPILER}
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tutorial
+      COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${PDFLATEX_COMPILER}
       ARGS      -interaction=batchmode ${doc}.tex
       ${doc}.tex
       COMMENT   "${doc}.pdf")

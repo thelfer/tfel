@@ -40,8 +40,12 @@ if(HAVE_CYRANO)
     TestComputeElasticPrediction2
     IsotropicPlasticity)
   target_link_libraries(MFrontCyranoBehaviourBricks
-    CyranoInterface MFrontProfiling TFELMaterial
-    TFELMath TFELUtilities TFELException)
+    PUBLIC CyranoInterface
+    PUBLIC MFrontProfiling
+    PUBLIC TFELMaterial
+    PUBLIC TFELMath
+    PUBLIC TFELUtilities
+    PUBLIC TFELException)
 endif(HAVE_CYRANO)
 
 macro(cyranotest_brick test_arg behaviour)
