@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 import math
 try:
     import unittest2 as unittest
@@ -67,7 +68,7 @@ class ViscoChabochMemoNRad(unittest.TestCase):
         m = MTest()
         setVerboseMode(VerboseLevel.VERBOSE_QUIET)
         m.setPredictionPolicy(PredictionPolicy.LINEARPREDICTION)
-        m.setBehaviour('aster','@MFrontAsterBehavioursBuildPath@','asterviscomemonrad');
+        m.setBehaviour('aster', os.environ['MFrontAsterBehavioursBuildPath'],'asterviscomemonrad');
         m.setMaterialProperty('PoissonRatio',0.3)
         m.setMaterialProperty('YoungModulus',205000.0)
         m.setMaterialProperty('C1inf', 182400.)

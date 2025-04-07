@@ -1,8 +1,7 @@
 if(HAVE_CASTEM)
-  add_subdirectory(castem)
-  add_subdirectory(castem2)
+ add_subdirectory(castem)
 endif(HAVE_CASTEM)
 
 if(HAVE_CYRANO)
-  add_subdirectory(cyrano)
+ add_subdirectory(cyrano)
 endif(HAVE_CYRANO)

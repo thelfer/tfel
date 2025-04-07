@@ -22,6 +22,14 @@ The page describes the new functionalities of Version 3.0.15 of the
 
 # Issues fixed
 
+## Issue 740: Support building with CMake 4.0.0
+
+For more details, see <https://github.com/thelfer/tfel/issues/740>.
+
+## Issue 746: [mfront] [mtest] Add support for substitutions in strings
+
+For more details, see <https://github.com/thelfer/tfel/issues/746>.
+
 ## Issue 742: Abaqus interface issue with Abaqus 2024
 ￼
 

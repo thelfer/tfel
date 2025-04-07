@@ -70,7 +70,7 @@ struct UMATBehaviourDescriptionTest final
   void test1(){
     using namespace std;
     using namespace tfel::glossary;
-    const auto b = ExternalBehaviourDescription{"@MFrontCastemBehavioursBuildPath@",
+    const auto b = ExternalBehaviourDescription{"$<TARGET_FILE:MFrontCastemBehaviours>",
 						"umatnorton","PlaneStrain"};
     // should small strain behaviour
     TFEL_TESTS_ASSERT(b.btype==1u);
@@ -97,7 +97,7 @@ struct UMATBehaviourDescriptionTest final
     {
       bool ok = false;
       try{
-	const auto b = ExternalBehaviourDescription{"@MFrontCastemBehavioursBuildPath@",
+	const auto b = ExternalBehaviourDescription{"$<TARGET_FILE:MFrontCastemBehaviours>",
 						    "unknown","PlaneStrain"};
       } catch(runtime_error&){
 	ok = true;
@@ -107,7 +107,7 @@ struct UMATBehaviourDescriptionTest final
     {
       bool ok = false;
       try{
-	const auto b = ExternalBehaviourDescription{"@MFrontCastemBehavioursBuildPath@",
+	const auto b = ExternalBehaviourDescription{"$<TARGET_FILE:MFrontCastemBehaviours>",
 						    "umatnorton","PlaneStress"};
       } catch(runtime_error&){
 	ok = true;
@@ -121,7 +121,7 @@ struct UMATBehaviourDescriptionTest final
   void test3(){
     using namespace std;
     using namespace tfel::glossary;
-    const auto b = ExternalBehaviourDescription{"@MFrontCastemBehavioursBuildPath@",
+    const auto b = ExternalBehaviourDescription{"$<TARGET_FILE:MFrontCastemBehaviours>",
 						"umatnorton_log1d","AxisymmetricalGeneralisedPlaneStrain"};
     // should finite strain behaviour
     TFEL_TESTS_ASSERT(b.btype==2u);
@@ -155,7 +155,7 @@ struct UMATBehaviourDescriptionTest final
   void test4(){
     using namespace std;
     using namespace tfel::glossary;
-    const auto b = ExternalBehaviourDescription{"@MFrontCastemBehavioursBuildPath@",
+    const auto b = ExternalBehaviourDescription{"$<TARGET_FILE:MFrontCastemBehaviours>",
 						"umatfinitestrainsinglecrystal","Tridimensional"};
     // should finite strain behaviour
     TFEL_TESTS_ASSERT(b.btype==2u);
@@ -193,7 +193,7 @@ struct UMATBehaviourDescriptionTest final
   void test5(){
     using namespace tfel::system;
     auto& elm = ExternalLibraryManager::getExternalLibraryManager();
-    const auto l = "@MFrontCastemBehavioursBuildPath@";
+    const auto l = "$<TARGET_FILE:MFrontCastemBehaviours>";
     const auto f = "umatnorton_log1d";
     const auto mh = elm.getSupportedModellingHypotheses(l,f);
     TFEL_TESTS_ASSERT(mh.size()==1u);
