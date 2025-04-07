@@ -1,0 +1,80 @@
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
+
+from @tfel_material_python_module@ import ModellingHypothesis
+import @mfront_python_module@ as mfront
+
+class PyMFrontTest2(unittest.TestCase):
+
+    def test_pass(self):
+        f   = '@top_srcdir@/mfront/tests/behaviours/Chaboche.mfront'
+        dsl = mfront.getDSL(f)
+        dsl.analyseFile(f,[])
+
+        # behaviour description
+        bd = dsl.getBehaviourDescription()
+
+        mh = bd.getModellingHypotheses()
+        self.assertEqual(len(mh),5)
+        self.assertTrue(ModellingHypothesis.AXISYMMETRICALGENERALISEDPLANESTRAIN in mh)
+        self.assertTrue(ModellingHypothesis.AXISYMMETRICAL in mh)
+        self.assertTrue(ModellingHypothesis.PLANESTRAIN in mh)
+        self.assertTrue(ModellingHypothesis.GENERALISEDPLANESTRAIN in mh)
+        self.assertTrue(ModellingHypothesis.TRIDIMENSIONAL in mh)
+
+        # a deeper look at the 3D case
+        d = bd.getBehaviourData(ModellingHypothesis.TRIDIMENSIONAL)
+        mps = d.getMaterialProperties()
+        self.assertEqual(len(mps),10)
+
+        # recommended way
+        mpsnames = [mp.getExternalName() for mp in mps]
+        self.assertEqual(len(mpsnames),10)
+        self.assertTrue('YoungModulus' in mpsnames)
+        self.assertTrue('PoissonRatio' in mpsnames)
+        self.assertTrue('R_inf' in mpsnames)
+        self.assertTrue('R_0' in mpsnames)
+        self.assertTrue('b' in mpsnames)
+        self.assertTrue('k' in mpsnames)
+        self.assertTrue('w' in mpsnames)
+        self.assertTrue('C_inf' in mpsnames)
+        self.assertTrue('g_0' in mpsnames)
+        self.assertTrue('a_inf' in mpsnames)
+
+        # "tfel < 3.1.x" way
+        mpsnames = d.getExternalNames(mps)
+        self.assertEqual(len(mpsnames),12)
+        self.assertTrue('YoungModulus' in mpsnames)
+        self.assertTrue('PoissonRatio' in mpsnames)
+        self.assertTrue('R_inf' in mpsnames)
+        self.assertTrue('R_0' in mpsnames)
+        self.assertTrue('b' in mpsnames)
+        self.assertTrue('k' in mpsnames)
+        self.assertTrue('w' in mpsnames)
+        self.assertTrue('C_inf[0]' in mpsnames)
+        self.assertTrue('C_inf[1]' in mpsnames)
+        self.assertTrue('g_0[0]' in mpsnames)
+        self.assertTrue('g_0[1]' in mpsnames)
+        self.assertTrue('a_inf' in mpsnames)
+
+        # recommended way
+        ivs = d.getPersistentVariables()
+        ivsnames = [v.getExternalName() for v in ivs]
+        self.assertEqual(len(ivsnames),3)
+        self.assertTrue('ElasticStrain' in ivsnames)
+        self.assertTrue('p' in ivsnames)
+        self.assertTrue('a' in ivsnames)
+
+        # "tfel < 3.1.x" way
+        ivsnames = d.getExternalNames(ivs)
+        self.assertEqual(len(ivsnames),4)
+        self.assertTrue('ElasticStrain' in ivsnames)
+        self.assertTrue('p' in ivsnames)
+        self.assertTrue('a[0]' in ivsnames)
+        self.assertTrue('a[1]' in ivsnames)
+        
+        
+if __name__ == '__main__':
+    unittest.main()

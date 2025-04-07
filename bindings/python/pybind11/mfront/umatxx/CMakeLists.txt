@@ -1,0 +1,13 @@
+if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+  set(tfel_system_python_module "tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}.system_${TFEL_SUFFIX_FOR_PYTHON_MODULES}")
+else(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+  set(tfel_system_python_module "tfel.system")
+endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+
+if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+  tfel_python_script_base(mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES}/umatxx_${TFEL_SUFFIX_FOR_PYTHON_MODULES} __init__.py)
+  tfel_python_script_base(mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES}/umatxx_${TFEL_SUFFIX_FOR_PYTHON_MODULES} Behaviour.py)
+else(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+  tfel_python_script_base(mfront/umatxx __init__.py)
+  tfel_python_script_base(mfront/umatxx Behaviour.py)
+endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)

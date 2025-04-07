@@ -213,7 +213,11 @@ macro(test_aster_python test)
     set_tests_properties(aster${test}_py
       PROPERTIES DEPENDS MFrontAsterBehaviours)
     set(python_env)
-    list(APPEND python_env "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python")
+    if(enable-pybind11)
+      list(APPEND python_env "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python/pybind11")
+    else(enable-pybind11)
+      list(APPEND python_env "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python/boost")
+    endif(enable-pybind11)
     list(APPEND python_env "MFrontAsterBehavioursBuildPath=$<TARGET_FILE:MFrontAsterBehaviours>")
     set_tests_properties(aster${test}_py
       PROPERTIES ENVIRONMENT "${python_env}")

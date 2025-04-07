@@ -22,7 +22,7 @@ function(test_pymfront test)
     add_test(NAME pymfront${test}_py
       COMMAND ${Python_EXECUTABLE} pymfront${test}.py)
     set_tests_properties(pymfront${test}_py
-      PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python")
+      PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python/pybind11")
   endif(NOT CMAKE_CONFIGURATION_TYPES)
 endfunction(test_pymfront)
 
@@ -32,7 +32,7 @@ function(test_pymfront_mp interface library function)
       COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/material-properties.py)
     set_property(TEST pymfront_material_properties_${interface}_py
       PROPERTY ENVIRONMENT
-      PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python
+      PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python/pybind11
       MFRONT_MATERIAL_PROPERTY_LIBRARY=${library}
       MFRONT_MATERIAL_PROPERTY_FUNCTION=${function})      
   endif(NOT CMAKE_CONFIGURATION_TYPES)
@@ -44,7 +44,7 @@ function(test_pymtest_bv file library)
       COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/${file}.py)
     set_property(TEST pymtest_behaviours_${file}_py
       PROPERTY ENVIRONMENT
-      PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python
+      PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python/pybind11
       MTEST_BEHAVIOUR_LIBRARY=${library})      
   endif(NOT CMAKE_CONFIGURATION_TYPES)
 endfunction(test_pymtest_bv)

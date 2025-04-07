@@ -1,0 +1,192 @@
+from @tfel_system_python_module@ import ExternalLibraryManager
+
+class Behaviour:
+    """The class Behaviour gathers information about a behaviour for a
+    specific modelling hypothesis and allows the modification of its
+    parameters.
+    The following piece of information are available:
+      - material properties names
+      - internal state variable names
+      - internal state variable types
+      - external state variable names
+      - parameters names
+      - parameters types
+      - symmetry of the behaviour (isotropic or orthotropic)
+
+    Note that this class does not take into account additional
+    variables required by the interface. To take those into account,
+    the user shall refer to the Behaviour class of the mtest package.
+    """
+
+    def __init__(self,h,l,b):
+        """
+        Behaviour constructor.
+        The following argument are required :
+          - h : modelling hypothesis
+          - l : library in which the behaviour is defined
+          - b : behaviour name
+        """
+        self.hypothesis = h
+        self.library   = l
+        self.behaviour = b
+
+    def getMaterialPropertiesNames(self):
+        """
+        return the names of the material properties
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.getUMATMaterialPropertiesNames(self.library,
+                                                  self.behaviour,
+	self.hypothesis)
+
+    def getInternalStateVariablesNames(self):
+        """
+        return the names of the internal state variables
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.getUMATInternalStateVariablesNames(self.library,
+                                                      self.behaviour,
+	self.hypothesis)
+
+    def getInternalStateVariablesTypes(self):
+        """
+        return the types of the internal state variables in an array
+        of integers sorted in the same order than the array of names
+        returned by the getInternalStateVariablesNames.
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        ts = elm.getUMATInternalStateVariablesTypes(self.library,
+                                                   self.behaviour,
+	self.hypothesis)
+        types = []
+        for t in ts:
+            if(t==0):
+                types.append("Scalar")
+            elif(t==1):
+                types.append("Stensor")
+            elif(t==2):
+                types.append("TVector")
+            elif(t==3):
+                types.append("Tensor")
+            else:
+                raise("Behaviour.getInternalStateVariablesTypes :"
+                      "unsupported state variable type '"+str(t)+"'")
+        return types
+                
+    def getExternalStateVariablesNames(self):
+        """
+        return the names of the external state variables.  Note that
+        the temperature has been removed from the list of external
+        state variables as it is treated apart by interfaces derived
+        from the UMAT interface.
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.getUMATExternalStateVariablesNames(self.library,
+                                                      self.behaviour,
+                                                      self.hypothesis)
+
+    def getParametersNames(self):
+        """
+        return the names of the internal state variables
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.getUMATParametersNames(self.library,
+                                          self.behaviour,
+                                          self.hypothesis)
+
+    def getParametersTypes(self):
+        """
+        return the types of the internal state variables in an array
+        of integers sorted in the same order than the array of names
+        returned by the getParametersNames.
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        ts = elm.getUMATParametersTypes(self.library,
+                                        self.behaviour,
+                                        self.hypothesis)
+        types = []
+        for t in ts:
+            if(t==0):
+                types.append("Float")
+            elif(t==1):
+                types.append("Int")
+            elif(t==2):
+                types.append("UShort")
+            else:
+                raise("Behaviour.getParametersTypes :"
+                      "unsupported state variable type '"+str(t)+"'")
+        return types
+
+    def getRealParameterDefaultValue(self,n):
+        """
+        return the default value for a real parameter
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.getRealParameterDefaultValue(self.library,
+                                                self.behaviour,
+                                                self.hypothesis,n)
+    
+    def getIntegerParameterDefaultValue(self,n):
+        """
+        return the default value for an integer parameter
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.getIntegerParameterDefaultValue(self.library,
+                                                   self.behaviour,
+                                                   self.hypothesis,n)
+
+    def getUnsignedShortParameterDefaultValue(self,n):
+        """
+        return the default value for an unsigned short parameter
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.getUnsignedShortParameterDefaultValue(self.library,
+                                                         self.behaviour,
+                                                         self.hypothesis,n)
+
+    
+    def isIsotropic(self):
+        """
+        return true if the material is isotropic
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.getUMATBehaviourType(self.library,
+                                        self.behaviour)==0
+
+    def isOrthotropic(self):
+        """
+        return true if the material is orthotropic
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.getUMATBehaviourType(self.library,
+                                        self.behaviour)==1
+
+    def requiresStiffnessTensor(self):
+        """
+        return true if the behaviour requires the stiffness tensor
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.getUMATRequiresStiffnessTensor(self.library,
+                                                  self.behaviour,
+                                                  self.hypothesis)==1
+
+    def requiresThermalExpansionCoefficientTensor(self):
+        """
+        return true if the behaviour requires the thermal expansion
+        coefficient tensor
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.requiresThermalExpansionCoefficientTensor(self.library,
+                                                             self.behaviour,
+                                                             self.hypothesis)==1
+    
+    def setParameter(self,n,v):
+        """
+        set a parameter true
+          - n : name of the parameter
+          - v : value of the parameter
+        """
+        elm = ExternalLibraryManager.getExternalLibraryManager()
+        return elm.setParameter(self.library,
+                                self.behaviour,
+				self.hypothesis,n,v)

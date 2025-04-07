@@ -1,0 +1,41 @@
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
+
+import @mfront_python_module@ as mfront
+
+class PyMFrontTest1(unittest.TestCase):
+
+    def test_pass(self):
+
+        f   = '@top_srcdir@/mfront/tests/behaviours/Chaboche.mfront'
+        dsl = mfront.getDSL(f)
+        dsl.setInterfaces(['aster'])
+        dsl.analyseFile(f,[])
+        
+        # file description
+        fd = dsl.getFileDescription()
+        self.assertEqual(fd.fileName,f)
+        self.assertEqual(fd.authorName,'Jean - Michel Proix')
+        self.assertEqual(fd.date,'26 / 11 / 2013')
+
+        # targets information
+        tg = dsl.getTargetsDescription()
+        self.assertEqual(len(tg.libraries),1)
+        self.assertTrue(mfront.describes(tg,'AsterBehaviour'))
+        self.assertEqual(len(tg.headers),4)
+        self.assertTrue('MFront/Aster/asterChaboche.hxx' in tg.headers)
+        self.assertTrue('TFEL/Material/Chaboche.hxx' in tg.headers)
+        self.assertTrue('TFEL/Material/ChabocheBehaviourData.hxx' in tg.headers)
+        self.assertTrue('TFEL/Material/ChabocheIntegrationData.hxx' in tg.headers)
+        self.assertFalse('TFEL/Material/ChabocheIntegrationData2.hxx' in tg.headers)
+        
+        # library description
+        l = tg.getLibrary('AsterBehaviour')
+        self.assertEqual(l.name,'AsterBehaviour')
+        self.assertTrue('asterchaboche' in l.epts)
+        
+        
+if __name__ == '__main__':
+    unittest.main()

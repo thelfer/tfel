@@ -1,0 +1,5 @@
+import tfel_@TFEL_SUFFIX_FOR_PYTHON_MODULES@.material_@TFEL_SUFFIX_FOR_PYTHON_MODULES@
+from ._mfront_@TFEL_SUFFIX_FOR_PYTHON_MODULES@ import *
+
+initDSLs()
+initInterfaces()
