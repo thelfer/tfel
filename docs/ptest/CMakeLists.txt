@@ -12,10 +12,6 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
     COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${PDFLATEX_COMPILER}
     ARGS      -interaction=batchmode
     ARGS       ptest.tex
-# COMMAND   BSTINPUTS=${abs_top_srcdir}/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
-# ARGS      -terse ptest
-# COMMAND   ${MAKEINDEX_COMPILER}
-# ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist mkeys.idx
     COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${PDFLATEX_COMPILER}
     ARGS      -interaction=batchmode
     ARGS       ptest.tex
