@@ -57,7 +57,7 @@ static std::string handleSpace(const std::string& p) {
                            "MinGW can't handle it (Found '" +
                            p +
                            "'). "
-                           "Please change TFEL installation directory"))
+                           "Please change TFEL installation directory"));
   }
 #endif /* (defined _WIN32 || defined _WIN64) && \
           (defined __MINGW32__ || defined __MINGW64__) */
