@@ -151,7 +151,7 @@ elseif(((CMAKE_CXX_COMPILER_ID STREQUAL "Clang") OR
        (NOT PATHSCALE_COMPILER))
   include(cmake/modules/clang.cmake)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
-  include(cmake/modules/clang.cmake)
+  include(cmake/modules/nvhpc.cmake)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
   include(cmake/modules/intel.cmake)
 #elseif((CMAKE_CXX_COMPILER_ID STREQUAL "PathScale") OR (PATHSCALE_COMPILER))

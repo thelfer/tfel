@@ -66,11 +66,19 @@ namespace tfel::math::parser {
   std::shared_ptr<Expr> GeneralPowerFunction::differentiate(
       const std::vector<double>::size_type pos,
       const std::vector<double>& v) const {
-    auto dp = [this, &v] {
+    auto dp = [this, &v]() -> std::shared_ptr<Expr> {
       auto Nf = std::make_shared<Number>(std::to_string(this->n), this->n);
       if (this->n == 17) {
+#ifdef __NVCOMPILER
+        auto ptr = new PowerFunction<16>(this->expr->clone(v));
+        auto e = std::shared_ptr<Expr>(ptr);
+        auto b = std::make_shared<BinaryOperation<OpMult>>(Nf, e);
+        return b;
+#else /* __NVCOMPILER */
         return std::make_shared<BinaryOperation<OpMult>>(
             Nf, std::make_shared<PowerFunction<16>>(this->expr->clone(v)));
+
+#endif  /* __NVCOMPILER */
       }
       return std::make_shared<BinaryOperation<OpMult>>(
           Nf, std::make_shared<GeneralPowerFunction>(this->expr->clone(v),
