@@ -120,8 +120,8 @@ namespace mfront {
       if (t.flag == tfel::utilities::Token::String) {
         auto delim = t.value.at(0);
         auto contents = t.value.substr(1, t.value.size() - 2);
-        for (const auto& [k, v] : s) {
-          contents = tfel::utilities::replace_all(contents, k, v);
+        for (const auto& kv : s) {
+          contents = tfel::utilities::replace_all(contents, kv.first, kv.second);
         }
         t.value = delim + contents + delim;
       } else {
