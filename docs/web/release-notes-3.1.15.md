@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 3.1.15 of the
 
 # Issues fixed
 
+## Issue : Fix segfault in `FCString` when assigning a narrow view
+
+For more details, see <https://github.com/thelfer/tfel/issues/>.
+
 ## Issue 671: [python] python module extension is incorrect
 
 For more details, see <https://github.com/thelfer/tfel/issues/671>.
