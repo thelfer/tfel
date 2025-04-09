@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 3.0.15 of the
 
 # Issues fixed
 
+## Issue 755: Add support for the `nvc++` compiler
+
+For more details, see <https://github.com/thelfer/tfel/issues/755>.
+
 ## Issue 740: Support building with CMake 4.0.0
 
 For more details, see <https://github.com/thelfer/tfel/issues/740>.
