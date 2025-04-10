@@ -1,4 +1,3 @@
-
 ---
 title: Release notes of the 5.1 version of `TFEL`, `MFront` and `MTest`
 author: Thomas Helfer, Antoine Martin
@@ -28,8 +27,11 @@ eqnPrefixTemplate: "($$i$$)"
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
 
-
 # Known incompatibilities
+
+The native `Europlexus` interface has been removed, as `Europlexus` now
+uses the `generic` interface through `MGIS` (see
+<https://github.com/thelfer/tfel/issues/739> for details).
 
 When compiling with option `TFEL_APPEND_VERSION` set to `ON` or when
 defining the string variable `TFEL_VERSION_FLAVOUR`, the `python`
@@ -489,6 +491,10 @@ of tangent operator of the local behaviours. The implementation
 shows how to use any behaviour law on each phase.
 
 # Issues fixed
+
+## Issue 739: [mfront] Depreciation of europlexus interface
+
+For more details, see <https://github.com/thelfer/tfel/issues/739>
 
 ## Issue 708: Add support for hardening modes when `libc++` is used
 

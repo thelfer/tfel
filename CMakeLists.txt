@@ -236,14 +236,6 @@ if(enable-ansys)
   tfel_add_c_cxx_definitions("HAVE_ANSYS=1")
 endif(enable-ansys)
 
-#europlexus
-option(enable-europlexus "build europlexus interface for mechanical behaviours" OFF)
-if(enable-europlexus)
-  message(STATUS "europlexus support enabled")
-  set(HAVE_EUROPLEXUS ON)
-  tfel_add_c_cxx_definitions("HAVE_EUROPLEXUS=1")
-endif(enable-europlexus)
-
 #zmat
 option(enable-zmat "build zmat interface for mechanical behaviours" OFF)
 if(enable-zmat)

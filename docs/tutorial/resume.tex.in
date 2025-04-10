@@ -45,7 +45,7 @@ comportement sont~:
 
 De plus, \mfront{} a un intérêt pour d'autres projets EDF (projet
 LOCO, assimilation de données avec ADAO dans Salomé, via l'outil de
-simulation \mtest{}, code de dynamique rapide EUROPLEXUS, échange
+simulation \mtest{}, échange
 standardisés avec des partenaires universitaires dans le cadre de
 thèse, etc.).  La mise en open-source, pour une utilisation libre avec
 \aster{}, est en cours d'instruction pendant l'année 2014. Pour

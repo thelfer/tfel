@@ -11,7 +11,7 @@ library. Those languages cover three kind of material knowledge:
 - mechanical behaviours. Numerical performances of generated
   mechanical behaviours was given a particular attention. MFront
   offers a variety of interfaces to finite element solvers `Cast3M`,
-  `Code-Aster`, `EUROPLEXUS`, `Abaqus-Standard`, `Abaqus-Explicit`,
+  `Code-Aster`, `Abaqus-Standard`, `Abaqus-Explicit`,
   `Zebulon`, etc. or various FFT solvers such as
   `AMITEX_FFTP`. Various benchmarks shows that `MFront`
   implementations are competitive with native implementations

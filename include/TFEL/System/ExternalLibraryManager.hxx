@@ -757,12 +757,6 @@ namespace tfel::system {
      * \param[in] l : name of the library
      * \param[in] f : law name
      */
-    EuroplexusFctPtr getEuroplexusFunction(const std::string&,
-                                           const std::string&);
-    /*!
-     * \param[in] l : name of the library
-     * \param[in] f : law name
-     */
     CastemFctPtr getCastemExternalBehaviourFunction(const std::string&,
                                                     const std::string&);
     /*!

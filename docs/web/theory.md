@@ -868,7 +868,7 @@ theory to finite rotation*
 <!--     \) -->
 <!--   - For specific cases, the mechanical behaviour shall also provide: -->
 <!--     - a prediction operator -->
-<!--   - the elastic operator (Abaqus-Explicit, Europlexus) -->
+<!--   - the elastic operator (Abaqus-Explicit) -->
 <!--   - estimation of the stored and dissipated energies (Abaqus-Explicit) -->
   
 
@@ -886,7 +886,7 @@ theory to finite rotation*
 <!-- -	Generated example of usage: -->
 <!--     - Generation of MODELISER/MATERIAU instructions (Cast3M) -->
 <!--   - Input file for Abaqus -->
-<!--   - Provide information for dynamic resolution of inputs (MTest/Aster/Europlexus): -->
+<!--   - Provide information for dynamic resolution of inputs (MTest/Aster): -->
 <!--     - Numbers Types (scalar, tensors, symmetric tensors) -->
 <!--   - Entry names /Glossary names… -->
   
