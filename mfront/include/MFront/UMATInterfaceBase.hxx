@@ -37,7 +37,6 @@ namespace mfront {
    * - `Code_Aster`
    * - `CalculiX`
    * - `Cyrano`
-   * - `Europlexus`
    * - etc..
    */
   struct MFRONT_VISIBILITY_EXPORT UMATInterfaceBase

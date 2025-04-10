@@ -38,9 +38,6 @@
 #include "MTest/AsterCohesiveZoneModel.hxx"
 #include "MTest/AsterLogarithmicStrainBehaviourWrapper.hxx"
 #endif /* HAVE_ASTER  */
-#ifdef HAVE_EUROPLEXUS
-#include "MTest/EuroplexusFiniteStrainBehaviour.hxx"
-#endif /* HAVE_EUROPLEXUS  */
 #ifdef HAVE_ABAQUS
 #include "MTest/AbaqusStandardBehaviour.hxx"
 #include "MTest/AbaqusSmallStrainBehaviour.hxx"
@@ -401,18 +398,6 @@ namespace mtest {
         b = std::make_shared<AsterFiniteStrainBehaviour>(h, l, f);
       } else if (type == 3u) {
         b = std::make_shared<AsterCohesiveZoneModel>(h, l, f);
-      } else {
-        throw_if(true,
-                 "unsupported behaviour type (" + std::to_string(type) + ")");
-      }
-    }
-#endif
-#ifdef HAVE_EUROPLEXUS
-    if ((in == "europlexus") || (in == "epx") || (in == "Europlexus")) {
-      check_no_parameters();
-      const auto type = elm.getUMATBehaviourType(l, f);
-      if (type == 2u) {
-        b = std::make_shared<EuroplexusFiniteStrainBehaviour>(h, l, f);
       } else {
         throw_if(true,
                  "unsupported behaviour type (" + std::to_string(type) + ")");

@@ -40,10 +40,6 @@ if(HAVE_ANSYS)
   add_subdirectory(ansys)
 endif(HAVE_ANSYS)
 
-if(HAVE_EUROPLEXUS)
-  add_subdirectory(epx)
-endif(HAVE_EUROPLEXUS)
-
 if(HAVE_CYRANO)
   add_subdirectory(cyrano)
 endif(HAVE_CYRANO)

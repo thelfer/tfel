@@ -1512,20 +1512,6 @@ namespace tfel::system {
     return fct;
   }
 
-  EuroplexusFctPtr ExternalLibraryManager::getEuroplexusFunction(
-      const std::string& l, const std::string& f) {
-    const auto lib = this->loadLibrary(l);
-    const auto fct = ::tfel_getEuroplexusFunction(lib, f.c_str());
-    raise_if(fct == nullptr,
-             "ExternalLibraryManager::getEuroplexusFunction: "
-             " could not load Europlexus function '" +
-                 f +
-                 "' "
-                 "(" +
-                 getErrorMessage() + ")");
-    return fct;
-  }
-
   std::vector<std::string> ExternalLibraryManager::getArrayOfStrings(
       const std::string& l, const std::string& e, const std::string& n) {
     const auto lib = this->loadLibrary(l);

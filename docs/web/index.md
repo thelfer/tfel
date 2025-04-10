@@ -67,8 +67,6 @@ A set of interfaces are provided for various solvers:
   interface is described [here](castem.html).
 - the [`Code_Aster`](http://www.code-aster.org) finite element
   solver. This interface is described [here](aster.html)
-- the [`Europlexus`](http://europlexus.jrc.ec.europa.eu/) finite
-  element solver. This interface is described [here](epx.html)
 - the
   [`Abaqus Standard`](http://www.3ds.com/products-services/simulia/products/abaqus/abaqusstandard/)
   finite element solver. This interface is described

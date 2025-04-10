@@ -72,10 +72,6 @@
 #include "MFront/AnsysInterface.hxx"
 #endif
 
-#ifdef HAVE_EUROPLEXUS
-#include "MFront/EuroplexusInterface.hxx"
-#endif
-
 #ifdef HAVE_CALCULIX
 #include "MFront/CalculiXInterface.hxx"
 #endif
@@ -190,10 +186,6 @@ namespace mfront {
 #ifdef HAVE_ANSYS
     BehaviourInterfaceProxy<AnsysInterface> ansysProxy;
 #endif /* HAVE_ANSYS */
-
-#ifdef HAVE_EUROPLEXUS
-    BehaviourInterfaceProxy<EuroplexusInterface> europlexusProxy;
-#endif /* HAVE_EUROPLEXUS */
 
 #ifdef HAVE_DIANAFEA
     BehaviourInterfaceProxy<DianaFEAInterface> dianaFEAProxy;

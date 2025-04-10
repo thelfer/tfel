@@ -74,7 +74,6 @@ finitos:
 
 - `Cast3M`
 - `Code Aster`
-- `Europlexus`
 - `Abaqus Standard`
 - `Abaqus Explicit`
 - `Zebulon`
@@ -1566,7 +1565,7 @@ disponibles de Salome-Meca, seleccionables desde el menú desplegable, o
 directamente desde los botones a la derecha de este.
 
 Estas herramientas son: `Aster, `JobManager, `Geometry, `Parametric,
-`Mesh, `Homard, `ParaVis, `ADAO, `MED, `Eficas, `YACS, `Europlexus`.
+`Mesh, `Homard, `ParaVis, `ADAO, `MED, `Eficas, `YACS,
 
 Y finalmente, al pie del programa, se puede encontrar una consola Python
 para poder trabajar en lenguaje Python.

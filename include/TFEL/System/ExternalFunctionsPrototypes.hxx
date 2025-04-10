@@ -51,7 +51,6 @@ typedef long AsterIntegerType;
 
 typedef int AbaqusIntegerType;
 typedef int AnsysIntegerType;
-typedef int EuroplexusIntegerType;
 typedef int CalculiXIntegerType;
 typedef int DianaFEAIntegerType;
 
@@ -59,7 +58,6 @@ typedef double AbaqusRealType;
 typedef double AnsysRealType;
 typedef double CastemRealType;
 typedef double AsterRealType;
-typedef double EuroplexusRealType;
 typedef double CalculiXRealType;
 typedef double DianaFEARealType;
 
@@ -613,35 +611,6 @@ namespace tfel::system {
    * This is the prototype of the external functions used by the
    * pleiades version of the castem finite element solver
    */
-  typedef void(TFEL_ADDCALL_PTR EuroplexusFctPtr)(
-      EuroplexusIntegerType *const,  // status of the integration, 0 on success
-      EuroplexusRealType *const,     // Cauchy stress
-      EuroplexusRealType *const,     // state variables
-      EuroplexusRealType *const,     // stiffness tensor
-      EuroplexusRealType *const,     // time step scaling factor
-      EuroplexusIntegerType *const,  // broken indicator
-      char *const,                   // error message
-      const EuroplexusIntegerType *const,  // number of state variables
-      const EuroplexusIntegerType *const,  // modelling hypothesis
-      const EuroplexusRealType *const,     // time increment
-      const EuroplexusRealType
-          *const,  // deformation gradient at the beginning of the time step
-      const EuroplexusRealType
-          *const,  // deformation gradient at the end of the time step
-      const EuroplexusRealType *const,     // rotation matrix
-      const EuroplexusRealType *const,     // material properties
-      const EuroplexusIntegerType *const,  // number of material properties
-      const EuroplexusRealType *const,     // temperature
-      const EuroplexusRealType *const,     // increment of temperature
-      const EuroplexusRealType *const,     // external state variables
-      const EuroplexusRealType *const,  // external state variables increments
-      const EuroplexusIntegerType
-          *const);  // number of external state variables
-                    /*!
-                     * a simple alias.
-                     * This is the prototype of the external functions used by the
-                     * pleiades version of the castem finite element solver
-                     */
   typedef void(TFEL_ADDCALL_PTR CalculiXFctPtr)(
       const char *const,
       const CalculiXIntegerType *const,

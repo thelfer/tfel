@@ -7,7 +7,6 @@
 
 @UseQt true;
 @AbaqusFiniteStrainStrategy[abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
-@EuroplexusFiniteStrainStrategy[epx] MieheApelLambrechtLogarithmicStrain;
 
 // Material properties
 @MaterialProperty stress young;
