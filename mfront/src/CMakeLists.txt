@@ -385,6 +385,12 @@ if(HAVE_LSDYNA)
     TFELException)
 endif(HAVE_LSDYNA)
 
+if(HAVE_OPENRADIOSS)
+  set(TFELMFront_SOURCES
+    OpenRadiossInterface.cxx
+    ${TFELMFront_SOURCES})
+endif(HAVE_OPENRADIOSS)
+
 if(HAVE_DIANAFEA)
   set(TFELMFront_SOURCES
     DianaFEAInterface.cxx
