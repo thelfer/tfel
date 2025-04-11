@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 cmake_policy(SET CMP0022 NEW)
 cmake_policy(SET CMP0054 NEW)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
+  cmake_policy(SET CMP0167 NEW)  
+endif(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
 if(CMAKE_VERSION VERSION_GREATER 3.14.0)
   cmake_policy(SET CMP0083 NEW)  
   include(CheckPIESupported)
@@ -211,6 +214,13 @@ if(enable-lsdyna)
   set(HAVE_LSDYNA ON)
   tfel_add_c_cxx_definitions("HAVE_LSDYNA=1")
 endif(enable-lsdyna)
+
+option(enable-open-radioss "build open-radioss interface for mechanical behaviours" OFF)
+if(enable-open-radioss)
+  message(STATUS "open-radioss support enabled")
+  set(HAVE_OPENRADIOSS ON)
+  tfel_add_c_cxx_definitions("HAVE_OPENRADIOSS=1")
+endif(enable-open-radioss)
 
 #diana-fea
 option(enable-diana-fea "build Diana FEA interface for mechanical behaviours" OFF)
