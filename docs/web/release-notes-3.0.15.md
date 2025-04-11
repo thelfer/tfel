@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 3.0.15 of the
 
 # Issues fixed
 
+## Issue 757: cmake policy CMP0167 is only supported after 3..30.0
+
+For more details, see <https://github.com/thelfer/tfel/issues/757>.
+
 ## Issue 755: Add support for the `nvc++` compiler
 
 For more details, see <https://github.com/thelfer/tfel/issues/755>.
