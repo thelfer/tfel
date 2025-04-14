@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 5.0.1 of the
  
 # Issues fixed
 
+## Issue 764: [tfel-math] Remove the noexcept specifier in the nonlinear solvers
+
+For more details, see <https://github.com/thelfer/tfel/issues/764>
+
 ## Issue 703: [octave] set `C++` standard to 20 when calling `mkoctfile`
 
 For more details, see <https://github.com/thelfer/tfel/issues/703>
