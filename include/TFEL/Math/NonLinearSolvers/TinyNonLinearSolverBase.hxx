@@ -136,14 +136,14 @@ namespace tfel::math {
      *
      * \return true on success
      */
-    TFEL_HOST_DEVICE bool solveNonLinearSystem() noexcept;
+    TFEL_HOST_DEVICE bool solveNonLinearSystem();
     /*!
      * \brief solve the non linear problem. This method is called by the
      * `solveNonLinearSystem` and must contain the core of the resolution
      * algorithm.
      * \return true on success
      */
-    TFEL_HOST_DEVICE bool solveNonLinearSystem2() noexcept;
+    TFEL_HOST_DEVICE bool solveNonLinearSystem2();
     /*!
      * \brief this method is called at the beginning of the
      * `solveNonLinearSystem` method.

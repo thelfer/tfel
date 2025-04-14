@@ -39,7 +39,7 @@ namespace tfel::math {
             typename ExternalWorkSpace>
   TFEL_HOST_DEVICE bool
   TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
-      solveNonLinearSystem2() noexcept {
+      solveNonLinearSystem2() {
     auto& child = static_cast<Child&>(*this);
     auto converged = false;
     child.executeInitialisationTaskBeforeBeginningOfCoreAlgorithm();
@@ -84,7 +84,7 @@ namespace tfel::math {
             typename ExternalWorkSpace>
   TFEL_HOST_DEVICE bool
   TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
-      solveNonLinearSystem() noexcept {
+      solveNonLinearSystem() {
     constexpr auto one_half = NumericType(1) / 2;
     auto& child = static_cast<Child&>(*this);
     child.reportBeginningOfResolution();
