@@ -132,7 +132,8 @@ namespace mfront {
         }
       }
       if (s.size() > 2) {
-        if (s.substr(s.size() - 2) == ".c") {
+        if ((s.substr(s.size() - 2) == ".c") ||
+            (s.substr(s.size() - 2) == ".f")) {
           res.second.first += s.substr(0, s.size() - 2) + ".o ";
         }
       }
@@ -182,14 +183,17 @@ namespace mfront {
     }
     MFrontLockGuard lock;
     const auto env_cc = ::getenv("CC");
+    const auto env_fc = ::getenv("FC");
     const auto env_cxx = ::getenv("CXX");
     const auto inc = ::getenv("INCLUDES");
     const auto cxxflags = ::getenv("CXXFLAGS");
     const auto cflags = ::getenv("CFLAGS");
+    const auto fflags = ::getenv("FFLAGS");
     const auto ldflags = ::getenv("LDFLAGS");
     const auto sb = o.silentBuild ? "@" : "";
     const auto cxx = (env_cxx == nullptr) ? "$(CXX)" : env_cxx;
     const auto cc = (env_cc == nullptr) ? "$(CC)" : env_cc;
+    const auto fc = (env_fc == nullptr) ? "$(FC)" : env_fc;
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto mfile = d + tfel::system::dirStringSeparator() + f;
     std::ofstream m(mfile);
@@ -197,6 +201,7 @@ namespace mfront {
     tfel::raise_if(!m, "generateMakeFile : can't open file '" + mfile + "'");
     auto cppSources = std::set<std::string>{};
     auto cSources = std::set<std::string>{};
+    auto fSources = std::set<std::string>{};
     for (const auto& l : t.libraries) {
       for (const auto& src : l.sources) {
         if (src.size() > 4) {
@@ -204,10 +209,16 @@ namespace mfront {
               (src.substr(src.size() - 4) == ".cxx")) {
             cppSources.insert(src);
           }
+          if (src.substr(src.size() - 4) == ".f90") {
+            fSources.insert(src);
+          }
         }
         if (src.size() > 2) {
           if (src.substr(src.size() - 2) == ".c") {
             cSources.insert(src);
+          }
+          if (src.substr(src.size() - 2) == ".f") {
+            fSources.insert(src);
           }
         }
       }
@@ -222,7 +233,10 @@ namespace mfront {
     if (env_cxx != nullptr) {
       m << "CXX := " << env_cxx << "\n";
     }
-    if ((env_cc != nullptr) || (env_cxx != nullptr)) {
+    if (env_fc != nullptr) {
+      m << "FC := " << env_fc << "\n";
+    }
+    if ((env_cc != nullptr) || (env_cxx != nullptr) || (env_fc != nullptr)) {
       m << '\n';
     }
     // INCLUDES
@@ -330,6 +344,16 @@ namespace mfront {
         m << "-DWIN32 -DMFRONT_COMPILING $(INCLUDES)\n\n";
       } else {
         m << "-fPIC $(INCLUDES)\n\n";
+      }
+    }
+    // CFLAGS
+    if (!fSources.empty()) {
+      m << "FFLAGS := -W -Wall -Wfatal-errors ";
+      if (fflags != nullptr) {
+        m << fflags << " ";
+      }
+      if (!((o.sys == "win32") || (o.sys == "cygwin"))) {
+        m << "-fPIC\n\n";
       }
     }
     // sources list
@@ -525,6 +549,12 @@ namespace mfront {
     if (!cSources.empty()) {
       m << "%.o:%.c\n";
       m << "\t" << sb << cc << " $(CFLAGS) $< -o $@ -c\n\n";
+    }
+    if (!fSources.empty()) {
+      m << "%.o:%.f\n";
+      m << "\t" << sb << fc << " $(FFLAGS) $< -o $@ -c\n\n";
+      m << "%.o:%.f90\n";
+      m << "\t" << sb << fc << " $(FFLAGS) $< -o $@ -c\n\n";
     }
     if (!o.nodeps) {
       if (!cppSources.empty()) {

@@ -37,7 +37,9 @@ namespace mfront {
         const BehaviourDescription&) const override;
     void endTreatment(const BehaviourDescription&,
                       const FileDescription&) const override;
-    //! destructor
+    void getTargetsDescription(TargetsDescription&,
+                               const BehaviourDescription&) override;
+    //! \brief destructor
     ~OpenRadiossInterface() override;
   };
   
