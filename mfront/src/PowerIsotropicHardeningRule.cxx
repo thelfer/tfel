@@ -96,7 +96,7 @@ namespace mfront {
       if (!this->p0.empty()) {
         const auto p0n = IsotropicHardeningRule::getVariableId("p0", fid, id);
         c += "pow(max(this->" + pn + "+(this->theta)*(this->d" + pn +
-             ")+this->" + p0n + ",strain(0)),this->" + nn + ");\n";
+             "),strain(0))+this->" + p0n + ", this->" + nn + ");\n";
       } else {
         c += "pow(max(this->" + pn + "+(this->theta)*(this->d" + pn + "),";
         c += "strain(0)),this->" + nn + ");\n";
@@ -115,7 +115,7 @@ namespace mfront {
       if (!this->p0.empty()) {
         const auto p0n = IsotropicHardeningRule::getVariableId("p0", fid, id);
         c += "pow(max(this->" + pn + "+(this->theta)*(this->d" + pn +
-             ")+this->" + p0n + ",strain(0)),this->" + nn + ");\n";
+             "),strain(0))+this->" + p0n + ", this->" + nn + ");\n";
         c += "const auto " + dR + " = ";
         c += "(this->theta)*(this->" + nn + ")*" + R + "/(std::max(this->" +
              pn + "+(this->theta)*(this->d" + pn + ")+this->" + p0n +
