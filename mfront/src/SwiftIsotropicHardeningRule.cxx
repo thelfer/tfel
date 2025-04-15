@@ -86,7 +86,7 @@ namespace mfront::bbrick {
     const auto nn = IsotropicHardeningRule::getVariableId("E", fid, id);
     const auto pn = "p" + fid;
     auto c = "const auto " + R + " = (this->" + pn + "+(this->theta)*(this->d" +
-             pn + ")>this->" + p0n + ") ? (this->" + R0n + ")*";
+             pn + ")> strain(0)) ? (this->" + R0n + ")*";
     c += "pow((this->" + pn + "+(this->theta)*(this->d" + pn + ")+this->" +
          p0n + ")/(this->" + p0n + "),this->" + nn + ") : this->" + R0n + ";\n";
     return c;
@@ -101,7 +101,7 @@ namespace mfront::bbrick {
     const auto nn = IsotropicHardeningRule::getVariableId("E", fid, id);
     const auto pn = "p" + fid;
     auto c = "const auto " + R + " = (this->" + pn + "+(this->theta)*(this->d" +
-             pn + ")>this->" + p0n + ") ? (this->" + R0n + ")*";
+             pn + ") > strain(0)) ? (this->" + R0n + ")*";
     c += "pow((this->" + pn + "+(this->theta)*(this->d" + pn + ")+this->" +
          p0n + ")/(this->" + p0n + "),this->" + nn + ") : this->" + R0n + ";\n";
     c += "const auto " + dR + " = ";
