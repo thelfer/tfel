@@ -3783,10 +3783,9 @@ namespace mfront {
           const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
           // if the user provided a tangent operator, it won't be
           // overriden
-
           CodeBlock tangentOperator;
           std::ostringstream code;
-          code << "if(smt==ELASTIC){\n"
+          code << "if(smt == ELASTIC){\n"
                << "this->Dt = this->D;\n"
                << "} else {\n"
                << "return false;\n"

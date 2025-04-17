@@ -102,6 +102,7 @@ void declareMakefileGenerator(pybind11::module_&);
 void declareMakefileGenerator(pybind11::module_& m) {
   using namespace mfront;
   pybind11::class_<MakefileGenerator>(m, "MakefileGenerator")
+    .def(pybind11::init<>())
       .def("generate", &MakefileGenerator::generate0,
            "generate the `Makefile.mfront` file")
       .def("generate", &MakefileGenerator::generate1,
