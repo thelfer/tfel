@@ -32,7 +32,6 @@ namespace mfront {
       const std::string& f) {
     auto dsl = MFrontBase::getDSL(f);
     dsl->analyseFile(f, {}, {});
-    dsl->endsInputFileProcessing();
     return dsl;
   }  // end of generateAbstractDSL
 
