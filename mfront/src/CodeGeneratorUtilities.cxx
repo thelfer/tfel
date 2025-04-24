@@ -1,6 +1,5 @@
-
 /*!
- * \file   mfront/src/DSLUtilities.cxx
+ * \file   mfront/src/CodeGeneratorUtilities.cxx
  * \brief
  *
  * \author Thomas Helfer
@@ -25,7 +24,6 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 #include "MFront/MFrontDebugMode.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/VariableDescription.hxx"
 #include "MFront/StaticVariableDescription.hxx"
 #include "MFront/FileDescription.hxx"
@@ -33,6 +31,7 @@
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/MaterialPropertyParametersHandler.hxx"
 #include "MFront/SymbolsGenerator.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 
 #ifndef _MSC_VER
 static const char* const constexpr_c = "constexpr";
@@ -41,55 +40,6 @@ static const char* const constexpr_c = "const";
 #endif
 
 namespace mfront {
-
-  std::vector<std::string> getScalarTypeAliases() {
-    return {"numeric_type",
-            "real",
-            "time",
-            "length",
-            "frequency",
-            "speed",
-            "stress",
-            "strain",
-            "strainrate",
-            "stressrate",
-            "temperature",
-            "thermalexpansion",
-            "thermalconductivity",
-            "massdensity",
-            "energydensity"};
-  }  // end of getScalarTypeAliases
-
-  std::vector<std::string> getTinyVectorTypeAliases() {
-    return {"TVector", "DisplacementTVector", "ForceTVector", "HeatFlux",
-            "TemperatureGradient"};
-  }  // end of getTinyVectorTypeAliases
-
-  std::vector<std::string> getStensorTypeAliases() {
-    return {"Stensor",       "StressStensor",     "StressRateStensor",
-            "StrainStensor", "StrainRateStensor", "FrequencyStensor"};
-  }
-
-  std::vector<std::string> getTensorTypeAliases() {
-    return {"Tensor", "DeformationGradientTensor",
-            "DeformationGradientRateTensor", "StressTensor"};
-  }
-
-  std::vector<std::string> getST2toST2TypeAliases() {
-    return {"StiffnessTensor", "Stensor4"};
-  }
-
-  std::vector<std::string> getTypeAliases() {
-    auto aliases = getScalarTypeAliases();
-    auto append = [&aliases](const std::vector<std::string>& others) {
-      aliases.insert(aliases.end(), others.begin(), others.end());
-    };
-    append(getTinyVectorTypeAliases());
-    append(getStensorTypeAliases());
-    append(getTensorTypeAliases());
-    append(getST2toST2TypeAliases());
-    return aliases;
-  }  // end of getTypeAliases
 
   void exportStringSymbol(std::ostream& os,
                           const std::string_view n,
@@ -557,19 +507,6 @@ namespace mfront {
     os << '\n';
   }  // end of writeStaticVariables
 
-  std::string getMaterialLawLibraryNameBase(
-      const MaterialPropertyDescription& mpd) {
-    const auto material = mpd.material;
-    const auto library = mpd.library;
-    if (library.empty()) {
-      if (material.empty()) {
-        return "MaterialLaw";
-      }
-      return material;
-    }
-    return library;
-  }  // end of getMaterialLawLibraryNameBase
-
   void writeF77FUNCMacros(std::ostream& f) {
     auto def = [&f] {
       f << "#ifndef F77_FUNC\n"
@@ -645,68 +582,6 @@ namespace mfront {
        << "  MFRONT_SHAREDOBJ TYPE NAME[SIZE] = {VALUE}\n"
        << "#endif /* MFRONT_EXPORT_ARRAY_OF_SYMBOLS*/\n\n";
   }  // end of writeExportDirectives
-
-  std::string makeUpperCase(std::string_view n) {
-    std::string s(n);
-    auto p = n.begin();
-    auto p2 = s.begin();
-    for (; p != n.end(); ++p, ++p2) {
-      *p2 = static_cast<char>(toupper(*p));
-    }
-    return s;
-  }  // end of makeUpperCase
-
-  std::string makeLowerCase(std::string_view n) {
-    std::string s(n);
-    auto p = n.begin();
-    auto p2 = s.begin();
-    for (; p != n.end(); ++p, ++p2) {
-      *p2 = static_cast<char>(tolower(*p));
-    }
-    return s;
-  }  // end of makeLowerCase
-
-  void displayGlossaryEntryCompleteDescription(
-      std::ostream& os, const tfel::glossary::GlossaryEntry& e) {
-    const auto& k = e.getKey();
-    const auto& n = e.getNames();
-    const auto& sd = e.getShortDescription();
-    const auto& d = e.getDescription();
-    if ((!sd.empty()) || (!d.empty())) {
-      os << '\n'
-         << "For your information, the description of the glossary entry '" << k
-         << "' is:\n";
-      if (!n.empty()) {
-        os << k << ":";
-        for (const auto& elem : n) {
-          os << " '" << elem << "'";
-        }
-        os << '\n';
-      }
-      if (!sd.empty()) {
-        os << sd << '\n';
-      }
-      if (!d.empty()) {
-        for (const auto& elem : d) {
-          os << elem << '\n';
-        }
-      }
-    }
-  }  // end of displayGlossaryEntryCompleteDescription
-
-  void addSymbol(std::map<std::string, std::string>& symbols,
-                 const std::string_view s,
-                 const std::string_view r) {
-    const auto sname = std::string{s};
-    if (symbols.find(sname) != symbols.end()) {
-      if (symbols.at(sname) != r) {
-        tfel::raise("addSymbol: symbol '" + sname +
-                    "' has multiple replacement strings ('" +
-                    symbols.at(sname) + "' and '" + std::string{r} + "')");
-      }
-    }
-    symbols.insert({sname, std::string{r}});
-  }  // end of addSymbol
 
   static void writeBoundsChecks(std::ostream& os,
                                 const VariableDescription& v,
@@ -805,30 +680,5 @@ namespace mfront {
     writeBoundsChecks(os, v, n, space_dimension, "", addThis,
                       checkEndOfTimeStepValue, true);
   }  // end of writePhysicalBoundsChecks
-
-#ifdef MFRONT_HAVE_MADNEX
-
-  std::tuple<std::string, std::string, std::string, std::string>
-  decomposeImplementationPathInMadnexFile(const std::string_view p) {
-    using result_type =
-        std::tuple<std::string, std::string, std::string, std::string>;
-    const auto details = tfel::utilities::tokenize(p, ':');
-    auto raise_if = [&p](const bool b) {
-      if (b) {
-        tfel::raise("decomposeImplementationPathInMadnexFile: invalid path '" +
-                    std::string{p} + "'");
-      }
-    };
-    raise_if((details.size() != 5) && (details.size() != 4));
-    if (details.size() == 4) {
-      return result_type{std::move(details[1]), std::move(details[2]), "",
-                         std::move(details[3])};
-    }
-    const auto mid = details[3] == "<none>" ? "" : details[3];
-    return result_type{std::move(details[1]), std::move(details[2]),
-                       std::move(mid), std::move(details[4])};
-  }  // end of decomposeImplementationPathInMadnexFile
-
-#endif /* MFRONT_HAVE_MADNEX */
 
 }  // end of namespace mfront

@@ -23,7 +23,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/PerformanceProfiling.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/PedanticMode.hxx"

@@ -24,12 +24,14 @@ set(mfront_tests_SOURCES
   Elasticity4
   Elasticity5
   Elasticity6
+  Elasticity8
   OrthotropicElastic
   OrthotropicElastic2
   OrthotropicElastic3
   OrthotropicElastic4
   OrthotropicElastic5
   OrthotropicElastic6
+  OrthotropicElastic7
   PerfectPlasticity
   HosfordPerfectPlasticity
   HosfordPerfectPlasticity2
@@ -166,8 +168,13 @@ if(enable-mfront-quantity-tests)
        ComputeThermalExpansion
        ComputeThermalExpansion2
        ComputeThermalExpansion3
+       ComputeThermalExpansion4
+       ComputeThermalExpansion5
+       ComputeThermalExpansion6
+       ComputeThermalExpansion7
        Elasticity
        Elasticity2
+       Elasticity7
        Norton3
        Norton4
        Plasticity

@@ -1,4 +1,4 @@
-@Behaviour ComputeThermalExpansion3;
+@Behaviour ComputeThermalExpansion7;
 @UseQt true;
 @Author Helfer Thomas;
 @Date 32/12/17;
@@ -15,8 +15,10 @@ nu.setGlossaryName("PoissonRatio");
 
 @Parameter a0 = 2.e-5;
 @Parameter a1 = 4.e-8;
-@ComputeThermalExpansion
-    "a0+a1*(T-273.15)" {thermal_expansion_reference_temperature : 273.15};
+@ComputeThermalExpansion{
+  thermal_expansion : "a0+a1*(T-273.15)",
+  reference_temperature : 273.15
+};
 
 @InitLocalVariables{
   lambda = computeLambda(young,nu);

@@ -458,4 +458,43 @@ namespace tfel::utilities {
     return r;
   }
 
+  void check_keys(const DataMap& d, const std::vector<std::string>& keys) {
+    auto faults = std::vector<std::string>{};
+    for (const auto& de : d) {
+      if (std::find(keys.begin(), keys.end(), de.first) == keys.end()) {
+        faults.push_back(de.first);
+      }
+    }
+    if (faults.empty()) {
+      return;
+    }
+    auto msg = [&faults] {
+      if (faults.size() == 1) {
+        return "check_keys: key '" + faults[0] + "' is not allowed";
+      }
+      auto r = std::string{"check_keys: keys"};
+      const auto pe = faults.end();
+      for (auto p = faults.begin(); p != pe; ++p) {
+        if (std::next(p) == pe) {
+          r += " and '" + *p + "'";
+        } else {
+          if (p == faults.begin()) {
+            r += " '" + *p + "'";
+          } else {
+            r += ", '" + *p + "'";
+          }
+        }
+      }
+      r += " are not allowed";
+      return r;
+    }();
+    if (!keys.empty()) {
+      msg += ". The following keys are allowed:";
+      for (const auto& k : keys) {
+        msg += "\n- " + k;
+      }
+    }
+    raise(msg);
+  } // end of check_keys
+
 }  // end of namespace tfel::utilities

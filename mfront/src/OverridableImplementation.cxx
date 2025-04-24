@@ -21,7 +21,7 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/SearchPathsHandler.hxx"
 #include "MFront/MaterialKnowledgeDescription.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/OverridableImplementation.hxx"

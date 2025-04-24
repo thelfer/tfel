@@ -19,7 +19,7 @@
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/MFrontUtilities.hxx"
 #include "MFront/SupportedTypes.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/VariableDescription.hxx"

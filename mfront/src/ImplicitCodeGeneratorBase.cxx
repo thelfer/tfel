@@ -15,7 +15,7 @@
 #include <sstream>
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/PedanticMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"

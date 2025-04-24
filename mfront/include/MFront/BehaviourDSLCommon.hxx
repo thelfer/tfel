@@ -589,6 +589,8 @@ namespace mfront {
     virtual void treatLocalVar();
     //! handle the `@ComputeThermalExpansion` keyword
     virtual void treatComputeThermalExpansion();
+    virtual void treatComputeThermalExpansionFirstSyntax();
+    virtual void treatComputeThermalExpansionSecondSyntax();
     //! handle the `@ComputeStiffnessTensor` keyword
     virtual void treatComputeStiffnessTensor();
     //! handle the `@ElasticMaterialProperties` keyword

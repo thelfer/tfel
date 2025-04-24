@@ -125,6 +125,8 @@ set(TFELMFront_SOURCES
     DSLBase.cxx
     InterfaceBase.cxx
     DSLUtilities.cxx
+    BehaviourDSLUtilities.cxx
+    CodeGeneratorUtilities.cxx
     FiniteStrainBehaviourTangentOperatorConversion.cxx
     FiniteStrainBehaviourTangentOperatorConversionPath.cxx
     MaterialPropertyInterfaceFactory.cxx

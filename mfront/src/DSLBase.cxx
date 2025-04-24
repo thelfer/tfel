@@ -36,7 +36,6 @@
 #include "MFront/SupportedTypes.hxx"
 #include "MFront/DSLBase.hxx"
 #include "MFront/SearchPathsHandler.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/MFrontLogStream.hxx"

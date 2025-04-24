@@ -21,7 +21,6 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "MFront/PedanticMode.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/ModelDSLCommon.hxx"

@@ -1,5 +1,5 @@
 /*!
- * \file   mfront/include/MFront/DSLUtilities.ixx
+ * \file   mfront/include/MFront/CodeGeneratorUtilities.ixx
  * \brief
  *
  * \author Thomas Helfer
@@ -12,8 +12,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_DSLUTILITIES_IXX
-#define LIB_MFRONT_DSLUTILITIES_IXX
+#ifndef LIB_MFRONT_CODEGENERATORUTILITIES_IXX
+#define LIB_MFRONT_CODEGENERATORUTILITIES_IXX
 
 #include <ostream>
 
@@ -29,4 +29,4 @@ namespace mfront {
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_DSLUTILITIES_IXX */
+#endif /* LIB_MFRONT_CODEGENERATORUTILITIES_IXX */

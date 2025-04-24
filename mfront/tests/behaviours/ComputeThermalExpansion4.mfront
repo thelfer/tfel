@@ -1,6 +1,6 @@
-@Behaviour ComputeThermalExpansion3;
-@UseQt true;
+@Behaviour ComputeThermalExpansion4;
 @Author Helfer Thomas;
+@UseQt true;
 @Date 32/12/17;
 @Description{
  Test of the `@ComputeThermalExpansion` keyword.
@@ -13,10 +13,7 @@ nu.setGlossaryName("PoissonRatio");
 
 @LocalVariable stress lambda,mu;
 
-@Parameter a0 = 2.e-5;
-@Parameter a1 = 4.e-8;
-@ComputeThermalExpansion
-    "a0+a1*(T-273.15)" {thermal_expansion_reference_temperature : 273.15};
+@ComputeThermalExpansion{thermal_expansion : "2.e-5*(1+(T-273.15)/500)"};
 
 @InitLocalVariables{
   lambda = computeLambda(young,nu);
@@ -30,11 +27,10 @@ nu.setGlossaryName("PoissonRatio");
   Dt=lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
 }
 
+@ProvidesSymmetricTangentOperator;
 @Integrator{
   sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
-}
-
-@TangentOperator {
-  static_cast<void>(smt);
-  Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
 }

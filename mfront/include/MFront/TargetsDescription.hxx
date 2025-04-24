@@ -20,7 +20,7 @@
 #include <iosfwd>
 
 #include "MFront/MFrontConfig.hxx"
-#include "MFront/MFrontUtilities.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/LibraryDescription.hxx"
 #include "MFront/ExecutableDescription.hxx"
 #include "MFront/SpecificTargetDescription.hxx"

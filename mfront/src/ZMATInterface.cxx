@@ -22,7 +22,7 @@
 #include "TFEL/System/System.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/InstallPath.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"

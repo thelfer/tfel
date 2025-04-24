@@ -19,7 +19,7 @@
 #include "TFEL/System/System.hxx"
 
 #include "MFront/MFrontHeader.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/ModelInterfaceProxy.hxx"
 #include "MFront/MFrontGerminalModelInterface.hxx"
 

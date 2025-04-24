@@ -16,7 +16,7 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 
@@ -347,4 +347,17 @@ namespace mfront {
     return mpd.material + "_" + mpd.className + "-parameters.txt";
   }  // end of getParametersFileName
 
+  std::string getMaterialLawLibraryNameBase(
+      const MaterialPropertyDescription& mpd) {
+    const auto material = mpd.material;
+    const auto library = mpd.library;
+    if (library.empty()) {
+      if (material.empty()) {
+        return "MaterialLaw";
+      }
+      return material;
+    }
+    return library;
+  }  // end of getMaterialLawLibraryNameBase
+  
 }  // end of namespace mfront

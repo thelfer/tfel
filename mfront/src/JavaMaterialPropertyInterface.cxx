@@ -41,6 +41,7 @@
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/FileDescription.hxx"

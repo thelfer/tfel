@@ -205,6 +205,13 @@ namespace tfel::utilities {
   bool is_convertible(const Data&);
 
   /*!
+   * \brief check that all the keys of the data map are in the given list.
+   * \param[in] d: data map
+   * \param[in] keys: allowed keys
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT void check_keys(const DataMap&, const std::vector<std::string>&);
+
+  /*!
    * \brief an helper structure used to validate a data map.
    */
   struct TFELUTILITIES_VISIBILITY_EXPORT DataMapValidator {

@@ -13,7 +13,7 @@
 
 #include <ostream>
 #include "TFEL/Raise.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/BehaviourInterfaceBase.hxx"
 #include "MFront/AbaqusExplicitInterface.hxx"

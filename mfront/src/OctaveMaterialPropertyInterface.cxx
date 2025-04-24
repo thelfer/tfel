@@ -23,7 +23,7 @@
 #include "TFEL/System/System.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
 #include "MFront/MFrontHeader.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"

@@ -25,7 +25,6 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/NonLinearSystemSolver.hxx"

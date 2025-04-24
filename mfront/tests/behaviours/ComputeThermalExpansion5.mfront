@@ -1,4 +1,4 @@
-@Behaviour ComputeThermalExpansion3;
+@Behaviour ComputeThermalExpansion5;
 @UseQt true;
 @Author Helfer Thomas;
 @Date 32/12/17;
@@ -15,8 +15,7 @@ nu.setGlossaryName("PoissonRatio");
 
 @Parameter a0 = 2.e-5;
 @Parameter a1 = 4.e-8;
-@ComputeThermalExpansion
-    "a0+a1*(T-273.15)" {thermal_expansion_reference_temperature : 273.15};
+@ComputeThermalExpansion{thermal_expansion : "a0+a1*(T-273.15)"};
 
 @InitLocalVariables{
   lambda = computeLambda(young,nu);
@@ -34,7 +33,7 @@ nu.setGlossaryName("PoissonRatio");
   sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
 }
 
-@TangentOperator {
+@TangentOperator{
   static_cast<void>(smt);
-  Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+  Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
 }
