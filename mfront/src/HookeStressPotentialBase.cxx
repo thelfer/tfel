@@ -133,6 +133,9 @@ namespace mfront {
       opts.emplace_back("thermal_expansion_reference_temperature",
                         "reference temperature for the thermal expansion",
                         OptionDescription::REAL);
+      opts.emplace_back("initial_geometry_reference_temperature",
+                        "reference temperature for the thermal expansion",
+                        OptionDescription::REAL);
       return opts;
     }  // end of HookeStressPotentialBase::getIsotropicBehaviourOptions()
 
