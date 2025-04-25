@@ -87,12 +87,8 @@ namespace tfel::check {
   }  // end of declareTFELComponents
 
   static void declareTFELExecutables(ConfigurationManager& c) {
-    // for (const std::string& e : {"mfront", "mtest", "mfront-doc",
-    //                             "mfm-test-generator", "mfront-query"}) {
-    //   c.addSubstitution('@' + e + '@', tfel::getTFELExecutableName(e), false);
-    // }
 #ifdef TFEL_PYTHON_EXECUTABLE
-    c.addSubstitution("@python@", TFEL_PYTHON_EXECUTABLE, false);
+    c.addSubstitution("@python@", TFEL_PYTHON_EXECUTABLE);
 #endif /* */
   }  // end of declareTFELExecutables
 
