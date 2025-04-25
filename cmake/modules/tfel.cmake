@@ -212,6 +212,8 @@ macro(add_mfront_behaviour_generated_source lib interface dir intrinsic_source f
     set(isuffix "-generic")
   elseif("${interface}" STREQUAL "castem")
     set(iprefix "umat")
+  elseif("${interface}" STREQUAL "dianafea")
+    set(iprefix "DianaFEA")
   else ("${interface}" STREQUAL "generic")
     set(iprefix "${interface}")
   endif("${interface}" STREQUAL "generic")
