@@ -4059,12 +4059,9 @@ namespace mfront {
           "unsupported material property type"));
     }();
     const auto T = (t == "t") ? "this->T" : "this->T+this->dT";
-    if (t == "t") {
-      out << "dl0_l0";
-    } else {
-      out << "dl1_l0";
-    }
-    out << "[" << c << "] += 1/(1+alpha" << suffix
+    const auto i = (t == "t") ? "0" : "1";
+    out << "const auto mfront_thermal_expansion" << c << "_" << i << "  "
+        << "= 1/(1+alpha" << suffix
         << "_Ti * (this->referenceTemperatureForThermalExpansion-" << Tref
         << "))*("
         << "alpha" << suffix << "_T_" << t << " * (" << T << "-" << Tref << ")-"
@@ -4091,17 +4088,17 @@ namespace mfront {
       const auto i = b ? "1" : "0";
       const auto T = b ? "this->T+this->dT" : "this->T";
       if (cmp.name.empty()) {
-        out << "dl" << i << "_l0"
-            << "[" << c << "] += " << cmp.value << "/(1+" << cmp.value
+        out << "const auto mfront_thermal_expansion" << c << "_" << i << " "
+            << "= " << cmp.value << "/(1+" << cmp.value
             << "*(this->referenceTemperatureForThermalExpansion-" << Tref
             << "))"
             << "*(" << T
             << "-this->referenceTemperatureForThermalExpansion);\n";
       } else {
-        out << "dl" << i << "_l0"
-            << "[" << c << "] += (this->" << cmp.name << ")/(1+(this->"
-            << cmp.name << ")*(this->referenceTemperatureForThermalExpansion-"
-            << Tref << "))"
+        out << "const auto mfront_thermal_expansion" << c << "_" << i << " "
+            << "= (this->" << cmp.name << ")/(1+(this->" << cmp.name
+            << ")*(this->referenceTemperatureForThermalExpansion-" << Tref
+            << "))"
             << "*(" << T
             << "-this->referenceTemperatureForThermalExpansion);\n";
       }
@@ -4168,16 +4165,18 @@ namespace mfront {
           this->writeThermalExpansionComputation(this->behaviourFile,
                                                  acs.front(), "t", "0");
         }
-        this->behaviourFile << "dl0_l0[1] += dl0_l0[0];\n"
-                            << "dl0_l0[2] += dl0_l0[0];\n";
+	this->behaviourFile << "dl0_l0[0] += mfront_thermal_expansion0_0;\n"
+			    << "dl0_l0[1] += mfront_thermal_expansion0_0;\n"
+			    << "dl0_l0[2] += mfront_thermal_expansion0_0;\n";
         if (a.is<BehaviourDescription::ConstantMaterialProperty>()) {
           eval(this->behaviourFile, a, "0", true);
         } else {
           this->writeThermalExpansionComputation(this->behaviourFile,
                                                  acs.front(), "t_dt", "0");
         }
-        this->behaviourFile << "dl1_l0[1] += dl1_l0[0];\n"
-                            << "dl1_l0[2] += dl1_l0[0];\n";
+        this->behaviourFile << "dl1_l0[0] += mfront_thermal_expansion0_1;\n"
+			    << "dl1_l0[1] += mfront_thermal_expansion0_1;\n"
+			    << "dl1_l0[2] += mfront_thermal_expansion0_1;\n";
       } else if (acs.size() == 3u) {
         throw_if(this->mb.getSymmetryType() != mfront::ORTHOTROPIC,
                  "invalid number of thermal expansion coefficients");
@@ -4199,6 +4198,12 @@ namespace mfront {
                                                    "t_dt", idx, idx);
           }
         }
+        this->behaviourFile << "dl0_l0[0] += mfront_thermal_expansion0_0;\n"
+			    << "dl0_l0[1] += mfront_thermal_expansion1_0;\n"
+			    << "dl0_l0[2] += mfront_thermal_expansion2_0;\n";
+	this->behaviourFile << "dl1_l0[0] += mfront_thermal_expansion0_1;\n"
+			    << "dl1_l0[1] += mfront_thermal_expansion1_1;\n"
+			    << "dl1_l0[2] += mfront_thermal_expansion2_1;\n";
       } else {
         throw_if(true, "unsupported behaviour symmetry");
       }
