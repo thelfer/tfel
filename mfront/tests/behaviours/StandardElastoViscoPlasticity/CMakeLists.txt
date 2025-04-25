@@ -14,6 +14,8 @@ install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
   Test6.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+  Test7.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 	NortonTest.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 	NortonTest_nj.mfront)

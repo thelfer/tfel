@@ -23,7 +23,7 @@
 #include "TFEL/System/System.hxx"
 
 #include "MFront/MFrontWarningMode.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"

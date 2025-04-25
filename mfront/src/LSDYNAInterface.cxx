@@ -18,7 +18,6 @@
 #include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/System/System.hxx"
 
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"

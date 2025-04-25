@@ -20,7 +20,7 @@
 
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontDebugMode.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
 #include "MFront/MFrontPleiadesModelInterfaceBase.hxx"

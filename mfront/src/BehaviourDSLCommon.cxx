@@ -35,7 +35,6 @@
 
 #include "MFront/MFront.hxx"
 #include "MFront/MFrontHeader.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
@@ -54,6 +53,7 @@
 #include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
 #include "MFront/AbstractBehaviourCodeGenerator.hxx"
 #include "MFront/BehaviourVariableDescription.hxx"
+#include "MFront/BehaviourDSLUtilities.hxx"
 #include "MFront/BehaviourDSLCommon.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
@@ -1987,6 +1987,41 @@ namespace mfront {
   }  // end of treatLibrary
 
   void BehaviourDSLCommon::treatComputeThermalExpansion() {
+    if (this->mb.getAttribute<bool>(
+            BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+            false)) {
+      tfel::raise(
+          "BehaviourDSLCommon::treatComputeThermalExpansion: "
+          "@ComputeThermalExpansion can be used along with "
+          "@RequireThermalExpansionCoefficientTensor");
+    }
+    const auto new_syntax = [this] {
+      auto c = this->current;
+      if (c == this->tokens.end()) {
+        return false;
+      }
+      if (c->value != "{") {
+        return false;
+      }
+      // we have to choose between the new syntax and the historical one
+      ++c;
+      if (c == this->tokens.end()) {
+        return false;
+      }
+      ++c;
+      if (c == this->tokens.end()) {
+        return false;
+      }
+      return c->value == ":";
+    }();
+    if (new_syntax) {
+      this->treatComputeThermalExpansionSecondSyntax();
+    } else {
+      this->treatComputeThermalExpansionFirstSyntax();
+    }
+  }  // end of treatComputeThermalExpansion
+
+  void BehaviourDSLCommon::treatComputeThermalExpansionFirstSyntax() {
     using namespace tfel::utilities;
     using ExternalMFrontMaterialProperty =
         BehaviourDescription::ExternalMFrontMaterialProperty;
@@ -2024,12 +2059,6 @@ namespace mfront {
       this->mb.setEntryName(h, "initial_geometry_reference_temperature",
                             "ReferenceTemperatureForInitialGeometry");
     };  // end of addTi
-    throw_if(
-        this->mb.getAttribute<bool>(
-            BehaviourDescription::requiresThermalExpansionCoefficientTensor,
-            false),
-        "@ComputeThermalExpansion can be used along with "
-        "@RequireThermalExpansionCoefficientTensor");
     const auto& acs = this->readMaterialPropertyOrArrayOfMaterialProperties(m);
     this->checkNotEndOfFile(m);
     if (this->current->value == "{") {
@@ -2038,7 +2067,7 @@ namespace mfront {
                "invalid number of data. "
                "Only the 'reference_temperature' is expected");
       const auto pd = data.begin();
-      throw_if(pd->first != "reference_temperature",
+      throw_if((pd->first != "reference_temperature") && (pd->first != n),
                "the only data expected is "
                "'reference_temperature' (read '" +
                    pd->first + "')");
@@ -2084,7 +2113,32 @@ namespace mfront {
     if (!this->mb.hasParameter(h, "initial_geometry_reference_temperature")) {
       addTi(293.15);
     }
-  }  // end of treatComputeThermalExpansion
+  }  // end of treatComputeThermalExpansionFirstSyntaxt
+
+  void BehaviourDSLCommon::treatComputeThermalExpansionSecondSyntax() {
+    const auto opts = [this] {
+      auto o = tfel::utilities::DataParsingOptions{};
+      o.allowMultipleKeysInMap = true;
+      const auto data =
+          tfel::utilities::Data::read(this->current, this->tokens.end(), o);
+      if (data.empty()) {
+        return tfel::utilities::DataMap{};
+      }
+      if (!data.is<tfel::utilities::DataMap>()) {
+        this->throwRuntimeError(
+            "IsotropicBehaviourDSLBase::treatIsotropicHardeningRules",
+            "expected to read a map");
+      }
+      return data.get<tfel::utilities::DataMap>();
+    }();
+    tfel::utilities::check_keys(
+        opts,
+        {"thermal_expansion", "thermal_expansion1", "thermal_expansion2",
+         "thermal_expansion3", "thermal_expansion_reference_temperature",
+         "reference_temperature", "initial_geometry_reference_temperature",
+         "save_thermal_expansion"});
+    addThermalExpansionCoefficientsIfDefined(*this, this->mb, opts, true);
+  }
 
   void BehaviourDSLCommon::treatElasticMaterialProperties() {
     if (this->mb.getAttribute<bool>(

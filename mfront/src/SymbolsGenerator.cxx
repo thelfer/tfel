@@ -16,7 +16,7 @@
 #include "TFEL/Config/GetTFELVersion.h"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/BehaviourMaterialProperty.hxx"

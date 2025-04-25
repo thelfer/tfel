@@ -15,7 +15,8 @@
 #include <algorithm>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/MFrontUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"

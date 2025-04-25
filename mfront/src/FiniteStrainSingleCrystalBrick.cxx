@@ -20,7 +20,6 @@
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/System/System.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/AbstractBehaviourDSL.hxx"
@@ -130,8 +129,8 @@ namespace mfront {
             "option '" +
             std::string(n) + "' is not defined");
       }
-      return mfront::bbrick::getBehaviourDescriptionMaterialProperty(
-          this->dsl, n, d.at(n));
+      return mfront::getBehaviourDescriptionMaterialProperty(this->dsl, n,
+                                                             d.at(n));
     };
     if ((d.count("young_modulus1") != 0) || (d.count("young_modulus2") != 0) ||
         (d.count("young_modulus3") != 0) || (d.count("poisson_ratio12") != 0) ||

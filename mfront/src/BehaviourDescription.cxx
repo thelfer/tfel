@@ -22,7 +22,6 @@
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/PedanticMode.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/LocalDataStructure.hxx"
 #include "MFront/ModelDescription.hxx"
@@ -46,6 +45,8 @@ namespace mfront {
   const char* const BehaviourDescription::finalClass = "final";
   const char* const BehaviourDescription::internalNamespace =
       "internal_namespace";
+  const char* const BehaviourDescription::saveThermalExpansion =
+      "save_thermal_expansion";
 
   static MaterialPropertyDescription buildMaterialPropertyDescription(
       const BehaviourDescription::ConstantMaterialProperty& mp,

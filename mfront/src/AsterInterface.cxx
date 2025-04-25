@@ -22,12 +22,12 @@
 #include "TFEL/System/System.hxx"
 
 #include "MFront/MFrontWarningMode.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/VariableDescription.hxx"
 #include "MFront/AsterSymbolsGenerator.hxx"
 #include "MFront/AsterInterface.hxx"
 

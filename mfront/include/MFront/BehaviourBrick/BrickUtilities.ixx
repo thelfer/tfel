@@ -14,6 +14,8 @@
 #ifndef LIB_MFRONT_BEHAVIOURBRICK_BRICKUTILITIES_IXX
 #define LIB_MFRONT_BEHAVIOURBRICK_BRICKUTILITIES_IXX
 
+#include "MFront/BehaviourDSLUtilities.hxx"
+
 namespace mfront::bbrick {
 
   template <std::size_t N>

@@ -12,7 +12,7 @@
  */
 
 #include <ostream>
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/MFrontUtilities.hxx"
 #include "MFront/PerformanceProfiling.hxx"
 
 namespace mfront {

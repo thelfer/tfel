@@ -1,3 +1,4 @@
+
 /*!
  * \file  mfront/include/MFront/BehaviourDescription.hxx
  * \brief
@@ -72,6 +73,8 @@ namespace mfront {
     static const char* const defaultConstructor;
     //! \brief standard option and attribute
     static const char* const finalClass;
+    //! \brief standard attribute
+    static const char* const saveThermalExpansion;
     //! \brief a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! \brief a simple alias

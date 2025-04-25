@@ -20,7 +20,6 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/AbstractBehaviourInterface.hxx"
 #include "MFront/BehaviourInterfaceFactory.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/DefaultCodeGeneratorBase.hxx"
 #include "MFront/DefaultDSLBase.hxx"
 

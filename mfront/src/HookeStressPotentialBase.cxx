@@ -134,8 +134,15 @@ namespace mfront::bbrick {
     opts.emplace_back("thermal_expansion_reference_temperature",
                       "reference temperature for the thermal expansion",
                       OptionDescription::REAL);
+    opts.emplace_back("initial_geometry_reference_temperature",
+                      "reference temperature for the thermal expansion",
+                      OptionDescription::REAL);
+    opts.emplace_back("save_thermal_expansion",
+                      "boolean stating if the computed thermal expansion shall "
+                      "be saved in a dedicated auxiliary state variable",
+                      OptionDescription::BOOLEAN);
     return opts;
-  }  // end of HookeStressPotentialBase::getIsotropicBehaviourOptions()
+  }  // end of getIsotropicBehaviourOptions
 
   std::vector<OptionDescription> HookeStressPotentialBase::
       getOrthotropicBehaviourElasticMaterialPropertiesOptions() {
@@ -214,8 +221,7 @@ namespace mfront::bbrick {
                                  "shear_modulus12", "shear_modulus23"},
         std::vector<std::string>{"young_modulus", "poisson_ratio"});
     return opts;
-  }  // end of
-     // HookeStressPotentialBase::getOrthotropicBehaviourElasticMaterialPropertiesOptions
+  }  // end of getOrthotropicBehaviourElasticMaterialPropertiesOptions
 
   std::vector<OptionDescription>
   HookeStressPotentialBase::getOrthotropicBehaviourOptions() {
@@ -307,42 +313,6 @@ namespace mfront::bbrick {
       check(n);
       return getBehaviourDescriptionMaterialProperty(dsl, n, d.at(n));
     };
-    auto addTi = [&bd, &d]() {
-      const auto n = "initial_geometry_reference_temperature";
-      const auto v = [&d, &n] {
-        if (d.count(n) != 0) {
-          return d.at(n).get<double>();
-        } else {
-          return 293.15;
-        }
-      }();
-      VariableDescription Ti("temperature", n, 1u, 0u);
-      Ti.description =
-          "value of the temperature when the initial geometry was measured";
-      bd.addParameter(uh, Ti, BehaviourData::ALREADYREGISTRED);
-      bd.setParameterDefaultValue(uh, n, v);
-      bd.setEntryName(uh, n, "ReferenceTemperatureForInitialGeometry");
-    };  // end of addTi
-    auto addTref = [&bd, &d]() {
-      const auto n = "thermal_expansion_reference_temperature";
-      const auto v = [&d, &n] {
-        if (d.count(n) != 0) {
-          const auto Tref = d.at(n);
-          if (Tref.is<int>()) {
-            return static_cast<double>(Tref.get<int>());
-          }
-          return Tref.get<double>();
-        } else {
-          return 293.15;
-        }
-      }();
-      VariableDescription Tref("temperature", n, 1u, 0u);
-      Tref.description =
-          "reference value for the the thermal expansion coefficient";
-      bd.addParameter(uh, Tref, BehaviourData::ALREADYREGISTRED);
-      bd.setParameterDefaultValue(uh, n, v);
-      bd.setEntryName(uh, n, "ThermalExpansionReferenceTemperature");
-    };  // end of addTref
     // options
     auto update = [throw_if, &d](bool& b, const char* n) {
       if (d.count(n) != 0) {
@@ -417,22 +387,8 @@ namespace mfront::bbrick {
       bd.setAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,
                       true, false);
     }
-    if (d.count("thermal_expansion") != 0) {
-      check_not("thermal_expansion1");
-      check_not("thermal_expansion2");
-      check_not("thermal_expansion3");
-      addTi();
-      addTref();
-      bd.setThermalExpansionCoefficient(get_mp("thermal_expansion"));
-    } else if ((d.count("thermal_expansion1") != 0) ||
-               (d.count("thermal_expansion2") != 0) ||
-               (d.count("thermal_expansion3") != 0)) {
-      addTi();
-      addTref();
-      bd.setThermalExpansionCoefficients(get_mp("thermal_expansion1"),
-                                         get_mp("thermal_expansion2"),
-                                         get_mp("thermal_expansion3"));
-    }
+    // thermal expansion coefficients
+    addThermalExpansionCoefficientsIfDefined(dsl, bd, d);
     // relative stress criterion
     const auto seps_n = "relative_value_for_the_equivalent_stress_lower_bound";
     const auto seps_v = [&d, seps_n]() -> double {

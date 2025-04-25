@@ -64,19 +64,6 @@ namespace mfront::bbrick {
   bool areAllConstantMaterialProperties(
       const std::array<BehaviourDescription::MaterialProperty, N> &);
   /*!
-   * \brief extract a material property usable in a behaviour from a value. If
-   * the material property is handled through an external mfront file, the
-   * generation of the associated sources is added to the compilation process
-   * handled by the DSL.
-   * \param[in,out] dsl: behaviour dsl
-   * \param[in] n: material property name
-   * \param[in] d: data
-   */
-  MFRONT_VISIBILITY_EXPORT BehaviourDescription::MaterialProperty
-  getBehaviourDescriptionMaterialProperty(AbstractBehaviourDSL &,
-                                          const std::string_view,
-                                          const tfel::utilities::Data &);
-  /*!
    * \brief declare a parameter or a local variable used to store the
    * evaluation of the material property.
    * \param[out] bd: behaviour description

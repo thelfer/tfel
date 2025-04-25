@@ -482,6 +482,38 @@ namespace mfront {
   MFRONT_VISIBILITY_EXPORT SupportedTypes::TypeSize operator*(
       const unsigned int, const SupportedTypes::TypeSize&);
 
+  /*!
+   * \return a list of standard types defined in the `tfel::config::Type` type
+   * \note this method internally calls the `getStandardScalarTFELTypedefs`
+   * function.
+   */
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string> getTypeAliases();
+  /*!
+   * \return a list of standard scalar types defined in the
+   * `tfel::config::Type` type
+   */
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string> getScalarTypeAliases();
+  /*!
+   * \return a list of standard tiny vector types defined in the
+   * `tfel::config::Type` type
+   */
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string> getTinyVectorTypeAliases();
+  /*!
+   * \return a list of standard symmetric tensor types defined in the
+   * `tfel::config::Type` type
+   */
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string> getStensorTypeAliases();
+  /*!
+   * \return a list of standard tensor types defined in the
+   * `tfel::config::Type` type
+   */
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string> getTensorTypeAliases();
+  /*!
+   * \return a list of standard st2tost2 types defined in the
+   * `tfel::config::Type` type
+   */
+  MFRONT_VISIBILITY_EXPORT std::vector<std::string> getST2toST2TypeAliases();
+
 }  // end of namespace mfront
 
 #endif /* LIB_MFRONT_SUPPORTEDTYPES_HXX */

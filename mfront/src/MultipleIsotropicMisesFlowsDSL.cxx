@@ -16,10 +16,8 @@
 #include <sstream>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/DSLFactory.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MultipleIsotropicMisesFlowsCodeGenerator.hxx"
 #include "MFront/MultipleIsotropicMisesFlowsDSL.hxx"
 

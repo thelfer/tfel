@@ -14,7 +14,6 @@
 
 #include <string>
 #include <stdexcept>
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/DSLFactory.hxx"
 #include "MFront/IsotropicMisesCreepCodeGenerator.hxx"

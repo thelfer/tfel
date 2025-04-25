@@ -40,6 +40,7 @@
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/TargetsDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"

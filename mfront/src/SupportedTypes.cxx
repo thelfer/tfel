@@ -23,7 +23,6 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/VariableDescription.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/SupportedTypes.hxx"
 
 namespace mfront {
@@ -1535,5 +1534,54 @@ namespace mfront {
     os << s;
     return os.str();
   }  // end of to_string
+
+  std::vector<std::string> getScalarTypeAliases() {
+    return {"numeric_type",
+            "real",
+            "time",
+            "length",
+            "frequency",
+            "speed",
+            "stress",
+            "strain",
+            "strainrate",
+            "stressrate",
+            "temperature",
+            "thermalexpansion",
+            "thermalconductivity",
+            "massdensity",
+            "energydensity"};
+  }  // end of getScalarTypeAliases
+
+  std::vector<std::string> getTinyVectorTypeAliases() {
+    return {"TVector", "DisplacementTVector", "ForceTVector", "HeatFlux",
+            "TemperatureGradient"};
+  }  // end of getTinyVectorTypeAliases
+
+  std::vector<std::string> getStensorTypeAliases() {
+    return {"Stensor",       "StressStensor",     "StressRateStensor",
+            "StrainStensor", "StrainRateStensor", "FrequencyStensor"};
+  }
+
+  std::vector<std::string> getTensorTypeAliases() {
+    return {"Tensor", "DeformationGradientTensor",
+            "DeformationGradientRateTensor", "StressTensor"};
+  }
+
+  std::vector<std::string> getST2toST2TypeAliases() {
+    return {"StiffnessTensor", "Stensor4"};
+  }
+
+  std::vector<std::string> getTypeAliases() {
+    auto aliases = getScalarTypeAliases();
+    auto append = [&aliases](const std::vector<std::string>& others) {
+      aliases.insert(aliases.end(), others.begin(), others.end());
+    };
+    append(getTinyVectorTypeAliases());
+    append(getStensorTypeAliases());
+    append(getTensorTypeAliases());
+    append(getST2toST2TypeAliases());
+    return aliases;
+  }  // end of getTypeAliases
 
 }  // end of namespace mfront
