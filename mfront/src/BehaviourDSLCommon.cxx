@@ -5279,19 +5279,17 @@ namespace mfront {
       const std::string& suffix) const {
     const auto Tref = "this->thermal_expansion_reference_temperature";
     const auto T = (t == "t") ? "this->T" : "this->T+this->dT";
-    if (t == "t") {
-      out << "dl0_l0";
-    } else {
-      out << "dl1_l0";
-    }
-    out << "[" << c << "] += 1/(1+alpha" << suffix
+    const auto i = (t == "t") ? "0" : "1";
+    out << "const auto mfront_thermal_expansion" << c << "_" << i << "  "
+        << "= 1 / (1 + alpha" << suffix
         << "_Ti * (this->initial_geometry_reference_temperature-" << Tref
-        << "))*("
-        << "alpha" << suffix << "_T_" << t << " * (" << T << "-" << Tref << ")-"
+        << ")) * ("
+        << "alpha" << suffix << "_T_" << t << " * (" << T << "-" << Tref
+        << ") - "
         << "alpha" << suffix
         << "_Ti * (this->initial_geometry_reference_temperature-" << Tref
         << "));\n";
-  }  // end of BehaviourDSLCommon::writeThermalExpansionComputation
+  }  // end of writeThermalExpansionComputation
 
   void BehaviourDSLCommon::writeBehaviourComputeStressFreeExpansion(
       std::ostream& os, const Hypothesis h) const {
@@ -5311,15 +5309,15 @@ namespace mfront {
       const auto i = b ? "1" : "0";
       const auto T = b ? "this->T+this->dT" : "this->T";
       if (cmp.name.empty()) {
-        out << "dl" << i << "_l0"
-            << "[" << c << "] += " << cmp.value << "/(1+" << cmp.value
+        out << "const auto mfront_thermal_expansion" << c << "_" << i << " "
+            << "= " << cmp.value << "/(1+" << cmp.value
             << "*(this->initial_geometry_reference_temperature-" << Tref << "))"
             << "*(" << T << "-this->initial_geometry_reference_temperature);\n";
       } else {
-        out << "dl" << i << "_l0"
-            << "[" << c << "] += (this->" << cmp.name << ")/(1+(this->"
-            << cmp.name << ")*(this->initial_geometry_reference_temperature-"
-            << Tref << "))"
+        out << "const auto mfront_thermal_expansion" << c << "_" << i << " "
+            << "= (this->" << cmp.name << ")/(1+(this->" << cmp.name
+            << ")*(this->initial_geometry_reference_temperature-" << Tref
+            << "))"
             << "*(" << T << "-this->initial_geometry_reference_temperature);\n";
       }
     };
@@ -5379,15 +5377,17 @@ namespace mfront {
           this->writeThermalExpansionCoefficientsComputations(os, acs.front());
           this->writeThermalExpansionComputation(os, "t", "0");
         }
-        os << "dl0_l0[1] += dl0_l0[0];\n"
-           << "dl0_l0[2] += dl0_l0[0];\n";
+        os << "dl0_l0[0] += mfront_thermal_expansion0_0;\n"
+           << "dl0_l0[1] += mfront_thermal_expansion0_0;\n"
+           << "dl0_l0[2] += mfront_thermal_expansion0_0;\n";
         if (a.is<BehaviourDescription::ConstantMaterialProperty>()) {
           eval(os, a, "0", true);
         } else {
           this->writeThermalExpansionComputation(os, "t_dt", "0");
         }
-        os << "dl1_l0[1] += dl1_l0[0];\n"
-           << "dl1_l0[2] += dl1_l0[0];\n";
+        os << "dl1_l0[0] += mfront_thermal_expansion0_1;\n"
+           << "dl1_l0[1] += mfront_thermal_expansion0_1;\n"
+           << "dl1_l0[2] += mfront_thermal_expansion0_1;\n";
       } else if (acs.size() == 3u) {
         throw_if(this->mb.getSymmetryType() != mfront::ORTHOTROPIC,
                  "invalid number of thermal expansion coefficients");
@@ -5407,6 +5407,12 @@ namespace mfront {
             this->writeThermalExpansionComputation(os, "t_dt", idx, idx);
           }
         }
+        os << "dl0_l0[0] += mfront_thermal_expansion0_0;\n"
+           << "dl0_l0[1] += mfront_thermal_expansion1_0;\n"
+           << "dl0_l0[2] += mfront_thermal_expansion2_0;\n";
+        os << "dl1_l0[0] += mfront_thermal_expansion0_1;\n"
+           << "dl1_l0[1] += mfront_thermal_expansion1_1;\n"
+           << "dl1_l0[2] += mfront_thermal_expansion2_1;\n";
       } else {
         throw_if(true, "unsupported behaviour symmetry");
       }
