@@ -45,6 +45,8 @@ namespace mfront {
   const char* const BehaviourDescription::finalClass = "final";
   const char* const BehaviourDescription::internalNamespace =
       "internal_namespace";
+  const char* const BehaviourDescription::saveThermalExpansion =
+      "save_thermal_expansion";
 
   static MaterialPropertyDescription buildMaterialPropertyDescription(
       const BehaviourDescription::ConstantMaterialProperty& mp,

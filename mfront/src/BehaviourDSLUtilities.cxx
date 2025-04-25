@@ -129,6 +129,14 @@ namespace mfront {
       addTi();
       addTref();
       bd.setThermalExpansionCoefficient(get_mp("thermal_expansion"));
+      if (get_if(d, "save_thermal_expansion", false)) {
+        VariableDescription a("strain", "mfront_thermal_expansion", 1u, 0u);
+        a.setEntryName("ComputedThermalExpansion");
+        a.description = "mean linear thermal expansion";
+        bd.addAuxiliaryStateVariable(uh, a);
+        bd.setAttribute(BehaviourDescription::saveThermalExpansion, true,
+                        false);
+      }
     } else if ((d.count("thermal_expansion1") != 0) ||
                (d.count("thermal_expansion2") != 0) ||
                (d.count("thermal_expansion3") != 0)) {
@@ -143,9 +151,19 @@ namespace mfront {
       bd.setThermalExpansionCoefficients(get_mp("thermal_expansion1"),
                                          get_mp("thermal_expansion2"),
                                          get_mp("thermal_expansion3"));
+      if (get_if(d, "save_thermal_expansion", false)) {
+        VariableDescription a("strain", "mfront_thermal_expansion", 3u,
+                              0u);
+        a.setEntryName("ComputedThermalExpansion");
+        a.description = "mean linear thermal expansion";
+        bd.addAuxiliaryStateVariable(uh, a);
+        bd.setAttribute(BehaviourDescription::saveThermalExpansion, true,
+                        false);
+      }
     } else {
       check_not("initial_geometry_reference_temperature");
       check_not("thermal_expansion_reference_temperature");
+      check_not("save_thermal_expansion");
     }
   }  // end of addThermalExpansionCoefficientsIfDefined
 

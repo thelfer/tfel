@@ -349,6 +349,8 @@ models are updated at beginning of the `updateAuxiliarySateVariables`
 method **before** any user defined code (see the
 `@UpdateAuxiliaryStateVariables` keyword).
 
+## Uniform syntax
+
 ## New command line arguments
 
 The following command line arguments are now supported:
@@ -441,6 +443,48 @@ This list can be retrieved as follows:
 $ mfront --list-isotropic-hardening-rules
 ~~~~
 
+## Extensions of the `StandardElastoViscoPlasticity` brick
+
+### Saving the thermal expansion
+
+The `save_thermal_expansion boolean` option has been introduced in all
+stress potentials deriving from `the HookeStressPotentialBase`.
+
+This option states if the computed thermal expansion(s) at the end of
+the time step shall be stored in an auxiliary state variable. The
+external name of this variable is `ComputedThermalExpansion`. For an
+isotropic thermal expansion, this variable is a scalar. For an
+orthotropic material, this variable is an array of (3) scalars.
+
+#### Example of usage
+
+```cxx
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{
+    young_modulus : 150e9,
+    poisson_ratio : 0.3,
+    thermal_expansion : 1e-5,
+    save_thermal_expansion : true
+  }
+};
+```
+
+## Uniform syntax for `@ComputeThermalExpansion`
+
+The `@ComputeThermalExpansion` keyword now accepts the same options than
+the stress potentials deriving from `the HookeStressPotentialBase`:
+
+```cxx
+@ComputeThermalExpansion{
+  thermal_expansion1: 1.e-5,
+  thermal_expansion2: 0.2e-5,
+  thermal_expansion3: 1.2e-5,
+  thermal_expansion_reference_temperature: 293.15, 
+  initial_geometry_reference_temperature: 293.15,
+  save_thermal_expansion: true
+};
+```
+
 # New features in `mfront-query`
 
 ## New command line arguments
@@ -491,6 +535,10 @@ of tangent operator of the local behaviours. The implementation
 shows how to use any behaviour law on each phase.
 
 # Issues fixed
+
+## Issue 760: Save the thermal expansion tensor via an `@AuxiliaryStateVariable` using `@Brick`'s stress_potential 
+
+For more details, see <https://github.com/thelfer/tfel/issues/760>
 
 ## Issue 739: [mfront] Depreciation of europlexus interface
 

@@ -25,6 +25,7 @@ set(mfront_tests_SOURCES
   Elasticity5
   Elasticity6
   Elasticity8
+  Elasticity9
   OrthotropicElastic
   OrthotropicElastic2
   OrthotropicElastic3
@@ -32,6 +33,7 @@ set(mfront_tests_SOURCES
   OrthotropicElastic5
   OrthotropicElastic6
   OrthotropicElastic7
+  OrthotropicElastic8
   PerfectPlasticity
   HosfordPerfectPlasticity
   HosfordPerfectPlasticity2
@@ -454,6 +456,8 @@ test_generic(elasticity25)
 test_generic(elasticity26)
 test_generic(elasticity27)
 test_generic(elasticity28)
+test_generic(elasticity29)
+test_generic(elasticity30)
 test_generic(perfectplasticity)
 test_generic(plasticity2)
 test_generic(plasticity3)

@@ -260,7 +260,7 @@ The `Hooke` stress potential supports the following options:
 - `thermal_expansion1`
 - `thermal_expansion2`
 - `thermal_expansion3`
-- `thermal_expansion_reference_temperature`
+- `thermal_expansion_reference_temperature`, or `reference_temperature`
 - `plane_stress_support`
 - `generic_tangent_operator`
 - `generic_prediction_operator`

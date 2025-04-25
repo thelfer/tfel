@@ -19,6 +19,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Issues fixed
 
+## Issue 771:[Hooke stress potential] The initial_geometry_reference_temperature is not listed in the authorized options of the potential
+
+For more details, see <https://github.com/thelfer/tfel/issues/771>.
+
 ## Issue 765: [mfront] Fix numerical tests in the `Swift` and `Power` hardening rules
 
 For more details, see <https://github.com/thelfer/tfel/issues/765>.

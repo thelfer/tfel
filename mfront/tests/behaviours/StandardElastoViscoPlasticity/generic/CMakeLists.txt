@@ -6,6 +6,7 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   Test4
   Test5
   Test6
+  Test7
   NortonTest
   NortonTest_nj
   NortonTest2

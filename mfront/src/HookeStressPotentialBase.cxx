@@ -134,8 +134,15 @@ namespace mfront::bbrick {
     opts.emplace_back("thermal_expansion_reference_temperature",
                       "reference temperature for the thermal expansion",
                       OptionDescription::REAL);
+    opts.emplace_back("initial_geometry_reference_temperature",
+                      "reference temperature for the thermal expansion",
+                      OptionDescription::REAL);
+    opts.emplace_back("save_thermal_expansion",
+                      "boolean stating if the computed thermal expansion shall "
+                      "be saved in a dedicated auxiliary state variable",
+                      OptionDescription::BOOLEAN);
     return opts;
-  }  // end of HookeStressPotentialBase::getIsotropicBehaviourOptions()
+  }  // end of getIsotropicBehaviourOptions
 
   std::vector<OptionDescription> HookeStressPotentialBase::
       getOrthotropicBehaviourElasticMaterialPropertiesOptions() {
@@ -214,8 +221,7 @@ namespace mfront::bbrick {
                                  "shear_modulus12", "shear_modulus23"},
         std::vector<std::string>{"young_modulus", "poisson_ratio"});
     return opts;
-  }  // end of
-     // HookeStressPotentialBase::getOrthotropicBehaviourElasticMaterialPropertiesOptions
+  }  // end of getOrthotropicBehaviourElasticMaterialPropertiesOptions
 
   std::vector<OptionDescription>
   HookeStressPotentialBase::getOrthotropicBehaviourOptions() {

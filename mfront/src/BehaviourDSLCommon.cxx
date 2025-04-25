@@ -2135,7 +2135,8 @@ namespace mfront {
         opts,
         {"thermal_expansion", "thermal_expansion1", "thermal_expansion2",
          "thermal_expansion3", "thermal_expansion_reference_temperature",
-         "reference_temperature", "initial_geometry_reference_temperature"});
+         "reference_temperature", "initial_geometry_reference_temperature",
+         "save_thermal_expansion"});
     addThermalExpansionCoefficientsIfDefined(*this, this->mb, opts, true);
   }
 
