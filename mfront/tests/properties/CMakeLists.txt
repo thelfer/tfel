@@ -166,7 +166,7 @@ if(HAVE_CASTEM)
     MaterialLawDSLOptionsTest
     VanadiumAlloy_YoungModulus_SRMA
     VanadiumAlloy_PoissonRatio_SRMA)
-  mfront_castem_check_library(MFrontMaterialProperties-castem castem "castem" ${mfront_SOURCES})
+  mfront_check_module(MFrontMaterialProperties-castem castem "castem" ${mfront_SOURCES})
   target_include_directories(MFrontMaterialProperties-castem
     PRIVATE "${PROJECT_SOURCE_DIR}/include"
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
