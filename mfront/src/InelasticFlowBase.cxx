@@ -51,6 +51,16 @@ namespace mfront::bbrick {
         "by this inelastic flow in a dedicated auxiliary state variable",
         OptionDescription::BOOLEAN);
     opts.emplace_back(
+        "save_stress_criterion",
+        "flag stating if the stress criterion in the middle of the time step "
+        "shall be saved in a dedicated auxiliary state variable",
+        OptionDescription::BOOLEAN);
+    opts.emplace_back("stress_criterion_external_name",
+                      "external name of the auxiliary state variable in which "
+                      "the stress criterion shall be saved if the "
+                      "save_stress_criterion option is `true.",
+                      OptionDescription::STRING);
+    opts.emplace_back(
         "porosity_effect_on_equivalent_plastic_strain",
         "specify the effect of the porosity of the flow rule. "
         "Valid strings are 'StandardPorosityEffect' (or equivalently "
@@ -118,6 +128,8 @@ namespace mfront::bbrick {
       getLogStream() << "checking options\n";
     }
     this->checkOptions(d);
+    //
+    this->stress_criterion_external_name = "EquivalentStress" + id;
     // parsing options
     for (const auto& e : d) {
       if (e.first == "criterion") {
@@ -194,6 +206,17 @@ namespace mfront::bbrick {
         } else {
           add_kinematic_hardening_rule(getDataStructure(e.first, e.second));
         }
+      } else if (e.first == "stress_criterion_external_name") {
+        if (!e.second.is<std::string>()) {
+          raise("'stress_criterion_external_name' is not a string");
+        }
+        this->stress_criterion_external_name =
+            e.second.get<std::string>();
+      } else if (e.first == "save_stress_criterion") {
+        if (!e.second.is<bool>()) {
+          raise("'save_stress_criterion' is not a boolean");
+        }
+        this->save_stress_criterion = e.second.get<bool>();
       } else if (e.first == "save_porosity_increase") {
         if (!e.second.is<bool>()) {
           raise("'save_porosity_increase' is not a boolean");
@@ -349,6 +372,17 @@ namespace mfront::bbrick {
         bd.addAuxiliaryStateVariable(uh, fg);
       }
     }
+    if (this->save_stress_criterion) {
+      const auto n = "mfront_" + this->stress_criterion_external_name;
+      VariableDescription stress_criterion("stress", n, 1u, 0u);
+      const auto& g = tfel::glossary::Glossary::getGlossary();
+      if (g.contains(this->stress_criterion_external_name)) {
+        stress_criterion.setGlossaryName(this->stress_criterion_external_name);
+      } else {
+        stress_criterion.setEntryName(this->stress_criterion_external_name);
+      }
+      bd.addAuxiliaryStateVariable(uh, stress_criterion);
+    }
   }  // end of initialize
 
   void InelasticFlowBase::setPorosityEvolutionHandled(const bool b) {
@@ -418,6 +452,10 @@ namespace mfront::bbrick {
       i.code += this->sc->computeElasticPrediction(id, bd, sp);
       i.code += computeElasticLimitInitialValue(bd, this->ihrs, id);
       i.code += "this->bpl" + id + " = seqel" + id + " > Rel" + id + ";\n";
+      if (this->save_stress_criterion) {
+        i.code += "this->mfront_" + stress_criterion_external_name +
+                   " = seqel" + id + ";\n";
+      }
       bd.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                  BehaviourData::BeforeInitializeLocalVariables, i,
                  BehaviourData::CREATEORAPPEND, BehaviourData::AT_BEGINNING);
@@ -515,6 +553,10 @@ namespace mfront::bbrick {
         ib.code +=
             this->fc->computeNormal(id, bd, sp, StressCriterion::FLOWCRITERION);
       }
+    }
+    if (this->save_stress_criterion) {
+      ib.code += "this->mfront_" + stress_criterion_external_name + " = seq" +
+                 id + ";\n";
     }
     // check on the flow direction
     if (this->cosine_threshold < 1.5) {
