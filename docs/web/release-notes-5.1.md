@@ -445,7 +445,32 @@ $ mfront --list-isotropic-hardening-rules
 
 ## Extensions of the `StandardElastoViscoPlasticity` brick
 
-### Saving the thermal expansion
+### Saving the stress criterion  {#sec:tfel:5.1:StandardElastoViscoPlasticity:saving_stress_criterion}
+
+All inelastic flows now allows the save the value of the stress
+criterion at \(t+\theta\,\Delta\,t\) in a dedicated auxiliary state
+variable by setting the `save_stress_criterion` option to `true`.
+
+The external name of this auxiliary state variable defaults to
+`EquivalentStress` + id, where id is the identifier of the inelastic
+flow. This name can be changed using the
+`stress_criterion_external_name` option.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 33e6, H : 438e6},
+    stress_criterion_external_name : "StressCriterion",
+    save_stress_criterion : true
+  }
+};
+~~~~
+
+### Saving the thermal expansion {#sec:tfel:5.1:StandardElastoViscoPlasticity:saving_thermal_expansion}
 
 The `save_thermal_expansion boolean` option has been introduced in all
 stress potentials deriving from `the HookeStressPotentialBase`.
@@ -536,7 +561,17 @@ shows how to use any behaviour law on each phase.
 
 # Issues fixed
 
+## Issue 761: Save the equivalent stress via an `@AuxiliaryStateVariable` using `@Brick`'s inelastic_flow
+
+This feature is described in Section
+@sec:tfel:5.1:StandardElastoViscoPlasticity:saving_stress_criterion.
+
+For more details, see <https://github.com/thelfer/tfel/issues/761>
+
 ## Issue 760: Save the thermal expansion tensor via an `@AuxiliaryStateVariable` using `@Brick`'s stress_potential 
+
+This feature is described in Section
+@sec:tfel:5.1:StandardElastoViscoPlasticity:saving_thermal_expansion.
 
 For more details, see <https://github.com/thelfer/tfel/issues/760>
 
@@ -558,7 +593,7 @@ This feature is described in Section @sec:tfel_5_1:zero.
 
 For more details, see <https://github.com/thelfer/tfel/issues/721>
 
-## Issue 717: [mfront] Add warning if the increment of a state variable is not used in @Integrator for the Implicit DSLs and the Default DSLs
+## Issue 717: [mfront] Add warning if the increment of a state variable is not used in `@Integrator` for the `Implicit` DSLs and the `Default` DSLs
 ￼
 
 For more details, see <https://github.com/thelfer/tfel/issues/717>

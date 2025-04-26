@@ -177,6 +177,19 @@ namespace mfront::bbrick {
      * auxiliary state variable.
      */
     bool save_porosity_increase = false;
+    /*!
+     * \brief flag stating if the equivalent stress at the middle of the time
+     * step must be saved in a dedicated auxiliary state variable.
+     */
+    bool save_stress_criterion = false;
+    /*!
+     * \brief external name of the auxiliary state variable in which the stress
+     * criterion shall be saved if `save_stress_criterion` is `true`.
+     *
+     * This defaults to `EquivalentStress` + id, where id is the identifier of
+     * the inelastic flow
+     */
+    std::string stress_criterion_external_name;
   };  // end of struct InelasticFlowBase
 
 }  // end of namespace mfront::bbrick

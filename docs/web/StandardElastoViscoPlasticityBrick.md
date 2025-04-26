@@ -224,6 +224,31 @@ the limit of the elastic domain as a sum, denoted
 combining various predefined forms of isotropic hardening rules (Voce,
 Linear, etc.) defined hereafter.
 
+#### Saving the stress criterion
+
+All inelastic flows allows the save the value of the stress
+criterion at `t+\theta\,\Delta\,t` in a dedicated auxiliary state
+variable by setting the `save_stress_criterion` option to `true`.
+
+The external name of this auxiliary state variable defaults to
+`EquivalentStress` + id, where id is the identifier of the inelastic
+flow. This name can be changed using the
+`stress_criterion_external_name` option.
+
+##### Example of usage
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 33e6, H : 438e6},
+    stress_criterion_external_name : "StressCriterion",
+    save_stress_criterion : true
+  }
+};
+~~~~
+
 #### Maximum equivalent stress in the `Plastic` flow
 
 During the Newton iterations, the current estimate of the equivalent
@@ -248,15 +273,6 @@ of iterations allowed for the Newton algorithm. A typical value for
 ##### Example
 
 ~~~~{.cxx}
-@DSL Implicit;
-@Behaviour PerfectPlasticity;
-@Author Thomas Helfer;
-@Date 17 / 08 / 2020;
-@Description{};
-
-@Epsilon 1.e-14;
-@Theta 1;
-
 @Brick StandardElastoViscoPlasticity{
   stress_potential : "Hooke" {young_modulus : 200e9, poisson_ratio : 0.3},
   inelastic_flow : "Plastic" {
