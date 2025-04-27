@@ -445,6 +445,24 @@ $ mfront --list-isotropic-hardening-rules
 
 ## Extensions of the `StandardElastoViscoPlasticity` brick
 
+### Changing the external name of the equivalent strain {#sec:tfel:5.1:StandardElastoViscoPlasticity:equivalent_strain_external_name}
+
+All inelastic flows now allows to change the external name of the
+equilvaent strain with the `equivalent_strain_external_name` option.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 33e6, H : 438e6},
+    equivalent_strain_external_name : "CumulatedEquivalentPlasticStrain"
+  }
+};
+~~~~
+
 ### Saving the stress criterion  {#sec:tfel:5.1:StandardElastoViscoPlasticity:saving_stress_criterion}
 
 All inelastic flows now allows the save the value of the stress
@@ -586,21 +604,28 @@ shows how to use any behaviour law on each phase.
 
 # Issues fixed
 
-## Issue 762: Save the isotropic_hardening's threshold stress via an auxiliary state variable using `@Brick`'s inelastic_flow
+## Issue 763: Personalize names of equivalent plastic strain in `StandardElastoViscoPlasticity`'s inelastic_flow
+
+This feature is described in Section
+@sec:tfel:5.1:StandardElastoViscoPlasticity:equivalent_strain_external_name.
+
+For more details, see <https://github.com/thelfer/tfel/issues/763>
+
+## Issue 762: Save the isotropic_hardening's threshold stress via an auxiliary state variable using `StandardElastoViscoPlasticity`'s inelastic_flow
 
 This feature is described in Section
 @sec:tfel:5.1:StandardElastoViscoPlasticity:saving_yield_surface_radius.
 
 For more details, see <https://github.com/thelfer/tfel/issues/762>
 
-## Issue 761: Save the equivalent stress via an `@AuxiliaryStateVariable` using `@Brick`'s inelastic_flow
+## Issue 761: Save the equivalent stress via an `@AuxiliaryStateVariable` using `StandardElastoViscoPlasticity`'s inelastic_flow
 
 This feature is described in Section
 @sec:tfel:5.1:StandardElastoViscoPlasticity:saving_stress_criterion.
 
 For more details, see <https://github.com/thelfer/tfel/issues/761>
 
-## Issue 760: Save the thermal expansion tensor via an `@AuxiliaryStateVariable` using `@Brick`'s stress_potential 
+## Issue 760: Save the thermal expansion tensor via an `@AuxiliaryStateVariable` using `StandardElastoViscoPlasticity`'s stress_potential 
 
 This feature is described in Section
 @sec:tfel:5.1:StandardElastoViscoPlasticity:saving_thermal_expansion.

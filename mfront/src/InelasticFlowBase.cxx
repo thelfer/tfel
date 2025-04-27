@@ -51,6 +51,10 @@ namespace mfront::bbrick {
         "by this inelastic flow in a dedicated auxiliary state variable",
         OptionDescription::BOOLEAN);
     opts.emplace_back(
+        "equivalent_strain_external_name",
+        "external name of the equivalent (plastic or viscoplastic) strain.",
+        OptionDescription::STRING);
+    opts.emplace_back(
         "save_stress_criterion",
         "flag stating if the stress criterion in the middle of the time step "
         "shall be saved in a dedicated auxiliary state variable",
@@ -60,11 +64,11 @@ namespace mfront::bbrick {
                       "the stress criterion shall be saved if the "
                       "save_stress_criterion option is `true.",
                       OptionDescription::STRING);
-    opts.emplace_back(
-        "save_yield_surface_radius",
-        "flag stating if the yield surface radius in the middle of the time step "
-        "shall be saved in a dedicated auxiliary state variable",
-        OptionDescription::BOOLEAN);
+    opts.emplace_back("save_yield_surface_radius",
+                      "flag stating if the yield surface radius in the middle "
+                      "of the time step "
+                      "shall be saved in a dedicated auxiliary state variable",
+                      OptionDescription::BOOLEAN);
     opts.emplace_back("yield_surface_radius_external_name",
                       "external name of the auxiliary state variable in which "
                       "the yield surface radius shall be saved if the "
@@ -217,12 +221,16 @@ namespace mfront::bbrick {
         } else {
           add_kinematic_hardening_rule(getDataStructure(e.first, e.second));
         }
+      } else if (e.first == "equivalent_strain_external_name") {
+        if (!e.second.is<std::string>()) {
+          raise("'equivalent_strain_external_name' is not a string");
+        }
+        this->equivalent_strain_external_name = e.second.get<std::string>();
       } else if (e.first == "stress_criterion_external_name") {
         if (!e.second.is<std::string>()) {
           raise("'stress_criterion_external_name' is not a string");
         }
-        this->stress_criterion_external_name =
-            e.second.get<std::string>();
+        this->stress_criterion_external_name = e.second.get<std::string>();
       } else if (e.first == "save_stress_criterion") {
         if (!e.second.is<bool>()) {
           raise("'save_stress_criterion' is not a boolean");
@@ -232,8 +240,7 @@ namespace mfront::bbrick {
         if (!e.second.is<std::string>()) {
           raise("'yield_surface_radius_external_name' is not a string");
         }
-        this->yield_surface_radius_external_name =
-            e.second.get<std::string>();
+        this->yield_surface_radius_external_name = e.second.get<std::string>();
       } else if (e.first == "save_yield_surface_radius") {
         if (!e.second.is<bool>()) {
           raise("'save_yield_surface_radius' is not a boolean");
@@ -416,9 +423,11 @@ namespace mfront::bbrick {
       VariableDescription yield_surface_radius("stress", n, 1u, 0u);
       const auto& g = tfel::glossary::Glossary::getGlossary();
       if (g.contains(this->yield_surface_radius_external_name)) {
-        yield_surface_radius.setGlossaryName(this->yield_surface_radius_external_name);
+        yield_surface_radius.setGlossaryName(
+            this->yield_surface_radius_external_name);
       } else {
-        yield_surface_radius.setEntryName(this->yield_surface_radius_external_name);
+        yield_surface_radius.setEntryName(
+            this->yield_surface_radius_external_name);
       }
       bd.addAuxiliaryStateVariable(uh, yield_surface_radius);
     }
@@ -493,11 +502,11 @@ namespace mfront::bbrick {
       i.code += "this->bpl" + id + " = seqel" + id + " > Rel" + id + ";\n";
       if (this->save_stress_criterion) {
         i.code += "this->mfront_" + stress_criterion_external_name +
-                   " = seqel" + id + ";\n";
+                  " = seqel" + id + ";\n";
       }
       if (this->save_yield_surface_radius) {
         i.code += "this->mfront_" + yield_surface_radius_external_name +
-                   " = Rel" + id + ";\n";
+                  " = Rel" + id + ";\n";
       }
       bd.setCode(ModellingHypothesis::UNDEFINEDHYPOTHESIS,
                  BehaviourData::BeforeInitializeLocalVariables, i,

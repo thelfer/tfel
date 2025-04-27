@@ -1,0 +1,20 @@
+@MaximumNumberOfSubSteps 1;
+@XMLOutputFile @xml_output@;
+@Behaviour<generic> @library@ 'Test15';
+
+@ExternalStateVariable 'Temperature' 293.15 ;
+
+@ImposedStrain 'EXX' {0 : 0, 1 : 1e-2};
+@Times{0, 1. in 100};
+
+@Real 'E' 150e9;
+@Real 'R0' 33e6;
+@Real 'Hy' 438e6;
+
+@Evolution<function> 'EquivalentStressValue'  //
+    'EXX < (R0 / E) ? E * EXX : Hy * E / (E + Hy) * EXX + E * R0 / (E + Hy)';
+@Evolution<function> 'EquivalentStrainValue'  //
+    'EXX < (R0 / E) ? 0 : (EquivalentStressValue - R0) / Hy';
+
+@Test<function> 'EquivalentStress' 'EquivalentStressValue'  1e-3;
+@Test<function> 'eqstrain'         'EquivalentStrainValue'  1e-12;

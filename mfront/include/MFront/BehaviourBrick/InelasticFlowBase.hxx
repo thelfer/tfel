@@ -178,6 +178,15 @@ namespace mfront::bbrick {
      */
     bool save_porosity_increase = false;
     /*!
+     * \brief external name of equivalent strain.
+     *
+     * \note The default external name depends on the inelastic flow.
+     * For instance, this defaults to `EquivalentPlasticStrain` + id,
+     * where id is the identifier of the inelastic flow for plastic
+     * flows.
+     */
+    std::string equivalent_strain_external_name;
+    /*!
      * \brief flag stating if the equivalent stress at the middle of the time
      * step must be saved in a dedicated auxiliary state variable.
      */
