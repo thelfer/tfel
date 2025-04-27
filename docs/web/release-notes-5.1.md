@@ -470,14 +470,14 @@ flow. This name can be changed using the
 };
 ~~~~
 
-### Saving the stress criterion  {#sec:tfel:5.1:StandardElastoViscoPlasticity:saving_yield_surface_radius}
+### Saving yield radius {#sec:tfel:5.1:StandardElastoViscoPlasticity:saving_yield_surface_radius}
 
 All inelastic flows now allows the save the value of the stress
 criterion at \(t+\theta\,\Delta\,t\) in a dedicated auxiliary state
 variable by setting the `save_yield_surface_radius` option to `true`.
 
 The external name of this auxiliary state variable defaults to
-`EquivalentStress` + id, where id is the identifier of the inelastic
+`YieldSurfaceRadius` + id, where id is the identifier of the inelastic
 flow. This name can be changed using the
 `yield_surface_radius_external_name` option.
 
@@ -489,7 +489,7 @@ flow. This name can be changed using the
   inelastic_flow : "Plastic" {
     criterion : "Mises",
     isotropic_hardening : "Linear" {R0 : 33e6, H : 438e6},
-    yield_surface_radius_external_name : "R",
+    yield_surface_radius_external_name : "CurrentYieldStrength",
     save_yield_surface_radius : true
   }
 };
@@ -585,6 +585,13 @@ of tangent operator of the local behaviours. The implementation
 shows how to use any behaviour law on each phase.
 
 # Issues fixed
+
+## Issue 762: Save the isotropic_hardening's threshold stress via an auxiliary state variable using `@Brick`'s inelastic_flow
+
+This feature is described in Section
+@sec:tfel:5.1:StandardElastoViscoPlasticity:saving_yield_surface_radius.
+
+For more details, see <https://github.com/thelfer/tfel/issues/762>
 
 ## Issue 761: Save the equivalent stress via an `@AuxiliaryStateVariable` using `@Brick`'s inelastic_flow
 
