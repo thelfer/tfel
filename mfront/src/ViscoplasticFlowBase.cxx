@@ -56,6 +56,10 @@ namespace mfront::bbrick {
     if (b) {
       if (!this->ihrs.empty()) {
         c += computeElasticLimitAndDerivative(bd, this->ihrs, id);
+        if (this->save_yield_surface_radius) {
+          c += "this->mfront_" + yield_surface_radius_external_name + " = R" +
+               id + ";\n";
+        }
       }
       c += this->computeFlowRateAndDerivative(bd, sp, id);
       c += "fp" + id + " -= (this->dt) * vp" + id + ";\n";
@@ -93,6 +97,10 @@ namespace mfront::bbrick {
     } else {
       if (!this->ihrs.empty()) {
         c += computeElasticLimit(bd, this->ihrs, id);
+        if (this->save_yield_surface_radius) {
+          c += "this->mfront_" + yield_surface_radius_external_name + " = R" +
+               id + ";\n";
+        }
       }
       c += this->computeFlowRate(bd, sp, id);
       c += "fp" + id + " -= (this->dt) * vp" + id + ";\n";

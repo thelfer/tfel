@@ -141,6 +141,10 @@ namespace mfront::bbrick {
       const auto dfp_ddp = "dfp" + id + "_ddp" + id;
       c += computeElasticLimitAndDerivative(bd, this->ihrs, id);
       c += damping;
+      if (this->save_yield_surface_radius) {
+        c += "this->mfront_" + yield_surface_radius_external_name + " = " + R +
+             ";\n";
+      }
       c += fp + " = (" + seq + "-" + R + ")/(" + snf + ");\n";
       c += sp.generateImplicitEquationDerivatives(
           bd, "strain", "p" + id, dseq_ds + "/(" + snf + ")",
@@ -174,6 +178,10 @@ namespace mfront::bbrick {
       c += computeElasticLimit(bd, this->ihrs, id);
       c += damping;
       c += fp + " = (" + seq + "-" + R + ")/(" + snf + ");\n";
+      if (this->save_yield_surface_radius) {
+        c += "this->mfront_" + yield_surface_radius_external_name + " = " + R +
+             ";\n";
+      }
     }
     return c;
   }  // end of buildFlowImplicitEquations

@@ -470,6 +470,31 @@ flow. This name can be changed using the
 };
 ~~~~
 
+### Saving the stress criterion  {#sec:tfel:5.1:StandardElastoViscoPlasticity:saving_yield_surface_radius}
+
+All inelastic flows now allows the save the value of the stress
+criterion at \(t+\theta\,\Delta\,t\) in a dedicated auxiliary state
+variable by setting the `save_yield_surface_radius` option to `true`.
+
+The external name of this auxiliary state variable defaults to
+`EquivalentStress` + id, where id is the identifier of the inelastic
+flow. This name can be changed using the
+`yield_surface_radius_external_name` option.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 33e6, H : 438e6},
+    yield_surface_radius_external_name : "R",
+    save_yield_surface_radius : true
+  }
+};
+~~~~
+
 ### Saving the thermal expansion {#sec:tfel:5.1:StandardElastoViscoPlasticity:saving_thermal_expansion}
 
 The `save_thermal_expansion boolean` option has been introduced in all

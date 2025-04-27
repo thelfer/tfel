@@ -190,6 +190,19 @@ namespace mfront::bbrick {
      * the inelastic flow
      */
     std::string stress_criterion_external_name;
+    /*!
+     * \brief flag stating if the yield surface radius at the middle of the time
+     * step must be saved in a dedicated auxiliary state variable.
+     */
+    bool save_yield_surface_radius = false;
+    /*!
+     * \brief external name of the auxiliary state variable in which the yield
+     * surface radius shall be saved if `save_yield_surface_radius` is `true`.
+     *
+     * This defaults to `YieldSurfaceRadius` + id, where id is the identifier of
+     * the inelastic flow
+     */
+    std::string yield_surface_radius_external_name;
   };  // end of struct InelasticFlowBase
 
 }  // end of namespace mfront::bbrick

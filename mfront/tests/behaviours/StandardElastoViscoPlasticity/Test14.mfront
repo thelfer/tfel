@@ -1,0 +1,19 @@
+@DSL Implicit;
+@Behaviour Test14;
+@Author Thomas Helfer;
+
+@Epsilon 1e-14;
+@Theta 1;
+
+@ModellingHypotheses {".+"};
+
+@Brick "StandardElastoViscoPlasticity" {
+  stress_potential : "Hooke" {young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Norton" {
+    criterion : "Mises",
+    K : 100e6,
+    n : 3.2,
+    isotropic_hardening: "Linear" {R0 : 50e6, H : 2e9},
+    save_yield_surface_radius : true
+  }
+};
