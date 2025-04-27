@@ -90,13 +90,18 @@ namespace mfront::bbrick {
     tfel::raise_if(this->ihrs.empty(),
                    "PlasticInelasticFlow::initialize: "
                    "no isotropic hardening rule defined");
-    if (id.empty()) {
-      addStateVariable(bd, "strain", "p", Glossary::EquivalentPlasticStrain);
+    if (!this->equivalent_strain_external_name.empty()) {
+      addStateVariable(bd, "strain", "p",
+                       this->equivalent_strain_external_name);
     } else {
-      addStateVariable(
-          bd, "strain", "p" + id,
-          static_cast<const std::string&>(Glossary::EquivalentPlasticStrain) +
-              id);
+      if (id.empty()) {
+        addStateVariable(bd, "strain", "p", Glossary::EquivalentPlasticStrain);
+      } else {
+        addStateVariable(
+            bd, "strain", "p" + id,
+            static_cast<const std::string&>(Glossary::EquivalentPlasticStrain) +
+                id);
+      }
     }
   }  // end of initialize
 

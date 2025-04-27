@@ -185,6 +185,29 @@ The DDIF2 stress potential is fully described
 
 # Inelastic flows
 
+## Generalities
+
+### About the equivalent strain
+
+Most inelastic flows introduces an equivalent strain as a measure of the
+material's hardening.
+
+This state variable is named `p`+`id` where `id` is an identifier
+associated with the inelastic flow. `id` is empty if only one inelastic
+flows is defined and contain a number otherwise. More precisely, when
+several inelastic flows are defined, `0` is the `id` of the first
+inelatic flow, `1` is the `id` of the second inelatic flow, etc..
+
+The default external name of the equivalent strain depends on the
+inelastic flow selected:
+
+- `EquivalentPlasticStrain`+`id` is used by plastic flows,
+- `EquivalentViscoplasticStrain`+`id` is used by viscoplastic flows.
+
+See Section
+@sec:StandardElastoViscoPlasticity:equivalent_strain_external_name for
+how to change the external name of the equilavent strain.
+
 ## List of available inelastic flows
 
 ### The `Plastic` inelastic flow
@@ -382,7 +405,27 @@ code.
 };
 ~~~~
 
-## Newton steps rejections based on the change of the flow direction between two successive estimates {#sec:cosine_checks}
+## Common inelastic flows' options
+
+### External name of the equivalent strain  {#sec:StandardElastoViscoPlasticity:equivalent_strain_external_name}
+
+All inelastic flows allows to change the external name of the equilvaent
+strain with the `equivalent_strain_external_name` option.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 33e6, H : 438e6},
+    equivalent_strain_external_name : "CumulatedEquivalentPlasticStrain"
+  }
+};
+~~~~
+
+### Newton steps rejections based on the change of the flow direction between two successive estimates {#sec:cosine_checks}
 
 Some stress criteria (Hosford 1972, Barlat 2004, Mohr-Coulomb) shows
 sharp edges that may cause the failure of the standard Newton algorithm,
@@ -411,7 +454,6 @@ threshold. This threshold must be in the range \(\left[-1:1\right]\),
 but due to the slow variation of the cosine near \(0\), a typical value
 of this threshold is \(0.99\) which is equivalent to impose that the
 angle between two successive estimates is below \(8\mbox{}^{\circ}\).
-
 
 ## List of available stress criteria
 
