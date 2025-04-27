@@ -183,7 +183,6 @@ The Hooke stress potential is fully described
 The DDIF2 stress potential is fully described
 [here](DDIF2StressPotential.html).
 
-
 # Inelastic flows
 
 ## List of available inelastic flows
@@ -223,31 +222,6 @@ the limit of the elastic domain as a sum, denoted
 \(\sum_{i}R_{i}\paren{p}\), to indicate that one may define it by
 combining various predefined forms of isotropic hardening rules (Voce,
 Linear, etc.) defined hereafter.
-
-#### Saving the stress criterion
-
-All inelastic flows allows the save the value of the stress
-criterion at `t+\theta\,\Delta\,t` in a dedicated auxiliary state
-variable by setting the `save_stress_criterion` option to `true`.
-
-The external name of this auxiliary state variable defaults to
-`EquivalentStress` + id, where id is the identifier of the inelastic
-flow. This name can be changed using the
-`stress_criterion_external_name` option.
-
-##### Example of usage
-
-~~~~{.cxx}
-@Brick StandardElastoViscoPlasticity{
-  stress_potential : Hooke{young_modulus : 150e9, poisson_ratio : 0.3},
-  inelastic_flow : "Plastic" {
-    criterion : "Mises",
-    isotropic_hardening : "Linear" {R0 : 33e6, H : 438e6},
-    stress_criterion_external_name : "StressCriterion",
-    save_stress_criterion : true
-  }
-};
-~~~~
 
 #### Maximum equivalent stress in the `Plastic` flow
 
@@ -857,6 +831,31 @@ divergence of the Newton algorithm du to oscillations of the flow
 direction. Specifying a threshold for the angle between. See Section
 @sec:cosine_checks for details.
 
+### Saving the stress criterion
+
+All inelastic flows allows the save the value of the stress
+criterion at `t+\theta\,\Delta\,t` in a dedicated auxiliary state
+variable by setting the `save_stress_criterion` option to `true`.
+
+The external name of this auxiliary state variable defaults to
+`EquivalentStress` + id, where id is the identifier of the inelastic
+flow. This name can be changed using the
+`stress_criterion_external_name` option.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 33e6, H : 438e6},
+    stress_criterion_external_name : "StressCriterion",
+    save_stress_criterion : true
+  }
+};
+~~~~
+
 ## List of available isotropic hardening rules
 
 > **Note**
@@ -1112,9 +1111,9 @@ options:
 };
 ~~~~
 
-## List of rate sensitivity factors {#sec:rate_sensitivity_factors}
+#### List of rate sensitivity factors {#sec:rate_sensitivity_factors}
 
-### Cowper-Symonds's rate sensitivity factor
+##### Cowper-Symonds's rate sensitivity factor
 
 \[
 R_{rs}\paren{\dot{p}}=1+A\,\left(\frac{\dot{p}}{\dot{p}_{0}}\right)^{n}
@@ -1133,7 +1132,7 @@ A\,\left(\frac{\dot{p}}{\dot{p}_{0}}\right)^{n} &&\text{if}&&\dot{p}\geq\dot{p}_
 \right.
 \]
 
-### Johnson-Cook's rate sensitivity factor
+##### Johnson-Cook's rate sensitivity factor
 
 \[
 R_{rs}\paren{\dot{p}}=1+
@@ -1145,6 +1144,31 @@ A\,\log\left(\frac{\dot{p}}{\dot{p}_{0}}\right)&&\text{if}&&\dot{p}\geq\dot{p}_{
 \right.
 \]
 
+### Saving the yield surface's radius
+
+All inelastic flows allows the save the value of the yield surface's
+radius at `t+\theta\,\Delta\,t` in a dedicated auxiliary state variable
+by setting the `save_yield_surface_radius` option to `true`.
+
+The external name of this auxiliary state variable defaults to
+`YieldSurfaceRadius` + id, where id is the identifier of the inelastic
+flow. This name can be changed using the
+`yield_surface_radius_external_name` option.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 33e6, H : 438e6},
+    isotropic_hardening : "Voce" {R0 : 0, Rinf: 50e6, b : 20},
+    yield_surface_radius_external_name : "YieldStrength",
+    save_yield_surface_radius : true
+  }
+};
+~~~~
 
 ## List of available kinematic hardening rules
 

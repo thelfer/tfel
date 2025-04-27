@@ -10,6 +10,10 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   Test8
   Test9
   Test10
+  Test11
+  Test12
+  Test13
+  Test14
   NortonTest
   NortonTest_nj
   NortonTest2
@@ -209,6 +213,10 @@ generictest_standardelastovicoplasticitybrick(Test9
     test9 MFrontStandardElastoViscoPlasticityBrickBehaviours Test9)
 generictest_standardelastovicoplasticitybrick(Test10
     test10 MFrontStandardElastoViscoPlasticityBrickBehaviours Test10)
+generictest_standardelastovicoplasticitybrick(Test11
+    test11 MFrontStandardElastoViscoPlasticityBrickBehaviours Test11)
+generictest_standardelastovicoplasticitybrick(Test13
+    test13 MFrontStandardElastoViscoPlasticityBrickBehaviours Test13)
 
 generictest_standardelastovicoplasticitybrick(GursonTvergaardNeedleman1982-test1
     GursonTvergaardNeedleman1982-test1
