@@ -604,6 +604,10 @@ shows how to use any behaviour law on each phase.
 
 # Issues fixed
 
+## Issue 777: [tfel-check] Clearer message if a directory is given as an argument
+
+For more details, see <https://github.com/thelfer/tfel/issues/777>
+
 ## Issue 763: Personalize names of equivalent plastic strain in `StandardElastoViscoPlasticity`'s inelastic_flow
 
 This feature is described in Section
