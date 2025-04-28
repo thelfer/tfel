@@ -24,6 +24,7 @@
 #include <climits>
 #include <unistd.h>
 #include <libgen.h>
+#include <sys/stat.h>
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
@@ -282,7 +283,23 @@ namespace tfel::check {
         }
       }
     } else {
+      // some tests on the input files
       for (const auto& i : this->inputs) {
+        struct stat file_info;
+        if (::stat(i.c_str(), &file_info) == -1) {
+          log.addMessage("can't get information on input  '" + i + "'");
+          log.addMessage("Aborting");
+          exit(EXIT_FAILURE);
+        }
+        if (!S_ISREG(file_info.st_mode)) {
+          log.addMessage("input  '" + i + "' is not a regular file");
+          log.addMessage("Aborting");
+          exit(EXIT_FAILURE);
+        }
+      }
+      // executing each input files
+      for (const auto& i : this->inputs) {
+        //
         const auto path = strdup(i.c_str());
         const auto path2 = strdup(path);
         const auto d = std::string(::dirname(path));

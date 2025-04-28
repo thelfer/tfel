@@ -623,7 +623,13 @@ namespace tfel::check {
     this->treatCharAsString(true);
     this->mergeStrings(false);
     // open the file
-    this->openFile(this->file);
+    try {
+      this->openFile(this->file);
+    } catch (std::exception& e) {
+      this->throwRuntimeError(
+          "TestLauncher::analyseInputFile",
+          "error while parsing '" + this->file + "', " + std::string{e.what()});
+    }
     // strip any C/C++ comments
     this->stripComments();
     // applying substitutions
