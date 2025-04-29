@@ -137,7 +137,7 @@ namespace tfel {
             if ((strcmp(p->d_name, ".") != 0) &&
                 (strcmp(p->d_name, "..") != 0)) {
               std::map<std::string, std::vector<std::string>> r2;
-              recursiveFind(r2, re, name + '/' + p->d_name, depth + 1, mdepth);
+              recursiveFind(r2, re, name + '/' + p->d_name, b, depth + 1, mdepth);
               r.insert(r2.begin(), r2.end());
             }
           }
