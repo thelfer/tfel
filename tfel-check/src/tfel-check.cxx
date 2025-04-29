@@ -55,7 +55,7 @@ namespace tfel::check {
   static void parseConfigFiles(ConfigurationManager& c) {
     const auto s = tfel::system::dirSeparator();
     std::regex re("tfel-check.config", std::regex_constants::extended);
-    const auto& files = tfel::system::recursiveFind(re, ".", 0);
+    const auto& files = tfel::system::recursiveFind(re, ".", false);
     for (const auto& d : files) {
       for (const auto& f : d.second) {
         parse(c.getConfigurationManager(d.first), d.first + s + f);
@@ -296,7 +296,7 @@ namespace tfel::check {
     int status = EXIT_SUCCESS;
     if (this->inputs.empty()) {
       std::regex re(".+\\.check", std::regex_constants::extended);
-      const auto& files = tfel::system::recursiveFind(re, ".", 0);
+      const auto& files = tfel::system::recursiveFind(re, ".", false);
       for (const auto& d : files) {
         for (const auto& f : d.second) {
           if (!exe(d.first, f)) {

@@ -635,6 +635,10 @@ shows how to use any behaviour law on each phase.
 
 # Issues fixed
 
+## Issue 779: [tfel-check] Failure during parsing step if a symbolic linked was not correctly generated
+
+For more details, see <https://github.com/thelfer/tfel/issues/779>.
+
 ## Issue 778: [tfel-check] Add an option to return a failure if at least one check fails
 
 For more details, see <https://github.com/thelfer/tfel/issues/778>
