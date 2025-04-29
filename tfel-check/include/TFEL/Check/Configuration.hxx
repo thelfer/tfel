@@ -36,7 +36,12 @@ namespace tfel::check {
     Configuration& operator=(Configuration&&);
     //! \brief standard assignement
     Configuration& operator=(const Configuration&);
-    //! \brief list of subordinates
+    /*!
+     * \brief discard command's failure if comparisons are ok.
+     * \note If no comparisons is declared, command's failure is never ignored.
+     */
+    bool discard_commands_failure = true;
+    //! \brief list of components
     std::vector<std::string> available_components;
     /*!
      * \brief substitutions applied to `.check` files.
@@ -45,7 +50,7 @@ namespace tfel::check {
      * replaced by value.
      */
     std::map<std::string, std::string> substitutions;
-    //! global logger
+    //! \brief global logger
     PCLogger log;
   };  // end of struct Configuration
 

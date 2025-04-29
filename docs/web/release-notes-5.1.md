@@ -572,6 +572,37 @@ The following command line arguments are now supported:
     the default behaviour of `mfront-query`).
 - `-Werror` is equivalent to `--warning-error=true`.
 
+# New features in `tfel-check`
+
+## Discard commands failure
+
+By default, `tfel-check` discards a command failure if at least one test
+is defined. The rationale behind this choice is that some command may
+succeed in producing the expected results but may still fail to exit
+properly.
+
+This behavior can be controlled by the `--discard-commands-failure`
+which takes `true` or `false` as argument.
+
+### Example of usage
+
+~~~~
+$ tfel-check --discard-commands-failure=false
+entering directory '/tmp/tests'
+* beginning of test './test.check'
+** Exec-1 ./main                                                       [ FAILED]
+** Compare-1 'results.res' and 'results.res', column '1'               [SUCCESS]
+* end of test './test.check'                                           [ FAILED]
+======
+$ tfel-check --discard-commands-failure=true
+entering directory '/tmp/tests'
+* beginning of test './test.check'
+** Exec-1 ./main                                                       [ FAILED]
+** Compare-1 'results.res' and 'results.res', column '1'               [SUCCESS]
+* end of test './test.check'                                           [SUCCESS]
+====== 
+~~~~
+
 ## New keywords
 
 ### `@TFELLibraries`
@@ -603,6 +634,10 @@ of tangent operator of the local behaviours. The implementation
 shows how to use any behaviour law on each phase.
 
 # Issues fixed
+
+## Issue 778: [tfel-check] Add an option to return a failure if at least one check fails
+
+For more details, see <https://github.com/thelfer/tfel/issues/778>
 
 ## Issue 777: [tfel-check] Clearer message if a directory is given as an argument
 

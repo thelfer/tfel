@@ -77,6 +77,11 @@ namespace tfel::check {
      * \param[in] c: component
      */
     void addComponent(const std::string&);
+    /*!
+     * \brief set discard commands failure
+     * \param[in] b: boolean
+     */
+    void setDiscardCommandsFailure(const bool);
 
    private:
     /*!
@@ -91,7 +96,7 @@ namespace tfel::check {
      * \param[in] f: function applying the modification
      */
     void modify(std::function<void(Configuration&)>);
-    //! current configuration
+    //! \brief current configuration
     Configuration configuration;
     //! \brief list of subordinates
     std::map<std::string, ConfigurationManager> subordinates;
