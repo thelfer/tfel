@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 3.0.15 of the
 
 # Issues fixed
 
+## Issue 782: [tfel-system] `recursiveFind`: directory depths are not handled correctly. The flag selecting the treatment of errors is not passed correctly
+
+For more details, see <https://github.com/thelfer/tfel/issues/782>.
+
 ## Issue 769: Fix potential conflict between `@ComputeStressFressExpansion` and `@ComputeThermalExpansion`
 
 For more details, see <https://github.com/thelfer/tfel/issues/769>.
