@@ -143,13 +143,18 @@ namespace ansys {
       tfel::material::ModellingHypothesis::PLANESTRESS> {
     template <typename Behaviour, typename real>
     static void exe(const Behaviour& b, real* const DDSDDE) {
-      using namespace tfel::material;
-      typedef MechanicalBehaviourTraits<Behaviour> Traits;
-      using handler = typename std::conditional<
-          Traits::isConsistentTangentOperatorSymmetric,
-          SymmetricConsistentTangentOperatorComputer,
-          GeneralConsistentTangentOperatorComputer>::type;
-      handler::exe(b, DDSDDE);
+      constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
+      constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
+      const auto& Dt = b.getTangentOperator();
+      DDSDDE[0] = Dt(0, 0);
+      DDSDDE[1] = Dt(1, 0);
+      DDSDDE[2] = Dt(3, 0) /*  */;
+      DDSDDE[3] = Dt(0, 1);
+      DDSDDE[4] = Dt(1, 1);
+      DDSDDE[5] = Dt(3, 1) /*  */;
+      DDSDDE[6] = Dt(0, 3) /*  */;
+      DDSDDE[7] = Dt(1, 3) /*  */;
+      DDSDDE[8] = Dt(3, 3) /*  */;
     }  // end of exe
    private:
     struct SymmetricConsistentTangentOperatorComputer {
