@@ -643,9 +643,14 @@ namespace tfel::check {
     while (this->current != this->end()) {
       const auto p = this->callBacks.find(this->current->value);
       if (p == this->callBacks.end()) {
-        this->throwRuntimeError(
-            "TestLauncher::analyseInputFile",
-            "unknown keyword '" + this->current->value + "'");
+        auto msg = "unknown keyword '" + this->current->value + "'";
+        if (!this->callBacks.empty()) {
+          msg += ". The following keywords are available:";
+          for (const auto& cb : this->callBacks) {
+            msg += "\n- " + cb.first;
+          }
+        }
+        this->throwRuntimeError("TestLauncher::analyseInputFile", msg);
       }
       ++(this->current);
       (this->*(p->second))();
@@ -753,8 +758,14 @@ namespace tfel::check {
       const auto output_file = this->testname + "-" + step + ".out";
       const auto success = this->execute(c, output_file, step);
       this->glog.addSimpleTestResult("** " + step + " " + c.command, success);
-      if ((!success) && (this->comparisons.empty())) {
-        gsuccess = false;
+      if (!success){
+        if (!configuration.discard_commands_failure) {
+            gsuccess = false;
+        } else {
+          if (this->comparisons.empty()) {
+            gsuccess = false;
+          }
+        }
       }
       ++i;
     }

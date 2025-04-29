@@ -198,6 +198,35 @@ entering directory '/tmp/tfel-check'
 * end of test './ImplicitSimoMieheElastoPlasticity.check'              [SUCCESS]
 ~~~~
 
+## Commands failure
+
+By default, `tfel-check` discards a command failure if at least one test
+is defined. The rationale behind this choice is that some command may
+succeed in producing the expected results but may still fail to exit
+properly.
+
+This behavior can be controlled by the `--discard-commands-failure`
+which takes `true` or `false` as argument.
+
+### Example of usage
+
+~~~~
+$ tfel-check --discard-commands-failure=false
+entering directory '/tmp/tests'
+* beginning of test './test.check'
+** Exec-1 ./main                                                       [ FAILED]
+** Compare-1 'results.res' and 'results.res', column '1'               [SUCCESS]
+* end of test './test.check'                                           [ FAILED]
+======
+$ tfel-check --discard-commands-failure=true
+entering directory '/tmp/tests'
+* beginning of test './test.check'
+** Exec-1 ./main                                                       [ FAILED]
+** Compare-1 'results.res' and 'results.res', column '1'               [SUCCESS]
+* end of test './test.check'                                           [SUCCESS]
+====== 
+~~~~
+
 # Description of the input files{#sec:tfel_check:input_files}
 
 ## List of available keywords

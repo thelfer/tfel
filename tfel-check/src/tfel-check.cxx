@@ -193,6 +193,28 @@ namespace tfel::check {
                  },
                  true));
     this->registerCallBack(
+        "--discard-commands-failure",
+        CallBack(
+            "discard command's failure if comparisons are ok (default "
+            "behaviour). If no "
+            "comparisons is declared, command's failure is never ignored.",
+            [this] {
+              const auto boolean_value = [this] {
+                const auto& opt = this->currentArgument->getOption();
+                if (opt == "true") {
+                  return true;
+                } else if (opt != "false") {
+                  std::cerr << "invalid option '" << opt
+                            << "' passed to '--discard-commands-failure', "
+                            << "expected 'true' or 'false'.";
+                  std::exit(EXIT_FAILURE);
+                }
+                return false;
+              }();
+              this->configurations.setDiscardCommandsFailure(boolean_value);
+            },
+            true));
+    this->registerCallBack(
         "--list-default-components",
         CallBack(
             "list all default components",
