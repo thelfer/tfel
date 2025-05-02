@@ -147,6 +147,11 @@ Different homogenization bounds are implemented.
 The available functions are `computeVoigtStiffness`, `computeReussStiffness`,
 `computeIsotropicHashinShtrikmanBounds`.
 
+### Homogenization schemes
+
+Ponte Castaneda and Willis scheme for distributions
+of ellipsoidal inclusions for biphasic media is now available.
+
 ## Python bindings
 
 Python bindings are now generated using the

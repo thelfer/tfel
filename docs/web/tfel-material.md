@@ -454,7 +454,8 @@ There are also, when the medium is anisotropic, `computeAnisotropicLocalisationT
 
 Different schemes are implemented and return the homogenized stiffness of the material.
 These schemes are introduced by the header `LinearHomogenizationSchemes.hxx`.
-The scheme available are Mori-Tanaka scheme and dilute scheme.
+The scheme available are Mori-Tanaka scheme, dilute scheme, and Ponte Castaneda
+and Willis scheme.
 The available functions are `computeMoriTanakaScheme`, `computeDiluteScheme`,
 `computeSphereDiluteScheme`, `computeSphereMoriTanakaScheme`.
 
@@ -462,8 +463,9 @@ If a distribution of ellipsoids is considered, three types of distributions
 are considered : isotropic, transverse isotropic and with unique orientation.
 The corresponding functions are `computeIsotropicDiluteScheme`,
 `computeTransverseIsotropicDiluteScheme`, `computeOrientedDiluteScheme`,
-`computeIsotropicMoriTanakaScheme`, `computeTransverseIsotropicMoriTanakaScheme`
-and `computeOrientedMoriTanakaScheme`.
+`computeIsotropicMoriTanakaScheme`, `computeTransverseIsotropicMoriTanakaScheme`,
+`computeOrientedMoriTanakaScheme`, `computeIsotropicPCWScheme`,
+`computeTransverseIsotropicPCWScheme` and `computeOrientedPCWScheme`.
 
 ## Homogenization bounds
 
