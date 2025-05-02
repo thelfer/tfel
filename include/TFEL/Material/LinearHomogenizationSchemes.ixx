@@ -526,6 +526,146 @@ namespace tfel::material::homogenization::elasticity {
                                                      nu_i, A);
   }
 
+  template <typename real, typename StressType, typename LengthType>
+  const tfel::math::st2tost2<3u, StressType> computePCWScheme(
+      const StressType& young,
+      const real& nu,
+      const real& f,
+      const StressType& young_i,
+      const real& nu_i,
+      const tfel::math::st2tost2<3u, real>& A,
+      const tfel::math::tvector<3u, real>& n_a_d,
+      const LengthType& a_d,
+      const tfel::math::tvector<3u, real>& n_b_d,
+      const LengthType& b_d,
+      const LengthType& c_d) {
+    if ((f < 0) || (f > 1)) {
+      tfel::reportContractViolation("f<0 or f>1");
+    }
+    tfel::math::st2tost2<3u, StressType> C_0;
+    static constexpr auto value =
+        StiffnessTensorAlterationCharacteristic::UNALTERED;
+    computeIsotropicStiffnessTensorII<3u, value, StressType, real>(C_0, young,
+                                                                   nu);
+    const auto S0 = invert(C_0);
+    tfel::math::st2tost2<3u, StressType> C_i;
+    computeIsotropicStiffnessTensorII<3u, value, StressType, real>(C_i, young_i,
+                                                                   nu_i);
+
+    const auto n_a_d_ = n_a_d / norm(n_a_d);
+    const auto n_b_d_ = n_b_d / norm(n_b_d);
+    const auto n_c_d_ = tfel::math::cross_product<real>(n_a_d_, n_b_d_);
+    const std::array<LengthType, 3> abc_ = {a_d, b_d, c_d};
+    const auto sig = internals::sortEllipsoidLengths<LengthType>(a_d, b_d, c_d);
+    const auto S = computeEshelbyTensor<real, LengthType>(
+        nu, abc_[sig[0]], abc_[sig[1]], abc_[sig[2]]);
+    const std::array<tfel::math::tvector<3u, real>, 3> nabc_ = {n_a_d_, n_b_d_,
+                                                                n_c_d_};
+    const auto n_1 = nabc_[sig[0]];
+    const auto n_2 = nabc_[sig[1]];
+    using namespace tfel::math;
+    const auto n_3 = cross_product<real>(n_1, n_2);
+    const rotation_matrix<real> r = {n_1[0], n_1[1], n_1[2], n_2[0], n_2[1],
+                                     n_2[2], n_3[0], n_3[1], n_3[2]};
+    const auto S_basis = change_basis(S, r);
+    const auto P_d = S_basis * S0;
+    const auto C = C_i - C_0;
+    const auto Pr = C * A;
+    const auto PPr = Pr * P_d;
+    const auto I = tfel::math::st2tost2<3u, real>::Id();
+    const auto inv = invert(I - f * PPr);
+    return C_0 + f * inv * Pr;
+  }
+
+  template <typename real, typename StressType, typename LengthType>
+  const tfel::math::st2tost2<3u, StressType> computeIsotropicPCWScheme(
+      const StressType& young,
+      const real& nu,
+      const real& f,
+      const StressType& young_i,
+      const real& nu_i,
+      const LengthType& a,
+      const LengthType& b,
+      const LengthType& c,
+      const tfel::math::tvector<3u, real>& n_a_d,
+      const LengthType& a_d,
+      const tfel::math::tvector<3u, real>& n_b_d,
+      const LengthType& b_d,
+      const LengthType& c_d) {
+    if ((f < 0) || (f > 1)) {
+      tfel::reportContractViolation("f<0 or f>1");
+    }
+    const auto pairA =
+        EllipsoidMeanLocalisator<3u, real, StressType, LengthType>::Isotropic(
+            young, nu, young_i, nu_i, a, b, c);
+    const auto ka=std::get<0>(pairA);
+    const auto mu=std::get<1>(pairA);
+    const auto A=3*ka*tfel::math::st2tost2<3u,real>::J()+2*mu*tfel::math::st2tost2<3u,real>::K();
+
+    return computePCWScheme<real,StressType,LengthType>(young, nu, f, young_i, nu_i, A, n_a_d, a_d, n_b_d,
+                            b_d, c_d);
+  }
+
+  template <typename real, typename StressType, typename LengthType>
+  const tfel::math::st2tost2<3u, StressType>
+  computeTransverseIsotropicPCWScheme(
+      const StressType& young,
+      const real& nu,
+      const real& f,
+      const StressType& young_i,
+      const real& nu_i,
+      const tfel::math::tvector<3u, real>& n_a,
+      const LengthType& a,
+      const LengthType& b,
+      const LengthType& c,
+      const tfel::math::tvector<3u, real>& n_a_d,
+      const LengthType& a_d,
+      const tfel::math::tvector<3u, real>& n_b_d,
+      const LengthType& b_d,
+      const LengthType& c_d) {
+    if ((f < 0) || (f > 1)) {
+      tfel::reportContractViolation("f<0 or f>1");
+    }
+
+    const auto A =
+        EllipsoidMeanLocalisator<3u, real, StressType,
+                                 LengthType>::TransverseIsotropic(young, nu,
+                                                                  young_i, nu_i,
+                                                                  n_a, a, b, c);
+
+    return computePCWScheme<real,StressType,LengthType>(young, nu, f, young_i, nu_i, A, n_a_d, a_d, n_b_d,
+                            b_d, c_d);
+  }
+
+  template <typename real, typename StressType, typename LengthType>
+  const tfel::math::st2tost2<3u, StressType> computeOrientedPCWScheme(
+      const StressType& young,
+      const real& nu,
+      const real& f,
+      const StressType& young_i,
+      const real& nu_i,
+      const tfel::math::tvector<3u, real>& n_a,
+      const LengthType& a,
+      const tfel::math::tvector<3u, real>& n_b,
+      const LengthType& b,
+      const LengthType& c,
+      const tfel::math::tvector<3u, real>& n_a_d,
+      const LengthType& a_d,
+      const tfel::math::tvector<3u, real>& n_b_d,
+      const LengthType& b_d,
+      const LengthType& c_d) {
+    if ((f < 0) || (f > 1)) {
+      tfel::reportContractViolation("f<0 or f>1");
+    }
+
+    const auto A =
+        EllipsoidMeanLocalisator<3u, real, StressType, LengthType>::Oriented(
+            young, nu, young_i, nu_i, n_a, a, n_b, b, c);
+
+    return computePCWScheme<real,StressType,LengthType>(young, nu, f, young_i, nu_i, A, n_a_d, a_d, n_b_d,
+                            b_d, c_d);
+  }
+
 }  // end of namespace tfel::material::homogenization::elasticity
 
 #endif /* LIB_TFEL_MATERIAL_LINEARHOMOGENIZATIONSCHEMES_IXX */

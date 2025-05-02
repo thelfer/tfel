@@ -297,6 +297,184 @@ namespace tfel::material::homogenization::elasticity {
                                   const LengthType&,
                                   const LengthType&);
 
+  /*!
+   * This function gives the homogenized stiffness for a Ponte-Castaneda and
+   * Willis scheme,
+   * for a distribution of ellipsoids with the same shape
+   * (formula 3.27 of Ponte Castaneda 1995).
+   * The mean localisator A is given by the user and depends on the
+   * distribution of orientations (the user can also uses
+   * computeIsotropicPCWscheme and others). \return an object of type
+   * st2tost2<3u,StressType> \tparam real: underlying type \tparam StressType:
+   * type of the elastic constants related to the matrix and the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoids
+   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
+   * \param [in] f: volumic fraction of ellipsoids
+   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the
+   * inclusions
+   * \param [in] A: mean strain localisation tensor of inclusions
+   * \param [in] n_a_d: direction of the principal axis whose semi-length is
+   * \f$a\f$ (related to the
+   * distribution of inclusions)
+   * \param[in] a_d: length of the first semi-axis
+   * \param [in] n_b_d: direction of the principal axis whose semi-length is
+   * \f$a\f$
+   * \param[in] b_d: length of the second semi-axis
+   * \param[in] c_d: length of the third semi-axis
+   */
+  template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType> computePCWScheme(
+      const StressType&,
+      const real&,
+      const real&,
+      const StressType&,
+      const real&,
+      const tfel::math::st2tost2<3u, real>&,
+      const tfel::math::tvector<3u, real>&,
+      const LengthType&,
+      const tfel::math::tvector<3u, real>&,
+      const LengthType&,
+      const LengthType&);
+
+  /*!
+   * This function gives the homogenized stiffness for a Ponte-Castaneda and
+   * Willis scheme,
+   * for a distribution of ellipsoids with the same shape and a uniform
+   * isotropic distribution of their orientations
+   * (formula 3.27 of Ponte Castaneda 1995).
+   * \return an object of type st2tost2<3u,StressType>
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix and
+   * the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoids
+   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
+   * \param [in] f: volumic fraction of ellipsoids
+   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the
+   * inclusions
+   * \param[in] a: length of the first semi-axis (of the ellipsoids)
+   * \param[in] b: length of the second semi-axis
+   * \param[in] c: length of the third semi-axis
+   * \param [in] n_a_d: direction of the principal axis whose semi-length is
+   * \f$a\f$ (related to the
+   * distribution of inclusions)
+   * \param[in] a_d: length of the first semi-axis
+   * \param [in] n_b_d: direction of the principal axis whose semi-length is
+   * \f$a\f$
+   * \param[in] b_d: length of the second semi-axis
+   * \param[in] c_d: length of the third semi-axis
+   */
+  template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
+  computeIsotropicPCWScheme(const StressType&,
+                            const real&,
+                            const real&,
+                            const StressType&,
+                            const real&,
+                            const LengthType&,
+                            const LengthType&,
+                            const LengthType&,
+                            const tfel::math::tvector<3u, real>&,
+                            const LengthType&,
+                            const tfel::math::tvector<3u, real>&,
+                            const LengthType&,
+                            const LengthType&);
+
+  /*!
+   * This function gives the homogenized stiffness for a Ponte-Castaneda and
+   * Willis scheme,
+   * for a distribution of ellipsoids with the same shape and a uniform
+   * isotropic distribution of their orientations
+   * (formula 3.27 of Ponte Castaneda 1995).
+   * \return an object of type st2tost2<3u,StressType>
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix and
+   * the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoids
+   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
+   * \param [in] f: volumic fraction of ellipsoids
+   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the
+   * inclusions
+   * \param [in] n_a: direction of the principal axis whose semi-length is
+   * \f$a\f$ (related to the shape of the inclusions)
+   * \param[in] a: length of semi-axis relative to the direction
+   * \f$n_a\f$
+   * \param[in] b: length of the semi-axis relative to the direction \f$n_b\f$
+   * \param[in] c: length of the third semi-axis
+   * \param [in] n_a_d: direction of the principal axis whose semi-length is
+   * \f$a\f$ (related to the
+   * distribution of inclusions)
+   * \param[in] a_d: length of the first semi-axis
+   * \param [in] n_b_d: direction of the principal axis whose semi-length is
+   * \f$a\f$
+   * \param[in] b_d: length of the second semi-axis
+   * \param[in] c_d: length of the third semi-axis
+   */
+  template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
+  computeTransverseIsotropicPCWScheme(const StressType&,
+                                      const real&,
+                                      const real&,
+                                      const StressType&,
+                                      const real&,
+                                      const tfel::math::tvector<3u, real>&,
+                                      const LengthType&,
+                                      const LengthType&,
+                                      const LengthType&,
+                                      const tfel::math::tvector<3u, real>&,
+                                      const LengthType&,
+                                      const tfel::math::tvector<3u, real>&,
+                                      const LengthType&,
+                                      const LengthType&);
+
+  /*!
+   * This function gives the homogenized stiffness for a Ponte-Castaneda and
+   * Willis scheme,
+   * for a distribution of ellipsoids with the same shape and a fixed
+   * orientation (formula 3.25 of Ponte Castaneda 1995).
+   * \return an object of type st2tost2<3u,StressType>
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix and
+   * the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoids
+   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
+   * \param [in] f: volumic fraction of ellipsoids
+   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the
+   * inclusions
+   * \param [in] n_a: direction of the principal axis whose semi-length is
+   * \f$a\f$ (related to the shape of the inclusions)
+   * \param[in] a: length of semi-axis relative to the direction
+   * \f$n_a\f$
+   * \param [in] n_b: direction of the principal axis whose
+   * semi-length is \f$b\f$
+   * \param[in] b: length of the semi-axis relative to the direction \f$n_b\f$
+   * \param[in] c: length of the third semi-axis
+   * \param [in] n_a_d: direction of the principal axis whose semi-length is
+   * \f$a\f$ (related to the
+   * distribution of inclusions)
+   * \param[in] a_d: length of the first semi-axis
+   * \param [in] n_b_d: direction of the principal axis whose semi-length is
+   * \f$a\f$
+   * \param[in] b_d: length of the second semi-axis
+   * \param[in] c_d: length of the third semi-axis
+   */
+  template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
+  computeOrientedPCWScheme(const StressType&,
+                           const real&,
+                           const real&,
+                           const StressType&,
+                           const real&,
+                           const tfel::math::tvector<3u, real>&,
+                           const LengthType&,
+                           const tfel::math::tvector<3u, real>&,
+                           const LengthType&,
+                           const LengthType&,
+                           const tfel::math::tvector<3u, real>&,
+                           const LengthType&,
+                           const tfel::math::tvector<3u, real>&,
+                           const LengthType&,
+                           const LengthType&);
+
 }  // end of namespace tfel::material::homogenization::elasticity
 
 #include "TFEL/Material/LinearHomogenizationSchemes.ixx"
