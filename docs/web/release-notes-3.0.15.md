@@ -20,6 +20,8 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 3.0.15 of the
 `TFEL` project.
 
+This version was released on Mai 12, 2025.
+
 # Issues fixed
 
 ## Issue 782: [tfel-system] `recursiveFind`: directory depths are not handled correctly. The flag selecting the treatment of errors is not passed correctly

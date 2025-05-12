@@ -19,7 +19,7 @@
 // in c++ other than defining some macros specific to the standard
 // library implementation: here we want to detect if we use libc++
 // which is a bit touchy with std::complex
-#include <ciso646>
+#include <version>
 
 #if (defined _LIBCPP_VERSION)
 #include <complex>
