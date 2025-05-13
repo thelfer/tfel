@@ -395,6 +395,7 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       const auto f = real{0.2};
       const tfel::math::tvector<3u, real> n_a = {0., 0., 1.};
       const tfel::math::tvector<3u, real> n_b = {1., 0., 0.};
+      const Distribution<real,length> D={.n_a=n_a,.a=a,.n_b=n_b,.b=b,.c=c};
       // OrientedPCWScheme must be equal to OrientedMoriTanakaScheme,
       // when the tensor P_d is oriented in the same way as the ellipsoids,
       // with the same lengths
@@ -402,14 +403,14 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
           computeOrientedMoriTanakaScheme<real, stress, length>(
               young, nu, f, young_i, nu_i, n_a, a, n_b, b, c);
       const auto ChomPCW1 = computeOrientedPCWScheme<real, stress, length>(
-          young, nu, f, young_i, nu_i, n_a, a, n_b, b, c, n_a, a, n_b, b, c);
+          young, nu, f, young_i, nu_i, n_a, a, n_b, b, c, D);
       // Test the compilation
       const auto ChomPCW3 =
           computeTransverseIsotropicPCWScheme<real, stress, length>(
-              young, nu, f, young_i, nu_i, n_a, a, b, c, n_a, a, n_b, b, c);
+              young, nu, f, young_i, nu_i, n_a, a, b, c, D);
 
       const auto ChomPCW2 = computeIsotropicPCWScheme<real, stress, length>(
-          young, nu, f, young_i, nu_i, a, b, c, n_a, b, n_b, b, c);
+          young, nu, f, young_i, nu_i, a, b, c, D);
 
       TFEL_TESTS_ASSERT(my_abs(ChomMT1(2, 2) - ChomPCW1(2, 2)) < seps);
       // std::cout << (ChomMT1(2, 2)).getValue()<<" "<<ChomPCW1(2, 2).getValue()

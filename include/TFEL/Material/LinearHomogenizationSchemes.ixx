@@ -534,11 +534,7 @@ namespace tfel::material::homogenization::elasticity {
       const StressType& young_i,
       const real& nu_i,
       const tfel::math::st2tost2<3u, real>& A,
-      const tfel::math::tvector<3u, real>& n_a_d,
-      const LengthType& a_d,
-      const tfel::math::tvector<3u, real>& n_b_d,
-      const LengthType& b_d,
-      const LengthType& c_d) {
+      const Distribution<real,LengthType>& D) {
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
@@ -552,11 +548,11 @@ namespace tfel::material::homogenization::elasticity {
     computeIsotropicStiffnessTensorII<3u, value, StressType, real>(C_i, young_i,
                                                                    nu_i);
 
-    const auto n_a_d_ = n_a_d / norm(n_a_d);
-    const auto n_b_d_ = n_b_d / norm(n_b_d);
+    const auto n_a_d_ = D.n_a / norm(D.n_a);
+    const auto n_b_d_ = D.n_b / norm(D.n_b);
     const auto n_c_d_ = tfel::math::cross_product<real>(n_a_d_, n_b_d_);
-    const std::array<LengthType, 3> abc_ = {a_d, b_d, c_d};
-    const auto sig = internals::sortEllipsoidLengths<LengthType>(a_d, b_d, c_d);
+    const std::array<LengthType, 3> abc_ = {D.a, D.b, D.c};
+    const auto sig = internals::sortEllipsoidLengths<LengthType>(D.a, D.b, D.c);
     const auto S = computeEshelbyTensor<real, LengthType>(
         nu, abc_[sig[0]], abc_[sig[1]], abc_[sig[2]]);
     const std::array<tfel::math::tvector<3u, real>, 3> nabc_ = {n_a_d_, n_b_d_,
@@ -587,11 +583,7 @@ namespace tfel::material::homogenization::elasticity {
       const LengthType& a,
       const LengthType& b,
       const LengthType& c,
-      const tfel::math::tvector<3u, real>& n_a_d,
-      const LengthType& a_d,
-      const tfel::math::tvector<3u, real>& n_b_d,
-      const LengthType& b_d,
-      const LengthType& c_d) {
+      const Distribution<real,LengthType>& D) {
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
@@ -602,8 +594,7 @@ namespace tfel::material::homogenization::elasticity {
     const auto mu=std::get<1>(pairA);
     const auto A=3*ka*tfel::math::st2tost2<3u,real>::J()+2*mu*tfel::math::st2tost2<3u,real>::K();
 
-    return computePCWScheme<real,StressType,LengthType>(young, nu, f, young_i, nu_i, A, n_a_d, a_d, n_b_d,
-                            b_d, c_d);
+    return computePCWScheme<real,StressType,LengthType>(young, nu, f, young_i, nu_i, A, D);
   }
 
   template <typename real, typename StressType, typename LengthType>
@@ -618,11 +609,7 @@ namespace tfel::material::homogenization::elasticity {
       const LengthType& a,
       const LengthType& b,
       const LengthType& c,
-      const tfel::math::tvector<3u, real>& n_a_d,
-      const LengthType& a_d,
-      const tfel::math::tvector<3u, real>& n_b_d,
-      const LengthType& b_d,
-      const LengthType& c_d) {
+      const Distribution<real,LengthType>& D) {
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
@@ -633,8 +620,7 @@ namespace tfel::material::homogenization::elasticity {
                                                                   young_i, nu_i,
                                                                   n_a, a, b, c);
 
-    return computePCWScheme<real,StressType,LengthType>(young, nu, f, young_i, nu_i, A, n_a_d, a_d, n_b_d,
-                            b_d, c_d);
+    return computePCWScheme<real,StressType,LengthType>(young, nu, f, young_i, nu_i, A, D);
   }
 
   template <typename real, typename StressType, typename LengthType>
@@ -649,11 +635,7 @@ namespace tfel::material::homogenization::elasticity {
       const tfel::math::tvector<3u, real>& n_b,
       const LengthType& b,
       const LengthType& c,
-      const tfel::math::tvector<3u, real>& n_a_d,
-      const LengthType& a_d,
-      const tfel::math::tvector<3u, real>& n_b_d,
-      const LengthType& b_d,
-      const LengthType& c_d) {
+      const Distribution<real,LengthType>& D) {
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
@@ -662,8 +644,7 @@ namespace tfel::material::homogenization::elasticity {
         EllipsoidMeanLocalisator<3u, real, StressType, LengthType>::Oriented(
             young, nu, young_i, nu_i, n_a, a, n_b, b, c);
 
-    return computePCWScheme<real,StressType,LengthType>(young, nu, f, young_i, nu_i, A, n_a_d, a_d, n_b_d,
-                            b_d, c_d);
+    return computePCWScheme<real,StressType,LengthType>(young, nu, f, young_i, nu_i, A, D);
   }
 
 }  // end of namespace tfel::material::homogenization::elasticity
