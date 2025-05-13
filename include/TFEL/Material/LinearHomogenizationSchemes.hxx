@@ -297,28 +297,22 @@ namespace tfel::material::homogenization::elasticity {
                                   const LengthType&,
                                   const LengthType&);
 
-  
   /*!
-   * Here is a structure that defines a distribution of inclusions for Ponte-Castaneda &
-   * Willis scheme.
-   * \ n_a: direction of the principal axis whose semi-length is
-   * \f$a\f$
-   * \ a: length of the first semi-axis
-   * \ n_b: direction of the principal axis whose semi-length is
-   * \f$b\f$
-   * \ b: length of the second semi-axis
-   * \ c: length of the third semi-axis
-     */
-     template <typename real, typename LengthType>
-    struct Distribution{
-       tfel::math::tvector<3u, real> n_a;
-       LengthType a;
-       tfel::math::tvector<3u, real> n_b;
-       LengthType b;
-       LengthType c;
-	};
-	
-	
+   * Here is a structure that defines a distribution of inclusions for
+   * Ponte-Castaneda & Willis scheme. \ n_a: direction of the principal axis
+   * whose semi-length is \f$a\f$ \ a: length of the first semi-axis \ n_b:
+   * direction of the principal axis whose semi-length is \f$b\f$ \ b: length of
+   * the second semi-axis \ c: length of the third semi-axis
+   */
+  template <typename real, typename LengthType>
+  struct Distribution {
+    tfel::math::tvector<3u, real> n_a;
+    LengthType a;
+    tfel::math::tvector<3u, real> n_b;
+    LengthType b;
+    LengthType c;
+  };
+
   /*!
    * This function gives the homogenized stiffness for a Ponte-Castaneda and
    * Willis scheme,
@@ -345,7 +339,7 @@ namespace tfel::material::homogenization::elasticity {
       const StressType&,
       const real&,
       const tfel::math::st2tost2<3u, real>&,
-      const Distribution<real,LengthType>&);
+      const Distribution<real, LengthType>&);
 
   /*!
    * This function gives the homogenized stiffness for a Ponte-Castaneda and
@@ -377,7 +371,7 @@ namespace tfel::material::homogenization::elasticity {
                             const LengthType&,
                             const LengthType&,
                             const LengthType&,
-                            const Distribution<real,LengthType>&);
+                            const Distribution<real, LengthType>&);
 
   /*!
    * This function gives the homogenized stiffness for a Ponte-Castaneda and
@@ -413,7 +407,7 @@ namespace tfel::material::homogenization::elasticity {
                                       const LengthType&,
                                       const LengthType&,
                                       const LengthType&,
-                                      const Distribution<real,LengthType>&);
+                                      const Distribution<real, LengthType>&);
 
   /*!
    * This function gives the homogenized stiffness for a Ponte-Castaneda and
@@ -451,7 +445,7 @@ namespace tfel::material::homogenization::elasticity {
                            const tfel::math::tvector<3u, real>&,
                            const LengthType&,
                            const LengthType&,
-                           const Distribution<real,LengthType>&);
+                           const Distribution<real, LengthType>&);
 
 }  // end of namespace tfel::material::homogenization::elasticity
 

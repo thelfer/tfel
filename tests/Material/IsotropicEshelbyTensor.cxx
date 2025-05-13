@@ -255,8 +255,8 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     }
 #endif /* _LIBCPP_VERSION */
   }
-  
-   // These functions must return the same thing
+
+  // These functions must return the same thing
   template <typename NumericType, bool use_qt>
   void test_hill_tensors() {
 #ifndef _LIBCPP_VERSION
@@ -274,32 +274,35 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
 
     using namespace tfel::material::homogenization::elasticity;
     {
-      const auto PSphere_1 = computeSphereHillPolarisationTensor<real, stress>(
-          young, nu);
+      const auto PSphere_1 =
+          computeSphereHillPolarisationTensor<real, stress>(young, nu);
       const auto PSphere_2 =
           computeAxisymmetricalHillPolarisationTensor<real, stress>(
               young, nu, n_a, real{1});
-      const auto PSphere_3 =
-          computeHillPolarisationTensor<real, stress, lg>(
-              young, nu, n_a, lg{2}, n_b, lg{2.00000001},
-              lg{2.00001});
-      const auto kappa = young/3./(1-2*nu);
-      const auto mu = young/2./(1+nu);
+      const auto PSphere_3 = computeHillPolarisationTensor<real, stress, lg>(
+          young, nu, n_a, lg{2}, n_b, lg{2.00000001}, lg{2.00001});
+      const auto kappa = young / 3. / (1 - 2 * nu);
+      const auto mu = young / 2. / (1 + nu);
       const auto PSphere_4 = computeSphereHillPolarisationTensor<real, stress>(
-          {.kappa=kappa, .mu=mu});
-      const auto PSphere_5 =
-          computeHillPolarisationTensor<real, stress, lg>(
-              {.kappa=kappa, .mu=mu}, n_a, lg{2}, n_b, lg{2.00000001},
-              lg{2.00001});
-      const auto PSphere_6 = computeAxisymmetricalHillPolarisationTensor<real, stress>(
-          {.kappa=kappa, .mu=mu},n_a,real(1));
+          {.kappa = kappa, .mu = mu});
+      const auto PSphere_5 = computeHillPolarisationTensor<real, stress, lg>(
+          {.kappa = kappa, .mu = mu}, n_a, lg{2}, n_b, lg{2.00000001},
+          lg{2.00001});
+      const auto PSphere_6 =
+          computeAxisymmetricalHillPolarisationTensor<real, stress>(
+              {.kappa = kappa, .mu = mu}, n_a, real(1));
       for (int i : {0, 1, 2, 3, 4, 5}) {
         for (int j : {0, 1, 2, 3, 4, 5}) {
-          TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_2(i, j)) < compliance(eps));
-          TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_3(i, j)) < compliance(eps));
-          TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_4(i, j)) < compliance(eps));
-          TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_5(i, j)) < compliance(eps));
-          TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_5(i, j)) < compliance(eps));
+          TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_2(i, j)) <
+                            compliance(eps));
+          TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_3(i, j)) <
+                            compliance(eps));
+          TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_4(i, j)) <
+                            compliance(eps));
+          TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_5(i, j)) <
+                            compliance(eps));
+          TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_5(i, j)) <
+                            compliance(eps));
         }
       }
     }
@@ -309,14 +312,17 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
               young, nu, n_a, lg{20} / lg{2.0001});
       const auto PAxis_2 = computeHillPolarisationTensor<real, stress, lg>(
           young, nu, n_a, lg{20}, n_b, lg{2}, lg{2.0001});
-      const auto kappa = young/3./(1-2*nu);
-      const auto mu = young/2./(1+nu);
-      const auto PAxis_3 = computeAxisymmetricalHillPolarisationTensor<real, stress>(
-          {.kappa=kappa, .mu=mu},n_a, lg{20} / lg{2.0001});
+      const auto kappa = young / 3. / (1 - 2 * nu);
+      const auto mu = young / 2. / (1 + nu);
+      const auto PAxis_3 =
+          computeAxisymmetricalHillPolarisationTensor<real, stress>(
+              {.kappa = kappa, .mu = mu}, n_a, lg{20} / lg{2.0001});
       for (int i : {0, 1, 2, 3, 4, 5}) {
         for (int j : {0, 1, 2, 3, 4, 5}) {
-          TFEL_TESTS_ASSERT(my_abs(PAxis_1(i, j) - PAxis_2(i, j)) < compliance(eps));
-          TFEL_TESTS_ASSERT(my_abs(PAxis_1(i, j) - PAxis_3(i, j)) < compliance(eps));
+          TFEL_TESTS_ASSERT(my_abs(PAxis_1(i, j) - PAxis_2(i, j)) <
+                            compliance(eps));
+          TFEL_TESTS_ASSERT(my_abs(PAxis_1(i, j) - PAxis_3(i, j)) <
+                            compliance(eps));
         }
       }
     }
@@ -342,8 +348,9 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       const auto Pnnnn = n_aa_n_aa * (Prot1 * n_aa_n_aa);
       const auto Ptttt = n_bb_n_bb * (Prot1 * n_bb_n_bb);
       const auto Pttnn = n_bb_n_bb * (Prot1 * n_aa_n_aa);
-      std::cout << Ptttt(0).getValue() << Pnnnn(0).getValue() << Pttnn(0).getValue() << std::endl;
-      TFEL_TESTS_ASSERT(5*Pnnnn(0) -  Ptttt(0) <compliance(0));
+      std::cout << Ptttt(0).getValue() << Pnnnn(0).getValue()
+                << Pttnn(0).getValue() << std::endl;
+      TFEL_TESTS_ASSERT(5 * Pnnnn(0) - Ptttt(0) < compliance(0));
     }
 #endif /* _LIBCPP_VERSION */
   }

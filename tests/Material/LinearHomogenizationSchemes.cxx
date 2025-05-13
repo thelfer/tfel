@@ -395,7 +395,8 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       const auto f = real{0.2};
       const tfel::math::tvector<3u, real> n_a = {0., 0., 1.};
       const tfel::math::tvector<3u, real> n_b = {1., 0., 0.};
-      const Distribution<real,length> D={.n_a=n_a,.a=a,.n_b=n_b,.b=b,.c=c};
+      const Distribution<real, length> D = {
+          .n_a = n_a, .a = a, .n_b = n_b, .b = b, .c = c};
       // OrientedPCWScheme must be equal to OrientedMoriTanakaScheme,
       // when the tensor P_d is oriented in the same way as the ellipsoids,
       // with the same lengths
