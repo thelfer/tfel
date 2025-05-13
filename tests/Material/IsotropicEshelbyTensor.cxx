@@ -298,7 +298,7 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
           TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_2(i, j)) < compliance(eps));
           TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_3(i, j)) < compliance(eps));
           TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_4(i, j)) < compliance(eps));
-          std::cout<<PSphere_6(i, j).getValue()<<std::endl;
+          TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_5(i, j)) < compliance(eps));
           TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_5(i, j)) < compliance(eps));
         }
       }
