@@ -18,7 +18,37 @@
 #include <stdexcept>
 
 namespace tfel::material::homogenization::elasticity {
-
+  
+  template <typename StressType>
+  struct KGModuli{
+   StressType kappa;
+   StressType mu;
+  };
+  
+  template <typename real,typename StressType>
+  struct EnuModuli{
+   StressType E;
+   real nu;
+  };
+  
+  template <typename real,typename StressType>
+  TFEL_HOST_DEVICE KGModuli<StressType> convertEnuModuli(const EnuModuli<real,StressType>& Enu){
+   const auto E=Enu.E;
+   const auto nu=Enu.nu;
+   const KGModuli<StressType> KG={.kappa=E/3./(1-2*nu),.mu=E/2./(1+nu)};
+   return KG;
+  }
+  
+  template <typename real,typename StressType>
+  TFEL_HOST_DEVICE EnuModuli<real,StressType> convertKGModuli(const KGModuli<StressType>& KG){
+   const auto kappa=KG.kappa;
+   const auto mu=KG.mu;
+   const auto nu=(3 * kappa - 2 * mu) / (2 * mu + 6 * kappa);
+   const auto E=2 * mu * (1 + nu);
+   const EnuModuli<real,StressType> Enu={.E=E,.nu=nu};
+   return Enu;
+  }
+  
   /*!
    * This function builds the Eshelby tensor of a circular cylinder embedded
    * in an isotropic matrix, considering a PLANE STRAIN modelling hypothesis
@@ -68,6 +98,18 @@ namespace tfel::material::homogenization::elasticity {
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, tfel::math::invert_type<StressType>> computeSphereHillPolarisationTensor(
       const StressType&,
       const real&);
+      
+   /*!
+   * This function do the same as computeSphereHillPolarisationTensor
+   * but with elastic moduli of KGModuli type
+   * \return an object of type st2tost2<3u,invert_type<StressType>>
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants
+   * \param[in] KG: moduli of the matrix
+   */
+  template <typename real,typename StressType>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, tfel::math::invert_type<StressType>> computeSphereHillPolarisationTensor(
+      const KGModuli<StressType>&);
                                      
                                      
   /*!
@@ -97,6 +139,8 @@ namespace tfel::material::homogenization::elasticity {
                                      const real = real{1.5e-4},
                                      const real = real{1e-5});
                                      
+                                     
+                                     
    /*!
    * This function builds the Hill tensor of an axisymmetrical ellipsoid
    * embedded in an isotropic matrix. The function takes into account the
@@ -120,6 +164,23 @@ namespace tfel::material::homogenization::elasticity {
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, tfel::math::invert_type<StressType>>
   computeAxisymmetricalHillPolarisationTensor(const StressType&,
   				     const real&,
+  				     const tfel::math::tvector<3u, real>&,
+                                     const real&,
+                                     const real = real{8e-3},
+                                     const real = real{1.5e-4},
+                                     const real = real{1e-5});
+                                     
+   /*!
+   * This function do the same as computeAxisymmetricalHillPolarisationTensor
+   * but with elastic moduli of KGModuli type
+   * \return an object of type st2tost2<3u,invert_type<StressType>>
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants
+   * \param[in] KG: moduli of the matrix
+   */
+  template <typename real,typename StressType>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, tfel::math::invert_type<StressType>>
+  computeAxisymmetricalHillPolarisationTensor(const KGModuli<StressType>&,
   				     const tfel::math::tvector<3u, real>&,
                                      const real&,
                                      const real = real{8e-3},
@@ -187,6 +248,27 @@ namespace tfel::material::homogenization::elasticity {
       const StressType&,
       const real&,
       const tfel::math::tvector<3u, real>&,
+      const LengthType&,
+      const tfel::math::tvector<3u, real>&,
+      const LengthType&,
+      const LengthType&,
+      const real = real{8e-3},
+      const real = real{1.5e-4},
+      const real = real{1e-5});
+      
+   /*!
+   * This function do the same as computeHillPolarisationTensor
+   * but with elastic moduli of KGModuli type
+   * \return an object of type st2tost2<3u,invert_type<StressType>>
+   * \tparam real: underlying type
+   * \tparam LengthType: type of the dimensions of the ellipsoid
+   * \tparam StressType: type of the elastic constants
+   * \param[in] KG: moduli of the matrix
+   */
+  template <typename real,typename StressType,typename LengthType>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, tfel::math::invert_type<StressType>>
+  computeHillPolarisationTensor(const KGModuli<StressType>&,
+  				     const tfel::math::tvector<3u, real>&,
       const LengthType&,
       const tfel::math::tvector<3u, real>&,
       const LengthType&,

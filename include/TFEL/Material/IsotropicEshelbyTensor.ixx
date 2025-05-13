@@ -103,6 +103,13 @@ namespace tfel::material::homogenization::elasticity {
     using namespace tfel::math;
     return a * st2tost2<3u, real>::J() + b * st2tost2<3u, real>::K();
   }  // end of function computeSphereHillPolarisationTensor
+  
+  template <typename real,typename StressType>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, tfel::math::invert_type<StressType>> computeSphereHillPolarisationTensor(
+      const KGModuli<StressType>& KG0) {
+      const EnuModuli<real,StressType> Enu0=convertKGModuli<real,StressType>(KG0);
+      return computeSphereHillPolarisationTensor<real,StressType>(Enu0.E,Enu0.nu);
+  }  // end of function computeSphereHillPolarisationTensor
 
   template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
@@ -223,6 +230,18 @@ namespace tfel::material::homogenization::elasticity {
  
     const auto invC0 = tfel::math::invert(C_0);
     return S0_basis * invC0;
+  }  // end of function computeAxisymmetricalHillPolarisationTensor
+  
+  template <typename real,typename StressType>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, tfel::math::invert_type<StressType>> computeAxisymmetricalHillPolarisationTensor(
+      				     const KGModuli<StressType>& KG0,
+      				     const tfel::math::tvector<3u, real>& n_a,
+                                     const real& e,
+                                     const real precf,
+                                     const real precd,
+                                     const real precld) {
+    const EnuModuli<real,StressType> Enu0=convertKGModuli<real,StressType>(KG0);
+    return computeAxisymmetricalHillPolarisationTensor<real,StressType>(Enu0.E,Enu0.nu,n_a,e,precf,precd,precld);
   }  // end of function computeAxisymmetricalHillPolarisationTensor
 
 
@@ -394,6 +413,21 @@ namespace tfel::material::homogenization::elasticity {
     const auto invC0 = tfel::math::invert(C_0);
     return S0_basis * invC0;
    
+  }  // end of function computeHillPolarisationTensor
+  
+  template <typename real, typename StressType,typename LengthType>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, tfel::math::invert_type<StressType>> computeHillPolarisationTensor(
+      const KGModuli<StressType>& KG0,
+      const tfel::math::tvector<3u, real>& n_a,
+      const LengthType& a,
+      const tfel::math::tvector<3u, real>& n_b,
+      const LengthType& b,
+      const LengthType& c,
+      const real precf,
+      const real precd,
+      const real precld) {
+      const EnuModuli<real,StressType> Enu0=convertKGModuli<real,StressType>(KG0);
+    return computeHillPolarisationTensor<real,StressType,LengthType>(Enu0.E,Enu0.nu,n_a,a,n_b,b,c,precf,precd,precld);
   }  // end of function computeHillPolarisationTensor
   
   
