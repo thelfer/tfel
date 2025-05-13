@@ -122,8 +122,11 @@ namespace tfel::material::homogenization::elasticity {
       } else {
         n_ = {0., 1., 0.};
       }
-      const auto n_2 = cross_product(n_a, n_);
-      const auto n_3 = cross_product(n_a, n_2);
+      using namespace tfel::math;
+      const tvector<3u, real> n_1=n_a / norm(n_a);
+      tvector<3u, real> n_2 = cross_product(n_1, n_);
+      n_2=n_2/ norm(n_2);
+      tvector<3u, real> n_3 = cross_product(n_1, n_2);
       const tvector<3u, real> n_x = {1., 0., 0.};
       const tvector<3u, real> n_y = {0., 1., 0.};
       const tvector<3u, real> n_z = {0., 0., 1.};
@@ -136,7 +139,7 @@ namespace tfel::material::homogenization::elasticity {
             computeAxisymmetricalEllipsoidLocalisationTensor<real, StressType>(
                 young, nu, young_i, nu_i, n_z, a / b);
         const rotation_matrix<real> r = {n_2[0], n_2[1], n_2[2], n_3[0], n_3[1],
-                                         n_3[2], n_a[0], n_a[1], n_a[2]};
+                                         n_3[2], n_1[0], n_1[1], n_1[2]};
         A = change_basis(A_, r);
       } else {
         st2tost2<3u, real> A_;
@@ -174,7 +177,7 @@ namespace tfel::material::homogenization::elasticity {
             zero, zero, zero, A44,  zero, zero, zero, zero, zero,
             zero, A55,  zero, zero, zero, zero, zero, zero, A66};
         const rotation_matrix<real> r = {n_2[0], n_2[1], n_2[2], n_3[0], n_3[1],
-                                         n_3[2], n_a[0], n_a[1], n_a[2]};
+                                         n_3[2], n_1[0], n_1[1], n_1[2]};
         A = change_basis(A_moy, r);
       }
       return A;
@@ -538,6 +541,12 @@ namespace tfel::material::homogenization::elasticity {
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
+    if (not(tfel::math::ieee754::fpclassify(
+                  tfel::math::VectorVectorDotProduct::exe<
+                      real, tfel::math::tvector<3u, real>,
+                      tfel::math::tvector<3u, real>>(D.n_a, D.n_b)) == FP_ZERO)) {
+        tfel::reportContractViolation("n_a and n_b of the distribution are not normals");
+      }
     tfel::math::st2tost2<3u, StressType> C_0;
     static constexpr auto value =
         StiffnessTensorAlterationCharacteristic::UNALTERED;

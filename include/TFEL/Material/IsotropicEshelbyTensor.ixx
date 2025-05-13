@@ -205,7 +205,8 @@ namespace tfel::material::homogenization::elasticity {
     } else {
       n_ = {0., 1., 0.};
     }
-    const auto n_b_ = cross_product<real>(n_a_, n_);
+    auto n_b_ = cross_product<real>(n_a_, n_);
+    n_b_=n_b_/ norm(n_b_);
     const auto n_c_ = cross_product<real>(n_a_, n_b_);
     tfel::math::tvector<3u, real> n_1;
     tfel::math::tvector<3u, real> n_2;

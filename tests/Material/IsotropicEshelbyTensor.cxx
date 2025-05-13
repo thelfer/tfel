@@ -291,11 +291,14 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
           computeHillPolarisationTensor<real, stress, lg>(
               {.kappa=kappa, .mu=mu}, n_a, lg{2}, n_b, lg{2.00000001},
               lg{2.00001});
+      const auto PSphere_6 = computeAxisymmetricalHillPolarisationTensor<real, stress>(
+          {.kappa=kappa, .mu=mu},n_a,real(1));
       for (int i : {0, 1, 2, 3, 4, 5}) {
         for (int j : {0, 1, 2, 3, 4, 5}) {
           TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_2(i, j)) < compliance(eps));
           TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_3(i, j)) < compliance(eps));
           TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_4(i, j)) < compliance(eps));
+          std::cout<<PSphere_6(i, j).getValue()<<std::endl;
           TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_5(i, j)) < compliance(eps));
         }
       }
