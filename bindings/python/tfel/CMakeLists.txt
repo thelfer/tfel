@@ -46,6 +46,7 @@ tfel_python_module(material
   CrystalStructure.cxx
   PiPlane.cxx
   Barlat.cxx
+  Homogenization.cxx
   Hosford.cxx)
 target_link_libraries(py_tfel_material
   PRIVATE TFELMaterial TFELMath TFELException

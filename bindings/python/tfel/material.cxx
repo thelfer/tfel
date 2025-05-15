@@ -24,6 +24,7 @@ void declareCrystalStructure(pybind11::module_&);
 void declarePiPlane(pybind11::module_&);
 void declareHosford(pybind11::module_&);
 void declareBarlat(pybind11::module_&);
+void declareHomogenization(pybind11::module_&);
 
 #ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
 PYBIND11_MODULE(TFEL_MATERIAL_MODULE_NAME, m) {
@@ -36,4 +37,5 @@ PYBIND11_MODULE(material, m) {
   declarePiPlane(m);
   declareHosford(m);
   declareBarlat(m);
+  declareHomogenization(m);
 }
