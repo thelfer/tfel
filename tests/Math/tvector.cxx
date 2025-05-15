@@ -25,9 +25,9 @@
 int main() {
   using namespace tfel::math;
   constexpr auto eps = 1.e-14;
-  using mass = qt<Mass>;
-  using force = qt<Force>;
-  using acceleration = qt<Acceleration>;
+  using mass = qt<unit::Mass>;
+  using force = qt<unit::Force>;
+  using acceleration = qt<unit::Acceleration>;
   using avector = tvector<5, acceleration>;
   using fvector = tvector<5, force>;
   constexpr mass m = mass(2);

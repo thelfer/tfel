@@ -43,7 +43,7 @@
    */                                                                    \
   template <typename T, typename OwnershipPolicy>                        \
   struct IsAssignableTo<                                                 \
-      tfel::math::Quantity<tfel::math::NoUnit, T, OwnershipPolicy>, X> { \
+      tfel::math::Quantity<tfel::math::unit::NoUnit, T, OwnershipPolicy>, X> { \
     /*!                                                                  \
      * \brief result of the metafunction                                 \
      */                                                                  \
@@ -56,7 +56,7 @@
    */                                                                    \
   template <typename T, typename OwnershipPolicy>                        \
   struct IsAssignableTo<                                                 \
-      X, tfel::math::Quantity<tfel::math::NoUnit, T, OwnershipPolicy>> { \
+      X, tfel::math::Quantity<tfel::math::unit::NoUnit, T, OwnershipPolicy>> { \
     /*!                                                                  \
      * \brief result of the metafunction                                 \
      */                                                                  \
@@ -152,7 +152,7 @@ namespace tfel::typetraits {
    * \see   IsFundamentalNumericType
    */
   template <typename T>
-  struct IsFundamentalNumericType<tfel::math::qt<tfel::math::NoUnit, T>> {
+  struct IsFundamentalNumericType<tfel::math::qt<tfel::math::unit::NoUnit, T>> {
     //! \brief result of the metafunction
     static constexpr bool cond = true;
   };
@@ -162,7 +162,7 @@ namespace tfel::typetraits {
    * \see   IsFundamentalNumericType
    */
   template <typename T>
-  struct IsFundamentalNumericType<const tfel::math::qt<tfel::math::NoUnit, T>> {
+  struct IsFundamentalNumericType<const tfel::math::qt<tfel::math::unit::NoUnit, T>> {
     //! \brief result of the metafunction
     static constexpr bool cond = true;
   };

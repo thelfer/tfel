@@ -220,7 +220,8 @@ namespace mfront {
        << "#include <sstream>\n"
        << "#include \"TFEL/PhysicalConstants.hxx\"\n"
        << "#include \"TFEL/Config/TFELTypes.hxx\"\n"
-       << "#include \"TFEL/Math/Array/View.hxx\"\n";
+       << "#include \"TFEL/Math/Array/View.hxx\"\n"
+       << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n";
     if (useQuantities(md)) {
       os << "#include \"TFEL/Math/qt.hxx\"\n";
     }
