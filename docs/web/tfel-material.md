@@ -454,22 +454,52 @@ There are also, when the medium is anisotropic, `computeAnisotropicLocalisationT
 
 Different schemes are implemented and return the homogenized stiffness of the material.
 These schemes are introduced by the header `LinearHomogenizationSchemes.hxx`.
-The scheme available are Mori-Tanaka scheme and dilute scheme.
-The available functions are `computeMoriTanakaScheme`, `computeDiluteScheme`,
-`computeSphereDiluteScheme`, `computeSphereMoriTanakaScheme`.
+The available schemes are:
+ - Mori-Tanaka scheme
+ - dilute scheme
+ - Ponte Castaneda and Willis scheme
 
-If a distribution of ellipsoids is considered, three types of distributions
-are considered : isotropic, transverse isotropic and with unique orientation.
-The corresponding functions are `computeIsotropicDiluteScheme`,
-`computeTransverseIsotropicDiluteScheme`, `computeOrientedDiluteScheme`,
-`computeIsotropicMoriTanakaScheme`, `computeTransverseIsotropicMoriTanakaScheme`
-and `computeOrientedMoriTanakaScheme`.
+Each scheme is based on the average of the localisation tensor \(\tenseur A \)
+defined above. This average is computed assuming different distributions
+of orientations of ellipsoids. Hence different cases are considered:
+ - spheres (no orientations)
+ - oriented ellipsoids (two vectors \(\tenseur n_a,\tenseur n_b\) define the orientation)
+ - uniform isotropic distribution of orientations
+ - transverse isotropic distribution of orientations (one axis \(\tenseur n_a\)
+ of the ellipsoid is fixed, the others are uniformly distributed in the transverse plane)
+
+Hence, the available functions are:
+ - `computeSphereDiluteScheme`
+ - `computeSphereMoriTanakaScheme`
+ - `computeOrientedDiluteScheme`
+ - `computeOrientedMoriTanakaScheme`
+ - `computeOrientedPCWScheme`
+ - `computeIsotropicDiluteScheme`
+ - `computeIsotropicMoriTanakaScheme`
+ - `computeIsotropicPCWScheme`
+ - `computeTransverseIsotropicDiluteScheme`
+ - `computeTransverseIsotropicMoriTanakaScheme`
+ - `computeTransverseIsotropicPCWScheme`
+ 
+Because the functions are based on the average of the localisation tensor \(\tenseur A \)
+associated with each distribution, a `Base` function is also defined for each scheme,
+that only takes in argument the average of the localisation tensor:
+ - `computeMoriTanakaScheme`
+ - `computeDiluteScheme`
+ - `computePCWScheme`
+ 
+For special case of Ponte-Castaneda and Willis scheme, a `Distribution` object must
+be created. It is defined by two vectors \(\tenseur n_a,\tenseur n_b\) and three lengths
+\(a,b,c\) that define the ellipsoid which defines the distribution.
+
 
 ## Homogenization bounds
 
 Different bounds are implemented and are introduced by the header
 `LinearHomogenizationBounds.hxx`.
-The available bounds are `computeVoigtStiffness`, 
-`computeReussStiffness`, and `computeIsotropicHashinShtrikmanBounds`.
+The available bounds are:
+ - Voigt bound (`computeVoigtStiffness`)
+ - Reuss bound (`computeReussStiffness`)
+ - Hashin-Shtrikman bounds (`computeIsotropicHashinShtrikmanBounds`)
 
 <!-- Local IspellDict: english -->
