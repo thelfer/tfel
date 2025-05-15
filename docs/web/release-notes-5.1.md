@@ -664,6 +664,10 @@ shows how to use any behaviour law on each phase.
 
 For more details, see <https://github.com/thelfer/tfel/issues/790>
 
+## Issue 789: [mfront] advice to remove include and src in case of compilation error
+
+For more details, see <https://github.com/thelfer/tfel/issues/789>
+
 ## Issue 779: [tfel-check] Failure during parsing step if a symbolic linked was not correctly generated
 
 For more details, see <https://github.com/thelfer/tfel/issues/779>.
