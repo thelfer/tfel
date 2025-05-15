@@ -97,8 +97,8 @@ struct CubicSplineInterpolationTest final : public tfel::tests::TestCase {
   }
   void test3() {
 #if (not defined __INTEL_COMPILER) && (not defined __clang__)
-    using time = tfel::math::qt<tfel::math::Time, double>;
-    using stress = tfel::math::qt<tfel::math::Stress, double>;
+    using time = tfel::math::qt<tfel::math::unit::Time, double>;
+    using stress = tfel::math::qt<tfel::math::unit::Stress, double>;
     using stressrate = tfel::math::derivative_type<stress, time>;
     using CollocationPoint =
         tfel::math::CubicSplineCollocationPoint<time, stress>;
@@ -148,8 +148,8 @@ struct CubicSplineInterpolationTest final : public tfel::tests::TestCase {
   void test4() {
 #if (not defined __INTEL_COMPILER) && (not defined __clang__) && \
     (not defined _MSC_VER)
-    using time = tfel::math::qt<tfel::math::Time, double>;
-    using stress = tfel::math::qt<tfel::math::Stress, double>;
+    using time = tfel::math::qt<tfel::math::unit::Time, double>;
+    using stress = tfel::math::qt<tfel::math::unit::Stress, double>;
     using stressrate = tfel::math::derivative_type<stress, time>;
     using StressArray = tfel::math::fsarray<2u, stress>;
     using StressRateArray = tfel::math::fsarray<2u, stressrate>;

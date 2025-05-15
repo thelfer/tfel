@@ -1165,6 +1165,7 @@ namespace mfront {
        << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
        << "#include\"TFEL/Math/General/Abs.hxx\"\n"
        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
+       << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n"
        << "#include\"TFEL/Math/Array/ViewsArrayIO.hxx\"\n"
        << "#include\"TFEL/Math/Array/fsarrayIO.hxx\"\n"
        << "#include\"TFEL/Math/Array/runtime_arrayIO.hxx\"\n"
