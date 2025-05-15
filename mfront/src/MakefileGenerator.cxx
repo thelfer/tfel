@@ -587,7 +587,14 @@ namespace mfront {
             "waiting end of make process");
       }
       if (status != 0) {
-        error("libraries building went wrong");
+        error(
+            "Libraries building went wrong. "
+            "This may be due to an error in your implementation.\n"
+            "In rarer cases, this may be due to a "
+            "incompatibility with a previous run of MFront and you "
+            "may want to remove to the 'include' and 'src' directories. "
+            "You may also invoke MFront with the `--verbose=debug` flag for "
+            "more (hopefully helpful) information.");
       }
     } else {
       execvp(make, const_cast<char* const*>(argv));
