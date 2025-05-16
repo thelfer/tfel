@@ -43,6 +43,9 @@ namespace tfel::config {
     typedef tfel::math::qt<tfel::math::unit::Frequency, T> strainrate;
     typedef tfel::math::qt<tfel::math::unit::Force, T> force;
     typedef tfel::math::qt<tfel::math::unit::Stress, T> stress;
+    typedef tfel::math::qt<typedef GenerateUnit<-1, 1, 2, 0, 0, 0, 0>::type Compliance,T> compliance;
+    typedef tfel::math::qt<typedef GenerateUnit<1, -1, -1, 0, 0, 0, 0>::type Viscosity,T> viscosity;
+    typedef tfel::math::qt<typedef GenerateUnit<-1, 1, 1, 0, 0, 0, 0>::type ViscousCompliance,T> viscouscompliance;
     typedef tfel::math::qt<tfel::math::unit::StressRate, T> stressrate;
     typedef tfel::math::qt<tfel::math::unit::Temperature, T> temperature;
     typedef tfel::math::qt<tfel::math::unit::InvTemperature, T>
@@ -72,6 +75,9 @@ namespace tfel::config {
     using strainrate = T;
     using force = T;
     using stress = T;
+    using compliance = T;
+    using viscosity = T;
+    using viscouscompliance = T;
     using stressrate = T;
     using temperature = T;
     using thermalexpansion = T;
@@ -125,6 +131,12 @@ namespace tfel::config {
         DeformationGradientRateTensor;
     typedef tfel::math::st2tost2<N, typename ScalarTypes<T, true>::real>
         Stensor4;
+    typedef tfel::math::st2tost2<N, typename ScalarTypes<T, true>::compliance>
+        ComplianceTensor;
+    typedef tfel::math::st2tost2<N, typename ScalarTypes<T, true>::viscosity>
+        ViscosityTensor;
+    typedef tfel::math::st2tost2<N, typename ScalarTypes<T, true>::viscouscompliance>
+        ViscousComplianceTensor;
     typedef tfel::math::st2tost2<N, typename ScalarTypes<T, true>::stress>
         StiffnessTensor;
     typedef typename tfel::config::internals::PositionType<N, T, true>::type
@@ -169,6 +181,9 @@ namespace tfel::config {
     typedef tfel::math::tensor<N, T> DeformationGradientRateTensor;
     typedef tfel::math::st2tost2<N, T> Stensor4;
     typedef tfel::math::st2tost2<N, T> StiffnessTensor;
+    typedef tfel::math::st2tost2<N, T> ComplianceTensor;
+    typedef tfel::math::st2tost2<N, T> ViscosityTensor;
+    typedef tfel::math::st2tost2<N, T> ViscousComplianceTensor;
     typedef typename tfel::config::internals::PositionType<N, T, false>::type
         PositionType;
     typedef typename tfel::config::internals::SpatialGradType<N, T, true>::type

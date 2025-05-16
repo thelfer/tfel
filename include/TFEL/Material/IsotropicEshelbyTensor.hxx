@@ -15,42 +15,10 @@
 
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Material/StiffnessTensor.hxx"
+#include "TFEL/Material/IsotropicModuli.hxx"
 #include <stdexcept>
 
 namespace tfel::material::homogenization::elasticity {
-
-  template <typename StressType>
-  struct KGModuli {
-    StressType kappa;
-    StressType mu;
-  };
-
-  template <typename real, typename StressType>
-  struct EnuModuli {
-    StressType E;
-    real nu;
-  };
-
-  template <typename real, typename StressType>
-  TFEL_HOST_DEVICE KGModuli<StressType> convertEnuModuli(
-      const EnuModuli<real, StressType>& Enu) {
-    const auto E = Enu.E;
-    const auto nu = Enu.nu;
-    const KGModuli<StressType> KG = {.kappa = E / 3. / (1 - 2 * nu),
-                                     .mu = E / 2. / (1 + nu)};
-    return KG;
-  }
-
-  template <typename real, typename StressType>
-  TFEL_HOST_DEVICE EnuModuli<real, StressType> convertKGModuli(
-      const KGModuli<StressType>& KG) {
-    const auto kappa = KG.kappa;
-    const auto mu = KG.mu;
-    const auto nu = (3 * kappa - 2 * mu) / (2 * mu + 6 * kappa);
-    const auto E = 2 * mu * (1 + nu);
-    const EnuModuli<real, StressType> Enu = {.E = E, .nu = nu};
-    return Enu;
-  }
 
   /*!
    * This function builds the Eshelby tensor of a circular cylinder embedded
