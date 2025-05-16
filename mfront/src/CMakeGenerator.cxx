@@ -414,7 +414,15 @@ namespace mfront {
       error("cmake configuration went wrong", argv);
     }
     if (call_cmake(argv2) != 0) {
-      error("libraries building went wrong", argv2);
+      error(
+          "Libraries building went wrong. "
+          "This may be due to an error in your implementation.\n"
+          "In rarer cases, this may be due to a "
+          "incompatibility with a previous run of MFront and you "
+          "may want to remove to the 'include' and 'src' directories. "
+          "You may also invoke MFront with the `--verbose=debug` flag for "
+          "more (hopefully helpful) information.",
+          argv2);
     }
 #endif
     systemCall::changeCurrentWorkingDirectory(pwd);

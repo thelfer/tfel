@@ -174,12 +174,12 @@ struct StensorViewTest final : public tfel::tests::TestCase {
   }
   void constexpr_test3() {
     using namespace tfel::math;
-    using time = qt<Time, double>;
+    using time = qt<unit::Time, double>;
     static_assert(std::same_as<scalar_view<float>, float&>);
     static_assert(std::same_as<scalar_view<const float>, const float&>);
-    static_assert(std::same_as<scalar_view<time>, qt_ref<Time, double>>);
-    static_assert(
-        std::same_as<scalar_view<const time>, const qt_ref<Time, double>>);
+    static_assert(std::same_as<scalar_view<time>, qt_ref<unit::Time, double>>);
+    static_assert(std::same_as<scalar_view<const time>,
+                               const qt_ref<unit::Time, double>>);
   }
 
   //! \brief an helper method to check values

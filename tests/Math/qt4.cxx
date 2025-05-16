@@ -44,7 +44,7 @@ struct StensorQtTest final : public tfel::tests::TestCase {
   }  // end of execute
   void test1() {
     using namespace tfel::math;
-    using stress = qt<Stress, double>;
+    using stress = qt<unit::Stress, double>;
     constexpr const auto eps = 1e-14;
     constexpr auto v1 = stress{-12};
     constexpr auto v2 = -v1;
@@ -53,7 +53,7 @@ struct StensorQtTest final : public tfel::tests::TestCase {
   }  // end of test2
   void test2() {
     using namespace tfel::math;
-    using real = qt<NoUnit, double>;
+    using real = qt<unit::NoUnit, double>;
     constexpr const auto eps = 1e-14;
     const stensor<3u, real> s = -stensor<3u, real>::Id();
     TFEL_TESTS_ASSERT(my_abs(s[0].getValue() + 1) < eps);
@@ -65,7 +65,7 @@ struct StensorQtTest final : public tfel::tests::TestCase {
   }  // end of test2
   void test3() {
     using namespace tfel::math;
-    using real = qt<NoUnit, double>;
+    using real = qt<unit::NoUnit, double>;
     constexpr const auto eps = 1e-14;
     const st2tost2<1u, real> s = -st2tost2<1u, real>::Id();
     TFEL_TESTS_ASSERT(my_abs(s(0, 0).getValue() + 1) < eps);
@@ -80,7 +80,7 @@ struct StensorQtTest final : public tfel::tests::TestCase {
   }  // end of test3
   void test4() {
     using namespace tfel::math;
-    using real = qt<NoUnit, double>;
+    using real = qt<unit::NoUnit, double>;
     constexpr const auto eps = 1e-14;
     const t2tot2<1u, real> s = -t2tot2<1u, real>::Id();
     TFEL_TESTS_ASSERT(my_abs(s(0, 0).getValue() + 1) < eps);

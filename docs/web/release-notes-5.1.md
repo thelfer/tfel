@@ -29,15 +29,17 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Known incompatibilities
 
-The native `Europlexus` interface has been removed, as `Europlexus` now
-uses the `generic` interface through `MGIS` (see
-<https://github.com/thelfer/tfel/issues/739> for details).
+- The native `Europlexus` interface has been removed, as `Europlexus`
+  now uses the `generic` interface through `MGIS` (see
+  <https://github.com/thelfer/tfel/issues/739> for details).
+- When compiling with option `TFEL_APPEND_VERSION` set to `ON` or when
+  defining the string variable `TFEL_VERSION_FLAVOUR`, the `python`
+  modules are now modified to reflect those information. This old
+  behaviour can be restored by setting the
+  `unversioned-python-module-names` option to `ON`.
+- The definition of some unit class has (`Stress`, `Temperature`, etc..)
+  have been moved from `tfel::math` to `tfel::math::unit`.
 
-When compiling with option `TFEL_APPEND_VERSION` set to `ON` or when
-defining the string variable `TFEL_VERSION_FLAVOUR`, the `python`
-modules are now modified to reflect those information. This old
-behaviour can be restored by setting the
-`unversioned-python-module-names` option to `ON`.
 
 ## Internal API changes
 
@@ -115,6 +117,24 @@ $ tfel-config-5.1.0-release --python-module-suffix
 ~~~~
 
 # New `TFEL/Math` features
+
+## The `tfel::types` namespace
+
+The `tfel::types` namespace contains type aliases that are helpful to
+deduce a type from another. This is mostly useful to support quantities.
+
+The implementation of the `computeLambda` provides a simple example of
+its usage:
+
+~~~~
+template <tfel::math::ScalarConcept StressType>
+TFEL_HOST_DEVICE constexpr StressType computeLambda(
+    const StressType& young, const types::real<StressType>& nu) noexcept
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>()) {
+  return nu * young / ((1 + nu) * (1 - 2 * nu));
+}
+~~~~
 
 ## A `zero` method to create tensorial objects {#sec:tfel_5_1:zero}
 
@@ -639,6 +659,14 @@ of tangent operator of the local behaviours. The implementation
 shows how to use any behaviour law on each phase.
 
 # Issues fixed
+
+## Issue 790: [tfel-math] Remove `Stress`, `Time` from the `tfel::math` namespace
+
+For more details, see <https://github.com/thelfer/tfel/issues/790>
+
+## Issue 789: [mfront] advice to remove include and src in case of compilation error
+
+For more details, see <https://github.com/thelfer/tfel/issues/789>
 
 ## Issue 779: [tfel-check] Failure during parsing step if a symbolic linked was not correctly generated
 

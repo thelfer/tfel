@@ -265,7 +265,7 @@ namespace tfel::math {
      */
     template <typename ValueType2, typename OwnershipPolicy2>
     TFEL_HOST_DEVICE constexpr Quantity& operator*=(
-        const Quantity<NoUnit, ValueType2, OwnershipPolicy2>& a) noexcept
+        const Quantity<unit::NoUnit, ValueType2, OwnershipPolicy2>& a) noexcept
         requires(IsQtScalarOperationValid<ValueType, ValueType2>::cond) {
       this->getValue() *= a.getValue();
       return *this;
@@ -289,7 +289,7 @@ namespace tfel::math {
      */
     template <typename ValueType2, typename OwnershipPolicy2>
     TFEL_HOST_DEVICE constexpr Quantity& operator/=(
-        const Quantity<NoUnit, ValueType2, OwnershipPolicy2>& a) noexcept
+        const Quantity<unit::NoUnit, ValueType2, OwnershipPolicy2>& a) noexcept
         requires(IsQtScalarOperationValid<ValueType, ValueType2>::cond) {
       this->getValue() /= a.getValue();
       return *this;
