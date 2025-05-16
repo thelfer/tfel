@@ -559,7 +559,7 @@ namespace homogenization::elasticity {
   /*!
    * This struct defines a matrix-inclusion microstructure as a child of
    * Microstructure. This type of microstructure is viewed as an array of
-   * InclusionPhase, with a matrixPhase.
+   * InclusionDistribution, with a matrixPhase.
    * \tparam unsigned short int: dimension
    * \tparam real: underlying type
    * \tparam LengthType: type of the lengths related to the inclusion
