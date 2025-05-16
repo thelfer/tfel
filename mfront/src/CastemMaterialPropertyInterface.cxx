@@ -21,6 +21,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 #include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/FileDescription.hxx"
@@ -341,7 +342,8 @@ namespace mfront {
         << "#include<cmath>\n"
         << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
         << "#include\"TFEL/PhysicalConstants.hxx\"\n"
-        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n";
+        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n"
+        << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n";
     if (useQuantities(mpd)) {
       out << "#include\"TFEL/Math/qt.hxx\"\n"
           << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";

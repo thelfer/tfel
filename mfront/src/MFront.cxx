@@ -968,7 +968,7 @@ namespace mfront {
       auto& log = getLogStream();
       for (const auto& t : this->specifiedTargets) {
         if (getVerboseMode() >= VERBOSE_LEVEL0) {
-          log << "Treating target : " << t << std::endl;
+          log << "Treating target '" << t << "'" << std::endl;
         }
         this->buildLibraries(t);
       }

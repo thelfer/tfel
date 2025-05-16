@@ -35,8 +35,7 @@ class TFELConan(ConanFile):
         args = [
             '-DCMAKE_INSTALL_PREFIX="%s"' % self.package_folder,
             '-Denable-python-bindings=ON', '-Dlocal-castem-header=ON',
-            '-Denable-aster=ON', '-Denable-europlexus=ON',
-            '-Denable-abaqus=ON', '-Denable-calculix=ON',
+            '-Denable-aster=ON', '-Denable-abaqus=ON', '-Denable-calculix=ON',
             '-DTFEL_SVN_REVISION=0'
         ]
         self.run(

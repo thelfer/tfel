@@ -22,7 +22,6 @@
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/PedanticMode.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/LocalDataStructure.hxx"
 #include "MFront/ModelDescription.hxx"
@@ -46,6 +45,8 @@ namespace mfront {
   const char* const BehaviourDescription::finalClass = "final";
   const char* const BehaviourDescription::internalNamespace =
       "internal_namespace";
+  const char* const BehaviourDescription::saveThermalExpansion =
+      "save_thermal_expansion";
 
   static MaterialPropertyDescription buildMaterialPropertyDescription(
       const BehaviourDescription::ConstantMaterialProperty& mp,
@@ -2971,8 +2972,10 @@ namespace mfront {
       const auto& flags = SupportedTypes::getTypeFlags();
       for (const auto& v : variables) {
         const auto pf = flags.find(v.type);
-        if (pf->second == SupportedTypes::TVECTOR) {
-          b1 = true;
+	if (pf != flags.end()) {
+          if (pf->second == SupportedTypes::TVECTOR) {
+            b1 = true;
+          }
         }
         if (v.arraySize > 1) {
           if (this->useDynamicallyAllocatedVector(v.arraySize)) {

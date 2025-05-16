@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
-cmake_policy(SET CMP0005 OLD)
 cmake_policy(SET CMP0022 NEW)
-cmake_policy(SET CMP0026 OLD)
-cmake_policy(SET CMP0053 OLD)
 cmake_policy(SET CMP0054 NEW)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
+  cmake_policy(SET CMP0167 NEW)  
+endif(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
 if(CMAKE_VERSION VERSION_GREATER 3.14.0)
   cmake_policy(SET CMP0083 NEW)  
   include(CheckPIESupported)
@@ -45,12 +45,15 @@ set(PACKAGE_BUGREPORT "tfel-contact@cea.fr")
 include(cmake/modules/ieee754.cmake)
 
 # check for the fenv package
+option(enable-use-fenv "enable usage of the fenv package" ON)
+if(enable-use-fenv)
 include(CheckIncludeFiles)
 check_include_files(fenv.h HAVE_FENV_H)
 if(HAVE_FENV_H)
   tfel_add_c_cxx_definitions("HAVE_FENV")
 endif(HAVE_FENV_H)
-
+endif(enable-use-fenv)
+  
 option(enable-include-what-you-use
   "enable include-what-you-use diagnostics" OFF)
 if(enable-include-what-you-use)
@@ -235,14 +238,6 @@ if(enable-ansys)
   set(HAVE_ANSYS ON)
   tfel_add_c_cxx_definitions("HAVE_ANSYS=1")
 endif(enable-ansys)
-
-#europlexus
-option(enable-europlexus "build europlexus interface for mechanical behaviours" OFF)
-if(enable-europlexus)
-  message(STATUS "europlexus support enabled")
-  set(HAVE_EUROPLEXUS ON)
-  tfel_add_c_cxx_definitions("HAVE_EUROPLEXUS=1")
-endif(enable-europlexus)
 
 #zmat
 option(enable-zmat "build zmat interface for mechanical behaviours" OFF)

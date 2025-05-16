@@ -13,7 +13,7 @@
 
 #include <fstream>
 #include "TFEL/Raise.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/AbaqusInterfaceBase.hxx"

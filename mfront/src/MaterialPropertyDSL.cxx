@@ -30,7 +30,7 @@
 
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontLogStream.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/PedanticMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"

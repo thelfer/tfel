@@ -14,7 +14,7 @@
 #include <string>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/DSLFactory.hxx"
 #include "MFront/IsotropicStrainHardeningMisesCreepCodeGenerator.hxx"

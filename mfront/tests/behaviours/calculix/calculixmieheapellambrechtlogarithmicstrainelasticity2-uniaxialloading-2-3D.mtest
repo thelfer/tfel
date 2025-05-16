@@ -1,0 +1,40 @@
+/*! 
+ * \file   calculixmieheapellambrechtlogarithmicstrain-uniaxialloading-2-3D.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  4 dec. 2013
+ */
+
+@Behaviour<calculix> @library@ 'LOGARITHMICSTRAINELASTICITY2';
+@MaterialProperty<constant> 'YoungModulus'     215.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+
+@ImposedDrivingVariable 'FZZ' {0:1.,1.:1.8};
+@ImposedDrivingVariable 'FXY' 0.;
+@ImposedDrivingVariable 'FYX' 0.;
+@ImposedDrivingVariable 'FXZ' 0.;
+@ImposedDrivingVariable 'FZX' 0.;
+@ImposedDrivingVariable 'FYZ' 0.;
+@ImposedDrivingVariable 'FZY' 0.;
+
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0.,1 in 10};
+
+@Evolution<function> 'ezz' 'log(FZZ**2)/2';
+@Evolution<function> 'err' '-PoissonRatio*ezz';
+@Evolution<function> 'eyy' '-PoissonRatio*ezz';
+@Evolution<function> 'J'   'sqrt(exp(2*err)*exp(2*eyy))*FZZ';
+@Evolution<function> 'Tzz' 'YoungModulus*ezz';
+
+@Test<function> {'SXX':'0','SYY':'0'} 1.e-2;
+@Test<function> {'SZZ':'Tzz/J'}       1.e-2;
+@Test<function> {'SXY':'0','SXZ':'0','SYZ':'0'}           1.e-2;
+@Test<function> {'FXX': 'sqrt(exp(2*err))','FYY': 'sqrt(exp(2*eyy))'} 1.e-7;
+@Test<function> {'FXY': '0', 'FZY':'0'} 1.e-10;
+@Test<function> {'FXZ': '0', 'FZX':'0'} 1.e-10;
+@Test<function> {'FYZ': '0', 'FZY':'0'} 1.e-10;
+
+
+
+

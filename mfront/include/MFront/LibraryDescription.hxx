@@ -19,7 +19,7 @@
 
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "MFront/MFrontConfig.hxx"
-#include "MFront/MFrontUtilities.hxx"
+#include "MFront/DSLUtilities.hxx"
 #include "MFront/CompiledTargetDescriptionBase.hxx"
 
 namespace mfront {

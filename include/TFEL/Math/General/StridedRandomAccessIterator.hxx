@@ -195,6 +195,9 @@ namespace tfel::math {
       if (this->stride == 0) {
         throwNullStrideException();
       }
+      if (this->stride != o.stride) {
+        throwUmatchedStrideException();
+      }
       return this->current == o.current;
     }  // end of operator==
 
@@ -202,6 +205,36 @@ namespace tfel::math {
       return !(this->operator==(o));
     }  // end of operator==
 
+    // comparison operators
+    
+    bool operator<=(const StridedRandomAccessIterator& o) const {
+      if (this->stride != o.stride) {
+        throwUmatchedStrideException();
+      }
+      return this->current <= o.current;
+    }
+
+    bool operator<(const StridedRandomAccessIterator& o) const {
+      if (this->stride != o.stride) {
+        throwUmatchedStrideException();
+      }
+      return this->current < o.current;
+    }
+
+    bool operator>=(const StridedRandomAccessIterator& o) const {
+      if (this->stride != o.stride) {
+        throwUmatchedStrideException();
+      }
+      return this->current >= o.current;
+    }
+
+    bool operator>(const StridedRandomAccessIterator& o) const {
+      if (this->stride != o.stride) {
+        throwUmatchedStrideException();
+      }
+      return this->current > o.current;
+    }
+    
     difference_type operator-(const StridedRandomAccessIterator& s) const {
       if (this->stride == 0) {
         throwNullStrideException();
@@ -211,10 +244,12 @@ namespace tfel::math {
       }
       return (this->current - s.current) / (this->stride);
     }  // end of operator==
+
+
    private:
-    //! current position
+    //! \brief current position
     iterator_base current;
-    //! stride value
+    //! \brief stride value
     difference_type stride;
   };
 

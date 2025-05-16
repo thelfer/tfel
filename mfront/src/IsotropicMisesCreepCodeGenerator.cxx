@@ -13,7 +13,7 @@
  */
 
 #include <ostream>
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/IsotropicMisesCreepCodeGenerator.hxx"
 

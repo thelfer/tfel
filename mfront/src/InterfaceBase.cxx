@@ -15,7 +15,6 @@
 #include <sstream>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/InterfaceBase.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)

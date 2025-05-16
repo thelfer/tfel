@@ -18,10 +18,10 @@
 #include "TFEL/System/System.hxx"
 
 #include "MFront/MFrontWarningMode.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/VariableDescription.hxx"
 #include "MFront/AbaqusExplicitSymbolsGenerator.hxx"
 #include "MFront/AbaqusExplicitInterface.hxx"
 

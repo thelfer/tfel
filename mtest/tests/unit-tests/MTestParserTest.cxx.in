@@ -33,8 +33,14 @@
 
 struct MTestParserTest final : public tfel::tests::TestCase {
   MTestParserTest()
-      : tfel::tests::TestCase("Test", "MTestParserTest") {
-  }  // end of MTestParserTest
+      : tfel::tests::TestCase("Test", "MTestParserTest"),
+      castem_library([]{const auto e = ::getenv("MFrontCastemBehavioursBuildPath");
+	  return e == nullptr ? std::string{} : e;}()),
+      aster_library([]{const auto e = ::getenv("MFrontAsterBehavioursBuildPath");
+	  return e == nullptr ? std::string{} : e;}()),
+      cyrano_library([]{const auto e = ::getenv("MFrontCyranoBehavioursBuildPath");
+	  return e == nullptr ? std::string{} : e;}())
+ {}  // end of MTestParserTest
 
   tfel::tests::TestResult execute() override {
     mfront::setVerboseMode(mfront::VERBOSE_QUIET);
@@ -102,15 +108,15 @@ struct MTestParserTest final : public tfel::tests::TestCase {
     this->check("@UnsignedIntegerParameter 'espilon' 1.e-8;");
 // tests requiring the definition of a behaviour
 #ifdef HAVE_CASTEM
-    this->check("@MFrontCastemBehavioursBuildPath@", "umat");
-    this->check2("@MFrontCastemBehavioursBuildPath@", "umat");
+    this->check(this->castem_library, "umat");
+    this->check2(this->castem_library, "umat");
 #endif
 #ifdef HAVE_ASTER
-    this->check("@MFrontAsterBehavioursBuildPath@", "aster");
-    this->check2("@MFrontCastemBehavioursBuildPath@", "umat");
+    this->check(this->aster_library, "aster");
+    this->check2(this->castem_library, "umat");
 #endif
 #ifdef HAVE_CYRANO
-    this->check("@MFrontCyranoBehavioursBuildPath@", "cyrano",
+    this->check(this->cyrano_library, "cyrano",
                 "@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';");
 #endif
     return this->result;
@@ -328,6 +334,10 @@ struct MTestParserTest final : public tfel::tests::TestCase {
                 "';"
                 "@AccelerationAlgorithmParameter 'AccelerationTrigger' 0;");
   }  // end of checkAlgorithm
+private:
+  const std::string castem_library;
+  const std::string aster_library;
+  const std::string cyrano_library;
 };
 
 TFEL_TESTS_GENERATE_PROXY(MTestParserTest, "MTestParserTest");

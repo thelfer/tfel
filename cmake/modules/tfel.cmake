@@ -282,17 +282,7 @@ macro(add_mfront_behaviour_generated_source lib interface dir intrinsic_source f
   else ("${interface}" STREQUAL "generic")
     set(iprefix "${interface}")
   endif("${interface}" STREQUAL "generic")
-  if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-    set(mfront_executable "$<TARGET_FILE:mfront>")
-  else(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-    # retrieve the old behaviour for debian squeeze's version of cmake
-    # does not work with configurations
-    if(WIN32)
-      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront.exe")
-    else(WIN32)
-      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
-    endif(WIN32)
-  endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
+  set(mfront_executable "$<TARGET_FILE:mfront>")
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(mfront_flags "--debug")
   else(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -326,7 +316,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
       ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
-      DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+      DEPENDS mfront
       DEPENDS "${mfront_file}"
       COMMENT "treating mfront source ${file}.mfront")
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
@@ -338,7 +328,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/behaviours"
 	ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
 	ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
-	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+	DEPENDS mfront
 	DEPENDS "${mfront_file}"
 	COMMENT "treating mfront source ${file}.mfront")
       file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generation-test)
@@ -365,17 +355,7 @@ macro(mfront_dependencies lib)
     message(FATAL_ERROR "mfront_dependencies : no source specified")
   endif(${ARGC} LESS 1)
   foreach(source ${ARGN})
-    if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-      set(mfront_executable "$<TARGET_FILE:mfront>")
-    else(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-      # retrieve the old behaviour for debian squeeze's version of cmake
-      # does not work with configurations
-      if(WIN32)
-	set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront.exe")
-      else(WIN32)
-	set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
-      endif(WIN32)
-    endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
+    set(mfront_executable "$<TARGET_FILE:mfront>")
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
       set(mfront_flags "--debug")
     else(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -400,7 +380,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
 %PATH%"
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
-	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+	DEPENDS mfront
 	DEPENDS "${mfront_file}"
 	COMMENT "treating mfront source ${source}.mfront")
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
@@ -408,7 +388,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
 	OUTPUT  "src/${source}-mfront.cxx"
 	COMMAND "${mfront_executable}"
 	ARGS    "${mfront_flags}" "--interface=mfront" "${PROJECT_SOURCE_DIR}/mfront/tests/properties/${source}.mfront"
-	DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+	DEPENDS mfront
 	DEPENDS "${mfront_file}"
 	COMMENT "treating mfront source ${source}.mfront")
       # add_test(NAME mfront-${source}-mfront COMMAND

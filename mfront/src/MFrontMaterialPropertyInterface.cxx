@@ -16,7 +16,7 @@
 #include <algorithm>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/TargetsDescription.hxx"

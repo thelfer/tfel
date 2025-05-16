@@ -1,11 +1,11 @@
 /*!
- * \file  mfront/include/MFront/Abaqus/abaqus.doxygen
- * \brief This file documents the `abaqus` namespace.
+ * \file  mfront/include/MFront/LSDYNA/lsdyna.doxygen
+ * \brief This file documents the `lsdyna` namespace.
  */
 
 /*!
  * \namespace abaqus
- * \brief the namespace abaqus contains material related to the MFront
- * interface to the `Abaqus/Standard` and `Abaqus/Explicit` finite
- * element solver.
+ * \brief the namespace lsdyna contains material related to the MFront
+ * interface to the [LSDYNA](https://lsdyna.ansys.com/) explicit
+ * finite element solver.
  */

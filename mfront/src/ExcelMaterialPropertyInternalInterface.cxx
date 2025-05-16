@@ -11,7 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
+#include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/ExcelMaterialPropertyInternalInterface.hxx"
 
 namespace mfront {

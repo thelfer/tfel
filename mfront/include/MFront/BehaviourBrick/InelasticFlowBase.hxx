@@ -177,6 +177,41 @@ namespace mfront::bbrick {
      * auxiliary state variable.
      */
     bool save_porosity_increase = false;
+    /*!
+     * \brief external name of equivalent strain.
+     *
+     * \note The default external name depends on the inelastic flow.
+     * For instance, this defaults to `EquivalentPlasticStrain` + id,
+     * where id is the identifier of the inelastic flow for plastic
+     * flows.
+     */
+    std::string equivalent_strain_external_name;
+    /*!
+     * \brief flag stating if the equivalent stress at the middle of the time
+     * step must be saved in a dedicated auxiliary state variable.
+     */
+    bool save_stress_criterion = false;
+    /*!
+     * \brief external name of the auxiliary state variable in which the stress
+     * criterion shall be saved if `save_stress_criterion` is `true`.
+     *
+     * This defaults to `EquivalentStress` + id, where id is the identifier of
+     * the inelastic flow
+     */
+    std::string stress_criterion_external_name;
+    /*!
+     * \brief flag stating if the yield surface radius at the middle of the time
+     * step must be saved in a dedicated auxiliary state variable.
+     */
+    bool save_yield_surface_radius = false;
+    /*!
+     * \brief external name of the auxiliary state variable in which the yield
+     * surface radius shall be saved if `save_yield_surface_radius` is `true`.
+     *
+     * This defaults to `YieldSurfaceRadius` + id, where id is the identifier of
+     * the inelastic flow
+     */
+    std::string yield_surface_radius_external_name;
   };  // end of struct InelasticFlowBase
 
 }  // end of namespace mfront::bbrick

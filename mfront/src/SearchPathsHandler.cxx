@@ -31,7 +31,6 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/SearchPathsHandler.hxx"
 
 namespace mfront {
@@ -315,5 +314,31 @@ namespace mfront {
     static SearchPathsHandler msf;
     return msf;
   }  // end of getSearchPathsHandler
+
+
+#ifdef MFRONT_HAVE_MADNEX
+
+  std::tuple<std::string, std::string, std::string, std::string>
+  decomposeImplementationPathInMadnexFile(const std::string_view p) {
+    using result_type =
+        std::tuple<std::string, std::string, std::string, std::string>;
+    const auto details = tfel::utilities::tokenize(p, ':');
+    auto raise_if = [&p](const bool b) {
+      if (b) {
+        tfel::raise("decomposeImplementationPathInMadnexFile: invalid path '" +
+                    std::string{p} + "'");
+      }
+    };
+    raise_if((details.size() != 5) && (details.size() != 4));
+    if (details.size() == 4) {
+      return result_type{std::move(details[1]), std::move(details[2]), "",
+                         std::move(details[3])};
+    }
+    const auto mid = details[3] == "<none>" ? "" : details[3];
+    return result_type{std::move(details[1]), std::move(details[2]),
+                       std::move(mid), std::move(details[4])};
+  }  // end of decomposeImplementationPathInMadnexFile
+
+#endif /* MFRONT_HAVE_MADNEX */
 
 }  // end of namespace mfront

@@ -15,7 +15,8 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/MFrontUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/BehaviourInterfaceBase.hxx"
 

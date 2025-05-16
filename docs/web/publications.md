@@ -13,7 +13,12 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @pierre_modelling_2025
+    @helfer_mfemmgis_2025
+    @kiszkurno_is_2025
+    @pierre_modelling_2025
     @scherer_grain-size_2025
+    @liu_mesostructural_2025
     @quintin_uncertainty_2024
     @rapanakis_cross-anisotropic_2024
     @nagel_hierarchical_2024

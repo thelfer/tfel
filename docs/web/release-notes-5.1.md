@@ -1,4 +1,3 @@
-
 ---
 title: Release notes of the 5.1 version of `TFEL`, `MFront` and `MTest`
 author: Thomas Helfer, Antoine Martin
@@ -28,14 +27,19 @@ eqnPrefixTemplate: "($$i$$)"
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
 
-
 # Known incompatibilities
 
-When compiling with option `TFEL_APPEND_VERSION` set to `ON` or when
-defining the string variable `TFEL_VERSION_FLAVOUR`, the `python`
-modules are now modified to reflect those information. This old
-behaviour can be restored by setting the
-`unversioned-python-module-names` option to `ON`.
+- The native `Europlexus` interface has been removed, as `Europlexus`
+  now uses the `generic` interface through `MGIS` (see
+  <https://github.com/thelfer/tfel/issues/739> for details).
+- When compiling with option `TFEL_APPEND_VERSION` set to `ON` or when
+  defining the string variable `TFEL_VERSION_FLAVOUR`, the `python`
+  modules are now modified to reflect those information. This old
+  behaviour can be restored by setting the
+  `unversioned-python-module-names` option to `ON`.
+- The definition of some unit class has (`Stress`, `Temperature`, etc..)
+  have been moved from `tfel::math` to `tfel::math::unit`.
+
 
 ## Internal API changes
 
@@ -114,6 +118,24 @@ $ tfel-config-5.1.0-release --python-module-suffix
 
 # New `TFEL/Math` features
 
+## The `tfel::types` namespace
+
+The `tfel::types` namespace contains type aliases that are helpful to
+deduce a type from another. This is mostly useful to support quantities.
+
+The implementation of the `computeLambda` provides a simple example of
+its usage:
+
+~~~~
+template <tfel::math::ScalarConcept StressType>
+TFEL_HOST_DEVICE constexpr StressType computeLambda(
+    const StressType& young, const types::real<StressType>& nu) noexcept
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>()) {
+  return nu * young / ((1 + nu) * (1 - 2 * nu));
+}
+~~~~
+
 ## A `zero` method to create tensorial objects {#sec:tfel_5_1:zero}
 
 A static method named `zero` is now available to create fixed-size
@@ -144,6 +166,11 @@ computed with `computeAnisotropicEshelbyTensor` in 3D and
 Different homogenization bounds are implemented.
 The available functions are `computeVoigtStiffness`, `computeReussStiffness`,
 `computeIsotropicHashinShtrikmanBounds`.
+
+### Homogenization schemes
+
+Ponte Castaneda and Willis scheme for distributions
+of ellipsoidal inclusions for biphasic media is now available.
 
 ## Python bindings
 
@@ -347,6 +374,8 @@ models are updated at beginning of the `updateAuxiliarySateVariables`
 method **before** any user defined code (see the
 `@UpdateAuxiliaryStateVariables` keyword).
 
+## Uniform syntax
+
 ## New command line arguments
 
 The following command line arguments are now supported:
@@ -439,6 +468,116 @@ This list can be retrieved as follows:
 $ mfront --list-isotropic-hardening-rules
 ~~~~
 
+## Extensions of the `StandardElastoViscoPlasticity` brick
+
+### Changing the external name of the equivalent strain {#sec:tfel:5.1:StandardElastoViscoPlasticity:equivalent_strain_external_name}
+
+All inelastic flows now allows to change the external name of the
+equilvaent strain with the `equivalent_strain_external_name` option.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 33e6, H : 438e6},
+    equivalent_strain_external_name : "CumulatedEquivalentPlasticStrain"
+  }
+};
+~~~~
+
+### Saving the stress criterion  {#sec:tfel:5.1:StandardElastoViscoPlasticity:saving_stress_criterion}
+
+All inelastic flows now allows the save the value of the stress
+criterion at \(t+\theta\,\Delta\,t\) in a dedicated auxiliary state
+variable by setting the `save_stress_criterion` option to `true`.
+
+The external name of this auxiliary state variable defaults to
+`EquivalentStress` + id, where id is the identifier of the inelastic
+flow. This name can be changed using the
+`stress_criterion_external_name` option.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 33e6, H : 438e6},
+    stress_criterion_external_name : "StressCriterion",
+    save_stress_criterion : true
+  }
+};
+~~~~
+
+### Saving yield radius {#sec:tfel:5.1:StandardElastoViscoPlasticity:saving_yield_surface_radius}
+
+All inelastic flows now allows the save the value of the stress
+criterion at \(t+\theta\,\Delta\,t\) in a dedicated auxiliary state
+variable by setting the `save_yield_surface_radius` option to `true`.
+
+The external name of this auxiliary state variable defaults to
+`YieldSurfaceRadius` + id, where id is the identifier of the inelastic
+flow. This name can be changed using the
+`yield_surface_radius_external_name` option.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 33e6, H : 438e6},
+    yield_surface_radius_external_name : "CurrentYieldStrength",
+    save_yield_surface_radius : true
+  }
+};
+~~~~
+
+### Saving the thermal expansion {#sec:tfel:5.1:StandardElastoViscoPlasticity:saving_thermal_expansion}
+
+The `save_thermal_expansion boolean` option has been introduced in all
+stress potentials deriving from `the HookeStressPotentialBase`.
+
+This option states if the computed thermal expansion(s) at the end of
+the time step shall be stored in an auxiliary state variable. The
+external name of this variable is `ComputedThermalExpansion`. For an
+isotropic thermal expansion, this variable is a scalar. For an
+orthotropic material, this variable is an array of (3) scalars.
+
+#### Example of usage
+
+```cxx
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{
+    young_modulus : 150e9,
+    poisson_ratio : 0.3,
+    thermal_expansion : 1e-5,
+    save_thermal_expansion : true
+  }
+};
+```
+
+## Uniform syntax for `@ComputeThermalExpansion`
+
+The `@ComputeThermalExpansion` keyword now accepts the same options than
+the stress potentials deriving from `the HookeStressPotentialBase`:
+
+```cxx
+@ComputeThermalExpansion{
+  thermal_expansion1: 1.e-5,
+  thermal_expansion2: 0.2e-5,
+  thermal_expansion3: 1.2e-5,
+  thermal_expansion_reference_temperature: 293.15, 
+  initial_geometry_reference_temperature: 293.15,
+  save_thermal_expansion: true
+};
+```
+
 # New features in `mfront-query`
 
 ## New command line arguments
@@ -457,6 +596,37 @@ The following command line arguments are now supported:
   - `--warning-error=false` does not turn warnings into errors (which is
     the default behaviour of `mfront-query`).
 - `-Werror` is equivalent to `--warning-error=true`.
+
+# New features in `tfel-check`
+
+## Discard commands failure
+
+By default, `tfel-check` discards a command failure if at least one test
+is defined. The rationale behind this choice is that some command may
+succeed in producing the expected results but may still fail to exit
+properly.
+
+This behavior can be controlled by the `--discard-commands-failure`
+which takes `true` or `false` as argument.
+
+### Example of usage
+
+~~~~
+$ tfel-check --discard-commands-failure=false
+entering directory '/tmp/tests'
+* beginning of test './test.check'
+** Exec-1 ./main                                                       [ FAILED]
+** Compare-1 'results.res' and 'results.res', column '1'               [SUCCESS]
+* end of test './test.check'                                           [ FAILED]
+======
+$ tfel-check --discard-commands-failure=true
+entering directory '/tmp/tests'
+* beginning of test './test.check'
+** Exec-1 ./main                                                       [ FAILED]
+** Compare-1 'results.res' and 'results.res', column '1'               [SUCCESS]
+* end of test './test.check'                                           [SUCCESS]
+====== 
+~~~~
 
 ## New keywords
 
@@ -490,6 +660,58 @@ shows how to use any behaviour law on each phase.
 
 # Issues fixed
 
+## Issue 790: [tfel-math] Remove `Stress`, `Time` from the `tfel::math` namespace
+
+For more details, see <https://github.com/thelfer/tfel/issues/790>
+
+## Issue 789: [mfront] advice to remove include and src in case of compilation error
+
+For more details, see <https://github.com/thelfer/tfel/issues/789>
+
+## Issue 779: [tfel-check] Failure during parsing step if a symbolic linked was not correctly generated
+
+For more details, see <https://github.com/thelfer/tfel/issues/779>.
+
+## Issue 778: [tfel-check] Add an option to return a failure if at least one check fails
+
+For more details, see <https://github.com/thelfer/tfel/issues/778>
+
+## Issue 777: [tfel-check] Clearer message if a directory is given as an argument
+
+For more details, see <https://github.com/thelfer/tfel/issues/777>
+
+## Issue 763: Personalize names of equivalent plastic strain in `StandardElastoViscoPlasticity`'s inelastic_flow
+
+This feature is described in Section
+@sec:tfel:5.1:StandardElastoViscoPlasticity:equivalent_strain_external_name.
+
+For more details, see <https://github.com/thelfer/tfel/issues/763>
+
+## Issue 762: Save the isotropic_hardening's threshold stress via an auxiliary state variable using `StandardElastoViscoPlasticity`'s inelastic_flow
+
+This feature is described in Section
+@sec:tfel:5.1:StandardElastoViscoPlasticity:saving_yield_surface_radius.
+
+For more details, see <https://github.com/thelfer/tfel/issues/762>
+
+## Issue 761: Save the equivalent stress via an `@AuxiliaryStateVariable` using `StandardElastoViscoPlasticity`'s inelastic_flow
+
+This feature is described in Section
+@sec:tfel:5.1:StandardElastoViscoPlasticity:saving_stress_criterion.
+
+For more details, see <https://github.com/thelfer/tfel/issues/761>
+
+## Issue 760: Save the thermal expansion tensor via an `@AuxiliaryStateVariable` using `StandardElastoViscoPlasticity`'s stress_potential 
+
+This feature is described in Section
+@sec:tfel:5.1:StandardElastoViscoPlasticity:saving_thermal_expansion.
+
+For more details, see <https://github.com/thelfer/tfel/issues/760>
+
+## Issue 739: [mfront] Depreciation of europlexus interface
+
+For more details, see <https://github.com/thelfer/tfel/issues/739>
+
 ## Issue 708: Add support for hardening modes when `libc++` is used
 
 For more details, see <https://github.com/thelfer/tfel/issues/708>
@@ -504,7 +726,7 @@ This feature is described in Section @sec:tfel_5_1:zero.
 
 For more details, see <https://github.com/thelfer/tfel/issues/721>
 
-## Issue 717: [mfront] Add warning if the increment of a state variable is not used in @Integrator for the Implicit DSLs and the Default DSLs
+## Issue 717: [mfront] Add warning if the increment of a state variable is not used in `@Integrator` for the `Implicit` DSLs and the `Default` DSLs
 ￼
 
 For more details, see <https://github.com/thelfer/tfel/issues/717>

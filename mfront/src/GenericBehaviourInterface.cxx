@@ -17,7 +17,7 @@
 #include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/System/System.hxx"
 #include "MFront/MFrontWarningMode.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/LibraryDescription.hxx"
 #include "MFront/TargetsDescription.hxx"

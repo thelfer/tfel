@@ -1,0 +1,24 @@
+/*! 
+ * \file   norton2.mtest
+ * \brief
+ * \author Helfer Thomas
+ * \brief  09 avril 2013
+ */
+
+@ModellingHypothesis 'GeneralisedPlaneStrain';
+
+@PredictionPolicy 'ElasticPrediction';
+@AccelerationAlgorithm 'Crossed2Deltabis';
+
+@Behaviour<umat> @library@ 'umatnorton_rk2';
+@MaterialProperty<constant> 'YoungModulus'     150.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+@MaterialProperty<constant> 'A' 8.e-67;
+@MaterialProperty<constant> 'E' 8.2;
+
+@Real 'tmax' 2500;
+@Real 'emax' 2.5e-2;
+@ImposedStrain<function> 'EXX' 'emax/tmax*t';
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Times {0.,100. in 100, 'tmax' in 1000};

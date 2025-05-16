@@ -47,11 +47,11 @@ struct QtRefTest final : public tfel::tests::TestCase {
   }  // end of execute
   void test1() {
     using namespace tfel::math;
-    constexpr qt<Mass> m3 = []() constexpr {
+    constexpr qt<unit::Mass> m3 = []() constexpr {
       auto v1 = double{50.};
       auto v2 = double{100.};
-      qt_ref<Mass> m1(v1);
-      qt_ref<Mass> m2(v2);
+      qt_ref<unit::Mass> m1(v1);
+      qt_ref<unit::Mass> m2(v2);
       return m1 + 0.5 * m2;
     }
     ();
@@ -59,11 +59,11 @@ struct QtRefTest final : public tfel::tests::TestCase {
   }  // end of test1
   void test2() {
     using namespace tfel::math;
-    constexpr qt<Mass> m3 = []() constexpr {
+    constexpr qt<unit::Mass> m3 = []() constexpr {
       auto v1 = double{50.};
       auto v2 = double{100.};
-      qt_ref<Mass> m1(v1);
-      qt_ref<Mass> m2(v2);
+      qt_ref<unit::Mass> m1(v1);
+      qt_ref<unit::Mass> m2(v2);
       return m1 + 0.5 * m2;
     }
     ();
@@ -71,11 +71,11 @@ struct QtRefTest final : public tfel::tests::TestCase {
   }  // end of test2
   void test3() {
     using namespace tfel::math;
-    constexpr qt<Mass> m3 = []() constexpr {
+    constexpr qt<unit::Mass> m3 = []() constexpr {
       const auto v1 = double{50.};
       const auto v2 = double{100.};
-      const_qt_ref<Mass> m1(v1);
-      const_qt_ref<Mass> m2(v2);
+      const_qt_ref<unit::Mass> m1(v1);
+      const_qt_ref<unit::Mass> m2(v2);
       return m1 + 0.5 * m2;
     }
     ();
@@ -83,11 +83,11 @@ struct QtRefTest final : public tfel::tests::TestCase {
   }  // end of test3
   void test4() {
     using namespace tfel::math;
-    constexpr qt<Mass> m3 = []() constexpr {
+    constexpr qt<unit::Mass> m3 = []() constexpr {
       auto v1 = double{50.};
       const auto v2 = double{100.};
-      qt_ref<Mass> m1(v1);
-      const_qt_ref<Mass> m2(v2);
+      qt_ref<unit::Mass> m1(v1);
+      const_qt_ref<unit::Mass> m2(v2);
       return m1 + 0.5 * m2;
     }
     ();
@@ -95,10 +95,10 @@ struct QtRefTest final : public tfel::tests::TestCase {
   }  // end of test4
   void test5() {
     using namespace tfel::math;
-    constexpr qt<Mass> m3 = []() constexpr {
-      auto increase_mass = [](const qt<Mass>& m) constexpr { return 2 * m; };
+    constexpr qt<unit::Mass> m3 = []() constexpr {
+      auto increase_mass = [](const qt<unit::Mass>& m) constexpr { return 2 * m; };
       auto v1 = double{50.};
-      const_qt_ref<Mass> m1(v1);
+      const_qt_ref<unit::Mass> m1(v1);
       return increase_mass(m1);
     }
     ();
@@ -107,7 +107,7 @@ struct QtRefTest final : public tfel::tests::TestCase {
   void test6() {
 #if (not defined __INTEL_COMPILER) && (not defined __clang__)
     using namespace tfel::math;
-    using strain = qt<NoUnit>;
+    using strain = qt<unit::NoUnit>;
     constexpr auto eeps = strain{1e-14};
     constexpr auto dp = strain(1e-3);
     constexpr auto n = stensor<3u, strain>{
@@ -125,10 +125,10 @@ struct QtRefTest final : public tfel::tests::TestCase {
     using namespace tfel::math;
     constexpr auto eps = 1e-14;
     constexpr auto value = []() constexpr {
-      constexpr qt<Mass> m(100.);
-      constexpr qt<Acceleration> a(2);
+      constexpr qt<unit::Mass> m(100.);
+      constexpr qt<unit::Acceleration> a(2);
       auto vf = double{};
-      auto f = qt_ref<Force>(vf);
+      auto f = qt_ref<unit::Force>(vf);
       f = m * a;
       return vf;
     }
@@ -138,14 +138,14 @@ struct QtRefTest final : public tfel::tests::TestCase {
   void test8() {
     using namespace tfel::math;
     constexpr auto eps = 1e-14;
-    constexpr qt<NoUnit> m(100.);
+    constexpr qt<unit::NoUnit> m(100.);
     constexpr double m_value = m;
     TFEL_TESTS_STATIC_ASSERT(my_abs(m_value - 100.) < eps);
   }
   void test9() {
     using namespace tfel::math;
     constexpr auto eps = 1e-14;
-    constexpr qt<NoUnit> q(1.2);
+    constexpr qt<unit::NoUnit> q(1.2);
     const auto cos_q = std::cos(q);
     TFEL_TESTS_ASSERT(std::abs(cos_q - std::cos(1.2)) < eps);
   }

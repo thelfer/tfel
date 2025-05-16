@@ -15,9 +15,11 @@
 #define LIB_MFRONT_MFRONTSEARCHPATHSHANDLER_HXX
 
 #include <set>
+#include <tuple>
 #include <string>
 #include <vector>
 #include <variant>
+#include <string_view>
 
 #include "MFront/MFrontConfig.hxx"
 
@@ -124,6 +126,24 @@ namespace mfront {
     //! \brief list of search paths
     std::vector<Path> paths;
   };  // end of struct SearchPathsHandler
+
+
+#ifdef MFRONT_HAVE_MADNEX
+
+  /*!
+   * \brief decompose an implementation location in a madnex file. The path
+   * is assumed to have the following form:
+   * `madnex:<file>:<type>:<material>:<implementation>`
+   * \param[in] path : implementation
+   * \return a tuple of strings containng the file path, the type of the
+   * implementation (material property, behaviour or model), the material
+   * name, the name of the implementation
+   */
+  MFRONT_VISIBILITY_EXPORT
+  std::tuple<std::string, std::string, std::string, std::string>
+  decomposeImplementationPathInMadnexFile(const std::string_view);
+
+#endif /* MFRONT_HAVE_MADNEX */
 
 }  // namespace mfront
 

@@ -16,8 +16,8 @@
 
 #include <string>
 #include <vector>
-
 #include "MFront/MFrontConfig.hxx"
+#include "MFront/DSLUtilities.hxx"
 
 namespace mfront {
 

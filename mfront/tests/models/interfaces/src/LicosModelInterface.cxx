@@ -21,10 +21,11 @@
 #include <cctype>
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/System/System.hxx"
 
 #include "MFront/MFrontHeader.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/VariableDescription.hxx"
 #include "MFront/StaticVariableDescription.hxx"
@@ -1756,12 +1757,15 @@ namespace mfront {
 
   void MFrontModelInterface::getTargetsDescription(TargetsDescription& td,
                                                    const ModelDescription& md) {
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     const auto lib = getLibraryName(md);
     auto& l = td.getLibrary(lib);
     l.sources.push_back(md.className + "-@application@.cxx");
     td.headers.push_back("Pleiades/Model/" + md.className +
                          "-@application@.hxx");
     l.cppflags.push_back("`@application@-config --includes`");
+    insert_if(l.cppflags,
+	      "$(shell " + tfel_config + " --cppflags --compiler-flags)");    
     l.ldflags.push_back("`@application@-config --libs` -lm");
     l.epts.push_back(md.className);
   }  // end of MFrontModelInterface::getTargetsDescription

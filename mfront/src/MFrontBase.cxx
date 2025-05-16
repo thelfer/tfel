@@ -33,7 +33,6 @@
 #include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/MFrontUtilities.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/DefaultDSL.hxx"
 #include "MFront/DSLFactory.hxx"
 #include "MFront/PathSpecifier.hxx"

@@ -32,14 +32,19 @@ namespace mfront::bbrick {
     using namespace tfel::glossary;
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     InelasticFlowBase::initialize(bd, dsl, id, d);
-    if (id.empty()) {
+    if (!this->equivalent_strain_external_name.empty()) {
       addStateVariable(bd, "strain", "p",
-                       Glossary::EquivalentViscoplasticStrain);
+                       this->equivalent_strain_external_name);
     } else {
-      addStateVariable(bd, "strain", "p" + id,
-                       static_cast<const std::string&>(
-                           Glossary::EquivalentViscoplasticStrain) +
-                           id);
+      if (id.empty()) {
+        addStateVariable(bd, "strain", "p",
+                         Glossary::EquivalentViscoplasticStrain);
+      } else {
+        addStateVariable(bd, "strain", "p" + id,
+                         static_cast<const std::string&>(
+                             Glossary::EquivalentViscoplasticStrain) +
+                             id);
+      }
     }
     for (const auto& vn : {"vp", "dvp_dseqe", "dvp_dp"}) {
       bd.reserveName(uh, vn + id);
@@ -56,6 +61,10 @@ namespace mfront::bbrick {
     if (b) {
       if (!this->ihrs.empty()) {
         c += computeElasticLimitAndDerivative(bd, this->ihrs, id);
+        if (this->save_yield_surface_radius) {
+          c += "this->mfront_" + yield_surface_radius_external_name + " = R" +
+               id + ";\n";
+        }
       }
       c += this->computeFlowRateAndDerivative(bd, sp, id);
       c += "fp" + id + " -= (this->dt) * vp" + id + ";\n";
@@ -93,6 +102,10 @@ namespace mfront::bbrick {
     } else {
       if (!this->ihrs.empty()) {
         c += computeElasticLimit(bd, this->ihrs, id);
+        if (this->save_yield_surface_radius) {
+          c += "this->mfront_" + yield_surface_radius_external_name + " = R" +
+               id + ";\n";
+        }
       }
       c += this->computeFlowRate(bd, sp, id);
       c += "fp" + id + " -= (this->dt) * vp" + id + ";\n";

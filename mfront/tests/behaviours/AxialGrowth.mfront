@@ -6,7 +6,6 @@
 }
 
 @AbaqusFiniteStrainStrategy[abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
-@EPXFiniteStrainStrategy[epx] MieheApelLambrechtLogarithmicStrain;
 
 @OrthotropicBehaviour<Pipe>;
 @RequireStiffnessTensor<Altered>;

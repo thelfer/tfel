@@ -29,6 +29,7 @@ void declareMTestFileExport(pybind11::module_&);
 void declareMTestFileExport(pybind11::module_& m) {
   //
   pybind11::class_<mtest::TestDescription>(m, "TestDescription")
+      .def(pybind11::init<>())
       .def_readwrite("name", &mtest::TestDescription::name)
       .def_readwrite("scheme", &mtest::TestDescription::scheme)
       .def_readwrite("author", &mtest::TestDescription::author)

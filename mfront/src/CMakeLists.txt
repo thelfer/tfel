@@ -1,4 +1,3 @@
-
 configure_file(${PROJECT_SOURCE_DIR}/mfront/src/MFrontHeader.cxx.in
                ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
@@ -126,6 +125,8 @@ set(TFELMFront_SOURCES
     DSLBase.cxx
     InterfaceBase.cxx
     DSLUtilities.cxx
+    BehaviourDSLUtilities.cxx
+    CodeGeneratorUtilities.cxx
     FiniteStrainBehaviourTangentOperatorConversion.cxx
     FiniteStrainBehaviourTangentOperatorConversionPath.cxx
     MaterialPropertyInterfaceFactory.cxx
@@ -461,25 +462,6 @@ if(HAVE_ANSYS)
     TFELUtilities
     TFELException)
 endif(HAVE_ANSYS)
-
-if(HAVE_EUROPLEXUS)
-  set(TFELMFront_SOURCES
-    EuroplexusInterface.cxx
-    EuroplexusSymbolsGenerator.cxx
-    ${TFELMFront_SOURCES})
-  set(EuroplexusInterface_SOURCES
-    EuroplexusInterfaceExceptions.cxx
-    EuroplexusException.cxx
-    EuroplexusComputeStiffnessTensor.cxx
-    EuroplexusStressFreeExpansionHandler.cxx
-    EuroplexusComputeThermalExpansionCoefficientTensor.cxx
-    EuroplexusFiniteStrain.cxx)
-  mfront_library(EuroplexusInterface ${EuroplexusInterface_SOURCES})
-  target_link_libraries(EuroplexusInterface
-    MTestFileGenerator
-    TFELUtilities
-    TFELException)
-endif(HAVE_EUROPLEXUS)
 
 if(HAVE_ZMAT)
   set(TFELMFront_SOURCES

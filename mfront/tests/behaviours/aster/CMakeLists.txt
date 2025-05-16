@@ -204,20 +204,20 @@ function(test_aster test_arg)
 endfunction(test_aster)
 
 macro(test_aster_python test)
-  get_property(MFrontAsterBehavioursBuildPath TARGET MFrontAsterBehaviours PROPERTY LOCATION)
-  configure_file(aster${test}.py.in
-    aster${test}.py @ONLY)
-  add_test(NAME aster${test}_py
-    COMMAND ${PYTHON_EXECUTABLE} aster${test}.py)
-  set_tests_properties(aster${test}_py
-    PROPERTIES DEPENDS MFrontAsterBehaviours)
-  if(CMAKE_CONFIGURATION_TYPES)
+  if(NOT CMAKE_CONFIGURATION_TYPES)
+    configure_file(aster${test}.py.in aster${test}.py.in2 @ONLY)
+    file(GENERATE OUTPUT aster${test}.py
+                  INPUT ${CMAKE_CURRENT_BINARY_DIR}/aster${test}.py.in2)
+    add_test(NAME aster${test}_py
+      COMMAND ${Python_EXECUTABLE} aster${test}.py)
     set_tests_properties(aster${test}_py
-      PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python;$<TARGET_FILE_DIR:py_std__stl_vector>;$<TARGET_FILE_DIR:py_tfel_tests>")
-  else(CMAKE_CONFIGURATION_TYPES)
+      PROPERTIES DEPENDS MFrontAsterBehaviours)
+    set(python_env)
+    list(APPEND python_env "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python")
+    list(APPEND python_env "MFrontAsterBehavioursBuildPath=$<TARGET_FILE:MFrontAsterBehaviours>")
     set_tests_properties(aster${test}_py
-      PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/bindings/python")
-  endif(CMAKE_CONFIGURATION_TYPES)
+      PROPERTIES ENVIRONMENT "${python_env}")
+  endif(NOT CMAKE_CONFIGURATION_TYPES)
 endmacro(test_aster_python)
 
 test_aster(initializationfailuretest

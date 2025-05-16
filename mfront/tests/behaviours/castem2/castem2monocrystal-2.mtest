@@ -1,0 +1,62 @@
+/*! 
+ * \file   astermonocrystal-2.mtest
+ * \brief un cas particulièrement difficile généré automatiquement
+ * lors d'une divergence du Newton local. Ce cas passe uniquement si
+ * on limite les incréments de variables internes (méthode
+ * setMaximunIncrementValuePerIteration).
+ * \author jmp
+ * \brief  20 nov 2013
+ */
+
+@ModellingHypothesis 'Tridimensional';
+@StiffnessMatrixType 'ConsistentTangentOperator';
+@Behaviour<umat> @library@ 'umatmonocrystal';
+@MaximumNumberOfSubSteps 1;
+
+// Material properties
+@MaterialProperty<constant> 'C' 0;
+@MaterialProperty<constant> 'K' 100;
+@MaterialProperty<constant> 'PoissonRatio12' 0.33;
+@MaterialProperty<constant> 'PoissonRatio13' 0.33;
+@MaterialProperty<constant> 'PoissonRatio23' 0.33;
+@MaterialProperty<constant> 'Q' 10;
+@MaterialProperty<constant> 'R0' 333;
+@MaterialProperty<constant> 'ShearModulus12' 67669.172932331;
+@MaterialProperty<constant> 'ShearModulus13' 67669.172932331;
+@MaterialProperty<constant> 'ShearModulus23' 67669.172932331;
+@MaterialProperty<constant> 'YoungModulus1' 180000;
+@MaterialProperty<constant> 'YoungModulus2' 180000;
+@MaterialProperty<constant> 'YoungModulus3' 180000;
+@MaterialProperty<constant> 'ThermalExpansion1' 0.;
+@MaterialProperty<constant> 'ThermalExpansion2' 0.;
+@MaterialProperty<constant> 'ThermalExpansion3' 0.;
+@MaterialProperty<constant> 'MassDensity' 0.;
+@MaterialProperty<constant> 'V1X'   1.;
+@MaterialProperty<constant> 'V1Y'   0.;
+@MaterialProperty<constant> 'V1Z'   0.;
+@MaterialProperty<constant> 'V2X'   0.;
+@MaterialProperty<constant> 'V2Y'   1.;
+@MaterialProperty<constant> 'V2Z'   0.;
+@MaterialProperty<constant> 'b' 10;
+@MaterialProperty<constant> 'd1'0;
+@MaterialProperty<constant> 'm' 20;
+
+// Internal state variables
+@InternalStateVariable 'ElasticStrain' {-0.0014848995463575,-0.0014845076674683,0.0044988225571566,-7.4141442462021e-08,-5.9135408223038e-07,-1.4491169263582e-06};
+
+
+// External state variables
+@ExternalStateVariable<evolution> 'Temperature' {0 : 320,30000 : 320};
+
+@Stress {-0.063203987691281,-0.010167747041919,809.76384761573,-0.01003418018283,-0.080032883309375,-0.1961210877778};
+
+@ImposedStrain<evolution> 'EXX' {0:-0.0014848995463648,30000:-0.0019798303228701};
+@ImposedStrain<evolution> 'EYY' {0:-0.0014845076674756,30000:-0.0019793216426816};
+@ImposedStrain<evolution> 'EZZ' {0:0.0044988225571299,30000:0.0059983336770726};
+@ImposedStrain<evolution> 'EXY' {0:-1.0485183346651e-07,30000:-1.4342820697528e-07};
+@ImposedStrain<evolution> 'EXZ' {0:-5.9135408227332e-07,30000:-7.6541139096331e-07};
+@ImposedStrain<evolution> 'EYZ' {0:-1.4491169263293e-06,30000:-1.9399915202972e-06};
+
+// Times
+@Times {0, 30000 in 1};
+

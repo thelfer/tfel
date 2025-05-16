@@ -94,8 +94,14 @@ namespace tfel::utilities {
   template <std::size_t N2>
   basic_fcstring<N, CharT, Traits>& basic_fcstring<N, CharT, Traits>::operator=(
       const CStringNarrowedView<N2, CharT>& rhs) {
-    const auto s1 = basic_fcstring<N2, CharT, Traits>::strnlen(rhs.value);
-    const auto s = (s1 > N2) ? N2 : s1;
+    const auto s = [&rhs] {
+      for (std::size_t i = 0; i != N2; ++i) {
+        if (rhs.value[i] == '\0') {
+          return i;
+        }
+      }
+      return N2;
+    }();
     tfel::raise_if<std::length_error>(s > N,
                                       "basic_fcstring::operator = "
                                       "rhs too long");

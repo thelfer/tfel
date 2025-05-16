@@ -24,6 +24,7 @@
 #include <climits>
 #include <unistd.h>
 #include <libgen.h>
+#include <sys/stat.h>
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
@@ -54,7 +55,7 @@ namespace tfel::check {
   static void parseConfigFiles(ConfigurationManager& c) {
     const auto s = tfel::system::dirSeparator();
     std::regex re("tfel-check.config", std::regex_constants::extended);
-    const auto& files = tfel::system::recursiveFind(re, ".", 0);
+    const auto& files = tfel::system::recursiveFind(re, ".", false);
     for (const auto& d : files) {
       for (const auto& f : d.second) {
         parse(c.getConfigurationManager(d.first), d.first + s + f);
@@ -192,6 +193,28 @@ namespace tfel::check {
                  },
                  true));
     this->registerCallBack(
+        "--discard-commands-failure",
+        CallBack(
+            "discard command's failure if comparisons are ok (default "
+            "behaviour). If no "
+            "comparisons is declared, command's failure is never ignored.",
+            [this] {
+              const auto boolean_value = [this] {
+                const auto& opt = this->currentArgument->getOption();
+                if (opt == "true") {
+                  return true;
+                } else if (opt != "false") {
+                  std::cerr << "invalid option '" << opt
+                            << "' passed to '--discard-commands-failure', "
+                            << "expected 'true' or 'false'.";
+                  std::exit(EXIT_FAILURE);
+                }
+                return false;
+              }();
+              this->configurations.setDiscardCommandsFailure(boolean_value);
+            },
+            true));
+    this->registerCallBack(
         "--list-default-components",
         CallBack(
             "list all default components",
@@ -273,7 +296,7 @@ namespace tfel::check {
     int status = EXIT_SUCCESS;
     if (this->inputs.empty()) {
       std::regex re(".+\\.check", std::regex_constants::extended);
-      const auto& files = tfel::system::recursiveFind(re, ".", 0);
+      const auto& files = tfel::system::recursiveFind(re, ".", false);
       for (const auto& d : files) {
         for (const auto& f : d.second) {
           if (!exe(d.first, f)) {
@@ -282,7 +305,23 @@ namespace tfel::check {
         }
       }
     } else {
+      // some tests on the input files
       for (const auto& i : this->inputs) {
+        struct stat file_info;
+        if (::stat(i.c_str(), &file_info) == -1) {
+          log.addMessage("can't get information on input  '" + i + "'");
+          log.addMessage("Aborting");
+          exit(EXIT_FAILURE);
+        }
+        if (!S_ISREG(file_info.st_mode)) {
+          log.addMessage("input  '" + i + "' is not a regular file");
+          log.addMessage("Aborting");
+          exit(EXIT_FAILURE);
+        }
+      }
+      // executing each input files
+      for (const auto& i : this->inputs) {
+        //
         const auto path = strdup(i.c_str());
         const auto path2 = strdup(path);
         const auto d = std::string(::dirname(path));

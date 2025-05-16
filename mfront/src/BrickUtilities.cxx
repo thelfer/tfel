@@ -12,6 +12,7 @@
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
+#include "MFront/BehaviourDSLUtilities.hxx"
 #include "MFront/BehaviourBrick/IsotropicHardeningRule.hxx"
 #include "MFront/BehaviourBrick/BrickUtilities.hxx"
 
@@ -53,37 +54,6 @@ namespace mfront::bbrick {
     }
     return c;
   }  // end of generateMaterialPropertyInitializationCode
-
-  BehaviourDescription::MaterialProperty
-  getBehaviourDescriptionMaterialProperty(AbstractBehaviourDSL& dsl,
-                                          const std::string_view n,
-                                          const tfel::utilities::Data& d) {
-    if (d.is<double>()) {
-      BehaviourDescription::ConstantMaterialProperty cmp;
-      cmp.value = d.get<double>();
-      return cmp;
-    } else if (d.is<int>()) {
-      BehaviourDescription::ConstantMaterialProperty cmp;
-      cmp.value = static_cast<double>(d.get<int>());
-      return cmp;
-    }
-    if (!d.is<std::string>()) {
-      tfel::raise(
-          "getBehaviourDescriptionMaterialProperty: "
-          "unsupported data type for material property '" +
-          std::string(n) + "'");
-    }
-    const auto mp = d.get<std::string>();
-    if (tfel::utilities::ends_with(mp, ".mfront")) {
-      // file name
-      BehaviourDescription::ExternalMFrontMaterialProperty emp;
-      emp.mpd = dsl.handleMaterialPropertyDescription(mp);
-      return emp;
-    }
-    BehaviourDescription::AnalyticMaterialProperty amp;
-    amp.f = mp;
-    return amp;
-  }  // end of getBehaviourDescriptionMaterialProperty_impl
 
   void declareParameterOrLocalVariable(
       BehaviourDescription& bd,

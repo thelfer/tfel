@@ -107,6 +107,12 @@ namespace tfel::check {
     });
   }  // end of addComponent
 
+  void ConfigurationManager::setDiscardCommandsFailure(const bool b){
+    this->modify([&b](Configuration& cf) noexcept {  //
+      cf.discard_commands_failure = b;
+    });
+  }
+
   const Configuration& ConfigurationManager::getConfiguration() const {
     return this->configuration;
   }  // end of getConfiguration

@@ -24,7 +24,6 @@
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/MFrontUtilities.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/PerformanceProfiling.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/ModelDescription.hxx"

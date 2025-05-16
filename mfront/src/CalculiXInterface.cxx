@@ -22,13 +22,14 @@
 #include "TFEL/System/System.hxx"
 
 #include "MFront/MFrontWarningMode.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/MFrontUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/VariableDescription.hxx"
 #include "MFront/CalculiXSymbolsGenerator.hxx"
 #include "MFront/CalculiXInterface.hxx"
 

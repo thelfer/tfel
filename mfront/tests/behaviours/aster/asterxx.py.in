@@ -1,3 +1,4 @@
+import os
 try:
     import unittest2 as unittest
 except ImportError:
@@ -11,7 +12,7 @@ class Asterxx(unittest.TestCase):
         Np=30
         Nss=12
 
-        b = Behaviour("Tridimensional","@MFrontAsterBehavioursBuildPath@",
+        b = Behaviour("Tridimensional", os.environ['MFrontAsterBehavioursBuildPath'],
 		      "asterpolycrystals")
         mpnames=b.getMaterialPropertiesNames()
         ivnames=b.getInternalStateVariablesNames()

@@ -18,7 +18,6 @@
 @UMATFiniteStrainStrategy[umat]                    MieheApelLambrechtLogarithmicStrain;
 @CalculiXFiniteStrainStrategy[calculix]            MieheApelLambrechtLogarithmicStrain;
 @AbaqusFiniteStrainStrategy[abaqus,abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
-@EPXFiniteStrainStrategy[epx]                      MieheApelLambrechtLogarithmicStrain;
 @AnsysFiniteStrainStrategy[ansys]                  MieheApelLambrechtLogarithmicStrain;
 
 @ProvidesSymmetricTangentOperator;

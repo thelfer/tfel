@@ -24,12 +24,16 @@ set(mfront_tests_SOURCES
   Elasticity4
   Elasticity5
   Elasticity6
+  Elasticity8
+  Elasticity9
   OrthotropicElastic
   OrthotropicElastic2
   OrthotropicElastic3
   OrthotropicElastic4
   OrthotropicElastic5
   OrthotropicElastic6
+  OrthotropicElastic7
+  OrthotropicElastic8
   PerfectPlasticity
   HosfordPerfectPlasticity
   HosfordPerfectPlasticity2
@@ -157,15 +161,22 @@ set(mfront_tests_SOURCES
   ProfilerTest2
   ProfilerTest3
   ArrayOfScalarGradients
-  ArrayOfStensorGradients)
+  ArrayOfStensorGradients
+  PoroElasticity
+  PoroPlasticity)
 
 if(enable-mfront-quantity-tests)
   list(APPEND mfront_tests_SOURCES
        ComputeThermalExpansion
        ComputeThermalExpansion2
        ComputeThermalExpansion3
+       ComputeThermalExpansion4
+       ComputeThermalExpansion5
+       ComputeThermalExpansion6
+       ComputeThermalExpansion7
        Elasticity
        Elasticity2
+       Elasticity7
        Norton3
        Norton4
        Plasticity
@@ -445,6 +456,8 @@ test_generic(elasticity25)
 test_generic(elasticity26)
 test_generic(elasticity27)
 test_generic(elasticity28)
+test_generic(elasticity29)
+test_generic(elasticity30)
 test_generic(perfectplasticity)
 test_generic(plasticity2)
 test_generic(plasticity3)
@@ -738,6 +751,9 @@ test_generic(externalmodelcaller3 ExternalModelCallerTest.ref)
 # test_generic(parametertest)
 # test_generic(parametertest2)
 test_generic(norton5)
+
+test_generic(PoroElasticity)
+test_generic(PoroPlasticity PoroPlasticity.ref)
 
 # test_generic(elasticmaterialpropertiesboundschecktest
 #   NO_XML_OUTPUT WILL_FAIL)
