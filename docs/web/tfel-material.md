@@ -504,17 +504,18 @@ The available bounds are:
  
 # Isotropic elastic moduli
 
-A `struct` IsotropicModuli is defined in the header "IsotropicModuli.hxx"
+A `struct` `IsotropicModuli` is defined in the header "IsotropicModuli.hxx"
 for the elastic moduli of an isotropic material.
-Three specializations are defined:
- - `IsotropicModuli<StressType>::KG` (for bulk and shear moduli)
- - `IsotropicModuli<StressType>::YoungNu` (for Young modulus and Poisson ratio)
- - `IsotropicModuli<StressType>::LambdaMu` (for Lame moduli)
+Three children `struct` are defined:
+ - `KGModuli` (for bulk and shear moduli)
+ - `YoungNuModuli` (for Young modulus and Poisson ratio)
+ - `LambdaMuModuli` (for Lame moduli)
 
-6 functions that permits to convert a type of isotropic moduli into another
-are also defined:
- - `KGtoYoungNu`, `YoungNutoKG`
- - `KGtoLambdaMu`, `LambdaMutoKG`
- - `LambdaMutoYoungNu`, `YoungNutoLambdaMu`
+Each `struct` has methods which permit to convert
+the moduli:
+ - `ToYoungNu()`
+ - `ToLambdaMu()`
+ - `ToKG()`
+These methods all return `std::pair` objects.
 
 <!-- Local IspellDict: english -->

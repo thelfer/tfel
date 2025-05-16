@@ -325,6 +325,10 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       const auto nu = real{0.3};
       const auto young_i = stress{150e9};
       const auto nu_i = real{0.2};
+      const auto kappa_0 = young / 3. / (1 - 2 * nu);
+      const auto mu_0 = young / 2. / (1 + nu);
+      const auto kappai = young_i / 3. / (1 - 2 * nu_i);
+      const auto mui= young_i / 2. / (1 + nu_i);
       const auto a = length{0.4};
       const auto b = length{0.3};
       const auto c = length{0.2};
@@ -370,10 +374,22 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       const auto ka3 = (Chom3(0, 0) + 2 * Chom3(0, 1)) / 3;
       const auto nuTI_DS_3 = (3 * ka3 - 2 * mu3) / (2 * mu3 + 6 * ka3);
       const auto ETI_DS_3 = 2 * mu3 * (1 + nuTI_DS_3);
-
+      
+      
+      const tfel::material::KGModuli<stress> KG_0(kappa_0,mu_0);
+      const tfel::material::KGModuli<stress> KG_i(kappai,mui);
+      const auto Chom4 =
+          computeTransverseIsotropicDiluteScheme<real, stress, length>(
+              KG_0, f, KG_i, n_a, a, a + length{0.0000001}, c);
+      const auto mu4 = (Chom4(0, 0) - Chom4(0, 1)) / 2;
+      const auto ka4 = (Chom4(0, 0) + 2 * Chom4(0, 1)) / 3;
+      const auto nuTI_DS_4 = (3 * ka4 - 2 * mu4) / (2 * mu4 + 6 * ka4);
+      const auto ETI_DS_4 = 2 * mu4 * (1 + nuTI_DS_4);
       TFEL_TESTS_ASSERT(my_abs(ETI_DS_2 - ETI_DS_3) < stress{10 * eps});
+      TFEL_TESTS_ASSERT(my_abs(ETI_DS_2 - ETI_DS_4) < stress{10 * eps});
       // std::cout << (E2-E3).getValue() << " "<< value << '\n';
       TFEL_TESTS_ASSERT(my_abs(nuTI_DS_2 - nuTI_DS_3) < eps);
+      TFEL_TESTS_ASSERT(my_abs(nuTI_DS_2 - nuTI_DS_4) < eps);
     }
 #endif /* _LIBCPP_VERSION */
   }
@@ -389,6 +405,14 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       const auto nu = real{0.3};
       const auto young_i = stress{150e9};
       const auto nu_i = real{0.2};
+      const auto kappa_0 = young / 3. / (1 - 2 * nu);
+      const auto mu_0 = young / 2. / (1 + nu);
+      const auto lambda_0=kappa_0-2*mu_0/3;
+      const auto kappai = young_i / 3. / (1 - 2 * nu_i);
+      const auto mui= young_i / 2. / (1 + nu_i);
+      const auto lambdai=kappai-2*mui/3;
+      const tfel::material::LambdaMuModuli<stress> LambdaMu_0(lambda_0,mu_0);
+      const tfel::material::KGModuli<stress> KG_i(kappai,mui);
       const auto a = length{20.};
       const auto b = length{1.};
       const auto c = length{3.};
@@ -405,6 +429,8 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
               young, nu, f, young_i, nu_i, n_a, a, n_b, b, c);
       const auto ChomPCW1 = computeOrientedPCWScheme<real, stress, length>(
           young, nu, f, young_i, nu_i, n_a, a, n_b, b, c, D);
+      const auto ChomPCW4 = computeOrientedPCWScheme<real, stress, length>(
+          LambdaMu_0, f, KG_i, n_a, a, n_b, b, c, D);
       // Test the compilation
       const auto ChomPCW3 =
           computeTransverseIsotropicPCWScheme<real, stress, length>(
@@ -412,6 +438,7 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
 
       const auto ChomPCW2 = computeIsotropicPCWScheme<real, stress, length>(
           young, nu, f, young_i, nu_i, a, b, c, D);
+      
 
       TFEL_TESTS_ASSERT(my_abs(ChomMT1(2, 2) - ChomPCW1(2, 2)) < seps);
       // std::cout << (ChomMT1(2, 2)).getValue()<<" "<<ChomPCW1(2, 2).getValue()
@@ -421,6 +448,7 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       // std::cout << (ChomMT1(0, 2) - ChomPCW1(0, 2)).getValue() << " " <<
       // seps.getValue()
       //           << '\n';
+      TFEL_TESTS_ASSERT(my_abs(ChomPCW1(0, 0) - ChomPCW4(0, 0)) < seps);
     }
 #endif /* _LIBCPP_VERSION */
   }
