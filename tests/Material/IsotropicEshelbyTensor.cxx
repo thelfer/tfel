@@ -283,14 +283,15 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
           young, nu, n_a, lg{2}, n_b, lg{2.00000001}, lg{2.00001});
       const auto kappa = young / 3. / (1 - 2 * nu);
       const auto mu = young / 2. / (1 + nu);
+      const tfel::material::KGModuli<stress> KG(kappa,mu);
       const auto PSphere_4 = computeSphereHillPolarisationTensor<real, stress>(
-          {.kappa = kappa, .mu = mu});
+          KG);
       const auto PSphere_5 = computeHillPolarisationTensor<real, stress, lg>(
-          {.kappa = kappa, .mu = mu}, n_a, lg{2}, n_b, lg{2.00000001},
+          KG, n_a, lg{2}, n_b, lg{2.00000001},
           lg{2.00001});
       const auto PSphere_6 =
           computeAxisymmetricalHillPolarisationTensor<real, stress>(
-              {.kappa = kappa, .mu = mu}, n_a, real(1));
+              KG, n_a, real(1));
       for (int i : {0, 1, 2, 3, 4, 5}) {
         for (int j : {0, 1, 2, 3, 4, 5}) {
           TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_2(i, j)) <
@@ -314,9 +315,10 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
           young, nu, n_a, lg{20}, n_b, lg{2}, lg{2.0001});
       const auto kappa = young / 3. / (1 - 2 * nu);
       const auto mu = young / 2. / (1 + nu);
+      const tfel::material::KGModuli<stress> KG(kappa,mu);
       const auto PAxis_3 =
           computeAxisymmetricalHillPolarisationTensor<real, stress>(
-              {.kappa = kappa, .mu = mu}, n_a, lg{20} / lg{2.0001});
+              KG, n_a, lg{20} / lg{2.0001});
       for (int i : {0, 1, 2, 3, 4, 5}) {
         for (int j : {0, 1, 2, 3, 4, 5}) {
           TFEL_TESTS_ASSERT(my_abs(PAxis_1(i, j) - PAxis_2(i, j)) <

@@ -501,5 +501,21 @@ The available bounds are:
  - Voigt bound (`computeVoigtStiffness`)
  - Reuss bound (`computeReussStiffness`)
  - Hashin-Shtrikman bounds (`computeIsotropicHashinShtrikmanBounds`)
+ 
+# Isotropic elastic moduli
+
+A `struct` `IsotropicModuli` is defined in the header "IsotropicModuli.hxx"
+for the elastic moduli of an isotropic material.
+Three children `struct` are defined:
+ - `KGModuli` (for bulk and shear moduli)
+ - `YoungNuModuli` (for Young modulus and Poisson ratio)
+ - `LambdaMuModuli` (for Lame moduli)
+
+Each `struct` has methods which permit to convert
+the moduli:
+ - `ToYoungNu()`
+ - `ToLambdaMu()`
+ - `ToKG()`
+These methods all return `std::pair` objects.
 
 <!-- Local IspellDict: english -->

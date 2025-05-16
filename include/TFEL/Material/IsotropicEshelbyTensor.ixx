@@ -89,7 +89,7 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of function computeSphereEshelbyTensor
 
   template <typename real, typename StressType>
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, tfel::math::invert_type<StressType>>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
   computeSphereHillPolarisationTensor(const StressType& young, const real& nu) {
     if ((nu > real(0.5)) || (nu < real(-1))) {
       tfel::reportContractViolation("nu>0.5 or nu<-1");
@@ -104,12 +104,12 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of function computeSphereHillPolarisationTensor
 
   template <typename real, typename StressType>
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, tfel::math::invert_type<StressType>>
-  computeSphereHillPolarisationTensor(const KGModuli<StressType>& KG0) {
-    const EnuModuli<real, StressType> Enu0 =
-        convertKGModuli<real, StressType>(KG0);
-    return computeSphereHillPolarisationTensor<real, StressType>(Enu0.E,
-                                                                 Enu0.nu);
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
+  computeSphereHillPolarisationTensor(const IsotropicModuli<StressType>& IM0) {
+    
+    const auto Enu0 = IM0.ToYoungNu();
+    return computeSphereHillPolarisationTensor<real, StressType>(std::get<0>(Enu0),
+                                                                 std::get<1>(Enu0));
   }  // end of function computeSphereHillPolarisationTensor
 
   template <typename real>
@@ -183,7 +183,7 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of function computeAxisymmetricalEshelbyTensor
 
   template <typename real, typename StressType>
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, tfel::math::invert_type<StressType>>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
   computeAxisymmetricalHillPolarisationTensor(
       const StressType& young,
       const real& nu,
@@ -235,18 +235,17 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of function computeAxisymmetricalHillPolarisationTensor
 
   template <typename real, typename StressType>
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, tfel::math::invert_type<StressType>>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
   computeAxisymmetricalHillPolarisationTensor(
-      const KGModuli<StressType>& KG0,
+      const IsotropicModuli<StressType>& IM0,
       const tfel::math::tvector<3u, real>& n_a,
       const real& e,
       const real precf,
       const real precd,
       const real precld) {
-    const EnuModuli<real, StressType> Enu0 =
-        convertKGModuli<real, StressType>(KG0);
+    const auto Enu0 = IM0.ToYoungNu();
     return computeAxisymmetricalHillPolarisationTensor<real, StressType>(
-        Enu0.E, Enu0.nu, n_a, e, precf, precd, precld);
+        std::get<0>(Enu0),std::get<1>(Enu0), n_a, e, precf, precd, precld);
   }  // end of function computeAxisymmetricalHillPolarisationTensor
 
   namespace internals {
@@ -366,7 +365,7 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of function computeEshelbyTensor
 
   template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, tfel::math::invert_type<StressType>>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
   computeHillPolarisationTensor(const StressType& young,
                                 const real& nu,
                                 const tfel::math::tvector<3u, real>& n_a,
@@ -419,8 +418,8 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of function computeHillPolarisationTensor
 
   template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, tfel::math::invert_type<StressType>>
-  computeHillPolarisationTensor(const KGModuli<StressType>& KG0,
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
+  computeHillPolarisationTensor(const IsotropicModuli<StressType>& IM0,
                                 const tfel::math::tvector<3u, real>& n_a,
                                 const LengthType& a,
                                 const tfel::math::tvector<3u, real>& n_b,
@@ -429,10 +428,9 @@ namespace tfel::material::homogenization::elasticity {
                                 const real precf,
                                 const real precd,
                                 const real precld) {
-    const EnuModuli<real, StressType> Enu0 =
-        convertKGModuli<real, StressType>(KG0);
+    const auto Enu0 = IM0.ToYoungNu();
     return computeHillPolarisationTensor<real, StressType, LengthType>(
-        Enu0.E, Enu0.nu, n_a, a, n_b, b, c, precf, precd, precld);
+        std::get<0>(Enu0), std::get<1>(Enu0), n_a, a, n_b, b, c, precf, precd, precld);
   }  // end of function computeHillPolarisationTensor
 
   template <typename real, typename StressType>
@@ -457,7 +455,18 @@ namespace tfel::material::homogenization::elasticity {
     const auto ka = 1 / (3 + 9 * kaS * (k_i - k0) / k0);
     using namespace tfel::math;
     return 3 * ka * st2tost2<3u, real>::J() + 2 * mu * st2tost2<3u, real>::K();
+  }  
+  
+  template <typename real, typename StressType>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
+  computeSphereLocalisationTensor(const IsotropicModuli<StressType>& IM0,
+                                  const IsotropicModuli<StressType>& IM_i) {
+    const auto Enu0 = IM0.ToYoungNu();
+    const auto Enui = IM_i.ToYoungNu();
+    return computeSphereLocalisationTensor<real, StressType>(
+        std::get<0>(Enu0),std::get<1>(Enu0), std::get<0>(Enui),std::get<1>(Enui));
   }  // end of function SphereLocalisationTensor
+  
 
   template <typename real, typename StressType>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
@@ -492,6 +501,19 @@ namespace tfel::material::homogenization::elasticity {
     const auto Pr = P0 * C;
     const auto A = invert(st2tost2<3u, real>::Id() + Pr);
     return A;
+  }
+  
+  template <typename real, typename StressType>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
+  computeAxisymmetricalEllipsoidLocalisationTensor(
+      const IsotropicModuli<StressType>& IM0,
+      const IsotropicModuli<StressType>& IM_i,
+      const tfel::math::tvector<3u, real>& n_a,
+      const real& e) {
+    const auto Enu0 = IM0.ToYoungNu();
+    const auto Enui = IM_i.ToYoungNu();
+    return computeAxisymmetricalEllipsoidLocalisationTensor<real, StressType>(
+        std::get<0>(Enu0),std::get<1>(Enu0), std::get<0>(Enui),std::get<1>(Enui),n_a,e);
   }  // end of function computeAxisymmetricalEllipsoidLocalisationTensor
 
   template <typename real, typename StressType, typename LengthType>
@@ -529,6 +551,21 @@ namespace tfel::material::homogenization::elasticity {
     const auto Pr = P0 * C;
     const auto A = invert(st2tost2<3u, real>::Id() + Pr);
     return A;
+  }
+  
+  template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
+  computeEllipsoidLocalisationTensor(const IsotropicModuli<StressType>& IM0,
+      				     const IsotropicModuli<StressType>& IM_i,
+                                     const tfel::math::tvector<3u, real>& n_a,
+                                     const LengthType& a,
+                                     const tfel::math::tvector<3u, real>& n_b,
+                                     const LengthType& b,
+                                     const LengthType& c) {
+      const auto Enu0 = IM0.ToYoungNu();
+      const auto Enui = IM_i.ToYoungNu();
+    return computeEllipsoidLocalisationTensor<real, StressType,LengthType>(
+        std::get<0>(Enu0),std::get<1>(Enu0), std::get<0>(Enui),std::get<1>(Enui),n_a,a,n_b,b,c);
   }  // end of function computeEllipsoidLocalisationTensor
 
 }  // end of namespace tfel::material::homogenization::elasticity

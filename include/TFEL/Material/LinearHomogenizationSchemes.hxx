@@ -16,6 +16,7 @@
 
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Material/IsotropicEshelbyTensor.hxx"
+#include "TFEL/Material/IsotropicModuli.hxx"
 
 namespace tfel::material::homogenization::elasticity {
 
@@ -66,7 +67,8 @@ namespace tfel::material::homogenization::elasticity {
   /*!
    * This function gives the homogenized moduli for a dilute scheme, for
    * spheres.
-   * \return an object of type std::pair<StressType,real>
+   * \return an object of type std::pair<StressType,real> containing
+   * Young modulus and Poisson ratio
    * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix
    * and the spheres
@@ -82,11 +84,31 @@ namespace tfel::material::homogenization::elasticity {
       const real&,
       const StressType&,
       const real&);
-
-  /*!
+      
+   /*!
+   * This function is an overload of computeSphereDiluteScheme 
+   * with IsotropicModuli.
+   * \return an object of type std::pair<StressType,real> containing
+   * Young modulus and Poisson ratio
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix
+   * and the spheres
+   * \param [in] IM0: Isotropic moduli of the matrix
+   * \param [in] f: volumic fraction of spheres
+   * \param [in] IM_i: Isotropic moduli of the inclusions
+   */
+  template <typename real, typename StressType>
+  TFEL_HOST_DEVICE const std::pair<StressType, real> computeSphereDiluteScheme(
+      const IsotropicModuli<StressType>&,
+      const real&,
+      const IsotropicModuli<StressType>&);   
+   
+   
+   /*!
    * This function gives the homogenized moduli for a Mori-Tanaka scheme,
    * for spheres.
-   * \return an object of type std::pair<StressType,real>
+   * \return an object of type std::pair<StressType,real> containing
+   * Young modulus and Poisson ratio
    * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix and
    * the spheres
@@ -103,11 +125,32 @@ namespace tfel::material::homogenization::elasticity {
                                 const real&,
                                 const StressType&,
                                 const real&);
-
+   
+  /*!
+   * This function is an overload of computeSphereMoriTanakaScheme
+   * with IsotropicModuli.
+   * \return an object of type std::pair<StressType,real> containing
+   * Young modulus and Poisson ratio
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix and
+   * the spheres
+   * \param [in] IM0: Isotropic moduli of the matrix
+   * \param [in] f: volumic fraction of spheres
+   * \param [in] IM_i: Isotropic moduli of the inclusions
+   */
+  template <typename real, typename StressType>
+  TFEL_HOST_DEVICE const std::pair<StressType, real>
+  computeSphereMoriTanakaScheme(
+      const IsotropicModuli<StressType>&,
+      const real&,
+      const IsotropicModuli<StressType>&);
+   
+  
   /*!
    * This function gives the homogenized moduli for a dilute scheme, for an
    * isotropic distribution of ellipsoids
-   * \return an object of type std::pair<StressType,real>
+   * \return an object of type std::pair<StressType,real> containing
+   * Young modulus ans Poisson ratio
    * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix
    * and the ellipsoids
@@ -127,6 +170,33 @@ namespace tfel::material::homogenization::elasticity {
                                const real&,
                                const StressType&,
                                const real&,
+                               const LengthType&,
+                               const LengthType&,
+                               const LengthType&);
+   
+   
+   /*!
+   * This function is an overload of computeIsotropicDiluteScheme
+   * with IsotropicModuli.
+   * \return an object of type std::pair<StressType,real> containing
+   * Young modulus ans Poisson ratio
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix
+   * and the ellipsoids
+   * \tparam LengthType: type of the dimensions of the
+   * ellipsoids
+   * \param [in] IM0: Isotropic moduli of the matrix
+   * \param [in] f: volumic fraction of the inclusions
+   * \param [in] IM_i: Isotropic moduli of the inclusions
+   * \param[in] a: length of the first semi-axis
+   * \param[in] b: length of the second semi-axis
+   * \param[in] c: length of the third semi-axis
+   */
+  template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE const std::pair<StressType, real>
+  computeIsotropicDiluteScheme(const IsotropicModuli<StressType>&,
+      			       const real&,
+      			       const IsotropicModuli<StressType>&,
                                const LengthType&,
                                const LengthType&,
                                const LengthType&);
@@ -165,6 +235,33 @@ namespace tfel::material::homogenization::elasticity {
                                          const LengthType&,
                                          const LengthType&,
                                          const LengthType&);
+                                         
+   /*!
+   * This function is an overload of computeTransverseIsotropicDiluteScheme
+   * with IsotropicModuli.
+   * \return an object of type st2tost2<3u,StressType>
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix and
+   * the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoids
+   * \param [in] IM0: Isotropic moduli of the matrix
+   * \param [in] f: volumic fraction of the inclusions
+   * \param [in] IM_i: Isotropic moduli of the inclusions
+   * \param [in] n_a: direction of the principal axis
+   * which has a fixed orientation and a semi-length \f$a\f$
+   * \param[in] a: length of semi-axis relative to the direction \f$n_a\f$
+   * \param[in] b: length of the second semi-axis
+   * \param[in] c: length of the third semi-axis
+   */
+  template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
+  computeTransverseIsotropicDiluteScheme(const IsotropicModuli<StressType>&,
+      			                 const real&,
+      			                 const IsotropicModuli<StressType>&,
+                                         const tfel::math::tvector<3u, real>&,
+                                         const LengthType&,
+                                         const LengthType&,
+                                         const LengthType&);
 
   /*!
    * This function gives the homogenized stiffness for a dilute scheme, for
@@ -199,11 +296,43 @@ namespace tfel::material::homogenization::elasticity {
                               const tfel::math::tvector<3u, real>&,
                               const LengthType&,
                               const LengthType&);
+   
+   /*!
+   * This function is an overload of computeOrientedDiluteScheme
+   * with IsotropicModuli.
+   * \return an object of type st2tost2<3u,StressType>
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix and
+   * the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoid
+   * \param [in] IM0: Isotropic moduli of the matrix
+   * \param [in] f: volumic fraction of the inclusions
+   * \param [in] IM_i: Isotropic moduli of the inclusions
+   * \param [in] n_a: direction of the principal axis whose semi-length is
+   * \f$a\f$
+   * \param[in] a: length of semi-axis relative to the direction \f$n_a\f$
+   * \param [in] n_b: direction of the principal axis whose semi-length is
+   * \f$b\f$
+   * \param[in] b: length of the semi-axis relative to the direction \f$n_b\f$
+   * \param[in] c: length of the third semi-axis
+   */
+  template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
+  computeOrientedDiluteScheme(const IsotropicModuli<StressType>&,
+      			      const real&,
+      			      const IsotropicModuli<StressType>&,
+                              const tfel::math::tvector<3u, real>&,
+                              const LengthType&,
+                              const tfel::math::tvector<3u, real>&,
+                              const LengthType&,
+                              const LengthType&);
+
 
   /*!
    * This function gives the homogenized moduli for a Mori-Tanaka scheme,
    * for an isotropic distribution of ellipsoids
-   * \return an object of type std::pair<StressType,real>
+   * \return an object of type std::pair<StressType,real> containing
+   * Young modulus ans Poisson ratio
    * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the
    * matrix and the ellipsoids
@@ -223,6 +352,31 @@ namespace tfel::material::homogenization::elasticity {
                                    const real&,
                                    const StressType&,
                                    const real&,
+                                   const LengthType&,
+                                   const LengthType&,
+                                   const LengthType&);
+                                   
+   /*!
+   * This function is an overload of computeIsotropicMoriTanakaScheme
+   * with IsotropicModuli.
+   * \return an object of type std::pair<StressType,real> containing
+   * Young modulus ans Poisson ratio
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the
+   * matrix and the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoids
+   * \param [in] IM0: Isotropic moduli of the matrix
+   * \param [in] f: volumic fraction of the inclusions
+   * \param [in] IM_i: Isotropic moduli of the inclusions
+   * \param[in] a: length of the first semi-axis
+   * \param[in] b: length of the second semi-axis
+   * \param[in] c: length of the third semi-axis
+   */
+  template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE const std::pair<StressType, real>
+  computeIsotropicMoriTanakaScheme(const IsotropicModuli<StressType>&,
+      			           const real&,
+      			           const IsotropicModuli<StressType>&,
                                    const LengthType&,
                                    const LengthType&,
                                    const LengthType&);
@@ -261,6 +415,34 @@ namespace tfel::material::homogenization::elasticity {
       const LengthType&,
       const LengthType&,
       const LengthType&);
+      
+   /*!
+   * This function is an overload of computeTransverseIsotropicMoriTanakaScheme
+   * with IsotropicModuli.
+   * \return an object of type st2tost2<3u,StressType>
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix
+   * and the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoids
+   * \param [in] IM0: Isotropic moduli of the matrix
+   * \param [in] f: volumic fraction of the inclusions
+   * \param [in] IM_i: Isotropic moduli of the inclusions
+   * \param [in] n_a: direction of the principal axis
+   * which has a fixed orientation and a semi-length \f$a\f$
+   * \param[in] a: length of semi-axis relative to the direction \f$n_a\f$
+   * \param[in] b: length of the second semi-axis
+   * \param[in] c: length of the third semi-axis
+   */
+  template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
+  computeTransverseIsotropicMoriTanakaScheme(
+      const IsotropicModuli<StressType>&,
+      const real&,
+      const IsotropicModuli<StressType>&,
+      const tfel::math::tvector<3u, real>&,
+      const LengthType&,
+      const LengthType&,
+      const LengthType&);
 
   /*!
    * This function gives the homogenized stiffness for a Mori-Tanaka scheme,
@@ -291,6 +473,37 @@ namespace tfel::material::homogenization::elasticity {
                                   const real&,
                                   const StressType&,
                                   const real&,
+                                  const tfel::math::tvector<3u, real>&,
+                                  const LengthType&,
+                                  const tfel::math::tvector<3u, real>&,
+                                  const LengthType&,
+                                  const LengthType&);
+                                  
+    /*!
+   * This function is an overload of computeOrientedMoriTanakaScheme
+   * with IsotropicModuli.
+   * \return an object of type st2tost2<3u,StressType>
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix and
+   * the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoids
+   * \param [in] IM0: Isotropic moduli of the matrix
+   * \param [in] f: volumic fraction of the inclusions
+   * \param [in] IM_i: Isotropic moduli of the inclusions
+   * \param [in] n_a: direction of the principal axis whose semi-length is
+   * \f$a\f$
+   * \param[in] a: length of semi-axis relative to the direction
+   * \f$n_a\f$
+   * \param [in] n_b: direction of the principal axis whose
+   * semi-length is \f$b\f$
+   * \param[in] b: length of the semi-axis relative to the direction \f$n_b\f$
+   * \param[in] c: length of the third semi-axis
+   */
+  template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
+  computeOrientedMoriTanakaScheme(const IsotropicModuli<StressType>&,
+      				  const real&,
+      				  const IsotropicModuli<StressType>&,
                                   const tfel::math::tvector<3u, real>&,
                                   const LengthType&,
                                   const tfel::math::tvector<3u, real>&,
@@ -340,6 +553,7 @@ namespace tfel::material::homogenization::elasticity {
       const real&,
       const tfel::math::st2tost2<3u, real>&,
       const Distribution<real, LengthType>&);
+      
 
   /*!
    * This function gives the homogenized stiffness for a Ponte-Castaneda and
@@ -368,6 +582,32 @@ namespace tfel::material::homogenization::elasticity {
                             const real&,
                             const StressType&,
                             const real&,
+                            const LengthType&,
+                            const LengthType&,
+                            const LengthType&,
+                            const Distribution<real, LengthType>&);
+                            
+    /*!
+   * This function is an overload of computeIsotropicPCWScheme 
+   * with IsotropicModuli.
+   * \return an object of type st2tost2<3u,StressType>
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix and
+   * the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoids
+   * \param [in] IM0: Isotropic moduli of the matrix
+   * \param [in] f: volumic fraction of the inclusions
+   * \param [in] IM_i: Isotropic moduli of the inclusions
+   * \param[in] a: length of the first semi-axis (of the ellipsoids)
+   * \param[in] b: length of the second semi-axis
+   * \param[in] c: length of the third semi-axis
+   * \param [in] D: Distribution that characterizes the distribution
+   */
+  template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
+  computeIsotropicPCWScheme(const IsotropicModuli<StressType>&,
+                            const real&,
+                            const IsotropicModuli<StressType>&,
                             const LengthType&,
                             const LengthType&,
                             const LengthType&,
@@ -408,7 +648,38 @@ namespace tfel::material::homogenization::elasticity {
                                       const LengthType&,
                                       const LengthType&,
                                       const Distribution<real, LengthType>&);
-
+   
+   
+   /*!
+   * This function is an overload of computeTransverseIsotropicPCWScheme
+   * with IsotropicModuli.
+   * \return an object of type st2tost2<3u,StressType>
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix and
+   * the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoids
+   * \param [in] IM0: Isotropic moduli of the matrix
+   * \param [in] f: volumic fraction of the inclusions
+   * \param [in] IM_i: Isotropic moduli of the inclusions
+   * \param [in] n_a: direction of the principal axis whose semi-length is
+   * \f$a\f$ (related to the shape of the inclusions)
+   * \param[in] a: length of semi-axis relative to the direction
+   * \f$n_a\f$
+   * \param[in] b: length of the semi-axis relative to the direction \f$n_b\f$
+   * \param[in] c: length of the third semi-axis
+   * \param [in] D: Distribution that characterizes the distribution
+   */
+  template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
+  computeTransverseIsotropicPCWScheme(const IsotropicModuli<StressType>&,
+                            	      const real&,
+                            	      const IsotropicModuli<StressType>&,
+                                      const tfel::math::tvector<3u, real>&,
+                                      const LengthType&,
+                                      const LengthType&,
+                                      const LengthType&,
+                                      const Distribution<real, LengthType>&); 
+  
   /*!
    * This function gives the homogenized stiffness for a Ponte-Castaneda and
    * Willis scheme,
@@ -440,6 +711,39 @@ namespace tfel::material::homogenization::elasticity {
                            const real&,
                            const StressType&,
                            const real&,
+                           const tfel::math::tvector<3u, real>&,
+                           const LengthType&,
+                           const tfel::math::tvector<3u, real>&,
+                           const LengthType&,
+                           const LengthType&,
+                           const Distribution<real, LengthType>&);
+                           
+    /*!
+   * This function is an overload of computeTransverseIsotropicPCWScheme
+   * with IsotropicModuli.
+   * \return an object of type st2tost2<3u,StressType>
+   * \tparam real: underlying type
+   * \tparam StressType: type of the elastic constants related to the matrix and
+   * the ellipsoids
+   * \tparam LengthType: type of the dimensions of the ellipsoids
+   * \param [in] IM0: Isotropic moduli of the matrix
+   * \param [in] f: volumic fraction of the inclusions
+   * \param [in] IM_i: Isotropic moduli of the inclusions
+   * \param [in] n_a: direction of the principal axis whose semi-length is
+   * \f$a\f$ (related to the shape of the inclusions)
+   * \param[in] a: length of semi-axis relative to the direction
+   * \f$n_a\f$
+   * \param [in] n_b: direction of the principal axis whose
+   * semi-length is \f$b\f$
+   * \param[in] b: length of the semi-axis relative to the direction \f$n_b\f$
+   * \param[in] c: length of the third semi-axis
+   * \param [in] D: Distribution that characterizes the distribution
+   */
+  template <typename real, typename StressType, typename LengthType>
+  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
+  computeOrientedPCWScheme(const IsotropicModuli<StressType>&,
+                           const real&,
+                           const IsotropicModuli<StressType>&,
                            const tfel::math::tvector<3u, real>&,
                            const LengthType&,
                            const tfel::math::tvector<3u, real>&,
