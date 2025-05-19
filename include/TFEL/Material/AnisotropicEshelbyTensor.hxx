@@ -26,7 +26,7 @@ namespace tfel::material::homogenization::elasticity {
    * ellipse also has a specific orientation given by the vector
    * \f$n_a\f$. A LOCAL basis can then be defined.
    * The function returns the Hill tensor in th GLOBAL basis.
-   * \return an object of type st2tost2<2u,tfel::math::invert_type<StressType>>
+   * \return an object of type st2tost2<2u,types::compliance<StressType>>
    * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants
    * \param[in] C: stiffness tensor of the matrix
@@ -35,12 +35,13 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] b: length of semi-axis relative to the other direction
    * \param[in] max_it: maximal number of iterations for integration
    */
-  template <typename real, typename StressType>
-  TFEL_HOST_DEVICE
-      tfel::math::st2tost2<2u, typename tfel::math::invert_type<StressType>>
-      computePlainStrainAnisotropicHillTensor(
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<2u, types::compliance<StressType>> computePlainStrainAnisotropicHillTensor(
           const tfel::math::st2tost2<2u, StressType>&,
-          const real&,
+          const types::real<StressType>&,
           const std::size_t max_it = 12);
 
   /*!
@@ -60,18 +61,20 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] b: length of semi-axis relative to the other direction
    * \param[in] max_it: maximal number of iterations for integration
    */
-  template <typename real, typename StressType>
-  TFEL_HOST_DEVICE tfel::math::st2tost2<2u, real>
-  computePlainStrainAnisotropicEshelbyTensor(
-      const tfel::math::st2tost2<2u, StressType>&,
-      const real&,
-      const std::size_t max_it = 12);
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<2u, types::real<StressType>> computePlainStrainAnisotropicEshelbyTensor(
+          const tfel::math::st2tost2<2u, StressType>&,
+          const types::real<StressType>&,
+          const std::size_t max_it = 12);
 
   /*!
    * This function builds the Hill tensor of a general ellipsoid embedded in
    * an ANISOTROPIC matrix. The function returns the Hill tensor in the
    * global basis
-   * \return an object of type st2tost2<3u,tfel::math::invert_type<StressType>>
+   * \return an object of type st2tost2<3u,types::compliance<StressType>>
    * \tparam real: underlying type
    * \tparam LengthType: type of the dimensions of the ellipsoid
    * \tparam StressType: type of the elastic constants
@@ -83,16 +86,18 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] c: length of the remaining semi-axis
    * \param[in] max_it: maximal number of iterations for integration
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE
-      tfel::math::st2tost2<3u, typename tfel::math::invert_type<StressType>>
-      computeAnisotropicHillTensor(const tfel::math::st2tost2<3u, StressType>&,
-                                   const tfel::math::tvector<3u, real>&,
-                                   const LengthType&,
-                                   const tfel::math::tvector<3u, real>&,
-                                   const LengthType&,
-                                   const LengthType&,
-                                   const std::size_t max_it = 12);
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<3u, types::compliance<StressType>> computeAnisotropicHillTensor(
+          const tfel::math::st2tost2<3u, StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const std::size_t max_it = 12);
 
   /*!
    * This function builds the Eshelby tensor of a general ellipsoid embedded
@@ -110,15 +115,18 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] c: length of the remaining semi-axis
    * \param[in] max_it: maximal number of iterations for integration
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
-  computeAnisotropicEshelbyTensor(const tfel::math::st2tost2<3u, StressType>&,
-                                  const tfel::math::tvector<3u, real>&,
-                                  const LengthType&,
-                                  const tfel::math::tvector<3u, real>&,
-                                  const LengthType&,
-                                  const LengthType&,
-                                  const std::size_t max_it = 12);
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE tfel::math::
+          st2tost2<3u, types::real<StressType>> computeAnisotropicEshelbyTensor(
+              const tfel::math::st2tost2<3u, StressType>&,
+              const tfel::math::tvector<3u, types::real<StressType>>&,
+              const types::length<StressType>&,
+              const tfel::math::tvector<3u, types::real<StressType>>&,
+              const types::length<StressType>&,
+              const types::length<StressType>&,
+              const std::size_t max_it = 12);
 
   /*!
    * This function builds the strain localisation tensor of a general
@@ -145,17 +153,19 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] c: length of the remaining semi-axis
    * \param[in] max_it: maximal number of iterations for integration
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
-  computeAnisotropicLocalisationTensor(
-      const tfel::math::st2tost2<3u, StressType>&,
-      const tfel::math::st2tost2<3u, StressType>&,
-      const tfel::math::tvector<3u, real>&,
-      const LengthType&,
-      const tfel::math::tvector<3u, real>&,
-      const LengthType&,
-      const LengthType&,
-      const std::size_t max_it = 12);
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<3u, types::real<StressType>> computeAnisotropicLocalisationTensor(
+          const tfel::math::st2tost2<3u, StressType>&,
+          const tfel::math::st2tost2<3u, StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const std::size_t max_it = 12);
 
   /*!
    * This function builds the strain localisation tensor of a general 2d ellipse
@@ -177,15 +187,17 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] b: length of semi-axis relative to the other direction
    * \param[in] max_it: maximal number of iterations for integration
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
-  computePlainStrainAnisotropicLocalisationTensor(
-      const tfel::math::st2tost2<2u, StressType>&,
-      const tfel::math::st2tost2<2u, StressType>&,
-      const tfel::math::tvector<2u, real>&,
-      const LengthType&,
-      const LengthType&,
-      const std::size_t max_it = 12);
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<3u, types::real<StressType>> computePlainStrainAnisotropicLocalisationTensor(
+          const tfel::math::st2tost2<2u, StressType>&,
+          const tfel::math::st2tost2<2u, StressType>&,
+          const tfel::math::tvector<2u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const std::size_t max_it = 12);
 
 }  // namespace tfel::material::homogenization::elasticity
 

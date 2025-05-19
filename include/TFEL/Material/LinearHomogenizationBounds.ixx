@@ -20,12 +20,12 @@ namespace tfel::material::homogenization::elasticity {
 
   template <unsigned short int d,
             unsigned int N,
-            typename real,
-            typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<d, StressType>
-  computeVoigtStiffness(
-      const std::array<real, N> &tab_f,
-      const std::array<tfel::math::st2tost2<d, StressType>, N> &tab_C) {
+            tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<d, StressType> computeVoigtStiffness(
+          const std::array<types::real<StressType>, N> &tab_f,
+          const std::array<tfel::math::st2tost2<d, StressType>, N> &tab_C) {
     tfel::math::st2tost2<d, StressType> C_V = tab_f[0] * tab_C[0];
     for (int i = 1; i < N; i++) {
       C_V += tab_f[i] * tab_C[i];
@@ -35,13 +35,13 @@ namespace tfel::material::homogenization::elasticity {
 
   template <unsigned short int d,
             unsigned int N,
-            typename real,
-            typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<d, StressType>
-  computeReussStiffness(
-      const std::array<real, N> &tab_f,
-      const std::array<tfel::math::st2tost2<d, StressType>, N> &tab_C) {
-    tfel::math::st2tost2<d, tfel::math::invert_type<StressType>> S_R =
+            tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<d, StressType> computeReussStiffness(
+          const std::array<types::real<StressType>, N> &tab_f,
+          const std::array<tfel::math::st2tost2<d, StressType>, N> &tab_C) {
+    tfel::math::st2tost2<d, types::compliance<StressType>> S_R =
         tab_f[0] * invert(tab_C[0]);
     for (int i = 1; i < N; i++) {
       S_R += tab_f[i] * invert(tab_C[i]);
@@ -51,14 +51,27 @@ namespace tfel::material::homogenization::elasticity {
 
   template <unsigned short int d,
             unsigned int N,
-            typename real,
-            typename StressType>
-  TFEL_HOST_DEVICE const std::pair<std::pair<StressType, StressType>,
-                                   std::pair<StressType, StressType>>
-  computeIsotropicHashinShtrikmanBounds(
-      const std::array<real, N> &tab_f,
-      const std::array<StressType, N> &tab_K,
-      const std::array<StressType, N> &tab_mu) {
+            tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const std::pair<
+          std::pair<StressType, StressType>,
+          std::pair<
+              StressType,
+              StressType>> computeIsotropicHashinShtrikmanBounds(const std::
+                                                                     array<
+                                                                         types::real<
+                                                                             StressType>,
+                                                                         N>
+                                                                         &tab_f,
+                                                                 const std::array<
+                                                                     StressType,
+                                                                     N> &tab_K,
+                                                                 const std::array<
+                                                                     StressType,
+                                                                     N>
+                                                                     &tab_mu) {
+    using real = types::real<StressType>;
     std::array<StressType, N> tab_H;
     for (int i = 0; i < N; i++) {
       tab_H[i] =
@@ -75,7 +88,7 @@ namespace tfel::material::homogenization::elasticity {
     auto K_star_max = 2 * (d - 1) / real(d) * mu_max;
     auto mu_star_min = H_min;
     auto mu_star_max = H_max;
-    using compliance = tfel::math::invert_type<StressType>;
+    using compliance = types::compliance<StressType>;
     StressType Ke_U;
     StressType mue_U;
     StressType Ke_L;

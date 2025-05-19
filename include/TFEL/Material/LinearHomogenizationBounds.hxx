@@ -30,12 +30,12 @@ namespace tfel::material::homogenization::elasticity {
    */
   template <unsigned short int d,
             unsigned int N,
-            typename real,
-            typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<d, StressType>
-  computeVoigtStiffness(
-      const std::array<real, N>&,
-      const std::array<tfel::math::st2tost2<d, StressType>, N>&);
+            tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<d, StressType> computeVoigtStiffness(
+          const std::array<types::real<StressType>, N>&,
+          const std::array<tfel::math::st2tost2<d, StressType>, N>&);
 
   /*!
    * This function gives the Reuss stiffness
@@ -50,12 +50,12 @@ namespace tfel::material::homogenization::elasticity {
    */
   template <unsigned short int d,
             unsigned int N,
-            typename real,
-            typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<d, StressType>
-  computeReussStiffness(
-      const std::array<real, N>&,
-      const std::array<tfel::math::st2tost2<d, StressType>, N>&);
+            tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<d, StressType> computeReussStiffness(
+          const std::array<types::real<StressType>, N>&,
+          const std::array<tfel::math::st2tost2<d, StressType>, N>&);
 
   /*!
    * This function gives the Hashin-Shtrikman bounds for a d-dimensional
@@ -75,13 +75,24 @@ namespace tfel::material::homogenization::elasticity {
    */
   template <unsigned short int d,
             unsigned int N,
-            typename real,
-            typename StressType>
-  TFEL_HOST_DEVICE const std::pair<std::pair<StressType, StressType>,
-                                   std::pair<StressType, StressType>>
-  computeIsotropicHashinShtrikmanBounds(const std::array<real, N>&,
-                                        const std::array<StressType, N>&,
-                                        const std::array<StressType, N>&);
+            tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const std::pair<
+          std::pair<StressType, StressType>,
+          std::pair<
+              StressType,
+              StressType>> computeIsotropicHashinShtrikmanBounds(const std::
+                                                                     array<
+                                                                         types::real<
+                                                                             StressType>,
+                                                                         N>&,
+                                                                 const std::array<
+                                                                     StressType,
+                                                                     N>&,
+                                                                 const std::array<
+                                                                     StressType,
+                                                                     N>&);
 
 }  // end of namespace tfel::material::homogenization::elasticity
 
