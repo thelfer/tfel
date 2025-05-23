@@ -13,6 +13,8 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @helfer_mfrontgallery_2025
+    @mersel_dynamic_2025
     @pierre_modelling_2025
     @helfer_mfemmgis_2025
     @kiszkurno_is_2025
@@ -37,6 +39,7 @@ nocite: |
     @scherer_tensile_2024
     @vedrine_role_2024
     @senac_yield_2024
+    @mersel_evaluation_2024
     @helfer_new_2024
     @jamond_manta_2024
     @valmalle_dic_2024
