@@ -45,7 +45,6 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
     using real = double;
     constexpr bool qt = true;
     using stress = typename tfel::config::Types<1u, real, qt>::stress;
-    using length = typename tfel::config::Types<1u, real, qt>::length;
 
     this->template test1<stress>();
     this->template test3<stress>();
@@ -444,7 +443,6 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       const auto lambda_0=kappa_0-2*mu_0/3;
       const auto kappai = young_i / 3. / (1 - 2 * nu_i);
       const auto mui= young_i / 2. / (1 + nu_i);
-      const auto lambdai=kappai-2*mui/3;
       const tfel::material::LambdaMuModuli<stress> LambdaMu_0(lambda_0,mu_0);
       const tfel::material::KGModuli<stress> KG_i(kappai,mui);
       const auto a = length{20.};

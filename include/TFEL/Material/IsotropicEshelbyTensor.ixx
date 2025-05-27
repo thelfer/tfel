@@ -234,7 +234,7 @@ namespace tfel::material::homogenization::elasticity {
     }
     using namespace tfel::math;
     const auto n_3 = cross_product<real>(n_1, n_2);
-    const auto S0 = computeAxisymmetricalEshelbyTensor<real>(nu, e);
+    const auto S0 = computeAxisymmetricalEshelbyTensor<real>(nu, e, precf, precd, precld);
     const tfel::math::rotation_matrix<real> r = {
         n_1[0], n_1[1], n_1[2], n_2[0], n_2[1], n_2[2], n_3[0], n_3[1], n_3[2]};
     const auto S0_basis = change_basis(S0, r);
@@ -339,7 +339,7 @@ namespace tfel::material::homogenization::elasticity {
     const auto b_ = abc_[sig[1]];
     const auto c_ = abc_[sig[2]];
 
-    constexpr real pi = std::numbers::pi_v<long double>;
+    constexpr real pi = std::numbers::pi_v<tfel::math::base_type<real>>;
     const auto a2 = a_ * a_;
     const auto b2 = b_ * b_;
     const auto c2 = c_ * c_;
@@ -422,7 +422,7 @@ namespace tfel::material::homogenization::elasticity {
     const std::array<LengthType, 3> abc_ = {a, b, c};
     const auto sig = internals::sortEllipsoidLengths<LengthType>(a, b, c);
     const auto S0 = computeEshelbyTensor<StressType>(
-        nu, abc_[sig[0]], abc_[sig[1]], abc_[sig[2]]);
+        nu, abc_[sig[0]], abc_[sig[1]], abc_[sig[2]],precf,precd,precld);
     const std::array<tfel::math::tvector<3u, real>, 3> nabc_ = {n_a_, n_b_,
                                                                 n_c_};
     const auto n_1 = nabc_[sig[0]];
@@ -456,8 +456,6 @@ namespace tfel::material::homogenization::elasticity {
           const types::real<StressType> precf,
           const types::real<StressType> precd,
           const types::real<StressType> precld) {
-    using real = types::real<StressType>;
-    using LengthType = types::length<StressType>;
     const auto Enu0 = IM0.ToYoungNu();
     return computeHillPolarisationTensor<StressType>(
         std::get<0>(Enu0), std::get<1>(Enu0), n_a, a, n_b, b, c, precf, precd,
@@ -534,7 +532,6 @@ namespace tfel::material::homogenization::elasticity {
                                                                    nu_i);
     using namespace tfel::math;
     const st2tost2<3u, StressType> C = C_i - C_0;
-    const auto invC0 = invert(C_0);
     const auto Pr = P0 * C;
     const auto A = invert(st2tost2<3u, real>::Id() + Pr);
     return A;
@@ -549,7 +546,6 @@ namespace tfel::material::homogenization::elasticity {
           const IsotropicModuli<StressType>& IM_i,
           const tfel::math::tvector<3u, types::real<StressType>>& n_a,
           const types::real<StressType>& e) {
-    using real = types::real<StressType>;
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
     return computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
@@ -593,7 +589,6 @@ namespace tfel::material::homogenization::elasticity {
                                                                    nu_i);
     using namespace tfel::math;
     const st2tost2<3u, StressType> C = C_i - C_0;
-    const auto invC0 = invert(C_0);
     const auto Pr = P0 * C;
     const auto A = invert(st2tost2<3u, real>::Id() + Pr);
     return A;
@@ -611,8 +606,6 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::tvector<3u, types::real<StressType>>& n_b,
           const types::length<StressType>& b,
           const types::length<StressType>& c) {
-    using real = types::real<StressType>;
-    using LengthType = types::length<StressType>;
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
     return computeEllipsoidLocalisationTensor<StressType>(
