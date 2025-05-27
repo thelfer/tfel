@@ -16,55 +16,64 @@
 #include "TFEL/Material/IsotropicEshelbyTensor.hxx"
 #include "TFEL/Material/AnisotropicEshelbyTensor.hxx"
 
-  template <typename real, typename StressType>
-  static tfel::math::st2tost2<3u, real>
+
+template <tfel::math::ScalarConcept StressType>
+requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+  static tfel::math::st2tost2<3u, tfel::types::real<StressType>>
   computeSphereLocalisationTensor(
     const StressType& young,
-    const real& nu,
+    const tfel::types::real<StressType>& nu,
     const StressType& young_i,
-    const real& nu_i) {
-    return tfel::material::homogenization::elasticity::computeSphereLocalisationTensor<real,StressType>(young, nu,young_i,nu_i);
+    const tfel::types::real<StressType>& nu_i) {
+    return tfel::material::homogenization::elasticity::computeSphereLocalisationTensor<StressType>(young, nu,young_i,nu_i);
   }
   
-  template <typename real, typename StressType>
-  static tfel::math::st2tost2<3u, real>
+template <tfel::math::ScalarConcept StressType>
+requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+  static tfel::math::st2tost2<3u, tfel::types::real<StressType>>
   computeAxisymmetricalEllipsoidLocalisationTensor(
     const StressType& young,
-    const real& nu,
+    const tfel::types::real<StressType>& nu,
     const StressType& young_i,
-    const real& nu_i,
-    const tfel::math::tvector<3u, real>& n_a,
-    const real& e) {
-    return tfel::material::homogenization::elasticity::computeAxisymmetricalEllipsoidLocalisationTensor<real,StressType>(young, nu,young_i,nu_i,n_a,e);
+    const tfel::types::real<StressType>& nu_i,
+    const tfel::math::tvector<3u, tfel::types::real<StressType>>& n_a,
+    const tfel::types::real<StressType>& e) {
+    return tfel::material::homogenization::elasticity::computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(young, nu,young_i,nu_i,n_a,e);
   }
   
-  template <typename real, typename StressType, typename LengthType>
-  static tfel::math::st2tost2<3u, real>
+template <tfel::math::ScalarConcept StressType>
+requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+  static tfel::math::st2tost2<3u, tfel::types::real<StressType>>
   computeEllipsoidLocalisationTensor(
       const StressType& young,
-      const real& nu,
+      const tfel::types::real<StressType>& nu,
       const StressType& young_i,
-      const real& nu_i,
-      const tfel::math::tvector<3u, real>& n_a,
-      const LengthType& a,
-      const tfel::math::tvector<3u, real>& n_b,
-      const LengthType& b,
-      const LengthType& c) {
-    return tfel::material::homogenization::elasticity::computeEllipsoidLocalisationTensor<real,StressType,LengthType>(young, nu,young_i,nu_i,n_a,a,n_b,b,c);
+      const tfel::types::real<StressType>& nu_i,
+      const tfel::math::tvector<3u, tfel::types::real<StressType>>& n_a,
+      const tfel::types::length<StressType>& a,
+      const tfel::math::tvector<3u, tfel::types::real<StressType>>& n_b,
+      const tfel::types::length<StressType>& b,
+      const tfel::types::length<StressType>& c) {
+    return tfel::material::homogenization::elasticity::computeEllipsoidLocalisationTensor<StressType>(young, nu,young_i,nu_i,n_a,a,n_b,b,c);
   }
   
-  template <typename real, typename StressType, typename LengthType>
-  static tfel::math::st2tost2<3u, real>
+template <tfel::math::ScalarConcept StressType>
+requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+  static tfel::math::st2tost2<3u, tfel::types::real<StressType>>
   computeAnisotropicLocalisationTensor(
       const tfel::math::st2tost2<3u, StressType>& C0_glob,
       const tfel::math::st2tost2<3u, StressType>& C0_loc,
-      const tfel::math::tvector<3u, real>& n_a,
-      const LengthType& a,
-      const tfel::math::tvector<3u, real>& n_b,
-      const LengthType& b,
-      const LengthType& c,
+      const tfel::math::tvector<3u, tfel::types::real<StressType>>& n_a,
+      const tfel::types::length<StressType>& a,
+      const tfel::math::tvector<3u, tfel::types::real<StressType>>& n_b,
+      const tfel::types::length<StressType>& b,
+      const tfel::types::length<StressType>& c,
       const std::size_t max_it = 12) {
-    return tfel::material::homogenization::elasticity::computeAnisotropicLocalisationTensor<real,StressType,LengthType>(C0_glob, C0_loc,n_a,a,n_b,b,c,max_it);
+    return tfel::material::homogenization::elasticity::computeAnisotropicLocalisationTensor<StressType>(C0_glob, C0_loc,n_a,a,n_b,b,c,max_it);
   }
 
 
@@ -72,11 +81,11 @@ void declareLocalisationTensors(pybind11::module_&);
 
 void declareLocalisationTensors(pybind11::module_& m) {
   m.def("computeSphereLocalisationTensor",
-        &computeSphereLocalisationTensor<double,double>);
+        &computeSphereLocalisationTensor<double>);
   m.def("computeAxisymmetricalEllipsoidLocalisationTensor",
-        &computeAxisymmetricalEllipsoidLocalisationTensor<double,double>);
+        &computeAxisymmetricalEllipsoidLocalisationTensor<double>);
   m.def("computeEllipsoidLocalisationTensor",
-        &computeEllipsoidLocalisationTensor<double,double,double>);
+        &computeEllipsoidLocalisationTensor<double>);
   m.def("computeAnisotropicLocalisationTensor",
-        &computeAnisotropicLocalisationTensor<double,double,double>);
+        &computeAnisotropicLocalisationTensor<double>);
 }

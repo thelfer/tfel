@@ -17,7 +17,7 @@
 
   
   
-  template <typename real, typename StressType, typename LengthType>
+  template <typename StressType>
   static tfel::math::st2tost2<3u, double>
   computeHillPolarisationTensor(
       const StressType& young,
