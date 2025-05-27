@@ -127,7 +127,7 @@ namespace tfel::material::homogenization::elasticity {
       if (J > 2) {
         fac *= cste;
       }
-      A(I, J) = fac * Aijkl;
+      A(I, J) = Type(fac * Aijkl);
     }
 
     template <unsigned short int N, typename Type, typename real>
@@ -190,7 +190,7 @@ namespace tfel::material::homogenization::elasticity {
               const int& j,
               const int& k,
               const int& l) {
-      const real pi = std::numbers::pi_v<real>;
+      const real pi = std::numbers::pi_v<tfel::math::base_type<real>>;
       const tfel::math::tvector<2u, real> X = {
           std::cos(theta) / a * LengthType(1),
           std::sin(theta) / b * LengthType(1)};
@@ -214,7 +214,7 @@ namespace tfel::material::homogenization::elasticity {
                                  const int& j,
                                  const int& k,
                                  const int& l) {
-      const real pi = std::numbers::pi_v<real>;
+      const real pi = std::numbers::pi_v<tfel::math::base_type<real>>;
       const tfel::math::tvector<3u, real> X = {
           std::sin(theta) * std::cos(phi) / a * LengthType(1),
           std::sin(theta) * std::sin(phi) / b * LengthType(1),
@@ -230,15 +230,18 @@ namespace tfel::material::homogenization::elasticity {
 
   }  // end of namespace internals
 
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE static tfel::math::
-      st2tost2<2u, typename tfel::math::invert_type<StressType>>
-      computePlainStrainAnisotropicHillTensor(
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE static tfel::math::
+      st2tost2<2u, types::compliance<StressType>> computePlainStrainAnisotropicHillTensor(
           const tfel::math::st2tost2<2u, StressType>& C,
-          const tfel::math::tvector<2u, real>& n_a,
-          const LengthType& a,
-          const LengthType& b,
+          const tfel::math::tvector<2u, types::real<StressType>>& n_a,
+          const types::length<StressType>& a,
+          const types::length<StressType>& b,
           const std::size_t max_it) {
+    using real = types::real<StressType>;
+    using LengthType = types::length<StressType>;
     if (not((a > LengthType{0}) and (b > LengthType{0}))) {
       tfel::reportContractViolation("a<=0 or b<=0");
     }
@@ -257,17 +260,17 @@ namespace tfel::material::homogenization::elasticity {
                                               n_a_[1], n_b_[1], real(0),
                                               real(0), real(0), real(1)};
     const rotation_matrix<real> r_loc_glob = transpose(r_glob_loc);
-    const real pi = std::numbers::pi_v<real>;
+    const real pi = std::numbers::pi_v<tfel::math::base_type<real>>;
     const real zero = real(0);
-    using compliance = typename tfel::math::invert_type<StressType>;
+    using compliance = types::compliance<StressType>;
     tfel::math::st2tost2<2u, compliance> P;
     for (int i = 0; i < 2; i++)
       for (int j = i; j < 2; j++)
         for (int k = 0; k < 2; k++)
           for (int l = k; l < 2; l++) {
             const auto p_ = [C, a, b, i, j, k, l](const real& theta) {
-              return internals::p_ijkl_2D<real, StressType>(C, a, b, theta, i,
-                                                            j, k, l);
+              return internals::p_ijkl_2D<real, StressType, LengthType>(
+                  C, a, b, theta, i, j, k, l);
             };
             const auto int_p = compliance(
                 internals::integrate1D<real>(p_, zero, 2 * pi, max_it));
@@ -277,17 +280,20 @@ namespace tfel::material::homogenization::elasticity {
     return change_basis(P * StressType(1), r_loc_glob) / StressType(1);
   }
 
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE
-      tfel::math::st2tost2<3u, typename tfel::math::invert_type<StressType>>
-      computeAnisotropicHillTensor(
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<3u, types::compliance<StressType>> computeAnisotropicHillTensor(
           const tfel::math::st2tost2<3u, StressType>& C,
-          const tfel::math::tvector<3u, real>& n_a,
-          const LengthType& a,
-          const tfel::math::tvector<3u, real>& n_b,
-          const LengthType& b,
-          const LengthType& c,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+          const types::length<StressType>& a,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_b,
+          const types::length<StressType>& b,
+          const types::length<StressType>& c,
           const std::size_t max_it) {
+    using LengthType = types::length<StressType>;
+    using real = types::real<StressType>;
     if (not((a > LengthType{0}) and (b > LengthType{0}) and
             (c > LengthType{0}))) {
       tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
@@ -316,9 +322,9 @@ namespace tfel::material::homogenization::elasticity {
     const auto C_loc =
         StressType(1) * change_basis(C / StressType(1), r_glob_loc);
 
-    const real pi = std::numbers::pi_v<real>;
+    const real pi = std::numbers::pi_v<tfel::math::base_type<real>>;
     const real zero = real(0);
-    using compliance = typename tfel::math::invert_type<StressType>;
+    using compliance = types::compliance<StressType>;
     tfel::math::st2tost2<3u, compliance> P;
     for (int i = 0; i < 3; i++)
       for (int j = i; j < 3; j++)
@@ -337,45 +343,52 @@ namespace tfel::material::homogenization::elasticity {
     return change_basis(P * StressType(1), r_loc_glob) / StressType(1);
   }
 
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
-  computeAnisotropicEshelbyTensor(const tfel::math::st2tost2<3u, StressType>& C,
-                                  const tfel::math::tvector<3u, real>& n_a,
-                                  const LengthType& a,
-                                  const tfel::math::tvector<3u, real>& n_b,
-                                  const LengthType& b,
-                                  const LengthType& c,
-                                  const std::size_t max_it) {
-    return computeAnisotropicHillTensor<real, StressType, LengthType>(
-               C, n_a, a, n_b, b, c, max_it) *
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE tfel::math::
+          st2tost2<3u, types::real<StressType>> computeAnisotropicEshelbyTensor(
+              const tfel::math::st2tost2<3u, StressType>& C,
+              const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+              const types::length<StressType>& a,
+              const tfel::math::tvector<3u, types::real<StressType>>& n_b,
+              const types::length<StressType>& b,
+              const types::length<StressType>& c,
+              const std::size_t max_it) {
+    return computeAnisotropicHillTensor<StressType>(C, n_a, a, n_b, b, c,
+                                                    max_it) *
            C;
   }
 
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE tfel::math::st2tost2<2u, real>
-  computePlainStrainAnisotropicEshelbyTensor(
-      const tfel::math::st2tost2<2u, StressType>& C,
-      const tfel::math::tvector<2u, real>& n_a,
-      const LengthType& a,
-      const LengthType& b,
-      const std::size_t max_it) {
-    return computePlainStrainAnisotropicHillTensor<real, StressType,
-                                                   LengthType>(C, n_a, a, b,
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<2u, types::real<StressType>> computePlainStrainAnisotropicEshelbyTensor(
+          const tfel::math::st2tost2<2u, StressType>& C,
+          const tfel::math::tvector<2u, types::real<StressType>>& n_a,
+          const types::length<StressType>& a,
+          const types::length<StressType>& b,
+          const std::size_t max_it) {
+    return computePlainStrainAnisotropicHillTensor<StressType>(C, n_a, a, b,
                                                                max_it) *
            C;
   }
 
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
-  computeAnisotropicLocalisationTensor(
-      const tfel::math::st2tost2<3u, StressType>& C_0_glob,
-      const tfel::math::st2tost2<3u, StressType>& C_i_loc,
-      const tfel::math::tvector<3u, real>& n_a,
-      const LengthType& a,
-      const tfel::math::tvector<3u, real>& n_b,
-      const LengthType& b,
-      const LengthType& c,
-      const std::size_t max_it) {
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<3u, types::real<StressType>> computeAnisotropicLocalisationTensor(
+          const tfel::math::st2tost2<3u, StressType>& C_0_glob,
+          const tfel::math::st2tost2<3u, StressType>& C_i_loc,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+          const types::length<StressType>& a,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_b,
+          const types::length<StressType>& b,
+          const types::length<StressType>& c,
+          const std::size_t max_it) {
+    using real = types::real<StressType>;
     if (not(tfel::math::ieee754::fpclassify(
                 tfel::math::VectorVectorDotProduct::exe<
                     real, tfel::math::tvector<3u, real>,
@@ -397,9 +410,8 @@ namespace tfel::material::homogenization::elasticity {
                                               n_a_[1], n_b_[1], n_c_[1],
                                               n_a_[2], n_b_[2], n_c_[2]};
     const rotation_matrix<real> r_loc_glob = transpose(r_glob_loc);
-    const auto P_0_glob =
-        computeAnisotropicHillTensor<real, StressType, LengthType>(
-            C_0_glob, n_a_, a, n_b_, b, c, max_it);
+    const auto P_0_glob = computeAnisotropicHillTensor<StressType>(
+        C_0_glob, n_a_, a, n_b_, b, c, max_it);
     const auto C_i_glob =
         change_basis(C_i_loc / StressType(1), r_loc_glob) * StressType(1);
     const st2tost2<3u, StressType> C = C_i_glob - C_0_glob;
@@ -408,15 +420,18 @@ namespace tfel::material::homogenization::elasticity {
     return A;
   }
 
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE tfel::math::st2tost2<2u, real>
-  computePlainStrainAnisotropicLocalisationTensor(
-      const tfel::math::st2tost2<2u, StressType>& C_0_glob,
-      const tfel::math::st2tost2<2u, StressType>& C_i_loc,
-      const tfel::math::tvector<2u, real>& n_a,
-      const LengthType& a,
-      const LengthType& b,
-      const std::size_t max_it) {
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<2u, types::real<StressType>> computePlainStrainAnisotropicLocalisationTensor(
+          const tfel::math::st2tost2<2u, StressType>& C_0_glob,
+          const tfel::math::st2tost2<2u, StressType>& C_i_loc,
+          const tfel::math::tvector<2u, types::real<StressType>>& n_a,
+          const types::length<StressType>& a,
+          const types::length<StressType>& b,
+          const std::size_t max_it) {
+    using real = types::real<StressType>;
     if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
       tfel::reportContractViolation("n_a is null");
     }
@@ -432,9 +447,8 @@ namespace tfel::material::homogenization::elasticity {
                                               n_a_[1], n_b_[1], real(0),
                                               real(0), real(0), real(1)};
     const rotation_matrix<real> r_loc_glob = transpose(r_glob_loc);
-    const auto P_0_glob =
-        computePlainStrainAnisotropicHillTensor<real, StressType, LengthType>(
-            C_0_glob, n_a_, a, b, max_it);
+    const auto P_0_glob = computePlainStrainAnisotropicHillTensor<StressType>(
+        C_0_glob, n_a_, a, b, max_it);
     const auto C_i_glob =
         change_basis(C_i_loc / StressType(1), r_loc_glob) * StressType(1);
     const st2tost2<2u, StressType> C = C_i_glob - C_0_glob;
