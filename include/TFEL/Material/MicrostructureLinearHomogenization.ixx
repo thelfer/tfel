@@ -219,7 +219,7 @@ namespace tfel::material::homogenization::elasticity {
           Chom_(i,j)=Chom(i,j);
           Chom(i,j)=Ch(i,j);
        }
-       error=tfel::math::relative_error<N,real,StressType>(Chom_,Chom);
+       error=tfel::material::internals::relative_error<N,real,StressType>(Chom_,Chom);
        if ((not(isotropic_matrix)) || (iter/10==iter/10.)){
            std::cout<<"relative difference between previous Chom and actual Chom: "<<error<<std::endl;
            real C11=real(Chom(0,0).getValue());

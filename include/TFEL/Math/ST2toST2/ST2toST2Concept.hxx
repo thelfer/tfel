@@ -78,6 +78,25 @@ namespace tfel::math {
    * \param[in] t: fourth order tensor
    */
   TFEL_HOST_DEVICE constexpr auto transpose(ST2toST2Concept auto&&) noexcept;
+   
+    /*!
+   * \return the trace of a `st2tost2`
+   * \param[in] A : fourth order tensor
+   */
+  TFEL_HOST_DEVICE constexpr auto trace(const ST2toST2Concept auto&) noexcept;
+  
+  /*!
+   * \return the quadruple contraction of two `st2tost2`
+   * \param[in] A,B: fourth order tensors
+   */
+  TFEL_HOST_DEVICE constexpr auto quaddot(const ST2toST2Concept auto&, const ST2toST2Concept auto&) noexcept;
+  
+  /*!
+   * \return the norm of a `st2tost2` : the norm of Id is 1
+   * \param[in] A: fourth order tensor
+   */
+  TFEL_HOST_DEVICE constexpr auto norm(const ST2toST2Concept auto&) noexcept;
+  
   /*!
    * \return the determinant of a `st2tost2`
    * \param[in] s: fourth order tensor

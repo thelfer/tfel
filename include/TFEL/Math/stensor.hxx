@@ -287,6 +287,31 @@ namespace tfel::math {
     //! \return the identity
     TFEL_HOST_DEVICE static constexpr stensor<N, base_type<ValueType>>
     Id() noexcept;
+    
+    /*!
+   * \brief set the component (i,j) of a `stensor` to Aij (it will
+   * automatically multiply the components of type 12, 23 and 13 by sqrt(2) in the Voigt notation)
+   * \return void
+   * \param[in] A : second-order tensor 
+   * \param[in] i,j : indices
+   * \param[in] Aij : value
+   */
+    template <typename T>
+    TFEL_HOST_DEVICE constexpr void setComponent(StensorConcept auto&,
+                                              unsigned short,
+                                              unsigned short,
+                                              const T&);
+    
+    /*!
+   * \brief get the component (i,j) of a `stensor`
+   * \return the true value Aij (and not the value in the Voigt notation)
+   * \param[in] A : second-order tensor
+   * \param[in] i,j : indices
+   */
+    TFEL_HOST_DEVICE constexpr auto getComponent(const StensorConcept auto&,
+                                              unsigned short,
+                                              unsigned short);
+    
     /*!
      * copy the value from a container
      */
@@ -751,6 +776,8 @@ namespace tfel::math {
    */
   TFEL_HOST_DEVICE constexpr auto computeDeviatorDeterminantDerivative(
       const StensorConcept auto&) noexcept;
+    
+    
   /*!
    * \brief rotate a symmetric tensor using a rotation matrix
    * \param[in] s: symmetric tensor to be rotated

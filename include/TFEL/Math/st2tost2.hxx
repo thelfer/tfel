@@ -222,6 +222,44 @@ namespace tfel::math {
    */
   template <unsigned short N, typename T>
   using ConstST2toST2View = ConstView<st2tost2<N, T>>;
+  
+  /*!
+   * \brief This function returns the Voigt index of a pair of indices. Ex: 11 gives 0, 12 or 21 give 3.
+   * \return unsigned short 
+   * \tparam N : dimension
+   * \param[in] i,j : indices
+   */
+  template <unsigned short N>
+   TFEL_HOST_DEVICE constexpr unsigned short VoigtIndex(unsigned short,
+                                               unsigned short);
+                                               
+  /*!
+   * \brief set the component (i,j,k,l) of a `st2tost2` to Aijkl
+   * \return void
+   * \param[in] A : fourth-order tensor 
+   * \param[in] i,j,k,l : indices
+   * \param[in] Aijkl : value
+   */
+  template <typename T>
+  TFEL_HOST_DEVICE constexpr void setComponent(ST2toST2Concept auto&,
+                                               unsigned short,
+                                               unsigned short,
+                                               unsigned short,
+                                               unsigned short,
+                                               const T&);
+                                               
+   /*!
+   * \brief get the component (i,j,k,l) of a `st2tost2`
+   * \return the true value Aijkl (and not the value in the Voigt notation)
+   * \param[in] A : fourth-order tensor 
+   * \param[in] i,j,k,l : indices
+   */                                      
+   TFEL_HOST_DEVICE constexpr auto
+    getComponent(const ST2toST2Concept auto&,
+                         unsigned short,
+                         unsigned short,
+                         unsigned short,
+                         unsigned short);
 
   /*!
    * \return change the basis of a st2tost2
@@ -232,6 +270,7 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr auto change_basis(
       const ST2toST2Type&,
       const rotation_matrix<numeric_type<ST2toST2Type>>&) noexcept;
+      
   /*!
    * \return the invert of a st2tost2
    * \param[in] s : st2tost2 to be inverted

@@ -11,8 +11,7 @@ target_link_libraries(py_tfel_material__material
   ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
 
 tfel_material_python_module(homogenization
-  homogenization.cxx
-  IsotropicHillTensors.cxx)
+  homogenization.cxx)
 target_link_libraries(py_tfel_material_homogenization
   PRIVATE TFELMaterial TFELMath TFELException
   ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})

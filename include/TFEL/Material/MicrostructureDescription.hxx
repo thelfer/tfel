@@ -17,44 +17,9 @@
 #include "TFEL/Material/LinearHomogenizationSchemes.hxx"
 #include <stdexcept>
 
+namespace tfel::material{
 
-namespace tfel::math {
-  
-  /*!
-   * This function returns the trace of a st2tost2 of arbitrary type and arbitrary dimension N
-   * \tparam N: dimension
-   * \tparam T: type of the coefficients
-   * \param A : st2tost2 object
-   * \return a value of type T
-   */
-  template <unsigned short int N,typename T>
-  T trace(const tfel::math::st2tost2<N, T> &A) {
-    T tr = T(0.); 
-    auto size = tfel::math::StensorDimeToSize<N>::value;
-    for (int i = 0 ;i<size;i++){
-       tr+=A(i,i);
-    }
-    return tr;
-  }
-  
-  /*!
-   * This function returns the double contraction of two st2tost2 of arbitrary types,
-   * arbitrary common dimension N, and returns the result in a certain type T
-   * \tparam N: dimension
-   * \tparam T: type of the result desired
-   * \tparam TA: type of tensor A
-   * \tparam TB: type of tensor B
-   * \param A,B: st2tost2 objects
-   * \return a value of type T
-   */
-  template <unsigned short int N,typename T,typename TA, typename TB>
-  T quad_product(const tfel::math::st2tost2<N, TA> &A, const tfel::math::st2tost2<N, TB> &B) {
-     auto A_ = A/TA(1);
-     auto B_ = B/TB(1);
-     tfel::math::st2tost2<N, T> prod = T(1)*A_*B_;
-    return trace<N,T>(prod);
-  }
-  
+   namespace internals {
   /*!
    * This function compares two tensors of type T. It returns false if 
    * the norm of C1-C2 is bigger than eps * norm(C2)
@@ -63,17 +28,14 @@ namespace tfel::math {
    * \param C1,C2 st2tost2 objects
    * \return a bool
    */
-  template<unsigned short int N,typename real, typename T>
+   template<unsigned short int N,typename real, typename T>
    real relative_error(const tfel::math::st2tost2<N,T> &C1,const tfel::math::st2tost2<N,T> &C2){
-       auto val=std::sqrt(tfel::math::quad_product<N,real,T,T>(C1-C2,C1-C2)/tfel::math::quad_product<N,real,T,T>(C2,C2));
+       auto val=norm(C1-C2)/norm(C2);
        return val;
-      }//end of compare
+      }//end of relative_error
       
-      
-}  // end of namespace tfel::math
+   }  // end of namespace internals
 
-
-namespace tfel::material{
 
    // TO DO : check the expressions in 2D
       
@@ -91,10 +53,10 @@ namespace tfel::material{
        static constexpr auto eps = std::numeric_limits<real>::epsilon();
        auto J=tfel::math::st2tost2<N,real>::J();
        auto K=tfel::math::st2tost2<N,real>::K();
-       const auto kappai = tfel::math::quad_product<N,StressType,real,StressType>(J,Ci) / 3;
-       const auto mui = tfel::math::quad_product<N,StressType,real,StressType>(K,Ci) / 10;
+       const auto kappai = tfel::math::quaddot(J,Ci) / 3;
+       const auto mui = tfel::math::quaddot(K,Ci) / 10;
        auto C_comp=3*kappai*J+2*mui*K;
-       auto val=std::sqrt(tfel::math::quad_product<N,StressType,StressType,StressType>(Ci-C_comp,Ci-C_comp)/tfel::math::quad_product<N,StressType,StressType,StressType>(Ci,Ci));
+       auto val=std::sqrt(tfel::math::quaddot(Ci-C_comp,Ci-C_comp)/tfel::math::quaddot(Ci,Ci));
        if (val > 100*eps){
           return false;
        }
@@ -116,8 +78,8 @@ namespace tfel::material{
     std::pair<StressType,StressType> computeKappaMu(const tfel::math::st2tost2<N,StressType> &Ci){
        auto J=tfel::math::st2tost2<N,real>::J();
        auto K=tfel::math::st2tost2<N,real>::K();
-       const StressType kappai = tfel::math::quad_product<N,StressType,real,StressType>(J,Ci) / 3;
-       const StressType mui = tfel::math::quad_product<N,StressType,real,StressType>(K,Ci) / 10;
+       const StressType kappai = tfel::math::quaddot(J,Ci) / 3;
+       const StressType mui = tfel::math::quaddot(K,Ci) / 10;
        return {kappai,mui};
       }//end of computeKappaMu
       
@@ -284,10 +246,14 @@ namespace homogenization::elasticity {
            auto pair0=computeYoungNu<N,real,StressType>(C0);
            const auto E0 = std::get<0>(pair0);
            const auto nu0 = std::get<1>(pair0);
-           return computeGeneralEllipsoidLocalisationTensor<real,StressType,LengthType>(E0,nu0, Ci, n_a_i, ai,n_b_i, bi, ci);
+	// prevision of a general C_i !
+	   auto pairi=computeYoungNu<N,real,StressType>(Ci);
+           const auto Ei = std::get<0>(pairi);
+           const auto nui = std::get<1>(pairi);
+           return computeEllipsoidLocalisationTensor<StressType>(E0,nu0, Ei,nui, n_a_i, ai,n_b_i, bi, ci);
         }
         else{
-           return computeAnisotropicLocalisationTensor<real,StressType,LengthType>(C0,Ci,n_a_i,ai,n_b_i,bi,ci,max_iter_anisotropic_integration);
+           return computeAnisotropicLocalisationTensor<StressType>(C0,Ci,n_a_i,ai,n_b_i,bi,ci,max_iter_anisotropic_integration);
         }
     };
     
@@ -333,12 +299,12 @@ namespace homogenization::elasticity {
            auto pair0=computeYoungNu<3u,real,StressType>(C0);
            const auto E0 = std::get<0>(pair0);
            const auto nu0 = std::get<1>(pair0);
-           return computeSphereLocalisationTensor<real,StressType>(E0,nu0,Ei,nui);
+           return computeSphereLocalisationTensor<StressType>(E0,nu0,Ei,nui);
         }
         else{
            tfel::math::tvector<3u,real> n_a={1.,0.,0.};
            tfel::math::tvector<3u,real> n_b={0.,1.,0.};
-           return computeAnisotropicLocalisationTensor<real,StressType,real>(C0,Ci,n_a,real(1),n_b,real(1),real(1),max_iter_anisotropic_integration);
+           return computeAnisotropicLocalisationTensor<StressType>(C0,Ci,n_a,real(1),n_b,real(1),real(1),max_iter_anisotropic_integration);
         }
     };
     
@@ -367,11 +333,11 @@ namespace homogenization::elasticity {
            auto pair0=computeYoungNu<2u,real,StressType>(C0);
            const auto E0 = std::get<0>(pair0);
            const auto nu0 = std::get<1>(pair0);    //TO DO /////////////////////////////////////////
-           return tfel::math::st2tost2<2u,real>::Id();//computeDiskLocalisationTensor<real,StressType>(E0,nu0,Ei,nui);
+           return tfel::math::st2tost2<2u,real>::Id();//computeDiskLocalisationTensor<StressType>(E0,nu0,Ei,nui);
         }
         else{
            tfel::math::tvector<2u,real> n_a={1.,0.};
-           return computePlainStrainAnisotropicLocalisationTensor<real,StressType,real>(C0,Ci,n_a,real(1),real(1),max_iter_anisotropic_integration);
+           return computePlainStrainAnisotropicLocalisationTensor<StressType>(C0,Ci,n_a,real(1),real(1),max_iter_anisotropic_integration);
         }
     };
     
@@ -527,10 +493,10 @@ namespace homogenization::elasticity {
            auto pair0=computeYoungNu<N,real,StressType>(C0);
            const auto E0 = std::get<0>(pair0);
            const auto nu0 = std::get<1>(pair0);
-           return computeGeneralEllipsoidLocalisationTensor<real,StressType,LengthType>(E0,nu0, Ci, n_a_i, ai,n_b_i, bi, ci);
+           return computeEllipsoidLocalisationTensor<StressType>(E0,nu0, Ci, n_a_i, ai,n_b_i, bi, ci);
         }
         else{
-           computeAnisotropicLocalisationTensor<real,StressType,LengthType>(C0,Ci,n_a_i,ai,n_b_i,bi,ci,max_iter_anisotropic_integration);
+           computeAnisotropicLocalisationTensor<StressType>(C0,Ci,n_a_i,ai,n_b_i,bi,ci,max_iter_anisotropic_integration);
         }
     };
     
