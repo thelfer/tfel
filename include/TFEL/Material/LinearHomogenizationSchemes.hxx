@@ -33,14 +33,16 @@ namespace tfel::material::homogenization::elasticity {
    * inclusions
    * \param [in] A: mean strain localisation tensor of inclusions
    */
-  template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeDiluteScheme(const StressType&,
-                      const real&,
-                      const real&,
-                      const StressType&,
-                      const real&,
-                      const tfel::math::st2tost2<3u, real>&);
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<3u, StressType> computeDiluteScheme(
+          const StressType&,
+          const types::real<StressType>&,
+          const types::real<StressType>&,
+          const StressType&,
+          const types::real<StressType>&,
+          const tfel::math::st2tost2<3u, types::real<StressType>>&);
 
   /*!
    * This function gives the homogenized stiffness for a Mori-Tanaka scheme
@@ -55,14 +57,16 @@ namespace tfel::material::homogenization::elasticity {
    * inclusions
    * \param [in] A: mean strain localisation tensor of inclusions
    */
-  template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeMoriTanakaScheme(const StressType&,
-                          const real&,
-                          const real&,
-                          const StressType&,
-                          const real&,
-                          const tfel::math::st2tost2<3u, real>&);
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<3u, StressType> computeMoriTanakaScheme(
+          const StressType&,
+          const types::real<StressType>&,
+          const types::real<StressType>&,
+          const StressType&,
+          const types::real<StressType>&,
+          const tfel::math::st2tost2<3u, types::real<StressType>>&);
 
   /*!
    * This function gives the homogenized moduli for a dilute scheme, for
@@ -77,16 +81,19 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the
    * inclusions
    */
-  template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const std::pair<StressType, real> computeSphereDiluteScheme(
-      const StressType&,
-      const real&,
-      const real&,
-      const StressType&,
-      const real&);
-      
-   /*!
-   * This function is an overload of computeSphereDiluteScheme 
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const
+      std::pair<StressType, types::real<StressType>> computeSphereDiluteScheme(
+          const StressType&,
+          const types::real<StressType>&,
+          const types::real<StressType>&,
+          const StressType&,
+          const types::real<StressType>&);
+
+  /*!
+   * This function is an overload of computeSphereDiluteScheme
    * with IsotropicModuli.
    * \return an object of type std::pair<StressType,real> containing
    * Young modulus and Poisson ratio
@@ -97,14 +104,16 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] f: volumic fraction of spheres
    * \param [in] IM_i: Isotropic moduli of the inclusions
    */
-  template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const std::pair<StressType, real> computeSphereDiluteScheme(
-      const IsotropicModuli<StressType>&,
-      const real&,
-      const IsotropicModuli<StressType>&);   
-   
-   
-   /*!
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const
+      std::pair<StressType, types::real<StressType>> computeSphereDiluteScheme(
+          const IsotropicModuli<StressType>&,
+          const types::real<StressType>&,
+          const IsotropicModuli<StressType>&);
+
+  /*!
    * This function gives the homogenized moduli for a Mori-Tanaka scheme,
    * for spheres.
    * \return an object of type std::pair<StressType,real> containing
@@ -118,14 +127,17 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the
    * inclusions
    */
-  template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const std::pair<StressType, real>
-  computeSphereMoriTanakaScheme(const StressType&,
-                                const real&,
-                                const real&,
-                                const StressType&,
-                                const real&);
-   
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE const std::
+      pair<StressType, types::real<StressType>> computeSphereMoriTanakaScheme(
+          const StressType&,
+          const types::real<StressType>&,
+          const types::real<StressType>&,
+          const StressType&,
+          const types::real<StressType>&);
+
   /*!
    * This function is an overload of computeSphereMoriTanakaScheme
    * with IsotropicModuli.
@@ -138,14 +150,15 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] f: volumic fraction of spheres
    * \param [in] IM_i: Isotropic moduli of the inclusions
    */
-  template <typename real, typename StressType>
-  TFEL_HOST_DEVICE const std::pair<StressType, real>
-  computeSphereMoriTanakaScheme(
-      const IsotropicModuli<StressType>&,
-      const real&,
-      const IsotropicModuli<StressType>&);
-   
-  
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE const std::
+      pair<StressType, types::real<StressType>> computeSphereMoriTanakaScheme(
+          const IsotropicModuli<StressType>&,
+          const types::real<StressType>&,
+          const IsotropicModuli<StressType>&);
+
   /*!
    * This function gives the homogenized moduli for a dilute scheme, for an
    * isotropic distribution of ellipsoids
@@ -163,19 +176,21 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] b: length of the second semi-axis
    * \param[in] c: length of the third semi-axis
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const std::pair<StressType, real>
-  computeIsotropicDiluteScheme(const StressType&,
-                               const real&,
-                               const real&,
-                               const StressType&,
-                               const real&,
-                               const LengthType&,
-                               const LengthType&,
-                               const LengthType&);
-   
-   
-   /*!
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE const std::
+      pair<StressType, types::real<StressType>> computeIsotropicDiluteScheme(
+          const StressType&,
+          const types::real<StressType>&,
+          const types::real<StressType>&,
+          const StressType&,
+          const types::real<StressType>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&);
+
+  /*!
    * This function is an overload of computeIsotropicDiluteScheme
    * with IsotropicModuli.
    * \return an object of type std::pair<StressType,real> containing
@@ -192,14 +207,17 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] b: length of the second semi-axis
    * \param[in] c: length of the third semi-axis
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const std::pair<StressType, real>
-  computeIsotropicDiluteScheme(const IsotropicModuli<StressType>&,
-      			       const real&,
-      			       const IsotropicModuli<StressType>&,
-                               const LengthType&,
-                               const LengthType&,
-                               const LengthType&);
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE const std::
+      pair<StressType, types::real<StressType>> computeIsotropicDiluteScheme(
+          const IsotropicModuli<StressType>&,
+          const types::real<StressType>&,
+          const IsotropicModuli<StressType>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&);
 
   /*!
    * This function gives the homogenized stiffness for a dilute scheme, for
@@ -224,19 +242,22 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] b: length of the second semi-axis
    * \param[in] c: length of the third semi-axis
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeTransverseIsotropicDiluteScheme(const StressType&,
-                                         const real&,
-                                         const real&,
-                                         const StressType&,
-                                         const real&,
-                                         const tfel::math::tvector<3u, real>&,
-                                         const LengthType&,
-                                         const LengthType&,
-                                         const LengthType&);
-                                         
-   /*!
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const tfel::math::
+          st2tost2<3u, StressType> computeTransverseIsotropicDiluteScheme(
+              const StressType&,
+              const types::real<StressType>&,
+              const types::real<StressType>&,
+              const StressType&,
+              const types::real<StressType>&,
+              const tfel::math::tvector<3u, types::real<StressType>>&,
+              const types::length<StressType>&,
+              const types::length<StressType>&,
+              const types::length<StressType>&);
+
+  /*!
    * This function is an overload of computeTransverseIsotropicDiluteScheme
    * with IsotropicModuli.
    * \return an object of type st2tost2<3u,StressType>
@@ -253,15 +274,18 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] b: length of the second semi-axis
    * \param[in] c: length of the third semi-axis
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeTransverseIsotropicDiluteScheme(const IsotropicModuli<StressType>&,
-      			                 const real&,
-      			                 const IsotropicModuli<StressType>&,
-                                         const tfel::math::tvector<3u, real>&,
-                                         const LengthType&,
-                                         const LengthType&,
-                                         const LengthType&);
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const tfel::math::
+          st2tost2<3u, StressType> computeTransverseIsotropicDiluteScheme(
+              const IsotropicModuli<StressType>&,
+              const types::real<StressType>&,
+              const IsotropicModuli<StressType>&,
+              const tfel::math::tvector<3u, types::real<StressType>>&,
+              const types::length<StressType>&,
+              const types::length<StressType>&,
+              const types::length<StressType>&);
 
   /*!
    * This function gives the homogenized stiffness for a dilute scheme, for
@@ -284,20 +308,22 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] b: length of the semi-axis relative to the direction \f$n_b\f$
    * \param[in] c: length of the third semi-axis
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeOrientedDiluteScheme(const StressType&,
-                              const real&,
-                              const real&,
-                              const StressType&,
-                              const real&,
-                              const tfel::math::tvector<3u, real>&,
-                              const LengthType&,
-                              const tfel::math::tvector<3u, real>&,
-                              const LengthType&,
-                              const LengthType&);
-   
-   /*!
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<3u, StressType> computeOrientedDiluteScheme(
+          const StressType&,
+          const types::real<StressType>&,
+          const types::real<StressType>&,
+          const StressType&,
+          const types::real<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&);
+
+  /*!
    * This function is an overload of computeOrientedDiluteScheme
    * with IsotropicModuli.
    * \return an object of type st2tost2<3u,StressType>
@@ -316,17 +342,18 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] b: length of the semi-axis relative to the direction \f$n_b\f$
    * \param[in] c: length of the third semi-axis
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeOrientedDiluteScheme(const IsotropicModuli<StressType>&,
-      			      const real&,
-      			      const IsotropicModuli<StressType>&,
-                              const tfel::math::tvector<3u, real>&,
-                              const LengthType&,
-                              const tfel::math::tvector<3u, real>&,
-                              const LengthType&,
-                              const LengthType&);
-
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<3u, StressType> computeOrientedDiluteScheme(
+          const IsotropicModuli<StressType>&,
+          const types::real<StressType>&,
+          const IsotropicModuli<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&);
 
   /*!
    * This function gives the homogenized moduli for a Mori-Tanaka scheme,
@@ -345,18 +372,28 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] b: length of the second semi-axis
    * \param[in] c: length of the third semi-axis
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const std::pair<StressType, real>
-  computeIsotropicMoriTanakaScheme(const StressType&,
-                                   const real&,
-                                   const real&,
-                                   const StressType&,
-                                   const real&,
-                                   const LengthType&,
-                                   const LengthType&,
-                                   const LengthType&);
-                                   
-   /*!
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const std::pair<
+          StressType,
+          types::real<
+              StressType>> computeIsotropicMoriTanakaScheme(const StressType&,
+                                                            const types::real<
+                                                                StressType>&,
+                                                            const types::real<
+                                                                StressType>&,
+                                                            const StressType&,
+                                                            const types::real<
+                                                                StressType>&,
+                                                            const types::length<
+                                                                StressType>&,
+                                                            const types::length<
+                                                                StressType>&,
+                                                            const types::length<
+                                                                StressType>&);
+
+  /*!
    * This function is an overload of computeIsotropicMoriTanakaScheme
    * with IsotropicModuli.
    * \return an object of type std::pair<StressType,real> containing
@@ -372,14 +409,17 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] b: length of the second semi-axis
    * \param[in] c: length of the third semi-axis
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const std::pair<StressType, real>
-  computeIsotropicMoriTanakaScheme(const IsotropicModuli<StressType>&,
-      			           const real&,
-      			           const IsotropicModuli<StressType>&,
-                                   const LengthType&,
-                                   const LengthType&,
-                                   const LengthType&);
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE const std::
+      pair<StressType, types::real<StressType>> computeIsotropicMoriTanakaScheme(
+          const IsotropicModuli<StressType>&,
+          const types::real<StressType>&,
+          const IsotropicModuli<StressType>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&);
 
   /*!
    * This function gives the homogenized stiffness for a Mori-Tanaka scheme,
@@ -403,20 +443,22 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] b: length of the second semi-axis
    * \param[in] c: length of the third semi-axis
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeTransverseIsotropicMoriTanakaScheme(
-      const StressType&,
-      const real&,
-      const real&,
-      const StressType&,
-      const real&,
-      const tfel::math::tvector<3u, real>&,
-      const LengthType&,
-      const LengthType&,
-      const LengthType&);
-      
-   /*!
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const tfel::math::
+          st2tost2<3u, StressType> computeTransverseIsotropicMoriTanakaScheme(
+              const StressType&,
+              const types::real<StressType>&,
+              const types::real<StressType>&,
+              const StressType&,
+              const types::real<StressType>&,
+              const tfel::math::tvector<3u, types::real<StressType>>&,
+              const types::length<StressType>&,
+              const types::length<StressType>&,
+              const types::length<StressType>&);
+
+  /*!
    * This function is an overload of computeTransverseIsotropicMoriTanakaScheme
    * with IsotropicModuli.
    * \return an object of type st2tost2<3u,StressType>
@@ -433,16 +475,18 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] b: length of the second semi-axis
    * \param[in] c: length of the third semi-axis
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeTransverseIsotropicMoriTanakaScheme(
-      const IsotropicModuli<StressType>&,
-      const real&,
-      const IsotropicModuli<StressType>&,
-      const tfel::math::tvector<3u, real>&,
-      const LengthType&,
-      const LengthType&,
-      const LengthType&);
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const tfel::math::
+          st2tost2<3u, StressType> computeTransverseIsotropicMoriTanakaScheme(
+              const IsotropicModuli<StressType>&,
+              const types::real<StressType>&,
+              const IsotropicModuli<StressType>&,
+              const tfel::math::tvector<3u, types::real<StressType>>&,
+              const types::length<StressType>&,
+              const types::length<StressType>&,
+              const types::length<StressType>&);
 
   /*!
    * This function gives the homogenized stiffness for a Mori-Tanaka scheme,
@@ -466,20 +510,24 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] b: length of the semi-axis relative to the direction \f$n_b\f$
    * \param[in] c: length of the third semi-axis
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeOrientedMoriTanakaScheme(const StressType&,
-                                  const real&,
-                                  const real&,
-                                  const StressType&,
-                                  const real&,
-                                  const tfel::math::tvector<3u, real>&,
-                                  const LengthType&,
-                                  const tfel::math::tvector<3u, real>&,
-                                  const LengthType&,
-                                  const LengthType&);
-                                  
-    /*!
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const
+      tfel::math::st2tost2<3u, StressType> computeOrientedMoriTanakaScheme(
+          const StressType&,
+          const types::real<StressType>&,
+          const types::real<StressType>&,
+          const StressType&,
+          const types::real<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&);
+
+  /*!
    * This function is an overload of computeOrientedMoriTanakaScheme
    * with IsotropicModuli.
    * \return an object of type st2tost2<3u,StressType>
@@ -499,16 +547,19 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] b: length of the semi-axis relative to the direction \f$n_b\f$
    * \param[in] c: length of the third semi-axis
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeOrientedMoriTanakaScheme(const IsotropicModuli<StressType>&,
-      				  const real&,
-      				  const IsotropicModuli<StressType>&,
-                                  const tfel::math::tvector<3u, real>&,
-                                  const LengthType&,
-                                  const tfel::math::tvector<3u, real>&,
-                                  const LengthType&,
-                                  const LengthType&);
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const
+      tfel::math::st2tost2<3u, StressType> computeOrientedMoriTanakaScheme(
+          const IsotropicModuli<StressType>&,
+          const types::real<StressType>&,
+          const IsotropicModuli<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&);
 
   /*!
    * Here is a structure that defines a distribution of inclusions for
@@ -517,13 +568,15 @@ namespace tfel::material::homogenization::elasticity {
    * direction of the principal axis whose semi-length is \f$b\f$ \ b: length of
    * the second semi-axis \ c: length of the third semi-axis
    */
-  template <typename real, typename LengthType>
-  struct Distribution {
-    tfel::math::tvector<3u, real> n_a;
-    LengthType a;
-    tfel::math::tvector<3u, real> n_b;
-    LengthType b;
-    LengthType c;
+  template <tfel::math::ScalarConcept StressType>
+  requires(
+      tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                         StressType>()) struct Distribution {
+    tfel::math::tvector<3u, types::real<StressType>> n_a;
+    types::length<StressType> a;
+    tfel::math::tvector<3u, types::real<StressType>> n_b;
+    types::length<StressType> b;
+    types::length<StressType> c;
   };
 
   /*!
@@ -544,16 +597,17 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] A: mean strain localisation tensor of inclusions
    * \param [in] D: Distribution that characterizes the distribution
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType> computePCWScheme(
-      const StressType&,
-      const real&,
-      const real&,
-      const StressType&,
-      const real&,
-      const tfel::math::st2tost2<3u, real>&,
-      const Distribution<real, LengthType>&);
-      
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<3u, StressType> computePCWScheme(
+          const StressType&,
+          const types::real<StressType>&,
+          const types::real<StressType>&,
+          const StressType&,
+          const types::real<StressType>&,
+          const tfel::math::st2tost2<3u, types::real<StressType>>&,
+          const Distribution<StressType>&);
 
   /*!
    * This function gives the homogenized stiffness for a Ponte-Castaneda and
@@ -575,20 +629,22 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] c: length of the third semi-axis
    * \param [in] D: Distribution that characterizes the distribution
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeIsotropicPCWScheme(const StressType&,
-                            const real&,
-                            const real&,
-                            const StressType&,
-                            const real&,
-                            const LengthType&,
-                            const LengthType&,
-                            const LengthType&,
-                            const Distribution<real, LengthType>&);
-                            
-    /*!
-   * This function is an overload of computeIsotropicPCWScheme 
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<3u, StressType> computeIsotropicPCWScheme(
+          const StressType&,
+          const types::real<StressType>&,
+          const types::real<StressType>&,
+          const StressType&,
+          const types::real<StressType>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const Distribution<StressType>&);
+
+  /*!
+   * This function is an overload of computeIsotropicPCWScheme
    * with IsotropicModuli.
    * \return an object of type st2tost2<3u,StressType>
    * \tparam real: underlying type
@@ -603,15 +659,17 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] c: length of the third semi-axis
    * \param [in] D: Distribution that characterizes the distribution
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeIsotropicPCWScheme(const IsotropicModuli<StressType>&,
-                            const real&,
-                            const IsotropicModuli<StressType>&,
-                            const LengthType&,
-                            const LengthType&,
-                            const LengthType&,
-                            const Distribution<real, LengthType>&);
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<3u, StressType> computeIsotropicPCWScheme(
+          const IsotropicModuli<StressType>&,
+          const types::real<StressType>&,
+          const IsotropicModuli<StressType>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const Distribution<StressType>&);
 
   /*!
    * This function gives the homogenized stiffness for a Ponte-Castaneda and
@@ -636,21 +694,23 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] c: length of the third semi-axis
    * \param [in] D: Distribution that characterizes the distribution
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeTransverseIsotropicPCWScheme(const StressType&,
-                                      const real&,
-                                      const real&,
-                                      const StressType&,
-                                      const real&,
-                                      const tfel::math::tvector<3u, real>&,
-                                      const LengthType&,
-                                      const LengthType&,
-                                      const LengthType&,
-                                      const Distribution<real, LengthType>&);
-   
-   
-   /*!
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const
+      tfel::math::st2tost2<3u, StressType> computeTransverseIsotropicPCWScheme(
+          const StressType&,
+          const types::real<StressType>&,
+          const types::real<StressType>&,
+          const StressType&,
+          const types::real<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const Distribution<StressType>&);
+
+  /*!
    * This function is an overload of computeTransverseIsotropicPCWScheme
    * with IsotropicModuli.
    * \return an object of type st2tost2<3u,StressType>
@@ -669,17 +729,20 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] c: length of the third semi-axis
    * \param [in] D: Distribution that characterizes the distribution
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeTransverseIsotropicPCWScheme(const IsotropicModuli<StressType>&,
-                            	      const real&,
-                            	      const IsotropicModuli<StressType>&,
-                                      const tfel::math::tvector<3u, real>&,
-                                      const LengthType&,
-                                      const LengthType&,
-                                      const LengthType&,
-                                      const Distribution<real, LengthType>&); 
-  
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const
+      tfel::math::st2tost2<3u, StressType> computeTransverseIsotropicPCWScheme(
+          const IsotropicModuli<StressType>&,
+          const types::real<StressType>&,
+          const IsotropicModuli<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const Distribution<StressType>&);
+
   /*!
    * This function gives the homogenized stiffness for a Ponte-Castaneda and
    * Willis scheme,
@@ -704,21 +767,23 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] c: length of the third semi-axis
    * \param [in] D: Distribution that characterizes the distribution
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeOrientedPCWScheme(const StressType&,
-                           const real&,
-                           const real&,
-                           const StressType&,
-                           const real&,
-                           const tfel::math::tvector<3u, real>&,
-                           const LengthType&,
-                           const tfel::math::tvector<3u, real>&,
-                           const LengthType&,
-                           const LengthType&,
-                           const Distribution<real, LengthType>&);
-                           
-    /*!
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<3u, StressType> computeOrientedPCWScheme(
+          const StressType&,
+          const types::real<StressType>&,
+          const types::real<StressType>&,
+          const StressType&,
+          const types::real<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const Distribution<StressType>&);
+
+  /*!
    * This function is an overload of computeTransverseIsotropicPCWScheme
    * with IsotropicModuli.
    * \return an object of type st2tost2<3u,StressType>
@@ -739,17 +804,19 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] c: length of the third semi-axis
    * \param [in] D: Distribution that characterizes the distribution
    */
-  template <typename real, typename StressType, typename LengthType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeOrientedPCWScheme(const IsotropicModuli<StressType>&,
-                           const real&,
-                           const IsotropicModuli<StressType>&,
-                           const tfel::math::tvector<3u, real>&,
-                           const LengthType&,
-                           const tfel::math::tvector<3u, real>&,
-                           const LengthType&,
-                           const LengthType&,
-                           const Distribution<real, LengthType>&);
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<3u, StressType> computeOrientedPCWScheme(
+          const IsotropicModuli<StressType>&,
+          const types::real<StressType>&,
+          const IsotropicModuli<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const Distribution<StressType>&);
 
 }  // end of namespace tfel::material::homogenization::elasticity
 
