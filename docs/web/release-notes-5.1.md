@@ -153,7 +153,7 @@ constexpr auto s = stensor<2u, double>::zero();
 
 ### Ellipsoidal inclusion embedded in anisotropic matrix
 
-When \(\tenseuq{C}_0\) is anisotropic, the Eshelby tensor can be
+When \(\tenseurq{C}_0\) is anisotropic, the Eshelby tensor can be
 computed with `computeAnisotropicEshelbyTensor` in 3D and
 `computePlainStrainAnisotropicEshelbyTensor` in 2D. There are also
 `computeAnisotropicHillTensor`,
