@@ -1252,16 +1252,12 @@ namespace mfront {
         for (const auto& fss : this->finiteStrainStrategies) {
           if (fss == FINITEROTATIONSMALLSTRAIN) {
             b.push_back(base + "_frst");
-            //	    b.push_back(name+"_frst");
           } else if (fss == MIEHEAPELLAMBRECHTLOGARITHMICSTRAIN) {
             b.push_back(base + "_malls");
-            //	    b.push_back(name+"_malls");
           } else if (fss == LOGARITHMICSTRAIN1D) {
-            b.push_back(base + "_log1D");
-            //	    b.push_back(name+"_log1D");
+            b.push_back(base + "_log1d");
           } else if (fss == NONE) {
             b.push_back(base + "_ss");
-            //	    b.push_back(name+"_ss");
           } else {
             throw(runtime_error(
                 "CastemInterface::getGeneratedEntryPoints: "
