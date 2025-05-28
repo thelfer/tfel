@@ -66,7 +66,7 @@ namespace tfel::math {
    *  const StressType& young,
    *  const typename tfel::math::ScalarTypeRebind<StressType>::real& nu)
    *  requires(
-   *      tfel::math::checkUnitCompatibility<tfel::math::Stress, StressType>());
+   *      tfel::math::checkUnitCompatibility<tfel::math::unit::Stress, StressType>());
    * \endcode
    *
    * Thanks to the `checkUnitCompatibility` function, this function only
