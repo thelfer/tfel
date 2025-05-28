@@ -16,6 +16,7 @@
 #include "TFEL/Raise.hxx"
 #include "MFront/InitDSLs.hxx"
 #include "MFront/MFrontBase.hxx"
+#include "MFront/MFrontDebugMode.hxx"
 #include "MFront/InitInterfaces.hxx"
 #include "MFront/AbstractDSL.hxx"
 #include "MFront/MaterialPropertyDSL.hxx"
@@ -95,6 +96,7 @@ BOOST_PYTHON_MODULE(_mfront) {
   GetImplementationsPathsPtr ptr = mfront::getImplementationsPaths;
   boost::python::def("initDSLs", mfront::initDSLs);
   boost::python::def("initInterfaces", mfront::initInterfaces);
+  boost::python::def("setDebugMode", mfront::setDebugMode);
   boost::python::def("getDSL", getDSL);
   boost::python::def(
       "getImplementationsPaths", ptr,
