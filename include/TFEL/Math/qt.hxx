@@ -377,7 +377,7 @@ namespace tfel::math {
       return tfel::math::ieee754::fpclassify(a.getValue() - b.getValue()) ==
              FP_ZERO;
     } else {
-      return tfel::math::ieee754::fpclassify(a.getValue() - b.getValue()) == FP_ZERO;
+      return a.getValue() == b.getValue();
     }
   }
 
