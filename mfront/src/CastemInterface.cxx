@@ -1429,16 +1429,12 @@ namespace mfront {
         for (const auto& fs : fss) {
           if (fs == "FiniteRotationSmallStrain") {
             b.push_back(base + "_frst");
-            //	    b.push_back(name+"_frst");
           } else if (fs == "MieheApelLambrechtLogarithmicStrain") {
             b.push_back(base + "_malls");
-            //	    b.push_back(name+"_malls");
           } else if (fs == "LogarithmicStrain1D") {
-            b.push_back(base + "_log1D");
-            //	    b.push_back(name+"_log1D");
+            b.push_back(base + "_log1d");
           } else if (fs == "None") {
             b.push_back(base + "_ss");
-            //	    b.push_back(name+"_ss");
           } else {
             tfel::raise(
                 "CastemInterface::getGeneratedEntryPoints: "
