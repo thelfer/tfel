@@ -377,7 +377,7 @@ By definition, this convention, named `Plate` in `MFront` is only valid
 for \(3D\), \(2D\) plane stress, \(2D\) plane strain and \(2D\)
 generalized plane strain modelling hypotheses.
 
-# Homogeneisation
+# Homogenization
 
 The homogenization functions are part of the namespace `tfel::material::homogenization`.
 A specialization for elasticity is defined: `tfel::material::homogenization::elasticity`.
@@ -455,6 +455,7 @@ There are also, when the medium is anisotropic, `computeAnisotropicLocalisationT
 Different schemes are implemented and return the homogenized stiffness of the material.
 These schemes are introduced by the header `LinearHomogenizationSchemes.hxx`.
 The available schemes are:
+
  - Mori-Tanaka scheme
  - dilute scheme
  - Ponte Castaneda and Willis scheme
@@ -462,6 +463,7 @@ The available schemes are:
 Each scheme is based on the average of the localisation tensor \(\tenseur A \)
 defined above. This average is computed assuming different distributions
 of orientations of ellipsoids. Hence different cases are considered:
+
  - spheres (no orientations)
  - oriented ellipsoids (two vectors \(\tenseur n_a,\tenseur n_b\) define the orientation)
  - uniform isotropic distribution of orientations
@@ -469,6 +471,7 @@ of orientations of ellipsoids. Hence different cases are considered:
  of the ellipsoid is fixed, the others are uniformly distributed in the transverse plane)
 
 Hence, the available functions are:
+
  - `computeSphereDiluteScheme`
  - `computeSphereMoriTanakaScheme`
  - `computeOrientedDiluteScheme`
@@ -484,6 +487,7 @@ Hence, the available functions are:
 Because the functions are based on the average of the localisation tensor \(\tenseur A \)
 associated with each distribution, a `Base` function is also defined for each scheme,
 that only takes in argument the average of the localisation tensor:
+
  - `computeMoriTanakaScheme`
  - `computeDiluteScheme`
  - `computePCWScheme`
@@ -498,8 +502,27 @@ be created. It is defined by two vectors \(\tenseur n_a,\tenseur n_b\) and three
 Different bounds are implemented and are introduced by the header
 `LinearHomogenizationBounds.hxx`.
 The available bounds are:
+
  - Voigt bound (`computeVoigtStiffness`)
  - Reuss bound (`computeReussStiffness`)
  - Hashin-Shtrikman bounds (`computeIsotropicHashinShtrikmanBounds`)
+ 
+# Isotropic elastic moduli
+
+A `struct` `IsotropicModuli` is defined in the header "IsotropicModuli.hxx"
+for the elastic moduli of an isotropic material.
+Three children `struct` are defined:
+
+ - `KGModuli` (for bulk and shear moduli)
+ - `YoungNuModuli` (for Young modulus and Poisson ratio)
+ - `LambdaMuModuli` (for Lame moduli)
+
+Each `struct` has methods which permit to convert
+the moduli:
+
+ - `ToYoungNu()`
+ - `ToLambdaMu()`
+ - `ToKG()`
+These methods all return `std::pair` objects.
 
 <!-- Local IspellDict: english -->

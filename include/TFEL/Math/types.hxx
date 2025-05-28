@@ -120,6 +120,15 @@ namespace tfel::types {
 
   template <tfel::math::ScalarConcept ScalarType>
   using stress = typename tfel::math::ScalarTypeRebind<ScalarType>::stress;
+  
+  template <tfel::math::ScalarConcept ScalarType>
+  using compliance = typename tfel::math::ScalarTypeRebind<ScalarType>::compliance;
+  
+  template <tfel::math::ScalarConcept ScalarType>
+  using viscosity = typename tfel::math::ScalarTypeRebind<ScalarType>::viscosity;
+  
+  template <tfel::math::ScalarConcept ScalarType>
+  using viscouscompliance = typename tfel::math::ScalarTypeRebind<ScalarType>::viscouscompliance;
 
   template <tfel::math::ScalarConcept ScalarType>
   using stressrate =
