@@ -523,6 +523,7 @@ the moduli:
  - `ToYoungNu()`
  - `ToLambdaMu()`
  - `ToKG()`
+ 
 These methods all return `std::pair` objects.
 
 <!-- Local IspellDict: english -->
