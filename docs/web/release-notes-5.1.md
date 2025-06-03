@@ -172,11 +172,6 @@ The available functions are `computeVoigtStiffness`, `computeReussStiffness`,
 Ponte Castaneda and Willis scheme for distributions
 of ellipsoidal inclusions for biphasic media is now available.
 
-## Python bindings
-
-Python bindings are now generated using the
-[`pybind11`](https://github.com/pybind/pybind11) library.
-
 # New features in `MFront`
 
 This version introduces the following main features in `MFront`:
@@ -657,6 +652,15 @@ Sachs scheme, $\beta$-rule. These tutorials use the
 keyword `@BehaviourVariable` for the integration and the computation
 of tangent operator of the local behaviours. The implementation
 shows how to use any behaviour law on each phase.
+
+# Python bindings
+
+Python bindings are now generated using the
+[`pybind11`](https://github.com/pybind/pybind11) library.
+
+## New features in the `mfront` module
+
+- The `setDebugMode` function is now available.
 
 # Issues fixed
 
