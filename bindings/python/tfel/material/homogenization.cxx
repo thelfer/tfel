@@ -22,6 +22,7 @@ void declareHillTensors(pybind11::module_&);
 void declareLocalisationTensors(pybind11::module_&);
 void declareLinearHomogenizationSchemes(pybind11::module_&);
 void declareLinearHomogenizationBounds(pybind11::module_&);
+void declareIsotropicModuli(pybind11::module_&);
 
 
 #ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
@@ -33,4 +34,5 @@ PYBIND11_MODULE(homogenization, m) {
   declareLocalisationTensors(m);
   declareLinearHomogenizationSchemes(m);
   declareLinearHomogenizationBounds(m);
+  declareIsotropicModuli(m);
 }
