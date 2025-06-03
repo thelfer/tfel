@@ -183,8 +183,11 @@ the manipulation of isotropic materials easier.
 Python bindings are now generated using the
 [`pybind11`](https://github.com/pybind/pybind11) library.
 
+The module `tfel.material` now contains the isotropic elastic moduli objects and
+their functions to convert these moduli.
+
 Moreover, some new functionalities are available for homogenization,
-via `tfel.material.homogenization` module.
+via the `tfel.material.homogenization` module.
 It contains functions concerning:
 
 - Hill tensors
@@ -192,9 +195,6 @@ It contains functions concerning:
 - Homogenization schemes for biphasic materials (Dilute scheme, Mori-Tanaka scheme,
 Ponte Castaneda and Willis scheme)
 - Homogenization bounds for biphasic materials (Voigt/Reuss, Hashin-Shtrikman)
-
-and it contains the isotropic moduli objects and their functions to convert these
-moduli.
 
 # New features in `MFront`
 
