@@ -83,7 +83,7 @@ namespace tfel::material::homogenization::elasticity {
           for (int j = 0; j < N; j++)
             for (int l = 0; l < N; l++) {
               A_ik += real(
-                  (getComponent(C, i, j, k, l)) /
+                  (tfel::math::getComponent(C, i, j, k, l)) /
                   StressType(1) * X[j] * X[l]);
             }
           A(i, k) = A_ik;
