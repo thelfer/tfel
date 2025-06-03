@@ -172,6 +172,30 @@ The available functions are `computeVoigtStiffness`, `computeReussStiffness`,
 Ponte Castaneda and Willis scheme for distributions
 of ellipsoidal inclusions for biphasic media is now available.
 
+## Isotropic Moduli
+
+`IsotropicModuli` objects are defined
+for the elastic moduli of an isotropic material. It makes
+the manipulation of isotropic materials easier.
+
+## Python bindings
+
+Python bindings are now generated using the
+[`pybind11`](https://github.com/pybind/pybind11) library.
+
+The module `tfel.material` now contains the isotropic elastic moduli objects and
+their functions to convert these moduli.
+
+Moreover, some new functionalities are available for homogenization,
+via the `tfel.material.homogenization` module.
+It contains functions concerning:
+
+- Hill tensors
+- Localisation tensors
+- Homogenization schemes for biphasic materials (Dilute scheme, Mori-Tanaka scheme,
+Ponte Castaneda and Willis scheme)
+- Homogenization bounds for biphasic materials (Voigt/Reuss, Hashin-Shtrikman)
+
 # New features in `MFront`
 
 This version introduces the following main features in `MFront`:

@@ -674,7 +674,7 @@ namespace tfel::material::homogenization::elasticity {
   /*!
    * This function gives the homogenized stiffness for a Ponte-Castaneda and
    * Willis scheme,
-   * for a distribution of ellipsoids with the same shape and a uniform
+   * for a distribution of ellipsoids with the same shape and a transverse
    * isotropic distribution of their orientations
    * (formula 3.27 of Ponte Castaneda 1995).
    * \return an object of type st2tost2<3u,StressType>
@@ -690,7 +690,7 @@ namespace tfel::material::homogenization::elasticity {
    * \f$a\f$ (related to the shape of the inclusions)
    * \param[in] a: length of semi-axis relative to the direction
    * \f$n_a\f$
-   * \param[in] b: length of the semi-axis relative to the direction \f$n_b\f$
+   * \param[in] b: length of the second semi-axis
    * \param[in] c: length of the third semi-axis
    * \param [in] D: Distribution that characterizes the distribution
    */
