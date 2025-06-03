@@ -677,6 +677,15 @@ keyword `@BehaviourVariable` for the integration and the computation
 of tangent operator of the local behaviours. The implementation
 shows how to use any behaviour law on each phase.
 
+# Python bindings
+
+Python bindings are now generated using the
+[`pybind11`](https://github.com/pybind/pybind11) library.
+
+## New features in the `mfront` module
+
+- The `setDebugMode` function is now available.
+
 # Issues fixed
 
 ## Issue 790: [tfel-math] Remove `Stress`, `Time` from the `tfel::math` namespace

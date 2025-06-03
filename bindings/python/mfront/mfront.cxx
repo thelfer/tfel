@@ -17,6 +17,7 @@
 #include "TFEL/Macros.hxx"
 #include "MFront/InitDSLs.hxx"
 #include "MFront/MFrontBase.hxx"
+#include "MFront/MFrontDebugMode.hxx"
 #include "MFront/InitInterfaces.hxx"
 #include "MFront/AbstractDSL.hxx"
 #include "MFront/MaterialPropertyDSL.hxx"
@@ -75,6 +76,7 @@ PYBIND11_MODULE(_mfront, m) {
   GetImplementationsPathsPtr ptr = mfront::getImplementationsPaths;
   m.def("initDSLs", mfront::initDSLs);
   m.def("initInterfaces", mfront::initInterfaces);
+  m.def("setDebugMode", mfront::setDebugMode);
   m.def("getDSL", getDSL);
   m.def("getImplementationsPaths", ptr, "file"_a, "material"_a = "",
         "material_property"_a = "", "behaviour"_a = "", "model"_a = "");
