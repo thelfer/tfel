@@ -66,14 +66,14 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
   static tfel::math::st2tost2<3u, tfel::types::real<StressType>>
   computeAnisotropicLocalisationTensor(
       const tfel::math::st2tost2<3u, StressType>& C0_glob,
-      const tfel::math::st2tost2<3u, StressType>& C0_loc,
+      const tfel::math::st2tost2<3u, StressType>& Ci_loc,
       const tfel::math::tvector<3u, tfel::types::real<StressType>>& n_a,
       const tfel::types::length<StressType>& a,
       const tfel::math::tvector<3u, tfel::types::real<StressType>>& n_b,
       const tfel::types::length<StressType>& b,
       const tfel::types::length<StressType>& c,
       const std::size_t max_it = 12) {
-    return tfel::material::homogenization::elasticity::computeAnisotropicLocalisationTensor<StressType>(C0_glob, C0_loc,n_a,a,n_b,b,c,max_it);
+    return tfel::material::homogenization::elasticity::computeAnisotropicLocalisationTensor<StressType>(C0_glob, Ci_loc,n_a,a,n_b,b,c,max_it);
   }
 
 
