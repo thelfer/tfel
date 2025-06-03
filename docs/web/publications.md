@@ -13,6 +13,7 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @gribonval_multi-physics_2025
     @helfer_mfrontgallery_2025
     @mersel_dynamic_2025
     @pierre_modelling_2025
@@ -46,6 +47,7 @@ nocite: |
     @lorenzo_exploring_2024
     @simo_novel_2024
     @singh_irradiation_2024
+    @bouizem_construction_2023
     @gicquel_polycrystalline_2023
     @gicquel_developpement_2023
     @loiseau_formulation_2023
