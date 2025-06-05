@@ -64,7 +64,7 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr auto norm(const ST2toST2Concept auto& A) noexcept {
     using ST2toST2Type = decltype(A); 
     using NumType = numeric_type<ST2toST2Type>;
-    return NumType(power<1, 2>(real(quaddot(A,A))/real(6)));
+    return NumType(power<1, 2>(real(quaddot(transpose(A),A))/real(6)));
   } // end of norm
 
   TFEL_HOST_DEVICE constexpr auto det(const ST2toST2Concept auto& s) noexcept {
