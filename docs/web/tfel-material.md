@@ -391,17 +391,17 @@ If we consider a constant stress-free strain \(\tenseur \varepsilon^\mathrm{T}\)
 filling an ellipsoidal volume embedded in an infinite homogeneous medium whose
 elasticity is \(\tenseurq{C}_0\), the strain tensor inside the ellipsoid is given by
 
-\(\tenseur \varepsilon=\tenseur S_0:\tenseur \varepsilon^\mathrm{T}\).
+\(\tenseur \varepsilon=\tenseurq S_0:\tenseur \varepsilon^\mathrm{T}\).
 
-where \(\tenseur S_0\) is the Eshelby tensor.
-Note that it is related to the Hill tensor (\tenseur P_0\) by
+where \(\tenseurq S_0\) is the Eshelby tensor.
+Note that it is related to the Hill tensor (\tenseurq P_0\) by
 
-\(\tenseur P_0=\tenseur S_0:\tenseur C_0^{-1}\)
+\(\tenseurq P_0=\tenseurq S_0:\tenseurq C_0^{-1}\)
 
 which gives the strain tensor inside the ellipsoid as a function of the
-polarization tensor \(\tenseur \tau = -\tenseur C_0:\tenseur \varepsilon^\mathrm{T}\) : 
+polarization tensor \(\tenseur \tau = -\tenseurq C_0:\tenseur \varepsilon^\mathrm{T}\) : 
 
-\(\tenseur \varepsilon=-\tenseur P_0:\tenseur \tau\).
+\(\tenseur \varepsilon=-\tenseurq P_0:\tenseur \tau\).
 
 The function `computeEshelbyTensor` computes the Eshelby tensor of an ellipsoid
 whose semi-axis lengths are `a`, `b`, `c`, embedded in an isotropic
@@ -423,7 +423,7 @@ for `long double`.
 In the same way, the formulas for the axisymmetrical case are instable when the aspect
 ratio is near one, so a parameter allows to switch to the formula for a sphere.
 
-When \(\tenseur C_0\) is anisotropic, the Eshelby tensor can be computed
+When \(\tenseurq C_0\) is anisotropic, the Eshelby tensor can be computed
 with `computeAnisotropicEshelbyTensor` in 3D and `computePlainStrainAnisotropicEshelbyTensor`
 in 2D. There are also `computeAnisotropicHillTensor` and `computePlainStrainAnisotropicHillTensor`.
 These functions are introduced by the header `AnisotropicEshelbyTensor.hxx`.
@@ -432,14 +432,14 @@ These functions are introduced by the header `AnisotropicEshelbyTensor.hxx`.
 
 The header `IsotropicEshelbyTensor.hxx` also introduces
 three functions that compute the strain localisation tensor of an ellipsoid.
-If we consider an ellipsoid whose elasticity is \(\tenseur C_i\), embedded
-in an infinite homogeneous medium whose elasticity is \(\tenseur C_0\),
+If we consider an ellipsoid whose elasticity is \(\tenseurq C_i\), embedded
+in an infinite homogeneous medium whose elasticity is \(\tenseurq C_0\),
 submitted to a external uniform strain field at infinity \(\tenseur E\),
 the strain field within the ellipsoid is uniform and given by
 
-\(\tenseur \varepsilon = \tenseur A:\tenseur E\)
+\(\tenseur \varepsilon = \tenseurq A:\tenseur E\)
 
-where \(\tenseur A \) is the localisation tensor.
+where \(\tenseurq A \) is the localisation tensor.
 
 Three functions are implemented for the different possible shapes :
 `computeEllipsoidLocalisationTensor`, `computeAxisymmetricalEllipsoidLocalisationTensor`

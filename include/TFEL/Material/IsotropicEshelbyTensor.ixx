@@ -138,13 +138,15 @@ namespace tfel::material::homogenization::elasticity {
     }
 
     const auto precision = [precf, precd, precld]() {
-      if (typeid(real) == typeid(long double)) {
+      if constexpr (std::same_as<tfel::math::base_type<real>, long double>){
         return precld;
-      } else if (typeid(real) == typeid(double)) {
+      } else if constexpr (std::same_as<tfel::math::base_type<real>, double>){
         return precd;
+      } else {
+        return precf;
       }
-      return precf;
     }();
+    
     if (std::abs(e - 1) < precision) {
       return computeSphereEshelbyTensor<real>(nu);
     }
@@ -315,12 +317,13 @@ namespace tfel::material::homogenization::elasticity {
     }
 
     const auto precision = [precf, precd, precld]() {
-      if (typeid(real) == typeid(long double)) {
+      if constexpr (std::same_as<tfel::math::base_type<real>, long double>){
         return precld;
-      } else if (typeid(real) == typeid(double)) {
+      } else if constexpr (std::same_as<tfel::math::base_type<real>, double>){
         return precd;
+      } else {
+        return precf;
       }
-      return precf;
     }();
     if (std::abs((b - a) / c) < precision ||
         std::abs((a - c) / b) < precision ||
@@ -338,7 +341,6 @@ namespace tfel::material::homogenization::elasticity {
     const auto a_ = abc_[sig[0]];
     const auto b_ = abc_[sig[1]];
     const auto c_ = abc_[sig[2]];
-
     constexpr real pi = std::numbers::pi_v<tfel::math::base_type<real>>;
     const auto a2 = a_ * a_;
     const auto b2 = b_ * b_;
@@ -429,6 +431,7 @@ namespace tfel::material::homogenization::elasticity {
     const auto n_2 = nabc_[sig[1]];
     using namespace tfel::math;
     const auto n_3 = cross_product<real>(n_1, n_2);
+    //r is the global basis expressed in the local sorted basis (n1,n2,n3)
     const rotation_matrix<real> r = {n_1[0], n_1[1], n_1[2], n_2[0], n_2[1],
                                      n_2[2], n_3[0], n_3[1], n_3[2]};
     const auto S0_basis = change_basis(S0, r);
@@ -500,6 +503,7 @@ namespace tfel::material::homogenization::elasticity {
         std::get<0>(Enu0), std::get<1>(Enu0), std::get<0>(Enui),
         std::get<1>(Enui));
   }  // end of function SphereLocalisationTensor
+
 
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
