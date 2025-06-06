@@ -410,23 +410,24 @@ namespace tfel::math {
     return {one, one, one, zero, zero, zero};
   }  // end of stensor<N,T>::Id
   
-  template <typename T>
+  
+  template <typename NumType, typename T>
     TFEL_HOST_DEVICE constexpr void setComponent(StensorConcept auto& A,
                                               unsigned short i,
                                               unsigned short j,
-                                              const T& Aij) {
+                                              const T& Aij) noexcept
+       requires (isAssignableTo<NumType, T>()) {
       using StensorType=decltype(A);
-      using TA = numeric_type<StensorType>;
       const auto N = getSpaceDimension<StensorType>();                                        
       const unsigned short I = VoigtIndex<N>(i, j);
-      A(I) = TA(Aij);
-      constexpr auto cste = Cste<TA>::sqrt2;
+      A(I) = Aij;
+      constexpr auto cste = Cste<NumType>::sqrt2;
       if (I > 2) {
         A(I) = A(I)*cste;
       }
     }
     
-    
+   
     TFEL_HOST_DEVICE constexpr auto
     getComponent(const StensorConcept auto& A,
                         unsigned short int i,
