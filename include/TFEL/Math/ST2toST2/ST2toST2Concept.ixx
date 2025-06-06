@@ -1,7 +1,7 @@
 /*!
  * \file   include/TFEL/Math/ST2toST2/ST2toST2Concept.ixx
  * \brief
- * \author Thomas Helfer
+ * \author Thomas Helfer/Antoine Martin
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence
@@ -19,7 +19,13 @@
 #include "TFEL/Math/ST2toST2/ST2toST2TransposeExpr.hxx"
 
 namespace tfel::math {
-
+   
+   /*!
+   * \brief This function computes the L1-norm of a `st2tost2` as the sum of
+   * the absolute values of each component of the `st2tost2`
+   * \return the norm L1
+   * \param[in] v: `st2tost2`
+   */
   TFEL_HOST_DEVICE constexpr auto abs(const ST2toST2Concept auto& v) noexcept {
     using ST2toST2Type = decltype(v);
     using NumType = numeric_type<ST2toST2Type>;
@@ -35,7 +41,14 @@ namespace tfel::math {
     }
     return a;
   }  // end of abs
-
+   
+   /*!
+   * \brief This function computes the transpose of a `st2tost2`
+   * as \f[ {}^tA_{ij}=A_{ji}\f] in Voigt notation, which also
+   * corresponds to \f[ {}^tA_{ijkl}=A_{lkji}=A_{klij}\f].
+   * \return a `st2tost2`
+   * \param[in] t: `st2tost2`
+   */
   TFEL_HOST_DEVICE constexpr auto transpose(ST2toST2Concept auto&& t) noexcept {
     using ST2toST2Type = decltype(t);
     return Expr<EvaluationResult<ST2toST2Type>,
@@ -44,6 +57,13 @@ namespace tfel::math {
   }  // end of transpose
   
   
+  /*!
+   * \brief This function computes the trace of a `st2tost2`
+   * as \f[ Tr\left(A\right)=\sum_i A_{ii}\f] in Voigt notation, which also
+   * corresponds to \f[ Tr\left(A\right)=I::A=\frac{1}{2}\sum_{i,j}(A_{ijij}+A_{ijji})\f]
+   * \return the trace
+   * \param[in] A: `st2tost2`
+   */
   TFEL_HOST_DEVICE constexpr auto trace(const ST2toST2Concept auto& A) noexcept {
     using ST2toST2Type = decltype(A); 
     using NumType = numeric_type<ST2toST2Type>;
@@ -57,16 +77,43 @@ namespace tfel::math {
     return tr;
   } //end of trace
   
-   TFEL_HOST_DEVICE constexpr auto quaddot(const ST2toST2Concept auto& A, const ST2toST2Concept auto& B) noexcept {
+  /*!
+   * \brief This function computes the quadruple contraction of two `st2tost2`
+   * as \f[ A::B=\sum_{i,j} A_{ij}B_{ji}\f] in Voigt notation, which also
+   * corresponds to \f[ A::B=\sum_{i,j,k,l}A_{ijkl}B_{lkji}=\sum_{i,j,k,l}A_{ijkl}B_{klij}\f]
+   * \return the quadruple contraction scalar
+   * \param[in] A,B: `st2tost2`
+   */
+   TFEL_HOST_DEVICE constexpr auto quaddot(const ST2toST2Concept auto& A, const ST2toST2Concept auto& B) noexcept requires(getSpaceDimension<A>() == getSpaceDimension<B>()) {
     return trace(A*B);
   } // end of quaddot
   
+  /*!
+   * \brief This function computes the norm of a `st2tost2`
+   * as \f[ ||A||=\sqrt{\frac{1}{N}{}^tA::A}\f] where \f[N\f] is
+   * the size of the tensor (for example, \f[6\f] for a dimension 3,
+   * and \f[4\f] for a dimension 2).
+   * \f[ ||A||=\sqrt{\frac{1}{N}\sum_{i,j,k,l}A_{ijkl}A_{ijkl}}\f]
+   * or also \f[ ||A||=\sqrt{\frac{1}{N}\sum_{i,j} A_{ij}A_{ij}}\f] in Voigt notation.
+   * The factor \f[\frac 1N\f] ensures that the norm of \f[I\f] is 1.
+   * \return the norm
+   * \param[in] A: `st2tost2`
+   */
   TFEL_HOST_DEVICE constexpr auto norm(const ST2toST2Concept auto& A) noexcept {
     using ST2toST2Type = decltype(A); 
     using NumType = numeric_type<ST2toST2Type>;
-    return NumType(power<1, 2>(real(quaddot(transpose(A),A))/real(6)));
+    constexpr auto N =
+        StensorDimeToSize<getSpaceDimension<ST2toST2Type>()>::value;
+    return NumType(power<1, 2>(real(quaddot(transpose(A),A))/real(N)));
   } // end of norm
-
+   
+   
+   /*!
+   * \brief This function computes the determinant of a `st2tost2`
+   * as the determinant of the corresponding matrix in Voigt notation.
+   * \return the determinant
+   * \param[in] s: `st2tost2`
+   */
   TFEL_HOST_DEVICE constexpr auto det(const ST2toST2Concept auto& s) noexcept {
     using ST2toST2Type = decltype(s);
     constexpr auto N = getSpaceDimension<ST2toST2Type>();

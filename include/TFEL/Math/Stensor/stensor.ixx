@@ -410,6 +410,15 @@ namespace tfel::math {
     return {one, one, one, zero, zero, zero};
   }  // end of stensor<N,T>::Id
   
+  /*!
+   * \brief This function set the component (i,j) of a `stensor` to
+   * a value `Aij`, using the function `VoigtIndex`.
+   * \return void
+   * \tparam T : type of the value `Aij` to set
+   * \param[in] A: `stensor`
+   * \param[in] i,j: `unsigned short`
+   * \param[in] Aij: value that we want for \f[A_{ij}\f]
+   */
   template <typename T>
     TFEL_HOST_DEVICE constexpr void setComponent(StensorConcept auto& A,
                                               unsigned short i,
@@ -426,7 +435,13 @@ namespace tfel::math {
       }
     }
     
-    
+    /*!
+   * \brief This function returns the component (i,j) of a `stensor`,
+   * using the function `VoigtIndex`.
+   * \return the value \f[A_{ij}\f]
+   * \param[in] A: `stensor`
+   * \param[in] i,j: `unsigned short`
+   */
     TFEL_HOST_DEVICE constexpr auto
     getComponent(const StensorConcept auto& A,
                         unsigned short int i,
