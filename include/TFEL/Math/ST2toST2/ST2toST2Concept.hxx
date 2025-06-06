@@ -90,7 +90,7 @@ namespace tfel::math {
    * \return the trace
    * \param[in] A: `st2tost2`
    */
-  TFEL_HOST_DEVICE constexpr auto trace(const ST2toST2Concept auto&) noexcept;
+  TFEL_HOST_DEVICE constexpr auto trace(const ST2toST2Concept auto&) noexcept ;
   
   /*!
    * \brief This function computes the quadruple contraction of two `st2tost2`

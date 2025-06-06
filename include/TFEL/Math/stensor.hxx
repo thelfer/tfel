@@ -292,16 +292,19 @@ namespace tfel::math {
    * \brief This function set the component (i,j) of a `stensor` to
    * a value `Aij`, using the function `VoigtIndex`.
    * \return void
-   * \tparam T : type of the value `Aij` to set
+   * \tparam NumType: type of the values of the `stensor`
+   * \tparam T : type of the value `Aij` to set must be same as
+   * the type of the values of the `stensor`.
    * \param[in] A: `stensor`
    * \param[in] i,j: `unsigned short`
    * \param[in] Aij: value that we want for \f[A_{ij}\f]
    */
-    template <typename T>
+    template <typename NumType, typename T>
     TFEL_HOST_DEVICE constexpr void setComponent(StensorConcept auto&,
                                               unsigned short,
                                               unsigned short,
-                                              const T&);
+                                              const T&) noexcept
+       requires (isAssignableTo<NumType, T>());
     
     /*!
    * \brief This function returns the component (i,j) of a `stensor`,

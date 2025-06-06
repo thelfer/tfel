@@ -246,18 +246,21 @@ namespace tfel::math {
    * \brief This function set the component (i,j,k,l) of a `st2tost2` to
    * a value `Aijkl`, which may be useful in some cases.
    * \return void
-   * \tparam T : type of the value `Aijkl` to set
+   * \tparam NumType: type of the values of the `st2tost2`
+   * \tparam T : type of the value `Aijkl` to set must be same as
+   * the type of the values of the `st2tost2`.
    * \param[in] A: `st2tost2`
    * \param[in] i,j,k,l: `unsigned short`
    * \param[in] Aijkl: value that we want for \f[A_{ijkl}\f]
    */
-  template <typename T>
+  template <typename NumType, typename T>
   TFEL_HOST_DEVICE constexpr void setComponent(ST2toST2Concept auto&,
                                                unsigned short,
                                                unsigned short,
                                                unsigned short,
                                                unsigned short,
-                                               const T&);
+                                               const T&) noexcept
+       requires (isAssignableTo<NumType, T>());
                                                
    /*!
    * \brief This function returns the component (i,j,k,l) of a `st2tost2`.

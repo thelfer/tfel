@@ -1,9 +1,9 @@
 /*!
- * \file   tests/Math/st2tost2/st2tost2-3.cxx
+ * \file   tests/Math/st2tost2/st2tost2_components.cxx
  * \brief
  *
- * \author Thomas Helfer
- * \date   19 mar 2008
+ * \author Antoine Martin
+ * \date   6 june 2025
  * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -19,7 +19,12 @@
 #include <cmath>
 #include <cstdlib>
 #include <cassert>
-
+#include <iostream>
+#include "TFEL/Tests/TestCase.hxx"
+#include "TFEL/Tests/TestProxy.hxx"
+#include "TFEL/Tests/TestManager.hxx"
+#include "TFEL/Config/TFELTypes.hxx"
+#include "TFEL/Math/qt.hxx"
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Math/stensor.hxx"
 
@@ -39,24 +44,41 @@ struct ST2ToST2TestComponents final : public tfel::tests::TestCase {
     auto seps=stress(eps);    
     using namespace tfel::math;
     const double sqrt2 = sqrt(2.);
-    stensor<2u, stress> A = {};
-    auto s11=getComponent(s,0,0);
-    auto s12=getComponent(s,0,1);
-    TFEL_TESTS_ASSERT(my_abs(s11 - s(0)) < seps);
-    TFEL_TESTS_ASSERT(my_abs(s12 - s(3)/sqrt2) < seps);
+    const auto J2=tfel::math::st2tost2<2u,double>::J();
+    const auto K2=tfel::math::st2tost2<2u,double>::K();
+    auto M2=K2;
+    M2(1,3)=double(6);
+    st2tost2<2u, stress> A = stress(2)*J2+stress(3)*K2+stress(1)*M2;
+    auto A1111=getComponent(A,0,0,0,0);
+    auto A1212=getComponent(A,0,1,0,1);
+    auto A2212=getComponent(A,1,1,0,1);
+    TFEL_TESTS_ASSERT(my_abs(A1111 - A(0,0)) < seps);
+    TFEL_TESTS_ASSERT(my_abs(A1212 - A(3,3)/2) < 10*seps);
+    TFEL_TESTS_ASSERT(my_abs(A2212 - A(1,3)/sqrt2) < 10*seps);
+    setComponent<stress,stress>(A,1,0,0,1,stress(1e9));
+    TFEL_TESTS_ASSERT(my_abs(stress(1e9) - A(3,3)/2) < 1e9*seps);
+    setComponent<stress,stress>(A,1,1,0,1,stress(1e9));
+    TFEL_TESTS_ASSERT(my_abs(stress(1e9) - A(1,3)/sqrt2) < 1e9*seps);
+    TFEL_TESTS_ASSERT(my_abs(stress(0) - A(3,1)/sqrt2) < seps);
     
-    setComponent<stress>(s,1,0,stress(1e9));
-    TFEL_TESTS_ASSERT(my_abs(stress(1e9) - s(3)/sqrt2) < 1e9*seps);
-    stensor<3u, stress> sig = {stress(8.2), stress(4.5), stress(7.2), stress(2.3 * sqrt2), stress(1.3 * sqrt2), stress(5.3 * sqrt2)};
-    auto sig11=getComponent(sig,0,0);
-    auto sig12=getComponent(sig,0,1);
-    auto sig23=getComponent(sig,1,2);
-    TFEL_TESTS_ASSERT(my_abs(sig11 - sig(0)) < seps);
-    TFEL_TESTS_ASSERT(my_abs(sig12 - sig(3)/sqrt2) < seps);
-    TFEL_TESTS_ASSERT(my_abs(sig23 - sig(5)/sqrt2) < 5*seps);
-    setComponent<stress>(sig,1,0,stress(1e9));
-    TFEL_TESTS_ASSERT(my_abs(stress(1e9) - sig(3)/sqrt2) < 1e9*seps);
-    
+    const auto J=tfel::math::st2tost2<3u,double>::J();
+    const auto K=tfel::math::st2tost2<3u,double>::K();
+    auto M=K;
+    M(1,4)=double(6);
+    st2tost2<3u, stress> C = stress(2)*J+stress(3)*K+stress(1)*M;
+    auto C1111=getComponent(C,0,0,0,0);
+    auto C1212=getComponent(C,0,1,0,1);
+    auto C2323=getComponent(C,1,2,1,2);
+    auto C2213=getComponent(C,1,1,0,2);
+    TFEL_TESTS_ASSERT(my_abs(C1111 - C(0,0)) < seps);
+    TFEL_TESTS_ASSERT(my_abs(C1212 - C(3,3)/2) < 10*seps);
+    TFEL_TESTS_ASSERT(my_abs(C2323 - C(5,5)/2) < 5*seps);
+    TFEL_TESTS_ASSERT(my_abs(C2213 - C(1,4)/sqrt2) < 10*seps);
+    setComponent<stress,stress>(C,1,0,1,0,stress(1e9));
+    TFEL_TESTS_ASSERT(my_abs(stress(1e9) - C(3,3)/2) < 1e9*seps);
+    setComponent<stress,stress>(C,1,1,0,1,stress(1e9));
+    TFEL_TESTS_ASSERT(my_abs(stress(1e9) - C(1,3)/sqrt2) < 1e9*seps);
+    TFEL_TESTS_ASSERT(my_abs(stress(0) - C(3,1)/sqrt2) < seps);
     
     return this->result;
   }  // end of execute

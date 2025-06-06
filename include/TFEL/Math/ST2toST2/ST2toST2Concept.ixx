@@ -46,7 +46,7 @@ namespace tfel::math {
   
   
   TFEL_HOST_DEVICE constexpr auto trace(const ST2toST2Concept auto& A) noexcept {
-    using ST2toST2Type = decltype(A); 
+    using ST2toST2Type = decltype(A);
     using NumType = numeric_type<ST2toST2Type>;
     using IndexType = index_type<ST2toST2Type>;
     constexpr auto size =
@@ -58,18 +58,16 @@ namespace tfel::math {
     return tr;
   } //end of trace
   
-  
-   TFEL_HOST_DEVICE constexpr auto quaddot(const ST2toST2Concept auto& A, const ST2toST2Concept auto& B) noexcept requires(getSpaceDimension(A) == getSpaceDimension(B)) {
+   TFEL_HOST_DEVICE constexpr auto quaddot(const ST2toST2Concept auto& A, const ST2toST2Concept auto& B) noexcept {
     return trace(A*B);
   } // end of quaddot
   
- 
   TFEL_HOST_DEVICE constexpr auto norm(const ST2toST2Concept auto& A) noexcept {
     using ST2toST2Type = decltype(A); 
     using NumType = numeric_type<ST2toST2Type>;
     constexpr auto N =
-        StensorDimeToSize<getSpaceDimension<ST2toST2Type>()>::value;
-    return NumType(power<1, 2>(real(quaddot(transpose(A),A))/real(N)));
+        StensorDimeToSize<getSpaceDimension<ST2toST2Type>()>::value; 
+    return NumType(power<1, 2>(NumType(quaddot(transpose(A),A))/NumType(N)));
   } // end of norm
    
    
