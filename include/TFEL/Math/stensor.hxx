@@ -288,13 +288,14 @@ namespace tfel::math {
     TFEL_HOST_DEVICE static constexpr stensor<N, base_type<ValueType>>
     Id() noexcept;
     
-    /*!
-   * \brief set the component (i,j) of a `stensor` to Aij (it will
-   * automatically multiply the components of type 12, 23 and 13 by sqrt(2) in the Voigt notation)
+  /*!
+   * \brief This function set the component (i,j) of a `stensor` to
+   * a value `Aij`, using the function `VoigtIndex`.
    * \return void
-   * \param[in] A : second-order tensor 
-   * \param[in] i,j : indices
-   * \param[in] Aij : value
+   * \tparam T : type of the value `Aij` to set
+   * \param[in] A: `stensor`
+   * \param[in] i,j: `unsigned short`
+   * \param[in] Aij: value that we want for \f[A_{ij}\f]
    */
     template <typename T>
     TFEL_HOST_DEVICE constexpr void setComponent(StensorConcept auto&,
@@ -303,10 +304,11 @@ namespace tfel::math {
                                               const T&);
     
     /*!
-   * \brief get the component (i,j) of a `stensor`
-   * \return the true value Aij (and not the value in the Voigt notation)
-   * \param[in] A : second-order tensor
-   * \param[in] i,j : indices
+   * \brief This function returns the component (i,j) of a `stensor`,
+   * using the function `VoigtIndex`.
+   * \return the value \f[A_{ij}\f]
+   * \param[in] A: `stensor`
+   * \param[in] i,j: `unsigned short`
    */
     TFEL_HOST_DEVICE constexpr auto getComponent(const StensorConcept auto&,
                                               unsigned short,

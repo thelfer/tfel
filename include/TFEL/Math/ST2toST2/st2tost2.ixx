@@ -224,21 +224,7 @@ namespace tfel::math {
   }  // end of st2tost2<N,T>::J
   
   
-  /*!
-   * \brief This function returns the Voigt index of two indices (beginning from 0).
-   * Hence, the correspondence is, in 3d: \f[(0,0)->0, (1,1)->1, (2,2)->2,
-   * (0,1) or (1,0) -> 3, (0,2) or (2,0) -> 4, (1,2) or (2,1)-> 5\f].
-   * In 2d, it is \f[(0,0)->0, (1,1)->1, (2,2)->2,
-   * (0,1) or (1,0) -> 3\f].
-   * In 1d, \f[(0,0)->0, (1,1)->1, (2,2)->2\f].
-   * Be careful to the Voigt indices between 3 and 5, which are different from
-   * the usual convention: \f[\varepsilon_{12}\f] is usually the last component
-   * of the vector \f[\varepsilon\f] in the usual Voigt notation, but here it is situated
-   * as the fourth component, in order that the vector in dimension 2 is just a truncation
-   * of the vector in dimension 3.
-   * \return an unsigned short
-   * \param[in] i,j: unsigned short
-   */
+  
   template <unsigned short N>
    TFEL_HOST_DEVICE constexpr unsigned short VoigtIndex(unsigned short i,
                                                unsigned short j){
@@ -271,15 +257,7 @@ namespace tfel::math {
     }
   };
   
-  /*!
-   * \brief This function set the component (i,j,k,l) of a `st2tost2` to
-   * a value `Aijkl`, which may be useful in some cases.
-   * \return void
-   * \tparam T : type of the value `Aijkl` to set
-   * \param[in] A: `st2tost2`
-   * \param[in] i,j,k,l: `unsigned short`
-   * \param[in] Aijkl: value that we want for \f[A_{ijkl}\f]
-   */
+  
   template <typename T>
   TFEL_HOST_DEVICE constexpr void setComponent(ST2toST2Concept auto& A,
                                                unsigned short i,
@@ -302,12 +280,7 @@ namespace tfel::math {
       }
     }
     
-  /*!
-   * \brief This function returns the component (i,j,k,l) of a `st2tost2`.
-   * \return the value \f[A_{ijkl}\f]
-   * \param[in] A: `st2tost2`
-   * \param[in] i,j,k,l: `unsigned short`
-   */
+ 
    TFEL_HOST_DEVICE constexpr auto
     getComponent(const ST2toST2Concept auto& A,
                          unsigned short i,
