@@ -2256,7 +2256,6 @@ namespace mfront {
          << "using std::vector;\n";
       writeMaterialLaws(os, this->bd.getMaterialLaws());
       this->writeBehaviourParameterInitialisation(os, h);
-      this->writeBehaviourLocalVariablesInitialisation(os, h);
     };
     this->checkBehaviourFile(os);
     // initializers
@@ -3128,6 +3127,7 @@ namespace mfront {
         os << "this->d" << v.name << " -= this->" << v.name << ";\n";
       }
     }
+    this->writeBehaviourLocalVariablesInitialisation(os, h);
     //
     if (this->bd.hasCode(h, BehaviourData::BeforeInitializeLocalVariables)) {
       if (this->bd.getAttribute(BehaviourData::profiling, false)) {
