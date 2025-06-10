@@ -43,9 +43,28 @@ if((NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL "Release"))
   set(OPTIMISATION_FLAGS "-O2 -DNDEBUG ${OPTIMISATION_FLAGS}")
 endif((NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL "Release"))
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  add_definitions("-g")
-endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+option(enable-glibcxx-debug "use the debug version of the C++ standard as implemented by the glib C++ library" OFF)
+if(enable-glibcxx-debug)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+     set(CMAKE_CXX_FLAGS_DEBUG "-g -D_GLIBCXX_DEBUG -Rno-debug-disables-optimization" CACHE STRING
+      "Flags used by the C++ compiler during debug builds."
+      FORCE)
+  else(CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+     set(CMAKE_CXX_FLAGS_DEBUG "-g -D_GLIBCXX_DEBUG" CACHE STRING
+      "Flags used by the C++ compiler during debug builds."
+      FORCE)
+  endif(CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+else(enable-glibcxx-debug)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+    set(CMAKE_CXX_FLAGS_DEBUG "-g -Rno-debug-disables-optimization" CACHE STRING
+        "Flags used by the C++ compiler during debug builds."
+        FORCE)
+  else(CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+    set(CMAKE_CXX_FLAGS_DEBUG "-g" CACHE STRING
+        "Flags used by the C++ compiler during debug builds."
+        FORCE)
+  endif(CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM")
+endif(enable-glibcxx-debug)
 
 if(HAVE_FORTRAN)
   # we associate clang with the gnu fortran compiler
