@@ -222,6 +222,86 @@ namespace tfel::math {
               c0,   c0,   c0,   c0, c0, c0};
     }
   }  // end of st2tost2<N,T>::J
+  
+  
+  
+  template <unsigned short N>
+   TFEL_HOST_DEVICE constexpr unsigned short VoigtIndex(unsigned short i,
+                                               unsigned short j){
+     if (N==1 or N==2 or N==3){
+       if ((i == 0) and (j == 0)) {
+        return 0;
+       } else if ((i == 1) and (j == 1)) {
+        return 1;
+       } else if ((i == 2) and (j == 2)) {
+        return 2;
+       } else if (N==1){
+         tfel::reportContractViolation("indices are not valid");
+       } else if (N==2 or N==3){
+       	   if (((i == 0) and (j == 1)) || ((i == 1) and (j == 0))) {
+             return 3;
+           } else if (N==2){
+              tfel::reportContractViolation("indices are not valid");
+           } else if (N==3){
+                if (((i == 0) and (j == 2)) || ((i == 2) and (j == 0))) {
+                  return 4;
+                } else if (((i == 1) and (j == 2)) || ((i == 2) and (j == 1))) {
+                  return 5;
+                } else {
+                    tfel::reportContractViolation("indices are not valid");
+                }
+           }
+       }
+    } else {
+           tfel::reportContractViolation("dimension is not valid");
+    }
+  };
+  
+  
+  template <typename NumType, typename T>
+  TFEL_HOST_DEVICE constexpr void setComponent(ST2toST2Concept auto& A,
+                                               unsigned short i,
+                                               unsigned short j,
+                                               unsigned short k,
+                                               unsigned short l,
+                                               const T& Aijkl) noexcept
+      requires (isAssignableTo<NumType, T>()){
+      using ST2toST2Type=decltype(A);
+      const auto N = getSpaceDimension<ST2toST2Type>(); 
+      const auto I = VoigtIndex<N>(i, j);
+      const auto J = VoigtIndex<N>(k, l);
+      constexpr auto cste = Cste<NumType>::sqrt2;
+      A(I,J)=Aijkl;
+      if (I > 2) {
+        A(I,J) = A(I,J)*cste;
+      }
+      if (J > 2) {
+        A(I,J) = A(I,J)*cste;
+      }
+    }
+    
+ 
+   TFEL_HOST_DEVICE constexpr auto
+    getComponent(const ST2toST2Concept auto& A,
+                         unsigned short i,
+                         unsigned short j,
+                         unsigned short k,
+                         unsigned short l) {
+      using ST2toST2Type=decltype(A);
+      using T = numeric_type<ST2toST2Type>;
+      const auto N = getSpaceDimension<ST2toST2Type>();
+      const int I = VoigtIndex<N>(i, j);
+      const int J = VoigtIndex<N>(k, l);
+      auto Aijkl=T(A(I,J));
+      constexpr auto icste = Cste<T>::isqrt2;
+      if (I > 2) {
+        Aijkl *= icste;
+      }
+      if (J > 2) {
+        Aijkl *= icste;
+      }
+      return Aijkl;
+    }
 
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr void st2tost2<N, T>::import(
@@ -277,6 +357,7 @@ namespace tfel::math {
       return Result{sr * s * sir};
     }
   }  // end of change_basis
+  
 
   template <ST2toST2Concept ST2toST2Type, TensorConcept TensorType>
   TFEL_HOST_DEVICE constexpr auto push_forward(const ST2toST2Type& C,
