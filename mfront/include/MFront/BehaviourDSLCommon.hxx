@@ -600,8 +600,20 @@ namespace mfront {
      * the behaviour Description
      */
     virtual void readElasticMaterialProperties();
+    //! \brief helper function to read the elastic material properties
+    virtual std::vector<BehaviourDescription::MaterialProperty>
+    readElasticMaterialPropertiesI();
+    //! \brief helper function to read the elastic material properties
+    virtual std::vector<BehaviourDescription::MaterialProperty>
+    readElasticMaterialPropertiesII();
     //! \brief handle the `@HillTensor` keyword
     virtual void treatHillTensor();
+    //! \brief helper function to read the elastic material properties
+    virtual std::vector<BehaviourDescription::MaterialProperty>
+    readHillTensorDefinitionI();
+    //! \brief helper function to read the elastic material properties
+    virtual std::vector<BehaviourDescription::MaterialProperty>
+    readHillTensorDefinitionII();
     //! \brief handle the `@InitLocalVariables` keyword
     virtual void treatInitLocalVariables();
     //! \brief handle the `@OrthotropicBehaviour` keyword

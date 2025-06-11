@@ -26,6 +26,7 @@ set(mfront_tests_SOURCES
   Elasticity6
   Elasticity8
   Elasticity9
+  Elasticity10
   OrthotropicElastic
   OrthotropicElastic2
   OrthotropicElastic3
@@ -34,6 +35,7 @@ set(mfront_tests_SOURCES
   OrthotropicElastic6
   OrthotropicElastic7
   OrthotropicElastic8
+  OrthotropicElastic9
   PerfectPlasticity
   HosfordPerfectPlasticity
   HosfordPerfectPlasticity2
@@ -246,7 +248,8 @@ if(enable-mfront-quantity-tests)
     Norton_rk54_qt
     Norton_rkCastem_qt
     ImplicitNorton7
-    ImplicitOrthotropicCreep3)
+    ImplicitOrthotropicCreep3
+    ImplicitOrthotropicCreep4)
 endif(enable-mfront-quantity-tests)
 
 mfront_behaviour_check_library(MFrontGenericBehaviours3 generic
@@ -442,6 +445,7 @@ test_generic(elasticity6-2)
 test_generic(elasticity8)
 test_generic(elasticity9)
 test_generic(elasticity10)
+test_generic(elasticity10-1)
 test_generic(elasticity11)
 test_generic(elasticity12)
 test_generic(elasticity13)
@@ -543,6 +547,7 @@ test_generic(orthotropicelasticity6-21)
 test_generic(orthotropicelasticity6-22)
 test_generic(orthotropicelasticity6-23)
 test_generic(orthotropicelasticity6-24)
+test_generic(orthotropicelasticity9-1)
 test_generic(orthotropiccreep)
 test_generic(orthotropiccreep-rk42)
 test_generic(orthotropiccreep-rkCastem)
