@@ -22,13 +22,6 @@ The page describes the new functionalities of Version 3.0.16 of the
 
 # Issues fixed
 
-## Issue 743: `-Denable-glibcxx-debug=ON` seems to have no effects
-
-This option was only supported with `gcc`. It is now also supported with
-`clang` and `icpx`.
-
-For more details, see <https://github.com/thelfer/tfel/issues/743>.
-
 ## Issue 801: [mfront] lower case the full name of the behavior law (1D ->1d) 
 
 ￼

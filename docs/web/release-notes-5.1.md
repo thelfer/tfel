@@ -358,7 +358,7 @@ contain:
 
 ## Calling an external behaviour: the `@BehaviourVariable` keyword
 
-~~~~{.cpp}
+```cxx
 @BehaviourVariable first_phase_plastic_behaviour {
   file: "Plasticity.mfront",
   variables_suffix: "1",
@@ -368,7 +368,7 @@ contain:
   shared_material_properties: {".+"},
   shared_external_state_variables: {".+"}
 };
-~~~~
+```
 
 ### Behaviour variable factories
 
@@ -570,7 +570,7 @@ orthotropic material, this variable is an array of (3) scalars.
 
 #### Example of usage
 
-~~~~{.cpp}
+```cxx
 @Brick StandardElastoViscoPlasticity{
   stress_potential : Hooke{
     young_modulus : 150e9,
@@ -579,29 +579,14 @@ orthotropic material, this variable is an array of (3) scalars.
     save_thermal_expansion : true
   }
 };
-~~~~
+```
 
-## Uniform syntaxes
-
-### Uniform syntax for `@ElasticMaterialProperties` and `@ComputeStiffnessTensor`
-
-The `@ElasticMaterialProperties` and `@ComputeStiffnessTensor` now
-accept the same options than the stress potentials deriving from the
-`HookeStressPotentialBase`:
-
-~~~~{.cpp}
-@ElasticMaterialProperties{
-  young_modulus: 150e9,
-  poisson_ratio: 0.3
-};
-~~~~
-
-### Uniform syntax for `@ComputeThermalExpansion`
+## Uniform syntax for `@ComputeThermalExpansion`
 
 The `@ComputeThermalExpansion` keyword now accepts the same options than
-the stress potentials deriving from the `HookeStressPotentialBase`:
+the stress potentials deriving from `the HookeStressPotentialBase`:
 
-~~~~{.cpp}
+```cxx
 @ComputeThermalExpansion{
   thermal_expansion1: 1.e-5,
   thermal_expansion2: 0.2e-5,
@@ -610,17 +595,7 @@ the stress potentials deriving from the `HookeStressPotentialBase`:
   initial_geometry_reference_temperature: 293.15,
   save_thermal_expansion: true
 };
-~~~~
-
-### Uniform syntax for `@HillTensor`
-
-The `@HillTensor` keyword now accepts the same options than the Hill's
-stress criterion available in the `StandardElastoViscoPlasticity` brick:
-
-~~~~{.cpp}
-@HillTensor H {F: 0.371, G: 0.629, H: 4.052, L: 1.5, M: 1.5, N: 1.5};
-~~~~
-
+```
 
 # New features in `mfront-query`
 

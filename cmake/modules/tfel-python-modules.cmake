@@ -75,7 +75,7 @@ function(tfel_material_python_module name)
                           LIBRARY_OUTPUT_DIRECTORY
                           ${PROJECT_BINARY_DIR}/bindings/python/tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}/material)
   endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
-endfunction(tfel_material_python_module)
+endfunction(tfel_python_module)
 
 function(mfront_python_module name)
   python_lib_module(${name} mfront ${ARGN})

@@ -396,7 +396,7 @@ namespace mtest {
     const auto p1 = std::find(esvs.begin(), esvs.end(), n);
     const auto p2 = std::find(esvs2.begin(), esvs2.end(), n);
     const auto b1 = p1 != esvs.end();
-    const auto b2 = p2 != esvs2.end();
+    const auto b2 = p2 != esvs.end();
     if (b1) {
       // full name of the external state variable
       const auto type = t.getBehaviour()->getExternalStateVariableType(n);

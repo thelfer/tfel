@@ -2198,75 +2198,15 @@ namespace mfront {
     return mps;
   }
 
-  std::vector<BehaviourDescription::MaterialProperty>
-  BehaviourDSLCommon::readElasticMaterialPropertiesI() {
-    auto p = this->current;
-    const auto pe = this->tokens.end();
-    CxxTokenizer::checkNotEndOfLine(
-        "BehaviourDSLCommon::readElasticMaterialPropertiesI", p, pe);
-    if (p->value != "{") {
-        this->throwRuntimeError(
-            "BehaviourDSLCommon::readElasticMaterialPropertiesI",
-            "expected '{'");
-    }
-    ++p;
-    // vector or map
-    CxxTokenizer::checkNotEndOfLine(
-        "BehaviourDSLCommon::readElasticMaterialPropertiesI", p, pe);
-    if (p->value == "}") {
-      ++p;
-      this->throwRuntimeError(
-          "BehaviourDSLCommon::readElasticMaterialPropertiesI",
-          "no material property given");
-    }
-    // map or string vector
-    ++p;
-    CxxTokenizer::checkNotEndOfLine(
-        "BehaviourDSLCommon::readElasticMaterialPropertiesI", p, pe);
-    if (p->value == ":") {
-      p = std::prev(p, 2);
-      return this->readElasticMaterialPropertiesII();
-    }
-    return this->readMaterialPropertyOrArrayOfMaterialProperties(
-        "BehaviourDSLCommon::readElasticMaterialProperties");
-  }  // end of readElasticMaterialPropertiesI
-
-  std::vector<BehaviourDescription::MaterialProperty>
-  BehaviourDSLCommon::readElasticMaterialPropertiesII() {
-    const auto d =
-        tfel::utilities::Data::read_map(this->current, this->tokens.end())
-            .get<tfel::utilities::DataMap>();
-    if ((d.size() != 2u) && (d.size() != 9u)) {
-      this->throwRuntimeError(
-          "BehaviourDSLCommon::readElasticMaterialProperties",
-          "invalid number of elastic material properties given");
-    }
-    auto get_mp = [this, &d](const char* const n) {
-      if (d.count(n) == 0) {
-        this->throwRuntimeError(
-            "BehaviourDSLCommon::readElasticMaterialPropertiesII",
-            "material property '" + std::string(n) + "' is not defined");
-      }
-      return getBehaviourDescriptionMaterialProperty(*this, n, d.at(n));
-    };
-    if (d.size() == 2u) {
-      return {get_mp("young_modulus"), get_mp("poisson_ratio")};
-    }
-    return {get_mp("young_modulus1"),  get_mp("young_modulus2"),
-            get_mp("young_modulus3"),  get_mp("poisson_ratio12"),
-            get_mp("poisson_ratio23"), get_mp("poisson_ratio13"),
-            get_mp("shear_modulus12"), get_mp("shear_modulus23"),
-            get_mp("shear_modulus13")};
-  }  // end of readElasticMaterialPropertiesII
-
   void BehaviourDSLCommon::readElasticMaterialProperties() {
-    const auto emps = readElasticMaterialPropertiesI();
+    const auto& emps = this->readMaterialPropertyOrArrayOfMaterialProperties(
+        "BehaviourDSLCommon::readElasticMaterialProperties");
     this->readSpecifiedToken(
         "BehaviourDSLCommon::readElasticMaterialProperties", ";");
     if ((emps.size() != 2u) && (emps.size() != 9u)) {
       this->throwRuntimeError(
           "BehaviourDSLCommon::readElasticMaterialProperties",
-          "invalid number of elastic material properties given");
+          "invalid number of file names given");
     }
     if (emps.size() == 9u) {
       // the material shall have been declared orthotropic
@@ -2298,61 +2238,6 @@ namespace mfront {
                           false);
   }  // end of treatComputeStiffnessTensor
 
-  std::vector<BehaviourDescription::MaterialProperty>
-  BehaviourDSLCommon::readHillTensorDefinitionI() {
-    auto p = this->current;
-    const auto pe = this->tokens.end();
-    CxxTokenizer::checkNotEndOfLine(
-        "BehaviourDSLCommon::readHillTensorDefinitionI", p, pe);
-    if (p->value != "{") {
-        this->throwRuntimeError(
-            "BehaviourDSLCommon::readHillTensorDefinitionI",
-            "expected '{'");
-    }
-    ++p;
-    // vector or map
-    CxxTokenizer::checkNotEndOfLine(
-        "BehaviourDSLCommon::readHillTensorDefinitionI", p, pe);
-    if (p->value == "}") {
-      ++p;
-      this->throwRuntimeError(
-          "BehaviourDSLCommon::readHillTensorDefinitionI",
-          "no material property given");
-    }
-    // map or string vector
-    ++p;
-    CxxTokenizer::checkNotEndOfLine(
-        "BehaviourDSLCommon::readHillTensorDefinitionI", p, pe);
-    if (p->value == ":") {
-      p = std::prev(p, 2);
-      return this->readHillTensorDefinitionII();
-    }
-    return this->readMaterialPropertyOrArrayOfMaterialProperties(
-        "BehaviourDSLCommon::readHillTensorDefinition");
-  }  // end of readHillTensorDefinitionI
-
-  std::vector<BehaviourDescription::MaterialProperty>
-  BehaviourDSLCommon::readHillTensorDefinitionII() {
-    const auto d =
-        tfel::utilities::Data::read_map(this->current, this->tokens.end())
-            .get<tfel::utilities::DataMap>();
-    if (d.size() != 6u) {
-      this->throwRuntimeError(
-          "BehaviourDSLCommon::readHillTensorDefinition",
-          "invalid number of material properties given (6 expected)");
-    }
-    auto get_mp = [this, &d](const char* const n) {
-      if (d.count(n) == 0) {
-        this->throwRuntimeError(
-            "BehaviourDSLCommon::readHillTensorDefinitionII",
-            "material property '" + std::string(n) + "' is not defined");
-      }
-      return getBehaviourDescriptionMaterialProperty(*this, n, d.at(n));
-    };
-    return {get_mp("F"), get_mp("G"), get_mp("H"),
-            get_mp("L"), get_mp("M"), get_mp("N")};
-  }  // end of readHillTensorDefinitionII
-
   void BehaviourDSLCommon::treatHillTensor() {
     if (this->mb.getSymmetryType() != mfront::ORTHOTROPIC) {
       this->throwRuntimeError(
@@ -2373,7 +2258,8 @@ namespace mfront {
     v.description = "Hill tensor";
     ++(this->current);
     // Hill coefficients
-    const auto& hcs = this->readHillTensorDefinitionI();
+    const auto& hcs = this->readMaterialPropertyOrArrayOfMaterialProperties(
+        "BehaviourDSLCommon::treatHillTensor");
     this->readSpecifiedToken("BehaviourDSLCommon::treatHillTensor", ";");
     if (hcs.size() != 6u) {
       this->throwRuntimeError("BehaviourDSLCommon::treatHillTensor",
