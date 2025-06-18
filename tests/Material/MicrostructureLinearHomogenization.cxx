@@ -47,7 +47,6 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
 
     this->template test_particulate<real, stress, length>();
     this->template test_polycrystal<real, stress, length>();
-    // this->template testHS_2D<real, stress>();
 
     return this->result;
   }
@@ -60,11 +59,10 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     length a = length(10);
     length b = length(1);
     length c = length(1);
-    tfel::math::tvector<3u, real> n_a = {1, 0, 0};
-    tfel::math::tvector<3u, real> n_b = {0, 1, 0};
+    tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
+    tfel::math::tvector<3u, real> n_b = {0., 1., 0.};
     
     const auto young0 = stress{1e9};
-    const auto seps=young0*eps;
     const auto nu0 = real(0.2);
     const auto youngi = stress{10e9};
     const auto nui = real(0.3);
@@ -81,8 +79,8 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     IsotropicDistribution<3u,stress> distrib1(ellipsoid1,real(0.5),C_0);
     unsigned short int index = 0;
     TransverseIsotropicDistribution<stress> distrib2(spheroid1,real(0.02),C_i,n_a,index);                 
-    //IsotropicDistribution<3u,real,stress,length> distrib2(ellipsoid1,real(0.5),C_i);
-    //OrientedDistribution<3u,real,stress,length> distrib2(spheroid1,real(0.02),C_i,n_a,n_b); 
+    IsotropicDistribution<3u,stress> distrib3(ellipsoid1,real(0.5),C_i);
+    OrientedDistribution<3u,stress> distrib4(spheroid1,real(0.02),C_i,n_a,n_b); 
     
     ParticulateMicrostructure<3u, stress> micro1(C_0);
     micro1.addInclusionPhase(distrib1);
@@ -92,7 +90,7 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     auto zs=stress(0);
     tfel::math::stensor<3u,stress> P={zs,zs,zs,zs,zs,zs};
     std::vector<tfel::math::stensor<3u,stress>> polarizations = {P,P,P};
-    auto h_s_1=computeDilute<3u, real, length, stress>(micro1,polarizations,false,E,true);
+    auto h_s_1=computeDilute<3u, stress>(micro1,polarizations,false,E,true);
     auto Chom_DS_iso=h_s_1.homogenized_stiffness;
     //auto h_s_2=computeDilute<3u,stress>(micro1,polarizations,false,E,false);
     //auto Chom_DS_non_iso=h_s_2.homogenized_stiffness;
@@ -129,7 +127,6 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     Ellipsoid<length> ellipsoid1(a,b,c);
 
     const auto young0 = stress{1e9};
-    const auto seps=young0*eps;
     const auto nu0 = real(0.2);
     const auto youngi = stress{10e9};
     const auto nui = real(0.3);
@@ -151,19 +148,12 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     crystal.addGrain(grain2);
     crystal.addGrain(grain3);
     
-    tfel::math::stensor<3u,real> E={1,0,0,0,0,0};
+    tfel::math::stensor<3u,real> E={1.,0.,0.,0.,0.,0.};
     auto zs=stress(0);
     tfel::math::stensor<3u,stress> P={zs,zs,zs,zs,zs,zs};
     std::vector<tfel::math::stensor<3u,stress>> polarizations = {P,P};
-    //auto h_s_SC1=computeSelfConsistent<3u, stress>(crystal,polarizations,false,E,true,200);
-    //auto Chom_SC_iso=h_s_SC1.homogenized_stiffness;
     auto h_s_SC2=computeSelfConsistent<3u, stress>(crystal,polarizations,false,E,false,20,6);
     auto Chom_SC_non_iso=h_s_SC2.homogenized_stiffness;
-    //for (int i=0;i<6;i++)
-    //for (int j=0;j<6;j++){
-    //  TFEL_TESTS_ASSERT(my_abs(Chom_SC_iso(i,j)- Chom_SC_non_iso(i,j)) < stress{1000000*seps});
-    //  std::cout<<i<<" "<<j<<" "<< (Chom_SC_iso(i,j)-Chom_SC_non_iso(i,j)).getValue()<<" "<<eps<<std::endl;
-    //}
     
   };
 

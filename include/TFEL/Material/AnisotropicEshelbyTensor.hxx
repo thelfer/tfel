@@ -191,7 +191,7 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
            StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::real<StressType>> computePlainStrainAnisotropicLocalisationTensor(
+      st2tost2<2u, types::real<StressType>> computePlainStrainAnisotropicLocalisationTensor(
           const tfel::math::st2tost2<2u, StressType>&,
           const tfel::math::st2tost2<2u, StressType>&,
           const tfel::math::tvector<2u, types::real<StressType>>&,

@@ -67,7 +67,7 @@ namespace tfel::math {
     using NumType = numeric_type<ST2toST2Type>;
     constexpr auto N =
         StensorDimeToSize<getSpaceDimension<ST2toST2Type>()>::value; 
-    return NumType(power<1, 2>(NumType(quaddot(transpose(A),A))/NumType(N)));
+    return NumType(power<1, 2>(quaddot(transpose(A),A)/N));
   } // end of norm
    
    

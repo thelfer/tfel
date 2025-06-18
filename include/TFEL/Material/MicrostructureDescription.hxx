@@ -89,7 +89,7 @@ namespace homogenization::elasticity {
    * disks...)
    */
   template<unsigned short int N,tfel::math::ScalarConcept LengthType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::length,
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
                                               LengthType>())
   struct Inclusion {
     std::array<LengthType, N> semiLengths;
@@ -103,7 +103,7 @@ namespace homogenization::elasticity {
    * \tparam LengthType: type of the lengths
    */
   template <tfel::math::ScalarConcept LengthType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::length,
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
                                               LengthType>())
   struct Ellipsoid : public Inclusion<3u,LengthType>{
     
@@ -119,7 +119,7 @@ namespace homogenization::elasticity {
    * \tparam LengthType: type of the lengths
    */
   template <tfel::math::ScalarConcept LengthType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::length,
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
                                               LengthType>())
   struct Spheroid : public Inclusion<3u,LengthType> {
     
@@ -133,7 +133,7 @@ namespace homogenization::elasticity {
    * This struct represents a 3d sphere as a child of Inclusion<3>
    */
    template <tfel::math::ScalarConcept LengthType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::length,
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
                                               LengthType>())
   struct Sphere : public Inclusion<3u,LengthType> {
   
@@ -147,7 +147,7 @@ namespace homogenization::elasticity {
    * \tparam LengthType: type of the radius
    */
    template <tfel::math::ScalarConcept LengthType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::length,
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
                                               LengthType>())
   struct Disk : public Inclusion<2u,LengthType> {
   
@@ -162,7 +162,7 @@ namespace homogenization::elasticity {
    * \tparam LengthType: type of the lengths
    */
   template <tfel::math::ScalarConcept LengthType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::length,
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
                                               LengthType>())
   struct Ellipse : public Inclusion<2u,LengthType>{
     
@@ -188,8 +188,8 @@ namespace homogenization::elasticity {
   struct Phase {
     using real=tfel::types::real<StressType>;
     real fraction;
-    StiffnessTensor<N, StressType> stiffness;
-    Phase(real f, tfel::math::st2tost2<N, StressType> &C) : fraction(f), stiffness(C){};
+    tfel::math::st2tost2<N, StressType> stiffness;
+    Phase(real f, const tfel::math::st2tost2<N, StressType> &C) : fraction(f), stiffness(C){};
     virtual ~Phase(){};
   };
 
@@ -214,7 +214,7 @@ namespace homogenization::elasticity {
     tfel::math::tvector<N,real> n_a;
     tfel::math::tvector<N,real> n_b;
 
-    GrainPhase(real frac, tfel::math::st2tost2<N, StressType> &C, Inclusion<N,real> &inc, tfel::math::tvector<N,real> &n_a_, tfel::math::tvector<N,real> &n_b_)
+    GrainPhase(real frac,tfel::math::st2tost2<N, StressType> &C,Inclusion<N,LengthType> &inc,const tfel::math::tvector<N,real> &n_a_, const tfel::math::tvector<N,real> &n_b_)
         : Phase<N, StressType>(frac, C), inclusion(inc), n_a(n_a_), n_b(n_b_){
         static constexpr auto eps = std::numeric_limits<real>::epsilon();
           if (not((n_a|n_b) < eps)) {
@@ -222,15 +222,16 @@ namespace homogenization::elasticity {
           }
        };
         
-    tfel::math::st2tost2<N,real> computeMeanLocalisator(const tfel::math::st2tost2<N,StressType> &C0, bool isotropic_matrix,const int max_iter_anisotropic_integration = 12){
+    tfel::math::st2tost2<N,real> computeMeanLocalisator(const tfel::math::st2tost2<N,StressType> &C0, bool isotropic_matrix,int max_iter_anisotropic_integration = 12){
         tfel::math::st2tost2<N,StressType> Ci = this->stiffness;
         auto semiL= (this->inclusion).semiLengths;
         auto n_a_i=this->n_a;
         auto n_b_i=this->n_b;
         auto ai=semiL[0];
         auto bi=semiL[1];
+        LengthType ci;
         if (N==3){
-        	auto ci=semiL[2];
+        	ci=semiL[2];
         }
         if (isotropic_matrix){
            auto pair0=computeKappaMu<N,StressType>(C0);
@@ -252,7 +253,7 @@ namespace homogenization::elasticity {
         	if (N==3){
            		return computeAnisotropicLocalisationTensor<StressType>(C0,Ci,n_a_i,ai,n_b_i,bi,ci,max_iter_anisotropic_integration);
            	} else if (N==2){
-           		return computePlainStrainAnisotropicLocalisationTensor<StressType>(C0,Ci,n_a_i,ai,bi,max_iter_anisotropic_integration);
+           		tfel::reportContractViolation("dimension 2 coming soon"); //return computePlainStrainAnisotropicLocalisationTensor<StressType>(C0,Ci,n_a_i,ai,bi,max_iter_anisotropic_integration);
            	}
         }
     };
@@ -277,8 +278,8 @@ namespace homogenization::elasticity {
     using LengthType=tfel::types::length<StressType>;
     
     Inclusion<N,LengthType> inclusion;
-    InclusionDistribution(Inclusion<N,LengthType> &inc, real frac, tfel::math::st2tost2<N,StressType> &C): Phase<N,StressType>(frac,C), inclusion(inc){};
-    virtual tfel::math::st2tost2<N,real> computeMeanLocalisator(const tfel::math::st2tost2<N,StressType> &C0, bool isotropic_matrix,const int max_iter_anisotropic_integration) = 0;
+    InclusionDistribution(const Inclusion<N,LengthType> &inc, real frac, const tfel::math::st2tost2<N,StressType> &C): Phase<N,StressType>(frac,C), inclusion(inc){};
+    virtual tfel::math::st2tost2<N,real> computeMeanLocalisator(const tfel::math::st2tost2<N,StressType> &C0, bool isotropic_matrix, int max_iter_anisotropic_integration) = 0;
     virtual ~InclusionDistribution(){};
   };
   
@@ -288,18 +289,18 @@ namespace homogenization::elasticity {
    * a child of InclusionDistribution<3u>, with inclusion of type
    * Sphere.
    */
-   template<typename real,tfel::math::ScalarConcept StressType>
+   template<tfel::math::ScalarConcept StressType>
    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
   struct SphereDistribution : public InclusionDistribution<3u,StressType> {
     using real=tfel::types::real<StressType>;
     using LengthType=tfel::types::length<StressType>;
     
-    SphereDistribution(Sphere<LengthType> &sph, real frac, tfel::math::st2tost2<3u,StressType> &Ci): InclusionDistribution<3u,StressType>(sph, frac, Ci){};
+    SphereDistribution(const Sphere<LengthType> &sph, real frac, const tfel::math::st2tost2<3u,StressType> &Ci): InclusionDistribution<3u,StressType>(sph, frac, Ci){};
     
-    virtual tfel::math::st2tost2<3u,real> computeMeanLocalisator(const tfel::math::st2tost2<3u,StressType> &C0, bool isotropic_matrix,const int max_iter_anisotropic_integration = 12){
+    virtual tfel::math::st2tost2<3u,real> computeMeanLocalisator(const tfel::math::st2tost2<3u,StressType> &C0, bool isotropic_matrix,int max_iter_anisotropic_integration = 12) override {
         auto Ci = this->stiffness;
-        if (not(isIsotropic<3u,real,StressType>(Ci))){
+        if (not(isIsotropic<3u,StressType>(Ci))){
         	tfel::reportContractViolation("I cannot make computation on distribution of anisotropic inclusions");
         }
         auto pairi=computeKappaMu<3u,StressType>(Ci);
@@ -338,9 +339,9 @@ namespace homogenization::elasticity {
     
     DiskDistribution(Disk<LengthType> &disk, real frac, tfel::math::st2tost2<2u,StressType> &Ci): InclusionDistribution<2u,StressType>(disk,frac,Ci){};
     
-    virtual tfel::math::st2tost2<2u,real> computeMeanLocalisator(const tfel::math::st2tost2<2u,StressType> &C0, bool isotropic_matrix,const int max_iter_anisotropic_integration = 12){
+    virtual tfel::math::st2tost2<2u,real> computeMeanLocalisator(const tfel::math::st2tost2<2u,StressType> &C0, bool isotropic_matrix,int max_iter_anisotropic_integration = 12) override {
         auto Ci = this->stiffness;
-        if (not(isIsotropic<2u,real,StressType>(Ci))){
+        if (not(isIsotropic<2u,StressType>(Ci))){
               tfel::reportContractViolation("I cannot make computation on distribution of anisotropic inclusions");
         }
            auto pairi=computeKappaMu<2u,StressType>(Ci);
@@ -374,11 +375,11 @@ namespace homogenization::elasticity {
     using real=tfel::types::real<StressType>;
     using LengthType=tfel::types::length<StressType>;
     
-    IsotropicDistribution(Ellipsoid<LengthType> &ell, real frac, tfel::math::st2tost2<3u,StressType> &Ci): InclusionDistribution<3u,StressType>(ell,frac,Ci){};
-    IsotropicDistribution(Spheroid<LengthType> &sphero, real frac, tfel::math::st2tost2<3u,StressType> &Ci): InclusionDistribution<3u,StressType>(sphero,frac,Ci){};
-    IsotropicDistribution(Ellipse<LengthType> &ell, real frac, tfel::math::st2tost2<2u,StressType> &Ci): InclusionDistribution<2u,StressType>(ell,frac,Ci){};
+    IsotropicDistribution(const Ellipsoid<LengthType> &ell, real frac, const tfel::math::st2tost2<3u,StressType> &Ci): InclusionDistribution<3u,StressType>(ell,frac,Ci){};
+    IsotropicDistribution(const Spheroid<LengthType> &sphero, real frac, const tfel::math::st2tost2<3u,StressType> &Ci): InclusionDistribution<3u,StressType>(sphero,frac,Ci){};
+    IsotropicDistribution(const Ellipse<LengthType> &ell, real frac, const tfel::math::st2tost2<2u,StressType> &Ci): InclusionDistribution<2u,StressType>(ell,frac,Ci){};
     
-    virtual tfel::math::st2tost2<N,real> computeMeanLocalisator(const tfel::math::st2tost2<N,StressType> &C0, bool isotropic_matrix = true,const int max_iter_anisotropic_integration = 12){
+    virtual tfel::math::st2tost2<N,real> computeMeanLocalisator(const tfel::math::st2tost2<N,StressType> &C0,bool isotropic_matrix = true,int max_iter_anisotropic_integration = 12) override {
         tfel::math::st2tost2<N,StressType> Ci = this->stiffness;
         if (not(isIsotropic<N,StressType>(Ci))){
               tfel::reportContractViolation("I cannot make computation on distribution of anisotropic inclusions");
@@ -401,7 +402,7 @@ namespace homogenization::elasticity {
 		tfel::reportContractViolation("dimension 2 coming soon");
         } else if (N==3){
 		auto ci = semiL[2];
-        	auto pair = EllipsoidMeanLocalisator<3u, StressType>::Isotropic(KG0, KGi, nui, ai, bi, ci);
+        	auto pair = EllipsoidMeanLocalisator<3u, StressType>::Isotropic(KG0, KGi, ai, bi, ci);
         	auto kappaA = std::get<0>(pair);
         	auto muA = std::get<1>(pair);
         	return 3*kappaA*tfel::math::st2tost2<3u,real>::J()+2*muA*tfel::math::st2tost2<3u,real>::K();
@@ -429,28 +430,28 @@ namespace homogenization::elasticity {
     tfel::math::tvector<3u,real> n;
     unsigned short int index;
     
-    TransverseIsotropicDistribution(Ellipsoid<LengthType> &ell, real frac, tfel::math::st2tost2<3u,StressType> &C,tfel::math::tvector<3u,real> &n_, unsigned short int &ind): InclusionDistribution<3u,StressType>(ell,frac,C), n(n_), index(ind){
+    TransverseIsotropicDistribution(const Ellipsoid<LengthType> &ell, real frac, const tfel::math::st2tost2<3u,StressType> &C,const tfel::math::tvector<3u,real> &n_, unsigned short int &ind): InclusionDistribution<3u,StressType>(ell,frac,C), n(n_), index(ind){
     	if ((ind!=0) and (ind!=1) and (ind!=2)){
-    		tfel::reportContractViolation("The index can only be 0, 1 or 2 and is the axis of the ellipsoid which does not rotate")
+    		tfel::reportContractViolation("The index can only be 0, 1 or 2 and is the axis of the ellipsoid which does not rotate");
     	}
     };
     
-    TransverseIsotropicDistribution(Spheroid<LengthType> &sphero, real frac, tfel::math::st2tost2<3u,StressType> &C,tfel::math::tvector<3u,real> &n_, unsigned short int &ind): InclusionDistribution<3u,StressType>(sphero,frac,C), n(n_), index(ind){
+    TransverseIsotropicDistribution(const Spheroid<LengthType> &sphero, real frac, const tfel::math::st2tost2<3u,StressType> &C,const tfel::math::tvector<3u,real> &n_, unsigned short int &ind): InclusionDistribution<3u,StressType>(sphero,frac,C), n(n_), index(ind){
     	if ((ind!=0) and (ind!=1) and (ind!=2)){
-    		tfel::reportContractViolation("The index can only be 0, 1 or 2 and is the axis of the ellipsoid which does not rotate")
+    		tfel::reportContractViolation("The index can only be 0, 1 or 2 and is the axis of the ellipsoid which does not rotate");
     	}
     };
     
-    virtual tfel::math::st2tost2<3u,real> computeMeanLocalisator(const tfel::math::st2tost2<3u,StressType> &C0, bool isotropic_matrix,const int max_iter_anisotropic_integration = 12){
+    virtual tfel::math::st2tost2<3u,real> computeMeanLocalisator(const tfel::math::st2tost2<3u,StressType> &C0, bool isotropic_matrix,int max_iter_anisotropic_integration = 12) override {
         tfel::math::st2tost2<3u,StressType> Ci = this->stiffness;
-        if (not(isIsotropic<3u,real,StressType>(Ci))){
+        if (not(isIsotropic<3u,StressType>(Ci))){
               tfel::reportContractViolation("I cannot make computation on distribution of anisotropic inclusions");
         }
         auto pairi=computeKappaMu<3u,StressType>(Ci);
         const auto kappai = std::get<0>(pairi);
         const auto mui = std::get<1>(pairi);
         const auto KGi=KGModuli<StressType>(kappai,mui);
-        if (not(isIsotropic<3u,real,StressType>(C0))){
+        if (not(isIsotropic<3u,StressType>(C0))){
             std::cout<<"warning: your matrix is not isotropic, and it will be made isotropic for computing the average localisator in the distribution"<<std::endl;
         }
         auto pair0=computeKappaMu<3u,StressType>(C0);
@@ -474,7 +475,7 @@ namespace homogenization::elasticity {
           bi=semiL[0];
           ci=semiL[1];
         }
-        return EllipsoidMeanLocalisator<3u, real, StressType, LengthType>::TransverseIsotropic(KG0,KGi, this->n, ai, bi, ci);
+        return EllipsoidMeanLocalisator<3u, StressType>::TransverseIsotropic(KG0,KGi, this->n, ai, bi, ci);
     };
     
     virtual ~TransverseIsotropicDistribution(){};
@@ -497,36 +498,37 @@ namespace homogenization::elasticity {
     tfel::math::tvector<N,real> n_a;
     tfel::math::tvector<N,real> n_b;
     
-    OrientedDistribution(Ellipsoid<LengthType> &ell,real frac, tfel::math::st2tost2<3u,StressType> &C,tfel::math::tvector<3u,real> &n_a_,tfel::math::tvector<3u,real> &n_b_): InclusionDistribution<3u,real,StressType,LengthType>(ell,frac,C), n_a(n_a_), n_b(n_b_) {
+    OrientedDistribution(const Ellipsoid<LengthType> &ell,real frac, const tfel::math::st2tost2<3u,StressType> &C,const tfel::math::tvector<3u,real> &n_a_,const tfel::math::tvector<3u,real> &n_b_): InclusionDistribution<3u,StressType>(ell,frac,C), n_a(n_a_), n_b(n_b_) {
        if (not(tfel::math::ieee754::fpclassify(
                   n_a|n_b) == FP_ZERO)) {
          tfel::reportContractViolation("n_a and n_b not normals");
        }
     };
     
-    OrientedDistribution(Ellipse<LengthType> &ell,real frac, tfel::math::st2tost2<2u,StressType> &C,tfel::math::tvector<2u,real> &n_a_,tfel::math::tvector<2u,real> &n_b_): InclusionDistribution<2u,real,StressType,LengthType>(ell,frac,C), n_a(n_a_), n_b(n_b_) {
+    OrientedDistribution(const Ellipse<LengthType> &ell,real frac, const tfel::math::st2tost2<2u,StressType> &C,const tfel::math::tvector<2u,real> &n_a_,const tfel::math::tvector<2u,real> &n_b_): InclusionDistribution<2u,StressType>(ell,frac,C), n_a(n_a_), n_b(n_b_) {
        if (not(tfel::math::ieee754::fpclassify(
                   n_a|n_b) == FP_ZERO)) {
          tfel::reportContractViolation("n_a and n_b not normals");
        }
     };
     
-    OrientedDistribution(Spheroid<LengthType> &sphero,real frac, tfel::math::st2tost2<3u,StressType> &C,tfel::math::tvector<3u,real> &n_a_,tfel::math::tvector<3u,real> &n_b_): InclusionDistribution<3u,real,StressType,LengthType>(sphero,frac,C), n_a(n_a_), n_b(n_b_) {
+    OrientedDistribution(const Spheroid<LengthType> &sphero,real frac,tfel::math::st2tost2<3u,StressType> &C,const tfel::math::tvector<3u,real> &n_a_,const tfel::math::tvector<3u,real> &n_b_): InclusionDistribution<3u,StressType>(sphero,frac,C), n_a(n_a_), n_b(n_b_) {
        if (not(tfel::math::ieee754::fpclassify(
                   n_a|n_b) == FP_ZERO)) {
          tfel::reportContractViolation("n_a and n_b not normals");
        }
     };
     
-    virtual tfel::math::st2tost2<N,real> computeMeanLocalisator(const tfel::math::st2tost2<N,StressType> &C0, bool isotropic_matrix,const int max_iter_anisotropic_integration = 12){
+    virtual tfel::math::st2tost2<N,real> computeMeanLocalisator(const tfel::math::st2tost2<N,StressType> &C0, bool isotropic_matrix, int max_iter_anisotropic_integration = 12) override {
         tfel::math::st2tost2<N,StressType> Ci = this->stiffness;
         auto semiL= (this->inclusion).semiLengths;
         auto n_a_i=this->n_a;
         auto n_b_i=this->n_b;
         auto ai=semiL[0];
         auto bi=semiL[1];
+        LengthType ci;
         if (N==3){
-        	auto ci=semiL[2];
+        	ci=semiL[2];
         }
         if (isotropic_matrix){
            auto pair0=computeKappaMu<N,StressType>(C0);
@@ -543,7 +545,8 @@ namespace homogenization::elasticity {
         	if (N==3){
            		return computeAnisotropicLocalisationTensor<StressType>(C0,Ci,n_a_i,ai,n_b_i,bi,ci,max_iter_anisotropic_integration);
         	} else if (N==2){
-        		return computePlainStrainAnisotropicLocalisationTensor<StressType>(C0,Ci,n_a_i,ai,bi,max_iter_anisotropic_integration);
+        	tfel::reportContractViolation("dimension 2 coming soon");
+        		//return computePlainStrainAnisotropicLocalisationTensor<StressType>(C0,Ci,n_a_i,ai,bi,max_iter_anisotropic_integration);
         	}
         }
     };
@@ -592,7 +595,7 @@ namespace homogenization::elasticity {
           inclusionPhases(std::vector<InclusionDistribution<N, StressType>*>({})),
           matrixPhase(Phase<N,StressType>(real(1),C0)){};
 
-    virtual ~MatrixInclusionMicrostructure(){};
+    virtual ~ParticulateMicrostructure(){};
 
     int addInclusionPhase(
         InclusionDistribution<N, StressType> &inclusionPhase) {

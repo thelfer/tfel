@@ -469,14 +469,13 @@ namespace tfel::material::homogenization::elasticity {
           const types::length<StressType>& a,
           const types::length<StressType>& b,
           const types::length<StressType>& c) {
-    using real = types::real<StressType>;
-    using LengthType = types::length<StressType>;
+    
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
 
     const auto pair =
-        EllipsoidMeanLocalisator<3u, real, StressType, LengthType>::Isotropic(
+        EllipsoidMeanLocalisator<3u,StressType>::Isotropic(
             young, nu, young_i, nu_i, a, b, c);
     const auto ka = std::get<0>(pair);
     const auto mu = std::get<1>(pair);
@@ -524,14 +523,12 @@ namespace tfel::material::homogenization::elasticity {
               const types::length<StressType>& a,
               const types::length<StressType>& b,
               const types::length<StressType>& c) {
-    using real = types::real<StressType>;
-    using LengthType = types::length<StressType>;
+    
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
     const auto A =
-        EllipsoidMeanLocalisator<3u, real, StressType,
-                                 LengthType>::TransverseIsotropic(young, nu,
+        EllipsoidMeanLocalisator<3u, StressType>::TransverseIsotropic(young, nu,
                                                                   young_i, nu_i,
                                                                   n_a, a, b, c);
     return computeDiluteScheme<StressType>(young, nu, f, young_i, nu_i, A);
@@ -571,13 +568,12 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::tvector<3u, types::real<StressType>>& n_b,
           const types::length<StressType>& b,
           const types::length<StressType>& c) {
-    using real = types::real<StressType>;
-    using LengthType = types::length<StressType>;
+    
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
     const auto A =
-        EllipsoidMeanLocalisator<3u, real, StressType, LengthType>::Oriented(
+        EllipsoidMeanLocalisator<3u, StressType>::Oriented(
             young, nu, young_i, nu_i, n_a, a, n_b, b, c);
     return computeDiluteScheme<StressType>(young, nu, f, young_i, nu_i, A);
   }
@@ -626,13 +622,12 @@ namespace tfel::material::homogenization::elasticity {
                                                             const types::length<
                                                                 StressType>&
                                                                 c) {
-    using real = types::real<StressType>;
-    using LengthType = types::length<StressType>;
+    
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
     const auto pair =
-        EllipsoidMeanLocalisator<3u, real, StressType, LengthType>::Isotropic(
+        EllipsoidMeanLocalisator<3u, StressType>::Isotropic(
             young, nu, young_i, nu_i, a, b, c);
     const auto ka = std::get<0>(pair);
     const auto mu = std::get<1>(pair);
@@ -680,14 +675,12 @@ namespace tfel::material::homogenization::elasticity {
               const types::length<StressType>& a,
               const types::length<StressType>& b,
               const types::length<StressType>& c) {
-    using real = types::real<StressType>;
-    using LengthType = types::length<StressType>;
+  
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
     const auto A =
-        EllipsoidMeanLocalisator<3u, real, StressType,
-                                 LengthType>::TransverseIsotropic(young, nu,
+        EllipsoidMeanLocalisator<3u, StressType>::TransverseIsotropic(young, nu,
                                                                   young_i, nu_i,
                                                                   n_a, a, b, c);
     return computeMoriTanakaScheme<StressType>(young, nu, f, young_i, nu_i, A);
@@ -728,13 +721,12 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::tvector<3u, types::real<StressType>>& n_b,
           const types::length<StressType>& b,
           const types::length<StressType>& c) {
-    using real = types::real<StressType>;
-    using LengthType = types::length<StressType>;
+    
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
     const auto A =
-        EllipsoidMeanLocalisator<3u, real, StressType, LengthType>::Oriented(
+        EllipsoidMeanLocalisator<3u, StressType>::Oriented(
             young, nu, young_i, nu_i, n_a, a, n_b, b, c);
     return computeMoriTanakaScheme<StressType>(young, nu, f, young_i, nu_i, A);
   }
@@ -832,12 +824,11 @@ namespace tfel::material::homogenization::elasticity {
           const types::length<StressType>& c,
           const Distribution<StressType>& D) {
     using real = types::real<StressType>;
-    using LengthType = types::length<StressType>;
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
     const auto pairA =
-        EllipsoidMeanLocalisator<3u, real, StressType, LengthType>::Isotropic(
+        EllipsoidMeanLocalisator<3u, StressType>::Isotropic(
             young, nu, young_i, nu_i, a, b, c);
     const auto ka = std::get<0>(pairA);
     const auto mu = std::get<1>(pairA);
@@ -880,15 +871,13 @@ namespace tfel::material::homogenization::elasticity {
           const types::length<StressType>& b,
           const types::length<StressType>& c,
           const Distribution<StressType>& D) {
-    using real = types::real<StressType>;
-    using LengthType = types::length<StressType>;
+   
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
 
     const auto A =
-        EllipsoidMeanLocalisator<3u, real, StressType,
-                                 LengthType>::TransverseIsotropic(young, nu,
+        EllipsoidMeanLocalisator<3u, StressType>::TransverseIsotropic(young, nu,
                                                                   young_i, nu_i,
                                                                   n_a, a, b, c);
 
@@ -930,14 +919,13 @@ namespace tfel::material::homogenization::elasticity {
           const types::length<StressType>& b,
           const types::length<StressType>& c,
           const Distribution<StressType>& D) {
-    using real = types::real<StressType>;
-    using LengthType = types::length<StressType>;
+   
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
 
     const auto A =
-        EllipsoidMeanLocalisator<3u, real, StressType, LengthType>::Oriented(
+        EllipsoidMeanLocalisator<3u, StressType>::Oriented(
             young, nu, young_i, nu_i, n_a, a, n_b, b, c);
 
     return computePCWScheme<StressType>(young, nu, f, young_i, nu_i, A, D);

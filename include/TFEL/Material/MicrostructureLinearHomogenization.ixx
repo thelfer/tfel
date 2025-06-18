@@ -62,8 +62,8 @@ namespace tfel::material::homogenization::elasticity {
                                               StressType>())
   HomogenizationScheme<N, StressType> computeDilute(
       ParticulateMicrostructure<N, StressType> &micro,
-      std::vector<tfel::math::stensor<N, StressType>> &polarisations,
-      bool get_strain_second_moments, tfel::math::stensor<N, tfel::types::real<StressType>> &E, bool isotropic_matrix,const int max_iter_anisotropic_integration = 12) {
+      const std::vector<tfel::math::stensor<N, StressType>> &polarisations,
+      bool get_strain_second_moments, const tfel::math::stensor<N, tfel::types::real<StressType>> &E, bool isotropic_matrix,int max_iter_anisotropic_integration = 12) {
       
     using real=tfel::types::real<StressType>;
     using compliance = tfel::types::compliance<StressType>;
@@ -121,8 +121,8 @@ namespace tfel::material::homogenization::elasticity {
                                               StressType>())
   HomogenizationScheme<N, StressType> computeMoriTanaka(
       ParticulateMicrostructure<N, StressType> &micro,
-      std::vector<tfel::math::stensor<N, StressType>> &polarisations,
-      bool get_strain_second_moments, tfel::math::stensor<N, tfel::types::real<StressType>> &E, bool isotropic_matrix,const int max_iter_anisotropic_integration = 12) {
+      const std::vector<tfel::math::stensor<N, StressType>> &polarisations,
+      bool get_strain_second_moments,const tfel::math::stensor<N, tfel::types::real<StressType>> &E, bool isotropic_matrix,int max_iter_anisotropic_integration = 12) {
       
     using real=tfel::types::real<StressType>;
     using compliance = tfel::types::compliance<StressType>;
@@ -134,7 +134,7 @@ namespace tfel::material::homogenization::elasticity {
     const auto C0 = micro.get_matrix_elasticity();
     const auto tau0 = polarisations[0];
     const auto f0 = micro.get_matrix_fraction();
-    HomogenizationScheme<N, real, LengthType, StressType> h_s;
+    HomogenizationScheme<N, StressType> h_s;
     auto Chom = C0;
     auto tau_eff=tau0;
     
@@ -188,11 +188,10 @@ namespace tfel::material::homogenization::elasticity {
                                               StressType>())
   HomogenizationScheme<N, StressType> computeSelfConsistent(
       Polycrystal<N, StressType> &crystal,
-      std::vector<tfel::math::stensor<N, StressType>> &polarisations,
-      bool get_strain_second_moments, tfel::math::stensor<N, tfel::types::real<StressType>> &E, bool isotropic_matrix, const int max_iter, const int max_iter_anisotropic_integration = 8) {
+      const std::vector<tfel::math::stensor<N, StressType>> &polarisations,
+      bool get_strain_second_moments, const tfel::math::stensor<N, tfel::types::real<StressType>> &E, bool isotropic_matrix, int max_iter, int max_iter_anisotropic_integration = 8) {
       
     using real=tfel::types::real<StressType>;
-    using compliance = tfel::types::compliance<StressType>;
       
     real error = 1.;
     const auto np = crystal.get_number_of_grains();
@@ -229,7 +228,7 @@ namespace tfel::material::homogenization::elasticity {
           Chom(i,j)=Ch(i,j);
        }
        error=tfel::material::relative_error<N,real,StressType>(Chom_,Chom);
-       if ((not(isotropic_matrix)) || (iter/10==iter/10.)){
+       if ((not(isotropic_matrix)) || tfel::math::ieee754::fpclassify(iter/10-iter/10.) == FP_ZERO){
            std::cout<<"relative difference between previous Chom and actual Chom: "<<error<<std::endl;
            real C11=real(Chom(0,0).getValue());
            std::cout<<"actual Chom_11: "<<C11<<std::endl;
