@@ -44,6 +44,8 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
 
   tfel::tests::TestResult execute() override {
     this->template test_Eshelby_2d<double, true>();
+    this->template test_Hill_2d<double, true>();
+    this->template test_localisation_2d<double, true>();
     this->template test_Eshelby_tensors<double, true>();
     this->template test_Eshelby_limits<float, true>();
     this->template test_Eshelby_limits<double, true>();
@@ -71,6 +73,73 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
           TFEL_TESTS_ASSERT(std::abs(S2d_1(i, j) - S2d_2(i, j)) < eps);
           // std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
         }
+      }
+      
+    }
+#endif /* _LIBCPP_VERSION */
+  }
+  
+  private:
+  template <typename NumericType, bool use_qt>
+  void test_Hill_2d() {
+#ifndef _LIBCPP_VERSION
+    using real = NumericType;
+    using stress =
+        typename tfel::config::Types<1u, NumericType, use_qt>::stress;
+    using compliance =
+        typename tfel::config::Types<1u, NumericType, use_qt>::compliance;
+    using length = typename tfel::config::Types<1u, NumericType, use_qt>::length;
+    static constexpr auto eps = std::numeric_limits<real>::epsilon();
+    const auto nu = real{0.3};
+    const auto young =stress(1e9);
+    const auto ceps=compliance(eps);
+    const tfel::math::tvector<2u, real> n_a = {0., 1.};
+    const auto a= length(1);
+    using namespace tfel::material;
+    const auto Enu=YoungNuModuli<stress>(young,nu);
+    using namespace tfel::material::homogenization::elasticity;
+    {
+      const auto P2d_1 = computeCircularCylinderHillTensor<stress>(Enu);
+      const auto P2d_2 = computeEllipticCylinderHillTensor<stress>(Enu,n_a,a,a);
+      for (int i : {0, 1, 2, 3})
+      for (int j : {0, 1, 2, 3}) {
+          TFEL_TESTS_ASSERT(my_abs(P2d_1(i, j) - P2d_2(i, j)) < ceps);
+      }
+    }
+#endif /* _LIBCPP_VERSION */
+  }
+  
+   private:
+  template <typename NumericType, bool use_qt>
+  void test_localisation_2d() {
+#ifndef _LIBCPP_VERSION
+    using real = NumericType;
+    using stress =
+        typename tfel::config::Types<1u, NumericType, use_qt>::stress;
+    using compliance =
+        typename tfel::config::Types<1u, NumericType, use_qt>::compliance;
+    using length = typename tfel::config::Types<1u, NumericType, use_qt>::length;
+    static constexpr auto eps = std::numeric_limits<real>::epsilon();
+    const auto nu = real{0.3};
+    const auto young =stress(1e9);
+    const tfel::math::tvector<2u, real> n_a = {0., 1.};
+    const auto a= length(1);
+    using namespace tfel::material;
+    const auto Enu=YoungNuModuli<stress>(young,nu);
+    const auto nu_i = real{0.1};
+    const auto young_i =stress(5e9);
+    static constexpr auto value =
+        StiffnessTensorAlterationCharacteristic::UNALTERED;
+    tfel::math::st2tost2<2u, stress> C_i;
+    computeIsotropicStiffnessTensorII<2u, value, stress, real>(C_i, young_i,
+                                                                   nu_i);
+    using namespace tfel::material::homogenization::elasticity;
+    {
+      const auto A2d_1 = computeCircularCylinderLocalisationTensor(Enu,C_i);
+      const auto A2d_2 = computeEllipticCylinderLocalisationTensor(Enu,C_i,n_a,a,a);
+      for (int i : {0, 1, 2, 3})
+      for (int j : {0, 1, 2, 3}) {
+          TFEL_TESTS_ASSERT(std::abs(A2d_1(i, j) - A2d_2(i, j)) < eps);
       }
     }
 #endif /* _LIBCPP_VERSION */
@@ -354,8 +423,8 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       const auto Pnnnn = n_aa_n_aa * (Prot1 * n_aa_n_aa);
       const auto Ptttt = n_bb_n_bb * (Prot1 * n_bb_n_bb);
       const auto Pttnn = n_bb_n_bb * (Prot1 * n_aa_n_aa);
-      std::cout << Ptttt(0).getValue() << Pnnnn(0).getValue()
-                << Pttnn(0).getValue() << std::endl;
+      //std::cout << Ptttt(0).getValue() << Pnnnn(0).getValue()
+      //          << Pttnn(0).getValue() << std::endl;
       TFEL_TESTS_ASSERT(5 * Pnnnn(0) - Ptttt(0) < compliance(0));
     }
 #endif /* _LIBCPP_VERSION */

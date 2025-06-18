@@ -377,6 +377,25 @@ By definition, this convention, named `Plate` in `MFront` is only valid
 for \(3D\), \(2D\) plane stress, \(2D\) plane strain and \(2D\)
 generalized plane strain modelling hypotheses.
 
+# Isotropic elastic moduli
+
+A `struct` `IsotropicModuli` is defined in the header "IsotropicModuli.hxx"
+for the elastic moduli of an isotropic material.
+Three children `struct` are defined:
+
+ - `KGModuli` (for bulk and shear moduli)
+ - `YoungNuModuli` (for Young modulus and Poisson ratio)
+ - `LambdaMuModuli` (for Lame moduli)
+
+Each `struct` has methods which permit to convert
+the moduli:
+
+ - `ToYoungNu()`
+ - `ToLambdaMu()`
+ - `ToKG()`
+ 
+These methods all return `std::pair` objects.
+
 # Homogenization
 
 The homogenization functions are part of the namespace `tfel::material::homogenization`.
@@ -424,8 +443,8 @@ In the same way, the formulas for the axisymmetrical case are instable when the 
 ratio is near one, so a parameter allows to switch to the formula for a sphere.
 
 When \(\tenseurq C_0\) is anisotropic, the Eshelby tensor can be computed
-with `computeAnisotropicEshelbyTensor` in 3D and `computePlainStrainAnisotropicEshelbyTensor`
-in 2D. There are also `computeAnisotropicHillTensor` and `computePlainStrainAnisotropicHillTensor`.
+with `computeAnisotropicEshelbyTensor` in 3D and `computePlaneStrainAnisotropicEshelbyTensor`
+in 2D. There are also `computeAnisotropicHillTensor` and `computePlaneStrainAnisotropicHillTensor`.
 These functions are introduced by the header `AnisotropicEshelbyTensor.hxx`.
 
 ## Strain localisation tensors
@@ -447,10 +466,10 @@ and `computeSphereLocalisationTensor`.
 The ellipsoid is parametrized by its semi-axis lengths \(a,b,c\) but also
 by its axis orientations.
 The functions then return the localisation tensors taking into account the orientations.
-There are also, when the medium is anisotropic, `computeAnisotropicLocalisationTensor` and `computePlainStrainAnisotropicLocalisationTensor`. These functions are introduced by the header
+There are also, when the medium is anisotropic, `computeAnisotropicLocalisationTensor` and `computePlaneStrainAnisotropicLocalisationTensor`. These functions are introduced by the header
 `AnisotropicEshelbyTensor.hxx`.
 
-## Homogenization schemes
+## Homogenization schemes for biphasic microstructures
 
 Different schemes are implemented and return the homogenized stiffness of the material.
 These schemes are introduced by the header `LinearHomogenizationSchemes.hxx`.
@@ -496,6 +515,9 @@ For special case of Ponte-Castaneda and Willis scheme, a `Distribution` object m
 be created. It is defined by two vectors \(\tenseur n_a,\tenseur n_b\) and three lengths
 \(a,b,c\) that define the ellipsoid which defines the distribution.
 
+A tutorial on the computation of homogenized schemes for biphasic particulate microstructures
+is available [here](BiphasicLinearHomogenization.html).
+
 
 ## Homogenization bounds
 
@@ -507,23 +529,127 @@ The available bounds are:
  - Reuss bound (`computeReussStiffness`)
  - Hashin-Shtrikman bounds (`computeIsotropicHashinShtrikmanBounds`)
  
-# Isotropic elastic moduli
+## Creation of general microstructures
 
-A `struct` `IsotropicModuli` is defined in the header "IsotropicModuli.hxx"
-for the elastic moduli of an isotropic material.
-Three children `struct` are defined:
+It is possible to create `Microstructure` objects for homogenization.
+Two types of `Microstructure` can be created:
 
- - `KGModuli` (for bulk and shear moduli)
- - `YoungNuModuli` (for Young modulus and Poisson ratio)
- - `LambdaMuModuli` (for Lame moduli)
+ - Matrix-inclusion microstructures: `ParticulateMicrostructure`
+ - Polycrystalline microstructures: `Polycrystal`
 
-Each `struct` has methods which permit to convert
-the moduli:
+The two types of microstructures are available in 3d an 2d
+via a template parameter: `ParticulateMicrostructure<N,StressType>`
+with `N` the dimension.
+For the details, see the file 'MicrostructureDescription.hxx'.
 
- - `ToYoungNu()`
- - `ToLambdaMu()`
- - `ToKG()`
+Before presenting the two types of microstructures, we must mention
+the `Phase` object and the `Inclusion` object.
+The `Phase` object represents a phase and has only two attributes:
  
-These methods all return `std::pair` objects.
+ - `fraction` (the volume fraction of the phase)
+ - `stiffness` (a `st2tost2` object).
+ 
+The `Inclusion` is a geometrical object which is characterized by
+its unique attribute: `semiLengths`. It is a `std::array` of `N`
+lengths, which are the semi-lengths of the ellipsoid/ellipse,
+where `N` is the dimension considered (2 or 3).
+Hence, `Inclusion` has two template parameters: `Inclusion<N,LengthType>`.
+Some particular `Inclusion` objects are also defined:
+ 
+ - `Ellipsoid` (very general 3d `Inclusion` with 3 semi-lengths)
+ - `Spheroid` (3d `Inclusion` with the last two semi-lengths identical)
+ - `Sphere` (3d `Inclusion` with 3 semi-lengths equal to unity)
+ - `Ellipse` (general 2d `Inclusion` with two semi-lengths)
+ - `Disk` (2d `Inclusion` with 2 semi-lengths equal to unity)
+
+### `Polycrystal`
+
+The `Polycrystal` is composed of grain phases,
+that can be added by the user (he can add as much as he wants).
+
+The `Polycrystal` has the following useful attributes:
+
+ - `number_of_grains`
+ - `total_fraction`
+ - `grains`
+
+`grains` is a `std::vector` of pointers on `GrainPhase` objects.
+The `number_of_grains` is the number of `GrainPhase` in `grains`.
+The `total_fraction` permits to know if the fraction unity has been
+reached after adding some `GrainPhase` objects in `grains`.
+
+A `GrainPhase` is a `Phase` object. It is characterized by a shape
+of grain and a stiffness, with a volume fraction. It has three attributes (plus
+the `fraction` and the `stiffness` of a `Phase`):
+ 
+ - `inclusion`
+ - `n_a`
+ - `n_b`
+ 
+The `inclusion` is the ellipsoidal/elliptical shape of the grain, and is
+a `Inclusion` object. `n_a` and
+`n_b` correspond to the directions of the main axes of the `inclusion`.
+It is noted that `n_a` corresponds to the first length in `inclusion.semiLengths`,
+and `n_b` to the second. Hence a `GrainPhase` is necessarily oriented.
+
+A `GrainPhase` has also a method called `computeMeanLocalisator`. It takes
+a stiffness tensor as argument which represents some matrix, and computes
+the strain localisation tensor of the `GrainPhase` embedded by this matrix (possibly
+anisotropic).
+
+A `Polycrystal` has also methods:
+ 
+ - `addGrain`
+ - `removeGrain`
+ - `get_number_of_grains`
+ - `get_total_fraction`
+ - `get_grain`
+ 
+### `ParticulateMicrostructure`
+
+The `ParticulateMicrostructure` consists of a matrix, within which the user can add several
+distribution of ellipsoidal (or elliptic in 2d) inclusions (he can add as much as he wants).
+
+The `ParticulateMicrostructure` has the following useful attributes:
+
+ - 
+ - 
+ -
+ 
+The `ParticulateMicrostructure` has also methods:
+
+ - 
+ - 
+ -
+
+
+
+## Homogenization of `Microstructure` objects
+
+Once created, some classical homogenization scheme can be considered on the
+`Microstructure` objects. For the details, see the file
+'MicrostructureLinearHomogenization.ixx'.
+
+An object, called `HomogenizationScheme` defines the structure of
+an homogenization scheme, which is returned by the main functions
+that homogenize the `Microstructure` objects. `HomogenizationScheme`
+has the following attributes:
+
+ - the `homogenized_stiffness`
+ - the `effective_polarisation`
+ - the `mean_strain_localisation_tensors`
+
+The following homogenization functions are available:
+ 
+ - `computeDilute`: takes as main arguments a `ParticulateMicrostructure`
+ and a vector of `stensor` which are the polarisations on each phase
+ - `computeMoriTanaka`: same arguments as `computeDilute`
+ - `computeSelfConsistent`: takes as main arguments a `Polycrystal`
+ and a vector of `stensor` which are the polarisations on each phase
+
+All these functions return a `HomogenizationScheme`.
+
+A tutorial on the computation of homogenized schemes on these microstructures
+will be soon available.
 
 <!-- Local IspellDict: english -->
