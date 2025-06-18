@@ -18,10 +18,13 @@
 namespace tfel::material::homogenization::elasticity {
 
   template <unsigned short N,
-            typename real,
-            typename StressType,
-            typename LengthType>
+            tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
   struct EllipsoidMeanLocalisator {
+     using real = types::real<StressType>;
+     using LengthType=types::length<StressType>;
+     
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
 
     TFEL_HOST_DEVICE static const std::pair<real, real> Isotropic(
@@ -87,6 +90,20 @@ namespace tfel::material::homogenization::elasticity {
       }
       return {ka, mu};
     }  // end of Isotropic
+    
+    //overloading of the function, for IsotropicModuli objects
+    TFEL_HOST_DEVICE static const std::pair<real, real> Isotropic(
+        const IsotropicModuli<StressType>& IM0,
+        const IsotropicModuli<StressType>& IM_i,
+        const LengthType& a,
+        const LengthType& b,
+        const LengthType& c) {
+    const auto Enu0 = IM0.ToYoungNu();
+    const auto Enui = IM_i.ToYoungNu();
+    return Isotropic(
+        std::get<0>(Enu0), real(std::get<1>(Enu0)), std::get<0>(Enui),
+        real(std::get<1>(Enui)), a, b, c);
+     }//end of overloading of Isotropic
 
     TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u, real>
     TransverseIsotropic(const StressType& young,
@@ -173,6 +190,21 @@ namespace tfel::material::homogenization::elasticity {
       }
       return A;
     }  // end of TransverseIsotropic
+    
+     //overloading of the function, for IsotropicModuli objects
+    TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u, real>
+    TransverseIsotropic(const IsotropicModuli<StressType>& IM0,
+			const IsotropicModuli<StressType>& IM_i,
+			const tfel::math::tvector<3u, real>& n_a,
+                        const LengthType& a,
+                        const LengthType& b,
+                        const LengthType& c) {
+    const auto Enu0 = IM0.ToYoungNu();
+    const auto Enui = IM_i.ToYoungNu();
+    return TransverseIsotropic(
+        std::get<0>(Enu0), real(std::get<1>(Enu0)), std::get<0>(Enui),
+        real(std::get<1>(Enui)), n_a, a, b, c);
+     }//end of overloading of TransverseIsotropic
 
     TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u, real> Oriented(
         const StressType& young,
@@ -224,6 +256,22 @@ namespace tfel::material::homogenization::elasticity {
       }
       return A;
     }  // end of Oriented
+    
+     //overloading of the function, for IsotropicModuli objects
+    TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u, real>
+    Oriented(const IsotropicModuli<StressType>& IM0,
+			const IsotropicModuli<StressType>& IM_i,
+			const tfel::math::tvector<3u, real>& n_a,
+                        const LengthType& a,
+                        const tfel::math::tvector<3u, real>& n_b,
+                        const LengthType& b,
+                        const LengthType& c) {
+    const auto Enu0 = IM0.ToYoungNu();
+    const auto Enui = IM_i.ToYoungNu();
+    return Oriented(
+        std::get<0>(Enu0), real(std::get<1>(Enu0)), std::get<0>(Enui),
+        real(std::get<1>(Enui)), n_a, a, n_b, b, c);
+     }//end of overloading of Oriented
 
   };  // end of struct EllipsoidMeanLocalisator ;
 

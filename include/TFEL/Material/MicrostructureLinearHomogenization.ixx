@@ -34,10 +34,12 @@ namespace tfel::material::homogenization::elasticity {
    * \tparam StressType: type of the elastic constants related to the inclusion
    */
   template <unsigned short int N,
-            typename real,
-            typename LengthType,
-            typename StressType>
+      tfel::math::ScalarConcept StressType>
+   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
   struct HomogenizationScheme {
+  using real=tfel::types::real<StressType>;
+  
     tfel::math::st2tost2<N, StressType> homogenized_stiffness;
     tfel::math::stensor<N, StressType> effective_polarisation;
     std::vector<tfel::math::st2tost2<N, real>> mean_strain_localisation_tensors;
@@ -48,30 +50,34 @@ namespace tfel::material::homogenization::elasticity {
   /*!
    * Here is the Dilute scheme which returns an object of
    * type HomogenizationScheme from a MatrixInclusionMicrostructure.
-   * \tparam unsigned short int: dimension \tparam
-   * real: underlying type \tparam LengthType: type of the lengths related to
-   * the inclusion \tparam StressType: type of the elastic constants related to
-   * the inclusion \return an object of type HomogenizationScheme
-   * \param[in] micro: MatrixInclusionMicrostructure
+   * \tparam unsigned short int: dimension
+   * \tparam StressType: type of the elastic constants related to
+   * the inclusion
+   * \return an object of type HomogenizationScheme
+   * \param[in] micro: ParticulateMicrostructure
    */
   template <unsigned short int N,
-            typename real,
-            typename LengthType,
-            typename StressType>
-  HomogenizationScheme<N, real, LengthType, StressType> computeDilute(
-      MatrixInclusionMicrostructure<N, real, LengthType, StressType> &micro,
+            tfel::math::ScalarConcept StressType>
+   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+  HomogenizationScheme<N, StressType> computeDilute(
+      ParticulateMicrostructure<N, StressType> &micro,
       std::vector<tfel::math::stensor<N, StressType>> &polarisations,
-      bool get_strain_second_moments, tfel::math::stensor<N, real> &E, bool isotropic_matrix,const int max_iter_anisotropic_integration = 12) {
+      bool get_strain_second_moments, tfel::math::stensor<N, tfel::types::real<StressType>> &E, bool isotropic_matrix,const int max_iter_anisotropic_integration = 12) {
+      
+    using real=tfel::types::real<StressType>;
+    using compliance = tfel::types::compliance<StressType>;
+    
     const auto np = micro.get_number_of_phases();
     if (polarisations.size()!=np){
        tfel::reportContractViolation("the size of your polarization vector does not correspond to the number of phases");
     }
     const auto C0 = micro.get_matrix_elasticity();
     const auto tau0 = polarisations[0];
-    HomogenizationScheme<N, real, LengthType, StressType> h_s;
+    HomogenizationScheme<N, StressType> h_s;
     auto Chom = C0;
     auto tau_eff=tau0;
-    using compliance = typename tfel::math::invert_type<StressType>;
+    
     std::vector<tfel::math::st2tost2<N, real>> localisators = {tfel::math::st2tost2<N,real>::Id()};
     std::vector<tfel::math::stensor<N, real>> free_strains = {};
     std::vector<tfel::math::st2tost2<N, compliance>> hill_tensors = {};
@@ -84,8 +90,6 @@ namespace tfel::material::homogenization::elasticity {
       auto Ci = (*phasei).stiffness;
       auto fi = (*phasei).fraction;
       auto taui=polarisations[i+1];
-      
-      // TO DO : 2D /////////////////////////////////
       auto Ai = (*phasei).computeMeanLocalisator(C0,isotropic_matrix,max_iter_anisotropic_integration);
       Chom += fi * (Ci - C0) * Ai;
       tau_eff+=fi*tfel::math::transpose(Ai)*(taui-tau0);
@@ -105,20 +109,24 @@ namespace tfel::material::homogenization::elasticity {
   
    /*!
    * Here is the MoriTanaka scheme which returns an object of
-   * type HomogenizationScheme from a MatrixInclusionMicrostructure.
-   * \tparam unsigned short int: dimension \tparam
-   * real: underlying type \tparam LengthType: type of the lengths related to
-   * the inclusion \tparam StressType: type of the elastic constants related to
-   * the inclusion \return an object of type HomogenizationScheme
+   * type HomogenizationScheme from a ParticulateMicrostructure.
+   * \tparam unsigned short int: dimension
+   * \tparam StressType: type of the elastic constants related to
+   * the inclusion
+   * \return an object of type HomogenizationScheme
    */
   template <unsigned short int N,
-            typename real,
-            typename LengthType,
-            typename StressType>
-  HomogenizationScheme<N, real, LengthType, StressType> computeMoriTanaka(
-      MatrixInclusionMicrostructure<N, real, LengthType, StressType> &micro,
+   		tfel::math::ScalarConcept StressType>
+   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+  HomogenizationScheme<N, StressType> computeMoriTanaka(
+      ParticulateMicrostructure<N, StressType> &micro,
       std::vector<tfel::math::stensor<N, StressType>> &polarisations,
-      bool get_strain_second_moments, tfel::math::stensor<N, real> &E, bool isotropic_matrix,const int max_iter_anisotropic_integration = 12) {
+      bool get_strain_second_moments, tfel::math::stensor<N, tfel::types::real<StressType>> &E, bool isotropic_matrix,const int max_iter_anisotropic_integration = 12) {
+      
+    using real=tfel::types::real<StressType>;
+    using compliance = tfel::types::compliance<StressType>;
+    
     const auto np = micro.get_number_of_phases();
     if (polarisations.size()!=np){
        tfel::reportContractViolation("the size of your polarization vector does not correspond to the number of phases");
@@ -129,7 +137,7 @@ namespace tfel::material::homogenization::elasticity {
     HomogenizationScheme<N, real, LengthType, StressType> h_s;
     auto Chom = C0;
     auto tau_eff=tau0;
-    using compliance = typename tfel::math::invert_type<StressType>;
+    
     std::vector<tfel::math::st2tost2<N, real>> localisators = {};
     std::vector<tfel::math::stensor<N, real>> free_strains = {};
     std::vector<tfel::math::st2tost2<N, compliance>> hill_tensors = {};
@@ -138,7 +146,6 @@ namespace tfel::material::homogenization::elasticity {
     for (unsigned int i = 0; i < np - 1; i++) {
       auto phasei = micro.get_inclusionPhase(i);
       auto fi = (*phasei).fraction;
-      // TO DO : 2D /////////////////////////////////
       auto Ai = (*phasei).computeMeanLocalisator(C0,isotropic_matrix,max_iter_anisotropic_integration);
       localisators.push_back(Ai);
       A0+=fi*Ai;
@@ -170,23 +177,26 @@ namespace tfel::material::homogenization::elasticity {
   /*!
    * Here is the Self-consistent scheme which returns an object of
    * type HomogenizationScheme from a Polycrystal.
-   * \tparam unsigned short int: dimension \tparam
-   * real: underlying type \tparam LengthType: type of the lengths related to
-   * the inclusion \tparam StressType: type of the elastic constants related to
-   * the inclusion \return an object of type HomogenizationScheme
+   * \tparam unsigned short int: dimension
+   * \tparam StressType: type of the elastic constants related to
+   * the inclusion
+   * \return an object of type HomogenizationScheme
    */
   template <unsigned short int N,
-            typename real,
-            typename LengthType,
-            typename StressType>
-  HomogenizationScheme<N, real, LengthType, StressType> computeSelfConsistent(
-      Polycrystal<N, real, LengthType, StressType> &crystal,
+            tfel::math::ScalarConcept StressType>
+   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+  HomogenizationScheme<N, StressType> computeSelfConsistent(
+      Polycrystal<N, StressType> &crystal,
       std::vector<tfel::math::stensor<N, StressType>> &polarisations,
-      bool get_strain_second_moments, tfel::math::stensor<N, real> &E, bool isotropic_matrix, const int max_iter, const int max_iter_anisotropic_integration = 8) {
+      bool get_strain_second_moments, tfel::math::stensor<N, tfel::types::real<StressType>> &E, bool isotropic_matrix, const int max_iter, const int max_iter_anisotropic_integration = 8) {
+      
+    using real=tfel::types::real<StressType>;
+    using compliance = tfel::types::compliance<StressType>;
       
     real error = 1.;
     const auto np = crystal.get_number_of_grains();
-    HomogenizationScheme<N, real, LengthType, StressType> h_s;
+    HomogenizationScheme<N, StressType> h_s;
     std::vector<tfel::math::st2tost2<N, real>> localisators = {};
     std::vector<tfel::math::stensor<N, real>> free_strains = {};
     std::vector<tfel::math::st2tost2<N, real>> second_moments = {};
@@ -198,7 +208,6 @@ namespace tfel::material::homogenization::elasticity {
        for (unsigned int i = 0; i < np ; i++) {
          auto graini = crystal.get_grain(i);
          auto fi = (*graini).fraction;
-         // TO DO : 2D /////////////////////////////////
          auto Ai = (*graini).computeMeanLocalisator(Chom,isotropic_matrix,max_iter_anisotropic_integration);
          localisators.push_back(Ai);
          A0+=fi*Ai;
@@ -219,7 +228,7 @@ namespace tfel::material::homogenization::elasticity {
           Chom_(i,j)=Chom(i,j);
           Chom(i,j)=Ch(i,j);
        }
-       error=tfel::material::internals::relative_error<N,real,StressType>(Chom_,Chom);
+       error=tfel::material::relative_error<N,real,StressType>(Chom_,Chom);
        if ((not(isotropic_matrix)) || (iter/10==iter/10.)){
            std::cout<<"relative difference between previous Chom and actual Chom: "<<error<<std::endl;
            real C11=real(Chom(0,0).getValue());
