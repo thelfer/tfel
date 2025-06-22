@@ -4,7 +4,7 @@
  *
  * \author Helfer Thomas
  * \date   05 mai 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -4165,9 +4165,9 @@ namespace mfront {
           this->writeThermalExpansionComputation(this->behaviourFile,
                                                  acs.front(), "t", "0");
         }
-	this->behaviourFile << "dl0_l0[0] += mfront_thermal_expansion0_0;\n"
-			    << "dl0_l0[1] += mfront_thermal_expansion0_0;\n"
-			    << "dl0_l0[2] += mfront_thermal_expansion0_0;\n";
+        this->behaviourFile << "dl0_l0[0] += mfront_thermal_expansion0_0;\n"
+                            << "dl0_l0[1] += mfront_thermal_expansion0_0;\n"
+                            << "dl0_l0[2] += mfront_thermal_expansion0_0;\n";
         if (a.is<BehaviourDescription::ConstantMaterialProperty>()) {
           eval(this->behaviourFile, a, "0", true);
         } else {
@@ -4175,8 +4175,8 @@ namespace mfront {
                                                  acs.front(), "t_dt", "0");
         }
         this->behaviourFile << "dl1_l0[0] += mfront_thermal_expansion0_1;\n"
-			    << "dl1_l0[1] += mfront_thermal_expansion0_1;\n"
-			    << "dl1_l0[2] += mfront_thermal_expansion0_1;\n";
+                            << "dl1_l0[1] += mfront_thermal_expansion0_1;\n"
+                            << "dl1_l0[2] += mfront_thermal_expansion0_1;\n";
       } else if (acs.size() == 3u) {
         throw_if(this->mb.getSymmetryType() != mfront::ORTHOTROPIC,
                  "invalid number of thermal expansion coefficients");
@@ -4199,11 +4199,11 @@ namespace mfront {
           }
         }
         this->behaviourFile << "dl0_l0[0] += mfront_thermal_expansion0_0;\n"
-			    << "dl0_l0[1] += mfront_thermal_expansion1_0;\n"
-			    << "dl0_l0[2] += mfront_thermal_expansion2_0;\n";
-	this->behaviourFile << "dl1_l0[0] += mfront_thermal_expansion0_1;\n"
-			    << "dl1_l0[1] += mfront_thermal_expansion1_1;\n"
-			    << "dl1_l0[2] += mfront_thermal_expansion2_1;\n";
+                            << "dl0_l0[1] += mfront_thermal_expansion1_0;\n"
+                            << "dl0_l0[2] += mfront_thermal_expansion2_0;\n";
+        this->behaviourFile << "dl1_l0[0] += mfront_thermal_expansion0_1;\n"
+                            << "dl1_l0[1] += mfront_thermal_expansion1_1;\n"
+                            << "dl1_l0[2] += mfront_thermal_expansion2_1;\n";
       } else {
         throw_if(true, "unsupported behaviour symmetry");
       }

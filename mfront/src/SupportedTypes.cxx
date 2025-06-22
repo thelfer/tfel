@@ -4,7 +4,7 @@
  * \brief
  * \author Helfer Thomas
  * \date   12 Jan 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * re served.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are

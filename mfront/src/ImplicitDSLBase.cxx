@@ -4,7 +4,7 @@
  *
  * \author Helfer Thomas
  * \date   21 sep 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -657,7 +657,7 @@ namespace mfront {
         return "(" + var + "+(this->theta)*d" + var + ")";
       }
     }
-    if (d.isAuxiliaryStateVariableName(var)){
+    if (d.isAuxiliaryStateVariableName(var)) {
       const auto& v = d.getAuxiliaryStateVariables().getVariable(var);
       if (v.getAttribute<bool>("ComputedByExternalModel", false)) {
         if (addThisPtr) {
@@ -707,9 +707,9 @@ namespace mfront {
         return "(" + var + "+d" + var + ")";
       }
     }
-    if (d.isAuxiliaryStateVariableName(var)){
+    if (d.isAuxiliaryStateVariableName(var)) {
       const auto& v = d.getAuxiliaryStateVariables().getVariable(var);
-      if (v.getAttribute<bool>("ComputedByExternalModel", false)){
+      if (v.getAttribute<bool>("ComputedByExternalModel", false)) {
         if (addThisPtr) {
           return "(this->" + var + "+this->d" + var + ")";
         } else {

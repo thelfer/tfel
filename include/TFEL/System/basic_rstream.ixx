@@ -4,11 +4,11 @@
  *
  * \author Helfer Thomas
  * \date   14 nov 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -43,88 +43,88 @@ namespace tfel {
     }
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_rstream<Child, Traits>& basic_rstream<Child, Traits>::
-    operator>>(char& c) {
+    TFEL_INLINE2 basic_rstream<Child, Traits>&
+    basic_rstream<Child, Traits>::operator>>(char& c) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_rstream<Child, Traits>::read(fd, &c, sizeof(char));
       return *this;
     }  // end of basic_rstream<Child,Traits>::operator>>
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_rstream<Child, Traits>& basic_rstream<Child, Traits>::
-    operator>>(bool& b) {
+    TFEL_INLINE2 basic_rstream<Child, Traits>&
+    basic_rstream<Child, Traits>::operator>>(bool& b) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_rstream<Child, Traits>::read(fd, &b, sizeof(bool));
       return *this;
     }  // end of basic_rstream<Child,Traits>::operator>>
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_rstream<Child, Traits>& basic_rstream<Child, Traits>::
-    operator>>(short& s) {
+    TFEL_INLINE2 basic_rstream<Child, Traits>&
+    basic_rstream<Child, Traits>::operator>>(short& s) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_rstream<Child, Traits>::read(fd, &s, sizeof(short));
       return *this;
     }  // end of basic_rstream<Child,Traits>::operator>>
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_rstream<Child, Traits>& basic_rstream<Child, Traits>::
-    operator>>(unsigned short& u) {
+    TFEL_INLINE2 basic_rstream<Child, Traits>&
+    basic_rstream<Child, Traits>::operator>>(unsigned short& u) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_rstream<Child, Traits>::read(fd, &u, sizeof(unsigned short));
       return *this;
     }  // end of basic_rstream<Child,Traits>::operator>>
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_rstream<Child, Traits>& basic_rstream<Child, Traits>::
-    operator>>(int& i) {
+    TFEL_INLINE2 basic_rstream<Child, Traits>&
+    basic_rstream<Child, Traits>::operator>>(int& i) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_rstream<Child, Traits>::read(fd, &i, sizeof(int));
       return *this;
     }  // end of basic_rstream<Child,Traits>::operator>>
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_rstream<Child, Traits>& basic_rstream<Child, Traits>::
-    operator>>(unsigned int& u) {
+    TFEL_INLINE2 basic_rstream<Child, Traits>&
+    basic_rstream<Child, Traits>::operator>>(unsigned int& u) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_rstream<Child, Traits>::read(fd, &u, sizeof(unsigned int));
       return *this;
     }  // end of basic_rstream<Child,Traits>::operator>>
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_rstream<Child, Traits>& basic_rstream<Child, Traits>::
-    operator>>(long& l) {
+    TFEL_INLINE2 basic_rstream<Child, Traits>&
+    basic_rstream<Child, Traits>::operator>>(long& l) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_rstream<Child, Traits>::read(fd, &l, sizeof(long));
       return *this;
     }  // end of basic_rstream<Child,Traits>::operator>>
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_rstream<Child, Traits>& basic_rstream<Child, Traits>::
-    operator>>(unsigned long& u) {
+    TFEL_INLINE2 basic_rstream<Child, Traits>&
+    basic_rstream<Child, Traits>::operator>>(unsigned long& u) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_rstream<Child, Traits>::read(fd, &u, sizeof(unsigned long));
       return *this;
     }  // end of basic_rstream<Child,Traits>::operator>>
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_rstream<Child, Traits>& basic_rstream<Child, Traits>::
-    operator>>(float& f) {
+    TFEL_INLINE2 basic_rstream<Child, Traits>&
+    basic_rstream<Child, Traits>::operator>>(float& f) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_rstream<Child, Traits>::read(fd, &f, sizeof(float));
       return *this;
     }  // end of basic_rstream<Child,Traits>::operator>>
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_rstream<Child, Traits>& basic_rstream<Child, Traits>::
-    operator>>(double& d) {
+    TFEL_INLINE2 basic_rstream<Child, Traits>&
+    basic_rstream<Child, Traits>::operator>>(double& d) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_rstream<Child, Traits>::read(fd, &d, sizeof(double));
       return *this;
     }  // end of basic_rstream<Child,Traits>::operator>>
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_rstream<Child, Traits>& basic_rstream<Child, Traits>::
-    operator>>(long double& l) {
+    TFEL_INLINE2 basic_rstream<Child, Traits>&
+    basic_rstream<Child, Traits>::operator>>(long double& l) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_rstream<Child, Traits>::read(fd, &l, sizeof(long double));
       return *this;

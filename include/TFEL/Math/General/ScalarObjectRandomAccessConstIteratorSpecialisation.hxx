@@ -3,11 +3,11 @@
  * include/TFEL/Math/General/ScalarObjectRandomAccessConstIteratorSpecialisation.hxx
  * \brief  This file specialises the ScalarObjectRandomAccessConstIterator an
  * ObjectScalarRandomAccessConstIterator for common operation \author Helfer
- * Thomas \date   17 Oct 2006 \copyright Copyright (C) 2006-2018 CEA/DEN, EDF
+ * Thomas \date   17 Oct 2006 \copyright Copyright (C) 2006-2025 CEA/DEN, EDF
  * R&D. All rights reserved. This project is publicly released under either the
- * GNU GPL Licence or the CECILL-A licence. A copy of thoses licences are
- * delivered with the sources of TFEL. CEA or EDF may also distribute this
- * project under specific licensing conditions.
+ * GNU GPL Licence with linking exception or the CECILL-A licence. A copy of
+ * thoses licences are delivered with the sources of TFEL. CEA or EDF may also
+ * distribute this project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_SCALAROBJECTRANDOMACCESSCONSTITERATORSPECIALISATION_H_
@@ -132,7 +132,7 @@ namespace tfel {
        * \return value_type
        */
       TFEL_MATH_INLINE
-      const value_type operator*(void)const { return a * (*p); }
+      const value_type operator*(void) const { return a * (*p); }
 
       TFEL_MATH_INLINE
       ScalarObjectRandomAccessConstIterator& operator++(void) {
@@ -232,7 +232,7 @@ namespace tfel {
         return *this;
       }
 
-      TFEL_MATH_INLINE value_type operator*(void)const { return a / (*p); }
+      TFEL_MATH_INLINE value_type operator*(void) const { return a / (*p); }
 
       TFEL_MATH_INLINE ScalarObjectRandomAccessConstIterator& operator++(void) {
         p++;
@@ -330,7 +330,7 @@ namespace tfel {
         return *this;
       }
 
-      TFEL_MATH_INLINE value_type operator*(void)const { return (*p) * b; }
+      TFEL_MATH_INLINE value_type operator*(void) const { return (*p) * b; }
 
       TFEL_MATH_INLINE ObjectScalarRandomAccessConstIterator& operator++(void) {
         p++;
@@ -428,7 +428,7 @@ namespace tfel {
         return *this;
       }
 
-      TFEL_MATH_INLINE value_type operator*(void)const { return (*p) / b; }
+      TFEL_MATH_INLINE value_type operator*(void) const { return (*p) / b; }
 
       TFEL_MATH_INLINE ObjectScalarRandomAccessConstIterator& operator++(void) {
         p++;

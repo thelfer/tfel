@@ -3,11 +3,11 @@
  * \brief
  * \author Helfer Thomas
  * \date   30 Août 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -122,14 +122,14 @@ namespace tfel {
     }
 
     template <unsigned short N, typename T>
-    typename fsarray<N, T>::const_iterator fsarray<N, T>::begin(void) const
-        noexcept {
+    typename fsarray<N, T>::const_iterator fsarray<N, T>::begin(
+        void) const noexcept {
       return this->v;
     }
 
     template <unsigned short N, typename T>
-    typename fsarray<N, T>::const_iterator fsarray<N, T>::cbegin(void) const
-        noexcept {
+    typename fsarray<N, T>::const_iterator fsarray<N, T>::cbegin(
+        void) const noexcept {
       return this->v;
     }
 
@@ -139,14 +139,14 @@ namespace tfel {
     }
 
     template <unsigned short N, typename T>
-    typename fsarray<N, T>::const_iterator fsarray<N, T>::end(void) const
-        noexcept {
+    typename fsarray<N, T>::const_iterator fsarray<N, T>::end(
+        void) const noexcept {
       return this->v + N;
     }
 
     template <unsigned short N, typename T>
-    typename fsarray<N, T>::const_iterator fsarray<N, T>::cend(void) const
-        noexcept {
+    typename fsarray<N, T>::const_iterator fsarray<N, T>::cend(
+        void) const noexcept {
       return this->v + N;
     }
 

@@ -4,7 +4,7 @@
  *
  * \author Helfer Thomas
  * \date   14 fév 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -30,8 +30,8 @@ namespace tfel {
 
     MathDivergenceException::~MathDivergenceException() noexcept = default;
 
-    const char* MaximumNumberOfIterationsReachedException::what() const
-        noexcept {
+    const char* MaximumNumberOfIterationsReachedException::what()
+        const noexcept {
       return "maximum number of iterations reached";
     }  // end of MaximumNumberOfIterationsReachedException::what
 

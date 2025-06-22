@@ -3,11 +3,11 @@
  * \brief  This file declares the CastemComputeStiffnessTensor class
  * \author Helfer Thomas
  * \date   18 mar 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -51,9 +51,9 @@ namespace castem {
    * \param[in]  props : material properties
    */
   MFRONT_CASTEM_VISIBILITY_EXPORT void
-      CastemComputeIsotropicPlaneStressAlteredStiffnessTensor(
-          tfel::config::Types<2u, CastemReal, false>::StiffnessTensor&,
-          const CastemReal* const);
+  CastemComputeIsotropicPlaneStressAlteredStiffnessTensor(
+      tfel::config::Types<2u, CastemReal, false>::StiffnessTensor&,
+      const CastemReal* const);
 
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
@@ -72,9 +72,9 @@ namespace castem {
    * \param[in]  props : material properties
    */
   MFRONT_CASTEM_VISIBILITY_EXPORT void
-      CastemComputeOrthotropicStiffnessTensor1D(
-          tfel::config::Types<1u, CastemReal, false>::StiffnessTensor&,
-          const CastemReal* const);
+  CastemComputeOrthotropicStiffnessTensor1D(
+      tfel::config::Types<1u, CastemReal, false>::StiffnessTensor&,
+      const CastemReal* const);
 
   /*!
    * \brief compute the stiffness tensor for plane strain, generalised
@@ -83,9 +83,9 @@ namespace castem {
    * \param[in]  props : material properties
    */
   MFRONT_CASTEM_VISIBILITY_EXPORT void
-      CastemComputeOrthotropicStiffnessTensor2D(
-          tfel::config::Types<2u, CastemReal, false>::StiffnessTensor&,
-          const CastemReal* const);
+  CastemComputeOrthotropicStiffnessTensor2D(
+      tfel::config::Types<2u, CastemReal, false>::StiffnessTensor&,
+      const CastemReal* const);
 
   /*!
    * \brief compute the stiffness tensor for plane stress modelling
@@ -94,9 +94,9 @@ namespace castem {
    * \param[in]  props : material properties
    */
   MFRONT_CASTEM_VISIBILITY_EXPORT void
-      CastemComputeOrthotropicPlaneStressAlteredStiffnessTensor(
-          tfel::config::Types<2u, CastemReal, false>::StiffnessTensor&,
-          const CastemReal* const);
+  CastemComputeOrthotropicPlaneStressAlteredStiffnessTensor(
+      tfel::config::Types<2u, CastemReal, false>::StiffnessTensor&,
+      const CastemReal* const);
 
   /*!
    * \brief compute the stiffness tensor for plane stress modelling
@@ -105,9 +105,9 @@ namespace castem {
    * \param[in]  props : material properties
    */
   MFRONT_CASTEM_VISIBILITY_EXPORT void
-      CastemComputeOrthotropicPlaneStressUnAlteredStiffnessTensor(
-          tfel::config::Types<2u, CastemReal, false>::StiffnessTensor&,
-          const CastemReal* const);
+  CastemComputeOrthotropicPlaneStressUnAlteredStiffnessTensor(
+      tfel::config::Types<2u, CastemReal, false>::StiffnessTensor&,
+      const CastemReal* const);
 
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
@@ -116,9 +116,9 @@ namespace castem {
    * \param[in]  props : material properties
    */
   MFRONT_CASTEM_VISIBILITY_EXPORT void
-      CastemComputeOrthotropicStiffnessTensor3D(
-          tfel::config::Types<3u, CastemReal, false>::StiffnessTensor&,
-          const CastemReal* const);
+  CastemComputeOrthotropicStiffnessTensor3D(
+      tfel::config::Types<3u, CastemReal, false>::StiffnessTensor&,
+      const CastemReal* const);
 
   /*!
    * This structure is in charge of computing the Stiffness operator

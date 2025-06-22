@@ -3,7 +3,7 @@
  * \brief
  * \author Helfer Thomas
  * \date   13 janv. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -19,8 +19,8 @@ namespace tfel {
 
     namespace internals {
 
-      const char* StensorEigenValuesComputationFailureException::what() const
-          noexcept {
+      const char* StensorEigenValuesComputationFailureException::what()
+          const noexcept {
         return "eigen value computation failed";
       }
 

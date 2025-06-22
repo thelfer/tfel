@@ -3,11 +3,11 @@
  * \brief  This file implements the methods of the class t2tot2.
  * \author Helfer Thomas
  * \date   19 November 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -496,8 +496,8 @@ namespace tfel {
 
     template <unsigned short N, typename T>
     t2tot2<N, T>& t2tot2<N, T>::operator=(const t2tot2<N, T>& src) {
-      fsarray<TensorDimeToSize<N>::value * TensorDimeToSize<N>::value, T>::
-      operator=(src);
+      fsarray<TensorDimeToSize<N>::value * TensorDimeToSize<N>::value,
+              T>::operator=(src);
       return *this;
     }
 

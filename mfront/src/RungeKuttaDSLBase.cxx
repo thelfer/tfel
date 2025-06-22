@@ -3,7 +3,7 @@
  * \brief
  * \author Helfer Thomas
  * \date   10 Nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -892,7 +892,8 @@ namespace mfront {
   void RungeKuttaDSLBase::writeBehaviourUpdateAuxiliaryStateVariables(
       const Hypothesis h) {
     BehaviourDSLCommon::writeBehaviourUpdateAuxiliaryStateVariables(h);
-    if (this->mb.hasCode(h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
+    if (this->mb.hasCode(
+            h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       this->behaviourFile << "/*!\n"
                           << "* \\brief Update auxiliary state variables at "
                              "end of integration\n"
@@ -906,11 +907,11 @@ namespace mfront {
       writeMaterialLaws(
           "RungeKuttaDSLBase::writeBehaviourUpdateAuxiliaryStateVariables",
           this->behaviourFile, this->mb.getMaterialLaws());
-      this->behaviourFile << this->mb.getCode(
-                                 h,
-                                 RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)
-                          << '\n'
-                          << "}\n\n";
+      this->behaviourFile
+          << this->mb.getCode(
+                 h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)
+          << '\n'
+          << "}\n\n";
     }
   }  // end of  RungeKuttaDSLBase::writeBehaviourUpdateAuxiliaryStateVariables
 
@@ -2027,7 +2028,8 @@ namespace mfront {
           modifyVariableForStiffnessTensorComputation());
     }
     this->behaviourFile << "this->computeFinalStress();\n";
-    if (this->mb.hasCode(h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
+    if (this->mb.hasCode(
+            h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       this->behaviourFile << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
     this->behaviourFile << "t += dt_;\n"
@@ -2445,7 +2447,8 @@ namespace mfront {
                           << v.name << "_K2);\n";
     }
     this->behaviourFile << "this->computeFinalStress();\n";
-    if (this->mb.hasCode(h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
+    if (this->mb.hasCode(
+            h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       this->behaviourFile << "this->updateAuxiliaryStateVariables(dt_);\n";
     }
     this->behaviourFile << "t += dt_;\n"
@@ -2628,7 +2631,8 @@ namespace mfront {
     }
     this->behaviourFile << "// Update stress field\n"
                         << "this->computeFinalStress();\n";
-    if (this->mb.hasCode(h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
+    if (this->mb.hasCode(
+            h, RungeKuttaDSLBase::RungeKuttaUpdateAuxiliaryStateVariables)) {
       this->behaviourFile << "this->updateAuxiliaryStateVariables(this->dt);\n";
     }
   }  // end of RungeKuttaDSLBase::writeBehaviourRK4Integrator

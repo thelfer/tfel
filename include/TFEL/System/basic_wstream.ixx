@@ -4,11 +4,11 @@
  *
  * \author Helfer Thomas
  * \date   14 nov 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -45,88 +45,88 @@ namespace tfel {
     }
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_wstream<Child, Traits>& basic_wstream<Child, Traits>::
-    operator<<(const char& c) {
+    TFEL_INLINE2 basic_wstream<Child, Traits>&
+    basic_wstream<Child, Traits>::operator<<(const char& c) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_wstream<Child, Traits>::write(fd, &c, sizeof(char));
       return *this;
     }  // end of basic_wstream<Child,Traits>::operator<<
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_wstream<Child, Traits>& basic_wstream<Child, Traits>::
-    operator<<(const bool& b) {
+    TFEL_INLINE2 basic_wstream<Child, Traits>&
+    basic_wstream<Child, Traits>::operator<<(const bool& b) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_wstream<Child, Traits>::write(fd, &b, sizeof(bool));
       return *this;
     }  // end of basic_wstream<Child,Traits>::operator<<
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_wstream<Child, Traits>& basic_wstream<Child, Traits>::
-    operator<<(const short& s) {
+    TFEL_INLINE2 basic_wstream<Child, Traits>&
+    basic_wstream<Child, Traits>::operator<<(const short& s) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_wstream<Child, Traits>::write(fd, &s, sizeof(short));
       return *this;
     }  // end of basic_wstream<Child,Traits>::operator<<
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_wstream<Child, Traits>& basic_wstream<Child, Traits>::
-    operator<<(const unsigned short& u) {
+    TFEL_INLINE2 basic_wstream<Child, Traits>&
+    basic_wstream<Child, Traits>::operator<<(const unsigned short& u) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_wstream<Child, Traits>::write(fd, &u, sizeof(unsigned short));
       return *this;
     }  // end of basic_wstream<Child,Traits>::operator<<
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_wstream<Child, Traits>& basic_wstream<Child, Traits>::
-    operator<<(const int& i) {
+    TFEL_INLINE2 basic_wstream<Child, Traits>&
+    basic_wstream<Child, Traits>::operator<<(const int& i) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_wstream<Child, Traits>::write(fd, &i, sizeof(int));
       return *this;
     }  // end of basic_wstream<Child,Traits>::operator<<
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_wstream<Child, Traits>& basic_wstream<Child, Traits>::
-    operator<<(const unsigned int& u) {
+    TFEL_INLINE2 basic_wstream<Child, Traits>&
+    basic_wstream<Child, Traits>::operator<<(const unsigned int& u) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_wstream<Child, Traits>::write(fd, &u, sizeof(unsigned int));
       return *this;
     }  // end of basic_wstream<Child,Traits>::operator<<
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_wstream<Child, Traits>& basic_wstream<Child, Traits>::
-    operator<<(const long& l) {
+    TFEL_INLINE2 basic_wstream<Child, Traits>&
+    basic_wstream<Child, Traits>::operator<<(const long& l) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_wstream<Child, Traits>::write(fd, &l, sizeof(long));
       return *this;
     }  // end of basic_wstream<Child,Traits>::operator<<
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_wstream<Child, Traits>& basic_wstream<Child, Traits>::
-    operator<<(const unsigned long& u) {
+    TFEL_INLINE2 basic_wstream<Child, Traits>&
+    basic_wstream<Child, Traits>::operator<<(const unsigned long& u) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_wstream<Child, Traits>::write(fd, &u, sizeof(unsigned long));
       return *this;
     }  // end of basic_wstream<Child,Traits>::operator<<
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_wstream<Child, Traits>& basic_wstream<Child, Traits>::
-    operator<<(const float& f) {
+    TFEL_INLINE2 basic_wstream<Child, Traits>&
+    basic_wstream<Child, Traits>::operator<<(const float& f) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_wstream<Child, Traits>::write(fd, &f, sizeof(float));
       return *this;
     }  // end of basic_wstream<Child,Traits>::operator<<
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_wstream<Child, Traits>& basic_wstream<Child, Traits>::
-    operator<<(const double& d) {
+    TFEL_INLINE2 basic_wstream<Child, Traits>&
+    basic_wstream<Child, Traits>::operator<<(const double& d) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_wstream<Child, Traits>::write(fd, &d, sizeof(double));
       return *this;
     }  // end of basic_wstream<Child,Traits>::operator<<
 
     template <typename Child, typename Traits>
-    TFEL_INLINE2 basic_wstream<Child, Traits>& basic_wstream<Child, Traits>::
-    operator<<(const long double& l) {
+    TFEL_INLINE2 basic_wstream<Child, Traits>&
+    basic_wstream<Child, Traits>::operator<<(const long double& l) {
       int fd = static_cast<const Child*>(this)->getFileDescriptor();
       basic_wstream<Child, Traits>::write(fd, &l, sizeof(long double));
       return *this;

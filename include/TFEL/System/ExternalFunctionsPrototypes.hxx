@@ -3,11 +3,11 @@
  * \brief
  * \author Helfer Thomas
  * \brief 26 jan 2010
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -404,8 +404,7 @@ namespace tfel {
         const CastemIntegerType *const,
         const CastemIntegerType *const,
         const CastemIntegerType *const, /* number of components of tensors */
-        const CastemIntegerType
-            *const,                  /* number of internal state variables    */
+        const CastemIntegerType *const, /* number of internal state variables */
         const CastemRealType *const, /* material properties                   */
         const CastemIntegerType *const, /* number of material properties */
         const CastemRealType *const,
@@ -449,8 +448,7 @@ namespace tfel {
         const AbaqusIntegerType *const,
         const AbaqusIntegerType *const,
         const AbaqusIntegerType *const, /* number of components of tensors */
-        const AbaqusIntegerType
-            *const,                  /* number of internal state variables    */
+        const AbaqusIntegerType *const, /* number of internal state variables */
         const AbaqusRealType *const, /* material properties                   */
         const AbaqusIntegerType *const, /* number of material properties */
         const AbaqusRealType *const,
@@ -523,8 +521,7 @@ namespace tfel {
         const AsterRealType *const, /* external state variables */
         const AsterRealType *const, /* external state variables increments   */
         const AsterIntegerType *const, /* number of components of tensors */
-        const AsterIntegerType
-            *const,                 /* number of internal state variables    */
+        const AsterIntegerType *const, /* number of internal state variables */
         const AsterRealType *const, /* material properties                   */
         const AsterIntegerType *const, /* number of material properties */
         const AsterRealType *const, /* rotation matrix                       */
