@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   09 févr. 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -86,10 +86,11 @@ struct StensorIsotropicFunctionDerivativeTest final
   }
   template <unsigned short N>
   void test2(const tfel::math::stensor<N, double>& v) {
-    this->test(v, [](const double x) { return std::abs(x); },
-               [](const double x) {
-                 return std::abs(x) < 1.e-12 ? 0.5 : ((x < 0) ? -1 : 1);
-               });
+    this->test(
+        v, [](const double x) { return std::abs(x); },
+        [](const double x) {
+          return std::abs(x) < 1.e-12 ? 0.5 : ((x < 0) ? -1 : 1);
+        });
   }
 };
 

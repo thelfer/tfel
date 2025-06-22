@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date 01/01/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -40,8 +40,8 @@ namespace tfel::math {
      * \param[in] i: requested index
      */
     TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference
-    operator[](const typename ArrayPolicyType::IndexingPolicy::size_type) const
-        noexcept;
+    operator[](const typename ArrayPolicyType::IndexingPolicy::size_type)
+        const noexcept;
     /*!
      * \brief access operator
      * \return a reference to the data associated with the given indices
@@ -50,8 +50,8 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference
     operator[](
         const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
-                         ArrayPolicyType::IndexingPolicy::arity>&) const
-        noexcept;
+                         ArrayPolicyType::IndexingPolicy::arity>&)
+        const noexcept;
     /*!
      * \brief access operator
      * \return a reference to the data associated with the given indices
@@ -68,8 +68,8 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr typename ArrayPolicyType::const_reference
     operator()(
         const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
-                         ArrayPolicyType::IndexingPolicy::arity>&) const
-        noexcept;
+                         ArrayPolicyType::IndexingPolicy::arity>&)
+        const noexcept;
 
   };  // end of ConstArrayCommonMethods
 

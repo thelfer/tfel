@@ -3,7 +3,7 @@
  * \brief
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -98,7 +98,7 @@ namespace numodis {
     if (gsystem1.getIPlane() == gsystem2.getIPlane()) {
       if (Coincide(gsystem1.getIBurgers(), gsystem2.getIBurgers()) != 0) {
         // self junction
-        throw - 1;
+        throw -1;
       }
       // add Burgers vectors
       IBurgers iburgers3a(gsystem1.getIBurgers() + gsystem2.getIBurgers());
@@ -114,7 +114,7 @@ namespace numodis {
     }
     if (Coincide(gsystem1.getIBurgers(), gsystem2.getIBurgers()) != 0) {
       // colinear situation
-      throw - 2;
+      throw -2;
     }
     // compute junction direction
     IDirection ijunction(this->getNindices());

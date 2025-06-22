@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -117,8 +117,8 @@ namespace mfront::bbrick {
     auto c = "const auto " + R + " = (this->" + R0n + ")*";
     if (!this->p0.empty()) {
       const auto p0n = IsotropicHardeningRule::getVariableId("p0", fid, id);
-      c += "pow(max(this->" + pn + "+(this->theta)*(this->d" + pn + "),strain(0))+this->" +
-           p0n + ", this->" + nn + ");\n";
+      c += "pow(max(this->" + pn + "+(this->theta)*(this->d" + pn +
+           "),strain(0))+this->" + p0n + ", this->" + nn + ");\n";
       c += "const auto " + dR + " = ";
       c += "(this->theta)*(this->" + nn + ")*" + R + "/(std::max(this->" + pn +
            "+(this->theta)*(this->d" + pn + ")+this->" + p0n + ",this->" + p0n +

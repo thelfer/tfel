@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   04 mars 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -178,8 +178,9 @@ namespace mfront {
     //
     this->registerCallBack(
         "--modelling-hypothesis",
-        CallBack("select a modelling hypothesis",
-                 [this] { this->treatModellingHypothesis(); }, true));
+        CallBack(
+            "select a modelling hypothesis",
+            [this] { this->treatModellingHypothesis(); }, true));
     // standard queries
     const std::vector<std::pair<const char*, const char*>> sq = {
         {"--behaviour-name", "show the behaviour name"},
@@ -292,7 +293,8 @@ namespace mfront {
     for (const auto& q : sq) {
       this->registerCallBack(
           q.first,
-          CallBack(q.second, [this] { this->treatStandardQuery(); }, false));
+          CallBack(
+              q.second, [this] { this->treatStandardQuery(); }, false));
     }
     const std::vector<std::pair<const char*, const char*>> sq2 = {
         {"--attribute-type", "display an attribute type"},
@@ -331,7 +333,8 @@ namespace mfront {
     for (const auto& q : sq2) {
       this->registerCallBack(
           q.first,
-          CallBack(q.second, [this] { this->treatStandardQuery2(); }, true));
+          CallBack(
+              q.second, [this] { this->treatStandardQuery2(); }, true));
     }
   }  // end of registerCommandLineCallBacks
 

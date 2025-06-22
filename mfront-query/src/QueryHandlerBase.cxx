@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   22/11/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -98,46 +98,54 @@ namespace mfront {
         false);
     this->registerCallBack(
         "--dsl-option",
-        CallBack("allow to define options passed to domain specific languages",
-                 [] {}, true));
+        CallBack(
+            "allow to define options passed to domain specific languages",
+            [] {}, true));
     this->registerCallBack(
         "--dsl-material-property-option",
-        CallBack("allow to define options passed to domain specific languages "
-                 "related to material properties",
-                 [] {}, true));
+        CallBack(
+            "allow to define options passed to domain specific languages "
+            "related to material properties",
+            [] {}, true));
     this->registerCallBack(
         "--dsl-behaviour-option",
-        CallBack("allow to define options passed to domain specific languages "
-                 "related to behaviours",
-                 [] {}, true));
+        CallBack(
+            "allow to define options passed to domain specific languages "
+            "related to behaviours",
+            [] {}, true));
     this->registerCallBack(
         "--dsl-model-option",
-        CallBack("allow to define options passed to domain specific languages "
-                 "related to models",
-                 [] {}, true));
+        CallBack(
+            "allow to define options passed to domain specific languages "
+            "related to models",
+            [] {}, true));
     this->registerCallBack(
         "--dsl-options-file",
-        CallBack("allow to define options passed to domain specific languages  "
-                 "thanks to an external file in a JSON-like format",
-                 [] {}, true));
+        CallBack(
+            "allow to define options passed to domain specific languages  "
+            "thanks to an external file in a JSON-like format",
+            [] {}, true));
     this->registerCallBack(
         "--dsl-material-property-options-file",
-        CallBack("allow to define options passed to domain specific languages "
-                 "related to material properties thanks to an external file in "
-                 "a JSON-like format",
-                 [] {}, true));
+        CallBack(
+            "allow to define options passed to domain specific languages "
+            "related to material properties thanks to an external file in "
+            "a JSON-like format",
+            [] {}, true));
     this->registerCallBack(
         "--dsl-behaviour-options-file",
-        CallBack("allow to define options passed to domain specific languages "
-                 "related to behaviours thanks to an external file in a "
-                 "JSON-like format",
-                 [] {}, true));
+        CallBack(
+            "allow to define options passed to domain specific languages "
+            "related to behaviours thanks to an external file in a "
+            "JSON-like format",
+            [] {}, true));
     this->registerCallBack(
         "--dsl-model-options-file",
-        CallBack("allow to define options passed to domain specific languages "
-                 "related to models thanks to an external file in a JSON-like "
-                 "format",
-                 [] {}, true));
+        CallBack(
+            "allow to define options passed to domain specific languages "
+            "related to models thanks to an external file in a JSON-like "
+            "format",
+            [] {}, true));
     this->registerNewCallBack(
         "--include", "-I", &QueryHandlerBase::treatSearchPath,
         "add a new path at the beginning of the search paths", true);
@@ -155,9 +163,10 @@ namespace mfront {
                               "set the installation directory "
                               "(same as --install-path)",
                               true);
-    this->registerCallBack(
-        "--nomelt", CallBack("don't melt librairies sources",
-                             [this] { this->melt_sources = false; }, false));
+    this->registerCallBack("--nomelt",
+                           CallBack(
+                               "don't melt librairies sources",
+                               [this] { this->melt_sources = false; }, false));
     this->registerNewCallBack(
         "--warning", "-W", &QueryHandlerBase::treatWarning, "print warnings");
     this->registerNewCallBack("--pedantic", &QueryHandlerBase::treatPedantic,
@@ -182,8 +191,9 @@ namespace mfront {
 #endif /* MFRONT_HAVE_MADNEX */
     this->registerCallBack(
         "--generated-sources",
-        CallBack("show all the generated sources",
-                 [this] { this->treatGeneratedSources(); }, true));
+        CallBack(
+            "show all the generated sources",
+            [this] { this->treatGeneratedSources(); }, true));
     this->registerCallBack(
         "--specific-target-generated-sources",
         CallBack(
@@ -191,27 +201,33 @@ namespace mfront {
             [this] { this->treatSpecificTargetGeneratedSources(); }, true));
     this->registerCallBack(
         "--all-specific-targets-generated-sources",
-        CallBack("show all the generated sources associated specific targets",
-                 [this] { this->treatAllSpecificTargetsGeneratedSources(); },
-                 false));
+        CallBack(
+            "show all the generated sources associated specific targets",
+            [this] { this->treatAllSpecificTargetsGeneratedSources(); },
+            false));
     this->registerCallBack(
         "--generated-headers",
-        CallBack("show all the generated headers",
-                 [this] { this->treatGeneratedHeaders(); }, false));
+        CallBack(
+            "show all the generated headers",
+            [this] { this->treatGeneratedHeaders(); }, false));
     this->registerCallBack("--cppflags",
-                           CallBack("show all the global headers",
-                                    [this] { this->treatCppFlags(); }, false));
+                           CallBack(
+                               "show all the global headers",
+                               [this] { this->treatCppFlags(); }, false));
     this->registerCallBack(
         "--libraries-dependencies",
-        CallBack("show all the libraries dependencies",
-                 [this] { this->treatLibrariesDependencies(); }, false));
+        CallBack(
+            "show all the libraries dependencies",
+            [this] { this->treatLibrariesDependencies(); }, false));
     this->registerCallBack(
         "--specific-targets",
-        CallBack("show all the specific targets",
-                 [this] { this->treatSpecificTargets(); }, false));
-    this->registerCallBack("--no-gui", CallBack("do not display errors using "
-                                                "a message box (windows only)",
-                                                [] {}, false));
+        CallBack(
+            "show all the specific targets",
+            [this] { this->treatSpecificTargets(); }, false));
+    this->registerCallBack("--no-gui", CallBack(
+                                           "do not display errors using "
+                                           "a message box (windows only)",
+                                           [] {}, false));
   }
 
   std::function<void()> QueryHandlerBase::generateGeneratedSourcesQuery(

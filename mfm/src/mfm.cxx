@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   13 avril 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -196,14 +196,15 @@ struct MFM : public tfel::utilities::ArgumentParserBase<MFM> {
     this->registerCallBack(
         "--verbose", CallBack("set verbose output", set_verbose_level, true));
     this->registerCallBack("--show-libs",
-                           CallBack("show library name in front "
-                                    "of entry points",
-                                    [this] { this->show_libs = true; }, false));
-    this->registerCallBack(
-        "--show-sources",
-        CallBack("show the name of the MFront "
-                 "file used to generate the entry points",
-                 [this] { this->show_sources = true; }, false));
+                           CallBack(
+                               "show library name in front "
+                               "of entry points",
+                               [this] { this->show_libs = true; }, false));
+    this->registerCallBack("--show-sources",
+                           CallBack(
+                               "show the name of the MFront "
+                               "file used to generate the entry points",
+                               [this] { this->show_sources = true; }, false));
   }  // end of registerCommandLineCallBacks
 
   const tfel::utilities::Argument& getCurrentCommandLineArgument() const {

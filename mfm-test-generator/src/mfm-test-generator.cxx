@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   13 avril 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -119,48 +119,51 @@ namespace mfmtg {
     //! \brief register the command line call backs
     void registerCommandLineCallBacks() {
       this->registerCallBack(
-          "--verbose",
-          CallBack("set verbose output",
-                   [this] {
-                     if (this->currentArgument->getOption().empty()) {
-                       mfront::setVerboseMode(mfront::VERBOSE_LEVEL1);
-                     } else {
-                       const auto& l = this->currentArgument->getOption();
-                       mfront::setVerboseMode(l);
-                     }
-                   },
-                   true));
+          "--verbose", CallBack(
+                           "set verbose output",
+                           [this] {
+                             if (this->currentArgument->getOption().empty()) {
+                               mfront::setVerboseMode(mfront::VERBOSE_LEVEL1);
+                             } else {
+                               const auto& l =
+                                   this->currentArgument->getOption();
+                               mfront::setVerboseMode(l);
+                             }
+                           },
+                           true));
       this->registerCallBack(
           "--target",
-          CallBack("specify a target code",
-                   [this] {
-                     const auto& t = this->currentArgument->getOption();
-                     if (std::find(this->targets.cbegin(), this->targets.cend(),
-                                   t) == this->targets.cend()) {
-                       this->targets.push_back(t);
-                     }
-                   },
-                   true));
+          CallBack(
+              "specify a target code",
+              [this] {
+                const auto& t = this->currentArgument->getOption();
+                if (std::find(this->targets.cbegin(), this->targets.cend(),
+                              t) == this->targets.cend()) {
+                  this->targets.push_back(t);
+                }
+              },
+              true));
       this->registerCallBack(
           "--plugins",
-          CallBack("specify a list of shared libraries containing user defined "
-                   "test cases or generators, separated by a comma ','",
-                   [this] { load_plugins(this->currentArgument->getOption()); },
-                   true));
+          CallBack(
+              "specify a list of shared libraries containing user defined "
+              "test cases or generators, separated by a comma ','",
+              [this] { load_plugins(this->currentArgument->getOption()); },
+              true));
       this->registerCallBack(
           "--targets",
-          CallBack("specify a set targets separated by commas",
-                   [this] {
-                     for (const auto& t : tfel::utilities::tokenize(
-                              this->currentArgument->getOption(), ',')) {
-                       if (std::find(this->targets.cbegin(),
-                                     this->targets.cend(),
-                                     t) == this->targets.cend()) {
-                         this->targets.push_back(t);
-                       }
-                     }
-                   },
-                   true));
+          CallBack(
+              "specify a set targets separated by commas",
+              [this] {
+                for (const auto& t : tfel::utilities::tokenize(
+                         this->currentArgument->getOption(), ',')) {
+                  if (std::find(this->targets.cbegin(), this->targets.cend(),
+                                t) == this->targets.cend()) {
+                    this->targets.push_back(t);
+                  }
+                }
+              },
+              true));
 #ifdef MFM_TEST_GENERATOR_HAVE_MADNEX
       auto treatBehaviour = [this] {
         if (!this->behaviour.empty()) {

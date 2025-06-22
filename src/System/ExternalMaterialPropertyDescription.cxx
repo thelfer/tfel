@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   15 June 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -108,10 +108,12 @@ namespace tfel::system {
       ExternalMaterialPropertyDescription&&) = default;
   ExternalMaterialPropertyDescription::ExternalMaterialPropertyDescription(
       const ExternalMaterialPropertyDescription&) = default;
-  ExternalMaterialPropertyDescription& ExternalMaterialPropertyDescription::
-  operator=(const ExternalMaterialPropertyDescription&) = default;
-  ExternalMaterialPropertyDescription& ExternalMaterialPropertyDescription::
-  operator=(ExternalMaterialPropertyDescription&&) = default;
+  ExternalMaterialPropertyDescription&
+  ExternalMaterialPropertyDescription::operator=(
+      const ExternalMaterialPropertyDescription&) = default;
+  ExternalMaterialPropertyDescription&
+  ExternalMaterialPropertyDescription::operator=(
+      ExternalMaterialPropertyDescription&&) = default;
   ExternalMaterialPropertyDescription::~ExternalMaterialPropertyDescription() =
       default;
 
