@@ -3,11 +3,11 @@
  * \brief  This file declares the LSDYNAComputeStiffnessTensor class
  * \author Thomas Helfer
  * \date   18 mar 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -48,9 +48,9 @@ namespace lsdyna {
    * \param[in]  props : material properties
    */
   MFRONT_LSDYNA_VISIBILITY_EXPORT void
-      LSDYNAComputeIsotropicPlaneStressAlteredStiffnessTensor(
-          tfel::config::Types<2u, float, false>::StiffnessTensor&,
-          const float* const);
+  LSDYNAComputeIsotropicPlaneStressAlteredStiffnessTensor(
+      tfel::config::Types<2u, float, false>::StiffnessTensor&,
+      const float* const);
   /*!
    * \brief compute the stiffness tensor for plane stress modelling
    * hypothesis.
@@ -58,9 +58,9 @@ namespace lsdyna {
    * \param[in]  props : material properties
    */
   MFRONT_LSDYNA_VISIBILITY_EXPORT void
-      LSDYNAComputeIsotropicPlaneStressAlteredStiffnessTensor(
-          tfel::config::Types<2u, double, false>::StiffnessTensor&,
-          const double* const);
+  LSDYNAComputeIsotropicPlaneStressAlteredStiffnessTensor(
+      tfel::config::Types<2u, double, false>::StiffnessTensor&,
+      const double* const);
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
    * modelling hypothesis.
@@ -86,9 +86,9 @@ namespace lsdyna {
    * \param[in]  props : material properties
    */
   MFRONT_LSDYNA_VISIBILITY_EXPORT void
-      LSDYNAComputeOrthotropicStiffnessTensor2D(
-          tfel::config::Types<2u, float, false>::StiffnessTensor&,
-          const float* const);
+  LSDYNAComputeOrthotropicStiffnessTensor2D(
+      tfel::config::Types<2u, float, false>::StiffnessTensor&,
+      const float* const);
   /*!
    * \brief compute the stiffness tensor for plane strain, generalised
    * plane strain and axisymmetrical hypotheses.
@@ -96,9 +96,9 @@ namespace lsdyna {
    * \param[in]  props : material properties
    */
   MFRONT_LSDYNA_VISIBILITY_EXPORT void
-      LSDYNAComputeOrthotropicStiffnessTensor2D(
-          tfel::config::Types<2u, double, false>::StiffnessTensor&,
-          const double* const);
+  LSDYNAComputeOrthotropicStiffnessTensor2D(
+      tfel::config::Types<2u, double, false>::StiffnessTensor&,
+      const double* const);
   /*!
    * \brief compute the stiffness tensor for plane stress modelling
    * hypothesis.
@@ -106,9 +106,9 @@ namespace lsdyna {
    * \param[in]  props : material properties
    */
   MFRONT_LSDYNA_VISIBILITY_EXPORT void
-      LSDYNAComputeOrthotropicPlaneStressAlteredStiffnessTensor(
-          tfel::config::Types<2u, float, false>::StiffnessTensor&,
-          const float* const);
+  LSDYNAComputeOrthotropicPlaneStressAlteredStiffnessTensor(
+      tfel::config::Types<2u, float, false>::StiffnessTensor&,
+      const float* const);
   /*!
    * \brief compute the stiffness tensor for plane stress modelling
    * hypothesis.
@@ -116,9 +116,9 @@ namespace lsdyna {
    * \param[in]  props : material properties
    */
   MFRONT_LSDYNA_VISIBILITY_EXPORT void
-      LSDYNAComputeOrthotropicPlaneStressAlteredStiffnessTensor(
-          tfel::config::Types<2u, double, false>::StiffnessTensor&,
-          const double* const);
+  LSDYNAComputeOrthotropicPlaneStressAlteredStiffnessTensor(
+      tfel::config::Types<2u, double, false>::StiffnessTensor&,
+      const double* const);
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
    * modelling hypothesis.
@@ -126,9 +126,9 @@ namespace lsdyna {
    * \param[in]  props : material properties
    */
   MFRONT_LSDYNA_VISIBILITY_EXPORT void
-      LSDYNAComputeOrthotropicStiffnessTensor3D(
-          tfel::config::Types<3u, float, false>::StiffnessTensor&,
-          const float* const);
+  LSDYNAComputeOrthotropicStiffnessTensor3D(
+      tfel::config::Types<3u, float, false>::StiffnessTensor&,
+      const float* const);
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
    * modelling hypothesis.
@@ -136,9 +136,9 @@ namespace lsdyna {
    * \param[in]  props : material properties
    */
   MFRONT_LSDYNA_VISIBILITY_EXPORT void
-      LSDYNAComputeOrthotropicStiffnessTensor3D(
-          tfel::config::Types<3u, double, false>::StiffnessTensor&,
-          const double* const);
+  LSDYNAComputeOrthotropicStiffnessTensor3D(
+      tfel::config::Types<3u, double, false>::StiffnessTensor&,
+      const double* const);
 
   /*!
    * This structure is in charge of computing the Stiffness operator

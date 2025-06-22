@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   02/07/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -141,8 +141,8 @@ namespace tfel::math {
      * \brief check the convergence of the method
      * \param[in] e: current error
      */
-    TFEL_HOST_DEVICE constexpr bool checkConvergence(const NumericType e) const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr bool checkConvergence(
+        const NumericType e) const noexcept {
       return e < this->epsilon;
     }
     /*!
@@ -185,15 +185,15 @@ namespace tfel::math {
      */
     TFEL_HOST_DEVICE constexpr void processNewEstimate() noexcept {}
     //! \brief method called when the resolution begins
-    TFEL_HOST_DEVICE constexpr void reportBeginningOfResolution() const
-        noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportBeginningOfResolution()
+        const noexcept {}
     //! \brief method called when the resolution succeeds
     TFEL_HOST_DEVICE constexpr void reportSuccess() const noexcept {}
     //! \brief method called when the resolution fails
     TFEL_HOST_DEVICE constexpr void reportFailure() const noexcept {}
     //! \brief method called when the evaluation of the residual failed.
-    TFEL_HOST_DEVICE constexpr void reportInvalidResidualEvaluation() const
-        noexcept {}
+    TFEL_HOST_DEVICE constexpr void reportInvalidResidualEvaluation()
+        const noexcept {}
     //! \brief method called when the computation of a new correction failed.
     TFEL_HOST_DEVICE constexpr void reportNewCorrectionComputationFailure()
         const noexcept {}

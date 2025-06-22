@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   17/01/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -81,7 +81,9 @@ namespace tfel::math {
    * \tparam Array2Tag: tag of variable
    * \tparam ArrayDerivativeType: type of the array derivative
    */
-  template <typename Array1Tag, typename Array2Tag, typename ArrayDerivativeType>
+  template <typename Array1Tag,
+            typename Array2Tag,
+            typename ArrayDerivativeType>
   struct ConceptRebind<FixedSizeArrayDerivativeTag<Array1Tag, Array2Tag>,
                        ArrayDerivativeType> {
     //! \brief a simple alias

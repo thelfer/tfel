@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date 01/01/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -242,8 +242,8 @@ namespace tfel::math {
             typename ArrayPolicy,
             typename ArrayPolicy::IndexingPolicy::size_type N>
   constexpr typename GenericFixedSizeArray<Child, ArrayPolicy, N>::size_type
-  GenericFixedSizeArray<Child, ArrayPolicy, N>::getContainerSize() const
-      noexcept {
+  GenericFixedSizeArray<Child, ArrayPolicy, N>::getContainerSize()
+      const noexcept {
     return N;
   }  // end of data
 

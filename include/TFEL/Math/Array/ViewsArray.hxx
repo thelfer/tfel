@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   19/05/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -260,8 +260,8 @@ namespace tfel::math {
     constexpr auto operator()(
         const typename MemoryIndexingPolicyType::size_type i,
         const std::array<typename ViewIndexingPolicyType::size_type,
-                         ViewIndexingPolicyType::arity>& vsizes) const
-        noexcept {
+                         ViewIndexingPolicyType::arity>& vsizes)
+        const noexcept {
       static_assert(!ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       static_assert(MemoryIndexingPolicyType::arity == 1u, "invalid call");
       using const_view_type = typename ViewsArrayBase::const_view_type;
@@ -306,8 +306,8 @@ namespace tfel::math {
         const std::array<typename MemoryIndexingPolicyType::size_type,
                          MemoryIndexingPolicyType::arity>& indices,
         const std::array<typename ViewIndexingPolicyType::size_type,
-                         ViewIndexingPolicyType::arity>& vsizes) const
-        noexcept {
+                         ViewIndexingPolicyType::arity>& vsizes)
+        const noexcept {
       static_assert(!ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       using const_view_type = typename ViewsArrayBase::const_view_type;
       const auto p = ViewIndexingPolicyType{vsizes};

@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date 01/01/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -47,8 +47,8 @@ namespace tfel::math {
     //!
     static constexpr auto unRollLoop = true;
     //! \return the minimal data size
-    TFEL_HOST_DEVICE constexpr size_type getUnderlyingArrayMinimalSize() const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr size_type getUnderlyingArrayMinimalSize()
+        const noexcept {
       return 1;
     }
     //! \return if the array is empty
@@ -83,8 +83,8 @@ namespace tfel::math {
     //!
     static constexpr auto unRollLoop = N < 100;
     //! \return the minimal data size
-    TFEL_HOST_DEVICE constexpr size_type getUnderlyingArrayMinimalSize() const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr size_type getUnderlyingArrayMinimalSize()
+        const noexcept {
       if constexpr (Stride == 1) {
         return this->size();
       } else {
@@ -92,8 +92,8 @@ namespace tfel::math {
       }
     }
     //!
-    TFEL_HOST_DEVICE constexpr size_type getIndex(const size_type i) const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr size_type getIndex(
+        const size_type i) const noexcept {
       if constexpr (Stride == 1) {
         return i;
       } else {
@@ -113,8 +113,8 @@ namespace tfel::math {
      * \return the logical size of the array for the given dimension
      * \param[in] i: dimension
      */
-    TFEL_HOST_DEVICE constexpr size_type size(const size_type i) const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr size_type size(
+        const size_type i) const noexcept {
       if (i != 0) {
         tfel::reportContractViolation(
             "FixedSizeVectorIndexingPolicy: "
@@ -169,9 +169,8 @@ namespace tfel::math {
     using RowMajorIndexingPolicy =
         FixedSizeRowMajorMatrixIndexingPolicy<SizeType, N, M>;
     //!
-    TFEL_HOST_DEVICE constexpr size_type getIndex(const size_type i,
-                                                  const size_type j) const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr size_type getIndex(
+        const size_type i, const size_type j) const noexcept {
       return i * Stride + j;
     }
     //!
@@ -180,8 +179,8 @@ namespace tfel::math {
       return this->getIndex(indices[0], indices[1]);
     }
     //! \return the minimal data size
-    TFEL_HOST_DEVICE constexpr size_type getUnderlyingArrayMinimalSize() const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr size_type getUnderlyingArrayMinimalSize()
+        const noexcept {
       if constexpr (Stride == M) {
         return this->size();
       } else {
@@ -202,8 +201,8 @@ namespace tfel::math {
      * \return the logical size of the array for the given dimension
      * \param[in] i: dimension
      */
-    TFEL_HOST_DEVICE constexpr size_type size(const size_type i) const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr size_type size(
+        const size_type i) const noexcept {
 #ifndef TFEL_NO_RUNTIME_CHECK_BOUNDS
       if (i > 1) {
         tfel::reportContractViolation(
@@ -284,8 +283,8 @@ namespace tfel::math {
       return size_type{};
     }
     //!
-    TFEL_HOST_DEVICE constexpr size_type getIndex(const size_type i) const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr size_type getIndex(
+        const size_type i) const noexcept {
       static_assert(arity == 1);
       constexpr auto a1 = IndexingPolicy1::arity;
       if constexpr (a1 == 1) {
@@ -297,9 +296,8 @@ namespace tfel::math {
       }
     }
     //!
-    TFEL_HOST_DEVICE constexpr size_type getIndex(const size_type i,
-                                                  const size_type j) const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr size_type getIndex(
+        const size_type i, const size_type j) const noexcept {
       static_assert(arity == 2);
       constexpr auto a1 = IndexingPolicy1::arity;
       if constexpr (a1 == 0) {
@@ -315,10 +313,10 @@ namespace tfel::math {
       }
     }
     //!
-    TFEL_HOST_DEVICE constexpr size_type getIndex(const size_type i,
-                                                  const size_type j,
-                                                  const size_type k) const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr size_type getIndex(
+        const size_type i,
+        const size_type j,
+        const size_type k) const noexcept {
       static_assert(arity == 3);
       constexpr auto a1 = IndexingPolicy1::arity;
       if constexpr (a1 == 0) {
@@ -338,11 +336,11 @@ namespace tfel::math {
       }
     }
     //!
-    TFEL_HOST_DEVICE constexpr size_type getIndex(const size_type i,
-                                                  const size_type j,
-                                                  const size_type k,
-                                                  const size_type l) const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr size_type getIndex(
+        const size_type i,
+        const size_type j,
+        const size_type k,
+        const size_type l) const noexcept {
       static_assert(arity == 4);
       constexpr auto a1 = IndexingPolicy1::arity;
       if constexpr (a1 == 0) {
@@ -367,8 +365,8 @@ namespace tfel::math {
     }
     //!
     template <typename... SizeType>
-    TFEL_HOST_DEVICE constexpr size_type getIndex(const SizeType... i) const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr size_type getIndex(
+        const SizeType... i) const noexcept {
       static_assert(sizeof...(SizeType) == arity,
                     "invalid number of arguments");
       checkIndicesValiditity<FixedSizeIndexingPoliciesCartesianProduct,
@@ -410,8 +408,8 @@ namespace tfel::math {
       }
     }
     //! \return the minimal data size
-    TFEL_HOST_DEVICE constexpr size_type getUnderlyingArrayMinimalSize() const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr size_type getUnderlyingArrayMinimalSize()
+        const noexcept {
       constexpr auto a1 = IndexingPolicy1::arity;
       if constexpr (a1 == 0) {
         return tfel::math::getUnderlyingArrayMinimalSize<IndexingPolicy2>();
@@ -447,8 +445,8 @@ namespace tfel::math {
      * \return the logical size of the array for the given dimension
      * \param[in] i: dimension
      */
-    TFEL_HOST_DEVICE constexpr size_type size(const size_type i) const
-        noexcept {
+    TFEL_HOST_DEVICE constexpr size_type size(
+        const size_type i) const noexcept {
       if (i >= FixedSizeIndexingPoliciesCartesianProduct::arity) {
         tfel::reportContractViolation(
             "FixedSizeMatrixIndexingPolicy: "

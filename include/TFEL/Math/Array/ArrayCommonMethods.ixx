@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date 01/01/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -20,9 +20,9 @@ namespace tfel::math {
 
   template <typename Child, typename ArrayPolicyType>
   constexpr typename ArrayPolicyType::const_reference
-      ConstArrayCommonMethods<Child, ArrayPolicyType>::operator[](
-          const typename ArrayPolicyType::IndexingPolicy::size_type i) const
-      noexcept {
+  ConstArrayCommonMethods<Child, ArrayPolicyType>::operator[](
+      const typename ArrayPolicyType::IndexingPolicy::size_type i)
+      const noexcept {
     static_assert(ArrayPolicyType::IndexingPolicy::arity == 1u, "invalid call");
     const auto& child = static_cast<const Child&>(*this);
     const auto* const d = child.data();
@@ -35,10 +35,10 @@ namespace tfel::math {
 
   template <typename Child, typename ArrayPolicyType>
   constexpr typename ArrayPolicyType::const_reference
-      ConstArrayCommonMethods<Child, ArrayPolicyType>::operator[](
-          const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
-                           ArrayPolicyType::IndexingPolicy::arity>& i) const
-      noexcept {
+  ConstArrayCommonMethods<Child, ArrayPolicyType>::operator[](
+      const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
+                       ArrayPolicyType::IndexingPolicy::arity>& i)
+      const noexcept {
     const auto& child = static_cast<const Child&>(*this);
     const auto* const d = child.data();
     if constexpr (ArrayPolicyType::isMakeConstReferenceTrivial) {
@@ -70,8 +70,8 @@ namespace tfel::math {
   constexpr typename ArrayPolicyType::const_reference
   ConstArrayCommonMethods<Child, ArrayPolicyType>::operator()(
       const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
-                       ArrayPolicyType::IndexingPolicy::arity>& i) const
-      noexcept {
+                       ArrayPolicyType::IndexingPolicy::arity>& i)
+      const noexcept {
     const auto& child = static_cast<const Child&>(*this);
     const auto* const d = child.data();
     if constexpr (ArrayPolicyType::isMakeConstReferenceTrivial) {
@@ -83,9 +83,8 @@ namespace tfel::math {
 
   template <typename Child, typename ArrayPolicyType>
   constexpr typename ArrayPolicyType::reference
-      MutableArrayCommonMethods<Child, ArrayPolicyType>::operator[](
-          const typename ArrayPolicyType::IndexingPolicy::size_type
-              i) noexcept {
+  MutableArrayCommonMethods<Child, ArrayPolicyType>::operator[](
+      const typename ArrayPolicyType::IndexingPolicy::size_type i) noexcept {
     static_assert(ArrayPolicyType::IndexingPolicy::arity == 1u, "invalid call");
     auto& child = static_cast<Child&>(*this);
     auto* const d = child.data();
@@ -98,10 +97,9 @@ namespace tfel::math {
 
   template <typename Child, typename ArrayPolicyType>
   constexpr typename ArrayPolicyType::reference
-      MutableArrayCommonMethods<Child, ArrayPolicyType>::operator[](
-          const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
-                           ArrayPolicyType::IndexingPolicy::arity>&
-              i) noexcept {
+  MutableArrayCommonMethods<Child, ArrayPolicyType>::operator[](
+      const std::array<typename ArrayPolicyType::IndexingPolicy::size_type,
+                       ArrayPolicyType::IndexingPolicy::arity>& i) noexcept {
     auto& child = static_cast<Child&>(*this);
     auto* const d = child.data();
     if constexpr (ArrayPolicyType::isMakeReferenceTrivial) {

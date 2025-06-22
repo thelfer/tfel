@@ -3,11 +3,11 @@
  * \brief  This file declares the CMaterialPropertyInterfaceBase class
  * \author Thomas Helfer
  * \date   06 mai 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -259,10 +259,10 @@ namespace mfront {
     /*!
      * \brief write catch blocks before the material property body
      * \param[out] os:  output file stream
-     * \param[in] msh: code returning the error message (a string must be escaped)
-     * \param[in] mpd: material property description
-     * \param[in] floating_point_type: floating-point type
-     * \param[in] use_qt: use quantities
+     * \param[in] msh: code returning the error message (a string must be
+     * escaped) \param[in] mpd: material property description \param[in]
+     * floating_point_type: floating-point type \param[in] use_qt: use
+     * quantities
      */
     virtual void returnInvalidValue(std::ostream&,
                                     std::string_view,
