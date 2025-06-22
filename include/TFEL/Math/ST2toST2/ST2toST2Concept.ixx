@@ -2,11 +2,11 @@
  * \file   include/TFEL/Math/ST2toST2/ST2toST2Concept.ixx
  * \brief
  * \author Thomas Helfer
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -24,8 +24,9 @@ namespace tfel {
   namespace math {
 
     template <class T>
-    TFEL_MATH_INLINE typename ST2toST2Traits<T>::NumType ST2toST2Concept<T>::
-    operator()(const unsigned short i, const unsigned short j) const {
+    TFEL_MATH_INLINE typename ST2toST2Traits<T>::NumType
+    ST2toST2Concept<T>::operator()(const unsigned short i,
+                                   const unsigned short j) const {
       return static_cast<const T&>(*this).operator()(i, j);
     }  // end of ST2toST2Concept<T>::operator()
 

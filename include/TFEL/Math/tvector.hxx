@@ -2,11 +2,11 @@
  * \file   include/TFEL/Math/tvector.hxx
  * \brief
  * \author Thomas Helfer
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -189,8 +189,8 @@ namespace tfel {
        * \param const unsigned short, index.
        * \return const T&, a reference to the tvector ith element.
        */
-      TFEL_MATH_INLINE constexpr const T& operator()(const unsigned short) const
-          noexcept;
+      TFEL_MATH_INLINE constexpr const T& operator()(
+          const unsigned short) const noexcept;
       /*!
        * \brief index operator.
        * This is a vector concept requirement.
@@ -204,8 +204,8 @@ namespace tfel {
        * Return the RunTimeProperties of the tvector
        * \return tvector::RunTimeProperties
        */
-      TFEL_MATH_INLINE constexpr RunTimeProperties getRunTimeProperties() const
-          noexcept;
+      TFEL_MATH_INLINE constexpr RunTimeProperties getRunTimeProperties()
+          const noexcept;
       /*!
        * copy the Nth elements following this argument.
        * \param const InputIterator, an iterator to the first element

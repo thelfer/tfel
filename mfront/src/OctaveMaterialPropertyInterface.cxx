@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date 06 mai 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -143,7 +143,7 @@ namespace mfront {
         << "#include<vector>\n"
         << "#include<cmath>\n"
         << "#include<octave/oct.h>\n"
-	<< "#include<octave//interpreter.h>\n\n";
+        << "#include<octave//interpreter.h>\n\n";
     if (!mpd.includes.empty()) {
       out << mpd.includes << "\n\n";
     }
@@ -260,8 +260,8 @@ namespace mfront {
               CMaterialPropertyInterfaceBase::getVariableNumber(mpd, i.name);
           if (b.boundsType == VariableBoundsDescription::LOWER) {
             out << "if(" << i.name << " < " << b.lowerBound << "){\n"
-                << get_out_of_bounds_policy //
-		<< "if(mfront_policy.is_defined()){\n"
+                << get_out_of_bounds_policy  //
+                << "if(mfront_policy.is_defined()){\n"
                 << "if(mfront_policy.is_string()){\n"
                 << "string msg(\"" << name << " : " << i.name
                 << " is below its physical lower bound.\");\n"
@@ -283,8 +283,8 @@ namespace mfront {
                 << "}\n";
           } else if (b.boundsType == VariableBoundsDescription::UPPER) {
             out << "if(" << i.name << " < " << b.lowerBound << "){\n"
-                << get_out_of_bounds_policy //
-		<< "if(mfront_policy.is_defined()){\n"
+                << get_out_of_bounds_policy  //
+                << "if(mfront_policy.is_defined()){\n"
                 << "if(mfront_policy.is_string()){\n"
                 << "string msg(\"" << i.name
                 << " is over its physical upper bound.\");\n"
@@ -307,8 +307,8 @@ namespace mfront {
           } else {
             out << "if((" << i.name << " < " << b.lowerBound << ")||"
                 << "(" << i.name << " > " << b.upperBound << ")){\n"
-                << get_out_of_bounds_policy //
-		<< "if(mfront_policy.is_defined()){\n"
+                << get_out_of_bounds_policy  //
+                << "if(mfront_policy.is_defined()){\n"
                 << "if(mfront_policy.is_string()){\n"
                 << "string msg(\"" << i.name << " is out of its bounds.\");\n"
                 << "if(mfront_policy.string_value()==\"STRICT\"){\n"

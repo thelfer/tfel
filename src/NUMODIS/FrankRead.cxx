@@ -3,7 +3,7 @@
  * \brief
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -55,12 +55,12 @@ namespace numodis {
     // range for betaF
     double bFmin = beta0 - pi;
     double bFmax = 0.0;
-    if (bFmin > bFmax) throw - 1;  // throw: ill-defined beta0 value
+    if (bFmin > bFmax) throw -1;  // throw: ill-defined beta0 value
 
     double Eq4min = this->Equation4(alpha, beta0, bFmin);
     double Eq4max = this->Equation4(alpha, beta0, bFmax);
     if (Eq4min * Eq4max > 0.0)
-      throw - 2;  // throw: both sides have positive values
+      throw -2;  // throw: both sides have positive values
 
     // find betaF using a simple bisection method
     int N = 0;
@@ -81,7 +81,7 @@ namespace numodis {
         Eq4max = Eq4mid;
       }
     }
-    throw - 3;  // throw: calculation did not converge
+    throw -3;  // throw: calculation did not converge
   }
 
   //=================================================================

@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   08 juin 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -71,10 +71,10 @@ namespace mfront {
     Parser::registerNewCallBack("--interface",
                                 &MaterialPropertyQuery::treatInterface,
                                 "define an interface", true);
-    Parser::registerCallBack("--no-gui",
-                             CallBack("do not display errors using "
-                                      "a message box (windows only)",
-                                      [] {}, false));
+    Parser::registerCallBack("--no-gui", CallBack(
+                                             "do not display errors using "
+                                             "a message box (windows only)",
+                                             [] {}, false));
     // standard queries
     const std::vector<std::pair<const char*, const char*>> sq = {
         {"--author", "show the author name"},

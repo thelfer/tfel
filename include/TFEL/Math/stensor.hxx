@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   04 May 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -383,8 +383,8 @@ namespace tfel {
        */
       TFEL_MATH_INLINE static constexpr stensor<N, T> Id();
 
-      TFEL_MATH_INLINE constexpr const T& operator()(const unsigned short) const
-          noexcept;
+      TFEL_MATH_INLINE constexpr const T& operator()(
+          const unsigned short) const noexcept;
 
       TFEL_MATH_INLINE T& operator()(const unsigned short) noexcept;
       // fsarray access operator
@@ -392,8 +392,8 @@ namespace tfel {
       /*!
        * \return the RunTimeProperties of the stensor
        */
-      constexpr TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const
-          noexcept;
+      constexpr TFEL_MATH_INLINE RunTimeProperties
+      getRunTimeProperties() const noexcept;
       /*!
        * copy the value from a container
        */

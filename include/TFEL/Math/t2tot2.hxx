@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   19 November 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -381,7 +381,8 @@ namespace tfel {
          (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
                                            T>::cond) &&
          T2toST2Traits<T2toST2Type>::dime == 1u),
-        void>::type convert(t2tot2<1u, T>&, const T2toST2Type&);
+        void>::type
+    convert(t2tot2<1u, T>&, const T2toST2Type&);
 
     template <typename T, typename T2toST2Type>
     typename std::enable_if<
@@ -389,7 +390,8 @@ namespace tfel {
          (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
                                            T>::cond) &&
          T2toST2Traits<T2toST2Type>::dime == 2u),
-        void>::type convert(t2tot2<2u, T>&, const T2toST2Type&);
+        void>::type
+    convert(t2tot2<2u, T>&, const T2toST2Type&);
 
     template <typename T, typename T2toST2Type>
     typename std::enable_if<
@@ -397,7 +399,8 @@ namespace tfel {
          (tfel::typetraits::IsAssignableTo<T2toST2NumType<T2toST2Type>,
                                            T>::cond) &&
          T2toST2Traits<T2toST2Type>::dime == 3u),
-        void>::type convert(t2tot2<3u, T>&, const T2toST2Type&);
+        void>::type
+    convert(t2tot2<3u, T>&, const T2toST2Type&);
 
   }  // end of namespace math
 

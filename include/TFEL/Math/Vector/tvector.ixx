@@ -4,11 +4,11 @@
  *
  * \author Thomas Helfer
  * \date   28 Jun 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -139,8 +139,8 @@ namespace tfel {
     }  // end of tvector<N,T>::tvector(const Expr<tvector<N,T2>,Operation>&)
 
     template <unsigned short N, typename T>
-    constexpr const T& tvector<N, T>::operator()(const unsigned short i) const
-        noexcept {
+    constexpr const T& tvector<N, T>::operator()(
+        const unsigned short i) const noexcept {
       return this->v[i];
     }
 
