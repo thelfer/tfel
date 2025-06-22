@@ -5,9 +5,9 @@
  * \brief  This file defines the Eshelby tensor for an ellipsoidal inclusion
  * embedded in an isotropic matrix. \copyright Copyright (C) 2006-2018 CEA/DEN,
  * EDF R&D. All rights reserved. This project is publicly released under either
- * the GNU GPL Licence or the CECILL-A licence. A copy of thoses licences are
- * delivered with the sources of TFEL. CEA or EDF may also distribute this
- * project under specific licensing conditions.
+ * the GNU GPL Licence with linking exception or the CECILL-A licence. A copy of
+ * thoses licences are delivered with the sources of TFEL. CEA or EDF may also
+ * distribute this project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATERIAL_ISOTROPICESHELBYTENSOR_IXX
@@ -138,15 +138,15 @@ namespace tfel::material::homogenization::elasticity {
     }
 
     const auto precision = [precf, precd, precld]() {
-      if constexpr (std::same_as<tfel::math::base_type<real>, long double>){
+      if constexpr (std::same_as<tfel::math::base_type<real>, long double>) {
         return precld;
-      } else if constexpr (std::same_as<tfel::math::base_type<real>, double>){
+      } else if constexpr (std::same_as<tfel::math::base_type<real>, double>) {
         return precd;
       } else {
         return precf;
       }
     }();
-    
+
     if (std::abs(e - 1) < precision) {
       return computeSphereEshelbyTensor<real>(nu);
     }
@@ -236,7 +236,8 @@ namespace tfel::material::homogenization::elasticity {
     }
     using namespace tfel::math;
     const auto n_3 = cross_product<real>(n_1, n_2);
-    const auto S0 = computeAxisymmetricalEshelbyTensor<real>(nu, e, precf, precd, precld);
+    const auto S0 =
+        computeAxisymmetricalEshelbyTensor<real>(nu, e, precf, precd, precld);
     const tfel::math::rotation_matrix<real> r = {
         n_1[0], n_1[1], n_1[2], n_2[0], n_2[1], n_2[2], n_3[0], n_3[1], n_3[2]};
     const auto S0_basis = change_basis(S0, r);
@@ -317,9 +318,9 @@ namespace tfel::material::homogenization::elasticity {
     }
 
     const auto precision = [precf, precd, precld]() {
-      if constexpr (std::same_as<tfel::math::base_type<real>, long double>){
+      if constexpr (std::same_as<tfel::math::base_type<real>, long double>) {
         return precld;
-      } else if constexpr (std::same_as<tfel::math::base_type<real>, double>){
+      } else if constexpr (std::same_as<tfel::math::base_type<real>, double>) {
         return precd;
       } else {
         return precf;
@@ -424,14 +425,14 @@ namespace tfel::material::homogenization::elasticity {
     const std::array<LengthType, 3> abc_ = {a, b, c};
     const auto sig = internals::sortEllipsoidLengths<LengthType>(a, b, c);
     const auto S0 = computeEshelbyTensor<StressType>(
-        nu, abc_[sig[0]], abc_[sig[1]], abc_[sig[2]],precf,precd,precld);
+        nu, abc_[sig[0]], abc_[sig[1]], abc_[sig[2]], precf, precd, precld);
     const std::array<tfel::math::tvector<3u, real>, 3> nabc_ = {n_a_, n_b_,
                                                                 n_c_};
     const auto n_1 = nabc_[sig[0]];
     const auto n_2 = nabc_[sig[1]];
     using namespace tfel::math;
     const auto n_3 = cross_product<real>(n_1, n_2);
-    //r is the global basis expressed in the local sorted basis (n1,n2,n3)
+    // r is the global basis expressed in the local sorted basis (n1,n2,n3)
     const rotation_matrix<real> r = {n_1[0], n_1[1], n_1[2], n_2[0], n_2[1],
                                      n_2[2], n_3[0], n_3[1], n_3[2]};
     const auto S0_basis = change_basis(S0, r);
@@ -503,7 +504,6 @@ namespace tfel::material::homogenization::elasticity {
         std::get<0>(Enu0), std::get<1>(Enu0), std::get<0>(Enui),
         std::get<1>(Enui));
   }  // end of function SphereLocalisationTensor
-
 
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<

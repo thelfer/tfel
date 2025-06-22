@@ -3,7 +3,7 @@
  * \author Antoine Martin
  * \date   23 January 2025
  * \brief  This file defines some well-known homogenization bounds.
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All
  * rights reserved. This project is publicly released under either the GNU GPL
  * Licence or the CECILL-A licence. A copy of thoses licences are delivered with
  * the sources of TFEL. CEA or EDF may also distribute this project under

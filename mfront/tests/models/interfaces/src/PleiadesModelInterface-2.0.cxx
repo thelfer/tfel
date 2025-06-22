@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   10 Nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -369,7 +369,7 @@ namespace mfront {
     l.sources.push_back(md.className + "-" + getName() + ".cxx");
     insert_if(l.cppflags, "$(shell pleiades-config --includes)");
     insert_if(l.cppflags,
-              "$(shell " + tfel_config + " --cppflags --compiler-flags)");    
+              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
     l.ldflags.push_back("`pleiades-config --libs` -lm");
     l.epts.push_back(md.className);
   }  // end of MFrontModelInterface::getTargetsDescription

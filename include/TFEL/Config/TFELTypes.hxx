@@ -3,11 +3,11 @@
  * \brief  This file implements the Types class
  * \author Thomas Helfer
  * \date   08 Aug 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -43,9 +43,15 @@ namespace tfel::config {
     typedef tfel::math::qt<tfel::math::unit::Frequency, T> strainrate;
     typedef tfel::math::qt<tfel::math::unit::Force, T> force;
     typedef tfel::math::qt<tfel::math::unit::Stress, T> stress;
-    typedef tfel::math::qt<tfel::math::GenerateUnit<-1, 1, 2, 0, 0, 0, 0>::type,T> compliance;
-    typedef tfel::math::qt<tfel::math::GenerateUnit<1, -1, -1, 0, 0, 0, 0>::type,T> viscosity;
-    typedef tfel::math::qt<tfel::math::GenerateUnit<-1, 1, 1, 0, 0, 0, 0>::type,T> viscouscompliance;
+    typedef tfel::math::qt<tfel::math::GenerateUnit<-1, 1, 2, 0, 0, 0, 0>::type,
+                           T>
+        compliance;
+    typedef tfel::math::
+        qt<tfel::math::GenerateUnit<1, -1, -1, 0, 0, 0, 0>::type, T>
+            viscosity;
+    typedef tfel::math::qt<tfel::math::GenerateUnit<-1, 1, 1, 0, 0, 0, 0>::type,
+                           T>
+        viscouscompliance;
     typedef tfel::math::qt<tfel::math::unit::StressRate, T> stressrate;
     typedef tfel::math::qt<tfel::math::unit::Temperature, T> temperature;
     typedef tfel::math::qt<tfel::math::unit::InvTemperature, T>
@@ -135,8 +141,9 @@ namespace tfel::config {
         ComplianceTensor;
     typedef tfel::math::st2tost2<N, typename ScalarTypes<T, true>::viscosity>
         ViscosityTensor;
-    typedef tfel::math::st2tost2<N, typename ScalarTypes<T, true>::viscouscompliance>
-        ViscousComplianceTensor;
+    typedef tfel::math::
+        st2tost2<N, typename ScalarTypes<T, true>::viscouscompliance>
+            ViscousComplianceTensor;
     typedef tfel::math::st2tost2<N, typename ScalarTypes<T, true>::stress>
         StiffnessTensor;
     typedef typename tfel::config::internals::PositionType<N, T, true>::type

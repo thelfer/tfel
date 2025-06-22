@@ -116,7 +116,7 @@ namespace mfront {
   std::pair<std::string, VariableBoundsDescription> readVariableBounds(
       tfel::utilities::CxxTokenizer::const_iterator& p,
       const tfel::utilities::CxxTokenizer::const_iterator pe);
-}
+}  // namespace mfront
 
 #include "MFront/DSLUtilities.ixx"
 

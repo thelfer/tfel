@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   22/06/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -75,7 +75,7 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     }
 
     const auto SAxi1 = computeAnisotropicEshelbyTensor<stress>(
-       C_0, n_a, lg{30}, n_b, lg{3}, lg{3}, 14);
+        C_0, n_a, lg{30}, n_b, lg{3}, lg{3}, 14);
     const auto SAxi2 = computeEshelbyTensor<stress>(nu, lg{30}, lg{3}, lg{3});
     for (int i : {0, 1, 2, 3, 4, 5}) {
       for (int j : {0, 1, 2, 3, 4, 5}) {
@@ -94,7 +94,7 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       }
     }
 #endif /* _LIBCPP_VERSION */
-  }  // end of test_Eshelby
+  }    // end of test_Eshelby
 
   template <typename NumericType, bool use_qt>
   void test_Eshelby2D() {
@@ -113,9 +113,8 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     static constexpr auto value =
         StiffnessTensorAlterationCharacteristic::UNALTERED;
     computeIsotropicStiffnessTensorII<2u, value, stress, real>(C_0, young, nu);
-    const auto S2D1 =
-        computePlainStrainAnisotropicEshelbyTensor<stress>(
-            C_0, n_a, lg{3}, lg{2}, 14);
+    const auto S2D1 = computePlainStrainAnisotropicEshelbyTensor<stress>(
+        C_0, n_a, lg{3}, lg{2}, 14);
     const auto S2D2 = computeEllipticCylinderEshelbyTensor(nu, real{1.5});
     for (int i : {0, 1, 2, 3}) {
       for (int j : {0, 1, 2, 3}) {
@@ -124,9 +123,8 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       }
     }
 
-    const auto S2DCir1 =
-        computePlainStrainAnisotropicEshelbyTensor<stress>(
-            C_0, n_a, lg{3}, lg{3}, 14);
+    const auto S2DCir1 = computePlainStrainAnisotropicEshelbyTensor<stress>(
+        C_0, n_a, lg{3}, lg{3}, 14);
     const auto S2DCir2 = computeCircularCylinderEshelbyTensor(nu);
     for (int i : {0, 1, 2, 3}) {
       for (int j : {0, 1, 2, 3}) {
@@ -136,7 +134,7 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       }
     }
 #endif /* _LIBCPP_VERSION */
-  }  // end of test_Eshelby2D
+  }    // end of test_Eshelby2D
 
   template <typename NumericType, bool use_qt>
   void test_localisator() {
@@ -174,7 +172,7 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       }
     }
 #endif /* _LIBCPP_VERSION */
-  }  // end of test_localisator
+  }    // end of test_localisator
 
 };  // end of struct AnisotropicEshelbyTensorTest
 

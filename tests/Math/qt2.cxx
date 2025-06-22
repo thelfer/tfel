@@ -4,7 +4,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   18 Jul 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -96,7 +96,9 @@ struct QtRefTest final : public tfel::tests::TestCase {
   void test5() {
     using namespace tfel::math;
     constexpr qt<unit::Mass> m3 = []() constexpr {
-      auto increase_mass = [](const qt<unit::Mass>& m) constexpr { return 2 * m; };
+      auto increase_mass = [](const qt<unit::Mass>& m) constexpr {
+        return 2 * m;
+      };
       auto v1 = double{50.};
       const_qt_ref<unit::Mass> m1(v1);
       return increase_mass(m1);

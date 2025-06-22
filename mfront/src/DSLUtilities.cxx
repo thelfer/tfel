@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/DSLUtilities.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   23/04/2025
  */
@@ -62,7 +62,7 @@ namespace mfront {
     return d.get<tfel::utilities::DataMap>();
   }  // end of read
 
-    std::pair<std::string, VariableBoundsDescription> readVariableBounds(
+  std::pair<std::string, VariableBoundsDescription> readVariableBounds(
       tfel::utilities::CxxTokenizer::const_iterator& p,
       const tfel::utilities::CxxTokenizer::const_iterator pe) {
     using tfel::utilities::CxxTokenizer;
@@ -171,5 +171,5 @@ namespace mfront {
     }
     return true;
   }
-  
+
 }  // end of namespace mfront

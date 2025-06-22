@@ -4,7 +4,7 @@
  *
  * \author Thomas Helfer
  * \date   05/05/2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -2205,9 +2205,8 @@ namespace mfront {
     CxxTokenizer::checkNotEndOfLine(
         "BehaviourDSLCommon::readElasticMaterialPropertiesI", p, pe);
     if (p->value != "{") {
-        this->throwRuntimeError(
-            "BehaviourDSLCommon::readElasticMaterialPropertiesI",
-            "expected '{'");
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::readElasticMaterialPropertiesI", "expected '{'");
     }
     ++p;
     // vector or map
@@ -2305,9 +2304,8 @@ namespace mfront {
     CxxTokenizer::checkNotEndOfLine(
         "BehaviourDSLCommon::readHillTensorDefinitionI", p, pe);
     if (p->value != "{") {
-        this->throwRuntimeError(
-            "BehaviourDSLCommon::readHillTensorDefinitionI",
-            "expected '{'");
+      this->throwRuntimeError("BehaviourDSLCommon::readHillTensorDefinitionI",
+                              "expected '{'");
     }
     ++p;
     // vector or map
@@ -2315,9 +2313,8 @@ namespace mfront {
         "BehaviourDSLCommon::readHillTensorDefinitionI", p, pe);
     if (p->value == "}") {
       ++p;
-      this->throwRuntimeError(
-          "BehaviourDSLCommon::readHillTensorDefinitionI",
-          "no material property given");
+      this->throwRuntimeError("BehaviourDSLCommon::readHillTensorDefinitionI",
+                              "no material property given");
     }
     // map or string vector
     ++p;

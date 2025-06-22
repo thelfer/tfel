@@ -5,9 +5,9 @@
  * \brief  This file declares the Eshelby tensor for an ellipsoidal inclusion
  * embedded in an isotropic matrix. \copyright Copyright (C) 2006-2018 CEA/DEN,
  * EDF R&D. All rights reserved. This project is publicly released under either
- * the GNU GPL Licence or the CECILL-A licence. A copy of thoses licences are
- * delivered with the sources of TFEL. CEA or EDF may also distribute this
- * project under specific licensing conditions.
+ * the GNU GPL Licence with linking exception or the CECILL-A licence. A copy of
+ * thoses licences are delivered with the sources of TFEL. CEA or EDF may also
+ * distribute this project under specific licensing conditions.
  */
 
 #ifndef LIB_TFEL_MATERIAL_ISOTROPICESHELBYTENSOR_HXX
@@ -363,15 +363,13 @@ namespace tfel::material::homogenization::elasticity {
    * A:E_0\f] where \f$E_0\f$ is the uniform strain tensor imposed at
    * infinity, and \f$\epsilon\f$ is the strain tensor solution of Eshelby
    * problem for the ellipsoid. The ellipsoid also has a specific
-   * orientation given by the vectors \f$n_a\f$, \f$n_b\f$, which provides a direct local basis \f$(n_a,n_b,n_c)\f$.
-   * The elasticity \f$C_i\f$ is specified in this local basis.
-   * \return an object of type st2tost2, which is the fourth-order localisation
-   * tensor \f$A\f$ (in the global basis).
-   * \return an object of type st2tost2
-   * \tparam real: underlying type
-   * \tparam StressType: type of
-   * the elastic constants related to the matrix and the ellipsoid
-   * \tparam LengthType: type of the dimensions of the ellipsoid
+   * orientation given by the vectors \f$n_a\f$, \f$n_b\f$, which provides a
+   * direct local basis \f$(n_a,n_b,n_c)\f$. The elasticity \f$C_i\f$ is
+   * specified in this local basis. \return an object of type st2tost2, which is
+   * the fourth-order localisation tensor \f$A\f$ (in the global basis). \return
+   * an object of type st2tost2 \tparam real: underlying type \tparam
+   * StressType: type of the elastic constants related to the matrix and the
+   * ellipsoid \tparam LengthType: type of the dimensions of the ellipsoid
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] C_i: elasticity of the inclusions
    * \param [in] n_a: direction of the principal axis whose length is \f$a\f$
@@ -380,7 +378,7 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] b: length of semi-axis relative to the direction \f$n_b\f$
    * \param [in] c: length of the remaining semi-axis
    */
-   
+
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,

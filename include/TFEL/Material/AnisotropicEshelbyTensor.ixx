@@ -5,9 +5,10 @@
  * \brief  This file defines the Eshelby tensor for an ellipsoidal inclusion
  * embedded in an anisotropic matrix. \copyright Copyright (C) 2006-2018
  * CEA/DEN, EDF R&D. All rights reserved. This project is publicly released
- * under either the GNU GPL Licence or the CECILL-A licence. A copy of thoses
- * licences are delivered with the sources of TFEL. CEA or EDF may also
- * distribute this project under specific licensing conditions.
+ * under either the GNU GPL Licence with linking exception or the CECILL-A
+ * licence. A copy of thoses licences are delivered with the sources of TFEL.
+ * CEA or EDF may also distribute this project under specific licensing
+ * conditions.
  */
 
 #ifndef LIB_TFEL_MATERIAL_ANISOTROPICESHELBYTENSOR_IXX
@@ -82,9 +83,8 @@ namespace tfel::material::homogenization::elasticity {
           real A_ik = real(0);
           for (int j = 0; j < N; j++)
             for (int l = 0; l < N; l++) {
-              A_ik += real(
-                  (tfel::math::getComponent(C, i, j, k, l)) /
-                  StressType(1) * X[j] * X[l]);
+              A_ik += real((tfel::math::getComponent(C, i, j, k, l)) /
+                           StressType(1) * X[j] * X[l]);
             }
           A(i, k) = A_ik;
           if (i != k) {
@@ -188,7 +188,7 @@ namespace tfel::material::homogenization::elasticity {
             };
             const auto int_p = compliance(
                 internals::integrate1D<real>(p_, zero, 2 * pi, max_it));
-            tfel::math::setComponent<compliance>(P, i, j, k, l,int_p);
+            tfel::math::setComponent<compliance>(P, i, j, k, l, int_p);
           }
     return change_basis(P * StressType(1), r_loc_glob) / StressType(1);
   }
