@@ -1,11 +1,11 @@
 /*!
  * \file   include/TFEL/Math/Matrix/MatrixConcept.ixx
  * \author Thomas Helfer
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -17,9 +17,10 @@ namespace tfel {
   namespace math {
 
     template <class T>
-    TFEL_MATH_INLINE typename MatrixTraits<T>::NumType MatrixConcept<T>::
-    operator()(const typename MatrixTraits<T>::IndexType i,
-               const typename MatrixTraits<T>::IndexType j) const {
+    TFEL_MATH_INLINE typename MatrixTraits<T>::NumType
+    MatrixConcept<T>::operator()(
+        const typename MatrixTraits<T>::IndexType i,
+        const typename MatrixTraits<T>::IndexType j) const {
       return static_cast<const T&>(*this).operator()(i, j);
     }
 

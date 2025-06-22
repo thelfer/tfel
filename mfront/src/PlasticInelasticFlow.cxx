@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   28/03/2018
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -82,8 +82,9 @@ namespace mfront {
         c += "}\n";
         auto kid = decltype(khrs.size()){};
         for (const auto& khr : khrs) {
-          c += khr->computeDerivatives("p" + id, "-dseq" + id + "_ds" + id + "/(" + snf + ")", id,
-                                       std::to_string(kid));
+          c += khr->computeDerivatives(
+              "p" + id, "-dseq" + id + "_ds" + id + "/(" + snf + ")", id,
+              std::to_string(kid));
           ++kid;
         }
       } else {

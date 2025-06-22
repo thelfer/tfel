@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \brief 26 mai 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -38,7 +38,8 @@ namespace zmat {
     template <typename T>
     static inline typename std::enable_if<
         std::is_same<tfel::typetraits::base_type<T>, double>::value,
-        void>::type convert(tfel::math::stensor<1u, T>&, const double* const);
+        void>::type
+    convert(tfel::math::stensor<1u, T>&, const double* const);
     /*!
      * convert an 2D ZMAT symmetric tensor to a TFEL one
      * \param[in] src  : source
@@ -47,7 +48,8 @@ namespace zmat {
     template <typename T>
     static inline typename std::enable_if<
         std::is_same<tfel::typetraits::base_type<T>, double>::value,
-        void>::type convert(tfel::math::stensor<2u, T>&, const double* const);
+        void>::type
+    convert(tfel::math::stensor<2u, T>&, const double* const);
     /*!
      * convert an 3D ZMAT symmetric tensor to a TFEL one
      * \param[in] src  : source
@@ -56,7 +58,8 @@ namespace zmat {
     template <typename T>
     static inline typename std::enable_if<
         std::is_same<tfel::typetraits::base_type<T>, double>::value,
-        void>::type convert(tfel::math::stensor<3u, T>&, const double* const);
+        void>::type
+    convert(tfel::math::stensor<3u, T>&, const double* const);
     /*!
      * convert an 1D TFEL symmetric tensor to a ZMAT one
      * \param[in] src  : source
@@ -95,7 +98,8 @@ namespace zmat {
     template <typename T>
     static inline typename std::enable_if<
         std::is_same<tfel::typetraits::base_type<T>, double>::value,
-        void>::type convert(tfel::math::tensor<1u, T>&, const double* const);
+        void>::type
+    convert(tfel::math::tensor<1u, T>&, const double* const);
     /*!
      * convert an 2D ZMAT  tensor to a TFEL one
      * \param[in] src  : source
@@ -104,7 +108,8 @@ namespace zmat {
     template <typename T>
     static inline typename std::enable_if<
         std::is_same<tfel::typetraits::base_type<T>, double>::value,
-        void>::type convert(tfel::math::tensor<2u, T>&, const double* const);
+        void>::type
+    convert(tfel::math::tensor<2u, T>&, const double* const);
     /*!
      * convert an 3D ZMAT  tensor to a TFEL one
      * \param[in] src  : source
@@ -113,7 +118,8 @@ namespace zmat {
     template <typename T>
     static inline typename std::enable_if<
         std::is_same<tfel::typetraits::base_type<T>, double>::value,
-        void>::type convert(tfel::math::tensor<3u, T>&, const double* const);
+        void>::type
+    convert(tfel::math::tensor<3u, T>&, const double* const);
     /*!
      * convert an 1D TFEL  tensor to a ZMAT one
      * \param[in] src  : source
@@ -182,7 +188,8 @@ namespace zmat {
     template <typename T>
     static inline typename std::enable_if<
         std::is_same<tfel::typetraits::base_type<T>, double>::value,
-        void>::type convert(tfel::math::st2tost2<1u, T>&, const ZSET::MATRIX&);
+        void>::type
+    convert(tfel::math::st2tost2<1u, T>&, const ZSET::MATRIX&);
     /*!
      * convert a 2D ZMAT stiffness tensor to a TFEL one
      * \param[in] src  : source
@@ -191,7 +198,8 @@ namespace zmat {
     template <typename T>
     static inline typename std::enable_if<
         std::is_same<tfel::typetraits::base_type<T>, double>::value,
-        void>::type convert(tfel::math::st2tost2<2u, T>&, const ZSET::MATRIX&);
+        void>::type
+    convert(tfel::math::st2tost2<2u, T>&, const ZSET::MATRIX&);
     /*!
      * \brief convert an ZSET stiffness tensor to a TFEL one
      * \param[in] src:  source
@@ -200,7 +208,8 @@ namespace zmat {
     template <typename T>
     static inline typename std::enable_if<
         std::is_same<tfel::typetraits::base_type<T>, double>::value,
-        void>::type convert(tfel::math::st2tost2<3u, T>&, const ZSET::MATRIX&);
+        void>::type
+    convert(tfel::math::st2tost2<3u, T>&, const ZSET::MATRIX&);
   };
 
 }  // end of namespace zmat

@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   23 janv. 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -73,17 +73,19 @@ namespace tfel {
         default;
 
     template <std::size_t N, typename CharT, typename Traits>
-    basic_fcstring<N, CharT, Traits>& basic_fcstring<N, CharT, Traits>::
-    operator=(basic_fcstring&&) = default;
+    basic_fcstring<N, CharT, Traits>&
+    basic_fcstring<N, CharT, Traits>::operator=(basic_fcstring&&) = default;
 
     template <std::size_t N, typename CharT, typename Traits>
-    basic_fcstring<N, CharT, Traits>& basic_fcstring<N, CharT, Traits>::
-    operator=(const basic_fcstring&) = default;
+    basic_fcstring<N, CharT, Traits>&
+    basic_fcstring<N, CharT, Traits>::operator=(const basic_fcstring&) =
+        default;
 
     template <std::size_t N, typename CharT, typename Traits>
     template <typename Alloc>
-    basic_fcstring<N, CharT, Traits>& basic_fcstring<N, CharT, Traits>::
-    operator=(const std::basic_string<CharT, Traits, Alloc>& rhs) {
+    basic_fcstring<N, CharT, Traits>&
+    basic_fcstring<N, CharT, Traits>::operator=(
+        const std::basic_string<CharT, Traits, Alloc>& rhs) {
       const auto s = rhs.size();
       tfel::raise_if<std::length_error>(s > N,
                                         "basic_fcstring::operator = "
@@ -95,8 +97,9 @@ namespace tfel {
 
     template <std::size_t N, typename CharT, typename Traits>
     template <std::size_t N2>
-    basic_fcstring<N, CharT, Traits>& basic_fcstring<N, CharT, Traits>::
-    operator=(const CStringNarrowedView<N2, CharT>& rhs) {
+    basic_fcstring<N, CharT, Traits>&
+    basic_fcstring<N, CharT, Traits>::operator=(
+        const CStringNarrowedView<N2, CharT>& rhs) {
       const auto s = [&rhs] {
         for (std::size_t i = 0; i != N2; ++i) {
           if (rhs.value[i] == '\0') {
@@ -114,8 +117,8 @@ namespace tfel {
     }  // end of basic_fcstring<N,CharT,Traits>::operator =
 
     template <std::size_t N, typename CharT, typename Traits>
-    basic_fcstring<N, CharT, Traits>& basic_fcstring<N, CharT, Traits>::
-    operator=(const CharT* rhs) {
+    basic_fcstring<N, CharT, Traits>&
+    basic_fcstring<N, CharT, Traits>::operator=(const CharT* rhs) {
       const auto s = basic_fcstring::strnlen(rhs);
       tfel::raise_if<std::length_error>(s > N,
                                         "basic_fcstring::operator = "
@@ -152,8 +155,9 @@ namespace tfel {
     }  // end of basic_fcstring<N,CharT,Traits>::at
 
     template <std::size_t N, typename CharT, typename Traits>
-    basic_fcstring<N, CharT, Traits>::
-    operator std::basic_string<CharT, Traits>() const {
+    basic_fcstring<N, CharT, Traits>::operator std::basic_string<CharT,
+                                                                 Traits>()
+        const {
       return std::basic_string<CharT, Traits>(this->data());
     }  // end of basic_fcstring<N,CharT,Traits>::operator std::string
 

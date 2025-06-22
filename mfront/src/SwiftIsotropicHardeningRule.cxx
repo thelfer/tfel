@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -106,7 +106,8 @@ namespace mfront {
       const auto nn = IsotropicHardeningRule::getVariableId("E", fid, id);
       const auto pn = "p" + fid;
       auto c = "const auto " + R + " = (this->" + pn +
-               "+(this->theta)*(this->d" + pn + ") > strain(0)) ? (this->" + R0n + ")*";
+               "+(this->theta)*(this->d" + pn + ") > strain(0)) ? (this->" +
+               R0n + ")*";
       c += "pow((this->" + pn + "+(this->theta)*(this->d" + pn + ")+this->" +
            p0n + ")/(this->" + p0n + "),this->" + nn + ") : this->" + R0n +
            ";\n";

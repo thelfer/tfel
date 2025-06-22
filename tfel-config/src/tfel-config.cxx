@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   27/08/2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -253,8 +253,8 @@ static void listOptions(std::ostream& os) {
 }  // end of listOptions
 
 TFEL_NORETURN static void treatVersion() {
-  std::cout << "tfel-config " << VERSION
-            << " (git hash: " << TFEL_GIT_HASH << ")" << std::endl;
+  std::cout << "tfel-config " << VERSION << " (git hash: " << TFEL_GIT_HASH
+            << ")" << std::endl;
   std::exit(EXIT_SUCCESS);
 }  // end of treatHelp
 
@@ -322,125 +322,151 @@ int main(const int argc, const char* const* const argv) {
   try {
 #endif /* __CYGWIN__ */
 
-    registerCallBack("--compiler-flags", [] { compilerflags = true; },
-                     "return tfel recommended compiler flags.");
-    registerCallBack("--oflags0", [] { oflags0 = true; },
-                     "return tfel recommended optimisation "
-                     "flags without architecture specific flags.");
-    registerCallBack("--oflags", [] { oflags0 = oflags = true; },
-                     "return tfel recommended optimisation "
-                     "flags with architecture specific flags.");
-    registerCallBack("--oflags2", [] { oflags2 = true; },
-                     "return some aggressive optimisation flags, "
-                     "possibly at the expense of numerical precision. "
-                     "This shall be added to `--oflags` results.");
-    registerCallBack("--warning", [] { warning = true; },
-                     "return tfel recommended warnings.");
-    registerCallBack("--includes", [] { incs = true; },
-                     "return tfel include path.");
-    registerCallBack("--cppflags", [] { cppflags = true; },
-                     "return preprocessor flags.");
-    registerCallBack("--ldflags", [] { ldflags = true; },
-                     "return linking flags.");
-    registerCallBack("--libs", [] { ldflags = true; }, "return linking flags.");
-    registerCallBack("--include-path", [] { incspath = true; },
-                     "return the path to the `TFEL` headers.");
-    registerCallBack("--library-path", [] { libspath = true; },
-                     "return the path to the `TFEL` library.");
-    registerCallBack("--library-dependency", [] { libsdeps = true; },
-                     "return the dependencies of a `TFEL` library.");
+    registerCallBack(
+        "--compiler-flags", [] { compilerflags = true; },
+        "return tfel recommended compiler flags.");
+    registerCallBack(
+        "--oflags0", [] { oflags0 = true; },
+        "return tfel recommended optimisation "
+        "flags without architecture specific flags.");
+    registerCallBack(
+        "--oflags", [] { oflags0 = oflags = true; },
+        "return tfel recommended optimisation "
+        "flags with architecture specific flags.");
+    registerCallBack(
+        "--oflags2", [] { oflags2 = true; },
+        "return some aggressive optimisation flags, "
+        "possibly at the expense of numerical precision. "
+        "This shall be added to `--oflags` results.");
+    registerCallBack(
+        "--warning", [] { warning = true; },
+        "return tfel recommended warnings.");
+    registerCallBack(
+        "--includes", [] { incs = true; }, "return tfel include path.");
+    registerCallBack(
+        "--cppflags", [] { cppflags = true; }, "return preprocessor flags.");
+    registerCallBack(
+        "--ldflags", [] { ldflags = true; }, "return linking flags.");
+    registerCallBack(
+        "--libs", [] { ldflags = true; }, "return linking flags.");
+    registerCallBack(
+        "--include-path", [] { incspath = true; },
+        "return the path to the `TFEL` headers.");
+    registerCallBack(
+        "--library-path", [] { libspath = true; },
+        "return the path to the `TFEL` library.");
+    registerCallBack(
+        "--library-dependency", [] { libsdeps = true; },
+        "return the dependencies of a `TFEL` library.");
     registerCallBack("--help", &treatHelp, "print this help message.");
 #ifdef HAVE_CASTEM
-    registerCallBack("--castem", [] { castem = true; },
-                     "request flags for castem.");
+    registerCallBack(
+        "--castem", [] { castem = true; }, "request flags for castem.");
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ZMAT
-    registerCallBack("--zmat", [] { zmat = true; }, "request flags for zmat.");
+    registerCallBack(
+        "--zmat", [] { zmat = true; }, "request flags for zmat.");
 #endif /* HAVE_ZMAT */
-    registerCallBack("--exceptions", [] { exceptions = true; },
-                     "request flags for libTFELException.");
-    registerCallBack("--math", [] { math = exceptions = true; },
-                     "request flags for libTFELMath.");
-    registerCallBack("--math-kriging",
-                     [] { mathKriging = math = exceptions = true; },
-                     "request flags for libTFELMathKriging.");
-    registerCallBack("--math-cubic-spline",
-                     [] { mathCubicSpline = math = exceptions = true; },
-                     "request flags for libTFELMathCubicSpline.");
-    registerCallBack("--math-parser",
-                     [] {
+    registerCallBack(
+        "--exceptions", [] { exceptions = true; },
+        "request flags for libTFELException.");
+    registerCallBack(
+        "--math", [] { math = exceptions = true; },
+        "request flags for libTFELMath.");
+    registerCallBack(
+        "--math-kriging", [] { mathKriging = math = exceptions = true; },
+        "request flags for libTFELMathKriging.");
+    registerCallBack(
+        "--math-cubic-spline",
+        [] { mathCubicSpline = math = exceptions = true; },
+        "request flags for libTFELMathCubicSpline.");
+    registerCallBack(
+        "--math-parser",
+        [] {
 #if __cplusplus < 201703L
-                       physicalConstants = true;
+          physicalConstants = true;
 #endif /* __cplusplus > 201703L */
-                       math = exceptions = true;
-                       mathParser = mathKriging = true;
-                     },
-                     "request flags for libTFELMathParser.");
-    registerCallBack("--tests", [] { tests = true; },
-                     "request flags for libTFELTests.");
-    registerCallBack("--physical-constants", [] { physicalConstants = true; },
-                     "request flags for libTFELPhysicalConstants.");
-    registerCallBack("--system", [] { lsystem = exceptions = true; },
-                     "request flags for libTFELSystem.");
-    registerCallBack("--utilities", [] { utilities = true; },
-                     "request flags for libTFELUtilities.");
-    registerCallBack("--glossary", [] { glossary = true; },
-                     "request flags for libTFELGlossary.");
-    registerCallBack("--material",
-                     [] {
-                       exceptions = numodis = true;
-                       material = utilities = math = true;
-                     },
-                     "request flags for libTFELMaterial.");
-    registerCallBack("--numodis", [] { numodis = true; },
-                     "request flags for libTFELNUMODIS.");
-    registerCallBack("--mfront-profiling", [] { mfront_profiling = true; },
-                     "request flags for libMFrontProfiling.");
-    registerCallBack("--all",
-                     [] {
-                       exceptions = math = numodis = material = true;
-                       utilities = glossary = lsystem = tests = true;
-                       mfront_profiling = true;
-                     },
-                     "request flags for all librairies.");
+          math = exceptions = true;
+          mathParser = mathKriging = true;
+        },
+        "request flags for libTFELMathParser.");
+    registerCallBack(
+        "--tests", [] { tests = true; }, "request flags for libTFELTests.");
+    registerCallBack(
+        "--physical-constants", [] { physicalConstants = true; },
+        "request flags for libTFELPhysicalConstants.");
+    registerCallBack(
+        "--system", [] { lsystem = exceptions = true; },
+        "request flags for libTFELSystem.");
+    registerCallBack(
+        "--utilities", [] { utilities = true; },
+        "request flags for libTFELUtilities.");
+    registerCallBack(
+        "--glossary", [] { glossary = true; },
+        "request flags for libTFELGlossary.");
+    registerCallBack(
+        "--material",
+        [] {
+          exceptions = numodis = true;
+          material = utilities = math = true;
+        },
+        "request flags for libTFELMaterial.");
+    registerCallBack(
+        "--numodis", [] { numodis = true; },
+        "request flags for libTFELNUMODIS.");
+    registerCallBack(
+        "--mfront-profiling", [] { mfront_profiling = true; },
+        "request flags for libMFrontProfiling.");
+    registerCallBack(
+        "--all",
+        [] {
+          exceptions = math = numodis = material = true;
+          utilities = glossary = lsystem = tests = true;
+          mfront_profiling = true;
+        },
+        "request flags for all librairies.");
     registerCallBack("--version", &treatVersion,
                      "print tfel version and svn revision.");
-    registerCallBack("--major-number",
-                     [] {
-                       const auto v = tokenize(VERSION, '.');
-                       if (v.size() >= 1) {
-                         std::cout << v[0] << " ";
-                       }
-                     },
-                     "print tfel major version.");
-    registerCallBack("--minor-number",
-                     [] {
-                       const auto v = tokenize(VERSION, '.');
-                       if (v.size() >= 2) {
-                         std::cout << v[1] << " ";
-                       }
-                     },
-                     "print tfel minor version.");
-    registerCallBack("--revision-number",
-                     [] {
-                       const auto v = tokenize(VERSION, '.');
-                       if (v.size() >= 3) {
-                         std::cout << v[2] << " ";
-                       }
-                     },
-                     "print tfel revision version.");
-    registerCallBack("--cxx-standard",
-                     [] {
+    registerCallBack(
+        "--major-number",
+        [] {
+          const auto v = tokenize(VERSION, '.');
+          if (v.size() >= 1) {
+            std::cout << v[0] << " ";
+          }
+        },
+        "print tfel major version.");
+    registerCallBack(
+        "--minor-number",
+        [] {
+          const auto v = tokenize(VERSION, '.');
+          if (v.size() >= 2) {
+            std::cout << v[1] << " ";
+          }
+        },
+        "print tfel minor version.");
+    registerCallBack(
+        "--revision-number",
+        [] {
+          const auto v = tokenize(VERSION, '.');
+          if (v.size() >= 3) {
+            std::cout << v[2] << " ";
+          }
+        },
+        "print tfel revision version.");
+    registerCallBack(
+        "--cxx-standard",
+        [] {
 #if __cplusplus >= 201703L
-                       std::cout << "17";
+          std::cout << "17";
 #elif __cplusplus >= 201402L
-                     std::cout << "14";
+        std::cout << "14";
 #else  /* __cplusplus >= 201703L */
-                     std::cout << "11";
+        std::cout << "11";
 #endif /* __cplusplus >= 201703L */
-                     },
-                     "print the version of the C++ standard "
-                     "used to compile TFEL.");
+        },
+        "print the version of the C++ standard "
+        "used to compile TFEL.");
     registerCallBack("--licence", &treatLicences, "print tfel licences.");
 #ifdef TFEL_PYTHON_BINDINGS
     registerCallBack(
@@ -542,12 +568,12 @@ int main(const int argc, const char* const* const argv) {
       const auto* const cxx_standard =
           getenv("TFEL_CXX_STANDARD_COMPILER_FLAG");
       if (cxx_standard != nullptr) {
-	std::cout << " " << cxx_standard << " ";
+        std::cout << " " << cxx_standard << " ";
         auto ncompiler_cxxflags = std::string{};
         replace_all(ncompiler_cxxflags, COMPILER_CXXFLAGS, "-std=c++11", "");
-	std::cout << COMPILER_FLAGS << " " << ncompiler_cxxflags << " ";
+        std::cout << COMPILER_FLAGS << " " << ncompiler_cxxflags << " ";
       } else {
-	std::cout << COMPILER_FLAGS << " " << COMPILER_CXXFLAGS << " ";
+        std::cout << COMPILER_FLAGS << " " << COMPILER_CXXFLAGS << " ";
       }
     }
 
