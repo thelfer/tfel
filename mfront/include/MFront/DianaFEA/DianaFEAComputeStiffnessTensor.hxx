@@ -3,11 +3,11 @@
  * \brief  This file declares the DianaFEAComputeStiffnessTensor class
  * \author Thomas Helfer
  * \date   18 mar 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -30,9 +30,9 @@ namespace dianafea {
    * \param[in]  props : material properties
    */
   MFRONT_DIANAFEA_VISIBILITY_EXPORT void
-      DianaFEAComputeIsotropicStiffnessTensor2D(
-          tfel::config::Types<2u, float, false>::StiffnessTensor&,
-          const float* const);
+  DianaFEAComputeIsotropicStiffnessTensor2D(
+      tfel::config::Types<2u, float, false>::StiffnessTensor&,
+      const float* const);
   /*!
    * \brief compute the stiffness tensor for plane strain, generalised
    * plane strain and axisymmetrical hypotheses.
@@ -40,9 +40,9 @@ namespace dianafea {
    * \param[in]  props : material properties
    */
   MFRONT_DIANAFEA_VISIBILITY_EXPORT void
-      DianaFEAComputeIsotropicStiffnessTensor2D(
-          tfel::config::Types<2u, double, false>::StiffnessTensor&,
-          const double* const);
+  DianaFEAComputeIsotropicStiffnessTensor2D(
+      tfel::config::Types<2u, double, false>::StiffnessTensor&,
+      const double* const);
   /*!
    * \brief compute the stiffness tensor for plane stress modelling
    * hypothesis.
@@ -50,9 +50,9 @@ namespace dianafea {
    * \param[in]  props : material properties
    */
   MFRONT_DIANAFEA_VISIBILITY_EXPORT void
-      DianaFEAComputeIsotropicPlaneStressAlteredStiffnessTensor(
-          tfel::config::Types<2u, float, false>::StiffnessTensor&,
-          const float* const);
+  DianaFEAComputeIsotropicPlaneStressAlteredStiffnessTensor(
+      tfel::config::Types<2u, float, false>::StiffnessTensor&,
+      const float* const);
   /*!
    * \brief compute the stiffness tensor for plane stress modelling
    * hypothesis.
@@ -60,9 +60,9 @@ namespace dianafea {
    * \param[in]  props : material properties
    */
   MFRONT_DIANAFEA_VISIBILITY_EXPORT void
-      DianaFEAComputeIsotropicPlaneStressAlteredStiffnessTensor(
-          tfel::config::Types<2u, double, false>::StiffnessTensor&,
-          const double* const);
+  DianaFEAComputeIsotropicPlaneStressAlteredStiffnessTensor(
+      tfel::config::Types<2u, double, false>::StiffnessTensor&,
+      const double* const);
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
    * modelling hypothesis.
@@ -70,9 +70,9 @@ namespace dianafea {
    * \param[in]  props : material properties
    */
   MFRONT_DIANAFEA_VISIBILITY_EXPORT void
-      DianaFEAComputeIsotropicStiffnessTensor3D(
-          tfel::config::Types<3u, float, false>::StiffnessTensor&,
-          const float* const);
+  DianaFEAComputeIsotropicStiffnessTensor3D(
+      tfel::config::Types<3u, float, false>::StiffnessTensor&,
+      const float* const);
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
    * modelling hypothesis.
@@ -80,9 +80,9 @@ namespace dianafea {
    * \param[in]  props : material properties
    */
   MFRONT_DIANAFEA_VISIBILITY_EXPORT void
-      DianaFEAComputeIsotropicStiffnessTensor3D(
-          tfel::config::Types<3u, double, false>::StiffnessTensor&,
-          const double* const);
+  DianaFEAComputeIsotropicStiffnessTensor3D(
+      tfel::config::Types<3u, double, false>::StiffnessTensor&,
+      const double* const);
   /*!
    * \brief compute the stiffness tensor for plane strain, generalised
    * plane strain and axisymmetrical hypotheses.
@@ -90,9 +90,9 @@ namespace dianafea {
    * \param[in]  props : material properties
    */
   MFRONT_DIANAFEA_VISIBILITY_EXPORT void
-      DianaFEAComputeOrthotropicStiffnessTensor2D(
-          tfel::config::Types<2u, float, false>::StiffnessTensor&,
-          const float* const);
+  DianaFEAComputeOrthotropicStiffnessTensor2D(
+      tfel::config::Types<2u, float, false>::StiffnessTensor&,
+      const float* const);
   /*!
    * \brief compute the stiffness tensor for plane strain, generalised
    * plane strain and axisymmetrical hypotheses.
@@ -100,9 +100,9 @@ namespace dianafea {
    * \param[in]  props : material properties
    */
   MFRONT_DIANAFEA_VISIBILITY_EXPORT void
-      DianaFEAComputeOrthotropicStiffnessTensor2D(
-          tfel::config::Types<2u, double, false>::StiffnessTensor&,
-          const double* const);
+  DianaFEAComputeOrthotropicStiffnessTensor2D(
+      tfel::config::Types<2u, double, false>::StiffnessTensor&,
+      const double* const);
   /*!
    * \brief compute the stiffness tensor for plane stress modelling
    * hypothesis.
@@ -110,9 +110,9 @@ namespace dianafea {
    * \param[in]  props : material properties
    */
   MFRONT_DIANAFEA_VISIBILITY_EXPORT void
-      DianaFEAComputeOrthotropicPlaneStressAlteredStiffnessTensor(
-          tfel::config::Types<2u, float, false>::StiffnessTensor&,
-          const float* const);
+  DianaFEAComputeOrthotropicPlaneStressAlteredStiffnessTensor(
+      tfel::config::Types<2u, float, false>::StiffnessTensor&,
+      const float* const);
   /*!
    * \brief compute the stiffness tensor for plane stress modelling
    * hypothesis.
@@ -120,9 +120,9 @@ namespace dianafea {
    * \param[in]  props : material properties
    */
   MFRONT_DIANAFEA_VISIBILITY_EXPORT void
-      DianaFEAComputeOrthotropicPlaneStressAlteredStiffnessTensor(
-          tfel::config::Types<2u, double, false>::StiffnessTensor&,
-          const double* const);
+  DianaFEAComputeOrthotropicPlaneStressAlteredStiffnessTensor(
+      tfel::config::Types<2u, double, false>::StiffnessTensor&,
+      const double* const);
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
    * modelling hypothesis.
@@ -130,9 +130,9 @@ namespace dianafea {
    * \param[in]  props : material properties
    */
   MFRONT_DIANAFEA_VISIBILITY_EXPORT void
-      DianaFEAComputeOrthotropicStiffnessTensor3D(
-          tfel::config::Types<3u, float, false>::StiffnessTensor&,
-          const float* const);
+  DianaFEAComputeOrthotropicStiffnessTensor3D(
+      tfel::config::Types<3u, float, false>::StiffnessTensor&,
+      const float* const);
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
    * modelling hypothesis.
@@ -140,9 +140,9 @@ namespace dianafea {
    * \param[in]  props : material properties
    */
   MFRONT_DIANAFEA_VISIBILITY_EXPORT void
-      DianaFEAComputeOrthotropicStiffnessTensor3D(
-          tfel::config::Types<3u, double, false>::StiffnessTensor&,
-          const double* const);
+  DianaFEAComputeOrthotropicStiffnessTensor3D(
+      tfel::config::Types<3u, double, false>::StiffnessTensor&,
+      const double* const);
 
   /*!
    * This structure is in charge of computing the Stiffness operator

@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date 01/01/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -64,8 +64,8 @@ namespace tfel::math {
     //!
     constexpr size_type getIndex(const size_type i) const noexcept { return i; }
     //!
-    constexpr size_type getIndex(const std::array<size_type, 1u>& i) const
-        noexcept {
+    constexpr size_type getIndex(
+        const std::array<size_type, 1u>& i) const noexcept {
       return this->getIndex(i[0]);
     }
     /*!
@@ -147,13 +147,13 @@ namespace tfel::math {
     constexpr RuntimeRowMajorMatrixIndexingPolicy& operator=(
         const RuntimeRowMajorMatrixIndexingPolicy&) = default;
     //!
-    constexpr size_type getIndex(const size_type i, const size_type j) const
-        noexcept {
+    constexpr size_type getIndex(const size_type i,
+                                 const size_type j) const noexcept {
       return i * this->n_columns + j;
     }
     //!
-    constexpr size_type getIndex(const std::array<size_type, 2u> indices) const
-        noexcept {
+    constexpr size_type getIndex(
+        const std::array<size_type, 2u> indices) const noexcept {
       return this->getIndex(indices[0], indices[1]);
     }
     //! \return the minimal data size

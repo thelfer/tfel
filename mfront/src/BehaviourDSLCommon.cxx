@@ -4,7 +4,7 @@
  *
  * \author Thomas Helfer
  * \date   05/05/2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -907,7 +907,7 @@ namespace mfront {
       getLogStream() << "BehaviourDSLCommon::getModelDescription: "
                      << "treating file '" << f << "'\n";
     }
-    // 
+    //
     const auto path = SearchPathsHandler::search(f);
     // a simple test to fix Issue #524
     const auto adsl = MFrontBase::getDSL(path);
