@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \brief 14 mai 2009
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -259,7 +259,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
       << " * \\file   Glossary.hxx\n"
       << " * \\author Thomas Helfer\n"
       << " * \\date   09/06/14\n"
-      << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights\n"
+      << " * \\copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights\n"
       << " * reserved.\n"
       << " * This project is publicly released under either the GNU GPL "
          "Licence\n"
@@ -363,7 +363,7 @@ void generateCxxOutput(const GlossaryTokenizer& tokenizer) {
       << " * \\file   Glossary.cxx\n"
       << " * \\author Thomas Helfer\n"
       << " * \\date   09/06/14\n"
-      << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights\n"
+      << " * \\copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights\n"
       << " * reserved.\n"
       << " * This project is publicly released under either the GNU GPL "
          "Licence\n"
@@ -683,7 +683,7 @@ void generateBoostPythonBindings(const GlossaryTokenizer& tokenizer) {
       << " * \\file   PythonGlossary.cxx\n"
       << " * \\author Thomas Helfer\n"
       << " * \\date   09/06/14\n"
-      << " * \\copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights\n"
+      << " * \\copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights\n"
       << " * reserved.\n"
       << " * This project is publicly released under either the GNU GPL "
          "Licence\n"
