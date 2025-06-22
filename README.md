@@ -35,13 +35,14 @@ distributions of TFEL.
 project. Since svn revision 584, TFEL was part of the `PLEIADES`
 project.
 
-Starting from versions 2.x, TFEL has been publicly released under
-either the GPL or the CECILL-A licence. A copy of those licences are
-delivered with the sources of TFEL. CEA or EDF may also distribute
-this project under specific licensing conditions.
+Starting from versions 2.x, TFEL has been publicly released under either
+the GPL or the CECILL-A licence. A copy of those licences are delivered
+with the sources of TFEL. CEA or EDF may also distribute this project
+under specific licensing conditions. Since 2023, the linking exception
+clause was added to the GPL licence.
 
 Copyright (C) 2006-2013 CEA/DEN. All rights reserved. 
-Copyright (C) 2014-2015 CEA/DEN, EDF R&D. All rights reserved. 
+Copyright (C) 2014-2025 CEA/DEN, EDF R&D. All rights reserved. 
 
 # How to cite `TFEL/MFront`
 
