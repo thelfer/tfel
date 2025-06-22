@@ -3,7 +3,7 @@
  * \brief
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -68,7 +68,7 @@ namespace numodis {
     double Eqmin = this->computeFx(phimin, 0.0, phimin, 0.0);
     double Eqmax = this->computeFx(phimax, 0.0, phimax, 0.0);
     if (Eqmin * Eqmax > 0.0)
-      throw - 1;  // throw: both sides have positive values
+      throw -1;  // throw: both sides have positive values
 
     // find phi using a simple bisection method
     int N = 0;
@@ -89,7 +89,7 @@ namespace numodis {
       }
     }
 
-    throw - 2;  // throw: calculation did not converge
+    throw -2;  // throw: calculation did not converge
   }
 
   //===================================================================
@@ -122,7 +122,7 @@ namespace numodis {
         beta0 = this->computeEquilibriumBeta0(phi);
       } catch (int) {
         std::cerr << "=> could not find beta0 at equilibrium" << std::endl;
-        throw - 1;
+        throw -1;
       }
 
       // compute betaF from beta0
@@ -131,7 +131,7 @@ namespace numodis {
         betaF = _lt0.computeBetaF(_alpha0 - phi, beta0, tol, Nmax);
       } catch (int) {
         std::cerr << "=> could not find betaF from beta0" << std::endl;
-        throw - 2;
+        throw -2;
       }
       // compute the corresponding stress
       double sigma =
@@ -171,7 +171,7 @@ namespace numodis {
     double Fxmin = this->computeFx(phi, beta0min, phi, 0.0);
     double Fxmax = this->computeFx(phi, beta0max, phi, 0.0);
     if (Fxmin * Fxmax > 0.0)
-      throw - 1;  // throw: both sides have the same values
+      throw -1;  // throw: both sides have the same values
 
     // find beta0 using a simple bisection method
     int N = 0;
@@ -191,7 +191,7 @@ namespace numodis {
         Fxmax = Fxmid;
       }
     }
-    throw - 2;  // throw: calculation did not converge
+    throw -2;  // throw: calculation did not converge
   }
 
 }  // end of namespace numodis

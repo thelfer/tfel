@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   01/10/2020
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -147,8 +147,8 @@ namespace mfront {
       }
       return madnex::File(f, H5F_ACC_TRUNC);
     }();
-    auto r = file.getRoot(); 
-   //
+    auto r = file.getRoot();
+    //
     if (!madnex::exists(r, "tests")) {
       madnex::createGroup(r, "tests");
     }

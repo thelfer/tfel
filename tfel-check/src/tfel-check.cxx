@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   28 Jan 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -176,25 +176,27 @@ namespace tfel {
         this->registerCallBack(n, a, c);
       };
       declare2("--config", "-c",
-               CallBack("add a configuration file",
-                        [this] {
-                          const auto f = this->currentArgument->getOption();
-                          parse(this->configurations, f);
-                        },
-                        true));
+               CallBack(
+                   "add a configuration file",
+                   [this] {
+                     const auto f = this->currentArgument->getOption();
+                     parse(this->configurations, f);
+                   },
+                   true));
       this->registerCallBack(
           "--list-default-components",
-          CallBack("list all default components",
-                   [this] {
-                     auto global_configuration =
-                         this->configurations.getConfiguration("");
-                     for (const auto& c :
-                          global_configuration.available_components) {
-                       std::cout << "- " << c << '\n';
-                     }
-                     std::exit(EXIT_SUCCESS);
-                   },
-                   false));
+          CallBack(
+              "list all default components",
+              [this] {
+                auto global_configuration =
+                    this->configurations.getConfiguration("");
+                for (const auto& c :
+                     global_configuration.available_components) {
+                  std::cout << "- " << c << '\n';
+                }
+                std::exit(EXIT_SUCCESS);
+              },
+              false));
     }  // end of TFELCheck::registerArgumentCallBacks
 
     std::string TFELCheck::getVersionDescription() const { return VERSION; }

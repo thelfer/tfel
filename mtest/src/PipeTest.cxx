@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   24 nov. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -891,7 +891,7 @@ namespace mtest {
 #ifdef _MSC_VER
         // pi capture is required for Visual Studio 2015
         const auto Pi = [this, T, Ri_, pi] {
-#else /* _MSC_VER */
+#else  /* _MSC_VER */
         const auto Pi = [this, T, Ri_] {
 #endif /* _MSC_VER */
           if (this->gseq == nullptr) {

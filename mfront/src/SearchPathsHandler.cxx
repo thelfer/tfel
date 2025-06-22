@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \brief 21 mai 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -113,7 +113,7 @@ namespace mfront {
       if (p.is<MadnexPath>()) {
 #ifdef MFRONT_HAVE_MADNEX
         using ptr = std::vector<std::string>  //
-            (madnex::DataBase::*)(const std::string&)const;
+            (madnex::DataBase::*)(const std::string&) const;
         const auto& madnex_path = p.get<MadnexPath>();
         const auto name = [&f] {
           const auto ext = getFileExtension(f);

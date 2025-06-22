@@ -3,11 +3,11 @@
  * \brief  This file declares the EuroplexusComputeStiffnessTensor class
  * \author Thomas Helfer
  * \date   18 mar 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -40,9 +40,9 @@ namespace epx {
    * \param[in]  props : material properties
    */
   MFRONT_EPX_VISIBILITY_EXPORT void
-      EuroplexusComputeIsotropicPlaneStressAlteredStiffnessTensor(
-          tfel::config::Types<2u, EuroplexusReal, false>::StiffnessTensor&,
-          const EuroplexusReal* const);
+  EuroplexusComputeIsotropicPlaneStressAlteredStiffnessTensor(
+      tfel::config::Types<2u, EuroplexusReal, false>::StiffnessTensor&,
+      const EuroplexusReal* const);
 
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
@@ -61,9 +61,9 @@ namespace epx {
    * \param[in]  props : material properties
    */
   MFRONT_EPX_VISIBILITY_EXPORT void
-      EuroplexusComputeOrthotropicStiffnessTensor2D(
-          tfel::config::Types<2u, EuroplexusReal, false>::StiffnessTensor&,
-          const EuroplexusReal* const);
+  EuroplexusComputeOrthotropicStiffnessTensor2D(
+      tfel::config::Types<2u, EuroplexusReal, false>::StiffnessTensor&,
+      const EuroplexusReal* const);
 
   /*!
    * \brief compute the stiffness tensor for plane stress modelling
@@ -72,9 +72,9 @@ namespace epx {
    * \param[in]  props : material properties
    */
   MFRONT_EPX_VISIBILITY_EXPORT void
-      EuroplexusComputeOrthotropicPlaneStressAlteredStiffnessTensor(
-          tfel::config::Types<2u, EuroplexusReal, false>::StiffnessTensor&,
-          const EuroplexusReal* const);
+  EuroplexusComputeOrthotropicPlaneStressAlteredStiffnessTensor(
+      tfel::config::Types<2u, EuroplexusReal, false>::StiffnessTensor&,
+      const EuroplexusReal* const);
 
   /*!
    * \brief compute the stiffness tensor for the tridimensionnal
@@ -83,9 +83,9 @@ namespace epx {
    * \param[in]  props : material properties
    */
   MFRONT_EPX_VISIBILITY_EXPORT void
-      EuroplexusComputeOrthotropicStiffnessTensor3D(
-          tfel::config::Types<3u, EuroplexusReal, false>::StiffnessTensor&,
-          const EuroplexusReal* const);
+  EuroplexusComputeOrthotropicStiffnessTensor3D(
+      tfel::config::Types<3u, EuroplexusReal, false>::StiffnessTensor&,
+      const EuroplexusReal* const);
 
   /*!
    * This structure is in charge of computing the Stiffness operator

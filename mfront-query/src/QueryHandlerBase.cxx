@@ -78,9 +78,10 @@ namespace mfront {
                               "set the installation directory "
                               "(same as --install-path)",
                               true);
-    this->registerCallBack(
-        "--nomelt", CallBack("don't melt librairies sources",
-                             [this] { this->melt_sources = false; }, false));
+    this->registerCallBack("--nomelt",
+                           CallBack(
+                               "don't melt librairies sources",
+                               [this] { this->melt_sources = false; }, false));
     this->registerNewCallBack(
         "--warning", "-W", &QueryHandlerBase::treatWarning, "print warnings");
     this->registerNewCallBack("--pedantic", &QueryHandlerBase::treatPedantic,
@@ -105,8 +106,9 @@ namespace mfront {
 #endif /* MFRONT_HAVE_MADNEX */
     this->registerCallBack(
         "--generated-sources",
-        CallBack("show all the generated sources",
-                 [this] { this->treatGeneratedSources(); }, true));
+        CallBack(
+            "show all the generated sources",
+            [this] { this->treatGeneratedSources(); }, true));
     this->registerCallBack(
         "--specific-target-generated-sources",
         CallBack(
@@ -114,27 +116,33 @@ namespace mfront {
             [this] { this->treatSpecificTargetGeneratedSources(); }, true));
     this->registerCallBack(
         "--all-specific-targets-generated-sources",
-        CallBack("show all the generated sources associated specific targets",
-                 [this] { this->treatAllSpecificTargetsGeneratedSources(); },
-                 false));
+        CallBack(
+            "show all the generated sources associated specific targets",
+            [this] { this->treatAllSpecificTargetsGeneratedSources(); },
+            false));
     this->registerCallBack(
         "--generated-headers",
-        CallBack("show all the generated headers",
-                 [this] { this->treatGeneratedHeaders(); }, false));
+        CallBack(
+            "show all the generated headers",
+            [this] { this->treatGeneratedHeaders(); }, false));
     this->registerCallBack("--cppflags",
-                           CallBack("show all the global headers",
-                                    [this] { this->treatCppFlags(); }, false));
+                           CallBack(
+                               "show all the global headers",
+                               [this] { this->treatCppFlags(); }, false));
     this->registerCallBack(
         "--libraries-dependencies",
-        CallBack("show all the libraries dependencies",
-                 [this] { this->treatLibrariesDependencies(); }, false));
+        CallBack(
+            "show all the libraries dependencies",
+            [this] { this->treatLibrariesDependencies(); }, false));
     this->registerCallBack(
         "--specific-targets",
-        CallBack("show all the specific targets",
-                 [this] { this->treatSpecificTargets(); }, false));
-    this->registerCallBack("--no-gui", CallBack("do not display errors using "
-                                                "a message box (windows only)",
-                                                [] {}, false));
+        CallBack(
+            "show all the specific targets",
+            [this] { this->treatSpecificTargets(); }, false));
+    this->registerCallBack("--no-gui", CallBack(
+                                           "do not display errors using "
+                                           "a message box (windows only)",
+                                           [] {}, false));
   }
 
   std::function<void()> QueryHandlerBase::generateGeneratedSourcesQuery(

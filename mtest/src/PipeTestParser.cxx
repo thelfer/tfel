@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \brief  12 avril 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -74,7 +74,8 @@ namespace mtest {
         auto delim = token.value.at(0);
         auto contents = token.value.substr(1, token.value.size() - 2);
         for (const auto& kv : s) {
-          contents = tfel::utilities::replace_all(contents, kv.first, kv.second);
+          contents =
+              tfel::utilities::replace_all(contents, kv.first, kv.second);
         }
         token.value = delim + contents + delim;
       } else {

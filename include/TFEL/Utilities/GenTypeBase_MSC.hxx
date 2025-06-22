@@ -5,11 +5,11 @@
  * \see    TL
  * \author Thomas Helfer
  * \date   19 Apr. 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -115,7 +115,7 @@ namespace tfel {
           tfel::meta::TLCountNbrOfT<typename std::decay<T1>::type,
                                     List>::value == 1,
           T1 &>::type
-      emplace(Args &&... args) {
+      emplace(Args &&...args) {
         // We create a new object of type T1 by calling the copy constructor
         this->template set_uninitialised<T1>();
         void *p = reinterpret_cast<void *>(&(this->buffer));
