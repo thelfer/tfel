@@ -4,7 +4,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   18 Jul 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -53,7 +53,8 @@ struct QtRefTest final : public tfel::tests::TestCase {
       qt_ref<Mass> m1(v1);
       qt_ref<Mass> m2(v2);
       return m1 + 0.5 * m2;
-    }();
+    }
+    ();
     TFEL_TESTS_STATIC_ASSERT(my_abs(m3.getValue() - 100.) < 1.e-14);
   }  // end of test1
   void test2() {
@@ -64,7 +65,8 @@ struct QtRefTest final : public tfel::tests::TestCase {
       qt_ref<Mass> m1(v1);
       qt_ref<Mass> m2(v2);
       return m1 + 0.5 * m2;
-    }();
+    }
+    ();
     TFEL_TESTS_STATIC_ASSERT(my_abs(m3.getValue() - 100.) < 1.e-14);
   }  // end of test2
   void test3() {
@@ -75,7 +77,8 @@ struct QtRefTest final : public tfel::tests::TestCase {
       const_qt_ref<Mass> m1(v1);
       const_qt_ref<Mass> m2(v2);
       return m1 + 0.5 * m2;
-    }();
+    }
+    ();
     TFEL_TESTS_STATIC_ASSERT(my_abs(m3.getValue() - 100.) < 1.e-14);
   }  // end of test3
   void test4() {
@@ -86,7 +89,8 @@ struct QtRefTest final : public tfel::tests::TestCase {
       qt_ref<Mass> m1(v1);
       const_qt_ref<Mass> m2(v2);
       return m1 + 0.5 * m2;
-    }();
+    }
+    ();
     TFEL_TESTS_STATIC_ASSERT(my_abs(m3.getValue() - 100.) < 1.e-14);
   }  // end of test4
   void test5() {
@@ -96,7 +100,8 @@ struct QtRefTest final : public tfel::tests::TestCase {
       auto v1 = double{50.};
       const_qt_ref<Mass> m1(v1);
       return increase_mass(m1);
-    }();
+    }
+    ();
     TFEL_TESTS_STATIC_ASSERT(my_abs(m3.getValue() - 100.) < 1.e-14);
   }  // end of test5
   void test6() {
@@ -126,7 +131,8 @@ struct QtRefTest final : public tfel::tests::TestCase {
       auto f = qt_ref<Force>(vf);
       f = m * a;
       return vf;
-    }();
+    }
+    ();
     TFEL_TESTS_STATIC_ASSERT(my_abs(value - 200.) < eps);
   }
   void test8() {

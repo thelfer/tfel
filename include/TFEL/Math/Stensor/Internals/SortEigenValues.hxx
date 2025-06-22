@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   04 janv. 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -61,7 +61,7 @@ namespace tfel::math::internals {
         }
       }
     }  // end of exe
-  };  // end of struct SortEigenValues<2u>
+  };   // end of struct SortEigenValues<2u>
   //! \brief partial specialisation of the `SortEigenValues` in 3D
   template <>
   struct SortEigenValues<3u> {
@@ -96,7 +96,7 @@ namespace tfel::math::internals {
         swap_if_lesser(vp1, vp2);
       }
     }  // end of exe
-  };  // end of struct SortEigenValues<3u>
+  };   // end of struct SortEigenValues<3u>
 
 }  // end of namespace tfel::math::internals
 

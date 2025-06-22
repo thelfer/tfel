@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   01/10/2020
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -237,7 +237,7 @@ namespace mfront {
     }
     //
     madnex::write(g, impl);
-  }  // end of writeMadnexFile
+  }    // end of writeMadnexFile
 #endif /* MFRONT_HAVE_MADNEX */
 
   void write(const OverridableImplementation& i, const std::string& f) {
@@ -258,7 +258,7 @@ namespace mfront {
     static_cast<void>(i);
     tfel::raise("write: unsupported file extension '" + ext + "'");
 #endif /* MFRONT_HAVE_MADNEX */
-  }  // end of write
+  }    // end of write
 
   void write(const OverridableImplementation& i,
              const std::string& t,

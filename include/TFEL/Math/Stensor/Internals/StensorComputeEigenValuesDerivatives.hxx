@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   04 janv. 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -27,9 +27,7 @@ namespace tfel::math::internals {
         StensorType& n1,
         StensorType& n2,
         const rotation_matrix<numeric_type<StensorType>>&)  //
-        noexcept
-      requires(getSpaceDimension<StensorType>() == 1u)
-    {
+        noexcept requires(getSpaceDimension<StensorType>() == 1u) {
       using real = base_type<numeric_type<StensorType>>;
       constexpr auto zero = real(0);
       constexpr auto one = real(1);
@@ -47,8 +45,7 @@ namespace tfel::math::internals {
         StensorType& n1,
         StensorType& n2,
         const rotation_matrix<numeric_type<StensorType>>& m) noexcept  //
-      requires(getSpaceDimension<StensorType>() == 2u)
-    {
+        requires(getSpaceDimension<StensorType>() == 2u) {
       using real = base_type<numeric_type<StensorType>>;
       constexpr auto zero = real(0);
       constexpr auto one = real(1);
@@ -68,8 +65,7 @@ namespace tfel::math::internals {
         StensorType& n1,
         StensorType& n2,
         const rotation_matrix<numeric_type<StensorType>>& m) noexcept  //
-      requires(getSpaceDimension<StensorType>() == 3u)
-    {
+        requires(getSpaceDimension<StensorType>() == 3u) {
       using real = base_type<numeric_type<StensorType>>;
       const tvector<3u, real> v0 = m.template column_view<0u>();
       const tvector<3u, real> v1 = m.template column_view<1u>();

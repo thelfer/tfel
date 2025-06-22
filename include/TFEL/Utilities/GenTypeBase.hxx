@@ -5,11 +5,11 @@
  * \see    TL
  * \author Thomas Helfer
  * \date   19 Apr. 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -131,8 +131,7 @@ namespace tfel::utilities {
     GenTypeBase(const GenTypeBase &) = default;
     //! \brief constructor from a value
     template <typename T1>
-    GenTypeBase(T1 &&value)
-      requires(isValidType<T1>)
+    GenTypeBase(T1 &&value) requires(isValidType<T1>)
         : variant(std::forward<T1>(value)) {}
     // \brief assignement operator
     GenTypeBase &operator=(GenTypeBase &&) = default;
@@ -140,9 +139,7 @@ namespace tfel::utilities {
     GenTypeBase &operator=(const GenTypeBase &) = default;
     // \brief assignement operator from a value
     template <typename T1>
-    GenTypeBase &operator=(T1 &&value)
-      requires(isValidType<T1>)
-    {
+    GenTypeBase &operator=(T1 &&value) requires(isValidType<T1>) {
       variant::operator=(std::forward<T1>(value));
       return *this;
     }
@@ -162,31 +159,23 @@ namespace tfel::utilities {
      * \pre   T1 must be a type that the GenType can hold.
      */
     template <typename T1>
-    TFEL_INLINE void set(T1 &&src)
-      requires(isValidType<T1>)
-    {
+    TFEL_INLINE void set(T1 &&src) requires(isValidType<T1>) {
       this->operator=(std::forward<T1>(src));
     }
     //
     template <typename T1>
-    TFEL_INLINE bool is() const
-      requires(isValidType<T1>)
-    {
+    TFEL_INLINE bool is() const requires(isValidType<T1>) {
       return std::holds_alternative<T1>(*this);
     }
     //! \return the value hold by the `GenTypeBase`.
     template <typename T1>
-    TFEL_INLINE const T1 &get() const
-      requires(isValidType<T1>)
-    {
+    TFEL_INLINE const T1 &get() const requires(isValidType<T1>) {
       tfel::raise_if<GenTypeCastError>(!this->template is<T1>());
       return std::get<T1>(*this);
     }
     //! \return the value hold by the `GenTypeBase`.
     template <typename T1>
-    TFEL_INLINE T1 &get()
-      requires(isValidType<T1>)
-    {
+    TFEL_INLINE T1 &get() requires(isValidType<T1>) {
       tfel::raise_if<GenTypeCastError>(!this->template is<T1>());
       return std::get<T1>(*this);
     }
@@ -198,9 +187,7 @@ namespace tfel::utilities {
     TFEL_INLINE void clear() { variant::operator=(std::monostate()); }
     //! \brief set the value of the GenType.
     template <typename T1>
-    TFEL_INLINE void set_uninitialised()
-      requires(isValidType<T1>)
-    {
+    TFEL_INLINE void set_uninitialised() requires(isValidType<T1>) {
       this->operator=(T1());
     }
   };

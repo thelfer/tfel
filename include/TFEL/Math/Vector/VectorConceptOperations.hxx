@@ -3,11 +3,11 @@
  * \brief  This file implements operations that can be applied to matrices.
  * \author Thomas Helfer
  * \date   01 jui 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -93,8 +93,8 @@ namespace tfel::math {
    * an operation : use of parenthesis is required.
    */
   template <VectorConcept T1, VectorConcept T2>
-  TFEL_HOST_DEVICE constexpr auto operator|(const T1&, const T2&)
-    requires(!isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>());
+  TFEL_HOST_DEVICE constexpr auto operator|(const T1&, const T2&) requires(
+      !isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>());
 
   /*!
    * \brief  return the euclidian norm of a tvector
@@ -102,8 +102,8 @@ namespace tfel::math {
    * \return const typename tfel::typetraits::RealPartType<T>::type, the result
    */
   template <VectorConcept T1>
-  TFEL_HOST_DEVICE auto norm(const T1& v)
-    requires(!isInvalid<BinaryOperationResult<T1, T1, OpDotProduct>>());
+  TFEL_HOST_DEVICE auto norm(const T1& v) requires(
+      !isInvalid<BinaryOperationResult<T1, T1, OpDotProduct>>());
 
 }  // end of namespace tfel::math
 

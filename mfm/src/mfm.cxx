@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   13 avril 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -277,7 +277,7 @@ struct MFM : public tfel::utilities::ArgumentParserBase<MFM> {
     VERBOSE_LEVEL3 = 3,  //<! the finer level for standard user
     VERBOSE_DEBUG = 4,   //<! an output adapted for debugging
     VERBOSE_FULL = 5     //<! a very detailled output
-  };  // end of enum VerboseLevel
+  };                     // end of enum VerboseLevel
 
   std::vector<Filter> filters;
 

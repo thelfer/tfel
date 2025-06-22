@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   13 oct. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -83,7 +83,7 @@ namespace tfel::math::st2tost2_internals {
       s(3, 3) = r(0, 0) * r(1, 1) + r(0, 1) * r(1, 0);
       return s;
     }  // end of BuildFromRotationMatrix<2u>::exe
-  };  // end of struct BuildFromRotationMatrix<2u>
+  };   // end of struct BuildFromRotationMatrix<2u>
   /*!
    * \brief partial specialisation in 3D
    */
@@ -157,7 +157,7 @@ namespace tfel::math::st2tost2_internals {
       s(5, 5) = e * i + f * h;
       return s;
     }  // end of BuildFromRotationMatrix<3u>::exe
-  };  // end of struct BuildFromRotationMatrix<3u>
+  };   // end of struct BuildFromRotationMatrix<3u>
 
 }  // end of namespace tfel::math::st2tost2_internals
 

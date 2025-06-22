@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   30/06/2018
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -373,7 +373,7 @@ namespace mfront {
            << "const mfront_gb_size_type);\n\n";
       }
     }  // end of for (const auto h : mhs)
-  }  // end of writeRotationFunctionsDeclarations
+  }    // end of writeRotationFunctionsDeclarations
 
   static void writeRotationMatrixDefinition(std::ostream& os, const bool b) {
     os << "const auto r = [&rv]() -> tfel::math::tmatrix<3,3,mfront::gb::real> "

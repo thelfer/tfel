@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   25/06/2020
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -80,13 +80,15 @@ struct DerivativeViewTest final : public tfel::tests::TestCase {
       derivative_view_from_tiny_matrix<6, int, int>(r(1, 1)) = 1;
       derivative_view_from_tiny_matrix<6, int, int>(r(2, 3)) = 2;
       return r;
-    }();
+    }
+    ();
     constexpr auto m2 = []() constexpr {
       auto r = tmatrix<6, 6, int>{0};
       map_derivative<1, 1, int, int>(r) = 1;
       map_derivative<2, 3, int, int>(r) = 2;
       return r;
-    }();
+    }
+    ();
     TFEL_TESTS_STATIC_ASSERT(checkMatrixValuesAtCompileTime(m, expected));
     this->checkMatrixValuesAtRuntimeTime(m, expected);
     TFEL_TESTS_STATIC_ASSERT(checkMatrixValuesAtCompileTime(m2, expected));
@@ -108,12 +110,14 @@ struct DerivativeViewTest final : public tfel::tests::TestCase {
           &(r(1, 1)));
       s = stensor<2u, int>::Id();
       return r;
-    }();
+    }
+    ();
     constexpr auto m2 = []() constexpr {
       auto r = tmatrix<5, 3, int>{0};
       map_derivative<1, 1, stensor<2u, int>, int>(r) = stensor<2u, int>::Id();
       return r;
-    }();
+    }
+    ();
     TFEL_TESTS_STATIC_ASSERT(checkMatrixValuesAtCompileTime(m, expected));
     this->checkMatrixValuesAtRuntimeTime(m, expected);
     TFEL_TESTS_STATIC_ASSERT(checkMatrixValuesAtCompileTime(m2, expected));
@@ -132,12 +136,14 @@ struct DerivativeViewTest final : public tfel::tests::TestCase {
           &(r(0, 1)));
       s = stensor<2u, int>::Id();
       return r;
-    }();
+    }
+    ();
     constexpr auto m2 = []() constexpr {
       auto r = tmatrix<2, 5, int>{0};
       map_derivative<0, 1, int, stensor<2u, int>>(r) = stensor<2u, int>::Id();
       return r;
-    }();
+    }
+    ();
     TFEL_TESTS_STATIC_ASSERT(checkMatrixValuesAtCompileTime(m, expected));
     this->checkMatrixValuesAtRuntimeTime(m, expected);
     TFEL_TESTS_STATIC_ASSERT(checkMatrixValuesAtCompileTime(m2, expected));
@@ -159,13 +165,15 @@ struct DerivativeViewTest final : public tfel::tests::TestCase {
                                                 stensor<2u, int>>(&(r(1, 1)));
       s = st2tost2<2u, int>::IxI();
       return r;
-    }();
+    }
+    ();
     constexpr auto m2 = []() constexpr {
       auto r = tmatrix<5, 5, int>{0};
       map_derivative<1, 1, stensor<2u, int>, stensor<2u, int>>(r) =
           st2tost2<2u, int>::IxI();
       return r;
-    }();
+    }
+    ();
     TFEL_TESTS_STATIC_ASSERT(checkMatrixValuesAtCompileTime(m, expected));
     this->checkMatrixValuesAtRuntimeTime(m, expected);
     TFEL_TESTS_STATIC_ASSERT(checkMatrixValuesAtCompileTime(m2, expected));

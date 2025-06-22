@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   06 mai 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -62,7 +62,8 @@ namespace mfront {
              default_policy + "\";\n";
     }();
     if (b.boundsType == VariableBoundsDescription::LOWER) {
-      src << "if(" << v.name << " < " << v.type << '{' << b.lowerBound << "}){\n"
+      src << "if(" << v.name << " < " << v.type << '{' << b.lowerBound
+          << "}){\n"
           << get_policy  //
           << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
           << "std::ostringstream msg;\n"
@@ -78,7 +79,8 @@ namespace mfront {
           << "}\n"
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-      src << "if(" << v.name << " > " << v.type << '{' << b.upperBound << "}){\n"
+      src << "if(" << v.name << " > " << v.type << '{' << b.upperBound
+          << "}){\n"
           << get_policy  //
           << "if(::strcmp(mfront_policy,\"STRICT\")==0){\n"
           << "std::ostringstream msg;\n"
@@ -137,7 +139,8 @@ namespace mfront {
     }
     const auto& b = v.getPhysicalBounds();
     if (b.boundsType == VariableBoundsDescription::LOWER) {
-      src << "if(" << v.name << " < " << v.type << '{' << b.lowerBound << "}){\n"
+      src << "if(" << v.name << " < " << v.type << '{' << b.lowerBound
+          << "}){\n"
           << "std::ostringstream msg;\n"
           << "msg << \"" << name << " : " << v.name
           << " is below its physical lower bound \";\n"
@@ -146,7 +149,8 @@ namespace mfront {
           << "tfel::raise<std::range_error>(msg.str());\n"
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-      src << "if(" << v.name << " > " << v.type << '{' << b.upperBound << "}){\n"
+      src << "if(" << v.name << " > " << v.type << '{' << b.upperBound
+          << "}){\n"
           << "std::ostringstream msg;\n"
           << "msg << \"" << name << " : " << v.name
           << " is beyond its physical upper bound \";\n"
@@ -450,9 +454,9 @@ namespace mfront {
           << "tfel::PhysicalConstants<double, false>;\n";
     }
     src << "[[maybe_unused]] auto min = [](const auto a, const auto b) "
-	<< "{ return a < b ? a : b; };\n"
-	<< "[[maybe_unused]] auto max = [](const auto a, const auto b) "
-	<< "{ return a > b ? a : b; };\n";
+        << "{ return a < b ? a : b; };\n"
+        << "[[maybe_unused]] auto max = [](const auto a, const auto b) "
+        << "{ return a > b ? a : b; };\n";
     writeMaterialLaws(src, mpd.materialLaws);
     writeStaticVariables(src, mpd.staticVars, fd.fileName);
     for (const auto& i : mpd.inputs) {

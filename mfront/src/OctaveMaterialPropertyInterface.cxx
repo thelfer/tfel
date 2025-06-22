@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date 06 mai 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -77,13 +77,13 @@ namespace mfront {
           << "return " << nbr << ";\n"
           << "}\n";
     } else if (b.boundsType == VariableBoundsDescription::UPPER) {
-      if(use_qt){
+      if (use_qt) {
         out << "if(" << v.name << " > " << v.type << "{" << b.upperBound
             << "}){\n";
       } else {
         out << "if(" << v.name << " > " << b.upperBound << "){\n";
       }
-       out   << get_out_of_bounds_policy  //
+      out << get_out_of_bounds_policy  //
           << "\"OCTAVE_OUT_OF_BOUNDS_POLICY\");\n"
           << "if(mfront_policy.is_defined()){\n"
           << "if(mfront_policy.is_string()){\n"

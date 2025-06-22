@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   10 Nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -487,8 +487,7 @@ namespace mfront {
           std::find_if(this->md.inputs.begin(), this->md.inputs.end(), match);
       auto pp = std::find_if(this->md.parameters.begin(),
                              this->md.parameters.end(), match);
-      if ((pi == this->md.inputs.end()) &&
-          (pp == this->md.parameters.end())) {
+      if ((pi == this->md.inputs.end()) && (pp == this->md.parameters.end())) {
         tfel::raise(
             "MaterialPropertyDSL::finalizeVariablesDeclaration: "
             "no variable named '" +

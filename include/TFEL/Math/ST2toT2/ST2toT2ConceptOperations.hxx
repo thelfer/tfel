@@ -3,11 +3,11 @@
  * \brief  This file implements operations that can be applied to st2tot2.
  * \author Thomas Helfer
  * \date   19 November 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -179,8 +179,7 @@ namespace tfel::math {
 
   template <TensorConcept T1, ST2toT2Concept T2>
   TFEL_HOST_DEVICE constexpr auto operator|(const T1& a, const T2& b) noexcept
-    requires(!isInvalid<BinaryOperationResult<T1, T2, OpMult>>())
-  {
+      requires(!isInvalid<BinaryOperationResult<T1, T2, OpMult>>()) {
     using Handle = BinaryOperationHandler<T1, T2, OpMult>;
     return Handle(a, b);
   }  // end of operator|

@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   12 août 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -36,11 +36,10 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr auto
   convertSpatialModuliToKirchhoffJaumanRateModuli(
       const ST2toST2Type& C_s, const StensorType& tau) noexcept
-    requires(
-        (getSpaceDimension<ST2toST2Type>() ==
-         getSpaceDimension<StensorType>()) &&
-        (std::is_same_v<numeric_type<ST2toST2Type>, numeric_type<StensorType>>))
-  {
+      requires((getSpaceDimension<ST2toST2Type>() ==
+                getSpaceDimension<StensorType>()) &&
+               (std::is_same_v<numeric_type<ST2toST2Type>,
+                               numeric_type<StensorType>>)) {
     constexpr auto N = getSpaceDimension<ST2toST2Type>();
     using NumType = numeric_type<ST2toST2Type>;
     if constexpr (N == 1) {

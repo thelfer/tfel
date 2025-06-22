@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \brief 03 mars 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -62,9 +62,9 @@ namespace mfront {
     const auto use_qt =
         (areQuantitiesSupported && useQuantities(mpd)) ? "true" : "false";
     for (const auto& a : getScalarTypeAliases()) {
-      os << "using " << a
-         << " [[maybe_unused]] = " << "typename tfel::config::ScalarTypes<"
-         << numeric_type << ", " << use_qt << ">::" << a << ";\n";
+      os << "using " << a << " [[maybe_unused]] = "
+         << "typename tfel::config::ScalarTypes<" << numeric_type << ", "
+         << use_qt << ">::" << a << ";\n";
     }
   }  // end of writeScalarStandardTypedefs
 

@@ -4,7 +4,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   02/07/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -83,7 +83,7 @@ struct PowellDogLegNewtonRaphsonSolver2
     J = 2 * x;
     return true;
   }  // end of computFdF
-};  // end of struct PowellDogLegNewtonRaphsonSolver2
+};   // end of struct PowellDogLegNewtonRaphsonSolver2
 
 struct PowellDogLegNewtonRaphsonSolver3
     : public tfel::math::TinyPowellDogLegNewtonRaphsonSolver<
@@ -110,7 +110,7 @@ struct PowellDogLegNewtonRaphsonSolver3
          -200 * x(0), 100.};
     return true;
   }  // end of computFdF
-};  // end of struct PowellDogLegNewtonRaphsonSolver3
+};   // end of struct PowellDogLegNewtonRaphsonSolver3
 
 struct TinyPowellDogLegNewtonRaphsonSolverTest final
     : public tfel::tests::TestCase {

@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   19 November 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -50,7 +50,7 @@ namespace tfel::math {
    */
   template <typename T>
   concept T2toST2Concept =
-      (std::is_same_v<typename std::decay_t<T>::ConceptTag, T2toST2Tag>) &&  //
+      (std::is_same_v<typename std::decay_t<T>::ConceptTag, T2toST2Tag>)&&  //
       (requires(const T t, const unsigned short i, const unsigned short j) {
         t(i, j);
       });
@@ -82,10 +82,10 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr void
   computePushForwardDerivativeWithRespectToDeformationGradient(
       T2toST2ResultType&, const StensorType&, const TensorType&) noexcept  //
-    requires(tfel::typetraits::IsFundamentalNumericType<
-                 numeric_type<TensorType>>::cond &&
-             isAssignableTo<numeric_type<StensorType>,
-                            numeric_type<T2toST2ResultType>>());
+      requires(tfel::typetraits::IsFundamentalNumericType<
+               numeric_type<TensorType>>::cond&&
+                   isAssignableTo<numeric_type<StensorType>,
+                                  numeric_type<T2toST2ResultType>>());
   /*!
    * \brief compute the Cauchy stress derivative from the Kirchhoff
    * stress derivative with respect to the deformation gradient
@@ -104,19 +104,19 @@ namespace tfel::math {
       const T2toST2Type&,
       const StensorType&,
       const TensorType&) noexcept  //
-    requires(
-        getSpaceDimension<T2toST2ResultType>() ==
-            getSpaceDimension<T2toST2Type>() &&
-        getSpaceDimension<T2toST2ResultType>() ==
-            getSpaceDimension<StensorType>() &&
-        getSpaceDimension<T2toST2ResultType>() ==
-            getSpaceDimension<TensorType>() &&
-        tfel::typetraits::IsFundamentalNumericType<
-            numeric_type<TensorType>>::cond &&
-        isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
-                                                    numeric_type<StensorType>,
-                                                    OpPlus>::Result,
-                       numeric_type<T2toST2ResultType>>());
+      requires(
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<T2toST2Type>() &&
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<StensorType>() &&
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<TensorType>() &&
+          tfel::typetraits::IsFundamentalNumericType<
+              numeric_type<TensorType>>::cond &&
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                                      numeric_type<StensorType>,
+                                                      OpPlus>::Result,
+                         numeric_type<T2toST2ResultType>>());
   /*!
    * \brief compute the Kirchhoff stress derivative from the Cauchy
    * stress derivative with respect to the deformation gradient
@@ -135,19 +135,19 @@ namespace tfel::math {
       const T2toST2Type&,
       const StensorType&,
       const TensorType&) noexcept  //
-    requires(
-        getSpaceDimension<T2toST2ResultType>() ==
-            getSpaceDimension<T2toST2Type>() &&
-        getSpaceDimension<T2toST2ResultType>() ==
-            getSpaceDimension<StensorType>() &&
-        getSpaceDimension<T2toST2ResultType>() ==
-            getSpaceDimension<TensorType>() &&
-        tfel::typetraits::IsFundamentalNumericType<
-            numeric_type<TensorType>>::cond &&
-        isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
-                                                    numeric_type<StensorType>,
-                                                    OpPlus>::Result,
-                       numeric_type<T2toST2ResultType>>());
+      requires(
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<T2toST2Type>() &&
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<StensorType>() &&
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<TensorType>() &&
+          tfel::typetraits::IsFundamentalNumericType<
+              numeric_type<TensorType>>::cond &&
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                                      numeric_type<StensorType>,
+                                                      OpPlus>::Result,
+                         numeric_type<T2toST2ResultType>>());
   /*!
    * \brief an helper function which returns if the given type implements the
    * `T2toST2Concept`.

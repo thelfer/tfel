@@ -71,7 +71,7 @@ namespace lsdyna {
     }
     return "";
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-  }  // end of  getErrorMessage
+  }    // end of  getErrorMessage
 
   static void log(const std::string& m) {
     static std::ofstream log("mfront-lsdyna.log");

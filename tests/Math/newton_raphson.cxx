@@ -4,7 +4,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   02 Aug 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -80,7 +80,7 @@ struct NewtonRaphsonSolver2
     J = 2 * x;
     return true;
   }  // end of computFdF
-};  // end of struct NewtonRaphsonSolver2
+};   // end of struct NewtonRaphsonSolver2
 
 struct NewtonRaphsonSolver3
     : public tfel::math::
@@ -104,7 +104,7 @@ struct NewtonRaphsonSolver3
          -200 * x(0), 100.};
     return true;
   }  // end of computFdF
-};  // end of struct NewtonRaphsonSolver3
+};   // end of struct NewtonRaphsonSolver3
 
 template <unsigned short N, typename NumericType>
 struct HeapAllocatedWorkspace {

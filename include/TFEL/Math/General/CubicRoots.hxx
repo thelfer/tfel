@@ -4,11 +4,11 @@
  *
  * \author Thomas Helfer
  * \date   03 jui 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -99,9 +99,8 @@ namespace tfel::math {
                                                       const T a2,
                                                       const T a1,
                                                       const T a0)  //
-      requires((tfel::typetraits::IsReal<T>::cond) &&
-               (tfel::typetraits::IsFundamentalNumericType<T>::cond))
-    {
+        requires((tfel::typetraits::IsReal<T>::cond) &&
+                 (tfel::typetraits::IsFundamentalNumericType<T>::cond)) {
       constexpr auto C_1_2 = T{1} / T{2};
       constexpr auto C_1_3 = T{1} / T{3};
       constexpr auto C_2_3 = T{2} * C_1_3;
@@ -219,9 +218,8 @@ namespace tfel::math {
                                                const T a1,
                                                const T a0,
                                                const bool b = false)  //
-      requires((tfel::typetraits::IsReal<T>::cond) &&
-               (tfel::typetraits::IsFundamentalNumericType<T>::cond))
-    {
+        requires((tfel::typetraits::IsReal<T>::cond) &&
+                 (tfel::typetraits::IsFundamentalNumericType<T>::cond)) {
       const auto nb = CubicRoots::find_roots(x1, x2, x3, a3, a2, a1, a0);
       if ((nb > 0) && (b)) {
         CubicRoots::improve(x1, a3, a2, a1, a0);

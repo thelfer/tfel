@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \brief 21 mai 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -242,7 +242,7 @@ namespace mfront {
         "SearchPathsHandler::addMadnexSearchPaths: "
         "madnex support is not enabled");
 #endif /* MFRONT_HAVE_MADNEX */
-  }  // end of addMadnexSearchPath
+  }    // end of addMadnexSearchPath
 
   void SearchPathsHandler::addSearchPaths(const std::string& p) {
     auto& msf = SearchPathsHandler::getSearchPathsHandler();
@@ -290,13 +290,14 @@ namespace mfront {
     return directories;
   }  // end of getSearchPaths
 
-  std::vector<SearchPathsHandler::Path> SearchPathsHandler::getRegistredPaths() {
+  std::vector<SearchPathsHandler::Path>
+  SearchPathsHandler::getRegistredPaths() {
     return SearchPathsHandler::getSearchPathsHandler().paths;
   }  // end of getRegistredPaths
 
-  void SearchPathsHandler::resetPaths(const std::vector<Path>& npaths){
+  void SearchPathsHandler::resetPaths(const std::vector<Path>& npaths) {
     SearchPathsHandler::getSearchPathsHandler().paths = npaths;
-  } // end of resetPaths
+  }  // end of resetPaths
 
   SearchPathsHandler::SearchPathsHandler() {
     const char* const p = ::getenv("MFRONT_INCLUDE_PATH");

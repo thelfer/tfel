@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   04/08/2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -56,10 +56,11 @@ struct QtRefTest final : public tfel::tests::TestCase {
 #if (not defined __INTEL_COMPILER) && (not defined __clang__)
     using namespace tfel::math;
     constexpr auto eps = double{1e-14};
-    constexpr auto s = []() constexpr -> stensor<3, qt<Stress, double>> {
+    constexpr auto s = []() constexpr->stensor<3, qt<Stress, double>> {
       double stress_values[6] = {0, 1, 2, 3, 4, 5};
       return map<stensor<3, qt<Stress>>>(stress_values);
-    }();
+    }
+    ();
     TFEL_TESTS_STATIC_ASSERT(my_abs(s[0].getValue()) < eps);
     TFEL_TESTS_STATIC_ASSERT(my_abs(s[1].getValue() - 1) < eps);
     TFEL_TESTS_STATIC_ASSERT(my_abs(s[2].getValue() - 2) < eps);
@@ -67,7 +68,7 @@ struct QtRefTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(my_abs(s[4].getValue() - 4) < eps);
     TFEL_TESTS_STATIC_ASSERT(my_abs(s[5].getValue() - 5) < eps);
 #endif /* (not defined __INTEL_COMPILER) && (not defined __clang__) */
-  }  // end of test2
+  }    // end of test2
   void test3() {
     using namespace tfel::math;
     using stress = qt<Stress, double>;

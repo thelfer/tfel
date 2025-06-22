@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   21 avril 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -18,11 +18,10 @@ namespace tfel::math {
 
   template <StensorConcept StensorType1, StensorConcept StensorType2>
   TFEL_HOST_DEVICE constexpr auto symmetric_product_derivative_daba_da(
-      const StensorType1& a,
-      const StensorType2& b) noexcept -> st2tost2<1u, decltype(a[0] * b[0])>  //
-    requires((getSpaceDimension<StensorType1>() == 1u) &&
-             (getSpaceDimension<StensorType2>() == 1u))
-  {
+      const StensorType1& a, const StensorType2& b) noexcept
+      -> st2tost2<1u, decltype(a[0] * b[0])>  //
+  requires((getSpaceDimension<StensorType1>() == 1u) &&
+           (getSpaceDimension<StensorType2>() == 1u)) {
     using NumType = decltype(a[0] * b[0]);
     using real = base_type<NumType>;
     TFEL_HOST_DEVICE constexpr auto zero = real(0);
@@ -33,11 +32,10 @@ namespace tfel::math {
 
   template <StensorConcept StensorType1, StensorConcept StensorType2>
   TFEL_HOST_DEVICE constexpr auto symmetric_product_derivative_daba_da(
-      const StensorType1& a,
-      const StensorType2& b) noexcept -> st2tost2<2u, decltype(a[0] * b[0])>  //
-    requires((getSpaceDimension<StensorType1>() == 2u) &&
-             (getSpaceDimension<StensorType2>() == 2u))
-  {
+      const StensorType1& a, const StensorType2& b) noexcept
+      -> st2tost2<2u, decltype(a[0] * b[0])>  //
+  requires((getSpaceDimension<StensorType1>() == 2u) &&
+           (getSpaceDimension<StensorType2>() == 2u)) {
     using NumType = decltype(a[0] * b[0]);
     using real = base_type<NumType>;
     TFEL_HOST_DEVICE constexpr auto zero = real(0);
@@ -61,11 +59,10 @@ namespace tfel::math {
 
   template <StensorConcept StensorType1, StensorConcept StensorType2>
   TFEL_HOST_DEVICE constexpr auto symmetric_product_derivative_daba_da(
-      const StensorType1& a,
-      const StensorType2& b) noexcept -> st2tost2<3u, decltype(a[0] * b[0])>  //
-    requires((getSpaceDimension<StensorType1>() == 3u) &&
-             (getSpaceDimension<StensorType2>() == 3u))
-  {
+      const StensorType1& a, const StensorType2& b) noexcept
+      -> st2tost2<3u, decltype(a[0] * b[0])>  //
+  requires((getSpaceDimension<StensorType1>() == 3u) &&
+           (getSpaceDimension<StensorType2>() == 3u)) {
     using NumType = decltype(a[0] * b[0]);
     using real = base_type<NumType>;
     TFEL_HOST_DEVICE constexpr auto zero = real(0);
@@ -110,8 +107,7 @@ namespace tfel::math {
   template <StensorConcept StensorType>
   TFEL_HOST_DEVICE constexpr auto symmetric_product_derivative_daba_db(
       const StensorType& a) noexcept -> st2tost2<1u, decltype(a[0] * a[0])>  //
-    requires(getSpaceDimension<StensorType>() == 1u)
-  {
+  requires(getSpaceDimension<StensorType>() == 1u) {
     using NumType = decltype(a[0] * a[0]);
     using real = base_type<NumType>;
     TFEL_HOST_DEVICE constexpr auto zero = real(0);
@@ -123,8 +119,7 @@ namespace tfel::math {
   template <StensorConcept StensorType>
   TFEL_HOST_DEVICE constexpr auto symmetric_product_derivative_daba_db(
       const StensorType& a) noexcept -> st2tost2<2u, decltype(a[0] * a[0])>  //
-    requires(getSpaceDimension<StensorType>() == 2u)
-  {
+  requires(getSpaceDimension<StensorType>() == 2u) {
     using NumType = decltype(a[0] * a[0]);
     using real = base_type<NumType>;
     constexpr auto zero = real(0);
@@ -149,8 +144,7 @@ namespace tfel::math {
   template <StensorConcept StensorType>
   TFEL_HOST_DEVICE constexpr auto symmetric_product_derivative_daba_db(
       const StensorType& a) noexcept -> st2tost2<3u, decltype(a[0] * a[0])>  //
-    requires(getSpaceDimension<StensorType>() == 3u)
-  {
+  requires(getSpaceDimension<StensorType>() == 3u) {
     using NumType = decltype(a[0] * a[0]);
     using real = base_type<NumType>;
     constexpr auto cste = Cste<real>::sqrt2;

@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   04 May 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -102,7 +102,7 @@ namespace tfel::math {
       //! no ordering
       UNSORTED
     };  // end of EigenValuesOrdering
-  };  // end of struct stensor_common
+  };    // end of struct stensor_common
 
   template <unsigned short N, typename ValueType>
   struct stensor
@@ -125,23 +125,23 @@ namespace tfel::math {
     //! \brief import from external memory location which uses Voigt notations
     //! for strains
     template <typename InputIterator>
-    TFEL_HOST_DEVICE constexpr void importVoigt(const InputIterator) noexcept
-      requires(std::is_same_v<
-               typename std::iterator_traits<InputIterator>::value_type,
-               base_type<ValueType>>);
+    TFEL_HOST_DEVICE constexpr void
+    importVoigt(const InputIterator) noexcept requires(
+        std::is_same_v<typename std::iterator_traits<InputIterator>::value_type,
+                       base_type<ValueType>>);
     //! \brief import from external memory location which uses Voigt notations
     //! for stresses
     template <typename InputIterator>
-    TFEL_HOST_DEVICE constexpr void importTab(const InputIterator) noexcept
-      requires(std::is_same_v<
-               typename std::iterator_traits<InputIterator>::value_type,
-               base_type<ValueType>>);
+    TFEL_HOST_DEVICE constexpr void
+    importTab(const InputIterator) noexcept requires(
+        std::is_same_v<typename std::iterator_traits<InputIterator>::value_type,
+                       base_type<ValueType>>);
     //! \brief import values from external memory location
     template <typename InputIterator>
-    TFEL_HOST_DEVICE constexpr void import(const InputIterator) noexcept
-      requires(std::is_same_v<
-               typename std::iterator_traits<InputIterator>::value_type,
-               base_type<ValueType>>);
+    TFEL_HOST_DEVICE constexpr void
+    import(const InputIterator) noexcept requires(
+        std::is_same_v<typename std::iterator_traits<InputIterator>::value_type,
+                       base_type<ValueType>>);
     /*!
      * \brief export to external memory location using Voigt notations for0
      * stresses
@@ -299,7 +299,7 @@ namespace tfel::math {
     template <MatrixConcept MatrixType>
     TFEL_HOST_DEVICE static constexpr auto buildFromMatrix(
         const MatrixType&) noexcept
-      requires(isAssignableTo<numeric_type<MatrixType>, ValueType>());
+        requires(isAssignableTo<numeric_type<MatrixType>, ValueType>());
 
     /*!
      * build a symmetric tensor from the diadic product of a vector with
@@ -309,10 +309,10 @@ namespace tfel::math {
     template <VectorConcept VectorType>
     TFEL_HOST_DEVICE static constexpr auto buildFromVectorDiadicProduct(
         const VectorType&) noexcept
-      requires(
-          isAssignableTo<typename ComputeUnaryResult<numeric_type<VectorType>,
-                                                     Power<2>>::Result,
-                         ValueType>());
+        requires(
+            isAssignableTo<typename ComputeUnaryResult<numeric_type<VectorType>,
+                                                       Power<2>>::Result,
+                           ValueType>());
 
     /*!
      * build a symmetric tensor from the symmetric diadic product of two
@@ -324,10 +324,10 @@ namespace tfel::math {
     TFEL_HOST_DEVICE static constexpr auto
     buildFromVectorsSymmetricDiadicProduct(const VectorType&,
                                            const VectorType2&) noexcept
-      requires(isAssignableTo<BinaryOperationResult<numeric_type<VectorType>,
-                                                    numeric_type<VectorType2>,
-                                                    OpMult>,
-                              ValueType>());
+        requires(isAssignableTo<BinaryOperationResult<numeric_type<VectorType>,
+                                                      numeric_type<VectorType2>,
+                                                      OpMult>,
+                                ValueType>());
 
     /*!
      * build a symmetric tensor from its eigen values and vectors
@@ -483,9 +483,9 @@ namespace tfel::math {
         StensorType&,
         StensorType&,
         const rotation_matrix<ValueType>&) noexcept  //
-      requires(
-          (getSpaceDimension<StensorType>() == N) &&
-          (isAssignableTo<base_type<ValueType>, numeric_type<StensorType>>()));
+        requires((getSpaceDimension<StensorType>() == N) &&
+                 (isAssignableTo<base_type<ValueType>,
+                                 numeric_type<StensorType>>()));
     /*!
      * \return the eigentensors
      * \param[in]  m: eigenvectors
@@ -505,9 +505,9 @@ namespace tfel::math {
         StensorType&,
         StensorType&,
         const rotation_matrix<ValueType>&) noexcept  //
-      requires(
-          (getSpaceDimension<StensorType>() == N) &&
-          (isAssignableTo<base_type<ValueType>, numeric_type<StensorType>>()));
+        requires((getSpaceDimension<StensorType>() == N) &&
+                 (isAssignableTo<base_type<ValueType>,
+                                 numeric_type<StensorType>>()));
     /*!
      * \brief compute the "eigentensors" derivatives
      * \param[out] dn0_ds: derivative of the first  eigentensor
@@ -525,11 +525,11 @@ namespace tfel::math {
         const tvector<3u, ValueType>&,
         const rotation_matrix<ValueType>&,
         const ValueType)  //
-      requires(
-          (getSpaceDimension<ST2toST2Type>() == N) &&
-          (isAssignableTo<
-              BinaryOperationResult<base_type<ValueType>, ValueType, OpDiv>,
-              numeric_type<ST2toST2Type>>()));
+        requires(
+            (getSpaceDimension<ST2toST2Type>() == N) &&
+            (isAssignableTo<
+                BinaryOperationResult<base_type<ValueType>, ValueType, OpDiv>,
+                numeric_type<ST2toST2Type>>()));
     /*!
      * \brief compute an isotropic function
      * \param[in]  f:   function
@@ -582,12 +582,13 @@ namespace tfel::math {
         const tvector<3u, T2>&,
         const tvector<3u, ValueType>&,
         const rotation_matrix<ValueType>&,
-        const ValueType)
-      requires(
-          (getSpaceDimension<ST2toST2Type>() == N) &&
-          (isAssignableTo<
-              BinaryOperationResult<base_type<ValueType>, ValueType, OpDiv>,
-              numeric_type<ST2toST2Type>>()));
+        const ValueType) requires((getSpaceDimension<ST2toST2Type>() == N) &&
+                                  (isAssignableTo<
+                                      BinaryOperationResult<
+                                          base_type<ValueType>,
+                                          ValueType,
+                                          OpDiv>,
+                                      numeric_type<ST2toST2Type>>()));
     /*!
      * compute the derivative of an isotropic function
      * \param[out] d:   result
@@ -624,12 +625,13 @@ namespace tfel::math {
         const FunctionDerivative&,
         const tvector<3u, ValueType>&,
         const rotation_matrix<ValueType>&,
-        const ValueType)
-      requires(
-          (getSpaceDimension<ST2toST2Type>() == N) &&
-          (isAssignableTo<
-              BinaryOperationResult<base_type<ValueType>, ValueType, OpDiv>,
-              numeric_type<ST2toST2Type>>()));
+        const ValueType) requires((getSpaceDimension<ST2toST2Type>() == N) &&
+                                  (isAssignableTo<
+                                      BinaryOperationResult<
+                                          base_type<ValueType>,
+                                          ValueType,
+                                          OpDiv>,
+                                      numeric_type<ST2toST2Type>>()));
     /*!
      * \return the value of an isotropic function
      * \param[in] f: function
@@ -697,7 +699,7 @@ namespace tfel::math {
   template <unsigned short N, typename T, typename OutputIterator>
   TFEL_HOST_DEVICE constexpr void exportToBaseTypeArray(const stensor<N, T>&,
                                                         OutputIterator) noexcept
-    requires(isScalar<T>());
+      requires(isScalar<T>());
 
   /*!
    * compute the tresca stress
@@ -770,36 +772,40 @@ namespace tfel::math {
    * \param b : if true, refinement of eigen values is performed
    */
   template <StensorConcept StensorType>
-  TFEL_HOST_DEVICE auto logarithm(const StensorType&, const bool = false)
-    requires(tfel::typetraits::IsFundamentalNumericType<
-             numeric_type<StensorType>>::cond);
+  TFEL_HOST_DEVICE auto
+  logarithm(const StensorType&, const bool = false) requires(
+      tfel::typetraits::IsFundamentalNumericType<
+          numeric_type<StensorType>>::cond);
   /*!
    * \brief compute the absolute value of a symmetric tensor
    * \param s : tensor
    * \param b : if true, refinement of eigen values is performed
    */
   template <StensorConcept StensorType>
-  TFEL_HOST_DEVICE auto absolute_value(const StensorType&, const bool = false)
-    requires(tfel::typetraits::IsFundamentalNumericType<
-             numeric_type<StensorType>>::cond);
+  TFEL_HOST_DEVICE auto
+  absolute_value(const StensorType&, const bool = false) requires(
+      tfel::typetraits::IsFundamentalNumericType<
+          numeric_type<StensorType>>::cond);
   /*!
    * \brief compute the positive part of a symmetric tensor
    * \param s : tensor
    * \param b : if true, refinement of eigen values is performed
    */
   template <StensorConcept StensorType>
-  TFEL_HOST_DEVICE auto positive_part(const StensorType&, const bool = false)
-    requires(tfel::typetraits::IsFundamentalNumericType<
-             numeric_type<StensorType>>::cond);
+  TFEL_HOST_DEVICE auto
+  positive_part(const StensorType&, const bool = false) requires(
+      tfel::typetraits::IsFundamentalNumericType<
+          numeric_type<StensorType>>::cond);
   /*!
    * \brief compute the negative part of a symmetric tensor
    * \param s : tensor
    * \param b : if true, refinement of eigen values is performed
    */
   template <StensorConcept StensorType>
-  TFEL_HOST_DEVICE auto negative_part(const StensorType&, const bool = false)
-    requires(tfel::typetraits::IsFundamentalNumericType<
-             numeric_type<StensorType>>::cond);
+  TFEL_HOST_DEVICE auto
+  negative_part(const StensorType&, const bool = false) requires(
+      tfel::typetraits::IsFundamentalNumericType<
+          numeric_type<StensorType>>::cond);
   /*!
    * \return the square of a symmetric stensor
    * \param[in] s : squared tensor
@@ -873,9 +879,9 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr auto
   convertCorotationnalCauchyStressToSecondPiolaKirchhoffStress(
       const T&, const T2&) noexcept
-    requires(
-        (getSpaceDimension<T>() == getSpaceDimension<T2>()) &&
-        (tfel::typetraits::IsFundamentalNumericType<numeric_type<T2>>::cond));
+      requires(
+          (getSpaceDimension<T>() == getSpaceDimension<T2>()) &&
+          (tfel::typetraits::IsFundamentalNumericType<numeric_type<T2>>::cond));
   /*!
    * \brief convert the second Piola-Kirchhoff stress to the
    * corotationnal cauchy stress:
@@ -891,9 +897,9 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr auto
   convertSecondPiolaKirchhoffStressToCorotationnalCauchyStress(
       const T&, const T2&) noexcept
-    requires(
-        (getSpaceDimension<T>() == getSpaceDimension<T2>()) &&
-        (tfel::typetraits::IsFundamentalNumericType<numeric_type<T2>>::cond));
+      requires(
+          (getSpaceDimension<T>() == getSpaceDimension<T2>()) &&
+          (tfel::typetraits::IsFundamentalNumericType<numeric_type<T2>>::cond));
   /*!
    * \brief return the symmetric product of two stensors as a symmetric tensor:
    * \f[
@@ -905,8 +911,8 @@ namespace tfel::math {
   template <StensorConcept StensorType1, StensorConcept StensorType2>
   TFEL_HOST_DEVICE constexpr auto symmetric_product(
       const StensorType1&, const StensorType2&) noexcept
-    requires(getSpaceDimension<StensorType1>() ==
-             getSpaceDimension<StensorType2>());
+      requires(getSpaceDimension<StensorType1>() ==
+               getSpaceDimension<StensorType2>());
 
 }  // end of namespace tfel::math
 

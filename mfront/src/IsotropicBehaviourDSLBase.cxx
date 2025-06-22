@@ -4,7 +4,7 @@
  *
  * \author Thomas Helfer
  * \date   01 jui 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -178,15 +178,14 @@ namespace mfront {
   std::string IsotropicBehaviourDSLBase::flowRuleVariableModifier(
       const Hypothesis h, const std::string& var, const bool addThisPtr) {
     const auto& d = this->mb.getBehaviourData(h);
-    if ((d.isExternalStateVariableName(var)) ||
-        (d.isStateVariableName(var))) {
+    if ((d.isExternalStateVariableName(var)) || (d.isStateVariableName(var))) {
       if (addThisPtr) {
         return "this->" + var + "_";
       } else {
         return var + "_";
       }
     }
-    if (d.isAuxiliaryStateVariableName(var)){
+    if (d.isAuxiliaryStateVariableName(var)) {
       const auto& v = d.getAuxiliaryStateVariables().getVariable(var);
       if (v.getAttribute<bool>("ComputedByExternalModel", false)) {
         if (addThisPtr) {
@@ -196,8 +195,7 @@ namespace mfront {
         }
       }
     }
-    if ((d.isExternalStateVariableIncrementName(var)) ||
-        (var == "dT")) {
+    if ((d.isExternalStateVariableIncrementName(var)) || (var == "dT")) {
       this->declareExternalStateVariableProbablyUnusableInPurelyImplicitResolution(
           h, var.substr(1));
     }

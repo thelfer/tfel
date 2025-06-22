@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   19 November 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -124,46 +124,44 @@ namespace tfel::math {
      */
     template <TensorConcept TensorType>
     TFEL_HOST_DEVICE static constexpr auto tpld(const TensorType&) noexcept
-      requires(getSpaceDimension<TensorType>() == N &&
-               isAssignableTo<numeric_type<TensorType>, ValueType>());
+        requires(getSpaceDimension<TensorType>() == N &&
+                 isAssignableTo<numeric_type<TensorType>, ValueType>());
     /*!
      * \param[in] B : second tensor of the product
      * \param[in] C : derivative of the first tensor
      * \return the left part of the derivative of a tensor product
      */
     template <TensorConcept TensorType, T2toT2Concept T2toT2Type>
-    TFEL_HOST_DEVICE static constexpr auto tpld(const TensorType&,
-                                                const T2toT2Type&) noexcept
-      requires(
-          getSpaceDimension<TensorType>() == N &&
-          getSpaceDimension<T2toT2Type>() == N &&
-          isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
-                                                      numeric_type<T2toT2Type>,
-                                                      OpMult>::Result,
-                         ValueType>());
+    TFEL_HOST_DEVICE static constexpr auto
+    tpld(const TensorType&, const T2toT2Type&) noexcept requires(
+        getSpaceDimension<TensorType>() == N &&
+        getSpaceDimension<T2toT2Type>() == N &&
+        isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
+                                                    numeric_type<T2toT2Type>,
+                                                    OpMult>::Result,
+                       ValueType>());
     /*!
      * \param[in] A : first tensor of the product
      * \return the right part of the derivative of a tensor product
      */
     template <TensorConcept TensorType>
     TFEL_HOST_DEVICE static constexpr auto tprd(const TensorType&) noexcept
-      requires(getSpaceDimension<TensorType>() == N &&
-               isAssignableTo<numeric_type<TensorType>, ValueType>());
+        requires(getSpaceDimension<TensorType>() == N &&
+                 isAssignableTo<numeric_type<TensorType>, ValueType>());
     /*!
      * \param[in] A : first tensor of the product
      * \param[in] C : derivative of the first tensor
      * \return the right part of the derivative of a tensor product
      */
     template <TensorConcept TensorType, T2toT2Concept T2toT2Type>
-    TFEL_HOST_DEVICE static constexpr auto tprd(const TensorType&,
-                                                const T2toT2Type&) noexcept
-      requires(
-          getSpaceDimension<TensorType>() == N &&
-          getSpaceDimension<T2toT2Type>() == N &&
-          isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
-                                                      numeric_type<T2toT2Type>,
-                                                      OpMult>::Result,
-                         ValueType>());
+    TFEL_HOST_DEVICE static constexpr auto
+    tprd(const TensorType&, const T2toT2Type&) noexcept requires(
+        getSpaceDimension<TensorType>() == N &&
+        getSpaceDimension<T2toT2Type>() == N &&
+        isAssignableTo<typename ComputeBinaryResult<numeric_type<TensorType>,
+                                                    numeric_type<T2toT2Type>,
+                                                    OpMult>::Result,
+                       ValueType>());
     /*!
      * \return the derivative of the transpose of a tensor with respect of
      * this tensor
@@ -184,8 +182,8 @@ namespace tfel::math {
      */
     template <T2toST2Concept T2toST2Type>
     TFEL_HOST_DEVICE constexpr t2tot2(const T2toST2Type&) noexcept
-      requires((isAssignableTo<numeric_type<T2toST2Type>, ValueType>()) &&
-               (getSpaceDimension<T2toST2Type>() == N));
+        requires((isAssignableTo<numeric_type<T2toST2Type>, ValueType>()) &&
+                 (getSpaceDimension<T2toST2Type>() == N));
     /*!
      * \brief constructors from arrays to implement class
      * template argument deduction.
@@ -193,8 +191,8 @@ namespace tfel::math {
      */
     template <std::size_t... d>
     TFEL_HOST_DEVICE constexpr t2tot2(ValueType const (&... arrays)[d])  //
-      requires((sizeof...(d) == TensorDimeToSize<N>::value) &&
-               ((d == TensorDimeToSize<N>::value) && ...));
+        requires((sizeof...(d) == TensorDimeToSize<N>::value) &&
+                 ((d == TensorDimeToSize<N>::value) && ...));
     //
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(t2tot2,
                                                GenericFixedSizeArrayBase);
@@ -262,13 +260,13 @@ namespace tfel::math {
   template <TensorConcept TensorType>
   TFEL_HOST_DEVICE constexpr auto computeDeterminantSecondDerivative(
       const TensorType&) noexcept
-    requires(isScalar<numeric_type<TensorType>>());
+      requires(isScalar<numeric_type<TensorType>>());
 
   template <typename T, T2toST2Concept T2toST2Type>
   TFEL_HOST_DEVICE constexpr void convert(
       t2tot2<getSpaceDimension<T2toST2Type>(), T>&,
       const T2toST2Type&) noexcept  //
-    requires(isAssignableTo<numeric_type<T2toST2Type>, T>());
+      requires(isAssignableTo<numeric_type<T2toST2Type>, T>());
 
 }  // end of namespace tfel::math
 

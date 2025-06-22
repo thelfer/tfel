@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   19 November 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -122,8 +122,8 @@ namespace tfel::math {
     template <TensorConcept TensorType>
     TFEL_HOST_DEVICE static TFEL_HOST_DEVICE constexpr auto dCdF(
         const TensorType&) noexcept
-      requires(getSpaceDimension<TensorType>() == N &&
-               isAssignableTo<numeric_type<TensorType>, ValueType>());
+        requires(getSpaceDimension<TensorType>() == N &&
+                 isAssignableTo<numeric_type<TensorType>, ValueType>());
     /*!
      * \param[in] F : deformation gradient
      * \return the derivative of the Cauchy left symmetric tensor
@@ -132,8 +132,8 @@ namespace tfel::math {
     template <TensorConcept TensorType>
     TFEL_HOST_DEVICE static TFEL_HOST_DEVICE constexpr auto dBdF(
         const TensorType&) noexcept
-      requires(getSpaceDimension<TensorType>() == N &&
-               isAssignableTo<numeric_type<TensorType>, ValueType>());
+        requires(getSpaceDimension<TensorType>() == N &&
+                 isAssignableTo<numeric_type<TensorType>, ValueType>());
     //
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(t2tost2,
                                                GenericFixedSizeArrayBase);
@@ -144,8 +144,8 @@ namespace tfel::math {
      */
     template <std::size_t... d>
     TFEL_HOST_DEVICE constexpr t2tost2(ValueType const (&... arrays)[d])  //
-      requires((sizeof...(d) == StensorDimeToSize<N>::value) &&
-               ((d == TensorDimeToSize<N>::value) && ...));
+        requires((sizeof...(d) == StensorDimeToSize<N>::value) &&
+                 ((d == TensorDimeToSize<N>::value) && ...));
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();
@@ -219,12 +219,12 @@ namespace tfel::math {
       const T2toST2Type&,
       const StensorType&,
       const TensorType&) noexcept  //
-    requires(getSpaceDimension<T2toST2Type>() ==
-                 getSpaceDimension<StensorType>() &&
-             getSpaceDimension<T2toST2Type>() ==
-                 getSpaceDimension<TensorType>() &&
-             tfel::typetraits::IsFundamentalNumericType<
-                 numeric_type<TensorType>>::cond);
+      requires(getSpaceDimension<T2toST2Type>() ==
+                   getSpaceDimension<StensorType>() &&
+               getSpaceDimension<T2toST2Type>() ==
+                   getSpaceDimension<TensorType>() &&
+               tfel::typetraits::IsFundamentalNumericType<
+                   numeric_type<TensorType>>::cond);
   /*!
    * \brief compute the Cauchy stress derivative from the Kirchhoff stress
    * derivative
@@ -240,12 +240,12 @@ namespace tfel::math {
       const T2toST2Type&,
       const StensorType&,
       const TensorType&) noexcept  //
-    requires(getSpaceDimension<T2toST2Type>() ==
-                 getSpaceDimension<StensorType>() &&
-             getSpaceDimension<T2toST2Type>() ==
-                 getSpaceDimension<TensorType>() &&
-             tfel::typetraits::IsFundamentalNumericType<
-                 numeric_type<TensorType>>::cond);
+      requires(getSpaceDimension<T2toST2Type>() ==
+                   getSpaceDimension<StensorType>() &&
+               getSpaceDimension<T2toST2Type>() ==
+                   getSpaceDimension<TensorType>() &&
+               tfel::typetraits::IsFundamentalNumericType<
+                   numeric_type<TensorType>>::cond);
   /*!
    * \return the derivative of the push-forward of a symmetric
    * second order tensor with respect to the deformation gradient
@@ -267,12 +267,12 @@ namespace tfel::math {
       const T2toST2Type&,
       const StensorType&,
       const TensorType&) noexcept  //
-    requires(getSpaceDimension<StensorType>() ==
-                 getSpaceDimension<T2toST2Type>() &&
-             getSpaceDimension<TensorType>() ==
-                 getSpaceDimension<T2toST2Type>() &&
-             tfel::typetraits::IsFundamentalNumericType<
-                 numeric_type<TensorType>>::cond);
+      requires(getSpaceDimension<StensorType>() ==
+                   getSpaceDimension<T2toST2Type>() &&
+               getSpaceDimension<TensorType>() ==
+                   getSpaceDimension<T2toST2Type>() &&
+               tfel::typetraits::IsFundamentalNumericType<
+                   numeric_type<TensorType>>::cond);
   /*!
    * \brief compute de derivative of the push-forward of a symmetric
    * second order tensor with respect to the deformation gradient
@@ -297,10 +297,10 @@ namespace tfel::math {
       const T2toST2Type&,
       const StensorType&,
       const TensorType&) noexcept  //
-    requires(
-        tfel::typetraits::IsFundamentalNumericType<
-            numeric_type<TensorType>>::cond &&
-        isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+      requires(tfel::typetraits::IsFundamentalNumericType<
+               numeric_type<TensorType>>::cond&&
+                   isAssignableTo<
+                       typename ComputeBinaryResult<numeric_type<T2toST2Type>,
                                                     numeric_type<StensorType>,
                                                     OpPlus>::Result,
                        numeric_type<T2toST2ResultType>>());

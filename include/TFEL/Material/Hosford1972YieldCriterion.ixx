@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   15/11/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -51,8 +51,7 @@ namespace tfel::material::internals {
       const tfel::math::tvector<3u, HosfordStressType<StressStensor>>&,
       const tfel::math::tmatrix<3u, 3u, HosfordBaseType<StressStensor>>&,
       const tfel::material::HosfordStressType<StressStensor>)  //
-    requires(tfel::math::getSpaceDimension<StressStensor>() == 1u)
-  {
+      requires(tfel::math::getSpaceDimension<StressStensor>() == 1u) {
     d2Psi_ds2 = {d2Psi_dvp2[0], d2Psi_dvp2[3], d2Psi_dvp2[4],
                  d2Psi_dvp2[3], d2Psi_dvp2[1], d2Psi_dvp2[5],
                  d2Psi_dvp2[4], d2Psi_dvp2[5], d2Psi_dvp2[2]};
@@ -88,8 +87,7 @@ namespace tfel::material::internals {
       const tfel::math::tvector<3u, HosfordStressType<StressStensor>>& vp,
       const tfel::math::tmatrix<3u, 3u, HosfordBaseType<StressStensor>>& m,
       const tfel::material::HosfordStressType<StressStensor> e)  //
-    requires(tfel::math::getSpaceDimension<StressStensor>() == 2u)
-  {
+      requires(tfel::math::getSpaceDimension<StressStensor>() == 2u) {
     using namespace tfel::math;
     using base = tfel::material::HosfordBaseType<StressStensor>;
     constexpr auto icste = Cste<base>::isqrt2;
@@ -143,8 +141,7 @@ namespace tfel::material::internals {
       const tfel::math::tvector<3u, HosfordStressType<StressStensor>>& vp,
       const tfel::math::tmatrix<3u, 3u, HosfordBaseType<StressStensor>>& m,
       const tfel::material::HosfordStressType<StressStensor> e)  //
-    requires(tfel::math::getSpaceDimension<StressStensor>() == 3u)
-  {
+      requires(tfel::math::getSpaceDimension<StressStensor>() == 3u) {
     using namespace tfel::math;
     using base = tfel::material::HosfordBaseType<StressStensor>;
     constexpr auto cste = Cste<base>::isqrt2;

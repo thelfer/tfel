@@ -1,8 +1,7 @@
 /*!
  * \file   MFront/BehaviourBrick/StrainRateSensitiveIsotropicHardeningRule.hxx
- * \brief  This file declares the StrainRateSensitiveIsotropicHardeningRule class
- * \author Thomas Helfer
- * \date   13/11/2024
+ * \brief  This file declares the StrainRateSensitiveIsotropicHardeningRule
+ * class \author Thomas Helfer \date   13/11/2024
  */
 
 #ifndef LIB_MFRONT_BBRICKS_STRAINRATESENSITIVEISOTROPICHARDENINGRULE_HXX
@@ -31,7 +30,8 @@ namespace mfront::bbrick {
    *   R_{rs}\left(0\right) = 1
    *   \f]
    */
-  struct StrainRateSensitiveIsotropicHardeningRule final : IsotropicHardeningRule {
+  struct StrainRateSensitiveIsotropicHardeningRule final
+      : IsotropicHardeningRule {
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,

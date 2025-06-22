@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   19 mars 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -78,7 +78,7 @@ namespace abaqus {
                                      buas>::exe(data.getStiffnessTensor(),
                                                 props);
       }  // end of exe
-    };  // end of struct StiffnessOperatorInitializer
+    };   // end of struct StiffnessOperatorInitializer
     //! structure in charge of initializing the stiffness operator
     struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer {
       typedef typename BV::BehaviourData BData;
@@ -89,7 +89,7 @@ namespace abaqus {
             ATraits::stype>::exe(props + o,
                                  data.getThermalExpansionCoefficientTensor());
       }  // end of exe
-    };  // end of struct ThermalExpansionCoefficientTensorInitializer
+    };   // end of struct ThermalExpansionCoefficientTensorInitializer
     //! place holder for tag dispatching
     struct TFEL_VISIBILITY_LOCAL DoNothingInitializer {
       typedef typename BV::BehaviourData BData;
@@ -317,7 +317,7 @@ namespace abaqus {
         b.setBehaviourDataGradients(e);
         b.setIntegrationDataGradients(de);
       }  // end of exe
-    };  // end of struct GradientInitialiserWithStressFreeExpansion
+    };   // end of struct GradientInitialiserWithStressFreeExpansion
     //! An helper structure used to initialise the driving variables
     struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithoutStressFreeExpansion {
       /*!
@@ -337,8 +337,8 @@ namespace abaqus {
         b.setBehaviourDataGradients(e);
         b.setIntegrationDataGradients(de);
       }  // end of exe
-    };  // end of struct GradientInitialiserWithoutStressFreeExpansion
-  };  // end of struct AbaqusExplicitInterface
+    };   // end of struct GradientInitialiserWithoutStressFreeExpansion
+  };     // end of struct AbaqusExplicitInterface
 
 }  // end of namespace abaqus
 

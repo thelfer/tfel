@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   15/03/2018
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -25,7 +25,7 @@ namespace mfront::bbrick {
   static std::string getIsotropicHardeningRuleId(const std::string& id,
                                                  const int n) {
     return (!id.empty() ? id + "_" : "") + "riihr_" + std::to_string(n);
-  } // end of getIsotropicHardeningRuleId
+  }  // end of getIsotropicHardeningRuleId
 
   static std::string getIsotropicHardeningRuleValue(const std::string& name,
                                                     const std::string& fid,
@@ -205,7 +205,8 @@ namespace mfront::bbrick {
           bd, fid, getIsotropicHardeningRuleId(id, idx));
       ++idx;
     }
-    c += this->rsf->computeStrainRateSensitivityFactorAndDerivative(bd, fid, id);
+    c +=
+        this->rsf->computeStrainRateSensitivityFactorAndDerivative(bd, fid, id);
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto Rs = id.empty() ? "Rs" + fid : "Rs" + fid + "_" + id;
     c += "const auto " + R + " = (";

@@ -3,11 +3,11 @@
  * \brief  This file implements the methods of the class st2tost2.
  * \author Thomas Helfer
  * \date   02 jun 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -33,9 +33,8 @@ namespace tfel::math {
   template <std::size_t... d>
   TFEL_HOST_DEVICE constexpr st2tost2<N, ValueType>::st2tost2(
       ValueType const (&... arrays)[d])  //
-    requires((sizeof...(d) == StensorDimeToSize<N>::value) &&
-             ((d == StensorDimeToSize<N>::value) && ...))
-  {
+      requires((sizeof...(d) == StensorDimeToSize<N>::value) &&
+               ((d == StensorDimeToSize<N>::value) && ...)) {
     auto init_row = [this](
                         const typename st2tost2::size_type i,
                         ValueType const(&values)[StensorDimeToSize<N>::value]) {
@@ -52,9 +51,8 @@ namespace tfel::math {
   template <StensorConcept StensorType>
   TFEL_HOST_DEVICE constexpr auto st2tost2<N, T>::dsquare(
       const StensorType& s) noexcept
-    requires(getSpaceDimension<StensorType>() == N &&
-             isAssignableTo<numeric_type<StensorType>, T>())
-  {
+      requires(getSpaceDimension<StensorType>() == N &&
+               isAssignableTo<numeric_type<StensorType>, T>()) {
     return Expr<st2tost2<N, T>, StensorSquareDerivativeExpr<N>>(s);
   }
 
@@ -62,13 +60,12 @@ namespace tfel::math {
   template <StensorConcept StensorType, ST2toST2Concept ST2toST2Type>
   TFEL_HOST_DEVICE constexpr auto st2tost2<N, T>::dsquare(
       const StensorType& s, const ST2toST2Type& C) noexcept
-    requires(getSpaceDimension<StensorType>() == N &&
-             getSpaceDimension<ST2toST2Type>() == N &&
-             isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
-                                                  numeric_type<ST2toST2Type>,
-                                                  OpMult>,
-                            T>())
-  {
+      requires(getSpaceDimension<StensorType>() == N &&
+               getSpaceDimension<ST2toST2Type>() == N &&
+               isAssignableTo<BinaryOperationResult<numeric_type<StensorType>,
+                                                    numeric_type<ST2toST2Type>,
+                                                    OpMult>,
+                              T>()) {
     return Expr<st2tost2<N, T>, StensorSquareDerivativeExpr<N>>(s, C);
   }  // end of dsquare
 
@@ -76,9 +73,8 @@ namespace tfel::math {
   template <StensorConcept StensorType>
   TFEL_HOST_DEVICE constexpr auto st2tost2<N, T>::stpd(
       const StensorType& s) noexcept
-    requires(getSpaceDimension<StensorType>() == N &&
-             isAssignableTo<numeric_type<StensorType>, T>())
-  {
+      requires(getSpaceDimension<StensorType>() == N &&
+               isAssignableTo<numeric_type<StensorType>, T>()) {
     return StensorSymmetricProductDerivative<N, T>::exe(s);
   }
 
@@ -86,9 +82,8 @@ namespace tfel::math {
   template <T2toST2Concept T2toST2Type>
   TFEL_HOST_DEVICE constexpr auto st2tost2<N, T>::convert(
       const T2toST2Type& src) noexcept
-    requires(getSpaceDimension<T2toST2Type>() == N &&
-             isAssignableTo<numeric_type<T2toST2Type>, T>())
-  {
+      requires(getSpaceDimension<T2toST2Type>() == N &&
+               isAssignableTo<numeric_type<T2toST2Type>, T>()) {
     return Expr<st2tost2<N, T>, ConvertT2toST2ToST2toST2Expr<N>>(src);
   }  // end of convert
 
@@ -286,9 +281,8 @@ namespace tfel::math {
   template <ST2toST2Concept ST2toST2Type, TensorConcept TensorType>
   TFEL_HOST_DEVICE constexpr auto push_forward(const ST2toST2Type& C,
                                                const TensorType& F) noexcept
-    requires(getSpaceDimension<ST2toST2Type>() ==
-             getSpaceDimension<TensorType>())
-  {
+      requires(getSpaceDimension<ST2toST2Type>() ==
+               getSpaceDimension<TensorType>()) {
     st2tost2<getSpaceDimension<ST2toST2Type>(),
              BinaryOperationResult<numeric_type<ST2toST2Type>,
                                    numeric_type<TensorType>, OpMult>>
@@ -298,10 +292,10 @@ namespace tfel::math {
   }  // end of push_forward
 
   template <ST2toST2Concept ST2toST2Type, TensorConcept TensorType>
-  TFEL_HOST constexpr auto pull_back(const ST2toST2Type& C, const TensorType& F)
-    requires(getSpaceDimension<ST2toST2Type>() ==
-             getSpaceDimension<TensorType>())
-  {
+  TFEL_HOST constexpr auto pull_back(
+      const ST2toST2Type& C,
+      const TensorType& F) requires(getSpaceDimension<ST2toST2Type>() ==
+                                    getSpaceDimension<TensorType>()) {
     const auto iF = invert(F);
     return push_forward(C, iF);
   }  // end of pull_back

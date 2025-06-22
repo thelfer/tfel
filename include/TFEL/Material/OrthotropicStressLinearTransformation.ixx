@@ -3,11 +3,11 @@
  * \brief
  * \author HELFER Thomas 202608
  * \date   13/01/2018
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -68,7 +68,7 @@ namespace tfel::material {
                 (c23 - 2 * c21) / 3, (c23 + c21) / 3,     (c21 - 2 * c23) / 3,
                 (c32 - 2 * c31) / 3, (c31 - 2 * c32) / 3, (c32 + c31) / 3};
       }  // end of exe
-    };  // end of struct OrthotropicStressLinearTransformation<1u>
+    };   // end of struct OrthotropicStressLinearTransformation<1u>
     /*!
      * \brief partial specialisation of the
      * `OrthotropicStressLinearTransformation` in `2D`.
@@ -117,7 +117,7 @@ namespace tfel::material {
                 zero,
                 c44};
       }  // end of exe
-    };  // end of struct OrthotropicStressLinearTransformation<2u>
+    };   // end of struct OrthotropicStressLinearTransformation<2u>
     /*!
      * \brief partial specialisation of the
      * `OrthotropicStressLinearTransformation` in `3D`.
@@ -186,7 +186,7 @@ namespace tfel::material {
                 zero,
                 c66};
       }  // end of exe
-    };  // end of struct OrthotropicStressLinearTransformation<3u>
+    };   // end of struct OrthotropicStressLinearTransformation<3u>
     /*!
      * \brief an helper structure used to build linear
      * transformation according to the modelling hypothesis and the
@@ -263,7 +263,7 @@ namespace tfel::material {
         return OrthotropicStressLinearTransformation<2u>::exe(
             c13, c31, c12, c21, c32, c23, c55, c44, c66);
       }  // end of exe
-    };  // end of struct OrthotropicStressLinearTransformationII
+    };   // end of struct OrthotropicStressLinearTransformationII
     /*!
      * \brief partial specialisation of the
      * `OrthotropicStressLinearTransformationII` for the
@@ -303,7 +303,7 @@ namespace tfel::material {
         return OrthotropicStressLinearTransformation<2u>::exe(
             c13, c31, c12, c21, c32, c23, c55, c44, c66);
       }  // end of exe
-    };  // end of struct
+    };   // end of struct
         // OrthotropicStressLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::PIPE>
     /*!
      * \brief partial specialisation of the
@@ -344,7 +344,7 @@ namespace tfel::material {
         return OrthotropicStressLinearTransformation<2u>::exe(
             c13, c31, c12, c21, c32, c23, c55, c44, c66);
       }  // end of exe
-    };  // end of struct
+    };   // end of struct
         // OrthotropicStressLinearTransformationII<H,tfel::material::OrthotropicAxesConvention::PIPE>
     /*!
      * \brief partial specialisation of the

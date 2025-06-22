@@ -3,11 +3,11 @@
  * \brief  this file implements the copy class.
  * \author Thomas Helfer
  * \date   30 Jun 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -156,10 +156,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
                                                OutputIterator q) noexcept
-      requires(
-          !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
-            tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond))
-    {
+        requires(
+            !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
+              tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond)) {
       *q = *p;
       return copy<1u>::exe(++p, ++q);
     }
@@ -198,9 +197,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
                                                OutputIterator q) noexcept
-      requires((tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
-                tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond))
-    {
+        requires(
+            (tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
+             tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond)) {
       q[0] = p[0];
       q[1] = p[1];
       q[2] = p[2];
@@ -214,10 +213,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
                                                OutputIterator q) noexcept
-      requires(
-          !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
-            tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond))
-    {
+        requires(
+            !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
+              tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond)) {
       *q = *p;
       return copy<2u>::exe(++p, ++q);
     }
@@ -256,9 +254,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
                                                OutputIterator q) noexcept
-      requires((tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
-                tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond))
-    {
+        requires(
+            (tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
+             tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond)) {
       q[0] = p[0];
       q[1] = p[1];
       q[2] = p[2];
@@ -273,10 +271,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
                                                OutputIterator q) noexcept
-      requires(
-          !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
-            tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond))
-    {
+        requires(
+            !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
+              tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond)) {
       *q = *p;
       return copy<3u>::exe(++p, ++q);
     }
@@ -315,9 +312,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
                                                OutputIterator q) noexcept
-      requires((tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
-                tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond))
-    {
+        requires(
+            (tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
+             tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond)) {
       q[0] = p[0];
       q[1] = p[1];
       q[2] = p[2];
@@ -333,10 +330,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
                                                OutputIterator q) noexcept
-      requires(
-          !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
-            tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond))
-    {
+        requires(
+            !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
+              tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond)) {
       *q = *p;
       return copy<4u>::exe(++p, ++q);
     }
@@ -375,9 +371,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
                                                OutputIterator q) noexcept
-      requires((tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
-                tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond))
-    {
+        requires(
+            (tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
+             tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond)) {
       q[0] = p[0];
       q[1] = p[1];
       q[2] = p[2];
@@ -394,10 +390,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
                                                OutputIterator q) noexcept
-      requires(
-          !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
-            tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond))
-    {
+        requires(
+            !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
+              tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond)) {
       *q = *p;
       return copy<5u>::exe(++p, ++q);
     }
@@ -436,9 +431,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
                                                OutputIterator q) noexcept
-      requires((tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
-                tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond))
-    {
+        requires(
+            (tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
+             tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond)) {
       q[0] = p[0];
       q[1] = p[1];
       q[2] = p[2];
@@ -456,10 +451,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
                                                OutputIterator q) noexcept
-      requires(
-          !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
-            tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond))
-    {
+        requires(
+            !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
+              tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond)) {
       *q = *p;
       return copy<6u>::exe(++p, ++q);
     }
@@ -498,9 +492,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
                                                OutputIterator q) noexcept
-      requires((tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
-                tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond))
-    {
+        requires(
+            (tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
+             tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond)) {
       q[0] = p[0];
       q[1] = p[1];
       q[2] = p[2];
@@ -519,10 +513,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
                                                OutputIterator q) noexcept
-      requires(
-          !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
-            tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond))
-    {
+        requires(
+            !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
+              tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond)) {
       *q = *p;
       return copy<7u>::exe(++p, ++q);
     }
@@ -561,9 +554,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
                                                OutputIterator q) noexcept
-      requires((tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
-                tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond))
-    {
+        requires(
+            (tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
+             tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond)) {
       q[0] = p[0];
       q[1] = p[1];
       q[2] = p[2];
@@ -583,10 +576,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
                                                OutputIterator q) noexcept
-      requires(
-          !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
-            tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond))
-    {
+        requires(
+            !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
+              tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond)) {
       *q = *p;
       return copy<8u>::exe(++p, ++q);
     }
@@ -623,11 +615,10 @@ namespace tfel::fsalgo {
      * \date   30 Jun 2006
      */
     template <typename InputIterator, typename OutputIterator>
-    TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
-                                               OutputIterator q) noexcept
-      requires(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
-               tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond)
-    {
+    TFEL_HOST_DEVICE static constexpr auto
+    exe(InputIterator p, OutputIterator q) noexcept requires(
+        tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond&&
+            tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond) {
       q[0] = p[0];
       q[1] = p[1];
       q[2] = p[2];
@@ -648,10 +639,9 @@ namespace tfel::fsalgo {
     template <typename InputIterator, typename OutputIterator>
     TFEL_HOST_DEVICE static constexpr auto exe(InputIterator p,
                                                OutputIterator q) noexcept
-      requires(
-          !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
-            tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond))
-    {
+        requires(
+            !(tfel::typetraits::IsRandomAccessIterator<InputIterator>::cond &&
+              tfel::typetraits::IsRandomAccessIterator<OutputIterator>::cond)) {
       *q = *p;
       return copy<9u>::exe(++p, ++q);
     }

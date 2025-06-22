@@ -3,9 +3,10 @@
  * \brief  This file declares the MathObjectTraits, MatrixConcept and MatrixType
  * classes. \author Thomas Helfer \date   04 May 2006 \copyright Copyright (C)
  * 2006-2018 CEA/DEN, EDF R&D. All rights reserved. This project is publicly
- * released under either the GNU GPL Licence or the CECILL-A licence. A copy of
- * thoses licences are delivered with the sources of TFEL. CEA or EDF may also
- * distribute this project under specific licensing conditions.
+ * released under either the GNU GPL Licence with linking exception or the
+ * CECILL-A licence. A copy of thoses licences are delivered with the sources of
+ * TFEL. CEA or EDF may also distribute this project under specific licensing
+ * conditions.
  */
 
 #ifndef LIB_TFEL_MATH_MATRIXCONCEPT_HXX
@@ -45,10 +46,11 @@ namespace tfel::math {
   template <typename MatrixType>
   concept MatrixConcept =
       (std::is_same_v<typename std::decay_t<MatrixType>::ConceptTag,
-                      MatrixTag>) &&
-      (requires(const MatrixType t,
-                const index_type<MatrixType> i,
-                const index_type<MatrixType> j) { t(i, j); });
+                      MatrixTag>)&&(requires(const MatrixType t,
+                                             const index_type<MatrixType> i,
+                                             const index_type<MatrixType> j) {
+        t(i, j);
+      });
 
   //! paratial specialisation for matrices
   template <typename MatrixType>

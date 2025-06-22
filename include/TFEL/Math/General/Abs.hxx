@@ -3,11 +3,11 @@
  * \brief  This file declares the abs function
  * \author Thomas Helfer
  * \date   13 Feb 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -28,8 +28,7 @@ namespace tfel::math {
    */
   template <typename NumericType>
   TFEL_HOST_DEVICE constexpr auto abs(const NumericType& s) noexcept
-    requires(tfel::typetraits::isFundamentalNumericType<NumericType>())
-  {
+      requires(tfel::typetraits::isFundamentalNumericType<NumericType>()) {
     return (s < NumericType(0)) ? -s : s;
   }
   /*!
@@ -37,9 +36,8 @@ namespace tfel::math {
    * \param[in] s: value
    */
   template <typename NumericType>
-  TFEL_HOST_DEVICE constexpr auto abs(const Complex<NumericType>& s)
-    requires(tfel::typetraits::IsFundamentalNumericType<NumericType>::cond)
-  {
+  TFEL_HOST_DEVICE constexpr auto abs(const Complex<NumericType>& s) requires(
+      tfel::typetraits::IsFundamentalNumericType<NumericType>::cond) {
     return s.norm();
   }
 

@@ -3,11 +3,11 @@
  * \brief  This file declares the MechanicalBehaviour class
  * \author Thomas Helfer
  * \date   22 Sep 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -133,7 +133,7 @@ namespace tfel::material {
       CONSISTENTTANGENTOPERATOR,
       NOSTIFFNESSREQUESTED
     };  // end of enum SMType
-  };  // end of struct MechanicalBehaviourBase
+  };    // end of struct MechanicalBehaviourBase
 
   /*!
    * a trait class describing which tangent operators can be
@@ -146,7 +146,7 @@ namespace tfel::material {
      * operator. Finite strain beaviours are a noticeable exception.
      */
     enum SMFlag { STANDARDTANGENTOPERATOR };  // end of enum Flag
-  };  // end of struct
+  };                                          // end of struct
 
   /*!
    * a trait class describing which tangent operators can be

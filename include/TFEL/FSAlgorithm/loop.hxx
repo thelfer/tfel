@@ -3,11 +3,11 @@
  * \brief  this file implements the loop class.
  * \author Thomas Helfer
  * \date   18/04/2018
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -54,7 +54,7 @@ namespace tfel::fsalgo {
        */
       template <typename F>
       void exe(F&) {}  // end of exe
-    };  // end of struct do_loop<N, N>
+    };                 // end of struct do_loop<N, N>
 
   }  // namespace internals
 

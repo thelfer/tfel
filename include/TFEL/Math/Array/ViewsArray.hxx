@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   19/05/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -315,13 +315,11 @@ namespace tfel::math {
     }
     // \brief multiplication by a scalar
     template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr ViewsArray& operator*=(
-        const ValueType2& s) noexcept
-      requires(
-          (isScalar<ValueType2>()) &&
-          (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpMult>,
-                          MappedType>()))
-    {
+    TFEL_HOST_DEVICE constexpr ViewsArray&
+    operator*=(const ValueType2& s) noexcept requires(
+        (isScalar<ValueType2>()) &&
+        (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpMult>,
+                        MappedType>())) {
       static_assert(!std::is_const_v<MappedType>, "invalid call");
       const auto f =
           makeMultiIndicesUnaryOperatorFunctor([s](auto& a) { a *= s; }, *this);
@@ -342,13 +340,11 @@ namespace tfel::math {
     }  // end of operator*=
     // \brief division by a scalar
     template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr ViewsArray& operator/=(
-        const ValueType2& s) noexcept
-      requires(
-          (isScalar<ValueType2>()) &&
-          (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpDiv>,
-                          MappedType>()))
-    {
+    TFEL_HOST_DEVICE constexpr ViewsArray&
+    operator/=(const ValueType2& s) noexcept requires(
+        (isScalar<ValueType2>()) &&
+        (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpDiv>,
+                        MappedType>())) {
       static_assert(!std::is_const_v<MappedType>, "invalid call");
       return this->operator*=(1 / s);
     }  // end of operator/=

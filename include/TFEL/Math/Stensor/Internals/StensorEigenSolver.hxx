@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   29 déc. 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -53,7 +53,7 @@ namespace tfel::math::internals {
           base_type_cast(v[5]) * icste,  //
           base_type_cast(v[2])};
     }  // end of as_base_matrix
-  };  // end of StensorEigenSolverBase<3u, NumType>
+  };   // end of StensorEigenSolverBase<3u, NumType>
 
   /*!
    * A class for interfacing various eigen solvers. By default,
@@ -158,7 +158,7 @@ namespace tfel::math::internals {
           vp2, m, sm(0, 0), sm(1, 1), sm(2, 2), sm(0, 1), sm(0, 2), sm(1, 2));
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
-  };  // end of struct StensorEigenSolver
+  };   // end of struct StensorEigenSolver
 
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
@@ -213,7 +213,7 @@ namespace tfel::math::internals {
           base_type_cast(v[5]) * icste, base_type_cast(v[2]), b);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
-  };  // end of struct StensorEigenSolver
+  };   // end of struct StensorEigenSolver
 
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
@@ -269,7 +269,7 @@ namespace tfel::math::internals {
       m(1, 2) = real(0);
       m(2, 2) = real(1);
     }  // end of computeEigenVectors
-  };  // end of struct StensorEigenSolver
+  };   // end of struct StensorEigenSolver
 
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
@@ -317,7 +317,7 @@ namespace tfel::math::internals {
                                                                        sm);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
-  };  // end of struct StensorEigenSolver
+  };   // end of struct StensorEigenSolver
 
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
@@ -377,7 +377,7 @@ namespace tfel::math::internals {
       fses::syevj3(m, vp2, sm);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
-  };  // end of struct StensorEigenSolver
+  };   // end of struct StensorEigenSolver
 
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
@@ -436,7 +436,7 @@ namespace tfel::math::internals {
       fses::syevq3(m, vp2, sm);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
-  };  // end of struct StensorEigenSolver
+  };   // end of struct StensorEigenSolver
 
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
@@ -495,7 +495,7 @@ namespace tfel::math::internals {
       fses::syevd3(m, vp2, sm);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
-  };  // end of struct StensorEigenSolver
+  };   // end of struct StensorEigenSolver
 
   /*!
    * \brief Partial specialisation of the `StensorEigenSolver`
@@ -554,7 +554,7 @@ namespace tfel::math::internals {
       fses::syevh3(m, vp2, sm);
       vp = {NumType(vp2(0)), NumType(vp2(1)), NumType(vp2(2))};
     }  // end of computeEigenVectors
-  };  // end of struct StensorEigenSolver
+  };   // end of struct StensorEigenSolver
 
 }  // namespace tfel::math::internals
 

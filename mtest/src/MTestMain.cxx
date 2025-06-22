@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \brief  05 avril 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -570,7 +570,7 @@ namespace mtest {
       }
     }
     this->addTest(t, test_name);
-  }  // end of appendTestFromMadnexFile
+  }    // end of appendTestFromMadnexFile
 #endif /* MADNEX_MTEST_TEST_SUPPORT */
 
   void MTestMain::treatMadnexInputFile(const std::string& i) {
@@ -627,7 +627,7 @@ namespace mtest {
         "MTestMain::treatMadnexInputFile: "
         "madnex support is not available");
 #endif /* MADNEX_MTEST_TEST_SUPPORT */
-  }  // end of treatMadnexInputFile
+  }    // end of treatMadnexInputFile
 
   void MTestMain::treatStandardInputFile(const std::string& i) {
 #ifdef MTEST_HAVE_MADNEX

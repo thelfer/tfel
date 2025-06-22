@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \brief 30 janv. 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -141,7 +141,7 @@ namespace abaqus {
         b.setABAQUSBehaviourDataGradients(STRAN);
         b.setABAQUSIntegrationDataGradients(DSTRAN);
       }  // end of exe
-    };  // end of struct GradientInitialiserWithoutStressFreeExpansion
+    };   // end of struct GradientInitialiserWithoutStressFreeExpansion
 
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer {
       typedef typename BV::BehaviourData BData;
@@ -154,7 +154,7 @@ namespace abaqus {
                                      buas>::exe(data.getStiffnessTensor(),
                                                 props);
       }  // end of exe
-    };  // end of struct StiffnessOperatorInitializer
+    };   // end of struct StiffnessOperatorInitializer
 
     struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer {
       typedef typename BV::BehaviourData BData;
@@ -165,7 +165,7 @@ namespace abaqus {
             AbaqusTraits<BV>::btype, H, AbaqusTraits<BV>::stype>::
             exe(props + o, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
-    };  // end of struct ThermalExpansionCoefficientTensorInitializer
+    };   // end of struct ThermalExpansionCoefficientTensorInitializer
 
     struct TFEL_VISIBILITY_LOCAL DoNothingInitializer {
       typedef typename BV::BehaviourData BData;
@@ -186,7 +186,7 @@ namespace abaqus {
         TFEL_ABAQUS_INLINE static void exe(T& Psi_d, const BV& b) {
           b.computeDissipatedEnergy(Psi_d);
         }  // end of exe
-      };  // end of struct DissipatedEnergyComputer
+      };   // end of struct DissipatedEnergyComputer
       //! place holder for tag dispatching
       struct TFEL_VISIBILITY_LOCAL DoNothingEnergyComputer {
         template <typename T>

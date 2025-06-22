@@ -3,11 +3,11 @@
  * \brief  This file implements operations that can be applied to tensor.
  * \author Thomas Helfer
  * \date   01 jui 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -216,8 +216,9 @@ namespace tfel::math {
   template <TensorConcept TensorType1, TensorConcept TensorType2>
   TFEL_HOST_DEVICE constexpr auto operator|(const TensorType1&,
                                             const TensorType2&) noexcept
-    requires(!isInvalid<
-             BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>());
+      requires(
+          !isInvalid<
+              BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>());
 
 }  // end of namespace tfel::math
 

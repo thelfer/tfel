@@ -4,7 +4,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   20 Nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -294,9 +294,7 @@ namespace tfel::utilities {
     using return_type = bool;
     // default implementation
     template <typename T1, typename T2>
-    static bool apply(const T1&, const T2&)
-      requires(!std::is_same_v<T1, T2>)
-    {
+    static bool apply(const T1&, const T2&) requires(!std::is_same_v<T1, T2>) {
       return false;
     }  // end of apply
     static bool apply(const std::string& x1, const std::string& x2) {
@@ -337,7 +335,7 @@ namespace tfel::utilities {
     static bool apply(const double v1, const double v2) {
       return tfel::math::ieee754::fpclassify(v1 - v2) == FP_ZERO;
     }  // end of apply
-  };  // end of struct DataComparator
+  };   // end of struct DataComparator
 
   bool operator==(const Data& lhs, const Data& rhs) {
     if (&lhs == &rhs) {

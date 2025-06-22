@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \brief 19 mai 2010
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -75,7 +75,7 @@ namespace tfel::math {
                                            const double vy,
                                            const double vz) const {
     const tvector<2u> v = {this->a1 * (vy) + b1, this->a2 * (vz) + b2};
-    return FK::operator()(this->a0 * vx + this->b0, v);
+    return FK::operator()(this->a0* vx + this->b0, v);
   }  // end of FactorizedKriging1D2D::operator()
 
   FactorizedKriging1D2D::~FactorizedKriging1D2D() = default;

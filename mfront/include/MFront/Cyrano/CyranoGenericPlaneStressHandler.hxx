@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   21 fév 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -254,7 +254,7 @@ namespace cyrano {
             c1, c1, c3, DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
             NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, op);
       }  // end of exe
-    };  // end of struct TreatPlanStressIsotropicBehaviour
+    };   // end of struct TreatPlanStressIsotropicBehaviour
 
     struct TreatPlaneStressOrthotropicBehaviour {
       TFEL_CYRANO_INLINE2 static void exe(
@@ -330,7 +330,7 @@ namespace cyrano {
             c1, c2, S22, DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, nPROPS,
             NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, op);
       }  // end of exe
-    };  // end of struct TreatPlanStressOrthotropicBehaviour
+    };   // end of struct TreatPlanStressOrthotropicBehaviour
 
   };  // end of struct CyranoGenericPlaneStressHandlerTreatPlaneStrain
 

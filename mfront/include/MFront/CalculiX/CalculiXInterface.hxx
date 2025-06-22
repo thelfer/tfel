@@ -3,11 +3,11 @@
  * \brief  This file implements the CalculiXInterface class.
  * \author Thomas Helfer
  * \date   28 Jul 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -124,7 +124,7 @@ namespace calculix {
         i.exe(d);
       }
     };  // end of struct CallBehaviour2
-  };  // end of struct CalculiXInterface
+  };    // end of struct CalculiXInterface
 
 }  // end of namespace calculix
 

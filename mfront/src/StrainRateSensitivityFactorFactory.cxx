@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   17/11/2024
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -20,18 +20,20 @@
 
 namespace mfront::bbrick {
 
-  StrainRateSensitivityFactorFactory& StrainRateSensitivityFactorFactory::getFactory() {
+  StrainRateSensitivityFactorFactory&
+  StrainRateSensitivityFactorFactory::getFactory() {
     static StrainRateSensitivityFactorFactory i;
     return i;
   }  // end of getFactory
 
   std::vector<std::string>
-  StrainRateSensitivityFactorFactory::getRegistredStrainRateSensitivityFactors() const {
+  StrainRateSensitivityFactorFactory::getRegistredStrainRateSensitivityFactors()
+      const {
     return getKeys(this->generators);
   }  // end of getRegistredStrainRateSensitivityFactors
 
   void StrainRateSensitivityFactorFactory::addGenerator(const std::string& n,
-                                                   const Generator& g) {
+                                                        const Generator& g) {
     if (!this->generators.insert({n, g}).second) {
       tfel::raise(
           "StrainRateSensitivityFactorFactory::addGenerator: "
@@ -54,13 +56,15 @@ namespace mfront::bbrick {
 
   StrainRateSensitivityFactorFactory::StrainRateSensitivityFactorFactory() {
     this->addGenerator("CowperSymonds", []() {
-      return std::make_shared<bbrick::CowperSymondsStrainRateSensitivityFactor>();
+      return std::make_shared<
+          bbrick::CowperSymondsStrainRateSensitivityFactor>();
     });
     this->addGenerator("JohnsonCook", []() {
       return std::make_shared<bbrick::JohnsonCookStrainRateSensitivityFactor>();
     });
   }  // end of StrainRateSensitivityFactorFactory
 
-  StrainRateSensitivityFactorFactory::~StrainRateSensitivityFactorFactory() = default;
+  StrainRateSensitivityFactorFactory::~StrainRateSensitivityFactorFactory() =
+      default;
 
 }  // end of namespace mfront::bbrick

@@ -19,7 +19,8 @@ namespace tfel::math {
     struct CheckUnitCompatibilityImplementation<Unit, NumericType>
         : std::conditional_t<
               isQuantity<NumericType>(),
-              std::is_same<typename QuantityTraits<NumericType>::UnitType, Unit>,
+              std::is_same<typename QuantityTraits<NumericType>::UnitType,
+                           Unit>,
               std::true_type> {};
 
     template <UnitConcept Unit, MathObjectConcept MathObjectType>
@@ -27,7 +28,7 @@ namespace tfel::math {
         : CheckUnitCompatibilityImplementation<Unit,
                                                numeric_type<MathObjectType>> {};
 
-  }  // namespace internal
+  }  // namespace internals
 
   template <UnitConcept Unit, typename T>
   requires(ScalarConcept<T> || MathObjectConcept<T>)  //
@@ -42,6 +43,5 @@ namespace tfel::math {
   }
 
 }  // end of namespace tfel::math
-
 
 #endif /* LIB_TFEL_MATH_TYPES_IXX */

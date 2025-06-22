@@ -3,11 +3,11 @@
  * \brief  This file declares the CastemComputeStiffnessTensor class
  * \author Thomas Helfer
  * \date   25/07/2018
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -34,8 +34,8 @@ namespace mfront::gb {
   computeOrthotropicUnAlteredElasticStiffnessTensor(
       tfel::math::st2tost2<1u, stress>&,
       const real* const) noexcept  //
-    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
-             1u);
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               1u);
   /*!
    * \brief compute the unaltered elastic stiffness tensor
    * \param[out] C: stiffness tensor
@@ -48,8 +48,8 @@ namespace mfront::gb {
   computeOrthotropicUnAlteredElasticStiffnessTensor(
       tfel::math::st2tost2<2u, stress>&,
       const real* const) noexcept  //
-    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
-             2u);
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               2u);
   /*!
    * \brief compute the unaltered elastic stiffness tensor
    * \param[out] C: stiffness tensor
@@ -62,8 +62,8 @@ namespace mfront::gb {
   computeOrthotropicUnAlteredElasticStiffnessTensor(
       tfel::math::st2tost2<3u, stress>&,
       const real* const) noexcept  //
-    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
-             3u);
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               3u);
   /*!
    * \brief compute the unaltered elastic stiffness tensor
    * \param[out] C: stiffness tensor
@@ -76,8 +76,8 @@ namespace mfront::gb {
   computeOrthotropicAlteredElasticStiffnessTensor(
       tfel::math::st2tost2<1u, stress>&,
       const real* const) noexcept  //
-    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
-             1u);
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               1u);
   /*!
    * \brief compute the unaltered elastic stiffness tensor
    * \param[out] C: stiffness tensor
@@ -90,8 +90,8 @@ namespace mfront::gb {
   computeOrthotropicAlteredElasticStiffnessTensor(
       tfel::math::st2tost2<2u, stress>&,
       const real* const) noexcept  //
-    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
-             2u);
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               2u);
   /*!
    * \brief compute the unaltered elastic stiffness tensor
    * \param[out] C: stiffness tensor
@@ -103,8 +103,8 @@ namespace mfront::gb {
   TFEL_HOST_DEVICE constexpr void
   computeOrthotropicAlteredElasticStiffnessTensor(
       tfel::math::st2tost2<3u, stress>&, const real* const) noexcept  //
-    requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
-             3u);
+      requires(tfel::material::ModellingHypothesisToSpaceDimension<H>::value ==
+               3u);
 
 }  // end of namespace mfront::gb
 

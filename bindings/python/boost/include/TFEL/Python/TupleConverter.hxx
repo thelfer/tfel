@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \brief 11 mars 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -68,7 +68,7 @@ namespace tfel::python::internals {
       using namespace boost::python;
       return incref(make_tuple(std::get<S>(t)...).ptr());
     }  // end of exe
-  };  // end of build_python_tuple
+  };   // end of build_python_tuple
 
   template <typename T, int n>
   T extract_nth_elt(const boost::python::tuple& l) {
@@ -92,7 +92,7 @@ namespace tfel::python::internals {
                     const integer_sequence<S...>&) {
       new (s) std::tuple<Types...>(extract_nth_elt<Types, S>(l)...);
     }  // end of exe
-  };  // end of build_tuple
+  };   // end of build_tuple
 
   /*!
    * \brief convert tuple converter to python tuple
@@ -102,7 +102,7 @@ namespace tfel::python::internals {
     static PyObject* convert(const std::tuple<Types...>& t) {
       return build_python_tuple<Types...>::exe(t);
     }  // end of convert
-  };  // end of struct tuple_to_python_tuple
+  };   // end of struct tuple_to_python_tuple
 
   template <typename... Types>
   struct tuple_from_python_tuple {

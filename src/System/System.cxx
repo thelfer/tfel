@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   06/11/2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -38,24 +38,24 @@
 #include <windows.h>
 #include <direct.h>
 #ifndef S_ISDIR
-#define S_ISDIR(mode) (((mode) & S_IFMT) == S_IFDIR)
+#define S_ISDIR(mode) (((mode)&S_IFMT) == S_IFDIR)
 #endif
 #ifndef S_ISREG
-#define S_ISREG(mode) (((mode) & S_IFMT) == S_IFREG)
+#define S_ISREG(mode) (((mode)&S_IFMT) == S_IFREG)
 #endif
 #ifndef S_ISCHR
-#define S_ISCHR(m) (((m) & S_IFMT) == S_IFCHR)
+#define S_ISCHR(m) (((m)&S_IFMT) == S_IFCHR)
 #endif /* S_ISCHR */
 /* Not in MS Visual Studio 2008 Express */
 #ifndef S_IFBLK
 #ifndef S_ISBLK
-#define S_ISBLK(m) (((m) & S_IFMT) == S_IFBLK)
+#define S_ISBLK(m) (((m)&S_IFMT) == S_IFBLK)
 #endif /* S_ISBLK */
 #define S_IFBLK(m) (0)
 #endif /* S_IFBLK */
 #ifndef S_IFIFO
 #ifndef S_ISFIFO
-#define S_ISFIFO(m) (((m) & S_IFMT) == S_IFIFO)
+#define S_ISFIFO(m) (((m)&S_IFMT) == S_IFIFO)
 #endif /* S_ISFIFO */
 #define S_IFFIFO(m) (0)
 #endif /* S_IFIFO */
@@ -315,7 +315,7 @@ namespace tfel::system {
                                systemCall::fileType(destInfos.st_mode));
     }
 #endif /* defined _WIN32 || _WIN64 */
-  }  // end of systemCall::copy
+  }    // end of systemCall::copy
 
 #if defined _WIN32 || defined _WIN64
   void systemCall::mkdir(const std::string& dir)
@@ -457,7 +457,7 @@ namespace tfel::system {
       r = static_cast<size_t>(r - w);
       b += w;
     }
-  }  // end of systemCall::write
+  }    // end of systemCall::write
 #endif /* !(defined _WIN32 || defined _WIN64 ) */
 
   std::string systemCall::fileType(const mode_t mode) {
@@ -622,7 +622,7 @@ namespace tfel::system {
   std::string systemCall::getUserName() {
     const auto l = ::getlogin();
     return l != nullptr ? l : "";
-  }  // end of systemCall::getUserName
+  }    // end of systemCall::getUserName
 #endif /* !(defined _WIN32 || defined _WIN64 ) */
 
   std::string systemCall::getAbsolutePath(const std::string& f) {
@@ -640,7 +640,7 @@ namespace tfel::system {
              "can't retrieve full path for for '" + f + "'");
     return path;
 #endif /* (defined _WIN32 || defined _WIN64 ) && (! defined __CYGWIN__) */
-  }  // end of systemCall::getAbsolutePath
+  }    // end of systemCall::getAbsolutePath
 
   void systemCall::changeCurrentWorkingDirectory(const std::string& name) {
 #if defined _WIN32 || defined _WIN64

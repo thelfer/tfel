@@ -3,11 +3,11 @@
  * \brief
  * \author Étienne Castelier
  * \date 25 févr. 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -69,8 +69,8 @@ namespace tfel::math::anderson {
                           const unsigned char n);
 
   template <typename Field>
-  auto scalar_product(const Field& f1,
-                      const Field& f2) -> decltype(f1[0] * f2[0]);
+  auto scalar_product(const Field& f1, const Field& f2)
+      -> decltype(f1[0] * f2[0]);
 
 }  // end of namespace tfel::math::anderson
 

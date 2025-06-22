@@ -3,11 +3,11 @@
  * \brief  This file implements the EuroplexusInterface class.
  * \author Thomas Helfer
  * \date   28 Jul 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -163,7 +163,7 @@ namespace epx {
         tfel::fsalgo::copy<S>::exe(de.begin(), dv1);
         return {dv0, dv1};
       }  // end of exe
-    };  // end of struct SmallStrainChangeBasis
+    };   // end of struct SmallStrainChangeBasis
     template <tfel::material::ModellingHypothesis::Hypothesis H>
     struct FiniteStrainChangeBasis : public StressChangeBasis<H> {
       static std::pair<const EuroplexusReal*, const EuroplexusReal*> forward(
@@ -192,9 +192,9 @@ namespace epx {
       static std::pair<const EuroplexusReal*, const EuroplexusReal*> forward(
           const EPXData& d, EuroplexusReal* const, EuroplexusReal* const) {
         return {d.DV0, d.DV1};
-      }  // end of forward
+      }                                        // end of forward
       static void backward(const EPXData&) {}  // end of forward
-    };  // end of struct DoNothing
+    };                                         // end of struct DoNothing
     template <tfel::material::ModellingHypothesis::Hypothesis H>
     struct CallBehaviour2 {
       TFEL_EPX_INLINE2 static void exe(const EPXData& d) {
@@ -223,7 +223,7 @@ namespace epx {
         ChangeBasis::backward(d);
       }
     };  // end of struct CallBehaviour
-  };  // end of struct EuroplexusInterface
+  };    // end of struct EuroplexusInterface
 
 }  // end of namespace epx
 

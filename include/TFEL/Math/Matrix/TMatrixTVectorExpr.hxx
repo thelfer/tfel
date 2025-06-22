@@ -4,11 +4,11 @@
  *
  * \author Thomas Helfer
  * \date   06 avr 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -73,7 +73,7 @@ namespace tfel::math {
       const MType& m;          //! reference to the underlying matrix
       const unsigned short i;  //! row index
       unsigned short j = 0;    //! current column
-    };  // end of struc RowConstIterator
+    };                         // end of struc RowConstIterator
     //! a pseudo iterator for the vector. This iterator works even if
     // VType does not provide an iterator
     struct VectorConstIterator {

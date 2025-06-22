@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   25/07/2022
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -31,7 +31,7 @@ namespace mfront::bbrick {
     const auto Rel = id.empty() ? "Rel" + fid : "Rel" + fid + "_" + id;
     const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
     const auto dR = "d" + R + "_ddp" + fid;
-    const auto f = "mfront_interpolation_value_" + R ;
+    const auto f = "mfront_interpolation_value_" + R;
     const auto df = "mfront_interpolation_derivative_value_" + R;
     bd.reserveName(uh, Rel);
     bd.reserveName(uh, R);
@@ -153,7 +153,7 @@ namespace mfront::bbrick {
     } else {
       const auto R = id.empty() ? "R" + fid : "R" + fid + "_" + id;
       const auto f = "mfront_interpolation_value_" + R;
-      const auto df = "mfront_interpolation_derivative_value_" + R ;
+      const auto df = "mfront_interpolation_derivative_value_" + R;
       m += writeLinearInterpolationValues(*this, args);
       m += "const auto [" + f + ", " + df + "] =";
       m += "tfel::math::computeLinearInterpolationAndDerivative<";

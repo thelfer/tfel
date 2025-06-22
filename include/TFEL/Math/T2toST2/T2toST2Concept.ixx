@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   19 November 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -43,11 +43,10 @@ namespace tfel::math {
       T2toST2ResultType& dTdF,
       const StensorType& S,
       const TensorType& F) noexcept  //
-    requires(tfel::typetraits::IsFundamentalNumericType<
-                 numeric_type<TensorType>>::cond &&
-             isAssignableTo<numeric_type<StensorType>,
-                            numeric_type<T2toST2ResultType>>())
-  {
+      requires(tfel::typetraits::IsFundamentalNumericType<
+               numeric_type<TensorType>>::cond&&
+                   isAssignableTo<numeric_type<StensorType>,
+                                  numeric_type<T2toST2ResultType>>()) {
     using value_type = numeric_type<T2toST2ResultType>;
     constexpr auto N = getSpaceDimension<T2toST2ResultType>();
     static_assert(getSpaceDimension<StensorType>() == N);
@@ -155,20 +154,19 @@ namespace tfel::math {
       const T2toST2Type& dt_K,
       const StensorType& s,
       const TensorType& F) noexcept  //
-    requires(
-        getSpaceDimension<T2toST2ResultType>() ==
-            getSpaceDimension<T2toST2Type>() &&
-        getSpaceDimension<T2toST2ResultType>() ==
-            getSpaceDimension<StensorType>() &&
-        getSpaceDimension<T2toST2ResultType>() ==
-            getSpaceDimension<TensorType>() &&
-        tfel::typetraits::IsFundamentalNumericType<
-            numeric_type<TensorType>>::cond &&
-        isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
-                                                    numeric_type<StensorType>,
-                                                    OpPlus>::Result,
-                       numeric_type<T2toST2ResultType>>())
-  {
+      requires(
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<T2toST2Type>() &&
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<StensorType>() &&
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<TensorType>() &&
+          tfel::typetraits::IsFundamentalNumericType<
+              numeric_type<TensorType>>::cond &&
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                                      numeric_type<StensorType>,
+                                                      OpPlus>::Result,
+                         numeric_type<T2toST2ResultType>>()) {
     const auto iJ = 1 / det(F);
     const auto dJ = computeDeterminantDerivative(F);
     ds = iJ * (dt_K - (s ^ dJ));
@@ -184,20 +182,19 @@ namespace tfel::math {
       const T2toST2Type& ds,
       const StensorType& s,
       const TensorType& F) noexcept  //
-    requires(
-        getSpaceDimension<T2toST2ResultType>() ==
-            getSpaceDimension<T2toST2Type>() &&
-        getSpaceDimension<T2toST2ResultType>() ==
-            getSpaceDimension<StensorType>() &&
-        getSpaceDimension<T2toST2ResultType>() ==
-            getSpaceDimension<TensorType>() &&
-        tfel::typetraits::IsFundamentalNumericType<
-            numeric_type<TensorType>>::cond &&
-        isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
-                                                    numeric_type<StensorType>,
-                                                    OpPlus>::Result,
-                       numeric_type<T2toST2ResultType>>())
-  {
+      requires(
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<T2toST2Type>() &&
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<StensorType>() &&
+          getSpaceDimension<T2toST2ResultType>() ==
+              getSpaceDimension<TensorType>() &&
+          tfel::typetraits::IsFundamentalNumericType<
+              numeric_type<TensorType>>::cond &&
+          isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                                      numeric_type<StensorType>,
+                                                      OpPlus>::Result,
+                         numeric_type<T2toST2ResultType>>()) {
     const auto J = det(F);
     const auto dJ = computeDeterminantDerivative(F);
     dt_K = J * ds + (s ^ dJ);

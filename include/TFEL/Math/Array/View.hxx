@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date 01/01/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -222,9 +222,8 @@ namespace tfel::math {
      * \param[in] src: array to be assigned
      */
     template <typename OtherArray>
-    TFEL_HOST_DEVICE constexpr View& operator=(const OtherArray& src)
-      requires(isAssignableTo<OtherArray, MappedType>())
-    {
+    TFEL_HOST_DEVICE constexpr View& operator=(const OtherArray& src) requires(
+        isAssignableTo<OtherArray, MappedType>()) {
       static_assert(!is_const, "invalid call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                src.getIndexingPolicy());
@@ -233,9 +232,8 @@ namespace tfel::math {
     }
     //
     template <typename OtherArray>
-    TFEL_HOST_DEVICE constexpr View& operator+=(const OtherArray& src)
-      requires(isAssignableTo<OtherArray, MappedType>())
-    {
+    TFEL_HOST_DEVICE constexpr View& operator+=(const OtherArray& src) requires(
+        isAssignableTo<OtherArray, MappedType>()) {
       static_assert(!is_const, "invalid call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                src.getIndexingPolicy());
@@ -244,9 +242,8 @@ namespace tfel::math {
     }
     //
     template <typename OtherArray>
-    TFEL_HOST_DEVICE constexpr View& operator-=(const OtherArray& src)
-      requires(isAssignableTo<OtherArray, MappedType>())
-    {
+    TFEL_HOST_DEVICE constexpr View& operator-=(const OtherArray& src) requires(
+        isAssignableTo<OtherArray, MappedType>()) {
       static_assert(!is_const, "invalid call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                src.getIndexingPolicy());
@@ -255,24 +252,22 @@ namespace tfel::math {
     }
     //
     template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr View& operator*=(const ValueType2& s) noexcept
-      requires(isAssignableTo<BinaryOperationResult<ValueType2,
-                                                    numeric_type<MappedType>,
-                                                    OpMult>,
-                              numeric_type<MappedType>>())
-    {
+    TFEL_HOST_DEVICE constexpr View&
+    operator*=(const ValueType2& s) noexcept requires(
+        isAssignableTo<
+            BinaryOperationResult<ValueType2, numeric_type<MappedType>, OpMult>,
+            numeric_type<MappedType>>()) {
       static_assert(!is_const, "invalid call");
       selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(s);
       return *this;
     }  // end of operator*=
        //
     template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr View& operator/=(const ValueType2& s) noexcept
-      requires(isAssignableTo<BinaryOperationResult<numeric_type<MappedType>,
-                                                    ValueType2,
-                                                    OpDiv>,
-                              numeric_type<MappedType>>())
-    {
+    TFEL_HOST_DEVICE constexpr View&
+    operator/=(const ValueType2& s) noexcept requires(
+        isAssignableTo<
+            BinaryOperationResult<numeric_type<MappedType>, ValueType2, OpDiv>,
+            numeric_type<MappedType>>()) {
       static_assert(!is_const, "invalid call");
       selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(1 /
                                                                             s);
@@ -309,45 +304,52 @@ namespace tfel::math {
 
   namespace internals {
 
-    template<ScalarConcept ScalarType, bool isQt>
-    struct ScalarViewImplementation{
-      using type = std::conditional_t<
-	std::is_const_v<ScalarType>,const ScalarType&, ScalarType&>;
+    template <ScalarConcept ScalarType, bool isQt>
+    struct ScalarViewImplementation {
+      using type = std::conditional_t<std::is_const_v<ScalarType>,
+                                      const ScalarType&,
+                                      ScalarType&>;
     };
 
-    template<ScalarConcept ScalarType>
-    struct ScalarViewImplementation<ScalarType, true>{
+    template <ScalarConcept ScalarType>
+    struct ScalarViewImplementation<ScalarType, true> {
       using type = std::conditional_t<
-	std::is_const_v<ScalarType>,
-	const qt_ref<typename QuantityTraits<std::decay_t<ScalarType>>::UnitType,
-		     typename QuantityTraits<std::decay_t<ScalarType>>::ValueType>,
-	qt_ref<typename QuantityTraits<std::decay_t<ScalarType>>::UnitType,
-	       typename QuantityTraits<std::decay_t<ScalarType>>::ValueType>>;
+          std::is_const_v<ScalarType>,
+          const qt_ref<
+              typename QuantityTraits<std::decay_t<ScalarType>>::UnitType,
+              typename QuantityTraits<std::decay_t<ScalarType>>::ValueType>,
+          qt_ref<typename QuantityTraits<std::decay_t<ScalarType>>::UnitType,
+                 typename QuantityTraits<std::decay_t<ScalarType>>::ValueType>>;
     };
-    
-  }
-  
+
+  }  // namespace internals
+
   //! \brief view to a scalar
   template <ScalarConcept ScalarType>
-  using scalar_view = typename internals::ScalarViewImplementation<ScalarType, isQuantity<ScalarType>()>::type;
+  using scalar_view = typename internals::
+      ScalarViewImplementation<ScalarType, isQuantity<ScalarType>()>::type;
 
   template <ScalarConcept ScalarType>
-  TFEL_HOST_DEVICE constexpr scalar_view<ScalarType> map(base_type<ScalarType>* const p) {
+  TFEL_HOST_DEVICE constexpr scalar_view<ScalarType> map(
+      base_type<ScalarType>* const p) {
     return scalar_view<ScalarType>(*p);
   }  // end of map
 
   template <ScalarConcept ScalarType>
-  TFEL_HOST_DEVICE constexpr scalar_view<ScalarType> map(base_type<ScalarType>& v) {
+  TFEL_HOST_DEVICE constexpr scalar_view<ScalarType> map(
+      base_type<ScalarType>& v) {
     return scalar_view<ScalarType>(v);
   }  // end of map
 
   template <ScalarConcept ScalarType>
-  TFEL_HOST_DEVICE constexpr scalar_view<const ScalarType> map(const base_type<ScalarType>* const p) {
+  TFEL_HOST_DEVICE constexpr scalar_view<const ScalarType> map(
+      const base_type<ScalarType>* const p) {
     return scalar_view<const ScalarType>(*p);
   }  // end of map
 
   template <ScalarConcept ScalarType>
-  TFEL_HOST_DEVICE constexpr scalar_view<const ScalarType> map(const base_type<ScalarType>& v) {
+  TFEL_HOST_DEVICE constexpr scalar_view<const ScalarType> map(
+      const base_type<ScalarType>& v) {
     return scalar_view<const ScalarType>(v);
   }  // end of map
 
@@ -358,22 +360,20 @@ namespace tfel::math {
    */
   template <typename MappedType,
             typename IndexingPolicyType = typename MappedType::indexing_policy>
-  TFEL_HOST_DEVICE constexpr View<MappedType, IndexingPolicyType> map(
-      const ViewDataPointerType<MappedType> p)
-    requires((!std::is_const_v<MappedType>) && (!isScalar<MappedType>()) &&
-             (std::remove_cv_t<MappedType>::hasFixedSizes))
-  {
+  TFEL_HOST_DEVICE constexpr View<MappedType, IndexingPolicyType>
+  map(const ViewDataPointerType<MappedType> p) requires(
+      (!std::is_const_v<MappedType>)&&(!isScalar<MappedType>()) &&
+      (std::remove_cv_t<MappedType>::hasFixedSizes)) {
     return View<MappedType, IndexingPolicyType>{p};
   }  // end of map
 
   template <typename MappedType,
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy>
-  TFEL_HOST_DEVICE constexpr View<const MappedType, IndexingPolicyType> map(
-      const ViewConstDataPointerType<MappedType> p)
-    requires((!isScalar<MappedType>()) &&
-             (std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes))
-  {
+  TFEL_HOST_DEVICE constexpr View<const MappedType, IndexingPolicyType>
+  map(const ViewConstDataPointerType<MappedType> p) requires(
+      (!isScalar<MappedType>()) &&
+      (std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes)) {
     return View<const MappedType, IndexingPolicyType>{p};
   }  // end of map
 
@@ -405,15 +405,13 @@ namespace tfel::math {
   template <typename MappedType,
             typename... Args,
             typename IndexingPolicyType = typename MappedType::indexing_policy>
-  TFEL_HOST_DEVICE constexpr View<MappedType, IndexingPolicyType> map(
-      Args&&... args)
-    requires((!std::is_const_v<MappedType>) &&
-             (!IndexingPolicyType::hasFixedSizes) &&
-             (checkIndexingPoliciesCompatiblity<
-                 IndexingPolicyType,
-                 typename MappedType::indexing_policy>()) &&
-             (canMakeViewFromLastArgument<MappedType, Args...>()))
-  {
+  TFEL_HOST_DEVICE constexpr View<MappedType, IndexingPolicyType>
+  map(Args&&... args) requires(
+      (!std::is_const_v<MappedType>)&&(!IndexingPolicyType::hasFixedSizes) &&
+      (checkIndexingPoliciesCompatiblity<
+          IndexingPolicyType,
+          typename MappedType::indexing_policy>()) &&
+      (canMakeViewFromLastArgument<MappedType, Args...>())) {
     static_assert(sizeof...(Args) >= 2, "invalid call");
     const auto r =
         buildIndexingPolicyAndExtractPointerToData<IndexingPolicyType>(args...);
@@ -425,15 +423,14 @@ namespace tfel::math {
             typename... Args,
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy>
-  TFEL_HOST_DEVICE constexpr View<const MappedType, IndexingPolicyType> map(
-      const Args&... args)
-    requires((!std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes) &&
-             (checkIndexingPoliciesCompatiblity<
-                 IndexingPolicyType,
-                 typename std::remove_cv_t<MappedType>::indexing_policy>()) &&
-             (canMakeConstViewFromLastArgument<std::remove_cv_t<MappedType>,
-                                               Args...>()))
-  {
+  TFEL_HOST_DEVICE constexpr View<const MappedType, IndexingPolicyType>
+  map(const Args&... args) requires(
+      (!std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes) &&
+      (checkIndexingPoliciesCompatiblity<
+          IndexingPolicyType,
+          typename std::remove_cv_t<MappedType>::indexing_policy>()) &&
+      (canMakeConstViewFromLastArgument<std::remove_cv_t<MappedType>,
+                                        Args...>())) {
     static_assert(sizeof...(Args) >= 2, "invalid call");
     const auto r =
         buildIndexingPolicyAndExtractPointerToData<IndexingPolicyType>(args...);

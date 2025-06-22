@@ -3,11 +3,11 @@
  *\brief  This file pecialises some class traits for quantities.
  *\author Thomas Helfer
  *\date   06 Jun 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ *linking exception or the CECILL-A licence. A copy of thoses licences are
+ *delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -76,7 +76,9 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsScalar
    */
-  template <tfel::math::UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
+  template <tfel::math::UnitConcept UnitType,
+            typename ValueType,
+            typename OwnershipPolicy>
   struct IsScalar<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
     static constexpr bool cond = true;
@@ -86,7 +88,9 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsScalar
    */
-  template <tfel::math::UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
+  template <tfel::math::UnitConcept UnitType,
+            typename ValueType,
+            typename OwnershipPolicy>
   struct IsScalar<
       const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
@@ -97,7 +101,9 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsReal
    */
-  template <tfel::math::UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
+  template <tfel::math::UnitConcept UnitType,
+            typename ValueType,
+            typename OwnershipPolicy>
   struct IsReal<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
     static constexpr bool cond = IsReal<ValueType>::cond;
@@ -107,7 +113,9 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsReal
    */
-  template <tfel::math::UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
+  template <tfel::math::UnitConcept UnitType,
+            typename ValueType,
+            typename OwnershipPolicy>
   struct IsReal<
       const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
@@ -118,7 +126,9 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsComplex
    */
-  template <tfel::math::UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
+  template <tfel::math::UnitConcept UnitType,
+            typename ValueType,
+            typename OwnershipPolicy>
   struct IsComplex<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
     static constexpr bool cond = IsComplex<ValueType>::cond;
@@ -128,7 +138,9 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   IsComplex
    */
-  template <tfel::math::UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
+  template <tfel::math::UnitConcept UnitType,
+            typename ValueType,
+            typename OwnershipPolicy>
   struct IsComplex<
       const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
@@ -159,7 +171,9 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   RealPartType
    */
-  template <tfel::math::UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
+  template <tfel::math::UnitConcept UnitType,
+            typename ValueType,
+            typename OwnershipPolicy>
   struct RealPartType<
       tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
@@ -171,7 +185,9 @@ namespace tfel::typetraits {
    * \brief Partial specialisation for qt
    * \see   RealPartType
    */
-  template <tfel::math::UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
+  template <tfel::math::UnitConcept UnitType,
+            typename ValueType,
+            typename OwnershipPolicy>
   struct RealPartType<
       const tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     //! \brief result of the metafunction
@@ -236,7 +252,9 @@ namespace tfel::typetraits {
   TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<double>);
   TFEL_MATH_QT_BASE_TYPE(tfel::math::Complex<long double>);
 
-  template <tfel::math::UnitConcept UnitType, typename ValueType, typename OwnershipPolicy>
+  template <tfel::math::UnitConcept UnitType,
+            typename ValueType,
+            typename OwnershipPolicy>
   struct AbsType<tfel::math::Quantity<UnitType, ValueType, OwnershipPolicy>> {
     using type = tfel::math::qt<UnitType, typename AbsType<ValueType>::type>;
   };  // end of struct AbsType

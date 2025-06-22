@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   01 Déc 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -165,7 +165,7 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr void exportToBaseTypeArray(const tensor<N, T>&,
                                                         const auto) noexcept
-    requires(isScalar<T>());
+      requires(isScalar<T>());
   /*!
    * \return the invert of a tensor
    * \param[in] t : tensor to be inverted

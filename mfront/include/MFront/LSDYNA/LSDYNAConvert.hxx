@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   22 mars 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -48,7 +48,7 @@ namespace lsdyna {
                            const LSDYNAReal* const v) {
       tfel::math::tensor<N, T>::buildFromFortranMatrix(F, v);
     }  // end of exe
-  };  // end of struct UMATImportGradients
+  };   // end of struct UMATImportGradients
   /*!
    * \brief partial specialisation of the UMATImportGradients
    * for the plane stress modelling hypothesis.
@@ -79,7 +79,7 @@ namespace lsdyna {
                            const LSDYNAReal* const v) {
       tfel::math::tensor<2u, T>::buildFromFortranMatrix(F, v);
     }  // end of exe
-  };  // end of struct UMATImportGradients
+  };   // end of struct UMATImportGradients
   /*!
    * \brief class defining the convertion from lsdyna to mfront for
    * thermodynamic forces
@@ -100,7 +100,7 @@ namespace lsdyna {
                            const LSDYNAReal* const v) {
       s.importTab(v);
     }  // end of exe
-  };  // end of struct UMATImportThermodynamicForces
+  };   // end of struct UMATImportThermodynamicForces
   /*!
    * \brief partial specialisation of the UMATImportThermodynamicForces
    * for the plane stress modelling hypothesis.
@@ -122,7 +122,7 @@ namespace lsdyna {
       s[2] = LSDYNAReal{0};
       s[3] = v[2] * cste;
     }  // end of exe
-  };  // end of struct UMATImportThermodynamicForces
+  };   // end of struct UMATImportThermodynamicForces
   /*!
    * \brief class defining the convertion from mfront to lsdyna for
    * thermodynamic forces
@@ -143,7 +143,7 @@ namespace lsdyna {
                            const tfel::math::stensor<N, T>& s) {
       s.exportTab(v);
     }  // end of exe
-  };  // end of struct UMATExportThermodynamicForces
+  };   // end of struct UMATExportThermodynamicForces
   /*!
    * \brief partial specialisation of the UMATExportThermodynamicForces
    * for the plane stress modelling hypothesis.
@@ -164,7 +164,7 @@ namespace lsdyna {
       v[1] = s[1];
       v[2] = s[3] * icste;
     }  // end of exe
-  };  // end of struct UMATExportThermodynamicForces
+  };   // end of struct UMATExportThermodynamicForces
 
 }  // end of namespace lsdyna
 

@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \brief 30 janv. 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -289,7 +289,7 @@ namespace castem {
             c1, c1, c3, DTIME, DROT, DDSDDE, STRAN, DSTRAN, TEMP, DTEMP, nPROPS,
             &nb, PREDEF, DPRED, STATEV, NSTATV, STRESS, PNEWDT, op, sfeh);
       }  // end of exe
-    };  // end of struct TreatPlanStressIsotropicBehaviour
+    };   // end of struct TreatPlanStressIsotropicBehaviour
 
     struct TreatPlaneStressOrthotropicBehaviour {
       TFEL_CASTEM_INLINE2 static void exe(
@@ -373,7 +373,7 @@ namespace castem {
             nPROPS, NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, PNEWDT, op,
             sfeh);
       }  // end of exe
-    };  // end of struct TreatPlanStressOrthotropicBehaviour
+    };   // end of struct TreatPlanStressOrthotropicBehaviour
 
   };  // end of struct CastemGenericPlaneStressHandlerTreatPlaneStrain
 

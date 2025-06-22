@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \brief 18 mai 2010
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -48,7 +48,7 @@ namespace tfel::math {
   }
 
   double Kriging1D::operator()(const double vx) const {
-    return Kriging<1u, double>::operator()(this->a * vx + this->b);
+    return Kriging<1u, double>::operator()(this->a* vx + this->b);
   }  // end of Kriging1D::operator()
 
   Kriging1D::~Kriging1D() = default;

@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   25 oct. 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -29,7 +29,7 @@ namespace tfel::utilities::internals {
     static bool is_convertible(const tfel::utilities::Data& d) {
       return d.template is<T>();
     }  // end of exe
-  };  // end of DataConvertorImpl<T,true>;
+  };   // end of DataConvertorImpl<T,true>;
 
   /*!
    * \brief an helper class (in C++-11, no `if constexpr`, so we
@@ -131,9 +131,9 @@ namespace tfel::utilities::internals {
 namespace tfel::utilities {
 
   template <typename T1>
-  DataMapValidator& DataMapValidator::addDataTypeValidator(const std::string& k)
-    requires(tfel::meta::TLCountNbrOfT<std::decay_t<T1>, DataTypes>::value == 1)
-  {
+  DataMapValidator&
+  DataMapValidator::addDataTypeValidator(const std::string& k) requires(
+      tfel::meta::TLCountNbrOfT<std::decay_t<T1>, DataTypes>::value == 1) {
     return this->addDataValidator(k, [](const Data& d) {
       if (!d.template is<T1>()) {
         tfel::raise("invalid type");

@@ -4,11 +4,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   22 nov. 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -41,14 +41,13 @@ namespace tfel::math {
       PPType& pp,
       const StensorType& s,
       const numeric_type<StensorType> eps)  //
-    requires(
-        getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<StensorType>() == 1u &&
-        isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
-        isAssignableTo<base_type<numeric_type<StensorType>>,
-                       numeric_type<DPPType>>())
-  {
+      requires(
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 1u &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DPPType>>()) {
     using tfel::math::abs;
     typedef numeric_type<StensorType> NumType;
     typedef base_type<NumType> real;
@@ -95,14 +94,13 @@ namespace tfel::math {
       PPType& pp,
       const StensorType& s,
       const numeric_type<StensorType> eps)  //
-    requires(
-        getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<StensorType>() == 2u &&
-        isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
-        isAssignableTo<base_type<numeric_type<StensorType>>,
-                       numeric_type<DPPType>>())
-  {
+      requires(
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 2u &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DPPType>>()) {
     using tfel::math::abs;
     using tfel::math::internals::stensor_pneg;
     using tfel::math::internals::stensor_ppos;
@@ -171,14 +169,13 @@ namespace tfel::math {
       PPType& pp,
       const StensorType& s,
       const numeric_type<StensorType> eps)  //
-    requires(
-        getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<StensorType>() == 3u &&
-        isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
-        isAssignableTo<base_type<numeric_type<StensorType>>,
-                       numeric_type<DPPType>>())
-  {
+      requires(
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 3u &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DPPType>>()) {
     using tfel::math::internals::stensor_pneg;
     using tfel::math::internals::stensor_ppos;
     typedef numeric_type<StensorType> NumType;
@@ -327,19 +324,18 @@ namespace tfel::math {
       NPType& np,
       const StensorType& s,
       const numeric_type<StensorType> eps)  //
-    requires(
-        getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<StensorType>() == 1u &&
-        isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
-        isAssignableTo<numeric_type<StensorType>, numeric_type<NPType>>() &&
-        isAssignableTo<base_type<numeric_type<StensorType>>,
-                       numeric_type<DPPType>>() &&
-        isAssignableTo<base_type<numeric_type<StensorType>>,
-                       numeric_type<DNPType>>())
-  {
+      requires(
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 1u &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<NPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DPPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DNPType>>()) {
     using tfel::math::abs;
     typedef numeric_type<StensorType> NumType;
     typedef base_type<NumType> real;
@@ -407,19 +403,18 @@ namespace tfel::math {
       NPType& np,
       const StensorType& s,
       const numeric_type<StensorType> eps)  //
-    requires(
-        getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<StensorType>() == 2u &&
-        isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
-        isAssignableTo<numeric_type<StensorType>, numeric_type<NPType>>() &&
-        isAssignableTo<base_type<numeric_type<StensorType>>,
-                       numeric_type<DPPType>>() &&
-        isAssignableTo<base_type<numeric_type<StensorType>>,
-                       numeric_type<DNPType>>())
-  {
+      requires(
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 2u &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<NPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DPPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DNPType>>()) {
     using tfel::math::abs;
     using tfel::math::internals::stensor_pneg;
     using tfel::math::internals::stensor_ppos;
@@ -510,19 +505,18 @@ namespace tfel::math {
       NPType& np,
       const StensorType& s,
       const numeric_type<StensorType> eps)  //
-    requires(
-        getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
-        getSpaceDimension<StensorType>() == 3u &&
-        isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
-        isAssignableTo<numeric_type<StensorType>, numeric_type<NPType>>() &&
-        isAssignableTo<base_type<numeric_type<StensorType>>,
-                       numeric_type<DPPType>>() &&
-        isAssignableTo<base_type<numeric_type<StensorType>>,
-                       numeric_type<DNPType>>())
-  {
+      requires(
+          getSpaceDimension<DPPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<DNPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<PPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<NPType>() == getSpaceDimension<StensorType>() &&
+          getSpaceDimension<StensorType>() == 3u &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<PPType>>() &&
+          isAssignableTo<numeric_type<StensorType>, numeric_type<NPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DPPType>>() &&
+          isAssignableTo<base_type<numeric_type<StensorType>>,
+                         numeric_type<DNPType>>()) {
     using tfel::math::internals::stensor_pneg;
     using tfel::math::internals::stensor_ppos;
     typedef numeric_type<StensorType> NumType;

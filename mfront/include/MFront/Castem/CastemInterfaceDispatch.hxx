@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \brief 24 juil. 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -68,7 +68,7 @@ namespace castem {
           throwInvalidBehaviourTypeAndModellingHypothesis(type,
                                                           MH::toString(H));
     }  // end of exe
-  };  // end of struct CastemInterfaceDispatch
+  };   // end of struct CastemInterfaceDispatch
 
   /*!
    * \class  CastemInterfaceDispatch
@@ -130,7 +130,7 @@ namespace castem {
                       STATEV, STRESS, op, sfeh);
       handler.exe(DDSDDE, STRESS, STATEV, PNEWDT);
     }  // end of exe
-  };  // end of struct CastemInterfaceDispatch
+  };   // end of struct CastemInterfaceDispatch
 
   /*!
    * \class  CastemInterfaceDispatch
@@ -181,7 +181,7 @@ namespace castem {
                    NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, PNEWDT, op,
                    sfeh);
     }  // end of exe
-  };  // end of struct CastemInterfaceDispatch
+  };   // end of struct CastemInterfaceDispatch
 
   /*!
    * \class  CastemInterfaceDispatch
@@ -291,7 +291,7 @@ namespace castem {
                    NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, PNEWDT, op,
                    sfeh);
     }  // end of exe
-  };  // end of struct CastemInterfaceDispatch
+  };   // end of struct CastemInterfaceDispatch
 
   /* cohesive zones models */
   template <
@@ -353,7 +353,7 @@ namespace castem {
       STRESS[0] = t[1];
       STRESS[1] = t[0];
     }  // end of exe
-  };  // end of struct CastemInterfaceDispatch
+  };   // end of struct CastemInterfaceDispatch
 
   template <
       template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
@@ -453,7 +453,7 @@ namespace castem {
       STRESS[1] = t[2];
       STRESS[2] = t[0];
     }  // end of exe
-  };  // end of struct CastemInterfaceDispatch
+  };   // end of struct CastemInterfaceDispatch
 
 }  // end of namespace castem
 

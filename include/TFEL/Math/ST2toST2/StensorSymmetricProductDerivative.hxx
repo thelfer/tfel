@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   17 août 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -28,9 +28,8 @@ namespace tfel::math {
     template <StensorConcept StensorType>
     TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<1u, T> exe(
         const StensorType& s) noexcept
-      requires((getSpaceDimension<StensorType>() == 1u) &&
-               (isAssignableTo<numeric_type<StensorType>, T>()))
-    {
+        requires((getSpaceDimension<StensorType>() == 1u) &&
+                 (isAssignableTo<numeric_type<StensorType>, T>())) {
       using real = base_type<T>;
       constexpr real zero = real(0);
       return {2 * s[0], zero, zero, zero, 2 * s[1], zero, zero, zero, 2 * s[2]};
@@ -42,9 +41,8 @@ namespace tfel::math {
     template <StensorConcept StensorType>
     TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<2u, T> exe(
         const StensorType& s) noexcept
-      requires((getSpaceDimension<StensorType>() == 2u) &&
-               (isAssignableTo<numeric_type<StensorType>, T>()))
-    {
+        requires((getSpaceDimension<StensorType>() == 2u) &&
+                 (isAssignableTo<numeric_type<StensorType>, T>())) {
       using real = base_type<T>;
       constexpr real zero = real(0);
       return {2 * s[0], zero, zero, s[3],       zero,     2 * s[1],
@@ -58,9 +56,8 @@ namespace tfel::math {
     template <StensorConcept StensorType>
     TFEL_HOST_DEVICE static constexpr tfel::math::st2tost2<3u, T> exe(
         const StensorType& s) noexcept
-      requires((getSpaceDimension<StensorType>() == 3u) &&
-               (isAssignableTo<numeric_type<StensorType>, T>()))
-    {
+        requires((getSpaceDimension<StensorType>() == 3u) &&
+                 (isAssignableTo<numeric_type<StensorType>, T>())) {
       using real = base_type<T>;
       constexpr auto icste = Cste<T>::isqrt2;
       constexpr auto zero = real(0);

@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   29 août 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -65,13 +65,13 @@ namespace tfel::math {
                                         const tmatrix<3u, 3u, real>&,
                                         const tvector<3u,
                                                       real>&) noexcept  //
-      requires((tfel::math::getSpaceDimension<ST2toST2Type>() == 1u) &&
-                   (std::is_same<numeric_type<ST2toST2Type>, stress>::value) &&
-                   (tfel::math::getSpaceDimension<ST2toST2Type2>() == 1u) &&
-                   (isAssignableTo<numeric_type<ST2toST2Type2>, stress>()),
-               (tfel::math::getSpaceDimension<ST2toST2Type3>() == 1u) &&
-                   (isAssignableTo<numeric_type<ST2toST2Type3>, real>()))
-    {
+        requires(
+            (tfel::math::getSpaceDimension<ST2toST2Type>() == 1u) &&
+                (std::is_same<numeric_type<ST2toST2Type>, stress>::value) &&
+                (tfel::math::getSpaceDimension<ST2toST2Type2>() == 1u) &&
+                (isAssignableTo<numeric_type<ST2toST2Type2>, stress>()),
+            (tfel::math::getSpaceDimension<ST2toST2Type3>() == 1u) &&
+                (isAssignableTo<numeric_type<ST2toST2Type3>, real>())) {
       const auto iC0 = P(0, 0);
       const auto iC1 = P(1, 1);
       const auto iC2 = P(2, 2);

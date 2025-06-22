@@ -4,11 +4,11 @@
  * `include/TFEL/Material/OrthotropicPlasticity.ixx`.
  * \author Thomas Helfer
  * \date   14/01/2018
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -24,15 +24,15 @@ namespace tfel::material {
   }
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
-  TFEL_HOST_DEVICE constexpr auto computeJ2O(
-      const StensorType& s,
-      const tfel::math::base_type<StensorType> a1,
-      const tfel::math::base_type<StensorType> a2,
-      const tfel::math::base_type<StensorType> a3,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
+      TFEL_HOST_DEVICE
+      constexpr auto computeJ2O(const StensorType& s,
+                                const tfel::math::base_type<StensorType> a1,
+                                const tfel::math::base_type<StensorType> a2,
+                                const tfel::math::base_type<StensorType> a3,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>) {
     return (a2 * (s[1] - s[2]) * (s[1] - s[2]) +
             a3 * (s[0] - s[2]) * (s[0] - s[2]) +
             a1 * (s[0] - s[1]) * (s[0] - s[1])) /
@@ -40,15 +40,15 @@ namespace tfel::material {
   }  // end of computeJ2O
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
-  TFEL_HOST_DEVICE constexpr auto computeJ2O(
-      const StensorType& s,
-      const tfel::math::base_type<StensorType> a1,
-      const tfel::math::base_type<StensorType> a2,
-      const tfel::math::base_type<StensorType> a3,
-      const tfel::math::base_type<StensorType> a4,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
+      TFEL_HOST_DEVICE
+      constexpr auto computeJ2O(const StensorType& s,
+                                const tfel::math::base_type<StensorType> a1,
+                                const tfel::math::base_type<StensorType> a2,
+                                const tfel::math::base_type<StensorType> a3,
+                                const tfel::math::base_type<StensorType> a4,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>) {
     return (a2 * (s[1] - s[2]) * (s[1] - s[2]) +
             a3 * (s[0] - s[2]) * (s[0] - s[2]) +
             a1 * (s[0] - s[1]) * (s[0] - s[1])) /
@@ -57,15 +57,15 @@ namespace tfel::material {
   }  // end of computeJ2O
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
-  TFEL_HOST_DEVICE constexpr auto computeJ2O(
-      const StensorType& s,
-      const tfel::math::base_type<StensorType> a1,
-      const tfel::math::base_type<StensorType> a2,
-      const tfel::math::base_type<StensorType> a3,
-      const tfel::math::base_type<StensorType> a4,
-      const tfel::math::base_type<StensorType> a5,
-      const tfel::math::base_type<StensorType> a6) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
+      TFEL_HOST_DEVICE
+      constexpr auto computeJ2O(const StensorType& s,
+                                const tfel::math::base_type<StensorType> a1,
+                                const tfel::math::base_type<StensorType> a2,
+                                const tfel::math::base_type<StensorType> a3,
+                                const tfel::math::base_type<StensorType> a4,
+                                const tfel::math::base_type<StensorType> a5,
+                                const tfel::math::base_type<StensorType> a6) {
     return (a6 * s[5] * s[5] + a5 * s[4] * s[4] + a4 * s[3] * s[3]) / 2 +
            (a2 * (s[1] - s[2]) * (s[1] - s[2]) +
             a3 * (s[0] - s[2]) * (s[0] - s[2]) +
@@ -80,15 +80,15 @@ namespace tfel::material {
   }  // end of computeJ2ODerivative
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
-  TFEL_HOST_DEVICE constexpr auto computeJ2ODerivative(
-      const StensorType& s,
-      const tfel::math::base_type<StensorType> a1,
-      const tfel::math::base_type<StensorType> a2,
-      const tfel::math::base_type<StensorType> a3,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ2ODerivative(
+          const StensorType& s,
+          const tfel::math::base_type<StensorType> a1,
+          const tfel::math::base_type<StensorType> a2,
+          const tfel::math::base_type<StensorType> a3,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>) {
     using Result =
         tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
                             tfel::math::numeric_type<StensorType>>;
@@ -98,15 +98,15 @@ namespace tfel::material {
   }  // end of computeJ2ODerivative
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
-  TFEL_HOST_DEVICE constexpr auto computeJ2ODerivative(
-      const StensorType& s,
-      const tfel::math::base_type<StensorType> a1,
-      const tfel::math::base_type<StensorType> a2,
-      const tfel::math::base_type<StensorType> a3,
-      const tfel::math::base_type<StensorType> a4,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ2ODerivative(
+          const StensorType& s,
+          const tfel::math::base_type<StensorType> a1,
+          const tfel::math::base_type<StensorType> a2,
+          const tfel::math::base_type<StensorType> a3,
+          const tfel::math::base_type<StensorType> a4,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>) {
     using Result =
         tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
                             tfel::math::numeric_type<StensorType>>;
@@ -117,15 +117,15 @@ namespace tfel::material {
   }  // end of computeJ2ODerivative
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
-  TFEL_HOST_DEVICE constexpr auto computeJ2ODerivative(
-      const StensorType& s,
-      const tfel::math::base_type<StensorType> a1,
-      const tfel::math::base_type<StensorType> a2,
-      const tfel::math::base_type<StensorType> a3,
-      const tfel::math::base_type<StensorType> a4,
-      const tfel::math::base_type<StensorType> a5,
-      const tfel::math::base_type<StensorType> a6) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ2ODerivative(
+          const StensorType& s,
+          const tfel::math::base_type<StensorType> a1,
+          const tfel::math::base_type<StensorType> a2,
+          const tfel::math::base_type<StensorType> a3,
+          const tfel::math::base_type<StensorType> a4,
+          const tfel::math::base_type<StensorType> a5,
+          const tfel::math::base_type<StensorType> a6) {
     using Result =
         tfel::math::stensor<tfel::math::getSpaceDimension<StensorType>(),
                             tfel::math::numeric_type<StensorType>>;
@@ -144,15 +144,15 @@ namespace tfel::material {
   }  // end of computeJ2OSecondDerivative
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
-  TFEL_HOST_DEVICE constexpr auto computeJ2OSecondDerivative(
-      const StensorType&,
-      const tfel::math::base_type<StensorType> a1,
-      const tfel::math::base_type<StensorType> a2,
-      const tfel::math::base_type<StensorType> a3,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ2OSecondDerivative(
+          const StensorType&,
+          const tfel::math::base_type<StensorType> a1,
+          const tfel::math::base_type<StensorType> a2,
+          const tfel::math::base_type<StensorType> a3,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>) {
     using Result = tfel::math::st2tost2<
         tfel::math::getSpaceDimension<StensorType>(),
         tfel::math::BinaryOperationResult<tfel::math::base_type<StensorType>,
@@ -163,15 +163,15 @@ namespace tfel::material {
   }  // end of computeJ2OSecondDerivative
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
-  TFEL_HOST_DEVICE constexpr auto computeJ2OSecondDerivative(
-      const StensorType&,
-      const tfel::math::base_type<StensorType> a1,
-      const tfel::math::base_type<StensorType> a2,
-      const tfel::math::base_type<StensorType> a3,
-      const tfel::math::base_type<StensorType> a4,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ2OSecondDerivative(
+          const StensorType&,
+          const tfel::math::base_type<StensorType> a1,
+          const tfel::math::base_type<StensorType> a2,
+          const tfel::math::base_type<StensorType> a3,
+          const tfel::math::base_type<StensorType> a4,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>) {
     using Result = tfel::math::st2tost2<
         tfel::math::getSpaceDimension<StensorType>(),
         tfel::math::BinaryOperationResult<tfel::math::base_type<StensorType>,
@@ -186,15 +186,15 @@ namespace tfel::material {
   }  // end of computeJ2OSecondDerivative
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
-  TFEL_HOST_DEVICE constexpr auto computeJ2OSecondDerivative(
-      const StensorType&,
-      const tfel::math::base_type<StensorType> a1,
-      const tfel::math::base_type<StensorType> a2,
-      const tfel::math::base_type<StensorType> a3,
-      const tfel::math::base_type<StensorType> a4,
-      const tfel::math::base_type<StensorType> a5,
-      const tfel::math::base_type<StensorType> a6) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ2OSecondDerivative(
+          const StensorType&,
+          const tfel::math::base_type<StensorType> a1,
+          const tfel::math::base_type<StensorType> a2,
+          const tfel::math::base_type<StensorType> a3,
+          const tfel::math::base_type<StensorType> a4,
+          const tfel::math::base_type<StensorType> a5,
+          const tfel::math::base_type<StensorType> a6) {
     using Result = tfel::math::st2tost2<
         tfel::math::getSpaceDimension<StensorType>(),
         tfel::math::BinaryOperationResult<tfel::math::base_type<StensorType>,
@@ -218,20 +218,20 @@ namespace tfel::material {
   }
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
-  TFEL_HOST_DEVICE constexpr auto computeJ3O(
-      const StensorType& s,
-      const tfel::math::base_type<StensorType> b1,
-      const tfel::math::base_type<StensorType> b2,
-      const tfel::math::base_type<StensorType> b3,
-      const tfel::math::base_type<StensorType> b4,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
+      TFEL_HOST_DEVICE
+      constexpr auto computeJ3O(const StensorType& s,
+                                const tfel::math::base_type<StensorType> b1,
+                                const tfel::math::base_type<StensorType> b2,
+                                const tfel::math::base_type<StensorType> b3,
+                                const tfel::math::base_type<StensorType> b4,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>) {
     return ((2 * (b4 + b1) - b3 - b2) * s[2] * s[2] * s[2]) / 27 +
            ((b4 + b3) * s[1] * s[1] * s[1]) / 27 +
            ((b2 + b1) * s[0] * s[0] * s[0]) / 27 -
@@ -242,20 +242,20 @@ namespace tfel::material {
   }
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
-  TFEL_HOST_DEVICE constexpr auto computeJ3O(
-      const StensorType& s,
-      const tfel::math::base_type<StensorType> b1,
-      const tfel::math::base_type<StensorType> b2,
-      const tfel::math::base_type<StensorType> b3,
-      const tfel::math::base_type<StensorType> b4,
-      const tfel::math::base_type<StensorType> b5,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType> b10,
-      const tfel::math::base_type<StensorType>) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
+      TFEL_HOST_DEVICE
+      constexpr auto computeJ3O(const StensorType& s,
+                                const tfel::math::base_type<StensorType> b1,
+                                const tfel::math::base_type<StensorType> b2,
+                                const tfel::math::base_type<StensorType> b3,
+                                const tfel::math::base_type<StensorType> b4,
+                                const tfel::math::base_type<StensorType> b5,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType>,
+                                const tfel::math::base_type<StensorType> b10,
+                                const tfel::math::base_type<StensorType>) {
     return ((2 * (b4 + b1) - b3 - b2) * s[2] * s[2] * s[2]) / 27 +
            ((b4 + b3) * s[1] * s[1] * s[1]) / 27 +
            ((b2 + b1) * s[0] * s[0] * s[0]) / 27 -
@@ -269,20 +269,20 @@ namespace tfel::material {
   }
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
-  TFEL_HOST_DEVICE constexpr auto computeJ3O(
-      const StensorType& s,
-      const tfel::math::base_type<StensorType> b1,
-      const tfel::math::base_type<StensorType> b2,
-      const tfel::math::base_type<StensorType> b3,
-      const tfel::math::base_type<StensorType> b4,
-      const tfel::math::base_type<StensorType> b5,
-      const tfel::math::base_type<StensorType> b6,
-      const tfel::math::base_type<StensorType> b7,
-      const tfel::math::base_type<StensorType> b8,
-      const tfel::math::base_type<StensorType> b9,
-      const tfel::math::base_type<StensorType> b10,
-      const tfel::math::base_type<StensorType> b11) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
+      TFEL_HOST_DEVICE
+      constexpr auto computeJ3O(const StensorType& s,
+                                const tfel::math::base_type<StensorType> b1,
+                                const tfel::math::base_type<StensorType> b2,
+                                const tfel::math::base_type<StensorType> b3,
+                                const tfel::math::base_type<StensorType> b4,
+                                const tfel::math::base_type<StensorType> b5,
+                                const tfel::math::base_type<StensorType> b6,
+                                const tfel::math::base_type<StensorType> b7,
+                                const tfel::math::base_type<StensorType> b8,
+                                const tfel::math::base_type<StensorType> b9,
+                                const tfel::math::base_type<StensorType> b10,
+                                const tfel::math::base_type<StensorType> b11) {
     using real = tfel::math::base_type<StensorType>;
     constexpr const auto icste = tfel::math::Cste<real>::isqrt2;
     return ((2 * (b4 + b1) - b3 - b2) * s[2] * s[2] * s[2]) / 27 +
@@ -310,20 +310,20 @@ namespace tfel::material {
   }  // end of computeJ3ODerivative
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
-  TFEL_HOST_DEVICE constexpr auto computeJ3ODerivative(
-      const StensorType& s,
-      const tfel::math::base_type<StensorType> b1,
-      const tfel::math::base_type<StensorType> b2,
-      const tfel::math::base_type<StensorType> b3,
-      const tfel::math::base_type<StensorType> b4,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ3ODerivative(
+          const StensorType& s,
+          const tfel::math::base_type<StensorType> b1,
+          const tfel::math::base_type<StensorType> b2,
+          const tfel::math::base_type<StensorType> b3,
+          const tfel::math::base_type<StensorType> b4,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>) {
     using namespace tfel::math;
     auto dJ3O =
         stensor<1u,
@@ -345,20 +345,20 @@ namespace tfel::material {
   }  // end of computeJ3ODerivative
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
-  TFEL_HOST_DEVICE constexpr auto computeJ3ODerivative(
-      const StensorType& s,
-      const tfel::math::base_type<StensorType> b1,
-      const tfel::math::base_type<StensorType> b2,
-      const tfel::math::base_type<StensorType> b3,
-      const tfel::math::base_type<StensorType> b4,
-      const tfel::math::base_type<StensorType> b5,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType> b10,
-      const tfel::math::base_type<StensorType>) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ3ODerivative(
+          const StensorType& s,
+          const tfel::math::base_type<StensorType> b1,
+          const tfel::math::base_type<StensorType> b2,
+          const tfel::math::base_type<StensorType> b3,
+          const tfel::math::base_type<StensorType> b4,
+          const tfel::math::base_type<StensorType> b5,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType> b10,
+          const tfel::math::base_type<StensorType>) {
     using namespace tfel::math;
     auto dJ3O =
         stensor<2u,
@@ -384,20 +384,20 @@ namespace tfel::material {
   }  // end of computeJ3ODerivative
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
-  constexpr auto computeJ3ODerivative(
-      const StensorType& s,
-      const tfel::math::base_type<StensorType> b1,
-      const tfel::math::base_type<StensorType> b2,
-      const tfel::math::base_type<StensorType> b3,
-      const tfel::math::base_type<StensorType> b4,
-      const tfel::math::base_type<StensorType> b5,
-      const tfel::math::base_type<StensorType> b6,
-      const tfel::math::base_type<StensorType> b7,
-      const tfel::math::base_type<StensorType> b8,
-      const tfel::math::base_type<StensorType> b9,
-      const tfel::math::base_type<StensorType> b10,
-      const tfel::math::base_type<StensorType> b11) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
+      constexpr auto computeJ3ODerivative(
+          const StensorType& s,
+          const tfel::math::base_type<StensorType> b1,
+          const tfel::math::base_type<StensorType> b2,
+          const tfel::math::base_type<StensorType> b3,
+          const tfel::math::base_type<StensorType> b4,
+          const tfel::math::base_type<StensorType> b5,
+          const tfel::math::base_type<StensorType> b6,
+          const tfel::math::base_type<StensorType> b7,
+          const tfel::math::base_type<StensorType> b8,
+          const tfel::math::base_type<StensorType> b9,
+          const tfel::math::base_type<StensorType> b10,
+          const tfel::math::base_type<StensorType> b11) {
     using namespace tfel::math;
     using real = base_type<StensorType>;
     constexpr const auto icste = Cste<real>::isqrt2;
@@ -440,20 +440,20 @@ namespace tfel::material {
   }  // end of computeJ3OSecondDerivative
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
-  TFEL_HOST_DEVICE constexpr auto computeJ3OSecondDerivative(
-      const StensorType& s,
-      const tfel::math::base_type<StensorType> b1,
-      const tfel::math::base_type<StensorType> b2,
-      const tfel::math::base_type<StensorType> b3,
-      const tfel::math::base_type<StensorType> b4,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 1u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ3OSecondDerivative(
+          const StensorType& s,
+          const tfel::math::base_type<StensorType> b1,
+          const tfel::math::base_type<StensorType> b2,
+          const tfel::math::base_type<StensorType> b3,
+          const tfel::math::base_type<StensorType> b4,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>) {
     auto d2J3O =
         tfel::math::st2tost2<1u, tfel::math::numeric_type<StensorType>>{};
     d2J3O(0, 0) =
@@ -478,20 +478,20 @@ namespace tfel::material {
   }  // end of computeJ3OSecondDerivative
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
-  TFEL_HOST_DEVICE constexpr auto computeJ3OSecondDerivative(
-      const StensorType& s,
-      const tfel::math::base_type<StensorType> b1,
-      const tfel::math::base_type<StensorType> b2,
-      const tfel::math::base_type<StensorType> b3,
-      const tfel::math::base_type<StensorType> b4,
-      const tfel::math::base_type<StensorType> b5,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType>,
-      const tfel::math::base_type<StensorType> b10,
-      const tfel::math::base_type<StensorType>) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 2u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ3OSecondDerivative(
+          const StensorType& s,
+          const tfel::math::base_type<StensorType> b1,
+          const tfel::math::base_type<StensorType> b2,
+          const tfel::math::base_type<StensorType> b3,
+          const tfel::math::base_type<StensorType> b4,
+          const tfel::math::base_type<StensorType> b5,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType>,
+          const tfel::math::base_type<StensorType> b10,
+          const tfel::math::base_type<StensorType>) {
     auto d2J3O =
         tfel::math::st2tost2<2u, tfel::math::numeric_type<StensorType>>{};
     d2J3O(0, 0) =
@@ -523,20 +523,20 @@ namespace tfel::material {
   }  // end of computeJ3OSecondDerivative
 
   template <tfel::math::StensorConcept StensorType>
-    requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
-  TFEL_HOST_DEVICE constexpr auto computeJ3OSecondDerivative(
-      const StensorType& s,
-      const tfel::math::base_type<StensorType> b1,
-      const tfel::math::base_type<StensorType> b2,
-      const tfel::math::base_type<StensorType> b3,
-      const tfel::math::base_type<StensorType> b4,
-      const tfel::math::base_type<StensorType> b5,
-      const tfel::math::base_type<StensorType> b6,
-      const tfel::math::base_type<StensorType> b7,
-      const tfel::math::base_type<StensorType> b8,
-      const tfel::math::base_type<StensorType> b9,
-      const tfel::math::base_type<StensorType> b10,
-      const tfel::math::base_type<StensorType> b11) {
+  requires(tfel::math::getSpaceDimension<StensorType>() == 3u)  //
+      TFEL_HOST_DEVICE constexpr auto computeJ3OSecondDerivative(
+          const StensorType& s,
+          const tfel::math::base_type<StensorType> b1,
+          const tfel::math::base_type<StensorType> b2,
+          const tfel::math::base_type<StensorType> b3,
+          const tfel::math::base_type<StensorType> b4,
+          const tfel::math::base_type<StensorType> b5,
+          const tfel::math::base_type<StensorType> b6,
+          const tfel::math::base_type<StensorType> b7,
+          const tfel::math::base_type<StensorType> b8,
+          const tfel::math::base_type<StensorType> b9,
+          const tfel::math::base_type<StensorType> b10,
+          const tfel::math::base_type<StensorType> b11) {
     using namespace tfel::math;
     using real = base_type<StensorType>;
     constexpr const auto icste = Cste<real>::isqrt2;

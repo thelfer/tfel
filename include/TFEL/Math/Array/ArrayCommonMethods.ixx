@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date 01/01/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -180,8 +180,8 @@ namespace tfel::math {
   template <typename ValueType>
   constexpr Child& MutableArrayCommonMethods<Child, ArrayPolicyType>::operator=(
       const std::initializer_list<ValueType>& values) noexcept
-    requires(isAssignableTo<ValueType, typename ArrayPolicyType::value_type>())
-  {
+      requires(
+          isAssignableTo<ValueType, typename ArrayPolicyType::value_type>()) {
     auto& child = static_cast<Child&>(*this);
     if (values.size() != child.size()) {
       tfel::reportContractViolation(
@@ -218,10 +218,9 @@ namespace tfel::math {
 
   template <typename Child, typename ArrayPolicyType>
   template <typename ValueType2>
-  constexpr void MutableArrayCommonMethods<Child, ArrayPolicyType>::fill(
-      const ValueType2& v)
-    requires(isAssignableTo<ValueType2, typename ArrayPolicyType::value_type>())
-  {
+  constexpr void MutableArrayCommonMethods<Child, ArrayPolicyType>::
+      fill(const ValueType2& v) requires(
+          isAssignableTo<ValueType2, typename ArrayPolicyType::value_type>()) {
     const auto f = makeMultiIndicesUnaryOperatorFunctor(
         [v](typename ArrayPolicyType::reference a) { a = v; }, *this);
     auto& child = static_cast<Child&>(*this);
@@ -233,10 +232,9 @@ namespace tfel::math {
   constexpr void MutableArrayCommonMethods<Child, ArrayPolicyType>::clamp(
       const ValueType2& lower_bound,
       const ValueType3& upper_bound)  //
-    requires(
-        isAssignableTo<ValueType2, typename ArrayPolicyType::value_type>() &&
-        isAssignableTo<ValueType3, typename ArrayPolicyType::value_type>())
-  {
+      requires(
+          isAssignableTo<ValueType2, typename ArrayPolicyType::value_type>() &&
+          isAssignableTo<ValueType3, typename ArrayPolicyType::value_type>()) {
     const auto f = makeMultiIndicesUnaryOperatorFunctor(
         [lower_bound, upper_bound](typename ArrayPolicyType::reference a) {
           if (a < lower_bound) {
@@ -255,12 +253,11 @@ namespace tfel::math {
   constexpr void
   MutableArrayCommonMethods<Child, ArrayPolicyType>::multiplyByScalar(
       const ValueType2& s)  //
-    requires(isAssignableTo<
-             BinaryOperationResult<ValueType2,
-                                   typename ArrayPolicyType::value_type,
-                                   OpMult>,
-             typename ArrayPolicyType::value_type>())
-  {
+      requires(isAssignableTo<
+               BinaryOperationResult<ValueType2,
+                                     typename ArrayPolicyType::value_type,
+                                     OpMult>,
+               typename ArrayPolicyType::value_type>()) {
     const auto f = makeMultiIndicesUnaryOperatorFunctor(
         [s](typename ArrayPolicyType::reference a) { a *= s; }, *this);
     auto& child = static_cast<Child&>(*this);
