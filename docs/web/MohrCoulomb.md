@@ -129,10 +129,17 @@ The plastic potential differs from the yield surface in order to more
 accurately estimate dilatancy, but has an analogous structure:
 
 \[
-	G_\mathrm{F} = \frac{I_1}{3} \sin \psi + \sqrt{J_2 K_G^2 + a^2 \tan^2 \phi \cos^2 \psi} - c \cos \psi
+	G_\mathrm{F} = \frac{I_1}{3} \sin \psi + \sqrt{J_2 K_G^2 + a_G^2 \sin^2 \psi} - c \cos \psi
 \]{#eq:plastic_potential}
 
-where \(\psi\) is the dilatancy angle. \(K_G\), \(A_G\) and \(B_G\) follow
+where \(\psi\) is the dilatancy angle and
+
+\[
+	a_G = \frac{c}{\tan\psi} - \frac{c}{\tan\phi} + a
+\]
+
+
+\(K_G\), \(A_G\) and \(B_G\) follow
 from @eq:K_abbo and @eq:Sloan by substituting the friction angle
 with the dilatancy angle : 
 
@@ -154,20 +161,7 @@ K_G(\theta) = \begin{cases}
 \end{aligned}
 \]
 
-Equation (@Eq:plastic_potential) can be written as follow:
-
-
-\[
-	G_\mathrm{F} = \frac{I_1}{3} \sin \psi + \sqrt{J_2 K_G^2 + a_G^2 \sin^2 \psi} - c \cos \psi
-\]{#eq:plastic_potential2}
-
-with 
-
-\[
-a_G = a \dfrac{\tan \phi}{\tan \psi}
-\]
-
-this formulation allows the use of the `StandardElastoViscoplasticity` brick (see the last part).
+This formulation allows the use of the `StandardElastoViscoplasticity` brick (see the last part).
 
 ## Plastic flow rule
 
@@ -443,7 +437,7 @@ First, we define some variables :
   cos_6_lodeT = cos(6. * lodeT);
   sin_6_lodeT = sin(6. * lodeT);
   tan_3_lodeT = tan(3. * lodeT);
-  a_G = (a * tan(phi)) / tan(psi)
+  a_G = (psi != 0. && phi != 0.) ? (c / tan(psi) - c / tan(phi) + a) : a;
 ~~~~
 
 Then the  `computeElasticPrediction` method (introducted with the 
@@ -804,7 +798,7 @@ a.setEntryName("TensionCutOffParameter");
 @LocalVariable real a_G;
 
 @InitLocalVariables {
-  a_G = (a * tan((phi*pi)/180)) / tan((psi*pi)/180);
+  a_G = (psi != 0. && phi != 0.) ? c / tan((psi*pi)/180) - c / tan((phi*pi)/180) + a : a;
   constexpr const auto u = MohrCoulombParameters<StressStensor>::DEGREE;
   pf = makeMohrCoulombParameters<StressStensor, u>(c, phi, lodeT, a);
   pg = makeMohrCoulombParameters<StressStensor, u>(c, psi, lodeT, a_G);
