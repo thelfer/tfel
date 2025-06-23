@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 4.1.5 of the
 
 # Issues fixed
 
+## Issue 813: [implicit-dsl] smflag may not be defined for generalized behaviour
+
+For more details, see <https://github.com/thelfer/tfel/issues/813>.
+
 ## Issue 807: [mfront] Evaluation of external material properties shall be made *after* the evaluation of external models
 
 For more details, see <https://github.com/thelfer/tfel/issues/807>.

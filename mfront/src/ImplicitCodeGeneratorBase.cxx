@@ -1044,10 +1044,7 @@ namespace mfront {
     if (this->bd.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
       os << "integrate(const SMFlag smflag,const SMType smt) override final{\n";
     } else {
-      if ((this->bd.getBehaviourType() ==
-           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-          (this->bd.getBehaviourType() ==
-           BehaviourDescription::COHESIVEZONEMODEL)) {
+      if (!this->bd.getTangentOperatorBlocks().empty()) {
         os << "integrate(const SMFlag smflag,const SMType smt) override "
               "final{\n";
       } else {
