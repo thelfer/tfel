@@ -120,23 +120,47 @@ namespace tfel::material::homogenization::elasticity {
       computeIsotropicStiffnessTensorII<2u, value, StressType, real>(
           C_i, young_i, nu_i);
       tvector<2u, real> n_a = {1., 0.};
-      const auto A_ = computeEllipticCylinderLocalisationTensor<StressType>(
-          IM_0, C_i, n_a, a, b);
-      // TO DOOOOOO/////////
+      const st2tost2<2u, real> A_ = computePlaneStrainLocalisationTensor<StressType>(
+          IM0, C_i, n_a, a, b);
+     
       const auto zero = real(0);
-      const auto un = real(1);
-      // const auto A11 =
-      // const auto A12 =
-      // const auto A44 =
-      const auto A11 = un;
-      const auto A12 = zero;
-      const auto A44 = un;
-      const st2tost2<2u, real> A_moy = {A11,  A12,  zero, zero, A12, A11,
-                                        zero, zero, zero, zero, un,  zero,
+      const auto A11 = 3*A_(0,0)/4+A_(0,1)/4+A_(3,3)/4;
+      const auto A12 = A_(0,0)/4+3*A_(0,1)/4-A_(3,3)/4;
+      const auto A13 = A_(0,2);
+      const auto A31 = A_(2,0);
+      const auto A33 = A_(2,2);
+      const auto A44 = A_(3,3)/4+A_(0,0)/4-A_(0,1)/4;
+      
+      const st2tost2<2u, real> A_moy = {A11,  A12,  A13, zero,
+                                        A12,  A11,  A13, zero,
+                                        A31,  A31,  A33, zero,
                                         zero, zero, zero, A44};
       return A_moy;
     }  // end of overloading of Isotropic
-
+    
+    
+    // overloading of the function for semiLengths argument in 2d
+    TFEL_HOST_DEVICE static const tfel::math::st2tost2<2u, real> Isotropic(
+        const IsotropicModuli<StressType>& IM0,
+        const IsotropicModuli<StressType>& IM_i,
+        const std::array<types::length<StressType>,2u>& semiLengths){
+    return Isotropic(IM0,IM_i,semiLengths[0], semiLengths[1]);
+    
+    }//end of Isotropic
+    
+    // overloading of the function for semiLengths argument in 3d
+    TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u, real> Isotropic(
+        const IsotropicModuli<StressType>& IM0,
+        const IsotropicModuli<StressType>& IM_i,
+        const std::array<types::length<StressType>,3u>& semiLengths){
+        using real = types::real<StressType>;
+          auto pair = Isotropic(IM0,IM_i,semiLengths[0], semiLengths[1],semiLengths[2]);
+          auto kappaA = std::get<0>(pair);
+          auto muA = std::get<1>(pair);
+          return 3 * kappaA * tfel::math::st2tost2<3u, real>::J() +
+                 2 * muA * tfel::math::st2tost2<3u, real>::K();
+    }//end of Isotropic
+    
     TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u, real>
     TransverseIsotropic(const StressType& young,
                         const real& nu,

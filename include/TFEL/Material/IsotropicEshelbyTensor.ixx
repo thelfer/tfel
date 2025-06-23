@@ -23,7 +23,7 @@ namespace tfel::material::homogenization::elasticity {
 
   template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<2u, real>
-  computeCircularCylinderEshelbyTensor(const real& nu) {
+  computeDiskPlaneStrainEshelbyTensor(const real& nu) {
     if ((nu > real(0.5)) || (nu < real(-1))) {
       tfel::reportContractViolation("nu>0.5 or nu<-1");
     }
@@ -38,20 +38,20 @@ namespace tfel::material::homogenization::elasticity {
     const auto S13 = 2 * Q / 3 - 2 * R;
     return {S11,  S12,  S13,  zero, S12,  S11,  S13,  zero,
             zero, zero, zero, zero, zero, zero, zero, S44};
-  }  // end of function computeCircularCylinderEshelbyTensor
+  }  // end of function computeDiskPlaneStrainEshelbyTensor
 
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
            StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<2u, types::compliance<StressType>> computeCircularCylinderHillTensor(
+      st2tost2<2u, types::compliance<StressType>> computeDiskPlaneStrainHillTensor(
           const IsotropicModuli<StressType>& IM_0) {
     using real = types::real<StressType>;
 
     const auto pair0 = IM_0.ToYoungNu();
     const auto young = std::get<0>(pair0);
     const auto nu = std::get<1>(pair0);
-    const auto S0 = computeCircularCylinderEshelbyTensor<real>(nu);
+    const auto S0 = computeDiskPlaneStrainEshelbyTensor<real>(nu);
     tfel::math::st2tost2<2u, StressType> C_0;
     static constexpr auto value =
         StiffnessTensorAlterationCharacteristic::UNALTERED;
@@ -62,7 +62,7 @@ namespace tfel::material::homogenization::elasticity {
 
   template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<2u, real>
-  computeEllipticCylinderEshelbyTensor(const real& nu, const real& e) {
+  computePlaneStrainEshelbyTensor(const real& nu, const real& e) {
     if ((nu > real(0.5)) || (nu < real(-1))) {
       tfel::reportContractViolation("nu>0.5 or nu<-1");
     }
@@ -94,13 +94,13 @@ namespace tfel::material::homogenization::elasticity {
     }
     return {S22,  S21,  S23,  zero, S12,  S11,  S13,  zero,
             zero, zero, zero, zero, zero, zero, zero, S44};
-  }  // end of function computeEllipticCylinderEshelbyTensor
+  }  // end of function computePlaneStrainEshelbyTensor
 
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
            StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<2u, types::compliance<StressType>> computeEllipticCylinderHillTensor(
+      st2tost2<2u, types::compliance<StressType>> computePlaneStrainHillTensor(
           const IsotropicModuli<StressType>& IM_0,
           const tfel::math::tvector<2u, types::real<StressType>>& n_a,
           const types::length<StressType>& a,
@@ -123,7 +123,7 @@ namespace tfel::material::homogenization::elasticity {
     tvector<2u, real> n_b_ = {-n_a_[1], n_a_[0]};
 
     const real e = b / a;
-    const auto S0 = computeEllipticCylinderEshelbyTensor<real>(nu, e);
+    const auto S0 = computePlaneStrainEshelbyTensor<real>(nu, e);
     tfel::math::tvector<2u, real> n_1;
     tfel::math::tvector<2u, real> n_2;
     if (a < b) {
@@ -133,10 +133,13 @@ namespace tfel::material::homogenization::elasticity {
       n_1 = n_a_;
       n_2 = n_b_;
     }
-
+	std::cout<<"ici"<<std::endl;
     // r is the global basis expressed in the local sorted basis (n1,n2)
     const tfel::math::rotation_matrix<real> r = {
-        n_1[0], n_1[1], 0., n_2[0], n_2[1], 0., 0., 0., 1.};
+        n_1[0], n_1[1], real(0),
+        n_2[0], n_2[1], real(0),
+        real(0),real(0), real(1)};
+
     const auto S0_basis = change_basis(S0, r);
 
     tfel::math::st2tost2<2u, StressType> C_0;
@@ -146,7 +149,7 @@ namespace tfel::material::homogenization::elasticity {
                                                                    nu);
     const auto invC0 = tfel::math::invert(C_0);
     return S0_basis * invC0;
-  }  // end of computeEllipticCylinderHillTensor
+  }  // end of computePlaneStrainHillTensor
 
   template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real> computeSphereEshelbyTensor(

@@ -39,7 +39,7 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
            StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<2u, types::compliance<StressType>> computePlainStrainAnisotropicHillTensor(
+      st2tost2<2u, types::compliance<StressType>> computePlaneStrainAnisotropicHillTensor(
           const tfel::math::st2tost2<2u, StressType>&,
           const types::real<StressType>&,
           const std::size_t max_it = 12);
@@ -65,7 +65,7 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
            StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<2u, types::real<StressType>> computePlainStrainAnisotropicEshelbyTensor(
+      st2tost2<2u, types::real<StressType>> computePlaneStrainAnisotropicEshelbyTensor(
           const tfel::math::st2tost2<2u, StressType>&,
           const types::real<StressType>&,
           const std::size_t max_it = 12);
@@ -191,12 +191,50 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
            StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<2u, types::real<StressType>> computePlainStrainAnisotropicLocalisationTensor(
+      st2tost2<2u, types::real<StressType>> computePlaneStrainAnisotropicLocalisationTensor(
           const tfel::math::st2tost2<2u, StressType>&,
           const tfel::math::st2tost2<2u, StressType>&,
           const tfel::math::tvector<2u, types::real<StressType>>&,
           const types::length<StressType>&,
           const types::length<StressType>&,
+          const std::size_t max_it = 12);
+          
+  /*!
+   * struct for dispatching computeAnisotropicLocalisationTensor over the dimension
+   * \tparam N: dimension
+   * \tparam StressType: type of the elastic constants related to the matrix
+   * and the ellipsoid
+   */
+   template <unsigned short int N, tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>())
+  struct AnisotropicLocalisationTensor;
+  
+   /*!
+   *  A function computeAnisotropicLocalisationTensor for dimensions 2 and 3.
+   * \tparam N: dimension
+   * \tparam StressType: type of the elastic constants related to the matrix
+   * and the ellipsoid
+   * \param[in] C_0_glob: stiffness tensor of the matrix in the GLOBAL basis
+   * \param[in] C_i_loc: stiffness tensor of the inclusion in the LOCAL
+   * basis, which is the basis given by (\f$n_a\f$,\f$n_b\f$) (\f$n_b\f$ is useless in 2d).
+   * \param [in] n_a: direction of the principal axis relative to first semi-length
+   * \param [in] n_b: direction of the principal axis relative to second semi-length
+   * \param [in] semiLengths: array of lengths of the N semi-axes. The first one for direction
+   * \f$n_a\f$, the second for \f$n_b\f$.
+   * \param[in] max_it: maximal number of iterations for integration
+   */
+  template <unsigned short int N,tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<N, types::real<StressType>> computeGeneralAnisotropicLocalisationTensor(
+          const tfel::math::st2tost2<N, StressType>&,
+          const tfel::math::st2tost2<N, StressType>&,
+          const tfel::math::tvector<N, types::real<StressType>>&,
+          const tfel::math::tvector<N, types::real<StressType>>&,
+          const std::array<types::length<StressType>,N>&,
           const std::size_t max_it = 12);
 
 }  // namespace tfel::material::homogenization::elasticity

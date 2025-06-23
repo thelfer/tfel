@@ -27,28 +27,15 @@ namespace tfel::material::homogenization::elasticity {
              tfel::math::unit::Stress,
              StressType>()) TFEL_HOST_DEVICE tfel::math::
         st2tost2<N, types::real<StressType>> computeLocalisationTensorBase(
-            const IsotropicModuli<StressType>& IM_0,
+            tfel::math::st2tost2<N, StressType>& C_0,
             const tfel::math::st2tost2<N, tfel::types::compliance<StressType>>&
                 P0,
             const tfel::math::st2tost2<N, StressType>& C_i) {
-      using real = types::real<StressType>;
 
-      const auto pair0 = IM_0.ToYoungNu();
-      const auto young = std::get<0>(pair0);
-      const auto nu = std::get<1>(pair0);
-      if ((nu > real(0.5)) || (nu < real(-1))) {
-        tfel::reportContractViolation("nu>0.5 or nu<-1");
-      }
-
-      tfel::math::st2tost2<N, StressType> C_0;
-      static constexpr auto value =
-          StiffnessTensorAlterationCharacteristic::UNALTERED;
-      computeIsotropicStiffnessTensorII<N, value, StressType, real>(C_0, young,
-                                                                    nu);
       using namespace tfel::math;
       const auto C = C_i - C_0;
       const auto Pr = P0 * C;
-      const auto A = invert(st2tost2<N, real>::Id() + Pr);
+      const auto A = invert(st2tost2<N, types::real<StressType>>::Id() + Pr);
       return A;
     }  // end of computeLocalisationTensorBase
 
@@ -58,29 +45,52 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
            StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<2u, types::real<StressType>> computeCircularCylinderLocalisationTensor(
+      st2tost2<2u, types::real<StressType>> computeDiskPlaneStrainLocalisationTensor(
           const IsotropicModuli<StressType>& IM_0,
           const tfel::math::st2tost2<2u, StressType>& C_i) {
-    const auto P0 = computeCircularCylinderHillTensor<StressType>(IM_0);
-    return internals::computeLocalisationTensorBase<2u, StressType>(IM_0, P0,
+          using real=tfel::types::real<StressType>;
+	const auto P0 = computeDiskPlaneStrainHillTensor<StressType>(IM_0);
+	const auto pair0 = IM_0.ToYoungNu();
+	const auto young = std::get<0>(pair0);
+	const auto nu = std::get<1>(pair0);
+	if ((nu > real(0.5)) || (nu < real(-1))) {
+	tfel::reportContractViolation("nu>0.5 or nu<-1");
+	}
+	tfel::math::st2tost2<2u, StressType> C_0;
+	static constexpr auto value =
+	  StiffnessTensorAlterationCharacteristic::UNALTERED;
+	computeIsotropicStiffnessTensorII<2u, value, StressType, real>(C_0, young,
+		                                                    nu);
+    return internals::computeLocalisationTensorBase<2u, StressType>(C_0, P0,
                                                                     C_i);
-  }  // end of computeCircularCylinderLocalisationTensor
+  }  // end of computeDiskPlaneStrainLocalisationTensor
 
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
            StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<2u, types::real<StressType>> computeEllipticCylinderLocalisationTensor(
+      st2tost2<2u, types::real<StressType>> computePlaneStrainLocalisationTensor(
           const IsotropicModuli<StressType>& IM_0,
           const tfel::math::st2tost2<2u, StressType>& C_i,
           const tfel::math::tvector<2u, types::real<StressType>>& n_a,
           const types::length<StressType>& a,
           const types::length<StressType>& b) {
-    const auto P0 =
-        computeEllipticCylinderHillTensor<StressType>(IM_0, n_a, a, b);
-    return internals::computeLocalisationTensorBase<2u, StressType>(IM_0, P0,
+          using real=tfel::types::real<StressType>;
+	const auto P0 = computePlaneStrainHillTensor<StressType>(IM_0, n_a, a, b);
+	const auto pair0 = IM_0.ToYoungNu();
+	const auto young = std::get<0>(pair0);
+	const auto nu = std::get<1>(pair0);
+	if ((nu > real(0.5)) || (nu < real(-1))) {
+	tfel::reportContractViolation("nu>0.5 or nu<-1");
+	}
+	tfel::math::st2tost2<2u, StressType> C_0;
+	static constexpr auto value =
+	  StiffnessTensorAlterationCharacteristic::UNALTERED;
+	computeIsotropicStiffnessTensorII<2u, value, StressType, real>(C_0, young,
+		                                                    nu);
+    return internals::computeLocalisationTensorBase<2u, StressType>(C_0, P0,
                                                                     C_i);
-  }  // end of computeEllipticCylinderLocalisationTensor
+  }  // end of computePlaneStrainLocalisationTensor
 
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
@@ -258,6 +268,48 @@ namespace tfel::material::homogenization::elasticity {
         std::get<0>(Enu0), std::get<1>(Enu0), std::get<0>(Enui),
         std::get<1>(Enui), n_a, a, n_b, b, c);
   }  // end of second overload of computeEllipsoidLocalisationTensor
+  
+  
+   template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>())
+  struct IsotropicLocalisationTensor<2u, StressType> {
+  static TFEL_HOST_DEVICE tfel::math::st2tost2<2u, types::real<StressType>> exe(const IsotropicModuli<StressType>& IM0,
+          const tfel::math::st2tost2<2u, StressType>& C_i_loc,
+          const tfel::math::tvector<2u, types::real<StressType>>& n_a,
+          const tfel::math::tvector<2u, types::real<StressType>>& n_b,
+          const std::array<types::length<StressType>,2u>& semiLengths) {
+      return computePlainStrainLocalisationTensor<StressType>(IM0,C_i_loc,n_a,semiLengths[0],semiLengths[1]);
+    }
+  };//end of IsotropicLocalisationTensor<2u, StressType>
+  
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>())
+  struct IsotropicLocalisationTensor<3u, StressType> {
+  static TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>> exe(const IsotropicModuli<StressType>& IM0,
+          const tfel::math::st2tost2<3u, StressType>& C_i_loc,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_b,
+          const std::array<types::length<StressType>,3u>& semiLengths) {
+      return computeEllipsoidLocalisationTensor<StressType>(IM0,C_i_loc,n_a,semiLengths[0],n_b,semiLengths[1],semiLengths[2]);
+    }
+  };//end of IsotropicLocalisationTensor<3u, StressType>
+  
+  template <unsigned short int N,tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<N, types::real<StressType>> computeIsotropicLocalisationTensor(
+          const IsotropicModuli<StressType>& IM0,
+          const tfel::math::st2tost2<N, StressType>& C_i,
+          const tfel::math::tvector<N, types::real<StressType>>& n_a,
+          const tfel::math::tvector<N, types::real<StressType>>& n_b,
+          const std::array<types::length<StressType>,N>& semiLengths){
+     return IsotropicLocalisationTensor<N,StressType>::exe(IM0,C_i,n_a,n_b,semiLengths);     
+    }// end of computeIsotropicLocalisationTensor
 
 }  // end of namespace tfel::material::homogenization::elasticity
 

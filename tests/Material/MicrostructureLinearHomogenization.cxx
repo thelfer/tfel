@@ -86,11 +86,10 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     micro1.addInclusionPhase(distrib1);
     micro1.addInclusionPhase(distrib2);
     
-    tfel::math::stensor<3u,real> E={1,0,0,0,0,0};
     auto zs=stress(0);
     tfel::math::stensor<3u,stress> P={zs,zs,zs,zs,zs,zs};
     std::vector<tfel::math::stensor<3u,stress>> polarizations = {P,P,P};
-    auto h_s_1=computeDilute<3u, stress>(micro1,polarizations,false,E,true);
+    auto h_s_1=computeDilute<3u, stress>(micro1,polarizations,true);
     auto Chom_DS_iso=h_s_1.homogenized_stiffness;
     //auto h_s_2=computeDilute<3u,stress>(micro1,polarizations,false,E,false);
     //auto Chom_DS_non_iso=h_s_2.homogenized_stiffness;
@@ -99,9 +98,9 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     //  TFEL_TESTS_ASSERT(my_abs(Chom_DS_iso(i,j)- Chom_DS_non_iso(i,j)) < stress{seps});
     //}
     
-    HomogenizationScheme<3u, stress> h_s_MT1=computeMoriTanaka<3u, stress>(micro1,polarizations,false,E,true);
+    HomogenizationScheme<3u, stress> h_s_MT1=computeMoriTanaka<3u, stress>(micro1,polarizations,true);
     auto Chom_MT_iso=h_s_MT1.homogenized_stiffness;
-    //HomogenizationScheme<3u, stress> h_s_MT2=computeMoriTanaka<3u, stress>(micro1,polarizations,false,E,true);
+    //HomogenizationScheme<3u, stress> h_s_MT2=computeMoriTanaka<3u, stress>(micro1,polarizations,true);
     //auto Chom_MT_non_iso=h_s_MT2.homogenized_stiffness;
     //for (int i=0;i<6;i++)
     //for (int j=0;j<6;j++){
@@ -147,12 +146,11 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     crystal.addGrain(grain1);
     crystal.addGrain(grain2);
     crystal.addGrain(grain3);
-    
-    tfel::math::stensor<3u,real> E={1.,0.,0.,0.,0.,0.};
+
     auto zs=stress(0);
     tfel::math::stensor<3u,stress> P={zs,zs,zs,zs,zs,zs};
     std::vector<tfel::math::stensor<3u,stress>> polarizations = {P,P};
-    auto h_s_SC2=computeSelfConsistent<3u, stress>(crystal,polarizations,false,E,false,20,6);
+    auto h_s_SC2=computeSelfConsistent<3u, stress>(crystal,polarizations,false,20,6);
     auto Chom_SC_non_iso=h_s_SC2.homogenized_stiffness;
     
   };

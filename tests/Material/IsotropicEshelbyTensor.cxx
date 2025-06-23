@@ -66,8 +66,8 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     // These functions must return the same thing
     using namespace tfel::material::homogenization::elasticity;
     {
-      const auto S2d_1 = computeCircularCylinderEshelbyTensor(nu);
-      const auto S2d_2 = computeEllipticCylinderEshelbyTensor(nu, real{1});
+      const auto S2d_1 = computeDiskPlaneStrainEshelbyTensor(nu);
+      const auto S2d_2 = computePlaneStrainEshelbyTensor(nu, real{1});
       for (int i : {0, 1, 2, 3}) {
         for (int j : {0, 1, 2, 3}) {
           TFEL_TESTS_ASSERT(std::abs(S2d_1(i, j) - S2d_2(i, j)) < eps);
@@ -99,8 +99,8 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     const auto Enu=YoungNuModuli<stress>(young,nu);
     using namespace tfel::material::homogenization::elasticity;
     {
-      const auto P2d_1 = computeCircularCylinderHillTensor<stress>(Enu);
-      const auto P2d_2 = computeEllipticCylinderHillTensor<stress>(Enu,n_a,a,a);
+      const auto P2d_1 = computeDiskPlaneStrainHillTensor<stress>(Enu);
+      const auto P2d_2 = computePlaneStrainHillTensor<stress>(Enu,n_a,a,a);
       for (int i : {0, 1, 2, 3})
       for (int j : {0, 1, 2, 3}) {
           TFEL_TESTS_ASSERT(my_abs(P2d_1(i, j) - P2d_2(i, j)) < ceps);
@@ -135,8 +135,8 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
                                                                    nu_i);
     using namespace tfel::material::homogenization::elasticity;
     {
-      const auto A2d_1 = computeCircularCylinderLocalisationTensor(Enu,C_i);
-      const auto A2d_2 = computeEllipticCylinderLocalisationTensor(Enu,C_i,n_a,a,a);
+      const auto A2d_1 = computeDiskPlaneStrainLocalisationTensor(Enu,C_i);
+      const auto A2d_2 = computePlaneStrainLocalisationTensor(Enu,C_i,n_a,a,a);
       for (int i : {0, 1, 2, 3})
       for (int j : {0, 1, 2, 3}) {
           TFEL_TESTS_ASSERT(std::abs(A2d_1(i, j) - A2d_2(i, j)) < eps);

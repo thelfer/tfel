@@ -30,7 +30,7 @@ namespace tfel::material::homogenization::elasticity {
    */
   template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<2u, real>
-  computeCircularCylinderEshelbyTensor(const real&);
+  computeDiskPlaneStrainEshelbyTensor(const real&);
 
   /*!
    * This function builds the Hill tensor of a circular cylinder embedded
@@ -45,7 +45,7 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
            StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<2u, types::compliance<StressType>> computeCircularCylinderHillTensor(
+      st2tost2<2u, types::compliance<StressType>> computeDiskPlaneStrainHillTensor(
           const IsotropicModuli<StressType>&);
 
   /*!
@@ -60,7 +60,7 @@ namespace tfel::material::homogenization::elasticity {
    */
   template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<2u, real>
-  computeEllipticCylinderEshelbyTensor(const real&, const real&);
+  computePlaneStrainEshelbyTensor(const real&, const real&);
 
   /*!
    * This function builds the Hill tensor of an elliptic cylinder embedded
@@ -78,7 +78,7 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
            StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<2u, types::compliance<StressType>> computeEllipticCylinderHillTensor(
+      st2tost2<2u, types::compliance<StressType>> computePlaneStrainHillTensor(
           const IsotropicModuli<StressType>&,
           const tfel::math::tvector<2u, types::real<StressType>>&,
           const types::length<StressType>&,

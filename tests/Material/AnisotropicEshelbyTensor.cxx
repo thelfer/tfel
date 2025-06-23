@@ -114,9 +114,9 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
         StiffnessTensorAlterationCharacteristic::UNALTERED;
     computeIsotropicStiffnessTensorII<2u, value, stress, real>(C_0, young, nu);
     const auto S2D1 =
-        computePlainStrainAnisotropicEshelbyTensor<stress>(
+        computePlaneStrainAnisotropicEshelbyTensor<stress>(
             C_0, n_a, lg{3}, lg{2}, 14);
-    const auto S2D2 = computeEllipticCylinderEshelbyTensor(nu, real{1.5});
+    const auto S2D2 = computePlaneStrainEshelbyTensor(nu, real{1.5});
     for (int i : {0, 1, 2, 3}) {
       for (int j : {0, 1, 2, 3}) {
         TFEL_TESTS_ASSERT(std::abs(S2D1(i, j) - S2D2(i, j)) < eps);
@@ -125,9 +125,9 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     }
 
     const auto S2DCir1 =
-        computePlainStrainAnisotropicEshelbyTensor<stress>(
+        computePlaneStrainAnisotropicEshelbyTensor<stress>(
             C_0, n_a, lg{3}, lg{3}, 14);
-    const auto S2DCir2 = computeCircularCylinderEshelbyTensor(nu);
+    const auto S2DCir2 = computeDiskPlaneStrainEshelbyTensor(nu);
     for (int i : {0, 1, 2, 3}) {
       for (int j : {0, 1, 2, 3}) {
         TFEL_TESTS_ASSERT(std::abs(S2DCir1(i, j) - S2DCir2(i, j)) < eps);

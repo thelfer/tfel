@@ -245,23 +245,12 @@ namespace tfel::material {
           const auto kappai = std::get<0>(pairi);
           const auto mui = std::get<1>(pairi);
           const auto KGi = KGModuli<StressType>(kappai, mui);
-          if (N == 3) {
-            return computeEllipsoidLocalisationTensor<StressType>(
-                KG0, Ci, n_a_i, ai, n_b_i, bi, ci);
-          } else if (N == 2) {
-            return computeEllipticCylinderLocalisationTensor<StressType>(
-                KG0, Ci, n_a_i, ai, bi);
+          return computeIsotropicLocalisationTensor<N,StressType>(
+                KG0, Ci, n_a_i, n_b_i, semiL);
+          } else {
+            return computeGeneralAnisotropicLocalisationTensor<N,StressType>(
+                C0, Ci, n_a_i, n_b_i,semiL,max_iter_anisotropic_integration);
           }
-        } else {
-          if (N == 3) {
-            return computeAnisotropicLocalisationTensor<StressType>(
-                C0, Ci, n_a_i, ai, n_b_i, bi, ci,
-                max_iter_anisotropic_integration);
-          } else if (N == 2) {
-            return computePlainStrainAnisotropicLocalisationTensor<StressType>(
-                C0, Ci, n_a_i, ai, bi, max_iter_anisotropic_integration);
-          }
-        }
       };
 
       virtual ~GrainPhase(){};
@@ -380,10 +369,10 @@ namespace tfel::material {
           const auto KG0 = KGModuli<StressType>(kappa0, mu0);
           tfel::math::tvector<2u, real> n_a = {1., 0.};
           return computeEllipticCylinderLocalisationTensor<StressType>(
-              KG0, Ci, n_a, real(1), real(1))
+              KG0, Ci, n_a, real(1), real(1));
         } else {
           tfel::math::tvector<2u, real> n_a = {1., 0.};
-          return computePlainStrainAnisotropicLocalisationTensor<StressType>(
+          return computePlaneStrainAnisotropicLocalisationTensor<StressType>(
               C0, Ci, n_a, real(1), real(1), max_iter_anisotropic_integration);
         }
       };
@@ -442,20 +431,8 @@ namespace tfel::material {
         const auto mu0 = std::get<1>(pair0);
         const auto KG0 = KGModuli<StressType>(kappa0, mu0);
         auto semiL = (this->inclusion).semiLengths;
-        auto ai = semiL[0];
-        auto bi = semiL[1];
-        if (N == 2) {
-          return EllipsoidMeanLocalisator<2u, StressType>::Isotropic(KG0, KGi,
-                                                                     ai, bi);
-        } else if (N == 3) {
-          auto ci = semiL[2];
-          auto pair = EllipsoidMeanLocalisator<3u, StressType>::Isotropic(
-              KG0, KGi, ai, bi, ci);
-          auto kappaA = std::get<0>(pair);
-          auto muA = std::get<1>(pair);
-          return 3 * kappaA * tfel::math::st2tost2<3u, real>::J() +
-                 2 * muA * tfel::math::st2tost2<3u, real>::K();
-        }
+        return EllipsoidMeanLocalisator<N, StressType>::Isotropic(KG0, KGi,
+                                                                     semiL);
       };
 
       virtual ~IsotropicDistribution(){};
@@ -624,33 +601,16 @@ namespace tfel::material {
         auto semiL = (this->inclusion).semiLengths;
         auto n_a_i = this->n_a;
         auto n_b_i = this->n_b;
-        auto ai = semiL[0];
-        auto bi = semiL[1];
-        LengthType ci;
-        if (N == 3) {
-          ci = semiL[2];
-        }
         if (isotropic_matrix) {
           auto pair0 = computeKappaMu<N, StressType>(C0);
           const auto kappa0 = std::get<0>(pair0);
           const auto mu0 = std::get<1>(pair0);
           const auto KG0 = KGModuli<StressType>(kappa0, mu0);
-          if (N == 3) {
-            return computeEllipsoidLocalisationTensor<StressType>(
-                KG0, Ci, n_a_i, ai, n_b_i, bi, ci);
-          } else if (N == 2) {
-            return computeEllipticCylinderLocalisationTensor<StressType>(
-                KG0, Ci, n_a, ai, bi);
-          }
+          return computeIsotropicLocalisationTensor<N,StressType>(KG0, Ci, n_a_i, n_b_i, semiL);
         } else {
-          if (N == 3) {
-            return computeAnisotropicLocalisationTensor<StressType>(
-                C0, Ci, n_a_i, ai, n_b_i, bi, ci,
+            return computeGeneralAnisotropicLocalisationTensor<N,StressType>(
+                C0, Ci, n_a_i, n_b_i, semiL,
                 max_iter_anisotropic_integration);
-          } else if (N == 2) {
-            return computePlainStrainAnisotropicLocalisationTensor<StressType>(
-                C0, Ci, n_a_i, ai, bi, max_iter_anisotropic_integration);
-          }
         }
       };
 
