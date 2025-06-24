@@ -116,6 +116,8 @@ namespace mfront {
     this->disableCallBack("@GlidingSystems");
     this->disableCallBack("@SlidingSystems");
     this->disableCallBack("@InteractionMatrix");
+    this->registerNewCallBack("@Predictor",
+                              &IsotropicBehaviourDSLBase::treatPredictor);
     // a defaut version of the prediction operator is always provided
     this->mb.setAttribute(h, BehaviourData::hasPredictionOperator, true);
     this->mb.setIntegrationScheme(BehaviourDescription::SPECIFICSCHEME);
@@ -141,6 +143,14 @@ namespace mfront {
     d.minimalMFrontFileBody = "@FlowRule{}\n\n";
     return d;
   }  // end of getBehaviourDSLDescription
+
+  void IsotropicBehaviourDSLBase::treatPredictor() {
+    std::function<std::string(const Hypothesis, const std::string&, const bool)>
+        m = [this](const Hypothesis h, const std::string& sv, const bool b) {
+          return this->standardModifier(h, sv, b);
+        };
+    this->treatCodeBlock(BehaviourData::ComputePredictor, m, true, true);
+  }  // end of treatPredictor
 
   bool IsotropicBehaviourDSLBase::handleStrainHardening() const { return true; }
 

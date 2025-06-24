@@ -58,6 +58,9 @@ namespace mfront {
     ~IsotropicBehaviourDSLBase() override;
 
    protected:
+    //! \brief treat the `@Predictor` keyword
+    virtual void treatPredictor();
+    //
     void treatExternalStateVariable() override;
     void completeVariableDeclaration() override;
     void endsInputFileProcessing() override;

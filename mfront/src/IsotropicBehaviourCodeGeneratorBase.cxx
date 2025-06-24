@@ -41,7 +41,8 @@ namespace mfront {
         return this->bd.getClassName() + "::" + i.name;
       } else {
         this->throwRuntimeError(
-            "ImplicitDSLBase::writeBehaviourLocalVariablesInitialisation",
+            "IsotropicBehaviourCodeGeneratorBase::"
+            "writeBehaviourLocalVariablesInitialisation",
             "unsupported input type for variable '" + i.name + "'");
       }
     };
@@ -58,7 +59,7 @@ namespace mfront {
         return this->bd.getClassName() + "::" + i.name;
       } else {
         this->throwRuntimeError(
-            "IsotropicBehaviourCodeGenerator::"
+            "IsotropicBehaviourCodeGeneratorBase::"
             "writeBehaviourLocalVariablesInitialisation",
             "unsupported input type for variable '" + i.name + "'");
       }
