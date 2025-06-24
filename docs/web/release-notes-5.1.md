@@ -40,7 +40,6 @@ eqnPrefixTemplate: "($$i$$)"
 - The definition of some unit class has (`Stress`, `Temperature`, etc..)
   have been moved from `tfel::math` to `tfel::math::unit`.
 
-
 ## Internal API changes
 
 `IsotropicHardeningRule::computeElasticLimitAndDerivative` now returns
@@ -487,6 +486,19 @@ This list can be retrieved as follows:
 $ mfront --list-isotropic-hardening-rules
 ~~~~
 
+### Add support for the `@Predictor` code block
+
+The code block `@Predictor` allows to specify an intial guess for the
+(visco-)plastic strain increments.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Predictor{
+ dp = sqrt(deto| deto);
+}
+~~~~
+
 ## Extensions of the `StandardElastoViscoPlasticity` brick
 
 ### Changing the external name of the equivalent strain {#sec:tfel:5.1:StandardElastoViscoPlasticity:equivalent_strain_external_name}
@@ -712,6 +724,10 @@ Python bindings are now generated using the
 - The `setDebugMode` function is now available.
 
 # Issues fixed
+
+## Issue 793: add @Predictor support for isotropic DSLs
+
+For more details, see <https://github.com/thelfer/tfel/issues/793>
 
 ## Issue 790: [tfel-math] Remove `Stress`, `Time` from the `tfel::math` namespace
 

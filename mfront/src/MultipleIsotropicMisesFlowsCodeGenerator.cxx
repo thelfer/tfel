@@ -313,6 +313,9 @@ namespace mfront {
          << "throw(runtime_error(\"invalid tangent operator flag\"));\n"
          << "}\n";
     }
+    if (this->bd.hasCode(h, BehaviourData::ComputePredictor)) {
+      os << this->bd.getCode(h, BehaviourData::ComputePredictor) << '\n';
+    }
     this->writeBehaviourIntegratorPreprocessingStep(os);
     os << "this->seq_e = sigmaeq(this->se);\n";
     n = 0;
