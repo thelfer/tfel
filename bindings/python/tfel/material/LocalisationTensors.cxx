@@ -14,6 +14,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include "TFEL/Material/IsotropicEshelbyTensor.hxx"
+#include "TFEL/Material/LocalisationTensor.hxx"
 #include "TFEL/Material/AnisotropicEshelbyTensor.hxx"
 
 

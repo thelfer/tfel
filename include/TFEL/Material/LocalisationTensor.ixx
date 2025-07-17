@@ -122,6 +122,8 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>>
   computeSphereLocalisationTensor(const IsotropicModuli<StressType>& IM0,
                                   const IsotropicModuli<StressType>& IM_i) {

@@ -212,7 +212,7 @@ namespace tfel::material::homogenization::elasticity {
   struct AnisotropicLocalisationTensor;
   
    /*!
-   *  A function computeAnisotropicLocalisationTensor for dimensions 2 and 3.
+   *  A function computeGeneralAnisotropicLocalisationTensor for dimensions 2 and 3.
    * \tparam N: dimension
    * \tparam StressType: type of the elastic constants related to the matrix
    * and the ellipsoid

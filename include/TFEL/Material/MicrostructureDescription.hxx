@@ -15,6 +15,8 @@
 
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Material/LinearHomogenizationSchemes.hxx"
+#include "TFEL/Material/AnisotropicEshelbyTensor.hxx"
+#include "TFEL/Material/LocalisationTensor.hxx"
 #include <stdexcept>
 
 namespace tfel::material {
@@ -650,7 +652,7 @@ namespace tfel::material {
       using real = tfel::types::real<StressType>;
       using LengthType = tfel::types::length<StressType>;
 
-      ParticulateMicrostructure(tfel::math::st2tost2<N, StressType> &C0)
+      ParticulateMicrostructure(const tfel::math::st2tost2<N, StressType> &C0)
           : Microstructure<N, StressType>(),
             number_of_phases(1),
             inclusionPhases(
