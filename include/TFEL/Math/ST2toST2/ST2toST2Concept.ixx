@@ -89,7 +89,7 @@ namespace tfel::math {
       return {};
     }
     auto v = base_type<real>{1};
-    for (const index_type<ST2toST2Type> i = 0; i != ts; ++i) {
+    for (index_type<ST2toST2Type> i = 0; i != ts; ++i) {
       v *= m(i, i);
     }
     return r.second == 1 ? v : -v;
