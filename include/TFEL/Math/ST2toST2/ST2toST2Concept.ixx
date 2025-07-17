@@ -86,7 +86,7 @@ namespace tfel::math {
       return a * (e * i - f * h) + b * (f * g - d * i) + c * (d * h - e * g);
     } else {
       constexpr auto ts = StensorDimeToSize<N>::value;
-      using Result = UnaryResultType<numeric_type<ST2toST2Type>, Power<ts>>;
+      using Result = unary_result_type<numeric_type<ST2toST2Type>, Power<ts>>;
       using real = base_type<numeric_type<ST2toST2Type>>;
       tmatrix<ts, ts, real> m;
       tfel::fsalgo::transform<ts * ts>::exe(
@@ -97,7 +97,7 @@ namespace tfel::math {
         return Result{};
       }
       auto v = base_type<real>{1};
-      for (const index_type<ST2toST2Type> i = 0; i != ts; ++i) {
+      for (index_type<ST2toST2Type> i = 0; i != ts; ++i) {
         v *= m(i, i);
       }
       return r.second == 1 ? Result{v} : -Result{v};
