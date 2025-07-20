@@ -1239,10 +1239,12 @@ namespace mfront {
       std::ofstream out{fn};
       throw_if(!out, "could not open file '" + fn + "'");
       auto write_variables_names = [&out](const auto variables,
-                                          const bool add_comment_mark) {
+                                          const bool add_comment_mark,
+                                          const char* const prefix = nullptr) {
         if (!variables.empty()) {
           int i = 1;
-          auto write = [&i, &out, &add_comment_mark](
+          int current = 1;
+          auto write = [&i, &current, &out, &add_comment_mark, &prefix](
                            const VariableDescription& v, const std::string& n) {
             auto write_line_break_if_required = [&i, &out, &add_comment_mark] {
               if (i % 9 == 0) {
@@ -1255,14 +1257,24 @@ namespace mfront {
             };
             if (v.isScalar()) {
               write_line_break_if_required();
-              out << '<' << n << '>';
+              out << '<';
+              if (prefix != nullptr) {
+                out << prefix << current << ": ";
+              }
+              out << n << '>';
               ++i;
+              ++current;
             } else {
               const auto vs = SupportedTypes::getTypeSize(v.type, 1u)
                                   .getValueForModellingHypothesis(h);
               for (int idx = 0; idx != vs; ++i) {
                 write_line_break_if_required();
-                out << '<' << n << '_' << idx << '>';
+                out << '<' ;
+                if (prefix != nullptr) {
+                  out << prefix << current << ": ";
+                }
+                out << n << '_' << idx << '>';
+                ++current;
                 if (++idx != vs) {
                   out << ", ";
                 }
@@ -1338,7 +1350,7 @@ namespace mfront {
           isvs.push_back(VariableDescription{
               "StressStensor", "dualOfTheLogarithmicStrain", 1, 0u});
         }
-        write_variables_names(isvs, true);
+        write_variables_names(isvs, true, "SDV");
         out << "\n";
         out << "*Depvar\n" << vsize << "\n";
       }
