@@ -1269,7 +1269,7 @@ namespace mfront {
                                   .getValueForModellingHypothesis(h);
               for (int idx = 0; idx != vs; ++i) {
                 write_line_break_if_required();
-                out << '<' ;
+                out << '<';
                 if (prefix != nullptr) {
                   out << prefix << current << ": ";
                 }

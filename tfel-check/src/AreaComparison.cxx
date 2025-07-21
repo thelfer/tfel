@@ -14,7 +14,7 @@
 #include <cmath>
 #include <vector>
 #include <algorithm>
-
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Check/AreaComparison.hxx"
 
 namespace tfel::check {
@@ -150,14 +150,15 @@ namespace tfel::check {
     }
     if (!s) {
       this->msgLog += " failed (" + this->name + " check).\n    Area error : ";
-      this->msgLog += std::to_string(areaValue);
-      this->msgLog += " \n    Max area = " + std::to_string(this->prec) + "\n";
+      this->msgLog += tfel::utilities::convert(areaValue);
+      this->msgLog +=
+          " \n    Max area = " + tfel::utilities::convert(this->prec) + "\n";
       this->success = false;
     } else {
       this->msgLog +=
           " succeed (" + this->name +
-          " check).\n    Area error : " + std::to_string(areaValue) +
-          "\n    Max area : " + std::to_string(this->prec) + "\n";
+          " check).\n    Area error : " + tfel::utilities::convert(areaValue) +
+          "\n    Max area : " + tfel::utilities::convert(this->prec) + "\n";
     }
   }
 
