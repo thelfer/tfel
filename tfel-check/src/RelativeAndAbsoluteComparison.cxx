@@ -18,7 +18,7 @@
 #include <vector>
 #include <cstdlib>
 #include <limits>
-
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Check/RelativeAndAbsoluteComparison.hxx"
 
 namespace tfel::check {
@@ -89,32 +89,35 @@ namespace tfel::check {
                           100.0;
       this->msgLog.append(" failed (" + this->name +
                           " check).\n    Maximum relative error : ");
-      this->msgLog.append(std::to_string(maxRelativeError));
-      this->msgLog +=
-          " at line " + std::to_string(errorRelLineNumber) +
-          "\n    Maximum absolute error : " + std::to_string(maxAbsoluteError) +
-          " at line " + std::to_string(errorAbsLineNumber) +
-          "\n    Failed comparisons count (for column) : " +
-          std::to_string(errorLinesCount) + " / " +
-          std::to_string(this->c1->getValues().size()) + " (" +
-          std::to_string(errorLinesPercent) +
-          " %)\n    Thresholds : rel = " + std::to_string(this->prec) +
-          ", abs = " + std::to_string(this->precision2) + "\n";
+      this->msgLog.append(tfel::utilities::convert(maxRelativeError));
+      this->msgLog += " at line " + std::to_string(errorRelLineNumber) +
+                      "\n    Maximum absolute error : " +
+                      tfel::utilities::convert(maxAbsoluteError) + " at line " +
+                      std::to_string(errorAbsLineNumber) +
+                      "\n    Failed comparisons count (for column) : " +
+                      std::to_string(errorLinesCount) + " / " +
+                      std::to_string(this->c1->getValues().size()) + " (" +
+                      tfel::utilities::convert(errorLinesPercent) +
+                      " %)\n    Thresholds : rel = " +
+                      tfel::utilities::convert(this->prec) +
+                      ", abs = " + tfel::utilities::convert(this->precision2) +
+                      "\n";
       this->success = false;
     } else {
       this->msgLog += " succeed (" + this->name +
                       " check).\n    Maximum relative error : " +
-                      std::to_string(maxRelativeError) + " at line " +
+                      tfel::utilities::convert(maxRelativeError) + " at line " +
                       std::to_string(errorRelLineNumber) + "\n";
       if (errorAbsLineNumber) {
-        this->msgLog +=
-            "    Maximum absolute error : " + std::to_string(maxAbsoluteError) +
-            " at line " + std::to_string(errorAbsLineNumber) + "\n";
+        this->msgLog += "    Maximum absolute error : " +
+                        tfel::utilities::convert(maxAbsoluteError) +
+                        " at line " + std::to_string(errorAbsLineNumber) + "\n";
       } else {
         this->msgLog += "    Absolute comparison not used.\n";
       }
-      this->msgLog += "    Thresholds : rel = " + std::to_string(this->prec) +
-                      ", abs = " + std::to_string(this->precision2);
+      this->msgLog +=
+          "    Thresholds : rel = " + tfel::utilities::convert(this->prec) +
+          ", abs = " + tfel::utilities::convert(this->precision2);
     }
   }
 

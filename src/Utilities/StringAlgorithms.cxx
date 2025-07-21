@@ -11,6 +11,8 @@
  * project under specific licensing conditions.
  */
 
+#include <sstream>
+#include <concepts>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
@@ -170,5 +172,29 @@ namespace tfel::utilities {
     throw_if(p != s.size());
     return r;
   }
+
+  namespace internals {
+
+    std::string convertNumberToString(std::floating_point auto& v) {
+      std::ostringstream os;
+      os.precision(14);
+      os << std::scientific;
+      os << v;
+      return os.str();
+    }  // end of convertNumberToString
+
+  }  // namespace internals
+
+  std::string convert(const float& v) {
+    return internals::convertNumberToString(v);
+  }  // end of convert
+
+  std::string convert(const double& v) {
+    return internals::convertNumberToString(v);
+  }  // end of convert
+
+  std::string convert(const long double& v) {
+    return internals::convertNumberToString(v);
+  }  // end of convert
 
 }  // namespace tfel::utilities
