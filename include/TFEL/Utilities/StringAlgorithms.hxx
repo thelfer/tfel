@@ -127,6 +127,23 @@ namespace tfel::utilities {
    */
   template <>
   TFELUTILITIES_VISIBILITY_EXPORT long double convert<>(const std::string&);
+  /*!
+   * \brief convert a float to string using scientific notation and a 14 digit
+   * precision.
+   * \param[in] v: string to be converted
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT std::string convert(const float&);
+  /*!
+   * \brief convert a double to string using scientific notation and a 14 digit
+   * precision.
+   * \param[in] v: string to be converted
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT std::string convert(const double&);
+  /*!
+   * \brief convert a long double to string using scientific notation and a 14
+   * digit precision. \param[in] v: string to be converted
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT std::string convert(const long double&);
 
 }  // end of namespace tfel::utilities
 

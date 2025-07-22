@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <limits>
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Check/RelativeComparison.hxx"
 
 namespace tfel::check {
@@ -70,21 +71,23 @@ namespace tfel::check {
                           100.0;
       this->msgLog.append(" failed (" + this->name +
                           " check).\n    Maximum relative error : ");
-      this->msgLog.append(std::to_string(maxRelativeError));
+      this->msgLog.append(tfel::utilities::convert(maxRelativeError));
       this->msgLog +=
           " at line " + std::to_string(errorLineNumber) +
           "\n    Failed comparisons (for column) : " +
           std::to_string(errorLinesCount) + " / " +
           std::to_string(this->c1->getValues().size()) + " (" +
-          std::to_string(errorLinesPercent) +
-          " %)\n    Threshold : rel = " + std::to_string(this->prec) + "\n";
+          tfel::utilities::convert(errorLinesPercent) +
+          " %)\n    Threshold : rel = " + tfel::utilities::convert(this->prec) +
+          "\n";
       this->success = false;
     } else {
-      this->msgLog += " succeed (" + this->name +
-                      " check).\n    Maximum relative error : " +
-                      std::to_string(maxRelativeError) +
-                      "\n    Threshold : rel = " + std::to_string(this->prec) +
-                      "\n";
+      this->msgLog +=
+          " succeed (" + this->name +
+          " check).\n    Maximum relative error : " +
+          tfel::utilities::convert(maxRelativeError) +
+          "\n    Threshold : rel = " + tfel::utilities::convert(this->prec) +
+          "\n";
     }
   }
 

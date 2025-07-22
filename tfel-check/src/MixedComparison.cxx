@@ -18,6 +18,7 @@
 #include <limits>
 #include <cstdlib>
 
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Check/MixedComparison.hxx"
 
 namespace tfel::check {
@@ -71,22 +72,22 @@ namespace tfel::check {
                           100.0;
       this->msgLog.append(" failed (" + this->name +
                           " check).\n    Maximum mixed error : ");
-      this->msgLog.append(std::to_string(maxMixedError));
+      this->msgLog.append(tfel::utilities::convert(maxMixedError));
       this->msgLog +=
           " at line " + std::to_string(errorLineNumber) +
           "\n    Failed comparisons (for column) : " +
           std::to_string(errorLinesCount) + " / " +
           std::to_string(this->c1->getValues().size()) + " (" +
-          std::to_string(errorLinesPercent) +
-          " %)\n    Threshold : rel = " + std::to_string(this->prec) +
-          ", abs = " + std::to_string(this->precision2) + "\n";
+          tfel::utilities::convert(errorLinesPercent) +
+          " %)\n    Threshold : rel = " + tfel::utilities::convert(this->prec) +
+          ", abs = " + tfel::utilities::convert(this->precision2) + "\n";
       this->success = false;
     } else {
-      this->msgLog += " succeed (" + this->name +
-                      " check).\n    Maximum mixed error : " +
-                      std::to_string(maxMixedError) +
-                      "\n    Threshold : rel = " + std::to_string(this->prec) +
-                      ", abs = " + std::to_string(this->precision2) + "\n";
+      this->msgLog +=
+          " succeed (" + this->name + " check).\n    Maximum mixed error : " +
+          tfel::utilities::convert(maxMixedError) +
+          "\n    Threshold : rel = " + tfel::utilities::convert(this->prec) +
+          ", abs = " + tfel::utilities::convert(this->precision2) + "\n";
     }
   }
 
