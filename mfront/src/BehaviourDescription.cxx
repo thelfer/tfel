@@ -2963,6 +2963,10 @@ namespace mfront {
   }  // end of SupportedTypes::areDynamicallyAllocatedVectorsAllowed
 
   void BehaviourDescription::setStrainMeasure(const StrainMeasure sm) {
+    tfel::raise_if(
+        !this->allowsNewUserDefinedVariables(),
+        "BehaviourDescription::setStrainMeasure: "
+        "the strain measure must be set before the first code block");
     tfel::raise_if(this->getBehaviourType() !=
                        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR,
                    "BehaviourDescription::setStrainMeasure: "
