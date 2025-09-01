@@ -183,7 +183,7 @@ namespace tfel::material {
           bool isotropic_matrix,
           int max_iter_anisotropic_integration = 12) override {
         auto Ci = this->stiffness;
-        if (not(isIsotropic<StressType,real>(Ci))) {
+        if (not(isIsotropic<StressType>(Ci))) {
           tfel::reportContractViolation(
               "I cannot make computation on distribution of anisotropic "
               "inclusions");
@@ -238,7 +238,7 @@ namespace tfel::material {
           bool isotropic_matrix = true,
           int max_iter_anisotropic_integration = 12) override {
         tfel::math::st2tost2<3u, StressType> Ci = this->stiffness;
-        if (not(isIsotropic<StressType,real>(Ci))) {
+        if (not(isIsotropic<StressType>(Ci))) {
           tfel::reportContractViolation(
               "I cannot make computation on distribution of anisotropic "
               "inclusions");
@@ -247,7 +247,7 @@ namespace tfel::material {
         const auto kappai = std::get<0>(pairi);
         const auto mui = std::get<1>(pairi);
         const auto KGi = KGModuli<StressType>(kappai, mui);
-        if (not(isIsotropic<StressType,real>(C0))) {
+        if (not(isIsotropic<StressType>(C0))) {
           std::cout << "warning: your matrix is not isotropic, and it will be "
                        "made isotropic for computing the average localisator "
                        "in the distribution"
@@ -320,7 +320,7 @@ namespace tfel::material {
           bool isotropic_matrix,
           int max_iter_anisotropic_integration = 12) override {
         tfel::math::st2tost2<3u, StressType> Ci = this->stiffness;
-        if (not(isIsotropic<StressType,real>(Ci))) {
+        if (not(isIsotropic<StressType>(Ci))) {
           tfel::reportContractViolation(
               "I cannot make computation on distribution of anisotropic "
               "inclusions");
@@ -329,7 +329,7 @@ namespace tfel::material {
         const auto kappai = std::get<0>(pairi);
         const auto mui = std::get<1>(pairi);
         const auto KGi = KGModuli<StressType>(kappai, mui);
-        if (not(isIsotropic<StressType,real>(C0))) {
+        if (not(isIsotropic<StressType>(C0))) {
           std::cout << "warning: your matrix is not isotropic, and it will be "
                        "made isotropic for computing the average localisator "
                        "in the distribution"
