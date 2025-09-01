@@ -652,4 +652,10 @@ All these functions return a `HomogenizationScheme`.
 A tutorial on the computation of homogenized schemes on these microstructures
 will be soon available.
 
+Moreover, a function `isIsotropic` returns a `boolean`
+which states if a `st2tost2` object is an isotropic tensor.
+A function `computeKappaMu` also projects a `st2tost2` object
+on the space of isotropic tensors and returns the corresponding
+moduli.
+
 <!-- Local IspellDict: english -->

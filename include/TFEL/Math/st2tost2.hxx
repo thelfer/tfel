@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   04 May 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -222,27 +222,26 @@ namespace tfel::math {
    */
   template <unsigned short N, typename T>
   using ConstST2toST2View = ConstView<st2tost2<N, T>>;
-  
+
   /*!
-   * \brief This function returns the Voigt index of two indices (beginning from 0).
-   * Hence, the correspondence is, in 3d: \f[(0,0)->0, (1,1)->1, (2,2)->2,
+   * \brief This function returns the Voigt index of two indices (beginning from
+   * 0). Hence, the correspondence is, in 3d: \f[(0,0)->0, (1,1)->1, (2,2)->2,
    * (0,1) or (1,0) -> 3, (0,2) or (2,0) -> 4, (1,2) or (2,1)-> 5\f].
    * In 2d, it is \f[(0,0)->0, (1,1)->1, (2,2)->2,
    * (0,1) or (1,0) -> 3\f].
    * In 1d, \f[(0,0)->0, (1,1)->1, (2,2)->2\f].
    * Be careful to the Voigt indices between 3 and 5, which are different from
    * the usual convention: \f[\varepsilon_{12}\f] is usually the last component
-   * of the vector \f[\varepsilon\f] in the usual Voigt notation, but here it is situated
-   * as the fourth component, in order that the vector in dimension 2 is just a truncation
-   * of the vector in dimension 3.
-   * \return an unsigned short
-   * \param[in] i,j: unsigned short
+   * of the vector \f[\varepsilon\f] in the usual Voigt notation, but here it is
+   * situated as the fourth component, in order that the vector in dimension 2
+   * is just a truncation of the vector in dimension 3. \return an unsigned
+   * short \param[in] i,j: unsigned short
    */
   template <unsigned short N>
-   TFEL_HOST_DEVICE constexpr unsigned short VoigtIndex(unsigned short,
-                                               unsigned short);
-                                               
-   /*!
+  TFEL_HOST_DEVICE constexpr unsigned short VoigtIndex(unsigned short,
+                                                       unsigned short);
+
+  /*!
    * \brief This function set the component (i,j,k,l) of a `st2tost2` to
    * a value `Aijkl`, which may be useful in some cases.
    * \return void
@@ -260,20 +259,19 @@ namespace tfel::math {
                                                unsigned short,
                                                unsigned short,
                                                const T&) noexcept
-       requires (isAssignableTo<NumType, T>());
-                                               
-   /*!
+      requires(isAssignableTo<NumType, T>());
+
+  /*!
    * \brief This function returns the component (i,j,k,l) of a `st2tost2`.
    * \return the value \f[A_{ijkl}\f]
    * \param[in] A: `st2tost2`
    * \param[in] i,j,k,l: `unsigned short`
-   */                                   
-   TFEL_HOST_DEVICE constexpr auto
-    getComponent(const ST2toST2Concept auto&,
-                         unsigned short,
-                         unsigned short,
-                         unsigned short,
-                         unsigned short);
+   */
+  TFEL_HOST_DEVICE constexpr auto getComponent(const ST2toST2Concept auto&,
+                                               unsigned short,
+                                               unsigned short,
+                                               unsigned short,
+                                               unsigned short);
 
   /*!
    * \return change the basis of a st2tost2
@@ -284,7 +282,7 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr auto change_basis(
       const ST2toST2Type&,
       const rotation_matrix<numeric_type<ST2toST2Type>>&) noexcept;
-      
+
   /*!
    * \return the invert of a st2tost2
    * \param[in] s : st2tost2 to be inverted

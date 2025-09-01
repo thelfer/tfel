@@ -4,7 +4,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   20 Nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -495,6 +495,6 @@ namespace tfel::utilities {
       }
     }
     raise(msg);
-  } // end of check_keys
+  }  // end of check_keys
 
 }  // end of namespace tfel::utilities

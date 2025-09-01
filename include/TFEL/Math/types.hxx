@@ -66,8 +66,8 @@ namespace tfel::math {
    *  const StressType& young,
    *  const typename tfel::math::ScalarTypeRebind<StressType>::real& nu)
    *  requires(
-   *      tfel::math::checkUnitCompatibility<tfel::math::unit::Stress, StressType>());
-   * \endcode
+   *      tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+   * StressType>()); \endcode
    *
    * Thanks to the `checkUnitCompatibility` function, this function only
    * compiles if `StressType` either:
@@ -120,15 +120,18 @@ namespace tfel::types {
 
   template <tfel::math::ScalarConcept ScalarType>
   using stress = typename tfel::math::ScalarTypeRebind<ScalarType>::stress;
-  
+
   template <tfel::math::ScalarConcept ScalarType>
-  using compliance = typename tfel::math::ScalarTypeRebind<ScalarType>::compliance;
-  
+  using compliance =
+      typename tfel::math::ScalarTypeRebind<ScalarType>::compliance;
+
   template <tfel::math::ScalarConcept ScalarType>
-  using viscosity = typename tfel::math::ScalarTypeRebind<ScalarType>::viscosity;
-  
+  using viscosity =
+      typename tfel::math::ScalarTypeRebind<ScalarType>::viscosity;
+
   template <tfel::math::ScalarConcept ScalarType>
-  using viscouscompliance = typename tfel::math::ScalarTypeRebind<ScalarType>::viscouscompliance;
+  using viscouscompliance =
+      typename tfel::math::ScalarTypeRebind<ScalarType>::viscouscompliance;
 
   template <tfel::math::ScalarConcept ScalarType>
   using stressrate =

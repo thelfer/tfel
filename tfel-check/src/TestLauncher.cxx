@@ -3,7 +3,7 @@
  * \brief  Class to manage tfel unit tests.
  * \author Thomas Helfer
  * \date   26 jan 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -758,9 +758,9 @@ namespace tfel::check {
       const auto output_file = this->testname + "-" + step + ".out";
       const auto success = this->execute(c, output_file, step);
       this->glog.addSimpleTestResult("** " + step + " " + c.command, success);
-      if (!success){
+      if (!success) {
         if (!configuration.discard_commands_failure) {
-            gsuccess = false;
+          gsuccess = false;
         } else {
           if (this->comparisons.empty()) {
             gsuccess = false;

@@ -1,6 +1,6 @@
 /*!
  * \file   MFront/DSLUtilities.ixx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   23/04/2025
  */
@@ -16,7 +16,7 @@ namespace mfront {
             const tfel::utilities::CxxTokenizer::const_iterator pe) {
     r = read<T>(p, pe);
   }  // end of read
-  
+
 }  // end of namespace mfront
 
 #endif /* LIB_MFRONT_DSLUTILITIES_IXX */

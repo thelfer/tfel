@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   22/06/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -161,7 +161,8 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     {
       const auto SSphere_1 = computeSphereEshelbyTensor(nu);
       const auto SSphere_2 = computeAxisymmetricalEshelbyTensor(nu, real{1});
-      const auto SSphere_3 = computeEshelbyTensor<stress>(nu, lg{2}, lg{2}, lg{2});
+      const auto SSphere_3 =
+          computeEshelbyTensor<stress>(nu, lg{2}, lg{2}, lg{2});
       for (int i : {0, 1, 2, 3, 4, 5}) {
         for (int j : {0, 1, 2, 3, 4, 5}) {
           TFEL_TESTS_ASSERT(std::abs(SSphere_1(i, j) - SSphere_2(i, j)) < eps);
@@ -175,8 +176,10 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     // or EshelbyTensor(3,3,30)
     {
       const auto SAxis_1 = computeAxisymmetricalEshelbyTensor(nu, real{10});
-      const auto SAxis_2 = computeEshelbyTensor<stress>(nu, lg{30}, lg{3}, lg{3});
-      const auto SAxis_3 = computeEshelbyTensor<stress>(nu, lg{3}, lg{3}, lg{30});
+      const auto SAxis_2 =
+          computeEshelbyTensor<stress>(nu, lg{30}, lg{3}, lg{3});
+      const auto SAxis_3 =
+          computeEshelbyTensor<stress>(nu, lg{3}, lg{3}, lg{30});
       for (int i : {0, 1, 2, 3, 4, 5}) {
         for (int j : {0, 1, 2, 3, 4, 5}) {
           TFEL_TESTS_ASSERT(std::abs(SAxis_1(i, j) - SAxis_2(i, j)) < eps);
@@ -234,11 +237,13 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
         SAxis_lim_2 = computeEshelbyTensor<stress>(nu, lg{1.05}, lg{1}, lg{10});
       } else if (tfel::math::ieee754::fpclassify(
                      std::numeric_limits<double>::epsilon() - eps) == FP_ZERO) {
-        SAxis_lim_2 = computeEshelbyTensor<stress>(nu, lg{1.0005}, lg{1}, lg{10});
+        SAxis_lim_2 =
+            computeEshelbyTensor<stress>(nu, lg{1.0005}, lg{1}, lg{10});
       } else if (tfel::math::ieee754::fpclassify(
                      std::numeric_limits<long double>::epsilon() - eps) ==
                  FP_ZERO) {
-        SAxis_lim_2 = computeEshelbyTensor<stress>(nu, lg{1.00005}, lg{1}, lg{10});
+        SAxis_lim_2 =
+            computeEshelbyTensor<stress>(nu, lg{1.00005}, lg{1}, lg{10});
       };
 
       for (int i : {0, 1, 2, 3, 4, 5}) {
@@ -271,15 +276,14 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
 
     using namespace tfel::material::homogenization::elasticity;
     {
-      const auto ASphere_1 = computeSphereLocalisationTensor<stress>(
-          young, nu, young_i, nu_i);
+      const auto ASphere_1 =
+          computeSphereLocalisationTensor<stress>(young, nu, young_i, nu_i);
       const auto ASphere_2 =
           computeAxisymmetricalEllipsoidLocalisationTensor<stress>(
               young, nu, young_i, nu_i, n_a, real{1});
-      const auto ASphere_3 =
-          computeEllipsoidLocalisationTensor<stress>(
-              young, nu, young_i, nu_i, n_a, lg{2}, n_b, lg{2.00000001},
-              lg{2.00001});
+      const auto ASphere_3 = computeEllipsoidLocalisationTensor<stress>(
+          young, nu, young_i, nu_i, n_a, lg{2}, n_b, lg{2.00000001},
+          lg{2.00001});
       for (int i : {0, 1, 2, 3, 4, 5}) {
         for (int j : {0, 1, 2, 3, 4, 5}) {
           TFEL_TESTS_ASSERT(std::abs(ASphere_1(i, j) - ASphere_2(i, j)) < eps);
@@ -322,8 +326,8 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
               young, nu, young_i, nu_i, n_aa, real{20});
       const auto Annnn = n_aa_n_aa * (Arot1 * n_aa_n_aa);
       const auto Atttt = n_bb_n_bb * (Arot1 * n_bb_n_bb);
-      //const auto Attnn = n_bb_n_bb * (Arot1 * n_aa_n_aa);
-      //  std::cout << Atttt(0) << Annnn(0) << Attnn(0) << std::endl;
+      // const auto Attnn = n_bb_n_bb * (Arot1 * n_aa_n_aa);
+      //   std::cout << Atttt(0) << Annnn(0) << Attnn(0) << std::endl;
       TFEL_TESTS_ASSERT(Annnn(0) - 5 * Atttt(0) > 0);
     }
 #endif /* _LIBCPP_VERSION */
@@ -350,21 +354,18 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       const auto PSphere_1 =
           computeSphereHillPolarisationTensor<stress>(young, nu);
       const auto PSphere_2 =
-          computeAxisymmetricalHillPolarisationTensor<stress>(
-              young, nu, n_a, real{1});
+          computeAxisymmetricalHillPolarisationTensor<stress>(young, nu, n_a,
+                                                              real{1});
       const auto PSphere_3 = computeHillPolarisationTensor<stress>(
           young, nu, n_a, lg{2}, n_b, lg{2.00000001}, lg{2.00001});
       const auto kappa = young / 3. / (1 - 2 * nu);
       const auto mu = young / 2. / (1 + nu);
-      const tfel::material::KGModuli<stress> KG(kappa,mu);
-      const auto PSphere_4 = computeSphereHillPolarisationTensor<stress>(
-          KG);
+      const tfel::material::KGModuli<stress> KG(kappa, mu);
+      const auto PSphere_4 = computeSphereHillPolarisationTensor<stress>(KG);
       const auto PSphere_5 = computeHillPolarisationTensor<stress>(
-          KG, n_a, lg{2}, n_b, lg{2.00000001},
-          lg{2.00001});
+          KG, n_a, lg{2}, n_b, lg{2.00000001}, lg{2.00001});
       const auto PSphere_6 =
-          computeAxisymmetricalHillPolarisationTensor<stress>(
-              KG, n_a, real(1));
+          computeAxisymmetricalHillPolarisationTensor<stress>(KG, n_a, real(1));
       for (int i : {0, 1, 2, 3, 4, 5}) {
         for (int j : {0, 1, 2, 3, 4, 5}) {
           TFEL_TESTS_ASSERT(my_abs(PSphere_1(i, j) - PSphere_2(i, j)) <
@@ -381,17 +382,15 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       }
     }
     {
-      const auto PAxis_1 =
-          computeAxisymmetricalHillPolarisationTensor<stress>(
-              young, nu, n_a, lg{20} / lg{2.0001});
+      const auto PAxis_1 = computeAxisymmetricalHillPolarisationTensor<stress>(
+          young, nu, n_a, lg{20} / lg{2.0001});
       const auto PAxis_2 = computeHillPolarisationTensor<stress>(
           young, nu, n_a, lg{20}, n_b, lg{2}, lg{2.0001});
       const auto kappa = young / 3. / (1 - 2 * nu);
       const auto mu = young / 2. / (1 + nu);
-      const tfel::material::KGModuli<stress> KG(kappa,mu);
-      const auto PAxis_3 =
-          computeAxisymmetricalHillPolarisationTensor<stress>(
-              KG, n_a, lg{20} / lg{2.0001});
+      const tfel::material::KGModuli<stress> KG(kappa, mu);
+      const auto PAxis_3 = computeAxisymmetricalHillPolarisationTensor<stress>(
+          KG, n_a, lg{20} / lg{2.0001});
       for (int i : {0, 1, 2, 3, 4, 5}) {
         for (int j : {0, 1, 2, 3, 4, 5}) {
           TFEL_TESTS_ASSERT(my_abs(PAxis_1(i, j) - PAxis_2(i, j)) <
@@ -417,9 +416,8 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       const tfel::math::stensor<3u, real> n_bb_n_bb = {dem, 0.,   dem,
                                                        0.,  -dem, 0.};
 
-      const auto Prot1 =
-          computeAxisymmetricalHillPolarisationTensor<stress>(
-              young, nu, n_aa, real{20});
+      const auto Prot1 = computeAxisymmetricalHillPolarisationTensor<stress>(
+          young, nu, n_aa, real{20});
       const auto Pnnnn = n_aa_n_aa * (Prot1 * n_aa_n_aa);
       const auto Ptttt = n_bb_n_bb * (Prot1 * n_bb_n_bb);
       const auto Pttnn = n_bb_n_bb * (Prot1 * n_aa_n_aa);

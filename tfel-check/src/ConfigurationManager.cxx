@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   13 sept. 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -107,7 +107,7 @@ namespace tfel::check {
     });
   }  // end of addComponent
 
-  void ConfigurationManager::setDiscardCommandsFailure(const bool b){
+  void ConfigurationManager::setDiscardCommandsFailure(const bool b) {
     this->modify([&b](Configuration& cf) noexcept {  //
       cf.discard_commands_failure = b;
     });

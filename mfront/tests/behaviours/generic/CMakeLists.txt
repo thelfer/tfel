@@ -183,6 +183,7 @@ if(enable-mfront-quantity-tests)
        Plasticity4
        Plasticity5
        Plasticity6
+       Plasticity7
        PlasticityWithoutAutomaticTemperatureDeclaration
        StrainHardeningCreep3
        StrainHardeningCreep5
@@ -799,6 +800,7 @@ if(enable-mfront-quantity-tests)
   test_generic(plasticity plasticity.ref)
   test_generic(plasticity5 plasticity.ref)
   test_generic(plasticity6)
+  test_generic(plasticity7 plasticity.ref)
   test_generic(plasticity_without_temperature_declaration plasticity.ref)
   test_generic(TensorialExternalStateVariableTest)
 endif(enable-mfront-quantity-tests)

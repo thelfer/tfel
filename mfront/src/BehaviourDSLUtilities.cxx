@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/BehaviourDSLUtilities.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   23/04/2025
  */
@@ -87,7 +87,7 @@ namespace mfront {
     };  // end of addTi
     auto addTref = [&bd, &d, &Tref1, &Tref2]() {
       const auto v = [&d, &Tref1, &Tref2] {
-        if (d.count(Tref1) != 0){
+        if (d.count(Tref1) != 0) {
           const auto Tref = d.at(Tref1);
           if (Tref.is<int>()) {
             return static_cast<double>(Tref.get<int>());
@@ -117,8 +117,8 @@ namespace mfront {
       if (!allow_reference_temperature) {
         tfel::raise("addThermalExpansionCoefficientsIfDefined: '" +
                     std::string(Tref2) +
-                    "' is not allowed in this context, use '" + std::string(Tref1) +
-                    "' instead");
+                    "' is not allowed in this context, use '" +
+                    std::string(Tref1) + "' instead");
       }
       check_not(Tref1);
     }
@@ -140,7 +140,7 @@ namespace mfront {
     } else if ((d.count("thermal_expansion1") != 0) ||
                (d.count("thermal_expansion2") != 0) ||
                (d.count("thermal_expansion3") != 0)) {
-      if(bd.getSymmetryType() != mfront::ORTHOTROPIC){
+      if (bd.getSymmetryType() != mfront::ORTHOTROPIC) {
         tfel::raise(
             "addThermalExpansionCoefficientsIfDefined: "
             "the mechanical behaviour must be orthotropic "
@@ -152,8 +152,7 @@ namespace mfront {
                                          get_mp("thermal_expansion2"),
                                          get_mp("thermal_expansion3"));
       if (get_if(d, "save_thermal_expansion", false)) {
-        VariableDescription a("strain", "mfront_thermal_expansion", 3u,
-                              0u);
+        VariableDescription a("strain", "mfront_thermal_expansion", 3u, 0u);
         a.setEntryName("ComputedThermalExpansion");
         a.description = "mean linear thermal expansion";
         bd.addAuxiliaryStateVariable(uh, a);
