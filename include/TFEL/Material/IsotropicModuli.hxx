@@ -168,7 +168,7 @@ namespace tfel::material {
 
   /*!
    * \brief This function computes the relative difference between a `st2tost2` C1,
-   * relatively to a `st2tost2` C2. The precision can be given by the user.
+   * relatively to a `st2tost2` C2.
    * \tparam real: underlying type
    * \tparam N: dimension
    * \tparam T: type of the tensors
@@ -177,8 +177,7 @@ namespace tfel::material {
    */
   template <unsigned short int N, typename real, typename T>
   real relative_error(const tfel::math::st2tost2<N, T> &C1,
-                      const tfel::math::st2tost2<N, T> &C2,
-                      const real eps = std::numeric_limits<real>::epsilon()) {
+                      const tfel::math::st2tost2<N, T> &C2) {
     real val = tfel::math::norm(C1 - C2) / tfel::math::norm(C2);
     return val;
   }  // end of relative_error
@@ -201,7 +200,7 @@ namespace tfel::material {
     auto J = tfel::math::st2tost2<3u, tfel::types::real<T>>::J();
     auto K = tfel::math::st2tost2<3u, tfel::types::real<T>>::K();
     const auto A_comp = 3 * kappai * J + 2 * mui * K;
-    const auto val = relative_error<3u, types::real<T>, T>(Ai, A_comp,eps);
+    const auto val = relative_error<3u, types::real<T>, T>(Ai, A_comp);
     if (val > eps) {
       return false;
     }

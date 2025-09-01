@@ -396,6 +396,12 @@ the moduli:
  
 These methods all return `std::pair` objects.
 
+Moreover, a function `isIsotropic` returns a `boolean`
+which states if a `st2tost2` object is an isotropic tensor.
+A function `computeKappaMu` also projects a `st2tost2` object
+on the space of isotropic tensors and returns the corresponding
+moduli.
+
 # Homogenization
 
 The homogenization functions are part of the namespace `tfel::material::homogenization`.
@@ -529,26 +535,38 @@ The available bounds are:
  - Reuss bound (`computeReussStiffness`)
  - Hashin-Shtrikman bounds (`computeIsotropicHashinShtrikmanBounds`)
  
-## Creation of general microstructures
+## Homogenization of general microstructures
 
-It is possible to create `Microstructure` objects for homogenization.
-Two types of `Microstructure` can be created:
+It is possible to create `ParticulateMicrostructure` objects for
+homogenization of general matrix-inclusion microstructures.
 
- - Matrix-inclusion microstructures: `ParticulateMicrostructure`
- - Polycrystalline microstructures: `Polycrystal`
+### The `ParticulateMicrostructure` class
 
-The two types of microstructures are available in 3d an 2d
+The class `ParticulateMicrostructure` is available in 3d an 2d
 via a template parameter: `ParticulateMicrostructure<N,StressType>`
-with `N` the dimension.
-For the details, see the file 'MicrostructureDescription.hxx'.
+with `N` the dimension. For the details, see the file 'MicrostructureDescription.hxx'.
 
-Before presenting the two types of microstructures, we must mention
-the `Phase` object and the `Inclusion` object.
-The `Phase` object represents a phase and has only two attributes:
+A ParticulateMicrostructure consists on a matrix, in which are embedded
+several `InclusionDistribution`, which represent distributions
+of inclusions.
+
+#### The `InclusionDistribution` class
+
+A `InclusionDistribution` is an abstract class which represents a distribution
+of inclusions. The `InclusionDistribution` class is in fact a child of
+a more generic class which represents a phase: `Phase`.
+The `Phase` class has only two attributes:
  
  - `fraction` (the volume fraction of the phase)
  - `stiffness` (a `st2tost2` object).
+
+There are 4 childs of `InclusionDistribution`:
  
+ - `SphereDistribution` (distribution of spheres)
+ - `IsotropicDistribution` (isotropic distribution of ellipsoids)
+ - `TransverseDistribution` (transverse isotropic distribution of ellipsoids)
+ - `OrientedDistribution` (aligned distribution of ellipsoids)
+
 The `Inclusion` is a geometrical object which is characterized by
 its unique attribute: `semiLengths`. It is a `std::array` of `N`
 lengths, which are the semi-lengths of the ellipsoid/ellipse,
@@ -561,101 +579,29 @@ Some particular `Inclusion` objects are also defined:
  - `Sphere` (3d `Inclusion` with 3 semi-lengths equal to unity)
  - `Ellipse` (general 2d `Inclusion` with two semi-lengths)
  - `Disk` (2d `Inclusion` with 2 semi-lengths equal to unity)
-
-### `Polycrystal`
-
-The `Polycrystal` is composed of grain phases,
-that can be added by the user (he can add as much as he wants).
-
-The `Polycrystal` has the following useful attributes:
-
- - `number_of_grains`
- - `total_fraction`
- - `grains`
-
-`grains` is a `std::vector` of pointers on `GrainPhase` objects.
-The `number_of_grains` is the number of `GrainPhase` in `grains`.
-The `total_fraction` permits to know if the fraction unity has been
-reached after adding some `GrainPhase` objects in `grains`.
-
-A `GrainPhase` is a `Phase` object. It is characterized by a shape
-of grain and a stiffness, with a volume fraction. It has three attributes (plus
-the `fraction` and the `stiffness` of a `Phase`):
  
- - `inclusion`
- - `n_a`
- - `n_b`
+The method `computeMeanLocalisator` of the `InclusionDistribution`
+class returns the average strain localisator of the
+distribution of inclusions, when embedded in a given matrix.
+
+#### Description of a `ParticulateMicrostructure`
+
+Hence, the `ParticulateMicrostructure` has three attributes:
+
+ - `number_of_phases`
+ - `matrixPhase`
+ - `inclusionPhases`
+
+The `matrixPhase` is of type `Phase`.
  
-The `inclusion` is the ellipsoidal/elliptical shape of the grain, and is
-a `Inclusion` object. `n_a` and
-`n_b` correspond to the directions of the main axes of the `inclusion`.
-It is noted that `n_a` corresponds to the first length in `inclusion.semiLengths`,
-and `n_b` to the second. Hence a `GrainPhase` is necessarily oriented.
+The `inclusionPhases` is a `std::vector` of pointers on
+`InclusionDistribution` objects (which represent the distributions of inclusions).
 
-A `GrainPhase` has also a method called `computeMeanLocalisator`. It takes
-a stiffness tensor as argument which represents some matrix, and computes
-the strain localisation tensor of the `GrainPhase` embedded by this matrix (possibly
-anisotropic).
+The `ParticulateMicrostructure` has also methods (see 'MicrostructureDescription.hxx'
+for details):
 
-A `Polycrystal` has also methods:
- 
- - `addGrain`
- - `removeGrain`
- - `get_number_of_grains`
- - `get_total_fraction`
- - `get_grain`
- 
-### `ParticulateMicrostructure`
-
-The `ParticulateMicrostructure` consists of a matrix, within which the user can add several
-distribution of ellipsoidal (or elliptic in 2d) inclusions (he can add as much as he wants).
-
-The `ParticulateMicrostructure` has the following useful attributes:
-
- - 
- - 
- -
- 
-The `ParticulateMicrostructure` has also methods:
-
- - 
- - 
- -
-
-
-
-## Homogenization of `Microstructure` objects
-
-Once created, some classical homogenization scheme can be considered on the
-`Microstructure` objects. For the details, see the file
-'MicrostructureLinearHomogenization.ixx'.
-
-An object, called `HomogenizationScheme` defines the structure of
-an homogenization scheme, which is returned by the main functions
-that homogenize the `Microstructure` objects. `HomogenizationScheme`
-has the following attributes:
-
- - the `homogenized_stiffness`
- - the `effective_polarisation`
- - the `mean_strain_localisation_tensors`
-
-The following homogenization functions are available:
- 
- - `computeDilute`: takes as main arguments a `ParticulateMicrostructure`
- and a vector of `stensor` which are the polarisations on each phase
- - `computeMoriTanaka`: same arguments as `computeDilute`
- - `computeSelfConsistent`: takes as main arguments a `Polycrystal`
- and a vector of `stensor` which are the polarisations on each phase
-
-All these functions return a `HomogenizationScheme`.
-
-A tutorial on the computation of homogenized schemes on these microstructures
-will be soon available.
-
-Moreover, a function `isIsotropic` returns a `boolean`
-which states if a `st2tost2` object is an isotropic tensor.
-A function `computeKappaMu` also projects a `st2tost2` object
-on the space of isotropic tensors and returns the corresponding
-moduli.
+ - addInclusionPhase
+ - removeInclusionPhase
+ - get_number_of_phases, get_matrix_fraction, get_matrix_elasticity, get_inclusionPhase
 
 <!-- Local IspellDict: english -->

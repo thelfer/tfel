@@ -2259,14 +2259,13 @@ namespace mfront {
   }  // end of readElasticMaterialPropertiesII
 
   void BehaviourDSLCommon::readElasticMaterialProperties() {
-    const auto& emps = this->readMaterialPropertyOrArrayOfMaterialProperties(
-        "BehaviourDSLCommon::readElasticMaterialProperties");
+    const auto emps = readElasticMaterialPropertiesI();
     this->readSpecifiedToken(
         "BehaviourDSLCommon::readElasticMaterialProperties", ";");
     if ((emps.size() != 2u) && (emps.size() != 9u)) {
       this->throwRuntimeError(
           "BehaviourDSLCommon::readElasticMaterialProperties",
-          "invalid number of file names given");
+          "invalid number of elastic material properties given");
     }
     if (emps.size() == 9u) {
       // the material shall have been declared orthotropic
@@ -2371,8 +2370,7 @@ namespace mfront {
     v.description = "Hill tensor";
     ++(this->current);
     // Hill coefficients
-    const auto& hcs = this->readMaterialPropertyOrArrayOfMaterialProperties(
-        "BehaviourDSLCommon::treatHillTensor");
+    const auto& hcs = this->readHillTensorDefinitionI();
     this->readSpecifiedToken("BehaviourDSLCommon::treatHillTensor", ";");
     if (hcs.size() != 6u) {
       this->throwRuntimeError("BehaviourDSLCommon::treatHillTensor",
