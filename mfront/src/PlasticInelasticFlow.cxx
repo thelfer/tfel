@@ -81,7 +81,7 @@ namespace mfront {
         const auto imax = d.at(rimax_n);
         this->equivalent_stress_check_maximum_iteration_factor =
             tfel::utilities::convert<double>(imax);
-        if ((this->equivalent_stress_check_maximum_iteration_factor < 0) &&
+        if ((this->equivalent_stress_check_maximum_iteration_factor < 0) ||
             (this->equivalent_stress_check_maximum_iteration_factor > 1)) {
           tfel::raise(
               "PlasticInelasticFlow::initialize: the value for option "
