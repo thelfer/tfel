@@ -159,8 +159,8 @@ namespace tfel::material {
   template <tfel::math::ScalarConcept T>
   TFEL_HOST_DEVICE constexpr std::pair<T, T> computeKappaMu(const tfel::math::st2tost2<3u, T> &A) {
     const auto siz = tfel::math::StensorDimeToSize<3u>::value;
-    auto J = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::J();
-    auto K = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::K();
+    constexpr auto J = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::J();
+    constexpr auto K = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::K();
     const T kappai = tfel::math::quaddot(A, J) / 3;
     const T mui = tfel::math::quaddot(A, K) / (siz - 1) / 2;
     return {kappai, mui};
@@ -177,8 +177,7 @@ namespace tfel::material {
   template <unsigned short int N, tfel::math::ScalarConcept T>
   TFEL_HOST_DEVICE constexpr tfel::math::base_type<T> relative_error(const tfel::math::st2tost2<N, T> &C1,
                       const tfel::math::st2tost2<N, T> &C2) {
-    tfel::math::base_type<T> val = tfel::math::norm(C1 - C2) / tfel::math::norm(C2);
-
+    const auto val = tfel::math::norm(C1 - C2) / tfel::math::norm(C2);
     return val;
   }  // end of relative_error
 
@@ -196,8 +195,8 @@ namespace tfel::material {
     const auto pair = computeKappaMu<T>(Ai);
     const auto kappai = std::get<0>(pair);
     const auto mui = std::get<1>(pair);
-    auto J = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::J();
-    auto K = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::K();
+    constexpr auto J = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::J();
+    constexpr auto K = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::K();
     const auto A_comp = 3 * kappai * J + 2 * mui * K;
     const auto val = relative_error<3u, T>(Ai, A_comp);
     return val < eps;
