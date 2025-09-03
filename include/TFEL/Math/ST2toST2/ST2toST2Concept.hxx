@@ -105,12 +105,10 @@ namespace tfel::math {
 
   /*!
    * \brief This function computes the norm of a `st2tost2`
-   * as \f[ ||A||=\sqrt{\frac{1}{N}{}^tA::A}\f] where \f[N\f] is
-   * the size of the tensor (for example, \f[6\f] for a dimension 3,
-   * and \f[4\f] for a dimension 2).
-   * \f[ ||A||=\sqrt{\frac{1}{N}\sum_{i,j,k,l}A_{ijkl}A_{ijkl}}\f]
-   * or also \f[ ||A||=\sqrt{\frac{1}{N}\sum_{i,j} A_{ij}A_{ij}}\f] in Voigt
-   * notation. The factor \f[\frac 1N\f] ensures that the norm of \f[I\f] is 1.
+   * as \f[ ||A||=\sqrt{{}^tA::A}\f].
+   * \f[ ||A||=\sqrt{\sum_{i,j,k,l}A_{ijkl}A_{ijkl}}\f]
+   * or also \f[ ||A||=\sqrt{\sum_{i,j} A_{ij}A_{ij}}\f] in Voigt
+   * notation.
    * \return the norm
    * \param[in] A: `st2tost2`
    */
