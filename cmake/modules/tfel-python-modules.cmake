@@ -57,7 +57,7 @@ function(tfel_python_module name)
                           LIBRARY_OUTPUT_DIRECTORY
                           ${PROJECT_BINARY_DIR}/bindings/python/tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES})
   endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
-
+endfunction(tfel_python_module)
 
 function(tfel_material_python_module name)
   python_module_base(tfel_material_${name} ${name} ${ARGN})
