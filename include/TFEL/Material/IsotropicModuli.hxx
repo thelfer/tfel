@@ -21,8 +21,7 @@
 #include "TFEL/Math/st2tost2.hxx"
 
 namespace tfel::material {
-  
-  
+
   /*!
    * \brief This class is a virtual class which represents isotropic moduli.
    * 3 formats are possible: (Young,Nu), (Lambda,Mu) and (K,Mu).
@@ -39,7 +38,7 @@ namespace tfel::material {
     virtual std::pair<StressType, StressType> ToLambdaMu() const& = 0;
     virtual std::pair<StressType, StressType> ToKG() const& = 0;
   };
-  
+
    /*!
    * \brief This class is relative to the format (Young,Nu).
    * It can be converted to the other formats (Lambda,Mu) and (K,Mu).
@@ -74,7 +73,7 @@ namespace tfel::material {
       return {Kappa, Mu};
     };
   };  // end of YoungNuoduli
-  
+
 
   /*!
    * \brief This class is relative to the format (K,Nu).
@@ -111,7 +110,6 @@ namespace tfel::material {
     };
   };  // end of KGModuli
 
-
    /*!
    * \brief This class is relative to the format (Lambda,Mu).
    * It can be converted to the other formats (Young,Nu) and (K,Mu).
@@ -146,7 +144,7 @@ namespace tfel::material {
       return {Kappa, Mu};
     };
   };  // end of LambdaMuModuli
-  
+
   
   /*!
    * This function makes the projection of a `st2tost2`
@@ -161,8 +159,8 @@ namespace tfel::material {
   template <tfel::math::ScalarConcept T>
   TFEL_HOST_DEVICE constexpr std::pair<T, T> computeKappaMu(const tfel::math::st2tost2<3u, T> &A) {
     const auto siz = tfel::math::StensorDimeToSize<3u>::value;
-    auto J = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::J();
-    auto K = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::K();
+    constexpr auto J = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::J();
+    constexpr auto K = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::K();
     const T kappai = tfel::math::quaddot(A, J) / 3;
     const T mui = tfel::math::quaddot(A, K) / (siz - 1) / 2;
     return {kappai, mui};
@@ -171,7 +169,6 @@ namespace tfel::material {
   /*!
    * \brief This function computes the relative difference between a `st2tost2` C1,
    * relatively to a `st2tost2` C2.
-   * \tparam real: underlying type
    * \tparam N: dimension
    * \tparam T: type of the tensors
    * \param C1,C2 st2tost2 objects
@@ -180,7 +177,7 @@ namespace tfel::material {
   template <unsigned short int N, tfel::math::ScalarConcept T>
   TFEL_HOST_DEVICE constexpr tfel::math::base_type<T> relative_error(const tfel::math::st2tost2<N, T> &C1,
                       const tfel::math::st2tost2<N, T> &C2) {
-    tfel::math::base_type<T> val = tfel::math::norm(C1 - C2) / tfel::math::norm(C2);
+    const auto val = tfel::math::norm(C1 - C2) / tfel::math::norm(C2);
     return val;
   }  // end of relative_error
 
@@ -191,7 +188,6 @@ namespace tfel::material {
    * original \f$A_i\f$. The precision can be given by the user.
    * The implementation goes for dimension 3 only.
    * \tparam T: type of the `st2tost2`
-   * \tparam real: underlying type
    * \param Ai : `st2tost2` \return a boolean
    */
   template <tfel::math::ScalarConcept T>
@@ -199,8 +195,8 @@ namespace tfel::material {
     const auto pair = computeKappaMu<T>(Ai);
     const auto kappai = std::get<0>(pair);
     const auto mui = std::get<1>(pair);
-    auto J = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::J();
-    auto K = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::K();
+    constexpr auto J = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::J();
+    constexpr auto K = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::K();
     const auto A_comp = 3 * kappai * J + 2 * mui * K;
     const auto val = relative_error<3u, T>(Ai, A_comp);
     return val < eps;

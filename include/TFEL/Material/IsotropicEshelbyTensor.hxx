@@ -16,6 +16,7 @@
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Material/StiffnessTensor.hxx"
 #include "TFEL/Material/IsotropicModuli.hxx"
+#include "TFEL/Material/LocalisationTensor.hxx"
 #include <stdexcept>
 
 namespace tfel::material::homogenization::elasticity {
@@ -29,7 +30,23 @@ namespace tfel::material::homogenization::elasticity {
    */
   template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<2u, real>
-  computeCircularCylinderEshelbyTensor(const real&);
+  computeDiskPlaneStrainEshelbyTensor(const real&);
+
+  /*!
+   * This function builds the Hill tensor of a circular cylinder embedded
+   * in an isotropic matrix, considering a PLANE STRAIN modelling hypothesis.
+   * The Hill tensor gives the opposite of the uniform strain in the ellipsoid
+   * as a function of the imposed polarisation.
+   * \return an object of type st2tost2<2u,compliance>
+   * \tparam StressType: type of the elastic constants
+   * \param[in] IM_0: Isotropic Moduli of the matrix
+   */
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<2u, types::compliance<StressType>> computeDiskPlaneStrainHillTensor(
+          const IsotropicModuli<StressType>&);
 
   /*!
    * This function builds the Eshelby tensor of an elliptic cylinder
@@ -43,7 +60,29 @@ namespace tfel::material::homogenization::elasticity {
    */
   template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<2u, real>
-  computeEllipticCylinderEshelbyTensor(const real&, const real&);
+  computePlaneStrainEshelbyTensor(const real&, const real&);
+
+  /*!
+   * This function builds the Hill tensor of an elliptic cylinder embedded
+   * in an isotropic matrix, considering a PLANE STRAIN modelling hypothesis.
+   * The Hill tensor gives the opposite of the uniform strain in the ellipsoid
+   * as a function of the imposed polarisation.
+   * \return an object of type st2tost2<2u,compliance>
+   * \tparam StressType: type of the elastic constants
+   * \param[in] IM_0: Isotropic Moduli of the matrix
+   * \param [in] n_a: direction of the principal axis whose length is \f$a\f$
+   * \param [in] a: length of semi-axis relative to the direction \f$n_a\f$
+   * \param [in] b: length of semi-axis relative to the other direction
+   */
+  template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<2u, types::compliance<StressType>> computePlaneStrainHillTensor(
+          const IsotropicModuli<StressType>&,
+          const tfel::math::tvector<2u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&);
 
   /*!
    * This function builds the Eshelby tensor of a sphere embedded in an
@@ -60,7 +99,6 @@ namespace tfel::material::homogenization::elasticity {
    * This function builds the Hill tensor of a sphere embedded in an
    * isotropic matrix.
    * \return an object of type st2tost2<3u,compliance<StressType>>
-   * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants
    * \param[in] young: Young modulus of the matrix
    * \param[in] nu: Poisson's ratio of the matrix
@@ -79,7 +117,6 @@ namespace tfel::material::homogenization::elasticity {
    * This function is an overload of computeSphereHillPolarisationTensor
    * with elastic moduli of IsotropicModuli<StressType> type
    * \return an object of type st2tost2<3u,compliance<StressType>>
-   * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants
    * \param[in] IM0: isotropic moduli of the matrix
    */
@@ -122,7 +159,6 @@ namespace tfel::material::homogenization::elasticity {
    * embedded in an isotropic matrix. The function takes into account the
    * orientation of the ellipsoid.
    * \return an object of type st2tost2<3u,compliance<StressType>>
-   * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants
    * \param[in] young: Young modulus of the matrix
    * \param[in] nu: Poisson's ratio of the matrix
@@ -153,7 +189,6 @@ namespace tfel::material::homogenization::elasticity {
    * This function is an overload of computeAxisymmetricalHillPolarisationTensor
    *  with elastic moduli of IsotropicModuli<StressType> type
    * \return an object of type st2tost2<3u,compliance<StressType>>
-   * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants
    * \param[in] IM0: isotropic moduli of the matrix
    */
@@ -175,8 +210,6 @@ namespace tfel::material::homogenization::elasticity {
    * basis (e1,e2,e3) where e1 (resp. e2, e3) is aligned with the axis with
    * the first (resp. the second and third) biggest length
    * \return an object of type st2tost2<3u,real>
-   * \tparam real: underlying type
-   * \tparam LengthType: type of the dimensions of the ellipsoid
    * \param[in] nu: Poisson's ratio of the matrix
    * \param[in] a: length of the first semi-axis
    * \param[in] b: length of the second semi-axis
@@ -208,8 +241,6 @@ namespace tfel::material::homogenization::elasticity {
    * in an isotropic matrix. The function takes into account the orientation
    * of the ellipsoid.
    * \return an object of type st2tost2<3u,compliance<StressType>>
-   * \tparam real: underlying type
-   * \tparam LengthType: type of the dimensions of the ellipsoid
    * \tparam StressType: type of the elastic constants
    * \param[in] young: Young modulus of the matrix
    * \param[in] nu: Poisson's ratio of the matrix
@@ -246,8 +277,6 @@ namespace tfel::material::homogenization::elasticity {
    * This function is an overload of computeHillPolarisationTensor
    *  with elastic moduli of IsotropicModuli<StressType> type
    * \return an object of type st2tost2<3u,compliance<StressType>>
-   * \tparam real: underlying type
-   * \tparam LengthType: type of the dimensions of the ellipsoid
    * \tparam StressType: type of the elastic constants
    * \param[in] IM0: isotropic moduli of the matrix
    */
@@ -265,164 +294,6 @@ namespace tfel::material::homogenization::elasticity {
           const types::real<StressType> = types::real<StressType>{8e-3},
           const types::real<StressType> = types::real<StressType>{1.5e-4},
           const types::real<StressType> = types::real<StressType>{1e-5});
-
-  /*!
-   * This function builds the strain localisation tensor of a sphere
-   * with a general elasticity, embedded in an isotropic matrix.
-   * \return an object of type st2tost2
-   * \tparam    real: underlying type
-   * \tparam StressType: type of the elastic constants related to the matrix
-   * and the ellipsoid
-   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
-   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the
-   * inclusions
-   */
-  template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-      TFEL_HOST_DEVICE tfel::math::
-          st2tost2<3u, types::real<StressType>> computeSphereLocalisationTensor(
-              const StressType&,
-              const types::real<StressType>&,
-              const StressType&,
-              const types::real<StressType>&);
-
-  /*!
-   * This function is an overload of computeSphereLocalisationTensor
-   *  with elastic moduli of IsotropicModuli<StressType> type
-   * \return an object of type st2tost2
-   * \tparam    real: underlying type
-   * \tparam StressType: type of the elastic constants related to the matrix
-   * and the ellipsoid
-   * \param[in] IM0: isotropic moduli of the matrix
-   * \param[in] IM_i: isotropic moduli of the inclusions
-   */
-  template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-      TFEL_HOST_DEVICE tfel::math::
-          st2tost2<3u, types::real<StressType>> computeSphereLocalisationTensor(
-              const IsotropicModuli<StressType>&,
-              const IsotropicModuli<StressType>&);
-
-  /*!
-   * This function builds the strain localisation tensor of an
-   * axisymmetrical ellipsoid with a general elasticity, embedded in an
-   * isotropic matrix. The ellipsoid also has a specific orientation given
-   * by the vector \f$n_a\f$, axis of the ellipsoid, whose semi-length is
-   * \f$a\f$.
-   * \return an object of type st2tost2
-   * \tparam real: underlying type
-   * \tparam StressType: type of the elastic constants related to the
-   * matrix and the ellipsoid
-   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
-   * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the
-   * inclusions
-   * \param [in] n_a: direction of the axis of the ellipsoid (whose
-   * semi-length is \f$a\f$)
-   * \param [in] a: length of semi-axis relative to the
-   * direction \f$n_a\f$
-   */
-  template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::real<StressType>> computeAxisymmetricalEllipsoidLocalisationTensor(
-          const StressType&,
-          const types::real<StressType>&,
-          const StressType&,
-          const types::real<StressType>&,
-          const tfel::math::tvector<3u, types::real<StressType>>&,
-          const types::real<StressType>&);
-
-  /*!
-   * This function is an overload of
-   * computeAxisymmetricalEllipsoidLocalisationTensor with elastic moduli of
-   * IsotropicModuli<StressType> type \return an object of type st2tost2 \tparam
-   * real: underlying type \tparam StressType: type of the elastic constants
-   * related to the matrix and the ellipsoid \param[in] IM0: isotropic moduli of
-   * the matrix \param[in] IM_i: isotropic moduli of the inclusions \param [in]
-   * n_a: direction of the axis of the ellipsoid (whose semi-length is \f$a\f$)
-   * \param [in] a: length of semi-axis relative to the
-   * direction \f$n_a\f$
-   */
-  template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::real<StressType>> computeAxisymmetricalEllipsoidLocalisationTensor(
-          const IsotropicModuli<StressType>&,
-          const IsotropicModuli<StressType>&,
-          const tfel::math::tvector<3u, types::real<StressType>>&,
-          const types::real<StressType>&);
-
-  /*!
-   * This function builds the strain localisation tensor of a general
-   * ellipsoid with a general elasticity, embedded in an isotropic matrix.
-   * The localisation tensor \f$A\f$ is defined as follows : \f[\epsilon =
-   * A:E_0\f] where \f$E_0\f$ is the uniform strain tensor imposed at
-   * infinity, and \f$\epsilon\f$ is the strain tensor solution of Eshelby
-   * problem for the ellipsoid. The ellipsoid also has a specific
-   * orientation given by the vectors \f$n_a\f$, \f$n_b\f$, which provides a
-   * direct local basis \f$(n_a,n_b,n_c)\f$. The elasticity \f$C_i\f$ is
-   * specified in this local basis. \return an object of type st2tost2, which is
-   * the fourth-order localisation tensor \f$A\f$ (in the global basis). \return
-   * an object of type st2tost2 \tparam real: underlying type \tparam
-   * StressType: type of the elastic constants related to the matrix and the
-   * ellipsoid \tparam LengthType: type of the dimensions of the ellipsoid
-   * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
-   * \param [in] C_i: elasticity of the inclusions
-   * \param [in] n_a: direction of the principal axis whose length is \f$a\f$
-   * \param [in] a: length of semi-axis relative to the direction \f$n_a\f$
-   * \param [in] n_b: direction of the principal axis whose length is \f$b\f$
-   * \param [in] b: length of semi-axis relative to the direction \f$n_b\f$
-   * \param [in] c: length of the remaining semi-axis
-   */
-
-  template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::real<StressType>> computeEllipsoidLocalisationTensor(
-          const StressType&,
-          const types::real<StressType>&,
-          const StressType&,
-          const types::real<StressType>&,
-          const tfel::math::tvector<3u, types::real<StressType>>&,
-          const types::length<StressType>&,
-          const tfel::math::tvector<3u, types::real<StressType>>&,
-          const types::length<StressType>&,
-          const types::length<StressType>&);
-
-  /*!
-   * This function is an overload of computeEllipsoidLocalisationTensor
-   * with elastic moduli of IsotropicModuli<StressType> type
-   * \return an object of type st2tost2, which is the fourth-order localisation
-   * tensor \f$A\f$
-   * \tparam real: underlying type
-   * \tparam StressType: type of
-   * the elastic constants related to the matrix and the ellipsoid
-   * \tparam LengthType: type of the dimensions of the ellipsoid
-   * \param[in] IM0: isotropic moduli of the matrix
-   * \param[in] IM_i: isotropic moduli of the inclusions
-   * \param [in] n_a: direction of the principal axis whose length is \f$a\f$
-   * \param [in] a: length of semi-axis relative to the direction \f$n_a\f$
-   * \param [in] n_b: direction of the principal axis whose length is \f$b\f$
-   * \param [in] b: length of semi-axis relative to the direction \f$n_b\f$
-   * \param [in] c: length of the remaining semi-axis
-   */
-  template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::real<StressType>> computeEllipsoidLocalisationTensor(
-          const IsotropicModuli<StressType>&,
-          const IsotropicModuli<StressType>&,
-          const tfel::math::tvector<3u, types::real<StressType>>&,
-          const types::length<StressType>&,
-          const tfel::math::tvector<3u, types::real<StressType>>&,
-          const types::length<StressType>&,
-          const types::length<StressType>&);
 
 }  // end of namespace tfel::material::homogenization::elasticity
 

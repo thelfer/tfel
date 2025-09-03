@@ -377,6 +377,31 @@ By definition, this convention, named `Plate` in `MFront` is only valid
 for \(3D\), \(2D\) plane stress, \(2D\) plane strain and \(2D\)
 generalized plane strain modelling hypotheses.
 
+# Isotropic elastic moduli
+
+A `struct` `IsotropicModuli` is defined in the header "IsotropicModuli.hxx"
+for the elastic moduli of an isotropic material.
+Three children `struct` are defined:
+
+ - `KGModuli` (for bulk and shear moduli)
+ - `YoungNuModuli` (for Young modulus and Poisson ratio)
+ - `LambdaMuModuli` (for Lame moduli)
+
+Each `struct` has methods which permit to convert
+the moduli:
+
+ - `ToYoungNu()`
+ - `ToLambdaMu()`
+ - `ToKG()`
+ 
+These methods all return `std::pair` objects.
+
+Moreover, a function `isIsotropic` returns a `boolean`
+which states if a `st2tost2` object is an isotropic tensor.
+A function `computeKappaMu` also projects a `st2tost2` object
+on the space of isotropic tensors and returns the corresponding
+moduli.
+
 # Homogenization
 
 The homogenization functions are part of the namespace `tfel::material::homogenization`.
@@ -424,8 +449,8 @@ In the same way, the formulas for the axisymmetrical case are instable when the 
 ratio is near one, so a parameter allows to switch to the formula for a sphere.
 
 When \(\tenseurq C_0\) is anisotropic, the Eshelby tensor can be computed
-with `computeAnisotropicEshelbyTensor` in 3D and `computePlainStrainAnisotropicEshelbyTensor`
-in 2D. There are also `computeAnisotropicHillTensor` and `computePlainStrainAnisotropicHillTensor`.
+with `computeAnisotropicEshelbyTensor` in 3D and `computePlaneStrainAnisotropicEshelbyTensor`
+in 2D. There are also `computeAnisotropicHillTensor` and `computePlaneStrainAnisotropicHillTensor`.
 These functions are introduced by the header `AnisotropicEshelbyTensor.hxx`.
 
 ## Strain localisation tensors
@@ -447,10 +472,10 @@ and `computeSphereLocalisationTensor`.
 The ellipsoid is parametrized by its semi-axis lengths \(a,b,c\) but also
 by its axis orientations.
 The functions then return the localisation tensors taking into account the orientations.
-There are also, when the medium is anisotropic, `computeAnisotropicLocalisationTensor` and `computePlainStrainAnisotropicLocalisationTensor`. These functions are introduced by the header
+There are also, when the medium is anisotropic, `computeAnisotropicLocalisationTensor` and `computePlaneStrainAnisotropicLocalisationTensor`. These functions are introduced by the header
 `AnisotropicEshelbyTensor.hxx`.
 
-## Homogenization schemes
+## Homogenization schemes for biphasic microstructures
 
 Different schemes are implemented and return the homogenized stiffness of the material.
 These schemes are introduced by the header `LinearHomogenizationSchemes.hxx`.
@@ -496,6 +521,9 @@ For special case of Ponte-Castaneda and Willis scheme, a `Distribution` object m
 be created. It is defined by two vectors \(\tenseur n_a,\tenseur n_b\) and three lengths
 \(a,b,c\) that define the ellipsoid which defines the distribution.
 
+A tutorial on the computation of homogenized schemes for biphasic particulate microstructures
+is available [here](BiphasicLinearHomogenization.html).
+
 
 ## Homogenization bounds
 
@@ -507,29 +535,73 @@ The available bounds are:
  - Reuss bound (`computeReussStiffness`)
  - Hashin-Shtrikman bounds (`computeIsotropicHashinShtrikmanBounds`)
  
-# Isotropic elastic moduli
+## Homogenization of general microstructures
 
-A `struct` `IsotropicModuli` is defined in the header "IsotropicModuli.hxx"
-for the elastic moduli of an isotropic material.
-Three children `struct` are defined:
+It is possible to create `ParticulateMicrostructure` objects for
+homogenization of general matrix-inclusion microstructures.
 
- - `KGModuli` (for bulk and shear moduli)
- - `YoungNuModuli` (for Young modulus and Poisson ratio)
- - `LambdaMuModuli` (for Lame moduli)
+### The `ParticulateMicrostructure` class
 
-Each `struct` has methods which permit to convert
-the moduli:
+The class `ParticulateMicrostructure` is available in 3d an 2d
+via a template parameter: `ParticulateMicrostructure<N,StressType>`
+with `N` the dimension. For the details, see the file 'MicrostructureDescription.hxx'.
 
- - `ToYoungNu()`
- - `ToLambdaMu()`
- - `ToKG()`
+A ParticulateMicrostructure consists on a matrix, in which are embedded
+several `InclusionDistribution`, which represent distributions
+of inclusions.
+
+#### The `InclusionDistribution` class
+
+A `InclusionDistribution` is an abstract class which represents a distribution
+of inclusions. The `InclusionDistribution` class is in fact a child of
+a more generic class which represents a phase: `Phase`.
+The `Phase` class has only two attributes:
  
-These methods all return `std::pair` objects.
+ - `fraction` (the volume fraction of the phase)
+ - `stiffness` (a `st2tost2` object).
 
-Moreover, a function `isIsotropic` returns a `boolean`
-which states if a `st2tost2` object is an isotropic tensor.
-A function `computeKappaMu` also projects a `st2tost2` object
-on the space of isotropic tensors and returns the corresponding
-moduli.
+There are 4 childs of `InclusionDistribution`:
+ 
+ - `SphereDistribution` (distribution of spheres)
+ - `IsotropicDistribution` (isotropic distribution of ellipsoids)
+ - `TransverseDistribution` (transverse isotropic distribution of ellipsoids)
+ - `OrientedDistribution` (aligned distribution of ellipsoids)
+
+The `Inclusion` is a geometrical object which is characterized by
+its unique attribute: `semiLengths`. It is a `std::array` of `N`
+lengths, which are the semi-lengths of the ellipsoid/ellipse,
+where `N` is the dimension considered (2 or 3).
+Hence, `Inclusion` has two template parameters: `Inclusion<N,LengthType>`.
+Some particular `Inclusion` objects are also defined:
+ 
+ - `Ellipsoid` (very general 3d `Inclusion` with 3 semi-lengths)
+ - `Spheroid` (3d `Inclusion` with the last two semi-lengths identical)
+ - `Sphere` (3d `Inclusion` with 3 semi-lengths equal to unity)
+ - `Ellipse` (general 2d `Inclusion` with two semi-lengths)
+ - `Disk` (2d `Inclusion` with 2 semi-lengths equal to unity)
+ 
+The method `computeMeanLocalisator` of the `InclusionDistribution`
+class returns the average strain localisator of the
+distribution of inclusions, when embedded in a given matrix.
+
+#### Description of a `ParticulateMicrostructure`
+
+Hence, the `ParticulateMicrostructure` has three attributes:
+
+ - `number_of_phases`
+ - `matrixPhase`
+ - `inclusionPhases`
+
+The `matrixPhase` is of type `Phase`.
+ 
+The `inclusionPhases` is a `std::vector` of pointers on
+`InclusionDistribution` objects (which represent the distributions of inclusions).
+
+The `ParticulateMicrostructure` has also methods (see 'MicrostructureDescription.hxx'
+for details):
+
+ - addInclusionPhase
+ - removeInclusionPhase
+ - get_number_of_phases, get_matrix_fraction, get_matrix_elasticity, get_inclusionPhase
 
 <!-- Local IspellDict: english -->

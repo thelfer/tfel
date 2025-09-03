@@ -154,11 +154,11 @@ constexpr auto s = stensor<2u, double>::zero();
 
 When \(\tenseurq{C}_0\) is anisotropic, the Eshelby tensor can be
 computed with `computeAnisotropicEshelbyTensor` in 3D and
-`computePlainStrainAnisotropicEshelbyTensor` in 2D. There are also
+`computePlaneStrainAnisotropicEshelbyTensor` in 2D. There are also
 `computeAnisotropicHillTensor`,
-`computePlainStrainAnisotropicHillTensor`, and also
+`computePlaneStrainAnisotropicHillTensor`, and also
 `computeAnisotropicLocalisationTensor` and
-`computePlainStrainAnisotropicLocalisationTensor`.
+`computePlaneStrainAnisotropicLocalisationTensor`.
 
 ### Homogenization bounds
 
@@ -170,6 +170,21 @@ The available functions are `computeVoigtStiffness`, `computeReussStiffness`,
 
 Ponte Castaneda and Willis scheme for distributions
 of ellipsoidal inclusions for biphasic media is now available.
+
+### Creation of microstructures and homogenization
+
+The creation of `Microstructure` objects is now possible
+and permits to consider very general microstructure,
+with an arbitrary number of phase types.
+
+Two types of microstructures are implemented:
+ 
+ - `ParticulateMicrostructure`
+ - `Polycrystal`
+ 
+Moreover, some functions permit to compute the classical
+homogenized schemes on these very general microstructures.
+It includes the homogenized stiffness and the strain localisators.
 
 ## Isotropic Moduli
 

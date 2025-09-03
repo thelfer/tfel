@@ -65,8 +65,6 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr auto norm(const ST2toST2Concept auto& A) noexcept {
     using ST2toST2Type = decltype(A);
     using NumType = numeric_type<ST2toST2Type>;
-    constexpr auto N =
-        StensorDimeToSize<getSpaceDimension<ST2toST2Type>()>::value;
     return NumType(power<1, 2>(quaddot(transpose(A), A)));
   }  // end of norm
 
