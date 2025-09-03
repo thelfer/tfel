@@ -223,38 +223,6 @@ namespace tfel::math {
     }
   }  // end of st2tost2<N,T>::J
 
-  template <unsigned short N>
-  TFEL_HOST_DEVICE constexpr unsigned short VoigtIndex(unsigned short i,
-                                                       unsigned short j) {
-    if (N == 1 or N == 2 or N == 3) {
-      if ((i == 0) and (j == 0)) {
-        return 0;
-      } else if ((i == 1) and (j == 1)) {
-        return 1;
-      } else if ((i == 2) and (j == 2)) {
-        return 2;
-      } else if (N == 1) {
-        tfel::reportContractViolation("indices are not valid");
-      } else if (N == 2 or N == 3) {
-        if (((i == 0) and (j == 1)) || ((i == 1) and (j == 0))) {
-          return 3;
-        } else if (N == 2) {
-          tfel::reportContractViolation("indices are not valid");
-        } else if (N == 3) {
-          if (((i == 0) and (j == 2)) || ((i == 2) and (j == 0))) {
-            return 4;
-          } else if (((i == 1) and (j == 2)) || ((i == 2) and (j == 1))) {
-            return 5;
-          } else {
-            tfel::reportContractViolation("indices are not valid");
-          }
-        }
-      }
-    } else {
-      tfel::reportContractViolation("dimension is not valid");
-    }
-  };
-
   template <typename NumType, typename T>
   TFEL_HOST_DEVICE constexpr void setComponent(ST2toST2Concept auto& A,
                                                unsigned short i,

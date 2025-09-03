@@ -224,24 +224,6 @@ namespace tfel::math {
   using ConstST2toST2View = ConstView<st2tost2<N, T>>;
 
   /*!
-   * \brief This function returns the Voigt index of two indices (beginning from
-   * 0). Hence, the correspondence is, in 3d: \f[(0,0)->0, (1,1)->1, (2,2)->2,
-   * (0,1) or (1,0) -> 3, (0,2) or (2,0) -> 4, (1,2) or (2,1)-> 5\f].
-   * In 2d, it is \f[(0,0)->0, (1,1)->1, (2,2)->2,
-   * (0,1) or (1,0) -> 3\f].
-   * In 1d, \f[(0,0)->0, (1,1)->1, (2,2)->2\f].
-   * Be careful to the Voigt indices between 3 and 5, which are different from
-   * the usual convention: \f[\varepsilon_{12}\f] is usually the last component
-   * of the vector \f[\varepsilon\f] in the usual Voigt notation, but here it is
-   * situated as the fourth component, in order that the vector in dimension 2
-   * is just a truncation of the vector in dimension 3. \return an unsigned
-   * short \param[in] i,j: unsigned short
-   */
-  template <unsigned short N>
-  TFEL_HOST_DEVICE constexpr unsigned short VoigtIndex(unsigned short,
-                                                       unsigned short);
-
-  /*!
    * \brief This function set the component (i,j,k,l) of a `st2tost2` to
    * a value `Aijkl`, which may be useful in some cases.
    * \return void
