@@ -543,4 +543,4 @@ namespace tfel::material::homogenization::elasticity {
 
 }  // end of namespace tfel::material::homogenization::elasticity
 
-#endif /* LIB_TFEL_MATERIAL_ISOTROPICESHELBYTENSOR_IXX */ u,
+#endif /* LIB_TFEL_MATERIAL_ISOTROPICESHELBYTENSOR_IXX */

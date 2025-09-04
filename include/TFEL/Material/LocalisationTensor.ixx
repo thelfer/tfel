@@ -313,4 +313,4 @@ namespace tfel::material::homogenization::elasticity {
 
 }  // end of namespace tfel::material::homogenization::elasticity
 
-#endif /* LIB_TFEL_MATERIAL_LOCALISATIONTENSOR_IXX */ u,
+#endif /* LIB_TFEL_MATERIAL_LOCALISATIONTENSOR_IXX */

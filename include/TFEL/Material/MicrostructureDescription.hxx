@@ -156,6 +156,7 @@ namespace tfel::material {
       virtual tfel::math::st2tost2<N, real> computeMeanLocalisator(
           const tfel::math::st2tost2<N, StressType> &C0,
           bool isotropic_matrix,
+          bool verbose,
           int max_iter_anisotropic_integration) = 0;
       virtual ~InclusionDistribution(){};
     };
@@ -181,6 +182,7 @@ namespace tfel::material {
       virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const tfel::math::st2tost2<3u, StressType> &C0,
           bool isotropic_matrix,
+          bool verbose = true,
           int max_iter_anisotropic_integration = 12) override {
         auto Ci = this->stiffness;
         if (not(isIsotropic<StressType>(Ci))) {
@@ -236,6 +238,7 @@ namespace tfel::material {
       virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const tfel::math::st2tost2<3u, StressType> &C0,
           bool isotropic_matrix = true,
+          bool verbose = true,
           int max_iter_anisotropic_integration = 12) override {
         tfel::math::st2tost2<3u, StressType> Ci = this->stiffness;
         if (not(isIsotropic<StressType>(Ci))) {
@@ -247,15 +250,21 @@ namespace tfel::material {
         const auto kappai = std::get<0>(pairi);
         const auto mui = std::get<1>(pairi);
         const auto KGi = KGModuli<StressType>(kappai, mui);
-        if (not(isIsotropic<StressType>(C0))) {
-          std::cout << "warning: your matrix is not isotropic, and it will be "
-                       "made isotropic for computing the average localisator "
-                       "in the distribution"
-                    << std::endl;
-        }
         auto pair0 = computeKappaMu<StressType>(C0);
         const auto kappa0 = std::get<0>(pair0);
         const auto mu0 = std::get<1>(pair0);
+        constexpr auto J = tfel::math::st2tost2<3u,real>::J();
+        constexpr auto K = tfel::math::st2tost2<3u,real>::K();
+        const auto C_iso=3*kappa0*J+2*mu0*K;
+        auto rel = relative_error<3u,StressType>(C0,C_iso);
+        if (not(isIsotropic<StressType>(C0))) {
+          std::cout << "warning: your matrix is not strictly isotropic, and it will be "
+                       "made isotropic for computing the average localisator "
+                       "in the isotropic distribution"
+                    << std::endl;
+        std::cout<< "Relative difference between the exact C0 and its isotropized: "
+        << rel << std::endl;
+        }
         const auto KG0 = KGModuli<StressType>(kappa0, mu0);
         auto semiL = (this->inclusion).semiLengths;
         return EllipsoidMeanLocalisator<3u, StressType>::Isotropic(KG0, KGi,
@@ -317,7 +326,8 @@ namespace tfel::material {
 
       virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const tfel::math::st2tost2<3u, StressType> &C0,
-          bool isotropic_matrix,
+          bool isotropic_matrix = true,
+          bool verbose = true,
           int max_iter_anisotropic_integration = 12) override {
         tfel::math::st2tost2<3u, StressType> Ci = this->stiffness;
         if (not(isIsotropic<StressType>(Ci))) {
@@ -332,7 +342,7 @@ namespace tfel::material {
         if (not(isIsotropic<StressType>(C0))) {
           std::cout << "warning: your matrix is not isotropic, and it will be "
                        "made isotropic for computing the average localisator "
-                       "in the distribution"
+                       "in the transverse isotropic distribution"
                     << std::endl;
         }
         auto pair0 = computeKappaMu<StressType>(C0);
@@ -410,7 +420,8 @@ namespace tfel::material {
 
       virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const tfel::math::st2tost2<3u, StressType> &C0,
-          bool isotropic_matrix,
+          bool isotropic_matrix = false,
+          bool verbose = true,
           int max_iter_anisotropic_integration = 12) override {
         tfel::math::st2tost2<3u, StressType> Ci = this->stiffness;
         auto semiL = (this->inclusion).semiLengths;
@@ -502,7 +513,7 @@ namespace tfel::material {
                       << std::endl;
           };
           (this->number_of_phases)--;
-          (this->matrixPhase.fraction) -= *(this->inclusionPhases[i]).fraction;
+          (this->matrixPhase.fraction) += (*(this->inclusionPhases[i])).fraction;
           (this->inclusionPhases).erase((this->inclusionPhases).begin() + i);
           return 1;
         };
