@@ -368,10 +368,9 @@ namespace tfel::material::homogenization::elasticity {
   static TFEL_HOST_DEVICE tfel::math::st2tost2<2u, types::real<StressType>> exe(const tfel::math::st2tost2<2u, StressType>& C_0_glob,
           const tfel::math::st2tost2<2u, StressType>& C_i_loc,
           const tfel::math::tvector<2u, types::real<StressType>>& n_a,
-          const tfel::math::tvector<2u, types::real<StressType>>& n_b,
           const std::array<types::length<StressType>,2u>& semiLengths,
           const std::size_t max_it) {
-      return computePlainStrainAnisotropicLocalisationTensor<StressType>(C_0_glob,C_i_loc,n_a,semiLengths[0],semiLengths[1],max_it);
+      return computePlaneStrainAnisotropicLocalisationTensor<StressType>(C_0_glob,C_i_loc,n_a,semiLengths[0],semiLengths[1],max_it);
     }
   };//end of AnisotropicLocalisationTensor<2u, StressType>
   

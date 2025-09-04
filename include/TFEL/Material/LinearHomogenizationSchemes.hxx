@@ -15,7 +15,7 @@
 #define LIB_TFEL_MATERIAL_LINEARHOMOGENIZATIONSCHEMES_HXX
 
 #include "TFEL/Math/st2tost2.hxx"
-#include "TFEL/Material/IsotropicEshelbyTensor.hxx"
+#include "TFEL/Material/LocalisationTensor.hxx"
 #include "TFEL/Material/IsotropicModuli.hxx"
 
 namespace tfel::material::homogenization::elasticity {

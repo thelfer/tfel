@@ -16,7 +16,6 @@
 #include <cmath>
 #include <numbers>
 #include <stdexcept>
-#include <typeinfo>
 #include "TFEL/Math/General/IEEE754.hxx"
 
 namespace tfel::material::homogenization::elasticity {
@@ -213,9 +212,9 @@ namespace tfel::material::homogenization::elasticity {
     }
 
     const auto precision = [precf, precd, precld]() {
-      if constexpr (std::same_as<tfel::math::base_type<real>, long double>) {
+      if (std::same_as<tfel::math::base_type<real>, long double>) {
         return precld;
-      } else if constexpr (std::same_as<tfel::math::base_type<real>, double>) {
+      } else if (std::same_as<tfel::math::base_type<real>, double>) {
         return precd;
       } else {
         return precf;
@@ -393,9 +392,9 @@ namespace tfel::material::homogenization::elasticity {
     }
 
     const auto precision = [precf, precd, precld]() {
-      if constexpr (std::same_as<tfel::math::base_type<real>, long double>) {
+      if (std::same_as<tfel::math::base_type<real>, long double>) {
         return precld;
-      } else if constexpr (std::same_as<tfel::math::base_type<real>, double>) {
+      } else if (std::same_as<tfel::math::base_type<real>, double>) {
         return precd;
       } else {
         return precf;

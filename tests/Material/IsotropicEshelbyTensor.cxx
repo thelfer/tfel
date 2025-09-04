@@ -18,11 +18,11 @@
 #include <limits>
 #include <cstdlib>
 #include <iostream>
-#include <typeinfo>
 #include "TFEL/Config/TFELTypes.hxx"
 #ifndef _LIBCPP_VERSION
 #include "TFEL/Material/StiffnessTensor.hxx"
 #include "TFEL/Material/IsotropicEshelbyTensor.hxx"
+#include "TFEL/Material/LocalisationTensor.hxx"
 #endif /* _LIBCPP_VERSION */
 
 #include "TFEL/Math/qt.hxx"

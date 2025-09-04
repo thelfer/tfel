@@ -109,7 +109,6 @@ namespace tfel::material::homogenization::elasticity {
         const IsotropicModuli<StressType>& IM_i,
         const LengthType& a,
         const LengthType& b) {
-      using real = tfel::types::real<StressType>;
       const auto Enui = IM_i.ToYoungNu();
       const auto young_i = std::get<0>(Enui);
       const auto nu_i = std::get<1>(Enui);
@@ -153,7 +152,6 @@ namespace tfel::material::homogenization::elasticity {
         const IsotropicModuli<StressType>& IM0,
         const IsotropicModuli<StressType>& IM_i,
         const std::array<types::length<StressType>,3u>& semiLengths){
-        using real = types::real<StressType>;
           auto pair = Isotropic(IM0,IM_i,semiLengths[0], semiLengths[1],semiLengths[2]);
           auto kappaA = std::get<0>(pair);
           auto muA = std::get<1>(pair);

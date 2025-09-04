@@ -23,6 +23,7 @@
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
 #ifndef _LIBCPP_VERSION
 #include "TFEL/Material/IsotropicEshelbyTensor.hxx"
+#include "TFEL/Material/LocalisationTensor.hxx"
 #include "TFEL/Material/AnisotropicEshelbyTensor.hxx"
 #endif /* _LIBCPP_VERSION */
 #include "TFEL/Material/StiffnessTensor.hxx"

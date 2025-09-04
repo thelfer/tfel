@@ -447,14 +447,15 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
           young, nu, f, young_i, nu_i, n_a, a, n_b, b, c);
       const auto ChomPCW1 = computeOrientedPCWScheme<stress>(
           young, nu, f, young_i, nu_i, n_a, a, n_b, b, c, D);
-      const auto ChomPCW4 = computeOrientedPCWScheme<stress>(
+      const auto ChomPCW2 = computeOrientedPCWScheme<stress>(
           LambdaMu_0, f, KG_i, n_a, a, n_b, b, c, D);
-      // Test the compilation
+      const Distribution<stress> D2 = {
+          .n_a = n_a, .a = a, .n_b = n_b, .b = b, .c = b};
       const auto ChomPCW3 = computeTransverseIsotropicPCWScheme<stress>(
-          young, nu, f, young_i, nu_i, n_a, a, b, c, D);
+          young, nu, f, young_i, nu_i, n_a, a, b, b, D2);
 
-      const auto ChomPCW2 = computeIsotropicPCWScheme<stress>(
-          young, nu, f, young_i, nu_i, a, b, c, D);
+      const auto ChomMT2 = computeTransverseIsotropicMoriTanakaScheme<stress>(
+          young, nu, f, young_i, nu_i, n_a, a, b, b);
 
       TFEL_TESTS_ASSERT(my_abs(ChomMT1(2, 2) - ChomPCW1(2, 2)) < seps);
       // std::cout << (ChomMT1(2, 2)).getValue()<<" "<<ChomPCW1(2, 2).getValue()
@@ -464,7 +465,8 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       // std::cout << (ChomMT1(0, 2) - ChomPCW1(0, 2)).getValue() << " " <<
       // seps.getValue()
       //           << '\n';
-      TFEL_TESTS_ASSERT(my_abs(ChomPCW1(0, 0) - ChomPCW4(0, 0)) < seps);
+      TFEL_TESTS_ASSERT(my_abs(ChomPCW1(0, 0) - ChomPCW2(0, 0)) < seps);
+      TFEL_TESTS_ASSERT(my_abs(ChomMT2(0, 0) - ChomPCW3(0, 0)) < seps);
     }
 #endif /* _LIBCPP_VERSION */
   }
