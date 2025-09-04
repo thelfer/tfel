@@ -100,9 +100,9 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     tfel::math::stensor<3u,stress> P=tfel::math::stensor<3u,stress>::zero();
     std::vector<tfel::math::stensor<3u,stress>> polarizations = {P,P,P};
     
-    auto h_s_1=computeDilute<3u, stress>(micro1,polarizations,true);
+    auto h_s_1=computeDilute<3u, stress>(micro1,polarizations);
     auto Chom_DS_1=h_s_1.homogenized_stiffness;
-    auto h_s_2=computeDilute<3u,stress>(micro2,polarizations,true);
+    auto h_s_2=computeDilute<3u,stress>(micro2,polarizations);
     auto Chom_DS_2=h_s_2.homogenized_stiffness;
     
     for (int i=0;i<6;i++)
@@ -116,9 +116,9 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     micro2.removeInclusionPhase(0);
     micro2.addInclusionPhase(distrib6);
     
-    HomogenizationScheme<3u, stress> h_s_MT1=computeMoriTanaka<3u, stress>(micro1,polarizations,true);
+    HomogenizationScheme<3u, stress> h_s_MT1=computeMoriTanaka<3u, stress>(micro1,polarizations);
     auto Chom_MT_1=h_s_MT1.homogenized_stiffness;
-    HomogenizationScheme<3u, stress> h_s_MT2=computeMoriTanaka<3u, stress>(micro2,polarizations,true);
+    HomogenizationScheme<3u, stress> h_s_MT2=computeMoriTanaka<3u, stress>(micro2,polarizations);
     auto Chom_MT_2=h_s_MT2.homogenized_stiffness;
     for (int i=0;i<6;i++)
     for (int j=0;j<6;j++){
@@ -133,9 +133,9 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     micro2.removeInclusionPhase(0);
     micro2.addInclusionPhase(distrib2);
  
-    auto h_s_SC1=computeSelfConsistent<3u, stress>(micro1,polarizations,true,false,12);
+    auto h_s_SC1=computeSelfConsistent<3u, stress>(micro1,polarizations,12,false,12);
     auto Chom_SC_1=h_s_SC1.homogenized_stiffness;
-    auto h_s_SC2=computeSelfConsistent<3u, stress>(micro2,polarizations,true,false,12);
+    auto h_s_SC2=computeSelfConsistent<3u, stress>(micro2,polarizations,12,false,12);
     auto Chom_SC_2=h_s_SC2.homogenized_stiffness;
     for (int i=0;i<6;i++)
     for (int j=0;j<6;j++){

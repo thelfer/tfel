@@ -57,7 +57,7 @@ namespace tfel::material::homogenization::elasticity {
       HomogenizationScheme<N, StressType> computeDilute(
           ParticulateMicrostructure<N, StressType> &micro,
           const std::vector<tfel::math::stensor<N, StressType>> &polarisations,
-          bool isotropic_matrix,
+          bool isotropic_matrix = true,
           bool verbose = true,
           int max_iter_anisotropic_integration = 12) {
     using real = tfel::types::real<StressType>;
@@ -111,7 +111,7 @@ namespace tfel::material::homogenization::elasticity {
       HomogenizationScheme<N, StressType> computeMoriTanaka(
           ParticulateMicrostructure<N, StressType> &micro,
           const std::vector<tfel::math::stensor<N, StressType>> &polarisations,
-          bool isotropic_matrix,
+          bool isotropic_matrix = true,
           bool verbose = true,
           int max_iter_anisotropic_integration = 12) {
     using real = tfel::types::real<StressType>;
@@ -168,18 +168,18 @@ namespace tfel::material::homogenization::elasticity {
    * the inclusion
    * \return an object of type HomogenizationScheme
    */
+
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
       HomogenizationScheme<N, StressType> computeSelfConsistent(
           ParticulateMicrostructure<N, StressType> &micro,
           const std::vector<tfel::math::stensor<N, StressType>> &polarisations,
-          bool isotropic_matrix,
           int max_iter,
+          bool isotropic_matrix = true,
           bool verbose = true,
           int max_iter_anisotropic_integration = 8) {
     using real = tfel::types::real<StressType>;
-
     real error = 1.;
     const auto np = micro.get_number_of_phases();
     const auto f0 = micro.get_matrix_fraction();
@@ -228,10 +228,6 @@ namespace tfel::material::homogenization::elasticity {
         std::cout << "actual Chom_11: " << C11 << std::endl;
       }
       iter++;
-      if ((iter==max_iter) and (verbose)){
-      auto C11 = Chom(0, 0)/StressType(1);
-      std::cout << "Final Chom_11: " << C11 << std::endl;
-      }
     }
     h_s.homogenized_stiffness = Chom;
     h_s.effective_polarisation = tau_eff; //////TO DO ///////////

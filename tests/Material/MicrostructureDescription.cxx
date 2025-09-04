@@ -93,7 +93,7 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
     OrientedDistribution<stress> distrib4(ellipsoid1,real(0.5),C_i,n_b,n_a);
     
     const auto A_Or_1 = distrib3.computeMeanLocalisator(C_0);
-    const auto A_Or_2 = distrib4.computeMeanLocalisator(C_0,true);
+    const auto A_Or_2 = distrib4.computeMeanLocalisator(C_0);
     
     for (int i=0 ; i<6; i++)
     for (int j=0 ; j<6; j++){

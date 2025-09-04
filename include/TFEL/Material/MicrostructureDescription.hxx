@@ -181,7 +181,7 @@ namespace tfel::material {
 
       virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const tfel::math::st2tost2<3u, StressType> &C0,
-          bool isotropic_matrix,
+          bool isotropic_matrix = true,
           bool verbose = true,
           int max_iter_anisotropic_integration = 12) override {
         auto Ci = this->stiffness;
@@ -194,10 +194,24 @@ namespace tfel::material {
         const auto kappai = std::get<0>(pairi);
         const auto mui = std::get<1>(pairi);
         const auto KGi = KGModuli<StressType>(kappai, mui);
-        if (isotropic_matrix) {
+        if (isotropic_matrix){
           auto pair0 = computeKappaMu<StressType>(C0);
           const auto kappa0 = std::get<0>(pair0);
           const auto mu0 = std::get<1>(pair0);
+          constexpr auto J = tfel::math::st2tost2<3u,real>::J();
+          constexpr auto K = tfel::math::st2tost2<3u,real>::K();
+          const auto C_iso=3*kappa0*J+2*mu0*K;
+          auto rel = relative_error<3u,StressType>(C0,C_iso);
+         if ((not(isIsotropic<StressType>(C0))) and (verbose)) {
+          std::cout << "warning: your matrix is not strictly isotropic, and it will be "
+                       "made isotropic for computing the average localisator "
+                       "in the sphere distribution"
+                    << std::endl;
+        std::cout<< "Relative difference between the exact C0 and its isotropized: "
+        << rel << std::endl;
+        std::cout<< "You can set isotropic_matrix parameter to false to use the anisotropic matrix"
+        << std::endl;
+        }
           const auto KG0 = KGModuli<StressType>(kappa0, mu0);
           return computeSphereLocalisationTensor<StressType>(KG0, KGi);
         } else {
@@ -250,6 +264,11 @@ namespace tfel::material {
         const auto kappai = std::get<0>(pairi);
         const auto mui = std::get<1>(pairi);
         const auto KGi = KGModuli<StressType>(kappai, mui);
+        if (isotropic_matrix==false){
+          tfel::reportContractViolation(
+              "I cannot make computation of isotropic distribution "
+              "of inclusions embedded in an anisotropic matrix");
+        }
         auto pair0 = computeKappaMu<StressType>(C0);
         const auto kappa0 = std::get<0>(pair0);
         const auto mu0 = std::get<1>(pair0);
@@ -257,7 +276,7 @@ namespace tfel::material {
         constexpr auto K = tfel::math::st2tost2<3u,real>::K();
         const auto C_iso=3*kappa0*J+2*mu0*K;
         auto rel = relative_error<3u,StressType>(C0,C_iso);
-        if (not(isIsotropic<StressType>(C0))) {
+        if ((not(isIsotropic<StressType>(C0))) and (verbose)) {
           std::cout << "warning: your matrix is not strictly isotropic, and it will be "
                        "made isotropic for computing the average localisator "
                        "in the isotropic distribution"
@@ -339,15 +358,26 @@ namespace tfel::material {
         const auto kappai = std::get<0>(pairi);
         const auto mui = std::get<1>(pairi);
         const auto KGi = KGModuli<StressType>(kappai, mui);
-        if (not(isIsotropic<StressType>(C0))) {
-          std::cout << "warning: your matrix is not isotropic, and it will be "
-                       "made isotropic for computing the average localisator "
-                       "in the transverse isotropic distribution"
-                    << std::endl;
+        if (isotropic_matrix==false){
+          tfel::reportContractViolation(
+              "I cannot make computation of transverse isotropic distribution "
+              "of inclusions embedded in an anisotropic matrix");
         }
         auto pair0 = computeKappaMu<StressType>(C0);
         const auto kappa0 = std::get<0>(pair0);
         const auto mu0 = std::get<1>(pair0);
+        constexpr auto J = tfel::math::st2tost2<3u,real>::J();
+        constexpr auto K = tfel::math::st2tost2<3u,real>::K();
+        const auto C_iso=3*kappa0*J+2*mu0*K;
+        auto rel = relative_error<3u,StressType>(C0,C_iso);
+        if ((not(isIsotropic<StressType>(C0))) and (verbose)) {
+          std::cout << "warning: your matrix is not strictly isotropic, and it will be "
+                       "made isotropic for computing the average localisator "
+                       "in the transverse isotropic distribution"
+                    << std::endl;
+        std::cout<< "Relative difference between the exact C0 and its isotropized: "
+        << rel << std::endl;
+        }
         const auto KG0 = KGModuli<StressType>(kappa0, mu0);
         auto semiL = (this->inclusion).semiLengths;
         auto ind = this->index;
@@ -420,17 +450,31 @@ namespace tfel::material {
 
       virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const tfel::math::st2tost2<3u, StressType> &C0,
-          bool isotropic_matrix = false,
+          bool isotropic_matrix = true,
           bool verbose = true,
           int max_iter_anisotropic_integration = 12) override {
         tfel::math::st2tost2<3u, StressType> Ci = this->stiffness;
         auto semiL = (this->inclusion).semiLengths;
         auto n_a_i = this->n_a;
         auto n_b_i = this->n_b;
-        if (isotropic_matrix) {
-          auto pair0 = computeKappaMu<StressType>(C0);
-          const auto kappa0 = std::get<0>(pair0);
-          const auto mu0 = std::get<1>(pair0);
+        if (isotropic_matrix){
+        auto pair0 = computeKappaMu<StressType>(C0);
+        const auto kappa0 = std::get<0>(pair0);
+        const auto mu0 = std::get<1>(pair0);
+        constexpr auto J = tfel::math::st2tost2<3u,real>::J();
+        constexpr auto K = tfel::math::st2tost2<3u,real>::K();
+        const auto C_iso=3*kappa0*J+2*mu0*K;
+        auto rel = relative_error<3u,StressType>(C0,C_iso);
+        if (not(isIsotropic<StressType>(C0)) and (verbose)) {
+          std::cout << "warning: your matrix is not strictly isotropic, and it will be "
+                       "made isotropic for computing the average localisator "
+                       "in the oriented distribution"
+                    << std::endl;
+        std::cout<< "Relative difference between the exact C0 and its isotropized: "
+        << rel << std::endl;
+        std::cout<< "You can set isotropic_matrix parameter to false to use the anisotropic matrix"
+        << std::endl;
+        }
           const auto KG0 = KGModuli<StressType>(kappa0, mu0);
           return computeIsotropicLocalisationTensor<3u,StressType>(KG0, Ci, n_a_i, n_b_i, semiL);
         } else {
