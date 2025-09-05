@@ -214,15 +214,11 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     {
       const auto SSphere_lim_1 = computeSphereEshelbyTensor(nu);
       tfel::math::st2tost2<3u, real> SSphere_lim_2;           
-      if (tfel::math::ieee754::fpclassify(
-              std::numeric_limits<float>::epsilon() - static_cast<float>(eps)) == FP_ZERO) {
+      if (std::same_as<real, float>) {
         SSphere_lim_2 = computeAxisymmetricalEshelbyTensor(nu, static_cast<real>(1.001));
-      } else if (tfel::math::ieee754::fpclassify(
-                     std::numeric_limits<double>::epsilon() - static_cast<double>(eps)) == FP_ZERO) {
+      } else if (std::same_as<real, double>) {
         SSphere_lim_2 = computeAxisymmetricalEshelbyTensor(nu, static_cast<real>(1.000001));
-      } else if (tfel::math::ieee754::fpclassify(
-                     std::numeric_limits<long double>::epsilon() - static_cast<long double>(eps)) ==
-                 FP_ZERO) {
+      } else if (std::same_as<real, long double>) {
         SSphere_lim_2 = computeAxisymmetricalEshelbyTensor(nu, static_cast<real>(1.0000001));
       }
       for (int i : {0, 1, 2, 3, 4, 5}) {
@@ -239,16 +235,12 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     {
       const auto SAxis_lim_1 = computeAxisymmetricalEshelbyTensor(nu, static_cast<real>(10));
       tfel::math::st2tost2<3u, real> SAxis_lim_2;
-      if (tfel::math::ieee754::fpclassify(
-              std::numeric_limits<float>::epsilon() - static_cast<float>(eps)) == FP_ZERO) {
+      if (std::same_as<real, float>){
         SAxis_lim_2 = computeEshelbyTensor<stress>(nu, lg{1.05}, lg{1}, lg{10});
-      } else if (tfel::math::ieee754::fpclassify(
-                     std::numeric_limits<double>::epsilon() - static_cast<double>(eps)) == FP_ZERO) {
+      } else if (std::same_as<real, double>) {
         SAxis_lim_2 =
             computeEshelbyTensor<stress>(nu, lg{1.0005}, lg{1}, lg{10});
-      } else if (tfel::math::ieee754::fpclassify(
-                     std::numeric_limits<long double>::epsilon() - static_cast<long double>(eps)) ==
-                 FP_ZERO) {
+      } else if (std::same_as<real, long double>) {
         SAxis_lim_2 =
             computeEshelbyTensor<stress>(nu, lg{1.00005}, lg{1}, lg{10});
       }
