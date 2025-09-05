@@ -107,8 +107,7 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     
     for (int i=0;i<6;i++)
     for (int j=0;j<6;j++){
-      TFEL_TESTS_ASSERT(my_abs(Chom_DS_1(i,j)- Chom_DS_2(i,j)) < stress{eps});
-      //std::cout<<Chom_DS_1(i,j)-Chom_DS_2(i,j)<<" "<<eps<<std::endl;
+      TFEL_TESTS_ASSERT(my_abs((Chom_DS_1(i,j)- Chom_DS_2(i,j))/tfel::math::norm(Chom_DS_1)) < eps);
     }
     
     micro1.removeInclusionPhase(0);
@@ -122,7 +121,7 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     auto Chom_MT_2=h_s_MT2.homogenized_stiffness;
     for (int i=0;i<6;i++)
     for (int j=0;j<6;j++){
-      TFEL_TESTS_ASSERT(my_abs(Chom_MT_1(i,j)- Chom_MT_2(i,j)) < stress{eps});
+      TFEL_TESTS_ASSERT((my_abs(Chom_MT_1(i,j)- Chom_MT_2(i,j))/tfel::math::norm(Chom_MT_1)) < eps);
       //std::cout<<Chom_MT_1(i,j)-Chom_MT_2(i,j)<<" "<<std::endl;
     }
 
@@ -133,9 +132,9 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     micro2.removeInclusionPhase(0);
     micro2.addInclusionPhase(distrib2);
  
-    auto h_s_SC1=computeSelfConsistent<3u, stress>(micro1,polarizations,12,false,12);
+    auto h_s_SC1=computeSelfConsistent<3u, stress>(micro1,polarizations,12);
     auto Chom_SC_1=h_s_SC1.homogenized_stiffness;
-    auto h_s_SC2=computeSelfConsistent<3u, stress>(micro2,polarizations,12,false,12);
+    auto h_s_SC2=computeSelfConsistent<3u, stress>(micro2,polarizations,12);
     auto Chom_SC_2=h_s_SC2.homogenized_stiffness;
     for (int i=0;i<6;i++)
     for (int j=0;j<6;j++){
