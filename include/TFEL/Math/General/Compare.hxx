@@ -14,25 +14,32 @@
 #ifndef LIB_TFEL_MATH_COMPARE_HXX
 #define LIB_TFEL_MATH_COMPARE_HXX
 
+#include<cmath>
+#include<concepts>
+#include"TFEL/Math/qt.hxx"
 
 namespace tfel::math {
 
   /*
-   * \brief compare two values with a precision given by their base_type precision
+   * \brief compare two values with a precision
    */
-   template <ScalarConcept ScalarType>
-   TFEL_HOST_DEVICE static constexpr bool areAlmostEqual(const base_type<ScalarType>& eps, const base_type<ScalarType>& a, const base_type<ScalarType>& b){
- 	return std::abs(a-b)< eps;
-   }
-   
+  template <std::floating_point ScalarType>
+  TFEL_HOST_DEVICE constexpr bool areAlmostEqual(const ScalarType& eps,
+						 const ScalarType& a,
+						 const ScalarType& b) {
+    return std::abs(a - b) < eps;
+  }
+
    /*
-   * \brief compare two quantities with a precision given by the quantity base_type precision
+   * \brief compare two quantities with a precision
    */
-   template <ScalarConcept ScalarType>
-   TFEL_HOST_DEVICE static constexpr bool areAlmostEqual(const base_type<ScalarType>& eps, const ScalarType& a, 
-                                                         const ScalarType&b){
-	return std::abs(a.getValue()-b.getValue())< eps;
-   }
+  template <std::floating_point ScalarType, UnitConcept UnitType>
+  TFEL_HOST_DEVICE constexpr bool areAlmostEqual(
+      const ScalarType& eps,
+      const qt<UnitType, ScalarType>& a,
+      const qt<UnitType, ScalarType>& b) {
+    return std::abs(a.getValue() - b.getValue()) < eps;
+  }
 
 }  // end of namespace tfel::math
 
