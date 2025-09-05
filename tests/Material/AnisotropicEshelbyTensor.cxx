@@ -31,6 +31,11 @@
 #include "TFEL/Tests/TestProxy.hxx"
 #include "TFEL/Tests/TestManager.hxx"
 
+template <typename T>
+static constexpr T my_abs(const T& v) noexcept {
+  return v < T(0) ? -v : v;
+}
+
 struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
   AnisotropicEshelbyTensorTest()
       : tfel::tests::TestCase("TFEL/Material", "AnisotropicEshelbyTensor") {
@@ -40,6 +45,9 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     this->template test_Eshelby<double, true>();
     this->template test_Eshelby2D<double, true>();
     this->template test_localisator<double, true>();
+    this->template test_Eshelby<double, false>();
+    this->template test_Eshelby2D<double, false>();
+    this->template test_localisator<double, false>();
     return this->result;
   }
 
@@ -104,8 +112,10 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     using real = NumericType;
     using lg = typename tfel::config::Types<1u, real, use_qt>::length;
     using stress = typename tfel::config::Types<1u, real, use_qt>::stress;
+    using compliance = typename tfel::config::Types<1u, real, use_qt>::compliance;
     static constexpr auto eps =
         tfel::math::constexpr_fct::sqrt(std::numeric_limits<real>::epsilon());
+    static constexpr auto ceps = compliance(eps);
     const auto nu = real{0.3};
     const auto young = stress{150e9};
     const tfel::math::tvector<2u, real> n_a = {1., 0.};
@@ -118,10 +128,16 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
         computePlaneStrainAnisotropicEshelbyTensor<stress>(
             C_0, n_a, lg{3}, lg{2}, 14);
     const auto S2D2 = computePlaneStrainEshelbyTensor(nu, real{1.5});
+    
+    const auto P2D1 =
+        computePlaneStrainAnisotropicHillTensor<stress>(
+            C_0, n_a, lg{3}, lg{2}, 14);
+    const auto P2D2 = computePlaneStrainHillTensor(YoungNuModuli<stress>(young,nu),n_a,lg{3},lg{2});
 
     for (int i : {0, 1, 2, 3}) {
       for (int j : {0, 1, 2, 3}) {
         TFEL_TESTS_ASSERT(std::abs(S2D1(i, j) - S2D2(i, j)) < eps);
+        TFEL_TESTS_ASSERT(my_abs(P2D1(i, j) - P2D2(i, j)) < ceps);
         // std::cout << S2D1(i,j) <<" " <<S2D2(i,j)<< " "<< eps<<'\n';
       }
     }

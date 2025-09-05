@@ -51,7 +51,7 @@ namespace tfel::material {
       Ellipsoid(LengthType a, LengthType b, LengthType c)
           : Inclusion<3u, LengthType>(std::array<LengthType, 3u>({a, b, c})){}
 
-      virtual ~Ellipsoid(){}
+      virtual ~Ellipsoid() override {}
     };
 
     /*!
@@ -66,7 +66,7 @@ namespace tfel::material {
       Spheroid(LengthType a, LengthType b)
           : Inclusion<3u, LengthType>(std::array<LengthType, 3u>({a, b, b})){}
 
-      virtual ~Spheroid(){}
+      virtual ~Spheroid() override {}
     };
 
     /*!
@@ -80,7 +80,7 @@ namespace tfel::material {
           : Inclusion<3u, LengthType>(std::array<LengthType, 3u>(
                 {LengthType(1), LengthType(1), LengthType(1)})){}
 
-      virtual ~Sphere(){}
+      virtual ~Sphere() override {}
     };
 
     /*!
@@ -95,7 +95,7 @@ namespace tfel::material {
           : Inclusion<2u, LengthType>(
                 std::array<LengthType, 2u>({LengthType(1), LengthType(1)})){}
 
-      virtual ~Disk(){}
+      virtual ~Disk() override {}
     };
 
     /*!
@@ -110,7 +110,7 @@ namespace tfel::material {
       Ellipse(LengthType a, LengthType b)
           : Inclusion<2u, LengthType>(std::array<LengthType, 2u>({a, b})){}
 
-      virtual ~Ellipse(){}
+      virtual ~Ellipse() override {}
     };
 
     ////Definition of 'Phase' objects
@@ -506,7 +506,7 @@ namespace tfel::material {
           (this->matrixPhase.fraction) -= *(this->inclusionPhases[i]).fraction;
           (this->inclusionPhases).erase((this->inclusionPhases).begin() + i);
           return 1;
-        };
+        }
       }
 
       unsigned int get_number_of_phases() { return (this->number_of_phases); }

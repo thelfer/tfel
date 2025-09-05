@@ -53,6 +53,13 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
     this->template test6<stress>();
     this->template test7<stress>();
     this->template test8<stress>();
+    this->template test1<real>();
+    this->template test3<real>();
+    this->template test4<real>();
+    this->template test5<real>();
+    this->template test6<real>();
+    this->template test7<real>();
+    this->template test8<real>();
     return this->result;
   }
 

@@ -149,9 +149,9 @@ namespace tfel::material::homogenization::elasticity {
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
   computeAxisymmetricalEshelbyTensor(const real&,
                                      const real&,
-                                     const real = real{8e-3},
-                                     const real = real{1.5e-4},
-                                     const real = real{1e-5});
+                                     const real = static_cast<real>(8e-3),
+                                     const real = static_cast<real>(1.5e-4),
+                                     const real = static_cast<real>(1e-5));
 
   /*!
    * This function builds the Hill tensor of an axisymmetrical ellipsoid
@@ -180,9 +180,9 @@ namespace tfel::material::homogenization::elasticity {
           const types::real<StressType>&,
           const tfel::math::tvector<3u, types::real<StressType>>&,
           const types::real<StressType>&,
-          const types::real<StressType> = types::real<StressType>{8e-3},
-          const types::real<StressType> = types::real<StressType>{1.5e-4},
-          const types::real<StressType> = types::real<StressType>{1e-5});
+          const types::real<StressType> = static_cast<types::real<StressType>>(8e-3),
+          const types::real<StressType> = static_cast<types::real<StressType>>(1.5e-4),
+          const types::real<StressType> = static_cast<types::real<StressType>>(1e-5));
 
   /*!
    * This function is an overload of computeAxisymmetricalHillPolarisationTensor
@@ -199,9 +199,9 @@ namespace tfel::material::homogenization::elasticity {
           const IsotropicModuli<StressType>&,
           const tfel::math::tvector<3u, types::real<StressType>>&,
           const types::real<StressType>&,
-          const types::real<StressType> = types::real<StressType>{8e-3},
-          const types::real<StressType> = types::real<StressType>{1.5e-4},
-          const types::real<StressType> = types::real<StressType>{1e-5});
+          const types::real<StressType> = static_cast<types::real<StressType>>(8e-3),
+          const types::real<StressType> = static_cast<types::real<StressType>>(1.5e-4),
+          const types::real<StressType> = static_cast<types::real<StressType>>(1e-5));
 
   /*!
    * This function builds the Eshelby tensor of a general ellipsoid embedded
@@ -231,9 +231,9 @@ namespace tfel::material::homogenization::elasticity {
           const types::length<StressType>&,
           const types::length<StressType>&,
           const types::length<StressType>&,
-          const types::real<StressType> = types::real<StressType>{8e-3},
-          const types::real<StressType> = types::real<StressType>{1.5e-4},
-          const types::real<StressType> = types::real<StressType>{1e-5});
+          const types::real<StressType> = static_cast<types::real<StressType>>(8e-3),
+          const types::real<StressType> = static_cast<types::real<StressType>>(1.5e-4),
+          const types::real<StressType> = static_cast<types::real<StressType>>(1e-5));
 
   /*!
    * This function builds the Hill tensor of a general ellipsoid embedded
@@ -268,9 +268,9 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::tvector<3u, types::real<StressType>>&,
           const types::length<StressType>&,
           const types::length<StressType>&,
-          const types::real<StressType> = types::real<StressType>{8e-3},
-          const types::real<StressType> = types::real<StressType>{1.5e-4},
-          const types::real<StressType> = types::real<StressType>{1e-5});
+          const types::real<StressType> = static_cast<types::real<StressType>>(8e-3),
+          const types::real<StressType> = static_cast<types::real<StressType>>(1.5e-4),
+          const types::real<StressType> = static_cast<types::real<StressType>>(1e-5));
 
   /*!
    * This function is an overload of computeHillPolarisationTensor
@@ -290,9 +290,9 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::tvector<3u, types::real<StressType>>&,
           const types::length<StressType>&,
           const types::length<StressType>&,
-          const types::real<StressType> = types::real<StressType>{8e-3},
-          const types::real<StressType> = types::real<StressType>{1.5e-4},
-          const types::real<StressType> = types::real<StressType>{1e-5});
+          const types::real<StressType> = static_cast<types::real<StressType>>(8e-3),
+          const types::real<StressType> = static_cast<types::real<StressType>>(1.5e-4),
+          const types::real<StressType> = static_cast<types::real<StressType>>(1e-5));
 
 }  // end of namespace tfel::material::homogenization::elasticity
 
