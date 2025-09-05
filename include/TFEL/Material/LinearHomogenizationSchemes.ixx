@@ -44,21 +44,22 @@ namespace tfel::material::homogenization::elasticity {
               (c > LengthType{0}))) {
         tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
       }
+      
       const tfel::math::tvector<3u, real> n_1 = {1., 0., 0.};
       const tfel::math::tvector<3u, real> n_2 = {0., 1., 0.};
       real mu;
       real ka;
-      if ((a == b) and (b == c)) {
+      if ((std::abs((a - b)/LengthType(1)) < eps) and (std::abs((c - b)/LengthType(1)) < eps)) {
         const auto A = computeSphereLocalisationTensor<StressType>(
             young, nu, young_i, nu_i);
         mu = A(3, 3) / 2;
         ka = A(0, 0) - 4 * mu / 3;
-      } else if ((a == b) || (a == c) || (b == c)) {
+      } else if ((std::abs((a - b)/LengthType(1)) < eps) || (std::abs((a - c)/LengthType(1)) < eps) || (std::abs((c - b)/LengthType(1)) < eps)) {
         tfel::math::st2tost2<3u, real> A_;
-        if (a == b) {
+        if (std::abs((a - b)/LengthType(1)) < eps) {
           A_ = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
               young, nu, young_i, nu_i, n_1, c / a);
-        } else if (a == c) {
+        } else if (std::abs((a - c)/LengthType(1)) < eps) {
           A_ = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
               young, nu, young_i, nu_i, n_1, b / a);
         } else {
@@ -109,7 +110,6 @@ namespace tfel::material::homogenization::elasticity {
         const IsotropicModuli<StressType>& IM_i,
         const LengthType& a,
         const LengthType& b) {
-      using real = tfel::types::real<StressType>;
       const auto Enui = IM_i.ToYoungNu();
       const auto young_i = std::get<0>(Enui);
       const auto nu_i = std::get<1>(Enui);
@@ -153,7 +153,6 @@ namespace tfel::material::homogenization::elasticity {
         const IsotropicModuli<StressType>& IM0,
         const IsotropicModuli<StressType>& IM_i,
         const std::array<types::length<StressType>,3u>& semiLengths){
-        using real = types::real<StressType>;
           auto pair = Isotropic(IM0,IM_i,semiLengths[0], semiLengths[1],semiLengths[2]);
           auto kappaA = std::get<0>(pair);
           auto muA = std::get<1>(pair);
@@ -199,10 +198,10 @@ namespace tfel::material::homogenization::elasticity {
       const tvector<3u, real> n_y = {0., 1., 0.};
       const tvector<3u, real> n_z = {0., 0., 1.};
       st2tost2<3u, real> A;
-      if ((a == b) and (b == c)) {
+      if ((std::abs((a - b)/LengthType(1)) < eps) and (std::abs((c - b)/LengthType(1)) < eps)) {
         A = computeSphereLocalisationTensor<StressType>(young, nu, young_i,
                                                         nu_i);
-      } else if (b == c) {
+      } else if (std::abs((c - b)/LengthType(1)) < eps) {
         const auto A_ =
             computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
                 young, nu, young_i, nu_i, n_z, a / b);
@@ -212,10 +211,10 @@ namespace tfel::material::homogenization::elasticity {
         A = change_basis(A_, r);
       } else {
         st2tost2<3u, real> A_;
-        if (a == b) {
+        if (std::abs((a - b)/LengthType(1)) < eps) {
           A_ = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
               young, nu, young_i, nu_i, n_y, c / a);
-        } else if (a == c) {
+        } else if (std::abs((a - b)/LengthType(1)) < eps) {
           A_ = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
               young, nu, young_i, nu_i, n_x, b / a);
         } else {
@@ -297,18 +296,18 @@ namespace tfel::material::homogenization::elasticity {
       }
       using namespace tfel::math;
       st2tost2<3u, real> A;
-      if ((a == b) and (b == c)) {
+      if ((std::abs((a - b)/LengthType(1)) < eps) and (std::abs((c - b)/LengthType(1)) < eps)) {
         A = computeSphereLocalisationTensor<StressType>(young, nu, young_i,
                                                         nu_i);
-      } else if (a == b) {
+      } else if (std::abs((a - b)/LengthType(1)) < eps) {
         tvector<3u, real> n_1 = tfel::math::cross_product(n_a, n_b);
         n_1 = n_1 / norm(n_1);
         A = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
             young, nu, young_i, nu_i, n_1, c / a);
-      } else if (a == c) {
+      } else if (std::abs((a - c)/LengthType(1)) < eps) {
         A = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
             young, nu, young_i, nu_i, n_b, b / a);
-      } else if (b == c) {
+      } else if (std::abs((c - b)/LengthType(1)) < eps) {
         A = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
             young, nu, young_i, nu_i, n_a, a / b);
       } else {

@@ -1,3 +1,4 @@
+
 install_header(TFEL Macros.hxx)
 install_header(TFEL ContractViolation.hxx)
 install_header(TFEL Raise.hxx)
@@ -18,6 +19,7 @@ install_header(TFEL/Glossary GlossaryEntry.hxx)
 install_header(TFEL/UnicodeSupport UnicodeSupport.hxx)
 
 install_header(TFEL/Metaprogramming/Forward TypeList.hxx)
+install_header(TFEL/Metaprogramming Concepts.hxx)
 install_header(TFEL/Metaprogramming Implements.hxx)
 install_header(TFEL/Metaprogramming TypeList.hxx)
 install_header(TFEL/Metaprogramming TypeList.ixx)

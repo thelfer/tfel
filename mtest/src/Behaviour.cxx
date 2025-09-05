@@ -303,7 +303,7 @@ namespace mtest {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "Behaviour::getBehaviour: " + m);
     };
-    auto check_no_parameters = [&throw_if, &d] {
+    [[maybe_unused]] auto check_no_parameters = [&throw_if, &d] {
       if (d.empty()) {
         return;
       }

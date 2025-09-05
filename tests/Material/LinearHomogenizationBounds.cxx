@@ -48,6 +48,8 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
 
     this->template testHS_3D<stress>();
     this->template testHS_2D<stress>();
+    this->template testHS_3D<real>();
+    this->template testHS_2D<real>();
 
     return this->result;
   }

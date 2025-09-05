@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATH_EXPRESSION_EXPR_HXX
 
 #include <type_traits>
+#include "TFEL/Metaprogramming/Concepts.hxx"
 #include "TFEL/TypeTraits/IsScalar.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
@@ -32,11 +33,12 @@ namespace tfel::math {
    */
   struct ExprBase {
    protected:
+    //
     /*!
      * \brief a simple metafunction defining how an argument of an
      * operation is stored in the Expr class.
      */
-    template <typename ValueType>
+    template <tfel::meta::ReferenceConcept ValueType>
     using ArgumentStorage = std::conditional_t<
         tfel::typetraits::isScalar<ValueType>(),
         const std::decay_t<ValueType>,
