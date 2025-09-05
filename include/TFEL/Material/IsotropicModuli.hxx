@@ -32,7 +32,7 @@ namespace tfel::material {
       tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                          StressType>()) struct IsotropicModuli {
     IsotropicModuli(){}
-    virtual ~IsotropicModuli(){}
+    virtual ~IsotropicModuli() = default;
     virtual std::pair<StressType, types::real<StressType>> ToYoungNu()
         const& = 0;
     virtual std::pair<StressType, StressType> ToLambdaMu() const& = 0;
