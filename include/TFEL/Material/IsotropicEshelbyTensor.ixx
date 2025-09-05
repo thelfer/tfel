@@ -412,9 +412,9 @@ namespace tfel::material::homogenization::elasticity {
     }
     const std::array<LengthType, 3> abc_ = {a, b, c};
     const auto sig = internals::sortEllipsoidLengths<LengthType>(a, b, c);
-    const auto a_ = abc_[sig[0]];
-    const auto b_ = abc_[sig[1]];
-    const auto c_ = abc_[sig[2]];
+    const auto a_ = abc_[static_cast<int>(sig[0])];
+    const auto b_ = abc_[static_cast<int>(sig[1])];
+    const auto c_ = abc_[static_cast<int>(sig[2])];
     constexpr real pi = std::numbers::pi_v<tfel::math::base_type<real>>;
     const auto a2 = a_ * a_;
     const auto b2 = b_ * b_;
@@ -498,11 +498,11 @@ namespace tfel::material::homogenization::elasticity {
     const std::array<LengthType, 3> abc_ = {a, b, c};
     const auto sig = internals::sortEllipsoidLengths<LengthType>(a, b, c);
     const auto S0 = computeEshelbyTensor<StressType>(
-        nu, abc_[sig[0]], abc_[sig[1]], abc_[sig[2]], precf, precd, precld);
+        nu, abc_[static_cast<int>(sig[0])], abc_[static_cast<int>(sig[1])], abc_[static_cast<int>(sig[2])], precf, precd, precld);
     const std::array<tfel::math::tvector<3u, real>, 3> nabc_ = {n_a_, n_b_,
                                                                 n_c_};
-    const auto n_1 = nabc_[sig[0]];
-    const auto n_2 = nabc_[sig[1]];
+    const auto n_1 = nabc_[static_cast<int>(sig[0])];
+    const auto n_2 = nabc_[static_cast<int>(sig[1])];
     using namespace tfel::math;
     const auto n_3 = cross_product<real>(n_1, n_2);
     // r is the global basis expressed in the local sorted basis (n1,n2,n3)
