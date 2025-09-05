@@ -442,9 +442,7 @@ for the axisymmetrical ellipsoid and in [@eshelby_1957] for other cases.
 
 When two axes are very close, the formulas for three different axes are numerically instable,
 hence a parameter is introduced to switch to the formulas suited for the perfect
-axisymmetrical case. This parameter can be modified by the user, it is called `precf`
-when using `float`, `precd` for `double`, and `precld`.
-for `long double`.
+axisymmetrical case. This parameter can be modified by the user, it is called precision.
 In the same way, the formulas for the axisymmetrical case are instable when the aspect
 ratio is near one, so a parameter allows to switch to the formula for a sphere.
 

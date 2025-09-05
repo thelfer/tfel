@@ -59,7 +59,7 @@ struct IsotropicModuliTest final : public tfel::tests::TestCase {
     
     TFEL_TESTS_ASSERT(yes_it_is_isotropic);
     
-    const auto KG = KGModuli(kappa,mu);
+    const auto KG = KGModuli<stress>(kappa,mu);
     const auto Enu=KG.ToYoungNu();
     const auto E = std::get<0>(Enu);
     const auto nu = std::get<1>(Enu);

@@ -31,8 +31,8 @@ namespace tfel::material {
   requires(
       tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                          StressType>()) struct IsotropicModuli {
-    IsotropicModuli(){};
-    virtual ~IsotropicModuli(){};
+    IsotropicModuli(){}
+    virtual ~IsotropicModuli() = default;
     virtual std::pair<StressType, types::real<StressType>> ToYoungNu()
         const& = 0;
     virtual std::pair<StressType, StressType> ToLambdaMu() const& = 0;
@@ -52,18 +52,17 @@ namespace tfel::material {
     StressType young;
     types::real<StressType> nu;
     YoungNuModuli(const StressType& Young, const types::real<StressType>& Nu)
-        : IsotropicModuli<StressType>(), young(Young), nu(Nu){};
-    virtual ~YoungNuModuli(){};
+        : IsotropicModuli<StressType>(), young(Young), nu(Nu){}
 
     std::pair<StressType, types::real<StressType>> ToYoungNu() const& override {
       return {this->young, this->nu};
-    };
+    }
 
     std::pair<StressType, StressType> ToLambdaMu() const& override {
       const auto lambda = computeLambda<StressType>(this->young, this->nu);
       const auto mu = computeMu<StressType>(this->young, this->nu);
       return {lambda, mu};
-    };
+    }
 
     std::pair<StressType, StressType> ToKG() const& override {
       const auto Young = this->young;
@@ -71,7 +70,7 @@ namespace tfel::material {
       const auto Kappa = Young / 3. / (1 - 2 * Nu);
       const auto Mu = Young / 2. / (1 + Nu);
       return {Kappa, Mu};
-    };
+    }
   };  // end of YoungNuoduli
 
 
@@ -87,8 +86,7 @@ namespace tfel::material {
     StressType kappa;
     StressType mu;
     KGModuli(const StressType& Kappa, const StressType& Mu)
-        : IsotropicModuli<StressType>(), kappa(Kappa), mu(Mu){};
-    virtual ~KGModuli(){};
+        : IsotropicModuli<StressType>(), kappa(Kappa), mu(Mu){}
 
     std::pair<StressType, types::real<StressType>> ToYoungNu() const& override {
       const auto Kappa = this->kappa;
@@ -96,18 +94,18 @@ namespace tfel::material {
       const auto Nu = (3 * Kappa - 2 * Mu) / (2 * Mu + 6 * Kappa);
       const auto Young = 2 * Mu * (1 + Nu);
       return {Young, Nu};
-    };
+    }
 
     std::pair<StressType, StressType> ToLambdaMu() const& override {
       const auto Kappa = this->kappa;
       const auto Mu = this->mu;
       const auto Lambda = Kappa - 2 * Mu / 3;
       return {Lambda, Mu};
-    };
+    }
 
     std::pair<StressType, StressType> ToKG() const& override {
       return {this->kappa, this->mu};
-    };
+    }
   };  // end of KGModuli
 
    /*!
@@ -123,26 +121,26 @@ namespace tfel::material {
     StressType lambda;
     StressType mu;
     LambdaMuModuli(const StressType& Lambda, const StressType& Mu)
-        : IsotropicModuli<StressType>(), lambda(Lambda), mu(Mu){};
-    virtual ~LambdaMuModuli(){};
+        : IsotropicModuli<StressType>(), lambda(Lambda), mu(Mu){}
+
     std::pair<StressType, types::real<StressType>> ToYoungNu() const& override {
       const auto Lambda = this->lambda;
       const auto Mu = this->mu;
       const auto Nu = Lambda / (2 * Mu + 2 * Lambda);
       const auto Young = 2 * Mu * (1 + Nu);
       return {Young, Nu};
-    };
+    }
 
     std::pair<StressType, StressType> ToLambdaMu() const& override {
       return {this->lambda, this->mu};
-    };
+    }
 
     std::pair<StressType, StressType> ToKG() const& override {
       const auto Lambda = this->lambda;
       const auto Mu = this->mu;
       const auto Kappa = Lambda + 2 * Mu / 3;
       return {Kappa, Mu};
-    };
+    }
   };  // end of LambdaMuModuli
 
   
