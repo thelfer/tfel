@@ -1,5 +1,5 @@
 /*!
- * \file   include/TFEL/Math/General/Tolerances.hxx
+ * \file   include/TFEL/Material/EshelbyTolerances.hxx
  * \brief  This file declares tolerance values relative to the floatting-point types
 * \author Antoine Martin
  * \date   5 sept 2025
@@ -11,39 +11,35 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_TOLERANCES_HXX
-#define LIB_TFEL_MATH_TOLERANCES_HXX
+#ifndef LIB_TFEL_MATERIAL_ESHELBYTOLERANCES_HXX
+#define LIB_TFEL_MATERIAL_ESHELBYTOLERANCES_HXX
 
 #include <cmath>
 #include <type_traits>
-#include "TFEL/Config/TFELConfig.hxx"
 
-namespace tfel::math {
+namespace tfel::material {
 
   /*!
    * \brief  a struct which contains tolerances values for Eshelby tensors
    */
-  template <std::floating_point NumericType>
   struct EshelbyTolerances {
   
-    const NumericType precf = 8e-3 ;
-    const NumericType precd =  1.5e-4 ;
-    const NumericType precld =  1e-5 ;
+    static constexpr float precf = float{8e-3} ;
+    static constexpr double precd =  double{1.5e-4} ;
+    static constexpr long double precld =  static_cast<long double>(1e-5);
     
+    template <std::floating_point NumericType>
     TFEL_HOST_DEVICE static constexpr auto get() {
     if constexpr (std::same_as<NumericType, long double>) {
-        return NumericType(1e-5);
+        return precld;
       } else if constexpr (std::same_as<NumericType, double>) {
-        return NumericType(1.5e-4);
-      } else if constexpr (std::same_as<NumericType, float>) {
-        return NumericType(8e-3);
-      } else {
-        return NumericType(8e-3);
-      }
+        return precd;
+      } else  {
+        return precf;
+      } 
     }
-    
    };
 
-}  // end of namespace tfel::math
+}  // end of namespace tfel::material
 
-#endif /* LIB_TFEL_MATH_TOLERANCES_HXX */
+#endif /* LIB_TFEL_MATERIAL_ESHELBYTOLERANCES_HXX */

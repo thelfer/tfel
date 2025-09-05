@@ -24,7 +24,7 @@ namespace tfel::material::homogenization::elasticity {
            StressType>()) struct EllipsoidMeanLocalisator {
     using real = types::real<StressType>;
     using LengthType = types::length<StressType>;
-
+    static constexpr auto eps = std::numeric_limits<tfel::math::base_type<StressType>>::epsilon();
     
     TFEL_HOST_DEVICE static const std::pair<real, real> Isotropic(
         const StressType& young,
@@ -50,17 +50,17 @@ namespace tfel::material::homogenization::elasticity {
       real mu;
       real ka;
       using namespace tfel::math;
-      if (areAlmostEqual<LengthType>(a,b) and areAlmostEqual<LengthType>(c,b)) {
+      if (areAlmostEqual<LengthType>(eps,a,b) and areAlmostEqual<LengthType>(eps,c,b)) {
         const auto A = computeSphereLocalisationTensor<StressType>(
             young, nu, young_i, nu_i);
         mu = A(3, 3) / 2;
         ka = A(0, 0) - 4 * mu / 3;
-      } else if (areAlmostEqual<LengthType>(a,b) || areAlmostEqual<LengthType>(a,c) || areAlmostEqual<LengthType>(c,b)) {
+      } else if (areAlmostEqual<LengthType>(eps,a,b) || areAlmostEqual<LengthType>(eps,a,c) || areAlmostEqual<LengthType>(eps,c,b)) {
         st2tost2<3u, real> A_;
-        if (areAlmostEqual<LengthType>(a,b)) {
+        if (areAlmostEqual<LengthType>(eps,a,b)) {
           A_ = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
               young, nu, young_i, nu_i, n_1, c / a);
-        } else if (areAlmostEqual<LengthType>(a,c)) {
+        } else if (areAlmostEqual<LengthType>(eps,a,c)) {
           A_ = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
               young, nu, young_i, nu_i, n_1, b / a);
         } else {
@@ -199,10 +199,10 @@ namespace tfel::material::homogenization::elasticity {
       const tvector<3u, real> n_y = {0., 1., 0.};
       const tvector<3u, real> n_z = {0., 0., 1.};
       st2tost2<3u, real> A;
-      if (areAlmostEqual<LengthType>(a,b) and areAlmostEqual<LengthType>(c,b)) {
+      if (areAlmostEqual<LengthType>(eps,a,b) and areAlmostEqual<LengthType>(eps,c,b)) {
         A = computeSphereLocalisationTensor<StressType>(young, nu, young_i,
                                                         nu_i);
-      } else if (areAlmostEqual<LengthType>(c,b)) {
+      } else if (areAlmostEqual<LengthType>(eps,c,b)) {
         const auto A_ =
             computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
                 young, nu, young_i, nu_i, n_z, a / b);
@@ -212,10 +212,10 @@ namespace tfel::material::homogenization::elasticity {
         A = change_basis(A_, r);
       } else {
         st2tost2<3u, real> A_;
-        if (areAlmostEqual<LengthType>(a,b)) {
+        if (areAlmostEqual<LengthType>(eps,a,b)) {
           A_ = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
               young, nu, young_i, nu_i, n_y, c / a);
-        } else if (areAlmostEqual<LengthType>(a,b)) {
+        } else if (areAlmostEqual<LengthType>(eps,a,b)) {
           A_ = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
               young, nu, young_i, nu_i, n_x, b / a);
         } else {
@@ -297,18 +297,18 @@ namespace tfel::material::homogenization::elasticity {
       }
       using namespace tfel::math;
       st2tost2<3u, real> A;
-      if (areAlmostEqual<LengthType>(a,b) and areAlmostEqual<LengthType>(c,b)) {
+      if (areAlmostEqual<LengthType>(eps,a,b) and areAlmostEqual<LengthType>(eps,c,b)) {
         A = computeSphereLocalisationTensor<StressType>(young, nu, young_i,
                                                         nu_i);
-      } else if (areAlmostEqual<LengthType>(a,b)) {
+      } else if (areAlmostEqual<LengthType>(eps,a,b)) {
         tvector<3u, real> n_1 = tfel::math::cross_product(n_a, n_b);
         n_1 = n_1 / norm(n_1);
         A = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
             young, nu, young_i, nu_i, n_1, c / a);
-      } else if (areAlmostEqual<LengthType>(a,c)) {
+      } else if (areAlmostEqual<LengthType>(eps,a,c)) {
         A = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
             young, nu, young_i, nu_i, n_b, b / a);
-      } else if (areAlmostEqual<LengthType>(c,b)) {
+      } else if (areAlmostEqual<LengthType>(eps,c,b)) {
         A = computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
             young, nu, young_i, nu_i, n_a, a / b);
       } else {

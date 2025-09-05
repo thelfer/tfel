@@ -21,8 +21,7 @@ namespace tfel::math {
    * \brief compare two values with a precision given by their base_type precision
    */
    template <ScalarConcept ScalarType>
-   TFEL_HOST_DEVICE static constexpr bool areAlmostEqual(const base_type<ScalarType> a, const base_type<ScalarType> b){
- 	constexpr auto eps = std::numeric_limits<base_type<ScalarType>>::epsilon();
+   TFEL_HOST_DEVICE static constexpr bool areAlmostEqual(const base_type<ScalarType>& eps, const base_type<ScalarType>& a, const base_type<ScalarType>& b){
  	return std::abs(a-b)< eps;
    }
    
@@ -30,9 +29,8 @@ namespace tfel::math {
    * \brief compare two quantities with a precision given by the quantity base_type precision
    */
    template <ScalarConcept ScalarType>
-   TFEL_HOST_DEVICE static constexpr bool areAlmostEqual(const ScalarType& a, 
+   TFEL_HOST_DEVICE static constexpr bool areAlmostEqual(const base_type<ScalarType>& eps, const ScalarType& a, 
                                                          const ScalarType&b){
-	constexpr auto eps = std::numeric_limits<base_type<ScalarType>>::epsilon();
 	return std::abs(a.getValue()-b.getValue())< eps;
    }
 
