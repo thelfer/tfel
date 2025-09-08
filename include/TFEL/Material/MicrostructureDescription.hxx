@@ -494,8 +494,7 @@ namespace tfel::material {
 
       int removeInclusionPhase(unsigned int i) {
         if ((this->number_of_phases) == 1) {
-          //           std::cout << "there are no more inclusions !" <<
-          //           std::endl;
+	  //          std::cout << "there are no more inclusions !" << std::endl;
           return 0;
         } else if ((this->number_of_phases) < i + 2) {
           //           std::cout << "there are less phases than what you think
