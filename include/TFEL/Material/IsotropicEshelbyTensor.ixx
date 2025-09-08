@@ -16,7 +16,6 @@
 #include <cmath>
 #include <numbers>
 #include <stdexcept>
-#include <typeinfo>
 #include "TFEL/Math/General/IEEE754.hxx"
 
 namespace tfel::material::homogenization::elasticity {
@@ -201,25 +200,13 @@ namespace tfel::material::homogenization::elasticity {
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
   computeAxisymmetricalEshelbyTensor(const real& nu,
                                      const real& e,
-                                     const real precf,
-                                     const real precd,
-                                     const real precld) {
+                                     const tfel::math::base_type<real>  precision) {
     if ((nu > real(0.5)) || (nu < real(-1))) {
       tfel::reportContractViolation("nu>0.5 or nu<-1");
     }
     if (not(e > real(0))) {
       tfel::reportContractViolation("e<=0");
     }
-
-    const auto precision = [precf, precd, precld]() {
-      if constexpr (std::same_as<tfel::math::base_type<real>, long double>) {
-        return precld;
-      } else if constexpr (std::same_as<tfel::math::base_type<real>, double>) {
-        return precd;
-      } else {
-        return precf;
-      }
-    }();
 
     if (std::abs(e - 1) < precision) {
       return computeSphereEshelbyTensor<real>(nu);
@@ -278,9 +265,7 @@ namespace tfel::material::homogenization::elasticity {
           const types::real<StressType>& nu,
           const tfel::math::tvector<3u, types::real<StressType>>& n_a,
           const types::real<StressType>& e,
-          const types::real<StressType> precf,
-          const types::real<StressType> precd,
-          const types::real<StressType> precld) {
+          const tfel::math::base_type<StressType> precision) {
     using real = types::real<StressType>;
     if (not(young > StressType{0})) {
       tfel::reportContractViolation("E<=0");
@@ -311,7 +296,7 @@ namespace tfel::material::homogenization::elasticity {
     using namespace tfel::math;
     const auto n_3 = cross_product<real>(n_1, n_2);
     const auto S0 =
-        computeAxisymmetricalEshelbyTensor<real>(nu, e, precf, precd, precld);
+        computeAxisymmetricalEshelbyTensor<real>(nu, e, precision);
     const tfel::math::rotation_matrix<real> r = {
         n_1[0], n_1[1], n_1[2], n_2[0], n_2[1], n_2[2], n_3[0], n_3[1], n_3[2]};
     const auto S0_basis = change_basis(S0, r);
@@ -333,12 +318,10 @@ namespace tfel::material::homogenization::elasticity {
           const IsotropicModuli<StressType>& IM0,
           const tfel::math::tvector<3u, types::real<StressType>>& n_a,
           const types::real<StressType>& e,
-          const types::real<StressType> precf,
-          const types::real<StressType> precd,
-          const types::real<StressType> precld) {
+          const tfel::math::base_type<StressType> precision) {
     const auto Enu0 = IM0.ToYoungNu();
     return computeAxisymmetricalHillPolarisationTensor<StressType>(
-        std::get<0>(Enu0), std::get<1>(Enu0), n_a, e, precf, precd, precld);
+        std::get<0>(Enu0), std::get<1>(Enu0), n_a, e, precision);
   }  // end of function computeAxisymmetricalHillPolarisationTensor
 
   namespace internals {
@@ -349,7 +332,7 @@ namespace tfel::material::homogenization::elasticity {
      * Poisson's ratio of the matrix
      */
     template <typename LengthType>
-    TFEL_HOST_DEVICE std::array<int, 3> sortEllipsoidLengths(
+    TFEL_HOST_DEVICE std::array<std::size_t, 3> sortEllipsoidLengths(
         const LengthType& a, const LengthType& b, const LengthType& c) {
       if ((a > b) and (a > c)) {
         if (b > c)
@@ -378,9 +361,7 @@ namespace tfel::material::homogenization::elasticity {
           const types::length<StressType>& a,
           const types::length<StressType>& b,
           const types::length<StressType>& c,
-          const types::real<StressType> precf,
-          const types::real<StressType> precd,
-          const types::real<StressType> precld) {
+          const tfel::math::base_type<StressType> precision) {
     using real = types::real<StressType>;
     using LengthType = types::length<StressType>;
     if ((nu > real(0.5)) || (nu < real(-1))) {
@@ -391,15 +372,6 @@ namespace tfel::material::homogenization::elasticity {
       tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
     }
 
-    const auto precision = [precf, precd, precld]() {
-      if constexpr (std::same_as<tfel::math::base_type<real>, long double>) {
-        return precld;
-      } else if constexpr (std::same_as<tfel::math::base_type<real>, double>) {
-        return precd;
-      } else {
-        return precf;
-      }
-    }();
     if (std::abs((b - a) / c) < precision ||
         std::abs((a - c) / b) < precision ||
         std::abs((b - c) / a) < precision) {
@@ -473,9 +445,7 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::tvector<3u, types::real<StressType>>& n_b,
           const types::length<StressType>& b,
           const types::length<StressType>& c,
-          const types::real<StressType> precf,
-          const types::real<StressType> precd,
-          const types::real<StressType> precld) {
+          const tfel::math::base_type<StressType> precision) {
     using real = types::real<StressType>;
     using LengthType = types::length<StressType>;
     if (not(young > StressType{0})) {
@@ -499,7 +469,7 @@ namespace tfel::material::homogenization::elasticity {
     const std::array<LengthType, 3> abc_ = {a, b, c};
     const auto sig = internals::sortEllipsoidLengths<LengthType>(a, b, c);
     const auto S0 = computeEshelbyTensor<StressType>(
-        nu, abc_[sig[0]], abc_[sig[1]], abc_[sig[2]], precf, precd, precld);
+        nu, abc_[sig[0]], abc_[sig[1]], abc_[sig[2]], precision);
     const std::array<tfel::math::tvector<3u, real>, 3> nabc_ = {n_a_, n_b_,
                                                                 n_c_};
     const auto n_1 = nabc_[sig[0]];
@@ -531,13 +501,10 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::tvector<3u, types::real<StressType>>& n_b,
           const types::length<StressType>& b,
           const types::length<StressType>& c,
-          const types::real<StressType> precf,
-          const types::real<StressType> precd,
-          const types::real<StressType> precld) {
+          const tfel::math::base_type<StressType> precision) {
     const auto Enu0 = IM0.ToYoungNu();
     return computeHillPolarisationTensor<StressType>(
-        std::get<0>(Enu0), std::get<1>(Enu0), n_a, a, n_b, b, c, precf, precd,
-        precld);
+        std::get<0>(Enu0), std::get<1>(Enu0), n_a, a, n_b, b, c, precision);
   }  // end of function computeHillPolarisationTensor
 
 }  // end of namespace tfel::material::homogenization::elasticity

@@ -44,7 +44,7 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
     using stress = typename tfel::config::Types<1u, real, true>::stress;
     using length = typename tfel::config::Types<1u, real, true>::length;
 
-    //this->template test_particulate<real, stress, length>();
+    this->template test_particulate<real, stress, length>();
     this->template test_particulate<real, real, real>();
   
     return this->result;
@@ -119,7 +119,7 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
     micro1.addInclusionPhase(distrib2);
    
      
-  };
+  }
 
 };  // end of struct MicrostructureDescriptionTest
 
