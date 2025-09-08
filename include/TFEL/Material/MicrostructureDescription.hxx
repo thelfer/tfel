@@ -248,10 +248,11 @@ namespace tfel::material {
         const auto mui = std::get<1>(pairi);
         const auto KGi = KGModuli<StressType>(kappai, mui);
         if (not(isIsotropic<StressType>(C0))) {
-          std::cout << "warning: your matrix is not isotropic, and it will be "
-                       "made isotropic for computing the average localisator "
-                       "in the distribution"
-                    << std::endl;
+          //           std::cout << "warning: your matrix is not isotropic, and
+          //           it will be "
+          //                        "made isotropic for computing the average
+          //                        localisator " "in the distribution"
+          //                     << std::endl;
         }
         auto pair0 = computeKappaMu<StressType>(C0);
         const auto kappa0 = std::get<0>(pair0);
@@ -330,10 +331,11 @@ namespace tfel::material {
         const auto mui = std::get<1>(pairi);
         const auto KGi = KGModuli<StressType>(kappai, mui);
         if (not(isIsotropic<StressType>(C0))) {
-          std::cout << "warning: your matrix is not isotropic, and it will be "
-                       "made isotropic for computing the average localisator "
-                       "in the distribution"
-                    << std::endl;
+          //           std::cout << "warning: your matrix is not isotropic, and
+          //           it will be "
+          //                        "made isotropic for computing the average
+          //                        localisator " "in the distribution"
+          //                     << std::endl;
         }
         auto pair0 = computeKappaMu<StressType>(C0);
         const auto kappa0 = std::get<0>(pair0);
@@ -477,8 +479,9 @@ namespace tfel::material {
       int addInclusionPhase(
           InclusionDistribution<N, StressType> &inclusionPhase) {
         if (this->matrixPhase.fraction - inclusionPhase.fraction < real(0)) {
-          std::cout << "the volume fraction of inclusions is too high !"
-                    << std::endl;
+          //           std::cout << "the volume fraction of inclusions is too
+          //           high !"
+          //                     << std::endl;
           return 0;
         } else {
           (this->number_of_phases)++;
@@ -490,17 +493,19 @@ namespace tfel::material {
 
       int removeInclusionPhase(unsigned int i) {
         if ((this->number_of_phases) == 1) {
-          std::cout << "there are no more inclusions !" << std::endl;
+//          std::cout << "there are no more inclusions !" << std::endl;
           return 0;
         } else if ((this->number_of_phases) < i + 2) {
-          std::cout << "there are less phases than what you think !"
-                    << std::endl;
+          //           std::cout << "there are less phases than what you think
+          //           !"
+          //                     << std::endl;
           return 0;
         } else {
           if ((this->number_of_phases) == 2) {
-            std::cout << "you have removed the last inclusion phase !"
-                      << std::endl;
-          };
+            //             std::cout << "you have removed the last inclusion
+            //             phase !"
+            //                       << std::endl;
+          }
           (this->number_of_phases)--;
           (this->matrixPhase.fraction) -= *(this->inclusionPhases[i]).fraction;
           (this->inclusionPhases).erase((this->inclusionPhases).begin() + i);

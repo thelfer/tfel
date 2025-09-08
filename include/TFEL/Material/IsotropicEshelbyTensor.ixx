@@ -133,7 +133,6 @@ namespace tfel::material::homogenization::elasticity {
       n_1 = n_a_;
       n_2 = n_b_;
     }
-	std::cout<<"ici"<<std::endl;
     // r is the global basis expressed in the local sorted basis (n1,n2)
     const tfel::math::rotation_matrix<real> r = {
         n_1[0], n_1[1], real(0),
