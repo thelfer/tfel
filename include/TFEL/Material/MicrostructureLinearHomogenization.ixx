@@ -213,11 +213,12 @@ namespace tfel::material::homogenization::elasticity {
       error = tfel::material::relative_error<N, real, StressType>(Chom_, Chom);
       if ((not(isotropic_matrix)) ||
           tfel::math::ieee754::fpclassify(iter / 10 - iter / 10.) == FP_ZERO) {
-        std::cout
-            << "relative difference between previous Chom and actual Chom: "
-            << error << std::endl;
+        //         std::cout
+        //             << "relative difference between previous Chom and actual
+        //             Chom: "
+        //             << error << std::endl;
         real C11 = real(Chom(0, 0).getValue());
-        std::cout << "actual Chom_11: " << C11 << std::endl;
+        //         std::cout << "actual Chom_11: " << C11 << std::endl;
       }
       iter++;
     }
