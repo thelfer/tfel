@@ -35,11 +35,12 @@ namespace mfront {
       const FileDescription& fd,
       const std::string_view numeric_type,
       const bool areQuantitiesSupported) {
+    const auto use_qt = (areQuantitiesSupported && useQuantities(mpd));
     os << "using namespace std;\n"
        << "using tfel::math::invert_type;\n"
        << "using tfel::math::result_type;\n"
        << "using tfel::math::derivative_type;\n";
-    if (areQuantitiesSupported) {
+    if (use_qt) {
       os << "using PhysicalConstants [[maybe_unused]] = "
          << "tfel::PhysicalConstants<" << numeric_type << ", true>;\n";
     } else {
