@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 4.1.5 of the
 
 # Issues fixed
 
+## Issue 839: [mfront] PhysicalConstants is inconsistently defined in material properties: quantities are always used, even if not requested
+
+For more details, see <https://github.com/thelfer/tfel/issues/839>.
+
 ## Issue 813: [implicit-dsl] smflag may not be defined for generalized behaviour
 
 For more details, see <https://github.com/thelfer/tfel/issues/813>.
