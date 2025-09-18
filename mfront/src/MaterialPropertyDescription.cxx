@@ -2,7 +2,7 @@
  * \file  mfront/src/MaterialPropertyDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \brief 03 mars 2014
+ * \brief 03/03/2014
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -35,11 +35,12 @@ namespace mfront {
       const FileDescription& fd,
       const std::string_view numeric_type,
       const bool areQuantitiesSupported) {
+    const auto use_qt = (areQuantitiesSupported && useQuantities(mpd));
     os << "using namespace std;\n"
        << "using tfel::math::invert_type;\n"
        << "using tfel::math::result_type;\n"
        << "using tfel::math::derivative_type;\n";
-    if (areQuantitiesSupported) {
+    if (use_qt) {
       os << "using PhysicalConstants [[maybe_unused]] = "
          << "tfel::PhysicalConstants<" << numeric_type << ", true>;\n";
     } else {
