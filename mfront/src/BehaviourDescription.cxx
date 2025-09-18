@@ -1357,7 +1357,6 @@ namespace mfront {
     ThermodynamicForce sig("StressStensor", "\u03C3", "sig");
     sig.setGlossaryName("Stress");
     if (b) {
-      constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
       this->registerMemberName(uh, "F");
       this->registerMemberName(uh, "dF");
     }

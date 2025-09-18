@@ -1192,7 +1192,7 @@ namespace mfront {
       std::string_view n) const {
     auto warnings = std::vector<std::string>{};
     for (const auto h : this->mb.getDistinctModellingHypotheses()) {
-      auto report = [&warnings, h](const std::string& msg) {
+      auto report = [&warnings](const std::string& msg) {
         warnings.push_back(
             msg + ". This warning can be disabled by using the <safe> option.");
       };

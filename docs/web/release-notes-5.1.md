@@ -740,6 +740,10 @@ Python bindings are now generated using the
 
 # Issues fixed
 
+## Issue 741: Add support for `flang`
+￼
+For more details, see <https://github.com/thelfer/tfel/issues/741>
+
 ## Issue 822: [calculix-interface] add info about SDV variables in the generated example of input file
 
 The list of internal state variables are now shown in the comment of the
