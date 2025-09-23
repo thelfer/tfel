@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 4.0.6 of the
 
 # Issues fixed
 
+## Issue 840: [tfel-math] Fix io for views on `tmatrix` and `tvector`
+
+For more details, see <https://github.com/thelfer/tfel/issues/840>
+
 ## Issue 818: [tfel-math] correct determinant of a `st2tost2`
 
 For more details, see <https://github.com/thelfer/tfel/issues/818>
