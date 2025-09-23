@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATH_TMATRIXIO_HXX
 
 #include <ostream>
+#include "TFEL/Math/Array/View.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 
 namespace tfel::math {
@@ -24,6 +25,42 @@ namespace tfel::math {
 
   template <unsigned short N, unsigned short M, typename T>
   std::ostream& operator<<(std::ostream& os, const tmatrix<N, M, T>& m) {
+    unsigned short i, j;
+    os << "[";
+    for (i = 0; i < N; ++i) {
+      os << "[";
+      for (j = 0; j < M; ++j) {
+        os << m(i, j);
+        if (j != M - 1) {
+          os << ",";
+        }
+      }
+      os << "]";
+    }
+    os << "]";
+    return os;
+  }
+
+  template <unsigned short N, unsigned short M, typename T>
+  std::ostream& operator<<(std::ostream& os, const View<tmatrix<N, M, T>>& m) {
+    unsigned short i, j;
+    os << "[";
+    for (i = 0; i < N; ++i) {
+      os << "[";
+      for (j = 0; j < M; ++j) {
+        os << m(i, j);
+        if (j != M - 1) {
+          os << ",";
+        }
+      }
+      os << "]";
+    }
+    os << "]";
+    return os;
+  }
+
+  template <unsigned short N, unsigned short M, typename T>
+  std::ostream& operator<<(std::ostream& os, const View<const tmatrix<N, M, T>>& m) {
     unsigned short i, j;
     os << "[";
     for (i = 0; i < N; ++i) {
