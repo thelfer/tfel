@@ -3,9 +3,9 @@ import os
 if os.name == 'nt':
     versioned_tfelhome="TFELHOME_@TFEL_VERSION@".replace(".", "_").replace("-", "_")
     if versioned_tfelhome in os.environ:
-        tfelhome = os.environ[versioned_tfelhome]
+        tfelhome = os.environ[versioned_tfelhome] + '\\bin'
     elif "TFELHOME" in os.environ:
-        tfelhome = os.environ["TFELHOME"]
+        tfelhome = os.environ["TFELHOME"] + '\\bin'
     else:
         import pathlib
         # remove \python...\site_packages\tfel\__init__.py
