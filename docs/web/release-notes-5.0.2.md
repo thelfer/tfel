@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 5.0.2 of the
  
 # Issues fixed
 
+## Issue 843: [python bindings] fix call to `os.add_dll_directory` when `TFELHOME` is defined
+
+For more details, see <https://github.com/thelfer/tfel/issues/843>
+
 ## Issue 798: [tfel-math] fix declaration of the data function in the `View` class
 
 For more details, see <https://github.com/thelfer/tfel/issues/798>
