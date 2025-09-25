@@ -11,7 +11,7 @@ if os.name == 'nt':
         # remove bin\python...\site_packages\tfel\material\__init__.py
         tfelhome = pathlib.Path(*pathlib.Path(__file__).parts[0:-6])
         os.environ["TFELHOME"] = str(tfelhome)
-    os.add_dll_directory(tfelhome + '\\bin')
+    os.add_dll_directory(str(tfelhome) + '\\bin')
 
 from ._material import *
 
