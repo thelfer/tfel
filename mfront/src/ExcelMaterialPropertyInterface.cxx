@@ -180,8 +180,8 @@ namespace mfront {
       std::ofstream file("excel/" + libName + "-64bits.bas");
       throw_if(!file, "unable to open file 'src/" + libName + ".bas'");
       for (const auto& f : i.second) {
-        file << "Declare PtrSafe Function " << f.function << "_Implementation_ Lib \"" << libName
-             << ".dll\"  Alias " << f.function << " (";
+        file << "Declare PtrSafe Function " << f.function << "_mfront_impl_ Lib \"" << libName
+             << ".dll\"  Alias \"" << f.function << "\" (";
         for (auto p6 = f.variables.cbegin(); p6 != f.variables.cend();) {
           file << "ByVal " << *p6 << " As Double";
           if (++p6 != f.variables.end()) {
@@ -197,7 +197,7 @@ namespace mfront {
           }
         }
         file << ") As Double\n";
-        file << f.function << " = " << f.function << "_Implementation_(";
+        file << f.function << " = " << f.function << "_mfront_impl_(";
         for (auto p6 = f.variables.cbegin(); p6 != f.variables.cend();) {
           file << *p6;
           if (++p6 != f.variables.end()) {
