@@ -10,9 +10,9 @@ if os.name == 'nt':
     else:
         import pathlib
         # remove \python...\site_packages\tfel\__init__.py
-        tfelhome = pathlib.Path(*pathlib.Path(__file__).parts[0:-4])
+        tfelhome = pathlib.Path(*pathlib.Path(__file__).parts[0:-5])
         os.environ["TFELHOME"] = str(tfelhome)
-    os.add_dll_directory(tfelhome)
+    os.add_dll_directory(str(tfelhome) + '\\bin')
 
 import tfel.tests
 import tfel.math
