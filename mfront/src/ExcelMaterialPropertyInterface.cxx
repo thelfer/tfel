@@ -205,7 +205,7 @@ namespace mfront {
           }
         }
         file << ")\n";
-        file << "EndFunction\n";
+        file << "End Function\n";
       }
     }
 
