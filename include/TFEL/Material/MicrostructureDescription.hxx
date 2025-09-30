@@ -203,16 +203,16 @@ namespace tfel::material {
           constexpr auto K = tfel::math::st2tost2<3u,real>::K();
           const auto C_iso=3*kappa0*J+2*mu0*K;
           auto rel = relative_error<3u,StressType>(C0,C_iso);
-         if ((not(isIsotropic<StressType>(C0))) and (verbose)) {
-          std::cout << "warning: your matrix is not strictly isotropic, and it will be "
-                       "made isotropic for computing the average localisator "
-                       "in the sphere distribution"
-                    << std::endl;
-        std::cout<< "Relative difference between the exact C0 and its isotropized: "
-        << rel << std::endl;
-        std::cout<< "You can set isotropic_matrix parameter to false to use the anisotropic matrix"
-        << std::endl;
-        }
+       //  if ((not(isIsotropic<StressType>(C0))) and (verbose)) {
+       //   std::cout << "warning: your matrix is not strictly isotropic, and it will be "
+       //                "made isotropic for computing the average localisator "
+       //                "in the sphere distribution"
+       //             << std::endl;
+       // std::cout<< "Relative difference between the exact C0 and its isotropized: "
+       // << rel << std::endl;
+       // std::cout<< "You can set isotropic_matrix parameter to false to use the anisotropic matrix"
+       // << std::endl;
+       // }
           const auto KG0 = KGModuli<StressType>(kappa0, mu0);
           return computeSphereLocalisationTensor<StressType>(KG0, KGi);
         } else {
@@ -277,14 +277,14 @@ namespace tfel::material {
         constexpr auto K = tfel::math::st2tost2<3u,real>::K();
         const auto C_iso=3*kappa0*J+2*mu0*K;
         auto rel = relative_error<3u,StressType>(C0,C_iso);
-        if ((not(isIsotropic<StressType>(C0))) and (verbose)) {
-          std::cout << "warning: your matrix is not strictly isotropic, and it will be "
-                       "made isotropic for computing the average localisator "
-                       "in the isotropic distribution"
-                    << std::endl;
-        std::cout<< "Relative difference between the exact C0 and its isotropized: "
-        << rel << std::endl;
-        }
+       // if ((not(isIsotropic<StressType>(C0))) and (verbose)) {
+       //   std::cout << "warning: your matrix is not strictly isotropic, and it will be "
+       //                "made isotropic for computing the average localisator "
+       //                "in the isotropic distribution"
+       //             << std::endl;
+       // std::cout<< "Relative difference between the exact C0 and its isotropized: "
+       // << rel << std::endl;
+       // }
         const auto KG0 = KGModuli<StressType>(kappa0, mu0);
         auto semiL = (this->inclusion).semiLengths;
         return EllipsoidMeanLocalisator<3u, StressType>::Isotropic(KG0, KGi,
@@ -371,14 +371,14 @@ namespace tfel::material {
         constexpr auto K = tfel::math::st2tost2<3u,real>::K();
         const auto C_iso=3*kappa0*J+2*mu0*K;
         auto rel = relative_error<3u,StressType>(C0,C_iso);
-        if ((not(isIsotropic<StressType>(C0))) and (verbose)) {
-          std::cout << "warning: your matrix is not strictly isotropic, and it will be "
-                       "made isotropic for computing the average localisator "
-                       "in the transverse isotropic distribution"
-                    << std::endl;
-        std::cout<< "Relative difference between the exact C0 and its isotropized: "
-        << rel << std::endl;
-        }
+        //if ((not(isIsotropic<StressType>(C0))) and (verbose)) {
+        //  std::cout << "warning: your matrix is not strictly isotropic, and it will be "
+        //               "made isotropic for computing the average localisator "
+        //               "in the transverse isotropic distribution"
+        //            << std::endl;
+        //std::cout<< "Relative difference between the exact C0 and its isotropized: "
+        //<< rel << std::endl;
+        //}
         const auto KG0 = KGModuli<StressType>(kappa0, mu0);
         auto semiL = (this->inclusion).semiLengths;
         auto ind = this->index;
@@ -466,16 +466,16 @@ namespace tfel::material {
         constexpr auto K = tfel::math::st2tost2<3u,real>::K();
         const auto C_iso=3*kappa0*J+2*mu0*K;
         auto rel = relative_error<3u,StressType>(C0,C_iso);
-        if (not(isIsotropic<StressType>(C0)) and (verbose)) {
-          std::cout << "warning: your matrix is not strictly isotropic, and it will be "
-                       "made isotropic for computing the average localisator "
-                       "in the oriented distribution"
-                    << std::endl;
-        std::cout<< "Relative difference between the exact C0 and its isotropized: "
-        << rel << std::endl;
-        std::cout<< "You can set isotropic_matrix parameter to false to use the anisotropic matrix"
-        << std::endl;
-        }
+        //if (not(isIsotropic<StressType>(C0)) and (verbose)) {
+        //  std::cout << "warning: your matrix is not strictly isotropic, and it will be "
+        //               "made isotropic for computing the average localisator "
+        //               "in the oriented distribution"
+        //            << std::endl;
+        //std::cout<< "Relative difference between the exact C0 and its isotropized: "
+        //<< rel << std::endl;
+        //std::cout<< "You can set isotropic_matrix parameter to false to use the anisotropic matrix"
+        //<< std::endl;
+        //}
           const auto KG0 = KGModuli<StressType>(kappa0, mu0);
           return computeIsotropicLocalisationTensor<3u,StressType>(KG0, Ci, n_a_i, n_b_i, semiL);
         } else {
@@ -555,11 +555,11 @@ namespace tfel::material {
           //                     << std::endl;
           return 0;
         } else {
-          if ((this->number_of_phases) == 2) {
+          //if ((this->number_of_phases) == 2) {
             //             std::cout << "you have removed the last inclusion
             //             phase !"
             //                       << std::endl;
-          }
+          //}
           (this->number_of_phases)--;
           (this->matrixPhase.fraction) += (*(this->inclusionPhases[i])).fraction;
           (this->inclusionPhases).erase((this->inclusionPhases).begin() + i);

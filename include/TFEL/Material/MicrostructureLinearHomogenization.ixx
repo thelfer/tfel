@@ -220,13 +220,13 @@ namespace tfel::material::homogenization::elasticity {
           Chom(i, j) = Ch(i, j);
         }
       error = tfel::material::relative_error<N, StressType>(Chom_, Chom);
-      if (verbose) {
-        std::cout << "iteration " << iter << " "
-            << "relative Delta Chom: "
-            << error << std::endl;
-        auto C11 = Chom(0, 0)/StressType(1);
-        std::cout << "actual Chom_11: " << C11 << std::endl;
-      }
+      //if (verbose) {
+      //  std::cout << "iteration " << iter << " "
+      //      << "relative Delta Chom: "
+      //      << error << std::endl;
+      //  auto C11 = Chom(0, 0)/StressType(1);
+      //  std::cout << "actual Chom_11: " << C11 << std::endl;
+      //}
       iter++;
     }
     h_s.homogenized_stiffness = Chom;
