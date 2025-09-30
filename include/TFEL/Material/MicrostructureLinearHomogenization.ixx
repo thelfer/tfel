@@ -25,7 +25,7 @@ namespace tfel::material::homogenization::elasticity {
    * The struct HomogenizationScheme is a struct whose attributes are
    * various objects that are useful in homogenization
    * theory, as homogenized stiffness, mean strain localisation tensors,
-   * second-order moments...
+   * effective_polarisation...
    * \tparam unsigned short int: dimension
    * \tparam real: underlying type
    * \tparam LengthType: type of the lengths related to the inclusion
