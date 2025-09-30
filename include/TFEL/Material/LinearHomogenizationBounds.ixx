@@ -27,7 +27,7 @@ namespace tfel::material::homogenization::elasticity {
           const std::array<types::real<StressType>, N> &tab_f,
           const std::array<tfel::math::st2tost2<d, StressType>, N> &tab_C) {
     tfel::math::st2tost2<d, StressType> C_V = tab_f[0] * tab_C[0];
-    for (unsigned int i = 1; i < N; i++) {
+    for (std::size_t i = 1; i < N; i++) {
       C_V += tab_f[i] * tab_C[i];
     }
     return C_V;
@@ -43,7 +43,7 @@ namespace tfel::material::homogenization::elasticity {
           const std::array<tfel::math::st2tost2<d, StressType>, N> &tab_C) {
     tfel::math::st2tost2<d, types::compliance<StressType>> S_R =
         tab_f[0] * invert(tab_C[0]);
-    for (unsigned int i = 1; i < N; i++) {
+    for (std::size_t i = 1; i < N; i++) {
       S_R += tab_f[i] * invert(tab_C[i]);
     }
     return invert(S_R);
@@ -73,7 +73,7 @@ namespace tfel::material::homogenization::elasticity {
                                                                      &tab_mu) {
     using real = types::real<StressType>;
     std::array<StressType, N> tab_H;
-    for (unsigned int i = 0; i < N; i++) {
+    for (std::size_t i = 0; i < N; i++) {
       tab_H[i] =
           tab_mu[i] *
           (real(d) * tab_K[i] / 2 + (d + 1) * (d - 2) * tab_mu[i] / real(d)) /
@@ -97,7 +97,7 @@ namespace tfel::material::homogenization::elasticity {
     compliance Ne_U = compliance(0);
     compliance Ce_L = compliance(0);
     compliance Ne_L = compliance(0);
-    for (unsigned int i = 0; i < N; i++) {
+    for (std::size_t i = 0; i < N; i++) {
       Ce_L += tab_f[i] / (K_star_min + tab_K[i]);
       Ne_L += tab_f[i] / (mu_star_min + tab_mu[i]);
       Ce_U += tab_f[i] / (K_star_max + tab_K[i]);

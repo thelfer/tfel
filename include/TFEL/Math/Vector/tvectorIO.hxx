@@ -16,6 +16,7 @@
 
 #include <ostream>
 #include "TFEL/FSAlgorithm/copy.hxx"
+#include "TFEL/Math/Array/View.hxx"
 #include "TFEL/Math/tvector.hxx"
 
 namespace tfel::math {
@@ -25,6 +26,22 @@ namespace tfel::math {
 
   template <unsigned short N, typename T>
   std::ostream& operator<<(std::ostream& os, const tvector<N, T>& s) {
+    os << "( ";
+    tfel::fsalgo::copy<N>::exe(s.begin(), std::ostream_iterator<T>(os, " "));
+    os << ")";
+    return os;
+  }
+
+  template <unsigned short N, typename T>
+  std::ostream& operator<<(std::ostream& os, const View<tvector<N, T>>& s) {
+    os << "( ";
+    tfel::fsalgo::copy<N>::exe(s.begin(), std::ostream_iterator<T>(os, " "));
+    os << ")";
+    return os;
+  }
+
+  template <unsigned short N, typename T>
+  std::ostream& operator<<(std::ostream& os, const View<const tvector<N, T>>& s) {
     os << "( ";
     tfel::fsalgo::copy<N>::exe(s.begin(), std::ostream_iterator<T>(os, " "));
     os << ")";

@@ -8,10 +8,10 @@ if os.name == 'nt':
         tfelhome = os.environ["TFELHOME"]
     else:
         import pathlib
-        # remove \python...\site_packages\tfel\__init__.py
-        tfelhome = pathlib.Path(*pathlib.Path(__file__).parts[0:-5])
+        # remove bin\python...\site_packages\tfel\material\__init__.py
+        tfelhome = pathlib.Path(*pathlib.Path(__file__).parts[0:-6])
         os.environ["TFELHOME"] = str(tfelhome)
-    os.add_dll_directory(tfelhome)
+    os.add_dll_directory(str(tfelhome) + '\\bin')
 
 from ._material import *
 

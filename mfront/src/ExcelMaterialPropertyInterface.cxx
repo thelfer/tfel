@@ -156,6 +156,8 @@ namespace mfront {
       interfaces2[i.library].push_back(i);
       wrapper << '\n';
     }
+    wrapper.close();
+    //
     for (const auto& i : interfaces2) {
       const auto& libName = i.first;
       std::ofstream file("src/" + libName + ".bas");
@@ -172,7 +174,41 @@ namespace mfront {
         file << ") As Double\n";
       }
     }
-    wrapper.close();
+    tfel::system::systemCall::mkdir("excel");
+    for (const auto& i : interfaces2) {
+      const auto& libName = i.first;
+      std::ofstream file("excel/" + libName + "-64bits.bas");
+      throw_if(!file, "unable to open file 'src/" + libName + ".bas'");
+      for (const auto& f : i.second) {
+        file << "Declare PtrSafe Function " << f.function << "_mfront_impl_ Lib \"" << libName
+             << ".dll\"  Alias \"" << f.function << "\" (";
+        for (auto p6 = f.variables.cbegin(); p6 != f.variables.cend();) {
+          file << "ByVal " << *p6 << " As Double";
+          if (++p6 != f.variables.end()) {
+            file << ", ";
+          }
+        }
+        file << ") As Double\n\n";
+        file << "Function " << f.function << " (";
+        for (auto p6 = f.variables.cbegin(); p6 != f.variables.cend();) {
+          file << "ByVal " << *p6 << " As Double";
+          if (++p6 != f.variables.end()) {
+            file << ", ";
+          }
+        }
+        file << ") As Double\n";
+        file << f.function << " = " << f.function << "_mfront_impl_(";
+        for (auto p6 = f.variables.cbegin(); p6 != f.variables.cend();) {
+          file << *p6;
+          if (++p6 != f.variables.end()) {
+            file << ", ";
+          }
+        }
+        file << ")\n";
+        file << "End Function\n";
+      }
+    }
+
   }  // end of ExcelMaterialPropertyInterface::writeSrcFile()
 
 }  // end of namespace mfront
