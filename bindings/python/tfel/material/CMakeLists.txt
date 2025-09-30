@@ -18,7 +18,7 @@ tfel_material_python_module(homogenization
   HillTensors.cxx
   LocalisationTensors.cxx
   Microstructure.cxx
-  MicrostructureHomogenization.cxx)
+  MicrostructureLinearHomogenization.cxx)
 target_link_libraries(py_tfel_material_homogenization
   PRIVATE TFELMaterial TFELMath TFELException
   ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})

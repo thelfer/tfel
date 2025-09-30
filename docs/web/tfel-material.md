@@ -549,7 +549,9 @@ homogenization of general matrix-inclusion microstructures.
 
 The class `ParticulateMicrostructure` is available in 3d an 2d
 via a template parameter: `ParticulateMicrostructure<N,StressType>`
-with `N` the dimension. For the details, see the file 'MicrostructureDescription.hxx'.
+with `N` the dimension. However, the 2d microstructures are limited in the
+current version.
+For the details, see the file 'MicrostructureDescription.hxx'.
 
 A ParticulateMicrostructure consists on a matrix, in which are embedded
 several `InclusionDistribution`, which represent distributions

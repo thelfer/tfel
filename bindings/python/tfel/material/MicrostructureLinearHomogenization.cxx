@@ -36,18 +36,17 @@ template <unsigned short int N, tfel::math::ScalarConcept StressType>
       tfel::material::homogenization::elasticity::HomogenizationScheme<N,StressType> computeMoriTanakaScheme(
           tfel::material::homogenization::elasticity::ParticulateMicrostructure<N, StressType> &micro,
           const std::vector<tfel::math::stensor<N, StressType>> &polarisations,
-          bool isotropic_matrix){
-          //int max_iter_anisotropic_integration = 12) {
-          
-          //const auto pola=tfel::math::stensor<N, StressType>::zero();
-          //const auto polarisations={pola,pola,pola,pola,pola};
-          return tfel::material::homogenization::elasticity::computeMoriTanaka<N,StressType>(micro,polarisations,isotropic_matrix,12);}
+          bool isotropic_matrix = true,
+          bool verbose = true,
+          int max_iter_anisotropic_integration = 12
+          ){
+          return tfel::material::homogenization::elasticity::computeMoriTanaka<N,StressType>(micro,polarisations,isotropic_matrix,verbose,max_iter_anisotropic_integration);}
 
 
   
-void declareMicrostructureHomogenization(pybind11::module_&);
+void declareMicrostructureLinearHomogenization(pybind11::module_&);
 
-void declareMicrostructureHomogenization(pybind11::module_& m) {
+void declareMicrostructureLinearHomogenization(pybind11::module_& m) {
   declareHomogenizationScheme<3,double>(m, "HomogenizationScheme3D");
   m.def("computeMoriTanakaScheme3D",
         &computeMoriTanakaScheme<3,double>);

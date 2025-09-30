@@ -21,41 +21,37 @@ namespace tfel::material::homogenization::elasticity {
    * This function gives the Voigt stiffness
    * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the phases
-   * \tparam N: number of phases
    * \tparam d: dimension (2 or 3)
    * \return an object of type st2tost2<d,StressType>
-   * \param [in] tab_f: std::array<real,N> of volumic fractions of phases
-   * \param [in] tab_C: std::array<st2tost2<d,StressType>,N> of stiffness
+   * \param [in] tab_f: std::vector<real> of volumic fractions of phases
+   * \param [in] tab_C: std::vector<st2tost2<d,StressType>> of stiffness
    * tensors of phases
    */
   template <unsigned short int d,
-            unsigned int N,
             tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>()) TFEL_HOST_DEVICE
       const tfel::math::st2tost2<d, StressType> computeVoigtStiffness(
-          const std::array<types::real<StressType>, N>&,
-          const std::array<tfel::math::st2tost2<d, StressType>, N>&);
+          const std::vector<types::real<StressType>>&,
+          const std::vector<tfel::math::st2tost2<d, StressType>>&);
 
   /*!
    * This function gives the Reuss stiffness
    * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the phases
-   * \tparam N: number of phases
    * \tparam d: dimension (2 or 3)
    * \return an object of type st2tost2<d,StressType>
-   * \param [in] tab_f: std::array<real,N> of volumic fractions of phases
-   * \param [in] tab_C: std::array<st2tost2<d,StressType>,N> of stiffness
+   * \param [in] tab_f: std::vector<real> of volumic fractions of phases
+   * \param [in] tab_C: std::vector<st2tost2<d,StressType>> of stiffness
    * tensors of phases
    */
   template <unsigned short int d,
-            unsigned int N,
             tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>()) TFEL_HOST_DEVICE
       const tfel::math::st2tost2<d, StressType> computeReussStiffness(
-          const std::array<types::real<StressType>, N>&,
-          const std::array<tfel::math::st2tost2<d, StressType>, N>&);
+          const std::vector<types::real<StressType>>&,
+          const std::vector<tfel::math::st2tost2<d, StressType>>&);
 
   /*!
    * This function gives the Hashin-Shtrikman bounds for a d-dimensional
@@ -63,18 +59,16 @@ namespace tfel::material::homogenization::elasticity {
    * found in Torquato (2002).
    * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the phases
-   * \tparam N: number of phases
    * \tparam d: dimension (2 or 3)
    * \return an object of type std::pair<std::pair<StressType, StressType>,
    * std::pair<StressType, StressType>>. First element of the pair is the lower
    * bound and second element is the upper bound. Each bound is a pair with bulk
    * and shear moduli.
-   * \param [in] tab_f: std::array<real,N> of volumic fractions of phases
-   * \param [in] tab_K: std::array<StressType,N> of bulk moduli of phases
-   * \param [in] tab_mu: std::array<StressType,N> of shear moduli of phases
+   * \param [in] tab_f: std::vector<real> of volumic fractions of phases
+   * \param [in] tab_K: std::vector<StressType> of bulk moduli of phases
+   * \param [in] tab_mu: std::vector<StressType> of shear moduli of phases
    */
   template <unsigned short int d,
-            unsigned int N,
             tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
@@ -83,16 +77,13 @@ namespace tfel::material::homogenization::elasticity {
           std::pair<
               StressType,
               StressType>> computeIsotropicHashinShtrikmanBounds(const std::
-                                                                     array<
+                                                                     vector<
                                                                          types::real<
-                                                                             StressType>,
-                                                                         N>&,
-                                                                 const std::array<
-                                                                     StressType,
-                                                                     N>&,
-                                                                 const std::array<
-                                                                     StressType,
-                                                                     N>&);
+                                                                             StressType>>&,
+                                                                 const std::vector<
+                                                                     StressType>&,
+                                                                 const std::vector<
+                                                                     StressType>&);
 
 }  // end of namespace tfel::material::homogenization::elasticity
 
