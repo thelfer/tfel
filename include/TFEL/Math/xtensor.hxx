@@ -14,140 +14,132 @@
 #ifndef LIB_TFEL_MATH_XTENSOR_HXX
 #define LIB_TFEL_MATH_XTENSOR_HXX
 
-#include <cstddef>
-#include <initializer_list>
-#include <type_traits>
-#include "TFEL/Config/TFELConfig.hxx"
-#include "TFEL/TypeTraits/IsAssignableTo.hxx"
-#include "TFEL/FSAlgorithm/FSAlgorithm.hxx"
-#include "TFEL/Math/General/MathObjectTraits.hxx"
-#include "TFEL/Math/General/BasicOperations.hxx"
-#include "TFEL/Math/General/EmptyRunTimeProperties.hxx"
-#include "TFEL/Math/Array/GenericFixedSizeArray.hxx"
+#include <ranges>
+#include <iterator>
+#include <iostream>
 #include "TFEL/Math/Array/View.hxx"
-#include "TFEL/Math/Tensor/TensorConcept.hxx"
-#include "TFEL/Math/Tensor/TensorConceptOperations.hxx"
 #include "TFEL/Math/tvector.hxx"
 #include "TFEL/Math/tmatrix.hxx"
 #include "TFEL/Math/stensor.hxx"
-#include "TFEL/Math/Forward/tensor.hxx"
+#include "TFEL/Math/st2tost2.hxx"
 
 namespace tfel::math {
 
-
-    
   /*!
-   * \brief 
+   * \brief P-order tensor
    */
   template<std::size_t P,std::size_t N,typename real>
   struct xtensor {
     std::array<xtensor<P-1,N,real>,N> arr;
-    xtensor(std::array<<xtensor<P-1,N,real>,N>,N>& t) : arr(t) {}
-    const real& operator()(std::array<std::size_t,P>& ii) const {
-        return arri(ii(0))(std::ranges::views::drop(ii, 1));
-    }
-    real& operator()(std::array<std::size_t,P>& ii) {
-        return arri(ii(0))(std::ranges::views::drop(ii, 1));
-    }
-  }
+    xtensor() : arr(std::array<xtensor<P-1,N,real>,N>{}) {}
+    xtensor(const std::array<xtensor<P-1,N,real>,N>& t) : arr(t) {}
 
-  /*!
-   * \brief 
-   */
-  template<1,N,typename real>
-  struct xtensor {
-    std::array<real,N> arr;
-    xtensor(std::array<real,N>& t) : arr(t) {}
-    const real& operator()(std::size_t i) const {
-        return (this->arr)(i);
-    }
-    real& operator()(std::size_t i) {
-        return (this->arr)(i);
-    }
-  }
+    xtensor<P-1,N,real>& operator()(const std::size_t&);
+    template<typename... typeind>
+    auto& operator()(const std::size_t&,typeind...);
 
-  /*!
-   * \brief 
-   */
-  template<0,N,typename real>
-  struct xtensor {
-    real arr;
-    xtensor(real& t) : arr(t) {}
-    const real& operator() const {
-        return this->arr;
-    }
-    void operator()(real& t) {
-        this->arr=t;
-    }
-  }
+    static xtensor<P-1,N,real> createZero(const std::size_t&);
+    template<std::size_t... ind>
+    static std::array<xtensor<P-1,N,real>,N> createZeroArray(const std::index_sequence<ind...>&);
+    static xtensor<P,N,real> zero();
 
-  /*!
-   * \brief contraction of a xtensor on indices i, i+1
-   */
-  template<std::size_t P,std::size_t N,typename real>
-  xtensor<P-2,N,real> contract(xtensor<P,N,real>& T,i) {
-    xtensor<P-2,N,real> Tc;
-    if (i>0){
-        for (std::size_t j=0;j<N;j++){
-            Tc(j)=contract(T(j),i-1)
-        }
-    }
-    if ((i==0) and (P>2)){
-        for (std::size_t j=0;j<N;j++){
-            for (int k=0;k<N;k++){
-                Tc(j)+=T(k)(k)(j);
-            }
-        }
-    }
-    if (P==2){
-        r=real(0);
-        for (int k=0;k<N;k++){
-            r+=T(k)(k);
-        }
-        Tc(r);
-    }
-    return Tc;
-    }
+    template<std::size_t P2>
+    xtensor<P+P2,N,real> otimes(xtensor<P2,N,real>&);
+
+    xtensor<P-2,N,real> contract(const std::size_t&) requires (P>2);
+    real contract(const std::size_t&) requires (P==2);
+
+    template<std::size_t M>
+    auto contract_on(const std::array<std::size_t,M>&) requires (M>1);
+    template<std::size_t M>
+    auto contract_on(const std::array<std::size_t,M>&) requires (M==1);
+
+    template<std::size_t P2>
+    xtensor<P+P2-2,N,real> dot(xtensor<P2,N,real>&) requires (P2>0);
+
+    template<std::size_t P2,std::size_t M>
+    auto contract_with(xtensor<P2,N,real>&);
+
+    xtensor<P,N,real> drop() requires (P==2);
+    xtensor<P,N,real> drop() requires (P>2);
+
+    xtensor<P,N,real> transpose() requires (P==2);
+    xtensor<P,N,real> transpose() requires (P>2);
+
+    st2tost2<3,real> toStensor4() requires ((P==2) and (N==6));
+
+    ~xtensor(){};
+  };
+
 
    /*!
-   * \brief dyadic product of 2 xtensors
+   * \brief first-order tensor
    */
-  template<std::size_t P1,std::size_t P2,std::size_t N,typename real>
-  xtensor<P1+P2,N,real> otimes(xtensor<P1,N,real>& T1,xtensor<P2,N,real>& T2) {
-    std::size_t P=P1+P2;
-    xtensor<P,N,real> Tc;
-    if (P1>1){
-        for (std::size_t i=0;i<N;i++){
-            Tc(i)=otimes<P1-1,P2,N,real>(T1(i),T2);
-        }
-    }
-    if (P1==1){
-        for (std::size_t i=0;i<N;i++){
-            Tc(i)=T1(i)*T2;
-        }
-    }
-    return Tc;
-    }
+  template<std::size_t N,typename real>
+  struct xtensor<1,N,real> {
+    std::array<real,N> arr;
+    xtensor() : arr(std::array<real,N>{}) {}
+    xtensor(const std::array<real,N>& t) : arr(t) {}
+
+    real& operator()(const std::size_t&);
+
+    static real createZero(const std::size_t&);
+    template<std::size_t... ind>
+    static std::array<real,N> createZeroArray(const std::index_sequence<ind...>&);
+    static xtensor<1,N,real> zero();
+
+    template<std::size_t P2>
+    xtensor<1+P2,N,real> otimes(xtensor<P2,N,real>&);
+
+    template<std::size_t P2>
+    auto dot(xtensor<P2,N,real>&);
+
+    stensor<3,real> toStensor() requires (N==6);
+
+    ~xtensor(){};
+  };
 
 
-  /*!
-   * \brief M-contraction of 2 xtensor
+    /*!
+   * \brief product of a real and a xtensor<1>
    */
-  template<std::size_t P1,std::size_t P2,std::size_t M,std::size_t N,typename real>
-  xtensor<P1+P2-M,N,real> dot(xtensor<P1,N,real>& T1,xtensor<P2,N,real>& T2) {
-    xtensor<P1+P2-M,N,real> Tc;
-    xtensor<P1+P2,N,real> T0=otimes<P1,P2,N,real>(T1,T2);
-    std::size_t p=0;
-    while (p<M){
-        xtensor<P1+P2-2*p-1,N,real> T0=contract(T0,P1-1-p);
-        p++;
-    }
+  template<std::size_t N,typename real>
+  xtensor<1,N,real> operator*(real,xtensor<1,N,real>&);
 
-    }
+    /*!
+   * \brief product of a real and a xtensor<P>
+   */
+  template<std::size_t P,std::size_t N,typename real>
+  xtensor<P,N,real> operator*(real,xtensor<P,N,real>&);
+
+    /*!
+   * \brief sum of 2 xtensor<P>
+   */
+  template<std::size_t P,std::size_t N,typename real>
+  xtensor<P,N,real> operator+(xtensor<P,N,real>& T1,xtensor<P,N,real>& T2);
+
+
+    /*!
+   * \brief substraction of 2 xtensor<P>
+   */
+  template<std::size_t P,std::size_t N,typename real>
+  xtensor<P,N,real> operator-(xtensor<P,N,real>& T1,xtensor<P,N,real>& T2);
+
+    /*!
+   * \brief conversion of a st2tost2<3> to a xtensor<2,6>
+   */
+  template<typename real>
+  xtensor<2,6,real> toXtensor(const st2tost2<3,real>&);
+  
+   /*!
+   * \brief conversion of a stensor<3> to a xtensor<1,6>
+   */
+  template<typename real>
+  xtensor<1,6,real> toXtensor(const stensor<3,real>&);
 
 
   }// end of namespace tfel::math
 
-
+#include "TFEL/Math/xtensor.ixx"
 
 #endif /* LIB_TFEL_MATH_XTENSOR_HXX */
