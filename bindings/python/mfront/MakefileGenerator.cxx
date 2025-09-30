@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   11 juil. 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -102,7 +102,7 @@ void declareMakefileGenerator(pybind11::module_&);
 void declareMakefileGenerator(pybind11::module_& m) {
   using namespace mfront;
   pybind11::class_<MakefileGenerator>(m, "MakefileGenerator")
-    .def(pybind11::init<>())
+      .def(pybind11::init<>())
       .def("generate", &MakefileGenerator::generate0,
            "generate the `Makefile.mfront` file")
       .def("generate", &MakefileGenerator::generate1,

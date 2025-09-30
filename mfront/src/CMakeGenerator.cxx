@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   16/08/2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -151,11 +151,11 @@ namespace mfront {
       << "if(TFEL_INSTALL_PATH)\n"
       << "  set(TFELHOME \"${TFEL_INSTALL_PATH}\")\n"
       << "else(TFEL_INSTALL_PATH)\n"
-      << "  set(TFELHOME \"" + tfel::getInstallPath() + "\")\n"
+      << "  set(TFELHOME [==[" + tfel::getInstallPath() + "]==])\n"
       << "endif(TFEL_INSTALL_PATH)\n"
       << "\n"
       << "find_program(TFEL_CONFIG  " << tfel::getTFELConfigExecutableName()
-      << " \"${TFELHOME}/bin\")\n"
+      << " [==[${TFELHOME}/bin]==])\n"
       << "message(STATUS \"tfel-config         : ${TFEL_CONFIG}\")\n"
       << "\n";
     switch (o.olevel) {

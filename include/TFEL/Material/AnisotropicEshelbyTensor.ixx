@@ -5,9 +5,10 @@
  * \brief  This file defines the Eshelby tensor for an ellipsoidal inclusion
  * embedded in an anisotropic matrix. \copyright Copyright (C) 2006-2018
  * CEA/DEN, EDF R&D. All rights reserved. This project is publicly released
- * under either the GNU GPL Licence or the CECILL-A licence. A copy of thoses
- * licences are delivered with the sources of TFEL. CEA or EDF may also
- * distribute this project under specific licensing conditions.
+ * under either the GNU GPL Licence with linking exception or the CECILL-A
+ * licence. A copy of thoses licences are delivered with the sources of TFEL.
+ * CEA or EDF may also distribute this project under specific licensing
+ * conditions.
  */
 
 #ifndef LIB_TFEL_MATERIAL_ANISOTROPICESHELBYTENSOR_IXX
@@ -367,10 +368,9 @@ namespace tfel::material::homogenization::elasticity {
   static TFEL_HOST_DEVICE tfel::math::st2tost2<2u, types::real<StressType>> exe(const tfel::math::st2tost2<2u, StressType>& C_0_glob,
           const tfel::math::st2tost2<2u, StressType>& C_i_loc,
           const tfel::math::tvector<2u, types::real<StressType>>& n_a,
-          const tfel::math::tvector<2u, types::real<StressType>>& n_b,
           const std::array<types::length<StressType>,2u>& semiLengths,
           const std::size_t max_it) {
-      return computePlainStrainAnisotropicLocalisationTensor<StressType>(C_0_glob,C_i_loc,n_a,semiLengths[0],semiLengths[1],max_it);
+      return computePlaneStrainAnisotropicLocalisationTensor<StressType>(C_0_glob,C_i_loc,n_a,semiLengths[0],semiLengths[1],max_it);
     }
   };//end of AnisotropicLocalisationTensor<2u, StressType>
   

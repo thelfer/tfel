@@ -4,7 +4,7 @@
  * \brief
  * \author Thomas Helfer
  * \date 31/08/2010
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -25,7 +25,6 @@ void declarePiPlane(pybind11::module_&);
 void declareHosford(pybind11::module_&);
 void declareBarlat(pybind11::module_&);
 void declareIsotropicModuli(pybind11::module_&);
-
 
 #ifdef TFEL_SUFFIX_FOR_PYTHON_MODULES
 PYBIND11_MODULE(TFEL_MATERIAL_MODULE_NAME, m) {

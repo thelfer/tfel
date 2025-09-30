@@ -4,11 +4,11 @@
  *
  * \author Thomas Helfer
  * \date   05/02/2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -108,36 +108,36 @@ namespace tfel::utilities::internals {
 
    private:
     struct EndRecursion {
-      static return_type apply(const GenTypeBase<List>&,
-                               const GenTypeBase<List>&) {
+      [[noreturn]] static return_type apply(const GenTypeBase<List>&,
+					    const GenTypeBase<List>&) {
         throw(GenTypeCastError());
       }
-      static return_type apply(T&,
-                               const GenTypeBase<List>&,
-                               const GenTypeBase<List>&) {
+      [[noreturn]] static return_type apply(T&,
+					    const GenTypeBase<List>&,
+					    const GenTypeBase<List>&) {
         throw(GenTypeCastError());
       }
-      static return_type apply(GenTypeBase<List>&, GenTypeBase<List>&) {
+      [[noreturn]] static return_type apply(GenTypeBase<List>&, GenTypeBase<List>&) {
         throw(GenTypeCastError());
       }
-      static return_type apply(T&, GenTypeBase<List>&, GenTypeBase<List>&) {
+      [[noreturn]] static return_type apply(T&, GenTypeBase<List>&, GenTypeBase<List>&) {
         throw(GenTypeCastError());
       }
     };  // end of struct EndRecursion
 
     struct EndRecursionII {
-      static void apply(const GenTypeBase<List>&, const GenTypeBase<List>&) {
+      [[noreturn]] static void apply(const GenTypeBase<List>&, const GenTypeBase<List>&) {
         throw(GenTypeCastError());
       }
-      static void apply(T&,
-                        const GenTypeBase<List>&,
-                        const GenTypeBase<List>&) {
+      [[noreturn]] static void apply(T&,
+				      const GenTypeBase<List>&,
+				      const GenTypeBase<List>&) {
         throw(GenTypeCastError());
       }
-      static void apply(GenTypeBase<List>&, GenTypeBase<List>&) {
+      [[noreturn]] static void apply(GenTypeBase<List>&, GenTypeBase<List>&) {
         throw(GenTypeCastError());
       }
-      static void apply(T&, GenTypeBase<List>&, GenTypeBase<List>&) {
+      [[noreturn]] static void apply(T&, GenTypeBase<List>&, GenTypeBase<List>&) {
         throw(GenTypeCastError());
       }
     };  // end of struct EndRecursionII

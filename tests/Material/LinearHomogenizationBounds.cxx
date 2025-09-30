@@ -3,7 +3,7 @@
  * \brief
  * \author Antoine Martin
  * \date   23 January 2025
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -48,19 +48,20 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
 
     this->template testHS_3D<stress>();
     this->template testHS_2D<stress>();
+    this->template testHS_3D<real>();
+    this->template testHS_2D<real>();
 
     return this->result;
   }
 
  private:
   template <tfel::math::ScalarConcept stress>
-  requires(tfel::math::checkUnitCompatibility<
-         tfel::math::unit::Stress, stress>())
-  void testHS_3D() {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              stress>()) void testHS_3D() {
 #ifndef _LIBCPP_VERSION
     // we just compare a direct formula for two phases and the function for N=2
     // phases
-    using real =tfel::types::real<stress>;
+    using real = tfel::types::real<stress>;
     using namespace tfel::material::homogenization::elasticity;
     constexpr auto eps = 100 * tfel::math::constexpr_fct::sqrt(
                                    std::numeric_limits<real>::epsilon());
@@ -79,9 +80,8 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
     std::array<stress, 2> tab_mu;
     tab_mu[0] = young1 / 2 / (1 + nu1);
     tab_mu[1] = young2 / 2 / (1 + nu2);
-    const auto pair =
-        computeIsotropicHashinShtrikmanBounds<3u, 2, stress>(tab_f, tab_K,
-                                                                   tab_mu);
+    const auto pair = computeIsotropicHashinShtrikmanBounds<3u, 2, stress>(
+        tab_f, tab_K, tab_mu);
     const auto LB = std::get<0>(pair);
     const auto UB = std::get<1>(pair);
     const auto K_L = std::get<0>(LB);
@@ -124,13 +124,12 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
 
  private:
   template <tfel::math::ScalarConcept stress>
-  requires(tfel::math::checkUnitCompatibility<
-         tfel::math::unit::Stress, stress>())
-  void testHS_2D() {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              stress>()) void testHS_2D() {
 #ifndef _LIBCPP_VERSION
     // we just compare a direct formula for two phases and the function for N=2
     // phases
-    using real=tfel::types::real<stress>;
+    using real = tfel::types::real<stress>;
     using namespace tfel::material::homogenization::elasticity;
     constexpr auto eps = 100 * tfel::math::constexpr_fct::sqrt(
                                    std::numeric_limits<real>::epsilon());
@@ -149,9 +148,8 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
     std::array<stress, 2> tab_mu;
     tab_mu[0] = young1 / 2 / (1 + nu1);
     tab_mu[1] = young2 / 2 / (1 + nu2);
-    const auto pair =
-        computeIsotropicHashinShtrikmanBounds<2u, 2,stress>(tab_f, tab_K,
-                                                                   tab_mu);
+    const auto pair = computeIsotropicHashinShtrikmanBounds<2u, 2, stress>(
+        tab_f, tab_K, tab_mu);
     const auto LB = std::get<0>(pair);
     const auto UB = std::get<1>(pair);
     const auto K_L = std::get<0>(LB);

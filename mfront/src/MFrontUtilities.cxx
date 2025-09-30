@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   15 août 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -45,7 +45,7 @@ namespace mfront {
     return s;
   }  // end of makeLowerCase
 
-    void displayGlossaryEntryCompleteDescription(
+  void displayGlossaryEntryCompleteDescription(
       std::ostream& os, const tfel::glossary::GlossaryEntry& e) {
     const auto& k = e.getKey();
     const auto& n = e.getNames();
@@ -72,7 +72,7 @@ namespace mfront {
       }
     }
   }  // end of displayGlossaryEntryCompleteDescription
-  
+
   void insert_if(std::vector<std::string>& d, const std::string& v) {
     if (v.empty()) {
       return;

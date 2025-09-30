@@ -23,8 +23,8 @@ void test() {
                    tfel::math::qt<unit::Stress, base_type<stress>>>::value);
   static_assert(CheckUnitCompatibility<unit::Stress, stress>::value);
   static_assert(CheckUnitCompatibility<unit::Stress, const stress>::value);
-  static_assert(
-      CheckUnitCompatibility<unit::Stress, qt_ref<unit::Stress, double>>::value);
+  static_assert(CheckUnitCompatibility<unit::Stress,
+                                       qt_ref<unit::Stress, double>>::value);
   static_assert(
       CheckUnitCompatibility<unit::Stress,
                              const qt_ref<unit::Stress, double>>::value);

@@ -4,7 +4,7 @@
  * \date   24 October 2024
  * \brief  This file declares some homogenization schemes based on solution of
  * Eshelby problem.
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All
  * rights reserved. This project is publicly released under either the GNU GPL
  * Licence or the CECILL-A licence. A copy of thoses licences are delivered with
  * the sources of TFEL. CEA or EDF may also distribute this project under
@@ -15,7 +15,7 @@
 #define LIB_TFEL_MATERIAL_LINEARHOMOGENIZATIONSCHEMES_HXX
 
 #include "TFEL/Math/st2tost2.hxx"
-#include "TFEL/Material/IsotropicEshelbyTensor.hxx"
+#include "TFEL/Material/LocalisationTensor.hxx"
 #include "TFEL/Material/IsotropicModuli.hxx"
 
 namespace tfel::material::homogenization::elasticity {

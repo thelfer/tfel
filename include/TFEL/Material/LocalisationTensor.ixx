@@ -16,8 +16,8 @@
 #include <cmath>
 #include <numbers>
 #include <stdexcept>
-#include <typeinfo>
 #include "TFEL/Math/General/IEEE754.hxx"
+#include "TFEL/Material/LocalisationTensor.hxx"
 
 namespace tfel::material::homogenization::elasticity {
 
@@ -149,7 +149,7 @@ namespace tfel::material::homogenization::elasticity {
     if ((nu > real(0.5)) || (nu < real(-1))) {
       tfel::reportContractViolation("nu>0.5 or nu<-1");
     }
-    if (not(e > 0)) {
+    if (not(e > real(0))) {
       tfel::reportContractViolation("e<=0");
     }
     const auto P0 = computeAxisymmetricalHillPolarisationTensor<StressType>(
@@ -280,7 +280,6 @@ namespace tfel::material::homogenization::elasticity {
   static TFEL_HOST_DEVICE tfel::math::st2tost2<2u, types::real<StressType>> exe(const IsotropicModuli<StressType>& IM0,
           const tfel::math::st2tost2<2u, StressType>& C_i_loc,
           const tfel::math::tvector<2u, types::real<StressType>>& n_a,
-          const tfel::math::tvector<2u, types::real<StressType>>& n_b,
           const std::array<types::length<StressType>,2u>& semiLengths) {
       return computePlainStrainLocalisationTensor<StressType>(IM0,C_i_loc,n_a,semiLengths[0],semiLengths[1]);
     }

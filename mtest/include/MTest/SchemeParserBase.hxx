@@ -1,13 +1,14 @@
+
 /*!
  * \file   SchemeParserBase.hxx
  * \brief
  * \author Thomas Helfer
  * \date   21 déc. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -262,23 +263,23 @@ namespace mtest {
     //! \return the list of keywords
     std::vector<std::string> getKeyWordsList() const;
     //! \brief a simple alias
-    using CallBack = void (SchemeParserBase::*)(SchemeBase&, tokens_iterator&);
-    //! \brief a simple alias
     using ExternalFunctionManager = tfel::math::parser::ExternalFunctionManager;
     //! \brief external function imported through the `@Import` keyword
     std::shared_ptr<ExternalFunctionManager> externalFunctions;
-    //! \brief callbacks
-    std::map<std::string, CallBack> callbacks;
     //! \brief input file
     std::string file;
 
    private:
+    //! \brief a simple alias
+    using CallBack = void (SchemeParserBase::*)(SchemeBase&, tokens_iterator&);
     /*!
      * register a call back
      * \param[in] k : key word
      * \param[in] p : pointer to a member function
      */
     void registerCallBack(const std::string&, const CallBack&);
+    //! \brief callbacks
+    std::map<std::string, CallBack> callbacks;
   };  // end of struct SchemeParserBase
 
 }  // end of namespace mtest

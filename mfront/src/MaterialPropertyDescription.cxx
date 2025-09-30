@@ -2,8 +2,8 @@
  * \file  mfront/src/MaterialPropertyDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \brief 03 mars 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \brief 03/03/2014
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -35,11 +35,12 @@ namespace mfront {
       const FileDescription& fd,
       const std::string_view numeric_type,
       const bool areQuantitiesSupported) {
+    const auto use_qt = (areQuantitiesSupported && useQuantities(mpd));
     os << "using namespace std;\n"
        << "using tfel::math::invert_type;\n"
        << "using tfel::math::result_type;\n"
        << "using tfel::math::derivative_type;\n";
-    if (areQuantitiesSupported) {
+    if (use_qt) {
       os << "using PhysicalConstants [[maybe_unused]] = "
          << "tfel::PhysicalConstants<" << numeric_type << ", true>;\n";
     } else {
@@ -359,5 +360,5 @@ namespace mfront {
     }
     return library;
   }  // end of getMaterialLawLibraryNameBase
-  
+
 }  // end of namespace mfront

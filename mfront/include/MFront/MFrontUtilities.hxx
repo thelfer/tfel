@@ -3,11 +3,11 @@
  * \brief This header declares a few general functions
  * \author Thomas Helfer
  * \date   15/08/2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -21,12 +21,12 @@
 #include <iosfwd>
 #include "MFront/MFrontConfig.hxx"
 
-namespace tfel::glossary{
+namespace tfel::glossary {
 
   // forward declaration
   struct GlossaryEntry;
-  
-}
+
+}  // namespace tfel::glossary
 
 namespace mfront {
 
@@ -100,7 +100,7 @@ namespace mfront {
   MFRONT_VISIBILITY_EXPORT void write(std::ostream&,
                                       const std::vector<std::string>&,
                                       const std::string&);
-  
+
   MFRONT_VISIBILITY_EXPORT std::string makeUpperCase(std::string_view);
 
   MFRONT_VISIBILITY_EXPORT std::string makeLowerCase(std::string_view);
