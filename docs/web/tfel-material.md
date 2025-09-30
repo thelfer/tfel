@@ -407,11 +407,12 @@ moduli.
 The homogenization functions are part of the namespace `tfel::material::homogenization`.
 A specialization for elasticity is defined: `tfel::material::homogenization::elasticity`.
 
-## Eshelby tensors
+## Eshelby and Hill tensors in isotropic reference medium
 
 The header `IsotropicEshelbyTensor.hxx` introduces
-the function `computeEshelbyTensor` which computes the Eshelby tensor
+some functions for computation of the Eshelby tensors and Hill tensors
 of an ellipsoid.
+
 If we consider a constant stress-free strain \(\tenseur \varepsilon^\mathrm{T}\)
 filling an ellipsoidal volume embedded in an infinite homogeneous medium whose
 elasticity is \(\tenseurq{C}_0\), the strain tensor inside the ellipsoid is given by
@@ -438,22 +439,25 @@ and also `computeCircularCylinderEshelbyTensor` and `computeEllipticCylinderEshe
 for plane strain elasticity.
 
 The expressions can be found in [@torquato_2002]
-for the axisymmetrical ellipsoid and in [@eshelby_1957] for other cases.
+for the axisymmetrical ellipsoid (or spheroid) and in [@eshelby_1957] for the general ellipsoid
+(three different semi-axes).
 
 When two axes are very close, the formulas for three different axes are numerically instable,
 hence a parameter is introduced to switch to the formulas suited for the perfect
-axisymmetrical case. This parameter can be modified by the user, it is called precision.
+axisymmetrical case. This parameter can be modified by the user.
 In the same way, the formulas for the axisymmetrical case are instable when the aspect
 ratio is near one, so a parameter allows to switch to the formula for a sphere.
+
+## Eshelby and Hill tensors in anisotropic reference medium
 
 When \(\tenseurq C_0\) is anisotropic, the Eshelby tensor can be computed
 with `computeAnisotropicEshelbyTensor` in 3D and `computePlaneStrainAnisotropicEshelbyTensor`
 in 2D. There are also `computeAnisotropicHillTensor` and `computePlaneStrainAnisotropicHillTensor`.
 These functions are introduced by the header `AnisotropicEshelbyTensor.hxx`.
 
-## Strain localisation tensors
+## Strain localisation tensors in isotropic reference medium
 
-The header `IsotropicEshelbyTensor.hxx` also introduces
+The header `LocalisationTensor.hxx` also introduces
 three functions that compute the strain localisation tensor of an ellipsoid.
 If we consider an ellipsoid whose elasticity is \(\tenseurq C_i\), embedded
 in an infinite homogeneous medium whose elasticity is \(\tenseurq C_0\),
@@ -470,6 +474,9 @@ and `computeSphereLocalisationTensor`.
 The ellipsoid is parametrized by its semi-axis lengths \(a,b,c\) but also
 by its axis orientations.
 The functions then return the localisation tensors taking into account the orientations.
+
+## Strain localisation tensors in anisotropic reference medium
+
 There are also, when the medium is anisotropic, `computeAnisotropicLocalisationTensor` and `computePlaneStrainAnisotropicLocalisationTensor`. These functions are introduced by the header
 `AnisotropicEshelbyTensor.hxx`.
 
@@ -601,5 +608,22 @@ for details):
  - addInclusionPhase
  - removeInclusionPhase
  - get_number_of_phases, get_matrix_fraction, get_matrix_elasticity, get_inclusionPhase
+ 
+### Homogenization schemes
+
+The file `MicrostructureLinearHomogenization.ixx` introduces the class `HomogenizationScheme`
+which has three attributes:
+ 
+ - `homogenized_stiffness`
+ - `effective_polarisation`
+ - `mean_strain_localisation_tensors`
+ 
+In the same file are introduced some functions which takes a `ParticulateMicrostructure`
+as an argument and returns a `HomogenizationScheme` object. These functions are:
+
+ - `computeDilute`
+ - `computeMoriTanaka`
+ - `computeSelfConsistent`
+
 
 <!-- Local IspellDict: english -->
