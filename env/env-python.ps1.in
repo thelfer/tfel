@@ -1,0 +1,3 @@
+$env:TFELHOME=(get-item $PSScriptRoot).parent.parent.FullName
+$env:PATH=$env:TFELHOME+'\bin;'+$env:PATH
+$env:PYTHONPATH=$env:TFELHOME+'\@TFEL_PYTHON_SITE_PACKAGES_DIR@;'+$env:PYTHONPATH
