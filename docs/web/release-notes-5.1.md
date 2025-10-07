@@ -50,6 +50,42 @@ the equivalent plastic strain.
 
 # New features in the `TFEL` libraries
 
+## Scripts to define environment variables for `TFEL` to work properly
+
+Depending on the system and compilation options, some of following
+variables shall be set for `TFEL` to work properly: `TFELHOME`, `PATH`,
+`LD_LIBRARY_PATH` and `PYTHONPATH`.
+
+`TFEL` now installs automatically the following files in the installation
+directory (refered to `<install_prefix>` in the following):
+
+- `<install_prefix>/share/tfel/env/env.sh` for `UNIX` systems and the
+  `bash` shell. This file shall be used as follows:
+
+  ~~~~{.sh}
+  $ source <install_prefix>/share/tfel/env/env.sh
+  ~~~~
+- `<install_prefix>\share\tfel\env\env.ps1` for `PowerShell`
+  shell under `Windows`. This file shall be used as follows:
+
+  ~~~~{.sh}
+  $ .\<install_prefix>\share\tfel\env\env.ps1
+  ~~~~
+- `<install_prefix>\share\tfel\env\env.bat` for the historical `cmd`
+  shell under `Windows`. This file shall be used as follows:
+
+  ~~~~{.sh}
+  $ call <install_prefix>\share\tfel\env\env.bat
+  ~~~~
+
+> **Note**
+>
+> Those variables are not required if `TFEL` is installed
+> system-wide (for instance in `/usr/local`) and that the `TFEL`'s
+> binaries are not relocated (i.e. moved to a different directory than
+> the one specified during the compilation process as the installation
+> directory).
+
 ## Environment
 
 This version now supports a new environment variable to specify the
