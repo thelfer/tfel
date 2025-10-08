@@ -182,6 +182,18 @@ tensorial objects.
 constexpr auto s = stensor<2u, double>::zero();
 ~~~~
 
+## Sorting eigenvalues in ascending/descending order
+
+The `sortEigenValues` function takes a vector of three values and sort
+them in ascending or descending order. This function is useful has the
+eigenvalues returned by `stensor::computeEigenValues` can only partially
+sorted depending on the space dimension, except in `3D`:
+
+- in `1D`, the eigenvalues are never sorted as the rotation matrix
+  giving the eigen tensors must be the identity.
+- in `2D`, only the inplane eigenvalues can be sorted: the third
+  eigenvalue is always given by the out of plane direction.
+
 # New `TFEL/Material` features
 
 ## Homogenization
@@ -775,6 +787,14 @@ Python bindings are now generated using the
 - The `setDebugMode` function is now available.
 
 # Issues fixed
+
+## Issue 849: [TFEL/Math] add function to sort the eigen values in ascending order
+
+For more details, see <https://github.com/thelfer/tfel/issues/849>
+
+## Issue 846: Create environment files for sh, cmd and powershell 
+
+For more details, see <https://github.com/thelfer/tfel/issues/846>
 
 ## Issue 741: Add support for `flang`
 ￼

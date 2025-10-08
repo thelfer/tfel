@@ -1059,6 +1059,50 @@ namespace tfel::math {
     return dJ;
   }
 
+  template <ScalarConcept ValueType>
+  constexpr tvector<3u, ValueType> sortEigenValues(
+      const tvector<3u, ValueType>& vp,
+      stensor_common::EigenValuesOrdering o) noexcept {
+    if (o == stensor_common::DESCENDING) {
+      if ((vp[0] > vp[1]) && (vp[0] > vp[2])) {
+        if (vp[1] > vp[2]) {
+          return {vp[0], vp[1], vp[2]};
+        } else {
+          return {vp[0], vp[2], vp[1]};
+        }
+      } else if ((vp[1] > vp[0]) && (vp[1] > vp[2])) {
+        if (vp[0] > vp[2]) {
+          return {vp[1], vp[0], vp[2]};
+        } else {
+          return {vp[1], vp[2], vp[0]};
+        }
+      }
+      if (vp[0] > vp[1]) {
+        return {vp[2], vp[0], vp[1]};
+      }
+      return {vp[2], vp[1], vp[0]};
+    } else if (o == stensor_common::ASCENDING) {
+      if ((vp[0] < vp[1]) && (vp[0] < vp[2])) {
+        if (vp[1] < vp[2]) {
+          return {vp[0], vp[1], vp[2]};
+        } else {
+          return {vp[0], vp[2], vp[1]};
+        }
+      } else if ((vp[1] < vp[0]) && (vp[1] < vp[2])) {
+        if (vp[0] < vp[2]) {
+          return {vp[1], vp[0], vp[2]};
+        } else {
+          return {vp[1], vp[2], vp[0]};
+        }
+      }
+      if (vp[0] < vp[1]) {
+        return {vp[2], vp[0], vp[1]};
+      }
+      return {vp[2], vp[1], vp[0]};
+    }
+    return vp;
+  }  // end of sortEigenValues
+
 }  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_STENSOR_IXX */
