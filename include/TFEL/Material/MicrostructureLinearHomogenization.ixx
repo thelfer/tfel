@@ -77,7 +77,7 @@ namespace tfel::material::homogenization::elasticity {
     std::vector<tfel::math::st2tost2<N, real>> localisators = {
         tfel::math::st2tost2<N, real>::Id()};
     std::vector<tfel::math::st2tost2<N, compliance>> hill_tensors = {};
-    
+
     for (unsigned int i = 0; i < np - 1; i++) {
       auto phasei = micro.get_inclusionPhase(i);
       auto Ci = (*phasei).stiffness;
@@ -225,7 +225,7 @@ namespace tfel::material::homogenization::elasticity {
     h_s.homogenized_stiffness = Chom;
     // h_s.effective_polarisation = tau_eff; TO DO ///////////
     h_s.mean_strain_localisation_tensors = localisators;
-    
+
     return h_s;
   }
 

@@ -46,26 +46,26 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
 
     this->template test_particulate<real, stress, length>();
     this->template test_particulate<real, real, real>();
-  
+
     return this->result;
   }
 
  private:
   template <typename real, typename stress, typename length>
   void test_particulate() {
-  static constexpr auto eps = std::numeric_limits<real>::epsilon();
+    static constexpr auto eps = std::numeric_limits<real>::epsilon();
     using namespace tfel::material::homogenization::elasticity;
     length a = length(10);
     length b = length(1);
     length c = length(1);
     tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
     tfel::math::tvector<3u, real> n_b = {0., 1., 0.};
-    
+
     const auto young0 = stress{1e9};
     const auto nu0 = real(0.2);
     const auto youngi = stress{10e9};
     const auto nui = real(0.3);
-    
+
     tfel::math::st2tost2<3u, stress> C_0;
     static constexpr auto value =
         tfel::material::StiffnessTensorAlterationCharacteristic::UNALTERED;
@@ -74,51 +74,51 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
     tfel::math::st2tost2<3u, stress> C_i;
     tfel::material::computeIsotropicStiffnessTensorII<3u, value, stress, real>(
         C_i, youngi, nui);
-        
-    Ellipsoid<length> ellipsoid1(a,b,c);
-    Spheroid<length> spheroid1(a,b);
-    IsotropicDistribution<stress> distrib1(ellipsoid1,real(0.5),C_i);
-    IsotropicDistribution<stress> distrib2(spheroid1,real(0.5),C_i);
-    
+
+    Ellipsoid<length> ellipsoid1(a, b, c);
+    Spheroid<length> spheroid1(a, b);
+    IsotropicDistribution<stress> distrib1(ellipsoid1, real(0.5), C_i);
+    IsotropicDistribution<stress> distrib2(spheroid1, real(0.5), C_i);
+
     const auto A_iso1 = distrib1.computeMeanLocalisator(C_0);
     const auto A_iso2 = distrib2.computeMeanLocalisator(C_0);
-    
-    for (int i=0 ; i<6; i++)
-    for (int j=0 ; j<6; j++){
-    TFEL_TESTS_ASSERT(my_abs(A_iso1(i,j)- A_iso2(i,j)) < eps);
-    }
-    
+
+    for (int i = 0; i < 6; i++)
+      for (int j = 0; j < 6; j++) {
+        TFEL_TESTS_ASSERT(my_abs(A_iso1(i, j) - A_iso2(i, j)) < eps);
+      }
+
     unsigned short int index = 0;
-    TransverseIsotropicDistribution<stress> distrib3(spheroid1,real(0.5),C_i,n_b,index);                 
-    OrientedDistribution<stress> distrib4(ellipsoid1,real(0.5),C_i,n_b,n_a);
-    
+    TransverseIsotropicDistribution<stress> distrib3(spheroid1, real(0.5), C_i,
+                                                     n_b, index);
+    OrientedDistribution<stress> distrib4(ellipsoid1, real(0.5), C_i, n_b, n_a);
+
     const auto A_Or_1 = distrib3.computeMeanLocalisator(C_0, true);
     const auto A_Or_2 = distrib4.computeMeanLocalisator(C_0, true);
-    
-    for (int i=0 ; i<6; i++)
-    for (int j=0 ; j<6; j++){
-    TFEL_TESTS_ASSERT(my_abs(A_Or_1(i,j)- A_Or_2(i,j)) < eps);
-    }
-    
+
+    for (int i = 0; i < 6; i++)
+      for (int j = 0; j < 6; j++) {
+        TFEL_TESTS_ASSERT(my_abs(A_Or_1(i, j) - A_Or_2(i, j)) < eps);
+      }
+
     unsigned short int index2 = 1;
-    TransverseIsotropicDistribution<stress> distrib5(ellipsoid1,real(0.5),C_i,n_a,index2);                 
-    TransverseIsotropicDistribution<stress> distrib6(spheroid1,real(0.5),C_i,n_a,index2);
-    
+    TransverseIsotropicDistribution<stress> distrib5(ellipsoid1, real(0.5), C_i,
+                                                     n_a, index2);
+    TransverseIsotropicDistribution<stress> distrib6(spheroid1, real(0.5), C_i,
+                                                     n_a, index2);
+
     const auto A_TI_1 = distrib5.computeMeanLocalisator(C_0, true);
     const auto A_TI_2 = distrib6.computeMeanLocalisator(C_0, true);
-    
-    for (int i=0 ; i<6; i++)
-    for (int j=0 ; j<6; j++){
-    TFEL_TESTS_ASSERT(my_abs(A_TI_1(i,j)- A_TI_2(i,j)) < eps);
-    }
-    
-    
+
+    for (int i = 0; i < 6; i++)
+      for (int j = 0; j < 6; j++) {
+        TFEL_TESTS_ASSERT(my_abs(A_TI_1(i, j) - A_TI_2(i, j)) < eps);
+      }
+
     ParticulateMicrostructure<3u, stress> micro1(C_0);
     micro1.addInclusionPhase(distrib1);
     micro1.addInclusionPhase(distrib2);
     micro1.addInclusionPhase(distrib2);
-   
-     
   }
 
 };  // end of struct MicrostructureDescriptionTest

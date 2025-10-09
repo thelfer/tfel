@@ -112,7 +112,8 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     using real = NumericType;
     using lg = typename tfel::config::Types<1u, real, use_qt>::length;
     using stress = typename tfel::config::Types<1u, real, use_qt>::stress;
-    using compliance = typename tfel::config::Types<1u, real, use_qt>::compliance;
+    using compliance =
+        typename tfel::config::Types<1u, real, use_qt>::compliance;
     static constexpr auto eps =
         tfel::math::constexpr_fct::sqrt(std::numeric_limits<real>::epsilon());
     static constexpr auto ceps = compliance(eps);
@@ -124,15 +125,14 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     static constexpr auto value =
         StiffnessTensorAlterationCharacteristic::UNALTERED;
     computeIsotropicStiffnessTensorII<2u, value, stress, real>(C_0, young, nu);
-    const auto S2D1 =
-        computePlaneStrainAnisotropicEshelbyTensor<stress>(
-            C_0, n_a, lg{3}, lg{2}, 14);
+    const auto S2D1 = computePlaneStrainAnisotropicEshelbyTensor<stress>(
+        C_0, n_a, lg{3}, lg{2}, 14);
     const auto S2D2 = computePlaneStrainEshelbyTensor(nu, real{1.5});
-    
-    const auto P2D1 =
-        computePlaneStrainAnisotropicHillTensor<stress>(
-            C_0, n_a, lg{3}, lg{2}, 14);
-    const auto P2D2 = computePlaneStrainHillTensor(YoungNuModuli<stress>(young,nu),n_a,lg{3},lg{2});
+
+    const auto P2D1 = computePlaneStrainAnisotropicHillTensor<stress>(
+        C_0, n_a, lg{3}, lg{2}, 14);
+    const auto P2D2 = computePlaneStrainHillTensor(
+        YoungNuModuli<stress>(young, nu), n_a, lg{3}, lg{2});
 
     for (int i : {0, 1, 2, 3}) {
       for (int j : {0, 1, 2, 3}) {
@@ -142,9 +142,8 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       }
     }
 
-    const auto S2DCir1 =
-        computePlaneStrainAnisotropicEshelbyTensor<stress>(
-            C_0, n_a, lg{3}, lg{3}, 14);
+    const auto S2DCir1 = computePlaneStrainAnisotropicEshelbyTensor<stress>(
+        C_0, n_a, lg{3}, lg{3}, 14);
     const auto S2DCir2 = computeDiskPlaneStrainEshelbyTensor(nu);
 
     for (int i : {0, 1, 2, 3}) {

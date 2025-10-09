@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATH_IEEE754_IXX
 #define LIB_TFEL_MATH_IEEE754_IXX
 
+#include <bit>
 #include <cmath>
 #include <limits>
 #include <cfloat>
@@ -24,36 +25,27 @@
 namespace tfel::math::ieee754 {
 
   constexpr int fpclassify(const float x) noexcept {
-    union {
-      float f;
-      uint32_t i;
-    } u = {x};
-    int e = u.i >> 23 & 0xff;
-    if (!e) return u.i << 1 ? FP_SUBNORMAL : FP_ZERO;
-    if (e == 0xff) return u.i << 9 ? FP_NAN : FP_INFINITE;
+    const auto i = std::bit_cast<uint32_t>(x);
+    const int e = i >> 23 & 0xff;
+    if (!e) return i << 1 ? FP_SUBNORMAL : FP_ZERO;
+    if (e == 0xff) return i << 9 ? FP_NAN : FP_INFINITE;
     return FP_NORMAL;
   }
 
   constexpr int fpclassify(const double x) noexcept {
-    union {
-      double f;
-      uint64_t i;
-    } u = {x};
-    int e = u.i >> 52 & 0x7ff;
-    if (!e) return u.i << 1 ? FP_SUBNORMAL : FP_ZERO;
-    if (e == 0x7ff) return u.i << 12 ? FP_NAN : FP_INFINITE;
+    const auto i = std::bit_cast<uint64_t>(x);
+    const int e = i >> 52 & 0x7ff;
+    if (!e) return i << 1 ? FP_SUBNORMAL : FP_ZERO;
+    if (e == 0x7ff) return i << 12 ? FP_NAN : FP_INFINITE;
     return FP_NORMAL;
   }
 
 #if LDBL_MANT_DIG == 53 && LDBL_MAX_EXP == 1024
   constexpr int fpclassify(const long double x) noexcept {
-    union {
-      long double f;
-      uint64_t i;
-    } u = {x};
-    int e = u.i >> 52 & 0x7ff;
-    if (!e) return u.i << 1 ? FP_SUBNORMAL : FP_ZERO;
-    if (e == 0x7ff) return u.i << 12 ? FP_NAN : FP_INFINITE;
+    const auto i = std::bit_cast<uint64_t>(x);
+    const int e = i >> 52 & 0x7ff;
+    if (!e) return i << 1 ? FP_SUBNORMAL : FP_ZERO;
+    if (e == 0x7ff) return i << 12 ? FP_NAN : FP_INFINITE;
     return FP_NORMAL;
   }
 #elif LDBL_MANT_DIG == 64 && LDBL_MAX_EXP == 16384
@@ -65,10 +57,10 @@ namespace tfel::math::ieee754 {
 #endif
 #endif /* __BYTE_ORDER	*/
     auto le = [] {
-      union {
-        uint32_t i;
+      struct char_array {
         char c[4];
-      } bint = {0x01020304};
+      };
+      const auto bint = std::bit_cast<char_array, std::uint32_t>(0x01020304);
       return bint.c[0] != 1;
     }();
     if (!le) {
@@ -76,18 +68,16 @@ namespace tfel::math::ieee754 {
           "tfel::math::ieee754::fpclassify: "
           "unsupported long double representation");
     }
-    union {
-      long double f;
-      struct {
-        uint64_t m;
-        uint16_t se;
-      } i;
-    } u = {x};
-    int e = u.i.se & 0x7fff;
-    int msb = u.i.m >> 63;
-    if (!e && !msb) return u.i.m ? FP_SUBNORMAL : FP_ZERO;
+    struct internal_representation {
+      uint64_t m;
+      uint16_t se;
+    };
+    const auto i = std::bit_cast<internal_representation, long double>(x);
+    const int e = i.se & 0x7fff;
+    const int msb = i.m >> 63;
+    if (!e && !msb) return i.m ? FP_SUBNORMAL : FP_ZERO;
     if (!msb) return FP_NAN;
-    if (e == 0x7fff) return u.i.m << 1 ? FP_NAN : FP_INFINITE;
+    if (e == 0x7fff) return i.m << 1 ? FP_NAN : FP_INFINITE;
     return FP_NORMAL;
   }
 #elif LDBL_MANT_DIG == 113 && LDBL_MAX_EXP == 16384
@@ -100,48 +90,46 @@ namespace tfel::math::ieee754 {
 #endif
 #endif /* __BYTE_ORDER */
     auto le = [] {
-      union {
-        uint32_t i;
+      struct char_array {
         char c[4];
-      } bint = {0x01020304};
+      };
+      const auto bint = std::bit_cast<char_array, std::uint32_t>(0x01020304);
       return bint.c[0] != 1;
     }();
     if (le) {
-      union {
-        long double f;
-        struct {
-          uint64_t lo;
-          uint32_t mid;
-          uint16_t top;
-          uint16_t se;
-        } i;
-        struct {
-          uint64_t lo;
-          uint64_t hi;
-        } i2;
-      } u = {x};
-      int e = u.i.se & 0x7fff;
-      u.i.se = 0;
-      if (!e) return u.i2.lo | u.i2.hi ? FP_SUBNORMAL : FP_ZERO;
-      if (e == 0x7fff) return u.i2.lo | u.i2.hi ? FP_NAN : FP_INFINITE;
+      struct internal_representation {
+        uint64_t lo;
+        uint32_t mid;
+        uint16_t top;
+        uint16_t se;
+      };
+      struct internal_representation2 {
+        uint64_t lo;
+        uint64_t hi;
+      };
+      const auto i = std::bit_cast<internal_representation, long double>(x);
+      const int e = u.i.se & 0x7fff;
+      i.se = 0;
+      const auto i2 = std::bit_cast<internal_representation2>(i);
+      if (!e) return i2.lo | i2.hi ? FP_SUBNORMAL : FP_ZERO;
+      if (e == 0x7fff) return i2.lo | i2.hi ? FP_NAN : FP_INFINITE;
     } else if (!le) {
-      union {
-        long double f;
-        struct {
-          uint16_t se;
-          uint16_t top;
-          uint32_t mid;
-          uint64_t lo;
-        } i;
-        struct {
-          uint64_t hi;
-          uint64_t lo;
-        } i2;
-      } u = {x};
-      int e = u.i.se & 0x7fff;
-      u.i.se = 0;
-      if (!e) return u.i2.lo | u.i2.hi ? FP_SUBNORMAL : FP_ZERO;
-      if (e == 0x7fff) return u.i2.lo | u.i2.hi ? FP_NAN : FP_INFINITE;
+      struct internal_representation {
+        uint16_t se;
+        uint16_t top;
+        uint32_t mid;
+        uint64_t lo;
+      };
+      const auto i = std::bit_cast<internal_representation, long double>(x);
+      const int e = i.se & 0x7fff;
+      i.se = 0;
+      struct internal_representation2 {
+        uint64_t hi;
+        uint64_t lo;
+      };
+      const auto i2 = std::bit_cast<internal_representation2>(i);
+      if (!e) return i2.lo | i2.hi ? FP_SUBNORMAL : FP_ZERO;
+      if (e == 0x7fff) return i2.lo | i2.hi ? FP_NAN : FP_INFINITE;
     }
     return FP_NORMAL;
   }

@@ -38,18 +38,18 @@ struct ST2ToST2TestOperations final : public tfel::tests::TestCase {
       : tfel::tests::TestCase("TFEL/Math", "ST2ToST2TestOperations") {
   }  // end of ST2ToST2TestOperations
   tfel::tests::TestResult execute() override {
-     this->template test_1<double, true>();
-     this->template test_1<double, false>();
+    this->template test_1<double, true>();
+    this->template test_1<double, false>();
 
     return this->result;
-  
   }
-  
-  private:
+
+ private:
   template <typename NumericType, bool use_qt>
   void test_1() {
     using real = typename tfel::config::Types<1u, NumericType, use_qt>::real;
-    using stress = typename tfel::config::Types<1u, NumericType, use_qt>::stress;
+    using stress =
+        typename tfel::config::Types<1u, NumericType, use_qt>::stress;
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
     auto seps = stress(eps);
     using namespace tfel::math;
