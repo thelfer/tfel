@@ -1,4 +1,5 @@
 add_subdirectory(ExpressionTemplates)
+add_subdirectory(NumericalIntegration)
 add_subdirectory(RungeKutta)
 add_subdirectory(stensor)
 add_subdirectory(tensor)
