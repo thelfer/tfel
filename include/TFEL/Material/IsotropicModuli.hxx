@@ -23,7 +23,7 @@
 namespace tfel::material {
 
   /*!
-   * \brief This class is a virtual class which represents isotropic moduli.
+   * \brief This class is an abstract class which represents isotropic moduli.
    * 3 formats are possible: (Young,Nu), (Lambda,Mu) and (K,Mu).
    */
    
@@ -32,6 +32,7 @@ namespace tfel::material {
       tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                          StressType>()) struct IsotropicModuli {
     IsotropicModuli(){}
+    virtual IsotropicModuli<StressType>& operator=(const IsotropicModuli<StressType> &IM) = default;
     virtual ~IsotropicModuli() = default;
     virtual std::pair<StressType, types::real<StressType>> ToYoungNu()
         const& = 0;
@@ -142,7 +143,26 @@ namespace tfel::material {
       return {Kappa, Mu};
     }
   };  // end of LambdaMuModuli
-
+  
+  
+  /*!
+   * \brief This function takes a IsotropicModuli and
+   * returns the corresponding st2tost2
+   * \tparam StressType: type of the moduli
+   * \param IM : `IsotropicModuli`  \return a `st2tost2`
+   */
+  template <tfel::math::ScalarConcept StressType>
+  requires(
+      tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                         StressType>())
+  TFEL_HOST_DEVICE constexpr tfel::math::st2tost2<3u,StressType> computeIsotropicStiffnessTensor(const IsotropicModuli<StressType> &IM) {
+    const auto KG=IM.ToKG();
+    const auto kappa = std::get<0>(KG);
+    const auto mu = std::get<1>(KG);
+    constexpr auto J = tfel::math::st2tost2<3u, tfel::math::base_type<StressType>>::J();
+    constexpr auto K = tfel::math::st2tost2<3u, tfel::math::base_type<StressType>>::K();
+    return 3 * kappa * J + 2 * mu * K;
+  }  // end of computeIsotropicStiffnessTensor
   
   /*!
    * This function makes the projection of a `st2tost2`
@@ -163,6 +183,22 @@ namespace tfel::material {
     const T mui = tfel::math::quaddot(A, K) / (siz - 1) / 2;
     return {kappai, mui};
   }  // end of computeKappaMu
+  
+  /*!
+   * This function returns the isotropized moduli of a st2tost2
+   * It uses computeKappaMu
+   * The implementation goes for dimension 3 only.
+   * \tparam T: type of the `st2tost2`
+   * \param A : `st2tost2`
+   * \return a KGModuli
+   */
+  template <tfel::math::ScalarConcept StressType>
+  TFEL_HOST_DEVICE constexpr KGModuli<StressType> computeKGModuli(const tfel::math::st2tost2<3u, StressType> &A) {
+    const auto pair = computeKappaMu<StressType>(A);
+    const auto kappa = std::get<0>(pair);
+    const auto mu = std::get<1>(pair);
+    return KGModuli<StressType>(kappa,mu);
+  }  // end of computeKGModuli
 
   /*!
    * \brief This function computes the relative difference between a `st2tost2` C1,
@@ -189,7 +225,7 @@ namespace tfel::material {
    * \param Ai : `st2tost2` \return a boolean
    */
   template <tfel::math::ScalarConcept T>
-  TFEL_HOST_DEVICE constexpr bool isIsotropic(const tfel::math::st2tost2<3u, T> &Ai, const tfel::math::base_type<T> eps=std::numeric_limits<tfel::math::base_type<T>>::epsilon()) {
+  TFEL_HOST_DEVICE constexpr bool isIsotropic(const tfel::math::st2tost2<3u, T> &Ai, const tfel::math::base_type<T> eps) {
     const auto pair = computeKappaMu<T>(Ai);
     const auto kappai = std::get<0>(pair);
     const auto mui = std::get<1>(pair);
