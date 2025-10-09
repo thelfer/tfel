@@ -35,8 +35,8 @@ namespace tfel::material {
         tfel::math::checkUnitCompatibility<tfel::math::unit::Length,
                                            LengthType>()) struct Inclusion {
       std::array<LengthType, N> semiLengths;
-      Inclusion(std::array<LengthType, N> semiL) : semiLengths(semiL){}
-      virtual ~Inclusion(){}
+      Inclusion(std::array<LengthType, N> semiL) : semiLengths(semiL) {}
+      virtual ~Inclusion() {}
     };
 
     /*!
@@ -49,7 +49,7 @@ namespace tfel::material {
                                                 LengthType>()) struct Ellipsoid
         : public Inclusion<3u, LengthType> {
       Ellipsoid(LengthType a, LengthType b, LengthType c)
-          : Inclusion<3u, LengthType>(std::array<LengthType, 3u>({a, b, c})){}
+          : Inclusion<3u, LengthType>(std::array<LengthType, 3u>({a, b, c})) {}
 
       virtual ~Ellipsoid() override {}
     };
@@ -64,7 +64,7 @@ namespace tfel::material {
                                                 LengthType>()) struct Spheroid
         : public Inclusion<3u, LengthType> {
       Spheroid(LengthType a, LengthType b)
-          : Inclusion<3u, LengthType>(std::array<LengthType, 3u>({a, b, b})){}
+          : Inclusion<3u, LengthType>(std::array<LengthType, 3u>({a, b, b})) {}
 
       virtual ~Spheroid() override {}
     };
@@ -78,7 +78,7 @@ namespace tfel::material {
         : public Inclusion<3u, LengthType> {
       Sphere()
           : Inclusion<3u, LengthType>(std::array<LengthType, 3u>(
-                {LengthType(1), LengthType(1), LengthType(1)})){}
+                {LengthType(1), LengthType(1), LengthType(1)})) {}
 
       virtual ~Sphere() override {}
     };
@@ -93,7 +93,7 @@ namespace tfel::material {
         : public Inclusion<2u, LengthType> {
       Disk()
           : Inclusion<2u, LengthType>(
-                std::array<LengthType, 2u>({LengthType(1), LengthType(1)})){}
+                std::array<LengthType, 2u>({LengthType(1), LengthType(1)})) {}
 
       virtual ~Disk() override {}
     };
@@ -108,7 +108,7 @@ namespace tfel::material {
                                                 LengthType>()) struct Ellipse
         : public Inclusion<2u, LengthType> {
       Ellipse(LengthType a, LengthType b)
-          : Inclusion<2u, LengthType>(std::array<LengthType, 2u>({a, b})){}
+          : Inclusion<2u, LengthType>(std::array<LengthType, 2u>({a, b})) {}
 
       virtual ~Ellipse() override {}
     };
@@ -128,10 +128,9 @@ namespace tfel::material {
       real fraction;
       tfel::math::st2tost2<N, StressType> stiffness;
       Phase(real f, const tfel::math::st2tost2<N, StressType> &C)
-          : fraction(f), stiffness(C){}
-      virtual ~Phase(){}
+          : fraction(f), stiffness(C) {}
+      virtual ~Phase() {}
     };
-
 
     /////Definition of 'InclusionDistribution' objects
 
@@ -153,7 +152,7 @@ namespace tfel::material {
       InclusionDistribution(const Inclusion<N, LengthType> &inc,
                             real frac,
                             const tfel::math::st2tost2<N, StressType> &C)
-          : Phase<N, StressType>(frac, C), inclusion(inc){}
+          : Phase<N, StressType>(frac, C), inclusion(inc) {}
       virtual tfel::math::st2tost2<N, real> computeMeanLocalisator(
           const tfel::math::st2tost2<N, StressType> &C0,
           bool isotropic_matrix,
@@ -177,7 +176,7 @@ namespace tfel::material {
       SphereDistribution(const Sphere<LengthType> &sph,
                          real frac,
                          const tfel::math::st2tost2<3u, StressType> &Ci)
-          : InclusionDistribution<3u, StressType>(sph, frac, Ci){}
+          : InclusionDistribution<3u, StressType>(sph, frac, Ci) {}
 
       virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const tfel::math::st2tost2<3u, StressType> &C0,
@@ -211,7 +210,6 @@ namespace tfel::material {
       virtual ~SphereDistribution() override {}
     };
 
-
     /*!
      * This struct represents an isotropic distribution of
      * 3d-ellipsoids, 3d-spheroids, as a child of
@@ -221,18 +219,18 @@ namespace tfel::material {
     requires(tfel::math::checkUnitCompatibility<
              tfel::math::unit::Stress,
              StressType>()) struct IsotropicDistribution
-        : public InclusionDistribution<3u,StressType> {
+        : public InclusionDistribution<3u, StressType> {
       using real = tfel::types::real<StressType>;
       using LengthType = tfel::types::length<StressType>;
 
       IsotropicDistribution(const Ellipsoid<LengthType> &ell,
                             real frac,
                             const tfel::math::st2tost2<3u, StressType> &Ci)
-          : InclusionDistribution<3u, StressType>(ell, frac, Ci){}
+          : InclusionDistribution<3u, StressType>(ell, frac, Ci) {}
       IsotropicDistribution(const Spheroid<LengthType> &sphero,
                             real frac,
                             const tfel::math::st2tost2<3u, StressType> &Ci)
-          : InclusionDistribution<3u, StressType>(sphero, frac, Ci){}
+          : InclusionDistribution<3u, StressType>(sphero, frac, Ci) {}
 
       virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const tfel::math::st2tost2<3u, StressType> &C0,
@@ -261,7 +259,7 @@ namespace tfel::material {
         const auto KG0 = KGModuli<StressType>(kappa0, mu0);
         auto semiL = (this->inclusion).semiLengths;
         return EllipsoidMeanLocalisator<3u, StressType>::Isotropic(KG0, KGi,
-                                                                     semiL);
+                                                                   semiL);
       }
 
       virtual ~IsotropicDistribution() override {}
@@ -397,7 +395,6 @@ namespace tfel::material {
         }
       }
 
-
       OrientedDistribution(const Spheroid<LengthType> &sphero,
                            real frac,
                            tfel::math::st2tost2<3u, StressType> &C,
@@ -424,11 +421,11 @@ namespace tfel::material {
           const auto kappa0 = std::get<0>(pair0);
           const auto mu0 = std::get<1>(pair0);
           const auto KG0 = KGModuli<StressType>(kappa0, mu0);
-          return computeIsotropicLocalisationTensor<3u,StressType>(KG0, Ci, n_a_i, n_b_i, semiL);
+          return computeIsotropicLocalisationTensor<3u, StressType>(
+              KG0, Ci, n_a_i, n_b_i, semiL);
         } else {
-            return computeGeneralAnisotropicLocalisationTensor<3u,StressType>(
-                C0, Ci, n_a_i, n_b_i, semiL,
-                max_iter_anisotropic_integration);
+          return computeGeneralAnisotropicLocalisationTensor<3u, StressType>(
+              C0, Ci, n_a_i, n_b_i, semiL, max_iter_anisotropic_integration);
         }
       }
 
@@ -447,8 +444,8 @@ namespace tfel::material {
     requires(tfel::math::checkUnitCompatibility<
              tfel::math::unit::Stress,
              StressType>()) struct Microstructure {
-      Microstructure(){}
-      virtual ~Microstructure(){}
+      Microstructure() {}
+      virtual ~Microstructure() {}
     };
 
     /*!
@@ -473,7 +470,7 @@ namespace tfel::material {
             number_of_phases(1),
             inclusionPhases(
                 std::vector<InclusionDistribution<N, StressType> *>({})),
-            matrixPhase(Phase<N, StressType>(real(1), C0)){}
+            matrixPhase(Phase<N, StressType>(real(1), C0)) {}
 
       virtual ~ParticulateMicrostructure() override {}
 
@@ -494,7 +491,8 @@ namespace tfel::material {
 
       int removeInclusionPhase(unsigned int i) {
         if ((this->number_of_phases) == 1) {
-	  //          std::cout << "there are no more inclusions !" << std::endl;
+          //          std::cout << "there are no more inclusions !" <<
+          //          std::endl;
           return 0;
         } else if ((this->number_of_phases) < i + 2) {
           //           std::cout << "there are less phases than what you think

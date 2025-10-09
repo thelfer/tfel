@@ -41,7 +41,8 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T>
-  std::ostream& operator<<(std::ostream& os, const View<const tvector<N, T>>& s) {
+  std::ostream& operator<<(std::ostream& os,
+                           const View<const tvector<N, T>>& s) {
     os << "( ";
     tfel::fsalgo::copy<N>::exe(s.begin(), std::ostream_iterator<T>(os, " "));
     os << ")";

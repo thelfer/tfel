@@ -14,9 +14,9 @@
 #ifndef LIB_TFEL_MATH_COMPARE_HXX
 #define LIB_TFEL_MATH_COMPARE_HXX
 
-#include<cmath>
-#include<concepts>
-#include"TFEL/Math/qt.hxx"
+#include <cmath>
+#include <concepts>
+#include "TFEL/Math/qt.hxx"
 
 namespace tfel::math {
 
@@ -25,12 +25,12 @@ namespace tfel::math {
    */
   template <std::floating_point ScalarType>
   TFEL_HOST_DEVICE constexpr bool areAlmostEqual(const ScalarType& eps,
-						 const ScalarType& a,
-						 const ScalarType& b) {
+                                                 const ScalarType& a,
+                                                 const ScalarType& b) {
     return std::abs(a - b) < eps;
   }
 
-   /*
+  /*
    * \brief compare two quantities with a precision
    */
   template <std::floating_point ScalarType, UnitConcept UnitType>

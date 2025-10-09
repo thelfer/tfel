@@ -26,12 +26,12 @@ namespace tfel::material {
    * \brief This class is a virtual class which represents isotropic moduli.
    * 3 formats are possible: (Young,Nu), (Lambda,Mu) and (K,Mu).
    */
-   
+
   template <tfel::math::ScalarConcept StressType>
   requires(
       tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                          StressType>()) struct IsotropicModuli {
-    IsotropicModuli(){}
+    IsotropicModuli() {}
     virtual ~IsotropicModuli() = default;
     virtual std::pair<StressType, types::real<StressType>> ToYoungNu()
         const& = 0;
@@ -39,11 +39,11 @@ namespace tfel::material {
     virtual std::pair<StressType, StressType> ToKG() const& = 0;
   };
 
-   /*!
+  /*!
    * \brief This class is relative to the format (Young,Nu).
    * It can be converted to the other formats (Lambda,Mu) and (K,Mu).
    */
-   
+
   template <tfel::math::ScalarConcept StressType>
   requires(
       tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
@@ -52,7 +52,7 @@ namespace tfel::material {
     StressType young;
     types::real<StressType> nu;
     YoungNuModuli(const StressType& Young, const types::real<StressType>& Nu)
-        : IsotropicModuli<StressType>(), young(Young), nu(Nu){}
+        : IsotropicModuli<StressType>(), young(Young), nu(Nu) {}
 
     std::pair<StressType, types::real<StressType>> ToYoungNu() const& override {
       return {this->young, this->nu};
@@ -73,12 +73,11 @@ namespace tfel::material {
     }
   };  // end of YoungNuoduli
 
-
   /*!
    * \brief This class is relative to the format (K,Nu).
    * It can be converted to the other formats (Lambda,Mu) and (Young,Nu).
    */
-   
+
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>()) struct KGModuli
@@ -86,7 +85,7 @@ namespace tfel::material {
     StressType kappa;
     StressType mu;
     KGModuli(const StressType& Kappa, const StressType& Mu)
-        : IsotropicModuli<StressType>(), kappa(Kappa), mu(Mu){}
+        : IsotropicModuli<StressType>(), kappa(Kappa), mu(Mu) {}
 
     std::pair<StressType, types::real<StressType>> ToYoungNu() const& override {
       const auto Kappa = this->kappa;
@@ -108,11 +107,11 @@ namespace tfel::material {
     }
   };  // end of KGModuli
 
-   /*!
+  /*!
    * \brief This class is relative to the format (Lambda,Mu).
    * It can be converted to the other formats (Young,Nu) and (K,Mu).
    */
-   
+
   template <tfel::math::ScalarConcept StressType>
   requires(
       tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
@@ -121,7 +120,7 @@ namespace tfel::material {
     StressType lambda;
     StressType mu;
     LambdaMuModuli(const StressType& Lambda, const StressType& Mu)
-        : IsotropicModuli<StressType>(), lambda(Lambda), mu(Mu){}
+        : IsotropicModuli<StressType>(), lambda(Lambda), mu(Mu) {}
 
     std::pair<StressType, types::real<StressType>> ToYoungNu() const& override {
       const auto Lambda = this->lambda;
@@ -143,7 +142,6 @@ namespace tfel::material {
     }
   };  // end of LambdaMuModuli
 
-  
   /*!
    * This function makes the projection of a `st2tost2`
    * on the subset of isotropic fourth-order tensors.
@@ -155,7 +153,8 @@ namespace tfel::material {
    * \return a std::pair<T,T> (kappa,mu)
    */
   template <tfel::math::ScalarConcept T>
-  TFEL_HOST_DEVICE constexpr std::pair<T, T> computeKappaMu(const tfel::math::st2tost2<3u, T> &A) {
+  TFEL_HOST_DEVICE constexpr std::pair<T, T> computeKappaMu(
+      const tfel::math::st2tost2<3u, T>& A) {
     const auto siz = tfel::math::StensorDimeToSize<3u>::value;
     constexpr auto J = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::J();
     constexpr auto K = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::K();
@@ -165,16 +164,14 @@ namespace tfel::material {
   }  // end of computeKappaMu
 
   /*!
-   * \brief This function computes the relative difference between a `st2tost2` C1,
-   * relatively to a `st2tost2` C2.
-   * \tparam N: dimension
-   * \tparam T: type of the tensors
-   * \param C1,C2 st2tost2 objects
-   * \return a real
+   * \brief This function computes the relative difference between a `st2tost2`
+   * C1, relatively to a `st2tost2` C2. \tparam N: dimension \tparam T: type of
+   * the tensors \param C1,C2 st2tost2 objects \return a real
    */
   template <unsigned short int N, tfel::math::ScalarConcept T>
-  TFEL_HOST_DEVICE constexpr tfel::math::base_type<T> relative_error(const tfel::math::st2tost2<N, T> &C1,
-                      const tfel::math::st2tost2<N, T> &C2) {
+  TFEL_HOST_DEVICE constexpr tfel::math::base_type<T> relative_error(
+      const tfel::math::st2tost2<N, T>& C1,
+      const tfel::math::st2tost2<N, T>& C2) {
     const auto val = tfel::math::norm(C1 - C2) / tfel::math::norm(C2);
     return val;
   }  // end of relative_error
@@ -189,7 +186,10 @@ namespace tfel::material {
    * \param Ai : `st2tost2` \return a boolean
    */
   template <tfel::math::ScalarConcept T>
-  TFEL_HOST_DEVICE constexpr bool isIsotropic(const tfel::math::st2tost2<3u, T> &Ai, const tfel::math::base_type<T> eps=std::numeric_limits<tfel::math::base_type<T>>::epsilon()) {
+  TFEL_HOST_DEVICE constexpr bool isIsotropic(
+      const tfel::math::st2tost2<3u, T>& Ai,
+      const tfel::math::base_type<T> eps =
+          std::numeric_limits<tfel::math::base_type<T>>::epsilon()) {
     const auto pair = computeKappaMu<T>(Ai);
     const auto kappai = std::get<0>(pair);
     const auto mui = std::get<1>(pair);
