@@ -78,8 +78,7 @@ namespace tfel::math {
     requires(std::is_invocable_v<FunctionType, real>);
 
    private:
-
-    static constexpr auto eval_if_required(const auto&);
+    static constexpr auto eval_if_required(const auto &);
 
     template <ScalarConcept real, typename FunctionType>
     [[nodiscard]] constexpr auto integrate(

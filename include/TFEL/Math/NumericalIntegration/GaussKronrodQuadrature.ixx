@@ -18,14 +18,14 @@
 
 namespace tfel::math {
 
-  constexpr auto GaussKronrodQuadrature::eval_if_required(const auto& r){
+  constexpr auto GaussKronrodQuadrature::eval_if_required(const auto &r) {
     if constexpr (ExpressionConcept<std::decay_t<decltype(r)>>) {
       return eval(r);
     } else {
       return r;
     }
   }
-  
+
   template <ScalarConcept real, typename FunctionType>
   constexpr auto GaussKronrodQuadrature::operator()(
       const FunctionType &f,                                     //
@@ -34,11 +34,12 @@ namespace tfel::math {
       const NumericalParameters<real> params) const              //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
       -> std::optional<
-          tfel::math::result_type<real, std::invoke_result_t<FunctionType, real>,
+          tfel::math::result_type<real,
+                                  std::invoke_result_t<FunctionType, real>,
                                   OpMult>>  //
   requires(std::is_invocable_v<FunctionType, real>) {
     using result_type = std::optional<tfel::math::result_type<
-       real,        std::invoke_result_t<FunctionType, real>, OpMult>>;
+        real, std::invoke_result_t<FunctionType, real>, OpMult>>;
     constexpr auto zero = real{};
     auto change_sign = [](const result_type ores) noexcept -> result_type {
       if (!ores.has_value()) {

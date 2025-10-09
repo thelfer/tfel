@@ -62,7 +62,7 @@ struct GaussKronrodQuadratureTest final : public tfel::tests::TestCase {
     if (oi.has_value()) {
       TFEL_TESTS_ASSERT(std::abs(*oi - 0.8862269254528) < 1e-11);
     }
-  } // end of test2
+  }  // end of test2
   void test3() {
     const auto local_abs = [](const double e) { return e > 0 ? e : -e; };
     // left unbounded integral
@@ -88,7 +88,7 @@ struct GaussKronrodQuadratureTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(or4.has_value());
     TFEL_TESTS_STATIC_ASSERT(local_abs(*or4 - std::numbers::pi_v<double>) <
                              1e-12);
-  } // end of test3
+  }  // end of test3
   void test4() {
     constexpr auto a = double{};
     constexpr auto b = std::numbers::pi_v<double> / 4;
@@ -104,16 +104,16 @@ struct GaussKronrodQuadratureTest final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(std::abs(i[1] - std::sin(b)) < 1e-14);
       TFEL_TESTS_ASSERT(std::abs(std::get<1>(*or1)) < 1e-14);
     }
-  } // end of test4
+  }  // end of test4
   void test5() {
     constexpr auto a = double{};
     constexpr auto b = std::numbers::pi_v<double> / 4;
     const auto or1 = tfel::math::gauss_kronrod_integrate(
-							 [](const double x) noexcept -> tfel::math::tvector<2u, double> {
-							   return {std::sin(x), std::cos(x)};
-							 },
-							 a, b,
-							 {.absolute_tolerance = 1e-12, .maximum_number_of_refinements = 8});
+        [](const double x) noexcept -> tfel::math::tvector<2u, double> {
+          return {std::sin(x), std::cos(x)};
+        },
+        a, b,
+        {.absolute_tolerance = 1e-12, .maximum_number_of_refinements = 8});
     TFEL_TESTS_ASSERT(or1.has_value());
     if (or1.has_value()) {
       TFEL_TESTS_ASSERT(std::abs((*or1)[0] + std::cos(b) - 1) < 1e-14);
@@ -121,18 +121,19 @@ struct GaussKronrodQuadratureTest final : public tfel::tests::TestCase {
     }
   }  // end of test5
   //  void test6() {
-    // using time = tfel::config::ScalarTypes<double, true>::time;
-    // using strainrate = tfel::config::ScalarTypes<double, true>::strainrate;
-    // constexpr auto a = time{};
-    // constexpr auto b = time{3600};
-    // constexpr auto c = tfel::math::derivative_type<strainrate, time>{2.3e-5};
-    // const auto or1 = tfel::math::gauss_kronrod_integrate(
-    //  							 [c](const time t) noexcept { return c * t; }, a, b);
-    // TFEL_TESTS_ASSERT(or1.has_value());
-    // if (or1.has_value()) {
-    //   TFEL_TESTS_ASSERT(tfel::math::abs(*or1 - strain(c * b * b / 2)) <
-    // 			strain(1e-14));
-    // }
+  // using time = tfel::config::ScalarTypes<double, true>::time;
+  // using strainrate = tfel::config::ScalarTypes<double, true>::strainrate;
+  // constexpr auto a = time{};
+  // constexpr auto b = time{3600};
+  // constexpr auto c = tfel::math::derivative_type<strainrate, time>{2.3e-5};
+  // const auto or1 = tfel::math::gauss_kronrod_integrate(
+  //  							 [c](const time t) noexcept { return c * t; }, a,
+  //  b);
+  // TFEL_TESTS_ASSERT(or1.has_value());
+  // if (or1.has_value()) {
+  //   TFEL_TESTS_ASSERT(tfel::math::abs(*or1 - strain(c * b * b / 2)) <
+  // 			strain(1e-14));
+  // }
   //  }  // end of test6
 };
 
