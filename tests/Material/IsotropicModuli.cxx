@@ -61,8 +61,17 @@ struct IsotropicModuliTest final : public tfel::tests::TestCase {
     
     const auto KG = KGModuli<stress>(kappa,mu);
     const auto Enu=KG.ToYoungNu();
-    const auto E = std::get<0>(Enu);
-    const auto nu = std::get<1>(Enu);
+    const auto LG=KG.ToLambdaMu();
+    const auto Enu_bis=LG.ToYoungNu();
+   
+    const auto E = Enu.young;
+    const auto nu = Enu.nu;
+    const auto E_bis = Enu_bis.young;
+    const auto nu_bis = Enu_bis.nu;
+    
+    TFEL_TESTS_ASSERT( my_abs(E-E_bis)< stress(eps));
+    TFEL_TESTS_ASSERT( my_abs(nu-nu_bis)< eps);
+    
     const auto c11 = (1-nu)*E/(1+nu)/(1-2*nu);
     const auto c12 = nu*E/(1+nu)/(1-2*nu);
     const auto cmu = E/(1+nu);

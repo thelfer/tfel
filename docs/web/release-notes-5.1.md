@@ -148,67 +148,73 @@ constexpr auto s = stensor<2u, double>::zero();
 
 # New `TFEL/Material` features
 
-## Homogenization
-
-### Ellipsoidal inclusion embedded in anisotropic matrix
-
-When \(\tenseurq{C}_0\) is anisotropic, the Eshelby tensor can be
-computed with `computeAnisotropicEshelbyTensor` in 3D and
-`computePlaneStrainAnisotropicEshelbyTensor` in 2D. There are also
-`computeAnisotropicHillTensor`,
-`computePlaneStrainAnisotropicHillTensor`, and also
-`computeAnisotropicLocalisationTensor` and
-`computePlaneStrainAnisotropicLocalisationTensor`.
-
-### Homogenization bounds
-
-Different homogenization bounds are implemented.
-The available functions are `computeVoigtStiffness`, `computeReussStiffness`,
-`computeIsotropicHashinShtrikmanBounds`.
-
-### Homogenization schemes
-
-Ponte Castaneda and Willis scheme for distributions
-of ellipsoidal inclusions for biphasic media is now available.
-
-### Creation of microstructures and homogenization
-
-The creation of `Microstructure` objects is now possible
-and permits to consider very general microstructure,
-with an arbitrary number of phase types.
-
-Two types of microstructures are implemented:
- 
- - `ParticulateMicrostructure`
- - `Polycrystal`
- 
-Moreover, some functions permit to compute the classical
-homogenized schemes on these very general microstructures.
-It includes the homogenized stiffness and the strain localisators.
-
 ## Isotropic Moduli
 
 `IsotropicModuli` objects are defined
 for the elastic moduli of an isotropic material. It makes
-the manipulation of isotropic materials easier.
+the manipulation of isotropic materials easier. See `TFEL/Material/IsotropicModuli.hxx`.
+
+## Homogenization
+
+### Eshelby and Hill tensors in isotropic and anisotropic matrix
+
+The Eshelby and Hill tensors which where available in isotropic medium
+are now also available in anisotropic medium. See `TFEL/Material/IsotropicEshelbyTensor.hxx`
+for isotropic medium and `TFEL/Material/AnisotropicEshelbyTensor.hxx` for anisotropic
+medium.
+
+### Localisation tensors
+
+The localisation tensors which connect a remote uniform strain
+to the local strain in an ellipsoid are available both in isotropic
+and anisotropic medium. See `TFEL/Material/LocalisationTensor.hxx` for
+isotropic medium, and `TFEL/Material/AnisotropicEshelbyTensor.hxx` for
+anisotropic medium.
+
+### Homogenization bounds
+
+Different homogenization bounds are available for an arbitrary number of 
+phases, in dimension 2 or 3:
+ 
+ - Hashin-Shtrikman bounds (isotropic phases)
+ - Reuss/Voigt bounds
+
+### Homogenization for biphasic media
+
+Ponte Castaneda and Willis scheme for distributions
+of ellipsoidal inclusions for biphasic media is now available, see
+`TFEL/Material/LinearHomogenizationSchemes.hxx`
+
+### Homogenization for general microstructures
+
+The creation of `ParticulateMicrostructure` objects is now possible
+and permits to consider very general microstructure,
+with an arbitrary number of phases, each phase being a distribution
+of ellipsoidal inclusions with very general properties.
+The construction of such particulate microstructures is detailed
+in the [documentation](tfel-material.html) of TFEL/Material modules.
+ 
+Moreover, three classical schemes are implemented for these microstructures:
+
+ - Dilute scheme
+ - Mori-Tanaka scheme
+ - Self-consistent scheme
+
+Some polarizations can also be imposed on each phase, and the strain localisators
+can be provided.
 
 ## Python bindings
 
 Python bindings are now generated using the
 [`pybind11`](https://github.com/pybind/pybind11) library.
 
-The module `tfel.material` now contains the isotropic elastic moduli objects and
-their functions to convert these moduli.
+### Module `tfel.material.homogenization`
 
-Moreover, some new functionalities are available for homogenization,
+Some new functionalities are available for homogenization,
 via the `tfel.material.homogenization` module.
-It contains functions concerning:
+It contains a copy of the functionalities available in the namespace
+`tfel::material::homogenization::elasticity`.
 
-- Hill tensors
-- Localisation tensors
-- Homogenization schemes for biphasic materials (Dilute scheme, Mori-Tanaka scheme,
-Ponte Castaneda and Willis scheme)
-- Homogenization bounds for biphasic materials (Voigt/Reuss, Hashin-Shtrikman)
 
 # New features in `MFront`
 

@@ -128,6 +128,7 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
     micro1.addInclusionPhase(distrib1);
     micro1.addInclusionPhase(distrib2);
     micro1.addInclusionPhase(distrib2);
+    micro1.addInclusionPhase(distrib2);
    
      
   }
