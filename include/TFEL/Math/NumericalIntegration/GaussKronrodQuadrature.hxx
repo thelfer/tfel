@@ -74,7 +74,10 @@ namespace tfel::math {
             tfel::math::result_type<real,
                                     std::invoke_result_t<FunctionType, real>,
                                     OpMult>,
-            real>>  //
+            tfel::math::result_type<
+                real,
+                numeric_type<std::invoke_result_t<FunctionType, real>>,
+                OpMult>>>  //
     requires(std::is_invocable_v<FunctionType, real>);
 
    private:

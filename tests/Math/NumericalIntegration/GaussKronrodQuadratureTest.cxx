@@ -38,7 +38,7 @@ struct GaussKronrodQuadratureTest final : public tfel::tests::TestCase {
     this->test3();
     this->test4();
     this->test5();
-    //    this->test6();
+    this->test6();
     return this->result;
   }
 
@@ -66,7 +66,7 @@ struct GaussKronrodQuadratureTest final : public tfel::tests::TestCase {
   void test3() {
     const auto local_abs = [](const double e) { return e > 0 ? e : -e; };
     // left unbounded integral
-    auto f1 = [](const double t) { return 1 / (1 + t * t); };
+    constexpr auto f1 = [](const double t) { return 1 / (1 + t * t); };
     constexpr auto or2 = tfel::math::gauss_kronrod_integrate(
         f1, -std::numeric_limits<double>::max(), double{},
         {.absolute_tolerance = 1e-12, .maximum_number_of_refinements = 8});
@@ -120,21 +120,21 @@ struct GaussKronrodQuadratureTest final : public tfel::tests::TestCase {
       TFEL_TESTS_ASSERT(std::abs((*or1)[1] - std::sin(b)) < 1e-14);
     }
   }  // end of test5
-  //  void test6() {
-  // using time = tfel::config::ScalarTypes<double, true>::time;
-  // using strainrate = tfel::config::ScalarTypes<double, true>::strainrate;
-  // constexpr auto a = time{};
-  // constexpr auto b = time{3600};
-  // constexpr auto c = tfel::math::derivative_type<strainrate, time>{2.3e-5};
-  // const auto or1 = tfel::math::gauss_kronrod_integrate(
-  //  							 [c](const time t) noexcept { return c * t; }, a,
-  //  b);
-  // TFEL_TESTS_ASSERT(or1.has_value());
-  // if (or1.has_value()) {
-  //   TFEL_TESTS_ASSERT(tfel::math::abs(*or1 - strain(c * b * b / 2)) <
-  // 			strain(1e-14));
-  // }
-  //  }  // end of test6
+  void test6() {
+    using time = tfel::config::ScalarTypes<double, true>::time;
+    using strain = tfel::config::ScalarTypes<double, true>::strain;
+    using strainrate = tfel::config::ScalarTypes<double, true>::strainrate;
+    constexpr auto a = time{};
+    constexpr auto b = time{3600};
+    constexpr auto c = tfel::math::derivative_type<strainrate, time>{2.3e-5};
+    const auto or1 = tfel::math::gauss_kronrod_integrate(
+        [c](const time t) noexcept { return c * t; }, a, b);
+    TFEL_TESTS_ASSERT(or1.has_value());
+    if (or1.has_value()) {
+      const auto v = c * b * b / 2;
+      TFEL_TESTS_ASSERT(tfel::math::abs(std::get<0>(*or1) - v) < strain{1e-12});
+    }
+  }  // end of test6
 };
 
 TFEL_TESTS_GENERATE_PROXY(GaussKronrodQuadratureTest,
