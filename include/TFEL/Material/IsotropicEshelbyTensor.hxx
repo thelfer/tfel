@@ -150,7 +150,9 @@ namespace tfel::material::homogenization::elasticity {
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
   computeAxisymmetricalEshelbyTensor(const real&,
                                      const real&,
-                                     const tfel::math::base_type<real> = tfel::material::EshelbyTolerances::get<tfel::math::base_type<real> >());
+                                     const tfel::math::base_type<real> =
+                                         tfel::material::EshelbyTolerances::get<
+                                             tfel::math::base_type<real>>());
 
   /*!
    * This function builds the Hill tensor of an axisymmetrical ellipsoid
@@ -179,7 +181,8 @@ namespace tfel::material::homogenization::elasticity {
           const types::real<StressType>&,
           const tfel::math::tvector<3u, types::real<StressType>>&,
           const types::real<StressType>&,
-          const tfel::math::base_type<StressType> = tfel::material::EshelbyTolerances::get<tfel::math::base_type<StressType> >());
+          const tfel::math::base_type<StressType> = tfel::material::
+              EshelbyTolerances::get<tfel::math::base_type<StressType>>());
 
   /*!
    * This function is an overload of computeAxisymmetricalHillPolarisationTensor
@@ -196,7 +199,8 @@ namespace tfel::material::homogenization::elasticity {
           const IsotropicModuli<StressType>&,
           const tfel::math::tvector<3u, types::real<StressType>>&,
           const types::real<StressType>&,
-          const tfel::math::base_type<StressType> = tfel::material::EshelbyTolerances::get<tfel::math::base_type<StressType> >());
+          const tfel::math::base_type<StressType> = tfel::material::
+              EshelbyTolerances::get<tfel::math::base_type<StressType>>());
 
   /*!
    * This function builds the Eshelby tensor of a general ellipsoid embedded
@@ -208,7 +212,7 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] a: length of the first semi-axis
    * \param[in] b: length of the second semi-axis
    * \param[in] c: length of the third semi-axis
-   * \param[in] precf, precd, precld: default
+   * \param[in] precision: default
    * arguments which aim at preventing the numerical instability of the
    * formula when the ellipsoid is almost axisymmetrical. When the absolute
    * value of (a-b)/c (or (a-c)/b or (b-c)/a) is below precf (resp. precd,
@@ -226,7 +230,8 @@ namespace tfel::material::homogenization::elasticity {
           const types::length<StressType>&,
           const types::length<StressType>&,
           const types::length<StressType>&,
-          const tfel::math::base_type<StressType> = tfel::material::EshelbyTolerances::get<tfel::math::base_type<StressType> >());
+          const tfel::math::base_type<StressType> = tfel::material::
+              EshelbyTolerances::get<tfel::math::base_type<StressType>>());
 
   /*!
    * This function builds the Hill tensor of a general ellipsoid embedded
@@ -241,7 +246,7 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] n_b: direction of the principal axis whose length is \f$b\f$
    * \param [in] b: length of semi-axis relative to the direction \f$n_b\f$
    * \param [in] c: length of the remaining semi-axis
-   * \param[in] precf, precd, precld: default
+   * \param[in] precision: default
    * arguments which aim at preventing the numerical instability of the
    * formula when the ellipsoid is almost axisymmetrical. When the absolute
    * value of (a-b)/c (or (a-c)/b or (b-c)/a) is below precf (resp. precd,
@@ -261,7 +266,8 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::tvector<3u, types::real<StressType>>&,
           const types::length<StressType>&,
           const types::length<StressType>&,
-          const tfel::math::base_type<StressType> = tfel::material::EshelbyTolerances::get<tfel::math::base_type<StressType> >());
+          const tfel::math::base_type<StressType> = tfel::material::
+              EshelbyTolerances::get<tfel::math::base_type<StressType>>());
 
   /*!
    * This function is an overload of computeHillPolarisationTensor
@@ -269,6 +275,17 @@ namespace tfel::material::homogenization::elasticity {
    * \return an object of type st2tost2<3u,compliance<StressType>>
    * \tparam StressType: type of the elastic constants
    * \param[in] IM0: isotropic moduli of the matrix
+   * \param [in] n_a: direction of the principal axis whose length is \f$a\f$
+   * \param [in] a: length of semi-axis relative to the direction \f$n_a\f$
+   * \param [in] n_b: direction of the principal axis whose length is \f$b\f$
+   * \param [in] b: length of semi-axis relative to the direction \f$n_b\f$
+   * \param [in] c: length of the remaining semi-axis
+   * \param[in] precision: default
+   * arguments which aim at preventing the numerical instability of the
+   * formula when the ellipsoid is almost axisymmetrical. When the absolute
+   * value of (a-b)/c (or (a-c)/b or (b-c)/a) is below precf (resp. precd,
+   * precld) for real=float (resp. real= double, long double), the returned
+   * tensor is computeAxisymmetricalHillTensor.
    */
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
@@ -281,7 +298,8 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::tvector<3u, types::real<StressType>>&,
           const types::length<StressType>&,
           const types::length<StressType>&,
-          const tfel::math::base_type<StressType> = tfel::material::EshelbyTolerances::get<tfel::math::base_type<StressType> >());
+          const tfel::math::base_type<StressType> = tfel::material::
+              EshelbyTolerances::get<tfel::math::base_type<StressType>>());
 
 }  // end of namespace tfel::material::homogenization::elasticity
 

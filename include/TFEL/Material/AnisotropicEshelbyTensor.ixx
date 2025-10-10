@@ -147,7 +147,7 @@ namespace tfel::material::homogenization::elasticity {
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE static tfel::math::
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
       st2tost2<2u, types::compliance<StressType>> computePlaneStrainAnisotropicHillTensor(
           const tfel::math::st2tost2<2u, StressType>& C,
           const tfel::math::tvector<2u, types::real<StressType>>& n_a,
@@ -186,7 +186,7 @@ namespace tfel::material::homogenization::elasticity {
                 internals::integrate1D<real>(p_, zero, 2 * pi, max_it));
             tfel::math::setComponent<compliance>(P, i, j, k, l, int_p);
           }
-    return change_basis(P *StressType(1), r_loc_glob) /StressType(1);
+    return change_basis(P * StressType(1), r_loc_glob) / StressType(1);
   }
 
   template <tfel::math::ScalarConcept StressType>
@@ -228,7 +228,8 @@ namespace tfel::material::homogenization::elasticity {
                                               n_a_[1], n_b_[1], n_c_[1],
                                               n_a_[2], n_b_[2], n_c_[2]};
     const rotation_matrix<real> r_loc_glob = transpose(r_glob_loc);
-    const auto C_loc = change_basis(C/StressType(1) , r_glob_loc) *StressType(1);
+    const auto C_loc =
+        change_basis(C / StressType(1), r_glob_loc) * StressType(1);
 
     const real pi = std::numbers::pi_v<tfel::math::base_type<real>>;
     const real zero = real(0);
@@ -247,7 +248,7 @@ namespace tfel::material::homogenization::elasticity {
                 p_, zero, pi, zero, 2 * pi, max_it));
             tfel::math::setComponent<compliance>(P, i, j, k, l, int_p);
           }
-    return change_basis(P *StressType(1) , r_loc_glob)/StressType(1) ;
+    return change_basis(P * StressType(1), r_loc_glob) / StressType(1);
   }
 
   template <tfel::math::ScalarConcept StressType>
@@ -353,44 +354,46 @@ namespace tfel::material::homogenization::elasticity {
     const auto P_0_glob = computePlaneStrainAnisotropicHillTensor<StressType>(
         C_0_glob, n_a_, a, b, max_it);
     const auto C_i_glob =
-        change_basis(C_i_loc/StressType(1) , r_loc_glob)*StressType(1) ;
+        change_basis(C_i_loc / StressType(1), r_loc_glob) * StressType(1);
     const st2tost2<2u, StressType> C = C_i_glob - C_0_glob;
     const auto Pr = P_0_glob * C;
     const auto A = invert(st2tost2<2u, real>::Id() + Pr);
     return A;
-  }//end of computePlaneStrainAnisotropicLocalisationTensor
-  
+  }  // end of computePlaneStrainAnisotropicLocalisationTensor
+
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
-           StressType>())
-  struct AnisotropicLocalisationTensor<2u, StressType> {
-  static TFEL_HOST_DEVICE tfel::math::st2tost2<2u, types::real<StressType>> exe(const tfel::math::st2tost2<2u, StressType>& C_0_glob,
-          const tfel::math::st2tost2<2u, StressType>& C_i_loc,
-          const tfel::math::tvector<2u, types::real<StressType>>& n_a,
-          const std::array<types::length<StressType>,2u>& semiLengths,
-          const std::size_t max_it) {
-      return computePlaneStrainAnisotropicLocalisationTensor<StressType>(C_0_glob,C_i_loc,n_a,semiLengths[0],semiLengths[1],max_it);
+           StressType>()) struct AnisotropicLocalisationTensor<2u, StressType> {
+    static TFEL_HOST_DEVICE tfel::math::st2tost2<2u, types::real<StressType>>
+    exe(const tfel::math::st2tost2<2u, StressType>& C_0_glob,
+        const tfel::math::st2tost2<2u, StressType>& C_i_loc,
+        const tfel::math::tvector<2u, types::real<StressType>>& n_a,
+        const std::array<types::length<StressType>, 2u>& semiLengths,
+        const std::size_t max_it) {
+      return computePlaneStrainAnisotropicLocalisationTensor<StressType>(
+          C_0_glob, C_i_loc, n_a, semiLengths[0], semiLengths[1], max_it);
     }
-  };//end of AnisotropicLocalisationTensor<2u, StressType>
-  
+  };  // end of AnisotropicLocalisationTensor<2u, StressType>
+
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
-           StressType>())
-  struct AnisotropicLocalisationTensor<3u, StressType> {
-  static TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>> exe(const tfel::math::st2tost2<3u, StressType>& C_0_glob,
-          const tfel::math::st2tost2<3u, StressType>& C_i_loc,
-          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-          const tfel::math::tvector<3u, types::real<StressType>>& n_b,
-          const std::array<types::length<StressType>,3u>& semiLengths,
-          const std::size_t max_it) {
-      return computeAnisotropicLocalisationTensor<StressType>(C_0_glob,C_i_loc,n_a,semiLengths[0],n_b,semiLengths[1],semiLengths[2],max_it);
+           StressType>()) struct AnisotropicLocalisationTensor<3u, StressType> {
+    static TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>>
+    exe(const tfel::math::st2tost2<3u, StressType>& C_0_glob,
+        const tfel::math::st2tost2<3u, StressType>& C_i_loc,
+        const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+        const tfel::math::tvector<3u, types::real<StressType>>& n_b,
+        const std::array<types::length<StressType>, 3u>& semiLengths,
+        const std::size_t max_it) {
+      return computeAnisotropicLocalisationTensor<StressType>(
+          C_0_glob, C_i_loc, n_a, semiLengths[0], n_b, semiLengths[1],
+          semiLengths[2], max_it);
     }
-  };//end of AnisotropicLocalisationTensor<3u, StressType>
-  
-  
-  template <unsigned short int N,tfel::math::ScalarConcept StressType>
+  };  // end of AnisotropicLocalisationTensor<3u, StressType>
+
+  template <unsigned short int N, tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
            StressType>()) TFEL_HOST_DEVICE tfel::math::
@@ -399,10 +402,11 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::st2tost2<N, StressType>& C_i_loc,
           const tfel::math::tvector<N, types::real<StressType>>& n_a,
           const tfel::math::tvector<N, types::real<StressType>>& n_b,
-          const std::array<types::length<StressType>,N>& semiLengths,
-          const std::size_t max_it){      
-    return AnisotropicLocalisationTensor<N, StressType>::exe(C_0_glob,C_i_loc,n_a,n_b,semiLengths,max_it);
-   }
+          const std::array<types::length<StressType>, N>& semiLengths,
+          const std::size_t max_it) {
+    return AnisotropicLocalisationTensor<N, StressType>::exe(
+        C_0_glob, C_i_loc, n_a, n_b, semiLengths, max_it);
+  }
 
 }  // namespace tfel::material::homogenization::elasticity
 

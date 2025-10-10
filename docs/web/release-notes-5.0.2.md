@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 5.0.2 of the
  
 # Issues fixed
 
+## Issue 854: [tfel-math] tfel::math::fpclassify is not usable in constexpr's context
+
+For more details, see <https://github.com/thelfer/tfel/issues/854>
+
 ## Issue 843: [python bindings] fix call to `os.add_dll_directory` when `TFELHOME` is defined
 
 For more details, see <https://github.com/thelfer/tfel/issues/843>

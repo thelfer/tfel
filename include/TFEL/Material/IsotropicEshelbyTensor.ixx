@@ -47,9 +47,9 @@ namespace tfel::material::homogenization::elasticity {
           const IsotropicModuli<StressType>& IM_0) {
     using real = types::real<StressType>;
 
-    const auto pair0 = IM_0.ToYoungNu();
-    const auto young = std::get<0>(pair0);
-    const auto nu = std::get<1>(pair0);
+    const auto Enu0 = IM_0.ToYoungNu();
+    const auto young = Enu0.young;
+    const auto nu = Enu0.nu;
     const auto S0 = computeDiskPlaneStrainEshelbyTensor<real>(nu);
     tfel::math::st2tost2<2u, StressType> C_0;
     static constexpr auto value =
@@ -106,9 +106,9 @@ namespace tfel::material::homogenization::elasticity {
           const types::length<StressType>& b) {
     using real = types::real<StressType>;
 
-    const auto pair0 = IM_0.ToYoungNu();
-    const auto young = std::get<0>(pair0);
-    const auto nu = std::get<1>(pair0);
+    const auto Enu0 = IM_0.ToYoungNu();
+    const auto young = Enu0.young;
+    const auto nu = Enu0.nu;
 
     if (not(young > StressType{0})) {
       tfel::reportContractViolation("E<=0");
@@ -133,10 +133,9 @@ namespace tfel::material::homogenization::elasticity {
       n_2 = n_b_;
     }
     // r is the global basis expressed in the local sorted basis (n1,n2)
-    const tfel::math::rotation_matrix<real> r = {
-        n_1[0], n_1[1], real(0),
-        n_2[0], n_2[1], real(0),
-        real(0),real(0), real(1)};
+    const tfel::math::rotation_matrix<real> r = {n_1[0],  n_1[1],  real(0),
+                                                 n_2[0],  n_2[1],  real(0),
+                                                 real(0), real(0), real(1)};
 
     const auto S0_basis = change_basis(S0, r);
 
@@ -192,15 +191,16 @@ namespace tfel::material::homogenization::elasticity {
       st2tost2<3u, types::compliance<StressType>> computeSphereHillPolarisationTensor(
           const IsotropicModuli<StressType>& IM0) {
     const auto Enu0 = IM0.ToYoungNu();
-    return computeSphereHillPolarisationTensor<StressType>(std::get<0>(Enu0),
-                                                           std::get<1>(Enu0));
+    return computeSphereHillPolarisationTensor<StressType>(Enu0.young,
+                                                           Enu0.nu);
   }  // end of function computeSphereHillPolarisationTensor
 
   template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
-  computeAxisymmetricalEshelbyTensor(const real& nu,
-                                     const real& e,
-                                     const tfel::math::base_type<real>  precision) {
+  computeAxisymmetricalEshelbyTensor(
+      const real& nu,
+      const real& e,
+      const tfel::math::base_type<real> precision) {
     if ((nu > real(0.5)) || (nu < real(-1))) {
       tfel::reportContractViolation("nu>0.5 or nu<-1");
     }
@@ -246,9 +246,11 @@ namespace tfel::material::homogenization::elasticity {
         zero, zero, zero, zero, S55,  zero, zero, zero, zero, zero, zero, S55};
     if (e > 1) {
       using namespace tfel::math;
-      const tvector<3u, real> n_1 = {0., 0., 1.};
-      const tvector<3u, real> n_2 = {0., -1., 0.};
-      const tvector<3u, real> n_3 = {1., 0., 0.};
+      const auto z=real(0);
+      const auto un=real(1);
+      const tvector<3u, real> n_1 = {z, z, un};
+      const tvector<3u, real> n_2 = {z, -un, z};
+      const tvector<3u, real> n_3 = {un, z, z};
       const rotation_matrix<real> r = {n_1[0], n_1[1], n_1[2], n_2[0], n_2[1],
                                        n_2[2], n_3[0], n_3[1], n_3[2]};
       return change_basis(S, r);
@@ -277,9 +279,9 @@ namespace tfel::material::homogenization::elasticity {
     tfel::math::tvector<3u, real> n_;
     if ((tfel::math::ieee754::fpclassify(n_a[1]) != FP_ZERO) ||
         (tfel::math::ieee754::fpclassify(n_a[2]) != FP_ZERO)) {
-      n_ = {1., 0., 0.};
+      n_ = {real(1), real(0), real(0)};
     } else {
-      n_ = {0., 1., 0.};
+      n_ = {real(0), real(1), real(0)};
     }
     auto n_b_ = cross_product<real>(n_a_, n_);
     n_b_ = n_b_ / norm(n_b_);
@@ -295,8 +297,7 @@ namespace tfel::material::homogenization::elasticity {
     }
     using namespace tfel::math;
     const auto n_3 = cross_product<real>(n_1, n_2);
-    const auto S0 =
-        computeAxisymmetricalEshelbyTensor<real>(nu, e, precision);
+    const auto S0 = computeAxisymmetricalEshelbyTensor<real>(nu, e, precision);
     const tfel::math::rotation_matrix<real> r = {
         n_1[0], n_1[1], n_1[2], n_2[0], n_2[1], n_2[2], n_3[0], n_3[1], n_3[2]};
     const auto S0_basis = change_basis(S0, r);
@@ -321,7 +322,7 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::base_type<StressType> precision) {
     const auto Enu0 = IM0.ToYoungNu();
     return computeAxisymmetricalHillPolarisationTensor<StressType>(
-        std::get<0>(Enu0), std::get<1>(Enu0), n_a, e, precision);
+        Enu0.young, Enu0.nu, n_a, e, precision);
   }  // end of function computeAxisymmetricalHillPolarisationTensor
 
   namespace internals {
@@ -504,7 +505,7 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::base_type<StressType> precision) {
     const auto Enu0 = IM0.ToYoungNu();
     return computeHillPolarisationTensor<StressType>(
-        std::get<0>(Enu0), std::get<1>(Enu0), n_a, a, n_b, b, c, precision);
+        Enu0.young, Enu0.nu, n_a, a, n_b, b, c, precision);
   }  // end of function computeHillPolarisationTensor
 
 }  // end of namespace tfel::material::homogenization::elasticity

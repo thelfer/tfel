@@ -1,6 +1,6 @@
 /*!
  * \file   TFEL/Metaprogramming/Concepts.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   03/09/2025
  */
@@ -15,6 +15,6 @@ namespace tfel::meta {
   template <typename ValueType>
   concept ReferenceConcept = std::is_reference_v<ValueType>;
 
-} // end of namespace tfel::meta
+}  // end of namespace tfel::meta
 
 #endif /* LIB_TFEL_METAPROGRAMMING_CONCEPTS_HXX */

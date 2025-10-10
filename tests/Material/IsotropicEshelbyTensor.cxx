@@ -76,19 +76,19 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     using namespace tfel::material::homogenization::elasticity;
     {
       const auto S2d_1 = computeDiskPlaneStrainEshelbyTensor(nu);
-      const auto S2d_2 = computePlaneStrainEshelbyTensor(nu, static_cast<real>(1));
+      const auto S2d_2 =
+          computePlaneStrainEshelbyTensor(nu, static_cast<real>(1));
       for (int i : {0, 1, 2, 3}) {
         for (int j : {0, 1, 2, 3}) {
           TFEL_TESTS_ASSERT(std::abs(S2d_1(i, j) - S2d_2(i, j)) < eps);
           // std::cout << S1(i,j) << " " << S2(i,j) << " " << value << '\n';
         }
       }
-      
     }
 #endif /* _LIBCPP_VERSION */
   }
-  
-  private:
+
+ private:
   template <typename NumericType, bool use_qt>
   void test_Hill_2d() {
 #ifndef _LIBCPP_VERSION
@@ -97,57 +97,60 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
         typename tfel::config::Types<1u, NumericType, use_qt>::stress;
     using compliance =
         typename tfel::config::Types<1u, NumericType, use_qt>::compliance;
-    using length = typename tfel::config::Types<1u, NumericType, use_qt>::length;
+    using length =
+        typename tfel::config::Types<1u, NumericType, use_qt>::length;
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
     const auto nu = static_cast<real>(0.3);
-    const auto young =stress(1e9);
-    const auto ceps=compliance(eps);
+    const auto young = stress(1e9);
+    const auto ceps = compliance(eps);
     const tfel::math::tvector<2u, real> n_a = {0., 1.};
-    const auto a= length(1);
+    const auto a = length(1);
     using namespace tfel::material;
-    const auto Enu=YoungNuModuli<stress>(young,nu);
+    const auto Enu = YoungNuModuli<stress>(young, nu);
     using namespace tfel::material::homogenization::elasticity;
     {
       const auto P2d_1 = computeDiskPlaneStrainHillTensor<stress>(Enu);
-      const auto P2d_2 = computePlaneStrainHillTensor<stress>(Enu,n_a,a,a);
+      const auto P2d_2 = computePlaneStrainHillTensor<stress>(Enu, n_a, a, a);
       for (int i : {0, 1, 2, 3})
-      for (int j : {0, 1, 2, 3}) {
+        for (int j : {0, 1, 2, 3}) {
           TFEL_TESTS_ASSERT(my_abs(P2d_1(i, j) - P2d_2(i, j)) < ceps);
-      }
+        }
     }
 #endif /* _LIBCPP_VERSION */
   }
-  
-   private:
+
+ private:
   template <typename NumericType, bool use_qt>
   void test_localisation_2d() {
 #ifndef _LIBCPP_VERSION
     using real = NumericType;
     using stress =
         typename tfel::config::Types<1u, NumericType, use_qt>::stress;
-    using length = typename tfel::config::Types<1u, NumericType, use_qt>::length;
+    using length =
+        typename tfel::config::Types<1u, NumericType, use_qt>::length;
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
     const auto nu = static_cast<real>(0.3);
-    const auto young =stress(1e9);
+    const auto young = stress(1e9);
     const tfel::math::tvector<2u, real> n_a = {0., 1.};
-    const auto a= length(1);
+    const auto a = length(1);
     using namespace tfel::material;
-    const auto Enu=YoungNuModuli<stress>(young,nu);
+    const auto Enu = YoungNuModuli<stress>(young, nu);
     const auto nu_i = static_cast<real>(0.1);
-    const auto young_i =stress(5e9);
+    const auto young_i = stress(5e9);
     static constexpr auto value =
         StiffnessTensorAlterationCharacteristic::UNALTERED;
     tfel::math::st2tost2<2u, stress> C_i;
     computeIsotropicStiffnessTensorII<2u, value, stress, real>(C_i, young_i,
-                                                                   nu_i);
+                                                               nu_i);
     using namespace tfel::material::homogenization::elasticity;
     {
-      const auto A2d_1 = computeDiskPlaneStrainLocalisationTensor(Enu,C_i);
-      const auto A2d_2 = computePlaneStrainLocalisationTensor(Enu,C_i,n_a,a,a);
+      const auto A2d_1 = computeDiskPlaneStrainLocalisationTensor(Enu, C_i);
+      const auto A2d_2 =
+          computePlaneStrainLocalisationTensor(Enu, C_i, n_a, a, a);
       for (int i : {0, 1, 2, 3})
-      for (int j : {0, 1, 2, 3}) {
+        for (int j : {0, 1, 2, 3}) {
           TFEL_TESTS_ASSERT(std::abs(A2d_1(i, j) - A2d_2(i, j)) < eps);
-      }
+        }
     }
 #endif /* _LIBCPP_VERSION */
   }
@@ -167,7 +170,8 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     // also equal to EshelbyTensor(2,2,2)
     {
       const auto SSphere_1 = computeSphereEshelbyTensor(nu);
-      const auto SSphere_2 = computeAxisymmetricalEshelbyTensor(nu, static_cast<real>(1));
+      const auto SSphere_2 =
+          computeAxisymmetricalEshelbyTensor(nu, static_cast<real>(1));
       const auto SSphere_3 =
           computeEshelbyTensor<stress>(nu, lg{2}, lg{2}, lg{2});
       for (int i : {0, 1, 2, 3, 4, 5}) {
@@ -182,7 +186,8 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     // AxisymmetricalEshelbyTensor with e=10 is equal to EshelbyTensor(30,3,3)
     // or EshelbyTensor(3,3,30)
     {
-      const auto SAxis_1 = computeAxisymmetricalEshelbyTensor(nu, static_cast<real>(10));
+      const auto SAxis_1 =
+          computeAxisymmetricalEshelbyTensor(nu, static_cast<real>(10));
       const auto SAxis_2 =
           computeEshelbyTensor<stress>(nu, lg{30}, lg{3}, lg{3});
       const auto SAxis_3 =
@@ -213,13 +218,16 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     // manage)
     {
       const auto SSphere_lim_1 = computeSphereEshelbyTensor(nu);
-      tfel::math::st2tost2<3u, real> SSphere_lim_2;           
+      tfel::math::st2tost2<3u, real> SSphere_lim_2;
       if (std::same_as<real, float>) {
-        SSphere_lim_2 = computeAxisymmetricalEshelbyTensor(nu, static_cast<real>(1.001));
+        SSphere_lim_2 =
+            computeAxisymmetricalEshelbyTensor(nu, static_cast<real>(1.001));
       } else if (std::same_as<real, double>) {
-        SSphere_lim_2 = computeAxisymmetricalEshelbyTensor(nu, static_cast<real>(1.000001));
+        SSphere_lim_2 =
+            computeAxisymmetricalEshelbyTensor(nu, static_cast<real>(1.000001));
       } else if (std::same_as<real, long double>) {
-        SSphere_lim_2 = computeAxisymmetricalEshelbyTensor(nu, static_cast<real>(1.0000001));
+        SSphere_lim_2 = computeAxisymmetricalEshelbyTensor(
+            nu, static_cast<real>(1.0000001));
       }
       for (int i : {0, 1, 2, 3, 4, 5}) {
         for (int j : {0, 1, 2, 3, 4, 5}) {
@@ -233,9 +241,10 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
     // EshelbyTensor when a is near b must be near AxisymmetricalEshelbyTensor
     // (there is a numerical instability that we propose to manage)
     {
-      const auto SAxis_lim_1 = computeAxisymmetricalEshelbyTensor(nu, static_cast<real>(10));
+      const auto SAxis_lim_1 =
+          computeAxisymmetricalEshelbyTensor(nu, static_cast<real>(10));
       tfel::math::st2tost2<3u, real> SAxis_lim_2;
-      if (std::same_as<real, float>){
+      if (std::same_as<real, float>) {
         SAxis_lim_2 = computeEshelbyTensor<stress>(nu, lg{1.05}, lg{1}, lg{10});
       } else if (std::same_as<real, double>) {
         SAxis_lim_2 =
@@ -353,8 +362,8 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       const auto PSphere_1 =
           computeSphereHillPolarisationTensor<stress>(young, nu);
       const auto PSphere_2 =
-          computeAxisymmetricalHillPolarisationTensor<stress>(young, nu, n_a,
-                                                              static_cast<real>(1));
+          computeAxisymmetricalHillPolarisationTensor<stress>(
+              young, nu, n_a, static_cast<real>(1));
       const auto PSphere_3 = computeHillPolarisationTensor<stress>(
           young, nu, n_a, lg{2}, n_b, lg{2.00000001}, lg{2.00001});
       const auto kappa = young / 3. / (1 - 2 * nu);
@@ -419,9 +428,9 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
           young, nu, n_aa, static_cast<real>(20));
       const auto Pnnnn = n_aa_n_aa * (Prot1 * n_aa_n_aa);
       const auto Ptttt = n_bb_n_bb * (Prot1 * n_bb_n_bb);
-      //const auto Pttnn = n_bb_n_bb * (Prot1 * n_aa_n_aa);
-      //std::cout << Ptttt(0).getValue() << Pnnnn(0).getValue()
-      //          << Pttnn(0).getValue() << std::endl;
+      // const auto Pttnn = n_bb_n_bb * (Prot1 * n_aa_n_aa);
+      // std::cout << Ptttt(0).getValue() << Pnnnn(0).getValue()
+      //           << Pttnn(0).getValue() << std::endl;
       TFEL_TESTS_ASSERT(5 * Pnnnn(0) - Ptttt(0) < compliance(0));
     }
 #endif /* _LIBCPP_VERSION */
