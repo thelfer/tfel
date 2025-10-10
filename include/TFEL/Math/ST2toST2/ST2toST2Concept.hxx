@@ -2,11 +2,11 @@
  * \file  include/TFEL/Math/ST2toST2/ST2toST2Concept.hxx
  * \brief
  * \author Thomas Helfer
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -73,11 +73,47 @@ namespace tfel::math {
    * symmetric tensor
    */
   TFEL_HOST_DEVICE constexpr auto abs(const ST2toST2Concept auto&) noexcept;
+
   /*!
-   * \return a transposed view of a fourth order tensor
-   * \param[in] t: fourth order tensor
+   * \brief This function computes the transpose of a `st2tost2`
+   * as \f[ {}^tA_{ij}=A_{ji}\f] in Voigt notation, which also
+   * corresponds to \f[ {}^tA_{ijkl}=A_{lkji}=A_{klij}\f].
+   * \return a `st2tost2`
+   * \param[in] t: `st2tost2`
    */
   TFEL_HOST_DEVICE constexpr auto transpose(ST2toST2Concept auto&&) noexcept;
+
+  /*!
+   * \brief This function computes the trace of a `st2tost2`
+   * as \f[ Tr\left(A\right)=\sum_i A_{ii}\f] in Voigt notation, which also
+   * corresponds to \f[
+   * Tr\left(A\right)=I::A=\frac{1}{2}\sum_{i,j}(A_{ijij}+A_{ijji})\f] \return
+   * the trace \param[in] A: `st2tost2`
+   */
+  TFEL_HOST_DEVICE constexpr auto trace(const ST2toST2Concept auto&) noexcept;
+
+  /*!
+   * \brief This function computes the quadruple contraction of two `st2tost2`
+   * as \f[ A::B=\sum_{i,j} A_{ij}B_{ji}\f] in Voigt notation, which also
+   * corresponds to \f[
+   * A::B=\sum_{i,j,k,l}A_{ijkl}B_{lkji}=\sum_{i,j,k,l}A_{ijkl}B_{klij}\f]
+   * \return the quadruple contraction scalar
+   * \param[in] A,B: `st2tost2`
+   */
+  TFEL_HOST_DEVICE constexpr auto quaddot(const ST2toST2Concept auto&,
+                                          const ST2toST2Concept auto&) noexcept;
+
+  /*!
+   * \brief This function computes the norm of a `st2tost2`
+   * as \f[ ||A||=\sqrt{{}^tA::A}\f].
+   * \f[ ||A||=\sqrt{\sum_{i,j,k,l}A_{ijkl}A_{ijkl}}\f]
+   * or also \f[ ||A||=\sqrt{\sum_{i,j} A_{ij}A_{ij}}\f] in Voigt
+   * notation.
+   * \return the norm
+   * \param[in] A: `st2tost2`
+   */
+  TFEL_HOST_DEVICE constexpr auto norm(const ST2toST2Concept auto&) noexcept;
+
   /*!
    * \return the determinant of a `st2tost2`
    * \param[in] s: fourth order tensor

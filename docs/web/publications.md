@@ -13,6 +13,18 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @vedrine_revisiting_2025
+    @tandogan_multi-physics_2026
+    @fontana_hyperelastic_2026
+    @vedrine_sensitivity_2025
+    @bilke_reproducible_2025
+    @sleiman_tube2fem_2025
+    @pierre_multiphysics_2025
+    @faucher_very_2025
+    @lucarelli_physically_2025
+    @gribonval_multi-physics_2025
+    @helfer_mfrontgallery_2025
+    @mersel_dynamic_2025
     @pierre_modelling_2025
     @helfer_mfemmgis_2025
     @kiszkurno_is_2025
@@ -37,12 +49,14 @@ nocite: |
     @scherer_tensile_2024
     @vedrine_role_2024
     @senac_yield_2024
+    @mersel_evaluation_2024
     @helfer_new_2024
     @jamond_manta_2024
     @valmalle_dic_2024
     @lorenzo_exploring_2024
     @simo_novel_2024
     @singh_irradiation_2024
+    @bouizem_construction_2023
     @gicquel_polycrystalline_2023
     @gicquel_developpement_2023
     @loiseau_formulation_2023

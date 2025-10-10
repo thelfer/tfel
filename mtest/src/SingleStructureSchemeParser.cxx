@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   21 déc. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -396,7 +396,7 @@ namespace mtest {
     const auto p1 = std::find(esvs.begin(), esvs.end(), n);
     const auto p2 = std::find(esvs2.begin(), esvs2.end(), n);
     const auto b1 = p1 != esvs.end();
-    const auto b2 = p2 != esvs.end();
+    const auto b2 = p2 != esvs2.end();
     if (b1) {
       // full name of the external state variable
       const auto type = t.getBehaviour()->getExternalStateVariableType(n);

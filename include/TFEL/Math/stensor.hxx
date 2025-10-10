@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   04 May 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -76,30 +76,30 @@ namespace tfel::math {
   struct stensor_common {
     //! \brief available eigen solver
     enum EigenSolver {
-      //! historical algorithm
+      //! \brief historical native and homemade algorithm
       TFELEIGENSOLVER,
-      //! non iterative solver from Joachim Kopp,
+      //! \brief non iterative solver from Joachim Kopp,
       FSESANALYTICALEIGENSOLVER,
-      //! Jacobi iterative solver from Joachim Kopp
+      //! \brief Jacobi iterative solver from Joachim Kopp
       FSESJACOBIEIGENSOLVER,
-      //! QL with implicit shifts iterative solver from Joachim Kopp
+      //! \brief QL with implicit shifts iterative solver from Joachim Kopp
       FSESQLEIGENSOLVER,
-      //!  Cuppen's Divide & Conquer solver from Joachim Kopp
+      //! \brief  Cuppen's Divide & Conquer solver from Joachim Kopp
       FSESCUPPENEIGENSOLVER,
-      //!  hybride solver from Joachim Kopp
+      //! \brief  hybride solver from Joachim Kopp
       FSESHYBRIDEIGENSOLVER,
-      //! iterative solver from David Eberly, Geometric Tools
+      //! \brief iterative solver from David Eberly, Geometric Tools
       GTESYMMETRICQREIGENSOLVER,
-      //! non iterative solver from Isaac Harari and Uri Albocher,
+      //! \brief non iterative solver from Isaac Harari and Uri Albocher,
       HARARIEIGENSOLVER
     };  // end of EigenSolver
-    //! \brief available eigen solver
+    //! \brief \brief available eigen solver
     enum EigenValuesOrdering {
-      //! sort eigenvalues from the lowest to the greatest
+      //! \brief sort eigenvalues from the lowest to the greatest
       ASCENDING,
-      //! sort eigenvalues from the greatest to the lowest
+      //! \brief sort eigenvalues from the greatest to the lowest
       DESCENDING,
-      //! no ordering
+      //! \brief no ordering
       UNSORTED
     };  // end of EigenValuesOrdering
   };    // end of struct stensor_common
@@ -188,6 +188,11 @@ namespace tfel::math {
      * \param[out] vp2: first eigen value
      * \param[in]  o:   eigenvalues ordering
      * \param[in]  b:   refine eigenvalues
+     *
+     * \note even though one may ask the eigen values to
+     * be sorted, the eigenvalues in 1D are not
+     * sorted by this method and in 2D, only the inplane eigenvalues are
+     * sorted.
      */
     template <EigenSolver = TFELEIGENSOLVER>
     TFEL_HOST_DEVICE TFEL_MATH_INLINE2 void computeEigenValues(
@@ -202,6 +207,11 @@ namespace tfel::math {
      * \param[out] vp: eigen values
      * \param[in]  o:  eigenvalues ordering
      * \param[in]  b:  refine eigenvalues
+     *
+     * \note even though one may ask the eigen values to
+     * be sorted, the eigenvalues in 1D are not
+     * sorted by this method and in 2D, only the inplane eigenvalues are
+     * sorted.
      */
     template <EigenSolver = TFELEIGENSOLVER>
     TFEL_HOST_DEVICE TFEL_MATH_INLINE2 void computeEigenValues(
@@ -214,6 +224,11 @@ namespace tfel::math {
      * \param[in] o:  eigenvalues ordering
      * \param[in] b:  refine eigenvalues
      * \return eigen values
+     *
+     * \note even though one may ask the eigen values to
+     * be sorted, the eigenvalues in 1D are not
+     * sorted by this method and in 2D, only the inplane eigenvalues are
+     * sorted.
      */
     template <EigenSolver = TFELEIGENSOLVER>
     TFEL_HOST_DEVICE TFEL_MATH_INLINE2 tvector<3u, ValueType>
@@ -244,6 +259,11 @@ namespace tfel::math {
      * \tparam    es: eigen solver
      * \param[in] o:  eigenvalues ordering
      * \param[in] b: refine eigenvalues
+     *
+     * \note even though one may ask the eigen values to
+     * be sorted, the eigenvalues in 1D are not
+     * sorted by this method and in 2D, only the inplane eigenvalues are
+     * sorted.
      */
     template <EigenSolver = TFELEIGENSOLVER>
     TFEL_HOST_DEVICE TFEL_MATH_INLINE2
@@ -257,6 +277,11 @@ namespace tfel::math {
      * \param[out] m:  rotation matrix
      * \param[in]  o:  eigenvalues ordering
      * \param[in]  b:  refine eigenvalues
+     *
+     * \note even though one may ask the eigen values to
+     * be sorted, the eigenvalues in 1D are not
+     * sorted by this method and in 2D, only the inplane eigenvalues are
+     * sorted.
      */
     template <EigenSolver = TFELEIGENSOLVER>
     TFEL_HOST_DEVICE TFEL_MATH_INLINE2 void computeEigenVectors(
@@ -287,6 +312,36 @@ namespace tfel::math {
     //! \return the identity
     TFEL_HOST_DEVICE static constexpr stensor<N, base_type<ValueType>>
     Id() noexcept;
+
+    /*!
+     * \brief This function set the component (i,j) of a `stensor` to
+     * a value `Aij`, using the function `VoigtIndex`.
+     * \return void
+     * \tparam NumType: type of the values of the `stensor`
+     * \tparam T : type of the value `Aij` to set must be same as
+     * the type of the values of the `stensor`.
+     * \param[in] A: `stensor`
+     * \param[in] i,j: `unsigned short`
+     * \param[in] Aij: value that we want for \f[A_{ij}\f]
+     */
+    template <typename NumType, typename T>
+    TFEL_HOST_DEVICE constexpr void setComponent(StensorConcept auto&,
+                                                 unsigned short,
+                                                 unsigned short,
+                                                 const T&) noexcept
+        requires(isAssignableTo<NumType, T>());
+
+    /*!
+     * \brief This function returns the component (i,j) of a `stensor`,
+     * using the function `VoigtIndex`.
+     * \return the value \f[A_{ij}\f]
+     * \param[in] A: `stensor`
+     * \param[in] i,j: `unsigned short`
+     */
+    TFEL_HOST_DEVICE constexpr auto getComponent(const StensorConcept auto&,
+                                                 unsigned short,
+                                                 unsigned short);
+
     /*!
      * copy the value from a container
      */
@@ -751,6 +806,7 @@ namespace tfel::math {
    */
   TFEL_HOST_DEVICE constexpr auto computeDeviatorDeterminantDerivative(
       const StensorConcept auto&) noexcept;
+
   /*!
    * \brief rotate a symmetric tensor using a rotation matrix
    * \param[in] s: symmetric tensor to be rotated
@@ -913,6 +969,22 @@ namespace tfel::math {
       const StensorType1&, const StensorType2&) noexcept
       requires(getSpaceDimension<StensorType1>() ==
                getSpaceDimension<StensorType2>());
+
+  /*!
+   * \brief sort the eigenvalues
+   * \param[in] vp: eigen values
+   * \param[in] ordering: expected ordering
+   *
+   * \note this function is useful, even though one may ask the eigen values to
+   * be sorted in `computeEigenValues` since in 1D the eigenvalues are not
+   * sorted by this method and in 2D, only the inplane eigenvalues are
+   * sorted.
+   */
+  template <ScalarConcept ValueType>
+  [[nodiscard]] constexpr tvector<3u, ValueType> sortEigenValues(
+      const tvector<3u, ValueType>&,
+      stensor_common::EigenValuesOrdering =
+          stensor_common::DESCENDING) noexcept;
 
 }  // end of namespace tfel::math
 

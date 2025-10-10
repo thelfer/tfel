@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   16/08/2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -587,7 +587,14 @@ namespace mfront {
             "waiting end of make process");
       }
       if (status != 0) {
-        error("libraries building went wrong");
+        error(
+            "Libraries building went wrong. "
+            "This may be due to an error in your implementation.\n"
+            "In rarer cases, this may be due to a "
+            "incompatibility with a previous run of MFront and you "
+            "may want to remove to the 'include' and 'src' directories. "
+            "You may also invoke MFront with the `--verbose=debug` flag for "
+            "more (hopefully helpful) information.");
       }
     } else {
       execvp(make, const_cast<char* const*>(argv));

@@ -19,12 +19,15 @@ void test() {
   static_assert(std::same_as<typename ScalarTypeRebind<stress>::time,
                              typename Types::time>);
   static_assert(
-      std::is_same<stress, tfel::math::qt<Stress, base_type<stress>>>::value);
-  static_assert(CheckUnitCompatibility<Stress, stress>::value);
-  static_assert(CheckUnitCompatibility<Stress, const stress>::value);
-  static_assert(CheckUnitCompatibility<Stress, qt_ref<Stress, double>>::value);
+      std::is_same<stress,
+                   tfel::math::qt<unit::Stress, base_type<stress>>>::value);
+  static_assert(CheckUnitCompatibility<unit::Stress, stress>::value);
+  static_assert(CheckUnitCompatibility<unit::Stress, const stress>::value);
+  static_assert(CheckUnitCompatibility<unit::Stress,
+                                       qt_ref<unit::Stress, double>>::value);
   static_assert(
-      CheckUnitCompatibility<Stress, const qt_ref<Stress, double>>::value);
+      CheckUnitCompatibility<unit::Stress,
+                             const qt_ref<unit::Stress, double>>::value);
 }
 
 int main() {

@@ -1,3 +1,5 @@
+add_subdirectory(material)
+
 tfel_python_module(_tfel
   tfel.cxx
   Config.cxx
@@ -39,17 +41,6 @@ target_link_libraries(py_tfel_math
    PRIVATE TFELMath TFELMathParser TFELException
    ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
 
-tfel_python_module(material
-  material.cxx
-  ModellingHypothesis.cxx
-  OutOfBoundsPolicy.cxx
-  CrystalStructure.cxx
-  PiPlane.cxx
-  Barlat.cxx
-  Hosford.cxx)
-target_link_libraries(py_tfel_material
-  PRIVATE TFELMaterial TFELMath TFELException
-  ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
 
 set(PY_TFEL_SYSTEM_SOURCES)
 list(APPEND PY_TFEL_SYSTEM_SOURCES

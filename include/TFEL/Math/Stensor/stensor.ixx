@@ -3,11 +3,11 @@
  * \brief  This file implements the methods of the class stensor.
  * \author Thomas Helfer
  * \date   02 jun 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -409,6 +409,37 @@ namespace tfel::math {
     }
     return {one, one, one, zero, zero, zero};
   }  // end of stensor<N,T>::Id
+
+  template <typename NumType, typename T>
+  TFEL_HOST_DEVICE constexpr void setComponent(StensorConcept auto& A,
+                                               unsigned short i,
+                                               unsigned short j,
+                                               const T& Aij) noexcept
+      requires(isAssignableTo<NumType, T>()) {
+    using StensorType = decltype(A);
+    const auto N = getSpaceDimension<StensorType>();
+    const unsigned short I = VoigtIndex<N>(i, j);
+    A(I) = Aij;
+    constexpr auto cste = Cste<NumType>::sqrt2;
+    if (I > 2) {
+      A(I) = A(I) * cste;
+    }
+  }
+
+  TFEL_HOST_DEVICE constexpr auto getComponent(const StensorConcept auto& A,
+                                               unsigned short int i,
+                                               unsigned short int j) {
+    using StensorType = decltype(A);
+    using T = numeric_type<StensorType>;
+    const auto N = getSpaceDimension<StensorType>();
+    const unsigned short I = VoigtIndex<N>(i, j);
+    constexpr auto icste = Cste<base_type<T>>::isqrt2;
+    auto Aij = A(I);
+    if (I > 2) {
+      Aij *= icste;
+    }
+    return Aij;
+  }
 
   template <unsigned short N, typename T>
   template <typename InputIterator>
@@ -1027,6 +1058,50 @@ namespace tfel::math {
     computeDeviatorDeterminantDerivative(dJ, s);
     return dJ;
   }
+
+  template <ScalarConcept ValueType>
+  constexpr tvector<3u, ValueType> sortEigenValues(
+      const tvector<3u, ValueType>& vp,
+      stensor_common::EigenValuesOrdering o) noexcept {
+    if (o == stensor_common::DESCENDING) {
+      if ((vp[0] > vp[1]) && (vp[0] > vp[2])) {
+        if (vp[1] > vp[2]) {
+          return {vp[0], vp[1], vp[2]};
+        } else {
+          return {vp[0], vp[2], vp[1]};
+        }
+      } else if ((vp[1] > vp[0]) && (vp[1] > vp[2])) {
+        if (vp[0] > vp[2]) {
+          return {vp[1], vp[0], vp[2]};
+        } else {
+          return {vp[1], vp[2], vp[0]};
+        }
+      }
+      if (vp[0] > vp[1]) {
+        return {vp[2], vp[0], vp[1]};
+      }
+      return {vp[2], vp[1], vp[0]};
+    } else if (o == stensor_common::ASCENDING) {
+      if ((vp[0] < vp[1]) && (vp[0] < vp[2])) {
+        if (vp[1] < vp[2]) {
+          return {vp[0], vp[1], vp[2]};
+        } else {
+          return {vp[0], vp[2], vp[1]};
+        }
+      } else if ((vp[1] < vp[0]) && (vp[1] < vp[2])) {
+        if (vp[0] < vp[2]) {
+          return {vp[1], vp[0], vp[2]};
+        } else {
+          return {vp[1], vp[2], vp[0]};
+        }
+      }
+      if (vp[0] < vp[1]) {
+        return {vp[2], vp[0], vp[1]};
+      }
+      return {vp[2], vp[1], vp[0]};
+    }
+    return vp;
+  }  // end of sortEigenValues
 
 }  // end of namespace tfel::math
 

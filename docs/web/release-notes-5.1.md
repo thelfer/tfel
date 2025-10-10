@@ -29,15 +29,16 @@ eqnPrefixTemplate: "($$i$$)"
 
 # Known incompatibilities
 
-The native `Europlexus` interface has been removed, as `Europlexus` now
-uses the `generic` interface through `MGIS` (see
-<https://github.com/thelfer/tfel/issues/739> for details).
-
-When compiling with option `TFEL_APPEND_VERSION` set to `ON` or when
-defining the string variable `TFEL_VERSION_FLAVOUR`, the `python`
-modules are now modified to reflect those information. This old
-behaviour can be restored by setting the
-`unversioned-python-module-names` option to `ON`.
+- The native `Europlexus` interface has been removed, as `Europlexus`
+  now uses the `generic` interface through `MGIS` (see
+  <https://github.com/thelfer/tfel/issues/739> for details).
+- When compiling with option `TFEL_APPEND_VERSION` set to `ON` or when
+  defining the string variable `TFEL_VERSION_FLAVOUR`, the `python`
+  modules are now modified to reflect those information. This old
+  behaviour can be restored by setting the
+  `unversioned-python-module-names` option to `ON`.
+- The definition of some unit class has (`Stress`, `Temperature`, etc..)
+  have been moved from `tfel::math` to `tfel::math::unit`.
 
 ## Internal API changes
 
@@ -48,6 +49,42 @@ time step rather than the derivative with respect to the increment of
 the equivalent plastic strain.
 
 # New features in the `TFEL` libraries
+
+## Scripts to define environment variables for `TFEL` to work properly
+
+Depending on the system and compilation options, some of following
+variables shall be set for `TFEL` to work properly: `TFELHOME`, `PATH`,
+`LD_LIBRARY_PATH` and `PYTHONPATH`.
+
+`TFEL` now installs automatically the following files in the installation
+directory (refered to `<install_prefix>` in the following):
+
+- `<install_prefix>/share/tfel/env/env.sh` for `UNIX` systems and the
+  `bash` shell. This file shall be used as follows:
+
+  ~~~~{.sh}
+  $ source <install_prefix>/share/tfel/env/env.sh
+  ~~~~
+- `<install_prefix>\share\tfel\env\env.ps1` for `PowerShell`
+  shell under `Windows`. This file shall be used as follows:
+
+  ~~~~{.sh}
+  $ .\<install_prefix>\share\tfel\env\env.ps1
+  ~~~~
+- `<install_prefix>\share\tfel\env\env.bat` for the historical `cmd`
+  shell under `Windows`. This file shall be used as follows:
+
+  ~~~~{.sh}
+  $ call <install_prefix>\share\tfel\env\env.bat
+  ~~~~
+
+> **Note**
+>
+> Those variables are not required if `TFEL` is installed
+> system-wide (for instance in `/usr/local`) and that the `TFEL`'s
+> binaries are not relocated (i.e. moved to a different directory than
+> the one specified during the compilation process as the installation
+> directory).
 
 ## Environment
 
@@ -116,6 +153,24 @@ $ tfel-config-5.1.0-release --python-module-suffix
 
 # New `TFEL/Math` features
 
+## The `tfel::types` namespace
+
+The `tfel::types` namespace contains type aliases that are helpful to
+deduce a type from another. This is mostly useful to support quantities.
+
+The implementation of the `computeLambda` provides a simple example of
+its usage:
+
+~~~~
+template <tfel::math::ScalarConcept StressType>
+TFEL_HOST_DEVICE constexpr StressType computeLambda(
+    const StressType& young, const types::real<StressType>& nu) noexcept
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>()) {
+  return nu * young / ((1 + nu) * (1 - 2 * nu));
+}
+~~~~
+
 ## A `zero` method to create tensorial objects {#sec:tfel_5_1:zero}
 
 A static method named `zero` is now available to create fixed-size
@@ -127,19 +182,31 @@ tensorial objects.
 constexpr auto s = stensor<2u, double>::zero();
 ~~~~
 
+## Sorting eigenvalues in ascending/descending order
+
+The `sortEigenValues` function takes a vector of three values and sort
+them in ascending or descending order. This function is useful has the
+eigenvalues returned by `stensor::computeEigenValues` can only partially
+sorted depending on the space dimension, except in `3D`:
+
+- in `1D`, the eigenvalues are never sorted as the rotation matrix
+  giving the eigen tensors must be the identity.
+- in `2D`, only the inplane eigenvalues can be sorted: the third
+  eigenvalue is always given by the out of plane direction.
+
 # New `TFEL/Material` features
 
 ## Homogenization
 
 ### Ellipsoidal inclusion embedded in anisotropic matrix
 
-When \(\tenseuq{C}_0\) is anisotropic, the Eshelby tensor can be
+When \(\tenseurq{C}_0\) is anisotropic, the Eshelby tensor can be
 computed with `computeAnisotropicEshelbyTensor` in 3D and
-`computePlainStrainAnisotropicEshelbyTensor` in 2D. There are also
+`computePlaneStrainAnisotropicEshelbyTensor` in 2D. There are also
 `computeAnisotropicHillTensor`,
-`computePlainStrainAnisotropicHillTensor`, and also
+`computePlaneStrainAnisotropicHillTensor`, and also
 `computeAnisotropicLocalisationTensor` and
-`computePlainStrainAnisotropicLocalisationTensor`.
+`computePlaneStrainAnisotropicLocalisationTensor`.
 
 ### Homogenization bounds
 
@@ -147,10 +214,49 @@ Different homogenization bounds are implemented.
 The available functions are `computeVoigtStiffness`, `computeReussStiffness`,
 `computeIsotropicHashinShtrikmanBounds`.
 
+### Homogenization schemes
+
+Ponte Castaneda and Willis scheme for distributions
+of ellipsoidal inclusions for biphasic media is now available.
+
+### Creation of microstructures and homogenization
+
+The creation of `Microstructure` objects is now possible
+and permits to consider very general microstructure,
+with an arbitrary number of phase types.
+
+Two types of microstructures are implemented:
+ 
+ - `ParticulateMicrostructure`
+ - `Polycrystal`
+ 
+Moreover, some functions permit to compute the classical
+homogenized schemes on these very general microstructures.
+It includes the homogenized stiffness and the strain localisators.
+
+## Isotropic Moduli
+
+`IsotropicModuli` objects are defined
+for the elastic moduli of an isotropic material. It makes
+the manipulation of isotropic materials easier.
+
 ## Python bindings
 
 Python bindings are now generated using the
 [`pybind11`](https://github.com/pybind/pybind11) library.
+
+The module `tfel.material` now contains the isotropic elastic moduli objects and
+their functions to convert these moduli.
+
+Moreover, some new functionalities are available for homogenization,
+via the `tfel.material.homogenization` module.
+It contains functions concerning:
+
+- Hill tensors
+- Localisation tensors
+- Homogenization schemes for biphasic materials (Dilute scheme, Mori-Tanaka scheme,
+Ponte Castaneda and Willis scheme)
+- Homogenization bounds for biphasic materials (Voigt/Reuss, Hashin-Shtrikman)
 
 # New features in `MFront`
 
@@ -314,7 +420,7 @@ contain:
 
 ## Calling an external behaviour: the `@BehaviourVariable` keyword
 
-```cxx
+~~~~{.cpp}
 @BehaviourVariable first_phase_plastic_behaviour {
   file: "Plasticity.mfront",
   variables_suffix: "1",
@@ -324,7 +430,7 @@ contain:
   shared_material_properties: {".+"},
   shared_external_state_variables: {".+"}
 };
-```
+~~~~
 
 ### Behaviour variable factories
 
@@ -443,6 +549,19 @@ This list can be retrieved as follows:
 $ mfront --list-isotropic-hardening-rules
 ~~~~
 
+### Add support for the `@Predictor` code block
+
+The code block `@Predictor` allows to specify an intial guess for the
+(visco-)plastic strain increments.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Predictor{
+ dp = sqrt(deto| deto);
+}
+~~~~
+
 ## Extensions of the `StandardElastoViscoPlasticity` brick
 
 ### Changing the external name of the equivalent strain {#sec:tfel:5.1:StandardElastoViscoPlasticity:equivalent_strain_external_name}
@@ -526,7 +645,7 @@ orthotropic material, this variable is an array of (3) scalars.
 
 #### Example of usage
 
-```cxx
+~~~~{.cpp}
 @Brick StandardElastoViscoPlasticity{
   stress_potential : Hooke{
     young_modulus : 150e9,
@@ -535,14 +654,29 @@ orthotropic material, this variable is an array of (3) scalars.
     save_thermal_expansion : true
   }
 };
-```
+~~~~
 
-## Uniform syntax for `@ComputeThermalExpansion`
+## Uniform syntaxes
+
+### Uniform syntax for `@ElasticMaterialProperties` and `@ComputeStiffnessTensor`
+
+The `@ElasticMaterialProperties` and `@ComputeStiffnessTensor` now
+accept the same options than the stress potentials deriving from the
+`HookeStressPotentialBase`:
+
+~~~~{.cpp}
+@ElasticMaterialProperties{
+  young_modulus: 150e9,
+  poisson_ratio: 0.3
+};
+~~~~
+
+### Uniform syntax for `@ComputeThermalExpansion`
 
 The `@ComputeThermalExpansion` keyword now accepts the same options than
-the stress potentials deriving from `the HookeStressPotentialBase`:
+the stress potentials deriving from the `HookeStressPotentialBase`:
 
-```cxx
+~~~~{.cpp}
 @ComputeThermalExpansion{
   thermal_expansion1: 1.e-5,
   thermal_expansion2: 0.2e-5,
@@ -551,7 +685,17 @@ the stress potentials deriving from `the HookeStressPotentialBase`:
   initial_geometry_reference_temperature: 293.15,
   save_thermal_expansion: true
 };
-```
+~~~~
+
+### Uniform syntax for `@HillTensor`
+
+The `@HillTensor` keyword now accepts the same options than the Hill's
+stress criterion available in the `StandardElastoViscoPlasticity` brick:
+
+~~~~{.cpp}
+@HillTensor H {F: 0.371, G: 0.629, H: 4.052, L: 1.5, M: 1.5, N: 1.5};
+~~~~
+
 
 # New features in `mfront-query`
 
@@ -633,7 +777,70 @@ keyword `@BehaviourVariable` for the integration and the computation
 of tangent operator of the local behaviours. The implementation
 shows how to use any behaviour law on each phase.
 
+# Python bindings
+
+Python bindings are now generated using the
+[`pybind11`](https://github.com/pybind/pybind11) library.
+
+## New features in the `mfront` module
+
+- The `setDebugMode` function is now available.
+
 # Issues fixed
+
+## Issue 849: [TFEL/Math] add function to sort the eigen values in ascending order
+
+For more details, see <https://github.com/thelfer/tfel/issues/849>
+
+## Issue 846: Create environment files for sh, cmd and powershell 
+
+For more details, see <https://github.com/thelfer/tfel/issues/846>
+
+## Issue 741: Add support for `flang`
+￼
+For more details, see <https://github.com/thelfer/tfel/issues/741>
+
+## Issue 822: [calculix-interface] add info about SDV variables in the generated example of input file
+
+The list of internal state variables are now shown in the comment of the
+generated example of input file:
+
+~~~~
+** 
+** File generated by MFront from the Norton.mfront source
+** Example of how to use the Norton behaviour law
+** Author Helfer Thomas
+** Date   23 / 11 / 06
+**
+
+*Material, name=@CALCULIXBEHAVIOUR_NORTON
+** list of internal state variables:
+** <SDV1: ElasticStrain_0>, <SDV2: ElasticStrain_1>, <SDV3: ElasticStrain_2>, 
+** <SDV4: ElasticStrain_3>, <SDV5: ElasticStrain_4>, <SDV6: ElasticStrain_5>,
+** <SDV7: EquivalentViscoplasticStrain>
+*Depvar
+7
+** The material properties are given as if we used parameters to explicitly
+** display their names. Users shall replace those declaration by
+** theirs values
+*User Material, constants=4
+<NortonCoefficient>, <NortonExponent>, <YoungModulus>, <PoissonRatio>
+
+~~~~
+
+For more details, see <https://github.com/thelfer/tfel/issues/822>
+
+## Issue 793: add @Predictor support for isotropic DSLs
+
+For more details, see <https://github.com/thelfer/tfel/issues/793>
+
+## Issue 790: [tfel-math] Remove `Stress`, `Time` from the `tfel::math` namespace
+
+For more details, see <https://github.com/thelfer/tfel/issues/790>
+
+## Issue 789: [mfront] advice to remove include and src in case of compilation error
+
+For more details, see <https://github.com/thelfer/tfel/issues/789>
 
 ## Issue 779: [tfel-check] Failure during parsing step if a symbolic linked was not correctly generated
 

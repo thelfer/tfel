@@ -3,7 +3,7 @@
  * \author Antoine Martin
  * \date   23 January 2025
  * \brief  This file declares some well-known homogenization bounds.
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All
  * rights reserved. This project is publicly released under either the GNU GPL
  * Licence or the CECILL-A licence. A copy of thoses licences are delivered with
  * the sources of TFEL. CEA or EDF may also distribute this project under
@@ -30,12 +30,12 @@ namespace tfel::material::homogenization::elasticity {
    */
   template <unsigned short int d,
             unsigned int N,
-            typename real,
-            typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<d, StressType>
-  computeVoigtStiffness(
-      const std::array<real, N>&,
-      const std::array<tfel::math::st2tost2<d, StressType>, N>&);
+            tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<d, StressType> computeVoigtStiffness(
+          const std::array<types::real<StressType>, N>&,
+          const std::array<tfel::math::st2tost2<d, StressType>, N>&);
 
   /*!
    * This function gives the Reuss stiffness
@@ -50,12 +50,12 @@ namespace tfel::material::homogenization::elasticity {
    */
   template <unsigned short int d,
             unsigned int N,
-            typename real,
-            typename StressType>
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<d, StressType>
-  computeReussStiffness(
-      const std::array<real, N>&,
-      const std::array<tfel::math::st2tost2<d, StressType>, N>&);
+            tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<d, StressType> computeReussStiffness(
+          const std::array<types::real<StressType>, N>&,
+          const std::array<tfel::math::st2tost2<d, StressType>, N>&);
 
   /*!
    * This function gives the Hashin-Shtrikman bounds for a d-dimensional
@@ -75,13 +75,24 @@ namespace tfel::material::homogenization::elasticity {
    */
   template <unsigned short int d,
             unsigned int N,
-            typename real,
-            typename StressType>
-  TFEL_HOST_DEVICE const std::pair<std::pair<StressType, StressType>,
-                                   std::pair<StressType, StressType>>
-  computeIsotropicHashinShtrikmanBounds(const std::array<real, N>&,
-                                        const std::array<StressType, N>&,
-                                        const std::array<StressType, N>&);
+            tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const std::pair<
+          std::pair<StressType, StressType>,
+          std::pair<
+              StressType,
+              StressType>> computeIsotropicHashinShtrikmanBounds(const std::
+                                                                     array<
+                                                                         types::real<
+                                                                             StressType>,
+                                                                         N>&,
+                                                                 const std::array<
+                                                                     StressType,
+                                                                     N>&,
+                                                                 const std::array<
+                                                                     StressType,
+                                                                     N>&);
 
 }  // end of namespace tfel::material::homogenization::elasticity
 

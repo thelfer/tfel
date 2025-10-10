@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   28/07/2022
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -97,8 +97,8 @@ struct CubicSplineInterpolationTest final : public tfel::tests::TestCase {
   }
   void test3() {
 #if (not defined __INTEL_COMPILER) && (not defined __clang__)
-    using time = tfel::math::qt<tfel::math::Time, double>;
-    using stress = tfel::math::qt<tfel::math::Stress, double>;
+    using time = tfel::math::qt<tfel::math::unit::Time, double>;
+    using stress = tfel::math::qt<tfel::math::unit::Stress, double>;
     using stressrate = tfel::math::derivative_type<stress, time>;
     using CollocationPoint =
         tfel::math::CubicSplineCollocationPoint<time, stress>;
@@ -148,8 +148,8 @@ struct CubicSplineInterpolationTest final : public tfel::tests::TestCase {
   void test4() {
 #if (not defined __INTEL_COMPILER) && (not defined __clang__) && \
     (not defined _MSC_VER)
-    using time = tfel::math::qt<tfel::math::Time, double>;
-    using stress = tfel::math::qt<tfel::math::Stress, double>;
+    using time = tfel::math::qt<tfel::math::unit::Time, double>;
+    using stress = tfel::math::qt<tfel::math::unit::Stress, double>;
     using stressrate = tfel::math::derivative_type<stress, time>;
     using StressArray = tfel::math::fsarray<2u, stress>;
     using StressRateArray = tfel::math::fsarray<2u, stressrate>;

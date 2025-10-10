@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date 01/01/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -207,8 +207,8 @@ namespace tfel::math {
     using selectViewArrayBase<MappedType, IndexingPolicyType>::operator[];
     using selectViewArrayBase<MappedType, IndexingPolicyType>::operator();
     //! \return a pointer to the underlying array serving as element storage.
-    TFEL_HOST_DEVICE constexpr data_pointer_type data() noexcept {
-      static_assert(!is_const, "invalid call");
+    TFEL_HOST_DEVICE constexpr data_pointer_type data() noexcept
+        requires(!is_const) {
       return this->data_pointer;
     }  // end of data
 

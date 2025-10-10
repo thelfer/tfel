@@ -59,6 +59,24 @@ function(tfel_python_module name)
   endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
 endfunction(tfel_python_module)
 
+function(tfel_material_python_module name)
+  python_module_base(tfel_material_${name} ${name} ${ARGN})
+  if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+    install(TARGETS py_tfel_material_${name}
+      DESTINATION ${TFEL_PYTHON_SITE_PACKAGES_DIR}/tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}/material
+      COMPONENT python_bindings)
+  else(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+    install(TARGETS py_tfel_material_${name}
+       DESTINATION ${TFEL_PYTHON_SITE_PACKAGES_DIR}/tfel/material
+       COMPONENT python_bindings)
+  endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+  if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+    set_target_properties(py_tfel_material_${name} PROPERTIES
+                          LIBRARY_OUTPUT_DIRECTORY
+                          ${PROJECT_BINARY_DIR}/bindings/python/tfel_${TFEL_SUFFIX_FOR_PYTHON_MODULES}/material)
+  endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+endfunction(tfel_material_python_module)
+
 function(mfront_python_module name)
   python_lib_module(${name} mfront ${ARGN})
   set(fullname "mfront_${name}")

@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   19 févr. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -38,8 +38,8 @@ struct Expr9Test final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(
         (MathObjectTraits<EvaluationResult<expr>>::dime == 2u));
     TFEL_TESTS_STATIC_ASSERT((getSpaceDimension<expr>() == 2u));
-    using expr2 =
-        BinaryOperationHandler<tensor<1u, double>&, tensor<1u, double>, OpMult>;
+    using expr2 = BinaryOperationHandler<tensor<1u, double>&,
+                                         tensor<1u, double>&, OpMult>;
     tensor<1u, double> t1;
     tensor<1u, double> t2;
     expr2 e(t1, t2);

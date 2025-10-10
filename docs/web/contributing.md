@@ -2,7 +2,7 @@
 title: Contributing to `TFEL`
 author: Thomas Helfer
 date: 11/2024
-lang: en_EN
+lang: en-EN
 ---
 
 Contributions to `TFEL` are greatly appreciated.

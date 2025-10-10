@@ -7,11 +7,11 @@
  * \f]
  * \author Thomas Helfer
  * \date   31 Jul 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -33,10 +33,8 @@ namespace tfel::material {
    */
   template <tfel::math::ScalarConcept StressType>
   TFEL_HOST_DEVICE constexpr StressType computeLambda(
-      const StressType& young,
-      const typename tfel::math::ScalarTypeRebind<StressType>::real&
-          nu) noexcept
-      requires(tfel::math::checkUnitCompatibility<tfel::math::Stress,
+      const StressType& young, const types::real<StressType>& nu) noexcept
+      requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                                   StressType>()) {
     return nu * young / ((1 + nu) * (1 - 2 * nu));
   }
@@ -46,10 +44,8 @@ namespace tfel::material {
    */
   template <tfel::math::ScalarConcept StressType>
   TFEL_HOST_DEVICE constexpr StressType computeMu(
-      const StressType& young,
-      const typename tfel::math::ScalarTypeRebind<StressType>::real&
-          nu) noexcept
-      requires(tfel::math::checkUnitCompatibility<tfel::math::Stress,
+      const StressType& young, const types::real<StressType>& nu) noexcept
+      requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                                   StressType>()) {
     return young / (2 * (1 + nu));
   }  // end of computeMu

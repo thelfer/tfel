@@ -377,7 +377,32 @@ By definition, this convention, named `Plate` in `MFront` is only valid
 for \(3D\), \(2D\) plane stress, \(2D\) plane strain and \(2D\)
 generalized plane strain modelling hypotheses.
 
-# Homogeneisation
+# Isotropic elastic moduli
+
+A `struct` `IsotropicModuli` is defined in the header "IsotropicModuli.hxx"
+for the elastic moduli of an isotropic material.
+Three children `struct` are defined:
+
+ - `KGModuli` (for bulk and shear moduli)
+ - `YoungNuModuli` (for Young modulus and Poisson ratio)
+ - `LambdaMuModuli` (for Lame moduli)
+
+Each `struct` has methods which permit to convert
+the moduli:
+
+ - `ToYoungNu()`
+ - `ToLambdaMu()`
+ - `ToKG()`
+ 
+These methods all return `std::pair` objects.
+
+Moreover, a function `isIsotropic` returns a `boolean`
+which states if a `st2tost2` object is an isotropic tensor.
+A function `computeKappaMu` also projects a `st2tost2` object
+on the space of isotropic tensors and returns the corresponding
+moduli.
+
+# Homogenization
 
 The homogenization functions are part of the namespace `tfel::material::homogenization`.
 A specialization for elasticity is defined: `tfel::material::homogenization::elasticity`.
@@ -391,17 +416,17 @@ If we consider a constant stress-free strain \(\tenseur \varepsilon^\mathrm{T}\)
 filling an ellipsoidal volume embedded in an infinite homogeneous medium whose
 elasticity is \(\tenseurq{C}_0\), the strain tensor inside the ellipsoid is given by
 
-\(\tenseur \varepsilon=\tenseur S_0:\tenseur \varepsilon^\mathrm{T}\).
+\(\tenseur \varepsilon=\tenseurq S_0:\tenseur \varepsilon^\mathrm{T}\).
 
-where \(\tenseur S_0\) is the Eshelby tensor.
-Note that it is related to the Hill tensor (\tenseur P_0\) by
+where \(\tenseurq S_0\) is the Eshelby tensor.
+Note that it is related to the Hill tensor (\tenseurq P_0\) by
 
-\(\tenseur P_0=\tenseur S_0:\tenseur C_0^{-1}\)
+\(\tenseurq P_0=\tenseurq S_0:\tenseurq C_0^{-1}\)
 
 which gives the strain tensor inside the ellipsoid as a function of the
-polarization tensor \(\tenseur \tau = -\tenseur C_0:\tenseur \varepsilon^\mathrm{T}\) : 
+polarization tensor \(\tenseur \tau = -\tenseurq C_0:\tenseur \varepsilon^\mathrm{T}\) : 
 
-\(\tenseur \varepsilon=-\tenseur P_0:\tenseur \tau\).
+\(\tenseur \varepsilon=-\tenseurq P_0:\tenseur \tau\).
 
 The function `computeEshelbyTensor` computes the Eshelby tensor of an ellipsoid
 whose semi-axis lengths are `a`, `b`, `c`, embedded in an isotropic
@@ -417,29 +442,27 @@ for the axisymmetrical ellipsoid and in [@eshelby_1957] for other cases.
 
 When two axes are very close, the formulas for three different axes are numerically instable,
 hence a parameter is introduced to switch to the formulas suited for the perfect
-axisymmetrical case. This parameter can be modified by the user, it is called `precf`
-when using `float`, `precd` for `double`, and `precld`.
-for `long double`.
+axisymmetrical case. This parameter can be modified by the user, it is called precision.
 In the same way, the formulas for the axisymmetrical case are instable when the aspect
 ratio is near one, so a parameter allows to switch to the formula for a sphere.
 
-When \(\tenseur C_0\) is anisotropic, the Eshelby tensor can be computed
-with `computeAnisotropicEshelbyTensor` in 3D and `computePlainStrainAnisotropicEshelbyTensor`
-in 2D. There are also `computeAnisotropicHillTensor` and `computePlainStrainAnisotropicHillTensor`.
+When \(\tenseurq C_0\) is anisotropic, the Eshelby tensor can be computed
+with `computeAnisotropicEshelbyTensor` in 3D and `computePlaneStrainAnisotropicEshelbyTensor`
+in 2D. There are also `computeAnisotropicHillTensor` and `computePlaneStrainAnisotropicHillTensor`.
 These functions are introduced by the header `AnisotropicEshelbyTensor.hxx`.
 
 ## Strain localisation tensors
 
 The header `IsotropicEshelbyTensor.hxx` also introduces
 three functions that compute the strain localisation tensor of an ellipsoid.
-If we consider an ellipsoid whose elasticity is \(\tenseur C_i\), embedded
-in an infinite homogeneous medium whose elasticity is \(\tenseur C_0\),
+If we consider an ellipsoid whose elasticity is \(\tenseurq C_i\), embedded
+in an infinite homogeneous medium whose elasticity is \(\tenseurq C_0\),
 submitted to a external uniform strain field at infinity \(\tenseur E\),
 the strain field within the ellipsoid is uniform and given by
 
-\(\tenseur \varepsilon = \tenseur A:\tenseur E\)
+\(\tenseur \varepsilon = \tenseurq A:\tenseur E\)
 
-where \(\tenseur A \) is the localisation tensor.
+where \(\tenseurq A \) is the localisation tensor.
 
 Three functions are implemented for the different possible shapes :
 `computeEllipsoidLocalisationTensor`, `computeAxisymmetricalEllipsoidLocalisationTensor`
@@ -447,29 +470,136 @@ and `computeSphereLocalisationTensor`.
 The ellipsoid is parametrized by its semi-axis lengths \(a,b,c\) but also
 by its axis orientations.
 The functions then return the localisation tensors taking into account the orientations.
-There are also, when the medium is anisotropic, `computeAnisotropicLocalisationTensor` and `computePlainStrainAnisotropicLocalisationTensor`. These functions are introduced by the header
+There are also, when the medium is anisotropic, `computeAnisotropicLocalisationTensor` and `computePlaneStrainAnisotropicLocalisationTensor`. These functions are introduced by the header
 `AnisotropicEshelbyTensor.hxx`.
 
-## Homogenization schemes
+## Homogenization schemes for biphasic microstructures
 
 Different schemes are implemented and return the homogenized stiffness of the material.
 These schemes are introduced by the header `LinearHomogenizationSchemes.hxx`.
-The scheme available are Mori-Tanaka scheme and dilute scheme.
-The available functions are `computeMoriTanakaScheme`, `computeDiluteScheme`,
-`computeSphereDiluteScheme`, `computeSphereMoriTanakaScheme`.
+The available schemes are:
 
-If a distribution of ellipsoids is considered, three types of distributions
-are considered : isotropic, transverse isotropic and with unique orientation.
-The corresponding functions are `computeIsotropicDiluteScheme`,
-`computeTransverseIsotropicDiluteScheme`, `computeOrientedDiluteScheme`,
-`computeIsotropicMoriTanakaScheme`, `computeTransverseIsotropicMoriTanakaScheme`
-and `computeOrientedMoriTanakaScheme`.
+ - Mori-Tanaka scheme
+ - dilute scheme
+ - Ponte Castaneda and Willis scheme
+
+Each scheme is based on the average of the localisation tensor \(\tenseur A \)
+defined above. This average is computed assuming different distributions
+of orientations of ellipsoids. Hence different cases are considered:
+
+ - spheres (no orientations)
+ - oriented ellipsoids (two vectors \(\tenseur n_a,\tenseur n_b\) define the orientation)
+ - uniform isotropic distribution of orientations
+ - transverse isotropic distribution of orientations (one axis \(\tenseur n_a\)
+ of the ellipsoid is fixed, the others are uniformly distributed in the transverse plane)
+
+Hence, the available functions are:
+
+ - `computeSphereDiluteScheme`
+ - `computeSphereMoriTanakaScheme`
+ - `computeOrientedDiluteScheme`
+ - `computeOrientedMoriTanakaScheme`
+ - `computeOrientedPCWScheme`
+ - `computeIsotropicDiluteScheme`
+ - `computeIsotropicMoriTanakaScheme`
+ - `computeIsotropicPCWScheme`
+ - `computeTransverseIsotropicDiluteScheme`
+ - `computeTransverseIsotropicMoriTanakaScheme`
+ - `computeTransverseIsotropicPCWScheme`
+ 
+Because the functions are based on the average of the localisation tensor \(\tenseur A \)
+associated with each distribution, a `Base` function is also defined for each scheme,
+that only takes in argument the average of the localisation tensor:
+
+ - `computeMoriTanakaScheme`
+ - `computeDiluteScheme`
+ - `computePCWScheme`
+ 
+For special case of Ponte-Castaneda and Willis scheme, a `Distribution` object must
+be created. It is defined by two vectors \(\tenseur n_a,\tenseur n_b\) and three lengths
+\(a,b,c\) that define the ellipsoid which defines the distribution.
+
+A tutorial on the computation of homogenized schemes for biphasic particulate microstructures
+is available [here](BiphasicLinearHomogenization.html).
+
 
 ## Homogenization bounds
 
 Different bounds are implemented and are introduced by the header
 `LinearHomogenizationBounds.hxx`.
-The available bounds are `computeVoigtStiffness`, 
-`computeReussStiffness`, and `computeIsotropicHashinShtrikmanBounds`.
+The available bounds are:
+
+ - Voigt bound (`computeVoigtStiffness`)
+ - Reuss bound (`computeReussStiffness`)
+ - Hashin-Shtrikman bounds (`computeIsotropicHashinShtrikmanBounds`)
+ 
+## Homogenization of general microstructures
+
+It is possible to create `ParticulateMicrostructure` objects for
+homogenization of general matrix-inclusion microstructures.
+
+### The `ParticulateMicrostructure` class
+
+The class `ParticulateMicrostructure` is available in 3d an 2d
+via a template parameter: `ParticulateMicrostructure<N,StressType>`
+with `N` the dimension. For the details, see the file 'MicrostructureDescription.hxx'.
+
+A ParticulateMicrostructure consists on a matrix, in which are embedded
+several `InclusionDistribution`, which represent distributions
+of inclusions.
+
+#### The `InclusionDistribution` class
+
+A `InclusionDistribution` is an abstract class which represents a distribution
+of inclusions. The `InclusionDistribution` class is in fact a child of
+a more generic class which represents a phase: `Phase`.
+The `Phase` class has only two attributes:
+ 
+ - `fraction` (the volume fraction of the phase)
+ - `stiffness` (a `st2tost2` object).
+
+There are 4 childs of `InclusionDistribution`:
+ 
+ - `SphereDistribution` (distribution of spheres)
+ - `IsotropicDistribution` (isotropic distribution of ellipsoids)
+ - `TransverseDistribution` (transverse isotropic distribution of ellipsoids)
+ - `OrientedDistribution` (aligned distribution of ellipsoids)
+
+The `Inclusion` is a geometrical object which is characterized by
+its unique attribute: `semiLengths`. It is a `std::array` of `N`
+lengths, which are the semi-lengths of the ellipsoid/ellipse,
+where `N` is the dimension considered (2 or 3).
+Hence, `Inclusion` has two template parameters: `Inclusion<N,LengthType>`.
+Some particular `Inclusion` objects are also defined:
+ 
+ - `Ellipsoid` (very general 3d `Inclusion` with 3 semi-lengths)
+ - `Spheroid` (3d `Inclusion` with the last two semi-lengths identical)
+ - `Sphere` (3d `Inclusion` with 3 semi-lengths equal to unity)
+ - `Ellipse` (general 2d `Inclusion` with two semi-lengths)
+ - `Disk` (2d `Inclusion` with 2 semi-lengths equal to unity)
+ 
+The method `computeMeanLocalisator` of the `InclusionDistribution`
+class returns the average strain localisator of the
+distribution of inclusions, when embedded in a given matrix.
+
+#### Description of a `ParticulateMicrostructure`
+
+Hence, the `ParticulateMicrostructure` has three attributes:
+
+ - `number_of_phases`
+ - `matrixPhase`
+ - `inclusionPhases`
+
+The `matrixPhase` is of type `Phase`.
+ 
+The `inclusionPhases` is a `std::vector` of pointers on
+`InclusionDistribution` objects (which represent the distributions of inclusions).
+
+The `ParticulateMicrostructure` has also methods (see 'MicrostructureDescription.hxx'
+for details):
+
+ - addInclusionPhase
+ - removeInclusionPhase
+ - get_number_of_phases, get_matrix_fraction, get_matrix_elasticity, get_inclusionPhase
 
 <!-- Local IspellDict: english -->

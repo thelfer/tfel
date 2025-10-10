@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   28/03/2018
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -79,7 +79,7 @@ namespace mfront::bbrick {
       const auto imax = d.at(rimax_n);
       this->equivalent_stress_check_maximum_iteration_factor =
           tfel::utilities::convert<double>(imax);
-      if ((this->equivalent_stress_check_maximum_iteration_factor < 0) &&
+      if ((this->equivalent_stress_check_maximum_iteration_factor < 0) ||
           (this->equivalent_stress_check_maximum_iteration_factor > 1)) {
         tfel::raise(
             "PlasticInelasticFlow::initialize: the value for option "

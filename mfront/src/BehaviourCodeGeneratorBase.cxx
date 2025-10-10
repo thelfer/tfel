@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   03/08/2022
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -1165,6 +1165,7 @@ namespace mfront {
        << "#include\"TFEL/TypeTraits/IsReal.hxx\"\n"
        << "#include\"TFEL/Math/General/Abs.hxx\"\n"
        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n"
+       << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n"
        << "#include\"TFEL/Math/Array/ViewsArrayIO.hxx\"\n"
        << "#include\"TFEL/Math/Array/fsarrayIO.hxx\"\n"
        << "#include\"TFEL/Math/Array/runtime_arrayIO.hxx\"\n"

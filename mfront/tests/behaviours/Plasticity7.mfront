@@ -1,0 +1,19 @@
+@DSL IsotropicPlasticMisesFlow;
+@Behaviour Plasticity7;
+@Author Helfer Thomas;
+@Date 23 / 11 / 06;
+
+@UseQt true;
+
+@MaterialProperty stress H;
+@MaterialProperty stress s0;
+
+@Predictor {
+  dp = sqrt(deto|deto);
+}
+
+@FlowRule {
+  f = seq - H * p - s0;
+  df_dseq = 1;
+  df_dp = -H;
+}

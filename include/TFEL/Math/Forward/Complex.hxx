@@ -4,11 +4,11 @@
  * the Complex class.
  * \author Thomas Helfer
  * \brief 03 janv. 2012
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -19,7 +19,7 @@
 // in c++ other than defining some macros specific to the standard
 // library implementation: here we want to detect if we use libc++
 // which is a bit touchy with std::complex
-#include <ciso646>
+#include <version>
 
 #if (defined _LIBCPP_VERSION)
 #include <complex>

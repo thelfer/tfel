@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \brief 03 jan. 2012
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -87,6 +87,50 @@ namespace tfel::math {
                       std::integral_constant<unsigned int, D6>,
                       std::integral_constant<unsigned int, D7>>;
   };
+
+  namespace internal {
+
+    template <typename T>
+    struct UnitConceptImplementation : std::false_type {};
+
+    template <int N1,
+              int N2,
+              int N3,
+              int N4,
+              int N5,
+              int N6,
+              int N7,
+              unsigned int D1,
+              unsigned int D2,
+              unsigned int D3,
+              unsigned int D4,
+              unsigned int D5,
+              unsigned int D6,
+              unsigned int D7>
+    struct UnitConceptImplementation<
+        Unit<std::integral_constant<int, N1>,
+             std::integral_constant<int, N2>,
+             std::integral_constant<int, N3>,
+             std::integral_constant<int, N4>,
+             std::integral_constant<int, N5>,
+             std::integral_constant<int, N6>,
+             std::integral_constant<int, N7>,
+             std::integral_constant<unsigned int, D1>,
+             std::integral_constant<unsigned int, D2>,
+             std::integral_constant<unsigned int, D3>,
+             std::integral_constant<unsigned int, D4>,
+             std::integral_constant<unsigned int, D5>,
+             std::integral_constant<unsigned int, D6>,
+             std::integral_constant<unsigned int, D7>>> : std::true_type {};
+
+  }  // namespace internal
+
+  template <typename T>
+  concept UnitConcept = internal::UnitConceptImplementation<T>::value;
+
+}  // end of namespace tfel::math
+
+namespace tfel::math::unit {
 
   //! \brief a simple alias
   using NoUnit = Unit<std::integral_constant<int, 0>,
@@ -248,45 +292,9 @@ namespace tfel::math {
    */
   typedef GenerateUnit<1, 0, -3, 0, 0, 0, 0>::type HeatFluxDensity;  // kg.s-3
 
-  namespace internal {
+}  // end of namespace tfel::math::unit
 
-    template <typename T>
-    struct UnitConceptImplementation : std::false_type {};
-
-    template <int N1,
-              int N2,
-              int N3,
-              int N4,
-              int N5,
-              int N6,
-              int N7,
-              unsigned int D1,
-              unsigned int D2,
-              unsigned int D3,
-              unsigned int D4,
-              unsigned int D5,
-              unsigned int D6,
-              unsigned int D7>
-    struct UnitConceptImplementation<
-        Unit<std::integral_constant<int, N1>,
-             std::integral_constant<int, N2>,
-             std::integral_constant<int, N3>,
-             std::integral_constant<int, N4>,
-             std::integral_constant<int, N5>,
-             std::integral_constant<int, N6>,
-             std::integral_constant<int, N7>,
-             std::integral_constant<unsigned int, D1>,
-             std::integral_constant<unsigned int, D2>,
-             std::integral_constant<unsigned int, D3>,
-             std::integral_constant<unsigned int, D4>,
-             std::integral_constant<unsigned int, D5>,
-             std::integral_constant<unsigned int, D6>,
-             std::integral_constant<unsigned int, D7>>> : std::true_type {};
-
-  }  // namespace internal
-
-  template <typename T>
-  concept UnitConcept = internal::UnitConceptImplementation<T>::value;
+namespace tfel::math {
 
   /*
    * \class Quantity
@@ -334,7 +342,7 @@ namespace tfel::math {
                       ValueType,
                       tfel::math::internals::QuantityValueOwnershipPolicy<
                           ValueType,
-                          std::is_same_v<UnitType, NoUnit>>>;
+                          std::is_same_v<UnitType, unit::NoUnit>>>;
   //! \brief a simple alias
   template <UnitConcept UnitType, typename ValueType = double>
   using qt_ref =
@@ -342,7 +350,7 @@ namespace tfel::math {
                ValueType,
                tfel::math::internals::QuantityReferenceOwnershipPolicy<
                    ValueType,
-                   std::is_same_v<UnitType, NoUnit>>>;
+                   std::is_same_v<UnitType, unit::NoUnit>>>;
   //! \brief a simple alias
   template <UnitConcept UnitType, typename ValueType = double>
   using const_qt_ref =
@@ -350,7 +358,7 @@ namespace tfel::math {
                ValueType,
                tfel::math::internals::QuantityReferenceOwnershipPolicy<
                    const ValueType,
-                   std::is_same_v<UnitType, NoUnit>>>;
+                   std::is_same_v<UnitType, unit::NoUnit>>>;
   //! \brief an helper metafunction which transforms a quantity type into the a
   //! reference
   template <typename QuantityType>
@@ -374,7 +382,7 @@ namespace tfel::math {
     };  // end of struct MakeQuantityValueType
 
     template <typename ValueType>
-    struct MakeQuantityValueType<qt<NoUnit, ValueType>> {
+    struct MakeQuantityValueType<qt<unit::NoUnit, ValueType>> {
       //! \brief result of the metafunction
       using type = ValueType;
     };  // end of struct MakeQuantityValueType

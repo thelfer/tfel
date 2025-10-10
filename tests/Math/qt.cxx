@@ -4,7 +4,7 @@
  *
  * \author Helfer thomas
  * \date   06 Jun 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -45,31 +45,31 @@ struct qtTest final : public tfel::tests::TestCase {
  private:
   void test1() {
     using namespace tfel::math;
-    constexpr qt<Mass> m1(100.);
-    constexpr qt<Mass> m2(100.);
-    constexpr qt<Mass> m3 = m1 + 0.5 * m2;
-    constexpr qt<Acceleration, unsigned short> a(2);
-    constexpr qt<Force> f = m1 * a;
-    const auto value = qt<NoUnit>(3);
+    constexpr qt<unit::Mass> m1(100.);
+    constexpr qt<unit::Mass> m2(100.);
+    constexpr qt<unit::Mass> m3 = m1 + 0.5 * m2;
+    constexpr qt<unit::Acceleration, unsigned short> a(2);
+    constexpr qt<unit::Force> f = m1 * a;
+    const auto value = qt<unit::NoUnit>(3);
     TFEL_TESTS_STATIC_ASSERT(!isQuantity<double>());
-    TFEL_TESTS_STATIC_ASSERT(isQuantity<qt<Mass>>());
+    TFEL_TESTS_STATIC_ASSERT(isQuantity<qt<unit::Mass>>());
     TFEL_TESTS_STATIC_ASSERT(my_abs(m3.getValue() - 150.) < 1.e-14);
     TFEL_TESTS_STATIC_ASSERT(my_abs(f.getValue() - 200.) < 1.e-14);
     TFEL_TESTS_ASSERT(
-        (my_abs(std::cos(qt<NoUnit>(12.)) - std::cos(12.)) < 1.e-14));
+        (my_abs(std::cos(qt<unit::NoUnit>(12.)) - std::cos(12.)) < 1.e-14));
     TFEL_TESTS_ASSERT((my_abs(pow(value, 3.) - 27) < 1.e-14));
   }  // end of test1
   void test2() {
     using namespace tfel::math;
-    using RootSquareMass = UnaryResultType<qt<Mass>, Power<1, 2>>::type;
+    using RootSquareMass = UnaryResultType<qt<unit::Mass>, Power<1, 2>>::type;
     constexpr RootSquareMass v1(1.5);
-    constexpr qt<Mass> v2 = v1 * v1;
+    constexpr qt<unit::Mass> v2 = v1 * v1;
     TFEL_TESTS_STATIC_ASSERT(my_abs(v2.getValue() - 2.25) < 1.e-14);
   }  // end of test2
   void test3() {
     using namespace tfel::math;
-    constexpr qt<Mass, int> a(-12);
-    constexpr qt<Mass, int> b(14);
+    constexpr qt<unit::Mass, int> a(-12);
+    constexpr qt<unit::Mass, int> b(14);
     TFEL_TESTS_STATIC_ASSERT(a <= b);
     TFEL_TESTS_STATIC_ASSERT(a < b);
     TFEL_TESTS_STATIC_ASSERT(b > a);
@@ -80,7 +80,7 @@ struct qtTest final : public tfel::tests::TestCase {
   }  // end of test3
   void test4() {
     using namespace tfel::math;
-    using time = qt<Time, double>;
+    using time = qt<unit::Time, double>;
     auto time_value = double(1);
     auto getTime = [&time_value]() -> double& { return time_value; };
     auto t = time(getTime());
@@ -89,7 +89,7 @@ struct qtTest final : public tfel::tests::TestCase {
   //! Test if implicit conversion works as expected
   void test5() {
     using namespace tfel::math;
-    auto d = [](const qt<NoUnit, double>& v) constexpr {
+    auto d = [](const qt<unit::NoUnit, double>& v) constexpr {
       return 2 * v.getValue();
     };
     TFEL_TESTS_STATIC_ASSERT(my_abs(d(12) - 24) < 1.e-14);
@@ -97,7 +97,7 @@ struct qtTest final : public tfel::tests::TestCase {
   // tests related to class template argument deduction
   void test6() {
     using namespace tfel::math;
-    using time = qt<Time>;
+    using time = qt<unit::Time>;
     constexpr Quantity t = time{1.2};
     TFEL_TESTS_STATIC_ASSERT((std::is_same_v<decltype(t), const time>));
     TFEL_TESTS_STATIC_ASSERT(my_abs(t.getValue() - 1.2) < 1e-15);

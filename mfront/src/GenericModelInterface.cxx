@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   28/04/2022
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -220,7 +220,8 @@ namespace mfront {
        << "#include <sstream>\n"
        << "#include \"TFEL/PhysicalConstants.hxx\"\n"
        << "#include \"TFEL/Config/TFELTypes.hxx\"\n"
-       << "#include \"TFEL/Math/Array/View.hxx\"\n";
+       << "#include \"TFEL/Math/Array/View.hxx\"\n"
+       << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n";
     if (useQuantities(md)) {
       os << "#include \"TFEL/Math/qt.hxx\"\n";
     }

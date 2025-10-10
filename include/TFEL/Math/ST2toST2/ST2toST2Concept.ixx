@@ -1,12 +1,12 @@
 /*!
  * \file   include/TFEL/Math/ST2toST2/ST2toST2Concept.ixx
  * \brief
- * \author Thomas Helfer
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \author Thomas Helfer/Antoine Martin
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -43,6 +43,31 @@ namespace tfel::math {
         std::forward<ST2toST2Type>(t));
   }  // end of transpose
 
+  TFEL_HOST_DEVICE constexpr auto trace(
+      const ST2toST2Concept auto& A) noexcept {
+    using ST2toST2Type = decltype(A);
+    using NumType = numeric_type<ST2toST2Type>;
+    using IndexType = index_type<ST2toST2Type>;
+    constexpr auto size =
+        StensorDimeToSize<getSpaceDimension<ST2toST2Type>()>::value;
+    auto tr = NumType{};
+    for (IndexType i = 0; i < size; i++) {
+      tr += A(i, i);
+    }
+    return tr;
+  }  // end of trace
+
+  TFEL_HOST_DEVICE constexpr auto quaddot(
+      const ST2toST2Concept auto& A, const ST2toST2Concept auto& B) noexcept {
+    return trace(A * B);
+  }  // end of quaddot
+
+  TFEL_HOST_DEVICE constexpr auto norm(const ST2toST2Concept auto& A) noexcept {
+    using ST2toST2Type = decltype(A);
+    using NumType = numeric_type<ST2toST2Type>;
+    return NumType(power<1, 2>(quaddot(transpose(A), A)));
+  }  // end of norm
+
   TFEL_HOST_DEVICE constexpr auto det(const ST2toST2Concept auto& s) noexcept {
     using ST2toST2Type = decltype(s);
     constexpr auto N = getSpaceDimension<ST2toST2Type>();
@@ -59,7 +84,7 @@ namespace tfel::math {
       return a * (e * i - f * h) + b * (f * g - d * i) + c * (d * h - e * g);
     } else {
       constexpr auto ts = StensorDimeToSize<N>::value;
-      using Result = UnaryResultType<numeric_type<ST2toST2Type>, Power<ts>>;
+      using Result = unary_result_type<numeric_type<ST2toST2Type>, Power<ts>>;
       using real = base_type<numeric_type<ST2toST2Type>>;
       tmatrix<ts, ts, real> m;
       tfel::fsalgo::transform<ts * ts>::exe(
@@ -70,7 +95,7 @@ namespace tfel::math {
         return Result{};
       }
       auto v = base_type<real>{1};
-      for (const index_type<ST2toST2Type> i = 0; i != ts; ++i) {
+      for (index_type<ST2toST2Type> i = 0; i != ts; ++i) {
         v *= m(i, i);
       }
       return r.second == 1 ? Result{v} : -Result{v};
