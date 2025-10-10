@@ -67,6 +67,26 @@ struct GaussKronrodQuadratureTest final : public tfel::tests::TestCase {
     const auto local_abs = [](const double e) { return e > 0 ? e : -e; };
     // left unbounded integral
     constexpr auto f1 = [](const double t) { return 1 / (1 + t * t); };
+#ifdef _MSC_VER
+    const auto or2 = tfel::math::gauss_kronrod_integrate(
+        f1, -std::numeric_limits<double>::max(), double{},
+        {.absolute_tolerance = 1e-12, .maximum_number_of_refinements = 8});
+    TFEL_TESTS_ASSERT(or2.has_value());
+    TFEL_TESTS_ASSERT(local_abs(*or2 - std::numbers::pi_v<double> / 2) < 1e-12);
+    // right unbounded integral
+    const auto or3 = tfel::math::gauss_kronrod_integrate(
+        f1, double{}, std::numeric_limits<double>::max(),
+        {.absolute_tolerance = 1e-12, .maximum_number_of_refinements = 8});
+    TFEL_TESTS_ASSERT(or3.has_value());
+    TFEL_TESTS_ASSERT(local_abs(*or3 - std::numbers::pi_v<double> / 2) < 1e-12);
+    // unbounded integral
+    const auto or4 = tfel::math::gauss_kronrod_integrate(
+        f1, -std::numeric_limits<double>::max(),
+        std::numeric_limits<double>::max(),
+        {.absolute_tolerance = 1e-12, .maximum_number_of_refinements = 8});
+    TFEL_TESTS_ASSERT(or4.has_value());
+    TFEL_TESTS_ASSERT(local_abs(*or4 - std::numbers::pi_v<double>) < 1e-12);
+#else
     constexpr auto or2 = tfel::math::gauss_kronrod_integrate(
         f1, -std::numeric_limits<double>::max(), double{},
         {.absolute_tolerance = 1e-12, .maximum_number_of_refinements = 8});
@@ -88,6 +108,7 @@ struct GaussKronrodQuadratureTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(or4.has_value());
     TFEL_TESTS_STATIC_ASSERT(local_abs(*or4 - std::numbers::pi_v<double>) <
                              1e-12);
+#endif
   }  // end of test3
   void test4() {
     constexpr auto a = double{};
