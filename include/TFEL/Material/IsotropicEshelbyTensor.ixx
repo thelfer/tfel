@@ -133,10 +133,9 @@ namespace tfel::material::homogenization::elasticity {
       n_2 = n_b_;
     }
     // r is the global basis expressed in the local sorted basis (n1,n2)
-    const tfel::math::rotation_matrix<real> r = {
-        n_1[0], n_1[1], real(0),
-        n_2[0], n_2[1], real(0),
-        real(0),real(0), real(1)};
+    const tfel::math::rotation_matrix<real> r = {n_1[0],  n_1[1],  real(0),
+                                                 n_2[0],  n_2[1],  real(0),
+                                                 real(0), real(0), real(1)};
 
     const auto S0_basis = change_basis(S0, r);
 
@@ -198,9 +197,10 @@ namespace tfel::material::homogenization::elasticity {
 
   template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real>
-  computeAxisymmetricalEshelbyTensor(const real& nu,
-                                     const real& e,
-                                     const tfel::math::base_type<real>  precision) {
+  computeAxisymmetricalEshelbyTensor(
+      const real& nu,
+      const real& e,
+      const tfel::math::base_type<real> precision) {
     if ((nu > real(0.5)) || (nu < real(-1))) {
       tfel::reportContractViolation("nu>0.5 or nu<-1");
     }
@@ -297,8 +297,7 @@ namespace tfel::material::homogenization::elasticity {
     }
     using namespace tfel::math;
     const auto n_3 = cross_product<real>(n_1, n_2);
-    const auto S0 =
-        computeAxisymmetricalEshelbyTensor<real>(nu, e, precision);
+    const auto S0 = computeAxisymmetricalEshelbyTensor<real>(nu, e, precision);
     const tfel::math::rotation_matrix<real> r = {
         n_1[0], n_1[1], n_1[2], n_2[0], n_2[1], n_2[2], n_3[0], n_3[1], n_3[2]};
     const auto S0_basis = change_basis(S0, r);

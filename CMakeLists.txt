@@ -406,6 +406,7 @@ if(enable-testing)
   add_subdirectory(tests)
 endif()
 add_subdirectory(mfm-test-generator)
+add_subdirectory(env)
 
 #documentations
 add_custom_target(doc)

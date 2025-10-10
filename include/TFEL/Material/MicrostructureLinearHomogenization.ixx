@@ -48,7 +48,7 @@ namespace tfel::material::homogenization::elasticity {
     std::vector<tfel::math::st2tost2<N, real>> localisators = {
         tfel::math::st2tost2<N, real>::Id()};
     std::vector<tfel::math::st2tost2<N, compliance>> hill_tensors = {};
-    
+
     for (unsigned int i = 0; i < np - 1; i++) {
       auto phasei = micro.get_inclusionPhase(i);
       auto Ci = (*phasei).stiffness;

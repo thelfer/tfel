@@ -49,7 +49,7 @@ namespace tfel::material {
                                                 LengthType>()) struct Ellipsoid
         : public Inclusion<3u, LengthType> {
       Ellipsoid(LengthType a, LengthType b, LengthType c)
-          : Inclusion<3u, LengthType>(std::array<LengthType, 3u>({a, b, c})){}
+          : Inclusion<3u, LengthType>(std::array<LengthType, 3u>({a, b, c})) {}
 
     };
 
@@ -64,7 +64,6 @@ namespace tfel::material {
         : public Ellipsoid<LengthType> {
       Spheroid(LengthType a, LengthType b)
           : Ellipsoid<LengthType>(a, b, b){}
-
     };
 
     /*!
@@ -76,7 +75,6 @@ namespace tfel::material {
         : public Spheroid<LengthType> {
       Sphere()
           : Spheroid<LengthType>(LengthType(1),LengthType(1)){}
-
     };
     
     /*!
@@ -89,7 +87,7 @@ namespace tfel::material {
                                                 LengthType>()) struct Ellipse
         : public Inclusion<2u, LengthType> {
       Ellipse(LengthType a, LengthType b)
-          : Inclusion<2u, LengthType>(std::array<LengthType, 2u>({a, b})){}
+          : Inclusion<2u, LengthType>(std::array<LengthType, 2u>({a, b})) {}
 
     };
 
@@ -161,7 +159,6 @@ namespace tfel::material {
           : Phase<N, StressType>(frac, IM), inclusion(inc){}
           
       virtual InclusionDistribution<N,StressType>& operator=(const InclusionDistribution<N,StressType> &ID) = default;
-          
       virtual tfel::math::st2tost2<N, real> computeMeanLocalisator(
           const tfel::math::st2tost2<N, StressType> &C0,
           int max_iter_anisotropic_integration) = 0;
@@ -218,7 +215,6 @@ namespace tfel::material {
       }
     };
 
-
     /*!
      * This struct represents an isotropic distribution of
      * 3d-ellipsoids, 3d-spheroids, as a child of
@@ -228,7 +224,7 @@ namespace tfel::material {
     requires(tfel::math::checkUnitCompatibility<
              tfel::math::unit::Stress,
              StressType>()) struct IsotropicDistribution
-        : public InclusionDistribution<3u,StressType> {
+        : public InclusionDistribution<3u, StressType> {
       using real = tfel::types::real<StressType>;
       using LengthType = tfel::types::length<StressType>;
 
@@ -385,7 +381,6 @@ namespace tfel::material {
         }
       }
 
-
       OrientedDistribution(const Spheroid<LengthType> &sphero,
                            real frac,
                            const tfel::math::st2tost2<3u, StressType> &C,
@@ -448,6 +443,7 @@ namespace tfel::material {
              tfel::math::unit::Stress,
              StressType>()) struct Microstructure {
       Microstructure(){}
+
     };
 
     /*!
@@ -508,7 +504,8 @@ namespace tfel::material {
 
       int removeInclusionPhase(unsigned int i) {
         if ((this->number_of_phases) == 1) {
-	  //          std::cout << "there are no more inclusions !" << std::endl;
+          //          std::cout << "there are no more inclusions !" <<
+          //          std::endl;
           return 0;
         } else if ((this->number_of_phases) < i + 2) {
           //           std::cout << "there are less phases than what you think

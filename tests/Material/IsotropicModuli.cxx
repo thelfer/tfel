@@ -32,7 +32,8 @@ static constexpr T my_abs(const T& v) noexcept {
 
 struct IsotropicModuliTest final : public tfel::tests::TestCase {
   IsotropicModuliTest()
-      : tfel::tests::TestCase("TFEL/Material", "IsotropicModuli") {}  // end of IsotropicModuliTest
+      : tfel::tests::TestCase("TFEL/Material", "IsotropicModuli") {
+  }  // end of IsotropicModuliTest
   tfel::tests::TestResult execute() override {
     this->template test_1<float, true>();
     this->template test_1<float, false>();
@@ -51,8 +52,8 @@ struct IsotropicModuliTest final : public tfel::tests::TestCase {
     constexpr auto eps = std::numeric_limits<real>::epsilon();
     constexpr auto kappa = stress{1.e9};
     constexpr auto mu = stress{2.e9};
-    constexpr auto J=tfel::math::st2tost2<3u,real>::J();
-    constexpr auto K=tfel::math::st2tost2<3u,real>::K();
+    constexpr auto J = tfel::math::st2tost2<3u, real>::J();
+    constexpr auto K = tfel::math::st2tost2<3u, real>::K();
     using namespace tfel::material;
     const auto tens = 3*kappa*J+2*mu*K;
     const auto yes_it_is_isotropic = isIsotropic<stress>(tens,eps);

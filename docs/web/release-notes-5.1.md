@@ -50,6 +50,42 @@ the equivalent plastic strain.
 
 # New features in the `TFEL` libraries
 
+## Scripts to define environment variables for `TFEL` to work properly
+
+Depending on the system and compilation options, some of following
+variables shall be set for `TFEL` to work properly: `TFELHOME`, `PATH`,
+`LD_LIBRARY_PATH` and `PYTHONPATH`.
+
+`TFEL` now installs automatically the following files in the installation
+directory (refered to `<install_prefix>` in the following):
+
+- `<install_prefix>/share/tfel/env/env.sh` for `UNIX` systems and the
+  `bash` shell. This file shall be used as follows:
+
+  ~~~~{.sh}
+  $ source <install_prefix>/share/tfel/env/env.sh
+  ~~~~
+- `<install_prefix>\share\tfel\env\env.ps1` for `PowerShell`
+  shell under `Windows`. This file shall be used as follows:
+
+  ~~~~{.sh}
+  $ .\<install_prefix>\share\tfel\env\env.ps1
+  ~~~~
+- `<install_prefix>\share\tfel\env\env.bat` for the historical `cmd`
+  shell under `Windows`. This file shall be used as follows:
+
+  ~~~~{.sh}
+  $ call <install_prefix>\share\tfel\env\env.bat
+  ~~~~
+
+> **Note**
+>
+> Those variables are not required if `TFEL` is installed
+> system-wide (for instance in `/usr/local`) and that the `TFEL`'s
+> binaries are not relocated (i.e. moved to a different directory than
+> the one specified during the compilation process as the installation
+> directory).
+
 ## Environment
 
 This version now supports a new environment variable to specify the
@@ -145,6 +181,18 @@ tensorial objects.
 ~~~~{.cxx}
 constexpr auto s = stensor<2u, double>::zero();
 ~~~~
+
+## Sorting eigenvalues in ascending/descending order
+
+The `sortEigenValues` function takes a vector of three values and sort
+them in ascending or descending order. This function is useful has the
+eigenvalues returned by `stensor::computeEigenValues` can only partially
+sorted depending on the space dimension, except in `3D`:
+
+- in `1D`, the eigenvalues are never sorted as the rotation matrix
+  giving the eigen tensors must be the identity.
+- in `2D`, only the inplane eigenvalues can be sorted: the third
+  eigenvalue is always given by the out of plane direction.
 
 # New `TFEL/Material` features
 
@@ -745,6 +793,14 @@ Python bindings are now generated using the
 - The `setDebugMode` function is now available.
 
 # Issues fixed
+
+## Issue 849: [TFEL/Math] add function to sort the eigen values in ascending order
+
+For more details, see <https://github.com/thelfer/tfel/issues/849>
+
+## Issue 846: Create environment files for sh, cmd and powershell 
+
+For more details, see <https://github.com/thelfer/tfel/issues/846>
 
 ## Issue 741: Add support for `flang`
 ￼

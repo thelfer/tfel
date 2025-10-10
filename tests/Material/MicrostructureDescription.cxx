@@ -46,26 +46,26 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
 
     this->template test_particulate<real, stress, length>();
     this->template test_particulate<real, real, real>();
-  
+
     return this->result;
   }
 
  private:
   template <typename real, typename stress, typename length>
   void test_particulate() {
-  static constexpr auto eps = std::numeric_limits<real>::epsilon();
+    static constexpr auto eps = std::numeric_limits<real>::epsilon();
     using namespace tfel::material::homogenization::elasticity;
     length a = length(10);
     length b = length(1);
     length c = length(1);
     tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
     tfel::math::tvector<3u, real> n_b = {0., 1., 0.};
-    
+
     const auto young0 = stress{1e9};
     const auto nu0 = real(0.2);
     const auto youngi = stress{10e9};
     const auto nui = real(0.3);
-    
+
     tfel::math::st2tost2<3u, stress> C_0;
     static constexpr auto value =
         tfel::material::StiffnessTensorAlterationCharacteristic::UNALTERED;
@@ -123,14 +123,11 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(my_abs(A_TI_1(i,j)- A_TI_2(i,j)) < eps);
     }
     
-    
     ParticulateMicrostructure<3u, stress> micro1(C_0);
     micro1.addInclusionPhase(distrib1);
     micro1.addInclusionPhase(distrib2);
     micro1.addInclusionPhase(distrib2);
-    micro1.addInclusionPhase(distrib2);
    
-     
   }
 
 };  // end of struct MicrostructureDescriptionTest

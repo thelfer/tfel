@@ -133,6 +133,7 @@ namespace tfel::material {
     }
   };  // end of KGModuli
 
+
   template <tfel::math::ScalarConcept StressType>
   requires(
       tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
@@ -164,6 +165,7 @@ namespace tfel::material {
       return KGModuli<StressType>(Kappa, Mu);
     }
   };  // end of LambdaMuModuli
+
 
   /*!
    * \brief This function takes a IsotropicModuli and
