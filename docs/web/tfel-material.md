@@ -722,11 +722,22 @@ The `inclusionPhases` is a `std::vector` of pointers on
 
 #### The `Phase` class
 
-The `Phase class` is very simple. It has three attributes:
+The `Phase class` is very simple. It has two attributes:
 
  - `fraction` (`real` type)
  - `stiffness` (`st2tost2` type)
- - `is_isotropic` (`bool` type)
+
+and a method `is_isotropic()` which returns true if the phase is isotropic.
+A `Phase` can be initialized as:
+
+~~~~{.cpp}
+Phase<3u,stress> Ph1(C0);
+Phase<3u,stress> Ph2(IM0);
+~~~~
+
+If `C0` is a `st2tost2`, hence `Ph1` is not isotropic, whereas if `IM0` is
+an `IsotropicModuli`, hence `Ph2` is isotropic (and `Ph2.is_isotropic();`
+will return `true`.
 
 #### The `InclusionDistribution class`
 

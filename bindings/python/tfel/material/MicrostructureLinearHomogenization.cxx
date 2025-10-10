@@ -14,7 +14,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include "TFEL/Material/MicrostructureDescription.hxx"
-#include "TFEL/Material/MicrostructureLinearHomogenization.ixx"
+#include "TFEL/Material/MicrostructureLinearHomogenization.hxx"
   
 template <unsigned short int N,tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<
@@ -25,10 +25,21 @@ static void declareHomogenizationScheme(pybind11::module_& m, const char* const 
 
   pybind11::class_<HS>(m, n, pybind11::buffer_protocol())
       .def(pybind11::init<const HS&>())
-      .def("homogenized_stiffness",[](HS &hs){
-          return hs.homogenized_stiffness;});
+      .def_readonly("homogenized_stiffness",&HS::homogenized_stiffness)
+      .def_readonly("effective_polarisation",&HS::effective_polarisation)
+      .def_readonly("mean_strain_localisation_tensors",&HS::mean_strain_localisation_tensors);
   }
-  
+
+template <unsigned short int N, tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      tfel::material::homogenization::elasticity::HomogenizationScheme<N,StressType> computeDiluteScheme(
+          tfel::material::homogenization::elasticity::ParticulateMicrostructure<N, StressType> &micro,
+          const std::vector<tfel::math::stensor<N, StressType>> &polarisations,
+          int max_iter_anisotropic_integration = 12
+          ){
+          return tfel::material::homogenization::elasticity::computeDilute<N,StressType>(micro,polarisations,max_iter_anisotropic_integration);}
+          
   
 template <unsigned short int N, tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
@@ -36,21 +47,33 @@ template <unsigned short int N, tfel::math::ScalarConcept StressType>
       tfel::material::homogenization::elasticity::HomogenizationScheme<N,StressType> computeMoriTanakaScheme(
           tfel::material::homogenization::elasticity::ParticulateMicrostructure<N, StressType> &micro,
           const std::vector<tfel::math::stensor<N, StressType>> &polarisations,
-          bool isotropic_matrix = true,
-          bool verbose = true,
           int max_iter_anisotropic_integration = 12
           ){
-          return tfel::material::homogenization::elasticity::computeMoriTanaka<N,StressType>(micro,polarisations,isotropic_matrix,verbose,max_iter_anisotropic_integration);}
+          return tfel::material::homogenization::elasticity::computeMoriTanaka<N,StressType>(micro,polarisations,max_iter_anisotropic_integration);}
+          
+template <unsigned short int N, tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      tfel::material::homogenization::elasticity::HomogenizationScheme<N,StressType> computeSelfConsistentScheme(
+          tfel::material::homogenization::elasticity::ParticulateMicrostructure<N, StressType> &micro,
+          const std::vector<tfel::math::stensor<N, StressType>> &polarisations,
+          int max_iter,
+          bool isotropic,
+          int max_iter_anisotropic_integration = 12
+          ){
+          return tfel::material::homogenization::elasticity::computeSelfConsistent<N,StressType>(micro,polarisations,max_iter,isotropic,max_iter_anisotropic_integration);}
 
 
   
 void declareMicrostructureLinearHomogenization(pybind11::module_&);
 
 void declareMicrostructureLinearHomogenization(pybind11::module_& m) {
-  declareHomogenizationScheme<3,double>(m, "HomogenizationScheme3D");
-  m.def("computeMoriTanakaScheme3D",
+  declareHomogenizationScheme<3u,double>(m, "HomogenizationScheme");
+  m.def("computeMoriTanakaScheme",
         &computeMoriTanakaScheme<3,double>);
-  m.def("computeMoriTanakaScheme2D",
-        &computeMoriTanakaScheme<2,double>);
+  m.def("computeDiluteScheme",
+        &computeDiluteScheme<3,double>);
+  m.def("computeSelfConsistentScheme",
+        &computeSelfConsistentScheme<3,double>);
   
 }

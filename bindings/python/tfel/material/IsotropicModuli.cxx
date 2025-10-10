@@ -17,13 +17,25 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Material/IsotropicModuli.hxx"
 
+
+template <tfel::math::ScalarConcept StressType>
+requires(tfel::math::checkUnitCompatibility<
+         tfel::math::unit::Stress,
+         StressType>()) static void declareIsotropicModuli(pybind11::module_& m,
+                                                    const char* const n) {
+    using IM = tfel::material::IsotropicModuli<StressType>;
+    pybind11::class_<IM,std::shared_ptr<IM>>(m, n, pybind11::buffer_protocol());
+  }
+
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<
          tfel::math::unit::Stress,
          StressType>()) static void declareKGModuli(pybind11::module_& m,
                                                     const char* const n) {
   using KG = tfel::material::KGModuli<StressType>;
-  pybind11::class_<KG>(m, n, pybind11::buffer_protocol())
+  using IM = tfel::material::IsotropicModuli<StressType>;
+  
+  pybind11::class_<KG,IM,std::shared_ptr<KG>>(m, n, pybind11::buffer_protocol())
       .def(pybind11::init<const KG&>())
       .def(pybind11::init<const StressType&, const StressType&>())
       .def("kappa",
@@ -43,7 +55,9 @@ requires(tfel::math::checkUnitCompatibility<
          StressType>()) static void declareYoungNuModuli(pybind11::module_& m,
                                                          const char* const n) {
   using YN = tfel::material::YoungNuModuli<StressType>;
-  pybind11::class_<YN>(m, n, pybind11::buffer_protocol())
+  using IM = tfel::material::IsotropicModuli<StressType>;
+  
+  pybind11::class_<YN,IM,std::shared_ptr<YN>>(m, n, pybind11::buffer_protocol())
       .def(pybind11::init<const YN&>())
       .def(pybind11::init<const StressType&,
                           const tfel::types::real<StressType>&>())
@@ -66,7 +80,9 @@ requires(tfel::math::checkUnitCompatibility<
          StressType>()) static void declareLambdaMuModuli(pybind11::module_& m,
                                                           const char* const n) {
   using LM = tfel::material::LambdaMuModuli<StressType>;
-  pybind11::class_<LM>(m, n, pybind11::buffer_protocol())
+  using IM = tfel::material::IsotropicModuli<StressType>;
+  
+  pybind11::class_<LM,IM,std::shared_ptr<LM>>(m, n, pybind11::buffer_protocol())
       .def(pybind11::init<const LM&>())
       .def(pybind11::init<const StressType&, const StressType&>())
       .def("lambda",
@@ -83,6 +99,7 @@ requires(tfel::math::checkUnitCompatibility<
 void declareIsotropicModuli(pybind11::module_&);
 
 void declareIsotropicModuli(pybind11::module_& m) {
+  declareIsotropicModuli<double>(m, "IsotropicModuli");
   declareKGModuli<double>(m, "KGModuli");
   declareYoungNuModuli<double>(m, "YoungNuModuli");
   declareLambdaMuModuli<double>(m, "LambdaMuModuli");
