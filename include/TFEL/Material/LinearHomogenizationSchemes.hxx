@@ -17,6 +17,7 @@
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Material/LocalisationTensor.hxx"
 #include "TFEL/Material/IsotropicModuli.hxx"
+#include "TFEL/Material/EshelbyTolerances.hxx"
 
 namespace tfel::material::homogenization::elasticity {
 

@@ -17,7 +17,6 @@
 #include <numbers>
 #include <stdexcept>
 #include "TFEL/Math/General/IEEE754.hxx"
-#include "TFEL/Material/LocalisationTensor.hxx"
 
 namespace tfel::material::homogenization::elasticity {
 
@@ -47,19 +46,19 @@ namespace tfel::material::homogenization::elasticity {
       st2tost2<2u, types::real<StressType>> computeDiskPlaneStrainLocalisationTensor(
           const IsotropicModuli<StressType>& IM_0,
           const tfel::math::st2tost2<2u, StressType>& C_i) {
-    using real = tfel::types::real<StressType>;
-    const auto P0 = computeDiskPlaneStrainHillTensor<StressType>(IM_0);
-    const auto pair0 = IM_0.ToYoungNu();
-    const auto young = std::get<0>(pair0);
-    const auto nu = std::get<1>(pair0);
-    if ((nu > real(0.5)) || (nu < real(-1))) {
-      tfel::reportContractViolation("nu>0.5 or nu<-1");
-    }
-    tfel::math::st2tost2<2u, StressType> C_0;
-    static constexpr auto value =
-        StiffnessTensorAlterationCharacteristic::UNALTERED;
-    computeIsotropicStiffnessTensorII<2u, value, StressType, real>(C_0, young,
-                                                                   nu);
+          using real=tfel::types::real<StressType>;
+	const auto P0 = computeDiskPlaneStrainHillTensor<StressType>(IM_0);
+	const auto Enu0 = IM_0.ToYoungNu();
+        const auto young = Enu0.young;
+        const auto nu = Enu0.nu;
+	if ((nu > real(0.5)) || (nu < real(-1))) {
+	tfel::reportContractViolation("nu>0.5 or nu<-1");
+	}
+	tfel::math::st2tost2<2u, StressType> C_0;
+	static constexpr auto value =
+	  StiffnessTensorAlterationCharacteristic::UNALTERED;
+	computeIsotropicStiffnessTensorII<2u, value, StressType, real>(C_0, young,
+		                                                    nu);
     return internals::computeLocalisationTensorBase<2u, StressType>(C_0, P0,
                                                                     C_i);
   }  // end of computeDiskPlaneStrainLocalisationTensor
@@ -74,19 +73,19 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::tvector<2u, types::real<StressType>>& n_a,
           const types::length<StressType>& a,
           const types::length<StressType>& b) {
-    using real = tfel::types::real<StressType>;
-    const auto P0 = computePlaneStrainHillTensor<StressType>(IM_0, n_a, a, b);
-    const auto pair0 = IM_0.ToYoungNu();
-    const auto young = std::get<0>(pair0);
-    const auto nu = std::get<1>(pair0);
-    if ((nu > real(0.5)) || (nu < real(-1))) {
-      tfel::reportContractViolation("nu>0.5 or nu<-1");
-    }
-    tfel::math::st2tost2<2u, StressType> C_0;
-    static constexpr auto value =
-        StiffnessTensorAlterationCharacteristic::UNALTERED;
-    computeIsotropicStiffnessTensorII<2u, value, StressType, real>(C_0, young,
-                                                                   nu);
+          using real=tfel::types::real<StressType>;
+	const auto P0 = computePlaneStrainHillTensor<StressType>(IM_0, n_a, a, b);
+	const auto Enu0 = IM_0.ToYoungNu();
+        const auto young = Enu0.young;
+        const auto nu = Enu0.nu;
+	if ((nu > real(0.5)) || (nu < real(-1))) {
+	tfel::reportContractViolation("nu>0.5 or nu<-1");
+	}
+	tfel::math::st2tost2<2u, StressType> C_0;
+	static constexpr auto value =
+	  StiffnessTensorAlterationCharacteristic::UNALTERED;
+	computeIsotropicStiffnessTensorII<2u, value, StressType, real>(C_0, young,
+		                                                    nu);
     return internals::computeLocalisationTensorBase<2u, StressType>(C_0, P0,
                                                                     C_i);
   }  // end of computePlaneStrainLocalisationTensor
@@ -121,14 +120,16 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>())
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>>
   computeSphereLocalisationTensor(const IsotropicModuli<StressType>& IM0,
                                   const IsotropicModuli<StressType>& IM_i) {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
     return computeSphereLocalisationTensor<StressType>(
-        std::get<0>(Enu0), std::get<1>(Enu0), std::get<0>(Enui),
-        std::get<1>(Enui));
+        Enu0.young, Enu0.nu, Enui.young, Enui.nu);
   }  // end of function SphereLocalisationTensor
 
   template <tfel::math::ScalarConcept StressType>
@@ -179,8 +180,7 @@ namespace tfel::material::homogenization::elasticity {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
     return computeAxisymmetricalEllipsoidLocalisationTensor<StressType>(
-        std::get<0>(Enu0), std::get<1>(Enu0), std::get<0>(Enui),
-        std::get<1>(Enui), n_a, e);
+        Enu0.young, Enu0.nu, Enui.young, Enui.nu, n_a, e);
   }  // end of function computeAxisymmetricalEllipsoidLocalisationTensor
 
   template <tfel::math::ScalarConcept StressType>
@@ -199,8 +199,8 @@ namespace tfel::material::homogenization::elasticity {
     using LengthType = types::length<StressType>;
 
     const auto Enu0 = IM0.ToYoungNu();
-    const auto young0 = std::get<0>(Enu0);
-    const auto nu0 = std::get<1>(Enu0);
+    const auto young0 = Enu0.young;
+    const auto nu0 = Enu0.nu;
 
     if ((nu0 > real(0.5)) || (nu0 < real(-1))) {
       tfel::reportContractViolation("nu0>0.5 or nu0<-1");
@@ -264,8 +264,7 @@ namespace tfel::material::homogenization::elasticity {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
     return computeEllipsoidLocalisationTensor<StressType>(
-        std::get<0>(Enu0), std::get<1>(Enu0), std::get<0>(Enui),
-        std::get<1>(Enui), n_a, a, n_b, b, c);
+        Enu0.young, Enu0.nu, Enui.young, Enui.nu, n_a, a, n_b, b, c);
   }  // end of second overload of computeEllipsoidLocalisationTensor
 
   template <tfel::math::ScalarConcept StressType>
@@ -314,4 +313,4 @@ namespace tfel::material::homogenization::elasticity {
 
 }  // end of namespace tfel::material::homogenization::elasticity
 
-#endif /* LIB_TFEL_MATERIAL_LOCALISATIONTENSOR_IXX */ u,
+#endif /* LIB_TFEL_MATERIAL_LOCALISATIONTENSOR_IXX */

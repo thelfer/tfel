@@ -26,20 +26,12 @@ requires(tfel::math::checkUnitCompatibility<
   pybind11::class_<KG>(m, n, pybind11::buffer_protocol())
       .def(pybind11::init<const KG&>())
       .def(pybind11::init<const StressType&, const StressType&>())
-      .def("__getitem__",
-           [](const KG& kg, const unsigned short i) {
-             if ((i != 0) and (i != 1)) {
-               tfel::raise<std::range_error>(
-                   "invalid index '" + std::to_string(static_cast<int>(i)) +
-                   "'");
-             } else if (i == 0) {
-               const auto pair = kg.ToKG();
-               return std::get<0>(pair);
-             } else {
-               const auto pair = kg.ToKG();
-               return std::get<1>(pair);
-             }
-           })
+      .def("kappa",
+           [](const KG& kg) {
+             return kg.kappa;})
+      .def("mu",
+           [](const KG& kg) {
+             return kg.mu;})
       .def("ToYoungNu", [](const KG& kg) { return kg.ToYoungNu(); })
       .def("ToLambdaMu", [](const KG& kg) { return kg.ToLambdaMu(); })
       .def("ToKG", [](const KG& kg) { return kg.ToKG(); });
@@ -55,19 +47,13 @@ requires(tfel::math::checkUnitCompatibility<
       .def(pybind11::init<const YN&>())
       .def(pybind11::init<const StressType&,
                           const tfel::types::real<StressType>&>())
-      .def("__getitem__",
-           [](const YN& yn, const unsigned short i) {
-             if ((i != 0) and (i != 1)) {
-               tfel::raise<std::range_error>(
-                   "invalid index '" + std::to_string(static_cast<int>(i)) +
-                   "'");
-             } else if (i == 0) {
-               const auto pair = yn.ToYoungNu();
-               return std::get<0>(pair);
-             } else {
-               const auto pair = yn.ToYoungNu();
-               return std::get<1>(pair);
-             }
+      .def("young",
+           [](const YN& yn) {
+             return yn.young;
+           })
+      .def("nu",
+           [](const YN& yn) {
+             return yn.nu;
            })
       .def("ToYoungNu", [](const YN& yn) { return yn.ToYoungNu(); })
       .def("ToLambdaMu", [](const YN& yn) { return yn.ToLambdaMu(); })
@@ -83,19 +69,11 @@ requires(tfel::math::checkUnitCompatibility<
   pybind11::class_<LM>(m, n, pybind11::buffer_protocol())
       .def(pybind11::init<const LM&>())
       .def(pybind11::init<const StressType&, const StressType&>())
-      .def("__getitem__",
-           [](const LM& lm, const unsigned short i) {
-             if ((i != 0) and (i != 1)) {
-               tfel::raise<std::range_error>(
-                   "invalid index '" + std::to_string(static_cast<int>(i)) +
-                   "'");
-             } else if (i == 0) {
-               const auto pair = lm.ToLambdaMu();
-               return std::get<0>(pair);
-             } else {
-               const auto pair = lm.ToLambdaMu();
-               return std::get<1>(pair);
-             }
+      .def("lambda",
+           [](const LM& lm) {return lm.lambda;
+           })
+      .def("mu",
+           [](const LM& lm) {return lm.mu;
            })
       .def("ToYoungNu", [](const LM& lm) { return lm.ToYoungNu(); })
       .def("ToLambdaMu", [](const LM& lm) { return lm.ToLambdaMu(); })

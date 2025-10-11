@@ -42,7 +42,9 @@ namespace tfel::material::homogenization::elasticity {
            StressType>()) TFEL_HOST_DEVICE tfel::math::
       st2tost2<2u, types::compliance<StressType>> computePlaneStrainAnisotropicHillTensor(
           const tfel::math::st2tost2<2u, StressType>&,
-          const types::real<StressType>&,
+          const tfel::math::tvector<2u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
           const std::size_t max_it = 12);
 
   /*!
@@ -68,7 +70,9 @@ namespace tfel::material::homogenization::elasticity {
            StressType>()) TFEL_HOST_DEVICE tfel::math::
       st2tost2<2u, types::real<StressType>> computePlaneStrainAnisotropicEshelbyTensor(
           const tfel::math::st2tost2<2u, StressType>&,
-          const types::real<StressType>&,
+          const tfel::math::tvector<2u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
           const std::size_t max_it = 12);
 
   /*!

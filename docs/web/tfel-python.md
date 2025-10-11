@@ -85,15 +85,6 @@ from tfel.material import KGModuli
 K=1e9
 G=0.2e9
 kg=KGModuli(K,G)
-~~~~
-
-or 
-
-~~~~{.py}
-from tfel.material import KGModuli
-K=1e9
-G=0.2e9
-kg=KGModuli(K,G)
 kg2=KGModuli(kg)
 ~~~~
 
@@ -103,8 +94,6 @@ and their methods permit to convert them:
 - `ToLambdaMu()`
 - `ToKG()`
  
-These methods return a `tuple`, hence `KGModuli(1e9,0.2e9).ToYoungNu()` is
-a `tuple` and not a KGModuli object.
 
 ## The `tfel.material.homogenization` module
 
