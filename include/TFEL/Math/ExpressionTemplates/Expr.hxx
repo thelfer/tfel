@@ -457,6 +457,19 @@ namespace tfel::math {
     return e;
   }  // end of eval
 
+  namespace internals {
+
+    template <typename Type>
+    struct ExpressionTest : std::false_type {};
+
+    template <typename ResultType, typename Operation>
+    struct ExpressionTest<Expr<ResultType, Operation>> : std::true_type {};
+
+  }  // namespace internals
+
+  template <typename ExpressionType>
+  concept ExpressionConcept = internals::ExpressionTest<ExpressionType>::value;
+
 }  // end of namespace tfel::math
 
 namespace tfel::typetraits {
