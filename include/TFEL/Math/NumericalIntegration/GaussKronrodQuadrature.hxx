@@ -29,6 +29,16 @@
 
 namespace tfel::math {
 
+  /*!
+   * \brief class implementing numerical integration using the Gauss-Kronrod's
+   * quadrature adaptative scheme.
+   *
+   * This scheme is described in depth here:
+   * https://en.wikipedia.org/wiki/Gauss%E2%80%93Kronrod_quadrature_formula
+   *
+   * \note The implementation is strongly inspired by the one of the boost/math
+   * library
+   */
   struct GaussKronrodQuadrature {
     /*!
      * \brief numerical parameters for the adaptative version
@@ -61,9 +71,17 @@ namespace tfel::math {
     requires(std::is_invocable_v<FunctionType, real>);
 
     /*!
+     * \brief integration of a function without refinement using 15pts Kronrod's
+     * quadrature rule. Error is estimated by comparison with 7pts Gauss'
+     * quadature rule.
+     *
      * \param[in] f: function to be integrated
      * \param[in] a: first bound
      * \param[in] b: second bound
+     *
+     * \return an optional tuple containing the value of the integral estimated
+     * using 15pts Kronrod's quadrature rule and an estimation of the quadrature
+     * error.
      */
     template <ScalarConcept real, typename FunctionType>
     [[nodiscard]] constexpr auto operator()(const FunctionType &f,
@@ -153,6 +171,10 @@ namespace tfel::math {
     requires(std::is_invocable_v<FunctionType, real>);
   };
 
+  /*!
+   * \brief inline object implementing the numerical integration using the
+   * Gauss-Kronrod's quadrature adaptative scheme
+   */
   inline constexpr auto gauss_kronrod_integrate = GaussKronrodQuadrature{};
 
 }  // end of namespace tfel::math
