@@ -49,6 +49,12 @@ features:
   solvers for small sized problems described in Section
   @sec:tfel_math:non_linear_solvers.
 
+This features are described in this document. Other modules of the
+library are described in the following pages:
+
+- [data interpolation](tfel-math-data-interpolation.html),
+- [numerical integration](tfel-math-numerical-integration.html).
+
 # Mathematical objects {#sec:tfel_math:math_objects}
 
 The mathematical objects provided by the `TFEL/Math` library are based
