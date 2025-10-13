@@ -206,7 +206,7 @@ the manipulation of isotropic materials easier. See `TFEL/Material/IsotropicModu
 
 ### Eshelby and Hill tensors in isotropic and anisotropic matrix
 
-The Eshelby and Hill tensors which where available in isotropic medium
+The Eshelby and Hill tensors which were available in isotropic medium
 are now also available in anisotropic medium. See `TFEL/Material/IsotropicEshelbyTensor.hxx`
 for isotropic medium and `TFEL/Material/AnisotropicEshelbyTensor.hxx` for anisotropic
 medium.
