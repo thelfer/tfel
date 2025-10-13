@@ -379,7 +379,7 @@ generalized plane strain modelling hypotheses.
 
 # Isotropic elastic moduli
 
-Three `struct` are defined to represent the isotropic moduli of
+Three data structures are defined to represent the isotropic moduli of
 an isotropic material:
 
  - `KGModuli` (attributes: `kappa`,`mu`)
