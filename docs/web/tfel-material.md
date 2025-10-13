@@ -399,7 +399,7 @@ const auto K = KG.kappa;
 const auto G = KG.mu;
 ~~~~
 
-It can also be converted to other `IsotropicModuli` as follows:
+It can  be converted to the other describing isotropic moduli as follows:
 
 ~~~~{.cpp}
 const auto Enu = KG.ToYoungNu();
