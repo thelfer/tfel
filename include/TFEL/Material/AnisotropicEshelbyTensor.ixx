@@ -17,6 +17,7 @@
 #include <cmath>
 #include <numbers>
 #include <stdexcept>
+#include "TFEL/Math/General/Abs.hxx"
 
 namespace tfel::material::homogenization::elasticity {
 
@@ -48,12 +49,14 @@ namespace tfel::material::homogenization::elasticity {
         h /= 2;
 
         for (std::size_t j = 1; j < p; j += 2) {
-          I1 += f(a + j * h) * h;
-          IL1 += std::abs(f(a + j * h)) * h;
+          const auto x = a + static_cast<real>(j) * h;
+          const auto v = f(x);
+          I1 += v * h;
+          IL1 +=  tfel::math::abs(v) * h;
         }
 
         ++k;
-        error = std::abs(I0 - I1);
+        error = tfel::math::abs(I0 - I1);
       }
       return I1;
     }

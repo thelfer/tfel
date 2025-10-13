@@ -379,7 +379,7 @@ generalized plane strain modelling hypotheses.
 
 # Isotropic elastic moduli
 
-Three `struct` are defined to represent the isotropic moduli of
+Three data structures are defined to represent the isotropic moduli of
 an isotropic material:
 
  - `KGModuli` (attributes: `kappa`,`mu`)
@@ -399,7 +399,7 @@ const auto K = KG.kappa;
 const auto G = KG.mu;
 ~~~~
 
-It can also be converted to other `IsotropicModuli` as follows:
+It can  be converted to the other describing isotropic moduli as follows:
 
 ~~~~{.cpp}
 const auto Enu = KG.ToYoungNu();
@@ -427,7 +427,7 @@ Here, `isIsotropic` first projects \(\tenseurq{C}\) on
 the isotropic basis, and constructs the isotropized of \(\tenseurq{C}\).
 Then, it computes the relative difference between \(\tenseurq{C}\)
 and its isotropized, by using the \(L2\)-norm. This difference is compared
-to `eps`.
+to the tolerance `eps`.
 
 # Homogenization
 

@@ -206,7 +206,7 @@ the manipulation of isotropic materials easier. See `TFEL/Material/IsotropicModu
 
 ### Eshelby and Hill tensors in isotropic and anisotropic matrix
 
-The Eshelby and Hill tensors which where available in isotropic medium
+The Eshelby and Hill tensors which were available in isotropic medium
 are now also available in anisotropic medium. See `TFEL/Material/IsotropicEshelbyTensor.hxx`
 for isotropic medium and `TFEL/Material/AnisotropicEshelbyTensor.hxx` for anisotropic
 medium.
@@ -230,17 +230,17 @@ phases, in dimension 2 or 3:
 ### Homogenization for biphasic media
 
 Ponte Castaneda and Willis scheme for distributions
-of ellipsoidal inclusions for biphasic media is now available, see
+of ellipsoidal inclusions for biphasic media is available, see
 `TFEL/Material/LinearHomogenizationSchemes.hxx`
 
 ### Homogenization for general microstructures
 
-The creation of `ParticulateMicrostructure` objects is now possible
-and permits to consider very general microstructure,
+The creation of `ParticulateMicrostructure` objects is possible
+and permits to consider very general microstructures,
 with an arbitrary number of phases, each phase being a distribution
 of ellipsoidal inclusions with very general properties.
 The construction of such particulate microstructures is detailed
-in the [documentation](tfel-material.html) of TFEL/Material modules.
+in the [documentation](tfel-material.html) of the `TFEL/Material` library.
  
 Moreover, three classical schemes are implemented for these microstructures:
 
@@ -253,14 +253,14 @@ can be provided.
 
 ## Python bindings
 
-Python bindings are now generated using the
+Python bindings are generated using the
 [`pybind11`](https://github.com/pybind/pybind11) library.
 
 ### Module `tfel.material.homogenization`
 
 Some new functionalities are available for homogenization,
 via the `tfel.material.homogenization` module.
-It contains a copy of the functionalities available in the namespace
+It mirrors the functionalities available in the namespace
 `tfel::material::homogenization::elasticity`.
 
 
