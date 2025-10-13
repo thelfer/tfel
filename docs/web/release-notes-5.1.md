@@ -235,8 +235,8 @@ of ellipsoidal inclusions for biphasic media is available, see
 
 ### Homogenization for general microstructures
 
-The creation of `ParticulateMicrostructure` objects is now possible
-and permits to consider very general microstructure,
+The creation of `ParticulateMicrostructure` objects is possible
+and permits to consider very general microstructures,
 with an arbitrary number of phases, each phase being a distribution
 of ellipsoidal inclusions with very general properties.
 The construction of such particulate microstructures is detailed
