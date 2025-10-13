@@ -253,7 +253,7 @@ can be provided.
 
 ## Python bindings
 
-Python bindings are now generated using the
+Python bindings are generated using the
 [`pybind11`](https://github.com/pybind/pybind11) library.
 
 ### Module `tfel.material.homogenization`
