@@ -476,6 +476,7 @@ of general ellipsoids embedded in an isotropic medium.
 We can compute the Hill tensors as follows:
 
 ~~~~{.cpp}
+using namespace tfel::material::homogenization::elasticity;
 const auto P0 = computeSphereHillPolarisationTensor<stress>(E0,nu0);
 const auto P0_axi = computeAxisymmetricalHillPolarisationTensor<stress>(E0,nu0,n_a,e);
 const auto P0_ellipsoid = computeHillPolarisationTensor<stress>(E0,nu0,n_a,a,n_b,b,c);

@@ -13,6 +13,7 @@
 
 #include <sstream>
 #include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
 #include <pybind11/stl.h>
 #include <pybind11/operators.h>
 #include "TFEL/Math/st2tost2.hxx"
@@ -21,6 +22,7 @@
 template <unsigned short N>
 static void declarest2tost2(pybind11::module_& m, const char* const n) {
   using st2tost2 = tfel::math::st2tost2<N, double>;
+  const auto S = tfel::math::StensorDimeToSize<N>::value;
   pybind11::class_<st2tost2>(m, n, pybind11::buffer_protocol())
       .def_static("zero", &st2tost2::zero)
       .def_buffer([](st2tost2& s) -> pybind11::buffer_info {
@@ -35,7 +37,16 @@ static void declarest2tost2(pybind11::module_& m, const char* const n) {
             {s.size(1) * sizeof(double), sizeof(double)});
       })
       .def(pybind11::init<>())
-      .def(pybind11::init<double>())
+      .def(pybind11::init<>([](pybind11::array_t<double, pybind11::array::c_style | pybind11::array::forcecast> &u){
+              if ((u.shape(0)!=S) || (u.shape(1)!=S)){
+              tfel::raise<std::range_error>(
+                   "invalid shape of ST2toST2");
+              }
+              st2tost2 t;
+              for (std::size_t i=0;i<S;i++)
+              for (std::size_t j=0;j<S;j++){t(i,j)=u.unchecked<2>()(i,j);}
+              return t;
+             }))
       .def("__repr__",
            [](const st2tost2& s) {
              std::ostringstream os;
@@ -53,8 +64,10 @@ static void declarest2tost2(pybind11::module_& m, const char* const n) {
              return s(r, c);
            })
       .def("__setitem__",
-           [](st2tost2& s, const unsigned short r, const unsigned short c,
+           [](st2tost2& s, const std::pair<unsigned short,unsigned short>& ind,
               const double v) {
+             const auto r = std::get<0>(ind);
+             const auto c = std::get<1>(ind);
              if ((r >= s.size(0)) && (c >= s.size(1))) {
                tfel::raise<std::range_error>(
                    "invalid index '(" + std::to_string(static_cast<int>(r)) +

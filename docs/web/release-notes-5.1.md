@@ -198,7 +198,7 @@ sorted depending on the space dimension, except in `3D`:
 
 ## Isotropic Moduli
 
-`IsotropicModuli` objects are defined
+[`IsotropicModuli`](tfel-material.html#isotropic-elastic-moduli) objects are defined
 for the elastic moduli of an isotropic material. It makes
 the manipulation of isotropic materials easier. See `TFEL/Material/IsotropicModuli.hxx`.
 
@@ -206,7 +206,8 @@ the manipulation of isotropic materials easier. See `TFEL/Material/IsotropicModu
 
 ### Eshelby and Hill tensors in isotropic and anisotropic matrix
 
-The Eshelby and Hill tensors which were available in isotropic medium
+The [Eshelby and Hill tensors](tfel-material.html#eshelby-hill-and-localisation-tensors)
+which were available in isotropic medium
 are now also available in anisotropic medium. See `TFEL/Material/IsotropicEshelbyTensor.hxx`
 for isotropic medium and `TFEL/Material/AnisotropicEshelbyTensor.hxx` for anisotropic
 medium.
@@ -239,8 +240,8 @@ The creation of `ParticulateMicrostructure` objects is possible
 and permits to consider very general microstructures,
 with an arbitrary number of phases, each phase being a distribution
 of ellipsoidal inclusions with very general properties.
-The construction of such particulate microstructures is detailed
-in the [documentation](tfel-material.html) of the `TFEL/Material` library.
+The construction of such [particulate microstructures](tfel-material.html#homogenization-of-general-microstructures)
+is detailed in the documentation of the `TFEL/Material` library.
  
 Moreover, three classical schemes are implemented for these microstructures:
 
@@ -259,8 +260,8 @@ Python bindings are generated using the
 ### Module `tfel.material.homogenization`
 
 Some new functionalities are available for homogenization,
-via the `tfel.material.homogenization` module.
-It mirrors the functionalities available in the namespace
+via the [`tfel.material.homogenization`](tfel-python.html#the-tfel.material.homogenization-module)
+module. It mirrors the functionalities available in the namespace
 `tfel::material::homogenization::elasticity`.
 
 
