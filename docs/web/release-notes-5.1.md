@@ -230,7 +230,7 @@ phases, in dimension 2 or 3:
 ### Homogenization for biphasic media
 
 Ponte Castaneda and Willis scheme for distributions
-of ellipsoidal inclusions for biphasic media is now available, see
+of ellipsoidal inclusions for biphasic media is available, see
 `TFEL/Material/LinearHomogenizationSchemes.hxx`
 
 ### Homogenization for general microstructures
