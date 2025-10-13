@@ -786,5 +786,4 @@ as an argument and returns a `HomogenizationScheme` object. Three schemes are av
  - Mori-Tanaka scheme
  - Self-Consistent scheme
 
-
 <!-- Local IspellDict: english -->
