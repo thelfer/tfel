@@ -260,7 +260,7 @@ Python bindings are generated using the
 
 Some new functionalities are available for homogenization,
 via the `tfel.material.homogenization` module.
-It contains a copy of the functionalities available in the namespace
+It mirrors the functionalities available in the namespace
 `tfel::material::homogenization::elasticity`.
 
 
