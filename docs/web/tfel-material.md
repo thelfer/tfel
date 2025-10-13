@@ -427,7 +427,7 @@ Here, `isIsotropic` first projects \(\tenseurq{C}\) on
 the isotropic basis, and constructs the isotropized of \(\tenseurq{C}\).
 Then, it computes the relative difference between \(\tenseurq{C}\)
 and its isotropized, by using the \(L2\)-norm. This difference is compared
-to `eps`.
+to the tolerance `eps`.
 
 # Homogenization
 
