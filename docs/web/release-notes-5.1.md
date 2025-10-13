@@ -240,7 +240,7 @@ and permits to consider very general microstructures,
 with an arbitrary number of phases, each phase being a distribution
 of ellipsoidal inclusions with very general properties.
 The construction of such particulate microstructures is detailed
-in the [documentation](tfel-material.html) of TFEL/Material modules.
+in the [documentation](tfel-material.html) of the `TFEL/Material` library.
  
 Moreover, three classical schemes are implemented for these microstructures:
 
