@@ -17,7 +17,7 @@
 
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                            StressType>()) static tfel::material::YoungNuModuli<StressType> computeSphereDiluteScheme(
+                                            StressType>()) static tfel::material::YoungNuModuli<StressType> computeSphereDiluteScheme_(
         const StressType& young,
         const tfel::types::real<StressType>& nu,
         const tfel::types::real<StressType>& f,
@@ -29,7 +29,7 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
 
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                            StressType>()) static tfel::material::YoungNuModuli<StressType> computeSphereMoriTanakaScheme(const StressType& young,
+                                            StressType>()) static tfel::material::YoungNuModuli<StressType> computeSphereMoriTanakaScheme_(const StressType& young,
                                                         const tfel::types::real<
                                                             StressType>& nu,
                                                         const tfel::types::real<
@@ -44,7 +44,7 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
 
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                            StressType>()) static tfel::material::YoungNuModuli<StressType> computeIsotropicDiluteScheme(const StressType& young,
+                                            StressType>()) static tfel::material::YoungNuModuli<StressType> computeIsotropicDiluteScheme_(const StressType& young,
                                                       const tfel::types::real<
                                                           StressType>& nu,
                                                       const tfel::types::real<
@@ -65,7 +65,7 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
 
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                            StressType>()) static tfel::material::YoungNuModuli<StressType> computeIsotropicMoriTanakaScheme(const StressType&
+                                            StressType>()) static tfel::material::YoungNuModuli<StressType> computeIsotropicMoriTanakaScheme_(const StressType&
                                                                young,
                                                            const tfel::types::
                                                                real<StressType>&
@@ -98,7 +98,7 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                             StressType>()) static tfel::math::
-    st2tost2<3u, StressType> computeTransverseIsotropicDiluteScheme(
+    st2tost2<3u, StressType> computeTransverseIsotropicDiluteScheme_(
         const StressType& young,
         const tfel::types::real<StressType>& nu,
         const tfel::types::real<StressType>& f,
@@ -116,7 +116,7 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                             StressType>()) static tfel::math::
-    st2tost2<3u, StressType> computeTransverseIsotropicMoriTanakaScheme(
+    st2tost2<3u, StressType> computeTransverseIsotropicMoriTanakaScheme_(
         const StressType& young,
         const tfel::types::real<StressType>& nu,
         const tfel::types::real<StressType>& f,
@@ -134,7 +134,7 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                             StressType>()) static tfel::math::
-    st2tost2<3u, StressType> computeOrientedDiluteScheme(
+    st2tost2<3u, StressType> computeOrientedDiluteScheme_(
         const StressType& young,
         const tfel::types::real<StressType>& nu,
         const tfel::types::real<StressType>& f,
@@ -153,7 +153,7 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                             StressType>()) static tfel::math::
-    st2tost2<3u, StressType> computeOrientedMoriTanakaScheme(
+    st2tost2<3u, StressType> computeOrientedMoriTanakaScheme_(
         const StressType& young,
         const tfel::types::real<StressType>& nu,
         const tfel::types::real<StressType>& f,
@@ -172,17 +172,17 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
 void declareLinearHomogenizationSchemes(pybind11::module_&);
 
 void declareLinearHomogenizationSchemes(pybind11::module_& m) {
-  m.def("computeSphereDiluteScheme", &computeSphereDiluteScheme<double>);
+  m.def("computeSphereDiluteScheme", &computeSphereDiluteScheme_<double>);
   m.def("computeSphereMoriTanakaScheme",
-        &computeSphereMoriTanakaScheme<double>);
-  m.def("computeIsotropicDiluteScheme", &computeIsotropicDiluteScheme<double>);
+        &computeSphereMoriTanakaScheme_<double>);
+  m.def("computeIsotropicDiluteScheme", &computeIsotropicDiluteScheme_<double>);
   m.def("computeIsotropicMoriTanakaScheme",
-        &computeIsotropicMoriTanakaScheme<double>);
+        &computeIsotropicMoriTanakaScheme_<double>);
   m.def("computeTransverseIsotropicDiluteScheme",
-        &computeTransverseIsotropicDiluteScheme<double>);
+        &computeTransverseIsotropicDiluteScheme_<double>);
   m.def("computeTransverseIsotropicMoriTanakaScheme",
-        &computeTransverseIsotropicMoriTanakaScheme<double>);
-  m.def("computeOrientedDiluteScheme", &computeOrientedDiluteScheme<double>);
+        &computeTransverseIsotropicMoriTanakaScheme_<double>);
+  m.def("computeOrientedDiluteScheme", &computeOrientedDiluteScheme_<double>);
   m.def("computeOrientedMoriTanakaScheme",
-        &computeOrientedMoriTanakaScheme<double>);
+        &computeOrientedMoriTanakaScheme_<double>);
 }

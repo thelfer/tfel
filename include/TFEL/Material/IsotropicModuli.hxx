@@ -61,7 +61,7 @@ namespace tfel::material {
   requires(
       tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                          StressType>()) struct IsotropicModuli {
-    IsotropicModuli() {}
+    IsotropicModuli() = default;
     IsotropicModuli(const IsotropicModuli<StressType>& IM) = default;
     virtual IsotropicModuli<StressType>& operator=(
         const IsotropicModuli<StressType>& IM) = default;
@@ -78,8 +78,11 @@ namespace tfel::material {
       : public IsotropicModuli<StressType> {
     StressType young;
     types::real<StressType> nu;
+    
     YoungNuModuli(const StressType& Young, const types::real<StressType>& Nu)
         : IsotropicModuli<StressType>(), young(Young), nu(Nu) {}
+    
+    using IsotropicModuli<StressType>::operator=;
 
     YoungNuModuli<StressType> ToYoungNu() const override {
       const auto Young = this->young;
@@ -111,6 +114,8 @@ namespace tfel::material {
     StressType mu;
     KGModuli(const StressType& Kappa, const StressType& Mu)
         : IsotropicModuli<StressType>(), kappa(Kappa), mu(Mu) {}
+    
+    using IsotropicModuli<StressType>::operator=;
 
     YoungNuModuli<StressType> ToYoungNu() const override {
       const auto Kappa = this->kappa;
@@ -144,6 +149,8 @@ namespace tfel::material {
     StressType mu;
     LambdaMuModuli(const StressType& Lambda, const StressType& Mu)
         : IsotropicModuli<StressType>(), lambda(Lambda), mu(Mu) {}
+    
+    using IsotropicModuli<StressType>::operator=;
 
     YoungNuModuli<StressType> ToYoungNu() const override {
       const auto Lambda = this->lambda;
