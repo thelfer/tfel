@@ -62,6 +62,7 @@ namespace tfel::material {
       tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                          StressType>()) struct IsotropicModuli {
     IsotropicModuli() {}
+    IsotropicModuli(const IsotropicModuli<StressType>& IM) = default;
     virtual IsotropicModuli<StressType>& operator=(
         const IsotropicModuli<StressType>& IM) = default;
     virtual ~IsotropicModuli() = default;

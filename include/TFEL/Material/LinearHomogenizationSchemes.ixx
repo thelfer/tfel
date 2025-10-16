@@ -419,7 +419,7 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
       TFEL_HOST_DEVICE const
-      std::pair<StressType, types::real<StressType>> computeSphereDiluteScheme(
+      YoungNuModuli<StressType> computeSphereDiluteScheme(
           const StressType& young,
           const types::real<StressType>& nu,
           const types::real<StressType>& f,
@@ -444,30 +444,29 @@ namespace tfel::material::homogenization::elasticity {
     const auto muhom =
         mu0 + f * (mu_i - mu0) / (1 + beta0 * (mu_i - mu0) / mu0);
     const auto khom = k0 + f * (k_i - k0) / (1 + alpha0 * (k_i - k0) / k0);
-    const auto nuhom = (3 * khom - 2 * muhom) / (2 * muhom + 6 * khom);
-    const auto Ehom = 2 * muhom * (1 + nuhom);
-    return {Ehom, nuhom};
+    const auto kg = KGModuli<StressType>(khom,muhom);
+    return kg.ToYoungNu();
   }
 
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
       TFEL_HOST_DEVICE const
-      std::pair<StressType, types::real<StressType>> computeSphereDiluteScheme(
+      KGModuli<StressType> computeSphereDiluteScheme(
           const IsotropicModuli<StressType>& IM0,
           const types::real<StressType>& f,
           const IsotropicModuli<StressType>& IM_i) {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
-    return computeSphereDiluteScheme(Enu0.young, Enu0.nu,
+    const auto Enu = computeSphereDiluteScheme(Enu0.young, Enu0.nu,
                                      f, Enui.young, Enui.nu);
+    return Enu.ToKG();
   }  // end of computeSphereDiluteScheme
 
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE const std::
-      pair<StressType, types::real<StressType>> computeSphereMoriTanakaScheme(
+           StressType>()) TFEL_HOST_DEVICE const YoungNuModuli<StressType> computeSphereMoriTanakaScheme(
           const StressType& young,
           const types::real<StressType>& nu,
           const types::real<StressType>& f,
@@ -493,30 +492,28 @@ namespace tfel::material::homogenization::elasticity {
                      (mu0 + mu0 * (9 * k0 + 8 * mu0) / 6 / (k0 + 2 * mu0)));
     const auto khom =
         k0 + f * (k_i - k0) / (1 + (1 - f) * (k_i - k0) / (k0 + 4 * mu0 / 3));
-    const auto nuhom = (3 * khom - 2 * muhom) / (2 * muhom + 6 * khom);
-    const auto Ehom = 2 * muhom * (1 + nuhom);
-    return {Ehom, nuhom};
+    const auto kg = KGModuli<StressType>(khom,muhom);
+    return kg.ToYoungNu();
   }
 
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE const std::
-      pair<StressType, types::real<StressType>> computeSphereMoriTanakaScheme(
+           StressType>()) TFEL_HOST_DEVICE const KGModuli<StressType> computeSphereMoriTanakaScheme(
           const IsotropicModuli<StressType>& IM0,
           const types::real<StressType>& f,
           const IsotropicModuli<StressType>& IM_i) {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
-    return computeSphereMoriTanakaScheme(
+    const auto Enu = computeSphereMoriTanakaScheme(
         Enu0.young, Enu0.nu, f, Enui.young, Enui.nu);
+    return Enu.ToKG();
   }  // end of computeSphereMoriTanakaScheme
 
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE const std::
-      pair<StressType, types::real<StressType>> computeIsotropicDiluteScheme(
+           StressType>()) TFEL_HOST_DEVICE const YoungNuModuli<StressType> computeIsotropicDiluteScheme(
           const StressType& young,
           const types::real<StressType>& nu,
           const types::real<StressType>& f,
@@ -539,16 +536,14 @@ namespace tfel::material::homogenization::elasticity {
     const auto mu_i = young_i / 2 / (1 + nu_i);
     const auto muhom = mu0 + 2 * f * (mu_i - mu0) * mu;
     const auto khom = k0 + 3 * f * (k_i - k0) * ka;
-    const auto nuhom = (3 * khom - 2 * muhom) / (2 * muhom + 6 * khom);
-    const auto Ehom = 2 * muhom * (1 + nuhom);
-    return {Ehom, nuhom};
+    const auto kg = KGModuli<StressType>(khom,muhom);
+    return kg.ToYoungNu();
   }
 
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE const std::
-      pair<StressType, types::real<StressType>> computeIsotropicDiluteScheme(
+           StressType>()) TFEL_HOST_DEVICE const KGModuli<StressType> computeIsotropicDiluteScheme(
           const IsotropicModuli<StressType>& IM0,
           const types::real<StressType>& f,
           const IsotropicModuli<StressType>& IM_i,
@@ -557,8 +552,9 @@ namespace tfel::material::homogenization::elasticity {
           const types::length<StressType>& c) {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
-    return computeIsotropicDiluteScheme(
+    const auto Enu = computeIsotropicDiluteScheme(
         Enu0.young, Enu0.nu, f, Enui.young, Enui.nu, a, b, c);
+        return Enu.ToKG();
   }  // end of computeIsotropicDiluteScheme
 
   template <tfel::math::ScalarConcept StressType>
@@ -645,10 +641,7 @@ namespace tfel::material::homogenization::elasticity {
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
-      TFEL_HOST_DEVICE const std::pair<
-          StressType,
-          types::real<
-              StressType>> computeIsotropicMoriTanakaScheme(const StressType&
+      TFEL_HOST_DEVICE const YoungNuModuli<StressType> computeIsotropicMoriTanakaScheme(const StressType&
                                                                 young,
                                                             const types::real<
                                                                 StressType>& nu,
@@ -679,16 +672,14 @@ namespace tfel::material::homogenization::elasticity {
     const auto mu_i = young_i / 2 / (1 + nu_i);
     const auto muhom = mu0 + f * (mu_i - mu0) * mu / (f * mu + (1 - f) / 2);
     const auto khom = k0 + f * (k_i - k0) * ka / (ka * f + (1 - f) / 3);
-    const auto nuhom = (3 * khom - 2 * muhom) / (2 * muhom + 6 * khom);
-    const auto Ehom = 2 * muhom * (1 + nuhom);
-    return {Ehom, nuhom};
+    const auto kg = KGModuli<StressType>(khom,muhom);
+    return kg.ToYoungNu();
   }
 
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE const std::
-      pair<StressType, types::real<StressType>> computeIsotropicMoriTanakaScheme(
+           StressType>()) TFEL_HOST_DEVICE const KGModuli<StressType> computeIsotropicMoriTanakaScheme(
           const IsotropicModuli<StressType>& IM0,
           const types::real<StressType>& f,
           const IsotropicModuli<StressType>& IM_i,
@@ -697,8 +688,9 @@ namespace tfel::material::homogenization::elasticity {
           const types::length<StressType>& c) {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
-    return computeIsotropicMoriTanakaScheme(
+    const auto Enu=computeIsotropicMoriTanakaScheme(
         Enu0.young, Enu0.nu, f, Enui.young, Enui.nu, a, b, c);
+    return Enu.ToKG();
   }  // end of computeIsotropicMoriTanakaScheme
 
   template <tfel::math::ScalarConcept StressType>

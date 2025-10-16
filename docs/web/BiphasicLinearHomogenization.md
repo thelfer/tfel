@@ -28,13 +28,14 @@ The implemented schemes for biphasic media are:
 
  - Dilute scheme
  - Mori-Tanaka scheme
+ - PCW scheme
  - Voigt and Reuss bounds
  - Isotropic Hashin-Shtrikman bounds
 
-For dilute scheme and Mori-Tanaka scheme, the following assumptions are made:
+For dilute scheme, Mori-Tanaka scheme and PCW scheme, the following assumptions are made:
 
  - the microstructure is biphasic
- - the phases are isotropic
+ - the phases are locally isotropic
  - one phase is a matrix, the other is made by inclusions
  - the shape of inclusions can be spherical, spheroidal, ellipsoidal, otherwise the mean strain localisator (for a single inclusion problem) can be provided by the user
  - for non-spherical inclusions, we consider 3 possibilities of orientation distribution: isotropic, transverse isotropic and oriented
@@ -86,6 +87,7 @@ It is important not to forget the header files that must be included:
 @TFELLibraries {"Material"};
 
 @Includes{
+#include "TFEL/Material/IsotropicModuli.hxx"
 #include "TFEL/Material/LinearHomogenizationSchemes.hxx"
 #include "TFEL/Material/LinearHomogenizationBounds.hxx"
 }
@@ -110,12 +112,12 @@ schemes:
 ~~~~ {#biphasic .cpp .numberLines}
 @Function{
 using namespace tfel::material::homogenization::elasticity;
-std::pair<stress,real> pa;
+tfel::material::KGModuli<stress> kg;
 if (scheme==real(0)){
-pa=computeSphereDiluteScheme<real,stress>(E0,nu0,f,Ei,nui);
+kg=computeSphereDiluteScheme<stress>(E0,nu0,f,Ei,nui);
 }
 if (scheme==real(1)){
-pa=computeSphereMoriTanakaScheme<real,stress>(E0,nu0,f,Ei,nui);
+kg=computeSphereMoriTanakaScheme<stress>(E0,nu0,f,Ei,nui);
 };
 if (scheme==real(2)){
 std::array<real,2> tab_f={1-f,f};
@@ -125,27 +127,26 @@ std::array<stress,2> tab_k={k0,ki};
 auto mu0=E0/2/(1+nu0);
 auto mui=Ei/2/(1+nui);
 std::array<stress,2> tab_mu={mu0,mui};
-auto pa2=computeIsotropicHashinShtrikmanBounds<3u,2u,real,stress>(tab_f,tab_k,tab_mu);
+auto pa2=computeIsotropicHashinShtrikmanBounds<3u,2u,stress>(tab_f,tab_k,tab_mu);
 auto UB=std::get<1>(pa2);
-auto kh=std::get<0>(UB);
-auto muh=std::get<1>(UB);
-auto Eh=9*kh*muh/(muh+3*kh);
-auto nuh=(3*kh-2*muh)/2/(3*kh+muh);
-pa={Eh,nuh};
+auto kh=UB.kappa;
+auto muh=UB.mu;
+kg=KGModuli<stress>(kh,muh);
+auto Enu=kg.ToYoungNu();
 };
-E=std::get<0>(pa);
+E=Enu.young;
 }
 ~~~~
 
-Hence, `pa` is a `std::pair` that returns the Young homogenized modulus
+Hence, `Enu` is a `YoungNuModuli` which contains the Young homogenized modulus
 and the homogenized Poisson ratio. The computation of dilute scheme
 and Mori-Tanaka scheme are straightforward.
 
 The function `computeIsotropicHashinShtrikmanBounds` necessitates
 to give the arrays of volume fractions `tab_f`, bulk moduli `tab_k`
-and shear moduli `tab_mu`. The function returns a pair of pair. The first
+and shear moduli `tab_mu`. The function returns a `pair` of `KGModuli`. The first
 pair is lower HS bound, the second is upper HS bound (that we want here).
-Each bound is a pair whose first element is the bulk modulus, and whose second element
+Each bound is `KGModuli` whose `kappa` attribute is the bulk modulus, and whose `mu` attribute
 is the shear modulus. The function is also available for plain strain elasticity
 (the first template argument is the dimension).
 
@@ -227,16 +228,16 @@ tfel::math::tvector<3u,real> n_a={1,0,0};
 tfel::math::tvector<3u,real> n_b={0,1,0};
 using namespace tfel::material::homogenization::elasticity;
 if (distrib==real(0)){
-auto pa = computeIsotropicMoriTanakaScheme<real,stress,length>(E0,nu0,f,Ei,nui,a,b,c);
-E1=std::get<0>(pa);
+auto Enu = computeIsotropicMoriTanakaScheme<stress>(E0,nu0,f,Ei,nui,a,b,c);
+E1=Enu.young;
 }
 if (distrib==real(1)){
-auto Chom=computeTransverseIsotropicMoriTanakaScheme<real,stress,length>(E0,nu0,f,Ei,nui,n_a,a,b,c);
+auto Chom=computeTransverseIsotropicMoriTanakaScheme<stress>(E0,nu0,f,Ei,nui,n_a,a,b,c);
 auto Shom=invert(Chom);
 E1=1/Shom(0,0);
 }
 if (distrib==real(2)){
-auto Chom=computeOrientedMoriTanakaScheme<real,stress,length>(E0,nu0,f,Ei,nui,n_a,a,n_b,b,c);
+auto Chom=computeOrientedMoriTanakaScheme<stress>(E0,nu0,f,Ei,nui,n_a,a,n_b,b,c);
 auto Shom=invert(Chom);
 E1=1/Shom(0,0);
 }

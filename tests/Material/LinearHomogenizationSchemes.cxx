@@ -97,14 +97,14 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
     const auto nuSphere_MT_1 =
         (3 * khom1 - 2 * muhom1) / (2 * muhom1 + 6 * khom1);
     const auto ESphere_MT_1 = 2 * muhom1 * (1 + nuSphere_MT_1);
-    const auto pair2 =
+    const auto Enu2 =
         computeSphereDiluteScheme<stress>(young, nu, f, young_i, nu_i);
-    const auto ESphere_DS_2 = std::get<0>(pair2);
-    const auto nuSphere_DS_2 = std::get<1>(pair2);
-    const auto pair3 =
+    const auto ESphere_DS_2 = Enu2.young;
+    const auto nuSphere_DS_2 = Enu2.nu;
+    const auto Enu3 =
         computeSphereMoriTanakaScheme<stress>(young, nu, f, young_i, nu_i);
-    const auto ESphere_MT_3 = std::get<0>(pair3);
-    const auto nuSphere_MT_3 = std::get<1>(pair3);
+    const auto ESphere_MT_3 = Enu3.young;
+    const auto nuSphere_MT_3 = Enu3.nu;
 
     // std::cout << (ESphere_DS_2-ESphere_DS_0).getValue() << " " << eps <<
     // '\n';
@@ -139,14 +139,14 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       const tfel::math::tvector<3u, real> n_b = {1., 0., 0.};
       // computeSphereDiluteScheme must be equal to IsotropicDiluteScheme,
       // TransverseIsotropicDiluteScheme and OrientedDiluteScheme when a=b=c
-      const auto pair0 =
+      const auto Enu0 =
           computeSphereDiluteScheme<stress>(young, nu, f, young_i, nu_i);
-      const auto ESphere_0 = std::get<0>(pair0);
-      const auto nuSphere_0 = std::get<1>(pair0);
-      const auto pair1 = computeIsotropicDiluteScheme<stress>(
+      const auto ESphere_0 = Enu0.young;
+      const auto nuSphere_0 = Enu0.nu;
+      const auto Enu1 = computeIsotropicDiluteScheme<stress>(
           young, nu, f, young_i, nu_i, a, a, a);
-      const auto ESphere_1 = std::get<0>(pair1);
-      const auto nuSphere_1 = std::get<1>(pair1);
+      const auto ESphere_1 = Enu1.young;
+      const auto nuSphere_1 = Enu1.nu;
       const auto Chom2 = computeTransverseIsotropicDiluteScheme<stress>(
           young, nu, f, young_i, nu_i, n_a, a, a, a);
       const auto mu2 = (Chom2(0, 0) - Chom2(0, 1)) / 2;
@@ -237,14 +237,14 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       // SphereMoriTanakaScheme must be equal to IsotropicMoriTanakaScheme,
       // TransverseIsotropicMoriTanakaScheme and OrientedMoriTanakaScheme when
       // a=b=c
-      const auto pair0 =
+      const auto Enu0 =
           computeSphereMoriTanakaScheme<stress>(young, nu, f, young_i, nu_i);
-      const auto ESphere_MT_0 = std::get<0>(pair0);
-      const auto nuSphere_MT_0 = std::get<1>(pair0);
-      const auto pair1 = computeIsotropicMoriTanakaScheme<stress>(
+      const auto ESphere_MT_0 = Enu0.young;
+      const auto nuSphere_MT_0 = Enu0.nu;
+      const auto Enu1 = computeIsotropicMoriTanakaScheme<stress>(
           young, nu, f, young_i, nu_i, a, a, a);
-      const auto ESphere_MT_1 = std::get<0>(pair1);
-      const auto nuSphere_MT_1 = std::get<1>(pair1);
+      const auto ESphere_MT_1 = Enu1.young;
+      const auto nuSphere_MT_1 = Enu1.nu;
       const auto Chom2 = computeTransverseIsotropicMoriTanakaScheme<stress>(
           young, nu, f, young_i, nu_i, n_a, a, a, a);
       const auto mu2 = (Chom2(0, 0) - Chom2(0, 1)) / 2;
@@ -298,30 +298,30 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       //    const tfel::math::tvector<3u,real> n_b = {1.,0.,0.};
       // IsotropicDiluteScheme when a is near b must be near
       // IsotropicDiluteScheme when a=b
-      const auto pair0 = computeIsotropicDiluteScheme<stress>(
+      const auto Enu0 = computeIsotropicDiluteScheme<stress>(
           young, nu, f, young_i, nu_i, a, a + length{0.0000001}, c);
-      const auto EI_DS_0 = std::get<0>(pair0);
-      const auto nuI_DS_0 = std::get<1>(pair0);
+      const auto EI_DS_0 = Enu0.young;
+      const auto nuI_DS_0 = Enu0.nu;
 
-      const auto pair1 = computeIsotropicDiluteScheme<stress>(
+      const auto Enu1 = computeIsotropicDiluteScheme<stress>(
           young, nu, f, young_i, nu_i, a, c, a + length{0.0000001});
-      const auto EI_DS_1 = std::get<0>(pair1);
-      const auto nuI_DS_1 = std::get<1>(pair1);
+      const auto EI_DS_1 = Enu1.young;
+      const auto nuI_DS_1 = Enu1.nu;
 
-      const auto pair2 = computeIsotropicDiluteScheme<stress>(
+      const auto Enu2 = computeIsotropicDiluteScheme<stress>(
           young, nu, f, young_i, nu_i, c, a, a + length{0.0000001});
-      const auto EI_DS_2 = std::get<0>(pair2);
-      const auto nuI_DS_2 = std::get<1>(pair2);
+      const auto EI_DS_2 = Enu2.young;
+      const auto nuI_DS_2 = Enu2.nu;
 
-      const auto pair3 = computeIsotropicDiluteScheme<stress>(
+      const auto Enu3 = computeIsotropicDiluteScheme<stress>(
           young, nu, f, young_i, nu_i, a, c, a);
-      const auto EI_DS_3 = std::get<0>(pair3);
-      const auto nuI_DS_3 = std::get<1>(pair3);
+      const auto EI_DS_3 = Enu3.young;
+      const auto nuI_DS_3 = Enu3.nu;
 
-      const auto pair4 = computeIsotropicDiluteScheme<stress>(
+      const auto Enu4 = computeIsotropicDiluteScheme<stress>(
           young, nu, f, young_i, nu_i, c, a, a);
-      const auto EI_DS_4 = std::get<0>(pair4);
-      const auto nuI_DS_4 = std::get<1>(pair4);
+      const auto EI_DS_4 = Enu4.young;
+      const auto nuI_DS_4 = Enu4.nu;
 
       TFEL_TESTS_ASSERT(my_abs(EI_DS_1 - EI_DS_0) < stress{eps});
       // std::cout << (E0-E1).getValue() << " "<< E1.getValue() << '\n';
