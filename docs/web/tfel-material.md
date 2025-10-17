@@ -631,11 +631,12 @@ by the available schemes. For example, for the distribution of spheres:
 ~~~~{.cpp}
 const auto IM0=YoungNuModuli<stress>(E0,nu0);
 const auto IMi=YoungNuModuli<stress>(Ei,nui);
-const auto C_DS = computeSphereDiluteScheme<stress>(IM0,f,IMi);
-const auto C_MT = computeSphereMoriTanakaScheme<stress>(IM0,f,IMi);
+const auto KG_DS = computeSphereDiluteScheme<stress>(IM0,f,IMi);
+const auto KG_MT = computeSphereMoriTanakaScheme<stress>(IM0,f,IMi);
 ~~~~
 
-Here, `f` is the volume fraction, and the subscript `0` refers to the matrix, and
+Note that the two above schemes return a `KGModuli` object (see [above](tfel-material.html#isotropic-elastic-moduli)).
+Also, `f` is the volume fraction, and the subscript `0` refers to the matrix, and
 the subscript `i` refers to the inclusion.
 
 For the oriented inclusions, we can do:
@@ -646,6 +647,7 @@ const auto C_MT = computeOrientedMoriTanakaScheme<stress>(IM0,f,IMi,n_a,a,n_b,b,
 const auto C_PCW = computeOrientedPCWScheme<stress>(IM0,f,IMi,n_a,a,n_b,b,c,D);
 ~~~~
 
+Here, the three above schemes return `st2tost2` objects.
 Note that `PCW` refers to the Ponte-Castaneda and Willis scheme.
 For this scheme, a `Distribution` object must
 be created by the user. It is defined by two vectors \(\tenseur n_a,\tenseur n_b\) and three lengths
@@ -658,11 +660,16 @@ Distribution<stress> D = {.n_a = n_a, .a = a, .n_b = n_b, .b = b, .c = c};
 For the isotropic distribution of ellipsoids, we can do:
 
 ~~~~{.cpp}
-const auto C_DS = computeIsotropicDiluteScheme<stress>(IM0,f,IMi,a,b,c);
-const auto C_MT = computeIsotropicMoriTanakaScheme<stress>(IM0,f,IMi,a,b,c);
+const auto KG_DS = computeIsotropicDiluteScheme<stress>(IM0,f,IMi,a,b,c);
+const auto KG_MT = computeIsotropicMoriTanakaScheme<stress>(IM0,f,IMi,a,b,c);
 const auto C_PCW = computeIsotropicPCWScheme<stress>(IM0,f,IMi,a,b,c,D);
 ~~~~
 
+Here, the two first schemes return `KGModuli` objects, whereas
+`computeIsotropicPCWScheme` returns a `st2tost2` object. For this
+latter case, the ellipsoids have indeed a uniform isotropic
+distribution of orientations, but the user might use a non-isotropic
+`Distribution D`.
 And finally, we can consider a transverse isotropic distribution
 of inclusions:
 
@@ -672,6 +679,7 @@ const auto C_MT = computeTransverseIsotropicMoriTanakaScheme<stress>(IM0,f,IMi,n
 const auto C_PCW = computeTransverseIsotropicPCWScheme<stress>(IM0,f,IMi,n_a,a,b,c,D);
 ~~~~
  
+Here, the three above schemes return `st2tost2` objects.
 Because the functions are based on the average of the localisation tensor \(\tenseur A \)
 associated with each distribution, a `Base` function is also defined for each scheme,
 that only takes in argument the average of the localisation tensor `A_av`. We then
@@ -683,6 +691,7 @@ const auto C_MT = computeMoriTanakaScheme<stress>(E0,nu0,f,Ei,nui,A_av);
 const auto C_PCW = computePCWScheme<stress>(E0,nu0,f,Ei,nui,A_av,D);
 ~~~~
 
+Here, the three above schemes return `st2tost2` objects.
 A tutorial on the computation of homogenized schemes for biphasic particulate microstructures
 is available [here](BiphasicLinearHomogenization.html).
 
@@ -728,17 +737,25 @@ The `Phase class` is very simple. It has two attributes:
  - `fraction` (`real` type)
  - `stiffness` (`st2tost2` type)
 
-and a method `is_isotropic()` which returns true if the phase is isotropic.
-A `Phase` can be initialized as:
+and one method: `is_isotropic()` which returns a `bool` stating if the phase is
+considered isotropic or not. The value of this `bool` depends on the
+way the `Phase` was constructed. By doing
 
 ~~~~{.cpp}
-Phase<3u,stress> Ph1(C0);
-Phase<3u,stress> Ph2(IM0);
+const auto C0=tfel::math::st2tost2<stress>::Id();
+Phase<stress> ph(f,C0);
+bool b = ph.is_isotropic();
 ~~~~
 
-If `C0` is a `st2tost2`, hence `Ph1` is not isotropic, whereas if `IM0` is
-an `IsotropicModuli`, hence `Ph2` is isotropic (and `Ph2.is_isotropic();`
-will return `true`.
+`b` will have the value `false`, whereas by doing
+
+~~~~{.cpp}
+const auto KG=tfel::material::KGModuli<stress>(k,g);
+Phase<stress> ph(f,KG);
+bool b = ph.is_isotropic();
+~~~~
+
+`b` will have the value `true`.
 
 #### The `InclusionDistribution class`
 
@@ -797,6 +814,5 @@ as an argument and returns a `HomogenizationScheme` object. Three schemes are av
  - dilute scheme
  - Mori-Tanaka scheme
  - Self-Consistent scheme
-
 
 <!-- Local IspellDict: english -->

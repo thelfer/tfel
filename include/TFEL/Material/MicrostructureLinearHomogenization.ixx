@@ -144,7 +144,6 @@ namespace tfel::material::homogenization::elasticity {
           bool isotropic,
           int max_iter_anisotropic_integration) {
     using real = tfel::types::real<StressType>;
-    real error = 1.;
     const auto np = micro.get_number_of_phases();
     const auto f0 = micro.get_matrix_fraction();
     const auto C0 = micro.get_matrix_elasticity();
@@ -193,7 +192,6 @@ namespace tfel::material::homogenization::elasticity {
           Chom_(i, j) = Chom(i, j);
           Chom(i, j) = Ch(i, j);
         }
-      error = tfel::material::relative_error<N, StressType>(Chom_, Chom);
       iter++;
       if (iter>=max_iter){
         for (unsigned int i = 0; i < np -1 ; i++) {

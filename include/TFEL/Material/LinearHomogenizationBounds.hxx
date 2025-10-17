@@ -60,9 +60,9 @@ namespace tfel::material::homogenization::elasticity {
    * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the phases
    * \tparam d: dimension (2 or 3)
-   * \return an object of type std::pair<std::pair<StressType, StressType>,
-   * std::pair<StressType, StressType>>. First element of the pair is the lower
-   * bound and second element is the upper bound. Each bound is a pair with bulk
+   * \return an object of type std::pair<KGModuli<StressType>,
+   * KGModuli<StressType>>. First element of the pair is the lower
+   * bound and second element is the upper bound. Each bound is KGModuli with bulk
    * and shear moduli.
    * \param [in] tab_f: std::vector<real> of volumic fractions of phases
    * \param [in] tab_K: std::vector<StressType> of bulk moduli of phases
@@ -72,12 +72,8 @@ namespace tfel::material::homogenization::elasticity {
             tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
-      TFEL_HOST_DEVICE const std::pair<
-          std::pair<StressType, StressType>,
-          std::pair<
-              StressType,
-              StressType>> computeIsotropicHashinShtrikmanBounds(const std::
-                                                                     vector<
+      TFEL_HOST_DEVICE const std::pair<KGModuli<StressType>,KGModuli<StressType>> computeIsotropicHashinShtrikmanBounds(const std::
+                                                                     array<
                                                                          types::real<
                                                                              StressType>>&,
                                                                  const std::vector<

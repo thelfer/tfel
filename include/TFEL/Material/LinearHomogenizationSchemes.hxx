@@ -24,7 +24,6 @@ namespace tfel::material::homogenization::elasticity {
   /*!
    * This function gives the homogenized stiffness for a dilute scheme,
    * knowing the strain localisation tensor.
-   * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix and
    * the inclusions
    * \return an object of type st2tost2<3u,StressType>
@@ -49,7 +48,6 @@ namespace tfel::material::homogenization::elasticity {
    * This function gives the homogenized stiffness for a Mori-Tanaka scheme
    * knowing the strain localisation tensor.
    * \return an object of type st2tost2<3u,StressType>
-   * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix
    * and the inclusions
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
@@ -72,9 +70,8 @@ namespace tfel::material::homogenization::elasticity {
   /*!
    * This function gives the homogenized moduli for a dilute scheme, for
    * spheres.
-   * \return an object of type std::pair<StressType,real> containing
+   * \return an object of type YoungNuModuli<StressType> containing
    * Young modulus and Poisson ratio
-   * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix
    * and the spheres
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
@@ -86,7 +83,7 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
       TFEL_HOST_DEVICE const
-      std::pair<StressType, types::real<StressType>> computeSphereDiluteScheme(
+      YoungNuModuli<StressType> computeSphereDiluteScheme(
           const StressType&,
           const types::real<StressType>&,
           const types::real<StressType>&,
@@ -96,9 +93,8 @@ namespace tfel::material::homogenization::elasticity {
   /*!
    * This function is an overload of computeSphereDiluteScheme
    * with IsotropicModuli.
-   * \return an object of type std::pair<StressType,real> containing
-   * Young modulus and Poisson ratio
-   * \tparam real: underlying type
+   * \return an object of type KGModuli<StressType> containing
+   * bulk modulus and shear modulus
    * \tparam StressType: type of the elastic constants related to the matrix
    * and the spheres
    * \param [in] IM0: Isotropic moduli of the matrix
@@ -109,7 +105,7 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
       TFEL_HOST_DEVICE const
-      std::pair<StressType, types::real<StressType>> computeSphereDiluteScheme(
+      KGModuli<StressType> computeSphereDiluteScheme(
           const IsotropicModuli<StressType>&,
           const types::real<StressType>&,
           const IsotropicModuli<StressType>&);
@@ -117,9 +113,8 @@ namespace tfel::material::homogenization::elasticity {
   /*!
    * This function gives the homogenized moduli for a Mori-Tanaka scheme,
    * for spheres.
-   * \return an object of type std::pair<StressType,real> containing
+   * \return an object of type YoungNuModuli<StressType> containing
    * Young modulus and Poisson ratio
-   * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix and
    * the spheres
    * \param [in] young,nu: Young modulus and Poisson's ratio of the
@@ -131,8 +126,7 @@ namespace tfel::material::homogenization::elasticity {
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE const std::
-      pair<StressType, types::real<StressType>> computeSphereMoriTanakaScheme(
+           StressType>()) TFEL_HOST_DEVICE const YoungNuModuli<StressType> computeSphereMoriTanakaScheme(
           const StressType&,
           const types::real<StressType>&,
           const types::real<StressType>&,
@@ -142,8 +136,8 @@ namespace tfel::material::homogenization::elasticity {
   /*!
    * This function is an overload of computeSphereMoriTanakaScheme
    * with IsotropicModuli.
-   * \return an object of type std::pair<StressType,real> containing
-   * Young modulus and Poisson ratio
+   * \return an object of type KGModuli<StressType> containing
+   * bulk modulus and shear modulus
    * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix and
    * the spheres
@@ -154,8 +148,7 @@ namespace tfel::material::homogenization::elasticity {
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE const std::
-      pair<StressType, types::real<StressType>> computeSphereMoriTanakaScheme(
+           StressType>()) TFEL_HOST_DEVICE const KGModuli<StressType> computeSphereMoriTanakaScheme(
           const IsotropicModuli<StressType>&,
           const types::real<StressType>&,
           const IsotropicModuli<StressType>&);
@@ -163,13 +156,10 @@ namespace tfel::material::homogenization::elasticity {
   /*!
    * This function gives the homogenized moduli for a dilute scheme, for an
    * isotropic distribution of ellipsoids
-   * \return an object of type std::pair<StressType,real> containing
-   * Young modulus ans Poisson ratio
-   * \tparam real: underlying type
+   * \return an object of type YoungNuModuli<StressType> containing
+   * Young modulus and Poisson ratio
    * \tparam StressType: type of the elastic constants related to the matrix
    * and the ellipsoids
-   * \tparam LengthType: type of the dimensions of the
-   * ellipsoids
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of ellipsoids
    * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the
@@ -180,8 +170,7 @@ namespace tfel::material::homogenization::elasticity {
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE const std::
-      pair<StressType, types::real<StressType>> computeIsotropicDiluteScheme(
+           StressType>()) TFEL_HOST_DEVICE const YoungNuModuli<StressType> computeIsotropicDiluteScheme(
           const StressType&,
           const types::real<StressType>&,
           const types::real<StressType>&,
@@ -194,12 +183,10 @@ namespace tfel::material::homogenization::elasticity {
   /*!
    * This function is an overload of computeIsotropicDiluteScheme
    * with IsotropicModuli.
-   * \return an object of type std::pair<StressType,real> containing
-   * Young modulus ans Poisson ratio
-   * \tparam real: underlying type
+   * \return an object of type KGModuli<StressType> containing
+   * bulk modulus and shear modulus
    * \tparam StressType: type of the elastic constants related to the matrix
    * and the ellipsoids
-   * \tparam LengthType: type of the dimensions of the
    * ellipsoids
    * \param [in] IM0: Isotropic moduli of the matrix
    * \param [in] f: volumic fraction of the inclusions
@@ -211,8 +198,7 @@ namespace tfel::material::homogenization::elasticity {
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE const std::
-      pair<StressType, types::real<StressType>> computeIsotropicDiluteScheme(
+           StressType>()) TFEL_HOST_DEVICE const KGModuli<StressType> computeIsotropicDiluteScheme(
           const IsotropicModuli<StressType>&,
           const types::real<StressType>&,
           const IsotropicModuli<StressType>&,
@@ -228,10 +214,8 @@ namespace tfel::material::homogenization::elasticity {
    * to n, and the distribution of these axes inside this plane is
    * isotropic.
    * \return an object of type st2tost2<3u,StressType>
-   * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix and
    * the ellipsoids
-   * \tparam LengthType: type of the dimensions of the ellipsoids
    * \param [in] young,nu: Young modulus and
    * Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of ellipsoids
@@ -262,10 +246,8 @@ namespace tfel::material::homogenization::elasticity {
    * This function is an overload of computeTransverseIsotropicDiluteScheme
    * with IsotropicModuli.
    * \return an object of type st2tost2<3u,StressType>
-   * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix and
    * the ellipsoids
-   * \tparam LengthType: type of the dimensions of the ellipsoids
    * \param [in] IM0: Isotropic moduli of the matrix
    * \param [in] f: volumic fraction of the inclusions
    * \param [in] IM_i: Isotropic moduli of the inclusions
@@ -293,10 +275,8 @@ namespace tfel::material::homogenization::elasticity {
    * a distribution of oriented ellipsoids : all principal axes have the
    * same fixed orientation.
    * \return an object of type st2tost2<3u,StressType>
-   * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix and
    * the ellipsoids
-   * \tparam LengthType: type of the dimensions of the ellipsoid
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of ellipsoids
    * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the
@@ -328,10 +308,8 @@ namespace tfel::material::homogenization::elasticity {
    * This function is an overload of computeOrientedDiluteScheme
    * with IsotropicModuli.
    * \return an object of type st2tost2<3u,StressType>
-   * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix and
    * the ellipsoids
-   * \tparam LengthType: type of the dimensions of the ellipsoid
    * \param [in] IM0: Isotropic moduli of the matrix
    * \param [in] f: volumic fraction of the inclusions
    * \param [in] IM_i: Isotropic moduli of the inclusions
@@ -359,12 +337,10 @@ namespace tfel::material::homogenization::elasticity {
   /*!
    * This function gives the homogenized moduli for a Mori-Tanaka scheme,
    * for an isotropic distribution of ellipsoids
-   * \return an object of type std::pair<StressType,real> containing
-   * Young modulus ans Poisson ratio
-   * \tparam real: underlying type
+   * \return an object of type YoungNuModuli<StressType> containing
+   * Young modulus and Poisson ratio
    * \tparam StressType: type of the elastic constants related to the
    * matrix and the ellipsoids
-   * \tparam LengthType: type of the dimensions of the ellipsoids
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of ellipsoids
    * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the
@@ -376,10 +352,7 @@ namespace tfel::material::homogenization::elasticity {
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
-      TFEL_HOST_DEVICE const std::pair<
-          StressType,
-          types::real<
-              StressType>> computeIsotropicMoriTanakaScheme(const StressType&,
+      TFEL_HOST_DEVICE const YoungNuModuli<StressType> computeIsotropicMoriTanakaScheme(const StressType&,
                                                             const types::real<
                                                                 StressType>&,
                                                             const types::real<
@@ -397,12 +370,10 @@ namespace tfel::material::homogenization::elasticity {
   /*!
    * This function is an overload of computeIsotropicMoriTanakaScheme
    * with IsotropicModuli.
-   * \return an object of type std::pair<StressType,real> containing
-   * Young modulus ans Poisson ratio
-   * \tparam real: underlying type
+   * \return an object of type KGModuli<StressType> containing
+   * bulk modulus and shear modulus
    * \tparam StressType: type of the elastic constants related to the
    * matrix and the ellipsoids
-   * \tparam LengthType: type of the dimensions of the ellipsoids
    * \param [in] IM0: Isotropic moduli of the matrix
    * \param [in] f: volumic fraction of the inclusions
    * \param [in] IM_i: Isotropic moduli of the inclusions
@@ -413,8 +384,7 @@ namespace tfel::material::homogenization::elasticity {
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE const std::
-      pair<StressType, types::real<StressType>> computeIsotropicMoriTanakaScheme(
+           StressType>()) TFEL_HOST_DEVICE const KGModuli<StressType> computeIsotropicMoriTanakaScheme(
           const IsotropicModuli<StressType>&,
           const types::real<StressType>&,
           const IsotropicModuli<StressType>&,
@@ -430,10 +400,8 @@ namespace tfel::material::homogenization::elasticity {
    * normal to n, and the distribution of these axes inside this plane is
    * isotropic.
    * \return an object of type st2tost2<3u,StressType>
-   * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix
    * and the ellipsoids
-   * \tparam LengthType: type of the dimensions of the ellipsoids
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of ellipsoids
    * \param [in] young_i,nu_i: Young modulus and Poisson's ratio
@@ -463,10 +431,8 @@ namespace tfel::material::homogenization::elasticity {
    * This function is an overload of computeTransverseIsotropicMoriTanakaScheme
    * with IsotropicModuli.
    * \return an object of type st2tost2<3u,StressType>
-   * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix
    * and the ellipsoids
-   * \tparam LengthType: type of the dimensions of the ellipsoids
    * \param [in] IM0: Isotropic moduli of the matrix
    * \param [in] f: volumic fraction of the inclusions
    * \param [in] IM_i: Isotropic moduli of the inclusions
@@ -494,10 +460,8 @@ namespace tfel::material::homogenization::elasticity {
    * for a distribution of oriented ellipsoids : all principal axes have the
    * same fixed orientation.
    * \return an object of type st2tost2<3u,StressType>
-   * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix and
    * the ellipsoids
-   * \tparam LengthType: type of the dimensions of the ellipsoids
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of ellipsoids
    * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the
@@ -532,10 +496,8 @@ namespace tfel::material::homogenization::elasticity {
    * This function is an overload of computeOrientedMoriTanakaScheme
    * with IsotropicModuli.
    * \return an object of type st2tost2<3u,StressType>
-   * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix and
    * the ellipsoids
-   * \tparam LengthType: type of the dimensions of the ellipsoids
    * \param [in] IM0: Isotropic moduli of the matrix
    * \param [in] f: volumic fraction of the inclusions
    * \param [in] IM_i: Isotropic moduli of the inclusions
@@ -588,9 +550,8 @@ namespace tfel::material::homogenization::elasticity {
    * The mean localisator A is given by the user and depends on the
    * distribution of orientations (the user can also uses
    * computeIsotropicPCWscheme and others). \return an object of type
-   * st2tost2<3u,StressType> \tparam real: underlying type \tparam StressType:
+   * st2tost2<3u,StressType> \tparam StressType:
    * type of the elastic constants related to the matrix and the ellipsoids
-   * \tparam LengthType: type of the dimensions of the ellipsoids
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of ellipsoids
    * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the
@@ -617,10 +578,8 @@ namespace tfel::material::homogenization::elasticity {
    * isotropic distribution of their orientations
    * (formula 3.27 of Ponte Castaneda 1995).
    * \return an object of type st2tost2<3u,StressType>
-   * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the matrix and
    * the ellipsoids
-   * \tparam LengthType: type of the dimensions of the ellipsoids
    * \param [in] young,nu: Young modulus and Poisson's ratio of the matrix
    * \param [in] f: volumic fraction of ellipsoids
    * \param [in] young_i,nu_i: Young modulus and Poisson's ratio of the

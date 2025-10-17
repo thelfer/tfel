@@ -157,8 +157,7 @@ namespace tfel::material {
                             real frac,
                             const IsotropicModuli<StressType> &IM)
           : Phase<N, StressType>(frac, IM), inclusion(inc){}
-          
-      virtual InclusionDistribution<N,StressType>& operator=(const InclusionDistribution<N,StressType> &ID) = default;
+      
       virtual tfel::math::st2tost2<N, real> computeMeanLocalisator(
           const tfel::math::st2tost2<N, StressType> &C0,
           int max_iter_anisotropic_integration) = 0;
@@ -250,6 +249,8 @@ namespace tfel::material {
           const tfel::math::st2tost2<3u, StressType> &C0,
           int max_iter_anisotropic_integration = 12) override {
         tfel::reportContractViolation("I cannot compute the mean localisator for a distribution of non oriented anisotropic inclusions in an anisotropic matrix. Try to use an IsotropicModuli for the matrix");
+        auto C1=1/StressType(max_iter_anisotropic_integration)*C0;
+        return C1;
       }
 
     };
@@ -333,6 +334,8 @@ namespace tfel::material {
           const tfel::math::st2tost2<3u, StressType> &C0,
           int max_iter_anisotropic_integration = 12) override {
         tfel::reportContractViolation("I cannot compute the mean localisator for a distribution of non oriented anisotropic inclusions in an anisotropic matrix. Try to use an IsotropicModuli for the matrix");
+        auto C1=1/StressType(max_iter_anisotropic_integration)*C0;
+        return C1;
       }
 
     };

@@ -36,14 +36,13 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
       N, StressType>(f_i, C_i);
 }
 
+
 template <tfel::math::ScalarConcept StressType,std::size_t N>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                             StressType>()) static std::
     pair<
-        std::pair<StressType, StressType>,
-        std::pair<
-            StressType,
-            StressType>> computeIsotropicHashinShtrikmanBounds(const std::
+        tfel::material::KGModuli<StressType>,
+        tfel::material::KGModuli<StressType>> computeIsotropicHashinShtrikmanBounds(const std::
                                                                    vector<
                                                                        tfel::types::
                                                                            real<
@@ -55,6 +54,7 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
   return tfel::material::homogenization::elasticity::
       computeIsotropicHashinShtrikmanBounds<N, StressType>(f_i, K_i, G_i);
 }
+
 
 void declareLinearHomogenizationBounds(pybind11::module_&);
 

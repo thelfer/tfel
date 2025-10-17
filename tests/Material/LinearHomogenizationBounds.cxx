@@ -88,10 +88,10 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
         tab_f, tab_K, tab_mu);
     const auto LB = std::get<0>(pair);
     const auto UB = std::get<1>(pair);
-    const auto K_L = std::get<0>(LB);
-    const auto mu_L = std::get<1>(LB);
-    const auto K_U = std::get<0>(UB);
-    const auto mu_U = std::get<1>(UB);
+    const auto K_L = LB.kappa;
+    const auto mu_L = LB.mu;
+    const auto K_U = UB.kappa;
+    const auto mu_U = UB.mu;
 
     const auto phi1 = tab_f[0];
     const auto phi2 = tab_f[1];
@@ -156,10 +156,10 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
         tab_f, tab_K, tab_mu);
     const auto LB = std::get<0>(pair);
     const auto UB = std::get<1>(pair);
-    const auto K_L = std::get<0>(LB);
-    const auto mu_L = std::get<1>(LB);
-    const auto K_U = std::get<0>(UB);
-    const auto mu_U = std::get<1>(UB);
+    const auto K_L = LB.kappa;
+    const auto mu_L = LB.mu;
+    const auto K_U = UB.kappa;
+    const auto mu_U = UB.mu;
 
     const auto phi1 = tab_f[0];
     const auto phi2 = tab_f[1];
@@ -188,9 +188,9 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
                              (phi1 * mu2 + phi2 * mu1 + H2);
 
     TFEL_TESTS_ASSERT(my_abs(K_L - K_Lbis) < seps);
-    TFEL_TESTS_ASSERT(my_abs(mu_L - mu_Lbis) < seps);
+    TFEL_TESTS_ASSERT(my_abs((mu_L - mu_Lbis)/mu_L) < eps);
     TFEL_TESTS_ASSERT(my_abs(K_U - K_Ubis) < seps);
-    TFEL_TESTS_ASSERT(my_abs(mu_U - mu_Ubis) < seps);
+    TFEL_TESTS_ASSERT(my_abs((mu_U - mu_Ubis)/mu_U) < eps);
 #endif /* _LIBCPP_VERSION */
   }
   
