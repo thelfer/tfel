@@ -20,7 +20,6 @@ template <unsigned short int N,tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<
          tfel::math::unit::Stress, StressType>())
 static void declareHomogenizationScheme(pybind11::module_& m, const char* const n) {
-  using real = tfel::types::real<StressType>;
   using HS = tfel::material::homogenization::elasticity::HomogenizationScheme<N,StressType>;
 
   pybind11::class_<HS>(m, n, pybind11::buffer_protocol())

@@ -37,7 +37,7 @@ static void declarest2tost2(pybind11::module_& m, const char* const n) {
             {s.size(1) * sizeof(double), sizeof(double)});
       })
       .def(pybind11::init<>())
-      .def(pybind11::init<>([](pybind11::array_t<double, pybind11::array::c_style | pybind11::array::forcecast> &u){
+      .def(pybind11::init<>([S](pybind11::array_t<double, pybind11::array::c_style | pybind11::array::forcecast> &u){
               if ((u.shape(0)!=S) || (u.shape(1)!=S)){
               tfel::raise<std::range_error>(
                    "invalid shape of ST2toST2");

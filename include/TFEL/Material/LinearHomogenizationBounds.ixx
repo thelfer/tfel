@@ -52,7 +52,7 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
       TFEL_HOST_DEVICE const std::pair<KGModuli<StressType>,KGModuli<StressType>> computeIsotropicHashinShtrikmanBounds(const std::
-                                                                     array<
+                                                                     vector<
                                                                          types::real<
                                                                              StressType>>
                                                                          &tab_f,

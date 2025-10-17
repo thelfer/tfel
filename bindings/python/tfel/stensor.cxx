@@ -37,7 +37,7 @@ static void declarestensor(pybind11::module_& m, const char* const n) {
             {sizeof(double)});
       })
       .def(pybind11::init<>())
-      .def(pybind11::init<>([](pybind11::array_t<double, pybind11::array::c_style | pybind11::array::forcecast> &u){
+      .def(pybind11::init<>([S](pybind11::array_t<double, pybind11::array::c_style | pybind11::array::forcecast> &u){
               if (u.size()!=S){
               tfel::raise<std::range_error>(
                    "invalid size of Stensor");
