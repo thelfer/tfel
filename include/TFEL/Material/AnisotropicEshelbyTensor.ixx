@@ -150,7 +150,7 @@ namespace tfel::material::homogenization::elasticity {
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE static tfel::math::
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
       st2tost2<2u, types::compliance<StressType>> computePlaneStrainAnisotropicHillTensor(
           const tfel::math::st2tost2<2u, StressType>& C,
           const tfel::math::tvector<2u, types::real<StressType>>& n_a,
