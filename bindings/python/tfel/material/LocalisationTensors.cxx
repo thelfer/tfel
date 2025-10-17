@@ -19,7 +19,7 @@
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                             StressType>()) static tfel::math::
-    st2tost2<3u, tfel::types::real<StressType>> computeSphereLocalisationTensor(
+    st2tost2<3u, tfel::types::real<StressType>> computeSphereLocalisationTensor_(
         const StressType& young,
         const tfel::types::real<StressType>& nu,
         const StressType& young_i,
@@ -31,7 +31,7 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                             StressType>()) static tfel::math::
-    st2tost2<3u, tfel::types::real<StressType>> computeAxisymmetricalEllipsoidLocalisationTensor(
+    st2tost2<3u, tfel::types::real<StressType>> computeAxisymmetricalEllipsoidLocalisationTensor_(
         const StressType& young,
         const tfel::types::real<StressType>& nu,
         const StressType& young_i,
@@ -45,8 +45,8 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
 
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                            StressType>()) static tfel::math::
-    st2tost2<3u, tfel::types::real<StressType>> computeEllipsoidLocalisationTensor(
+                                            StressType>()) tfel::math::
+    st2tost2<3u, tfel::types::real<StressType>> computeEllipsoidLocalisationTensor_(
         const StressType& young,
         const tfel::types::real<StressType>& nu,
         const StressType& young_i,
@@ -64,7 +64,7 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                             StressType>()) static tfel::math::
-    st2tost2<3u, tfel::types::real<StressType>> computeAnisotropicLocalisationTensor(
+    st2tost2<3u, tfel::types::real<StressType>> computeAnisotropicLocalisationTensor_(
         const tfel::math::st2tost2<3u, StressType>& C0_glob,
         const tfel::math::st2tost2<3u, StressType>& Ci_loc,
         const tfel::math::tvector<3u, tfel::types::real<StressType>>& n_a,
@@ -82,11 +82,11 @@ void declareLocalisationTensors(pybind11::module_&);
 
 void declareLocalisationTensors(pybind11::module_& m) {
   m.def("computeSphereLocalisationTensor",
-        &computeSphereLocalisationTensor<double>);
+        &computeSphereLocalisationTensor_<double>);
   m.def("computeAxisymmetricalEllipsoidLocalisationTensor",
-        &computeAxisymmetricalEllipsoidLocalisationTensor<double>);
+        &computeAxisymmetricalEllipsoidLocalisationTensor_<double>);
   m.def("computeEllipsoidLocalisationTensor",
-        &computeEllipsoidLocalisationTensor<double>);
+        &computeEllipsoidLocalisationTensor_<double>);
   m.def("computeAnisotropicLocalisationTensor",
-        &computeAnisotropicLocalisationTensor<double>);
+        &computeAnisotropicLocalisationTensor_<double>);
 }

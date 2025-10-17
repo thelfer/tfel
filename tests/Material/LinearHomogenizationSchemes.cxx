@@ -73,7 +73,7 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
     using real = tfel::types::real<StressType>;
     using stress = StressType;
     using namespace tfel::material::homogenization::elasticity;
-    constexpr auto eps = 100 * tfel::math::constexpr_fct::sqrt(
+    constexpr auto eps = tfel::math::constexpr_fct::sqrt(
                                    std::numeric_limits<real>::epsilon());
     const auto young = stress{1e9};
     const auto seps = young * eps;
@@ -97,14 +97,14 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
     const auto nuSphere_MT_1 =
         (3 * khom1 - 2 * muhom1) / (2 * muhom1 + 6 * khom1);
     const auto ESphere_MT_1 = 2 * muhom1 * (1 + nuSphere_MT_1);
-    const auto pair2 =
+    const auto Enu2 =
         computeSphereDiluteScheme<stress>(young, nu, f, young_i, nu_i);
-    const auto ESphere_DS_2 = std::get<0>(pair2);
-    const auto nuSphere_DS_2 = std::get<1>(pair2);
-    const auto pair3 =
+    const auto ESphere_DS_2 = Enu2.young;
+    const auto nuSphere_DS_2 = Enu2.nu;
+    const auto Enu3 =
         computeSphereMoriTanakaScheme<stress>(young, nu, f, young_i, nu_i);
-    const auto ESphere_MT_3 = std::get<0>(pair3);
-    const auto nuSphere_MT_3 = std::get<1>(pair3);
+    const auto ESphere_MT_3 = Enu3.young;
+    const auto nuSphere_MT_3 = Enu3.nu;
 
     // std::cout << (ESphere_DS_2-ESphere_DS_0).getValue() << " " << eps <<
     // '\n';
@@ -123,7 +123,7 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       using real = tfel::types::real<StressType>;
       using stress = StressType;
       using length = tfel::types::length<StressType>;
-      constexpr auto eps = 100 * tfel::math::constexpr_fct::sqrt(
+      constexpr auto eps = tfel::math::constexpr_fct::sqrt(
                                      std::numeric_limits<real>::epsilon());
 
       using namespace tfel::material::homogenization::elasticity;
@@ -139,14 +139,14 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       const tfel::math::tvector<3u, real> n_b = {1., 0., 0.};
       // computeSphereDiluteScheme must be equal to IsotropicDiluteScheme,
       // TransverseIsotropicDiluteScheme and OrientedDiluteScheme when a=b=c
-      const auto pair0 =
+      const auto Enu0 =
           computeSphereDiluteScheme<stress>(young, nu, f, young_i, nu_i);
-      const auto ESphere_0 = std::get<0>(pair0);
-      const auto nuSphere_0 = std::get<1>(pair0);
-      const auto pair1 = computeIsotropicDiluteScheme<stress>(
+      const auto ESphere_0 = Enu0.young;
+      const auto nuSphere_0 = Enu0.nu;
+      const auto Enu1 = computeIsotropicDiluteScheme<stress>(
           young, nu, f, young_i, nu_i, a, a, a);
-      const auto ESphere_1 = std::get<0>(pair1);
-      const auto nuSphere_1 = std::get<1>(pair1);
+      const auto ESphere_1 = Enu1.young;
+      const auto nuSphere_1 = Enu1.nu;
       const auto Chom2 = computeTransverseIsotropicDiluteScheme<stress>(
           young, nu, f, young_i, nu_i, n_a, a, a, a);
       const auto mu2 = (Chom2(0, 0) - Chom2(0, 1)) / 2;
@@ -160,13 +160,13 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       const auto nuSphere_3 = (3 * ka3 - 2 * mu3) / (2 * mu3 + 6 * ka3);
       const auto ESphere_3 = 2 * mu3 * (1 + nuSphere_3);
 
-      TFEL_TESTS_ASSERT(my_abs(ESphere_0 - ESphere_1) < stress{eps});
+      TFEL_TESTS_ASSERT(my_abs(ESphere_0 - ESphere_1) < stress{100*eps});
       // std::cout << (ESphere_0-ESphere_1).getValue() << " "<< eps << '\n';
       TFEL_TESTS_ASSERT(my_abs(nuSphere_0 - nuSphere_1) < eps);
-      TFEL_TESTS_ASSERT(my_abs(ESphere_0 - ESphere_2) < stress{eps});
+      TFEL_TESTS_ASSERT(my_abs(ESphere_0 - ESphere_2) < stress{100*eps});
       // std::cout << (ESphere_2-ESphere_0).getValue() << " "<< eps << '\n';
       TFEL_TESTS_ASSERT(my_abs(nuSphere_0 - nuSphere_2) < eps);
-      TFEL_TESTS_ASSERT(my_abs(ESphere_0 - ESphere_3) < stress{eps});
+      TFEL_TESTS_ASSERT(my_abs(ESphere_0 - ESphere_3) < stress{100*eps});
       // std::cout << (ESphere_0-ESphere_3).getValue() << " "<< eps << '\n';
       TFEL_TESTS_ASSERT(my_abs(nuSphere_0 - nuSphere_3) < eps);
     }
@@ -181,7 +181,7 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       using real = tfel::types::real<StressType>;
       using stress = StressType;
       using length = tfel::types::length<StressType>;
-      constexpr auto eps = 100 * tfel::math::constexpr_fct::sqrt(
+      constexpr auto eps =  tfel::math::constexpr_fct::sqrt(
                                      std::numeric_limits<real>::epsilon());
 
       using namespace tfel::material::homogenization::elasticity;
@@ -208,7 +208,7 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       const auto ka3 = (Chom3(0, 0) + 2 * Chom3(0, 1)) / 3;
       const auto nuTI_DS_3 = (3 * ka3 - 2 * mu3) / (2 * mu3 + 6 * ka3);
       const auto ETI_DS_3 = 2 * mu3 * (1 + nuTI_DS_3);
-      TFEL_TESTS_ASSERT(my_abs(ETI_DS_2 - ETI_DS_3) < stress{eps});
+      TFEL_TESTS_ASSERT(my_abs(ETI_DS_2 - ETI_DS_3) < 100*stress{eps});
       TFEL_TESTS_ASSERT(my_abs(nuTI_DS_2 - nuTI_DS_3) < eps);
       // std::cout << (E2-E3).getValue() << " "<< eps << '\n';
     }
@@ -224,7 +224,7 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       using stress = StressType;
       using length = tfel::types::length<StressType>;
       using namespace tfel::material::homogenization::elasticity;
-      constexpr auto eps = 10 * std::numeric_limits<real>::epsilon();
+      constexpr auto eps = std::numeric_limits<real>::epsilon();
       const auto young = stress{1e9};
       const auto seps = young * eps;
       const auto nu = real{0.3};
@@ -237,14 +237,14 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       // SphereMoriTanakaScheme must be equal to IsotropicMoriTanakaScheme,
       // TransverseIsotropicMoriTanakaScheme and OrientedMoriTanakaScheme when
       // a=b=c
-      const auto pair0 =
+      const auto Enu0 =
           computeSphereMoriTanakaScheme<stress>(young, nu, f, young_i, nu_i);
-      const auto ESphere_MT_0 = std::get<0>(pair0);
-      const auto nuSphere_MT_0 = std::get<1>(pair0);
-      const auto pair1 = computeIsotropicMoriTanakaScheme<stress>(
+      const auto ESphere_MT_0 = Enu0.young;
+      const auto nuSphere_MT_0 = Enu0.nu;
+      const auto Enu1 = computeIsotropicMoriTanakaScheme<stress>(
           young, nu, f, young_i, nu_i, a, a, a);
-      const auto ESphere_MT_1 = std::get<0>(pair1);
-      const auto nuSphere_MT_1 = std::get<1>(pair1);
+      const auto ESphere_MT_1 = Enu1.young;
+      const auto nuSphere_MT_1 = Enu1.nu;
       const auto Chom2 = computeTransverseIsotropicMoriTanakaScheme<stress>(
           young, nu, f, young_i, nu_i, n_a, a, a, a);
       const auto mu2 = (Chom2(0, 0) - Chom2(0, 1)) / 2;
@@ -282,7 +282,7 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       using real = tfel::types::real<StressType>;
       using stress = StressType;
       using length = tfel::types::length<StressType>;
-      constexpr auto eps = 100 * tfel::math::constexpr_fct::sqrt(
+      constexpr auto eps = tfel::math::constexpr_fct::sqrt(
                                      std::numeric_limits<real>::epsilon());
 
       using namespace tfel::material::homogenization::elasticity;
@@ -298,41 +298,41 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       //    const tfel::math::tvector<3u,real> n_b = {1.,0.,0.};
       // IsotropicDiluteScheme when a is near b must be near
       // IsotropicDiluteScheme when a=b
-      const auto pair0 = computeIsotropicDiluteScheme<stress>(
+      const auto Enu0 = computeIsotropicDiluteScheme<stress>(
           young, nu, f, young_i, nu_i, a, a + length{0.0000001}, c);
-      const auto EI_DS_0 = std::get<0>(pair0);
-      const auto nuI_DS_0 = std::get<1>(pair0);
+      const auto EI_DS_0 = Enu0.young;
+      const auto nuI_DS_0 = Enu0.nu;
 
-      const auto pair1 = computeIsotropicDiluteScheme<stress>(
+      const auto Enu1 = computeIsotropicDiluteScheme<stress>(
           young, nu, f, young_i, nu_i, a, c, a + length{0.0000001});
-      const auto EI_DS_1 = std::get<0>(pair1);
-      const auto nuI_DS_1 = std::get<1>(pair1);
+      const auto EI_DS_1 = Enu1.young;
+      const auto nuI_DS_1 = Enu1.nu;
 
-      const auto pair2 = computeIsotropicDiluteScheme<stress>(
+      const auto Enu2 = computeIsotropicDiluteScheme<stress>(
           young, nu, f, young_i, nu_i, c, a, a + length{0.0000001});
-      const auto EI_DS_2 = std::get<0>(pair2);
-      const auto nuI_DS_2 = std::get<1>(pair2);
+      const auto EI_DS_2 = Enu2.young;
+      const auto nuI_DS_2 = Enu2.nu;
 
-      const auto pair3 = computeIsotropicDiluteScheme<stress>(
+      const auto Enu3 = computeIsotropicDiluteScheme<stress>(
           young, nu, f, young_i, nu_i, a, c, a);
-      const auto EI_DS_3 = std::get<0>(pair3);
-      const auto nuI_DS_3 = std::get<1>(pair3);
+      const auto EI_DS_3 = Enu3.young;
+      const auto nuI_DS_3 = Enu3.nu;
 
-      const auto pair4 = computeIsotropicDiluteScheme<stress>(
+      const auto Enu4 = computeIsotropicDiluteScheme<stress>(
           young, nu, f, young_i, nu_i, c, a, a);
-      const auto EI_DS_4 = std::get<0>(pair4);
-      const auto nuI_DS_4 = std::get<1>(pair4);
+      const auto EI_DS_4 = Enu4.young;
+      const auto nuI_DS_4 = Enu4.nu;
 
-      TFEL_TESTS_ASSERT(my_abs(EI_DS_1 - EI_DS_0) < stress{10 * eps});
+      TFEL_TESTS_ASSERT(my_abs(EI_DS_1 - EI_DS_0) < stress{eps});
       // std::cout << (E0-E1).getValue() << " "<< E1.getValue() << '\n';
       TFEL_TESTS_ASSERT(my_abs(nuI_DS_1 - nuI_DS_0) < eps);
-      TFEL_TESTS_ASSERT(my_abs(EI_DS_1 - EI_DS_2) < stress{10 * eps});
+      TFEL_TESTS_ASSERT(my_abs(EI_DS_1 - EI_DS_2) < stress{eps});
       // std::cout << E0.getValue() << " "<< E2.getValue() << '\n';
       TFEL_TESTS_ASSERT(my_abs(nuI_DS_1 - nuI_DS_2) < eps);
-      TFEL_TESTS_ASSERT(my_abs(EI_DS_1 - EI_DS_3) < stress{10 * eps});
+      TFEL_TESTS_ASSERT(my_abs(EI_DS_1 - EI_DS_3) < stress{eps});
       // std::cout << E0.getValue() << " "<< E3.getValue() << '\n';
       TFEL_TESTS_ASSERT(my_abs(nuI_DS_1 - nuI_DS_3) < eps);
-      TFEL_TESTS_ASSERT(my_abs(EI_DS_1 - EI_DS_4) < stress{10 * eps});
+      TFEL_TESTS_ASSERT(my_abs(EI_DS_1 - EI_DS_4) < stress{eps});
       // std::cout << E3.getValue() << " "<< E4.getValue() << '\n';
       TFEL_TESTS_ASSERT(my_abs(nuI_DS_1 - nuI_DS_4) < eps);
     }
