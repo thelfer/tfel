@@ -166,8 +166,26 @@ namespace mfront {
     systemCall::mkdir("include/MFront/DianaFEA");
     systemCall::mkdir("dianafea");
 
+    //
+    systemCall::mkdir("abaqus");
+    try {
+      // copy umat.cpp locally
+      MFrontLockGuard lock;
+      const auto root = tfel::getInstallPath();
+#ifdef TFEL_APPEND_SUFFIX
+      const auto dn = root + "/share/doc/mfront-" VERSION "/dianafea/";
+#else  /* TFEL_APPEND_SUFFIX */
+      const auto dn = root + "/share/doc/mfront/dianafea/";
+#endif /* TFEL_APPEND_SUFFIX */
+      systemCall::copy(dn + "CMakeLists.txt", "dianafea");
+      systemCall::copy(dn + "dianafea_external_behaviour_call.cxx", "dianafea");
+      systemCall::copy(dn + "usrmat.f90", "dianafea");
+      systemCall::copy(dn + "test-usrmat.cxx", "dianafea");
+      systemCall::copy(dn + "test.f90", "dianafea");
+    } catch (...) {
+    }
+    //
     std::ofstream out;
-
     // header
     auto fname = "DianaFEA" + name + ".hxx";
     out.open("include/MFront/DianaFEA/" + fname);

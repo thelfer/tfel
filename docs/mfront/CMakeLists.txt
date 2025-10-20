@@ -194,5 +194,6 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
 endif(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
 
 add_subdirectory(abaqus)
+add_subdirectory(dianafea)
 add_subdirectory(ansys)
 add_subdirectory(lsdyna)
