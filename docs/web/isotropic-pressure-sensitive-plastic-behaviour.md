@@ -53,12 +53,12 @@ where \(\lambda\) and \(\mu\) are the first and second Lamé parameters.
 
 The yield surface is chosen as follows:
 \[
-f\paren{\tsigma}=\sigmaeq^{\star}\paren{p, \sigmaeq}-\sigma_{Y}
+f\paren{\tsigma}=\sigmaeq^{\star}\paren{p_{r}, \sigmaeq}-\sigma_{Y}
 \]
 where:
 
 - \(\sigmaeq^{\star}\) is the equivalent stress,
-- \(p\) is the hydrostatic stress, defined by \(p=\Frac{1}{3}\trace{\tsigma}\),
+- \(p_{r}\) is the hydrostatic stress, defined by \(p_{r}=\Frac{1}{3}\trace{\tsigma}\),
 - \(\sigmaeq\) is the von Mises stress, defined by
   \[
   \sigmaeq=\sqrt{\Frac{3}{2}\tenseur{s}\,\colon\,\tenseur{s}}=\sqrt{\tsigma\,\colon\,\tenseur{M}\,\colon\tsigma}
@@ -67,3 +67,15 @@ where:
   and \(\tenseurq{M}=\Frac{3}{2}\left(\tenseurq{I}-\tenseur{I}\,\otimes\,\tenseur{I}\right)\),
 - The yield stress \(\sigma_{Y}\) is a constant material parameter.
 
+Plasticity is assumed associated, the flow direction \(n_{f}\) is given
+by the normality rule:
+\[
+\begin{aligned}
+n_{f}&=\deriv{f}{\tsigma}&=\deriv{f}{\sigmaeq}\,\deriv{\sigmaeq}{\tsigma}+\deriv{f}{p_{r}}\,\deriv{p_{r}}{\tsigma}\\
+&&=\deriv{f}{\sigmaeq}\,\tenseur{n}+\frac{1}{3}\,\deriv{f}{p_{r}}\,\tenseur{I}\\
+\end{aligned}
+\]
+where \(\tenseur{n}\) is the von Mises normal:
+\[
+\tenseur{n}=\frac{3}{2\,\sigmaeq}\tenseur{s}=\frac{1}{\sigmaeq}\,\tenseurq{M}\,\colon\,\tsigma
+\]
