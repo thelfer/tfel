@@ -1,0 +1,6 @@
+* Example of data file used to associate a DIANA id to an MFront behaviour
+* The first column contains the id of the law as declared in DIANA
+* The second column contains the name of the library to be loaded
+* (stripped from the `lib` prefix under Unix and from the extension).
+* The third column contains the name of the behaviour to be loaded
+1 MFrontDIANABehaviour TestBehaviour
