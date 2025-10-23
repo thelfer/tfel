@@ -329,27 +329,25 @@ The available bounds are:
  - Reuss bound
  - Hashin-Shtrikman bounds
  
-Here are some examples:
+Here are some examples of computation:
 
 ~~~~{.py}
 f0=0.2
 f1=0.5
-f2=0.2
-f3=0.1
+f2=0.3
 C0=tm.ST2toST23D(np.eye(6))
 C1=tm.ST2toST23D(2*np.eye(6))
 C2=tm.ST2toST23D(5*np.eye(6))
-C3=tm.ST2toST23D(10*np.eye(6))
 
-C02d=tm.ST2toST22D(np.eye(4))
-C12d=tm.ST2toST22D(2*np.eye(4))
-C22d=tm.ST2toST22D(5*np.eye(4))
+C0_2d=tm.ST2toST22D(np.eye(4))
+C1_2d=tm.ST2toST22D(2*np.eye(4))
+C2_2d=tm.ST2toST22D(5*np.eye(4))
 
 # Voigt and Reuss bounds
-CV_3D=hm.computeVoigtStiffness3D([f0,f1,f2,f3],[C0,C1,C2,C3])
-CV_2D=hm.computeVoigtStiffness2D([f0,f1,f2+f3],[C02d,C12d,C22d])
-CR_3D=hm.computeReussStiffness3D([f0,f1,f2,f3],[C0,C1,C2,C3])
-CR_2D=hm.computeReussStiffness2D([f0,f1,f2+f3],[C02d,C12d,C22d])
+CV_3D=hm.computeVoigtStiffness3D([f0,f1,f2],[C0,C1,C2])
+CV_2D=hm.computeVoigtStiffness2D([f0,f1,f2],[C0_2d,C1_2d,C2_2d])
+CR_3D=hm.computeReussStiffness3D([f0,f1,f2],[C0,C1,C2])
+CR_2D=hm.computeReussStiffness2D([f0,f1,f2],[C0_2d,C1_2d,C2_2d])
 
 print(CR_3D,CV_3D)
 print(CR_2D,CV_2D)
@@ -361,10 +359,8 @@ K1=2/3
 G1=1
 K2=5/3
 G2=5/2
-K3=10/3
-G3=5
-KG_HS_3D=hm.computeIsotropicHashinShtrikmanBounds3D([f0,f1,f2,f3],[K0,K1,K2,K3],[G0,G1,G2,G3])
-KG_HS_2D=hm.computeIsotropicHashinShtrikmanBounds2D([f0,f1,f2+f3],[K0,K1,K2],[G0,G1,G2])
+KG_HS_3D=hm.computeIsotropicHashinShtrikmanBounds3D([f0,f1,f2],[K0,K1,K2],[G0,G1,G2])
+KG_HS_2D=hm.computeIsotropicHashinShtrikmanBounds2D([f0,f1,f2],[K0,K1,K2],[G0,G1,G2])
 
 K_LB_3D=KG_HS_3D[0][0]
 G_LB_3D=KG_HS_3D[0][1]
@@ -383,6 +379,9 @@ print(K_LB_2D,G_LB_2D)
 print(K_UB_2D,G_UB_2D)
 ~~~~
 
+Note that Voigt and Reuss bounds work on `ST2toST2` objects, whereas
+Hashin-Shtrikman bounds work on bulk and shear moduli.
+The number of phases is arbitrary.
 
 ### Homogenization of general microstructures
 
@@ -391,8 +390,7 @@ print(K_UB_2D,G_UB_2D)
 Some objects are defined that mirror the objects defined
 in the namespace `tfel::material::homogenization::elasticity`
 for the construction and homogenization of general microstructures.
-Again, we invite the reader to consult the [details](tfel-material.html#homogenization-of-general-microstructures)
-of the documentation.
+The reader may want to consult this documentation [here](tfel-material.html#homogenization-of-general-microstructures).
 
 The `ParticulateMicrostructure` object is  defined and can be instantiated
 in various ways:
@@ -407,7 +405,9 @@ micro_2=hm.ParticulateMicrostructure(C0)
 micro_3=hm.ParticulateMicrostructure(micro_2)
 ~~~~
 
-This object has no public attribute. However,
+where `C0` and `IM0` correspond to the elasticity
+of the matrix phase.
+The `ParticulateMicrostructure` has no public attribute. However,
 it has some methods that return the value of the
 private attributes:
 
@@ -446,8 +446,6 @@ sph_dist=hm.SphereDistribution(sph,f,IMi)
 ellipsoid_dist_iso=hm.IsotropicDistribution(ellipso,f,IMi)
 
 n_a=tm.TVector3D([0.,0.,1.])
-ellipsoid_dist_TI=hm.TransverseIsotropicDistribution(ellipso,f,IMi,n_a,0)
-
 n_b=tm.TVector3D([0.,1.,0.])
 ellipsoid_dist_O=hm.OrientedDistribution(ellipso,f,IMi,n_a,n_b)
 Ci=tm.ST2toST23D(1e9*np.eye(6))
@@ -456,9 +454,26 @@ Ci[1,0]=1e8
 ellipsoid_dist_O_2=hm.OrientedDistribution(ellipso,f,Ci,n_a,n_b)
 ~~~~
 
+The `TransverseDistribution` is a special case
+which requires to precise which axis of the ellipsoid (or spheroid)
+will remain fixed when the two other axes rotate:
+
+~~~~{.py}
+index=0
+ellipsoid_dist_TI=hm.TransverseIsotropicDistribution(ellipso,f,IMi,n_a,index)
+~~~~
+
+The index can be 0,1 or 2. For a spheroid, giving `2` for the `index`
+is the same as giving `1`, because these 2 axes have the same length.
+
 Note that the `OrientedDistribution` can be instantiated with a `ST2toST2` object,
-here `Ci`. It is also possible for a `SphereDistribution`.
-And we can add these distributions to the microstructure:
+here `Ci`. It is also possible for a `SphereDistribution`. It can be
+useful for considering anisotropic inclusions. However, the basis in which
+`Ci` is defined is the local basis for the `OrientedDistribution`, that is, the
+basis defined by `n_a` and `n_b` passed as arguments. For a `SphereDistribution`,
+it is the global basis.
+
+We can now add these distributions to the microstructure:
 
 ~~~~{.py}
 micro_1.addInclusionPhase(sph_dist)
@@ -613,7 +628,8 @@ elastic moduli. If isotropic, it will works in all case, whereas
 if not isotropic, it will fail depending on the distributions that are present
 in the microstructure.
 Moreover, if anisotropic, another parameter can be passed to specify the
-number of subdivisions in the numerical integration:
+number of subdivisions in the numerical integration (this value is `12`
+by default):
 
 ~~~~{.py}
 micro_1.replaceMatrixPhase(C0)
@@ -623,18 +639,32 @@ hmDS_aniso=hm.computeDiluteScheme(micro_1,10)
 hmMT_aniso=hm.computeMoriTanakaScheme(micro_1,10)
 ~~~~
 
-The integer value is `12` by default.
 We can also recover the strain localisation tensors:
 
-...
+~~~~{.py}
+A_i_DS=hmDS.mean_strain_localisation_tensors
+print("A_0_DS: ",A_i_DS[0],"A_1_DS: ",A_i_DS[1])
+~~~~
 
 We can also add a polarization on each phase:
 
-...
+~~~~{.py}
+micro_1.replaceMatrixPhase(IM0)
+pola=[tm.Stensor3D(6*[0.]),tm.Stensor3D([1.e8,1e8,1e8,0.,0.,0.])]
+hmDS_pola=hm.computeDiluteScheme(micro_1,polarisations=pola)
+~~~~
 
+(note that here we must precise the name of the optional argument).
+And we can recover the effective polarization:
 
-And we can obtain the effective polarization:
+~~~~{.py}
+P_eff_DS=hmDS_pola.effective_polarisation
+print("P_eff_DS: ",P_eff_DS)
+~~~~
 
-...
+In fact, the functions `computeDiluteScheme`, `computeMoriTanakaScheme`
+`computeSelfConsistentScheme`... return an object `HomogenizationScheme`
+which possesses the attributes `homogenized_stiffness`,`mean_strain_localisation_tensors`
+and `effective_polarisation`.
 
 <!-- Local IspellDict: english -->

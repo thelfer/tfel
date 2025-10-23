@@ -67,10 +67,11 @@ template <unsigned short int N, tfel::math::ScalarConcept StressType>
 void declareMicrostructureLinearHomogenization(pybind11::module_&);
 
 void declareMicrostructureLinearHomogenization(pybind11::module_& m) {
+using namespace tfel::material::homogenization::elasticity;
   const auto pola = std::vector<tfel::math::stensor<3u,double>>{};
   declareHomogenizationScheme<3u,double>(m, "HomogenizationScheme");
-  m.def("computeMoriTanakaScheme", &computeMoriTanakaScheme<3,double>,pybind11::arg("micro"),pybind11::arg("max_iter_anisotropic_integration")=12,pybind11::arg("polarisations")=pola);
-  m.def("computeDiluteScheme", &computeDiluteScheme<3,double>,pybind11::arg("micro"),pybind11::arg("max_iter_anisotropic_integration")=12,pybind11::arg("polarisations")=pola);
-  m.def("computeSelfConsistentScheme", &computeSelfConsistentScheme<3,double>,pybind11::arg("micro"),pybind11::arg("max_iter"),pybind11::arg("isotropic"),pybind11::arg("max_iter_anisotropic_integration")=12,pybind11::arg("polarisations")=pola);
+  m.def("computeMoriTanakaScheme", &computeMoriTanaka<3,double>,pybind11::arg("micro"),pybind11::arg("max_iter_anisotropic_integration")=12,pybind11::arg("polarisations")=pola);
+  m.def("computeDiluteScheme", &computeDilute<3,double>,pybind11::arg("micro"),pybind11::arg("max_iter_anisotropic_integration")=12,pybind11::arg("polarisations")=pola);
+  m.def("computeSelfConsistentScheme", &computeSelfConsistent<3,double>,pybind11::arg("micro"),pybind11::arg("max_iter"),pybind11::arg("isotropic"),pybind11::arg("max_iter_anisotropic_integration")=12,pybind11::arg("polarisations")=pola);
   
 }

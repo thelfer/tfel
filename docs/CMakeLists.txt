@@ -20,5 +20,4 @@ add_subdirectory(gallery)
 add_subdirectory(mfront)
 add_subdirectory(mtest)
 add_subdirectory(ptest)
-add_subdirectory(web)
 

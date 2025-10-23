@@ -56,8 +56,8 @@ namespace tfel::material::homogenization::elasticity {
                                               StressType>())
       HomogenizationScheme<N, StressType> computeDilute(
           ParticulateMicrostructure<N, StressType> &,
-          const std::vector<tfel::math::stensor<N, StressType>> &,
-          int max_iter_anisotropic_integration = 12);
+          int max_iter_anisotropic_integration = 12,
+          const std::vector<tfel::math::stensor<N, StressType>> & = {});
 
   /*!
    * Here is the MoriTanaka scheme which returns an object of
@@ -72,8 +72,8 @@ namespace tfel::material::homogenization::elasticity {
                                               StressType>())
       HomogenizationScheme<N, StressType> computeMoriTanaka(
           ParticulateMicrostructure<N, StressType> &,
-          const std::vector<tfel::math::stensor<N, StressType>> &,
-          int max_iter_anisotropic_integration = 12);
+          int max_iter_anisotropic_integration = 12,
+          const std::vector<tfel::math::stensor<N, StressType>> & = {});
 
   /*!
    * Here is the Self-consistent scheme which returns an object of
@@ -89,10 +89,10 @@ namespace tfel::material::homogenization::elasticity {
                                               StressType>())
       HomogenizationScheme<N, StressType> computeSelfConsistent(
           ParticulateMicrostructure<N, StressType> &,
-          const std::vector<tfel::math::stensor<N, StressType>> &,
           int max_iter,
           bool isotropic,
-          int max_iter_anisotropic_integration = 8);
+          int max_iter_anisotropic_integration = 8,
+          const std::vector<tfel::math::stensor<N, StressType>> & = {});
 
 }  // end of namespace tfel::material::homogenization::elasticity
 

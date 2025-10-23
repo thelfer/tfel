@@ -562,7 +562,7 @@ const auto A_C = computePlaneStrainLocalisationTensor<stress>(IM0,C_i,n_a,a,b);
 ~~~~
 
 
-## Computation in anisotropic reference medium
+### Computation in anisotropic reference medium
 
 The header `AnisotropicEshelbyTensor.hxx` introduces
 the computation of the Eshelby tensors and Hill tensors
@@ -706,29 +706,116 @@ The available bounds are:
  - Reuss bound
  - Hashin-Shtrikman bounds
  
+Here are some examples of computation:
+
+~~~~{.cpp}
+//Voigt and Reuss bounds
+std::vector<real> tab_f={real(0.2),real(0.8)};
+const auto C0 = stress(1e9)*Stensor4<3u,real>::Id();
+const auto C1 = stress(1e7)*Stensor4<3u,real>::Id();
+std::vector<Stensor4<3u,stress>> tab_C={C0,C1};
+
+const Stensor4<3u,real> CV = computeVoigtStiffness<3u, stress>(tab_f, tab_C);
+const Stensor4<3u,real> CR = computeReussStiffness<3u, stress>(tab_f, tab_C);
+
+//Hashin-Shtrikman bounds
+const auto K0=stress(1/3);
+const auto G0=stress(1/2);
+const auto K1=stress(2/3);
+const auto G1=stress(1);
+const auto K2=stress(5/3);
+const auto G2=stress(5/2);
+std::vector<real> tab_f={real(0.1),real(0.8),real(0.1)};
+std::vector<stress> tab_K={K0,K1,K2};
+std::vector<stress> tab_mu={G0,G1,G2};
+
+const auto pair = computeIsotropicHashinShtrikmanBounds<3u, stress>(tab_f, tab_K, tab_mu);
+
+const auto LB = std::get<0>(pair);
+const auto K_L = std::get<0>(LB);
+const auto mu_L = std::get<1>(LB);
+
+const auto UB = std::get<1>(pair);
+const auto K_U = std::get<0>(UB);
+const auto mu_U = std::get<1>(UB);
+~~~~
+
+Note that Voigt and Reuss bounds work on `st2tost2` (or `Stensor4`) objects, whereas
+Hashin-Shtrikman bounds work on bulk and shear moduli.
+The number of phases is arbitrary, and the dimension is 2 or 3.
+ 
 ## Homogenization of general microstructures
 
 A `ParticulateMicrostructure` object can be created for
 homogenization of general matrix-inclusion microstructures.
 
-### The `ParticulateMicrostructure class`
+### Description and construction of a microstructure
+
+#### The `ParticulateMicrostructure class`
 
 The `ParticulateMicrostructure class` is available in 3d an 2d
 via 2 template parameters: `ParticulateMicrostructure<N,stress>`
 with `N` the dimension. For the details, see the file 'MicrostructureDescription.hxx'
 which introduces the `class`.
 
-A ParticulateMicrostructure consists on a matrix, in which are embedded
+A `ParticulateMicrostructure` consists on a matrix, in which are embedded
 several distributions of inclusions. The class has three (private) attributes:
 
  - `number_of_phases`
  - `matrixPhase`
  - `inclusionPhases`
 
-The `matrixPhase` is of type `Phase`.
+The `matrixPhase` is of type `Phase`, described below.
  
 The `inclusionPhases` is a `std::vector` of pointers on
-`InclusionDistribution` objects (which represent the distributions of inclusions).
+`InclusionDistribution` objects (which represent the distributions of inclusions). This
+class is also described below. 
+
+We can instantiate a `ParticulateMicrostructure` as follows,
+passing the matrix elasticity as an argument:
+
+~~~~{.cpp}
+using namespace tfel::material::homogenization::elasticity;
+const auto IM0=tfel::material::KGModuli<stress>(1e7,1e7);
+const auto micro_1=ParticulateMicrostructure(IM0);
+
+const auto C0 = stress(1e9)*Stensor4<3u,real>::Id();
+const auto micro_2=ParticulateMicrostructure(C0);
+~~~~
+
+`ParticulateMicrostructure` has also some methods (see 'MicrostructureDescription.hxx'
+for details). The following ones allow to get some attributes of the class:
+
+ - `get_number_of_phases`
+ - `get_matrix_fraction` (attribute `fraction` of `matrixPhase`)
+ - `get_matrix_elasticity` (attribute `stiffness` of `matrixPhase`)
+ - `is_isotropic_matrix` (private attribute `is_isotropic` of `matrixPhase`)
+ 
+Last method returns a boolean which states if the matrix is considered isotropic
+or not. In fact, depending on how was instantiated the `ParticulateMicrostructure`,
+the matrix is considered isotropic or not. For example, by doing
+
+~~~~{.cpp}
+bool val_1=micro_1.is_isotropic_matrix();
+bool val_2=micro_2.is_isotropic_matrix();
+~~~~
+
+`val_1` will be `True` because `micro_1` was instantiated above with a `KGModuli`,
+whereas `val_2` will be `False`. Note that `False` does not mean
+that the matrix elasticity is not isotropic, but that it is CONSIDERED
+as not isotropic.
+
+Other methods allows to add/remove `InclusionDistribution` objects
+to the attribute `inclusionPhases`, and also to replace
+`matrixPhase`:
+
+ - `get_inclusionPhase`
+ - `addInclusionPhase`
+ - `removeInclusionPhase`
+ - `replaceMatrixPhase`
+ 
+But we first describe `Phase`, `InclusionDistribution`
+and `Inclusion` classes.
 
 #### The `Phase` class
 
@@ -738,7 +825,7 @@ The `Phase class` is very simple. It has two attributes:
  - `stiffness` (`st2tost2` type)
 
 and one method: `is_isotropic()` which returns a `bool` stating if the phase is
-considered isotropic or not. The value of this `bool` depends on the
+considered isotropic or not. Again, the value of this `bool` depends on the
 way the `Phase` was constructed. By doing
 
 ~~~~{.cpp}
@@ -755,29 +842,17 @@ Phase<stress> ph(f,KG);
 bool b = ph.is_isotropic();
 ~~~~
 
-`b` will have the value `true`.
+`b` will have the value `true`. Hence,
+when a `ParticulateMicrostructure` is instantiated,
+it automatically instantiates a `Phase` object corresponding to 
+the attribute `matrixPhase`. However, we note that the user can
+construct a microstructure without using `Phase` instantiation
+himself.
 
-#### The `InclusionDistribution class`
-
-The `InclusionDistribution class` is an abstract class which represents a distribution
-of inclusions. It is a child of the `Phase class`.
-There are 4 child `class` of the `InclusionDistribution class`:
- 
- - `SphereDistribution` (distribution of spheres)
- - `IsotropicDistribution` (isotropic distribution of ellipsoids)
- - `TransverseDistribution` (transverse isotropic distribution of ellipsoids)
- - `OrientedDistribution` (aligned distribution of ellipsoids)
- 
-Each `class` has a unique attribute `inclusion` (which is of type `Inclusion`, see below),
-and a method, `computeMeanLocalisator`, which computes the average of the localisation
-tensor on the distribution. This function is mainly used in the computation of the homogenization
-schemes (see below).
-
-These `class` are currently available in 3d only.
- 
 #### The `Inclusion class`
 
-The `Inclusion class` is characterized by
+Before describing the `InclusionDistribution class`, we must describe
+the `Inclusion class`. This latter is characterized by
 its unique attribute: `semiLengths`. It is a `std::array` of `N`
 lengths, which are the semi-lengths of the ellipsoid/ellipse,
 where `N` is the dimension considered (2 or 3).
@@ -788,18 +863,144 @@ Some particular `Inclusion` objects are also defined:
  - `Spheroid` (child of `Ellipsoid` with the last two semi-lengths identical)
  - `Sphere` (child of `Spheroid` with 3 semi-lengths equal to unity)
 
-#### Methods of the `ParticulateMicrostructure class`
+Let us try:
 
-The `ParticulateMicrostructure` has the following methods (see 'MicrostructureDescription.hxx'
-for details):
-
- - `addInclusionPhase`
- - `removeInclusionPhase`
- - `replaceMatrixPhase`
- - `get_number_of_phases`, `get_matrix_fraction`, `get_matrix_elasticity`, `is_isotropic_matrix`, `get_inclusionPhase`
-
+~~~~{.cpp}
+Ellipsoid<length> ellipsoid1(a,b,c);
+Spheroid<length> spheroid1(a,b);
+Sphere<length> sphere1();
+~~~~
  
-### Homogenization schemes
+#### The `InclusionDistribution class`
+
+The `InclusionDistribution class` is an abstract class which represents a distribution
+of inclusions. It is a child of the `Phase class`, and it is used
+to represent the distribution of inclusions in a `ParticulateMicrostructure`.
+There are 4 child `class` of the `InclusionDistribution class`:
+ 
+ - `SphereDistribution` (distribution of spheres)
+ - `IsotropicDistribution` (isotropic distribution of ellipsoids)
+ - `TransverseDistribution` (transverse isotropic distribution of ellipsoids)
+ - `OrientedDistribution` (aligned distribution of ellipsoids)
+ 
+Here are some examples of instantiation:
+
+~~~~{.cpp}
+const auto KGi=tfel::material::KGModuli<stress>(Ki,Gi);
+SphereDistribution<stress> distrib_sph(sphere1,f,KGi);
+IsotropicDistribution<stress> distrib_ell(ellipsoid1,f,KGi);
+
+tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
+tfel::math::tvector<3u, real> n_b = {0., 1., 0.};
+OrientedDistribution<stress> distrib_O(ellipsoid1,f,KGi,n_a,n_b);
+~~~~
+
+The `TransverseDistribution` is a special case
+which requires to precise which axis of the ellipsoid (or spheroid)
+will remain fixed when the two other axes rotate:
+
+~~~{.cpp}
+unsigned short int index = 0;
+TransverseIsotropicDistribution<stress> distrib_TI(ellipsoid1,f,KGi,n_a,index);
+~~~~
+
+The index can be 0,1 or 2. For a spheroid, giving `2` for the `index`
+is the same as giving `1`, because these 2 axes have the same length.
+
+Note that the `OrientedDistribution` can be instantiated with a `Stensor4` object
+as elasticity.
+It is also possible for a `SphereDistribution`. It can be
+useful for considering anisotropic inclusions. However, the basis in which
+the `Stensor4` elasticity is defined is the local basis for the `OrientedDistribution`,
+that is, the basis defined by `n_a` and `n_b` passed as arguments. For a `SphereDistribution`,
+it is the global basis.
+
+We can now construct our `ParticulateMicrostructure` by adding some
+`InclusionDistribution` objects:
+
+~~~~{.cpp}
+micro_1.addInclusionPhase(distrib_sph);
+std::cout<< micro_1.get_number_of_phases()<< std::endl;
+std::cout<< micro_1.get_matrix_fraction()<< std::endl;
+
+micro_1.addInclusionPhase(distrib_ell);
+std::cout<< micro_1.get_number_of_phases()<< std::endl;
+std::cout<< micro_1.get_matrix_fraction()<< std::endl;
+~~~~
+
+or remove them:
+
+~~~~{.cpp}
+micro_1.removeInclusionPhase(0);
+std::cout<< micro_1.get_number_of_phases()<< std::endl;
+std::cout<< micro_1.get_matrix_fraction()<< std::endl;
+~~~~
+
+At this stage, we have added the distribution of spheres `distrib_sph`,
+and added the isotropic distribution of ellipsoids `distrib_ell`.
+Afterthat, we have removed the first inclusion distribution (number `0`), which is
+the distribution of spheres. Hence, only one `InclusionDistribution` object
+remains in the microstructure. We can get this distribution by doing:
+
+~~~~{.cpp}
+const auto ell_dist=micro_1.get_inclusionPhase(0);
+~~~~
+
+Each `InclusionDistribution` object has three attributes:
+`inclusion` (which is of type `Inclusion`, see above),
+`fraction` and `stiffness` (because they are attributes of `Phase` objects).
+It has also two methods. The first
+just states if the distribution was instantiated with an `IsotropicModuli`
+or with a `Stensor4` object. Here,
+it was instantiated with a `KGModuli`, so that it is considered isotropic.
+Hence,
+
+~~~~{.cpp}
+std::cout<< ell_dist.is_isotropic()<< std::endl;
+~~~~
+
+prints `1`.
+
+The second method of the distribution allows to compute
+the mean strain localisation (or concentration) tensor in the inclusions
+when they are embedded in a matrix:
+
+~~~~{.cpp}
+Ai=ell_dist.computeMeanLocalisator(IM0);
+~~~~
+
+Note that in the latter case, passing `C0`, a `Stensor4` object
+as an argument of the method will return an error, because
+it will be considered that the matrix is not isotropic,
+so that computing a average localisator of a distribution
+of ellipsoids in an anisotropic matrix is impossible (too complicated).
+However, it can be done for other kinds of distributions, like
+sphere distributions or distributions of oriented inclusions:
+
+~~~~{.cpp}
+A1=distrib_sph.computeMeanLocalisator(C0,10);
+A2=distrib_O.computeMeanLocalisator(C0,10);
+~~~~
+
+Here, the integer `10` is the number of subdivisions in the integration
+process in the computation of the Hill tensor relative to the inclusions.
+It is `12` by default.
+
+A last method of the `ParticulateMicrostructure` object allows to replace
+the matrix phase:
+
+~~~~{.py}
+micro_1.replaceMatrixPhase(C0);
+std::cout<< micro_1.get_matrix_elasticity()<< std::endl;
+std::cout<< micro_1.is_isotropic_matrix()<< std::endl;
+~~~~
+
+Here we see that the matrix is no more isotropic
+because it was replaced via a `Stensor4` object `C0`.
+
+Note that the 4 `InclusionDistribution` classes are currently available in 3d only.
+ 
+### Computation of homogenization schemes
 
 The file `MicrostructureLinearHomogenization.ixx` introduces the `HomogenizationScheme class`
 which has three attributes:
@@ -807,12 +1008,93 @@ which has three attributes:
  - `homogenized_stiffness`
  - `effective_polarisation`
  - `mean_strain_localisation_tensors`
- 
-In the same file are introduced some functions which take a `ParticulateMicrostructure`
-as an argument and returns a `HomogenizationScheme` object. Three schemes are available:
 
- - dilute scheme
- - Mori-Tanaka scheme
- - Self-Consistent scheme
+This is the object that return the functions listed below:
+
+ - `computeDilute` (dilute scheme)
+ - `computeMoriTanaka` (Mori-Tanaka scheme)
+ - `computeSelfConsistent` (Self-Consistent scheme)
+
+These functions take a `ParticulateMicrostructure`
+as an argument and returns a `HomogenizationScheme` object.
+
+Let us try:
+
+~~~~{.cpp}
+using namespace tfel::material::homogenization::elasticity;
+auto hmDS=computeDilute<3u,stress>(micro_1);
+auto hmMT=hm.computeMoriTanaka<3u,stress>(micro_1);
+auto hmSC=hm.computeSelfConsistent<3u,stress>(micro_1,10,true);
+~~~~
+
+We note that `computeSelfConsistent` not only takes
+the microstructure as an argument, but also takes one integer (`10`) as
+a parameter, which is the maximum number of iteration in the self-consistent
+iterative algorithm. Moreover, the `bool` parameter (`true`) precises if
+the computation considers an isotropic matrix when computing the Hill tensors
+relative to the inclusions, at each iteration of the algorithm. Indeed,
+the homogenized stiffness may be non isotropic, so that the user can
+make the choice of isotropizing this homogenized stiffness at each iteration.
+Otherwise, he can put `False`, so that a numerical integration (resulting
+in a slower computation) will be performed to compute the Hill tensors.
+Moreover, an integer parameter can be added after the boolean, that indicates
+the number of subdivisions in the numerical integration. This value is `12` by
+default:
+
+~~~~{.py}
+micro_2.addInclusionPhase(distrib_O);
+hmSC_iso=computeSelfConsistent<3u,stress>(micro_2,10,True);
+hmSC_aniso=computeSelfConsistent<3u,stress>(micro_2,10,False,10);
+std::cout<< "SC iso: "<< hmSC_iso.homogenized_stiffness<< std::endl;
+std::cout<< "SC aniso: "<< hmSC_aniso.homogenized_stiffness<< std::endl;
+~~~~
+
+(the "std::cout" does not work when  using quantities).
+For the oter schemes, the isotropic character of the matrix
+when computing the strain localisators will depend
+on what returns `micro_1.is_isotropic_matrix()`. Hence, it is important
+to initialized the matrix or the microstructure with the appropriate
+elastic moduli. If isotropic, it will works in all case, whereas
+if not isotropic, it will fail depending on the distributions that are present
+in the microstructure.
+Moreover, if anisotropic, another parameter can be passed to specify the
+number of subdivisions in the numerical integration (this value is
+`12` by default):
+
+~~~~{.py}
+micro_1.replaceMatrixPhase(C0);
+micro_1.removeInclusionPhase(0);
+micro_1.addInclusionPhase(distrib_O);
+auto hmDS_aniso=computeDilute<3u,stress>(micro_1,10);
+auto hmMT_aniso=computeMoriTanaka<3u,stress>(micro_1,10);
+~~~~
+
+We can recover the strain localisation tensors as follows:
+
+~~~~{.cpp}
+A_i_DS=hmDS.mean_strain_localisation_tensors;
+std::cout<<"A_0_DS: "<< A_i_DS[0]<<"A_1_DS: "<< A_i_DS[1]<< std::endl;
+~~~~
+
+We can also add a polarization on each phase:
+
+~~~~{.cpp}
+micro_1.replaceMatrixPhase(IM0);
+const auto P0 = Stensor<3u,stress>::zero();
+const Stensor<3u,stress> P1 = {stress(6.e8),stress(6.e8),stress(6.e8),stress(0.),stress(0.),stress(0.)};
+const auto pola={P0,P1};
+auto hmDS_pola=computeDilute<3u,stress>(micro_1,0,pola);
+~~~~
+
+Note that here we must also precise the parameter `max_iter_anisotropic_integration`
+before the optional argument `pola`.
+Here this integer is 0 because it will not be used, given that
+the matrix phase is isotropic (see first line).
+And we can recover the effective polarization:
+
+~~~~{.cpp}
+auto P_eff_DS=hmDS_pola.effective_polarisation;
+~~~~
+
 
 <!-- Local IspellDict: english -->
