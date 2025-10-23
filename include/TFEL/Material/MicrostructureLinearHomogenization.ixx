@@ -27,8 +27,6 @@ namespace tfel::material::homogenization::elasticity {
           const std::vector<tfel::math::stensor<N, StressType>> &polarisations,
           int max_iter_anisotropic_integration) {
     using real = tfel::types::real<StressType>;
-    using compliance = tfel::types::compliance<StressType>;
-
     const auto np = micro.get_number_of_phases();
     if (polarisations.size() != np) {
       tfel::reportContractViolation(
@@ -47,8 +45,7 @@ namespace tfel::material::homogenization::elasticity {
 
     std::vector<tfel::math::st2tost2<N, real>> localisators = {
         tfel::math::st2tost2<N, real>::Id()};
-    std::vector<tfel::math::st2tost2<N, compliance>> hill_tensors = {};
-
+    
     for (unsigned int i = 0; i < np - 1; i++) {
       auto phasei = micro.get_inclusionPhase(i);
       auto Ci = (*phasei).stiffness;
@@ -81,7 +78,6 @@ namespace tfel::material::homogenization::elasticity {
           const std::vector<tfel::math::stensor<N, StressType>> &polarisations,
           int max_iter_anisotropic_integration) {
     using real = tfel::types::real<StressType>;
-    using compliance = tfel::types::compliance<StressType>;
 
     const auto np = micro.get_number_of_phases();
     if (polarisations.size() != np) {
@@ -100,7 +96,6 @@ namespace tfel::material::homogenization::elasticity {
     auto Chom = C0;
     auto tau_eff = tau0;
     std::vector<tfel::math::st2tost2<N, real>> localisators = {};
-    std::vector<tfel::math::st2tost2<N, compliance>> hill_tensors = {};
     tfel::math::st2tost2<N, real> A0 = f0 * tfel::math::st2tost2<N, real>::Id();
     for (unsigned int i = 0; i < np - 1; i++) {
       auto phasei = micro.get_inclusionPhase(i);

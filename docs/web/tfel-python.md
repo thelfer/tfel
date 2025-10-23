@@ -274,34 +274,50 @@ nu=0.2
 young_i=100e9
 nu_i=0.3
 f=0.2
+IM=tmat.YoungNuModuli(young,nu)
+IMi=tmat.YoungNuModuli(young_i,nu_i)
 
 # Spherical inclusions
-pairDS=hm.computeSphereDiluteScheme(young,nu,f,young_i,nu_i)
-pairMT=hm.computeSphereMoriTanakaScheme(young,nu,f,young_i,nu_i)
-young_hom=pairDS[0]
-nu_hom=pairDS[1]
+EnuDS=hm.computeSphereDiluteScheme(young,nu,f,young_i,nu_i)
+EnuMT=hm.computeSphereMoriTanakaScheme(young,nu,f,young_i,nu_i)
+KGDS_IM=hm.computeSphereDiluteScheme(IM,f,IMi)
+KGMT_IM=hm.computeSphereMoriTanakaScheme(IM,f,IMi)
+print(EnuDS.young,EnuDS.nu,KGDS_IM.kappa,KGDS_IM.mu)
+print(EnuMT.young,EnuMT.nu,KGMT_IM.kappa,KGMT_IM.mu)
 
 # Ellipsoidal inclusions
 a=10.
 b=1.
 c=3.
-
-## Isotropic distribution of orientations
-pair_I_DS=hm.computeIsotropicDiluteScheme(young,nu,f,young_i,nu_i,a,b,c)
-pair_I_MT=hm.computeIsotropicMoriTanakaScheme(young,nu,f,young_i,nu_i,a,b,c)
-young_I=pair_I_DS[0]
-nu_I=pair_I_DS[1]
-
 n_a=tm.TVector3D([0.,0.,1.])
 n_b=tm.TVector3D([0.,1.,0.])
 
+## Isotropic distribution of orientations
+KG_I_DS=hm.computeIsotropicDiluteScheme(IM,f,IMi,a,b,c)
+KG_I_MT=hm.computeIsotropicMoriTanakaScheme(IM,f,IMi,a,b,c)
+
+D=hm.Distribution(n_a,a,n_b,b,c)
+C_I_PCW=hm.computeIsotropicPCWScheme(IM,f,IMi,a,b,c,D)
+
+print(KG_I_DS.kappa,KG_I_DS.mu)
+print(KG_I_MT.kappa,KG_I_MT.mu)
+print(C_I_PCW)
+
 ## Ellipsoids which turn around their axis 'a'
-C_TI_DS=hm.computeTransverseIsotropicDiluteScheme(young,nu,f,young_i,nu_i,n_a,a,b,c)
-C_TI_MT=hm.computeTransverseIsotropicMoriTanakaScheme(young,nu,f,young_i,nu_i,n_a,a,b,c)
+C_TI_DS=hm.computeTransverseIsotropicDiluteScheme(IM,f,IMi,n_a,a,b,c)
+C_TI_MT=hm.computeTransverseIsotropicMoriTanakaScheme(IM,f,IMi,n_a,a,b,c)
+C_TI_PCW=hm.computeTransverseIsotropicPCWScheme(IM,f,IMi,n_a,a,b,c,D)
+print(C_TI_DS)
+print(C_TI_MT)
+print(C_TI_PCW)
 
 ## Oriented ellipsoids
-C_O_DS=hm.computeOrientedDiluteScheme(young,nu,f,young_i,nu_i,n_a,a,n_b,b,c)
-C_O_MT=hm.computeOrientedMoriTanakaScheme(young,nu,f,young_i,nu_i,n_a,a,n_b,b,c)
+C_O_DS=hm.computeOrientedDiluteScheme(IM,f,IMi,n_a,a,n_b,b,c)
+C_O_MT=hm.computeOrientedMoriTanakaScheme(IM,f,IMi,n_a,a,n_b,b,c)
+C_O_PCW=hm.computeOrientedPCWScheme(IM,f,IMi,n_a,a,n_b,b,c,D)
+print(C_O_DS)
+print(C_O_MT)
+print(C_O_PCW)
 ~~~~
 
 
@@ -312,9 +328,313 @@ The available bounds are:
  - Voigt bound
  - Reuss bound
  - Hashin-Shtrikman bounds
+ 
+Here are some examples:
+
+~~~~{.py}
+f0=0.2
+f1=0.5
+f2=0.2
+f3=0.1
+C0=tm.ST2toST23D(np.eye(6))
+C1=tm.ST2toST23D(2*np.eye(6))
+C2=tm.ST2toST23D(5*np.eye(6))
+C3=tm.ST2toST23D(10*np.eye(6))
+
+C02d=tm.ST2toST22D(np.eye(4))
+C12d=tm.ST2toST22D(2*np.eye(4))
+C22d=tm.ST2toST22D(5*np.eye(4))
+
+# Voigt and Reuss bounds
+CV_3D=hm.computeVoigtStiffness3D([f0,f1,f2,f3],[C0,C1,C2,C3])
+CV_2D=hm.computeVoigtStiffness2D([f0,f1,f2+f3],[C02d,C12d,C22d])
+CR_3D=hm.computeReussStiffness3D([f0,f1,f2,f3],[C0,C1,C2,C3])
+CR_2D=hm.computeReussStiffness2D([f0,f1,f2+f3],[C02d,C12d,C22d])
+
+print(CR_3D,CV_3D)
+print(CR_2D,CV_2D)
+
+# Hashin-Shtrikman bounds
+K0=1/3
+G0=1/2
+K1=2/3
+G1=1
+K2=5/3
+G2=5/2
+K3=10/3
+G3=5
+KG_HS_3D=hm.computeIsotropicHashinShtrikmanBounds3D([f0,f1,f2,f3],[K0,K1,K2,K3],[G0,G1,G2,G3])
+KG_HS_2D=hm.computeIsotropicHashinShtrikmanBounds2D([f0,f1,f2+f3],[K0,K1,K2],[G0,G1,G2])
+
+K_LB_3D=KG_HS_3D[0][0]
+G_LB_3D=KG_HS_3D[0][1]
+K_UB_3D=KG_HS_3D[1][0]
+G_UB_3D=KG_HS_3D[1][1]
+
+print(K_LB_3D,G_LB_3D)
+print(K_UB_3D,G_UB_3D)
+
+K_LB_2D=KG_HS_2D[0][0]
+G_LB_2D=KG_HS_2D[0][1]
+K_UB_2D=KG_HS_2D[1][0]
+G_UB_2D=KG_HS_2D[1][1]
+
+print(K_LB_2D,G_LB_2D)
+print(K_UB_2D,G_UB_2D)
+~~~~
 
 
 ### Homogenization of general microstructures
 
+#### Construction of a `ParticulateMicrostructure`
+
+Some objects are defined that mirror the objects defined
+in the namespace `tfel::material::homogenization::elasticity`
+for the construction and homogenization of general microstructures.
+Again, we invite the reader to consult the [details](tfel-material.html#homogenization-of-general-microstructures)
+of the documentation.
+
+The `ParticulateMicrostructure` object is  defined and can be instantiated
+in various ways:
+
+~~~~{.py}
+IM0=tmat.KGModuli(1e7,1e7)
+micro_1=hm.ParticulateMicrostructure(IM0)
+
+C0=tm.ST2toST23D(1e7*np.eye(6))
+micro_2=hm.ParticulateMicrostructure(C0)
+
+micro_3=hm.ParticulateMicrostructure(micro_2)
+~~~~
+
+This object has no public attribute. However,
+it has some methods that return the value of the
+private attributes:
+
+~~~~{.py}
+print(micro_1.get_number_of_phases())
+print(micro_1.get_matrix_fraction())
+print(micro_1.get_matrix_elasticity())
+print(micro_1.is_isotropic_matrix())
+~~~~
+
+Note that last line returns `True` if `micro_1` was instantiated with
+objects like `KGModuli`, `YoungNuModuli`, `LambdaMuModuli`, and `False`
+when instantiated with a `ST2toST2` (like `micro_2` above).
+
+We can add a distribution of inclusions if we first
+instantiate such a distribution. We must instantiate
+an inclusion first:
+
+~~~~{.py}
+a=10
+b=2
+c=3
+sph=hm.Sphere()
+spheroid=hm.Spheroid(a,b)
+ellipso=hm.Ellipsoid(a,b,c)
+print(spheroid.axis_length(),spheroid.transverse_length())
+print(ellipso.semi_lengths)
+~~~~
+
+We can now instantiate a distribution of inclusions in various ways:
+
+~~~~{.py}
+IMi=tmat.KGModuli(1e9,1e9)
+f=0.1
+sph_dist=hm.SphereDistribution(sph,f,IMi)
+ellipsoid_dist_iso=hm.IsotropicDistribution(ellipso,f,IMi)
+
+n_a=tm.TVector3D([0.,0.,1.])
+ellipsoid_dist_TI=hm.TransverseIsotropicDistribution(ellipso,f,IMi,n_a,0)
+
+n_b=tm.TVector3D([0.,1.,0.])
+ellipsoid_dist_O=hm.OrientedDistribution(ellipso,f,IMi,n_a,n_b)
+Ci=tm.ST2toST23D(1e9*np.eye(6))
+Ci[0,1]=1e8
+Ci[1,0]=1e8
+ellipsoid_dist_O_2=hm.OrientedDistribution(ellipso,f,Ci,n_a,n_b)
+~~~~
+
+Note that the `OrientedDistribution` can be instantiated with a `ST2toST2` object,
+here `Ci`. It is also possible for a `SphereDistribution`.
+And we can add these distributions to the microstructure:
+
+~~~~{.py}
+micro_1.addInclusionPhase(sph_dist)
+print(micro_1.get_number_of_phases())
+print(micro_1.get_matrix_fraction())
+
+micro_1.addInclusionPhase(ellipsoid_dist_iso)
+print(micro_1.get_number_of_phases())
+print(micro_1.get_matrix_fraction())
+~~~~
+
+or remove them:
+
+~~~~{.py}
+micro_1.removeInclusionPhase(0)
+print(micro_1.get_number_of_phases())
+print(micro_1.get_matrix_fraction())
+~~~~
+
+At this stage, we have added the distribution of spheres `sph_dist`,
+and added the isotropic distribution of ellipsoids `ellipsoid_dist_iso`.
+Afterthat, we have removed the first inclusion distribution (number `0`), which is
+the distribution of spheres. Hence, only one `InclusionDistribution` object
+remains in the microstructure. We can get this distribution by doing:
+
+~~~~{.py}
+ell_dist=micro_1.get_inclusionPhase(0)
+~~~~
+
+This distribution of ellipsoids was instantiated before with a `Ellipsoid`
+object, a fraction, and an isotropic elastic modulus (see above `ellipsoid_dist_iso`)
+In fact, the distribution has three attributes:
+
+~~~~{.py}
+print(ell_dist.inclusion)
+print(ell_dist.fraction)
+print(ell_dist.stiffness)
+~~~~
+
+like the other types of distributions of inclusions (`SphereDistribution`,
+`TransverseIsotropicDistribution` and `OrientedDistribution`).
+All these distributions have also two methods. The first
+just states if the distribution was instantiated with isotropic
+elastic moduli or with a `ST2toST2` object. Here,
+it was instantiated with a `KGModuli`, so that it is considered isotropic.
+Hence,
+
+~~~~{.py}
+print(ell_dist.is_isotropic())
+~~~~
+
+returns `True`.
+
+The second method of the distribution allows to compute
+the mean strain localisation (or concentration) tensor in the inclusions
+when they are embedded in a matrix:
+
+~~~~{.py}
+Ai=ell_dist.computeMeanLocalisator(IM0)
+print(Ai)
+~~~~
+
+Note that in the latter case, passing `C0`, a `ST2toST2` object
+as an argument of the method will return an error, because
+it will be considered that the matrix is not isotropic,
+so that computing a average localisator of a distribution
+of ellipsoids in an anisotropic matrix is impossible (too complicated).
+However, it can be done for other kinds of distributions, like
+sphere distributions or distributions of oriented inclusions:
+
+~~~~{.py}
+A1=sph_dist.computeMeanLocalisator(C0,10)
+A2=ellipsoid_dist_O.computeMeanLocalisator(C0,10)
+print(A1,A2)
+~~~~
+
+Here, the integer `10` is the number of subdivisions in the integration
+process in the computation of the Hill tensor relative to the inclusions.
+It is `12` by default.
+
+The last method of the `ParticulateMicrostructure` object allows to replace
+the matrix phase:
+
+~~~~{.py}
+micro_1.replaceMatrixPhase(C0)
+print(micro_1.get_matrix_elasticity())
+print(micro_1.is_isotropic_matrix())
+~~~~
+
+Here we see that the matrix is no more isotropic
+because it was replaced via a `ST2toST2` object.
+
+Now, let us do homogenization !
+
+#### Homogenization schemes
+
+Three schemes are currently available:
+
+ - Dilute scheme
+ - Mori-Tanaka scheme
+ - Self-consistent scheme
+ 
+Let us consider the previous `ParticulateMicrostructure` object `micro_1`.
+We already have seen that computing some average localisators
+in an anisotropic matrix
+was not possible for non-oriented anisotropic inclusions like ellipsoids.
+Hence, we here recover the isotropic matrix by doing
+
+~~~~{.py}
+micro_1.replaceMatrixPhase(IM0)
+print(micro_1.is_isotropic_matrix())
+~~~~
+
+Afterwards,
+
+~~~~{.py}
+hmDS=hm.computeDiluteScheme(micro_1)
+hmMT=hm.computeMoriTanakaScheme(micro_1)
+hmSC=hm.computeSelfConsistentScheme(micro_1,10,True)
+print("DS: ",hmDS.homogenized_stiffness)
+print("MT: ",hmMT.homogenized_stiffness)
+print("SC: ",hmSC.homogenized_stiffness)
+~~~~
+
+We note that `computeSelfConsistentScheme` not only takes
+the microstructure as an argument, but also takes one integer (`10`) as
+a parameter, which is the maximum number of iteration in the self-consistent
+iterative algorithm. Moreover, the `bool` parameter (`True`) precises if
+the computation considers an isotropic matrix when computing the Hill tensors
+relative to the inclusions, at each iteration of the algorithm. Indeed,
+the homogenized stiffness may be non isotropic, so that the user can
+make the choice of isotropizing this homogenized stiffness at each iteration.
+Otherwise, he can put `False`, so that a numerical integration (resulting
+in a slower computation) will be performed to compute the Hill tensors.
+Moreover, an integer parameter can be added after the boolean, that indicates
+the number of subdivisions in the numerical integration. This value is `12` by
+default:
+
+~~~~{.py}
+micro_2.addInclusionPhase(ellipsoid_dist_O)
+hmSC_iso=hm.computeSelfConsistentScheme(micro_2,10,True)
+hmSC_aniso=hm.computeSelfConsistentScheme(micro_2,10,False,10)
+print("SC iso: ",hmSC_iso.homogenized_stiffness)
+print("SC aniso: ",hmSC_aniso.homogenized_stiffness)
+~~~~
+
+For the oter schemes, the isotropic character of the matrix
+when computing the strain localisators will depend
+on what returns `micro_1.is_isotropic_matrix()`. Hence, it is important
+to initialized the matrix or the microstructure with the appropriate
+elastic moduli. If isotropic, it will works in all case, whereas
+if not isotropic, it will fail depending on the distributions that are present
+in the microstructure.
+Moreover, if anisotropic, another parameter can be passed to specify the
+number of subdivisions in the numerical integration:
+
+~~~~{.py}
+micro_1.replaceMatrixPhase(C0)
+micro_1.removeInclusionPhase(0)
+micro_1.addInclusionPhase(ellipsoid_dist_O)
+hmDS_aniso=hm.computeDiluteScheme(micro_1,10)
+hmMT_aniso=hm.computeMoriTanakaScheme(micro_1,10)
+~~~~
+
+The integer value is `12` by default.
+We can also recover the strain localisation tensors:
+
+...
+
+We can also add a polarization on each phase:
+
+...
+
+
+And we can obtain the effective polarization:
+
+...
 
 <!-- Local IspellDict: english -->

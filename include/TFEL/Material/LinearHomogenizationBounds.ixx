@@ -51,7 +51,12 @@ namespace tfel::material::homogenization::elasticity {
             tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
-      TFEL_HOST_DEVICE const std::pair<KGModuli<StressType>,KGModuli<StressType>> computeIsotropicHashinShtrikmanBounds(const std::
+      TFEL_HOST_DEVICE const std::
+    pair<
+        std::
+    pair<StressType,StressType>,
+        std::
+    pair<StressType,StressType>> computeIsotropicHashinShtrikmanBounds(const std::
                                                                      vector<
                                                                          types::real<
                                                                              StressType>>
@@ -98,8 +103,8 @@ namespace tfel::material::homogenization::elasticity {
     mue_L = 1 / Ne_L - mu_star_min;
     Ke_U = 1 / Ce_U - K_star_max;
     mue_U = 1 / Ne_U - mu_star_max;
-    const auto KG_L = KGModuli<StressType>(Ke_L,mue_L);
-    const auto KG_U = KGModuli<StressType>(Ke_U,mue_U);
+    const std::pair<StressType,StressType> KG_L = {Ke_L,mue_L};
+    const std::pair<StressType,StressType> KG_U = {Ke_U,mue_U};
     return {KG_L, KG_U};
   }
 

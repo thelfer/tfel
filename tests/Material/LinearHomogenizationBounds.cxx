@@ -88,10 +88,10 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
         tab_f, tab_K, tab_mu);
     const auto LB = std::get<0>(pair);
     const auto UB = std::get<1>(pair);
-    const auto K_L = LB.kappa;
-    const auto mu_L = LB.mu;
-    const auto K_U = UB.kappa;
-    const auto mu_U = UB.mu;
+    const auto K_L = std::get<0>(LB);
+    const auto mu_L = std::get<1>(LB);
+    const auto K_U = std::get<0>(UB);
+    const auto mu_U = std::get<1>(UB);
 
     const auto phi1 = tab_f[0];
     const auto phi2 = tab_f[1];
@@ -156,10 +156,10 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
         tab_f, tab_K, tab_mu);
     const auto LB = std::get<0>(pair);
     const auto UB = std::get<1>(pair);
-    const auto K_L = LB.kappa;
-    const auto mu_L = LB.mu;
-    const auto K_U = UB.kappa;
-    const auto mu_U = UB.mu;
+    const auto K_L = std::get<0>(LB);
+    const auto mu_L = std::get<1>(LB);
+    const auto K_U = std::get<0>(UB);
+    const auto mu_U = std::get<1>(UB);
 
     const auto phi1 = tab_f[0];
     const auto phi2 = tab_f[1];

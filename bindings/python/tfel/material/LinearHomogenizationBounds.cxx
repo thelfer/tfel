@@ -41,8 +41,10 @@ template <tfel::math::ScalarConcept StressType,std::size_t N>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                             StressType>()) static std::
     pair<
-        tfel::material::KGModuli<StressType>,
-        tfel::material::KGModuli<StressType>> computeIsotropicHashinShtrikmanBounds(const std::
+        std::
+    pair<StressType,StressType>,
+        std::
+    pair<StressType,StressType>> computeIsotropicHashinShtrikmanBounds(const std::
                                                                    vector<
                                                                        tfel::types::
                                                                            real<
