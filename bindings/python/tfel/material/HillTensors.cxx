@@ -16,90 +16,20 @@
 #include "TFEL/Material/IsotropicEshelbyTensor.hxx"
 #include "TFEL/Material/AnisotropicEshelbyTensor.hxx"
 
-template <tfel::math::ScalarConcept StressType>
-requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                            StressType>()) static tfel::math::
-    st2tost2<3u, tfel::types::compliance<StressType>> computeSphereHillTensor(
-        const StressType& young, const tfel::types::real<StressType>& nu) {
-  return tfel::material::homogenization::elasticity::
-      computeSphereHillPolarisationTensor<StressType>(young, nu);
-}
-
-template <tfel::math::ScalarConcept StressType>
-requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                            StressType>()) static tfel::math::
-    st2tost2<
-        3u,
-        tfel::types::compliance<
-            StressType>> computeAxisymmetricalHillTensor(const StressType&
-                                                             young,
-                                                         const tfel::types::
-                                                             real<StressType>&
-                                                                 nu,
-                                                         const tfel::math::tvector<
-                                                             3u,
-                                                             tfel::types::real<
-                                                                 StressType>>&
-                                                             n_a,
-                                                         const tfel::types::
-                                                             real<StressType>&
-                                                                 e) {
-  return tfel::material::homogenization::elasticity::
-      computeAxisymmetricalHillPolarisationTensor<StressType>(young, nu, n_a,
-                                                              e);
-}
-
-template <tfel::math::ScalarConcept StressType>
-requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                            StressType>()) static tfel::math::
-    st2tost2<3u, tfel::types::compliance<StressType>> computeHillTensor(
-        const StressType& young,
-        const tfel::types::real<StressType>& nu,
-        const tfel::math::tvector<3u, tfel::types::real<StressType>>& n_a,
-        const tfel::types::length<StressType>& a,
-        const tfel::math::tvector<3u, tfel::types::real<StressType>>& n_b,
-        const tfel::types::length<StressType>& b,
-        const tfel::types::length<StressType>& c) {
-  return tfel::material::homogenization::elasticity::
-      computeHillPolarisationTensor<StressType>(young, nu, n_a, a, n_b, b, c);
-}
-
-template <tfel::math::ScalarConcept StressType>
-requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                            StressType>()) static tfel::math::
-    st2tost2<
-        3u,
-        tfel::types::compliance<
-            StressType>> computeAnisotropicHillTensor(const tfel::math::
-                                                          st2tost2<3u,
-                                                                   StressType>&
-                                                              C0,
-                                                      const tfel::math::tvector<
-                                                          3u,
-                                                          tfel::types::real<
-                                                              StressType>>& n_a,
-                                                      const tfel::types::length<
-                                                          StressType>& a,
-                                                      const tfel::math::tvector<
-                                                          3u,
-                                                          tfel::types::real<
-                                                              StressType>>& n_b,
-                                                      const tfel::types::length<
-                                                          StressType>& b,
-                                                      const tfel::types::length<
-                                                          StressType>& c,
-                                                      const std::size_t max_it =
-                                                          12) {
-  return tfel::material::homogenization::elasticity::
-      computeAnisotropicHillTensor<StressType>(C0, n_a, a, n_b, b, c, max_it);
-}
-
 void declareHillTensors(pybind11::module_&);
 
+using namespace tfel::material;
 void declareHillTensors(pybind11::module_& m) {
-  m.def("computeSphereHillTensor", &computeSphereHillTensor<double>);
+  m.def("computeSphereHillTensor", [](const double young,const double nu){return homogenization::elasticity::computeSphereHillPolarisationTensor<double>(young,nu);});
+  m.def("computeSphereHillTensor", [](const IsotropicModuli<double> &IM){return homogenization::elasticity::computeSphereHillPolarisationTensor<double>(IM);});
   m.def("computeAxisymmetricalHillTensor",
-        &computeAxisymmetricalHillTensor<double>);
-  m.def("computeHillTensor", &computeHillTensor<double>);
-  m.def("computeAnisotropicHillTensor", &computeAnisotropicHillTensor<double>);
+        [](const double young,const double nu,const tfel::math::tvector<3u,double> &n_a,const double e){return homogenization::elasticity::computeAxisymmetricalHillPolarisationTensor<double>(young,nu,n_a,e);});
+  m.def("computeAxisymmetricalHillTensor",
+        [](const IsotropicModuli<double> &IM,const tfel::math::tvector<3u,double> &n_a,const double e){return homogenization::elasticity::computeAxisymmetricalHillPolarisationTensor<double>(IM,n_a,e);});
+  m.def("computeHillTensor",
+        [](const double young,const double nu,const tfel::math::tvector<3u,double> &n_a,const double a,const tfel::math::tvector<3u,double> &n_b,const double b,const double c){return homogenization::elasticity::computeHillPolarisationTensor<double>(young,nu,n_a,a,n_b,b,c);});
+  m.def("computeHillTensor",
+        [](const IsotropicModuli<double> &IM,const tfel::math::tvector<3u,double> &n_a,const double a,const tfel::math::tvector<3u,double> &n_b,const double b,const double c){return homogenization::elasticity::computeHillPolarisationTensor<double>(IM,n_a,a,n_b,b,c);});
+  m.def("computeAnisotropicHillTensor",
+        [](const tfel::math::st2tost2<3u,double> &C0,const tfel::math::tvector<3u,double> &n_a,const double a,const tfel::math::tvector<3u,double> &n_b,const double b,const double c, const std::size_t &max_it){return homogenization::elasticity::computeAnisotropicHillTensor<double>(C0,n_a,a,n_b,b,c,max_it);});
 }

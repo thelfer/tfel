@@ -129,8 +129,8 @@ auto mui=Ei/2/(1+nui);
 std::array<stress,2> tab_mu={mu0,mui};
 auto pa2=computeIsotropicHashinShtrikmanBounds<3u,2u,stress>(tab_f,tab_k,tab_mu);
 auto UB=std::get<1>(pa2);
-auto kh=UB.kappa;
-auto muh=UB.mu;
+auto kh=std::get<0>(UB);
+auto muh=std::get<1>(UB)
 kg=KGModuli<stress>(kh,muh);
 auto Enu=kg.ToYoungNu();
 };
@@ -144,9 +144,9 @@ and Mori-Tanaka scheme are straightforward.
 
 The function `computeIsotropicHashinShtrikmanBounds` necessitates
 to give the arrays of volume fractions `tab_f`, bulk moduli `tab_k`
-and shear moduli `tab_mu`. The function returns a `pair` of `KGModuli`. The first
+and shear moduli `tab_mu`. The function returns a `std::pair` of `std::pair`. The first
 pair is lower HS bound, the second is upper HS bound (that we want here).
-Each bound is `KGModuli` whose `kappa` attribute is the bulk modulus, and whose `mu` attribute
+Each bound is `std::pair` whose first attribute is the bulk modulus, and whose second attribute
 is the shear modulus. The function is also available for plain strain elasticity
 (the first template argument is the dimension).
 

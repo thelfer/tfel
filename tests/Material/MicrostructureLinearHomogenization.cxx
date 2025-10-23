@@ -97,13 +97,10 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     ParticulateMicrostructure<3u, stress> micro2(KG0);
     micro2.addInclusionPhase(distrib2);
     micro2.addInclusionPhase(distrib4);
-   
-    tfel::math::stensor<3u,stress> P=tfel::math::stensor<3u,stress>::zero();
-    std::vector<tfel::math::stensor<3u,stress>> polarizations = {P,P,P};
     
-    auto h_s_1=computeDilute<3u, stress>(micro1,polarizations);
+    auto h_s_1=computeDilute<3u, stress>(micro1);
     auto Chom_DS_1=h_s_1.homogenized_stiffness;
-    auto h_s_2=computeDilute<3u,stress>(micro2,polarizations);
+    auto h_s_2=computeDilute<3u,stress>(micro2);
     auto Chom_DS_2=h_s_2.homogenized_stiffness;
     
     for (int i=0;i<6;i++)
@@ -116,9 +113,9 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     micro2.removeInclusionPhase(0);
     micro2.addInclusionPhase(distrib6);
     
-    HomogenizationScheme<3u, stress> h_s_MT1=computeMoriTanaka<3u, stress>(micro1,polarizations);
+    HomogenizationScheme<3u, stress> h_s_MT1=computeMoriTanaka<3u, stress>(micro1);
     auto Chom_MT_1=h_s_MT1.homogenized_stiffness;
-    HomogenizationScheme<3u, stress> h_s_MT2=computeMoriTanaka<3u, stress>(micro2,polarizations);
+    HomogenizationScheme<3u, stress> h_s_MT2=computeMoriTanaka<3u, stress>(micro2);
     auto Chom_MT_2=h_s_MT2.homogenized_stiffness;
     for (int i=0;i<6;i++)
     for (int j=0;j<6;j++){
@@ -126,7 +123,6 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
       //std::cout<<Chom_MT_1(i,j)-Chom_MT_2(i,j)<<" "<<std::endl;
     }
 
-    
     micro2.removeInclusionPhase(0);
     micro2.removeInclusionPhase(0);
     IsotropicDistribution<stress> distrib20(spheroid1,real(0.0001),KGi);
@@ -138,18 +134,17 @@ struct MicrostructureLinearHomogenizationTest final : public tfel::tests::TestCa
     micro1.removeInclusionPhase(0);
     micro1.removeInclusionPhase(0);
     micro1.addInclusionPhase(distrib_o);
-    std::vector<tfel::math::stensor<3u,stress>> polarizations_ = {P,P};
     
     bool isotropic = true;
-    auto h_s_SC1=computeSelfConsistent<3u, stress>(micro1,polarizations_,12,isotropic);
+    auto h_s_SC1=computeSelfConsistent<3u, stress>(micro1,12,isotropic);
     auto Chom_SC_1=h_s_SC1.homogenized_stiffness;
-    auto h_s_SC2=computeSelfConsistent<3u, stress>(micro1,polarizations_,12,not(isotropic),10);
+    auto h_s_SC2=computeSelfConsistent<3u, stress>(micro1,12,not(isotropic),10);
     auto Chom_SC_2=h_s_SC2.homogenized_stiffness;
     TFEL_TESTS_ASSERT(tfel::material::relative_error(Chom_SC_1,Chom_SC_2) < 10/stress(1)*young0*eps);
     
-    auto h_s_SC3=computeSelfConsistent<3u, stress>(micro2,polarizations_,12,isotropic);
+    auto h_s_SC3=computeSelfConsistent<3u, stress>(micro2,12,isotropic);
     auto Chom_SC_3=h_s_SC3.homogenized_stiffness;
-    auto h_s_MT3=computeMoriTanaka<3u, stress>(micro2,polarizations_);
+    auto h_s_MT3=computeMoriTanaka<3u, stress>(micro2);
     auto Chom_MT_3=h_s_MT3.homogenized_stiffness;
     TFEL_TESTS_ASSERT(tfel::material::relative_error(Chom_SC_3,Chom_MT_3) < 1e-3);
     

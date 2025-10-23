@@ -13,10 +13,12 @@ target_link_libraries(py_tfel_material__material
 
 tfel_material_python_module(homogenization
   homogenization.cxx
-  LocalisationTensors.cxx
   LinearHomogenizationSchemes.cxx
   LinearHomogenizationBounds.cxx
-  HillTensors.cxx)
+  HillTensors.cxx
+  LocalisationTensors.cxx
+  Microstructure.cxx
+  MicrostructureLinearHomogenization.cxx)
 target_link_libraries(py_tfel_material_homogenization
   PRIVATE TFELMaterial TFELMath TFELException
   ${TFEL_PYTHON_MODULES_PRIVATE_LINK_LIBRARIES})
