@@ -13,9 +13,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
-    @vedrine_revisiting_2025
+    @hure_homogenized_2026
     @tandogan_multi-physics_2026
     @fontana_hyperelastic_2026
+    @vedrine_revisiting_2025
     @vedrine_sensitivity_2025
     @bilke_reproducible_2025
     @sleiman_tube2fem_2025
