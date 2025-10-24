@@ -67,28 +67,22 @@ namespace tfel::material::homogenization::elasticity {
    * \tparam d: dimension (2 or 3)
    * \return an object of type std::pair<KGModuli<StressType>,
    * KGModuli<StressType>>. First element of the pair is the lower
-   * bound and second element is the upper bound. Each bound is KGModuli with bulk
-   * and shear moduli.
-   * \param [in] tab_f: std::array<real,N> of volumic fractions of phases
-   * \param [in] tab_K: std::array<StressType,N> of bulk moduli of phases
-   * \param [in] tab_mu: std::array<StressType,N> of shear moduli of phases
+   * bound and second element is the upper bound. Each bound is KGModuli with
+   * bulk and shear moduli. \param [in] tab_f: std::array<real,N> of volumic
+   * fractions of phases \param [in] tab_K: std::array<StressType,N> of bulk
+   * moduli of phases \param [in] tab_mu: std::array<StressType,N> of shear
+   * moduli of phases
    */
   template <unsigned short int d,
             unsigned int N,
             tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-      TFEL_HOST_DEVICE const std::pair<KGModuli<StressType>,KGModuli<StressType>> computeIsotropicHashinShtrikmanBounds(const std::
-                                                                     array<
-                                                                         types::real<
-                                                                             StressType>,
-                                                                         N>&,
-                                                                 const std::array<
-                                                                     StressType,
-                                                                     N>&,
-                                                                 const std::array<
-                                                                     StressType,
-                                                                     N>&);
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE const std::
+      pair<KGModuli<StressType>, KGModuli<StressType>> computeIsotropicHashinShtrikmanBounds(
+          const std::array<types::real<StressType>, N>&,
+          const std::array<StressType, N>&,
+          const std::array<StressType, N>&);
 
 }  // end of namespace tfel::material::homogenization::elasticity
 

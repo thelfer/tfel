@@ -81,9 +81,8 @@ namespace tfel::material::homogenization::elasticity {
    */
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-      TFEL_HOST_DEVICE const
-      YoungNuModuli<StressType> computeSphereDiluteScheme(
+                                              StressType>()) TFEL_HOST_DEVICE
+      const YoungNuModuli<StressType> computeSphereDiluteScheme(
           const StressType&,
           const types::real<StressType>&,
           const types::real<StressType>&,
@@ -104,8 +103,7 @@ namespace tfel::material::homogenization::elasticity {
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
-      TFEL_HOST_DEVICE const
-      KGModuli<StressType> computeSphereDiluteScheme(
+      TFEL_HOST_DEVICE const KGModuli<StressType> computeSphereDiluteScheme(
           const IsotropicModuli<StressType>&,
           const types::real<StressType>&,
           const IsotropicModuli<StressType>&);
@@ -124,9 +122,9 @@ namespace tfel::material::homogenization::elasticity {
    * inclusions
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE const YoungNuModuli<StressType> computeSphereMoriTanakaScheme(
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const YoungNuModuli<StressType> computeSphereMoriTanakaScheme(
           const StressType&,
           const types::real<StressType>&,
           const types::real<StressType>&,
@@ -146,9 +144,9 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] IM_i: Isotropic moduli of the inclusions
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE const KGModuli<StressType> computeSphereMoriTanakaScheme(
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const KGModuli<StressType> computeSphereMoriTanakaScheme(
           const IsotropicModuli<StressType>&,
           const types::real<StressType>&,
           const IsotropicModuli<StressType>&);
@@ -168,9 +166,9 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] c: length of the third semi-axis
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE const YoungNuModuli<StressType> computeIsotropicDiluteScheme(
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const YoungNuModuli<StressType> computeIsotropicDiluteScheme(
           const StressType&,
           const types::real<StressType>&,
           const types::real<StressType>&,
@@ -196,9 +194,9 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] c: length of the third semi-axis
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE const KGModuli<StressType> computeIsotropicDiluteScheme(
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const KGModuli<StressType> computeIsotropicDiluteScheme(
           const IsotropicModuli<StressType>&,
           const types::real<StressType>&,
           const IsotropicModuli<StressType>&,
@@ -351,21 +349,16 @@ namespace tfel::material::homogenization::elasticity {
    */
   template <tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-      TFEL_HOST_DEVICE const YoungNuModuli<StressType> computeIsotropicMoriTanakaScheme(const StressType&,
-                                                            const types::real<
-                                                                StressType>&,
-                                                            const types::real<
-                                                                StressType>&,
-                                                            const StressType&,
-                                                            const types::real<
-                                                                StressType>&,
-                                                            const types::length<
-                                                                StressType>&,
-                                                            const types::length<
-                                                                StressType>&,
-                                                            const types::length<
-                                                                StressType>&);
+                                              StressType>()) TFEL_HOST_DEVICE
+      const YoungNuModuli<StressType> computeIsotropicMoriTanakaScheme(
+          const StressType&,
+          const types::real<StressType>&,
+          const types::real<StressType>&,
+          const StressType&,
+          const types::real<StressType>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&);
 
   /*!
    * This function is an overload of computeIsotropicMoriTanakaScheme
@@ -382,9 +375,9 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] c: length of the third semi-axis
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE const KGModuli<StressType> computeIsotropicMoriTanakaScheme(
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const KGModuli<StressType> computeIsotropicMoriTanakaScheme(
           const IsotropicModuli<StressType>&,
           const types::real<StressType>&,
           const IsotropicModuli<StressType>&,

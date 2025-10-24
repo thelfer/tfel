@@ -17,7 +17,8 @@
 
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                            StressType>()) static tfel::material::YoungNuModuli<StressType> computeSphereDiluteScheme_(
+                                            StressType>()) static tfel::
+    material::YoungNuModuli<StressType> computeSphereDiluteScheme_(
         const StressType& young,
         const tfel::types::real<StressType>& nu,
         const tfel::types::real<StressType>& f,
@@ -29,35 +30,29 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
 
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                            StressType>()) static tfel::material::YoungNuModuli<StressType> computeSphereMoriTanakaScheme_(const StressType& young,
-                                                        const tfel::types::real<
-                                                            StressType>& nu,
-                                                        const tfel::types::real<
-                                                            StressType>& f,
-                                                        const StressType&
-                                                            young_i,
-                                                        const tfel::types::real<
-                                                            StressType>& nu_i) {
+                                            StressType>()) static tfel::
+    material::YoungNuModuli<StressType> computeSphereMoriTanakaScheme_(
+        const StressType& young,
+        const tfel::types::real<StressType>& nu,
+        const tfel::types::real<StressType>& f,
+        const StressType& young_i,
+        const tfel::types::real<StressType>& nu_i) {
   return tfel::material::homogenization::elasticity::
       computeSphereMoriTanakaScheme<StressType>(young, nu, f, young_i, nu_i);
 }
 
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                            StressType>()) static tfel::material::YoungNuModuli<StressType> computeIsotropicDiluteScheme_(const StressType& young,
-                                                      const tfel::types::real<
-                                                          StressType>& nu,
-                                                      const tfel::types::real<
-                                                          StressType>& f,
-                                                      const StressType& young_i,
-                                                      const tfel::types::real<
-                                                          StressType>& nu_i,
-                                                      const tfel::types::length<
-                                                          StressType>& a,
-                                                      const tfel::types::length<
-                                                          StressType>& b,
-                                                      const tfel::types::length<
-                                                          StressType>& c) {
+                                            StressType>()) static tfel::
+    material::YoungNuModuli<StressType> computeIsotropicDiluteScheme_(
+        const StressType& young,
+        const tfel::types::real<StressType>& nu,
+        const tfel::types::real<StressType>& f,
+        const StressType& young_i,
+        const tfel::types::real<StressType>& nu_i,
+        const tfel::types::length<StressType>& a,
+        const tfel::types::length<StressType>& b,
+        const tfel::types::length<StressType>& c) {
   return tfel::material::homogenization::elasticity::
       computeIsotropicDiluteScheme<StressType>(young, nu, f, young_i, nu_i, a,
                                                b, c);
@@ -65,31 +60,16 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
 
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                            StressType>()) static tfel::material::YoungNuModuli<StressType> computeIsotropicMoriTanakaScheme_(const StressType&
-                                                               young,
-                                                           const tfel::types::
-                                                               real<StressType>&
-                                                                   nu,
-                                                           const tfel::types::
-                                                               real<StressType>&
-                                                                   f,
-                                                           const StressType&
-                                                               young_i,
-                                                           const tfel::types::
-                                                               real<StressType>&
-                                                                   nu_i,
-                                                           const tfel::types::
-                                                               length<
-                                                                   StressType>&
-                                                                   a,
-                                                           const tfel::types::
-                                                               length<
-                                                                   StressType>&
-                                                                   b,
-                                                           const tfel::types::
-                                                               length<
-                                                                   StressType>&
-                                                                   c) {
+                                            StressType>()) static tfel::
+    material::YoungNuModuli<StressType> computeIsotropicMoriTanakaScheme_(
+        const StressType& young,
+        const tfel::types::real<StressType>& nu,
+        const tfel::types::real<StressType>& f,
+        const StressType& young_i,
+        const tfel::types::real<StressType>& nu_i,
+        const tfel::types::length<StressType>& a,
+        const tfel::types::length<StressType>& b,
+        const tfel::types::length<StressType>& c) {
   return tfel::material::homogenization::elasticity::
       computeIsotropicMoriTanakaScheme<StressType>(young, nu, f, young_i, nu_i,
                                                    a, b, c);

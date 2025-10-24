@@ -52,7 +52,7 @@ namespace tfel::material::homogenization::elasticity {
           const auto x = a + static_cast<real>(j) * h;
           const auto v = f(x);
           I1 += v * h;
-          IL1 +=  tfel::math::abs(v) * h;
+          IL1 += tfel::math::abs(v) * h;
         }
 
         ++k;

@@ -52,21 +52,13 @@ namespace tfel::material::homogenization::elasticity {
   template <unsigned short int d,
             unsigned int N,
             tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-      TFEL_HOST_DEVICE const std::pair<KGModuli<StressType>,KGModuli<StressType>> computeIsotropicHashinShtrikmanBounds(const std::
-                                                                     array<
-                                                                         types::real<
-                                                                             StressType>,
-                                                                         N>
-                                                                         &tab_f,
-                                                                 const std::array<
-                                                                     StressType,
-                                                                     N> &tab_K,
-                                                                 const std::array<
-                                                                     StressType,
-                                                                     N>
-                                                                     &tab_mu) {
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE const std::
+      pair<KGModuli<StressType>, KGModuli<StressType>> computeIsotropicHashinShtrikmanBounds(
+          const std::array<types::real<StressType>, N> &tab_f,
+          const std::array<StressType, N> &tab_K,
+          const std::array<StressType, N> &tab_mu) {
     using real = types::real<StressType>;
     std::array<StressType, N> tab_H;
     for (std::size_t i = 0; i < N; i++) {
@@ -103,8 +95,8 @@ namespace tfel::material::homogenization::elasticity {
     mue_L = 1 / Ne_L - mu_star_min;
     Ke_U = 1 / Ce_U - K_star_max;
     mue_U = 1 / Ne_U - mu_star_max;
-    const auto KG_L = KGModuli<StressType>(Ke_L,mue_L);
-    const auto KG_U = KGModuli<StressType>(Ke_U,mue_U);
+    const auto KG_L = KGModuli<StressType>(Ke_L, mue_L);
+    const auto KG_U = KGModuli<StressType>(Ke_U, mue_U);
     return {KG_L, KG_U};
   }
 
