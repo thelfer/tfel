@@ -19,11 +19,19 @@
 template <tfel::math::ScalarConcept StressType>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                             StressType>()) static tfel::math::
-    st2tost2<3u, tfel::types::real<StressType>> computeSphereLocalisationTensor_(
-        const StressType& young,
-        const tfel::types::real<StressType>& nu,
-        const StressType& young_i,
-        const tfel::types::real<StressType>& nu_i) {
+    st2tost2<
+        3u,
+        tfel::types::real<
+            StressType>> computeSphereLocalisationTensor_(const StressType&
+                                                              young,
+                                                          const tfel::types::
+                                                              real<StressType>&
+                                                                  nu,
+                                                          const StressType&
+                                                              young_i,
+                                                          const tfel::types::
+                                                              real<StressType>&
+                                                                  nu_i) {
   return tfel::material::homogenization::elasticity::
       computeSphereLocalisationTensor<StressType>(young, nu, young_i, nu_i);
 }

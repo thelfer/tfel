@@ -73,8 +73,8 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
     using real = tfel::types::real<StressType>;
     using stress = StressType;
     using namespace tfel::material::homogenization::elasticity;
-    constexpr auto eps = tfel::math::constexpr_fct::sqrt(
-                                   std::numeric_limits<real>::epsilon());
+    constexpr auto eps =
+        tfel::math::constexpr_fct::sqrt(std::numeric_limits<real>::epsilon());
     const auto young = stress{1e9};
     const auto seps = young * eps;
     const auto nu = real{0.3};
@@ -123,8 +123,8 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       using real = tfel::types::real<StressType>;
       using stress = StressType;
       using length = tfel::types::length<StressType>;
-      constexpr auto eps = tfel::math::constexpr_fct::sqrt(
-                                     std::numeric_limits<real>::epsilon());
+      constexpr auto eps =
+          tfel::math::constexpr_fct::sqrt(std::numeric_limits<real>::epsilon());
 
       using namespace tfel::material::homogenization::elasticity;
       const auto young = stress{1e9};
@@ -160,13 +160,13 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       const auto nuSphere_3 = (3 * ka3 - 2 * mu3) / (2 * mu3 + 6 * ka3);
       const auto ESphere_3 = 2 * mu3 * (1 + nuSphere_3);
 
-      TFEL_TESTS_ASSERT(my_abs(ESphere_0 - ESphere_1) < stress{100*eps});
+      TFEL_TESTS_ASSERT(my_abs(ESphere_0 - ESphere_1) < stress{100 * eps});
       // std::cout << (ESphere_0-ESphere_1).getValue() << " "<< eps << '\n';
       TFEL_TESTS_ASSERT(my_abs(nuSphere_0 - nuSphere_1) < eps);
-      TFEL_TESTS_ASSERT(my_abs(ESphere_0 - ESphere_2) < stress{100*eps});
+      TFEL_TESTS_ASSERT(my_abs(ESphere_0 - ESphere_2) < stress{100 * eps});
       // std::cout << (ESphere_2-ESphere_0).getValue() << " "<< eps << '\n';
       TFEL_TESTS_ASSERT(my_abs(nuSphere_0 - nuSphere_2) < eps);
-      TFEL_TESTS_ASSERT(my_abs(ESphere_0 - ESphere_3) < stress{100*eps});
+      TFEL_TESTS_ASSERT(my_abs(ESphere_0 - ESphere_3) < stress{100 * eps});
       // std::cout << (ESphere_0-ESphere_3).getValue() << " "<< eps << '\n';
       TFEL_TESTS_ASSERT(my_abs(nuSphere_0 - nuSphere_3) < eps);
     }
@@ -181,8 +181,8 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       using real = tfel::types::real<StressType>;
       using stress = StressType;
       using length = tfel::types::length<StressType>;
-      constexpr auto eps =  tfel::math::constexpr_fct::sqrt(
-                                     std::numeric_limits<real>::epsilon());
+      constexpr auto eps =
+          tfel::math::constexpr_fct::sqrt(std::numeric_limits<real>::epsilon());
 
       using namespace tfel::material::homogenization::elasticity;
       const auto young = stress{1e9};
@@ -208,7 +208,7 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       const auto ka3 = (Chom3(0, 0) + 2 * Chom3(0, 1)) / 3;
       const auto nuTI_DS_3 = (3 * ka3 - 2 * mu3) / (2 * mu3 + 6 * ka3);
       const auto ETI_DS_3 = 2 * mu3 * (1 + nuTI_DS_3);
-      TFEL_TESTS_ASSERT(my_abs(ETI_DS_2 - ETI_DS_3) < 100*stress{eps});
+      TFEL_TESTS_ASSERT(my_abs(ETI_DS_2 - ETI_DS_3) < 100 * stress{eps});
       TFEL_TESTS_ASSERT(my_abs(nuTI_DS_2 - nuTI_DS_3) < eps);
       // std::cout << (E2-E3).getValue() << " "<< eps << '\n';
     }
@@ -282,8 +282,8 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       using real = tfel::types::real<StressType>;
       using stress = StressType;
       using length = tfel::types::length<StressType>;
-      constexpr auto eps = tfel::math::constexpr_fct::sqrt(
-                                     std::numeric_limits<real>::epsilon());
+      constexpr auto eps =
+          tfel::math::constexpr_fct::sqrt(std::numeric_limits<real>::epsilon());
 
       using namespace tfel::material::homogenization::elasticity;
       const auto young = stress{1e9};

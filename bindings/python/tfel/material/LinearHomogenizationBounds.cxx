@@ -35,8 +35,6 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
       3, 2, StressType>(f_i, C_i);
 }
 
-
-
 void declareLinearHomogenizationBounds(pybind11::module_&);
 
 void declareLinearHomogenizationBounds(pybind11::module_& m) {

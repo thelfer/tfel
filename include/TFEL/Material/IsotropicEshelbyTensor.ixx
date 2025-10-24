@@ -191,8 +191,7 @@ namespace tfel::material::homogenization::elasticity {
       st2tost2<3u, types::compliance<StressType>> computeSphereHillPolarisationTensor(
           const IsotropicModuli<StressType>& IM0) {
     const auto Enu0 = IM0.ToYoungNu();
-    return computeSphereHillPolarisationTensor<StressType>(Enu0.young,
-                                                           Enu0.nu);
+    return computeSphereHillPolarisationTensor<StressType>(Enu0.young, Enu0.nu);
   }  // end of function computeSphereHillPolarisationTensor
 
   template <typename real>
@@ -246,8 +245,8 @@ namespace tfel::material::homogenization::elasticity {
         zero, zero, zero, zero, S55,  zero, zero, zero, zero, zero, zero, S55};
     if (e > 1) {
       using namespace tfel::math;
-      const auto z=real(0);
-      const auto un=real(1);
+      const auto z = real(0);
+      const auto un = real(1);
       const tvector<3u, real> n_1 = {z, z, un};
       const tvector<3u, real> n_2 = {z, -un, z};
       const tvector<3u, real> n_3 = {un, z, z};
@@ -504,8 +503,8 @@ namespace tfel::material::homogenization::elasticity {
           const types::length<StressType>& c,
           const tfel::math::base_type<StressType> precision) {
     const auto Enu0 = IM0.ToYoungNu();
-    return computeHillPolarisationTensor<StressType>(
-        Enu0.young, Enu0.nu, n_a, a, n_b, b, c, precision);
+    return computeHillPolarisationTensor<StressType>(Enu0.young, Enu0.nu, n_a,
+                                                     a, n_b, b, c, precision);
   }  // end of function computeHillPolarisationTensor
 
 }  // end of namespace tfel::material::homogenization::elasticity
