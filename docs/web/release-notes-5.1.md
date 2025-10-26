@@ -194,6 +194,27 @@ sorted depending on the space dimension, except in `3D`:
 - in `2D`, only the inplane eigenvalues can be sorted: the third
   eigenvalue is always given by the out of plane direction.
 
+## Views of tensorial objects with coalescent memory access
+
+The `View` class allows to interpret a contiguous memory area as a
+tensorial object. Such views are not efficient on GPUs where coalescent
+memory access are preferable. The newly introduced `CoalescedView` class
+offers a solution to this issue.
+
+A coalesced view is initialized by an array of pointers to the
+components of the mapped object, as illustrated in the following
+snippet:
+
+~~~~{.cxx}
+int values[8] = {1, 10, 2, 20, 3, 30, 4, 40};
+std::array ptrs{&values[0], &values[2], &values[4], &values[6]};
+auto s1 = map<stensor<2u, int>>(ptrs);
+~~~~
+
+In this snippet, the components of the symmetric tensor `s1` are not
+stored continuously but each component is associated to an independent
+pointer.
+
 # New `TFEL/Material` features
 
 ## Isotropic Moduli
