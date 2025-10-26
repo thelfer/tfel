@@ -34,28 +34,32 @@ namespace tfel::math {
 
   //
   template <typename MathObjectType>
-  concept FixedSizeMathObjectConcept = MathObjectConcept<MathObjectType> &&
+  concept MappableMutableMathObjectUsingCoalescedViewConcept =
+      MathObjectConcept<MathObjectType> &&
       MathObjectType::indexing_policy::hasFixedSizes;
 
   template <typename MathObjectType>
-  concept ConstFixedSizeMathObjectConcept = std::is_const_v<MathObjectType> &&
+  concept MappableImmutableMathObjectUsingCoalescedViewConcept =
+      std::is_const_v<MathObjectType> &&
       MathObjectConcept<std::remove_cv_t<MathObjectType>> &&
       MathObjectType::indexing_policy::hasFixedSizes;
 
   template <typename MathObjectType>
-  concept FinalFixedSizeMathObjectConcept =
-      FixedSizeMathObjectConcept<MathObjectType> ||
-      ConstFixedSizeMathObjectConcept<MathObjectType>;
+  concept MappableMathObjectUsingCoalescedViewConcept =
+      MappableMutableMathObjectUsingCoalescedViewConcept<MathObjectType> ||
+      MappableImmutableMathObjectUsingCoalescedViewConcept<MathObjectType>;
 
   /*!
    * \brief view of an object from a continuous memory area
    * \tparam MappedType: type of the object mapped to the memory area
    */
-  template <FinalFixedSizeMathObjectConcept MappedType,
+  template <MappableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType = typename MappedType::indexing_policy>
   struct CoalescedView
-      : ConceptRebind<typename ComputeObjectTag<std::remove_cv_t<MappedType>>::type,
-                      CoalescedView<std::remove_cv_t<MappedType>, IndexingPolicyType>>::type,
+      : ConceptRebind<
+            typename ComputeObjectTag<std::remove_cv_t<MappedType>>::type,
+            CoalescedView<std::remove_cv_t<MappedType>,
+                          IndexingPolicyType>>::type,
         IndexingPolicyType {
     //
     static_assert(
@@ -295,7 +299,8 @@ namespace tfel::math {
    * \brief partial specialisation of the `MathObjectTraits` for const views
    * \tparam MappedType: mapped type
    */
-  template <FinalFixedSizeMathObjectConcept MappedType, typename IndexingPolicyType>
+  template <MappableMathObjectUsingCoalescedViewConcept MappedType,
+            typename IndexingPolicyType>
   struct MathObjectTraits<CoalescedView<MappedType, IndexingPolicyType>>
       : public MathObjectTraits<std::remove_cv_t<MappedType>> {
   };  // end of struct MathObjectTraits
@@ -305,7 +310,8 @@ namespace tfel::math {
    * views.
    * \tparam MappedType: mapped type
    */
-  template <FinalFixedSizeMathObjectConcept MappedType, typename IndexingPolicyType>
+  template <MappableMathObjectUsingCoalescedViewConcept MappedType,
+            typename IndexingPolicyType>
   struct ResultOfEvaluation<CoalescedView<MappedType, IndexingPolicyType>> {
     //! \brief result of the metafunction
     using type = std::remove_cv_t<MappedType>;
@@ -316,33 +322,27 @@ namespace tfel::math {
    * \tparam MappedType: object mapped
    * \param[in] p: pointer to the mapped memory area
    */
-  template <FixedSizeMathObjectConcept MappedType,
+  template <MappableMutableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType = typename MappedType::indexing_policy>
   TFEL_HOST_DEVICE constexpr CoalescedView<MappedType, IndexingPolicyType> map(
       const std::span<ViewDataPointerType<MappedType>,
-                      [] {
-                        IndexingPolicyType p;
-                        return p.size();
-                      }()> ptrs)  //
+                      indexing_policy_size<IndexingPolicyType>> ptrs)  //
       requires((!std::is_const_v<MappedType>)&&(
           std::remove_cv_t<MappedType>::hasFixedSizes)) {
     return CoalescedView<MappedType, IndexingPolicyType>{ptrs};
   }  // end of map
 
-  template <ConstFixedSizeMathObjectConcept MappedType,
+  template <MappableImmutableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy>
   TFEL_HOST_DEVICE constexpr CoalescedView<MappedType, IndexingPolicyType> map(
       const std::span<ViewConstDataPointerType<std::remove_cv_t<MappedType>>,
-                      [] {
-                        IndexingPolicyType p;
-                        return p.size();
-                      }()> ptrs)  //
+                      indexing_policy_size<IndexingPolicyType>> ptrs)  //
       requires((std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes)) {
     return CoalescedView<MappedType, IndexingPolicyType>{ptrs};
   }  // end of map
 
-  template <FixedSizeMathObjectConcept MappedType,
+  template <MappableMutableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy>
   using ConstCoalescedView =
@@ -357,7 +357,7 @@ namespace tfel::typetraits {
    * \tparam MathObject: object used to create the view to be assigned.
    * \tparam MathObject2: math object that will be assigned.
    */
-  template <tfel::math::FinalFixedSizeMathObjectConcept MathObject,
+  template <tfel::math::MappableMathObjectUsingCoalescedViewConcept MathObject,
             typename IndexingPolicyType,
             typename MathObject2>
   struct IsAssignableTo<
@@ -375,7 +375,7 @@ namespace tfel::typetraits {
    * assigned.
    */
   template <typename MathObject,
-            tfel::math::FinalFixedSizeMathObjectConcept MathObject2,
+            tfel::math::MappableMathObjectUsingCoalescedViewConcept MathObject2,
             typename IndexingPolicyType2>
   struct IsAssignableTo<
       MathObject,
@@ -394,9 +394,9 @@ namespace tfel::typetraits {
    * \tparam MathObject2: math object used to create the view that will be
    * assigned.
    */
-  template <tfel::math::FinalFixedSizeMathObjectConcept MathObject,
+  template <tfel::math::MappableMathObjectUsingCoalescedViewConcept MathObject,
             typename IndexingPolicyType,
-            tfel::math::FinalFixedSizeMathObjectConcept MathObject2,
+            tfel::math::MappableMathObjectUsingCoalescedViewConcept MathObject2,
             typename IndexingPolicyType2>
   struct IsAssignableTo<
       tfel::math::CoalescedView<MathObject, IndexingPolicyType>,
@@ -415,7 +415,7 @@ namespace tfel::typetraits {
   //! \brief specialisation of IsAssignableTo
   template <typename EvaluationResult,
             typename Operation,
-            tfel::math::FinalFixedSizeMathObjectConcept MathObject,
+            tfel::math::MappableMathObjectUsingCoalescedViewConcept MathObject,
             typename IndexingPolicyType>
   struct IsAssignableTo<
       tfel::math::Expr<EvaluationResult, Operation>,

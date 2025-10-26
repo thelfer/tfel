@@ -204,7 +204,8 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(s2[2] == 1);
     TFEL_TESTS_STATIC_ASSERT(s2[3] == 1);
   }
-  void test8() { auto os = std::ostringstream{};
+  void test8() {
+    auto os = std::ostringstream{};
     using namespace tfel::math;
     std::array<int, 4> values = {0, 1, 2, 3};
     std::array ptrs{&values[0], &values[1], &values[2], &values[3]};
@@ -212,7 +213,8 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
     os << s1;
     TFEL_TESTS_CHECK_EQUAL(os.str(), "[ 0 1 2 3 ]");
   }
-  void test9() { auto os = std::ostringstream{};
+  void test9() {
+    auto os = std::ostringstream{};
     using namespace tfel::math;
     std::array<int, 3> values = {1, 2, 3};
     std::array ptrs{&values[0], &values[1], &values[2]};
@@ -220,7 +222,8 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
     os << s1;
     TFEL_TESTS_CHECK_EQUAL(os.str(), "( 1 2 3 )");
   }
-  void test10() { auto os = std::ostringstream{};
+  void test10() {
+    auto os = std::ostringstream{};
     using namespace tfel::math;
     std::array<int, 4> values = {0, 1, 2, 3};
     std::array ptrs{&values[0], &values[1], &values[2], &values[3]};
