@@ -89,6 +89,16 @@ namespace tfel::math {
     using const_data_pointer_type = ViewConstDataPointerType<MappedType>;
     //! \brief default constructor
     explicit TFEL_HOST_DEVICE constexpr CoalescedView(
+        const std::array<data_pointer_type, N>& p) noexcept
+        : ptrs([&p] {
+            return [&p]<std::size_t... Is>(
+                std::integer_sequence<std::size_t, Is...>) {
+              return std::array<data_pointer_type, N>{p[Is]...};
+            }
+            (std::make_index_sequence<N>());
+          }()) {}
+    //! \brief default constructor
+    explicit TFEL_HOST_DEVICE constexpr CoalescedView(
         const std::span<data_pointer_type, N>& p) noexcept
         : ptrs([&p] {
             return [&p]<std::size_t... Is>(
