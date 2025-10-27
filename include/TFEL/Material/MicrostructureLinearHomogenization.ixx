@@ -46,8 +46,8 @@ namespace tfel::material::homogenization::elasticity {
       }
     }
     const auto C0 = micro.get_matrix_elasticity();
-    KGModuli<StressType> KG0(StressType(0),StressType(0));
-    if (micro.is_isotropic_matrix()){
+    KGModuli<StressType> KG0(StressType(0), StressType(0));
+    if (micro.is_isotropic_matrix()) {
       KG0 = computeKGModuli<StressType>(C0);
     }
     const auto tau0 = polarisations_[0];
@@ -64,11 +64,11 @@ namespace tfel::material::homogenization::elasticity {
       auto fi = (*phasei).fraction;
       auto taui = polarisations_[i + 1];
       tfel::math::st2tost2<N, real> Ai;
-      if (micro.is_isotropic_matrix()){
+      if (micro.is_isotropic_matrix()) {
         Ai = (*phasei).computeMeanLocalisator(KG0);
       } else {
-        Ai = (*phasei).computeMeanLocalisator(
-          C0, max_iter_anisotropic_integration);
+        Ai = (*phasei).computeMeanLocalisator(C0,
+                                              max_iter_anisotropic_integration);
       }
       Chom += fi * (Ci - C0) * Ai;
       tau_eff += fi * tfel::math::transpose(Ai) * (taui - tau0);
@@ -81,7 +81,6 @@ namespace tfel::material::homogenization::elasticity {
     return h_s;
   };
 
- 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
@@ -110,8 +109,8 @@ namespace tfel::material::homogenization::elasticity {
       }
     }
     const auto C0 = micro.get_matrix_elasticity();
-    KGModuli<StressType> KG0(StressType(0),StressType(0));
-    if (micro.is_isotropic_matrix()){
+    KGModuli<StressType> KG0(StressType(0), StressType(0));
+    if (micro.is_isotropic_matrix()) {
       KG0 = computeKGModuli<StressType>(C0);
     }
     const auto tau0 = polarisations_[0];
@@ -125,11 +124,11 @@ namespace tfel::material::homogenization::elasticity {
       auto phasei = micro.get_inclusionPhase(i);
       auto fi = (*phasei).fraction;
       tfel::math::st2tost2<N, real> Ai;
-      if (micro.is_isotropic_matrix()){
+      if (micro.is_isotropic_matrix()) {
         Ai = (*phasei).computeMeanLocalisator(KG0);
       } else {
-        Ai = (*phasei).computeMeanLocalisator(
-          C0, max_iter_anisotropic_integration);
+        Ai = (*phasei).computeMeanLocalisator(C0,
+                                              max_iter_anisotropic_integration);
       }
       localisators.push_back(Ai);
       A0 += fi * Ai;
@@ -186,32 +185,33 @@ namespace tfel::material::homogenization::elasticity {
     }
     
     HomogenizationScheme<N, StressType> h_s;
-    auto tau_eff=tfel::math::stensor<N,StressType>::zero();
+    auto tau_eff = tfel::math::stensor<N, StressType>::zero();
     std::vector<tfel::math::st2tost2<N, real>> localisators = {};
     auto Chom = C0;
     auto Chom_ = C0;
     int iter = 0;
     while (iter < max_iter) {
       std::vector<tfel::math::st2tost2<N, real>> localisators_try = {};
-      tfel::math::st2tost2<N, real> A0 = f0 * tfel::math::st2tost2<N, real>::Id();
+      tfel::math::st2tost2<N, real> A0 =
+          f0 * tfel::math::st2tost2<N, real>::Id();
       for (unsigned int i = 0; i < np - 1; i++) {
         auto phasei = micro.get_inclusionPhase(i);
         auto fi = (*phasei).fraction;
         tfel::math::st2tost2<N, real> Ai;
-        if (isotropic){
+        if (isotropic) {
           auto KGhom = computeKGModuli<StressType>(Chom);
           Ai = (*phasei).computeMeanLocalisator(KGhom);
         } else {
           Ai = (*phasei).computeMeanLocalisator(
-            Chom, max_iter_anisotropic_integration);
+              Chom, max_iter_anisotropic_integration);
         }
         localisators_try.push_back(Ai);
         A0 += fi * Ai;
       }
       A0 = invert(A0);
       localisators_try.insert(localisators_try.begin(), A0);
-      tfel::math::st2tost2<N, StressType> Ch = f0*C0*A0;
-      for (unsigned int i = 0; i < np -1 ; i++) {
+      tfel::math::st2tost2<N, StressType> Ch = f0 * C0 * A0;
+      for (unsigned int i = 0; i < np - 1; i++) {
         auto phasei = micro.get_inclusionPhase(i);
         auto Ci = (*phasei).stiffness;
         auto fi = (*phasei).fraction;

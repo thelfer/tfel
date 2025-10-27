@@ -188,9 +188,9 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
                              (phi1 * mu2 + phi2 * mu1 + H2);
 
     TFEL_TESTS_ASSERT(my_abs(K_L - K_Lbis) < seps);
-    TFEL_TESTS_ASSERT(my_abs((mu_L - mu_Lbis)/mu_L) < eps);
+    TFEL_TESTS_ASSERT(my_abs((mu_L - mu_Lbis) / mu_L) < eps);
     TFEL_TESTS_ASSERT(my_abs(K_U - K_Ubis) < seps);
-    TFEL_TESTS_ASSERT(my_abs((mu_U - mu_Ubis)/mu_U) < eps);
+    TFEL_TESTS_ASSERT(my_abs((mu_U - mu_Ubis) / mu_U) < eps);
 #endif /* _LIBCPP_VERSION */
   }
   
