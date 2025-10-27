@@ -19,8 +19,8 @@ template <tfel::math::ScalarConcept StressType,std::size_t N>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                             StressType>()) static tfel::math::
     st2tost2<N, StressType> computeVoigtStiffness(
-        const std::vector<tfel::types::real<StressType>>& f_i,
-        const std::vector<tfel::math::st2tost2<N, StressType>>& C_i) {
+        std::vector<tfel::types::real<StressType>>& f_i,
+        std::vector<tfel::math::st2tost2<N, StressType>>& C_i) {
   return tfel::material::homogenization::elasticity::computeVoigtStiffness<
       N, StressType>(f_i, C_i);
 }
@@ -30,8 +30,8 @@ template <tfel::math::ScalarConcept StressType,std::size_t N>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                             StressType>()) static tfel::math::
     st2tost2<N, StressType> computeReussStiffness(
-        const std::vector<tfel::types::real<StressType>>& f_i,
-        const std::vector<tfel::math::st2tost2<N, StressType>>& C_i) {
+        std::vector<tfel::types::real<StressType>>& f_i,
+        std::vector<tfel::math::st2tost2<N, StressType>>& C_i) {
   return tfel::material::homogenization::elasticity::computeReussStiffness<
       N, StressType>(f_i, C_i);
 }
@@ -44,14 +44,14 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
         std::
     pair<StressType,StressType>,
         std::
-    pair<StressType,StressType>> computeIsotropicHashinShtrikmanBounds(const std::
+    pair<StressType,StressType>> computeIsotropicHashinShtrikmanBounds(std::
                                                                    vector<
                                                                        tfel::types::
                                                                            real<
                                                                                StressType>>& f_i,
-                                                               const std::vector<
+                                                               std::vector<
                                                                    StressType>& K_i,
-                                                               const std::vector<
+                                                               std::vector<
                                                                    StressType>& G_i) {
   return tfel::material::homogenization::elasticity::
       computeIsotropicHashinShtrikmanBounds<N, StressType>(f_i, K_i, G_i);

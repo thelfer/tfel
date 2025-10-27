@@ -62,8 +62,6 @@ template <unsigned short int N, tfel::math::ScalarConcept StressType>
           ){
           return tfel::material::homogenization::elasticity::computeSelfConsistent<N,StressType>(micro,polarisations,max_iter,isotropic,max_iter_anisotropic_integration);}
 
-
-  
 void declareMicrostructureLinearHomogenization(pybind11::module_&);
 
 void declareMicrostructureLinearHomogenization(pybind11::module_& m) {

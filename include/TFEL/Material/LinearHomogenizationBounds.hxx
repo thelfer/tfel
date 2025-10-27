@@ -77,8 +77,7 @@ namespace tfel::material::homogenization::elasticity {
         std::
     pair<StressType,StressType>,
         std::
-    pair<StressType,StressType>> computeIsotropicHashinShtrikmanBounds(const std::
-                                                                     vector<
+    pair<StressType,StressType>> computeIsotropicHashinShtrikmanBounds(const std::vector<
                                                                          types::real<
                                                                              StressType>>&,
                                                                  const std::vector<

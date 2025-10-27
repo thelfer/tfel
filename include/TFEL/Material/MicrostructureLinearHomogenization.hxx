@@ -41,7 +41,18 @@ namespace tfel::material::homogenization::elasticity {
     tfel::math::stensor<N, StressType> effective_polarisation;
     std::vector<tfel::math::st2tost2<N, real>> mean_strain_localisation_tensors;
   };
-
+  
+  /*!
+   * An internal function for initialization of the polarisation vector
+   */
+   namespace internals{
+     template <unsigned short int N, tfel::math::ScalarConcept StressType>
+     requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>())
+    std::vector<tfel::math::stensor<N, StressType>> initialize_polarisation(const std::vector<tfel::math::stensor<N, StressType>>&,const std::size_t);   
+   }
+  
   /*!
    * Here is the Dilute scheme which returns an object of
    * type HomogenizationScheme from a ParticulateMicrostructure.
