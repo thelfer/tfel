@@ -1023,8 +1023,8 @@ Let us try:
 ~~~~{.cpp}
 using namespace tfel::material::homogenization::elasticity;
 auto hmDS=computeDilute<3u,stress>(micro_1);
-auto hmMT=hm.computeMoriTanaka<3u,stress>(micro_1);
-auto hmSC=hm.computeSelfConsistent<3u,stress>(micro_1,10,true);
+auto hmMT=computeMoriTanaka<3u,stress>(micro_1);
+auto hmSC=computeSelfConsistent<3u,stress>(micro_1,10,true);
 ~~~~
 
 We note that `computeSelfConsistent` not only takes
