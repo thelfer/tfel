@@ -110,10 +110,10 @@ struct EshelbyTest final : public tfel::tests::TestCase {
 
     using namespace tfel::material::homogenization::elasticity;
     {  // const auto S1 = computeSphereEshelbyTensor(real{1});
-      // const auto S2 = computeAxisymmetricalEshelbyTensor(nu,real{0});
-      // const auto S3 = computeAxisymmetricalEshelbyTensor(nu,real{-10});
-      // const auto S4 = computeEshelbyTensor<real,lg>(nu,lg{-1},lg{3},lg{2});
-      // const auto S5 = computeEshelbyTensor<real,lg>(nu,lg{-1},lg{-1},lg{1});
+       // const auto S2 = computeAxisymmetricalEshelbyTensor(nu,real{0});
+       // const auto S3 = computeAxisymmetricalEshelbyTensor(nu,real{-10});
+       // const auto S4 = computeEshelbyTensor<real,lg>(nu,lg{-1},lg{3},lg{2});
+       // const auto S5 = computeEshelbyTensor<real,lg>(nu,lg{-1},lg{-1},lg{1});
     }
   };
 
@@ -269,18 +269,18 @@ struct EshelbyTest final : public tfel::tests::TestCase {
     using namespace tfel::material::homogenization::elasticity;
     {  // const auto A1 =
        // computeSphereLocalisationTensor<real,stress>(young,real{1},young_i,nu_i);
-      // const auto A2 =
-      // computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,real{0});
-      // const auto A3 =
-      // computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_0,real{1});
-      // const auto A4 =
-      // computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(stress{-1},nu,young_i,nu_i,n_a,real{1});
-      // const auto A5 =
-      // computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n_b,lg{0},c);
-      // const auto A6 =
-      // computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n_,b,c);
-      // const auto A7 =
-      // computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n__,b,c);
+       // const auto A2 =
+       // computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_a,real{0});
+       // const auto A3 =
+       // computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(young,nu,young_i,nu_i,n_0,real{1});
+       // const auto A4 =
+       // computeAxisymmetricalEllipsoidLocalisationTensor<real,stress>(stress{-1},nu,young_i,nu_i,n_a,real{1});
+       // const auto A5 =
+       // computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n_b,lg{0},c);
+       // const auto A6 =
+       // computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n_,b,c);
+       // const auto A7 =
+       // computeEllipsoidLocalisationTensor<real,stress,lg>(young,nu,young_i,nu_i,n_a,a,n__,b,c);
     }
   };
 

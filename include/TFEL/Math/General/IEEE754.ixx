@@ -68,10 +68,10 @@ namespace tfel::math::ieee754 {
           "tfel::math::ieee754::fpclassify: "
           "unsupported long double representation");
     }
-    struct internal_representation{
+    struct internal_representation {
       uint64_t m;
       uint16_t se;
-    } ;
+    };
     const auto i = std::bit_cast<internal_representation, long double>(x);
     const int e = i.se & 0x7fff;
     const int msb = i.m >> 63;
