@@ -29,9 +29,7 @@ namespace tfel::math {
   GenericRuntimeArray<Child, ArrayPolicy>::GenericRuntimeArray(
       const typename ArrayPolicy::IndexingPolicy& p,
       const ValueType& value)  //
-      requires(isAssignableTo<
-               ValueType,
-               typename GenericRuntimeArray<Child, ArrayPolicy>::value_type>())
+      requires(isAssignableTo<ValueType, value_type>())
       : GenericRuntimeArray(p) {
     this->fill(value);
   }  // end of GenericRuntimeArray
@@ -49,10 +47,7 @@ namespace tfel::math {
   template <typename ValueType>
   GenericRuntimeArray<Child, ArrayPolicy>::GenericRuntimeArray(
       const std::initializer_list<ValueType>&
-          values) requires((isAssignableTo<ValueType,
-                                           typename GenericRuntimeArray<
-                                               Child,
-                                               ArrayPolicy>::value_type>()) &&
+          values) requires((isAssignableTo<ValueType, value_type>()) &&
                            (ArrayPolicy::IndexingPolicy::arity == 1) &&
                            (ArrayPolicy::IndexingPolicy::areDataContiguous))
       : GenericRuntimeArray(values.size()) {
@@ -131,12 +126,8 @@ namespace tfel::math {
   Child& GenericRuntimeArray<Child, ArrayPolicy>::operator*=(
       const ValueType2& v) noexcept
       requires(
-          isAssignableTo<
-              BinaryOperationResult<
-                  ValueType2,
-                  typename GenericRuntimeArray<Child, ArrayPolicy>::value_type,
-                  OpMult>,
-              typename GenericRuntimeArray<Child, ArrayPolicy>::value_type>()) {
+          isAssignableTo<BinaryOperationResult<ValueType2, value_type, OpMult>,
+                         value_type>()) {
     auto& child = static_cast<Child&>(*this);
     child.multiplyByScalar(v);
     return child;
@@ -147,12 +138,8 @@ namespace tfel::math {
   Child& GenericRuntimeArray<Child, ArrayPolicy>::operator/=(
       const ValueType2& v) noexcept
       requires(
-          isAssignableTo<
-              BinaryOperationResult<
-                  typename GenericRuntimeArray<Child, ArrayPolicy>::value_type,
-                  ValueType2,
-                  OpDiv>,
-              typename GenericRuntimeArray<Child, ArrayPolicy>::value_type>()) {
+          isAssignableTo<BinaryOperationResult<value_type, ValueType2, OpDiv>,
+                         value_type>()) {
     auto& child = static_cast<Child&>(*this);
     child.multiplyByScalar(1 / v);
     return child;
