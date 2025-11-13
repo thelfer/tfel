@@ -37,15 +37,18 @@ static void declarestensor(pybind11::module_& m, const char* const n) {
             {sizeof(double)});
       })
       .def(pybind11::init<>())
-      .def(pybind11::init<>([S](pybind11::array_t<double, pybind11::array::c_style | pybind11::array::forcecast> &u){
-              if (u.size()!=S){
-              tfel::raise<std::range_error>(
-                   "invalid size of Stensor");
-              }
-              stensor t;
-              for (std::size_t i=0;i<S;i++){t(i)=u.unchecked<1>()(i);}
-              return t;
-             }))
+      .def(pybind11::init<>(
+          [S](pybind11::array_t<double, pybind11::array::c_style |
+                                            pybind11::array::forcecast>& u) {
+            if (u.size() != S) {
+              tfel::raise<std::range_error>("invalid size of Stensor");
+            }
+            stensor t;
+            for (std::size_t i = 0; i < S; i++) {
+              t(i) = u.unchecked<1>()(i);
+            }
+            return t;
+          }))
       .def("__len__", [](const stensor& s) { return s.size(); })
       .def("__repr__",
            [](const stensor& s) {

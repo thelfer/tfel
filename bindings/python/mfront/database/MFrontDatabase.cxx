@@ -1,6 +1,6 @@
 /*!
  * \file   MFrontDatabase.cxx
- * \brief    
+ * \brief
  * \author th202608
  * \date   13/11/2025
  */
@@ -68,7 +68,7 @@ MFrontDatabase_getEntryPoints(const mfront::MFrontDatabase& db,
                                     .interface_filter = interface,
                                     .regular_expression_syntax = s};
   return db.getEntryPoints(query);
-  }  // end of mfront::MFrontDatabase_getEntryPoints
+}  // end of mfront::MFrontDatabase_getEntryPoints
 
 static mfront::MFrontDatabase::AnalyseDirectoryResults
 MFrontDatabase_analyseDirectory(

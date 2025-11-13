@@ -52,7 +52,6 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
   }  // end of MFM
 
  private:
-
   void registerCommandLineCallBacks() {
     auto set_verbose_level = [this] {
       if (getCurrentCommandLineArgument().getOption().empty()) {

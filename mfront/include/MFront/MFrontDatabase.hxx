@@ -31,11 +31,7 @@ namespace mfront {
     //! \brief an intermediate structure describing an entry point
     struct EntryPoint {
       //! \brief type of material knowledge
-      enum MaterialKnowledgeType {
-        MATERIALPROPERTY,
-        BEHAVIOUR,
-        MODEL
-      };
+      enum MaterialKnowledgeType { MATERIALPROPERTY, BEHAVIOUR, MODEL };
       //! \brief library in which the entry point is defined
       std::string library;
       //! \brief name of the entry point

@@ -28,8 +28,7 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] tab_C: std::span<st2tost2<d,StressType>> of stiffness
    * tensors of phases
    */
-  template <unsigned short int d,
-            tfel::math::ScalarConcept StressType>
+  template <unsigned short int d, tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>()) TFEL_HOST_DEVICE
       const tfel::math::st2tost2<d, StressType> computeVoigtStiffness(
@@ -46,8 +45,7 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] tab_C: std::span<st2tost2<d,StressType>> of stiffness
    * tensors of phases
    */
-  template <unsigned short int d,
-            tfel::math::ScalarConcept StressType>
+  template <unsigned short int d, tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>()) TFEL_HOST_DEVICE
       const tfel::math::st2tost2<d, StressType> computeReussStiffness(
@@ -61,26 +59,25 @@ namespace tfel::material::homogenization::elasticity {
    * \tparam real: underlying type
    * \tparam StressType: type of the elastic constants related to the phases
    * \tparam d: dimension (2 or 3)
-   * \return a std::pair<std::pair<StressType,StressType>,std::pair<StressType,StressType>>.
+   * \return a
+   * std::pair<std::pair<StressType,StressType>,std::pair<StressType,StressType>>.
    * First element of the pair is the lower
-   * bound and second element is the upper bound. Each bound is a std::pair with bulk
-   * and shear moduli.
-   * \param [in] tab_f: std::span<real> of volumic fractions of phases
-   * \param [in] tab_K: std::span<StressType> of bulk moduli of phases
-   * \param [in] tab_mu: std::span<StressType> of shear moduli of phases
+   * bound and second element is the upper bound. Each bound is a std::pair with
+   * bulk and shear moduli. \param [in] tab_f: std::span<real> of volumic
+   * fractions of phases \param [in] tab_K: std::span<StressType> of bulk moduli
+   * of phases \param [in] tab_mu: std::span<StressType> of shear moduli of
+   * phases
    */
-  template <unsigned short int d,
-            tfel::math::ScalarConcept StressType>
+  template <unsigned short int d, tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
-      TFEL_HOST_DEVICE const std::
-    pair<
-        std::
-    pair<StressType,StressType>,
-        std::
-    pair<StressType,StressType>> computeIsotropicHashinShtrikmanBounds(const std::span<
-                                                                         types::real<
-                                                                             StressType>>&,
+      TFEL_HOST_DEVICE const std::pair<
+          std::pair<StressType, StressType>,
+          std::pair<
+              StressType,
+              StressType>> computeIsotropicHashinShtrikmanBounds(const std::
+                                                                     span<types::real<
+                                                                         StressType>>&,
                                                                  const std::span<
                                                                      StressType>&,
                                                                  const std::span<

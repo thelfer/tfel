@@ -88,7 +88,7 @@ namespace mfront {
       if (!entry.is_regular_file()) {
         continue;
       }
-      const auto prefix = [&opts]()->std::string {
+      const auto prefix = [&opts]() -> std::string {
         if (opts.library_prefix.has_value()) {
           return *(opts.library_prefix);
         }
@@ -100,7 +100,7 @@ namespace mfront {
         return "lib";
 #endif
       }();
-      const auto suffix = [&opts]()->std::string {
+      const auto suffix = [&opts]() -> std::string {
         if (opts.library_suffix.has_value()) {
           return *(opts.library_suffix);
         }
@@ -120,7 +120,7 @@ namespace mfront {
           (tfel::utilities::ends_with(l, suffix))) {
         try {
           this->analyseLibrary(p.string());
-        } catch (std::exception& error){
+        } catch (std::exception& error) {
           if (opts.ignore_errors) {
             r.library_analysis_failures.push_back(
                 {.library = l, .error_message = error.what()});
@@ -230,8 +230,9 @@ namespace mfront {
     return r;
   }  // end of getEntryPoints
 
-  const std::vector<MFrontDatabase::EntryPoint>& MFrontDatabase::getEntryPoints() const {
+  const std::vector<MFrontDatabase::EntryPoint>&
+  MFrontDatabase::getEntryPoints() const {
     return this->epts;
-  } // end of getEntryPoints
+  }  // end of getEntryPoints
 
 }  // end of namespace mfront

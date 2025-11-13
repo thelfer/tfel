@@ -19,8 +19,7 @@
 
 namespace tfel::material::homogenization::elasticity {
 
-  template <unsigned short int d,
-            tfel::math::ScalarConcept StressType>
+  template <unsigned short int d, tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>()) TFEL_HOST_DEVICE
       const tfel::math::st2tost2<d, StressType> computeVoigtStiffness(
@@ -33,8 +32,7 @@ namespace tfel::material::homogenization::elasticity {
     return C_V;
   }
 
-  template <unsigned short int d,
-            tfel::math::ScalarConcept StressType>
+  template <unsigned short int d, tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>()) TFEL_HOST_DEVICE
       const tfel::math::st2tost2<d, StressType> computeReussStiffness(
@@ -48,27 +46,26 @@ namespace tfel::material::homogenization::elasticity {
     return invert(S_R);
   }
 
-  template <unsigned short int d,
-            tfel::math::ScalarConcept StressType>
+  template <unsigned short int d, tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
-      TFEL_HOST_DEVICE const std::
-    pair<
-        std::
-    pair<StressType,StressType>,
-        std::
-    pair<StressType,StressType>> computeIsotropicHashinShtrikmanBounds(const std::span<
-                                                                         types::real<
-                                                                             StressType>>
+      TFEL_HOST_DEVICE const std::pair<
+          std::pair<StressType, StressType>,
+          std::pair<
+              StressType,
+              StressType>> computeIsotropicHashinShtrikmanBounds(const std::
+                                                                     span<types::real<
+                                                                         StressType>>
                                                                          &tab_f,
                                                                  const std::span<
-                                                                     StressType> &tab_K,
+                                                                     StressType>
+                                                                     &tab_K,
                                                                  const std::span<
                                                                      StressType>
                                                                      &tab_mu) {
     using real = types::real<StressType>;
-    const auto N=tab_f.size();
-    
+    const auto N = tab_f.size();
+
     std::vector<StressType> tab_H;
     for (std::size_t i = 0; i < N; i++) {
       tab_H.push_back(
@@ -76,10 +73,10 @@ namespace tfel::material::homogenization::elasticity {
           (real(d) * tab_K[i] / 2 + (d + 1) * (d - 2) * tab_mu[i] / real(d)) /
           (tab_K[i] + 2 * tab_mu[i]));
     }
-    auto mu_max = *std::max_element(tab_mu.begin(),tab_mu.end());
-    auto mu_min = *std::min_element(tab_mu.begin(),tab_mu.end());
-    auto H_max = *std::max_element(tab_H.begin(),tab_H.end());
-    auto H_min = *std::min_element(tab_H.begin(),tab_H.end());
+    auto mu_max = *std::max_element(tab_mu.begin(), tab_mu.end());
+    auto mu_min = *std::min_element(tab_mu.begin(), tab_mu.end());
+    auto H_max = *std::max_element(tab_H.begin(), tab_H.end());
+    auto H_min = *std::min_element(tab_H.begin(), tab_H.end());
     auto K_star_min = 2 * (d - 1) / real(d) * mu_min;
     auto K_star_max = 2 * (d - 1) / real(d) * mu_max;
     auto mu_star_min = H_min;
@@ -103,8 +100,8 @@ namespace tfel::material::homogenization::elasticity {
     mue_L = 1 / Ne_L - mu_star_min;
     Ke_U = 1 / Ce_U - K_star_max;
     mue_U = 1 / Ne_U - mu_star_max;
-    const std::pair<StressType,StressType> KG_L = {Ke_L,mue_L};
-    const std::pair<StressType,StressType> KG_U = {Ke_U,mue_U};
+    const std::pair<StressType, StressType> KG_L = {Ke_L, mue_L};
+    const std::pair<StressType, StressType> KG_U = {Ke_U, mue_U};
     return {KG_L, KG_U};
   }
 
