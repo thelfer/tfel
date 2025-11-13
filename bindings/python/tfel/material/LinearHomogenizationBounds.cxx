@@ -15,7 +15,7 @@
 #include <pybind11/stl.h>
 #include "TFEL/Material/LinearHomogenizationBounds.hxx"
 
-template <tfel::math::ScalarConcept StressType,std::size_t N>
+template <tfel::math::ScalarConcept StressType, std::size_t N>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                             StressType>()) static tfel::math::
     st2tost2<N, StressType> computeVoigtStiffness(
@@ -25,8 +25,7 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
       N, StressType>(f_i, C_i);
 }
 
-
-template <tfel::math::ScalarConcept StressType,std::size_t N>
+template <tfel::math::ScalarConcept StressType, std::size_t N>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                             StressType>()) static tfel::math::
     st2tost2<N, StressType> computeReussStiffness(
@@ -36,38 +35,36 @@ requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
       N, StressType>(f_i, C_i);
 }
 
-
-template <tfel::math::ScalarConcept StressType,std::size_t N>
+template <tfel::math::ScalarConcept StressType, std::size_t N>
 requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                             StressType>()) static std::
     pair<
-        std::
-    pair<StressType,StressType>,
-        std::
-    pair<StressType,StressType>> computeIsotropicHashinShtrikmanBounds(std::
-                                                                   vector<
-                                                                       tfel::types::
-                                                                           real<
-                                                                               StressType>>& f_i,
+        std::pair<StressType, StressType>,
+        std::pair<
+            StressType,
+            StressType>> computeIsotropicHashinShtrikmanBounds(std::
+                                                                   vector<tfel::types::real<
+                                                                       StressType>>&
+                                                                       f_i,
                                                                std::vector<
-                                                                   StressType>& K_i,
+                                                                   StressType>&
+                                                                   K_i,
                                                                std::vector<
-                                                                   StressType>& G_i) {
+                                                                   StressType>&
+                                                                   G_i) {
   return tfel::material::homogenization::elasticity::
       computeIsotropicHashinShtrikmanBounds<N, StressType>(f_i, K_i, G_i);
 }
 
-
-
 void declareLinearHomogenizationBounds(pybind11::module_&);
 
 void declareLinearHomogenizationBounds(pybind11::module_& m) {
-  m.def("computeVoigtStiffness3D", &computeVoigtStiffness<double,3>);
-  m.def("computeReussStiffness3D", &computeReussStiffness<double,3>);
+  m.def("computeVoigtStiffness3D", &computeVoigtStiffness<double, 3>);
+  m.def("computeReussStiffness3D", &computeReussStiffness<double, 3>);
   m.def("computeIsotropicHashinShtrikmanBounds3D",
-        &computeIsotropicHashinShtrikmanBounds<double,3>);
-  m.def("computeVoigtStiffness2D", &computeVoigtStiffness<double,2>);
-  m.def("computeReussStiffness2D", &computeReussStiffness<double,2>);
+        &computeIsotropicHashinShtrikmanBounds<double, 3>);
+  m.def("computeVoigtStiffness2D", &computeVoigtStiffness<double, 2>);
+  m.def("computeReussStiffness2D", &computeReussStiffness<double, 2>);
   m.def("computeIsotropicHashinShtrikmanBounds2D",
-        &computeIsotropicHashinShtrikmanBounds<double,2>);
+        &computeIsotropicHashinShtrikmanBounds<double, 2>);
 }

@@ -1,6 +1,7 @@
 add_executable(mfm mfm.cxx)
 target_link_libraries(mfm
-  TFELSystem TFELUtilities)
+  tfel::TFELUtilities
+  tfel::TFELMFrontDatabase)
 set_property(TARGET mfm PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 if(TFEL_APPEND_SUFFIX)
   set_target_properties(mfm

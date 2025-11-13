@@ -111,8 +111,7 @@ namespace tfel::math {
     template <typename ValueType>
     explicit GenericRuntimeArray(
         const typename ArrayPolicy::IndexingPolicy&,
-        const ValueType&) requires(isAssignableTo<ValueType,
-                                                  value_type>());
+        const ValueType&) requires(isAssignableTo<ValueType, value_type>());
     /*!
      * \brief constructor from an initializer list
      * \param[in] values: values
@@ -121,8 +120,7 @@ namespace tfel::math {
     GenericRuntimeArray(
         const typename GenericRuntimeArray<Child, ArrayPolicy>::indexing_policy,
         const std::initializer_list<
-            ValueType>&) requires((isAssignableTo<ValueType,
-                                                  value_type>()) &&
+            ValueType>&) requires((isAssignableTo<ValueType, value_type>()) &&
                                   (ArrayPolicy::IndexingPolicy::arity == 1) &&
                                   (ArrayPolicy::IndexingPolicy::
                                        areDataContiguous));
@@ -132,8 +130,7 @@ namespace tfel::math {
      */
     template <typename ValueType>
     GenericRuntimeArray(const std::initializer_list<ValueType>&) requires(
-        (isAssignableTo<
-            ValueType, value_type>()) &&
+        (isAssignableTo<ValueType, value_type>()) &&
         (ArrayPolicy::IndexingPolicy::arity == 1) &&
         (ArrayPolicy::IndexingPolicy::areDataContiguous));
     /*!
@@ -182,19 +179,13 @@ namespace tfel::math {
     //
     template <typename ValueType2>
     Child& operator*=(const ValueType2&) noexcept requires(
-        isAssignableTo<
-            BinaryOperationResult<
-                ValueType2, value_type, OpMult>,
-            value_type>());
+        isAssignableTo<BinaryOperationResult<ValueType2, value_type, OpMult>,
+                       value_type>());
     //
     template <typename ValueType2>
     Child& operator/=(const ValueType2&) noexcept requires(
-        isAssignableTo<
-            BinaryOperationResult<
-                value_type,
-                ValueType2,
-                OpDiv>,
-            value_type>());
+        isAssignableTo<BinaryOperationResult<value_type, ValueType2, OpDiv>,
+                       value_type>());
     //
     bool empty() const;
     //
