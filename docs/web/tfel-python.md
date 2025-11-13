@@ -1,6 +1,20 @@
-% The TFEL Python API
-% Thomas Helfer
-% 19/12/2017
+---
+title:  Overview of the `TFEL` modules
+author: Thomas Helfer
+date: 19/12/2017
+lang: en-EN
+numbersections: true
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+lstPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+header-includes:
+bibliography: bibliography.bib
+csl: iso690-numeric-en.csl
+---
 
 This page describes the `python` modules based on the `TFEL`
 libraries.

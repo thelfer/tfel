@@ -1,7 +1,7 @@
 ---
 title:  Overview of the `TFELMFrontDatabase` library
 author: Thomas Helfer
-date: 21/11/2017
+date: 13/11/2025
 lang: en-EN
 numbersections: true
 link-citations: true
@@ -33,11 +33,54 @@ associated with a behaviour, a material property or a point-wise model.
 >
 > The [`mfm`](https://thelfer.github.io/thelfer/mfm.html)
 > executable exposes the functionalities of `TFELMFrontDatabase`
-> on the command-line
+> on the command-line.
 
 # Overview
 
-## Entry points
+## Filling the database
+
+The database must be filled by any of the following method:
+
+- `analyseLibrary`
+- `analyseLibraries`
+- `analyseDirectory`
+- `analyseDirectories`
+- `analyseDirectoriesListedInEnvironmentVariable`
+
+When analysing a directory and a set of directories, the
+`AnalyseDirectoryOptions` structure can be used to customize the
+behaviour of the last methods. This structure has the following members:
+
+- `ignore_errors`: if `true`, errors are not blocking. Errors are then
+  reported in the returned data structure of type
+  `AnalyseDirectoryResults`. This member is `false` by default.
+- `library_prefix`: this optional string indicates the expected prefix
+  for libraries. All files that do not start with this prefix are
+  ignored. If this member is not set, a default value depending on the
+  operating system is used.
+- `library_suffix`: this optional string indicates the expected suffix
+  for libraries. All files that do not start with this suffix are
+  ignored. If this member is not set, a default value depending on the
+  operating system is used.
+
+## Querying entry points
+
+The `getEntryPoints` methods allows to retrieve the entry points
+resulting from the analyses described in the previous section.
+
+### The `MFrontDatabase::Query` data structure
+
+- `type`: type of entry points.
+- `name_filter`: regular expression to filter the entry points by their
+  names.
+- `material_filter`: regular expression to filter entry points by their
+  material.
+- `interface_filter`: regular expression to filter entry points by their
+  interface.
+- `regular_expression_syntax`: this member selects the syntax used for
+  filters based on regular expression.
+
+### Description of the entry points
 
 The `MFrontDatabase::EntryPoint` structure contains:
 
@@ -46,3 +89,4 @@ The `MFrontDatabase::EntryPoint` structure contains:
 - the name of the entry point,
 - the library in which the entry point is defined.
 - the name of the source file used to generate the entry point.
+

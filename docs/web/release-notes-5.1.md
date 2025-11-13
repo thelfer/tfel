@@ -67,17 +67,7 @@ associated with a behaviour, a material property or a point-wise model.
 > and load it in `MTest` or analyse it with 
 > `tfel::system::ExternalLibraryManager`
 
-### Entry points
-
-The `MFrontDatabase::EntryPoint` structure contains:
-
-- the type of material knowledge described (behaviour, material property
-  or point-wise model),
-- the name of the entry point,
-- the library in which the entry point is defined.
-- the name of the source file used to generate the entry point.
-
-### Example of usage
+See [this page](tfel-mfront-database.html) for details.
 
 ## Scripts to define environment variables for `TFEL` to work properly
 
@@ -314,6 +304,23 @@ via the [`tfel.material.homogenization`](tfel-python.html#the-tfel.material.homo
 module. It mirrors the functionalities available in the namespace
 `tfel::material::homogenization::elasticity`.
 
+### Module `mfront.database`
+
+The functionalities of the `TFELMFrontDatabase` library are exposed in a
+new `python` module named `mfront.database`.
+
+See [this page](mfront-python.html) for details
+
+#### Example of usage
+
+~~~~{.python}
+import mfront.database
+db = mfront.database.MFrontDatabase()
+r = db.analyseDirectory('/tmp/test-lib/')
+epts = db.getEntryPoints(interface = 'generic')
+for e in epts:
+    print(f"{e.library}: {e.name}")
+~~~~
 
 # New features in `MFront`
 

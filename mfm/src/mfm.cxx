@@ -183,10 +183,10 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
         }
         const auto r = this->analyseDirectory(e, {.ignore_errors = true});
         if (this->vlevel >= VERBOSE_DEBUG) {
-          if (!r.errors.empty()) {
+          if (!r.library_analysis_failures.empty()) {
             std::clog << "Error while treating directory'" << e << ":\n";
           }
-          for (const auto& error : r.errors) {
+          for (const auto& error : r.library_analysis_failures) {
             std::clog << "- " << error.library << ": "  //
                       << error.error_message << "'\n";
           }

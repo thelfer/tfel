@@ -64,7 +64,24 @@ namespace mfront {
                                         const std::string& d,
                                         const AnalyseDirectoryOptions& opts) {
     std::filesystem::path directory(d);
+    if (!std::filesystem::exists(d)) {
+      if (!opts.ignore_errors) {
+        tfel::raise(
+            "MFrontDatabase::analyseDirectory: "
+            "directory '" +
+            d + "' does not exist");
+      }
+      r.invalid_directories.push_back(d);
+      return;
+    }
     if (!std::filesystem::is_directory(directory)) {
+      if (!opts.ignore_errors) {
+        tfel::raise(
+            "MFrontDatabase::analyseDirectory: "
+            "'" +
+            d + "' is not a directory");
+      }
+      r.invalid_directories.push_back(d);
       return;
     }
     for (const auto& entry : std::filesystem::directory_iterator(directory)) {
@@ -105,7 +122,8 @@ namespace mfront {
           this->analyseLibrary(p.string());
         } catch (std::exception& error){
           if (opts.ignore_errors) {
-            r.errors.push_back({.library = l, .error_message = error.what()});
+            r.library_analysis_failures.push_back(
+                {.library = l, .error_message = error.what()});
           } else {
             throw;
           }
@@ -143,6 +161,31 @@ namespace mfront {
     return r;
   }  // end of analyseDirectories
 
+  MFrontDatabase::AnalyseDirectoryResults
+  MFrontDatabase::analyseDirectoriesListedInEnvironmentVariable(
+      const std::string& e) {
+    const auto opts = AnalyseDirectoryOptions{};
+    return this->analyseDirectoriesListedInEnvironmentVariable(e, opts);
+  }  // end of analyseDirectoriesListedInEnvironmentVariable
+
+  MFrontDatabase::AnalyseDirectoryResults
+  MFrontDatabase::analyseDirectoriesListedInEnvironmentVariable(
+      const std::string& e, const AnalyseDirectoryOptions& opts) {
+    auto r = AnalyseDirectoryResults{};
+    const char* const p = std::getenv(e.c_str());
+    if (p == nullptr) {
+      return r;
+    }
+#if defined _WIN32 || defined _WIN64
+    const auto directories = tfel::utilities::tokenize(p, ';');
+#else
+    const auto directories = tfel::utilities::tokenize(p, ':');
+#endif
+    return this->analyseDirectories(directories, opts);
+  }  // end of analyseDirectoriesListedInEnvironmentVariable
+
+  void MFrontDatabase::clear() { this->epts.clear(); }  // end of clear
+
   std::vector<MFrontDatabase::EntryPoint> MFrontDatabase::getEntryPoints(
       const Query& q) const {
     using Filter = std::function<bool(const EntryPoint&)>;
@@ -155,28 +198,27 @@ namespace mfront {
       });
     }
     if (q.interface_filter.has_value()) {
-      filters.push_back(
-          [&elm, &q, i = *(q.interface_filter)](const EntryPoint& e) noexcept {
-            auto r = std::regex{
-                i, q.regular_expression_syntax | std::regex_constants::icase};
-            return std::regex_match(elm.getInterface(e.library, e.name), r);
-          });
+      auto expr =
+          std::regex{*(q.interface_filter),
+                     q.regular_expression_syntax | std::regex_constants::icase};
+      filters.push_back([&elm, &q, r = expr](const EntryPoint& e) noexcept {
+        return std::regex_match(elm.getInterface(e.library, e.name), r);
+      });
     }
     if (q.material_filter.has_value()) {
-      filters.push_back(
-          [&elm, &q, m = *(q.material_filter)](const EntryPoint& e) noexcept {
-            auto r = std::regex{
-                m, q.regular_expression_syntax | std::regex_constants::icase};
-            return std::regex_match(elm.getMaterial(e.library, e.name), r);
-          });
+      auto expr =
+          std::regex{*(q.material_filter),
+                     q.regular_expression_syntax | std::regex_constants::icase};
+      filters.push_back([&elm, &q, r = expr](const EntryPoint& e) noexcept {
+        return std::regex_match(elm.getMaterial(e.library, e.name), r);
+      });
     }
     if (q.name_filter.has_value()) {
-      filters.push_back(
-          [&q, n = *(q.name_filter)](const EntryPoint& e) noexcept {
-            auto r = std::regex{
-                n, q.regular_expression_syntax | std::regex_constants::icase};
-            return std::regex_match(e.name, r);
-          });
+      auto expr = std::regex{*(q.name_filter), q.regular_expression_syntax |
+                                                   std::regex_constants::icase};
+      filters.push_back([&q, r = expr](const EntryPoint& e) noexcept {
+        return std::regex_match(e.name, r);
+      });
     }
     // applying filters
     auto r = this->epts;
