@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <functional>
+#include <filesystem>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Utilities/ArgumentParserBase.hxx"
@@ -166,21 +167,42 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
       tfel::raise_if(c, "mfm: " + m);
     };
     const auto& a = this->getCurrentCommandLineArgument();
-    //    const auto& l = static_cast<const std::string&>(a);
-    const auto& l = a.as_string();
-    if (l.empty()) {
+    const auto& e = a.as_string();
+    if (e.empty()) {
       return;
     }
-    throw_if(l[0] == '-', "unsupported option '" + l + "'");
-    if (vlevel >= VERBOSE_LEVEL1) {
-      std::clog << "Treating library '" << l << "'\n";
+    throw_if(e[0] == '-', "unsupported option '" + e + "'");
+    if (this->vlevel >= VERBOSE_LEVEL1) {
+      std::clog << "Treating library or directory '" << e << "'\n";
     }
     try {
-      this->analyseLibrary(l);
-    } catch (std::exception& e) {
-      if (vlevel >= VERBOSE_DEBUG) {
-        std::clog << "Error while treating library '" << l << ": " << e.what()
-                  << "'\n";
+      std::filesystem::path p(e);
+      if (std::filesystem::is_directory(p)) {
+        if (this->vlevel >= VERBOSE_LEVEL2) {
+          std::clog << "Treating directory '" << e << "'\n";
+        }
+        const auto r = this->analyseDirectory(e, {.ignore_errors = true});
+        if (this->vlevel >= VERBOSE_DEBUG) {
+          if (!r.errors.empty()) {
+            std::clog << "Error while treating directory'" << e << ":\n";
+          }
+          for (const auto& error : r.errors) {
+            std::clog << "- " << error.library << ": "  //
+                      << error.error_message << "'\n";
+          }
+        }
+      } else if (std::filesystem::is_regular_file(p)) {
+        if (this->vlevel >= VERBOSE_LEVEL2) {
+          std::clog << "Treating library '" << e << "'\n";
+        }
+        this->analyseLibrary(e);
+      } else {
+        tfel::raise("'" + e + "' is neither a regular file nor a directory");
+      }
+    } catch (std::exception& error) {
+      if (this->vlevel >= VERBOSE_DEBUG) {
+        std::clog << "Error while treating library or directory'" << e << ": "
+                  << error.what() << "'\n";
       }
     }
   }  // end of treatUnknownArgument

@@ -60,7 +60,8 @@ namespace mfront {
     }
   }  // end of analyseLibraries
 
-  void MFrontDatabase::analyseDirectory(const std::string& d,
+  void MFrontDatabase::analyseDirectory(AnalyseDirectoryResults& r,
+                                        const std::string& d,
                                         const AnalyseDirectoryOptions& opts) {
     std::filesystem::path directory(d);
     if (!std::filesystem::is_directory(directory)) {
@@ -96,20 +97,50 @@ namespace mfront {
         return ".so";
 #endif
       }();
-      const auto l = entry.path().string();
+      const auto p = entry.path();
+      const auto l = p.filename().string();
       if ((tfel::utilities::starts_with(l, prefix)) &&
           (tfel::utilities::ends_with(l, suffix))) {
-        this->analyseLibrary(l);
+        try {
+          this->analyseLibrary(p.string());
+        } catch (std::exception& error){
+          if (opts.ignore_errors) {
+            r.errors.push_back({.library = l, .error_message = error.what()});
+          } else {
+            throw;
+          }
+        }
       }
     }
   }  // end of analyseLibraries
 
-  void MFrontDatabase::analyseDirectories(
+  MFrontDatabase::AnalyseDirectoryResults MFrontDatabase::analyseDirectory(
+      const std::string& d) {
+    const auto opts = AnalyseDirectoryOptions{};
+    return this->analyseDirectory(d, opts);
+  }  // end of analyseDirectory
+
+  MFrontDatabase::AnalyseDirectoryResults MFrontDatabase::analyseDirectory(
+      const std::string& d, const AnalyseDirectoryOptions& opts) {
+    auto r = AnalyseDirectoryResults{};
+    this->analyseDirectory(r, d, opts);
+    return r;
+  }  // end of analyseDirectory
+
+  MFrontDatabase::AnalyseDirectoryResults MFrontDatabase::analyseDirectories(
+      const std::vector<std::string>& directories) {
+    const auto opts = AnalyseDirectoryOptions{};
+    return this->analyseDirectories(directories, opts);
+  }  // end of analyseDirectories
+
+  MFrontDatabase::AnalyseDirectoryResults MFrontDatabase::analyseDirectories(
       const std::vector<std::string>& directories,
       const AnalyseDirectoryOptions& opts) {
+    auto r = AnalyseDirectoryResults{};
     for (const auto& d : directories) {
       this->analyseDirectory(d, opts);
     }
+    return r;
   }  // end of analyseDirectories
 
   std::vector<MFrontDatabase::EntryPoint> MFrontDatabase::getEntryPoints(
@@ -141,7 +172,7 @@ namespace mfront {
     }
     if (q.name_filter.has_value()) {
       filters.push_back(
-          [&elm, &q, n = *(q.name_filter)](const EntryPoint& e) noexcept {
+          [&q, n = *(q.name_filter)](const EntryPoint& e) noexcept {
             auto r = std::regex{
                 n, q.regular_expression_syntax | std::regex_constants::icase};
             return std::regex_match(e.name, r);

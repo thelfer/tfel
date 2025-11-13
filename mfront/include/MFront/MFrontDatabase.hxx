@@ -43,33 +43,47 @@ namespace mfront{
     };  // end of EntryPoint
     //! \brief class 
     struct Query {
-      std::optional<EntryPoint::MaterialKnowledgeType> type;
-      std::optional<std::string> name_filter;
-      std::optional<std::string> material_filter;
-      std::optional<std::string> interface_filter;
+      std::optional<EntryPoint::MaterialKnowledgeType> type = {};
+      std::optional<std::string> name_filter = {};
+      std::optional<std::string> material_filter = {};
+      std::optional<std::string> interface_filter = {};
       //
       std::regex_constants::syntax_option_type regular_expression_syntax =
           std::regex_constants::ECMAScript;
     };
     struct AnalyseDirectoryOptions {
-      std::optional<std::string> library_prefix;
-      std::optional<std::string> library_suffix;
+      bool ignore_errors = false;
+      std::optional<std::string> library_prefix = {};
+      std::optional<std::string> library_suffix = {};
+    };
+    struct LibraryAnalysisFailureReport {
+      std::string library;
+      std::string error_message;
+    };
+    struct AnalyseDirectoryResults {
+      std::vector<LibraryAnalysisFailureReport> errors;
     };
     //
     void analyseLibrary(const std::string&);
     //
     void analyseLibraries(const std::vector<std::string>&);
     //
-    void analyseDirectory(const std::string&, const AnalyseDirectoryOptions&);
+    AnalyseDirectoryResults analyseDirectory(const std::string&);
+    AnalyseDirectoryResults analyseDirectory(const std::string&,
+                                             const AnalyseDirectoryOptions&);
     //
-    void analyseDirectories(const std::vector<std::string>&,
-                            const AnalyseDirectoryOptions&);
+    AnalyseDirectoryResults analyseDirectories(const std::vector<std::string>&);
+    AnalyseDirectoryResults analyseDirectories(const std::vector<std::string>&,
+                                               const AnalyseDirectoryOptions&);
     //
     std::vector<EntryPoint> getEntryPoints(const Query&) const;
     //
     const std::vector<EntryPoint>& getEntryPoints() const;
 
    private:
+    void analyseDirectory(AnalyseDirectoryResults&,
+                          const std::string&,
+                          const AnalyseDirectoryOptions&);
     //! \brief registred entry points
     std::vector<EntryPoint> epts;
   };
