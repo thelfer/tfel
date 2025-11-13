@@ -618,7 +618,7 @@ target_include_directories(TFELMFrontDatabase
    PRIVATE
    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 target_link_libraries(TFELMFrontDatabase 
-   PUBLIC tfel::TFELSystem)
+   PRIVATE tfel::TFELSystem tfel::TFELUtilities)
 if(enable-static)
   target_include_directories(TFELMFrontDatabase-static
     PUBLIC 
@@ -628,5 +628,5 @@ if(enable-static)
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
   # type of architecture
   target_link_libraries(TFELMFrontDatabase-static 
-    PUBLIC tfel::TFELSystem-static)
+    PRIVATE tfel::TFELSystem-static tfel::TFELUtilities-static)
 endif(enable-static)
