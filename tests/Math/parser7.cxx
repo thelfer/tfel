@@ -53,7 +53,7 @@ struct TestFunction final : public tfel::tests::Test {
     double x;
     for (x = this->xa; x <= this->xb; x += this->dx) {
       ev.setVariableValue("x", x);
-      if (abs(fct(x) - ev.getValue()) > e) {
+      if (std::abs(fct(x) - ev.getValue()) > e) {
         return false;
       }
     }

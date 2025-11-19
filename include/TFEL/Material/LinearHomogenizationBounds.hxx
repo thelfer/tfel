@@ -13,9 +13,10 @@
 #ifndef LIB_TFEL_MATERIAL_LINEARHOMOGENIZATIONBOUNDS_HXX
 #define LIB_TFEL_MATERIAL_LINEARHOMOGENIZATIONBOUNDS_HXX
 
+#include <span>
+#include "TFEL/Math/types.hxx"
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Material/IsotropicEshelbyTensor.hxx"
-#include <span>
 
 namespace tfel::material::homogenization::elasticity {
   /*!

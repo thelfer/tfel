@@ -47,32 +47,6 @@
 #define TFEL_MATERIAL_LAW_INLINE2 inline
 #endif /* LIB_TFEL_CONFIG_HXX */
 
-//! a usefull macro for defining levels of inlining. This is
-//  mainly used in the fe namespace.
-#ifndef TFEL_FE_INLINE
-#define TFEL_FE_INLINE inline
-#endif /* LIB_TFEL_CONFIG_HXX */
-
-#if (defined __GNUC__) && (!defined __INTEL_COMPILER)
-#if __GNUC__ >= 4
-#define TFEL_MAY_ALIAS_ATTRIBUTE __attribute__((__may_alias__))
-#else /* __GNUC__ >= 4 */
-#define TFEL_MAY_ALIAS_ATTRIBUTE
-#endif /* LIB_TFEL_CONFIG_HXX */
-#else  /* (defined __GNUC__) && (! defined __INTEL_COMPILER) */
-#define TFEL_MAY_ALIAS_ATTRIBUTE
-#endif /* LIB_TFEL_CONFIG_HXX */
-
-#if (defined __GNUC__) && (!defined __INTEL_COMPILER)
-#if __GNUC__ >= 4
-#define TFEL_UNUSED_ATTRIBUTE __attribute__((__unused__))
-#else /* __GNUC__ >= 4 */
-#define TFEL_UNUSED_ATTRIBUTE
-#endif /* LIB_TFEL_CONFIG_HXX */
-#else  /* (defined __GNUC__) && (! defined __INTEL_COMPILER) */
-#define TFEL_UNUSED_ATTRIBUTE
-#endif /* LIB_TFEL_CONFIG_HXX */
-
 /*!
  * \def TFEL_VISIBILITY_IMPORT
  *
