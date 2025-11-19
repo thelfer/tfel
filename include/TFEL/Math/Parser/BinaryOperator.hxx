@@ -92,7 +92,7 @@ namespace tfel::math::parser {
   };  // end of struct OpPower
 
   struct BinaryOperationBase {
-    TFEL_VISIBILITY_LOCAL [[noreturn]] static void
+    [[noreturn]] static void
     throwUnimplementedDifferentiateFunctionException();
   };  // end of struct BinaryOperationBase
 
