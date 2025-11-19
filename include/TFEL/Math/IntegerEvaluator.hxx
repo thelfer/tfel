@@ -96,38 +96,39 @@ namespace tfel::math {
     std::map<std::string, std::vector<int>::size_type> positions;
     std::shared_ptr<tfel::math::parser::IntegerExpr> expr;
     template <typename T>
-    static bool TFEL_VISIBILITY_LOCAL convert(const std::string&);
-    static bool TFEL_VISIBILITY_LOCAL isNumber(const std::string&);
-    std::vector<int>::size_type TFEL_VISIBILITY_LOCAL
-    registerVariable(const std::string&);
-    std::vector<int>::size_type TFEL_VISIBILITY_LOCAL
-    getVariablePosition(const std::string&) const;
-    std::vector<std::string> TFEL_VISIBILITY_LOCAL
-    analyseParameters(std::vector<std::string>::const_iterator&,
-                      const std::vector<std::string>::const_iterator);
-    std::vector<std::shared_ptr<IntegerEvaluator::TExpr>> TFEL_VISIBILITY_LOCAL
+    TFEL_VISIBILITY_LOCAL static bool convert(const std::string&);
+    TFEL_VISIBILITY_LOCAL static bool isNumber(const std::string&);
+    TFEL_VISIBILITY_LOCAL std::vector<int>::size_type registerVariable(
+        const std::string&);
+    TFEL_VISIBILITY_LOCAL std::vector<int>::size_type getVariablePosition(
+        const std::string&) const;
+    TFEL_VISIBILITY_LOCAL std::vector<std::string> analyseParameters(
+        std::vector<std::string>::const_iterator&,
+        const std::vector<std::string>::const_iterator);
+    TFEL_VISIBILITY_LOCAL std::vector<std::shared_ptr<IntegerEvaluator::TExpr>>
     analyseArguments(std::vector<std::string>::const_iterator&,
                      const std::vector<std::string>::const_iterator,
                      const bool);
-    std::vector<std::shared_ptr<IntegerEvaluator::TExpr>> TFEL_VISIBILITY_LOCAL
+    TFEL_VISIBILITY_LOCAL std::vector<std::shared_ptr<IntegerEvaluator::TExpr>>
     analyseArguments(const unsigned short,
                      std::vector<std::string>::const_iterator&,
                      const std::vector<std::string>::const_iterator,
                      const bool);
-    std::shared_ptr<IntegerEvaluator::TExpr> TFEL_VISIBILITY_LOCAL
-    treatGroup(std::vector<std::string>::const_iterator&,
+    TFEL_VISIBILITY_LOCAL std::shared_ptr<IntegerEvaluator::TExpr> treatGroup(
+        std::vector<std::string>::const_iterator&,
+        std::vector<std::string>::const_iterator,
+        const bool = false,
+        const std::string& = ")");
+    TFEL_VISIBILITY_LOCAL unsigned short countNumberOfArguments(
+        std::vector<std::string>::const_iterator,
+        const std::vector<std::string>::const_iterator);
+    TFEL_VISIBILITY_LOCAL void analyse(const std::string&, const bool = false);
+    TFEL_VISIBILITY_LOCAL
+        std::pair<bool, std::vector<std::string>::const_iterator>
+        search(std::vector<std::string>::const_iterator,
                std::vector<std::string>::const_iterator,
-               const bool = false,
-               const std::string& = ")");
-    unsigned short TFEL_VISIBILITY_LOCAL
-    countNumberOfArguments(std::vector<std::string>::const_iterator,
-                           const std::vector<std::string>::const_iterator);
-    void TFEL_VISIBILITY_LOCAL analyse(const std::string&, const bool = false);
-    std::pair<bool, std::vector<std::string>::const_iterator>
-        TFEL_VISIBILITY_LOCAL search(std::vector<std::string>::const_iterator,
-                                     std::vector<std::string>::const_iterator,
-                                     const std::string&,
-                                     const std::string&);
+               const std::string&,
+               const std::string&);
   };  // end of struct IntegerEvaluator
 
 }  // end of namespace tfel::math

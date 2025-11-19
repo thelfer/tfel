@@ -109,7 +109,7 @@ namespace mfront {
 
    private:
     //! \return the unique instance of the class
-    static TFEL_VISIBILITY_LOCAL SearchPathsHandler& getSearchPathsHandler();
+    TFEL_VISIBILITY_LOCAL static SearchPathsHandler& getSearchPathsHandler();
     /*!
      * \brief default constructor
      *
@@ -122,7 +122,8 @@ namespace mfront {
     SearchPathsHandler& operator=(const SearchPathsHandler&) = delete;
     SearchPathsHandler& operator=(SearchPathsHandler&&) = delete;
     //! \brief return the path to a madnex file
-    static std::string searchMadnexFile(const std::string&);
+    TFEL_VISIBILITY_LOCAL static std::string searchMadnexFile(
+        const std::string&);
     //! \brief list of search paths
     std::vector<Path> paths;
   };  // end of struct SearchPathsHandler

@@ -65,16 +65,11 @@ namespace tfel::glossary {
     //! \brief cast operator to string. Equivalent to getKey()
     operator const std::string&() const;
     //
-    friend TFELGLOSSARY_VISIBILITY_EXPORT bool operator<(const GlossaryEntry&,
-                                                         const GlossaryEntry&);
-    friend TFELGLOSSARY_VISIBILITY_EXPORT bool operator!=(const std::string&,
-                                                          const GlossaryEntry&);
-    friend TFELGLOSSARY_VISIBILITY_EXPORT bool operator!=(const GlossaryEntry&,
-                                                          const std::string&);
-    friend TFELGLOSSARY_VISIBILITY_EXPORT bool operator==(const std::string&,
-                                                          const GlossaryEntry&);
-    friend TFELGLOSSARY_VISIBILITY_EXPORT bool operator==(const GlossaryEntry&,
-                                                          const std::string&);
+    friend bool operator<(const GlossaryEntry&, const GlossaryEntry&);
+    friend bool operator!=(const std::string&, const GlossaryEntry&);
+    friend bool operator!=(const GlossaryEntry&, const std::string&);
+    friend bool operator==(const std::string&, const GlossaryEntry&);
+    friend bool operator==(const GlossaryEntry&, const std::string&);
     //! \brief destructor
     ~GlossaryEntry();
 

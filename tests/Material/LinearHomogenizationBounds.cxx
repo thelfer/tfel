@@ -21,6 +21,7 @@
 #include <typeinfo>
 #include "TFEL/Config/TFELTypes.hxx"
 #include "TFEL/Math/qt.hxx"
+#include "TFEL/Math/types.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include "TFEL/Material/StiffnessTensor.hxx"
 #ifndef _LIBCPP_VERSION

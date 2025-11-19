@@ -240,29 +240,30 @@ namespace tfel::math {
 
    private:
     template <typename T>
-    static bool TFEL_VISIBILITY_LOCAL convert(const std::string&);
-    static bool TFEL_VISIBILITY_LOCAL isNumber(const std::string&);
+    TFEL_VISIBILITY_LOCAL static bool convert(const std::string&);
+    TFEL_VISIBILITY_LOCAL static bool isNumber(const std::string&);
     //! \brief clear the object
     TFEL_VISIBILITY_LOCAL void clear();
-    void TFEL_VISIBILITY_LOCAL
-    treatDiff(std::vector<std::string>::const_iterator&,
-              const std::vector<std::string>::const_iterator,
-              Evaluator::TGroup* const,
-              const bool);
-    std::vector<double>::size_type TFEL_VISIBILITY_LOCAL
-    registerVariable(const std::string&);
-    std::shared_ptr<tfel::math::parser::ExternalFunctionManager>
-        TFEL_VISIBILITY_LOCAL getExternalFunctionManager();
-    std::vector<double>::size_type TFEL_VISIBILITY_LOCAL
-    getVariablePosition(const std::string&) const;
-    std::vector<std::string> TFEL_VISIBILITY_LOCAL
-    analyseParameters(std::vector<std::string>::const_iterator&,
-                      const std::vector<std::string>::const_iterator);
-    std::vector<std::shared_ptr<Evaluator::TExpr>> TFEL_VISIBILITY_LOCAL
+    TFEL_VISIBILITY_LOCAL void treatDiff(
+        std::vector<std::string>::const_iterator&,
+        const std::vector<std::string>::const_iterator,
+        Evaluator::TGroup* const,
+        const bool);
+    TFEL_VISIBILITY_LOCAL std::vector<double>::size_type registerVariable(
+        const std::string&);
+    TFEL_VISIBILITY_LOCAL
+        std::shared_ptr<tfel::math::parser::ExternalFunctionManager>
+        getExternalFunctionManager();
+    TFEL_VISIBILITY_LOCAL std::vector<double>::size_type getVariablePosition(
+        const std::string&) const;
+    TFEL_VISIBILITY_LOCAL std::vector<std::string> analyseParameters(
+        std::vector<std::string>::const_iterator&,
+        const std::vector<std::string>::const_iterator);
+    TFEL_VISIBILITY_LOCAL std::vector<std::shared_ptr<Evaluator::TExpr>>
     analyseArguments(std::vector<std::string>::const_iterator&,
                      const std::vector<std::string>::const_iterator,
                      const bool);
-    std::vector<std::shared_ptr<Evaluator::TExpr>> TFEL_VISIBILITY_LOCAL
+    TFEL_VISIBILITY_LOCAL std::vector<std::shared_ptr<Evaluator::TExpr>>
     analyseArguments(const unsigned short,
                      std::vector<std::string>::const_iterator&,
                      const std::vector<std::string>::const_iterator,
@@ -306,19 +307,20 @@ namespace tfel::math {
         const std::vector<std::string>::const_iterator,
         const std::string&,
         const bool);
-    std::pair<bool, std::vector<std::string>::const_iterator>
-        TFEL_VISIBILITY_LOCAL search(std::vector<std::string>::const_iterator,
-                                     std::vector<std::string>::const_iterator,
-                                     const std::string&,
-                                     const std::string&);
-    std::vector<std::string>::const_iterator TFEL_VISIBILITY_LOCAL
+    TFEL_VISIBILITY_LOCAL
+        std::pair<bool, std::vector<std::string>::const_iterator>
+        search(std::vector<std::string>::const_iterator,
+               std::vector<std::string>::const_iterator,
+               const std::string&,
+               const std::string&);
+    TFEL_VISIBILITY_LOCAL std::vector<std::string>::const_iterator
     searchComparisonOperator(const std::vector<std::string>::const_iterator,
                              const std::vector<std::string>::const_iterator);
-    std::shared_ptr<Evaluator::TLogicalExpr> TFEL_VISIBILITY_LOCAL
+    TFEL_VISIBILITY_LOCAL std::shared_ptr<Evaluator::TLogicalExpr>
     treatLogicalExpression(const std::vector<std::string>::const_iterator,
                            const std::vector<std::string>::const_iterator,
                            const bool);
-    std::shared_ptr<Evaluator::TLogicalExpr> TFEL_VISIBILITY_LOCAL
+    TFEL_VISIBILITY_LOCAL std::shared_ptr<Evaluator::TLogicalExpr>
     treatLogicalExpression2(const std::vector<std::string>::const_iterator,
                             const std::vector<std::string>::const_iterator,
                             const bool);
@@ -330,11 +332,11 @@ namespace tfel::math {
      * variable can be added dynamically.
      * \param[in] s: string delimiting the end of the subexpression
      */
-    std::shared_ptr<Evaluator::TExpr> TFEL_VISIBILITY_LOCAL
-    treatGroup2(std::vector<std::string>::const_iterator&,
-                std::vector<std::string>::const_iterator,
-                const bool = false,
-                const std::string& = ")");
+    TFEL_VISIBILITY_LOCAL std::shared_ptr<Evaluator::TExpr> treatGroup2(
+        std::vector<std::string>::const_iterator&,
+        std::vector<std::string>::const_iterator,
+        const bool = false,
+        const std::string& = ")");
 
     static ExternalFunctionRegister externalFunctionRegister
         TFEL_VISIBILITY_LOCAL;
