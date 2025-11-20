@@ -519,8 +519,6 @@ models are updated at beginning of the `updateAuxiliarySateVariables`
 method **before** any user defined code (see the
 `@UpdateAuxiliaryStateVariables` keyword).
 
-## Uniform syntax
-
 ## New command line arguments
 
 The following command line arguments are now supported:
