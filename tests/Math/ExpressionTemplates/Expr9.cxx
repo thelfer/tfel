@@ -41,7 +41,8 @@ struct Expr9Test final : public tfel::tests::TestCase {
         (T2toT2Traits<T2toT2Type<expr>::type>::dime == 2u));
     TFEL_TESTS_STATIC_ASSERT((T2toT2Traits<expr>::dime == 2u));
     using expr2 =
-        BinaryOperationHandler<tensor<1u, double>&, tensor<1u, double>, OpMult>;
+        BinaryOperationHandler<tensor<1u, double>&,
+                               tensor<1u, double>&, OpMult>;
     tensor<1u, double> t1;
     tensor<1u, double> t2;
     expr2 e(t1, t2);
