@@ -96,7 +96,7 @@
 #define TFEL_VISIBILITY_EXPORT __declspec(dllexport)
 #define TFEL_VISIBILITY_LOCAL
 #else /* defined _WIN32 || defined __CYGWIN__ */
-#if (defined __GNUC__) && (!defined __INTEL_COMPILER) && (!defined __NVCOMPILER)
+#if (defined __GNUC__) && (!defined __INTEL_COMPILER) && (!defined __NVCOMPILER) && (!defined __clang__)
 #if __GNUC__ >= 4
 #define TFEL_VISIBILITY_IMPORT [[gnu::visibility("default")]]
 #define TFEL_VISIBILITY_EXPORT [[gnu::visibility("default")]]
@@ -114,6 +114,16 @@
 #define TFEL_VISIBILITY_IMPORT __attribute__((visibility("default")))
 #define TFEL_VISIBILITY_EXPORT __attribute__((visibility("default")))
 #define TFEL_VISIBILITY_LOCAL __attribute__((visibility("hidden")))
+#elif defined __clang__
+#if __clang_major__ >= 18
+#define TFEL_VISIBILITY_IMPORT [[gnu::visibility("default")]]
+#define TFEL_VISIBILITY_EXPORT [[gnu::visibility("default")]]
+#define TFEL_VISIBILITY_LOCAL [[gnu::visibility("hidden")]]
+#else /* __clang_major__ >= 18 */
+#define TFEL_VISIBILITY_IMPORT __attribute__((visibility("default")))
+#define TFEL_VISIBILITY_EXPORT __attribute__((visibility("default")))
+#define TFEL_VISIBILITY_LOCAL __attribute__((visibility("hidden")))
+#endif /* __clang_major__ >= 18 */
 #else
 #define TFEL_VISIBILITY_IMPORT
 #define TFEL_VISIBILITY_EXPORT
