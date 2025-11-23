@@ -49,6 +49,12 @@ features:
   solvers for small sized problems described in Section
   @sec:tfel_math:non_linear_solvers.
 
+This features are described in this document. Other modules of the
+library are described in the following pages:
+
+- [data interpolation](tfel-math-data-interpolation.html),
+- [numerical integration](tfel-math-numerical-integration.html).
+
 # Mathematical objects {#sec:tfel_math:math_objects}
 
 The mathematical objects provided by the `TFEL/Math` library are based
@@ -626,7 +632,12 @@ const auto c = eval(a + b);
 
 ## Views {#sec:tfel_math:views}
 
-Views allows to map memory area to mathematical objets.
+Views allows to map memory area to mathematical objets. Two kind of view
+are available in `TFEL/Math`:
+
+- the `View` class which assumes a mapping from a contiguous memory,
+- the `CoalescedView` class which allows to give a pointer for each
+  component of the mapped mathematical object.
 
 > **Typical usage of views in `MFront`**
 >
@@ -743,6 +754,27 @@ The result of this operation is the matrix:
   0 & 0 & 0 \\
 \end{pmatrix}
 \]
+
+### Views of tensorial objects with coalescent memory access
+
+The `View` class allows to interpret a contiguous memory area as a
+tensorial object. Such views are not efficient on GPUs where coalescent
+memory access are preferable. The newly introduced `CoalescedView` class
+offers a solution to this issue.
+
+A coalesced view is initialized by an array of pointers to the
+components of the mapped object, as illustrated in the following
+snippet:
+
+~~~~{.cxx}
+int values[8] = {1, 10, 2, 20, 3, 30, 4, 40};
+std::array ptrs{&values[0], &values[2], &values[4], &values[6]};
+auto s1 = map<stensor<2u, int>>(ptrs);
+~~~~
+
+In this snippet, the components of the symmetric tensor `s1` are not
+stored continuously but each component is associated to an independent
+pointer.
 
 # Solvers for fixed size non-linear systems {#sec:tfel_math:non_linear_solvers}
 

@@ -250,8 +250,7 @@ namespace numodis {
 
     virtual ~Crystallo();
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
-        std::ostream& os, const Crystallo& crystallo);
+    friend std::ostream& operator<<(std::ostream&, const Crystallo&);
 
    protected:
     //! Name of the class

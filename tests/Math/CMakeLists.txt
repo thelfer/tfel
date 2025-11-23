@@ -1,4 +1,5 @@
 add_subdirectory(ExpressionTemplates)
+add_subdirectory(NumericalIntegration)
 add_subdirectory(RungeKutta)
 add_subdirectory(stensor)
 add_subdirectory(tensor)
@@ -60,6 +61,7 @@ endmacro(tests_math4)
 
 tests_math(IndexingPoliciesTest)
 tests_math(view)
+tests_math(coalesced_view)
 tests_math(power)
 tests_math(CubicRoots)
 tests_math(promote)

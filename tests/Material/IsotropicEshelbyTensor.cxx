@@ -332,11 +332,13 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       const auto Arot1 =
           computeAxisymmetricalEllipsoidLocalisationTensor<stress>(
               young, nu, young_i, nu_i, n_aa, static_cast<real>(20));
-      const auto Annnn = n_aa_n_aa * (Arot1 * n_aa_n_aa);
-      const auto Atttt = n_bb_n_bb * (Arot1 * n_bb_n_bb);
+      const auto Ana = Arot1 * n_aa_n_aa;
+      const auto Annnn = n_aa_n_aa * Ana;
+      const auto Anb = Arot1 * n_bb_n_bb;
+      const auto Atttt = n_bb_n_bb * Anb;
       // const auto Attnn = n_bb_n_bb * (Arot1 * n_aa_n_aa);
       //   std::cout << Atttt(0) << Annnn(0) << Attnn(0) << std::endl;
-      TFEL_TESTS_ASSERT(Annnn(0) - 5 * Atttt(0) > 0);
+      TFEL_TESTS_ASSERT(Annnn(0) - 5 * Atttt(0) > real(0));
     }
 #endif /* _LIBCPP_VERSION */
   }
@@ -426,8 +428,10 @@ struct IsotropicEshelbyTensorTest final : public tfel::tests::TestCase {
 
       const auto Prot1 = computeAxisymmetricalHillPolarisationTensor<stress>(
           young, nu, n_aa, static_cast<real>(20));
-      const auto Pnnnn = n_aa_n_aa * (Prot1 * n_aa_n_aa);
-      const auto Ptttt = n_bb_n_bb * (Prot1 * n_bb_n_bb);
+      const auto Pna = Prot1 * n_aa_n_aa;
+      const auto Pnnnn = n_aa_n_aa * Pna;
+      const auto Pnb = Prot1 * n_bb_n_bb;
+      const auto Ptttt = n_bb_n_bb * Pnb;
       // const auto Pttnn = n_bb_n_bb * (Prot1 * n_aa_n_aa);
       // std::cout << Ptttt(0).getValue() << Pnnnn(0).getValue()
       //           << Pttnn(0).getValue() << std::endl;

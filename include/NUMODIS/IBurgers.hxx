@@ -128,19 +128,21 @@ namespace numodis {
 
     int& operator[](const size_type i) { return _index[i]; }
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend int Coincide(const IBurgers& b1,
-                                                      const IBurgers& b2);
-
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
-        std::ostream&, const IBurgers&);
-
    protected:
     //! index of the burgers vector
     std::vector<int> _index;
+
+  private:
+    friend int Coincide(const IBurgers&, const IBurgers&);
+
+    friend std::ostream& operator<<(std::ostream&, const IBurgers&);
   };
 
   TFELNUMODIS_VISIBILITY_EXPORT
-  int Coincide(const IBurgers& b1, const IBurgers& b2);
+  int Coincide(const IBurgers&, const IBurgers&);
+
+  TFELNUMODIS_VISIBILITY_EXPORT std::ostream& operator<<(
+        std::ostream&, const IBurgers&);
 
 }  // end of namespace numodis
 

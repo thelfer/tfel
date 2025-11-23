@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 5.0.2 of the
  
 # Issues fixed
 
+## Issue 867: Compilation fails with intel 2022
+
+For more details, see <https://github.com/thelfer/tfel/issues/867>
+
 ## Issue 854: [tfel-math] tfel::math::fpclassify is not usable in constexpr's context
 
 For more details, see <https://github.com/thelfer/tfel/issues/854>

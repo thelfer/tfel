@@ -26,12 +26,12 @@ namespace tfel::math::parser {
      * \param[in] a: lhs
      * \param[in] b: rhs
      */
-    static double TFEL_VISIBILITY_LOCAL apply(const double, const double);
+    TFEL_VISIBILITY_LOCAL static double apply(const double, const double);
     /*!
      * \param[in] a: lhs
      * \param[in] b: rhs
      */
-    static std::string TFEL_VISIBILITY_LOCAL getCxxFormula(const std::string&,
+    TFEL_VISIBILITY_LOCAL static std::string getCxxFormula(const std::string&,
                                                            const std::string&);
   };  // end of struct OpPlus
 
@@ -40,12 +40,12 @@ namespace tfel::math::parser {
      * \param[in] a: lhs
      * \param[in] b: rhs
      */
-    static double TFEL_VISIBILITY_LOCAL apply(const double, const double);
+    TFEL_VISIBILITY_LOCAL static double apply(const double, const double);
     /*!
      * \param[in] a: lhs
      * \param[in] b: rhs
      */
-    static std::string TFEL_VISIBILITY_LOCAL getCxxFormula(const std::string&,
+    TFEL_VISIBILITY_LOCAL static std::string getCxxFormula(const std::string&,
                                                            const std::string&);
   };  // end of struct OpMinus
 
@@ -54,12 +54,12 @@ namespace tfel::math::parser {
      * \param[in] a: lhs
      * \param[in] b: rhs
      */
-    static double TFEL_VISIBILITY_LOCAL apply(const double, const double);
+    TFEL_VISIBILITY_LOCAL static double apply(const double, const double);
     /*!
      * \param[in] a: lhs
      * \param[in] b: rhs
      */
-    static std::string TFEL_VISIBILITY_LOCAL getCxxFormula(const std::string&,
+    TFEL_VISIBILITY_LOCAL static std::string getCxxFormula(const std::string&,
                                                            const std::string&);
   };  // end of struct OpMult
 
@@ -68,12 +68,12 @@ namespace tfel::math::parser {
      * \param[in] a: lhs
      * \param[in] b: rhs
      */
-    static double TFEL_VISIBILITY_LOCAL apply(const double, const double);
+    TFEL_VISIBILITY_LOCAL static double apply(const double, const double);
     /*!
      * \param[in] a: lhs
      * \param[in] b: rhs
      */
-    static std::string TFEL_VISIBILITY_LOCAL getCxxFormula(const std::string&,
+    TFEL_VISIBILITY_LOCAL static std::string getCxxFormula(const std::string&,
                                                            const std::string&);
   };  // end of struct OpDiv
 
@@ -82,17 +82,17 @@ namespace tfel::math::parser {
      * \param[in] a: lhs
      * \param[in] b: rhs
      */
-    static double TFEL_VISIBILITY_LOCAL apply(const double, const double);
+    TFEL_VISIBILITY_LOCAL static double apply(const double, const double);
     /*!
      * \param[in] a: lhs
      * \param[in] b: rhs
      */
-    static std::string TFEL_VISIBILITY_LOCAL getCxxFormula(const std::string&,
+    TFEL_VISIBILITY_LOCAL static std::string getCxxFormula(const std::string&,
                                                            const std::string&);
   };  // end of struct OpPower
 
   struct BinaryOperationBase {
-    [[noreturn]] static void TFEL_VISIBILITY_LOCAL
+    [[noreturn]] static void
     throwUnimplementedDifferentiateFunctionException();
   };  // end of struct BinaryOperationBase
 

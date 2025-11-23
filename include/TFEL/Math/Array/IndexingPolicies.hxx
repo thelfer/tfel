@@ -150,6 +150,14 @@ namespace tfel::math {
   template <typename T>
   TFEL_HOST_DEVICE constexpr bool hasIndexingPolicy();
 
+  //! \brief total size of a fixed size policy
+  template <typename IndexingPolicyType>
+  requires(IndexingPolicyType::
+               hasFixedSizes) inline constexpr auto indexing_policy_size = [] {
+    IndexingPolicyType p;
+    return p.size();
+  }();
+
 }  // end of namespace tfel::math
 
 #include "TFEL/Math/Array/IndexingPolicies.ixx"
