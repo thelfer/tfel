@@ -158,7 +158,7 @@ namespace ansys {
         using TangentOperatorType =
             typename AnsysTangentOperatorType<AnsysTraits<Behaviour>::btype,
                                               real, 2u>::type;
-        constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
+        constexpr const auto two = tfel::math::Cste<real>::sqrt2;
         constexpr const auto cste = real{2};
         auto Dt =
             static_cast<const TangentOperatorType&>(bv.getTangentOperator());
@@ -179,7 +179,7 @@ namespace ansys {
         using TangentOperatorType =
             typename AnsysTangentOperatorType<AnsysTraits<Behaviour>::btype,
                                               real, 2u>::type;
-        constexpr const auto cste = real{2};
+        constexpr const auto two = real{2};
         constexpr auto cste = tfel::math::Cste<real>::sqrt2;
         auto Dt =
             static_cast<const TangentOperatorType&>(bv.getTangentOperator());
