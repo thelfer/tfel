@@ -287,24 +287,53 @@ namespace mfront {
         << "*dt,eto,deto,\n"
         << "props,*T,*dT,\n"
         << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(),\n"
-        << "dianafea::DianaFEAStandardSmallStrainStressFreeExpansionHandler};\n"
-        << "if(*ntens==4){\n"
-        << "if(dianafea::DianaFEAInterface<\n"
-        << "tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,\n"
-        << "tfel::material::" << bd.getClassName() << ">::exe(d)!=0){\n"
-        << "std::cerr << \"" << bd.getClassName()
-        << ": integration failure\\n\";\n"
-        << "std::exit(-1);\n"
-        << "}\n"
-        << "} else {\n"
-        << "if(dianafea::DianaFEAInterface<\n"
-        << "tfel::material::ModellingHypothesis::TRIDIMENSIONAL,\n"
-        << "tfel::material::" << bd.getClassName() << ">::exe(d)!=0){\n"
-        << "std::cerr << \"" << bd.getClassName()
-        << ": integration failure\\n\";\n"
-        << "std::exit(-1);\n"
-        << "}\n"
-        << "}\n"
+        << "dianafea::DianaFEAStandardSmallStrainStressFreeExpansionHandler};\n";
+    // plane stress support
+    out << "if(*ntens==3){\n";
+    if (hypotheses.contains(ModellingHypothesis::PLANESTRESS)) {
+      out << "if(dianafea::DianaFEAInterface<\n"
+          << "tfel::material::ModellingHypothesis::PLANESTRESS,\n"
+          << "tfel::material::" << bd.getClassName() << ">::exe(d)!=0){\n"
+          << "std::cerr << \"" << bd.getClassName()
+          << ": integration failure\\n\";\n"
+          << "std::exit(-1);\n"
+          << "}\n";
+    } else {
+      out << "std::cerr << \"" << bd.getClassName()
+          << ": plane stress hypothesis is not supported\\n\";\n"
+          << "std::exit(-1);\n";
+    }
+    // plane strain support
+    out << "} else if(*ntens==4){\n";
+    if (hypotheses.contains(ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
+      out << "if(dianafea::DianaFEAInterface<\n"
+          << "tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,\n"
+          << "tfel::material::" << bd.getClassName() << ">::exe(d)!=0){\n"
+          << "std::cerr << \"" << bd.getClassName()
+          << ": integration failure\\n\";\n"
+          << "std::exit(-1);\n"
+          << "}\n";
+    } else {
+      out << "std::cerr << \"" << bd.getClassName()
+          << ": plane strain hypothesis is not supported\\n\";\n"
+          << "std::exit(-1);\n";
+    }
+    // tridimensional support
+    out << "} else {\n";
+    if (hypotheses.contains(ModellingHypothesis::TRIDIMENSIONAL)) {
+      out << "if(dianafea::DianaFEAInterface<\n"
+          << "tfel::material::ModellingHypothesis::TRIDIMENSIONAL,\n"
+          << "tfel::material::" << bd.getClassName() << ">::exe(d)!=0){\n"
+          << "std::cerr << \"" << bd.getClassName()
+          << ": integration failure\\n\";\n"
+          << "std::exit(-1);\n"
+          << "}\n";
+    } else {
+      out << "std::cerr << \"" << bd.getClassName()
+          << ": tridimensional hypothesis is not supported\\n\";\n"
+          << "std::exit(-1);\n";
+    }
+    out << "}\n"
         << "} // end of " << this->getFunctionNameBasis(name) << "\n\n"
         << "} // end of extern \"C\"\n";
     out.close();
