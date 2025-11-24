@@ -50,8 +50,8 @@ namespace tfel::math::parser {
     ~DifferentiatedFunctionExpr() override;
 
    private:
-    std::shared_ptr<ExternalFunction> TFEL_VISIBILITY_LOCAL
-    getDerivative() const;
+    TFEL_VISIBILITY_LOCAL std::shared_ptr<ExternalFunction> getDerivative()
+        const;
     mutable std::shared_ptr<ExternalFunction> f;
     std::vector<std::shared_ptr<Expr>> args;
     std::vector<std::vector<double>::size_type> pvar;

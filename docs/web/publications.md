@@ -13,9 +13,12 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
-    @vedrine_revisiting_2025
+    @hure_homogenized_2026
     @tandogan_multi-physics_2026
     @fontana_hyperelastic_2026
+    @elbez_crystal_2025
+    @bourceret_interaction_2025
+    @vedrine_revisiting_2025
     @vedrine_sensitivity_2025
     @bilke_reproducible_2025
     @sleiman_tube2fem_2025
@@ -31,6 +34,7 @@ nocite: |
     @pierre_modelling_2025
     @scherer_grain-size_2025
     @liu_mesostructural_2025
+    @bez_impact_2024
     @quintin_uncertainty_2024
     @rapanakis_cross-anisotropic_2024
     @nagel_hierarchical_2024
@@ -79,6 +83,7 @@ nocite: |
     @zhang_modeling_2023
     @siedel_approche_2023
     @soleilhet_numerical_2023
+    @bouizem_application_2022
     @beccantini_europlexus_2022
     @helfer_mfem-mgis-mfront_2022
     @onimus_polycrystalline_2022

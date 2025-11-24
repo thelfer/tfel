@@ -14,72 +14,69 @@
 #define LIB_TFEL_MATERIAL_LINEARHOMOGENIZATIONBOUNDS_IXX
 
 #include <cmath>
-#include "TFEL/FSAlgorithm/max_element.hxx"
+#include <algorithm>
+#include <span>
 
 namespace tfel::material::homogenization::elasticity {
 
-  template <unsigned short int d,
-            unsigned int N,
-            tfel::math::ScalarConcept StressType>
+  template <unsigned short int d, tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>()) TFEL_HOST_DEVICE
       const tfel::math::st2tost2<d, StressType> computeVoigtStiffness(
-          const std::array<types::real<StressType>, N> &tab_f,
-          const std::array<tfel::math::st2tost2<d, StressType>, N> &tab_C) {
+          const std::span<types::real<StressType>> &tab_f,
+          const std::span<tfel::math::st2tost2<d, StressType>> &tab_C) {
     tfel::math::st2tost2<d, StressType> C_V = tab_f[0] * tab_C[0];
-    for (std::size_t i = 1; i < N; i++) {
+    for (std::size_t i = 1; i < tab_f.size(); i++) {
       C_V += tab_f[i] * tab_C[i];
     }
     return C_V;
   }
 
-  template <unsigned short int d,
-            unsigned int N,
-            tfel::math::ScalarConcept StressType>
+  template <unsigned short int d, tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>()) TFEL_HOST_DEVICE
       const tfel::math::st2tost2<d, StressType> computeReussStiffness(
-          const std::array<types::real<StressType>, N> &tab_f,
-          const std::array<tfel::math::st2tost2<d, StressType>, N> &tab_C) {
+          const std::span<types::real<StressType>> &tab_f,
+          const std::span<tfel::math::st2tost2<d, StressType>> &tab_C) {
     tfel::math::st2tost2<d, types::compliance<StressType>> S_R =
         tab_f[0] * invert(tab_C[0]);
-    for (std::size_t i = 1; i < N; i++) {
+    for (std::size_t i = 1; i < tab_f.size(); i++) {
       S_R += tab_f[i] * invert(tab_C[i]);
     }
     return invert(S_R);
   }
 
-  template <unsigned short int d,
-            unsigned int N,
-            tfel::math::ScalarConcept StressType>
+  template <unsigned short int d, tfel::math::ScalarConcept StressType>
   requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                               StressType>())
-      TFEL_HOST_DEVICE const std::pair<KGModuli<StressType>,KGModuli<StressType>> computeIsotropicHashinShtrikmanBounds(const std::
-                                                                     array<
-                                                                         types::real<
-                                                                             StressType>,
-                                                                         N>
+      TFEL_HOST_DEVICE const std::pair<
+          std::pair<StressType, StressType>,
+          std::pair<
+              StressType,
+              StressType>> computeIsotropicHashinShtrikmanBounds(const std::
+                                                                     span<types::real<
+                                                                         StressType>>
                                                                          &tab_f,
-                                                                 const std::array<
-                                                                     StressType,
-                                                                     N> &tab_K,
-                                                                 const std::array<
-                                                                     StressType,
-                                                                     N>
+                                                                 const std::span<
+                                                                     StressType>
+                                                                     &tab_K,
+                                                                 const std::span<
+                                                                     StressType>
                                                                      &tab_mu) {
     using real = types::real<StressType>;
-    std::array<StressType, N> tab_H;
+    const auto N = tab_f.size();
+
+    std::vector<StressType> tab_H;
     for (std::size_t i = 0; i < N; i++) {
-      tab_H[i] =
+      tab_H.push_back(
           tab_mu[i] *
           (real(d) * tab_K[i] / 2 + (d + 1) * (d - 2) * tab_mu[i] / real(d)) /
-          (tab_K[i] + 2 * tab_mu[i]);
+          (tab_K[i] + 2 * tab_mu[i]));
     }
-    using namespace tfel::fsalgo;
-    auto mu_max = *max_element<N>::exe(tab_mu.begin());
-    auto mu_min = *min_element<N>::exe(tab_mu.begin());
-    auto H_max = *max_element<N>::exe(tab_H.begin());
-    auto H_min = *min_element<N>::exe(tab_H.begin());
+    auto mu_max = *std::max_element(tab_mu.begin(), tab_mu.end());
+    auto mu_min = *std::min_element(tab_mu.begin(), tab_mu.end());
+    auto H_max = *std::max_element(tab_H.begin(), tab_H.end());
+    auto H_min = *std::min_element(tab_H.begin(), tab_H.end());
     auto K_star_min = 2 * (d - 1) / real(d) * mu_min;
     auto K_star_max = 2 * (d - 1) / real(d) * mu_max;
     auto mu_star_min = H_min;
@@ -103,8 +100,8 @@ namespace tfel::material::homogenization::elasticity {
     mue_L = 1 / Ne_L - mu_star_min;
     Ke_U = 1 / Ce_U - K_star_max;
     mue_U = 1 / Ne_U - mu_star_max;
-    const auto KG_L = KGModuli<StressType>(Ke_L,mue_L);
-    const auto KG_U = KGModuli<StressType>(Ke_U,mue_U);
+    const std::pair<StressType, StressType> KG_L = {Ke_L, mue_L};
+    const std::pair<StressType, StressType> KG_U = {Ke_U, mue_U};
     return {KG_L, KG_U};
   }
 

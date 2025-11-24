@@ -1,0 +1,1 @@
+from ._mfront_database_@TFEL_SUFFIX_FOR_PYTHON_MODULES@ import *

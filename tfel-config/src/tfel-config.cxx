@@ -120,6 +120,7 @@ static bool numodis = false;
 static bool material = false;
 static bool tests = false;
 static bool mfront = false;
+static bool mfrontDatabase = false;
 static bool mfrontLogStream = false;
 static bool mfrontProfiling = false;
 static bool mtest = false;
@@ -321,6 +322,7 @@ static void listLibraries(const char* p) {
   };
   display_if(config, "TFELConfig");
   display_if(mfront, "TFELMFront");
+  display_if(mfrontDatabase, "TFELMFrontDatabase");
   display_if(mfrontLogStream, "MFrontLogStream");
   display_if(mfrontProfiling, "MFrontProfiling");
   display_if(mtest, "TFELMTest");
@@ -470,6 +472,13 @@ int main(const int argc, const char* const* const argv) {
           mfront = true;
         },
         "request flags for TFELMFront.");
+    registerCallBack(
+        "--mfront-database",
+        [] {
+          lsystem = true;
+          mfrontDatabase = true;
+        },
+        "request flags for MFrontDatabase.");
     registerCallBack(
         "--mfront-log-stream", [] { mfrontLogStream = true; },
         "request flags for MFrontLogStream.");

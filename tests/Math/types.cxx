@@ -12,8 +12,8 @@ template <bool qt>
 void test() {
   using namespace tfel::math;
   using Types = tfel::config::Types<3, float, qt>;
-  using stress = Types::stress;
-  using StressStensor = Types::StressStensor;
+  using stress = typename Types::stress;
+  using StressStensor = typename Types::StressStensor;
   static_assert(std::same_as<typename TypeRebind<StressStensor>::time,
                              typename Types::time>);
   static_assert(std::same_as<typename ScalarTypeRebind<stress>::time,

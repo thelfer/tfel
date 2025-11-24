@@ -46,19 +46,19 @@ namespace tfel::material::homogenization::elasticity {
       st2tost2<2u, types::real<StressType>> computeDiskPlaneStrainLocalisationTensor(
           const IsotropicModuli<StressType>& IM_0,
           const tfel::math::st2tost2<2u, StressType>& C_i) {
-          using real=tfel::types::real<StressType>;
-	const auto P0 = computeDiskPlaneStrainHillTensor<StressType>(IM_0);
-	const auto Enu0 = IM_0.ToYoungNu();
-        const auto young = Enu0.young;
-        const auto nu = Enu0.nu;
-	if ((nu > real(0.5)) || (nu < real(-1))) {
-	tfel::reportContractViolation("nu>0.5 or nu<-1");
-	}
-	tfel::math::st2tost2<2u, StressType> C_0;
-	static constexpr auto value =
-	  StiffnessTensorAlterationCharacteristic::UNALTERED;
-	computeIsotropicStiffnessTensorII<2u, value, StressType, real>(C_0, young,
-		                                                    nu);
+    using real = tfel::types::real<StressType>;
+    const auto P0 = computeDiskPlaneStrainHillTensor<StressType>(IM_0);
+    const auto Enu0 = IM_0.ToYoungNu();
+    const auto young = Enu0.young;
+    const auto nu = Enu0.nu;
+    if ((nu > real(0.5)) || (nu < real(-1))) {
+      tfel::reportContractViolation("nu>0.5 or nu<-1");
+    }
+    tfel::math::st2tost2<2u, StressType> C_0;
+    static constexpr auto value =
+        StiffnessTensorAlterationCharacteristic::UNALTERED;
+    computeIsotropicStiffnessTensorII<2u, value, StressType, real>(C_0, young,
+                                                                   nu);
     return internals::computeLocalisationTensorBase<2u, StressType>(C_0, P0,
                                                                     C_i);
   }  // end of computeDiskPlaneStrainLocalisationTensor
@@ -73,19 +73,19 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::tvector<2u, types::real<StressType>>& n_a,
           const types::length<StressType>& a,
           const types::length<StressType>& b) {
-          using real=tfel::types::real<StressType>;
-	const auto P0 = computePlaneStrainHillTensor<StressType>(IM_0, n_a, a, b);
-	const auto Enu0 = IM_0.ToYoungNu();
-        const auto young = Enu0.young;
-        const auto nu = Enu0.nu;
-	if ((nu > real(0.5)) || (nu < real(-1))) {
-	tfel::reportContractViolation("nu>0.5 or nu<-1");
-	}
-	tfel::math::st2tost2<2u, StressType> C_0;
-	static constexpr auto value =
-	  StiffnessTensorAlterationCharacteristic::UNALTERED;
-	computeIsotropicStiffnessTensorII<2u, value, StressType, real>(C_0, young,
-		                                                    nu);
+    using real = tfel::types::real<StressType>;
+    const auto P0 = computePlaneStrainHillTensor<StressType>(IM_0, n_a, a, b);
+    const auto Enu0 = IM_0.ToYoungNu();
+    const auto young = Enu0.young;
+    const auto nu = Enu0.nu;
+    if ((nu > real(0.5)) || (nu < real(-1))) {
+      tfel::reportContractViolation("nu>0.5 or nu<-1");
+    }
+    tfel::math::st2tost2<2u, StressType> C_0;
+    static constexpr auto value =
+        StiffnessTensorAlterationCharacteristic::UNALTERED;
+    computeIsotropicStiffnessTensorII<2u, value, StressType, real>(C_0, young,
+                                                                   nu);
     return internals::computeLocalisationTensorBase<2u, StressType>(C_0, P0,
                                                                     C_i);
   }  // end of computePlaneStrainLocalisationTensor
@@ -120,16 +120,16 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>())
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>>
-  computeSphereLocalisationTensor(const IsotropicModuli<StressType>& IM0,
-                                  const IsotropicModuli<StressType>& IM_i) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE tfel::math::
+          st2tost2<3u, types::real<StressType>> computeSphereLocalisationTensor(
+              const IsotropicModuli<StressType>& IM0,
+              const IsotropicModuli<StressType>& IM_i) {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
-    return computeSphereLocalisationTensor<StressType>(
-        Enu0.young, Enu0.nu, Enui.young, Enui.nu);
+    return computeSphereLocalisationTensor<StressType>(Enu0.young, Enu0.nu,
+                                                       Enui.young, Enui.nu);
   }  // end of function SphereLocalisationTensor
 
   template <tfel::math::ScalarConcept StressType>

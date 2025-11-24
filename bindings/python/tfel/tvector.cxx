@@ -13,6 +13,7 @@
 
 #include <sstream>
 #include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
 #include <pybind11/stl.h>
 #include <pybind11/operators.h>
 #include "TFEL/Raise.hxx"
@@ -36,7 +37,18 @@ static void declaretvector(pybind11::module_& m, const char* const n) {
             {sizeof(double)});
       })
       .def(pybind11::init<>())
-      .def(pybind11::init<double>())
+      .def(pybind11::init<>(
+          [](pybind11::array_t<double, pybind11::array::c_style |
+                                           pybind11::array::forcecast>& u) {
+            if (u.size() != N) {
+              tfel::raise<std::range_error>("invalid size of TVector");
+            }
+            tvector t;
+            for (std::size_t i = 0; i < N; i++) {
+              t(i) = u.unchecked<1>()(i);
+            }
+            return t;
+          }))
       .def("__len__", [](const tvector& v) { return v.size(); })
       .def("__repr__",
            [](const tvector& v) {

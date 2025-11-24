@@ -57,16 +57,16 @@ namespace tfel::math {
   struct IntegerEvaluator::TBinaryOperation final
       : public IntegerEvaluator::TExpr {
     struct IntegerOpPlus {
-      static int TFEL_VISIBILITY_LOCAL apply(const int, const int);
+      TFEL_VISIBILITY_LOCAL static int apply(const int, const int);
     };  // end of struct IntegerOpPlus
     struct IntegerOpMinus {
-      static int TFEL_VISIBILITY_LOCAL apply(const int, const int);
+      TFEL_VISIBILITY_LOCAL static int apply(const int, const int);
     };  // end of struct IntegerOpMinus
     struct IntegerOpMult {
-      static int TFEL_VISIBILITY_LOCAL apply(const int, const int);
+      TFEL_VISIBILITY_LOCAL static int apply(const int, const int);
     };  // end of struct IntegerOpMult
     struct IntegerOpDiv {
-      static int TFEL_VISIBILITY_LOCAL apply(const int, const int);
+      TFEL_VISIBILITY_LOCAL static int apply(const int, const int);
     };  // end of struct IntegerOpDiv
     /*!
      * Expression generated

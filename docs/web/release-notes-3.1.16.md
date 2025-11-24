@@ -25,3 +25,7 @@ The page describes the new functionalities of Version 3.1.16 of the
 ## Issue 827: [mfront] `@StrainMeasure` shall not be allowed after the first code block
 
 For more details, see <https://github.com/thelfer/tfel/issues/827>.
+
+## Issue 784: [ansys] Plane stress support is broken
+
+For more details, see <https://github.com/thelfer/tfel/issues/784>.
