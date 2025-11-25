@@ -14,7 +14,7 @@
 #include <cmath>
 #include <cstdlib>
 #include "TFEL/Math/ST2toST2/ST2toST2View.hxx"
-#include "TFEL/Math/ST2toST2/ConstST2toST2View.hxx"
+#include "TFEL/Math/ST2toST2/UmatNormaliseTangentOperator.hxx"
 #include "MTest/AnsysNormaliseTangentOperator.hxx"
 
 namespace mtest {
@@ -22,60 +22,28 @@ namespace mtest {
   void AnsysNormaliseTangentOperator::exe(real* const Kt,
                                           const tfel::math::matrix<real>& D,
                                           const unsigned short d) {
-    using namespace tfel::math;
     if (d == 1u) {
-      ST2toST2View<1u, real> k(Kt);
-      ConstST2toST2View<1u, real> m(&D(0, 0));
-      // transpose
-      for (unsigned short i = 0; i != 3u; ++i) {
-        for (unsigned short j = 0; j != 3u; ++j) {
-          k(i, j) = m(i, j);
-        }
-      }
+      tfel::math::UmatNormaliseTangentOperatorBase<1u, real>::exe(Kt, &D(0, 0));
     } else if (d == 2u) {
-      constexpr const auto icste = Cste<real>::isqrt2;
-      ST2toST2View<2u, real> k(Kt);
-      ConstST2toST2View<2u, real> m(&D(0, 0));
-      // transpose
-      for (unsigned short i = 0; i != 4u; ++i) {
-        for (unsigned short j = 0; j != 4u; ++j) {
-          k(i, j) = m(j, i);
-        }
-      }
-      k(0, 3) *= icste;
-      k(1, 3) *= icste;
-      k(2, 3) *= icste;
-      k(3, 0) *= icste;
-      k(3, 1) *= icste;
-      k(3, 2) *= icste;
+      tfel::math::UmatNormaliseTangentOperatorBase<2u, real>::exe(Kt, &D(0, 0));
     } else if (d == 3u) {
-      constexpr const auto icste = Cste<real>::isqrt2;
-      ST2toST2View<3u, real> k(Kt);
-      ConstST2toST2View<3u, real> m(&D(0, 0));
-      // transpose
-      for (unsigned short i = 0; i != 6u; ++i) {
-        for (unsigned short j = 0; j != 6u; ++j) {
-          k(i, j) = m(j, i);
-        }
-      }
-      k(0, 3) *= icste;
-      k(1, 3) *= icste;
-      k(2, 3) *= icste;
-      k(0, 4) *= icste;
-      k(1, 4) *= icste;
-      k(2, 4) *= icste;
-      k(0, 5) *= icste;
-      k(1, 5) *= icste;
-      k(2, 5) *= icste;
-      k(3, 0) *= icste;
-      k(3, 1) *= icste;
-      k(3, 2) *= icste;
-      k(4, 0) *= icste;
-      k(4, 1) *= icste;
-      k(4, 2) *= icste;
-      k(5, 0) *= icste;
-      k(5, 1) *= icste;
-      k(5, 2) *= icste;
+      tfel::math::UmatNormaliseTangentOperatorBase<3u, real>::exe(Kt, &D(0, 0));
+      // now changing to Voigt conventions: 23 <-> 13
+      // changing last columns
+      tfel::math::ST2toST2View<3u, real> K(Kt);
+      std::swap(K(0, 4), K(0, 5));
+      std::swap(K(1, 4), K(1, 5));
+      std::swap(K(2, 4), K(2, 5));
+      std::swap(K(3, 4), K(3, 5));
+      std::swap(K(4, 4), K(4, 5));
+      std::swap(K(5, 4), K(5, 5));
+      // changing last rows
+      std::swap(K(4, 0), K(5, 0));
+      std::swap(K(4, 1), K(5, 1));
+      std::swap(K(4, 2), K(5, 2));
+      std::swap(K(4, 3), K(5, 3));
+      std::swap(K(4, 4), K(5, 4));
+      std::swap(K(4, 5), K(5, 5));
     }
   }  // end of AnsysNormaliseTangentOperator::exe
 

@@ -63,9 +63,11 @@ namespace mtest {
              "consistent tangent operator");
     const AnsysInt nprops = s.mprops1.size();
     const AnsysInt ndirect = [&h, &throw_if] {
+      if (h == ModellingHypothesis::PLANESTRESS) {
+        return 2;
+      }
       if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
-          (h == ModellingHypothesis::PLANESTRAIN) ||
-          (h == ModellingHypothesis::PLANESTRESS)) {
+          (h == ModellingHypothesis::PLANESTRAIN)) {
         return 3;
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         return 3;
@@ -83,9 +85,11 @@ namespace mtest {
       throw_if(true, "unsupported hypothesis");
     }();
     const AnsysInt ntens = [&h, &throw_if] {
+      if (h == ModellingHypothesis::PLANESTRESS) {
+        return 3;
+      }
       if ((h == ModellingHypothesis::AXISYMMETRICAL) ||
-          (h == ModellingHypothesis::PLANESTRAIN) ||
-          (h == ModellingHypothesis::PLANESTRESS)) {
+          (h == ModellingHypothesis::PLANESTRAIN)) {
         return 4;
       } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
         return 6;
@@ -137,17 +141,25 @@ namespace mtest {
       ude(i) = s.e1(i) - s.e0(i);
     }
     // thermal strain
-    for (AnsysInt i = 0; i != static_cast<unsigned short>(ntens); ++i) {
+    for (AnsysInt i = 0; i != s.e_th0.size(); ++i) {
       ue0(i) -= s.e_th0(i);
       ude(i) -= s.e_th1(i) - s.e_th0(i);
     }
     // ansys standard convention
     for (AnsysInt i = 3; i != s.e1.size(); ++i) {
-      ue0(i) /= sqrt2;
-      ude(i) /= sqrt2;
+      ue0(i) *= sqrt2;
+      ude(i) *= sqrt2;
     }
-    for (AnsysInt i = 3; i != static_cast<unsigned short>(ntens); ++i) {
+    for (AnsysInt i = 3; i != us.size(); ++i) {
       us(i) /= sqrt2;
+    }
+    if (h == ModellingHypothesis::PLANESTRESS) {
+      std::swap(ue0[2], ue0[3]);
+      std::swap(ude[2], ude[3]);
+      std::swap(us[2], us[3]);
+      ue0[3] = 0;
+      ude[3] = 0;
+      us[3] = 0;
     }
     if (h == ModellingHypothesis::TRIDIMENSIONAL) {
       std::swap(ue0[4], ue0[5]);
@@ -185,21 +197,6 @@ namespace mtest {
     }
     // treating the consistent tangent operator
     if (h == ModellingHypothesis::TRIDIMENSIONAL) {
-      // Convertion from Voigt 23 <-> 13
-      // changing last columns
-      std::swap(wk.D(0, 4), wk.D(0, 5));
-      std::swap(wk.D(1, 4), wk.D(1, 5));
-      std::swap(wk.D(2, 4), wk.D(2, 5));
-      std::swap(wk.D(3, 4), wk.D(3, 5));
-      std::swap(wk.D(4, 4), wk.D(4, 5));
-      std::swap(wk.D(5, 4), wk.D(5, 5));
-      // changing last rows
-      std::swap(wk.D(4, 0), wk.D(5, 0));
-      std::swap(wk.D(4, 1), wk.D(5, 1));
-      std::swap(wk.D(4, 2), wk.D(5, 2));
-      std::swap(wk.D(4, 3), wk.D(5, 3));
-      std::swap(wk.D(4, 4), wk.D(5, 4));
-      std::swap(wk.D(4, 5), wk.D(5, 5));
       // normalizing
       AnsysNormaliseTangentOperator::exe(&Kt(0, 0), wk.D, 3u);
     } else if (h == ModellingHypothesis::AXISYMMETRICAL) {
@@ -245,8 +242,12 @@ namespace mtest {
       if (!s.iv0.empty()) {
         copy_n(wk.ivs.begin(), s.iv1.size(), s.iv1.begin());
       }
+      if (h == ModellingHypothesis::PLANESTRESS) {
+        us[3] = us[2];
+        us[2] = AnsysReal{0};
+      }
       // turning stresses in TFEL conventions
-      for (AnsysInt i = 3; i != static_cast<unsigned short>(ntens); ++i) {
+      for (AnsysInt i = 3; i != us.size(); ++i) {
         us[i] *= sqrt2;
       }
       if (h == ModellingHypothesis::TRIDIMENSIONAL) {

@@ -216,11 +216,11 @@ namespace ansys {
     template <typename T>
     static inline void exe(tfel::math::stensor<2u, T>& e,
                            const AnsysReal* const v) {
-      constexpr const auto cste = tfel::math::Cste<T>::sqrt2;
+      constexpr const auto icste = tfel::math::Cste<T>::isqrt2;
       e[0] = v[0];
       e[1] = v[1];
       e[2] = v[2];
-      e[3] = v[3] * cste;
+      e[3] = v[3] * icste;
     }  // end of exe
   };
   /*!
@@ -236,13 +236,13 @@ namespace ansys {
     template <typename T>
     static inline void exe(tfel::math::stensor<3u, T>& e,
                            const AnsysReal* const v) {
-      constexpr const auto cste = tfel::math::Cste<T>::sqrt2;
+      constexpr const auto icste = tfel::math::Cste<T>::isqrt2;
       e[0] = v[0];
       e[1] = v[1];
       e[2] = v[2];
-      e[3] = v[3] * cste;
-      e[4] = v[5] * cste;
-      e[5] = v[4] * cste;
+      e[3] = v[3] * icste;
+      e[4] = v[5] * icste;
+      e[5] = v[4] * icste;
     }  // end of exe
   };
   /*!
