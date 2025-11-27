@@ -189,6 +189,7 @@ namespace mfront {
     add("@AuxiliaryStateVar", &BehaviourDSLCommon::treatAuxiliaryStateVariable);
     add("@AuxiliaryStateVariable",
         &BehaviourDSLCommon::treatAuxiliaryStateVariable);
+    add("@AuxiliaryModel", &BehaviourDSLCommon::treatAuxiliaryModel);
     add("@ExternalStateVar", &BehaviourDSLCommon::treatExternalStateVariable);
     add("@ExternalStateVariable",
         &BehaviourDSLCommon::treatExternalStateVariable);
@@ -1115,56 +1116,13 @@ namespace mfront {
   }  // end of treatAdditionalTangentOperatorBlock
 
   void BehaviourDSLCommon::treatModel() {
-    if (getVerboseMode() >= VERBOSE_DEBUG) {
-      getLogStream() << "BehaviourDSLCommon::treatModel: begin\n";
-    }
-    this->checkNotEndOfFile("BehaviourDSLCommon::treatModel");
-    const auto lineNumber = this->current->line;
-    const auto f = SearchPathsHandler::search(
-        this->readString("BehaviourDSLCommon::treatModel"));
-    const auto adsl = MFrontBase::getDSL(f);
-    if (adsl->getTargetType() == AbstractDSL::MODELDSL) {
-      auto md = this->getModelDescription(f);
-      this->mb.addModelDescription(md);
-    } else {
-      auto md = this->getBehaviourDescription(f);
-      if (!md.isModel()) {
-        this->throwRuntimeError(
-            "BehaviourDSLCommon::treatModel",
-            "file path '" + f + "' does not describe a model");
-      }
-      const auto name = "mfront_external_model_" + md.getClassName();
-      auto d = BehaviourVariableDescription{
-          .file = f,
-          .symbolic_form = name,
-          .name = name,
-          .description =
-              [this] {
-                if (!this->currentComment.empty()) {
-                  return this->currentComment;
-                }
-                return std::string{};
-              }(),
-          .line_number = lineNumber,
-          .variables_prefix = "",
-          .variables_suffix = "",
-          .external_names_prefix = "",
-          .external_names_suffix = "",
-          .shared_material_properties = {std::regex{".+"}},
-          .shared_external_state_variables = {std::regex{".+"}},
-          .store_gradients = false,
-          .store_thermodynamic_forces = false,
-          .automatically_save_associated_auxiliary_state_variables = false,
-          .behaviour = std::move(md)};
-      const auto fname = getBehaviourVariableFactoryClassName(d);
-      this->reserveName(fname);
-      this->reserveName(fname + "_instance");
-      this->mb.addModelDescription(d);
-    }
-    if (getVerboseMode() >= VERBOSE_DEBUG) {
-      getLogStream() << "BehaviourDSLCommon::treatModel: end\n";
-    }
-    this->readSpecifiedToken("BehaviourDSLCommon::treatModel", ";");
+    const auto m1 =
+        static_cast<void (BehaviourDescription::*)(const ModelDescription&)>(
+            &BehaviourDescription::addModelDescription);
+    const auto m2 = static_cast<void (BehaviourDescription::*)(
+        const BehaviourVariableDescription&)>(
+        &BehaviourDescription::addModelDescription);
+    this->treatModel("BehaviourDSLCommon::treatModel", m1, m2);
   }  // end of treatModel
 
   void BehaviourDSLCommon::treatModel2() {
@@ -1181,7 +1139,7 @@ namespace mfront {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "BehaviourDSLCommon::treatModel2: end\n";
     }
-  }  // end of treatModel
+  }  // end of treatModel2
 
   void BehaviourDSLCommon::treatUnsupportedCodeBlockOptions(
       const CodeBlockOptions& o) {
@@ -2916,19 +2874,15 @@ namespace mfront {
   }  // end of treatBehaviour
 
   BehaviourVariableDescription
-  BehaviourDSLCommon::readBehaviourVariableDescription() {
+  BehaviourDSLCommon::readBehaviourVariableDescription(
+      const std::string& sname,
+      const tfel::utilities::Token::size_type lineNumber,
+      const std::optional<std::string>& fileName) {
     using namespace tfel::utilities;
-    const auto mname = "BehaviourVariableDSLCommon::treatBehaviourVariable";
-
-    this->checkNotEndOfFile("BehaviourDSLCommon::treatBehaviourVariable");
-    const auto lineNumber = this->current->line;
-    const auto sname = this->current->value;
+    const auto mname = "readBehaviourVariableDescription";
     const auto bname = tfel::unicode::getMangledString(sname);
-
-    if (!isValidUserDefinedVariableName(bname)) {
-      this->throwRuntimeError(mname, "invalid variable name '" + bname + "'");
-    }
-    ++(this->current);
+    //
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatBehaviourVariable");
     auto options = [this]() {
       if ((this->current != this->tokens.end()) &&
           (this->current->value == "{")) {
@@ -2940,7 +2894,6 @@ namespace mfront {
     //
     auto validator =
         DataMapValidator{}
-            .addDataTypeValidator<std::string>("file")
             .addDataTypeValidator<std::string>("variables_prefix")
             .addDataTypeValidator<std::string>("variables_suffix")
             .addDataTypeValidator<std::string>("external_names_prefix")
@@ -2953,6 +2906,9 @@ namespace mfront {
                 "shared_material_properties")
             .addDataTypeValidator<std::vector<Data>>(
                 "shared_external_state_variables");
+    if (!fileName.has_value()) {
+      validator.addDataTypeValidator<std::string>("file");
+    }
     validator.validate(options);
     //
     auto extract_regex_vector =
@@ -2980,7 +2936,12 @@ namespace mfront {
       }
       return r;
     };
-    const auto& file = get<std::string>(options, "file");
+    const auto& file = [&fileName, &options] {
+      if (fileName.has_value()) {
+        return *fileName;
+      }
+      return get<std::string>(options, "file");
+    }();
     //
     const auto v_prefix = get_if<std::string>(options, "variables_prefix", "");
     const auto v_suffix = get_if<std::string>(options, "variables_suffix", "");
@@ -3053,6 +3014,22 @@ namespace mfront {
     this->reserveName("mfront_behaviour_variable_" + d.name);
     return d;
   }  // end of readBehaviourVariableDescription
+
+  BehaviourVariableDescription
+  BehaviourDSLCommon::readBehaviourVariableDescription(){
+    using namespace tfel::utilities;
+    const char* const mname =
+        "BehaviourDSLCommon::readBehaviourVariableDescription";
+    this->checkNotEndOfFile(mname);
+    const auto lineNumber = this->current->line;
+    const auto sname = this->current->value;
+    ++(this->current);
+    if (!isValidUserDefinedVariableName(
+            tfel::unicode::getMangledString(sname))) {
+      this->throwRuntimeError(mname, "invalid variable name '" + sname + "'");
+    }
+    return readBehaviourVariableDescription(sname, lineNumber);
+} // end of readBehaviourVariableDescription
 
   void BehaviourDSLCommon::treatBehaviourVariable() {
     this->mb.addBehaviourVariable(this->readBehaviourVariableDescription());
@@ -3231,6 +3208,77 @@ namespace mfront {
     this->readVariableList(
         v, h, &BehaviourDescription::addAuxiliaryStateVariables, true);
   }  // end of treatAuxiliaryStateVariable
+
+  void BehaviourDSLCommon::treatModel(
+      const std::string& method,
+      void (BehaviourDescription::*m1)(const ModelDescription&),
+      void (BehaviourDescription::*m2)(const BehaviourVariableDescription&)) {
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << method << ": begin\n";
+    }
+    this->checkNotEndOfFile(method);
+    const auto lineNumber = this->current->line;
+    const auto f = SearchPathsHandler::search(this->readString(method));
+    const auto adsl = MFrontBase::getDSL(f);
+    if (adsl->getTargetType() == AbstractDSL::MODELDSL) {
+      auto md = this->getModelDescription(f);
+      this->readSpecifiedToken(method, ";");
+      (this->mb.*m1)(md);
+    } else {
+      const auto d = [this, &f, &method, &lineNumber] {
+        this->checkNotEndOfFile(method);
+        auto md = this->getBehaviourDescription(f);
+        const auto name = "mfront_external_model_" + md.getClassName();
+        if (this->current->value == "{") {
+          return readBehaviourVariableDescription(name, lineNumber, f);
+        }
+        this->readSpecifiedToken(method, ";");
+        return BehaviourVariableDescription{
+            .file = f,
+            .symbolic_form = name,
+            .name = name,
+            .description =
+                [this] {
+                  if (!this->currentComment.empty()) {
+                    return this->currentComment;
+                  }
+                  return std::string{};
+                }(),
+            .line_number = lineNumber,
+            .variables_prefix = "",
+            .variables_suffix = "",
+            .external_names_prefix = "",
+            .external_names_suffix = "",
+            .shared_material_properties = {std::regex{".+"}},
+            .shared_external_state_variables = {std::regex{".+"}},
+            .store_gradients = false,
+            .store_thermodynamic_forces = false,
+            .automatically_save_associated_auxiliary_state_variables = false,
+            .behaviour = std::move(md)};
+      }();
+      if (!d.behaviour.isModel()) {
+        this->throwRuntimeError(
+            method, "file path '" + f + "' does not describe a model");
+      }
+      const auto fname = getBehaviourVariableFactoryClassName(d);
+      this->reserveName(fname);
+      this->reserveName(fname + "_instance");
+      (this->mb.*m2)(d);
+    }
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << method << ": end\n";
+    }
+  }
+
+  void BehaviourDSLCommon::treatAuxiliaryModel() {
+    const auto m1 =
+        static_cast<void (BehaviourDescription::*)(const ModelDescription&)>(
+            &BehaviourDescription::addModelDescription);
+    const auto m2 = static_cast<void (BehaviourDescription::*)(
+        const BehaviourVariableDescription&)>(
+        &BehaviourDescription::addModelDescription);
+    this->treatModel("BehaviourDSLCommon::treatAuxiliaryModel", m1, m2);
+  }  // end of treatAuxiliaryModel
 
   void BehaviourDSLCommon::treatExternalStateVariable() {
     VarContainer v;

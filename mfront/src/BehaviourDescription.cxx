@@ -2220,6 +2220,13 @@ namespace mfront {
     return this->models;
   }  // end of getModelsDescriptions
 
+  const std::vector<std::variant<
+      ModelDescription,
+      BehaviourDescription::ExternalModelBasedOnBehaviourVariableFactory>>&
+  BehaviourDescription::getAuxiliaryModelsDescriptions() const {
+    return this->auxiliaryModels;
+  }  // end of getAuxiliaryModelsDescriptions
+
   void BehaviourDescription::addModelDescription(const ModelDescription& md) {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     for (auto ov : md.outputs) {
@@ -2236,6 +2243,22 @@ namespace mfront {
     this->models.push_back(
         ExternalModelBasedOnBehaviourVariableFactory{.factory = fname});
   }  // end of addModelDescription
+
+  void BehaviourDescription::addAuxiliaryModelDescription(const ModelDescription& md) {
+    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    for (auto ov : md.outputs) {
+      this->addAuxiliaryStateVariable(uh, ov, BehaviourData::UNREGISTRED);
+    }
+    this->auxiliaryModels.push_back(md);
+  }  // end of addModelDescription
+
+  void BehaviourDescription::addAuxiliaryModelDescription(
+      const BehaviourVariableDescription& md) {
+    const auto fname = getBehaviourVariableFactoryClassName(md);
+    this->addBehaviourVariableFactory(md, true);
+    this->auxiliaryModels.push_back(
+        ExternalModelBasedOnBehaviourVariableFactory{.factory = fname});
+  }  // end of addAuxiliaryModelDescription
 
   void BehaviourDescription::addMaterialProperties(
       const Hypothesis h,

@@ -492,6 +492,19 @@ namespace mfront {
      */
     void addModelDescription(const BehaviourVariableDescription&);
     /*!
+     * \brief add an auxiliary model description.
+     * All outputs of the model are automatically added as auxiliary state
+     * variables
+     * \param[in] md: model description
+     */
+    void addAuxiliaryModelDescription(const ModelDescription&);
+    /*!
+     * \brief add an auxiliary model description based on an already declared
+     * behaviour variable factory.
+     * \param[in] md: model description
+     */
+    void addAuxiliaryModelDescription(const BehaviourVariableDescription&);
+    /*!
      * add a local data structure
      * \param[in] lds: local data structure
      * \param[in] s: registration status
@@ -747,6 +760,11 @@ namespace mfront {
         std::variant<ModelDescription,
                      ExternalModelBasedOnBehaviourVariableFactory>>&
     getModelsDescriptions() const;
+    //! \return registred models
+    const std::vector<
+        std::variant<ModelDescription,
+                     ExternalModelBasedOnBehaviourVariableFactory>>&
+    getAuxiliaryModelsDescriptions() const;
     /*!
      * \brief set the elastic material properties
      * \param[in] emps: elastic material properties
@@ -2004,6 +2022,10 @@ namespace mfront {
     std::vector<std::variant<ModelDescription,
                              ExternalModelBasedOnBehaviourVariableFactory>>
         models;
+    //! \brief list of registred auxiliary models
+    std::vector<std::variant<ModelDescription,
+                             ExternalModelBasedOnBehaviourVariableFactory>>
+        auxiliaryModels;
     //! \brief slip systems
     std::optional<SlipSystemsDescription> gs;
     //! \brief list of all Hill tensors defined
