@@ -1,15 +1,21 @@
 if(UNIX)
   if(enable-python-bindings)
     configure_file(env-python.sh.in env.sh @ONLY)
+    configure_file(env-python.fish.in env.fish @ONLY)
   else(enable-python-bindings) 
    configure_file(env.sh.in env.sh @ONLY)
+   configure_file(env.fish.in env.fish @ONLY)
   endif(enable-python-bindings)
   if(TFEL_SUFFIX)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/env.sh
+    install(FILES
+            ${CMAKE_CURRENT_BINARY_DIR}/env.sh
+            ${CMAKE_CURRENT_BINARY_DIR}/env.fish
             DESTINATION share/tfel-${TFEL_SUFFIX}/env
             COMPONENT core)
   else(TFEL_SUFFIX)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/env.sh
+    install(FILES
+            ${CMAKE_CURRENT_BINARY_DIR}/env.sh
+            ${CMAKE_CURRENT_BINARY_DIR}/env.fish
             DESTINATION share/tfel/env
             COMPONENT core)
   endif(TFEL_SUFFIX)
@@ -25,17 +31,15 @@ if(WIN32)
    configure_file(env.bat.in env.bat @ONLY)
   endif(enable-python-bindings)
   if(TFEL_SUFFIX)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/env.ps1
-            DESTINATION share/tfel-${TFEL_SUFFIX}/env
-            COMPONENT core)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/env.bat
+    install(FILES
+            ${CMAKE_CURRENT_BINARY_DIR}/env.ps1
+            ${CMAKE_CURRENT_BINARY_DIR}/env.bat
             DESTINATION share/tfel-${TFEL_SUFFIX}/env
             COMPONENT core)
   else(TFEL_SUFFIX)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/env.ps1
-            DESTINATION share/tfel/env
-            COMPONENT core)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/env.bat
+    install(FILES
+            ${CMAKE_CURRENT_BINARY_DIR}/env.ps1
+            ${CMAKE_CURRENT_BINARY_DIR}/env.bat
             DESTINATION share/tfel/env
             COMPONENT core)
   endif(TFEL_SUFFIX)
