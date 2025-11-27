@@ -89,6 +89,28 @@ function(mfront_python_module name)
   endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
 endfunction(mfront_python_module)
 
+function(mfront_database_python_module name)
+  python_module_base(mfront_database_${name} ${name} ${ARGN})
+  set(fullname "mfront_database_${name}")
+  target_include_directories(py_${fullname}
+    PRIVATE "${PROJECT_SOURCE_DIR}/mfront/include"
+    PRIVATE "${PROJECT_SOURCE_DIR}/include")
+  if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+    install(TARGETS py_mfront_database_${name}
+      DESTINATION ${TFEL_PYTHON_SITE_PACKAGES_DIR}/mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES}/database
+      COMPONENT python_bindings)
+  else(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+    install(TARGETS py_mfront_database_${name}
+       DESTINATION ${TFEL_PYTHON_SITE_PACKAGES_DIR}/mfront/database
+       COMPONENT python_bindings)
+  endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+  if(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+    set_target_properties(py_mfront_database_${name} PROPERTIES
+                          LIBRARY_OUTPUT_DIRECTORY
+                          ${PROJECT_BINARY_DIR}/bindings/python/mfront_${TFEL_SUFFIX_FOR_PYTHON_MODULES}/database)
+  endif(TFEL_PYTHON_MODULES_APPEND_SUFFIX)
+endfunction(mfront_database_python_module)
+
 function(mtest_python_module name)
   python_lib_module(${name} mtest ${ARGN})
   set(fullname "mtest_${name}")

@@ -91,11 +91,9 @@ namespace numodis {
     //=============================================================
     IBurgers::size_type getNindices() const { return _iburgers.getNindices(); }
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator==(const GSystem& lhs,
-                                                         const GSystem& rhs);
+    friend bool operator==(const GSystem&, const GSystem&);
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
-        std::ostream& os, const GSystem& gsystem);
+    friend std::ostream& operator<<(std::ostream&, const GSystem&);
 
     virtual ~GSystem();
 
@@ -107,6 +105,11 @@ namespace numodis {
     IPlane _iplane;
   };
 
+  TFELNUMODIS_VISIBILITY_EXPORT bool operator==(const GSystem&, const GSystem&);
+
+  TFELNUMODIS_VISIBILITY_EXPORT std::ostream& operator<<(std::ostream&, const GSystem&);
+
+  
 }  // end of namespace numodis
 
 #endif

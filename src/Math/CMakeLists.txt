@@ -59,7 +59,7 @@ target_include_directories(TFELMath
 target_link_libraries(TFELMath
 	PUBLIC TFELException)
 if(enable-static)
-    target_include_directories(TFELMath-static
+  target_include_directories(TFELMath-static
       PUBLIC 
       $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
       $<INSTALL_INTERFACE:include>)
@@ -105,6 +105,11 @@ endif(enable-static)
     
 tfel_library(TFELMathParser ${TFELMathParser_SOURCES})
 add_dependencies(TFELMathParser TFELMath)
+if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+  target_compile_definitions(TFELMathParser PUBLIC "TFEL_ARCH64")
+else( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+  target_compile_definitions(TFELMathParser PUBLIC "TFEL_ARCH32")
+endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 target_include_directories(TFELMathParser
    PUBLIC 
    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
@@ -116,6 +121,11 @@ target_link_libraries(TFELMathParser
 	PUBLIC tfel::TFELException
 	PUBLIC tfel::TFELUnicodeSupport)
 if(enable-static)
+    if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+      target_compile_definitions(TFELMathParser-static PUBLIC "TFEL_ARCH64")
+    else( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+      target_compile_definitions(TFELMathParser-static PUBLIC "TFEL_ARCH32")
+    endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     target_include_directories(TFELMathParser-static
       PUBLIC 
       $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>

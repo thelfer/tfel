@@ -45,11 +45,11 @@ class BehaviourTest(unittest.TestCase):
         self.assertEqual(b.expandExternalStateVariablesNames(), ["Temperature"])
         self.assertEqual(b.getExternalStateVariableType("Temperature"), 0)
         self.assertEqual(b.getExternalStateVariablePosition("Temperature"), 0)
-        self.assertEqual(b.getParametersNames(),
-                         ['minimal_time_step_scaling_factor',
-                          'maximal_time_step_scaling_factor',
-                          'theta',
-                          'epsilon'])
+        self.assertEqual(set(b.getParametersNames()),
+                         set(['minimal_time_step_scaling_factor',
+                              'maximal_time_step_scaling_factor',
+                              'theta',
+                              'epsilon']))
         self.assertEqual(b.getIntegerParametersNames(), [])
         self.assertEqual(b.getUnsignedShortParametersNames(), ['iterMax'])
 

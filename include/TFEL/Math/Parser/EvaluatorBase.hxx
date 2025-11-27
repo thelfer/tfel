@@ -33,9 +33,9 @@ namespace tfel::math::parser {
     std::vector<std::string> tokens;
 
    private:
-    static TFEL_VISIBILITY_LOCAL void splitAtTokenSeperator(
+    TFEL_VISIBILITY_LOCAL static void splitAtTokenSeperator(
         std::vector<std::string>&);
-    static TFEL_VISIBILITY_LOCAL std::string readNumber(
+    TFEL_VISIBILITY_LOCAL static std::string readNumber(
         std::string::const_iterator&, const std::string::const_iterator);
   };  // end of struct EvaluatorBase
 

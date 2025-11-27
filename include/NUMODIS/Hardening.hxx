@@ -36,10 +36,8 @@ namespace numodis {
     int getRankInteraction(const GSystem& gsystem1,
                            const GSystem& gsystem2) const;
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
-        std::ostream&, const Hardening&);
-
    private:
+    friend std::ostream& operator<<(std::ostream&, const Hardening&);
     //! pointer to the Crystallo object
     const Crystallo& _pcrystallo;
     //! all glide systems
@@ -50,6 +48,8 @@ namespace numodis {
     std::vector<std::pair<GSystem, GSystem>> _interactions;
   };
 
+  TFELNUMODIS_VISIBILITY_EXPORT  std::ostream& operator<<(std::ostream&, const Hardening&);
+  
 }  // end of namespace numodis
 
 #endif

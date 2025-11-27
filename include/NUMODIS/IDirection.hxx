@@ -104,20 +104,20 @@ namespace numodis {
     //=============================================================
     long unsigned int getNindices() const { return _index.size(); }
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
-        std::ostream&, const IDirection&);
-
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator==(const IDirection& lhs,
-                                                         const IDirection& rhs);
-
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator!=(const IDirection& lhs,
-                                                         const IDirection& rhs);
-
    protected:
     //! index of the vector
     std::vector<int> _index;
+
+  private:
+
+    friend std::ostream& operator<<(std::ostream&, const IDirection&);
+    friend bool operator==(const IDirection&, const IDirection&);
+    friend bool operator!=(const IDirection&, const IDirection&);
   };
 
+  TFELNUMODIS_VISIBILITY_EXPORT std::ostream& operator<<(
+        std::ostream&, const IDirection&);
+  
   TFELNUMODIS_VISIBILITY_EXPORT
   bool operator==(const IDirection& lhs, const IDirection& rhs);
 

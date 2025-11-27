@@ -37,16 +37,19 @@ static void declarest2tost2(pybind11::module_& m, const char* const n) {
             {s.size(1) * sizeof(double), sizeof(double)});
       })
       .def(pybind11::init<>())
-      .def(pybind11::init<>([S](pybind11::array_t<double, pybind11::array::c_style | pybind11::array::forcecast> &u){
-              if ((u.shape(0)!=S) || (u.shape(1)!=S)){
-              tfel::raise<std::range_error>(
-                   "invalid shape of ST2toST2");
+      .def(pybind11::init<>(
+          [S](pybind11::array_t<double, pybind11::array::c_style |
+                                            pybind11::array::forcecast>& u) {
+            if ((u.shape(0) != S) || (u.shape(1) != S)) {
+              tfel::raise<std::range_error>("invalid shape of ST2toST2");
+            }
+            st2tost2 t;
+            for (std::size_t i = 0; i < S; i++)
+              for (std::size_t j = 0; j < S; j++) {
+                t(i, j) = u.unchecked<2>()(i, j);
               }
-              st2tost2 t;
-              for (std::size_t i=0;i<S;i++)
-              for (std::size_t j=0;j<S;j++){t(i,j)=u.unchecked<2>()(i,j);}
-              return t;
-             }))
+            return t;
+          }))
       .def("__repr__",
            [](const st2tost2& s) {
              std::ostringstream os;
@@ -64,7 +67,7 @@ static void declarest2tost2(pybind11::module_& m, const char* const n) {
              return s(r, c);
            })
       .def("__setitem__",
-           [](st2tost2& s, const std::pair<unsigned short,unsigned short>& ind,
+           [](st2tost2& s, const std::pair<unsigned short, unsigned short>& ind,
               const double v) {
              const auto r = std::get<0>(ind);
              const auto c = std::get<1>(ind);

@@ -410,3 +410,6 @@ if(HAVE_ABAQUS)
   install_mfront_header(MFront/LSDYNA LSDYNAComputeThermalExpansionCoefficientTensor.hxx)
   install_mfront_header(MFront/LSDYNA LSDYNAFiniteStrain.hxx)
 endif(HAVE_ABAQUS)
+
+# headers for TFELMFrontDatabase
+install_mfront_header(MFront MFrontDatabase.hxx)

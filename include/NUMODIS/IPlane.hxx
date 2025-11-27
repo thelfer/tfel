@@ -125,26 +125,22 @@ namespace numodis {
       return true;
     }
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
-        std::ostream& os, const IPlane& iplane);
-
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator==(const IPlane& lhs,
-                                                         const IPlane& rhs);
-
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator!=(const IPlane& lhs,
-                                                         const IPlane& rhs);
-
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator<(const IPlane& lhs,
-                                                        const IPlane& rhs);
-
-    TFELNUMODIS_VISIBILITY_EXPORT friend int PlaneCoincide(const IPlane& lhs,
-                                                           const IPlane& rhs);
-
    protected:
     //! index of the glide plane
     std::vector<int> _index;
+
+  private:
+  
+    friend std::ostream& operator<<(std::ostream&, const IPlane&);
+    friend bool operator==(const IPlane&, const IPlane&);
+    friend bool operator!=(const IPlane&, const IPlane&);
+    friend bool operator<(const IPlane&, const IPlane&);
+    friend int PlaneCoincide(const IPlane&, const IPlane&);
   };
 
+  TFELNUMODIS_VISIBILITY_EXPORT std::ostream& operator<<(
+        std::ostream& os, const IPlane& iplane);
+  
   TFELNUMODIS_VISIBILITY_EXPORT
   bool operator==(const IPlane& lhs, const IPlane& rhs);
 

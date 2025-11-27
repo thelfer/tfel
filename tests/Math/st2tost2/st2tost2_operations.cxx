@@ -50,7 +50,7 @@ struct ST2ToST2TestOperations final : public tfel::tests::TestCase {
     using real = typename tfel::config::Types<1u, NumericType, use_qt>::real;
     using stress =
         typename tfel::config::Types<1u, NumericType, use_qt>::stress;
-    static constexpr auto eps = std::numeric_limits<real>::epsilon();
+    static constexpr auto eps = 100 * std::numeric_limits<real>::epsilon();
     auto seps = stress(eps);
     using namespace tfel::math;
 

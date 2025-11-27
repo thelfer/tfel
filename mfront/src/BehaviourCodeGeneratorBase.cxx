@@ -4971,7 +4971,8 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     const auto& md = this->bd.getBehaviourData(h);
     // initialize
-    auto write_initialize = [&os, h](const BehaviourVariableDescription& b) {
+    auto write_initialize = [&os, &md,
+                             h](const BehaviourVariableDescription& b) {
       const auto warnings = checkInitializeMethods(
           b.behaviour, h,
           {.checkGradientsAtTheBeginningOfTheTimeStep = true,
@@ -5014,8 +5015,10 @@ namespace mfront {
         }
       }
       for (const auto& mp : getSharedMaterialProperties(b, h)) {
+        const auto v = md.getMaterialProperties().getVariableByExternalName(
+            mp.getExternalName());
         os << "mfront_behaviour_variable_" << b.name << ". " << mp.name
-           << " = this->" << mp.name << ";\n";
+           << " = this->" << v.name << ";\n";
       }
       for (const auto& mp : getUnSharedMaterialProperties(b, h)) {
         const auto nmp = applyNamesChanges(b, mp);
@@ -5023,10 +5026,12 @@ namespace mfront {
            << " = this->" << nmp.name << ";\n";
       }
       for (const auto& esv : getSharedExternalStateVariables(b, h)) {
+        const auto v = md.getExternalStateVariables().getVariableByExternalName(
+            esv.getExternalName());
         os << "mfront_behaviour_variable_" << b.name << ". " << esv.name
-           << " = this->" << esv.name << ";\n";
+           << " = this->" << v.name << ";\n";
         os << "mfront_behaviour_variable_" << b.name << ". d" << esv.name
-           << " = this->d" << esv.name << ";\n";
+           << " = this->d" << v.name << ";\n";
       }
       for (const auto& esv : getUnSharedExternalStateVariables(b, h)) {
         const auto nesv = applyNamesChanges(b, esv);
