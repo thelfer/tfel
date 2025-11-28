@@ -62,6 +62,8 @@ namespace mfront {
     }
 #if defined _WIN32 || defined _WIN64
     return "make.exe";
+#elif defined __FreeBSD__
+    return "gmake";
 #else
     return "make";
 #endif
