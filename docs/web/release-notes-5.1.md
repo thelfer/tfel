@@ -39,6 +39,8 @@ eqnPrefixTemplate: "($$i$$)"
   `unversioned-python-module-names` option to `ON`.
 - The definition of some unit class has (`Stress`, `Temperature`, etc..)
   have been moved from `tfel::math` to `tfel::math::unit`.
+- By default, `gmake` is used on `FreeBSD` when using the
+  `Makefile` generator of `MFront`.
 
 ## Internal API changes
 
