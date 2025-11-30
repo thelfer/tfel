@@ -72,7 +72,8 @@ endif(enable-glibcxx-debug)
 
 if(HAVE_FORTRAN)
   # we associate clang with the gnu fortran compiler
-  if("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "LLVMFlang")
+  if (("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "LLVMFlang") OR
+      ("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "Flang"))
     set(LLVM_FORTRAN_COMPILER ON)
   elseif("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "IntelLLVM")
     set(INTEL_FORTRAN_COMPILER ON)
