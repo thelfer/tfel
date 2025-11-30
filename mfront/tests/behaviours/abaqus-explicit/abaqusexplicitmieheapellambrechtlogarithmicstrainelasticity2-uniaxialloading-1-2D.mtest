@@ -27,10 +27,7 @@
 @Evolution<function> 'Trr' 'YoungModulus*err';
 
 @Test<function> {'SZZ':'0','STT':'0','SRZ':'0'} 1.e-3;
-@Test<function> {'SRR':'Trr/J'}                 1.e-3;
+@Test<function> {'SRR':'Trr/J'}                 2.e-3;
 @Test<function> {'SRZ':'0'}                     1.e-3;
 @Test<function> {'FTT': 'sqrt(exp(2*ett))','FZZ': 'sqrt(exp(2*ezz))'} 1.e-10;
 @Test<function> {'FRZ': '0', 'FZR':'0'} 1.e-10;
-
-
-

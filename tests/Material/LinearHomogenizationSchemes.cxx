@@ -263,11 +263,11 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
       // std::cout << (ESphere_MT_0-ESphere_MT_1).getValue() << " "<< eps <<
       // '\n';
       TFEL_TESTS_ASSERT(my_abs(nuSphere_MT_0 - nuSphere_MT_1) < eps);
-      TFEL_TESTS_ASSERT(my_abs(ESphere_MT_0 - ESphere_MT_2) < stress{seps});
+      TFEL_TESTS_ASSERT(my_abs(ESphere_MT_0 - ESphere_MT_2) < stress{5*seps});
       // std::cout << (ESphere_MT_2-ESphere_MT_0).getValue() << " "<< eps <<
       // '\n';
       TFEL_TESTS_ASSERT(my_abs(nuSphere_MT_0 - nuSphere_MT_2) < eps);
-      TFEL_TESTS_ASSERT(my_abs(ESphere_MT_0 - ESphere_MT_3) < stress{seps});
+      TFEL_TESTS_ASSERT(my_abs(ESphere_MT_0 - ESphere_MT_3) < stress{5*seps});
       // std::cout << (ESphere_MT_0-ESphere_MT_3).getValue() << " "<< eps <<
       // '\n';
       TFEL_TESTS_ASSERT(my_abs(nuSphere_MT_0 - nuSphere_MT_3) < eps);

@@ -91,17 +91,17 @@ namespace numodis {
     //=============================================================
     IBurgers::size_type getNindices() const { return _iburgers.getNindices(); }
 
-    friend bool operator==(const GSystem&, const GSystem&);
-
-    friend std::ostream& operator<<(std::ostream&, const GSystem&);
-
     virtual ~GSystem();
 
    private:
-    //! burgers vector
+    //
+    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator==(const GSystem&,
+                                                         const GSystem&);
+    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
+        std::ostream&, const GSystem&);
+    //! \brief Burgers's vector
     IBurgers _iburgers;
-
-    //! constraining planes
+    //! \brief constraining planes
     IPlane _iplane;
   };
 
