@@ -109,10 +109,12 @@ namespace numodis {
     std::vector<int> _index;
 
   private:
-
-    friend std::ostream& operator<<(std::ostream&, const IDirection&);
-    friend bool operator==(const IDirection&, const IDirection&);
-    friend bool operator!=(const IDirection&, const IDirection&);
+   TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
+       std::ostream&, const IDirection&);
+   TFELNUMODIS_VISIBILITY_EXPORT friend bool operator==(const IDirection&,
+                                                        const IDirection&);
+   TFELNUMODIS_VISIBILITY_EXPORT friend bool operator!=(const IDirection&,
+                                                        const IDirection&);
   };
 
   TFELNUMODIS_VISIBILITY_EXPORT std::ostream& operator<<(
