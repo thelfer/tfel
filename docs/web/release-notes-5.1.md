@@ -760,6 +760,35 @@ stress criterion available in the `StandardElastoViscoPlasticity` brick:
 @HillTensor H {F: 0.371, G: 0.629, H: 4.052, L: 1.5, M: 1.5, N: 1.5};
 ~~~~
 
+## New keywords
+
+### `@TFELLibraries`
+
+The `@TFELLibraries` keyword let the user specify TFEL libraries to link
+with. This keyword must be followed by an array of strings.
+
+The following libraries are available: `Config`, `Exception`,
+`Glossary`, `Tests`, `UnicodeSupport`, `Utilities`, `System`, `Math`,
+`MathCubicSpline`, `MathKriging`, `MathParser`, `NUMODIS`, `Material`,
+`MFront`, `MTest`.
+
+#### Example of usage
+
+~~~~{.cpp}
+@TFELLibraries {"MathParser"};
+~~~~
+
+## New tutorials
+
+New tutorials on implementation of homogenization schemes
+for biphasic linear elastic media are available in the gallery.
+
+New tutorials on implementation of homogenization schemes
+in non-linear elasticity are available in the gallery: Taylor scheme,
+Sachs scheme, $\beta$-rule. These tutorials use the 
+keyword `@BehaviourVariable` for the integration and the computation
+of tangent operator of the local behaviours. The implementation
+shows how to use any behaviour law on each phase.
 
 # New features in `mfront-query`
 
@@ -811,35 +840,19 @@ entering directory '/tmp/tests'
 ====== 
 ~~~~
 
-## New keywords
+# New features in `MTest`
 
-### `@TFELLibraries`
+## Print the value of lagrange multpliers associated with nonlinear constraints to the output file {#sec:tfel_5.1:mtest:print_lagrange_multipliers}
 
-The `@TFELLibraries` keyword let the user specify TFEL libraries to link
-with. This keyword must be followed by an array of strings.
+The `@PrintLagrangeMultipliers` keyword is followed by a boolean stating
+if the value of lagrange multpliers associated with nonlinear
+constraints shall be printed in the output file.
 
-The following libraries are available: `Config`, `Exception`,
-`Glossary`, `Tests`, `UnicodeSupport`, `Utilities`, `System`, `Math`,
-`MathCubicSpline`, `MathKriging`, `MathParser`, `NUMODIS`, `Material`,
-`MFront`, `MTest`.
+### Example of usage
 
-#### Example of usage
-
-~~~~{.cpp}
-@TFELLibraries {"MathParser"};
+~~~~{.cxx}
+@PrintLagrangeMultipliers true;
 ~~~~
-
-## New tutorials
-
-New tutorials on implementation of homogenization schemes
-for biphasic linear elastic media are available in the gallery.
-
-New tutorials on implementation of homogenization schemes
-in non-linear elasticity are available in the gallery: Taylor scheme,
-Sachs scheme, $\beta$-rule. These tutorials use the 
-keyword `@BehaviourVariable` for the integration and the computation
-of tangent operator of the local behaviours. The implementation
-shows how to use any behaviour law on each phase.
 
 # Python bindings
 
@@ -851,6 +864,12 @@ Python bindings are now generated using the
 - The `setDebugMode` function is now available.
 
 # Issues fixed
+
+## Issue 868: [mtest] Access to Lagrange multipliers for constraints
+
+This feature is described in Section @sec:tfel_5.1:mtest:print_lagrange_multipliers.
+
+For more details, see <https://github.com/thelfer/tfel/issues/868>
 
 ## Issue 849: [TFEL/Math] add function to sort the eigen values in ascending order
 

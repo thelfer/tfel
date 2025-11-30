@@ -1288,6 +1288,8 @@ void declareMTest(pybind11::module_& m) {
            "    - the behaviour' internal state variables\n"
            "    - the behaviour' external state variables\n"
            "    - any evolution defined in the input file\n")
+      .def("printLagrangeMultipliers", &MTest::printLagrangeMultipliers,
+           "set if Lagrange multipliers shall be print in the output file")
       .def("setCompareToNumericalTangentOperator",
            &MTest::setCompareToNumericalTangentOperator,
            "set if a comparison of the tangent operator returned by the "

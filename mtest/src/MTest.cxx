@@ -324,6 +324,18 @@ namespace mtest {
                   << "th component of the " << dvn << " (" << gc[i] << ")\n";
         ++cnbr;
       }
+      if (this->shallPrintLagrangeMultipliers) {
+        auto nc = std::size_t{1};
+        for (const auto& pc : this->constraints) {
+          const auto nlm = pc->getNumberOfLagrangeMultipliers();
+          for (unsigned short i = 0; i != nlm; ++i) {
+            this->out << "# " << cnbr << " column: " << i + 1
+                      << "th Lagrange multplier of constraint " << nc << "\n";
+            ++cnbr;
+          }
+          ++nc;
+        }
+      }
       for (unsigned short i = 0; i != nth; ++i) {
         this->out << "# " << cnbr << " column: " << i + 1
                   << "th component of the " << thn << " (" << thc[i] << ")\n";
@@ -453,17 +465,13 @@ namespace mtest {
   }  // end of initializeWorkSpace
 
   size_t MTest::getNumberOfUnknowns() const {
-    using tfel::math::vector;
     tfel::raise_if(!this->initialisationFinished,
                    "MTest::getNumberOfUnknowns: "
                    "object not initialised");
-    // number of components of the driving variables
-    const auto N = this->b->getGradientsSize();
     // getting the total number of unknowns
-    size_t s = N;
+    size_t s = this->b->getGradientsSize();;
     for (const auto& pc : this->constraints) {
-      const auto& c = *pc;
-      s += c.getNumberOfLagrangeMultipliers();
+      s += pc->getNumberOfLagrangeMultipliers();
     }
     return s;
   }  // end of getNumberOfUnknowns
@@ -536,6 +544,10 @@ namespace mtest {
     }
     return tr;
   }
+
+  void MTest::printLagrangeMultipliers(const bool b){
+    this->shallPrintLagrangeMultipliers = b;
+  } // end of printLagrangeMultipliers
 
   void MTest::setCompareToNumericalTangentOperator(const bool bo) {
     this->cto = bo;
@@ -944,16 +956,17 @@ namespace mtest {
     }
     if (this->out) {
       auto& cs = s.getStructureCurrentState("").istates[0];
-      // number of components of the driving variables and the thermodynamic
-      // forces
-      const auto ndv = this->b->getGradientsSize();
-      const auto nth = this->b->getThermodynamicForcesSize();
-      unsigned short i;
       this->out << t << " ";
-      for (i = 0; i != ndv; ++i) {
-        this->out << s.u0[i] << " ";
+      if (this->shallPrintLagrangeMultipliers) {
+        std::copy(s.u0.begin(), s.u0.end(),
+                  std::ostream_iterator<real>(this->out, " "));
+      } else {
+        for (unsigned short i = 0; i != this->b->getGradientsSize(); ++i) {
+          this->out << s.u0[i] << " ";
+        }
       }
-      for (i = 0; i != nth; ++i) {
+      const auto nth = this->b->getThermodynamicForcesSize();
+      for (unsigned short i = 0; i != nth; ++i) {
         this->out << cs.s0[i] << " ";
       }
       std::copy(cs.iv0.begin(), cs.iv0.end(),

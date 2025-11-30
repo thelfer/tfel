@@ -214,6 +214,11 @@ namespace mtest {
      */
     virtual void setThermodynamicForcesInitialValues(const std::vector<real>&);
     /*!
+     * \brief set if the lagrange multipliers must be printed in the output file
+     * \param[in] b : boolean
+     */
+    virtual void printLagrangeMultipliers(const bool);
+    /*!
      * \brief add a new constraint
      * \param[in] c     : constraint
      */
@@ -259,28 +264,30 @@ namespace mtest {
      * the number of lagrangian multipliers)
      */
     virtual size_t getNumberOfUnknowns() const override;
-    //! list of events
+    //! \brief list of events
     std::map<double, std::vector<std::string>> events;
-    //! list of tests
+    //! \brief list of tests
     std::vector<std::shared_ptr<UTest>> tests;
-    //! constraints
+    //! \brief constraints
     std::vector<std::shared_ptr<Constraint>> constraints;
-    //! user defined post-processings
+    //! \brief user defined post-processings
     std::vector<std::shared_ptr<UserDefinedPostProcessing>> upostprocessings;
-    //! rotation matrix
+    //! \brief rotation matrix
     tfel::math::tmatrix<3u, 3u, real> rm;
-    //! boolean, true if the rotation matrix has been defined by the user
+    //! \brief boolean, true if the rotation matrix has been defined by the user
     bool isRmDefined = false;
     // inital values of the driving variables
     std::vector<real> e_t0;
     // inital values of the thermodynamic forces
     std::vector<real> s_t0;
-    //! tangent operator comparison criterium
+    //! \brief tangent operator comparison criterium
     real toeps = -1;
-    //! perturbation value
+    //! \brief perturbation value
     real pv = -1;
-    //! compare to numerical jacobian
+    //! \brief compare to numerical jacobian
     bool cto = false;
+    //! \brief print lagrange multpliers
+    bool shallPrintLagrangeMultipliers = false;
   };  // end of struct MTest
 
 }  // end of namespace mtest
