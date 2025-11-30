@@ -61,7 +61,11 @@ namespace mfront {
       return emake;
     }
 #if defined _WIN32 || defined _WIN64
+#if defined __MINGW32__ || defined __MINGW64__
+    return "mingw32-make.exe";
+#else
     return "make.exe";
+#endif
 #elif defined __FreeBSD__
     return "gmake";
 #else
