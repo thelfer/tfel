@@ -37,7 +37,8 @@ namespace numodis {
                            const GSystem& gsystem2) const;
 
    private:
-    friend std::ostream& operator<<(std::ostream&, const Hardening&);
+    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
+        std::ostream&, const Hardening&);
     //! pointer to the Crystallo object
     const Crystallo& _pcrystallo;
     //! all glide systems
