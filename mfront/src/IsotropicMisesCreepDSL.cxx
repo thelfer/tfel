@@ -62,11 +62,12 @@ namespace mfront {
   void IsotropicMisesCreepDSL::endsInputFileProcessing() {
     using namespace std;
     IsotropicBehaviourDSLBase::endsInputFileProcessing();
-    const Hypothesis h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    if (!this->mb.hasCode(h, BehaviourData::FlowRule)) {
-      string msg("IsotropicMisesCreepDSL::endsInputFileProcessing : ");
-      msg += "no flow rule defined";
-      throw(runtime_error(msg));
+    for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
+      if (!this->mb.hasCode(h, BehaviourData::FlowRule)) {
+        this->throwRuntimeError(
+            "IsotropicMisesCreepDSL::endsInputFileProcessing",
+            "no flow rule defined");
+      }
     }
   }  // end of IsotropicMisesCreepDSL::endsInputFileProcessing
 
