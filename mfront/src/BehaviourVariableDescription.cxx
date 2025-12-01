@@ -123,9 +123,9 @@ namespace mfront {
       const BehaviourVariableDescription& d,
       const BehaviourVariableDescription::Hypothesis& h) {
     const auto& bd = d.behaviour.getBehaviourData(h);
-    return selectVariablesFromRegularExpression(bd.getMaterialProperties(),
-                                                d.shared_material_properties,
-                                                d.evaluated_material_properties);
+    return selectVariablesFromRegularExpression(
+        bd.getMaterialProperties(), d.shared_material_properties,
+        d.evaluated_material_properties);
   }  // end of getSharedMaterialProperties
 
   VariableDescriptionContainer getEvaluatedMaterialProperties(

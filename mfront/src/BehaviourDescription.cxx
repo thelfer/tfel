@@ -2774,75 +2774,76 @@ namespace mfront {
     //
     auto checkBehaviourVariables = [this](const BehaviourData& bdata,
                                           const Hypothesis h) {
-      auto checkBehaviourVariable = [this, &bdata,
-                                     h](const BehaviourVariableDescription&
-                                            bv) {
-        auto checkVariable = [this, &bdata, &bv](const VariableDescription& v) {
-          const auto& source = [this, &bdata, &bv,
-                                &v]() -> VariableDescription {
-            if (this->isGradientExternalName(v.getExternalName())) {
-              return this->getGradientByExternalName(v.getExternalName());
+      auto checkBehaviourVariable =
+          [this, &bdata, h](const BehaviourVariableDescription& bv) {
+            auto checkVariable = [this, &bdata,
+                                  &bv](const VariableDescription& v) {
+              const auto& source = [this, &bdata, &bv,
+                                    &v]() -> VariableDescription {
+                if (this->isGradientExternalName(v.getExternalName())) {
+                  return this->getGradientByExternalName(v.getExternalName());
+                }
+                if (this->isThermodynamicForceExternalName(
+                        v.getExternalName())) {
+                  return this->getThermodynamicForceByExternalName(
+                      v.getExternalName());
+                }
+                try {
+                  return bdata.getVariableDescriptionByExternalName(
+                      v.getExternalName());
+                } catch (std::exception& e) {
+                  tfel::raise("variable '" + v.getExternalName() + "' ('" +
+                              v.name + "') of behaviour variable '" + bv.name +
+                              "' can't be evaluated");
+                }
+              }();
+              if (!((bdata.isExternalStateVariableName(source.name)) ||
+                    (bdata.isMaterialPropertyName(source.name)) ||
+                    (bdata.isParameterName(source.name)) ||
+                    (bdata.isStaticVariableName(source.name)) ||
+                    (this->isGradientName(source.name)) ||
+                    ((this->isThermodynamicForceName(source.name)) &&
+                     bv.is_auxiliary_model) ||
+                    ((bdata.isPersistentVariableName(source.name)) &&
+                     bv.is_auxiliary_model))) {
+                tfel::raise(
+                    "variable '" + v.getExternalName() + "' ('" + v.name +
+                    "') of behaviour variable '" + bv.name +
+                    "' can't be evaluated with neither an external state "
+                    "variable, a material property, a parameter nor a static "
+                    "variable ");
+              }
+              auto report = [&v, &source, &bv](const std::string_view& reason) {
+                tfel::raise(
+                    "The shared variable '" + source.name +
+                    "' declared by behaviour variable '" + bv.name +
+                    "' is not compatible with the variable declared by the "
+                    "calling behaviour: " +
+                    std::string{reason});
+              };
+              if (v.getVariableTypeIdentifier() !=
+                  source.getVariableTypeIdentifier()) {
+                report("unmatched type ('" + v.type + "' vs '" + source.type +
+                       "')");
+              }
+              if (v.arraySize != source.arraySize) {
+                report("unmatched array size (" + std::to_string(v.arraySize) +
+                       " vs " + std::to_string(source.arraySize) + ")");
+              }
+              if ((v.hasGlossaryName()) && (source.hasGlossaryName())) {
+                if (v.getExternalName() != source.getExternalName()) {
+                  report("unmatched external names ('" + v.getExternalName() +
+                         "' vs '" + source.getExternalName() + "')");
+                }
+              }
+            };  // end of checkVariable
+            for (const auto& mp : getEvaluatedMaterialProperties(bv, h)) {
+              checkVariable(mp);
             }
-            if (this->isThermodynamicForceExternalName(
-                    v.getExternalName())) {
-              return this->getThermodynamicForceByExternalName(
-                  v.getExternalName());
+            for (const auto& esv : getEvaluatedExternalStateVariables(bv, h)) {
+              checkVariable(esv);
             }
-            try {
-              return bdata.getVariableDescriptionByExternalName(
-                  v.getExternalName());
-            } catch (std::exception& e) {
-              tfel::raise("variable '" + v.getExternalName() + "' ('" + v.name +
-                          "') of behaviour variable '" + bv.name +
-                          "' can't be evaluated");
-            }
-          }();
-          if (!((bdata.isExternalStateVariableName(source.name)) ||
-                (bdata.isMaterialPropertyName(source.name)) ||
-                (bdata.isParameterName(source.name)) ||
-                (bdata.isStaticVariableName(source.name)) ||
-                (this->isGradientName(source.name)) ||
-                ((this->isThermodynamicForceName(source.name)) &&
-                 bv.is_auxiliary_model) ||
-                ((bdata.isPersistentVariableName(source.name)) &&
-                 bv.is_auxiliary_model))) {
-            tfel::raise(
-                "variable '" + v.getExternalName() + "' ('" + v.name +
-                "') of behaviour variable '" + bv.name +
-                "' can't be evaluated with neither an external state "
-                "variable, a material property, a parameter nor a static "
-                "variable ");
-          }
-          auto report = [&v, &source, &bv](const std::string_view& reason) {
-            tfel::raise("The shared variable '" + source.name +
-                        "' declared by behaviour variable '" + bv.name +
-                        "' is not compatible with the variable declared by the "
-                        "calling behaviour: " +
-                        std::string{reason});
-          };
-          if (v.getVariableTypeIdentifier() !=
-              source.getVariableTypeIdentifier()) {
-            report("unmatched type ('" + v.type + "' vs '" + source.type +
-                   "')");
-          }
-          if (v.arraySize != source.arraySize) {
-            report("unmatched array size (" + std::to_string(v.arraySize) +
-                   " vs " + std::to_string(source.arraySize) + ")");
-          }
-          if ((v.hasGlossaryName()) && (source.hasGlossaryName())) {
-            if (v.getExternalName() != source.getExternalName()) {
-              report("unmatched external names ('" + v.getExternalName() +
-                     "' vs '" + source.getExternalName() + "')");
-            }
-          }
-        };  // end of checkVariable
-        for (const auto& mp : getEvaluatedMaterialProperties(bv, h)) {
-          checkVariable(mp);
-        }
-        for (const auto& esv : getEvaluatedExternalStateVariables(bv, h)) {
-          checkVariable(esv);
-        }
-      };  // end of checkBehaviourVariable
+          };  // end of checkBehaviourVariable
       for (const auto& bv : bdata.getBehaviourVariables()) {
         checkBehaviourVariable(bv);
       }
