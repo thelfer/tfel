@@ -60,7 +60,8 @@ namespace tfel::math {
   }
 
   template <unsigned short N, unsigned short M, typename T>
-  std::ostream& operator<<(std::ostream& os, const View<const tmatrix<N, M, T>>& m) {
+  std::ostream& operator<<(std::ostream& os,
+                           const View<const tmatrix<N, M, T>>& m) {
     unsigned short i, j;
     os << "[";
     for (i = 0; i < N; ++i) {
