@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 3.0.16 of the
 
 # Issues fixed
 
+## Issue 884: [mfront] Isotropic DSLs can't be restricted to certain modelling hypothesis 
+
+For more details, see <https://github.com/thelfer/tfel/issues/884>.
+
 ## Issue 882: Add support for AMD Fortran's compiler
 
 For more details, see <https://github.com/thelfer/tfel/issues/882>.

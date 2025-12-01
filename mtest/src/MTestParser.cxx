@@ -984,7 +984,7 @@ namespace mtest {
   }  // end of MTestParser::handleUserDefinedPostProcessing
 
   void MTestParser::handlePrintLagrangeMultipliers(MTest& t,
-                                                    tokens_iterator& p) {
+                                                   tokens_iterator& p) {
     const std::string m = "MTestParser::handlePrintLagrangeMultipliers";
     const auto b = [&p] {
       if (p->value == "true") {

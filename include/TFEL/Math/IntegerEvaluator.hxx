@@ -124,11 +124,11 @@ namespace tfel::math {
         const std::vector<std::string>::const_iterator);
     TFEL_VISIBILITY_LOCAL void analyse(const std::string&, const bool = false);
     TFEL_VISIBILITY_LOCAL
-        std::pair<bool, std::vector<std::string>::const_iterator>
-        search(std::vector<std::string>::const_iterator,
-               std::vector<std::string>::const_iterator,
-               const std::string&,
-               const std::string&);
+    std::pair<bool, std::vector<std::string>::const_iterator> search(
+        std::vector<std::string>::const_iterator,
+        std::vector<std::string>::const_iterator,
+        const std::string&,
+        const std::string&);
   };  // end of struct IntegerEvaluator
 
 }  // end of namespace tfel::math
