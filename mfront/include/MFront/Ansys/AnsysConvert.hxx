@@ -113,7 +113,8 @@ namespace ansys {
    * \tparam H: modelling hypothesis
    */
   template <>
-  struct ImportDrivingVariables<tfel::material::ModellingHypothesis::PLANESTRESS> {
+  struct ImportDrivingVariables<
+      tfel::material::ModellingHypothesis::PLANESTRESS> {
     /*!
      * \tparam T: type of the thermodynamique forces
      * \param[out] s: symmetric tensor to be filled
@@ -161,7 +162,7 @@ namespace ansys {
       s[2] = 0;
       s[3] = v[2] * cste;
     }  // end of exe
-  };  // end of struct ImportThermodynamicForces
+  };   // end of struct ImportThermodynamicForces
   /*!
    * \brief class defining the convertion from mfront to ansys for
    * thermodynamic forces
@@ -183,7 +184,7 @@ namespace ansys {
       v[1] = s[1];
       v[2] = s[3] * icste;
     }  // end of exe
-  };  // end of struct ExportThermodynamicForces
+  };   // end of struct ExportThermodynamicForces
 
   /*!
    * \brief partial specialisation of the ImportSymmetricTensor in 1D.
