@@ -1293,10 +1293,11 @@ namespace mfront {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing: begin\n";
     }
+    //
     this->disableVariableDeclaration();
-    // restrictions on user defined compute stress free expansion
     for (const auto h : this->mb.getDistinctModellingHypotheses()) {
       const auto& d = this->mb.getBehaviourData(h);
+      // restrictions on user defined compute stress free expansion
       if (d.hasCode(BehaviourData::ComputeStressFreeExpansion)) {
         const auto& cb =
             d.getCodeBlock(BehaviourData::ComputeStressFreeExpansion);
@@ -2877,7 +2878,8 @@ namespace mfront {
   BehaviourDSLCommon::readBehaviourVariableDescription(
       const std::string& sname,
       const tfel::utilities::Token::size_type lineNumber,
-      const std::optional<std::string>& fileName) {
+      const std::optional<std::string>& fileName,
+      const bool is_auxiliary_model) {
     using namespace tfel::utilities;
     const auto mname = "readBehaviourVariableDescription";
     const auto bname = tfel::unicode::getMangledString(sname);
@@ -3003,6 +3005,7 @@ namespace mfront {
         .automatically_save_associated_auxiliary_state_variables = get_if<bool>(
             options, "automatically_save_associated_auxiliary_state_variables",
             true),
+        .is_auxiliary_model = is_auxiliary_model,
         .behaviour = this->getBehaviourDescription(file)};
     // some restrictions of the behaviours
     if (d.behaviour.getAttribute(BehaviourDescription::requiresStiffnessTensor,
@@ -3024,7 +3027,7 @@ namespace mfront {
   }  // end of readBehaviourVariableDescription
 
   BehaviourVariableDescription
-  BehaviourDSLCommon::readBehaviourVariableDescription(){
+  BehaviourDSLCommon::readBehaviourVariableDescription() {
     using namespace tfel::utilities;
     const char* const mname =
         "BehaviourDSLCommon::readBehaviourVariableDescription";
@@ -3036,8 +3039,8 @@ namespace mfront {
             tfel::unicode::getMangledString(sname))) {
       this->throwRuntimeError(mname, "invalid variable name '" + sname + "'");
     }
-    return readBehaviourVariableDescription(sname, lineNumber);
-} // end of readBehaviourVariableDescription
+    return readBehaviourVariableDescription(sname, lineNumber, {}, false);
+  }  // end of readBehaviourVariableDescription
 
   void BehaviourDSLCommon::treatBehaviourVariable() {
     this->mb.addBehaviourVariable(this->readBehaviourVariableDescription());
@@ -3257,11 +3260,14 @@ namespace mfront {
             .variables_suffix = "",
             .external_names_prefix = "",
             .external_names_suffix = "",
-            .shared_material_properties = {std::regex{".+"}},
-            .shared_external_state_variables = {std::regex{".+"}},
+            .shared_material_properties = {},
+            .evaluated_material_properties = {std::regex{".+"}},
+            .shared_external_state_variables = {},
+            .evaluated_external_state_variables = {std::regex{".+"}},
             .store_gradients = false,
             .store_thermodynamic_forces = false,
             .automatically_save_associated_auxiliary_state_variables = false,
+            .is_auxiliary_model = true,
             .behaviour = std::move(md)};
       }();
       if (!d.behaviour.isModel()) {

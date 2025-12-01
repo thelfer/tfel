@@ -559,10 +559,21 @@ namespace mfront {
      */
     const Gradient& getGradient(const std::string&) const;
     /*!
-     * \return the thermodynamic force with the associated name
+     * \return the driving variable with the given external name
+     * \param[in] n: name
+     */
+    const Gradient& getGradientByExternalName(const std::string&) const;
+    /*!
+     * \return the thermodynamic force with the given name
      * \param[in] n: name
      */
     const ThermodynamicForce& getThermodynamicForce(const std::string&) const;
+    /*!
+     * \return the thermodynamic force with the given external name
+     * \param[in] n: name
+     */
+    const ThermodynamicForce& getThermodynamicForceByExternalName(
+        const std::string&) const;
     //! \return the list of tangent operator blocks
     std::vector<std::pair<VariableDescription, VariableDescription>>
     getTangentOperatorBlocks() const;
@@ -646,6 +657,8 @@ namespace mfront {
 
     bool isGradientName(const std::string&) const;
 
+    bool isGradientExternalName(const std::string&) const;
+
     bool isGradientIncrementName(const std::string&) const;
 
     bool isNameOfAGradientAtTheBeginningOfTheTimeStep(const std::string&) const;
@@ -653,6 +666,9 @@ namespace mfront {
     bool isNameOfAGradientAtTheEndOfTheTimeStep(const std::string&) const;
 
     bool isThermodynamicForceName(const std::string&) const;
+
+    bool isThermodynamicForceExternalName(const std::string&) const;
+
     //! \return the behaviour type
     BehaviourType getBehaviourType() const;
     /*!
@@ -1768,10 +1784,20 @@ namespace mfront {
      */
     Gradient& getGradient(const std::string&);
     /*!
-     * \return the thermodynamic force with the associated name
+     * \return the gradient variable with the given external name
+     * \param[in] n: name
+     */
+    Gradient& getGradientByExternalName(const std::string&);
+    /*!
+     * \return the thermodynamic force with the given external name
      * \param[in] n: name
      */
     ThermodynamicForce& getThermodynamicForce(const std::string&);
+    /*!
+     * \return the thermodynamic force with the associated name
+     * \param[in] n: name
+     */
+    ThermodynamicForce& getThermodynamicForceByExternalName(const std::string&);
     //! update the class name
     void updateClassName();
     /*!

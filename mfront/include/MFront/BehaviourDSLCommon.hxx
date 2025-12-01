@@ -410,11 +410,16 @@ namespace mfront {
      * \param[in] bname: name of the behaviour variable
      * \param[in] lineNumber: line number
      * \param[in] fileName: file containing the implementation of the behaviour
+     * \param[in]
+     * allow_external_state_variables_evaluation_using_persistent_variables:
+     * boolean stating if using persistent variables to evaluate external state
+     * variables.
      */
     virtual BehaviourVariableDescription readBehaviourVariableDescription(
         const std::string&,
         const tfel::utilities::Token::size_type,
-        const std::optional<std::string>& = {});
+        const std::optional<std::string>& = {},
+        const bool = false);
     /*!
      * \brief extract a material property from a token. If the token
      * is a string, it is interpred as a mfront file name. Otherwise,

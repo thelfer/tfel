@@ -99,6 +99,11 @@ namespace mfront {
      * for updating these auxiliary state variables.
      */
     bool automatically_save_associated_auxiliary_state_variables = true;
+    /*!
+     * \brief flag stating if the behaviour variable describes on auxiliary
+     * model.
+     */
+    bool is_auxiliary_model = false;
     //! \brief behaviour description
     BehaviourDescription behaviour;
   };  // end of BehaviourVariableDescription

@@ -82,7 +82,7 @@ namespace mfront {
         tfel::raise("variable '" + v.getExternalName() + "' ('" + v.name +
                     "') is both shared and evaluated");
       }
-      if (!shared) {
+      if (!(shared || evaluated)) {
         r.push_back(v);
       }
     }
