@@ -273,7 +273,8 @@ namespace mfront {
         << "*dt,eto,deto,\n"
         << "props,*T,*dT,\n"
         << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(),\n"
-        << "dianafea::DianaFEAStandardSmallStrainStressFreeExpansionHandler};\n";
+        << "dianafea::DianaFEAStandardSmallStrainStressFreeExpansionHandler};"
+           "\n";
     // plane stress support
     out << "if(*ntens==3){\n";
     if (hypotheses.find(ModellingHypothesis::PLANESTRESS) != hypotheses.end()) {
@@ -291,7 +292,8 @@ namespace mfront {
     }
     // plane strain support
     out << "} else if(*ntens==4){\n";
-    if (hypotheses.find(ModellingHypothesis::GENERALISEDPLANESTRAIN) != hypotheses.end()) {
+    if (hypotheses.find(ModellingHypothesis::GENERALISEDPLANESTRAIN) !=
+        hypotheses.end()) {
       out << "if(dianafea::DianaFEAInterface<\n"
           << "tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,\n"
           << "tfel::material::" << bd.getClassName() << ">::exe(d)!=0){\n"
@@ -306,7 +308,8 @@ namespace mfront {
     }
     // tridimensional support
     out << "} else {\n";
-    if (hypotheses.find(ModellingHypothesis::TRIDIMENSIONAL) != hypotheses.end()) {
+    if (hypotheses.find(ModellingHypothesis::TRIDIMENSIONAL) !=
+        hypotheses.end()) {
       out << "if(dianafea::DianaFEAInterface<\n"
           << "tfel::material::ModellingHypothesis::TRIDIMENSIONAL,\n"
           << "tfel::material::" << bd.getClassName() << ">::exe(d)!=0){\n"

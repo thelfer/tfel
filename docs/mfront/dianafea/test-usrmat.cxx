@@ -1,6 +1,6 @@
 /*!
  * \file   test-external-behaviour-call.cxx
- * \brief    
+ * \brief
  * \author th202608
  * \date   08/01/2019
  */
