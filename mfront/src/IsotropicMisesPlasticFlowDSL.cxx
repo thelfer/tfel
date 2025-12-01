@@ -101,6 +101,9 @@ namespace mfront {
   }
 
   void IsotropicMisesPlasticFlowDSL::endsInputFileProcessing() {
+    if (!this->mb.areModellingHypothesesDefined()) {
+      this->mb.setModellingHypotheses(this->getDefaultModellingHypotheses());
+    }
     for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
       if (!this->mb.hasCode(h, BehaviourData::FlowRule)) {
         if (this->ihrs.empty()) {
