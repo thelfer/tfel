@@ -1122,7 +1122,7 @@ namespace mfront {
     const auto m2 = static_cast<void (BehaviourDescription::*)(
         const BehaviourVariableDescription&)>(
         &BehaviourDescription::addModelDescription);
-    this->treatModel("BehaviourDSLCommon::treatModel", m1, m2);
+    this->treatModel("BehaviourDSLCommon::treatModel", m1, m2, false);
   }  // end of treatModel
 
   void BehaviourDSLCommon::treatModel2() {
@@ -1293,6 +1293,10 @@ namespace mfront {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing: begin\n";
     }
+    // for evaluation of auxiliary models, we must save the initial value of
+    // certain persistent variables and thermodynamic forces.
+
+
     //
     this->disableVariableDeclaration();
     for (const auto h : this->mb.getDistinctModellingHypotheses()) {
@@ -3223,7 +3227,8 @@ namespace mfront {
   void BehaviourDSLCommon::treatModel(
       const std::string& method,
       void (BehaviourDescription::*m1)(const ModelDescription&),
-      void (BehaviourDescription::*m2)(const BehaviourVariableDescription&)) {
+      void (BehaviourDescription::*m2)(const BehaviourVariableDescription&),
+      bool is_auxiliary) {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << method << ": begin\n";
     }
@@ -3236,7 +3241,7 @@ namespace mfront {
       this->readSpecifiedToken(method, ";");
       (this->mb.*m1)(md);
     } else {
-      const auto d = [this, &f, &method, &lineNumber] {
+      const auto d = [this, &f, &method, &lineNumber, &is_auxiliary] {
         this->checkNotEndOfFile(method);
         auto md = this->getBehaviourDescription(f);
         const auto name = "mfront_external_model_" + md.getClassName();
@@ -3267,7 +3272,7 @@ namespace mfront {
             .store_gradients = false,
             .store_thermodynamic_forces = false,
             .automatically_save_associated_auxiliary_state_variables = false,
-            .is_auxiliary_model = true,
+            .is_auxiliary_model = is_auxiliary,
             .behaviour = std::move(md)};
       }();
       if (!d.behaviour.isModel()) {
@@ -3287,11 +3292,11 @@ namespace mfront {
   void BehaviourDSLCommon::treatAuxiliaryModel() {
     const auto m1 =
         static_cast<void (BehaviourDescription::*)(const ModelDescription&)>(
-            &BehaviourDescription::addModelDescription);
+            &BehaviourDescription::addAuxiliaryModelDescription);
     const auto m2 = static_cast<void (BehaviourDescription::*)(
         const BehaviourVariableDescription&)>(
-        &BehaviourDescription::addModelDescription);
-    this->treatModel("BehaviourDSLCommon::treatAuxiliaryModel", m1, m2);
+        &BehaviourDescription::addAuxiliaryModelDescription);
+    this->treatModel("BehaviourDSLCommon::treatAuxiliaryModel", m1, m2, true);
   }  // end of treatAuxiliaryModel
 
   void BehaviourDSLCommon::treatExternalStateVariable() {

@@ -800,11 +800,13 @@ namespace mfront {
      * \param[in] method: calling method name
      * \param[in] m1: method called if a model is read
      * \param[in] m2: method called if a behaviour is read
+     * \param[in] is_auxiliary: method called an auxiliary model is treated
      */
     void treatModel(
         const std::string&,
         void (BehaviourDescription::*)(const ModelDescription&),
-        void (BehaviourDescription::*)(const BehaviourVariableDescription&));
+        void (BehaviourDescription::*)(const BehaviourVariableDescription&),
+        const bool);
     //! \brief behaviour description
     BehaviourDescription mb;
     //! \brief registred bricks
