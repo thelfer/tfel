@@ -93,10 +93,11 @@ namespace mfront {
 
   void IsotropicStrainHardeningMisesCreepDSL::endsInputFileProcessing() {
     IsotropicBehaviourDSLBase::endsInputFileProcessing();
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    tfel::raise_if(!this->mb.hasCode(h, BehaviourData::FlowRule),
-                   "IsotropicMisesCreepDSL::endsInputFileProcessing: "
-                   "no flow rule defined");
+    for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
+      tfel::raise_if(!this->mb.hasCode(h, BehaviourData::FlowRule),
+                     "IsotropicMisesCreepDSL::endsInputFileProcessing: "
+                     "no flow rule defined");
+    }
   }  // end of IsotropicStrainHardeningMisesCreepDSL::endsInputFileProcessing
 
   void

@@ -161,7 +161,7 @@ namespace ansys {
       s[2] = 0;
       s[3] = v[2] * cste;
     }  // end of exe
-  };  // end of struct ImportThermodynamicForces
+  };   // end of struct ImportThermodynamicForces
   /*!
    * \brief class defining the convertion from mfront to ansys for
    * thermodynamic forces
@@ -183,7 +183,7 @@ namespace ansys {
       v[1] = s[1];
       v[2] = s[3] * icste;
     }  // end of exe
-  };  // end of struct ExportThermodynamicForces
+  };   // end of struct ExportThermodynamicForces
 
   /*!
    * \brief partial specialisation of the ImportSymmetricTensor in 1D.
