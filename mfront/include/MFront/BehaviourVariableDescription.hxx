@@ -63,11 +63,23 @@ namespace mfront {
      */
     std::vector<std::regex> shared_material_properties;
     /*!
+     * \brief list of regular expressions allowing to select the material
+     * properties that shall be evaluated by the behaviour using the behaviour
+     * variable
+     */
+    std::vector<std::regex> evaluated_material_properties;
+    /*!
      * \brief list of regular expressions allowing to select the external
      * state variables that shall be shared with the behaviour using the
      * behaviour variable
      */
     std::vector<std::regex> shared_external_state_variables;
+    /*!
+     * \brief list of regular expressions allowing to select the external
+     * state variables that shall be evaluated with the behaviour using the
+     * behaviour variable
+     */
+    std::vector<std::regex> evaluated_external_state_variables;
     /*!
      * \brief flag stating if the gradients of the behaviour
      * variable shall be stored in dedicated auxiliary state variables
@@ -101,16 +113,6 @@ namespace mfront {
   MFRONT_VISIBILITY_EXPORT VariableDescription applyNamesChanges(
       const BehaviourVariableDescription&, const VariableDescription&);
   /*!
-   * \brief return the list of material properties which are not shared
-   * with the behaviour using the behaviour variable
-   * \param[in] d: behaviour variable description
-   * \param[in] h: modelling hypothesis
-   */
-  MFRONT_VISIBILITY_EXPORT VariableDescriptionContainer
-  getUnSharedMaterialProperties(
-      const BehaviourVariableDescription&,
-      const BehaviourVariableDescription::Hypothesis&);
-  /*!
    * \brief return the list of material properties which are shared
    * with the behaviour using the behaviour variable
    * \param[in] d: behaviour variable description
@@ -120,13 +122,23 @@ namespace mfront {
   getSharedMaterialProperties(const BehaviourVariableDescription&,
                               const BehaviourVariableDescription::Hypothesis&);
   /*!
-   * \brief return the list of external state variables which are
-   * not shared with the behaviour using the behaviour variable
+   * \brief return the list of material properties which shall be
+   * evaluated by the behaviour using the behaviour variable
    * \param[in] d: behaviour variable description
    * \param[in] h: modelling hypothesis
    */
   MFRONT_VISIBILITY_EXPORT VariableDescriptionContainer
-  getUnSharedExternalStateVariables(
+  getEvaluatedMaterialProperties(
+      const BehaviourVariableDescription&,
+      const BehaviourVariableDescription::Hypothesis&);
+  /*!
+   * \brief return the list of material properties which are not shared
+   * nor evaluated by the behaviour using the behaviour variable
+   * \param[in] d: behaviour variable description
+   * \param[in] h: modelling hypothesis
+   */
+  MFRONT_VISIBILITY_EXPORT VariableDescriptionContainer
+  getUnSharedNorEvaluatedMaterialProperties(
       const BehaviourVariableDescription&,
       const BehaviourVariableDescription::Hypothesis&);
   /*!
@@ -137,6 +149,26 @@ namespace mfront {
    */
   MFRONT_VISIBILITY_EXPORT VariableDescriptionContainer
   getSharedExternalStateVariables(
+      const BehaviourVariableDescription&,
+      const BehaviourVariableDescription::Hypothesis&);
+  /*!
+   * \brief return the list of external state variables which shall
+   * be evaluated by the behaviour using the behaviour variable
+   * \param[in] d: behaviour variable description
+   * \param[in] h: modelling hypothesis
+   */
+  MFRONT_VISIBILITY_EXPORT VariableDescriptionContainer
+  getEvaluatedExternalStateVariables(
+      const BehaviourVariableDescription&,
+      const BehaviourVariableDescription::Hypothesis&);
+  /*!
+   * \brief return the list of external state variables which are
+   * not shared nor evaluated by the behaviour using the behaviour variable
+   * \param[in] d: behaviour variable description
+   * \param[in] h: modelling hypothesis
+   */
+  MFRONT_VISIBILITY_EXPORT VariableDescriptionContainer
+  getUnSharedNorEvaluatedExternalStateVariables(
       const BehaviourVariableDescription&,
       const BehaviourVariableDescription::Hypothesis&);
   /*!

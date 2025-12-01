@@ -5020,7 +5020,31 @@ namespace mfront {
         os << "mfront_behaviour_variable_" << b.name << ". " << mp.name
            << " = this->" << v.name << ";\n";
       }
-      for (const auto& mp : getUnSharedMaterialProperties(b, h)) {
+      for (const auto& mp : getEvaluatedMaterialProperties(b, h)) {
+        const auto& source = [&md, &b, &mp] {
+          try {
+            return md.getVariableDescriptionByExternalName(
+                mp.getExternalName());
+          } catch (std::exception& e) {
+            tfel::raise("variable '" + mp.getExternalName() + "' ('" + mp.name +
+                        "') of behaviour variable '" + b.name +
+                        "' can't be evaluated");
+          }
+        }();
+        if (!((md.isExternalStateVariableName(source.name)) ||
+              (md.isMaterialPropertyName(source.name)) ||
+              (md.isParameterName(source.name)) ||
+              (md.isStaticVariableName(source.name)))) {
+          tfel::raise("variable '" + mp.getExternalName() + "' ('" + mp.name +
+                      "') of behaviour variable '" + b.name +
+                      "' can't be evaluated with neither an external state "
+                      "variable, a material property, a parameter nor a static "
+                      "variable ");
+        }
+        os << "mfront_behaviour_variable_" << b.name << ". " << mp.name
+           << " = this->" << source.name << ";\n";
+      }
+      for (const auto& mp : getUnSharedNorEvaluatedMaterialProperties(b, h)) {
         const auto nmp = applyNamesChanges(b, mp);
         os << "mfront_behaviour_variable_" << b.name << ". " << mp.name
            << " = this->" << nmp.name << ";\n";
@@ -5033,7 +5057,41 @@ namespace mfront {
         os << "mfront_behaviour_variable_" << b.name << ". d" << esv.name
            << " = this->d" << v.name << ";\n";
       }
-      for (const auto& esv : getUnSharedExternalStateVariables(b, h)) {
+      for (const auto& esv : getEvaluatedExternalStateVariables(b, h)) {
+        const auto& source = [&md, &b, &esv] {
+          try {
+            return md.getVariableDescriptionByExternalName(
+                esv.getExternalName());
+          } catch (std::exception& e) {
+            tfel::raise("variable '" + esv.getExternalName() + "' ('" + esv.name +
+                        "') of behaviour variable '" + b.name +
+                        "' can't be evaluated");
+          }
+        }();
+        if (!((md.isExternalStateVariableName(source.name)) ||
+              (md.isMaterialPropertyName(source.name)) ||
+              (md.isParameterName(source.name)) ||
+              (md.isStaticVariableName(source.name)))) {
+          tfel::raise("variable '" + esv.getExternalName() + "' ('" + esv.name +
+                      "') of behaviour variable '" + b.name +
+                      "' can't be evaluated with neither an external state "
+                      "variable, a material property, a parameter nor a static "
+                      "variable ");
+        }
+        if (md.isExternalStateVariableName(source.name)) {
+          os << "mfront_behaviour_variable_" << b.name << ". " << esv.name
+             << " = this->" << source.name << ";\n";
+          os << "mfront_behaviour_variable_" << b.name << ". d" << esv.name
+             << " = this->d" << source.name << ";\n";
+        } else {
+          os << "mfront_behaviour_variable_" << b.name << ". " << esv.name
+             << " = this->" << source.name << ";\n";
+          os << "mfront_behaviour_variable_" << b.name << ". d" << esv.name
+             << " = this->" << source.name << ";\n";
+        }
+      }
+      for (const auto& esv :
+           getUnSharedNorEvaluatedExternalStateVariables(b, h)) {
         const auto nesv = applyNamesChanges(b, esv);
         os << "mfront_behaviour_variable_" << b.name << ". " << esv.name
            << " = this->" << nesv.name << ";\n";

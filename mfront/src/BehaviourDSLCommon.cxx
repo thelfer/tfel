@@ -2905,7 +2905,11 @@ namespace mfront {
             .addDataTypeValidator<std::vector<Data>>(
                 "shared_material_properties")
             .addDataTypeValidator<std::vector<Data>>(
-                "shared_external_state_variables");
+                "evaluated_material_properties")
+            .addDataTypeValidator<std::vector<Data>>(
+                "shared_external_state_variables")
+            .addDataTypeValidator<std::vector<Data>>(
+                "evaluated_external_state_variables");
     if (!fileName.has_value()) {
       validator.addDataTypeValidator<std::string>("file");
     }
@@ -2987,8 +2991,12 @@ namespace mfront {
         .external_names_suffix = enames_suffix,
         .shared_material_properties =
             extract_regex_vector("shared_material_properties"),
+        .evaluated_material_properties =
+            extract_regex_vector("evaluated_material_properties"),
         .shared_external_state_variables =
             extract_regex_vector("shared_external_state_variables"),
+        .evaluated_external_state_variables =
+            extract_regex_vector("evaluated_external_state_variables"),
         .store_gradients = get_if<bool>(options, "store_gradients", true),
         .store_thermodynamic_forces =
             get_if<bool>(options, "store_thermodynamic_forces", true),

@@ -19,12 +19,13 @@ namespace mfront {
     return prefix + n + suffix;
   }  // end of addPrefixAndSuffix
 
-  static VariableDescriptionContainer selectSharedVariables(
+  static VariableDescriptionContainer selectVariablesFromRegularExpression(
       const VariableDescriptionContainer& variables,
-      const std::vector<std::regex>& filters) {
+      const std::vector<std::regex>& filters,
+      const std::vector<std::regex>& second_filters) {
     auto r = VariableDescriptionContainer{};
     for (const auto& v : variables) {
-      const auto shared = [&v, &filters] {
+      const auto selected = [&v, &filters] {
         for (const auto& f : filters) {
           if ((std::regex_search(v.name, f)) ||
               (std::regex_search(v.getExternalName(), f))) {
@@ -33,20 +34,34 @@ namespace mfront {
         }
         return false;
       }();
-      if (shared) {
+      const auto selected2 = [&v, &second_filters] {
+        for (const auto& f : second_filters) {
+          if ((std::regex_search(v.name, f)) ||
+              (std::regex_search(v.getExternalName(), f))) {
+            return true;
+          }
+        }
+        return false;
+      }();
+      if (selected && selected2) {
+        tfel::raise("variable '" + v.getExternalName() + "' ('" + v.name +
+                    "') is both shared and evaluated");
+      }
+      if (selected) {
         r.push_back(v);
       }
     }
     return r;
-  }  // end of selectSharedVariables
+  }  // end of selectVariablesFromRegularExpression
 
-  static VariableDescriptionContainer selectUnSharedVariables(
+  static VariableDescriptionContainer selectUnSharedNorEvaluatedVariables(
       const VariableDescriptionContainer& variables,
-      const std::vector<std::regex>& filters) {
+      const std::vector<std::regex>& shared_filters,
+      const std::vector<std::regex>& evaluated_filters) {
     auto r = VariableDescriptionContainer{};
     for (const auto& v : variables) {
-      const auto shared = [&v, &filters] {
-        for (const auto& f : filters) {
+      const auto shared = [&v, &shared_filters] {
+        for (const auto& f : shared_filters) {
           if ((std::regex_search(v.name, f)) ||
               (std::regex_search(v.getExternalName(), f))) {
             return true;
@@ -54,12 +69,25 @@ namespace mfront {
         }
         return false;
       }();
+      const auto evaluated = [&v, &evaluated_filters] {
+        for (const auto& f : evaluated_filters) {
+          if ((std::regex_search(v.name, f)) ||
+              (std::regex_search(v.getExternalName(), f))) {
+            return true;
+          }
+        }
+        return false;
+      }();
+      if (shared && evaluated) {
+        tfel::raise("variable '" + v.getExternalName() + "' ('" + v.name +
+                    "') is both shared and evaluated");
+      }
       if (!shared) {
         r.push_back(v);
       }
     }
     return r;
-  }  // end of selectUnSharedVariables
+  }  // end of selectUnSharedNorEvaluatedVariables
 
   VariableDescription applyNamesChanges(const BehaviourVariableDescription& d,
                                         const VariableDescription& v) {
@@ -95,33 +123,55 @@ namespace mfront {
       const BehaviourVariableDescription& d,
       const BehaviourVariableDescription::Hypothesis& h) {
     const auto& bd = d.behaviour.getBehaviourData(h);
-    return selectSharedVariables(bd.getMaterialProperties(),
-                                 d.shared_material_properties);
+    return selectVariablesFromRegularExpression(bd.getMaterialProperties(),
+                                                d.shared_material_properties,
+                                                d.evaluated_material_properties);
   }  // end of getSharedMaterialProperties
 
-  VariableDescriptionContainer getUnSharedMaterialProperties(
+  VariableDescriptionContainer getEvaluatedMaterialProperties(
       const BehaviourVariableDescription& d,
       const BehaviourVariableDescription::Hypothesis& h) {
     const auto& bd = d.behaviour.getBehaviourData(h);
-    return selectUnSharedVariables(bd.getMaterialProperties(),
-                                   d.shared_material_properties);
-  }  // end of getUnSharedMaterialProperties
+    return selectVariablesFromRegularExpression(bd.getMaterialProperties(),
+                                                d.evaluated_material_properties,
+                                                d.shared_material_properties);
+  }  // end of getEvaluatedMaterialProperties
+
+  VariableDescriptionContainer getUnSharedNorEvaluatedMaterialProperties(
+      const BehaviourVariableDescription& d,
+      const BehaviourVariableDescription::Hypothesis& h) {
+    const auto& bd = d.behaviour.getBehaviourData(h);
+    return selectUnSharedNorEvaluatedVariables(bd.getMaterialProperties(),
+                                               d.shared_material_properties,
+                                               d.evaluated_material_properties);
+  }  // end of getUnSharedNorEvaluatedMaterialProperties
 
   VariableDescriptionContainer getSharedExternalStateVariables(
       const BehaviourVariableDescription& d,
       const BehaviourVariableDescription::Hypothesis& h) {
     const auto& bd = d.behaviour.getBehaviourData(h);
-    return selectSharedVariables(bd.getExternalStateVariables(),
-                                 d.shared_external_state_variables);
+    return selectVariablesFromRegularExpression(
+        bd.getExternalStateVariables(), d.shared_external_state_variables,
+        d.evaluated_external_state_variables);
   }  // end of getSharedExternalStateVariables
 
-  VariableDescriptionContainer getUnSharedExternalStateVariables(
+  VariableDescriptionContainer getEvaluatedExternalStateVariables(
       const BehaviourVariableDescription& d,
       const BehaviourVariableDescription::Hypothesis& h) {
     const auto& bd = d.behaviour.getBehaviourData(h);
-    return selectUnSharedVariables(bd.getExternalStateVariables(),
-                                   d.shared_external_state_variables);
-  }  // end of getUnSharedExternalStateVariables
+    return selectVariablesFromRegularExpression(
+        bd.getExternalStateVariables(), d.evaluated_external_state_variables,
+        d.shared_external_state_variables);
+  }  // end of getEvaluatedExternalStateVariables
+
+  VariableDescriptionContainer getUnSharedNorEvaluatedExternalStateVariables(
+      const BehaviourVariableDescription& d,
+      const BehaviourVariableDescription::Hypothesis& h) {
+    const auto& bd = d.behaviour.getBehaviourData(h);
+    return selectUnSharedNorEvaluatedVariables(
+        bd.getExternalStateVariables(), d.shared_external_state_variables,
+        d.evaluated_external_state_variables);
+  }  // end of getUnSharedNorEvaluatedExternalStateVariables
 
   std::string getBehaviourWrapperClassName(
       const BehaviourVariableDescription& d) {

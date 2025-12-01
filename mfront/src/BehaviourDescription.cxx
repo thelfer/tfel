@@ -2244,7 +2244,8 @@ namespace mfront {
         ExternalModelBasedOnBehaviourVariableFactory{.factory = fname});
   }  // end of addModelDescription
 
-  void BehaviourDescription::addAuxiliaryModelDescription(const ModelDescription& md) {
+  void BehaviourDescription::addAuxiliaryModelDescription(
+      const ModelDescription& md) {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     for (auto ov : md.outputs) {
       this->addAuxiliaryStateVariable(uh, ov, BehaviourData::UNREGISTRED);
@@ -2434,7 +2435,7 @@ namespace mfront {
       }
     }
     // material properties
-    for (const auto& mp : getUnSharedMaterialProperties(bv, h)) {
+    for (const auto& mp : getUnSharedNorEvaluatedMaterialProperties(bv, h)) {
       try {
         bd.addMaterialProperty(applyNamesChanges(bv, mp),
                                BehaviourData::UNREGISTRED);
@@ -2462,7 +2463,8 @@ namespace mfront {
       }
     }
     // external state variables
-    for (const auto& esv : getUnSharedExternalStateVariables(bv, h)) {
+    for (const auto& esv :
+         getUnSharedNorEvaluatedExternalStateVariables(bv, h)) {
       try {
         bd.addExternalStateVariable(applyNamesChanges(bv, esv),
                                     BehaviourData::UNREGISTRED);
