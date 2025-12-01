@@ -252,8 +252,8 @@ namespace tfel::math {
     TFEL_VISIBILITY_LOCAL std::vector<double>::size_type registerVariable(
         const std::string&);
     TFEL_VISIBILITY_LOCAL
-        std::shared_ptr<tfel::math::parser::ExternalFunctionManager>
-        getExternalFunctionManager();
+    std::shared_ptr<tfel::math::parser::ExternalFunctionManager>
+    getExternalFunctionManager();
     TFEL_VISIBILITY_LOCAL std::vector<double>::size_type getVariablePosition(
         const std::string&) const;
     TFEL_VISIBILITY_LOCAL std::vector<std::string> analyseParameters(
@@ -308,11 +308,11 @@ namespace tfel::math {
         const std::string&,
         const bool);
     TFEL_VISIBILITY_LOCAL
-        std::pair<bool, std::vector<std::string>::const_iterator>
-        search(std::vector<std::string>::const_iterator,
-               std::vector<std::string>::const_iterator,
-               const std::string&,
-               const std::string&);
+    std::pair<bool, std::vector<std::string>::const_iterator> search(
+        std::vector<std::string>::const_iterator,
+        std::vector<std::string>::const_iterator,
+        const std::string&,
+        const std::string&);
     TFEL_VISIBILITY_LOCAL std::vector<std::string>::const_iterator
     searchComparisonOperator(const std::vector<std::string>::const_iterator,
                              const std::vector<std::string>::const_iterator);

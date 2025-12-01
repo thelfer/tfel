@@ -132,18 +132,18 @@ namespace numodis {
     //! index of the burgers vector
     std::vector<int> _index;
 
-  private:
-   TFELNUMODIS_VISIBILITY_EXPORT friend int Coincide(const IBurgers&,
-                                                     const IBurgers&);
-   TFELNUMODIS_VISIBILITY_EXPORT
-   friend std::ostream& operator<<(std::ostream&, const IBurgers&);
+   private:
+    TFELNUMODIS_VISIBILITY_EXPORT friend int Coincide(const IBurgers&,
+                                                      const IBurgers&);
+    TFELNUMODIS_VISIBILITY_EXPORT
+    friend std::ostream& operator<<(std::ostream&, const IBurgers&);
   };
 
   TFELNUMODIS_VISIBILITY_EXPORT
   int Coincide(const IBurgers&, const IBurgers&);
 
-  TFELNUMODIS_VISIBILITY_EXPORT std::ostream& operator<<(
-        std::ostream&, const IBurgers&);
+  TFELNUMODIS_VISIBILITY_EXPORT std::ostream& operator<<(std::ostream&,
+                                                         const IBurgers&);
 
 }  // end of namespace numodis
 

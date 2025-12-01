@@ -469,7 +469,8 @@ namespace mtest {
                    "MTest::getNumberOfUnknowns: "
                    "object not initialised");
     // getting the total number of unknowns
-    size_t s = this->b->getGradientsSize();;
+    size_t s = this->b->getGradientsSize();
+    ;
     for (const auto& pc : this->constraints) {
       s += pc->getNumberOfLagrangeMultipliers();
     }
@@ -545,9 +546,9 @@ namespace mtest {
     return tr;
   }
 
-  void MTest::printLagrangeMultipliers(const bool b){
+  void MTest::printLagrangeMultipliers(const bool b) {
     this->shallPrintLagrangeMultipliers = b;
-  } // end of printLagrangeMultipliers
+  }  // end of printLagrangeMultipliers
 
   void MTest::setCompareToNumericalTangentOperator(const bool bo) {
     this->cto = bo;
