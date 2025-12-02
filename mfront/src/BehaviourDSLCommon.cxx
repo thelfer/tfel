@@ -1247,7 +1247,7 @@ namespace mfront {
     // defining modelling hypotheses
     if (!this->mb.areModellingHypothesesDefined()) {
       auto dmh = this->getDefaultModellingHypotheses();
-      // taking into account restrictin du to the `Plate` othotropic
+      // taking into account restriction du to the `Plate` othotropic
       // axes convention
       if ((this->mb.getSymmetryType() == mfront::ORTHOTROPIC) &&
           (this->mb.getOrthotropicAxesConvention() ==
@@ -1265,6 +1265,64 @@ namespace mfront {
       }
       this->mb.setModellingHypotheses(dmh);
     }
+    // auxiliary models need to store values of thermodynamic forces and
+    // persistent variables using in the evaluation of material properties
+    // and external state variables
+    for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
+      const auto& bdata = this->mb.getBehaviourData(h);
+      auto ths = std::vector<ThermodynamicForce>{};
+      auto pvs = std::vector<VariableDescription>{};
+      for (const auto& am : this->mb.getAuxiliaryModelsDescriptions()) {
+        if (!std::holds_alternative<
+                BehaviourDescription::
+                    ExternalModelBasedOnBehaviourVariableFactory>(am)) {
+          continue;
+        }
+        auto treat = [this, &ths, &pvs, &bdata](const VariableDescription& v) {
+          const auto& ename = v.getExternalName();
+          if (this->mb.isThermodynamicForceExternalName(ename)) {
+            for (const auto& th : ths) {
+              if (th.getExternalName() == ename) {
+                // this thermodynamic force is already registred
+                return;
+              }
+            }
+            ths.push_back(static_cast<const BehaviourDescription&>(this->mb)
+                              .getThermodynamicForceByExternalName(ename));
+            return;
+          }
+          for (const auto& pv : bdata.getPersistentVariables()) {
+            if (pv.getExternalName() == ename) {
+              for (const auto& pv2 : pvs) {
+                if (pv2.getExternalName() == ename) {
+                  // this persistent variable is already registred
+                  return;
+                }
+              }
+              pvs.push_back(
+                  bdata.getPersistentVariableDescriptionByExternalName(ename));
+              return;
+            }
+          }
+        };
+        const auto& ad = bdata.getBehaviourVariableFactory(
+            std::get<BehaviourDescription::
+                         ExternalModelBasedOnBehaviourVariableFactory>(am)
+                .factory);
+        for (const auto& esv : getEvaluatedExternalStateVariables(ad, h)) {
+          treat(esv);
+        }
+      }  // end of loop on auxiliary models
+      auto& os = getLogStream();
+      os << "\nthermodynamic forces:\n";
+      for (const auto& th: ths) {
+        os << "- " << th.getExternalName() << " " << th.name << '\n';
+      }
+      os << "\npersistent variables:\n";
+      for (const auto& pv: pvs) {
+        os << "- " << pv.getExternalName() << " " << pv.name << '\n';
+      }
+    }    // end of loop on modelling hypothesis
     // treating bricks
     for (const auto& pb : this->bricks) {
       pb->completeVariableDeclaration();
@@ -1295,7 +1353,6 @@ namespace mfront {
     }
     // for evaluation of auxiliary models, we must save the initial value of
     // certain persistent variables and thermodynamic forces.
-
 
     //
     this->disableVariableDeclaration();
