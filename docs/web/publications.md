@@ -16,6 +16,7 @@ nocite: |
     @hure_homogenized_2026
     @tandogan_multi-physics_2026
     @fontana_hyperelastic_2026
+    @ren_laboratory_2025
     @elbez_crystal_2025
     @bourceret_interaction_2025
     @vedrine_revisiting_2025
