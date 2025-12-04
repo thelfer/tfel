@@ -316,6 +316,7 @@ namespace mfront {
         << "#include<cstdlib>\n"
         << "#include<string>\n"
         << "#include<vector>\n"
+        << "#include<locale>\n"
         << "#include<cmath>\n";
     if (!includes.empty()) {
       out << includes << "\n\n";
@@ -353,6 +354,13 @@ namespace mfront {
           << "const double v"
           << "){\n";
       for (const auto& p : params) {
+        if (p.getExternalName() != p.name) {
+          out << "if(strcmp(\"" << p.getExternalName() << "\",p) == 0){\n"
+              << "castem::" << hn << "::get" << hn << "()." << p.name
+              << " = v;\n"
+              << "return 1;\n"
+              << "}\n";
+        }
         out << "if(strcmp(\"" << p.name << "\",p)==0){\n"
             << "castem::" << hn << "::get" << hn << "()." << p.name << " = v;\n"
             << "return 1;\n"
