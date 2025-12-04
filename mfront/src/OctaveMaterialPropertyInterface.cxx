@@ -141,6 +141,7 @@ namespace mfront {
         << "#include<cstdlib>\n"
         << "#include<string>\n"
         << "#include<vector>\n"
+        << "#include<locale>\n"
         << "#include<cmath>\n"
         << "#include<octave/oct.h>\n"
         << "#include<octave//interpreter.h>\n\n";
