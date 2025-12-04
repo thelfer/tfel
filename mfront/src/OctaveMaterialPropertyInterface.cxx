@@ -291,6 +291,7 @@ namespace mfront {
         << "#include<cstdlib>\n"
         << "#include<string>\n"
         << "#include<vector>\n"
+        << "#include<locale>\n"
         << "#include<cmath>\n"
         << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
         << "#include\"TFEL/PhysicalConstants.hxx\"\n"

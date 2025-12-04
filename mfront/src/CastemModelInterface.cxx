@@ -270,6 +270,7 @@ namespace mfront {
        << " * \\date   " << fd.date << '\n'
        << " */\n\n"
        << "#include <cmath>\n"
+       << "#include <locale>\n"
        << "#include <cstring>\n"
        << "#include <sstream>\n"
        << "#include \"TFEL/PhysicalConstants.hxx\"\n"
@@ -637,8 +638,20 @@ namespace mfront {
           continue;
         }
         const auto en = p.getExternalName();
+        if (en != p.name) {
+          os << (first ? "if" : "} else if")  //
+             << "(std::strcmp(\"" << en << "\", n) == 0){\n"
+             << "parameters." << p.name << " = " << p.type << "{v};\n"
+             << "return 1;\n";
+        }
+        if ((!p.symbolic_form.empty()) && (p.symbolic_form != p.name)) {
+          os << (first ? "if" : "} else if")  //
+             << "(std::strcmp(\"" << p.symbolic_form << "\", n) == 0){\n"
+             << "parameters." << p.name << " = " << p.type << "{v};\n"
+             << "return 1;\n";
+        }
         os << (first ? "if" : "} else if")  //
-           << "(std::strcmp(\"" << en << "\", n) == 0){\n"
+           << "(std::strcmp(\"" << p.name << "\", n) == 0){\n"
            << "parameters." << p.name << " = " << p.type << "{v};\n"
            << "return 1;\n";
         first = false;
