@@ -341,6 +341,7 @@ namespace mfront {
        << "#include<cerrno>\n"
        << "#include<string>\n"
        << "#include<vector>\n"
+       << "#include<locale>\n"
        << "#include<cmath>\n"
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include\"TFEL/PhysicalConstants.hxx\"\n"
@@ -383,6 +384,20 @@ namespace mfront {
          << "const double v"
          << "){\n";
       for (const auto& p : params) {
+        if (p.getExternalName() != p.name) {
+          os << "if(strcmp(\"" << p.getExternalName() << "\",p) == 0){\n"
+             << iname << "::" << hn << "::get" << hn << "()." << p.name
+             << " = v;\n"
+             << "return 1;\n"
+             << "}\n";
+        }
+        if ((!p.symbolic_form.empty()) && (p.symbolic_form != p.name)) {
+          os << "if(strcmp(\"" << p.symbolic_form << "\",p) == 0){\n"
+             << iname << "::" << hn << "::get" << hn << "()." << p.name
+             << " = v;\n"
+             << "return 1;\n"
+             << "}\n";
+        }
         os << "if(strcmp(\"" << p.name << "\",p) == 0){\n"
            << iname << "::" << hn << "::get" << hn << "()." << p.name
            << " = v;\n"
