@@ -13,6 +13,7 @@
  */
 
 #include <string>
+#include <locale>
 #include <sstream>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
@@ -221,6 +222,7 @@ namespace mfront {
         "Expected the beginning of a block or a specific theta value.");
     if (this->current->value != "{") {
       std::istringstream converter(this->current->value);
+      converter.imbue(std::locale("en_US.UTF-8"));
       std::ostringstream otheta;
       std::ostringstream ose;
       std::ostringstream oseq_e;
