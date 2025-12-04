@@ -5194,6 +5194,7 @@ namespace mfront {
     os << " */\n\n";
     if (this->bd.hasParameters()) {
       os << "#include<string>\n"
+         << "#include<locale>\n"
          << "#include<cstring>\n"
          << "#include<sstream>\n"
          << "#include<fstream>\n"
@@ -5241,6 +5242,7 @@ namespace mfront {
       << "{\n"
       << type << " value;\n"
       << "std::istringstream converter(v);\n"
+      << "converter.imbue(std::locale(\"en_US.UTF-8\"));\n"
       << "converter >> value;\n"
       << "tfel::raise_if(!converter||(!converter.eof()),\n"
       << "\"" << cname << "::get" << type2 << ": \"\n"
