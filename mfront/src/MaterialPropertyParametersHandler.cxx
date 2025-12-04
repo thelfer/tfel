@@ -99,11 +99,12 @@ namespace mfront {
        << "    return;\n"
        << "  }\n"
        << "  double pvalue;\n"
-       << "  try {\n"
-       << "    pvalue = std::stod(tokens[1]);\n"
-       << "  } catch(...){\n"
-       << "    set_msg(\"can't convert '\"+tokens[1]+\"' to floating point "
-          "value\");\n"
+       << "  std::istringstream mfront_converter(tokens[1]);\n"
+       << "  mfront_converter.imbue(std::locale(\"en_US.UTF-8\"));\n"
+       << "  mfront_converter >> pvalue;\n"
+       << "  if((!mfront_converter) || (!mfront_converter.eof())){\n"
+       << "    set_msg(\"can't convert '\"+tokens[1]+"
+       << "            \"' to floating point value\");\n"
        << "    return;\n"
        << "  }\n";
     bool first = true;
@@ -111,15 +112,7 @@ namespace mfront {
       if (!first) {
         os << " else ";
       }
-      auto pn = p;
-      if (mpd.glossaryNames.find(pn) != mpd.glossaryNames.end()) {
-        pn = mpd.glossaryNames.find(pn)->second;
-      } else {
-        if (mpd.entryNames.find(pn) != mpd.entryNames.end()) {
-          pn = mpd.entryNames.find(pn)->second;
-        }
-      }
-      os << "if(tokens[0]==\"" << pn << "\"){\n"
+      os << "if(tokens[0]==\"" << p << "\"){\n"
          << "this->" << p << " = pvalue;\n"
          << "}";
       first = false;

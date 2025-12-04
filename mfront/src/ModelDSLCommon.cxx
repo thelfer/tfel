@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <locale>
 #include <sstream>
 #include <stdexcept>
 #include <algorithm>

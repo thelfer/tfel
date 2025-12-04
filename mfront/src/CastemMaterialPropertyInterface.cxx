@@ -209,6 +209,7 @@ namespace mfront {
         << "#include<cstdlib>\n"
         << "#include<string>\n"
         << "#include<vector>\n"
+        << "#include<locale>\n"
         << "#include<cmath>\n";
     if (!includes.empty()) {
       out << includes << "\n\n";
