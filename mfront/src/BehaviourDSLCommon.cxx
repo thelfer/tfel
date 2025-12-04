@@ -39,6 +39,7 @@
 #include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/PedanticMode.hxx"
+#include "MFront/LocalDataStructure.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/SearchPathsHandler.hxx"
 #include "MFront/AbstractBehaviourInterface.hxx"
@@ -1268,9 +1269,11 @@ namespace mfront {
     // auxiliary models need to store values of thermodynamic forces and
     // persistent variables using in the evaluation of material properties
     // and external state variables
+    auto initialValues = LocalDataStructure{};
+    initialValues.name = "mfront_initial_values";
     for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
       const auto& bdata = this->mb.getBehaviourData(h);
-      auto ths = std::vector<ThermodynamicForce>{};
+      auto thfs = std::vector<ThermodynamicForce>{};
       auto pvs = std::vector<VariableDescription>{};
       for (const auto& am : this->mb.getAuxiliaryModelsDescriptions()) {
         if (!std::holds_alternative<
@@ -1278,17 +1281,17 @@ namespace mfront {
                     ExternalModelBasedOnBehaviourVariableFactory>(am)) {
           continue;
         }
-        auto treat = [this, &ths, &pvs, &bdata](const VariableDescription& v) {
+        auto treat = [this, &thfs, &pvs, &bdata](const VariableDescription& v) {
           const auto& ename = v.getExternalName();
           if (this->mb.isThermodynamicForceExternalName(ename)) {
-            for (const auto& th : ths) {
+            for (const auto& th : thfs) {
               if (th.getExternalName() == ename) {
                 // this thermodynamic force is already registred
                 return;
               }
             }
-            ths.push_back(static_cast<const BehaviourDescription&>(this->mb)
-                              .getThermodynamicForceByExternalName(ename));
+            thfs.push_back(static_cast<const BehaviourDescription&>(this->mb)
+                               .getThermodynamicForceByExternalName(ename));
             return;
           }
           for (const auto& pv : bdata.getPersistentVariables()) {
@@ -1313,16 +1316,14 @@ namespace mfront {
           treat(esv);
         }
       }  // end of loop on auxiliary models
-      auto& os = getLogStream();
-      os << "\nthermodynamic forces:\n";
-      for (const auto& th: ths) {
-        os << "- " << th.getExternalName() << " " << th.name << '\n';
+      for (const auto& thf: thfs) {
+        initialValues.addVariable(h, {thf.type, thf.name});
       }
-      os << "\npersistent variables:\n";
       for (const auto& pv: pvs) {
-        os << "- " << pv.getExternalName() << " " << pv.name << '\n';
+        initialValues.addVariable(h, {pv.type, pv.name});
       }
     }    // end of loop on modelling hypothesis
+    this->mb.addLocalDataStructure(initialValues);
     // treating bricks
     for (const auto& pb : this->bricks) {
       pb->completeVariableDeclaration();
