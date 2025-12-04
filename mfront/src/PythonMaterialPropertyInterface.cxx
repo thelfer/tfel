@@ -315,6 +315,7 @@ namespace mfront {
             << "#include<cstdio>\n"
             << "#include<string>\n"
             << "#include<vector>\n"
+            << "#include<locale>\n"
             << "#include<cmath>\n"
             << "#include\"TFEL/Config/TFELTypes.hxx\"\n";
     if (useQuantities(mpd)) {
