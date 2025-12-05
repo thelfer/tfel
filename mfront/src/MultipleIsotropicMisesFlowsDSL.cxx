@@ -460,7 +460,7 @@ namespace mfront {
         "Expected the beginning of a block or a specific theta value.");
     if (this->current->value != "{") {
       istringstream converter(this->current->value);
-      converter.imbue(std::locale("en_US.UTF-8"));
+      converter.imbue(std::locale::classic());
       ostringstream otheta;
       ostringstream ose;
       ostringstream oseq_e;
