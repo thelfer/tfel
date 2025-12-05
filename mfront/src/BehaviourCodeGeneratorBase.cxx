@@ -5242,7 +5242,7 @@ namespace mfront {
       << "{\n"
       << type << " value;\n"
       << "std::istringstream converter(v);\n"
-      << "converter.imbue(std::locale(\"en_US.UTF-8\"));\n"
+      << "converter.imbue(std::locale::classic());\n"
       << "converter >> value;\n"
       << "tfel::raise_if(!converter||(!converter.eof()),\n"
       << "\"" << cname << "::get" << type2 << ": \"\n"
