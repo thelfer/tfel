@@ -418,8 +418,7 @@ namespace mfront {
     virtual BehaviourVariableDescription readBehaviourVariableDescription(
         const std::string&,
         const tfel::utilities::Token::size_type,
-        const std::optional<std::string>& = {},
-        const bool = false);
+        const std::optional<std::string>& = {});
     /*!
      * \brief extract a material property from a token. If the token
      * is a string, it is interpred as a mfront file name. Otherwise,
@@ -800,13 +799,11 @@ namespace mfront {
      * \param[in] method: calling method name
      * \param[in] m1: method called if a model is read
      * \param[in] m2: method called if a behaviour is read
-     * \param[in] is_auxiliary: method called an auxiliary model is treated
      */
     void treatModel(
         const std::string&,
         void (BehaviourDescription::*)(const ModelDescription&),
-        void (BehaviourDescription::*)(const BehaviourVariableDescription&),
-        const bool);
+        void (BehaviourDescription::*)(const BehaviourVariableDescription&));
     //! \brief behaviour description
     BehaviourDescription mb;
     //! \brief registred bricks

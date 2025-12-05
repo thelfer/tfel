@@ -1123,7 +1123,7 @@ namespace mfront {
     const auto m2 = static_cast<void (BehaviourDescription::*)(
         const BehaviourVariableDescription&)>(
         &BehaviourDescription::addModelDescription);
-    this->treatModel("BehaviourDSLCommon::treatModel", m1, m2, false);
+    this->treatModel("BehaviourDSLCommon::treatModel", m1, m2);
   }  // end of treatModel
 
   void BehaviourDSLCommon::treatModel2() {
@@ -1316,12 +1316,20 @@ namespace mfront {
           treat(esv);
         }
       }  // end of loop on auxiliary models
+      CodeBlock i;
       for (const auto& thf: thfs) {
         initialValues.addVariable(h, {thf.type, thf.name});
+        i.code += "this->mfront_initial_values. " + thf.name + " = ";
+        i.code += "this->" + thf.name + ";\n";
       }
       for (const auto& pv: pvs) {
         initialValues.addVariable(h, {pv.type, pv.name});
+        i.code += "this->mfront_initial_values. " + pv.name + " = ";
+        i.code += "this->" + pv.name + ";\n";
       }
+      this->mb.setCode(h, BehaviourData::BeforeInitializeLocalVariables, i,
+                       BehaviourData::CREATEORAPPEND,
+                       BehaviourData::AT_BEGINNING);
     }    // end of loop on modelling hypothesis
     this->mb.addLocalDataStructure(initialValues);
     // treating bricks
@@ -2940,8 +2948,7 @@ namespace mfront {
   BehaviourDSLCommon::readBehaviourVariableDescription(
       const std::string& sname,
       const tfel::utilities::Token::size_type lineNumber,
-      const std::optional<std::string>& fileName,
-      const bool is_auxiliary_model) {
+      const std::optional<std::string>& fileName) {
     using namespace tfel::utilities;
     const auto mname = "readBehaviourVariableDescription";
     const auto bname = tfel::unicode::getMangledString(sname);
@@ -3067,7 +3074,6 @@ namespace mfront {
         .automatically_save_associated_auxiliary_state_variables = get_if<bool>(
             options, "automatically_save_associated_auxiliary_state_variables",
             true),
-        .is_auxiliary_model = is_auxiliary_model,
         .behaviour = this->getBehaviourDescription(file)};
     // some restrictions of the behaviours
     if (d.behaviour.getAttribute(BehaviourDescription::requiresStiffnessTensor,
@@ -3101,7 +3107,7 @@ namespace mfront {
             tfel::unicode::getMangledString(sname))) {
       this->throwRuntimeError(mname, "invalid variable name '" + sname + "'");
     }
-    return readBehaviourVariableDescription(sname, lineNumber, {}, false);
+    return readBehaviourVariableDescription(sname, lineNumber, {});
   }  // end of readBehaviourVariableDescription
 
   void BehaviourDSLCommon::treatBehaviourVariable() {
@@ -3285,8 +3291,7 @@ namespace mfront {
   void BehaviourDSLCommon::treatModel(
       const std::string& method,
       void (BehaviourDescription::*m1)(const ModelDescription&),
-      void (BehaviourDescription::*m2)(const BehaviourVariableDescription&),
-      bool is_auxiliary) {
+      void (BehaviourDescription::*m2)(const BehaviourVariableDescription&)) {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << method << ": begin\n";
     }
@@ -3299,7 +3304,7 @@ namespace mfront {
       this->readSpecifiedToken(method, ";");
       (this->mb.*m1)(md);
     } else {
-      const auto d = [this, &f, &method, &lineNumber, &is_auxiliary] {
+      const auto d = [this, &f, &method, &lineNumber] {
         this->checkNotEndOfFile(method);
         auto md = this->getBehaviourDescription(f);
         const auto name = "mfront_external_model_" + md.getClassName();
@@ -3330,7 +3335,6 @@ namespace mfront {
             .store_gradients = false,
             .store_thermodynamic_forces = false,
             .automatically_save_associated_auxiliary_state_variables = false,
-            .is_auxiliary_model = is_auxiliary,
             .behaviour = std::move(md)};
       }();
       if (!d.behaviour.isModel()) {
@@ -3354,7 +3358,7 @@ namespace mfront {
     const auto m2 = static_cast<void (BehaviourDescription::*)(
         const BehaviourVariableDescription&)>(
         &BehaviourDescription::addAuxiliaryModelDescription);
-    this->treatModel("BehaviourDSLCommon::treatAuxiliaryModel", m1, m2, true);
+    this->treatModel("BehaviourDSLCommon::treatAuxiliaryModel", m1, m2);
   }  // end of treatAuxiliaryModel
 
   void BehaviourDSLCommon::treatExternalStateVariable() {

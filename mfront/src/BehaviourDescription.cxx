@@ -2778,6 +2778,20 @@ namespace mfront {
           [this, &bdata, h](const BehaviourVariableDescription& bv) {
             auto checkVariable = [this, &bdata,
                                   &bv](const VariableDescription& v) {
+              const auto is_auxiliary_model = [this, &bv] {
+                for (const auto& m : this->getAuxiliaryModelsDescriptions()) {
+                  if (!std::holds_alternative<
+                          ExternalModelBasedOnBehaviourVariableFactory>(m)) {
+                    continue;
+                  }
+                  const auto& md =
+                      std::get<ExternalModelBasedOnBehaviourVariableFactory>(m);
+                  if (md.factory == bv.name) {
+                    return true;
+                  }
+                }
+                return false;
+              }();
               const auto& source = [this, &bdata, &bv,
                                     &v]() -> VariableDescription {
                 if (this->isGradientExternalName(v.getExternalName())) {
@@ -2803,9 +2817,9 @@ namespace mfront {
                     (bdata.isStaticVariableName(source.name)) ||
                     (this->isGradientName(source.name)) ||
                     ((this->isThermodynamicForceName(source.name)) &&
-                     bv.is_auxiliary_model) ||
+                     is_auxiliary_model) ||
                     ((bdata.isPersistentVariableName(source.name)) &&
-                     bv.is_auxiliary_model))) {
+                     is_auxiliary_model))) {
                 tfel::raise(
                     "variable '" + v.getExternalName() + "' ('" + v.name +
                     "') of behaviour variable '" + bv.name +
