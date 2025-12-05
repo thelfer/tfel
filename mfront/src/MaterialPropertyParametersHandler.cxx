@@ -101,7 +101,7 @@ namespace mfront {
        << "  }\n"
        << "  double pvalue;\n"
        << "  std::istringstream mfront_converter(tokens[1]);\n"
-       << "  mfront_converter.imbue(std::locale(\"en_US.UTF-8\"));\n"
+       << "  mfront_converter.imbue(std::locale::classic());\n"
        << "  mfront_converter >> pvalue;\n"
        << "  if((!mfront_converter) || (!mfront_converter.eof())){\n"
        << "    set_msg(\"can't convert '\"+tokens[1]+"
