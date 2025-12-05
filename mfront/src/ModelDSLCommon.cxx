@@ -768,7 +768,7 @@ namespace mfront {
                               "Expected depth value.");
       unsigned short value;
       std::istringstream converter(this->current->value);
-      converter.imbue(std::locale("en_US.UTF-8"));
+      converter.imbue(std::locale::classic());
       converter >> value;
       if (!converter || (!converter.eof())) {
         this->throwRuntimeError(
