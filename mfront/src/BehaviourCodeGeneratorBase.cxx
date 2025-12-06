@@ -2016,7 +2016,7 @@ namespace mfront {
         const auto& f =
             this->bd.getBehaviourData(h).getBehaviourVariableFactory(
                 md.factory);
-        const auto instance = "mfront_auxiliary_model_"+f.name + "_instance";
+        const auto instance = "mfront_auxiliary_model_" + f.name + "_instance";
         os << "auto " << instance << " = " << f.name << ".make();\n"
            << "if(!this->initialize(" << instance << ")){\n"
            << "return false;\n"

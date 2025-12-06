@@ -701,6 +701,16 @@ namespace mfront {
      */
     void addParameter(const VariableDescription&, const RegistrationStatus);
     /*!
+     *
+     */
+    void declareMaterialPropertyFromSharedVariable(
+        const BehaviourVariableDescription&, const VariableDescription&);
+    /*!
+     *
+     */
+    void declareExternalStateVariableFromSharedVariable(
+        const BehaviourVariableDescription&, const VariableDescription&);
+    /*!
      * \return true if a parameter with the given name exists
      * \param[in] n : name
      */

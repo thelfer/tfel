@@ -11,8 +11,6 @@
 #include "MFront/DSLBase.hxx"
 #include "MFront/BehaviourVariableDescription.hxx"
 
-#include <iostream>
-
 namespace mfront {
 
   static std::string addPrefixAndSuffix(const std::string& n,
@@ -58,8 +56,6 @@ namespace mfront {
       const VariableDescriptionContainer& variables,
       const std::vector<std::regex>& shared_filters,
       const std::vector<std::regex>& evaluated_filters) {
-    std::cout << "evaluated_filters.size(): " << evaluated_filters.size()
-              << '\n';
     auto r = VariableDescriptionContainer{};
     for (const auto& v : variables) {
       auto apply_filters = [&v](const std::vector<std::regex>& filters) {
@@ -183,5 +179,30 @@ namespace mfront {
     return "MFront" + d.behaviour.getClassName() +  //
            "BehaviourVariableFactory_" + d.name;
   }  // end of getBehaviourWrapperClassName
+
+  void checkSharedVariableCompatibility(const BehaviourVariableDescription& bv,
+                                        const VariableDescription& v1,
+                                        const VariableDescription& v2) {
+    auto report = [&bv, &v1, &v2](const std::string_view& reason) {
+      tfel::raise("The shared variable '" + v1.name +
+                  "' declared by behaviour variable '" + bv.name +
+                  "' is not compatible with the variable declared by the "
+                  "calling behaviour: " +
+                  std::string{reason});
+    };
+    if (v1.getVariableTypeIdentifier() != v2.getVariableTypeIdentifier()) {
+      report("unmatched type ('" + v1.type + "' vs '" + v2.type + "')");
+    }
+    if (v1.arraySize != v2.arraySize) {
+      report("unmatched array size (" + std::to_string(v1.arraySize) + " vs " +
+             std::to_string(v2.arraySize) + ")");
+    }
+    if ((v1.hasGlossaryName()) && (v2.hasGlossaryName())) {
+      if (v1.getExternalName() != v2.getExternalName()) {
+        report("unmatched external names ('" + v1.getExternalName() + "' vs '" +
+               v2.getExternalName() + "')");
+      }
+    }
+  }  // end checkSharedVariableCompatibility
 
 }  // end of namespace mfront

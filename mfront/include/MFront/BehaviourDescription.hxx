@@ -16,6 +16,7 @@
 #define LIB_MFRONT_BEHAVIOURDESCRIPTION_HXX
 
 #include <set>
+#include <tuple>
 #include <vector>
 #include <memory>
 #include <utility>
@@ -1811,8 +1812,11 @@ namespace mfront {
      * \param[in] v: behaviour variable added
      * \param[in] isExternalModel: flag stating if the factory is associated
      * with an external model
+     * \param[in] isAuxiliaryModel: flag stating if the factory is associated
+     * with an auxiliary model
      */
     void addBehaviourVariableFactory(const BehaviourVariableDescription&,
+                                     const bool,
                                      const bool);
     /*!
      * \call the behaviour data associated with the given hypothesis
@@ -2102,7 +2106,7 @@ namespace mfront {
      * when modelling hypothesis are defined. The second member of the pair
      * indicates if the factory is associated with an external model
      */
-    std::vector<std::pair<BehaviourVariableDescription, bool>>
+    std::vector<std::tuple<BehaviourVariableDescription, bool, bool>>
         behaviourVariableFactoriesCandidates;
     /*!
      * Support for dynamically allocated vectors is not allowed in all

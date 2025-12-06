@@ -1317,12 +1317,12 @@ namespace mfront {
         }
       }  // end of loop on auxiliary models
       CodeBlock i;
-      for (const auto& thf: thfs) {
+      for (const auto& thf : thfs) {
         initialValues.addVariable(h, {thf.type, thf.name});
         i.code += "this->mfront_initial_values. " + thf.name + " = ";
         i.code += "this->" + thf.name + ";\n";
       }
-      for (const auto& pv: pvs) {
+      for (const auto& pv : pvs) {
         initialValues.addVariable(h, {pv.type, pv.name});
         i.code += "this->mfront_initial_values. " + pv.name + " = ";
         i.code += "this->" + pv.name + ";\n";
@@ -1330,7 +1330,7 @@ namespace mfront {
       this->mb.setCode(h, BehaviourData::BeforeInitializeLocalVariables, i,
                        BehaviourData::CREATEORAPPEND,
                        BehaviourData::AT_BEGINNING);
-    }    // end of loop on modelling hypothesis
+    }  // end of loop on modelling hypothesis
     this->mb.addLocalDataStructure(initialValues);
     // treating bricks
     for (const auto& pb : this->bricks) {
@@ -2973,6 +2973,8 @@ namespace mfront {
             .addDataTypeValidator<bool>("store_thermodynamic_forces")
             .addDataTypeValidator<bool>(
                 "automatically_save_associated_auxiliary_state_variables")
+            .addDataTypeValidator<bool>(
+                "use_shared_variable_if_evaluation_is_not_feasible")
             .addDataTypeValidator<std::vector<Data>>(
                 "shared_material_properties")
             .addDataTypeValidator<std::vector<Data>>(
@@ -3074,6 +3076,9 @@ namespace mfront {
         .automatically_save_associated_auxiliary_state_variables = get_if<bool>(
             options, "automatically_save_associated_auxiliary_state_variables",
             true),
+        .use_shared_variable_if_evaluation_is_not_feasible = get_if<bool>(
+            options, "use_shared_variable_if_evaluation_is_not_feasible",
+            false),
         .behaviour = this->getBehaviourDescription(file)};
     // some restrictions of the behaviours
     if (d.behaviour.getAttribute(BehaviourDescription::requiresStiffnessTensor,
@@ -3335,6 +3340,7 @@ namespace mfront {
             .store_gradients = false,
             .store_thermodynamic_forces = false,
             .automatically_save_associated_auxiliary_state_variables = false,
+            .use_shared_variable_if_evaluation_is_not_feasible = true,
             .behaviour = std::move(md)};
       }();
       if (!d.behaviour.isModel()) {

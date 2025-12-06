@@ -189,6 +189,18 @@ namespace mfront {
   MFRONT_VISIBILITY_EXPORT std::string getBehaviourVariableFactoryClassName(
       const BehaviourVariableDescription&);
 
+  /*!
+   * \brief check if the variable of behaviour description is compatible with
+   * the variable declared by the calling behaviour
+   * \param[in] bv: behaviour variable
+   * \param[in] v1: variable declared as shared by the behaviour variable
+   * \param[in] v2: variable declared by the calling behaviour
+   */
+  MFRONT_VISIBILITY_EXPORT void checkSharedVariableCompatibility(
+      const BehaviourVariableDescription&,
+      const VariableDescription&,
+      const VariableDescription&);
+
 }  // end of namespace mfront
 
 #endif /* LIB_BEHAVIOURVARIABLEDESCRIPTION_HXX */

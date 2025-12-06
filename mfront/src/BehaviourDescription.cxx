@@ -2280,9 +2280,9 @@ namespace mfront {
       this->addBehaviourVariable(bv);
     }
     this->behaviourVariablesCandidates.clear();
-    for (const auto& [bv, isExternalModel] :
+    for (const auto& [bv, isExternalModel, isAuxiliaryModel] :
          this->behaviourVariableFactoriesCandidates) {
-      this->addBehaviourVariableFactory(bv, isExternalModel);
+      this->addBehaviourVariableFactory(bv, isExternalModel, isAuxiliaryModel);
     }
     this->behaviourVariableFactoriesCandidates.clear();
   }  // end of setModellingHypotheses
@@ -2313,7 +2313,7 @@ namespace mfront {
   void BehaviourDescription::addModelDescription(
       const BehaviourVariableDescription& md) {
     const auto fname = getBehaviourVariableFactoryClassName(md);
-    this->addBehaviourVariableFactory(md, true);
+    this->addBehaviourVariableFactory(md, true, false);
     this->models.push_back(
         ExternalModelBasedOnBehaviourVariableFactory{.factory = fname});
   }  // end of addModelDescription
@@ -2322,6 +2322,7 @@ namespace mfront {
       const ModelDescription& md) {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     for (auto ov : md.outputs) {
+      ov.setAttribute("ComputedByAuxiliaryModel", true, false);
       this->addAuxiliaryStateVariable(uh, ov, BehaviourData::UNREGISTRED);
     }
     this->auxiliaryModels.push_back(md);
@@ -2330,7 +2331,7 @@ namespace mfront {
   void BehaviourDescription::addAuxiliaryModelDescription(
       const BehaviourVariableDescription& md) {
     const auto fname = getBehaviourVariableFactoryClassName(md);
-    this->addBehaviourVariableFactory(md, true);
+    this->addBehaviourVariableFactory(md, false, true);
     this->auxiliaryModels.push_back(
         ExternalModelBasedOnBehaviourVariableFactory{.factory = fname});
   }  // end of addAuxiliaryModelDescription
@@ -2482,7 +2483,8 @@ namespace mfront {
       BehaviourData& bd,
       const BehaviourVariableDescription& bv,
       const BehaviourDescription::Hypothesis h,
-      const bool isExternalModel) {
+      const bool isExternalModel,
+      const bool isAuxiliaryModel) {
     // gradients and thermodynamic forces
     for (const auto& [g, th] : bv.behaviour.getMainVariables()) {
       if (bv.store_gradients) {
@@ -2527,6 +2529,9 @@ namespace mfront {
         auto nisv = applyNamesChanges(bv, isv);
         if (isExternalModel) {
           nisv.setAttribute("ComputedByExternalModel", true, false);
+        }
+        if (isAuxiliaryModel) {
+          nisv.setAttribute("ComputedByAuxiliaryModel", true, false);
         }
         bd.addAuxiliaryStateVariable(nisv, BehaviourData::UNREGISTRED);
       } catch (std::exception& e) {
@@ -2584,10 +2589,10 @@ namespace mfront {
       // now adding everything that we need
       constexpr auto uh = Hypothesis::UNDEFINEDHYPOTHESIS;
       if (!this->areAllMechanicalDataSpecialised()) {
-        completeVariablesDeclarations(this->d, v, uh, false);
+        completeVariablesDeclarations(this->d, v, uh, false, false);
       }
       for (auto& md : this->sd) {
-        completeVariablesDeclarations(*(md.second), v, md.first, false);
+        completeVariablesDeclarations(*(md.second), v, md.first, false, false);
       }
       this->d.addBehaviourVariable(v);
       for (auto& md : this->sd) {
@@ -2608,11 +2613,13 @@ namespace mfront {
 
   void BehaviourDescription::addBehaviourVariableFactory(
       const BehaviourVariableDescription& v) {
-    this->addBehaviourVariableFactory(v, false);
+    this->addBehaviourVariableFactory(v, false, false);
   }
 
   void BehaviourDescription::addBehaviourVariableFactory(
-      const BehaviourVariableDescription& v, const bool isExternalModel) {
+      const BehaviourVariableDescription& v,
+      const bool isExternalModel,
+      const bool isAuxiliaryModel) {
     if (!this->allowsNewUserDefinedVariables()) {
       tfel::raise(
           "BehaviourDescription::addBehaviourVariableFactory: "
@@ -2645,11 +2652,12 @@ namespace mfront {
       // now adding everything that we need
       constexpr auto uh = Hypothesis::UNDEFINEDHYPOTHESIS;
       if (!this->areAllMechanicalDataSpecialised()) {
-        completeVariablesDeclarations(this->d, v, uh, isExternalModel);
+        completeVariablesDeclarations(this->d, v, uh, isExternalModel,
+                                      isAuxiliaryModel);
       }
       for (auto& md : this->sd) {
         completeVariablesDeclarations(*(md.second), v, md.first,
-                                      isExternalModel);
+                                      isExternalModel, isAuxiliaryModel);
       }
       this->d.addBehaviourVariableFactory(v);
       for (auto& md : this->sd) {
@@ -2665,7 +2673,7 @@ namespace mfront {
             << "are defined'\n";
       }
       this->behaviourVariableFactoriesCandidates.push_back(
-          {v, isExternalModel});
+          {v, isExternalModel, isAuxiliaryModel});
     }
   }  // end of addBehaviourVariableFactory
 
@@ -2772,92 +2780,118 @@ namespace mfront {
     // complete the declaration of physical bounds
     this->checkAndCompletePhysicalBoundsDeclaration();
     //
-    auto checkBehaviourVariables = [this](const BehaviourData& bdata,
+    auto checkBehaviourVariables = [this](BehaviourData& bdata,
                                           const Hypothesis h) {
-      auto checkBehaviourVariable =
-          [this, &bdata, h](const BehaviourVariableDescription& bv) {
-            auto checkVariable = [this, &bdata,
-                                  &bv](const VariableDescription& v) {
-              const auto is_auxiliary_model = [this, &bv] {
-                for (const auto& m : this->getAuxiliaryModelsDescriptions()) {
-                  if (!std::holds_alternative<
-                          ExternalModelBasedOnBehaviourVariableFactory>(m)) {
-                    continue;
-                  }
-                  const auto& md =
-                      std::get<ExternalModelBasedOnBehaviourVariableFactory>(m);
-                  if (md.factory == getBehaviourVariableFactoryClassName(bv)) {
-                    return true;
-                  }
-                }
-                return false;
-              }();
-              const auto& source = [this, &bdata, &bv,
-                                    &v]() -> VariableDescription {
-                if (this->isGradientExternalName(v.getExternalName())) {
-                  return this->getGradientByExternalName(v.getExternalName());
-                }
-                if (this->isThermodynamicForceExternalName(
-                        v.getExternalName())) {
-                  return this->getThermodynamicForceByExternalName(
-                      v.getExternalName());
-                }
-                try {
-                  return bdata.getVariableDescriptionByExternalName(
-                      v.getExternalName());
-                } catch (std::exception& e) {
-                  tfel::raise("variable '" + v.getExternalName() + "' ('" +
-                              v.name + "') of behaviour variable '" + bv.name +
-                              "' can't be evaluated");
-                }
-              }();
-              if (!((bdata.isExternalStateVariableName(source.name)) ||
-                    (bdata.isMaterialPropertyName(source.name)) ||
-                    (bdata.isParameterName(source.name)) ||
-                    (bdata.isStaticVariableName(source.name)) ||
-                    (this->isGradientName(source.name)) ||
-                    ((this->isThermodynamicForceName(source.name)) &&
-                     is_auxiliary_model) ||
-                    ((bdata.isPersistentVariableName(source.name)) &&
-                     is_auxiliary_model))) {
-                tfel::raise(
-                    "variable '" + v.getExternalName() + "' ('" + v.name +
-                    "') of behaviour variable '" + bv.name +
-                    "' can't be evaluated with neither an external state "
-                    "variable, a material property, a parameter nor a static "
-                    "variable ");
-              }
-              auto report = [&v, &source, &bv](const std::string_view& reason) {
-                tfel::raise(
-                    "The shared variable '" + source.name +
-                    "' declared by behaviour variable '" + bv.name +
-                    "' is not compatible with the variable declared by the "
-                    "calling behaviour: " +
-                    std::string{reason});
-              };
-              if (v.getVariableTypeIdentifier() !=
-                  source.getVariableTypeIdentifier()) {
-                report("unmatched type ('" + v.type + "' vs '" + source.type +
-                       "')");
-              }
-              if (v.arraySize != source.arraySize) {
-                report("unmatched array size (" + std::to_string(v.arraySize) +
-                       " vs " + std::to_string(source.arraySize) + ")");
-              }
-              if ((v.hasGlossaryName()) && (source.hasGlossaryName())) {
-                if (v.getExternalName() != source.getExternalName()) {
-                  report("unmatched external names ('" + v.getExternalName() +
-                         "' vs '" + source.getExternalName() + "')");
-                }
-              }
-            };  // end of checkVariable
-            for (const auto& mp : getEvaluatedMaterialProperties(bv, h)) {
-              checkVariable(mp);
+      auto checkBehaviourVariable = [this, &bdata,
+                                     h](const BehaviourVariableDescription&
+                                            bv) {
+        auto checkVariable = [this, &bdata, &bv](const VariableDescription& v,
+                                                 const bool materialProperty) {
+          const auto& osource = [this, &bdata, &bv,
+                                 &v]() -> std::optional<VariableDescription> {
+            if (this->isGradientExternalName(v.getExternalName())) {
+              return this->getGradientByExternalName(v.getExternalName());
             }
-            for (const auto& esv : getEvaluatedExternalStateVariables(bv, h)) {
-              checkVariable(esv);
+            if (this->isThermodynamicForceExternalName(v.getExternalName())) {
+              return this->getThermodynamicForceByExternalName(
+                  v.getExternalName());
             }
-          };  // end of checkBehaviourVariable
+            try {
+              return bdata.getVariableDescriptionByExternalName(
+                  v.getExternalName());
+            } catch (std::exception&) {
+            }
+            return {};
+          }();
+          const auto is_evaluable = [this, &osource, &bdata, &bv, &v] {
+            if (!osource.has_value()) {
+              return false;
+            }
+            const auto is_auxiliary_model = [this, &bv] {
+              for (const auto& m : this->getAuxiliaryModelsDescriptions()) {
+                if (!std::holds_alternative<
+                        ExternalModelBasedOnBehaviourVariableFactory>(m)) {
+                  continue;
+                }
+                const auto& md =
+                    std::get<ExternalModelBasedOnBehaviourVariableFactory>(m);
+                if (md.factory == getBehaviourVariableFactoryClassName(bv)) {
+                  return true;
+                }
+              }
+              return false;
+            }();
+            if ((bdata.isExternalStateVariableName(osource->name)) ||
+                (bdata.isMaterialPropertyName(osource->name)) ||
+                (bdata.isParameterName(osource->name)) ||
+                (bdata.isStaticVariableName(osource->name)) ||
+                (this->isGradientName(osource->name)) ||
+                ((this->isThermodynamicForceName(osource->name)) &&
+                 is_auxiliary_model) ||
+                ((bdata.isStateVariableName(osource->name)) &&
+                 is_auxiliary_model)) {
+              return true;
+            }
+            if ((bdata.isAuxiliaryStateVariableName(osource->name)) &&
+                is_auxiliary_model) {
+              if (osource->getAttribute<bool>("ComputedByAuxiliaryModel",
+                                              false)) {
+                tfel::raise("variable '" + v.getExternalName() + "' ('" +
+                            v.name + "') of behaviour variable '" + bv.name +
+                            "' can't be evaluated by an auxiliary variable "
+                            "computed by another auxiliary model");
+              }
+              return true;
+            }
+            return false;
+          }();
+          if (!is_evaluable) {
+            if (bv.use_shared_variable_if_evaluation_is_not_feasible) {
+              if (materialProperty) {
+                bdata.declareMaterialPropertyFromSharedVariable(bv, v);
+              } else {
+                bdata.declareExternalStateVariableFromSharedVariable(bv, v);
+              }
+              return;
+            } else {
+              tfel::raise(
+                  "variable '" + v.getExternalName() + "' ('" + v.name +
+                  "') of behaviour variable '" + bv.name +
+                  "' can't be evaluated with neither an external state "
+                  "variable, a material property, a parameter nor a static "
+                  "variable ");
+            }
+          }
+          auto report = [&v, &osource, &bv](const std::string_view& reason) {
+            tfel::raise("The sourve variable '" + osource->name +
+                        "' declared by behaviour variable '" + bv.name +
+                        "' is not compatible with the variable declared by the "
+                        "calling behaviour: " +
+                        std::string{reason});
+          };
+          if (v.getVariableTypeIdentifier() !=
+              osource->getVariableTypeIdentifier()) {
+            report("unmatched type ('" + v.type + "' vs '" + osource->type +
+                   "')");
+          }
+          if (v.arraySize != osource->arraySize) {
+            report("unmatched array size (" + std::to_string(v.arraySize) +
+                   " vs " + std::to_string(osource->arraySize) + ")");
+          }
+          if ((v.hasGlossaryName()) && (osource->hasGlossaryName())) {
+            if (v.getExternalName() != osource->getExternalName()) {
+              report("unmatched external names ('" + v.getExternalName() +
+                     "' vs '" + osource->getExternalName() + "')");
+            }
+          }
+        };  // end of checkVariable
+        for (const auto& mp : getEvaluatedMaterialProperties(bv, h)) {
+          checkVariable(mp, true);
+        }
+        for (const auto& esv : getEvaluatedExternalStateVariables(bv, h)) {
+          checkVariable(esv, false);
+        }
+      };  // end of checkBehaviourVariable
       for (const auto& bv : bdata.getBehaviourVariables()) {
         checkBehaviourVariable(bv);
       }
