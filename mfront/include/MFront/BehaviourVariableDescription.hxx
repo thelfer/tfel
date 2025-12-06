@@ -100,10 +100,10 @@ namespace mfront {
      */
     bool automatically_save_associated_auxiliary_state_variables = true;
     /*!
-     * \brief flag stating if the behaviour variable describes on auxiliary
-     * model.
+     * \brief flag stating if a shared variable shall be used is the evaluation
+     * of a variable is not feasible
      */
-    bool is_auxiliary_model = false;
+    bool use_shared_variable_if_evaluation_is_not_feasible = false;
     //! \brief behaviour description
     BehaviourDescription behaviour;
   };  // end of BehaviourVariableDescription

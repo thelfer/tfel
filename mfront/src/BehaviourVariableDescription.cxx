@@ -11,6 +11,8 @@
 #include "MFront/DSLBase.hxx"
 #include "MFront/BehaviourVariableDescription.hxx"
 
+#include <iostream>
+
 namespace mfront {
 
   static std::string addPrefixAndSuffix(const std::string& n,
@@ -21,28 +23,26 @@ namespace mfront {
 
   static VariableDescriptionContainer selectVariablesFromRegularExpression(
       const VariableDescriptionContainer& variables,
-      const std::vector<std::regex>& filters,
+      const std::vector<std::regex>& first_filters,
       const std::vector<std::regex>& second_filters) {
     auto r = VariableDescriptionContainer{};
     for (const auto& v : variables) {
-      const auto selected = [&v, &filters] {
+      auto apply_filters = [&v](const std::vector<std::regex>& filters) {
         for (const auto& f : filters) {
-          if ((std::regex_search(v.name, f)) ||
-              (std::regex_search(v.getExternalName(), f))) {
+          if ((std::regex_match(v.name, f)) ||
+              (std::regex_match(v.getExternalName(), f))) {
             return true;
+          }
+          if (!v.symbolic_form.empty()) {
+            if (std::regex_match(v.symbolic_form, f)) {
+              return true;
+            }
           }
         }
         return false;
-      }();
-      const auto selected2 = [&v, &second_filters] {
-        for (const auto& f : second_filters) {
-          if ((std::regex_search(v.name, f)) ||
-              (std::regex_search(v.getExternalName(), f))) {
-            return true;
-          }
-        }
-        return false;
-      }();
+      };
+      const auto selected = apply_filters(first_filters);
+      const auto selected2 = apply_filters(second_filters);
       if (selected && selected2) {
         tfel::raise("variable '" + v.getExternalName() + "' ('" + v.name +
                     "') is both shared and evaluated");
@@ -58,26 +58,26 @@ namespace mfront {
       const VariableDescriptionContainer& variables,
       const std::vector<std::regex>& shared_filters,
       const std::vector<std::regex>& evaluated_filters) {
+    std::cout << "evaluated_filters.size(): " << evaluated_filters.size()
+              << '\n';
     auto r = VariableDescriptionContainer{};
     for (const auto& v : variables) {
-      const auto shared = [&v, &shared_filters] {
-        for (const auto& f : shared_filters) {
-          if ((std::regex_search(v.name, f)) ||
-              (std::regex_search(v.getExternalName(), f))) {
+      auto apply_filters = [&v](const std::vector<std::regex>& filters) {
+        for (const auto& f : filters) {
+          if ((std::regex_match(v.name, f)) ||
+              (std::regex_match(v.getExternalName(), f))) {
             return true;
+          }
+          if (!v.symbolic_form.empty()) {
+            if (std::regex_match(v.symbolic_form, f)) {
+              return true;
+            }
           }
         }
         return false;
-      }();
-      const auto evaluated = [&v, &evaluated_filters] {
-        for (const auto& f : evaluated_filters) {
-          if ((std::regex_search(v.name, f)) ||
-              (std::regex_search(v.getExternalName(), f))) {
-            return true;
-          }
-        }
-        return false;
-      }();
+      };
+      const auto shared = apply_filters(shared_filters);
+      const auto evaluated = apply_filters(evaluated_filters);
       if (shared && evaluated) {
         tfel::raise("variable '" + v.getExternalName() + "' ('" + v.name +
                     "') is both shared and evaluated");

@@ -2786,7 +2786,7 @@ namespace mfront {
                   }
                   const auto& md =
                       std::get<ExternalModelBasedOnBehaviourVariableFactory>(m);
-                  if (md.factory == bv.name) {
+                  if (md.factory == getBehaviourVariableFactoryClassName(bv)) {
                     return true;
                   }
                 }
