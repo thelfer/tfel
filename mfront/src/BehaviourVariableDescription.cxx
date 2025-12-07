@@ -101,10 +101,9 @@ namespace mfront {
       nv.symbolic_form = addPrefixAndSuffix(v.symbolic_form, d.variables_prefix,
                                             d.variables_suffix);
     }
-    if ((v.hasGlossaryName()) || (v.hasEntryName())) {
-      const auto ename =
-          addPrefixAndSuffix(v.getExternalName(), d.external_names_prefix,
-                             d.external_names_suffix);
+    const auto ename = addPrefixAndSuffix(
+        v.getExternalName(), d.external_names_prefix, d.external_names_suffix);
+    if (v.name != ename) {
       const auto& g = tfel::glossary::Glossary::getGlossary();
       if (g.contains(ename)) {
         nv.resetGlossaryName(ename);
@@ -113,6 +112,7 @@ namespace mfront {
       }
     }
     return nv;
+
   }  // end of applyNamesChanges
 
   VariableDescriptionContainer getSharedMaterialProperties(
