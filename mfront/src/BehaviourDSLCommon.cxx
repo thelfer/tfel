@@ -2963,6 +2963,14 @@ namespace mfront {
     }();
     this->readSpecifiedToken(mname, ";");
     //
+    auto vectorValidator = [](const Data& d) {
+      if (d.empty()) {
+        return;
+      }
+      if (!d.is<std::vector<Data>>()) {
+        tfel::raise("invalid type");
+      }
+    };
     auto validator =
         DataMapValidator{}
             .addDataTypeValidator<std::string>("variables_prefix")
@@ -2975,14 +2983,12 @@ namespace mfront {
                 "automatically_save_associated_auxiliary_state_variables")
             .addDataTypeValidator<bool>(
                 "use_shared_variable_if_evaluation_is_not_feasible")
-            .addDataTypeValidator<std::vector<Data>>(
-                "shared_material_properties")
-            .addDataTypeValidator<std::vector<Data>>(
-                "evaluated_material_properties")
-            .addDataTypeValidator<std::vector<Data>>(
-                "shared_external_state_variables")
-            .addDataTypeValidator<std::vector<Data>>(
-                "evaluated_external_state_variables");
+            .addDataValidator("shared_material_properties", vectorValidator)
+            .addDataValidator("evaluated_material_properties", vectorValidator)
+            .addDataValidator("shared_external_state_variables",
+                              vectorValidator)
+            .addDataValidator("evaluated_external_state_variables",
+                              vectorValidator);
     if (!fileName.has_value()) {
       validator.addDataTypeValidator<std::string>("file");
     }
@@ -2992,6 +2998,10 @@ namespace mfront {
         [this, &options,
          mname](const std::string_view& n) -> std::vector<std::regex> {
       if (!options.contains(n)) {
+        return {};
+      }
+      if (get(options, n).empty()) {
+        // is empty, checked by vectorValidator
         return {};
       }
       auto r = std::vector<std::regex>{};
