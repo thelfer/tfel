@@ -2022,7 +2022,7 @@ namespace mfront {
 
   void BehaviourData::finalizeVariablesDeclaration(const Hypothesis h) {
     //
-    for (const auto& bv : this->behaviourVariables) {
+    auto finalize = [this, h](const BehaviourVariableDescription& bv) {
       for (const auto& mp : getSharedMaterialProperties(bv, h)) {
         try {
           this->declareMaterialPropertyFromSharedVariable(bv, mp);
@@ -2043,6 +2043,12 @@ namespace mfront {
                       std::string{e.what()});
         }
       }
+    };
+    for (const auto& bv : this->behaviourVariables) {
+      finalize(bv);
+    }
+    for (const auto& bv : this->behaviourVariableFactories) {
+      finalize(bv);
     }
     //
     auto check = [](const VariableDescription& v) {
