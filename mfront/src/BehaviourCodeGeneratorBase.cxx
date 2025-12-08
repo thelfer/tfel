@@ -5088,6 +5088,7 @@ namespace mfront {
                 mp.getExternalName()).name;
           }
           if (md.isStaticVariableName(mp.getExternalName())) {
+
             return md.getStaticVariableDescription(mp.getExternalName()).name;
           }
           try {

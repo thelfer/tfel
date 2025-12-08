@@ -2804,6 +2804,9 @@ namespace mfront {
             return {};
           }();
           const auto is_evaluable = [this, &osource, &bdata, &bv, &v] {
+            if (bdata.isStaticVariableName(v.getExternalName())) {
+              return true;
+            }
             if (!osource.has_value()) {
               return false;
             }
@@ -2824,7 +2827,6 @@ namespace mfront {
             if ((bdata.isExternalStateVariableName(osource->name)) ||
                 (bdata.isMaterialPropertyName(osource->name)) ||
                 (bdata.isParameterName(osource->name)) ||
-                (bdata.isStaticVariableName(osource->name)) ||
                 (this->isGradientName(osource->name)) ||
                 ((this->isThermodynamicForceName(osource->name)) &&
                  is_auxiliary_model) ||
@@ -2869,19 +2871,33 @@ namespace mfront {
                         "calling behaviour: " +
                         std::string{reason});
           };
-          if (v.getVariableTypeIdentifier() !=
-              osource->getVariableTypeIdentifier()) {
-            report("unmatched type ('" + v.type + "' vs '" + osource->type +
-                   "')");
-          }
-          if (v.arraySize != osource->arraySize) {
-            report("unmatched array size (" + std::to_string(v.arraySize) +
-                   " vs " + std::to_string(osource->arraySize) + ")");
-          }
-          if ((v.hasGlossaryName()) && (osource->hasGlossaryName())) {
-            if (v.getExternalName() != osource->getExternalName()) {
-              report("unmatched external names ('" + v.getExternalName() +
-                     "' vs '" + osource->getExternalName() + "')");
+          if (bdata.isStaticVariableName(v.getExternalName())) {
+            const auto sv =
+                bdata.getStaticVariableDescription(v.getExternalName());
+            if (v.getVariableTypeIdentifier() !=
+                sv.getVariableTypeIdentifier()) {
+              report("unmatched type ('" + v.type + "' vs '" + sv.type +
+                     "')");
+            }
+            if (v.arraySize != sv.arraySize) {
+              report("unmatched array size (" + std::to_string(v.arraySize) +
+                     " vs " + std::to_string(sv.arraySize) + ")");
+            }
+          } else {
+            if (v.getVariableTypeIdentifier() !=
+                osource->getVariableTypeIdentifier()) {
+              report("unmatched type ('" + v.type + "' vs '" + osource->type +
+                     "')");
+            }
+            if (v.arraySize != osource->arraySize) {
+              report("unmatched array size (" + std::to_string(v.arraySize) +
+                     " vs " + std::to_string(osource->arraySize) + ")");
+            }
+            if ((v.hasGlossaryName()) && (osource->hasGlossaryName())) {
+              if (v.getExternalName() != osource->getExternalName()) {
+                report("unmatched external names ('" + v.getExternalName() +
+                       "' vs '" + osource->getExternalName() + "')");
+              }
             }
           }
         };  // end of checkVariable
