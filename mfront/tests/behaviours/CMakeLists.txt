@@ -1,6 +1,7 @@
 add_subdirectory(unit-tests)
 # bricks
 add_subdirectory(IsotropicDSLs)
+add_subdirectory(AuxiliaryModels)
 add_subdirectory(BehaviourVariables)
 add_subdirectory(StandardElasticity)
 add_subdirectory(StandardElastoViscoPlasticity)
