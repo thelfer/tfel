@@ -2001,6 +2001,16 @@ namespace mfront {
         }
       }
     }
+    const auto& md = this->bd.getBehaviourData(h);
+    for (const auto& b : md.getBehaviourVariables()) {
+      if (b.automatically_save_associated_auxiliary_state_variables) {
+        os << "this->updateAuxiliaryStateVariables(" << b.name << ");\n";
+      }
+    }
+    if (this->bd.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
+      os << this->bd.getCode(h, BehaviourData::UpdateAuxiliaryStateVariables)
+         << "\n";
+    }
     for (const auto& m : this->bd.getAuxiliaryModelsDescriptions()) {
       if (std::holds_alternative<ModelDescription>(m)) {
         const auto& md = std::get<ModelDescription>(m);
@@ -2033,16 +2043,6 @@ namespace mfront {
           os << "this->updateAuxiliaryStateVariables(" << instance << ");\n";
         }
       }
-    }
-    const auto& md = this->bd.getBehaviourData(h);
-    for (const auto& b : md.getBehaviourVariables()) {
-      if (b.automatically_save_associated_auxiliary_state_variables) {
-        os << "this->updateAuxiliaryStateVariables(" << b.name << ");\n";
-      }
-    }
-    if (this->bd.hasCode(h, BehaviourData::UpdateAuxiliaryStateVariables)) {
-      os << this->bd.getCode(h, BehaviourData::UpdateAuxiliaryStateVariables)
-         << "\n";
     }
     os << "return true;\n"
        << "}\n\n";
