@@ -506,6 +506,11 @@ namespace mfront {
     getAuxiliaryStateVariableDescriptionByExternalName(
         const std::string&) const;
     /*!
+     * \param[in] n: name
+     */
+    const StaticVariableDescription& getStaticVariableDescription(
+        const std::string&) const;
+    /*!
      * \param[in] n: external name
      */
     const VariableDescription&
@@ -631,7 +636,6 @@ namespace mfront {
      * \param[in] n : name
      */
     bool isStaticVariableName(const std::string& n) const;
-
     //! \brief \return the static variables defined
     const StaticVariableDescriptionContainer& getStaticVariables() const;
     /*!
@@ -709,6 +713,7 @@ namespace mfront {
      *
      */
     void declareExternalStateVariableFromSharedVariable(
+
         const BehaviourVariableDescription&, const VariableDescription&);
     /*!
      * \return true if a parameter with the given name exists

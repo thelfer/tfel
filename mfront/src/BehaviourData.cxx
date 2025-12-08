@@ -471,6 +471,11 @@ namespace mfront {
     return this->getParameters().getVariableByExternalName(v);
   }  // end of getParameterDescriptionByExternalName
 
+  const StaticVariableDescription& BehaviourData::getStaticVariableDescription(
+      const std::string& n) const {
+    return this->getStaticVariables().get(n);
+  }  // end of getStaticVariableDescription
+
   void BehaviourData::addMaterialProperty(const VariableDescription& v,
                                           const RegistrationStatus s) {
     this->addVariable(this->materialProperties, v, s, false);
