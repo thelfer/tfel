@@ -3,7 +3,8 @@ mfront_behaviour_brick_check_library(MFrontAuxiliaryModels
   AuxiliaryModelTest1
   AuxiliaryModelTest2
   AuxiliaryModelTest3
-  AuxiliaryModelTest4)
+  AuxiliaryModelTest4
+  AuxiliaryModelTest5)
 
 macro(generictest_auxiliary_model test_arg behaviour)
     set(_REFERENCE_FILE )
@@ -50,3 +51,4 @@ generictest_auxiliary_model(auxiliary_model_test1 MFrontAuxiliaryModels auxiliar
 generictest_auxiliary_model(auxiliary_model_test2 MFrontAuxiliaryModels)
 generictest_auxiliary_model(auxiliary_model_test3 MFrontAuxiliaryModels)
 generictest_auxiliary_model(auxiliary_model_test4 MFrontAuxiliaryModels)
+generictest_auxiliary_model(auxiliary_model_test5 MFrontAuxiliaryModels)
