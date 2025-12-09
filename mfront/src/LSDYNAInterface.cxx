@@ -13,11 +13,9 @@
 
 #include <fstream>
 #include <iostream>
-
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/System/System.hxx"
-
 #include "MFront/MFrontLock.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"

@@ -61,6 +61,10 @@ namespace mfront {
     return SupportedTypes::getTypeSize(this->type, this->arraySize);
   }
 
+  int VariableDescriptionBase::getVariableTypeIdentifier() const {
+    return SupportedTypes::getTypeIdentifier(this->type);
+  }  // end of getVariableTypeIdentifier
+
   VariableDescriptionBase::~VariableDescriptionBase() = default;
 
   const std::string& displayName(const VariableDescriptionBase& v) {

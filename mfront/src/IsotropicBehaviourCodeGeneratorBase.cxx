@@ -258,6 +258,7 @@ namespace mfront {
 
   void IsotropicBehaviourCodeGeneratorBase::
       writeBehaviourIntegratorPostprocessingStep(std::ostream& os) const {
+    const auto btype = this->bd.getBehaviourTypeFlag();
     if (!this->bd.getAttribute(
             IsotropicBehaviourDSLBase::useStressUpdateAlgorithm, false)) {
       os << "this->deel = this->deto - (this->dp) * (this->n);\n";
@@ -281,7 +282,15 @@ namespace mfront {
          << "(this->lambda_tdt) * trace(this->eel) * Stensor::Id() + "
          << "2 * (this->mu_tdt) * (this->eel);\n";
     }
-    os << "this->updateAuxiliaryStateVariables();\n";
+    os << "if(!this->updateAuxiliaryStateVariables()){\n";
+    if (this->bd.useQt()) {
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
+    } else {
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType, false>::FAILURE;\n";
+    }
+    os << "}\n";
   }  // end of writeBehaviourIntegratorPostocessingStep
 
   void
