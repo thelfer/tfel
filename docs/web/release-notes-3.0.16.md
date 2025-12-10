@@ -20,6 +20,8 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 3.0.16 of the
 `TFEL` project.
 
+This version was released on December 10, 2025.
+
 # Issues fixed
 
 ## Issue 886: [mfront] reading parameters from a text file shall not be locale sensitive. `stod` shall not be used
