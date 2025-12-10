@@ -33,7 +33,7 @@ include(cmake/modules/tfel.cmake)
 include(cmake/modules/autotools.cmake)
 
 #major and minor version
-tfel_project(3 4 "9")
+tfel_project(3 4 "10-dev")
 set(CMAKE_CXX_STANDARD 11)
 set(CXX_STANDARD_REQUIRED ON)
 set(PACKAGE_BUGREPORT "tfel-contact@cea.fr")
