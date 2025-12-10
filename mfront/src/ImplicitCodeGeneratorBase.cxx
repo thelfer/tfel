@@ -1113,7 +1113,15 @@ namespace mfront {
     if (this->bd.hasCode(h, BehaviourData::ComputeFinalThermodynamicForces)) {
       os << "this->computeFinalThermodynamicForces();\n";
     }
-    os << "this->updateAuxiliaryStateVariables();\n";
+    os << "if(!this->updateAuxiliaryStateVariables()){\n";
+    if (this->bd.useQt()) {
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
+    } else {
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType, false>::FAILURE;\n";
+    }
+    os << "}\n";
     if (!areRuntimeChecksDisabled(this->bd)) {
       for (const auto& v : d.getPersistentVariables()) {
         this->writePhysicalBoundsChecks(os, v, false);

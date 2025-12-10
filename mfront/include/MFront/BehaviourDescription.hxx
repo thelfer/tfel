@@ -16,6 +16,7 @@
 #define LIB_MFRONT_BEHAVIOURDESCRIPTION_HXX
 
 #include <set>
+#include <tuple>
 #include <vector>
 #include <memory>
 #include <utility>
@@ -492,6 +493,19 @@ namespace mfront {
      */
     void addModelDescription(const BehaviourVariableDescription&);
     /*!
+     * \brief add an auxiliary model description.
+     * All outputs of the model are automatically added as auxiliary state
+     * variables
+     * \param[in] md: model description
+     */
+    void addAuxiliaryModelDescription(const ModelDescription&);
+    /*!
+     * \brief add an auxiliary model description based on an already declared
+     * behaviour variable factory.
+     * \param[in] md: model description
+     */
+    void addAuxiliaryModelDescription(const BehaviourVariableDescription&);
+    /*!
      * add a local data structure
      * \param[in] lds: local data structure
      * \param[in] s: registration status
@@ -546,10 +560,21 @@ namespace mfront {
      */
     const Gradient& getGradient(const std::string&) const;
     /*!
-     * \return the thermodynamic force with the associated name
+     * \return the driving variable with the given external name
+     * \param[in] n: name
+     */
+    const Gradient& getGradientByExternalName(const std::string&) const;
+    /*!
+     * \return the thermodynamic force with the given name
      * \param[in] n: name
      */
     const ThermodynamicForce& getThermodynamicForce(const std::string&) const;
+    /*!
+     * \return the thermodynamic force with the given external name
+     * \param[in] n: name
+     */
+    const ThermodynamicForce& getThermodynamicForceByExternalName(
+        const std::string&) const;
     //! \return the list of tangent operator blocks
     std::vector<std::pair<VariableDescription, VariableDescription>>
     getTangentOperatorBlocks() const;
@@ -633,6 +658,8 @@ namespace mfront {
 
     bool isGradientName(const std::string&) const;
 
+    bool isGradientExternalName(const std::string&) const;
+
     bool isGradientIncrementName(const std::string&) const;
 
     bool isNameOfAGradientAtTheBeginningOfTheTimeStep(const std::string&) const;
@@ -640,6 +667,9 @@ namespace mfront {
     bool isNameOfAGradientAtTheEndOfTheTimeStep(const std::string&) const;
 
     bool isThermodynamicForceName(const std::string&) const;
+
+    bool isThermodynamicForceExternalName(const std::string&) const;
+
     //! \return the behaviour type
     BehaviourType getBehaviourType() const;
     /*!
@@ -747,6 +777,11 @@ namespace mfront {
         std::variant<ModelDescription,
                      ExternalModelBasedOnBehaviourVariableFactory>>&
     getModelsDescriptions() const;
+    //! \return registred models
+    const std::vector<
+        std::variant<ModelDescription,
+                     ExternalModelBasedOnBehaviourVariableFactory>>&
+    getAuxiliaryModelsDescriptions() const;
     /*!
      * \brief set the elastic material properties
      * \param[in] emps: elastic material properties
@@ -1750,10 +1785,20 @@ namespace mfront {
      */
     Gradient& getGradient(const std::string&);
     /*!
-     * \return the thermodynamic force with the associated name
+     * \return the gradient variable with the given external name
+     * \param[in] n: name
+     */
+    Gradient& getGradientByExternalName(const std::string&);
+    /*!
+     * \return the thermodynamic force with the given external name
      * \param[in] n: name
      */
     ThermodynamicForce& getThermodynamicForce(const std::string&);
+    /*!
+     * \return the thermodynamic force with the associated name
+     * \param[in] n: name
+     */
+    ThermodynamicForce& getThermodynamicForceByExternalName(const std::string&);
     //! update the class name
     void updateClassName();
     /*!
@@ -1767,8 +1812,11 @@ namespace mfront {
      * \param[in] v: behaviour variable added
      * \param[in] isExternalModel: flag stating if the factory is associated
      * with an external model
+     * \param[in] isAuxiliaryModel: flag stating if the factory is associated
+     * with an auxiliary model
      */
     void addBehaviourVariableFactory(const BehaviourVariableDescription&,
+                                     const bool,
                                      const bool);
     /*!
      * \call the behaviour data associated with the given hypothesis
@@ -2004,6 +2052,10 @@ namespace mfront {
     std::vector<std::variant<ModelDescription,
                              ExternalModelBasedOnBehaviourVariableFactory>>
         models;
+    //! \brief list of registred auxiliary models
+    std::vector<std::variant<ModelDescription,
+                             ExternalModelBasedOnBehaviourVariableFactory>>
+        auxiliaryModels;
     //! \brief slip systems
     std::optional<SlipSystemsDescription> gs;
     //! \brief list of all Hill tensors defined
@@ -2054,7 +2106,7 @@ namespace mfront {
      * when modelling hypothesis are defined. The second member of the pair
      * indicates if the factory is associated with an external model
      */
-    std::vector<std::pair<BehaviourVariableDescription, bool>>
+    std::vector<std::tuple<BehaviourVariableDescription, bool, bool>>
         behaviourVariableFactoriesCandidates;
     /*!
      * Support for dynamically allocated vectors is not allowed in all

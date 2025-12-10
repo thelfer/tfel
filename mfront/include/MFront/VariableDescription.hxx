@@ -215,11 +215,6 @@ namespace mfront {
     const std::string& getExternalName() const;
     //! \return if the variable describes a scalar
     bool isScalar() const;
-    /*!
-     * \return an integer describing the type of variable
-     * \see `SupportedTypes::getVariableTypeIdentifier` for details.
-     */
-    int getVariableTypeIdentifier() const;
     //! \brief destructor
     ~VariableDescription();
 
