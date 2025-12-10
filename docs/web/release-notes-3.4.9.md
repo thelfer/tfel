@@ -26,7 +26,7 @@ This version was released on December 10, 2025 along with:
 - [Version 3.0.16](release-notes-3.0.16.html),
 - [Version 3.1.16](release-notes-3.1.16.html),
 - [Version 3.2.13](release-notes-3.2.13.html),
-- [Version 3.3.8](release-notes-3.3.8.html),
+- [Version 3.3.8](release-notes-3.3.8.html).
 
 and inherits from all fixes from those releases.
 

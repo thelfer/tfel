@@ -24,6 +24,6 @@ The page describes the new functionalities of Version 3.2.13 of the
 This version was released on December 10, 2025 along with:
 
 - [Version 3.0.16](release-notes-3.0.16.html),
-- [Version 3.1.16](release-notes-3.1.16.html),
+- [Version 3.1.16](release-notes-3.1.16.html).
 
 and inherits from all fixes from those releases.
