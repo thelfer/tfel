@@ -71,7 +71,7 @@ the equivalent plastic strain.
 - [Overview of the `TFELMFrontDatabase` library](tfel-mfront-database.html)
 
 
-## MTest
+## `MTest`
 
 - [On physical interpretations of Lagrange multipliers for kinematic and
   static constraints in MTest](mtest-nonlinear-constraints.html)
