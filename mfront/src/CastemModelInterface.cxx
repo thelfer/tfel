@@ -645,12 +645,14 @@ namespace mfront {
              << "(std::strcmp(\"" << en << "\", n) == 0){\n"
              << "parameters." << p.name << " = " << p.type << "{v};\n"
              << "return 1;\n";
+          first = false;
         }
         if ((!p.symbolic_form.empty()) && (p.symbolic_form != p.name)) {
           os << (first ? "if" : "} else if")  //
              << "(std::strcmp(\"" << p.symbolic_form << "\", n) == 0){\n"
              << "parameters." << p.name << " = " << p.type << "{v};\n"
              << "return 1;\n";
+          first = false;
         }
         os << (first ? "if" : "} else if")  //
            << "(std::strcmp(\"" << p.name << "\", n) == 0){\n"
