@@ -6,17 +6,8 @@ following DSLs: `Model`, `DefaultModel`, `RungeKuttaModel` and
 This model is called after updating the auxiliary state variables of the
 behaviour.
 
-
-From the behaviour point of view, those state variables are declared as
-additional auxiliary state variables.
-
-## Note
-
-In the behaviour, the names of the variables described by the model
-are the same than in the model.
- 
-The entry/glossary names of those variables shall be defined in the
-model.
+From the behaviour point of view, the state variables of an auxiliary
+model are declared as additional auxiliary state variables.
 
 ## Example
 

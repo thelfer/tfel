@@ -50,6 +50,32 @@ step) with respect to the equivalent plastic strain at the middle of the
 time step rather than the derivative with respect to the increment of
 the equivalent plastic strain.
 
+# Documentation
+
+## New tutorials
+
+- [Implementation of Cailletaud-Pilvin beta rule for homogenization](BetaRule.html)
+- [Implementation of Sachs/Reuss homogenization scheme with a BehaviourVariable](Sachs.html)
+- [Implementation of Taylor/Voigt homogenization scheme with a BehaviourVariable](Taylor.html)
+
+## `TFEL/Math`
+
+- [Numerical intgeration in the `TFEL/Math` library](tfel-math-numerical-integration.html)
+
+##  `TFEL/Material`
+
+- [Implementation of mean-field homogenization schemes for biphasic elastic media](BiphasicLinearHomogenization.html)
+
+## `TFEL/MFrontDatabase`
+
+- [Overview of the `TFELMFrontDatabase` library](tfel-mfront-database.html)
+
+
+## MTest
+
+- [On physical interpretations of Lagrange multipliers for kinematic and
+  static constraints in MTest](mtest-nonlinear-constraints.html)
+
 # New features in the `TFEL` libraries
 
 ## New library `TFELMFrontDatabase`
@@ -520,6 +546,25 @@ behaviour. The auxiliary state variables associated with the point-wise
 models are updated at beginning of the `updateAuxiliarySateVariables`
 method **before** any user defined code (see the
 `@UpdateAuxiliaryStateVariables` keyword).
+
+### The `@AuxiliaryModel` keyword
+
+The `@AuxiliaryModel` keyword is used to call an external point-wise
+model from a behaviour. Those models can be implemented using the
+following DSLs: `Model`, `DefaultModel`, `RungeKuttaModel` and
+`ImplicitModel`.
+
+This model is called **after** updating the auxiliary state variables of
+the behaviour.
+
+From the behaviour point of view, the state variables of an auxiliary
+model are declared as additional auxiliary state variables.
+
+#### Example
+
+~~~~ {#AuxiliaryModel .cpp}
+@AuxiliaryModel "DuctileDamageIndicator_RiceTracey1969.mfront";
+~~~~
 
 ## New command line arguments
 
