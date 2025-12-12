@@ -153,12 +153,13 @@ namespace mfront {
              "the dianafea interface only supports small and "
              "finite strain behaviours");
     checkFiniteStrainStrategyDefinitionConsistency(bd);
-    // the only supported modelling hypothesis
-    constexpr auto h = ModellingHypothesis::TRIDIMENSIONAL;
-    const auto& d = bd.getBehaviourData(h);
-    throw_if(d.getExternalStateVariables().size() != 1u,
-             "external state variables are not supported "
-             "by Diana FEA's native interface");
+    const auto hypotheses = this->getModellingHypothesesToBeTreated(bd);
+    for (const auto& h : hypotheses) {
+      const auto& d = bd.getBehaviourData(h);
+      throw_if(d.getExternalStateVariables().size() != 1u,
+               "external state variables are not supported "
+               "by Diana FEA's native interface");
+    }
     // get the modelling hypotheses to be treated
     const auto name = bd.getLibrary() + bd.getClassName();
     // output directories
@@ -166,8 +167,26 @@ namespace mfront {
     systemCall::mkdir("include/MFront/DianaFEA");
     systemCall::mkdir("dianafea");
 
+    //
+    systemCall::mkdir("abaqus");
+    try {
+      // copy umat.cpp locally
+      MFrontLockGuard lock;
+      const auto root = tfel::getInstallPath();
+#ifdef TFEL_APPEND_SUFFIX
+      const auto dn = root + "/share/doc/mfront-" VERSION "/dianafea/";
+#else  /* TFEL_APPEND_SUFFIX */
+      const auto dn = root + "/share/doc/mfront/dianafea/";
+#endif /* TFEL_APPEND_SUFFIX */
+      systemCall::copy(dn + "CMakeLists.txt", "dianafea");
+      systemCall::copy(dn + "dianafea_external_behaviour_call.cxx", "dianafea");
+      systemCall::copy(dn + "usrmat.f90", "dianafea");
+      systemCall::copy(dn + "test-usrmat.cxx", "dianafea");
+      systemCall::copy(dn + "test.f90", "dianafea");
+    } catch (...) {
+    }
+    //
     std::ofstream out;
-
     // header
     auto fname = "DianaFEA" + name + ".hxx";
     out.open("include/MFront/DianaFEA/" + fname);
@@ -252,9 +271,10 @@ namespace mfront {
     out << "extern \"C\"{\n\n";
 
     DianaFEASymbolsGenerator sg;
-    sg.generateGeneralSymbols(out, *this, bd, fd, {h}, name);
-    sg.generateSymbols(out, *this, bd, fd, name, h);
-
+    sg.generateGeneralSymbols(out, *this, bd, fd, hypotheses, name);
+    for (const auto h : hypotheses) {
+      sg.generateSymbols(out, *this, bd, fd, name, h);
+    }
     this->writeSetParametersFunctionsImplementations(out, bd, name);
     this->writeSetOutOfBoundsPolicyFunctionImplementation(out, bd, name);
 
@@ -267,14 +287,53 @@ namespace mfront {
         << "*dt,eto,deto,\n"
         << "props,*T,*dT,\n"
         << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(),\n"
-        << "dianafea::DianaFEAStandardSmallStrainStressFreeExpansionHandler};\n"
-        << "if(dianafea::DianaFEAInterface<\n"
-        << "tfel::material::ModellingHypothesis::TRIDIMENSIONAL,\n"
-        << "tfel::material::" << bd.getClassName() << ">::exe(d)!=0){\n"
-        << "std::cerr << \"" << bd.getClassName()
-        << ": integration failure\\n\";\n"
-        << "std::exit(-1);\n"
-        << "}\n"
+        << "dianafea::DianaFEAStandardSmallStrainStressFreeExpansionHandler};\n";
+    // plane stress support
+    out << "if(*ntens==3){\n";
+    if (hypotheses.contains(ModellingHypothesis::PLANESTRESS)) {
+      out << "if(dianafea::DianaFEAInterface<\n"
+          << "tfel::material::ModellingHypothesis::PLANESTRESS,\n"
+          << "tfel::material::" << bd.getClassName() << ">::exe(d)!=0){\n"
+          << "std::cerr << \"" << bd.getClassName()
+          << ": integration failure\\n\";\n"
+          << "std::exit(-1);\n"
+          << "}\n";
+    } else {
+      out << "std::cerr << \"" << bd.getClassName()
+          << ": plane stress hypothesis is not supported\\n\";\n"
+          << "std::exit(-1);\n";
+    }
+    // plane strain support
+    out << "} else if(*ntens==4){\n";
+    if (hypotheses.contains(ModellingHypothesis::GENERALISEDPLANESTRAIN)) {
+      out << "if(dianafea::DianaFEAInterface<\n"
+          << "tfel::material::ModellingHypothesis::GENERALISEDPLANESTRAIN,\n"
+          << "tfel::material::" << bd.getClassName() << ">::exe(d)!=0){\n"
+          << "std::cerr << \"" << bd.getClassName()
+          << ": integration failure\\n\";\n"
+          << "std::exit(-1);\n"
+          << "}\n";
+    } else {
+      out << "std::cerr << \"" << bd.getClassName()
+          << ": plane strain hypothesis is not supported\\n\";\n"
+          << "std::exit(-1);\n";
+    }
+    // tridimensional support
+    out << "} else {\n";
+    if (hypotheses.contains(ModellingHypothesis::TRIDIMENSIONAL)) {
+      out << "if(dianafea::DianaFEAInterface<\n"
+          << "tfel::material::ModellingHypothesis::TRIDIMENSIONAL,\n"
+          << "tfel::material::" << bd.getClassName() << ">::exe(d)!=0){\n"
+          << "std::cerr << \"" << bd.getClassName()
+          << ": integration failure\\n\";\n"
+          << "std::exit(-1);\n"
+          << "}\n";
+    } else {
+      out << "std::cerr << \"" << bd.getClassName()
+          << ": tridimensional hypothesis is not supported\\n\";\n"
+          << "std::exit(-1);\n";
+    }
+    out << "}\n"
         << "} // end of " << this->getFunctionNameBasis(name) << "\n\n"
         << "} // end of extern \"C\"\n";
     out.close();
@@ -407,168 +466,181 @@ namespace mfront {
   DianaFEAInterface::getModellingHypothesesToBeTreated(
       const BehaviourDescription& bd) const {
     const auto& bh = bd.getModellingHypotheses();
-    tfel::raise_if(bh.find(ModellingHypothesis::TRIDIMENSIONAL) == bh.end(),
-                   "DianaFEAInterface::getModellingHypothesesToBeTreated : "
-                   "the 'Tridimensional' hypothesis is not supported, "
-                   "which is required for the DianaFEA interface");
-    return {ModellingHypothesis::TRIDIMENSIONAL};
+    auto hypotheses = std::set<ModellingHypothesis::Hypothesis>{};
+    if (bh.find(ModellingHypothesis::TRIDIMENSIONAL) != bh.end()) {
+      hypotheses.insert(ModellingHypothesis::TRIDIMENSIONAL);
+    }
+    if (bh.find(ModellingHypothesis::GENERALISEDPLANESTRAIN) != bh.end()) {
+      hypotheses.insert(ModellingHypothesis::GENERALISEDPLANESTRAIN);
+    }
+    tfel::raise_if(
+        hypotheses.empty(),
+        "DianaFEAInterface::getModellingHypothesesToBeTreated : "
+        "neither the 'Tridimensional' hypothesis nor "
+        "the 'GeneralisedPlaneStrain' hypothesis "
+        "are supported, which is required for the DianaFEA interface");
+    return hypotheses;
   }  // end of getModellingHypothesesToBeTreated
 
   void DianaFEAInterface::writeBehaviourTraits(
       std::ostream& out, const BehaviourDescription& bd) const {
-    constexpr auto h = ModellingHypothesis::TRIDIMENSIONAL;
-    const auto mvs = bd.getMainVariablesSize();
-    const auto mprops = this->buildMaterialPropertiesList(bd, h);
-    out << "template<typename NumericType";
-    if (bd.useQt()) {
-      out << ", bool use_qt";
-    }
-    out << ">\n"
-        << "struct DianaFEATraits<tfel::material::" << bd.getClassName()
-        << "<tfel::material::ModellingHypothesis::TRIDIMENSIONAL, ";
-    out << "NumericType, ";
-    if (bd.useQt()) {
-      out << "use_qt";
-    } else {
-      out << "false";
-    }
-    out << ">>\n{\n"
-        << "//! behaviour type\n";
-    if (bd.getBehaviourType() ==
-        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      out << "static " << constexpr_c
-          << " DianaFEABehaviourType btype = "
-             "dianafea::"
-             "STANDARDSTRAINBASEDBEHAVIOUR;\n";
-    } else if (bd.getBehaviourType() ==
-               BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-      out << "static " << constexpr_c
-          << " DianaFEABehaviourType btype = "
-             "dianafea::"
-             "STANDARDFINITESTRAINBEHAVIOUR;\n";
-    } else {
-      tfel::raise(
-          "DianaFEAInterface::writeBehaviourTraits : "
-          "unsupported behaviour type");
-    }
-    out << "//! space dimension\n"
-        << "static " << constexpr_c << " unsigned short N "
-        << "= "
-           "tfel::material::ModellingHypothesisToSpaceDimension<tfel::material:"
-           ":ModellingHypothesis::TRIDIMENSIONAL>::value;\n"
-        << "// tiny vector size\n"
-        << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
-        << "// symmetric tensor size\n"
-        << "static " << constexpr_c
-        << " unsigned short StensorSize = "
-           "tfel::math::StensorDimeToSize<N>::value;\n"
-        << "// tensor size\n"
-        << "static " << constexpr_c
-        << " unsigned short TensorSize  = "
-           "tfel::math::TensorDimeToSize<N>::value;\n"
-        << "// size of the driving variable array\n"
-        << "static " << constexpr_c
-        << " unsigned short GradientSize = " << mvs.first << ";\n"
-        << "// size of the thermodynamic force variable array (STRESS)\n"
-        << "static " << constexpr_c
-        << " unsigned short ThermodynamicForceVariableSize = " << mvs.second
-        << ";\n";
-    if (bd.getAttribute(BehaviourDescription::requiresUnAlteredStiffnessTensor,
-                        false)) {
-      out << "static " << constexpr_c
-          << " bool requiresUnAlteredStiffnessTensor = true;\n";
-    } else {
-      out << "static " << constexpr_c
-          << " bool requiresUnAlteredStiffnessTensor = false;\n";
-    }
-    if (bd.getAttribute(BehaviourDescription::requiresStiffnessTensor, false)) {
-      out << "static " << constexpr_c
-          << " bool requiresStiffnessTensor = true;\n";
-    } else {
-      out << "static " << constexpr_c
-          << " bool requiresStiffnessTensor = false;\n";
-    }
-    if (bd.getAttribute(
-            BehaviourDescription::requiresThermalExpansionCoefficientTensor,
-            false)) {
-      out << "static " << constexpr_c
-          << " bool requiresThermalExpansionCoefficientTensor = true;\n";
-    } else {
-      out << "static " << constexpr_c
-          << " bool requiresThermalExpansionCoefficientTensor = false;\n";
-    }
-    if (bd.getSymmetryType() == mfront::ISOTROPIC) {
-      out << "static " << constexpr_c
-          << " DianaFEASymmetryType type = dianafea::ISOTROPIC;\n";
-    } else if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
-      out << "static " << constexpr_c
-          << " DianaFEASymmetryType type = dianafea::ORTHOTROPIC;\n";
-    } else {
-      tfel::raise(
-          "DianaFEAInterface::writeBehaviourTraits: "
-          "unsupported behaviour type.\n"
-          "The DianaFEA interface only support isotropic or orthotropic "
-          "behaviour at this time.");
-    }
-    // computing material properties size
-    auto msize = SupportedTypes::TypeSize{};
-    if (!mprops.first.empty()) {
-      const auto& m = mprops.first.back();
-      msize = m.offset;
-      msize += SupportedTypes::getTypeSize(m.type, m.arraySize);
-      msize -= mprops.second;
-    }
-    out << "static " << constexpr_c
-        << " unsigned short material_properties_nb = " << msize << ";\n";
-    if (bd.getElasticSymmetryType() == mfront::ISOTROPIC) {
-      out << "static " << constexpr_c
-          << " DianaFEASymmetryType etype = dianafea::ISOTROPIC;\n";
+    for (const auto h : this->getModellingHypothesesToBeTreated(bd)) {
+      const auto mvs = bd.getMainVariablesSize();
+      const auto mprops = this->buildMaterialPropertiesList(bd, h);
+      out << "template<typename NumericType";
+      if (bd.useQt()) {
+        out << ", bool use_qt";
+      }
+      out << ">\n"
+          << "struct DianaFEATraits<tfel::material::" << bd.getClassName()
+          << "<tfel::material::ModellingHypothesis::" +
+                 ModellingHypothesis::toUpperCaseString(h) + ", ";
+      out << "NumericType, ";
+      if (bd.useQt()) {
+        out << "use_qt";
+      } else {
+        out << "false";
+      }
+      out << ">>\n{\n"
+          << "//! behaviour type\n";
+      if (bd.getBehaviourType() ==
+          BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+        out << "static " << constexpr_c
+            << " DianaFEABehaviourType btype = "
+               "dianafea::"
+               "STANDARDSTRAINBASEDBEHAVIOUR;\n";
+      } else if (bd.getBehaviourType() ==
+                 BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
+        out << "static " << constexpr_c
+            << " DianaFEABehaviourType btype = "
+               "dianafea::"
+               "STANDARDFINITESTRAINBEHAVIOUR;\n";
+      } else {
+        tfel::raise(
+            "DianaFEAInterface::writeBehaviourTraits : "
+            "unsupported behaviour type");
+      }
+      out << "//! space dimension\n"
+          << "static " << constexpr_c << " unsigned short N "
+          << "= "
+             "tfel::material::ModellingHypothesisToSpaceDimension<tfel::"
+             "material:"
+             ":ModellingHypothesis::TRIDIMENSIONAL>::value;\n"
+          << "// tiny vector size\n"
+          << "static " << constexpr_c << " unsigned short TVectorSize = N;\n"
+          << "// symmetric tensor size\n"
+          << "static " << constexpr_c
+          << " unsigned short StensorSize = "
+             "tfel::math::StensorDimeToSize<N>::value;\n"
+          << "// tensor size\n"
+          << "static " << constexpr_c
+          << " unsigned short TensorSize  = "
+             "tfel::math::TensorDimeToSize<N>::value;\n"
+          << "// size of the driving variable array\n"
+          << "static " << constexpr_c
+          << " unsigned short GradientSize = " << mvs.first << ";\n"
+          << "// size of the thermodynamic force variable array (STRESS)\n"
+          << "static " << constexpr_c
+          << " unsigned short ThermodynamicForceVariableSize = " << mvs.second
+          << ";\n";
+      if (bd.getAttribute(
+              BehaviourDescription::requiresUnAlteredStiffnessTensor, false)) {
+        out << "static " << constexpr_c
+            << " bool requiresUnAlteredStiffnessTensor = true;\n";
+      } else {
+        out << "static " << constexpr_c
+            << " bool requiresUnAlteredStiffnessTensor = false;\n";
+      }
       if (bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
                           false)) {
         out << "static " << constexpr_c
-            << " unsigned short elasticPropertiesOffset = 2u;\n";
+            << " bool requiresStiffnessTensor = true;\n";
       } else {
         out << "static " << constexpr_c
-            << " unsigned short elasticPropertiesOffset = 0u;\n";
+            << " bool requiresStiffnessTensor = false;\n";
       }
       if (bd.getAttribute(
               BehaviourDescription::requiresThermalExpansionCoefficientTensor,
               false)) {
         out << "static " << constexpr_c
-            << " unsigned short thermalExpansionPropertiesOffset = 1u;\n";
+            << " bool requiresThermalExpansionCoefficientTensor = true;\n";
       } else {
         out << "static " << constexpr_c
-            << " unsigned short thermalExpansionPropertiesOffset = 0u;\n";
+            << " bool requiresThermalExpansionCoefficientTensor = false;\n";
       }
-    } else if (bd.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
+      if (bd.getSymmetryType() == mfront::ISOTROPIC) {
+        out << "static " << constexpr_c
+            << " DianaFEASymmetryType type = dianafea::ISOTROPIC;\n";
+      } else if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
+        out << "static " << constexpr_c
+            << " DianaFEASymmetryType type = dianafea::ORTHOTROPIC;\n";
+      } else {
+        tfel::raise(
+            "DianaFEAInterface::writeBehaviourTraits: "
+            "unsupported behaviour type.\n"
+            "The DianaFEA interface only support isotropic or orthotropic "
+            "behaviour at this time.");
+      }
+      // computing material properties size
+      auto msize = SupportedTypes::TypeSize{};
+      if (!mprops.first.empty()) {
+        const auto& m = mprops.first.back();
+        msize = m.offset;
+        msize += SupportedTypes::getTypeSize(m.type, m.arraySize);
+        msize -= mprops.second;
+      }
       out << "static " << constexpr_c
-          << " DianaFEASymmetryType etype = dianafea::ORTHOTROPIC;\n";
-      if (bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
-                          false)) {
+          << " unsigned short material_properties_nb = " << msize << ";\n";
+      if (bd.getElasticSymmetryType() == mfront::ISOTROPIC) {
         out << "static " << constexpr_c
-            << " unsigned short elasticPropertiesOffset "
-            << "= 9u;\n";
+            << " DianaFEASymmetryType etype = dianafea::ISOTROPIC;\n";
+        if (bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
+                            false)) {
+          out << "static " << constexpr_c
+              << " unsigned short elasticPropertiesOffset = 2u;\n";
+        } else {
+          out << "static " << constexpr_c
+              << " unsigned short elasticPropertiesOffset = 0u;\n";
+        }
+        if (bd.getAttribute(
+                BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+                false)) {
+          out << "static " << constexpr_c
+              << " unsigned short thermalExpansionPropertiesOffset = 1u;\n";
+        } else {
+          out << "static " << constexpr_c
+              << " unsigned short thermalExpansionPropertiesOffset = 0u;\n";
+        }
+      } else if (bd.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
+        out << "static " << constexpr_c
+            << " DianaFEASymmetryType etype = dianafea::ORTHOTROPIC;\n";
+        if (bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
+                            false)) {
+          out << "static " << constexpr_c
+              << " unsigned short elasticPropertiesOffset "
+              << "= 9u;\n";
+        } else {
+          out << "static " << constexpr_c
+              << " unsigned short elasticPropertiesOffset = 0u;\n";
+        }
+        if (bd.getAttribute(
+                BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+                false)) {
+          out << "static " << constexpr_c
+              << " unsigned short thermalExpansionPropertiesOffset = 3u;\n";
+        } else {
+          out << "static " << constexpr_c
+              << " unsigned short thermalExpansionPropertiesOffset = 0u;\n";
+        }
       } else {
-        out << "static " << constexpr_c
-            << " unsigned short elasticPropertiesOffset = 0u;\n";
+        tfel::raise(
+            "DianaFEAInterface::writeBehaviourTraits: "
+            "unsupported behaviour type.\n"
+            "The DianaFEA interface only support isotropic or "
+            "orthotropic behaviour at this time.");
       }
-      if (bd.getAttribute(
-              BehaviourDescription::requiresThermalExpansionCoefficientTensor,
-              false)) {
-        out << "static " << constexpr_c
-            << " unsigned short thermalExpansionPropertiesOffset = 3u;\n";
-      } else {
-        out << "static " << constexpr_c
-            << " unsigned short thermalExpansionPropertiesOffset = 0u;\n";
-      }
-    } else {
-      tfel::raise(
-          "DianaFEAInterface::writeBehaviourTraits: "
-          "unsupported behaviour type.\n"
-          "The DianaFEA interface only support isotropic or "
-          "orthotropic behaviour at this time.");
+      out << "}; // end of class DianaFEATraits\n\n";
     }
-    out << "}; // end of class DianaFEATraits\n\n";
   }
 
   std::map<UMATInterfaceBase::Hypothesis, std::string>

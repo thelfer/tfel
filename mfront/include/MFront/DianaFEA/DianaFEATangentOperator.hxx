@@ -39,12 +39,12 @@ namespace dianafea {
   struct DianaFEATangentOperator {
     /*!
      * \brief convert to TFEL object
-     * \param[in] D: dianafea tangent operatorx
+     * \param[in] D: dianafea tangent operator
      */
     static tfel::math::st2tost2<2u, real> convert2D(const real* const);
     /*!
      * \brief convert to TFEL object
-     * \param[in] D: dianafea tangent operatorx
+     * \param[in] D: dianafea tangent operator
      */
     static tfel::math::st2tost2<3u, real> convert3D(const real* const);
     /*!
@@ -155,19 +155,9 @@ namespace dianafea {
         using TangentOperatorType = typename DianaFEATangentOperatorType<
             DianaFEATraits<Behaviour>::btype, real, 2u>::type;
         constexpr const auto cste = tfel::math::Cste<real>::sqrt2;
-        // constexpr      const auto icste = tfel::math::Cste<real>::isqrt2;
-        // constexpr const auto one_half = real(1)/real(2);
-        auto Dt =
+        constexpr auto two = real{2};
+        const auto& Dt =
             static_cast<const TangentOperatorType&>(bv.getTangentOperator());
-        // DDSDDE[0] = Dt(0,0);
-        // DDSDDE[1] = Dt(1,0);
-        // DDSDDE[2] = Dt(3,0)*icste;
-        // DDSDDE[3] = Dt(0,1);
-        // DDSDDE[4] = Dt(1,1);
-        // DDSDDE[5] = Dt(3,1)*icste;
-        // DDSDDE[6] = Dt(0,3)*icste;
-        // DDSDDE[7] = Dt(1,3)*icste;
-        // DDSDDE[8] = Dt(3,3)*one_half;
         DDSDDE[0] = Dt(0, 0);
         DDSDDE[1] = Dt(1, 0);
         DDSDDE[2] = Dt(3, 0) * cste;
@@ -176,7 +166,7 @@ namespace dianafea {
         DDSDDE[5] = Dt(3, 1) * cste;
         DDSDDE[6] = Dt(0, 3) * cste;
         DDSDDE[7] = Dt(1, 3) * cste;
-        DDSDDE[8] = Dt(3, 3);
+        DDSDDE[8] = Dt(3, 3) * two;
       }  // end of exe
     };
     struct GeneralConsistentTangentOperatorComputer {
@@ -185,19 +175,9 @@ namespace dianafea {
         using TangentOperatorType = typename DianaFEATangentOperatorType<
             DianaFEATraits<Behaviour>::btype, real, 2u>::type;
         constexpr auto cste = tfel::math::Cste<real>::sqrt2;
-        // constexpr auto icste = tfel::math::Cste<real>::isqrt2;
-        // constexpr const auto one_half = real(1)/real(2);
-        auto Dt =
+        constexpr auto two = real{2};
+        const auto& Dt =
             static_cast<const TangentOperatorType&>(bv.getTangentOperator());
-        // DDSDDE[0] = Dt(0,0);
-        // DDSDDE[1] = Dt(0,1);
-        // DDSDDE[2] = Dt(0,3)*icste;
-        // DDSDDE[3] = Dt(1,0);
-        // DDSDDE[4] = Dt(1,1);
-        // DDSDDE[5] = Dt(1,3)*icste;
-        // DDSDDE[6] = Dt(3,0)*icste;
-        // DDSDDE[7] = Dt(3,1)*icste;
-        // DDSDDE[8] = Dt(3,3)*one_half;
         DDSDDE[0] = Dt(0, 0);
         DDSDDE[1] = Dt(0, 1);
         DDSDDE[2] = Dt(0, 3) * cste;
@@ -206,7 +186,7 @@ namespace dianafea {
         DDSDDE[5] = Dt(1, 3) * cste;
         DDSDDE[6] = Dt(3, 0) * cste;
         DDSDDE[7] = Dt(3, 1) * cste;
-        DDSDDE[8] = Dt(3, 3);
+        DDSDDE[8] = Dt(3, 3) * two;
       }  // end of exe
     };
   };

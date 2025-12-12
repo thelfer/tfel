@@ -160,7 +160,7 @@ namespace ansys {
                                               real, 2u>::type;
         constexpr const auto two = tfel::math::Cste<real>::sqrt2;
         constexpr const auto cste = real{2};
-        auto Dt =
+        const auto& Dt =
             static_cast<const TangentOperatorType&>(bv.getTangentOperator());
         DDSDDE[0] = Dt(0, 0);
         DDSDDE[1] = Dt(1, 0);
@@ -181,7 +181,7 @@ namespace ansys {
                                               real, 2u>::type;
         constexpr const auto two = real{2};
         constexpr auto cste = tfel::math::Cste<real>::sqrt2;
-        auto Dt =
+        const auto& Dt =
             static_cast<const TangentOperatorType&>(bv.getTangentOperator());
         DDSDDE[0] = Dt(0, 0);
         DDSDDE[1] = Dt(0, 1);
