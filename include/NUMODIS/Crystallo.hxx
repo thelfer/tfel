@@ -250,16 +250,14 @@ namespace numodis {
 
     virtual ~Crystallo();
 
-    friend std::ostream& operator<<(std::ostream&, const Crystallo&);
-
    protected:
-    //! Name of the class
+    //! \brief name of the class
     std::string _name;
-    //! basis used to compute atomic positions and directions
+    //! \brief basis used to compute atomic positions and directions
     std::vector<Vect3> _alattice;
-    //! basis used to compute Burgers' vector
+    //! \brief basis used to compute Burgers' vector
     std::vector<Vect3> _blattice;
-    //! basis used to compute plane normal
+    //! \brief basis used to compute plane normal
     std::vector<Vect3> _plattice;
   };
 

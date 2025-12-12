@@ -20,7 +20,25 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 3.0.16 of the
 `TFEL` project.
 
+This version was released on December 10, 2025.
+
 # Issues fixed
+
+## Issue 886: [mfront] reading parameters from a text file shall not be locale sensitive. `stod` shall not be used
+
+For more details, see <https://github.com/thelfer/tfel/issues/886>.
+
+## Issue 885: [mfront] material properties shall read parameters using external names
+
+For more details, see <https://github.com/thelfer/tfel/issues/885>.
+
+## Issue 884: [mfront] Isotropic DSLs can't be restricted to certain modelling hypothesis 
+
+For more details, see <https://github.com/thelfer/tfel/issues/884>.
+
+## Issue 882: Add support for AMD Fortran's compiler
+
+For more details, see <https://github.com/thelfer/tfel/issues/882>.
 
 ## Issue 743: `-Denable-glibcxx-debug=ON` seems to have no effects
 

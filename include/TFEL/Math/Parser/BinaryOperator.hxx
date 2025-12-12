@@ -92,8 +92,7 @@ namespace tfel::math::parser {
   };  // end of struct OpPower
 
   struct BinaryOperationBase {
-    [[noreturn]] static void
-    throwUnimplementedDifferentiateFunctionException();
+    [[noreturn]] static void throwUnimplementedDifferentiateFunctionException();
   };  // end of struct BinaryOperationBase
 
   template <typename Op>

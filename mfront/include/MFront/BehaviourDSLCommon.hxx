@@ -401,8 +401,24 @@ namespace mfront {
     virtual std::string tangentOperatorVariableModifier(const Hypothesis,
                                                         const std::string&,
                                                         const bool);
-    //! \brief read the description of a behaviour variable
+    /*!
+     * \brief read the description of a behaviour variable
+     */
     virtual BehaviourVariableDescription readBehaviourVariableDescription();
+    /*!
+     * \brief read the description of a behaviour variable
+     * \param[in] bname: name of the behaviour variable
+     * \param[in] lineNumber: line number
+     * \param[in] fileName: file containing the implementation of the behaviour
+     * \param[in]
+     * allow_external_state_variables_evaluation_using_persistent_variables:
+     * boolean stating if using persistent variables to evaluate external state
+     * variables.
+     */
+    virtual BehaviourVariableDescription readBehaviourVariableDescription(
+        const std::string&,
+        const tfel::utilities::Token::size_type,
+        const std::optional<std::string>& = {});
     /*!
      * \brief extract a material property from a token. If the token
      * is a string, it is interpred as a mfront file name. Otherwise,
@@ -642,6 +658,8 @@ namespace mfront {
     virtual void treatStateVariable();
     //! \brief handle the `@AuxiliaryStateVariable` keyword
     virtual void treatAuxiliaryStateVariable();
+    //! \brief handle the `@AuxiliaryModel` keyword
+    virtual void treatAuxiliaryModel();
     //! \brief handle the `@ExternalStateVariable` keyword
     virtual void treatExternalStateVariable();
     //! \brief handle the `@InitializeFunctionVariable` keyword
@@ -775,6 +793,17 @@ namespace mfront {
      * \param[in] c: code block
      */
     void checkTangentOperatorBlock(const std::string&, const CodeBlock&) const;
+    /*!
+     * \brief common implementation used by the treatModel and
+     * treatAuxiliaryModel methods
+     * \param[in] method: calling method name
+     * \param[in] m1: method called if a model is read
+     * \param[in] m2: method called if a behaviour is read
+     */
+    void treatModel(
+        const std::string&,
+        void (BehaviourDescription::*)(const ModelDescription&),
+        void (BehaviourDescription::*)(const BehaviourVariableDescription&));
     //! \brief behaviour description
     BehaviourDescription mb;
     //! \brief registred bricks

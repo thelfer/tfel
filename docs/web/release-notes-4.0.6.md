@@ -20,6 +20,16 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 4.0.6 of the
 `TFEL` project.
 
+This version was released on December 10, 2025 along with:
+
+- [Version 3.0.16](release-notes-3.0.16.html),
+- [Version 3.1.16](release-notes-3.1.16.html),
+- [Version 3.2.13](release-notes-3.2.13.html),
+- [Version 3.3.8](release-notes-3.3.8.html),
+- [Version 3.4.9](release-notes-3.4.9.html).
+
+and inherits from all fixes from those releases.
+
 # Issues fixed
 
 ## Issue 840: [tfel-math] Fix io for views on `tmatrix` and `tvector`

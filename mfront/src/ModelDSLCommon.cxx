@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <locale>
 #include <sstream>
 #include <stdexcept>
 #include <algorithm>
@@ -767,6 +768,7 @@ namespace mfront {
                               "Expected depth value.");
       unsigned short value;
       std::istringstream converter(this->current->value);
+      converter.imbue(std::locale::classic());
       converter >> value;
       if (!converter || (!converter.eof())) {
         this->throwRuntimeError(

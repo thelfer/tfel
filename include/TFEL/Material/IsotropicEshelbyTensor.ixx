@@ -401,7 +401,7 @@ namespace tfel::material::homogenization::elasticity {
         "functions std::ellint_1 and std::ellint_2 are not implemented in the "
         "current version of libc++ (LLVM 21.1, end of 2025)");
     const auto F = types::real<StressType>{};
-    const auto E =  types::real<StressType>{};
+    const auto E = types::real<StressType>{};
 #else
     const auto F = std::ellint_1(k, theta);
     const auto E = std::ellint_2(k, theta);

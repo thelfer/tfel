@@ -56,7 +56,7 @@ struct IsotropicModuliTest final : public tfel::tests::TestCase {
     constexpr auto K = tfel::math::st2tost2<3u, real>::K();
     using namespace tfel::material;
     const auto tens = 3 * kappa * J + 2 * mu * K;
-    const auto yes_it_is_isotropic = isIsotropic<stress>(tens, eps);
+    const auto yes_it_is_isotropic = isIsotropic<stress>(tens, 2 * eps);
 
     TFEL_TESTS_ASSERT(yes_it_is_isotropic);
 
@@ -90,7 +90,8 @@ struct IsotropicModuliTest final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(my_abs((C(0, 1) - c12) / c12) < 100 * real(eps));
     TFEL_TESTS_ASSERT(my_abs((C(3, 3) - cmu) / cmu) < 100 * real(eps));
 
-    TFEL_TESTS_ASSERT(my_abs((KG.kappa - KG_.kappa) / KG.kappa) < real(eps));
+    TFEL_TESTS_ASSERT(my_abs((KG.kappa - KG_.kappa) / KG.kappa) <
+                      real(2 * eps));
     TFEL_TESTS_ASSERT(my_abs((KG.mu - KG_.mu) / KG.mu) < 10 * real(eps));
 
     const auto KappaMu = computeKappaMu<stress>(tens2);

@@ -191,7 +191,7 @@ namespace ansys {
         DDSDDE[5] = Dt(1, 3) * cste;
         DDSDDE[6] = Dt(3, 0) * cste;
         DDSDDE[7] = Dt(3, 1) * cste;
-        DDSDDE[8] = Dt(3, 3) * two; 
+        DDSDDE[8] = Dt(3, 3) * two;
       }  // end of exe
     };
   };

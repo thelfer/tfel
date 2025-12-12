@@ -1,0 +1,12 @@
+@DSL DefaultGenericBehaviour;
+@Behaviour AuxiliaryModelTest3;
+
+@Parameter stress K = 100e9;
+K.setGlossaryName("BulkModulus");
+
+@AuxiliaryModel "AuxiliaryModel1.mfront" {
+  external_names_prefix : "Model1_",
+  external_names_suffix : "_test1"
+};
+
+@Integrator{}
