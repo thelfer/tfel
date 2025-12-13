@@ -107,8 +107,8 @@ namespace tfel::math::ieee754 {
         uint64_t lo;
         uint64_t hi;
       };
-      const auto i = std::bit_cast<internal_representation, long double>(x);
-      const int e = u.i.se & 0x7fff;
+      auto i = std::bit_cast<internal_representation, long double>(x);
+      const int e = i.se & 0x7fff;
       i.se = 0;
       const auto i2 = std::bit_cast<internal_representation2>(i);
       if (!e) return i2.lo | i2.hi ? FP_SUBNORMAL : FP_ZERO;
@@ -120,7 +120,7 @@ namespace tfel::math::ieee754 {
         uint32_t mid;
         uint64_t lo;
       };
-      const auto i = std::bit_cast<internal_representation, long double>(x);
+      auto i = std::bit_cast<internal_representation, long double>(x);
       const int e = i.se & 0x7fff;
       i.se = 0;
       struct internal_representation2 {
