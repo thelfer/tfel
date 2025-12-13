@@ -36,8 +36,8 @@ include(cmake/modules/tfel.cmake)
 include(cmake/modules/autotools.cmake)
 
 #major and minor version
-set(TFEL_DEVELOPMENT_VERSION OFF)
-tfel_project(5 0 "2")
+set(TFEL_DEVELOPMENT_VERSION ON)
+tfel_project(5 0 "3")
 set(PACKAGE_BUGREPORT "tfel-contact@cea.fr")
 
 # load the list of rounding modes defined by the IEEE754 standard
