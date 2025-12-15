@@ -260,11 +260,8 @@ namespace tfel {
           this->readSpecifiedToken("TestLauncher::treatTest", "}");
           return std::make_pair(f, c);
         };
-        this->readSpecifiedToken("TestLauncher::treatTest", "{");
         const auto p1 = getFileAndColumn();
-        this->readSpecifiedToken("TestLauncher::treatTest", ",");
         const auto p2 = getFileAndColumn();
-        this->readSpecifiedToken("TestLauncher::treatTest", "}");
         auto test = make_test();
         test->setFileA(p1.first);
         test->setColA(p1.second);
