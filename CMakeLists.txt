@@ -37,7 +37,7 @@ include(cmake/modules/tfel.cmake)
 include(cmake/modules/autotools.cmake)
 
 #major and minor version
-set(TFEL_DEVELOPMENT_VERSION ON)
+set(TFEL_DEVELOPMENT_VERSION OFF)
 tfel_project(5 1 "0")
 set(PACKAGE_BUGREPORT "tfel-contact@cea.fr")
 
