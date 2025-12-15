@@ -151,7 +151,7 @@ namespace dianafea {
      */
     template <typename T>
     static inline void importStrain(tfel::math::stensor<2u, T>& e,
-                                     const DianaFEAReal* const v) {
+                                    const DianaFEAReal* const v) {
       constexpr auto icste = tfel::math::Cste<T>::isqrt2;
       e[0] = v[0];
       e[1] = v[1];
