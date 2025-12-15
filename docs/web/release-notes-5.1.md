@@ -27,6 +27,34 @@ eqnPrefixTemplate: "($$i$$)"
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
 
+
+The page describes the new functionalities of Version 5.1 of the
+`TFEL` project.
+
+This version was released on December 15, 2025 along with:
+
+- [Version 3.0.16](release-notes-3.0.16.html),
+- [Version 3.1.16](release-notes-3.1.16.html),
+- [Version 3.2.13](release-notes-3.2.13.html),
+- [Version 3.3.8](release-notes-3.3.8.html),
+- [Version 3.4.9](release-notes-3.4.9.html),
+- [Version 4.0.6](release-notes-4.0.6.html),
+- [Version 4.1.5](release-notes-4.1.5.html),
+- [Version 4.2.4](release-notes-4.2.4.html)
+- [Version 5.0.2](release-notes-5.0.2.html).
+
+# Highlights
+
+Thanks to many contributors and feed-backs from users, Version 5.1 brings many improvements including:
+
+- a growing set of features releated to homogenization in the `TFEL/Material` library,
+- the addition of many warnings in `MFront`,
+- the ability to call a behaviour from another behaviour. This feature already have
+  different applications, including the definition of behaviour variables, the
+  extension of the `@Model` keyword, the introduction of auxiliary models for
+  post-processing purpuses.
+- a better support of the `Windows` platform.
+
 # Known incompatibilities
 
 - The native `Europlexus` interface has been removed, as `Europlexus`
@@ -69,7 +97,6 @@ the equivalent plastic strain.
 ## `TFEL/MFrontDatabase`
 
 - [Overview of the `TFELMFrontDatabase` library](tfel-mfront-database.html)
-
 
 ## `MTest`
 
