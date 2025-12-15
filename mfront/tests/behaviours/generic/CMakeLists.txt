@@ -117,6 +117,7 @@ set(mfront_tests_SOURCES
   ExternalModelCaller
   ExternalModelCaller2
   ExternalModelCaller3
+  ExternalModelCaller4
   PolyCrystals
   PolyCrystals_DD_CC
   PolyCrystals_DD_CFC

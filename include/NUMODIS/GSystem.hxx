@@ -107,9 +107,9 @@ namespace numodis {
 
   TFELNUMODIS_VISIBILITY_EXPORT bool operator==(const GSystem&, const GSystem&);
 
-  TFELNUMODIS_VISIBILITY_EXPORT std::ostream& operator<<(std::ostream&, const GSystem&);
+  TFELNUMODIS_VISIBILITY_EXPORT std::ostream& operator<<(std::ostream&,
+                                                         const GSystem&);
 
-  
 }  // end of namespace numodis
 
 #endif

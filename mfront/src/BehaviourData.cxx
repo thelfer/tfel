@@ -471,6 +471,11 @@ namespace mfront {
     return this->getParameters().getVariableByExternalName(v);
   }  // end of getParameterDescriptionByExternalName
 
+  const StaticVariableDescription& BehaviourData::getStaticVariableDescription(
+      const std::string& n) const {
+    return this->getStaticVariables().get(n);
+  }  // end of getStaticVariableDescription
+
   void BehaviourData::addMaterialProperty(const VariableDescription& v,
                                           const RegistrationStatus s) {
     this->addVariable(this->materialProperties, v, s, false);
@@ -1999,41 +2004,33 @@ namespace mfront {
     return initialize_methods;
   }  // end of getUserDefinedInitializeCodeBlocksNames
 
+  void BehaviourData::declareMaterialPropertyFromSharedVariable(
+      const BehaviourVariableDescription& bv, const VariableDescription& mp) {
+    if (this->isMaterialPropertyName(mp.name)) {
+      const auto& cmp = this->getMaterialProperties().getVariable(mp.name);
+      checkSharedVariableCompatibility(bv, mp, cmp);
+    } else {
+      this->addMaterialProperty(mp, BehaviourData::UNREGISTRED);
+    }
+  }  // end of declareMaterialPropertyFromSharedVariable
+
+  void BehaviourData::declareExternalStateVariableFromSharedVariable(
+      const BehaviourVariableDescription& bv, const VariableDescription& esv) {
+    if (this->isExternalStateVariableName(esv.name)) {
+      const auto& cesv =
+          this->getExternalStateVariables().getVariable(esv.name);
+      checkSharedVariableCompatibility(bv, esv, cesv);
+    } else {
+      this->addExternalStateVariable(esv, BehaviourData::UNREGISTRED);
+    }
+  }  // end of declareExternalStateVariableFromSharedVariable
+
   void BehaviourData::finalizeVariablesDeclaration(const Hypothesis h) {
     //
-    for (const auto& bv : this->behaviourVariables) {
-      auto checkVariableCompatibility = [&bv](const VariableDescription& v1,  //
-                                              const VariableDescription& v2) {
-        auto report = [&v1, &v2, &bv](const std::string_view& reason) {
-          tfel::raise("The shared variable '" + v2.name +
-                      "' declared by behaviour variable '" + bv.name +
-                      "' is not compatible with the variable declared by the "
-                      "calling behaviour: " +
-                      std::string{reason});
-        };
-        if (v1.getVariableTypeIdentifier() != v2.getVariableTypeIdentifier()) {
-          report("unmatched type ('" + v1.type + "' vs '" + v2.type + "')");
-        }
-        if (v1.arraySize != v2.arraySize) {
-          report("unmatched array size (" + std::to_string(v1.arraySize) +
-                 " vs " + std::to_string(v2.arraySize) + ")");
-        }
-        if ((v1.hasGlossaryName()) && (v2.hasGlossaryName())) {
-          if (v1.getExternalName() != v2.getExternalName()) {
-            report("unmatched external names ('" + v1.getExternalName() +
-                   "' vs '" + v2.getExternalName() + "')");
-          }
-        }
-      };
+    auto finalize = [this, h](const BehaviourVariableDescription& bv) {
       for (const auto& mp : getSharedMaterialProperties(bv, h)) {
         try {
-          if (this->isMaterialPropertyName(mp.name)) {
-            const auto& cmp =
-                this->getMaterialProperties().getVariable(mp.name);
-            checkVariableCompatibility(cmp, mp);
-          } else {
-            this->addMaterialProperty(mp, BehaviourData::UNREGISTRED);
-          }
+          this->declareMaterialPropertyFromSharedVariable(bv, mp);
         } catch (std::exception& e) {
           tfel::raise("Error while treating shared material property '" +
                       mp.name + "' from behaviour '" + bv.name + "' of type '" +
@@ -2043,13 +2040,7 @@ namespace mfront {
       }
       for (const auto& esv : getSharedExternalStateVariables(bv, h)) {
         try {
-          if (this->isExternalStateVariableName(esv.name)) {
-            const auto& cesv =
-                this->getExternalStateVariables().getVariable(esv.name);
-            checkVariableCompatibility(cesv, esv);
-          } else {
-            this->addExternalStateVariable(esv, BehaviourData::UNREGISTRED);
-          }
+          this->declareExternalStateVariableFromSharedVariable(bv, esv);
         } catch (std::exception& e) {
           tfel::raise("Error while treating shared external state variable '" +
                       esv.name + "' from behaviour '" + bv.name +
@@ -2057,6 +2048,12 @@ namespace mfront {
                       std::string{e.what()});
         }
       }
+    };
+    for (const auto& bv : this->behaviourVariables) {
+      finalize(bv);
+    }
+    for (const auto& bv : this->behaviourVariableFactories) {
+      finalize(bv);
     }
     //
     auto check = [](const VariableDescription& v) {

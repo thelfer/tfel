@@ -20,6 +20,9 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 3.1.16 of the
 `TFEL` project.
 
+This version was released on December 10, 2025 along with [Version
+3.0.16](release-notes-3.0.16.html) and inherits from all fixes from this
+release
 # Issues fixed
 
 ## Issue 827: [mfront] `@StrainMeasure` shall not be allowed after the first code block

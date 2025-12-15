@@ -49,8 +49,9 @@ namespace numodis {
     std::vector<std::pair<GSystem, GSystem>> _interactions;
   };
 
-  TFELNUMODIS_VISIBILITY_EXPORT  std::ostream& operator<<(std::ostream&, const Hardening&);
-  
+  TFELNUMODIS_VISIBILITY_EXPORT std::ostream& operator<<(std::ostream&,
+                                                         const Hardening&);
+
 }  // end of namespace numodis
 
 #endif

@@ -44,17 +44,17 @@ namespace dianafea {
     static constexpr unsigned short N =
         tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
     /*!
-     * \tparam T: type of the thermodynamique forces
+     * \tparam T: numeric type
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
     template <typename T>
     static inline void exe(tfel::math::stensor<N, T>& e,
                            const DianaFEAReal* const v) {
-      ImportSymmetricTensor<N>::exe(e, v);
+      ImportSymmetricTensor<N>::importStrain(e, v);
     }  // end of exe
     /*!
-     * \tparam T: type of the thermodynamique forces
+     * \tparam T: numeric type
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
@@ -76,14 +76,14 @@ namespace dianafea {
     static constexpr unsigned short N =
         tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
     /*!
-     * \tparam T: type of the thermodynamique forces
+     * \tparam T: numeric type
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
     template <typename T>
     static inline void exe(tfel::math::stensor<N, T>& s,
                            const DianaFEAReal* const v) {
-      ImportSymmetricTensor<N>::exe(s, v);
+      ImportSymmetricTensor<N>::importStress(s, v);
     }  // end of exe
   };   // end of struct ImportThermodynamicForces
 
@@ -98,7 +98,7 @@ namespace dianafea {
     static constexpr unsigned short N =
         tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
     /*!
-     * \tparam T: type of the thermodynamique forces
+     * \tparam T: numeric type
      * \param[out] v: values
      * \param[in]  s: symmetric tensor to be exported
      */
@@ -115,13 +115,25 @@ namespace dianafea {
   template <>
   struct ImportSymmetricTensor<1u> {
     /*!
-     * \tparam T: type of the thermodynamique forces
+     * \tparam T: numeric type
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
     template <typename T>
-    static inline void exe(tfel::math::stensor<1u, T>& e,
-                           const DianaFEAReal* const v) {
+    static inline void importStrain(tfel::math::stensor<1u, T>& e,
+                                    const DianaFEAReal* const v) {
+      e[0] = v[0];
+      e[1] = v[1];
+      e[2] = v[2];
+    }  // end of exe
+    /*!
+     * \tparam T: numeric type
+     * \param[out] s: symmetric tensor to be filled
+     * \param[in]  v: values
+     */
+    template <typename T>
+    static inline void importStress(tfel::math::stensor<1u, T>& e,
+                                    const DianaFEAReal* const v) {
       e[0] = v[0];
       e[1] = v[1];
       e[2] = v[2];
@@ -133,18 +145,32 @@ namespace dianafea {
   template <>
   struct ImportSymmetricTensor<2u> {
     /*!
-     * \tparam T: type of the thermodynamique forces
+     * \tparam T: numeric type
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
     template <typename T>
-    static inline void exe(tfel::math::stensor<2u, T>& e,
-                           const DianaFEAReal* const v) {
+    static inline void importStrain(tfel::math::stensor<2u, T>& e,
+                                    const DianaFEAReal* const v) {
       constexpr auto icste = tfel::math::Cste<T>::isqrt2;
       e[0] = v[0];
       e[1] = v[1];
       e[2] = v[2];
       e[3] = v[3] * icste;
+    }  // end of exe
+    /*!
+     * \tparam T: numeric type
+     * \param[out] s: symmetric tensor to be filled
+     * \param[in]  v: values
+     */
+    template <typename T>
+    static inline void importStress(tfel::math::stensor<2u, T>& e,
+                                    const DianaFEAReal* const v) {
+      constexpr auto cste = tfel::math::Cste<T>::sqrt2;
+      e[0] = v[0];
+      e[1] = v[1];
+      e[2] = v[2];
+      e[3] = v[3] * cste;
     }  // end of exe
   };
   /*!
@@ -153,13 +179,13 @@ namespace dianafea {
   template <>
   struct ImportSymmetricTensor<3u> {
     /*!
-     * \tparam T: type of the thermodynamique forces
+     * \tparam T: numeric type
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
     template <typename T>
-    static inline void exe(tfel::math::stensor<3u, T>& e,
-                           const DianaFEAReal* const v) {
+    static inline void importStrain(tfel::math::stensor<3u, T>& e,
+                                    const DianaFEAReal* const v) {
       constexpr auto icste = tfel::math::Cste<T>::isqrt2;
       e[0] = v[0];
       e[1] = v[1];
@@ -168,6 +194,17 @@ namespace dianafea {
       e[4] = v[5] * icste;
       e[5] = v[4] * icste;
     }  // end of exe
+    template <typename T>
+    static inline void importStress(tfel::math::stensor<3u, T>& e,
+                                    const DianaFEAReal* const v) {
+      constexpr auto cste = tfel::math::Cste<T>::sqrt2;
+      e[0] = v[0];
+      e[1] = v[1];
+      e[2] = v[2];
+      e[3] = v[3] * cste;
+      e[4] = v[5] * cste;
+      e[5] = v[4] * cste;
+    }  // end of exe
   };
   /*!
    * \brief partial specialisation of the ExportSymmetricTensor in 1D.
@@ -175,7 +212,7 @@ namespace dianafea {
   template <>
   struct ExportSymmetricTensor<1u> {
     /*!
-     * \tparam T: type of the thermodynamique forces
+     * \tparam T: numeric type
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
@@ -193,7 +230,7 @@ namespace dianafea {
   template <>
   struct ExportSymmetricTensor<2u> {
     /*!
-     * \tparam T: type of the thermodynamique forces
+     * \tparam T: numeric type
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
@@ -213,7 +250,7 @@ namespace dianafea {
   template <>
   struct ExportSymmetricTensor<3u> {
     /*!
-     * \tparam T: type of the thermodynamique forces
+     * \tparam T: numeric type
      * \param[out] s: symmetric tensor to be filled
      * \param[in]  v: values
      */
@@ -229,6 +266,89 @@ namespace dianafea {
       v[4] = e[5] * icste;
     }  // end of exe
   };
+
+  /*!
+   * \brief class defining the convertion from dianafea to mfront for
+   * driving variables
+   */
+  template <>
+  struct ImportGradients<tfel::material::ModellingHypothesis::PLANESTRESS> {
+    //! space dimension
+    static constexpr unsigned short N = 2u;
+    /*!
+     * \tparam T: numeric type
+     * \param[out] s: symmetric tensor to be filled
+     * \param[in]  v: values
+     */
+    template <typename T>
+    static inline void exe(tfel::math::stensor<2u, T>& e,
+                           const DianaFEAReal* const v) {
+      constexpr auto icste = tfel::math::Cste<T>::isqrt2;
+      e[0] = v[0];
+      e[1] = v[1];
+      e[2] = 0;
+      e[3] = v[2] * icste;
+    }  // end of exe
+    /*!
+     * \tparam T: numeric type
+     * \param[out] s: symmetric tensor to be filled
+     * \param[in]  v: values
+     */
+    template <typename T>
+    static inline void exe(tfel::math::tensor<2u, T>& F,
+                           const DianaFEAReal* const v) {
+      tfel::math::tensor<2u, T>::buildFromFortranMatrix(F, v);
+    }  // end of exe
+  };   // end of struct ImportGradients
+
+  /*!
+   * \brief class defining the convertion from dianafea to mfront for
+   * thermodynamic forces
+   */
+  template <>
+  struct ImportThermodynamicForces<
+      tfel::material::ModellingHypothesis::PLANESTRESS> {
+    //! space dimension
+    static constexpr unsigned short N = 2u;
+    /*!
+     * \tparam T: numeric type
+     * \param[out] s: symmetric tensor to be filled
+     * \param[in]  v: values
+     */
+    template <typename T>
+    static inline void exe(tfel::math::stensor<2u, T>& s,
+                           const DianaFEAReal* const v) {
+      constexpr auto cste = tfel::math::Cste<T>::sqrt2;
+      s[0] = v[0];
+      s[1] = v[1];
+      s[2] = 0;
+      s[3] = v[2] * cste;
+    }  // end of exe
+  };   // end of struct ImportThermodynamicForces
+
+  /*!
+   * \brief class defining the convertion from mfront to dianafea for
+   * thermodynamic forces
+   */
+  template <>
+  struct ExportThermodynamicForces<
+      tfel::material::ModellingHypothesis::PLANESTRESS> {
+    //! space dimension
+    static constexpr unsigned short N = 2u;
+    /*!
+     * \tparam T: numeric type
+     * \param[out] v: values
+     * \param[in]  s: symmetric tensor to be exported
+     */
+    template <typename T>
+    static inline void exe(DianaFEAReal* const v,
+                           const tfel::math::stensor<2u, T>& s) {
+      constexpr auto icste = tfel::math::Cste<T>::isqrt2;
+      v[0] = s[0];
+      v[1] = s[1];
+      v[2] = s[3] * icste;
+    }  // end of exe
+  };   // end of struct ExportThermodynamicForces
 
 }  // end of namespace dianafea
 

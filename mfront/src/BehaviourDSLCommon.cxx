@@ -39,6 +39,7 @@
 #include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/PedanticMode.hxx"
+#include "MFront/LocalDataStructure.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/SearchPathsHandler.hxx"
 #include "MFront/AbstractBehaviourInterface.hxx"
@@ -189,6 +190,7 @@ namespace mfront {
     add("@AuxiliaryStateVar", &BehaviourDSLCommon::treatAuxiliaryStateVariable);
     add("@AuxiliaryStateVariable",
         &BehaviourDSLCommon::treatAuxiliaryStateVariable);
+    add("@AuxiliaryModel", &BehaviourDSLCommon::treatAuxiliaryModel);
     add("@ExternalStateVar", &BehaviourDSLCommon::treatExternalStateVariable);
     add("@ExternalStateVariable",
         &BehaviourDSLCommon::treatExternalStateVariable);
@@ -1115,56 +1117,13 @@ namespace mfront {
   }  // end of treatAdditionalTangentOperatorBlock
 
   void BehaviourDSLCommon::treatModel() {
-    if (getVerboseMode() >= VERBOSE_DEBUG) {
-      getLogStream() << "BehaviourDSLCommon::treatModel: begin\n";
-    }
-    this->checkNotEndOfFile("BehaviourDSLCommon::treatModel");
-    const auto lineNumber = this->current->line;
-    const auto f = SearchPathsHandler::search(
-        this->readString("BehaviourDSLCommon::treatModel"));
-    const auto adsl = MFrontBase::getDSL(f);
-    if (adsl->getTargetType() == AbstractDSL::MODELDSL) {
-      auto md = this->getModelDescription(f);
-      this->mb.addModelDescription(md);
-    } else {
-      auto md = this->getBehaviourDescription(f);
-      if (!md.isModel()) {
-        this->throwRuntimeError(
-            "BehaviourDSLCommon::treatModel",
-            "file path '" + f + "' does not describe a model");
-      }
-      const auto name = "mfront_external_model_" + md.getClassName();
-      auto d = BehaviourVariableDescription{
-          .file = f,
-          .symbolic_form = name,
-          .name = name,
-          .description =
-              [this] {
-                if (!this->currentComment.empty()) {
-                  return this->currentComment;
-                }
-                return std::string{};
-              }(),
-          .line_number = lineNumber,
-          .variables_prefix = "",
-          .variables_suffix = "",
-          .external_names_prefix = "",
-          .external_names_suffix = "",
-          .shared_material_properties = {std::regex{".+"}},
-          .shared_external_state_variables = {std::regex{".+"}},
-          .store_gradients = false,
-          .store_thermodynamic_forces = false,
-          .automatically_save_associated_auxiliary_state_variables = false,
-          .behaviour = std::move(md)};
-      const auto fname = getBehaviourVariableFactoryClassName(d);
-      this->reserveName(fname);
-      this->reserveName(fname + "_instance");
-      this->mb.addModelDescription(d);
-    }
-    if (getVerboseMode() >= VERBOSE_DEBUG) {
-      getLogStream() << "BehaviourDSLCommon::treatModel: end\n";
-    }
-    this->readSpecifiedToken("BehaviourDSLCommon::treatModel", ";");
+    const auto m1 =
+        static_cast<void (BehaviourDescription::*)(const ModelDescription&)>(
+            &BehaviourDescription::addModelDescription);
+    const auto m2 = static_cast<void (BehaviourDescription::*)(
+        const BehaviourVariableDescription&)>(
+        &BehaviourDescription::addModelDescription);
+    this->treatModel("BehaviourDSLCommon::treatModel", m1, m2);
   }  // end of treatModel
 
   void BehaviourDSLCommon::treatModel2() {
@@ -1181,7 +1140,7 @@ namespace mfront {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "BehaviourDSLCommon::treatModel2: end\n";
     }
-  }  // end of treatModel
+  }  // end of treatModel2
 
   void BehaviourDSLCommon::treatUnsupportedCodeBlockOptions(
       const CodeBlockOptions& o) {
@@ -1289,7 +1248,7 @@ namespace mfront {
     // defining modelling hypotheses
     if (!this->mb.areModellingHypothesesDefined()) {
       auto dmh = this->getDefaultModellingHypotheses();
-      // taking into account restrictin du to the `Plate` othotropic
+      // taking into account restriction du to the `Plate` othotropic
       // axes convention
       if ((this->mb.getSymmetryType() == mfront::ORTHOTROPIC) &&
           (this->mb.getOrthotropicAxesConvention() ==
@@ -1307,6 +1266,72 @@ namespace mfront {
       }
       this->mb.setModellingHypotheses(dmh);
     }
+    // auxiliary models need to store values of thermodynamic forces and
+    // persistent variables using in the evaluation of material properties
+    // and external state variables
+    auto initialValues = LocalDataStructure{};
+    initialValues.name = "mfront_initial_values";
+    for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
+      const auto& bdata = this->mb.getBehaviourData(h);
+      auto thfs = std::vector<ThermodynamicForce>{};
+      auto pvs = std::vector<VariableDescription>{};
+      for (const auto& am : this->mb.getAuxiliaryModelsDescriptions()) {
+        if (!std::holds_alternative<
+                BehaviourDescription::
+                    ExternalModelBasedOnBehaviourVariableFactory>(am)) {
+          continue;
+        }
+        auto treat = [this, &thfs, &pvs, &bdata](const VariableDescription& v) {
+          const auto& ename = v.getExternalName();
+          if (this->mb.isThermodynamicForceExternalName(ename)) {
+            for (const auto& th : thfs) {
+              if (th.getExternalName() == ename) {
+                // this thermodynamic force is already registred
+                return;
+              }
+            }
+            thfs.push_back(static_cast<const BehaviourDescription&>(this->mb)
+                               .getThermodynamicForceByExternalName(ename));
+            return;
+          }
+          for (const auto& pv : bdata.getPersistentVariables()) {
+            if (pv.getExternalName() == ename) {
+              for (const auto& pv2 : pvs) {
+                if (pv2.getExternalName() == ename) {
+                  // this persistent variable is already registred
+                  return;
+                }
+              }
+              pvs.push_back(
+                  bdata.getPersistentVariableDescriptionByExternalName(ename));
+              return;
+            }
+          }
+        };
+        const auto& ad = bdata.getBehaviourVariableFactory(
+            std::get<BehaviourDescription::
+                         ExternalModelBasedOnBehaviourVariableFactory>(am)
+                .factory);
+        for (const auto& esv : getEvaluatedExternalStateVariables(ad, h)) {
+          treat(esv);
+        }
+      }  // end of loop on auxiliary models
+      CodeBlock i;
+      for (const auto& thf : thfs) {
+        initialValues.addVariable(h, {thf.type, thf.name});
+        i.code += "this->mfront_initial_values. " + thf.name + " = ";
+        i.code += "this->" + thf.name + ";\n";
+      }
+      for (const auto& pv : pvs) {
+        initialValues.addVariable(h, {pv.type, pv.name});
+        i.code += "this->mfront_initial_values. " + pv.name + " = ";
+        i.code += "this->" + pv.name + ";\n";
+      }
+      this->mb.setCode(h, BehaviourData::BeforeInitializeLocalVariables, i,
+                       BehaviourData::CREATEORAPPEND,
+                       BehaviourData::AT_BEGINNING);
+    }  // end of loop on modelling hypothesis
+    this->mb.addLocalDataStructure(initialValues);
     // treating bricks
     for (const auto& pb : this->bricks) {
       pb->completeVariableDeclaration();
@@ -1335,10 +1360,14 @@ namespace mfront {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing: begin\n";
     }
+    // for evaluation of auxiliary models, we must save the initial value of
+    // certain persistent variables and thermodynamic forces.
+
+    //
     this->disableVariableDeclaration();
-    // restrictions on user defined compute stress free expansion
     for (const auto h : this->mb.getDistinctModellingHypotheses()) {
       const auto& d = this->mb.getBehaviourData(h);
+      // restrictions on user defined compute stress free expansion
       if (d.hasCode(BehaviourData::ComputeStressFreeExpansion)) {
         const auto& cb =
             d.getCodeBlock(BehaviourData::ComputeStressFreeExpansion);
@@ -2916,19 +2945,15 @@ namespace mfront {
   }  // end of treatBehaviour
 
   BehaviourVariableDescription
-  BehaviourDSLCommon::readBehaviourVariableDescription() {
+  BehaviourDSLCommon::readBehaviourVariableDescription(
+      const std::string& sname,
+      const tfel::utilities::Token::size_type lineNumber,
+      const std::optional<std::string>& fileName) {
     using namespace tfel::utilities;
-    const auto mname = "BehaviourVariableDSLCommon::treatBehaviourVariable";
-
-    this->checkNotEndOfFile("BehaviourDSLCommon::treatBehaviourVariable");
-    const auto lineNumber = this->current->line;
-    const auto sname = this->current->value;
+    const auto mname = "readBehaviourVariableDescription";
     const auto bname = tfel::unicode::getMangledString(sname);
-
-    if (!isValidUserDefinedVariableName(bname)) {
-      this->throwRuntimeError(mname, "invalid variable name '" + bname + "'");
-    }
-    ++(this->current);
+    //
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatBehaviourVariable");
     auto options = [this]() {
       if ((this->current != this->tokens.end()) &&
           (this->current->value == "{")) {
@@ -2938,9 +2963,16 @@ namespace mfront {
     }();
     this->readSpecifiedToken(mname, ";");
     //
+    auto vectorValidator = [](const Data& d) {
+      if (d.empty()) {
+        return;
+      }
+      if (!d.is<std::vector<Data>>()) {
+        tfel::raise("invalid type");
+      }
+    };
     auto validator =
         DataMapValidator{}
-            .addDataTypeValidator<std::string>("file")
             .addDataTypeValidator<std::string>("variables_prefix")
             .addDataTypeValidator<std::string>("variables_suffix")
             .addDataTypeValidator<std::string>("external_names_prefix")
@@ -2949,16 +2981,27 @@ namespace mfront {
             .addDataTypeValidator<bool>("store_thermodynamic_forces")
             .addDataTypeValidator<bool>(
                 "automatically_save_associated_auxiliary_state_variables")
-            .addDataTypeValidator<std::vector<Data>>(
-                "shared_material_properties")
-            .addDataTypeValidator<std::vector<Data>>(
-                "shared_external_state_variables");
+            .addDataTypeValidator<bool>(
+                "use_shared_variable_if_evaluation_is_not_feasible")
+            .addDataValidator("shared_material_properties", vectorValidator)
+            .addDataValidator("evaluated_material_properties", vectorValidator)
+            .addDataValidator("shared_external_state_variables",
+                              vectorValidator)
+            .addDataValidator("evaluated_external_state_variables",
+                              vectorValidator);
+    if (!fileName.has_value()) {
+      validator.addDataTypeValidator<std::string>("file");
+    }
     validator.validate(options);
     //
     auto extract_regex_vector =
         [this, &options,
          mname](const std::string_view& n) -> std::vector<std::regex> {
       if (!options.contains(n)) {
+        return {};
+      }
+      if (get(options, n).empty()) {
+        // is empty, checked by vectorValidator
         return {};
       }
       auto r = std::vector<std::regex>{};
@@ -2980,7 +3023,12 @@ namespace mfront {
       }
       return r;
     };
-    const auto& file = get<std::string>(options, "file");
+    const auto& file = [&fileName, &options] {
+      if (fileName.has_value()) {
+        return *fileName;
+      }
+      return get<std::string>(options, "file");
+    }();
     //
     const auto v_prefix = get_if<std::string>(options, "variables_prefix", "");
     const auto v_suffix = get_if<std::string>(options, "variables_suffix", "");
@@ -3026,14 +3074,21 @@ namespace mfront {
         .external_names_suffix = enames_suffix,
         .shared_material_properties =
             extract_regex_vector("shared_material_properties"),
+        .evaluated_material_properties =
+            extract_regex_vector("evaluated_material_properties"),
         .shared_external_state_variables =
             extract_regex_vector("shared_external_state_variables"),
+        .evaluated_external_state_variables =
+            extract_regex_vector("evaluated_external_state_variables"),
         .store_gradients = get_if<bool>(options, "store_gradients", true),
         .store_thermodynamic_forces =
             get_if<bool>(options, "store_thermodynamic_forces", true),
         .automatically_save_associated_auxiliary_state_variables = get_if<bool>(
             options, "automatically_save_associated_auxiliary_state_variables",
             true),
+        .use_shared_variable_if_evaluation_is_not_feasible = get_if<bool>(
+            options, "use_shared_variable_if_evaluation_is_not_feasible",
+            false),
         .behaviour = this->getBehaviourDescription(file)};
     // some restrictions of the behaviours
     if (d.behaviour.getAttribute(BehaviourDescription::requiresStiffnessTensor,
@@ -3052,6 +3107,22 @@ namespace mfront {
     this->reserveName(getBehaviourWrapperClassName(d));
     this->reserveName("mfront_behaviour_variable_" + d.name);
     return d;
+  }  // end of readBehaviourVariableDescription
+
+  BehaviourVariableDescription
+  BehaviourDSLCommon::readBehaviourVariableDescription() {
+    using namespace tfel::utilities;
+    const char* const mname =
+        "BehaviourDSLCommon::readBehaviourVariableDescription";
+    this->checkNotEndOfFile(mname);
+    const auto lineNumber = this->current->line;
+    const auto sname = this->current->value;
+    ++(this->current);
+    if (!isValidUserDefinedVariableName(
+            tfel::unicode::getMangledString(sname))) {
+      this->throwRuntimeError(mname, "invalid variable name '" + sname + "'");
+    }
+    return readBehaviourVariableDescription(sname, lineNumber, {});
   }  // end of readBehaviourVariableDescription
 
   void BehaviourDSLCommon::treatBehaviourVariable() {
@@ -3231,6 +3302,80 @@ namespace mfront {
     this->readVariableList(
         v, h, &BehaviourDescription::addAuxiliaryStateVariables, true);
   }  // end of treatAuxiliaryStateVariable
+
+  void BehaviourDSLCommon::treatModel(
+      const std::string& method,
+      void (BehaviourDescription::*m1)(const ModelDescription&),
+      void (BehaviourDescription::*m2)(const BehaviourVariableDescription&)) {
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << method << ": begin\n";
+    }
+    this->checkNotEndOfFile(method);
+    const auto lineNumber = this->current->line;
+    const auto f = SearchPathsHandler::search(this->readString(method));
+    const auto adsl = MFrontBase::getDSL(f);
+    if (adsl->getTargetType() == AbstractDSL::MODELDSL) {
+      auto md = this->getModelDescription(f);
+      this->readSpecifiedToken(method, ";");
+      (this->mb.*m1)(md);
+    } else {
+      const auto d = [this, &f, &method, &lineNumber] {
+        this->checkNotEndOfFile(method);
+        auto md = this->getBehaviourDescription(f);
+        const auto name = "mfront_external_model_" + md.getClassName();
+        if (this->current->value == "{") {
+          return readBehaviourVariableDescription(name, lineNumber, f);
+        }
+        this->readSpecifiedToken(method, ";");
+        return BehaviourVariableDescription{
+            .file = f,
+            .symbolic_form = name,
+            .name = name,
+            .description =
+                [this] {
+                  if (!this->currentComment.empty()) {
+                    return this->currentComment;
+                  }
+                  return std::string{};
+                }(),
+            .line_number = lineNumber,
+            .variables_prefix = "",
+            .variables_suffix = "",
+            .external_names_prefix = "",
+            .external_names_suffix = "",
+            .shared_material_properties = {},
+            .evaluated_material_properties = {std::regex{".+"}},
+            .shared_external_state_variables = {},
+            .evaluated_external_state_variables = {std::regex{".+"}},
+            .store_gradients = false,
+            .store_thermodynamic_forces = false,
+            .automatically_save_associated_auxiliary_state_variables = false,
+            .use_shared_variable_if_evaluation_is_not_feasible = true,
+            .behaviour = std::move(md)};
+      }();
+      if (!d.behaviour.isModel()) {
+        this->throwRuntimeError(
+            method, "file path '" + f + "' does not describe a model");
+      }
+      const auto fname = getBehaviourVariableFactoryClassName(d);
+      this->reserveName(fname);
+      this->reserveName(fname + "_instance");
+      (this->mb.*m2)(d);
+    }
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << method << ": end\n";
+    }
+  }
+
+  void BehaviourDSLCommon::treatAuxiliaryModel() {
+    const auto m1 =
+        static_cast<void (BehaviourDescription::*)(const ModelDescription&)>(
+            &BehaviourDescription::addAuxiliaryModelDescription);
+    const auto m2 = static_cast<void (BehaviourDescription::*)(
+        const BehaviourVariableDescription&)>(
+        &BehaviourDescription::addAuxiliaryModelDescription);
+    this->treatModel("BehaviourDSLCommon::treatAuxiliaryModel", m1, m2);
+  }  // end of treatAuxiliaryModel
 
   void BehaviourDSLCommon::treatExternalStateVariable() {
     VarContainer v;

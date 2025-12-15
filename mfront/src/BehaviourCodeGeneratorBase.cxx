@@ -481,9 +481,10 @@ namespace mfront {
         << " * \\return an interaction matrix\n"
         << " * \\param[in] m: coefficients of the interaction matrix\n"
         << " */\n"
-        << "constexpr tfel::math::tmatrix<Nss, Nss, real>\n"
+        << "constexpr auto\n"
         << "buildInteractionMatrix("
-        << "const tfel::math::fsarray<" << ims.rank() << ", real>&) const;\n"
+        << "const tfel::math::fsarray<" << ims.rank() << ", real>&) const\n"
+        << " -> tfel::math::tmatrix<Nss, Nss, real>;\n"
         << "//! return the unique instance of the class\n"
         << "static const " << cn << "&\n"
         << "getSlidingSystems();\n"
@@ -755,11 +756,9 @@ namespace mfront {
     // buildInteractionMatrix
     auto count = std::size_t{};  // number of terms of the matrix treated so far
     out << "template<typename real>\n"
-        << "constexpr "
-        << "tfel::math::tmatrix<" << cn << "<real>::Nss," << cn
-        << "<real>::Nss,real>\n"
-        << cn << "<real>::buildInteractionMatrix("
-        << "const tfel::math::fsarray<" << ims.rank() << ", real>& m) const{\n"
+        << "constexpr auto " << cn << "<real>::buildInteractionMatrix("
+        << "const tfel::math::fsarray<" << ims.rank() << ", real>& m) const\n"
+        << "-> tfel::math::tmatrix<Nss,Nss,real>{\n"
         << "return {";
     for (std::size_t idx = 0; idx != nb; ++idx) {
       const auto gsi = sss.getSlipSystems(idx);
@@ -1973,10 +1972,11 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     using ExternalModel =
         BehaviourDescription::ExternalModelBasedOnBehaviourVariableFactory;
+    auto tmpnames = std::vector<std::string>{};
     os << "/*!\n"
        << " * \\brief Update auxiliary state variables at end of integration\n"
        << " */\n"
-       << "TFEL_HOST_DEVICE void updateAuxiliaryStateVariables()"
+       << "TFEL_HOST_DEVICE [[nodiscard]] bool updateAuxiliaryStateVariables()"
        << "{\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n";
@@ -1995,8 +1995,8 @@ namespace mfront {
                 md.factory);
         for (const auto& v :
              f.behaviour.getBehaviourData(h).getPersistentVariables()) {
-          const auto vn = v.name;
-          os << "this->" << vn << " += this->d" << vn << ";\n";
+          const auto vn = applyNamesChanges(f, v);
+          os << "this->" << vn.name << " += this->d" << vn.name << ";\n";
         }
       }
     }
@@ -2010,7 +2010,41 @@ namespace mfront {
       os << this->bd.getCode(h, BehaviourData::UpdateAuxiliaryStateVariables)
          << "\n";
     }
-    os << "}\n\n";
+    for (const auto& m : this->bd.getAuxiliaryModelsDescriptions()) {
+      if (std::holds_alternative<ModelDescription>(m)) {
+        const auto& model = std::get<ModelDescription>(m);
+        auto inputs = std::vector<std::string>{};
+        auto outputs = std::vector<std::string>{};
+        for (const auto& v : model.outputs) {
+          inputs.push_back(v.name);
+          outputs.push_back(v.name);
+        }
+        this->writeModelCall(os, tmpnames, h, model, outputs, inputs, "em");
+      } else {
+        const auto& model = std::get<ExternalModel>(m);
+        const auto& f =
+            this->bd.getBehaviourData(h).getBehaviourVariableFactory(
+                model.factory);
+        const auto instance = "mfront_auxiliary_model_" + f.name + "_instance";
+        os << "auto " << instance << " = " << f.name << ".make();\n"
+           << "if(!this->initialize(" << instance << ")){\n"
+           << "return false;\n"
+           << "}\n"
+           << "if(!" << instance << ". integrate("
+           << "::tfel::material::TangentOperatorTraits<::tfel::"
+           << "material::MechanicalBehaviourBase::GENERALBEHAVIOUR>::"
+           << "STANDARDTANGENTOPERATOR, NOSTIFFNESSREQUESTED)){\n"
+           << "return false;\n"
+           << "}\n";
+        for (const auto& v :
+             f.behaviour.getBehaviourData(h).getPersistentVariables()) {
+          const auto vn = applyNamesChanges(f, v);
+          os << "this->updateAuxiliaryStateVariables(" << instance << ");\n";
+        }
+      }
+    }
+    os << "return true;\n"
+       << "}\n\n";
   }  // end of writeBehaviourUpdateAuxiliaryStateVariables
 
   void BehaviourCodeGeneratorBase::writeBehaviourComputeInternalEnergy(
@@ -2129,7 +2163,15 @@ namespace mfront {
     }
     os << "this->updateIntegrationVariables();\n"
        << "this->updateStateVariables();\n"
-       << "this->updateAuxiliaryStateVariables();\n";
+       << "if(!this->updateAuxiliaryStateVariables()){\n";
+    if (this->bd.useQt()) {
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
+    } else {
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType, false>::FAILURE;\n";
+    }
+    os << "}\n";
     if (!areRuntimeChecksDisabled(this->bd)) {
       for (const auto& v :
            this->bd.getBehaviourData(h).getPersistentVariables()) {
@@ -3328,8 +3370,9 @@ namespace mfront {
            << "}\n";
         for (const auto& v :
              mv.behaviour.getBehaviourData(h).getPersistentVariables()) {
-          os << "this->d" << v.name << " = " << instance << ". " << v.name
-             << " - this->" << v.name << ";\n";
+          const auto vn = applyNamesChanges(mv, v);
+          os << "this->d" << vn.name << " = " << instance << ". " << v.name
+             << " - this->" << vn.name << ";\n";
         }
       }
     }
@@ -4971,8 +5014,22 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     const auto& md = this->bd.getBehaviourData(h);
     // initialize
-    auto write_initialize = [&os, &md,
+    auto write_initialize = [this, &os, &md,
                              h](const BehaviourVariableDescription& b) {
+      using ExternalModel =
+          BehaviourDescription::ExternalModelBasedOnBehaviourVariableFactory;
+      const auto is_auxiliary_model = [this, &b] {
+        for (const auto& m : this->bd.getAuxiliaryModelsDescriptions()) {
+          if (!std::holds_alternative<ExternalModel>(m)) {
+            continue;
+          }
+          const auto& model = std::get<ExternalModel>(m);
+          if (model.factory == getBehaviourVariableFactoryClassName(b)) {
+            return true;
+          }
+        }
+        return false;
+      }();
       const auto warnings = checkInitializeMethods(
           b.behaviour, h,
           {.checkGradientsAtTheBeginningOfTheTimeStep = true,
@@ -5020,7 +5077,64 @@ namespace mfront {
         os << "mfront_behaviour_variable_" << b.name << ". " << mp.name
            << " = this->" << v.name << ";\n";
       }
-      for (const auto& mp : getUnSharedMaterialProperties(b, h)) {
+      for (const auto& mp : getEvaluatedMaterialProperties(b, h)) {
+        const auto& source = [this, &md, &b, &mp]() -> std::string {
+          if (this->bd.isGradientExternalName(mp.getExternalName())) {
+            return this->bd.getGradientByExternalName(mp.getExternalName())
+                .name;
+          }
+          if (this->bd.isThermodynamicForceExternalName(mp.getExternalName())) {
+            return this->bd
+                .getThermodynamicForceByExternalName(mp.getExternalName())
+                .name;
+          }
+          if (md.isStaticVariableName(mp.getExternalName())) {
+            return md.getStaticVariableDescription(mp.getExternalName()).name;
+          }
+          try {
+            return md.getVariableDescriptionByExternalName(mp.getExternalName())
+                .name;
+          } catch (std::exception& e) {
+            tfel::raise("variable '" + mp.getExternalName() + "' ('" + mp.name +
+                        "') of behaviour variable '" + b.name +
+                        "' can't be evaluated");
+          }
+        }();
+        if (!((md.isExternalStateVariableName(source)) ||
+              (md.isMaterialPropertyName(source)) ||
+              (md.isParameterName(source)) ||
+              (md.isStaticVariableName(source)) ||
+              (this->bd.isGradientName(source)) ||
+              ((this->bd.isThermodynamicForceName(source)) &&
+               is_auxiliary_model) ||
+              ((md.isPersistentVariableName(source)) && is_auxiliary_model))) {
+          tfel::raise("variable '" + mp.getExternalName() + "' ('" + mp.name +
+                      "') of behaviour variable '" + b.name +
+                      "' can't be evaluated with neither an external state "
+                      "variable, a material property, a parameter nor a static "
+                      "variable ");
+        }
+        if (this->bd.isGradientName(source)) {
+          const auto& g = this->bd.getGradient(source);
+          if (Gradient::isIncrementKnown(g)) {
+            os << "mfront_behaviour_variable_" << b.name << ". " << mp.name
+               << " = this->" << source << " + this->d" << source << ";\n";
+          } else {
+            os << "mfront_behaviour_variable_" << b.name << ". " << mp.name
+               << " = this->" << source << "1;\n";
+          }
+        } else if (md.isExternalStateVariableName(source)) {
+          os << "mfront_behaviour_variable_" << b.name << ". " << mp.name
+             << " = this->" << source << " + this->d" << source << ";\n";
+        } else if (md.isStaticVariableName(source)) {
+          os << "mfront_behaviour_variable_" << b.name << ". " << mp.name
+             << " = " << bd.getClassName() << "::" << source << ";\n";
+        } else {
+          os << "mfront_behaviour_variable_" << b.name << ". " << mp.name
+             << " = this->" << source << ";\n";
+        }
+      }
+      for (const auto& mp : getUnSharedNorEvaluatedMaterialProperties(b, h)) {
         const auto nmp = applyNamesChanges(b, mp);
         os << "mfront_behaviour_variable_" << b.name << ". " << mp.name
            << " = this->" << nmp.name << ";\n";
@@ -5033,7 +5147,88 @@ namespace mfront {
         os << "mfront_behaviour_variable_" << b.name << ". d" << esv.name
            << " = this->d" << v.name << ";\n";
       }
-      for (const auto& esv : getUnSharedExternalStateVariables(b, h)) {
+      for (const auto& esv : getEvaluatedExternalStateVariables(b, h)) {
+        const auto source = [this, &md, &b, &esv]() -> std::string {
+          try {
+            if (this->bd.isGradientExternalName(esv.getExternalName())) {
+              return this->bd.getGradientByExternalName(esv.getExternalName())
+                  .name;
+            }
+            if (this->bd.isThermodynamicForceExternalName(
+                    esv.getExternalName())) {
+              return this->bd
+                  .getThermodynamicForceByExternalName(esv.getExternalName())
+                  .name;
+            }
+            if (md.isStaticVariableName(esv.getExternalName())) {
+              return md.getStaticVariableDescription(esv.getExternalName())
+                  .name;
+            }
+            return md
+                .getVariableDescriptionByExternalName(esv.getExternalName())
+                .name;
+          } catch (std::exception& e) {
+            tfel::raise("variable '" + esv.getExternalName() + "' ('" +
+                        esv.name + "') of behaviour variable '" + b.name +
+                        "' can't be evaluated");
+          }
+        }();
+        if (!((md.isExternalStateVariableName(source)) ||
+              (md.isMaterialPropertyName(source)) ||
+              (md.isParameterName(source)) ||
+              (md.isStaticVariableName(source)) ||
+              (this->bd.isGradientName(source)) ||
+              ((this->bd.isThermodynamicForceName(source)) &&
+               is_auxiliary_model) ||
+              ((md.isPersistentVariableName(source)) && is_auxiliary_model))) {
+          tfel::raise("variable '" + esv.getExternalName() + "' ('" + esv.name +
+                      "') of behaviour variable '" + b.name +
+                      "' can't be evaluated with neither an external state "
+                      "variable, a material property, a parameter, a gradient, "
+                      "a thermodynamic_force, nor a static "
+                      "variable ");
+        }
+        if (this->bd.isGradientName(source)) {
+          const auto& g = this->bd.getGradient(source);
+          if (Gradient::isIncrementKnown(g)) {
+            os << "mfront_behaviour_variable_" << b.name << ". " << esv.name
+               << " = this->" << source << ";\n";
+            os << "mfront_behaviour_variable_" << b.name << ". d" << esv.name
+               << " = this->d" << source << ";\n";
+          } else {
+            os << "mfront_behaviour_variable_" << b.name << ". " << esv.name
+               << " = this->" << source << "0;\n";
+            os << "mfront_behaviour_variable_" << b.name << ". d" << esv.name
+               << " = this->" << source << "1 - this->" << source << "0;\n";
+          }
+        } else if (md.isExternalStateVariableName(source)) {
+          os << "mfront_behaviour_variable_" << b.name << ". " << esv.name
+             << " = this->" << source << ";\n";
+          os << "mfront_behaviour_variable_" << b.name << ". d" << esv.name
+             << " = this->d" << source << ";\n";
+        } else if (md.isStaticVariableName(source)) {
+          os << "mfront_behaviour_variable_" << b.name << ". " << esv.name
+             << " = " << bd.getClassName() << "::" << source << ";\n";
+          os << "mfront_behaviour_variable_" << b.name << ". d" << esv.name
+             << " = " << esv.type << "{};\n";
+        } else {
+          if ((this->bd.isThermodynamicForceName(source)) ||
+              (md.isPersistentVariableName(source))) {
+            os << "mfront_behaviour_variable_" << b.name << ". " << esv.name
+               << " = this->mfront_initial_values. " << source << ";\n";
+            os << "mfront_behaviour_variable_" << b.name << ". d" << esv.name
+               << " = this->" << source << "- this->mfront_initial_values. "
+               << source << ";\n";
+          } else {
+            os << "mfront_behaviour_variable_" << b.name << ". " << esv.name
+               << " = this->" << source << ";\n";
+            os << "mfront_behaviour_variable_" << b.name << ". d" << esv.name
+               << " = " << esv.type << "{};\n";
+          }
+        }
+      }
+      for (const auto& esv :
+           getUnSharedNorEvaluatedExternalStateVariables(b, h)) {
         const auto nesv = applyNamesChanges(b, esv);
         os << "mfront_behaviour_variable_" << b.name << ". " << esv.name
            << " = this->" << nesv.name << ";\n";
@@ -5718,6 +5913,7 @@ namespace mfront {
     os << " */\n\n";
     if (this->bd.hasParameters()) {
       os << "#include<string>\n"
+         << "#include<locale>\n"
          << "#include<cstring>\n"
          << "#include<sstream>\n"
          << "#include<fstream>\n"
@@ -5765,6 +5961,7 @@ namespace mfront {
       << "{\n"
       << type << " value;\n"
       << "std::istringstream converter(v);\n"
+      << "converter.imbue(std::locale::classic());\n"
       << "converter >> value;\n"
       << "tfel::raise_if(!converter||(!converter.eof()),\n"
       << "\"" << cname << "::get" << type2 << ": \"\n"
@@ -6060,6 +6257,7 @@ namespace mfront {
                     "writeSrcFileParametersInitializer",
                     "invalid parameter type '" + p.type + "'");
               }
+
               os << cname << "::getDouble(tokens[0],tokens[1]);\n";
             }
           } else {

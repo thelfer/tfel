@@ -10,6 +10,8 @@
 - Maxence Wangerez
 - Jérémy Hure
 - Chao Ling
+- Mehran Ghasabeh
+- Thomas Nagel
 - Bruno Michel
 - Nicolas Sellenet
 - Éric Brunon
