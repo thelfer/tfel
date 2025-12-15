@@ -481,9 +481,10 @@ namespace mfront {
         << " * \\return an interaction matrix\n"
         << " * \\param[in] m: coefficients of the interaction matrix\n"
         << " */\n"
-        << "constexpr tfel::math::tmatrix<Nss, Nss, real>\n"
+        << "constexpr auto\n"
         << "buildInteractionMatrix("
-        << "const tfel::math::fsarray<" << ims.rank() << ", real>&) const;\n"
+        << "const tfel::math::fsarray<" << ims.rank() << ", real>&) const\n"
+        << " -> tfel::math::tmatrix<Nss, Nss, real>;\n"
         << "//! return the unique instance of the class\n"
         << "static const " << cn << "&\n"
         << "getSlidingSystems();\n"
@@ -755,11 +756,9 @@ namespace mfront {
     // buildInteractionMatrix
     auto count = std::size_t{};  // number of terms of the matrix treated so far
     out << "template<typename real>\n"
-        << "constexpr "
-        << "tfel::math::tmatrix<" << cn << "<real>::Nss," << cn
-        << "<real>::Nss,real>\n"
-        << cn << "<real>::buildInteractionMatrix("
-        << "const tfel::math::fsarray<" << ims.rank() << ", real>& m) const{\n"
+        << "constexpr auto " << cn << "<real>::buildInteractionMatrix("
+        << "const tfel::math::fsarray<" << ims.rank() << ", real>& m) const\n"
+        << "-> tfel::math::tmatrix<Nss,Nss,real>{\n"
         << "return {";
     for (std::size_t idx = 0; idx != nb; ++idx) {
       const auto gsi = sss.getSlipSystems(idx);
