@@ -96,7 +96,8 @@
 #define TFEL_VISIBILITY_EXPORT __declspec(dllexport)
 #define TFEL_VISIBILITY_LOCAL
 #else /* defined _WIN32 || defined __CYGWIN__ */
-#if (defined __GNUC__) && (!defined __INTEL_COMPILER) && (!defined __NVCOMPILER) && (!defined __clang__)
+#if (defined __GNUC__) && (!defined __INTEL_COMPILER) && \
+    (!defined __NVCOMPILER) && (!defined __clang__)
 #if __GNUC__ >= 4
 #define TFEL_VISIBILITY_IMPORT [[gnu::visibility("default")]]
 #define TFEL_VISIBILITY_EXPORT [[gnu::visibility("default")]]
@@ -209,8 +210,10 @@
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #if defined TFELGlossary_EXPORTS
+#define TFELGLOSSARY_VISIBILITY_FRIEND_EXPORT TFEL_VISIBILITY_EXPORT
 #define TFELGLOSSARY_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
 #else
+#define TFELGLOSSARY_VISIBILITY_FRIEND_EXPORT
 #ifndef TFEL_STATIC_BUILD
 #define TFELGLOSSARY_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
 #else
@@ -218,6 +221,7 @@
 #endif
 #endif
 #else
+#define TFELGLOSSARY_VISIBILITY_FRIEND_EXPORT
 #define TFELGLOSSARY_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
 #endif /* LIB_TFEL_CONFIG_HXX */
 

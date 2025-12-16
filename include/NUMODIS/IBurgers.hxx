@@ -133,9 +133,9 @@ namespace numodis {
     std::vector<int> _index;
 
    private:
-    TFELNUMODIS_VISIBILITY_EXPORT friend int Coincide(const IBurgers&,
-                                                      const IBurgers&);
-    TFELNUMODIS_VISIBILITY_EXPORT
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend int Coincide(const IBurgers&,
+                                                             const IBurgers&);
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT
     friend std::ostream& operator<<(std::ostream&, const IBurgers&);
   };
 
