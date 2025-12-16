@@ -40,8 +40,10 @@ This version was released on December 15, 2025 along with:
 - [Version 3.4.9](release-notes-3.4.9.html),
 - [Version 4.0.6](release-notes-4.0.6.html),
 - [Version 4.1.5](release-notes-4.1.5.html),
-- [Version 4.2.4](release-notes-4.2.4.html)
+- [Version 4.2.4](release-notes-4.2.4.html),
 - [Version 5.0.2](release-notes-5.0.2.html).
+
+and inherits from all fixes from those releases.
 
 # Highlights
 
