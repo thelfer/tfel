@@ -159,8 +159,8 @@ namespace numodis {
     double _vector[3];
 
    private:
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(std::ostream&,
-                                                                  const Vect3&);
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend std::ostream& operator<<(
+        std::ostream&, const Vect3&);
   };
 
   TFELNUMODIS_VISIBILITY_EXPORT Vect3 operator*(const double, const Vect3&);
