@@ -57,16 +57,26 @@ namespace tfel::check {
   TestLauncher::Command::~Command() = default;
 
   TestLauncher::TestLauncher(const Configuration& c, const std::string& f)
-      : glog(c.log),
+      : directory(c.directory),
+        glog(c.log),
         file(f),
         comparison(new AbsoluteComparison()),
         interpolation(new NoInterpolation()),
         integralInterpolation(new NoInterpolation()) {
     this->testname = this->file.substr(0, this->file.rfind("."));
-    this->logfile = this->testname + ".checklog";
+    if (!this->directory.empty()) {
+      this->logfile = this->directory + '/' + this->testname + ".checklog";
+    } else {
+      this->logfile = this->testname + ".checklog";
+    }
     this->log = PCLogger(std::make_shared<PCTextDriver>(this->logfile));
-    this->log.addDriver(
-        std::make_shared<PCJUnitDriver>("TEST-" + this->testname + ".xml"));
+    if (!this->directory.empty()) {
+      this->log.addDriver(std::make_shared<PCJUnitDriver>(
+          this->directory + "/TEST-" + this->testname + ".xml"));
+    } else {
+      this->log.addDriver(
+          std::make_shared<PCJUnitDriver>("TEST-" + this->testname + ".xml"));
+    }
     this->ClockAction(START);
     this->ClockAction(STOP);
     this->ClockAction(GET);
@@ -189,7 +199,11 @@ namespace tfel::check {
         this->throwRuntimeError("TestLauncher::treatCleanFiles",
                                 "file '" + f + "' multiply declared");
       }
-      this->cleanfiles.push_back(f);
+      if (!this->directory.empty()) {
+        this->cleanfiles.push_back(this->directory + '/' + f);
+      } else {
+        this->cleanfiles.push_back(f);
+      }
     }
     this->readSpecifiedToken("TestLauncher::treatCleanFiles", ";");
   }  // end of treatCleanFiles
@@ -204,7 +218,11 @@ namespace tfel::check {
         this->throwRuntimeError("TestLauncher::treatCleanDirectories",
                                 "directory '" + d + "' multiply declared");
       }
-      this->cleandirectories.push_back(d);
+      if (!this->directory.empty()) {
+        this->cleandirectories.push_back(this->directory + '/' + d);
+      } else {
+        this->cleandirectories.push_back(d);
+      }
     }
     this->readSpecifiedToken("TestLauncher::treatCleanDirectories", ";");
   }  // end of treatCleanDirectories
@@ -442,14 +460,14 @@ namespace tfel::check {
     } else if (this->current->value == "Area") {
       this->comparison.reset(new AreaComparison());
     } else {
-      this->throwRuntimeError("TestLauncher::treatTest",
+      this->throwRuntimeError("TestLauncher::treatTestType",
                               "unknown test type "
                               "(read '" +
                                   this->current->value + "').");
     }
     ++(this->current);
     if (this->comparison->getName() != "area") {
-      this->readSpecifiedToken("TestLauncher::treatTest", ";");
+      this->readSpecifiedToken("TestLauncher::treatTestType", ";");
       return;
     }
     auto check = [this] {
@@ -464,9 +482,9 @@ namespace tfel::check {
       }
     };
     check();
-    this->readSpecifiedToken("TestLauncher::treatTest", "interpolation");
+    this->readSpecifiedToken("TestLauncher::treatTestType", "interpolation");
     check();
-    this->setInterpolation("TestLauncher::treatTest");
+    this->setInterpolation("TestLauncher::treatTestType");
     this->readSpecifiedToken("TestLauncher::treatTestType", "using");
     check();
     if ((this->current->flag == tfel::utilities::Token::String) ||
@@ -493,6 +511,12 @@ namespace tfel::check {
         return std::make_shared<Column>(c);
       }
     };
+    auto add_directory = [this](const std::string& f) {
+      if (!this->directory.empty()) {
+        return this->directory + '/' + f;
+      }
+      return f;
+    };
     auto make_test = [this] {
       auto test = std::make_shared<Test>();
       test->setComparison(this->comparison);
@@ -511,9 +535,10 @@ namespace tfel::check {
     };
     this->checkNotEndOfFile("TestLauncher::treatTest");
     if (this->current->value == "{") {
-      auto getFileAndColumn = [this, &getColumn] {
+      auto getFileAndColumn = [this, &add_directory, &getColumn] {
         this->readSpecifiedToken("TestLauncher::treatTest", "{");
-        const auto f = this->readString("TestLauncher::treatTest");
+        const auto f =
+            add_directory(this->readString("TestLauncher::treatTest"));
         this->readSpecifiedToken("TestLauncher::treatTest", ":");
         const auto c = getColumn();
         this->readSpecifiedToken("TestLauncher::treatTest", "}");
@@ -529,8 +554,10 @@ namespace tfel::check {
       this->comparisons.push_back(*test);
     } else {
       // standard test
-      const auto f1 = this->readString("TestLauncher::treatTest");
-      const auto f2 = this->readString("TestLauncher::treatTest");
+      const auto f1 =
+          add_directory(this->readString("TestLauncher::treatTest"));
+      const auto f2 =
+          add_directory(this->readString("TestLauncher::treatTest"));
       this->checkNotEndOfFile("TestLauncher::treatTest");
       if (this->current->value == ";") {
         this->throwRuntimeError("TestLauncher::treatTest",
@@ -621,7 +648,11 @@ namespace tfel::check {
     this->mergeStrings(false);
     // open the file
     try {
-      this->openFile(this->file);
+      if (!this->directory.empty()) {
+        this->openFile(this->directory + '/' + this->file);
+      } else {
+        this->openFile(this->file);
+      }
     } catch (std::exception& e) {
       this->throwRuntimeError(
           "TestLauncher::analyseInputFile",
@@ -697,10 +728,11 @@ namespace tfel::check {
   bool TestLauncher::execute(const Command& c,
                              const std::string& output_file,
                              const std::string& step) {
-    tfel::system::ProcessManager manager;
     try {
+      tfel::system::ProcessManager manager;
       this->ClockAction(START);
-      manager.execute(c.command, "", output_file, this->environments);
+      manager.execute(this->directory, c.command, "", output_file,
+                      this->environments);
       this->ClockAction(STOP);
       if (c.output_check) {
         const auto output = getFileContent(output_file);
@@ -718,10 +750,12 @@ namespace tfel::check {
                                 this->ClockAction(GET), true);
       }
     } catch (std::exception& e) {
+      std::cerr << "finishing: " << this->directory << " " << c.command << '\n';
       this->log.addTestResult(this->testname, step, c.command, 0.0,
                               c.shall_fail, e.what());
       return c.shall_fail;
     } catch (...) {
+      std::cerr << "finishing: " << this->directory << " " << c.command << '\n';
       this->log.addTestResult(this->testname, step, c.command, 0.0,
                               c.shall_fail, "unhandled exception thrown");
       return c.shall_fail;
@@ -752,7 +786,12 @@ namespace tfel::check {
     unsigned short i = 1;
     for (const auto& c : this->commands) {
       const auto step = "Exec-" + std::to_string(i);
-      const auto output_file = this->testname + "-" + step + ".out";
+      const auto output_file = [this, &step] {
+        if (this->directory.empty()) {
+          return this->testname + "-" + step + ".out";
+        }
+        return this->directory + '/' + this->testname + "-" + step + ".out";
+      }();
       const auto success = this->execute(c, output_file, step);
       this->glog.addSimpleTestResult("** " + step + " " + c.command, success);
       if (!success) {
@@ -797,10 +836,24 @@ namespace tfel::check {
     }
     // files and directories clean-up
     for (const auto& f : this->cleanfiles) {
-      tfel::system::systemCall::unlink(f);
+      try {
+        tfel::system::systemCall::unlink(f);
+      } catch (std::exception& e) {
+        this->glog.addMessage("cleaning file '" + f +
+                              "' failed: " + std::string{e.what()});
+      } catch (...) {
+        this->glog.addMessage("cleaning file '" + f + "' failed");
+      }
     }
     for (const auto& d : this->cleandirectories) {
-      tfel::system::systemCall::rmdir(d);
+      try {
+        tfel::system::systemCall::rmdir(d);
+      } catch (std::exception& e) {
+        this->glog.addMessage("cleaning directory '" + d +
+                              "' failed: " + std::string{e.what()});
+      } catch (...) {
+        this->glog.addMessage("cleaning directory '" + d + "' failed");
+      }
     }
     return gsuccess;
   }  // end of execute

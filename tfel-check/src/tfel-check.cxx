@@ -32,6 +32,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 #include "TFEL/System/RecursiveFind.hxx"
+#include "TFEL/System/ThreadPool.hxx"
 #include "TFEL/Utilities/TerminalColors.hxx"
 #include "MFront/InitDSLs.hxx"
 #include "MFront/InitInterfaces.hxx"
@@ -40,7 +41,6 @@
 #include "MFront/ModelInterfaceFactory.hxx"
 #include "TFEL/Check/ConfigurationManager.hxx"
 #include "TFEL/Check/TestLauncher.hxx"
-#include "TFEL/Check/TestLauncherV1.hxx"
 #include "TFEL/Check/PCLogger.hxx"
 #include "TFEL/Check/PCTextDriver.hxx"
 #include "TFEL/Check/PCJUnitDriver.hxx"
@@ -248,6 +248,7 @@ namespace tfel::check {
 
   int TFELCheck::execute() {
     using namespace std;
+    auto pool = tfel::system::ThreadPool{4};
     auto log = PCLogger(std::make_shared<PCTextDriver>("tfel-check.log"));
     log.addDriver(std::make_shared<PCTextDriver>());
     auto exe = [this, &log](const std::string& d, const std::string& f) {
@@ -255,53 +256,32 @@ namespace tfel::check {
       const auto cpath = systemCall::getCurrentWorkingDirectory();
       const auto path = systemCall::getAbsolutePath(d);
       log.addMessage("entering directory '" + path + "'");
-      try {
-        systemCall::changeCurrentWorkingDirectory(d);
-      } catch (std::exception& e) {
-        log.addMessage("can't move to directory '" + d + "' (" +
-                       std::string(e.what()) + ")");
-        log.addSimpleTestResult("* result of test '" + d + '/' + f + "'",
-                                false);
-        return false;
-      }
       log.addMessage("* beginning of test '" + d + '/' + f + "'");
       const auto name = d + '/' + f;
       auto success = true;
       try {
-        // if(this->file_version==TestLauncher::V1){
-        // 	TestLauncherV1 c(f,log);
-        // 	success = c.execute();
-        // } else {
         auto c = this->configurations.getConfiguration(d);
         c.log = log;
+        c.directory = d;
         TestLauncher t(c, f);
         success = t.execute(c);
-        //      }
       } catch (std::exception& e) {
         log.addMessage("test failed : '" + f + "', reason:\n" + e.what());
         success = false;
       }
       log.addSimpleTestResult("* end of test '" + d + '/' + f + "'", success);
       log.addMessage("======");
-      try {
-        systemCall::changeCurrentWorkingDirectory(cpath);
-      } catch (std::exception& e) {
-        log.addMessage("can't move back to top directory '" + cpath + "' (" +
-                       std::string(e.what()) + ")");
-        log.addMessage("Aborting");
-        exit(EXIT_FAILURE);
-      }
       return success;
     };
-    int status = EXIT_SUCCESS;
+    auto future_results =
+        std::vector<std::future<tfel::system::ThreadedTaskResult<bool>>>{};
     if (this->inputs.empty()) {
       std::regex re(".+\\.check", std::regex_constants::extended);
       const auto& files = tfel::system::recursiveFind(re, ".", false);
       for (const auto& d : files) {
         for (const auto& f : d.second) {
-          if (!exe(d.first, f)) {
-            status = EXIT_FAILURE;
-          }
+          future_results.push_back(
+              pool.addTask([exe, d, f] { return exe(d.first, f); }));
         }
       }
     } else {
@@ -328,8 +308,21 @@ namespace tfel::check {
         const auto f = std::string(::basename(path2));
         ::free(path);
         ::free(path2);
-        // basename
-        if (!exe(d, f)) {
+        // shall a new thread which starts a fork
+        future_results.push_back(
+            pool.addTask([exe, d, f] { return exe(d, f); }));
+      }
+    }
+    // waiting for all jobs to terminate
+    pool.wait();
+    // checking the output values of all jobs
+    int status = EXIT_SUCCESS;
+    for (auto& f : future_results) {
+      auto r = f.get();
+      if (!r) {
+        status = EXIT_FAILURE;
+      } else {
+        if (!(*r)) {
           status = EXIT_FAILURE;
         }
       }
