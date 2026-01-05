@@ -750,12 +750,10 @@ namespace tfel::check {
                                 this->ClockAction(GET), true);
       }
     } catch (std::exception& e) {
-      std::cerr << "finishing: " << this->directory << " " << c.command << '\n';
       this->log.addTestResult(this->testname, step, c.command, 0.0,
                               c.shall_fail, e.what());
       return c.shall_fail;
     } catch (...) {
-      std::cerr << "finishing: " << this->directory << " " << c.command << '\n';
       this->log.addTestResult(this->testname, step, c.command, 0.0,
                               c.shall_fail, "unhandled exception thrown");
       return c.shall_fail;
