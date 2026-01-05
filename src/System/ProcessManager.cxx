@@ -296,7 +296,7 @@ namespace tfel::system {
     sigset_t oSigSet;
     // splitting the argument
     if (cmd.empty()) {
-      throw(SystemError("ProcessManager::createProcess : empty command"));
+      tfel::raise<SystemError>("ProcessManager::createProcess : empty command");
     }
     istringstream args(cmd);
     copy(istream_iterator<string>(args), istream_iterator<string>(),
@@ -721,6 +721,21 @@ namespace tfel::system {
                                const std::map<std::string, std::string>& e) {
     const auto pid = this->createProcess(directory, cmd, in, out, e);
     this->wait(pid);
+    const auto p = this->findProcess(pid);
+    const auto pe = this->processes.rend();
+    if (p == pe) {
+      tfel::raise("no process associated with pid " + std::to_string(pid));
+    }
+    if (!p->exitStatus) {
+      tfel::raise<SystemError>("ProcessManager::execute : '" + cmd +
+                               "' exited du to a signal");
+    }
+    if (p->exitValue != EXIT_SUCCESS) {
+      std::ostringstream msg;
+      msg << "ProcessManager::execute : '" << cmd
+          << "' exited abnormally with value " << p->exitValue;
+      tfel::raise<SystemError>(msg.str());
+    }
   }  // end of ProcessManager::execute
 
   std::vector<ProcessManager::Process>::reverse_iterator
