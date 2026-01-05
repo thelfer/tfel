@@ -12,16 +12,17 @@
  */
 
 #include <map>
+#include <thread>
 #include <vector>
 #include <string>
+#include <cerrno>
 #include <cstring>
 #include <cstdlib>
-#include <cerrno>
+#include <climits>
 #include <stdexcept>
 #include <iterator>
 #include <algorithm>
 #include <iostream>
-#include <climits>
 #include <unistd.h>
 #include <libgen.h>
 #include <sys/stat.h>
@@ -130,10 +131,17 @@ namespace tfel::check {
     std::string getUsageDescription() const override;
     //! \brief configuration manager
     ConfigurationManager configurations;
-    //! list of configuration files
+    //! \brief list of configuration files
     std::vector<std::string> configFiles;
     //! list of input files
     std::vector<std::string> inputs;
+    //! \brief number of parallel jobs
+    tfel::system::ThreadPool::size_type njobs = 1;
+    /*!
+     * \brief boolean stating if the number of jobs allowed shall be lesser
+     * than the number of cores
+     */
+    bool discard_jobs_limit = false;
   };  // end of struct TFELCheck
 
   bool TFELCheck::treatSubstitution() {
@@ -184,6 +192,47 @@ namespace tfel::check {
                            const CallBack& c) {
       this->registerCallBack(n, a, c);
     };
+    auto read_boolean_value = [this](const char* const m) {
+      const auto& opt = this->currentArgument->getOption();
+      if (opt == "true") {
+        return true;
+      } else if (opt != "false") {
+        std::cerr << "invalid option '" << opt << "' passed to '" << m << "', "
+                  << "expected 'true' or 'false'.\n";
+        std::exit(EXIT_FAILURE);
+      }
+      return false;
+    };
+    declare2(
+        "--jobs", "-j",
+        CallBack(
+            "specifies the number of jobs (commands) to run simultaneously",
+            [this] {
+              const auto& o = this->currentArgument->getOption();
+              if (o.empty()) {
+                const auto processor_count =
+                    std::thread::hardware_concurrency();
+                if (processor_count == 0) {
+                  std::cerr << "unable to determine the number of cores and no "
+                            << "value passed to '--jobs'\n";
+                  std::exit(EXIT_FAILURE);
+                }
+                this->njobs = processor_count;
+                return;
+              }
+              auto pos = std::size_t{};
+              try {
+                this->njobs = std::stoul(o, &pos);
+              } catch (std::invalid_argument& e) {
+                std::cerr << "invalid value '" << o << "' passed to '--jobs'\n";
+                std::exit(EXIT_FAILURE);
+              }
+              if (pos != o.size()) {
+                std::cerr << "invalid value '" << o << "' passed to '--jobs'\n";
+                std::exit(EXIT_FAILURE);
+              }
+            },
+            true));
     declare2("--config", "-c",
              CallBack(
                  "add a configuration file",
@@ -196,22 +245,20 @@ namespace tfel::check {
         "--discard-commands-failure",
         CallBack(
             "discard command's failure if comparisons are ok (default "
-            "behaviour). If no "
-            "comparisons is declared, command's failure is never ignored.",
-            [this] {
-              const auto boolean_value = [this] {
-                const auto& opt = this->currentArgument->getOption();
-                if (opt == "true") {
-                  return true;
-                } else if (opt != "false") {
-                  std::cerr << "invalid option '" << opt
-                            << "' passed to '--discard-commands-failure', "
-                            << "expected 'true' or 'false'.";
-                  std::exit(EXIT_FAILURE);
-                }
-                return false;
-              }();
-              this->configurations.setDiscardCommandsFailure(boolean_value);
+            "behaviour). If no comparisons is declared, command's failure is "
+            "never ignored.",
+            [this, read_boolean_value] {
+              const auto b = read_boolean_value("--discard-commands-failure");
+              this->configurations.setDiscardCommandsFailure(b);
+            },
+            true));
+    this->registerCallBack(
+        "--discard-jobs-limit",
+        CallBack(
+            "disable test on the number of jobs allowed to run simultaneously.",
+            [this, read_boolean_value] {
+              this->discard_jobs_limit =
+                  read_boolean_value("--discard-commands-failure");
             },
             true));
     this->registerCallBack(
@@ -241,6 +288,19 @@ namespace tfel::check {
     this->setArguments(argc, argv);
     this->registerArgumentCallBacks();
     this->parseArguments();
+    //
+    if (!this->discard_jobs_limit) {
+      const auto processor_count = std::thread::hardware_concurrency();
+      if (processor_count != 0) {
+        if (this->njobs > processor_count) {
+          std::cerr
+              << "the number of jobs is greater than the number of "
+              << "available cores. This is not supported by default. Use "
+              << "the '--discard-jobs-limit' option to discard this check\n";
+          std::exit(EXIT_FAILURE);
+        }
+      }
+    }
     // this is done after argument parsing to allow the user to modify default
     // executables' names
     declareTFELExecutables(this->configurations);
@@ -248,7 +308,7 @@ namespace tfel::check {
 
   int TFELCheck::execute() {
     using namespace std;
-    auto pool = tfel::system::ThreadPool{4};
+    auto pool = tfel::system::ThreadPool{this->njobs};
     auto log = PCLogger(std::make_shared<PCTextDriver>("tfel-check.log"));
     log.addDriver(std::make_shared<PCTextDriver>());
     auto exe = [this, &log](const std::string& d, const std::string& f) {
