@@ -33,6 +33,20 @@ The page describes the new functionalities of Version 5.2 of the
 
 # New features in `tfel-check`
 
+# New features in `TFEL` libraries
+
+##  New features in `TFEL/System`
+
+### Improvements in `ProcessManager`
+
+- New overloads of the `createProcess` and `execute` methods allow
+  specifying the directory where a command shall executed.
+- `ProcessManager` shall now work properly in a multithreaded context.
+
+### Improvements in `SignalManager`
+
+- `SignalManager` shall now work properly in a multithreaded context.
+
 # Acknowledgements
 
 The authors are grateful to the many contributors to the `TFEL/MFront`

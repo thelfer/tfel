@@ -6,7 +6,7 @@
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
- * linking exception or the CECILL-A licence. A copy of thoses licences are
+T * linking exception or the CECILL-A licence. A copy of thoses licences are
  * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
@@ -18,15 +18,15 @@
 #endif /* __CYGWIN__ */
 
 #include <iostream>
-#include <cstdlib>
 #include <stdexcept>
-#include <cerrno>
-#include <sstream>
 #include <algorithm>
 #include <iterator>
+#include <cstdlib>
+#include <sstream>
 #include <cstring>
 #include <cassert>
-
+#include <cerrno>
+#include <mutex>
 #include <csignal>
 #include <unistd.h>
 #include <sys/wait.h>
@@ -37,6 +37,8 @@
 #include "TFEL/System/SignalManager.hxx"
 #include "TFEL/System/ProcessManager.h"
 #include "TFEL/System/ProcessManager.hxx"
+
+std::mutex processesAccess;
 
 namespace tfel::system {
 
@@ -146,6 +148,7 @@ namespace tfel::system {
 
   void ProcessManager::terminateHandler(const int) {
     // treating handled processes
+    std::lock_guard<std::mutex> guard(processesAccess);
     auto& signalManager = SignalManager::getSignalManager();
     signalManager.removeHandler(this->sHandler);
     for (const auto& p : this->processes) {
@@ -183,6 +186,7 @@ namespace tfel::system {
 
   void ProcessManager::sigChildHandler(const int) {
     // treating handled processes
+    std::lock_guard<std::mutex> guard(processesAccess);
     for (auto& t : this->processes) {
       if (t.isRunning) {
         int status;
@@ -252,12 +256,15 @@ namespace tfel::system {
     close(ffd[1]);
     close(cfd[0]);
     // registering
-    this->inputs.insert({pid, cfd[1]});
-    this->outputs.insert({pid, ffd[0]});
-    Process proc;
-    proc.id = pid;
-    proc.isRunning = true;
-    this->processes.push_back(proc);
+    {
+      std::lock_guard<std::mutex> guard(processesAccess);
+      this->inputs.insert({pid, cfd[1]});
+      this->outputs.insert({pid, ffd[0]});
+      Process proc;
+      proc.id = pid;
+      proc.isRunning = true;
+      this->processes.push_back(proc);
+    }
     // registering is made, tell the child
     write(cfd[1], "OK", 2u);
     // the pipe was broken, which means that exec succeed
@@ -266,6 +273,7 @@ namespace tfel::system {
   }  // end of ProcessManager::createProcess
 
   ProcessManager::ProcessId ProcessManager::createProcess(
+      const std::string& directory,
       const std::string& cmd,
       const ProcessManager::StreamId* const in,
       const ProcessManager::StreamId* const out,
@@ -357,6 +365,9 @@ namespace tfel::system {
       for (const auto& ev : e) {
         ::setenv(ev.first.c_str(), ev.second.c_str(), 1);
       }
+      if (!directory.empty()) {
+        systemCall::changeCurrentWorkingDirectory(directory);
+      }
       // calling the command
       execvp(argv[0], argv);
       // called failed, tells the father, free memory and quit
@@ -374,16 +385,19 @@ namespace tfel::system {
     close(ffd[1]);
     close(cfd[0]);
     // registering
-    if (in[0] != -1) {
-      ins.insert({pid, in[1]});
+    {
+      std::lock_guard<std::mutex> guard(processesAccess);
+      if (in[0] != -1) {
+        ins.insert({pid, in[1]});
+      }
+      if (out[0] != -1) {
+        outs.insert({pid, out[0]});
+      }
+      Process proc;
+      proc.id = pid;
+      proc.isRunning = true;
+      this->processes.push_back(proc);
     }
-    if (out[0] != -1) {
-      outs.insert({pid, out[0]});
-    }
-    Process proc;
-    proc.id = pid;
-    proc.isRunning = true;
-    this->processes.push_back(proc);
     // registering is made, tell the child
     write(cfd[1], "OK", 2u);
     close(cfd[1]);
@@ -402,7 +416,10 @@ namespace tfel::system {
       if (out[0] != -1) {
         outs.erase(outs.find(pid));
       }
-      this->processes.pop_back();
+      {
+        std::lock_guard<std::mutex> guard(processesAccess);
+        this->processes.pop_back();
+      }
       waitpid(pid, &status, 0);
       sigprocmask(SIG_SETMASK, &oSigSet, nullptr);
       string msg("ProcessManager::createProcess : call to execvp failed ");
@@ -415,6 +432,15 @@ namespace tfel::system {
   }  // end of ProcessManager::createProces
 
   ProcessManager::ProcessId ProcessManager::createProcess(
+      const std::string& cmd,
+      const std::string& inputFile,
+      const std::string& outputFile,
+      const std::map<std::string, std::string>& e) {
+    this->createProcess("", cmd, inputFile, outputFile, e);
+  }
+
+  ProcessManager::ProcessId ProcessManager::createProcess(
+      const std::string& directory,
       const std::string& cmd,
       const std::string& inputFile,
       const std::string& outputFile,
@@ -453,7 +479,7 @@ namespace tfel::system {
       fdOut[1] = fdOut[0];
     }
     try {
-      pid = this->createProcess(cmd, fdIn, fdOut, this->inputFiles,
+      pid = this->createProcess(directory, cmd, fdIn, fdOut, this->inputFiles,
                                 this->outputFiles, e);
     } catch (...) {
       // something went wrong in createProcess,
@@ -499,7 +525,8 @@ namespace tfel::system {
       }
     }
     try {
-      pid = this->createProcess(cmd, fdIn, fdOut, this->inputs, this->outputs);
+      pid = this->createProcess("", cmd, fdIn, fdOut, this->inputs,
+                                this->outputs);
     } catch (...) {
       // something went wrong in createProcess, cleaning up
       if ((flag == StdIn) || (flag == StdInAndOut)) {
@@ -516,11 +543,10 @@ namespace tfel::system {
   }  // end of ProcessManager::createProcess
 
   void ProcessManager::killProcess(const ProcessId pid) {
-    using namespace std;
     auto p = this->findProcess(pid);
     auto pe = this->processes.rend();
     if (p == pe) {
-      ostringstream msg;
+      std::ostringstream msg;
       msg << "ProcessManager::killProcess : ";
       msg << "no process associated with pid " << pid;
       throw(SystemError(msg.str()));
@@ -531,11 +557,9 @@ namespace tfel::system {
   }  // end of ProcessManager::killProcess
 
   void ProcessManager::wait(const ProcessId pid) {
-    using namespace std;
-    int status;
-    auto p = this->findProcess(pid);
+    const auto p = this->findProcess(pid);
     if (p == this->processes.rend()) {
-      ostringstream msg;
+      std::ostringstream msg;
       msg << "ProcessManager::sendSignal : process " << pid
           << " is not registred";
       throw(SystemError(msg.str()));
@@ -543,27 +567,27 @@ namespace tfel::system {
     if (!p->isRunning) {
       return;
     }
+    int status;
     ::waitpid(pid, &status, 0);
     this->setProcessExitStatus(*p, status);
   }  // end of ProcessManager::wait
 
   void ProcessManager::sendSignal(const ProcessId pid, const int signal) {
-    using namespace std;
-    auto p = this->findProcess(pid);
+    const auto p = this->findProcess(pid);
     if (p == this->processes.rend()) {
-      ostringstream msg;
+      std::ostringstream msg;
       msg << "ProcessManager::sendSignal : process " << pid
           << " is not registred";
       throw(SystemError(msg.str()));
     }
     if (!p->isRunning) {
-      ostringstream msg;
+      std::ostringstream msg;
       msg << "ProcessManager::sendSignal : process " << pid
           << " is not running";
       throw(SystemError(msg.str()));
     }
     if (::kill(pid, signal) == -1) {
-      ostringstream msg;
+      std::ostringstream msg;
       msg << "ProcessManager::sendSignal : sending signal "
           << "to process " << pid << " failed";
       systemCall::throwSystemError(msg.str(), errno);
@@ -687,33 +711,22 @@ namespace tfel::system {
                                const std::string& in,
                                const std::string& out,
                                const std::map<std::string, std::string>& e) {
-    auto pid = this->createProcess(cmd, in, out, e);
-    const auto p = this->findProcess(pid);
-    assert(p != this->processes.rend());
-    auto cond = p->isRunning;
-    while (cond) {
-      cond = p->isRunning;
-      if (cond) {
-        pause();
-      }
-    }
-    if (!p->exitStatus) {
-      throw(
-          SystemError("ProcessManager::execute : '"
-                      "' exited du to a signal"));
-    }
-    if (p->exitValue != EXIT_SUCCESS) {
-      std::ostringstream msg;
-      msg << "ProcessManager::execute : '" << cmd
-          << "' exited abnormally with value " << p->exitValue;
-      raise<SystemError>(msg.str());
-    }
+    this->execute("", cmd, in, out, e);
+  }  // end of execute
+
+  void ProcessManager::execute(const std::string& directory,
+                               const std::string& cmd,
+                               const std::string& in,
+                               const std::string& out,
+                               const std::map<std::string, std::string>& e) {
+    const auto pid = this->createProcess(directory, cmd, in, out, e);
+    this->wait(pid);
   }  // end of ProcessManager::execute
 
   std::vector<ProcessManager::Process>::reverse_iterator
   ProcessManager::findProcess(const ProcessId pid) {
     auto p = this->processes.rbegin();
-    auto pe = this->processes.rend();
+    const auto pe = this->processes.rend();
     while (p != pe) {
       if (p->id == pid) {
         break;
@@ -726,7 +739,7 @@ namespace tfel::system {
   std::vector<ProcessManager::Process>::const_reverse_iterator
   ProcessManager::findProcess(const ProcessId pid) const {
     auto p = this->processes.rbegin();
-    auto pe = this->processes.rend();
+    const auto pe = this->processes.rend();
     while (p != pe) {
       if (p->id == pid) {
         break;

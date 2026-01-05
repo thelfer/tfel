@@ -69,9 +69,28 @@ namespace tfel::system {
                                     const RedirectionType = None);
     /*!
      * create a new process
-     * \param const std::string&, command to be executed. The first word
+     * \param[in] command: command to be executed. The first word
      * is the program name, the others options
+     * \param[in] const std::string&, name of a file to which the
+     * new process standard input is redirected. This option is ignored
+     * if this name is void.
      * \param const std::string&, name of a file to which the
+     * new process standard output is redirected. This option is ignored
+     * if this name is void.
+     * \param[in] e : additionnal environment variables for the child process
+     * \return the pid of the new process
+     */
+    virtual ProcessId createProcess(
+        const std::string&,
+        const std::string&,
+        const std::string&,
+        const std::string&,
+        const std::map<std::string, std::string>& = {});
+    /*!
+     * create a new process
+     * \param[in] command: command to be executed. The first word
+     * is the program name, the others options
+     * \param[in] const std::string&, name of a file to which the
      * new process standard input is redirected. This option is ignored
      * if this name is void.
      * \param const std::string&, name of a file to which the
@@ -85,6 +104,23 @@ namespace tfel::system {
         const std::string&,
         const std::string&,
         const std::map<std::string, std::string>& = {});
+    /*!
+     * execute the command and wait until its end
+     * \param const std::string&, command to be executed. The first word
+     * is the program name, the others options
+     * \param const std::string&, name of a file to which the
+     * new process standard input is redirected. This option is ignored
+     * if this name is void.
+     * \param const std::string&, name of a file to which the
+     * new process standard output is redirected. This option is ignored
+     * if this name is void.
+     * \param[in] e : additionnal environment variables for the child process
+     */
+    virtual void execute(const std::string&,
+                         const std::string&,
+                         const std::string& = "",
+                         const std::string& = "",
+                         const std::map<std::string, std::string>& = {});
     /*!
      * execute the command and wait until its end
      * \param const std::string&, command to be executed. The first word
@@ -146,6 +182,7 @@ namespace tfel::system {
      */
     TFEL_VISIBILITY_LOCAL ProcessId
     createProcess(const std::string&,
+                  const std::string&,
                   const StreamId* const,
                   const StreamId* const,
                   StreamMap&,
