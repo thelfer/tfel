@@ -152,13 +152,16 @@ namespace tfel::system {
     auto& signalManager = SignalManager::getSignalManager();
     signalManager.removeHandler(this->sHandler);
     for (const auto& p : this->processes) {
-      if (p.isRunning) {
-        this->sendSignal(p.id);
-        ::waitpid(p.id, nullptr, 0);
-        this->closeProcessFiles(p.id);
+      if (p.get() == nullptr) {
+        continue;
+      }
+      if (p->isRunning) {
+        this->sendSignal(p->id);
+        ::waitpid(p->id, nullptr, 0);
+        this->closeProcessFiles(p->id);
       }
     }
-    exit(-1);
+    std::exit(EXIT_FAILURE);
   }  // end of ProcessManager::terminateHandler
 
   void ProcessManager::setProcessExitStatus(ProcessManager::Process& p,
@@ -187,12 +190,15 @@ namespace tfel::system {
   void ProcessManager::sigChildHandler(const int) {
     // treating handled processes
     std::lock_guard<std::mutex> guard(processesAccess);
-    for (auto& t : this->processes) {
-      if (t.isRunning) {
+    for (auto& p : this->processes) {
+      if (p.get() == nullptr) {
+        continue;
+      }
+      if (p->isRunning) {
         int status;
-        int ret = waitpid(t.id, &status, WNOHANG);
-        if (ret == t.id) {
-          this->setProcessExitStatus(t, status);
+        int ret = waitpid(p->id, &status, WNOHANG);
+        if (ret == p->id) {
+          this->setProcessExitStatus(*p, status);
         }
       }
     }
@@ -260,9 +266,9 @@ namespace tfel::system {
       std::lock_guard<std::mutex> guard(processesAccess);
       this->inputs.insert({pid, cfd[1]});
       this->outputs.insert({pid, ffd[0]});
-      Process proc;
-      proc.id = pid;
-      proc.isRunning = true;
+      auto proc = std::make_shared<Process>();
+      proc->id = pid;
+      proc->isRunning = true;
       this->processes.push_back(proc);
     }
     // registering is made, tell the child
@@ -393,9 +399,9 @@ namespace tfel::system {
       if (out[0] != -1) {
         outs.insert({pid, out[0]});
       }
-      Process proc;
-      proc.id = pid;
-      proc.isRunning = true;
+      auto proc = std::make_shared<Process>();
+      proc->id = pid;
+      proc->isRunning = true;
       this->processes.push_back(proc);
     }
     // registering is made, tell the child
@@ -436,7 +442,7 @@ namespace tfel::system {
       const std::string& inputFile,
       const std::string& outputFile,
       const std::map<std::string, std::string>& e) {
-    this->createProcess("", cmd, inputFile, outputFile, e);
+    return this->createProcess("", cmd, inputFile, outputFile, e);
   }
 
   ProcessManager::ProcessId ProcessManager::createProcess(
@@ -544,8 +550,7 @@ namespace tfel::system {
 
   void ProcessManager::killProcess(const ProcessId pid) {
     auto p = this->findProcess(pid);
-    auto pe = this->processes.rend();
-    if (p == pe) {
+    if (p.get() == nullptr) {
       std::ostringstream msg;
       msg << "ProcessManager::killProcess : ";
       msg << "no process associated with pid " << pid;
@@ -557,8 +562,8 @@ namespace tfel::system {
   }  // end of ProcessManager::killProcess
 
   void ProcessManager::wait(const ProcessId pid) {
-    const auto p = this->findProcess(pid);
-    if (p == this->processes.rend()) {
+    auto p = this->findProcess(pid);
+    if (p.get() == nullptr) {
       std::ostringstream msg;
       msg << "ProcessManager::sendSignal : process " << pid
           << " is not registred";
@@ -573,8 +578,8 @@ namespace tfel::system {
   }  // end of ProcessManager::wait
 
   void ProcessManager::sendSignal(const ProcessId pid, const int signal) {
-    const auto p = this->findProcess(pid);
-    if (p == this->processes.rend()) {
+    auto p = this->findProcess(pid);
+    if (p.get() == nullptr) {
       std::ostringstream msg;
       msg << "ProcessManager::sendSignal : process " << pid
           << " is not registred";
@@ -592,13 +597,11 @@ namespace tfel::system {
           << "to process " << pid << " failed";
       systemCall::throwSystemError(msg.str(), errno);
     }
+    p->isRunning = false;
   }  // end of ProcessManager::sendSignal
 
   ProcessManager::~ProcessManager() {
-    using namespace std;
     auto& signalManager = SignalManager::getSignalManager();
-    vector<Process>::iterator p;
-    map<ProcessId, StreamId>::iterator p2;
     int status;
     sigset_t nSigSet;
     sigset_t oSigSet;
@@ -606,54 +609,58 @@ namespace tfel::system {
     sigfillset(&nSigSet);
     sigprocmask(SIG_BLOCK, &nSigSet, &oSigSet);
     // killing all remaining processes
-    for (p = this->processes.begin(); p != this->processes.end(); ++p) {
+    for (const auto& p : this->processes) {
+      std::map<ProcessId, StreamId>::iterator p2;
+      if (p.get() == nullptr) {
+        continue;
+      }
       if (p->isRunning) {
         try {
           this->sendSignal(p->id, SIGKILL);
         } catch (SystemError& e) {
-          cerr << "ProcessManager::~ProcessManager : FIXME "
-               << "sending signal to process " << p->id << " failed ("
-               << e.what() << ").\n";
+          std::cerr << "ProcessManager::~ProcessManager : FIXME "
+                    << "sending signal to process " << p->id << " failed ("
+                    << e.what() << ").\n";
         }
         if (::waitpid(p->id, &status, 0) == -1) {
-          cerr << "ProcessManager::~ProcessManager : FIXME "
-               << "waipid for process " << p->id << " failed ("
-               << strerror(errno) << ").\n";
+          std::cerr << "ProcessManager::~ProcessManager : FIXME "
+                    << "waipid for process " << p->id << " failed ("
+                    << strerror(errno) << ").\n";
         }
         p2 = this->inputs.find(p->id);
         if (p2 != this->inputs.end()) {
           if (::close(p2->second) == -1) {
-            cerr << "ProcessManager::~ProcessManager : FIXME "
-                 << "can't close file descriptor " << p2->second
-                 << " associated with process " << p2->first << " ("
-                 << strerror(errno) << ").\n";
+            std::cerr << "ProcessManager::~ProcessManager : FIXME "
+                      << "can't close file descriptor " << p2->second
+                      << " associated with process " << p2->first << " ("
+                      << strerror(errno) << ").\n";
           }
         }
         p2 = this->outputs.find(p->id);
         if (p2 != this->outputs.end()) {
           if (::close(p2->second) == -1) {
-            cerr << "ProcessManager::~ProcessManager : FIXME "
-                 << "can't close file descriptor " << p2->second
-                 << " associated with process " << p2->first << " ("
-                 << strerror(errno) << ").\n";
+            std::cerr << "ProcessManager::~ProcessManager : FIXME "
+                      << "can't close file descriptor " << p2->second
+                      << " associated with process " << p2->first << " ("
+                      << strerror(errno) << ").\n";
           }
         }
         p2 = this->inputFiles.find(p->id);
         if (p2 != this->inputFiles.end()) {
           if (::close(p2->second) == -1) {
-            cerr << "ProcessManager::~ProcessManager : FIXME "
-                 << "can't close file descriptor " << p2->second
-                 << " associated with process " << p2->first << " ("
-                 << strerror(errno) << ").\n";
+            std::cerr << "ProcessManager::~ProcessManager : FIXME "
+                      << "can't close file descriptor " << p2->second
+                      << " associated with process " << p2->first << " ("
+                      << strerror(errno) << ").\n";
           }
         }
         p2 = this->outputFiles.find(p->id);
         if (p2 != this->outputFiles.end()) {
           if (::close(p2->second) == -1) {
-            cerr << "ProcessManager::~ProcessManager : FIXME "
-                 << "can't close file descriptor " << p2->second
-                 << " associated with process " << p2->first << " ("
-                 << strerror(errno) << ").\n";
+            std::cerr << "ProcessManager::~ProcessManager : FIXME "
+                      << "can't close file descriptor " << p2->second
+                      << " associated with process " << p2->first << " ("
+                      << strerror(errno) << ").\n";
           }
         }
       }
@@ -678,9 +685,9 @@ namespace tfel::system {
     auto throw_if = [](const bool c, const std::string& msg) {
       raise_if(c, "ProcessManager::getInputStream: " + msg);
     };
-    const auto p = this->findProcess(id);
-    const auto pe = this->processes.rend();
-    throw_if(p == pe, "no process associated with pid " + std::to_string(id));
+    auto p = this->findProcess(id);
+    throw_if(p.get() == nullptr,
+             "no process associated with pid " + std::to_string(id));
     throw_if(!p->isRunning, "process associated with pid " +
                                 std::to_string(id) + " is not running");
     const auto p2 = this->inputs.find(id);
@@ -694,9 +701,9 @@ namespace tfel::system {
     auto throw_if = [](const bool c, const std::string& msg) {
       raise_if(c, "ProcessManager::getOutputStream: " + msg);
     };
-    const auto p = this->findProcess(id);
-    const auto pe = this->processes.rend();
-    throw_if(p == pe, "no process associated with pid " + std::to_string(id));
+    auto p = this->findProcess(id);
+    throw_if(p.get() == nullptr,
+             "no process associated with pid " + std::to_string(id));
     throw_if(!p->isRunning,
              "process associated with "
              "pid " +
@@ -721,9 +728,8 @@ namespace tfel::system {
                                const std::map<std::string, std::string>& e) {
     const auto pid = this->createProcess(directory, cmd, in, out, e);
     this->wait(pid);
-    const auto p = this->findProcess(pid);
-    const auto pe = this->processes.rend();
-    if (p == pe) {
+    auto p = this->findProcess(pid);
+    if (p.get() == nullptr) {
       tfel::raise("no process associated with pid " + std::to_string(pid));
     }
     if (!p->exitStatus) {
@@ -738,30 +744,35 @@ namespace tfel::system {
     }
   }  // end of ProcessManager::execute
 
-  std::vector<ProcessManager::Process>::reverse_iterator
-  ProcessManager::findProcess(const ProcessId pid) {
+  std::shared_ptr<ProcessManager::Process> ProcessManager::findProcess(const ProcessId pid) {
+    std::lock_guard<std::mutex> guard(processesAccess);
     auto p = this->processes.rbegin();
     const auto pe = this->processes.rend();
     while (p != pe) {
-      if (p->id == pid) {
-        break;
+      if (p->get() != nullptr) {
+        if ((*p)->id == pid) {
+          return *p;
+        }
+        ++p;
       }
-      ++p;
     }
-    return p;
+    return {};
   }  // end of ProcessManager::findProcess
 
-  std::vector<ProcessManager::Process>::const_reverse_iterator
-  ProcessManager::findProcess(const ProcessId pid) const {
+  std::shared_ptr<const ProcessManager::Process> ProcessManager::findProcess(
+      const ProcessId pid) const {
+    std::lock_guard<std::mutex> guard(processesAccess);
     auto p = this->processes.rbegin();
     const auto pe = this->processes.rend();
     while (p != pe) {
-      if (p->id == pid) {
-        break;
+      if (p->get() != nullptr) {
+        if ((*p)->id == pid) {
+          return *p;
+        }
+        ++p;
       }
-      ++p;
     }
-    return p;
+    return {};
   }  // end of ProcessManager::findProcess
 
   void ProcessManager::cleanUp() {

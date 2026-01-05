@@ -17,7 +17,8 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <signal.h>
+#include <memory>
+#include <csignal>
 #include <sys/types.h>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/System/SystemError.hxx"
@@ -30,16 +31,14 @@ namespace tfel::system {
    * \brief a class used to handle external processes
    */
   struct TFELSYSTEM_VISIBILITY_EXPORT ProcessManager {
-    //! a simple alias
-    typedef pid_t ProcessId;
-    //! a simple alias
-    typedef int StreamId;
-    //! a simple alias
-    typedef std::map<ProcessId, StreamId> StreamMap;
-    //! a simple alias
-    typedef rstreamView<true> rstream;
-    //! a simple alias
-    typedef wstreamView<true> wstream;
+    //! \brief a simple alias
+    using ProcessId = pid_t;
+    //! \brief a simple alias
+    using StreamId = int;
+    //! \brief a simple alias
+    using rstream = rstreamView<true>;
+    //! \brief a simple alias
+    using wstream = wstreamView<true>;
     /*!
      * \brief base class to pass commands to sub processes
      */
@@ -165,6 +164,9 @@ namespace tfel::system {
       int exitValue;
     };  // end of struct Process
 
+    //! \brief a simple alias
+    using StreamMap = std::map<ProcessId, StreamId>;
+
     /*
      * create a new process
      * \param const std::string&, command to be executed. The first word
@@ -199,13 +201,12 @@ namespace tfel::system {
     TFEL_VISIBILITY_LOCAL void closeProcessFiles(const ProcessId);
 
     TFEL_VISIBILITY_LOCAL
-    std::vector<Process>::reverse_iterator findProcess(const ProcessId);
+    std::shared_ptr<Process> findProcess(const ProcessId);
 
     TFEL_VISIBILITY_LOCAL
-    std::vector<Process>::const_reverse_iterator findProcess(
-        const ProcessId) const;
+    std::shared_ptr<const Process> findProcess(const ProcessId) const;
 
-    std::vector<Process> processes;
+    std::vector<std::shared_ptr<Process>> processes;
 
     StreamMap inputs;
     StreamMap outputs;
