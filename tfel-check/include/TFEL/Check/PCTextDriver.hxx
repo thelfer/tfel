@@ -26,6 +26,7 @@ namespace tfel::check {
 
   struct TFELCHECK_VISIBILITY_EXPORT PCTextDriver : public PCILogDriver {
     PCTextDriver();
+    PCTextDriver(std::ostream&);
     PCTextDriver(const std::string&);
     void addMessage(const std::string&) override;
     void reportSkippedTest(const std::string&) override;

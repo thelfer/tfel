@@ -12,6 +12,7 @@
  */
 
 #include <map>
+#include <mutex>
 #include <thread>
 #include <vector>
 #include <string>
@@ -45,6 +46,8 @@
 #include "TFEL/Check/PCLogger.hxx"
 #include "TFEL/Check/PCTextDriver.hxx"
 #include "TFEL/Check/PCJUnitDriver.hxx"
+
+std::mutex log_synchronization;
 
 namespace tfel::check {
 
@@ -309,12 +312,18 @@ namespace tfel::check {
   int TFELCheck::execute() {
     using namespace std;
     auto pool = tfel::system::ThreadPool{this->njobs};
-    auto log = PCLogger(std::make_shared<PCTextDriver>("tfel-check.log"));
-    log.addDriver(std::make_shared<PCTextDriver>());
-    auto exe = [this, &log](const std::string& d, const std::string& f) {
+    auto log_file = std::ofstream("tfel-check.log");
+    if (!log_file.good()) {
+      std::cerr << "can't open file 'tfel-check.log'\n";
+      std::exit(EXIT_FAILURE);
+    }
+    auto exe = [this, &log_file](const std::string& d, const std::string& f) {
       using namespace tfel::system;
       const auto cpath = systemCall::getCurrentWorkingDirectory();
       const auto path = systemCall::getAbsolutePath(d);
+      std::ostringstream output;
+      auto log = PCLogger(std::make_shared<PCTextDriver>(output));
+      log.addDriver(std::make_shared<PCTextDriver>());
       log.addMessage("entering directory '" + path + "'");
       log.addMessage("* beginning of test '" + d + '/' + f + "'");
       const auto name = d + '/' + f;
@@ -331,6 +340,11 @@ namespace tfel::check {
       }
       log.addSimpleTestResult("* end of test '" + d + '/' + f + "'", success);
       log.addMessage("======");
+      log.terminate();
+      {
+        std::lock_guard<std::mutex> guard(log_synchronization);
+        log_file << output.str();
+      }
       return success;
     };
     auto future_results =
@@ -349,14 +363,14 @@ namespace tfel::check {
       for (const auto& i : this->inputs) {
         struct stat file_info;
         if (::stat(i.c_str(), &file_info) == -1) {
-          log.addMessage("can't get information on input  '" + i + "'");
-          log.addMessage("Aborting");
-          exit(EXIT_FAILURE);
+          std::cerr << "can't get information on input  '" + i + "'\n";
+          std::cerr << "Aborting\n";
+          std::exit(EXIT_FAILURE);
         }
         if (!S_ISREG(file_info.st_mode)) {
-          log.addMessage("input  '" + i + "' is not a regular file");
-          log.addMessage("Aborting");
-          exit(EXIT_FAILURE);
+          std::cerr << "input  '" + i + "' is not a regular file\n";
+          std::cerr << "Aborting\n";
+          std::exit(EXIT_FAILURE);
         }
       }
       // executing each input files
@@ -387,7 +401,6 @@ namespace tfel::check {
         }
       }
     }
-    log.terminate();
     return status;
   }
 

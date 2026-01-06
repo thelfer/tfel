@@ -14,15 +14,16 @@
  * project under specific licensing conditions.
  */
 
-#include <iostream>
 #include <iomanip>
-
+#include <iostream>
 #include "TFEL/Utilities/TerminalColors.hxx"
 #include "TFEL/Check/PCTextDriver.hxx"
 
 namespace tfel::check {
 
   PCTextDriver::PCTextDriver() = default;
+
+  PCTextDriver::PCTextDriver(std::ostream& os) : PCILogDriver(os) {}
 
   PCTextDriver::PCTextDriver(const std::string& f) : PCILogDriver(f) {}
 
