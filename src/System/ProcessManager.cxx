@@ -45,20 +45,20 @@ namespace tfel::system {
   ProcessManager::Command::~Command() = default;
 
   ProcessManager::ProcessManager() : shallStopOnSignals(false) {
-    auto& signalManager = SignalManager::getSignalManager();
+    auto& sm = SignalManager::getSignalManager();
     struct sigaction action;
     auto f = &ProcessManager::sigChildHandler;
     // blocking all signals during treatment of sigChildHandler
     sigfillset(&(action.sa_mask));
     action.sa_flags = 0;
     this->sHandler =
-        signalManager.registerHandler(SIGCHLD, sigMemFun(*this, f), action);
+        sm.registerHandler(SIGCHLD, sigMemFun(*this, f), action);
     this->stopOnSignals(true);
   }  // end of ProcessManager::ProcessManager
 
   void ProcessManager::stopOnSignals(const bool b) {
     using namespace std;
-    auto& signalManager = SignalManager::getSignalManager();
+    auto& sm = SignalManager::getSignalManager();
     if (b == this->shallStopOnSignals) {
       return;
     }
@@ -70,34 +70,34 @@ namespace tfel::system {
       action.sa_flags = SA_RESETHAND;
       auto f = &ProcessManager::terminateHandler;
       this->sHandlerSIGBUS =
-          signalManager.registerHandler(SIGBUS, sigMemFun(*this, f), action);
+          sm.registerHandler(SIGBUS, sigMemFun(*this, f), action);
       this->sHandlerSIGSEGV =
-          signalManager.registerHandler(SIGSEGV, sigMemFun(*this, f), action);
+          sm.registerHandler(SIGSEGV, sigMemFun(*this, f), action);
       this->sHandlerSIGFPE =
-          signalManager.registerHandler(SIGFPE, sigMemFun(*this, f), action);
+          sm.registerHandler(SIGFPE, sigMemFun(*this, f), action);
       this->sHandlerSIGABRT =
-          signalManager.registerHandler(SIGABRT, sigMemFun(*this, f), action);
+          sm.registerHandler(SIGABRT, sigMemFun(*this, f), action);
       this->sHandlerSIGHUP =
-          signalManager.registerHandler(SIGHUP, sigMemFun(*this, f), action);
+          sm.registerHandler(SIGHUP, sigMemFun(*this, f), action);
       this->sHandlerSIGILL =
-          signalManager.registerHandler(SIGILL, sigMemFun(*this, f), action);
+          sm.registerHandler(SIGILL, sigMemFun(*this, f), action);
       this->sHandlerSIGTERM =
-          signalManager.registerHandler(SIGTERM, sigMemFun(*this, f), action);
+          sm.registerHandler(SIGTERM, sigMemFun(*this, f), action);
       this->sHandlerSIGINT =
-          signalManager.registerHandler(SIGINT, sigMemFun(*this, f), action);
+          sm.registerHandler(SIGINT, sigMemFun(*this, f), action);
       this->sHandlerSIGQUIT =
-          signalManager.registerHandler(SIGQUIT, sigMemFun(*this, f), action);
+          sm.registerHandler(SIGQUIT, sigMemFun(*this, f), action);
     } else {
       this->shallStopOnSignals = false;
-      signalManager.removeHandler(this->sHandlerSIGBUS);
-      signalManager.removeHandler(this->sHandlerSIGSEGV);
-      signalManager.removeHandler(this->sHandlerSIGFPE);
-      signalManager.removeHandler(this->sHandlerSIGABRT);
-      signalManager.removeHandler(this->sHandlerSIGHUP);
-      signalManager.removeHandler(this->sHandlerSIGILL);
-      signalManager.removeHandler(this->sHandlerSIGTERM);
-      signalManager.removeHandler(this->sHandlerSIGINT);
-      signalManager.removeHandler(this->sHandlerSIGQUIT);
+      sm.removeHandler(this->sHandlerSIGBUS);
+      sm.removeHandler(this->sHandlerSIGSEGV);
+      sm.removeHandler(this->sHandlerSIGFPE);
+      sm.removeHandler(this->sHandlerSIGABRT);
+      sm.removeHandler(this->sHandlerSIGHUP);
+      sm.removeHandler(this->sHandlerSIGILL);
+      sm.removeHandler(this->sHandlerSIGTERM);
+      sm.removeHandler(this->sHandlerSIGINT);
+      sm.removeHandler(this->sHandlerSIGQUIT);
     }
   }  // end of ProcessManager::stopOnSignals
 
@@ -149,8 +149,8 @@ namespace tfel::system {
   void ProcessManager::terminateHandler(const int) {
     // treating handled processes
     std::lock_guard<std::mutex> guard(processesAccess);
-    auto& signalManager = SignalManager::getSignalManager();
-    signalManager.removeHandler(this->sHandler);
+    auto& sm = SignalManager::getSignalManager();
+    sm.removeHandler(this->sHandler);
     for (const auto& p : this->processes) {
       if (p.get() == nullptr) {
         continue;
@@ -601,7 +601,7 @@ namespace tfel::system {
   }  // end of ProcessManager::sendSignal
 
   ProcessManager::~ProcessManager() {
-    auto& signalManager = SignalManager::getSignalManager();
+    auto& sm = SignalManager::getSignalManager();
     int status;
     sigset_t nSigSet;
     sigset_t oSigSet;
@@ -666,15 +666,15 @@ namespace tfel::system {
       }
     }
     // removing the handle
-    signalManager.removeHandler(this->sHandler);
+    sm.removeHandler(this->sHandler);
     if (this->shallStopOnSignals) {
-      signalManager.removeHandler(this->sHandlerSIGSEGV);
-      signalManager.removeHandler(this->sHandlerSIGFPE);
-      signalManager.removeHandler(this->sHandlerSIGABRT);
-      signalManager.removeHandler(this->sHandlerSIGHUP);
-      signalManager.removeHandler(this->sHandlerSIGILL);
-      signalManager.removeHandler(this->sHandlerSIGINT);
-      signalManager.removeHandler(this->sHandlerSIGQUIT);
+      sm.removeHandler(this->sHandlerSIGSEGV);
+      sm.removeHandler(this->sHandlerSIGFPE);
+      sm.removeHandler(this->sHandlerSIGABRT);
+      sm.removeHandler(this->sHandlerSIGHUP);
+      sm.removeHandler(this->sHandlerSIGILL);
+      sm.removeHandler(this->sHandlerSIGINT);
+      sm.removeHandler(this->sHandlerSIGQUIT);
     }
     // restoring the previous signal mask
     sigprocmask(SIG_SETMASK, &oSigSet, nullptr);
