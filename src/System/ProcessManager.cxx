@@ -51,8 +51,7 @@ namespace tfel::system {
     // blocking all signals during treatment of sigChildHandler
     sigfillset(&(action.sa_mask));
     action.sa_flags = 0;
-    this->sHandler =
-        sm.registerHandler(SIGCHLD, sigMemFun(*this, f), action);
+    this->sHandler = sm.registerHandler(SIGCHLD, sigMemFun(*this, f), action);
     this->stopOnSignals(true);
   }  // end of ProcessManager::ProcessManager
 
@@ -744,7 +743,8 @@ namespace tfel::system {
     }
   }  // end of ProcessManager::execute
 
-  std::shared_ptr<ProcessManager::Process> ProcessManager::findProcess(const ProcessId pid) {
+  std::shared_ptr<ProcessManager::Process> ProcessManager::findProcess(
+      const ProcessId pid) {
     std::lock_guard<std::mutex> guard(processesAccess);
     auto p = this->processes.rbegin();
     const auto pe = this->processes.rend();
