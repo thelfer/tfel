@@ -16,9 +16,7 @@
 #include "TFEL/Raise.hxx"
 #include "MTest/Constraint.hxx"
 
-static mtest::ConstraintOptions makeConstraintOptions(const pybind11::tuple a,
-                                                      const pybind11::dict d) {
-  tfel::raise_if(pybind11::len(a) != 0, "no unamed argument expected");
+static mtest::ConstraintOptions makeConstraintOptions(const pybind11::kwargs d) {
   mtest::ConstraintOptions opts;
   for (const auto& [key, value] : d) {
     const auto k = pybind11::cast<std::string>(key);
