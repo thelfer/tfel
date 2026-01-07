@@ -99,6 +99,17 @@ Another example would be to use `@CleanDirectories` and `@CleanFiles`
 commands inappropriately and erase data used by commands of other
 `.check` files.
 
+### Synchronizing the output on the terminal
+
+By default, the output on the terminal are **not** synchronized, which
+means that the completion of every individual step (command execution,
+results comparisons, etc.) in a job is displayed immediately.
+
+Using the command line argument `--synchronize-terminal-output` (which
+expects a boolean option), this behaviour can be changed. If
+synchronized, the output of each job is stored in a buffer and then
+displayed at the end of the job completion.
+
 ## A first example
 
 Let us consider this simple test file:
@@ -251,7 +262,7 @@ which takes `true` or `false` as argument.
 
 ### Example of usage
 
-~~~~
+~~~~{.bash}
 $ tfel-check --discard-commands-failure=false
 entering directory '/tmp/tests'
 * beginning of test './test.check'
@@ -413,3 +424,23 @@ automatically declared.
 Those substitutions are declared after reading the configuration files
 and after parsing the command line arguments, so those default
 substitutions can be overridden by the user.
+
+# Command line arguments
+
+A description of the available command line arguments is displayed by
+passing `--help` (`-h`) to `tfel-check`.
+
+~~~~
+Usage: tfel-check [options] [files]
+
+Available options are : 
+--config, -c                    : add a configuration file
+--discard-commands-failure      : discard command's failure if comparisons are ok (default behaviour). If no comparisons is declared, command's failure is never ignored.
+--discard-jobs-limit            : disable test on the number of jobs allowed to run simultaneously.
+--help, -h                      : Display this message
+--jobs, -j                      : specifies the number of jobs (commands) to run simultaneously
+--list-default-components       : list all default components
+--synchronize-terminal-output   : synchronize the terminal output in parallel (false by default). If synchronized, the results of each `.check` file is diplayed after its full completion.
+--use-terminal-colors           : use terminal colors for terminal output (std::cout).
+--version, -v                   : Display version information
+~~~~

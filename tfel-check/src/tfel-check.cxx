@@ -145,6 +145,16 @@ namespace tfel::check {
      * than the number of cores
      */
     bool discard_jobs_limit = false;
+    /*!
+     * \brief boolean stating that terminal colors shall be used for the
+     * terminal output (std::cout)
+     */
+    bool use_terminal_colors = false;
+    /*!
+     * \brief boolean stating that the terminal output (std::cout) shall be
+     * synchronized
+     */
+    bool synchronize_terminal_output = false;
   };  // end of struct TFELCheck
 
   bool TFELCheck::treatSubstitution() {
@@ -245,6 +255,26 @@ namespace tfel::check {
                  },
                  true));
     this->registerCallBack(
+        "--synchronize-terminal-output",
+        CallBack(
+            "synchronize the terminal output in parallel (false by default). "
+            "If synchronized, the results of each `.check` file is diplayed "
+            "after its full completion.",
+            [this, read_boolean_value] {
+              this->synchronize_terminal_output =
+                  read_boolean_value("--synchronize-terminal-output");
+            },
+            true));
+    this->registerCallBack(
+        "--use-terminal-colors",
+        CallBack(
+            "use terminal colors for terminal output (std::cout).",
+            [this, read_boolean_value] {
+              this->use_terminal_colors =
+                  read_boolean_value("--use-terminal-colors");
+            },
+            true));
+    this->registerCallBack(
         "--discard-commands-failure",
         CallBack(
             "discard command's failure if comparisons are ok (default "
@@ -321,9 +351,14 @@ namespace tfel::check {
       using namespace tfel::system;
       const auto cpath = systemCall::getCurrentWorkingDirectory();
       const auto path = systemCall::getAbsolutePath(d);
+      // store the output of the given process that will be saved in
+      // tfel-check.log
       std::ostringstream output;
-      auto log = PCLogger(std::make_shared<PCTextDriver>(output));
-      log.addDriver(std::make_shared<PCTextDriver>());
+      auto log = PCLogger(std::make_shared<PCTextDriver>(output, true));
+      // this adds unsynchronized output to std::cout
+      if (!this->synchronize_terminal_output) {
+        log.addDriver(std::make_shared<PCTextDriver>());
+      }
       log.addMessage("entering directory '" + path + "'");
       log.addMessage("* beginning of test '" + d + '/' + f + "'");
       const auto name = d + '/' + f;
@@ -344,6 +379,9 @@ namespace tfel::check {
       {
         std::lock_guard<std::mutex> guard(log_synchronization);
         log_file << output.str();
+        if (this->synchronize_terminal_output) {
+          std::cout << output.str();
+        }
       }
       return success;
     };
