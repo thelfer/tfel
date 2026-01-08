@@ -345,13 +345,13 @@ namespace mfront {
     if (has_constructor) {
       os << md.className << "(";
       if (!md.constantMaterialProperties.empty()) {
-        os << "const mfront_gb_BehaviourData& mfront_model_data";
+        os << " const castem::CastemReal *const mfront_material_properties";
       }
       os << ")\n:";
       auto first = true;
       for (const auto& mp : md.constantMaterialProperties) {
         os << (first ? "" : ",\n");
-        os << mp.name << "(mfront_model_data.s1.material_properties["
+        os << mp.name << "(mfront_material_properties["
            << getVariablePosition(md.constantMaterialProperties, mp.name, false)
            << "])";
         first = false;
