@@ -1273,4 +1273,3 @@ For more details, see <https://github.com/thelfer/tfel/issues/640>
 ## Issue 294: [python-bindings] Evaluate port to `pybind`
 
 For more details, see <https://github.com/thelfer/tfel/issues/293>
-
