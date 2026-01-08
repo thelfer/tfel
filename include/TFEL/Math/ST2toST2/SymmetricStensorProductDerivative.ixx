@@ -24,7 +24,7 @@ namespace tfel::math {
            (getSpaceDimension<StensorType2>() == 1u)) {
     using NumType = decltype(a[0] * b[0]);
     using real = base_type<NumType>;
-    TFEL_HOST_DEVICE constexpr auto zero = real(0);
+    constexpr auto zero = real(0);
     return {2 * a[0] * b[0], zero, zero, zero,
             2 * a[1] * b[1], zero, zero, zero,
             2 * a[2] * b[2]};
@@ -38,7 +38,7 @@ namespace tfel::math {
            (getSpaceDimension<StensorType2>() == 2u)) {
     using NumType = decltype(a[0] * b[0]);
     using real = base_type<NumType>;
-    TFEL_HOST_DEVICE constexpr auto zero = real(0);
+    constexpr auto zero = real(0);
     return {a[3] * b[3] + 2 * a[0] * b[0],
             zero,
             zero,
@@ -65,8 +65,8 @@ namespace tfel::math {
            (getSpaceDimension<StensorType2>() == 3u)) {
     using NumType = decltype(a[0] * b[0]);
     using real = base_type<NumType>;
-    TFEL_HOST_DEVICE constexpr auto zero = real(0);
-    TFEL_HOST_DEVICE constexpr auto cste = Cste<real>::sqrt2;
+    constexpr auto zero = real(0);
+    constexpr auto cste = Cste<real>::sqrt2;
     return {a[4] * b[4] + a[3] * b[3] + 2 * a[0] * b[0], zero, zero,
             (cste * a[4] * b[5] + 2 * a[0] * b[3] + 2 * a[3] * b[1]) / 2,
             (cste * a[3] * b[5] + 2 * a[0] * b[4] + 2 * a[4] * b[2]) / 2, zero,
@@ -110,7 +110,7 @@ namespace tfel::math {
   requires(getSpaceDimension<StensorType>() == 1u) {
     using NumType = decltype(a[0] * a[0]);
     using real = base_type<NumType>;
-    TFEL_HOST_DEVICE constexpr auto zero = real(0);
+    constexpr auto zero = real(0);
     return {a[0] * a[0], zero,        zero,  //
             zero,        a[1] * a[1], zero,  //
             zero,        zero,        a[2] * a[2]};
