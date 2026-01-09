@@ -13,6 +13,7 @@ endmacro(tests_material)
 
 tests_material(LinearHomogenizationSchemes)
 tests_material(LinearHomogenizationBounds)
+tests_material(HomogenizationSecondMoments)
 tests_material(IsotropicEshelbyTensor)
 tests_material(MicrostructureDescription)
 tests_material(MicrostructureLinearHomogenization)
