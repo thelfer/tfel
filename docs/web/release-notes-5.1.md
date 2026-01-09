@@ -27,6 +27,36 @@ eqnPrefixTemplate: "($$i$$)"
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
 
+
+The page describes the new functionalities of Version 5.1 of the
+`TFEL` project.
+
+This version was released on December 15, 2025 along with:
+
+- [Version 3.0.16](release-notes-3.0.16.html),
+- [Version 3.1.16](release-notes-3.1.16.html),
+- [Version 3.2.13](release-notes-3.2.13.html),
+- [Version 3.3.8](release-notes-3.3.8.html),
+- [Version 3.4.9](release-notes-3.4.9.html),
+- [Version 4.0.6](release-notes-4.0.6.html),
+- [Version 4.1.5](release-notes-4.1.5.html),
+- [Version 4.2.4](release-notes-4.2.4.html),
+- [Version 5.0.2](release-notes-5.0.2.html).
+
+and inherits from all fixes from those releases.
+
+# Highlights
+
+Thanks to many contributors and feed-backs from users, Version 5.1 brings many improvements including:
+
+- a growing set of features releated to homogenization in the `TFEL/Material` library,
+- the addition of many warnings in `MFront`,
+- the ability to call a behaviour from another behaviour. This feature already have
+  different applications, including the definition of behaviour variables, the
+  extension of the `@Model` keyword, the introduction of auxiliary models for
+  post-processing purpuses.
+- a better support of the `Windows` platform.
+
 # Known incompatibilities
 
 - The native `Europlexus` interface has been removed, as `Europlexus`
@@ -49,6 +79,31 @@ the derivative of the elastic limit (computed at the middle of the time
 step) with respect to the equivalent plastic strain at the middle of the
 time step rather than the derivative with respect to the increment of
 the equivalent plastic strain.
+
+# Documentation
+
+## New tutorials
+
+- [Implementation of Cailletaud-Pilvin beta rule for homogenization](BetaRule.html)
+- [Implementation of Sachs/Reuss homogenization scheme with a BehaviourVariable](Sachs.html)
+- [Implementation of Taylor/Voigt homogenization scheme with a BehaviourVariable](Taylor.html)
+
+## `TFEL/Math`
+
+- [Numerical intgeration in the `TFEL/Math` library](tfel-math-numerical-integration.html)
+
+##  `TFEL/Material`
+
+- [Implementation of mean-field homogenization schemes for biphasic elastic media](BiphasicLinearHomogenization.html)
+
+## `TFEL/MFrontDatabase`
+
+- [Overview of the `TFELMFrontDatabase` library](tfel-mfront-database.html)
+
+## `MTest`
+
+- [On physical interpretations of Lagrange multipliers for kinematic and
+  static constraints in MTest](mtest-nonlinear-constraints.html)
 
 # New features in the `TFEL` libraries
 
@@ -414,7 +469,7 @@ contains:
 >
 > Using the increment of the external state variable and the
 > time increment to compute the rate of an external state variable can be
-> legitimate, but it is better to compute this rate in @InitLocalVariables
+> legitimate, but it is better to compute this rate in `@InitLocalVariables`
 > and take into account the fact that the `Cast3M` solver may
 > set the time increment to zero when activating is forced convergence
 > algorithm.
@@ -520,6 +575,25 @@ behaviour. The auxiliary state variables associated with the point-wise
 models are updated at beginning of the `updateAuxiliarySateVariables`
 method **before** any user defined code (see the
 `@UpdateAuxiliaryStateVariables` keyword).
+
+### The `@AuxiliaryModel` keyword
+
+The `@AuxiliaryModel` keyword is used to call an external point-wise
+model from a behaviour. Those models can be implemented using the
+following DSLs: `Model`, `DefaultModel`, `RungeKuttaModel` and
+`ImplicitModel`.
+
+This model is called **after** updating the auxiliary state variables of
+the behaviour.
+
+From the behaviour point of view, the state variables of an auxiliary
+model are declared as additional auxiliary state variables.
+
+#### Example
+
+~~~~ {#AuxiliaryModel .cpp}
+@AuxiliaryModel "DuctileDamageIndicator_RiceTracey1969.mfront";
+~~~~
 
 ## New command line arguments
 
@@ -863,6 +937,123 @@ Python bindings are now generated using the
 
 - The `setDebugMode` function is now available.
 
+# Tested configurations
+
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+|     System                            | Compiler                   | Build type | Options        | Generator            | Percentage of success |
++:=====================================:+:==========================:+:==========:+:==============:+:====================:+:=====================:+
+| Ubuntu 22.04.5 LTS  (Jammy Jellyfish) | gcc 11.4.0                 | Release    |                | Unix Makefiles       | 100% (20469/20469)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Ubuntu 22.04.5 LTS  (Jammy Jellyfish) | gcc 11.4.0                 | Debug      |                | Unix Makefiles       | 100% (20469/20469)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Ubuntu 22.04.5 LTS  (Jammy Jellyfish) | gcc 11.4.0                 | Release    |                | Ninja                | 100% (20469/20469)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Ubuntu 22.04.5 LTS  (Jammy Jellyfish) | gcc 11.4.0                 | Release    |                | Ninja Multi-Config   | 100% (20456/20456)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Ubuntu 22.04.5 LTS  (Jammy Jellyfish) | gcc 11.4.0                 | Debug      |                | Ninja Multi-Config   | 100% (20456/20456)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Ubuntu 22.04.5 LTS  (Jammy Jellyfish) | gcc 11.4.0                 | Release    | fast-math      | Unix Makefiles       |  99% (20467/20469)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Ubuntu 22.04.5 LTS  (Jammy Jellyfish) | gcc 14.2.0                 | Release    |                | Unix Makefiles       | 100% (20469/20469)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Ubuntu 22.04.5 LTS  (Jammy Jellyfish) | gcc 15.1.0                 | Release    |                | Unix Makefiles       | 100% (20469/20469)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Ubuntu 22.04.5 LTS  (Jammy Jellyfish) | llvm 14.0.0                | Release    |                | Unix Makefiles       | 100% (20469/20469)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Ubuntu 22.04.5 LTS  (Jammy Jellyfish) | llvm 18.1.8                | Release    |                | Unix Makefiles       | 100% (20457/20457)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Ubuntu 22.04.5 LTS  (Jammy Jellyfish) | llvm 21.0.0                | Release    |                | Unix Makefiles       | 100% (6976/6976)      |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Ubuntu 22.04.5 LTS  (Jammy Jellyfish) | llvm 21.0.0                | Release    | libc++         | Unix Makefiles       | 100% (6921/6921)      |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Ubuntu 22.04.5 LTS  (Jammy Jellyfish) | llvm 21.0.0                | Debug      | libc++         | Unix Makefiles       | 100% (20457/20457)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Ubuntu 22.04.5 LTS  (Jammy Jellyfish) | Intel 2024.2               | Release    |                | Unix Makefiles       |  99% (20396/20399)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Ubuntu 22.04.5 LTS  (Jammy Jellyfish) | NVHPC 25.3                 | Release    |                | Unix Makefiles       |  93% (6410/6921)      |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Ubuntu 22.04.5 LTS  (Jammy Jellyfish) | AOCC 5.0                   | Release    |                | Unix Makefiles       | 100% (20410/20410)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Debian 13 (trixie)                    | gcc 14.2.0                 | Release    |                | Unix Makefiles       | 100% (16518/16518)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Debian 12.12 (bookworm, 32bits)       | gcc 12.2.0                 | Release    |                | Unix Makefiles       |  99% (16517/16518)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Fedora 43                             | gcc 15.2.1                 | Release    |                | Unix Makefiles       | 100% (16518/16518)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Ubuntu 25.10                          | gcc                        | Release    |                | Unix Makefiles       | 100% (16518/16518)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| GhostBSD 25.02-R14.3p2                | clang                      | Release    |                | Unix Makefiles       |  99% (16490/16518)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Haiku                                 | gcc 13.3.0                 | Release    |                | Unix Makefiles       | 100% (6921/6921)      |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| OpenIndiana 20251026                  | gcc                        | Release    |                | Unix Makefiles       | 100% (6921/6921)      |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Windows 11                            | Visual Studio 17.4         | Release    |                |                      |  99% (18724/19002)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Windows 11                            | Visual Studio 17.4         | Release    | no random test |                      |  99% (15518/15522)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Windows 11                            | Visual Studio 17.4 (win32) | Release    | no random test |                      |  99% (15464/15522)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Windows 11                            | MinGW  14.2                | Release    |                |                      |  99% (6387/6390)      |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+| Windows 11                            | MinGW  14.2  (Cast3M 2025) | Release    |                |                      |  99% (13418/13422)    |
++---------------------------------------+----------------------------+------------+----------------+----------------------+-----------------------+
+
+### Notes
+
+- The number of tests varies in function of the options passed to
+  `cmake`, notably the number of interfaces supported or enabling random
+  tests.
+- For Intel 2024.2 and nvhpc, failures are related to tolerance choices.
+- For GhostBSD, failures seem related to tolerance choices, but more
+  investigation are required.
+- For Debian 12.12 (bookworm, 32bits), the only failure is triggered by
+  a segmentation fault error. The same test, analysed using `valgrind`,
+  does not exhibit any memory error on other plateforms.
+- For Visual Studio, most failures are related to tests where the
+  rounding mode is changed randomly. Some failures are linked to
+  ill-defined configurations of the test in this specific environment
+  that must be fixed. Three failures are related to formating of
+  reference files.
+- For MinGW, failures are related to formating of reference files.
+- For MinGW, only the `Unix Makefiles` generator is supported, the
+  `Ninja` generator is known to lead to errors.
+
+## Github actions
+
+Github actions allows to check compilation on the following platforms:
+
+- Ubuntu (latest) `gcc` 13.3.0
+- MacOs (latest) AppleClang 17.0.0.17000013
+- Windows MinGW  15.2.0
+
+## Continuous integration provide by the `PLEIADES` project
+
++---------------------------------------+---------------+------------+-----------+----------------------+-----------------------+
+|     System                            | Compiler      | Build type | Options   | Generator            | Percentage of success |
++:=====================================:+:=============:+:==========:+:=========:+:====================:+:=====================:+
+| Ubuntu 24.04   LTS  (Noble Numbat)    | gcc  13.3.0   | Release    |           | Unix Makefiles       | 100% (6921/6921)      |
++---------------------------------------+---------------+------------+-----------+----------------------+-----------------------+
+| Ubuntu 22.04.5 LTS  (Jammy Jellyfish) | gcc  11.4.0   | Release    |           | Unix Makefiles       | 100% (6921/6921)      |
++---------------------------------------+---------------+------------+-----------+----------------------+-----------------------+
+| Debian 12.12 (bookworm)               | gcc  12.2.0   | Release    |           | Unix Makefiles       | 100% (6921/6921)      |
++---------------------------------------+---------------+------------+-----------+----------------------+-----------------------+
+| Debian 11.11 (bullseye)               | gcc  11.3.0   | Release    |           | Unix Makefiles       | 100% (6921/6921)      |
++---------------------------------------+---------------+------------+-----------+----------------------+-----------------------+
+| Debian 10.13 (buster)                 | gcc  11.3.0   | Release    |           | Unix Makefiles       | 100% (6921/6921)      |
++---------------------------------------+---------------+------------+-----------+----------------------+-----------------------+
+| Debian  9.13 (stretch)                | gcc  11.3.0   | Release    |           | Unix Makefiles       | 100% (6921/6921)      |
++---------------------------------------+---------------+------------+-----------+----------------------+-----------------------+
+
+# Acknowledgements
+
+The authors are grateful to the many contributors to the `TFEL/MFront`
+project. This research was conducted in the framework of the PLEIADES
+project, which was supported financially by the CEA (Commissariat à
+l’Énergie Atomique et aux Énergies Alternatives), EDF (Électricité de
+France) and Framatome. Homogenization developments were conducted within
+the framework of the AnoHonA ANR project (n° AAPG2023).
+
 # Issues fixed
 
 ## Issue 868: [mtest] Access to Lagrange multipliers for constraints
@@ -1082,4 +1273,3 @@ For more details, see <https://github.com/thelfer/tfel/issues/640>
 ## Issue 294: [python-bindings] Evaluate port to `pybind`
 
 For more details, see <https://github.com/thelfer/tfel/issues/293>
-

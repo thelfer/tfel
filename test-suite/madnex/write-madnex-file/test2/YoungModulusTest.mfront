@@ -1,0 +1,19 @@
+@DSL MaterialLaw;
+@Law YoungModulusTest;
+@Author Thomas Helfer;
+@UseQt true;
+
+@Output stress E;
+E.setGlossaryName("YoungModulus");
+
+@Input temperature T;
+T.setGlossaryName("Temperature");
+
+@Parameter stress E0 = 150e9;
+@Parameter derivative_type<stress, temperature> dE_dT = -2e9;
+
+@Parameter temperature Tref = 293.15;
+
+@Function{
+  E = E0 + dE_dT * (T - Tref);
+}

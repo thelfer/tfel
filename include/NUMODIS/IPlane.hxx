@@ -130,16 +130,16 @@ namespace numodis {
     std::vector<int> _index;
 
    private:
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend std::ostream& operator<<(
         std::ostream&, const IPlane&);
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator==(const IPlane&,
-                                                         const IPlane&);
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator!=(const IPlane&,
-                                                         const IPlane&);
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator<(const IPlane&,
-                                                        const IPlane&);
-    TFELNUMODIS_VISIBILITY_EXPORT friend int PlaneCoincide(const IPlane&,
-                                                           const IPlane&);
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend bool operator==(const IPlane&,
+                                                                const IPlane&);
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend bool operator!=(const IPlane&,
+                                                                const IPlane&);
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend bool operator<(const IPlane&,
+                                                               const IPlane&);
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend int PlaneCoincide(
+        const IPlane&, const IPlane&);
   };
 
   TFELNUMODIS_VISIBILITY_EXPORT std::ostream& operator<<(std::ostream& os,

@@ -24,17 +24,20 @@ namespace tfel::check {
   PCILogDriver::PCILogDriver(PCILogDriver&&) = default;
   PCILogDriver::PCILogDriver(const PCILogDriver&) = default;
 
+  PCILogDriver::PCILogDriver(std::ostream& os) : log_ptr(&os) {}
+
   PCILogDriver::PCILogDriver(const std::string& f) {
     this->log = std::make_shared<std::ofstream>(f);
     raise_if(!this->log->good(),
              "PCILogDriver::PCILogDriver: "
              "can't open file '" +
                  f + "'");
+    this->log_ptr = this->log.get();
   }
 
   std::ostream& PCILogDriver::getStream() {
-    if (this->log != nullptr) {
-      return *(this->log);
+    if (this->log_ptr != nullptr) {
+      return *(this->log_ptr);
     }
     return std::cout;
   }

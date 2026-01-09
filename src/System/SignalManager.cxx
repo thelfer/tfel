@@ -17,19 +17,24 @@
 #endif
 #endif /* __CYGWIN__ */
 
-#include <iostream>
-#include <sstream>
-#include <cstdlib>
-#include <cstdio>
-#include <cerrno>
-#include <cassert>
-#include <cstring>
+#include <fcntl.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <unistd.h>
-#include <fcntl.h>
+#include <mutex>
+#include <cstdio>
+#include <cerrno>
+#include <cstdlib>
+#include <cassert>
+#include <cstring>
+#include <csignal>
+#include <sstream>
+#include <optional>
+#include <iostream>
 #include "TFEL/System/SystemError.hxx"
 #include "TFEL/System/SignalManager.hxx"
+
+std::mutex callbacksAccess;
 
 namespace tfel::system {
 
@@ -171,6 +176,7 @@ namespace tfel::system {
   SignalManager::SignalManager() : handlerNbr(0u) {}
 
   void SignalManager::eraseHandlers() {
+    std::lock_guard<std::mutex> guard(callbacksAccess);
     for (auto& c : SignalManager::callBacks) {
       for (auto& ptr : c.second) {
         delete ptr.second;
@@ -183,20 +189,20 @@ namespace tfel::system {
     SignalManager::eraseHandlers();
   }  // end of SignalManager()::~SignalManager
 
-  unsigned short SignalManager::registerHandler(const int sig,
-                                                SignalHandler* const f,
-                                                struct sigaction& action) {
-    unsigned short handler;
+  std::size_t SignalManager::registerHandler(const int sig,
+                                             SignalHandler* const f,
+                                             struct sigaction& action) {
+    std::lock_guard<std::mutex> guard(callbacksAccess);
     action.sa_handler = &SignalManager::treatAction;
-    handler = SignalManager::handlerNbr;
+    auto handler = SignalManager::handlerNbr;
     SignalManager::callBacks[sig].insert({handler, f});
     ++SignalManager::handlerNbr;
     sigaction(sig, &action, nullptr);
     return handler;
   }  // end of SignalManager::registerHandler
 
-  unsigned short SignalManager::registerHandler(const int sig,
-                                                SignalHandler* const f) {
+  std::size_t SignalManager::registerHandler(const int sig,
+                                             SignalHandler* const f) {
     struct sigaction action;
     sigemptyset(&(action.sa_mask));
     if ((sig == SIGSEGV) || (sig == SIGFPE)) {
@@ -207,7 +213,7 @@ namespace tfel::system {
     return SignalManager::registerHandler(sig, f, action);
   }  // end of SignalManager::registerHandler
 
-  void SignalManager::removeHandler(const unsigned short id) {
+  void SignalManager::removeHandler(const std::size_t id) {
     sigset_t nSigSet;
     sigset_t oSigSet;
     // blocking all signals
@@ -223,18 +229,21 @@ namespace tfel::system {
 #endif /* sigprocmask */
     bool found = false;
     // removing the handle
-    for (auto p = SignalManager::callBacks.begin();
-         (p != SignalManager::callBacks.end()) && (!found); ++p) {
-      auto p2 = p->second.begin();
-      while ((p2 != p->second.end()) && (!found)) {
-        if (p2->first == id) {
-          delete p2->second;
-          auto p3 = p2;
-          ++p2;
-          p->second.erase(p3);
-          found = true;
-        } else {
-          ++p2;
+    {
+      std::lock_guard<std::mutex> guard(callbacksAccess);
+      for (auto p = SignalManager::callBacks.begin();
+           (p != SignalManager::callBacks.end()) && (!found); ++p) {
+        auto p2 = p->second.begin();
+        while ((p2 != p->second.end()) && (!found)) {
+          if (p2->first == id) {
+            delete p2->second;
+            auto p3 = p2;
+            ++p2;
+            p->second.erase(p3);
+            found = true;
+          } else {
+            ++p2;
+          }
         }
       }
     }
@@ -251,12 +260,21 @@ namespace tfel::system {
   }  // end of SignalManager::removeHandler
 
   void SignalManager::treatAction(int sig) {
-    auto& sm = SignalManager::getSignalManager();
-    const auto p = sm.callBacks.find(sig);
-    if (p != sm.callBacks.end()) {
-      for (const auto& c : p->second) {
-        c.second->execute(sig);
+    const auto ocallbacks =
+        [sig]() -> std::optional<std::map<std::size_t, SignalHandler*>> {
+      auto& sm = SignalManager::getSignalManager();
+      std::lock_guard<std::mutex> guard(callbacksAccess);
+      const auto p = sm.callBacks.find(sig);
+      if (p == sm.callBacks.end()) {
+        return {};
       }
+      return p->second;
+    }();
+    if (!ocallbacks.has_value()) {
+      return;
+    }
+    for (const auto& c : *(ocallbacks)) {
+      c.second->execute(sig);
     }
   }  // end of SignalManager::treatAction
 

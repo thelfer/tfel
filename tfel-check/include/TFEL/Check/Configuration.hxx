@@ -50,6 +50,8 @@ namespace tfel::check {
      * replaced by value.
      */
     std::map<std::string, std::string> substitutions;
+    //! \brief directory in which the test is executed
+    std::string directory;
     //! \brief global logger
     PCLogger log;
   };  // end of struct Configuration

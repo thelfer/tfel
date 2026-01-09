@@ -96,20 +96,35 @@
 #define TFEL_VISIBILITY_EXPORT __declspec(dllexport)
 #define TFEL_VISIBILITY_LOCAL
 #else /* defined _WIN32 || defined __CYGWIN__ */
-#if (defined __GNUC__) && (!defined __INTEL_COMPILER)
+#if (defined __GNUC__) && (!defined __INTEL_COMPILER) && \
+    (!defined __NVCOMPILER) && (!defined __clang__)
 #if __GNUC__ >= 4
-#define TFEL_VISIBILITY_IMPORT __attribute__((visibility("default")))
-#define TFEL_VISIBILITY_EXPORT __attribute__((visibility("default")))
-#define TFEL_VISIBILITY_LOCAL __attribute__((visibility("hidden")))
+#define TFEL_VISIBILITY_IMPORT [[gnu::visibility("default")]]
+#define TFEL_VISIBILITY_EXPORT [[gnu::visibility("default")]]
+#define TFEL_VISIBILITY_LOCAL [[gnu::visibility("hidden")]]
 #else /*__GNUC__ >= 4 */
 #define TFEL_VISIBILITY_IMPORT
 #define TFEL_VISIBILITY_EXPORT
 #define TFEL_VISIBILITY_LOCAL
 #endif /* LIB_TFEL_CONFIG_HXX */
 #elif defined __INTEL_COMPILER
+#define TFEL_VISIBILITY_IMPORT [[gnu::visibility("default")]]
+#define TFEL_VISIBILITY_EXPORT [[gnu::visibility("default")]]
+#define TFEL_VISIBILITY_LOCAL [[gnu::visibility("hidden")]]
+#elif (defined __NVCOMPILER)
 #define TFEL_VISIBILITY_IMPORT __attribute__((visibility("default")))
 #define TFEL_VISIBILITY_EXPORT __attribute__((visibility("default")))
 #define TFEL_VISIBILITY_LOCAL __attribute__((visibility("hidden")))
+#elif defined __clang__
+#if __clang_major__ >= 18
+#define TFEL_VISIBILITY_IMPORT [[gnu::visibility("default")]]
+#define TFEL_VISIBILITY_EXPORT [[gnu::visibility("default")]]
+#define TFEL_VISIBILITY_LOCAL [[gnu::visibility("hidden")]]
+#else /* __clang_major__ >= 18 */
+#define TFEL_VISIBILITY_IMPORT __attribute__((visibility("default")))
+#define TFEL_VISIBILITY_EXPORT __attribute__((visibility("default")))
+#define TFEL_VISIBILITY_LOCAL __attribute__((visibility("hidden")))
+#endif /* __clang_major__ >= 18 */
 #else
 #define TFEL_VISIBILITY_IMPORT
 #define TFEL_VISIBILITY_EXPORT
@@ -195,15 +210,19 @@
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #if defined TFELGlossary_EXPORTS
+#define TFELGLOSSARY_VISIBILITY_FRIEND_EXPORT TFEL_VISIBILITY_EXPORT
 #define TFELGLOSSARY_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
 #else
 #ifndef TFEL_STATIC_BUILD
+#define TFELGLOSSARY_VISIBILITY_FRIEND_EXPORT TFEL_VISIBILITY_IMPORT
 #define TFELGLOSSARY_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
 #else
+#define TFELGLOSSARY_VISIBILITY_FRIEND_EXPORT
 #define TFELGLOSSARY_VISIBILITY_EXPORT
 #endif
 #endif
 #else
+#define TFELGLOSSARY_VISIBILITY_FRIEND_EXPORT
 #define TFELGLOSSARY_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
 #endif /* LIB_TFEL_CONFIG_HXX */
 

@@ -347,13 +347,13 @@ namespace mfront {
     if (has_constructor) {
       os << md.className << "(";
       if (!md.constantMaterialProperties.empty()) {
-        os << "const mfront_gb_BehaviourData& mfront_model_data";
+        os << " const castem::CastemReal *const mfront_material_properties";
       }
       os << ")\n:";
       auto first = true;
       for (const auto& mp : md.constantMaterialProperties) {
         os << (first ? "" : ",\n");
-        os << mp.name << "(mfront_model_data.s1.material_properties["
+        os << mp.name << "(mfront_material_properties["
            << getVariablePosition(md.constantMaterialProperties, mp.name, false)
            << "])";
         first = false;
@@ -645,12 +645,14 @@ namespace mfront {
              << "(std::strcmp(\"" << en << "\", n) == 0){\n"
              << "parameters." << p.name << " = " << p.type << "{v};\n"
              << "return 1;\n";
+          first = false;
         }
         if ((!p.symbolic_form.empty()) && (p.symbolic_form != p.name)) {
           os << (first ? "if" : "} else if")  //
              << "(std::strcmp(\"" << p.symbolic_form << "\", n) == 0){\n"
              << "parameters." << p.name << " = " << p.type << "{v};\n"
              << "return 1;\n";
+          first = false;
         }
         os << (first ? "if" : "} else if")  //
            << "(std::strcmp(\"" << p.name << "\", n) == 0){\n"

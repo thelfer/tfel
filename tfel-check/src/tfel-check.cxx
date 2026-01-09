@@ -12,16 +12,18 @@
  */
 
 #include <map>
+#include <mutex>
+#include <thread>
 #include <vector>
 #include <string>
+#include <cerrno>
 #include <cstring>
 #include <cstdlib>
-#include <cerrno>
+#include <climits>
 #include <stdexcept>
 #include <iterator>
 #include <algorithm>
 #include <iostream>
-#include <climits>
 #include <unistd.h>
 #include <libgen.h>
 #include <sys/stat.h>
@@ -32,6 +34,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 #include "TFEL/System/RecursiveFind.hxx"
+#include "TFEL/System/ThreadPool.hxx"
 #include "TFEL/Utilities/TerminalColors.hxx"
 #include "MFront/InitDSLs.hxx"
 #include "MFront/InitInterfaces.hxx"
@@ -40,10 +43,11 @@
 #include "MFront/ModelInterfaceFactory.hxx"
 #include "TFEL/Check/ConfigurationManager.hxx"
 #include "TFEL/Check/TestLauncher.hxx"
-#include "TFEL/Check/TestLauncherV1.hxx"
 #include "TFEL/Check/PCLogger.hxx"
 #include "TFEL/Check/PCTextDriver.hxx"
 #include "TFEL/Check/PCJUnitDriver.hxx"
+
+std::mutex log_synchronization;
 
 namespace tfel::check {
 
@@ -130,10 +134,27 @@ namespace tfel::check {
     std::string getUsageDescription() const override;
     //! \brief configuration manager
     ConfigurationManager configurations;
-    //! list of configuration files
+    //! \brief list of configuration files
     std::vector<std::string> configFiles;
     //! list of input files
     std::vector<std::string> inputs;
+    //! \brief number of parallel jobs
+    tfel::system::ThreadPool::size_type njobs = 1;
+    /*!
+     * \brief boolean stating if the number of jobs allowed shall be lesser
+     * than the number of cores
+     */
+    bool discard_jobs_limit = false;
+    /*!
+     * \brief boolean stating that terminal colors shall be used for the
+     * terminal output (std::cout)
+     */
+    bool use_terminal_colors = false;
+    /*!
+     * \brief boolean stating that the terminal output (std::cout) shall be
+     * synchronized
+     */
+    bool synchronize_terminal_output = false;
   };  // end of struct TFELCheck
 
   bool TFELCheck::treatSubstitution() {
@@ -184,6 +205,47 @@ namespace tfel::check {
                            const CallBack& c) {
       this->registerCallBack(n, a, c);
     };
+    auto read_boolean_value = [this](const char* const m) {
+      const auto& opt = this->currentArgument->getOption();
+      if (opt == "true") {
+        return true;
+      } else if (opt != "false") {
+        std::cerr << "invalid option '" << opt << "' passed to '" << m << "', "
+                  << "expected 'true' or 'false'.\n";
+        std::exit(EXIT_FAILURE);
+      }
+      return false;
+    };
+    declare2(
+        "--jobs", "-j",
+        CallBack(
+            "specifies the number of jobs (commands) to run simultaneously",
+            [this] {
+              const auto& o = this->currentArgument->getOption();
+              if (o.empty()) {
+                const auto processor_count =
+                    std::thread::hardware_concurrency();
+                if (processor_count == 0) {
+                  std::cerr << "unable to determine the number of cores and no "
+                            << "value passed to '--jobs'\n";
+                  std::exit(EXIT_FAILURE);
+                }
+                this->njobs = processor_count;
+                return;
+              }
+              auto pos = std::size_t{};
+              try {
+                this->njobs = std::stoul(o, &pos);
+              } catch (std::invalid_argument& e) {
+                std::cerr << "invalid value '" << o << "' passed to '--jobs'\n";
+                std::exit(EXIT_FAILURE);
+              }
+              if (pos != o.size()) {
+                std::cerr << "invalid value '" << o << "' passed to '--jobs'\n";
+                std::exit(EXIT_FAILURE);
+              }
+            },
+            true));
     declare2("--config", "-c",
              CallBack(
                  "add a configuration file",
@@ -193,25 +255,43 @@ namespace tfel::check {
                  },
                  true));
     this->registerCallBack(
+        "--synchronize-terminal-output",
+        CallBack(
+            "synchronize the terminal output in parallel (false by default). "
+            "If synchronized, the results of each `.check` file is diplayed "
+            "after its full completion.",
+            [this, read_boolean_value] {
+              this->synchronize_terminal_output =
+                  read_boolean_value("--synchronize-terminal-output");
+            },
+            true));
+    this->registerCallBack(
+        "--use-terminal-colors",
+        CallBack(
+            "use terminal colors for terminal output (std::cout).",
+            [this, read_boolean_value] {
+              this->use_terminal_colors =
+                  read_boolean_value("--use-terminal-colors");
+            },
+            true));
+    this->registerCallBack(
         "--discard-commands-failure",
         CallBack(
             "discard command's failure if comparisons are ok (default "
-            "behaviour). If no "
-            "comparisons is declared, command's failure is never ignored.",
-            [this] {
-              const auto boolean_value = [this] {
-                const auto& opt = this->currentArgument->getOption();
-                if (opt == "true") {
-                  return true;
-                } else if (opt != "false") {
-                  std::cerr << "invalid option '" << opt
-                            << "' passed to '--discard-commands-failure', "
-                            << "expected 'true' or 'false'.";
-                  std::exit(EXIT_FAILURE);
-                }
-                return false;
-              }();
-              this->configurations.setDiscardCommandsFailure(boolean_value);
+            "behaviour). If no comparisons is declared, command's failure is "
+            "never ignored.",
+            [this, read_boolean_value] {
+              const auto b = read_boolean_value("--discard-commands-failure");
+              this->configurations.setDiscardCommandsFailure(b);
+            },
+            true));
+    this->registerCallBack(
+        "--discard-jobs-limit",
+        CallBack(
+            "disable test on the number of jobs allowed to run simultaneously.",
+            [this, read_boolean_value] {
+              this->discard_jobs_limit =
+                  read_boolean_value("--discard-commands-failure");
             },
             true));
     this->registerCallBack(
@@ -241,6 +321,19 @@ namespace tfel::check {
     this->setArguments(argc, argv);
     this->registerArgumentCallBacks();
     this->parseArguments();
+    //
+    if (!this->discard_jobs_limit) {
+      const auto processor_count = std::thread::hardware_concurrency();
+      if (processor_count != 0) {
+        if (this->njobs > processor_count) {
+          std::cerr
+              << "the number of jobs is greater than the number of "
+              << "available cores. This is not supported by default. Use "
+              << "the '--discard-jobs-limit' option to discard this check\n";
+          std::exit(EXIT_FAILURE);
+        }
+      }
+    }
     // this is done after argument parsing to allow the user to modify default
     // executables' names
     declareTFELExecutables(this->configurations);
@@ -248,60 +341,59 @@ namespace tfel::check {
 
   int TFELCheck::execute() {
     using namespace std;
-    auto log = PCLogger(std::make_shared<PCTextDriver>("tfel-check.log"));
-    log.addDriver(std::make_shared<PCTextDriver>());
-    auto exe = [this, &log](const std::string& d, const std::string& f) {
+    auto pool = tfel::system::ThreadPool{this->njobs};
+    auto log_file = std::ofstream("tfel-check.log");
+    if (!log_file.good()) {
+      std::cerr << "can't open file 'tfel-check.log'\n";
+      std::exit(EXIT_FAILURE);
+    }
+    auto exe = [this, &log_file](const std::string& d, const std::string& f) {
       using namespace tfel::system;
       const auto cpath = systemCall::getCurrentWorkingDirectory();
       const auto path = systemCall::getAbsolutePath(d);
-      log.addMessage("entering directory '" + path + "'");
-      try {
-        systemCall::changeCurrentWorkingDirectory(d);
-      } catch (std::exception& e) {
-        log.addMessage("can't move to directory '" + d + "' (" +
-                       std::string(e.what()) + ")");
-        log.addSimpleTestResult("* result of test '" + d + '/' + f + "'",
-                                false);
-        return false;
+      // store the output of the given process that will be saved in
+      // tfel-check.log
+      std::ostringstream output;
+      auto log = PCLogger(std::make_shared<PCTextDriver>(output, true));
+      // this adds unsynchronized output to std::cout
+      if (!this->synchronize_terminal_output) {
+        log.addDriver(std::make_shared<PCTextDriver>());
       }
+      log.addMessage("entering directory '" + path + "'");
       log.addMessage("* beginning of test '" + d + '/' + f + "'");
       const auto name = d + '/' + f;
       auto success = true;
       try {
-        // if(this->file_version==TestLauncher::V1){
-        // 	TestLauncherV1 c(f,log);
-        // 	success = c.execute();
-        // } else {
         auto c = this->configurations.getConfiguration(d);
         c.log = log;
+        c.directory = d;
         TestLauncher t(c, f);
         success = t.execute(c);
-        //      }
       } catch (std::exception& e) {
         log.addMessage("test failed : '" + f + "', reason:\n" + e.what());
         success = false;
       }
       log.addSimpleTestResult("* end of test '" + d + '/' + f + "'", success);
       log.addMessage("======");
-      try {
-        systemCall::changeCurrentWorkingDirectory(cpath);
-      } catch (std::exception& e) {
-        log.addMessage("can't move back to top directory '" + cpath + "' (" +
-                       std::string(e.what()) + ")");
-        log.addMessage("Aborting");
-        exit(EXIT_FAILURE);
+      log.terminate();
+      {
+        std::lock_guard<std::mutex> guard(log_synchronization);
+        log_file << output.str();
+        if (this->synchronize_terminal_output) {
+          std::cout << output.str();
+        }
       }
       return success;
     };
-    int status = EXIT_SUCCESS;
+    auto future_results =
+        std::vector<std::future<tfel::system::ThreadedTaskResult<bool>>>{};
     if (this->inputs.empty()) {
       std::regex re(".+\\.check", std::regex_constants::extended);
       const auto& files = tfel::system::recursiveFind(re, ".", false);
       for (const auto& d : files) {
         for (const auto& f : d.second) {
-          if (!exe(d.first, f)) {
-            status = EXIT_FAILURE;
-          }
+          future_results.push_back(
+              pool.addTask([exe, d, f] { return exe(d.first, f); }));
         }
       }
     } else {
@@ -309,14 +401,14 @@ namespace tfel::check {
       for (const auto& i : this->inputs) {
         struct stat file_info;
         if (::stat(i.c_str(), &file_info) == -1) {
-          log.addMessage("can't get information on input  '" + i + "'");
-          log.addMessage("Aborting");
-          exit(EXIT_FAILURE);
+          std::cerr << "can't get information on input  '" + i + "'\n";
+          std::cerr << "Aborting\n";
+          std::exit(EXIT_FAILURE);
         }
         if (!S_ISREG(file_info.st_mode)) {
-          log.addMessage("input  '" + i + "' is not a regular file");
-          log.addMessage("Aborting");
-          exit(EXIT_FAILURE);
+          std::cerr << "input  '" + i + "' is not a regular file\n";
+          std::cerr << "Aborting\n";
+          std::exit(EXIT_FAILURE);
         }
       }
       // executing each input files
@@ -328,13 +420,25 @@ namespace tfel::check {
         const auto f = std::string(::basename(path2));
         ::free(path);
         ::free(path2);
-        // basename
-        if (!exe(d, f)) {
+        // shall a new thread which starts a fork
+        future_results.push_back(
+            pool.addTask([exe, d, f] { return exe(d, f); }));
+      }
+    }
+    // waiting for all jobs to terminate
+    pool.wait();
+    // checking the output values of all jobs
+    int status = EXIT_SUCCESS;
+    for (auto& f : future_results) {
+      auto r = f.get();
+      if (!r) {
+        status = EXIT_FAILURE;
+      } else {
+        if (!(*r)) {
           status = EXIT_FAILURE;
         }
       }
     }
-    log.terminate();
     return status;
   }
 

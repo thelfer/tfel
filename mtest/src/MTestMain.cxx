@@ -12,6 +12,7 @@
  */
 
 #include <cfenv>
+#include <csignal>
 #include <regex>
 #include <string>
 #include <vector>

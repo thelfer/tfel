@@ -95,9 +95,9 @@ namespace numodis {
 
    private:
     //
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator==(const GSystem&,
-                                                         const GSystem&);
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend bool operator==(const GSystem&,
+                                                                const GSystem&);
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend std::ostream& operator<<(
         std::ostream&, const GSystem&);
     //! \brief Burgers's vector
     IBurgers _iburgers;
