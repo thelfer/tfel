@@ -79,7 +79,7 @@ commands inappropriately and erase data used by commands of other
 ### Improvements in `ProcessManager`
 
 - New overloads of the `createProcess` and `execute` methods allow
-  specifying the directory where a command shall executed.
+  specifying the directory where a command shall be executed.
 - `ProcessManager` shall now work properly in a multithreaded context.
 
 ### Improvements in `SignalManager`
