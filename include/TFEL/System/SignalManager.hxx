@@ -16,7 +16,7 @@
 
 #include <map>
 #include <string>
-#include <signal.h>
+#include <cstddef>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/System/SignalHandler.hxx"
 
@@ -25,12 +25,12 @@ namespace tfel::system {
   struct TFELSYSTEM_VISIBILITY_EXPORT SignalManager {
     static void printBackTrace(const int);
     static SignalManager &getSignalManager();
-    unsigned short registerHandler(const int,
-                                   SignalHandler *const,
-                                   struct sigaction &);
-    unsigned short registerHandler(const int, SignalHandler *const);
+    std::size_t registerHandler(const int,
+                                SignalHandler *const,
+                                struct sigaction &);
+    std::size_t registerHandler(const int, SignalHandler *const);
     void setSpecificHandler(const int, SignalHandler *const);
-    void removeHandler(const unsigned short);
+    void removeHandler(const std::size_t);
     ~SignalManager();
 
    private:
@@ -46,9 +46,9 @@ namespace tfel::system {
     void eraseHandlers();
     TFEL_VISIBILITY_LOCAL
     static void treatAction(int);
-    std::map<int, std::map<unsigned short, SignalHandler *>> callBacks;
+    std::map<int, std::map<std::size_t, SignalHandler *>> callBacks;
     std::map<int, SignalHandler *> sHandlers;
-    unsigned short handlerNbr;
+    std::size_t handlerNbr;
   };  // end of struct SignalManager
 
 }  // end of namespace tfel::system

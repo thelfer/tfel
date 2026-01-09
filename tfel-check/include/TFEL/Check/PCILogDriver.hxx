@@ -32,6 +32,11 @@ namespace tfel::check {
     PCILogDriver();
     /*!
      * \brief constructor
+     * \param os: output stream.
+     */
+    PCILogDriver(std::ostream&);
+    /*!
+     * \brief constructor
      * \param f: string containing the name of the file where logs are
      * to be written. Default : write to stdout (screen).
      */
@@ -97,6 +102,9 @@ namespace tfel::check {
     std::ostream& getStream();
 
    private:
+    //! \brief pointer to the log stream, if any
+    std::ostream* log_ptr = nullptr;
+    //! \brief log stream, is handled internally
     std::shared_ptr<std::ostream> log;
   };
 

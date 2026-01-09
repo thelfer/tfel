@@ -157,6 +157,8 @@ namespace tfel::check {
       GET
     }; /**!< ClockAction supported event. */
     double ClockAction(ClockEventType clockevent);
+    //! \brief directory in which the test is executed
+    std::string directory;
     //! \brief list of files to be removed after the tests
     std::vector<std::string> cleanfiles;
     //! \brief list of directories to be removed after the tests execution

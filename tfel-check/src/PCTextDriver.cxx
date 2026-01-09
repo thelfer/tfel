@@ -14,17 +14,23 @@
  * project under specific licensing conditions.
  */
 
-#include <iostream>
 #include <iomanip>
-
+#include <iostream>
 #include "TFEL/Utilities/TerminalColors.hxx"
 #include "TFEL/Check/PCTextDriver.hxx"
 
 namespace tfel::check {
 
-  PCTextDriver::PCTextDriver() = default;
+  PCTextDriver::PCTextDriver()
+      : use_terminal_colors(true) {}  // end of PCTextDriver
 
-  PCTextDriver::PCTextDriver(const std::string& f) : PCILogDriver(f) {}
+  PCTextDriver::PCTextDriver(const bool b) : use_terminal_colors(b) {}
+
+  PCTextDriver::PCTextDriver(std::ostream& os, const bool b)
+      : PCILogDriver(os), use_terminal_colors(b) {}
+
+  PCTextDriver::PCTextDriver(const std::string& f, const bool b)
+      : PCILogDriver(f), use_terminal_colors(b)  {}
 
   PCTextDriver::~PCTextDriver() = default;
 
@@ -45,8 +51,10 @@ namespace tfel::check {
   }  // end of formatMessage
 
   template <size_t N>
-  static void setStreamColor(std::ostream& os, const char (&c)[N]) {
-    if (&os == &std::cout) {
+  static void setStreamColor(std::ostream& os,
+                             const char (&c)[N],
+                             const bool b) {
+    if (b) {
       os.write(c, sizeof(c));
     }
   }  // end of setStreamColor
@@ -58,9 +66,9 @@ namespace tfel::check {
     auto& os = this->getStream();
     os << std::setw(70) << std::left << std::setfill(' ') << msg
        << std::setfill(' ') << std::right << std::setw(10);
-    setStreamColor(os, TerminalColors::Yellow);
+    setStreamColor(os, TerminalColors::Yellow, this->use_terminal_colors);
     os << "[SKIPPED]";
-    setStreamColor(os, TerminalColors::Reset);
+    setStreamColor(os, TerminalColors::Reset, this->use_terminal_colors);
     os << '\n';
   }  // end of PCTextDriver::reportSkippedTest
 
@@ -78,12 +86,12 @@ namespace tfel::check {
     os << std::setw(70) << std::left << std::setfill(' ') << msg
        << std::setfill(' ') << std::right << std::setw(10);
     if (success) {
-      setStreamColor(os, TerminalColors::Green);
+      setStreamColor(os, TerminalColors::Green, this->use_terminal_colors);
     } else {
-      setStreamColor(os, TerminalColors::Red);
+      setStreamColor(os, TerminalColors::Red, this->use_terminal_colors);
     }
     os << successMsg;
-    setStreamColor(os, TerminalColors::Reset);
+    setStreamColor(os, TerminalColors::Reset, this->use_terminal_colors);
     os << '\n';
     if (!command.empty()) {
       os << " Command was : " << command << '\n';

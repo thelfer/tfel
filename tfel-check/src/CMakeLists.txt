@@ -6,7 +6,6 @@ tfel_library(TFELCheck
   PCLogger.cxx
   PCTextDriver.cxx
   TestLauncher.cxx
-  TestLauncherV1.cxx
   SplineInterpolation.cxx
   SplineLocalInterpolation.cxx
   Interpolation.cxx
