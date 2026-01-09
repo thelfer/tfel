@@ -48,8 +48,8 @@ By default, as in previous versions, only one process is used.
 The command line argument `--jobs` (`-j`) allow specifying the number
 of jobs run simultaneously.
 
-In no option option is given to `--jobs`, the number of cores
-available is used, if the system provide this information.
+If no option is given to `--jobs`, the number of available cores
+is used, if the system provide this information.
 
 #### Limit on the number of jobs
 
