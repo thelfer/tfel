@@ -1,6 +1,18 @@
-% Ponte-Castaneda variational bound for homogenization in non-linear elasticity
-% Martin Antoine
-% January, 5 2026
+---
+title: Ponte-Castaneda variational bound for homogenization in non-linear elasticity
+author: Antoine Martin
+date: 5/01/2026
+lang: en-EN
+link-citations: true
+colorlinks: true
+geometry:
+  - margin=2cm
+papersize: a4
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\tenseur}[1]{\underline{#1}}
 \newcommand{\tenseurq}[1]{\underline{\mathbf{#1}}}
@@ -43,8 +55,8 @@ The variational approach used by Ponte-Castaneda is based on the elastic potenti
     w(\tepsilon)= \sum_{r=1}^{N}\chi_r\,w_r (\tepsilon)
   \end{aligned}
 where $N$ is the number of phases and $\chi_r$ is characteristic function of phase $r$.
-The local potential $w_r$ is a non-linear function of the strain $\tepsilon$, but more precisely
-it is a non-linear function of the `second-moment' of the strain $\te=\Frac 12\tepsilon\otimes\tepsilon$.
+The local potential $w_r$ is a non-linear function of the strain $\tepsilon$.
+
 Here we focus on potentials of the form
  \begin{aligned}
   w_r(\tepsilon)=\Frac92 k_r\, \varepsilon_m^2+f_r (\epsiloneq^2)
