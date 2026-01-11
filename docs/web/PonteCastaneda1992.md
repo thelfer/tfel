@@ -55,9 +55,8 @@ The variational approach used by Ponte-Castaneda is based on the elastic potenti
     w(\tepsilon)= \sum_{r=1}^{N}\chi_r\,w_r (\tepsilon)
   \end{aligned}
 where $N$ is the number of phases and $\chi_r$ is characteristic function of phase $r$.
-The local potential $w_r$ is a non-linear function of the strain $\tepsilon$.
 
-Here we focus on potentials of the form
+The local potential $w_r$ is a non-linear function of the strain $\tepsilon$, but here we focus on potentials of the form
  \begin{aligned}
   w_r(\tepsilon)=\Frac92 k_r\, \varepsilon_m^2+f_r (\epsiloneq^2)
   \end{aligned}
@@ -74,7 +73,7 @@ In the variational approach, the homogenization problem is equivalent to a minim
   
 ## The variational bound
 
-Ponte-Castaneda's idea is to use the dual function $f_r^*$ of $f_r$, under an hypothesis of concavity of $f_r$ (note that $w_r$ is convex relatively to $\tepsilon$, but the hypothesis is: $f_r$ concave relatively to $\epsiloneq$).
+Ponte-Castaneda's idea is to use the dual function $f_r^*$ of $f_r$, under an hypothesis of concavity of $f_r$. Note that $w_r$ is convex relatively to $\tepsilon$, but the hypothesis is: $f_r$ concave relatively to $\epsiloneq^2$, which adds a supplementary restriction to the behaviour.
 \begin{aligned}
     w_r(\tepsilon)=\underset{\mu_0^r(\tenseur x)}{\min} \left\{\Frac92 k_r\, \varepsilon_m^2+\Frac32 \mu_0^r(\tenseur x)\, \epsiloneq^2-f_r^*(\mu_0^r(\tenseur x))\right\}
   \end{aligned}
@@ -141,7 +140,9 @@ In the application of the implementation, we take the example of the following b
   \begin{aligned}
     w_r(\tepsilon)=\dfrac{9}{2}k_r\,\varepsilon_{m}^2+\dfrac{\sigma_r^0}{n+1}\,\varepsilon_{eq}^{n+1}
   \end{aligned}
-  where $n$ is between $0$ and $1$, which means that $f_r(e)=\dfrac{\sigma_r^0}{n+1}\,e^{\frac{n+1}2}$.
+  where $n$ is between $0$ and $1$, which means that $f_r(e)=\dfrac{\sigma_r^0}{n+1}\,e^{\frac{n+1}2}$ (note that the function
+  $f_r$ is effectively concave relatively to $e$, because $0\lt n\leq 1$).
+  
   Moreover, we make the choice of purely elastic inclusions. Hence, only the matrix is non-linear and has a
   secant modulus.
   
