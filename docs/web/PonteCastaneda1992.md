@@ -114,10 +114,13 @@ which can be shown to be equivalent to
 ## Summary
 
 The resolution hence consists in 
-\begin{gather}
- \text{Find}\,e^r=\langle \epsiloneq^2\rangle_r\,\text{such that}\quad\langle \epsiloneq^2\rangle_r= \Frac{2}{3c_r}\deriv{W_0^{\mathrm{eff}}}{\mu_0^r}\quad\text{where}\,W_0^{\mathrm{eff}}\,\text{is the effective energy of a linear comparison composite}\\
- \text{whose elastic moduli are}\,(k_r,\,\mu_0^r)\,\text{such that}\quad\mu_0^r= \Frac23\deriv{f_r}{e}\left(\langle \epsiloneq^2\rangle_r\right).
-  \end{gather}
+\[
+ \text{Find}\,e^r=\langle \epsiloneq^2\rangle_r\,\text{such that}\quad\langle \epsiloneq^2\rangle_r= \Frac{2}{3c_r}\deriv{W_0^{\mathrm{eff}}}{\mu_0^r}
+\]
+where \(W_0^{\mathrm{eff}}\) is the effective energy of a linear comparison composite whose elastic moduli are \(k_r\) annd \(\mu_0^r\) such that:
+\[
+\mu_0^r= \Frac23\deriv{f_r}{e}\left(\langle \epsiloneq^2\rangle_r\right).
+\]
  
 ## Macroscopic stress and tangent operator
 
