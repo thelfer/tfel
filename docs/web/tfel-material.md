@@ -743,6 +743,36 @@ const auto mu_U = std::get<1>(UB);
 Note that Voigt and Reuss bounds work on `st2tost2` (or `Stensor4`) objects, whereas
 Hashin-Shtrikman bounds work on bulk and shear moduli.
 The number of phases is arbitrary, and the dimension is 2 or 3.
+
+## Second moments of the strains
+
+Some functions allow to compute the second moments of the strains
+if considering a Hashin-Shtrikman type microstructure. More precisely,
+we consider isotropic spherical inclusions embedded in an isotropic
+matrix, and we compute the following moments:
+
+\(\langle\varepsilon_{eq}^2\rangle_r\qquad\text{and}\qquad\langle\varepsilon_{m}^2\rangle_r\)
+
+on each phase $r$, \(\varepsilon_{eq}\) being the equivalent strain and \(\varepsilon_{m}\)
+being the third of the trace of the strain. We hence write
+
+~~~~{.cpp}
+const auto kg0 = KGModuli<stress>(K0,G0);
+const auto kgr = KGModuli<stress>(K1,G1);
+using namespace tfel::material::homogenization::elasticity;
+const auto em2r = computeMeanSquaredHydrostaticStrain(kg0,fr,kgr,em2,eeq2);
+const auto em20=std::get<0>(em2);
+const auto em2i=std::get<1>(em2);
+const auto eeq2r = computeMeanSquaredEquivalentStrain(kg0,fr,kgr,em2,eeq2);
+const auto eeq20=std::get<0>(eeq2);
+const auto eeq2i=std::get<1>(eeq2);
+~~~~
+
+Here the functions appearing at lines 4 and 7 need 5 arguments: isotropic modulus
+of the matrix `kg0`, volume fraction of spheres, isotropic modulus of the inclusions `kgr`,
+but also the second moments of the total strain: `em2` for the hydrostatic part
+and `eeq2` for the deviatoric part. The functions return `std::pair`, each element
+of the `pair` corresponds to a phase (matrix or spheres).
  
 ## Homogenization of general microstructures
 
