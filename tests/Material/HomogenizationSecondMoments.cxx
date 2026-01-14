@@ -65,8 +65,8 @@ struct HomogenizationSecondMomentsTest final : public tfel::tests::TestCase {
     using real = tfel::types::real<stress>;
     constexpr real eps_d = 1e-6;
     using namespace tfel::material;
-    const auto k0 = stress(2.e9);
-    const auto mu0 = stress(3.e9);
+    const auto k0 = stress(2e9);
+    const auto mu0 = stress(3e9);
     const auto ki = stress(5e12);
     const auto mui = stress(6e12);
     const auto kg = KGModuli<stress>(k0,mu0);
@@ -109,15 +109,15 @@ struct HomogenizationSecondMomentsTest final : public tfel::tests::TestCase {
     const auto LB_dki = std::get<0>(HS_dki);
     const auto dk_dki = (std::get<0>(LB_dki)-std::get<0>(LB))/eps_d/ki;
     
-    const auto der_k0 = 9./2.*dk_dk0+3./2.*dmu_dk0;
-    const auto der_ki = 9./2.*dk_dki;
-    const auto der_mu0 = 9./2.*dk_dmu0+3./2.*dmu_dmu0;
-    const auto der_mui = 3./2.*dmu_dmui;
+    const auto der_k0 = 9*dk_dk0/2+3*dmu_dk0/2;
+    const auto der_ki = 9*dk_dki/2;
+    const auto der_mu0 = 9*dk_dmu0/2+3*dmu_dmu0/2;
+    const auto der_mui = 3*dmu_dmui/2;
     
-    const auto em20_ = 2./9./(1-f)*der_k0;
-    const auto em2i_ = 2./9./f*der_ki;
-    const auto eeq20_ = 2./3./(1-f)*der_mu0;
-    const auto eeq2i_ = 2./3./f*der_mui;
+    const auto em20_ = 2/(1-f)*der_k0/9;
+    const auto em2i_ = 2/f*der_ki/9;
+    const auto eeq20_ = 2/(1-f)*der_mu0/3;
+    const auto eeq2i_ = 2/f*der_mui/3;
     
     TFEL_TESTS_ASSERT(my_abs(em20-em20_) < eps_d);
     TFEL_TESTS_ASSERT(my_abs(em2i-em2i_) < eps_d);
@@ -136,8 +136,8 @@ struct HomogenizationSecondMomentsTest final : public tfel::tests::TestCase {
     using real = tfel::types::real<stress>;
     constexpr real eps_d = 1e-6;
     using namespace tfel::material;
-    const auto k0 = stress(2.e9);
-    const auto mu0 = stress(3.e9);
+    const auto k0 = stress(2e9);
+    const auto mu0 = stress(3e9);
     const auto ki = stress(5e7);
     const auto mui = stress(6e7);
     const auto kg = KGModuli<stress>(k0,mu0);
@@ -180,15 +180,15 @@ struct HomogenizationSecondMomentsTest final : public tfel::tests::TestCase {
     const auto UB_dmui = std::get<1>(HS_dmui);
     const auto dmu_dmui = (std::get<1>(UB_dmui)-std::get<1>(UB))/eps_d/mui;
     
-    const auto der_k0 = 9./2.*dk_dk0+3./2.*dmu_dk0;
-    const auto der_ki = 9./2.*dk_dki;
-    const auto der_mu0 = 9./2.*dk_dmu0+3./2.*dmu_dmu0;
-    const auto der_mui = 3./2.*dmu_dmui;
+    const auto der_k0 = 9*dk_dk0/2+3*dmu_dk0/2;
+    const auto der_ki = 9*dk_dki/2;
+    const auto der_mu0 = 9*dk_dmu0/2+3*dmu_dmu0/2;
+    const auto der_mui = 3*dmu_dmui/2;
     
-    const auto em20_ = 2./9./(1-f)*der_k0;
-    const auto em2i_ = 2./9./f*der_ki;
-    const auto eeq20_ = 2./3./(1-f)*der_mu0;
-    const auto eeq2i_ = 2./3./f*der_mui;
+    const auto em20_ = 2/(1-f)*der_k0/9;
+    const auto em2i_ = 2/f*der_ki/9;
+    const auto eeq20_ = 2/(1-f)*der_mu0/3;
+    const auto eeq2i_ = 2/f*der_mui/3;
     
     TFEL_TESTS_ASSERT(my_abs(em20-em20_) < eps_d);
     TFEL_TESTS_ASSERT(my_abs(em2i-em2i_) < eps_d);

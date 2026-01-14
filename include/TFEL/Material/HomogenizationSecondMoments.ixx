@@ -30,17 +30,17 @@ namespace tfel::material::homogenization::elasticity {
           const auto k0=kg0.kappa;
           const auto mui=kgi.mu;
           const auto ki=kgi.kappa;
-          const auto muP = 5.*mu0/2.*(k0+4./3.*mu0)/(k0+2.*mu0);
-          const auto kP = k0+4./3.*mu0;
-          const auto dmuP_dmu0 = 5./2.*(k0+4./3.*mu0)/(k0+2.*mu0)+5.*mu0/2.*(4./3.*(k0+2.*mu0)-2*(k0+4./3.*mu0))/(k0+2.*mu0)/(k0+2.*mu0);
-          const auto dkP_dmu0 = 4./3.;
+          const auto muP = 5*mu0/2*(k0+4*mu0/3)/(k0+2*mu0);
+          const auto kP = k0+4*mu0/3;
+          const auto dmuP_dmu0 = 5*(k0+4*mu0/3)/2/(k0+2*mu0)+5*mu0/2*(4*(k0+2*mu0)/3-2*(k0+4*mu0/3))/(k0+2*mu0)/(k0+2*mu0);
+
           const auto den_mu = 1+(1-f)*(mui-mu0)/muP;
           const auto den_k = 1+(1-f)*(ki-k0)/kP;
           const auto dermuHS_mu0=1+f*(-den_mu-(mui-mu0)*(1-f)*(-muP-(mui-mu0)*dmuP_dmu0)/muP/muP)/den_mu/den_mu;
-          const auto derkHS_mu0 = f*(-(ki-k0)*(1-f)*(-(ki-k0)*dkP_dmu0)/kP/kP)/den_k/den_k;
+          const auto derkHS_mu0 = f*(-(ki-k0)*(1-f)*(-4*(ki-k0)/3)/kP/kP)/den_k/den_k;
           const auto dermuHS_mui=f*(den_mu-(mui-mu0)*(1-f)/muP)/den_mu/den_mu;
-          const auto eeq20=1./(1-f)*(3.*derkHS_mu0*em2+dermuHS_mu0*eeq2);
-          const auto eeq2i=1./f*dermuHS_mui*eeq2;
+          const auto eeq20=1/(1-f)*(3*derkHS_mu0*em2+dermuHS_mu0*eeq2);
+          const auto eeq2i=1/f*dermuHS_mui*eeq2;
           return {eeq20,eeq2i};
           
       }
@@ -60,17 +60,16 @@ namespace tfel::material::homogenization::elasticity {
           const auto k0=kg0.kappa;
           const auto mui=kgi.mu;
           const auto ki=kgi.kappa;
-          const auto muP = 5.*mu0/2.*(k0+4./3.*mu0)/(k0+2.*mu0);
-          const auto kP = k0+4./3.*mu0;
+          const auto muP = 5*mu0/2*(k0+4*mu0/3)/(k0+2*mu0);
+          const auto kP = k0+4*mu0/3;
           const auto den_mu = 1+(1-f)*(mui-mu0)/muP;
           const auto den_k = 1+(1-f)*(ki-k0)/kP;
-          const auto dmuP_dk0 = 5.*mu0/3.*mu0/(k0+2.*mu0)/(k0+2.*mu0);
-          const auto dkP_dk0 = 1.;
+          const auto dmuP_dk0 = 5*mu0/3*mu0/(k0+2*mu0)/(k0+2*mu0);
           const auto dermuHS_k0 = f*(mui-mu0)*(1-f)*(mui-mu0)*dmuP_dk0/muP/muP/den_mu/den_mu;
-          const auto derkHS_k0 = 1+f*(-den_k-(ki-k0)*(1-f)*(-kP-(ki-k0)*dkP_dk0)/kP/kP)/den_k/den_k;
+          const auto derkHS_k0 = 1+f*(-den_k-(ki-k0)*(1-f)*(-kP-(ki-k0))/kP/kP)/den_k/den_k;
           const auto derkHS_ki = f*(den_k-(ki-k0)*(1-f)/kP)/den_k/den_k;
-          const auto em20=1./(1-f)*(derkHS_k0*em2+1./3.*dermuHS_k0*eeq2);
-          const auto em2i=1./f*derkHS_ki*em2;
+          const auto em20=1/(1-f)*(derkHS_k0*em2+dermuHS_k0*eeq2/3);
+          const auto em2i=1/f*derkHS_ki*em2;
           return {em20,em2i};
      }
      
