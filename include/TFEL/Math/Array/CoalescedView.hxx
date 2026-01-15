@@ -167,7 +167,7 @@ namespace tfel::math {
       if constexpr (array_policy::isMakeConstReferenceTrivial) {
         return *(this->ptrs[this->getIndex(static_cast<size_type>(i)...)]);
       } else {
-        return array_policy::make_const_reference(
+        return array_policy::make_reference(
             *(this->ptrs[this->getIndex(static_cast<size_type>(i)...)]));
       }
     }  // end of operator()
@@ -178,7 +178,7 @@ namespace tfel::math {
       if constexpr (array_policy::isMakeConstReferenceTrivial) {
         return *(this->ptrs[this->getIndex(i)]);
       } else {
-        return array_policy::make_const_reference(
+        return array_policy::make_reference(
             *(this->ptrs[this->getIndex(i)]));
       }
     }  // end of operator()

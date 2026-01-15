@@ -39,7 +39,7 @@ namespace tfel::math {
       for (decltype(a.size(0)) i = 0; i != a.size(0);) {
         os << "[";
         for (decltype(a.size(1)) j = 0; j != a.size(1); ++j) {
-          os << " " << a(i);
+          os << " " << a(i, j);
         }
         if (++i != a.size(0)) {
           os << " ], ";
