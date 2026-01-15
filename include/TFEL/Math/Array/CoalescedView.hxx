@@ -131,7 +131,7 @@ namespace tfel::math {
         const typename IndexingPolicyType::size_type i) noexcept
         requires(!is_const) {
       static_assert(IndexingPolicyType::arity == 1u, "invalid call");
-      if constexpr (array_policy::isMakeConstReferenceTrivial) {
+      if constexpr (array_policy::isMakeReferenceTrivial) {
         return *(this->ptrs[this->getIndex(i)]);
       } else {
         return array_policy::make_reference(*(this->ptrs[this->getIndex(i)]));
@@ -165,7 +165,7 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr typename array_policy::reference operator()(
         const Indices... i) noexcept requires(!is_const) {
       checkIndicesValiditity<IndexingPolicyType, Indices...>();
-      if constexpr (array_policy::isMakeConstReferenceTrivial) {
+      if constexpr (array_policy::isMakeReferenceTrivial) {
         return *(this->ptrs[this->getIndex(static_cast<size_type>(i)...)]);
       } else {
         return array_policy::make_reference(
