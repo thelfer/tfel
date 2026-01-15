@@ -225,8 +225,11 @@ struct StensorStridedCoalescedViewTest final : public tfel::tests::TestCase {
     using namespace tfel::math;
     // SoA layout for 3 stensor<2>: 3 objects with 4 components each
     // Memory: [c0_s0, c0_s1, c0_s2, c1_s0, c1_s1, c1_s2, ...]
-    std::array<int, 12> values = {1, 2, 3, 10, 20, 30, 100, 200, 300, 1000, 2000, 3000};
-    auto arr = StridedCoalescedViewsFixedSizeVector<stensor<2u, int>, unsigned short, 3>(&values[0]);
+    std::array<int, 12> values = {1,   2,   3,   10,   20,   30,
+                                  100, 200, 300, 1000, 2000, 3000};
+    auto arr =
+        StridedCoalescedViewsFixedSizeVector<stensor<2u, int>, unsigned short,
+                                             3>(&values[0]);
     // Check object 0: components at indices 0, 3, 6, 9
     TFEL_TESTS_ASSERT(arr[0][0] == 1);
     TFEL_TESTS_ASSERT(arr[0][1] == 10);

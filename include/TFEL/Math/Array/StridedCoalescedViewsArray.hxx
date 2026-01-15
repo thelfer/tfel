@@ -49,7 +49,9 @@ namespace tfel::math::internals {
    * \tparam ViewIndexingPolicyType: indexing policy used by the view
    */
   template <typename MappedType, typename ViewIndexingPolicyType>
-  struct StridedCoalescedViewsArrayBase<true, MappedType, ViewIndexingPolicyType> {
+  struct StridedCoalescedViewsArrayBase<true,
+                                        MappedType,
+                                        ViewIndexingPolicyType> {
     static_assert(tfel::math::isScalar<MappedType>());
     //! \brief type of views
     using view_type = MappedType&;
@@ -95,10 +97,10 @@ namespace tfel::math {
 
   //! \brief the pointer type used to build the view
   template <typename MappedType>
-  using StridedCoalescedViewsArrayDataPointerType =
-      std::conditional_t<std::is_const_v<MappedType>,
-                         const StridedCoalescedViewsArrayNumericType<MappedType>*,
-                         StridedCoalescedViewsArrayNumericType<MappedType>*>;
+  using StridedCoalescedViewsArrayDataPointerType = std::conditional_t<
+      std::is_const_v<MappedType>,
+      const StridedCoalescedViewsArrayNumericType<MappedType>*,
+      StridedCoalescedViewsArrayNumericType<MappedType>*>;
 
   /*!
    * \brief a structure used to represent an array of strided coalesced views.
@@ -109,17 +111,16 @@ namespace tfel::math {
    */
   template <typename MappedType,
             typename MemoryIndexingPolicyType,
-            typename ViewIndexingPolicyType =
-                typename tfel::math::internals::
-                    StridedCoalescedViewsArrayDefaultViewIndexingPolicy<
-                        isScalar<MappedType>(),
-                        MappedType>::type>
+            typename ViewIndexingPolicyType = typename tfel::math::internals::
+                StridedCoalescedViewsArrayDefaultViewIndexingPolicy<
+                    isScalar<MappedType>(),
+                    MappedType>::type>
   struct StridedCoalescedViewsArray
       : MemoryIndexingPolicyType,
-        tfel::math::internals::
-            StridedCoalescedViewsArrayBase<isScalar<MappedType>(),
-                                           MappedType,
-                                           ViewIndexingPolicyType> {
+        tfel::math::internals::StridedCoalescedViewsArrayBase<
+            isScalar<MappedType>(),
+            MappedType,
+            ViewIndexingPolicyType> {
     //! \brief boolean stating if views to scalars are considered
     static constexpr bool is_scalar = isScalar<MappedType>();
     //! \brief type of the pointer to the underlying data
@@ -163,15 +164,17 @@ namespace tfel::math {
       static_assert(!MemoryIndexingPolicyType::hasFixedSizes, "invalid call");
     }
     //! \brief copy constructor
-    constexpr StridedCoalescedViewsArray(const StridedCoalescedViewsArray&) noexcept = default;
+    constexpr StridedCoalescedViewsArray(
+        const StridedCoalescedViewsArray&) noexcept = default;
     //! \brief move constructor
-    constexpr StridedCoalescedViewsArray(StridedCoalescedViewsArray&&) noexcept = default;
+    constexpr StridedCoalescedViewsArray(
+        StridedCoalescedViewsArray&&) noexcept = default;
     //! \brief a simple alias
     using StridedCoalescedViewsArrayBase =
-        tfel::math::internals::
-            StridedCoalescedViewsArrayBase<isScalar<MappedType>(),
-                                           MappedType,
-                                           ViewIndexingPolicyType>;
+        tfel::math::internals::StridedCoalescedViewsArrayBase<
+            isScalar<MappedType>(),
+            MappedType,
+            ViewIndexingPolicyType>;
     //! \brief access operator
     TFEL_HOST_DEVICE constexpr typename StridedCoalescedViewsArray::view_type
     operator[](const typename MemoryIndexingPolicyType::size_type i) noexcept {
@@ -187,8 +190,8 @@ namespace tfel::math {
     //! \brief access operator
     TFEL_HOST_DEVICE constexpr
         typename StridedCoalescedViewsArray::const_view_type
-    operator[](const typename MemoryIndexingPolicyType::size_type i)
-        const noexcept {
+        operator[](const typename MemoryIndexingPolicyType::size_type i)
+            const noexcept {
       static_assert(MemoryIndexingPolicyType::arity == 1u, "invalid call");
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       auto* const d = this->data_pointer + i;
@@ -215,7 +218,7 @@ namespace tfel::math {
     template <typename... Indices>
     TFEL_HOST_DEVICE constexpr
         typename StridedCoalescedViewsArray::const_view_type
-    operator()(const Indices... i) const noexcept {
+        operator()(const Indices... i) const noexcept {
       static_assert(ViewIndexingPolicyType::hasFixedSizes, "invalid call");
       const auto* const d = this->data_pointer + this->getIndex(i...);
       if constexpr (is_scalar) {
@@ -240,15 +243,13 @@ namespace tfel::math {
         return p.size(i);
       };
       if constexpr (MemoryIndexingPolicyType::unRollLoop) {
-        IterateOverMultipleIndices<typename StridedCoalescedViewsArray::size_type,
-                                   0,
-                                   MemoryIndexingPolicyType::arity,
-                                   true>::exe(f, g);
+        IterateOverMultipleIndices<
+            typename StridedCoalescedViewsArray::size_type, 0,
+            MemoryIndexingPolicyType::arity, true>::exe(f, g);
       } else {
-        IterateOverMultipleIndices<typename StridedCoalescedViewsArray::size_type,
-                                   0,
-                                   MemoryIndexingPolicyType::arity,
-                                   false>::exe(f, g);
+        IterateOverMultipleIndices<
+            typename StridedCoalescedViewsArray::size_type, 0,
+            MemoryIndexingPolicyType::arity, false>::exe(f, g);
       }
       return *this;
     }  // end of operator*=
@@ -270,19 +271,17 @@ namespace tfel::math {
     const data_pointer_type data_pointer;
   };  // end of struct StridedCoalescedViewsArray
 
-  template <typename MappedType,
-            typename SizeType,
-            SizeType N>
+  template <typename MappedType, typename SizeType, SizeType N>
   struct StridedCoalescedViewsFixedSizeVectorIndexingPolicy
       : FixedSizeVectorIndexingPolicy<SizeType, N, 1> {
   };  // end of struct StridedCoalescedViewsFixedSizeVectorIndexingPolicy
 
-  template <typename MappedType,
-            typename SizeType,
-            SizeType N>
+  template <typename MappedType, typename SizeType, SizeType N>
   using StridedCoalescedViewsFixedSizeVector = StridedCoalescedViewsArray<
       MappedType,
-      StridedCoalescedViewsFixedSizeVectorIndexingPolicy<MappedType, SizeType, N>>;
+      StridedCoalescedViewsFixedSizeVectorIndexingPolicy<MappedType,
+                                                         SizeType,
+                                                         N>>;
 
   template <typename ArrayType>
   constexpr auto map_strided_array(
@@ -295,8 +294,8 @@ namespace tfel::math {
     static_assert(IndexingPolicy::arity == 1u);
     constexpr auto N = IndexingPolicy().size(0);
     if constexpr (std::is_const_v<ArrayType>) {
-      return StridedCoalescedViewsFixedSizeVector<const MappedType, size_type, N>(
-          p);
+      return StridedCoalescedViewsFixedSizeVector<const MappedType, size_type,
+                                                  N>(p);
     } else {
       return StridedCoalescedViewsFixedSizeVector<MappedType, size_type, N>(p);
     }

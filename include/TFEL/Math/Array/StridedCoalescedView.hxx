@@ -34,7 +34,7 @@ namespace tfel::math {
    * \tparam MappedType: type of the object mapped to the memory area
    *
    * This view is similar to CoalescedView but stores only a base pointer
-   * and a stride instead of an array of pointers. This is more efficient 
+   * and a stride instead of an array of pointers. This is more efficient
    * for SoA layouts in terms of register usage, particularly on GPU where
    * registers are easily saturated.
    *
@@ -107,7 +107,7 @@ namespace tfel::math {
         const typename IndexingPolicyType::size_type i) noexcept
         requires(!is_const) {
       static_assert(IndexingPolicyType::arity == 1u, "invalid call");
-      if constexpr (array_policy::isMakeConstReferenceTrivial) {
+      if constexpr (array_policy::isMakeReferenceTrivial) {
         return *(this->data_pointer + this->getIndex(i) * this->stride);
       } else {
         return array_policy::make_reference(
@@ -144,7 +144,7 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr typename array_policy::reference operator()(
         const Indices... i) noexcept requires(!is_const) {
       checkIndicesValiditity<IndexingPolicyType, Indices...>();
-      if constexpr (array_policy::isMakeConstReferenceTrivial) {
+      if constexpr (array_policy::isMakeReferenceTrivial) {
         return *(this->data_pointer +
                  this->getIndex(static_cast<size_type>(i)...) * this->stride);
       } else {
@@ -158,7 +158,7 @@ namespace tfel::math {
         const std::array<typename IndexingPolicyType::size_type,
                          IndexingPolicyType::arity>& i) noexcept
         requires(!is_const) {
-      if constexpr (array_policy::isMakeConstReferenceTrivial) {
+      if constexpr (array_policy::isMakeReferenceTrivial) {
         return *(this->data_pointer + this->getIndex(i) * this->stride);
       } else {
         return array_policy::make_reference(
@@ -307,7 +307,8 @@ namespace tfel::math {
    */
   template <MappableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType>
-  struct ResultOfEvaluation<StridedCoalescedView<MappedType, IndexingPolicyType>> {
+  struct ResultOfEvaluation<
+      StridedCoalescedView<MappedType, IndexingPolicyType>> {
     //! \brief result of the metafunction
     using type = std::remove_cv_t<MappedType>;
   };  // end of struct ResultOfEvaluation
@@ -320,7 +321,8 @@ namespace tfel::math {
    */
   template <MappableMutableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType = typename MappedType::indexing_policy>
-  TFEL_HOST_DEVICE constexpr StridedCoalescedView<MappedType, IndexingPolicyType>
+  TFEL_HOST_DEVICE constexpr StridedCoalescedView<MappedType,
+                                                  IndexingPolicyType>
   map_strided(const ViewDataPointerType<MappedType> p,
               const typename IndexingPolicyType::size_type s)  //
       requires((!std::is_const_v<MappedType>)&&(
@@ -331,7 +333,8 @@ namespace tfel::math {
   template <MappableImmutableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy>
-  TFEL_HOST_DEVICE constexpr StridedCoalescedView<MappedType, IndexingPolicyType>
+  TFEL_HOST_DEVICE constexpr StridedCoalescedView<MappedType,
+                                                  IndexingPolicyType>
   map_strided(const ViewConstDataPointerType<std::remove_cv_t<MappedType>> p,
               const typename IndexingPolicyType::size_type s)  //
       requires((std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes)) {
@@ -342,7 +345,8 @@ namespace tfel::math {
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy>
   using ConstStridedCoalescedView =
-      StridedCoalescedView<const std::remove_cv_t<MappedType>, IndexingPolicyType>;
+      StridedCoalescedView<const std::remove_cv_t<MappedType>,
+                           IndexingPolicyType>;
 
 }  // end of namespace tfel::math
 

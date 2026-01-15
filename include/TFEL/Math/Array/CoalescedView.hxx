@@ -180,8 +180,7 @@ namespace tfel::math {
       if constexpr (array_policy::isMakeConstReferenceTrivial) {
         return *(this->ptrs[this->getIndex(i)]);
       } else {
-        return array_policy::make_reference(
-            *(this->ptrs[this->getIndex(i)]));
+        return array_policy::make_reference(*(this->ptrs[this->getIndex(i)]));
       }
     }  // end of operator()
 

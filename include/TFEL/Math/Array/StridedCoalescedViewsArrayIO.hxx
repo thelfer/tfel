@@ -28,8 +28,7 @@ namespace tfel::math {
                                        MemoryIndexingPolicyType,
                                        ViewIndexingPolicyType>& a) {
     using StridedCoalescedViewsArrayType =
-        StridedCoalescedViewsArray<MappedType,
-                                   MemoryIndexingPolicyType,
+        StridedCoalescedViewsArray<MappedType, MemoryIndexingPolicyType,
                                    ViewIndexingPolicyType>;
     if constexpr (StridedCoalescedViewsArrayType::arity == 1u) {
       os << "[";
@@ -52,7 +51,8 @@ namespace tfel::math {
       }
       os << " ]";
     } else {
-      os << "[unsupported StridedCoalescedViewsArray object (arity greater than 2)]";
+      os << "[unsupported StridedCoalescedViewsArray object (arity greater "
+            "than 2)]";
     }
     return os;
   }  // end of operator<<
