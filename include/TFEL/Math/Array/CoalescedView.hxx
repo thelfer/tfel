@@ -128,9 +128,10 @@ namespace tfel::math {
     }  // end of operator[]
 
     TFEL_HOST_DEVICE constexpr typename array_policy::reference operator[](
-        const typename IndexingPolicyType::size_type i) noexcept {
+        const typename IndexingPolicyType::size_type i) noexcept
+        requires(!is_const) {
       static_assert(IndexingPolicyType::arity == 1u, "invalid call");
-      if constexpr (array_policy::isMakeConstReferenceTrivial) {
+      if constexpr (array_policy::isMakeReferenceTrivial) {
         return *(this->ptrs[this->getIndex(i)]);
       } else {
         return array_policy::make_reference(*(this->ptrs[this->getIndex(i)]));
@@ -162,23 +163,24 @@ namespace tfel::math {
 
     template <typename... Indices>
     TFEL_HOST_DEVICE constexpr typename array_policy::reference operator()(
-        const Indices... i) noexcept {
+        const Indices... i) noexcept requires(!is_const) {
       checkIndicesValiditity<IndexingPolicyType, Indices...>();
-      if constexpr (array_policy::isMakeConstReferenceTrivial) {
+      if constexpr (array_policy::isMakeReferenceTrivial) {
         return *(this->ptrs[this->getIndex(static_cast<size_type>(i)...)]);
       } else {
-        return array_policy::make_const_reference(
+        return array_policy::make_reference(
             *(this->ptrs[this->getIndex(static_cast<size_type>(i)...)]));
       }
     }  // end of operator()
 
     TFEL_HOST_DEVICE constexpr typename array_policy::reference operator()(
         const std::array<typename IndexingPolicyType::size_type,
-                         IndexingPolicyType::arity>& i) noexcept {
+                         IndexingPolicyType::arity>& i) noexcept
+        requires(!is_const) {
       if constexpr (array_policy::isMakeConstReferenceTrivial) {
         return *(this->ptrs[this->getIndex(i)]);
       } else {
-        return array_policy::make_const_reference(
+        return array_policy::make_reference(
             *(this->ptrs[this->getIndex(i)]));
       }
     }  // end of operator()
