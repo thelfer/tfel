@@ -1,8 +1,8 @@
 /*!
- * \file  include/TFEL/Math/Array/CoalescedView.hxx
+ * \file  include/TFEL/Math/Array/StridedCoalescedView.hxx
  * \brief
- * \author Thomas Helfer
- * \date 24/12/2025
+ * \author Tristan Chenaille
+ * \date 15/01/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -11,12 +11,9 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_ARRAY_COALESCEDVIEW_HXX
-#define LIB_TFEL_MATH_ARRAY_COALESCEDVIEW_HXX
+#ifndef LIB_TFEL_MATH_ARRAY_STRIDEDCOALESCEDVIEW_HXX
+#define LIB_TFEL_MATH_ARRAY_STRIDEDCOALESCEDVIEW_HXX
 
-#include <span>
-#include <array>
-#include <utility>
 #include <type_traits>
 #include "TFEL/Metaprogramming/InvalidType.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
@@ -28,38 +25,32 @@
 #include "TFEL/Math/Array/MultipleIndicesFunctors.hxx"
 #include "TFEL/Math/Array/ConstFixedSizeArrayBase.hxx"
 #include "TFEL/Math/Array/ConstRuntimeArrayBase.hxx"
-#include "TFEL/Math/Array/View.hxx"
+#include "TFEL/Math/Array/CoalescedView.hxx"
 
 namespace tfel::math {
 
-  //
-  template <typename MathObjectType>
-  concept MappableMutableMathObjectUsingCoalescedViewConcept =
-      MathObjectConcept<MathObjectType> &&
-      MathObjectType::indexing_policy::hasFixedSizes;
-
-  template <typename MathObjectType>
-  concept MappableImmutableMathObjectUsingCoalescedViewConcept =
-      std::is_const_v<MathObjectType> &&
-      MathObjectConcept<std::remove_cv_t<MathObjectType>> &&
-      MathObjectType::indexing_policy::hasFixedSizes;
-
-  template <typename MathObjectType>
-  concept MappableMathObjectUsingCoalescedViewConcept =
-      MappableMutableMathObjectUsingCoalescedViewConcept<MathObjectType> ||
-      MappableImmutableMathObjectUsingCoalescedViewConcept<MathObjectType>;
-
   /*!
-   * \brief view of an object from a continuous memory area
+   * \brief view of an object from a strided memory area
    * \tparam MappedType: type of the object mapped to the memory area
+   *
+   * This view is similar to CoalescedView but stores only a base pointer
+   * and a stride instead of an array of pointers. This is more efficient 
+   * for SoA layouts in terms of register usage, particularly on GPU where
+   * registers are easily saturated.
+   *
+   * Memory layout (for a stensor<2> with 4 components and stride S):
+   * - Component 0: base_ptr + 0 * S
+   * - Component 1: base_ptr + 1 * S
+   * - Component 2: base_ptr + 2 * S
+   * - Component 3: base_ptr + 3 * S
    */
   template <MappableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType = typename MappedType::indexing_policy>
-  struct CoalescedView
+  struct StridedCoalescedView
       : ConceptRebind<
             typename ComputeObjectTag<std::remove_cv_t<MappedType>>::type,
-            CoalescedView<std::remove_cv_t<MappedType>,
-                          IndexingPolicyType>>::type,
+            StridedCoalescedView<std::remove_cv_t<MappedType>,
+                                 IndexingPolicyType>>::type,
         IndexingPolicyType {
     //
     static_assert(
@@ -87,30 +78,15 @@ namespace tfel::math {
     using data_pointer_type = ViewDataPointerType<MappedType>;
     //! \brief a simple alias
     using const_data_pointer_type = ViewConstDataPointerType<MappedType>;
-    //! \brief default constructor
-    explicit TFEL_HOST_DEVICE constexpr CoalescedView(
-        const std::array<data_pointer_type, N>& p) noexcept
-        : ptrs([&p] {
-            return [&p]<std::size_t... Is>(
-                std::integer_sequence<std::size_t, Is...>) {
-              return std::array<data_pointer_type, N>{p[Is]...};
-            }
-            (std::make_index_sequence<N>());
-          }()) {}
-    //! \brief default constructor
-    explicit TFEL_HOST_DEVICE constexpr CoalescedView(
-        const std::span<data_pointer_type, N>& p) noexcept
-        : ptrs([&p] {
-            return [&p]<std::size_t... Is>(
-                std::integer_sequence<std::size_t, Is...>) {
-              return std::array<data_pointer_type, N>{p[Is]...};
-            }
-            (std::make_index_sequence<N>());
-          }()) {}
+    //! \brief constructor from a base pointer and a stride
+    explicit TFEL_HOST_DEVICE constexpr StridedCoalescedView(
+        const data_pointer_type p, const size_type s) noexcept
+        : data_pointer(p), stride(s) {}
     //! \brief copy constructor
-    constexpr CoalescedView(const CoalescedView&) noexcept = default;
+    constexpr StridedCoalescedView(const StridedCoalescedView&) noexcept =
+        default;
     //! \brief move constructor
-    constexpr CoalescedView(CoalescedView&&) noexcept = default;
+    constexpr StridedCoalescedView(StridedCoalescedView&&) noexcept = default;
     //! \return the current indexing policy
     constexpr const auto& getIndexingPolicy() const {
       return static_cast<const IndexingPolicyType&>(*this);
@@ -120,10 +96,10 @@ namespace tfel::math {
     operator[](const typename IndexingPolicyType::size_type i) const noexcept {
       static_assert(IndexingPolicyType::arity == 1u, "invalid call");
       if constexpr (array_policy::isMakeConstReferenceTrivial) {
-        return *(this->ptrs[this->getIndex(i)]);
+        return *(this->data_pointer + this->getIndex(i) * this->stride);
       } else {
         return array_policy::make_const_reference(
-            *(this->ptrs[this->getIndex(i)]));
+            *(this->data_pointer + this->getIndex(i) * this->stride));
       }
     }  // end of operator[]
 
@@ -132,9 +108,10 @@ namespace tfel::math {
         requires(!is_const) {
       static_assert(IndexingPolicyType::arity == 1u, "invalid call");
       if constexpr (array_policy::isMakeConstReferenceTrivial) {
-        return *(this->ptrs[this->getIndex(i)]);
+        return *(this->data_pointer + this->getIndex(i) * this->stride);
       } else {
-        return array_policy::make_reference(*(this->ptrs[this->getIndex(i)]));
+        return array_policy::make_reference(
+            *(this->data_pointer + this->getIndex(i) * this->stride));
       }
     }  // end of operator[]
 
@@ -143,10 +120,12 @@ namespace tfel::math {
     operator()(const Indices... i) const noexcept {
       checkIndicesValiditity<IndexingPolicyType, Indices...>();
       if constexpr (array_policy::isMakeConstReferenceTrivial) {
-        return *(this->ptrs[this->getIndex(static_cast<size_type>(i)...)]);
+        return *(this->data_pointer +
+                 this->getIndex(static_cast<size_type>(i)...) * this->stride);
       } else {
         return array_policy::make_const_reference(
-            *(this->ptrs[this->getIndex(static_cast<size_type>(i)...)]));
+            *(this->data_pointer +
+              this->getIndex(static_cast<size_type>(i)...) * this->stride));
       }
     }  // end of operator()
 
@@ -154,10 +133,10 @@ namespace tfel::math {
     operator()(const std::array<typename IndexingPolicyType::size_type,
                                 IndexingPolicyType::arity>& i) const noexcept {
       if constexpr (array_policy::isMakeConstReferenceTrivial) {
-        return *(this->ptrs[this->getIndex(i)]);
+        return *(this->data_pointer + this->getIndex(i) * this->stride);
       } else {
         return array_policy::make_const_reference(
-            *(this->ptrs[this->getIndex(i)]));
+            *(this->data_pointer + this->getIndex(i) * this->stride));
       }
     }  // end of operator()
 
@@ -166,10 +145,12 @@ namespace tfel::math {
         const Indices... i) noexcept requires(!is_const) {
       checkIndicesValiditity<IndexingPolicyType, Indices...>();
       if constexpr (array_policy::isMakeConstReferenceTrivial) {
-        return *(this->ptrs[this->getIndex(static_cast<size_type>(i)...)]);
+        return *(this->data_pointer +
+                 this->getIndex(static_cast<size_type>(i)...) * this->stride);
       } else {
         return array_policy::make_reference(
-            *(this->ptrs[this->getIndex(static_cast<size_type>(i)...)]));
+            *(this->data_pointer +
+              this->getIndex(static_cast<size_type>(i)...) * this->stride));
       }
     }  // end of operator()
 
@@ -178,16 +159,16 @@ namespace tfel::math {
                          IndexingPolicyType::arity>& i) noexcept
         requires(!is_const) {
       if constexpr (array_policy::isMakeConstReferenceTrivial) {
-        return *(this->ptrs[this->getIndex(i)]);
+        return *(this->data_pointer + this->getIndex(i) * this->stride);
       } else {
         return array_policy::make_reference(
-            *(this->ptrs[this->getIndex(i)]));
+            *(this->data_pointer + this->getIndex(i) * this->stride));
       }
     }  // end of operator()
 
     //! \brief assignement operator
-    TFEL_HOST_DEVICE constexpr CoalescedView& operator=(
-        const CoalescedView& src) noexcept {
+    TFEL_HOST_DEVICE constexpr StridedCoalescedView& operator=(
+        const StridedCoalescedView& src) noexcept {
       static_assert(!is_const, "invalid constructor call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                src.getIndexingPolicy());
@@ -200,7 +181,7 @@ namespace tfel::math {
      * \param[in] src: array to be assigned
      */
     template <typename OtherArray>
-    TFEL_HOST_DEVICE constexpr CoalescedView&
+    TFEL_HOST_DEVICE constexpr StridedCoalescedView&
     operator=(const OtherArray& src) requires(
         isAssignableTo<OtherArray, MappedType>()) {
       static_assert(!is_const, "invalid call");
@@ -211,7 +192,7 @@ namespace tfel::math {
     }
     //
     template <typename OtherArray>
-    TFEL_HOST_DEVICE constexpr CoalescedView&
+    TFEL_HOST_DEVICE constexpr StridedCoalescedView&
     operator+=(const OtherArray& src) requires(
         isAssignableTo<OtherArray, MappedType>()) {
       static_assert(!is_const, "invalid call");
@@ -222,7 +203,7 @@ namespace tfel::math {
     }
     //
     template <typename OtherArray>
-    TFEL_HOST_DEVICE constexpr CoalescedView&
+    TFEL_HOST_DEVICE constexpr StridedCoalescedView&
     operator-=(const OtherArray& src) requires(
         isAssignableTo<OtherArray, MappedType>()) {
       static_assert(!is_const, "invalid call");
@@ -233,7 +214,7 @@ namespace tfel::math {
     }
     //
     template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr CoalescedView&
+    TFEL_HOST_DEVICE constexpr StridedCoalescedView&
     operator*=(const ValueType2& s) noexcept requires(
         isAssignableTo<
             BinaryOperationResult<ValueType2, numeric_type<MappedType>, OpMult>,
@@ -246,7 +227,7 @@ namespace tfel::math {
     }  // end of operator*=
        //
     template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr CoalescedView&
+    TFEL_HOST_DEVICE constexpr StridedCoalescedView&
     operator/=(const ValueType2& s) noexcept requires(
         isAssignableTo<
             BinaryOperationResult<numeric_type<MappedType>, ValueType2, OpDiv>,
@@ -259,7 +240,7 @@ namespace tfel::math {
     }  // end of operator/=
 
     //! \brief destructor
-    ~CoalescedView() noexcept = default;
+    ~StridedCoalescedView() noexcept = default;
 
    protected:
     template <typename FunctorType>
@@ -303,9 +284,11 @@ namespace tfel::math {
       this->iterate(f);
     }  // end of substractAndAssign
 
-    //! \brief pointer to the memory buffer
-    std::array<data_pointer_type, N> ptrs;
-  };  // end of struct CoalescedView
+    //! \brief pointer to the first component
+    const data_pointer_type data_pointer;
+    //! \brief stride between successive components
+    const size_type stride;
+  };  // end of struct StridedCoalescedView
 
   /*!
    * \brief partial specialisation of the `MathObjectTraits` for const views
@@ -313,7 +296,7 @@ namespace tfel::math {
    */
   template <MappableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType>
-  struct MathObjectTraits<CoalescedView<MappedType, IndexingPolicyType>>
+  struct MathObjectTraits<StridedCoalescedView<MappedType, IndexingPolicyType>>
       : public MathObjectTraits<std::remove_cv_t<MappedType>> {
   };  // end of struct MathObjectTraits
 
@@ -324,41 +307,42 @@ namespace tfel::math {
    */
   template <MappableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType>
-  struct ResultOfEvaluation<CoalescedView<MappedType, IndexingPolicyType>> {
+  struct ResultOfEvaluation<StridedCoalescedView<MappedType, IndexingPolicyType>> {
     //! \brief result of the metafunction
     using type = std::remove_cv_t<MappedType>;
   };  // end of struct ResultOfEvaluation
 
   /*!
-   * \brief return a view from a memory area
+   * \brief return a strided coalesced view from a base pointer and a stride
    * \tparam MappedType: object mapped
-   * \param[in] p: pointer to the mapped memory area
+   * \param[in] p: pointer to the first component
+   * \param[in] s: stride between successive components
    */
   template <MappableMutableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType = typename MappedType::indexing_policy>
-  TFEL_HOST_DEVICE constexpr CoalescedView<MappedType, IndexingPolicyType> map(
-      const std::span<ViewDataPointerType<MappedType>,
-                      indexing_policy_size<IndexingPolicyType>> ptrs)  //
+  TFEL_HOST_DEVICE constexpr StridedCoalescedView<MappedType, IndexingPolicyType>
+  map_strided(const ViewDataPointerType<MappedType> p,
+              const typename IndexingPolicyType::size_type s)  //
       requires((!std::is_const_v<MappedType>)&&(
           std::remove_cv_t<MappedType>::hasFixedSizes)) {
-    return CoalescedView<MappedType, IndexingPolicyType>{ptrs};
-  }  // end of map
+    return StridedCoalescedView<MappedType, IndexingPolicyType>{p, s};
+  }  // end of map_strided
 
   template <MappableImmutableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy>
-  TFEL_HOST_DEVICE constexpr CoalescedView<MappedType, IndexingPolicyType> map(
-      const std::span<ViewConstDataPointerType<std::remove_cv_t<MappedType>>,
-                      indexing_policy_size<IndexingPolicyType>> ptrs)  //
+  TFEL_HOST_DEVICE constexpr StridedCoalescedView<MappedType, IndexingPolicyType>
+  map_strided(const ViewConstDataPointerType<std::remove_cv_t<MappedType>> p,
+              const typename IndexingPolicyType::size_type s)  //
       requires((std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes)) {
-    return CoalescedView<MappedType, IndexingPolicyType>{ptrs};
-  }  // end of map
+    return StridedCoalescedView<MappedType, IndexingPolicyType>{p, s};
+  }  // end of map_strided
 
   template <MappableMutableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy>
-  using ConstCoalescedView =
-      CoalescedView<const std::remove_cv_t<MappedType>, IndexingPolicyType>;
+  using ConstStridedCoalescedView =
+      StridedCoalescedView<const std::remove_cv_t<MappedType>, IndexingPolicyType>;
 
 }  // end of namespace tfel::math
 
@@ -373,7 +357,7 @@ namespace tfel::typetraits {
             typename IndexingPolicyType,
             typename MathObject2>
   struct IsAssignableTo<
-      tfel::math::CoalescedView<MathObject, IndexingPolicyType>,
+      tfel::math::StridedCoalescedView<MathObject, IndexingPolicyType>,
       MathObject2> {
     //! \brief result
     static constexpr bool cond =
@@ -391,7 +375,7 @@ namespace tfel::typetraits {
             typename IndexingPolicyType2>
   struct IsAssignableTo<
       MathObject,
-      tfel::math::CoalescedView<MathObject2, IndexingPolicyType2>> {
+      tfel::math::StridedCoalescedView<MathObject2, IndexingPolicyType2>> {
     //!
     static constexpr bool is_const = std::is_const_v<MathObject2>;
     //! \brief result
@@ -411,8 +395,8 @@ namespace tfel::typetraits {
             tfel::math::MappableMathObjectUsingCoalescedViewConcept MathObject2,
             typename IndexingPolicyType2>
   struct IsAssignableTo<
-      tfel::math::CoalescedView<MathObject, IndexingPolicyType>,
-      tfel::math::CoalescedView<MathObject2, IndexingPolicyType2>> {
+      tfel::math::StridedCoalescedView<MathObject, IndexingPolicyType>,
+      tfel::math::StridedCoalescedView<MathObject2, IndexingPolicyType2>> {
     //!
     static constexpr bool is_const = std::is_const_v<MathObject2>;
     //! \brief result
@@ -431,7 +415,7 @@ namespace tfel::typetraits {
             typename IndexingPolicyType>
   struct IsAssignableTo<
       tfel::math::Expr<EvaluationResult, Operation>,
-      tfel::math::CoalescedView<MathObject, IndexingPolicyType>> {
+      tfel::math::StridedCoalescedView<MathObject, IndexingPolicyType>> {
     //!
     static constexpr bool is_const = std::is_const_v<MathObject>;
     //! \brief result
@@ -442,4 +426,4 @@ namespace tfel::typetraits {
 
 }  // end of namespace tfel::typetraits
 
-#endif /* LIB_TFEL_MATH_ARRAY_COALESCEDVIEW_HXX */
+#endif /* LIB_TFEL_MATH_ARRAY_STRIDEDCOALESCEDVIEW_HXX */
