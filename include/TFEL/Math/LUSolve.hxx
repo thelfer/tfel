@@ -72,8 +72,10 @@ namespace tfel::math {
       if (m.getNbRows() == 0) {
         throw(LUInvalidMatrixSize());
       }
-      std::copy(b.begin(), b.end(), x.begin());
       const size_type n = m.getNbRows();
+      for (size_type i = 0; i != n; ++i) {
+        x(i) = b(i);
+      }
       for (size_type i = 0; i != n; ++i) {
         size_type pi = p(i);
         for (size_type j = 0; j != i; ++j) {

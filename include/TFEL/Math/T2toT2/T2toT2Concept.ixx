@@ -51,18 +51,21 @@ namespace tfel::math {
       return a * (e * i - f * h) + b * (f * g - d * i) + c * (d * h - e * g);
     } else {
       constexpr auto ts = TensorDimeToSize<N>::value;
-      using Result = UnaryResultType<numeric_type<T2toT2Type>, Power<ts>>;
+      using Result = unary_result_type<numeric_type<T2toT2Type>, Power<ts>>;
       using real = base_type<numeric_type<T2toT2Type>>;
       tmatrix<ts, ts, real> m;
-      tfel::fsalgo::transform<ts * ts>::exe(
-          s.begin(), m.begin(), [](const auto v) { return base_type_cast(v); });
+      for (unsigned short i = 0; i != ts; ++i) {
+        for (unsigned short j = 0; j != ts; ++j) {
+          m(i, j) = base_type_cast(s(i, j));
+        }
+      }
       TinyPermutation<ts> p;
       const auto r = LUDecomp<false>::exe(m, p);
       if (!r.first) {
         return Result{};
       }
       auto v = base_type<real>{1};
-      for (const index_type<T2toT2Type> i = 0; i != ts; ++i) {
+      for (index_type<T2toT2Type> i = 0; i != ts; ++i) {
         v *= m(i, i);
       }
       return r.second == 1 ? Result{v} : -Result{v};

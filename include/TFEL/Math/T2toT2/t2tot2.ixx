@@ -482,7 +482,11 @@ namespace tfel::math {
     constexpr auto N = getSpaceDimension<T2toST2Type>();
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {
-      tfel::fsalgo::copy<9u>::exe(s.begin(), d.begin());
+      for (unsigned short i = 0; i != 3u; ++i) {
+        for (unsigned short j = 0; j != 3u; ++j) {
+          d(i, j) = s(i, j);
+        }
+      }
     } else if constexpr (N == 2) {
       constexpr auto icste = Cste<T>::isqrt2;
       d(0, 0) = s(0, 0);
