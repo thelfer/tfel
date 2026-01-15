@@ -85,15 +85,14 @@ behaviour. This framework is described
   described
   [here](isotropicplasticityamstrongfrederickinematichardening.html)
 - [ImplicitNorton](gallery/viscoplasticity/ImplicitNorton.mfront)
-
-### Single crystal
-
 - The implementation of the Méric-Cailletaud single crystal behaviour
   under the small and finite strain assumptions are described
   [here](MericCailletaudSingleCrystalPlasticity.html)
 
-### Homogeneisation
+## Homogenization
 
+- The implementation of linear homogenization schemes in 3d elasticity
+  for biphasic media is described [here](BiphasicLinearHomogenization.html).
 - The implementation of [Sachs scheme](Sachs.html) and [Taylor scheme](Taylor.html)
   show how to implement basic homogenized bounds with any behaviour laws on the
   phases using `@BehaviourVariable`.
@@ -103,12 +102,9 @@ behaviour. This framework is described
   [here](ExplicitBerveillerZaouiPolyCrystals.html)
 - [\(\beta\)-rule](BetaRule.html) can also be implemented with
   `@BehaviourVariable` and hence any behaviour law on each phase.
+- A tutorial on implementation of Ponte-Castaneda bound (1992)
+  for a non-linear elastic composite is detaile [here](PonteCastaneda1992.html).
 
-# Material Law
-
-## Homogeneisation
-
- - The implementation of linear homogenization schemes in 3d elasticity
-   for biphasic media is described [here](BiphasicLinearHomogenization.html).
+ 
 
 <!-- Local IspellDict: english -->

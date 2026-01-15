@@ -86,6 +86,15 @@ commands inappropriately and erase data used by commands of other
 
 - `SignalManager` shall now work properly in a multithreaded context.
 
+# New `TFEL/Material` features
+
+## Homogenization
+
+The second moments of strains considering a Hashin-Shtrikman scheme
+are available. A new [tutorial](PonteCastaneda1992.html)
+shows how to use it in the implementation of Ponte-Castaneda variational
+bound (1992), within the framework of non-linear elasticity.
+
 # Acknowledgements
 
 The authors are grateful to the many contributors to the `TFEL/MFront`
