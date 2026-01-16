@@ -746,7 +746,8 @@ The number of phases is arbitrary, and the dimension is 2 or 3.
 
 ## Second moments of the strains
 
-Some functions allow to compute the second moments of the strains
+Some functions (defined in the header HomogenizationSecondMoments.hxx)
+allow to compute the second moments of the strains
 if considering a Hashin-Shtrikman type microstructure. More precisely,
 we consider isotropic spherical inclusions embedded in an isotropic
 matrix, and we compute the following moments:
