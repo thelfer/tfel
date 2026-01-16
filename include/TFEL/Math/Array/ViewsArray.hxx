@@ -77,7 +77,7 @@ namespace tfel::math::internals {
   struct ViewsArrayDefaultViewIndexingPolicy<true, MappedType> {
     static_assert(tfel::math::isScalar<MappedType>());
     //! \brief default indexing type
-    using type = tfel::math::ScalarIndexingPolicy<unsigned short>;
+    using type = tfel::math::ScalarIndexingPolicy<unsigned int>;
   };  // end of ViewsArrayDefaultViewIndexingPolicy
 
 }  // end of namespace tfel::math::internals
