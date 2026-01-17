@@ -638,6 +638,9 @@ are available in `TFEL/Math`:
 - the `View` class which assumes a mapping from a contiguous memory,
 - the `CoalescedView` class which allows to give a pointer for each
   component of the mapped mathematical object.
+- the `StrideCoalescedView` class which allows to give a pointer and a
+  stride separating two successive components of the mapped mathematical
+  object.
 
 > **Typical usage of views in `MFront`**
 >
