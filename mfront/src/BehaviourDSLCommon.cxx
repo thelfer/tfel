@@ -1386,8 +1386,8 @@ namespace mfront {
       }
     }
     if (this->mb.areSlipSystemsDefined()) {
-      this->mb.appendToIncludes("#include \"TFEL/Material/" +
-                                this->mb.getClassName() + "SlipSystems.hxx\"");
+      this->mb.appendToIncludes(
+          "#include \"" + this->mb.getSlipSystemHeaderFileName() + "\"");
     }
     //
     if (this->mb.getBehaviourType() ==
