@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 5.1.1 of the
  
 # Issues fixed
 
+## Issue 911: [mfront] include of the SlipSystems are not properly handled when the slip systems are generated for a behaviour variable
+
+For more details, see <https://github.com/thelfer/tfel/issues/911>
+
 ## Issue 908: [tfel-math] mutable value-access operators in `CoalescedView` shall be disabled for const views 
 
 For more details, see <https://github.com/thelfer/tfel/issues/908>
