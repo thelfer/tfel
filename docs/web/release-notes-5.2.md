@@ -126,3 +126,15 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 890: [mfront][homogenization] Add Ponte Castaneda 1992 non linear scheme
+
+For more details, see <https://github.com/thelfer/tfel/issues/890>
+
+## Issue 905: [TFEL/Math] Pointer-heavy CoalescedView
+
+For more details, see <https://github.com/thelfer/tfel/issues/905>
+
+## Issue 853: [tfel-fcheck] Have the possibility to launch multiple call to `tfel-check` simultaenously in a CI context
+
+For more details, see <https://github.com/thelfer/tfel/issues/853>
