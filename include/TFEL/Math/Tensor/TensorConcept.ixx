@@ -467,11 +467,12 @@ namespace tfel::math {
                        getSpaceDimension<StensorType>()),
                   "invalid arguments");
     if constexpr (getSpaceDimension<TensorType>() == 1u) {
-      using tfel::fsalgo::copy;
       typedef numeric_type<TensorType2> T;
       using real = base_type<T>;
       R = tensor<1u, real>::Id();
-      copy<3u>::exe(F.begin(), U.begin());
+      for (unsigned short i = 0; i != 3u; ++i) {
+        U(i) = F(i);
+      }
     } else {
       using tfel::fsalgo::transform;
       using T = numeric_type<TensorType2>;

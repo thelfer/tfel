@@ -1,8 +1,8 @@
 /*!
- * \file   include/TFEL/Math/Array/ViewsArrayIO.hxx
+ * \file   include/TFEL/Math/Array/StridedCoalescedViewsArrayIO.hxx
  * \brief
- * \author Thomas Helfer
- * \date   21/05/2021
+ * \author Tristan Chenaille
+ * \date   15/01/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -11,30 +11,32 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_TFEL_MATH_VIEWSARRAYIO_HXX
-#define LIB_TFEL_MATH_VIEWSARRAYIO_HXX
+#ifndef LIB_TFEL_MATH_STRIDEDCOALESCEDVIEWSARRAYIO_HXX
+#define LIB_TFEL_MATH_STRIDEDCOALESCEDVIEWSARRAYIO_HXX
 
 #include <ostream>
-#include "TFEL/Math/Array/ViewsArray.hxx"
+#include "TFEL/Math/Array/StridedCoalescedViewsArray.hxx"
 
 namespace tfel::math {
 
   template <typename MappedType,
             typename MemoryIndexingPolicyType,
             typename ViewIndexingPolicyType>
-  std::ostream& operator<<(std::ostream& os,
-                           const ViewsArray<MappedType,
-                                            MemoryIndexingPolicyType,
-                                            ViewIndexingPolicyType>& a) {
-    using ViewsArrayType = ViewsArray<MappedType, MemoryIndexingPolicyType,
-                                      ViewIndexingPolicyType>;
-    if constexpr (ViewsArrayType::arity == 1u) {
+  std::ostream& operator<<(
+      std::ostream& os,
+      const StridedCoalescedViewsArray<MappedType,
+                                       MemoryIndexingPolicyType,
+                                       ViewIndexingPolicyType>& a) {
+    using StridedCoalescedViewsArrayType =
+        StridedCoalescedViewsArray<MappedType, MemoryIndexingPolicyType,
+                                   ViewIndexingPolicyType>;
+    if constexpr (StridedCoalescedViewsArrayType::arity == 1u) {
       os << "[";
       for (decltype(a.size()) i = 0; i != a.size(); ++i) {
         os << " " << a(i);
       }
       os << " ]";
-    } else if constexpr (ViewsArrayType::arity == 2u) {
+    } else if constexpr (StridedCoalescedViewsArrayType::arity == 2u) {
       os << "[";
       for (decltype(a.size(0)) i = 0; i != a.size(0);) {
         os << "[";
@@ -49,11 +51,12 @@ namespace tfel::math {
       }
       os << " ]";
     } else {
-      os << "[unsupported ViewsArray object (arity greater than 2)]";
+      os << "[unsupported StridedCoalescedViewsArray object (arity greater "
+            "than 2)]";
     }
     return os;
   }  // end of operator<<
 
 }  // end of namespace tfel::math
 
-#endif /* LIB_TFEL_MATH_VIEWSARRAYIO_HXX */
+#endif /* LIB_TFEL_MATH_STRIDEDCOALESCEDVIEWSARRAYIO_HXX */
