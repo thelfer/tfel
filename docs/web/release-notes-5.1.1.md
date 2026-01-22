@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 5.1.1 of the
 
 # Issues fixed
 
+## Issue 913: `env.sh.in` shall not define the `PYTHONPATH`
+
+For more details, see <https://github.com/thelfer/tfel/issues/913>
+
 ## Issue 911: [mfront] include of the slip-systems are not properly handled when the slip systems are generated for a behaviour variable
 
 For more details, see <https://github.com/thelfer/tfel/issues/911>
