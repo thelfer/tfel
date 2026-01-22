@@ -177,7 +177,7 @@ namespace tfel::math {
         const std::array<typename IndexingPolicyType::size_type,
                          IndexingPolicyType::arity>& i) noexcept
         requires(!is_const) {
-      if constexpr (array_policy::isMakeConstReferenceTrivial) {
+      if constexpr (array_policy::isMakeReferenceTrivial) {
         return *(this->ptrs[this->getIndex(i)]);
       } else {
         return array_policy::make_reference(
