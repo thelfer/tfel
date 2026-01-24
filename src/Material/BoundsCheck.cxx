@@ -34,7 +34,7 @@ namespace tfel::material {
       const std::string_view b) {
     tfel::raise<OutOfBoundsException>(
         "BoundsCheckBase::throwOutOfUpperBoundsException: variable '" +
-        std::string{n} + "' is below its lower bound (" + std::string{v} + ">" +
+        std::string{n} + "' is above its upper bound (" + std::string{v} + ">" +
         std::string{b} + ")");
   }
 
@@ -62,7 +62,7 @@ namespace tfel::material {
       const std::string_view v,
       const std::string_view b) {
     std::cerr << "BoundsCheckBase::displayOutOfUpperBoundsWarning : variable '"
-              << n << "' is below its lower bound (" << v << ">" << b << ")\n";
+              << n << "' is above its upper bound (" << v << ">" << b << ")\n";
   }
 
   void BoundsCheckBase::displayOutOfBoundsWarning(const std::string_view n,
