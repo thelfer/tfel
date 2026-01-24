@@ -32,7 +32,7 @@ namespace tfel {
                                                          const std::string& b) {
       throw(OutOfBoundsException(
           "BoundsCheckBase::throwOutOfUpperBoundsException : variable '" + n +
-          "' is below its lower bound (" + v + ">" + b + ")"));
+          "' is above its upper bound (" + v + ">" + b + ")"));
     }
 
     void BoundsCheckBase::throwOutOfBoundsException(const std::string& n,
@@ -59,7 +59,7 @@ namespace tfel {
                                                          const std::string& b) {
       using namespace std;
       cerr << "BoundsCheckBase::displayOutOfUpperBoundsWarning : variable '"
-           << n << "' is below its lower bound (" << v << ">" << b << ")"
+           << n << "' is above its upper bound (" << v << ">" << b << ")"
            << endl;
     }
 
