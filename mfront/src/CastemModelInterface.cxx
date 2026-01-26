@@ -663,7 +663,8 @@ namespace mfront {
     CastemModelInterface::writeUMATFunctionArguments(os);
     os << "{\n";
     // checks on material properties
-    const auto mps_size = bdata.getMaterialProperties().size();
+    const auto mps_size =
+        getTypeSize(bdata.getMaterialProperties()).getValueForDimension(3);
     os << "if (" << mps_size << " != *NPROPS){\n"
        << "std::cerr << \"" << md.className
        << ": invalid number of material properties \"";
@@ -677,7 +678,8 @@ namespace mfront {
        << "return;\n"
        << "}\n";
     // checks on internal state variables
-    const auto isvs_size = bdata.getMaterialProperties().size();
+    const auto isvs_size =
+        getTypeSize(bdata.getPersistentVariables()).getValueForDimension(3);
     os << "if (" << isvs_size << " != *NSTATV){\n"
        << "std::cerr << \"" << md.className
        << ": invalid number of state variables \"";
