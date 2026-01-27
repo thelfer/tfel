@@ -111,17 +111,6 @@ which can be shown to be equivalent to
     \langle \epsiloneq^2\rangle_r= \Frac{2}{3c_r}\deriv{W_0^{\mathrm{eff}}}{\mu_0^r}
   \end{aligned}
   
-## Summary
-
-The resolution hence consists in 
-\[
- \text{Find}\,e^r=\langle \epsiloneq^2\rangle_r\,\text{such that}\quad\langle \epsiloneq^2\rangle_r= \Frac{2}{3c_r}\deriv{W_0^{\mathrm{eff}}}{\mu_0^r}
-\]
-where \(W_0^{\mathrm{eff}}\) is the effective energy of a linear comparison composite whose elastic moduli are \(k_r\) annd \(\mu_0^r\) such that:
-\[
-\mu_0^r= \Frac23\deriv{f_r}{e}\left(\langle \epsiloneq^2\rangle_r\right).
-\]
- 
 ## Macroscopic stress and tangent operator
 
 The macroscopic stress $\overline{\tsigma}$ is also shown to be (see [@ponte_castaneda_nonlinear_1998], eq. (4.41)):
@@ -136,8 +125,40 @@ The tangent operator is given by
   \end{aligned}
   Here, the derivative of $\tenseurq C_0^{\mathrm{eff}}$ w.r.t. $\overline{\tepsilon}$ can be computed by derivating the Hashin-Shtrikman
   moduli w.r.t. the secant moduli $\mu_0^r$ and the derivatives of these moduli w.r.t. $\overline{\tepsilon}$. However, it is tedious and in the implementation, we see that the convergence of the Newton Raphson algorithm is good if we only retain the first term \(\tenseurq C_0^{\mathrm{eff}}\) in the tangent operator.
+  
+  
+## Summary and possible implementations
+
+The resolution hence consists in 
+\[
+ \text{Find}\,e^r=\langle \epsiloneq^2\rangle_r\,\text{such that}\quad\langle \epsiloneq^2\rangle_r= \Frac{2}{3c_r}\deriv{W_0^{\mathrm{eff}}}{\mu_0^r}
+\]
+where \(W_0^{\mathrm{eff}}\) is the effective energy of a linear comparison composite whose elastic moduli are \(k_r\) annd \(\mu_0^r\) such that:
+\[
+\mu_0^r= \Frac23\deriv{f_r}{e}\left(\langle \epsiloneq^2\rangle_r\right).
+\]
+
+### Possible implementations
+
+The iterative resolution of the non-linear equation can be summarized as
+\[
+\underset{\substack{\\ \\ \\ \Downarrow\\ \\ \\\text{analytic / finite difference}\\ \\ \\\text{\texttt{@BehaviourVariable} / directly provided}}}{\mu_0^r= \Frac23\deriv{f_r}{e}\left(\langle \epsiloneq^2\rangle_r\right)}\quad\rightarrow\quad \underset{\substack{\\ \\ \\ \Downarrow\\ \\ \\\text{mean-field scheme / morphological tensors}\\ \\ \\\texttt{tfel::material::homogenization}}}{W_0^{\mathrm{eff}}\left(\mu_0^r\right)= \dfrac12\overline{\tepsilon}\dbldot\tenseurq C_0^{\mathrm{eff}}\dbldot\overline{\tepsilon}}\quad\rightarrow\quad\underset{\substack{\\ \\ \\ \Downarrow\\ \\ \\\text{analytic / finite difference}\\ \\ \\\texttt{tfel::material::homogenization}}}{\langle \epsiloneq^2\rangle_r= \Frac{2}{3c_r}\deriv{W_0^{\mathrm{eff}}}{\mu_0^r}}
+\]
+
+And the macroscopic stress must also be computed:
+\[
+\overline{\tsigma}=\tenseurq C_0^{\mathrm{eff}}\dbldot\overline{\tepsilon}
+\]
+
+The first step of the resolution consists in computing the secant modulus $\mu_0^r$ and it can be done analytically (as below) or via finite difference or automatic differentiation. Moreover, for both strategies, we could use a `BehaviourVariable`, defining the function $f_r$ in an external file (in our example, the function is to simple to do that).
+
+The second step consists in computing the effective energy $W_0^{\mathrm{eff}}$. This will be done via `tfel::material::homogenization`. This `namespace` provides classical mean-field schemes (we use a Hashin-Shtrikman bound in our example below). In another [tutorial](./PonteCastaneda1996.html) we show that we can take into account more specifically the morphology of the composite by providing interaction tensors.
+
+The third step consists in the computation of the second-moments. This is also done via `tfel::material::homogenization`. Here again, there are two strategies: analytical computation when possible, and finite difference or automatic differentiation when the analytical derivation is too tedious or even impossible. In our example below, the computation is analytic.
 
 # Implementation in MFront
+
+## Example used for the implementation
 
 In the application of the implementation, we take the example of the following behaviour:
   \begin{aligned}

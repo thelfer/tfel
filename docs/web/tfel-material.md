@@ -456,14 +456,17 @@ The expressions of Eshelby tensor can be found in [@torquato_2002]
 for the spheroidal inclusions and in [@eshelby_1957] for the general ellipsoid
 (three different semi-axes).
 
+![Ellipsoidal inclusion](./img/ellipsoide_C0.png){width=35%}
+
 Now if we consider an ellipsoid whose elasticity is \(\tenseurq C_i\), embedded
 in an infinite homogeneous medium whose elasticity is \(\tenseurq C_0\),
 submitted to a external uniform strain field at infinity \(\tenseur E\),
 the strain field within the ellipsoid is uniform and given by
 
-\(\tenseur \varepsilon = \tenseurq A:\tenseur E\)
+\(\tenseur \varepsilon = \tenseurq A_i:\tenseur E,\qquad\text{where}\quad
+ \tenseurq A_i = \left[\tenseurq I + \tenseurq P_0:\left(\tenseurq C_i -\tenseurq C_0\right)\right]^{-1}\)
 
-where \(\tenseurq A \) is the strain localisation (or concentration) tensor.
+where \(\tenseurq A_i \) is the strain localisation (or concentration) tensor.
 
 ### Computation in isotropic reference medium
 
@@ -487,7 +490,7 @@ The second one computes the Hill tensor for an axisymmetrical ellipsoid (or sphe
 The user must provides the normal vector `n_a` for the axis, and `e` for the aspect ratio.
 The third line computes the Hill tensor of a more general ellipsoid whose semi-axis lengths
 are `a`,`b`,`c`. The axis `a` is related to direction given by `n_a` and `b` is related to the
-direction given by `n_b`, which must be normal to `n_a`.
+direction given by `n_b`, which must be normal to `n_a` (see the figure above).
 
 An `IsotropicModuli` can also be passed for the elasticity, as follows:
 
@@ -567,6 +570,8 @@ const auto A_C = computePlaneStrainLocalisationTensor<stress>(IM0,C_i,n_a,a,b);
 The header `AnisotropicEshelbyTensor.hxx` introduces
 the computation of the Eshelby tensors and Hill tensors
 of general ellipsoids embedded in an anisotropic medium.
+The anisotropic elasticity \(\tenseurq C_0\) must be
+expressed in the global basis.
 
 These tensors can be computed as follows:
 
@@ -615,7 +620,7 @@ The available schemes are:
  - dilute scheme
  - Ponte Castaneda and Willis scheme
 
-Each scheme is based on the average of the localisation tensor \(\tenseur A \)
+Each scheme is based on the average of the localisation tensor \(\tenseurq A_i \)
 defined above. This average is computed assuming different distributions
 of ellipsoids. Hence different cases are considered:
 
@@ -624,6 +629,8 @@ of ellipsoids. Hence different cases are considered:
  - uniform isotropic distribution of orientations (the ellipsoids have no preferential orientation)
  - transverse isotropic distribution of orientations (one axis \(\tenseur n_a\)
  of the ellipsoid is fixed, the others are uniformly distributed in the transverse plane)
+
+![The three distributions of orientations considered here: oriented, isotropic, and transverse isotropic](./img/distributions.png){width=100%}
 
 Hence we can compute the homogenized stiffness returned
 by the available schemes. For example, for the distribution of spheres:
@@ -657,6 +664,16 @@ be created by the user. It is defined by two vectors \(\tenseur n_a,\tenseur n_b
 Distribution<stress> D = {.n_a = n_a, .a = a, .n_b = n_b, .b = b, .c = c};
 ~~~~
 
+![The three distributions of orientations can be considered with PCW scheme, but a big ellipsoid defines the spatial distribution of inclusions](./img/distributions_PCW.png){width=100%}
+
+Indeed, in Ponte-Castaneda and Willis scheme, there is a difference between
+the ellipsoid which defines the distribution of the inclusions, and the
+ellipsoid which defines the shape of the inclusions (in the image above, we represent
+the distribution `D` of inclusions by a big ellipsoid, with colored axes).
+A bigger axis for `D` means that along this axis, the distribution of inclusions
+is more diluted. A short axis means that, on the contrary, the distribution is denser
+along this axis.
+
 For the isotropic distribution of ellipsoids, we can do:
 
 ~~~~{.cpp}
@@ -669,7 +686,7 @@ Here, the two first schemes return `KGModuli` objects, whereas
 `computeIsotropicPCWScheme` returns a `st2tost2` object. For this
 latter case, the ellipsoids have indeed a uniform isotropic
 distribution of orientations, but the user might use a non-isotropic
-`Distribution D`.
+`Distribution D` (it corresponds to the configuration at the center on the image).
 And finally, we can consider a transverse isotropic distribution
 of inclusions:
 
@@ -680,7 +697,7 @@ const auto C_PCW = computeTransverseIsotropicPCWScheme<stress>(IM0,f,IMi,n_a,a,b
 ~~~~
  
 Here, the three above schemes return `st2tost2` objects.
-Because the functions are based on the average of the localisation tensor \(\tenseur A \)
+Because the functions are based on the average of the localisation tensor \(\tenseurq A_i \)
 associated with each distribution, a `Base` function is also defined for each scheme,
 that only takes in argument the average of the localisation tensor `A_av`. We then
 can compute a homogenized stiffness with a very general averaged localisator:
@@ -788,6 +805,8 @@ The `ParticulateMicrostructure class` is available in 3d an 2d
 via 2 template parameters: `ParticulateMicrostructure<N,stress>`
 with `N` the dimension. For the details, see the file 'MicrostructureDescription.hxx'
 which introduces the `class`.
+
+![The `ParticulateMicrostructure class` is made of a matrix which embeds different distributions of inclusions](./img/ParticulateMicrostructure.png){width=50%}
 
 A `ParticulateMicrostructure` consists on a matrix, in which are embedded
 several distributions of inclusions. The class has three (private) attributes:
@@ -1020,7 +1039,7 @@ It is `12` by default.
 A last method of the `ParticulateMicrostructure` object allows to replace
 the matrix phase:
 
-~~~~{.py}
+~~~~{.cpp}
 micro_1.replaceMatrixPhase(C0);
 std::cout<< micro_1.get_matrix_elasticity()<< std::endl;
 std::cout<< micro_1.is_isotropic_matrix()<< std::endl;
@@ -1066,16 +1085,16 @@ the computation considers an isotropic matrix when computing the Hill tensors
 relative to the inclusions, at each iteration of the algorithm. Indeed,
 the homogenized stiffness may be non isotropic, so that the user can
 make the choice of isotropizing this homogenized stiffness at each iteration.
-Otherwise, he can put `False`, so that a numerical integration (resulting
+Otherwise, he can put `false`, so that a numerical integration (resulting
 in a slower computation) will be performed to compute the Hill tensors.
 Moreover, an integer parameter can be added after the boolean, that indicates
 the number of subdivisions in the numerical integration. This value is `12` by
 default:
 
-~~~~{.py}
+~~~~{.cpp}
 micro_2.addInclusionPhase(distrib_O);
-hmSC_iso=computeSelfConsistent<3u,stress>(micro_2,10,True);
-hmSC_aniso=computeSelfConsistent<3u,stress>(micro_2,10,False,10);
+hmSC_iso=computeSelfConsistent<3u,stress>(micro_2,10,true);
+hmSC_aniso=computeSelfConsistent<3u,stress>(micro_2,10,false,10);
 std::cout<< "SC iso: "<< hmSC_iso.homogenized_stiffness<< std::endl;
 std::cout<< "SC aniso: "<< hmSC_aniso.homogenized_stiffness<< std::endl;
 ~~~~
@@ -1092,7 +1111,7 @@ Moreover, if anisotropic, another parameter can be passed to specify the
 number of subdivisions in the numerical integration (this value is
 `12` by default):
 
-~~~~{.py}
+~~~~{.cpp}
 micro_1.replaceMatrixPhase(C0);
 micro_1.removeInclusionPhase(0);
 micro_1.addInclusionPhase(distrib_O);
