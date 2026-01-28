@@ -153,7 +153,7 @@ in the case of the Taylor scheme. This is done via `@ProvidesTangentOperator`.
     Dt = f * Dt1 + (1 - f) * Dt2;
   }
 }
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
 
 We can see that we start by integrating the local behaviour.
 Let's look on the first phase:
