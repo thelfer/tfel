@@ -77,7 +77,7 @@ namespace tfel::math::internals {
   struct ViewsArrayDefaultViewIndexingPolicy<true, MappedType> {
     static_assert(tfel::math::isScalar<MappedType>());
     //! \brief default indexing type
-    using type = tfel::math::ScalarIndexingPolicy<unsigned short>;
+    using type = tfel::math::ScalarIndexingPolicy<unsigned int>;
   };  // end of ViewsArrayDefaultViewIndexingPolicy
 
 }  // end of namespace tfel::math::internals
@@ -141,7 +141,7 @@ namespace tfel::math {
      */
     explicit TFEL_HOST_DEVICE constexpr ViewsArray(
         const data_pointer_type p, const MemoryIndexingPolicyType& mp) noexcept
-        : data_pointer(p), MemoryIndexingPolicyType(mp) {
+        : MemoryIndexingPolicyType(mp), data_pointer(p) {
       static_assert(!MemoryIndexingPolicyType::hasFixedSizes, "invalid call");
     }
     /*!
@@ -151,7 +151,7 @@ namespace tfel::math {
     explicit TFEL_HOST_DEVICE constexpr ViewsArray(
         const data_pointer_type p,
         const typename MemoryIndexingPolicyType::size_type s) noexcept
-        : data_pointer(p), MemoryIndexingPolicyType(s) {
+        : MemoryIndexingPolicyType(s), data_pointer(p) {
       static_assert(!MemoryIndexingPolicyType::hasFixedSizes, "invalid call");
       static_assert(MemoryIndexingPolicyType::arity == 1u, "invalid call");
     }
@@ -163,7 +163,7 @@ namespace tfel::math {
         const data_pointer_type p,
         const std::array<typename MemoryIndexingPolicyType::size_type,
                          MemoryIndexingPolicyType::arity>& msizes) noexcept
-        : data_pointer(p), MemoryIndexingPolicyType(msizes) {
+        : MemoryIndexingPolicyType(msizes), data_pointer(p) {
       static_assert(!MemoryIndexingPolicyType::hasFixedSizes, "invalid call");
     }
     //! \brief copy constructor

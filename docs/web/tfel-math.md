@@ -638,6 +638,9 @@ are available in `TFEL/Math`:
 - the `View` class which assumes a mapping from a contiguous memory,
 - the `CoalescedView` class which allows to give a pointer for each
   component of the mapped mathematical object.
+- the `StrideCoalescedView` class which allows to give a pointer and a
+  stride separating two successive components of the mapped mathematical
+  object.
 
 > **Typical usage of views in `MFront`**
 >
@@ -760,7 +763,9 @@ The result of this operation is the matrix:
 The `View` class allows to interpret a contiguous memory area as a
 tensorial object. Such views are not efficient on GPUs where coalescent
 memory access are preferable. The newly introduced `CoalescedView` class
-offers a solution to this issue.
+offers a solution to this issue by storing one pointer per component.
+This is essentially a "scattered" view that achieves coalescent memory
+access when the backend storage is properly organized.
 
 A coalesced view is initialized by an array of pointers to the
 components of the mapped object, as illustrated in the following
@@ -775,6 +780,37 @@ auto s1 = map<stensor<2u, int>>(ptrs);
 In this snippet, the components of the symmetric tensor `s1` are not
 stored continuously but each component is associated to an independent
 pointer.
+
+### Views of tensorial objects with strided coalescent memory access (SoA layout)
+
+While `CoalescedView` stores one pointer per component, the
+`StridedCoalescedView` class provides an alternative approach using a
+single pointer and a stride value. This is particularly advantageous for
+Structure-of-Arrays (SoA) layouts where components are regularly spaced
+in memory.
+
+The main benefits of this approach are:
+
+- **Register savings on GPU**: storing one pointer plus one stride value
+  instead of \(N\) pointers significantly reduces register pressure,
+  which is a critical resource on GPUs.
+- **Negligible overhead**: recomputing a pointer address for each access
+  costs only one floating-point operation (one multiplication and one
+  addition), which is essentially free on modern GPU architectures.
+
+A strided coalesced view is created using the `map_strided` function, as
+illustrated in the following snippet:
+
+~~~~{.cxx}
+// SoA layout: [s0_c0, s1_c0, s0_c1, s1_c1, s0_c2, s1_c2, s0_c3, s1_c3]
+int values[8] = {1, 10, 2, 20, 3, 30, 4, 40};
+auto s1 = map_strided<stensor<2u, int>>(&values[0], 2);
+auto s2 = map_strided<stensor<2u, int>>(&values[1], 2);
+~~~~
+
+In this example, `s1` and `s2` are two symmetric tensors stored in SoA
+format with a stride of 2. The component `s1[i]` is located at address
+`&values[0] + i * 2`, while `s2[i]` is at `&values[1] + i * 2`.
 
 # Solvers for fixed size non-linear systems {#sec:tfel_math:non_linear_solvers}
 

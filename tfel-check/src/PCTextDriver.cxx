@@ -30,7 +30,7 @@ namespace tfel::check {
       : PCILogDriver(os), use_terminal_colors(b) {}
 
   PCTextDriver::PCTextDriver(const std::string& f, const bool b)
-      : PCILogDriver(f), use_terminal_colors(b)  {}
+      : PCILogDriver(f), use_terminal_colors(b) {}
 
   PCTextDriver::~PCTextDriver() = default;
 

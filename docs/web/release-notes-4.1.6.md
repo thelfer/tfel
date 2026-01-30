@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 4.1.6 of the
 
 # Issues fixed
 
-## Issue #902: [castem] support for material properties in point-wise models is broken
+## Issue 915: [mfront] Check on the number of state variables is broken in the Cast3M interface for point-wise models
+
+For more details, see: <https://sourceforge.net/p/tfel/tickets/915/>
+
+## Issue 902: [castem] support for material properties in point-wise models is broken
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/902/>

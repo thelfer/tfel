@@ -31,6 +31,27 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 5.2 of the
 `TFEL` project.
 
+# New `TFEL/Math` features
+
+## Views of tensorial objects with coalescent memory access for data separated by a constant stride
+
+In previous versions, the `View` class allows interpreting a contiguous
+memory area as a tensorial object. The `CoalescedView` class allows to
+create a tensorial object where each component is referred to by its own
+pointer.
+
+The `StridedCoalescedView` assumes that each component is separated by a
+constant stride in memory, so that it only have to store one pointer and
+the value of the stride.
+
+Such views are efficient on GPUs where coalescent memory access are
+preferable.
+
+~~~~{.cxx}
+int values[8] = {1, 10, 2, 20, 3, 30, 4, 40};
+auto s1 = map_strided<stensor<2u, int>>(values, 2);
+~~~~
+
 # New features in `tfel-check`
 
 ## Parallelization
@@ -105,3 +126,15 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 890: [mfront][homogenization] Add Ponte Castaneda 1992 non linear scheme
+
+For more details, see <https://github.com/thelfer/tfel/issues/890>
+
+## Issue 905: [TFEL/Math] Pointer-heavy CoalescedView
+
+For more details, see <https://github.com/thelfer/tfel/issues/905>
+
+## Issue 853: [tfel-fcheck] Have the possibility to launch multiple call to `tfel-check` simultaenously in a CI context
+
+For more details, see <https://github.com/thelfer/tfel/issues/853>

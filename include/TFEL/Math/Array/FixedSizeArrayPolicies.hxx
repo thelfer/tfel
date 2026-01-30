@@ -20,21 +20,21 @@
 namespace tfel::math {
 
   //! \brief an array policy based on the fixed size vector indexing policy
-  template <unsigned short N, typename ValueType>
+  template <unsigned int N, typename ValueType>
   struct FixedSizeVectorPolicy
       : StandardArrayPolicy<ValueType,
-                            FixedSizeVectorIndexingPolicy<unsigned short, N>> {
+                            FixedSizeVectorIndexingPolicy<unsigned int, N>> {
   };  // end of struct FixedSizeVectorPolicy
 
   /*!
    * \brief an array policy describing a fixed size matrix stored in row major
    * format based on the fixed size matrix indexing policy.
    */
-  template <unsigned short N, unsigned short M, typename ValueType>
+  template <unsigned int N, unsigned int M, typename ValueType>
   struct FixedSizeRowMajorMatrixPolicy
       : StandardArrayPolicy<
             ValueType,
-            FixedSizeRowMajorMatrixIndexingPolicy<unsigned short, N, M>> {
+            FixedSizeRowMajorMatrixIndexingPolicy<unsigned int, N, M>> {
   };  // end of struct FixedSizeRowMajorMatrixPolicy
 
 }  // end of namespace tfel::math
