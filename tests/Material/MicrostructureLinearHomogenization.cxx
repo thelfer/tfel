@@ -144,15 +144,15 @@ struct MicrostructureLinearHomogenizationTest final
     micro1.addInclusionPhase(distrib_o);
 
     bool isotropic = true;
-    auto h_s_SC1 = computeSelfConsistent<3u, stress>(micro1, 12, isotropic);
+    auto h_s_SC1 = computeSelfConsistent<3u, stress>(micro1, real(1e-6), isotropic);
     auto Chom_SC_1 = h_s_SC1.homogenized_stiffness;
     auto h_s_SC2 =
-        computeSelfConsistent<3u, stress>(micro1, 12, not(isotropic), 10);
+        computeSelfConsistent<3u, stress>(micro1, real(1e-6), not(isotropic), 10);
     auto Chom_SC_2 = h_s_SC2.homogenized_stiffness;
     TFEL_TESTS_ASSERT(tfel::material::relative_error(Chom_SC_1, Chom_SC_2) <
                       10 / stress(1) * young0 * eps);
 
-    auto h_s_SC3 = computeSelfConsistent<3u, stress>(micro2, 12, isotropic);
+    auto h_s_SC3 = computeSelfConsistent<3u, stress>(micro2, real(1e-6), isotropic);
     auto Chom_SC_3 = h_s_SC3.homogenized_stiffness;
     auto h_s_MT3 = computeMoriTanaka<3u, stress>(micro2);
     auto Chom_MT_3 = h_s_MT3.homogenized_stiffness;
