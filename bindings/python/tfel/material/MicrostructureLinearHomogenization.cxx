@@ -71,13 +71,13 @@ requires(
         HomogenizationScheme<N, StressType> computeSelfConsistentScheme(
             tfel::material::homogenization::elasticity::
                 ParticulateMicrostructure<N, StressType> &micro,
-            int max_iter,
+            const tfel::types::real<StressType> &precision,
             bool isotropic,
             int max_iter_anisotropic_integration,
             const std::vector<tfel::math::stensor<N, StressType>>
                 &polarisations) {
   return tfel::material::homogenization::elasticity::computeSelfConsistent<
-      N, StressType>(micro, polarisations, max_iter, isotropic,
+      N, StressType>(micro, polarisations, precision, isotropic,
                      max_iter_anisotropic_integration);
 }
 
@@ -96,7 +96,7 @@ void declareMicrostructureLinearHomogenization(pybind11::module_ &m) {
         pybind11::arg("max_iter_anisotropic_integration") = 12,
         pybind11::arg("polarisations") = pola);
   m.def("computeSelfConsistentScheme", &computeSelfConsistent<3, double>,
-        pybind11::arg("micro"), pybind11::arg("max_iter"),
+        pybind11::arg("micro"), pybind11::arg("precision"),
         pybind11::arg("isotropic"),
         pybind11::arg("max_iter_anisotropic_integration") = 12,
         pybind11::arg("polarisations") = pola);

@@ -1054,13 +1054,16 @@ Let us try:
 using namespace tfel::material::homogenization::elasticity;
 auto hmDS=computeDilute<3u,stress>(micro_1);
 auto hmMT=computeMoriTanaka<3u,stress>(micro_1);
-auto hmSC=computeSelfConsistent<3u,stress>(micro_1,10,true);
+auto hmSC=computeSelfConsistent<3u,stress>(micro_1,1e-6,true);
 ~~~~
 
 We note that `computeSelfConsistent` not only takes
-the microstructure as an argument, but also takes one integer (`10`) as
-a parameter, which is the maximum number of iteration in the self-consistent
-iterative algorithm. Moreover, the `bool` parameter (`true`) precises if
+the microstructure as an argument, but also takes one real (`1e-6`) as
+a parameter, which pilots the precision of the result. Indeed, at each iteration
+of the self-consistent iterative algorithm, the function computes the relative
+difference between the new and the old homogenized stiffness. This relative
+difference must be smaller than the real given as a parameter.
+Moreover, the `bool` parameter (`true`) precises if
 the computation considers an isotropic matrix when computing the Hill tensors
 relative to the inclusions, at each iteration of the algorithm. Indeed,
 the homogenized stiffness may be non isotropic, so that the user can
