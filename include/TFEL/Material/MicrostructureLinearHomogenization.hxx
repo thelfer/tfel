@@ -101,7 +101,7 @@ namespace tfel::material::homogenization::elasticity {
                                               StressType>())
       HomogenizationScheme<N, StressType> computeSelfConsistent(
           ParticulateMicrostructure<N, StressType> &,
-          int max_iter,
+          const tfel::types::real<StressType> &,
           bool isotropic,
           int max_iter_anisotropic_integration = 8,
           const std::vector<tfel::math::stensor<N, StressType>> & = {});
