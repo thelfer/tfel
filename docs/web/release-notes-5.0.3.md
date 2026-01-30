@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 5.0.3 of the
 
 # Issues fixed
 
+## Issue 917: Fix `TFELMFrontStaticConfig.cmake.in` and `TFELMaterialStaticConfig.cmake.in`
+
+For more details, see <https://github.com/thelfer/tfel/issues/917>
+
 ## Issue 897: [python-bindings] `makeConstraintOptions` is not properly wrapped
 
 For more details, see <https://github.com/thelfer/tfel/issues/897>
