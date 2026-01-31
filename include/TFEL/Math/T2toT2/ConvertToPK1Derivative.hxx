@@ -40,11 +40,11 @@ namespace tfel::math {
    * stress with respect to the deformation gradient.
    */
   template <unsigned short N, typename stress, typename real>
-  t2tot2<N, stress>
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr t2tot2<N, stress>
   convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
       const t2tost2<N, stress>&,
       const tensor<N, real>&,
-      const stensor<N, stress>&);
+      const stensor<N, stress>&) noexcept;
 
   /*!
    * \brief convert the derivative of the Cauchy stress with respect to the
@@ -63,11 +63,12 @@ namespace tfel::math {
    * \param[in] s: Cauchy stress
    */
   template <unsigned short N, typename stress, typename real>
-  void convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+  TFEL_HOST_DEVICE constexpr void
+  convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
       t2tot2<N, stress>&,
       const t2tost2<N, stress>&,
       const tensor<N, real>&,
-      const stensor<N, stress>&);
+      const stensor<N, stress>&) noexcept;
 
   /*!
    * \brief convert the derivative of the second Piola-Kirchoff stress with
@@ -87,11 +88,11 @@ namespace tfel::math {
    * stress with respect to the deformation gradient.
    */
   template <unsigned short N, typename stress, typename real>
-  t2tot2<N, stress>
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr t2tot2<N, stress>
   convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
       const st2tost2<N, stress>&,
       const tensor<N, real>&,
-      const stensor<N, stress>&);
+      const stensor<N, stress>&) noexcept;
 
   /*!
    * \brief convert the derivative of the second Piola-Kirchoff stress with
@@ -110,12 +111,12 @@ namespace tfel::math {
    * \param[in] s: Cauchy stress
    */
   template <unsigned short N, typename stress, typename real>
-  void
+  TFEL_HOST_DEVICE constexpr void
   convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
       t2tot2<N, stress>&,
       const st2tost2<N, stress>&,
       const tensor<N, real>&,
-      const stensor<N, stress>&);
+      const stensor<N, stress>&) noexcept;
 
 }  // end of namespace tfel::math
 
