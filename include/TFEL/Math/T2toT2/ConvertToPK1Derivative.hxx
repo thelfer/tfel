@@ -109,7 +109,7 @@ namespace tfel::math {
            (space_dimension<PK2StressDerivativeType> ==
             space_dimension<DeformationGradientType>)&&  //
            (space_dimension<PK2StressDerivativeType> ==
-            space_dimension<DeformationGradientType>))  //
+            space_dimension<CauchyStressType>))  //
       TFEL_HOST_DEVICE [[nodiscard]] constexpr          //
       t2tot2<space_dimension<PK2StressDerivativeType>,
              numeric_type<PK2StressDerivativeType>>  //
