@@ -671,7 +671,7 @@ namespace tfel::math {
       (space_dimension<CauchyStressDerivativeType> ==
        space_dimension<DeformationGradientType>)&&  //
       (space_dimension<CauchyStressDerivativeType> ==
-       space_dimension<DeformationGradientType>))  //
+       space_dimension<CauchyStressType>))  //
       TFEL_HOST_DEVICE [[nodiscard]] constexpr     //
       t2tot2<space_dimension<CauchyStressDerivativeType>,
              numeric_type<CauchyStressDerivativeType>>  //
