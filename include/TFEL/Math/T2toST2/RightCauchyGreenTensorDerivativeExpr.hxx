@@ -32,8 +32,9 @@ namespace tfel::math {
   /*!
    * Partial specialisation for 1D tensor
    */
-  template <typename T2toST2Type>
-  struct Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<1u>>
+  template <NoUnitT2toST2Concept T2toST2Type>
+  struct [[nodiscard]] Expr<T2toST2Type,
+                            RightCauchyGreenTensorDerivativeExpr<1u>>
       : public T2toST2ConceptBase<
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<1u>>>,
         public array_holder<9u, numeric_type<T2toST2Type>> {
@@ -46,7 +47,7 @@ namespace tfel::math {
      * \param[in] B : second tensor of the product
      */
     template <TensorConcept TensorType>
-    TFEL_MATH_INLINE2 Expr(const TensorType& F) {
+    TFEL_HOST_DEVICE constexpr Expr(const TensorType& F) noexcept {
       static_assert(getSpaceDimension<T2toST2Type>() ==
                     getSpaceDimension<TensorType>());
       static_assert(isAssignableTo<numeric_type<TensorType>,
@@ -63,24 +64,25 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    TFEL_MATH_INLINE const value_type& operator()(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 3 + j];
     }  // end of operator()
     /*!
      * \return the runtime properties
      */
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
+    getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
-  };  // end of struct
-      // Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> >
+  };  // end of Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> >
 
   /*!
    * Partial specialisation for 2D tensor
    */
-  template <typename T2toST2Type>
-  struct Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<2u>>
+  template <NoUnitT2toST2Concept T2toST2Type>
+  struct [[nodiscard]] Expr<T2toST2Type,
+                            RightCauchyGreenTensorDerivativeExpr<2u>>
       : public T2toST2ConceptBase<
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<2u>>>,
         public array_holder<20u, numeric_type<T2toST2Type>> {
@@ -93,7 +95,7 @@ namespace tfel::math {
      * \param[in] B : second tensor of the product
      */
     template <TensorConcept TensorType>
-    TFEL_MATH_INLINE2 Expr(const TensorType& F) {
+    TFEL_HOST_DEVICE constexpr Expr(const TensorType& F) noexcept {
       static_assert(getSpaceDimension<T2toST2Type>() ==
                     getSpaceDimension<TensorType>());
       static_assert(isAssignableTo<numeric_type<TensorType>,
@@ -121,24 +123,25 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    TFEL_MATH_INLINE const value_type& operator()(
-        const unsigned short i, const unsigned short j) const {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
+        const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 5 + j];
     }  // end of operator()
     /*!
      * \return the runtime properties
      */
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
+    getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
-  };  // end of struct
-      // Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> >
+  };  // end of Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> >
 
   /*!
    * Partial specialisation for 3D tensor
    */
-  template <typename T2toST2Type>
-  struct Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<3u>>
+  template <NoUnitT2toST2Concept T2toST2Type>
+  struct [[nodiscard]] Expr<T2toST2Type,
+                            RightCauchyGreenTensorDerivativeExpr<3u>>
       : public T2toST2ConceptBase<
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<3u>>>,
         public array_holder<54u, numeric_type<T2toST2Type>> {
@@ -151,7 +154,7 @@ namespace tfel::math {
      * \param[in] B : second tensor of the product
      */
     template <TensorConcept TensorType>
-    TFEL_MATH_INLINE2 Expr(const TensorType& F) {
+    TFEL_HOST_DEVICE constexpr Expr(const TensorType& F) noexcept {
       static_assert(getSpaceDimension<T2toST2Type>() ==
                     getSpaceDimension<TensorType>());
       static_assert(isAssignableTo<numeric_type<TensorType>,
@@ -209,18 +212,18 @@ namespace tfel::math {
      * \param[in] i : line   index
      * \param[in] j : column index
      */
-    TFEL_MATH_INLINE const value_type& operator()(
-        const unsigned short i, const unsigned short j) const {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
+        const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 9 + j];
     }  // end of operator()
     /*!
      * \return the runtime properties
      */
-    TFEL_MATH_INLINE RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
+    getRunTimeProperties() const noexcept {
       return RunTimeProperties();
     }
-  };  // end of struct
-      // Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> >
+  };  // end of Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> >
 
 }  // end of namespace tfel::math
 
