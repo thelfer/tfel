@@ -55,17 +55,17 @@ namespace tfel::math {
   template <MappableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType = typename MappedType::indexing_policy>
   using StridedCoalescedView = CoalescedViewBase<
-    MappedType,
-    IndexingPolicyType,
-    StridedCoalescedAccessPolicy<MappedType, IndexingPolicyType>>;
+      MappedType,
+      IndexingPolicyType,
+      StridedCoalescedAccessPolicy<MappedType, IndexingPolicyType>>;
 
   template <MappableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy>
-  using ConstStridedCoalescedView = StridedCoalescedView<
-    const std::remove_cv_t<MappedType>,
-    IndexingPolicyType>;
-  
+  using ConstStridedCoalescedView =
+      StridedCoalescedView<const std::remove_cv_t<MappedType>,
+                           IndexingPolicyType>;
+
   /*!
    * \brief return a strided coalesced view from a base pointer and a stride
    * \tparam MappedType: object mapped
@@ -94,8 +94,6 @@ namespace tfel::math {
     return StridedCoalescedView<MappedType, IndexingPolicyType>{p, s};
   }  // end of map_strided
 
-
-  
 }  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_ARRAY_STRIDEDCOALESCEDVIEW_HXX */

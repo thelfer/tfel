@@ -156,9 +156,9 @@ namespace tfel::math {
   inline constexpr auto space_dimension =
       MathObjectTraits<std::decay_t<MathObjectType>>::dime;
   /*!
-   * \brief an helper function checking if all the given math objects have the space dimension.
-   * \tparam MathObjectType1: math object
-   * \tparam MathObjectTypes: math objects
+   * \brief an helper function checking if all the given math objects have the
+   * space dimension. \tparam MathObjectType1: math object \tparam
+   * MathObjectTypes: math objects
    */
   template <MathObjectConcept MathObjectType1,
             MathObjectConcept... MathObjectTypes>
