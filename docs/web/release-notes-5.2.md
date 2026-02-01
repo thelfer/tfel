@@ -127,6 +127,11 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 922: [tfel-math] two functions have no GPU device support
+￼
+
+For more details, see <https://github.com/thelfer/tfel/issues/922>
+
 ## Issue 890: [mfront][homogenization] Add Ponte Castaneda 1992 non linear scheme
 
 For more details, see <https://github.com/thelfer/tfel/issues/890>
