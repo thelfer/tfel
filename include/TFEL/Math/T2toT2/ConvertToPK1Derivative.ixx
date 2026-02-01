@@ -40,10 +40,11 @@ namespace tfel::math::internals {
      * \param[in] s: Cauchy stress
      */
     template <typename stress, typename real>
-    static void exe(tfel::math::t2tot2<1u, stress>& dP,
-                    const tfel::math::t2tost2<1u, stress>& ds,
-                    const tfel::math::tensor<1u, real>& F,
-                    const tfel::math::stensor<1u, stress>& s) {
+    TFEL_HOST_DEVICE constexpr static void exe(
+        tfel::math::t2tot2<1u, stress>& dP,
+        const tfel::math::t2tost2<1u, stress>& ds,
+        const tfel::math::tensor<1u, real>& F,
+        const tfel::math::stensor<1u, stress>& s) noexcept {
       dP(0, 0) = ds(0, 0) * F[1] * F[2];
       dP(1, 0) = F[0] * ds(1, 0) * F[2] + s[1] * F[2];
       dP(2, 0) = F[0] * ds(2, 0) * F[1] + s[2] * F[1];
@@ -71,10 +72,11 @@ namespace tfel::math::internals {
      * \param[in] s: Cauchy stress
      */
     template <typename stress, typename real>
-    static void exe(tfel::math::t2tot2<2u, stress>& dP,
-                    const tfel::math::t2tost2<2u, stress>& ds,
-                    const tfel::math::tensor<2u, real>& F,
-                    const tfel::math::stensor<2u, stress>& s) {
+    TFEL_HOST_DEVICE constexpr static void exe(
+        tfel::math::t2tot2<2u, stress>& dP,
+        const tfel::math::t2tost2<2u, stress>& ds,
+        const tfel::math::tensor<2u, real>& F,
+        const tfel::math::stensor<2u, stress>& s) noexcept {
       constexpr auto cste = tfel::math::Cste<real>::sqrt2;
       constexpr auto icste = tfel::math::Cste<real>::isqrt2;
       //-->  f90(diff(P[1],F[0]));
@@ -162,10 +164,11 @@ namespace tfel::math::internals {
      * \param[in] s: Cauchy stress
      */
     template <typename stress, typename real>
-    static void exe(tfel::math::t2tot2<3u, stress>& dP,
-                    const tfel::math::t2tost2<3u, stress>& ds,
-                    const tfel::math::tensor<3u, real>& F,
-                    const tfel::math::stensor<3u, stress>& s) {
+    TFEL_HOST_DEVICE constexpr static void exe(
+        tfel::math::t2tot2<3u, stress>& dP,
+        const tfel::math::t2tost2<3u, stress>& ds,
+        const tfel::math::tensor<3u, real>& F,
+        const tfel::math::stensor<3u, stress>& s) noexcept {
       constexpr auto cste = tfel::math::Cste<real>::sqrt2;
       // -->  f90(diff(P[1],F_0));
       dP(0, 0) =
@@ -627,21 +630,22 @@ namespace tfel::math::internals {
 namespace tfel::math {
 
   template <unsigned short N, typename stress, typename real>
-  void convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+  TFEL_HOST_DEVICE constexpr void
+  convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
       t2tot2<N, stress>& dP,
       const t2tost2<N, stress>& ds,
       const tensor<N, real>& F,
-      const stensor<N, stress>& s) {
+      const stensor<N, stress>& s) noexcept {
     tfel::math::internals::DSIG_DF_to_DPK1_DF_Converter<N>::exe(dP, ds, F, s);
   }  // end of
      // convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative
 
   template <unsigned short N, typename stress, typename real>
-  t2tot2<N, stress>
+  TFEL_HOST_DEVICE constexpr t2tot2<N, stress>
   convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
       const t2tost2<N, stress>& ds,
       const tensor<N, real>& F,
-      const stensor<N, stress>& s) {
+      const stensor<N, stress>& s) noexcept {
     t2tot2<N, stress> dP;
     tfel::math::internals::DSIG_DF_to_DPK1_DF_Converter<N>::exe(dP, ds, F, s);
     return dP;
@@ -649,11 +653,11 @@ namespace tfel::math {
      // convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative
 
   template <unsigned short N, typename stress, typename real>
-  t2tot2<N, stress>
+  TFEL_HOST_DEVICE constexpr t2tot2<N, stress>
   convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
       const st2tost2<N, stress>& dS,
       const tensor<N, real>& F,
-      const stensor<N, stress>& s) {
+      const stensor<N, stress>& s) noexcept {
     t2tot2<N, stress> dP;
     convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
         dP, dS, F, s);
@@ -662,12 +666,12 @@ namespace tfel::math {
      // convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative
 
   template <unsigned short N, typename stress, typename real>
-  void
+  TFEL_HOST_DEVICE constexpr void
   convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
       t2tot2<N, stress>& dP,
       const st2tost2<N, stress>& dS,
       const tensor<N, real>& F,
-      const stensor<N, stress>& s) {
+      const stensor<N, stress>& s) noexcept {
     const auto dE_dF = eval(t2tost2<N, real>::dCdF(F) / 2);
     const auto dS_dF = t2tot2<N, stress>{dS * dE_dF};
     const auto S =
