@@ -105,24 +105,6 @@ namespace tfel::math {
     return v;
   }
   /*!
-   * \brief an helper function to retrieve the space dimension associated
-   * with a math object.
-   * \tparam MathObjectType: math object
-   * \deprecated prefer using the inline variable space_dimension
-   */
-  template <typename MathObjectType>
-  TFEL_HOST_DEVICE constexpr unsigned short getSpaceDimension() {
-    return MathObjectTraits<std::decay_t<MathObjectType>>::dime;
-  }  // end of getSpaceDimension
-  /*!
-   * \brief inline variable to retrieve the space dimension associated
-   * with a math object.
-   * \tparam MathObjectType: math object
-   */
-  template <typename MathObjectType>
-  inline constexpr auto space_dimension =
-      MathObjectTraits<std::decay_t<MathObjectType>>::dime;
-  /*!
    * \brief an helper function around `isAssignableTo`
    * \tparam  A, first type
    * \tparam  B, second type
@@ -154,7 +136,37 @@ namespace tfel::math {
   concept ScalarConcept = tfel::typetraits::IsScalar<std::decay_t<T>>::cond;
 
   template <typename T>
-  concept MathObjectConcept = MathObjectTraits<T>::is_specialized;
+  concept MathObjectConcept = MathObjectTraits<std::decay_t<T>>::is_specialized;
+  /*!
+   * \brief an helper function to retrieve the space dimension associated
+   * with a math object.
+   * \tparam MathObjectType: math object
+   * \deprecated prefer using the inline variable space_dimension
+   */
+  template <MathObjectConcept MathObjectType>
+  TFEL_HOST_DEVICE constexpr unsigned short getSpaceDimension() {
+    return MathObjectTraits<std::decay_t<MathObjectType>>::dime;
+  }  // end of getSpaceDimension
+  /*!
+   * \brief inline variable to retrieve the space dimension associated
+   * with a math object.
+   * \tparam MathObjectType: math object
+   */
+  template <MathObjectConcept MathObjectType>
+  inline constexpr auto space_dimension =
+      MathObjectTraits<std::decay_t<MathObjectType>>::dime;
+  /*!
+   * \brief an helper function checking if all the given math objects have the space dimension.
+   * \tparam MathObjectType1: math object
+   * \tparam MathObjectTypes: math objects
+   */
+  template <MathObjectConcept MathObjectType1,
+            MathObjectConcept... MathObjectTypes>
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr bool
+  checkSpaceDimensions() noexcept {
+    constexpr auto N = space_dimension<MathObjectType1>;
+    return (true && ... && (space_dimension<MathObjectTypes> == N));
+  }  // end of checkSpaceDimensions
 
 }  // end of namespace tfel::math
 

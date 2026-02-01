@@ -55,6 +55,23 @@ namespace tfel::math {
         t(i, j);
       });
   /*!
+   * \brief refinement of the `ST2toST2Concept` concept matched by `st2tost2`
+   * which hold value types without unit
+   */
+  template <typename T>
+  concept NoUnitST2toST2Concept = ST2toST2Concept<T> &&
+      (checkUnitCompatibility<unit::NoUnit, numeric_type<T>>());
+  /*!
+   * \brief refinement of the `ST2toST2Concept` concept matched by `st2tost2`
+   * which hold value types compatible with a stress
+   *
+   * \see checkUnitCompatibility for details
+   */
+  template <typename T>
+  concept StressST2toST2Concept = ST2toST2Concept<T> &&
+      (checkUnitCompatibility<unit::Stress, numeric_type<T>>());
+
+  /*!
    * \brief partial specialisation for fourth order tensor transforming a
    * symmetric tensor in another symmetric tensor
    */

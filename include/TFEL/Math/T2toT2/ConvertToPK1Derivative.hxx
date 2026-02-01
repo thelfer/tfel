@@ -36,18 +36,13 @@ namespace tfel::math {
    * \return the derivative of the first Piola-Kirchhoff
    * stress with respect to the deformation gradient.
    */
-  template <T2toST2Concept CauchyStressDerivativeType,
-            TensorConcept DeformationGradientType,
-            StensorConcept CauchyStressType>
-  requires(
-      (checkUnitCompatibility<unit::Stress, CauchyStressDerivativeType>()) &&
-      (checkUnitCompatibility<unit::NoUnit, DeformationGradientType>()) &&
-      (checkUnitCompatibility<unit::Stress, CauchyStressType>()) &&
-      (space_dimension<CauchyStressDerivativeType> ==
-       space_dimension<DeformationGradientType>)&&  //
-      (space_dimension<CauchyStressDerivativeType> ==
-       space_dimension<DeformationGradientType>))  //
-      TFEL_HOST_DEVICE [[nodiscard]] constexpr     //
+  template <StressT2toST2Concept CauchyStressDerivativeType,
+            NoUnitTensorConcept DeformationGradientType,
+            StressStensorConcept CauchyStressType>
+  requires(checkSpaceDimensions<CauchyStressDerivativeType,
+                                DeformationGradientType,
+                                CauchyStressType>())  //
+      TFEL_HOST_DEVICE [[nodiscard]] constexpr        //
       t2tot2<space_dimension<CauchyStressDerivativeType>,
              numeric_type<CauchyStressDerivativeType>>  //
       convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
@@ -66,21 +61,14 @@ namespace tfel::math {
    * \param[in] F: deformation gradient
    * \param[in] s: Cauchy stress
    */
-  template <T2toT2Concept PK1StressDerivativeType,
-            T2toST2Concept CauchyStressDerivativeType,
-            TensorConcept DeformationGradientType,
-            StensorConcept CauchyStressType>
-  requires(
-      (checkUnitCompatibility<unit::Stress, PK1StressDerivativeType>()) &&
-      (checkUnitCompatibility<unit::Stress, CauchyStressDerivativeType>()) &&
-      (checkUnitCompatibility<unit::NoUnit, DeformationGradientType>()) &&
-      (checkUnitCompatibility<unit::Stress, CauchyStressType>()) &&
-      (space_dimension<PK1StressDerivativeType> ==
-       space_dimension<CauchyStressDerivativeType>)&&  //
-      (space_dimension<PK1StressDerivativeType> ==
-       space_dimension<DeformationGradientType>)&&  //
-      (space_dimension<PK1StressDerivativeType> ==
-       space_dimension<CauchyStressType>))  //
+  template <StressT2toT2Concept PK1StressDerivativeType,
+            StressT2toST2Concept CauchyStressDerivativeType,
+            NoUnitTensorConcept DeformationGradientType,
+            StressStensorConcept CauchyStressType>
+  requires(checkSpaceDimensions<PK1StressDerivativeType,
+                                CauchyStressDerivativeType,
+                                DeformationGradientType,
+                                CauchyStressType>())  //
       TFEL_HOST_DEVICE
       constexpr void convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
           PK1StressDerivativeType& dP,
@@ -100,17 +88,13 @@ namespace tfel::math {
    * \return the derivative of the first Piola-Kirchhoff
    * stress with respect to the deformation gradient.
    */
-  template <ST2toST2Concept PK2StressDerivativeType,
-            TensorConcept DeformationGradientType,
-            StensorConcept CauchyStressType>
-  requires((checkUnitCompatibility<unit::Stress, PK2StressDerivativeType>()) &&
-           (checkUnitCompatibility<unit::NoUnit, DeformationGradientType>()) &&
-           (checkUnitCompatibility<unit::Stress, CauchyStressType>()) &&
-           (space_dimension<PK2StressDerivativeType> ==
-            space_dimension<DeformationGradientType>)&&  //
-           (space_dimension<PK2StressDerivativeType> ==
-            space_dimension<DeformationGradientType>))  //
-      TFEL_HOST_DEVICE [[nodiscard]] constexpr          //
+  template <StressST2toST2Concept PK2StressDerivativeType,
+            NoUnitTensorConcept DeformationGradientType,
+            StressStensorConcept CauchyStressType>
+  requires(checkSpaceDimensions<PK2StressDerivativeType,
+                                DeformationGradientType,
+                                CauchyStressType>())  //
+      TFEL_HOST_DEVICE [[nodiscard]] constexpr        //
       t2tot2<space_dimension<PK2StressDerivativeType>,
              numeric_type<PK2StressDerivativeType>>  //
       convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
@@ -129,21 +113,15 @@ namespace tfel::math {
    * \param[in] F: deformation gradient
    * \param[in] s: Cauchy stress
    */
-  template <T2toT2Concept PK1StressDerivativeType,
-            ST2toST2Concept PK2StressDerivativeType,
-            TensorConcept DeformationGradientType,
-            StensorConcept CauchyStressType>
-  requires((checkUnitCompatibility<unit::Stress, PK1StressDerivativeType>()) &&
-           (checkUnitCompatibility<unit::Stress, PK2StressDerivativeType>()) &&
-           (checkUnitCompatibility<unit::NoUnit, DeformationGradientType>()) &&
-           (checkUnitCompatibility<unit::Stress, CauchyStressType>()) &&
-           (space_dimension<PK1StressDerivativeType> ==
-            space_dimension<PK2StressDerivativeType>)&&  //
-           (space_dimension<PK1StressDerivativeType> ==
-            space_dimension<DeformationGradientType>)&&  //
-           (space_dimension<PK1StressDerivativeType> ==
-            space_dimension<DeformationGradientType>))  //
-      TFEL_HOST_DEVICE constexpr void                   //
+  template <StressT2toT2Concept PK1StressDerivativeType,
+            StressST2toST2Concept PK2StressDerivativeType,
+            NoUnitTensorConcept DeformationGradientType,
+            StressStensorConcept CauchyStressType>
+  requires(checkSpaceDimensions<PK1StressDerivativeType,
+                                PK2StressDerivativeType,
+                                DeformationGradientType,
+                                CauchyStressType>())  //
+      TFEL_HOST_DEVICE constexpr void                 //
       convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
           PK1StressDerivativeType&,
           const PK2StressDerivativeType&,
