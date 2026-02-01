@@ -108,12 +108,20 @@ namespace tfel::math {
    * \brief an helper function to retrieve the space dimension associated
    * with a math object.
    * \tparam MathObjectType: math object
+   * \deprecated prefer using the inline variable space_dimension
    */
   template <typename MathObjectType>
   TFEL_HOST_DEVICE constexpr unsigned short getSpaceDimension() {
     return MathObjectTraits<std::decay_t<MathObjectType>>::dime;
   }  // end of getSpaceDimension
-
+  /*!
+   * \brief inline variable to retrieve the space dimension associated
+   * with a math object.
+   * \tparam MathObjectType: math object
+   */
+  template <typename MathObjectType>
+  inline constexpr auto space_dimension =
+      MathObjectTraits<std::decay_t<MathObjectType>>::dime;
   /*!
    * \brief an helper function around `isAssignableTo`
    * \tparam  A, first type
