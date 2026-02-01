@@ -21,15 +21,14 @@ namespace tfel::material {
    * \param[in] F: deformation gradient
    */
   template <tfel::math::ScalarConcept ThermalConductivityType,
-            tfel::math::TensorConcept DeformationGradientType>
+            tfel::math::NoUnitTensorConcept DeformationGradientType>
   requires(
-      (tfel::math::checkUnitCompatibility<tfel::math::unit::ThermalConductivity,
-                                          ThermalConductivityType>()) &&
-      (tfel::math::checkUnitCompatibility<tfel::math::unit::NoUnit,
-                                          DeformationGradientType>()))  //
+      tfel::math::checkUnitCompatibility<tfel::math::unit::ThermalConductivity,
+                                         ThermalConductivityType>())  //
       TFEL_HOST_DEVICE
-      constexpr auto computeThermalConductivyMatrixInReferenceFrame(
-          const ThermalConductivityType, const DeformationGradientType&);
+      constexpr auto computeThermalConductivyMatrixInReferenceConfiguration(
+          const ThermalConductivityType,
+          const DeformationGradientType&) noexcept;
 
 }  // end of namespace tfel::material
 

@@ -13,15 +13,14 @@
 namespace tfel::material {
 
   template <tfel::math::ScalarConcept ThermalConductivityType,
-            tfel::math::TensorConcept DeformationGradientType>
+            tfel::math::NoUnitTensorConcept DeformationGradientType>
   requires(
-      (tfel::math::checkUnitCompatibility<tfel::math::unit::ThermalConductivity,
-                                          ThermalConductivityType>()) &&
-      (tfel::math::checkUnitCompatibility<tfel::math::unit::NoUnit,
-                                          DeformationGradientType>()))  //
+      tfel::math::checkUnitCompatibility<tfel::math::unit::ThermalConductivity,
+                                         ThermalConductivityType>())  //
       TFEL_HOST_DEVICE
-      constexpr auto computeThermalConductivyMatrixInReferenceFrame(
-          const ThermalConductivityType k, const DeformationGradientType& F) {
+      constexpr auto computeThermalConductivyMatrixInReferenceConfiguration(
+          const ThermalConductivityType k,
+          const DeformationGradientType& F) noexcept {
     using namespace tfel::math;
     using real = promote_type<base_type<ThermalConductivityType>,
                               base_type<numeric_type<DeformationGradientType>>>;
@@ -32,7 +31,7 @@ namespace tfel::material {
     const auto C = computeRightCauchyGreenTensor(F);
     const auto iC = invert(C);
     const auto m = k * det(F) * iC;
-    if constexpr (N==1){
+    if constexpr (N == 1) {
       return ResultType{m[0]};
 
     } else if constexpr (N == 2) {
