@@ -750,7 +750,7 @@ namespace tfel::math {
            (space_dimension<PK1StressDerivativeType> ==
             space_dimension<DeformationGradientType>)&&  //
            (space_dimension<PK1StressDerivativeType> ==
-            space_dimension<DeformationGradientType>))  //
+            space_dimension<CauchyStressType>))  //
       TFEL_HOST_DEVICE constexpr void                   //
       convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
           PK1StressDerivativeType& dP,
