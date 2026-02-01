@@ -30,8 +30,6 @@ namespace tfel::math::internals {
   template <>
   struct DSIG_DF_to_DPK1_DF_Converter<1u> {
     /*!
-     * \tparam stress: stress type
-     * \tparam real: numeric type
      * \param[out] dP: derivative of the first Piola-Kirchhoff stress with
      *                 respect to the deformation gradient
      * \param[in] ds: derivative of the Cauchy stress with respect to the
@@ -39,12 +37,24 @@ namespace tfel::math::internals {
      * \param[in] F: deformation gradient
      * \param[in] s: Cauchy stress
      */
-    template <typename stress, typename real>
-    TFEL_HOST_DEVICE constexpr static void exe(
-        tfel::math::t2tot2<1u, stress>& dP,
-        const tfel::math::t2tost2<1u, stress>& ds,
-        const tfel::math::tensor<1u, real>& F,
-        const tfel::math::stensor<1u, stress>& s) noexcept {
+    template <T2toT2Concept PK1StressDerivativeType,
+              T2toST2Concept CauchyStressDerivativeType,
+              TensorConcept DeformationGradientType,
+              StensorConcept CauchyStressType>
+    requires(
+        (checkUnitCompatibility<unit::Stress, PK1StressDerivativeType>()) &&
+        (checkUnitCompatibility<unit::Stress, CauchyStressDerivativeType>()) &&
+        (checkUnitCompatibility<unit::NoUnit, DeformationGradientType>()) &&
+        (checkUnitCompatibility<unit::Stress, CauchyStressType>()) &&
+        (space_dimension<PK1StressDerivativeType> == 1u) &&     //
+        (space_dimension<CauchyStressDerivativeType> == 1u) &&  //
+        (space_dimension<DeformationGradientType> == 1u) &&     //
+        (space_dimension<CauchyStressType> == 1u))              //
+        TFEL_HOST_DEVICE
+        constexpr static void exe(PK1StressDerivativeType& dP,
+                                  const CauchyStressDerivativeType& ds,
+                                  const DeformationGradientType& F,
+                                  const CauchyStressType& s) noexcept {
       dP(0, 0) = ds(0, 0) * F[1] * F[2];
       dP(1, 0) = F[0] * ds(1, 0) * F[2] + s[1] * F[2];
       dP(2, 0) = F[0] * ds(2, 0) * F[1] + s[2] * F[1];
@@ -62,8 +72,6 @@ namespace tfel::math::internals {
   template <>
   struct DSIG_DF_to_DPK1_DF_Converter<2u> {
     /*!
-     * \tparam stress: stress type
-     * \tparam real: numeric type
      * \param[out] dP: derivative of the first Piola-Kirchhoff stress with
      *                 respect to the deformation gradient
      * \param[in] ds: derivative of the Cauchy stress with respect to the
@@ -71,12 +79,25 @@ namespace tfel::math::internals {
      * \param[in] F: deformation gradient
      * \param[in] s: Cauchy stress
      */
-    template <typename stress, typename real>
-    TFEL_HOST_DEVICE constexpr static void exe(
-        tfel::math::t2tot2<2u, stress>& dP,
-        const tfel::math::t2tost2<2u, stress>& ds,
-        const tfel::math::tensor<2u, real>& F,
-        const tfel::math::stensor<2u, stress>& s) noexcept {
+    template <T2toT2Concept PK1StressDerivativeType,
+              T2toST2Concept CauchyStressDerivativeType,
+              TensorConcept DeformationGradientType,
+              StensorConcept CauchyStressType>
+    requires(
+        (checkUnitCompatibility<unit::Stress, PK1StressDerivativeType>()) &&
+        (checkUnitCompatibility<unit::Stress, CauchyStressDerivativeType>()) &&
+        (checkUnitCompatibility<unit::NoUnit, DeformationGradientType>()) &&
+        (checkUnitCompatibility<unit::Stress, CauchyStressType>()) &&
+        (space_dimension<PK1StressDerivativeType> == 2u) &&     //
+        (space_dimension<CauchyStressDerivativeType> == 2u) &&  //
+        (space_dimension<DeformationGradientType> == 2u) &&     //
+        (space_dimension<CauchyStressType> == 2u))              //
+        TFEL_HOST_DEVICE
+        constexpr static void exe(PK1StressDerivativeType& dP,
+                                  const CauchyStressDerivativeType& ds,
+                                  const DeformationGradientType& F,
+                                  const CauchyStressType& s) noexcept {
+      using real = numeric_type<DeformationGradientType>;
       constexpr auto cste = tfel::math::Cste<real>::sqrt2;
       constexpr auto icste = tfel::math::Cste<real>::isqrt2;
       //-->  f90(diff(P[1],F[0]));
@@ -154,8 +175,6 @@ namespace tfel::math::internals {
   template <>
   struct DSIG_DF_to_DPK1_DF_Converter<3u> {
     /*!
-     * \tparam stress: stress type
-     * \tparam real: numeric type
      * \param[out] dP: derivative of the first Piola-Kirchhoff stress with
      *                 respect to the deformation gradient
      * \param[in] ds: derivative of the Cauchy stress with respect to the
@@ -163,12 +182,25 @@ namespace tfel::math::internals {
      * \param[in] F: deformation gradient
      * \param[in] s: Cauchy stress
      */
-    template <typename stress, typename real>
-    TFEL_HOST_DEVICE constexpr static void exe(
-        tfel::math::t2tot2<3u, stress>& dP,
-        const tfel::math::t2tost2<3u, stress>& ds,
-        const tfel::math::tensor<3u, real>& F,
-        const tfel::math::stensor<3u, stress>& s) noexcept {
+    template <T2toT2Concept PK1StressDerivativeType,
+              T2toST2Concept CauchyStressDerivativeType,
+              TensorConcept DeformationGradientType,
+              StensorConcept CauchyStressType>
+    requires(
+        (checkUnitCompatibility<unit::Stress, PK1StressDerivativeType>()) &&
+        (checkUnitCompatibility<unit::Stress, CauchyStressDerivativeType>()) &&
+        (checkUnitCompatibility<unit::NoUnit, DeformationGradientType>()) &&
+        (checkUnitCompatibility<unit::Stress, CauchyStressType>()) &&
+        (space_dimension<PK1StressDerivativeType> == 3u) &&     //
+        (space_dimension<CauchyStressDerivativeType> == 3u) &&  //
+        (space_dimension<DeformationGradientType> == 3u) &&     //
+        (space_dimension<CauchyStressType> == 3u))              //
+        TFEL_HOST_DEVICE
+        constexpr static void exe(PK1StressDerivativeType& dP,
+                                  const CauchyStressDerivativeType& ds,
+                                  const DeformationGradientType& F,
+                                  const CauchyStressType& s) noexcept {
+      using real = numeric_type<DeformationGradientType>;
       constexpr auto cste = tfel::math::Cste<real>::sqrt2;
       // -->  f90(diff(P[1],F_0));
       dP(0, 0) =
@@ -629,53 +661,108 @@ namespace tfel::math::internals {
 
 namespace tfel::math {
 
-  template <unsigned short N, typename stress, typename real>
-  TFEL_HOST_DEVICE constexpr void
-  convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
-      t2tot2<N, stress>& dP,
-      const t2tost2<N, stress>& ds,
-      const tensor<N, real>& F,
-      const stensor<N, stress>& s) noexcept {
-    tfel::math::internals::DSIG_DF_to_DPK1_DF_Converter<N>::exe(dP, ds, F, s);
-  }  // end of
-     // convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative
-
-  template <unsigned short N, typename stress, typename real>
-  TFEL_HOST_DEVICE constexpr t2tot2<N, stress>
-  convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
-      const t2tost2<N, stress>& ds,
-      const tensor<N, real>& F,
-      const stensor<N, stress>& s) noexcept {
-    t2tot2<N, stress> dP;
+  template <T2toST2Concept CauchyStressDerivativeType,
+            TensorConcept DeformationGradientType,
+            StensorConcept CauchyStressType>
+  requires(
+      (checkUnitCompatibility<unit::Stress, CauchyStressDerivativeType>()) &&
+      (checkUnitCompatibility<unit::NoUnit, DeformationGradientType>()) &&
+      (checkUnitCompatibility<unit::Stress, CauchyStressType>()) &&
+      (space_dimension<CauchyStressDerivativeType> ==
+       space_dimension<DeformationGradientType>)&&  //
+      (space_dimension<CauchyStressDerivativeType> ==
+       space_dimension<CauchyStressType>))  //
+      TFEL_HOST_DEVICE [[nodiscard]] constexpr     //
+      t2tot2<space_dimension<CauchyStressDerivativeType>,
+             numeric_type<CauchyStressDerivativeType>>  //
+      convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+          const CauchyStressDerivativeType& ds,
+          const DeformationGradientType& F,
+          const CauchyStressType& s) noexcept {
+    constexpr auto N = space_dimension<CauchyStressDerivativeType>;
+    t2tot2<N, numeric_type<CauchyStressDerivativeType>> dP;
     tfel::math::internals::DSIG_DF_to_DPK1_DF_Converter<N>::exe(dP, ds, F, s);
     return dP;
   }  // end of
      // convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative
 
-  template <unsigned short N, typename stress, typename real>
-  TFEL_HOST_DEVICE constexpr t2tot2<N, stress>
-  convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
-      const st2tost2<N, stress>& dS,
-      const tensor<N, real>& F,
-      const stensor<N, stress>& s) noexcept {
-    t2tot2<N, stress> dP;
-    convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
-        dP, dS, F, s);
+  template <T2toT2Concept PK1StressDerivativeType,
+            T2toST2Concept CauchyStressDerivativeType,
+            TensorConcept DeformationGradientType,
+            StensorConcept CauchyStressType>
+  requires(
+      (checkUnitCompatibility<unit::Stress, PK1StressDerivativeType>()) &&
+      (checkUnitCompatibility<unit::Stress, CauchyStressDerivativeType>()) &&
+      (checkUnitCompatibility<unit::NoUnit, DeformationGradientType>()) &&
+      (checkUnitCompatibility<unit::Stress, CauchyStressType>()) &&
+      (space_dimension<PK1StressDerivativeType> ==
+       space_dimension<CauchyStressDerivativeType>)&&  //
+      (space_dimension<PK1StressDerivativeType> ==
+       space_dimension<DeformationGradientType>)&&  //
+      (space_dimension<PK1StressDerivativeType> ==
+       space_dimension<CauchyStressType>))  //
+      TFEL_HOST_DEVICE constexpr void       //
+      convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+          PK1StressDerivativeType& dP,
+          const CauchyStressDerivativeType& ds,
+          const DeformationGradientType& F,
+          const CauchyStressType& s) noexcept {
+    constexpr auto N = space_dimension<CauchyStressDerivativeType>;
+    tfel::math::internals::DSIG_DF_to_DPK1_DF_Converter<N>::exe(dP, ds, F, s);
+  }  // end of
+     // convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative
+
+  template <ST2toST2Concept PK2StressDerivativeType,
+            TensorConcept DeformationGradientType,
+            StensorConcept CauchyStressType>
+  requires((checkUnitCompatibility<unit::Stress, PK2StressDerivativeType>()) &&
+           (checkUnitCompatibility<unit::NoUnit, DeformationGradientType>()) &&
+           (checkUnitCompatibility<unit::Stress, CauchyStressType>()) &&
+           (space_dimension<PK2StressDerivativeType> ==
+            space_dimension<DeformationGradientType>)&&  //
+           (space_dimension<PK2StressDerivativeType> ==
+            space_dimension<CauchyStressType>))  //
+      TFEL_HOST_DEVICE [[nodiscard]] constexpr          //
+      t2tot2<space_dimension<PK2StressDerivativeType>,
+             numeric_type<PK2StressDerivativeType>>  //
+      convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+          const PK2StressDerivativeType& dS,
+          const DeformationGradientType& F,
+          const CauchyStressType& s) noexcept {
+    constexpr auto N = space_dimension<PK2StressDerivativeType>;
+    t2tot2<N, numeric_type<PK2StressDerivativeType>> dP;
+    convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(dP, dS, F,
+                                                                   s);
     return dP;
   }  // end of
      // convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative
 
-  template <unsigned short N, typename stress, typename real>
-  TFEL_HOST_DEVICE constexpr void
-  convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
-      t2tot2<N, stress>& dP,
-      const st2tost2<N, stress>& dS,
-      const tensor<N, real>& F,
-      const stensor<N, stress>& s) noexcept {
+  template <T2toT2Concept PK1StressDerivativeType,
+            ST2toST2Concept PK2StressDerivativeType,
+            TensorConcept DeformationGradientType,
+            StensorConcept CauchyStressType>
+  requires((checkUnitCompatibility<unit::Stress, PK1StressDerivativeType>()) &&
+           (checkUnitCompatibility<unit::Stress, PK2StressDerivativeType>()) &&
+           (checkUnitCompatibility<unit::NoUnit, DeformationGradientType>()) &&
+           (checkUnitCompatibility<unit::Stress, CauchyStressType>()) &&
+           (space_dimension<PK1StressDerivativeType> ==
+            space_dimension<PK2StressDerivativeType>)&&  //
+           (space_dimension<PK1StressDerivativeType> ==
+            space_dimension<DeformationGradientType>)&&  //
+           (space_dimension<PK1StressDerivativeType> ==
+            space_dimension<CauchyStressType>))  //
+      TFEL_HOST_DEVICE constexpr void                   //
+      convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+          PK1StressDerivativeType& dP,
+          const PK2StressDerivativeType& dS,
+          const DeformationGradientType& F,
+          const CauchyStressType& s) noexcept {
+    using real = numeric_type<DeformationGradientType>;
+    using stress = numeric_type<CauchyStressType>;
+    constexpr auto N = space_dimension<PK1StressDerivativeType>;
     const auto dE_dF = eval(t2tost2<N, real>::dCdF(F) / 2);
     const auto dS_dF = t2tot2<N, stress>{dS * dE_dF};
-    const auto S =
-        unsyme(convertCauchyStressToSecondPiolaKirchhoffStress(s, F));
+    const auto S = unsyme(convertCauchyStressToSecondPiolaKirchhoffStress(s, F));
     dP = t2tot2<N, stress>::tpld(S) + t2tot2<N, stress>::tprd(F, dS_dF);
   }  // end of
      // convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative
