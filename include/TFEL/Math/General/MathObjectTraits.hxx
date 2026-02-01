@@ -163,10 +163,10 @@ namespace tfel::math {
   template <MathObjectConcept MathObjectType1,
             MathObjectConcept... MathObjectTypes>
   TFEL_HOST_DEVICE [[nodiscard]] constexpr bool
-  checkSpaceDimensions() noexcept {
+  checkThatAllSpaceDimensionsAreEqual() noexcept {
     constexpr auto N = space_dimension<MathObjectType1>;
     return (true && ... && (space_dimension<MathObjectTypes> == N));
-  }  // end of checkSpaceDimensions
+  }  // end of checkThatAllSpaceDimensionsAreEqual
 
 }  // end of namespace tfel::math
 
