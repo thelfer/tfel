@@ -348,7 +348,7 @@ namespace tfel::math {
                 typename std::remove_cv_t<MappedType>::indexing_policy>
   using ConstCoalescedView =
       CoalescedView<const std::remove_cv_t<MappedType>, IndexingPolicyType>;
-  
+
   /*!
    * \brief partial specialisation of the `MathObjectTraits` for const views
    * \tparam MappedType: mapped type

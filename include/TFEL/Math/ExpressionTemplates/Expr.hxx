@@ -453,7 +453,8 @@ namespace tfel::math {
    * \param[in] e: expression
    */
   template <typename ResultType, typename Operation>
-  ResultType eval(const Expr<ResultType, Operation>& e) {
+  TFEL_HOST_DEVICE constexpr ResultType eval(
+      const Expr<ResultType, Operation>& e) {
     return e;
   }  // end of eval
 
