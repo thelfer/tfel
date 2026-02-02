@@ -503,7 +503,7 @@ const auto A_SC=hmSC.mean_strain_localisation_tensors;
 
 On line 1, we say we want a tolerance of `1e-6` (this is related to
 the stopping criterion of the iterative self-consistent algorithm,
-see the [doc](./tfel-material.html#homogenization)).
+see the [doc](./tfel-material.html#homogenization-of-general-microstructures)).
 We also consider an isotropic homogenized stiffness with `true`. This is related
 to the computation of the Hill tensor associated to the spherical inclusions.
 if using an anisotropic reference medium for computing this tensor,
