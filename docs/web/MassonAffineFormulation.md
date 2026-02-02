@@ -323,8 +323,6 @@ and the header for handling the rotations of the grains with their
 slip systems:
  
  - ExtendedPolyCrystalsSlidingSystems.hxx
- 
-which is provided as an external file
 
 ~~~~ {#Begin .cpp .numberLines}
 @TFELLibraries {"Material"};
@@ -333,7 +331,7 @@ which is provided as an external file
 #include "TFEL/Material/IsotropicEshelbyTensor.hxx"
 #include "TFEL/Material/MicrostructureDescription.hxx"
 #include "TFEL/Material/MicrostructureLinearHomogenization.hxx"
-#include "../extra-headers/TFEL/Material/ExtendedPolyCrystalsSlidingSystems.hxx"}
+#include "TFEL/Material/ExtendedPolyCrystalsSlidingSystems.hxx"}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For the approach based on morphological tensors, we do not need all these headers,
@@ -345,7 +343,7 @@ located at the same place as the `.mfront` file.
 @TFELLibraries {"Material"};
 @Includes{
 #include "../extra-headers/TFEL/Material/tensors.hxx"
-#include "../extra-headers/TFEL/Material/ExtendedPolyCrystalsSlidingSystems.hxx"}
+#include "TFEL/Material/ExtendedPolyCrystalsSlidingSystems.hxx"}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We will also generate a polycrystal and compute the tensors via FFT (see the `python` script [here](./downloads/Morphological_tensors.zip)).

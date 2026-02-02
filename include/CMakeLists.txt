@@ -575,6 +575,8 @@ install_header(TFEL/Material MetallicCFCGenericSlidingSystemsInteractionMatrix.h
 install_header(TFEL/Material MetallicCFCGenericSlidingSystemsInteractionMatrix.ixx)
 install_header(TFEL/Material PolyCrystalsSlidingSystems.hxx)
 install_header(TFEL/Material PolyCrystalsSlidingSystems.ixx)
+install_header(TFEL/Material ExtendedPolyCrystalsSlidingSystems.hxx)
+install_header(TFEL/Material ExtendedPolyCrystalsSlidingSystems.ixx)
 install_header(TFEL/Material OrthotropicAxesConvention.hxx)
 install_header(TFEL/Material OrthotropicAxesConvention.ixx)
 install_header(TFEL/Material GursonTvergaardNeedleman.hxx)
