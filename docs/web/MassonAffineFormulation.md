@@ -44,7 +44,7 @@ eqnPrefixTemplate: "($$i$$)"
 \renewcommand{\div}{\mathrm{div}}
 
 
-We present here an implementation of the affine formulation for homogenization [@masson_affine_2000]
+We present here an implementation of the affine formulation [@masson_affine_2000]
 for the homogenization of a viscoplastic polycrystal, example which is treated in [@bornert_second-order_2001]
 but with Ponte-Castaneda second-order estimates.
 
@@ -266,12 +266,18 @@ All the files are available in the `MFrontGallery` project, [here](https://githu
 
    The geometry of our polycrystal is generated with [`merope`](https://github.com/MarcJos/Merope/),
   with a Voronoi tesselation.
-  This geometry is saved as an array with an integer representing the number of the phase (or crystal).
-  The image below shows an example of such a polycrystal. There are here 10 crystals. The orientations
-  and volume fractions are given in the file `polycrystal.csv`. The geometry is used to
-  compute the morphological tensors (see the `python` script).
+  This geometry is saved as an array and will be used only for the approach based on morphological
+  tensors. The image below shows an example of such a polycrystal. There are here 10 crystals. The
+  volume fractions can also be computed on this microstructure
   
   ![Geometry of the polycrystal](./img/polycrystal.png){width=50%}
+  
+  The morphological tensors can be computed by following the instruction of the `README.md`
+  in this [folder](./downloads/Morphological_tensors.zip).
+  
+  The orientations of the slip systems will be given by angles, stored in the file `polycrystal.csv`.
+  This file also contains, at the end of each line, the volume fraction associated to a crystal.
+  They are in our case the same as the one computed on the generated microstructure.
   
   The potential $\psi_k^r$ will be of the form
   \begin{aligned}
@@ -293,7 +299,8 @@ The derivatives of the potential are
 ## Details of implementation
 
 We will mainly present the approach based on self-consistent
-scheme, we invite the reader to see the behaviour for the other approach.
+scheme, we invite the reader to see the `.mfront` file in the
+`MFrontGalleryProject` for the approach based on morphological tensors.
 
 ### Headers
 
@@ -346,7 +353,8 @@ located at the same place as the `.mfront` file.
 #include "TFEL/Material/ExtendedPolyCrystalsSlidingSystems.hxx"}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We will also generate a polycrystal and compute the tensors via FFT (see the `python` script [here](./downloads/Morphological_tensors.zip)).
+Of cours the tensors are computed before via FFT as explained above
+(see the folder mentioned above for the computation).
 
 ### Sliding systems
 
@@ -398,7 +406,7 @@ morphological tensors, is
 
 This matrix will store the morphological tensors. Indeed, in the
 `InitLocalVariables` code block, we can load these coefficients,
-which are in fact situated in the header ``
+which are in fact situated in the header `../extra-headers/TFEL/Material/tensors.hxx`
 
 ~~~~ {#Begin .cpp .numberLines}
 DELTA=Delta<real>::get_tensor();
@@ -435,10 +443,12 @@ for (int r=0;r<Np;r++){
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that here, a tensor `kap*I` is added to the compliance line 21. `kap`
+Note that here, a tensor `kap*I` is added to the compliance `M[r]` line 21. `kap`
 is a parameter that the user can change. It is necessary because
 the tensors $\tenseurq M_r$ are not invertible (see also [@bornert_second-order_2001],
-appendix B.1).
+appendix B.1). In our case, we set it as a `MaterialProperty` that can
+evolve with time (see `mtest` file below).
+We can hence consider $\tenseur L_r$, the inverse of $\tenseur M_r+\kappa\tenseurq I$.
 
 ### Self-consistent scheme
 
@@ -455,9 +465,11 @@ auto micro=ParticulateMicrostructure<3u,stress>(IM0);
 
 Note that here the matrix phase is defined by the elasticity `(k0,mu0)`
 but this elasticity will play no role in the sequel.
-Then, we will add some `SphereDistribution` objects,
-each of them representing a grain with its shape (`Sphere`), volume fraction
-and elasticity:
+Indeed, we will add the grains as `SphereDistribution` objects,
+and because the sum of the volume fractions is equal to one,
+the matrix will automatically have a fraction equal to zero.
+
+The grains are added like that:
 
 ~~~~ {#Integrator .cpp .numberLines}
 const auto sphere=Sphere<length>();
@@ -472,10 +484,13 @@ for (int r=0 ; r<Np; r++){
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Because the sum of the volume fractions are one, it means that the matrix
-phase will have a volume fraction equal to zero. This is not a problem,
-but do not forget that this phase still exist in the `ParticulateMicrostructure`
-object (see below).
+The shape of each grain is spherical, and we provide the stiffness tensors `L[r]`
+to the constructor `SphereDistribution`.
+We also put a polarisation on each grain: it is $-\tenseur L_r\dbldot\tenseur e^r$.
+
+Note that the `ParticulateMicrostructure` in fact contains `Np` phase: a matrix,
+and `Np` grains. Be careful with the indices: `polarisation[0]` is associated to
+the matrix.
 
 The self-consistent scheme is performed afterwards:
 
@@ -486,8 +501,16 @@ const auto tauSC = hmSC.effective_polarisation;
 const auto A_SC=hmSC.mean_strain_localisation_tensors;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Note that we want here a tolerance of `1e-6` and we consider an isotropic
-homogenized stiffness in the iterative algorithm with `true`.
+On line 1, we say we want a tolerance of `1e-6` (this is related to
+the stopping criterion of the iterative self-consistent algorithm,
+see the [doc](./tfel-material#homogenization.html)).
+We also consider an isotropic homogenized stiffness with `true`. This is related
+to the computation of the Hill tensor associated to the spherical inclusions.
+if using an anisotropic reference medium for computing this tensor,
+the integration of the behaviour would be too slow. Hence, we make the choice
+of an isotropization.
+Moreover, the `0` is just related to the number of anisotropic integration,
+but because of `true`, this has no effect.
 
 We will need the following tensors:
 
@@ -497,7 +520,7 @@ const auto PSC = computeSphereHillPolarisationTensor<stress>(KGSC);
 const auto MSC_star = invert(invert(PSC)- LSC);
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Note here that we isotropize the homogenized stiffness with the function
+Note here that we also isotropize the homogenized stiffness with the function
 `computeKGModuli`, on line 1. This is more consistent with the fact that we used `true`
 in the `computeSelfConsistent` function.
 
@@ -608,6 +631,8 @@ this line in the `mtest` file:
 
 Here, we choose to make vary the reference medium because when `t`
 increases, `n` increases, and hence the homogenized stiffness increases.
+This seems hence more consistent to consider a reference medium whose
+stiffness increases also.
 The optimal value of `r0` is not immediate, but some numerical tests
 can be carried out.
 
