@@ -448,7 +448,7 @@ is a parameter that the user can change. It is necessary because
 the tensors $\tenseurq M_r$ are not invertible (see also [@bornert_second-order_2001],
 appendix B.1). In our case, we set it as a `MaterialProperty` that can
 evolve with time (see `mtest` file below).
-We can hence consider $\tenseur L_r$, the inverse of $\tenseur M_r+\kappa\tenseurq I$.
+We can hence consider $\tenseurq L_r$, the inverse of $\tenseurq M_r+\kappa\tenseurq I$.
 
 ### Self-consistent scheme
 
@@ -486,7 +486,7 @@ for (int r=0 ; r<Np; r++){
 
 The shape of each grain is spherical, and we provide the stiffness tensors `L[r]`
 to the constructor `SphereDistribution`.
-We also put a polarisation on each grain: it is $-\tenseur L_r\dbldot\tenseur e^r$.
+We also put a polarisation on each grain: it is $-\tenseurq L_r\dbldot\tenseur e^r$.
 
 Note that the `ParticulateMicrostructure` in fact contains `Np` phase: a matrix,
 and `Np` grains. Be careful with the indices: `polarisation[0]` is associated to
@@ -503,7 +503,7 @@ const auto A_SC=hmSC.mean_strain_localisation_tensors;
 
 On line 1, we say we want a tolerance of `1e-6` (this is related to
 the stopping criterion of the iterative self-consistent algorithm,
-see the [doc](./tfel-material#homogenization.html)).
+see the [doc](./tfel-material.html#homogenization)).
 We also consider an isotropic homogenized stiffness with `true`. This is related
 to the computation of the Hill tensor associated to the spherical inclusions.
 if using an anisotropic reference medium for computing this tensor,
