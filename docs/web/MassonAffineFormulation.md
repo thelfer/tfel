@@ -292,6 +292,9 @@ The derivatives of the potential are
 
 ## Details of implementation
 
+We will mainly present the approach based on self-consistent
+scheme, we invite the reader to see the behaviour for the other approach.
+
 ### Headers
 
 For the jacobian, we adopt the `Numerical Jacobian`, so that
@@ -549,7 +552,7 @@ where $\mathbf {iJ}$ is the inverse of the Jacobian. The implementation is
 
 ~~~~ {#tangent .cpp .numberLines}
 @TangentOperator{
-  tmatrix<6*Np,6*Np,real> iJ = 0.001*ID+jacobian;
+  tmatrix<6*Np,6*Np,real> iJ = jacobian;
   TinyMatrixInvert<6*Np,real>::exe(iJ);
   dsigma_deto=iJ*A;
   Dt=Stensor4::zero();
@@ -560,22 +563,8 @@ where $\mathbf {iJ}$ is the inverse of the Jacobian. The implementation is
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Note the use of the matrix `ID` here, that was initialized at the beginning
-as a local variable:
-
-~~~~ {#tangent .cpp .numberLines}
-@LocalVariable tmatrix<6*Np,6*Np,real> ID;
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-with, in the `InitLocalVariables` code block:
-
-~~~~ {#tangent .cpp .numberLines}
-for (int r=0;r<Np;r++){
-  map_derivative<Stensor,Stensor>(ID,6*r,6*r) =I;
-}
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This is because the jacobian is null
+Note the use on line 7 of the function `tfel::math::map_derivative`
+which allows to extract (but also to fill) a block from a `tmatrix`.
 
 ## Results
 
@@ -616,11 +605,13 @@ This coefficient can hence be set as a material property, and we will add
 this line in the `mtest` file:
 
 ~~~~ {#Affine_formulation .mtest .numberLines}
-@MaterialProperty<function> 'r0' "1+4*t";
+@MaterialProperty<function> 'r0' "1+t";
 ~~~~~~~~~~~~~~
 
 Here, we choose to make vary the reference medium because when `t`
 increases, `n` increases, and hence the homogenized stiffness increases.
+The optimal value of `r0` is not immediate, but some numerical tests
+can be carried out.
 
 ![Effective resolved shear stress as a function of the parameter $n$](./img/Affine_formulation.png)
 
