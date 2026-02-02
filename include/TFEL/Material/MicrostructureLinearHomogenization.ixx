@@ -156,7 +156,7 @@ namespace tfel::material::homogenization::elasticity {
                                               StressType>())
       HomogenizationScheme<N, StressType> computeSelfConsistent(
           ParticulateMicrostructure<N, StressType> &micro,
-          const tfel::types::real<StressType> &precision,
+          const tfel::types::real<StressType> &tolerance,
           bool isotropic,
           int max_iter_anisotropic_integration,
           const std::vector<tfel::math::stensor<N, StressType>>
@@ -174,8 +174,8 @@ namespace tfel::material::homogenization::elasticity {
     std::vector<tfel::math::st2tost2<N, real>> localisators = {};
     auto Chom = C0;
     auto Chom_ = C0;
-    real rel_err = 2*precision +1;
-    while (rel_err > precision) {
+    real rel_err = tolerance +1;
+    while (rel_err > tolerance) {
       std::vector<tfel::math::st2tost2<N, real>> localisators_try = {};
       tfel::math::st2tost2<N, real> A0 =
           f0 * tfel::math::st2tost2<N, real>::Id();
@@ -211,7 +211,7 @@ namespace tfel::material::homogenization::elasticity {
           Chom(i, j) = Ch(i, j);
         }
       rel_err = relative_error(Chom,Chom_);
-      if (rel_err <= precision) {
+      if (rel_err <= tolerance) {
         for (std::size_t i = 0; i < np; i++) {
           auto Ai = localisators_try[i];
           localisators.push_back(Ai);
