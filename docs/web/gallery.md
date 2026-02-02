@@ -104,6 +104,8 @@ behaviour. This framework is described
   `@BehaviourVariable` and hence any behaviour law on each phase.
 - A tutorial on implementation of Ponte-Castaneda bound (1992)
   for a non-linear elastic composite is detaile [here](PonteCastaneda1992.html).
+- A tutorial on implementation of the [affine formulation](MassonAffineFormulation.html)
+  from Masson (2000) for a viscoplastic polycrystal.
 
  
 
