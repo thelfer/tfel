@@ -47,6 +47,22 @@ namespace tfel::math {
       (std::is_same_v<typename std::decay_t<T>::ConceptTag, TensorTag>)&&  //
       (requires(const T t, const unsigned short i) { t[i]; }) &&           //
       (requires(const T t, const unsigned short i) { t(i); });
+  /*!
+   * \brief refinement of the `TensorConcept` concept matched by tensor which
+   * hold value types without unit
+   */
+  template <typename T>
+  concept NoUnitTensorConcept = TensorConcept<T> &&
+      (checkUnitCompatibility<unit::NoUnit, numeric_type<T>>());
+  /*!
+   * \brief refinement of the `TensorConcept` concept matched by tensor which
+   * hold value types compatible with a stress
+   *
+   * \see checkUnitCompatibility for details
+   */
+  template <typename T>
+  concept StressTensorConcept = TensorConcept<T> &&
+      (checkUnitCompatibility<unit::Stress, numeric_type<T>>());
 
   //! forward declaration
   template <TensorConcept TensorType>

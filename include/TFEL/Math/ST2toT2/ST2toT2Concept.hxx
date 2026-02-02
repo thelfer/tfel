@@ -52,6 +52,22 @@ namespace tfel::math {
       (requires(const T t, const unsigned short i, const unsigned short j) {
         t(i, j);
       });
+  /*!
+   * \brief refinement of the `ST2toT2Concept` concept matched by `st2tot2`
+   * which hold value types without unit
+   */
+  template <typename T>
+  concept NoUnitST2toT2Concept = ST2toT2Concept<T> &&
+      (checkUnitCompatibility<unit::NoUnit, numeric_type<T>>());
+  /*!
+   * \brief refinement of the `ST2toT2Concept` concept matched by `st2tot2`
+   * which hold value types compatible with a stress
+   *
+   * \see checkUnitCompatibility for details
+   */
+  template <typename T>
+  concept StressST2toT2Concept = ST2toT2Concept<T> &&
+      (checkUnitCompatibility<unit::Stress, numeric_type<T>>());
   //! \brief partial specialisation for fourth order tensor
   template <typename Type>
   struct ConceptRebind<ST2toT2Tag, Type> {

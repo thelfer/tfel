@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 5.0.3 of the
 
 # Issues fixed
 
+## Issue 918: `TFEL` fails to compile with older compilers since version 5.0.2
+
+For more details, see <https://github.com/thelfer/tfel/issues/918>
+
 ## Issue 917: Fix `TFELMFrontStaticConfig.cmake.in` and `TFELMaterialStaticConfig.cmake.in`
 
 For more details, see <https://github.com/thelfer/tfel/issues/917>
