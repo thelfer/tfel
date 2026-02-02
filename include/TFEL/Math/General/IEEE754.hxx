@@ -115,6 +115,18 @@ namespace tfel::math::ieee754 {
 
 }  // end of namespace tfel::math::ieee754
 
+#ifdef _GLIBCXX_RELEASE
+#if _GLIBCXX_RELEASE < 11
+// version of libstdc++ prior to 11 lacks std::bit_cast
+// see Issue 918 for details: https://github.com/thelfer/tfel/issues/918
+#define TFEL_MATH_IEEE754_USE_LEGACY_IMPLEMENTATION
+#endif
+#endif
+
+#ifdef TFEL_MATH_IEEE754_USE_LEGACY_IMPLEMENTATION
+#include "TFEL/Math/General/IEEE754-legacy.ixx"
+#else
 #include "TFEL/Math/General/IEEE754.ixx"
+#endif
 
 #endif /* LIB_TFEL_MATH_IEEE754_HXX */

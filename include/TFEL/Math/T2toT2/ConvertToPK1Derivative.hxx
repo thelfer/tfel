@@ -19,6 +19,7 @@
 #include "TFEL/Math/st2tost2.hxx"
 #include "TFEL/Math/t2tost2.hxx"
 #include "TFEL/Math/t2tot2.hxx"
+#include "TFEL/Math/types.hxx"
 
 namespace tfel::math {
 
@@ -27,10 +28,6 @@ namespace tfel::math {
    * deformation gradient to the derivative of the first Piola-Kirchhoff
    * stress with respect to the deformation gradient.
    *
-   * \tparam N: spatial dimension
-   * \tparam stress: stress type
-   * \tparam real: numeric type
-   *
    * \param[in] ds: derivative of the Cauchy stress with respect to the
    *                deformation gradient
    * \param[in] F: deformation gradient
@@ -39,22 +36,24 @@ namespace tfel::math {
    * \return the derivative of the first Piola-Kirchhoff
    * stress with respect to the deformation gradient.
    */
-  template <unsigned short N, typename stress, typename real>
-  t2tot2<N, stress>
-  convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
-      const t2tost2<N, stress>&,
-      const tensor<N, real>&,
-      const stensor<N, stress>&);
-
+  template <StressT2toST2Concept CauchyStressDerivativeType,
+            NoUnitTensorConcept DeformationGradientType,
+            StressStensorConcept CauchyStressType>
+  requires(checkThatAllSpaceDimensionsAreEqual<CauchyStressDerivativeType,
+                                               DeformationGradientType,
+                                               CauchyStressType>())  //
+      TFEL_HOST_DEVICE [[nodiscard]] constexpr                       //
+      t2tot2<space_dimension<CauchyStressDerivativeType>,
+             numeric_type<CauchyStressDerivativeType>>  //
+      convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+          const CauchyStressDerivativeType&,
+          const DeformationGradientType&,
+          const CauchyStressType&) noexcept;
   /*!
    * \brief convert the derivative of the Cauchy stress with respect to the
    * deformation gradient to the derivative of the first Piola-Kirchhoff
    * stress with respect to the deformation gradient.
    *
-   * \tparam N: spatial dimension
-   * \tparam stress: stress type
-   * \tparam real: numeric type
-   *
    * \param[out] dP: derivative of the first Piola-Kirchhoff stress with
    *                 respect to the deformation gradient
    * \param[in] ds: derivative of the Cauchy stress with respect to the
@@ -62,21 +61,24 @@ namespace tfel::math {
    * \param[in] F: deformation gradient
    * \param[in] s: Cauchy stress
    */
-  template <unsigned short N, typename stress, typename real>
-  void convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
-      t2tot2<N, stress>&,
-      const t2tost2<N, stress>&,
-      const tensor<N, real>&,
-      const stensor<N, stress>&);
-
+  template <StressT2toT2Concept PK1StressDerivativeType,
+            StressT2toST2Concept CauchyStressDerivativeType,
+            NoUnitTensorConcept DeformationGradientType,
+            StressStensorConcept CauchyStressType>
+  requires(checkThatAllSpaceDimensionsAreEqual<PK1StressDerivativeType,
+                                               CauchyStressDerivativeType,
+                                               DeformationGradientType,
+                                               CauchyStressType>())  //
+      TFEL_HOST_DEVICE
+      constexpr void convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+          PK1StressDerivativeType& dP,
+          const CauchyStressDerivativeType& ds,
+          const DeformationGradientType& F,
+          const CauchyStressType& s) noexcept;
   /*!
    * \brief convert the derivative of the second Piola-Kirchoff stress with
    * respect to the Green-Lagrange strain to the derivative of the
    * first Piola-Kirchhoff stress with respect to the deformation gradient.
-   *
-   * \tparam N: spatial dimension
-   * \tparam stress: stress type
-   * \tparam real: numeric type
    *
    * \param[in] dS: derivative of the second Piola-Kirchoff stress with
    *                respect to the Green-Lagrange strain
@@ -86,21 +88,23 @@ namespace tfel::math {
    * \return the derivative of the first Piola-Kirchhoff
    * stress with respect to the deformation gradient.
    */
-  template <unsigned short N, typename stress, typename real>
-  t2tot2<N, stress>
-  convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
-      const st2tost2<N, stress>&,
-      const tensor<N, real>&,
-      const stensor<N, stress>&);
-
+  template <StressST2toST2Concept PK2StressDerivativeType,
+            NoUnitTensorConcept DeformationGradientType,
+            StressStensorConcept CauchyStressType>
+  requires(checkThatAllSpaceDimensionsAreEqual<PK2StressDerivativeType,
+                                               DeformationGradientType,
+                                               CauchyStressType>())  //
+      TFEL_HOST_DEVICE [[nodiscard]] constexpr                       //
+      t2tot2<space_dimension<PK2StressDerivativeType>,
+             numeric_type<PK2StressDerivativeType>>  //
+      convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+          const PK2StressDerivativeType&,
+          const DeformationGradientType&,
+          const CauchyStressType&) noexcept;
   /*!
    * \brief convert the derivative of the second Piola-Kirchoff stress with
    * respect to the Green-Lagrange strain to the derivative of the
    * first Piola-Kirchhoff stress with respect to the deformation gradient.
-   *
-   * \tparam N: spatial dimension
-   * \tparam stress: stress type
-   * \tparam real: numeric type
    *
    * \param[out] dP: derivative of the first Piola-Kirchhoff stress with
    *                 respect to the deformation gradient
@@ -109,13 +113,20 @@ namespace tfel::math {
    * \param[in] F: deformation gradient
    * \param[in] s: Cauchy stress
    */
-  template <unsigned short N, typename stress, typename real>
-  void
-  convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
-      t2tot2<N, stress>&,
-      const st2tost2<N, stress>&,
-      const tensor<N, real>&,
-      const stensor<N, stress>&);
+  template <StressT2toT2Concept PK1StressDerivativeType,
+            StressST2toST2Concept PK2StressDerivativeType,
+            NoUnitTensorConcept DeformationGradientType,
+            StressStensorConcept CauchyStressType>
+  requires(checkThatAllSpaceDimensionsAreEqual<PK1StressDerivativeType,
+                                               PK2StressDerivativeType,
+                                               DeformationGradientType,
+                                               CauchyStressType>())  //
+      TFEL_HOST_DEVICE constexpr void                                //
+      convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+          PK1StressDerivativeType&,
+          const PK2StressDerivativeType&,
+          const DeformationGradientType&,
+          const CauchyStressType&) noexcept;
 
 }  // end of namespace tfel::math
 

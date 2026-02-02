@@ -127,6 +127,19 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 926: [tfel-math] Add `TFEL_HOST_DEVICE` to `LeftCauchyGreenTensorDerivativeExpr` and `RightCauchyGreenTensorDerivativeExpr` classes
+
+For more details, see <https://github.com/thelfer/tfel/issues/926>
+
+## Issue 925: [tfel-math] Introduce the `StressStensorConcept` and `NoUnitStensorConcept` concepts and siblings for orther tensorial objects
+
+For more details, see <https://github.com/thelfer/tfel/issues/925>
+
+## Issue 922: [tfel-math] two functions have no GPU device support
+￼
+
+For more details, see <https://github.com/thelfer/tfel/issues/922>
+
 ## Issue 890: [mfront][homogenization] Add Ponte Castaneda 1992 non linear scheme
 
 For more details, see <https://github.com/thelfer/tfel/issues/890>
