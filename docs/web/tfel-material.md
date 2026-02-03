@@ -1079,7 +1079,7 @@ auto hmSC=computeSelfConsistent<3u,stress>(micro_1,1e-6,true);
 
 We note that `computeSelfConsistent` not only takes
 the microstructure as an argument, but also takes one real (`1e-6`) as
-a parameter, which pilots the precision of the result. Indeed, at each iteration
+a parameter, which pilots the accuracy of the result. Indeed, at each iteration
 of the self-consistent iterative algorithm, the function computes the relative
 difference between the new and the old homogenized stiffness. This relative
 difference must be smaller than the tolerance given as a parameter.
