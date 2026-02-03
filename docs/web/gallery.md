@@ -102,11 +102,12 @@ behaviour. This framework is described
   [here](ExplicitBerveillerZaouiPolyCrystals.html)
 - [\(\beta\)-rule](BetaRule.html) can also be implemented with
   `@BehaviourVariable` and hence any behaviour law on each phase.
-- A tutorial on implementation of Ponte-Castaneda bound (1992)
+- A tutorial on implementation of Ponte-Castaneda bound [@castaneda_new_1992]
   for a non-linear elastic composite is detaile [here](PonteCastaneda1992.html).
 - A tutorial on implementation of the [affine formulation](MassonAffineFormulation.html)
-  from Masson (2000) for a viscoplastic polycrystal.
+  from Masson et al. [@masson_affine_2000] for a viscoplastic polycrystal.
 
  
+# References
 
 <!-- Local IspellDict: english -->

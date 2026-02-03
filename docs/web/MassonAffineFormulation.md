@@ -398,14 +398,20 @@ slip systems:
 
 For the approach based on morphological tensors, we do not need all these headers,
 but we need to include a file which contains the morphological tensors.
-This file is present in a repository `extra-headers/TFEL/Material/`
+This file is present in a repository, let's say `extra-headers/TFEL/Material/`
 located at the same place as the `.mfront` file.
 
 ~~~~ {#Begin .cpp .numberLines}
 @TFELLibraries {"Material"};
 @Includes{
-#include "../extra-headers/TFEL/Material/tensors.hxx"
+#include "tensors.hxx"
 #include "TFEL/Material/ExtendedPolyCrystalsSlidingSystems.hxx"}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The compilation hence will be done like that:
+
+~~~~ {#Begin .sh .numberLines}
+mfront -I ../extra-headers/TFEL/Material --obuild --interface=generic Affine_formulation.mfront
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Of cours the tensors are computed before via FFT as explained above
@@ -461,7 +467,7 @@ morphological tensors, is
 
 This matrix will store the morphological tensors. Indeed, in the
 `InitLocalVariables` code block, we can load these coefficients,
-which are in fact situated in the header `../extra-headers/TFEL/Material/tensors.hxx`
+which are in fact situated in the header `extra-headers/TFEL/Material/tensors.hxx`
 
 ~~~~ {#Begin .cpp .numberLines}
 DELTA=Delta<real>::get_tensor();
