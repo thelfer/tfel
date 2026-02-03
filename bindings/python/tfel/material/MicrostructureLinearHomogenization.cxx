@@ -96,7 +96,7 @@ void declareMicrostructureLinearHomogenization(pybind11::module_ &m) {
         pybind11::arg("max_iter_anisotropic_integration") = 12,
         pybind11::arg("polarisations") = pola);
   m.def("computeSelfConsistentScheme", &computeSelfConsistent<3, double>,
-        pybind11::arg("micro"), pybind11::arg("precision"),
+        pybind11::arg("micro"), pybind11::arg("tolerance"),
         pybind11::arg("isotropic"),
         pybind11::arg("max_iter_anisotropic_integration") = 12,
         pybind11::arg("polarisations") = pola);
