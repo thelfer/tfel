@@ -77,7 +77,7 @@ requires(
             const std::vector<tfel::math::stensor<N, StressType>>
                 &polarisations) {
   return tfel::material::homogenization::elasticity::computeSelfConsistent<
-      N, StressType>(micro, polarisations, precision, isotropic,
+      N, StressType>(micro, polarisations, tolerance, isotropic,
                      max_iter_anisotropic_integration);
 }
 
