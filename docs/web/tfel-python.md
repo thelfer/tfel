@@ -156,6 +156,8 @@ import tfel.material as tmat
 import tfel.math as tm
 ~~~~
 
+![Ellipsoidal inclusion](./img/ellipsoide_C0.png){width=35%}
+
 ### Hill tensors
 
 The Hill tensors are available:
@@ -247,7 +249,7 @@ Note that if the elasticity of the inclusion
 is not isotropic, an anisotropic elasticity `C_i` can be provided, assuming that this elasticiy
 is expressed in the same basis as the one defined by `n_a,n_b` (the local basis of the inclusion):
 
-~~~~{.cpp}
+~~~~{.py}
 A_aniso = hm.computeLocalisationTensor(IM0,C_i,n_a,a,n_b,b,c)
 ~~~~
 
@@ -280,7 +282,7 @@ The following schemes are available for biphasic media with
  - dilute scheme
  - Ponte Castaneda and Willis scheme
 
-Here are some examples of computation:
+Here are some examples of computation for the spherical inclusions:
  
 ~~~~{.py}
 young=1e9
@@ -298,7 +300,16 @@ KGDS_IM=hm.computeSphereDiluteScheme(IM,f,IMi)
 KGMT_IM=hm.computeSphereMoriTanakaScheme(IM,f,IMi)
 print(EnuDS.young,EnuDS.nu,KGDS_IM.kappa,KGDS_IM.mu)
 print(EnuMT.young,EnuMT.nu,KGMT_IM.kappa,KGMT_IM.mu)
+~~~~
 
+And we can also consider distribution of ellipsoidal inclusions,
+with three kind of distributions of orientations.
+
+![The three distributions of orientations considered here: oriented, isotropic, and transverse isotropic](./img/distributions.png){width=100%}
+
+Hence, here are the examples to compute the homogenized properties:
+
+~~~~{.py .numberLines}
 # Ellipsoidal inclusions
 a=10.
 b=1.
@@ -334,6 +345,15 @@ print(C_O_MT)
 print(C_O_PCW)
 ~~~~
 
+![The three distributions of orientations can be considered with PCW scheme, but a big ellipsoid defines the spatial distribution of inclusions](./img/distributions_PCW.png){width=100%}
+
+In Ponte-Castaneda and Willis scheme (PCW), there is a difference between
+the ellipsoid which defines the distribution of the inclusions, and the
+ellipsoid which defines the shape of the inclusions (in the image above, we represent
+the distribution `D` of inclusions by a big ellipsoid, with colored axes).
+A bigger axis for `D` means that along this axis, the distribution of inclusions
+is more diluted. A short axis means that, on the contrary, the distribution is denser
+along this axis. The object `D` is defined above at line 12.
 
 ### Homogenization bounds
 
@@ -405,6 +425,8 @@ Some objects are defined that mirror the objects defined
 in the namespace `tfel::material::homogenization::elasticity`
 for the construction and homogenization of general microstructures.
 The reader may want to consult this documentation [here](tfel-material.html#homogenization-of-general-microstructures).
+
+![The `ParticulateMicrostructure` object is made of a matrix which embeds different distributions of inclusions](./img/ParticulateMicrostructure.png){width=50%}
 
 The `ParticulateMicrostructure` object is  defined and can be instantiated
 in various ways:

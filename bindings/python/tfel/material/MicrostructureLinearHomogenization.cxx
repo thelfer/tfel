@@ -71,7 +71,7 @@ requires(
         HomogenizationScheme<N, StressType> computeSelfConsistentScheme(
             tfel::material::homogenization::elasticity::
                 ParticulateMicrostructure<N, StressType> &micro,
-            const tfel::types::real<StressType> &precision,
+            const tfel::types::real<StressType> &tolerance,
             bool isotropic,
             int max_iter_anisotropic_integration,
             const std::vector<tfel::math::stensor<N, StressType>>

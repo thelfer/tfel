@@ -111,7 +111,23 @@ which can be shown to be equivalent to
     \langle \epsiloneq^2\rangle_r= \Frac{2}{3c_r}\deriv{W_0^{\mathrm{eff}}}{\mu_0^r}
   \end{aligned}
   
-## Summary
+## Macroscopic stress and tangent operator
+
+The macroscopic stress $\overline{\tsigma}$ is also shown to be (see [@ponte_castaneda_nonlinear_1998], eq. (4.41)):
+  \begin{aligned}
+    \overline{\tsigma}=\deriv{\overline{w}}{\overline{\tepsilon}}=\deriv{W_0^{\mathrm{eff}}}{\overline{\tepsilon}}=\tenseurq C_0^{\mathrm{eff}}\dbldot\overline{\tepsilon}
+  \end{aligned}
+where $\tenseurq C_0^{\mathrm{eff}}$ is the effective elasticity of the linear comparison composite. In our case, we use Hashin-Shtrikman bounds.
+
+The tangent operator is given by
+\begin{aligned}
+    \dfrac{\mathrm{d}\overline{\tsigma}}{\mathrm{d}\overline{\tepsilon}}=\tenseurq C_0^{\mathrm{eff}}+\dfrac{\mathrm{d}\tenseurq C_0^{\mathrm{eff}}}{\mathrm{d}\overline{\tepsilon}}
+  \end{aligned}
+  Here, the derivative of $\tenseurq C_0^{\mathrm{eff}}$ w.r.t. $\overline{\tepsilon}$ can be computed by derivating the Hashin-Shtrikman
+  moduli w.r.t. the secant moduli $\mu_0^r$ and the derivatives of these moduli w.r.t. $\overline{\tepsilon}$. However, it is tedious and in the implementation, we see that the convergence of the Newton Raphson algorithm is good if we only retain the first term \(\tenseurq C_0^{\mathrm{eff}}\) in the tangent operator.
+  
+  
+## Summary and possible implementations
 
 The resolution hence consists in 
 \[
@@ -121,23 +137,28 @@ where \(W_0^{\mathrm{eff}}\) is the effective energy of a linear comparison comp
 \[
 \mu_0^r= \Frac23\deriv{f_r}{e}\left(\langle \epsiloneq^2\rangle_r\right).
 \]
- 
-## Macroscopic stress and tangent operator
 
-The macroscopic stress $\overline{\tsigma}$ is also shown to be (see [@ponte_castaneda_nonlinear_1998], eq. (4.41)):
-  \begin{aligned}
-    \tsigma=\deriv{\overline{w}}{\overline{\tepsilon}}=\deriv{W_0^{\mathrm{eff}}}{\overline{\tepsilon}}=\tenseurq C_0^{\mathrm{eff}}\dbldot\overline{\tepsilon}
-  \end{aligned}
-where $\tenseurq C_0^{\mathrm{eff}}$ is the effective elasticity of the linear comparison composite. In our case, we use Hashin-Shtrikman bounds.
+### Possible implementations
 
-The tangent operator is given by
-\begin{aligned}
-    \dfrac{\mathrm{d}\tsigma}{\mathrm{d}\overline{\tepsilon}}=\tenseurq C_0^{\mathrm{eff}}+\dfrac{\mathrm{d}\tenseurq C_0^{\mathrm{eff}}}{\mathrm{d}\overline{\tepsilon}}
-  \end{aligned}
-  Here, the derivative of $\tenseurq C_0^{\mathrm{eff}}$ w.r.t. $\overline{\tepsilon}$ can be computed by derivating the Hashin-Shtrikman
-  moduli w.r.t. the secant moduli $\mu_0^r$ and the derivatives of these moduli w.r.t. $\overline{\tepsilon}$. However, it is tedious and in the implementation, we see that the convergence of the Newton Raphson algorithm is good if we only retain the first term \(\tenseurq C_0^{\mathrm{eff}}\) in the tangent operator.
+The iterative resolution of the non-linear equation can be summarized as
+\[
+\underset{\substack{\\ \\ \\ \Downarrow\\ \\ \\\text{analytic / finite difference}\\ \\ \\\text{\texttt{@BehaviourVariable} / directly provided}}}{\mu_0^r= \Frac23\deriv{f_r}{e}\left(\langle \epsiloneq^2\rangle_r\right)}\quad\rightarrow\quad \underset{\substack{\\ \\ \\ \Downarrow\\ \\ \\\text{mean-field scheme / morphological tensors}\\ \\ \\\texttt{tfel::material::homogenization}}}{W_0^{\mathrm{eff}}\left(\mu_0^r\right)= \dfrac12\overline{\tepsilon}\dbldot\tenseurq C_0^{\mathrm{eff}}\dbldot\overline{\tepsilon}}\quad\rightarrow\quad\underset{\substack{\\ \\ \\ \Downarrow\\ \\ \\\text{analytic / finite difference}\\ \\ \\\texttt{tfel::material::homogenization}}}{\langle \epsiloneq^2\rangle_r= \Frac{2}{3c_r}\deriv{W_0^{\mathrm{eff}}}{\mu_0^r}}
+\]
+
+And the macroscopic stress must also be computed:
+\[
+\overline{\tsigma}=\tenseurq C_0^{\mathrm{eff}}\dbldot\overline{\tepsilon}
+\]
+
+The first step of the resolution consists in computing the secant modulus $\mu_0^r$ and it can be done analytically (as below) or via finite difference or automatic differentiation. Moreover, for both strategies, we could use a `BehaviourVariable`, defining the function $f_r$ in an external file (in our example, the function is to simple to do that).
+
+The second step consists in computing the effective energy $W_0^{\mathrm{eff}}$. This will be done via `tfel::material::homogenization`. This `namespace` provides classical mean-field schemes (we use a Hashin-Shtrikman bound in our example below). This could also be done with interaction tensors, providing externally. In another [tutorial](./MassonAffineFormulation.html) we show that we can take into account more specifically the morphology of a polycrystal by providing interaction tensors.
+
+The third step consists in the computation of the second-moments. This is also done via `tfel::material::homogenization`. Here again, there are two strategies: analytical computation when possible, and finite difference or automatic differentiation when the analytical derivation is too tedious or even impossible. In our example below, the computation is analytic.
 
 # Implementation in MFront
+
+## Example used for the implementation
 
 In the application of the implementation, we take the example of the following behaviour:
   \begin{aligned}
@@ -161,7 +182,7 @@ which means that we only need the derivative of the Hashin-Shtrikman bound. This
 
 ## Details of implementation
 
-All the files are available [here](./downloads/PonteCastaneda1992.zip)
+The file `PonteCastaneda1992.mfront` is available in the `MFrontGallery` project, [here](https://github.com/thelfer/MFrontGallery/tree/master/generic-behaviours/homogenization/).
 
 For the jacobian, we adopt the `Numerical Jacobian`, which
 means that the beginning of the `mfront` file reads:
@@ -171,7 +192,7 @@ means that the beginning of the `mfront` file reads:
 @Behaviour PC_VB_92;
 @Author Martin Antoine;
 @Date 12 / 12 / 25;
-@Description{"Ponte Castaneda second-order estimates for homogenization of non-linear elasticity (one potential), based on second-moments computation"};
+@Description{"Ponte Castaneda variational bounds for homogenization of non-linear elasticity (one potential), based on second-moments computation"};
 @UseQt true;
 @Algorithm NewtonRaphson_NumericalJacobian;
 @PerturbationValueForNumericalJacobianComputation 1e-10;
