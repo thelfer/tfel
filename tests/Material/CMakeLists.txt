@@ -11,6 +11,7 @@ macro(tests_material test_arg)
     TFELUtilities TFELException TFELTests)
 endmacro(tests_material)
 
+tests_material(FiniteStrainHeatTransfer)
 tests_material(LinearHomogenizationSchemes)
 tests_material(LinearHomogenizationBounds)
 tests_material(HomogenizationSecondMoments)

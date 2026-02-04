@@ -221,13 +221,15 @@ namespace tfel::math {
    * \param[in] t: tensor
    */
   template <TensorConcept TensorType>
-  TFEL_HOST_DEVICE constexpr auto matrix_view(TensorType&& t) noexcept;
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto matrix_view(
+      TensorType&& t) noexcept;
   /*!
    * \return an expression representing the transpose of a tensor
    * \param[in] t: tensor
    */
   template <TensorConcept TensorType>
-  TFEL_HOST_DEVICE constexpr auto transpose(TensorType&&) noexcept;
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr auto transpose(
+      TensorType&&) noexcept;
 
   /*!
    * \brief an helper function which returns if the given type implements the
@@ -237,7 +239,8 @@ namespace tfel::math {
    * to 5.0
    */
   template <typename TensorType>
-  [[deprecated]] TFEL_HOST_DEVICE constexpr bool implementsTensorConcept() {
+  TFEL_HOST_DEVICE [[deprecated, nodiscard]] constexpr bool
+  implementsTensorConcept() {
     return TensorConcept<TensorType>;
   }  // end of implementsTensorConcept
 
