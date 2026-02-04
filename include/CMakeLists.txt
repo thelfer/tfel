@@ -1,4 +1,3 @@
-
 install_header(TFEL Macros.hxx)
 install_header(TFEL ContractViolation.hxx)
 install_header(TFEL Raise.hxx)
@@ -274,6 +273,8 @@ install_header(TFEL/Math/Tensor TensorProduct.hxx)
 install_header(TFEL/Math/Tensor TensorTransposeExpr.hxx)
 install_header(TFEL/Math/Tensor TensorViewFromStensor.hxx)
 install_header(TFEL/Math/Tensor MatrixViewFromTensor.hxx)
+install_header(TFEL/Math/Tensor PiolaTransformation.hxx)
+install_header(TFEL/Math/Tensor PiolaTransformation.ixx)
 install_header(TFEL/Math/Stensor/Internals StensorChangeBasis.hxx)
 install_header(TFEL/Math/Stensor/Internals StensorEigenSolver.hxx)
 install_header(TFEL/Math/Stensor/Internals SortEigenValues.hxx)
