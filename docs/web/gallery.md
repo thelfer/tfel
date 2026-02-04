@@ -96,6 +96,8 @@ behaviour. This framework is described
 - The implementation of [Sachs scheme](Sachs.html) and [Taylor scheme](Taylor.html)
   show how to implement basic homogenized bounds with any behaviour laws on the
   phases using `@BehaviourVariable`.
+- The implementation of Idiart's scheme [@idiart_thermodynamic_2025] for a
+  maxwellian viscoelastic composite with oriented ellipsoid is available [here](https://github.com/thelfer/MFrontGallery/blob/master/generic-behaviours/homogenization/Idiart_viscoelastic.mfront)
 - The description of the implementation of a polycrystal behaviour
   based on the Berveiller-Zaoui homogenisation scheme using an
   explicit scheme is available.
@@ -103,7 +105,7 @@ behaviour. This framework is described
 - [\(\beta\)-rule](BetaRule.html) can also be implemented with
   `@BehaviourVariable` and hence any behaviour law on each phase.
 - A tutorial on implementation of Ponte-Castaneda bound [@castaneda_new_1992]
-  for a non-linear elastic composite is detaile [here](PonteCastaneda1992.html).
+  for a non-linear elastic composite is detailed [here](PonteCastaneda1992.html).
 - A tutorial on implementation of the [affine formulation](MassonAffineFormulation.html)
   from Masson et al. [@masson_affine_2000] for a viscoplastic polycrystal.
 

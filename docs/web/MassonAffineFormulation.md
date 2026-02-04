@@ -52,8 +52,7 @@ but with Ponte-Castaneda second-order estimates.
 Here, the idea is to show that many implementations of that procedure are possible in `MFront`.
 We show here a first implementation based on the self-consistent scheme, provided by the `namespace`
 `tfel::material::homogenization`. A second approach which uses morphological tensors computed by FFT,
-on a given geometry of polycrystal, is also detailed. This allows to improve the estimates, but
-it necessitates an offline computation.
+on a given geometry of polycrystal, is also detailed.
 
 This tutorial first presents the homogenization problem, recalls the methodology
 of the affine formulation, presents different kinds of possible implementations,
@@ -112,13 +111,11 @@ where we introduced the space of kinematically admissible fields $\mathcal K(\ov
 
 The idea is to linearize the behaviour around a reference stress $\tsigma^r$:
 \[
- \begin{aligned}
     \tepsilon_r(\tsigma)\approx\tenseurq M_r\left(\tsigma^r\right)\dbldot\tsigma+\tenseur e^r
-  \end{aligned}
+\]
   where
-  \begin{aligned}
+\[
    \tenseurq M_r\left(\tsigma^r\right)=\deriv{\tepsilon_r}{\tsigma}\left(\tsigma^r\right)=\derivdeux{\psi_r}{\tsigma}\left(\tsigma^r\right)\qquad\tenseur e^r = \tepsilon_r(\tsigma^r)-\tenseurq M_r\left(\tsigma^r\right)\dbldot\tsigma^r
-  \end{aligned}
 \]
   This affine behaviour can be viewed as a so-called "thermoelastic comparison composite", and this composite
   can be homogenized. This leads to a linear problem, so that the average on phase $r$ of the solution $\tsigma$ is given by
@@ -661,6 +658,9 @@ which allows to extract (but also to fill) a block from a `tmatrix`.
 For the tests, we use `mtest`. However, note that the strain we impose
 is in fact a strain rate. The idea for us is to keep this strain rate
 constant and to make vary the parameter $n$ with time.
+We hence set it as a function which varies exponentially with time
+(this is just a choice).
+
 Besides, we choose two different values for $\tau_0^r$.
 5 crystals are such that $\tau_0=10 MPa$, and 5 others
 such that $\tau_0=50 MPa$.
@@ -689,6 +689,9 @@ The `.mtest` file is the following:
 @OutputFilePrecision 14;
 ~~~~~~~~~~~~~~
 
+Note that `kap` on line 9 is related to the small compliance
+we add to $\tenseurq M_r$ in order to make it invertible.
+
 For the morphological tensor approach, we talked above
 about the coefficient $r_0$ that allows to adjust the reference medium.
 This coefficient can hence be set as a material property, and we will add
@@ -698,10 +701,8 @@ this line in the `mtest` file:
 @MaterialProperty<function> 'r0' "1+t";
 ~~~~~~~~~~~~~~
 
-Here, we choose to make vary the reference medium because when `t`
-increases, `n` increases, and hence the homogenized stiffness increases.
-This seems hence more consistent to consider a reference medium whose
-stiffness increases also.
+Here, we choose to increase the elasticity the reference medium because its
+homogenized stiffness also increases.
 The optimal value of `r0` is not immediate, but some numerical tests
 can be carried out.
 
@@ -710,7 +711,10 @@ can be carried out.
 
 In this figure we plotted the results when all the $\tau_0^r$ are equal to $10 Mpa$
 (to show the heterogeneity) ("FFT 0"), the implementation of the affine approach
-with self-consistent scheme (AFF_SC), and with morphological tensors (AFF_MT).
+with self-consistent scheme (AFF_SC), and with morphological tensors (AFF_MT). For
+the latter, we plot it for a constant $r_0$ (which is, an elastic medium whose
+elasticity is $\tenseurq I$), and for a $r_0=1+t$ (which is, an elastic medium
+whose elasticity is $(1+t)\tenseurq I$).
 FFT results are also plotted (FFT).
 
 # References

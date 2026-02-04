@@ -192,7 +192,7 @@ The implementation requires the integration of the local behaviours.
 These are carried out via the `@BehaviourVariable` keyword.
 The implementation of the local behaviour is explained [here](./MericCailletaudSingleCrystalPlasticity.html).
 
-All files `MericCailletaudSingleCrystalViscoPlasticity.mfront`, `BetaRule.mfront` and `BetaRule.mtest` can be downloaded [here](./downloads/BetaRule.zip).
+All files `MericCailletaudSingleCrystalViscoPlasticity.mfront`, `BetaRule.mfront` and `BetaRule.mtest` are available in the `MFrontGallery` project, [here](https://github.com/thelfer/MFrontGallery/tree/master/generic-behaviours/homogenization/).
 
 
 For the example, we assume that the composites is made of only 2 phases.

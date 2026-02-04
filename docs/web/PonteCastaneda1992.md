@@ -152,7 +152,7 @@ And the macroscopic stress must also be computed:
 
 The first step of the resolution consists in computing the secant modulus $\mu_0^r$ and it can be done analytically (as below) or via finite difference or automatic differentiation. Moreover, for both strategies, we could use a `BehaviourVariable`, defining the function $f_r$ in an external file (in our example, the function is to simple to do that).
 
-The second step consists in computing the effective energy $W_0^{\mathrm{eff}}$. This will be done via `tfel::material::homogenization`. This `namespace` provides classical mean-field schemes (we use a Hashin-Shtrikman bound in our example below). In another [tutorial](./PonteCastaneda1996.html) we show that we can take into account more specifically the morphology of the composite by providing interaction tensors.
+The second step consists in computing the effective energy $W_0^{\mathrm{eff}}$. This will be done via `tfel::material::homogenization`. This `namespace` provides classical mean-field schemes (we use a Hashin-Shtrikman bound in our example below). This could also be done with interaction tensors, providing externally. In another [tutorial](./MassonAffineFormulation.html) we show that we can take into account more specifically the morphology of a polycrystal by providing interaction tensors.
 
 The third step consists in the computation of the second-moments. This is also done via `tfel::material::homogenization`. Here again, there are two strategies: analytical computation when possible, and finite difference or automatic differentiation when the analytical derivation is too tedious or even impossible. In our example below, the computation is analytic.
 
@@ -182,7 +182,7 @@ which means that we only need the derivative of the Hashin-Shtrikman bound. This
 
 ## Details of implementation
 
-All the files are available [here](./downloads/PonteCastaneda1992.zip)
+The file `PonteCastaneda1992.mfront` is available in the `MFrontGallery` project, [here](https://github.com/thelfer/MFrontGallery/tree/master/generic-behaviours/homogenization/).
 
 For the jacobian, we adopt the `Numerical Jacobian`, which
 means that the beginning of the `mfront` file reads:
