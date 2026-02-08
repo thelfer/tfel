@@ -1,6 +1,18 @@
-% MTest: unit mechanical behaviour testing
-% Helfer Thomas; Jean-Michel Proix
-% August 19, 2014
+---
+title: "MTest: unit testing of behaviours"
+author: Thomas Helfer
+date: 08/02/2026
+lang: en-EN
+link-citations: true
+colorlinks: true
+geometry:
+  - margin=2cm
+papersize: a4
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+---
 
 \newcommand{\paren}[1]{{\left(#1\right)}}
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
@@ -10,12 +22,13 @@
 `MFront` comes with a handy and easy-to-use tool called `MTest`. This
 tool handles two types of computations:
 
-- The description of a single material point.
-- The description of a pipe, subject to various kinds of loadings.
+- the description of a single material point,
+- the description of a pipe, subjected to various kinds of loadings.
+  This feature is detailed in [a dedicated page](`ptest.md`).
 
 From various benchmarks, this tool has been found much faster (from
 ten to several hundred times depending on the test case) than using a
-full-fledged finite element solver such as `Cast3M` or `Code_Aster`.
+full-fledged finite element solver such as `Cast3M` or `code_aster`.
 
 The `mtest` python module, described [here](mtest-python.html), allows
 much finer control of the computations.
@@ -57,7 +70,7 @@ The `--help-keyword` displays the help associated with a keyword. If
 this keyword is specific to the simulation of a pipe, use
 `--scheme=ptest` option *before* the `--help-keyword` option.
 
-# Material point
+# Simulation of a material point
 
 `MTest` can test the local behaviour of a material, by imposing
 independent constraints on each component of the driving variables (or
@@ -118,187 +131,6 @@ after several hours of computations.
 @Times {0.,1 in 20};
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# Simulation of a pipe
-
-`MTest` can also be used to model a pipe subjected to various loadings.
-
-## Radial loadings
-
-### Tight pipe
-
-#### Specifying the gas equation of state
-
-The equation of state of the gas can be specified using the
-`@GasEquationOfState` keyword.
-
-This keywords expects a function \(f\paren{P,V,T}\) such that the
-equation of state is:
-
-\[
-f\paren{P,V,T, n}=0
-\]{#eq:GasEquationOfState}
-
-where:
-
-- \(P\) is the inner pressure in the pipe.
-- \(V\) is the volume of gas in a pipe of unit height. For small strain
-  analyses, \(V\) is equal to the initial volume of the pipe. For finite
-  strain analysis, \(V\) is computed by:
-  \[
-  V = \pi \, \ets{R}^{2} \, \paren{1 + \ets{\varepsilon_{zz}}}
-  \]
-  where \(\ets{R}\) and \(\ets{\varepsilon_{zz}}\) are respectively the
-  current estimation of the radius and the current estimation of the
-  linear axial strain at the end of the time.
-- \(T\) is the current value of temperature at the inner surface of the
-  pipe (the temperature is assumed homogeneous inside the pipe).
-- \(n\) is the amount of substance of the gas. This quantity is assumed
-  constant during the experiment. Its value is deduced from Equation
-  @eq:GasEquationOfState by using:
-  - The filling pressure (see the `@FillingPressure` keyword).
-  - The filling temperature (see the `@FillingTemperature` keyword).
-  - The initial inner radius of the pipe[^1].
-
-[^1]: Using the initial inner radius of the pipe generally endows an
-  approximation as the initial radius is usually known before the gas is
-  introduced in the pipe.
-
-##### A first example
-
-In this example, the equation of state of a perfect gas is specified:
-
-~~~~{.cxx}
-@FillingPressure      1.e5;
-@FillingTemperature 293.15;
-@Real 'R' 8.314;
-@GasEquationOfState 'P*V-n*R*T';
-~~~~
-
-##### A second example
-
-In this example, the equation of state of a perfect gas is specified,
-but one imagine that the gas can only occupy a fraction \(\alpha\,V\) of
-the volume inside the pipe:
-
-~~~~{.cxx}
-@FillingPressure      1.e5;
-@FillingTemperature 293.15;
-@Real 'R' 8.314;
-@Real 'a' '0.8';
-@GasEquationOfState 'P*a*V-n*R*T';
-~~~~
-
-## Axial loadings
-
-## Modelling a non-deformable mandrel inside 
-
-The effect of a mandrel located inside the pipe can be modelled by
-defining the evolution of its radius \(R_{m}\) using the
-`@MandrelRadiusEvolution` keyword. The inner radius \(R_{i}\) will then
-satisfy the following unilateral boundary condition:
-
-\[
-R_{i} - R_{m} \geq 0
-\]
-
-This boundary condition is imposed by using a Lagrange multiplier. Its
-value is given by the contact pressure in the output file. The total
-pressure applied to the inner surface of the pipe is given by the sum of
-the imposed pressure (if any) and the contact pressure. Only the imposed
-inner pressure is used to compute the end cap effect.
-
-This boundary condition is not compatible with:
-
-- boundary conditions imposing the evolution of the inner radius of the
-  pipe or the outer radius of the pipe.
-- the modelling of a tight pipe. 
-
-### Axial binding
-
-If the evolution of the axial growth of the mandrel is defined using the
-`@MandrelAxialGrowthEvolution` keyword, an axial binding between the
-mandrel and the pipe is assumed, i.e. the difference between the axial
-growth of the pipe \(\varepsilon^{p}_{zz}\) and the axial growth of the
-mandrel \(\varepsilon^{p}_{zz}\) is assumed to be constant to its value
-when the contact between the mandrel and the pipe is detected:
-
-\[
-\varepsilon^{p}_{zz}-\varepsilon^{m}_{zz}=\textrm{Cste}
-\]
-
-This axial boundary condition is not compatible with the boundary
-condition imposing the evolution of the axial growth of the pipe.
-
-## Support for failure criteria for pipes
-
-Failure criteria can be added to pipe modelling using the
-`@FailureCriterion` keyword. Note that no failure criterion is currently
-shipped with `MTest`.
-
-A failure criterion is called at the end of each time step to detect
-failure of the pipe.
-
-Each failure criterion adds a column to the output file giving the
-status of the criterion:
-
-- `0` means that the criterion is not met, i.e. no failure is detected
-  and the pipe is sound.
-- `1` means that the criterion is met, i.e. failure is detected and the
-  pipe is broken.
-
-In case of failure, three policies can be selected using the
-`@FailurePolicy` keyword:
-
-- `ReportOnly`: failure does not affect computation. The evaluation of
-  the failure criteria only affects the output file.
-- `StopComputation`: failure leads to reject the current time step. If
-  substepping is enabled, the time step is divided by two. With this
-  policy, one can thus only approach the failure time, but never go
-  beyond.
-- `FreezeState` (or `FreezeStateUntilEndOfComputation`): if a failure is
-  detected, the state of the structure is frozen and does not evolve. No
-  equilibrium is performed, the behaviour is no more called and `PipeTest`
-  will output the same results again and again until the end of
-  computation. This option may be useful when optimizing material
-  parameters.
-
-### Example of usage
-
-~~~~{.cxx}
-@FailurePolicy 'FreezeState';
-@FailureCriterion 'ElongationAtBreak' {maximum_value : 1e-4};
-~~~~
-
-## Support for oxidation models for pipes
-
-The `@OxidationModel` keyword introduces a model which computes an
-oxidation length at either the inner boundary or the outer boundary of
-the pipe. This keyword must be followed by a data map with the following
-entries:
-
-- `model`: the name of model.
-- `library`: the name of the library in which the model is available.
-- `boundary`: the name of boundary on which the model is defined. This
-  variable must be equal to `inner_boundary` or `outer_boundary`.
-
-An oxidation model must define an internal state variable named
-`OxidationLength`. The values of the material properties and external
-state variables passed to an oxidation model are computed on the
-boundary on which the model is defined.
-
-The definition of at least one oxidation model automatically defines an
-evolution named `OxidationStatus` which states if an integration point
-is inside an oxidation layer.
-
-### Example of usage
-
-~~~~{.python}
-@OxidationModel{
-  model : 'umatm5deziroxoxidationmodel_srma2020b',
-  library : 'src/libUmatM5.so',
-  boundary : 'outer_boundary'
-};
-~~~~
 
 # References
 
