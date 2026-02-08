@@ -510,7 +510,8 @@ namespace mfront {
       const auto types = mfront::getST2toST2TypeAliases();
       return std::find(types.begin(), types.end(), type) != types.end();
     };
-    if (t.type == "tfel::math::quantity") {
+    if ((t.type == "tfel::math::quantity") ||
+        (t.type == "mfront_quantity")) {
       return {0, 3};
     } else if (t.type == "tfel::math::fsarray") {
       return treatArray1D();
@@ -600,7 +601,7 @@ namespace mfront {
       SupportedTypes::checkNumberOfTemplateArguments(t, 0u);
       return p->second;
     }
-    if (t.type == "tfel::math::quantity") {
+    if ((t.type == "tfel::math::quantity") || (t.type == "mfront_quantity")) {
       return SupportedTypes::SCALAR;
     } else if (t.type == "tfel::math::tvector") {
       return SupportedTypes::TVECTOR;
@@ -1038,7 +1039,7 @@ namespace mfront {
       for (decltype(args.size()) i = args.size(); i != 8u; ++i) {
         args.push_back(0);
       }
-      t.type = "tfel::math::quantity";
+      t.type = "mfront_quantity";
     } else {
       t.template_arguments.reset();
       t.type = "real";
