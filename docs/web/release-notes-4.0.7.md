@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 4.0.7 of the
 
 # Issues fixed
 
+## Issue 933: [mfront] the `use_qt` parameter shall alter the types declared using `quantity`
+
+For more details, see <https://github.com/thelfer/tfel/issues/933>.
+
 ## Issue 907: [tfel-math] fix `det` for `T2toT2` objects
 
 For more details, see <https://github.com/thelfer/tfel/issues/907>.
