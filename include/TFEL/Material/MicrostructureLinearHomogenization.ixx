@@ -174,7 +174,7 @@ namespace tfel::material::homogenization::elasticity {
     std::vector<tfel::math::st2tost2<N, real>> localisators = {};
     auto Chom = C0;
     auto Chom_ = C0;
-    real rel_err = tolerance +1;
+    real rel_err = tolerance + 1;
     while (rel_err > tolerance) {
       std::vector<tfel::math::st2tost2<N, real>> localisators_try = {};
       tfel::math::st2tost2<N, real> A0 =
@@ -210,7 +210,7 @@ namespace tfel::material::homogenization::elasticity {
           Chom_(i, j) = Chom(i, j);
           Chom(i, j) = Ch(i, j);
         }
-      rel_err = relative_error(Chom,Chom_);
+      rel_err = relative_error(Chom, Chom_);
       if (rel_err <= tolerance) {
         for (std::size_t i = 0; i < np; i++) {
           auto Ai = localisators_try[i];

@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 4.0.7 of the
 
 # Issues fixed
 
+## Issue 934: [tfel-math] fix assignement of quantities with incompatible unit types
+
+For more details, see <https://github.com/thelfer/tfel/issues/934>.
+
 ## Issue 933: [mfront] the `use_qt` parameter shall alter the types declared using `quantity`
 
 For more details, see <https://github.com/thelfer/tfel/issues/933>.
