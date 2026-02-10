@@ -356,6 +356,8 @@ namespace mfront {
       os << "(";
       this->writeArgumentsList(os, mpd);
       os << ")\n{\n";
+      const auto use_qt = useQuantities(mpd) ? "true" : "false";
+      os << "[[maybe_unused]] constexpr auto use_qt = " << use_qt << ";\n";
       writeScalarStandardTypedefs(os, mpd, "double", true);
       this->writeInterfaceSpecificVariables(os, mpd);
       for (const auto& i : mpd.inputs) {

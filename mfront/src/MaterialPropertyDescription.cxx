@@ -35,10 +35,13 @@ namespace mfront {
       const FileDescription& fd,
       const std::string& numeric_type,
       const bool areQuantitiesSupported) {
+    const auto use_qt = (areQuantitiesSupported && useQuantities(mpd));
     os << "using namespace std;\n"
        << "using tfel::math::invert_type;\n"
        << "using tfel::math::result_type;\n"
        << "using tfel::math::derivative_type;\n";
+    os << "[[maybe_unused]] constexpr auto use_qt = "
+       << (use_qt ? "true" : "false") << ";\n";
     writeScalarStandardTypedefs(os, mpd, numeric_type, areQuantitiesSupported);
     writeMaterialLaws(os, mpd.materialLaws);
     writeStaticVariables(os, mpd.staticVars, fd.fileName);
@@ -50,6 +53,7 @@ namespace mfront {
                                    const bool areQuantitiesSupported) {
     const auto use_qt =
         (areQuantitiesSupported && useQuantities(mpd)) ? "true" : "false";
+    os << "using NumericType [[maybe_unused]] = " << numeric_type << ";\n";
     for (const auto& a : getScalarTypeAliases()) {
       os << "using " << a << " [[maybe_unused]] = "
          << "typename tfel::config::ScalarTypes<" << numeric_type << ", "
