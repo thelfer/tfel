@@ -286,8 +286,11 @@ namespace mfront {
     if (mpd.inputs.empty()) {
       header << "//! nested typedef to make " << name
              << " model an adaptable generator (STL compliance)\n\n";
-      header << "typedef double result_type;\n\n";
+      header << "using result_type =  double;\n\n";
     }
+    const auto use_qt = useQuantities(mpd) ? "true" : "false";
+    header << "[[maybe_unused]] static constexpr auto use_qt = "  //
+           << use_qt << ";\n";
     writeScalarStandardTypedefs(header, mpd, "double", true);
     header << "//! \\brief default constructor\n"
            << name << "() noexcept;\n\n"

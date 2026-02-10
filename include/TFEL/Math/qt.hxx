@@ -230,7 +230,30 @@ namespace tfel::math {
         const Quantity<UnitType, ValueType2, OwnershipPolicy2>& src) noexcept
         : OwnershipPolicy(src.getValue()) {}  // end of Quantity
     //
-    using OwnershipPolicy::operator=;
+    template <typename T>
+    TFEL_HOST_DEVICE constexpr
+    std::enable_if_t<(std::is_constructible_v<ValueType, T>)&& //
+                     (std::is_convertible_v<ValueType, T>)&&   //
+      (std::is_same_v<UnitType, NoUnit>), Quantity&> operator=(const T &src) noexcept {
+      this->getValue() = src;
+      return *this;
+    }
+    template <typename T>
+    TFEL_HOST_DEVICE constexpr
+    std::enable_if_t<(std::is_constructible_v<ValueType, T>)&& //
+                     (std::is_convertible_v<ValueType, T>)&&   //
+      (std::is_same_v<UnitType, NoUnit>), Quantity&> operator+=(const T &src) noexcept {
+      this->getValue() += src;
+      return *this;
+    }
+    template <typename T>
+    TFEL_HOST_DEVICE constexpr
+    std::enable_if_t<(std::is_constructible_v<ValueType, T>)&& //
+                     (std::is_convertible_v<ValueType, T>)&&   //
+      (std::is_same_v<UnitType, NoUnit>), Quantity&> operator-=(const T &src) noexcept {
+      this->getValue() -= src;
+      return *this;
+    }
     //! \brief assignement operator
     template <typename ValueType2, typename OwnershipPolicy2>
     TFEL_HOST_DEVICE constexpr std::enable_if_t<
