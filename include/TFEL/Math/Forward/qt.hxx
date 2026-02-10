@@ -414,6 +414,41 @@ namespace tfel::math {
                             D7>::type,
       typename tfel::math::internals::MakeQuantityValueType<ValueType>::type>;
 
+  //! \brief a simple alias
+  template <bool use_qt,
+            typename ValueType,
+            int N1 = 0,
+            int N2 = 0,
+            int N3 = 0,
+            int N4 = 0,
+            int N5 = 0,
+            int N6 = 0,
+            int N7 = 0,
+            unsigned int D1 = 1,
+            unsigned int D2 = 1,
+            unsigned int D3 = 1,
+            unsigned int D4 = 1,
+            unsigned int D5 = 1,
+            unsigned int D6 = 1,
+            unsigned int D7 = 1>
+  using quantity_or_base_type = std::conditional_t<use_qt,
+                                                   quantity<ValueType,
+                                                            N1,
+                                                            N2,
+                                                            N3,
+                                                            N4,
+                                                            N5,
+                                                            N6,
+                                                            N7,
+                                                            D1,
+                                                            D2,
+                                                            D3,
+                                                            D4,
+                                                            D5,
+                                                            D6,
+                                                            D7>,
+                                                   ValueType>;
+
   namespace internals {
 
     template <typename T>
