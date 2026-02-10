@@ -40,6 +40,8 @@ struct qtTest final : public tfel::tests::TestCase {
     this->test4();
     this->test5();
     this->test6();
+    this->test7();
+    this->test8();
     return this->result;
   }  // end of execute
  private:
@@ -102,6 +104,64 @@ struct qtTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT((std::is_same_v<decltype(t), const time>));
     TFEL_TESTS_STATIC_ASSERT(my_abs(t.getValue() - 1.2) < 1e-15);
   }
+  void test7() {
+    using namespace tfel::math;
+    auto check_assignement = [this]<typename Unit1, typename Unit2, bool b>() {
+      constexpr auto can_assign = requires(qt<Unit1> & lhs, const qt<Unit2>& rhs) {
+        lhs = rhs;
+      };
+      TFEL_TESTS_STATIC_ASSERT(can_assign == b);
+      constexpr auto can_assign1 = requires(qt<Unit1> & lhs, const qt<Unit2>& rhs) {
+        lhs = rhs;
+      };
+      TFEL_TESTS_STATIC_ASSERT(can_assign1 == b);
+      constexpr auto can_assign2 = requires(qt<Unit1> & lhs, const qt<Unit2>& rhs) {
+        lhs = rhs;
+      };
+      TFEL_TESTS_STATIC_ASSERT(can_assign2 == b);
+    };
+    check_assignement.operator()<unit::NoUnit, unit::NoUnit, true>();
+    check_assignement.operator()<unit::NoUnit, unit::Time, false>();
+    check_assignement.operator()<unit::Time, unit::NoUnit, false>();
+  } // end of test7
+  void test8() {
+    using namespace tfel::math;
+    auto check_assignement =
+        [this]<typename Unit1, typename ValueType, bool b>() {
+          constexpr auto can_assign =
+              requires(qt<Unit1, ValueType> & lhs, const ValueType& rhs) {
+            lhs = rhs;
+          };
+          TFEL_TESTS_STATIC_ASSERT(can_assign == b);
+          constexpr auto can_assign1 =
+              requires(ValueType & lhs, const qt<Unit1, ValueType>& rhs) {
+            lhs = rhs;
+          };
+          TFEL_TESTS_STATIC_ASSERT(can_assign1 == b);
+          constexpr auto can_assign2 =
+              requires(qt<Unit1, ValueType> & lhs, const ValueType& rhs) {
+            lhs += rhs;
+          };
+          TFEL_TESTS_STATIC_ASSERT(can_assign2 == b);
+          constexpr auto can_assign3 =
+              requires(ValueType & lhs, const qt<Unit1, ValueType>& rhs) {
+            lhs += static_cast<const ValueType&>(rhs);
+          };
+          TFEL_TESTS_STATIC_ASSERT(can_assign3 == b);
+          constexpr auto can_assign4 =
+              requires(qt<Unit1, ValueType> & lhs, const ValueType& rhs) {
+            lhs -= rhs;
+          };
+          TFEL_TESTS_STATIC_ASSERT(can_assign4 == b);
+          constexpr auto can_assign5 =
+              requires(ValueType & lhs, const qt<Unit1, ValueType>& rhs) {
+            lhs -= static_cast<const ValueType&>(rhs);
+          };
+          TFEL_TESTS_STATIC_ASSERT(can_assign5 == b);
+        };
+    check_assignement.operator()<unit::NoUnit, double, true>();
+    check_assignement.operator()<unit::Time, float, false>();
+  }  // end of test8
 };
 
 TFEL_TESTS_GENERATE_PROXY(qtTest, "qtTest");

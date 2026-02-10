@@ -220,7 +220,30 @@ namespace tfel::math {
         requires(std::is_same_v<promote<ValueType, ValueType2>, ValueType>)
         : OwnershipPolicy(src.getValue()) {}  // end of Quantity
     //
-    using OwnershipPolicy::operator=;
+    template <typename T>
+    TFEL_HOST_DEVICE constexpr Quantity &operator=(const T &src) noexcept
+        requires((std::is_constructible_v<ValueType, T>)&& //
+                 (std::is_convertible_v<ValueType, T>)&&   //
+                 (std::same_as<UnitType, unit::NoUnit>)) {
+      this->getValue() = src;
+      return *this;
+    }
+    template <typename T>
+    TFEL_HOST_DEVICE constexpr Quantity &operator+=(const T &src) noexcept
+        requires((std::is_constructible_v<ValueType, T>)&& //
+                 (std::is_convertible_v<ValueType, T>)&&   //
+                 (std::same_as<UnitType, unit::NoUnit>)) {
+      this->getValue() += src;
+      return *this;
+    }
+    template <typename T>
+    TFEL_HOST_DEVICE constexpr Quantity &operator-=(const T &src) noexcept
+        requires((std::is_constructible_v<ValueType, T>)&& //
+                 (std::is_convertible_v<ValueType, T>)&&   //
+                 (std::same_as<UnitType, unit::NoUnit>)) {
+      this->getValue() -= src;
+      return *this;
+    }
     //! \brief assignement operator
     template <typename ValueType2, typename OwnershipPolicy2>
     TFEL_HOST_DEVICE constexpr Quantity& operator=(

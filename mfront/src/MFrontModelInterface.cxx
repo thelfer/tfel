@@ -31,9 +31,10 @@ namespace mfront {
   static void writeScalarStandardTypedefs(std::ostream& os,
                                           const ModelDescription& md) {
     const auto use_qt = useQuantities(md) ? "true" : "false";
+    os << "[[maybe_unused]] static constexpr auto use_qt = " << use_qt << ";\n";
     for (const auto& a : getScalarTypeAliases()) {
       os << "using " << a << " [[maybe_unused]] = "
-         << "typename tfel::config::ScalarTypes<double, " << use_qt
+         << "typename tfel::config::ScalarTypes<NumericType, " << use_qt
          << ">::" << a << ";\n";
     }
   }  // end of writeScalarStandardTypedefs

@@ -640,6 +640,8 @@ namespace mfront {
       std::ostream& os,
       const MaterialPropertyDescription& mpd,
       const std::string_view floating_point_type) const {
+    const auto use_qt = useQuantities(mpd) ? "true" : "false";
+    os << "[[maybe_unused]] constexpr auto use_qt = " << use_qt << ";\n";
     writeScalarStandardTypedefs(os, mpd, floating_point_type, true);
     this->writeInterfaceSpecificVariables(os, mpd);
     for (const auto& i : mpd.inputs) {
