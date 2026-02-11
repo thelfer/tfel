@@ -4959,9 +4959,11 @@ namespace mfront {
         if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
             (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
           if (this->bd.useQt()) {
-            os << "typename tfel::math::MakeQuantityReferenceType<"
+            os << "std::conditional_t<use_qt, "
+               << "typename tfel::math::MakeQuantityReferenceType<"
                << "tfel::math::derivative_type<" << v1.type << "," << v2.type
-               << ">>::type " << bn << ";\n";
+               << ">>::type, tfel::math::derivative_type<" << v1.type << ","
+               << v2.type << ">&>" << bn << ";\n";
           } else {
             os << "tfel::math::derivative_type<" << v1.type << "," << v2.type
                << ">& " << bn << ";\n";

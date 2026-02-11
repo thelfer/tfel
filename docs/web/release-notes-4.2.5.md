@@ -24,4 +24,4 @@ The page describes the new functionalities of Version 4.2.5 of the
 
 ## Issue #862: [diana-interface] Extension of `DIANA` interface to support 2D resolution
 
-For more details, see: <https://sourceforge.net/p/tfel/tickets/862/>
+For more details, see: <https://github.com/thelfer/tfel/issues/862/>
