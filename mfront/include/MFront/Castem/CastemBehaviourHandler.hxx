@@ -282,15 +282,15 @@ namespace castem {
         bData.setCASTEMBehaviourDataGradients(STRAN);
         iData.setCASTEMIntegrationDataGradients(DSTRAN);
       }  // end of exe
-         /*!
-          * \param[out] b      : b
-          * \param[in]  STRAN  : driving variable at the beginning of the
-          *                     time step
-          * \param[in]  DSTRAN : driving variable at the end of the
-          *                      time step or driving variable increment
-          * \param[in]  sfeh   : function handling the stress-free expansion
-          *                      at the beginning of the time step
-          */
+      /*!
+       * \param[out] b      : b
+       * \param[in]  STRAN  : driving variable at the beginning of the
+       *                     time step
+       * \param[in]  DSTRAN : driving variable at the end of the
+       *                      time step or driving variable increment
+       * \param[in]  sfeh   : function handling the stress-free expansion
+       *                      at the beginning of the time step
+       */
       TFEL_CASTEM_INLINE static void exe(BV &b,
                                          const CastemReal *const STRAN,
                                          const CastemReal *const DSTRAN,
@@ -375,7 +375,7 @@ namespace castem {
         return;
       }  // end of Error::exe
 
-    };  // end of struct Error
+    };  // namespace castem
 
     template <const bool bs,  // requires StiffnessTensor
               const bool ba>  // requires ThermalExpansionCoefficientTensor
@@ -917,7 +917,7 @@ namespace castem {
       typedef MechanicalBehaviourTraits<BV> Traits;
       const auto offset = CastemTraits<BV>::propertiesOffset;
       const auto nprops = CastemTraits<BV>::material_properties_nb;
-      const auto NPROPS_ = offset + nprops == 0 ? 1u : offset + nprops;
+      const auto NPROPS_ = offset + nprops;
       const auto is_defined_ = Traits::is_defined;
       // Test if the nb of properties matches Behaviour requirements
       if ((NPROPS != NPROPS_) && is_defined_) {
