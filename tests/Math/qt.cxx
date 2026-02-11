@@ -107,15 +107,18 @@ struct qtTest final : public tfel::tests::TestCase {
   void test7() {
     using namespace tfel::math;
     auto check_assignement = [this]<typename Unit1, typename Unit2, bool b>() {
-      constexpr auto can_assign = requires(qt<Unit1> & lhs, const qt<Unit2>& rhs) {
+      constexpr auto can_assign =
+          requires(qt<Unit1> & lhs, const qt<Unit2>& rhs) {
         lhs = rhs;
       };
       TFEL_TESTS_STATIC_ASSERT(can_assign == b);
-      constexpr auto can_assign1 = requires(qt<Unit1> & lhs, const qt<Unit2>& rhs) {
+      constexpr auto can_assign1 =
+          requires(qt<Unit1> & lhs, const qt<Unit2>& rhs) {
         lhs = rhs;
       };
       TFEL_TESTS_STATIC_ASSERT(can_assign1 == b);
-      constexpr auto can_assign2 = requires(qt<Unit1> & lhs, const qt<Unit2>& rhs) {
+      constexpr auto can_assign2 =
+          requires(qt<Unit1> & lhs, const qt<Unit2>& rhs) {
         lhs = rhs;
       };
       TFEL_TESTS_STATIC_ASSERT(can_assign2 == b);
@@ -123,7 +126,7 @@ struct qtTest final : public tfel::tests::TestCase {
     check_assignement.operator()<NoUnit, NoUnit, true>();
     check_assignement.operator()<NoUnit, Time, false>();
     check_assignement.operator()<Time, NoUnit, false>();
-  } // end of test7
+  }  // end of test7
   void test8() {
     using namespace tfel::math;
     auto check_assignement =

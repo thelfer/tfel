@@ -221,25 +221,25 @@ namespace tfel::math {
         : OwnershipPolicy(src.getValue()) {}  // end of Quantity
     //
     template <typename T>
-    TFEL_HOST_DEVICE constexpr Quantity &operator=(const T &src) noexcept
-        requires((std::is_constructible_v<ValueType, T>)&& //
-                 (std::is_convertible_v<ValueType, T>)&&   //
+    TFEL_HOST_DEVICE constexpr Quantity& operator=(const T& src) noexcept
+        requires((std::is_constructible_v<ValueType, T>)&&  //
+                 (std::is_convertible_v<ValueType, T>)&&    //
                  (std::same_as<UnitType, NoUnit>)) {
       this->getValue() = src;
       return *this;
     }
     template <typename T>
-    TFEL_HOST_DEVICE constexpr Quantity &operator+=(const T &src) noexcept
-        requires((std::is_constructible_v<ValueType, T>)&& //
-                 (std::is_convertible_v<ValueType, T>)&&   //
+    TFEL_HOST_DEVICE constexpr Quantity& operator+=(const T& src) noexcept
+        requires((std::is_constructible_v<ValueType, T>)&&  //
+                 (std::is_convertible_v<ValueType, T>)&&    //
                  (std::same_as<UnitType, NoUnit>)) {
       this->getValue() += src;
       return *this;
     }
     template <typename T>
-    TFEL_HOST_DEVICE constexpr Quantity &operator-=(const T &src) noexcept
-        requires((std::is_constructible_v<ValueType, T>)&& //
-                 (std::is_convertible_v<ValueType, T>)&&   //
+    TFEL_HOST_DEVICE constexpr Quantity& operator-=(const T& src) noexcept
+        requires((std::is_constructible_v<ValueType, T>)&&  //
+                 (std::is_convertible_v<ValueType, T>)&&    //
                  (std::same_as<UnitType, NoUnit>)) {
       this->getValue() -= src;
       return *this;
