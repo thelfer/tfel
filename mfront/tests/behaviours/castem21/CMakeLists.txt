@@ -126,7 +126,12 @@ set(mfront_tests_SOURCES
   ParameterTest2
   ElasticMaterialPropertiesBoundsCheckTest
   TemperatureUpdateOnSubSteppingCheck
-  GenerateMTestFileOnFailure)
+  GenerateMTestFileOnFailure
+  ode_default
+  ode_default2
+  ode_rk54
+  ode_implicit
+  model1)
 
 mfront_dependencies(MFrontCastem21Behaviours
   Inconel600_YoungModulus
@@ -659,4 +664,7 @@ test_castem21(tensorialexternalstatevariabletest)
 test_castem21(elasticmaterialpropertiesboundschecktest
   NO_XML_OUTPUT WILL_FAIL)
 test_castem21(temperatureupdateonsubsteppingcheck)
-
+test_castem21(ode_default REFERENCE_FILE  ode_default.ref)
+test_castem21(ode_implicit REFERENCE_FILE ode_implicit.ref)
+test_castem21(ode_rk54 REFERENCE_FILE ode_rk54.ref)
+test_castem21(model1)
