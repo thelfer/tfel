@@ -917,7 +917,7 @@ namespace castem {
       typedef MechanicalBehaviourTraits<BV> Traits;
       const auto offset = CastemTraits<BV>::propertiesOffset;
       const auto nprops = CastemTraits<BV>::material_properties_nb;
-      const auto NPROPS_ = offset + nprops == 0 ? 1u : offset + nprops;
+      const auto NPROPS_ = offset + nprops;
       const auto is_defined_ = Traits::is_defined;
       // Test if the nb of properties matches Behaviour requirements
       if ((NPROPS != NPROPS_) && is_defined_) {
