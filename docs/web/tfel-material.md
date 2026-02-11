@@ -433,6 +433,8 @@ to the tolerance `eps`.
 
 The homogenization functions are part of the namespace `tfel::material::homogenization`.
 A specialization for elasticity is defined: `tfel::material::homogenization::elasticity`.
+Note that the functionalities below are also available in
+the `Python` module (see the doc [here](tfel-python.html#the-tfel.material.homogenization-module)).
 
 ## Eshelby, Hill and localisation tensors
 
@@ -608,6 +610,11 @@ not isotropic, it must be provided in the local basis defined by `n_a,n_b`.
 
 ## Homogenization schemes for biphasic media
 
+Note that the functionalities below are also available in
+the `Python` module (see the doc [here](tfel-python.html#homogenization-schemes-in-biphasic-media)).
+See also [here](BiphasicLinearHomogenization.html) a tutorial on the computation of homogenized schemes for biphasic
+particulate microstructures.
+
 Different classical mean-field homogenization schemes are implemented
 for biphasic media. These schemes are introduced by the header `LinearHomogenizationSchemes.hxx`.
 They only deal with isotropic matrices and locally isotropic inclusions
@@ -709,9 +716,6 @@ const auto C_PCW = computePCWScheme<stress>(E0,nu0,f,Ei,nui,A_av,D);
 ~~~~
 
 Here, the three above schemes return `st2tost2` objects.
-A tutorial on the computation of homogenized schemes for biphasic particulate microstructures
-is available [here](BiphasicLinearHomogenization.html).
-
 
 ## Homogenization bounds
 
@@ -796,6 +800,8 @@ of the `pair` corresponds to a phase (matrix or spheres).
 
 A `ParticulateMicrostructure` object can be created for
 homogenization of general matrix-inclusion microstructures.
+Note that the functionalities below are also available in
+the `Python` module (see the doc [here](tfel-python.html#homogenization-of-general-microstructures)).
 
 ### Description and construction of a microstructure
 

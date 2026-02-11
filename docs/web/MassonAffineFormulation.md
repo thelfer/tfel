@@ -382,7 +382,7 @@ for the homogenization of the thermoelastic composite:
 and the header for handling the rotations of the grains with their
 slip systems:
  
- - ExtendedPolyCrystalsSlidingSystems.hxx
+ - PolyCrystalsSlidingSystems.hxx
 
 ~~~~ {#Begin .cpp .numberLines}
 @TFELLibraries {"Material"};
@@ -391,7 +391,7 @@ slip systems:
 #include "TFEL/Material/IsotropicEshelbyTensor.hxx"
 #include "TFEL/Material/MicrostructureDescription.hxx"
 #include "TFEL/Material/MicrostructureLinearHomogenization.hxx"
-#include "TFEL/Material/ExtendedPolyCrystalsSlidingSystems.hxx"}
+#include "TFEL/Material/PolyCrystalsSlidingSystems.hxx"}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For the approach based on morphological tensors, we do not need all these headers,
@@ -403,7 +403,7 @@ located at the same place as the `.mfront` file.
 @TFELLibraries {"Material"};
 @Includes{
 #include "tensors.hxx"
-#include "TFEL/Material/ExtendedPolyCrystalsSlidingSystems.hxx"}
+#include "TFEL/Material/PolyCrystalsSlidingSystems.hxx"}
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The compilation hence will be done like that:
@@ -434,10 +434,10 @@ but the rotations of the grains will be performed later, in the `Integrator`
 code block:
 
 ~~~~ {#Integrator .cpp .numberLines}
-using PolyCrystalsSlidingSystems =
+using ExtendedPolyCrystalsSlidingSystems =
 	ExtendedPolyCrystalsSlidingSystems<Np, Affine_formulationSlipSystems<real>, real>;
 const auto& gs =
-	PolyCrystalsSlidingSystems::getPolyCrystalsSlidingSystems("polycrystal.csv");
+	ExtendedPolyCrystalsSlidingSystems::getPolyCrystalsSlidingSystems("polycrystal.csv");
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Poperties and variables
