@@ -22,10 +22,19 @@ The page describes the new functionalities of Version 4.1.6 of the
 
 # Issues fixed
 
+## Issue 937: [model] Difference between `castem` and `castem21` interfaces
+
+For more details, see: <https://github.com/thelfer/tfel/issues/937/>
+
+## Issue 935: [model] Temperature is required to be the first external state variable with `Cast3M` interface
+
+For more details, see: <https://github.com/thelfer/tfel/issues/935/>
+
+
 ## Issue 915: [mfront] Check on the number of state variables is broken in the Cast3M interface for point-wise models
 
-For more details, see: <https://sourceforge.net/p/tfel/tickets/915/>
+For more details, see: <https://github.com/thelfer/tfel/issues/915/>
 
 ## Issue 902: [castem] support for material properties in point-wise models is broken
 
-For more details, see: <https://sourceforge.net/p/tfel/tickets/902/>
+For more details, see: <https://github.com/thelfer/tfel/issues/902/>

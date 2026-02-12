@@ -55,6 +55,9 @@ namespace mfront {
 
   std::string Castem21Interface::getMaterialPropertiesOffsetForBehaviourTraits(
       const BehaviourDescription& md) const {
+    if (md.isModel()) {
+      return CastemInterface::getMaterialPropertiesOffsetForBehaviourTraits(md);
+    }
     return CastemInterface::getMaterialPropertiesOffsetForBehaviourTraits(md) +
            " + 2u";
   }  // end of getMaterialPropertiesOffsetForBehaviourTraits

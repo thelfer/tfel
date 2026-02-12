@@ -999,30 +999,6 @@ namespace mfront {
       file << "using TangentOperator = " << this->bd.getTangentOperatorType()
            << ";\n";
     }
-    // quantities
-    file << "template <typename ValueType,\n"
-            "          int N1 = 0,\n"
-            "          int N2 = 0,\n"
-            "          int N3 = 0,\n"
-            "          int N4 = 0,\n"
-            "          int N5 = 0,\n"
-            "          int N6 = 0,\n"
-            "          int N7 = 0,\n"
-            "          unsigned int D1 = 1,\n"
-            "          unsigned int D2 = 1,\n"
-            "          unsigned int D3 = 1,\n"
-            "          unsigned int D4 = 1,\n"
-            "          unsigned int D5 = 1,\n"
-            "          unsigned int D6 = 1,\n"
-            "          unsigned int D7 = 1>\n";
-    if (this->bd.useQt()) {
-      file << "using mfront_quantity = "
-           << "std::conditional_t<use_qt, "
-           << "tfel::math::quantity<ValueType, N1, N2, N3, N4, N5, N6, N7, "
-           << "D1, D2, D3, D4, D5, D6, D7>, real>;\n";
-    } else {
-      file << "using mfront_quantity = NumericType;\n";
-    }
     // physical constants
     if (this->bd.useQt()) {
       file << "using PhysicalConstants = "
@@ -4983,9 +4959,11 @@ namespace mfront {
         if ((v1.getTypeFlag() == SupportedTypes::SCALAR) &&
             (v2.getTypeFlag() == SupportedTypes::SCALAR)) {
           if (this->bd.useQt()) {
-            os << "typename tfel::math::MakeQuantityReferenceType<"
+            os << "std::conditional_t<use_qt, "
+               << "typename tfel::math::MakeQuantityReferenceType<"
                << "tfel::math::derivative_type<" << v1.type << "," << v2.type
-               << ">>::type " << bn << ";\n";
+               << ">>::type, tfel::math::derivative_type<" << v1.type << ","
+               << v2.type << ">&>" << bn << ";\n";
           } else {
             os << "tfel::math::derivative_type<" << v1.type << "," << v2.type
                << ">& " << bn << ";\n";
