@@ -116,37 +116,51 @@ The idea is to linearize the behaviour around a reference stress $\tsigma^r$:
 \]
   where
 \[
-   \tenseurq M_r\left(\tsigma^r\right)=\deriv{\tepsilon_r}{\tsigma}\left(\tsigma^r\right)=\derivdeux{\psi_r}{\tsigma}\left(\tsigma^r\right)\qquad\tenseur e^r = \tepsilon_r(\tsigma^r)-\tenseurq M_r\left(\tsigma^r\right)\dbldot\tsigma^r
+   \tenseurq M_r\left(\tsigma^r\right)=\deriv{\tepsilon_r}{\tsigma}\left(\tsigma^r\right)=\derivdeux{\psi_r}{\tsigma}\left(\tsigma^r\right)\qquad\text{and}\quad\tenseur e^r = \deriv{\psi_r}{\tsigma}(\tsigma^r)-\tenseurq M_r\left(\tsigma^r\right)\dbldot\tsigma^r
 \]
-  This affine behaviour can be viewed as a so-called "thermoelastic comparison composite", and this composite
-  can be homogenized. This leads to a linear problem, so that the average on phase $r$ of the solution $\tsigma$ is given by
+  For a given set of reference stresses, this affine behaviour can be viewed as a so-called "thermoelastic comparison composite", and this composite
+  can be homogenized. This leads to a linear problem, so that the average on phase $r$ of the solution $\tepsilon$ is given by
 \[
   \begin{aligned}
-  \langle\tsigma\rangle_r = \tenseurq A_r\left(\tsigma^1,...,\tsigma^N\right)\dbldot\tE + \sum_s \tenseurq B_{rs}\left(\tsigma^1,...,\tsigma^N\right)\dbldot\tenseur e^s\left(\tsigma^s\right)
+  \langle\tepsilon\rangle_r = \tenseurq A_r\left(\tsigma^1,...,\tsigma^N\right)\dbldot\tE + \sum_s \tenseurq B_{rs}\left(\tsigma^1,...,\tsigma^N\right)\dbldot\tenseur e^s\left(\tsigma^s\right)
   \end{aligned}
 \]
   where $\tenseurq A_r\left(\tsigma^1,...,\tsigma^N\right)$ and $\tenseurq B_{rs}\left(\tsigma^1,...,\tsigma^N\right)$ can be obtained by a homogenization procedure (mean-field scheme, FFT...).
   
-The last question is the choice of the reference stresses $\tsigma^r$ ($1\leq r\leq N$). A discussion in [@masson_affine_2000] leads to the simple assumption that these reference stresses are the averages of the stress in the thermoelastic composite:
+The last question is the choice of the reference stresses $\tsigma^r$ ($1\leq r\leq N$). A discussion in [@masson_affine_2000] leads to the simple assumption that these reference stresses are the averages per phase of the stress in the thermoelastic composite:
 \[
 \begin{aligned}
 \tsigma^r = \langle\tsigma\rangle_r
 \end{aligned}
 \]
 where $\tsigma$ here stands for the stress solution of the thermoelastic homogenization problem.
+
+Now, if $\tenseurq M_r$ is invertible and by noting $\tenseurq L_r=\tenseurq M_r^{-1}$,
+the thermoelastic problem can be written as:
+\[
+\begin{aligned}
+\div\left[\tenseurq L_r\dbldot\left(\tepsilon-\tenseur e^r\right)\right]=0,\qquad\tepsilon\in\Ka\left(\tE\right)
+\end{aligned}
+\]
+Hence, $\tsigma^r = \langle\tsigma\rangle_r$ is equivalent to $\tsigma^r = \tenseurq L_r\dbldot\left(\langle\tepsilon\rangle_r-\tenseur e^r\right)$, which is exactly
+\[
+\begin{aligned}
+\deriv{\psi_r}{\tsigma}(\tsigma^r) = \langle\tepsilon\rangle_r
+\end{aligned}
+\]
   
 ## Macroscopic stress and tangent operator
 
   The macroscopic stress hence can be obtained by the classical relation:
 \[
   \begin{aligned}
-\tSigma=\sum_rc_r\,\langle\tsigma\rangle_r=\tenseurq C^{\mathrm{eff}}\dbldot\tE+\tenseur\tau^{\mathrm{eff}}
+\tSigma=\sum_rc_r\,\tsigma^r=\sum_rc_r\,\tenseurq L_r\dbldot\left(\langle\tepsilon\rangle_r-\tenseur e^r\right)=\tenseurq C^{\mathrm{eff}}\dbldot\tE+\tenseur\tau^{\mathrm{eff}}
   \end{aligned}
   \]
   where
   \[
 \begin{aligned}
-  \tenseurq C^{\mathrm{eff}}=\sum_rc_r\,\tenseurq A_r\qquad\text{and}\qquad\tenseur\tau^{\mathrm{eff}}=\sum_{r,s}c_r\,\tenseurq B_{rs}\dbldot\tenseur e^s
+  \tenseurq C^{\mathrm{eff}}=\sum_rc_r\,\tenseurq L_r\dbldot\tenseurq A_r\qquad\text{and}\qquad\tenseur\tau^{\mathrm{eff}}=\sum_{r,s}c_r\,\tenseurq L_r\dbldot\tenseurq B_{rs}\dbldot\tenseur e^s-\sum_{r}c_r\,\tenseurq L_r\dbldot\tenseur e^r
   \end{aligned}
 \]
   
@@ -165,14 +179,14 @@ In the expressions of the tangent operator, we can compute the term $\deriv{\tsi
 
 The resolution consists in
 \[
- \text{Find}\quad\tsigma^r\quad\text{such that}\quad\tsigma^r=\langle\tsigma\rangle_r
+ \text{Find}\quad\tsigma^r\quad\text{such that}\quad\deriv{\psi_r}{\tsigma}(\tsigma^r) = \langle\tepsilon\rangle_r
 \]
-where \(\tsigma\) is the stress field solution of a homogenization problem of the form:
+where \(\tepsilon\) is the strain field solution of a homogenization problem of the form:
 \[
 \begin{aligned}
-&\div\,\tsigma=\tenseur 0\\
-&\left(\tenseur e^r+\tenseurq M_r\dbldot\tsigma\right)\in\Ka\left(\tE\right)\\
-&\tenseurq M_r=\derivdeux{\psi_r}{\tsigma}\left(\tsigma^r\right)\qquad\text{and}\qquad\tenseur e^r=\deriv{\psi_r}{\tsigma}\left(\tsigma^r\right)-\tenseurq M_r\dbldot\tsigma^r
+&\div\,\left[\tenseurq L_r\dbldot\left(\tepsilon-\tenseur e^r\right)\right]=\tenseur 0\\
+&\tepsilon\in\Ka\left(\tE\right)\\
+&\tenseurq L_r=\left[\derivdeux{\psi_r}{\tsigma}\left(\tsigma^r\right)\right]^{-1}\qquad\text{and}\qquad\tenseur e^r=\deriv{\psi_r}{\tsigma}\left(\tsigma^r\right)-\tenseurq L_r^{-1}\dbldot\tsigma^r
 \end{aligned}
 \]
  
@@ -181,63 +195,67 @@ where \(\tsigma\) is the stress field solution of a homogenization problem of th
 The iterative resolution of the non-linear system can be summarized as
 
 \[
-\underset{\substack{\\ \\ \\ \Downarrow\\ \\ \\\text{analytic / finite difference}\\ \\ \\\text{\texttt{@BehaviourVariable} / directly provided}}}{\tenseurq M_r= \pderivdeux{\psi_r}{\tsigma}\left(\tsigma^r\right),\quad\tenseur e^r=\deriv{\psi_r}{\tsigma}\left(\tsigma^r\right)-\tenseurq M_r\dbldot\tsigma^r}\qquad\rightarrow\qquad \underset{\substack{\\ \\ \\ \Downarrow\\ \\ \\\text{mean-field scheme / morphological tensors}\\ \\ \\\texttt{tfel::material::homogenization}}}{\tsigma^r = \tenseurq A_r\dbldot\tE + \sum_s \tenseurq B_{rs}\dbldot\tenseur e^s}
+\underset{\substack{\\ \\ \\ \Downarrow\\ \\ \\\text{analytic / finite difference}\\ \\ \\\text{\texttt{@BehaviourVariable} / directly provided}}}{\tenseurq L_r= \left[\pderivdeux{\psi_r}{\tsigma}\left(\tsigma^r\right)\right]^{-1},\quad\tenseur e^r=\deriv{\psi_r}{\tsigma}\left(\tsigma^r\right)-\tenseurq L_r^{-1}\dbldot\tsigma^r}\qquad\rightarrow\qquad \underset{\substack{\\ \\ \\ \Downarrow\\ \\ \\\text{mean-field scheme / morphological tensors}\\ \\ \\\texttt{tfel::material::homogenization}}}{\langle\tepsilon\rangle_r = \tenseurq A_r\dbldot\tE + \sum_s \tenseurq B_{rs}\dbldot\tenseur e^s}
 \]
 
 The first step of the resolution consists in computing the moduli $\tenseurq M_r$ and free strains $\tenseur e^r$. It can be done analytically (as below) or via finite difference or automatic differentiation. Moreover, for both strategies, we could use a `BehaviourVariable`, defining the local behaviour in an external file (in our example, the potential is to simple to do that).
 
 The second step is the computation of the tensors $\tenseurq A_r$ and $\tenseurq B_{rs}$. This can be achieved by means of mean-field schemes (the `namespace` `tfel::material::homogenization` provides the good tensors). This can also be done via morphological tensors, computed on a given geometry of polycrystal. We will present below the two possibilities.
 
-We note that the equation relative to the second step is the non-linear equation to solve and will hence correspond to our residue.
-The macroscopic stress and the tangent operator must also be computed with the formulas shown above.
-
-## Computation of tensors Ar and Brs
-
-### Computation via morphological tensors
-
-In fact, the thermoelastic problem can be rewritten as a Lippmann-Schwinger equation (see [@willis_bounds_1977;@castaneda_effect_1995] for the primal version). Let us write $\tenseur\tau=\tsigma-\tenseurq L_0\dbldot\tepsilon$ with $\tepsilon=\tenseur e+\tenseurq M\dbldot\tsigma\in\Ka\left(\tE\right)$, we have, because, $\div\,\tsigma=0$,
+We note that the equation relative to the second step will give our residue.
+Indeed, the equation to solve is
 \[
 \begin{aligned}
-\tepsilon=\tE-\tenseurq \Gamma_0\left(\tenseur\tau\right)
+\deriv{\psi_r}{\tsigma}(\tsigma^r) = \langle\tepsilon\rangle_r = \tenseurq A_r\dbldot\tE + \sum_s \tenseurq B_{rs}\dbldot\tenseur e^s
 \end{aligned}
 \]
-where $\tenseurq \Gamma_0$ is the Green operator associated to the elasticity $\tenseurq L_0$ (this elasticity must be chosen by the user). It gives
+Hence the residue will be
 \[
 \begin{aligned}
-\tsigma=\tenseurq L_0\dbldot\tE-\tenseurq L_0\dbldot\tenseurq \Gamma_0\left(\tenseur\tau\right)+\tenseur\tau
-\end{aligned}
-\]
-and hence (due to the expressions of $\tenseur\tau$ and $\tepsilon$)
-\[
-\begin{aligned}
-\tsigma=\tenseurq L_0\dbldot\tE-\tenseurq L_0\dbldot\tenseurq \Gamma_0\left(\tsigma-\tenseurq L_0\dbldot\left(\tenseur e^r+\tenseurq M_r\dbldot\tsigma\right)\right)+\tsigma-\tenseurq L_0\dbldot\left(\tenseur e^r+\tenseurq M_r\dbldot\tsigma\right)
-\end{aligned}
-\]
-\[
-\begin{aligned}
-\tsigma+\tenseurq \Delta_0\left(\tenseurq\delta\tenseurq M_r\dbldot\tsigma\right)=\tenseurq L_0\dbldot\tE-\tenseurq \Delta_0\left(\tenseur e^r\right)
-\end{aligned}
-\]
-with $\tenseurq\delta\tenseurq M_r=\tenseurq M_r-\tenseurq M_0$, $\tenseurq M_0=\tenseurq L_0^{-1}$, and $\tenseurq \Delta_0=\tenseurq L_0-\tenseurq L_0\dbldot\tenseurq \Gamma_0\tenseurq L_0$. We will not resolve this equation exactly, but we will consider the average of the fields:
-\[
-\begin{aligned}
-\langle\tsigma\rangle_r + \sum_s\tenseurq \Delta_{rs}\dbldot\tenseurq\delta\tenseurq M_s\dbldot\langle\tsigma\rangle_s= \tenseurq L_0\dbldot\tE -\sum_s\tenseurq \Delta_{rs}\dbldot\tenseur e^s
+f_{\tsigma^r}=\tepsilon_r\left(\tsigma^r\right)-\tenseurq A_r\left(\tsigma^1,...,\tsigma^N\right)\dbldot\tE -\sum_s \tenseurq B_{rs}\left(\tsigma^1,...,\tsigma^N\right)\dbldot\tenseur e^s\left(\tsigma^s\right)
 \end{aligned}
 \]
 where
 \[
 \begin{aligned}
-\tenseurq \Delta_{rs} = \sum_j\langle\,\tenseurq\Delta_0(\chi_s\,\tenseur s_j)\otimes\tenseur s_j\,\rangle_r
+\tepsilon_r(\tsigma^r)=\deriv{\psi_r}{\tsigma}(\tsigma^r)
 \end{aligned}
 \]
-is what we call a morphological tensor or an interaction tensor, and can be computed by FFT or FEM before the `mfront` integration. This tensor makes intervene the Green operator $\tenseurq \Gamma_0$, relative to the elasticity $\tenseurq L_0$, and a basis of symmetric second-order tensors $(\tenseur s_1,...,\tenseur s_d)$ ($d=6$ in 3D).
-Hence, the $\langle\tsigma\rangle_r$ 's are solution of a linear system.
-Depending on the number of phases $N$, the computation of the $\tenseurq \Delta_{rs}$ is more or less costly, but it is achieved
-at the beginning, once and for all. 
 
-We note that the reference medium can be adjusted with a scalar coefficient. Indeed, if the user wants to choose
-a reference medium $r_0=10$ times stiffer, it is possible by dividing $\tenseurq M_0$ by $r_0$. It will be also necessary
-to change $\tenseurq \Delta_{rs}$ and to multiply it by $r_0$.
+## Computation of tensors Ar and Brs
+
+### Computation via morphological tensors
+
+In fact, the thermoelastic problem can be rewritten as a Lippmann-Schwinger equation (see [@willis_bounds_1977;@castaneda_effect_1995]). 
+Let us write $\tenseur\tau=\tsigma-\tenseurq L_0\dbldot\tepsilon$ with $\tsigma=\tenseurq L\dbldot\left(\tepsilon-\tenseur e\right)$.  We have $\tenseur\tau=\tenseurq\delta\tenseurq L\dbldot\tepsilon-\tenseurq L\dbldot\tenseur e$ with $\tenseurq\delta\tenseurq L=\tenseurq L-\tenseurq L_0$. We have, because, $\div\,\tsigma=0$,
+\[
+\begin{aligned}
+\tepsilon=\tE-\tenseurq \Gamma_0\left(\tenseur\tau\right)
+\end{aligned}
+\]
+where $\tenseurq \Gamma_0$ is the Green operator associated to the elasticity $\tenseurq L_0$ (this elasticity must be chosen by the user). It gives (due to the expression of $\tenseur\tau$)
+\[
+\begin{aligned}
+\tepsilon=\tE-\tenseurq \Gamma_0\left(\tenseurq\delta\tenseurq L\dbldot\tepsilon-\tenseurq L\dbldot\tenseur e\right)
+\end{aligned}
+\]
+We will not resolve this equation exactly, but we will consider the average of the fields:
+\[
+\begin{aligned}
+\langle\tepsilon\rangle_r + \sum_s\tenseurq \Gamma_{rs}\dbldot\tenseurq\delta\tenseurq L_s\dbldot\langle\tepsilon\rangle_s= \tE +\sum_s\tenseurq \Gamma_{rs}\dbldot\tenseurq L_s\dbldot\tenseur e^s
+\end{aligned}
+\]
+where
+\[
+\begin{aligned}
+\tenseurq \Gamma_{rs} = \sum_j\langle\,\tenseurq\Gamma_0(\chi_s\,\tenseur s_j)\otimes\tenseur s_j\,\rangle_r
+\end{aligned}
+\]
+is what we call a morphological tensor or an interaction tensor, and can be computed by FFT or FEM before the `mfront` integration. This tensor depends on the Green operator $\tenseurq \Gamma_0$, relative to the elasticity $\tenseurq L_0$, and a basis of symmetric second-order tensors $(\tenseur s_1,...,\tenseur s_d)$ ($d=6$ in 3D).
+Depending on the number of phases $N$, the computation of the $\tenseurq \Gamma_{rs}$ is more or less costly, but it is achieved
+at the beginning, once and for all. By inverting the system above, we directly obtain the expressions of $\tenseurq A_r$ and $\tenseurq B_{rs}$. 
+
+We note that the reference medium can be chosen in this approach. A natural approach is to take a $\tenseurq L_0$ isotropic near $\tenseurq L^{\mathrm{hom}}$.
 
 ### Computation via a self-consistent scheme
 
@@ -254,7 +272,7 @@ to compute the macroscopic stress:
 \]
 
 However, we also need the tensors $\tenseurq A_r$ and $\tenseurq B_{rs}$ for computing the average of
-the stress field $\langle\tsigma\rangle_r$ (i.e. the residue). To that extent, we go back to the equation
+the strain field $\langle\tepsilon\rangle_r$ (i.e. the residue). To that extent, we go back to the equation
 \[
 \begin{aligned}
 \tepsilon=\tE-\tenseurq \Gamma_0\left(\tenseur\tau\right)
@@ -266,7 +284,6 @@ and consider averages of the fields:
 \langle\tepsilon\rangle_r-\tE=-\sum_s\tenseurq \Gamma_{rs}\dbldot\langle\tenseur\tau\rangle_s
 \end{aligned}
 \]
-with $\tenseurq\Gamma_{rs}=\sum_j\langle\,\tenseurq\Gamma_0(\chi_s\,\tenseur s_j)\otimes\tenseur s_j\,\rangle_r$.
 
 A classical approximation (see Eq. (3.17) of [@castaneda_effect_1995]) is to consider that $\tenseurq\Gamma_{rs}=\delta_{rs}\tenseurq P_r-c_s\,\tenseurq P_0$, with $\tenseurq P_r=\tenseurq\Gamma_{rr}$ the Hill tensor associated to $\tenseurq L_0$ and the inclusion shape of phase $r$, and $\tenseurq P_0$ the Hill tensor associated to $\tenseurq L_0$ and a spherical inclusion. This is when considering an isotropic distribution of inclusions (otherwise $\tenseurq P_0$ must be modified). For our polycrystal, we can also consider that $\tenseurq P_r=\tenseurq P_0$ (i.e. the grains have a spherical shape) so that
 \[
@@ -274,35 +291,35 @@ A classical approximation (see Eq. (3.17) of [@castaneda_effect_1995]) is to con
 \langle\tepsilon\rangle_r-\tE=-\tenseurq P_0\dbldot\left(\langle\tenseur\tau\rangle_r-\langle\tenseur\tau\rangle\right)
 \end{aligned}
 \]
-and due to the expression of $\tenseur\tau$:
+and due to the expression of $\tenseur\tau=\tsigma-\tenseurq L_0\dbldot\tepsilon$:
 \[
 \begin{aligned}
 \left[\tenseurq P_0^{-1}-\tenseurq L_0\right]\dbldot\left(\langle\tepsilon\rangle_r-\tE\right)=-\left[\langle\tsigma\rangle_r-\tSigma\right]
 \end{aligned}
 \]
 We know that the reference medium, in the self-consistent approach, is identified with the homogenized medium. Hence, we note
-$\tenseurq P_0=\tenseurq P_{\mathrm{SC}}$, $\tenseurq L_0=\tenseurq L_{\mathrm{SC}}$, and $\tenseurq M_{\mathrm{SC}}^*=\left[\tenseurq P_{\mathrm{SC}}^{-1}-\tenseurq L_{\mathrm{SC}}\right]^{-1}$, so that, with $\langle\tepsilon\rangle_r=\tenseurq M_r\dbldot\tsigma^r+\tenseur e^r$, and $\langle\tsigma\rangle_r=\tsigma^r$
+$\tenseurq P_0=\tenseurq P_{\mathrm{SC}}$, $\tenseurq L_0=\tenseurq L_{\mathrm{SC}}$, and $\tenseurq M_{\mathrm{SC}}^*=\left[\tenseurq P_{\mathrm{SC}}^{-1}-\tenseurq L_{\mathrm{SC}}\right]^{-1}$, so that, with $\langle\tsigma\rangle_r=\tenseurq L_r\dbldot\left(\langle\tepsilon\rangle_r-\tenseur e^r\right)$,
 \[
 \begin{aligned}
-\left(\tenseurq M_r\dbldot\tsigma^r+\tenseur e^r-\tE\right)=-\tenseurq M_{\mathrm{SC}}^*\dbldot\left[\tsigma^r-\tSigma\right]
+\left(\langle\tepsilon\rangle_r-\tE\right)=-\tenseurq M_{\mathrm{SC}}^*\dbldot\left[\tenseurq L_r\dbldot\left(\langle\tepsilon\rangle_r-\tenseur e^r\right)-\tSigma\right]
 \end{aligned}
 \]
 which gives
 \[
 \begin{aligned}
-\tsigma^r=\left(\tenseurq M_r+\tenseurq M_{\mathrm{SC}}^*\right)^{-1}\dbldot\left[\tE-\tenseur e^r+\tenseurq M_{\mathrm{SC}}^*\dbldot\tSigma\right]
+\langle\tepsilon\rangle_r=\left(\tenseurq I+\tenseurq M_{\mathrm{SC}}^*\dbldot\tenseurq L_r\right)^{-1}\dbldot\left[\tE+\tenseurq M_{\mathrm{SC}}^*\dbldot\left(\tSigma+\tenseurq L_r\dbldot\tenseur e^r\right)\right]
 \end{aligned}
 \]
 which gives directly the expressions of $\tenseurq A_r$ and $\sum_s\tenseurq B_{rs}\dbldot\tenseur e^s$ (we use $\tSigma=\tenseurq L_{\mathrm{SC}}\dbldot\tE+\tenseur \tau_{\mathrm{SC}}$):
 \[
 \begin{aligned}
-\tenseurq A_r&=\left(\tenseurq M_r+\tenseurq M_{\mathrm{SC}}^*\right)^{-1}\dbldot\left(\tenseurq I + \tenseurq M_{\mathrm{SC}}^*\dbldot\tenseurq L_{\mathrm{SC}}\right)\\
-\sum_s\tenseurq B_{rs}\dbldot\tenseur e^s&=\left(\tenseurq M_r+\tenseurq M_{\mathrm{SC}}^*\right)^{-1}\dbldot\left(\tenseurq M_{\mathrm{SC}}^*\dbldot\tenseur \tau_{\mathrm{SC}}-\tenseur e^r\right)
+\tenseurq A_r&=\left(\tenseurq I+\tenseurq M_{\mathrm{SC}}^*\dbldot\tenseurq L_r\right)^{-1}\dbldot\left(\tenseurq I + \tenseurq M_{\mathrm{SC}}^*\dbldot\tenseurq L_{\mathrm{SC}}\right)\\
+\sum_s\tenseurq B_{rs}\dbldot\tenseur e^s&=\left(\tenseurq L_{\mathrm{SC}}^*+\tenseurq L_r\right)^{-1}\dbldot\left(\tenseur \tau_{\mathrm{SC}}+\tenseurq L_r\dbldot\tenseur e^r\right)
 \end{aligned}
 \]
-(and this is sufficient to compute the residue). However, we note that the library `tfel::material::homogenization` provides
-the tensor $\tenseurq A_{\mathrm{SC}}$ via the variable `mean_strain_localisation_tensors`, which relates
-$\langle\tepsilon\rangle_r$ and $\tE$. This tensor is also equal to $\tenseurq A_{\mathrm{SC}}=\tenseurq M_r\dbldot\tenseurq A_r$, due to the expression of $\langle\tsigma\rangle_r$.  This will be more simple for the implementation.
+where $\tenseurq L_{\mathrm{SC}}^*=\left(\tenseurq M_{\mathrm{SC}}^*\right)^{-1}$.
+And this is sufficient to compute the residue. However, we note that the library `tfel::material::homogenization` provides
+the tensor $\tenseurq A_r$ via the variable `mean_strain_localisation_tensors`. Moreover, the library also provides $\tenseur \tau_{\mathrm{SC}}$ if we specify the polarizations on each phase. We hence only have to compute $\tenseurq L_{\mathrm{SC}}^*$.
 
 
 # Implementation in MFront
@@ -329,23 +346,23 @@ All the files are available in the `MFrontGallery` project, [here](https://githu
   The potential $\psi_k^r$ will be of the form
   \[
 \begin{aligned}
-  \psi_k^r \left(\tau\right)= \dfrac{\dot{\gamma}_0\tau_0^{k,r}}{n+1}\left(\dfrac{|\tau|}{\tau_0^{k,r}}\right)^{n+1}
+  \psi_k^r \left(\tau\right)= \dfrac{\dot{\gamma}_0\tau_0^k}{n+1}\left(\dfrac{|\tau|}{\tau_0^k}\right)^{n+1}
   \end{aligned}
 \]
-  where the strain rate $\dot{\gamma}_0$ and the creep exponent $n\geq 1$ will be chosen identical for all $k,r$, and the resolved shear stress $\tau_0^{k,r}$ depends on $k,r$.
+  where the strain rate $\dot{\gamma}_0$ and the creep exponent $n\geq 1$ will be chosen identical for all $k,r$, and the resolved shear stress $\tau_0^k$ depends on $k$.
 
 The derivatives of the potential are
  \[
 \begin{aligned}
-  &\deriv{\psi_r}{\tsigma}=\sum_k \deriv{\psi_k^r}{\tau}\left(\tau_k^r\right)\,\tenseur\mu_k^r=\sum_k\mathrm{sgn}(\tau)\,\dot{\gamma}_0\left(\dfrac{|\tau|}{\tau_0^{k,r}}\right)^{n}\tenseur\mu_k^r\\
-  &\derivdeux{\psi_r}{\tsigma}=\sum_k \derivdeux{\psi_k^r}{\tau}\left(\tau_k^r\right)\,\tenseurq N_k^r=\sum_k \dfrac{n\,\dot{\gamma}_0}{\tau_0^{k,r}}\left(\dfrac{|\tau|}{\tau_0^{k,r}}\right)^{n-1}\tenseurq N_k^r,\qquad\text{with}\quad\tenseurq N_k^r=\tenseur \mu_k^r\otimes\tenseur \mu_k^r
+  &\deriv{\psi_r}{\tsigma}=\sum_k \deriv{\psi_k^r}{\tau}\left(\tau_k\right)\,\tenseur\mu_k^r=\sum_k\mathrm{sgn}(\tau)\,\dot{\gamma}_0\left(\dfrac{|\tau|}{\tau_0^{k}}\right)^{n}\tenseur\mu_k^r\\
+  &\derivdeux{\psi_r}{\tsigma}=\sum_k \derivdeux{\psi_k^r}{\tau}\left(\tau_k\right)\,\tenseurq N_k^r=\sum_k \dfrac{n\,\dot{\gamma}_0}{\tau_0^{k}}\left(\dfrac{|\tau|}{\tau_0^{k}}\right)^{n-1}\tenseurq N_k^r,\qquad\text{with}\quad\tenseurq N_k^r=\tenseur \mu_k^r\otimes\tenseur \mu_k^r
   \end{aligned}
 \]
   and then defining $\overline{\tau}_k^r=\tsigma^r\dbldot\tenseur \mu_k^r$ where $\tsigma^r$ is the reference stress, we have
   \[
 \begin{aligned}
-  &\tenseurq M_r=\sum_k \dfrac{n\,\dot{\gamma}_0}{\tau_0^{k,r}}\left(\dfrac{|\overline{\tau}_k^r|}{\tau_0^{k,r}}\right)^{n-1}\tenseurq N_k^r\\
-  &\tenseur e^r=\sum_k\left(\mathrm{sgn}(\overline{\tau}_k^r)-n\right)\,\dot{\gamma}_0\left(\dfrac{|\overline{\tau}_k^r|}{\tau_0^{k,r}}\right)^{n}\tenseur\mu_k^r
+  &\tenseurq M_r=\sum_k \dfrac{n\,\dot{\gamma}_0}{\tau_0^{k}}\left(\dfrac{|\overline{\tau}_k^r|}{\tau_0^{k}}\right)^{n-1}\tenseurq N_k^r\\
+  &\tenseur e^r=\sum_k\left(\mathrm{sgn}(\overline{\tau}_k^r)-n\right)\,\dot{\gamma}_0\left(\dfrac{|\overline{\tau}_k^r|}{\tau_0^{k}}\right)^{n}\tenseur\mu_k^r
   \end{aligned}
 \]
 
@@ -440,9 +457,9 @@ const auto& gs =
 	ExtendedPolyCrystalsSlidingSystems::getPolyCrystalsSlidingSystems("polycrystal.csv");
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-### Poperties and variables
+### Properties and variables
 
-The state variables are the reference stresses $\tsigma^r$ on each phase. 
+The state variables are the stresses $\tsigma^r$ on each phase. 
 
 ~~~~ {#Begin .cpp .numberLines}
 @StateVariable Stensor sigma[Np];
@@ -460,7 +477,7 @@ Note that among several local variables, one of them, for
 morphological tensors, is
 
 ~~~~ {#Begin .cpp .numberLines}
-@LocalVariable std::array<std::array<tfel::math::st2tost2<3u,real>,Np>,Np> DELTA;
+@LocalVariable std::array<std::array<tfel::math::st2tost2<3u,real>,Np>,Np> GAMMA;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This matrix will store the morphological tensors. Indeed, in the
@@ -468,7 +485,7 @@ This matrix will store the morphological tensors. Indeed, in the
 which are in fact situated in the header `extra-headers/TFEL/Material/tensors.hxx`
 
 ~~~~ {#Begin .cpp .numberLines}
-DELTA=Delta<real>::get_tensor();
+GAMMA=Gamma<real>::get_tensor();
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Affine modulus and free-strain
@@ -481,18 +498,21 @@ using namespace tfel::math;
 Stensor4 LSC;
 Stensor e[Np];
 Stensor dpsi_dsigma[Np];
+auto tau0k = tau1;
 
 for (int r=0;r<Np;r++){
   M[r]=Stensor4::zero();
   dpsi_dsigma[r]=Stensor::zero();
   frac[r]=gs.volume_fractions[r];
   for (int k=0;k<Nss;k++){
+     if (k>int(Nss/12)){tau0k=tau1;}
+     else{tau0k=tau2;}
      const auto Nkr = gs.mus[r][k]^gs.mus[r][k];
      const auto taukr = gs.mus[r][k] | (sigma[r]+dsigma[r]);
-     const auto puisn_1 = pow(abs(taukr)/tau0[r], nexp-1);
-     const auto fac= nexp*gamma0/tau0[r]*puisn_1;
+     const auto puisn_1 = pow(abs(taukr)/tau0k, nexp-1);
+     const auto fac= nexp*gamma0/tau0k*puisn_1;
      M[r]+=fac*Nkr;
-     const auto puisn = puisn_1*abs(taukr)/tau0[r];
+     const auto puisn = puisn_1*abs(taukr)/tau0k;
      const auto sgn= taukr< 0 ? -real(1) : real(1);
      dpsi_dsigma[r]+=sgn*gamma0*puisn*gs.mus[r][k]; 
   } 
@@ -501,6 +521,9 @@ for (int r=0;r<Np;r++){
   L[r]=invert(M[r]);
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Here, on line 12, we set $\tau_0^k=\tau_1$ for all gliding systems,
+except for $k=0$ and $k=1$, for which we set $\tau_0^k=\tau_2$.
 
 Note that here, a tensor `kap*I` is added to the compliance `M[r]` line 21. `kap`
 is a parameter that the user can change. It is necessary because
@@ -576,7 +599,7 @@ We will need the following tensors:
 ~~~~ {#Integrator .cpp .numberLines}
 auto KGSC = computeKGModuli(LSC);
 const auto PSC = computeSphereHillPolarisationTensor<stress>(KGSC);
-const auto MSC_star = invert(invert(PSC)- LSC);
+const auto LSC_star = invert(PSC)- LSC;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Note here that we also isotropize the homogenized stiffness with the function
@@ -585,22 +608,15 @@ in the `computeSelfConsistent` function.
 
 ### Residues and jacobian
 
-For the residues, we work on the strains (because `MFront` is more
-suited to strain type residues. Hence, we will define the residues as
-
-\[
-\begin{aligned}
-f_{\sigma^r}=\tenseurq M_r\dbldot\left(\tsigma^r-\tenseurq A_r\dbldot\tE-\sum_s\tenseurq B_{rs}\dbldot\tenseur e^s\right)
-\end{aligned}
-\]
+Here is the residue:
 
 ~~~~ {#Integrator .cpp .numberLines}
 for (int r=0;r<Np;r++){
   const Stensor4 Ar=A_SC[r+1];
   map_derivative<Stensor,Stensor>(A,6*r,0)=Ar;
   auto KGAr = computeKGModuli(Ar);
-  fsigma[r] = M[r]*(sigma[r]+dsigma[r])-Ar*(eto+deto);
-  fsigma[r]-= M[r]*(invert(M[r]+MSC_star))*(MSC_star*tauSC - e[r]);
+  fsigma[r] = dpsi_dsigma[r]-Ar*(eto+deto);
+  fsigma[r]-= invert(L[r]+LSC_star)*(tauSC + L[r]*e[r]);
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -621,19 +637,19 @@ To do that, we use a technique widely used in `MFront`.
 The idea is to write the non-linear system to solve as:
 \[
 \begin{aligned}
-\tenseurq M_r\dbldot\left[\tsigma^r - \tenseurq A_r\left(\tsigma^1,...,\tsigma^N\right)\dbldot\tE - \sum_s \tenseurq B_{rs}\left(\tsigma^1,...,\tsigma^N\right)\dbldot\tenseur e^s\left(\tsigma^s\right)\right]= f_{\sigma^r}(\tE,\tsigma^1,...,\tsigma^N)=0
+\tepsilon_r\left(\tsigma^r\right) - \tenseurq A_r\left(\tsigma^1,...,\tsigma^N\right)\dbldot\tE - \sum_s \tenseurq B_{rs}\left(\tsigma^1,...,\tsigma^N\right)\dbldot\tenseur e^s\left(\tsigma^s\right)= f_{\sigma^r}(\tE,\tsigma^1,...,\tsigma^N)=0
 \end{aligned}
 \]
 and by derivation of $f_{\sigma^r}$ w.r.t. $\tE$:
 \[
 \begin{aligned}
--\tenseurq M_r\dbldot\tenseurq A_r\left(\tsigma^1,...,\tsigma^N\right)+\sum_s\tenseurq J_{rs}\dbldot\deriv{\tsigma^s}{\tE}=0
+-\tenseurq A_r\left(\tsigma^1,...,\tsigma^N\right)+\sum_s\tenseurq J_{rs}\dbldot\deriv{\tsigma^s}{\tE}=0
 \end{aligned}
 \]
 where $\tenseurq J_{rs}=\deriv{f_{\sigma^r}}{\tsigma^s}$ stands for the sub-block $(r,s)$ of the Jacobian. Hence
 \[
 \begin{aligned}
-\deriv{\tsigma^r}{\tE}=\sum_s\mathbf {iJ}_{rs}\dbldot\tenseurq M_s\dbldot\tenseurq A_s\left(\tsigma^1,...,\tsigma^N\right)
+\deriv{\tsigma^r}{\tE}=\sum_s\mathbf {iJ}_{rs}\dbldot\tenseurq A_s\left(\tsigma^1,...,\tsigma^N\right)
 \end{aligned}
 \]
 where $\mathbf {iJ}$ is the inverse of the Jacobian. The implementation is
@@ -662,9 +678,8 @@ constant and to make vary the parameter $n$ with time.
 We hence set it as a function which varies exponentially with time
 (this is just a choice).
 
-Besides, we choose two different values for $\tau_0^r$.
-5 crystals are such that $\tau_0=10 MPa$, and 5 others
-such that $\tau_0=50 MPa$.
+Besides, we choose $\tau_1=5 MPa$, and for $\tau_2$
+we try $\tau_2=5MPa$ and $\tau_2=1MPa$.
 
 The `.mtest` file is the following:
 
@@ -674,10 +689,10 @@ The `.mtest` file is the following:
 @ExternalStateVariable 'Temperature' {0 : 1000,1:1000};
 
 @MaterialProperty<function> 'nexp' "1+0.9*(exp(2.4*t)-1)";
-@MaterialProperty<constant> 'tau1' 10.;
-@MaterialProperty<constant> 'tau2' 50.;
+@MaterialProperty<constant> 'tau1' 5.;
+@MaterialProperty<constant> 'tau2' 1.;
 
-@MaterialProperty<function> 'kap' "0.001";
+@MaterialProperty<function> 'kap' "0.05";
 
 @ImposedStrain 'EXX' {0 : 1, 1 : 1};
 @ImposedStrain 'EYY' {0 : -1, 1 : -1};
@@ -693,30 +708,20 @@ The `.mtest` file is the following:
 Note that `kap` on line 9 is related to the small compliance
 we add to $\tenseurq M_r$ in order to make it invertible.
 
-For the morphological tensor approach, we talked above
-about the coefficient $r_0$ that allows to adjust the reference medium.
-This coefficient can hence be set as a material property, and we will add
-this line in the `mtest` file:
-
-~~~~ {#Affine_formulation .mtest .numberLines}
-@MaterialProperty<function> 'r0' "1+t";
-~~~~~~~~~~~~~~
-
-Here, we choose to increase the elasticity the reference medium because its
-homogenized stiffness also increases.
-The optimal value of `r0` is not immediate, but some numerical tests
-can be carried out.
-
-![Effective resolved shear stress as a function of the parameter $n$](./img/Affine_formulation.png)
+![Axial macroscopic stress as a function of the parameter $n$](./img/Affine_formulation.png)
 
 
-In this figure we plotted the results when all the $\tau_0^r$ are equal to $10 Mpa$
-(to show the heterogeneity) ("FFT 0"), the implementation of the affine approach
-with self-consistent scheme (AFF_SC), and with morphological tensors (AFF_MT). For
-the latter, we plot it for a constant $r_0$ (which is, an elastic medium whose
-elasticity is $\tenseurq I$), and for a $r_0=1+t$ (which is, an elastic medium
-whose elasticity is $(1+t)\tenseurq I$).
+In this figure we plotted the results when $\tau_2$ is equal to $5 MPa$
+and when it is equal to $1MPa$.
+We plot the implementation of the affine approach
+with self-consistent scheme (AFF_SC), and with morphological tensors (AFF_MT).
 FFT results are also plotted (FFT).
+We see that when $\tau_0^k$ is the same for all gliding systems,
+the self-consistent scheme is in better agreement with FFT results
+than the other approach. However, when two gliding systems have a resolved
+shear stress 5 times smaller, the macroscopic stress decreases, and the
+morphological approach gives results in better agreement with FFT computation.
+The self-consistent scheme is too stiff.
 
 # References
 
