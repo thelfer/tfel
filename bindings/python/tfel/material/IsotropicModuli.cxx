@@ -92,4 +92,6 @@ void declareIsotropicModuli(pybind11::module_& m) {
   declareKGModuli<double>(m, "KGModuli");
   declareYoungNuModuli<double>(m, "YoungNuModuli");
   declareLambdaMuModuli<double>(m, "LambdaMuModuli");
+  m.def("computeKGModuli", &tfel::material::computeKGModuli<double>);
+  m.def("computeIsotropicStiffnessTensor", &tfel::material::computeIsotropicStiffnessTensor<double>);
 }
