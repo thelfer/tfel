@@ -52,6 +52,36 @@ int values[8] = {1, 10, 2, 20, 3, 30, 4, 40};
 auto s1 = map_strided<stensor<2u, int>>(values, 2);
 ~~~~
 
+## Piola's and Nanson's transformations
+
+### Piola's transformation
+
+The `computePiolaTransformOfIdentityMatrixInReferenceConfiguration`
+function returns the Piola transformation transformation of the identity
+matrix in the current configuration.
+
+# New `TFEL/Material` features
+
+## Finite strain heat transfer
+
+For isotropic or orthotropic materials described by Fourier's law in the
+current configuration, the
+`computeThermalConductivyMatrixInReferenceConfiguration` function are
+available to compute the thermal conductivity matrix in the reference
+frame using Piola's transformation. This function can be also be used to
+compute the derivative of the thermal conductivity matrix with respect
+to the temperature.
+
+### Example of usage
+
+~~~~{.cxx}
+const auto K =
+  computeThermalConductivyMatrixInReferenceConfiguration(k, F);
+~~~~
+
+where `k` is the thermal conductivity and `F` is the deformation
+gradient.
+
 # New features in `tfel-check`
 
 ## Parallelization

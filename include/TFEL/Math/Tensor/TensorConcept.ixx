@@ -18,6 +18,7 @@
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include "TFEL/Math/Forward/tvector.hxx"
 #include "TFEL/Math/Forward/tensor.hxx"
+#include "TFEL/Math/matrix.hxx"
 #include "TFEL/Math/Tensor/MatrixViewFromTensor.hxx"
 #include "TFEL/Math/Tensor/TensorTransposeExpr.hxx"
 
