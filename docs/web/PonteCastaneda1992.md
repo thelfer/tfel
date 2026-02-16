@@ -75,27 +75,27 @@ In the variational approach, the homogenization problem is equivalent to a minim
 
 Ponte-Castaneda's idea is to use the dual function $f_r^*$ of $f_r$, under an hypothesis of concavity of $f_r$. Note that $w_r$ is convex relatively to $\tepsilon$, but the hypothesis is: $f_r$ concave relatively to $\epsiloneq^2$, which adds a supplementary restriction to the behaviour.
 \begin{aligned}
-    w_r(\tepsilon)=\underset{\mu_0^r(\tenseur x)}{\min} \left\{\Frac92 k_r\, \varepsilon_m^2+\Frac32 \mu_0^r(\tenseur x)\, \epsiloneq^2-f_r^*(\mu_0^r(\tenseur x))\right\}
+    w_r(\tepsilon)=\underset{\mu_0^r(\tenseur x)}{\min} \left\{\Frac92 k_r\, \varepsilon_m^2+\Frac32 \mu_0^r(\tenseur x)\, \epsiloneq^2-f_r^*(\dfrac32\mu_0^r(\tenseur x))\right\}
   \end{aligned}
   where the dual function $f_r^*$ is defined as
   \begin{aligned}
-    f_r^*(\mu_0)=\underset{e}{\min} \left\{\mu_0 e-f_r(e)\right\}
+    f_r^*(\lambda_0)=\underset{e}{\min} \left\{\lambda_0 e-f_r(e)\right\}
   \end{aligned}
   
 Considering uniform per phase shear moduli $\mu_0^r$ (also called the 'secant moduli'), and after a few manipulations, Ponte-Castaneda arrives at the following bound on the effective energy $W^{\mathrm{eff}}(\overline{\tepsilon})$:
 \begin{aligned}
-    W^{\mathrm{eff}}(\overline{\tepsilon})=\underset{\tepsilon\in\mathcal K(\overline{\tepsilon})}{\textrm{min}} \langle w(\tepsilon)\rangle \leq \overline{w}(\overline{\tepsilon})=\underset{\mu_0^r}{\min} \left\{W_0^{\mathrm{eff}}(\overline{\tepsilon})-\sum_r c_r\, f_r^*(\mu_0^r)\right\}
+    W^{\mathrm{eff}}(\overline{\tepsilon})=\underset{\tepsilon\in\mathcal K(\overline{\tepsilon})}{\textrm{min}} \langle w(\tepsilon)\rangle \leq \overline{w}(\overline{\tepsilon})=\underset{\mu_0^r}{\min} \left\{W_0^{\mathrm{eff}}(\overline{\tepsilon})-\sum_r c_r\, f_r^*(\dfrac32\mu_0^r)\right\}
   \end{aligned}
  where $c_r$ is the volume fraction of phase $r$ and $W_0^{\mathrm{eff}}(\overline{\tepsilon})$ is the effective energy relative to a 'linear comparison composite' which is heterogeneous, and whose elastic moduli are the $k_r$ and the $\mu_0^r$.  
 
   The stationarity conditions associated to the minimization on $\mu_0^r$ are:
   \begin{aligned}
-    \deriv{W_0^{\mathrm{eff}}}{\mu_0^r} = c_r\,\deriv{f_r^*}{\mu_0^r}
+    \deriv{W_0^{\mathrm{eff}}}{\mu_0^r} = \dfrac{3c_r}{2}\,\left(f_r^*\right)'(\dfrac32 \mu_0^r)
   \end{aligned}
 
 which can be shown to be equivalent to
 \begin{aligned}
-    \mu_0^r= \Frac23 \deriv{f_r}{e}\left(\langle \epsiloneq^2\rangle_r\right)
+    \mu_0^r= \Frac23 f_r'\left(\langle \epsiloneq^2\rangle_r\right)
   \end{aligned}
   where $\epsiloneq$ is relative to $\tepsilon$ solution of the homogenization problem:
 \begin{aligned}
@@ -235,8 +235,9 @@ The second moment is given by the function `computeMeanSquaredEquivalentStrain`
 
 ~~~~ {#Integrator .cpp .numberLines}
 //second moments/////////////////////////////////
-const auto em2 = tfel::math::trace(eto+deto)/3.;
+const auto em = tfel::math::trace(eto+deto)/3.;
 const auto ed = tfel::math::deviator(eto+deto);
+const auto em2 = em*em;
 const auto eeq2 = 2./3.*(ed|ed);
 using namespace tfel::material;
 const auto kg0 = KGModuli<stress>(k_m,mu0);
