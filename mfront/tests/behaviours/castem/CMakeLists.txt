@@ -132,7 +132,12 @@ set(mfront_tests_SOURCES
   GenerateMTestFileOnFailure
   ProfilerTest
   ProfilerTest2
-  ProfilerTest3)
+  ProfilerTest3
+  ode_default
+  ode_default2
+  ode_rk54
+  ode_implicit
+  model1)
 
 mfront_dependencies(MFrontCastemBehaviours
   Inconel600_YoungModulus
@@ -664,6 +669,10 @@ test_castem(computethermalexpansion3)
 test_castem(parametertest)
 test_castem(parametertest2)
 test_castem(tensorialexternalstatevariabletest)
+test_castem(ode_default REFERENCE_FILE  ode_default.ref)
+test_castem(ode_implicit REFERENCE_FILE ode_implicit.ref)
+test_castem(ode_rk54 REFERENCE_FILE ode_rk54.ref)
+test_castem(model1)
 
 test_castem(elasticmaterialpropertiesboundschecktest
   NO_XML_OUTPUT WILL_FAIL)

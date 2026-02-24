@@ -1,0 +1,37 @@
+@DSL DefaultModelDSL{
+  automatic_declaration_of_the_temperature_as_first_external_state_variable :
+      false,
+  parameters_as_static_variables: true
+};
+@Model AuxiliaryModel1;
+
+@MaterialProperty real m1;
+m1.setEntryName("FirstMaterialPropertyValue");
+@MaterialProperty real m2;
+m2.setEntryName("SecondMaterialPropertyValue");
+@MaterialProperty real m3;
+m3.setEntryName("ThirdMaterialPropertyValue");
+
+@ExternalStateVariable real e1;
+e1.setEntryName("ChangeOfVolume");
+@ExternalStateVariable real e2;
+e2.setEntryName("SecondExternalStateVariableValue");
+@ExternalStateVariable real e3;
+e3.setEntryName("ThirdExternalStateVariableValue");
+@ExternalStateVariable real e4;
+e4.setEntryName("FourthExternalStateVariableValue");
+@ExternalStateVariable real e5;
+e5.setEntryName("FifthExternalStateVariableValue");
+
+@AuxiliaryStateVariable real isvs[3];
+isvs.setEntryName("InternalStateVariablesValues");
+@AuxiliaryStateVariable real isvs2[5];
+isvs2.setEntryName("InternalStateVariablesValues2");
+@AuxiliaryStateVariable real isvs3[5];
+isvs3.setEntryName("InternalStateVariablesValues3");
+
+@Integrator {
+  isvs = {m1, m2, m3};
+  isvs2 = {e1, e2, e3, e4, e5};
+  isvs3 = {e1 + de1, e2 + de2, e3 + de3, e4 + de4, e5 + de5};
+}

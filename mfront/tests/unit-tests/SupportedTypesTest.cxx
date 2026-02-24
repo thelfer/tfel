@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   30/08/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * re served.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -67,16 +67,20 @@ struct SupportedTypesTest final : public tfel::tests::TestCase {
     check("result_type<toto,tata,tfel::math::OpDiv>",
           "tfel::math::result_type<toto,tata,tfel::math::OpDiv>");
     check("quantity<real,1,0,0,3,2,-1,0>",
-          "tfel::math::quantity<numeric_type,1,0,0,3,2,-1,0>");
+          "tfel::math::quantity_or_base_type<use_qt,numeric_type,1,0,0,3,2,-1,"
+          "0>");
     check("test_empty_template_arguments<>", "test_empty_template_arguments<>");
     check("derivative_type<quantity<real,1,0,0,3,2,-1,0>,time>",
           "tfel::math::derivative_type<"
-          "tfel::math::quantity<numeric_type,1,0,0,3,2,-1,0>,time>");
+          "tfel::math::quantity_or_base_type<use_qt,numeric_type,1,0,0,3,2,-1,"
+          "0>,time>");
     check("vector<2u,3u+3u>", "vector<2,6>");
-    check("quantity<real,0,1>",
-          "tfel::math::quantity<numeric_type,0,1,0,0,0,0,0>");
-    check("quantity<real,0,1,2>",
-          "tfel::math::quantity<numeric_type,0,1,2,0,0,0,0>");
+    check(
+        "quantity<real,0,1>",
+        "tfel::math::quantity_or_base_type<use_qt,numeric_type,0,1,0,0,0,0,0>");
+    check(
+        "quantity<real,0,1,2>",
+        "tfel::math::quantity_or_base_type<use_qt,numeric_type,0,1,2,0,0,0,0>");
     check("tvector<Nss,real>", "tfel::math::tvector<12,real>");
     check("stensor<N,real>", "tfel::math::stensor<N,real>");
     check("tensor<N,real>", "tfel::math::tensor<N,real>");

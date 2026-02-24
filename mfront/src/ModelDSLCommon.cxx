@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \brief 11 jun 2010
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <locale>
 #include <sstream>
 #include <stdexcept>
 #include <algorithm>
@@ -21,7 +22,6 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "MFront/PedanticMode.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/ModelDSLCommon.hxx"
@@ -768,6 +768,7 @@ namespace mfront {
                               "Expected depth value.");
       unsigned short value;
       std::istringstream converter(this->current->value);
+      converter.imbue(std::locale::classic());
       converter >> value;
       if (!converter || (!converter.eof())) {
         this->throwRuntimeError(

@@ -53,7 +53,7 @@ struct MatrixTest final : public tfel::tests::TestCase {
     using namespace tfel::math;
 #ifdef __NVCOMPILER
     const auto m = matrix<int>{{0, 1}, { 2, 3 }};
-#else /* __NVCOMPILER */
+#else  /* __NVCOMPILER */
     const auto m = matrix{{0, 1},  //
                           {2, 3}};
 #endif /* __NVCOMPILER */

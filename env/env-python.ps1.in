@@ -1,0 +1,3 @@
+$env:TFELHOME=(Split-Path(Split-Path (Split-Path $PSScriptRoot)))
+$env:PATH=$env:TFELHOME+'\bin;'+$env:PATH
+$env:PYTHONPATH=$env:TFELHOME+'\@NATIVE_TFEL_PYTHON_SITE_PACKAGES_DIR@;'+$env:PYTHONPATH

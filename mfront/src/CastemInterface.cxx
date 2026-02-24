@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   17 Jan 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -25,11 +25,12 @@
 #include "TFEL/System/System.hxx"
 
 #include "MFront/MFrontWarningMode.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/VariableDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/CastemMaterialPropertyInterface.hxx"
 #include "MFront/CastemSymbolsGenerator.hxx"
@@ -766,7 +767,9 @@ namespace mfront {
     auto throw_if = [](const bool b, const std::string& m) {
       tfel::raise_if(b, "CastemInterface::endTreatment: " + m);
     };
-    this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
+    if (!mb.isModel()) {
+      this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
+    }
     // get the modelling hypotheses to be treated
     const auto& mhs = this->getModellingHypothesesToBeTreated(mb);
     // some consistency checks
@@ -1536,16 +1539,12 @@ namespace mfront {
         for (const auto& fs : fss) {
           if (fs == "FiniteRotationSmallStrain") {
             b.push_back(base + "_frst");
-            //	    b.push_back(name+"_frst");
           } else if (fs == "MieheApelLambrechtLogarithmicStrain") {
             b.push_back(base + "_malls");
-            //	    b.push_back(name+"_malls");
           } else if (fs == "LogarithmicStrain1D") {
-            b.push_back(base + "_log1D");
-            //	    b.push_back(name+"_log1D");
+            b.push_back(base + "_log1d");
           } else if (fs == "None") {
             b.push_back(base + "_ss");
-            //	    b.push_back(name+"_ss");
           } else {
             tfel::raise(
                 "CastemInterface::getGeneratedEntryPoints: "

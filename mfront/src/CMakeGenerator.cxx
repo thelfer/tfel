@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   16/08/2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -151,11 +151,11 @@ namespace mfront {
       << "if(TFEL_INSTALL_PATH)\n"
       << "  set(TFELHOME \"${TFEL_INSTALL_PATH}\")\n"
       << "else(TFEL_INSTALL_PATH)\n"
-      << "  set(TFELHOME \"" + tfel::getInstallPath() + "\")\n"
+      << "  set(TFELHOME [==[" + tfel::getInstallPath() + "]==])\n"
       << "endif(TFEL_INSTALL_PATH)\n"
       << "\n"
       << "find_program(TFEL_CONFIG  " << tfel::getTFELConfigExecutableName()
-      << " \"${TFELHOME}/bin\")\n"
+      << " [==[${TFELHOME}/bin]==])\n"
       << "message(STATUS \"tfel-config         : ${TFEL_CONFIG}\")\n"
       << "\n";
     switch (o.olevel) {
@@ -414,7 +414,15 @@ namespace mfront {
       error("cmake configuration went wrong", argv);
     }
     if (call_cmake(argv2) != 0) {
-      error("libraries building went wrong", argv2);
+      error(
+          "Libraries building went wrong. "
+          "This may be due to an error in your implementation.\n"
+          "In rarer cases, this may be due to a "
+          "incompatibility with a previous run of MFront and you "
+          "may want to remove to the 'include' and 'src' directories. "
+          "You may also invoke MFront with the `--verbose=debug` flag for "
+          "more (hopefully helpful) information.",
+          argv2);
     }
 #endif
     systemCall::changeCurrentWorkingDirectory(pwd);

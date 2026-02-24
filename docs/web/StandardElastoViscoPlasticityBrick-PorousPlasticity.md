@@ -1163,7 +1163,7 @@ growth:
 >   inelastic_flow : "Plastic" {
 >     criterion : "MohrCoulomb" {
 >       c : 3.e1,      // cohesion
->       phi : 0.523598775598299,    // friction angle angle
+>       phi : 0.523598775598299,    // friction angle
 >       lodeT : 0.506145483078356,  // transition angle (Abbo and Sloan)
 >       a : 1e1       // tension cuff-off parameter
 >     },
@@ -1183,7 +1183,7 @@ growth:
 >   inelastic_flow : "Plastic" {
 >     criterion : "MohrCoulomb" {
 >       c : 3.e1,      // cohesion
->       phi : 0.523598775598299,    // friction angle angle
+>       phi : 0.523598775598299,    // dilatancy angle
 >       lodeT : 0.506145483078356,  // transition angle (Abbo and Sloan)
 >       a : 1e1       // tension cuff-off parameter
 >     },

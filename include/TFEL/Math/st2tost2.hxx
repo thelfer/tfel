@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   04 May 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -224,6 +224,38 @@ namespace tfel::math {
   using ConstST2toST2View = ConstView<st2tost2<N, T>>;
 
   /*!
+   * \brief This function set the component (i,j,k,l) of a `st2tost2` to
+   * a value `Aijkl`, which may be useful in some cases.
+   * \return void
+   * \tparam NumType: type of the values of the `st2tost2`
+   * \tparam T : type of the value `Aijkl` to set must be same as
+   * the type of the values of the `st2tost2`.
+   * \param[in] A: `st2tost2`
+   * \param[in] i,j,k,l: `unsigned short`
+   * \param[in] Aijkl: value that we want for \f[A_{ijkl}\f]
+   */
+  template <typename NumType, typename T>
+  TFEL_HOST_DEVICE constexpr void setComponent(ST2toST2Concept auto&,
+                                               unsigned short,
+                                               unsigned short,
+                                               unsigned short,
+                                               unsigned short,
+                                               const T&) noexcept
+      requires(isAssignableTo<NumType, T>());
+
+  /*!
+   * \brief This function returns the component (i,j,k,l) of a `st2tost2`.
+   * \return the value \f[A_{ijkl}\f]
+   * \param[in] A: `st2tost2`
+   * \param[in] i,j,k,l: `unsigned short`
+   */
+  TFEL_HOST_DEVICE constexpr auto getComponent(const ST2toST2Concept auto&,
+                                               unsigned short,
+                                               unsigned short,
+                                               unsigned short,
+                                               unsigned short);
+
+  /*!
    * \return change the basis of a st2tost2
    * \param[in] s : st2tost2
    * \param[in] r : rotation matrix
@@ -232,6 +264,7 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr auto change_basis(
       const ST2toST2Type&,
       const rotation_matrix<numeric_type<ST2toST2Type>>&) noexcept;
+
   /*!
    * \return the invert of a st2tost2
    * \param[in] s : st2tost2 to be inverted

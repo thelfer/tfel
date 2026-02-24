@@ -2,7 +2,7 @@
 title: Creating packages for TFEL/MFront
 author: Thomas Helfer
 date: October 31, 2014
-lang: en_EN
+lang: en-EN
 ---
 
 The latest version of this document is always available at

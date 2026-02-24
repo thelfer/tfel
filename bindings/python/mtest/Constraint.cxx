@@ -3,7 +3,7 @@
  * \brief
  * \author th202608
  * \date   13/02/2018
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -16,9 +16,8 @@
 #include "TFEL/Raise.hxx"
 #include "MTest/Constraint.hxx"
 
-static mtest::ConstraintOptions makeConstraintOptions(const pybind11::tuple a,
-                                                      const pybind11::dict d) {
-  tfel::raise_if(pybind11::len(a) != 0, "no unamed argument expected");
+static mtest::ConstraintOptions makeConstraintOptions(
+    const pybind11::kwargs d) {
   mtest::ConstraintOptions opts;
   for (const auto& [key, value] : d) {
     const auto k = pybind11::cast<std::string>(key);

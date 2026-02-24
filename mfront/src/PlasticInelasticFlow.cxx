@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   28/03/2018
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -79,7 +79,7 @@ namespace mfront::bbrick {
       const auto imax = d.at(rimax_n);
       this->equivalent_stress_check_maximum_iteration_factor =
           tfel::utilities::convert<double>(imax);
-      if ((this->equivalent_stress_check_maximum_iteration_factor < 0) &&
+      if ((this->equivalent_stress_check_maximum_iteration_factor < 0) ||
           (this->equivalent_stress_check_maximum_iteration_factor > 1)) {
         tfel::raise(
             "PlasticInelasticFlow::initialize: the value for option "
@@ -90,13 +90,18 @@ namespace mfront::bbrick {
     tfel::raise_if(this->ihrs.empty(),
                    "PlasticInelasticFlow::initialize: "
                    "no isotropic hardening rule defined");
-    if (id.empty()) {
-      addStateVariable(bd, "strain", "p", Glossary::EquivalentPlasticStrain);
+    if (!this->equivalent_strain_external_name.empty()) {
+      addStateVariable(bd, "strain", "p",
+                       this->equivalent_strain_external_name);
     } else {
-      addStateVariable(
-          bd, "strain", "p" + id,
-          static_cast<const std::string&>(Glossary::EquivalentPlasticStrain) +
-              id);
+      if (id.empty()) {
+        addStateVariable(bd, "strain", "p", Glossary::EquivalentPlasticStrain);
+      } else {
+        addStateVariable(
+            bd, "strain", "p" + id,
+            static_cast<const std::string&>(Glossary::EquivalentPlasticStrain) +
+                id);
+      }
     }
   }  // end of initialize
 
@@ -141,6 +146,10 @@ namespace mfront::bbrick {
       const auto dfp_ddp = "dfp" + id + "_ddp" + id;
       c += computeElasticLimitAndDerivative(bd, this->ihrs, id);
       c += damping;
+      if (this->save_yield_surface_radius) {
+        c += "this->mfront_" + yield_surface_radius_external_name + " = " + R +
+             ";\n";
+      }
       c += fp + " = (" + seq + "-" + R + ")/(" + snf + ");\n";
       c += sp.generateImplicitEquationDerivatives(
           bd, "strain", "p" + id, dseq_ds + "/(" + snf + ")",
@@ -174,6 +183,10 @@ namespace mfront::bbrick {
       c += computeElasticLimit(bd, this->ihrs, id);
       c += damping;
       c += fp + " = (" + seq + "-" + R + ")/(" + snf + ");\n";
+      if (this->save_yield_surface_radius) {
+        c += "this->mfront_" + yield_surface_radius_external_name + " = " + R +
+             ";\n";
+      }
     }
     return c;
   }  // end of buildFlowImplicitEquations

@@ -1,0 +1,44 @@
+@Behaviour Elasticity9;
+@Author Helfer Thomas;
+@Date 23 / 11 / 06;
+@Description {
+  A very first test(the most simple one in fact).
+}
+
+@UseQt true;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+
+@ComputeThermalExpansion{
+  thermal_expansion : 2.e-5,
+  save_thermal_expansion : true
+};
+
+@InitLocalVariables {
+  lambda = computeLambda(young, nu);
+  mu = computeMu(young, nu);
+}
+
+@PredictionOperator {
+  if (!((smt == ELASTIC) || (smt == SECANTOPERATOR) ||
+        (smt == TANGENTOPERATOR))) {
+    return FAILURE;
+  }
+  Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+}
+
+@Integrator {
+  sig =
+      lambda * trace(eto + deto) * StrainStensor::Id() + 2 * mu * (eto + deto);
+}
+
+@TangentOperator {
+  static_cast<void>(smt);
+  Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+}

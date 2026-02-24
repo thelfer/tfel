@@ -1,11 +1,11 @@
 /*!
  * \file   include/TFEL/Math/Tensor/TensorConcept.ixx
  * \author Thomas Helfer
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -467,11 +467,12 @@ namespace tfel::math {
                        getSpaceDimension<StensorType>()),
                   "invalid arguments");
     if constexpr (getSpaceDimension<TensorType>() == 1u) {
-      using tfel::fsalgo::copy;
       typedef numeric_type<TensorType2> T;
       using real = base_type<T>;
       R = tensor<1u, real>::Id();
-      copy<3u>::exe(F.begin(), U.begin());
+      for (unsigned short i = 0; i != 3u; ++i) {
+        U(i) = F(i);
+      }
     } else {
       using tfel::fsalgo::transform;
       using T = numeric_type<TensorType2>;

@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   10 janv. 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -103,11 +103,12 @@ namespace mfront {
          << "    return;\n"
          << "  }\n"
          << "  double pvalue;\n"
-         << "  try {\n"
-         << "    pvalue = std::stod(tokens[1]);\n"
-         << "  } catch(...){\n"
-         << "    set_msg(\"can't convert '\"+tokens[1]+\"' to floating point "
-            "value\");\n"
+         << "  std::istringstream mfront_converter(tokens[1]);\n"
+         << "  mfront_converter.imbue(std::locale::classic());\n"
+         << "  mfront_converter >> pvalue;\n"
+         << "  if((!mfront_converter) || (!mfront_converter.eof())){\n"
+         << "    set_msg(\"can't convert '\"+tokens[1]+"
+         << "            \"' to floating point value\");\n"
          << "    return;\n"
          << "  }\n";
       bool first = true;
@@ -115,9 +116,19 @@ namespace mfront {
         if (!first) {
           os << " else ";
         }
-        os << "if(tokens[0]==\"" << p.getExternalName() << "\"){\n"
+        os << "if(tokens[0]==\"" << p.name << "\"){\n"
            << "this->" << p.name << " = pvalue;\n"
            << "}";
+        if (p.getExternalName() != p.name) {
+          os << " else if(tokens[0]==\"" << p.getExternalName() << "\"){\n"
+             << "this->" << p.name << " = pvalue;\n"
+             << "}";
+        }
+        if ((!p.symbolic_form.empty()) && (p.symbolic_form != p.name)) {
+          os << " else if(tokens[0]==\"" << p.symbolic_form << "\"){\n"
+             << "this->" << p.name << " = pvalue;\n"
+             << "}";
+        }
         first = false;
       }
       os << "else {\n"

@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   22 mars 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -104,6 +104,84 @@ namespace ansys {
     static inline void exe(AnsysReal* const v,
                            const tfel::math::stensor<N, T>& s) {
       ExportSymmetricTensor<N>::exe(v, s);
+    }  // end of exe
+  };   // end of struct ExportThermodynamicForces
+
+  /*!
+   * \brief class defining the convertion from ansys to mfront for
+   * driving variables
+   * \tparam H: modelling hypothesis
+   */
+  template <>
+  struct ImportGradients<tfel::material::ModellingHypothesis::PLANESTRESS> {
+    /*!
+     * \tparam T: type of the thermodynamique forces
+     * \param[out] s: symmetric tensor to be filled
+     * \param[in]  v: values
+     */
+    template <typename T>
+    static inline void exe(tfel::math::stensor<2u, T>& e,
+                           const AnsysReal* const v) {
+      constexpr auto cste = tfel::math::Cste<T>::isqrt2;
+      e[0] = v[0];
+      e[1] = v[1];
+      e[2] = 0;
+      e[3] = v[2] * cste;
+    }  // end of exe
+    /*!
+     * \tparam T: type of the thermodynamique forces
+     * \param[out] s: symmetric tensor to be filled
+     * \param[in]  v: values
+     */
+    template <typename T>
+    static inline void exe(tfel::math::tensor<2u, T>& F,
+                           const AnsysReal* const v) {
+      //      tfel::math::tensor<N, T>::buildFromFortranMatrix(F, v);
+    }  // end of exe
+  };   // end of struct ImportGradients
+  /*!
+   * \brief class defining the convertion from ansys to mfront for
+   * thermodynamic forces
+   * \tparam H: modelling hypothesis
+   */
+  template <>
+  struct ImportThermodynamicForces<
+      tfel::material::ModellingHypothesis::PLANESTRESS> {
+    /*!
+     * \tparam T: type of the thermodynamique forces
+     * \param[out] s: symmetric tensor to be filled
+     * \param[in]  v: values
+     */
+    template <typename T>
+    static inline void exe(tfel::math::stensor<2u, T>& s,
+                           const AnsysReal* const v) {
+      constexpr auto cste = tfel::math::Cste<T>::sqrt2;
+      s[0] = v[0];
+      s[1] = v[1];
+      s[2] = 0;
+      s[3] = v[2] * cste;
+    }  // end of exe
+  };   // end of struct ImportThermodynamicForces
+  /*!
+   * \brief class defining the convertion from mfront to ansys for
+   * thermodynamic forces
+   * \tparam H: modelling hypothesis
+   */
+  template <>
+  struct ExportThermodynamicForces<
+      tfel::material::ModellingHypothesis::PLANESTRESS> {
+    /*!
+     * \tparam T: type of the thermodynamique forces
+     * \param[out] v: values
+     * \param[in]  s: symmetric tensor to be exported
+     */
+    template <typename T>
+    static inline void exe(AnsysReal* const v,
+                           const tfel::math::stensor<2u, T>& s) {
+      constexpr auto icste = tfel::math::Cste<T>::isqrt2;
+      v[0] = s[0];
+      v[1] = s[1];
+      v[2] = s[3] * icste;
     }  // end of exe
   };   // end of struct ExportThermodynamicForces
 

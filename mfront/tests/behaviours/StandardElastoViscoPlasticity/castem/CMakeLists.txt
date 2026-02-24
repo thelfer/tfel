@@ -7,6 +7,10 @@ if(HAVE_CASTEM)
   Test4
   Test5
   Test6
+  Test7
+  Test8
+  Test9
+  Test10
   NortonTest
   NortonTest_nj
   NortonTest2

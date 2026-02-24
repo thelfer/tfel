@@ -1,0 +1,17 @@
+@ModellingHypothesis 'Tridimensional';
+@Behaviour<generic> @library@ 'AuxiliaryModelTest1';
+
+@ExternalStateVariable 'Temperature' 293.15;
+@ImposedDeformationGradient 'FXX' {0 : 1, 1 : 1.1};
+@ImposedDeformationGradient 'FXY' 0;
+@ImposedDeformationGradient 'FYX' 0;
+@ImposedDeformationGradient 'FXZ' 0;
+@ImposedDeformationGradient 'FZX' 0;
+@ImposedDeformationGradient 'FYZ' 0;
+@ImposedDeformationGradient 'FZY' 0;
+
+@Times {0, 1 in 10};
+
+@OutputFilePrecision 14;
+
+@Test<file> @reference_file@ {'EquivalentStress': 24} 1e-3;

@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Heler
  * \date   25/04/2019
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -40,11 +40,11 @@ namespace tfel ::math {
    * the deformation gradient.
    */
   template <unsigned short N, typename stress, typename real>
-  t2tost2<N, stress>
+  TFEL_HOST_DEVICE [[nodiscard]] constexpr t2tost2<N, stress>
   convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative(
       const t2tot2<N, stress>&,
       const tensor<N, real>&,
-      const stensor<N, stress>&);
+      const stensor<N, stress>&) noexcept;
 
   /*!
    * \brief convert the derivative of the first Piola-Kirchhoff stress with
@@ -63,11 +63,12 @@ namespace tfel ::math {
    * \param[in] s: Cauchy stress
    */
   template <unsigned short N, typename stress, typename real>
-  void convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative(
+  TFEL_HOST_DEVICE constexpr void
+  convertFirstPiolaKirchoffStressDerivativeToKirchhoffStressDerivative(
       t2tost2<N, stress>&,
       const t2tot2<N, stress>&,
       const tensor<N, real>&,
-      const stensor<N, stress>&);
+      const stensor<N, stress>&) noexcept;
 
 }  // end of namespace tfel::math
 

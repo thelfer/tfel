@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date 20/09/2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -1288,6 +1288,8 @@ void declareMTest(pybind11::module_& m) {
            "    - the behaviour' internal state variables\n"
            "    - the behaviour' external state variables\n"
            "    - any evolution defined in the input file\n")
+      .def("printLagrangeMultipliers", &MTest::printLagrangeMultipliers,
+           "set if Lagrange multipliers shall be print in the output file")
       .def("setCompareToNumericalTangentOperator",
            &MTest::setCompareToNumericalTangentOperator,
            "set if a comparison of the tangent operator returned by the "
@@ -1300,6 +1302,8 @@ void declareMTest(pybind11::module_& m) {
       .def("setNumericalTangentOperatorPerturbationValue",
            &MTest::setNumericalTangentOperatorPerturbationValue,
            "set the perburtation of the gradient used to compute a numerical "
-           "approximation of the tangent operator");
+           "approximation of the tangent operator")
+      .def("printLagrangeMultipliers", &MTest::printLagrangeMultipliers,
+           "if True, prints the Lagrange mulpliers in the output file");
 
 }  // end of declareExternalLibraryManager

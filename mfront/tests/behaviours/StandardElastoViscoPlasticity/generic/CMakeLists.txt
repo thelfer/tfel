@@ -6,6 +6,15 @@ mfront_behaviour_brick_check_library(MFrontStandardElastoViscoPlasticityBrickBeh
   Test4
   Test5
   Test6
+  Test7
+  Test8
+  Test9
+  Test10
+  Test11
+  Test12
+  Test13
+  Test14
+  Test15
   NortonTest
   NortonTest_nj
   NortonTest2
@@ -198,6 +207,19 @@ function(generictest_standardelastovicoplasticitybrick test_name test_file libra
       COMPONENT mtest)
   endif(TFEL_APPEND_SUFFIX)
 endfunction(generictest_standardelastovicoplasticitybrick)
+
+generictest_standardelastovicoplasticitybrick(Test8
+    test8 MFrontStandardElastoViscoPlasticityBrickBehaviours Test8)
+generictest_standardelastovicoplasticitybrick(Test9
+    test9 MFrontStandardElastoViscoPlasticityBrickBehaviours Test9)
+generictest_standardelastovicoplasticitybrick(Test10
+    test10 MFrontStandardElastoViscoPlasticityBrickBehaviours Test10)
+generictest_standardelastovicoplasticitybrick(Test11
+    test11 MFrontStandardElastoViscoPlasticityBrickBehaviours Test11)
+generictest_standardelastovicoplasticitybrick(Test13
+    test13 MFrontStandardElastoViscoPlasticityBrickBehaviours Test13)
+generictest_standardelastovicoplasticitybrick(Test15
+    test15 MFrontStandardElastoViscoPlasticityBrickBehaviours Test15)
 
 generictest_standardelastovicoplasticitybrick(GursonTvergaardNeedleman1982-test1
     GursonTvergaardNeedleman1982-test1

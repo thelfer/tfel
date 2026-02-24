@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date 06 mai 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -23,7 +23,7 @@
 #include "TFEL/System/System.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
 #include "MFront/MFrontHeader.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
@@ -290,10 +290,12 @@ namespace mfront {
         << "#include<cstdlib>\n"
         << "#include<string>\n"
         << "#include<vector>\n"
+        << "#include<locale>\n"
         << "#include<cmath>\n"
         << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
         << "#include\"TFEL/PhysicalConstants.hxx\"\n"
-        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n";
+        << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n"
+        << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n";
     if (useQuantities(mpd)) {
       out << "#include\"TFEL/Math/qt.hxx\"\n"
           << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";

@@ -3,11 +3,11 @@
  * \author Thomas Helfer
  * \date   10 Apr 10
  * \brief
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -102,7 +102,7 @@
  * \date   11 Apr 2010
  */
 #define TFEL_TESTS_FUNCTION(X, G, Y)                                  \
-  bool TFEL_VISIBILITY_LOCAL X();                                     \
+  TFEL_VISIBILITY_LOCAL bool X();                                     \
   TFEL_TESTS_GENERATE_PROXY3(tfel::tests::TestFunctionWrapper<X>,     \
                              TFEL_PP_JOIN(X, FunctionWrapper), G, Y); \
   bool X()

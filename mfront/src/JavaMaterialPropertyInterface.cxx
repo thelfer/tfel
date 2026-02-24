@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   06 mai 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -41,6 +41,7 @@
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/FileDescription.hxx"
@@ -315,7 +316,8 @@ namespace mfront {
             << "#include<cmath>\n\n"
             << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
             << "#include\"TFEL/PhysicalConstants.hxx\"\n"
-            << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n";
+            << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n"
+            << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n";
     if (useQuantities(mpd)) {
       srcFile << "#include\"TFEL/Math/qt.hxx\"\n"
               << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";

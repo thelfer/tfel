@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \brief  12 avril 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -283,6 +283,8 @@ namespace mtest {
         &MTestParser::handleNumericalTangentOperatorPerturbationValue);
     add("@UserDefinedPostProcessing",
         &MTestParser::handleUserDefinedPostProcessing);
+    add("@PrintLagrangeMultipliers",
+        &MTestParser::handlePrintLagrangeMultipliers);
   }
 
   void MTestParser::registerCallBack(const std::string& k,
@@ -980,6 +982,25 @@ namespace mtest {
     this->readSpecifiedToken(m, ";", p, this->tokens.end());
     t.addUserDefinedPostProcessing(f, v);
   }  // end of MTestParser::handleUserDefinedPostProcessing
+
+  void MTestParser::handlePrintLagrangeMultipliers(MTest& t,
+                                                   tokens_iterator& p) {
+    const std::string m = "MTestParser::handlePrintLagrangeMultipliers";
+    const auto b = [&p] {
+      if (p->value == "true") {
+        return true;
+      } else if (p->value != "false") {
+        tfel::raise(
+            "MTestParser::handlePrintLagrangeMultipliers: "
+            "unexpected token '" +
+            p->value + "'");
+      }
+      return false;
+    }();
+    ++p;
+    this->readSpecifiedToken(m, ";", p, this->tokens.end());
+    t.printLagrangeMultipliers(b);
+  }  // end of MTestParser::handlePrintLagrangeMultipliers
 
   ConstraintOptions MTestParser::readConstraintOptions(const std::string& m,
                                                        tokens_iterator& p) {

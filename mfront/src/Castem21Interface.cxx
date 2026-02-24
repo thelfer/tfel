@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   24/02/2021
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -55,6 +55,9 @@ namespace mfront {
 
   std::string Castem21Interface::getMaterialPropertiesOffsetForBehaviourTraits(
       const BehaviourDescription& md) const {
+    if (md.isModel()) {
+      return CastemInterface::getMaterialPropertiesOffsetForBehaviourTraits(md);
+    }
     return CastemInterface::getMaterialPropertiesOffsetForBehaviourTraits(md) +
            " + 2u";
   }  // end of getMaterialPropertiesOffsetForBehaviourTraits

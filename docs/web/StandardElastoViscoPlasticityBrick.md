@@ -183,8 +183,30 @@ The Hooke stress potential is fully described
 The DDIF2 stress potential is fully described
 [here](DDIF2StressPotential.html).
 
-
 # Inelastic flows
+
+## Generalities
+
+### About the equivalent strain
+
+Most inelastic flows introduces an equivalent strain as a measure of the
+material's hardening.
+
+This state variable is named `p`+`id` where `id` is an identifier
+associated with the inelastic flow. `id` is empty if only one inelastic
+flows is defined and contain a number otherwise. More precisely, when
+several inelastic flows are defined, `0` is the `id` of the first
+inelatic flow, `1` is the `id` of the second inelatic flow, etc..
+
+The default external name of the equivalent strain depends on the
+inelastic flow selected:
+
+- `EquivalentPlasticStrain`+`id` is used by plastic flows,
+- `EquivalentViscoplasticStrain`+`id` is used by viscoplastic flows.
+
+See Section
+@sec:StandardElastoViscoPlasticity:equivalent_strain_external_name for
+how to change the external name of the equilavent strain.
 
 ## List of available inelastic flows
 
@@ -248,15 +270,6 @@ of iterations allowed for the Newton algorithm. A typical value for
 ##### Example
 
 ~~~~{.cxx}
-@DSL Implicit;
-@Behaviour PerfectPlasticity;
-@Author Thomas Helfer;
-@Date 17 / 08 / 2020;
-@Description{};
-
-@Epsilon 1.e-14;
-@Theta 1;
-
 @Brick StandardElastoViscoPlasticity{
   stress_potential : "Hooke" {young_modulus : 200e9, poisson_ratio : 0.3},
   inelastic_flow : "Plastic" {
@@ -392,7 +405,27 @@ code.
 };
 ~~~~
 
-## Newton steps rejections based on the change of the flow direction between two successive estimates {#sec:cosine_checks}
+## Common inelastic flows' options
+
+### External name of the equivalent strain  {#sec:StandardElastoViscoPlasticity:equivalent_strain_external_name}
+
+All inelastic flows allows to change the external name of the equilvaent
+strain with the `equivalent_strain_external_name` option.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 33e6, H : 438e6},
+    equivalent_strain_external_name : "CumulatedEquivalentPlasticStrain"
+  }
+};
+~~~~
+
+### Newton steps rejections based on the change of the flow direction between two successive estimates {#sec:cosine_checks}
 
 Some stress criteria (Hosford 1972, Barlat 2004, Mohr-Coulomb) shows
 sharp edges that may cause the failure of the standard Newton algorithm,
@@ -421,7 +454,6 @@ threshold. This threshold must be in the range \(\left[-1:1\right]\),
 but due to the slow variation of the cosine near \(0\), a typical value
 of this threshold is \(0.99\) which is equivalent to impose that the
 angle between two successive estimates is below \(8\mbox{}^{\circ}\).
-
 
 ## List of available stress criteria
 
@@ -841,6 +873,31 @@ divergence of the Newton algorithm du to oscillations of the flow
 direction. Specifying a threshold for the angle between. See Section
 @sec:cosine_checks for details.
 
+### Saving the stress criterion
+
+All inelastic flows allows the save the value of the stress
+criterion at `t+\theta\,\Delta\,t` in a dedicated auxiliary state
+variable by setting the `save_stress_criterion` option to `true`.
+
+The external name of this auxiliary state variable defaults to
+`EquivalentStress` + id, where id is the identifier of the inelastic
+flow. This name can be changed using the
+`stress_criterion_external_name` option.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 33e6, H : 438e6},
+    stress_criterion_external_name : "StressCriterion",
+    save_stress_criterion : true
+  }
+};
+~~~~
+
 ## List of available isotropic hardening rules
 
 > **Note**
@@ -1096,9 +1153,9 @@ options:
 };
 ~~~~
 
-## List of rate sensitivity factors {#sec:rate_sensitivity_factors}
+#### List of rate sensitivity factors {#sec:rate_sensitivity_factors}
 
-### Cowper-Symonds's rate sensitivity factor
+##### Cowper-Symonds's rate sensitivity factor
 
 \[
 R_{rs}\paren{\dot{p}}=1+A\,\left(\frac{\dot{p}}{\dot{p}_{0}}\right)^{n}
@@ -1117,7 +1174,7 @@ A\,\left(\frac{\dot{p}}{\dot{p}_{0}}\right)^{n} &&\text{if}&&\dot{p}\geq\dot{p}_
 \right.
 \]
 
-### Johnson-Cook's rate sensitivity factor
+##### Johnson-Cook's rate sensitivity factor
 
 \[
 R_{rs}\paren{\dot{p}}=1+
@@ -1129,6 +1186,31 @@ A\,\log\left(\frac{\dot{p}}{\dot{p}_{0}}\right)&&\text{if}&&\dot{p}\geq\dot{p}_{
 \right.
 \]
 
+### Saving the yield surface's radius
+
+All inelastic flows allows the save the value of the yield surface's
+radius at `t+\theta\,\Delta\,t` in a dedicated auxiliary state variable
+by setting the `save_yield_surface_radius` option to `true`.
+
+The external name of this auxiliary state variable defaults to
+`YieldSurfaceRadius` + id, where id is the identifier of the inelastic
+flow. This name can be changed using the
+`yield_surface_radius_external_name` option.
+
+#### Example of usage
+
+~~~~{.cxx}
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 33e6, H : 438e6},
+    isotropic_hardening : "Voce" {R0 : 0, Rinf: 50e6, b : 20},
+    yield_surface_radius_external_name : "YieldStrength",
+    save_yield_surface_radius : true
+  }
+};
+~~~~
 
 ## List of available kinematic hardening rules
 

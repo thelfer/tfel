@@ -4,11 +4,11 @@
  *
  * \author Thomas Helfer
  * \date   06 Jul 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -72,8 +72,10 @@ namespace tfel::math {
       if (m.getNbRows() == 0) {
         throw(LUInvalidMatrixSize());
       }
-      std::copy(b.begin(), b.end(), x.begin());
       const size_type n = m.getNbRows();
+      for (size_type i = 0; i != n; ++i) {
+        x(i) = b(i);
+      }
       for (size_type i = 0; i != n; ++i) {
         size_type pi = p(i);
         for (size_type j = 0; j != i; ++j) {

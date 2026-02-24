@@ -1,6 +1,20 @@
-% The mfront module
-% Thomas Helfer
-% 4/06/2016
+---
+title:  The `mfront` module
+author: Thomas Helfer
+date: 04/06/2016
+lang: en-EN
+numbersections: true
+link-citations: true
+colorlinks: true
+figPrefixTemplate: "$$i$$"
+tblPrefixTemplate: "$$i$$"
+secPrefixTemplate: "$$i$$"
+lstPrefixTemplate: "$$i$$"
+eqnPrefixTemplate: "($$i$$)"
+header-includes:
+bibliography: bibliography.bib
+csl: iso690-numeric-en.csl
+---
 
 # Introduction
 
@@ -472,5 +486,21 @@ names associated to a `VariableDescriptionContainer`.
 - `isExternalStateVariableIncrementName`
 - `isParameterName`
 - `isStaticVariableName`
+
+# The `mfront.database` module
+
+The `mfront.database` module wraps the [`TFELMFrontDatabase`
+library](tfel-mfront-database.html).
+
+## Example of usage
+
+~~~~{.python}
+import mfront.database
+db = mfront.database.MFrontDatabase()
+r = db.analyseDirectory('/tmp/test-lib/')
+epts = db.getEntryPoints(interface = 'generic')
+for e in epts:
+    print(f"{e.library}: {e.name}")
+~~~~
 
 <!-- Local IspellDict: english -->

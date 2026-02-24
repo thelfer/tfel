@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   04/08/2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -44,21 +44,22 @@ struct QtRefTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(
         (std::is_same_v<double, ViewStorageType<stensor<3u, double>>>));
     TFEL_TESTS_STATIC_ASSERT(
-        (isQuantity<numeric_type<stensor<3u, qt<Mass>>>>()));
+        (isQuantity<numeric_type<stensor<3u, qt<unit::Mass>>>>()));
     TFEL_TESTS_STATIC_ASSERT(
-        (std::is_same_v<qt<Mass>, numeric_type<stensor<3u, qt<Mass>>>>));
+        (std::is_same_v<qt<unit::Mass>,
+                        numeric_type<stensor<3u, qt<unit::Mass>>>>));
     TFEL_TESTS_STATIC_ASSERT(
-        (std::is_same_v<double, base_type<qt<Mass, double>>>));
+        (std::is_same_v<double, base_type<qt<unit::Mass, double>>>));
     TFEL_TESTS_STATIC_ASSERT(
-        (std::is_same_v<double, ViewStorageType<stensor<3u, qt<Mass>>>>));
+        (std::is_same_v<double, ViewStorageType<stensor<3u, qt<unit::Mass>>>>));
   }
   void test2() {
 #if (not defined __INTEL_COMPILER) && (not defined __clang__)
     using namespace tfel::math;
     constexpr auto eps = double{1e-14};
-    constexpr auto s = []() constexpr->stensor<3, qt<Stress, double>> {
+    constexpr auto s = []() constexpr->stensor<3, qt<unit::Stress, double>> {
       double stress_values[6] = {0, 1, 2, 3, 4, 5};
-      return map<stensor<3, qt<Stress>>>(stress_values);
+      return map<stensor<3, qt<unit::Stress>>>(stress_values);
     }
     ();
     TFEL_TESTS_STATIC_ASSERT(my_abs(s[0].getValue()) < eps);
@@ -71,12 +72,12 @@ struct QtRefTest final : public tfel::tests::TestCase {
   }    // end of test2
   void test3() {
     using namespace tfel::math;
-    using stress = qt<Stress, double>;
+    using stress = qt<unit::Stress, double>;
     constexpr auto eps = double{1e-14};
     auto sig = stensor<3u, stress>{stress{0}, stress{1}, stress{2},
                                    stress{3}, stress{4}, stress{5}};
     double stress_values[6];
-    map<stensor<3u, qt<Stress, double>>>(stress_values) = sig;
+    map<stensor<3u, qt<unit::Stress, double>>>(stress_values) = sig;
     TFEL_TESTS_ASSERT(my_abs(stress_values[0]) < eps);
     TFEL_TESTS_ASSERT(my_abs(stress_values[1] - 1) < eps);
     TFEL_TESTS_ASSERT(my_abs(stress_values[2] - 2) < eps);

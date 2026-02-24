@@ -3,11 +3,11 @@
  * \brief
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -36,10 +36,9 @@ namespace numodis {
     int getRankInteraction(const GSystem& gsystem1,
                            const GSystem& gsystem2) const;
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
-        std::ostream&, const Hardening&);
-
    private:
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend std::ostream& operator<<(
+        std::ostream&, const Hardening&);
     //! pointer to the Crystallo object
     const Crystallo& _pcrystallo;
     //! all glide systems
@@ -49,6 +48,9 @@ namespace numodis {
     //! interacting glide systems
     std::vector<std::pair<GSystem, GSystem>> _interactions;
   };
+
+  TFELNUMODIS_VISIBILITY_EXPORT std::ostream& operator<<(std::ostream&,
+                                                         const Hardening&);
 
 }  // end of namespace numodis
 

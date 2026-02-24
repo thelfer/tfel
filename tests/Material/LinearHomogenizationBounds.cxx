@@ -3,7 +3,7 @@
  * \brief
  * \author Antoine Martin
  * \date   23 January 2025
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -21,6 +21,7 @@
 #include <typeinfo>
 #include "TFEL/Config/TFELTypes.hxx"
 #include "TFEL/Math/qt.hxx"
+#include "TFEL/Math/types.hxx"
 #include "TFEL/Math/General/ConstExprMathFunctions.hxx"
 #include "TFEL/Material/StiffnessTensor.hxx"
 #ifndef _LIBCPP_VERSION
@@ -46,18 +47,25 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
     constexpr bool qt = true;
     using stress = typename tfel::config::Types<1u, real, qt>::stress;
 
-    this->template testHS_3D<real, stress>();
-    this->template testHS_2D<real, stress>();
+    this->template testHS_3D<stress>();
+    this->template testHS_2D<stress>();
+    this->template testHS_3D<real>();
+    this->template testHS_2D<real>();
+
+    this->template testVR<stress>();
+    this->template testVR<real>();
 
     return this->result;
   }
 
  private:
-  template <typename real, typename stress>
-  void testHS_3D() {
+  template <tfel::math::ScalarConcept stress>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              stress>()) void testHS_3D() {
 #ifndef _LIBCPP_VERSION
     // we just compare a direct formula for two phases and the function for N=2
     // phases
+    using real = tfel::types::real<stress>;
     using namespace tfel::material::homogenization::elasticity;
     constexpr auto eps = 100 * tfel::math::constexpr_fct::sqrt(
                                    std::numeric_limits<real>::epsilon());
@@ -67,18 +75,17 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
     const auto nu1 = real{0.3};
     const auto young2 = stress{150e9};
     const auto nu2 = real{0.2};
-    std::array<real, 2> tab_f;
-    tab_f[0] = 0.1;
-    tab_f[1] = 0.9;
-    std::array<stress, 2> tab_K;
-    tab_K[0] = young1 / 3 / (1 - 2 * nu1);
-    tab_K[1] = young2 / 3 / (1 - 2 * nu2);
-    std::array<stress, 2> tab_mu;
-    tab_mu[0] = young1 / 2 / (1 + nu1);
-    tab_mu[1] = young2 / 2 / (1 + nu2);
+    std::vector<real> tab_f;
+    tab_f.push_back(real(0.1));
+    tab_f.push_back(real(0.9));
+    std::vector<stress> tab_K;
+    tab_K.push_back(young1 / 3 / (1 - 2 * nu1));
+    tab_K.push_back(young2 / 3 / (1 - 2 * nu2));
+    std::vector<stress> tab_mu;
+    tab_mu.push_back(young1 / 2 / (1 + nu1));
+    tab_mu.push_back(young2 / 2 / (1 + nu2));
     const auto pair =
-        computeIsotropicHashinShtrikmanBounds<3u, 2, real, stress>(tab_f, tab_K,
-                                                                   tab_mu);
+        computeIsotropicHashinShtrikmanBounds<3u, stress>(tab_f, tab_K, tab_mu);
     const auto LB = std::get<0>(pair);
     const auto UB = std::get<1>(pair);
     const auto K_L = std::get<0>(LB);
@@ -120,11 +127,13 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
   }
 
  private:
-  template <typename real, typename stress>
-  void testHS_2D() {
+  template <tfel::math::ScalarConcept stress>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              stress>()) void testHS_2D() {
 #ifndef _LIBCPP_VERSION
     // we just compare a direct formula for two phases and the function for N=2
     // phases
+    using real = tfel::types::real<stress>;
     using namespace tfel::material::homogenization::elasticity;
     constexpr auto eps = 100 * tfel::math::constexpr_fct::sqrt(
                                    std::numeric_limits<real>::epsilon());
@@ -134,18 +143,17 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
     const auto nu1 = real{0.3};
     const auto young2 = stress{150e9};
     const auto nu2 = real{0.2};
-    std::array<real, 2> tab_f;
-    tab_f[0] = 0.2;
-    tab_f[1] = 0.8;
-    std::array<stress, 2> tab_K;
-    tab_K[0] = young1 / 3 / (1 - 2 * nu1);
-    tab_K[1] = young2 / 3 / (1 - 2 * nu2);
-    std::array<stress, 2> tab_mu;
-    tab_mu[0] = young1 / 2 / (1 + nu1);
-    tab_mu[1] = young2 / 2 / (1 + nu2);
+    std::vector<real> tab_f;
+    tab_f.push_back(real(0.2));
+    tab_f.push_back(real(0.8));
+    std::vector<stress> tab_K;
+    tab_K.push_back(young1 / 3 / (1 - 2 * nu1));
+    tab_K.push_back(young2 / 3 / (1 - 2 * nu2));
+    std::vector<stress> tab_mu;
+    tab_mu.push_back(young1 / 2 / (1 + nu1));
+    tab_mu.push_back(young2 / 2 / (1 + nu2));
     const auto pair =
-        computeIsotropicHashinShtrikmanBounds<2u, 2, real, stress>(tab_f, tab_K,
-                                                                   tab_mu);
+        computeIsotropicHashinShtrikmanBounds<2u, stress>(tab_f, tab_K, tab_mu);
     const auto LB = std::get<0>(pair);
     const auto UB = std::get<1>(pair);
     const auto K_L = std::get<0>(LB);
@@ -180,9 +188,36 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
                              (phi1 * mu2 + phi2 * mu1 + H2);
 
     TFEL_TESTS_ASSERT(my_abs(K_L - K_Lbis) < seps);
-    TFEL_TESTS_ASSERT(my_abs(mu_L - mu_Lbis) < seps);
+    TFEL_TESTS_ASSERT(my_abs((mu_L - mu_Lbis) / mu_L) < eps);
     TFEL_TESTS_ASSERT(my_abs(K_U - K_Ubis) < seps);
-    TFEL_TESTS_ASSERT(my_abs(mu_U - mu_Ubis) < seps);
+    TFEL_TESTS_ASSERT(my_abs((mu_U - mu_Ubis) / mu_U) < eps);
+#endif /* _LIBCPP_VERSION */
+  }
+
+ private:
+  template <tfel::math::ScalarConcept stress>
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              stress>()) void testVR() {
+#ifndef _LIBCPP_VERSION
+
+    using real = tfel::types::real<stress>;
+    using namespace tfel::material::homogenization::elasticity;
+    constexpr auto eps =
+        tfel::math::constexpr_fct::sqrt(std::numeric_limits<real>::epsilon());
+    const auto seps = stress(1e9) * eps;
+    std::vector<real> tab_f;
+    tab_f.push_back(real(0.2));
+    tab_f.push_back(real(0.8));
+    std::vector<tfel::math::st2tost2<3u, stress>> tab_C;
+    tab_C.push_back(stress(1e9) * tfel::math::st2tost2<3u, real>::Id());
+    tab_C.push_back(stress(1e7) * tfel::math::st2tost2<3u, real>::Id());
+
+    const auto CV = computeVoigtStiffness<3u, stress>(tab_f, tab_C);
+    const auto CR = computeReussStiffness<3u, stress>(tab_f, tab_C);
+
+    TFEL_TESTS_ASSERT(my_abs(CV(0, 0) - stress(20.8e7)) < seps);
+    TFEL_TESTS_ASSERT(my_abs(CR(0, 0) - stress(1e7 / 0.802)) < seps);
+
 #endif /* _LIBCPP_VERSION */
   }
 };  // end of struct LinearHomogenizationBoundsTest

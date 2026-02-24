@@ -1,0 +1,35 @@
+@DSL DefaultGenericBehaviour;
+@Behaviour AuxiliaryModelTest2;
+
+@Gradient real e;
+e.setEntryName("ChangeOfVolume");
+
+@ThermodynamicForce stress p;
+p.setGlossaryName("HydrostaticPressure");
+
+@MaterialProperty real e2;
+e2.setEntryName("SecondExternalStateVariableValue");
+
+@Parameter real m1 = 0.1;
+m1.setEntryName("FirstMaterialPropertyValue");
+
+@StaticVariable real SecondMaterialPropertyValue = 0.2;
+
+@Parameter real esv1 = -0.1;
+esv1.setEntryName("FourthExternalStateVariableValue");
+
+@StaticVariable real FifthExternalStateVariableValue = -0.2;
+
+@Parameter stress K = 100e9;
+K.setGlossaryName("BulkModulus");
+
+@AuxiliaryModel "AuxiliaryModel1.mfront";
+
+@Integrator{
+  p = K * (e + de);
+}
+
+@TangentOperator {
+  static_cast<void>(smt);
+  dp_dde = K;
+}

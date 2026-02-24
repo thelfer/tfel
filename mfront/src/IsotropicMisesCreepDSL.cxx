@@ -4,7 +4,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   10 Nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -14,7 +14,6 @@
 
 #include <string>
 #include <stdexcept>
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/DSLFactory.hxx"
 #include "MFront/IsotropicMisesCreepCodeGenerator.hxx"
@@ -97,10 +96,12 @@ namespace mfront {
 
   void IsotropicMisesCreepDSL::endsInputFileProcessing() {
     IsotropicBehaviourDSLBase::endsInputFileProcessing();
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    if (!this->mb.hasCode(h, BehaviourData::FlowRule)) {
-      this->throwRuntimeError("IsotropicMisesCreepDSL::endsInputFileProcessing",
-                              "no flow rule defined");
+    for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
+      if (!this->mb.hasCode(h, BehaviourData::FlowRule)) {
+        this->throwRuntimeError(
+            "IsotropicMisesCreepDSL::endsInputFileProcessing",
+            "no flow rule defined");
+      }
     }
   }  // end of endsInputFileProcessing
 

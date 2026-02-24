@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   19 November 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -53,6 +53,22 @@ namespace tfel::math {
       (requires(const T t, const unsigned short i, const unsigned short j) {
         t(i, j);
       });
+  /*!
+   * \brief refinement of the `T2toT2Concept` concept matched by `t2tot2`
+   * which hold value types without unit
+   */
+  template <typename T>
+  concept NoUnitT2toT2Concept = T2toT2Concept<T> &&
+      (checkUnitCompatibility<unit::NoUnit, numeric_type<T>>());
+  /*!
+   * \brief refinement of the `T2toT2Concept` concept matched by `t2tot2`
+   * which hold value types compatible with a stress
+   *
+   * \see checkUnitCompatibility for details
+   */
+  template <typename T>
+  concept StressT2toT2Concept = T2toT2Concept<T> &&
+      (checkUnitCompatibility<unit::Stress, numeric_type<T>>());
   //! \brief partial specialisation for fourth order tensor
   template <typename Type>
   struct ConceptRebind<T2toT2Tag, Type> {

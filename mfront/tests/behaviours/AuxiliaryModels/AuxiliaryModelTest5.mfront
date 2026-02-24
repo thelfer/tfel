@@ -1,0 +1,22 @@
+@DSL DefaultGenericBehaviour;
+@Behaviour AuxiliaryModelTest5;
+
+@Parameter stress K = 100e9;
+K.setGlossaryName("BulkModulus");
+
+@Parameter real m1 = 0.1;
+m1.setEntryName("FirstMaterialPropertyValue");
+
+@Parameter real esv1 = -0.1;
+esv1.setEntryName("FourthExternalStateVariableValue");
+
+@AuxiliaryModel "AuxiliaryModel1.mfront" {
+  shared_material_properties : {"SecondMaterialPropertyValue"},
+  evaluated_material_properties : {"FirstMaterialPropertyValue"},
+  shared_external_state_variables : {"ChangeOfVolume"},
+  evaluated_external_state_variables : {"FourthExternalStateVariableValue"},
+  external_names_prefix : "Model1_",
+  external_names_suffix : "_test1"
+};
+
+@Integrator{}

@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Heler
  * \date   04/08/2022
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -15,7 +15,7 @@
 #include <sstream>
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/PedanticMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
@@ -1044,10 +1044,7 @@ namespace mfront {
     if (this->bd.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
       os << "integrate(const SMFlag smflag,const SMType smt) override final{\n";
     } else {
-      if ((this->bd.getBehaviourType() ==
-           BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
-          (this->bd.getBehaviourType() ==
-           BehaviourDescription::COHESIVEZONEMODEL)) {
+      if (!this->bd.getTangentOperatorBlocks().empty()) {
         os << "integrate(const SMFlag smflag,const SMType smt) override "
               "final{\n";
       } else {
@@ -1116,7 +1113,15 @@ namespace mfront {
     if (this->bd.hasCode(h, BehaviourData::ComputeFinalThermodynamicForces)) {
       os << "this->computeFinalThermodynamicForces();\n";
     }
-    os << "this->updateAuxiliaryStateVariables();\n";
+    os << "if(!this->updateAuxiliaryStateVariables()){\n";
+    if (this->bd.useQt()) {
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType, use_qt>::FAILURE;\n";
+    } else {
+      os << "return MechanicalBehaviour<" << btype
+         << ",hypothesis, NumericType, false>::FAILURE;\n";
+    }
+    os << "}\n";
     if (!areRuntimeChecksDisabled(this->bd)) {
       for (const auto& v : d.getPersistentVariables()) {
         this->writePhysicalBoundsChecks(os, v, false);

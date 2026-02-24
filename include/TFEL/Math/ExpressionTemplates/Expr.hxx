@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   04 févr. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -15,6 +15,7 @@
 #define LIB_TFEL_MATH_EXPRESSION_EXPR_HXX
 
 #include <type_traits>
+#include "TFEL/Metaprogramming/Concepts.hxx"
 #include "TFEL/TypeTraits/IsScalar.hxx"
 #include "TFEL/TypeTraits/IsAssignableTo.hxx"
 #include "TFEL/Math/General/MathObjectTraits.hxx"
@@ -32,11 +33,12 @@ namespace tfel::math {
    */
   struct ExprBase {
    protected:
+    //
     /*!
      * \brief a simple metafunction defining how an argument of an
      * operation is stored in the Expr class.
      */
-    template <typename ValueType>
+    template <tfel::meta::ReferenceConcept ValueType>
     using ArgumentStorage = std::conditional_t<
         tfel::typetraits::isScalar<ValueType>(),
         const std::decay_t<ValueType>,
@@ -451,9 +453,23 @@ namespace tfel::math {
    * \param[in] e: expression
    */
   template <typename ResultType, typename Operation>
-  ResultType eval(const Expr<ResultType, Operation>& e) {
+  TFEL_HOST_DEVICE constexpr ResultType eval(
+      const Expr<ResultType, Operation>& e) {
     return e;
   }  // end of eval
+
+  namespace internals {
+
+    template <typename Type>
+    struct ExpressionTest : std::false_type {};
+
+    template <typename ResultType, typename Operation>
+    struct ExpressionTest<Expr<ResultType, Operation>> : std::true_type {};
+
+  }  // namespace internals
+
+  template <typename ExpressionType>
+  concept ExpressionConcept = internals::ExpressionTest<ExpressionType>::value;
 
 }  // end of namespace tfel::math
 

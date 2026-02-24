@@ -4,7 +4,7 @@
  *
  * \author Thomas Helfer
  * \date   05/05/2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -35,11 +35,11 @@
 
 #include "MFront/MFront.hxx"
 #include "MFront/MFrontHeader.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/PedanticMode.hxx"
+#include "MFront/LocalDataStructure.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/SearchPathsHandler.hxx"
 #include "MFront/AbstractBehaviourInterface.hxx"
@@ -54,6 +54,7 @@
 #include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
 #include "MFront/AbstractBehaviourCodeGenerator.hxx"
 #include "MFront/BehaviourVariableDescription.hxx"
+#include "MFront/BehaviourDSLUtilities.hxx"
 #include "MFront/BehaviourDSLCommon.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
@@ -189,6 +190,7 @@ namespace mfront {
     add("@AuxiliaryStateVar", &BehaviourDSLCommon::treatAuxiliaryStateVariable);
     add("@AuxiliaryStateVariable",
         &BehaviourDSLCommon::treatAuxiliaryStateVariable);
+    add("@AuxiliaryModel", &BehaviourDSLCommon::treatAuxiliaryModel);
     add("@ExternalStateVar", &BehaviourDSLCommon::treatExternalStateVariable);
     add("@ExternalStateVariable",
         &BehaviourDSLCommon::treatExternalStateVariable);
@@ -1115,56 +1117,13 @@ namespace mfront {
   }  // end of treatAdditionalTangentOperatorBlock
 
   void BehaviourDSLCommon::treatModel() {
-    if (getVerboseMode() >= VERBOSE_DEBUG) {
-      getLogStream() << "BehaviourDSLCommon::treatModel: begin\n";
-    }
-    this->checkNotEndOfFile("BehaviourDSLCommon::treatModel");
-    const auto lineNumber = this->current->line;
-    const auto f = SearchPathsHandler::search(
-        this->readString("BehaviourDSLCommon::treatModel"));
-    const auto adsl = MFrontBase::getDSL(f);
-    if (adsl->getTargetType() == AbstractDSL::MODELDSL) {
-      auto md = this->getModelDescription(f);
-      this->mb.addModelDescription(md);
-    } else {
-      auto md = this->getBehaviourDescription(f);
-      if (!md.isModel()) {
-        this->throwRuntimeError(
-            "BehaviourDSLCommon::treatModel",
-            "file path '" + f + "' does not describe a model");
-      }
-      const auto name = "mfront_external_model_" + md.getClassName();
-      auto d = BehaviourVariableDescription{
-          .file = f,
-          .symbolic_form = name,
-          .name = name,
-          .description =
-              [this] {
-                if (!this->currentComment.empty()) {
-                  return this->currentComment;
-                }
-                return std::string{};
-              }(),
-          .line_number = lineNumber,
-          .variables_prefix = "",
-          .variables_suffix = "",
-          .external_names_prefix = "",
-          .external_names_suffix = "",
-          .shared_material_properties = {std::regex{".+"}},
-          .shared_external_state_variables = {std::regex{".+"}},
-          .store_gradients = false,
-          .store_thermodynamic_forces = false,
-          .automatically_save_associated_auxiliary_state_variables = false,
-          .behaviour = std::move(md)};
-      const auto fname = getBehaviourVariableFactoryClassName(d);
-      this->reserveName(fname);
-      this->reserveName(fname + "_instance");
-      this->mb.addModelDescription(d);
-    }
-    if (getVerboseMode() >= VERBOSE_DEBUG) {
-      getLogStream() << "BehaviourDSLCommon::treatModel: end\n";
-    }
-    this->readSpecifiedToken("BehaviourDSLCommon::treatModel", ";");
+    const auto m1 =
+        static_cast<void (BehaviourDescription::*)(const ModelDescription&)>(
+            &BehaviourDescription::addModelDescription);
+    const auto m2 = static_cast<void (BehaviourDescription::*)(
+        const BehaviourVariableDescription&)>(
+        &BehaviourDescription::addModelDescription);
+    this->treatModel("BehaviourDSLCommon::treatModel", m1, m2);
   }  // end of treatModel
 
   void BehaviourDSLCommon::treatModel2() {
@@ -1181,7 +1140,7 @@ namespace mfront {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "BehaviourDSLCommon::treatModel2: end\n";
     }
-  }  // end of treatModel
+  }  // end of treatModel2
 
   void BehaviourDSLCommon::treatUnsupportedCodeBlockOptions(
       const CodeBlockOptions& o) {
@@ -1289,7 +1248,7 @@ namespace mfront {
     // defining modelling hypotheses
     if (!this->mb.areModellingHypothesesDefined()) {
       auto dmh = this->getDefaultModellingHypotheses();
-      // taking into account restrictin du to the `Plate` othotropic
+      // taking into account restriction du to the `Plate` othotropic
       // axes convention
       if ((this->mb.getSymmetryType() == mfront::ORTHOTROPIC) &&
           (this->mb.getOrthotropicAxesConvention() ==
@@ -1307,6 +1266,72 @@ namespace mfront {
       }
       this->mb.setModellingHypotheses(dmh);
     }
+    // auxiliary models need to store values of thermodynamic forces and
+    // persistent variables using in the evaluation of material properties
+    // and external state variables
+    auto initialValues = LocalDataStructure{};
+    initialValues.name = "mfront_initial_values";
+    for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
+      const auto& bdata = this->mb.getBehaviourData(h);
+      auto thfs = std::vector<ThermodynamicForce>{};
+      auto pvs = std::vector<VariableDescription>{};
+      for (const auto& am : this->mb.getAuxiliaryModelsDescriptions()) {
+        if (!std::holds_alternative<
+                BehaviourDescription::
+                    ExternalModelBasedOnBehaviourVariableFactory>(am)) {
+          continue;
+        }
+        auto treat = [this, &thfs, &pvs, &bdata](const VariableDescription& v) {
+          const auto& ename = v.getExternalName();
+          if (this->mb.isThermodynamicForceExternalName(ename)) {
+            for (const auto& th : thfs) {
+              if (th.getExternalName() == ename) {
+                // this thermodynamic force is already registred
+                return;
+              }
+            }
+            thfs.push_back(static_cast<const BehaviourDescription&>(this->mb)
+                               .getThermodynamicForceByExternalName(ename));
+            return;
+          }
+          for (const auto& pv : bdata.getPersistentVariables()) {
+            if (pv.getExternalName() == ename) {
+              for (const auto& pv2 : pvs) {
+                if (pv2.getExternalName() == ename) {
+                  // this persistent variable is already registred
+                  return;
+                }
+              }
+              pvs.push_back(
+                  bdata.getPersistentVariableDescriptionByExternalName(ename));
+              return;
+            }
+          }
+        };
+        const auto& ad = bdata.getBehaviourVariableFactory(
+            std::get<BehaviourDescription::
+                         ExternalModelBasedOnBehaviourVariableFactory>(am)
+                .factory);
+        for (const auto& esv : getEvaluatedExternalStateVariables(ad, h)) {
+          treat(esv);
+        }
+      }  // end of loop on auxiliary models
+      CodeBlock i;
+      for (const auto& thf : thfs) {
+        initialValues.addVariable(h, {thf.type, thf.name});
+        i.code += "this->mfront_initial_values. " + thf.name + " = ";
+        i.code += "this->" + thf.name + ";\n";
+      }
+      for (const auto& pv : pvs) {
+        initialValues.addVariable(h, {pv.type, pv.name});
+        i.code += "this->mfront_initial_values. " + pv.name + " = ";
+        i.code += "this->" + pv.name + ";\n";
+      }
+      this->mb.setCode(h, BehaviourData::BeforeInitializeLocalVariables, i,
+                       BehaviourData::CREATEORAPPEND,
+                       BehaviourData::AT_BEGINNING);
+    }  // end of loop on modelling hypothesis
+    this->mb.addLocalDataStructure(initialValues);
     // treating bricks
     for (const auto& pb : this->bricks) {
       pb->completeVariableDeclaration();
@@ -1335,10 +1360,14 @@ namespace mfront {
     if (getVerboseMode() >= VERBOSE_DEBUG) {
       getLogStream() << "BehaviourDSLCommon::endsInputFileProcessing: begin\n";
     }
+    // for evaluation of auxiliary models, we must save the initial value of
+    // certain persistent variables and thermodynamic forces.
+
+    //
     this->disableVariableDeclaration();
-    // restrictions on user defined compute stress free expansion
     for (const auto h : this->mb.getDistinctModellingHypotheses()) {
       const auto& d = this->mb.getBehaviourData(h);
+      // restrictions on user defined compute stress free expansion
       if (d.hasCode(BehaviourData::ComputeStressFreeExpansion)) {
         const auto& cb =
             d.getCodeBlock(BehaviourData::ComputeStressFreeExpansion);
@@ -1357,8 +1386,8 @@ namespace mfront {
       }
     }
     if (this->mb.areSlipSystemsDefined()) {
-      this->mb.appendToIncludes("#include \"TFEL/Material/" +
-                                this->mb.getClassName() + "SlipSystems.hxx\"");
+      this->mb.appendToIncludes("#include \"" +
+                                this->mb.getSlipSystemHeaderFileName() + "\"");
     }
     //
     if (this->mb.getBehaviourType() ==
@@ -1987,6 +2016,41 @@ namespace mfront {
   }  // end of treatLibrary
 
   void BehaviourDSLCommon::treatComputeThermalExpansion() {
+    if (this->mb.getAttribute<bool>(
+            BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+            false)) {
+      tfel::raise(
+          "BehaviourDSLCommon::treatComputeThermalExpansion: "
+          "@ComputeThermalExpansion can be used along with "
+          "@RequireThermalExpansionCoefficientTensor");
+    }
+    const auto new_syntax = [this] {
+      auto c = this->current;
+      if (c == this->tokens.end()) {
+        return false;
+      }
+      if (c->value != "{") {
+        return false;
+      }
+      // we have to choose between the new syntax and the historical one
+      ++c;
+      if (c == this->tokens.end()) {
+        return false;
+      }
+      ++c;
+      if (c == this->tokens.end()) {
+        return false;
+      }
+      return c->value == ":";
+    }();
+    if (new_syntax) {
+      this->treatComputeThermalExpansionSecondSyntax();
+    } else {
+      this->treatComputeThermalExpansionFirstSyntax();
+    }
+  }  // end of treatComputeThermalExpansion
+
+  void BehaviourDSLCommon::treatComputeThermalExpansionFirstSyntax() {
     using namespace tfel::utilities;
     using ExternalMFrontMaterialProperty =
         BehaviourDescription::ExternalMFrontMaterialProperty;
@@ -2024,12 +2088,6 @@ namespace mfront {
       this->mb.setEntryName(h, "initial_geometry_reference_temperature",
                             "ReferenceTemperatureForInitialGeometry");
     };  // end of addTi
-    throw_if(
-        this->mb.getAttribute<bool>(
-            BehaviourDescription::requiresThermalExpansionCoefficientTensor,
-            false),
-        "@ComputeThermalExpansion can be used along with "
-        "@RequireThermalExpansionCoefficientTensor");
     const auto& acs = this->readMaterialPropertyOrArrayOfMaterialProperties(m);
     this->checkNotEndOfFile(m);
     if (this->current->value == "{") {
@@ -2038,7 +2096,7 @@ namespace mfront {
                "invalid number of data. "
                "Only the 'reference_temperature' is expected");
       const auto pd = data.begin();
-      throw_if(pd->first != "reference_temperature",
+      throw_if((pd->first != "reference_temperature") && (pd->first != n),
                "the only data expected is "
                "'reference_temperature' (read '" +
                    pd->first + "')");
@@ -2084,7 +2142,32 @@ namespace mfront {
     if (!this->mb.hasParameter(h, "initial_geometry_reference_temperature")) {
       addTi(293.15);
     }
-  }  // end of treatComputeThermalExpansion
+  }  // end of treatComputeThermalExpansionFirstSyntaxt
+
+  void BehaviourDSLCommon::treatComputeThermalExpansionSecondSyntax() {
+    const auto opts = [this] {
+      auto o = tfel::utilities::DataParsingOptions{};
+      o.allowMultipleKeysInMap = true;
+      const auto data =
+          tfel::utilities::Data::read(this->current, this->tokens.end(), o);
+      if (data.empty()) {
+        return tfel::utilities::DataMap{};
+      }
+      if (!data.is<tfel::utilities::DataMap>()) {
+        this->throwRuntimeError(
+            "IsotropicBehaviourDSLBase::treatIsotropicHardeningRules",
+            "expected to read a map");
+      }
+      return data.get<tfel::utilities::DataMap>();
+    }();
+    tfel::utilities::check_keys(
+        opts,
+        {"thermal_expansion", "thermal_expansion1", "thermal_expansion2",
+         "thermal_expansion3", "thermal_expansion_reference_temperature",
+         "reference_temperature", "initial_geometry_reference_temperature",
+         "save_thermal_expansion"});
+    addThermalExpansionCoefficientsIfDefined(*this, this->mb, opts, true);
+  }
 
   void BehaviourDSLCommon::treatElasticMaterialProperties() {
     if (this->mb.getAttribute<bool>(
@@ -2144,15 +2227,74 @@ namespace mfront {
     return mps;
   }
 
-  void BehaviourDSLCommon::readElasticMaterialProperties() {
-    const auto& emps = this->readMaterialPropertyOrArrayOfMaterialProperties(
+  std::vector<BehaviourDescription::MaterialProperty>
+  BehaviourDSLCommon::readElasticMaterialPropertiesI() {
+    auto p = this->current;
+    const auto pe = this->tokens.end();
+    CxxTokenizer::checkNotEndOfLine(
+        "BehaviourDSLCommon::readElasticMaterialPropertiesI", p, pe);
+    if (p->value != "{") {
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::readElasticMaterialPropertiesI", "expected '{'");
+    }
+    ++p;
+    // vector or map
+    CxxTokenizer::checkNotEndOfLine(
+        "BehaviourDSLCommon::readElasticMaterialPropertiesI", p, pe);
+    if (p->value == "}") {
+      ++p;
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::readElasticMaterialPropertiesI",
+          "no material property given");
+    }
+    // map or string vector
+    ++p;
+    CxxTokenizer::checkNotEndOfLine(
+        "BehaviourDSLCommon::readElasticMaterialPropertiesI", p, pe);
+    if (p->value == ":") {
+      p = std::prev(p, 2);
+      return this->readElasticMaterialPropertiesII();
+    }
+    return this->readMaterialPropertyOrArrayOfMaterialProperties(
         "BehaviourDSLCommon::readElasticMaterialProperties");
+  }  // end of readElasticMaterialPropertiesI
+
+  std::vector<BehaviourDescription::MaterialProperty>
+  BehaviourDSLCommon::readElasticMaterialPropertiesII() {
+    const auto d =
+        tfel::utilities::Data::read_map(this->current, this->tokens.end())
+            .get<tfel::utilities::DataMap>();
+    if ((d.size() != 2u) && (d.size() != 9u)) {
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::readElasticMaterialProperties",
+          "invalid number of elastic material properties given");
+    }
+    auto get_mp = [this, &d](const char* const n) {
+      if (d.count(n) == 0) {
+        this->throwRuntimeError(
+            "BehaviourDSLCommon::readElasticMaterialPropertiesII",
+            "material property '" + std::string(n) + "' is not defined");
+      }
+      return getBehaviourDescriptionMaterialProperty(*this, n, d.at(n));
+    };
+    if (d.size() == 2u) {
+      return {get_mp("young_modulus"), get_mp("poisson_ratio")};
+    }
+    return {get_mp("young_modulus1"),  get_mp("young_modulus2"),
+            get_mp("young_modulus3"),  get_mp("poisson_ratio12"),
+            get_mp("poisson_ratio23"), get_mp("poisson_ratio13"),
+            get_mp("shear_modulus12"), get_mp("shear_modulus23"),
+            get_mp("shear_modulus13")};
+  }  // end of readElasticMaterialPropertiesII
+
+  void BehaviourDSLCommon::readElasticMaterialProperties() {
+    const auto emps = readElasticMaterialPropertiesI();
     this->readSpecifiedToken(
         "BehaviourDSLCommon::readElasticMaterialProperties", ";");
     if ((emps.size() != 2u) && (emps.size() != 9u)) {
       this->throwRuntimeError(
           "BehaviourDSLCommon::readElasticMaterialProperties",
-          "invalid number of file names given");
+          "invalid number of elastic material properties given");
     }
     if (emps.size() == 9u) {
       // the material shall have been declared orthotropic
@@ -2184,6 +2326,59 @@ namespace mfront {
                           false);
   }  // end of treatComputeStiffnessTensor
 
+  std::vector<BehaviourDescription::MaterialProperty>
+  BehaviourDSLCommon::readHillTensorDefinitionI() {
+    auto p = this->current;
+    const auto pe = this->tokens.end();
+    CxxTokenizer::checkNotEndOfLine(
+        "BehaviourDSLCommon::readHillTensorDefinitionI", p, pe);
+    if (p->value != "{") {
+      this->throwRuntimeError("BehaviourDSLCommon::readHillTensorDefinitionI",
+                              "expected '{'");
+    }
+    ++p;
+    // vector or map
+    CxxTokenizer::checkNotEndOfLine(
+        "BehaviourDSLCommon::readHillTensorDefinitionI", p, pe);
+    if (p->value == "}") {
+      ++p;
+      this->throwRuntimeError("BehaviourDSLCommon::readHillTensorDefinitionI",
+                              "no material property given");
+    }
+    // map or string vector
+    ++p;
+    CxxTokenizer::checkNotEndOfLine(
+        "BehaviourDSLCommon::readHillTensorDefinitionI", p, pe);
+    if (p->value == ":") {
+      p = std::prev(p, 2);
+      return this->readHillTensorDefinitionII();
+    }
+    return this->readMaterialPropertyOrArrayOfMaterialProperties(
+        "BehaviourDSLCommon::readHillTensorDefinition");
+  }  // end of readHillTensorDefinitionI
+
+  std::vector<BehaviourDescription::MaterialProperty>
+  BehaviourDSLCommon::readHillTensorDefinitionII() {
+    const auto d =
+        tfel::utilities::Data::read_map(this->current, this->tokens.end())
+            .get<tfel::utilities::DataMap>();
+    if (d.size() != 6u) {
+      this->throwRuntimeError(
+          "BehaviourDSLCommon::readHillTensorDefinition",
+          "invalid number of material properties given (6 expected)");
+    }
+    auto get_mp = [this, &d](const char* const n) {
+      if (d.count(n) == 0) {
+        this->throwRuntimeError(
+            "BehaviourDSLCommon::readHillTensorDefinitionII",
+            "material property '" + std::string(n) + "' is not defined");
+      }
+      return getBehaviourDescriptionMaterialProperty(*this, n, d.at(n));
+    };
+    return {get_mp("F"), get_mp("G"), get_mp("H"),
+            get_mp("L"), get_mp("M"), get_mp("N")};
+  }  // end of readHillTensorDefinitionII
+
   void BehaviourDSLCommon::treatHillTensor() {
     if (this->mb.getSymmetryType() != mfront::ORTHOTROPIC) {
       this->throwRuntimeError(
@@ -2204,8 +2399,7 @@ namespace mfront {
     v.description = "Hill tensor";
     ++(this->current);
     // Hill coefficients
-    const auto& hcs = this->readMaterialPropertyOrArrayOfMaterialProperties(
-        "BehaviourDSLCommon::treatHillTensor");
+    const auto& hcs = this->readHillTensorDefinitionI();
     this->readSpecifiedToken("BehaviourDSLCommon::treatHillTensor", ";");
     if (hcs.size() != 6u) {
       this->throwRuntimeError("BehaviourDSLCommon::treatHillTensor",
@@ -2751,19 +2945,15 @@ namespace mfront {
   }  // end of treatBehaviour
 
   BehaviourVariableDescription
-  BehaviourDSLCommon::readBehaviourVariableDescription() {
+  BehaviourDSLCommon::readBehaviourVariableDescription(
+      const std::string& sname,
+      const tfel::utilities::Token::size_type lineNumber,
+      const std::optional<std::string>& fileName) {
     using namespace tfel::utilities;
-    const auto mname = "BehaviourVariableDSLCommon::treatBehaviourVariable";
-
-    this->checkNotEndOfFile("BehaviourDSLCommon::treatBehaviourVariable");
-    const auto lineNumber = this->current->line;
-    const auto sname = this->current->value;
+    const auto mname = "readBehaviourVariableDescription";
     const auto bname = tfel::unicode::getMangledString(sname);
-
-    if (!isValidUserDefinedVariableName(bname)) {
-      this->throwRuntimeError(mname, "invalid variable name '" + bname + "'");
-    }
-    ++(this->current);
+    //
+    this->checkNotEndOfFile("BehaviourDSLCommon::treatBehaviourVariable");
     auto options = [this]() {
       if ((this->current != this->tokens.end()) &&
           (this->current->value == "{")) {
@@ -2773,9 +2963,16 @@ namespace mfront {
     }();
     this->readSpecifiedToken(mname, ";");
     //
+    auto vectorValidator = [](const Data& d) {
+      if (d.empty()) {
+        return;
+      }
+      if (!d.is<std::vector<Data>>()) {
+        tfel::raise("invalid type");
+      }
+    };
     auto validator =
         DataMapValidator{}
-            .addDataTypeValidator<std::string>("file")
             .addDataTypeValidator<std::string>("variables_prefix")
             .addDataTypeValidator<std::string>("variables_suffix")
             .addDataTypeValidator<std::string>("external_names_prefix")
@@ -2784,16 +2981,27 @@ namespace mfront {
             .addDataTypeValidator<bool>("store_thermodynamic_forces")
             .addDataTypeValidator<bool>(
                 "automatically_save_associated_auxiliary_state_variables")
-            .addDataTypeValidator<std::vector<Data>>(
-                "shared_material_properties")
-            .addDataTypeValidator<std::vector<Data>>(
-                "shared_external_state_variables");
+            .addDataTypeValidator<bool>(
+                "use_shared_variable_if_evaluation_is_not_feasible")
+            .addDataValidator("shared_material_properties", vectorValidator)
+            .addDataValidator("evaluated_material_properties", vectorValidator)
+            .addDataValidator("shared_external_state_variables",
+                              vectorValidator)
+            .addDataValidator("evaluated_external_state_variables",
+                              vectorValidator);
+    if (!fileName.has_value()) {
+      validator.addDataTypeValidator<std::string>("file");
+    }
     validator.validate(options);
     //
     auto extract_regex_vector =
         [this, &options,
          mname](const std::string_view& n) -> std::vector<std::regex> {
       if (!options.contains(n)) {
+        return {};
+      }
+      if (get(options, n).empty()) {
+        // is empty, checked by vectorValidator
         return {};
       }
       auto r = std::vector<std::regex>{};
@@ -2815,7 +3023,12 @@ namespace mfront {
       }
       return r;
     };
-    const auto& file = get<std::string>(options, "file");
+    const auto& file = [&fileName, &options] {
+      if (fileName.has_value()) {
+        return *fileName;
+      }
+      return get<std::string>(options, "file");
+    }();
     //
     const auto v_prefix = get_if<std::string>(options, "variables_prefix", "");
     const auto v_suffix = get_if<std::string>(options, "variables_suffix", "");
@@ -2861,14 +3074,21 @@ namespace mfront {
         .external_names_suffix = enames_suffix,
         .shared_material_properties =
             extract_regex_vector("shared_material_properties"),
+        .evaluated_material_properties =
+            extract_regex_vector("evaluated_material_properties"),
         .shared_external_state_variables =
             extract_regex_vector("shared_external_state_variables"),
+        .evaluated_external_state_variables =
+            extract_regex_vector("evaluated_external_state_variables"),
         .store_gradients = get_if<bool>(options, "store_gradients", true),
         .store_thermodynamic_forces =
             get_if<bool>(options, "store_thermodynamic_forces", true),
         .automatically_save_associated_auxiliary_state_variables = get_if<bool>(
             options, "automatically_save_associated_auxiliary_state_variables",
             true),
+        .use_shared_variable_if_evaluation_is_not_feasible = get_if<bool>(
+            options, "use_shared_variable_if_evaluation_is_not_feasible",
+            false),
         .behaviour = this->getBehaviourDescription(file)};
     // some restrictions of the behaviours
     if (d.behaviour.getAttribute(BehaviourDescription::requiresStiffnessTensor,
@@ -2887,6 +3107,22 @@ namespace mfront {
     this->reserveName(getBehaviourWrapperClassName(d));
     this->reserveName("mfront_behaviour_variable_" + d.name);
     return d;
+  }  // end of readBehaviourVariableDescription
+
+  BehaviourVariableDescription
+  BehaviourDSLCommon::readBehaviourVariableDescription() {
+    using namespace tfel::utilities;
+    const char* const mname =
+        "BehaviourDSLCommon::readBehaviourVariableDescription";
+    this->checkNotEndOfFile(mname);
+    const auto lineNumber = this->current->line;
+    const auto sname = this->current->value;
+    ++(this->current);
+    if (!isValidUserDefinedVariableName(
+            tfel::unicode::getMangledString(sname))) {
+      this->throwRuntimeError(mname, "invalid variable name '" + sname + "'");
+    }
+    return readBehaviourVariableDescription(sname, lineNumber, {});
   }  // end of readBehaviourVariableDescription
 
   void BehaviourDSLCommon::treatBehaviourVariable() {
@@ -3066,6 +3302,80 @@ namespace mfront {
     this->readVariableList(
         v, h, &BehaviourDescription::addAuxiliaryStateVariables, true);
   }  // end of treatAuxiliaryStateVariable
+
+  void BehaviourDSLCommon::treatModel(
+      const std::string& method,
+      void (BehaviourDescription::*m1)(const ModelDescription&),
+      void (BehaviourDescription::*m2)(const BehaviourVariableDescription&)) {
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << method << ": begin\n";
+    }
+    this->checkNotEndOfFile(method);
+    const auto lineNumber = this->current->line;
+    const auto f = SearchPathsHandler::search(this->readString(method));
+    const auto adsl = MFrontBase::getDSL(f);
+    if (adsl->getTargetType() == AbstractDSL::MODELDSL) {
+      auto md = this->getModelDescription(f);
+      this->readSpecifiedToken(method, ";");
+      (this->mb.*m1)(md);
+    } else {
+      const auto d = [this, &f, &method, &lineNumber] {
+        this->checkNotEndOfFile(method);
+        auto md = this->getBehaviourDescription(f);
+        const auto name = "mfront_external_model_" + md.getClassName();
+        if (this->current->value == "{") {
+          return readBehaviourVariableDescription(name, lineNumber, f);
+        }
+        this->readSpecifiedToken(method, ";");
+        return BehaviourVariableDescription{
+            .file = f,
+            .symbolic_form = name,
+            .name = name,
+            .description =
+                [this] {
+                  if (!this->currentComment.empty()) {
+                    return this->currentComment;
+                  }
+                  return std::string{};
+                }(),
+            .line_number = lineNumber,
+            .variables_prefix = "",
+            .variables_suffix = "",
+            .external_names_prefix = "",
+            .external_names_suffix = "",
+            .shared_material_properties = {},
+            .evaluated_material_properties = {std::regex{".+"}},
+            .shared_external_state_variables = {},
+            .evaluated_external_state_variables = {std::regex{".+"}},
+            .store_gradients = false,
+            .store_thermodynamic_forces = false,
+            .automatically_save_associated_auxiliary_state_variables = false,
+            .use_shared_variable_if_evaluation_is_not_feasible = true,
+            .behaviour = std::move(md)};
+      }();
+      if (!d.behaviour.isModel()) {
+        this->throwRuntimeError(
+            method, "file path '" + f + "' does not describe a model");
+      }
+      const auto fname = getBehaviourVariableFactoryClassName(d);
+      this->reserveName(fname);
+      this->reserveName(fname + "_instance");
+      (this->mb.*m2)(d);
+    }
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << method << ": end\n";
+    }
+  }
+
+  void BehaviourDSLCommon::treatAuxiliaryModel() {
+    const auto m1 =
+        static_cast<void (BehaviourDescription::*)(const ModelDescription&)>(
+            &BehaviourDescription::addAuxiliaryModelDescription);
+    const auto m2 = static_cast<void (BehaviourDescription::*)(
+        const BehaviourVariableDescription&)>(
+        &BehaviourDescription::addAuxiliaryModelDescription);
+    this->treatModel("BehaviourDSLCommon::treatAuxiliaryModel", m1, m2);
+  }  // end of treatAuxiliaryModel
 
   void BehaviourDSLCommon::treatExternalStateVariable() {
     VarContainer v;
@@ -3783,10 +4093,9 @@ namespace mfront {
           const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
           // if the user provided a tangent operator, it won't be
           // overriden
-
           CodeBlock tangentOperator;
           std::ostringstream code;
-          code << "if(smt==ELASTIC){\n"
+          code << "if(smt == ELASTIC){\n"
                << "this->Dt = this->D;\n"
                << "} else {\n"
                << "return false;\n"

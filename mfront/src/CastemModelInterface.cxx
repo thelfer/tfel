@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   03/07/2022
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -20,7 +20,7 @@
 #include "TFEL/System/System.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontDebugMode.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/SupportedTypes.hxx"
 #include "MFront/VariableDescription.hxx"
@@ -74,7 +74,8 @@ namespace mfront {
   static void writeScalarStandardTypedefs(std::ostream& os,
                                           const ModelDescription& md) {
     const auto use_qt = useQuantities(md) ? "true" : "false";
-    os << "using NumericType [[maybe_unused]] = double;\n";
+    os << "[[maybe_unused]] static constexpr auto use_qt = " << use_qt << ";\n"
+       << "using NumericType [[maybe_unused]] = double;\n";
     for (const auto& a : getScalarTypeAliases()) {
       os << "using " << a << " [[maybe_unused]] = "
          << "typename tfel::config::ScalarTypes<double, " << use_qt
@@ -270,13 +271,16 @@ namespace mfront {
        << " * \\date   " << fd.date << '\n'
        << " */\n\n"
        << "#include <cmath>\n"
+       << "#include <locale>\n"
        << "#include <cstring>\n"
        << "#include <sstream>\n"
        << "#include \"TFEL/PhysicalConstants.hxx\"\n"
        << "#include \"TFEL/Config/TFELTypes.hxx\"\n"
-       << "#include \"TFEL/Math/Array/View.hxx\"\n";
+       << "#include \"TFEL/Math/Array/View.hxx\"\n"
+       << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n";
     if (useQuantities(md)) {
-      os << "#include \"TFEL/Math/qt.hxx\"\n";
+      os << "#include\"TFEL/Math/qt.hxx\"\n"
+         << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
     }
     os << "#include \"TFEL/Material/BoundsCheck.hxx\"\n"
        << "#include \"MFront/CastemModel/" << header << "\"\n\n";
@@ -344,13 +348,13 @@ namespace mfront {
     if (has_constructor) {
       os << md.className << "(";
       if (!md.constantMaterialProperties.empty()) {
-        os << "const mfront_gb_BehaviourData& mfront_model_data";
+        os << " const castem::CastemReal *const mfront_material_properties";
       }
       os << ")\n:";
       auto first = true;
       for (const auto& mp : md.constantMaterialProperties) {
         os << (first ? "" : ",\n");
-        os << mp.name << "(mfront_model_data.s1.material_properties["
+        os << mp.name << "(mfront_material_properties["
            << getVariablePosition(md.constantMaterialProperties, mp.name, false)
            << "])";
         first = false;
@@ -637,8 +641,22 @@ namespace mfront {
           continue;
         }
         const auto en = p.getExternalName();
+        if (en != p.name) {
+          os << (first ? "if" : "} else if")  //
+             << "(std::strcmp(\"" << en << "\", n) == 0){\n"
+             << "parameters." << p.name << " = " << p.type << "{v};\n"
+             << "return 1;\n";
+          first = false;
+        }
+        if ((!p.symbolic_form.empty()) && (p.symbolic_form != p.name)) {
+          os << (first ? "if" : "} else if")  //
+             << "(std::strcmp(\"" << p.symbolic_form << "\", n) == 0){\n"
+             << "parameters." << p.name << " = " << p.type << "{v};\n"
+             << "return 1;\n";
+          first = false;
+        }
         os << (first ? "if" : "} else if")  //
-           << "(std::strcmp(\"" << en << "\", n) == 0){\n"
+           << "(std::strcmp(\"" << p.name << "\", n) == 0){\n"
            << "parameters." << p.name << " = " << p.type << "{v};\n"
            << "return 1;\n";
         first = false;
@@ -654,7 +672,8 @@ namespace mfront {
     CastemModelInterface::writeUMATFunctionArguments(os);
     os << "{\n";
     // checks on material properties
-    const auto mps_size = bdata.getMaterialProperties().size();
+    const auto mps_size =
+        getTypeSize(bdata.getMaterialProperties()).getValueForDimension(3);
     os << "if (" << mps_size << " != *NPROPS){\n"
        << "std::cerr << \"" << md.className
        << ": invalid number of material properties \"";
@@ -668,7 +687,8 @@ namespace mfront {
        << "return;\n"
        << "}\n";
     // checks on internal state variables
-    const auto isvs_size = bdata.getMaterialProperties().size();
+    const auto isvs_size =
+        getTypeSize(bdata.getPersistentVariables()).getValueForDimension(3);
     os << "if (" << isvs_size << " != *NSTATV){\n"
        << "std::cerr << \"" << md.className
        << ": invalid number of state variables \"";

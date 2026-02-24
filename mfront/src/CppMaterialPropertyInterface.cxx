@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   06 mai 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -19,8 +19,8 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/System/System.hxx"
-
 #include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/FileDescription.hxx"
@@ -267,7 +267,8 @@ namespace mfront {
            << "#include<stdexcept>\n"
            << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
            << "#include\"TFEL/PhysicalConstants.hxx\"\n"
-           << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n";
+           << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n"
+           << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n";
     if (useQuantities(mpd)) {
       header << "#include\"TFEL/Math/qt.hxx\"\n"
              << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
@@ -282,8 +283,11 @@ namespace mfront {
     if (mpd.inputs.empty()) {
       header << "//! nested typedef to make " << name
              << " model an adaptable generator (STL compliance)\n\n";
-      header << "typedef double result_type;\n\n";
+      header << "using result_type =  double;\n\n";
     }
+    const auto use_qt = useQuantities(mpd) ? "true" : "false";
+    header << "[[maybe_unused]] static constexpr auto use_qt = "  //
+           << use_qt << ";\n";
     writeScalarStandardTypedefs(header, mpd, "double", true);
     header << "//! \\brief default constructor\n"
            << name << "() noexcept;\n\n"

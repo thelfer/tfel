@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   02 jui 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -14,7 +14,7 @@
 #include <string>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/DSLFactory.hxx"
 #include "MFront/IsotropicStrainHardeningMisesCreepCodeGenerator.hxx"
@@ -98,10 +98,11 @@ namespace mfront {
 
   void IsotropicStrainHardeningMisesCreepDSL::endsInputFileProcessing() {
     IsotropicBehaviourDSLBase::endsInputFileProcessing();
-    const auto h = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    tfel::raise_if(!this->mb.hasCode(h, BehaviourData::FlowRule),
-                   "IsotropicMisesCreepDSL::endsInputFileProcessing: "
-                   "no flow rule defined");
+    for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
+      tfel::raise_if(!this->mb.hasCode(h, BehaviourData::FlowRule),
+                     "IsotropicMisesCreepDSL::endsInputFileProcessing: "
+                     "no flow rule defined");
+    }
   }  // end of endsInputFileProcessing
 
   IsotropicStrainHardeningMisesCreepDSL::

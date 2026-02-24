@@ -3,11 +3,11 @@
  * \brief
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -250,17 +250,14 @@ namespace numodis {
 
     virtual ~Crystallo();
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
-        std::ostream& os, const Crystallo& crystallo);
-
    protected:
-    //! Name of the class
+    //! \brief name of the class
     std::string _name;
-    //! basis used to compute atomic positions and directions
+    //! \brief basis used to compute atomic positions and directions
     std::vector<Vect3> _alattice;
-    //! basis used to compute Burgers' vector
+    //! \brief basis used to compute Burgers' vector
     std::vector<Vect3> _blattice;
-    //! basis used to compute plane normal
+    //! \brief basis used to compute plane normal
     std::vector<Vect3> _plattice;
   };
 

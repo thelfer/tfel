@@ -38,7 +38,7 @@ include(cmake/modules/autotools.cmake)
 
 #major and minor version
 set(TFEL_DEVELOPMENT_VERSION ON)
-tfel_project(5 1 "0")
+tfel_project(5 2 "0")
 set(PACKAGE_BUGREPORT "tfel-contact@cea.fr")
 
 # load the list of rounding modes defined by the IEEE754 standard
@@ -100,13 +100,6 @@ if(APPLE)
       set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
    endif()
 endif()
-
-# type of architecture
-if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-  tfel_add_c_cxx_definitions("TFEL_ARCH64")
-else( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-  tfel_add_c_cxx_definitions("TFEL_ARCH32")
-endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
 #extraction git hash
 if(NOT TFEL_GIT_HASH)
@@ -413,6 +406,7 @@ if(enable-testing)
   add_subdirectory(tests)
 endif()
 add_subdirectory(mfm-test-generator)
+add_subdirectory(env)
 
 #documentations
 add_custom_target(doc)

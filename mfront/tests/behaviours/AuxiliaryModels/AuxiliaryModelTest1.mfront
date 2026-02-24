@@ -1,0 +1,20 @@
+@DSL Implicit;
+@Behaviour AuxiliaryModelTest1;
+
+@StrainMeasure Hencky;
+
+@Epsilon 1e-14;
+@Theta 1;
+
+@AuxiliaryModel "VonMisesStress.mfront" {
+  variables_prefix : "post_",
+  evaluated_external_state_variables : {".+"}
+};
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : "Hooke" {young_modulus : 200e3, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Voce" {R0 : 200., Rinf : 600., b : 5}
+  }
+};

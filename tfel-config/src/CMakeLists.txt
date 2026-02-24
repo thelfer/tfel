@@ -1,4 +1,10 @@
 add_executable(tfel-config tfel-config.cxx)
+# type of architecture
+if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+  target_compile_definitions(tfel-config PUBLIC "TFEL_ARCH64")
+else( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+  target_compile_definitions(tfel-config PUBLIC "TFEL_ARCH32")
+endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 target_include_directories(tfel-config
   PRIVATE ${PROJECT_BINARY_DIR}/include
   PRIVATE ${PROJECT_BINARY_DIR}/tfel-config/include

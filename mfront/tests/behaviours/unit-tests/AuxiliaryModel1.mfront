@@ -1,0 +1,7 @@
+@DSL Default;
+@Behaviour AuxiliaryModel1;
+@Description{
+  "Try to define an auxiliary model from an nonexistent file"
+}
+
+@AuxiliaryModel "InexistentAuxiliaryModel.mfront";

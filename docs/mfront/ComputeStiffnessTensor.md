@@ -1,9 +1,10 @@
 The `ComputeStiffnessTensor` keyword is used to define the elastic
 stiffness tensor based on the elastic material properites given as an
-array of entries. After this array, a semi-colon is expected.
+array of entries or as a dictionary. After this array or dictionary,
+a semi-colon is expected.
 
-This array is used to automatically used to declared the elastic
-material properties of the behaviour (see the
+This array or dictionary is used to automatically used to declared the
+elastic material properties of the behaviour (see the
 `@ElasticMaterialProperties` keyword for details).
 
 An entry can be either a string referring to an external `MFront`
@@ -12,14 +13,19 @@ file, a formula or a numerical value.
 If an entry refers to an external `MFront` file or the formula, all
 the inputs of this material property must be either:
 
-- a material property
-- a parameter
-- a state variable
-- an external state variable
+- a material property,
+- a parameter,
+- a state variable,
+- an external state variable,
 
 of the behaviour.
 
-## Isotropic case
+## Isotropic case (dictionary case)
+
+A dictionary with two entries named `young_modulus` and `poisson_ratio`
+is expected.
+
+## Isotropic case (array case)
 
 In the isotropic case, two entries are expected in the array, in that
 order:
@@ -27,7 +33,15 @@ order:
 - the Young Modulus
 - the Poisson ratio
 
-## Orthotropic case
+## Orthotropic case (dictionary case)
+
+A dictionary with nine entries named 
+`young_modulus1`, `young_modulus2`, `young_modulus3`,
+`poisson_ratio12`, `poisson_ratio23`, `poisson_ratio13`, 
+`shear_modulus12`, `shear_modulus23` and `shear_modulus13`
+is expected.
+
+## Orthotropic case (array case)
 
 In the orthotropic case, 9 entries are expected in the array, in that
 order:

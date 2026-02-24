@@ -4,7 +4,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   17 Jan 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -19,7 +19,7 @@
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/MFrontUtilities.hxx"
 #include "MFront/SupportedTypes.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/VariableDescription.hxx"
@@ -62,10 +62,6 @@ namespace mfront {
   bool VariableDescription::isScalar() const {
     return SupportedTypes::isScalarType(this->type);
   }  // end of isScalar
-
-  int VariableDescription::getVariableTypeIdentifier() const {
-    return SupportedTypes::getTypeIdentifier(this->type);
-  }  // end of getVariableTypeIdentifier
 
   void VariableDescription::setGlossaryName(const std::string& g) {
     using tfel::glossary::Glossary;

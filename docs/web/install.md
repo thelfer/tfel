@@ -154,11 +154,11 @@ sources.
 
 In the following, we use the following convention:
 
-- `$srcdir` points to the directory that actually contains the sources
+- `<srcdir>` refers to the directory that actually contains the sources
   files.
-- `$prefix` points to the final installation directory.
+- `<install_prefix>` refers to the final installation directory.
 
-Both `$srcdir` and `$prefix` must contain an *absolute* path.
+Both `<srcdir>` and `<install_prefix>` must contain an *absolute* path.
 
 ## Using the `cmake` build system
 
@@ -174,7 +174,7 @@ $ cmake --version
 A typical usage of `cmake` is the following:
 
 ~~~~ {#building .bash}
-$ cmake $srcdir -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=$prefix
+$ cmake <srcdir> -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=<install_prefix>
 ~~~~
 
 This will build `TFEL` with the support of interfaces for the
@@ -210,7 +210,7 @@ For example, we can use the following command to select the
 [Intel compilers suite](https://software.intel.com/en-us/c-compilers):
 
 ~~~~ {#building-icpc .bash}
-$ CXX=icpc CC=icc FC=ifort F77=ifort cmake $srcdir -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=$prefix
+$ CXX=icpc CC=icc FC=ifort F77=ifort cmake <srcdir> -DCMAKE_BUILD_TYPE=Release -Dlocal-castem-header=ON -Denable-fortran=ON -Denable-aster=ON -DCMAKE_INSTALL_PREFIX=<install_prefix>
 ~~~~
 
 ### Controlling the generation of the documentation
@@ -348,13 +348,47 @@ $ make doc
 # Final install
 
 To install `TFEL` binaries and libraries in the directory pointed by
-`$prefix`, just type:
+`<install_prefix>`, just type:
 
 ~~~~ {#building-install .bash}
 $ make install
 ~~~~
 
 The previous command also installs the documentation if built.
+
+# Scripts to define environment variables for `TFEL` to work properly
+
+Depending on the system and compilation options, some of following
+variables shall be set for `TFEL` to work properly after the
+installation: `TFELHOME`, `PATH`, `LD_LIBRARY_PATH` and `PYTHONPATH`.
+
+`TFEL` installs automatically the following files in the installation
+directory:
+
+- `<install_prefix>/share/tfel/env/env.sh` for `UNIX` systems and the
+  `bash` shell. This file shall be used as follows:
+
+  ~~~~{.sh}
+  $ source <install_prefix>/share/tfel/env/env.sh
+  ~~~~
+- `<install_prefix>\share\tfel\env\env.ps1` for `PowerShell`
+  shell under `Windows`. This file shall be used as follows:
+
+  ~~~~{.sh}
+  $ .\<install_prefix>\share\tfel\env\env.ps1
+  ~~~~
+- `<install_prefix>\share\tfel\env\env.bat` for the historical `cmd`
+  shell under `Windows`. This file shall be used as follows:
+
+  ~~~~{.sh}
+  $ call <install_prefix>\share\tfel\env\env.bat
+  ~~~~
+
+> **Note**
+>
+> Those variables are not required if `TFEL` is installed
+> system-wide (for instance in `/usr/local`) and that the `TFEL`'s
+> binaries are not relocated.
 
 # A Quick installation procedure on `Ubuntu` {#sec:QuickUbuntu}
 
