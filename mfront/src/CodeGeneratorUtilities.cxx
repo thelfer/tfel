@@ -464,7 +464,13 @@ namespace mfront {
     }
     for (const auto& v : vc) {
       if (getDebugMode()) {
-        os << "#line " << v.lineNumber << " \"" << f << "\"\n";
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+          os << "#line " << v.lineNumber << " \""
+             << tfel::utilities::replace_all(f, "\\", "\\\\")
+             << "\"\n";
+#else
+          os << "#line " << v.lineNumber << " \"" << f << "\"\n";
+#endif
       }
       if (v.type == "short") {
         os << "static " << constexpr_c << "  short " << v.name << " = "

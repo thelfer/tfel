@@ -396,7 +396,11 @@ namespace mfront {
       res = "#line ";
       res += std::to_string(currentLine);
       res += " \"";
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+      res += tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\");
+#else
       res += this->fd.fileName;
+#endif
       res += "\"\n";
     }
     if (!this->current->comment.empty()) {
@@ -459,7 +463,11 @@ namespace mfront {
           res += "#line ";
           res += std::to_string(currentLine);
           res += " \"";
-          res += this->fd.fileName;
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+      res += tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\");
+#else
+      res += this->fd.fileName;
+#endif
           res += "\"\n";
         } else {
           res += "\n";

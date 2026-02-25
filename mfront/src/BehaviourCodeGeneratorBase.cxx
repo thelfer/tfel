@@ -927,7 +927,13 @@ namespace mfront {
                        ? v.type
                        : SupportedTypes::getTimeDerivativeType(v.type);
     if ((!getDebugMode()) && (v.lineNumber != 0u)) {
-      f << "#line " << v.lineNumber << " \"" << fileName << "\"\n";
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+        f << "#line " << v.lineNumber << " \""
+	  << tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\")
+	  << "\"\n";
+#else
+        f << "#line " << v.lineNumber << " \"" << fd.fileName << "\"\n";
+#endif
     }
     if (v.arraySize == 1u) {
       f << t << " " << n << ";\n";
@@ -3636,8 +3642,13 @@ namespace mfront {
       }
       if (!getDebugMode()) {
         if (p.lineNumber != 0u) {
-          os << "#line " << p.lineNumber << " \"" << this->fd.fileName
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+          os << "#line " << p.lineNumber << " \""
+             << tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\")
              << "\"\n";
+#else
+          os << "#line " << p.lineNumber << " \"" << fd.fileName << "\"\n";
+#endif
         }
       }
       if (use_static_variables) {
@@ -3709,8 +3720,13 @@ namespace mfront {
     for (const auto& v : md.getStaticVariables()) {
       if (!getDebugMode()) {
         if (v.lineNumber != 0u) {
-          os << "#line " << v.lineNumber << " \"" << this->fd.fileName
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+          os << "#line " << v.lineNumber << " \""
+             << tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\")
              << "\"\n";
+#else
+          os << "#line " << v.lineNumber << " \"" << fd.fileName << "\"\n";
+#endif
         }
       }
       os << "static constexpr auto " << v.name << " = "  //

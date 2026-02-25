@@ -1634,7 +1634,13 @@ namespace mfront {
     this->checkBehaviourFile(os);
     for (const auto& v : d.getIntegrationVariables()) {
       if ((!getDebugMode()) && (v.lineNumber != 0u)) {
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+        os << "#line " << v.lineNumber << " \""
+           << tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\")
+           << "\"\n";
+#else
         os << "#line " << v.lineNumber << " \"" << this->fd.fileName << "\"\n";
+#endif
       }
       if (v.arraySize == 1u) {
         if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {

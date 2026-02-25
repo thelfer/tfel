@@ -482,8 +482,14 @@ namespace mfront {
     auto newInstruction = true;
     auto newLine = true;
     if (!getDebugMode()) {
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+      f.body += "#line " + std::to_string(currentLine) + " \"" +
+                tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\") +
+                "\"\n";
+#else
       f.body += "#line " + std::to_string(currentLine) + " \"" +
                 this->fd.fileName + "\"\n";
+#endif
     }
     for (; (this->current != this->tokens.end()) && (openedBrackets != 0);
          ++(this->current)) {
