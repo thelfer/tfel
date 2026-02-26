@@ -92,6 +92,10 @@
 #include "MFront/ZMATInterface.hxx"
 #endif /* HAVE_ZMAT */
 
+#ifdef HAVE_OPENRADIOSS
+#include "MFront/OpenRadiossInterface.hxx"
+#endif /* HAVE_OPENRADIOSS */
+
 #include "MFront/MFrontModelInterface.hxx"
 #include "MFront/InitInterfaces.hxx"
 
@@ -206,6 +210,10 @@ namespace mfront {
 #ifdef HAVE_LSDYNA
     BehaviourInterfaceProxy<LSDYNAInterface> lsdynaProxy;
 #endif /* HAVE_LSDYNA */
+
+#ifdef HAVE_OPENRADIOSS
+    BehaviourInterfaceProxy<OpenRadiossInterface> openRadiossProxy;
+#endif /* HAVE_OPENRADIOSS */
 
     MaterialPropertyInterfaceProxy<GenericMaterialPropertyInterface> gmpProxy;
     BehaviourInterfaceProxy<GenericBehaviourInterface> gbProxy;

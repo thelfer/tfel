@@ -1108,8 +1108,9 @@ namespace mfront {
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto& l = d.getLibrary(lib);
-    insert_if(l.sources, name + "-generic.cxx");
-    d.headers.push_back("MFront/GenericBehaviour/" + name + "-generic.hxx");
+    insert_if(l.sources, name + "-" + this->getInterfaceName() + ".cxx");
+    d.headers.push_back("MFront/GenericBehaviour/" + name + "-" +
+                        this->getInterfaceName() + ".hxx");
     insert_if(l.link_directories,
               "$(shell " + tfel_config + " --library-path)");
     if (this->shallGenerateMTestFileOnFailure(bd)) {
@@ -1133,7 +1134,7 @@ namespace mfront {
     tfel::system::systemCall::mkdir("include/MFront/GenericBehaviour");
     const auto mhs = this->getModellingHypothesesToBeTreated(bd);
     const auto name = bd.getLibrary() + bd.getClassName();
-    const auto header = name + "-generic.hxx";
+    const auto header = name + "-" + this->getInterfaceName() + ".hxx";
     const auto type = bd.getBehaviourType();
     const auto is_finite_strain_through_strain_measure =
         (type == BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
@@ -1201,7 +1202,7 @@ namespace mfront {
     out << "#endif /* " << hg << " */\n";
     out.close();
 
-    const auto src = name + "-generic.cxx";
+    const auto src = name + "-" + this->getInterfaceName() + ".cxx";
     out.open("src/" + src);
     if (!out) {
       raise("could not open file '" + src + "'");
@@ -1779,12 +1780,12 @@ namespace mfront {
       const BehaviourDescription& bd) const {
     if (bd.getLibrary().empty()) {
       if (!bd.getMaterialName().empty()) {
-        return bd.getMaterialName() + "-generic";
+        return bd.getMaterialName() + "-" + this->getInterfaceName();
       } else {
         return "Behaviour";
       }
     }
-    return bd.getLibrary() + "-generic";
+    return bd.getLibrary() + "-" + this->getInterfaceName();
   }  // end of getLibraryName
 
   std::string GenericBehaviourInterface::getFunctionNameBasis(
