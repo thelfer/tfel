@@ -115,7 +115,13 @@ namespace tfel {
     }
 #endif /* (defined _WIN32) || (defined _WIN64) */
 
-    char dirSeparator() { return '/'; }  // end of systemCall::dirSeparator
+  char dirSeparator() {
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+    return '\\';
+#else
+    return '/';
+#endif
+  }  // end of dirSeparator
 
     const std::string& dirStringSeparator() {
       using namespace std;
