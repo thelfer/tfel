@@ -13,7 +13,6 @@
 
 #include <ostream>
 #include <sstream>
-#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "MFront/CodeGeneratorUtilities.hxx"
@@ -1634,14 +1633,8 @@ namespace mfront {
     const auto& d = this->bd.getBehaviourData(h);
     this->checkBehaviourFile(os);
     for (const auto& v : d.getIntegrationVariables()) {
-      if ((!getDebugMode()) && (v.lineNumber != 0u)) {
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-        os << "#line " << v.lineNumber << " \""
-           << tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\")
-           << "\"\n";
-#else
-        os << "#line " << v.lineNumber << " \"" << this->fd.fileName << "\"\n";
-#endif
+      if (!getDebugMode()) {
+        printLinePragma(os, v.lineNumber, this->fd.fileName);
       }
       if (v.arraySize == 1u) {
         if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {

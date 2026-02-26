@@ -39,6 +39,7 @@
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/MFrontLogStream.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontMaterialPropertyInterface.hxx"
 #include "MFront/StaticVariableDescription.hxx"
 #include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
@@ -393,15 +394,7 @@ namespace mfront {
     }
     auto currentLine = this->current->line;
     if ((registerLine) && (!getDebugMode())) {
-      res = "#line ";
-      res += std::to_string(currentLine);
-      res += " \"";
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-      res += tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\");
-#else
-      res += this->fd.fileName;
-#endif
-      res += "\"\n";
+      res = printLinePragma(currentLine, this->fd.fileName);
     }
     if (!this->current->comment.empty()) {
       if (!b.description.empty()) {
@@ -458,19 +451,9 @@ namespace mfront {
       currentValue = demangle(*(this->current));
       if (currentLine != this->current->line) {
         currentLine = this->current->line;
+        res += "\n";
         if ((registerLine) && (!getDebugMode())) {
-          res += "\n";
-          res += "#line ";
-          res += std::to_string(currentLine);
-          res += " \"";
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-      res += tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\");
-#else
-      res += this->fd.fileName;
-#endif
-          res += "\"\n";
-        } else {
-          res += "\n";
+          res += printLinePragma(currentLine, this->fd.fileName);
         }
       }
       if ((currentValue == ";") && (!allowSemiColon)) {

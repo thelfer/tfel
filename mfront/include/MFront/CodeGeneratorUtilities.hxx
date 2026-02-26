@@ -362,6 +362,24 @@ namespace mfront {
                                  const std::string_view,
                                  const bool,
                                  const bool);
+  /*!
+   * \brief print a `#line` pragma indicating a line number and a file name
+   *
+   * \param[os] os: output stream
+   * \param[in] ln: line number
+   * \param[in] f: file name
+   */
+  MFRONT_VISIBILITY_EXPORT
+  void printLinePragma(std::ostream&, const std::size_t, std::string_view);
+
+  /*!
+   * \brief print a `#line` pragma indicating a line number and a file name
+   *
+   * \param[in] ln: line number
+   * \param[in] f: file name
+   */
+  MFRONT_VISIBILITY_EXPORT [[nodiscard]] std::string printLinePragma(
+      const std::size_t, std::string_view);
 
 }  // end of namespace mfront
 

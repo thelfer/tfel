@@ -464,13 +464,7 @@ namespace mfront {
     }
     for (const auto& v : vc) {
       if (getDebugMode()) {
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-          os << "#line " << v.lineNumber << " \""
-             << tfel::utilities::replace_all(f, "\\", "\\\\")
-             << "\"\n";
-#else
-          os << "#line " << v.lineNumber << " \"" << f << "\"\n";
-#endif
+        printLinePragma(os, v.lineNumber, f);
       }
       if (v.type == "short") {
         os << "static " << constexpr_c << "  short " << v.name << " = "
@@ -686,5 +680,31 @@ namespace mfront {
     writeBoundsChecks(os, v, n, space_dimension, "", addThis,
                       checkEndOfTimeStepValue, true);
   }  // end of writePhysicalBoundsChecks
+
+  std::string printLinePragma(const std::size_t ln, std::string_view f) {
+    if (ln == 0) {
+      return {};
+    }
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+    return "#line " + std::to_string(ln) + " \"" +
+           tfel::utilities::replace_all(f, "\\", "\\\\") + "\"\n";
+#else
+    return "#line " + std::to_string(ln) + " \"" + std::string{f} + "\"\n";
+#endif
+  }
+
+  void printLinePragma(std::ostream& os,
+                       const std::size_t ln,
+                       std::string_view f) {
+    if (ln == 0) {
+      return;
+    }
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+    os << "#line " << ln << " \""
+       << tfel::utilities::replace_all(f, "\\", "\\\\") << "\"\n";
+#else
+    os << "#line " << ln << " \"" << f << "\"\n";
+#endif
+  }
 
 }  // end of namespace mfront

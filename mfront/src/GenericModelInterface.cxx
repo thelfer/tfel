@@ -15,7 +15,6 @@
 #include <algorithm>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
-#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontDebugMode.hxx"
@@ -442,26 +441,14 @@ namespace mfront {
     // material properties
     for (const auto& mp : md.constantMaterialProperties) {
       if (!getDebugMode()) {
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-          os << "#line " << mp.lineNumber << " \""
-             << tfel::utilities::replace_all(fd.fileName, "\\", "\\\\")
-             << "\"\n";
-#else
-          os << "#line " << mp.lineNumber << " \"" << fd.fileName << "\"\n";
-#endif
+        printLinePragma(os, mp.lineNumber, fd.fileName);
       }
       os << "const " << mp.type << " " << mp.name << ";\n";
     }
     // parameters
     for (const auto& p : md.parameters) {
       if (!getDebugMode()) {
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-        os << "#line " << p.lineNumber << " \""
-           << tfel::utilities::replace_all(fd.fileName, "\\", "\\\\")
-           << "\"\n";
-#else
-        os << "#line " << p.lineNumber << " \"" << fd.fileName << "\"\n";
-#endif
+        printLinePragma(os, p.lineNumber, fd.fileName);
       }
       if ((isRealParameter(p)) &&
           (!areParametersTreatedAsStaticVariables(md))) {
@@ -485,13 +472,7 @@ namespace mfront {
     // static variables
     for (const auto& v : md.staticVars) {
       if (!getDebugMode()) {
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-          os << "#line " << v.lineNumber << " \""
-             << tfel::utilities::replace_all(fd.fileName, "\\", "\\\\")
-             << "\"\n";
-#else
-          os << "#line " << v.lineNumber << " \"" << fd.fileName << "\"\n";
-#endif
+        printLinePragma(os, v.lineNumber, fd.fileName);
       }
       os << "static constexpr " << v.type << " " << v.name << " = "  //
          << v.value << ";\n";

@@ -23,7 +23,6 @@
 #include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/Token.hxx"
-#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
@@ -678,15 +677,7 @@ namespace mfront {
     currentLine = this->current->line;
     newLine = true;
     if (!getDebugMode()) {
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-      this->md.f.body +=
-          "#line " + std::to_string(currentLine) + " \"" +
-          tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\") +
-          "\"\n";
-#else
-      this->md.f.body += "#line " + std::to_string(currentLine) + " \"" +
-                         this->fd.fileName + "\"\n";
-#endif
+      this->md.f.body += printLinePragma(currentLine, this->fd.fileName);
     }
     for (; (this->current != this->tokens.end()) && (openedBrackets != 0);
          ++(this->current)) {
@@ -694,15 +685,7 @@ namespace mfront {
         currentLine = this->current->line;
         this->md.f.body += "\n";
         if (!getDebugMode()) {
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-          this->md.f.body +=
-              "#line " + std::to_string(currentLine) + " \"" +
-              tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\") +
-              "\"\n";
-#else
-          this->md.f.body += "#line " + std::to_string(currentLine) + " \"" +
-                             this->fd.fileName + "\"\n";
-#endif
+          this->md.f.body += printLinePragma(currentLine, this->fd.fileName);
         }
         newLine = true;
       }

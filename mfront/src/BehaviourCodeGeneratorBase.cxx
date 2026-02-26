@@ -926,14 +926,8 @@ namespace mfront {
     const auto t = (!useTimeDerivative)
                        ? v.type
                        : SupportedTypes::getTimeDerivativeType(v.type);
-    if ((!getDebugMode()) && (v.lineNumber != 0u)) {
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-        f << "#line " << v.lineNumber << " \""
-	  << tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\")
-	  << "\"\n";
-#else
-        f << "#line " << v.lineNumber << " \"" << fd.fileName << "\"\n";
-#endif
+    if (!getDebugMode()) {
+      printLinePragma(f, v.lineNumber, this->fd.fileName);
     }
     if (v.arraySize == 1u) {
       f << t << " " << n << ";\n";
@@ -3641,15 +3635,7 @@ namespace mfront {
         continue;
       }
       if (!getDebugMode()) {
-        if (p.lineNumber != 0u) {
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-          os << "#line " << p.lineNumber << " \""
-             << tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\")
-             << "\"\n";
-#else
-          os << "#line " << p.lineNumber << " \"" << fd.fileName << "\"\n";
-#endif
-        }
+        printLinePragma(os, p.lineNumber, this->fd.fileName);
       }
       if (use_static_variables) {
         os << "static constexpr ";
@@ -3719,15 +3705,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     for (const auto& v : md.getStaticVariables()) {
       if (!getDebugMode()) {
-        if (v.lineNumber != 0u) {
-#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-          os << "#line " << v.lineNumber << " \""
-             << tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\")
-             << "\"\n";
-#else
-          os << "#line " << v.lineNumber << " \"" << fd.fileName << "\"\n";
-#endif
-        }
+        printLinePragma(os, v.lineNumber, this->fd.fileName);
       }
       os << "static constexpr auto " << v.name << " = "  //
          << v.type << "{" << v.value << "};\n";
