@@ -454,7 +454,13 @@ namespace mfront {
     // parameters
     for (const auto& p : md.parameters) {
       if (!getDebugMode()) {
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+        os << "#line " << p.lineNumber << " \""
+           << tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\")
+           << "\"\n";
+#else
         os << "#line " << p.lineNumber << " \"" << fd.fileName << "\"\n";
+#endif
       }
       if ((isRealParameter(p)) &&
           (!areParametersTreatedAsStaticVariables(md))) {

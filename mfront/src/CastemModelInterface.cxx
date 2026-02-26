@@ -601,7 +601,13 @@ namespace mfront {
     // static variables
     for (const auto& v : md.staticVars) {
       if (!getDebugMode()) {
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+        os << "#line " << p.lineNumber << " \""
+           << tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\")
+           << "\"\n";
+#else
         os << "#line " << v.lineNumber << " \"" << fd.fileName << "\"\n";
+#endif
       }
       os << "static constexpr " << v.type << " " << v.name << " = "  //
          << v.value << ";\n";

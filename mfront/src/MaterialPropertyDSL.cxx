@@ -693,8 +693,15 @@ namespace mfront {
         currentLine = this->current->line;
         this->md.f.body += "\n";
         if (!getDebugMode()) {
+#if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
+          this->md.f.body +=
+              "#line " + std::to_string(currentLine) + " \"" +
+              tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\") +
+              "\"\n";
+#else
           this->md.f.body += "#line " + std::to_string(currentLine) + " \"" +
                              this->fd.fileName + "\"\n";
+#endif
         }
         newLine = true;
       }
