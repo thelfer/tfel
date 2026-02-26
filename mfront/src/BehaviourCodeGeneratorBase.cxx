@@ -926,8 +926,8 @@ namespace mfront {
     const auto t = (!useTimeDerivative)
                        ? v.type
                        : SupportedTypes::getTimeDerivativeType(v.type);
-    if ((!getDebugMode()) && (v.lineNumber != 0u)) {
-      f << "#line " << v.lineNumber << " \"" << fileName << "\"\n";
+    if (!getDebugMode()) {
+      printLinePragma(f, v.lineNumber, this->fd.fileName);
     }
     if (v.arraySize == 1u) {
       f << t << " " << n << ";\n";
@@ -3635,10 +3635,7 @@ namespace mfront {
         continue;
       }
       if (!getDebugMode()) {
-        if (p.lineNumber != 0u) {
-          os << "#line " << p.lineNumber << " \"" << this->fd.fileName
-             << "\"\n";
-        }
+        printLinePragma(os, p.lineNumber, this->fd.fileName);
       }
       if (use_static_variables) {
         os << "static constexpr ";
@@ -3708,10 +3705,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     for (const auto& v : md.getStaticVariables()) {
       if (!getDebugMode()) {
-        if (v.lineNumber != 0u) {
-          os << "#line " << v.lineNumber << " \"" << this->fd.fileName
-             << "\"\n";
-        }
+        printLinePragma(os, v.lineNumber, this->fd.fileName);
       }
       os << "static constexpr auto " << v.name << " = "  //
          << v.type << "{" << v.value << "};\n";

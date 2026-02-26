@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 5.1.1 of the
 
 # Issues fixed
 
+## Issue 947: [mfront] Warnings in Windows
+
+For more details, see <https://github.com/thelfer/tfel/issues/947>
+
 ## Issue 913: `env.sh.in` shall not define the `PYTHONPATH`
 
 For more details, see <https://github.com/thelfer/tfel/issues/913>
