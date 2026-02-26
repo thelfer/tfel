@@ -13,6 +13,7 @@
 
 #include <ostream>
 #include <sstream>
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "MFront/CodeGeneratorUtilities.hxx"

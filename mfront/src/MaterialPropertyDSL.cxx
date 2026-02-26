@@ -23,6 +23,7 @@
 #include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/Token.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"

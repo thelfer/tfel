@@ -15,6 +15,7 @@
 #include <algorithm>
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontDebugMode.hxx"
@@ -443,7 +444,7 @@ namespace mfront {
       if (!getDebugMode()) {
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
           os << "#line " << mp.lineNumber << " \""
-             << tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\")
+             << tfel::utilities::replace_all(fd.fileName, "\\", "\\\\")
              << "\"\n";
 #else
           os << "#line " << mp.lineNumber << " \"" << fd.fileName << "\"\n";
@@ -456,7 +457,7 @@ namespace mfront {
       if (!getDebugMode()) {
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
         os << "#line " << p.lineNumber << " \""
-           << tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\")
+           << tfel::utilities::replace_all(fd.fileName, "\\", "\\\\")
            << "\"\n";
 #else
         os << "#line " << p.lineNumber << " \"" << fd.fileName << "\"\n";
@@ -486,7 +487,7 @@ namespace mfront {
       if (!getDebugMode()) {
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
           os << "#line " << v.lineNumber << " \""
-             << tfel::utilities::replace_all(this->fd.fileName, "\\", "\\\\")
+             << tfel::utilities::replace_all(fd.fileName, "\\", "\\\\")
              << "\"\n";
 #else
           os << "#line " << v.lineNumber << " \"" << fd.fileName << "\"\n";
