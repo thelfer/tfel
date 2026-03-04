@@ -378,8 +378,8 @@ namespace mfront {
    * \param[in] ln: line number
    * \param[in] f: file name
    */
-  MFRONT_VISIBILITY_EXPORT std::string printLinePragma(
-      const std::size_t, std::string_view);
+  MFRONT_VISIBILITY_EXPORT std::string printLinePragma(const std::size_t,
+                                                       std::string_view);
 
 }  // end of namespace mfront
 

@@ -22,6 +22,11 @@ The page describes the new functionalities of Version 4.1.6 of the
 
 # Issues fixed
 
+## Issue 951: [mfront] Correctly initialize the stress at the end of the time step when making a prediction for finite strain behaviours
+
+For more details, see: <https://github.com/thelfer/tfel/issues/951/>
+
+
 ## Issue 937: [model] Difference between `castem` and `castem21` interfaces
 
 For more details, see: <https://github.com/thelfer/tfel/issues/937/>
