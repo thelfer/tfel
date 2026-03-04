@@ -45,8 +45,8 @@ namespace mtest {
     this->mpnames.insert(this->mpnames.end(), mps.begin(), mps.end());
     //
     const bool isTemperatureAndExternalStateVariable =
-        std::find(this->evnames.begin(), this->evnames.end(),
-                  "Temperature") != this->evnames.end();
+        std::find(this->evnames.begin(), this->evnames.end(), "Temperature") !=
+        this->evnames.end();
     if (isTemperatureAndExternalStateVariable) {
       if (this->evnames.at(0) != "Temperature") {
         tfel::raise(
@@ -151,8 +151,8 @@ namespace mtest {
     auto kinc = CastemInt{1};
     auto k = CastemReal{0};
     const bool isTemperatureAndExternalStateVariable =
-        std::find(this->evnames.begin(), this->evnames.end(),
-                  "Temperature") != this->evnames.end();
+        std::find(this->evnames.begin(), this->evnames.end(), "Temperature") !=
+        this->evnames.end();
     if (isTemperatureAndExternalStateVariable) {
       (this->fct)(&s.s1(0), &wk.ivs(0), &k, nullptr, nullptr, nullptr, nullptr,
                   nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &dt,
