@@ -287,7 +287,8 @@ namespace mfront {
         << "*dt,eto,deto,\n"
         << "props,*T,*dT,\n"
         << this->getFunctionNameBasis(name) << "_getOutOfBoundsPolicy(),\n"
-        << "dianafea::DianaFEAStandardSmallStrainStressFreeExpansionHandler};\n";
+        << "dianafea::DianaFEAStandardSmallStrainStressFreeExpansionHandler};"
+           "\n";
     // plane stress support
     out << "if(*ntens==3){\n";
     if (hypotheses.contains(ModellingHypothesis::PLANESTRESS)) {

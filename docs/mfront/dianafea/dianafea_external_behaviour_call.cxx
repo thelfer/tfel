@@ -96,9 +96,9 @@ namespace dianafea {
     using fct = void (*)(double *const,
                          double *const,
                          double *const,
-                         const int* const,
-                         const int* const,
-                         const int* const,
+                         const int *const,
+                         const int *const,
+                         const int *const,
                          const double *const,
                          const double *const,
                          const double *const,
@@ -216,7 +216,7 @@ namespace dianafea {
       exit_if(tokens.size() != 3u, "invalid line " + std::to_string(ln));
       exit_if(tokens[0].size() > 6u,
               "invalid identifier at line" + std::to_string(ln));
-      const auto id  = tokens[0];
+      const auto id = tokens[0];
       const auto lib = tokens[1];
       const auto fct = tokens[2];
       auto ptr = find_library(lib);
@@ -259,9 +259,11 @@ namespace dianafea {
 
   ExternalBehavioursHandler::fct ExternalBehavioursHandler::find(
       const char *const n) const {
-    const auto p = std::find_if(
-        this->behaviours.begin(), this->behaviours.end(),
-        [n](const BehaviourHandler &b) { return std::strncmp(b.id.data(), n, 6)==0; });
+    const auto p =
+        std::find_if(this->behaviours.begin(), this->behaviours.end(),
+                     [n](const BehaviourHandler &b) {
+                       return std::strncmp(b.id.data(), n, 6) == 0;
+                     });
     return (p == this->behaviours.end()) ? nullptr : p->f;
   }  // end of ExternalBehavioursHandler::find
 
@@ -301,7 +303,7 @@ void dianafea_external_behaviour_call(double *const sig,
                                       const double dtemp) {
   static dianafea::ExternalBehavioursHandler h;
   const auto f = h.get(cname);
-  f(sig, ddsdde, statev,    //
+  f(sig, ddsdde, statev,       //
     &ntens, &nprops, &nstatv,  //
     eto, deto, &dt, props, &temp, &dtemp);
 }  // end of dianafea_external_behaviour_call

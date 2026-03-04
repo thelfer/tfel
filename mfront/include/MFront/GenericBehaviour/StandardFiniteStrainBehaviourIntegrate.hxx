@@ -126,6 +126,8 @@ namespace mfront::gb::finite_strain {
       reportError(d, "invalid choice for consistent tangent operator");
       return -1;
     }
+    const auto bs = d.K[0] > 50;
+    const auto Ke = bs ? d.K[0] - 100 : d.K[0];
     tfel::math::stensor<N, real> s0;
     tfel::math::stensor<N, real> s1;
     auto* const thermodynamic_forces0_old = d.s0.thermodynamic_forces;
@@ -163,44 +165,48 @@ namespace mfront::gb::finite_strain {
         reportError(d, "invalid choice for the stress measure");
         return -1;
       }
+      s1 = s0;
       d.s0.thermodynamic_forces = s0.begin();
       d.s1.thermodynamic_forces = s1.begin();
     }
     const auto r = mfront::gb::integrate<Behaviour>(d, smf, p);
     d.s0.thermodynamic_forces = thermodynamic_forces0_old;
     d.s1.thermodynamic_forces = thermodynamic_forces1_old;
-    if ((r) && (sm != StressMeasure::CAUCHY)) {
-      tfel::math::tensor<N, real> F1;
-      tfel::fsalgo::copy<TensorSize>::exe(d.s1.gradients, F1.begin());
-      if constexpr ((hypothesis == ModellingHypothesis::PLANESTRESS) ||
-                    (hypothesis == ModellingHypothesis::
-                                       AXISYMMETRICALGENERALISEDPLANESTRESS)) {
-        if constexpr (Traits::has_axial_deformation_gradient_offset) {
-          const auto F1zz = d.s1.internal_state_variables
-                                [Traits::axial_deformation_gradient_offset];
-          if constexpr (hypothesis == ModellingHypothesis::PLANESTRESS) {
-            F1[2] += F1zz;
+    if (Ke > -0.25) {  // not a prediction
+      if ((r) && (sm != StressMeasure::CAUCHY)) {
+        tfel::math::tensor<N, real> F1;
+        tfel::fsalgo::copy<TensorSize>::exe(d.s1.gradients, F1.begin());
+        if constexpr ((hypothesis == ModellingHypothesis::PLANESTRESS) ||
+                      (hypothesis ==
+                       ModellingHypothesis::
+                           AXISYMMETRICALGENERALISEDPLANESTRESS)) {
+          if constexpr (Traits::has_axial_deformation_gradient_offset) {
+            const auto F1zz = d.s1.internal_state_variables
+                                  [Traits::axial_deformation_gradient_offset];
+            if constexpr (hypothesis == ModellingHypothesis::PLANESTRESS) {
+              F1[2] += F1zz;
+            } else {
+              F1[1] += F1zz;
+            }
           } else {
-            F1[1] += F1zz;
+            reportError(d,
+                        "the axial deformation gradient is not defined "
+                        "as an internal state variable");
+            return -1;
           }
+        }
+        if (sm == StressMeasure::PK1) {
+          tfel::math::TensorView<N, real> pk1(d.s1.thermodynamic_forces);
+          pk1 = tfel::math::convertCauchyStressToFirstPiolaKirchhoffStress(s1,
+                                                                           F1);
+        } else if (sm == StressMeasure::PK2) {
+          tfel::math::StensorView<N, real> S1(d.s1.thermodynamic_forces);
+          S1 = tfel::math::convertCauchyStressToSecondPiolaKirchhoffStress(s1,
+                                                                           F1);
         } else {
-          reportError(d,
-                      "the axial deformation gradient is not defined "
-                      "as an internal state variable");
+          reportError(d, "invalid choice for the stress measure");
           return -1;
         }
-      }
-      if (sm == StressMeasure::PK1) {
-        tfel::math::TensorView<N, real> pk1(d.s1.thermodynamic_forces);
-        pk1 =
-            tfel::math::convertCauchyStressToFirstPiolaKirchhoffStress(s1, F1);
-      } else if (sm == StressMeasure::PK2) {
-        tfel::math::StensorView<N, real> S1(d.s1.thermodynamic_forces);
-        S1 =
-            tfel::math::convertCauchyStressToSecondPiolaKirchhoffStress(s1, F1);
-      } else {
-        reportError(d, "invalid choice for the stress measure");
-        return -1;
       }
     }
     return r;

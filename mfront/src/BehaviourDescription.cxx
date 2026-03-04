@@ -2876,8 +2876,7 @@ namespace mfront {
                 bdata.getStaticVariableDescription(v.getExternalName());
             if (v.getVariableTypeIdentifier() !=
                 sv.getVariableTypeIdentifier()) {
-              report("unmatched type ('" + v.type + "' vs '" + sv.type +
-                     "')");
+              report("unmatched type ('" + v.type + "' vs '" + sv.type + "')");
             }
             if (v.arraySize != sv.arraySize) {
               report("unmatched array size (" + std::to_string(v.arraySize) +

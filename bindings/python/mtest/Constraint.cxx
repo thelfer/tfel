@@ -16,7 +16,8 @@
 #include "TFEL/Raise.hxx"
 #include "MTest/Constraint.hxx"
 
-static mtest::ConstraintOptions makeConstraintOptions(const pybind11::kwargs d) {
+static mtest::ConstraintOptions makeConstraintOptions(
+    const pybind11::kwargs d) {
   mtest::ConstraintOptions opts;
   for (const auto& [key, value] : d) {
     const auto k = pybind11::cast<std::string>(key);

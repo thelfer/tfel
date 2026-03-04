@@ -649,8 +649,7 @@ namespace mfront {
       out << " * \\param[in] " << iprefix << v.first << ":  " << v.second
           << "\n";
     }
-    out << " */\n"
-        << mb.getClassName() << "BehaviourData(";
+    out << " */\n" << mb.getClassName() << "BehaviourData(";
     if (pT != nullptr) {
       out << "const NumericType* const " << iprefix << "T_";
     } else {
@@ -752,7 +751,8 @@ namespace mfront {
       if (pT != nullptr) {
         out << " * \\param[in] " + iprefix + "dT_: temperature increment\n";
       } else {
-        out << " * \\param[in] " + iprefix + "dT_: temperature increment (unused)\n";
+        out << " * \\param[in] " + iprefix +
+                   "dT_: temperature increment (unused)\n";
       }
     }
     if (this->areExternalStateVariablesSupported()) {
@@ -777,9 +777,9 @@ namespace mfront {
       }
     }
     if (this->areExternalStateVariablesSupported()) {
-      if (pT != nullptr){ 
+      if (pT != nullptr) {
         this->checkIfTemperatureIsDefinedAsTheFirstExternalStateVariable(mb);
-          out << ", const NumericType* const";
+        out << ", const NumericType* const";
         if (externalStateVarsHolder.size() != 1) {
           out << " " << iprefix << "dext_vars";
         }
