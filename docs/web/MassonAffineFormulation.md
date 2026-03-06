@@ -259,12 +259,13 @@ and we directly obtain the expressions of $\tenseurq A_r$ and $\tenseurq B_{rs}$
 
 ### Choice of reference medium
 
-We note that the reference medium can be chosen in this approach. A natural approach is to take a $\tenseurq L_0$ isotropic near $\tenseurq L^{\mathrm{hom}}$. To that extent we will make use of the fact that for an elasticity $\tenseurq C_1=\alpha_1\tenseurq C_0$ the strain Green operator $\tenseurq \Gamma_1$ relative to $\tenseurq C_1$ is given by 
+We note that the reference medium can be chosen in this approach. A natural approach is to take a $\tenseurq L_0$ isotropic near $\tenseurq L^{\mathrm{hom}}$. To that extent we will make use of the fact that for an elasticity $\tenseurq C_1=r_0\tenseurq C_0$ the strain Green operator $\tenseurq \Gamma_1$ relative to $\tenseurq C_1$ is given by 
 \[
-\tenseurq \Gamma_1=\dfrac{1}{\alpha_1}\tenseurq \Gamma_0
+\tenseurq \Gamma_1=\dfrac{1}{r_0}\tenseurq \Gamma_0
 \]
-Hence, we will compute the morphological tensors $\tenseurq \Gamma_{rs}$ for a given elasticity $\tenseurq C_0$, and we can change the reference medium by multiplication of $\tenseurq C_0$ by $\alpha_1$ and division of $\tenseurq \Gamma_0$ by $\alpha_1$.
-Moreover, in our case, it makes sense to take a reference medium $\tenseurq C_0=2\mu_0\tenseurq K$.
+Hence, we will compute the morphological tensors $\tenseurq \Gamma_{rs}$ for a given elasticity $\tenseurq C_0$, and we can change the reference medium by multiplication of $\tenseurq C_0$ by $r_0$ and division of $\tenseurq \Gamma_0$ by $r_0$.
+
+Moreover, in our case, it makes sense to take a reference medium $\tenseurq C_0=2\mu_0\tenseurq K$. Afterwards, we will update the elasticity by taking $\tenseurq C_1=2\mu_{\mathrm{hom}}\tenseurq K$, where $\mu_{\mathrm{hom}}$ is equal to the shear modulus given by the projection of $\tenseurq C_{\mathrm{hom}}$ on $\tenseurq K$, where $\tenseurq C_{\mathrm{hom}}$ is the homogenized tensors obtained at previous step of the Newton-Raphson algorithm.
 
 
 # Implementation in MFront
@@ -478,6 +479,10 @@ A = MAT*E;
 tmatrix<6*Np,6*Np,real> B = MAT*G;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Here we see that we multiply the morphological tensors by `1/r0` in order to adapt the reference medium.
+The `r0` will be updated after, depending on the `Chom` obtained.
+The `dL` also is impacted and written as `L[r]-r0*L0`. 
+
 ### Residues, jacobian and macroscopic stress
 
 Here is the computation of the residue, the jacobian and
@@ -489,6 +494,10 @@ for (int r=0;r<Np;r++){
   Ar[r]=map_derivative<Stensor,Stensor>(A,6*r,0);
   Chom+=frac[r]*L[r]*Ar[r];
 }
+
+auto KGhom=tfel::material::computeKGModuli(Chom);
+muhom=KGhom.mu;
+r0=muhom/mu0;
 
 for (int r=0;r<Np;r++){
   tau_eff-=frac[r]*L[r]*e[r];
@@ -504,7 +513,9 @@ for (int r=0;r<Np;r++){
 sig=Chom*(eto+deto)+tau_eff;
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The jacobian here is approximative and given on line 15. 
+The jacobian here is approximative and given by `dfsigma_ddsigma(r,r)=I`. 
+We also see that we update the factor `r0` with the shear modulus `muhom`,
+obtained by projection of `Chom` on the tensor `K`.
 
 
 ### Tangent operator
