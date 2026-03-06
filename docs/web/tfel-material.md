@@ -1058,7 +1058,7 @@ Note that the 4 `InclusionDistribution` classes are currently available in 3d on
  
 ### Computation of homogenization schemes
 
-The file `MicrostructureLinearHomogenization.ixx` introduces the `HomogenizationScheme class`
+The file `MicrostructureLinearHomogenization.ixx` introduces a `HomogenizationScheme` object
 which has three attributes:
  
  - `homogenized_stiffness`
