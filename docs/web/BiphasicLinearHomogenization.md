@@ -127,13 +127,13 @@ std::array<stress,2> tab_k={k0,ki};
 auto mu0=E0/2/(1+nu0);
 auto mui=Ei/2/(1+nui);
 std::array<stress,2> tab_mu={mu0,mui};
-auto pa2=computeIsotropicHashinShtrikmanBounds<3u,2u,stress>(tab_f,tab_k,tab_mu);
+auto pa2=computeIsotropicHashinShtrikmanBounds<3u,stress>(tab_f,tab_k,tab_mu);
 auto UB=std::get<1>(pa2);
 auto kh=std::get<0>(UB);
-auto muh=std::get<1>(UB)
-kg=KGModuli<stress>(kh,muh);
-auto Enu=kg.ToYoungNu();
+auto muh=std::get<1>(UB);
+kg=tfel::material::KGModuli<stress>(kh,muh);
 };
+auto Enu=kg.ToYoungNu();
 E=Enu.young;
 }
 ~~~~
