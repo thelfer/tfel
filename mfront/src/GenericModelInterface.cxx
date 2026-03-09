@@ -441,14 +441,14 @@ namespace mfront {
     // material properties
     for (const auto& mp : md.constantMaterialProperties) {
       if (!getDebugMode()) {
-        os << "#line " << mp.lineNumber << " \"" << fd.fileName << "\"\n";
+        printLinePragma(os, mp.lineNumber, fd.fileName);
       }
       os << "const " << mp.type << " " << mp.name << ";\n";
     }
     // parameters
     for (const auto& p : md.parameters) {
       if (!getDebugMode()) {
-        os << "#line " << p.lineNumber << " \"" << fd.fileName << "\"\n";
+        printLinePragma(os, p.lineNumber, fd.fileName);
       }
       if ((isRealParameter(p)) &&
           (!areParametersTreatedAsStaticVariables(md))) {
@@ -472,7 +472,7 @@ namespace mfront {
     // static variables
     for (const auto& v : md.staticVars) {
       if (!getDebugMode()) {
-        os << "#line " << v.lineNumber << " \"" << fd.fileName << "\"\n";
+        printLinePragma(os, v.lineNumber, fd.fileName);
       }
       os << "static constexpr " << v.type << " " << v.name << " = "  //
          << v.value << ";\n";

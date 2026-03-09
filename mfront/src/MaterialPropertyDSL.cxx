@@ -677,8 +677,7 @@ namespace mfront {
     currentLine = this->current->line;
     newLine = true;
     if (!getDebugMode()) {
-      this->md.f.body += "#line " + std::to_string(currentLine) + " \"" +
-                         this->fd.fileName + "\"\n";
+      this->md.f.body += printLinePragma(currentLine, this->fd.fileName);
     }
     for (; (this->current != this->tokens.end()) && (openedBrackets != 0);
          ++(this->current)) {
@@ -686,8 +685,7 @@ namespace mfront {
         currentLine = this->current->line;
         this->md.f.body += "\n";
         if (!getDebugMode()) {
-          this->md.f.body += "#line " + std::to_string(currentLine) + " \"" +
-                             this->fd.fileName + "\"\n";
+          this->md.f.body += printLinePragma(currentLine, this->fd.fileName);
         }
         newLine = true;
       }

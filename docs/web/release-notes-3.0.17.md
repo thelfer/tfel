@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 3.0.17 of the
 
 # Issues fixed
 
+## Issue 948: [tfel-system] fix dir separator on `window`
+
+For more details, see <https://github.com/thelfer/tfel/issues/948>.
+
 ## Issue 892: [tfel-check] Specifying distinct columns for reference file and result file is broken
 
 For more details, see <https://github.com/thelfer/tfel/issues/892>.
