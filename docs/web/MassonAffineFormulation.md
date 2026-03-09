@@ -311,6 +311,10 @@ The derivatives of the potential are
   &\tenseur e^r(\tsigma^r)=\sum_k\left(\mathrm{sgn}(\overline{\tau}_k^r)-n\right)\,\dot{\gamma}_0\left(\dfrac{|\overline{\tau}_k^r|}{\tau_0^{k}}\right)^{n}\tenseur\mu_k^r
   \end{aligned}
 \]
+We see here that the modulus $\tenseurq M_r$ is not invertible. Hence, in the following, we add a small tensor to $\tenseurq M_r$ in order to make it invertible (see also appendix B.1 of [@bornert_second-order_2001]):
+\[
+\tenseurq L_r=\left[\tenseurq M_r+\kappa\tenseurq I\right]^{-1}
+\]
 
 ## Details of implementation
 
@@ -448,10 +452,8 @@ for (int r=0;r<Np;r++){
 Here, on line 12, we set $\tau_0^k=\tau_1$ for all gliding systems,
 except for $k=0$ and $k=1$, for which we set $\tau_0^k=\tau_2$.
 
-Note that here, a tensor `kap*I` is added to the compliance `M[r]` line 21. `kap`
-is a parameter that the user can change. It is necessary because
-the tensors $\tenseurq M_r$ are not invertible (see also [@bornert_second-order_2001],
-appendix B.1). In our case, we set it as a `MaterialProperty` that can
+Note that here, a tensor `kap*I` is added to the compliance `M[r]` line 21. 
+In our case, we set `kap` as a `MaterialProperty` that can
 evolve with time (see `mtest` file below).
 We can hence consider $\tenseurq L_r$, the inverse of $\tenseurq M_r+\kappa\tenseurq I$.
 
