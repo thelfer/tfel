@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 3.0.17 of the
 
 # Issues fixed
 
+## Issue 953: Extending the precision of the default parameters value for material properties
+
+For more details, see <https://github.com/thelfer/tfel/issues/953>.
+
 ## Issue 948: [tfel-system] fix dir separator on `window`
 
 For more details, see <https://github.com/thelfer/tfel/issues/948>.
