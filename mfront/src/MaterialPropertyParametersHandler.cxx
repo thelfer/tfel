@@ -57,7 +57,10 @@ namespace mfront {
                            p->name + "'");
         const auto pv =
             p->getAttribute<double>(VariableDescription::defaultValue);
+        const auto prec = os.precision();
+        os.precision(14);
         os << p->name << "(" << pv << ")";
+        os.precision(prec);
         if (++p != mpd.parameters.end()) {
           os << ",\n";
         }
