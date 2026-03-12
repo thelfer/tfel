@@ -56,7 +56,10 @@ namespace mfront {
                                  "no default value for parameter '" +
                                  *p + "'"));
         }
+        const auto prec = os.precision();
+        os.precision(14);
         os << *p << "(" << pv->second << ")";
+        os.precision(prec);
         if (++p != mpd.parameters.end()) {
           os << ",\n";
         }
