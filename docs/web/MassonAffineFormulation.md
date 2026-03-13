@@ -282,9 +282,7 @@ All the files are available in the `MFrontGallery` project, [here](https://githu
   
   ![Geometry of the polycrystal](./img/polycrystal.png){width=50%}
   
-  The morphological tensors can be computed by following the instruction of the `README.md`
-  in this [folder](./downloads/Morphological_tensors.zip).
-  
+  The morphological tensors  were computed using a `python` script with `numpy.fft`.
   The orientations of the slip systems will be given by angles, stored in the file `polycrystal.csv`.
   This file also contains, at the end of each line, the volume fraction associated to a crystal.
   They are in our case the same as the one computed on the generated microstructure.
