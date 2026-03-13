@@ -94,6 +94,8 @@ The jacobian matrix is:
 
 # Implementation in MFront
 
+The files `Plasticity.mfront` and `Sachs.mfront` are available in the `MFrontGallery` project, [here](https://github.com/thelfer/MFrontGallery/tree/master/generic-behaviours/homogenization/).
+
 As for Taylor's scheme, we will use `BehaviourVariable`
 for the integration of local behaviours.
 The integration of global behavior, which requires solving a non-linear equation,

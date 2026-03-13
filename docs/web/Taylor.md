@@ -51,6 +51,8 @@ The macroscopic tangent operator is given by
 
 # Implementation in MFront
 
+The files `Plasticity.mfront` and `Taylor.mfront` are available in the `MFrontGallery` project, [here](https://github.com/thelfer/MFrontGallery/tree/master/generic-behaviours/homogenization/).
+
 It is possible to implement this homogenization scheme through a `Behaviour`.
 This `Behaviour` must call the behaviour laws of each phase.
 So, an interesting solution is to use a `BehaviourVariable`.
