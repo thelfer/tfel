@@ -1,7 +1,7 @@
 ---
 title: Installing TFEL/MFront on [Windows](http://windows.microsoft.com) in the [`MSYS2`](https://www.msys2.org/) environment
-author: Thomas Helfer
-date: 13/01/2022
+author: Thomas Helfer, Antoine Martin and Valentin Gallican
+date: 18/03/2026
 lang: en-EN
 link-citations: true
 colorlinks: true
@@ -12,10 +12,10 @@ eqnPrefixTemplate: "($$i$$)"
 ---
 
 This document describes how to install `TFEL/MFront` on [Windows
-plateform](http://windows.microsoft.com) in the
+plateform](http://windows.microsoft.com) using the
 [`MSYS2`](https://www.msys2.org/) environment.
 
-# Installing [`MSYS2`](https://www.msys2.org/) and the mandatory prerequisites
+# Installing and updating [`MSYS2`](https://www.msys2.org/)
 
 ## Installing [`MSYS2`](https://www.msys2.org/)
 
@@ -24,50 +24,112 @@ utilities, in particular `make` which is used by `MFront`. It also
 provides a convenient shell which is far more easier to use than the
 `DOS` terminal provided by the `cmd` command.
 
-## Installing a minimal build environment
+## Updating [`MSYS2`](https://www.msys2.org/)
 
-To build `TFEL`, one may need to install the following tools:
+Open an [`MSYS2`](https://www.msys2.org/) MSYS terminal and run:
 
 ~~~~{.bash}
-$ pacman -S base-devel gcc cmake
+$ pacman -Syu
 ~~~~
 
-# Installing the official package
+Close the terminal after completion.
+
+# Installing essential setup requirements
+
+Open a [`MSYS2`](https://www.msys2.org/) MINGW64 terminal and run:
+
+~~~~{.bash}
+$ pacman -S mingw-w64-x86_64-toolchain \
+            mingw-w64-x86_64-cmake \
+            mingw-w64-x86_64-eigen3 \
+            mingw-w64-x86_64-pybind11 \
+            mingw-w64-x86_64-python \
+            mingw-w64-x86_64-python-numpy \
+            mingw-w64-x86_64-python-matplotlib \
+            mingw-w64-x86_64-python-setuptools \
+            git
+~~~~
+
+These packages supply the compiler, `cmake`, numerical libraries, and `Python` bindings that `TFEL` depends on.
+
+# Cloning the `TFEL` repository
+
+Go to a directory where you want to download the TFEL sources and run:
+
+~~~~{.bash}
+$ git clone https://github.com/thelfer/tfel.git
+$ cd tfel
+~~~~
+
+Then run:
+
+~~~~{.bash}
+$ cmake -G "MinGW Makefiles" \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/mingw64 \
+        -DLOCAL_CASTEM_HEADER=ON \
+        -DENABLE_PYTHON=ON \
+        -DENABLE_PYTHON_BINDINGS=ON \
+        -DPYTHON_EXECUTABLE=/mingw64/bin/python \
+        ..
+  ~~~~
+
+# Compiling and installing `TFEL`
+
+Compile the project using:
+
+~~~~{#compiling .bash}
+$ mingw32-make -j12
+~~~~
+
+Then install it with:
+
+~~~~{#compiling .bash}
+$ mingw32-make install
+~~~~
+
+# Verifying the installation
+
+To check whether MFront has been successfully installed, run:
+
+~~~~{.bash}
+$ which mfront
+~~~~
+
+If the installation succeeded, this command should return the path to the mfront executable. Alternatively, `TFEL` can also be installed using the official package by running:
 
 ~~~~{.bash}
 $ pacman -S mingw-w64-x86_64-tfel
 ~~~~
 
-# Compiling `TFEL`
+However, this installation method does not provide the `Cast3M` and `Python` interfaces.
 
-`git` may be required if you want to work on the development branch:
+# Setting up the environment
+
+Create a file named `env.sh` and add the following lines:
 
 ~~~~{.bash}
-$ pacman -S git
+$ export TFELHOME=/mingw64
+$ export PATH=/mingw64/bin:$PATH
+$ export LD_LIBRARY_PATH=/mingw64/lib:$LD_LIBRARY_PATH
+$ export PYTHONPATH=/mingw64/bin/python3.XX/site-packages
+$ export MAKE=mingw32-make.exe
 ~~~~
 
-Compiling `TFEL` is merely a simple as opening a new `MSYS2` session
-and following the instructions given on the
-[main installation page](install.html).
+Note that XX corresponds to the `Python` version installed in [`MSYS2`](https://www.msys2.org/).
 
-For example:
+# Loading the environment and running tests
 
-~~~~ {#compiling .bash}
-$ cmake [path to TFEL sources] [options]
-$ make
-~~~~~~~~~~~~~~~~~~~~~~
+Before using TFEL/MFront, load the environment with:
 
-## Running the tests
-
-~~~~ {#testing .bash}
+~~~~{.bash}
 $ source env.sh
 $ make check
-~~~~~~~~~~~~~~~~~~~~~~
-
+~~~~
 
 # Usage
 
-Once done, mfront can be used as "usual" (like in Posix environments) in
+Once done, MFront can be used as "usual" (like in Posix environments) in
 [`MSYS2`](https://www.msys2.org/).
 
 <!-- Local IspellDict: english -->
