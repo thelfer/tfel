@@ -101,12 +101,12 @@ namespace tfel::material::homogenization::elasticity {
               const types::real<StressType>& nu_i) {
     using real = types::real<StressType>;
 
-    if (not(young > StressType{0})) {
-      tfel::reportContractViolation("E<=0");
-    }
-    if ((nu > real(0.5)) || (nu < real(-1))) {
-      tfel::reportContractViolation("nu>0.5 or nu<-1");
-    }
+    //if (not(young > StressType{0})) {
+    //  tfel::reportContractViolation("E<=0");
+    //}
+    //if ((nu > real(0.5)) || (nu < real(-1))) {
+    //  tfel::reportContractViolation("nu>0.5 or nu<-1");
+    //}
     const auto kaS = (1 + nu) / 9 / (1 - nu);
     const auto muS = 2 * (4 - 5 * nu) / 30 / (1 - nu);
     const auto k0 = young / 3 / (1 - 2 * nu);
@@ -144,9 +144,9 @@ namespace tfel::material::homogenization::elasticity {
           const tfel::math::tvector<3u, types::real<StressType>>& n_a,
           const types::real<StressType>& e) {
     using real = types::real<StressType>;
-    if ((nu > real(0.5)) || (nu < real(-1))) {
-      tfel::reportContractViolation("nu>0.5 or nu<-1");
-    }
+    //if ((nu > real(0.5)) || (nu < real(-1))) {
+    //  tfel::reportContractViolation("nu>0.5 or nu<-1");
+    //}
     if (not(e > real(0))) {
       tfel::reportContractViolation("e<=0");
     }
