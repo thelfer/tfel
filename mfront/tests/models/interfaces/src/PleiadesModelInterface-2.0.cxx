@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   10 Nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -23,9 +23,10 @@
 #include <cctype>
 #include <algorithm>
 
-#include "MFront/DSLUtilities.hxx"
+#include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/System/System.hxx"
 
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/VariableDescription.hxx"
 #include "MFront/StaticVariableDescription.hxx"
@@ -353,6 +354,7 @@ namespace mfront {
 
   void PleiadesModelInterface::getTargetsDescription(
       TargetsDescription& td, const ModelDescription& md) {
+    const auto tfel_config = tfel::getTFELConfigExecutableName();
     const auto lib = [&md]() -> std::string {
       if (md.library.empty()) {
         if (!md.material.empty()) {
@@ -365,7 +367,9 @@ namespace mfront {
     }();
     auto& l = td.getLibrary(lib);
     l.sources.push_back(md.className + "-" + getName() + ".cxx");
-    l.cppflags.push_back("`pleiades-config --includes`");
+    insert_if(l.cppflags, "$(shell pleiades-config --includes)");
+    insert_if(l.cppflags,
+              "$(shell " + tfel_config + " --cppflags --compiler-flags)");
     l.ldflags.push_back("`pleiades-config --libs` -lm");
     l.epts.push_back(md.className);
   }  // end of MFrontModelInterface::getTargetsDescription

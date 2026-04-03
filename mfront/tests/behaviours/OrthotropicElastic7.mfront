@@ -1,0 +1,28 @@
+@DSL DefaultDSL;
+@Behaviour OrthotropicElastic7;
+@Author    Helfer Thomas;
+@Date      10/03/11;
+
+@OrthotropicBehaviour<Pipe>;
+@RequireStiffnessTensor;
+@ProvidesSymmetricTangentOperator;
+
+@ComputeThermalExpansion{
+  thermal_expansion1 : "ThermalExpansionCoefficientTest_1.mfront",
+  thermal_expansion2 : "ThermalExpansionCoefficientTest_2.mfront",
+  thermal_expansion3 : "ThermalExpansionCoefficientTest_3.mfront"
+};
+
+@PredictionOperator{
+  if(!((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR))){
+    return FAILURE;
+  }
+  Dt=D;
+}
+
+@Integrator{
+  sig = D*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = D;
+  }
+}

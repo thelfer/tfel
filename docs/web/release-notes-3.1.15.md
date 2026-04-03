@@ -20,7 +20,15 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 3.1.15 of the
 `TFEL` project.
 
+This version was released on May 12, 2025 along with [Version
+3.0.15](release-notes-3.0.15.html) and inherits from all fixes from this
+release.
+
 # Issues fixed
+
+## Issue : Fix segfault in `FCString` when assigning a narrow view
+
+For more details, see <https://github.com/thelfer/tfel/issues/>.
 
 ## Issue 671: [python] python module extension is incorrect
 

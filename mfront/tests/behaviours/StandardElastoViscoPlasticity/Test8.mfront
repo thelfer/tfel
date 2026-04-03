@@ -1,0 +1,23 @@
+@DSL Implicit;
+@Behaviour Test8;
+@Author Thomas Helfer;
+@Date 26 / 03 / 2018;
+@Description {
+  "This behaviour defines an isotropic elastic material behaviour."
+  "\note The elastic material properties will be given by user defined "
+  "material properties."
+}
+
+@Epsilon 1e-14;
+@Theta 1;
+
+@ModellingHypotheses {".+"};
+
+@Brick StandardElastoViscoPlasticity{
+  stress_potential : Hooke{young_modulus : 150e9, poisson_ratio : 0.3},
+  inelastic_flow : "Plastic" {
+    criterion : "Mises",
+    isotropic_hardening : "Linear" {R0 : 33e6, H : 438e6},
+    save_stress_criterion : true
+  }
+};

@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   10 Nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -14,7 +14,6 @@
 #include <string>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/DSLFactory.hxx"
 #include "MFront/IsotropicMisesPlasticFlowCodeGenerator.hxx"
@@ -102,20 +101,24 @@ namespace mfront {
   }
 
   void IsotropicMisesPlasticFlowDSL::endsInputFileProcessing() {
-    constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
-    if (!this->mb.hasCode(uh, BehaviourData::FlowRule)) {
-      if (this->ihrs.empty()) {
-        this->throwRuntimeError(
-            "IsotropicMisesCreepDSL::endsInputFileProcessing",
-            "no flow rule and no hardening rule defined");
+    if (!this->mb.areModellingHypothesesDefined()) {
+      this->mb.setModellingHypotheses(this->getDefaultModellingHypotheses());
+    }
+    for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
+      if (!this->mb.hasCode(h, BehaviourData::FlowRule)) {
+        if (this->ihrs.empty()) {
+          this->throwRuntimeError(
+              "IsotropicMisesCreepDSL::endsInputFileProcessing",
+              "no flow rule and no hardening rule defined");
+        }
+        auto c = CodeBlock{};
+        c.code = "f = seq - R;\n";
+        c.code += "df_dseq = 1;\n";
+        c.code += "df_dp = -dR_dp;\n";
+        this->mb.setCode(h, BehaviourData::FlowRule, c,
+                         BehaviourData::CREATEORAPPEND,
+                         BehaviourData::AT_BEGINNING);
       }
-      auto c = CodeBlock{};
-      c.code = "f = seq - R;\n";
-      c.code += "df_dseq = 1;\n";
-      c.code += "df_dp = -dR_dp;\n";
-      this->mb.setCode(uh, BehaviourData::FlowRule, c,
-                       BehaviourData::CREATEORAPPEND,
-                       BehaviourData::AT_BEGINNING);
     }
     IsotropicBehaviourDSLBase::endsInputFileProcessing();
   }  // end of endsInputFileProcessing

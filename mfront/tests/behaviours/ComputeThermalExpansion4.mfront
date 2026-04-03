@@ -1,0 +1,36 @@
+@Behaviour ComputeThermalExpansion4;
+@Author Helfer Thomas;
+@UseQt true;
+@Date 32/12/17;
+@Description{
+ Test of the `@ComputeThermalExpansion` keyword.
+}
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable stress lambda,mu;
+
+@ComputeThermalExpansion{thermal_expansion : "2.e-5*(1+(T-273.15)/500)"};
+
+@InitLocalVariables{
+  lambda = computeLambda(young,nu);
+  mu = computeMu(young,nu);
+}
+
+@PredictionOperator{
+  if(!((smt==ELASTIC)||(smt==SECANTOPERATOR)||(smt==TANGENTOPERATOR))){
+    return FAILURE;
+  }
+  Dt=lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+}
+
+@ProvidesSymmetricTangentOperator;
+@Integrator{
+  sig = lambda*trace(eto+deto)*StrainStensor::Id()+2*mu*(eto+deto);
+  if(computeTangentOperator_){
+    Dt = lambda*Stensor4::IxI()+2*mu*Stensor4::Id();
+  }
+}

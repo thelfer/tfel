@@ -1,0 +1,198 @@
+@DSL ImplicitGenericBehaviour;
+@Behaviour PoroPlasticity;
+@Algorithm NewtonRaphson;  //_NumericalJacobian;
+@Epsilon 1.e-14;
+@Theta 1.;
+
+// >>>>>>>>>>>>>>>>>>>
+// Material properties
+// <<<<<<<<<<<<<<<<<<<
+
+@MaterialProperty stress k;
+@MaterialProperty stress mu;
+@MaterialProperty real biot;
+@MaterialProperty stress Nbiot;
+@MaterialProperty stress pc0;
+@MaterialProperty stress h;
+
+// >>>>>>>>>>>>>>>>>
+// Gradient and flux
+// <<<<<<<<<<<<<<<<<
+
+@Gradient StrainStensor eto;
+@ThermodynamicForce StressStensor sig;
+eto.setGlossaryName("Strain");
+sig.setGlossaryName("Stress");
+
+@Gradient strain phi;
+@ThermodynamicForce stress pre;
+phi.setEntryName("PorosityVariation");
+pre.setGlossaryName("Pressure");
+
+// >>>>>>>>>>>>>>>
+// State variables
+// <<<<<<<<<<<<<<<
+
+@StateVariable Stensor eel;
+@StateVariable real phiel;
+@StateVariable real lam;
+
+eel.setGlossaryName("ElasticStrain");
+phiel.setEntryName("ElasticPorosity");
+lam.setEntryName("CumPlastStrain");
+
+/// >>>>>>>>>>>>>>>
+/// Local variables
+/// <<<<<<<<<<<<<<<
+
+@LocalVariable bool b;        // If b = True, plastic loading
+@LocalVariable Stensor id2;   // Identity of order 2
+@LocalVariable Stensor4 id4;  // Identity or order 4
+@LocalVariable Stensor4 k4;   // Deviatoric projector of order 4
+@LocalVariable Stensor4 j4;   // Spheric projector of order 4
+@LocalVariable Stensor4 Deu;  // Undrained elastic stiffness
+
+// >>>>>>>>>>>>>>>>>
+// Tangent operators
+// <<<<<<<<<<<<<<<<<
+
+@TangentOperatorBlocks{dsig_ddeto, dsig_ddphi, dpre_ddeto, dpre_ddphi};
+
+/// >>>>>>>>>>>>>>>>>>>>
+/// Init Local Variables
+/// <<<<<<<<<<<<<<<<<<<<
+
+@InitLocalVariables {
+  id2 = Stensor::Id();
+  k4 = Stensor4::K();
+  j4 = Stensor4::J();
+  id4 = Stensor4::Id();
+  Deu = 3. * (k + Nbiot * pow(biot, 2.)) * j4 + 2. * mu * k4;
+}
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>
+// Flux-gradient relationship
+// <<<<<<<<<<<<<<<<<<<<<<<<<<
+
+@ComputeThermodynamicForces {
+  sig = Deu * eel - Nbiot * biot * phiel * id2;
+  pre = Nbiot * (phiel - biot * trace(eel));
+}
+
+/// >>>>>>>>>>>>>>>>>>
+/// Elastic Prediction
+/// <<<<<<<<<<<<<<<<<<
+
+@Predictor {
+  /// Compute the stress sigel
+  const Stensor sigel =
+      Deu * (eel + deto) - Nbiot * biot * (phiel + dphi) * id2;
+  /// Compute the pressure preel
+  const stress preel = Nbiot * (phiel + dphi - biot * trace(eel + deto));
+  /// Test the plasticity criterion
+  b = sigmaeq(sigel) - pc0 * (1 + preel / h) > 0.;
+}
+
+// >>>>>>>>>>>
+// Integration
+// <<<<<<<<<<<
+
+@Integrator {
+  if (b) {  /// Plastic loading
+    /// Compute the plasticity criterion
+    const stress seq = sigmaeq(sig);
+    const stress fP = seq - pc0 * (1 + pre / h);
+    /// Compute the flow directions
+    const Stensor nP_sig = 3. * deviator(sig) / (2. * seq);
+    const real nP_pre = -pc0 / h;
+    /// Equations to be solved
+    feel = deel - deto + dlam * nP_sig;
+    fphiel = dphiel - dphi + dlam * nP_pre;
+    flam = fP / k;
+
+    // Jacobian
+    // Derivatives of the stress sig
+    const Stensor4 dsig_deel = Deu;
+    const Stensor dsig_dphiel = -biot * Nbiot * id2;
+
+    // Derivatives of the pressure p
+    const Stensor dp_deel = -biot * Nbiot * id2;
+    const stress dp_dphiel = Nbiot;
+
+    /// Derivatives of the yield criterion fP
+    const Stensor dfP_deel = (nP_sig | dsig_deel) + (nP_pre * dp_deel);
+    const stress dfP_dphiel = (nP_sig | dsig_dphiel) + (nP_pre * dp_dphiel);
+    const stress dfP_dlam = 0.;
+
+    /// Derivatives of the flow direction nP_sig
+    const Stensor4 dnP_sig_dsig = (3. * k4 / 2. - (nP_sig ^ nP_sig)) / seq;
+    const Stensor4 dnP_sig_deel = dnP_sig_dsig * dsig_deel;
+    const Stensor dnP_sig_dphiel = dnP_sig_dsig * dsig_dphiel;
+
+    /// 1st line of the jacobian
+    dfeel_ddeel = id4 + dlam * dnP_sig_deel;
+    dfeel_ddphiel = dlam * dnP_sig_dphiel;
+    dfeel_ddlam = nP_sig;
+
+    /// 2nd line of the jacobian
+    dfphiel_ddeel = Stensor(0.);
+    dfphiel_ddphiel = 1.;
+    dfphiel_ddlam = nP_pre;
+
+    /// 3rd line of the jacobian
+    dflam_ddeel = dfP_deel / k;
+    dflam_ddphiel = dfP_dphiel / k;
+    dflam_ddlam = dfP_dlam / k;
+  }
+
+  else {  /// Elastic loading
+    feel = deel - deto;
+    fphiel = dphiel - dphi;
+    flam = dlam;
+  }
+}
+
+/// >>>>>>>>>>>>>>>>>>>>>>>>>>
+/// Flux-gradient relationship
+/// <<<<<<<<<<<<<<<<<<<<<<<<<<
+
+@ComputeFinalThermodynamicForces {
+  sig = Deu * eel - Nbiot * biot * phiel * id2;
+  pre = Nbiot * (phiel - biot * trace(eel));
+}
+
+@TangentOperator {
+  static_cast<void>(smt);
+  /// Use getIntegrationVariablesDerivatives_eto
+  dfeel_ddeto = -id4;
+  dfphiel_ddeto = Stensor(0.);
+  dflam_ddeto = Stensor(0.);
+  auto ddeel_ddeto = Stensor4{};
+  auto ddphiel_ddeto = Stensor{};
+  auto ddlam_ddeto = Stensor{};
+  getIntegrationVariablesDerivatives_eto(ddeel_ddeto, ddphiel_ddeto,
+                                         ddlam_ddeto);
+
+  /// Use getIntegrationVariablesDerivatives_phi
+  dfeel_ddphi = Stensor(0.);
+  dfphiel_ddphi = -1.;
+  dflam_ddphi = 0.;
+  auto ddeel_ddphi = Stensor{};
+  auto ddphiel_ddphi = real{};
+  auto ddlam_ddphi = real{};
+  getIntegrationVariablesDerivatives_phi(ddeel_ddphi, ddphiel_ddphi,
+                                         ddlam_ddphi);
+
+  /// Compute the derivative of the stress sig and the pressure w.r.t. eel and
+  /// phiel
+  const Stensor4 dsig_ddeel = Deu;
+  const Stensor dsig_ddphiel = -Nbiot * biot * id2;
+  const Stensor dpre_ddeel = -Nbiot * biot * id2;
+  const real dpre_ddphiel = Nbiot;
+
+  /// Compute the blocks of the tangent tensor
+  dsig_ddeto = (dsig_ddeel * ddeel_ddeto) + (dsig_ddphiel ^ ddphiel_ddeto);
+  dsig_ddphi = (dsig_ddeel * ddeel_ddphi) + (dsig_ddphiel * ddphiel_ddphi);
+  dpre_ddeto = (dpre_ddeel * ddeel_ddeto) + (dpre_ddphiel * ddphiel_ddeto);
+  dpre_ddphi = (dpre_ddeel | ddeel_ddphi) + (dpre_ddphiel * ddphiel_ddphi);
+}

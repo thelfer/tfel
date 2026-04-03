@@ -1,0 +1,24 @@
+@Author  Thomas Helfer;
+@Date    1/01/2018;
+
+@ModellingHypothesis 'AxisymmetricalGeneralisedPlaneStrain';
+@Behaviour<cyrano> @library@ 'cyranoparametertest';
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+
+@Parameter 'YoungModulus' 100e9;
+@Parameter 'PoissonRatio' 0.2;
+
+@Real 'e0' 1.e-3;
+@ImposedStrain<function> 'ERR' 'e0*sin(t/900.)';
+
+@Times {0.,3600 in 20};
+
+@Real 'young' 100e9;
+@Real 'nu' 0.2;
+// stresses
+@Test<function> 'SRR' 'young*ERR'  1.e-3;
+@Test<function> 'STT' '0.'         1.e-3;
+@Test<function> 'SZZ' '0.'         1.e-3;
+// strains
+@Test<function> 'ETT' '-nu*ERR'    1.e-8;
+@Test<function> 'EZZ' '-nu*ERR'    1.e-8;

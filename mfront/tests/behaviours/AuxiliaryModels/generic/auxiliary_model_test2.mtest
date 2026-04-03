@@ -1,0 +1,35 @@
+@ModellingHypothesis 'Tridimensional';
+@Behaviour<generic> @library@ 'AuxiliaryModelTest2';
+
+@Real 'm3' 0.3;
+@Real 'e2' -0.4;
+@Real 'e3_bts' -0.8;
+@Real 'e3_ets' -1.3;
+@MaterialProperty<constant> 'ThirdMaterialPropertyValue' 'm3';
+@MaterialProperty<constant> 'SecondExternalStateVariableValue' 'e2';
+@ExternalStateVariable 'Temperature' 293.15;
+@ExternalStateVariable 'ThirdExternalStateVariableValue' {
+  0 : 'e3_bts',
+  1 : 'e3_ets'
+};
+
+@Gradient{0.13};
+@ImposedGradient 'ChangeOfVolume' {0 : 0.13, 1 : 0.24};
+
+@Times {0, 1};
+
+@Test<function> 'InternalStateVariablesValues[0]' '0.1 * t' 1e-14;
+@Test<function> 'InternalStateVariablesValues[1]' '0.2 * t' 1e-14;
+@Test<function> 'InternalStateVariablesValues[2]' 'm3 * t' 1e-14;
+
+@Test<function> 'InternalStateVariablesValues2[0]' '0.13 * t' 1e-14;
+@Test<function> 'InternalStateVariablesValues2[1]' 'e2 * t' 1e-14;
+@Test<function> 'InternalStateVariablesValues2[2]' 'e3_bts * t' 1e-14;
+@Test<function> 'InternalStateVariablesValues2[3]' '-0.1 * t' 1e-14;
+@Test<function> 'InternalStateVariablesValues2[4]' '-0.2 * t' 1e-14;
+
+@Test<function> 'InternalStateVariablesValues3[0]' '0.24 * t' 1e-14;
+@Test<function> 'InternalStateVariablesValues3[1]' 'e2 * t' 1e-14;
+@Test<function> 'InternalStateVariablesValues3[2]' 'e3_ets * t' 1e-14;
+@Test<function> 'InternalStateVariablesValues3[3]' '-0.1 * t' 1e-14;
+@Test<function> 'InternalStateVariablesValues3[4]' '-0.2 * t' 1e-14;

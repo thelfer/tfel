@@ -4,7 +4,7 @@
  *
  * \author Thomas Helfer
  * \date   03 jui 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -43,6 +43,10 @@ struct StensorComputeEigenValues final : public tfel::tests::TestCase {
     this->test2<double, EigenSolver::GTESYMMETRICQREIGENSOLVER>();
     this->test2<float, EigenSolver::HARARIEIGENSOLVER>();
     this->test2<double, EigenSolver::HARARIEIGENSOLVER>();
+    this->test3<double, EigenSolver::GTESYMMETRICQREIGENSOLVER>();
+    this->test3<float, EigenSolver::HARARIEIGENSOLVER>();
+    this->test3<double, EigenSolver::HARARIEIGENSOLVER>();
+    this->test4();
     return this->result;
   }  // end of execute
 
@@ -91,6 +95,35 @@ struct StensorComputeEigenValues final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT((std::abs(vp3(0) - T(4.16709379934921)) < prec) ||
                       (std::abs(vp3(1) - T(4.16709379934921)) < prec) ||
                       (std::abs(vp3(2) - T(4.16709379934921)) < prec));
+  }
+  template <typename T, tfel::math::stensor_common::EigenSolver es>
+  void test3() {
+    using stensor = tfel::math::stensor<3, T>;
+    constexpr const auto prec = 20 * std::numeric_limits<T>::epsilon();
+    const auto s =
+        stensor{T(1.232), T(2.5198), T(0.234), T(1.5634), T(3.3425), T(0.9765)};
+    const auto vp = s.template computeEigenValues<es>();
+    const auto vp2 = tfel::math::sortEigenValues(vp, stensor::DESCENDING);
+    const auto vp3 = tfel::math::sortEigenValues(vp, stensor::ASCENDING);
+    TFEL_TESTS_ASSERT(std::abs(vp2(0) - T(4.16709379934921)) < prec);
+    TFEL_TESTS_ASSERT(std::abs(vp2(1) - T(1.50793773158270)) < prec);
+    TFEL_TESTS_ASSERT(std::abs(vp2(2) + T(1.68923153093191)) < prec);
+    TFEL_TESTS_ASSERT(std::abs(vp3(0) + T(1.68923153093191)) < prec);
+    TFEL_TESTS_ASSERT(std::abs(vp3(1) - T(1.50793773158270)) < prec);
+    TFEL_TESTS_ASSERT(std::abs(vp3(2) - T(4.16709379934921)) < prec);
+  }
+  void test4() {
+    constexpr auto vp = tfel::math::tvector<3u, int>{1, -1, 0};
+    constexpr auto vp2 =
+        tfel::math::sortEigenValues(vp, tfel::math::stensor_common::ASCENDING);
+    constexpr auto vp3 =
+        tfel::math::sortEigenValues(vp, tfel::math::stensor_common::DESCENDING);
+    TFEL_TESTS_STATIC_ASSERT(vp2[0] == -1);
+    TFEL_TESTS_STATIC_ASSERT(vp2[1] == 0);
+    TFEL_TESTS_STATIC_ASSERT(vp2[2] == 1);
+    TFEL_TESTS_STATIC_ASSERT(vp3[0] == 1);
+    TFEL_TESTS_STATIC_ASSERT(vp3[1] == 0);
+    TFEL_TESTS_STATIC_ASSERT(vp3[2] == -1);
   }
 };
 

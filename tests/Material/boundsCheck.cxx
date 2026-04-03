@@ -4,7 +4,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   08 Mar 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -27,7 +27,7 @@ int main() {
   using namespace std;
   using namespace tfel::math;
   using namespace tfel::material;
-  using mass = qt<Mass>;
+  using mass = qt<unit::Mass>;
   stensor<3, mass> s(mass(12.));
   stensor<3, float> s2(12.f);
   long double d = 12.L;

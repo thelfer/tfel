@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   31 Oct 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -1505,20 +1505,6 @@ namespace tfel::system {
     raise_if(fct == nullptr,
              "ExternalLibraryManager::getAsterFunction: "
              "could not load Aster function '" +
-                 f +
-                 "' "
-                 "(" +
-                 getErrorMessage() + ")");
-    return fct;
-  }
-
-  EuroplexusFctPtr ExternalLibraryManager::getEuroplexusFunction(
-      const std::string& l, const std::string& f) {
-    const auto lib = this->loadLibrary(l);
-    const auto fct = ::tfel_getEuroplexusFunction(lib, f.c_str());
-    raise_if(fct == nullptr,
-             "ExternalLibraryManager::getEuroplexusFunction: "
-             " could not load Europlexus function '" +
                  f +
                  "' "
                  "(" +

@@ -644,7 +644,7 @@ The implicit system is then readily implemented:
 >
 > ~~~~{.cxx}
 >   feel = deel - deto + de/3 * id + A * s;
->   fe   = de + 3 * dt * (B * trace(sig) - C);
+>   fe   = de - 3 * dt * (B * trace(sig) - C);
 > ~~~~
 
 We now computes the derivatives of \(A\), \(B\) and \(C\) with respect

@@ -3,11 +3,11 @@
  * \brief
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -125,25 +125,25 @@ namespace numodis {
       return true;
     }
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
-        std::ostream& os, const IPlane& iplane);
-
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator==(const IPlane& lhs,
-                                                         const IPlane& rhs);
-
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator!=(const IPlane& lhs,
-                                                         const IPlane& rhs);
-
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator<(const IPlane& lhs,
-                                                        const IPlane& rhs);
-
-    TFELNUMODIS_VISIBILITY_EXPORT friend int PlaneCoincide(const IPlane& lhs,
-                                                           const IPlane& rhs);
-
    protected:
     //! index of the glide plane
     std::vector<int> _index;
+
+   private:
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend std::ostream& operator<<(
+        std::ostream&, const IPlane&);
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend bool operator==(const IPlane&,
+                                                                const IPlane&);
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend bool operator!=(const IPlane&,
+                                                                const IPlane&);
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend bool operator<(const IPlane&,
+                                                               const IPlane&);
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend int PlaneCoincide(
+        const IPlane&, const IPlane&);
   };
+
+  TFELNUMODIS_VISIBILITY_EXPORT std::ostream& operator<<(std::ostream& os,
+                                                         const IPlane& iplane);
 
   TFELNUMODIS_VISIBILITY_EXPORT
   bool operator==(const IPlane& lhs, const IPlane& rhs);

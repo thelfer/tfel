@@ -1,0 +1,16 @@
+@DSL DefaultModelDSL{
+  automatic_declaration_of_the_temperature_as_first_external_state_variable :
+      false,
+  parameters_as_static_variables: true
+};
+@Model VonMisesStress;
+
+@AuxiliaryStateVariable real seq;
+seq.setEntryName("EquivalentStress");
+@ExternalStateVariable StressStensor sig;
+sig.setGlossaryName("Stress");
+
+@Integrator {
+  const auto sig_ets = sig + dsig;
+  seq = sigmaeq(sig_ets);
+}

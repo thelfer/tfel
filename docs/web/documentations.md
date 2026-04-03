@@ -90,9 +90,6 @@ MFront Users are available there:
 - The description of the interface to the
   [ZeBuLoN](http://www.zset-software.com/products/zebulon) finite
   element solver is available [here](zmat.html).
-- The description of the interface to the
-  [Europlexus](http://www-epx.cea.fr) finite
-  element solver is available [here](epx.html).
 - The description of the interface to the [CalculiX](calculix.de)
   finite element solver is available [here](calculix.html).
 

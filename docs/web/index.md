@@ -67,8 +67,6 @@ A set of interfaces are provided for various solvers:
   interface is described [here](castem.html).
 - the [`Code_Aster`](http://www.code-aster.org) finite element
   solver. This interface is described [here](aster.html)
-- the [`Europlexus`](http://europlexus.jrc.ec.europa.eu/) finite
-  element solver. This interface is described [here](epx.html)
 - the
   [`Abaqus Standard`](http://www.3ds.com/products-services/simulia/products/abaqus/abaqusstandard/)
   finite element solver. This interface is described
@@ -105,6 +103,25 @@ cover the following languages: `C`, `C++`, `python`, `fortran`, etc.
   the PLEIADES platform.
 - Versions higher than 2.0 are open-source and distributed under the
   [GPL](https://gnu.org/licenses/gpl.html "GNU General Public
-  License") license.
+  License") license with linking exception.
+
+# Licences
+
+`TFEL` version prior to 0.1 were released under both the LGPL and the
+CECILL-B licences. A copy of those licences are included in the
+distributions of TFEL.
+
+`TFEL` versions 1.x were developed by CEA within the PLEIADES
+project. Since svn revision 584, TFEL was part of the `PLEIADES`
+project.
+
+Starting from versions 2.x, TFEL has been publicly released under either
+the GPL or the CECILL-A licence. A copy of those licences are delivered
+with the sources of TFEL. CEA or EDF may also distribute this project
+under specific licensing conditions. Since 2023, the linking exception
+clause was added to the GPL licence.
+
+Copyright (C) 2006-2013 CEA/DEN. All rights reserved. 
+Copyright (C) 2014-2025 CEA/DEN, EDF R&D. All rights reserved. 
 
 <!-- Local IspellDict: english -->

@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date 20/09/2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -841,9 +841,9 @@ void declareMTest(pybind11::module_& m) {
       .def(pybind11::init<>())
       .def("copy", &MTestCurrentState_copy)
       .def("makeDeepCopy", &MTestCurrentState_makeDeepCopy)
-      .def_property_readonly("u_1", MTestCurrentState_getu_1)
-      .def_property_readonly("u0", MTestCurrentState_getu0)
-      .def_property_readonly("u1", MTestCurrentState_getu1)
+      .def_readwrite("u_1", &MTestCurrentState::u_1)
+      .def_readwrite("u0", &MTestCurrentState::u0)
+      .def_readwrite("u1", &MTestCurrentState::u1)
       .def_property_readonly("s_1", MTestCurrentState_gets_1)
       .def_property_readonly("s0", MTestCurrentState_gets0)
       .def_property_readonly("s1", MTestCurrentState_gets1)
@@ -1288,6 +1288,8 @@ void declareMTest(pybind11::module_& m) {
            "    - the behaviour' internal state variables\n"
            "    - the behaviour' external state variables\n"
            "    - any evolution defined in the input file\n")
+      .def("printLagrangeMultipliers", &MTest::printLagrangeMultipliers,
+           "set if Lagrange multipliers shall be print in the output file")
       .def("setCompareToNumericalTangentOperator",
            &MTest::setCompareToNumericalTangentOperator,
            "set if a comparison of the tangent operator returned by the "
@@ -1300,6 +1302,8 @@ void declareMTest(pybind11::module_& m) {
       .def("setNumericalTangentOperatorPerturbationValue",
            &MTest::setNumericalTangentOperatorPerturbationValue,
            "set the perburtation of the gradient used to compute a numerical "
-           "approximation of the tangent operator");
+           "approximation of the tangent operator")
+      .def("printLagrangeMultipliers", &MTest::printLagrangeMultipliers,
+           "if True, prints the Lagrange mulpliers in the output file");
 
 }  // end of declareExternalLibraryManager

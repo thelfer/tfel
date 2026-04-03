@@ -4,7 +4,7 @@
  *
  * \author Thomas Helfer
  * \date   21 sep 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -25,7 +25,6 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/NonLinearSystemSolver.hxx"
@@ -1193,7 +1192,7 @@ namespace mfront {
       std::string_view n) const {
     auto warnings = std::vector<std::string>{};
     for (const auto h : this->mb.getDistinctModellingHypotheses()) {
-      auto report = [&warnings, h](const std::string& msg) {
+      auto report = [&warnings](const std::string& msg) {
         warnings.push_back(
             msg + ". This warning can be disabled by using the <safe> option.");
       };
@@ -1468,7 +1467,7 @@ namespace mfront {
     for (const auto& iJb : jacobian_invert_blocks) {
       this->mb.reserveName(uh, iJb);
     }
-  }  // end of completeVariableDeclaration()
+  }  // end of completeVariableDeclaration
 
   void ImplicitDSLBase::endsInputFileProcessing() {
     using namespace tfel::glossary;
@@ -1590,6 +1589,23 @@ namespace mfront {
   void ImplicitDSLBase::makeConsistencyChecks() const {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     BehaviourDSLCommon::makeConsistencyChecks();
+    // check that no the increment of integration variables is not used in
+    // @InitLocalVariables
+    for (const auto& h : this->mb.getDistinctModellingHypotheses()) {
+      const auto& d = this->mb.getBehaviourData(h);
+      if (d.hasCode(BehaviourData::InitializeLocalVariables)) {
+        const auto& cb =
+            d.getCodeBlock(BehaviourData::InitializeLocalVariables);
+        for (const auto& v : d.getIntegrationVariables()) {
+          if (cb.members.contains("d" + v.name)) {
+            reportWarning("increment of integration variable '" + v.name +
+                          "' is used in the '" +
+                          std::string{BehaviourData::InitializeLocalVariables} +
+                          "' code block. This is unexpected.");
+          }
+        }
+      }
+    }
     //
     if (this->mb.getAttribute(
             uh, "usesDefaultPerturbationValueForNumericalJacobianComputation",
@@ -1621,13 +1637,10 @@ namespace mfront {
               "threshold) as the default value of the perturbuation used "
               "to compute a numerical approximation of the jacobian by a "
               "centered finite difference scheme. This value is generally "
-              "too "
-              "low. You may want to consider an higher value (1e-8 is a "
-              "good "
-              "choice). See the "
+              "too low. You may want to consider an higher value (1e-8 is a "
+              "good choice). See the "
               "`@PerturbationValueForNumericalJacobianComputation` keyword "
-              "for "
-              "details");
+              "for details.");
         }
       }
     }

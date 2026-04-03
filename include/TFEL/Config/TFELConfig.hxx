@@ -4,11 +4,11 @@
  * of inlining used by the different parts of TFEL.
  * \author Thomas Helfer
  * \date   31 mai 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -45,32 +45,6 @@
 //  mainly used in the materiallaw namespace.
 #ifndef TFEL_MATERIAL_LAW_INLINE2
 #define TFEL_MATERIAL_LAW_INLINE2 inline
-#endif /* LIB_TFEL_CONFIG_HXX */
-
-//! a usefull macro for defining levels of inlining. This is
-//  mainly used in the fe namespace.
-#ifndef TFEL_FE_INLINE
-#define TFEL_FE_INLINE inline
-#endif /* LIB_TFEL_CONFIG_HXX */
-
-#if (defined __GNUC__) && (!defined __INTEL_COMPILER)
-#if __GNUC__ >= 4
-#define TFEL_MAY_ALIAS_ATTRIBUTE __attribute__((__may_alias__))
-#else /* __GNUC__ >= 4 */
-#define TFEL_MAY_ALIAS_ATTRIBUTE
-#endif /* LIB_TFEL_CONFIG_HXX */
-#else  /* (defined __GNUC__) && (! defined __INTEL_COMPILER) */
-#define TFEL_MAY_ALIAS_ATTRIBUTE
-#endif /* LIB_TFEL_CONFIG_HXX */
-
-#if (defined __GNUC__) && (!defined __INTEL_COMPILER)
-#if __GNUC__ >= 4
-#define TFEL_UNUSED_ATTRIBUTE __attribute__((__unused__))
-#else /* __GNUC__ >= 4 */
-#define TFEL_UNUSED_ATTRIBUTE
-#endif /* LIB_TFEL_CONFIG_HXX */
-#else  /* (defined __GNUC__) && (! defined __INTEL_COMPILER) */
-#define TFEL_UNUSED_ATTRIBUTE
 #endif /* LIB_TFEL_CONFIG_HXX */
 
 /*!
@@ -122,20 +96,35 @@
 #define TFEL_VISIBILITY_EXPORT __declspec(dllexport)
 #define TFEL_VISIBILITY_LOCAL
 #else /* defined _WIN32 || defined __CYGWIN__ */
-#if (defined __GNUC__) && (!defined __INTEL_COMPILER)
+#if (defined __GNUC__) && (!defined __INTEL_COMPILER) && \
+    (!defined __NVCOMPILER) && (!defined __clang__)
 #if __GNUC__ >= 4
-#define TFEL_VISIBILITY_IMPORT __attribute__((visibility("default")))
-#define TFEL_VISIBILITY_EXPORT __attribute__((visibility("default")))
-#define TFEL_VISIBILITY_LOCAL __attribute__((visibility("hidden")))
+#define TFEL_VISIBILITY_IMPORT [[gnu::visibility("default")]]
+#define TFEL_VISIBILITY_EXPORT [[gnu::visibility("default")]]
+#define TFEL_VISIBILITY_LOCAL [[gnu::visibility("hidden")]]
 #else /*__GNUC__ >= 4 */
 #define TFEL_VISIBILITY_IMPORT
 #define TFEL_VISIBILITY_EXPORT
 #define TFEL_VISIBILITY_LOCAL
 #endif /* LIB_TFEL_CONFIG_HXX */
 #elif defined __INTEL_COMPILER
+#define TFEL_VISIBILITY_IMPORT [[gnu::visibility("default")]]
+#define TFEL_VISIBILITY_EXPORT [[gnu::visibility("default")]]
+#define TFEL_VISIBILITY_LOCAL [[gnu::visibility("hidden")]]
+#elif (defined __NVCOMPILER)
 #define TFEL_VISIBILITY_IMPORT __attribute__((visibility("default")))
 #define TFEL_VISIBILITY_EXPORT __attribute__((visibility("default")))
 #define TFEL_VISIBILITY_LOCAL __attribute__((visibility("hidden")))
+#elif defined __clang__
+#if __clang_major__ >= 18
+#define TFEL_VISIBILITY_IMPORT [[gnu::visibility("default")]]
+#define TFEL_VISIBILITY_EXPORT [[gnu::visibility("default")]]
+#define TFEL_VISIBILITY_LOCAL [[gnu::visibility("hidden")]]
+#else /* __clang_major__ >= 18 */
+#define TFEL_VISIBILITY_IMPORT __attribute__((visibility("default")))
+#define TFEL_VISIBILITY_EXPORT __attribute__((visibility("default")))
+#define TFEL_VISIBILITY_LOCAL __attribute__((visibility("hidden")))
+#endif /* __clang_major__ >= 18 */
 #else
 #define TFEL_VISIBILITY_IMPORT
 #define TFEL_VISIBILITY_EXPORT
@@ -221,15 +210,19 @@
 
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
 #if defined TFELGlossary_EXPORTS
+#define TFELGLOSSARY_VISIBILITY_FRIEND_EXPORT TFEL_VISIBILITY_EXPORT
 #define TFELGLOSSARY_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
 #else
 #ifndef TFEL_STATIC_BUILD
+#define TFELGLOSSARY_VISIBILITY_FRIEND_EXPORT TFEL_VISIBILITY_IMPORT
 #define TFELGLOSSARY_VISIBILITY_EXPORT TFEL_VISIBILITY_IMPORT
 #else
+#define TFELGLOSSARY_VISIBILITY_FRIEND_EXPORT
 #define TFELGLOSSARY_VISIBILITY_EXPORT
 #endif
 #endif
 #else
+#define TFELGLOSSARY_VISIBILITY_FRIEND_EXPORT
 #define TFELGLOSSARY_VISIBILITY_EXPORT TFEL_VISIBILITY_EXPORT
 #endif /* LIB_TFEL_CONFIG_HXX */
 

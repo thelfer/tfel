@@ -3,11 +3,11 @@
  * \brief  This file implements the methods of the class t2tot2.
  * \author Thomas Helfer
  * \date   19 November 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -482,7 +482,11 @@ namespace tfel::math {
     constexpr auto N = getSpaceDimension<T2toST2Type>();
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {
-      tfel::fsalgo::copy<9u>::exe(s.begin(), d.begin());
+      for (unsigned short i = 0; i != 3u; ++i) {
+        for (unsigned short j = 0; j != 3u; ++j) {
+          d(i, j) = s(i, j);
+        }
+      }
     } else if constexpr (N == 2) {
       constexpr auto icste = Cste<T>::isqrt2;
       d(0, 0) = s(0, 0);

@@ -2,8 +2,8 @@
  * \file  mfront/src/MaterialPropertyDescription.cxx
  * \brief
  * \author Thomas Helfer
- * \brief 03 mars 2014
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \brief 03/03/2014
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -16,7 +16,7 @@
 #include "TFEL/Raise.hxx"
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
 
@@ -35,17 +35,14 @@ namespace mfront {
       const FileDescription& fd,
       const std::string_view numeric_type,
       const bool areQuantitiesSupported) {
+    const auto use_qt = (areQuantitiesSupported && useQuantities(mpd));
     os << "using namespace std;\n"
        << "using tfel::math::invert_type;\n"
        << "using tfel::math::result_type;\n"
        << "using tfel::math::derivative_type;\n";
-    if (areQuantitiesSupported) {
-      os << "using PhysicalConstants [[maybe_unused]] = "
-         << "tfel::PhysicalConstants<" << numeric_type << ", true>;\n";
-    } else {
-      os << "using PhysicalConstants [[maybe_unused]] = "
-         << "tfel::PhysicalConstants<" << numeric_type << ", false>;\n";
-    }
+    os << "constexpr auto use_qt = " << (use_qt ? "true" : "false") << ";\n";
+    os << "using PhysicalConstants [[maybe_unused]] = "
+       << "tfel::PhysicalConstants<" << numeric_type << ", use_qt>;\n";
     os << "[[maybe_unused]] auto min = [](const auto a, const auto b) "
        << "{ return a < b ? a : b; };\n"
        << "[[maybe_unused]] auto max = [](const auto a, const auto b) "
@@ -61,6 +58,7 @@ namespace mfront {
                                    const bool areQuantitiesSupported) {
     const auto use_qt =
         (areQuantitiesSupported && useQuantities(mpd)) ? "true" : "false";
+    os << "using NumericType [[maybe_unused]] = " << numeric_type << ";\n";
     for (const auto& a : getScalarTypeAliases()) {
       os << "using " << a << " [[maybe_unused]] = "
          << "typename tfel::config::ScalarTypes<" << numeric_type << ", "
@@ -346,5 +344,18 @@ namespace mfront {
     }
     return mpd.material + "_" + mpd.className + "-parameters.txt";
   }  // end of getParametersFileName
+
+  std::string getMaterialLawLibraryNameBase(
+      const MaterialPropertyDescription& mpd) {
+    const auto material = mpd.material;
+    const auto library = mpd.library;
+    if (library.empty()) {
+      if (material.empty()) {
+        return "MaterialLaw";
+      }
+      return material;
+    }
+    return library;
+  }  // end of getMaterialLawLibraryNameBase
 
 }  // end of namespace mfront

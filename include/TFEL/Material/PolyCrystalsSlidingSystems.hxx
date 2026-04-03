@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \brief  16 mai 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -35,7 +35,7 @@ namespace tfel::material {
     typedef NumType real;
     //! a simple alias
     typedef tfel::math::stensor<3u> StrainStensor;
-    //! return the uniq instance of the class
+    //! return the unique instance of the class
     static const PolyCrystalsSlidingSystems& getPolyCrystalsSlidingSystems(
         const std::string& = "");
     //! tensor of directional senses, sorted by phases
@@ -57,6 +57,34 @@ namespace tfel::material {
      */
     PolyCrystalsSlidingSystems& operator=(const PolyCrystalsSlidingSystems&);
   };
+  
+  /*!
+     * \brief the same class as PolyCrystalsSlidingSystems but with
+     * volume fraction associated to each grain (fourth item of each line of the file
+     * given as an argument to the method getPolyCrystalsSlidingSystems)
+     * \param[in] Np      : number of phases
+     * \param[in] GS      : class describing the sliding system of one phase
+     * \param[in] NumType : numeric type used
+     */
+    template <unsigned short Ng, typename GS, typename NumType>
+    struct ExtendedPolyCrystalsSlidingSystems {
+      static constexpr unsigned short Nss = GS::Nss;
+      typedef NumType real;
+      typedef tfel::math::stensor<3u, real> StrainStensor;
+
+      static const ExtendedPolyCrystalsSlidingSystems &getPolyCrystalsSlidingSystems(
+          const std::string &);
+      tfel::math::vector<tfel::math::vector<StrainStensor>> mus;
+      
+      //! \brief volume fractions per phases
+      tfel::math::vector<real> volume_fractions;
+
+     private:
+      ExtendedPolyCrystalsSlidingSystems(const std::string &);
+      ExtendedPolyCrystalsSlidingSystems(const ExtendedPolyCrystalsSlidingSystems &);
+      ExtendedPolyCrystalsSlidingSystems &operator=(
+          const ExtendedPolyCrystalsSlidingSystems &);
+    };
 
 }  // end of namespace tfel::material
 

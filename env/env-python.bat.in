@@ -1,0 +1,4 @@
+@ECHO OFF
+for %%i in ("%~dp0.\..\..\..") do set "TFELHOME=%%~fi"
+set PATH=%TFELHOME%\bin;%PATH%
+set PYTHONPATH=%TFELHOME%\@NATIVE_TFEL_PYTHON_SITE_PACKAGES_DIR@;%PYTHONPATH%

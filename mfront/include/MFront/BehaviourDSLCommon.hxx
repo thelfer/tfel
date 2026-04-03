@@ -4,11 +4,11 @@
  *
  * \author Thomas Helfer
  * \date   05 mai 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -401,8 +401,24 @@ namespace mfront {
     virtual std::string tangentOperatorVariableModifier(const Hypothesis,
                                                         const std::string&,
                                                         const bool);
-    //! \brief read the description of a behaviour variable
+    /*!
+     * \brief read the description of a behaviour variable
+     */
     virtual BehaviourVariableDescription readBehaviourVariableDescription();
+    /*!
+     * \brief read the description of a behaviour variable
+     * \param[in] bname: name of the behaviour variable
+     * \param[in] lineNumber: line number
+     * \param[in] fileName: file containing the implementation of the behaviour
+     * \param[in]
+     * allow_external_state_variables_evaluation_using_persistent_variables:
+     * boolean stating if using persistent variables to evaluate external state
+     * variables.
+     */
+    virtual BehaviourVariableDescription readBehaviourVariableDescription(
+        const std::string&,
+        const tfel::utilities::Token::size_type,
+        const std::optional<std::string>& = {});
     /*!
      * \brief extract a material property from a token. If the token
      * is a string, it is interpred as a mfront file name. Otherwise,
@@ -589,6 +605,8 @@ namespace mfront {
     virtual void treatLocalVar();
     //! handle the `@ComputeThermalExpansion` keyword
     virtual void treatComputeThermalExpansion();
+    virtual void treatComputeThermalExpansionFirstSyntax();
+    virtual void treatComputeThermalExpansionSecondSyntax();
     //! handle the `@ComputeStiffnessTensor` keyword
     virtual void treatComputeStiffnessTensor();
     //! handle the `@ElasticMaterialProperties` keyword
@@ -598,8 +616,20 @@ namespace mfront {
      * the behaviour Description
      */
     virtual void readElasticMaterialProperties();
+    //! \brief helper function to read the elastic material properties
+    virtual std::vector<BehaviourDescription::MaterialProperty>
+    readElasticMaterialPropertiesI();
+    //! \brief helper function to read the elastic material properties
+    virtual std::vector<BehaviourDescription::MaterialProperty>
+    readElasticMaterialPropertiesII();
     //! \brief handle the `@HillTensor` keyword
     virtual void treatHillTensor();
+    //! \brief helper function to read the elastic material properties
+    virtual std::vector<BehaviourDescription::MaterialProperty>
+    readHillTensorDefinitionI();
+    //! \brief helper function to read the elastic material properties
+    virtual std::vector<BehaviourDescription::MaterialProperty>
+    readHillTensorDefinitionII();
     //! \brief handle the `@InitLocalVariables` keyword
     virtual void treatInitLocalVariables();
     //! \brief handle the `@OrthotropicBehaviour` keyword
@@ -628,6 +658,8 @@ namespace mfront {
     virtual void treatStateVariable();
     //! \brief handle the `@AuxiliaryStateVariable` keyword
     virtual void treatAuxiliaryStateVariable();
+    //! \brief handle the `@AuxiliaryModel` keyword
+    virtual void treatAuxiliaryModel();
     //! \brief handle the `@ExternalStateVariable` keyword
     virtual void treatExternalStateVariable();
     //! \brief handle the `@InitializeFunctionVariable` keyword
@@ -761,6 +793,17 @@ namespace mfront {
      * \param[in] c: code block
      */
     void checkTangentOperatorBlock(const std::string&, const CodeBlock&) const;
+    /*!
+     * \brief common implementation used by the treatModel and
+     * treatAuxiliaryModel methods
+     * \param[in] method: calling method name
+     * \param[in] m1: method called if a model is read
+     * \param[in] m2: method called if a behaviour is read
+     */
+    void treatModel(
+        const std::string&,
+        void (BehaviourDescription::*)(const ModelDescription&),
+        void (BehaviourDescription::*)(const BehaviourVariableDescription&));
     //! \brief behaviour description
     BehaviourDescription mb;
     //! \brief registred bricks

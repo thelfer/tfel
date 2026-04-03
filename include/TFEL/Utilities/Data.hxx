@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   12 sept. 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -205,6 +205,14 @@ namespace tfel::utilities {
   bool is_convertible(const Data&);
 
   /*!
+   * \brief check that all the keys of the data map are in the given list.
+   * \param[in] d: data map
+   * \param[in] keys: allowed keys
+   */
+  TFELUTILITIES_VISIBILITY_EXPORT void check_keys(
+      const DataMap&, const std::vector<std::string>&);
+
+  /*!
    * \brief an helper structure used to validate a data map.
    */
   struct TFELUTILITIES_VISIBILITY_EXPORT DataMapValidator {
@@ -240,6 +248,7 @@ namespace tfel::utilities {
   /*!
    * \brief throw an exception stating that the parameter type is not the
    * expected one.
+   * \param[in] n name of the variable
    */
   [[noreturn]] TFELUTILITIES_VISIBILITY_EXPORT void raiseUnmatchedDataType(
       const std::string_view);

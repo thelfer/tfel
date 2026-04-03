@@ -14,6 +14,22 @@ install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
   Test6.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+  Test7.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+  Test8.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+  Test9.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+  Test10.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+  Test11.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+  Test12.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+  Test13.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
+  Test14.mfront)
+install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 	NortonTest.mfront)
 install_mfront_data(tests/behaviours/StandardElastoViscoPlasticity
 	NortonTest_nj.mfront)

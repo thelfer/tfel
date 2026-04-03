@@ -89,7 +89,6 @@ mark_as_advanced(TFEL_CMAKE_CXX_FLAGS_PROFILING
 # tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fanalyzer")
 
 if(enable-sanitize-options)
-  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fcheck-pointer-bounds")
   tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=bounds-strict")
   tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=undefined")
   tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fsanitize=float-divide-by-zero")

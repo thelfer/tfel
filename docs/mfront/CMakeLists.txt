@@ -1,4 +1,3 @@
-
 macro(install_mfront_desc file)
   if(TFEL_APPEND_SUFFIX)
     install(FILES ${file}.md
@@ -45,6 +44,7 @@ install_mfront_desc(AdditionalTangentOperatorBlock)
 install_mfront_desc(AdditionalTangentOperatorBlocks)
 install_mfront_desc(Algorithm)
 install_mfront_desc(Author)
+install_mfront_desc(AuxiliaryModel)
 install_mfront_desc(AuxiliaryStateVar)
 install_mfront_desc(AuxiliaryStateVariable)
 install_mfront_desc(AxialGrowth)
@@ -195,5 +195,6 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
 endif(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
 
 add_subdirectory(abaqus)
+add_subdirectory(dianafea)
 add_subdirectory(ansys)
 add_subdirectory(lsdyna)

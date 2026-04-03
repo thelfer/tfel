@@ -4,19 +4,13 @@ configure_file(castem.tex.in
 ADD_CUSTOM_COMMAND(
   OUTPUT    castem.pdf
   DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/castem.tex.in
-  COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+  COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
   ARGS      -interaction=batchmode
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
   ARGS      castem.tex
-  COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+  COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
   ARGS      -interaction=batchmode
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
   ARGS      castem.tex
-  COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
+  COMMAND   BSTINPUTS=${abs_top_srcdir}/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
   ARGS      -terse castem
   COMMAND   ${MAKEINDEX_COMPILER}
   ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist uenv.idx
@@ -26,19 +20,13 @@ ADD_CUSTOM_COMMAND(
   ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist umkeys.idx
   COMMAND   ${MAKEINDEX_COMPILER}
   ARGS      -s ${PROJECT_SOURCE_DIR}/docs/mfront/style.ist utfel.idx
-  COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+  COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
   ARGS      -interaction=batchmode
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
   ARGS      castem.tex
-  COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+  COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
   ARGS      -interaction=batchmode
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-  ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
   ARGS      castem.tex
-  COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
+  COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${DVIPS_CONVERTER}
   ARGS      -R0 castem.dvi
   COMMAND   ${PS2PDF_CONVERTER}
   ARGS      castem.ps

@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   03 mai 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -17,6 +17,7 @@
 #include "TFEL/Macros.hxx"
 #include "MFront/InitDSLs.hxx"
 #include "MFront/MFrontBase.hxx"
+#include "MFront/MFrontDebugMode.hxx"
 #include "MFront/InitInterfaces.hxx"
 #include "MFront/AbstractDSL.hxx"
 #include "MFront/MaterialPropertyDSL.hxx"
@@ -75,6 +76,7 @@ PYBIND11_MODULE(_mfront, m) {
   GetImplementationsPathsPtr ptr = mfront::getImplementationsPaths;
   m.def("initDSLs", mfront::initDSLs);
   m.def("initInterfaces", mfront::initInterfaces);
+  m.def("setDebugMode", mfront::setDebugMode);
   m.def("getDSL", getDSL);
   m.def("getImplementationsPaths", ptr, "file"_a, "material"_a = "",
         "material_property"_a = "", "behaviour"_a = "", "model"_a = "");

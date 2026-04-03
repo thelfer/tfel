@@ -4,7 +4,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   12/01/2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * re served.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -23,7 +23,6 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/VariableDescription.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/SupportedTypes.hxx"
 
 namespace mfront {
@@ -510,7 +509,8 @@ namespace mfront {
       const auto types = mfront::getST2toST2TypeAliases();
       return std::find(types.begin(), types.end(), type) != types.end();
     };
-    if (t.type == "tfel::math::quantity") {
+    if ((t.type == "tfel::math::quantity") ||
+        (t.type == "tfel::math::quantity_or_base_type")) {
       return {0, 3};
     } else if (t.type == "tfel::math::fsarray") {
       return treatArray1D();
@@ -600,7 +600,8 @@ namespace mfront {
       SupportedTypes::checkNumberOfTemplateArguments(t, 0u);
       return p->second;
     }
-    if (t.type == "tfel::math::quantity") {
+    if ((t.type == "tfel::math::quantity") ||
+        (t.type == "tfel::math::quantity_or_base_type")) {
       return SupportedTypes::SCALAR;
     } else if (t.type == "tfel::math::tvector") {
       return SupportedTypes::TVECTOR;
@@ -1038,7 +1039,8 @@ namespace mfront {
       for (decltype(args.size()) i = args.size(); i != 8u; ++i) {
         args.push_back(0);
       }
-      t.type = "tfel::math::quantity";
+      args.insert(args.begin(), {"use_qt"});
+      t.type = "tfel::math::quantity_or_base_type";
     } else {
       t.template_arguments.reset();
       t.type = "real";
@@ -1535,5 +1537,54 @@ namespace mfront {
     os << s;
     return os.str();
   }  // end of to_string
+
+  std::vector<std::string> getScalarTypeAliases() {
+    return {"numeric_type",
+            "real",
+            "time",
+            "length",
+            "frequency",
+            "speed",
+            "stress",
+            "strain",
+            "strainrate",
+            "stressrate",
+            "temperature",
+            "thermalexpansion",
+            "thermalconductivity",
+            "massdensity",
+            "energydensity"};
+  }  // end of getScalarTypeAliases
+
+  std::vector<std::string> getTinyVectorTypeAliases() {
+    return {"TVector", "DisplacementTVector", "ForceTVector", "HeatFlux",
+            "TemperatureGradient"};
+  }  // end of getTinyVectorTypeAliases
+
+  std::vector<std::string> getStensorTypeAliases() {
+    return {"Stensor",       "StressStensor",     "StressRateStensor",
+            "StrainStensor", "StrainRateStensor", "FrequencyStensor"};
+  }
+
+  std::vector<std::string> getTensorTypeAliases() {
+    return {"Tensor", "DeformationGradientTensor",
+            "DeformationGradientRateTensor", "StressTensor"};
+  }
+
+  std::vector<std::string> getST2toST2TypeAliases() {
+    return {"StiffnessTensor", "Stensor4"};
+  }
+
+  std::vector<std::string> getTypeAliases() {
+    auto aliases = getScalarTypeAliases();
+    auto append = [&aliases](const std::vector<std::string>& others) {
+      aliases.insert(aliases.end(), others.begin(), others.end());
+    };
+    append(getTinyVectorTypeAliases());
+    append(getStensorTypeAliases());
+    append(getTensorTypeAliases());
+    append(getST2toST2TypeAliases());
+    return aliases;
+  }  // end of getTypeAliases
 
 }  // end of namespace mfront

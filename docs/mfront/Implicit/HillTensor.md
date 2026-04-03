@@ -1,13 +1,8 @@
 The `@HillTensor` keyword lets the user define a new second order tensor
 (`st2tost2`) suitable for computing the Hill stress.
 
-This keywords is followed by the name of the second order tensor and an
-array of 6 coefficients \(F\), \(G\), \(H\), \(L\), \(M\), \(N\). Those
-coefficients can be defined by:
-
-- a constant value.
-- an external `MFront` file.
-- an analytic value.
+The Hill's tensor per se is defined by 6 material properties named
+\(F\), \(G\), \(H\), \(L\), \(M\), \(N\), as follows:
 
 In \(3D\), The Hill tensor is defined by:
 \[
@@ -38,6 +33,17 @@ The Hill stress is defined by:
 > Chaboche and seems to differ from the one described in most other
 > books.
 
+The `HillTensor` keyword is followed by:
+
+- the name of the Hill's tensor,
+- an array of 6 material properties or a dictionary.
+
+Those material properties can be defined by:
+
+- a constant value.
+- an external `MFront` file.
+- an analytic value.
+
 ## Orthotropic axis convention
 
 The computation of the Hill tensor rely on the definition of an
@@ -50,4 +56,8 @@ the `OrthotropicBehaviour` keyword for details.
 
 ~~~~{#HillTensor .cpp}
 @HillTensor H {0.371,0.629,4.052,1.5,1.5,1.5};
+~~~~
+
+~~~~{#HillTensor .cpp}
+@HillTensor H {F: 0.371, G: 0.629, H: 4.052, L: 1.5, M: 1.5, N: 1.5};
 ~~~~

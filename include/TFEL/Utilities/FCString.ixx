@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   23 janv. 2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -94,8 +94,14 @@ namespace tfel::utilities {
   template <std::size_t N2>
   basic_fcstring<N, CharT, Traits>& basic_fcstring<N, CharT, Traits>::operator=(
       const CStringNarrowedView<N2, CharT>& rhs) {
-    const auto s1 = basic_fcstring<N2, CharT, Traits>::strnlen(rhs.value);
-    const auto s = (s1 > N2) ? N2 : s1;
+    const auto s = [&rhs] {
+      for (std::size_t i = 0; i != N2; ++i) {
+        if (rhs.value[i] == '\0') {
+          return i;
+        }
+      }
+      return N2;
+    }();
     tfel::raise_if<std::length_error>(s > N,
                                       "basic_fcstring::operator = "
                                       "rhs too long");

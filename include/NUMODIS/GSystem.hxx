@@ -3,11 +3,11 @@
  * \brief
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -91,21 +91,24 @@ namespace numodis {
     //=============================================================
     IBurgers::size_type getNindices() const { return _iburgers.getNindices(); }
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend bool operator==(const GSystem& lhs,
-                                                         const GSystem& rhs);
-
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
-        std::ostream& os, const GSystem& gsystem);
-
     virtual ~GSystem();
 
    private:
-    //! burgers vector
+    //
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend bool operator==(const GSystem&,
+                                                                const GSystem&);
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend std::ostream& operator<<(
+        std::ostream&, const GSystem&);
+    //! \brief Burgers's vector
     IBurgers _iburgers;
-
-    //! constraining planes
+    //! \brief constraining planes
     IPlane _iplane;
   };
+
+  TFELNUMODIS_VISIBILITY_EXPORT bool operator==(const GSystem&, const GSystem&);
+
+  TFELNUMODIS_VISIBILITY_EXPORT std::ostream& operator<<(std::ostream&,
+                                                         const GSystem&);
 
 }  // end of namespace numodis
 

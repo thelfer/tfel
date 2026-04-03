@@ -640,41 +640,6 @@ const char *(TFEL_ADDCALL_PTR tfel_getAsterIntegrationErrorMessage(
   return (const char *(TFEL_ADDCALL_PTR)())dlsym(lib, name);
 }
 
-void(TFEL_ADDCALL_PTR tfel_getEuroplexusFunction(LibraryHandlerPtr l,
-                                                 const char *const n))(
-    EuroplexusIntegerType *const,
-    EuroplexusRealType *const,
-    EuroplexusRealType *const,
-    EuroplexusRealType *const,
-    EuroplexusRealType *const,
-    EuroplexusIntegerType *const,
-    char *const,
-    const EuroplexusIntegerType *const,
-    const EuroplexusIntegerType *const,
-    const EuroplexusRealType *const,
-    const EuroplexusRealType *const,
-    const EuroplexusRealType *const,
-    const EuroplexusRealType *const,
-    const EuroplexusRealType *const,
-    const EuroplexusIntegerType *const,
-    const EuroplexusRealType *const,
-    const EuroplexusRealType *const,
-    const EuroplexusRealType *const,
-    const EuroplexusRealType *const,
-    const EuroplexusIntegerType *const) {
-  return (void(TFEL_ADDCALL_PTR)(
-      EuroplexusIntegerType *const, EuroplexusRealType *const,
-      EuroplexusRealType *const, EuroplexusRealType *const,
-      EuroplexusRealType *const, EuroplexusIntegerType *const, char *const,
-      const EuroplexusIntegerType *const, const EuroplexusIntegerType *const,
-      const EuroplexusRealType *const, const EuroplexusRealType *const,
-      const EuroplexusRealType *const, const EuroplexusRealType *const,
-      const EuroplexusRealType *const, const EuroplexusIntegerType *const,
-      const EuroplexusRealType *const, const EuroplexusRealType *const,
-      const EuroplexusRealType *const, const EuroplexusRealType *const,
-      const EuroplexusIntegerType *const))dlsym(l, n);
-}
-
 void(TFEL_ADDCALL_PTR tfel_getCalculiXExternalBehaviourFunction(
     LibraryHandlerPtr l, const char *const n))(const char *const,
                                                const CalculiXIntegerType *const,

@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   09 Nov 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -16,7 +16,7 @@
 
 #include <map>
 #include <string>
-#include <signal.h>
+#include <cstddef>
 #include "TFEL/Config/TFELConfig.hxx"
 #include "TFEL/System/SignalHandler.hxx"
 
@@ -25,12 +25,12 @@ namespace tfel::system {
   struct TFELSYSTEM_VISIBILITY_EXPORT SignalManager {
     static void printBackTrace(const int);
     static SignalManager &getSignalManager();
-    unsigned short registerHandler(const int,
-                                   SignalHandler *const,
-                                   struct sigaction &);
-    unsigned short registerHandler(const int, SignalHandler *const);
+    std::size_t registerHandler(const int,
+                                SignalHandler *const,
+                                struct sigaction &);
+    std::size_t registerHandler(const int, SignalHandler *const);
     void setSpecificHandler(const int, SignalHandler *const);
-    void removeHandler(const unsigned short);
+    void removeHandler(const std::size_t);
     ~SignalManager();
 
    private:
@@ -46,9 +46,9 @@ namespace tfel::system {
     void eraseHandlers();
     TFEL_VISIBILITY_LOCAL
     static void treatAction(int);
-    std::map<int, std::map<unsigned short, SignalHandler *>> callBacks;
+    std::map<int, std::map<std::size_t, SignalHandler *>> callBacks;
     std::map<int, SignalHandler *> sHandlers;
-    unsigned short handlerNbr;
+    std::size_t handlerNbr;
   };  // end of struct SignalManager
 
 }  // end of namespace tfel::system

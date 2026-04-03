@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   28/07/2022
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -94,8 +94,8 @@ struct LinearInterpolationTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(my_abs(values2[4] - 4) < 10 * eps);
   }
   void test3() {
-    using time = tfel::math::qt<tfel::math::Time, double>;
-    using stress = tfel::math::qt<tfel::math::Stress, double>;
+    using time = tfel::math::qt<tfel::math::unit::Time, double>;
+    using stress = tfel::math::qt<tfel::math::unit::Stress, double>;
     constexpr auto eps = std::numeric_limits<stress>::epsilon();
     constexpr std::array<time, 3u> abscissae{time{0}, time{1}, time{2}};
     constexpr std::array<stress, 3u> values{stress{1}, stress{2}, stress{4}};
@@ -151,8 +151,8 @@ struct LinearInterpolationTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(my_abs(std::get<1>(v2)) < 10 * eps);
   }
   void test5() {
-    using time = tfel::math::qt<tfel::math::Time, double>;
-    using stress = tfel::math::qt<tfel::math::Stress, double>;
+    using time = tfel::math::qt<tfel::math::unit::Time, double>;
+    using stress = tfel::math::qt<tfel::math::unit::Stress, double>;
     using stressrate = tfel::math::derivative_type<stress, time>;
     constexpr auto eps = std::numeric_limits<stress>::epsilon();
     constexpr auto eps2 = std::numeric_limits<stressrate>::epsilon();

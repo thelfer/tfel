@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   13 janv. 2015
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -34,7 +34,7 @@ namespace tfel::material {
       const std::string_view b) {
     tfel::raise<OutOfBoundsException>(
         "BoundsCheckBase::throwOutOfUpperBoundsException: variable '" +
-        std::string{n} + "' is below its lower bound (" + std::string{v} + ">" +
+        std::string{n} + "' is above its upper bound (" + std::string{v} + ">" +
         std::string{b} + ")");
   }
 
@@ -62,7 +62,7 @@ namespace tfel::material {
       const std::string_view v,
       const std::string_view b) {
     std::cerr << "BoundsCheckBase::displayOutOfUpperBoundsWarning : variable '"
-              << n << "' is below its lower bound (" << v << ">" << b << ")\n";
+              << n << "' is above its upper bound (" << v << ">" << b << ")\n";
   }
 
   void BoundsCheckBase::displayOutOfBoundsWarning(const std::string_view n,

@@ -1,4 +1,3 @@
-
 configure_file(${PROJECT_SOURCE_DIR}/mfront/src/MFrontHeader.cxx.in
                ${PROJECT_BINARY_DIR}/mfront/src/MFrontHeader.cxx)
 
@@ -126,6 +125,8 @@ set(TFELMFront_SOURCES
     DSLBase.cxx
     InterfaceBase.cxx
     DSLUtilities.cxx
+    BehaviourDSLUtilities.cxx
+    CodeGeneratorUtilities.cxx
     FiniteStrainBehaviourTangentOperatorConversion.cxx
     FiniteStrainBehaviourTangentOperatorConversionPath.cxx
     MaterialPropertyInterfaceFactory.cxx
@@ -463,25 +464,6 @@ if(HAVE_ANSYS)
     TFELException)
 endif(HAVE_ANSYS)
 
-if(HAVE_EUROPLEXUS)
-  set(TFELMFront_SOURCES
-    EuroplexusInterface.cxx
-    EuroplexusSymbolsGenerator.cxx
-    ${TFELMFront_SOURCES})
-  set(EuroplexusInterface_SOURCES
-    EuroplexusInterfaceExceptions.cxx
-    EuroplexusException.cxx
-    EuroplexusComputeStiffnessTensor.cxx
-    EuroplexusStressFreeExpansionHandler.cxx
-    EuroplexusComputeThermalExpansionCoefficientTensor.cxx
-    EuroplexusFiniteStrain.cxx)
-  mfront_library(EuroplexusInterface ${EuroplexusInterface_SOURCES})
-  target_link_libraries(EuroplexusInterface
-    MTestFileGenerator
-    TFELUtilities
-    TFELException)
-endif(HAVE_EUROPLEXUS)
-
 if(HAVE_ZMAT)
   set(TFELMFront_SOURCES
     ZMATInterface.cxx
@@ -607,7 +589,6 @@ if(TFEL_HAVE_MADNEX)
 endif(TFEL_HAVE_MADNEX)
 
 # MFront
-
 add_executable(mfront main.cxx)
 set_property(TARGET mfront PROPERTY POSITION_INDEPENDENT_CODE TRUE)
 target_link_libraries(mfront
@@ -626,3 +607,27 @@ install(TARGETS mfront DESTINATION bin
 if(enable-cppcheck)
   add_cppcheck(mfront)
 endif(enable-cppcheck)
+
+# MFrontDataBase
+
+tfel_library(TFELMFrontDatabase MFrontDatabase.cxx)
+target_include_directories(TFELMFrontDatabase
+   PUBLIC 
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/mfront/include>
+   $<INSTALL_INTERFACE:include>
+   PRIVATE
+   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+target_link_libraries(TFELMFrontDatabase 
+   PRIVATE tfel::TFELSystem tfel::TFELUtilities)
+if(enable-static)
+  target_include_directories(TFELMFrontDatabase-static
+    PUBLIC 
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+  # type of architecture
+  target_link_libraries(TFELMFrontDatabase-static 
+    PRIVATE tfel::TFELSystem-static tfel::TFELUtilities-static)
+endif(enable-static)

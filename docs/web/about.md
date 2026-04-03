@@ -6,9 +6,13 @@
 
 - Thomas Helfer
 - Jean-Michel Proix
-- Bruno Michel
+- Antoine Martin
+- Maxence Wangerez
 - Jérémy Hure
 - Chao Ling
+- Mehran Ghasabeh
+- Thomas Nagel
+- Bruno Michel
 - Nicolas Sellenet
 - Éric Brunon
 - François Hamon
@@ -44,6 +48,8 @@
 - Pedro Giffuni
 - Jamel Tirari
 - Gentien Marois
+
+and many others !
 
 # Tools
 

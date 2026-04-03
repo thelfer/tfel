@@ -1,0 +1,14 @@
+@DSL Implicit;
+@Behaviour WarningTest83;
+@Description {
+  "This file checks that a warning is reported if the increment of an "
+  "integration variable is used in @InitLocalVariables"
+}
+
+@Epsilon 1e-12;
+@IntegrationVariable real x;
+@InitializeLocalVariables {
+  dx;
+}
+@Integrator {
+}

@@ -26,6 +26,7 @@ if(HAVE_CASTEM)
     IsotropicStandardElasticity11
     IsotropicStandardElasticity12
     IsotropicStandardElasticity13
+    IsotropicStandardElasticity14
     OrthotropicStandardElasticity
     OrthotropicStandardElasticity2
     OrthotropicStandardElasticity3

@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \brief 05 avril 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -38,9 +38,6 @@
 #include "MTest/AsterCohesiveZoneModel.hxx"
 #include "MTest/AsterLogarithmicStrainBehaviourWrapper.hxx"
 #endif /* HAVE_ASTER  */
-#ifdef HAVE_EUROPLEXUS
-#include "MTest/EuroplexusFiniteStrainBehaviour.hxx"
-#endif /* HAVE_EUROPLEXUS  */
 #ifdef HAVE_ABAQUS
 #include "MTest/AbaqusStandardBehaviour.hxx"
 #include "MTest/AbaqusSmallStrainBehaviour.hxx"
@@ -306,7 +303,7 @@ namespace mtest {
     auto throw_if = [](const bool c, const std::string& m) {
       tfel::raise_if(c, "Behaviour::getBehaviour: " + m);
     };
-    auto check_no_parameters = [&throw_if, &d] {
+    [[maybe_unused]] auto check_no_parameters = [&throw_if, &d] {
       if (d.empty()) {
         return;
       }
@@ -401,18 +398,6 @@ namespace mtest {
         b = std::make_shared<AsterFiniteStrainBehaviour>(h, l, f);
       } else if (type == 3u) {
         b = std::make_shared<AsterCohesiveZoneModel>(h, l, f);
-      } else {
-        throw_if(true,
-                 "unsupported behaviour type (" + std::to_string(type) + ")");
-      }
-    }
-#endif
-#ifdef HAVE_EUROPLEXUS
-    if ((in == "europlexus") || (in == "epx") || (in == "Europlexus")) {
-      check_no_parameters();
-      const auto type = elm.getUMATBehaviourType(l, f);
-      if (type == 2u) {
-        b = std::make_shared<EuroplexusFiniteStrainBehaviour>(h, l, f);
       } else {
         throw_if(true,
                  "unsupported behaviour type (" + std::to_string(type) + ")");

@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   17 Jan 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -23,13 +23,13 @@
 #include "TFEL/System/System.hxx"
 
 #include "MFront/MFrontWarningMode.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontLock.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/VariableDescription.hxx"
 #include "MFront/Ansys/AnsysOrthotropicBehaviour.hxx"
 #include "MFront/AnsysSymbolsGenerator.hxx"
 #include "MFront/AnsysInterface.hxx"
@@ -1034,15 +1034,47 @@ namespace mfront {
               << "          << \"invalid number of material properties\\n\";\n"
               << "*keycut = 1;\n"
               << "return;\n"
-              << "}\n"
-              << "ansys::AnsysRotation2D<ansys::AnsysReal> R(PROPS+" +
-                     smpoffset + ");\n"
-              << "ansys::AnsysReal e[4u];\n"
-              << "ansys::AnsysReal de[4u];\n"
-              << "ansys::AnsysReal sm[4u];\n"
-              << "R.rotateStrainsForward(STRAN,e);\n"
-              << "R.rotateStrainsForward(DSTRAN,de);\n"
-              << "R.rotateStressesForward(STRESS,sm);\n";
+              << "}\n";
+          if (h == ModellingHypothesis::PLANESTRESS) {
+            out << "ansys::AnsysReal STRAN_tmp[4u];\n"
+                << "ansys::AnsysReal DSTRAN_tmp[4u];\n"
+                << "ansys::AnsysReal STRESS_tmp[4u];\n"
+                << "STRAN_tmp[0] = STRAN[0];\n"
+                << "STRAN_tmp[1] = STRAN[1];\n"
+                << "STRAN_tmp[2] = ansys::AnsysReal{};\n"
+                << "STRAN_tmp[3] = STRAN[2];\n"
+                << "DSTRAN_tmp[0] = DSTRAN[0];\n"
+                << "DSTRAN_tmp[1] = DSTRAN[1];\n"
+                << "DSTRAN_tmp[2] = ansys::AnsysReal{};\n"
+                << "DSTRAN_tmp[3] = DSTRAN[2];\n"
+                << "STRESS_tmp[0] = STRESS[0];\n"
+                << "STRESS_tmp[1] = STRESS[1];\n"
+                << "STRESS_tmp[2] = ansys::AnsysReal{};\n"
+                << "STRESS_tmp[3] = STRESS[2];\n"
+                << "ansys::AnsysRotation2D<ansys::AnsysReal> R(PROPS+" +
+                       smpoffset + ");\n"
+                << "ansys::AnsysReal e[4u];\n"
+                << "ansys::AnsysReal de[4u];\n"
+                << "ansys::AnsysReal sm[4u];\n"
+                << "R.rotateStrainsForward(STRAN_tmp,e);\n"
+                << "R.rotateStrainsForward(DSTRAN_tmp,de);\n"
+                << "R.rotateStressesForward(STRESS_tmp,sm);\n"
+                << "e[2] = e[3];\n"
+                << "e[3] = ansys::AnsysReal{};\n"
+                << "de[2] = de[3];\n"
+                << "de[3] = ansys::AnsysReal{};\n"
+                << "sm[2] = sm[3];\n"
+                << "sm[3] = ansys::AnsysReal{};\n";
+          } else {
+            out << "ansys::AnsysRotation2D<ansys::AnsysReal> R(PROPS+" +
+                       smpoffset + ");\n"
+                << "ansys::AnsysReal e[4u];\n"
+                << "ansys::AnsysReal de[4u];\n"
+                << "ansys::AnsysReal sm[4u];\n"
+                << "R.rotateStrainsForward(STRAN,e);\n"
+                << "R.rotateStrainsForward(DSTRAN,de);\n"
+                << "R.rotateStressesForward(STRESS,sm);\n";
+          }
         } else if (h == ModellingHypothesis::TRIDIMENSIONAL) {
           out << "if(*NPROPS<static_cast<ansys::AnsysInt>(" + smpoffset +
                      "+6u)){\n"
@@ -1057,9 +1089,9 @@ namespace mfront {
               << "ansys::AnsysReal e[6u];\n"
               << "ansys::AnsysReal de[6u];\n"
               << "ansys::AnsysReal sm[6u];\n"
-              << "R.rotateStrainsForward(STRAN,e);\n"
-              << "R.rotateStrainsForward(DSTRAN,de);\n"
-              << "R.rotateStressesForward(STRESS,sm);\n";
+              << "R.rotateStrainsForward(STRAN, e);\n"
+              << "R.rotateStrainsForward(DSTRAN, de);\n"
+              << "R.rotateStressesForward(STRESS, sm);\n";
         } else {
           throw_if(true, "unsupported hypothesis");
         }
@@ -1147,7 +1179,12 @@ namespace mfront {
             << "                           DDSDDE[1],DDSDDE[4],0,DDSDDE[7],\n"
             << "                           0,0,0,0,\n"
             << "                           DDSDDE[2],DDSDDE[5],0,DDSDDE[8]};\n"
-            << "R.rotateStressesBackward(sm,STRESS);\n"
+            << "sm[3] = sm[2];\n"
+            << "sm[2] = ansys::AnsysReal{};\n"
+            << "R.rotateStressesBackward(sm, STRESS_tmp);\n"
+            << "STRESS[0] = STRESS_tmp[0];\n"
+            << "STRESS[1] = STRESS_tmp[1];\n"
+            << "STRESS[2] = STRESS_tmp[3];\n"
             << "R.rotateTangentOperatorBackward(D);\n"
             << "DDSDDE[0]=D[0];\n"
             << "DDSDDE[1]=D[4];\n"

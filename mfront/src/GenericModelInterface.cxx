@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   28/04/2022
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -18,7 +18,7 @@
 #include "TFEL/System/System.hxx"
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontDebugMode.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/SupportedTypes.hxx"
 #include "MFront/VariableDescription.hxx"
@@ -68,7 +68,8 @@ namespace mfront {
   static void writeScalarStandardTypedefs(std::ostream& os,
                                           const ModelDescription& md) {
     const auto use_qt = useQuantities(md) ? "true" : "false";
-    os << "using NumericType [[maybe_unused]] = double;\n";
+    os << "[[maybe_unused]] static constexpr auto use_qt = " << use_qt << ";\n"
+       << "using NumericType [[maybe_unused]] = double;\n";
     for (const auto& a : getScalarTypeAliases()) {
       os << "using " << a << " [[maybe_unused]] = "
          << "typename tfel::config::ScalarTypes<double, " << use_qt
@@ -220,7 +221,8 @@ namespace mfront {
        << "#include <sstream>\n"
        << "#include \"TFEL/PhysicalConstants.hxx\"\n"
        << "#include \"TFEL/Config/TFELTypes.hxx\"\n"
-       << "#include \"TFEL/Math/Array/View.hxx\"\n";
+       << "#include \"TFEL/Math/Array/View.hxx\"\n"
+       << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n";
     if (useQuantities(md)) {
       os << "#include \"TFEL/Math/qt.hxx\"\n";
     }
@@ -439,14 +441,14 @@ namespace mfront {
     // material properties
     for (const auto& mp : md.constantMaterialProperties) {
       if (!getDebugMode()) {
-        os << "#line " << mp.lineNumber << " \"" << fd.fileName << "\"\n";
+        printLinePragma(os, mp.lineNumber, fd.fileName);
       }
       os << "const " << mp.type << " " << mp.name << ";\n";
     }
     // parameters
     for (const auto& p : md.parameters) {
       if (!getDebugMode()) {
-        os << "#line " << p.lineNumber << " \"" << fd.fileName << "\"\n";
+        printLinePragma(os, p.lineNumber, fd.fileName);
       }
       if ((isRealParameter(p)) &&
           (!areParametersTreatedAsStaticVariables(md))) {
@@ -470,7 +472,7 @@ namespace mfront {
     // static variables
     for (const auto& v : md.staticVars) {
       if (!getDebugMode()) {
-        os << "#line " << v.lineNumber << " \"" << fd.fileName << "\"\n";
+        printLinePragma(os, v.lineNumber, fd.fileName);
       }
       os << "static constexpr " << v.type << " " << v.name << " = "  //
          << v.value << ";\n";

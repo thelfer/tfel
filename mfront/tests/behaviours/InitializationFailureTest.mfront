@@ -8,7 +8,6 @@
 }
 
 @AbaqusFiniteStrainStrategy[abaqusexplicit] FiniteRotationSmallStrain;
-@EuroplexusFiniteStrainStrategy[epx] FiniteRotationSmallStrain; 
 
 @Parameter stress young = 150e9;
 young.setGlossaryName("YoungModulus");

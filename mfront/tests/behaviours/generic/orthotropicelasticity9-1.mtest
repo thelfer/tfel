@@ -1,0 +1,52 @@
+@Author Helfer Thomas;
+@Date  29/02/2016;
+@Description{
+  "This test checks that thermal expansions "
+  "are correctly taken into account for an "
+  "orthotropic material."
+};
+
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<generic> @library@ 'OrthotropicElastic9';
+
+@Real 'E1'   '7.8e+10';
+@Real 'E2'   '2.64233e+11';
+@Real 'E3'   '3.32e+11';
+@Real 'nu12' '0.13';
+@Real 'nu13' '0.18';
+@Real 'nu23' '0.24';
+@Real 'G12'  '4.8e+10';
+@Real 'G13'  '7.8e+10';
+@Real 'G23'  '1.16418e+11';
+@Real 'a'    '3.41e-5';
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+@Real 'Tref' 293.15;
+
+@ImposedStrain 'EXX' 0.;
+@ImposedStrain 'EYY' 0.;
+@ImposedStrain 'EZZ' 0.;
+
+@Times {0.,3600 in 20};
+
+@Real 'S11' '1/E1';
+@Real 'S22' '1/E2';
+@Real 'S33' '1/E3';
+@Real 'S12' '-nu12/E1';
+@Real 'S13' '-nu13/E1';
+@Real 'S23' '-nu23/E2';
+@Real 'dS'  'S11*S22*S33+2*S23*S13*S12-S11*S23*S23-S22*S13*S13-S33*S12*S12';
+@Real 'C00' '(S22*S33-S23*S23)/dS';
+@Real 'C01' '(S13*S23-S12*S33)/dS';
+@Real 'C02' '(S12*S23-S13*S22)/dS';
+@Real 'C10' '(S13*S23-S12*S33)/dS';
+@Real 'C11' '(S11*S33-S13*S13)/dS';
+@Real 'C12' '(S12*S13-S11*S23)/dS';
+@Real 'C20' '(S12*S23-S13*S22)/dS';
+@Real 'C21' '(S12*S13-S11*S23)/dS';
+@Real 'C22' '(S11*S22-S12*S12)/dS';
+@Test<function> 'SXX' '-(C00*a+C01*a+C02*a)*(Temperature-Tref)'  1.e-3;
+@Test<function> 'SYY' '-(C10*a+C11*a+C12*a)*(Temperature-Tref)'  1.e-3;
+@Test<function> 'SZZ' '-(C20*a+C21*a+C22*a)*(Temperature-Tref)'  1.e-3;
+@Test<function> {'EXY':'0.','EXZ':'0.','EYZ':'0.'} 1.e-12;

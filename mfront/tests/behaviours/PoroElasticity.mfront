@@ -1,0 +1,47 @@
+@DSL DefaultGenericBehaviour;
+@Behaviour PoroElasticity;
+
+// >>>>>>>>>>>>>>>>>>>
+// Material properties
+// <<<<<<<<<<<<<<<<<<<
+
+@MaterialProperty stress k;
+@MaterialProperty stress mu;
+@MaterialProperty real biot;
+@MaterialProperty real Nbiot;
+
+// >>>>>>>>>>>>>>>>>
+// Gradient and flux
+// <<<<<<<<<<<<<<<<<
+
+@Gradient StrainStensor eto;
+@ThermodynamicForce StressStensor sig;
+eto.setGlossaryName("Strain");
+sig.setGlossaryName("Stress");
+
+@Gradient stress pre;
+@ThermodynamicForce strain phi;
+pre.setEntryName("PressureChange");
+phi.setEntryName("PorosityChange");
+
+// >>>>>>>>>>>>>>>>>
+// Tangent operators
+// <<<<<<<<<<<<<<<<<
+
+@TangentOperatorBlocks{dsig_ddeto, dsig_ddpre, dphi_ddeto, dphi_ddpre};
+
+// >>>>>>>>>>>
+// Integration
+// <<<<<<<<<<<
+
+@Integrator {
+  sig = k*trace(eto+deto)*Stensor::Id()+2.*mu*deviator(eto+deto) - biot*(pre+dpre)*Stensor::Id();
+  phi = (pre+dpre)/Nbiot + biot*trace(eto+deto);
+}
+
+@TangentOperator {
+  dsig_ddeto = 3.*k*Stensor4::J()+2.*mu*Stensor4::K();
+  dsig_ddpre = -biot*Stensor::Id();
+  dphi_ddeto = biot*Stensor::Id();
+  dphi_ddpre = 1./Nbiot;
+}

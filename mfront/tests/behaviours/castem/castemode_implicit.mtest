@@ -1,0 +1,10 @@
+@Author Thomas Helfer;
+@Date   21/09/2021;
+@ModellingHypothesis 'Tridimensional';
+@Model<@interface@> @library@ 'umatode_implicit';
+// internal state variable initialisations
+@InternalStateVariable 'x' 1;
+// external state variable
+@ExternalStateVariable 'Temperature' 293.15;
+@Times {0, 1 in 10};
+@Test<file> @reference_file@ {'x': 2} 1.e-13; 

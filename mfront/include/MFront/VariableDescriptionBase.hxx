@@ -1,14 +1,13 @@
-
 /*!
  * \file   mfront/include/MFront/VariableDescriptionBase.hxx
  * \brief  This file declares the VariableDescriptionBase class
  * \author Thomas Helfer
  * \date   17 Jan 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -72,6 +71,11 @@ namespace mfront {
     SupportedTypes::TypeFlag getTypeFlag() const;
     //! \return the size of the variable
     SupportedTypes::TypeSize getTypeSize() const;
+    /*!
+     * \return an integer describing the type of variable
+     * \see `SupportedTypes::getVariableTypeIdentifier` for details.
+     */
+    int getVariableTypeIdentifier() const;
     //! \brief destructor
     ~VariableDescriptionBase();
     /*!

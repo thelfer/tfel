@@ -9,7 +9,6 @@
 @StrainMeasure GreenLagrange;
 @UMATFiniteStrainStrategy[umat]                    FiniteRotationSmallStrain;
 @AbaqusFiniteStrainStrategy[abaqus,abaqusexplicit] FiniteRotationSmallStrain;
-@EPXFiniteStrainStrategy[epx]                      FiniteRotationSmallStrain;
 
 @MaterialProperty stress young;
 young.setGlossaryName("YoungModulus");

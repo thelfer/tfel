@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   10 Nov 2006
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -30,7 +30,7 @@
 
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontLogStream.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/PedanticMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
@@ -677,8 +677,7 @@ namespace mfront {
     currentLine = this->current->line;
     newLine = true;
     if (!getDebugMode()) {
-      this->md.f.body += "#line " + std::to_string(currentLine) + " \"" +
-                         this->fd.fileName + "\"\n";
+      this->md.f.body += printLinePragma(currentLine, this->fd.fileName);
     }
     for (; (this->current != this->tokens.end()) && (openedBrackets != 0);
          ++(this->current)) {
@@ -686,8 +685,7 @@ namespace mfront {
         currentLine = this->current->line;
         this->md.f.body += "\n";
         if (!getDebugMode()) {
-          this->md.f.body += "#line " + std::to_string(currentLine) + " \"" +
-                             this->fd.fileName + "\"\n";
+          this->md.f.body += printLinePragma(currentLine, this->fd.fileName);
         }
         newLine = true;
       }

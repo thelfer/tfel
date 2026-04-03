@@ -24,6 +24,7 @@ if(HAVE_CYRANO)
     IsotropicStandardElasticity9
     IsotropicStandardElasticity10
     IsotropicStandardElasticity11
+    IsotropicStandardElasticity14
     OrthotropicStandardElasticity
     OrthotropicStandardElasticity2
     OrthotropicStandardElasticity3

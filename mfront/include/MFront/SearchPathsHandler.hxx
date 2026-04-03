@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \brief 21 mai 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -15,9 +15,11 @@
 #define LIB_MFRONT_MFRONTSEARCHPATHSHANDLER_HXX
 
 #include <set>
+#include <tuple>
 #include <string>
 #include <vector>
 #include <variant>
+#include <string_view>
 
 #include "MFront/MFrontConfig.hxx"
 
@@ -107,7 +109,7 @@ namespace mfront {
 
    private:
     //! \return the unique instance of the class
-    static TFEL_VISIBILITY_LOCAL SearchPathsHandler& getSearchPathsHandler();
+    TFEL_VISIBILITY_LOCAL static SearchPathsHandler& getSearchPathsHandler();
     /*!
      * \brief default constructor
      *
@@ -120,10 +122,28 @@ namespace mfront {
     SearchPathsHandler& operator=(const SearchPathsHandler&) = delete;
     SearchPathsHandler& operator=(SearchPathsHandler&&) = delete;
     //! \brief return the path to a madnex file
-    static std::string searchMadnexFile(const std::string&);
+    TFEL_VISIBILITY_LOCAL static std::string searchMadnexFile(
+        const std::string&);
     //! \brief list of search paths
     std::vector<Path> paths;
   };  // end of struct SearchPathsHandler
+
+#ifdef MFRONT_HAVE_MADNEX
+
+  /*!
+   * \brief decompose an implementation location in a madnex file. The path
+   * is assumed to have the following form:
+   * `madnex:<file>:<type>:<material>:<implementation>`
+   * \param[in] path : implementation
+   * \return a tuple of strings containng the file path, the type of the
+   * implementation (material property, behaviour or model), the material
+   * name, the name of the implementation
+   */
+  MFRONT_VISIBILITY_EXPORT
+  std::tuple<std::string, std::string, std::string, std::string>
+  decomposeImplementationPathInMadnexFile(const std::string_view);
+
+#endif /* MFRONT_HAVE_MADNEX */
 
 }  // namespace mfront
 

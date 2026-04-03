@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   20/03/2018
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -63,19 +63,6 @@ namespace mfront::bbrick {
   template <std::size_t N>
   bool areAllConstantMaterialProperties(
       const std::array<BehaviourDescription::MaterialProperty, N> &);
-  /*!
-   * \brief extract a material property usable in a behaviour from a value. If
-   * the material property is handled through an external mfront file, the
-   * generation of the associated sources is added to the compilation process
-   * handled by the DSL.
-   * \param[in,out] dsl: behaviour dsl
-   * \param[in] n: material property name
-   * \param[in] d: data
-   */
-  MFRONT_VISIBILITY_EXPORT BehaviourDescription::MaterialProperty
-  getBehaviourDescriptionMaterialProperty(AbstractBehaviourDSL &,
-                                          const std::string_view,
-                                          const tfel::utilities::Data &);
   /*!
    * \brief declare a parameter or a local variable used to store the
    * evaluation of the material property.

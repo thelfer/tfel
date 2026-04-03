@@ -1,5 +1,6 @@
 add_subdirectory(umatxx)
 add_subdirectory(mtest)
+add_subdirectory(database)
 
 mfront_python_module(_mfront mfront.cxx
   madnex.cxx

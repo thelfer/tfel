@@ -58,6 +58,58 @@ $ tfel-check --@python@=python3.5
 With this option, every occurrence of `@python@` will be replaced by
 `python3.5`.
 
+## Parallelization
+
+The commands described in different `.check` files can now be run in
+distinct processes.
+
+Note that the command described in a `.check` are still run
+sequentially.
+
+By default, as in previous versions, only one process is used.
+
+### Specifying the number of jobs run simultaneously
+
+The command line argument `--jobs` (`-j`) allow specifying the number
+of jobs run simultaneously.
+
+If no option is given to `--jobs`, the number of available cores
+is used, if the system provide this information.
+
+#### Limit on the number of jobs
+
+By default, this number must be lower than the number of cores
+available. This limit can be discarded by
+passing`--discard-jobs-limit=true` to `tfel-check`.
+
+### Caution
+
+The user must take care that the commands described in `.check` files
+can be run in parallel.
+
+- the jobs shall no exhaust memory.
+- the jobs shall not access concurrently to the same resources.
+
+A typical example of conflict would be to have two `.check` files in the
+same directory that call `mfront` to build somes shared libraries: the
+two `MFront`'s processes may write concurrently files in the `src` and
+`include` directories, leading to an undefined behaviour.
+
+Another example would be to use `@CleanDirectories` and `@CleanFiles`
+commands inappropriately and erase data used by commands of other
+`.check` files.
+
+### Synchronizing the output on the terminal
+
+By default, the output on the terminal are **not** synchronized, which
+means that the completion of every individual step (command execution,
+results comparisons, etc.) in a job is displayed immediately.
+
+Using the command line argument `--synchronize-terminal-output` (which
+expects a boolean option), this behaviour can be changed. If
+synchronized, the output of each job is stored in a buffer and then
+displayed at the end of the job completion.
+
 ## A first example
 
 Let us consider this simple test file:
@@ -196,6 +248,35 @@ entering directory '/tmp/tfel-check'
 ** Exec-2 castem2019_PLEIADES ImplicitSimoMieheElastoPlasticityUnia... [SUCCESS]
 ** Compare-1 'ImplicitSimoMieheElastoPlasticityUniaxialTesting-cast... [SUCCESS]
 * end of test './ImplicitSimoMieheElastoPlasticity.check'              [SUCCESS]
+~~~~
+
+## Commands failure
+
+By default, `tfel-check` discards a command failure if at least one test
+is defined. The rationale behind this choice is that some command may
+succeed in producing the expected results but may still fail to exit
+properly.
+
+This behavior can be controlled by the `--discard-commands-failure`
+which takes `true` or `false` as argument.
+
+### Example of usage
+
+~~~~{.bash}
+$ tfel-check --discard-commands-failure=false
+entering directory '/tmp/tests'
+* beginning of test './test.check'
+** Exec-1 ./main                                                       [ FAILED]
+** Compare-1 'results.res' and 'results.res', column '1'               [SUCCESS]
+* end of test './test.check'                                           [ FAILED]
+======
+$ tfel-check --discard-commands-failure=true
+entering directory '/tmp/tests'
+* beginning of test './test.check'
+** Exec-1 ./main                                                       [ FAILED]
+** Compare-1 'results.res' and 'results.res', column '1'               [SUCCESS]
+* end of test './test.check'                                           [SUCCESS]
+====== 
 ~~~~
 
 # Description of the input files{#sec:tfel_check:input_files}
@@ -343,3 +424,23 @@ automatically declared.
 Those substitutions are declared after reading the configuration files
 and after parsing the command line arguments, so those default
 substitutions can be overridden by the user.
+
+# Command line arguments
+
+A description of the available command line arguments is displayed by
+passing `--help` (`-h`) to `tfel-check`.
+
+~~~~
+Usage: tfel-check [options] [files]
+
+Available options are : 
+--config, -c                    : add a configuration file
+--discard-commands-failure      : discard command's failure if comparisons are ok (default behaviour). If no comparisons is declared, command's failure is never ignored.
+--discard-jobs-limit            : disable test on the number of jobs allowed to run simultaneously.
+--help, -h                      : Display this message
+--jobs, -j                      : specifies the number of jobs (commands) to run simultaneously
+--list-default-components       : list all default components
+--synchronize-terminal-output   : synchronize the terminal output in parallel (false by default). If synchronized, the results of each `.check` file is diplayed after its full completion.
+--use-terminal-colors           : use terminal colors for terminal output (std::cout).
+--version, -v                   : Display version information
+~~~~

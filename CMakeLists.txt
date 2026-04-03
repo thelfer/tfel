@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
-cmake_policy(SET CMP0005 OLD)
 cmake_policy(SET CMP0022 NEW)
-cmake_policy(SET CMP0026 OLD)
-cmake_policy(SET CMP0053 OLD)
 cmake_policy(SET CMP0054 NEW)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
+  cmake_policy(SET CMP0167 NEW)  
+endif(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
 if(CMAKE_VERSION VERSION_GREATER 3.14.0)
   cmake_policy(SET CMP0083 NEW)  
   include(CheckPIESupported)
@@ -38,19 +38,22 @@ include(cmake/modules/autotools.cmake)
 
 #major and minor version
 set(TFEL_DEVELOPMENT_VERSION ON)
-tfel_project(5 1 "0")
+tfel_project(5 2 "0")
 set(PACKAGE_BUGREPORT "tfel-contact@cea.fr")
 
 # load the list of rounding modes defined by the IEEE754 standard
 include(cmake/modules/ieee754.cmake)
 
 # check for the fenv package
+option(enable-use-fenv "enable usage of the fenv package" ON)
+if(enable-use-fenv)
 include(CheckIncludeFiles)
 check_include_files(fenv.h HAVE_FENV_H)
 if(HAVE_FENV_H)
   tfel_add_c_cxx_definitions("HAVE_FENV")
 endif(HAVE_FENV_H)
-
+endif(enable-use-fenv)
+  
 option(enable-include-what-you-use
   "enable include-what-you-use diagnostics" OFF)
 if(enable-include-what-you-use)
@@ -97,13 +100,6 @@ if(APPLE)
       set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
    endif()
 endif()
-
-# type of architecture
-if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-  tfel_add_c_cxx_definitions("TFEL_ARCH64")
-else( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-  tfel_add_c_cxx_definitions("TFEL_ARCH32")
-endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
 #extraction git hash
 if(NOT TFEL_GIT_HASH)
@@ -235,14 +231,6 @@ if(enable-ansys)
   set(HAVE_ANSYS ON)
   tfel_add_c_cxx_definitions("HAVE_ANSYS=1")
 endif(enable-ansys)
-
-#europlexus
-option(enable-europlexus "build europlexus interface for mechanical behaviours" OFF)
-if(enable-europlexus)
-  message(STATUS "europlexus support enabled")
-  set(HAVE_EUROPLEXUS ON)
-  tfel_add_c_cxx_definitions("HAVE_EUROPLEXUS=1")
-endif(enable-europlexus)
 
 #zmat
 option(enable-zmat "build zmat interface for mechanical behaviours" OFF)
@@ -411,6 +399,7 @@ if(enable-testing)
   add_subdirectory(tests)
 endif()
 add_subdirectory(mfm-test-generator)
+add_subdirectory(env)
 
 #documentations
 add_custom_target(doc)

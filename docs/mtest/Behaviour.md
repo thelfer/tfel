@@ -24,7 +24,6 @@ generated behaviours:
 - `aster`
 - `generic`
 - `dianafea`
-- `europlexus` (`epx`)
 - `abaqus` (`abaqus_standard` or `abaqus_umat`)
 - `abaqus_explicit` (`abaqus_vumat`)
 

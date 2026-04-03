@@ -3,11 +3,11 @@
  * \brief
  * \author Laurent Dupuy
  * \date   9/06/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -128,19 +128,22 @@ namespace numodis {
 
     int& operator[](const size_type i) { return _index[i]; }
 
-    TFELNUMODIS_VISIBILITY_EXPORT friend int Coincide(const IBurgers& b1,
-                                                      const IBurgers& b2);
-
-    TFELNUMODIS_VISIBILITY_EXPORT friend std::ostream& operator<<(
-        std::ostream&, const IBurgers&);
-
    protected:
     //! index of the burgers vector
     std::vector<int> _index;
+
+   private:
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend int Coincide(const IBurgers&,
+                                                             const IBurgers&);
+    TFELNUMODIS_VISIBILITY_FRIEND_EXPORT
+    friend std::ostream& operator<<(std::ostream&, const IBurgers&);
   };
 
   TFELNUMODIS_VISIBILITY_EXPORT
-  int Coincide(const IBurgers& b1, const IBurgers& b2);
+  int Coincide(const IBurgers&, const IBurgers&);
+
+  TFELNUMODIS_VISIBILITY_EXPORT std::ostream& operator<<(std::ostream&,
+                                                         const IBurgers&);
 
 }  // end of namespace numodis
 

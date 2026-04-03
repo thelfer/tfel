@@ -4,7 +4,7 @@
  *
  * \author Thomas Helfer
  * \date   12 sep 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -71,10 +71,6 @@
 
 #ifdef HAVE_ANSYS
 #include "MFront/AnsysInterface.hxx"
-#endif
-
-#ifdef HAVE_EUROPLEXUS
-#include "MFront/EuroplexusInterface.hxx"
 #endif
 
 #ifdef HAVE_CALCULIX
@@ -191,10 +187,6 @@ namespace mfront {
 #ifdef HAVE_ANSYS
     BehaviourInterfaceProxy<AnsysInterface> ansysProxy;
 #endif /* HAVE_ANSYS */
-
-#ifdef HAVE_EUROPLEXUS
-    BehaviourInterfaceProxy<EuroplexusInterface> europlexusProxy;
-#endif /* HAVE_EUROPLEXUS */
 
 #ifdef HAVE_DIANAFEA
     BehaviourInterfaceProxy<DianaFEAInterface> dianaFEAProxy;

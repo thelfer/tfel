@@ -52,6 +52,12 @@ target_include_directories(TFELSystem
    $<INSTALL_INTERFACE:include>
    PRIVATE
    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+# type of architecture
+if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+  target_compile_definitions(TFELSystem PUBLIC "TFEL_ARCH64")
+else( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+  target_compile_definitions(TFELSystem PUBLIC "TFEL_ARCH32")
+endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 if(TFEL_DL_LIBRARY)
   target_link_libraries(TFELSystem 
 	PUBLIC tfel::TFELException
@@ -80,6 +86,12 @@ if(enable-static)
     $<INSTALL_INTERFACE:include>
     PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+  # type of architecture
+  if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+    target_compile_definitions(TFELSystem-static PUBLIC "TFEL_ARCH64")
+  else( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+    target_compile_definitions(TFELSystem-static PUBLIC "TFEL_ARCH32")
+  endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
   if(TFEL_DL_LIBRARY)
     target_link_libraries(TFELSystem-static 
     PUBLIC tfel::TFELException-static

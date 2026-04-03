@@ -3,16 +3,16 @@
 @XMLOutputFile @xml_output@;
 @MaximumNumberOfSubSteps 1;
 @Behaviour<generic> @library@ @behaviour@;
-@MaterialProperty<constant> 'FirstPhaseYoungModulus'     150.e9;
-@MaterialProperty<constant> 'FirstPhasePoissonRatio'       0.3;
-@MaterialProperty<constant> 'H1'                'Hy';
-@MaterialProperty<constant> 's01'               102.e6;
+@MaterialProperty<constant> 'FirstPhaseYoungModulus'    150.e9;
+@MaterialProperty<constant> 'FirstPhasePoissonRatio'      0.3;
+@MaterialProperty<constant> 'FirstPhaseH'                'Hy';
+@MaterialProperty<constant> 'FirstPhases0'               102.e6;
 
 @ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
 
 @Real 'de'   '1.e-3';
 @Real 't1' '3600.';
-@Real 't0' 's01/(FirstPhaseYoungModulus*de)*t1';
+@Real 't0' 'FirstPhases0/(FirstPhaseYoungModulus*de)*t1';
 @Real 'e0' 'de*t0';
 @Real 'aone' '0.9999999';
 @ImposedStrain<function> 'EXX' '(de*t/t1)*H(aone*t1-t)+de*((1-t/t1)+1)*H(t-t1)';

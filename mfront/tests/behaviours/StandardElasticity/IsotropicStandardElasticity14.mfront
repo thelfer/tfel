@@ -1,0 +1,19 @@
+@DSL Implicit;
+@Behaviour IsotropicStandardElasticity14;
+@Author Thomas Helfer;
+@Date   5/06/2016;
+@Description{
+  "This file is used to test the StandardElasticity brick for "
+  "an isotropic behaviour."
+}
+
+@Epsilon 1e-14;
+@ModellingHypotheses {".+"};
+
+@Brick "StandardElasticity" {
+  young_modulus : 78e9,
+  poisson_ratio : 0.3,
+  thermal_expansion : 1e-5,
+  thermal_expansion_reference_temperature : 293.15,
+  save_thermal_expansion : true
+};

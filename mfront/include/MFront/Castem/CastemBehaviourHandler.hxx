@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \brief 30 janv. 2013
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -917,7 +917,7 @@ namespace castem {
       typedef MechanicalBehaviourTraits<BV> Traits;
       const auto offset = CastemTraits<BV>::propertiesOffset;
       const auto nprops = CastemTraits<BV>::material_properties_nb;
-      const auto NPROPS_ = offset + nprops == 0 ? 1u : offset + nprops;
+      const auto NPROPS_ = offset + nprops;
       const auto is_defined_ = Traits::is_defined;
       // Test if the nb of properties matches Behaviour requirements
       if ((NPROPS != NPROPS_) && is_defined_) {
@@ -938,7 +938,8 @@ namespace castem {
                                              NSTATV);
       }
     }  // end of checkNSTATV
-  };   // end of struct CastemBehaviourHandler
+
+  };  // end of struct CastemBehaviourHandler
 
 }  // end of namespace castem
 

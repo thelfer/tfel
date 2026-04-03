@@ -10,7 +10,7 @@ find_package(TFELMathStatic REQUIRED)
 find_package(TFELMathKrigingStatic REQUIRED)
 find_package(TFELMathParserStatic REQUIRED)
 find_package(TFELMathCubicSplineStatic REQUIRED)
-find_package(TFELNumodisStatic REQUIRED)
+find_package(TFELNUMODISStatic REQUIRED)
 find_package(TFELMaterialStatic REQUIRED)
 find_package(MFrontLogStreamStatic REQUIRED)
 

@@ -6,7 +6,6 @@
 }
 
 @AbaqusFiniteStrainStrategy[abaqusexplicit] MieheApelLambrechtLogarithmicStrain;
-@EPXFiniteStrainStrategy[epx] MieheApelLambrechtLogarithmicStrain;
 
 @UMATUseTimeSubStepping[umat] true;
 @UMATMaximumSubStepping[umat] 20;

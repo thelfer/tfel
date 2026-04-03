@@ -3,11 +3,11 @@
  * \brief
  * \author Thomas Helfer
  * \date   13/09/2017
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
- * This project is publicly released under either the GNU GPL Licence
- * or the CECILL-A licence. A copy of thoses licences are delivered
- * with the sources of TFEL. CEA or EDF may also distribute this
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
 
@@ -36,7 +36,12 @@ namespace tfel::check {
     Configuration& operator=(Configuration&&);
     //! \brief standard assignement
     Configuration& operator=(const Configuration&);
-    //! \brief list of subordinates
+    /*!
+     * \brief discard command's failure if comparisons are ok.
+     * \note If no comparisons is declared, command's failure is never ignored.
+     */
+    bool discard_commands_failure = true;
+    //! \brief list of components
     std::vector<std::string> available_components;
     /*!
      * \brief substitutions applied to `.check` files.
@@ -45,7 +50,9 @@ namespace tfel::check {
      * replaced by value.
      */
     std::map<std::string, std::string> substitutions;
-    //! global logger
+    //! \brief directory in which the test is executed
+    std::string directory;
+    //! \brief global logger
     PCLogger log;
   };  // end of struct Configuration
 

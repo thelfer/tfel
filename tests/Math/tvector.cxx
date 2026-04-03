@@ -2,7 +2,7 @@
  * \file   tests/Math/tvector.cxx
  * \brief
  * \author Thomas Helfer
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -25,9 +25,9 @@
 int main() {
   using namespace tfel::math;
   constexpr auto eps = 1.e-14;
-  using mass = qt<Mass>;
-  using force = qt<Force>;
-  using acceleration = qt<Acceleration>;
+  using mass = qt<unit::Mass>;
+  using force = qt<unit::Force>;
+  using acceleration = qt<unit::Acceleration>;
   using avector = tvector<5, acceleration>;
   using fvector = tvector<5, force>;
   constexpr mass m = mass(2);

@@ -3,7 +3,7 @@
  * \brief Implementation of PCLogger Drivers class.
  * \author sb152252
  * \date 31 août 2009
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -24,17 +24,20 @@ namespace tfel::check {
   PCILogDriver::PCILogDriver(PCILogDriver&&) = default;
   PCILogDriver::PCILogDriver(const PCILogDriver&) = default;
 
+  PCILogDriver::PCILogDriver(std::ostream& os) : log_ptr(&os) {}
+
   PCILogDriver::PCILogDriver(const std::string& f) {
     this->log = std::make_shared<std::ofstream>(f);
     raise_if(!this->log->good(),
              "PCILogDriver::PCILogDriver: "
              "can't open file '" +
                  f + "'");
+    this->log_ptr = this->log.get();
   }
 
   std::ostream& PCILogDriver::getStream() {
-    if (this->log != nullptr) {
-      return *(this->log);
+    if (this->log_ptr != nullptr) {
+      return *(this->log_ptr);
     }
     return std::cout;
   }

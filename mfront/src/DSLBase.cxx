@@ -4,7 +4,7 @@
  *
  * \author Thomas Helfer
  * \date   04 jun 2007
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -36,10 +36,10 @@
 #include "MFront/SupportedTypes.hxx"
 #include "MFront/DSLBase.hxx"
 #include "MFront/SearchPathsHandler.hxx"
-#include "MFront/DSLUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/MFrontLogStream.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontMaterialPropertyInterface.hxx"
 #include "MFront/StaticVariableDescription.hxx"
 #include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
@@ -276,9 +276,18 @@ namespace mfront {
     // substitutions
     const auto pe = s.end();
     for (auto& t : this->tokens) {
-      auto p = s.find(t.value);
-      if (p != pe) {
-        t.value = p->second;
+      if (t.flag == tfel::utilities::Token::String) {
+        auto delim = t.value.at(0);
+        auto contents = t.value.substr(1, t.value.size() - 2);
+        for (const auto& [k, v] : s) {
+          contents = tfel::utilities::replace_all(contents, k, v);
+        }
+        t.value = delim + contents + delim;
+      } else {
+        auto p = s.find(t.value);
+        if (p != pe) {
+          t.value = p->second;
+        }
       }
     }
     // treating external commands
@@ -385,11 +394,7 @@ namespace mfront {
     }
     auto currentLine = this->current->line;
     if ((registerLine) && (!getDebugMode())) {
-      res = "#line ";
-      res += std::to_string(currentLine);
-      res += " \"";
-      res += this->fd.fileName;
-      res += "\"\n";
+      res = printLinePragma(currentLine, this->fd.fileName);
     }
     if (!this->current->comment.empty()) {
       if (!b.description.empty()) {
@@ -446,15 +451,9 @@ namespace mfront {
       currentValue = demangle(*(this->current));
       if (currentLine != this->current->line) {
         currentLine = this->current->line;
+        res += "\n";
         if ((registerLine) && (!getDebugMode())) {
-          res += "\n";
-          res += "#line ";
-          res += std::to_string(currentLine);
-          res += " \"";
-          res += this->fd.fileName;
-          res += "\"\n";
-        } else {
-          res += "\n";
+          res += printLinePragma(currentLine, this->fd.fileName);
         }
       }
       if ((currentValue == ";") && (!allowSemiColon)) {

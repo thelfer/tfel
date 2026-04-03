@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   06 mai 2008
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -15,7 +15,8 @@
 #include <algorithm>
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/MFrontUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
@@ -440,10 +441,11 @@ namespace mfront {
        << "#include<algorithm>\n"
        << "#include\"TFEL/Config/TFELTypes.hxx\"\n"
        << "#include\"TFEL/PhysicalConstants.hxx\"\n"
-       << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n";
+       << "#include\"TFEL/Math/General/IEEE754.hxx\"\n\n"
+       << "#include\"TFEL/Math/General/DerivativeType.hxx\"\n";
     if (useQuantities(mpd)) {
-      os << "#include\"TFEL/Math/qt.hxx\"\n\n"
-         << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n\n";
+      os << "#include\"TFEL/Math/qt.hxx\"\n"
+         << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
     }
     if (!mpd.includes.empty()) {
       os << mpd.includes << "\n\n";
@@ -638,6 +640,8 @@ namespace mfront {
       std::ostream& os,
       const MaterialPropertyDescription& mpd,
       const std::string_view floating_point_type) const {
+    const auto use_qt = useQuantities(mpd) ? "true" : "false";
+    os << "[[maybe_unused]] constexpr auto use_qt = " << use_qt << ";\n";
     writeScalarStandardTypedefs(os, mpd, floating_point_type, true);
     this->writeInterfaceSpecificVariables(os, mpd);
     for (const auto& i : mpd.inputs) {

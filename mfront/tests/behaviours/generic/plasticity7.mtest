@@ -1,0 +1,44 @@
+@OutputFilePrecision 12;
+@Real 'Hy'  '102e9'; // H is used internally for the Heavyside function
+@XMLOutputFile @xml_output@;
+@MaximumNumberOfSubSteps 1;
+@Behaviour<generic> @library@ 'Plasticity7';
+@MaterialProperty<constant> 'YoungModulus'     150.e9;
+@MaterialProperty<constant> 'PoissonRatio'       0.3;
+@MaterialProperty<constant> 'H'                'Hy';
+@MaterialProperty<constant> 's0'               102.e6;
+
+@ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
+
+@Real 'de'   '1.e-3';
+@Real 't1' '3600.';
+@Real 't0' 's0/(YoungModulus*de)*t1';
+@Real 'e0' 'de*t0';
+@Real 'aone' '0.9999999';
+@ImposedStrain<function> 'EXX' '(de*t/t1)*H(aone*t1-t)+de*((1-t/t1)+1)*H(t-t1)';
+
+@Times {0.,'t1' in 20,'2*t1' in 2};
+
+// stresses
+@Test<function> 'SYY' '0.' 1.e-3;
+@Test<function> 'SZZ' '0.' 1.e-3;
+@Test<function> 'SXY' '0.' 1.e-3;
+@Test<function> 'SXZ' '0.' 1.e-3;
+@Test<function> 'SYZ' '0.' 1.e-3;
+// // strains
+@Test<function> 'EXY' '0.' 1.e-12;
+@Test<function> 'EXZ' '0.' 1.e-12;
+@Test<function> 'EYZ' '0.' 1.e-12;
+
+@Test<file> @reference_file@
+   {'EYY'            :3,
+    'EZZ'            :4,
+    'ElasticStrainXX':14,
+    'ElasticStrainYY':15,
+    'ElasticStrainZZ':16,
+    'ElasticStrainXY':17,
+    'ElasticStrainXZ':18,
+    'ElasticStrainYZ':19,
+    'EquivalentPlasticStrain':20} 1.e-12;
+    
+@Test<file> @reference_file@ 'SXX' 8 1.e-3;

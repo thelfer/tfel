@@ -57,6 +57,15 @@
  * either the GPL or the CECILL-A licence. A copy of thoses licences
  * are delivered with the sources of `TFEL`. CEA or EDF may also
  * distribute this project under specific licensing conditions.
+ *
+ * # Acknowledgement
+ * 
+ * This project uses code extracted from the following projects:
+ * 
+ * - <https://github.com/progschj/ThreadPool> by Jakob Progsch and Václav
+ *   Zeman
+ * - <https://github.com/jothepro/doxygen-awesome-css> by jothepro
+ *
  */
 
 /*!

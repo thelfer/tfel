@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   01/03/2022
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -29,6 +29,7 @@ void declareMTestFileExport(pybind11::module_&);
 void declareMTestFileExport(pybind11::module_& m) {
   //
   pybind11::class_<mtest::TestDescription>(m, "TestDescription")
+      .def(pybind11::init<>())
       .def_readwrite("name", &mtest::TestDescription::name)
       .def_readwrite("scheme", &mtest::TestDescription::scheme)
       .def_readwrite("author", &mtest::TestDescription::author)

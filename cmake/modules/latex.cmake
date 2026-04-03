@@ -16,25 +16,16 @@ if(LATEX_COMPILER)
     ADD_CUSTOM_COMMAND(
       OUTPUT    ${doc}.pdf
       DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/${doc}.tex.in
-      COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/beamer/themes
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+      COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
       ARGS      -interaction=batchmode
       ARGS      ${doc}.tex
-      COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/beamer/themes
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+      COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
       ARGS      -interaction=batchmode
       ARGS      ${doc}.tex
-      COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/beamer/themes
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+      COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
       ARGS      -interaction=batchmode
       ARGS      ${doc}.tex
-      COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
+      COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${DVIPS_CONVERTER}
       ARGS      -R0 ${doc}.dvi
       COMMAND   ${PS2PDF_CONVERTER}
       ARGS      ${doc}.ps
@@ -64,19 +55,13 @@ if(LATEX_COMPILER)
     ADD_CUSTOM_COMMAND(
       OUTPUT    ${doc}.pdf
       DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/${doc}.tex.in
-      COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${PDFLATEX_COMPILER}
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+      COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${PDFLATEX_COMPILER}
       ARGS      -interaction=batchmode
       ARGS      ${doc}.tex
-      COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${PDFLATEX_COMPILER}
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+      COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${PDFLATEX_COMPILER}
       ARGS      -interaction=batchmode
       ARGS      ${doc}.tex
-      COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${PDFLATEX_COMPILER}
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-      ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
+      COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${PDFLATEX_COMPILER}
       ARGS      -interaction=batchmode
       ARGS      ${doc}.tex
       COMMENT   "${doc}.pdf")

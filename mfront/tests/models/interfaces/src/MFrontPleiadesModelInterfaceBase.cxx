@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \brief 17 jun 2010
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -20,7 +20,7 @@
 
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontDebugMode.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
 #include "MFront/MFrontPleiadesModelInterfaceBase.hxx"

@@ -3,7 +3,7 @@
  * \brief
  * \author Thomas Helfer
  * \date   03 juin 2016
- * \copyright Copyright (C) 2006-2018 CEA/DEN, EDF R&D. All rights
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
  * linking exception or the CECILL-A licence. A copy of thoses licences are
@@ -16,7 +16,7 @@
 #include <algorithm>
 #include "TFEL/Raise.hxx"
 #include "TFEL/System/System.hxx"
-#include "MFront/DSLUtilities.hxx"
+#include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/TargetsDescription.hxx"
@@ -31,9 +31,10 @@ namespace mfront {
   static void writeScalarStandardTypedefs(std::ostream& os,
                                           const ModelDescription& md) {
     const auto use_qt = useQuantities(md) ? "true" : "false";
+    os << "[[maybe_unused]] static constexpr auto use_qt = " << use_qt << ";\n";
     for (const auto& a : getScalarTypeAliases()) {
       os << "using " << a << " [[maybe_unused]] = "
-         << "typename tfel::config::ScalarTypes<double, " << use_qt
+         << "typename tfel::config::ScalarTypes<NumericType, " << use_qt
          << ">::" << a << ";\n";
     }
   }  // end of writeScalarStandardTypedefs

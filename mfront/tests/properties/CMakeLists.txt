@@ -2,17 +2,7 @@ add_subdirectory(interfaces)
 
 function(add_mfront_generated_source lib interface ext file)
   set(mfront_file   "${CMAKE_CURRENT_SOURCE_DIR}/${file}.mfront")
-  if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-    set(mfront_executable "$<TARGET_FILE:mfront>")
-  else(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
-    # retrieve the old behaviour for debian squeeze's version of cmake
-    # does not work with configurations
-    if(WIN32)
-      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront.exe")
-    else(WIN32)
-      set(mfront_executable "${PROJECT_BINARY_DIR}/mfront/src/mfront")
-    endif(WIN32)
-  endif(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
+  set(mfront_executable "$<TARGET_FILE:mfront>")
   if("${interface}" STREQUAL "c")
     set(mfront_output "src/${file}.cxx")
   else("${interface}" STREQUAL "c")
@@ -42,7 +32,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
       COMMAND "${mfront_executable}"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
       ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
-      DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+      DEPENDS mfront
       DEPENDS "${mfront_file}"
       COMMENT "mfront source ${mfront_file}")
     else((CMAKE_HOST_WIN32) AND (NOT MSYS))
@@ -51,7 +41,7 @@ $<TARGET_FILE_DIR:TFELUnicodeSupport>;\
       COMMAND "${mfront_executable}"
       ARGS    "--search-path=${PROJECT_SOURCE_DIR}/mfront/tests/properties"
       ARGS    "${mfront_flags}" "--interface=${interface}" "${mfront_file}"
-      DEPENDS "${PROJECT_BINARY_DIR}/mfront/src/mfront"
+      DEPENDS mfront
       DEPENDS "${mfront_file}"
       COMMENT "mfront source ${mfront_file}")
     if(CMAKE_VERSION AND (${CMAKE_VERSION} GREATER "2.8.2"))
@@ -245,12 +235,12 @@ if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
 endif(CMAKE_BUILD_TYPE STREQUAL "Coverage")
 
 if(HAVE_FORTRAN)
+  add_executable(test-f EXCLUDE_FROM_ALL test-f.c compute.f)
+  add_test(NAME test-f COMMAND test-f)
+  add_dependencies(check test-f)
+  add_dependencies(test-f MFrontMaterialProperties-fortran)
+  target_link_libraries(test-f MFrontMaterialProperties-fortran)
   IF(GNU_FORTRAN_COMPILER)
-    add_executable(test-f EXCLUDE_FROM_ALL test-f.c compute.f)
-    add_test(NAME test-f COMMAND test-f)
-    add_dependencies(check test-f)
-    add_dependencies(test-f MFrontMaterialProperties-fortran)
-    target_link_libraries(test-f MFrontMaterialProperties-fortran)
     if(CMAKE_BUILD_TYPE STREQUAL "Coverage")
       target_link_libraries(test-f "-lgcov")
     endif(CMAKE_BUILD_TYPE STREQUAL "Coverage")

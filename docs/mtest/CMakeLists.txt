@@ -64,35 +64,23 @@ if(HAVE_LATEX AND GENERATE_REFERENCE_DOC)
     OUTPUT    mtest.pdf
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/Champs.tex.in
     DEPENDS    ${CMAKE_CURRENT_SOURCE_DIR}/mtest.tex.in
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
     ARGS       mtest.tex
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
     ARGS       mtest.tex
-    COMMAND   BSTINPUTS=@abs_top_srcdir@/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
+    COMMAND   BSTINPUTS=${abs_top_srcdir}/docs/tex/texmf/bibtex ${BIBTEX_COMPILER}
     ARGS      -terse mtest
     COMMAND   ${MAKEINDEX_COMPILER}
     ARGS      -s ${CMAKE_CURRENT_SOURCE_DIR}/style.ist mkeys.idx
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
     ARGS       mtest.tex
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${LATEX_COMPILER}
+    COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${LATEX_COMPILER}
     ARGS      -interaction=batchmode
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/latex/NT
-    ARGS      --include-directory=@abs_top_srcdir@/docs/tex/texmf/tex/images
     ARGS       mtest.tex
-    COMMAND   TEXMFHOME=@abs_top_srcdir@/docs/tex/texmf        ${DVIPS_CONVERTER}
+    COMMAND   TEXMFHOME=${abs_top_srcdir}/docs/tex/texmf        ${DVIPS_CONVERTER}
     ARGS      -R0 mtest.dvi
     COMMAND   ${PS2PDF_CONVERTER}
     ARGS      mtest.ps

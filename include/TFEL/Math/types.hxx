@@ -66,8 +66,8 @@ namespace tfel::math {
    *  const StressType& young,
    *  const typename tfel::math::ScalarTypeRebind<StressType>::real& nu)
    *  requires(
-   *      tfel::math::checkUnitCompatibility<tfel::math::Stress, StressType>());
-   * \endcode
+   *      tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+   * StressType>()); \endcode
    *
    * Thanks to the `checkUnitCompatibility` function, this function only
    * compiles if `StressType` either:
@@ -84,6 +84,83 @@ namespace tfel::math {
       constexpr bool checkUnitCompatibility();
 
 }  // end of namespace tfel::math
+
+namespace tfel::types {
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using real = typename tfel::math::ScalarTypeRebind<ScalarType>::real;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using time = typename tfel::math::ScalarTypeRebind<ScalarType>::time;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using frequency =
+      typename tfel::math::ScalarTypeRebind<ScalarType>::frequency;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using length = typename tfel::math::ScalarTypeRebind<ScalarType>::length;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using inv_length =
+      typename tfel::math::ScalarTypeRebind<ScalarType>::inv_length;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using displacement =
+      typename tfel::math::ScalarTypeRebind<ScalarType>::displacement;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using force = typename tfel::math::ScalarTypeRebind<ScalarType>::force;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using strain = typename tfel::math::ScalarTypeRebind<ScalarType>::strain;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using strainrate =
+      typename tfel::math::ScalarTypeRebind<ScalarType>::strainrate;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using stress = typename tfel::math::ScalarTypeRebind<ScalarType>::stress;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using compliance =
+      typename tfel::math::ScalarTypeRebind<ScalarType>::compliance;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using viscosity =
+      typename tfel::math::ScalarTypeRebind<ScalarType>::viscosity;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using viscouscompliance =
+      typename tfel::math::ScalarTypeRebind<ScalarType>::viscouscompliance;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using stressrate =
+      typename tfel::math::ScalarTypeRebind<ScalarType>::stressrate;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using temperature =
+      typename tfel::math::ScalarTypeRebind<ScalarType>::temperature;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using thermalexpansion =
+      typename tfel::math::ScalarTypeRebind<ScalarType>::thermalexpansion;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using massdensity =
+      typename tfel::math::ScalarTypeRebind<ScalarType>::massdensity;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using energydensity =
+      typename tfel::math::ScalarTypeRebind<ScalarType>::energydensity;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using speed = typename tfel::math::ScalarTypeRebind<ScalarType>::speed;
+
+  template <tfel::math::ScalarConcept ScalarType>
+  using thermalconductivity =
+      typename tfel::math::ScalarTypeRebind<ScalarType>::thermalconductivity;
+
+}  // end of namespace tfel::types
 
 #include "TFEL/Math/types.ixx"
 

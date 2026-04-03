@@ -493,7 +493,7 @@ identification would not be consistent.
 
 Those two finite strain strategies are fairly portable and are
 available (natively or via `MFront`) in `Cast3M`, `Code_Aster`,
-`Europlexus`, `Abaqus/Standard` and `Abaqus/Explicit` and `Zebulon`,
+`Abaqus/Standard` and `Abaqus/Explicit` and `Zebulon`,
 etc...
 
 ## Consistent tangent operator for finite strain behaviours
