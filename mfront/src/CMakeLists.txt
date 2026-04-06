@@ -203,6 +203,7 @@ set(TFELMFront_SOURCES
     UMATInterfaceBase.cxx
     GenericMaterialPropertyInterfaceBase.cxx
     GenericMaterialPropertyInterface.cxx
+    GenericParallelMaterialPropertyInterface.cxx
     GenericBehaviourInterface.cxx
     GenericBehaviourSymbolsGenerator.cxx
     GenericModelInterface.cxx

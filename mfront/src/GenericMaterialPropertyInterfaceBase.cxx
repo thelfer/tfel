@@ -282,11 +282,13 @@ namespace mfront {
        << "const " << types.real_type << "* const,"
        << "const " << types.integer_type << ","
        << "const " << types.out_of_bounds_policy_type << ");\n\n";
-    if (!mpd.parameters.empty()) {
-      os << "MFRONT_SHAREDOBJ int\n"
-         << name << "_setParameter(const char *const,"
-         << "const double);\n\n";
-    }
+
+    writeParametersSetterFunctionDeclaration(
+        os, mpd,
+        {.material_property_name = name,
+         .floating_point_type = "double",
+         .interface_namespace = this->getInterfaceName()});
+
     os << "#ifdef __cplusplus\n"
        << "} // end of extern \"C\"\n"
        << "#endif /* __cplusplus */\n\n"
@@ -377,58 +379,22 @@ namespace mfront {
         os, name + "_src",
         tfel::utilities::tokenize(file, tfel::system::dirSeparator()).back());
 
-    if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
-      const auto hn = getMaterialPropertyParametersHandlerClassName(name);
-      os << "MFRONT_SHAREDOBJ int\n"
-         << name << "_setParameter(const char *const p,"
-         << "const double v"
-         << "){\n";
-      for (const auto& p : params) {
-        if (p.getExternalName() != p.name) {
-          os << "if(strcmp(\"" << p.getExternalName() << "\",p) == 0){\n"
-             << iname << "::" << hn << "::get" << hn << "()." << p.name
-             << " = v;\n"
-             << "return 1;\n"
-             << "}\n";
-        }
-        if ((!p.symbolic_form.empty()) && (p.symbolic_form != p.name)) {
-          os << "if(strcmp(\"" << p.symbolic_form << "\",p) == 0){\n"
-             << iname << "::" << hn << "::get" << hn << "()." << p.name
-             << " = v;\n"
-             << "return 1;\n"
-             << "}\n";
-        }
-        os << "if(strcmp(\"" << p.name << "\",p) == 0){\n"
-           << iname << "::" << hn << "::get" << hn << "()." << p.name
-           << " = v;\n"
-           << "return 1;\n"
-           << "}\n";
-      }
-      os << "return 0;\n"
-         << "}\n\n";
-    }
+    writeParametersSetterFunctionImplementation(
+        os, mpd,
+        {.material_property_name = name,
+         .floating_point_type = "double",
+         .interface_namespace = iname});
 
     os << "MFRONT_SHAREDOBJ " << types.real_type << "\n" << name << "(";
+    os << types.output_status_type << "* const mfront_output_status,\n"
+       << "const " << types.real_type << "* const";
     if (!mpd.inputs.empty()) {
-      os << "" << types.output_status_type << "* const mfront_output_status,\n"
-         << "const " << types.real_type << "* const mfront_params,\n"
-         << "const " << types.integer_type << " mfront_nargs,\n";
-      if ((hasBounds(mpd.inputs)) || (hasBounds(mpd.output))) {
-        os << "const " << types.out_of_bounds_policy_type
-           << " mfront_out_of_bounds_policy";
-      } else {
-        os << "const " << types.out_of_bounds_policy_type << "";
-      }
-    } else {
-      os << "" << types.output_status_type << "* const mfront_output_status,\n"
-         << "const " << types.real_type << "* const,\n"
-         << "const " << types.integer_type << " mfront_nargs,\n";
-      if ((hasBounds(mpd.output)) || (hasPhysicalBounds(mpd.output))) {
-        os << "const " << types.out_of_bounds_policy_type
-           << " mfront_out_of_bounds_policy";
-      } else {
-        os << "const " << types.out_of_bounds_policy_type << "";
-      }
+      os << " mfront_params";
+    }
+    os << ",\nconst " << types.integer_type << " mfront_nargs,\n"
+       << "const " << types.out_of_bounds_policy_type;
+    if ((hasBounds(mpd.inputs)) || (hasBounds(mpd.output))) {
+      os << " mfront_out_of_bounds_policy";
     }
     os << ")\n{\n";
     writeBeginningOfMaterialPropertyBody(os, mpd, fd, "double", true);
