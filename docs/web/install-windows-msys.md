@@ -121,7 +121,7 @@ $ export MAKE=mingw32-make.exe
 
 Note: `XX` corresponds to the `Python` version installed in [`MSYS2`](https://www.msys2.org/).
 
-# Loading the environment and running tests
+# Loading the environment
 
 Before using TFEL/MFront, load the environment with:
 
