@@ -1,7 +1,7 @@
 ---
 title: Installing TFEL/MFront on [Windows](http://windows.microsoft.com) in the [`MSYS2`](https://www.msys2.org/) environment
 author: Thomas Helfer, Antoine Martin and Valentin Gallican
-date: 18/03/2026
+date: 08/04/2026
 lang: en-EN
 link-citations: true
 colorlinks: true
