@@ -60,7 +60,7 @@ Go to a directory where you want to download the TFEL sources and run:
 $ git clone https://github.com/thelfer/tfel.git
 $ cd tfel
 $ mkdir -p build
-$cd build
+$ cd build
 ~~~~
 
 Then run:
