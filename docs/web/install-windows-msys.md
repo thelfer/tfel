@@ -127,7 +127,6 @@ Before using TFEL/MFront, load the environment with:
 
 ~~~~{.bash}
 $ source env.sh
-$ make check
 ~~~~
 
 # Usage
