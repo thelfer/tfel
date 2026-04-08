@@ -59,19 +59,20 @@ Go to a directory where you want to download the TFEL sources and run:
 ~~~~{.bash}
 $ git clone https://github.com/thelfer/tfel.git
 $ cd tfel
+$ mkdir -p build
+$cd build
 ~~~~
 
 Then run:
 
 ~~~~{.bash}
-$ cmake -G "MinGW Makefiles" \
+$ cmake .. -G "MinGW Makefiles" \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_INSTALL_PREFIX=/mingw64 \
-        -DLOCAL_CASTEM_HEADER=ON \
-        -DENABLE_PYTHON=ON \
-        -DENABLE_PYTHON_BINDINGS=ON \
         -DPYTHON_EXECUTABLE=/mingw64/bin/python \
-        ..
+        -Denable-python=ON \
+        -Denable-python-bindings=ON
+        
   ~~~~
 
 # Compiling and installing `TFEL`
@@ -79,8 +80,10 @@ $ cmake -G "MinGW Makefiles" \
 Compile the project using:
 
 ~~~~{#compiling .bash}
-$ mingw32-make -j12
+$ mingw32-make -jYY
 ~~~~
+
+Note: `YY` corresponds to the number of parallel jobs (for example, a CPU with 12 threads → -j12).
 
 Then install it with:
 
@@ -116,7 +119,7 @@ $ export PYTHONPATH=/mingw64/bin/python3.XX/site-packages
 $ export MAKE=mingw32-make.exe
 ~~~~
 
-Note that XX corresponds to the `Python` version installed in [`MSYS2`](https://www.msys2.org/).
+Note: `XX` corresponds to the `Python` version installed in [`MSYS2`](https://www.msys2.org/).
 
 # Loading the environment and running tests
 
