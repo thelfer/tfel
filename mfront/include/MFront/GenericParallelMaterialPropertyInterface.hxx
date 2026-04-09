@@ -15,6 +15,7 @@
 #define LIB_MFRONT_GENERICPARALLELMATERIALPROPERTYINTERFACEBASE_HXX
 
 #include <string>
+#include <memory>
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/AbstractMaterialPropertyInterface.hxx"
@@ -23,6 +24,9 @@ namespace mfront {
 
   // forward declaration
   struct LibraryDescription;
+  namespace generic_parallel::material_property{
+    struct AbstractBackend;
+  }
 
   /*!
    * \brief a base class for material properties' interfaces such as the
@@ -30,6 +34,13 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT GenericParallelMaterialPropertyInterface
       : public AbstractMaterialPropertyInterface {
+    //! \brief list of types used by the interface
+    struct TypesDescription {
+      std::string real_type;
+      std::string integer_type;
+      std::string out_of_bounds_policy_type;
+      std::string output_status_type;
+    };
     //! \return the interface name
     static std::string getName();
     //! \brief default constructor
@@ -63,24 +74,22 @@ namespace mfront {
         const tokens_iterator) override;
     void writeOutputFiles(const MaterialPropertyDescription&,
                           const FileDescription&) const override;
-    //! \brief destructor
-    ~GenericParallelMaterialPropertyInterface() override;
-
-   protected:
-    struct TypesDescription {
-      std::string real_type;
-      std::string integer_type;
-      std::string out_of_bounds_policy_type;
-      std::string output_status_type;
-    };
-
+    //
     virtual TypesDescription getTypesDescription() const;
     virtual std::vector<std::string> getInterfaceHeaderFiles() const;
-    virtual std::string getInterfaceName() const;
     virtual std::string getInterfaceInternalNamespace() const;
     virtual std::string getInterfaceNameInCamelCase() const;
     virtual std::string getInterfaceNameInUpperCase() const;
     virtual std::string getOutOfBoundsPolicyEnumerationPrefix() const;
+    //! \brief destructor
+    ~GenericParallelMaterialPropertyInterface() override;
+
+   protected:
+    //
+    using AbstractBackend =
+        ::mfront::generic_parallel::material_property::AbstractBackend;
+
+    virtual std::string getInterfaceName() const;
 
     //! \return the name of the header file
     virtual std::string getHeaderFileName(const std::string&) const;
@@ -100,28 +109,9 @@ namespace mfront {
      */
     virtual void writeSrcFile(const MaterialPropertyDescription&,
                               const FileDescription&) const;
+
     //! \brief backend to be used
-    const std::string backend = "stlpar";
-    /*!
-     * \brief generate the implementation of the function for the parallel stl
-     * implementation
-     *
-     * \param[in] os: output stream
-     * \param[in] mpd: material property description
-     * \param[in] fd: file description
-     */
-    virtual void writeParallelSTLImplementation(
-        std::ostream&,
-        const MaterialPropertyDescription&,
-        const FileDescription&) const;
-    /*!
-     * \brief write the code analysying the array `mfront_bounds_statuses`
-     *
-     * \param[in] os: output stream
-     * \param[in] mpd: material property description
-     */
-    virtual void writeBoundsStatusesAnalysis(
-        std::ostream&, const MaterialPropertyDescription&) const;
+    const std::unique_ptr<const AbstractBackend> backend;
 
   };  // end of MfrontGenericParallelMaterialPropertyInterface
 
