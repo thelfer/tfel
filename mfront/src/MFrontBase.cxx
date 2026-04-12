@@ -36,7 +36,7 @@
 #include "MFront/DefaultDSL.hxx"
 #include "MFront/DSLFactory.hxx"
 #include "MFront/PathSpecifier.hxx"
-#include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
+#include "MFront/ConfigurationManager.hxx"
 #include "MFront/MFrontBase.hxx"
 
 namespace mfront {
@@ -52,7 +52,8 @@ namespace mfront {
     // local dsl options
     auto ldsl_options = dsl_options;
     const auto& global_options =
-        GlobalDomainSpecificLanguageOptionsManager::get();
+        static_cast<const GlobalDomainSpecificLanguageOptionsManager&>(
+            ConfigurationManager::get());
     auto& dslFactory = DSLFactory::getDSLFactory();
     std::shared_ptr<AbstractDSL> dsl;
     std::string library, dslName;
@@ -517,25 +518,33 @@ namespace mfront {
   }  // end of splitDSLOption
 
   void MFrontBase::addDSLOption(const std::string& o) {
-    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+    auto& g =
+        static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+            ConfigurationManager::get());
     const auto& kv = splitDSLOption(o);
     g.addDSLOption(kv.first, kv.second);
   }
 
   void MFrontBase::addMaterialPropertyDSLOption(const std::string& o) {
-    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+    auto& g =
+        static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+            ConfigurationManager::get());
     const auto& kv = splitDSLOption(o);
     g.addMaterialPropertyDSLOption(kv.first, kv.second);
   }
 
   void MFrontBase::addBehaviourDSLOption(const std::string& o) {
-    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+    auto& g =
+        static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+            ConfigurationManager::get());
     const auto& kv = splitDSLOption(o);
     g.addBehaviourDSLOption(kv.first, kv.second);
   }
 
   void MFrontBase::addModelDSLOption(const std::string& o) {
-    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+    auto& g =
+        static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+            ConfigurationManager::get());
     const auto& kv = splitDSLOption(o);
     g.addModelDSLOption(kv.first, kv.second);
   }
@@ -559,7 +568,9 @@ namespace mfront {
 
   void MFrontBase::parseDSLOptionsFile(const std::string& f) {
     const auto c = [](const std::string& k, const tfel::utilities::Data& d) {
-      auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+      auto& g =
+        static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+            ConfigurationManager::get());
       g.addDSLOption(k, d);
     };
     mfront::parseDSLOptionsFile(c, f);
@@ -567,7 +578,9 @@ namespace mfront {
 
   void MFrontBase::parseMaterialPropertyDSLOptionsFile(const std::string& f) {
     const auto c = [](const std::string& k, const tfel::utilities::Data& d) {
-      auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+      auto& g =
+        static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+            ConfigurationManager::get());
       g.addMaterialPropertyDSLOption(k, d);
     };
     mfront::parseDSLOptionsFile(c, f);
@@ -575,7 +588,9 @@ namespace mfront {
 
   void MFrontBase::parseBehaviourDSLOptionsFile(const std::string& f) {
     const auto c = [](const std::string& k, const tfel::utilities::Data& d) {
-      auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+      auto& g =
+        static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+            ConfigurationManager::get());
       g.addBehaviourDSLOption(k, d);
     };
     mfront::parseDSLOptionsFile(c, f);
@@ -583,7 +598,9 @@ namespace mfront {
 
   void MFrontBase::parseModelDSLOptionsFile(const std::string& f) {
     const auto c = [](const std::string& k, const tfel::utilities::Data& d) {
-      auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+      auto& g =
+        static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+            ConfigurationManager::get());
       g.addModelDSLOption(k, d);
     };
     mfront::parseDSLOptionsFile(c, f);

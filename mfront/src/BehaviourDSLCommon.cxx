@@ -51,7 +51,7 @@
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/ModelDSL.hxx"
 #include "MFront/MFrontModelInterface.hxx"
-#include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
+#include "MFront/ConfigurationManager.hxx"
 #include "MFront/AbstractBehaviourCodeGenerator.hxx"
 #include "MFront/BehaviourVariableDescription.hxx"
 #include "MFront/BehaviourDSLUtilities.hxx"
@@ -925,7 +925,8 @@ namespace mfront {
     }
     //
     const auto& global_options =
-        GlobalDomainSpecificLanguageOptionsManager::get();
+        static_cast<const GlobalDomainSpecificLanguageOptionsManager&>(
+            ConfigurationManager::get());
     auto dsl = ModelDSL{tfel::utilities::merge(
         global_options.getModelDSLOptions(), this->buildDSLOptions(), true)};
     // getting informations the source files

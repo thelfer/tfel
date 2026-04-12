@@ -74,6 +74,7 @@ endif(enable-static)
 set(TFELMFront_SOURCES
     MFront.cxx
     MFrontBase.cxx
+    ConfigurationManager.cxx
     GlobalDomainSpecificLanguageOptionsManager.cxx
     MaterialKnowledgeDescription.cxx
     PathSpecifier.cxx
