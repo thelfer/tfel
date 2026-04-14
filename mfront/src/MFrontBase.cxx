@@ -549,22 +549,97 @@ namespace mfront {
     g.addModelDSLOption(kv.first, kv.second);
   }
 
-  template <typename CallBack>
-  static void parseDSLOptionsFile(const CallBack& callback,
-                                  const std::string& f) {
+  static tfel::utilities::DataMap readConfigurationFile(const std::string& f) {
     std::ifstream ifs(f);
     if (!ifs) {
-      tfel::raise("parseDSLOptionsFile: can't open file '" + f + "'");
+      tfel::raise("readConfigurationFile: can't open file '" + f + "'");
     }
     tfel::utilities::CxxTokenizer t;
     t.parseString('{' + std::string{std::istreambuf_iterator<char>{ifs}, {}} +
                   '}');
     auto b = t.begin();
-    const auto data = read<tfel::utilities::DataMap>(b, t.end());
-    for (const auto& d : data) {
-      callback(d.first, d.second);
+    return read<tfel::utilities::DataMap>(b, t.end());
+  }  // end ofreadConfigurationFile
+
+  template <typename CallBack>
+  static void parseConfigurationFile(const CallBack& callback,
+                                     const std::string& f) {
+    try {
+      for (const auto& d : readConfigurationFile(f)) {
+        callback(d.first, d.second);
+      }
+    } catch (std::exception& e) {
+      tfel::raise("Error while parsing configuration file '" + f +
+                  "': " + e.what());
+    } catch (...) {
+      tfel::raise("Error while parsing configuration file '" + f +
+                  "': unknown exception");
     }
-  }  // end of parseDSLOptionsFile
+  }  // end of parseConfigurationFile
+
+  static void parseConfigurationFile(const std::string& f) {
+    using tfel::utilities::DataMap;
+    const auto data = readConfigurationFile(f);
+    auto validator = tfel::utilities::DataMapValidator{};
+    validator.addDataTypeValidator<DataMap>("dsl_options")
+        .addDataTypeValidator<DataMap>("material_property_dsl_options")
+        .addDataTypeValidator<DataMap>("behaviour_dsl_options")
+        .addDataTypeValidator<DataMap>("model_dsl_options")
+        .addDataTypeValidator<DataMap>("interfaces_options")
+        .addDataTypeValidator<DataMap>("compilation_options");
+    validator.validate(data);
+    auto& m = ConfigurationManager::get();
+    try {
+      if (data.contains("dsl_options")) {
+        auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(m);
+        for (const auto& [k, d] : data.at("dsl_options").get<DataMap>()) {
+          g.addDSLOption(k, d);
+        }
+      }
+      if (data.contains("material_property_dsl_options")) {
+        auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(m);
+        for (const auto& [k, d] :
+             data.at("material_property_dsl_options").get<DataMap>()) {
+          g.addMaterialPropertyDSLOption(k, d);
+        }
+      }
+      if (data.contains("behaviour_dsl_options")) {
+        auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(m);
+        for (const auto& [k, d] :
+             data.at("behaviour_dsl_options").get<DataMap>()) {
+          g.addBehaviourDSLOption(k, d);
+        }
+      }
+      if (data.contains("model_dsl_options")) {
+        auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(m);
+        for (const auto& [k, d] : data.at("model_dsl_options").get<DataMap>()) {
+          g.addModelDSLOption(k, d);
+        }
+      }
+      if (data.contains("interfaces_options")) {
+        for (const auto& [i, opts] :
+             data.at("interfaces_options").get<DataMap>()) {
+          if (!opts.is<tfel::utilities::DataMap>()) {
+            tfel::raise("invalid options types for interface '" + i + "'");
+          }
+        }
+      }
+      if (data.contains("compilation_options")) {
+        for (const auto& [l, opts] :
+             data.at("compilation_options").get<DataMap>()) {
+          if (!opts.is<tfel::utilities::DataMap>()) {
+            tfel::raise("invalid options types for language'" + l + "'");
+          }
+        }
+      }
+    } catch (std::exception& e) {
+      tfel::raise("Error while parsing configuration file '" + f +
+                  "': " + e.what());
+    } catch (...) {
+      tfel::raise("Error while parsing configuration file '" + f +
+                  "': unknown exception");
+    }
+  }  // end of parseConfigurationFile
 
   void MFrontBase::parseDSLOptionsFile(const std::string& f) {
     const auto c = [](const std::string& k, const tfel::utilities::Data& d) {
@@ -573,7 +648,7 @@ namespace mfront {
             ConfigurationManager::get());
       g.addDSLOption(k, d);
     };
-    mfront::parseDSLOptionsFile(c, f);
+    mfront::parseConfigurationFile(c, f);
   }
 
   void MFrontBase::parseMaterialPropertyDSLOptionsFile(const std::string& f) {
@@ -583,7 +658,7 @@ namespace mfront {
             ConfigurationManager::get());
       g.addMaterialPropertyDSLOption(k, d);
     };
-    mfront::parseDSLOptionsFile(c, f);
+    mfront::parseConfigurationFile(c, f);
   }
 
   void MFrontBase::parseBehaviourDSLOptionsFile(const std::string& f) {
@@ -593,7 +668,7 @@ namespace mfront {
             ConfigurationManager::get());
       g.addBehaviourDSLOption(k, d);
     };
-    mfront::parseDSLOptionsFile(c, f);
+    mfront::parseConfigurationFile(c, f);
   }
 
   void MFrontBase::parseModelDSLOptionsFile(const std::string& f) {
@@ -603,8 +678,13 @@ namespace mfront {
             ConfigurationManager::get());
       g.addModelDSLOption(k, d);
     };
-    mfront::parseDSLOptionsFile(c, f);
+    mfront::parseConfigurationFile(c, f);
   }
+
+  void MFrontBase::treatConfigurationFile() {
+    ::mfront::parseConfigurationFile(
+        this->getCurrentCommandLineArgument().getOption());
+  }  // end of treatDSLOptionsFile
 
   void MFrontBase::treatDSLOption() {
     MFrontBase::addDSLOption(this->getCurrentCommandLineArgument().getOption());
@@ -668,4 +748,4 @@ namespace mfront {
 
   MFrontBase::~MFrontBase() = default;
 
-}  // end of namespace mfront
+  }  // end of namespace mfront
