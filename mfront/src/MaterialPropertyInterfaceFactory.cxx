@@ -96,7 +96,7 @@ namespace mfront {
       tfel::raise(msg);
     }
     return p->second;
-  } // end of getUniqueNameFromAlias
+  }  // end of getUniqueNameFromAlias
 
   void MaterialPropertyInterfaceFactory::registerInterfaceDependency(
       const std::string& name, const std::string& dep) {

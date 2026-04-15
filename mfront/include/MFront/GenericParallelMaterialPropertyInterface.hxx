@@ -24,7 +24,7 @@ namespace mfront {
 
   // forward declaration
   struct LibraryDescription;
-  namespace generic_parallel::material_property{
+  namespace generic_parallel::material_property {
     struct AbstractBackend;
   }
 

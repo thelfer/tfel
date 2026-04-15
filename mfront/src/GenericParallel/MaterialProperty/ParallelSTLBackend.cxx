@@ -205,8 +205,7 @@ namespace mfront::generic_parallel::material_property {
           os << "double(" << pv << ");\n";
         }
       }
-    }
-    else {
+    } else {
       if (useQuantities(mpd)) {
         for (const auto& p : mpd.parameters) {
           os << "const auto " << p.name << " = " << p.type
@@ -250,7 +249,8 @@ namespace mfront::generic_parallel::material_property {
       }
       if (hasBounds(mpd.inputs)) {
         os << "// treating standard bounds\n";
-        for (decltype(mpd.inputs.size()) idx = 0; idx != mpd.inputs.size(); ++idx) {
+        for (decltype(mpd.inputs.size()) idx = 0; idx != mpd.inputs.size();
+             ++idx) {
           this->writeBounds(os, prefix, mpd.inputs[idx], idx,
                             useQuantities(mpd));
         }

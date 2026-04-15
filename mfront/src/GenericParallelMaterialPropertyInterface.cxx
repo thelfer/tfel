@@ -318,7 +318,6 @@ namespace mfront {
 
     this->backend->writeCImplementation(os, *this, mpd, fd);
 
-
     os.close();
 
     os << "#ifdef __cplusplus\n"

@@ -234,7 +234,7 @@ namespace mfront {
        << "MFRONT_SHAREDOBJ int\n"
        << args.material_property_name << "_setParameter(const char *const,"
        << "const double);\n\n";
-  } // end of writeParametersSetterFunctionDeclaration
+  }  // end of writeParametersSetterFunctionDeclaration
 
   void writeParametersSetterFunctionImplementation(
       std::ostream& os,
@@ -282,4 +282,4 @@ namespace mfront {
     return n + "MaterialPropertyHandler";
   }
 
-  }  // end of namespace mfront
+}  // end of namespace mfront

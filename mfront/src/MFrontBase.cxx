@@ -518,33 +518,29 @@ namespace mfront {
   }  // end of splitDSLOption
 
   void MFrontBase::addDSLOption(const std::string& o) {
-    auto& g =
-        static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
-            ConfigurationManager::get());
+    auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+        ConfigurationManager::get());
     const auto& kv = splitDSLOption(o);
     g.addDSLOption(kv.first, kv.second);
   }
 
   void MFrontBase::addMaterialPropertyDSLOption(const std::string& o) {
-    auto& g =
-        static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
-            ConfigurationManager::get());
+    auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+        ConfigurationManager::get());
     const auto& kv = splitDSLOption(o);
     g.addMaterialPropertyDSLOption(kv.first, kv.second);
   }
 
   void MFrontBase::addBehaviourDSLOption(const std::string& o) {
-    auto& g =
-        static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
-            ConfigurationManager::get());
+    auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+        ConfigurationManager::get());
     const auto& kv = splitDSLOption(o);
     g.addBehaviourDSLOption(kv.first, kv.second);
   }
 
   void MFrontBase::addModelDSLOption(const std::string& o) {
-    auto& g =
-        static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
-            ConfigurationManager::get());
+    auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+        ConfigurationManager::get());
     const auto& kv = splitDSLOption(o);
     g.addModelDSLOption(kv.first, kv.second);
   }
@@ -667,8 +663,8 @@ namespace mfront {
           }
           if (getVerboseMode() >= VERBOSE_DEBUG) {
             getLogStream()
-                << "treating configuration options for model interface '"
-                << i << " from file '" << file << "''\n";
+                << "treating configuration options for model interface '" << i
+                << " from file '" << file << "''\n";
           }
           m.addModelInterfaceOptions(i, opts);
         }
@@ -696,9 +692,8 @@ namespace mfront {
 
   void MFrontBase::parseDSLOptionsFile(const std::string& f) {
     const auto c = [](const std::string& k, const tfel::utilities::Data& d) {
-      auto& g =
-        static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
-            ConfigurationManager::get());
+      auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+          ConfigurationManager::get());
       g.addDSLOption(k, d);
     };
     mfront::parseConfigurationFile(c, f);
@@ -706,9 +701,8 @@ namespace mfront {
 
   void MFrontBase::parseMaterialPropertyDSLOptionsFile(const std::string& f) {
     const auto c = [](const std::string& k, const tfel::utilities::Data& d) {
-      auto& g =
-        static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
-            ConfigurationManager::get());
+      auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+          ConfigurationManager::get());
       g.addMaterialPropertyDSLOption(k, d);
     };
     mfront::parseConfigurationFile(c, f);
@@ -716,9 +710,8 @@ namespace mfront {
 
   void MFrontBase::parseBehaviourDSLOptionsFile(const std::string& f) {
     const auto c = [](const std::string& k, const tfel::utilities::Data& d) {
-      auto& g =
-        static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
-            ConfigurationManager::get());
+      auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+          ConfigurationManager::get());
       g.addBehaviourDSLOption(k, d);
     };
     mfront::parseConfigurationFile(c, f);
@@ -726,9 +719,8 @@ namespace mfront {
 
   void MFrontBase::parseModelDSLOptionsFile(const std::string& f) {
     const auto c = [](const std::string& k, const tfel::utilities::Data& d) {
-      auto& g =
-        static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
-            ConfigurationManager::get());
+      auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+          ConfigurationManager::get());
       g.addModelDSLOption(k, d);
     };
     mfront::parseConfigurationFile(c, f);
@@ -801,4 +793,4 @@ namespace mfront {
 
   MFrontBase::~MFrontBase() = default;
 
-  }  // end of namespace mfront
+}  // end of namespace mfront

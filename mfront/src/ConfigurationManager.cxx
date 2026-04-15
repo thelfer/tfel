@@ -1,6 +1,6 @@
 /*!
  * \file   ConfigurationManager.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   09/04/2026
  */
@@ -82,8 +82,8 @@ namespace mfront {
     }
   }  // end of addMaterialPropertyInterfaceOptions
 
-  void ConfigurationManager::addBehaviourInterfaceOptions(
-      const std::string& i, const DataMap& opts) {
+  void ConfigurationManager::addBehaviourInterfaceOptions(const std::string& i,
+                                                          const DataMap& opts) {
     const auto id = getUniqueInterfaceIdentifier(i);
     auto p = this->behaviour_interfaces_options.find(id);
     if (p == this->behaviour_interfaces_options.end()) {
@@ -93,8 +93,8 @@ namespace mfront {
     }
   }  // end of addBehaviourInterfaceOptions
 
-  void ConfigurationManager::addModelInterfaceOptions(
-      const std::string& i, const DataMap& opts) {
+  void ConfigurationManager::addModelInterfaceOptions(const std::string& i,
+                                                      const DataMap& opts) {
     const auto id = getUniqueInterfaceIdentifier(i);
     auto p = this->model_interfaces_options.find(id);
     if (p == this->model_interfaces_options.end()) {
