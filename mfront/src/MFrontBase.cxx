@@ -579,7 +579,8 @@ namespace mfront {
 
   static void parseConfigurationFile(const std::string& f) {
     using tfel::utilities::DataMap;
-    const auto data = readConfigurationFile(f);
+    const auto file = SearchPathsHandler::search(f);
+    const auto data = readConfigurationFile(file);
     auto validator = tfel::utilities::DataMapValidator{};
     validator.addDataTypeValidator<DataMap>("dsl_options")
         .addDataTypeValidator<DataMap>("material_property_dsl_options")
@@ -622,6 +623,54 @@ namespace mfront {
           if (!opts.is<tfel::utilities::DataMap>()) {
             tfel::raise("invalid options types for interface '" + i + "'");
           }
+          if (getVerboseMode() >= VERBOSE_DEBUG) {
+            getLogStream() << "treating configuration options for material "
+                           << "property interface '" << i << " from file '"
+                           << file << "''\n";
+          }
+          m.addInterfaceOptions(i, opts);
+        }
+      }
+      if (data.contains("material_property_interfaces_options")) {
+        for (const auto& [i, opts] :
+             data.at("material_property_interfaces_options").get<DataMap>()) {
+          if (!opts.is<tfel::utilities::DataMap>()) {
+            tfel::raise("invalid options types for interface '" + i + "'");
+          }
+          if (getVerboseMode() >= VERBOSE_DEBUG) {
+            getLogStream() << "treating configuration options for material "
+                           << "property interface '" << i << " from file '"
+                           << file << "''\n";
+          }
+          m.addMaterialPropertyInterfaceOptions(i, opts);
+        }
+      }
+      if (data.contains("behaviour_interfaces_options")) {
+        for (const auto& [i, opts] :
+             data.at("behaviour_interfaces_options").get<DataMap>()) {
+          if (!opts.is<tfel::utilities::DataMap>()) {
+            tfel::raise("invalid options types for interface '" + i + "'");
+          }
+          if (getVerboseMode() >= VERBOSE_DEBUG) {
+            getLogStream()
+                << "treating configuration options for behaviour interface '"
+                << i << " from file '" << file << "''\n";
+          }
+          m.addBehaviourInterfaceOptions(i, opts);
+        }
+      }
+      if (data.contains("model_interfaces_options")) {
+        for (const auto& [i, opts] :
+             data.at("model_interfaces_options").get<DataMap>()) {
+          if (!opts.is<tfel::utilities::DataMap>()) {
+            tfel::raise("invalid options types for interface '" + i + "'");
+          }
+          if (getVerboseMode() >= VERBOSE_DEBUG) {
+            getLogStream()
+                << "treating configuration options for model interface '"
+                << i << " from file '" << file << "''\n";
+          }
+          m.addModelInterfaceOptions(i, opts);
         }
       }
       if (data.contains("compilation_options")) {
@@ -629,6 +678,10 @@ namespace mfront {
              data.at("compilation_options").get<DataMap>()) {
           if (!opts.is<tfel::utilities::DataMap>()) {
             tfel::raise("invalid options types for language'" + l + "'");
+          }
+          if (getVerboseMode() >= VERBOSE_DEBUG) {
+            getLogStream() << "treating configuration options for language '"
+                           << l << "' from file '" << file << "'\n";
           }
         }
       }
