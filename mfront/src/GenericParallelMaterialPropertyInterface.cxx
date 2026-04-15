@@ -49,6 +49,14 @@ namespace mfront {
                                      ParallelSTLBackend>()) {
   }  // end of GenericParallelMaterialPropertyInterface
 
+  void GenericParallelMaterialPropertyInterface::setOptions(
+      const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
+
   GenericParallelMaterialPropertyInterface::TypesDescription
   GenericParallelMaterialPropertyInterface::getTypesDescription() const {
     auto types = TypesDescription{};

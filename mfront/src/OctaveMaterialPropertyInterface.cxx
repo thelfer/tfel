@@ -215,6 +215,13 @@ namespace mfront {
 
   OctaveMaterialPropertyInterface::OctaveMaterialPropertyInterface() = default;
 
+  void OctaveMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
+
   std::pair<bool, OctaveMaterialPropertyInterface::tokens_iterator>
   OctaveMaterialPropertyInterface::treatKeyword(
       const std::string& k,

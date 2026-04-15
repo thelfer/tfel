@@ -125,6 +125,12 @@ namespace mfront {
       : hasDefaultConstructor(false) {
   }  // end of MFrontModelInterface::MFrontModelInterface
 
+  void MFrontModelInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for model interface 'mfront'");
+    }
+  }  // end of setOptions
+
   void MFrontModelInterface::declareReservedNames(std::set<std::string>& v) {
     v.insert("first");
     v.insert("saveddata");

@@ -40,6 +40,7 @@ namespace mfront {
     //! \brief constructor
     ZMATInterface();
     //
+    void setOptions(const DataMap&) override;
     std::string getInterfaceName() const override;
     std::string getInterfaceVersion() const override;
     std::pair<bool, tokens_iterator> treatKeyword(

@@ -140,6 +140,13 @@ namespace mfront {
 
   ZMATInterface::ZMATInterface() = default;
 
+  void ZMATInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" +
+                  this->getInterfaceName() + "'");
+    }
+  } // end of setOptions
+
   std::string ZMATInterface::getInterfaceName() const { return "ZMAT"; }
 
   std::string ZMATInterface::getInterfaceVersion() const { return ""; }

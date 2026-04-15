@@ -26,6 +26,7 @@
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/ModelDSLCommon.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/ConfigurationManager.hxx"
 #include "MFront/ModelInterfaceFactory.hxx"
 #include "MFront/CodeGeneratorUtilities.hxx"
 
@@ -264,10 +265,16 @@ namespace mfront {
   }  // end of treatModel
 
   void ModelDSLCommon::setInterfaces(const std::set<std::string>& inames) {
+    const auto& m = ConfigurationManager::get();
     auto& mbif = ModelInterfaceFactory::getModelInterfaceFactory();
     for (const auto& i : inames) {
       if (this->interfaces.count(i) == 0) {
-        this->interfaces.insert({i, mbif.getInterface(i)});
+        auto ptr = mbif.getInterface(i);
+        const auto opts = m.getModelInterfaceOptions(i);
+        if (!opts.empty()) {
+          ptr->setOptions(opts);
+        }
+        this->interfaces.insert({i, ptr});
       }
     }
   }  // end of setInterfaces

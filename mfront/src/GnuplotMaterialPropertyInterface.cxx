@@ -73,6 +73,13 @@ namespace mfront {
   GnuplotMaterialPropertyInterface::~GnuplotMaterialPropertyInterface() =
       default;
 
+  void GnuplotMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
+
   std::string GnuplotMaterialPropertyInterface::eraseQuote(
       const std::string& in) {
     auto res = in;

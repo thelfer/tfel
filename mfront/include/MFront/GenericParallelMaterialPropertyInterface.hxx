@@ -65,6 +65,7 @@ namespace mfront {
     virtual std::string getFunctionName(
         const MaterialPropertyDescription&) const;
     //
+    void setOptions(const DataMap&) override;
     void getTargetsDescription(
         TargetsDescription&, const MaterialPropertyDescription&) const override;
     std::pair<bool, tokens_iterator> treatKeyword(

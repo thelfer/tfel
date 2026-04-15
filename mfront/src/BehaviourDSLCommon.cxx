@@ -3256,10 +3256,16 @@ namespace mfront {
   }  // end of treatInterface
 
   void BehaviourDSLCommon::setInterfaces(const std::set<std::string>& inames) {
+    const auto& m = ConfigurationManager::get();
     auto& mbif = BehaviourInterfaceFactory::getBehaviourInterfaceFactory();
     for (const auto& i : inames) {
       if (this->interfaces.count(i) == 0) {
-        this->interfaces.insert({i, mbif.getInterface(i)});
+        auto ptr = mbif.getInterface(i);
+        const auto opts = m.getBehaviourInterfaceOptions(i);
+        if (!opts.empty()) {
+          ptr->setOptions(opts);
+        }
+        this->interfaces.insert({i, ptr});
       }
     }
   }  // end of setInterfaces

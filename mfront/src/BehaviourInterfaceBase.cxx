@@ -59,6 +59,13 @@ namespace mfront {
 
   BehaviourInterfaceBase::BehaviourInterfaceBase() = default;
 
+  void BehaviourInterfaceBase::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" +
+                  this->getInterfaceName() + "'");
+    }
+  } // end of setOptions
+
   std::string BehaviourInterfaceBase::getInterfaceVersion() const {
     return "";
   }  // end of getInterfaceVersion

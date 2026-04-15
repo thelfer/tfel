@@ -48,6 +48,13 @@ namespace mfront {
 
   PleiadesModelInterface::PleiadesModelInterface() noexcept = default;
 
+  void PleiadesModelInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no option expected for model interface '" +
+                  this->getName() + "'");
+    }
+  }  // end of setOptions
+
   void PleiadesModelInterface::declareReservedNames(std::set<std::string>& v) {
     v.insert({"declareMaterialProperty",
               "declarePrivateMaterialProperty",

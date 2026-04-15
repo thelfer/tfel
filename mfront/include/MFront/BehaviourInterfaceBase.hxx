@@ -37,6 +37,7 @@ namespace mfront {
     //! \brief constructor
     BehaviourInterfaceBase();
     //
+    void setOptions(const DataMap&) override;
     std::string getInterfaceVersion() const override;
     bool isBehaviourConstructorRequired(
         const Hypothesis, const BehaviourDescription &) const override;

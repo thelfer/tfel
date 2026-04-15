@@ -34,6 +34,7 @@ namespace mfront {
     //! \brief constructor
     CastemModelInterface();
     //
+    void setOptions(const DataMap &) override;
     std::pair<bool, tokens_iterator> treatKeyword(
         const std::string &,
         const std::vector<std::string> &,

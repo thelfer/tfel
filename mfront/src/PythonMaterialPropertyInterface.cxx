@@ -55,6 +55,13 @@ namespace mfront {
 
   PythonMaterialPropertyInterface::PythonMaterialPropertyInterface() = default;
 
+  void PythonMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
+
   std::pair<bool, PythonMaterialPropertyInterface::tokens_iterator>
   PythonMaterialPropertyInterface::treatKeyword(
       const std::string& k,

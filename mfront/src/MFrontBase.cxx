@@ -772,7 +772,7 @@ namespace mfront {
 
   void MFrontBase::setInterface(const std::string& i) {
     tfel::raise_if(!this->interfaces.insert(i).second,
-                   "MFrontBase::treatInterface : "
+                   "MFrontBase::sInterface : "
                    "the interface '" +
                        i +
                        "' has "
@@ -785,9 +785,27 @@ namespace mfront {
     };
     const auto& o = this->getCurrentCommandLineArgument().getOption();
     throw_if(o.empty(), "no option given to the '--interface' argument");
-    for (const auto& i : tfel::utilities::tokenize(o, ',')) {
-      throw_if(i.empty(), "empty interface specified.");
-      this->setInterface(i);
+    auto t = tfel::utilities::CxxTokenizer{};
+    t.parseString("{" + o + "}");
+    auto b = t.begin();
+    const auto idata = tfel::utilities::Data::read_vector(b, t.end())
+                        .get<std::vector<tfel::utilities::Data>>();
+    for (const auto& i : idata) {
+      if (i.is<std::string>()) {
+        const auto iname = i.get<std::string>();
+        throw_if(iname.empty(), "empty interface specified.");
+        this->setInterface(iname);
+        continue;
+      }
+      throw_if(!i.is<tfel::utilities::DataStructure>(),
+               "invalid interface definition string '" + o + "'");
+      const auto& ds = i.get<tfel::utilities::DataStructure>();
+      throw_if(ds.name.empty(), "empty interface specified.");
+      if (!ds.data.empty()) {
+        auto& m = ConfigurationManager::get();
+        m.addInterfaceOptions(ds.name, ds.data);
+      }
+      this->setInterface(ds.name);
     }
   }  // end of treatInterface
 

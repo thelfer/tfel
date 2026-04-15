@@ -33,6 +33,8 @@ namespace mfront {
     std::string getLibraryName(const ModelDescription&) const;
     //! \brief constructor
     GenericModelInterface();
+    //
+    void setOptions(const DataMap &) override;
     std::pair<bool, tokens_iterator> treatKeyword(
         const std::string&,
         const std::vector<std::string>&,

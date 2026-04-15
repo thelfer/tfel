@@ -41,6 +41,13 @@ namespace mfront {
   GenericMaterialPropertyInterfaceBase::GenericMaterialPropertyInterfaceBase() =
       default;
 
+  void GenericMaterialPropertyInterfaceBase::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" +
+                  this->getInterfaceName() + "'");
+    }
+  }  // end of setOptions
+
   std::pair<bool,
             tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   GenericMaterialPropertyInterfaceBase::treatKeyword(
