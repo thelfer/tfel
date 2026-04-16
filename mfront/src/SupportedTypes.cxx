@@ -1373,7 +1373,7 @@ namespace mfront {
     auto type = TypeInformation{};
     if (current->value != "::") {
       type.type = current->value;
-      throw_if(!CxxTokenizer::isValidIdentifier(type.type, false),
+      throw_if(!CxxTokenizer::isValidIdentifier(type.type, true),
                "SupportedTypes::parseType: given type '" + type.type +
                    "' is not valid.");
       ++(current);
