@@ -651,10 +651,12 @@ namespace mfront {
       }
     };
     auto type = this->current->value;
-    throw_if(!this->isValidIdentifier(type, false),
-             "given type '" + type + "' is not valid.");
     ++(this->current);
     this->checkNotEndOfFile("DSLBase::readType");
+    if (this->current->value != "::") {
+      throw_if(!this->isValidIdentifier(type, true),
+               "given type '" + type + "' is not valid.");
+    }
     while (this->current->value == "::") {
       ++(this->current);
       this->checkNotEndOfFile("DSLBase::readType");
