@@ -1016,7 +1016,7 @@ namespace tfel::utilities {
         return false;
       }
     }
-    if (b) {
+    if (!b) {
       if (isReservedCxxKeywords(s)) {
         return false;
       }
