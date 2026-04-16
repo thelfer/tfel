@@ -206,6 +206,7 @@ set(TFELMFront_SOURCES
     GenericMaterialPropertyInterface.cxx
     GenericParallelMaterialPropertyInterface.cxx
     GenericParallel/MaterialProperty/AbstractBackend.cxx
+    GenericParallel/MaterialProperty/BackendFactory.cxx
     GenericParallel/MaterialProperty/BackendBase.cxx
     GenericParallel/MaterialProperty/ParallelSTLBackend.cxx
     GenericBehaviourInterface.cxx
@@ -309,7 +310,9 @@ if(HAVE_CASTEM)
 	Castem21Interface.cxx
 	CastemSymbolsGenerator.cxx
 	CastemMaterialPropertyInterface.cxx
+	Castem21MaterialPropertyInterface.cxx
 	CastemModelInterface.cxx
+	Castem21ModelInterface.cxx
 	AmitexInterface.cxx
 	${TFELMFront_SOURCES})
     set(CastemInterface_SOURCES

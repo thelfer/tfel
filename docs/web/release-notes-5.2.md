@@ -31,6 +31,10 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 5.2 of the
 `TFEL` project.
 
+# Known incompatibilities
+
+- `MFront`' Interfaces have to implement a method named `setOptions`.
+
 # New `TFEL/Math` features
 
 ## Views of tensorial objects with coalescent memory access for data separated by a constant stride
@@ -115,6 +119,79 @@ The second moments of strains considering a Hashin-Shtrikman scheme
 are available. A new [tutorial](PonteCastaneda1992.html)
 shows how to use it in the implementation of Ponte-Castaneda variational
 bound (1992), within the framework of non-linear elasticity.
+
+# New `MFront` features
+
+## Configuration file
+
+`MFront` now allows to define options in a configuration file define
+through the `--configuration-file` command line argument as follows:
+
+~~~~{bash}
+$ mfront --configuration-file=config.json --interface=generic-parallel UO2_ShearModulus.mfront
+~~~~
+
+Configuration file follows an extented `JSON`-like syntax. It contains
+the following sections:
+
+- `dsl_options`
+- `material_property_dsl_options`
+- `behaviour_dsl_options`
+- `model_dsl_options`
+- `interfaces_options`
+- `compilation_options`
+
+None of those sections is required. All those sections must introduce a
+dictionary.
+
+> **Note**
+>
+> The options given in sections `dsl_options`,
+> `material_property_dsl_options`, `behaviour_dsl_options` and
+> `model_dsl_options` may also be retrieved in dedicated configurations
+> files, respectively specified by the `--dsl-options-file`,
+> `--material-property-dsl-options-file`, `--behaviour-dsl-options-file`,
+> and `--model-dsl-options-file` command line arguments introduced in
+> Version 4.1.
+
+### Example of configuration file
+
+~~~~{.json}
+interfaces_options: {
+  generic-parallel: {
+    backend: "stlpar",
+    execution_policy: "par_unseq"
+  }
+}
+~~~~
+
+### The `interfaces_options` section
+
+### The `compilation_options` section
+
+
+## Passing options to interfaces on the command line
+
+### First syntax
+
+~~~~{bash}
+$ mfront --obuild --interface='generic-parallel{backend:"stlpar", execution_policy:"par_unseq"}' UO2_ShearModulus.mfront
+~~~~
+
+### Second syntax
+
+~~~~{bash}
+$ mfront --obuild --interface='{generic-parallel:{backend:"stlpar", execution_policy:"par_unseq"}}' UO2_ShearModulus.mfront
+~~~~
+
+## Generic material property interface for material properties
+
+### Available backends
+
+#### `STLPar`
+
+#### `CUDA`
+
 
 # Acknowledgements
 

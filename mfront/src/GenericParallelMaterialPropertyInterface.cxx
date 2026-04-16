@@ -28,6 +28,7 @@
 #include "MFront/MFrontLock.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/CodeGeneratorUtilities.hxx"
+#include "MFront/MFrontLogStream.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/FileDescription.hxx"
 #include "MFront/LibraryDescription.hxx"
@@ -36,6 +37,7 @@
 #include "MFront/MaterialPropertyParametersHandler.hxx"
 #include "MFront/GenericParallelMaterialPropertyInterface.hxx"
 #include "MFront/GenericParallel/MaterialProperty/ParallelSTLBackend.hxx"
+#include "MFront/GenericParallel/MaterialProperty/BackendFactory.hxx"
 
 namespace mfront {
 
@@ -51,9 +53,33 @@ namespace mfront {
 
   void GenericParallelMaterialPropertyInterface::setOptions(
       const DataMap& opts) {
-    if (!opts.empty()) {
-      tfel::raise("no options expected for interface '" + this->getName() +
-                  "'");
+    using ::mfront::generic_parallel::material_property::BackendFactory;
+    using tfel::utilities::DataStructure;
+    auto validator = tfel::utilities::DataMapValidator{};
+    validator.addDataTypeValidator<DataStructure>("backend");
+    validator.validate(opts);
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream()
+          << "GenericParallelMaterialPropertyInterface::setOptions: begin\n";
+    }
+    const auto ds = [&opts]() -> tfel::utilities::DataStructure {
+      if (contains(opts, "backend")) {
+        return DataStructure::convert(get(opts, "backend"));
+      }
+      auto r = DataStructure{};
+      r.name = "stlpar";
+      return r;
+    }();
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << "GenericParallelMaterialPropertyInterface::setOptions: "
+                        "creating backend '"
+                     << ds.name << "'\n";
+    }
+    auto& f = BackendFactory::get();
+    this->backend = f.generate(ds.name, ds.data);
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream()
+          << "GenericParallelMaterialPropertyInterface::setOptions: end\n";
     }
   }  // end of setOptions
 
@@ -173,6 +199,10 @@ namespace mfront {
     const auto types = this->getTypesDescription();
     const auto name = this->getFunctionName(mpd);
     const auto fn = "include/" + this->getHeaderFileName(name);
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << "GenericParallelMaterialPropertyInterface::"
+                        "writeHeaderFile: begin\n";
+    }
     std::ofstream os{fn};
     tfel::raise_if(
         !os,
@@ -226,10 +256,18 @@ namespace mfront {
        << "#endif /* __cplusplus */\n\n"
        << "#endif /* " << makeUpperCase(name) << "_" << iucname << "_HH */\n";
     os.close();
-  }  // end of writeHeaderFile()
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << "GenericParallelMaterialPropertyInterface::"
+                        "writeHeaderFile: end\n";
+    }
+  }  // end of writeHeaderFile
 
   void GenericParallelMaterialPropertyInterface::writeSrcFile(
       const MaterialPropertyDescription& mpd, const FileDescription& fd) const {
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << "GenericParallelMaterialPropertyInterface::"
+                        "writeSrcFile: begin\n";
+    }
     const auto types = this->getTypesDescription();
     const auto iname = this->getInterfaceName();
     const auto nname = this->getInterfaceInternalNamespace();
@@ -326,14 +364,18 @@ namespace mfront {
 
     this->backend->writeCImplementation(os, *this, mpd, fd);
 
-    os.close();
-
     os << "#ifdef __cplusplus\n"
        << "} // end of extern \"C\"\n"
        << "#endif /* __cplusplus */\n\n";
 
     this->backend->writeProxyObject(os, *this, mpd);
 
+    os.close();
+
+    if (getVerboseMode() >= VERBOSE_DEBUG) {
+      getLogStream() << "GenericParallelMaterialPropertyInterface::"
+                        "writeSrcFile: end\n";
+    }
   }  // end of GenericParallelMaterialPropertyInterface::writeSrcFile
 
   GenericParallelMaterialPropertyInterface::

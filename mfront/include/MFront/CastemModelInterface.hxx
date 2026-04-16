@@ -26,7 +26,7 @@ namespace mfront {
    * model description in a behaviour description and using the interface for
    * behaviours.
    */
-  struct CastemModelInterface final : public AbstractModelInterface {
+  struct CastemModelInterface : public AbstractModelInterface {
     //! \return the name of the interface
     static std::string getName();
     //! \return the name of the generated library

@@ -2,7 +2,7 @@
  * \file  MFrontBase.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04 mars 2015
+ * \date   04/03/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -40,6 +40,13 @@
 #include "MFront/MFrontBase.hxx"
 
 namespace mfront {
+
+  static tfel::utilities::CxxTokenizerOptions getConfigurationParsingOptions() {
+    auto opts = tfel::utilities::CxxTokenizerOptions{};
+    opts.dotAsSeparator = false;
+    opts.minusAsSeparator = false;
+    return opts;
+  }  // end of getConfigurationParsingOptions
 
   std::shared_ptr<AbstractDSL> MFrontBase::getDSL(
       const tfel::utilities::CxxTokenizer::const_iterator ptb,
@@ -550,7 +557,7 @@ namespace mfront {
     if (!ifs) {
       tfel::raise("readConfigurationFile: can't open file '" + f + "'");
     }
-    tfel::utilities::CxxTokenizer t;
+    auto t = tfel::utilities::CxxTokenizer{getConfigurationParsingOptions()};
     t.parseString('{' + std::string{std::istreambuf_iterator<char>{ifs}, {}} +
                   '}');
     auto b = t.begin();
@@ -729,7 +736,7 @@ namespace mfront {
   void MFrontBase::treatConfigurationFile() {
     ::mfront::parseConfigurationFile(
         this->getCurrentCommandLineArgument().getOption());
-  }  // end of treatDSLOptionsFile
+  }  // end of treatConfigurationFile
 
   void MFrontBase::treatDSLOption() {
     MFrontBase::addDSLOption(this->getCurrentCommandLineArgument().getOption());
@@ -785,11 +792,13 @@ namespace mfront {
     };
     const auto& o = this->getCurrentCommandLineArgument().getOption();
     throw_if(o.empty(), "no option given to the '--interface' argument");
-    auto t = tfel::utilities::CxxTokenizer{};
+    auto t = tfel::utilities::CxxTokenizer{getConfigurationParsingOptions()};
     t.parseString("{" + o + "}");
+    auto opts = tfel::utilities::DataParsingOptions{};
+    opts.rawStringParsingOptions = {.allowMinusSign = true};
     auto b = t.begin();
-    const auto idata = tfel::utilities::Data::read_vector(b, t.end())
-                        .get<std::vector<tfel::utilities::Data>>();
+    const auto idata = tfel::utilities::Data::read_vector(b, t.end(), opts)
+                           .get<std::vector<tfel::utilities::Data>>();
     for (const auto& i : idata) {
       if (i.is<std::string>()) {
         const auto iname = i.get<std::string>();
@@ -797,9 +806,9 @@ namespace mfront {
         this->setInterface(iname);
         continue;
       }
-      throw_if(!i.is<tfel::utilities::DataStructure>(),
+      throw_if(!tfel::utilities::DataStructure::is_convertible(i),
                "invalid interface definition string '" + o + "'");
-      const auto& ds = i.get<tfel::utilities::DataStructure>();
+      const auto ds = tfel::utilities::DataStructure::convert(i);
       throw_if(ds.name.empty(), "empty interface specified.");
       if (!ds.data.empty()) {
         auto& m = ConfigurationManager::get();

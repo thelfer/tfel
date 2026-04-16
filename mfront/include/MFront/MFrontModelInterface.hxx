@@ -27,15 +27,15 @@ namespace mfront {
     //
     void setOptions(const DataMap &) override;
     std::pair<bool, tokens_iterator> treatKeyword(
-        const std::string&,
-        const std::vector<std::string>&,
+        const std::string &,
+        const std::vector<std::string> &,
         tokens_iterator,
         const tokens_iterator) override;
-    void declareReservedNames(std::set<std::string>&) override;
-    void writeOutputFiles(const FileDescription&,
-                          const ModelDescription&) override;
-    void getTargetsDescription(TargetsDescription&,
-                               const ModelDescription&) override;
+    void declareReservedNames(std::set<std::string> &) override;
+    void writeOutputFiles(const FileDescription &,
+                          const ModelDescription &) override;
+    void getTargetsDescription(TargetsDescription &,
+                               const ModelDescription &) override;
     //! \brief destructor
     ~MFrontModelInterface() override;
   };  // end of struct MFrontModelInterface

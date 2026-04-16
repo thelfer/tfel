@@ -26,9 +26,9 @@ namespace mfront {
     void setOptions(const DataMap& opts) override;
     void declareReservedNames(std::set<std::string>&) override;
     void getTargetsDescription(TargetsDescription&,
-                                       const ModelDescription&) override;
+                               const ModelDescription&) override;
     void writeOutputFiles(const FileDescription&,
-                                  const ModelDescription&) override;
+                          const ModelDescription&) override;
 
    protected:
     virtual void openOutputFiles();

@@ -36,13 +36,13 @@ namespace mfront {
      * \param[in] n:   variable name
      */
     static VariableDescriptionContainer::size_type getVariableNumber(
-        const MaterialPropertyDescription&, const std::string&);
+        const MaterialPropertyDescription &, const std::string &);
     //! \brief constructor
     CMaterialPropertyInterfaceBase();
     //
     void setOptions(const DataMap &) override;
-    void writeOutputFiles(const MaterialPropertyDescription&,
-                          const FileDescription&) const override;
+    void writeOutputFiles(const MaterialPropertyDescription &,
+                          const FileDescription &) const override;
     //! \brief destructor
     ~CMaterialPropertyInterfaceBase() override;
 
@@ -50,25 +50,25 @@ namespace mfront {
     /*!
      * \param[out] os:  output file stream
      */
-    virtual void writeBeginHeaderNamespace(std::ostream&) const = 0;
+    virtual void writeBeginHeaderNamespace(std::ostream &) const = 0;
     /*!
      * \param[out] os:  output file stream
      */
-    virtual void writeEndHeaderNamespace(std::ostream&) const = 0;
+    virtual void writeEndHeaderNamespace(std::ostream &) const = 0;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
     virtual void writeInterfaceSymbol(
-        std::ostream&, const MaterialPropertyDescription&) const = 0;
+        std::ostream &, const MaterialPropertyDescription &) const = 0;
     /*!
      * \param[out] os:  output file stream
      */
-    virtual void writeBeginSrcNamespace(std::ostream&) const = 0;
+    virtual void writeBeginSrcNamespace(std::ostream &) const = 0;
     /*!
      * \param[out] os:  output file stream
      */
-    virtual void writeEndSrcNamespace(std::ostream&) const = 0;
+    virtual void writeEndSrcNamespace(std::ostream &) const = 0;
     //
     virtual bool requiresCheckBoundsFunction() const = 0;
     /*!
@@ -76,24 +76,24 @@ namespace mfront {
      * \param[in] mpd: material property description
      */
     virtual std::string getFunctionName(
-        const MaterialPropertyDescription&) const = 0;
+        const MaterialPropertyDescription &) const = 0;
     /*!
      * \param[in] mpd: material property description
      */
     virtual std::string getCheckBoundsFunctionName(
-        const MaterialPropertyDescription&) const = 0;
+        const MaterialPropertyDescription &) const = 0;
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
-    virtual std::string getHeaderFileName(const std::string&,
-                                          const std::string&) const = 0;
+    virtual std::string getHeaderFileName(const std::string &,
+                                          const std::string &) const = 0;
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
-    virtual std::string getSrcFileName(const std::string&,
-                                       const std::string&) const = 0;
+    virtual std::string getSrcFileName(const std::string &,
+                                       const std::string &) const = 0;
     /*!
      * \return the list of supported floating-point types. Supported
      * floating-point types are `float`, `double` and `long double`. For each
@@ -117,8 +117,8 @@ namespace mfront {
      * \param[in] t: floating-point type
      * \param[in] b: boolean stating if quantities must be used
      */
-    virtual void writeArgumentsList(std::ostream&,
-                                    const MaterialPropertyDescription&,
+    virtual void writeArgumentsList(std::ostream &,
+                                    const MaterialPropertyDescription &,
                                     const std::string_view,
                                     const bool) const;
     /*!
@@ -129,9 +129,9 @@ namespace mfront {
      * \param[in] floating_point_type: floating-point type
      * \param[in] use_qt: use_quantities on input/outputs
      */
-    virtual void writeMaterialPropertyBody(std::ostream&,
-                                           const MaterialPropertyDescription&,
-                                           const FileDescription&,
+    virtual void writeMaterialPropertyBody(std::ostream &,
+                                           const MaterialPropertyDescription &,
+                                           const FileDescription &,
                                            const std::string_view,
                                            const bool) const;
     /*!
@@ -141,112 +141,113 @@ namespace mfront {
      * \param[in] floating_point_type: floating-point type
      */
     virtual void writeMaterialPropertyCheckBoundsBody(
-        std::ostream&,
-        const MaterialPropertyDescription&,
+        std::ostream &,
+        const MaterialPropertyDescription &,
         const std::string_view) const;
     /*!
      * \param[out] os:  output file stream
      * \param[in] mpd : material property description
      */
     virtual void writeInterfaceSpecificVariables(
-        std::ostream&, const MaterialPropertyDescription&) const;
+        std::ostream &, const MaterialPropertyDescription &) const;
     /*!
      * \param[out] os:  output file stream
      * \param[out] mpd: material property description
      * \param[out] mpd: file description
      */
-    virtual void writeFileDescriptionSymbols(std::ostream&,
-                                             const MaterialPropertyDescription&,
-                                             const FileDescription&) const;
+    virtual void writeFileDescriptionSymbols(
+        std::ostream &,
+        const MaterialPropertyDescription &,
+        const FileDescription &) const;
     /*!
      * \param[out] os:  output file stream
      * \param[out] mpd: material property description
      */
-    virtual void writeValidatorSymbol(std::ostream&,
-                                      const MaterialPropertyDescription&) const;
+    virtual void writeValidatorSymbol(
+        std::ostream &, const MaterialPropertyDescription &) const;
     /*!
      * \param[out] os:  output file stream
      * \param[out] mpd: material property description
      */
     virtual void writeBuildIdentifierSymbol(
-        std::ostream&, const MaterialPropertyDescription&) const;
+        std::ostream &, const MaterialPropertyDescription &) const;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
     virtual void writeEntryPointSymbol(
-        std::ostream&, const MaterialPropertyDescription&) const;
+        std::ostream &, const MaterialPropertyDescription &) const;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
     virtual void writeTFELVersionSymbol(
-        std::ostream&, const MaterialPropertyDescription&) const;
+        std::ostream &, const MaterialPropertyDescription &) const;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
     virtual void writeUnitSystemSymbol(
-        std::ostream&, const MaterialPropertyDescription&) const;
+        std::ostream &, const MaterialPropertyDescription &) const;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
-    virtual void writeLawSymbol(std::ostream&,
-                                const MaterialPropertyDescription&) const;
+    virtual void writeLawSymbol(std::ostream &,
+                                const MaterialPropertyDescription &) const;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
-    virtual void writeMaterialSymbol(std::ostream&,
-                                     const MaterialPropertyDescription&) const;
+    virtual void writeMaterialSymbol(std::ostream &,
+                                     const MaterialPropertyDescription &) const;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
     virtual void writeMaterialKnowledgeTypeSymbol(
-        std::ostream&, const MaterialPropertyDescription&) const;
+        std::ostream &, const MaterialPropertyDescription &) const;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  name: name of the generated material property
      * \param[in]  mpd: material property description
      */
     virtual void writeVariablesNamesSymbol(
-        std::ostream&, const MaterialPropertyDescription&) const;
+        std::ostream &, const MaterialPropertyDescription &) const;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  name: name of the generated material property
      * \param[in]  mpd: material property description
      */
     virtual void writeVariablesBoundsSymbols(
-        std::ostream&, const MaterialPropertyDescription&) const;
+        std::ostream &, const MaterialPropertyDescription &) const;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
     virtual void writeHeaderPreprocessorDirectives(
-        std::ostream&, const MaterialPropertyDescription&) const;
+        std::ostream &, const MaterialPropertyDescription &) const;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      */
     virtual void writeSrcPreprocessorDirectives(
-        std::ostream&, const MaterialPropertyDescription&) const;
+        std::ostream &, const MaterialPropertyDescription &) const;
     /*!
      * \param[out] os:  output file stream
      * \param[in]  mpd: material property description
      * \param[in] floating_point_type: floating-point type
      * \param[in] use_qt: use quantities
      */
-    virtual void writeCErrorTreatment(std::ostream&,
-                                      const MaterialPropertyDescription&,
+    virtual void writeCErrorTreatment(std::ostream &,
+                                      const MaterialPropertyDescription &,
                                       const std::string_view,
                                       const bool) const;
     /*!
      * \brief write the `try` statement before the material property body
      * \param[out] os:  output file stream
      */
-    virtual void writeCxxTryBlock(std::ostream&) const;
+    virtual void writeCxxTryBlock(std::ostream &) const;
     /*!
      * \brief write catch blocks before the material property body
      * \param[out] os:  output file stream
@@ -254,8 +255,8 @@ namespace mfront {
      * \param[in] floating_point_type: floating-point type
      * \param[in] use_qt: use quantities
      */
-    virtual void writeCxxCatchBlock(std::ostream&,
-                                    const MaterialPropertyDescription&,
+    virtual void writeCxxCatchBlock(std::ostream &,
+                                    const MaterialPropertyDescription &,
                                     const std::string_view,
                                     const bool) const;
     /*!
@@ -267,9 +268,9 @@ namespace mfront {
      * \param[in] floating_point_type: floating-point type
      * \param[in] use_qt: use quantities
      */
-    virtual void returnInvalidValue(std::ostream&,
+    virtual void returnInvalidValue(std::ostream &,
                                     std::string_view,
-                                    const MaterialPropertyDescription&,
+                                    const MaterialPropertyDescription &,
                                     const std::string_view,
                                     const bool) const;
     //
@@ -279,23 +280,24 @@ namespace mfront {
      * material property.
      * \param[in] mpd: material property description
      */
-    virtual std::string getSymbolName(const MaterialPropertyDescription&) const;
+    virtual std::string getSymbolName(
+        const MaterialPropertyDescription &) const;
     /*!
      * \brief : write the source file. The headerFile member has been
      * opened appropriately and will be closed after the call.
      * \param[in] mpd : material property description
      * \param[in] fd  : file description
      */
-    virtual void writeHeaderFile(const MaterialPropertyDescription&,
-                                 const FileDescription&) const;
+    virtual void writeHeaderFile(const MaterialPropertyDescription &,
+                                 const FileDescription &) const;
     /*!
      * \brief : write the source file. The srcFile member has been
      * opened appropriately and will be closed after the call.
      * \param[in] mpd : material property description
      * \param[in] fd  : file description
      */
-    virtual void writeSrcFile(const MaterialPropertyDescription&,
-                              const FileDescription&) const;
+    virtual void writeSrcFile(const MaterialPropertyDescription &,
+                              const FileDescription &) const;
 
   };  // end of MfrontCMaterialPropertyInterfaceBase
 

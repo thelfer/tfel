@@ -47,7 +47,7 @@ namespace mfront {
         LibraryDescription&,
         const MaterialPropertyDescription&) const;
     //
-    void setOptions(const DataMap &) override;
+    void setOptions(const DataMap&) override;
     void getTargetsDescription(
         TargetsDescription&, const MaterialPropertyDescription&) const override;
     std::pair<bool, tokens_iterator> treatKeyword(

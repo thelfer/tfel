@@ -33,14 +33,15 @@ namespace mfront {
     //
     void setOptions(const DataMap &) override;
     std::pair<bool, tokens_iterator> treatKeyword(
-        const std::string&,
-        const std::vector<std::string>&,
+        const std::string &,
+        const std::vector<std::string> &,
         tokens_iterator,
         const tokens_iterator) override;
     void getTargetsDescription(
-        TargetsDescription&, const MaterialPropertyDescription&) const override;
-    void writeOutputFiles(const MaterialPropertyDescription&,
-                          const FileDescription&) const override;
+        TargetsDescription &,
+        const MaterialPropertyDescription &) const override;
+    void writeOutputFiles(const MaterialPropertyDescription &,
+                          const FileDescription &) const override;
     //! \brief destructor
     ~CppTestMaterialPropertyInterface() override;
 

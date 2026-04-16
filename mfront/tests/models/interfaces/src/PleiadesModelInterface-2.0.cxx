@@ -50,8 +50,8 @@ namespace mfront {
 
   void PleiadesModelInterface::setOptions(const DataMap& opts) {
     if (!opts.empty()) {
-      tfel::raise("no option expected for model interface '" +
-                  this->getName() + "'");
+      tfel::raise("no option expected for model interface '" + this->getName() +
+                  "'");
     }
   }  // end of setOptions
 

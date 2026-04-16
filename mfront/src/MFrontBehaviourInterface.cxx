@@ -27,12 +27,12 @@ namespace mfront {
     return "";
   }  // end of getInterfaceVersion
 
-  void MFrontBehaviourInterface::setOptions(const DataMap& opts) {
+  void MFrontBehaviourInterface::setOptions(const DataMap &opts) {
     if (!opts.empty()) {
       tfel::raise("no options expected for interface '" +
                   this->getInterfaceName() + "'");
     }
-  } // end of setOptions
+  }  // end of setOptions
 
   std::pair<bool, MFrontBehaviourInterface::tokens_iterator>
   MFrontBehaviourInterface::treatKeyword(BehaviourDescription &,

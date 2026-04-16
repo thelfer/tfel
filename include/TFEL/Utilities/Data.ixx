@@ -135,8 +135,14 @@ namespace tfel::utilities {
   DataMapValidator::addDataTypeValidator(const std::string& k) requires(
       tfel::meta::TLCountNbrOfT<std::decay_t<T1>, DataTypes>::value == 1) {
     return this->addDataValidator(k, [](const Data& d) {
-      if (!d.template is<T1>()) {
-        tfel::raise("invalid type");
+      if constexpr (std::same_as<T1, DataStructure>) {
+        if (!DataStructure::is_convertible(d)) {
+          tfel::raise("invalid type");
+        }
+      } else {
+        if (!d.template is<T1>()) {
+          tfel::raise("invalid type");
+        }
       }
     });
   }  // end of addDataTypeValidator

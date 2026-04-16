@@ -78,7 +78,7 @@ namespace mfront {
       tfel::raise("no options expected for interface '" + this->getName() +
                   "'");
     }
-  } // end of setOptions
+  }  // end of setOptions
 
   std::pair<bool, MFrontModelInterface::tokens_iterator>
   MFrontModelInterface::treatKeyword(const std::string& k,

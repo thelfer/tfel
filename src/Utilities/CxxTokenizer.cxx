@@ -1001,6 +1001,11 @@ namespace tfel::utilities {
   }
 
   bool CxxTokenizer::isValidIdentifier(std::string_view s, const bool b) {
+    return CxxTokenizer::isValidIdentifier(s, {.allowCxxKeywords = b});
+  } // end of isValidIdentifier
+
+  bool CxxTokenizer::isValidIdentifier(std::string_view s,
+                                       const IsValidIdentifierOptions &opts) {
     if (s.empty()) {
       return false;
     }
@@ -1009,6 +1014,12 @@ namespace tfel::utilities {
       return false;
     }
     for (; p != s.end(); ++p) {
+      if ((*p == '-') && (opts.allowMinusSign)) {
+        continue;
+      }
+      if ((*p == '.') && (opts.allowDotCharacter)) {
+        continue;
+      }
       if ((!isalpha(*p)) && (!(std::isdigit(*p))) && (*p != '_')) {
         return false;
       }
@@ -1016,7 +1027,7 @@ namespace tfel::utilities {
         return false;
       }
     }
-    if (b) {
+    if (!opts.allowCxxKeywords) {
       if (isReservedCxxKeywords(s)) {
         return false;
       }

@@ -64,7 +64,7 @@ namespace mfront {
      *
      * \param[in] opts: options
      */
-    virtual void setOptions(const DataMap&) = 0;
+    virtual void setOptions(const DataMap &) = 0;
     /*!
      * \brief treat a keyword
      * \param[in,out] bd: behaviour description

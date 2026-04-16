@@ -112,7 +112,7 @@ namespace mfront {
                               const FileDescription&) const;
 
     //! \brief backend to be used
-    const std::unique_ptr<const AbstractBackend> backend;
+    std::unique_ptr<const AbstractBackend> backend;
 
   };  // end of MfrontGenericParallelMaterialPropertyInterface
 

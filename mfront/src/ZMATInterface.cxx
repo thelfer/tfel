@@ -145,7 +145,7 @@ namespace mfront {
       tfel::raise("no options expected for interface '" +
                   this->getInterfaceName() + "'");
     }
-  } // end of setOptions
+  }  // end of setOptions
 
   std::string ZMATInterface::getInterfaceName() const { return "ZMAT"; }
 
