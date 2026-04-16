@@ -22,6 +22,11 @@ The page describes the new functionalities of Version 3.0.17 of the
 
 # Issues fixed
 
+## Issue 964: [tfel-utilities] The second parameter of `CxxTokenizer::isValidIdentifier` is not taken into account correctly
+
+For more details, see <https://github.com/thelfer/tfel/issues/964>.
+
+
 ## Issue 953: Extending the precision of the default parameters value for material properties
 
 For more details, see <https://github.com/thelfer/tfel/issues/953>.

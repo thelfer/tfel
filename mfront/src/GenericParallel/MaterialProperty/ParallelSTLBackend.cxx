@@ -22,11 +22,30 @@ namespace mfront::generic_parallel::material_property {
 
   ParallelSTLBackend::ParallelSTLBackend() = default;
 
-  ParallelSTLBackend::ParallelSTLBackend(const tfel::utilities::DataMap& opts) {
+  ParallelSTLBackend::ParallelSTLBackend(const tfel::utilities::DataMap& opts)
+      : execution_policy("std::execution::par_unseq") {
     auto validator = tfel::utilities::DataMapValidator{};
     validator.addDataTypeValidator<std::string>("execution_policy");
     validator.validate(opts);
-  }
+    if (contains(opts, "execution_policy")) {
+      const auto p = get<std::string>(opts, "execution_policy");
+      if ((p == "par") || (p == "parallel_policy")) {
+        this->execution_policy = "std::execution::par";
+      } else if ((p == "seq") || (p == "sequenced_policy")) {
+        this->execution_policy = "std::execution::seq";
+      } else if ((p == "unseq") || (p == "unsequenced_policy")) {
+        this->execution_policy = "std::execution::unseq";
+      } else if ((p == "par_unseq") || (p == "parallel_unsequenced_policy")) {
+        this->execution_policy = "std::execution::par_unseq";
+      } else {
+        tfel::raise(
+            "unsuported execution policy '" + p +
+            "'. Valid execution policy are: 'sequenced_policy' (or "
+            "'seq'), 'unsequenced_policy' (or 'unseq'), 'parallel_policy' (or "
+            "'par') and 'parallel_unsequenced_policy' (or 'par_unseq')");
+      }
+    }
+  }  // end of ParallelSTLBackend
 
   void ParallelSTLBackend::writeSpecificIncludesInHeaderFile(
       std::ostream&,
@@ -305,7 +324,8 @@ namespace mfront::generic_parallel::material_property {
     os << "// loop over the points\n"
        << "const auto mfront_index_range = "
        << "std::views::iota(" << types.integer_type << "{}, mfront_npoints);\n"
-       << "std::for_each(mfront_index_range.begin(), "
+       << "std::for_each(" << this->execution_policy
+       << ", mfront_index_range.begin(), "
        << "mfront_index_range.end(),\n"
        << "[mfront_kernel](const " << types.integer_type << " mfront_idx){\n"
        << "mfront_kernel(mfront_idx);\n"

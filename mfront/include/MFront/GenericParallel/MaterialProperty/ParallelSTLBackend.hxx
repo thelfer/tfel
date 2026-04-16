@@ -75,6 +75,8 @@ namespace mfront::generic_parallel::material_property {
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&) const;
+    //! \brief execution policy
+    std::string execution_policy;
   };  // end of ParallelSTLBackend
 
 }  // end of namespace mfront::generic_parallel::material_property
