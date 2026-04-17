@@ -407,7 +407,7 @@ namespace tfel::utilities {
   DataMapValidator& DataMapValidator::operator=(const DataMapValidator&) =
       default;
 
-  void DataMapValidator::addStrictlyPositiveIntegerCheck(const std::string& k){
+  void DataMapValidator::addStrictlyPositiveIntegerCheck(const std::string& k) {
     this->addDataValidator(k, [k](const Data& d) {
       if (!d.is<int>()) {
         tfel::raise("data named '" + k + "' is not an integer");

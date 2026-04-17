@@ -61,7 +61,8 @@ namespace mfront {
     return *id;
   }  // end of getInterfaceIdentifier
 
-  ConfigurationManager::Language ConfigurationManager::getLanguage(std::string_view s){
+  ConfigurationManager::Language ConfigurationManager::getLanguage(
+      std::string_view s) {
     if ((s == "c++") || (s == "cxx") || (s == "CXX") || (s == "C++")) {
       return ConfigurationManager::CXX;
     }

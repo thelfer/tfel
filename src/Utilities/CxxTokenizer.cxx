@@ -1002,7 +1002,7 @@ namespace tfel::utilities {
 
   bool CxxTokenizer::isValidIdentifier(std::string_view s, const bool b) {
     return CxxTokenizer::isValidIdentifier(s, {.allowCxxKeywords = b});
-  } // end of isValidIdentifier
+  }  // end of isValidIdentifier
 
   bool CxxTokenizer::isValidIdentifier(std::string_view s,
                                        const IsValidIdentifierOptions &opts) {

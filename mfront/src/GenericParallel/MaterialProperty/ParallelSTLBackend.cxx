@@ -48,13 +48,13 @@ namespace mfront::generic_parallel::material_property {
     }
   }  // end of ParallelSTLBackend
 
-  std::string ParallelSTLBackend::getHeaderFileExtension() const{
+  std::string ParallelSTLBackend::getHeaderFileExtension() const {
     return "hxx";
-  } // end of getHeaderFileExtension
+  }  // end of getHeaderFileExtension
 
   std::string ParallelSTLBackend::getSourceFileExtension() const {
     return "cxx";
-  } // end of getSourceFileExtension
+  }  // end of getSourceFileExtension
 
   void ParallelSTLBackend::writeSpecificIncludesInHeaderFile(
       std::ostream&,
@@ -276,7 +276,6 @@ namespace mfront::generic_parallel::material_property {
     // declaration of the output
     os << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
     if (!areRuntimeChecksDisabled(mpd)) {
-
       if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
         os << "#ifndef NO_" << iucname << "_BOUNDS_CHECK\n";
       }

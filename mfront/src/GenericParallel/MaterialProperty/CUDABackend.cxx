@@ -29,7 +29,7 @@ namespace mfront::generic_parallel::material_property {
 
   CUDABackend::CUDABackend() = default;
 
-  CUDABackend::CUDABackend(const tfel::utilities::DataMap& opts){
+  CUDABackend::CUDABackend(const tfel::utilities::DataMap& opts) {
     auto validator = tfel::utilities::DataMapValidator{};
     validator.addStrictlyPositiveIntegerCheck("number_of_blocks");
     validator.addStrictlyPositiveIntegerCheck("number_of_threads_per_block");
@@ -79,8 +79,7 @@ namespace mfront::generic_parallel::material_property {
        << "* const mfront_output";
     if (requiresBoundsCheck(mpd)) {
       os << ",\nint* const mfront_bounds_statuses"
-         << ",\nconst "
-         << types.integer_type << " mfront_out_of_bounds_policy";
+         << ",\nconst " << types.integer_type << " mfront_out_of_bounds_policy";
     }
     if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
       os << ",\nconst " << i.getInterfaceInternalNamespace() << "::" << name
@@ -109,8 +108,7 @@ namespace mfront::generic_parallel::material_property {
           os << "double(" << pv << ");\n";
         }
       }
-    }
-    else {
+    } else {
       if (useQuantities(mpd)) {
         for (const auto& p : mpd.parameters) {
           os << "const auto " << p.name << " = " << p.type

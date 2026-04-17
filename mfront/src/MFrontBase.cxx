@@ -713,7 +713,6 @@ namespace mfront {
             getLogStream() << "treating configuration options for language '"
                            << l << "' from file '" << file << "'\n";
           }
-
         }
       }
     } catch (std::exception& e) {
