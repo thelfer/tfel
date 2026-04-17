@@ -1,3 +1,4 @@
+
 /*!
  * \file  MFrontBase.cxx
  * \brief
@@ -682,10 +683,37 @@ namespace mfront {
           if (!opts.is<tfel::utilities::DataMap>()) {
             tfel::raise("invalid options types for language'" + l + "'");
           }
+          const auto language = ConfigurationManager::getLanguage(l);
+          for (const auto& [c, o] : opts.get<tfel::utilities::DataMap>()) {
+            if (c == "compiler") {
+              if (!o.is<std::string>()) {
+                tfel::raise(
+                    "unsupported option type for the 'compiler' option for "
+                    "language '" +
+                    l + "': expected a string");
+              }
+              m.setCompiler(language, o.get<std::string>());
+            } else {
+              const auto category =
+                  ConfigurationManager::getLanguageOptionsCategory(c);
+              if (o.is<std::string>()) {
+                m.addCompilationOption(language, category,
+                                       o.get<std::string>());
+              } else if (is_convertible<std::vector<std::string>>(o)) {
+                m.addCompilationOptions(language, category,
+                                        convert<std::vector<std::string>>(o));
+              } else {
+                tfel::raise("unsupported option type for category '" + c +
+                            "' for language '" + l +
+                            "': expected a string or an array of strings");
+              }
+            }
+          }
           if (getVerboseMode() >= VERBOSE_DEBUG) {
             getLogStream() << "treating configuration options for language '"
                            << l << "' from file '" << file << "'\n";
           }
+
         }
       }
     } catch (std::exception& e) {

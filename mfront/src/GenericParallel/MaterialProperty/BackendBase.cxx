@@ -77,7 +77,7 @@ namespace mfront::generic_parallel::material_property {
     }
     if ((b.boundsType == VariableBoundsDescription::UPPER) ||
         (b.boundsType == VariableBoundsDescription::LOWERANDUPPER)) {
-      os << "if(" << v.name << " > " << v.type << "(" << b.lowerBound << ")){\n"
+      os << "if(" << v.name << " > " << v.type << "(" << b.upperBound << ")){\n"
          << "mfront_bounds_statuses[" << 2 * i + 1 << "] = 1;\n"
          << "if (mfront_out_of_bounds_policy==" << iucname
          << "_STRICT_POLICY){\n"

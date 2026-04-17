@@ -18,6 +18,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <optional>
 #include "TFEL/Utilities/Data.hxx"
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
@@ -42,10 +43,24 @@ namespace mfront {
       COMPILATION_FLAGS,
       LINKER_FLAGS,
       LINK_PATHS,
-      LIBRARIES
+      LINK_LIBRARIES
     };
     //! \brief a simple alias
     using DataMap = tfel::utilities::DataMap;
+    /*!
+     * \brief return the language associated with the given string
+     *
+     * \param[in] s: string
+     */
+    [[nodiscard]] static Language getLanguage(std::string_view);
+    /*!
+     * \brief return the language options category associated with the given
+     * string
+     *
+     * \param[in] s: string
+     */
+    [[nodiscard]] static LanguageOptionCategory getLanguageOptionsCategory(
+        std::string_view);
     //! \brief return the unique instance of this class
     [[nodiscard]] static ConfigurationManager& get() noexcept;
     /*!
@@ -134,6 +149,16 @@ namespace mfront {
      */
     DataMap getModelInterfaceOptions(const std::string&) const;
     /*!
+     * \brief set the compiler for the given language
+     *
+     * \param[in] c: compiler
+     * \note an exception is thrown if the compiler is already set for the given
+     * language
+     */
+    void setCompiler(const Language, const std::string&);
+    //! \return the compiler for the given language, if set
+    [[nodiscard]] std::optional<std::string> getCompiler(const Language) const;
+    /*!
      * \brief add a compilation option of the given language
      *
      * \param[in] l: language
@@ -161,7 +186,7 @@ namespace mfront {
      *
      * \note if no option is declared, an empty set is returned
      */
-    [[nodiscard]] std::set<std::string> getCompilationOptions(
+    [[nodiscard]] std::optional<std::set<std::string>> getCompilationOptions(
         const Language, const LanguageOptionCategory) const;
 
    private:
@@ -175,17 +200,13 @@ namespace mfront {
      * properties
      */
     std::map<std::string, DataMap> material_property_interfaces_options;
-    /*!
-     * \brief list of options given to interfaces dedicated to behaviours
-     */
+    //! \brief list of options given to interfaces dedicated to behaviours
     std::map<std::string, DataMap> behaviour_interfaces_options;
-    /*!
-     * \brief list of options given to interfaces dedicated to models
-     */
+    //! \brief list of options given to interfaces dedicated to models
     std::map<std::string, DataMap> model_interfaces_options;
-    /*!
-     * \brief list of compilation options
-     */
+    //! \brief list of compilers
+    std::map<Language, std::string> compilers;
+    //! \brief list of compilation options
     std::map<Language, std::map<LanguageOptionCategory, std::set<std::string>>>
         compilation_options;
   };

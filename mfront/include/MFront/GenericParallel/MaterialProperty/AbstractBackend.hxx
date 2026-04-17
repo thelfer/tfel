@@ -35,6 +35,8 @@ namespace mfront::generic_parallel::material_property {
    * (CUDA, SYCL, parallel STL)
    */
   struct MFRONT_VISIBILITY_EXPORT AbstractBackend {
+    //! \brief return the extension of the header file
+    [[nodiscard]] virtual std::string getHeaderFileExtension() const = 0;
     /*!
      * \brief write additional headers in the header file
      *
@@ -68,6 +70,8 @@ namespace mfront::generic_parallel::material_property {
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&) const = 0;
+    //! \brief return the extension of the source file
+    [[nodiscard]] virtual std::string getSourceFileExtension() const = 0;
     /*!
      * \brief write additional headers in the source file
      *
@@ -85,11 +89,13 @@ namespace mfront::generic_parallel::material_property {
      * \param[in] os: output stream
      * \param[in] i: interface
      * \param[in] mpd: material property description
+     * \param[in] fd: file description
      */
     virtual void writeGlobalFunction(
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
-        const MaterialPropertyDescription&) const = 0;
+        const MaterialPropertyDescription&,
+        const FileDescription&) const = 0;
     /*!
      * \brief write the implementation of the material property
      *

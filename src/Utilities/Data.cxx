@@ -407,6 +407,17 @@ namespace tfel::utilities {
   DataMapValidator& DataMapValidator::operator=(const DataMapValidator&) =
       default;
 
+  void DataMapValidator::addStrictlyPositiveIntegerCheck(const std::string& k){
+    this->addDataValidator(k, [k](const Data& d) {
+      if (!d.is<int>()) {
+        tfel::raise("data named '" + k + "' is not an integer");
+      }
+      if (d.get<int>() <= 0) {
+        tfel::raise("data named '" + k + "' is not strictly postive");
+      }
+    });
+  }  // end of addStrictlyPositiveIntegerCheck
+
   DataMapValidator& DataMapValidator::addDataValidator(const std::string& k,
                                                        const DataValidator& f) {
     this->validators[k].push_back(f);

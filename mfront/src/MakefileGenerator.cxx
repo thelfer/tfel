@@ -44,6 +44,7 @@
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 #include "MFront/MFrontHeader.hxx"
+#include "MFront/ConfigurationManager.hxx"
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/InstallPath.hxx"
 #include "MFront/SearchPathsHandler.hxx"
@@ -186,16 +187,59 @@ namespace mfront {
     if (getVerboseMode() >= VERBOSE_LEVEL2) {
       getLogStream() << "generating Makefile\n";
     }
+    const auto& cm = ConfigurationManager::get();
+    auto get_compiler = [&cm](const char* const env,
+                              const ConfigurationManager::Language l)
+        -> std::optional<std::string> {
+      const auto* const compiler = std::getenv(env);
+      if (compiler != nullptr) {
+        return compiler;
+      }
+      const auto ocompiler = cm.getCompiler(l);
+      if (ocompiler.has_value()) {
+        return *ocompiler;
+      }
+      return {};
+    };
+    auto get_compilation_options =
+        [&cm](const char* const env, const ConfigurationManager::Language l,
+              const ConfigurationManager::LanguageOptionCategory c)
+        -> std::set<std::string> {
+      const auto* const opts = std::getenv(env);
+      if (opts != nullptr) {
+        return std::set<std::string>{{std::string{opts}}};
+      }
+      const auto opts2 = cm.getCompilationOptions(l, c);
+      if (opts2.has_value()) {
+        return *opts2;
+      }
+      return {};
+    };
+    auto transform_flag = [](const std::string& flag) {
+      if ((tfel::utilities::starts_with(flag, "$(shell ")) ||
+          (tfel::utilities::ends_with(flag, ")"))) {
+        return "$(strip " + flag + ")";
+      }
+      return flag;
+    };
     MFrontLockGuard lock;
-    const auto env_cc = ::getenv("CC");
-    const auto env_cxx = ::getenv("CXX");
+    const auto c_compiler = get_compiler("CC", ConfigurationManager::C);
+    const auto cxx_compiler = get_compiler("CXX", ConfigurationManager::CXX);
     const auto inc = ::getenv("INCLUDES");
-    const auto cxxflags = ::getenv("CXXFLAGS");
-    const auto cflags = ::getenv("CFLAGS");
-    const auto ldflags = ::getenv("LDFLAGS");
+    const auto cxxflags =
+        get_compilation_options("CXXFLAGS", ConfigurationManager::CXX,
+                                ConfigurationManager::COMPILATION_FLAGS);
+    const auto cflags =
+        get_compilation_options("CFLAGS", ConfigurationManager::C,
+                                ConfigurationManager::COMPILATION_FLAGS);
+    const auto cxx_ldflags =
+        get_compilation_options("LDFLAGS", ConfigurationManager::CXX,
+                                ConfigurationManager::LINKER_FLAGS);
+    const auto c_ldflags = get_compilation_options(
+        "LDFLAGS", ConfigurationManager::C, ConfigurationManager::LINKER_FLAGS);
     const auto sb = o.silentBuild ? "@" : "";
-    const auto cxx = (env_cxx == nullptr) ? "$(CXX)" : env_cxx;
-    const auto cc = (env_cc == nullptr) ? "$(CC)" : env_cc;
+    const auto cc = c_compiler.value_or("$(CC)");
+    const auto cxx = cxx_compiler.value_or("$(CXX)");
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto mfile = d + tfel::system::dirStringSeparator() + f;
     std::ofstream m(mfile);
@@ -222,13 +266,13 @@ namespace mfront {
       << MFrontHeader::getHeader("# ") << "\n";
     m << "export LD_LIBRARY_PATH:=$(PWD):$(LD_LIBRARY_PATH)\n\n";
     // COMPILERS
-    if (env_cc != nullptr) {
-      m << "CC := " << env_cc << "\n";
+    if (c_compiler.has_value()) {
+      m << "CC := " << *(c_compiler) << "\n";
     }
-    if (env_cxx != nullptr) {
-      m << "CXX := " << env_cxx << "\n";
+    if (cxx_compiler.has_value()) {
+      m << "CXX := " << *(cxx_compiler) << "\n";
     }
-    if ((env_cc != nullptr) || (env_cxx != nullptr)) {
+    if ((c_compiler.has_value()) || (cxx_compiler.has_value())) {
       m << '\n';
     }
     // INCLUDES
@@ -243,16 +287,11 @@ namespace mfront {
     // cpp flags
     std::vector<std::string> cppflags;
     for (const auto& l : t.libraries) {
-      for (const auto& flags : l.cppflags) {
-        insert_if(cppflags, flags);
+      for (const auto& flag : l.cppflags) {
+        insert_if(cppflags, transform_flag(flag));
       }
       for (const auto& id : l.include_directories) {
-        if ((tfel::utilities::starts_with(id, "$(shell ")) ||
-            (tfel::utilities::ends_with(id, ")"))) {
-          insert_if(cppflags, "-I\"$(strip " + id + ")\"");
-        } else {
-          insert_if(cppflags, "-I" + id);
-        }
+        insert_if(cppflags, "-I\"" + transform_flag(id) + '\"');
       }
     }
     if (!cppflags.empty()) {
@@ -278,32 +317,49 @@ namespace mfront {
     //
     m << "\n\n";
     // LDFLAGS
-    if (ldflags != nullptr) {
-      m << "LDFLAGS := " << ldflags << '\n';
+    if (!cxx_ldflags.empty()) {
+      m << "CXXLDFLAGS :=";
+      for (const auto& flag : cxx_ldflags) {
+        m << " " << transform_flag(flag);
+      }
+      m << " \n";
     }
+    if (!c_ldflags.empty()) {
+      m << "CLDFLAGS :=";
+      for (const auto& flag : c_ldflags) {
+        m << " " << transform_flag(flag);
+      }
+      m << " \n";
+    }
+    auto write_default_c_cxx_flags = [&o, &m, &tfel_config] {
+      switch (o.olevel) {
+        case GeneratorOptions::LEVEL2:
+          m << "$(shell " << tfel_config << " --oflags --oflags2) ";
+          break;
+        case GeneratorOptions::LEVEL1:
+          m << "$(shell " << tfel_config << " --oflags) ";
+          break;
+        case GeneratorOptions::LEVEL0:
+          m << "$(shell " << tfel_config << " --oflags0) ";
+          break;
+      }
+      if (o.debugFlags) {
+        m << "$(shell " << tfel_config << " --debug-flags) ";
+      }
+    };
     // CXXFLAGS
     if (!cppSources.empty()) {
-      m << "CXXFLAGS := -Wall -Wfatal-errors ";
-#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
-      m << "-ansi ";
-#endif /* __CYGWIN__ */
-      if (cxxflags != nullptr) {
-        m << cxxflags << " ";
+      m << "CXXFLAGS := ";
+      if (!cxxflags.empty()) {
+        for (const auto& flag : cxxflags) {
+          m << transform_flag(flag) << " ";
+        }
       } else {
-        switch (o.olevel) {
-          case GeneratorOptions::LEVEL2:
-            m << "$(shell " << tfel_config << " --oflags --oflags2) ";
-            break;
-          case GeneratorOptions::LEVEL1:
-            m << "$(shell " << tfel_config << " --oflags) ";
-            break;
-          case GeneratorOptions::LEVEL0:
-            m << "$(shell " << tfel_config << " --oflags0) ";
-            break;
-        }
-        if (o.debugFlags) {
-          m << "$(shell " << tfel_config << " --debug-flags) ";
-        }
+        m << "-Wall -Wfatal-errors ";
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+        m << "-ansi ";
+#endif /* __CYGWIN__ */
+        write_default_c_cxx_flags();
       }
       if ((o.sys == "win32") || (o.sys == "cygwin")) {
         m << "-DWIN32 -DMFRONT_COMPILING $(INCLUDES) \n\n";
@@ -313,24 +369,17 @@ namespace mfront {
     }
     // CFLAGS
     if (!cSources.empty()) {
-      m << "CFLAGS := -W -Wall -Wfatal-errors ";
-#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
-      m << "-ansi -std=c99 ";
-#endif /* __CYGWIN__ */
-      if (cflags != nullptr) {
-        m << cflags << " ";
-      } else {
-        switch (o.olevel) {
-          case GeneratorOptions::LEVEL2:
-            m << "$(shell " << tfel_config << " --oflags --oflags2) ";
-            break;
-          case GeneratorOptions::LEVEL1:
-            m << "$(shell " << tfel_config << " --oflags) ";
-            break;
-          case GeneratorOptions::LEVEL0:
-            m << "$(shell " << tfel_config << " --oflags0) ";
-            break;
+      m << "CFLAGS := ";
+      if (!cflags.empty()) {
+        for (const auto& flag : cflags) {
+          m << transform_flag(flag) << " ";
         }
+      } else {
+        m << "-W -Wall -Wfatal-errors ";
+#if !(defined _WIN32 || defined _WIN64 || defined __CYGWIN__)
+        m << "-ansi -std=c99 ";
+#endif /* __CYGWIN__ */
+        write_default_c_cxx_flags();
       }
       if ((o.sys == "win32") || (o.sys == "cygwin")) {
         m << "-DWIN32 -DMFRONT_COMPILING $(INCLUDES)\n\n";
@@ -440,8 +489,14 @@ namespace mfront {
       } else {
         m << sb << cc << " ";
       }
-      if (ldflags != nullptr) {
-        m << "$(LDFLAGS) ";
+      if (hasCxxSources) {
+        if (!cxx_ldflags.empty()) {
+          m << "$(CXXLDFLAGS) ";
+        }
+      } else {
+        if (!c_ldflags.empty()) {
+          m << "$(CLDFLAGS) ";
+        }
       }
       if (o.sys == "win32") {
         m << "-shared -Wl,--add-stdcall-alias,--out-implib,lib" << l.name

@@ -10,7 +10,6 @@
  * delivered with the sources of TFEL. CEA or EDF may also distribute this
  * project under specific licensing conditions.
  */
-
 #include <ostream>
 #include "MFront/VariableDescription.hxx"
 #include "MFront/MaterialPropertyDescription.hxx"
@@ -20,7 +19,9 @@
 
 namespace mfront::generic_parallel::material_property {
 
-  ParallelSTLBackend::ParallelSTLBackend() = default;
+  ParallelSTLBackend::ParallelSTLBackend()
+      : execution_policy("std::execution::par_unseq") {
+  }  // end of ParallelSTLBackend
 
   ParallelSTLBackend::ParallelSTLBackend(const tfel::utilities::DataMap& opts)
       : execution_policy("std::execution::par_unseq") {
@@ -47,6 +48,14 @@ namespace mfront::generic_parallel::material_property {
     }
   }  // end of ParallelSTLBackend
 
+  std::string ParallelSTLBackend::getHeaderFileExtension() const{
+    return "hxx";
+  } // end of getHeaderFileExtension
+
+  std::string ParallelSTLBackend::getSourceFileExtension() const {
+    return "cxx";
+  } // end of getSourceFileExtension
+
   void ParallelSTLBackend::writeSpecificIncludesInHeaderFile(
       std::ostream&,
       const GenericParallelMaterialPropertyInterface&,
@@ -64,8 +73,8 @@ namespace mfront::generic_parallel::material_property {
   void ParallelSTLBackend::writeGlobalFunction(
       std::ostream&,
       const GenericParallelMaterialPropertyInterface&,
-      const MaterialPropertyDescription&) const {
-  }  // end of writeGlobalFunction
+      const MaterialPropertyDescription&,
+      const FileDescription&) const {}  // end of writeGlobalFunction
 
   void ParallelSTLBackend::writeCxxDeclaration(
       std::ostream&,
@@ -132,18 +141,18 @@ namespace mfront::generic_parallel::material_property {
     }
     os << ")\n{\n";
     writeBeginningOfMaterialPropertyBody(os, mpd, fd, "double", true);
-    os << "auto mfront_report = "
-       << "[&mfront_output_status](const std::string& "
-       << "mfront_error_message){\n"
-       << "if(mfront_error_message.empty()){\n"
-       << "return;\n"
-       << "}\n"
-       << "std::strncpy(mfront_output_status->msg,"
-       << "mfront_error_message.c_str(),511);\n"
-       << "mfront_output_status->msg[511]='\\0';\n"
-       << "};\n";
     if (!areRuntimeChecksDisabled(mpd)) {
-      os << "const int mfront_errno_old = errno;\n";
+      os << "auto mfront_report = "
+         << "[&mfront_output_status](const std::string& "
+         << "mfront_error_message){\n"
+         << "if(mfront_error_message.empty()){\n"
+         << "return;\n"
+         << "}\n"
+         << "std::strncpy(mfront_output_status->msg,"
+         << "mfront_error_message.c_str(),511);\n"
+         << "mfront_output_status->msg[511]='\\0';\n"
+         << "};\n"
+         << "const int mfront_errno_old = errno;\n";
     }
     os << "mfront_output_status->status = 0;\n"
        << "mfront_output_status->bounds_status = 0;\n"
@@ -209,7 +218,7 @@ namespace mfront::generic_parallel::material_property {
          (mpd.output.hasPhysicalBounds()) || (mpd.output.hasBounds()));
     if (requiresBoundsCheck) {
       os << "auto mfront_bounds_statuses = std::vector<int>{};\n"
-         << "mfront_bounds_statuses.resize(2 * (mfront_nargs + 1));\n";
+         << "mfront_bounds_statuses.resize(2 * (mfront_nargs + 1), 0);\n";
     }
     // declaration of the kernel
     os << "auto mfront_kernel = [";
@@ -267,6 +276,7 @@ namespace mfront::generic_parallel::material_property {
     // declaration of the output
     os << "auto " << mpd.output.name << " = " << mpd.output.type << "{};\n";
     if (!areRuntimeChecksDisabled(mpd)) {
+
       if ((hasPhysicalBounds(mpd.inputs)) || (hasBounds(mpd.inputs))) {
         os << "#ifndef NO_" << iucname << "_BOUNDS_CHECK\n";
       }

@@ -1,7 +1,7 @@
 /*!
- * \file MFront/GenericParallel/MaterialProperty/ParallelSTLBackend.hxx
+ * \file MFront/GenericParallel/MaterialProperty/CUDABackend.hxx
  *
- * \brief  This file declares the `ParallelSTLBackend` class
+ * \brief  This file declares the `CUDABackend` class
  * \author Thomas Helfer
  * \date   07/04/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
@@ -12,8 +12,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_PARALLELSTLBACKEND_HXX
-#define LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_PARALLELSTLBACKEND_HXX
+#ifndef LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_CUDABACKEND_HXX
+#define LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_CUDABACKEND_HXX
 
 #include "TFEL/Utilities/Data.hxx"
 #include "MFront/MFrontConfig.hxx"
@@ -24,15 +24,15 @@ namespace mfront::generic_parallel::material_property {
   /*!
    * \brief This class implements a backend for the parallel STL algorithms
    */
-  struct MFRONT_VISIBILITY_EXPORT ParallelSTLBackend : BackendBase {
+  struct MFRONT_VISIBILITY_EXPORT CUDABackend : BackendBase {
     //! \brief default constructor
-    ParallelSTLBackend();
+    CUDABackend();
     /*!
      * \brief constructor
      *
      * \param[in] opts: options
      */
-    ParallelSTLBackend(const tfel::utilities::DataMap&);
+    CUDABackend(const tfel::utilities::DataMap&);
     //
     [[nodiscard]] std::string getHeaderFileExtension() const override;
     void writeSpecificIncludesInHeaderFile(
@@ -63,7 +63,7 @@ namespace mfront::generic_parallel::material_property {
                                 const MaterialPropertyDescription&,
                                 const FileDescription&) const override;
     //! \brief destructor
-    ~ParallelSTLBackend() noexcept override;
+    ~CUDABackend() noexcept override;
 
    protected:
     /*!
@@ -77,11 +77,13 @@ namespace mfront::generic_parallel::material_property {
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&) const;
-    //! \brief execution policy
-    std::string execution_policy;
-  };  // end of ParallelSTLBackend
+    //! \brief number of blocks
+    int number_of_blocks = 1;
+    //! \brief number of thread per blocks
+    int number_of_threads_per_blocks = 1;
+  };  // end of CUDABackend
 
 }  // end of namespace mfront::generic_parallel::material_property
 
-#endif /* LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_PARALLELSTLBACKEND_HXX \
+#endif /* LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_CUDABACKEND_HXX \
         */

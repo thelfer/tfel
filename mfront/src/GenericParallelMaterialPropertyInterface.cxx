@@ -178,13 +178,13 @@ namespace mfront {
   std::string GenericParallelMaterialPropertyInterface::getHeaderFileName(
       const std::string& name) const {
     const auto i = this->getInterfaceName();
-    return name + "-" + i + ".hxx";
+    return name + '-' + i + '.' + this->backend->getHeaderFileExtension();
   }
 
   std::string GenericParallelMaterialPropertyInterface::getSourceFileName(
       const std::string& name) const {
     const auto i = this->getInterfaceName();
-    return name + "-" + i + ".cxx";
+    return name + '-' + i + '.' + this->backend->getSourceFileExtension();
   }
 
   void GenericParallelMaterialPropertyInterface::writeOutputFiles(
@@ -330,7 +330,7 @@ namespace mfront {
                                             .interface_namespace = nname,
                                             .allow_copy_constructor = true});
 
-    this->backend->writeGlobalFunction(os, *this, mpd);
+    this->backend->writeGlobalFunction(os, *this, mpd, fd);
 
     this->backend->writeCxxImplementation(os, *this, mpd, fd);
 

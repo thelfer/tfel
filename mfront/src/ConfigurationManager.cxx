@@ -61,6 +61,49 @@ namespace mfront {
     return *id;
   }  // end of getInterfaceIdentifier
 
+  ConfigurationManager::Language ConfigurationManager::getLanguage(std::string_view s){
+    if ((s == "c++") || (s == "cxx") || (s == "CXX") || (s == "C++")) {
+      return ConfigurationManager::CXX;
+    }
+    if ((s == "c") || (s == "C")) {
+      return ConfigurationManager::C;
+    }
+    if ((s == "fortran") || (s == "Fortran") || (s == "FORTRAN")) {
+      return ConfigurationManager::FORTRAN;
+    }
+    if ((s == "cuda") || (s == "CUDA")) {
+      return ConfigurationManager::CUDA;
+    }
+    if (!((s == "sycl") || (s == "SYCL"))) {
+      tfel::raise("unsupported language '" + std::string{s} + "'");
+    }
+    return ConfigurationManager::SYCL;
+  }
+
+  ConfigurationManager::LanguageOptionCategory
+  ConfigurationManager::getLanguageOptionsCategory(std::string_view s) {
+    if (s == "preprocessor_flags") {
+      return ConfigurationManager::PREPROCESSOR_FLAGS;
+    }
+    if (s == "includes_paths") {
+      return ConfigurationManager::INCLUDES_PATHS;
+    }
+    if (s == "compilation_flags") {
+      return ConfigurationManager::COMPILATION_FLAGS;
+    }
+    if (s == "linker_flags") {
+      return ConfigurationManager::LINKER_FLAGS;
+    }
+    if (s == "link_paths") {
+      return ConfigurationManager::LINK_PATHS;
+    }
+    if (s != "link_libraries") {
+      tfel::raise("unsupported language options category '" + std::string{s} +
+                  "'");
+    }
+    return ConfigurationManager::LINK_LIBRARIES;
+  }  // end of getLanguageOptionsCategory
+
   ConfigurationManager& ConfigurationManager::get() noexcept {
     static ConfigurationManager m;
     return m;
@@ -156,6 +199,28 @@ namespace mfront {
     return opts;
   }  // end of getModelInterfaceOptions
 
+  void ConfigurationManager::setCompiler(const Language l,
+                                         const std::string& c) {
+    const auto p = this->compilers.find(l);
+    if (p != this->compilers.end()) {
+      if (p->second != c) {
+        tfel::raise("inconsistent compilers ('" + p->second +
+                    "' is distinct from '" + c + "')");
+      }
+      return;
+    }
+    this->compilers.insert({l, c});
+  }  // end of setCompiler
+
+  std::optional<std::string> ConfigurationManager::getCompiler(
+      const Language l) const {
+    const auto p = this->compilers.find(l);
+    if (p == this->compilers.end()) {
+      return {};
+    }
+    return p->second;
+  }  // end of getCompiler
+
   void ConfigurationManager::addCompilationOption(
       const Language l, const LanguageOptionCategory c, const std::string& o) {
     auto& options = this->compilation_options[l][c];
@@ -170,7 +235,8 @@ namespace mfront {
     options.insert(opts.begin(), opts.end());
   }  // end of addCompilationOptions
 
-  std::set<std::string> ConfigurationManager::getCompilationOptions(
+  std::optional<std::set<std::string>>
+  ConfigurationManager::getCompilationOptions(
       const Language l, const LanguageOptionCategory c) const {
     const auto p = this->compilation_options.find(l);
     if (p == this->compilation_options.end()) {

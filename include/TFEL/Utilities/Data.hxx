@@ -255,6 +255,14 @@ namespace tfel::utilities {
     template <typename T1>
     DataMapValidator& addDataTypeValidator(const std::string& k) requires(
         tfel::meta::TLCountNbrOfT<std::decay_t<T1>, DataTypes>::value == 1);
+    /*!
+     * \brief check that the data associated with the given key is a strictly
+     * positive integer
+     *
+     * \param[in] k: key
+     */
+    void addStrictlyPositiveIntegerCheck(const std::string&);
+
     //! \brief validate a data-map
     void validate(const DataMap&) const;
     //! \brief destructor
