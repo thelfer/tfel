@@ -15,6 +15,7 @@
 #ifndef LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_CUDABACKEND_HXX
 #define LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_CUDABACKEND_HXX
 
+#include <optional>
 #include "TFEL/Utilities/Data.hxx"
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/GenericParallel/MaterialProperty/BackendBase.hxx"
@@ -78,9 +79,9 @@ namespace mfront::generic_parallel::material_property {
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&) const;
     //! \brief number of blocks
-    int number_of_blocks = 1;
-    //! \brief number of thread per blocks
-    int number_of_threads_per_blocks = 1;
+    std::optional<int> number_of_blocks;
+    //! \brief number of threads per block
+    std::optional<int> number_of_threads_per_block;
   };  // end of CUDABackend
 
 }  // end of namespace mfront::generic_parallel::material_property

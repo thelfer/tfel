@@ -32,14 +32,14 @@ namespace mfront::generic_parallel::material_property {
   CUDABackend::CUDABackend(const tfel::utilities::DataMap& opts){
     auto validator = tfel::utilities::DataMapValidator{};
     validator.addStrictlyPositiveIntegerCheck("number_of_blocks");
-    validator.addStrictlyPositiveIntegerCheck("number_of_threads_per_blocks");
+    validator.addStrictlyPositiveIntegerCheck("number_of_threads_per_block");
     validator.validate(opts);
     if (contains(opts, "number_of_blocks")) {
       this->number_of_blocks = get<int>(opts, "number_of_blocks");
     }
-    if (contains(opts, "number_of_threads_per_blocks")) {
-      this->number_of_threads_per_blocks =
-          get<int>(opts, "number_of_threads_per_blocks");
+    if (contains(opts, "number_of_threads_per_block")) {
+      this->number_of_threads_per_block =
+          get<int>(opts, "number_of_threads_per_block");
     }
   }  // end of CUDABackend
 
@@ -83,7 +83,8 @@ namespace mfront::generic_parallel::material_property {
          << types.integer_type << " mfront_out_of_bounds_policy";
     }
     if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
-      os << ",\nconst Parameters mfront_parameters";
+      os << ",\nconst " << i.getInterfaceInternalNamespace() << "::" << name
+         << "MaterialPropertyHandler mfront_parameters";
     }
     for (const auto& v : mpd.inputs) {
       os << ",\nconst " << types.real_type << "* const "  //
@@ -331,15 +332,23 @@ namespace mfront::generic_parallel::material_property {
       const MaterialPropertyDescription& mpd) const {
     const auto name = i.getFunctionName(mpd);
     os << "// loop over the points\n"
-       << "mfront_" << name << "_kernel<<<1, "
-       << "mfront_npoints>>>(mfront_output, ";
+       << "mfront_" << name << "_kernel<<<"
+       << this->number_of_blocks.value_or(1) << ", ";
+    if (this->number_of_threads_per_block.has_value()) {
+      os << *(this->number_of_threads_per_block);
+    } else {
+      os << "mfront_npoints";
+    }
+    os << ">>>(mfront_output, ";
     if (requiresBoundsCheck(mpd)) {
       os << "mfront_bounds_statuses, "
          << "mfront_out_of_bounds_policy, ";
     }
     if ((!areParametersTreatedAsStaticVariables(mpd)) &&
         (!mpd.parameters.empty())) {
-      os << "mfront_parameters, ";
+      os << i.getInterfaceInternalNamespace() << "::" << name
+         << "MaterialPropertyHandler::get" << name
+         << "MaterialPropertyHandler(), ";
     }
     for (std::size_t idx = 0; idx != mpd.inputs.size(); ++idx) {
       os << "mfront_args[" << idx << "], ";
