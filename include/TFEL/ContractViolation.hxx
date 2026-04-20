@@ -24,8 +24,8 @@ namespace tfel {
    * \param[in] msg: message
    */
 #ifndef TFEL_NO_REPORT_CONTRACT_VIOLATION
-  [[noreturn]] TFEL_HOST TFELEXCEPTION_VISIBILITY_EXPORT void
-  reportContractViolation(const char* const msg);
+  [[noreturn]] TFELEXCEPTION_VISIBILITY_EXPORT TFEL_HOST void
+  reportContractViolation(const char* const);
 #else  /* TFEL_NO_REPORT_CONTRACT_VIOLATION */
   TFEL_HOST_DEVICE constexpr void reportContractViolation(const char* const) {
   }  // end of reportContractViolation
