@@ -120,34 +120,36 @@ namespace mfront {
     return res;
   }  // end of getLibraryLinkFlags(const std::string&)
 
-  // res.first : true if the target has C++ source files
+  // res.first.first : true if the target has C++ source files
+  // res.first.second: true if the target has CUDA source files
   // res.second.first : list of object files
   // res.second.first : list of library dependencies
-  static std::pair<bool, std::pair<std::string, std::string>>
+  static std::pair<std::pair<bool, bool>, std::pair<std::string, std::string>>
   getLibrarySourcesAndDependencies(const TargetsDescription& t,
                                    const GeneratorOptions& o,
                                    const std::string& name) {
     const auto& l = t.getLibrary(name);
-    auto res = std::pair<bool, std::pair<std::string, std::string>>{};
-    res.first = false;
+    auto res =
+        std::pair<std::pair<bool, bool>, std::pair<std::string, std::string>>{};
+    res.first = {false, false};
     for (const auto& s : l.sources) {
-      if (s.size() > 4) {
-        const auto ext = s.substr(s.size() - 4);
-        if ((ext == ".cpp") || (ext == ".cxx")) {
-          res.first = true;
-          res.second.first += s.substr(0, s.size() - 4) + ".o ";
-        }
+      if ((s.ends_with(".cpp")) || (s.ends_with(".cxx"))) {
+        res.first.first = true;
+        res.second.first += s.substr(0, s.size() - 4) + ".o ";
       }
-      if (s.size() > 2) {
-        if (s.substr(s.size() - 2) == ".c") {
-          res.second.first += s.substr(0, s.size() - 2) + ".o ";
-        }
+      if (s.ends_with(".c")) {
+        res.second.first += s.substr(0, s.size() - 2) + ".o ";
+      }
+      if (s.ends_with(".cu")) {
+        res.first.second = true;
+        res.second.first += s.substr(0, s.size() - 3) + ".o ";
       }
     }
     if (o.melt) {
       for (const auto& d : l.deps) {
         const auto rd = getLibrarySourcesAndDependencies(t, o, d);
-        res.first = res.first || rd.first;
+        res.first.first = res.first.first || rd.first.first;
+        res.first.second = res.first.second || rd.first.second;
         if (!res.second.first.empty()) {
           res.second.first += " ";
         }
@@ -225,6 +227,7 @@ namespace mfront {
     MFrontLockGuard lock;
     const auto c_compiler = get_compiler("CC", ConfigurationManager::C);
     const auto cxx_compiler = get_compiler("CXX", ConfigurationManager::CXX);
+    const auto cuda_compiler = get_compiler("CUDA_COMPILER", ConfigurationManager::CUDA);
     const auto inc = ::getenv("INCLUDES");
     const auto cxxflags =
         get_compilation_options("CXXFLAGS", ConfigurationManager::CXX,
@@ -232,14 +235,21 @@ namespace mfront {
     const auto cflags =
         get_compilation_options("CFLAGS", ConfigurationManager::C,
                                 ConfigurationManager::COMPILATION_FLAGS);
+    const auto cuda_flags =
+        get_compilation_options("CUDAFLAGS", ConfigurationManager::CUDA,
+                                ConfigurationManager::COMPILATION_FLAGS);
     const auto cxx_ldflags =
         get_compilation_options("LDFLAGS", ConfigurationManager::CXX,
                                 ConfigurationManager::LINKER_FLAGS);
     const auto c_ldflags = get_compilation_options(
         "LDFLAGS", ConfigurationManager::C, ConfigurationManager::LINKER_FLAGS);
+    const auto cuda_ldflags =
+        get_compilation_options("CUDALDFLAGS", ConfigurationManager::CUDA,
+                                ConfigurationManager::LINKER_FLAGS);
     const auto sb = o.silentBuild ? "@" : "";
     const auto cc = c_compiler.value_or("$(CC)");
     const auto cxx = cxx_compiler.value_or("$(CXX)");
+    const auto cuda = cuda_compiler.value_or("$(CUDA_COMPILER)");
     const auto tfel_config = tfel::getTFELConfigExecutableName();
     auto mfile = d + tfel::system::dirStringSeparator() + f;
     std::ofstream m(mfile);
@@ -247,18 +257,17 @@ namespace mfront {
     tfel::raise_if(!m, "generateMakeFile : can't open file '" + mfile + "'");
     auto cppSources = std::set<std::string>{};
     auto cSources = std::set<std::string>{};
+    auto cudaSources = std::set<std::string>{};
     for (const auto& l : t.libraries) {
       for (const auto& src : l.sources) {
-        if (src.size() > 4) {
-          if ((src.substr(src.size() - 4) == ".cpp") ||
-              (src.substr(src.size() - 4) == ".cxx")) {
-            cppSources.insert(src);
-          }
+        if ((src.ends_with(".cpp")) || (src.ends_with(".cxx"))) {
+          cppSources.insert(src);
         }
-        if (src.size() > 2) {
-          if (src.substr(src.size() - 2) == ".c") {
-            cSources.insert(src);
-          }
+        if (src.ends_with(".c")) {
+          cSources.insert(src);
+        }
+        if (src.ends_with(".cu")) {
+          cudaSources.insert(src);
         }
       }
     }
@@ -272,7 +281,11 @@ namespace mfront {
     if (cxx_compiler.has_value()) {
       m << "CXX := " << *(cxx_compiler) << "\n";
     }
-    if ((c_compiler.has_value()) || (cxx_compiler.has_value())) {
+    if (cuda_compiler.has_value()) {
+      m << "CUDA_COMPILER := " << *(cuda_compiler) << "\n";
+    }
+    if ((c_compiler.has_value()) || (cxx_compiler.has_value()) ||
+        (cuda_compiler.has_value())) {
       m << '\n';
     }
     // INCLUDES
@@ -327,6 +340,13 @@ namespace mfront {
     if (!c_ldflags.empty()) {
       m << "CLDFLAGS :=";
       for (const auto& flag : c_ldflags) {
+        m << " " << transform_flag(flag);
+      }
+      m << " \n";
+    }
+    if (!cuda_ldflags.empty()) {
+      m << "CUDALDFLAGS :=";
+      for (const auto& flag : cuda_ldflags) {
         m << " " << transform_flag(flag);
       }
       m << " \n";
@@ -387,6 +407,15 @@ namespace mfront {
         m << "-fPIC $(INCLUDES)\n\n";
       }
     }
+    if (!cudaSources.empty()) {
+      m << "CUDAFLAGS := ";
+      if (!cuda_flags.empty()) {
+        for (const auto& flag : cuda_flags) {
+          m << transform_flag(flag) << " ";
+        }
+      }
+      m << "$(INCLUDES)\n\n";
+    }
     // sources list
     if (!cppSources.empty()) {
       m << "SRCCXX = ";
@@ -405,6 +434,17 @@ namespace mfront {
       while (p4 != cSources.end()) {
         m << *p4;
         if (++p4 != cSources.end()) {
+          m << " ";
+        }
+      }
+      m << "\n\n";
+    }
+    if (!cudaSources.empty()) {
+      m << "SRCCUDA = ";
+      auto p4 = cudaSources.begin();
+      while (p4 != cudaSources.end()) {
+        m << *p4;
+        if (++p4 != cudaSources.end()) {
           m << " ";
         }
       }
@@ -475,7 +515,8 @@ namespace mfront {
       }
       m << getLibraryFullName(l) << " : ";
       auto dep = getLibrarySourcesAndDependencies(t, o, l.name);
-      const auto hasCxxSources = dep.first;
+      const auto hasCxxSources = dep.first.first;
+      const auto hasCUDASources = dep.first.second;
       if (!dep.second.first.empty()) {
         m << dep.second.first;
       }
@@ -484,12 +525,18 @@ namespace mfront {
         m << sl;
       }
       m << "\n\t";
-      if (hasCxxSources) {
+      if (hasCUDASources) {
+        m << sb << cuda << " ";
+      } else if (hasCxxSources) {
         m << sb << cxx << " ";
       } else {
         m << sb << cc << " ";
       }
-      if (hasCxxSources) {
+      if (hasCUDASources) {
+        if (!cuda_ldflags.empty()) {
+          m << "$(CUDALDFLAGS) ";
+        }
+      } else if (hasCxxSources) {
         if (!cxx_ldflags.empty()) {
           m << "$(CXXLDFLAGS) ";
         }
@@ -586,6 +633,10 @@ namespace mfront {
     if (!cSources.empty()) {
       m << "%.o:%.c\n";
       m << "\t" << sb << cc << " $(CFLAGS) $< -o $@ -c\n\n";
+    }
+    if (!cudaSources.empty()) {
+      m << "%.o:%.cu\n";
+      m << "\t" << sb << cuda << " $(CUDAFLAGS) $< -o $@ -c\n\n";
     }
     if (!o.nodeps) {
       if (!cppSources.empty()) {
