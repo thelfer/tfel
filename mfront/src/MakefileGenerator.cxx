@@ -203,7 +203,7 @@ namespace mfront {
       }
       return {};
     };
-    auto get_compilation_options =
+    auto get_compilation_flags =
         [&cm](const char* const env, const ConfigurationManager::Language l,
               const ConfigurationManager::LanguageOptionCategory c)
         -> std::set<std::string> {
@@ -212,6 +212,20 @@ namespace mfront {
         return std::set<std::string>{{std::string{opts}}};
       }
       const auto opts2 = cm.getCompilationOptions(l, c);
+      if (opts2.has_value()) {
+        return *opts2;
+      }
+      return {};
+    };
+    auto get_linker_flags =
+        [&cm](const char* const env,
+              const ConfigurationManager::LinkerOptionCategory c)
+        -> std::set<std::string> {
+      const auto* const opts = std::getenv(env);
+      if (opts != nullptr) {
+        return std::set<std::string>{{std::string{opts}}};
+      }
+      const auto opts2 = cm.getLinkerOptions(c);
       if (opts2.has_value()) {
         return *opts2;
       }
@@ -227,25 +241,21 @@ namespace mfront {
     MFrontLockGuard lock;
     const auto c_compiler = get_compiler("CC", ConfigurationManager::C);
     const auto cxx_compiler = get_compiler("CXX", ConfigurationManager::CXX);
-    const auto cuda_compiler = get_compiler("CUDA_COMPILER", ConfigurationManager::CUDA);
+    const auto cuda_compiler =
+        get_compiler("CUDA_COMPILER", ConfigurationManager::CUDA);
     const auto inc = ::getenv("INCLUDES");
+    const auto include_paths = cm.getIncludePaths();
     const auto cxxflags =
-        get_compilation_options("CXXFLAGS", ConfigurationManager::CXX,
-                                ConfigurationManager::COMPILATION_FLAGS);
+        get_compilation_flags("CXXFLAGS", ConfigurationManager::CXX,
+                              ConfigurationManager::COMPILATION_FLAGS);
     const auto cflags =
-        get_compilation_options("CFLAGS", ConfigurationManager::C,
-                                ConfigurationManager::COMPILATION_FLAGS);
+        get_compilation_flags("CFLAGS", ConfigurationManager::C,
+                              ConfigurationManager::COMPILATION_FLAGS);
     const auto cuda_flags =
-        get_compilation_options("CUDAFLAGS", ConfigurationManager::CUDA,
-                                ConfigurationManager::COMPILATION_FLAGS);
-    const auto cxx_ldflags =
-        get_compilation_options("LDFLAGS", ConfigurationManager::CXX,
-                                ConfigurationManager::LINKER_FLAGS);
-    const auto c_ldflags = get_compilation_options(
-        "LDFLAGS", ConfigurationManager::C, ConfigurationManager::LINKER_FLAGS);
-    const auto cuda_ldflags =
-        get_compilation_options("CUDALDFLAGS", ConfigurationManager::CUDA,
-                                ConfigurationManager::LINKER_FLAGS);
+        get_compilation_flags("CUDAFLAGS", ConfigurationManager::CUDA,
+                              ConfigurationManager::COMPILATION_FLAGS);
+    const auto ldflags =
+        get_linker_flags("LDFLAGS", ConfigurationManager::LINKER_FLAGS);
     const auto sb = o.silentBuild ? "@" : "";
     const auto cc = c_compiler.value_or("$(CC)");
     const auto cxx = cxx_compiler.value_or("$(CXX)");
@@ -293,6 +303,14 @@ namespace mfront {
     if (inc != nullptr) {
       m << inc << " ";
     }
+    if (!include_paths.empty()) {
+      for (const auto& path : include_paths) {
+        m << "-I" << path << ' ';
+      }
+    }
+    if (inc != nullptr) {
+      m << inc << ' ';
+    }
     m << "-I../include";
     for (const auto& path : o.include_paths) {
       m << " -I" << path;
@@ -330,23 +348,9 @@ namespace mfront {
     //
     m << "\n\n";
     // LDFLAGS
-    if (!cxx_ldflags.empty()) {
-      m << "CXXLDFLAGS :=";
-      for (const auto& flag : cxx_ldflags) {
-        m << " " << transform_flag(flag);
-      }
-      m << " \n";
-    }
-    if (!c_ldflags.empty()) {
-      m << "CLDFLAGS :=";
-      for (const auto& flag : c_ldflags) {
-        m << " " << transform_flag(flag);
-      }
-      m << " \n";
-    }
-    if (!cuda_ldflags.empty()) {
-      m << "CUDALDFLAGS :=";
-      for (const auto& flag : cuda_ldflags) {
+    if (!ldflags.empty()) {
+      m << "LDFLAGS :=";
+      for (const auto& flag : ldflags) {
         m << " " << transform_flag(flag);
       }
       m << " \n";
@@ -532,18 +536,8 @@ namespace mfront {
       } else {
         m << sb << cc << " ";
       }
-      if (hasCUDASources) {
-        if (!cuda_ldflags.empty()) {
-          m << "$(CUDALDFLAGS) ";
-        }
-      } else if (hasCxxSources) {
-        if (!cxx_ldflags.empty()) {
-          m << "$(CXXLDFLAGS) ";
-        }
-      } else {
-        if (!c_ldflags.empty()) {
-          m << "$(CLDFLAGS) ";
-        }
+      if (!ldflags.empty()) {
+        m << "$(LDFLAGS) ";
       }
       if (o.sys == "win32") {
         m << "-shared -Wl,--add-stdcall-alias,--out-implib,lib" << l.name

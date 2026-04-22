@@ -86,12 +86,15 @@ namespace mfront {
     if (s == "preprocessor_flags") {
       return ConfigurationManager::PREPROCESSOR_FLAGS;
     }
-    if (s == "includes_paths") {
-      return ConfigurationManager::INCLUDES_PATHS;
+    if (s != "compilation_flags") {
+      tfel::raise("unsupported language option category '" + std::string{s} +
+                  "'");
     }
-    if (s == "compilation_flags") {
-      return ConfigurationManager::COMPILATION_FLAGS;
-    }
+    return ConfigurationManager::COMPILATION_FLAGS;
+  }  // end of getLanguageOptionsCategory
+
+  ConfigurationManager::LinkerOptionCategory
+  ConfigurationManager::getLinkerOptionsCategory(std::string_view s) {
     if (s == "linker_flags") {
       return ConfigurationManager::LINKER_FLAGS;
     }
@@ -99,11 +102,11 @@ namespace mfront {
       return ConfigurationManager::LINK_PATHS;
     }
     if (s != "link_libraries") {
-      tfel::raise("unsupported language options category '" + std::string{s} +
+      tfel::raise("unsupported linker option category '" + std::string{s} +
                   "'");
     }
     return ConfigurationManager::LINK_LIBRARIES;
-  }  // end of getLanguageOptionsCategory
+  }  // end of getLinkerOptionsCategory
 
   ConfigurationManager& ConfigurationManager::get() noexcept {
     static ConfigurationManager m;
@@ -249,5 +252,41 @@ namespace mfront {
     }
     return p2->second;
   }  // end of getCompilationOptions
+
+  void ConfigurationManager::addLinkerOption(const LinkerOptionCategory c,
+                                             const std::string& o) {
+    auto& options = this->linker_options[c];
+    options.insert(o);
+  }  // end of addLinkerOptions
+
+  void ConfigurationManager::addLinkerOptions(
+      const LinkerOptionCategory c, const std::vector<std::string>& opts) {
+    auto& options = this->linker_options[c];
+    options.insert(opts.begin(), opts.end());
+  }  // end of addLinkerOptions
+
+  std::optional<std::set<std::string>> ConfigurationManager::getLinkerOptions(
+      const LinkerOptionCategory c) const {
+    const auto p = this->linker_options.find(c);
+    if (p == this->linker_options.end()) {
+      return {};
+    }
+    return p->second;
+  }  // end of getLinkerOptions
+
+  void ConfigurationManager::addIncludePath(const std::string& p) {
+    this->include_paths.insert(p);
+  }  // end of addIncludePaths
+
+  void ConfigurationManager::addIncludePaths(
+      const std::vector<std::string>& paths) {
+    for (const auto& p : paths) {
+      this->addIncludePath(p);
+    }
+  }  // end of addIncludePaths
+
+  std::set<std::string> ConfigurationManager::getIncludePaths() const {
+    return this->include_paths;
+  }  // end of getIncludePaths
 
 }  // end of namespace mfront

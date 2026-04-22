@@ -32,9 +32,9 @@ namespace mfront::generic_parallel::material_property {
     //! \brief default constructor
     BackendBase();
     // do nothing implementation
-    void writeProxyObject(std::ostream&,
-                          const GenericParallelMaterialPropertyInterface&,
-                          const MaterialPropertyDescription&) const override;
+    void writeProxyObjects(std::ostream&,
+                           const GenericParallelMaterialPropertyInterface&,
+                           const MaterialPropertyDescription&) const override;
     //! \brief destructor
     ~BackendBase() noexcept override;
 

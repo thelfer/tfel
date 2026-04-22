@@ -37,14 +37,9 @@ namespace mfront {
      */
     enum Language { CXX, C, FORTRAN, CUDA, SYCL };
     //! \brief list of option categories for the supported languages
-    enum LanguageOptionCategory {
-      PREPROCESSOR_FLAGS,
-      INCLUDES_PATHS,
-      COMPILATION_FLAGS,
-      LINKER_FLAGS,
-      LINK_PATHS,
-      LINK_LIBRARIES
-    };
+    enum LanguageOptionCategory { PREPROCESSOR_FLAGS, COMPILATION_FLAGS };
+    //! \brief list of option categories for the linking the generated libraries
+    enum LinkerOptionCategory { LINKER_FLAGS, LINK_PATHS, LINK_LIBRARIES };
     //! \brief a simple alias
     using DataMap = tfel::utilities::DataMap;
     /*!
@@ -60,6 +55,14 @@ namespace mfront {
      * \param[in] s: string
      */
     [[nodiscard]] static LanguageOptionCategory getLanguageOptionsCategory(
+        std::string_view);
+    /*!
+     * \brief return the language options category associated with the given
+     * string
+     *
+     * \param[in] s: string
+     */
+    [[nodiscard]] static LinkerOptionCategory getLinkerOptionsCategory(
         std::string_view);
     //! \brief return the unique instance of this class
     [[nodiscard]] static ConfigurationManager& get() noexcept;
@@ -183,11 +186,46 @@ namespace mfront {
      *
      * \param[in] l: language
      * \param[in] c: category
-     *
-     * \note if no option is declared, an empty set is returned
      */
     [[nodiscard]] std::optional<std::set<std::string>> getCompilationOptions(
         const Language, const LanguageOptionCategory) const;
+    /*!
+     * \brief add a linker option
+     *
+     * \param[in] c: category
+     * \param[in] o: option
+     */
+    void addLinkerOption(const LinkerOptionCategory, const std::string&);
+    /*!
+     * \brief add a linker option
+     *
+     * \param[in] c: category
+     * \param[in] opts: options
+     */
+    void addLinkerOptions(const LinkerOptionCategory,
+                          const std::vector<std::string>&);
+    /*!
+     * \return the linker options of the given category
+     *
+     * \param[in] c: category
+     */
+    [[nodiscard]] std::optional<std::set<std::string>> getLinkerOptions(
+        const LinkerOptionCategory) const;
+    /*!
+     * \brief add a include path
+     *
+     * \param[in] p: path
+     */
+    void addIncludePath(const std::string&);
+    /*!
+     * \brief add a include path
+     *
+     * \param[in] c: category
+     * \param[in] path: paths
+     */
+    void addIncludePaths(const std::vector<std::string>&);
+    //! \return the include paths
+    [[nodiscard]] std::set<std::string> getIncludePaths() const;
 
    private:
     /*!
@@ -209,6 +247,10 @@ namespace mfront {
     //! \brief list of compilation options
     std::map<Language, std::map<LanguageOptionCategory, std::set<std::string>>>
         compilation_options;
+    //! \brief list of include paths
+    std::set<std::string> include_paths;
+    //! \brief list of compilation options
+    std::map<LinkerOptionCategory, std::set<std::string>> linker_options;
   };
 
 }  // end of namespace mfront

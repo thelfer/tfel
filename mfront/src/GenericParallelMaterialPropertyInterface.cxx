@@ -237,13 +237,13 @@ namespace mfront {
     }
     this->backend->writeSpecificIncludesInHeaderFile(os, *this, mpd);
 
-    this->backend->writeCxxDeclaration(os, *this, mpd);
+    this->backend->writeCxxDeclarations(os, *this, mpd);
 
     os << "#ifdef __cplusplus\n"
        << "extern \"C\"{\n"
        << "#endif /* __cplusplus */\n\n";
 
-    this->backend->writeCDeclaration(os, *this, mpd);
+    this->backend->writeCDeclarations(os, *this, mpd);
 
     writeParametersSetterFunctionDeclaration(
         os, mpd,
@@ -330,9 +330,9 @@ namespace mfront {
                                             .interface_namespace = nname,
                                             .allow_copy_constructor = true});
 
-    this->backend->writeGlobalFunction(os, *this, mpd, fd);
+    this->backend->writeGlobalFunctions(os, *this, mpd, fd);
 
-    this->backend->writeCxxImplementation(os, *this, mpd, fd);
+    this->backend->writeCxxImplementations(os, *this, mpd, fd);
 
     os << "#ifdef __cplusplus\n"
        << "extern \"C\"{\n"
@@ -362,13 +362,13 @@ namespace mfront {
          .floating_point_type = "double",
          .interface_namespace = nname});
 
-    this->backend->writeCImplementation(os, *this, mpd, fd);
+    this->backend->writeCImplementations(os, *this, mpd, fd);
 
     os << "#ifdef __cplusplus\n"
        << "} // end of extern \"C\"\n"
        << "#endif /* __cplusplus */\n\n";
 
-    this->backend->writeProxyObject(os, *this, mpd);
+    this->backend->writeProxyObjects(os, *this, mpd);
 
     os.close();
 

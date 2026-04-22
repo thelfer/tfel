@@ -40,44 +40,81 @@ namespace mfront::generic_parallel::material_property {
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&) const override;
-    void writeCDeclaration(std::ostream&,
-                           const GenericParallelMaterialPropertyInterface&,
-                           const MaterialPropertyDescription&) const override;
-    void writeCxxDeclaration(std::ostream&,
-                             const GenericParallelMaterialPropertyInterface&,
-                             const MaterialPropertyDescription&) const override;
-    void writeGlobalFunction(std::ostream&,
-                             const GenericParallelMaterialPropertyInterface&,
-                             const MaterialPropertyDescription&,
-                             const FileDescription&) const override;
+    void writeCDeclarations(std::ostream&,
+                            const GenericParallelMaterialPropertyInterface&,
+                            const MaterialPropertyDescription&) const override;
+    void writeCxxDeclarations(
+        std::ostream&,
+        const GenericParallelMaterialPropertyInterface&,
+        const MaterialPropertyDescription&) const override;
+    void writeGlobalFunctions(std::ostream&,
+                              const GenericParallelMaterialPropertyInterface&,
+                              const MaterialPropertyDescription&,
+                              const FileDescription&) const override;
     [[nodiscard]] std::string getSourceFileExtension() const override;
     void writeSpecificIncludesInSourceFile(
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&) const override;
-    void writeCImplementation(std::ostream&,
-                              const GenericParallelMaterialPropertyInterface&,
-                              const MaterialPropertyDescription&,
-                              const FileDescription&) const override;
-    void writeCxxImplementation(std::ostream&,
-                                const GenericParallelMaterialPropertyInterface&,
-                                const MaterialPropertyDescription&,
-                                const FileDescription&) const override;
+    void writeCImplementations(std::ostream&,
+                               const GenericParallelMaterialPropertyInterface&,
+                               const MaterialPropertyDescription&,
+                               const FileDescription&) const override;
+    void writeCxxImplementations(
+        std::ostream&,
+        const GenericParallelMaterialPropertyInterface&,
+        const MaterialPropertyDescription&,
+        const FileDescription&) const override;
     //! \brief destructor
     ~CUDABackend() noexcept override;
 
    protected:
+    /*!
+     * \brief write the global functions, if required
+     *
+     * \param[in] os: output stream
+     * \param[in] i: interface
+     * \param[in] mpd: material property description
+     * \param[in] fd: file description
+     * \param[in] treatUniformArguments: boolean stating if one shall add
+     * support for uniform arguments
+     */
+    virtual void writeGlobalFunctions2(
+        std::ostream&,
+        const GenericParallelMaterialPropertyInterface&,
+        const MaterialPropertyDescription&,
+        const FileDescription&,
+        const bool) const;
+    /*!
+     * \brief write the C implementations of the material property
+     *
+     * \param[in] os: output stream
+     * \param[in] i: interface
+     * \param[in] mpd: material property description
+     * \param[in] fd: file description
+     * \param[in] treatUniformArguments: boolean stating if one shall add
+     * support for uniform arguments
+     */
+    virtual void writeCImplementations2(
+        std::ostream&,
+        const GenericParallelMaterialPropertyInterface&,
+        const MaterialPropertyDescription&,
+        const FileDescription&,
+        const bool) const;
     /*!
      * \brief write the call the kernel inside the body of the material property
      *
      * \param[in] os: output stream
      * \param[in] i: interface
      * \param[in] mpd: material property description
+     * \param[in] treatUniformArguments: boolean stating if one shall add
+     * support for uniform arguments
      */
     virtual void writeKernelCall(
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
-        const MaterialPropertyDescription&) const;
+        const MaterialPropertyDescription&,
+        const bool) const;
     //! \brief number of blocks
     std::optional<int> number_of_blocks;
     //! \brief number of threads per block

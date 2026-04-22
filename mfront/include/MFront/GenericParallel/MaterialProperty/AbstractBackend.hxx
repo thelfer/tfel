@@ -49,24 +49,24 @@ namespace mfront::generic_parallel::material_property {
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&) const = 0;
     /*!
-     * \brief write the declaration of the material property
+     * \brief write the C declarations of the material property
      *
      * \param[in] os: output stream
      * \param[in] i: interface
      * \param[in] mpd: material property description
      */
-    virtual void writeCDeclaration(
+    virtual void writeCDeclarations(
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&) const = 0;
     /*!
-     * \brief write the declaration of the material property
+     * \brief write the C++ declarations of the material property
      *
      * \param[in] os: output stream
      * \param[in] i: interface
      * \param[in] mpd: material property description
      */
-    virtual void writeCxxDeclaration(
+    virtual void writeCxxDeclarations(
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&) const = 0;
@@ -84,40 +84,40 @@ namespace mfront::generic_parallel::material_property {
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&) const = 0;
     /*!
-     * \brief write the global function, if required
+     * \brief write the global functions, if required
      *
      * \param[in] os: output stream
      * \param[in] i: interface
      * \param[in] mpd: material property description
      * \param[in] fd: file description
      */
-    virtual void writeGlobalFunction(
+    virtual void writeGlobalFunctions(
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&,
         const FileDescription&) const = 0;
     /*!
-     * \brief write the implementation of the material property
+     * \brief write the C++ implementations of the material property
      *
      * \param[in] os: output stream
      * \param[in] i: interface
      * \param[in] mpd: material property description
      * \param[in] fd: file description
      */
-    virtual void writeCxxImplementation(
+    virtual void writeCxxImplementations(
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&,
         const FileDescription&) const = 0;
     /*!
-     * \brief write the implementation of the material property
+     * \brief write the C implementations of the material property
      *
      * \param[in] os: output stream
      * \param[in] i: interface
      * \param[in] mpd: material property description
      * \param[in] fd: file description
      */
-    virtual void writeCImplementation(
+    virtual void writeCImplementations(
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&,
@@ -130,7 +130,7 @@ namespace mfront::generic_parallel::material_property {
      * \param[in] i: interface
      * \param[in] mpd: material property description
      */
-    virtual void writeProxyObject(
+    virtual void writeProxyObjects(
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&) const = 0;

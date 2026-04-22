@@ -21,7 +21,7 @@ namespace mfront::generic_parallel::material_property {
 
   BackendBase::BackendBase() = default;
 
-  void BackendBase::writeProxyObject(
+  void BackendBase::writeProxyObjects(
       std::ostream&,
       const GenericParallelMaterialPropertyInterface&,
       const MaterialPropertyDescription&) const {}  // end of writeProxyObject
