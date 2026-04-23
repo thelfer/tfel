@@ -90,7 +90,7 @@ namespace tfel::utilities::internals {
       }
       return true;
     }
-  };  // end of DataConvertor<std::vector<std::string>>
+  };  // end of DataConvertor<std::vector<T>>
 
   //! partial specialisation for `std::map`
   template <typename T>
