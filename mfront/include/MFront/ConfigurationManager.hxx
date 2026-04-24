@@ -255,15 +255,15 @@ namespace mfront {
   };
 
   //! \brief return the options used to read a configuration file
-  MFRONT_VISIBILITY_EXPORT [[nodiscard]] tfel::utilities::CxxTokenizerOptions
+  [[nodiscard]] MFRONT_VISIBILITY_EXPORT tfel::utilities::CxxTokenizerOptions
   getConfigurationParsingOptions() noexcept;
   /*!
    * \brief read a configuration file and turn it into a `DataMap`
    *
    * \param[in] f: file name
    */
-  MFRONT_VISIBILITY_EXPORT tfel::utilities::DataMap readConfigurationFile(
-      const std::string&);
+  [[nodiscard]] MFRONT_VISIBILITY_EXPORT tfel::utilities::DataMap
+  readConfigurationFile(const std::string&);
   /*!
    * \brief parse a configuration file
    *
