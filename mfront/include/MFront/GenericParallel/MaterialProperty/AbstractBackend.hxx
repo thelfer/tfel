@@ -17,6 +17,7 @@
 #define LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_ABSTRACTBACKEND_HXX
 
 #include <iosfwd>
+#include <string>
 #include "MFront/MFrontConfig.hxx"
 
 namespace mfront {
