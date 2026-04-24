@@ -327,10 +327,7 @@ namespace mfront {
         .addDataTypeValidator<DataMap>("model_dsl_options")
         .addDataTypeValidator<DataMap>("interfaces_options")
         .addDataTypeValidator<DataMap>("compilation_options")
-        .addDataValidator("linker_flags", [](const tfel::utilities::Data& d) {
-          return d.is<std::string>() ||
-                 is_convertible<std::vector<std::string>>(d);
-        });
+        .addDataTypeValidator<DataMap>("linking_options");
     validator.validate(data);
     auto& m = ConfigurationManager::get();
     try {
@@ -454,18 +451,29 @@ namespace mfront {
           }
         }
       }
-      if (data.contains("linker_flags")) {
-        const auto& o = data.at("linker_flags");
-        if (o.is<std::string>()) {
-          m.addLinkerOption(ConfigurationManager::LINKER_FLAGS,
-                            o.get<std::string>());
-        } else if (is_convertible<std::vector<std::string>>(o)) {
-          m.addLinkerOptions(ConfigurationManager::LINKER_FLAGS,
-                             convert<std::vector<std::string>>(o));
-        } else {
-          tfel::raise(
-              "unsupported type for linker_flags: "
-              "expected a string or an array of strings");
+      if (data.contains("linking_options")) {
+        auto linking_options_validator = tfel::utilities::DataMapValidator{};
+        linking_options_validator.addDataValidator(
+            "linker_flags", [](const tfel::utilities::Data& d) {
+              return d.is<std::string>() ||
+                     is_convertible<std::vector<std::string>>(d);
+            });
+        for (const auto& [n, o] : data.at("linking_options").get<DataMap>()) {
+          if (n == "linker_flags") {
+            if (o.is<std::string>()) {
+              m.addLinkerOption(ConfigurationManager::LINKER_FLAGS,
+                                o.get<std::string>());
+            } else if (is_convertible<std::vector<std::string>>(o)) {
+              m.addLinkerOptions(ConfigurationManager::LINKER_FLAGS,
+                                 convert<std::vector<std::string>>(o));
+            } else {
+              tfel::raise(
+                  "unsupported type for linker_flags: "
+                  "expected a string or an array of strings");
+            }
+          } else {
+            tfel::raise("unsupported linking options '" + n + '\'');
+          }
         }
       }
     } catch (std::exception& e) {
