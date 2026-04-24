@@ -438,13 +438,11 @@ namespace mfront {
         const auto hn = getMaterialPropertyParametersHandlerClassName(name);
         os << "if(!" << iname << "::" << hn << "::get" << hn << "().ok){\n"
            << "mfront_output_status->status = -6;\n"
-           << "mfront_report(" << iname << "::" << name
-           << "MaterialPropertyHandler::get" << name
-           << "MaterialPropertyHandler().msg);\n"
+           << "mfront_report(" << iname << "::" << hn << "::get" << hn
+           << "().msg);\n"
            << "errno = mfront_errno_old;\n"
-           << "return std::nan(" << iname << "::" << name
-           << "MaterialPropertyHandler::get" << name
-           << "MaterialPropertyHandler().msg.c_str());\n"
+           << "return std::nan(" << iname << "::" << hn << "::get" << hn
+           << "().msg.c_str());\n"
            << "}\n";
       }
     }

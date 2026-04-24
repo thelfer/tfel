@@ -35,6 +35,7 @@ namespace mfront::generic_parallel::material_property {
      */
     CUDABackend(const tfel::utilities::DataMap&);
     //
+    [[nodiscard]] std::string getName() const override;
     [[nodiscard]] std::string getHeaderFileExtension() const override;
     void writeSpecificIncludesInHeaderFile(
         std::ostream&,
@@ -116,8 +117,6 @@ namespace mfront::generic_parallel::material_property {
         const MaterialPropertyDescription&,
         const bool) const;
     //! \brief number of blocks
-    std::optional<int> number_of_blocks;
-    //! \brief number of threads per block
     std::optional<int> number_of_threads_per_block;
   };  // end of CUDABackend
 

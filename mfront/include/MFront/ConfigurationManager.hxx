@@ -30,7 +30,8 @@ namespace mfront {
    *
    *
    */
-  struct ConfigurationManager : GlobalDomainSpecificLanguageOptionsManager {
+  struct MFRONT_VISIBILITY_EXPORT ConfigurationManager
+      : GlobalDomainSpecificLanguageOptionsManager {
     /*!
      * \brief list of supported languages (including extensions) for which
      * options may be defined
@@ -252,6 +253,23 @@ namespace mfront {
     //! \brief list of compilation options
     std::map<LinkerOptionCategory, std::set<std::string>> linker_options;
   };
+
+  //! \brief return the options used to read a configuration file
+  MFRONT_VISIBILITY_EXPORT [[nodiscard]] tfel::utilities::CxxTokenizerOptions
+  getConfigurationParsingOptions() noexcept;
+  /*!
+   * \brief read a configuration file and turn it into a `DataMap`
+   *
+   * \param[in] f: file name
+   */
+  MFRONT_VISIBILITY_EXPORT tfel::utilities::DataMap readConfigurationFile(
+      const std::string&);
+  /*!
+   * \brief parse a configuration file
+   *
+   * \param[in] f: file name
+   */
+  MFRONT_VISIBILITY_EXPORT void parseConfigurationFile(const std::string&);
 
 }  // end of namespace mfront
 

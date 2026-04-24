@@ -426,9 +426,8 @@ namespace mfront {
         (!mpd.parameters.empty())) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
       srcFile << "if(!python::" << hn << "::get" << hn << "().ok){\n"
-              << "return throwPythonRuntimeException(python::" << name
-              << "MaterialPropertyHandler::get" << name
-              << "MaterialPropertyHandler().msg);\n"
+              << "return throwPythonRuntimeException(python::" << hn << "::get"
+              << hn << "().msg);\n"
               << "}\n";
     }
     writeAssignMaterialPropertyParameters(srcFile, mpd, name, "real", "python");

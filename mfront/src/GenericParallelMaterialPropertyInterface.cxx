@@ -161,7 +161,8 @@ namespace mfront {
   void GenericParallelMaterialPropertyInterface::getTargetsDescription(
       TargetsDescription& d, const MaterialPropertyDescription& mpd) const {
     const auto iccname = this->getInterfaceNameInCamelCase();
-    const auto lib = iccname + getMaterialLawLibraryNameBase(mpd);
+    const auto lib = iccname + getMaterialLawLibraryNameBase(mpd) + '-' +
+                     this->backend->getName();
     this->getLibraryDescription(d, d.getLibrary(lib), mpd);
   }  // end of getTargetsDescription
 
@@ -178,13 +179,15 @@ namespace mfront {
   std::string GenericParallelMaterialPropertyInterface::getHeaderFileName(
       const std::string& name) const {
     const auto i = this->getInterfaceName();
-    return name + '-' + i + '.' + this->backend->getHeaderFileExtension();
+    return name + '-' + i + '-' + this->backend->getName() + '.' +
+           this->backend->getHeaderFileExtension();
   }
 
   std::string GenericParallelMaterialPropertyInterface::getSourceFileName(
       const std::string& name) const {
     const auto i = this->getInterfaceName();
-    return name + '-' + i + '.' + this->backend->getSourceFileExtension();
+    return name + '-' + i + '-' + this->backend->getName() + '.' +
+           this->backend->getSourceFileExtension();
   }
 
   void GenericParallelMaterialPropertyInterface::writeOutputFiles(
@@ -318,7 +321,7 @@ namespace mfront {
       os << "#include\"TFEL/Math/qt.hxx\"\n"
          << "#include\"TFEL/Math/Quantity/qtIO.hxx\"\n";
     }
-    os << "#include\"" << name << "-" << iname << ".hxx\"\n\n";
+    os << "#include\"" << this->getHeaderFileName(name) << "\"\n\n";
     if (!includes.empty()) {
       os << includes << "\n\n";
     }
@@ -327,8 +330,7 @@ namespace mfront {
     writeMaterialPropertyParametersHandler(os, mpd,
                                            {.material_property_name = name,
                                             .floating_point_type = "double",
-                                            .interface_namespace = nname,
-                                            .allow_copy_constructor = true});
+                                            .interface_namespace = nname});
 
     this->backend->writeGlobalFunctions(os, *this, mpd, fd);
 

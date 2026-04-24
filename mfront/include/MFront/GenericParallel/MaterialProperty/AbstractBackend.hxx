@@ -35,6 +35,8 @@ namespace mfront::generic_parallel::material_property {
    * (CUDA, SYCL, parallel STL)
    */
   struct MFRONT_VISIBILITY_EXPORT AbstractBackend {
+    //! \brief return the name of the backend
+    [[nodiscard]] virtual std::string getName() const = 0;
     //! \brief return the extension of the header file
     [[nodiscard]] virtual std::string getHeaderFileExtension() const = 0;
     /*!

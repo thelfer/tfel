@@ -30,11 +30,6 @@ namespace mfront {
     const std::string floating_point_type;
     //!\brief interface associated with the interface
     const std::string interface_namespace;
-    /*!
-     * \brief if true, the copy constructor of the parameters's handler is not
-     * disabled.
-     */
-    const bool allow_copy_constructor = false;
   };
 
   /*!
@@ -76,6 +71,11 @@ namespace mfront {
       const MaterialPropertyDescription&,
       const std::string&,
       const std::string&,
+      const std::string&);
+  /*!
+   * \param[in]  n: name of the material property
+   */
+  MFRONT_VISIBILITY_EXPORT std::string getMaterialPropertyParametersClassName(
       const std::string&);
   /*!
    * \param[in]  n: name of the material property

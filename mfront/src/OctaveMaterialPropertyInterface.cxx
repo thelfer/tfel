@@ -465,9 +465,8 @@ namespace mfront {
     if (!mpd.parameters.empty()) {
       const auto hn = getMaterialPropertyParametersHandlerClassName(name);
       out << "if(!octave::" << hn << "::get" << hn << "().ok){\n"
-          << "error(\"%s\\n\", octave::" << name
-          << "MaterialPropertyHandler::get" << name
-          << "MaterialPropertyHandler().msg.c_str());\n"
+          << "error(\"%s\\n\", octave::" << hn << "::get" << hn
+          << "().msg.c_str());\n"
           << "return retval;\n"
           << "}\n";
     }

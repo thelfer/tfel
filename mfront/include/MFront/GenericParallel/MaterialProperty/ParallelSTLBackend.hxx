@@ -34,6 +34,7 @@ namespace mfront::generic_parallel::material_property {
      */
     ParallelSTLBackend(const tfel::utilities::DataMap&);
     //
+    [[nodiscard]] std::string getName() const override;
     [[nodiscard]] std::string getHeaderFileExtension() const override;
     void writeSpecificIncludesInHeaderFile(
         std::ostream&,

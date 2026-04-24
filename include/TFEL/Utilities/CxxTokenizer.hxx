@@ -43,6 +43,8 @@ namespace tfel::utilities {
     struct IsValidIdentifierOptions {
       //! \brief treat `.` as a separator
       bool allowDotCharacter = false;
+      //! \brief treat `+` as a separator
+      bool allowPlusSign = false;
       //! \brief treat `-` as a separator
       bool allowMinusSign = false;
       // \brief boolean stating if C++ keywords are allowed
@@ -338,6 +340,12 @@ namespace tfel::utilities {
      * sperator
      */
     void treatDotAsSeparator(const bool);
+    /*!
+     * \brief set if '+' shall be treated as as sperator
+     * \param[in] b : boolean telling if '+' shall be treated as as
+     * separator
+     */
+    void treatPlusAsSeparator(const bool);
     /*!
      * \brief set if '-' shall be treated as as sperator
      * \param[in] b : boolean telling if '-' shall be treated as as

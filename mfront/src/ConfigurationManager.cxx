@@ -11,11 +11,17 @@
  * project under specific licensing conditions.
  */
 
+#include <fstream>
 #include <optional>
-#include "MFront/ConfigurationManager.hxx"
+#include "TFEL/Utilities/Data.hxx"
+#include "TFEL/Utilities/CxxTokenizer.hxx"
+#include "MFront/DSLUtilities.hxx"
+#include "MFront/SearchPathsHandler.hxx"
+#include "MFront/MFrontLogStream.hxx"
 #include "MFront/MaterialPropertyInterfaceFactory.hxx"
 #include "MFront/BehaviourInterfaceFactory.hxx"
 #include "MFront/ModelInterfaceFactory.hxx"
+#include "MFront/ConfigurationManager.hxx"
 
 namespace mfront {
 
@@ -288,5 +294,187 @@ namespace mfront {
   std::set<std::string> ConfigurationManager::getIncludePaths() const {
     return this->include_paths;
   }  // end of getIncludePaths
+
+  tfel::utilities::CxxTokenizerOptions
+  getConfigurationParsingOptions() noexcept {
+    auto opts = tfel::utilities::CxxTokenizerOptions{};
+    opts.dotAsSeparator = false;
+    opts.plusAsSeparator = false;
+    opts.minusAsSeparator = false;
+    return opts;
+  }  // end of getConfigurationParsingOptions
+
+  tfel::utilities::DataMap readConfigurationFile(const std::string& f) {
+    std::ifstream ifs(f);
+    if (!ifs) {
+      tfel::raise("readConfigurationFile: can't open file '" + f + "'");
+    }
+    auto t = tfel::utilities::CxxTokenizer{getConfigurationParsingOptions()};
+    t.parseString('{' + std::string{std::istreambuf_iterator<char>{ifs}, {}} +
+                  '}');
+    auto b = t.begin();
+    return read<tfel::utilities::DataMap>(b, t.end());
+  }  // end ofreadConfigurationFile
+
+  void parseConfigurationFile(const std::string& f) {
+    using tfel::utilities::DataMap;
+    const auto file = SearchPathsHandler::search(f);
+    const auto data = readConfigurationFile(file);
+    auto validator = tfel::utilities::DataMapValidator{};
+    validator.addDataTypeValidator<DataMap>("dsl_options")
+        .addDataTypeValidator<DataMap>("material_property_dsl_options")
+        .addDataTypeValidator<DataMap>("behaviour_dsl_options")
+        .addDataTypeValidator<DataMap>("model_dsl_options")
+        .addDataTypeValidator<DataMap>("interfaces_options")
+        .addDataTypeValidator<DataMap>("compilation_options")
+        .addDataValidator("linker_flags", [](const tfel::utilities::Data& d) {
+          return d.is<std::string>() ||
+                 is_convertible<std::vector<std::string>>(d);
+        });
+    validator.validate(data);
+    auto& m = ConfigurationManager::get();
+    try {
+      if (data.contains("dsl_options")) {
+        auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(m);
+        for (const auto& [k, d] : data.at("dsl_options").get<DataMap>()) {
+          g.addDSLOption(k, d);
+        }
+      }
+      if (data.contains("material_property_dsl_options")) {
+        auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(m);
+        for (const auto& [k, d] :
+             data.at("material_property_dsl_options").get<DataMap>()) {
+          g.addMaterialPropertyDSLOption(k, d);
+        }
+      }
+      if (data.contains("behaviour_dsl_options")) {
+        auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(m);
+        for (const auto& [k, d] :
+             data.at("behaviour_dsl_options").get<DataMap>()) {
+          g.addBehaviourDSLOption(k, d);
+        }
+      }
+      if (data.contains("model_dsl_options")) {
+        auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(m);
+        for (const auto& [k, d] : data.at("model_dsl_options").get<DataMap>()) {
+          g.addModelDSLOption(k, d);
+        }
+      }
+      if (data.contains("interfaces_options")) {
+        for (const auto& [i, opts] :
+             data.at("interfaces_options").get<DataMap>()) {
+          if (!opts.is<tfel::utilities::DataMap>()) {
+            tfel::raise("invalid options types for interface '" + i + "'");
+          }
+          if (getVerboseMode() >= VERBOSE_DEBUG) {
+            getLogStream() << "treating configuration options for material "
+                           << "property interface '" << i << " from file '"
+                           << file << "''\n";
+          }
+          m.addInterfaceOptions(i, opts);
+        }
+      }
+      if (data.contains("material_property_interfaces_options")) {
+        for (const auto& [i, opts] :
+             data.at("material_property_interfaces_options").get<DataMap>()) {
+          if (!opts.is<tfel::utilities::DataMap>()) {
+            tfel::raise("invalid options types for interface '" + i + "'");
+          }
+          if (getVerboseMode() >= VERBOSE_DEBUG) {
+            getLogStream() << "treating configuration options for material "
+                           << "property interface '" << i << " from file '"
+                           << file << "''\n";
+          }
+          m.addMaterialPropertyInterfaceOptions(i, opts);
+        }
+      }
+      if (data.contains("behaviour_interfaces_options")) {
+        for (const auto& [i, opts] :
+             data.at("behaviour_interfaces_options").get<DataMap>()) {
+          if (!opts.is<tfel::utilities::DataMap>()) {
+            tfel::raise("invalid options types for interface '" + i + "'");
+          }
+          if (getVerboseMode() >= VERBOSE_DEBUG) {
+            getLogStream()
+                << "treating configuration options for behaviour interface '"
+                << i << " from file '" << file << "''\n";
+          }
+          m.addBehaviourInterfaceOptions(i, opts);
+        }
+      }
+      if (data.contains("model_interfaces_options")) {
+        for (const auto& [i, opts] :
+             data.at("model_interfaces_options").get<DataMap>()) {
+          if (!opts.is<tfel::utilities::DataMap>()) {
+            tfel::raise("invalid options types for interface '" + i + "'");
+          }
+          if (getVerboseMode() >= VERBOSE_DEBUG) {
+            getLogStream()
+                << "treating configuration options for model interface '" << i
+                << " from file '" << file << "''\n";
+          }
+          m.addModelInterfaceOptions(i, opts);
+        }
+      }
+      if (data.contains("compilation_options")) {
+        for (const auto& [l, opts] :
+             data.at("compilation_options").get<DataMap>()) {
+          if (!opts.is<tfel::utilities::DataMap>()) {
+            tfel::raise("invalid options types for language'" + l + "'");
+          }
+          const auto language = ConfigurationManager::getLanguage(l);
+          for (const auto& [c, o] : opts.get<tfel::utilities::DataMap>()) {
+            if (c == "compiler") {
+              if (!o.is<std::string>()) {
+                tfel::raise(
+                    "unsupported option type for the 'compiler' option for "
+                    "language '" +
+                    l + "': expected a string");
+              }
+              m.setCompiler(language, o.get<std::string>());
+            } else {
+              const auto category =
+                  ConfigurationManager::getLanguageOptionsCategory(c);
+              if (o.is<std::string>()) {
+                m.addCompilationOption(language, category,
+                                       o.get<std::string>());
+              } else if (is_convertible<std::vector<std::string>>(o)) {
+                m.addCompilationOptions(language, category,
+                                        convert<std::vector<std::string>>(o));
+              } else {
+                tfel::raise("unsupported option type for category '" + c +
+                            "' for language '" + l +
+                            "': expected a string or an array of strings");
+              }
+            }
+          }
+          if (getVerboseMode() >= VERBOSE_DEBUG) {
+            getLogStream() << "treating configuration options for language '"
+                           << l << "' from file '" << file << "'\n";
+          }
+        }
+      }
+      if (data.contains("linker_flags")) {
+        const auto& o = data.at("linker_flags");
+        if (o.is<std::string>()) {
+          m.addLinkerOption(ConfigurationManager::LINKER_FLAGS,
+                            o.get<std::string>());
+        } else if (is_convertible<std::vector<std::string>>(o)) {
+          m.addLinkerOptions(ConfigurationManager::LINKER_FLAGS,
+                             convert<std::vector<std::string>>(o));
+        } else {
+          tfel::raise(
+              "unsupported type for linker_flags: "
+              "expected a string or an array of strings");
+        }
+      }
+    } catch (std::exception& e) {
+      tfel::raise("Error while parsing configuration file '" + f +
+                  "': " + e.what());
+    } catch (...) {
+      tfel::raise("Error while parsing configuration file '" + f +
+                  "': unknown exception");
+    }
+  }  // end of parseConfigurationFile
 
 }  // end of namespace mfront

@@ -27,53 +27,56 @@ namespace mfront {
         (mpd.parameters.empty())) {
       return;
     }
-    os << "namespace " << args.interface_namespace << "{\n\n"
-       << "/*!\n"
-       << " * \\brief an auxiliary class handling parameters of the\n "
+    os << "namespace " << args.interface_namespace << "{\n\n";
+    //
+    os << "/*!\n"
+       << " * \\brief a class containing the parameters of the\n "
        << " * " << args.material_property_name << " material property\n"
        << " */\n"
        << "struct " << args.material_property_name
-       << "MaterialPropertyHandler\n{\n"
+       << "MaterialPropertyParameters\n{\n";
+    for (const auto& p : mpd.parameters) {
+      os << args.floating_point_type << " " << p.name << " = "
+         << args.floating_point_type << "{";
+      tfel::raise_if(!p.hasAttribute(VariableDescription::defaultValue),
+                     "writeAssignMaterialPropertyParameters: "
+                     "no default value for parameter "
+                     "'" +
+                         p.name + "'");
+      const auto pv = p.getAttribute<double>(VariableDescription::defaultValue);
+      const auto prec = os.precision();
+      os.precision(14);
+      os << pv;
+      os.precision(prec);
+      os << "};\n";
+    }
+    os << "}; // end of struct " << args.material_property_name
+       << "MaterialPropertyParameters\n\n";
+    //
+    os << "/*!\n"
+       << " * \\brief an auxiliary class handling parameters of the\n "
+       << " * " << args.material_property_name << " material property\n"
+       << " * using the Singleton pattern and optionaly overrides the values"
+       << " * of the parameters from a text file\n"
+       << " */\n"
+       << "struct " << args.material_property_name
+       << "MaterialPropertyParametersHandler\n"
+       << ": " << args.material_property_name << "MaterialPropertyParameters\n"
+       << "{\n"
        << "//! return the unique instance of this class\n"
        << "static " << args.material_property_name
-       << "MaterialPropertyHandler&\n"
-       << "get" << args.material_property_name << "MaterialPropertyHandler(){\n"
+       << "MaterialPropertyParametersHandler&\n"
+       << "get" << args.material_property_name
+       << "MaterialPropertyParametersHandler(){\n"
        << "static " << args.material_property_name
-       << "MaterialPropertyHandler i;\n"
+       << "MaterialPropertyParametersHandler i;\n"
        << "return i;\n"
        << "}\n";
-    if (args.allow_copy_constructor) {
-      os << args.material_property_name << "MaterialPropertyHandler(const "
-         << args.material_property_name
-         << "MaterialPropertyHandler&) = default;\n";
-    }
-    for (const auto& p : mpd.parameters) {
-      os << args.floating_point_type << " " << p.name << ";\n";
-    }
     os << "std::string msg;\n"
        << "bool ok = false;\n"
        << "private:\n"
-       << args.material_property_name << "MaterialPropertyHandler()";
-    if (!mpd.parameters.empty()) {
-      os << "\n: ";
-      for (auto p = mpd.parameters.begin(); p != mpd.parameters.end();) {
-        tfel::raise_if(!p->hasAttribute(VariableDescription::defaultValue),
-                       "writeAssignMaterialPropertyParameters: "
-                       "no default value for parameter "
-                       "'" +
-                           p->name + "'");
-        const auto pv =
-            p->getAttribute<double>(VariableDescription::defaultValue);
-        const auto prec = os.precision();
-        os.precision(14);
-        os << p->name << "(" << pv << ")";
-        os.precision(prec);
-        if (++p != mpd.parameters.end()) {
-          os << ",\n";
-        }
-      }
-    }
-    os << "\n{\n";
+       << args.material_property_name << "MaterialPropertyParametersHandler()"
+       << "\n{\n";
     if (allowsParametersInitializationFromFile(mpd)) {
       os << "auto tokenize = [](const std::string& line){\n"
          << "  std::istringstream tokenizer(line);\n"
@@ -95,9 +98,9 @@ namespace mfront {
          << "  auto tokens = tokenize(line);\n"
          << "  auto set_msg = [this,ln,line](const std::string& m){\n"
          << "    this->msg = \"" << args.material_property_name
-         << "MaterialPropertyHandler::\"\n"
+         << "MaterialPropertyParametersHandler::\"\n"
          << "    \"" << args.material_property_name
-         << "MaterialPropertyHandler: \"\n"
+         << "MaterialPropertyParametersHandler: \"\n"
          << "    \"error at line '\"+std::to_string(ln)+\"' \"\n"
          << "    \"while reading parameter file '"
          << args.material_property_name << "-parameters.txt'\"\n"
@@ -151,23 +154,18 @@ namespace mfront {
     os << "this->ok=true;\n"
        << "}\n"
        << "#if __cplusplus > 199711L\n"
-       << args.material_property_name << "MaterialPropertyHandler("
+       << args.material_property_name << "MaterialPropertyParametersHandler("
        << args.material_property_name
-       << "MaterialPropertyHandler&&) = delete;\n";
-    if (!args.allow_copy_constructor) {
-      os << args.material_property_name << "MaterialPropertyHandler(const "
-         << args.material_property_name
-         << "MaterialPropertyHandler&) = delete;\n";
-    }
-    os << args.material_property_name << "MaterialPropertyHandler&\n"
+       << "MaterialPropertyParametersHandler&&) = delete;\n"
+       << args.material_property_name << "MaterialPropertyParametersHandler&\n"
        << "operator=(" << args.material_property_name
-       << "MaterialPropertyHandler&&) = delete;\n"
-       << args.material_property_name << "MaterialPropertyHandler&\n"
+       << "MaterialPropertyParametersHandler&&) = delete;\n"
+       << args.material_property_name << "MaterialPropertyParametersHandler&\n"
        << "operator=(const " << args.material_property_name
-       << "MaterialPropertyHandler&) = delete;\n"
+       << "MaterialPropertyParametersHandler&) = delete;\n"
        << "#endif /* __cplusplus > 199711L */\n"
        << "}; // end of struct " << args.material_property_name
-       << "MaterialPropertyHandler\n"
+       << "MaterialPropertyParametersHandler\n\n"
        << "} // end of namespace " << args.interface_namespace << "\n\n";
   }  // end of writeMaterialPropertyParametersHandler
 
@@ -204,14 +202,14 @@ namespace mfront {
       if (useQuantities(mpd)) {
         for (const auto& p : mpd.parameters) {
           os << "const auto " << p.name << " = " << p.type << "(" << i
-             << "::" << n << "MaterialPropertyHandler::get" << n
-             << "MaterialPropertyHandler()." << p.name << ");\n";
+             << "::" << n << "MaterialPropertyParametersHandler::get" << n
+             << "MaterialPropertyParametersHandler()." << p.name << ");\n";
         }
       } else {
         for (const auto& p : mpd.parameters) {
           os << "const " << t << " " << p.name << " = " << i << "::" << n
-             << "MaterialPropertyHandler::get" << n
-             << "MaterialPropertyHandler()." << p.name << ";\n";
+             << "MaterialPropertyParametersHandler::get" << n
+             << "MaterialPropertyParametersHandler()." << p.name << ";\n";
         }
       }
     }
@@ -277,9 +275,13 @@ namespace mfront {
        << "}\n\n";
   }  // end of writeParametersSetterFunctionImplementation
 
+  std::string getMaterialPropertyParametersClassName(const std::string& n) {
+    return n + "MaterialPropertyParameters";
+  }
+
   std::string getMaterialPropertyParametersHandlerClassName(
       const std::string& n) {
-    return n + "MaterialPropertyHandler";
+    return n + "MaterialPropertyParametersHandler";
   }
 
 }  // end of namespace mfront
