@@ -155,6 +155,7 @@ namespace mfront {
     insert_if(l.link_libraries, "m");
 #endif /* !((defined _WIN32) && (defined _MSC_VER)) */
     insert_if(l.epts, name);
+    insert_if(l.epts, name + '2');
     d.headers.push_back(this->getHeaderFileName(name));
   }  // end of getLibraryDescription
 

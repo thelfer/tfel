@@ -159,8 +159,7 @@ dictionary.
 ~~~~{.json}
 interfaces_options: {
   generic-parallel: {
-    backend: "stlpar",
-    execution_policy: "par_unseq"
+    backend: {"stlpar", execution_policy: "par_unseq"}
   }
 }
 ~~~~
@@ -169,22 +168,41 @@ interfaces_options: {
 
 ### The `compilation_options` section
 
+~~~~{.json}
+compilation_options : {
+  cxx : {
+    compiler: "nvc++",
+    compilation_flags: "-O2 -stdpar=gpu -std=c++20 -march=native -gpu=sm_89" 
+  }
+}
+~~~~
+
+#### The `compiler` option
+
+#### The `compilation_flags` option
+
+### The `linking_options` section
+
+#### The `linker_flags` option
 
 ## Passing options to interfaces on the command line
 
 ### First syntax
 
 ~~~~{bash}
-$ mfront --obuild --interface='generic-parallel{backend:"stlpar", execution_policy:"par_unseq"}' UO2_ShearModulus.mfront
+$ mfront --obuild --interface='generic-parallel{backend:{"stlpar": {execution_policy:"par_unseq"}}}' UO2_ShearModulus.mfront
 ~~~~
 
 ### Second syntax
 
 ~~~~{bash}
-$ mfront --obuild --interface='{generic-parallel:{backend:"stlpar", execution_policy:"par_unseq"}}' UO2_ShearModulus.mfront
+$ mfront --obuild --interface='{generic-parallel:{backend:"stlpar"{execution_policy:"par_unseq"}}}' UO2_ShearModulus.mfront
 ~~~~
 
-## Generic material property interface for material properties
+## The `generic-parallel` interface for material properties
+
+See [this page for
+details](generic-parallel-material-property-interface.html).
 
 ### Available backends
 
