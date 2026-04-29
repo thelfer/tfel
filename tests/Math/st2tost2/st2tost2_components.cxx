@@ -133,6 +133,33 @@ struct ST2ToST2TestComponents final : public tfel::tests::TestCase {
       }
     }
 
+    // generateJComponent(i, j) must match J()(i, j) value-for-value,
+    // for every Voigt index pair, in every supported space dimension.
+    constexpr auto J3D = st2tost2<3u, double>::J();
+    for (unsigned short i = 0; i < 6; ++i) {
+      for (unsigned short j = 0; j < 6; ++j) {
+        TFEL_TESTS_ASSERT(
+            my_abs(st2tost2<3u, double>::generateJComponent(i, j) -
+                   J3D(i, j)) < eps);
+      }
+    }
+    constexpr auto J2D = st2tost2<2u, double>::J();
+    for (unsigned short i = 0; i < 4; ++i) {
+      for (unsigned short j = 0; j < 4; ++j) {
+        TFEL_TESTS_ASSERT(
+            my_abs(st2tost2<2u, double>::generateJComponent(i, j) -
+                   J2D(i, j)) < eps);
+      }
+    }
+    constexpr auto J1D = st2tost2<1u, double>::J();
+    for (unsigned short i = 0; i < 3; ++i) {
+      for (unsigned short j = 0; j < 3; ++j) {
+        TFEL_TESTS_ASSERT(
+            my_abs(st2tost2<1u, double>::generateJComponent(i, j) -
+                   J1D(i, j)) < eps);
+      }
+    }
+
     return this->result;
   }  // end of execute
 };
