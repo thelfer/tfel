@@ -337,7 +337,7 @@ namespace mfront::generic_parallel::material_property {
         os << "_without_strides";
       }
       os << " = [mfront_output";
-      if (handleStrides){
+      if (handleStrides) {
         os << ", mfront_output_stride";
       }
       if (!mpd.inputs.empty()) {
@@ -353,12 +353,11 @@ namespace mfront::generic_parallel::material_property {
       if ((!areParametersTreatedAsStaticVariables(mpd)) && (!params.empty())) {
         const auto pcn = getMaterialPropertyParametersClassName(name);
         const auto hn = getMaterialPropertyParametersHandlerClassName(name);
-        os << ", mfront_parameters = "                          //
+        os << ", mfront_parameters = "                        //
            << "static_cast<" << nname << "::" << pcn << ">("  //
            << nname << "::" << hn << "::get" << hn << "())";
       }
-      os << "](" << types.integer_type
-         << " mfront_idx){\n";
+      os << "](" << types.integer_type << " mfront_idx){\n";
       writeBeginningOfMaterialPropertyBody(os, mpd, fd, "double", true);
       // declaration of the parameters
       if (areParametersTreatedAsStaticVariables(mpd)) {
@@ -473,8 +472,7 @@ namespace mfront::generic_parallel::material_property {
     if (treatStrides) {
       write_kernel(true);
     }
-    auto write_kernel_call = [&os, this,
-                              &types](const bool handleStrides) {
+    auto write_kernel_call = [&os, this, &types](const bool handleStrides) {
       os << "// loop over the points\n"
          << "const auto mfront_index_range = "
          << "std::views::iota(" << types.integer_type
@@ -512,7 +510,8 @@ namespace mfront::generic_parallel::material_property {
            << "mfront_args_strides_tmp.end(), "
            << "[](const " << types.integer_type << " mfront_stride){"
            << "return mfront_stride == 1;});\n"
-           << "if(mfront_areAllArgumentsStrideOne && (mfront_output_stride == 1)){\n";
+           << "if(mfront_areAllArgumentsStrideOne && (mfront_output_stride == "
+              "1)){\n";
         write_kernel_call(false);
         os << "} else {\n";
         write_kernel_call(true);

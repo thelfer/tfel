@@ -59,7 +59,8 @@ namespace mfront::generic_parallel::material_property {
       std::ostream& os,
       const GenericParallelMaterialPropertyInterface&,
       const MaterialPropertyDescription&) const {
-    os << "#include <algorithm>\n"
+    os << "#include <memory>\n"
+       << "#include <algorithm>\n"
        << "#include<type_traits>\n"
        << "#include\"TFEL/FSAlgorithm/copy.hxx\"\n"
        << "#include\"TFEL/FSAlgorithm/fill.hxx\"\n\n";
@@ -334,8 +335,7 @@ namespace mfront::generic_parallel::material_property {
     os << types.output_status_type << "* const mfront_output_status,\n"
        << types.real_type << "* const mfront_output";
     if (treatStrides) {
-      os << ",\nconst " << types.integer_type
-         << " mfront_output_stride";
+      os << ",\nconst " << types.integer_type << " mfront_output_stride";
     }
     os << ",\nconst " << types.real_type << "* const * const";
     if (!mpd.inputs.empty()) {
@@ -447,6 +447,9 @@ namespace mfront::generic_parallel::material_property {
          << ");\n"
          << "return;\n"
          << "}\n"
+         << "std::unique_ptr<int, void (*)(int *const) noexcept> "
+         << "mfront_bounds_statuses_ptr(mfront_bounds_statuses, "
+         << "+[](int *const mfront_ptr) noexcept {cudaFree(mfront_ptr);});"
          << "tfel::fsalgo::fill<" << 2 * (mpd.inputs.size() + 1)
          << ">::exe(mfront_bounds_statuses, 0);\n";
     }
@@ -461,15 +464,6 @@ namespace mfront::generic_parallel::material_property {
          << "}\n"
          << "errno = mfront_errno_old;\n";
       this->writeBoundsStatusesAnalysis(os, i, mpd);
-    }
-    if (requiresBoundsCheck(mpd)) {
-      os << "cudaFree(mfront_bounds_statuses);\n"
-         << "const auto mfront_cuda_free_error = cudaGetLastError();\n"
-         << "if (mfront_cuda_free_error != cudaSuccess) {\n"
-         << "mfront_output_status->status = -6;\n"
-         << "mfront_report(cudaGetErrorString(mfront_cuda_free_error));\n"
-         << "return;\n"
-         << "}\n";
     }
     os << "} // end of " << name << "\n\n";
   }  // end of writeCImplementation2
@@ -488,9 +482,8 @@ namespace mfront::generic_parallel::material_property {
          << "mfront_args_strides, "
          << "mfront_argument_strides_tmp.begin());\n";
     }
-    auto write_kernel_call = [this, &os, &i, &mpd, &treatStrides,
-                              &name](const bool handleStrides,
-                                     const bool uniform) {
+    auto write_kernel_call = [this, &os, &i, &mpd, &treatStrides, &name](
+                                 const bool handleStrides, const bool uniform) {
       os << "// loop over the points\n"
          << "mfront_" << name << "_kernel";
       if (!handleStrides) {
@@ -544,7 +537,7 @@ namespace mfront::generic_parallel::material_property {
     if (treatStrides) {
       if (mpd.inputs.empty()) {
         os << "if (mfront_output_stride == 0) {\n";
-        write_kernel_call(false, true); 
+        write_kernel_call(false, true);
         os << "} else if (mfront_output_stride == 1) {\n";
         write_kernel_call(false, false);
         os << "} else {\n";
@@ -570,7 +563,8 @@ namespace mfront::generic_parallel::material_property {
            << "mfront_argument_strides_tmp.end(), "
            << "[](const " << types.integer_type
            << " mfront_stride){return mfront_stride == 1;});\n"
-           << "if ((mfront_areAllArgumentsStridesOne) && (mfront_output_stride == 1)){\n";
+           << "if ((mfront_areAllArgumentsStridesOne) && (mfront_output_stride "
+              "== 1)){\n";
         write_kernel_call(false, false);
         os << "} else {\n";
         write_kernel_call(treatStrides, false);
