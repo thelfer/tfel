@@ -177,6 +177,33 @@ namespace tfel::math {
      */
     TFEL_HOST_DEVICE static constexpr auto K() noexcept;
     /*!
+     * \return the (i, j) Voigt-indexed component of Id(), computed
+     * directly without instantiating the full tensor. Useful on GPU
+     * when the indices are warp-divergent at runtime, where indexing
+     * a materialized Id() defeats coalescence / constant-memory broadcast.
+     * \param[in] i, j: Voigt indices in [0, TensorDimeToSize<N>::value).
+     */
+    TFEL_HOST_DEVICE static constexpr auto generateIdComponent(
+        unsigned short, unsigned short) noexcept;
+    /*!
+     * \return the (i, j) Voigt-indexed component of IxI(), computed
+     * directly without instantiating the full tensor. Useful on GPU
+     * when the indices are warp-divergent at runtime, where indexing
+     * a materialized IxI() defeats coalescence / constant-memory broadcast.
+     * \param[in] i, j: Voigt indices in [0, TensorDimeToSize<N>::value).
+     */
+    TFEL_HOST_DEVICE static constexpr auto generateIxIComponent(
+        unsigned short, unsigned short) noexcept;
+    /*!
+     * \return the (i, j) Voigt-indexed component of K(), computed
+     * directly without instantiating the full tensor. Useful on GPU
+     * when the indices are warp-divergent at runtime, where indexing
+     * a materialized K() defeats coalescence / constant-memory broadcast.
+     * \param[in] i, j: Voigt indices in [0, TensorDimeToSize<N>::value).
+     */
+    TFEL_HOST_DEVICE static constexpr auto generateKComponent(
+        unsigned short, unsigned short) noexcept;
+    /*!
      * \brief constructor from a t2tost2
      * \param[in] v : values
      */
