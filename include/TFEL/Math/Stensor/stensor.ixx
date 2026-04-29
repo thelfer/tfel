@@ -398,7 +398,7 @@ namespace tfel::math {
   }
 
   template <unsigned short N, typename T>
-  constexpr stensor<N, base_type<T>> stensor<N, T>::Id() noexcept {
+  TFEL_HOST_DEVICE constexpr stensor<N, base_type<T>> stensor<N, T>::Id() noexcept {
     static_assert((N == 1) || (N == 2) || (N == 3), "invalid space dimension");
     constexpr auto zero = base_type<T>{0};
     constexpr auto one = base_type<T>{1};

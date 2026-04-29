@@ -168,11 +168,11 @@ namespace tfel::math {
         requires(getSpaceDimension<StensorType>() == N &&
                  isAssignableTo<numeric_type<StensorType>, ValueType>());
     //
-    static constexpr st2tost2 Id() noexcept;
-    static constexpr st2tost2 IxI() noexcept;
-    static constexpr st2tost2 K() noexcept;
-    static constexpr st2tost2 M() noexcept;
-    static constexpr st2tost2 J() noexcept;
+    TFEL_HOST_DEVICE static constexpr st2tost2 Id() noexcept;
+    TFEL_HOST_DEVICE static constexpr st2tost2 IxI() noexcept;
+    TFEL_HOST_DEVICE static constexpr st2tost2 K() noexcept;
+    TFEL_HOST_DEVICE static constexpr st2tost2 M() noexcept;
+    TFEL_HOST_DEVICE static constexpr st2tost2 J() noexcept;
     /*!
      * \return the (i, j) Voigt-indexed component of Id(), computed
      * directly without instantiating the full tensor. Useful on GPU

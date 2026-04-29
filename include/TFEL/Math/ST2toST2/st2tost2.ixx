@@ -94,7 +94,7 @@ namespace tfel::math {
   }  // end of st2tost2<N,T>::fromRotationMatrix
 
   template <unsigned short N, typename T>
-  constexpr st2tost2<N, T> st2tost2<N, T>::Id() noexcept {
+  TFEL_HOST_DEVICE constexpr st2tost2<N, T> st2tost2<N, T>::Id() noexcept {
     constexpr auto c0 = T{0};
     constexpr auto c1 = T{1};
     static_assert((N == 1) || (N == 2) || (N == 3));
@@ -126,7 +126,7 @@ namespace tfel::math {
   }  // end of st2tost2<N,T>::generateIdComponent
 
   template <unsigned short N, typename T>
-  constexpr st2tost2<N, T> st2tost2<N, T>::IxI() noexcept {
+  TFEL_HOST_DEVICE constexpr st2tost2<N, T> st2tost2<N, T>::IxI() noexcept {
     constexpr auto c1 = T{1};
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {
@@ -159,7 +159,7 @@ namespace tfel::math {
   }  // end of st2tost2<N,T>::generateIxIComponent
 
   template <unsigned short N, typename T>
-  constexpr st2tost2<N, T> st2tost2<N, T>::K() noexcept {
+  TFEL_HOST_DEVICE constexpr st2tost2<N, T> st2tost2<N, T>::K() noexcept {
     constexpr auto c2_3 = T{2} / T{3};
     constexpr auto mc1_3 = -T{1} / T{3};
     static_assert((N == 1) || (N == 2) || (N == 3));
@@ -198,7 +198,7 @@ namespace tfel::math {
   }  // end of st2tost2<N,T>::generateKComponent
 
   template <unsigned short N, typename T>
-  constexpr st2tost2<N, T> st2tost2<N, T>::M() noexcept {
+  TFEL_HOST_DEVICE constexpr st2tost2<N, T> st2tost2<N, T>::M() noexcept {
     constexpr auto c1 = T{1};
     constexpr auto mc1_2 = -T{1} / T{2};
     static_assert((N == 1) || (N == 2) || (N == 3));
@@ -237,7 +237,7 @@ namespace tfel::math {
   }  // end of st2tost2<N,T>::generateMComponent
 
   template <unsigned short N, typename T>
-  constexpr st2tost2<N, T> st2tost2<N, T>::J() noexcept {
+  TFEL_HOST_DEVICE constexpr st2tost2<N, T> st2tost2<N, T>::J() noexcept {
     constexpr auto c1_3 = T{1} / T{3};
     static_assert((N == 1) || (N == 2) || (N == 3));
     if constexpr (N == 1) {
