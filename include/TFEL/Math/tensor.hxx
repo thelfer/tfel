@@ -86,6 +86,15 @@ namespace tfel::math {
     TFEL_HOST_DEVICE static constexpr tensor<N, base_type<ValueType>>
     Id() noexcept;
     /*!
+     * \return the i-th Voigt-indexed component of Id(), computed
+     * directly without instantiating the full tensor. Useful on GPU
+     * when the index is warp-divergent at runtime, where indexing
+     * a materialized Id() defeats coalescence / constant-memory broadcast.
+     * \param[in] i: Voigt index in [0, TensorDimeToSize<N>::value).
+     */
+    TFEL_HOST_DEVICE static constexpr base_type<ValueType>
+    generateIdComponent(unsigned short) noexcept;
+    /*!
      * \brief Build a tensor from a fortran matrix.
      * \param[in] t: tensor to be filled
      * \param[in] v: pointer to an array used to initialise the
