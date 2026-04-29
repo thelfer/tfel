@@ -79,6 +79,33 @@ struct ST2ToST2TestComponents final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(my_abs(stress(1e9) - C(1, 3) / sqrt2) < 1e9 * seps);
     TFEL_TESTS_ASSERT(my_abs(stress(0) - C(3, 1) / sqrt2) < seps);
 
+    // generateMComponent(i, j) must match M()(i, j) value-for-value,
+    // for every Voigt index pair, in every supported space dimension.
+    constexpr auto M3D = st2tost2<3u, double>::M();
+    for (unsigned short i = 0; i < 6; ++i) {
+      for (unsigned short j = 0; j < 6; ++j) {
+        TFEL_TESTS_ASSERT(
+            my_abs(st2tost2<3u, double>::generateMComponent(i, j) -
+                   M3D(i, j)) < eps);
+      }
+    }
+    constexpr auto M2D = st2tost2<2u, double>::M();
+    for (unsigned short i = 0; i < 4; ++i) {
+      for (unsigned short j = 0; j < 4; ++j) {
+        TFEL_TESTS_ASSERT(
+            my_abs(st2tost2<2u, double>::generateMComponent(i, j) -
+                   M2D(i, j)) < eps);
+      }
+    }
+    constexpr auto M1D = st2tost2<1u, double>::M();
+    for (unsigned short i = 0; i < 3; ++i) {
+      for (unsigned short j = 0; j < 3; ++j) {
+        TFEL_TESTS_ASSERT(
+            my_abs(st2tost2<1u, double>::generateMComponent(i, j) -
+                   M1D(i, j)) < eps);
+      }
+    }
+
     return this->result;
   }  // end of execute
 };

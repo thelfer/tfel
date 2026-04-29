@@ -199,6 +199,17 @@ namespace tfel::math {
   }  // end of st2tost2<N,T>::M
 
   template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr T st2tost2<N, T>::generateMComponent(
+      unsigned short i, unsigned short j) noexcept {
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    constexpr auto c3_2 = T{3} / T{2};
+    constexpr auto c1_2 = T{1} / T{2};
+    return c3_2 * (i == j) *
+               (((i < 3) & (j < 3)) | ((i >= 3) & (j >= 3))) -
+           c1_2 * ((i < 3) & (j < 3));
+  }  // end of st2tost2<N,T>::generateMComponent
+
+  template <unsigned short N, typename T>
   constexpr st2tost2<N, T> st2tost2<N, T>::J() noexcept {
     constexpr auto c1_3 = T{1} / T{3};
     static_assert((N == 1) || (N == 2) || (N == 3));
