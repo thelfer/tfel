@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<testsuite name="TMatrixComponentsTest-6">
+<testcase classname="TFEL/Math" name="TMatrixComponentsTest6" time="4.7e-06">
+<success>
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+SUCCESS : assertion: &apos;std::abs(tmatrix&lt;N, N, double&gt;::generateIdComponent(i, j) - id(i, j)) &lt; 1.e-14&apos;
+</success>
+</testcase>
+</testsuite>
