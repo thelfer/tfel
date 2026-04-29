@@ -143,6 +143,14 @@ namespace tfel::math {
   }  // end of st2tost2<N,T>::Id
 
   template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr T st2tost2<N, T>::generateIxIComponent(
+      unsigned short i, unsigned short j) noexcept {
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    constexpr auto c1 = T{1};
+    return c1 * ((i < 3) & (j < 3));
+  }  // end of st2tost2<N,T>::generateIxIComponent
+
+  template <unsigned short N, typename T>
   constexpr st2tost2<N, T> st2tost2<N, T>::K() noexcept {
     constexpr auto c2_3 = T{2} / T{3};
     constexpr auto mc1_3 = -T{1} / T{3};
