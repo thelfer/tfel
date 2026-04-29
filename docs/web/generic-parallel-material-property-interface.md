@@ -16,16 +16,27 @@ eqnPrefixTemplate: "($$i$$)"
 
 This page describes the `generic-parallel` interface.
 
+The `generic-parallel` interface has been designed to be compatible with
+current parallel programming models (see the `Backends` section).
+
 # Prototypes of the generated functions
 
-The `generic` interface for material properties generates two functions.
-Those functions can be used:
+The `generic-parallel` interface for material properties generates two
+functions. Those functions can be used:
 
 - directly by including the generated headers and linking with the
   generated library.
 - indirectly by loading the generated function using system calls like
   `dlopen`/`dlsym` on `Unix` systems or `LoadLibrary`/`GetProcAddress`
   on `Windows`.
+
+In addition, the `generic-parallel` interface also exports:
+
+- symbols describing the material property (names of the inputs, list of
+  parameters, default values, etc.),
+- a function allowing to modify at runtime the value of the parameters
+  of the material property, if modification of parameters is allowed
+  (see the DSL options `parameters_as_static_variables` options).
 
 ## First prototype supporting data with strides
 
@@ -78,6 +89,8 @@ equal to one.
 
 # Backends
 
+Backends are associated with parallel programming models.
+
 ## `CUDA` backend
 
 ### Example of usage
@@ -118,10 +131,10 @@ thrust::device_vector<double> d_f(f);
 thrust::device_vector<double> d_G(T.size());
 
 auto output = mfront_gmp_OutputStatus{};
-auto policy = mfront_gmp_OutOfBoundsPolicy{};
-auto args = std::array<double *, 2u>{thrust::raw_pointer_cast(d_T.data()),
+const auto policy = GENERIC_MATERIALPROPERTY_NONE_POLICY;
+const auto args = std::array<double *, 2u>{thrust::raw_pointer_cast(d_T.data()),
                                      thrust::raw_pointer_cast(d_f.data())};
-auto args_stride = std::array<mfront_gmp_size_type, 2u>{1, 0};
+const auto args_stride = std::array<mfront_gmp_size_type, 2u>{1, 0};
 UO2_ShearModulus(&output, thrust::raw_pointer_cast(d_G.data()), 1,
                  args.data(), args_stride.data(), 2, 4, policy);
 G = d_G;
@@ -232,7 +245,7 @@ auto G = std::vector<double>(4);
 const auto T = std::vector<double>{300, 500, 300, 800};
 const auto f = std::vector<double>{0.1};
 auto output = mfront_gmp_OutputStatus{};
-const auto policy = mfront_gmp_OutOfBoundsPolicy{};
+const auto policy = GENERIC_MATERIALPROPERTY_NONE_POLICY;
 const auto args = std::array<const double *, 2u>{T.data(), f.data()};
 const auto args_strides = std::array<mfront_gmp_size_type, 2u>{1, 0};
 UO2_ShearModulus(&output, G.data(), 1, args.data(), args_strides.data(), 2, 4,
