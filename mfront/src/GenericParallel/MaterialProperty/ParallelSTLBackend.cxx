@@ -88,66 +88,6 @@ namespace mfront::generic_parallel::material_property {
       const GenericParallelMaterialPropertyInterface&,
       const MaterialPropertyDescription&) const {}
 
-  void ParallelSTLBackend::writeCDeclarations(
-      std::ostream& os,
-      const GenericParallelMaterialPropertyInterface& i,
-      const MaterialPropertyDescription& mpd) const {
-    const auto name = i.getFunctionName(mpd);
-    const auto types = i.getTypesDescription();
-    os << "/*!\n"
-       << " * \\brief compute the value of '" << mpd.className
-       << "' material property on a set of points\n"
-       << " *\n"
-       << " * \\param[in] mfront_output_status: output status\n"
-       << " * \\param[in] mfront_output: output values\n"
-       << " * \\param[in] mfront_output_stride: output stride\n"
-       << " * \\param[in] mfront_args: array of pointers to the state "
-       << "variables's values\n"
-       << " * \\param[in] mfront_args_strides: array of integers\n"
-       << " *             stating if the variables are uniform or not.\n"
-       << " *             If 0, the associated variable is not uniform\n"
-       << " * \\param[in] mfront_nargs: number of state variables'\n"
-       << " * \\param[in] mfront_npoints: number of points in which the "
-       << "material property is computed.\n"
-       << " * \\param[in] mfront_out_of_bounds_policy: out of bounds policy\n"
-       << " *\n"
-       << " * \\note `mfront_npoints` is also the size of the arrays giving\n"
-       << " *   the output and the nputs\n"
-       << " */\n"
-       << "MFRONT_SHAREDOBJ void " << name << "(\n"
-       << types.output_status_type << "* const,\n"
-       << types.real_type << "* const,\n"
-       << "const " << types.integer_type << ",\n"
-       << "const " << types.real_type << "* const* const,\n"
-       << "const " << types.integer_type << "* const,\n"
-       << "const " << types.integer_type << ",\n"
-       << "const " << types.integer_type << ",\n"
-       << "const " << types.out_of_bounds_policy_type << ");\n\n"
-       << "/*!\n"
-       << " * \\brief compute the value of '" << mpd.className
-       << "' material property on a set of points\n"
-       << " *\n"
-       << " * \\param[in] mfront_output_status: output status\n"
-       << " * \\param[in] mfront_args: array of pointers to the state "
-       << "variables's values\n"
-       << " * \\param[in] mfront_nargs: number of state variables'\n"
-       << " * \\param[in] mfront_npoints: number of points in which the "
-       << "material property is computed.\n"
-       << " * \\param[in] mfront_out_of_bounds_policy: out of bounds policy\n"
-       << " *\n"
-       << " * \\note all variables are assumed to be non uniform\n"
-       << " * \\note `mfront_npoints` is also the size of the arrays giving\n"
-       << " *   the output and the nputs\n"
-       << " */\n"
-       << "MFRONT_SHAREDOBJ void " << name << "2(\n"
-       << types.output_status_type << "* const,\n"
-       << types.real_type << "* const,\n"
-       << "const " << types.real_type << "* const* const,\n"
-       << "const " << types.integer_type << ",\n"
-       << "const " << types.integer_type << ",\n"
-       << "const " << types.out_of_bounds_policy_type << ");\n\n";
-  }  // end of writeDeclaration
-
   void ParallelSTLBackend::writeCxxImplementations(
       std::ostream&,
       const GenericParallelMaterialPropertyInterface&,

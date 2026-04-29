@@ -41,9 +41,6 @@ namespace mfront::generic_parallel::material_property {
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&) const override;
-    void writeCDeclarations(std::ostream&,
-                            const GenericParallelMaterialPropertyInterface&,
-                            const MaterialPropertyDescription&) const override;
     void writeCxxDeclarations(
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,

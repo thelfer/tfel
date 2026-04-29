@@ -31,6 +31,10 @@ namespace mfront::generic_parallel::material_property {
   struct MFRONT_VISIBILITY_EXPORT BackendBase : AbstractBackend {
     //! \brief default constructor
     BackendBase();
+    //
+    void writeCDeclarations(std::ostream&,
+                            const GenericParallelMaterialPropertyInterface&,
+                            const MaterialPropertyDescription&) const override;
     // do nothing implementation
     void writeProxyObjects(std::ostream&,
                            const GenericParallelMaterialPropertyInterface&,
