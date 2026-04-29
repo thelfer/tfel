@@ -174,6 +174,23 @@ namespace tfel::math {
     static constexpr st2tost2 M() noexcept;
     static constexpr st2tost2 J() noexcept;
     /*!
+     * \return the (i, j) Voigt-indexed component of Id() without
+     * materializing the full tensor.
+     *
+     * Intended for element-wise access in GPU kernels where i and/or j
+     * are warp-divergent at runtime: indexing a materialized Id() with
+     * a runtime index forces either a register spill to local memory
+     * (uncoalesced loads) or a non-broadcast read from constant memory
+     * (serialized within the warp). This generator-style accessor avoids
+     * the table altogether and produces the value with a single
+     * branch-free arithmetic expression that the compiler can predicate
+     * uniformly across the warp.
+     *
+     * \param[in] i, j: Voigt indices in [0, StensorDimeToSize<N>::value).
+     */
+    TFEL_HOST_DEVICE static constexpr ValueType
+    generateIdComponent(unsigned short, unsigned short) noexcept;
+    /*!
      * \return the (i, j) Voigt-indexed component of IxI() without
      * materializing the full tensor.
      *

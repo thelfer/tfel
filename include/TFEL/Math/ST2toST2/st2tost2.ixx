@@ -118,6 +118,14 @@ namespace tfel::math {
   }  // end of st2tost2<N,T>::Id
 
   template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr T st2tost2<N, T>::generateIdComponent(
+      unsigned short i, unsigned short j) noexcept {
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    constexpr auto c1 = T{1};
+    return c1 * (i == j);
+  }  // end of st2tost2<N,T>::generateIdComponent
+
+  template <unsigned short N, typename T>
   constexpr st2tost2<N, T> st2tost2<N, T>::IxI() noexcept {
     constexpr auto c1 = T{1};
     static_assert((N == 1) || (N == 2) || (N == 3));

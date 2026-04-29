@@ -79,6 +79,33 @@ struct ST2ToST2TestComponents final : public tfel::tests::TestCase {
     TFEL_TESTS_ASSERT(my_abs(stress(1e9) - C(1, 3) / sqrt2) < 1e9 * seps);
     TFEL_TESTS_ASSERT(my_abs(stress(0) - C(3, 1) / sqrt2) < seps);
 
+    // generateIdComponent(i, j) must match Id()(i, j) value-for-value,
+    // for every Voigt index pair, in every supported space dimension.
+    constexpr auto Id3D = st2tost2<3u, double>::Id();
+    for (unsigned short i = 0; i < 6; ++i) {
+      for (unsigned short j = 0; j < 6; ++j) {
+        TFEL_TESTS_ASSERT(
+            my_abs(st2tost2<3u, double>::generateIdComponent(i, j) -
+                   Id3D(i, j)) < eps);
+      }
+    }
+    constexpr auto Id2D = st2tost2<2u, double>::Id();
+    for (unsigned short i = 0; i < 4; ++i) {
+      for (unsigned short j = 0; j < 4; ++j) {
+        TFEL_TESTS_ASSERT(
+            my_abs(st2tost2<2u, double>::generateIdComponent(i, j) -
+                   Id2D(i, j)) < eps);
+      }
+    }
+    constexpr auto Id1D = st2tost2<1u, double>::Id();
+    for (unsigned short i = 0; i < 3; ++i) {
+      for (unsigned short j = 0; j < 3; ++j) {
+        TFEL_TESTS_ASSERT(
+            my_abs(st2tost2<1u, double>::generateIdComponent(i, j) -
+                   Id1D(i, j)) < eps);
+      }
+    }
+
     // generateIxIComponent(i, j) must match IxI()(i, j) value-for-value,
     // for every Voigt index pair, in every supported space dimension.
     constexpr auto IxI3D = st2tost2<3u, double>::IxI();
