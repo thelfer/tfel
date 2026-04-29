@@ -174,86 +174,46 @@ namespace tfel::math {
     static constexpr st2tost2 M() noexcept;
     static constexpr st2tost2 J() noexcept;
     /*!
-     * \return the (i, j) Voigt-indexed component of Id() without
-     * materializing the full tensor.
-     *
-     * Intended for element-wise access in GPU kernels where i and/or j
-     * are warp-divergent at runtime: indexing a materialized Id() with
-     * a runtime index forces either a register spill to local memory
-     * (uncoalesced loads) or a non-broadcast read from constant memory
-     * (serialized within the warp). This generator-style accessor avoids
-     * the table altogether and produces the value with a single
-     * branch-free arithmetic expression that the compiler can predicate
-     * uniformly across the warp.
-     *
+     * \return the (i, j) Voigt-indexed component of Id(), computed
+     * directly without instantiating the full tensor. Useful on GPU
+     * when the indices are warp-divergent at runtime, where indexing
+     * a materialized Id() defeats coalescence / constant-memory broadcast.
      * \param[in] i, j: Voigt indices in [0, StensorDimeToSize<N>::value).
      */
     TFEL_HOST_DEVICE static constexpr ValueType
     generateIdComponent(unsigned short, unsigned short) noexcept;
     /*!
-     * \return the (i, j) Voigt-indexed component of IxI() without
-     * materializing the full tensor.
-     *
-     * Intended for element-wise access in GPU kernels where i and/or j
-     * are warp-divergent at runtime: indexing a materialized IxI() with
-     * a runtime index forces either a register spill to local memory
-     * (uncoalesced loads) or a non-broadcast read from constant memory
-     * (serialized within the warp). This generator-style accessor avoids
-     * the table altogether and produces the value with a single
-     * branch-free arithmetic expression that the compiler can predicate
-     * uniformly across the warp.
-     *
+     * \return the (i, j) Voigt-indexed component of IxI(), computed
+     * directly without instantiating the full tensor. Useful on GPU
+     * when the indices are warp-divergent at runtime, where indexing
+     * a materialized IxI() defeats coalescence / constant-memory broadcast.
      * \param[in] i, j: Voigt indices in [0, StensorDimeToSize<N>::value).
      */
     TFEL_HOST_DEVICE static constexpr ValueType
     generateIxIComponent(unsigned short, unsigned short) noexcept;
     /*!
-     * \return the (i, j) Voigt-indexed component of K() without
-     * materializing the full tensor.
-     *
-     * Intended for element-wise access in GPU kernels where i and/or j
-     * are warp-divergent at runtime: indexing a materialized K() with a
-     * runtime index forces either a register spill to local memory
-     * (uncoalesced loads) or a non-broadcast read from constant memory
-     * (serialized within the warp). This generator-style accessor avoids
-     * the table altogether and produces the value with a single
-     * branch-free arithmetic expression that the compiler can predicate
-     * uniformly across the warp.
-     *
+     * \return the (i, j) Voigt-indexed component of K(), computed
+     * directly without instantiating the full tensor. Useful on GPU
+     * when the indices are warp-divergent at runtime, where indexing
+     * a materialized K() defeats coalescence / constant-memory broadcast.
      * \param[in] i, j: Voigt indices in [0, StensorDimeToSize<N>::value).
      */
     TFEL_HOST_DEVICE static constexpr ValueType
     generateKComponent(unsigned short, unsigned short) noexcept;
     /*!
-     * \return the (i, j) Voigt-indexed component of M() without
-     * materializing the full tensor.
-     *
-     * Intended for element-wise access in GPU kernels where i and/or j
-     * are warp-divergent at runtime: indexing a materialized M() with a
-     * runtime index forces either a register spill to local memory
-     * (uncoalesced loads) or a non-broadcast read from constant memory
-     * (serialized within the warp). This generator-style accessor avoids
-     * the table altogether and produces the value with a single
-     * branch-free arithmetic expression that the compiler can predicate
-     * uniformly across the warp.
-     *
+     * \return the (i, j) Voigt-indexed component of M(), computed
+     * directly without instantiating the full tensor. Useful on GPU
+     * when the indices are warp-divergent at runtime, where indexing
+     * a materialized M() defeats coalescence / constant-memory broadcast.
      * \param[in] i, j: Voigt indices in [0, StensorDimeToSize<N>::value).
      */
     TFEL_HOST_DEVICE static constexpr ValueType
     generateMComponent(unsigned short, unsigned short) noexcept;
     /*!
-     * \return the (i, j) Voigt-indexed component of J() without
-     * materializing the full tensor.
-     *
-     * Intended for element-wise access in GPU kernels where i and/or j
-     * are warp-divergent at runtime: indexing a materialized J() with a
-     * runtime index forces either a register spill to local memory
-     * (uncoalesced loads) or a non-broadcast read from constant memory
-     * (serialized within the warp). This generator-style accessor avoids
-     * the table altogether and produces the value with a single
-     * branch-free arithmetic expression that the compiler can predicate
-     * uniformly across the warp.
-     *
+     * \return the (i, j) Voigt-indexed component of J(), computed
+     * directly without instantiating the full tensor. Useful on GPU
+     * when the indices are warp-divergent at runtime, where indexing
+     * a materialized J() defeats coalescence / constant-memory broadcast.
      * \param[in] i, j: Voigt indices in [0, StensorDimeToSize<N>::value).
      */
     TFEL_HOST_DEVICE static constexpr ValueType
