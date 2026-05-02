@@ -208,12 +208,12 @@ if(enable-lsdyna)
   tfel_add_c_cxx_definitions("HAVE_LSDYNA=1")
 endif(enable-lsdyna)
 
-option(enable-open-radioss "build open-radioss interface for mechanical behaviours" OFF)
-if(enable-open-radioss)
-  message(STATUS "open-radioss support enabled")
+option(enable-openradioss "build openradioss interface for mechanical behaviours" OFF)
+if(enable-openradioss)
+  message(STATUS "openradioss support enabled")
   set(HAVE_OPENRADIOSS ON)
   tfel_add_c_cxx_definitions("HAVE_OPENRADIOSS=1")
-endif(enable-open-radioss)
+endif(enable-openradioss)
 
 #diana-fea
 option(enable-diana-fea "build Diana FEA interface for mechanical behaviours" OFF)

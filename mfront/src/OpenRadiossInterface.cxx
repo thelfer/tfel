@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/OpenRadiossInterface.cxx
- * \brief
+ * \brief  OpenRadioss interface
  * \author Thomas Helfer
  * \date   10/04/2025
  */
@@ -16,6 +16,19 @@
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/OpenRadiossInterface.hxx"
+
+/*
+  TODOs and Current limitations
+
+  - Currently 2D shells are not supported.
+  - The materials are generated with the ID = 1, therefore, only one material
+  is supported currently. In order to have serveral MFront generated materials
+  in OpenRadioss, this interface should be updated (maybe by adding a RADIOSS)
+  specific compilation flag/keyword that would allow the user to select the
+  material number.
+  - Double precision is used throughout the code, it is unlikely that we will
+  ever support single precision routines.
+ */
 
 namespace mfront {
 
@@ -140,6 +153,9 @@ namespace mfront {
           << "C     INPUT FILE READING (USER DATA)\n"
           << "C-----------------------------------------------\n"
           << "      \n"
+          // TODO, do we want to allow the reading of external variables?
+          // is it okay to read them raw into UPARAM? In the example provided
+          // in the documentation that is not the case...
           << "      READ(IIN,'(" << nprops << "F20.0)') ";
       for (int i = 1; i != nprops + 1; ++i) {
         out << "UPARAM(" << i << ")";
@@ -159,9 +175,13 @@ namespace mfront {
     const auto nstatev = mfront::getTypeSize(d.getPersistentVariables())
                              .getValueForModellingHypothesis(h);
     out << "      NUVAR = " << nstatev << '\n';
+    // TODO, we are not setting the number of curves that the material
+    // is going to use... Do we even want to allow for such a thing?
     out << "C-------------------------------------------------\n"
         << "C     INITIAL STIFFNESS                           \n"
         << "C-------------------------------------------------\n";
+    // TODO, review this variable as it does not exist in the function signature
+    // see issue https://github.com/OpenRadioss/OpenRadioss/issues/4924
     auto found = false;
     if (bd.getSymmetryType() == mfront::ISOTROPIC) {
       for (const auto& mp : mprops.first) {
@@ -234,7 +254,7 @@ namespace mfront {
     //      & 5X,'E . . . . . . . . . . . . . . . . . . .=',E12.4/
     //      & 5X,'NU. . . . . . . . . . . . . . . . . . .=',E12.4/
     //      & 5X,'Temperature FUNCTION ID . . . . . . . .=',I10/
-    //      & 5X,'Scalling factor for FUNCTION Ordinate .=',E12.4//)
+    //      & 5X,'Scaling factor for FUNCTION Ordinate. .=',E12.4//)
     // C
     // C-------------------------------------------------
     out << "C-------------------------------------------------\n"
@@ -272,7 +292,11 @@ namespace mfront {
         << "C   OUTPUT VARIABLES\n"
         << "C-----------------------------------------------\n"
         << "      DOUBLE PRECISION SOUNDSP(NEL),VISCMAX(NEL)\n"
-        << "      DOUBLE PRECISION UVAR(NUVAR)\n"
+        << "C-----------------------------------------------\n"
+        << "C   INPUT-OUTPUT VARIABLES\n"
+        << "C-----------------------------------------------\n"
+        << "      TYPE(ULAWINTBUF) :: USERBUF\n"
+        << "      DOUBLE PRECISION UVAR(NEL,NUVAR)\n"
         << "      DOUBLE PRECISION OFF(NEL),PLA(NEL), SIGY(NEL)\n"
         << "C-----------------------------------------------\n"
         << "C   TEMPORARY VARIABLES\n"
@@ -343,8 +367,8 @@ namespace mfront {
         << "        EPS_ETS(4) =  USERBUF%EPSXY(IDX) + USERBUF%DEPSXY(IDX)\n"
         << "        EPS_ETS(5) =  USERBUF%EPSXZ(IDX) + USERBUF%DEPSXZ(IDX)\n"
         << "        EPS_ETS(6) =  USERBUF%EPSYZ(IDX) + USERBUF%DEPSYZ(IDX)\n"
-        << "        RHO0 = USERBUF%RHO0(IDX)\n"
-        << "        T = USERBUF%TEMP(IDX)\n";
+        << "        RHO0       = USERBUF%RHO0(IDX)\n"
+        << "        T          = USERBUF%TEMP(IDX)\n";
     if (nstatev != 0) {
       for (int i = 0; i != nstatev; ++i) {
         out << "        STATEV_BTS(" << i + 1 << ") = UVAR(IDX, " << i + 1
