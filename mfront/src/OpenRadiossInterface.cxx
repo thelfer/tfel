@@ -55,9 +55,9 @@ namespace mfront {
     GenericBehaviourInterface::getTargetsDescription(td, bd);
     const auto lib = this->getLibraryName(bd);
     auto& l = td.getLibrary(lib);
-    insert_if(l.sources, "openradioss-lecmuser01.f");
-    insert_if(l.sources, "openradioss-luser01.f");
-    insert_if(l.sources, "openradioss-luser01-interface.cxx");
+    insert_if(l.sources, "lecmuser01.f");
+    insert_if(l.sources, "luser01.f");
+    insert_if(l.sources, "luser01-interface.cxx");
   }  // end of getTargetsDescription
 
   std::pair<bool, OpenRadiossInterface::tokens_iterator>
@@ -125,9 +125,9 @@ namespace mfront {
       }
       return r.getValueForModellingHypothesis(h);
     }();
-    auto out = std::ofstream("src/openradioss-lecmuser01.f");
+    auto out = std::ofstream("src/lecmuser01.f");
     if (!out) {
-      tfel::raise("could not open file 'src/openradioss-lecmuser01.f'");
+      tfel::raise("could not open file 'src/lecmuser01.f'");
     }
     out << "      SUBROUTINE "
         << "LECMUSER01(IIN,IOUT,UPARAM,MAXUPARAM,NUPARAM, \n"
@@ -182,6 +182,8 @@ namespace mfront {
         << "C-------------------------------------------------\n";
     // TODO, review this variable as it does not exist in the function signature
     // see issue https://github.com/OpenRadioss/OpenRadioss/issues/4924
+
+    // TODO, IMPORTANT! This code is incorrect, we need the actual value of Youngmodulus!!!
     auto found = false;
     if (bd.getSymmetryType() == mfront::ISOTROPIC) {
       for (const auto& mp : mprops.first) {
@@ -191,7 +193,7 @@ namespace mfront {
             r -= mprops.second;
             return r.getValueForModellingHypothesis(h);
           }();
-          out << "      STIFINT = UMAT(" << offset + 1 << ")\n";
+          out << "      STIFINT = " << offset + 1 << "\n";
           found = true;
           break;
         }
@@ -204,7 +206,7 @@ namespace mfront {
               r -= mprops.second;
               return r.getValueForModellingHypothesis(h);
             }();
-            out << "      STIFINT = UMAT(" << offset + 1 << ")\n";
+            out << "      STIFINT = " << offset + 1 << "\n";
             found = true;
             break;
           }
@@ -266,9 +268,9 @@ namespace mfront {
         << "      END\n";
     out.close();
     // generating the engine source
-    out.open("src/openradioss-luser01.f");
+    out.open("src/luser01.f");
     if (!out) {
-      tfel::raise("could not open file 'src/openradioss-luser01.f'");
+      tfel::raise("could not open file 'src/luser01.f'");
     }
     const auto estatev = nstatev == 0 ? 1 : nstatev;
     out << "      SUBROUTINE LUSER01 (\n"
@@ -315,7 +317,7 @@ namespace mfront {
         << "C   C-interface\n"
         << "C-----------------------------------------------\n"
         << "      interface\n"
-        << "         subroutine openradioss_luser01_interface("
+        << "         subroutine openradioss_luser01_interface(\n"
         << "     .                 sig_ets, soundsp, statev_ets,\n"
         << "     .                 eto_bts, eto_ets, sig_bts,\n"
         << "     .                 statev_bts, props, rho, T, dt)\n"
@@ -353,19 +355,19 @@ namespace mfront {
         << "        SIG_BTS(2) =  USERBUF%SIGOYY(IDX)\n"
         << "        SIG_BTS(3) =  USERBUF%SIGOZZ(IDX)\n"
         << "        SIG_BTS(4) =  USERBUF%SIGOXY(IDX)\n"
-        << "        SIG_BTS(5) =  USERBUF%SIGOXZ(IDX)\n"
+        << "        SIG_BTS(5) =  USERBUF%SIGOZX(IDX)\n"
         << "        SIG_BTS(6) =  USERBUF%SIGOYZ(IDX)\n"
         << "        EPS_BTS(1) =  USERBUF%EPSXX(IDX)\n"
         << "        EPS_BTS(2) =  USERBUF%EPSYY(IDX)\n"
         << "        EPS_BTS(3) =  USERBUF%EPSZZ(IDX)\n"
         << "        EPS_BTS(4) =  USERBUF%EPSXY(IDX)\n"
-        << "        EPS_BTS(5) =  USERBUF%EPSXZ(IDX)\n"
+        << "        EPS_BTS(5) =  USERBUF%EPSZX(IDX)\n"
         << "        EPS_BTS(6) =  USERBUF%EPSYZ(IDX)\n"
         << "        EPS_ETS(1) =  USERBUF%EPSXX(IDX) + USERBUF%DEPSXX(IDX)\n"
         << "        EPS_ETS(2) =  USERBUF%EPSYY(IDX) + USERBUF%DEPSYY(IDX)\n"
         << "        EPS_ETS(3) =  USERBUF%EPSZZ(IDX) + USERBUF%DEPSZZ(IDX)\n"
         << "        EPS_ETS(4) =  USERBUF%EPSXY(IDX) + USERBUF%DEPSXY(IDX)\n"
-        << "        EPS_ETS(5) =  USERBUF%EPSXZ(IDX) + USERBUF%DEPSXZ(IDX)\n"
+        << "        EPS_ETS(5) =  USERBUF%EPSZX(IDX) + USERBUF%DEPSZX(IDX)\n"
         << "        EPS_ETS(6) =  USERBUF%EPSYZ(IDX) + USERBUF%DEPSYZ(IDX)\n"
         << "        RHO0       = USERBUF%RHO0(IDX)\n"
         << "        T          = USERBUF%TEMP(IDX)\n";
@@ -382,7 +384,7 @@ namespace mfront {
         << "        USERBUF%SIGNYY(IDX) = SIG_ETS(2)\n"
         << "        USERBUF%SIGNZZ(IDX) = SIG_ETS(3)\n"
         << "        USERBUF%SIGNXY(IDX) = SIG_ETS(4)\n"
-        << "        USERBUF%SIGNXZ(IDX) = SIG_ETS(5)\n"
+        << "        USERBUF%SIGNZX(IDX) = SIG_ETS(5)\n"
         << "        USERBUF%SIGNYZ(IDX) = SIG_ETS(6)\n"
         << "        SOUNDSP(IDX) = SOUNDSP0\n";
     if (nstatev != 0) {
