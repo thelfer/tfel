@@ -401,9 +401,9 @@ namespace mfront {
     const auto name = bd.getLibrary() + bd.getClassName();
     const auto header = name + "-" + this->getInterfaceName() + ".hxx";
     const auto f = this->getFunctionNameForHypothesis(name, h);
-    out.open("src/openradioss-luser01-interface.cxx");
+    out.open("src/luser01-interface.cxx");
     if (!out) {
-      tfel::raise("could not open file 'src/openradioss-luser01-interface.cxx'");
+      tfel::raise("could not open file 'src/luser01-interface.cxx'");
     }
     out << "#include \"MFront/GenericBehaviour/BehaviourData.hxx\"\n"
         << "#include \"MFront/GenericBehaviour/" << header << "\"\n\n"
