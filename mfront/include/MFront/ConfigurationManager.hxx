@@ -36,7 +36,7 @@ namespace mfront {
      * \brief list of supported languages (including extensions) for which
      * options may be defined
      */
-    enum Language { CXX, C, FORTRAN, CUDA, SYCL };
+    enum Language { CXX, C, FORTRAN, CUDA, HIP, SYCL };
     //! \brief list of option categories for the supported languages
     enum LanguageOptionCategory { PREPROCESSOR_FLAGS, COMPILATION_FLAGS };
     //! \brief list of option categories for the linking the generated libraries

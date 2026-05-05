@@ -14,6 +14,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "MFront/GenericParallel/MaterialProperty/CUDABackend.hxx"
+#include "MFront/GenericParallel/MaterialProperty/HIPBackend.hxx"
 #include "MFront/GenericParallel/MaterialProperty/ParallelSTLBackend.hxx"
 #include "MFront/GenericParallel/MaterialProperty/BackendFactory.hxx"
 
@@ -27,6 +28,9 @@ namespace mfront::generic_parallel::material_property {
   BackendFactory::BackendFactory() {
     this->add("cuda", [](const DataMap& opts) {
       return std::make_unique<CUDABackend>(opts);
+    });
+    this->add("hip", [](const DataMap& opts) {
+      return std::make_unique<HIPBackend>(opts);
     });
     this->add("stlpar", [](const DataMap& opts) {
       return std::make_unique<ParallelSTLBackend>(opts);

@@ -1,7 +1,7 @@
 /*!
- * \file MFront/GenericParallel/MaterialProperty/CUDABackend.hxx
+ * \file MFront/GenericParallel/MaterialProperty/HIPBackend.hxx
  *
- * \brief  This file declares the `CUDABackend` class
+ * \brief  This file declares the `HIPBackend` class
  * \author Thomas Helfer
  * \date   07/04/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
@@ -12,8 +12,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_CUDABACKEND_HXX
-#define LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_CUDABACKEND_HXX
+#ifndef LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_HIPBACKEND_HXX
+#define LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_HIPBACKEND_HXX
 
 #include <optional>
 #include "TFEL/Utilities/Data.hxx"
@@ -22,8 +22,8 @@
 
 namespace mfront::generic_parallel::material_property {
 
-  //! \brief This class implements a backend for CUDA programming model
-  struct MFRONT_VISIBILITY_EXPORT CUDABackend final : CUDABackendBase {
+  //! \brief This class implements a backend for HIP
+  struct MFRONT_VISIBILITY_EXPORT HIPBackend final : CUDABackendBase {
     // constructors
     using CUDABackendBase::CUDABackendBase;
     //
@@ -32,14 +32,13 @@ namespace mfront::generic_parallel::material_property {
     [[nodiscard]] std::string getHeaderFileExtension() const override;
     [[nodiscard]] std::string getSourceFileExtension() const override;
     //! \brief destructor
-    ~CUDABackend() noexcept override;
+    ~HIPBackend() noexcept override;
 
    protected:
     //
     [[nodiscard]] std::string getProgrammingModel() const noexcept override;
-  };  // end of CUDABackend
+  };  // end of HIPBackend
 
 }  // end of namespace mfront::generic_parallel::material_property
 
-#endif /* LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_CUDABACKEND_HXX \
-        */
+#endif /* LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_HIPBACKEND_HXX */

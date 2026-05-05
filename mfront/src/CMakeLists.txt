@@ -208,7 +208,9 @@ set(TFELMFront_SOURCES
     GenericParallel/MaterialProperty/AbstractBackend.cxx
     GenericParallel/MaterialProperty/BackendFactory.cxx
     GenericParallel/MaterialProperty/BackendBase.cxx
+    GenericParallel/MaterialProperty/CUDABackendBase.cxx
     GenericParallel/MaterialProperty/CUDABackend.cxx
+    GenericParallel/MaterialProperty/HIPBackend.cxx
     GenericParallel/MaterialProperty/ParallelSTLBackend.cxx
     GenericBehaviourInterface.cxx
     GenericBehaviourSymbolsGenerator.cxx

@@ -81,6 +81,9 @@ namespace mfront {
     if ((s == "cuda") || (s == "CUDA")) {
       return ConfigurationManager::CUDA;
     }
+    if ((s == "hip") || (s == "HIP")) {
+      return ConfigurationManager::HIP;
+    }
     if (!((s == "sycl") || (s == "SYCL"))) {
       tfel::raise("unsupported language '" + std::string{s} + "'");
     }

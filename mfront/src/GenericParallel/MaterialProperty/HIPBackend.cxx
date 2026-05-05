@@ -1,6 +1,6 @@
 /*!
- * \file   CUDABackend.cxx
- * \brief  This file implements the `CUDABackend` class
+ * \file   HIPBackend.cxx
+ * \brief  This file implements the `HIPBackend` class
  * \author Thomas Helfer
  * \date   07/04/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
@@ -16,24 +16,24 @@
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/MaterialPropertyParametersHandler.hxx"
 #include "MFront/GenericParallelMaterialPropertyInterface.hxx"
-#include "MFront/GenericParallel/MaterialProperty/CUDABackend.hxx"
+#include "MFront/GenericParallel/MaterialProperty/HIPBackend.hxx"
 
 namespace mfront::generic_parallel::material_property {
 
-  std::string CUDABackend::getName() const { return "cuda"; }  // end of getName
+  std::string HIPBackend::getName() const { return "hip"; }  // end of getName
 
-  std::string CUDABackend::getProgrammingModel() const noexcept {
+  std::string HIPBackend::getProgrammingModel() const noexcept {
     return this->getName();
   }
 
-  std::string CUDABackend::getHeaderFileExtension() const {
+  std::string HIPBackend::getHeaderFileExtension() const {
     return "hxx";
   }  // end of getHeaderFileExtension
 
-  std::string CUDABackend::getSourceFileExtension() const {
-    return "cu";
+  std::string HIPBackend::getSourceFileExtension() const {
+    return "hip";
   }  // end of getSourceFileExtension
 
-  CUDABackend::~CUDABackend() = default;
+  HIPBackend::~HIPBackend() = default;
 
 }  // end of namespace mfront::generic_parallel::material_property
