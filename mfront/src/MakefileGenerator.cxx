@@ -352,15 +352,16 @@ namespace mfront {
         m << "-fPIC $(INCLUDES)\n\n";
       }
     }
-    // CFLAGS
+    // FFLAGS
     if (!fSources.empty()) {
       m << "FFLAGS := -W -Wall -Wfatal-errors ";
       if (fflags != nullptr) {
         m << fflags << " ";
       }
       if (!((o.sys == "win32") || (o.sys == "cygwin"))) {
-        m << "-fPIC\n\n";
+        m << " -fPIC $(INCLUDES)";
       }
+      m << "/n"
     }
     // sources list
     if (!cppSources.empty()) {
