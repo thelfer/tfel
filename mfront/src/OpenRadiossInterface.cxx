@@ -317,7 +317,7 @@ namespace mfront {
         << "C   C-interface\n"
         << "C-----------------------------------------------\n"
         << "      interface\n"
-        << "         subroutine openradioss_luser01_interface(\n"
+        << "         subroutine mfront_luser01_wrapper(\n"
         << "     .                 sig_ets, soundsp, statev_ets,\n"
         << "     .                 eto_bts, eto_ets, sig_bts,\n"
         << "     .                 statev_bts, props, rho, T, dt)\n"
@@ -345,7 +345,7 @@ namespace mfront {
         << "           real(kind = c_double), intent(in), value :: rho\n"
         << "           real(kind = c_double), intent(in), value :: T\n"
         << "           real(kind = c_double), intent(in), value :: dt\n"
-        << "         end subroutine openradioss_luser01_interface\n"
+        << "         end subroutine mfront_luser01_wrapper\n"
         << "      end interface\n"
         << "C-----------------------------------------------\n"
         << "C   LOOP OVER INTEGRATION POINTS\n"
@@ -407,7 +407,9 @@ namespace mfront {
     }
     out << "#include \"MFront/GenericBehaviour/BehaviourData.hxx\"\n"
         << "#include \"MFront/GenericBehaviour/" << header << "\"\n\n"
-        << "extern \"C\" {\n\n"
+        << "#ifdef __cplusplus\n"
+        << "extern \"C\" {\n"
+        << "#endif /* __cplusplus */\n\n"
         << "void openradioss_luser01_interface(double* const sig_ets,\n"
         << "double *const speed_of_sound,\n"
         << "double *const statev_ets,\n"
@@ -418,7 +420,8 @@ namespace mfront {
         << "const double *const mps,\n"
         << "const double rho,\n"
         << "const double T,\n"
-        << "const double dt){\n"
+        << "const double dt)\n"
+        << "{\n"
         << "static char error_msg[512];\n"
         << "double K = 100;\n"
         << "double rdt;\n"
@@ -446,7 +449,9 @@ namespace mfront {
         << "d.s1.external_state_variables = &T;\n"
         << "const auto r = " << f << "(&d);\n"
         << "} // end of openradioss_luser01_interface\n\n"
-        << "} // end of extern \"C\"\n";
+        << "#ifdef __cplusplus\n"
+        << "} // end of extern \"C\"\n"
+        << "#endif /* __cplusplus */\n";
     out.close();
   }  // end of endTreatment
 
