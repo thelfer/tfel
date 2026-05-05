@@ -361,7 +361,7 @@ namespace mfront {
       if (!((o.sys == "win32") || (o.sys == "cygwin"))) {
         m << " -fPIC $(INCLUDES)";
       }
-      m << "/n"
+      m << "\n";
     }
     // sources list
     if (!cppSources.empty()) {
