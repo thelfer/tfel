@@ -364,10 +364,9 @@ namespace mfront::generic_parallel::material_property {
        << "}\n";
     if (requiresBoundsCheck(mpd)) {
       os << "int *mfront_bounds_statuses;\n"
+         << "const auto mfront_" << pm << "_alloc_managed__error = "
          << pm << "MallocManaged(&mfront_bounds_statuses,\n"
          << "(2 * (mfront_nargs + 1)) * sizeof(int));\n"
-         << "const auto mfront_" << pm << "_alloc_managed__error = " << pm
-         << "GetLastError();\n"
          << "if (mfront_" << pm << "_alloc_managed__error != " << pm
          << "Success) {\n"
          << "mfront_output_status->status = -6;\n"

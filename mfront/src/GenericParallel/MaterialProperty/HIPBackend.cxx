@@ -34,6 +34,14 @@ namespace mfront::generic_parallel::material_property {
     return "hip";
   }  // end of getSourceFileExtension
 
+  void HIPBackend::writeSpecificIncludesInSourceFile(
+      std::ostream& os,
+      const GenericParallelMaterialPropertyInterface& i,
+      const MaterialPropertyDescription& mpd) const {
+    CUDABackendBase::writeSpecificIncludesInSourceFile(os, i, mpd);
+    os << "#include \"hip/hip_runtime.h\"\n";
+  } // end of writeSpecificIncludesInSourceFile
+
   HIPBackend::~HIPBackend() = default;
 
 }  // end of namespace mfront::generic_parallel::material_property

@@ -27,10 +27,13 @@ namespace mfront::generic_parallel::material_property {
     // constructors
     using CUDABackendBase::CUDABackendBase;
     //
-
     [[nodiscard]] std::string getName() const override;
     [[nodiscard]] std::string getHeaderFileExtension() const override;
     [[nodiscard]] std::string getSourceFileExtension() const override;
+    void writeSpecificIncludesInSourceFile(
+        std::ostream&,
+        const GenericParallelMaterialPropertyInterface&,
+        const MaterialPropertyDescription&) const override;
     //! \brief destructor
     ~HIPBackend() noexcept override;
 
