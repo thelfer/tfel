@@ -66,6 +66,7 @@ namespace mfront {
       }
     }
     os << "\n{\n"
+       << "auto mfront_errno_old = errno;\n"
        << "auto tokenize = [](const std::string& line){\n"
        << "  std::istringstream tokenizer(line);\n"
        << "  std::vector<std::string> tokens;\n"
@@ -76,8 +77,9 @@ namespace mfront {
        << "};\n"
        << "std::ifstream pfile(\"" << n << "-parameters.txt\");\n"
        << "if(!pfile){\n"
-       << "this->ok=true;\n"
-       << "return;\n"
+       << "  errno = mfront_errno_old;\n"
+       << "  this->ok=true;\n"
+       << "  return;\n"
        << "}\n"
        << "size_t ln = 1u;\n"
        << "while(!pfile.eof()){\n"
@@ -99,6 +101,7 @@ namespace mfront {
        << "  }\n"
        << "  if(tokens.size()!=2u){\n"
        << "    set_msg(\"invalid number of tokens\");\n"
+       << "    errno = mfront_errno_old;\n"
        << "    return;\n"
        << "  }\n"
        << "  double pvalue;\n"
@@ -108,6 +111,7 @@ namespace mfront {
        << "  if((!mfront_converter) || (!mfront_converter.eof())){\n"
        << "    set_msg(\"can't convert '\"+tokens[1]+"
        << "            \"' to floating point value\");\n"
+       << "    errno = mfront_errno_old;\n"
        << "    return;\n"
        << "  }\n";
     bool first = true;
@@ -125,6 +129,7 @@ namespace mfront {
        << "return;\n"
        << "}\n"
        << "}\n"
+       << "errno = mfront_errno_old;\n"
        << "this->ok=true;\n"
        << "}\n"
        << "#if __cplusplus > 199711L\n"
