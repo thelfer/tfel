@@ -1633,8 +1633,8 @@ namespace mfront {
     const auto& d = this->bd.getBehaviourData(h);
     this->checkBehaviourFile(os);
     for (const auto& v : d.getIntegrationVariables()) {
-      if ((!getDebugMode()) && (v.lineNumber != 0u)) {
-        os << "#line " << v.lineNumber << " \"" << this->fd.fileName << "\"\n";
+      if (!getDebugMode()) {
+        printLinePragma(os, v.lineNumber, this->fd.fileName);
       }
       if (v.arraySize == 1u) {
         if (SupportedTypes::getTypeFlag(v.type) == SupportedTypes::SCALAR) {

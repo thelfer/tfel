@@ -576,7 +576,7 @@ int main(const int argc, const char* const* const argv) {
                   << "--list-behaviour-mtest-tests             : "
                   << "list all the mtest tests associated with a set of "
                   << "behaviours in a madnex file\n"
-                  << "--list-behaviour-mfm-test-genartor-tests : "
+                  << "--list-behaviour-mfm-test-generator-tests : "
                   << "list all the mtest tests associated with a set of "
                   << "behaviours in a madnex file\n"
                   << "--list-models                            : "

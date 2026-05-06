@@ -63,7 +63,7 @@ namespace tfel::material::homogenization::elasticity {
       KG0 = computeKGModuli<StressType>(C0);
     }
     const auto tau0 = polarisations_[0];
-    HomogenizationScheme<N, StressType> h_s;
+    
     auto Chom = C0;
     auto tau_eff = tau0;
 
@@ -86,9 +86,7 @@ namespace tfel::material::homogenization::elasticity {
       tau_eff += fi * tfel::math::transpose(Ai) * (taui - tau0);
       localisators.push_back(Ai);
     }
-    h_s.homogenized_stiffness = Chom;
-    h_s.effective_polarisation = tau_eff;
-    h_s.mean_strain_localisation_tensors = localisators;
+    HomogenizationScheme<N, StressType> h_s={.homogenized_stiffness = Chom,.effective_polarisation = tau_eff,.mean_strain_localisation_tensors = localisators};
 
     return h_s;
   };
@@ -114,7 +112,6 @@ namespace tfel::material::homogenization::elasticity {
     }
     const auto tau0 = polarisations_[0];
     const auto f0 = micro.get_matrix_fraction();
-    HomogenizationScheme<N, StressType> h_s;
     auto Chom = C0;
     auto tau_eff = tau0;
     std::vector<tfel::math::st2tost2<N, real>> localisators = {};
@@ -144,9 +141,7 @@ namespace tfel::material::homogenization::elasticity {
       Chom += fi * (Ci - C0) * Ai;
       tau_eff += fi * transpose(Ai) * (taui - tau0);
     }
-    h_s.homogenized_stiffness = Chom;
-    h_s.effective_polarisation = tau_eff;
-    h_s.mean_strain_localisation_tensors = localisators;
+    HomogenizationScheme<N, StressType> h_s={.homogenized_stiffness = Chom,.effective_polarisation = tau_eff,.mean_strain_localisation_tensors = localisators};
 
     return h_s;
   };
@@ -165,22 +160,21 @@ namespace tfel::material::homogenization::elasticity {
     const auto np = micro.get_number_of_phases();
     const auto f0 = micro.get_matrix_fraction();
     const auto C0 = micro.get_matrix_elasticity();
-
+    
     const auto polarisations_ =
         internals::initialize_polarisation<N, StressType>(polarisations, np);
-
-    HomogenizationScheme<N, StressType> h_s;
     auto tau_eff = tfel::math::stensor<N, StressType>::zero();
-    std::vector<tfel::math::st2tost2<N, real>> localisators = {};
+    std::vector<tfel::math::st2tost2<N, real>> localisators = {}; 
     auto Chom = C0;
     auto Chom_ = C0;
     real rel_err = tolerance + 1;
+    
     while (rel_err > tolerance) {
       std::vector<tfel::math::st2tost2<N, real>> localisators_try = {};
       tfel::math::st2tost2<N, real> A0 =
           f0 * tfel::math::st2tost2<N, real>::Id();
       for (std::size_t i = 0; i < np - 1; i++) {
-        auto phasei = micro.get_inclusionPhase(i);
+        auto phasei=micro.get_inclusionPhase(i);
         auto fi = (*phasei).fraction;
         tfel::math::st2tost2<N, real> Ai;
         if (isotropic) {
@@ -228,9 +222,7 @@ namespace tfel::material::homogenization::elasticity {
       auto Ai = localisators[i + 1];
       tau_eff += fi * transpose(Ai) * taui;
     }
-    h_s.homogenized_stiffness = Chom;
-    h_s.effective_polarisation = tau_eff;
-    h_s.mean_strain_localisation_tensors = localisators;
+    HomogenizationScheme<N, StressType> h_s={.homogenized_stiffness = Chom,.effective_polarisation = tau_eff,.mean_strain_localisation_tensors = localisators};
     return h_s;
   }
 
