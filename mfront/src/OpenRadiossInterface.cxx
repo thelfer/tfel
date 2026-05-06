@@ -28,6 +28,9 @@
   material number.
   - Double precision is used throughout the code, it is unlikely that we will
   ever support single precision routines.
+  - Internal state variables do not seem to be correctly supported.
+  - Small/large strains need to be figured out. OpenRadioss defaults to large.
+  - Stress tensor storage needs to be figured out, see https://thelfer.github.io/tfel/web/tensors.html and https://help.altair.com/hwsolvers/rad/topics/solvers/rad/theory_basic_equations_stresses_in_solids_r.htm
  */
 
 namespace mfront {
@@ -78,6 +81,7 @@ namespace mfront {
   OpenRadiossInterface::getModellingHypothesesToBeTreated(
       const BehaviourDescription& bd) const {
     const auto& bh = bd.getModellingHypotheses();
+    // TODO shell elements are also supported
     tfel::raise_if(bh.find(ModellingHypothesis::TRIDIMENSIONAL) == bh.end(),
                    "OpenRadiossInterface::getModellingHypothesesToBeTreated : "
                    "the 'Tridimensional' hypothesis is not supported, "
@@ -89,29 +93,36 @@ namespace mfront {
                                           const FileDescription& fd) const {
     constexpr auto h = ModellingHypothesis::TRIDIMENSIONAL;
     const auto& d = bd.getBehaviourData(h);
-    //
+
     if (!bd.isTemperatureDefinedAsTheFirstExternalStateVariable()) {
       tfel::raise(
           "the temperature must be defined as the first external state "
           "variable to be compatible with the OpenRadioss's interface");
     }
+    // TODO, check if external variables are supported!
     if(d.getExternalStateVariables().size() != 1u){
       tfel::raise(
           "external state variables other than the temperature are not "
           "supported by OpenRadioss's interface");
     }
-    if (bd.getSymmetryType() != mfront::ISOTROPIC) {
-      tfel::raise(
-          "only isotropic behaviours are "
-          "supported by OpenRadioss's interface");
-    }
-    if (bd.getBehaviourType() !=
-        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-      tfel::raise(
-          "only small strain behaviours are "
-          "supported by OpenRadioss's interface");
-    }
-    //
+
+    // TODO Anisotropic behaviours are also supported, delete
+    // if (bd.getSymmetryType() != mfront::ISOTROPIC) {
+    //   tfel::raise(
+    //       "only isotropic behaviours are "
+    //       "supported by OpenRadioss's interface");
+    // }
+
+    // TODO Default strain behaviour is finite/large, see https://help.altair.com/hwsolvers/rad/topics/solvers/rad/theory_basic_equations_small_strain_formulation_r.htm
+    // Small strain is also supported and large deformation can switch to small strains at runtime
+    // delete this
+    // if (bd.getBehaviourType() !=
+    //     BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+    //   tfel::raise(
+    //       "only small strain behaviours are "
+    //       "supported by OpenRadioss's interface");
+    // }
+
     GenericBehaviourInterface::endTreatment(bd, fd);
     // generating the starter sources
     const auto mprops = this->buildMaterialPropertiesList(bd, h);
@@ -137,7 +148,6 @@ namespace mfront {
         << "      IMPLICIT NONE\n"
         << "      INTEGER IIN,IOUT,MAXUPARAM,NUPARAM,NUVAR,\n"
         << "     .        MAXFUNC,NFUNC,IFUNC(MAXFUNC)\n"
-        << "      INTEGER DUMMY_INTEGER\n"
         << "      DOUBLE PRECISION   UPARAM(MAXUPARAM),STIFINT\n"
         << "      TYPE(ULAWBUF) :: USERBUF\n"
         << "      NUPARAM = " << nprops << "\n"
@@ -235,9 +245,13 @@ namespace mfront {
         }
       }
     }
+    // TODO we are reaching this point when we shouldn't!!
     if (!found) {
-      tfel::raise("no way to initialize the initial sitffness");
+        out <<  "      STIFINT = 10\n ";
+        //  tfel::raise("no way to initialize the initial sitffness");
     }
+
+
     // C
     // C-------------------------------------------------
     // C     OUTPUT FILE PRINT
@@ -259,15 +273,10 @@ namespace mfront {
     //      & 5X,'Scaling factor for FUNCTION Ordinate. .=',E12.4//)
     // C
     // C-------------------------------------------------
-    out << "C-------------------------------------------------\n"
-        << "C     REMOVING UNSUED VARIABLES WARNINGS\n"
-        << "C-------------------------------------------------\n"
-        << "      IF(.FALSE.) DUMMY_INTEGER = NFUNC\n"
-        << "      IF(.FALSE.) DUMMY_INTEGER = IFUNC(1)\n"
-        << "      RETURN\n"
+    out << "      RETURN\n"
         << "      END\n";
     out.close();
-    // generating the engine source
+    // generating the engine source for solids
     out.open("src/luser01.f");
     if (!out) {
       tfel::raise("could not open file 'src/luser01.f'");
