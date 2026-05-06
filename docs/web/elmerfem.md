@@ -1,0 +1,148 @@
+% The `ElmerFEM` interface
+% Fernando Oleo Blanco
+% 26/04/2026
+
+\newcommand{\Frac}[2]{\displaystyle\frac{\displaystyle #1}{\displaystyle #2}}
+\newcommand{\deriv}[2]{\Frac{\partial #1}{\partial #2}}
+\newcommand{\tenseur}[1]{\underline{#1}}
+\newcommand{\tenseurq}[1]{\underline{\underline{\mathbf{#1}}}}
+\newcommand{\tns}[1]{{\underset{\tilde{}}{\mathbf{#1}}}}
+\newcommand{\transpose}[1]{{#1^{\mathrm{T}}}}
+\newcommand{\tsigma}{\tenseur{\sigma}}
+\newcommand{\ctsigma}{\tenseur{\hat{\sigma}}}
+\newcommand{\ctau}{\tenseur{\hat{\tau}}}
+\newcommand{\cD}{\tenseur{\hat{D}}}
+\newcommand{\cC}{\tenseurq{\hat{C}}}
+\newcommand{\cCtau}{\tenseurq{\hat{C}}^{\tau}}
+\newcommand{\CtJ}{\tenseurq{C}^{\tau\,J}}
+\newcommand{\CsT}{\tenseurq{C}^{\sigma\,T}}
+\newcommand{\CsG}{\tenseurq{C}^{\sigma\,G}}
+\newcommand{\CSE}{\tenseurq{C}^{\mathrm{SE}}}
+\newcommand{\Cs}{\tenseurq{C}^{s}}
+\newcommand{\Cspin}{\tenseurq{C}^{\mathrm{spin}}}
+\newcommand{\CMJ}{\tenseurq{C}^{MJ}}
+\newcommand{\tpld}[1]{\partial^{\star}_{l}\left(#1\right)}
+\newcommand{\tprd}[1]{\partial^{\star}_{r}\left(#1\right)}
+<!-- \newcommand{\paren}[1]{\left(#1\right)} -->
+
+<div id="slideshow">
+  <ul class="slides">
+  <li><img src="img/reload.gif" width="620" height="320" alt="Load and reload of an damage-elastoplastic coupon. Credit: Kevin Arden." /></li>
+  </ul>
+  <span class="arrow previous"></span>
+  <span class="arrow next"></span>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="js/slideshow.js"></script>
+
+# Introduction
+
+`ElmerFEM` is an open source multiphysics code, capable of coupling several
+different phenomena in a single run. It can couple the physics in both a
+loosly/iterative system or in a monolithic/strong form.
+
+`MFront` does not have a specialised interface for `ElmerFEM`'s advanced
+material behaviours. `ElmerFEM` added support for `Abaqus/Standar`'s `UMAT`
+interface in the last couple of releases. Using this same interface, which is
+also supported by `MFront`, we can add `MFront` capabilities to `ElmerFEM`'s
+finite strain solver. This solver lacks any advanced material laws beyond finite
+elasticity. This is where the value of `MFront` comes into place: it brings a
+large amount of easy and complete material laws and behaviours to `ElmerFEM`.
+
+- Isotropic and orthotropic materials are supported.
+- Only finite strain behaviours are supported.
+  - This means that only the `Elastic Solver` (`Procedure = "ElasticSolve"
+    "ElasticSolver"`) is supported.
+- 3D and 2D elements are supported.
+- The further testing is required to have a greater level of assurance, but
+  initial tests have given valid results.
+
+## Usage
+
+As indicated above, `ElmerFEM` reuses the same interface as
+`Abaqus/Standard`. In order to use `MFront` with `ElmerFEM`, the
+`Abaqus/Standard` interface has to be built as indicated [here](abaqus.html).
+
+In the `ElmerFEM` side, for the input file (`ElmerFEM` uses the `.sif` extension
+for its simulation input) the following material declaration has to be done (as
+documented in the [official `ElmerFEM`
+documentation](https://www.nic.funet.fi/pub/sci/physics/elmer/doc/ElmerModelsManual.pdf).
+
+~~~~{.pure}
+
+Material 1
+  ! UMAT Law
+  
+  Number of State Variables = Integer 1 ! Internal state variables to be saved (one for damage)
+  
+  Number of Material Constants = Integer 5 ! Number of constants to be read by the behaviour
+  ! List material constants as {Young, Poisson, Bt, e0, a}: required by FichantLaBorderieDamage
+  Material Constants(5) = Real 210000.0 0.30 50 0.0017 2 
+  Density = 0.0 ! Reference density used by ElmerFEM
+  Reference Temperature = 270.0 ! Reference temperature used by ElmerFEM
+  
+  ! Indicate where the compiled behaviour lives and which Element type is going to be used
+  UMAT Subroutine = File "./src/libABAQUSBEHAVIOUR" "FICHANTLABORDERIEDAMAGEBEHAVIOUR_PSTRAIN"
+  Name = "FICHANTLABORDERIEDAMAGEBEHAVIOUR_PSTRAIN"  ! This specifies the CMNAME argument of UMAT!
+
+  ! We can then have any other extra material parameters as needed in ElmerFEM
+  ! for other physical phenomena, such as heat transfer, electromagnetism...
+End
+
+Solver 1
+  element="p:2"
+  Equation = Linear elasticity
+  Procedure = "ElasticSolve" "ElasticSolver"
+  ...
+  Displace Mesh = True
+End
+~~~~~~~~~~~~~~
+
+As can be seen in the example above, in `ElmerFEM` we need to set up the
+following variables:
+
+- The number of state variables for the law that we are using.
+- The number of material constants that are needed by the law.
+- The actual values of the constants. Their order is the same as that in the
+  `MFront` file.
+- Reference density and temperature. These values are for `ElmerFEM` only.
+- Finally we need to pass on the `PATH` for the compiled behaviour.
+  - Then we need to specify the exact subroutine that is going to be used. If
+    our elements are 3D, we will need to specify the 3D behaviour. In this
+    example, our elements are planar, and therefore, we use the `*_PSTRAIN`
+    subroutine generated by `MFront`.
+- Then we can specify a `CMNAME` as needed by `UMAT`. This value is generally
+  inconsequential unless we are compiling several laws in the same file.
+  - In `ElmerFEM` we can create several materials, such as `Material 2` and have
+    a completely different `MFront` behaviour or any other as needed.
+
+### Example of compilation of a behaviour
+
+As previously indicated, the `Abaqus/Standard` interface is used. This interface
+can be built by passing the `--interface=abaqus` option to `MFront`:
+
+~~~~~{.pure}
+$ mfront --interface=abaqus --obuild SaintVenantKirchhoffElasticityTotalLagrangian.mfront
+
+Treating target : all
+The following library has been built :
+- libABAQUSBEHAVIOUR.so :  SAINTVENANTKIRCHHOFFELASTICITYTOTALLAGRANGIAN_AXIS SAINTVENANTKIRCHHOFFELASTICITYTOTALLAGRANGIAN_PSTRAIN SAINTVENANTKIRCHHOFFELASTICITYTOTALLAGRANGIAN_3D
+~~~~~~~
+
+Here we are using the `SaintVenantKirchhoffElasticityTotalLagrangian.mfront`
+example file. As we can see, `MFront` then indicates the name of the
+library/binary that it has built and all the different element options (`_AXIS`,
+`_PSTRAIN` and `_3D`) for which the behaviour has been created. It is up to the
+user to then use the right element routine for the corresponding geometry that
+is being simulated.
+
+## Further information
+
+The use of this interface has been documented in the following [Github
+discussion](https://github.com/ElmerCSC/elmerfem/issues/528#issuecomment-3812023940)
+and in the following `ElmerFEM` blogs: [Advanced material
+behaviours](https://www.elmerfem.org/forum/viewtopic.php?t=8887), [Fracture
+Mechanics application](https://www.elmerfem.org/forum/viewtopic.php?t=6646). The
+code example and image have been taken from
+[Notch-Plasticity-Damage](https://github.com/mrkearden/Notch-Plasticity-Damage)
+example repository.

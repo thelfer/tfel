@@ -22,10 +22,13 @@ The page describes the new functionalities of Version 3.0.17 of the
 
 # Issues fixed
 
+## Issue 971: [mfront] Trying to read a parameter file shall no modify the value of errno when the file is not present 
+
+For more details, see <https://github.com/thelfer/tfel/issues/971>.￼
+
 ## Issue 964: [tfel-utilities] The second parameter of `CxxTokenizer::isValidIdentifier` is not taken into account correctly
 
 For more details, see <https://github.com/thelfer/tfel/issues/964>.
-
 
 ## Issue 953: Extending the precision of the default parameters value for material properties
 
