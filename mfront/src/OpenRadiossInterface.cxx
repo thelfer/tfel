@@ -29,7 +29,8 @@
   - Double precision is used throughout the code, it is unlikely that we will
   ever support single precision routines.
   - Internal state variables do not seem to be correctly supported.
-  - Small/large strains need to be figured out. OpenRadioss defaults to large.
+  - Small/large strains need to be figured out. OpenRadioss defaults to large,
+  but may dynamicly change to a small strain approach if the time-step is small.
   - Stress tensor storage needs to be figured out, see https://thelfer.github.io/tfel/web/tensors.html and https://help.altair.com/hwsolvers/rad/topics/solvers/rad/theory_basic_equations_stresses_in_solids_r.htm
  */
 
@@ -328,7 +329,7 @@ namespace mfront {
         << "      interface\n"
         << "         subroutine mfront_luser01_wrapper(\n"
         << "     .                 sig_ets, soundsp, statev_ets,\n"
-        << "     .                 eto_bts, eto_ets, sig_bts,\n"
+        << "     .                 eps_bts, eps_ets, sig_bts,\n"
         << "     .                 statev_bts, props, rho, T, dt)\n"
         << "     .         bind(c,name = 'openradioss_luser01_interface')\n"
         << "           use, intrinsic :: iso_c_binding, only: c_int,\n"
@@ -336,21 +337,21 @@ namespace mfront {
         << "           implicit none\n"
         << "           real(kind = c_double), dimension(6), intent(out) :: "
            "sig_ets\n"
-        << "           real(kind = c_double), intent(out) :: soundsp\n"
+        << "           real(kind = c_double), intent(inout) :: soundsp\n"
         << "           real(kind = c_double), dimension(" << estatev
         << "), intent(out) ::\n"
         << "     . statev_ets\n"
         << "           real(kind = c_double), dimension(6), intent(in) :: "
-        << "eto_bts\n"
-        << "           real(kind = c_double), dimension(6), intent(in) :: "
-        << "eto_ets\n"
+        << "eps_bts\n"
+        << "           real(kind = c_double), dimension(6), intent(out) :: "
+        << "eps_ets\n"
         << "           real(kind = c_double), dimension(6), intent(in) :: "
         << "sig_bts\n"
         << "           real(kind = c_double), dimension(" << estatev
-        << "), intent(out) ::\n"
+        << "), intent(in) ::\n"
         << "     . statev_bts\n"
         << "           real(kind = c_double), dimension(" << nprops
-        << "), intent(out) :: props\n"
+        << "), intent(in) :: props\n"
         << "           real(kind = c_double), intent(in), value :: rho\n"
         << "           real(kind = c_double), intent(in), value :: T\n"
         << "           real(kind = c_double), intent(in), value :: dt\n"
@@ -363,9 +364,10 @@ namespace mfront {
         << "        SIG_BTS(1) =  USERBUF%SIGOXX(IDX)\n"
         << "        SIG_BTS(2) =  USERBUF%SIGOYY(IDX)\n"
         << "        SIG_BTS(3) =  USERBUF%SIGOZZ(IDX)\n"
-        << "        SIG_BTS(4) =  USERBUF%SIGOXY(IDX)\n"
-        << "        SIG_BTS(5) =  USERBUF%SIGOZX(IDX)\n"
-        << "        SIG_BTS(6) =  USERBUF%SIGOYZ(IDX)\n"
+        // We multiply the shear stresses to obtain the storage format for MFront
+        << "        SIG_BTS(4) =  USERBUF%SIGOXY(IDX)*SQRT(2.0)\n"
+        << "        SIG_BTS(5) =  USERBUF%SIGOZX(IDX)*SQRT(2.0)\n"
+        << "        SIG_BTS(6) =  USERBUF%SIGOYZ(IDX)*SQRT(2.0)\n"
         << "        EPS_BTS(1) =  USERBUF%EPSXX(IDX)\n"
         << "        EPS_BTS(2) =  USERBUF%EPSYY(IDX)\n"
         << "        EPS_BTS(3) =  USERBUF%EPSZZ(IDX)\n"
@@ -378,24 +380,29 @@ namespace mfront {
         << "        EPS_ETS(4) =  USERBUF%EPSXY(IDX) + USERBUF%DEPSXY(IDX)\n"
         << "        EPS_ETS(5) =  USERBUF%EPSZX(IDX) + USERBUF%DEPSZX(IDX)\n"
         << "        EPS_ETS(6) =  USERBUF%EPSYZ(IDX) + USERBUF%DEPSYZ(IDX)\n"
-        << "        RHO0       = USERBUF%RHO0(IDX)\n"
-        << "        T          = USERBUF%TEMP(IDX)\n";
+        << "        RHO0       =  USERBUF%RHO0(IDX)\n"
+        << "        T          =  USERBUF%TEMP(IDX)\n";
     if (nstatev != 0) {
       for (int i = 0; i != nstatev; ++i) {
         out << "        STATEV_BTS(" << i + 1 << ") = UVAR(IDX, " << i + 1
             << ")\n";
       }
     }
-    out << "        CALL MFRONT_LUSER01_WRAPPER(SIG_ETS, SOUNDSP0, STATEV_ETS,\n"
+    // Only compute elements that have not been deleted
+    out << "        IF (OFF(IDX) .EQ. 1) THEN\n"
+        << "          CALL MFRONT_LUSER01_WRAPPER(SIG_ETS, SOUNDSP0, STATEV_ETS,\n"
         << "     .       EPS_BTS, EPS_ETS, SIG_BTS, STATEV_BTS,\n"
         << "     .       UPARAM, RHO0, T, TIMESTEP)\n"
+        << "        ENDIF\n"
         << "        USERBUF%SIGNXX(IDX) = SIG_ETS(1)\n"
         << "        USERBUF%SIGNYY(IDX) = SIG_ETS(2)\n"
         << "        USERBUF%SIGNZZ(IDX) = SIG_ETS(3)\n"
-        << "        USERBUF%SIGNXY(IDX) = SIG_ETS(4)\n"
-        << "        USERBUF%SIGNZX(IDX) = SIG_ETS(5)\n"
-        << "        USERBUF%SIGNYZ(IDX) = SIG_ETS(6)\n"
-        << "        SOUNDSP(IDX) = SOUNDSP0\n";
+        // We devide shear stresses as MFront stores them as SQRT(2)*TAU
+        << "        USERBUF%SIGNXY(IDX) = SIG_ETS(4)/SQRT(2.0)\n"
+        << "        USERBUF%SIGNZX(IDX) = SIG_ETS(5)/SQRT(2.0)\n"
+        << "        USERBUF%SIGNYZ(IDX) = SIG_ETS(6)/SQRT(2.0)\n"
+        << "        SOUNDSP(IDX) = SOUNDSP0\n"
+        << "        VISCMAX(IDX) = 0.0\n";
     if (nstatev != 0) {
       for (int i = 0; i != nstatev; ++i) {
         out << "        UVAR(IDX, " << i + 1 << ") = STATEV_ETS(" << i + 1
@@ -422,8 +429,8 @@ namespace mfront {
         << "void openradioss_luser01_interface(double* const sig_ets,\n"
         << "double *const speed_of_sound,\n"
         << "double *const statev_ets,\n"
-        << "double *const eto_bts,\n"
-        << "double *const eto_ets,\n"
+        << "double *const eps_bts,\n"
+        << "double *const eps_ets,\n"
         << "const double *const sig_bts,\n"
         << "const double *const statev_bts,\n"
         << "const double *const mps,\n"
@@ -432,15 +439,22 @@ namespace mfront {
         << "const double dt)\n"
         << "{\n"
         << "static char error_msg[512];\n"
-        << "double K = 100;\n"
+        // K is greater than 50 in order to force the computation of the speed
+        // of sound in mfront_gb_BehaviourData (see BehaviourData.h)
+        // Ke is K[0] - 100; For the given value, Ke = 0, which indicates that
+        // the behaviour integration is carried out, but the stiffness matrix is not computed
+        // K[1] and K[2] are needed for finite strains
+        // Parameters selected from the documentation in BehaviourData.h and
+        // "Kinetic Description" and "Stress Rates" from the Radioss documentation
+        << "double K[3] = {100.0, 0.0, 0.0};\n"
         << "double rdt;\n"
         << "mfront_gb_BehaviourData d;\n"
         << "d.error_message = error_msg;\n"
-        << "d.K = &K;\n"
+        << "d.K = K;\n"
         << "d.dt = dt;\n"
         << "d.rdt = &rdt;\n"
         << "d.speed_of_sound = speed_of_sound;\n"
-        << "d.s0.gradients = eto_bts;\n"
+        << "d.s0.gradients = eps_bts;\n"
         << "d.s0.thermodynamic_forces = sig_bts;\n"
         << "d.s0.mass_density = &rho;\n"
         << "d.s0.material_properties = mps;\n"
@@ -448,7 +462,7 @@ namespace mfront {
         << "d.s0.stored_energy = nullptr;\n"
         << "d.s0.dissipated_energy = nullptr;\n"
         << "d.s0.external_state_variables = &T;\n"
-        << "d.s1.gradients = eto_ets;\n"
+        << "d.s1.gradients = eps_ets;\n"
         << "d.s1.thermodynamic_forces = sig_ets;\n"
         << "d.s1.mass_density = &rho;\n"
         << "d.s1.material_properties = mps;\n"
