@@ -845,7 +845,7 @@ for details). The following ones allow to get some attributes of the class:
  - `get_number_of_phases`
  - `get_matrix_fraction` (attribute `fraction` of `matrixPhase`)
  - `get_matrix_elasticity` (attribute `stiffness` of `matrixPhase`)
- - `is_isotropic_matrix` (private attribute `is_isotropic` of `matrixPhase`)
+ - `is_isotropic_matrix` (private attribute `isotropic` of `matrixPhase`)
  
 Last method returns a boolean which states if the matrix is considered isotropic
 or not. In fact, depending on how was instantiated the `ParticulateMicrostructure`,
@@ -862,25 +862,34 @@ that the matrix elasticity is not isotropic, but that it is CONSIDERED
 as not isotropic.
 
 Other methods allows to add/remove `InclusionDistribution` objects
-to the attribute `inclusionPhases`, and also to replace
-`matrixPhase`:
+to the attribute `inclusionPhases`, and also to modifiy the properties of
+the phases:
 
  - `get_inclusionPhase`
  - `addInclusionPhase`
  - `removeInclusionPhase`
- - `replaceMatrixPhase`
+ - `changeElasticityOfMatrixPhase`
+ - `changeElasticityOfInclusionPhase`
+ - `changeFractionOfInclusionPhase`
  
 But we first describe `Phase`, `InclusionDistribution`
 and `Inclusion` classes.
 
 #### The `Phase` class
 
-The `Phase class` is very simple. It has two attributes:
+The `Phase class` has three attributes:
 
  - `fraction` (`real` type)
- - `stiffness` (`st2tost2` type)
+ - `isotropic` (`bool` type, private attribute)
+ - `stiffness` (`st2tost2` type, private attribute)
 
-and one method: `is_isotropic()` which returns a `bool` stating if the phase is
+and three methods: 
+
+ - `is_isotropic`
+ - `changeElasticityOfPhase`
+ - `getElasticityOfPhase`
+ 
+`is_isotropic()` returns a `bool` stating if the phase is
 considered isotropic or not. Again, the value of this `bool` depends on the
 way the `Phase` was constructed. By doing
 
@@ -1042,11 +1051,11 @@ Here, the integer `10` is the number of subdivisions in the integration
 process in the computation of the Hill tensor relative to the inclusions.
 It is `12` by default.
 
-A last method of the `ParticulateMicrostructure` object allows to replace
-the matrix phase:
+A last method of the `ParticulateMicrostructure` object allows to change the
+elasticity of the matrix phase:
 
 ~~~~{.cpp}
-micro_1.replaceMatrixPhase(C0);
+micro_1.changeElasticityOfMatrixPhase(C0);
 std::cout<< micro_1.get_matrix_elasticity()<< std::endl;
 std::cout<< micro_1.is_isotropic_matrix()<< std::endl;
 ~~~~
@@ -1121,7 +1130,7 @@ number of subdivisions in the numerical integration (this value is
 `12` by default):
 
 ~~~~{.cpp}
-micro_1.replaceMatrixPhase(C0);
+micro_1.changeElasticityOfMatrixPhase(C0);
 micro_1.removeInclusionPhase(0);
 micro_1.addInclusionPhase(distrib_O);
 auto hmDS_aniso=computeDilute<3u,stress>(micro_1,10);
@@ -1138,7 +1147,7 @@ std::cout<<"A_0_DS: "<< A_i_DS[0]<<"A_1_DS: "<< A_i_DS[1]<< std::endl;
 We can also add a polarization on each phase:
 
 ~~~~{.cpp}
-micro_1.replaceMatrixPhase(IM0);
+micro_1.changeElasticityOfMatrixPhase(IM0);
 const auto P0 = Stensor<3u,stress>::zero();
 const Stensor<3u,stress> P1 = {stress(6.e8),stress(6.e8),stress(6.e8),stress(0.),stress(0.),stress(0.)};
 const auto pola={P0,P1};
