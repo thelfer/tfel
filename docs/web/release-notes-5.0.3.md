@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 5.0.3 of the
 
 # Issues fixed
 
+## Issue 965: [clang] Fix declaration of `reportContractViolation` when compiling with `clang++` and `CUDA` offloading
+
+For more details, see <https://github.com/thelfer/tfel/issues/965>
+
 ## Issue 918: `TFEL` fails to compile with older compilers since version 5.0.2
 
 For more details, see <https://github.com/thelfer/tfel/issues/918>

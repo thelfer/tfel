@@ -69,7 +69,7 @@ namespace tfel::math {
           }()) {}
     //! \brief default constructor
     explicit TFEL_HOST_DEVICE constexpr DefaultCoalescedAccessPolicy(
-        const std::span<ViewDataPointerType<MappedType>, N>& p) noexcept
+        const std::span<const ViewDataPointerType<MappedType>, N>& p) noexcept
         : ptrs([&p] {
             return [&p]<std::size_t... Is>(
                 std::integer_sequence<std::size_t, Is...>) {
@@ -377,27 +377,66 @@ namespace tfel::math {
   };  // end of struct ResultOfEvaluation
 
   /*!
-   * \brief return a view from a memory area
+   * \brief return a coalesced view from a list of pointers
    * \tparam MappedType: object mapped
-   * \param[in] p: pointer to the mapped memory area
+   * \param[in] p: pointers
    */
   template <MappableMutableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType = typename MappedType::indexing_policy>
   TFEL_HOST_DEVICE constexpr CoalescedView<MappedType, IndexingPolicyType> map(
-      const std::span<ViewDataPointerType<MappedType>,
-                      indexing_policy_size<IndexingPolicyType>> ptrs)  //
-      requires((!std::is_const_v<MappedType>)&&(
-          std::remove_cv_t<MappedType>::hasFixedSizes)) {
+      std::span<const ViewDataPointerType<MappedType>,
+                 indexing_policy_size<IndexingPolicyType>> ptrs)  //
+    requires((!std::is_const_v<MappedType>) &&
+             (std::remove_cv_t<MappedType>::hasFixedSizes))
+  {
     return CoalescedView<MappedType, IndexingPolicyType>{ptrs};
   }  // end of map
 
+  /*!
+   * \brief return an immutable coalesced view from a list of pointers
+   * \tparam MappedType: object mapped
+   * \param[in] p: pointers
+   */
   template <MappableImmutableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy>
   TFEL_HOST_DEVICE constexpr CoalescedView<MappedType, IndexingPolicyType> map(
-      const std::span<ViewConstDataPointerType<std::remove_cv_t<MappedType>>,
-                      indexing_policy_size<IndexingPolicyType>> ptrs)  //
-      requires((std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes)) {
+      std::span<const ViewConstDataPointerType<std::remove_cv_t<MappedType>>,
+                indexing_policy_size<IndexingPolicyType>> ptrs)  //
+    requires((std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes))
+  {
+    return CoalescedView<MappedType, IndexingPolicyType>{ptrs};
+  }  // end of map
+
+  /*!
+   * \brief return a coalesced view from a list of pointers
+   * \tparam MappedType: object mapped
+   * \param[in] p: pointers
+   */
+  template <MappableMutableMathObjectUsingCoalescedViewConcept MappedType,
+            typename IndexingPolicyType = typename MappedType::indexing_policy>
+  TFEL_HOST_DEVICE constexpr CoalescedView<MappedType, IndexingPolicyType> map(
+      std::array<ViewDataPointerType<MappedType>,
+                 indexing_policy_size<IndexingPolicyType>>& ptrs)  //
+    requires((!std::is_const_v<MappedType>) &&
+             (std::remove_cv_t<MappedType>::hasFixedSizes))
+  {
+    return CoalescedView<MappedType, IndexingPolicyType>{ptrs};
+  }  // end of map
+
+  /*!
+   * \brief return an immutable coalesced view from a list of pointers
+   * \tparam MappedType: object mapped
+   * \param[in] p: pointers
+   */
+  template <MappableImmutableMathObjectUsingCoalescedViewConcept MappedType,
+            typename IndexingPolicyType =
+                typename std::remove_cv_t<MappedType>::indexing_policy>
+  TFEL_HOST_DEVICE constexpr CoalescedView<MappedType, IndexingPolicyType> map(
+      const std::array<ViewConstDataPointerType<std::remove_cv_t<MappedType>>,
+                       indexing_policy_size<IndexingPolicyType>>& ptrs)  //
+    requires((std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes))
+  {
     return CoalescedView<MappedType, IndexingPolicyType>{ptrs};
   }  // end of map
 

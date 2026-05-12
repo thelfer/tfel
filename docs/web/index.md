@@ -92,6 +92,8 @@ A set of interfaces are provided for various solvers:
   is distributed under a free license for research and education
   purpose. Those solvers reuse the interface developed for the
   [`Cast3M`](http://www-cast3m.cea.fr) finite element solver.
+- the [`ElmerFEM`](https://www.elmerfem.org/blog/) multiphysics
+  solver. This interface is described [here](elmerfem.html).
 
 For material properties, various interfaces are also provided and
 cover the following languages: `C`, `C++`, `python`, `fortran`, etc.
