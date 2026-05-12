@@ -590,11 +590,11 @@ Here, the integer `10` is the number of subdivisions in the integration
 process in the computation of the Hill tensor relative to the inclusions.
 It is `12` by default.
 
-The last method of the `ParticulateMicrostructure` object allows to replace
-the matrix phase:
+The last method of the `ParticulateMicrostructure` object allows to change
+the elasticity of the matrix phase:
 
 ~~~~{.py}
-micro_1.replaceMatrixPhase(C0)
+micro_1.changeElasticityOfMatrixPhase(C0)
 print(micro_1.get_matrix_elasticity())
 print(micro_1.is_isotropic_matrix())
 ~~~~
@@ -619,7 +619,7 @@ was not possible for non-oriented anisotropic inclusions like ellipsoids.
 Hence, we here recover the isotropic matrix by doing
 
 ~~~~{.py}
-micro_1.replaceMatrixPhase(IM0)
+micro_1.changeElasticityOfMatrixPhase(IM0)
 print(micro_1.is_isotropic_matrix())
 ~~~~
 
@@ -671,7 +671,7 @@ number of subdivisions in the numerical integration (this value is `12`
 by default):
 
 ~~~~{.py}
-micro_1.replaceMatrixPhase(C0)
+micro_1.changeElasticityOfMatrixPhase(C0)
 micro_1.removeInclusionPhase(0)
 micro_1.addInclusionPhase(ellipsoid_dist_O)
 hmDS_aniso=hm.computeDiluteScheme(micro_1,10)
@@ -688,7 +688,7 @@ print("A_0_DS: ",A_i_DS[0],"A_1_DS: ",A_i_DS[1])
 We can also add a polarization on each phase:
 
 ~~~~{.py}
-micro_1.replaceMatrixPhase(IM0)
+micro_1.changeElasticityOfMatrixPhase(IM0)
 pola=[tm.Stensor3D(6*[0.]),tm.Stensor3D([1.e8,1e8,1e8,0.,0.,0.])]
 hmDS_pola=hm.computeDiluteScheme(micro_1,polarisations=pola)
 ~~~~

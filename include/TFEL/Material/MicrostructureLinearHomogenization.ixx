@@ -72,7 +72,7 @@ namespace tfel::material::homogenization::elasticity {
 
     for (std::size_t i = 0; i < np - 1; i++) {
       auto phasei = micro.get_inclusionPhase(i);
-      auto Ci = (*phasei).stiffness;
+      auto Ci = (*phasei).getElasticityOfPhase();
       auto fi = (*phasei).fraction;
       auto taui = polarisations_[i + 1];
       tfel::math::st2tost2<N, real> Ai;
@@ -133,7 +133,7 @@ namespace tfel::material::homogenization::elasticity {
     localisators.insert(localisators.begin(), A0);
     for (std::size_t i = 0; i < np - 1; i++) {
       auto phasei = micro.get_inclusionPhase(i);
-      auto Ci = (*phasei).stiffness;
+      auto Ci = (*phasei).getElasticityOfPhase();
       auto fi = (*phasei).fraction;
       auto taui = polarisations_[i + 1];
       localisators[i + 1] = localisators[i + 1] * A0;
@@ -192,7 +192,7 @@ namespace tfel::material::homogenization::elasticity {
       tfel::math::st2tost2<N, StressType> Ch = f0 * C0 * A0;
       for (std::size_t i = 0; i < np - 1; i++) {
         auto phasei = micro.get_inclusionPhase(i);
-        auto Ci = (*phasei).stiffness;
+        auto Ci = (*phasei).getElasticityOfPhase();
         auto fi = (*phasei).fraction;
         localisators_try[i + 1] = localisators_try[i + 1] * A0;
         auto Ai = localisators_try[i + 1];
