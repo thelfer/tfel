@@ -1,0 +1,20 @@
+dsl_options: {
+  disable_runtime_checks: true
+},
+interfaces_options: {
+  generic-parallel: {
+    backend: {stlpar: {
+        execution_policy: "parallel_unsequenced_policy"
+      }
+    }
+  }
+},
+compilation_options : {
+  cxx : {
+    compiler: "nvc++",
+    compilation_flags: "-O2 -stdpar=gpu -std=c++20 -march=native -gpu=sm_89" 
+  }
+},
+linking_options : {
+  linker_flags: "-stdpar=gpu"
+}

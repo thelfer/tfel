@@ -329,3 +329,34 @@ for details.
 - `libstdc++` implements the parallel STL algorithms on the top of the
   Threading Building Blocks library and requires an explicit link to
   this library.
+
+
+# Tests
+
+Unlike other material property interfaces, the tests for the
+`generic-parallel` interface is performed in the installation directory.
+This allows to tests various configurations that may use various `C++`
+compilers, a feature unsupported by the `cmake` build system.
+
+The list of configurations tested must be specified by defining a list
+named `generic-parallel-mp-tests-configurations` when invoking `cmake`
+as follows:
+
+~~~~
+cmake -Dgeneric-parallel-mp-tests-configurations="cuda-nvcc;cuda-clang"
+~~~~
+
+The following tests configurations are currently supported:
+
+- `cuda-nvcc`: compilation of `CUDA` files using the `nvcc` compiler.
+- `cuda-clang`: compilation of `CUDA` files using the `clang++`
+  compiler.
+- `hip-hipcc`: compilation of `HIP` files using the `hipcc` compiler.
+- `hip-clang`: compilation of `HIP` files using the `clang++` compiler.
+
+### Notes
+
+For configurations based on HIP, the variable `HIP_PLATFORM` must be
+passed to `cmake` or defined the environment. The value of this variable
+must be either `nvidia` or `amd`. If `HIP_PLATFORM` is `nvidia`, the
+`CUDA` platform must be available.

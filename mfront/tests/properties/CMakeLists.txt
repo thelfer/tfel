@@ -1,3 +1,4 @@
+add_subdirectory(configuration-files)
 add_subdirectory(interfaces)
 
 function(add_mfront_generated_source lib interface ext file)

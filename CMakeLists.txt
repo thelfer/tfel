@@ -578,17 +578,10 @@ else(TFEL_APPEND_SUFFIX)
 endif(TFEL_APPEND_SUFFIX)
 
 # install test-suite
-if(TFEL_APPEND_SUFFIX)
-  install(DIRECTORY test-suite
-    DESTINATION share/tfel-${TFEL_SUFFIX}/
-    COMPONENT code
-    PATTERN ".svn" EXCLUDE)
-else(TFEL_APPEND_SUFFIX)
-  install(DIRECTORY test-suite
-    DESTINATION share/tfel/
-    COMPONENT code
-    PATTERN ".svn" EXCLUDE)
-endif(TFEL_APPEND_SUFFIX)
+install(DIRECTORY test-suite
+  DESTINATION ${TFEL_DATAROOTDIR}
+  COMPONENT code
+  PATTERN ".svn" EXCLUDE)
 
 set(CPACK_PACKAGE_VERSION   "${TFEL_VERSION}")
 if(${CMAKE_SYSTEM_PROCESSOR})

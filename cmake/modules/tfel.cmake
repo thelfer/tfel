@@ -60,6 +60,13 @@ macro(tfel_project tfel_version_major tfel_version_minor tfel_version_patch)
   endif(TFEL_APPEND_SUFFIX)
   install(FILES "${PROJECT_BINARY_DIR}/tfel-config-version.cmake"
     DESTINATION "${export_install_path}")
+
+  if(TFEL_APPEND_SUFFIX)
+    set(TFEL_DATAROOTDIR "share/tfel-${TFEL_SUFFIX}")
+  else(TFEL_APPEND_SUFFIX)
+    set(TFEL_DATAROOTDIR "share/tfel")
+  endif(TFEL_APPEND_SUFFIX)
+
 endmacro(tfel_project)
 
 set(CPACK_COMPONENTS_ALL core mfront mtest mfm)
