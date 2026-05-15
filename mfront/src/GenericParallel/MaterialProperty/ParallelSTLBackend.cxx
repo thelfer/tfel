@@ -222,30 +222,30 @@ namespace mfront::generic_parallel::material_property {
            << "}\n";
       }
     }
-      if (treatStrides) {
-        os << "if((mfront_output_stride == 0) && (mfront_npoints != 1)){\n"
-           << "mfront_output_status->status = -7;\n"
-           << "mfront_report(\"if the output is uniform, the number of points "
-           << "must be equal to one (\" + std::to_string(mfront_npoints) + \" "
-           << "given)\");\n"
-           << "errno = mfront_errno_old;\n"
-           << "return;\n"
-           << "}\n";
-      }
-      os << "if(mfront_npoints <= 0){\n"
+    if (treatStrides) {
+      os << "if((mfront_output_stride == 0) && (mfront_npoints != 1)){\n"
+         << "mfront_output_status->status = -7;\n"
+         << "mfront_report(\"if the output is uniform, the number of points "
+         << "must be equal to one (\" + std::to_string(mfront_npoints) + \" "
+         << "given)\");\n"
+         << "errno = mfront_errno_old;\n"
          << "return;\n"
          << "}\n";
-      //
-      this->writeKernelCall(os, i, mpd, fd, treatStrides);
-      //
-      if (!areRuntimeChecksDisabled(mpd)) {
-        os << "if (errno != 0) {\n"
-           << "mfront_output_status->status = -3;\n"
-           << "mfront_output_status->c_error_number = errno;\n"
-           << "mfront_report(strerror(errno));\n"
-           << "}\n"
-           << "errno = mfront_errno_old;\n";
-        this->writeBoundsStatusesAnalysis(os, i, mpd);
+    }
+    os << "if(mfront_npoints <= 0){\n"
+       << "return;\n"
+       << "}\n";
+    //
+    this->writeKernelCall(os, i, mpd, fd, treatStrides);
+    //
+    if (!areRuntimeChecksDisabled(mpd)) {
+      os << "if (errno != 0) {\n"
+         << "mfront_output_status->status = -3;\n"
+         << "mfront_output_status->c_error_number = errno;\n"
+         << "mfront_report(strerror(errno));\n"
+         << "}\n"
+         << "errno = mfront_errno_old;\n";
+      this->writeBoundsStatusesAnalysis(os, i, mpd);
     }
     os << "} // end of " << name << "\n\n";
   }  // end of writeCImplementations2

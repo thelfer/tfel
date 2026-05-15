@@ -40,7 +40,7 @@ namespace mfront::generic_parallel::material_property {
       const MaterialPropertyDescription& mpd) const {
     CUDABackendBase::writeSpecificIncludesInSourceFile(os, i, mpd);
     os << "#include \"hip/hip_runtime.h\"\n";
-  } // end of writeSpecificIncludesInSourceFile
+  }  // end of writeSpecificIncludesInSourceFile
 
   HIPBackend::~HIPBackend() = default;
 
