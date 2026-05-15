@@ -203,7 +203,8 @@ namespace mfront::generic_parallel::material_property {
              << "mfront_output_status->status = -5;\n"
              << "mfront_report(\"negative stride given for variable '"
              << mpd.inputs[idx].getExternalName()
-             << "' (\"+std::to_string(mfront_output_stride)+\" given\");\n"
+             << "' (\"+std::to_string(mfront_args_strides[" << idx
+             << "])+\" given\");\n"
              << "errno = mfront_errno_old;\n"
              << "return;\n"
              << "}\n";
@@ -221,20 +222,30 @@ namespace mfront::generic_parallel::material_property {
            << "}\n";
       }
     }
-    os << "if(mfront_npoints <= 0){\n"
-       << "return;\n"
-       << "}\n";
-    //
-    this->writeKernelCall(os, i, mpd, fd, treatStrides);
-    //
-    if (!areRuntimeChecksDisabled(mpd)) {
-      os << "if (errno != 0) {\n"
-         << "mfront_output_status->status = -3;\n"
-         << "mfront_output_status->c_error_number = errno;\n"
-         << "mfront_report(strerror(errno));\n"
-         << "}\n"
-         << "errno = mfront_errno_old;\n";
-      this->writeBoundsStatusesAnalysis(os, i, mpd);
+      if (treatStrides) {
+        os << "if((mfront_output_stride == 0) && (mfront_npoints != 1)){\n"
+           << "mfront_output_status->status = -7;\n"
+           << "mfront_report(\"if the output is uniform, the number of points "
+           << "must be equal to one (\" + std::to_string(mfront_npoints) + \" "
+           << "given)\");\n"
+           << "errno = mfront_errno_old;\n"
+           << "return;\n"
+           << "}\n";
+      }
+      os << "if(mfront_npoints <= 0){\n"
+         << "return;\n"
+         << "}\n";
+      //
+      this->writeKernelCall(os, i, mpd, fd, treatStrides);
+      //
+      if (!areRuntimeChecksDisabled(mpd)) {
+        os << "if (errno != 0) {\n"
+           << "mfront_output_status->status = -3;\n"
+           << "mfront_output_status->c_error_number = errno;\n"
+           << "mfront_report(strerror(errno));\n"
+           << "}\n"
+           << "errno = mfront_errno_old;\n";
+        this->writeBoundsStatusesAnalysis(os, i, mpd);
     }
     os << "} // end of " << name << "\n\n";
   }  // end of writeCImplementations2
@@ -256,6 +267,20 @@ namespace mfront::generic_parallel::material_property {
          << "tfel::fsalgo::copy<" << mpd.inputs.size() << ">::exe("
          << "mfront_args_strides, "
          << "mfront_args_strides_tmp.begin());\n";
+      os << "const bool mfront_areAllArgumentsUniform = std::all_of("
+         << "mfront_args_strides_tmp.begin(), "
+         << "mfront_args_strides_tmp.end(), "
+         << "[](const " << types.integer_type
+         << " mfront_stride){return mfront_stride == 0;});\n"
+         << "if((mfront_output_stride == 0) && "
+         << "(!mfront_areAllArgumentsUniform)){\n"
+         << "mfront_output_status->status = -7;\n"
+         << "mfront_report(\"if the output is uniform, "
+         << "all the arguments must be uniform "
+         << "(i.e. their strides must be null)\");\n"
+         << "errno = mfront_errno_old;\n"
+         << "return;\n"
+         << "}\n";
     }
     if (requiresBoundsCheck) {
       // we do need to use heap allocations as nvc++ would automatically use
@@ -437,12 +462,8 @@ namespace mfront::generic_parallel::material_property {
         write_kernel_call(true);
         os << "}\n";
       } else {
-        os << "const bool mfront_areAllArgumentsUniform = std::all_of("
-           << "mfront_args_strides_tmp.begin(), "
-           << "mfront_args_strides_tmp.end(), "
-           << "[](const " << types.integer_type
-           << " mfront_stride){return mfront_stride == 0;});\n"
-           << "if(mfront_areAllArgumentsUniform){\n"
+        os << "if(mfront_areAllArgumentsUniform && "
+           << "(mfront_output_stride == 0)){\n"
            << "mfront_kernel(0);\n"
            << "} else {\n";
         os << "const bool mfront_areAllArgumentsStrideOne = std::all_of("

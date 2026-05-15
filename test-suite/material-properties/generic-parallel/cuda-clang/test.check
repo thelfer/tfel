@@ -1,5 +1,6 @@
 @Requires {"mfront::material_property::generic-parallel_interface::supported_configuration::cuda-clang"};
 
+@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-cuda-clang.json ../PoissonRatioTest.mfront";
 @Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-cuda-clang.json ../Inconel600_YoungModulus.mfront";
 @Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-cuda-clang.json ../Inconel600_YoungModulus-qt.mfront";
 

@@ -1,5 +1,5 @@
 dsl_options: {
-  disable_runtime_checks: true
+  disable_runtime_checks: false
 },
 interfaces_options: {
   generic-parallel: {

@@ -1,5 +1,6 @@
 @Requires {"mfront::material_property::generic-parallel_interface::supported_configuration::hip-hipcc"};
 
+@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-hip-hipcc.json ../PoissonRatioTest.mfront";
 @Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-hip-hipcc.json ../Inconel600_YoungModulus.mfront";
 @Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-hip-hipcc.json ../Inconel600_YoungModulus-qt.mfront";
 

@@ -567,7 +567,7 @@ if(TFEL_REQUIRES_HIP)
    if("hip-clang" IN_LIST generic-parallel-mp-tests-configurations)
     list(APPEND tfel-check-components
          "mfront::material_property::generic-parallel_interface::supported_configuration::hip-clang-nvidia-platform")
-   endif("hip-clang" IN_LIST ${generic-parallel-mp-tests-configurations})
+   endif("hip-clang" IN_LIST generic-parallel-mp-tests-configurations)
  elseif(HIP_PLATFORM STREQUAL "amd")
  else()
    message(FATAL_ERROR "unsupported value of HIP_PLATFORM. Expected 'amd' or 'nvidia', got '${HIP_PLATFORM}'")

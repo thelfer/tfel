@@ -1,5 +1,6 @@
 @Requires {"mfront::material_property::generic-parallel_interface::supported_configuration::cuda-nvcc"};
 
+@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-cuda-nvcc.json ../PoissonRatioTest.mfront";
 @Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-cuda-nvcc.json ../Inconel600_YoungModulus.mfront";
 @Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-cuda-nvcc.json ../Inconel600_YoungModulus-qt.mfront";
 

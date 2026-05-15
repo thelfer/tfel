@@ -1,6 +1,6 @@
-@DSL   MaterialLaw;
+@DSL MaterialLaw;
 @Material Inconel600;
-@Law      YoungModulus ;
+@Law YoungModulus_qt;
 
 @UseQt true;
 
