@@ -49,24 +49,28 @@ endif(enable-static)
 
 add_executable(tfel-check tfel-check.cxx)
 set_property(TARGET tfel-check PROPERTY POSITION_INDEPENDENT_CODE TRUE)
+
+# components
 if(tfel-check-components)
   string(REPLACE ";" "@" TFEL_CHECK_COMPONENTS_VALUE "${tfel-check-components}")
   target_compile_definitions(tfel-check
     PRIVATE "TFEL_CHECK_COMPONENTS=\"${TFEL_CHECK_COMPONENTS_VALUE}\"")
 endif(tfel-check-components)
+
+# substitutions
+add_tfel_check_substitution(TFEL_CXX_STANDARD "${CMAKE_CXX_STANDARD}")
 get_property(tfel-check-substitutions GLOBAL PROPERTY tfel-check-substitutions)
-if(tfel-check-substitutions)
-  string(REPLACE ";" "@" TFEL_CHECK_SUBSTITUTIONS_VALUE "${tfel-check-substitutions}")
-  target_compile_definitions(tfel-check
-    PRIVATE "TFEL_CHECK_SUBSTITUTIONS=\"${TFEL_CHECK_SUBSTITUTIONS_VALUE}\"")
-endif(tfel-check-substitutions)
+string(REPLACE ";" "@" TFEL_CHECK_SUBSTITUTIONS_VALUE "${tfel-check-substitutions}")
+target_compile_definitions(tfel-check
+  PRIVATE "TFEL_CHECK_SUBSTITUTIONS=\"${TFEL_CHECK_SUBSTITUTIONS_VALUE}\"")
+
 if(enable-python OR enable-python-bindings)
   target_compile_definitions(tfel-check
     PRIVATE TFEL_PYTHON_EXECUTABLE="${Python_EXECUTABLE}")
 endif(enable-python OR enable-python-bindings)
 
 target_link_libraries(tfel-check
-  TFELMFront TFELCheck TFELUtilities TFELSystem)
+  TFELMFront TFELCheck TFELUtilities TFELSystem TFELConfig)
 if(TFEL_APPEND_SUFFIX)
   set_target_properties(tfel-check
     PROPERTIES OUTPUT_NAME "tfel-check-${TFEL_SUFFIX}")

@@ -101,6 +101,14 @@ namespace tfel::check {
   }  // end of declareTFELComponents
 
   static void declareTFELSubstitutions(ConfigurationManager& c) {
+    const auto s = tfel::system::dirSeparator();
+    c.addSubstitution("@TFEL_INCLUDE_DIR@", getInstallPath() + s + "include",
+                      false);
+#ifdef _WIN32
+    c.addSubstitution("@TFEL_LIBRARY_DIR@", getInstallPath() + s + "bin", false);
+#else
+    c.addSubstitution("@TFEL_LIBRARY_DIR@", getInstallPath() + s + "lib", false);
+#endif
 #ifdef TFEL_CHECK_SUBSTITUTIONS
     for (const auto& co :
          tfel::utilities::tokenize(TFEL_CHECK_SUBSTITUTIONS, '@')) {
