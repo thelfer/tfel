@@ -1,6 +1,11 @@
+@Environment {"LD_LIBRARY_PATH": "src"};
+
 @Requires {"mfront::material_property::generic-parallel_interface::supported_configuration::stlpar-parunseq-gcc"};
 
 @Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-stlpar-parunseq-gcc.json ../Inconel600_YoungModulus.mfront";
 @Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-stlpar-parunseq-gcc.json ../Inconel600_YoungModulus-qt.mfront";
+@Command "@TFEL_GXX_COMPILER@ -I ../../../../../../include/ -I include -O2 -march=native --std=c++20 ../test-stlpar.cxx -o test-stlpar -L src -lGenericParallelInconel600-stlpar";
+@Command "./test-stlpar";
 
+@CleanFiles {"test-stlpar"};
 @CleanDirectories {"include", "src"};
