@@ -8,10 +8,7 @@ interfaces_options: {
 },
 compilation_options : {
   cxx : {
-    compiler: "g++",
-    compilation_flags: "-O2 -std=c++20 -march=native" 
+    compiler: "@TFEL_ICPX_COMPILER@",
+    compilation_flags: "-O2 -std=c++@CMAKE_CXX_STANDARD@ -march=native" 
   }
-},
-linking_options : {
-  linker_flags : "-ltbb"
 }

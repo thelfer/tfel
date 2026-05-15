@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 cmake_policy(SET CMP0022 NEW)
 cmake_policy(SET CMP0054 NEW)
+cmake_policy(SET CMP0074 NEW)
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)
   cmake_policy(SET CMP0167 NEW)  
 endif(CMAKE_VERSION VERSION_GREATER_EQUAL 3.30.0)

@@ -1,0 +1,6 @@
+@Requires {"mfront::material_property::generic-parallel_interface::supported_configuration::stlpar-parunseq-nvhpc-gpu"};
+
+@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-stlpar-parunseq-nvhpc-gpu.json ../Inconel600_YoungModulus.mfront";
+@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-stlpar-parunseq-nvhpc-gpu.json ../Inconel600_YoungModulus-qt.mfront";
+
+@CleanDirectories {"include", "src"};

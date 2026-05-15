@@ -11,7 +11,7 @@ interfaces_options: {
 },
 compilation_options : {
   hip: {
-    compiler: "hipcc",
+    compiler: "@TFEL_HIPCC_COMPILER@",
     compilation_flags: "-x cu --compiler-options=-fPIC --std=c++@CMAKE_CXX_STANDARD@ --expt-relaxed-constexpr -isystem @TFEL_HIP_INCLUDES@ -diag-suppress 20012"
   }
 }

@@ -11,8 +11,8 @@ interfaces_options: {
 },
 compilation_options : {
   cxx : {
-    compiler: "nvc++",
-    compilation_flags: "-O2 -stdpar=gpu -std=c++20 -march=native -gpu=sm_89" 
+    compiler: "@TFEL_NVHPC_COMPILER@",
+    compilation_flags: "-O2 -stdpar=gpu -std=c++@CMAKE_CXX_STANDARD@ -march=native" 
   }
 },
 linking_options : {

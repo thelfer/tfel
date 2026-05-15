@@ -1,0 +1,6 @@
+@Requires {"mfront::material_property::generic-parallel_interface::supported_configuration::stlpar-parunseq-clang"};
+
+@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-stlpar-parunseq-clang.json ../Inconel600_YoungModulus.mfront";
+@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-stlpar-parunseq-clang.json ../Inconel600_YoungModulus-qt.mfront";
+
+@CleanDirectories {"include", "src"};

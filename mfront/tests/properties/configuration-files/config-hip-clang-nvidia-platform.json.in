@@ -8,11 +8,11 @@ interfaces_options: {
 },
 compilation_options : {
   cxx : {
-    compiler: "clang++",
+    compiler: "@TFEL_CLANGXX_COMPILER@",
     compilation_flags: "-std=c++@CMAKE_CXX_STANDARD@ -O3 -march=native" 
   },
   hip : {
-    compiler: "clang++",
+    compiler: "@TFEL_CLANGXX_COMPILER@",
     compilation_flags: {"-O3 -std=c++@CMAKE_CXX_STANDARD@ -march=native",
       "-x cuda -isystem @TFEL_HIP_INCLUDES@",
       "-D__HIP_PLATFORM_NVIDIA__", "--cuda-path=@TFEL_CUDA_PATH@ -fPIC -DPIC"}
