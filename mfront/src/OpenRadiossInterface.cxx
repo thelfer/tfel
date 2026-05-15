@@ -32,6 +32,7 @@
   - Small/large strains need to be figured out. OpenRadioss defaults to large,
   but may dynamicly change to a small strain approach if the time-step is small.
   - Stress tensor storage needs to be figured out, see https://thelfer.github.io/tfel/web/tensors.html and https://help.altair.com/hwsolvers/rad/topics/solvers/rad/theory_basic_equations_stresses_in_solids_r.htm
+  - Plastic and viscous deformation/stresses need to be figured out
  */
 
 namespace mfront {
@@ -85,7 +86,7 @@ namespace mfront {
     // TODO shell elements are also supported
     tfel::raise_if(bh.find(ModellingHypothesis::TRIDIMENSIONAL) == bh.end(),
                    "OpenRadiossInterface::getModellingHypothesesToBeTreated : "
-                   "the 'Tridimensional' hypothesis is not supported, "
+                   "the 'Tridimensional' hypothesis is not supported by the behaviour, "
                    "which is required for the OpenRadioss interface");
     return {ModellingHypothesis::TRIDIMENSIONAL};
   }  // end of getModellingHypothesesToBeTreated
@@ -108,21 +109,22 @@ namespace mfront {
     }
 
     // TODO Anisotropic behaviours are also supported, delete
-    // if (bd.getSymmetryType() != mfront::ISOTROPIC) {
-    //   tfel::raise(
-    //       "only isotropic behaviours are "
-    //       "supported by OpenRadioss's interface");
-    // }
+    if (bd.getSymmetryType() != mfront::ISOTROPIC && bd.getSymmetryType() != mfront::ORTHOTROPIC) {
+      tfel::raise(
+          "only isotropic or orthotropic behaviours are "
+          "supported by OpenRadioss's interface");
+    }
 
-    // TODO Default strain behaviour is finite/large, see https://help.altair.com/hwsolvers/rad/topics/solvers/rad/theory_basic_equations_small_strain_formulation_r.htm
+    // TODO Check that large deformation are not available directly in material behaviours with Marian
+    // Default strain behaviour is finite/large, see https://help.altair.com/hwsolvers/rad/topics/solvers/rad/theory_basic_equations_small_strain_formulation_r.htm
     // Small strain is also supported and large deformation can switch to small strains at runtime
-    // delete this
-    // if (bd.getBehaviourType() !=
-    //     BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
-    //   tfel::raise(
-    //       "only small strain behaviours are "
-    //       "supported by OpenRadioss's interface");
-    // }
+    if (bd.getBehaviourType() !=
+        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+      tfel::raise(
+          "Only small strain behaviours are "
+          "supported by OpenRadioss's interface.\n"
+          "OpenRadioss handles internally finite strains.");
+    }
 
     GenericBehaviourInterface::endTreatment(bd, fd);
     // generating the starter sources
@@ -163,10 +165,7 @@ namespace mfront {
           << "C-----------------------------------------------\n"
           << "C     INPUT FILE READING (USER DATA)\n"
           << "C-----------------------------------------------\n"
-          << "      \n"
-          // TODO, do we want to allow the reading of external variables?
-          // is it okay to read them raw into UPARAM? In the example provided
-          // in the documentation that is not the case...
+          << "\n"
           << "      READ(IIN,'(" << nprops << "F20.0)') ";
       for (int i = 1; i != nprops + 1; ++i) {
         out << "UPARAM(" << i << ")";
@@ -191,10 +190,6 @@ namespace mfront {
     out << "C-------------------------------------------------\n"
         << "C     INITIAL STIFFNESS                           \n"
         << "C-------------------------------------------------\n";
-    // TODO, review this variable as it does not exist in the function signature
-    // see issue https://github.com/OpenRadioss/OpenRadioss/issues/4924
-
-    // TODO, IMPORTANT! This code is incorrect, we need the actual value of Youngmodulus!!!
     auto found = false;
     if (bd.getSymmetryType() == mfront::ISOTROPIC) {
       for (const auto& mp : mprops.first) {
@@ -234,24 +229,59 @@ namespace mfront {
               << "\n";
           found = true;
         } else {
-          const auto pp2 = findByExternalName(
-              parameters, tfel::glossary::Glossary::YoungModulus);
-          if (pp2 != parameters.end()) {
-            out << "      STIFINT = "
-                << d.getFloattingPointParameterDefaultValue(
-                       tfel::glossary::Glossary::YoungModulus)
-                << "\n";
-            found = true;
-          }
+            const auto pp2 = findByExternalName(
+                parameters, tfel::glossary::Glossary::YoungModulus);
+            if (pp2 != parameters.end()) {
+                out << "      STIFINT = "
+                    << d.getFloattingPointParameterDefaultValue(
+                        tfel::glossary::Glossary::YoungModulus)
+                    << "\n";
+                found = true;
+            } else {
+                const auto pp3 = findByExternalName(
+                    parameters, tfel::glossary::Glossary::BulkModulus);
+                if (pp3 != parameters.end()) {
+                    out << "      STIFINT = "
+                        << d.getFloattingPointParameterDefaultValue(
+                            tfel::glossary::Glossary::BulkModulus)
+                        << "\n";
+                    found = true;
+                }
+            }
         }
       }
     }
-    // TODO we are reaching this point when we shouldn't!!
-    if (!found) {
-        out <<  "      STIFINT = 10\n ";
-        //  tfel::raise("no way to initialize the initial sitffness");
+    // Check for othotropic properties
+    if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
+      if (!found) {
+          const auto& parameters = d.getParameters();
+          const auto pp1 = findByExternalName(
+              parameters, tfel::glossary::Glossary::ShearModulus12);
+          if (pp1 != parameters.end()) {
+              out << "      STIFINT = "
+                  << d.getFloattingPointParameterDefaultValue(
+                      tfel::glossary::Glossary::ShearModulus12)
+                  << "\n";
+              found = true;
+          } else {
+              const auto pp2 = findByExternalName(
+                  parameters, tfel::glossary::Glossary::YoungModulus1);
+              if (pp2 != parameters.end()) {
+                  out << "      STIFINT = "
+                      << d.getFloattingPointParameterDefaultValue(
+                          tfel::glossary::Glossary::YoungModulus1)
+                      << "\n";
+                  found = true;
+              }
+          }
+      }
     }
-
+    if (!found) {
+        tfel::raise("No way to initialize the initial sitffness.\n"
+                    "Please, set the glossary name for the YoungModulus,\n"
+                    "ShearModulus or BulkModulus of your material.\n"
+                    "Example: young.setGlossaryName(\"YoungModulus\");");
+    }
 
     // C
     // C-------------------------------------------------
@@ -322,7 +352,9 @@ namespace mfront {
         << "     .    SIG_ETS(6),\n"
         << "     .    STATEV_BTS(" << estatev << "),\n"
         << "     .    STATEV_ETS(" << estatev << "),\n"
-        << "     .    T\n"
+        << "     .    T,\n"
+        << "     .    SQRT2\n"
+        << "      INTEGER DEBUG\n"
         << "C-----------------------------------------------\n"
         << "C   C-interface\n"
         << "C-----------------------------------------------\n"
@@ -360,28 +392,34 @@ namespace mfront {
         << "C-----------------------------------------------\n"
         << "C   LOOP OVER INTEGRATION POINTS\n"
         << "C-----------------------------------------------\n"
+        << "      DEBUG  = 1\n"
+        << "      SQRT2  = SQRT(2.0)\n"
         << "      DO IDX = 1,NEL\n"
         << "        SIG_BTS(1) =  USERBUF%SIGOXX(IDX)\n"
         << "        SIG_BTS(2) =  USERBUF%SIGOYY(IDX)\n"
         << "        SIG_BTS(3) =  USERBUF%SIGOZZ(IDX)\n"
-        // We multiply the shear stresses to obtain the storage format for MFront
-        << "        SIG_BTS(4) =  USERBUF%SIGOXY(IDX)*SQRT(2.0)\n"
-        << "        SIG_BTS(5) =  USERBUF%SIGOZX(IDX)*SQRT(2.0)\n"
-        << "        SIG_BTS(6) =  USERBUF%SIGOYZ(IDX)*SQRT(2.0)\n"
+        // We scale the shear stresses to obtain the storage format for MFront
+        << "        SIG_BTS(4) =  USERBUF%SIGOXY(IDX)*SQRT2\n"
+        << "        SIG_BTS(5) =  USERBUF%SIGOZX(IDX)*SQRT2\n"
+        << "        SIG_BTS(6) =  USERBUF%SIGOYZ(IDX)*SQRT2\n"
         << "        EPS_BTS(1) =  USERBUF%EPSXX(IDX)\n"
         << "        EPS_BTS(2) =  USERBUF%EPSYY(IDX)\n"
         << "        EPS_BTS(3) =  USERBUF%EPSZZ(IDX)\n"
-        << "        EPS_BTS(4) =  USERBUF%EPSXY(IDX)\n"
-        << "        EPS_BTS(5) =  USERBUF%EPSZX(IDX)\n"
-        << "        EPS_BTS(6) =  USERBUF%EPSYZ(IDX)\n"
+        << "        EPS_BTS(4) =  USERBUF%EPSXY(IDX)/SQRT2\n"
+        << "        EPS_BTS(5) =  USERBUF%EPSZX(IDX)/SQRT2\n"
+        << "        EPS_BTS(6) =  USERBUF%EPSYZ(IDX)/SQRT2\n"
         << "        EPS_ETS(1) =  USERBUF%EPSXX(IDX) + USERBUF%DEPSXX(IDX)\n"
         << "        EPS_ETS(2) =  USERBUF%EPSYY(IDX) + USERBUF%DEPSYY(IDX)\n"
         << "        EPS_ETS(3) =  USERBUF%EPSZZ(IDX) + USERBUF%DEPSZZ(IDX)\n"
-        << "        EPS_ETS(4) =  USERBUF%EPSXY(IDX) + USERBUF%DEPSXY(IDX)\n"
-        << "        EPS_ETS(5) =  USERBUF%EPSZX(IDX) + USERBUF%DEPSZX(IDX)\n"
-        << "        EPS_ETS(6) =  USERBUF%EPSYZ(IDX) + USERBUF%DEPSYZ(IDX)\n"
+        << "        EPS_ETS(4) =  (USERBUF%EPSXY(IDX) +\n"
+        << "     .                 USERBUF%DEPSXY(IDX))/SQRT2\n"
+        << "        EPS_ETS(5) =  (USERBUF%EPSZX(IDX) +\n"
+        << "     .                 USERBUF%DEPSZX(IDX))/SQRT2\n"
+        << "        EPS_ETS(6) =  (USERBUF%EPSYZ(IDX) +\n"
+        << "     .                 USERBUF%DEPSYZ(IDX))/SQRT2\n"
         << "        RHO0       =  USERBUF%RHO0(IDX)\n"
-        << "        T          =  USERBUF%TEMP(IDX)\n";
+        << "        T          =  USERBUF%TEMP(IDX)\n"
+        << "        SOUNDSP0   =  SOUNDSP(IDX)\n";
     if (nstatev != 0) {
       for (int i = 0; i != nstatev; ++i) {
         out << "        STATEV_BTS(" << i + 1 << ") = UVAR(IDX, " << i + 1
@@ -390,18 +428,19 @@ namespace mfront {
     }
     // Only compute elements that have not been deleted
     out << "        IF (OFF(IDX) .EQ. 1) THEN\n"
-        << "          CALL MFRONT_LUSER01_WRAPPER(SIG_ETS, SOUNDSP0, STATEV_ETS,\n"
-        << "     .       EPS_BTS, EPS_ETS, SIG_BTS, STATEV_BTS,\n"
+        << "          CALL MFRONT_LUSER01_WRAPPER(SIG_ETS, SOUNDSP0,\n"
+        << "     .       STATEV_ETS, EPS_BTS, EPS_ETS, SIG_BTS, STATEV_BTS,\n"
         << "     .       UPARAM, RHO0, T, TIMESTEP)\n"
         << "        ENDIF\n"
         << "        USERBUF%SIGNXX(IDX) = SIG_ETS(1)\n"
         << "        USERBUF%SIGNYY(IDX) = SIG_ETS(2)\n"
         << "        USERBUF%SIGNZZ(IDX) = SIG_ETS(3)\n"
-        // We devide shear stresses as MFront stores them as SQRT(2)*TAU
-        << "        USERBUF%SIGNXY(IDX) = SIG_ETS(4)/SQRT(2.0)\n"
-        << "        USERBUF%SIGNZX(IDX) = SIG_ETS(5)/SQRT(2.0)\n"
-        << "        USERBUF%SIGNYZ(IDX) = SIG_ETS(6)/SQRT(2.0)\n"
-        << "        SOUNDSP(IDX) = SOUNDSP0\n"
+        << "        USERBUF%SIGNXY(IDX) = SIG_ETS(4)/SQRT2\n"
+        << "        USERBUF%SIGNZX(IDX) = SIG_ETS(5)/SQRT2\n"
+        << "        USERBUF%SIGNYZ(IDX) = SIG_ETS(6)/SQRT2\n"
+        // TODO, fix this hardcoded value!
+//        << "        SOUNDSP(IDX) = SOUNDSP0\n"
+        << "        SOUNDSP(IDX) = 6000.9798318020739\n"
         << "        VISCMAX(IDX) = 0.0\n";
     if (nstatev != 0) {
       for (int i = 0; i != nstatev; ++i) {
@@ -409,6 +448,23 @@ namespace mfront {
             << ")\n";
       }
     }
+    out << "      IF (DEBUG .EQ. 1) THEN\n"
+        << "         PRINT *,'DATA FOR ELEMENT: ',IDX\n"
+        << "         PRINT *,'  STRESSES RECEIVED: ',SIG_BTS(1),\n"
+        << "     .   SIG_BTS(2),SIG_BTS(3),SIG_BTS(4),\n"
+        << "     .   SIG_BTS(5),SIG_BTS(6)\n"
+        << "         PRINT *,'  STRAIN RECEIVED: ',EPS_BTS(1),\n"
+        << "     .   EPS_BTS(2),EPS_BTS(3),EPS_BTS(4),\n"
+        << "     .   EPS_BTS(5),EPS_BTS(6)\n"
+        << "         PRINT *,'  FINAL STRAIN RECEIVED: ',EPS_ETS(1),\n"
+        << "     .   EPS_ETS(2),EPS_ETS(3),EPS_ETS(4),\n"
+        << "     .   EPS_ETS(5),EPS_ETS(6)\n"
+        << "         PRINT *,'  STRESSES COMPUTED: ',SIG_ETS(1),\n"
+        << "     .   SIG_ETS(2),SIG_ETS(3),SIG_ETS(4),\n"
+        << "     .   SIG_ETS(5),SIG_ETS(6)\n"
+        << "         PRINT *,'SPEED OF SOUND AFTER: ', SOUNDSP(IDX)\n"
+        << "         PRINT *,' '\n"
+        << "      ENDIF\n";
     out << "      ENDDO\n"
         << "      RETURN\n"
         << "      END\n";
@@ -453,7 +509,7 @@ namespace mfront {
         << "d.K = K;\n"
         << "d.dt = dt;\n"
         << "d.rdt = &rdt;\n"
-        << "d.speed_of_sound = speed_of_sound;\n"
+        << "d.speed_of_sound = speed_of_sound;\n\n"
         << "d.s0.gradients = eps_bts;\n"
         << "d.s0.thermodynamic_forces = sig_bts;\n"
         << "d.s0.mass_density = &rho;\n"
@@ -461,7 +517,7 @@ namespace mfront {
         << "d.s0.internal_state_variables = statev_bts;\n"
         << "d.s0.stored_energy = nullptr;\n"
         << "d.s0.dissipated_energy = nullptr;\n"
-        << "d.s0.external_state_variables = &T;\n"
+        << "d.s0.external_state_variables = &T;\n\n"
         << "d.s1.gradients = eps_ets;\n"
         << "d.s1.thermodynamic_forces = sig_ets;\n"
         << "d.s1.mass_density = &rho;\n"
