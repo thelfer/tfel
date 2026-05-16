@@ -168,11 +168,56 @@ namespace tfel::math {
         requires(getSpaceDimension<StensorType>() == N &&
                  isAssignableTo<numeric_type<StensorType>, ValueType>());
     //
-    static constexpr st2tost2 Id() noexcept;
-    static constexpr st2tost2 IxI() noexcept;
-    static constexpr st2tost2 K() noexcept;
-    static constexpr st2tost2 M() noexcept;
-    static constexpr st2tost2 J() noexcept;
+    TFEL_HOST_DEVICE static constexpr st2tost2 Id() noexcept;
+    TFEL_HOST_DEVICE static constexpr st2tost2 IxI() noexcept;
+    TFEL_HOST_DEVICE static constexpr st2tost2 K() noexcept;
+    TFEL_HOST_DEVICE static constexpr st2tost2 M() noexcept;
+    TFEL_HOST_DEVICE static constexpr st2tost2 J() noexcept;
+    /*!
+     * \return the (i, j) Voigt-indexed component of Id(), computed
+     * directly without instantiating the full tensor. Useful on GPU
+     * when the indices are warp-divergent at runtime, where indexing
+     * a materialized Id() defeats coalescence / constant-memory broadcast.
+     * \param[in] i, j: Voigt indices in [0, StensorDimeToSize<N>::value).
+     */
+    TFEL_HOST_DEVICE static constexpr ValueType
+    generateIdComponent(unsigned short, unsigned short) noexcept;
+    /*!
+     * \return the (i, j) Voigt-indexed component of IxI(), computed
+     * directly without instantiating the full tensor. Useful on GPU
+     * when the indices are warp-divergent at runtime, where indexing
+     * a materialized IxI() defeats coalescence / constant-memory broadcast.
+     * \param[in] i, j: Voigt indices in [0, StensorDimeToSize<N>::value).
+     */
+    TFEL_HOST_DEVICE static constexpr ValueType
+    generateIxIComponent(unsigned short, unsigned short) noexcept;
+    /*!
+     * \return the (i, j) Voigt-indexed component of K(), computed
+     * directly without instantiating the full tensor. Useful on GPU
+     * when the indices are warp-divergent at runtime, where indexing
+     * a materialized K() defeats coalescence / constant-memory broadcast.
+     * \param[in] i, j: Voigt indices in [0, StensorDimeToSize<N>::value).
+     */
+    TFEL_HOST_DEVICE static constexpr ValueType
+    generateKComponent(unsigned short, unsigned short) noexcept;
+    /*!
+     * \return the (i, j) Voigt-indexed component of M(), computed
+     * directly without instantiating the full tensor. Useful on GPU
+     * when the indices are warp-divergent at runtime, where indexing
+     * a materialized M() defeats coalescence / constant-memory broadcast.
+     * \param[in] i, j: Voigt indices in [0, StensorDimeToSize<N>::value).
+     */
+    TFEL_HOST_DEVICE static constexpr ValueType
+    generateMComponent(unsigned short, unsigned short) noexcept;
+    /*!
+     * \return the (i, j) Voigt-indexed component of J(), computed
+     * directly without instantiating the full tensor. Useful on GPU
+     * when the indices are warp-divergent at runtime, where indexing
+     * a materialized J() defeats coalescence / constant-memory broadcast.
+     * \param[in] i, j: Voigt indices in [0, StensorDimeToSize<N>::value).
+     */
+    TFEL_HOST_DEVICE static constexpr ValueType
+    generateJComponent(unsigned short, unsigned short) noexcept;
     //
     TFEL_MATH_FIXED_SIZE_ARRAY_DEFAULT_METHODS(st2tost2,
                                                GenericFixedSizeArrayBase);
