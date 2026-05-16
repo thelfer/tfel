@@ -221,6 +221,9 @@ namespace tfel::math {
   TFEL_MATH_RESULT_TYPE_COMPLEX(double);
   TFEL_MATH_RESULT_TYPE_COMPLEX(long double);
 
+  template <typename X, typename Y>
+  using promote_type = typename tfel::typetraits::Promote<X, Y>::type;
+
 }  // end of namespace tfel::math
 
 #endif /* LIB_TFEL_MATH_BASICOPERATIONS_HXX */
