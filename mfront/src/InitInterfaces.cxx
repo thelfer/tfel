@@ -20,6 +20,7 @@
 #include "MFront/MFrontBehaviourInterface.hxx"
 #include "MFront/GenericMaterialPropertyInterface.hxx"
 #include "MFront/GenericBehaviourInterface.hxx"
+#include "MFront/CudaGenericBehaviourInterface.hxx"
 #include "MFront/GenericModelInterface.hxx"
 #include "MFront/CMaterialPropertyInterface.hxx"
 #include "MFront/ExcelMaterialPropertyInterface.hxx"
@@ -209,6 +210,7 @@ namespace mfront {
 
     MaterialPropertyInterfaceProxy<GenericMaterialPropertyInterface> gmpProxy;
     BehaviourInterfaceProxy<GenericBehaviourInterface> gbProxy;
+    BehaviourInterfaceProxy<CudaGenericBehaviourInterface> cgbProxy;
     ModelInterfaceProxy<GenericModelInterface> gmProxy;
 
     ModelInterfaceProxy<MFrontModelInterface> mmi;
