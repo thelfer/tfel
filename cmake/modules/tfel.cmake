@@ -587,6 +587,8 @@ if(TFEL_REQUIRES_CUDA)
   else(CUDAToolkit_LIBRARY_ROOT)
     cmake_path(GET CUDAToolkit_BIN_DIR PARENT_PATH TFEL_CUDA_PATH)
   endif(CUDAToolkit_LIBRARY_ROOT)  
+  add_tfel_check_substitution(TFEL_CUDA_PATH "${TFEL_CUDA_PATH}")
+  add_tfel_check_substitution(TFEL_CUDA_LIBRARY_DIR "${CUDAToolkit_LIBRARY_DIR}")
 endif()
 
 if(TFEL_REQUIRES_HIP)

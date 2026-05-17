@@ -1,7 +1,10 @@
 @Requires {"mfront::material_property::generic-parallel_interface::supported_configuration::cuda-clang"};
 
+@Environment {"LD_LIBRARY_PATH": "src"};
 @Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-cuda-clang.json ../PoissonRatioTest.mfront";
 @Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-cuda-clang.json ../Inconel600_YoungModulus.mfront";
 @Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-cuda-clang.json ../Inconel600_YoungModulus-qt.mfront";
+@Command "@TFEL_CLANGXX_COMPILER@ -O3 --std=c++@TFEL_CXX_STANDARD@ -march=native -x cuda --cuda-compile-host-device --cuda-gpu-arch=native --cuda-path=@TFEL_CUDA_PATH@ -I @TFEL_INCLUDE_DIR@ -I include ../test-cuda.cu -o test-cuda -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelInconel600-cuda -lGenericParallelMaterialLaw-cuda -L@TFEL_CUDA_LIBRARY_DIR@ -lcudart -ldl -lrt -pthread";
+@Command "./test-cuda test-cuda-clang";
 
 @CleanDirectories {"include", "src"};
