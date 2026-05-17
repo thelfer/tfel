@@ -469,6 +469,14 @@ namespace mfront::generic_parallel::material_property {
          << "}\n";
     };
     if (treatStrides) {
+      os << "if((mfront_output_stride == 0) && (mfront_npoints != 1)){\n"
+         << "mfront_output_status->status = -7;\n"
+         << "mfront_report(\"if the output is uniform, the number of points "
+         << "must be equal to one (\" + std::to_string(mfront_npoints) + \" "
+         << "given)\");\n"
+         << "errno = mfront_errno_old;\n"
+         << "return;\n"
+         << "}\n";
       if (mpd.inputs.empty()) {
         os << "if (mfront_output_stride == 0) {\n";
         write_kernel_call(false, true);
@@ -488,8 +496,10 @@ namespace mfront::generic_parallel::material_property {
         write_kernel_call(false, true);
         os << "} else {\n"
            << "if(mfront_output_stride == 0){\n"
-           << "mfront_output_status->status = -5;\n"
-           << "mfront_report(\"output shall not be uniform\");\n"
+           << "mfront_output_status->status = -7;\n"
+           << "mfront_report(\"if the output is uniform, "
+           << "all the arguments must be uniform "
+           << "(i.e. their strides must be null)\");\n"
            << "return;\n"
            << "}"
            << "const bool mfront_areAllArgumentsStridesOne = std::all_of("
