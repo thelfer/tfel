@@ -34,6 +34,7 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     this->test7();
     this->test8();
     this->test9();
+    this->test10();
     return this->result;
   }  // end of execute
 
@@ -270,6 +271,25 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     nu.resize(1);
     nu.at(0) = 0;
     PoissonRatioTest(&output, nu.data(), 0, nullptr, nullptr, 0, 1, policy);
+    TFEL_TESTS_ASSERT(std::abs(nu[0] - 0.39991) < eps);
+  }
+
+  void test10() {
+    constexpr auto eps = double{1e-14};
+    auto output = mfront_gmp_OutputStatus{};
+    auto output_qt = mfront_gmp_OutputStatus{};
+    auto nu = std::vector<double>(4);
+    const auto policy = mfront_gmp_OutOfBoundsPolicy{};
+    PoissonRatioTest2(&output, nu.data(), nullptr, 0, 4, policy);
+    TFEL_TESTS_CHECK_EQUAL(output.status, 0);
+    TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
+    TFEL_TESTS_CHECK_EQUAL(output.bounds_status, 0);
+    for (std::size_t i = 0; i != nu.size(); ++i) {
+      TFEL_TESTS_ASSERT(std::abs(nu[i] - 0.39991) < eps);
+    }
+    nu.resize(1);
+    nu.at(0) = 0;
+    PoissonRatioTest2(&output, nu.data(), nullptr, 0, 1, policy);
     TFEL_TESTS_ASSERT(std::abs(nu[0] - 0.39991) < eps);
   }
 };
