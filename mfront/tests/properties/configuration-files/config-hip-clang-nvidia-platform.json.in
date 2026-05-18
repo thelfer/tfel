@@ -15,6 +15,7 @@ compilation_options : {
     compiler: "@TFEL_CLANGXX_COMPILER@",
     compilation_flags: {"-O3 -std=c++@CMAKE_CXX_STANDARD@ -march=native",
       "-x cuda -isystem @TFEL_HIP_INCLUDES@",
+      "--cuda-compile-host-device --cuda-gpu-arch=native",
       "-D__HIP_PLATFORM_NVIDIA__", "--cuda-path=@TFEL_CUDA_PATH@ -fPIC -DPIC"}
   }
 },
