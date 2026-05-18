@@ -23,10 +23,11 @@ namespace mfront {
   /*!
    * \brief a class handling global options passed to domain specific languages.
    * Those global options are generally defined by command-line arguments
+   *
+   * \note direct usage of this class is deprecated in favour of the
+   * `ConfigurationManager` class.
    */
   struct MFRONT_VISIBILITY_EXPORT GlobalDomainSpecificLanguageOptionsManager {
-    //! \return the unique instance of this class
-    static GlobalDomainSpecificLanguageOptionsManager& get();
     /*!
      * \brief add an option that will be passed to all DSLs
      * \param[in] n: name of the option
@@ -89,11 +90,13 @@ namespace mfront {
     //! \return the global options to be passed to DSLs related to models.
     tfel::utilities::DataMap getModelDSLOptions() const;
 
-   private:
+   protected:
     //! \brief default constructor
     GlobalDomainSpecificLanguageOptionsManager();
     //! \brief destructor
     ~GlobalDomainSpecificLanguageOptionsManager();
+
+   private:
     /*!
      * \brief global options passed to DSLs related to material
      * properties

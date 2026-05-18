@@ -74,6 +74,7 @@ endif(enable-static)
 set(TFELMFront_SOURCES
     MFront.cxx
     MFrontBase.cxx
+    ConfigurationManager.cxx
     GlobalDomainSpecificLanguageOptionsManager.cxx
     MaterialKnowledgeDescription.cxx
     PathSpecifier.cxx
@@ -203,6 +204,14 @@ set(TFELMFront_SOURCES
     UMATInterfaceBase.cxx
     GenericMaterialPropertyInterfaceBase.cxx
     GenericMaterialPropertyInterface.cxx
+    GenericParallelMaterialPropertyInterface.cxx
+    GenericParallel/MaterialProperty/AbstractBackend.cxx
+    GenericParallel/MaterialProperty/BackendFactory.cxx
+    GenericParallel/MaterialProperty/BackendBase.cxx
+    GenericParallel/MaterialProperty/CUDABackendBase.cxx
+    GenericParallel/MaterialProperty/CUDABackend.cxx
+    GenericParallel/MaterialProperty/HIPBackend.cxx
+    GenericParallel/MaterialProperty/ParallelSTLBackend.cxx
     GenericBehaviourInterface.cxx
     GenericBehaviourSymbolsGenerator.cxx
     GenericModelInterface.cxx
@@ -304,7 +313,9 @@ if(HAVE_CASTEM)
 	Castem21Interface.cxx
 	CastemSymbolsGenerator.cxx
 	CastemMaterialPropertyInterface.cxx
+	Castem21MaterialPropertyInterface.cxx
 	CastemModelInterface.cxx
+	Castem21ModelInterface.cxx
 	AmitexInterface.cxx
 	${TFELMFront_SOURCES})
     set(CastemInterface_SOURCES

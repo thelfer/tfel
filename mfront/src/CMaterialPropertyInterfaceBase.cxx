@@ -59,6 +59,12 @@ namespace mfront {
 
   CMaterialPropertyInterfaceBase::CMaterialPropertyInterfaceBase() = default;
 
+  void CMaterialPropertyInterfaceBase::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for this interface");
+    }
+  }  // end of setOptions
+
   std::vector<std::string>
   CMaterialPropertyInterfaceBase::getSupportedFloatingPointTypes() const {
     return {"double"};

@@ -73,6 +73,13 @@ namespace mfront {
 
   MFrontModelInterface::MFrontModelInterface() = default;
 
+  void MFrontModelInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
+
   std::pair<bool, MFrontModelInterface::tokens_iterator>
   MFrontModelInterface::treatKeyword(const std::string& k,
                                      const std::vector<std::string>& i,

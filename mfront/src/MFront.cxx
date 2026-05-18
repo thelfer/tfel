@@ -329,6 +329,9 @@ namespace mfront {
     this->registerNewCallBack(
         "--list-dsl-options", &MFront::treatListDSLOptions,
         "list the options associated with a domain specific language", true);
+    this->registerNewCallBack("--configuration-file",
+                              &MFront::treatConfigurationFile,
+                              "define a configuration file", true);
     this->registerNewCallBack(
         "--dsl-option", &MFront::treatDSLOption,
         "allow to define options passed to domain specific languages", true);

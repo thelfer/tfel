@@ -385,10 +385,9 @@ namespace tfel::math {
             typename IndexingPolicyType = typename MappedType::indexing_policy>
   TFEL_HOST_DEVICE constexpr CoalescedView<MappedType, IndexingPolicyType> map(
       std::span<const ViewDataPointerType<MappedType>,
-                 indexing_policy_size<IndexingPolicyType>> ptrs)  //
-    requires((!std::is_const_v<MappedType>) &&
-             (std::remove_cv_t<MappedType>::hasFixedSizes))
-  {
+                indexing_policy_size<IndexingPolicyType>> ptrs)  //
+      requires((!std::is_const_v<MappedType>)&&(
+          std::remove_cv_t<MappedType>::hasFixedSizes)) {
     return CoalescedView<MappedType, IndexingPolicyType>{ptrs};
   }  // end of map
 
@@ -403,8 +402,7 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr CoalescedView<MappedType, IndexingPolicyType> map(
       std::span<const ViewConstDataPointerType<std::remove_cv_t<MappedType>>,
                 indexing_policy_size<IndexingPolicyType>> ptrs)  //
-    requires((std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes))
-  {
+      requires((std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes)) {
     return CoalescedView<MappedType, IndexingPolicyType>{ptrs};
   }  // end of map
 
@@ -418,9 +416,8 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr CoalescedView<MappedType, IndexingPolicyType> map(
       std::array<ViewDataPointerType<MappedType>,
                  indexing_policy_size<IndexingPolicyType>>& ptrs)  //
-    requires((!std::is_const_v<MappedType>) &&
-             (std::remove_cv_t<MappedType>::hasFixedSizes))
-  {
+      requires((!std::is_const_v<MappedType>)&&(
+          std::remove_cv_t<MappedType>::hasFixedSizes)) {
     return CoalescedView<MappedType, IndexingPolicyType>{ptrs};
   }  // end of map
 
@@ -435,8 +432,7 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr CoalescedView<MappedType, IndexingPolicyType> map(
       const std::array<ViewConstDataPointerType<std::remove_cv_t<MappedType>>,
                        indexing_policy_size<IndexingPolicyType>>& ptrs)  //
-    requires((std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes))
-  {
+      requires((std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes)) {
     return CoalescedView<MappedType, IndexingPolicyType>{ptrs};
   }  // end of map
 

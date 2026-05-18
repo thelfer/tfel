@@ -37,6 +37,7 @@
 #include "TFEL/System/RecursiveFind.hxx"
 #include "TFEL/System/ThreadPool.hxx"
 #include "TFEL/Utilities/TerminalColors.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/InitDSLs.hxx"
 #include "MFront/InitInterfaces.hxx"
 #include "MFront/MaterialPropertyInterfaceFactory.hxx"
@@ -91,7 +92,36 @@ namespace tfel::check {
     for (const auto& i : mf.getRegistredInterfaces()) {
       c.addComponent("mfront::model::" + i + "_interface");
     }
-  }  // end of declareTFELComponents
+#ifdef TFEL_CHECK_COMPONENTS
+    for (const auto& co :
+         tfel::utilities::tokenize(TFEL_CHECK_COMPONENTS, '@')) {
+      c.addComponent(co);
+    }
+#endif /* TFEL_CHECK_COMPONENTS */
+  }    // end of declareTFELComponents
+
+  static void declareTFELSubstitutions(ConfigurationManager& c) {
+    const auto s = tfel::system::dirSeparator();
+    c.addSubstitution("@TFEL_INCLUDE_DIR@", getInstallPath() + s + "include",
+                      false);
+#ifdef _WIN32
+    c.addSubstitution("@TFEL_LIBRARY_DIR@", getInstallPath() + s + "bin",
+                      false);
+#else
+    c.addSubstitution("@TFEL_LIBRARY_DIR@", getInstallPath() + s + "lib",
+                      false);
+#endif
+#ifdef TFEL_CHECK_SUBSTITUTIONS
+    for (const auto& co :
+         tfel::utilities::tokenize(TFEL_CHECK_SUBSTITUTIONS, '@')) {
+      const auto kv = tfel::utilities::tokenize(co, '%');
+      if (kv.size() != 2) {
+        tfel::raise("internal error: invalid substitution '" + co + "'");
+      }
+      c.addSubstitution("@" + kv.at(0) + "@", kv.at(1), false);
+    }
+#endif /* TFEL_CHECK_SUBSTITUTIONS */
+  }    // end of declareTFELSubstitutions
 
   static void declareTFELExecutables(ConfigurationManager& c) {
     for (const std::string e : {"mfront", "mtest", "mfront-doc",
@@ -308,6 +338,19 @@ namespace tfel::check {
               std::exit(EXIT_SUCCESS);
             },
             false));
+    this->registerCallBack(
+        "--list-default-substitutions",
+        CallBack(
+            "list all default substitutions",
+            [this] {
+              auto global_configuration =
+                  this->configurations.getConfiguration("");
+              for (const auto& [k, v] : global_configuration.substitutions) {
+                std::cout << "- '" << k << "': '" << v << "'\n";
+              }
+              std::exit(EXIT_SUCCESS);
+            },
+            false));
   }  // end of TFELCheck::registerArgumentCallBacks
 
   std::string TFELCheck::getVersionDescription() const { return VERSION; }
@@ -319,6 +362,7 @@ namespace tfel::check {
   TFELCheck::TFELCheck(const int argc, const char* const* const argv) {
     parseConfigFiles(this->configurations);
     declareTFELComponents(this->configurations);
+    declareTFELSubstitutions(this->configurations);
     this->setArguments(argc, argv);
     this->registerArgumentCallBacks();
     this->parseArguments();

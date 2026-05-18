@@ -1,0 +1,17 @@
+dsl_options: {
+  disable_runtime_checks: false
+},
+interfaces_options: {
+  generic-parallel: {
+    backend: {cuda : {
+        number_of_threads_per_block: 64
+      }
+    }
+  }
+},
+compilation_options : {
+  cuda : {
+    compiler: "@CMAKE_CUDA_COMPILER@",
+    compilation_flags: "-O2 -std=c++@CMAKE_CXX_STANDARD@ -diag-suppress 20012 -Xcompiler -fPIC --expt-relaxed-constexpr"
+  }
+}

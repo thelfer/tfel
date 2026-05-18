@@ -234,7 +234,8 @@ void declareLinearHomogenizationSchemes(pybind11::module_& m) {
           return homogenization::elasticity::computeOrientedPCWScheme(
               IM, f, IMi, n_a, a, n_b, b, c, D);
         });
-  m.def("computeMeanSquaredEquivalentStrain", &homogenization::elasticity::computeMeanSquaredEquivalentStrain<double>,
+  m.def("computeMeanSquaredEquivalentStrain",
+        &homogenization::elasticity::computeMeanSquaredEquivalentStrain<double>,
         pybind11::arg("IsotropicModuli_of_the_matrix"),
         pybind11::arg("volume_fraction"),
         pybind11::arg("IsotropicModuli_of_the_inclusion"),

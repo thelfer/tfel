@@ -14,12 +14,14 @@ eqnPrefixTemplate: "($$i$$)"
 ---
 nocite: |
     @dambrosi_analysis_2026
+    @balaguer_simulation_2026
     @spanu_experimental_2026
     @simo_wrapper-based_2026
     @zhang_mind_2026
     @hure_homogenized_2026
     @tandogan_multi-physics_2026
     @fontana_hyperelastic_2026
+    @martin_implementation_2025
     @ren_laboratory_2025
     @elbez_crystal_2025
     @bourceret_interaction_2025
@@ -39,6 +41,7 @@ nocite: |
     @pierre_modelling_2025
     @scherer_grain-size_2025
     @liu_mesostructural_2025
+    @cimatti_lucarelli_reduced_2024
     @bez_impact_2024
     @quintin_uncertainty_2024
     @rapanakis_cross-anisotropic_2024

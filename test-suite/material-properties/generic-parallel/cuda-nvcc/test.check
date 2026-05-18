@@ -1,0 +1,10 @@
+@Requires {"mfront::material_property::generic-parallel_interface::supported_configuration::cuda-nvcc"};
+
+@Environment {"LD_LIBRARY_PATH": "src"};
+@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-cuda-nvcc.json ../PoissonRatioTest.mfront";
+@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-cuda-nvcc.json ../Inconel600_YoungModulus.mfront";
+@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-cuda-nvcc.json ../Inconel600_YoungModulus-qt.mfront";
+@Command "@TFEL_NVCC_COMPILER@ -O3 --std=c++@TFEL_CXX_STANDARD@ -I @TFEL_INCLUDE_DIR@ -I include ../test-cuda.cu -o test-cuda -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelInconel600-cuda -lGenericParallelMaterialLaw-cuda";
+@Command "./test-cuda test-cuda-nvcc";
+
+@CleanDirectories {"include", "src"};

@@ -1,0 +1,10 @@
+@Requires {"mfront::material_property::generic-parallel_interface::supported_configuration::hip-hipcc"};
+
+@Environment {"LD_LIBRARY_PATH": "src"};
+@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-hip-hipcc.json ../PoissonRatioTest.mfront";
+@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-hip-hipcc.json ../Inconel600_YoungModulus.mfront";
+@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-hip-hipcc.json ../Inconel600_YoungModulus-qt.mfront";
+@Command "@TFEL_HIPCC_COMPILER@ @TFEL_HIPCC_FLAGS@ -O3 --std=c++@TFEL_CXX_STANDARD@ -isystem @TFEL_HIP_INCLUDE_DIR@ -I @TFEL_INCLUDE_DIR@ -I include ../test-hip.hip -o test-hip -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelInconel600-hip -lGenericParallelMaterialLaw-hip";
+@Command "./test-hip test-hip-hipcc";
+
+@CleanDirectories {"include", "src"};

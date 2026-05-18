@@ -28,28 +28,19 @@ namespace mfront {
     PleiadesModelInterface() noexcept;
     //! \return the name of the interface
     static std::string getName(void);
-
+    //
+    void setOptions(const DataMap&) override;
     std::pair<bool, TokensContainer::const_iterator> treatKeyword(
         const std::string&,
         const std::vector<std::string>&,
         TokensContainer::const_iterator,
         const TokensContainer::const_iterator) override;
-    /*! declare reserved names. Those are variables used internally
-     * that may conflicts with user variables
-     * \param[in] n : reserved names
-     */
     void declareReservedNames(std::set<std::string>&) override;
-    /*!
-     * \brief write the output files
-     * \param pdata : processing data
-     * \param data  : PleiadesModel data
-     */
     void writeOutputFiles(const FileDescription&,
                           const ModelDescription&) override;
-
     void getTargetsDescription(TargetsDescription&,
                                const ModelDescription&) override;
-    //! destructor
+    //! \brief destructor
     ~PleiadesModelInterface() override;
 
   };  // end of class PleiadesModelInterface

@@ -35,6 +35,18 @@ namespace tfel::utilities {
    * \brief a structure in charge of containing a complex data structure.
    */
   struct TFELUTILITIES_VISIBILITY_EXPORT DataStructure {
+    /*!
+     * \return if the given data is convertible to a data structure
+     *
+     * \param[in] d: data tested
+     */
+    static bool is_convertible(const Data&) noexcept;
+    /*!
+     * \return a data structure converted from the given data
+     *
+     * \param[in] d: data to be converted
+     */
+    static DataStructure convert(const Data&);
     //! \brief default constructor
     DataStructure();
     //! \brief move constructor
@@ -71,6 +83,14 @@ namespace tfel::utilities {
      * stored in a vector of Data
      */
     bool allowMultipleKeysInMap = false;
+    /*!
+     * \brief this boolean indicates if raw string are allowed, i.e. strings not
+     * declared in quotes. This is not allowed in standard JSON.
+     */
+    bool allowRawStrings = true;
+    //! \brief options used to read raw strings
+    CxxTokenizer::IsValidIdentifierOptions rawStringParsingOptions =
+        CxxTokenizer::IsValidIdentifierOptions{};
   };  // end of struct DataParsingOptions
 
   //! \brief list of all type handled by the Data structure
@@ -235,6 +255,14 @@ namespace tfel::utilities {
     template <typename T1>
     DataMapValidator& addDataTypeValidator(const std::string& k) requires(
         tfel::meta::TLCountNbrOfT<std::decay_t<T1>, DataTypes>::value == 1);
+    /*!
+     * \brief check that the data associated with the given key is a strictly
+     * positive integer
+     *
+     * \param[in] k: key
+     */
+    void addStrictlyPositiveIntegerCheck(const std::string&);
+
     //! \brief validate a data-map
     void validate(const DataMap&) const;
     //! \brief destructor

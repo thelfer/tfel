@@ -39,6 +39,24 @@ namespace tfel::utilities {
     using const_iterator = TokensContainer::const_iterator;
     //! a simple alias
     using size_type = TokensContainer::size_type;
+    //! \brief options used to parse an identifier
+    struct IsValidIdentifierOptions {
+      //! \brief treat `.` as a separator
+      bool allowDotCharacter = false;
+      //! \brief treat `+` as a separator
+      bool allowPlusSign = false;
+      //! \brief treat `-` as a separator
+      bool allowMinusSign = false;
+      // \brief boolean stating if C++ keywords are allowed
+      bool allowCxxKeywords = true;
+    };
+    /*!
+     * \return true if the given string is a valid variable name.
+     * \param[in] s : variable name
+     * \param[in] opts : options
+     */
+    static bool isValidIdentifier(std::string_view,
+                                  const IsValidIdentifierOptions &);
     /*!
      * \return true if the given string is a valid variable name.
      * \param[in] s : variable name
@@ -322,6 +340,12 @@ namespace tfel::utilities {
      * sperator
      */
     void treatDotAsSeparator(const bool);
+    /*!
+     * \brief set if '+' shall be treated as as sperator
+     * \param[in] b : boolean telling if '+' shall be treated as as
+     * separator
+     */
+    void treatPlusAsSeparator(const bool);
     /*!
      * \brief set if '-' shall be treated as as sperator
      * \param[in] b : boolean telling if '-' shall be treated as as
