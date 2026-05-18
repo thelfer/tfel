@@ -318,7 +318,6 @@ struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
     //
     Inconel600_YoungModulus(&output, thrust::raw_pointer_cast(d_E.data()), 0,
                             args.data(), args_strides.data(), 1, 1, policy);
-    std::cout << "output.status: " << output.status << '\n';
     TFEL_TESTS_CHECK_EQUAL(output.status, -7);
     TFEL_TESTS_CHECK_EQUAL(std::string(output.msg),
                            "if the output is uniform, all the arguments must "
