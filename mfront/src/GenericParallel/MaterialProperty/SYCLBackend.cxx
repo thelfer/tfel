@@ -22,29 +22,34 @@ namespace mfront::generic_parallel::material_property {
   SYCLBackend::SYCLBackend() {}  // end of SYCLBackend
 
   SYCLBackend::SYCLBackend(const tfel::utilities::DataMap& opts) {
-    //     auto validator = tfel::utilities::DataMapValidator{};
-    //     validator.addDataTypeValidator<std::string>("execution_policy");
-    //     validator.validate(opts);
-    //     if (contains(opts, "execution_policy")) {
-    //       const auto p = get<std::string>(opts, "execution_policy");
-    //       if ((p == "par") || (p == "parallel_policy")) {
-    //         this->execution_policy = "std::execution::par";
-    //       } else if ((p == "seq") || (p == "sequenced_policy")) {
-    //         this->execution_policy = "std::execution::seq";
-    //       } else if ((p == "unseq") || (p == "unsequenced_policy")) {
-    //         this->execution_policy = "std::execution::unseq";
-    //       } else if ((p == "par_unseq") || (p ==
-    //       "parallel_unsequenced_policy")) {
-    //         this->execution_policy = "std::execution::par_unseq";
-    //       } else {
-    //         tfel::raise(
-    //             "unsuported execution policy '" + p +
-    //             "'. Valid execution policy are: 'sequenced_policy' (or "
-    //             "'seq'), 'unsequenced_policy' (or 'unseq'), 'parallel_policy'
-    //             (or "
-    //             "'par') and 'parallel_unsequenced_policy' (or 'par_unseq')");
-    //       }
-    //     }
+    auto validator = tfel::utilities::DataMapValidator{};
+    validator.addDataTypeValidator<std::string>("device");
+    validator.addDataTypeValidator<std::string>("data_location");
+    validator.validate(opts);
+    if (contains(opts, "device")) {
+      const auto p = get<std::string>(opts, "device");
+      if (p == "default") {
+        this->device = "sycl::default_selector_v";
+      } else if (p == "cpu") {
+        this->device = "sycl::cpu_selector_v";
+      } else if (p == "gpu") {
+        this->device = "sycl::gpu_selector_v";
+      } else if (p == "accelerator") {
+        this->device = "sycl::accelerator_selector_v";
+      } else {
+        tfel::raise("unsuported execution policy '" + p +
+                    "'. Valid execution policy are: 'default', 'cpu', 'gpu' "
+                    "and 'accelerator'");
+      }
+    }
+    if (!contains(opts, "data_location")) {
+      tfel::raise("the 'data_location' option is not provided");
+    }
+    const auto dl = get<std::string>(opts, "data_location");
+    if (dl != "host") {
+      tfel::raise("unsuported data_location '" + dl +
+                  "'. The only valid value is: 'host'");
+    }
   }  // end of SYCLBackend
 
   std::string SYCLBackend::getName() const {
@@ -69,13 +74,13 @@ namespace mfront::generic_parallel::material_property {
       const bool treatStrides) const {
     const auto types = i.getTypesDescription();
     const auto requiresBoundsCheck = this->isBoundsCheckingRequired(mpd);
-    os << "sycl::queue mfront_queue(sycl::gpu_selector_v);\n";
+    os << "sycl::queue mfront_queue(" << this->device << ");\n";
     if (requiresBoundsCheck) {
       os << "using mfront_allocator_type = "
          << "sycl::usm_allocator<int, sycl::usm::alloc::shared>;\n"
          << "auto mfront_allocator = mfront_allocator_type{mfront_queue};\n"
          << "auto mfront_bounds_statuses = "
-         << "std::vector<int, mfront_allocator_type>{mfront_allocator}\n;"
+         << "std::vector<int, mfront_allocator_type>{mfront_allocator};\n"
          << "mfront_bounds_statuses.resize(2 * (mfront_nargs + 1), 0);\n";
     }
     this->writeKernel(os, i, mpd, fd, false);

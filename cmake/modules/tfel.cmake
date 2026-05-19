@@ -525,7 +525,7 @@ set(_tfel-generic-parallel_mp_tests_supported_configurations
     "cuda-nvcc" "cuda-clang" "hip-hipcc" "hip-clang"
     "stlpar-parunseq-gcc" "stlpar-parunseq-clang"
     "stlpar-parunseq-nvhpc-gpu" "stlpar-parunseq-icpx"
-    "sycl-gpu-icpx")
+    "sycl-default-icpx")
 
 foreach(conf ${generic-parallel-mp-tests-configurations})
   if(NOT "${conf}" IN_LIST _tfel-generic-parallel_mp_tests_supported_configurations)
@@ -617,7 +617,7 @@ if(_tfel-enable-generic-parallel-mp-stlpar-parunseq-nvhpc-gpu-tests)
 endif(_tfel-enable-generic-parallel-mp-stlpar-parunseq-nvhpc-gpu-tests)
 
 if((_tfel-enable-generic-parallel-mp-stlpar-parunseq-icpx-tests) OR
-   (_tfel-enable-generic-parallel-mp-sycl-gpu-icpx-tests))
+   (_tfel-enable-generic-parallel-mp-sycl-default-icpx-tests))
   define_tfel_cxx_compiler("icpx")
 endif()
   

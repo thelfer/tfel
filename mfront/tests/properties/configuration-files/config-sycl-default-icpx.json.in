@@ -1,0 +1,13 @@
+interfaces_options: {
+  generic-parallel: {
+    backend: sycl {
+     data_location: "unified"
+    }
+  }
+},
+compilation_options : {
+  cxx : {
+    compiler: "@TFEL_ICPX_COMPILER@",
+    compilation_flags: "-O2 -std=c++@CMAKE_CXX_STANDARD@ -march=native -fsycl" 
+  }
+}

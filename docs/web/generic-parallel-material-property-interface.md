@@ -353,6 +353,12 @@ The following tests configurations are currently supported:
   compiler.
 - `hip-hipcc`: compilation of `HIP` files using the `hipcc` compiler.
 - `hip-clang`: compilation of `HIP` files using the `clang++` compiler.
+- `hip-hipcc`: compilation of `HIP` files using the `hipcc` compiler.
+- `stlpar-parunseq-gcc`:
+- `stlpar-parunseq-clang`:
+- `stlpar-parunseq-nvhpc-gpu`:
+- `stlpar-parunseq-icpx`:
+- `sycl-default-sycl`: compilation of `SYCL` files using the `icpx` compiler.
 
 ### Notes
 
