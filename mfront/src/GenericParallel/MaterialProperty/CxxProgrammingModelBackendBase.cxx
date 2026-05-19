@@ -100,8 +100,8 @@ namespace mfront::generic_parallel::material_property {
     os << "(" << types.output_status_type << "* const mfront_output_status,\n"
        << types.real_type << "* const mfront_output";
     for (const auto& arg : this->getExtraArgumentsOfCFunctions()) {
-      if (arg.is_mutable) {
-        return;
+      if (!arg.is_mutable) {
+        continue;
       }
       os << ",\n" << arg.type;
       if (arg.is_pointer) {
@@ -110,8 +110,8 @@ namespace mfront::generic_parallel::material_property {
       os << " " << arg.name;
     }
     for (const auto& arg : this->getExtraArgumentsOfCFunctions()) {
-      if (!arg.is_mutable) {
-        return;
+      if (arg.is_mutable) {
+        continue;
       }
       os << ",\nconst " << arg.type;
       if (arg.is_pointer) {

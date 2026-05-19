@@ -52,23 +52,33 @@ namespace mfront::generic_parallel::material_property {
     }
   }  // end of SYCLBackend
 
-  std::string SYCLBackend::getName() const {
-    return "sycl";
-  }  // end of getName
+  std::string SYCLBackend::getName() const { return "sycl"; }  // end of getName
 
-  void SYCLBackend::writeSpecificIncludesInSourceFile(
+  void SYCLBackend::writeSpecificIncludesInHeaderFile(
       std::ostream& os,
-      const GenericParallelMaterialPropertyInterface&,
-      const MaterialPropertyDescription&) const {
-    os << "#include<concepts>\n"
-       << "#include<type_traits>\n"
+      const GenericParallelMaterialPropertyInterface& i,
+      const MaterialPropertyDescription& mpd) const {
+    CxxProgrammingModelBackendBase::writeSpecificIncludesInHeaderFile(os, i,
+                                                                      mpd);
+    os << "#ifdef __cplusplus\n"
        << "#include <sycl/sycl.hpp>\n"
-       << "#include\"TFEL/FSAlgorithm/copy.hxx\"\n\n"
+       << "#endif\n\n"
        << "#ifdef __cplusplus\n"
        << "using mfront_gpmp_sycl_queue = sycl::queue;\n"
        << "#else\n"
        << "typedef struct mfront_gpmp_sycl_queue mfront_gpmp_sycl_queue;\n"
        << "#endif\n\n";
+  }  // end of writeSpecificIncludesInSourceFile
+
+  void SYCLBackend::writeSpecificIncludesInSourceFile(
+      std::ostream& os,
+      const GenericParallelMaterialPropertyInterface& i,
+      const MaterialPropertyDescription& mpd) const {
+    CxxProgrammingModelBackendBase::writeSpecificIncludesInSourceFile(os, i,
+                                                                      mpd);
+    os << "#include<concepts>\n"
+       << "#include<type_traits>\n"
+       << "#include\"TFEL/FSAlgorithm/copy.hxx\"\n\n";
   }  // end of writeSpecificIncludesInSourceFile
 
   std::vector<BackendBase::ExtraArgumentOfCFunctions>
@@ -115,9 +125,9 @@ namespace mfront::generic_parallel::material_property {
         os << "if(mfront_output_stride == 0){\n"
            << "mfront_kernel(0);\n"
            << "} else if(mfront_output_stride == 1){\n";
-       write_kernel_call(false);
+        write_kernel_call(false);
         os << "} else {\n";
-       write_kernel_call(true);
+        write_kernel_call(true);
         os << "}\n";
       } else {
         os << "if(mfront_areAllArgumentsUniform && "
@@ -131,9 +141,9 @@ namespace mfront::generic_parallel::material_property {
            << "return mfront_stride == 1;});\n"
            << "if(mfront_areAllArgumentsStrideOne && (mfront_output_stride == "
               "1)){\n";
-       write_kernel_call(false);
+        write_kernel_call(false);
         os << "} else {\n";
-       write_kernel_call(true);
+        write_kernel_call(true);
         os << "}\n"
            << "}\n";
       }

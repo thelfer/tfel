@@ -27,18 +27,40 @@ namespace mfront::generic_parallel::material_property {
       const MaterialPropertyDescription& mpd) const {
     const auto name = i.getFunctionName(mpd);
     const auto types = i.getTypesDescription();
-    auto declare_extra_arguments = [this, &os] {
+    auto document_extra_arguments = [this, &os] {
       for (const auto& arg : this->getExtraArgumentsOfCFunctions()) {
-        if (arg.is_mutable) {
-          return;
+        if (!arg.is_mutable) {
+          continue;
         }
         os << "* \\param " << arg.name << ": " << arg.description << '\n';
       }
       for (const auto& arg : this->getExtraArgumentsOfCFunctions()) {
-        if (!arg.is_mutable) {
-          return;
+        if (arg.is_mutable) {
+          continue;
         }
         os << "* \\param[in] " << arg.name << ": " << arg.description << '\n';
+      }
+    };
+    auto declare_extra_arguments = [this, &os] {
+      for (const auto& arg : this->getExtraArgumentsOfCFunctions()) {
+        if (!arg.is_mutable) {
+          continue;
+        }
+        os << arg.type;
+        if (arg.is_pointer) {
+          os << "* const,";
+        }
+        os << "\n";
+      }
+      for (const auto& arg : this->getExtraArgumentsOfCFunctions()) {
+        if (arg.is_mutable) {
+          continue;
+        }
+        os << "const " << arg.type;
+        if (arg.is_pointer) {
+          os << "* const";
+        }
+        os << "\n";
       }
     };
     os << "/*!\n"
@@ -51,7 +73,7 @@ namespace mfront::generic_parallel::material_property {
        << " * If zero, only the first element of the output is computed\n"
        << " * A zero value is only meaningful if all inputs are uniform\n"
        << " *\n";
-    declare_extra_arguments();
+    document_extra_arguments();
     os << " * \\param[in] mfront_args: array of pointers to the state "
        << "variables's values\n"
        << " * \\param[in] mfront_strides: array of integers\n"
@@ -68,8 +90,9 @@ namespace mfront::generic_parallel::material_property {
        << " */\n"
        << "MFRONT_SHAREDOBJ void " << name << "(\n"
        << types.output_status_type << "* const,\n"
-       << types.real_type << "* const,\n"
-       << "const " << types.integer_type << ",\n"
+       << types.real_type << "* const,\n";
+    declare_extra_arguments();
+    os << "const " << types.integer_type << ",\n"
        << "const " << types.real_type << "* const* const,\n"
        << "const " << types.integer_type << "*,\n"
        << "const " << types.integer_type << ",\n"
@@ -82,7 +105,7 @@ namespace mfront::generic_parallel::material_property {
        << " * \\param[in] mfront_output_status: output status\n"
        << " * \\param[in] mfront_args: array of pointers to the state "
        << "variables's values\n";
-    declare_extra_arguments();
+    document_extra_arguments();
     os << " * \\param[in] mfront_nargs: number of state variables'\n"
        << " * \\param[in] mfront_npoints: number of points in which the "
        << "material property is computed.\n"
@@ -94,8 +117,9 @@ namespace mfront::generic_parallel::material_property {
        << " */\n"
        << "MFRONT_SHAREDOBJ void " << name << "2(\n"
        << types.output_status_type << "* const,\n"
-       << types.real_type << "* const,\n"
-       << "const " << types.real_type << "* const* const,\n"
+       << types.real_type << "* const,\n";
+    declare_extra_arguments();
+    os << "const " << types.real_type << "* const* const,\n"
        << "const " << types.integer_type << ",\n"
        << "const " << types.integer_type << ",\n"
        << "const " << types.out_of_bounds_policy_type << ");\n\n";

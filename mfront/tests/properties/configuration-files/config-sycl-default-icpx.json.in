@@ -1,7 +1,7 @@
 interfaces_options: {
   generic-parallel: {
     backend: sycl {
-     data_location: "unified"
+     data_location: "host"
     }
   }
 },
