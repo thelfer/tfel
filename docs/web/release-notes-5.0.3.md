@@ -22,6 +22,11 @@ The page describes the new functionalities of Version 5.0.3 of the
 
 # Issues fixed
 
+## Issue 975: Fix `fpclassify` for `long double`
+￼
+
+For more details, see <https://github.com/thelfer/tfel/issues/975>
+
 ## Issue 965: [clang] Fix declaration of `reportContractViolation` when compiling with `clang++` and `CUDA` offloading
 
 For more details, see <https://github.com/thelfer/tfel/issues/965>

@@ -57,7 +57,7 @@ namespace tfel::math::ieee754 {
    * - FP_INFINITE: +Inf or -Inf value
    * \param[in] x: value to be tested
    */
-  TFEL_HOST_DEVICE constexpr int fpclassify(const long double) noexcept;
+  TFEL_HOST_DEVICE int fpclassify(const long double) noexcept;
   /*!
    * \brief Determines if the given floating point number arg is a
    * not-a-number (NaN) value.
@@ -81,7 +81,7 @@ namespace tfel::math::ieee754 {
    * \return true if the given floating point number arg is a
    * not-a-number (NaN) value.
    */
-  TFEL_HOST_DEVICE constexpr bool isnan(const long double) noexcept;
+  TFEL_HOST_DEVICE bool isnan(const long double) noexcept;
   /*!
    * \brief Determines if the given floating point number arg has
    * finite value i.e. it is normal, subnormal or zero, but not
@@ -111,7 +111,7 @@ namespace tfel::math::ieee754 {
    * finite value i.e. it is normal, subnormal or zero, but not
    * infinite or NaN.
    */
-  TFEL_HOST_DEVICE constexpr bool isfinite(const long double) noexcept;
+  TFEL_HOST_DEVICE bool isfinite(const long double) noexcept;
 
 }  // end of namespace tfel::math::ieee754
 
