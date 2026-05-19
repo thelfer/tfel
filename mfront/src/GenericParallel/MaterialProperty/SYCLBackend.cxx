@@ -1,8 +1,8 @@
 /*!
- * \file   ParallelSTLBackend.cxx
- * \brief  This file implements the `ParallelSTLBackend` class
+ * \file   SYCLBackend.cxx
+ * \brief  This file implements the `SYCLBackend` class
  * \author Thomas Helfer
- * \date   07/04/2026
+ * \date   18/05/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -15,15 +15,15 @@
 #include "MFront/MaterialPropertyDescription.hxx"
 #include "MFront/MaterialPropertyParametersHandler.hxx"
 #include "MFront/GenericParallelMaterialPropertyInterface.hxx"
-#include "MFront/GenericParallel/MaterialProperty/ParallelSTLBackend.hxx"
+#include "MFront/GenericParallel/MaterialProperty/SYCLBackend.hxx"
 
 namespace mfront::generic_parallel::material_property {
 
-  ParallelSTLBackend::ParallelSTLBackend()
+  SYCLBackend::SYCLBackend()
       : execution_policy("std::execution::par_unseq") {
-  }  // end of ParallelSTLBackend
+  }  // end of SYCLBackend
 
-  ParallelSTLBackend::ParallelSTLBackend(const tfel::utilities::DataMap& opts)
+  SYCLBackend::SYCLBackend(const tfel::utilities::DataMap& opts)
       : execution_policy("std::execution::par_unseq") {
     auto validator = tfel::utilities::DataMapValidator{};
     validator.addDataTypeValidator<std::string>("execution_policy");
@@ -46,55 +46,55 @@ namespace mfront::generic_parallel::material_property {
             "'par') and 'parallel_unsequenced_policy' (or 'par_unseq')");
       }
     }
-  }  // end of ParallelSTLBackend
+  }  // end of SYCLBackend
 
-  std::string ParallelSTLBackend::getName() const {
-    return "stlpar";
+  std::string SYCLBackend::getName() const {
+    return "sycl";
   }  // end of getName
 
-  std::string ParallelSTLBackend::getHeaderFileExtension() const {
+  std::string SYCLBackend::getHeaderFileExtension() const {
     return "hxx";
   }  // end of getHeaderFileExtension
 
-  std::string ParallelSTLBackend::getSourceFileExtension() const {
+  std::string SYCLBackend::getSourceFileExtension() const {
     return "cxx";
   }  // end of getSourceFileExtension
 
-  void ParallelSTLBackend::writeSpecificIncludesInHeaderFile(
+  void SYCLBackend::writeSpecificIncludesInHeaderFile(
       std::ostream&,
       const GenericParallelMaterialPropertyInterface&,
       const MaterialPropertyDescription&) const {
   }  // end of writeSpecificIncludesInSourceFile
 
-  void ParallelSTLBackend::writeSpecificIncludesInSourceFile(
+  void SYCLBackend::writeSpecificIncludesInSourceFile(
       std::ostream& os,
       const GenericParallelMaterialPropertyInterface&,
       const MaterialPropertyDescription&) const {
     os << "#include<ranges>\n"
        << "#include<concepts>\n"
-       << "#include<execution>\n"
        << "#include<type_traits>\n"
+       << "#include <sycl/sycl.hpp>\n"
        << "#include\"TFEL/FSAlgorithm/copy.hxx\"\n\n";
   }  // end of writeSpecificIncludesInSourceFile
 
-  void ParallelSTLBackend::writeGlobalFunctions(
+  void SYCLBackend::writeGlobalFunctions(
       std::ostream&,
       const GenericParallelMaterialPropertyInterface&,
       const MaterialPropertyDescription&,
       const FileDescription&) const {}  // end of writeGlobalFunction
 
-  void ParallelSTLBackend::writeCxxDeclarations(
+  void SYCLBackend::writeCxxDeclarations(
       std::ostream&,
       const GenericParallelMaterialPropertyInterface&,
       const MaterialPropertyDescription&) const {}
 
-  void ParallelSTLBackend::writeCxxImplementations(
+  void SYCLBackend::writeCxxImplementations(
       std::ostream&,
       const GenericParallelMaterialPropertyInterface&,
       const MaterialPropertyDescription&,
       const FileDescription&) const {}
 
-  void ParallelSTLBackend::writeCImplementations(
+  void SYCLBackend::writeCImplementations(
       std::ostream& os,
       const GenericParallelMaterialPropertyInterface& i,
       const MaterialPropertyDescription& mpd,
@@ -104,7 +104,7 @@ namespace mfront::generic_parallel::material_property {
     }
   }  // end of writeCImplementations
 
-  void ParallelSTLBackend::writeCImplementations2(
+  void SYCLBackend::writeCImplementations2(
       std::ostream& os,
       const GenericParallelMaterialPropertyInterface& i,
       const MaterialPropertyDescription& mpd,
@@ -250,7 +250,7 @@ namespace mfront::generic_parallel::material_property {
     os << "} // end of " << name << "\n\n";
   }  // end of writeCImplementations2
 
-  void ParallelSTLBackend::writeKernelCall(
+  void SYCLBackend::writeKernelCall(
       std::ostream& os,
       const GenericParallelMaterialPropertyInterface& i,
       const MaterialPropertyDescription& mpd,
@@ -282,11 +282,14 @@ namespace mfront::generic_parallel::material_property {
          << "return;\n"
          << "}\n";
     }
-    os << "try{\n";
+    os << "try{\n"
+       << "sycl::queue mfront_queue(sycl::gpu_selector_v);\n";
     if (requiresBoundsCheck) {
-      // we do need to use heap allocations as nvc++ would automatically use
-      // managed memory
-      os << "auto mfront_bounds_statuses = std::vector<int>{};\n"
+      os << "using mfront_allocator_type = "
+         << "sycl::usm_allocator<int, sycl::usm::alloc::shared>;\n"
+         << "auto mfront_allocator = mfront_allocator_type{Q};\n"
+         << "auto mfront_bounds_statuses = "
+         << "std::vector<int, front_allocator_type>{mfront_allocator}\n;"
          << "mfront_bounds_statuses.resize(2 * (mfront_nargs + 1), 0);\n";
     }
     auto write_kernel = [this, &os, &i, &mpd, &fd, &requiresBoundsCheck,
@@ -440,17 +443,12 @@ namespace mfront::generic_parallel::material_property {
     }
     auto write_kernel_call = [&os, this, &types](const bool handleStrides) {
       os << "// loop over the points\n"
-         << "const auto mfront_index_range = "
-         << "std::views::iota(" << types.integer_type
-         << "{}, mfront_npoints);\n"
-         << "std::for_each(" << this->execution_policy
-         << ", mfront_index_range.begin(), "
-         << "mfront_index_range.end(), "
-         << "mfront_kernel";
+         << "mfront_queue.submit([&](sycl::handler &mfront_handler) {"
+         << "mfront_handler.parallel_for(mfront_npoints, mfront_kernel";
       if (!handleStrides) {
         os << "_without_strides";
       }
-      os << ");\n";
+      os << ");});\n";
     };
     if (treatStrides) {
       if (mpd.inputs.empty()) {
@@ -493,6 +491,6 @@ namespace mfront::generic_parallel::material_property {
        << "}\n";
   }  // end of writeKernelCall
 
-  ParallelSTLBackend::~ParallelSTLBackend() = default;
+  SYCLBackend::~SYCLBackend() = default;
 
 }  // end of namespace mfront::generic_parallel::material_property
