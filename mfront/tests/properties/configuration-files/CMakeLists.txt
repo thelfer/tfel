@@ -42,3 +42,7 @@ endif(_tfel-enable-generic-parallel-mp-stlpar-parunseq-nvhpc-gpu-tests)
 if(_tfel-enable-generic-parallel-mp-stlpar-parunseq-icpx-tests)
   install_configuration_file(config-stlpar-parunseq-icpx.json)
 endif(_tfel-enable-generic-parallel-mp-stlpar-parunseq-icpx-tests)
+
+if(_tfel-enable-generic-parallel-mp-sycl-gpu-icpx-tests)
+  install_configuration_file(config-sycl-gpu-icpx.json)
+endif(_tfel-enable-generic-parallel-mp-sycl-gpu-icpx-tests)

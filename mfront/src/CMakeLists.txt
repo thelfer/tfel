@@ -211,6 +211,7 @@ set(TFELMFront_SOURCES
     GenericParallel/MaterialProperty/CUDABackendBase.cxx
     GenericParallel/MaterialProperty/CUDABackend.cxx
     GenericParallel/MaterialProperty/HIPBackend.cxx
+    GenericParallel/MaterialProperty/CxxProgrammingModelBackendBase.cxx
     GenericParallel/MaterialProperty/ParallelSTLBackend.cxx
     GenericParallel/MaterialProperty/SYCLBackend.cxx
     GenericBehaviourInterface.cxx

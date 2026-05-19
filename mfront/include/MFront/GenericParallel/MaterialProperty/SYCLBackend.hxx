@@ -12,19 +12,17 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_GENERICSYCL_MATERIALPROPERTY_SYCLSTLBACKEND_HXX
-#define LIB_MFRONT_GENERICSYCL_MATERIALPROPERTY_SYCLSTLBACKEND_HXX
+#ifndef LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_SYCLBACKEND_HXX
+#define LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_SYCLBACKEND_HXX
 
 #include "TFEL/Utilities/Data.hxx"
 #include "MFront/MFrontConfig.hxx"
-#include "MFront/GenericParallel/MaterialProperty/BackendBase.hxx"
+#include "MFront/GenericParallel/MaterialProperty/CxxProgrammingModelBackendBase.hxx"
 
 namespace mfront::generic_parallel::material_property {
 
-  /*!
-   * \brief This class implements a backend for the parallel STL algorithms
-   */
-  struct MFRONT_VISIBILITY_EXPORT SYCLBackend : BackendBase {
+  //! \brief This class implements a backend for SYCL programming model
+  struct MFRONT_VISIBILITY_EXPORT SYCLBackend : CxxProgrammingModelBackendBase {
     //! \brief default constructor
     SYCLBackend();
     /*!
@@ -35,73 +33,23 @@ namespace mfront::generic_parallel::material_property {
     SYCLBackend(const tfel::utilities::DataMap&);
     //
     [[nodiscard]] std::string getName() const override;
-    [[nodiscard]] std::string getHeaderFileExtension() const override;
-    void writeSpecificIncludesInHeaderFile(
-        std::ostream&,
-        const GenericParallelMaterialPropertyInterface&,
-        const MaterialPropertyDescription&) const override;
-    void writeCxxDeclarations(
-        std::ostream&,
-        const GenericParallelMaterialPropertyInterface&,
-        const MaterialPropertyDescription&) const override;
-    void writeGlobalFunctions(std::ostream&,
-                              const GenericParallelMaterialPropertyInterface&,
-                              const MaterialPropertyDescription&,
-                              const FileDescription&) const override;
-    [[nodiscard]] std::string getSourceFileExtension() const override;
     void writeSpecificIncludesInSourceFile(
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&) const override;
-    void writeCImplementations(std::ostream&,
-                               const GenericParallelMaterialPropertyInterface&,
-                               const MaterialPropertyDescription&,
-                               const FileDescription&) const override;
-    void writeCxxImplementations(
-        std::ostream&,
-        const GenericParallelMaterialPropertyInterface&,
-        const MaterialPropertyDescription&,
-        const FileDescription&) const override;
     //! \brief destructor
     ~SYCLBackend() noexcept override;
 
    protected:
-    /*!
-     * \brief write the C implementations of the material property
-     *
-     * \param[in] os: output stream
-     * \param[in] i: interface
-     * \param[in] mpd: material property description
-     * \param[in] fd: file description
-     * \param[in] treatUniformArguments: boolean stating if one shall add
-     * support for uniform arguments
-     */
-    virtual void writeCImplementations2(
-        std::ostream&,
-        const GenericParallelMaterialPropertyInterface&,
-        const MaterialPropertyDescription&,
-        const FileDescription&,
-        const bool) const;
-    /*!
-     * \brief write the call the kernel inside the body of the material property
-     *
-     * \param[in] os: output stream
-     * \param[in] i: interface
-     * \param[in] mpd: material property description
-     * \param[in] fd: file description
-     * \param[in] treatUniformArguments: boolean stating if one shall add
-     * support for uniform arguments
-     */
-    virtual void writeKernelCall(
-        std::ostream&,
-        const GenericParallelMaterialPropertyInterface&,
-        const MaterialPropertyDescription&,
-        const FileDescription&,
-        const bool) const;
-    //! \brief execution policy
-    std::string execution_policy;
+
+    //
+    void writeKernelCall(std::ostream&,
+                         const GenericParallelMaterialPropertyInterface&,
+                         const MaterialPropertyDescription&,
+                         const FileDescription&,
+                         const bool) const override;
   };  // end of SYCLBackend
 
 }  // end of namespace mfront::generic_parallel::material_property
 
-#endif /* LIB_MFRONT_GENERICSYCL_MATERIALPROPERTY_SYCLSTLBACKEND_HXX */
+#endif /* LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_SYCLBACKEND_HXX */
