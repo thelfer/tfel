@@ -43,6 +43,8 @@ namespace mfront::generic_parallel::material_property {
    protected:
 
     //
+    [[nodiscard]] std::vector<ExtraArgumentOfCFunctions>
+    getExtraArgumentsOfCFunctions() const override;
     void writeKernelCall(std::ostream&,
                          const GenericParallelMaterialPropertyInterface&,
                          const MaterialPropertyDescription&,

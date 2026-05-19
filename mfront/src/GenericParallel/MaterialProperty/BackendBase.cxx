@@ -27,6 +27,20 @@ namespace mfront::generic_parallel::material_property {
       const MaterialPropertyDescription& mpd) const {
     const auto name = i.getFunctionName(mpd);
     const auto types = i.getTypesDescription();
+    auto declare_extra_arguments = [this, &os] {
+      for (const auto& arg : this->getExtraArgumentsOfCFunctions()) {
+        if (arg.is_mutable) {
+          return;
+        }
+        os << "* \\param " << arg.name << ": " << arg.description << '\n';
+      }
+      for (const auto& arg : this->getExtraArgumentsOfCFunctions()) {
+        if (!arg.is_mutable) {
+          return;
+        }
+        os << "* \\param[in] " << arg.name << ": " << arg.description << '\n';
+      }
+    };
     os << "/*!\n"
        << " * \\brief compute the value of '" << mpd.className
        << "' material property on a set of points\n"
@@ -36,8 +50,9 @@ namespace mfront::generic_parallel::material_property {
        << " * \\param[in] mfront_output_stride: output stride\n"
        << " * If zero, only the first element of the output is computed\n"
        << " * A zero value is only meaningful if all inputs are uniform\n"
-       << " *\n"
-       << " * \\param[in] mfront_args: array of pointers to the state "
+       << " *\n";
+    declare_extra_arguments();
+    os << " * \\param[in] mfront_args: array of pointers to the state "
        << "variables's values\n"
        << " * \\param[in] mfront_strides: array of integers\n"
        << " *             giving the stride of each argument.\n"
@@ -66,8 +81,9 @@ namespace mfront::generic_parallel::material_property {
        << " *\n"
        << " * \\param[in] mfront_output_status: output status\n"
        << " * \\param[in] mfront_args: array of pointers to the state "
-       << "variables's values\n"
-       << " * \\param[in] mfront_nargs: number of state variables'\n"
+       << "variables's values\n";
+    declare_extra_arguments();
+    os << " * \\param[in] mfront_nargs: number of state variables'\n"
        << " * \\param[in] mfront_npoints: number of points in which the "
        << "material property is computed.\n"
        << " *\n"
@@ -234,6 +250,11 @@ namespace mfront::generic_parallel::material_property {
     }
     os << "#endif /* NO_" << iucname << "_BOUNDS_CHECK */\n";
   }
+
+  std::vector<BackendBase::ExtraArgumentOfCFunctions>
+  BackendBase::getExtraArgumentsOfCFunctions() const {
+    return {};
+  }  // end of getExtraArgumentsOfCFunctions
 
   BackendBase::~BackendBase() noexcept = default;
 

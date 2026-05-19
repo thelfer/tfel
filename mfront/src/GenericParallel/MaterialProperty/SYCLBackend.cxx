@@ -63,8 +63,22 @@ namespace mfront::generic_parallel::material_property {
     os << "#include<concepts>\n"
        << "#include<type_traits>\n"
        << "#include <sycl/sycl.hpp>\n"
-       << "#include\"TFEL/FSAlgorithm/copy.hxx\"\n\n";
+       << "#include\"TFEL/FSAlgorithm/copy.hxx\"\n\n"
+       << "#ifdef __cplusplus\n"
+       << "using mfront_gpmp_sycl_queue = sycl::queue;\n"
+       << "#else\n"
+       << "typedef struct mfront_gpmp_sycl_queue mfront_gpmp_sycl_queue;\n"
+       << "#endif\n\n";
   }  // end of writeSpecificIncludesInSourceFile
+
+  std::vector<BackendBase::ExtraArgumentOfCFunctions>
+  SYCLBackend::getExtraArgumentsOfCFunctions() const {
+    return {{.type = "mfront_gpmp_sycl_queue",
+             .name = "mfront_queue",
+             .description = "SYCL queue",
+             .is_pointer = true,
+             .is_mutable = true}};
+  }  // end of getExtraArgumentsOfCFunctions
 
   void SYCLBackend::writeKernelCall(
       std::ostream& os,

@@ -99,6 +99,26 @@ namespace mfront::generic_parallel::material_property {
     }
     os << "(" << types.output_status_type << "* const mfront_output_status,\n"
        << types.real_type << "* const mfront_output";
+    for (const auto& arg : this->getExtraArgumentsOfCFunctions()) {
+      if (arg.is_mutable) {
+        return;
+      }
+      os << ",\n" << arg.type;
+      if (arg.is_pointer) {
+        os << "* const";
+      }
+      os << " " << arg.name;
+    }
+    for (const auto& arg : this->getExtraArgumentsOfCFunctions()) {
+      if (!arg.is_mutable) {
+        return;
+      }
+      os << ",\nconst " << arg.type;
+      if (arg.is_pointer) {
+        os << "* const";
+      }
+      os << " " << arg.name;
+    }
     if (treatStrides) {
       os << ",\nconst " << types.integer_type << " mfront_output_stride";
     }

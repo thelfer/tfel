@@ -15,6 +15,8 @@
 #ifndef LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_BACKENDBASE_HXX
 #define LIB_MFRONT_GENERICPARALLEL_MATERIALPROPERTY_BACKENDBASE_HXX
 
+#include <string>
+#include <vector>
 #include "MFront/MFrontConfig.hxx"
 #include "MFront/GenericParallel/MaterialProperty/AbstractBackend.hxx"
 
@@ -43,6 +45,25 @@ namespace mfront::generic_parallel::material_property {
     ~BackendBase() noexcept override;
 
    protected:
+    /*!
+     * \brief structure decribing the extra arguments of the C functions
+     */
+    struct ExtraArgumentOfCFunctions {
+      //! \brief type of the argument
+      std::string type;
+      //! \brief name of the argument. Shall start with `mfront_`
+      std::string name;
+      //! \brief description of the argument.
+      std::string description;
+      //! \brief boolean stating if the argument is passed as a pointer
+      bool is_pointer;
+      //! \brief boolean stating if the argument is mutable
+      bool is_mutable;
+    };
+    //! \return the list of extra argument to the C functions
+    [[nodiscard]] virtual std::vector<ExtraArgumentOfCFunctions>
+    getExtraArgumentsOfCFunctions() const;
+    //
     virtual void writePhysicalBounds(std::ostream& os,
                                      const VariableDescription& v,
                                      const size_t i,
