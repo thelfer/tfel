@@ -13,6 +13,10 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @helfer_new_2026
+    @nava_numerical_2026
+    @barani_mfem_mgis_2026
+    @helfer_third_2026
     @raude_advanced_2026
     @dambrosi_analysis_2026
     @balaguer_simulation_2026
