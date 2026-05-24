@@ -173,6 +173,7 @@ namespace tfel::math::unit {
    * \see GenerateUnit
    */
   typedef GenerateUnit<0, 0, 0, 0, 1, 0, 0>::type Temperature;
+
   /*!
    * \brief Declares the Kelvin unit
    * \see GenerateUnit
@@ -291,6 +292,35 @@ namespace tfel::math::unit {
    * \brief Declares the HeatFluxDensity unit
    */
   typedef GenerateUnit<1, 0, -3, 0, 0, 0, 0>::type HeatFluxDensity;  // kg.s-3
+
+  template <int N1,
+            int N2,
+            int N3,
+            int N4,
+            int N5,
+            int N6,
+            int N7,
+            unsigned int D1 = 1,
+            unsigned int D2 = 1,
+            unsigned int D3 = 1,
+            unsigned int D4 = 1,
+            unsigned int D5 = 1,
+            unsigned int D6 = 1,
+            unsigned int D7 = 1>
+  using generate_unit = typename GenerateUnit<N1,
+                                              N2,
+                                              N3,
+                                              N4,
+                                              N5,
+                                              N6,
+                                              N7,
+                                              D1,
+                                              D2,
+                                              D3,
+                                              D4,
+                                              D5,
+                                              D6,
+                                              D7>::type;
 
 }  // end of namespace tfel::math::unit
 
