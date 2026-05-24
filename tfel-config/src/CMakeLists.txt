@@ -17,6 +17,11 @@ if(TFEL_HAVE_MADNEX)
     PUBLIC TFEL_HAVE_MADNEX)
 endif(TFEL_HAVE_MADNEX)
 
+if(enable-python-bindings)
+  target_compile_definitions(tfel-config
+    PUBLIC TFEL_PYTHON_BINDINGS)
+endif(enable-python-bindings)
+
 if(WIN32 AND enable-static)
   set_target_properties(tfel-config PROPERTIES COMPILE_FLAGS "-DTFEL_STATIC_BUILD")
   set_target_properties(tfel-config PROPERTIES LINK_FLAGS "-static-libgcc -static") 
