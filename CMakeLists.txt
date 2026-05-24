@@ -328,6 +328,8 @@ if(enable-python OR enable-python-bindings)
     message(STATUS "Numpy version         ${Python_NumPy_VERSION}")
     message(STATUS "Numpy header path     ${Python_NumPy_INCLUDE_DIRS}")
   endif(enable-numpy-support)
+  # compatibility with autoconf
+  set(PYTHONLIBS_VERSION_STRING "${Python_VERSION}")
 endif(enable-python OR enable-python-bindings)
 
 #some checks
