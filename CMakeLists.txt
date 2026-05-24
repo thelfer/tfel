@@ -283,6 +283,8 @@ if(enable-python OR enable-python-bindings)
       set(TFEL_PYTHON_SITE_PACKAGES_DIR "lib${LIB_SUFFIX}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages")
     endif(WIN32)
   endif(NOT TFEL_PYTHON_SITE_PACKAGES_DIR)
+  # compatibility with autoconf
+  set(PYTHONLIBS_VERSION_STRING "${Python_VERSION}")
 endif(enable-python OR enable-python-bindings)
 
 #some checks
