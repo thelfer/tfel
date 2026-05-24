@@ -97,8 +97,15 @@ namespace mfront::generic_parallel::material_property {
     if (!treatStrides) {
       os << '2';
     }
-    os << "(" << types.output_status_type << "* const mfront_output_status,\n"
-       << types.real_type << "* const mfront_output";
+    os << "(" << types.output_status_type << "* const mfront_output_status,\n";
+    if (this->handlesDataTransfer()) {
+      os << types.real_type << "* const mfront_output_host";
+    } else {
+      os << types.real_type << "* const mfront_output";
+    }
+    if (treatStrides) {
+      os << ",\nconst " << types.integer_type << " mfront_output_stride";
+    }
     for (const auto& arg : this->getExtraArgumentsOfCFunctions()) {
       if (!arg.is_mutable) {
         continue;
@@ -119,12 +126,13 @@ namespace mfront::generic_parallel::material_property {
       }
       os << " " << arg.name;
     }
-    if (treatStrides) {
-      os << ",\nconst " << types.integer_type << " mfront_output_stride";
-    }
     os << ",\nconst " << types.real_type << "* const * const";
     if (!mpd.inputs.empty()) {
-      os << " mfront_args";
+      if (this->handlesDataTransfer()) {
+        os << " mfront_args_host";
+      } else {
+        os << " mfront_args";
+      }
     }
     if (treatStrides) {
       os << ",\nconst " << types.integer_type << "* const";
@@ -254,6 +262,10 @@ namespace mfront::generic_parallel::material_property {
          << "}\n";
     }
     //
+    if (this->handlesDataTransfer()) {
+      this->writeDataTransfersToDevice(os, i, mpd, treatStrides);
+    }
+    //
     os << "try{\n";
     this->writeKernelCall(os, i, mpd, fd, treatStrides);
     //
@@ -265,6 +277,9 @@ namespace mfront::generic_parallel::material_property {
          << "}\n"
          << "errno = mfront_errno_old;\n";
       this->writeBoundsStatusesAnalysis(os, i, mpd);
+    }
+    if (this->handlesDataTransfer()) {
+      this->writeDataTransfersToHost(os, i, mpd, treatStrides);
     }
     //
     os << "} catch(std::exception& mfront_cxx_exception){\n"
@@ -430,6 +445,18 @@ namespace mfront::generic_parallel::material_property {
     }
     os << "\n";
   };
+
+  void CxxProgrammingModelBackendBase::writeDataTransfersToHost(
+      std::ostream&,
+      const GenericParallelMaterialPropertyInterface&,
+      const MaterialPropertyDescription&,
+      const bool) const {}  // end of writeOutputDataTransfer
+
+  void CxxProgrammingModelBackendBase::writeDataTransfersToDevice(
+      std::ostream&,
+      const GenericParallelMaterialPropertyInterface&,
+      const MaterialPropertyDescription&,
+      const bool) const {}  // end of writeStateVariablesDataTransfer
 
   CxxProgrammingModelBackendBase::~CxxProgrammingModelBackendBase() = default;
 

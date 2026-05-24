@@ -21,6 +21,10 @@ namespace mfront::generic_parallel::material_property {
 
   BackendBase::BackendBase() = default;
 
+  bool BackendBase::handlesDataTransfer() const {
+    return false;
+  }  // end of handlesDataTransfer
+
   void BackendBase::writeCDeclarations(
       std::ostream& os,
       const GenericParallelMaterialPropertyInterface& i,
@@ -67,16 +71,25 @@ namespace mfront::generic_parallel::material_property {
        << " * \\brief compute the value of '" << mpd.className
        << "' material property on a set of points\n"
        << " *\n"
-       << " * \\param[in] mfront_output_status: output status\n"
-       << " * \\param[in] mfront_output: output values\n"
-       << " * \\param[in] mfront_output_stride: output stride\n"
+       << " * \\param[in] mfront_output_status: output status\n";
+    if (this->handlesDataTransfer()) {
+      os << " * \\param[in] mfront_output_host: output values\n";
+    } else {
+      os << " * \\param[in] mfront_output: output values\n";
+    }
+    os << " * \\param[in] mfront_output_stride: output stride\n"
        << " * If zero, only the first element of the output is computed\n"
        << " * A zero value is only meaningful if all inputs are uniform\n"
        << " *\n";
     document_extra_arguments();
-    os << " * \\param[in] mfront_args: array of pointers to the state "
-       << "variables's values\n"
-       << " * \\param[in] mfront_strides: array of integers\n"
+    if (this->handlesDataTransfer()) {
+      os << " * \\param[in] mfront_args_host: array of pointers to the state "
+         << "variables's values, on the host\n";
+    } else {
+      os << " * \\param[in] mfront_args: array of pointers to the state "
+         << "variables's values\n";
+    }
+    os << " * \\param[in] mfront_strides: array of integers\n"
        << " *             giving the stride of each argument.\n"
        << " *             If 0, the associated variable is not uniform\n"
        << " * \\param[in] mfront_nargs: number of state variables\n"
@@ -90,10 +103,10 @@ namespace mfront::generic_parallel::material_property {
        << " */\n"
        << "MFRONT_SHAREDOBJ void " << name << "(\n"
        << types.output_status_type << "* const,\n"
-       << types.real_type << "* const,\n";
+       << types.real_type << "* const,\n"
+       << "const " << types.integer_type << ",\n";
     declare_extra_arguments();
-    os << "const " << types.integer_type << ",\n"
-       << "const " << types.real_type << "* const* const,\n"
+    os << "const " << types.real_type << "* const* const,\n"
        << "const " << types.integer_type << "*,\n"
        << "const " << types.integer_type << ",\n"
        << "const " << types.integer_type << ",\n"
@@ -102,10 +115,20 @@ namespace mfront::generic_parallel::material_property {
        << " * \\brief compute the value of '" << mpd.className
        << "' material property on a set of points\n"
        << " *\n"
-       << " * \\param[in] mfront_output_status: output status\n"
-       << " * \\param[in] mfront_args: array of pointers to the state "
-       << "variables's values\n";
+       << " * \\param[in] mfront_output_status: output status\n";
+    if (this->handlesDataTransfer()) {
+      os << " * \\param[in] mfront_output_host: output values\n";
+    } else {
+      os << " * \\param[in] mfront_output: output values\n";
+    }
     document_extra_arguments();
+    if (this->handlesDataTransfer()) {
+      os << " * \\param[in] mfront_args_host: array of pointers to the state "
+         << "variables's values, on the host\n";
+    } else {
+      os << " * \\param[in] mfront_args: array of pointers to the state "
+         << "variables's values\n";
+    }
     os << " * \\param[in] mfront_nargs: number of state variables'\n"
        << " * \\param[in] mfront_npoints: number of points in which the "
        << "material property is computed.\n"

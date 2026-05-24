@@ -53,8 +53,18 @@ namespace mfront::generic_parallel::material_property {
                          const MaterialPropertyDescription&,
                          const FileDescription&,
                          const bool) const override;
+    bool handlesDataTransfer() const override;
+    void writeDataTransfersToDevice(
+        std::ostream&,
+        const GenericParallelMaterialPropertyInterface&,
+        const MaterialPropertyDescription&,
+        const bool) const override;
+    void writeDataTransfersToHost(
+        std::ostream&,
+        const GenericParallelMaterialPropertyInterface&,
+        const MaterialPropertyDescription&,
+        const bool) const override;
     //
-    std::string device = "sycl::default_selector_v";
     std::string data_location = "host";
   };  // end of SYCLBackend
 

@@ -10,4 +10,7 @@ compilation_options : {
     compiler: "@TFEL_ICPX_COMPILER@",
     compilation_flags: "-O2 -std=c++@CMAKE_CXX_STANDARD@ -march=native -fsycl" 
   }
+},
+linking_options : {
+  linker_flags : "-fsycl"
 }

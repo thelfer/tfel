@@ -64,15 +64,15 @@ namespace mfront::generic_parallel::material_property {
     [[nodiscard]] virtual std::vector<ExtraArgumentOfCFunctions>
     getExtraArgumentsOfCFunctions() const;
     //
-    virtual void writePhysicalBounds(std::ostream& os,
-                                     const VariableDescription& v,
-                                     const size_t i,
-                                     const bool useQuantities) const;
-    virtual void writeBounds(std::ostream& os,
-                             const std::string& iucname,
-                             const VariableDescription& v,
-                             const size_t i,
-                             const bool useQuantities) const;
+    virtual void writePhysicalBounds(std::ostream&,
+                                     const VariableDescription&,
+                                     const size_t,
+                                     const bool) const;
+    virtual void writeBounds(std::ostream&,
+                             const std::string&,
+                             const VariableDescription&,
+                             const size_t,
+                             const bool) const;
     /*!
      * \brief write the code analysying the array `mfront_bounds_statuses`
      *
@@ -84,6 +84,22 @@ namespace mfront::generic_parallel::material_property {
         std::ostream&,
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&) const;
+    /*!
+     * \brief return if the backend shall handle the data transfer from a host
+     * to a device
+     *
+     * If this method return true, the argument of the C function
+     * implementations containing pointers to values of the state variables
+     * is named `mfront_args_host`. The backend shall
+     * then defined a pointer named `mfront_args` to the beginning of an
+     * internal array of pointers.
+     *
+     * If this method returns false, this argument is directly named
+     * `mfront_args`.
+     *
+     * \note by default, no data transfer is handled
+     */
+    virtual bool handlesDataTransfer() const;
   };
 
 }  // end of namespace mfront::generic_parallel::material_property
