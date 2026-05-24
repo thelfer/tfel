@@ -92,6 +92,7 @@ nocite: |
     @zhang_modeling_2023
     @siedel_approche_2023
     @soleilhet_numerical_2023
+    @lorenzo_projet_2022
     @bouizem_application_2022
     @beccantini_europlexus_2022
     @helfer_mfem-mgis-mfront_2022
