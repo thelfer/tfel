@@ -947,6 +947,7 @@ There are 4 child `class` of the `InclusionDistribution class`:
  - `IsotropicDistribution` (isotropic distribution of ellipsoids)
  - `TransverseDistribution` (transverse isotropic distribution of ellipsoids)
  - `OrientedDistribution` (aligned distribution of ellipsoids)
+ - `UserDefinedDistributionOfSpheroids` (distribution of spheroids defined with orientation tensors)
  
 Here are some examples of instantiation:
 
@@ -979,6 +980,29 @@ useful for considering anisotropic inclusions. However, the basis in which
 the `Stensor4` elasticity is defined is the local basis for the `OrientedDistribution`,
 that is, the basis defined by `n_a` and `n_b` passed as arguments. For a `SphereDistribution`,
 it is the global basis.
+
+The `UserDefinedDistributionOfSpheroids` is a distribution of `Spheroid` (3d-objects,
+with two equal axes, see above). It is defined with two tensors: a second-order
+tensor \(\tenseur A_2\) and a fourth-order tensor \(\tenseur A_4\):
+
+\[
+\tenseur A_2=\langle\vec n\otimes\vec n\rangle\qquad\tenseur A_4=\langle\vec n\otimes\vec n\otimes\vec n\otimes\vec n\rangle
+\]
+
+This distribution can be instantiated as follows, with the help of the Walpole Basis (see [here](tfel-math.html#higher-order-objects-defined-as-derivatives) the documentation).
+
+~~~~{.cpp}
+using namespace tfel::math;
+tvector<3u, real> n_a = {1., 0., 0.};
+tvector<3u, real> n_b = {0., 1., 0.};
+const stensor<3u,real> A2 = 1./2*TransverseIsotropicWalpoleBasis<real>::q(n_b);
+
+const auto E2d=TransverseIsotropicWalpoleBasis<real>::E2(n_b);
+const auto Fd=TransverseIsotropicWalpoleBasis<real>::F(n_b);
+const st2tost2<3u,real> A4 = 1./2*E2d+1./4*Fd;
+
+UserDefinedDistributionOfSpheroids<stress> distribution(spheroid1, f, KGi, A2, A4);
+~~~~
 
 We can now construct our `ParticulateMicrostructure` by adding some
 `InclusionDistribution` objects:
