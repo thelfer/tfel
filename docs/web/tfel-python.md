@@ -536,6 +536,28 @@ useful for considering anisotropic inclusions. However, the basis in which
 basis defined by `n_a` and `n_b` passed as arguments. For a `SphereDistribution`,
 it is the global basis.
 
+Another type of distribution can be defined: the `UserDefinedDistributionOfSpheroids`.
+This is a distribution of spheroids defined with two orientation tensors,
+that incorporate microstructural information about the orientations
+of the spheroids (see [here](tfel-material#homogenization-of-general-microstructures)
+for the definition of orientation tensors).
+This kind of distribution can be constructed with `Spheroid` objects only.
+This is done as follows:
+
+~~~~{.py}
+spheroid=Spheroid(10,1)
+KGi=KGModuli(300,200)
+A2=Stensor3D([1.,1.,1.,0.,0.,0.])
+tenseur=np.zeros((6,6))
+tenseur[0,0]=0.1
+A4=ST2toST23D(np.eye(6)+tenseur)
+distrib=UserDefinedDistributionOfSpheroids(spheroid,frac,KGi,A2,A4)
+~~~~
+
+Above, the tensor `A2` is the second-order orientation tensor,
+taken equal to \(\frac13\mathbf 1\), and `A4` is the fourth-order
+orientation tensor, which is, here, particular.
+
 We can now add these distributions to the microstructure:
 
 ~~~~{.py}
