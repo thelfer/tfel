@@ -123,9 +123,7 @@ namespace mfront::generic_parallel::material_property {
     }
     auto write_kernel_call = [&os, this, &types](const bool handleStrides) {
       os << "// loop over the points\n";
-      if (this->handlesDataTransfer()) {
-        os << "auto mfront_sycl_kernel_event = ";
-      }
+      os << "auto mfront_sycl_kernel_event = ";
       os << "mfront_queue->parallel_for(mfront_npoints";
       if (this->handlesDataTransfer()) {
         os << ", mfront_sycl_memcpy_events";
@@ -138,7 +136,9 @@ namespace mfront::generic_parallel::material_property {
       if (this->handlesDataTransfer()) {
         os << "mfront_queue->memcpy(mfront_output_host, "
            << "mfront_output_ptr.data(), mfront_npoints, "
-           << "mfront_sycl_kernel_event);\n";
+           << "mfront_sycl_kernel_event).wait();\n";
+      } else {
+        os << "mfront_sycl_kernel_event.wait();\n";
       }
     };
     if (treatStrides) {
