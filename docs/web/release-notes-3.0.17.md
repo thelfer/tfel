@@ -22,6 +22,11 @@ The page describes the new functionalities of Version 3.0.17 of the
 
 # Issues fixed
 
+## Issue 971: [mfront] Trying to read a parameter file shall no modify the value of errno when the file is not present 
+￼
+
+For more details, see <https://github.com/thelfer/tfel/issues/971>.￼
+
 ## Issue 953: Extending the precision of the default parameters value for material properties
 
 For more details, see <https://github.com/thelfer/tfel/issues/953>.
