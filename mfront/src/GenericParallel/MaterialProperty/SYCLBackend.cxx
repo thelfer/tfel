@@ -144,7 +144,8 @@ namespace mfront::generic_parallel::material_property {
     if (treatStrides) {
       if (mpd.inputs.empty()) {
         os << "if(mfront_output_stride == 0){\n"
-           << "mfront_kernel(0);\n"
+           << "mfront_kernel_without_strides(0);\n"
+           << "mfront_queue->wait();\n"
            << "} else if(mfront_output_stride == 1){\n";
         write_kernel_call(false);
         os << "} else {\n";
