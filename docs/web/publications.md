@@ -13,6 +13,7 @@ eqnPrefixTemplate: "($$i$$)"
 
 ---
 nocite: |
+    @ren_poro-elasto-viscoplastic_2026
     @masin_viscohypoplastic_2026
     @gautier_methode_2026
     @ordonez_simulation_2026
