@@ -46,3 +46,7 @@ endif(_tfel-enable-generic-parallel-mp-stlpar-parunseq-icpx-tests)
 if(_tfel-enable-generic-parallel-mp-sycl-default-icpx-tests)
   install_configuration_file(config-sycl-default-icpx.json)
 endif(_tfel-enable-generic-parallel-mp-sycl-default-icpx-tests)
+
+if(_tfel-enable-generic-parallel-mp-sycl-default-acpp-tests)
+  install_configuration_file(config-sycl-default-acpp.json)
+endif(_tfel-enable-generic-parallel-mp-sycl-default-acpp-tests)

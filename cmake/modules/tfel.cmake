@@ -502,6 +502,13 @@ function(define_tfel_cxx_compiler compiler)
      add_tfel_check_substitution(TFEL_ICPX_COMPILER "${TFEL_ICPX_COMPILER}")
      message(STATUS "TFEL_ICPX_COMPILER: ${TFEL_ICPX_COMPILER}")
    endif()
+ elseif(compiler STREQUAL "acpp")
+   if(NOT TFEL_ACPP_COMPILER)
+     find_program(TFEL_ACPP_COMPILER NAMES "acpp" REQUIRED)
+     set(TFEL_ACPP_COMPILER "${TFEL_ACPP_COMPILER}" PARENT_SCOPE)
+     add_tfel_check_substitution(TFEL_ACPP_COMPILER "${TFEL_ACPP_COMPILER}")
+     message(STATUS "TFEL_ACPP_COMPILER: ${TFEL_ACPP_COMPILER}")
+   endif()
  elseif(compiler STREQUAL "nvhpc")
    if(NOT TFEL_NVHPC_COMPILER)
      if(CMAKE_CXX_COMPILER_ID STREQUAL "NVHPC")
@@ -527,7 +534,7 @@ set(_tfel-generic-parallel_mp_tests_supported_configurations
     "cuda-nvcc" "cuda-clang" "hip-hipcc" "hip-clang"
     "stlpar-parunseq-gcc" "stlpar-parunseq-clang"
     "stlpar-parunseq-nvhpc-gpu" "stlpar-parunseq-icpx"
-    "sycl-default-icpx")
+    "sycl-default-icpx" "sycl-default-acpp")
 
 foreach(conf ${generic-parallel-mp-tests-configurations})
   if(NOT "${conf}" IN_LIST _tfel-generic-parallel_mp_tests_supported_configurations)
@@ -623,3 +630,6 @@ if((_tfel-enable-generic-parallel-mp-stlpar-parunseq-icpx-tests) OR
   define_tfel_cxx_compiler("icpx")
 endif()
   
+if(_tfel-enable-generic-parallel-mp-sycl-default-acpp-tests)
+  define_tfel_cxx_compiler("acpp")
+endif()
