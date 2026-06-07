@@ -82,6 +82,33 @@ A=np.zeros((6,6))
 A[0,1]=0.001
 A_=tm.ST2toST23D(A)
 ~~~~
+
+## Walpole Basis
+
+The Walpole basis associated to a transverse isotropic symmetry can be used.
+See the C++ documentation [here](tfel-math.html#higher-order-objects-defined-as-derivatives).
+Here is an example in `Python`:
+
+~~~~{.py}
+from tfel.math import WalpoleBasis, ST2toST23D, TVector3D
+import numpy as np
+
+n=TVector3D([1.,0.,0.])
+E1=WalpoleBasis.E1(n)
+E2=WalpoleBasis.E2(n)
+E3=WalpoleBasis.E3(n)
+E4=WalpoleBasis.E4(n)
+F=WalpoleBasis.F(n)
+G=WalpoleBasis.G(n)
+
+tens=E1+E2+E3+E4+F+G
+comp=WalpoleBasis.components(n,tens)
+~~~~
+
+`n` is the direction of transverse isotropy, and the vectors of the basis
+are the `E1,...,G`.
+`comp` returns a `list` of 6 components of `tens` in the Walpole basis.
+
 # The `tfel.material` module
 
 ## Bindings related to the \(\pi\)-plane
@@ -508,6 +535,28 @@ useful for considering anisotropic inclusions. However, the basis in which
 `Ci` is defined is the local basis for the `OrientedDistribution`, that is, the
 basis defined by `n_a` and `n_b` passed as arguments. For a `SphereDistribution`,
 it is the global basis.
+
+Another type of distribution can be defined: the `UserDefinedDistributionOfSpheroids`.
+This is a distribution of spheroids defined with two orientation tensors,
+that incorporate microstructural information about the orientations
+of the spheroids (see [here](tfel-material#homogenization-of-general-microstructures)
+for the definition of orientation tensors).
+This kind of distribution can be constructed with `Spheroid` objects only.
+This is done as follows:
+
+~~~~{.py}
+spheroid=Spheroid(10,1)
+KGi=KGModuli(300,200)
+A2=Stensor3D([1.,1.,1.,0.,0.,0.])
+tenseur=np.zeros((6,6))
+tenseur[0,0]=0.1
+A4=ST2toST23D(np.eye(6)+tenseur)
+distrib=UserDefinedDistributionOfSpheroids(spheroid,frac,KGi,A2,A4)
+~~~~
+
+Above, the tensor `A2` is the second-order orientation tensor,
+taken equal to \(\frac13\mathbf 1\), and `A4` is the fourth-order
+orientation tensor, which is, here, particular.
 
 We can now add these distributions to the microstructure:
 
