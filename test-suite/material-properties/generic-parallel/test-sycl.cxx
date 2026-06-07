@@ -19,6 +19,18 @@
 #include "Inconel600_YoungModulus-generic-parallel-sycl.hxx"
 #include "Inconel600_YoungModulus_qt-generic-parallel-sycl.hxx"
 
+#ifdef TFEL_SYCL_DEVICE
+#if TFEL_SYCL_DEVICE == 0
+#define TFEL_SYCL_DEVICE_SELECTOR sycl::cpu_selector_v
+#elif TFEL_SYCL_DEVICE == 1
+#define TFEL_SYCL_DEVICE_SELECTOR sycl::gpu_selector_v
+#else
+#error "unsupported value for TFEL_SYCL_DEVICE"
+#endif
+#else
+#define TFEL_SYCL_DEVICE_SELECTOR sycl::cpu_selector_v
+#endif
+
 struct Iconel600YoungModulusTest : public tfel::tests::TestCase {
   Iconel600YoungModulusTest()
     : tfel::tests::TestCase("MFront/MaterialProperty/GenericParallel",
@@ -55,7 +67,7 @@ private:
     const auto policy = mfront_gmp_OutOfBoundsPolicy{};
     const auto args = std::array<const double *, 1u>{T.data()};
     const auto args_strides = std::array<mfront_gmp_size_type, 1u>{1};
-    auto Q = sycl::queue{sycl::cpu_selector_v};
+    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
     Inconel600_YoungModulus(&output, E.data(), 1, &Q, args.data(),
                             args_strides.data(), 1, 4, policy);
     Inconel600_YoungModulus_qt(&output_qt, E_qt.data(), 1, &Q, args.data(),
@@ -82,7 +94,7 @@ private:
     const auto policy = mfront_gmp_OutOfBoundsPolicy{};
     const auto args = std::array<const double *, 1u>{T.data()};
     const auto args_strides = std::array<mfront_gmp_size_type, 1u>{0};
-    auto Q = sycl::queue{sycl::cpu_selector_v};
+    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
     Inconel600_YoungModulus(&output, E.data(), 1, &Q, args.data(),
 			    args_strides.data(), 1, 4, policy);
     Inconel600_YoungModulus_qt(&output_qt, E_qt.data(), 1, &Q, args.data(),
@@ -109,7 +121,7 @@ private:
     const auto policy = mfront_gmp_OutOfBoundsPolicy{};
     const auto args = std::array<const double *, 1u>{T.data()};
     const auto args_strides = std::array<mfront_gmp_size_type, 1u>{0};
-    auto Q = sycl::queue{sycl::cpu_selector_v};
+    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
     Inconel600_YoungModulus(&output, E.data(), 0, &Q, args.data(),
 			    args_strides.data(), 1, 1, policy);
     Inconel600_YoungModulus_qt(&output_qt, E_qt.data(), 0, &Q, args.data(),
@@ -133,7 +145,7 @@ private:
     const auto T = std::vector<double>{300, 500, 300, 800};
     const auto policy = mfront_gmp_OutOfBoundsPolicy{};
     const auto args = std::array<const double *, 1u>{T.data()};
-    auto Q = sycl::queue{sycl::cpu_selector_v};
+    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
     Inconel600_YoungModulus2(&output, E.data(), &Q, args.data(), 1, 4, policy);
     Inconel600_YoungModulus_qt2(&output_qt, E_qt.data(), &Q, args.data(), 1, 4,
 				policy);
@@ -159,7 +171,7 @@ private:
     const auto policy = mfront_gmp_OutOfBoundsPolicy{};
     const auto args = std::array<const double *, 1u>{T.data()};
     const auto args_strides = std::array<mfront_gmp_size_type, 1u>{1};
-    auto Q = sycl::queue{sycl::cpu_selector_v};
+    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
     Inconel600_YoungModulus(&output, E.data(), 1, &Q, args.data(),
 			    args_strides.data(), 1, 4, policy);
     Inconel600_YoungModulus_qt(&output_qt, E_qt.data(), 1, &Q, args.data(),
@@ -187,7 +199,7 @@ private:
     const auto T = std::vector<double>{-300, 500, 300, 800};
     const auto policy = mfront_gmp_OutOfBoundsPolicy{};
     const auto args = std::array<const double *, 1u>{T.data()};
-    auto Q = sycl::queue{sycl::cpu_selector_v};
+    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
     Inconel600_YoungModulus2(&output, E.data(), &Q, args.data(), 1, 4, policy);
     Inconel600_YoungModulus_qt2(&output_qt, E_qt.data(), &Q, args.data(), 1, 4,
 				policy);
@@ -216,7 +228,7 @@ private:
     const auto policy = mfront_gmp_OutOfBoundsPolicy{};
     const auto args = std::array<const double *, 1u>{T.data()};
     const auto args_strides = std::array<mfront_gmp_size_type, 1u>{2};
-    auto Q = sycl::queue{sycl::cpu_selector_v};
+    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
     Inconel600_YoungModulus(&output, E.data(), 3, &Q, args.data(),
 			    args_strides.data(), 1, 4, policy);
     Inconel600_YoungModulus_qt(&output_qt, E_qt.data(), 3, &Q, args.data(),
@@ -241,7 +253,7 @@ private:
     const auto policy = mfront_gmp_OutOfBoundsPolicy{};
     const auto args = std::array<const double *, 1u>{T.data()};
     const auto args_strides = std::array<mfront_gmp_size_type, 1u>{1};
-    auto Q = sycl::queue{sycl::cpu_selector_v};
+    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
     Inconel600_YoungModulus(&output, E.data(), 1, &Q, args.data(),
 			    args_strides.data(), 3, 1, policy);
     TFEL_TESTS_CHECK_EQUAL(output.status, -5);
@@ -268,7 +280,7 @@ private:
     auto output_qt = mfront_gmp_OutputStatus{};
     auto nu = std::vector<double>(4);
     const auto policy = mfront_gmp_OutOfBoundsPolicy{};
-    auto Q = sycl::queue{sycl::cpu_selector_v};
+    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
     PoissonRatioTest(&output, nu.data(), 1, &Q, nullptr, nullptr, 0, 4,
 		     policy); TFEL_TESTS_CHECK_EQUAL(output.status, 0);
     TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);
@@ -289,7 +301,7 @@ private:
     auto output_qt = mfront_gmp_OutputStatus{};
     auto nu = std::vector<double>(4);
     const auto policy = mfront_gmp_OutOfBoundsPolicy{};
-    auto Q = sycl::queue{sycl::cpu_selector_v};
+    auto Q = sycl::queue{TFEL_SYCL_DEVICE_SELECTOR};
     PoissonRatioTest2(&output, nu.data(), &Q, nullptr, 0, 4, policy);
     TFEL_TESTS_CHECK_EQUAL(output.status, 0);
     TFEL_TESTS_CHECK_EQUAL(output.c_error_number, 0);

@@ -58,9 +58,8 @@ if(tfel-check-components)
 endif(tfel-check-components)
 
 # substitutions
-add_tfel_check_substitution(TFEL_CXX_STANDARD "${CMAKE_CXX_STANDARD}")
-get_property(tfel-check-substitutions GLOBAL PROPERTY tfel-check-substitutions)
-string(REPLACE ";" "@" TFEL_CHECK_SUBSTITUTIONS_VALUE "${tfel-check-substitutions}")
+get_property(tfel-substitutions CACHE tfel-substitutions PROPERTY STRINGS)
+string(REPLACE ";" "@" TFEL_CHECK_SUBSTITUTIONS_VALUE "${tfel-substitutions}")
 target_compile_definitions(tfel-check
   PRIVATE "TFEL_CHECK_SUBSTITUTIONS=\"${TFEL_CHECK_SUBSTITUTIONS_VALUE}\"")
 

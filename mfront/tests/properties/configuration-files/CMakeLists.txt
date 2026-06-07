@@ -4,49 +4,53 @@ function(install_configuration_file file)
                  ${CMAKE_CURRENT_BINARY_DIR}/${file} @ONLY)
   install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
-    DESTINATION ${TFEL_DATAROOTDIR}/test-suite/material-properties/generic-parallel/configuration-files
+    DESTINATION ${TFEL_DATAROOTDIR}/mfront/configuration-files
     COMPONENT core)
 endfunction(install_configuration_file)
 
-if(_tfel-enable-generic-parallel-mp-cuda-nvcc-tests)
+if(_tfel-enable-generic-parallel-cuda-nvcc-configuration)
   install_configuration_file(config-cuda-nvcc.json)
-endif(_tfel-enable-generic-parallel-mp-cuda-nvcc-tests)
+endif(_tfel-enable-generic-parallel-cuda-nvcc-configuration)
 
-if(_tfel-enable-generic-parallel-mp-cuda-clang-tests)
+if(_tfel-enable-generic-parallel-cuda-clang-configuration)
   install_configuration_file(config-cuda-clang.json)
-endif(_tfel-enable-generic-parallel-mp-cuda-clang-tests)
+endif(_tfel-enable-generic-parallel-cuda-clang-configuration)
 
-if(_tfel-enable-generic-parallel-mp-hip-hipcc-tests)
+if(_tfel-enable-generic-parallel-hip-hipcc-configuration)
   install_configuration_file(config-hip-hipcc.json)
-endif(_tfel-enable-generic-parallel-mp-hip-hipcc-tests)
+endif(_tfel-enable-generic-parallel-hip-hipcc-configuration)
 
-if(_tfel-enable-generic-parallel-mp-hip-clang-tests)
+if(_tfel-enable-generic-parallel-hip-clang-configuration)
   if(HIP_PLATFORM STREQUAL "nvidia")
      install_configuration_file(config-hip-clang-nvidia-platform.json)
   endif(HIP_PLATFORM STREQUAL "nvidia")
-endif(_tfel-enable-generic-parallel-mp-hip-clang-tests)
+endif(_tfel-enable-generic-parallel-hip-clang-configuration)
 
-if(_tfel-enable-generic-parallel-mp-stlpar-parunseq-gcc-tests)
+if(_tfel-enable-generic-parallel-stlpar-parunseq-gcc-configuration)
   find_package(TBB REQUIRED)
   install_configuration_file(config-stlpar-parunseq-gcc.json)
-endif(_tfel-enable-generic-parallel-mp-stlpar-parunseq-gcc-tests)
+endif(_tfel-enable-generic-parallel-stlpar-parunseq-gcc-configuration)
 
-if(_tfel-enable-generic-parallel-mp-stlpar-parunseq-clang-tests)
+if(_tfel-enable-generic-parallel-stlpar-parunseq-clang-configuration)
   install_configuration_file(config-stlpar-parunseq-clang.json)
-endif(_tfel-enable-generic-parallel-mp-stlpar-parunseq-clang-tests)
+endif(_tfel-enable-generic-parallel-stlpar-parunseq-clang-configuration)
 
-if(_tfel-enable-generic-parallel-mp-stlpar-parunseq-nvhpc-gpu-tests)
+if(_tfel-enable-generic-parallel-stlpar-parunseq-nvhpc-gpu-configuration)
   install_configuration_file(config-stlpar-parunseq-nvhpc-gpu.json)
-endif(_tfel-enable-generic-parallel-mp-stlpar-parunseq-nvhpc-gpu-tests)
+endif(_tfel-enable-generic-parallel-stlpar-parunseq-nvhpc-gpu-configuration)
 
-if(_tfel-enable-generic-parallel-mp-stlpar-parunseq-icpx-tests)
+if(_tfel-enable-generic-parallel-stlpar-parunseq-icpx-configuration)
   install_configuration_file(config-stlpar-parunseq-icpx.json)
-endif(_tfel-enable-generic-parallel-mp-stlpar-parunseq-icpx-tests)
+endif(_tfel-enable-generic-parallel-stlpar-parunseq-icpx-configuration)
 
-if(_tfel-enable-generic-parallel-mp-sycl-default-icpx-tests)
+if(_tfel-enable-generic-parallel-sycl-default-icpx-configuration)
   install_configuration_file(config-sycl-default-icpx.json)
-endif(_tfel-enable-generic-parallel-mp-sycl-default-icpx-tests)
+endif(_tfel-enable-generic-parallel-sycl-default-icpx-configuration)
 
-if(_tfel-enable-generic-parallel-mp-sycl-default-acpp-tests)
+if(_tfel-enable-generic-parallel-sycl-default-acpp-configuration)
   install_configuration_file(config-sycl-default-acpp.json)
-endif(_tfel-enable-generic-parallel-mp-sycl-default-acpp-tests)
+endif(_tfel-enable-generic-parallel-sycl-default-acpp-configuration)
+
+# if(_tfel-enable-generic-parallel-stlpar-parunseq-acpp-generic-configuration)
+#   install_configuration_file(config-stlpar-parunseq-acpp-generic.json)
+# endif(_tfel-enable-generic-parallel-stlpar-parunseq-acpp-generic-configuration)

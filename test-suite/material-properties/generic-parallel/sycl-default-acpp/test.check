@@ -1,9 +1,9 @@
 @Requires {"mfront::material_property::generic-parallel_interface::supported_configuration::sycl-default-acpp"};
 
 @Environment {"LD_LIBRARY_PATH": "src"};
-@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-sycl-default-acpp.json ../PoissonRatioTest.mfront";
-@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-sycl-default-acpp.json ../Inconel600_YoungModulus.mfront";
-@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=../configuration-files/config-sycl-default-acpp.json ../Inconel600_YoungModulus-qt.mfront";
+@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=config-sycl-default-acpp.json ../PoissonRatioTest.mfront";
+@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=config-sycl-default-acpp.json ../Inconel600_YoungModulus.mfront";
+@Command "@mfront@ --obuild --interface=generic-parallel --configuration-file=config-sycl-default-acpp.json ../Inconel600_YoungModulus-qt.mfront";
 @Command "@TFEL_ACPP_COMPILER@ -I @TFEL_INCLUDE_DIR@ -I include -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ ../test-sycl.cxx -o test-sycl -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelInconel600-sycl -lGenericParallelMaterialLaw-sycl";
 @Command "./test-sycl test-sycl-default-acpp";
 

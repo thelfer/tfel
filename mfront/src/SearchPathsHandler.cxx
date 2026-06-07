@@ -29,6 +29,7 @@
 #endif /* MFRONT_HAVE_MADNEX */
 
 #include "TFEL/Raise.hxx"
+#include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
 #include "MFront/SearchPathsHandler.hxx"
@@ -107,10 +108,10 @@ namespace mfront {
 
   std::string SearchPathsHandler::search(const std::string& f) {
     using namespace tfel::system;
-    auto& msf = SearchPathsHandler::getSearchPathsHandler();
     if (fileExistsAndIsReadable(f)) {
       return f;
     }
+    auto& msf = SearchPathsHandler::getSearchPathsHandler();
     for (const auto& p : msf.paths) {
       if (std::holds_alternative<MadnexPath>(p)) {
 #ifdef MFRONT_HAVE_MADNEX
@@ -299,6 +300,18 @@ namespace mfront {
   }  // end of resetPaths
 
   SearchPathsHandler::SearchPathsHandler() {
+    // adding path to configuration files generated automatically
+    const auto root = tfel::getInstallPath();
+    const auto ds = tfel::system::dirSeparator();
+#ifdef TFEL_APPEND_SUFFIX
+    this->paths.push_back(root + ds + "share" + ds + "tfel" + ds +
+                          "mfront-" TFEL_SUFFIX + ds + "configuration-files");
+#else  "+ds+"* TFEL_APPEND_SUFFIX *"+ds+"
+    this->paths.push_back(root + ds + "share" + ds + "tfel" + ds + "mfront" +
+                          ds + "configuration-files");
+#endif /* TFEL_APPEND_SUFFIX */
+
+    //
     const char* const p = ::getenv("MFRONT_INCLUDE_PATH");
     if (p != nullptr) {
 #if defined _WIN32 || defined _WIN64

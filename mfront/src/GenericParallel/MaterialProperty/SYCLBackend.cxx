@@ -154,7 +154,8 @@ namespace mfront::generic_parallel::material_property {
       } else {
         os << "if(mfront_areAllArgumentsUniform && "
            << "(mfront_output_stride == 0)){\n"
-           << "mfront_kernel(0);\n"
+           << "mfront_kernel_without_strides(0);\n"
+           << "mfront_queue->wait();\n"
            << "} else {\n";
         os << "const bool mfront_areAllArgumentsStrideOne = std::all_of("
            << "mfront_args_strides_tmp.begin(), "
@@ -176,7 +177,8 @@ namespace mfront::generic_parallel::material_property {
   }  // end of writeKernelCall
 
   bool SYCLBackend::handlesDataTransfer() const {
-    return false;  // this->data_location == "host";
+    return false;
+    // return this->data_location == "host";
   }                // end of handlesDataTransfer
 
   void SYCLBackend::writeDataTransfersToDevice(
@@ -190,8 +192,8 @@ namespace mfront::generic_parallel::material_property {
     }
     os << "auto mfront_sycl_memcpy_events = std::vector<::sycl::event>{};\n";
     if (mpd.inputs.empty()) {
-      os << "const " << types.real_type << "* const mfront_args = nullptr;";
       os << "mfront_sycl_memcpy_events.reserve(1);\n";
+      os << "const " << types.real_type << " * const * mfront_args = nullptr;\n";
     } else {
       os << "mfront_sycl_memcpy_events.reserve(" << mpd.inputs.size() + 1
          << ");\n"
@@ -225,7 +227,8 @@ namespace mfront::generic_parallel::material_property {
         os << "mfront_args_storage[" << idx << "] = "  //
            << "mfront_arg" << idx << "_ptr.data();\n";
       }
-      os << "const auto* const mfront_args = mfront_args_storage.data();\n";
+      os << "const " << types.real_type << " * * mfront_args = "
+         << "mfront_args_storage.data();\n";
     }
     os << "auto mfront_output_ptr = "
        << "::mfront::gpmp::sycl::DeviceDataPtr<" << types.real_type

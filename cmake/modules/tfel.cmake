@@ -447,24 +447,25 @@ endfunction(mfront_model_check_library)
 set(tfel-check-components)
 # list of substitutions automatically declared in tfel-check
 # the  key-value pair must be separated by the % character
-set(tfel-check-substitutions "" CACHE STRING "")
-set(tfel-check-substitutions-keys "" CACHE STRING "")
-set_property(CACHE tfel-check-substitutions PROPERTY ADVANCED TRUE)
-set_property(CACHE tfel-check-substitutions-keys PROPERTY ADVANCED TRUE)
-function(add_tfel_check_substitution key value)
-  get_property(tfel-check-substitutions CACHE tfel-check-substitutions PROPERTY STRINGS)
-  get_property(tfel-check-substitutions-keys CACHE tfel-check-substitutions-keys PROPERTY STRINGS)
-  if(key IN_LIST tfel-check-substitutions-keys)
-    if(NOT "${key}%${value}" IN_LIST tfel-check-substitutions)
-      message(FATAL_ERROR "a tfel-check substitution with key '${key}' is already defined")
+set(tfel-substitutions "" CACHE STRING "")
+set(tfel-substitutions-keys "" CACHE STRING "")
+set_property(CACHE tfel-substitutions PROPERTY ADVANCED TRUE)
+set_property(CACHE tfel-substitutions-keys PROPERTY ADVANCED TRUE)
+function(add_tfel_substitution key value)
+  get_property(tfel-substitutions CACHE tfel-substitutions PROPERTY STRINGS)
+  get_property(tfel-substitutions-keys CACHE tfel-substitutions-keys PROPERTY STRINGS)
+  if(key IN_LIST tfel-substitutions-keys)
+    if(NOT "${key}%${value}" IN_LIST tfel-substitutions)
+      message(FATAL_ERROR "a tfel substitution with key '${key}' is already defined")
     endif()
   else()
-    list(APPEND tfel-check-substitutions-keys "${key}")
-    list(APPEND tfel-check-substitutions "${key}%${value}")
-    set(tfel-check-substitutions "${tfel-check-substitutions}" CACHE STRING "" FORCE)
-    set(tfel-check-substitutions-keys "${tfel-check-substitutions-keys}" CACHE STRING "" FORCE)
+    list(APPEND tfel-substitutions-keys "${key}")
+    list(APPEND tfel-substitutions "${key}%${value}")
+    set(tfel-substitutions "${tfel-substitutions}" CACHE STRING "" FORCE)
+    set(tfel-substitutions-keys "${tfel-substitutions-keys}" CACHE STRING "" FORCE)
   endif()
 endfunction()
+add_tfel_substitution(TFEL_CXX_STANDARD "${CMAKE_CXX_STANDARD}")
 
 # function used to search additional C++ compilers, if needed
 function(define_tfel_cxx_compiler compiler)
@@ -476,7 +477,7 @@ function(define_tfel_cxx_compiler compiler)
         find_program(TFEL_GXX_COMPILER NAMES "g++" REQUIRED)
      endif()
      set(TFEL_GXX_COMPILER "${TFEL_GXX_COMPILER}" PARENT_SCOPE)
-     add_tfel_check_substitution(TFEL_GXX_COMPILER "${TFEL_GXX_COMPILER}")
+     add_tfel_substitution(TFEL_GXX_COMPILER "${TFEL_GXX_COMPILER}")
      message(STATUS "TFEL_GXX_COMPILER: ${TFEL_GXX_COMPILER}")
    endif()
  elseif(compiler STREQUAL "clang++")
@@ -488,7 +489,7 @@ function(define_tfel_cxx_compiler compiler)
         find_program(TFEL_CLANGXX_COMPILER NAMES "clang++" REQUIRED)
      endif()
      set(TFEL_CLANGXX_COMPILER "${TFEL_CLANGXX_COMPILER}" PARENT_SCOPE)
-     add_tfel_check_substitution(TFEL_CLANGXX_COMPILER "${TFEL_CLANGXX_COMPILER}")
+     add_tfel_substitution(TFEL_CLANGXX_COMPILER "${TFEL_CLANGXX_COMPILER}")
      message(STATUS "TFEL_CLANGXX_COMPILER: ${TFEL_CLANGXX_COMPILER}")
    endif()
  elseif(compiler STREQUAL "icpx")
@@ -499,14 +500,14 @@ function(define_tfel_cxx_compiler compiler)
         find_program(TFEL_ICPX_COMPILER NAMES "icpx" REQUIRED)
      endif()
      set(TFEL_ICPX_COMPILER "${TFEL_ICPX_COMPILER}" PARENT_SCOPE)
-     add_tfel_check_substitution(TFEL_ICPX_COMPILER "${TFEL_ICPX_COMPILER}")
+     add_tfel_substitution(TFEL_ICPX_COMPILER "${TFEL_ICPX_COMPILER}")
      message(STATUS "TFEL_ICPX_COMPILER: ${TFEL_ICPX_COMPILER}")
    endif()
  elseif(compiler STREQUAL "acpp")
    if(NOT TFEL_ACPP_COMPILER)
      find_program(TFEL_ACPP_COMPILER NAMES "acpp" REQUIRED)
      set(TFEL_ACPP_COMPILER "${TFEL_ACPP_COMPILER}" PARENT_SCOPE)
-     add_tfel_check_substitution(TFEL_ACPP_COMPILER "${TFEL_ACPP_COMPILER}")
+     add_tfel_substitution(TFEL_ACPP_COMPILER "${TFEL_ACPP_COMPILER}")
      message(STATUS "TFEL_ACPP_COMPILER: ${TFEL_ACPP_COMPILER}")
    endif()
  elseif(compiler STREQUAL "nvhpc")
@@ -517,7 +518,7 @@ function(define_tfel_cxx_compiler compiler)
         find_program(TFEL_NVHPC_COMPILER NAMES "nvc++" REQUIRED)
      endif()
      set(TFEL_NVHPC_COMPILER "${TFEL_NVHPC_COMPILER}" PARENT_SCOPE)
-     add_tfel_check_substitution(TFEL_NVHPC_COMPILER "${TFEL_NVHPC_COMPILER}")
+     add_tfel_substitution(TFEL_NVHPC_COMPILER "${TFEL_NVHPC_COMPILER}")
      message(STATUS "TFEL_NVHPC_COMPILER: ${TFEL_NVHPC_COMPILER}")
    endif()
  else()
@@ -530,18 +531,23 @@ endfunction(define_tfel_cxx_compiler)
 # Support of tests related to the generic-parallel interface
 ####
 
-set(_tfel-generic-parallel_mp_tests_supported_configurations
+set(_tfel-generic-parallel_supported_configurations
     "cuda-nvcc" "cuda-clang" "hip-hipcc" "hip-clang"
-    "stlpar-parunseq-gcc" "stlpar-parunseq-clang"
-    "stlpar-parunseq-nvhpc-gpu" "stlpar-parunseq-icpx"
-    "sycl-default-icpx" "sycl-default-acpp")
+    "stlpar-parunseq-gcc"
+    "stlpar-parunseq-clang"
+    "stlpar-parunseq-icpx"
+    "stlpar-parunseq-nvhpc-gpu"
+#    "stlpar-parunseq-acpp-generic"
+    "sycl-default-icpx"
+    "sycl-default-acpp"
+    "sycl-gpu-acpp")
 
-foreach(conf ${generic-parallel-mp-tests-configurations})
-  if(NOT "${conf}" IN_LIST _tfel-generic-parallel_mp_tests_supported_configurations)
+foreach(conf ${generic-parallel-configurations})
+  if(NOT "${conf}" IN_LIST _tfel-generic-parallel_supported_configurations)
     message(FATAL_ERROR "unsupported configuration '${conf}' for the tests of the generic-parallel interface. "
-            "Supported configuration are '${_tfel-generic-parallel_mp_tests_supported_configurations}'")
+            "Supported configuration are '${_tfel-generic-parallel_supported_configurations}'")
   endif()
-  set(_tfel-enable-generic-parallel-mp-${conf}-tests ON)
+  set(_tfel-enable-generic-parallel-${conf}-configuration ON)
   if(NOT ${conf} STREQUAL "hip-clang")
     list(APPEND tfel-check-components
          "mfront::material_property::generic-parallel_interface::supported_configuration::${conf}")
@@ -551,20 +557,20 @@ endforeach()
 set(TFEL_REQUIRES_CUDA OFF)
 set(TFEL_REQUIRES_HIP OFF)
 
-if(_tfel-enable-generic-parallel-mp-cuda-nvcc-tests OR
-   _tfel-enable-generic-parallel-mp-cuda-clang-tests)
+if(_tfel-enable-generic-parallel-cuda-nvcc-configuration OR
+   _tfel-enable-generic-parallel-cuda-clang-configuration)
   set(TFEL_REQUIRES_CUDA ON)
 endif()
 
-if(_tfel-enable-generic-parallel-mp-hip-hipcc-tests OR
-   _tfel-enable-generic-parallel-mp-hip-clang-tests)
+if(_tfel-enable-generic-parallel-hip-hipcc-configuration OR
+   _tfel-enable-generic-parallel-hip-clang-configuration)
   set(TFEL_REQUIRES_HIP ON)
 endif()
 
 if(TFEL_REQUIRES_HIP)
  if(NOT TFEL_HIPCC_COMPILER)
    find_program(TFEL_HIPCC_COMPILER NAMES "hipcc" REQUIRED)
-   add_tfel_check_substitution(TFEL_HIPCC_COMPILER "${TFEL_HIPCC_COMPILER}")
+   add_tfel_substitution(TFEL_HIPCC_COMPILER "${TFEL_HIPCC_COMPILER}")
  endif(NOT TFEL_HIPCC_COMPILER)
  if(NOT HIP_PLATFORM)
    if(NOT DEFINED ENV{HIP_PLATFORM})
@@ -575,14 +581,14 @@ if(TFEL_REQUIRES_HIP)
  if(HIP_PLATFORM STREQUAL "nvidia")
    set(TFEL_REQUIRES_CUDA ON)
    set(TFEL_HIPCC_FLAGS "-x cu")
-   add_tfel_check_substitution(TFEL_HIPCC_FLAGS "${TFEL_HIPCC_FLAGS}")
-   if("hip-clang" IN_LIST generic-parallel-mp-tests-configurations)
+   add_tfel_substitution(TFEL_HIPCC_FLAGS "${TFEL_HIPCC_FLAGS}")
+   if("hip-clang" IN_LIST generic-parallel-configuration)
     list(APPEND tfel-check-components
          "mfront::material_property::generic-parallel_interface::supported_configuration::hip-clang-nvidia-platform")
-   endif("hip-clang" IN_LIST generic-parallel-mp-tests-configurations)
+   endif("hip-clang" IN_LIST generic-parallel-configuration)
  elseif(HIP_PLATFORM STREQUAL "amd")
    set(TFEL_HIPCC_FLAGS "")
-   add_tfel_check_substitution(TFEL_HIPCC_FLAGS "${TFEL_HIPCC_FLAGS}")
+   add_tfel_substitution(TFEL_HIPCC_FLAGS "${TFEL_HIPCC_FLAGS}")
  else()
    message(FATAL_ERROR "unsupported value of HIP_PLATFORM. Expected 'amd' or 'nvidia', got '${HIP_PLATFORM}'")
  endif()
@@ -595,41 +601,43 @@ if(TFEL_REQUIRES_CUDA)
   endif()
   message(STATUS "nvcc compiler: ${CMAKE_CUDA_COMPILER}")
   set(TFEL_NVCC_COMPILER "${CMAKE_CUDA_COMPILER}")
-  add_tfel_check_substitution(TFEL_NVCC_COMPILER "${TFEL_NVCC_COMPILER}")
+  add_tfel_substitution(TFEL_NVCC_COMPILER "${TFEL_NVCC_COMPILER}")
   if(CUDAToolkit_LIBRARY_ROOT)
     set(TFEL_CUDA_PATH "${CUDAToolkit_LIBRARY_ROOT}")
   else(CUDAToolkit_LIBRARY_ROOT)
     cmake_path(GET CUDAToolkit_BIN_DIR PARENT_PATH TFEL_CUDA_PATH)
   endif(CUDAToolkit_LIBRARY_ROOT)  
-  add_tfel_check_substitution(TFEL_CUDA_PATH "${TFEL_CUDA_PATH}")
-  add_tfel_check_substitution(TFEL_CUDA_LIBRARY_DIR "${CUDAToolkit_LIBRARY_DIR}")
+  add_tfel_substitution(TFEL_CUDA_PATH "${TFEL_CUDA_PATH}")
+  add_tfel_substitution(TFEL_CUDA_LIBRARY_DIR "${CUDAToolkit_LIBRARY_DIR}")
 endif()
 
 if(TFEL_REQUIRES_HIP)
   find_package(hip REQUIRED)
   set(TFEL_HIP_INCLUDES "${HIP_INCLUDE_DIR}")
-  add_tfel_check_substitution(TFEL_HIP_INCLUDE_DIR "${TFEL_HIP_INCLUDES}")
+  add_tfel_substitution(TFEL_HIP_INCLUDE_DIR "${TFEL_HIP_INCLUDES}")
 endif(TFEL_REQUIRES_HIP)
 
-if((_tfel-enable-generic-parallel-mp-cuda-clang-tests) OR
-   (_tfel-enable-generic-parallel-mp-hip-clang-tests) OR
-   (_tfel-enable-generic-parallel-mp-stlpar-parunseq-clang-tests))
+if((_tfel-enable-generic-parallel-cuda-clang-configuration) OR
+   (_tfel-enable-generic-parallel-hip-clang-configuration) OR
+   (_tfel-enable-generic-parallel-stlpar-parunseq-clang-configuration))
   define_tfel_cxx_compiler("clang++")
 endif()
 
-if(_tfel-enable-generic-parallel-mp-stlpar-parunseq-gcc-tests)
+if(_tfel-enable-generic-parallel-stlpar-parunseq-gcc-configuration)
   define_tfel_cxx_compiler("g++")
-endif(_tfel-enable-generic-parallel-mp-stlpar-parunseq-gcc-tests)
+endif(_tfel-enable-generic-parallel-stlpar-parunseq-gcc-configuration)
 
-if(_tfel-enable-generic-parallel-mp-stlpar-parunseq-nvhpc-gpu-tests)
+if(_tfel-enable-generic-parallel-stlpar-parunseq-nvhpc-gpu-configuration)
   define_tfel_cxx_compiler("nvhpc")
-endif(_tfel-enable-generic-parallel-mp-stlpar-parunseq-nvhpc-gpu-tests)
+endif(_tfel-enable-generic-parallel-stlpar-parunseq-nvhpc-gpu-configuration)
 
-if((_tfel-enable-generic-parallel-mp-stlpar-parunseq-icpx-tests) OR
-   (_tfel-enable-generic-parallel-mp-sycl-default-icpx-tests))
+if((_tfel-enable-generic-parallel-stlpar-parunseq-icpx-configuration) OR
+   (_tfel-enable-generic-parallel-sycl-default-icpx-configuration))
   define_tfel_cxx_compiler("icpx")
 endif()
-  
-if(_tfel-enable-generic-parallel-mp-sycl-default-acpp-tests)
+
+if((_tfel-enable-generic-parallel-stlpar-parunseq-acpp-generic-configuration) OR
+   (_tfel-enable-generic-parallel-sycl-default-acpp-configuration) OR
+   (_tfel-enable-generic-parallel-sycl-gpu-acpp-configuration))
   define_tfel_cxx_compiler("acpp")
 endif()

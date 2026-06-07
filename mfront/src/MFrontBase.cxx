@@ -225,6 +225,17 @@ namespace mfront {
         lm.loadLibrary(l);
       }
     }
+    //
+#ifdef MFRONT_DEFAULT_SUBSTITUTIONS
+    for (const auto& co :
+         tfel::utilities::tokenize(MFRONT_DEFAULT_SUBSTITUTIONS, '@')) {
+      const auto kv = tfel::utilities::tokenize(co, '%');
+      if (kv.size() != 2) {
+        tfel::raise("internal error: invalid substitution '" + co + "'");
+      }
+      this->substitutions.insert({"@" + kv.at(0) + "@", kv.at(1)});
+    }
+#endif /* MFRONT_DEFAULT_SUBSTITUTIONS */
   }  // end of MFrontBase
 
   void MFrontBase::finalizeArgumentsParsing() {
@@ -548,8 +559,9 @@ namespace mfront {
   template <typename CallBack>
   static void parseConfigurationFile(const CallBack& callback,
                                      const std::string& f) {
+    const auto file = SearchPathsHandler::search(f);
     try {
-      for (const auto& d : readConfigurationFile(f)) {
+      for (const auto& d : readConfigurationFile(file)) {
         callback(d.first, d.second);
       }
     } catch (std::exception& e) {
