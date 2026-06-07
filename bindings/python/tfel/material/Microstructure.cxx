@@ -152,7 +152,15 @@ requires(tfel::math::checkUnitCompatibility<
                          const tfel::material::IsotropicModuli<StressType> &>())
       .def_readwrite("inclusion", &SD::inclusion)
       .def_readwrite("fraction", &SD::fraction)
-      .def_readwrite("stiffness", &SD::stiffness)
+      .def("getElasticityOfPhase", &SD::getElasticityOfPhase)
+      .def("changeElasticityOfPhase",
+           [](SD &sd, const tfel::math::st2tost2<3u, StressType> &C0) {
+             return sd.changeElasticityOfPhase(C0);
+           })
+      .def("changeElasticityOfPhase",
+           [](SD &sd, const tfel::material::IsotropicModuli<StressType> &IM0) {
+             return sd.changeElasticityOfPhase(IM0);
+           })
       .def("is_isotropic", &SD::is_isotropic)
       .def("computeMeanLocalisator",
            [](SD &sd, const tfel::material::IsotropicModuli<StressType> &IM0) {
@@ -197,7 +205,15 @@ requires(tfel::math::checkUnitCompatibility<
                          const tfel::material::IsotropicModuli<StressType> &>())
       .def_readwrite("inclusion", &IsoD::inclusion)
       .def_readwrite("fraction", &IsoD::fraction)
-      .def_readwrite("stiffness", &IsoD::stiffness)
+      .def("getElasticityOfPhase", &IsoD::getElasticityOfPhase)
+      .def("changeElasticityOfPhase",
+           [](IsoD &isod, const tfel::math::st2tost2<3u, StressType> &C0) {
+             return isod.changeElasticityOfPhase(C0);
+           })
+      .def("changeElasticityOfPhase",
+           [](IsoD &isod, const tfel::material::IsotropicModuli<StressType> &IM0) {
+             return isod.changeElasticityOfPhase(IM0);
+           })
       .def("is_isotropic", &IsoD::is_isotropic)
       .def("computeMeanLocalisator",
            [](IsoD &isod,
@@ -246,7 +262,15 @@ requires(
                           unsigned short int &>())
       .def_readwrite("inclusion", &TID::inclusion)
       .def_readwrite("fraction", &TID::fraction)
-      .def_readwrite("stiffness", &TID::stiffness)
+      .def("getElasticityOfPhase", &TID::getElasticityOfPhase)
+      .def("changeElasticityOfPhase",
+           [](TID &tid, const tfel::math::st2tost2<3u, StressType> &C0) {
+             return tid.changeElasticityOfPhase(C0);
+           })
+      .def("changeElasticityOfPhase",
+           [](TID &tid, const tfel::material::IsotropicModuli<StressType> &IM0) {
+             return tid.changeElasticityOfPhase(IM0);
+           })
       .def("is_isotropic", &TID::is_isotropic)
       .def(
           "computeMeanLocalisator",
@@ -302,7 +326,15 @@ requires(
                           const tfel::math::tvector<3, real> &>())
       .def_readwrite("inclusion", &OD::inclusion)
       .def_readwrite("fraction", &OD::fraction)
-      .def_readwrite("stiffness", &OD::stiffness)
+      .def("getElasticityOfPhase", &OD::getElasticityOfPhase)
+      .def("changeElasticityOfPhase",
+           [](OD &od, const tfel::math::st2tost2<3u, StressType> &C0) {
+             return od.changeElasticityOfPhase(C0);
+           })
+      .def("changeElasticityOfPhase",
+           [](OD &od, const tfel::material::IsotropicModuli<StressType> &IM0) {
+             return od.changeElasticityOfPhase(IM0);
+           })
       .def("is_isotropic", &OD::is_isotropic)
       .def("computeMeanLocalisator",
            [](OD &od, const tfel::material::IsotropicModuli<StressType> &IM0) {
@@ -334,20 +366,28 @@ requires(
           N, StressType>;
 
   pybind11::class_<PM>(m, n, pybind11::buffer_protocol())
-      .def(pybind11::init<const PM &>())
       .def(pybind11::init<const tfel::math::st2tost2<N, StressType> &>())
       .def(
           pybind11::init<const tfel::material::IsotropicModuli<StressType> &>())
       .def("addInclusionPhase", &PM::addInclusionPhase)
       .def("removeInclusionPhase", &PM::removeInclusionPhase)
-      .def("replaceMatrixPhase",
+      .def("changeElasticityOfMatrixPhase",
            [](PM &pm, const tfel::math::st2tost2<N, StressType> &C0) {
-             return pm.replaceMatrixPhase(C0);
+             return pm.changeElasticityOfMatrixPhase(C0);
            })
-      .def("replaceMatrixPhase",
+      .def("changeElasticityOfMatrixPhase",
            [](PM &pm, const tfel::material::IsotropicModuli<StressType> &IM0) {
-             return pm.replaceMatrixPhase(IM0);
+             return pm.changeElasticityOfMatrixPhase(IM0);
            })
+      .def("changeElasticityOfInclusionPhase",
+           [](PM &pm,unsigned int i, const tfel::math::st2tost2<N, StressType> &C0) {
+             return pm.changeElasticityOfInclusionPhase(i,C0);
+           })
+      .def("changeElasticityOfInclusionPhase",
+           [](PM &pm,unsigned int i, const tfel::material::IsotropicModuli<StressType> &IM0) {
+             return pm.changeElasticityOfInclusionPhase(i,IM0);
+           })
+      .def("changeFractionOfInclusionPhase", &PM::changeFractionOfInclusionPhase)
       .def("get_number_of_phases", &PM::get_number_of_phases)
       .def("get_matrix_fraction", &PM::get_matrix_fraction)
       .def("get_matrix_elasticity", &PM::get_matrix_elasticity)
