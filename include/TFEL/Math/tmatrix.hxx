@@ -170,10 +170,6 @@ namespace tfel::math::internals {
   /*!
    * \brief a metafunction returning a strided coalesced view type on a
    * derivative in tiny matrix ordered of M columns.
-   *
-   * The indexing policy is the very same as the one built for the non strided
-   * case by `BuildDerivativeViewFromTinyMatrixImplementation`; only the access
-   * policy is turned into a strided coalesced one.
    * \tparam are_both_scalars: boolean stating if both the function and the
    * variable types are scalars.
    * \tparam M: number of columns of the tiny matrix
@@ -198,8 +194,7 @@ namespace tfel::math::internals {
 
   /*!
    * \brief partial specialisation when both the function and the variable
-   * types are scalars. The view then degenerates to a reference, exactly as in
-   * the non strided case.
+   * types are scalar types.
    * \tparam M: number of columns of the tiny matrix
    * \tparam FunctionType: function type.
    * \tparam VariableType: variable type.
