@@ -345,11 +345,11 @@ function(python_lib_module name package)
   python_module_base(${package}_${name} ${name} ${ARGN})
   if(TFEL_APPEND_VERSION)
     install(TARGETS py_${package}_${name}
-      DESTINATION lib${LIB_VERSION}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}_${TFEL_VERSION_FOR_PYTHON_MODULES}
+      DESTINATION lib${LIB_VERSION}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/${package}_${TFEL_VERSION_FOR_PYTHON_MODULES}
       COMPONENT python_bindings)
   else(TFEL_APPEND_VERSION)
   install(TARGETS py_${package}_${name}
-    DESTINATION lib${LIB_VERSION}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${package}
+    DESTINATION lib${LIB_VERSION}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/${package}
     COMPONENT python_bindings)
   endif(TFEL_APPEND_VERSION)
 endfunction(python_lib_module)
@@ -400,7 +400,7 @@ function(tfel_python_script_base dir)
       set(python_script "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}")
     endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pyscript}.in")
     install(PROGRAMS ${python_script}
-      DESTINATION lib${LIB_VERSION}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/${dir}/
+      DESTINATION lib${LIB_VERSION}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages/${dir}/
       COMPONENT python_bindings)
   endforeach(pyscript ${ARGN})
 endfunction(tfel_python_script_base)
