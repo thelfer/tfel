@@ -126,6 +126,10 @@ namespace tfel::types {
       typename tfel::math::ScalarTypeRebind<ScalarType>::compliance;
 
   template <tfel::math::ScalarConcept ScalarType>
+  using squared_compliance =
+      typename tfel::math::ScalarTypeRebind<ScalarType>::squared_compliance;
+
+  template <tfel::math::ScalarConcept ScalarType>
   using viscosity =
       typename tfel::math::ScalarTypeRebind<ScalarType>::viscosity;
 

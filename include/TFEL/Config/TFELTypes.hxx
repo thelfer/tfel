@@ -46,6 +46,9 @@ namespace tfel::config {
     typedef tfel::math::qt<tfel::math::GenerateUnit<-1, 1, 2, 0, 0, 0, 0>::type,
                            T>
         compliance;
+    typedef tfel::math::qt<tfel::math::GenerateUnit<-2, 2, 4, 0, 0, 0, 0>::type,
+                           T>
+        squared_compliance;
     typedef tfel::math::
         qt<tfel::math::GenerateUnit<1, -1, -1, 0, 0, 0, 0>::type, T>
             viscosity;
@@ -82,6 +85,7 @@ namespace tfel::config {
     using force = T;
     using stress = T;
     using compliance = T;
+    using squared_compliance = T;
     using viscosity = T;
     using viscouscompliance = T;
     using stressrate = T;
