@@ -1,6 +1,3 @@
-dsl_options: {
-  disable_runtime_checks: false
-},
 interfaces_options: {
   generic-parallel: {
     backend: {stlpar: {
@@ -11,10 +8,10 @@ interfaces_options: {
 },
 compilation_options : {
   cxx : {
-    compiler: "@TFEL_NVHPC_COMPILER@",
-    compilation_flags: "-O2 -stdpar=gpu -std=c++@CMAKE_CXX_STANDARD@ -march=native" 
+    compiler: "@TFEL_GXX_COMPILER@",
+    compilation_flags: "-O2 -std=c++@TFEL_CXX_STANDARD@ -march=native" 
   }
 },
 linking_options : {
-  linker_flags: "-stdpar=gpu"
+  linker_flags : "-ltbb"
 }

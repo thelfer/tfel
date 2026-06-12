@@ -11,7 +11,7 @@ interfaces_options: {
 },
 compilation_options : {
   cuda : {
-    compiler: "@CMAKE_CUDA_COMPILER@",
-    compilation_flags: "-O2 -std=c++@CMAKE_CXX_STANDARD@ -diag-suppress 20012 -Xcompiler -fPIC --expt-relaxed-constexpr"
+    compiler: "@TFEL_NVCC_COMPILER@",
+    compilation_flags: "-O2 -std=c++@TFEL_CXX_STANDARD@ -diag-suppress 20012 -Xcompiler -fPIC --expt-relaxed-constexpr"
   }
 }

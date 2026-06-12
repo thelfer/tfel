@@ -1,9 +1,7 @@
 # options to install configuration files
 function(install_configuration_file file)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${file}.in 
-                 ${CMAKE_CURRENT_BINARY_DIR}/${file} @ONLY)
   install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/${file}
+    FILES ${CMAKE_CURRENT_SOURCE_DIR}/${file}
     DESTINATION ${TFEL_DATAROOTDIR}/mfront/configuration-files
     COMPONENT core)
 endfunction(install_configuration_file)

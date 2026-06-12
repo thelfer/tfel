@@ -528,14 +528,6 @@ if(HAVE_CASTEM)
     endif(enable-static)
   endif(CASTEHOME)
 endif(HAVE_CASTEM)
-get_property(tfel-substitutions CACHE tfel-substitutions PROPERTY STRINGS)
-string(REPLACE ";" "@" MFRONT_SUBSTITUTIONS_VALUE "${tfel-substitutions}")
-target_compile_definitions(TFELMFront
-  PRIVATE "MFRONT_SUBSTITUTIONS=\"${MFRONT_SUBSTITUTIONS_VALUE}\"")
-if(enable-static)
-  target_compile_definitions(TFELMFront-static
-    PRIVATE "MFRONT_SUBSTITUTIONS=\"${MFRONT_SUBSTITUTIONS_VALUE}\"")
-endif(enable-static)
 target_link_libraries(TFELMFront
   PUBLIC
   tfel::MFrontLogStream

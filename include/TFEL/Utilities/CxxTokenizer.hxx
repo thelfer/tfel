@@ -368,6 +368,13 @@ namespace tfel::utilities {
      * \param[in] s: separator
      */
     void addSeparator(const std::string &);
+    /*!
+     * \brief apply the given substitutions by calling `replace_all` on the
+     * values hold by the standard and string tokens.
+     *
+     * \param[in] substitutions: list of substitutions
+     */
+    void substitute(const std::map<std::string, std::string> &);
     //! \return true if the token list is empty
     bool empty() const;
     //! \return an iterator to the first token

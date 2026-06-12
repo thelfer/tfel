@@ -33,7 +33,125 @@ The page describes the new functionalities of Version 5.2 of the
 
 # Known incompatibilities
 
-- `MFront`' Interfaces have to implement a method named `setOptions`.
+- `MFront`' interfaces have to implement a method named `setOptions`.
+
+# Improvements to the build system
+
+## User-defined `cmake` variables
+
+- `generic-parallel-configurations`: list of configurations to be
+  supported. See next paragraph for details and the list of supported
+  configurations.
+- `TFEL_GXX_COMPILER`: path to the `g++` compiler.
+- `TFEL_CLANGXX_COMPILER`: path to the `clang++` compiler.
+- `TFEL_ICPX_COMPILER`: path to INTEL's `icpx` compiler.
+- `TFEL_NVHPC_COMPILER`: path to NVIDIA's `nvhpc` compiler.
+- `TFEL_ACPP_COMPILER`: path to AdaptativeCpp's `acpp` compiler.
+
+## Supported parallel configurations
+
+The following configurations are supported for parallel computations:
+
+- `cuda-nvcc`: configuration associated with the `CUDA` parallel
+  programming model and NVIDIA's `nvcc` compiler
+- `cuda-clang`: configuration associated with the `CUDA` parallel
+  programming model and LLVM's `clang` compiler
+- `hip-hipcc`:  configuration associated with the `HIP` parallel
+  programming model and AMD's `hipcc` compiler
+- `hip-clang`:  configuration associated with the `HIP` parallel
+  programming model and LLVM's `clang` compiler
+- `stlpar-parunseq-gcc`: configuration associated with `C++` standard
+  parallel algorithms using the parallel unsequenced execution policy
+  and the `gcc` compiler.
+- `stlpar-parunseq-clang`: configuration associated with `C++` standard
+  parallel algorithms using the parallel unsequenced execution policy
+  and the `clang` compiler.
+- `stlpar-parunseq-icpx`: configuration associated with `C++` standard
+  parallel algorithms using the parallel unsequenced execution policy
+  and the `icpx` compiler.
+- `stlpar-parunseq-nvhpc-gpu`: configuration associated with `C++`
+  standard parallel algorithms using the parallel unsequenced execution
+  policy and NVIDIA's `nvhpc` compiler with offloading on the GPU.
+- `sycl-default-icpx`: configuration associated with `SYCL` programming
+  model INTEL's `icpx` compiler.
+
+# New `TFEL/Config` features
+
+The `TFEL/Config` library is now documented on [this
+page](tfel-config.html).
+
+## TFEL's default substitutions
+
+The `getDefaultSubstitutions` function returns some default
+substitutions used by `MFront` when reading configuration files and
+`tfel-check` when analysing `.check` files.
+
+### General substitutions
+
+- `TFEL_CXX_STANDARD`: the `C++` standard used by the project.
+
+### Supported compilers
+
+- `TFEL_GXX_COMPILER`: path the `g++` compiler. The value associated
+  with this key is determined as follows, by order of priority:
+
+  1. by passing the variable `TFEL_GXX_COMPILER` during the invocation of
+  `cmake`.
+  2. by using `g++` as the main compiler to compile `TFEL`
+  3. by searching `g++` using `cmake`'s `find_program` function.
+- `TFEL_CLANGXX_COMPILER`: path to `LLVM` `clang++` compiler. The value
+  associated with this key is determined as follows, by order of
+  priority:
+
+  1. by passing the variable `TFEL_CLANGXX_COMPILER` during the invocation of
+  `cmake`,
+  2. by using `clang++` as the main compiler to compile `TFEL`,
+  3. by searching `clang++` using `cmake`'s `find_program` function.
+- `TFEL_ICPX_COMPILER`: path to INTEL's `icpx` compiler. The value
+  associated with this key is determined as follows, by order of
+  priority:
+
+  1. by passing the variable `TFEL_ICPX_COMPILER` during the invocation of
+  `cmake`,
+  2. by using `icpx` as the main compiler to compile `TFEL`,
+  3. by searching `icpx` using `cmake`'s `find_program` function.
+- `TFEL_ACPP_COMPILER`: path to AdaptativeCpp `acpp` compiler. The value
+  associated with this key is determined as follows, by order of
+  priority:
+
+  1. by passing the variable `TFEL_ACPP_COMPILER` during the invocation of
+  `cmake`,
+  2. by searching `acpp` using `cmake`'s `find_program` function.
+- `TFEL_NVHPC_COMPILER`: path to NVIDIA's `nvhpc` compiler. The value
+  associated with this key is determined as follows, by order of
+  priority:
+
+  1. by passing the variable `TFEL_NVHPC_COMPILER` during the invocation of
+  `cmake`,
+  2. by using `nvhpc` as the main compiler to compile `TFEL`,
+  3. by searching `nvhpc` using `cmake`'s `find_program` function.
+- `TFEL_NVCC_COMPILER`: path to NVIDIA's `nvhcp` as found by
+  `FindCUDAToolkit`.
+- `TFEL_HIPCC_COMPILER`: path to AMD's `hipcc` compiler. The value
+  associated with this key is determined as follows, by order of
+  priority:
+
+  1. by passing the variable `TFEL_HIPCC_COMPILER` during the invocation
+    of `cmake`,
+  2. by searching `hipcc` using `cmake`'s `find_program` function.
+
+### Substitutions related to the `HIPCC` compiler
+
+- `TFEL_HIPCC_FLAGS: additional flags to be passed to the `hipcc`
+  compiler.
+- `TFEL_HIP_INCLUDE_DIR`: paths to `HIP` headers
+
+### Substitutions related to the `CUDA` platform
+
+- `TFEL_CUDA_PATH`: path to NVIDIA's `CUDA` toolkit as found by
+  `CMake`'s `FindCUDAToolkit` module.
+- `TFEL_CUDA_LIBRARY_DIR`: path to the libraries of the NVIDIA's `CUDA`
+  toolkit as found by `CMake`'s `FindCUDAToolkit` module.
 
 # New `TFEL/Math` features
 

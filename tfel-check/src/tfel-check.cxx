@@ -31,6 +31,7 @@
 
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
+#include "TFEL/Config/Substitutions.hxx"
 #include "TFEL/Utilities/ArgumentParserBase.hxx"
 #include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "TFEL/System/System.hxx"
@@ -111,16 +112,9 @@ namespace tfel::check {
     c.addSubstitution("@TFEL_LIBRARY_DIR@", getInstallPath() + s + "lib",
                       false);
 #endif
-#ifdef TFEL_CHECK_SUBSTITUTIONS
-    for (const auto& co :
-         tfel::utilities::tokenize(TFEL_CHECK_SUBSTITUTIONS, '@')) {
-      const auto kv = tfel::utilities::tokenize(co, '%');
-      if (kv.size() != 2) {
-        tfel::raise("internal error: invalid substitution '" + co + "'");
-      }
-      c.addSubstitution("@" + kv.at(0) + "@", kv.at(1), false);
+    for (const auto& [s1, s2] : tfel::config::getTFELDefaultSubstitutions()) {
+      c.addSubstitution(s1, s2, false);
     }
-#endif /* TFEL_CHECK_SUBSTITUTIONS */
   }    // end of declareTFELSubstitutions
 
   static void declareTFELExecutables(ConfigurationManager& c) {

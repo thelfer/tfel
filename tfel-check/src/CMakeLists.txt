@@ -57,12 +57,6 @@ if(tfel-check-components)
     PRIVATE "TFEL_CHECK_COMPONENTS=\"${TFEL_CHECK_COMPONENTS_VALUE}\"")
 endif(tfel-check-components)
 
-# substitutions
-get_property(tfel-substitutions CACHE tfel-substitutions PROPERTY STRINGS)
-string(REPLACE ";" "@" TFEL_CHECK_SUBSTITUTIONS_VALUE "${tfel-substitutions}")
-target_compile_definitions(tfel-check
-  PRIVATE "TFEL_CHECK_SUBSTITUTIONS=\"${TFEL_CHECK_SUBSTITUTIONS_VALUE}\"")
-
 if(enable-python OR enable-python-bindings)
   target_compile_definitions(tfel-check
     PRIVATE TFEL_PYTHON_EXECUTABLE="${Python_EXECUTABLE}")

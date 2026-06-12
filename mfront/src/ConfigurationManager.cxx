@@ -13,8 +13,10 @@
 
 #include <fstream>
 #include <optional>
+#include "TFEL/Config/Substitutions.hxx"
 #include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
+#include "TFEL/Utilities/StringAlgorithms.hxx"
 #include "MFront/DSLUtilities.hxx"
 #include "MFront/SearchPathsHandler.hxx"
 #include "MFront/MFrontLogStream.hxx"
@@ -315,6 +317,9 @@ namespace mfront {
     auto t = tfel::utilities::CxxTokenizer{getConfigurationParsingOptions()};
     t.parseString('{' + std::string{std::istreambuf_iterator<char>{ifs}, {}} +
                   '}');
+    // applying substitutions
+    const auto substitutions = tfel::config::getTFELDefaultSubstitutions();
+    t.substitute(substitutions);
     auto b = t.begin();
     return read<tfel::utilities::DataMap>(b, t.end());
   }  // end ofreadConfigurationFile

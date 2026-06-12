@@ -1382,6 +1382,15 @@ namespace tfel::utilities {
     return this->tokens.size();
   }  // end of CxxTokenizer::size
 
+  void CxxTokenizer::substitute(
+      const std::map<std::string, std::string> &substitutions) {
+    for (auto &token : this->tokens) {
+      for (const auto &[s1, s2] : substitutions) {
+        token.value = tfel::utilities::replace_all(token.value, s1, s2);
+      }
+    }
+  }  // end of substitute
+
   CxxTokenizer::~CxxTokenizer() = default;
 
 }  // end of namespace tfel::utilities
