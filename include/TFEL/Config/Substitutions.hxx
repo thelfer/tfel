@@ -1,6 +1,6 @@
 /*!
  * \file   include/TFEL/Config/Substitutions.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   12/06/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
@@ -20,9 +20,15 @@
 
 namespace tfel::config {
 
-  TFELCONFIG_VISIBILITY_EXPORT [[nodiscard]] std::map<std::string, std::string>
+  /*!
+   * \brief return the default TFEL's substitutions
+   *
+   * Those substitutions are used by `MFront` when reading configuration files
+   * and by `tfel-check` when analysing `.check` files.
+   */
+  TFELCONFIG_VISIBILITY_EXPORT std::map<std::string, std::string>
   getTFELDefaultSubstitutions();
 
-} // end of namespace tfel::config
+}  // end of namespace tfel::config
 
 #endif /* LIB_TFEL_CONFIG_SUBSTITUTIONS_HXX */
