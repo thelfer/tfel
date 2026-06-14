@@ -115,7 +115,7 @@ namespace tfel::check {
     for (const auto& [s1, s2] : tfel::config::getTFELDefaultSubstitutions()) {
       c.addSubstitution(s1, s2, false);
     }
-  }    // end of declareTFELSubstitutions
+  }  // end of declareTFELSubstitutions
 
   static void declareTFELExecutables(ConfigurationManager& c) {
     for (const std::string e : {"mfront", "mtest", "mfront-doc",

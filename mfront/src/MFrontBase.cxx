@@ -236,7 +236,7 @@ namespace mfront {
       this->substitutions.insert({"@" + kv.at(0) + "@", kv.at(1)});
     }
 #endif /* MFRONT_DEFAULT_SUBSTITUTIONS */
-  }  // end of MFrontBase
+  }    // end of MFrontBase
 
   void MFrontBase::finalizeArgumentsParsing() {
     auto check = [](const std::string& s, const char* const t) {

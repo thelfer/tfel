@@ -226,7 +226,7 @@ namespace mfront::generic_parallel::material_property {
   bool SYCLBackend::handlesDataTransfer() const {
     //    return false;
     return this->data_location == "host";
-  }                // end of handlesDataTransfer
+  }  // end of handlesDataTransfer
 
   void SYCLBackend::writeDataTransfersToDevice(
       std::ostream& os,
@@ -240,7 +240,8 @@ namespace mfront::generic_parallel::material_property {
     os << "auto mfront_sycl_copy_events = std::vector<::sycl::event>{};\n";
     if (mpd.inputs.empty()) {
       os << "mfront_sycl_copy_events.reserve(1);\n";
-      os << "const " << types.real_type << " * const * mfront_args = nullptr;\n";
+      os << "const " << types.real_type
+         << " * const * mfront_args = nullptr;\n";
     } else {
       os << "mfront_sycl_copy_events.reserve(" << mpd.inputs.size() + 1
          << ");\n"
