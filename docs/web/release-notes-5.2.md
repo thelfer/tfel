@@ -52,6 +52,17 @@ int values[8] = {1, 10, 2, 20, 3, 30, 4, 40};
 auto s1 = map_strided<stensor<2u, int>>(values, 2);
 ~~~~
 
+# New `TFEL/Material` features
+
+## Homogenization
+
+The following methods of the ParticulateMicrostructure objects are able
+to modify the microstructure:
+ 
+ - `changeElasticityOfMatrixPhase`
+ - `changeElasticityOfInclusionPhase`
+ - `changeFractionOfInclusionPhase`
+
 # New features in `tfel-check`
 
 ## Parallelization
