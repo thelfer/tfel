@@ -143,7 +143,6 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
   }
   
   
-  private:
   template <typename real, typename stress, typename length>
   void user_defined_distribution() {
     static constexpr auto eps = std::numeric_limits<real>::epsilon();

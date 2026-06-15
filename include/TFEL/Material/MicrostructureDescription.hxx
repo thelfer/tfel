@@ -125,8 +125,8 @@ namespace tfel::material {
       void changeElasticityOfPhase(const tfel::math::st2tost2<N, StressType> &C) { this->stiffness = C; this->isotropic = false;}
       void changeElasticityOfPhase(const IsotropicModuli<StressType> &IM) { this->stiffness = computeIsotropicStiffnessTensor<StressType>(IM); this->isotropic = true;}
       
-      bool is_isotropic() { return this->isotropic; }
-      bool isIsotropic() { return this->isotropic; }
+      bool is_isotropic() const { return this->isotropic; }
+      bool isIsotropic() const { return this->isotropic; }
 
      private:
       tfel::math::st2tost2<N, StressType> stiffness;
@@ -572,8 +572,8 @@ namespace tfel::material {
         return (this->matrix_phase.getElasticityOfPhase());
       }
       
-      bool is_isotropic_matrix() { return (this->matrix_phase.isIsotropic()); }
-      bool isIsotropicMatrix() { return (this->matrix_phase.isIsotropic()); }
+      bool is_isotropic_matrix() const { return (this->matrix_phase.isIsotropic()); }
+      bool isIsotropicMatrix() const { return (this->matrix_phase.isIsotropic()); }
       
       real get_matrix_fraction() { return (this->matrix_phase.fraction); }
       real getMatrixFraction() { return (this->matrix_phase.fraction); }
