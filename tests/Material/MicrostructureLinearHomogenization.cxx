@@ -165,7 +165,6 @@ struct MicrostructureLinearHomogenizationTest final
                       1e-3);
   }
   
-  private:
   template <typename real, typename stress, typename length>
   void user_defined_distribution() {
   

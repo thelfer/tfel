@@ -301,7 +301,7 @@ namespace tfel::material {
           : InclusionDistribution<3u, StressType>(ell, frac, IM),
             n(n_),
             index(ind) {
-        if ((ind != 0) and (ind != 1) and (ind != 2)) {
+        if ((ind != 0) && (ind != 1) && (ind != 2)) {
           tfel::reportContractViolation(
               "The index can only be 0, 1 or 2 and is the axis of the "
               "ellipsoid which does not rotate");
@@ -316,7 +316,7 @@ namespace tfel::material {
           : InclusionDistribution<3u, StressType>(sphero, frac, IM),
             n(n_),
             index(ind) {
-        if ((ind != 0) and (ind != 1) and (ind != 2)) {
+        if ((ind != 0) && (ind != 1) && (ind != 2)) {
           tfel::reportContractViolation(
               "The index can only be 0, 1 or 2 and is the axis of the "
               "ellipsoid which does not rotate");
@@ -340,14 +340,17 @@ namespace tfel::material {
           bi = semiL[1];
           ci = semiL[2];
         }
-        if (ind == 1) {
+        else if (ind == 1) {
           bi = semiL[0];
           ci = semiL[2];
         }
-        if (ind == 2) {
+        else if (ind == 2) {
           bi = semiL[0];
           ci = semiL[1];
         }
+        else {
+        tfel::reportContractViolation(
+            "Bad index of ellipsoid semi-length. The index must be 0,1 or 2.");}
         return EllipsoidMeanLocalisator<3u, StressType>::TransverseIsotropic(
             IM0, KGi, this->n, ai, bi, ci);
       }

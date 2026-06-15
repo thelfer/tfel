@@ -595,7 +595,7 @@ In fact, the distribution has three attributes:
 ~~~~{.py}
 print(ell_dist.inclusion)
 print(ell_dist.fraction)
-print(ell_dist.stiffness)
+print(ell_dist.getElasticityOfPhase())
 ~~~~
 
 like the other types of distributions of inclusions (`SphereDistribution`,

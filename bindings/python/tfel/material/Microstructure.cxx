@@ -415,6 +415,8 @@ requires(
                                                                     const char
                                                                         *const
                                                                             n) {
+  using ID = tfel::material::homogenization::elasticity::InclusionDistribution<
+      N, StressType>;
   using PM =
       tfel::material::homogenization::elasticity::ParticulateMicrostructure<
           N, StressType>;
@@ -450,8 +452,16 @@ requires(
       .def("getMatrixElasticity", &PM::getMatrixElasticity)
       .def("is_isotropic_matrix", &PM::isIsotropicMatrix)
       .def("isIsotropicMatrix", &PM::isIsotropicMatrix)
-      .def("get_inclusionPhase", &PM::getInclusionPhase)
-      .def("getInclusionPhase", &PM::getInclusionPhase);
+      .def("get_inclusionPhase",
+     [](PM& pm, unsigned int i) {
+         return std::shared_ptr<ID>(
+             pm.getInclusionPhase(i).release());
+     })
+      .def("getInclusionPhase",
+     [](PM& pm, unsigned int i) {
+         return std::shared_ptr<ID>(
+             pm.getInclusionPhase(i).release());
+     });
 }
 
 void declareMicrostructure(pybind11::module_ &);

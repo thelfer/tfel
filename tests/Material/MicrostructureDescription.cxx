@@ -98,9 +98,8 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
 
     unsigned short int index = 0;
     TransverseIsotropicDistribution<stress> distrib3(spheroid1, real(0.5), Enui,
-                                                     n_b, index);
+                                                     n_b, index);                                               
     OrientedDistribution<stress> distrib4(ellipsoid1, real(0.5), C_i, n_b, n_a);
-
     const auto A_Or_1 = distrib3.computeMeanLocalisator(KG0);
     const auto A_Or_2 = distrib4.computeMeanLocalisator(KG0);
 
@@ -111,7 +110,6 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
                                                      Enui, n_a, index2);
     TransverseIsotropicDistribution<stress> distrib6(spheroid1, real(0.5), Enui,
                                                      n_a, index2);
-
     const auto A_TI_1 = distrib5.computeMeanLocalisator(KG0);
     const auto A_TI_2 = distrib6.computeMeanLocalisator(KG0);
 
