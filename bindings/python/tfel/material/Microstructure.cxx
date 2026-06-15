@@ -455,12 +455,12 @@ requires(
       .def("get_inclusionPhase",
      [](PM& pm, unsigned int i) {
          return std::shared_ptr<ID>(
-             pm.getInclusionPhase(i).release());
+             pm.getInclusionPhase(i));
      })
       .def("getInclusionPhase",
      [](PM& pm, unsigned int i) {
-         return std::shared_ptr<ID>(
-             pm.getInclusionPhase(i).release());
+            return std::shared_ptr<ID>(
+             pm.getInclusionPhase(i));
      });
 }
 
