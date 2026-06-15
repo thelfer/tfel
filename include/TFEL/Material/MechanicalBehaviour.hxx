@@ -133,7 +133,7 @@ namespace tfel::material {
       CONSISTENTTANGENTOPERATOR,
       NOSTIFFNESSREQUESTED
     };  // end of enum SMType
-  };    // end of struct MechanicalBehaviourBase
+  };  // end of struct MechanicalBehaviourBase
 
   /*!
    * a trait class describing which tangent operators can be
@@ -146,7 +146,7 @@ namespace tfel::material {
      * operator. Finite strain beaviours are a noticeable exception.
      */
     enum SMFlag { STANDARDTANGENTOPERATOR };  // end of enum Flag
-  };                                          // end of struct
+  };  // end of struct
 
   /*!
    * a trait class describing which tangent operators can be

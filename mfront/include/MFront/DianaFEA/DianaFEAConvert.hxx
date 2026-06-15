@@ -63,7 +63,7 @@ namespace dianafea {
                            const DianaFEAReal* const v) {
       tfel::math::tensor<N, T>::buildFromFortranMatrix(F, v);
     }  // end of exe
-  };   // end of struct ImportGradients
+  };  // end of struct ImportGradients
 
   /*!
    * \brief class defining the convertion from dianafea to mfront for
@@ -85,7 +85,7 @@ namespace dianafea {
                            const DianaFEAReal* const v) {
       ImportSymmetricTensor<N>::importStress(s, v);
     }  // end of exe
-  };   // end of struct ImportThermodynamicForces
+  };  // end of struct ImportThermodynamicForces
 
   /*!
    * \brief class defining the convertion from mfront to dianafea for
@@ -107,7 +107,7 @@ namespace dianafea {
                            const tfel::math::stensor<N, T>& s) {
       ExportSymmetricTensor<N>::exe(v, s);
     }  // end of exe
-  };   // end of struct ExportThermodynamicForces
+  };  // end of struct ExportThermodynamicForces
 
   /*!
    * \brief partial specialisation of the ImportSymmetricTensor in 1D.
@@ -299,7 +299,7 @@ namespace dianafea {
                            const DianaFEAReal* const v) {
       tfel::math::tensor<2u, T>::buildFromFortranMatrix(F, v);
     }  // end of exe
-  };   // end of struct ImportGradients
+  };  // end of struct ImportGradients
 
   /*!
    * \brief class defining the convertion from dianafea to mfront for
@@ -324,7 +324,7 @@ namespace dianafea {
       s[2] = 0;
       s[3] = v[2] * cste;
     }  // end of exe
-  };   // end of struct ImportThermodynamicForces
+  };  // end of struct ImportThermodynamicForces
 
   /*!
    * \brief class defining the convertion from mfront to dianafea for
@@ -348,7 +348,7 @@ namespace dianafea {
       v[1] = s[1];
       v[2] = s[3] * icste;
     }  // end of exe
-  };   // end of struct ExportThermodynamicForces
+  };  // end of struct ExportThermodynamicForces
 
 }  // end of namespace dianafea
 

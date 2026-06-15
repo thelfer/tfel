@@ -45,9 +45,9 @@ namespace mfront {
      * \param[in] f    : mfront file
      */
     ModelQuery(const int,
-               const char *const *const,
+               const char* const* const,
                std::shared_ptr<ModelDSL>,
-               const std::string &);
+               const std::string&);
     //! \brief return the number of queries to be treated
     std::size_t getNumberOfQueriesToBeTreated();
     //! \brief treat the requests
@@ -63,7 +63,7 @@ namespace mfront {
    private:
     //! \brief a simple alias
     using query =
-        std::function<void(const FileDescription &, const ModelDescription &)>;
+        std::function<void(const FileDescription&, const ModelDescription&)>;
     //
     void treatGeneratedSources() override final;
     void treatSpecificTargetGeneratedSources() override final;

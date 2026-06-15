@@ -31,9 +31,9 @@ namespace cyrano {
    * This allows behaviours written for the generalised plane stress
    * hypothesis to be used in plane stress computations.
    */
-  template <
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct CyranoGenericPlaneStressHandler : public CyranoInterfaceExceptions {
     /*!
      * Main entry point This mainly choose between a specific
@@ -41,21 +41,21 @@ namespace cyrano {
      * behaviour (isotropic or not).
      */
     TFEL_CYRANO_INLINE2 static void exe(
-        const CyranoInt *const NTENS,
-        const CyranoReal *const DTIME,
-        const CyranoReal *const DROT,
-        CyranoReal *const DDSOE,
-        const CyranoReal *const STRAN,
-        const CyranoReal *const DSTRAN,
-        const CyranoReal *const TEMP,
-        const CyranoReal *const DTEMP,
-        const CyranoReal *const PROPS,
-        const CyranoInt *const NPROPS,
-        const CyranoReal *const PREDEF,
-        const CyranoReal *const DPRED,
-        CyranoReal *const STATEV,
-        const CyranoInt *const NSTATV,
-        CyranoReal *const STRESS,
+        const CyranoInt* const NTENS,
+        const CyranoReal* const DTIME,
+        const CyranoReal* const DROT,
+        CyranoReal* const DDSOE,
+        const CyranoReal* const STRAN,
+        const CyranoReal* const DSTRAN,
+        const CyranoReal* const TEMP,
+        const CyranoReal* const DTEMP,
+        const CyranoReal* const PROPS,
+        const CyranoInt* const NPROPS,
+        const CyranoReal* const PREDEF,
+        const CyranoReal* const DPRED,
+        CyranoReal* const STATEV,
+        const CyranoInt* const NSTATV,
+        CyranoReal* const STRESS,
         const tfel::material::OutOfBoundsPolicy op) {
       using namespace tfel::meta;
       using namespace tfel::material;
@@ -95,20 +95,20 @@ namespace cyrano {
         const CyranoReal c1,
         const CyranoReal c2,
         const CyranoReal c3,
-        const CyranoReal *const DTIME,
-        const CyranoReal *const DROT,
-        CyranoReal *const DDSOE,
-        const CyranoReal *const STRAN,
-        const CyranoReal *const DSTRAN,
-        const CyranoReal *const TEMP,
-        const CyranoReal *const DTEMP,
-        const CyranoReal *const PROPS,
-        const CyranoInt *const NPROPS,
-        const CyranoReal *const PREDEF,
-        const CyranoReal *const DPRED,
-        CyranoReal *const STATEV,
-        const CyranoInt *const NSTATV,
-        CyranoReal *const STRESS,
+        const CyranoReal* const DTIME,
+        const CyranoReal* const DROT,
+        CyranoReal* const DDSOE,
+        const CyranoReal* const STRAN,
+        const CyranoReal* const DSTRAN,
+        const CyranoReal* const TEMP,
+        const CyranoReal* const DTEMP,
+        const CyranoReal* const PROPS,
+        const CyranoInt* const NPROPS,
+        const CyranoReal* const PREDEF,
+        const CyranoReal* const DPRED,
+        CyranoReal* const STATEV,
+        const CyranoInt* const NSTATV,
+        CyranoReal* const STRESS,
         const tfel::material::OutOfBoundsPolicy op) {
       using namespace std;
       using namespace tfel::meta;
@@ -174,33 +174,33 @@ namespace cyrano {
     }  // end of exe
 
     template <unsigned short N, typename T>
-    static void resize(tfel::math::tvector<N, T> &, const unsigned short) {}
+    static void resize(tfel::math::tvector<N, T>&, const unsigned short) {}
 
     template <typename T>
-    static void resize(tfel::math::vector<T> &v, const unsigned short n) {
+    static void resize(tfel::math::vector<T>& v, const unsigned short n) {
       v.resize(n);
     }
 
     template <typename GeneralisedPlaneStrainBehaviour>
     TFEL_CYRANO_INLINE2 static void iter(
-        const CyranoReal *const DTIME,
-        const CyranoReal *const DROT,
-        CyranoReal *const DDSOE,
-        const CyranoReal *const TEMP,
-        const CyranoReal *const DTEMP,
-        const CyranoReal *const PROPS,
-        const CyranoInt *const NPROPS,
-        const CyranoReal *const PREDEF,
-        const CyranoReal *const DPRED,
-        const CyranoReal *const STATEV,
-        const CyranoReal *const STRESS,
-        const CyranoReal *const STRAN,
-        const CyranoReal *const DSTRAN,
+        const CyranoReal* const DTIME,
+        const CyranoReal* const DROT,
+        CyranoReal* const DDSOE,
+        const CyranoReal* const TEMP,
+        const CyranoReal* const DTEMP,
+        const CyranoReal* const PROPS,
+        const CyranoInt* const NPROPS,
+        const CyranoReal* const PREDEF,
+        const CyranoReal* const DPRED,
+        const CyranoReal* const STATEV,
+        const CyranoReal* const STRESS,
+        const CyranoReal* const STRAN,
+        const CyranoReal* const DSTRAN,
         const CyranoReal dez,
-        CyranoReal *const v,
-        CyranoReal *const s,
-        CyranoReal *const eto,
-        CyranoReal *const deto,
+        CyranoReal* const v,
+        CyranoReal* const s,
+        CyranoReal* const eto,
+        CyranoReal* const deto,
         const tfel::material::OutOfBoundsPolicy op) {
       using namespace tfel::material;
       using tfel::fsalgo::copy;
@@ -225,20 +225,20 @@ namespace cyrano {
 
     struct TreatPlaneStressIsotropicBehaviour {
       TFEL_CYRANO_INLINE2 static void exe(
-          const CyranoReal *const DTIME,
-          const CyranoReal *const DROT,
-          CyranoReal *const DDSOE,
-          const CyranoReal *const STRAN,
-          const CyranoReal *const DSTRAN,
-          const CyranoReal *const TEMP,
-          const CyranoReal *const DTEMP,
-          const CyranoReal *const PROPS,
-          const CyranoInt *const NPROPS,
-          const CyranoReal *const PREDEF,
-          const CyranoReal *const DPRED,
-          CyranoReal *const STATEV,
-          const CyranoInt *const NSTATV,
-          CyranoReal *const STRESS,
+          const CyranoReal* const DTIME,
+          const CyranoReal* const DROT,
+          CyranoReal* const DDSOE,
+          const CyranoReal* const STRAN,
+          const CyranoReal* const DSTRAN,
+          const CyranoReal* const TEMP,
+          const CyranoReal* const DTEMP,
+          const CyranoReal* const PROPS,
+          const CyranoInt* const NPROPS,
+          const CyranoReal* const PREDEF,
+          const CyranoReal* const DPRED,
+          CyranoReal* const STATEV,
+          const CyranoInt* const NSTATV,
+          CyranoReal* const STRESS,
           const tfel::material::OutOfBoundsPolicy op) {
         using namespace tfel::material;
         const ModellingHypothesis::Hypothesis H =
@@ -254,24 +254,24 @@ namespace cyrano {
             c1, c1, c3, DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
             NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, op);
       }  // end of exe
-    };   // end of struct TreatPlanStressIsotropicBehaviour
+    };  // end of struct TreatPlanStressIsotropicBehaviour
 
     struct TreatPlaneStressOrthotropicBehaviour {
       TFEL_CYRANO_INLINE2 static void exe(
-          const CyranoReal *const DTIME,
-          const CyranoReal *const DROT,
-          CyranoReal *const DDSOE,
-          const CyranoReal *const STRAN,
-          const CyranoReal *const DSTRAN,
-          const CyranoReal *const TEMP,
-          const CyranoReal *const DTEMP,
-          const CyranoReal *const PROPS,
-          const CyranoInt *const NPROPS,
-          const CyranoReal *const PREDEF,
-          const CyranoReal *const DPRED,
-          CyranoReal *const STATEV,
-          const CyranoInt *const NSTATV,
-          CyranoReal *const STRESS,
+          const CyranoReal* const DTIME,
+          const CyranoReal* const DROT,
+          CyranoReal* const DDSOE,
+          const CyranoReal* const STRAN,
+          const CyranoReal* const DSTRAN,
+          const CyranoReal* const TEMP,
+          const CyranoReal* const DTEMP,
+          const CyranoReal* const PROPS,
+          const CyranoInt* const NPROPS,
+          const CyranoReal* const PREDEF,
+          const CyranoReal* const DPRED,
+          CyranoReal* const STATEV,
+          const CyranoInt* const NSTATV,
+          CyranoReal* const STRESS,
           const tfel::material::OutOfBoundsPolicy op) {
         using namespace tfel::meta;
         using namespace tfel::material;
@@ -330,7 +330,7 @@ namespace cyrano {
             c1, c2, S22, DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, nPROPS,
             NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, op);
       }  // end of exe
-    };   // end of struct TreatPlanStressOrthotropicBehaviour
+    };  // end of struct TreatPlanStressOrthotropicBehaviour
 
   };  // end of struct CyranoGenericPlaneStressHandlerTreatPlaneStrain
 

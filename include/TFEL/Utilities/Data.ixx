@@ -29,7 +29,7 @@ namespace tfel::utilities::internals {
     static bool is_convertible(const tfel::utilities::Data& d) {
       return d.template is<T>();
     }  // end of exe
-  };   // end of DataConvertorImpl<T,true>;
+  };  // end of DataConvertorImpl<T,true>;
 
   /*!
    * \brief an helper class (in C++-11, no `if constexpr`, so we
@@ -131,9 +131,9 @@ namespace tfel::utilities::internals {
 namespace tfel::utilities {
 
   template <typename T1>
-  DataMapValidator&
-  DataMapValidator::addDataTypeValidator(const std::string& k) requires(
-      tfel::meta::TLCountNbrOfT<std::decay_t<T1>, DataTypes>::value == 1) {
+  DataMapValidator& DataMapValidator::addDataTypeValidator(const std::string& k)
+    requires(tfel::meta::TLCountNbrOfT<std::decay_t<T1>, DataTypes>::value == 1)
+  {
     return this->addDataValidator(k, [](const Data& d) {
       if (!d.template is<T1>()) {
         tfel::raise("invalid type");

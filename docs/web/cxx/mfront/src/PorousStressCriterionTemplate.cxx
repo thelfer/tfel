@@ -55,7 +55,7 @@ namespace mfront {
 
     std::string
     __StressCriterionName__StressCriterion::updatePorosityUpperBound(
-        const BehaviourDescription &, const std::string &, const Role r) const {
+        const BehaviourDescription&, const std::string&, const Role r) const {
       if (!((r == STRESSCRITERION) || (r == STRESSANDFLOWCRITERION))) {
         tfel::raise(
             "StressCriterionBase::updatePorosityUpperBound: invalid call for "
@@ -74,12 +74,12 @@ namespace mfront {
 
     struct __StressCriterionName__StressCriterionProxy {
       __StressCriterionName__StressCriterionProxy() {
-        auto &f = StressCriterionFactory::getFactory();
+        auto& f = StressCriterionFactory::getFactory();
         f.addGenerator("__StressCriterionName__", [] {
           return std::make_shared<__StressCriterionName__StressCriterion>();
         });
       }  // end of __StressCriterionName__StressCriterionProxy
-    };   // end of struct __StressCriterionName__StressCriterionProxy
+    };  // end of struct __StressCriterionName__StressCriterionProxy
 
     static __StressCriterionName__StressCriterionProxy proxy;
 

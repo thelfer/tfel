@@ -17,18 +17,15 @@
 #include "TFEL/Material/MicrostructureLinearHomogenization.hxx"
 
 template <unsigned short int N, tfel::math::ScalarConcept StressType>
-requires(
-    tfel::math::checkUnitCompatibility<
-        tfel::math::unit::Stress,
-        StressType>()) static void declareHomogenizationScheme(pybind11::module_
-                                                                   &m,
-                                                               const char
-                                                                   *const n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+static void declareHomogenizationScheme(pybind11::module_& m,
+                                        const char* const n) {
   using HS = tfel::material::homogenization::elasticity::HomogenizationScheme<
       N, StressType>;
 
   pybind11::class_<HS>(m, n, pybind11::buffer_protocol())
-      .def(pybind11::init<const HS &>())
+      .def(pybind11::init<const HS&>())
       .def_readonly("homogenized_stiffness", &HS::homogenized_stiffness)
       .def_readonly("effective_polarisation", &HS::effective_polarisation)
       .def_readonly("mean_strain_localisation_tensors",
@@ -36,54 +33,51 @@ requires(
 }
 
 template <unsigned short int N, tfel::math::ScalarConcept StressType>
-requires(
-    tfel::math::checkUnitCompatibility<tfel::math::unit::Stress, StressType>())
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+tfel::material::homogenization::elasticity::HomogenizationScheme<N, StressType>
+computeDiluteScheme(
     tfel::material::homogenization::elasticity::
-        HomogenizationScheme<N, StressType> computeDiluteScheme(
-            tfel::material::homogenization::elasticity::
-                ParticulateMicrostructure<N, StressType> &micro,
-            int max_iter_anisotropic_integration,
-            const std::vector<tfel::math::stensor<N, StressType>>
-                &polarisations) {
+        ParticulateMicrostructure<N, StressType>& micro,
+    int max_iter_anisotropic_integration,
+    const std::vector<tfel::math::stensor<N, StressType>>& polarisations) {
   return tfel::material::homogenization::elasticity::computeDilute<N,
                                                                    StressType>(
       micro, polarisations, max_iter_anisotropic_integration);
 }
 
 template <unsigned short int N, tfel::math::ScalarConcept StressType>
-requires(
-    tfel::math::checkUnitCompatibility<tfel::math::unit::Stress, StressType>())
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+tfel::material::homogenization::elasticity::HomogenizationScheme<N, StressType>
+computeMoriTanakaScheme(
     tfel::material::homogenization::elasticity::
-        HomogenizationScheme<N, StressType> computeMoriTanakaScheme(
-            tfel::material::homogenization::elasticity::
-                ParticulateMicrostructure<N, StressType> &micro,
-            int max_iter_anisotropic_integration,
-            const std::vector<tfel::math::stensor<N, StressType>>
-                &polarisations) {
+        ParticulateMicrostructure<N, StressType>& micro,
+    int max_iter_anisotropic_integration,
+    const std::vector<tfel::math::stensor<N, StressType>>& polarisations) {
   return tfel::material::homogenization::elasticity::computeMoriTanaka<
       N, StressType>(micro, polarisations, max_iter_anisotropic_integration);
 }
 
 template <unsigned short int N, tfel::math::ScalarConcept StressType>
-requires(
-    tfel::math::checkUnitCompatibility<tfel::math::unit::Stress, StressType>())
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+tfel::material::homogenization::elasticity::HomogenizationScheme<N, StressType>
+computeSelfConsistentScheme(
     tfel::material::homogenization::elasticity::
-        HomogenizationScheme<N, StressType> computeSelfConsistentScheme(
-            tfel::material::homogenization::elasticity::
-                ParticulateMicrostructure<N, StressType> &micro,
-            const tfel::types::real<StressType> &tolerance,
-            bool isotropic,
-            int max_iter_anisotropic_integration,
-            const std::vector<tfel::math::stensor<N, StressType>>
-                &polarisations) {
+        ParticulateMicrostructure<N, StressType>& micro,
+    const tfel::types::real<StressType>& tolerance,
+    bool isotropic,
+    int max_iter_anisotropic_integration,
+    const std::vector<tfel::math::stensor<N, StressType>>& polarisations) {
   return tfel::material::homogenization::elasticity::computeSelfConsistent<
       N, StressType>(micro, polarisations, tolerance, isotropic,
                      max_iter_anisotropic_integration);
 }
 
-void declareMicrostructureLinearHomogenization(pybind11::module_ &);
+void declareMicrostructureLinearHomogenization(pybind11::module_&);
 
-void declareMicrostructureLinearHomogenization(pybind11::module_ &m) {
+void declareMicrostructureLinearHomogenization(pybind11::module_& m) {
   using namespace tfel::material::homogenization::elasticity;
   const auto pola = std::vector<tfel::math::stensor<3u, double>>{};
   declareHomogenizationScheme<3u, double>(m, "HomogenizationScheme");

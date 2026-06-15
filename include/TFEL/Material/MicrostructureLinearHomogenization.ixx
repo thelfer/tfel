@@ -21,12 +21,11 @@ namespace tfel::material::homogenization::elasticity {
 
   namespace internals {
     template <unsigned short int N, tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-        std::vector<tfel::math::stensor<N, StressType>> initialize_polarisation(
-            const std::vector<tfel::math::stensor<N, StressType>>
-                &polarisations,
-            const std::size_t np) {
+      requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                  StressType>())
+    std::vector<tfel::math::stensor<N, StressType>> initialize_polarisation(
+        const std::vector<tfel::math::stensor<N, StressType>>& polarisations,
+        const std::size_t np) {
       std::vector<tfel::math::stensor<N, StressType>> polarisations_;
       if (polarisations.size() == 0) {
         const auto zero = tfel::math::stensor<N, StressType>::zero();
@@ -45,13 +44,12 @@ namespace tfel::material::homogenization::elasticity {
   }  // namespace internals
 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-      HomogenizationScheme<N, StressType> computeDilute(
-          ParticulateMicrostructure<N, StressType> &micro,
-          int max_iter_anisotropic_integration,
-          const std::vector<tfel::math::stensor<N, StressType>>
-              &polarisations) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  HomogenizationScheme<N, StressType> computeDilute(
+      ParticulateMicrostructure<N, StressType>& micro,
+      int max_iter_anisotropic_integration,
+      const std::vector<tfel::math::stensor<N, StressType>>& polarisations) {
     using real = tfel::types::real<StressType>;
     const auto np = micro.getNumberOfPhases();
     const auto polarisations_ =
@@ -63,7 +61,7 @@ namespace tfel::material::homogenization::elasticity {
       KG0 = computeKGModuli<StressType>(C0);
     }
     const auto tau0 = polarisations_[0];
-    
+
     auto Chom = C0;
     auto tau_eff = tau0;
 
@@ -86,19 +84,21 @@ namespace tfel::material::homogenization::elasticity {
       tau_eff += fi * tfel::math::transpose(Ai) * (taui - tau0);
       localisators.push_back(Ai);
     }
-    HomogenizationScheme<N, StressType> h_s={.homogenized_stiffness = Chom,.effective_polarisation = tau_eff,.mean_strain_localisation_tensors = localisators};
+    HomogenizationScheme<N, StressType> h_s = {
+        .homogenized_stiffness = Chom,
+        .effective_polarisation = tau_eff,
+        .mean_strain_localisation_tensors = localisators};
 
     return h_s;
   };
 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-      HomogenizationScheme<N, StressType> computeMoriTanaka(
-          ParticulateMicrostructure<N, StressType> &micro,
-          int max_iter_anisotropic_integration,
-          const std::vector<tfel::math::stensor<N, StressType>>
-              &polarisations) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  HomogenizationScheme<N, StressType> computeMoriTanaka(
+      ParticulateMicrostructure<N, StressType>& micro,
+      int max_iter_anisotropic_integration,
+      const std::vector<tfel::math::stensor<N, StressType>>& polarisations) {
     using real = tfel::types::real<StressType>;
 
     const auto np = micro.getNumberOfPhases();
@@ -141,40 +141,42 @@ namespace tfel::material::homogenization::elasticity {
       Chom += fi * (Ci - C0) * Ai;
       tau_eff += fi * transpose(Ai) * (taui - tau0);
     }
-    HomogenizationScheme<N, StressType> h_s={.homogenized_stiffness = Chom,.effective_polarisation = tau_eff,.mean_strain_localisation_tensors = localisators};
+    HomogenizationScheme<N, StressType> h_s = {
+        .homogenized_stiffness = Chom,
+        .effective_polarisation = tau_eff,
+        .mean_strain_localisation_tensors = localisators};
 
     return h_s;
   };
 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-      HomogenizationScheme<N, StressType> computeSelfConsistent(
-          ParticulateMicrostructure<N, StressType> &micro,
-          const tfel::types::real<StressType> &tolerance,
-          bool isotropic,
-          int max_iter_anisotropic_integration,
-          const std::vector<tfel::math::stensor<N, StressType>>
-              &polarisations) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  HomogenizationScheme<N, StressType> computeSelfConsistent(
+      ParticulateMicrostructure<N, StressType>& micro,
+      const tfel::types::real<StressType>& tolerance,
+      bool isotropic,
+      int max_iter_anisotropic_integration,
+      const std::vector<tfel::math::stensor<N, StressType>>& polarisations) {
     using real = tfel::types::real<StressType>;
     const auto np = micro.getNumberOfPhases();
     const auto f0 = micro.getMatrixFraction();
     const auto C0 = micro.getMatrixElasticity();
-    
+
     const auto polarisations_ =
         internals::initialize_polarisation<N, StressType>(polarisations, np);
     auto tau_eff = tfel::math::stensor<N, StressType>::zero();
-    std::vector<tfel::math::st2tost2<N, real>> localisators = {}; 
+    std::vector<tfel::math::st2tost2<N, real>> localisators = {};
     auto Chom = C0;
     auto Chom_ = C0;
     real rel_err = tolerance + 1;
-    
+
     while (rel_err > tolerance) {
       std::vector<tfel::math::st2tost2<N, real>> localisators_try = {};
       tfel::math::st2tost2<N, real> A0 =
           f0 * tfel::math::st2tost2<N, real>::Id();
       for (std::size_t i = 0; i < np - 1; i++) {
-        auto phasei=micro.getInclusionPhase(i);
+        auto phasei = micro.getInclusionPhase(i);
         auto fi = (*phasei).fraction;
         tfel::math::st2tost2<N, real> Ai;
         if (isotropic) {
@@ -222,7 +224,10 @@ namespace tfel::material::homogenization::elasticity {
       auto Ai = localisators[i + 1];
       tau_eff += fi * transpose(Ai) * taui;
     }
-    HomogenizationScheme<N, StressType> h_s={.homogenized_stiffness = Chom,.effective_polarisation = tau_eff,.mean_strain_localisation_tensors = localisators};
+    HomogenizationScheme<N, StressType> h_s = {
+        .homogenized_stiffness = Chom,
+        .effective_polarisation = tau_eff,
+        .mean_strain_localisation_tensors = localisators};
     return h_s;
   }
 

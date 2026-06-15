@@ -99,8 +99,9 @@ namespace tfel::math {
                                                       const T a2,
                                                       const T a1,
                                                       const T a0)  //
-        requires((tfel::typetraits::IsReal<T>::cond) &&
-                 (tfel::typetraits::IsFundamentalNumericType<T>::cond)) {
+      requires((tfel::typetraits::IsReal<T>::cond) &&
+               (tfel::typetraits::IsFundamentalNumericType<T>::cond))
+    {
       constexpr auto C_1_2 = T{1} / T{2};
       constexpr auto C_1_3 = T{1} / T{3};
       constexpr auto C_2_3 = T{2} * C_1_3;
@@ -218,8 +219,9 @@ namespace tfel::math {
                                                const T a1,
                                                const T a0,
                                                const bool b = false)  //
-        requires((tfel::typetraits::IsReal<T>::cond) &&
-                 (tfel::typetraits::IsFundamentalNumericType<T>::cond)) {
+      requires((tfel::typetraits::IsReal<T>::cond) &&
+               (tfel::typetraits::IsFundamentalNumericType<T>::cond))
+    {
       const auto nb = CubicRoots::find_roots(x1, x2, x3, a3, a2, a1, a0);
       if ((nb > 0) && (b)) {
         CubicRoots::improve(x1, a3, a2, a1, a0);

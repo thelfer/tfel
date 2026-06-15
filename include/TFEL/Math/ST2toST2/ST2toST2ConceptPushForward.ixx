@@ -24,10 +24,11 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr void push_forward(ST2toST2Type& Ct,
                                                const ST2toST2Type2& C,
                                                const TensorType& F) noexcept  //
-      requires(getSpaceDimension<ST2toST2Type>() ==
-                   getSpaceDimension<ST2toST2Type2>() &&
-               getSpaceDimension<ST2toST2Type>() ==
-                   getSpaceDimension<TensorType>()) {
+    requires(getSpaceDimension<ST2toST2Type>() ==
+                 getSpaceDimension<ST2toST2Type2>() &&
+             getSpaceDimension<ST2toST2Type>() ==
+                 getSpaceDimension<TensorType>())
+  {
     constexpr auto N = getSpaceDimension<ST2toST2Type>();
     if constexpr (N == 1) {
       const auto C0 = F[0] * F[0];

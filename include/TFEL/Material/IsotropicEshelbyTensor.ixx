@@ -40,11 +40,10 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of function computeDiskPlaneStrainEshelbyTensor
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<2u, types::compliance<StressType>> computeDiskPlaneStrainHillTensor(
-          const IsotropicModuli<StressType>& IM_0) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<2u, types::compliance<StressType>>
+  computeDiskPlaneStrainHillTensor(const IsotropicModuli<StressType>& IM_0) {
     using real = types::real<StressType>;
 
     const auto Enu0 = IM_0.ToYoungNu();
@@ -96,14 +95,14 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of function computePlaneStrainEshelbyTensor
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<2u, types::compliance<StressType>> computePlaneStrainHillTensor(
-          const IsotropicModuli<StressType>& IM_0,
-          const tfel::math::tvector<2u, types::real<StressType>>& n_a,
-          const types::length<StressType>& a,
-          const types::length<StressType>& b) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<2u, types::compliance<StressType>>
+  computePlaneStrainHillTensor(
+      const IsotropicModuli<StressType>& IM_0,
+      const tfel::math::tvector<2u, types::real<StressType>>& n_a,
+      const types::length<StressType>& a,
+      const types::length<StressType>& b) {
     using real = types::real<StressType>;
 
     const auto Enu0 = IM_0.ToYoungNu();
@@ -151,9 +150,9 @@ namespace tfel::material::homogenization::elasticity {
   template <typename real>
   TFEL_HOST_DEVICE tfel::math::st2tost2<3u, real> computeSphereEshelbyTensor(
       const real& nu) {
-    //if ((nu > real(0.5)) || (nu < real(-1))) {
-    //  tfel::reportContractViolation("nu>0.5 or nu<-1");
-    //}
+    // if ((nu > real(0.5)) || (nu < real(-1))) {
+    //   tfel::reportContractViolation("nu>0.5 or nu<-1");
+    // }
     const auto a = (1 + nu) / 3 / (1 - nu);
     const auto b = 2 * (4 - 5 * nu) / 15 / (1 - nu);
     using namespace tfel::math;
@@ -161,23 +160,18 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of function computeSphereEshelbyTensor
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-      TFEL_HOST_DEVICE tfel::math::st2tost2<
-          3u,
-          types::compliance<
-              StressType>> computeSphereHillPolarisationTensor(const StressType&
-                                                                   young,
-                                                               const types::real<
-                                                                   StressType>&
-                                                                   nu) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
+  computeSphereHillPolarisationTensor(const StressType& young,
+                                      const types::real<StressType>& nu) {
     using real = types::real<StressType>;
-    //if ((nu > real(0.5)) || (nu < real(-1))) {
-    //  tfel::reportContractViolation("nu>0.5 or nu<-1");
-    //}
-    //if (not(young > StressType{0})) {
-    //  tfel::reportContractViolation("E<=0");
-    //}
+    // if ((nu > real(0.5)) || (nu < real(-1))) {
+    //   tfel::reportContractViolation("nu>0.5 or nu<-1");
+    // }
+    // if (not(young > StressType{0})) {
+    //   tfel::reportContractViolation("E<=0");
+    // }
     const auto a = (1 + nu) * (1 - 2 * nu) / 3 / young / (1 - nu);
     const auto b = 2 * (4 - 5 * nu) * (1 + nu) / 15 / young / (1 - nu);
     using namespace tfel::math;
@@ -185,11 +179,10 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of function computeSphereHillPolarisationTensor
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::compliance<StressType>> computeSphereHillPolarisationTensor(
-          const IsotropicModuli<StressType>& IM0) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
+  computeSphereHillPolarisationTensor(const IsotropicModuli<StressType>& IM0) {
     const auto Enu0 = IM0.ToYoungNu();
     return computeSphereHillPolarisationTensor<StressType>(Enu0.young, Enu0.nu);
   }  // end of function computeSphereHillPolarisationTensor
@@ -200,9 +193,9 @@ namespace tfel::material::homogenization::elasticity {
       const real& nu,
       const real& e,
       const tfel::math::base_type<real> precision) {
-    //if ((nu > real(0.5)) || (nu < real(-1))) {
-    //  tfel::reportContractViolation("nu>0.5 or nu<-1");
-    //}
+    // if ((nu > real(0.5)) || (nu < real(-1))) {
+    //   tfel::reportContractViolation("nu>0.5 or nu<-1");
+    // }
     if (not(e > real(0))) {
       tfel::reportContractViolation("e<=0");
     }
@@ -258,15 +251,15 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of function computeAxisymmetricalEshelbyTensor
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::compliance<StressType>> computeAxisymmetricalHillPolarisationTensor(
-          const StressType& young,
-          const types::real<StressType>& nu,
-          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-          const types::real<StressType>& e,
-          const tfel::math::base_type<StressType> precision) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
+  computeAxisymmetricalHillPolarisationTensor(
+      const StressType& young,
+      const types::real<StressType>& nu,
+      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+      const types::real<StressType>& e,
+      const tfel::math::base_type<StressType> precision) {
     using real = types::real<StressType>;
     if (not(young > StressType{0})) {
       tfel::reportContractViolation("E<=0");
@@ -311,14 +304,14 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of function computeAxisymmetricalHillPolarisationTensor
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::compliance<StressType>> computeAxisymmetricalHillPolarisationTensor(
-          const IsotropicModuli<StressType>& IM0,
-          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-          const types::real<StressType>& e,
-          const tfel::math::base_type<StressType> precision) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
+  computeAxisymmetricalHillPolarisationTensor(
+      const IsotropicModuli<StressType>& IM0,
+      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+      const types::real<StressType>& e,
+      const tfel::math::base_type<StressType> precision) {
     const auto Enu0 = IM0.ToYoungNu();
     return computeAxisymmetricalHillPolarisationTensor<StressType>(
         Enu0.young, Enu0.nu, n_a, e, precision);
@@ -351,22 +344,22 @@ namespace tfel::material::homogenization::elasticity {
           return {2, 1, 0};
       }
     }  // end of sortEllipsoidLengths
-  }    // end of namespace internals
+  }  // end of namespace internals
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>()) TFEL_HOST_DEVICE
-      tfel::math::st2tost2<3u, types::real<StressType>> computeEshelbyTensor(
-          const types::real<StressType>& nu,
-          const types::length<StressType>& a,
-          const types::length<StressType>& b,
-          const types::length<StressType>& c,
-          const tfel::math::base_type<StressType> precision) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>>
+  computeEshelbyTensor(const types::real<StressType>& nu,
+                       const types::length<StressType>& a,
+                       const types::length<StressType>& b,
+                       const types::length<StressType>& c,
+                       const tfel::math::base_type<StressType> precision) {
     using real = types::real<StressType>;
     using LengthType = types::length<StressType>;
-    //if ((nu > real(0.5)) || (nu < real(-1))) {
-    //  tfel::reportContractViolation("nu>0.5 or nu<-1");
-    //}
+    // if ((nu > real(0.5)) || (nu < real(-1))) {
+    //   tfel::reportContractViolation("nu>0.5 or nu<-1");
+    // }
     if (not((a > LengthType{0}) and (b > LengthType{0}) and
             (c > LengthType{0}))) {
       tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
@@ -441,18 +434,18 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of function computeEshelbyTensor
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::compliance<StressType>> computeHillPolarisationTensor(
-          const StressType& young,
-          const types::real<StressType>& nu,
-          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-          const types::length<StressType>& a,
-          const tfel::math::tvector<3u, types::real<StressType>>& n_b,
-          const types::length<StressType>& b,
-          const types::length<StressType>& c,
-          const tfel::math::base_type<StressType> precision) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
+  computeHillPolarisationTensor(
+      const StressType& young,
+      const types::real<StressType>& nu,
+      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+      const types::length<StressType>& a,
+      const tfel::math::tvector<3u, types::real<StressType>>& n_b,
+      const types::length<StressType>& b,
+      const types::length<StressType>& c,
+      const tfel::math::base_type<StressType> precision) {
     using real = types::real<StressType>;
     using LengthType = types::length<StressType>;
     if (not(young > StressType{0})) {
@@ -498,17 +491,17 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of function computeHillPolarisationTensor
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::compliance<StressType>> computeHillPolarisationTensor(
-          const IsotropicModuli<StressType>& IM0,
-          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-          const types::length<StressType>& a,
-          const tfel::math::tvector<3u, types::real<StressType>>& n_b,
-          const types::length<StressType>& b,
-          const types::length<StressType>& c,
-          const tfel::math::base_type<StressType> precision) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
+  computeHillPolarisationTensor(
+      const IsotropicModuli<StressType>& IM0,
+      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+      const types::length<StressType>& a,
+      const tfel::math::tvector<3u, types::real<StressType>>& n_b,
+      const types::length<StressType>& b,
+      const types::length<StressType>& c,
+      const tfel::math::base_type<StressType> precision) {
     const auto Enu0 = IM0.ToYoungNu();
     return computeHillPolarisationTensor<StressType>(Enu0.young, Enu0.nu, n_a,
                                                      a, n_b, b, c, precision);

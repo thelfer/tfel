@@ -26,13 +26,13 @@ namespace tfel::utilities {
     //! default constructor
     CxxTokenizerOptions();
     //! copy constructor
-    CxxTokenizerOptions(const CxxTokenizerOptions &);
+    CxxTokenizerOptions(const CxxTokenizerOptions&);
     //! move constructor
-    CxxTokenizerOptions(CxxTokenizerOptions &&);
+    CxxTokenizerOptions(CxxTokenizerOptions&&);
     //! standard assignement
-    CxxTokenizerOptions &operator=(const CxxTokenizerOptions &);
+    CxxTokenizerOptions& operator=(const CxxTokenizerOptions&);
     //! move assignement
-    CxxTokenizerOptions &operator=(CxxTokenizerOptions &&);
+    CxxTokenizerOptions& operator=(CxxTokenizerOptions&&);
     //! destructor
     ~CxxTokenizerOptions();
     //! \brief if true, keep the comment boundaries

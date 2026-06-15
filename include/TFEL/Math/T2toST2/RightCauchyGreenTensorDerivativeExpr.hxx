@@ -33,8 +33,8 @@ namespace tfel::math {
    * Partial specialisation for 1D tensor
    */
   template <NoUnitT2toST2Concept T2toST2Type>
-  struct [[nodiscard]] Expr<T2toST2Type,
-                            RightCauchyGreenTensorDerivativeExpr<1u>>
+  struct [[nodiscard]]
+  Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<1u>>
       : public T2toST2ConceptBase<
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<1u>>>,
         public array_holder<9u, numeric_type<T2toST2Type>> {
@@ -81,8 +81,8 @@ namespace tfel::math {
    * Partial specialisation for 2D tensor
    */
   template <NoUnitT2toST2Concept T2toST2Type>
-  struct [[nodiscard]] Expr<T2toST2Type,
-                            RightCauchyGreenTensorDerivativeExpr<2u>>
+  struct [[nodiscard]]
+  Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<2u>>
       : public T2toST2ConceptBase<
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<2u>>>,
         public array_holder<20u, numeric_type<T2toST2Type>> {
@@ -140,8 +140,8 @@ namespace tfel::math {
    * Partial specialisation for 3D tensor
    */
   template <NoUnitT2toST2Concept T2toST2Type>
-  struct [[nodiscard]] Expr<T2toST2Type,
-                            RightCauchyGreenTensorDerivativeExpr<3u>>
+  struct [[nodiscard]]
+  Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<3u>>
       : public T2toST2ConceptBase<
             Expr<T2toST2Type, RightCauchyGreenTensorDerivativeExpr<3u>>>,
         public array_holder<54u, numeric_type<T2toST2Type>> {

@@ -31,9 +31,9 @@ namespace mfront::gb::logarithmic_strain {
    * \param[in] d: behaviour data.
    * \param[in] p: out of bounds policy.
    */
-  template <typename Behaviour, void (Behaviour::*m)(const real *const)>
-  int executeInitializeFunction(mfront_gb_BehaviourData &d,
-                                const real *const initialize_variables,
+  template <typename Behaviour, void (Behaviour::*m)(const real* const)>
+  int executeInitializeFunction(mfront_gb_BehaviourData& d,
+                                const real* const initialize_variables,
                                 const tfel::material::OutOfBoundsPolicy p) {
     using namespace tfel::material;
     using mfront::gb::real;
@@ -93,10 +93,10 @@ namespace mfront::gb::logarithmic_strain {
       reportError(d, "invalid choice for the stress measure");
       return -1;
     }
-    auto *const gradients0_old = d.s0.gradients;
-    auto *const gradients1_old = d.s1.gradients;
-    auto *const thermodynamic_forces0_old = d.s0.thermodynamic_forces;
-    auto *const thermodynamic_forces1_old = d.s1.thermodynamic_forces;
+    auto* const gradients0_old = d.s0.gradients;
+    auto* const gradients1_old = d.s1.gradients;
+    auto* const thermodynamic_forces0_old = d.s0.thermodynamic_forces;
+    auto* const thermodynamic_forces1_old = d.s1.thermodynamic_forces;
     d.s0.gradients = e0.begin();
     d.s1.gradients = e0.begin();
     d.s0.thermodynamic_forces = T0.begin();
@@ -120,7 +120,7 @@ namespace mfront::gb::logarithmic_strain {
    * \param[in] p: out of bounds policy
    */
   template <typename Behaviour>
-  int integrate(mfront_gb_BehaviourData &d,
+  int integrate(mfront_gb_BehaviourData& d,
                 const tfel::material::OutOfBoundsPolicy p) {
     using namespace tfel::material;
     using mfront::gb::real;
@@ -193,11 +193,11 @@ namespace mfront::gb::logarithmic_strain {
       reportError(d, "invalid choice for the stress measure");
       return -1;
     }
-    auto *const gradients0_old = d.s0.gradients;
-    auto *const gradients1_old = d.s1.gradients;
-    auto *const thermodynamic_forces0_old = d.s0.thermodynamic_forces;
-    auto *const thermodynamic_forces1_old = d.s1.thermodynamic_forces;
-    auto *const K_old = d.K;
+    auto* const gradients0_old = d.s0.gradients;
+    auto* const gradients1_old = d.s1.gradients;
+    auto* const thermodynamic_forces0_old = d.s0.thermodynamic_forces;
+    auto* const thermodynamic_forces1_old = d.s1.thermodynamic_forces;
+    auto* const K_old = d.K;
     K(0, 0) = d.K[0];
     d.s0.gradients = e0.begin();
     d.s1.gradients = e1.begin();
@@ -306,7 +306,7 @@ namespace mfront::gb::logarithmic_strain {
             return -1;
           }
         }  // end of if(bk)
-      }    // end of if(bp)
+      }  // end of if(bp)
     }
     return r;
   }  // end of integrate
@@ -323,11 +323,11 @@ namespace mfront::gb::logarithmic_strain {
    * \param[in] p: out of bounds policy.
    */
   template <typename Behaviour,
-            void (Behaviour::*m)(real *const,
-                                 const typename Behaviour::BehaviourData &),
+            void (Behaviour::*m)(real* const,
+                                 const typename Behaviour::BehaviourData&),
             const bool use_initial_state>
-  int executePostProcessing(real *const post_processing_variables,
-                            mfront_gb_BehaviourData &d,
+  int executePostProcessing(real* const post_processing_variables,
+                            mfront_gb_BehaviourData& d,
                             const tfel::material::OutOfBoundsPolicy p) {
     using namespace tfel::material;
     using mfront::gb::real;
@@ -418,10 +418,10 @@ namespace mfront::gb::logarithmic_strain {
       reportError(d, "invalid choice for the stress measure");
       return -1;
     }
-    auto *const gradients0_old = d.s0.gradients;
-    auto *const gradients1_old = d.s1.gradients;
-    auto *const thermodynamic_forces0_old = d.s0.thermodynamic_forces;
-    auto *const thermodynamic_forces1_old = d.s1.thermodynamic_forces;
+    auto* const gradients0_old = d.s0.gradients;
+    auto* const gradients1_old = d.s1.gradients;
+    auto* const thermodynamic_forces0_old = d.s0.thermodynamic_forces;
+    auto* const thermodynamic_forces1_old = d.s1.thermodynamic_forces;
     d.s0.gradients = e0.begin();
     d.s1.gradients = e1.begin();
     d.s0.thermodynamic_forces = T0.begin();

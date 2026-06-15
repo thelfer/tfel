@@ -28,8 +28,8 @@ namespace tfel::math {
    */
   template <StensorConcept StensorType1, StensorConcept StensorType2>
   auto symmetric_product_aba(const StensorType1&, const StensorType2&)  //
-      requires(getSpaceDimension<StensorType1>() ==
-               getSpaceDimension<StensorType2>());
+    requires(getSpaceDimension<StensorType1>() ==
+             getSpaceDimension<StensorType2>());
 
 }  // end of namespace tfel::math
 

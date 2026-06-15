@@ -60,8 +60,9 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
 
  private:
   template <tfel::math::ScalarConcept stress>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              stress>()) void testHS_3D() {
+    requires(
+        tfel::math::checkUnitCompatibility<tfel::math::unit::Stress, stress>())
+  void testHS_3D() {
 #ifndef _LIBCPP_VERSION
     // we just compare a direct formula for two phases and the function for N=2
     // phases
@@ -128,8 +129,9 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
 
  private:
   template <tfel::math::ScalarConcept stress>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              stress>()) void testHS_2D() {
+    requires(
+        tfel::math::checkUnitCompatibility<tfel::math::unit::Stress, stress>())
+  void testHS_2D() {
 #ifndef _LIBCPP_VERSION
     // we just compare a direct formula for two phases and the function for N=2
     // phases
@@ -196,8 +198,9 @@ struct LinearHomogenizationBoundsTest final : public tfel::tests::TestCase {
 
  private:
   template <tfel::math::ScalarConcept stress>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              stress>()) void testVR() {
+    requires(
+        tfel::math::checkUnitCompatibility<tfel::math::unit::Stress, stress>())
+  void testVR() {
 #ifndef _LIBCPP_VERSION
 
     using real = tfel::types::real<stress>;

@@ -37,20 +37,20 @@ namespace cyrano {
     /*!
      * \brief throw an exception
      */
-    [[noreturn]] static void exe(const CyranoReal *const,
-                                 const CyranoReal *const,
-                                 const CyranoReal *const,
-                                 const CyranoReal *const,
-                                 const CyranoReal *const,
-                                 const CyranoReal *const,
-                                 const CyranoReal *const,
-                                 const CyranoReal *const,
-                                 const CyranoInt *const,
-                                 const CyranoReal *const,
-                                 const CyranoReal *const,
-                                 CyranoReal *const,
-                                 const CyranoInt *const,
-                                 CyranoReal *const);  // end of exe
+    [[noreturn]] static void exe(const CyranoReal* const,
+                                 const CyranoReal* const,
+                                 const CyranoReal* const,
+                                 const CyranoReal* const,
+                                 const CyranoReal* const,
+                                 const CyranoReal* const,
+                                 const CyranoReal* const,
+                                 const CyranoReal* const,
+                                 const CyranoInt* const,
+                                 const CyranoReal* const,
+                                 const CyranoReal* const,
+                                 CyranoReal* const,
+                                 const CyranoInt* const,
+                                 CyranoReal* const);  // end of exe
   };  // end of struct CyranoUnSupportedCaseHandler
 
   /*!
@@ -91,7 +91,7 @@ namespace cyrano {
      * \param[in] e : the CyranoException to be treated
      */
     static void treatCyranoException(const std::string_view,
-                                     const CyranoException &);
+                                     const CyranoException&);
 
     /*!
      * \brief display the error message out of a material exception to the
@@ -100,7 +100,7 @@ namespace cyrano {
      * \param[in] e : the material exception to be treated
      */
     static void treatMaterialException(
-        const std::string_view, const tfel::material::MaterialException &);
+        const std::string_view, const tfel::material::MaterialException&);
 
     /*!
      * \brief display the error message out of a generic tfel
@@ -109,7 +109,7 @@ namespace cyrano {
      * \param[in] e : the exception to be treated
      */
     static void treatTFELException(const std::string_view,
-                                   const tfel::exception::TFELException &);
+                                   const tfel::exception::TFELException&);
 
     /*!
      * \brief display the error message out of a generic standard
@@ -118,7 +118,7 @@ namespace cyrano {
      * \param[in] e : the exception to be treated
      */
     static void treatStandardException(const std::string_view,
-                                       const std::exception &);
+                                       const std::exception&);
 
     /*!
      * \brief display the error message when an unknown exception is caught

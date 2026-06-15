@@ -35,14 +35,14 @@ namespace mfront {
      * \param[in] argc: number of command line arguments
      * \param[in] argv: command line arguments
      */
-    QueryHandlerBase(const int, const char *const *const);
+    QueryHandlerBase(const int, const char* const* const);
     //! \brief destructor
     ~QueryHandlerBase() override;
 
    protected:
     //! \brief ArgumentParserBase must be a friend
     friend struct tfel::utilities::ArgumentParserBase<QueryHandlerBase>;
-    const tfel::utilities::Argument &getCurrentCommandLineArgument()
+    const tfel::utilities::Argument& getCurrentCommandLineArgument()
         const override final;
     void treatUnknownArgument() override final;
     std::string getVersionDescription() const override final;
@@ -53,8 +53,8 @@ namespace mfront {
      * \param[in] spaces: string placed in front of the description (generally
      * spaces, hence the name)
      */
-    static void displayVariable(const mfront::VariableDescription &,
-                                const std::string & = std::string{});
+    static void displayVariable(const mfront::VariableDescription&,
+                                const std::string& = std::string{});
     //! \brief register call-backs associated with command line arguments
     virtual void registerCommandLineCallBacks();
     //! \return the abstract domain specific language
@@ -64,14 +64,14 @@ namespace mfront {
      * \param[in] o: option passed the query
      */
     virtual std::function<void()> generateGeneratedSourcesQuery(
-        const std::string &) const;
+        const std::string&) const;
     /*!
      * \return an object handling the `--specific-target-generated-sources`
      * query.
      * \param[in] n: name of the specific target
      */
     virtual std::function<void()> generateSpecificTargetGeneratedSourcesQuery(
-        const std::string &) const;
+        const std::string&) const;
     /*!
      * \return an object handling the `--all-specific-targets-generated-sources`
      * query.

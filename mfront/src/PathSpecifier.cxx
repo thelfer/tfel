@@ -258,7 +258,7 @@ namespace mfront {
       }
     }
     return inputs;
-  }    // end of getImplementationsPathsInMadnexFiles
+  }  // end of getImplementationsPathsInMadnexFiles
 #endif /* MFRONT_HAVE_MADNEX */
 
   std::vector<std::string> getImplementationsPaths(

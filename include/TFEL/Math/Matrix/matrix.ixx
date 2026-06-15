@@ -34,8 +34,9 @@ namespace tfel::math {
   template <typename ValueType>
   template <typename ValueType2>
   matrix<ValueType>& matrix<ValueType>::operator=(
-      const std::initializer_list<std::initializer_list<ValueType2>>&
-          values) requires(isAssignableTo<ValueType2, ValueType2>()) {
+      const std::initializer_list<std::initializer_list<ValueType2>>& values)
+    requires(isAssignableTo<ValueType2, ValueType2>())
+  {
     const auto nc = values.begin()->size();
     for (const auto row : values) {
       if (row.size() != nc) {

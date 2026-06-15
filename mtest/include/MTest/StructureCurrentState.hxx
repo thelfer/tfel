@@ -45,13 +45,13 @@ namespace mtest {
      */
     StructureCurrentState();
     //! \brief move constructor
-    StructureCurrentState(StructureCurrentState &&);
+    StructureCurrentState(StructureCurrentState&&);
     //! \brief copy constructor
-    StructureCurrentState(const StructureCurrentState &);
+    StructureCurrentState(const StructureCurrentState&);
     //! \brief move assignment operator
-    StructureCurrentState &operator=(StructureCurrentState &&);
+    StructureCurrentState& operator=(StructureCurrentState&&);
     //! \brief assignment operator
-    StructureCurrentState &operator=(const StructureCurrentState &);
+    StructureCurrentState& operator=(const StructureCurrentState&);
     /*!
      * \brief make a deep copy of the object
      * Contrary to standard copy which shares pointers to the current
@@ -63,31 +63,31 @@ namespace mtest {
      * \set the behaviour associated to the structure
      * \param[in] p : pointer to the behaviour
      */
-    void setBehaviour(const std::shared_ptr<Behaviour> &);
+    void setBehaviour(const std::shared_ptr<Behaviour>&);
     /*!
      * \set the behaviour associated to the structure
      * \param[in] mh : modelling hypothesis
      */
     void setModellingHypothesis(const Hypothesis);
     //! \return the behaviour workspace associated to the current thread.
-    BehaviourWorkSpace &getBehaviourWorkSpace() const;
+    BehaviourWorkSpace& getBehaviourWorkSpace() const;
     //! \return the behaviour associated to the structure
-    const Behaviour &getBehaviour() const;
+    const Behaviour& getBehaviour() const;
     /*!
      * \return the current state associated with an auxiliary model
      * \param[in] m: model
      */
-    CurrentState &getModelCurrentState(const Model &);
+    CurrentState& getModelCurrentState(const Model&);
     /*!
      * \return the current state associated with an auxiliary model
      * \param[in] m: model
      */
-    const CurrentState &getModelCurrentState(const Model &) const;
+    const CurrentState& getModelCurrentState(const Model&) const;
     /*!
      * \return the workspace associated with the oxidation model
      * \param[in] m: model
      */
-    BehaviourWorkSpace &getModelWorkSpace(const Model &);
+    BehaviourWorkSpace& getModelWorkSpace(const Model&);
     /*!
      * \brief update the state at each integration points and the state of
      * auxiliary models
@@ -111,9 +111,9 @@ namespace mtest {
     //! \brief behaviour workspaces
     mutable std::vector<std::shared_ptr<BehaviourWorkSpace>> bwks;
     //! \brief model states
-    std::map<const Model *, std::shared_ptr<CurrentState>> model_states;
+    std::map<const Model*, std::shared_ptr<CurrentState>> model_states;
     //! \brief model workspace
-    std::map<const Model *, std::shared_ptr<BehaviourWorkSpace>> model_wks;
+    std::map<const Model*, std::shared_ptr<BehaviourWorkSpace>> model_wks;
   };
 
   /*!
@@ -121,13 +121,13 @@ namespace mtest {
    * becomes the values at the beginning of the next time step
    * \param[out] s: state
    */
-  MTEST_VISIBILITY_EXPORT void update(StructureCurrentState &);
+  MTEST_VISIBILITY_EXPORT void update(StructureCurrentState&);
   /*!
    * \brief revert the state: values at the end of the time step are
    * set equal to the values at the beginning of the next time step
    * \param[out] s: state
    */
-  MTEST_VISIBILITY_EXPORT void revert(StructureCurrentState &);
+  MTEST_VISIBILITY_EXPORT void revert(StructureCurrentState&);
 
 }  // end of namespace mtest
 

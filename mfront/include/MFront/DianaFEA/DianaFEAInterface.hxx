@@ -51,10 +51,10 @@ namespace dianafea {
    * duplication between two different finite strain strategies (to
    * reduce both compile-time and library size).
    */
-  template <
-      tfel::material::ModellingHypothesis::Hypothesis H,
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL DianaFEAInterface
       : protected DianaFEAInterfaceExceptions {
     TFEL_DIANAFEA_INLINE2 static int exe(const DianaFEAData& d) {
@@ -119,7 +119,7 @@ namespace dianafea {
         i.exe(d);
       }
     };  // end of struct CallBehaviour2
-  };    // end of struct DianaFEAInterface
+  };  // end of struct DianaFEAInterface
 
 }  // end of namespace dianafea
 

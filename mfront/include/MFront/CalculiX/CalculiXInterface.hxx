@@ -51,9 +51,9 @@ namespace calculix {
    * duplication between two different finite strain strategies (to
    * reduce both compile-time and library size).
    */
-  template <
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CalculiXInterface
       : protected CalculiXInterfaceExceptions {
     //! the only supported modelling hypothesis
@@ -124,7 +124,7 @@ namespace calculix {
         i.exe(d);
       }
     };  // end of struct CallBehaviour2
-  };    // end of struct CalculiXInterface
+  };  // end of struct CalculiXInterface
 
 }  // end of namespace calculix
 

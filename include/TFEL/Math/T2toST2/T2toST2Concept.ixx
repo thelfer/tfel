@@ -43,10 +43,11 @@ namespace tfel::math {
       T2toST2ResultType& dTdF,
       const StensorType& S,
       const TensorType& F) noexcept  //
-      requires(tfel::typetraits::IsFundamentalNumericType<
-               numeric_type<TensorType>>::cond&&
-                   isAssignableTo<numeric_type<StensorType>,
-                                  numeric_type<T2toST2ResultType>>()) {
+    requires(tfel::typetraits::IsFundamentalNumericType<
+                 numeric_type<TensorType>>::cond &&
+             isAssignableTo<numeric_type<StensorType>,
+                            numeric_type<T2toST2ResultType>>())
+  {
     using value_type = numeric_type<T2toST2ResultType>;
     constexpr auto N = getSpaceDimension<T2toST2ResultType>();
     static_assert(getSpaceDimension<StensorType>() == N);
@@ -154,19 +155,20 @@ namespace tfel::math {
       const T2toST2Type& dt_K,
       const StensorType& s,
       const TensorType& F) noexcept  //
-      requires(
-          getSpaceDimension<T2toST2ResultType>() ==
-              getSpaceDimension<T2toST2Type>() &&
-          getSpaceDimension<T2toST2ResultType>() ==
-              getSpaceDimension<StensorType>() &&
-          getSpaceDimension<T2toST2ResultType>() ==
-              getSpaceDimension<TensorType>() &&
-          tfel::typetraits::IsFundamentalNumericType<
-              numeric_type<TensorType>>::cond &&
-          isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
-                                                      numeric_type<StensorType>,
-                                                      OpPlus>::Result,
-                         numeric_type<T2toST2ResultType>>()) {
+    requires(
+        getSpaceDimension<T2toST2ResultType>() ==
+            getSpaceDimension<T2toST2Type>() &&
+        getSpaceDimension<T2toST2ResultType>() ==
+            getSpaceDimension<StensorType>() &&
+        getSpaceDimension<T2toST2ResultType>() ==
+            getSpaceDimension<TensorType>() &&
+        tfel::typetraits::IsFundamentalNumericType<
+            numeric_type<TensorType>>::cond &&
+        isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                                    numeric_type<StensorType>,
+                                                    OpPlus>::Result,
+                       numeric_type<T2toST2ResultType>>())
+  {
     const auto iJ = 1 / det(F);
     const auto dJ = computeDeterminantDerivative(F);
     ds = iJ * (dt_K - (s ^ dJ));
@@ -182,19 +184,20 @@ namespace tfel::math {
       const T2toST2Type& ds,
       const StensorType& s,
       const TensorType& F) noexcept  //
-      requires(
-          getSpaceDimension<T2toST2ResultType>() ==
-              getSpaceDimension<T2toST2Type>() &&
-          getSpaceDimension<T2toST2ResultType>() ==
-              getSpaceDimension<StensorType>() &&
-          getSpaceDimension<T2toST2ResultType>() ==
-              getSpaceDimension<TensorType>() &&
-          tfel::typetraits::IsFundamentalNumericType<
-              numeric_type<TensorType>>::cond &&
-          isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
-                                                      numeric_type<StensorType>,
-                                                      OpPlus>::Result,
-                         numeric_type<T2toST2ResultType>>()) {
+    requires(
+        getSpaceDimension<T2toST2ResultType>() ==
+            getSpaceDimension<T2toST2Type>() &&
+        getSpaceDimension<T2toST2ResultType>() ==
+            getSpaceDimension<StensorType>() &&
+        getSpaceDimension<T2toST2ResultType>() ==
+            getSpaceDimension<TensorType>() &&
+        tfel::typetraits::IsFundamentalNumericType<
+            numeric_type<TensorType>>::cond &&
+        isAssignableTo<typename ComputeBinaryResult<numeric_type<T2toST2Type>,
+                                                    numeric_type<StensorType>,
+                                                    OpPlus>::Result,
+                       numeric_type<T2toST2ResultType>>())
+  {
     const auto J = det(F);
     const auto dJ = computeDeterminantDerivative(F);
     dt_K = J * ds + (s ^ dJ);

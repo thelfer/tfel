@@ -31,7 +31,7 @@
 #include <io.h>
 #define F_OK 0 /* Test for existence.  */
 #ifndef S_ISREG
-#define S_ISREG(mode) (((mode)&S_IFMT) == S_IFREG)
+#define S_ISREG(mode) (((mode) & S_IFMT) == S_IFREG)
 #endif
 #endif
 

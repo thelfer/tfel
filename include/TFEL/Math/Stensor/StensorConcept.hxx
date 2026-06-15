@@ -56,15 +56,16 @@ namespace tfel::math {
    */
   template <typename T>
   concept StensorConcept =
-      (std::is_same_v<typename std::decay_t<T>::ConceptTag, StensorTag>)&&  //
-      (requires(const T t, const unsigned short i) { t[i]; }) &&            //
+      (std::is_same_v<typename std::decay_t<T>::ConceptTag, StensorTag>) &&  //
+      (requires(const T t, const unsigned short i) { t[i]; }) &&             //
       (requires(const T t, const unsigned short i) { t(i); });
   /*!
    * \brief refinement of the `StensorConcept` concept matched by symmetric
    * tensors which hold value types without unit
    */
   template <typename T>
-  concept NoUnitStensorConcept = StensorConcept<T> &&
+  concept NoUnitStensorConcept =
+      StensorConcept<T> &&
       (checkUnitCompatibility<unit::NoUnit, numeric_type<T>>());
   /*!
    * \brief refinement of the `StensorConcept` concept matched by symmetric
@@ -73,7 +74,8 @@ namespace tfel::math {
    * \see checkUnitCompatibility for details
    */
   template <typename T>
-  concept StressStensorConcept = StensorConcept<T> &&
+  concept StressStensorConcept =
+      StensorConcept<T> &&
       (checkUnitCompatibility<unit::Stress, numeric_type<T>>());
 
   //! \brief partial specialisation for symmetric tensors

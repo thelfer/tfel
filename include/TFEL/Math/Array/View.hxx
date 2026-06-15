@@ -208,7 +208,8 @@ namespace tfel::math {
     using selectViewArrayBase<MappedType, IndexingPolicyType>::operator();
     //! \return a pointer to the underlying array serving as element storage.
     TFEL_HOST_DEVICE constexpr data_pointer_type data() noexcept
-        requires(!is_const) {
+      requires(!is_const)
+    {
       return this->data_pointer;
     }  // end of data
 
@@ -222,8 +223,9 @@ namespace tfel::math {
      * \param[in] src: array to be assigned
      */
     template <typename OtherArray>
-    TFEL_HOST_DEVICE constexpr View& operator=(const OtherArray& src) requires(
-        isAssignableTo<OtherArray, MappedType>()) {
+    TFEL_HOST_DEVICE constexpr View& operator=(const OtherArray& src)
+      requires(isAssignableTo<OtherArray, MappedType>())
+    {
       static_assert(!is_const, "invalid call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                src.getIndexingPolicy());
@@ -232,8 +234,9 @@ namespace tfel::math {
     }
     //
     template <typename OtherArray>
-    TFEL_HOST_DEVICE constexpr View& operator+=(const OtherArray& src) requires(
-        isAssignableTo<OtherArray, MappedType>()) {
+    TFEL_HOST_DEVICE constexpr View& operator+=(const OtherArray& src)
+      requires(isAssignableTo<OtherArray, MappedType>())
+    {
       static_assert(!is_const, "invalid call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                src.getIndexingPolicy());
@@ -242,8 +245,9 @@ namespace tfel::math {
     }
     //
     template <typename OtherArray>
-    TFEL_HOST_DEVICE constexpr View& operator-=(const OtherArray& src) requires(
-        isAssignableTo<OtherArray, MappedType>()) {
+    TFEL_HOST_DEVICE constexpr View& operator-=(const OtherArray& src)
+      requires(isAssignableTo<OtherArray, MappedType>())
+    {
       static_assert(!is_const, "invalid call");
       //       checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                src.getIndexingPolicy());
@@ -252,22 +256,24 @@ namespace tfel::math {
     }
     //
     template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr View&
-    operator*=(const ValueType2& s) noexcept requires(
-        isAssignableTo<
-            BinaryOperationResult<ValueType2, numeric_type<MappedType>, OpMult>,
-            numeric_type<MappedType>>()) {
+    TFEL_HOST_DEVICE constexpr View& operator*=(const ValueType2& s) noexcept
+      requires(isAssignableTo<BinaryOperationResult<ValueType2,
+                                                    numeric_type<MappedType>,
+                                                    OpMult>,
+                              numeric_type<MappedType>>())
+    {
       static_assert(!is_const, "invalid call");
       selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(s);
       return *this;
     }  // end of operator*=
        //
     template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr View&
-    operator/=(const ValueType2& s) noexcept requires(
-        isAssignableTo<
-            BinaryOperationResult<numeric_type<MappedType>, ValueType2, OpDiv>,
-            numeric_type<MappedType>>()) {
+    TFEL_HOST_DEVICE constexpr View& operator/=(const ValueType2& s) noexcept
+      requires(isAssignableTo<BinaryOperationResult<numeric_type<MappedType>,
+                                                    ValueType2,
+                                                    OpDiv>,
+                              numeric_type<MappedType>>())
+    {
       static_assert(!is_const, "invalid call");
       selectViewArrayBase<MappedType, IndexingPolicyType>::multiplyByScalar(1 /
                                                                             s);
@@ -360,20 +366,22 @@ namespace tfel::math {
    */
   template <typename MappedType,
             typename IndexingPolicyType = typename MappedType::indexing_policy>
-  TFEL_HOST_DEVICE constexpr View<MappedType, IndexingPolicyType>
-  map(const ViewDataPointerType<MappedType> p) requires(
-      (!std::is_const_v<MappedType>)&&(!isScalar<MappedType>()) &&
-      (std::remove_cv_t<MappedType>::hasFixedSizes)) {
+  TFEL_HOST_DEVICE constexpr View<MappedType, IndexingPolicyType> map(
+      const ViewDataPointerType<MappedType> p)
+    requires((!std::is_const_v<MappedType>) && (!isScalar<MappedType>()) &&
+             (std::remove_cv_t<MappedType>::hasFixedSizes))
+  {
     return View<MappedType, IndexingPolicyType>{p};
   }  // end of map
 
   template <typename MappedType,
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy>
-  TFEL_HOST_DEVICE constexpr View<const MappedType, IndexingPolicyType>
-  map(const ViewConstDataPointerType<MappedType> p) requires(
-      (!isScalar<MappedType>()) &&
-      (std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes)) {
+  TFEL_HOST_DEVICE constexpr View<const MappedType, IndexingPolicyType> map(
+      const ViewConstDataPointerType<MappedType> p)
+    requires((!isScalar<MappedType>()) &&
+             (std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes))
+  {
     return View<const MappedType, IndexingPolicyType>{p};
   }  // end of map
 
@@ -405,13 +413,15 @@ namespace tfel::math {
   template <typename MappedType,
             typename... Args,
             typename IndexingPolicyType = typename MappedType::indexing_policy>
-  TFEL_HOST_DEVICE constexpr View<MappedType, IndexingPolicyType>
-  map(Args&&... args) requires(
-      (!std::is_const_v<MappedType>)&&(!IndexingPolicyType::hasFixedSizes) &&
-      (checkIndexingPoliciesCompatiblity<
-          IndexingPolicyType,
-          typename MappedType::indexing_policy>()) &&
-      (canMakeViewFromLastArgument<MappedType, Args...>())) {
+  TFEL_HOST_DEVICE constexpr View<MappedType, IndexingPolicyType> map(
+      Args&&... args)
+    requires((!std::is_const_v<MappedType>) &&
+             (!IndexingPolicyType::hasFixedSizes) &&
+             (checkIndexingPoliciesCompatiblity<
+                 IndexingPolicyType,
+                 typename MappedType::indexing_policy>()) &&
+             (canMakeViewFromLastArgument<MappedType, Args...>()))
+  {
     static_assert(sizeof...(Args) >= 2, "invalid call");
     const auto r =
         buildIndexingPolicyAndExtractPointerToData<IndexingPolicyType>(args...);
@@ -423,14 +433,15 @@ namespace tfel::math {
             typename... Args,
             typename IndexingPolicyType =
                 typename std::remove_cv_t<MappedType>::indexing_policy>
-  TFEL_HOST_DEVICE constexpr View<const MappedType, IndexingPolicyType>
-  map(const Args&... args) requires(
-      (!std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes) &&
-      (checkIndexingPoliciesCompatiblity<
-          IndexingPolicyType,
-          typename std::remove_cv_t<MappedType>::indexing_policy>()) &&
-      (canMakeConstViewFromLastArgument<std::remove_cv_t<MappedType>,
-                                        Args...>())) {
+  TFEL_HOST_DEVICE constexpr View<const MappedType, IndexingPolicyType> map(
+      const Args&... args)
+    requires((!std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes) &&
+             (checkIndexingPoliciesCompatiblity<
+                 IndexingPolicyType,
+                 typename std::remove_cv_t<MappedType>::indexing_policy>()) &&
+             (canMakeConstViewFromLastArgument<std::remove_cv_t<MappedType>,
+                                               Args...>()))
+  {
     static_assert(sizeof...(Args) >= 2, "invalid call");
     const auto r =
         buildIndexingPolicyAndExtractPointerToData<IndexingPolicyType>(args...);

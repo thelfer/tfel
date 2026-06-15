@@ -31,14 +31,14 @@ namespace tfel::math {
   }  // namespace internals
 
   template <UnitConcept Unit, typename T>
-  requires(ScalarConcept<T> || MathObjectConcept<T>)  //
-      struct CheckUnitCompatibility
+    requires(ScalarConcept<T> || MathObjectConcept<T>)  //
+  struct CheckUnitCompatibility
       : internals::CheckUnitCompatibilityImplementation<Unit, std::decay_t<T>> {
   };
 
   template <UnitConcept Unit, typename T>
-  requires(ScalarConcept<T> || MathObjectConcept<T>)  //
-      constexpr bool checkUnitCompatibility() {
+    requires(ScalarConcept<T> || MathObjectConcept<T>)  //
+  constexpr bool checkUnitCompatibility() {
     return CheckUnitCompatibility<Unit, std::decay_t<T>>::value;
   }
 

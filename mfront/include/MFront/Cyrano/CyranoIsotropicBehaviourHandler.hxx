@@ -22,26 +22,26 @@
 
 namespace cyrano {
 
-  template <
-      tfel::material::ModellingHypothesis::Hypothesis H,
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CyranoIsotropicBehaviourHandler {
     TFEL_CYRANO_INLINE static void exe(
-        const CyranoReal *const DTIME,
-        const CyranoReal *const,
-        CyranoReal *const DDSOE,
-        const CyranoReal *const STRAN,
-        const CyranoReal *const DSTRAN,
-        const CyranoReal *const TEMP,
-        const CyranoReal *const DTEMP,
-        const CyranoReal *const PROPS,
-        const CyranoInt *const NPROPS,
-        const CyranoReal *const PREDEF,
-        const CyranoReal *const DPRED,
-        CyranoReal *const STATEV,
-        const CyranoInt *const NSTATV,
-        CyranoReal *const STRESS,
+        const CyranoReal* const DTIME,
+        const CyranoReal* const,
+        CyranoReal* const DDSOE,
+        const CyranoReal* const STRAN,
+        const CyranoReal* const DSTRAN,
+        const CyranoReal* const TEMP,
+        const CyranoReal* const DTEMP,
+        const CyranoReal* const PROPS,
+        const CyranoInt* const NPROPS,
+        const CyranoReal* const PREDEF,
+        const CyranoReal* const DPRED,
+        CyranoReal* const STATEV,
+        const CyranoInt* const NSTATV,
+        CyranoReal* const STRESS,
         const StressFreeExpansionHandler sfeh,
         const tfel::material::OutOfBoundsPolicy op) {
       using namespace tfel::meta;

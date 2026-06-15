@@ -49,7 +49,8 @@ class generic_container : public generic_container_<T, holder> {
  public:
   template <unsigned int N>
   typename tfel::meta::TLFindNthElt<T, N>::type get() const
-      requires(N < tfel::meta::TLSize<T>::value) {
+    requires(N < tfel::meta::TLSize<T>::value)
+  {
     return static_cast<
                const holder<typename tfel::meta::TLFindNthElt<T, N>::type>*>(
                this)
@@ -57,8 +58,9 @@ class generic_container : public generic_container_<T, holder> {
   }
 
   template <unsigned int N>
-  void set(const typename tfel::meta::TLFindNthElt<T, N>::type& src) requires(
-      N < tfel::meta::TLSize<T>::value) {
+  void set(const typename tfel::meta::TLFindNthElt<T, N>::type& src)
+    requires(N < tfel::meta::TLSize<T>::value)
+  {
     static_cast<holder<typename tfel::meta::TLFindNthElt<T, N>::type>*>(this)
         ->set(src);
   }

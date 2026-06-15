@@ -80,8 +80,8 @@ namespace tfel::math {
    * \tparam T: tested type
    */
   template <UnitConcept Unit, typename T>
-  requires(ScalarConcept<T> || MathObjectConcept<T>)  //
-      constexpr bool checkUnitCompatibility();
+    requires(ScalarConcept<T> || MathObjectConcept<T>)  //
+  constexpr bool checkUnitCompatibility();
 
 }  // end of namespace tfel::math
 

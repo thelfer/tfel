@@ -23,10 +23,10 @@
 namespace tfel::material {
 
   template <typename StressStensor>
-  std::ostream &operator<<(
-      std::ostream &os,
+  std::ostream& operator<<(
+      std::ostream& os,
       const MichelAndSuquet1992HollowSphereStressCriterionParameters<
-          StressStensor> &p) {
+          StressStensor>& p) {
     os << "{n: " << p.n << ", feps: " << p.feps << "}";
     return os;
   }  // end of operator <<
@@ -34,10 +34,10 @@ namespace tfel::material {
   template <typename StressStensor>
   MichelAndSuquet1992HollowSphereStressType<StressStensor>
   computeMichelAndSuquet1992HollowSphereStress(
-      const StressStensor &sig,
+      const StressStensor& sig,
       const MichelAndSuquet1992HollowSpherePorosityType<StressStensor> f,
       const MichelAndSuquet1992HollowSphereStressCriterionParameters<
-          StressStensor> &p,
+          StressStensor>& p,
       const MichelAndSuquet1992HollowSphereStressType<StressStensor> seps) {
     // a simple alias to the underlying numeric type
     using real = MichelAndSuquet1992HollowSphereBaseType<StressStensor>;
@@ -61,10 +61,10 @@ namespace tfel::material {
       MichelAndSuquet1992HollowSphereStressDerivativeWithRespectToPorosityType<
           StressStensor>>
   computeMichelAndSuquet1992HollowSphereStressNormal(
-      const StressStensor &sig,
+      const StressStensor& sig,
       const MichelAndSuquet1992HollowSpherePorosityType<StressStensor> f,
       const MichelAndSuquet1992HollowSphereStressCriterionParameters<
-          StressStensor> &p,
+          StressStensor>& p,
       const MichelAndSuquet1992HollowSphereStressType<StressStensor> seps) {
     using real = MichelAndSuquet1992HollowSphereBaseType<StressStensor>;
     constexpr auto id =
@@ -105,10 +105,10 @@ namespace tfel::material {
       MichelAndSuquet1992HollowSphereNormalDerivativeWithRespectToPorosityType<
           StressStensor>>
   computeMichelAndSuquet1992HollowSphereStressSecondDerivative(
-      const StressStensor &sig,
+      const StressStensor& sig,
       const MichelAndSuquet1992HollowSpherePorosityType<StressStensor> f,
       const MichelAndSuquet1992HollowSphereStressCriterionParameters<
-          StressStensor> &p,
+          StressStensor>& p,
       const MichelAndSuquet1992HollowSphereStressType<StressStensor> seps) {
     constexpr auto N = tfel::math::getSpaceDimension<StressStensor>();
     using real = MichelAndSuquet1992HollowSphereBaseType<StressStensor>;

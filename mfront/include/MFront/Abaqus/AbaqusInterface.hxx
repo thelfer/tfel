@@ -51,10 +51,10 @@ namespace abaqus {
    * duplication between two different finite strain strategies (to
    * reduce both compile-time and library size).
    */
-  template <
-      tfel::material::ModellingHypothesis::Hypothesis H,
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AbaqusInterface
       : protected AbaqusInterfaceExceptions {
     //! a simple alias
@@ -115,7 +115,7 @@ namespace abaqus {
         i.exe(d);
       }
     };  // end of struct CallBehaviour2
-  };    // end of struct AbaqusInterface
+  };  // end of struct AbaqusInterface
 
 }  // end of namespace abaqus
 

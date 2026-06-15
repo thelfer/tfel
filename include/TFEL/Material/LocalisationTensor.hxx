@@ -32,12 +32,12 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] C_i: elasticity of the inclusion
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<2u, types::real<StressType>> computeDiskPlaneStrainLocalisationTensor(
-          const IsotropicModuli<StressType>&,
-          const tfel::math::st2tost2<2u, StressType>&);
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<2u, types::real<StressType>>
+  computeDiskPlaneStrainLocalisationTensor(
+      const IsotropicModuli<StressType>&,
+      const tfel::math::st2tost2<2u, StressType>&);
 
   /*!
    * This function builds the strain localisation tensor of an elliptic
@@ -53,15 +53,15 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] b: length of semi-axis relative to the other direction
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<2u, types::real<StressType>> computePlaneStrainLocalisationTensor(
-          const IsotropicModuli<StressType>&,
-          const tfel::math::st2tost2<2u, StressType>&,
-          const tfel::math::tvector<2u, types::real<StressType>>&,
-          const types::length<StressType>&,
-          const types::length<StressType>&);
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<2u, types::real<StressType>>
+  computePlaneStrainLocalisationTensor(
+      const IsotropicModuli<StressType>&,
+      const tfel::math::st2tost2<2u, StressType>&,
+      const tfel::math::tvector<2u, types::real<StressType>>&,
+      const types::length<StressType>&,
+      const types::length<StressType>&);
 
   /*!
    * This function builds the strain localisation tensor of a sphere
@@ -74,14 +74,13 @@ namespace tfel::material::homogenization::elasticity {
    * inclusions
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-      TFEL_HOST_DEVICE tfel::math::
-          st2tost2<3u, types::real<StressType>> computeSphereLocalisationTensor(
-              const StressType&,
-              const types::real<StressType>&,
-              const StressType&,
-              const types::real<StressType>&);
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>>
+  computeSphereLocalisationTensor(const StressType&,
+                                  const types::real<StressType>&,
+                                  const StressType&,
+                                  const types::real<StressType>&);
 
   /*!
    * This function is an overload of computeSphereLocalisationTensor
@@ -93,12 +92,11 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] IM_i: isotropic moduli of the inclusions
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-      TFEL_HOST_DEVICE tfel::math::
-          st2tost2<3u, types::real<StressType>> computeSphereLocalisationTensor(
-              const IsotropicModuli<StressType>&,
-              const IsotropicModuli<StressType>&);
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>>
+  computeSphereLocalisationTensor(const IsotropicModuli<StressType>&,
+                                  const IsotropicModuli<StressType>&);
 
   /*!
    * This function builds the strain localisation tensor of an
@@ -118,16 +116,16 @@ namespace tfel::material::homogenization::elasticity {
    * direction \f$n_a\f$
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::real<StressType>> computeAxisymmetricalEllipsoidLocalisationTensor(
-          const StressType&,
-          const types::real<StressType>&,
-          const StressType&,
-          const types::real<StressType>&,
-          const tfel::math::tvector<3u, types::real<StressType>>&,
-          const types::real<StressType>&);
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>>
+  computeAxisymmetricalEllipsoidLocalisationTensor(
+      const StressType&,
+      const types::real<StressType>&,
+      const StressType&,
+      const types::real<StressType>&,
+      const tfel::math::tvector<3u, types::real<StressType>>&,
+      const types::real<StressType>&);
 
   /*!
    * This function is an overload of
@@ -143,14 +141,14 @@ namespace tfel::material::homogenization::elasticity {
    * direction \f$n_a\f$
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::real<StressType>> computeAxisymmetricalEllipsoidLocalisationTensor(
-          const IsotropicModuli<StressType>&,
-          const IsotropicModuli<StressType>&,
-          const tfel::math::tvector<3u, types::real<StressType>>&,
-          const types::real<StressType>&);
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>>
+  computeAxisymmetricalEllipsoidLocalisationTensor(
+      const IsotropicModuli<StressType>&,
+      const IsotropicModuli<StressType>&,
+      const tfel::math::tvector<3u, types::real<StressType>>&,
+      const types::real<StressType>&);
 
   /*!
    * This function builds the strain localisation tensor of a general
@@ -173,17 +171,17 @@ namespace tfel::material::homogenization::elasticity {
    * length of the remaining semi-axis
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::real<StressType>> computeEllipsoidLocalisationTensor(
-          const IsotropicModuli<StressType>&,
-          const tfel::math::st2tost2<3u, StressType>&,
-          const tfel::math::tvector<3u, types::real<StressType>>&,
-          const types::length<StressType>&,
-          const tfel::math::tvector<3u, types::real<StressType>>&,
-          const types::length<StressType>&,
-          const types::length<StressType>&);
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>>
+  computeEllipsoidLocalisationTensor(
+      const IsotropicModuli<StressType>&,
+      const tfel::math::st2tost2<3u, StressType>&,
+      const tfel::math::tvector<3u, types::real<StressType>>&,
+      const types::length<StressType>&,
+      const tfel::math::tvector<3u, types::real<StressType>>&,
+      const types::length<StressType>&,
+      const types::length<StressType>&);
 
   /*!
    * This function is an overload of computeEllipsoidLocalisationTensor
@@ -201,19 +199,19 @@ namespace tfel::material::homogenization::elasticity {
    * \f$n_b\f$ \param [in] c: length of the remaining semi-axis
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::real<StressType>> computeEllipsoidLocalisationTensor(
-          const StressType&,
-          const types::real<StressType>&,
-          const StressType&,
-          const types::real<StressType>&,
-          const tfel::math::tvector<3u, types::real<StressType>>&,
-          const types::length<StressType>&,
-          const tfel::math::tvector<3u, types::real<StressType>>&,
-          const types::length<StressType>&,
-          const types::length<StressType>&);
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>>
+  computeEllipsoidLocalisationTensor(
+      const StressType&,
+      const types::real<StressType>&,
+      const StressType&,
+      const types::real<StressType>&,
+      const tfel::math::tvector<3u, types::real<StressType>>&,
+      const types::length<StressType>&,
+      const tfel::math::tvector<3u, types::real<StressType>>&,
+      const types::length<StressType>&,
+      const types::length<StressType>&);
 
   /*!
    * This function is another overload of computeEllipsoidLocalisationTensor
@@ -231,17 +229,17 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] c: length of the remaining semi-axis
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::real<StressType>> computeEllipsoidLocalisationTensor(
-          const IsotropicModuli<StressType>&,
-          const IsotropicModuli<StressType>&,
-          const tfel::math::tvector<3u, types::real<StressType>>&,
-          const types::length<StressType>&,
-          const tfel::math::tvector<3u, types::real<StressType>>&,
-          const types::length<StressType>&,
-          const types::length<StressType>&);
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>>
+  computeEllipsoidLocalisationTensor(
+      const IsotropicModuli<StressType>&,
+      const IsotropicModuli<StressType>&,
+      const tfel::math::tvector<3u, types::real<StressType>>&,
+      const types::length<StressType>&,
+      const tfel::math::tvector<3u, types::real<StressType>>&,
+      const types::length<StressType>&,
+      const types::length<StressType>&);
 
   /*!
    * struct for dispatching computeIsotropicLocalisationTensor over the
@@ -249,9 +247,9 @@ namespace tfel::material::homogenization::elasticity {
    * constants related to the matrix and the ellipsoid
    */
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) struct IsotropicLocalisationTensor;
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct IsotropicLocalisationTensor;
 
   /*!
    * This function just groups implementations of localisation
@@ -267,15 +265,15 @@ namespace tfel::material::homogenization::elasticity {
    * semi-axes. The first one for direction \f$n_a\f$, the second for \f$n_b\f$.
    */
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<N, types::real<StressType>> computeIsotropicLocalisationTensor(
-          const IsotropicModuli<StressType>&,
-          const tfel::math::st2tost2<N, StressType>&,
-          const tfel::math::tvector<N, types::real<StressType>>&,
-          const tfel::math::tvector<N, types::real<StressType>>&,
-          const std::array<types::length<StressType>, N>&);
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<N, types::real<StressType>>
+  computeIsotropicLocalisationTensor(
+      const IsotropicModuli<StressType>&,
+      const tfel::math::st2tost2<N, StressType>&,
+      const tfel::math::tvector<N, types::real<StressType>>&,
+      const tfel::math::tvector<N, types::real<StressType>>&,
+      const std::array<types::length<StressType>, N>&);
 
 }  // end of namespace tfel::material::homogenization::elasticity
 

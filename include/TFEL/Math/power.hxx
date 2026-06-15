@@ -32,7 +32,8 @@ namespace tfel::math {
    * \tparam D:
    */
   template <int N, unsigned int D>
-  requires(D != 0) struct UnaryResultType<float, Power<N, D>> {
+    requires(D != 0)
+  struct UnaryResultType<float, Power<N, D>> {
     using type = float;
   };
   /*!
@@ -43,7 +44,8 @@ namespace tfel::math {
    * \tparam D:
    */
   template <int N, unsigned int D>
-  requires(D != 0) struct UnaryResultType<double, Power<N, D>> {
+    requires(D != 0)
+  struct UnaryResultType<double, Power<N, D>> {
     using type = double;
   };
   /*!
@@ -54,7 +56,8 @@ namespace tfel::math {
    * \tparam D:
    */
   template <int N, unsigned int D>
-  requires(D != 0) struct UnaryResultType<long double, Power<N, D>> {
+    requires(D != 0)
+  struct UnaryResultType<long double, Power<N, D>> {
     using type = long double;
   };
   /*!
@@ -72,7 +75,7 @@ namespace tfel::math {
    */
   template <int N, unsigned int D, typename T>
   TFEL_HOST_DEVICE auto power(const std::floating_point auto) noexcept  //
-      requires(D != 0);
+    requires(D != 0);
 
 }  // end of namespace tfel::math
 

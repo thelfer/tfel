@@ -59,7 +59,7 @@ namespace tfel::math {
      */
     template <ScalarConcept real, typename FunctionType>
     [[nodiscard]] constexpr auto operator()(
-        const FunctionType &f,                                     //
+        const FunctionType& f,                                     //
         const real a,                                              //
         const real b,                                              //
         const NumericalParameters<real> params) const              //
@@ -68,7 +68,7 @@ namespace tfel::math {
             tfel::math::result_type<real,
                                     std::invoke_result_t<FunctionType, real>,
                                     OpMult>>  //
-    requires(std::is_invocable_v<FunctionType, real>);
+      requires(std::is_invocable_v<FunctionType, real>);
 
     /*!
      * \brief integration of a function without refinement using 15pts Kronrod's
@@ -84,7 +84,7 @@ namespace tfel::math {
      * error.
      */
     template <ScalarConcept real, typename FunctionType>
-    [[nodiscard]] constexpr auto operator()(const FunctionType &f,
+    [[nodiscard]] constexpr auto operator()(const FunctionType& f,
                                             const real a,
                                             const real b) const    //
         noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
@@ -96,79 +96,79 @@ namespace tfel::math {
                 real,
                 numeric_type<std::invoke_result_t<FunctionType, real>>,
                 OpMult>>>  //
-    requires(std::is_invocable_v<FunctionType, real>);
+      requires(std::is_invocable_v<FunctionType, real>);
 
    private:
-    static constexpr auto eval_if_required(const auto &);
+    static constexpr auto eval_if_required(const auto&);
 
     template <ScalarConcept real, typename FunctionType>
     [[nodiscard]] constexpr auto integrate(
-        const FunctionType &,
+        const FunctionType&,
         const real,
         const real,
-        const NumericalParameters<real> &) const                   //
+        const NumericalParameters<real>&) const                    //
         noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
         -> std::optional<
             tfel::math::result_type<real,
                                     std::invoke_result_t<FunctionType, real>,
                                     OpMult>>  //
-    requires(std::is_invocable_v<FunctionType, real>);
+      requires(std::is_invocable_v<FunctionType, real>);
 
     template <ScalarConcept real, typename FunctionType>
-    [[nodiscard]] constexpr auto integrate(const FunctionType &f,
+    [[nodiscard]] constexpr auto integrate(const FunctionType& f,
                                            const real a,
                                            const real b) const     //
         noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
-        requires(std::is_invocable_v<FunctionType, real>);
+      requires(std::is_invocable_v<FunctionType, real>);
 
     template <ScalarConcept real, typename FunctionType>
     [[nodiscard]] constexpr auto computeUnboundedIntegral(
-        const FunctionType &) const                                //
+        const FunctionType&) const                                 //
         noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
-        requires(std::is_invocable_v<FunctionType, real>);
+      requires(std::is_invocable_v<FunctionType, real>);
 
     template <ScalarConcept real, typename FunctionType>
     [[nodiscard]] constexpr auto computeLeftUnboundedIntegral(
-        const FunctionType &, const real) const                    //
+        const FunctionType&, const real) const                     //
         noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
-        requires(std::is_invocable_v<FunctionType, real>);
+      requires(std::is_invocable_v<FunctionType, real>);
 
     template <ScalarConcept real, typename FunctionType>
     [[nodiscard]] constexpr auto computeRightUnboundedIntegral(
-        const FunctionType &, const real) const                    //
+        const FunctionType&, const real) const                     //
         noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
-        requires(std::is_invocable_v<FunctionType, real>);
+      requires(std::is_invocable_v<FunctionType, real>);
 
     template <ScalarConcept real, typename FunctionType>
     [[nodiscard]] constexpr auto computeUnboundedIntegral(
-        const FunctionType &,
-        const NumericalParameters<real> &) const                   //
+        const FunctionType&,
+        const NumericalParameters<real>&) const                    //
         noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
-        requires(std::is_invocable_v<FunctionType, real>);
+      requires(std::is_invocable_v<FunctionType, real>);
 
     template <ScalarConcept real, typename FunctionType>
     [[nodiscard]] constexpr auto computeLeftUnboundedIntegral(
-        const FunctionType &,
+        const FunctionType&,
         const real,
-        const NumericalParameters<real> &) const                   //
+        const NumericalParameters<real>&) const                    //
         noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
         -> std::optional<
             tfel::math::result_type<real,
                                     std::invoke_result_t<FunctionType, real>,
                                     OpMult>>
-    requires(std::is_invocable_v<FunctionType, real>);
+      requires(std::is_invocable_v<FunctionType, real>);
 
     template <ScalarConcept real, typename FunctionType>
     [[nodiscard]] constexpr auto computeRightUnboundedIntegral(
-        const FunctionType &,
+        const FunctionType&,
         const real,
-        const NumericalParameters<real> &) const                   //
+        const NumericalParameters<real>&) const                    //
         noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
         -> std::optional<
             tfel::math::result_type<real,
                                     std::invoke_result_t<FunctionType, real>,
                                     OpMult>>
-    requires(std::is_invocable_v<FunctionType, real>);
+      requires(std::is_invocable_v<FunctionType, real>);
   };
 
   /*!

@@ -3,12 +3,10 @@
 @Author É.Brunon;
 @Date 06 / 12 / 07;
 
-@Description {
-  Matériaux RCG - T et RCG -
-      R Un point sur le carbure de Silicium NT SESC / LIAC 02 -
-      024 ind 0 de décembre 2002 J.M.ESCLEINE
- §8.4.2 Page 34
-}
+@Description{Matériaux RCG - T et RCG -
+             R Un point sur le carbure de Silicium NT SESC / LIAC 02 -
+             024 ind 0 de décembre 2002 J.M.ESCLEINE
+ §8.4.2 Page 34}
 
 @ExternalStateVar real flux;
 

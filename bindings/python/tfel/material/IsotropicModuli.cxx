@@ -18,20 +18,17 @@
 #include "TFEL/Material/IsotropicModuli.hxx"
 
 template <tfel::math::ScalarConcept StressType>
-requires(
-    tfel::math::checkUnitCompatibility<
-        tfel::math::unit::Stress,
-        StressType>()) static void declareIsotropicModuli(pybind11::module_& m,
-                                                          const char* const n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+static void declareIsotropicModuli(pybind11::module_& m, const char* const n) {
   using IM = tfel::material::IsotropicModuli<StressType>;
   pybind11::class_<IM, std::shared_ptr<IM>>(m, n, pybind11::buffer_protocol());
 }
 
 template <tfel::math::ScalarConcept StressType>
-requires(tfel::math::checkUnitCompatibility<
-         tfel::math::unit::Stress,
-         StressType>()) static void declareKGModuli(pybind11::module_& m,
-                                                    const char* const n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+static void declareKGModuli(pybind11::module_& m, const char* const n) {
   using KG = tfel::material::KGModuli<StressType>;
   using IM = tfel::material::IsotropicModuli<StressType>;
 
@@ -47,10 +44,9 @@ requires(tfel::math::checkUnitCompatibility<
 }
 
 template <tfel::math::ScalarConcept StressType>
-requires(tfel::math::checkUnitCompatibility<
-         tfel::math::unit::Stress,
-         StressType>()) static void declareYoungNuModuli(pybind11::module_& m,
-                                                         const char* const n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+static void declareYoungNuModuli(pybind11::module_& m, const char* const n) {
   using YN = tfel::material::YoungNuModuli<StressType>;
   using IM = tfel::material::IsotropicModuli<StressType>;
 
@@ -67,10 +63,9 @@ requires(tfel::math::checkUnitCompatibility<
 }
 
 template <tfel::math::ScalarConcept StressType>
-requires(tfel::math::checkUnitCompatibility<
-         tfel::math::unit::Stress,
-         StressType>()) static void declareLambdaMuModuli(pybind11::module_& m,
-                                                          const char* const n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+static void declareLambdaMuModuli(pybind11::module_& m, const char* const n) {
   using LM = tfel::material::LambdaMuModuli<StressType>;
   using IM = tfel::material::IsotropicModuli<StressType>;
 
@@ -93,5 +88,6 @@ void declareIsotropicModuli(pybind11::module_& m) {
   declareYoungNuModuli<double>(m, "YoungNuModuli");
   declareLambdaMuModuli<double>(m, "LambdaMuModuli");
   m.def("computeKGModuli", &tfel::material::computeKGModuli<double>);
-  m.def("computeIsotropicStiffnessTensor", &tfel::material::computeIsotropicStiffnessTensor<double>);
+  m.def("computeIsotropicStiffnessTensor",
+        &tfel::material::computeIsotropicStiffnessTensor<double>);
 }

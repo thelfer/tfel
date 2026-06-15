@@ -83,7 +83,7 @@ namespace tfel::math::internals {
                                                           VariableType>{
           &m(i, j)};
     }  // end of exe
-  };   // end of struct DerivativeViewFromTinyMatrixImplementation
+  };  // end of struct DerivativeViewFromTinyMatrixImplementation
 
   /*!
    * \brief partial specialization if the function type is a scalar.
@@ -137,7 +137,7 @@ namespace tfel::math::internals {
                                                           VariableType>{
           &m(i, j)};
     }  // end of exe
-  };   // end of struct DerivativeViewFromTinyMatrixImplementation
+  };  // end of struct DerivativeViewFromTinyMatrixImplementation
 
   /*!
    * \brief partial specialization if the variable type is a scalar.
@@ -191,7 +191,7 @@ namespace tfel::math::internals {
                                                           VariableType>{
           &m(i, j)};
     }  // end of exe
-  };   // end of struct DerivativeViewFromTinyMatrixImplementation
+  };  // end of struct DerivativeViewFromTinyMatrixImplementation
 
   /*!
    * \brief partial specialization if the function type and the variable type
@@ -241,7 +241,7 @@ namespace tfel::math::internals {
                                                           VariableType>(
           m(i, j));
     }  // end of exe
-  };   // end of struct DerivativeViewFromTinyMatrixImplementation
+  };  // end of struct DerivativeViewFromTinyMatrixImplementation
 
   template <MatrixConcept MatrixType>
   TFEL_HOST_DEVICE constexpr auto det2(const MatrixType& m) noexcept {
@@ -270,7 +270,8 @@ namespace tfel::math {
   template <std::size_t... d>
   TFEL_HOST_DEVICE constexpr tmatrix<N, M, ValueType>::tmatrix(
       ValueType const (&... arrays)[d])  //
-      requires((sizeof...(d) == N) && ((d == M) && ...)) {
+    requires((sizeof...(d) == N) && ((d == M) && ...))
+  {
     auto init_row = [this](const typename tmatrix::size_type i,
                            ValueType const(&values)[M]) {
       for (typename tmatrix::size_type j = 0u; j < M; ++j) {

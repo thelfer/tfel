@@ -118,7 +118,7 @@ namespace mfront {
       static bool b = true;
       return b;
     }  // end of getUnicodeOutputOption()
-  }    // end of namespace internals
+  }  // end of namespace internals
 
   void setUnicodeOutputOption(const bool b) {
     mfront::internals::getUnicodeOutputOption() = b;

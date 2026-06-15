@@ -39,8 +39,8 @@ namespace mfront {
       PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
           const override;
 
-      std::string updatePorosityUpperBound(const BehaviourDescription &,
-                                           const std::string &,
+      std::string updatePorosityUpperBound(const BehaviourDescription&,
+                                           const std::string&,
                                            const Role) const override;
 
       //! \brief destructor

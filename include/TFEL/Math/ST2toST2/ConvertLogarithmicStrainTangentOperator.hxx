@@ -65,13 +65,13 @@ namespace tfel::math {
                                         const tmatrix<3u, 3u, real>&,
                                         const tvector<3u,
                                                       real>&) noexcept  //
-        requires(
-            (tfel::math::getSpaceDimension<ST2toST2Type>() == 1u) &&
-                (std::is_same<numeric_type<ST2toST2Type>, stress>::value) &&
-                (tfel::math::getSpaceDimension<ST2toST2Type2>() == 1u) &&
-                (isAssignableTo<numeric_type<ST2toST2Type2>, stress>()),
-            (tfel::math::getSpaceDimension<ST2toST2Type3>() == 1u) &&
-                (isAssignableTo<numeric_type<ST2toST2Type3>, real>())) {
+      requires((tfel::math::getSpaceDimension<ST2toST2Type>() == 1u) &&
+                   (std::is_same<numeric_type<ST2toST2Type>, stress>::value) &&
+                   (tfel::math::getSpaceDimension<ST2toST2Type2>() == 1u) &&
+                   (isAssignableTo<numeric_type<ST2toST2Type2>, stress>()),
+               (tfel::math::getSpaceDimension<ST2toST2Type3>() == 1u) &&
+                   (isAssignableTo<numeric_type<ST2toST2Type3>, real>()))
+    {
       const auto iC0 = P(0, 0);
       const auto iC1 = P(1, 1);
       const auto iC2 = P(2, 2);

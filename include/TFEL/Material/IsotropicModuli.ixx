@@ -15,11 +15,10 @@
 namespace tfel::material {
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>()) TFEL_HOST_DEVICE
-      constexpr tfel::math::
-          st2tost2<3u, StressType> computeIsotropicStiffnessTensor(
-              const IsotropicModuli<StressType> &IM) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE constexpr tfel::math::st2tost2<3u, StressType>
+  computeIsotropicStiffnessTensor(const IsotropicModuli<StressType>& IM) {
     const auto KG = IM.ToKG();
     const auto kappa = KG.kappa;
     const auto mu = KG.mu;
@@ -32,7 +31,7 @@ namespace tfel::material {
 
   template <tfel::math::ScalarConcept T>
   TFEL_HOST_DEVICE constexpr std::pair<T, T> computeKappaMu(
-      const tfel::math::st2tost2<3u, T> &A) {
+      const tfel::math::st2tost2<3u, T>& A) {
     const auto siz = tfel::math::StensorDimeToSize<3u>::value;
     constexpr auto J = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::J();
     constexpr auto K = tfel::math::st2tost2<3u, tfel::math::base_type<T>>::K();
@@ -43,7 +42,7 @@ namespace tfel::material {
 
   template <tfel::math::ScalarConcept StressType>
   TFEL_HOST_DEVICE constexpr KGModuli<StressType> computeKGModuli(
-      const tfel::math::st2tost2<3u, StressType> &A) {
+      const tfel::math::st2tost2<3u, StressType>& A) {
     const auto pair = computeKappaMu<StressType>(A);
     const auto kappa = std::get<0>(pair);
     const auto mu = std::get<1>(pair);
@@ -52,15 +51,15 @@ namespace tfel::material {
 
   template <unsigned short int N, tfel::math::ScalarConcept T>
   TFEL_HOST_DEVICE constexpr tfel::math::base_type<T> relative_error(
-      const tfel::math::st2tost2<N, T> &C1,
-      const tfel::math::st2tost2<N, T> &C2) {
+      const tfel::math::st2tost2<N, T>& C1,
+      const tfel::math::st2tost2<N, T>& C2) {
     const auto val = tfel::math::norm(C1 - C2) / tfel::math::norm(C2);
     return val;
   }  // end of relative_error
 
   template <tfel::math::ScalarConcept T>
   TFEL_HOST_DEVICE constexpr bool isIsotropic(
-      const tfel::math::st2tost2<3u, T> &Ai,
+      const tfel::math::st2tost2<3u, T>& Ai,
       const tfel::math::base_type<T> eps) {
     const auto pair = computeKappaMu<T>(Ai);
     const auto kappai = std::get<0>(pair);

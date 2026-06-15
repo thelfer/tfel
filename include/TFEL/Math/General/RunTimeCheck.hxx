@@ -84,7 +84,7 @@ namespace tfel::math {
       }
       return a;
     }  // end of exe.
-  };   // end of RunTimeCheck.
+  };  // end of RunTimeCheck.
 
   /*!
    * Partial specialisation for EmptyRunTimeProperties.
@@ -101,7 +101,7 @@ namespace tfel::math {
                                       const EmptyRunTimeProperties) noexcept {
       return EmptyRunTimeProperties();
     }  // end of exe
-  };   // end of RunTimeCheck<EmptyRunTimeProperties>
+  };  // end of RunTimeCheck<EmptyRunTimeProperties>
 
 }  // end of namespace tfel::math
 

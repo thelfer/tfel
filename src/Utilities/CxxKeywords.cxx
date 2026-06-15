@@ -18,7 +18,7 @@
 
 namespace tfel::utilities {
 
-  static const char *reservedCxxKeywords[64] = {
+  static const char* reservedCxxKeywords[64] = {
       "asm",          "auto",      "bool",
       "break",        "case",      "catch",
       "char ",        "class",     "const",
@@ -43,7 +43,7 @@ namespace tfel::utilities {
       "constexpr"};
 
   std::size_t getNumberOfCxxKeywords() {
-    return sizeof(reservedCxxKeywords) / sizeof(char *);
+    return sizeof(reservedCxxKeywords) / sizeof(char*);
   }
 
   bool isReservedCxxKeywords(std::string_view s) {

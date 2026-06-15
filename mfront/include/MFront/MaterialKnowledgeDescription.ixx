@@ -18,7 +18,8 @@ namespace mfront {
 
   template <typename T>
   T& MaterialKnowledgeDescription::getAttribute(const std::string_view n)  //
-      requires(isMaterialKnowledgeAttributeType<T>()) {
+    requires(isMaterialKnowledgeAttributeType<T>())
+  {
     auto p = this->attributes.find(n);
     if (p == this->attributes.end()) {
       p = this->attributes
@@ -31,7 +32,8 @@ namespace mfront {
   template <typename T>
   const T& MaterialKnowledgeDescription::getAttribute(
       const std::string_view n) const  //
-      requires(isMaterialKnowledgeAttributeType<T>()) {
+    requires(isMaterialKnowledgeAttributeType<T>())
+  {
     const auto p = this->attributes.find(n);
     if (p == this->attributes.end()) {
       MaterialKnowledgeDescription::throwUndefinedAttribute(n);
@@ -42,7 +44,8 @@ namespace mfront {
   template <typename T>
   T MaterialKnowledgeDescription::getAttribute(const std::string_view n,
                                                const T& v) const  //
-      requires(isMaterialKnowledgeAttributeType<T>()) {
+    requires(isMaterialKnowledgeAttributeType<T>())
+  {
     const auto p = this->attributes.find(n);
     if (p == this->attributes.end()) {
       return v;

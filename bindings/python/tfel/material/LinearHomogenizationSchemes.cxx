@@ -17,10 +17,9 @@
 #include "TFEL/Material/HomogenizationSecondMoments.hxx"
 
 template <tfel::math::ScalarConcept StressType>
-requires(tfel::math::checkUnitCompatibility<
-         tfel::math::unit::Stress,
-         StressType>()) static void declareDistribution(pybind11::module_& m,
-                                                        const char* const n) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+static void declareDistribution(pybind11::module_& m, const char* const n) {
   using D =
       tfel::material::homogenization::elasticity::Distribution<StressType>;
 
@@ -234,7 +233,8 @@ void declareLinearHomogenizationSchemes(pybind11::module_& m) {
           return homogenization::elasticity::computeOrientedPCWScheme(
               IM, f, IMi, n_a, a, n_b, b, c, D);
         });
-  m.def("computeMeanSquaredEquivalentStrain", &homogenization::elasticity::computeMeanSquaredEquivalentStrain<double>,
+  m.def("computeMeanSquaredEquivalentStrain",
+        &homogenization::elasticity::computeMeanSquaredEquivalentStrain<double>,
         pybind11::arg("IsotropicModuli_of_the_matrix"),
         pybind11::arg("volume_fraction"),
         pybind11::arg("IsotropicModuli_of_the_inclusion"),

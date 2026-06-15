@@ -27,8 +27,9 @@ namespace tfel::math {
   template <T2toST2Concept T2toST2Type, TensorConcept TensorType>
   TFEL_HOST_DEVICE constexpr auto convertToTangentModuli(
       const T2toST2Type& K, const TensorType& F) noexcept  //
-      requires(getSpaceDimension<T2toST2Type>() ==
-               getSpaceDimension<TensorType>()) {
+    requires(getSpaceDimension<T2toST2Type>() ==
+             getSpaceDimension<TensorType>())
+  {
     constexpr auto N = getSpaceDimension<T2toST2Type>();
     using value_type = result_type<numeric_type<T2toST2Type>,
                                    numeric_type<TensorType>, OpMult>;

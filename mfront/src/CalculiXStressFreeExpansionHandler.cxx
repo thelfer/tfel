@@ -20,10 +20,10 @@ namespace calculix {
 
   template <typename real>
   static void CalculiXStandardSmallStrainStressFreeExpansionHandlerImpl(
-      real *const e,
-      real *const de,
-      const real *const s0,
-      const real *const s1,
+      real* const e,
+      real* const de,
+      const real* const s0,
+      const real* const s1,
       const CalculiXInt d) {
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     e[0] -= s0[0];
@@ -47,20 +47,20 @@ namespace calculix {
   }  // end of CalculiXStandardSmallStrainStressFreeExpansionHandler
 
   void CalculiXStandardSmallStrainStressFreeExpansionHandler(
-      CalculiXReal *const e,
-      CalculiXReal *const de,
-      const CalculiXReal *const s0,
-      const CalculiXReal *const s1,
+      CalculiXReal* const e,
+      CalculiXReal* const de,
+      const CalculiXReal* const s0,
+      const CalculiXReal* const s1,
       const CalculiXInt d) {
     CalculiXStandardSmallStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }
 
   template <typename real>
   static void CalculiXLogarithmicStrainStressFreeExpansionHandlerImpl(
-      real *const e,
-      real *const de,
-      const real *const s0,
-      const real *const s1,
+      real* const e,
+      real* const de,
+      const real* const s0,
+      const real* const s1,
       const CalculiXInt d) {
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     if (d == 2) {
@@ -98,10 +98,10 @@ namespace calculix {
   }  // end of CalculiXLogarithmicStrainStressFreeExpansionHandler
 
   void CalculiXLogarithmicStrainStressFreeExpansionHandler(
-      CalculiXReal *const e,
-      CalculiXReal *const de,
-      const CalculiXReal *const s0,
-      const CalculiXReal *const s1,
+      CalculiXReal* const e,
+      CalculiXReal* const de,
+      const CalculiXReal* const s0,
+      const CalculiXReal* const s1,
       const CalculiXInt d) {
     CalculiXLogarithmicStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }

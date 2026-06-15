@@ -16,15 +16,15 @@
 namespace tfel::material::homogenization::elasticity {
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE const std::
-      pair<types::real<StressType>, types::real<StressType>> computeMeanSquaredEquivalentStrain(
-          const IsotropicModuli<StressType>& IM0,
-          const types::real<StressType>& f,
-          const IsotropicModuli<StressType>& IMi,
-          const types::real<StressType>& em2,
-          const types::real<StressType>& eeq2) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE const
+      std::pair<types::real<StressType>, types::real<StressType>>
+      computeMeanSquaredEquivalentStrain(const IsotropicModuli<StressType>& IM0,
+                                         const types::real<StressType>& f,
+                                         const IsotropicModuli<StressType>& IMi,
+                                         const types::real<StressType>& em2,
+                                         const types::real<StressType>& eeq2) {
     const auto kg0 = IM0.ToKG();
     const auto kgi = IMi.ToKG();
     const auto mu0 = kg0.mu;
@@ -57,15 +57,15 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE const std::
-      pair<types::real<StressType>, types::real<StressType>> computeMeanSquaredHydrostaticStrain(
-          const IsotropicModuli<StressType>& IM0,
-          const types::real<StressType>& f,
-          const IsotropicModuli<StressType>& IMi,
-          const types::real<StressType>& em2,
-          const types::real<StressType>& eeq2) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE const std::pair<types::real<StressType>,
+                                   types::real<StressType>>
+  computeMeanSquaredHydrostaticStrain(const IsotropicModuli<StressType>& IM0,
+                                      const types::real<StressType>& f,
+                                      const IsotropicModuli<StressType>& IMi,
+                                      const types::real<StressType>& em2,
+                                      const types::real<StressType>& eeq2) {
     const auto kg0 = IM0.ToKG();
     const auto kgi = IMi.ToKG();
     const auto mu0 = kg0.mu;

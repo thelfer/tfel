@@ -27,66 +27,66 @@ namespace tfel::material {
    * 3 formats are possible: (Young,Nu), (Lambda,Mu) and (K,Mu).
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(
-      tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                         StressType>()) struct IsotropicModuli;
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct IsotropicModuli;
 
   /*!
    * \brief This class is relative to the format (K,Nu).
    * It can be converted to the other formats (Lambda,Mu) and (Young,Nu).
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>()) struct KGModuli;
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct KGModuli;
 
   /*!
    * \brief This class is relative to the format (Lambda,Mu).
    * It can be converted to the other formats (Young,Nu) and (K,Mu).
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(
-      tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                         StressType>()) struct LambdaMuModuli;
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct LambdaMuModuli;
 
   /*!
    * \brief This class is relative to the format (Young,Nu).
    * It can be converted to the other formats (Lambda,Mu) and (K,Mu).
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(
-      tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                         StressType>()) struct YoungNuModuli;
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct YoungNuModuli;
 
   template <tfel::math::ScalarConcept StressType>
-  requires(
-      tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                         StressType>()) struct IsotropicModuli {
-    
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct IsotropicModuli {
     IsotropicModuli() = default;
 
     IsotropicModuli(const IsotropicModuli<StressType>&) = default;
     IsotropicModuli<StressType>& operator=(const IsotropicModuli&) = default;
 
     IsotropicModuli(IsotropicModuli<StressType>&&) = default;
-    IsotropicModuli<StressType>& operator=(IsotropicModuli<StressType>&&) = default;
-    
+    IsotropicModuli<StressType>& operator=(IsotropicModuli<StressType>&&) =
+        default;
+
     virtual ~IsotropicModuli() = default;
-    
+
     virtual YoungNuModuli<StressType> ToYoungNu() const = 0;
     virtual LambdaMuModuli<StressType> ToLambdaMu() const = 0;
     virtual KGModuli<StressType> ToKG() const = 0;
   };
 
   template <tfel::math::ScalarConcept StressType>
-  requires(
-      tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                         StressType>()) struct YoungNuModuli
-      : public IsotropicModuli<StressType> {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct YoungNuModuli : public IsotropicModuli<StressType> {
     StressType young;
     types::real<StressType> nu;
-    
+
     YoungNuModuli() = default;
-    
+
     YoungNuModuli(const StressType& Young, const types::real<StressType>& Nu)
         : IsotropicModuli<StressType>(), young(Young), nu(Nu) {}
 
@@ -115,12 +115,12 @@ namespace tfel::material {
   };  // end of YoungNuoduli
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>()) struct KGModuli
-      : public IsotropicModuli<StressType> {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct KGModuli : public IsotropicModuli<StressType> {
     StressType kappa;
     StressType mu;
-    
+
     KGModuli() = default;
 
     KGModuli(const StressType& Kappa, const StressType& Mu)
@@ -151,15 +151,14 @@ namespace tfel::material {
   };  // end of KGModuli
 
   template <tfel::math::ScalarConcept StressType>
-  requires(
-      tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                         StressType>()) struct LambdaMuModuli
-      : public IsotropicModuli<StressType> {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct LambdaMuModuli : public IsotropicModuli<StressType> {
     StressType lambda;
     StressType mu;
-    
+
     LambdaMuModuli() = default;
-    
+
     LambdaMuModuli(const StressType& Lambda, const StressType& Mu)
         : IsotropicModuli<StressType>(), lambda(Lambda), mu(Mu) {}
 
@@ -194,11 +193,10 @@ namespace tfel::material {
    * \param IM : `IsotropicModuli`  \return a `st2tost2`
    */
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>()) TFEL_HOST_DEVICE
-      constexpr tfel::math::
-          st2tost2<3u, StressType> computeIsotropicStiffnessTensor(
-              const IsotropicModuli<StressType>&);
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE constexpr tfel::math::st2tost2<3u, StressType>
+  computeIsotropicStiffnessTensor(const IsotropicModuli<StressType>&);
 
   /*!
    * This function makes the projection of a `st2tost2`

@@ -389,8 +389,7 @@ int main(const int argc, const char* const* const argv) {
         "--cppflags", [] { cppflags = true; }, "return preprocessor flags.");
     registerCallBack(
         "--ldflags", [] { ldflags = true; }, "return linking flags.");
-    registerCallBack(
-        "--libs", [] { ldflags = true; }, "return linking flags.");
+    registerCallBack("--libs", [] { ldflags = true; }, "return linking flags.");
     registerCallBack(
         "--include-path", [] { incspath = true; },
         "return the path to the `TFEL` headers.");
@@ -406,8 +405,7 @@ int main(const int argc, const char* const* const argv) {
         "--castem", [] { castem = true; }, "request flags for castem.");
 #endif /* HAVE_CASTEM */
 #ifdef HAVE_ZMAT
-    registerCallBack(
-        "--zmat", [] { zmat = true; }, "request flags for zmat.");
+    registerCallBack("--zmat", [] { zmat = true; }, "request flags for zmat.");
 #endif /* HAVE_ZMAT */
     registerCallBack(
         "--exceptions", [] { exceptions = true; },

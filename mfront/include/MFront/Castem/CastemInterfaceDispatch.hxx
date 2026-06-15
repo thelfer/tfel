@@ -39,36 +39,36 @@ namespace castem {
    * \author Thomas Helfer
    * \date   24 Jul 2013
    */
-  template <
-      CastemBehaviourType type,
-      tfel::material::ModellingHypothesis::Hypothesis H,
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <CastemBehaviourType type,
+            tfel::material::ModellingHypothesis::Hypothesis H,
+            template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct CastemInterfaceDispatch : public CastemInterfaceExceptions {
-    TFEL_CASTEM_INLINE2 static void exe(const CastemInt *const,
-                                        const CastemReal *const,
-                                        const CastemReal *const,
-                                        const CastemReal *const,
-                                        const CastemReal *const,
-                                        const CastemReal *const,
-                                        const CastemReal *const,
-                                        const CastemReal *const,
-                                        const CastemReal *const,
-                                        const CastemInt *const,
-                                        const CastemReal *const,
-                                        const CastemReal *const,
-                                        CastemReal *const,
-                                        const CastemInt *const,
-                                        CastemReal *const,
-                                        CastemReal *const,
+    TFEL_CASTEM_INLINE2 static void exe(const CastemInt* const,
+                                        const CastemReal* const,
+                                        const CastemReal* const,
+                                        const CastemReal* const,
+                                        const CastemReal* const,
+                                        const CastemReal* const,
+                                        const CastemReal* const,
+                                        const CastemReal* const,
+                                        const CastemReal* const,
+                                        const CastemInt* const,
+                                        const CastemReal* const,
+                                        const CastemReal* const,
+                                        CastemReal* const,
+                                        const CastemInt* const,
+                                        CastemReal* const,
+                                        CastemReal* const,
                                         const tfel::material::OutOfBoundsPolicy,
-                                        const StressFreeExpansionHandler &) {
+                                        const StressFreeExpansionHandler&) {
       typedef tfel::material::ModellingHypothesis MH;
       CastemInterfaceExceptions::
           throwInvalidBehaviourTypeAndModellingHypothesis(type,
                                                           MH::toString(H));
     }  // end of exe
-  };   // end of struct CastemInterfaceDispatch
+  };  // end of struct CastemInterfaceDispatch
 
   /*!
    * \class  CastemInterfaceDispatch
@@ -76,31 +76,31 @@ namespace castem {
    * \author Thomas Helfer
    * \date   24 Jul 2013
    */
-  template <
-      tfel::material::ModellingHypothesis::Hypothesis H,
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Model>
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Model>
   struct CastemInterfaceDispatch<MODEL, H, Model>
       : public CastemInterfaceExceptions {
     TFEL_CASTEM_INLINE2 static void exe(
-        const CastemInt *const,
-        const CastemReal *const DTIME,
-        const CastemReal *const,
-        CastemReal *const DDSDDE,
-        const CastemReal *const STRAN,
-        const CastemReal *const DSTRAN,
-        const CastemReal *const TEMP,
-        const CastemReal *const DTEMP,
-        const CastemReal *const PROPS,
-        const CastemInt *const NPROPS,
-        const CastemReal *const PREDEF,
-        const CastemReal *const DPRED,
-        CastemReal *const STATEV,
-        const CastemInt *const NSTATV,
-        CastemReal *const STRESS,
-        CastemReal *const PNEWDT,
+        const CastemInt* const,
+        const CastemReal* const DTIME,
+        const CastemReal* const,
+        CastemReal* const DDSDDE,
+        const CastemReal* const STRAN,
+        const CastemReal* const DSTRAN,
+        const CastemReal* const TEMP,
+        const CastemReal* const DTEMP,
+        const CastemReal* const PROPS,
+        const CastemInt* const NPROPS,
+        const CastemReal* const PREDEF,
+        const CastemReal* const DPRED,
+        CastemReal* const STATEV,
+        const CastemInt* const NSTATV,
+        CastemReal* const STRESS,
+        CastemReal* const PNEWDT,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace tfel::material;
       using ModelImplementation = Model<H, CastemReal, false>;
       using Traits = CastemTraits<ModelImplementation>;
@@ -130,7 +130,7 @@ namespace castem {
                       STATEV, STRESS, op, sfeh);
       handler.exe(DDSDDE, STRESS, STATEV, PNEWDT);
     }  // end of exe
-  };   // end of struct CastemInterfaceDispatch
+  };  // end of struct CastemInterfaceDispatch
 
   /*!
    * \class  CastemInterfaceDispatch
@@ -138,31 +138,31 @@ namespace castem {
    * \author Thomas Helfer
    * \date   24 Jul 2013
    */
-  template <
-      tfel::material::ModellingHypothesis::Hypothesis H,
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct CastemInterfaceDispatch<STANDARDSTRAINBASEDBEHAVIOUR, H, Behaviour>
       : public CastemInterfaceExceptions {
     TFEL_CASTEM_INLINE2 static void exe(
-        const CastemInt *const NTENS,
-        const CastemReal *const DTIME,
-        const CastemReal *const DROT,
-        CastemReal *const DDSDDE,
-        const CastemReal *const STRAN,
-        const CastemReal *const DSTRAN,
-        const CastemReal *const TEMP,
-        const CastemReal *const DTEMP,
-        const CastemReal *const PROPS,
-        const CastemInt *const NPROPS,
-        const CastemReal *const PREDEF,
-        const CastemReal *const DPRED,
-        CastemReal *const STATEV,
-        const CastemInt *const NSTATV,
-        CastemReal *const STRESS,
-        CastemReal *const PNEWDT,
+        const CastemInt* const NTENS,
+        const CastemReal* const DTIME,
+        const CastemReal* const DROT,
+        CastemReal* const DDSDDE,
+        const CastemReal* const STRAN,
+        const CastemReal* const DSTRAN,
+        const CastemReal* const TEMP,
+        const CastemReal* const DTEMP,
+        const CastemReal* const PROPS,
+        const CastemInt* const NPROPS,
+        const CastemReal* const PREDEF,
+        const CastemReal* const DPRED,
+        CastemReal* const STATEV,
+        const CastemInt* const NSTATV,
+        CastemReal* const STRESS,
+        CastemReal* const PNEWDT,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace std;
       using namespace tfel::meta;
       using namespace tfel::material;
@@ -181,7 +181,7 @@ namespace castem {
                    NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, PNEWDT, op,
                    sfeh);
     }  // end of exe
-  };   // end of struct CastemInterfaceDispatch
+  };  // end of struct CastemInterfaceDispatch
 
   /*!
    * \class  CastemInterfaceDispatch
@@ -189,32 +189,32 @@ namespace castem {
    * \author Thomas Helfer
    * \date   24 Jul 2013
    */
-  template <
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct CastemInterfaceDispatch<
       STANDARDSTRAINBASEDBEHAVIOUR,
       tfel::material::ModellingHypothesis::PLANESTRESS,
       Behaviour> : public CastemInterfaceExceptions {
     TFEL_CASTEM_INLINE2 static void exe(
-        const CastemInt *const NTENS,
-        const CastemReal *const DTIME,
-        const CastemReal *const DROT,
-        CastemReal *const DDSDDE,
-        const CastemReal *const STRAN,
-        const CastemReal *const DSTRAN,
-        const CastemReal *const TEMP,
-        const CastemReal *const DTEMP,
-        const CastemReal *const PROPS,
-        const CastemInt *const NPROPS,
-        const CastemReal *const PREDEF,
-        const CastemReal *const DPRED,
-        CastemReal *const STATEV,
-        const CastemInt *const NSTATV,
-        CastemReal *const STRESS,
-        CastemReal *const PNEWDT,
+        const CastemInt* const NTENS,
+        const CastemReal* const DTIME,
+        const CastemReal* const DROT,
+        CastemReal* const DDSDDE,
+        const CastemReal* const STRAN,
+        const CastemReal* const DSTRAN,
+        const CastemReal* const TEMP,
+        const CastemReal* const DTEMP,
+        const CastemReal* const PROPS,
+        const CastemInt* const NPROPS,
+        const CastemReal* const PREDEF,
+        const CastemReal* const DPRED,
+        CastemReal* const STATEV,
+        const CastemInt* const NSTATV,
+        CastemReal* const STRESS,
+        CastemReal* const PNEWDT,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace std;
       using namespace tfel::meta;
       typedef tfel::material::ModellingHypothesis MH;
@@ -248,31 +248,31 @@ namespace castem {
    * \author Thomas Helfer
    * \date   24 Jul 2013
    */
-  template <
-      tfel::material::ModellingHypothesis::Hypothesis H,
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct CastemInterfaceDispatch<STANDARDFINITESTRAINBEHAVIOUR, H, Behaviour>
       : public CastemInterfaceExceptions {
     TFEL_CASTEM_INLINE2 static void exe(
-        const CastemInt *const NTENS,
-        const CastemReal *const DTIME,
-        const CastemReal *const DROT,
-        CastemReal *const DDSDDE,
-        const CastemReal *const STRAN,
-        const CastemReal *const DSTRAN,
-        const CastemReal *const TEMP,
-        const CastemReal *const DTEMP,
-        const CastemReal *const PROPS,
-        const CastemInt *const NPROPS,
-        const CastemReal *const PREDEF,
-        const CastemReal *const DPRED,
-        CastemReal *const STATEV,
-        const CastemInt *const NSTATV,
-        CastemReal *const STRESS,
-        CastemReal *const PNEWDT,
+        const CastemInt* const NTENS,
+        const CastemReal* const DTIME,
+        const CastemReal* const DROT,
+        CastemReal* const DDSDDE,
+        const CastemReal* const STRAN,
+        const CastemReal* const DSTRAN,
+        const CastemReal* const TEMP,
+        const CastemReal* const DTEMP,
+        const CastemReal* const PROPS,
+        const CastemInt* const NPROPS,
+        const CastemReal* const PREDEF,
+        const CastemReal* const DPRED,
+        CastemReal* const STATEV,
+        const CastemInt* const NSTATV,
+        CastemReal* const STRESS,
+        CastemReal* const PNEWDT,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace std;
       using namespace tfel::meta;
       using namespace tfel::material;
@@ -291,34 +291,34 @@ namespace castem {
                    NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, PNEWDT, op,
                    sfeh);
     }  // end of exe
-  };   // end of struct CastemInterfaceDispatch
+  };  // end of struct CastemInterfaceDispatch
 
   /* cohesive zones models */
-  template <
-      tfel::material::ModellingHypothesis::Hypothesis hypothesis,
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <tfel::material::ModellingHypothesis::Hypothesis hypothesis,
+            template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct CastemCohesiveZoneModelInterfaceDispatch2D
       : public CastemInterfaceExceptions {
     TFEL_CASTEM_INLINE2 static void exe(
-        const CastemInt *const NTENS,
-        const CastemReal *const DTIME,
-        const CastemReal *const DROT,
-        CastemReal *const DDSDDE,
-        const CastemReal *const STRAN,
-        const CastemReal *const DSTRAN,
-        const CastemReal *const TEMP,
-        const CastemReal *const DTEMP,
-        const CastemReal *const PROPS,
-        const CastemInt *const NPROPS,
-        const CastemReal *const PREDEF,
-        const CastemReal *const DPRED,
-        CastemReal *const STATEV,
-        const CastemInt *const NSTATV,
-        CastemReal *const STRESS,
-        CastemReal *const PNEWDT,
+        const CastemInt* const NTENS,
+        const CastemReal* const DTIME,
+        const CastemReal* const DROT,
+        CastemReal* const DDSDDE,
+        const CastemReal* const STRAN,
+        const CastemReal* const DSTRAN,
+        const CastemReal* const TEMP,
+        const CastemReal* const DTEMP,
+        const CastemReal* const PROPS,
+        const CastemInt* const NPROPS,
+        const CastemReal* const PREDEF,
+        const CastemReal* const DPRED,
+        CastemReal* const STATEV,
+        const CastemInt* const NSTATV,
+        CastemReal* const STRESS,
+        CastemReal* const PNEWDT,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace std;
       using namespace tfel::meta;
       typedef Behaviour<hypothesis, CastemReal, false> BV;
@@ -353,11 +353,11 @@ namespace castem {
       STRESS[0] = t[1];
       STRESS[1] = t[0];
     }  // end of exe
-  };   // end of struct CastemInterfaceDispatch
+  };  // end of struct CastemInterfaceDispatch
 
-  template <
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct CastemInterfaceDispatch<
       COHESIVEZONEMODEL,
       tfel::material::ModellingHypothesis::PLANESTRAIN,
@@ -366,9 +366,9 @@ namespace castem {
             tfel::material::ModellingHypothesis::PLANESTRAIN,
             Behaviour> {};
 
-  template <
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct CastemInterfaceDispatch<
       COHESIVEZONEMODEL,
       tfel::material::ModellingHypothesis::AXISYMMETRICAL,
@@ -378,32 +378,32 @@ namespace castem {
             Behaviour> {};
 
   /* cohesive zones models */
-  template <
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct CastemInterfaceDispatch<
       COHESIVEZONEMODEL,
       tfel::material::ModellingHypothesis::TRIDIMENSIONAL,
       Behaviour> : public CastemInterfaceExceptions {
     TFEL_CASTEM_INLINE2 static void exe(
-        const CastemInt *const NTENS,
-        const CastemReal *const DTIME,
-        const CastemReal *const DROT,
-        CastemReal *const DDSDDE,
-        const CastemReal *const STRAN,
-        const CastemReal *const DSTRAN,
-        const CastemReal *const TEMP,
-        const CastemReal *const DTEMP,
-        const CastemReal *const PROPS,
-        const CastemInt *const NPROPS,
-        const CastemReal *const PREDEF,
-        const CastemReal *const DPRED,
-        CastemReal *const STATEV,
-        const CastemInt *const NSTATV,
-        CastemReal *const STRESS,
-        CastemReal *const PNEWDT,
+        const CastemInt* const NTENS,
+        const CastemReal* const DTIME,
+        const CastemReal* const DROT,
+        CastemReal* const DDSDDE,
+        const CastemReal* const STRAN,
+        const CastemReal* const DSTRAN,
+        const CastemReal* const TEMP,
+        const CastemReal* const DTEMP,
+        const CastemReal* const PROPS,
+        const CastemInt* const NPROPS,
+        const CastemReal* const PREDEF,
+        const CastemReal* const DPRED,
+        CastemReal* const STATEV,
+        const CastemInt* const NSTATV,
+        CastemReal* const STRESS,
+        CastemReal* const PNEWDT,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace std;
       using namespace tfel::meta;
       typedef tfel::material::ModellingHypothesis MH;
@@ -453,7 +453,7 @@ namespace castem {
       STRESS[1] = t[2];
       STRESS[2] = t[0];
     }  // end of exe
-  };   // end of struct CastemInterfaceDispatch
+  };  // end of struct CastemInterfaceDispatch
 
 }  // end of namespace castem
 

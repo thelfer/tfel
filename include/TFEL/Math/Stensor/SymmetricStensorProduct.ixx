@@ -19,8 +19,9 @@ namespace tfel::math {
   template <StensorConcept StensorType1, StensorConcept StensorType2>
   auto symmetric_product_aba(const StensorType1& a,
                              const StensorType2& b)  //
-      requires(getSpaceDimension<StensorType1>() ==
-               getSpaceDimension<StensorType2>()) {
+    requires(getSpaceDimension<StensorType1>() ==
+             getSpaceDimension<StensorType2>())
+  {
     constexpr auto N = getSpaceDimension<StensorType1>();
     if constexpr (N == 1) {
       return stensor<1u, decltype(a[0] * b[0] * a[0])>{

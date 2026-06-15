@@ -73,7 +73,7 @@ namespace tfel::math {
       const MType& m;          //! reference to the underlying matrix
       const unsigned short i;  //! row index
       unsigned short j = 0;    //! current column
-    };                         // end of struc RowConstIterator
+    };  // end of struc RowConstIterator
     //! a pseudo iterator for the vector. This iterator works even if
     // VType does not provide an iterator
     struct VectorConstIterator {

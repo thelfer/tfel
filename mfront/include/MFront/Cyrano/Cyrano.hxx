@@ -40,12 +40,12 @@ namespace cyrano {
    *   step
    * - fourth paramater : expansion value at the end of the time step
    */
-  using StressFreeExpansionHandler = void (*)(CyranoReal *const,
-                                              CyranoReal *const,
-                                              const CyranoReal *const,
-                                              const CyranoReal *const,
-                                              const CyranoReal *const,
-                                              const CyranoReal *const);
+  using StressFreeExpansionHandler = void (*)(CyranoReal* const,
+                                              CyranoReal* const,
+                                              const CyranoReal* const,
+                                              const CyranoReal* const,
+                                              const CyranoReal* const,
+                                              const CyranoReal* const);
 
 }  // end of namespace cyrano
 

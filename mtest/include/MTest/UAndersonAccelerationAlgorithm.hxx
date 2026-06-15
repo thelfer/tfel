@@ -40,7 +40,7 @@ namespace mtest {
      * \param[in] p : parameter name
      * \param[in] v : parameter value
      */
-    void setParameter(const std::string &, const std::string &) override;
+    void setParameter(const std::string&, const std::string&) override;
     /*!
      * called at each time step, before the beginning of the Newton
      * algorithm
@@ -54,9 +54,9 @@ namespace mtest {
      * \param[in]     seps : criterium on the thermodynamic forces
      * \param[in]     iter : current iteration number
      */
-    void execute(tfel::math::vector<real> &,
-                 const tfel::math::vector<real> &,
-                 const tfel::math::vector<real> &,
+    void execute(tfel::math::vector<real>&,
+                 const tfel::math::vector<real>&,
+                 const tfel::math::vector<real>&,
                  const real,
                  const real,
                  const unsigned short) override;
@@ -74,9 +74,9 @@ namespace mtest {
     std::unique_ptr<UAnderson> a;
     /* pointer to the internal fields */
     //!< previous displacement estimate
-    Field *uO;
+    Field* uO;
     //!< current displacement estimate
-    Field *uN;
+    Field* uN;
     //! method order
     int Nmax = -1;
     //! alternance order

@@ -56,12 +56,12 @@ namespace mfront {
 
     struct __StressCriterionName__StressCriterionProxy {
       __StressCriterionName__StressCriterionProxy() {
-        auto &f = StressCriterionFactory::getFactory();
+        auto& f = StressCriterionFactory::getFactory();
         f.addGenerator("__StressCriterionName__", [] {
           return std::make_shared<__StressCriterionName__StressCriterion>();
         });
       }  // end of __StressCriterionName__StressCriterionProxy
-    };   // end of struct __StressCriterionName__StressCriterionProxy
+    };  // end of struct __StressCriterionName__StressCriterionProxy
 
     static __StressCriterionName__StressCriterionProxy proxy;
 

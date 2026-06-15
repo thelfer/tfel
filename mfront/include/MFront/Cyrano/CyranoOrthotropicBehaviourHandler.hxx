@@ -23,26 +23,26 @@ namespace cyrano {
   /*!
    * The handler for orthotropic behaviours
    */
-  template <
-      tfel::material::ModellingHypothesis::Hypothesis H,
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CyranoOrthotropicBehaviourHandler {
     TFEL_CYRANO_INLINE2 static void exe(
-        const CyranoReal *const DTIME,
-        const CyranoReal *const,
-        CyranoReal *const DDSOE,
-        const CyranoReal *const STRAN,
-        const CyranoReal *const DSTRAN,
-        const CyranoReal *const TEMP,
-        const CyranoReal *const DTEMP,
-        const CyranoReal *const PROPS,
-        const CyranoInt *const NPROPS,
-        const CyranoReal *const PREDEF,
-        const CyranoReal *const DPRED,
-        CyranoReal *const STATEV,
-        const CyranoInt *const NSTATV,
-        CyranoReal *const STRESS,
+        const CyranoReal* const DTIME,
+        const CyranoReal* const,
+        CyranoReal* const DDSOE,
+        const CyranoReal* const STRAN,
+        const CyranoReal* const DSTRAN,
+        const CyranoReal* const TEMP,
+        const CyranoReal* const DTEMP,
+        const CyranoReal* const PROPS,
+        const CyranoInt* const NPROPS,
+        const CyranoReal* const PREDEF,
+        const CyranoReal* const DPRED,
+        CyranoReal* const STATEV,
+        const CyranoInt* const NSTATV,
+        CyranoReal* const STRESS,
         const StressFreeExpansionHandler sfeh,
         const tfel::material::OutOfBoundsPolicy op) {
       using namespace tfel::meta;
@@ -70,7 +70,7 @@ namespace cyrano {
                       STATEV, STRESS, sfeh, op);
       handler.exe(DDSOE, STRESS, STATEV);
     }  // namespace cyrano
-  };   // end of struct CyranoOrthotropicBehaviourHander<1u,Behaviour>
+  };  // end of struct CyranoOrthotropicBehaviourHander<1u,Behaviour>
 
 }  // end of namespace cyrano
 

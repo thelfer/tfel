@@ -148,15 +148,15 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of namespace internals
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<2u, types::compliance<StressType>> computePlaneStrainAnisotropicHillTensor(
-          const tfel::math::st2tost2<2u, StressType>& C,
-          const tfel::math::tvector<2u, types::real<StressType>>& n_a,
-          const types::length<StressType>& a,
-          const types::length<StressType>& b,
-          const std::size_t max_it) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<2u, types::compliance<StressType>>
+  computePlaneStrainAnisotropicHillTensor(
+      const tfel::math::st2tost2<2u, StressType>& C,
+      const tfel::math::tvector<2u, types::real<StressType>>& n_a,
+      const types::length<StressType>& a,
+      const types::length<StressType>& b,
+      const std::size_t max_it) {
     using real = types::real<StressType>;
     using LengthType = types::length<StressType>;
     if (not((a > LengthType{0}) and (b > LengthType{0}))) {
@@ -193,17 +193,17 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::compliance<StressType>> computeAnisotropicHillTensor(
-          const tfel::math::st2tost2<3u, StressType>& C,
-          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-          const types::length<StressType>& a,
-          const tfel::math::tvector<3u, types::real<StressType>>& n_b,
-          const types::length<StressType>& b,
-          const types::length<StressType>& c,
-          const std::size_t max_it) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
+  computeAnisotropicHillTensor(
+      const tfel::math::st2tost2<3u, StressType>& C,
+      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+      const types::length<StressType>& a,
+      const tfel::math::tvector<3u, types::real<StressType>>& n_b,
+      const types::length<StressType>& b,
+      const types::length<StressType>& c,
+      const std::size_t max_it) {
     using LengthType = types::length<StressType>;
     using real = types::real<StressType>;
     if (not((a > LengthType{0}) and (b > LengthType{0}) and
@@ -255,50 +255,50 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-      TFEL_HOST_DEVICE tfel::math::
-          st2tost2<3u, types::real<StressType>> computeAnisotropicEshelbyTensor(
-              const tfel::math::st2tost2<3u, StressType>& C,
-              const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-              const types::length<StressType>& a,
-              const tfel::math::tvector<3u, types::real<StressType>>& n_b,
-              const types::length<StressType>& b,
-              const types::length<StressType>& c,
-              const std::size_t max_it) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>>
+  computeAnisotropicEshelbyTensor(
+      const tfel::math::st2tost2<3u, StressType>& C,
+      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+      const types::length<StressType>& a,
+      const tfel::math::tvector<3u, types::real<StressType>>& n_b,
+      const types::length<StressType>& b,
+      const types::length<StressType>& c,
+      const std::size_t max_it) {
     return computeAnisotropicHillTensor<StressType>(C, n_a, a, n_b, b, c,
                                                     max_it) *
            C;
   }
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<2u, types::real<StressType>> computePlaneStrainAnisotropicEshelbyTensor(
-          const tfel::math::st2tost2<2u, StressType>& C,
-          const tfel::math::tvector<2u, types::real<StressType>>& n_a,
-          const types::length<StressType>& a,
-          const types::length<StressType>& b,
-          const std::size_t max_it) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<2u, types::real<StressType>>
+  computePlaneStrainAnisotropicEshelbyTensor(
+      const tfel::math::st2tost2<2u, StressType>& C,
+      const tfel::math::tvector<2u, types::real<StressType>>& n_a,
+      const types::length<StressType>& a,
+      const types::length<StressType>& b,
+      const std::size_t max_it) {
     return computePlaneStrainAnisotropicHillTensor<StressType>(C, n_a, a, b,
                                                                max_it) *
            C;
   }
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<3u, types::real<StressType>> computeAnisotropicLocalisationTensor(
-          const tfel::math::st2tost2<3u, StressType>& C_0_glob,
-          const tfel::math::st2tost2<3u, StressType>& C_i_loc,
-          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-          const types::length<StressType>& a,
-          const tfel::math::tvector<3u, types::real<StressType>>& n_b,
-          const types::length<StressType>& b,
-          const types::length<StressType>& c,
-          const std::size_t max_it) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>>
+  computeAnisotropicLocalisationTensor(
+      const tfel::math::st2tost2<3u, StressType>& C_0_glob,
+      const tfel::math::st2tost2<3u, StressType>& C_i_loc,
+      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+      const types::length<StressType>& a,
+      const tfel::math::tvector<3u, types::real<StressType>>& n_b,
+      const types::length<StressType>& b,
+      const types::length<StressType>& c,
+      const std::size_t max_it) {
     using real = types::real<StressType>;
     if (not(tfel::math::ieee754::fpclassify(
                 tfel::math::VectorVectorDotProduct::exe<
@@ -332,16 +332,16 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<2u, types::real<StressType>> computePlaneStrainAnisotropicLocalisationTensor(
-          const tfel::math::st2tost2<2u, StressType>& C_0_glob,
-          const tfel::math::st2tost2<2u, StressType>& C_i_loc,
-          const tfel::math::tvector<2u, types::real<StressType>>& n_a,
-          const types::length<StressType>& a,
-          const types::length<StressType>& b,
-          const std::size_t max_it) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<2u, types::real<StressType>>
+  computePlaneStrainAnisotropicLocalisationTensor(
+      const tfel::math::st2tost2<2u, StressType>& C_0_glob,
+      const tfel::math::st2tost2<2u, StressType>& C_i_loc,
+      const tfel::math::tvector<2u, types::real<StressType>>& n_a,
+      const types::length<StressType>& a,
+      const types::length<StressType>& b,
+      const std::size_t max_it) {
     using real = types::real<StressType>;
     if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
       tfel::reportContractViolation("n_a is null");
@@ -365,9 +365,9 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of computePlaneStrainAnisotropicLocalisationTensor
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) struct AnisotropicLocalisationTensor<2u, StressType> {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct AnisotropicLocalisationTensor<2u, StressType> {
     static TFEL_HOST_DEVICE tfel::math::st2tost2<2u, types::real<StressType>>
     exe(const tfel::math::st2tost2<2u, StressType>& C_0_glob,
         const tfel::math::st2tost2<2u, StressType>& C_i_loc,
@@ -380,9 +380,9 @@ namespace tfel::material::homogenization::elasticity {
   };  // end of AnisotropicLocalisationTensor<2u, StressType>
 
   template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) struct AnisotropicLocalisationTensor<3u, StressType> {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  struct AnisotropicLocalisationTensor<3u, StressType> {
     static TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>>
     exe(const tfel::math::st2tost2<3u, StressType>& C_0_glob,
         const tfel::math::st2tost2<3u, StressType>& C_i_loc,
@@ -397,16 +397,16 @@ namespace tfel::material::homogenization::elasticity {
   };  // end of AnisotropicLocalisationTensor<3u, StressType>
 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<
-           tfel::math::unit::Stress,
-           StressType>()) TFEL_HOST_DEVICE tfel::math::
-      st2tost2<N, types::real<StressType>> computeGeneralAnisotropicLocalisationTensor(
-          const tfel::math::st2tost2<N, StressType>& C_0_glob,
-          const tfel::math::st2tost2<N, StressType>& C_i_loc,
-          const tfel::math::tvector<N, types::real<StressType>>& n_a,
-          const tfel::math::tvector<N, types::real<StressType>>& n_b,
-          const std::array<types::length<StressType>, N>& semiLengths,
-          const std::size_t max_it) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+  TFEL_HOST_DEVICE tfel::math::st2tost2<N, types::real<StressType>>
+  computeGeneralAnisotropicLocalisationTensor(
+      const tfel::math::st2tost2<N, StressType>& C_0_glob,
+      const tfel::math::st2tost2<N, StressType>& C_i_loc,
+      const tfel::math::tvector<N, types::real<StressType>>& n_a,
+      const tfel::math::tvector<N, types::real<StressType>>& n_b,
+      const std::array<types::length<StressType>, N>& semiLengths,
+      const std::size_t max_it) {
     return AnisotropicLocalisationTensor<N, StressType>::exe(
         C_0_glob, C_i_loc, n_a, n_b, semiLengths, max_it);
   }

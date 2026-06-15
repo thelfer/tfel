@@ -42,7 +42,7 @@ namespace mfront {
      * \param[in] argc : number of command line arguments
      * \param[in] argv : command line arguments
      */
-    MFront(const int, const char *const *const);
+    MFront(const int, const char* const* const);
     /*!
      * \brief treat a file (analyse and generate output files)
      * \param[in] f : file name
@@ -50,7 +50,7 @@ namespace mfront {
      * \return the target's description
      */
     virtual TargetsDescription treatFile(
-        const std::string &, const tfel::utilities::DataMap & = {}) const;
+        const std::string&, const tfel::utilities::DataMap& = {}) const;
     //! \brief execute MFront process
     virtual void exe();
     //! \brief destructor
@@ -64,7 +64,7 @@ namespace mfront {
     //! a do nothing callback
     virtual void doNothing() final;
     //! return the current argument
-    const tfel::utilities::Argument &getCurrentCommandLineArgument()
+    const tfel::utilities::Argument& getCurrentCommandLineArgument()
         const override final;
     //! get the version description
     std::string getVersionDescription() const override final;
@@ -113,7 +113,7 @@ namespace mfront {
 
     virtual void writeTargetsDescription() const;
 
-    virtual void buildLibraries(const std::string &);
+    virtual void buildLibraries(const std::string&);
 
     virtual void cleanLibraries();
 
@@ -129,7 +129,7 @@ namespace mfront {
 #endif
 
 #ifndef _MSC_VER
-    enum {MAKE, CMAKE} generator = MAKE;
+    enum { MAKE, CMAKE } generator = MAKE;
 #else
     enum { MAKE, CMAKE } generator = CMAKE;
 #endif

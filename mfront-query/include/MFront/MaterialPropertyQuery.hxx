@@ -45,9 +45,9 @@ namespace mfront {
      * \param[in] f    : mfront file
      */
     MaterialPropertyQuery(const int,
-                          const char *const *const,
+                          const char* const* const,
                           std::shared_ptr<MaterialPropertyDSL>,
-                          const std::string &);
+                          const std::string&);
     //! \brief return the number of queries to be treated
     std::size_t getNumberOfQueriesToBeTreated();
     //! \brief treat the requests
@@ -62,8 +62,8 @@ namespace mfront {
 
    private:
     //! \brief a simple alias
-    using query = std::function<void(const FileDescription &,
-                                     const MaterialPropertyDescription &)>;
+    using query = std::function<void(const FileDescription&,
+                                     const MaterialPropertyDescription&)>;
     //
     void treatGeneratedSources() override final;
     void treatSpecificTargetGeneratedSources() override final;

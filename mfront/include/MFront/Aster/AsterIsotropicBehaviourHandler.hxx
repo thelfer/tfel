@@ -20,30 +20,30 @@
 
 namespace aster {
 
-  template <
-      AsterBehaviourType btype,
-      tfel::material::ModellingHypothesis::Hypothesis H,
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <AsterBehaviourType btype,
+            tfel::material::ModellingHypothesis::Hypothesis H,
+            template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterIsotropicBehaviourHandler
       : public AsterBehaviourHandler<H, Behaviour> {
     TFEL_ASTER_INLINE static void exe(
-        const AsterReal *const DTIME,
-        const AsterReal *const,
-        AsterReal *const DDSOE,
-        const AsterReal *const STRAN,
-        const AsterReal *const DSTRAN,
-        const AsterReal *const TEMP,
-        const AsterReal *const DTEMP,
-        const AsterReal *const PROPS,
-        const AsterInt *const NPROPS,
-        const AsterReal *const PREDEF,
-        const AsterReal *const DPRED,
-        AsterReal *const STATEV,
-        const AsterInt *const NSTATV,
-        AsterReal *const STRESS,
+        const AsterReal* const DTIME,
+        const AsterReal* const,
+        AsterReal* const DDSOE,
+        const AsterReal* const STRAN,
+        const AsterReal* const DSTRAN,
+        const AsterReal* const TEMP,
+        const AsterReal* const DTEMP,
+        const AsterReal* const PROPS,
+        const AsterInt* const NPROPS,
+        const AsterReal* const PREDEF,
+        const AsterReal* const DPRED,
+        AsterReal* const STATEV,
+        const AsterInt* const NSTATV,
+        AsterReal* const STRESS,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       typedef Behaviour<H, AsterReal, false> BV;

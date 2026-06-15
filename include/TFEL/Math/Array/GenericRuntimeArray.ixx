@@ -29,7 +29,7 @@ namespace tfel::math {
   GenericRuntimeArray<Child, ArrayPolicy>::GenericRuntimeArray(
       const typename ArrayPolicy::IndexingPolicy& p,
       const ValueType& value)  //
-      requires(isAssignableTo<ValueType, value_type>())
+    requires(isAssignableTo<ValueType, value_type>())
       : GenericRuntimeArray(p) {
     this->fill(value);
   }  // end of GenericRuntimeArray
@@ -37,8 +37,9 @@ namespace tfel::math {
   template <typename Child, typename ArrayPolicy>
   template <typename OtherArray>
   GenericRuntimeArray<Child, ArrayPolicy>::GenericRuntimeArray(
-      const OtherArray& src) requires((isAssignableTo<OtherArray, Child>()) &&
-                                      (!std::is_same_v<OtherArray, Child>))
+      const OtherArray& src)
+    requires((isAssignableTo<OtherArray, Child>()) &&
+             (!std::is_same_v<OtherArray, Child>))
       : GenericRuntimeArray(src.getIndexingPolicy()) {
     this->operator=(src);
   }  // end of GenericRuntimeArray
@@ -46,10 +47,10 @@ namespace tfel::math {
   template <typename Child, typename ArrayPolicy>
   template <typename ValueType>
   GenericRuntimeArray<Child, ArrayPolicy>::GenericRuntimeArray(
-      const std::initializer_list<ValueType>&
-          values) requires((isAssignableTo<ValueType, value_type>()) &&
-                           (ArrayPolicy::IndexingPolicy::arity == 1) &&
-                           (ArrayPolicy::IndexingPolicy::areDataContiguous))
+      const std::initializer_list<ValueType>& values)
+    requires((isAssignableTo<ValueType, value_type>()) &&
+             (ArrayPolicy::IndexingPolicy::arity == 1) &&
+             (ArrayPolicy::IndexingPolicy::areDataContiguous))
       : GenericRuntimeArray(values.size()) {
     this->operator=(values);
   }  // end of GenericRuntimeArray
@@ -91,7 +92,9 @@ namespace tfel::math {
   template <typename Child, typename ArrayPolicy>
   template <typename OtherArray>
   Child& GenericRuntimeArray<Child, ArrayPolicy>::operator=(
-      const OtherArray& src) requires(isAssignableTo<OtherArray, Child>()) {
+      const OtherArray& src)
+    requires(isAssignableTo<OtherArray, Child>())
+  {
     auto& child = static_cast<Child&>(*this);
     //     checkIndexingPoliciesRuntimeCompatiblity(child.getIndexingPolicy(),
     //                                              src.getIndexingPolicy());
@@ -102,7 +105,9 @@ namespace tfel::math {
   template <typename Child, typename ArrayPolicy>
   template <typename OtherArray>
   Child& GenericRuntimeArray<Child, ArrayPolicy>::operator+=(
-      const OtherArray& src) requires(isAssignableTo<OtherArray, Child>()) {
+      const OtherArray& src)
+    requires(isAssignableTo<OtherArray, Child>())
+  {
     auto& child = static_cast<Child&>(*this);
     //     checkIndexingPoliciesRuntimeCompatiblity(child.getIndexingPolicy(),
     //                                              src.getIndexingPolicy());
@@ -113,7 +118,9 @@ namespace tfel::math {
   template <typename Child, typename ArrayPolicy>
   template <typename OtherArray>
   Child& GenericRuntimeArray<Child, ArrayPolicy>::operator-=(
-      const OtherArray& src) requires(isAssignableTo<OtherArray, Child>()) {
+      const OtherArray& src)
+    requires(isAssignableTo<OtherArray, Child>())
+  {
     auto& child = static_cast<Child&>(*this);
     //     checkIndexingPoliciesRuntimeCompatiblity(child.getIndexingPolicy(),
     //                                              src.getIndexingPolicy());
@@ -125,9 +132,10 @@ namespace tfel::math {
   template <typename ValueType2>
   Child& GenericRuntimeArray<Child, ArrayPolicy>::operator*=(
       const ValueType2& v) noexcept
-      requires(
-          isAssignableTo<BinaryOperationResult<ValueType2, value_type, OpMult>,
-                         value_type>()) {
+    requires(
+        isAssignableTo<BinaryOperationResult<ValueType2, value_type, OpMult>,
+                       value_type>())
+  {
     auto& child = static_cast<Child&>(*this);
     child.multiplyByScalar(v);
     return child;
@@ -137,9 +145,10 @@ namespace tfel::math {
   template <typename ValueType2>
   Child& GenericRuntimeArray<Child, ArrayPolicy>::operator/=(
       const ValueType2& v) noexcept
-      requires(
-          isAssignableTo<BinaryOperationResult<value_type, ValueType2, OpDiv>,
-                         value_type>()) {
+    requires(
+        isAssignableTo<BinaryOperationResult<value_type, ValueType2, OpDiv>,
+                       value_type>())
+  {
     auto& child = static_cast<Child&>(*this);
     child.multiplyByScalar(1 / v);
     return child;

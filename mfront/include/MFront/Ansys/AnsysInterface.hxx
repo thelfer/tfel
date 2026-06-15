@@ -51,10 +51,10 @@ namespace ansys {
    * duplication between two different finite strain strategies (to
    * reduce both compile-time and library size).
    */
-  template <
-      tfel::material::ModellingHypothesis::Hypothesis H,
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AnsysInterface
       : protected AnsysInterfaceExceptions {
     TFEL_ANSYS_INLINE2 static int exe(const AnsysData& d) {
@@ -118,7 +118,7 @@ namespace ansys {
         return i.exe(d);
       }
     };  // end of struct CallBehaviour2
-  };    // end of struct AnsysInterface
+  };  // end of struct AnsysInterface
 
 }  // end of namespace ansys
 

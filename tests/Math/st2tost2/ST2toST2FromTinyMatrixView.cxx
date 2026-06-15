@@ -50,7 +50,7 @@ struct ST2toST2FromTinyMatrixViewTest final : public tfel::tests::TestCase {
     }
     return this->result;
   }  // end of execute
-};   // end of ST2toST2FromTinyMatrixViewTest
+};  // end of ST2toST2FromTinyMatrixViewTest
 
 TFEL_TESTS_GENERATE_PROXY(ST2toST2FromTinyMatrixViewTest,
                           "ST2toST2FromTinyMatrixViewTest");

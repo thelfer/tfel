@@ -20,10 +20,10 @@ namespace abaqus {
 
   template <typename real>
   static void AbaqusStandardSmallStrainStressFreeExpansionHandlerImpl(
-      real *const e,
-      real *const de,
-      const real *const s0,
-      const real *const s1,
+      real* const e,
+      real* const de,
+      const real* const s0,
+      const real* const s1,
       const AbaqusInt d) {
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     e[0] -= s0[0];
@@ -47,29 +47,29 @@ namespace abaqus {
   }  // end of AbaqusStandardSmallStrainStressFreeExpansionHandler
 
   void AbaqusStandardSmallStrainStressFreeExpansionHandler(
-      float *const e,
-      float *const de,
-      const float *const s0,
-      const float *const s1,
+      float* const e,
+      float* const de,
+      const float* const s0,
+      const float* const s1,
       const AbaqusInt d) {
     AbaqusStandardSmallStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }
 
   void AbaqusStandardSmallStrainStressFreeExpansionHandler(
-      double *const e,
-      double *const de,
-      const double *const s0,
-      const double *const s1,
+      double* const e,
+      double* const de,
+      const double* const s0,
+      const double* const s1,
       const AbaqusInt d) {
     AbaqusStandardSmallStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }
 
   template <typename real>
   static void AbaqusLogarithmicStrainStressFreeExpansionHandlerImpl(
-      real *const e,
-      real *const de,
-      const real *const s0,
-      const real *const s1,
+      real* const e,
+      real* const de,
+      const real* const s0,
+      const real* const s1,
       const AbaqusInt d) {
     constexpr auto cste = tfel::math::Cste<real>::sqrt2;
     if (d == 2) {
@@ -106,18 +106,18 @@ namespace abaqus {
     }
   }  // end of AbaqusLogarithmicStrainStressFreeExpansionHandler
 
-  void AbaqusLogarithmicStrainStressFreeExpansionHandler(float *const e,
-                                                         float *const de,
-                                                         const float *const s0,
-                                                         const float *const s1,
+  void AbaqusLogarithmicStrainStressFreeExpansionHandler(float* const e,
+                                                         float* const de,
+                                                         const float* const s0,
+                                                         const float* const s1,
                                                          const AbaqusInt d) {
     AbaqusLogarithmicStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }
 
-  void AbaqusLogarithmicStrainStressFreeExpansionHandler(double *const e,
-                                                         double *const de,
-                                                         const double *const s0,
-                                                         const double *const s1,
+  void AbaqusLogarithmicStrainStressFreeExpansionHandler(double* const e,
+                                                         double* const de,
+                                                         const double* const s0,
+                                                         const double* const s1,
                                                          const AbaqusInt d) {
     AbaqusLogarithmicStrainStressFreeExpansionHandlerImpl(e, de, s0, s1, d);
   }

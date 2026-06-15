@@ -73,7 +73,7 @@ namespace tfel::system {
     }
     this->c.notify_all();
     // the destructor joins all threads
-    for (auto &w : this->workers) {
+    for (auto& w : this->workers) {
       w.join();
     }
   }  // end of ThreadPool::~ThreadPool

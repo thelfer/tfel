@@ -20,38 +20,38 @@
 namespace aster {
 
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterRotationMatrix2D {
-    AsterRotationMatrix2D(const AsterReal *const);
+    AsterRotationMatrix2D(const AsterReal* const);
 
     // Compute stresses in the material space
-    void rotateStressesForward(const AsterReal *const, AsterReal *const) const;
+    void rotateStressesForward(const AsterReal* const, AsterReal* const) const;
     // Compute stresses back in the global space
-    void rotateStressesBackward(const AsterReal *const, AsterReal *const) const;
+    void rotateStressesBackward(const AsterReal* const, AsterReal* const) const;
 
     // Compute strain in the material space
-    void rotateStrainsForward(const AsterReal *const, AsterReal *const) const;
+    void rotateStrainsForward(const AsterReal* const, AsterReal* const) const;
     // Compute stresses back in the global space
-    void rotateStrainsBackward(const AsterReal *const, AsterReal *const) const;
+    void rotateStrainsBackward(const AsterReal* const, AsterReal* const) const;
     // compute the stiffness matrix in the global space
-    void rotateTangentOperatorBackward(AsterReal *const) const;
+    void rotateTangentOperatorBackward(AsterReal* const) const;
 
    private:
     AsterReal MN[3][3];
   };  // end of struct AsterRotationMatrix2D
 
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterRotationMatrix3D {
-    AsterRotationMatrix3D(const AsterReal *const);
+    AsterRotationMatrix3D(const AsterReal* const);
 
     // Compute stresses in the material space
-    void rotateStressesForward(const AsterReal *const, AsterReal *const) const;
+    void rotateStressesForward(const AsterReal* const, AsterReal* const) const;
     // Compute stresses back in the global space
-    void rotateStressesBackward(const AsterReal *const, AsterReal *const) const;
+    void rotateStressesBackward(const AsterReal* const, AsterReal* const) const;
 
     // Compute strain in the material space
-    void rotateStrainsForward(const AsterReal *const, AsterReal *const) const;
+    void rotateStrainsForward(const AsterReal* const, AsterReal* const) const;
     // Compute striain back in the global space
-    void rotateStrainsBackward(const AsterReal *const, AsterReal *const) const;
+    void rotateStrainsBackward(const AsterReal* const, AsterReal* const) const;
     // compute the stiffness matrix in the global space
-    void rotateTangentOperatorBackward(AsterReal *const) const;
+    void rotateTangentOperatorBackward(AsterReal* const) const;
 
    private:
     AsterReal MN[6][6];

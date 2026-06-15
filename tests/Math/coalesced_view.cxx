@@ -73,7 +73,7 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
   }
   void test2() {
     using namespace tfel::math;
-    constexpr auto s = []() constexpr->stensor<2, int> {
+    constexpr auto s = []() constexpr -> stensor<2, int> {
       int values[8] = {1, 10, 2, 20, 3, 30, 4, 40};
       std::array ptrs{&values[0], &values[2], &values[4], &values[6]};
       std::array ptrs2{&values[1], &values[3], &values[5], &values[7]};
@@ -84,8 +84,7 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
       static_assert(s1.size(0) == 4);
       static_assert(s2.size(0) == 4);
       return 2 * s1 + s2;
-    }
-    ();
+    }();
     TFEL_TESTS_STATIC_ASSERT(s[0] == 12);
     TFEL_TESTS_STATIC_ASSERT(s[1] == 24);
     TFEL_TESTS_STATIC_ASSERT(s[2] == 36);
@@ -93,7 +92,7 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
   }
   void test2b() {
     using namespace tfel::math;
-    constexpr auto s = []() constexpr->stensor<2, int> {
+    constexpr auto s = []() constexpr -> stensor<2, int> {
       const int values[8] = {1, 10, 2, 20, 3, 30, 4, 40};
       std::array ptrs{&values[0], &values[2], &values[4], &values[6]};
       std::array ptrs2{&values[1], &values[3], &values[5], &values[7]};
@@ -104,8 +103,7 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
       static_assert(s1.size(0) == 4);
       static_assert(s2.size(0) == 4);
       return 2 * s1 + s2;
-    }
-    ();
+    }();
     TFEL_TESTS_STATIC_ASSERT(s[0] == 12);
     TFEL_TESTS_STATIC_ASSERT(s[1] == 24);
     TFEL_TESTS_STATIC_ASSERT(s[2] == 36);
@@ -113,7 +111,7 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
   }
   void test3() {
     using namespace tfel::math;
-    constexpr auto s = []() constexpr->std::array<int, 8> {
+    constexpr auto s = []() constexpr -> std::array<int, 8> {
       std::array<int, 8> values = {1, 10, 2, 20, 3, 30, 4, 40};
       std::array ptrs{&values[0], &values[2], &values[4], &values[6]};
       std::array ptrs2{&values[1], &values[3], &values[5], &values[7]};
@@ -121,8 +119,7 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
       const auto s2 = map<stensor<2u, int>>(ptrs2);
       s1 = s2;
       return values;
-    }
-    ();
+    }();
     TFEL_TESTS_STATIC_ASSERT(s[0] == 10);
     TFEL_TESTS_STATIC_ASSERT(s[1] == 10);
     TFEL_TESTS_STATIC_ASSERT(s[2] == 20);
@@ -134,14 +131,13 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
   }
   void test4() {
     using namespace tfel::math;
-    constexpr auto s = []() constexpr->std::array<int, 4> {
+    constexpr auto s = []() constexpr -> std::array<int, 4> {
       std::array<int, 4> values = {0, 1, 2, 3};
       std::array ptrs{&values[0], &values[1], &values[2], &values[3]};
       auto s1 = map<stensor<2u, int>>(ptrs);
       s1 = stensor<2, int>::Id();
       return values;
-    }
-    ();
+    }();
     TFEL_TESTS_STATIC_ASSERT(s[0] == 1);
     TFEL_TESTS_STATIC_ASSERT(s[1] == 1);
     TFEL_TESTS_STATIC_ASSERT(s[2] == 1);
@@ -149,14 +145,13 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
   }
   void test5() {
     using namespace tfel::math;
-    constexpr auto s = []() constexpr->std::array<int, 4> {
+    constexpr auto s = []() constexpr -> std::array<int, 4> {
       std::array<int, 4> values = {0, 1, 2, 3};
       std::array ptrs{&values[0], &values[1], &values[2], &values[3]};
       auto s1 = map<stensor<2u, int>>(ptrs);
       s1 += stensor<2, int>::Id();
       return values;
-    }
-    ();
+    }();
     TFEL_TESTS_STATIC_ASSERT(s[0] == 1);
     TFEL_TESTS_STATIC_ASSERT(s[1] == 2);
     TFEL_TESTS_STATIC_ASSERT(s[2] == 3);
@@ -164,14 +159,13 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
   }
   void test6() {
     using namespace tfel::math;
-    constexpr auto s = []() constexpr->std::array<int, 4> {
+    constexpr auto s = []() constexpr -> std::array<int, 4> {
       std::array<int, 4> values = {0, 1, 2, 3};
       std::array ptrs{&values[0], &values[1], &values[2], &values[3]};
       auto s1 = map<stensor<2u, int>>(ptrs);
       s1 -= stensor<2, int>::Id();
       return values;
-    }
-    ();
+    }();
     TFEL_TESTS_STATIC_ASSERT(s[0] == -1);
     TFEL_TESTS_STATIC_ASSERT(s[1] == 0);
     TFEL_TESTS_STATIC_ASSERT(s[2] == 1);
@@ -179,22 +173,20 @@ struct StensorCoalescedViewTest final : public tfel::tests::TestCase {
   }
   void test7() {
     using namespace tfel::math;
-    constexpr auto s = []() constexpr->std::array<int, 4> {
+    constexpr auto s = []() constexpr -> std::array<int, 4> {
       std::array<int, 4> values = {0, 1, 2, 3};
       std::array ptrs{&values[0], &values[1], &values[2], &values[3]};
       auto s1 = map<stensor<2u, int>>(ptrs);
       s1 *= 2;
       return values;
-    }
-    ();
-    constexpr auto s2 = []() constexpr->std::array<int, 4> {
+    }();
+    constexpr auto s2 = []() constexpr -> std::array<int, 4> {
       std::array<int, 4> values = {0, 1, 2, 3};
       std::array ptrs{&values[0], &values[1], &values[2], &values[3]};
       auto s1 = map<stensor<2u, int>>(ptrs);
       s1 /= 2;
       return values;
-    }
-    ();
+    }();
     TFEL_TESTS_STATIC_ASSERT(s[0] == 0);
     TFEL_TESTS_STATIC_ASSERT(s[1] == 2);
     TFEL_TESTS_STATIC_ASSERT(s[2] == 4);

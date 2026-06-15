@@ -33,8 +33,8 @@ namespace tfel::math {
    * Partial specialisation for 1D tensor
    */
   template <NoUnitT2toST2Concept T2toST2Type>
-  struct [[nodiscard]] Expr<T2toST2Type,
-                            LeftCauchyGreenTensorDerivativeExpr<1u>>
+  struct [[nodiscard]]
+  Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<1u>>
       : public T2toST2ConceptBase<
             Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<1u>>>,
         public array_holder<9u, numeric_type<T2toST2Type>> {
@@ -68,15 +68,15 @@ namespace tfel::math {
         const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 3 + j];
     }  // end of operator()
-  };   // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
-       // >
+  };  // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
+      // >
 
   /*!
    * Partial specialisation for 2D tensor
    */
   template <NoUnitT2toST2Concept T2toST2Type>
-  struct [[nodiscard]] Expr<T2toST2Type,
-                            LeftCauchyGreenTensorDerivativeExpr<2u>>
+  struct [[nodiscard]]
+  Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<2u>>
       : public T2toST2ConceptBase<
             Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<2u>>>,
         public array_holder<20u, numeric_type<T2toST2Type>> {
@@ -122,15 +122,15 @@ namespace tfel::math {
         const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 5 + j];
     }  // end of operator()
-  };   // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
-       // >
+  };  // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
+      // >
 
   /*!
    * Partial specialisation for 3D tensor
    */
   template <NoUnitT2toST2Concept T2toST2Type>
-  struct [[nodiscard]] Expr<T2toST2Type,
-                            LeftCauchyGreenTensorDerivativeExpr<3u>>
+  struct [[nodiscard]]
+  Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<3u>>
       : public T2toST2ConceptBase<
             Expr<T2toST2Type, LeftCauchyGreenTensorDerivativeExpr<3u>>>,
         public array_holder<54u, numeric_type<T2toST2Type>> {
@@ -204,8 +204,8 @@ namespace tfel::math {
         const unsigned short i, const unsigned short j) const noexcept {
       return this->v[i * 9 + j];
     }  // end of operator()
-  };   // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
-       // >
+  };  // end of struct Expr<T2toST2Type,LeftCauchyGreenTensorDerivativeExpr<1u>
+      // >
 
 }  // end of namespace tfel::math
 

@@ -76,7 +76,7 @@ struct FSArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(*(a5.rbegin() + 1) == 3);
     TFEL_TESTS_STATIC_ASSERT(*(a5.rbegin() + 2) == 5);
 #endif /* __INTEL_COMPILER  */
-  }    // end of test1
+  }  // end of test1
   void test2() {
     /* does not compile with icc 2021.1, but compiles with 2021.1 */
 #ifndef __INTEL_COMPILER
@@ -91,7 +91,7 @@ struct FSArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(a2[1] == 3);
     TFEL_TESTS_STATIC_ASSERT(a2[2] == 4);
 #endif /* __INTEL_COMPILER  */
-  }    // end of test2
+  }  // end of test2
   void test3() {
     int values[] = {0, 2, 0};
     const int values2[] = {0, 2, -2};
@@ -140,7 +140,7 @@ struct FSArrayTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(a[1] == 4);
     TFEL_TESTS_STATIC_ASSERT(a[2] == -3);
 #endif /* __INTEL_COMPILER  */
-  }    // end of test6
+  }  // end of test6
   void test7() {
     using namespace tfel::math;
     // class template argument deduction

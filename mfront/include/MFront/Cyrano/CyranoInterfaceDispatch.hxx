@@ -37,26 +37,26 @@ namespace cyrano {
    * \author Thomas Helfer
    * \date   24 Jul 2013
    */
-  template <
-      tfel::material::ModellingHypothesis::Hypothesis H,
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <tfel::material::ModellingHypothesis::Hypothesis H,
+            template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct CyranoInterfaceDispatch : public CyranoInterfaceExceptions {
     TFEL_CYRANO_INLINE2 static void exe(
-        const CyranoReal *const DTIME,
-        const CyranoReal *const DROT,
-        CyranoReal *const DDSOE,
-        const CyranoReal *const STRAN,
-        const CyranoReal *const DSTRAN,
-        const CyranoReal *const TEMP,
-        const CyranoReal *const DTEMP,
-        const CyranoReal *const PROPS,
-        const CyranoInt *const NPROPS,
-        const CyranoReal *const PREDEF,
-        const CyranoReal *const DPRED,
-        CyranoReal *const STATEV,
-        const CyranoInt *const NSTATV,
-        CyranoReal *const STRESS,
+        const CyranoReal* const DTIME,
+        const CyranoReal* const DROT,
+        CyranoReal* const DDSOE,
+        const CyranoReal* const STRAN,
+        const CyranoReal* const DSTRAN,
+        const CyranoReal* const TEMP,
+        const CyranoReal* const DTEMP,
+        const CyranoReal* const PROPS,
+        const CyranoInt* const NPROPS,
+        const CyranoReal* const PREDEF,
+        const CyranoReal* const DPRED,
+        CyranoReal* const STATEV,
+        const CyranoInt* const NSTATV,
+        CyranoReal* const STRESS,
         const StressFreeExpansionHandler sfeh,
         const tfel::material::OutOfBoundsPolicy op) {
       using namespace std;
@@ -72,7 +72,7 @@ namespace cyrano {
       Handler::exe(DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
                    NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, sfeh, op);
     }  // end of exe
-  };   // end of struct CyranoInterfaceDispatch
+  };  // end of struct CyranoInterfaceDispatch
 
 }  // end of namespace cyrano
 

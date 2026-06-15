@@ -103,7 +103,7 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       }
     }
 #endif /* _LIBCPP_VERSION */
-  }    // end of test_Eshelby
+  }  // end of test_Eshelby
 
   template <typename NumericType, bool use_qt>
   void test_Eshelby2D() {
@@ -154,7 +154,7 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       }
     }
 #endif /* _LIBCPP_VERSION */
-  }    // end of test_Eshelby2D
+  }  // end of test_Eshelby2D
 
   template <typename NumericType, bool use_qt>
   void test_localisator() {
@@ -192,7 +192,7 @@ struct AnisotropicEshelbyTensorTest final : public tfel::tests::TestCase {
       }
     }
 #endif /* _LIBCPP_VERSION */
-  }    // end of test_localisator
+  }  // end of test_localisator
 
 };  // end of struct AnisotropicEshelbyTensorTest
 

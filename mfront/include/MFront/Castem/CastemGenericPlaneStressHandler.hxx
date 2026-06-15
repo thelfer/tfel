@@ -32,9 +32,9 @@ namespace castem {
    * This allows behaviours written for the generalised plane stress
    * hypothesis to be used in plane stress computations.
    */
-  template <
-      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
-      class Behaviour>
+  template <template <tfel::material::ModellingHypothesis::Hypothesis,
+                      typename,
+                      bool> class Behaviour>
   struct CastemGenericPlaneStressHandler : public CastemInterfaceExceptions {
     /*!
      * Main entry point This mainly choose between a specific
@@ -42,23 +42,23 @@ namespace castem {
      * behaviour (isotropic or not).
      */
     TFEL_CASTEM_INLINE2 static void exe(
-        const CastemReal *const DTIME,
-        const CastemReal *const DROT,
-        CastemReal *const DDSDDE,
-        const CastemReal *const STRAN,
-        const CastemReal *const DSTRAN,
-        const CastemReal *const TEMP,
-        const CastemReal *const DTEMP,
-        const CastemReal *const PROPS,
-        const CastemInt *const NPROPS,
-        const CastemReal *const PREDEF,
-        const CastemReal *const DPRED,
-        CastemReal *const STATEV,
-        const CastemInt *const NSTATV,
-        CastemReal *const STRESS,
-        CastemReal *const PNEWDT,
+        const CastemReal* const DTIME,
+        const CastemReal* const DROT,
+        CastemReal* const DDSDDE,
+        const CastemReal* const STRAN,
+        const CastemReal* const DSTRAN,
+        const CastemReal* const TEMP,
+        const CastemReal* const DTEMP,
+        const CastemReal* const PROPS,
+        const CastemInt* const NPROPS,
+        const CastemReal* const PREDEF,
+        const CastemReal* const DPRED,
+        CastemReal* const STATEV,
+        const CastemInt* const NSTATV,
+        CastemReal* const STRESS,
+        CastemReal* const PNEWDT,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace tfel::meta;
       using namespace tfel::material;
       constexpr ModellingHypothesis::Hypothesis H =
@@ -101,23 +101,23 @@ namespace castem {
         const CastemReal c1,
         const CastemReal c2,
         const CastemReal c3,
-        const CastemReal *const DTIME,
-        const CastemReal *const DROT,
-        CastemReal *const DDSDDE,
-        const CastemReal *const STRAN,
-        const CastemReal *const DSTRAN,
-        const CastemReal *const TEMP,
-        const CastemReal *const DTEMP,
-        const CastemReal *const PROPS,
-        const CastemInt *const NPROPS,
-        const CastemReal *const PREDEF,
-        const CastemReal *const DPRED,
-        CastemReal *const STATEV,
-        const CastemInt *const NSTATV,
-        CastemReal *const STRESS,
-        CastemReal *const PNEWDT,
+        const CastemReal* const DTIME,
+        const CastemReal* const DROT,
+        CastemReal* const DDSDDE,
+        const CastemReal* const STRAN,
+        const CastemReal* const DSTRAN,
+        const CastemReal* const TEMP,
+        const CastemReal* const DTEMP,
+        const CastemReal* const PROPS,
+        const CastemInt* const NPROPS,
+        const CastemReal* const PREDEF,
+        const CastemReal* const DPRED,
+        CastemReal* const STATEV,
+        const CastemInt* const NSTATV,
+        CastemReal* const STRESS,
+        CastemReal* const PNEWDT,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace std;
       using namespace tfel::meta;
       using namespace tfel::material;
@@ -185,36 +185,36 @@ namespace castem {
     }  // end of exe
 
     template <unsigned short N, typename T>
-    static void resize(tfel::math::tvector<N, T> &, const unsigned short) {}
+    static void resize(tfel::math::tvector<N, T>&, const unsigned short) {}
 
     template <typename T>
-    static void resize(tfel::math::vector<T> &v, const unsigned short n) {
+    static void resize(tfel::math::vector<T>& v, const unsigned short n) {
       v.resize(n);
     }
 
     template <typename GeneralisedPlaneStrainBehaviour>
     TFEL_CASTEM_INLINE2 static void iter(
-        const CastemReal *const DTIME,
-        const CastemReal *const DROT,
-        CastemReal *const DDSDDE,
-        const CastemReal *const TEMP,
-        const CastemReal *const DTEMP,
-        const CastemReal *const PROPS,
-        const CastemInt *const NPROPS,
-        const CastemReal *const PREDEF,
-        const CastemReal *const DPRED,
-        const CastemReal *const STATEV,
-        const CastemReal *const STRESS,
-        CastemReal *const PNEWDT,
-        const CastemReal *const STRAN,
-        const CastemReal *const DSTRAN,
+        const CastemReal* const DTIME,
+        const CastemReal* const DROT,
+        CastemReal* const DDSDDE,
+        const CastemReal* const TEMP,
+        const CastemReal* const DTEMP,
+        const CastemReal* const PROPS,
+        const CastemInt* const NPROPS,
+        const CastemReal* const PREDEF,
+        const CastemReal* const DPRED,
+        const CastemReal* const STATEV,
+        const CastemReal* const STRESS,
+        CastemReal* const PNEWDT,
+        const CastemReal* const STRAN,
+        const CastemReal* const DSTRAN,
         const CastemReal dez,
-        CastemReal *const v,
-        CastemReal *const s,
-        CastemReal *const eto,
-        CastemReal *const deto,
+        CastemReal* const v,
+        CastemReal* const s,
+        CastemReal* const eto,
+        CastemReal* const deto,
         const tfel::material::OutOfBoundsPolicy op,
-        const StressFreeExpansionHandler &sfeh) {
+        const StressFreeExpansionHandler& sfeh) {
       using namespace tfel::material;
       using tfel::fsalgo::copy;
       const ModellingHypothesis::Hypothesis H =
@@ -238,23 +238,23 @@ namespace castem {
 
     struct TreatPlaneStressIsotropicBehaviour {
       TFEL_CASTEM_INLINE2 static void exe(
-          const CastemReal *const DTIME,
-          const CastemReal *const DROT,
-          CastemReal *const DDSDDE,
-          const CastemReal *const STRAN,
-          const CastemReal *const DSTRAN,
-          const CastemReal *const TEMP,
-          const CastemReal *const DTEMP,
-          const CastemReal *const PROPS,
-          const CastemInt *const NPROPS,
-          const CastemReal *const PREDEF,
-          const CastemReal *const DPRED,
-          CastemReal *const STATEV,
-          const CastemInt *const NSTATV,
-          CastemReal *const STRESS,
-          CastemReal *const PNEWDT,
+          const CastemReal* const DTIME,
+          const CastemReal* const DROT,
+          CastemReal* const DDSDDE,
+          const CastemReal* const STRAN,
+          const CastemReal* const DSTRAN,
+          const CastemReal* const TEMP,
+          const CastemReal* const DTEMP,
+          const CastemReal* const PROPS,
+          const CastemInt* const NPROPS,
+          const CastemReal* const PREDEF,
+          const CastemReal* const DPRED,
+          CastemReal* const STATEV,
+          const CastemInt* const NSTATV,
+          CastemReal* const STRESS,
+          CastemReal* const PNEWDT,
           const tfel::material::OutOfBoundsPolicy op,
-          const StressFreeExpansionHandler &sfeh) {
+          const StressFreeExpansionHandler& sfeh) {
         using namespace tfel::material;
         using BehaviourHandler = CastemIsotropicBehaviourHandler<
             STANDARDSTRAINBASEDBEHAVIOUR,
@@ -289,27 +289,27 @@ namespace castem {
             c1, c1, c3, DTIME, DROT, DDSDDE, STRAN, DSTRAN, TEMP, DTEMP, nPROPS,
             &nb, PREDEF, DPRED, STATEV, NSTATV, STRESS, PNEWDT, op, sfeh);
       }  // end of exe
-    };   // end of struct TreatPlanStressIsotropicBehaviour
+    };  // end of struct TreatPlanStressIsotropicBehaviour
 
     struct TreatPlaneStressOrthotropicBehaviour {
       TFEL_CASTEM_INLINE2 static void exe(
-          const CastemReal *const DTIME,
-          const CastemReal *const DROT,
-          CastemReal *const DDSDDE,
-          const CastemReal *const STRAN,
-          const CastemReal *const DSTRAN,
-          const CastemReal *const TEMP,
-          const CastemReal *const DTEMP,
-          const CastemReal *const PROPS,
-          const CastemInt *const NPROPS,
-          const CastemReal *const PREDEF,
-          const CastemReal *const DPRED,
-          CastemReal *const STATEV,
-          const CastemInt *const NSTATV,
-          CastemReal *const STRESS,
-          CastemReal *const PNEWDT,
+          const CastemReal* const DTIME,
+          const CastemReal* const DROT,
+          CastemReal* const DDSDDE,
+          const CastemReal* const STRAN,
+          const CastemReal* const DSTRAN,
+          const CastemReal* const TEMP,
+          const CastemReal* const DTEMP,
+          const CastemReal* const PROPS,
+          const CastemInt* const NPROPS,
+          const CastemReal* const PREDEF,
+          const CastemReal* const DPRED,
+          CastemReal* const STATEV,
+          const CastemInt* const NSTATV,
+          CastemReal* const STRESS,
+          CastemReal* const PNEWDT,
           const tfel::material::OutOfBoundsPolicy op,
-          const StressFreeExpansionHandler &sfeh) {
+          const StressFreeExpansionHandler& sfeh) {
         using namespace tfel::meta;
         using namespace tfel::material;
         constexpr auto H = ModellingHypothesis::GENERALISEDPLANESTRAIN;
@@ -373,7 +373,7 @@ namespace castem {
             nPROPS, NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, PNEWDT, op,
             sfeh);
       }  // end of exe
-    };   // end of struct TreatPlanStressOrthotropicBehaviour
+    };  // end of struct TreatPlanStressOrthotropicBehaviour
 
   };  // end of struct CastemGenericPlaneStressHandlerTreatPlaneStrain
 

@@ -26,8 +26,8 @@
 #include "TFEL/Math/tensor.hxx"
 
 struct
-    ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest
-        final : public tfel::tests::TestCase {
+    ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest final
+    : public tfel::tests::TestCase {
   ConvertionBetweenCorotationnalCauchyStressAndSecondPioloKirchhoffStressTest()
       : tfel::tests::TestCase("TFEL/Math",
                               "ConvertionBetweenCorotationnalCauchyStressAndSec"

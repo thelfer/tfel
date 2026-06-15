@@ -21,11 +21,13 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr BinaryOperationResult<StensorType1,
                                                    StensorType2,
                                                    OpDotProduct>
-  operator|(const StensorType1& a, const StensorType2& b) noexcept requires(
-      (getSpaceDimension<StensorType1>() ==
-       getSpaceDimension<StensorType2>()) &&
-      (!isInvalid<
-          BinaryOperationResult<StensorType1, StensorType2, OpDotProduct>>())) {
+  operator|(const StensorType1& a, const StensorType2& b) noexcept
+    requires(
+        (getSpaceDimension<StensorType1>() ==
+         getSpaceDimension<StensorType2>()) &&
+        (!isInvalid<
+            BinaryOperationResult<StensorType1, StensorType2, OpDotProduct>>()))
+  {
     constexpr auto N = getSpaceDimension<StensorType1>();
     if constexpr (N == 1) {
       return a(0) * b(0) + a(1) * b(1) + a(2) * b(2);

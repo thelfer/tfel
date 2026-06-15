@@ -32,13 +32,13 @@ namespace mfront {
    * conventions of Cast3M makes those two interfaces incompatibles.
    */
   struct CastemInterface : public UMATInterfaceBase, protected InterfaceBase {
-    static const char *const finiteStrainStrategies;
+    static const char* const finiteStrainStrategies;
 
-    static const char *const useTimeSubStepping;
+    static const char* const useTimeSubStepping;
 
-    static const char *const doSubSteppingOnInvalidResults;
+    static const char* const doSubSteppingOnInvalidResults;
 
-    static const char *const maximumSubStepping;
+    static const char* const maximumSubStepping;
     //! \return the name of the interface
     static std::string getName();
     /*!
@@ -48,21 +48,21 @@ namespace mfront {
      * hypothesis or if the behaviour don't handle the generalised
      * plane strain hypothesis.
      */
-    static bool usesGenericPlaneStressAlgorithm(const BehaviourDescription &);
+    static bool usesGenericPlaneStressAlgorithm(const BehaviourDescription&);
     /*!
      * \brief write the arguments of the `UMAT` function.
      * \note This function is meant to be used for declaring `UMAT` functions as
      * the variables of the function are not named
      * \param[in] os: output stream
      */
-    static void writeUMATFunctionArguments(std::ostream &);
+    static void writeUMATFunctionArguments(std::ostream&);
     /*!
      *\brief write the arguments of the `UMAT` function
      * \param[in] os: output stream
      * \param[in] t: behaviour type
      */
     static void writeUMATFunctionArguments(
-        std::ostream &, const BehaviourDescription::BehaviourType &);
+        std::ostream&, const BehaviourDescription::BehaviourType&);
     //! \brief default constructor
     CastemInterface();
     /*!
@@ -76,67 +76,67 @@ namespace mfront {
      * the last token treated.
      */
     std::pair<bool, tokens_iterator> treatKeyword(
-        BehaviourDescription &,
-        const std::string &,
-        const std::vector<std::string> &,
+        BehaviourDescription&,
+        const std::string&,
+        const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
     /*!
      * \param[out] d  : target description
      * \param[out] bd : behaviour description
      */
-    void getTargetsDescription(TargetsDescription &,
-                               const BehaviourDescription &) override;
+    void getTargetsDescription(TargetsDescription&,
+                               const BehaviourDescription&) override;
     /*!
      * write interface specific includes
      * \param[in] out : output file
      * \param[in] mb  : mechanical behaviour description
      */
     void writeInterfaceSpecificIncludes(
-        std::ostream &, const BehaviourDescription &) const override;
+        std::ostream&, const BehaviourDescription&) const override;
 
     /*!
      * \brief write output files
      * \param[in] mb        : mechanical behaviour description
      * \param[in] fd        : mfront file description
      */
-    void endTreatment(const BehaviourDescription &,
-                      const FileDescription &) const override;
+    void endTreatment(const BehaviourDescription&,
+                      const FileDescription&) const override;
     //! \brief destructor
     ~CastemInterface() override;
 
    protected:
-    std::string getLibraryName(const BehaviourDescription &) const override;
+    std::string getLibraryName(const BehaviourDescription&) const override;
 
-    static std::string treatScalar(const std::string &);
+    static std::string treatScalar(const std::string&);
 
-    static std::string treatScalar(const std::string &, const unsigned short);
+    static std::string treatScalar(const std::string&, const unsigned short);
 
-    static std::string treatTVector(const Hypothesis, const std::string &);
+    static std::string treatTVector(const Hypothesis, const std::string&);
 
     static std::string treatTVector(const Hypothesis,
-                                    const std::string &,
+                                    const std::string&,
                                     const unsigned short);
 
-    static std::string treatStensor(const Hypothesis, const std::string &);
+    static std::string treatStensor(const Hypothesis, const std::string&);
 
     static std::string treatStensor(const Hypothesis,
-                                    const std::string &,
+                                    const std::string&,
                                     const unsigned short);
 
-    static std::string treatTensor(const Hypothesis, const std::string &);
+    static std::string treatTensor(const Hypothesis, const std::string&);
 
     static std::string treatTensor(const Hypothesis,
-                                   const std::string &,
+                                   const std::string&,
                                    const unsigned short);
 
     std::string getInterfaceName() const override;
 
-    std::string getFunctionNameBasis(const std::string &) const override;
+    std::string getFunctionNameBasis(const std::string&) const override;
 
-    std::string getBehaviourName(const BehaviourDescription &) const;
+    std::string getBehaviourName(const BehaviourDescription&) const;
 
-    virtual std::string getUmatFunctionName(const BehaviourDescription &) const;
+    virtual std::string getUmatFunctionName(const BehaviourDescription&) const;
 
     /*!
      * \return the list of material properties required by the `Cast3M` finite
@@ -145,34 +145,34 @@ namespace mfront {
      * \param[in] h: modelling hypothesis
      */
     virtual std::vector<BehaviourMaterialProperty>
-    getDefaultMaterialPropertiesList(const BehaviourDescription &,
+    getDefaultMaterialPropertiesList(const BehaviourDescription&,
                                      const Hypothesis) const;
 
     std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
-    buildMaterialPropertiesList(const BehaviourDescription &,
+    buildMaterialPropertiesList(const BehaviourDescription&,
                                 const Hypothesis) const override;
 
     void writeMTestFileGeneratorSetModellingHypothesis(
-        std::ostream &) const override;
+        std::ostream&) const override;
 
     void writeGetOutOfBoundsPolicyFunctionImplementation(
-        std::ostream &,
-        const BehaviourDescription &,
-        const std::string &) const override;
+        std::ostream&,
+        const BehaviourDescription&,
+        const std::string&) const override;
     /*!
      * \brief write the set out of bounds policy function for an alias
      * behaviour \param[out] out   : output stream \param[out] name  : name of
      * the alias \param[out] name2 : name of the original behaviour
      */
     virtual void writeSetOutOfBoundsPolicyFunctionImplementation2(
-        std::ostream &, const std::string &, const std::string &) const;
+        std::ostream&, const std::string&, const std::string&) const;
     /*!
      * \brief generate an example of an input file
      * \param[in] bd: behaviour description
      * \param[in] h: modelling hypothesis
      */
-    virtual void generateInputFileExample(const BehaviourDescription &,
-                                          const FileDescription &) const;
+    virtual void generateInputFileExample(const BehaviourDescription&,
+                                          const FileDescription&) const;
     /*!
      * \brief generate an example of how to use the behaviour for the given
      * hypothesis. This method is called internally by the
@@ -182,34 +182,34 @@ namespace mfront {
      * \param[in] h: modelling hypothesis
      */
     virtual void generateInputFileExampleForHypothesis(
-        std::ostream &, const BehaviourDescription &, const Hypothesis) const;
+        std::ostream&, const BehaviourDescription&, const Hypothesis) const;
 
     virtual void writeVariableDescriptionContainerToGibiane(
-        std::ostream &,
+        std::ostream&,
         const Hypothesis,
-        const VariableDescriptionContainer &) const;
+        const VariableDescriptionContainer&) const;
 
     virtual void writeVariableDescriptionsToGibiane(
-        std::ostream &,
+        std::ostream&,
         const Hypothesis,
         const VariableDescriptionContainer::const_iterator,
         const VariableDescriptionContainer::const_iterator) const;
 
     virtual void writeGibianeMappingComments(
-        std::ostream &,
+        std::ostream&,
         const Hypothesis,
-        const VariableDescriptionContainer &) const;
+        const VariableDescriptionContainer&) const;
 
     virtual void writeGibianeMappingComments(
-        std::ostream &,
+        std::ostream&,
         const std::pair<std::vector<BehaviourMaterialProperty>,
-                        SupportedTypes::TypeSize> &) const;
+                        SupportedTypes::TypeSize>&) const;
 
-    virtual void writeGibianeInstruction(std::ostream &,
-                                         const std::string &) const;
+    virtual void writeGibianeInstruction(std::ostream&,
+                                         const std::string&) const;
 
-    virtual void writeCastemFunctionDeclaration(std::ostream &,
-                                                const std::string &) const;
+    virtual void writeCastemFunctionDeclaration(std::ostream&,
+                                                const std::string&) const;
     /*!
      * \brief an helper function
      * \param[out] out     : output file
@@ -219,15 +219,15 @@ namespace mfront {
      * \param[in]  m       : méthod called to write the function
      */
     virtual void writeCastemFunction(
-        std::ostream &,
-        const std::string &,
-        const std::string &,
-        const BehaviourDescription &,
-        void (CastemInterface::*)(std::ostream &,
-                                  const std::string &,
-                                  const std::string &,
-                                  const std::string &,
-                                  const BehaviourDescription &) const) const;
+        std::ostream&,
+        const std::string&,
+        const std::string&,
+        const BehaviourDescription&,
+        void (CastemInterface::*)(std::ostream&,
+                                  const std::string&,
+                                  const std::string&,
+                                  const std::string&,
+                                  const BehaviourDescription&) const) const;
     /*!
      * \param[out] out     : output file
      * \param[in]  name    : name of law
@@ -236,11 +236,11 @@ namespace mfront {
      * \param[in]  mb      : mechanical behaviourd description
      */
     virtual void writeFiniteRotationSmallStrainCastemFunction(
-        std::ostream &,
-        const std::string &,
-        const std::string &,
-        const std::string &,
-        const BehaviourDescription &) const;
+        std::ostream&,
+        const std::string&,
+        const std::string&,
+        const std::string&,
+        const BehaviourDescription&) const;
     /*!
      * \param[out] out     : output file
      * \param[in]  name    : name of law
@@ -249,11 +249,11 @@ namespace mfront {
      * \param[in]  mb      : mechanical behaviourd description
      */
     virtual void writeMieheApelLambrechtLogarithmicStrainCastemFunction(
-        std::ostream &,
-        const std::string &,
-        const std::string &,
-        const std::string &,
-        const BehaviourDescription &) const;
+        std::ostream&,
+        const std::string&,
+        const std::string&,
+        const std::string&,
+        const BehaviourDescription&) const;
     /*!
      * \brief write the implementation of the umat function
      * corresponding to the LOGARITHMICSTRAIN1D finite strain strategy
@@ -264,11 +264,11 @@ namespace mfront {
      * \param[in]  mb      : mechanical behaviourd description
      */
     virtual void writeLogarithmicStrain1DCastemFunction(
-        std::ostream &,
-        const std::string &,
-        const std::string &,
-        const std::string &,
-        const BehaviourDescription &) const;
+        std::ostream&,
+        const std::string&,
+        const std::string&,
+        const std::string&,
+        const BehaviourDescription&) const;
     /*!
      * \param[out] out     : output file
      * \param[in]  name    : name of law
@@ -276,27 +276,26 @@ namespace mfront {
      * \param[in]  suffix  : suffix library
      * \param[in]  mb      : mechanical behaviour description
      */
-    virtual void writeStandardCastemFunction(
-        std::ostream &,
-        const std::string &,
-        const std::string &,
-        const std::string &,
-        const BehaviourDescription &) const;
+    virtual void writeStandardCastemFunction(std::ostream&,
+                                             const std::string&,
+                                             const std::string&,
+                                             const std::string&,
+                                             const BehaviourDescription&) const;
     /*!
      * \brief return a string used to initialize the offset of the material
      * properties when declaring the `CastemTraits` class.
      * \param[in]  mb: mechanical behaviour description
      */
     virtual std::string getMaterialPropertiesOffsetForBehaviourTraits(
-        const BehaviourDescription &) const;
+        const BehaviourDescription&) const;
     /*!
      * \brief write a  specialisation of the `CastemTraits` class
      * \param[in] out : ouptut file
      * \param[in] mb  : behaviour description
      * \param[in] h   : modelling hypothesis
      */
-    virtual void writeCastemBehaviourTraits(std::ostream &,
-                                            const BehaviourDescription &,
+    virtual void writeCastemBehaviourTraits(std::ostream&,
+                                            const BehaviourDescription&,
                                             const Hypothesis) const;
     /*!
      * \brief plane stress handling requires to have access to the
@@ -308,8 +307,8 @@ namespace mfront {
      * \param[in] c: '0' (beginning of time step) or '1' (end of time
      * step)
      */
-    virtual bool writeInitializeAxialStrain(std::ostream &out,
-                                            const BehaviourDescription &mb,
+    virtual bool writeInitializeAxialStrain(std::ostream& out,
+                                            const BehaviourDescription& mb,
                                             const char c) const;
     /*!
      * \brief plane stress handling requires to have access to the
@@ -324,10 +323,10 @@ namespace mfront {
      * step)
      */
     virtual void writeFiniteStrainStrategiesPlaneStressSpecificCall(
-        std::ostream &,
-        const BehaviourDescription &,
-        const std::string &,
-        const std::string &,
+        std::ostream&,
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&,
         const char) const;
 
     /*!
@@ -342,19 +341,19 @@ namespace mfront {
      * \param[in] mb : behaviour description
      */
     virtual bool isModellingHypothesisSupported(
-        const Hypothesis, const BehaviourDescription &) const;
+        const Hypothesis, const BehaviourDescription&) const;
 
     std::string getModellingHypothesisTest(const Hypothesis) const override;
 
     std::map<UMATInterfaceBase::Hypothesis, std::string>
     gatherModellingHypothesesAndTests(
-        const BehaviourDescription &) const override;
+        const BehaviourDescription&) const override;
     /*!
      * \return the list of modelling hypotheses treated by the interface
      * \param[in] mb : behaviour description
      */
     virtual std::set<Hypothesis> getModellingHypothesesToBeTreated(
-        const BehaviourDescription &) const override;
+        const BehaviourDescription&) const override;
 
   };  // end of CastemInterface
 

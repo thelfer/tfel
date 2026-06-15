@@ -38,9 +38,9 @@ namespace mfront {
      * \param[in] f    : behaviour domain specific language
      */
     BehaviourDocumentationGenerator(const int,
-                                    const char *const *const,
+                                    const char* const* const,
                                     std::shared_ptr<AbstractBehaviourDSL>,
-                                    const std::string &);
+                                    const std::string&);
     //! treat the requests
     void exe() const override;
     //! destructor
@@ -50,22 +50,22 @@ namespace mfront {
         : DocumentationGeneratorBase::VariableInformationBase {
       using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
       VariableInformation();
-      VariableInformation(VariableInformation &&) noexcept;
-      VariableInformation(const VariableInformation &);
-      VariableInformation &operator=(VariableInformation &&);
-      VariableInformation &operator=(const VariableInformation &);
+      VariableInformation(VariableInformation&&) noexcept;
+      VariableInformation(const VariableInformation&);
+      VariableInformation& operator=(VariableInformation&&);
+      VariableInformation& operator=(const VariableInformation&);
       ~VariableInformation() noexcept;
       std::map<Hypothesis, std::string> descriptions;
       std::vector<Hypothesis> hypotheses;
     };
 
    private:
-    void writeWebOutput(std::ostream &,
-                        const BehaviourDescription &,
-                        const FileDescription &) const;
-    void writeFullOutput(std::ostream &,
-                         const BehaviourDescription &,
-                         const FileDescription &) const;
+    void writeWebOutput(std::ostream&,
+                        const BehaviourDescription&,
+                        const FileDescription&) const;
+    void writeFullOutput(std::ostream&,
+                         const BehaviourDescription&,
+                         const FileDescription&) const;
     //! abstract behaviour dsl
     std::shared_ptr<AbstractBehaviourDSL> dsl;
   };  // end of struct BehaviourDocumentationGenerator

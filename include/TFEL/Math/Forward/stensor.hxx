@@ -58,12 +58,12 @@ namespace tfel::math {
    * \tparam N : the spatial dimension.
    */
   template <unsigned short N>
-  requires((N == 1u) || (N == 2u) || (N == 3u)) struct StensorDimeToSize {
+    requires((N == 1u) || (N == 2u) || (N == 3u))
+  struct StensorDimeToSize {
     static constexpr auto value = []() constexpr -> unsigned short {
       constexpr unsigned short values[4] = {0u, 3u, 4u, 6u};
       return values[N];
-    }
-    ();
+    }();
   };
 
   /*!
@@ -74,12 +74,12 @@ namespace tfel::math {
    * \param value, the spatial dimension.
    */
   template <unsigned short N>
-  requires((N == 3u) || (N == 4u) || (N == 6u)) struct StensorSizeToDime {
+    requires((N == 3u) || (N == 4u) || (N == 6u))
+  struct StensorSizeToDime {
     static constexpr auto value = []() constexpr -> unsigned short {
       constexpr unsigned short values[7] = {0u, 0u, 0u, 1u, 2u, 0u, 3u};
       return values[N];
-    }
-    ();
+    }();
   };
 
   /*!
