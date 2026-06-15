@@ -119,25 +119,25 @@ struct MicrostructureDescriptionTest final : public tfel::tests::TestCase {
 
     ParticulateMicrostructure<3u, stress> micro1(C_0);
     micro1.addInclusionPhase(distrib1);
-    TFEL_TESTS_ASSERT(not(micro1.is_isotropic_matrix()));
+    TFEL_TESTS_ASSERT(not(micro1.isIsotropicMatrix()));
     micro1.changeElasticityOfMatrixPhase(KG0);
-    TFEL_TESTS_ASSERT(micro1.is_isotropic_matrix());
+    TFEL_TESTS_ASSERT(micro1.isIsotropicMatrix());
     micro1.changeElasticityOfInclusionPhase(0,10*C_0);
-    auto phasei=micro1.get_inclusionPhase(0);
+    auto phasei=micro1.getInclusionPhase(0);
     auto Ci=(*phasei).getElasticityOfPhase();
     tfel::math::st2tost2<3u,stress> C=10*C_0;
     TFEL_TESTS_ASSERT(tfel::material::relative_error(Ci,C)<eps);
-    auto iso=(*phasei).is_isotropic();
+    auto iso=(*phasei).isIsotropic();
     TFEL_TESTS_ASSERT(not(iso));
     micro1.changeElasticityOfInclusionPhase(0,KG0);
-    phasei=micro1.get_inclusionPhase(0);
+    phasei=micro1.getInclusionPhase(0);
     Ci=(*phasei).getElasticityOfPhase();
     TFEL_TESTS_ASSERT(tfel::material::relative_error(Ci,C_0)<eps);
-    iso=(*phasei).is_isotropic();
+    iso=(*phasei).isIsotropic();
     TFEL_TESTS_ASSERT(iso);
     micro1.changeFractionOfInclusionPhase(0,real(0.2));
-    TFEL_TESTS_ASSERT(my_abs(micro1.get_matrix_fraction()-real(0.8))<eps);
-    phasei=micro1.get_inclusionPhase(0);
+    TFEL_TESTS_ASSERT(my_abs(micro1.getMatrixFraction()-real(0.8))<eps);
+    phasei=micro1.getInclusionPhase(0);
     auto fr=(*phasei).fraction;
     TFEL_TESTS_ASSERT(my_abs(fr-real(0.2))<eps);
   }

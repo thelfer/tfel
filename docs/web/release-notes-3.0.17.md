@@ -22,6 +22,10 @@ The page describes the new functionalities of Version 3.0.17 of the
 
 # Issues fixed
 
+## Issue 983: [cmake] PYTHON_VERSION_MAJOR is deprecated in favour of Python_VERSION_MAJOR
+
+For more details, see <https://github.com/thelfer/tfel/issues/983>.￼
+
 ## Issue 971: [mfront] Trying to read a parameter file shall no modify the value of errno when the file is not present 
 ￼
 

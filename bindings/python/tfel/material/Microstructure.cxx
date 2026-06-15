@@ -161,7 +161,8 @@ requires(tfel::math::checkUnitCompatibility<
            [](SD &sd, const tfel::material::IsotropicModuli<StressType> &IM0) {
              return sd.changeElasticityOfPhase(IM0);
            })
-      .def("is_isotropic", &SD::is_isotropic)
+      .def("is_isotropic", &SD::isIsotropic)
+      .def("isIsotropic", &SD::isIsotropic)
       .def("computeMeanLocalisator",
            [](SD &sd, const tfel::material::IsotropicModuli<StressType> &IM0) {
              return sd.computeMeanLocalisator(IM0);
@@ -214,7 +215,8 @@ requires(tfel::math::checkUnitCompatibility<
            [](IsoD &isod, const tfel::material::IsotropicModuli<StressType> &IM0) {
              return isod.changeElasticityOfPhase(IM0);
            })
-      .def("is_isotropic", &IsoD::is_isotropic)
+      .def("is_isotropic", &IsoD::isIsotropic)
+      .def("isIsotropic", &IsoD::isIsotropic)
       .def("computeMeanLocalisator",
            [](IsoD &isod,
               const tfel::material::IsotropicModuli<StressType> &IM0) {
@@ -271,7 +273,8 @@ requires(
            [](TID &tid, const tfel::material::IsotropicModuli<StressType> &IM0) {
              return tid.changeElasticityOfPhase(IM0);
            })
-      .def("is_isotropic", &TID::is_isotropic)
+      .def("is_isotropic", &TID::isIsotropic)
+      .def("isIsotropic", &TID::isIsotropic)
       .def(
           "computeMeanLocalisator",
           [](TID &tid, const tfel::material::IsotropicModuli<StressType> &IM0) {
@@ -335,7 +338,8 @@ requires(
            [](OD &od, const tfel::material::IsotropicModuli<StressType> &IM0) {
              return od.changeElasticityOfPhase(IM0);
            })
-      .def("is_isotropic", &OD::is_isotropic)
+      .def("is_isotropic", &OD::isIsotropic)
+      .def("isIsotropic", &OD::isIsotropic)
       .def("computeMeanLocalisator",
            [](OD &od, const tfel::material::IsotropicModuli<StressType> &IM0) {
              return od.computeMeanLocalisator(IM0);
@@ -438,11 +442,16 @@ requires(
              return pm.changeElasticityOfInclusionPhase(i,IM0);
            })
       .def("changeFractionOfInclusionPhase", &PM::changeFractionOfInclusionPhase)
-      .def("get_number_of_phases", &PM::get_number_of_phases)
-      .def("get_matrix_fraction", &PM::get_matrix_fraction)
-      .def("get_matrix_elasticity", &PM::get_matrix_elasticity)
-      .def("is_isotropic_matrix", &PM::is_isotropic_matrix)
-      .def("get_inclusionPhase", &PM::get_inclusionPhase);
+      .def("get_number_of_phases", &PM::getNumberOfPhases)
+      .def("getNumberOfPhases", &PM::getNumberOfPhases)
+      .def("get_matrix_fraction", &PM::getMatrixFraction)
+      .def("getMatrixFraction", &PM::getMatrixFraction)
+      .def("get_matrix_elasticity", &PM::getMatrixElasticity)
+      .def("getMatrixElasticity", &PM::getMatrixElasticity)
+      .def("is_isotropic_matrix", &PM::isIsotropicMatrix)
+      .def("isIsotropicMatrix", &PM::isIsotropicMatrix)
+      .def("get_inclusionPhase", &PM::getInclusionPhase)
+      .def("getInclusionPhase", &PM::getInclusionPhase);
 }
 
 void declareMicrostructure(pybind11::module_ &);

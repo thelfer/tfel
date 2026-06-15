@@ -475,10 +475,10 @@ it has some methods that return the value of the
 private attributes:
 
 ~~~~{.py}
-print(micro_1.get_number_of_phases())
-print(micro_1.get_matrix_fraction())
-print(micro_1.get_matrix_elasticity())
-print(micro_1.is_isotropic_matrix())
+print(micro_1.getNumberOfPhases())
+print(micro_1.getMatrixFraction())
+print(micro_1.getMatrixElasticity())
+print(micro_1.isIsotropicMatrix())
 ~~~~
 
 Note that last line returns `True` if `micro_1` was instantiated with
@@ -562,20 +562,20 @@ We can now add these distributions to the microstructure:
 
 ~~~~{.py}
 micro_1.addInclusionPhase(sph_dist)
-print(micro_1.get_number_of_phases())
-print(micro_1.get_matrix_fraction())
+print(micro_1.getNumberOfPhases())
+print(micro_1.getMatrixFraction())
 
 micro_1.addInclusionPhase(ellipsoid_dist_iso)
-print(micro_1.get_number_of_phases())
-print(micro_1.get_matrix_fraction())
+print(micro_1.getNumberOfPhases())
+print(micro_1.getMatrixFraction())
 ~~~~
 
 or remove them:
 
 ~~~~{.py}
 micro_1.removeInclusionPhase(0)
-print(micro_1.get_number_of_phases())
-print(micro_1.get_matrix_fraction())
+print(micro_1.getNumberOfPhases())
+print(micro_1.getMatrixFraction())
 ~~~~
 
 At this stage, we have added the distribution of spheres `sph_dist`,
@@ -585,7 +585,7 @@ the distribution of spheres. Hence, only one `InclusionDistribution` object
 remains in the microstructure. We can get this distribution by doing:
 
 ~~~~{.py}
-ell_dist=micro_1.get_inclusionPhase(0)
+ell_dist=micro_1.getInclusionPhase(0)
 ~~~~
 
 This distribution of ellipsoids was instantiated before with a `Ellipsoid`
@@ -607,7 +607,7 @@ it was instantiated with a `KGModuli`, so that it is considered isotropic.
 Hence,
 
 ~~~~{.py}
-print(ell_dist.is_isotropic())
+print(ell_dist.isIsotropic())
 ~~~~
 
 returns `True`.
@@ -644,8 +644,8 @@ the elasticity of the matrix phase:
 
 ~~~~{.py}
 micro_1.changeElasticityOfMatrixPhase(C0)
-print(micro_1.get_matrix_elasticity())
-print(micro_1.is_isotropic_matrix())
+print(micro_1.getMatrixElasticity())
+print(micro_1.isIsotropicMatrix())
 ~~~~
 
 Here we see that the matrix is no more isotropic
@@ -669,7 +669,7 @@ Hence, we here recover the isotropic matrix by doing
 
 ~~~~{.py}
 micro_1.changeElasticityOfMatrixPhase(IM0)
-print(micro_1.is_isotropic_matrix())
+print(micro_1.isIsotropicMatrix())
 ~~~~
 
 Afterwards,
@@ -710,7 +710,7 @@ print("SC aniso: ",hmSC_aniso.homogenized_stiffness)
 
 For the oter schemes, the isotropic character of the matrix
 when computing the strain localisators will depend
-on what returns `micro_1.is_isotropic_matrix()`. Hence, it is important
+on what returns `micro_1.isIsotropicMatrix()`. Hence, it is important
 to initialized the matrix or the microstructure with the appropriate
 elastic moduli. If isotropic, it will works in all case, whereas
 if not isotropic, it will fail depending on the distributions that are present
