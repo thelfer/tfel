@@ -201,7 +201,7 @@ namespace tfel::utilities {
                                    const bool bm,
                                    const bool ba)
         : is_separator(bd, bp, bm, ba) {}
-    bool operator()(const std::string::value_type &c) const {
+    bool operator()(const std::string::value_type& c) const {
       return ((std::isspace(c)) || (is_separator::operator()(c)));
     }
   };  // end of struct is_separator_or_space
@@ -1023,7 +1023,7 @@ namespace tfel::utilities {
   }  // end of isValidIdentifier
 
   bool CxxTokenizer::isValidIdentifier(std::string_view s,
-                                       const IsValidIdentifierOptions &opts) {
+                                       const IsValidIdentifierOptions& opts) {
     if (s.empty()) {
       return false;
     }
@@ -1383,9 +1383,9 @@ namespace tfel::utilities {
   }  // end of CxxTokenizer::size
 
   void CxxTokenizer::substitute(
-      const std::map<std::string, std::string> &substitutions) {
-    for (auto &token : this->tokens) {
-      for (const auto &[s1, s2] : substitutions) {
+      const std::map<std::string, std::string>& substitutions) {
+    for (auto& token : this->tokens) {
+      for (const auto& [s1, s2] : substitutions) {
         token.value = tfel::utilities::replace_all(token.value, s1, s2);
       }
     }

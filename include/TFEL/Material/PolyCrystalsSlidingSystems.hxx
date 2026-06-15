@@ -72,8 +72,8 @@ namespace tfel::material {
     typedef NumType real;
     typedef tfel::math::stensor<3u, real> StrainStensor;
 
-    static const ExtendedPolyCrystalsSlidingSystems&
-    getPolyCrystalsSlidingSystems(const std::string&);
+    static const ExtendedPolyCrystalsSlidingSystems &
+    getPolyCrystalsSlidingSystems(const std::string &);
 
     tfel::math::vector<tfel::math::vector<StrainStensor>> mus;
 
@@ -88,11 +88,11 @@ namespace tfel::material {
     ExtendedPolyCrystalsSlidingSystems &operator=(
         const ExtendedPolyCrystalsSlidingSystems &);
 =======
-    ExtendedPolyCrystalsSlidingSystems(const std::string&);
+    ExtendedPolyCrystalsSlidingSystems(const std::string &);
     ExtendedPolyCrystalsSlidingSystems(
-        const ExtendedPolyCrystalsSlidingSystems&);
-    ExtendedPolyCrystalsSlidingSystems& operator=(
-        const ExtendedPolyCrystalsSlidingSystems&);
+        const ExtendedPolyCrystalsSlidingSystems &);
+    ExtendedPolyCrystalsSlidingSystems &operator=(
+        const ExtendedPolyCrystalsSlidingSystems &);
 >>>>>>> master
   };
 
