@@ -22,7 +22,8 @@ namespace tfel::math {
   template <unsigned short N,
             typename NumericType,
             typename Child,
-            template <unsigned short, typename> typename ExternalWorkSpace>
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
   template <typename... ExternalWorkSpaceArguments>
   TFEL_HOST_DEVICE
   TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
@@ -34,7 +35,8 @@ namespace tfel::math {
   template <unsigned short N,
             typename NumericType,
             typename Child,
-            template <unsigned short, typename> typename ExternalWorkSpace>
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
   TFEL_HOST_DEVICE bool
   TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
       solveNonLinearSystem2() {
@@ -78,7 +80,8 @@ namespace tfel::math {
   template <unsigned short N,
             typename NumericType,
             typename Child,
-            template <unsigned short, typename> typename ExternalWorkSpace>
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
   TFEL_HOST_DEVICE bool
   TinyNonLinearSolverBase<N, NumericType, Child, ExternalWorkSpace>::
       solveNonLinearSystem() {
@@ -113,7 +116,8 @@ namespace tfel::math {
   template <unsigned short N,
             typename NumericType,
             typename Child,
-            template <unsigned short, typename> typename ExternalWorkSpace>
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
   template <MatrixConcept FixedSizeMatrixType,
             VectorConcept FixedSizeVectorType>
   TFEL_HOST_DEVICE bool

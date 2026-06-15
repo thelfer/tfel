@@ -33,15 +33,15 @@ namespace tfel::material::homogenization::elasticity {
    * equivalent macroscopic strain
    */
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const
-      std::pair<types::real<StressType>, types::real<StressType>>
-      computeMeanSquaredEquivalentStrain(const IsotropicModuli<StressType>&,
-                                         const types::real<StressType>&,
-                                         const IsotropicModuli<StressType>&,
-                                         const types::real<StressType>&,
-                                         const types::real<StressType>&);
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE const std::
+      pair<types::real<StressType>, types::real<StressType>> computeMeanSquaredEquivalentStrain(
+          const IsotropicModuli<StressType>&,
+          const types::real<StressType>&,
+          const IsotropicModuli<StressType>&,
+          const types::real<StressType>&,
+          const types::real<StressType>&);
 
   /*!
    * This function computes the averages on each phase of the square of the
@@ -58,15 +58,15 @@ namespace tfel::material::homogenization::elasticity {
    * equivalent macroscopic strain
    */
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const
-      std::pair<types::real<StressType>, types::real<StressType>>
-      computeMeanSquaredHydrostaticStrain(const IsotropicModuli<StressType>&,
-                                          const types::real<StressType>&,
-                                          const IsotropicModuli<StressType>&,
-                                          const types::real<StressType>&,
-                                          const types::real<StressType>&);
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE const std::
+      pair<types::real<StressType>, types::real<StressType>> computeMeanSquaredHydrostaticStrain(
+          const IsotropicModuli<StressType>&,
+          const types::real<StressType>&,
+          const IsotropicModuli<StressType>&,
+          const types::real<StressType>&,
+          const types::real<StressType>&);
 
 }  // end of namespace tfel::material::homogenization::elasticity
 

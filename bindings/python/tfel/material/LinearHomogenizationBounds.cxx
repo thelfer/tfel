@@ -16,34 +16,42 @@
 #include "TFEL/Material/LinearHomogenizationBounds.hxx"
 
 template <tfel::math::ScalarConcept StressType, std::size_t N>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-static tfel::math::st2tost2<N, StressType> computeVoigtStiffness(
-    std::vector<tfel::types::real<StressType>>& f_i,
-    std::vector<tfel::math::st2tost2<N, StressType>>& C_i) {
+requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                            StressType>()) static tfel::math::
+    st2tost2<N, StressType> computeVoigtStiffness(
+        std::vector<tfel::types::real<StressType>>& f_i,
+        std::vector<tfel::math::st2tost2<N, StressType>>& C_i) {
   return tfel::material::homogenization::elasticity::computeVoigtStiffness<
       N, StressType>(f_i, C_i);
 }
 
 template <tfel::math::ScalarConcept StressType, std::size_t N>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-static tfel::math::st2tost2<N, StressType> computeReussStiffness(
-    std::vector<tfel::types::real<StressType>>& f_i,
-    std::vector<tfel::math::st2tost2<N, StressType>>& C_i) {
+requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                            StressType>()) static tfel::math::
+    st2tost2<N, StressType> computeReussStiffness(
+        std::vector<tfel::types::real<StressType>>& f_i,
+        std::vector<tfel::math::st2tost2<N, StressType>>& C_i) {
   return tfel::material::homogenization::elasticity::computeReussStiffness<
       N, StressType>(f_i, C_i);
 }
 
 template <tfel::math::ScalarConcept StressType, std::size_t N>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-static std::pair<std::pair<StressType, StressType>,
-                 std::pair<StressType, StressType>>
-computeIsotropicHashinShtrikmanBounds(
-    std::vector<tfel::types::real<StressType>>& f_i,
-    std::vector<StressType>& K_i,
-    std::vector<StressType>& G_i) {
+requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                            StressType>()) static std::
+    pair<
+        std::pair<StressType, StressType>,
+        std::pair<
+            StressType,
+            StressType>> computeIsotropicHashinShtrikmanBounds(std::
+                                                                   vector<tfel::types::real<
+                                                                       StressType>>&
+                                                                       f_i,
+                                                               std::vector<
+                                                                   StressType>&
+                                                                   K_i,
+                                                               std::vector<
+                                                                   StressType>&
+                                                                   G_i) {
   return tfel::material::homogenization::elasticity::
       computeIsotropicHashinShtrikmanBounds<N, StressType>(f_i, K_i, G_i);
 }

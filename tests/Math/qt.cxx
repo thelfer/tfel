@@ -108,13 +108,19 @@ struct qtTest final : public tfel::tests::TestCase {
     using namespace tfel::math;
     auto check_assignement = [this]<typename Unit1, typename Unit2, bool b>() {
       constexpr auto can_assign =
-          requires(qt<Unit1>& lhs, const qt<Unit2>& rhs) { lhs = rhs; };
+          requires(qt<Unit1> & lhs, const qt<Unit2>& rhs) {
+        lhs = rhs;
+      };
       TFEL_TESTS_STATIC_ASSERT(can_assign == b);
       constexpr auto can_assign1 =
-          requires(qt<Unit1>& lhs, const qt<Unit2>& rhs) { lhs = rhs; };
+          requires(qt<Unit1> & lhs, const qt<Unit2>& rhs) {
+        lhs = rhs;
+      };
       TFEL_TESTS_STATIC_ASSERT(can_assign1 == b);
       constexpr auto can_assign2 =
-          requires(qt<Unit1>& lhs, const qt<Unit2>& rhs) { lhs = rhs; };
+          requires(qt<Unit1> & lhs, const qt<Unit2>& rhs) {
+        lhs = rhs;
+      };
       TFEL_TESTS_STATIC_ASSERT(can_assign2 == b);
     };
     check_assignement.operator()<unit::NoUnit, unit::NoUnit, true>();
@@ -125,27 +131,35 @@ struct qtTest final : public tfel::tests::TestCase {
     using namespace tfel::math;
     auto check_assignement =
         [this]<typename Unit1, typename ValueType, bool b>() {
-          constexpr auto can_assign = requires(
-              qt<Unit1, ValueType>& lhs, const ValueType& rhs) { lhs = rhs; };
+          constexpr auto can_assign =
+              requires(qt<Unit1, ValueType> & lhs, const ValueType& rhs) {
+            lhs = rhs;
+          };
           TFEL_TESTS_STATIC_ASSERT(can_assign == b);
-          constexpr auto can_assign1 = requires(
-              ValueType& lhs, const qt<Unit1, ValueType>& rhs) { lhs = rhs; };
+          constexpr auto can_assign1 =
+              requires(ValueType & lhs, const qt<Unit1, ValueType>& rhs) {
+            lhs = rhs;
+          };
           TFEL_TESTS_STATIC_ASSERT(can_assign1 == b);
-          constexpr auto can_assign2 = requires(
-              qt<Unit1, ValueType>& lhs, const ValueType& rhs) { lhs += rhs; };
+          constexpr auto can_assign2 =
+              requires(qt<Unit1, ValueType> & lhs, const ValueType& rhs) {
+            lhs += rhs;
+          };
           TFEL_TESTS_STATIC_ASSERT(can_assign2 == b);
           constexpr auto can_assign3 =
-              requires(ValueType& lhs, const qt<Unit1, ValueType>& rhs) {
-                lhs += static_cast<const ValueType&>(rhs);
-              };
+              requires(ValueType & lhs, const qt<Unit1, ValueType>& rhs) {
+            lhs += static_cast<const ValueType&>(rhs);
+          };
           TFEL_TESTS_STATIC_ASSERT(can_assign3 == b);
-          constexpr auto can_assign4 = requires(
-              qt<Unit1, ValueType>& lhs, const ValueType& rhs) { lhs -= rhs; };
+          constexpr auto can_assign4 =
+              requires(qt<Unit1, ValueType> & lhs, const ValueType& rhs) {
+            lhs -= rhs;
+          };
           TFEL_TESTS_STATIC_ASSERT(can_assign4 == b);
           constexpr auto can_assign5 =
-              requires(ValueType& lhs, const qt<Unit1, ValueType>& rhs) {
-                lhs -= static_cast<const ValueType&>(rhs);
-              };
+              requires(ValueType & lhs, const qt<Unit1, ValueType>& rhs) {
+            lhs -= static_cast<const ValueType&>(rhs);
+          };
           TFEL_TESTS_STATIC_ASSERT(can_assign5 == b);
         };
     check_assignement.operator()<unit::NoUnit, double, true>();

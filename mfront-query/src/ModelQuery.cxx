@@ -63,7 +63,8 @@ namespace mfront {
     for (const auto& q : sq) {
       this->registerCallBack(
           q.first,
-          CallBack(q.second, [this] { this->treatStandardQuery(); }, false));
+          CallBack(
+              q.second, [this] { this->treatStandardQuery(); }, false));
     }
   }  // end of registerCommandLineCallBacks
 

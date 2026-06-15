@@ -241,7 +241,7 @@ namespace mfront {
         "SearchPathsHandler::addMadnexSearchPaths: "
         "madnex support is not enabled");
 #endif /* MFRONT_HAVE_MADNEX */
-  }  // end of addMadnexSearchPath
+  }    // end of addMadnexSearchPath
 
   void SearchPathsHandler::addSearchPaths(const std::string& p) {
     auto& msf = SearchPathsHandler::getSearchPathsHandler();

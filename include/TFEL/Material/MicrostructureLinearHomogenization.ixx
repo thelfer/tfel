@@ -21,11 +21,12 @@ namespace tfel::material::homogenization::elasticity {
 
   namespace internals {
     template <unsigned short int N, tfel::math::ScalarConcept StressType>
-      requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                  StressType>())
-    std::vector<tfel::math::stensor<N, StressType>> initialize_polarisation(
-        const std::vector<tfel::math::stensor<N, StressType>>& polarisations,
-        const std::size_t np) {
+    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                StressType>())
+        std::vector<tfel::math::stensor<N, StressType>> initialize_polarisation(
+            const std::vector<tfel::math::stensor<N, StressType>>&
+                polarisations,
+            const std::size_t np) {
       std::vector<tfel::math::stensor<N, StressType>> polarisations_;
       if (polarisations.size() == 0) {
         const auto zero = tfel::math::stensor<N, StressType>::zero();
@@ -44,12 +45,13 @@ namespace tfel::material::homogenization::elasticity {
   }  // namespace internals
 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  HomogenizationScheme<N, StressType> computeDilute(
-      ParticulateMicrostructure<N, StressType>& micro,
-      int max_iter_anisotropic_integration,
-      const std::vector<tfel::math::stensor<N, StressType>>& polarisations) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      HomogenizationScheme<N, StressType> computeDilute(
+          ParticulateMicrostructure<N, StressType>& micro,
+          int max_iter_anisotropic_integration,
+          const std::vector<tfel::math::stensor<N, StressType>>&
+              polarisations) {
     using real = tfel::types::real<StressType>;
     const auto np = micro.getNumberOfPhases();
     const auto polarisations_ =
@@ -93,12 +95,13 @@ namespace tfel::material::homogenization::elasticity {
   };
 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  HomogenizationScheme<N, StressType> computeMoriTanaka(
-      ParticulateMicrostructure<N, StressType>& micro,
-      int max_iter_anisotropic_integration,
-      const std::vector<tfel::math::stensor<N, StressType>>& polarisations) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      HomogenizationScheme<N, StressType> computeMoriTanaka(
+          ParticulateMicrostructure<N, StressType>& micro,
+          int max_iter_anisotropic_integration,
+          const std::vector<tfel::math::stensor<N, StressType>>&
+              polarisations) {
     using real = tfel::types::real<StressType>;
 
     const auto np = micro.getNumberOfPhases();
@@ -150,14 +153,15 @@ namespace tfel::material::homogenization::elasticity {
   };
 
   template <unsigned short int N, tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  HomogenizationScheme<N, StressType> computeSelfConsistent(
-      ParticulateMicrostructure<N, StressType>& micro,
-      const tfel::types::real<StressType>& tolerance,
-      bool isotropic,
-      int max_iter_anisotropic_integration,
-      const std::vector<tfel::math::stensor<N, StressType>>& polarisations) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      HomogenizationScheme<N, StressType> computeSelfConsistent(
+          ParticulateMicrostructure<N, StressType>& micro,
+          const tfel::types::real<StressType>& tolerance,
+          bool isotropic,
+          int max_iter_anisotropic_integration,
+          const std::vector<tfel::math::stensor<N, StressType>>&
+              polarisations) {
     using real = tfel::types::real<StressType>;
     const auto np = micro.getNumberOfPhases();
     const auto f0 = micro.getMatrixFraction();

@@ -31,7 +31,7 @@ namespace mfront {
                                  * `MultipleIsotropicMisesFlowsDSL` dsls. */
     USERDEFINEDSCHEME,          //!< default value.
     UNDEFINEDINTEGRATIONSCHEME  //!< undefined value.
-  };  // end of enum struct IntegrationScheme
+  };                            // end of enum struct IntegrationScheme
 
 }  // end of namespace mfront
 

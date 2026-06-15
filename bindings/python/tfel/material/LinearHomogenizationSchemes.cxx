@@ -17,9 +17,10 @@
 #include "TFEL/Material/HomogenizationSecondMoments.hxx"
 
 template <tfel::math::ScalarConcept StressType>
-  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                              StressType>())
-static void declareDistribution(pybind11::module_& m, const char* const n) {
+requires(tfel::math::checkUnitCompatibility<
+         tfel::math::unit::Stress,
+         StressType>()) static void declareDistribution(pybind11::module_& m,
+                                                        const char* const n) {
   using D =
       tfel::material::homogenization::elasticity::Distribution<StressType>;
 

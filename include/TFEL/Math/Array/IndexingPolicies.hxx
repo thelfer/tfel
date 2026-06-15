@@ -152,8 +152,8 @@ namespace tfel::math {
 
   //! \brief total size of a fixed size policy
   template <typename IndexingPolicyType>
-    requires(IndexingPolicyType::hasFixedSizes)
-  inline constexpr auto indexing_policy_size = [] {
+  requires(IndexingPolicyType::
+               hasFixedSizes) inline constexpr auto indexing_policy_size = [] {
     IndexingPolicyType p;
     return p.size();
   }();

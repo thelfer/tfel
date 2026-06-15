@@ -40,8 +40,8 @@ namespace tfel::material::internals {
       const tfel::math::tvector<3u, BarlatStressType<StressStensor>>&,
       const tfel::math::tmatrix<3u, 3u, BarlatBaseType<StressStensor>>&,
       const tfel::material::BarlatStressType<StressStensor>) noexcept  //
-    requires(tfel::math::getSpaceDimension<StressStensor>() == 1u)
-  {}  // end of completeBaralatStressSecondDerivative
+      requires(tfel::math::getSpaceDimension<StressStensor>() == 1u) {
+  }  // end of completeBaralatStressSecondDerivative
   /*!
    * \brief add the terms relative to the eigenvectors derivatives
    * \param[out] d2Phi_ds2: second derivative of the Barlat equivalent stress
@@ -66,8 +66,7 @@ namespace tfel::material::internals {
       const tfel::math::tvector<3u, BarlatStressType<StressStensor>>& vp,
       const tfel::math::tmatrix<3u, 3u, BarlatBaseType<StressStensor>>& m,
       const tfel::material::BarlatStressType<StressStensor> e)  //
-    requires(tfel::math::getSpaceDimension<StressStensor>() == 2u)
-  {
+      requires(tfel::math::getSpaceDimension<StressStensor>() == 2u) {
     using namespace tfel::math;
     using base = tfel::material::BarlatBaseType<StressStensor>;
     constexpr auto icste = Cste<base>::isqrt2;
@@ -107,8 +106,7 @@ namespace tfel::material::internals {
       const tfel::math::tvector<3u, BarlatStressType<StressStensor>>& vp,
       const tfel::math::tmatrix<3u, 3u, BarlatBaseType<StressStensor>>& m,
       const tfel::material::BarlatStressType<StressStensor> e)  //
-    requires(tfel::math::getSpaceDimension<StressStensor>() == 3u)
-  {
+      requires(tfel::math::getSpaceDimension<StressStensor>() == 3u) {
     using namespace tfel::math;
     using base = tfel::material::BarlatBaseType<StressStensor>;
     constexpr auto cste = Cste<base>::isqrt2;

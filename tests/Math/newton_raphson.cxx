@@ -80,7 +80,7 @@ struct NewtonRaphsonSolver2
     J = 2 * x;
     return true;
   }  // end of computFdF
-};  // end of struct NewtonRaphsonSolver2
+};   // end of struct NewtonRaphsonSolver2
 
 struct NewtonRaphsonSolver3
     : public tfel::math::
@@ -104,7 +104,7 @@ struct NewtonRaphsonSolver3
          -200 * x(0), 100.};
     return true;
   }  // end of computFdF
-};  // end of struct NewtonRaphsonSolver3
+};   // end of struct NewtonRaphsonSolver3
 
 template <unsigned short N, typename NumericType>
 struct HeapAllocatedWorkspace {

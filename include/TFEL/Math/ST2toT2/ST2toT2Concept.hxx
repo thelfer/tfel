@@ -48,7 +48,7 @@ namespace tfel::math {
    */
   template <typename T>
   concept ST2toT2Concept =
-      (std::is_same_v<typename std::decay_t<T>::ConceptTag, ST2toT2Tag>) &&  //
+      (std::is_same_v<typename std::decay_t<T>::ConceptTag, ST2toT2Tag>)&&  //
       (requires(const T t, const unsigned short i, const unsigned short j) {
         t(i, j);
       });
@@ -57,8 +57,7 @@ namespace tfel::math {
    * which hold value types without unit
    */
   template <typename T>
-  concept NoUnitST2toT2Concept =
-      ST2toT2Concept<T> &&
+  concept NoUnitST2toT2Concept = ST2toT2Concept<T> &&
       (checkUnitCompatibility<unit::NoUnit, numeric_type<T>>());
   /*!
    * \brief refinement of the `ST2toT2Concept` concept matched by `st2tot2`
@@ -67,8 +66,7 @@ namespace tfel::math {
    * \see checkUnitCompatibility for details
    */
   template <typename T>
-  concept StressST2toT2Concept =
-      ST2toT2Concept<T> &&
+  concept StressST2toT2Concept = ST2toT2Concept<T> &&
       (checkUnitCompatibility<unit::Stress, numeric_type<T>>());
   //! \brief partial specialisation for fourth order tensor
   template <typename Type>

@@ -40,19 +40,19 @@
 namespace aster {
 
   // forward declaration
-  template <AsterBehaviourType,
-            tfel::material::ModellingHypothesis::Hypothesis,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class>
+  template <
+      AsterBehaviourType,
+      tfel::material::ModellingHypothesis::Hypothesis,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class>
   struct AsterIsotropicBehaviourHandler;
 
   // forward declaration
-  template <AsterBehaviourType,
-            tfel::material::ModellingHypothesis::Hypothesis,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class>
+  template <
+      AsterBehaviourType,
+      tfel::material::ModellingHypothesis::Hypothesis,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class>
   struct AsterOrthotropicBehaviourHandler;
 
   /*!
@@ -71,9 +71,9 @@ namespace aster {
    * \author Thomas Helfer
    * \date   28 Jul 2006
    */
-  template <template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterInterface
       : protected AsterInterfaceExceptions {
     TFEL_ASTER_INLINE2 static int exe(
@@ -391,8 +391,8 @@ namespace aster {
         }
         return 0;
       }  // end of CallBehaviour::exe
-    };  // end of struct CallBehaviour
-  };  // end of struct AsterInterface
+    };   // end of struct CallBehaviour
+  };     // end of struct AsterInterface
 
 }  // end of namespace aster
 

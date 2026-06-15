@@ -87,7 +87,7 @@ struct LevenbergMarquardtSolver2
     J = 2 * x;
     return true;
   }  // end of computFdF
-};  // end of struct LevenbergMarquardtSolver2
+};   // end of struct LevenbergMarquardtSolver2
 
 struct LevenbergMarquardtSolver3
     : public tfel::math::
@@ -116,7 +116,7 @@ struct LevenbergMarquardtSolver3
          -200 * x(0), 100.};
     return true;
   }  // end of computFdF
-};  // end of struct LevenbergMarquardtSolver3
+};   // end of struct LevenbergMarquardtSolver3
 
 struct TinyLevenbergMarquardtSolverTest final : public tfel::tests::TestCase {
   TinyLevenbergMarquardtSolverTest()

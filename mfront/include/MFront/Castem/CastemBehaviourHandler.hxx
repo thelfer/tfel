@@ -124,11 +124,11 @@ namespace castem {
    * \tparam H:         modelling hypothesis
    * \tparam Behaviour: behaviour class
    */
-  template <CastemBehaviourType type,
-            tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      CastemBehaviourType type,
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemBehaviourHandler
       : public CastemInterfaceExceptions {
     /*!
@@ -298,7 +298,7 @@ namespace castem {
         b.setCASTEMBehaviourDataGradients(STRAN);
         b.setCASTEMIntegrationDataGradients(DSTRAN);
       }  // end of exe
-    };  // end of struct GradientInitialiserWithoutStressFreeExpansion
+    };   // end of struct GradientInitialiserWithoutStressFreeExpansion
 
     /*!
      * An helper structure which is used to compute the stiffness
@@ -314,7 +314,7 @@ namespace castem {
         CastemComputeStiffnessTensor<type, H, Traits::stype, buas>::exe(
             data.getStiffnessTensor(), props);
       }  // end of exe
-    };  // end of struct StiffnessTensorInitializer
+    };   // end of struct StiffnessTensorInitializer
 
     /*!
      * An helper structure which is used to compute the thermal
@@ -329,7 +329,7 @@ namespace castem {
             type, H, CastemTraits<BV>::stype>::
             exe(props, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
-    };  // end of struct ThermalExpansionCoefficientTensorInitializer
+    };   // end of struct ThermalExpansionCoefficientTensorInitializer
 
     /*!
      * an helper class which don't do any initialisation

@@ -78,9 +78,8 @@ namespace tfel::math {
                                                   IndexingPolicyType>
   map_strided(const ViewDataPointerType<MappedType> p,
               const typename IndexingPolicyType::size_type s)  //
-    requires((!std::is_const_v<MappedType>) &&
-             (std::remove_cv_t<MappedType>::hasFixedSizes))
-  {
+      requires((!std::is_const_v<MappedType>)&&(
+          std::remove_cv_t<MappedType>::hasFixedSizes)) {
     return StridedCoalescedView<MappedType, IndexingPolicyType>{p, s};
   }  // end of map_strided
 
@@ -91,8 +90,7 @@ namespace tfel::math {
                                                   IndexingPolicyType>
   map_strided(const ViewConstDataPointerType<std::remove_cv_t<MappedType>> p,
               const typename IndexingPolicyType::size_type s)  //
-    requires((std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes))
-  {
+      requires((std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes)) {
     return StridedCoalescedView<MappedType, IndexingPolicyType>{p, s};
   }  // end of map_strided
 

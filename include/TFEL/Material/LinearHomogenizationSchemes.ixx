@@ -19,9 +19,9 @@
 namespace tfel::material::homogenization::elasticity {
 
   template <unsigned short N, tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  struct EllipsoidMeanLocalisator {
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) struct EllipsoidMeanLocalisator {
     using real = types::real<StressType>;
     using LengthType = types::length<StressType>;
     static constexpr auto eps =
@@ -339,16 +339,15 @@ namespace tfel::material::homogenization::elasticity {
   };  // end of struct EllipsoidMeanLocalisator ;
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeDiluteScheme(
-      const StressType& young,
-      const types::real<StressType>& nu,
-      const types::real<StressType>& f,
-      const StressType& young_i,
-      const types::real<StressType>& nu_i,
-      const tfel::math::st2tost2<3u, types::real<StressType>>& A) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<3u, StressType> computeDiluteScheme(
+          const StressType& young,
+          const types::real<StressType>& nu,
+          const types::real<StressType>& f,
+          const StressType& young_i,
+          const types::real<StressType>& nu_i,
+          const tfel::math::st2tost2<3u, types::real<StressType>>& A) {
     using real = types::real<StressType>;
     // if ((nu > 0.5) || (nu < -1)) {
     //   tfel::reportContractViolation("nu>0.5 or nu<-1");
@@ -380,16 +379,15 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of DiluteScheme
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeMoriTanakaScheme(
-      const StressType& young,
-      const types::real<StressType>& nu,
-      const types::real<StressType>& f,
-      const StressType& young_i,
-      const types::real<StressType>& nu_i,
-      const tfel::math::st2tost2<3u, types::real<StressType>>& A) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<3u, StressType> computeMoriTanakaScheme(
+          const StressType& young,
+          const types::real<StressType>& nu,
+          const types::real<StressType>& f,
+          const StressType& young_i,
+          const types::real<StressType>& nu_i,
+          const tfel::math::st2tost2<3u, types::real<StressType>>& A) {
     using real = types::real<StressType>;
     // if ((nu > 0.5) || (nu < -1)) {
     //   tfel::reportContractViolation("nu>0.5 or nu<-1");
@@ -423,14 +421,14 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of MoriTanakaScheme
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const YoungNuModuli<StressType> computeSphereDiluteScheme(
-      const StressType& young,
-      const types::real<StressType>& nu,
-      const types::real<StressType>& f,
-      const StressType& young_i,
-      const types::real<StressType>& nu_i) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const YoungNuModuli<StressType> computeSphereDiluteScheme(
+          const StressType& young,
+          const types::real<StressType>& nu,
+          const types::real<StressType>& f,
+          const StressType& young_i,
+          const types::real<StressType>& nu_i) {
     // if ((nu > 0.5) || (nu < -1)) {
     //   tfel::reportContractViolation("nu>0.5 or nu<-1");
     // }
@@ -455,12 +453,12 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const KGModuli<StressType> computeSphereDiluteScheme(
-      const IsotropicModuli<StressType>& IM0,
-      const types::real<StressType>& f,
-      const IsotropicModuli<StressType>& IM_i) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const KGModuli<StressType> computeSphereDiluteScheme(
+          const IsotropicModuli<StressType>& IM0,
+          const types::real<StressType>& f,
+          const IsotropicModuli<StressType>& IM_i) {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
     const auto Enu =
@@ -469,14 +467,14 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of computeSphereDiluteScheme
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const YoungNuModuli<StressType>
-  computeSphereMoriTanakaScheme(const StressType& young,
-                                const types::real<StressType>& nu,
-                                const types::real<StressType>& f,
-                                const StressType& young_i,
-                                const types::real<StressType>& nu_i) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const YoungNuModuli<StressType> computeSphereMoriTanakaScheme(
+          const StressType& young,
+          const types::real<StressType>& nu,
+          const types::real<StressType>& f,
+          const StressType& young_i,
+          const types::real<StressType>& nu_i) {
     // if ((nu > 0.5) || (nu < -1)) {
     //   tfel::reportContractViolation("nu>0.5 or nu<-1");
     // }
@@ -502,12 +500,12 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const KGModuli<StressType> computeSphereMoriTanakaScheme(
-      const IsotropicModuli<StressType>& IM0,
-      const types::real<StressType>& f,
-      const IsotropicModuli<StressType>& IM_i) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const KGModuli<StressType> computeSphereMoriTanakaScheme(
+          const IsotropicModuli<StressType>& IM0,
+          const types::real<StressType>& f,
+          const IsotropicModuli<StressType>& IM_i) {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
     const auto Enu = computeSphereMoriTanakaScheme(Enu0.young, Enu0.nu, f,
@@ -516,17 +514,17 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of computeSphereMoriTanakaScheme
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const YoungNuModuli<StressType> computeIsotropicDiluteScheme(
-      const StressType& young,
-      const types::real<StressType>& nu,
-      const types::real<StressType>& f,
-      const StressType& young_i,
-      const types::real<StressType>& nu_i,
-      const types::length<StressType>& a,
-      const types::length<StressType>& b,
-      const types::length<StressType>& c) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const YoungNuModuli<StressType> computeIsotropicDiluteScheme(
+          const StressType& young,
+          const types::real<StressType>& nu,
+          const types::real<StressType>& f,
+          const StressType& young_i,
+          const types::real<StressType>& nu_i,
+          const types::length<StressType>& a,
+          const types::length<StressType>& b,
+          const types::length<StressType>& c) {
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
@@ -546,15 +544,15 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const KGModuli<StressType> computeIsotropicDiluteScheme(
-      const IsotropicModuli<StressType>& IM0,
-      const types::real<StressType>& f,
-      const IsotropicModuli<StressType>& IM_i,
-      const types::length<StressType>& a,
-      const types::length<StressType>& b,
-      const types::length<StressType>& c) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const KGModuli<StressType> computeIsotropicDiluteScheme(
+          const IsotropicModuli<StressType>& IM0,
+          const types::real<StressType>& f,
+          const IsotropicModuli<StressType>& IM_i,
+          const types::length<StressType>& a,
+          const types::length<StressType>& b,
+          const types::length<StressType>& c) {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
     const auto Enu = computeIsotropicDiluteScheme(Enu0.young, Enu0.nu, f,
@@ -563,19 +561,19 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of computeIsotropicDiluteScheme
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeTransverseIsotropicDiluteScheme(
-      const StressType& young,
-      const types::real<StressType>& nu,
-      const types::real<StressType>& f,
-      const StressType& young_i,
-      const types::real<StressType>& nu_i,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-      const types::length<StressType>& a,
-      const types::length<StressType>& b,
-      const types::length<StressType>& c) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const tfel::math::
+          st2tost2<3u, StressType> computeTransverseIsotropicDiluteScheme(
+              const StressType& young,
+              const types::real<StressType>& nu,
+              const types::real<StressType>& f,
+              const StressType& young_i,
+              const types::real<StressType>& nu_i,
+              const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+              const types::length<StressType>& a,
+              const types::length<StressType>& b,
+              const types::length<StressType>& c) {
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
@@ -586,17 +584,17 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeTransverseIsotropicDiluteScheme(
-      const IsotropicModuli<StressType>& IM0,
-      const types::real<StressType>& f,
-      const IsotropicModuli<StressType>& IM_i,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-      const types::length<StressType>& a,
-      const types::length<StressType>& b,
-      const types::length<StressType>& c) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const tfel::math::
+          st2tost2<3u, StressType> computeTransverseIsotropicDiluteScheme(
+              const IsotropicModuli<StressType>& IM0,
+              const types::real<StressType>& f,
+              const IsotropicModuli<StressType>& IM_i,
+              const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+              const types::length<StressType>& a,
+              const types::length<StressType>& b,
+              const types::length<StressType>& c) {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
     return computeTransverseIsotropicDiluteScheme(
@@ -604,20 +602,19 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of computeTransverseIsotropicDiluteScheme
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeOrientedDiluteScheme(
-      const StressType& young,
-      const types::real<StressType>& nu,
-      const types::real<StressType>& f,
-      const StressType& young_i,
-      const types::real<StressType>& nu_i,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-      const types::length<StressType>& a,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_b,
-      const types::length<StressType>& b,
-      const types::length<StressType>& c) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<3u, StressType> computeOrientedDiluteScheme(
+          const StressType& young,
+          const types::real<StressType>& nu,
+          const types::real<StressType>& f,
+          const StressType& young_i,
+          const types::real<StressType>& nu_i,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+          const types::length<StressType>& a,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_b,
+          const types::length<StressType>& b,
+          const types::length<StressType>& c) {
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
@@ -627,18 +624,17 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeOrientedDiluteScheme(
-      const IsotropicModuli<StressType>& IM0,
-      const types::real<StressType>& f,
-      const IsotropicModuli<StressType>& IM_i,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-      const types::length<StressType>& a,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_b,
-      const types::length<StressType>& b,
-      const types::length<StressType>& c) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const tfel::math::st2tost2<3u, StressType> computeOrientedDiluteScheme(
+          const IsotropicModuli<StressType>& IM0,
+          const types::real<StressType>& f,
+          const IsotropicModuli<StressType>& IM_i,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+          const types::length<StressType>& a,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_b,
+          const types::length<StressType>& b,
+          const types::length<StressType>& c) {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
     return computeOrientedDiluteScheme(Enu0.young, Enu0.nu, f, Enui.young,
@@ -646,17 +642,17 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of computeOrientedDiluteScheme
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const YoungNuModuli<StressType>
-  computeIsotropicMoriTanakaScheme(const StressType& young,
-                                   const types::real<StressType>& nu,
-                                   const types::real<StressType>& f,
-                                   const StressType& young_i,
-                                   const types::real<StressType>& nu_i,
-                                   const types::length<StressType>& a,
-                                   const types::length<StressType>& b,
-                                   const types::length<StressType>& c) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const YoungNuModuli<StressType> computeIsotropicMoriTanakaScheme(
+          const StressType& young,
+          const types::real<StressType>& nu,
+          const types::real<StressType>& f,
+          const StressType& young_i,
+          const types::real<StressType>& nu_i,
+          const types::length<StressType>& a,
+          const types::length<StressType>& b,
+          const types::length<StressType>& c) {
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
@@ -675,15 +671,15 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const KGModuli<StressType> computeIsotropicMoriTanakaScheme(
-      const IsotropicModuli<StressType>& IM0,
-      const types::real<StressType>& f,
-      const IsotropicModuli<StressType>& IM_i,
-      const types::length<StressType>& a,
-      const types::length<StressType>& b,
-      const types::length<StressType>& c) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      const KGModuli<StressType> computeIsotropicMoriTanakaScheme(
+          const IsotropicModuli<StressType>& IM0,
+          const types::real<StressType>& f,
+          const IsotropicModuli<StressType>& IM_i,
+          const types::length<StressType>& a,
+          const types::length<StressType>& b,
+          const types::length<StressType>& c) {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
     const auto Enu = computeIsotropicMoriTanakaScheme(
@@ -692,19 +688,19 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of computeIsotropicMoriTanakaScheme
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeTransverseIsotropicMoriTanakaScheme(
-      const StressType& young,
-      const types::real<StressType>& nu,
-      const types::real<StressType>& f,
-      const StressType& young_i,
-      const types::real<StressType>& nu_i,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-      const types::length<StressType>& a,
-      const types::length<StressType>& b,
-      const types::length<StressType>& c) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const tfel::math::
+          st2tost2<3u, StressType> computeTransverseIsotropicMoriTanakaScheme(
+              const StressType& young,
+              const types::real<StressType>& nu,
+              const types::real<StressType>& f,
+              const StressType& young_i,
+              const types::real<StressType>& nu_i,
+              const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+              const types::length<StressType>& a,
+              const types::length<StressType>& b,
+              const types::length<StressType>& c) {
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
@@ -715,17 +711,17 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeTransverseIsotropicMoriTanakaScheme(
-      const IsotropicModuli<StressType>& IM0,
-      const types::real<StressType>& f,
-      const IsotropicModuli<StressType>& IM_i,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-      const types::length<StressType>& a,
-      const types::length<StressType>& b,
-      const types::length<StressType>& c) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const tfel::math::
+          st2tost2<3u, StressType> computeTransverseIsotropicMoriTanakaScheme(
+              const IsotropicModuli<StressType>& IM0,
+              const types::real<StressType>& f,
+              const IsotropicModuli<StressType>& IM_i,
+              const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+              const types::length<StressType>& a,
+              const types::length<StressType>& b,
+              const types::length<StressType>& c) {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
     return computeTransverseIsotropicMoriTanakaScheme(
@@ -733,20 +729,20 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of computeTransverseIsotropicMoriTanakaScheme
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeOrientedMoriTanakaScheme(
-      const StressType& young,
-      const types::real<StressType>& nu,
-      const types::real<StressType>& f,
-      const StressType& young_i,
-      const types::real<StressType>& nu_i,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-      const types::length<StressType>& a,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_b,
-      const types::length<StressType>& b,
-      const types::length<StressType>& c) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const
+      tfel::math::st2tost2<3u, StressType> computeOrientedMoriTanakaScheme(
+          const StressType& young,
+          const types::real<StressType>& nu,
+          const types::real<StressType>& f,
+          const StressType& young_i,
+          const types::real<StressType>& nu_i,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+          const types::length<StressType>& a,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_b,
+          const types::length<StressType>& b,
+          const types::length<StressType>& c) {
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
@@ -756,18 +752,18 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE const tfel::math::st2tost2<3u, StressType>
-  computeOrientedMoriTanakaScheme(
-      const IsotropicModuli<StressType>& IM0,
-      const types::real<StressType>& f,
-      const IsotropicModuli<StressType>& IM_i,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-      const types::length<StressType>& a,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_b,
-      const types::length<StressType>& b,
-      const types::length<StressType>& c) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE const
+      tfel::math::st2tost2<3u, StressType> computeOrientedMoriTanakaScheme(
+          const IsotropicModuli<StressType>& IM0,
+          const types::real<StressType>& f,
+          const IsotropicModuli<StressType>& IM_i,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+          const types::length<StressType>& a,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_b,
+          const types::length<StressType>& b,
+          const types::length<StressType>& c) {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
     return computeOrientedMoriTanakaScheme(Enu0.young, Enu0.nu, f, Enui.young,
@@ -775,16 +771,16 @@ namespace tfel::material::homogenization::elasticity {
   }  // end of computeOrientedMoriTanakaScheme
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  const tfel::math::st2tost2<3u, StressType> computePCWScheme(
-      const StressType& young,
-      const types::real<StressType>& nu,
-      const types::real<StressType>& f,
-      const StressType& young_i,
-      const types::real<StressType>& nu_i,
-      const tfel::math::st2tost2<3u, types::real<StressType>>& A,
-      const Distribution<StressType>& D) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      const tfel::math::st2tost2<3u, StressType> computePCWScheme(
+          const StressType& young,
+          const types::real<StressType>& nu,
+          const types::real<StressType>& f,
+          const StressType& young_i,
+          const types::real<StressType>& nu_i,
+          const tfel::math::st2tost2<3u, types::real<StressType>>& A,
+          const Distribution<StressType>& D) {
     using real = types::real<StressType>;
     using LengthType = types::length<StressType>;
     if ((f < 0) || (f > 1)) {
@@ -833,18 +829,18 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  const tfel::math::st2tost2<3u, StressType> computeIsotropicPCWScheme(
-      const StressType& young,
-      const types::real<StressType>& nu,
-      const types::real<StressType>& f,
-      const StressType& young_i,
-      const types::real<StressType>& nu_i,
-      const types::length<StressType>& a,
-      const types::length<StressType>& b,
-      const types::length<StressType>& c,
-      const Distribution<StressType>& D) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      const tfel::math::st2tost2<3u, StressType> computeIsotropicPCWScheme(
+          const StressType& young,
+          const types::real<StressType>& nu,
+          const types::real<StressType>& f,
+          const StressType& young_i,
+          const types::real<StressType>& nu_i,
+          const types::length<StressType>& a,
+          const types::length<StressType>& b,
+          const types::length<StressType>& c,
+          const Distribution<StressType>& D) {
     using real = types::real<StressType>;
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
@@ -860,16 +856,16 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  const tfel::math::st2tost2<3u, StressType> computeIsotropicPCWScheme(
-      const IsotropicModuli<StressType>& IM0,
-      const types::real<StressType>& f,
-      const IsotropicModuli<StressType>& IM_i,
-      const types::length<StressType>& a,
-      const types::length<StressType>& b,
-      const types::length<StressType>& c,
-      const Distribution<StressType>& D) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      const tfel::math::st2tost2<3u, StressType> computeIsotropicPCWScheme(
+          const IsotropicModuli<StressType>& IM0,
+          const types::real<StressType>& f,
+          const IsotropicModuli<StressType>& IM_i,
+          const types::length<StressType>& a,
+          const types::length<StressType>& b,
+          const types::length<StressType>& c,
+          const Distribution<StressType>& D) {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
     return computeIsotropicPCWScheme(Enu0.young, Enu0.nu, f, Enui.young,
@@ -877,20 +873,19 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  const tfel::math::st2tost2<3u, StressType>
-  computeTransverseIsotropicPCWScheme(
-      const StressType& young,
-      const types::real<StressType>& nu,
-      const types::real<StressType>& f,
-      const StressType& young_i,
-      const types::real<StressType>& nu_i,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-      const types::length<StressType>& a,
-      const types::length<StressType>& b,
-      const types::length<StressType>& c,
-      const Distribution<StressType>& D) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) const
+      tfel::math::st2tost2<3u, StressType> computeTransverseIsotropicPCWScheme(
+          const StressType& young,
+          const types::real<StressType>& nu,
+          const types::real<StressType>& f,
+          const StressType& young_i,
+          const types::real<StressType>& nu_i,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+          const types::length<StressType>& a,
+          const types::length<StressType>& b,
+          const types::length<StressType>& c,
+          const Distribution<StressType>& D) {
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
@@ -903,18 +898,17 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  const tfel::math::st2tost2<3u, StressType>
-  computeTransverseIsotropicPCWScheme(
-      const IsotropicModuli<StressType>& IM0,
-      const types::real<StressType>& f,
-      const IsotropicModuli<StressType>& IM_i,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-      const types::length<StressType>& a,
-      const types::length<StressType>& b,
-      const types::length<StressType>& c,
-      const Distribution<StressType>& D) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) const
+      tfel::math::st2tost2<3u, StressType> computeTransverseIsotropicPCWScheme(
+          const IsotropicModuli<StressType>& IM0,
+          const types::real<StressType>& f,
+          const IsotropicModuli<StressType>& IM_i,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+          const types::length<StressType>& a,
+          const types::length<StressType>& b,
+          const types::length<StressType>& c,
+          const Distribution<StressType>& D) {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
     return computeTransverseIsotropicPCWScheme(
@@ -922,20 +916,20 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  const tfel::math::st2tost2<3u, StressType> computeOrientedPCWScheme(
-      const StressType& young,
-      const types::real<StressType>& nu,
-      const types::real<StressType>& f,
-      const StressType& young_i,
-      const types::real<StressType>& nu_i,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-      const types::length<StressType>& a,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_b,
-      const types::length<StressType>& b,
-      const types::length<StressType>& c,
-      const Distribution<StressType>& D) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      const tfel::math::st2tost2<3u, StressType> computeOrientedPCWScheme(
+          const StressType& young,
+          const types::real<StressType>& nu,
+          const types::real<StressType>& f,
+          const StressType& young_i,
+          const types::real<StressType>& nu_i,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+          const types::length<StressType>& a,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_b,
+          const types::length<StressType>& b,
+          const types::length<StressType>& c,
+          const Distribution<StressType>& D) {
     if ((f < 0) || (f > 1)) {
       tfel::reportContractViolation("f<0 or f>1");
     }
@@ -947,18 +941,18 @@ namespace tfel::material::homogenization::elasticity {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  const tfel::math::st2tost2<3u, StressType> computeOrientedPCWScheme(
-      const IsotropicModuli<StressType>& IM0,
-      const types::real<StressType>& f,
-      const IsotropicModuli<StressType>& IM_i,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_a,
-      const types::length<StressType>& a,
-      const tfel::math::tvector<3u, types::real<StressType>>& n_b,
-      const types::length<StressType>& b,
-      const types::length<StressType>& c,
-      const Distribution<StressType>& D) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      const tfel::math::st2tost2<3u, StressType> computeOrientedPCWScheme(
+          const IsotropicModuli<StressType>& IM0,
+          const types::real<StressType>& f,
+          const IsotropicModuli<StressType>& IM_i,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_a,
+          const types::length<StressType>& a,
+          const tfel::math::tvector<3u, types::real<StressType>>& n_b,
+          const types::length<StressType>& b,
+          const types::length<StressType>& c,
+          const Distribution<StressType>& D) {
     const auto Enu0 = IM0.ToYoungNu();
     const auto Enui = IM_i.ToYoungNu();
     return computeOrientedPCWScheme(Enu0.young, Enu0.nu, f, Enui.young, Enui.nu,

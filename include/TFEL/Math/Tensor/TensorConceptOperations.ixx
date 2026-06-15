@@ -18,11 +18,10 @@
 namespace tfel::math {
 
   template <TensorConcept TensorType1, TensorConcept TensorType2>
-  TFEL_HOST_DEVICE constexpr auto operator|(const TensorType1& a,
-                                            const TensorType2& b) noexcept
-    requires(!isInvalid<
-             BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>())
-  {
+  TFEL_HOST_DEVICE constexpr auto
+  operator|(const TensorType1& a, const TensorType2& b) noexcept requires(
+      !isInvalid<
+          BinaryOperationResult<TensorType1, TensorType2, OpDotProduct>>()) {
     constexpr auto N = getSpaceDimension<TensorType1>();
     static_assert((N == 1u) || (N == 2u) || (N == 3u));
     static_assert(N == getSpaceDimension<TensorType2>());

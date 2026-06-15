@@ -28,8 +28,7 @@ namespace tfel::math {
    */
   template <typename NumericType>
   TFEL_HOST_DEVICE constexpr auto abs(const NumericType& s) noexcept
-    requires(tfel::typetraits::isFundamentalNumericType<NumericType>())
-  {
+      requires(tfel::typetraits::isFundamentalNumericType<NumericType>()) {
     return (s < NumericType(0)) ? -s : s;
   }
   /*!
@@ -37,9 +36,8 @@ namespace tfel::math {
    * \param[in] s: value
    */
   template <typename NumericType>
-  TFEL_HOST_DEVICE constexpr auto abs(const Complex<NumericType>& s)
-    requires(tfel::typetraits::IsFundamentalNumericType<NumericType>::cond)
-  {
+  TFEL_HOST_DEVICE constexpr auto abs(const Complex<NumericType>& s) requires(
+      tfel::typetraits::IsFundamentalNumericType<NumericType>::cond) {
     return s.norm();
   }
 

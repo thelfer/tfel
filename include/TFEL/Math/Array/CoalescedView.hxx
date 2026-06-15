@@ -62,18 +62,20 @@ namespace tfel::math {
         const std::array<ViewDataPointerType<MappedType>, N>& p) noexcept
         : ptrs([&p] {
             return [&p]<std::size_t... Is>(
-                       std::integer_sequence<std::size_t, Is...>) {
+                std::integer_sequence<std::size_t, Is...>) {
               return std::array<ViewDataPointerType<MappedType>, N>{p[Is]...};
-            }(std::make_index_sequence<N>());
+            }
+            (std::make_index_sequence<N>());
           }()) {}
     //! \brief default constructor
     explicit TFEL_HOST_DEVICE constexpr DefaultCoalescedAccessPolicy(
         const std::span<const ViewDataPointerType<MappedType>, N>& p) noexcept
         : ptrs([&p] {
             return [&p]<std::size_t... Is>(
-                       std::integer_sequence<std::size_t, Is...>) {
+                std::integer_sequence<std::size_t, Is...>) {
               return std::array<ViewDataPointerType<MappedType>, N>{p[Is]...};
-            }(std::make_index_sequence<N>());
+            }
+            (std::make_index_sequence<N>());
           }()) {}
     //! \brief copy constructor
     constexpr DefaultCoalescedAccessPolicy(
@@ -160,8 +162,7 @@ namespace tfel::math {
 
     TFEL_HOST_DEVICE constexpr typename array_policy::reference operator[](
         const typename IndexingPolicyType::size_type i) noexcept
-      requires(!is_const)
-    {
+        requires(!is_const) {
       static_assert(IndexingPolicyType::arity == 1u, "invalid call");
       if constexpr (array_policy::isMakeReferenceTrivial) {
         return this->getValue(this->getIndex(i));
@@ -195,9 +196,7 @@ namespace tfel::math {
 
     template <typename... Indices>
     TFEL_HOST_DEVICE constexpr typename array_policy::reference operator()(
-        const Indices... i) noexcept
-      requires(!is_const)
-    {
+        const Indices... i) noexcept requires(!is_const) {
       checkIndicesValiditity<IndexingPolicyType, Indices...>();
       if constexpr (array_policy::isMakeReferenceTrivial) {
         return this->getValue(this->getIndex(static_cast<size_type>(i)...));
@@ -210,8 +209,7 @@ namespace tfel::math {
     TFEL_HOST_DEVICE constexpr typename array_policy::reference operator()(
         const std::array<typename IndexingPolicyType::size_type,
                          IndexingPolicyType::arity>& i) noexcept
-      requires(!is_const)
-    {
+        requires(!is_const) {
       if constexpr (array_policy::isMakeReferenceTrivial) {
         return this->getValue(this->getIndex(i));
       } else {
@@ -234,10 +232,9 @@ namespace tfel::math {
      * \param[in] src: array to be assigned
      */
     template <typename OtherArray>
-    TFEL_HOST_DEVICE constexpr CoalescedViewBase& operator=(
-        const OtherArray& src)
-      requires(isAssignableTo<OtherArray, MappedType>())
-    {
+    TFEL_HOST_DEVICE constexpr CoalescedViewBase&
+    operator=(const OtherArray& src) requires(
+        isAssignableTo<OtherArray, MappedType>()) {
       static_assert(!is_const, "invalid call");
       //             checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //              src.getIndexingPolicy());
@@ -246,10 +243,9 @@ namespace tfel::math {
     }
     //
     template <typename OtherArray>
-    TFEL_HOST_DEVICE constexpr CoalescedViewBase& operator+=(
-        const OtherArray& src)
-      requires(isAssignableTo<OtherArray, MappedType>())
-    {
+    TFEL_HOST_DEVICE constexpr CoalescedViewBase&
+    operator+=(const OtherArray& src) requires(
+        isAssignableTo<OtherArray, MappedType>()) {
       static_assert(!is_const, "invalid call");
       //            checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                     src.getIndexingPolicy());
@@ -258,10 +254,9 @@ namespace tfel::math {
     }
     //
     template <typename OtherArray>
-    TFEL_HOST_DEVICE constexpr CoalescedViewBase& operator-=(
-        const OtherArray& src)
-      requires(isAssignableTo<OtherArray, MappedType>())
-    {
+    TFEL_HOST_DEVICE constexpr CoalescedViewBase&
+    operator-=(const OtherArray& src) requires(
+        isAssignableTo<OtherArray, MappedType>()) {
       static_assert(!is_const, "invalid call");
       //            checkIndexingPoliciesRuntimeCompatiblity(this->getIndexingPolicy(),
       //                                                     src.getIndexingPolicy());
@@ -270,13 +265,11 @@ namespace tfel::math {
     }
     //
     template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr CoalescedViewBase& operator*=(
-        const ValueType2& s) noexcept
-      requires(isAssignableTo<BinaryOperationResult<ValueType2,
-                                                    numeric_type<MappedType>,
-                                                    OpMult>,
-                              numeric_type<MappedType>>())
-    {
+    TFEL_HOST_DEVICE constexpr CoalescedViewBase&
+    operator*=(const ValueType2& s) noexcept requires(
+        isAssignableTo<
+            BinaryOperationResult<ValueType2, numeric_type<MappedType>, OpMult>,
+            numeric_type<MappedType>>()) {
       static_assert(!is_const, "invalid call");
       const auto f = makeMultiIndicesUnaryOperatorFunctor(
           [s](typename array_policy::reference a) { a *= s; }, *this);
@@ -285,13 +278,11 @@ namespace tfel::math {
     }  // end of operator*=
        //
     template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr CoalescedViewBase& operator/=(
-        const ValueType2& s) noexcept
-      requires(isAssignableTo<BinaryOperationResult<numeric_type<MappedType>,
-                                                    ValueType2,
-                                                    OpDiv>,
-                              numeric_type<MappedType>>())
-    {
+    TFEL_HOST_DEVICE constexpr CoalescedViewBase&
+    operator/=(const ValueType2& s) noexcept requires(
+        isAssignableTo<
+            BinaryOperationResult<numeric_type<MappedType>, ValueType2, OpDiv>,
+            numeric_type<MappedType>>()) {
       static_assert(!is_const, "invalid call");
       const auto f = makeMultiIndicesUnaryOperatorFunctor(
           [s](typename array_policy::reference a) { a /= s; }, *this);
@@ -343,7 +334,7 @@ namespace tfel::math {
           *this, src);
       this->iterate(f);
     }  // end of substractAndAssign
-  };  // end of struct CoalescedViewBase
+  };   // end of struct CoalescedViewBase
 
   template <MappableMathObjectUsingCoalescedViewConcept MappedType,
             typename IndexingPolicyType = typename MappedType::indexing_policy>
@@ -395,9 +386,8 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr CoalescedView<MappedType, IndexingPolicyType> map(
       std::span<const ViewDataPointerType<MappedType>,
                 indexing_policy_size<IndexingPolicyType>> ptrs)  //
-    requires((!std::is_const_v<MappedType>) &&
-             (std::remove_cv_t<MappedType>::hasFixedSizes))
-  {
+      requires((!std::is_const_v<MappedType>)&&(
+          std::remove_cv_t<MappedType>::hasFixedSizes)) {
     return CoalescedView<MappedType, IndexingPolicyType>{ptrs};
   }  // end of map
 
@@ -412,8 +402,7 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr CoalescedView<MappedType, IndexingPolicyType> map(
       std::span<const ViewConstDataPointerType<std::remove_cv_t<MappedType>>,
                 indexing_policy_size<IndexingPolicyType>> ptrs)  //
-    requires((std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes))
-  {
+      requires((std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes)) {
     return CoalescedView<MappedType, IndexingPolicyType>{ptrs};
   }  // end of map
 
@@ -427,9 +416,8 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr CoalescedView<MappedType, IndexingPolicyType> map(
       std::array<ViewDataPointerType<MappedType>,
                  indexing_policy_size<IndexingPolicyType>>& ptrs)  //
-    requires((!std::is_const_v<MappedType>) &&
-             (std::remove_cv_t<MappedType>::hasFixedSizes))
-  {
+      requires((!std::is_const_v<MappedType>)&&(
+          std::remove_cv_t<MappedType>::hasFixedSizes)) {
     return CoalescedView<MappedType, IndexingPolicyType>{ptrs};
   }  // end of map
 
@@ -444,8 +432,7 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr CoalescedView<MappedType, IndexingPolicyType> map(
       const std::array<ViewConstDataPointerType<std::remove_cv_t<MappedType>>,
                        indexing_policy_size<IndexingPolicyType>>& ptrs)  //
-    requires((std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes))
-  {
+      requires((std::remove_cv_t<MappedType>::indexing_policy::hasFixedSizes)) {
     return CoalescedView<MappedType, IndexingPolicyType>{ptrs};
   }  // end of map
 

@@ -41,10 +41,10 @@ namespace castem {
    * \author Thomas Helfer
    * \date   28 Jul 2006
    */
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemInterface
       : protected CastemInterfaceExceptions {
     /*!

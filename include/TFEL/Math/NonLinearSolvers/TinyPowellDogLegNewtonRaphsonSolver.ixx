@@ -22,7 +22,8 @@ namespace tfel::math {
   template <unsigned short N,
             typename NumericType,
             typename Child,
-            template <unsigned short, typename> typename ExternalWorkSpace>
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
   bool TinyPowellDogLegNewtonRaphsonSolver<
       N,
       NumericType,

@@ -315,13 +315,11 @@ namespace tfel::math {
     }
     // \brief multiplication by a scalar
     template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr ViewsArray& operator*=(
-        const ValueType2& s) noexcept
-      requires(
-          (isScalar<ValueType2>()) &&
-          (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpMult>,
-                          MappedType>()))
-    {
+    TFEL_HOST_DEVICE constexpr ViewsArray&
+    operator*=(const ValueType2& s) noexcept requires(
+        (isScalar<ValueType2>()) &&
+        (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpMult>,
+                        MappedType>())) {
       static_assert(!std::is_const_v<MappedType>, "invalid call");
       const auto f =
           makeMultiIndicesUnaryOperatorFunctor([s](auto& a) { a *= s; }, *this);
@@ -342,13 +340,11 @@ namespace tfel::math {
     }  // end of operator*=
     // \brief division by a scalar
     template <typename ValueType2>
-    TFEL_HOST_DEVICE constexpr ViewsArray& operator/=(
-        const ValueType2& s) noexcept
-      requires(
-          (isScalar<ValueType2>()) &&
-          (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpDiv>,
-                          MappedType>()))
-    {
+    TFEL_HOST_DEVICE constexpr ViewsArray&
+    operator/=(const ValueType2& s) noexcept requires(
+        (isScalar<ValueType2>()) &&
+        (isAssignableTo<BinaryOperationResult<MappedType, ValueType2, OpDiv>,
+                        MappedType>())) {
       static_assert(!std::is_const_v<MappedType>, "invalid call");
       return this->operator*=(1 / s);
     }  // end of operator/=

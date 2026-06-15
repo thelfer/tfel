@@ -19,9 +19,8 @@
 
 namespace mfront {
 
-  struct MTESTFILEGENERATOR_VISIBILITY_EXPORT
-      UmatFiniteStrainMTestFileGenerator final
-      : public mfront::MTestFileGeneratorBase {
+  struct MTESTFILEGENERATOR_VISIBILITY_EXPORT UmatFiniteStrainMTestFileGenerator
+      final : public mfront::MTestFileGeneratorBase {
     /*!
      * constructor
      * \param[in] i : interface

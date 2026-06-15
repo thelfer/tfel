@@ -199,17 +199,15 @@ namespace tfel::math {
 
   template <typename T>
   TFEL_HOST_DEVICE constexpr auto conj(const T src) noexcept
-    requires((tfel::typetraits::isScalar<T>()) &&
-             (!tfel::typetraits::IsComplex<T>::cond))
-  {
+      requires((tfel::typetraits::isScalar<T>()) &&
+               (!tfel::typetraits::IsComplex<T>::cond)) {
     return src;
   }  // end of conj
 
   template <typename T>
   TFEL_HOST_DEVICE constexpr auto real(const T src) noexcept
-    requires((tfel::typetraits::isScalar<T>()) &&
-             (!tfel::typetraits::IsComplex<T>::cond))
-  {
+      requires((tfel::typetraits::isScalar<T>()) &&
+               (!tfel::typetraits::IsComplex<T>::cond)) {
     return src;
   }
 

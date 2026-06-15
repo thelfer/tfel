@@ -120,7 +120,7 @@ namespace tfel::material {
         return ComputeHillTensorBase<N, real>::hillTensor(H_F, H_G, H_H, H_L,
                                                           H_M, H_N);
       }  // end of exe
-    };  // end of struct
+    };   // end of struct
         // ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::DEFAULT,real>
     /*!
      * \brief partial specialisation of the `ComputeHillTensor`
@@ -166,7 +166,7 @@ namespace tfel::material {
         return ComputeHillTensorBase<N, real>::hillTensor(H_F, H_G, H_H, H_L,
                                                           H_M, H_N);
       }  // end of exe
-    };  // end of struct
+    };   // end of struct
         // ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::PIPE,real>
     /*!
      * \brief partial specialisation of the `ComputeHillTensor`
@@ -200,7 +200,7 @@ namespace tfel::material {
         return ComputeHillTensorBase<2u, real>::hillTensor(H_H, H_G, H_F, H_M,
                                                            H_L, H_N);
       }  // end of exe
-    };  // end of struct
+    };   // end of struct
         // ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::PIPE,real>
     /*!
      * \brief partial specialisation of the `ComputeHillTensor`
@@ -234,7 +234,7 @@ namespace tfel::material {
         return ComputeHillTensorBase<2u, real>::hillTensor(H_H, H_G, H_F, H_M,
                                                            H_L, H_N);
       }  // end of exe
-    };  // end of struct
+    };   // end of struct
         // ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::PIPE,real>
     /*!
      * \brief partial specialisation of the `ComputeHillTensor`
@@ -269,7 +269,7 @@ namespace tfel::material {
         return ComputeHillTensorBase<2u, real>::hillTensor(H_H, H_G, H_F, H_M,
                                                            H_L, H_N);
       }  // end of exe
-    };  // end of struct
+    };   // end of struct
         // ComputeHillTensor<H,tfel::material::OrthotropicAxesConvention::PIPE,real>
     /*!
      * \brief partial specialisation of the `ComputeHillTensor`
@@ -304,7 +304,7 @@ namespace tfel::material {
         return ComputeHillTensorBase<3u, real>::hillTensor(H_F, H_G, H_H, H_L,
                                                            H_M, H_N);
       }  // end of exe
-    };  // end of struct ComputeHillTensor
+    };   // end of struct ComputeHillTensor
     /*!
      * \brief partial specialisation of the `ComputeHillTensor`
      * class for the:
@@ -337,7 +337,7 @@ namespace tfel::material {
         return ComputeHillTensorBase<2u, real>::hillTensor(H_F, H_G, H_H, H_L,
                                                            H_M, H_N);
       }  // end of exe
-    };  // end of struct ComputeHillTensor
+    };   // end of struct ComputeHillTensor
     /*!
      * \brief partial specialisation of the `ComputeHillTensor`
      * class for the:
@@ -370,7 +370,7 @@ namespace tfel::material {
         return ComputeHillTensorBase<2u, real>::hillTensor(H_F, H_G, H_H, H_L,
                                                            H_M, H_N);
       }  // end of exe
-    };  // end of struct ComputeHillTensor
+    };   // end of struct ComputeHillTensor
     /*!
      * \brief partial specialisation of the `ComputeHillTensor`
      * class for the:
@@ -404,7 +404,7 @@ namespace tfel::material {
         return ComputeHillTensorBase<2u, real>::hillTensor(H_F, H_G, H_H, H_L,
                                                            H_M, H_N);
       }  // end of exe
-    };  // end of struct ComputeHillTensor
+    };   // end of struct ComputeHillTensor
 
   }  // end of namespace internals
 

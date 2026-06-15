@@ -49,12 +49,12 @@ namespace tfel::math::internals {
         const tfel::math::tvector<3u, NumType>&,
         const tfel::math::rotation_matrix<NumType>&,
         const NumType)  //
-      requires((getSpaceDimension<ST2toST2Type>() == 1u) &&
-               (isAssignableTo<typename ComputeBinaryResult<base_type<NumType>,
-                                                            NumType,
-                                                            OpDiv>::Result,
-                               numeric_type<ST2toST2Type>>()))
-    {
+        requires(
+            (getSpaceDimension<ST2toST2Type>() == 1u) &&
+            (isAssignableTo<typename ComputeBinaryResult<base_type<NumType>,
+                                                         NumType,
+                                                         OpDiv>::Result,
+                            numeric_type<ST2toST2Type>>())) {
       using namespace tfel::math;
       using namespace tfel::typetraits;
       typedef typename ComputeBinaryResult<base_type<NumType>, NumType,
@@ -76,12 +76,12 @@ namespace tfel::math::internals {
         const tfel::math::tvector<3u, NumType>& vp,
         const tfel::math::rotation_matrix<NumType>& m,
         const NumType eps)  //
-      requires((getSpaceDimension<ST2toST2Type>() == 2u) &&
-               (isAssignableTo<typename ComputeBinaryResult<base_type<NumType>,
-                                                            NumType,
-                                                            OpDiv>::Result,
-                               numeric_type<ST2toST2Type>>()))
-    {
+        requires(
+            (getSpaceDimension<ST2toST2Type>() == 2u) &&
+            (isAssignableTo<typename ComputeBinaryResult<base_type<NumType>,
+                                                         NumType,
+                                                         OpDiv>::Result,
+                            numeric_type<ST2toST2Type>>())) {
       typedef base_type<NumType> base;
       typedef BinaryOperationResult<base, NumType, OpDiv> InvNumType;
       constexpr auto icste = Cste<base>::isqrt2;
@@ -107,12 +107,12 @@ namespace tfel::math::internals {
         const tfel::math::tvector<3u, NumType>& vp,
         const tfel::math::rotation_matrix<NumType>& m,
         const NumType eps)  //
-      requires((getSpaceDimension<ST2toST2Type>() == 3u) &&
-               (isAssignableTo<typename ComputeBinaryResult<base_type<NumType>,
-                                                            NumType,
-                                                            OpDiv>::Result,
-                               numeric_type<ST2toST2Type>>()))
-    {
+        requires(
+            (getSpaceDimension<ST2toST2Type>() == 3u) &&
+            (isAssignableTo<typename ComputeBinaryResult<base_type<NumType>,
+                                                         NumType,
+                                                         OpDiv>::Result,
+                            numeric_type<ST2toST2Type>>())) {
       using namespace tfel::math;
       typedef base_type<NumType> base;
       constexpr auto cste = Cste<base>::isqrt2;

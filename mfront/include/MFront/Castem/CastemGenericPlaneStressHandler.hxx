@@ -32,9 +32,9 @@ namespace castem {
    * This allows behaviours written for the generalised plane stress
    * hypothesis to be used in plane stress computations.
    */
-  template <template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct CastemGenericPlaneStressHandler : public CastemInterfaceExceptions {
     /*!
      * Main entry point This mainly choose between a specific
@@ -289,7 +289,7 @@ namespace castem {
             c1, c1, c3, DTIME, DROT, DDSDDE, STRAN, DSTRAN, TEMP, DTEMP, nPROPS,
             &nb, PREDEF, DPRED, STATEV, NSTATV, STRESS, PNEWDT, op, sfeh);
       }  // end of exe
-    };  // end of struct TreatPlanStressIsotropicBehaviour
+    };   // end of struct TreatPlanStressIsotropicBehaviour
 
     struct TreatPlaneStressOrthotropicBehaviour {
       TFEL_CASTEM_INLINE2 static void exe(
@@ -373,7 +373,7 @@ namespace castem {
             nPROPS, NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, PNEWDT, op,
             sfeh);
       }  // end of exe
-    };  // end of struct TreatPlanStressOrthotropicBehaviour
+    };   // end of struct TreatPlanStressOrthotropicBehaviour
 
   };  // end of struct CastemGenericPlaneStressHandlerTreatPlaneStrain
 

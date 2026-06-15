@@ -36,11 +36,10 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr auto
   convertSpatialModuliToKirchhoffJaumanRateModuli(
       const ST2toST2Type& C_s, const StensorType& tau) noexcept
-    requires(
-        (getSpaceDimension<ST2toST2Type>() ==
-         getSpaceDimension<StensorType>()) &&
-        (std::is_same_v<numeric_type<ST2toST2Type>, numeric_type<StensorType>>))
-  {
+      requires((getSpaceDimension<ST2toST2Type>() ==
+                getSpaceDimension<StensorType>()) &&
+               (std::is_same_v<numeric_type<ST2toST2Type>,
+                               numeric_type<StensorType>>)) {
     constexpr auto N = getSpaceDimension<ST2toST2Type>();
     using NumType = numeric_type<ST2toST2Type>;
     if constexpr (N == 1) {

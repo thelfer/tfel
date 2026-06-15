@@ -34,9 +34,8 @@ namespace tfel::material {
   template <tfel::math::ScalarConcept StressType>
   TFEL_HOST_DEVICE constexpr StressType computeLambda(
       const StressType& young, const types::real<StressType>& nu) noexcept
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  {
+      requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                  StressType>()) {
     return nu * young / ((1 + nu) * (1 - 2 * nu));
   }
 
@@ -46,9 +45,8 @@ namespace tfel::material {
   template <tfel::math::ScalarConcept StressType>
   TFEL_HOST_DEVICE constexpr StressType computeMu(
       const StressType& young, const types::real<StressType>& nu) noexcept
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  {
+      requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                                  StressType>()) {
     return young / (2 * (1 + nu));
   }  // end of computeMu
 

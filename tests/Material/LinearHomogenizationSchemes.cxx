@@ -66,9 +66,8 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
 
  private:
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  void test1() {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) void test1() {
 #ifndef _LIBCPP_VERSION
     // tests computeDiluteScheme and computeMoriTanakaScheme for spheres
     // comparing to computeSphereDiluteScheme and computeSphereMoriTanakaScheme
@@ -118,9 +117,8 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  void test3() {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) void test3() {
 #ifndef _LIBCPP_VERSION
     {
       using real = tfel::types::real<StressType>;
@@ -177,9 +175,8 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  void test4() {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) void test4() {
 #ifndef _LIBCPP_VERSION
     {
       using real = tfel::types::real<StressType>;
@@ -220,9 +217,8 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  void test5() {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) void test5() {
 #ifndef _LIBCPP_VERSION
     {
       using real = tfel::types::real<StressType>;
@@ -280,9 +276,8 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  void test6() {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) void test6() {
 #ifndef _LIBCPP_VERSION
     {
       using real = tfel::types::real<StressType>;
@@ -346,9 +341,8 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  void test7() {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) void test7() {
 #ifndef _LIBCPP_VERSION
     {
       using real = tfel::types::real<StressType>;
@@ -425,9 +419,8 @@ struct LinearHomogenizationSchemesTest final : public tfel::tests::TestCase {
   }
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  void test8() {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) void test8() {
 #ifndef _LIBCPP_VERSION
     {
       using real = tfel::types::real<StressType>;

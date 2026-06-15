@@ -129,7 +129,7 @@ namespace mfront {
 #endif
 
 #ifndef _MSC_VER
-    enum { MAKE, CMAKE } generator = MAKE;
+    enum {MAKE, CMAKE} generator = MAKE;
 #else
     enum { MAKE, CMAKE } generator = CMAKE;
 #endif

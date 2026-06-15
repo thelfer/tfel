@@ -224,7 +224,7 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
     VERBOSE_LEVEL3 = 3,  //<! the finer level for standard user
     VERBOSE_DEBUG = 4,   //<! an output adapted for debugging
     VERBOSE_FULL = 5     //<! a very detailled output
-  };  // end of enum VerboseLevel
+  };                     // end of enum VerboseLevel
 
   mfront::MFrontDatabase::Query query;
 

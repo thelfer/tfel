@@ -37,8 +37,7 @@ namespace tfel::math {
           tfel::math::result_type<real,
                                   std::invoke_result_t<FunctionType, real>,
                                   OpMult>>  //
-    requires(std::is_invocable_v<FunctionType, real>)
-  {
+  requires(std::is_invocable_v<FunctionType, real>) {
     using result_type = std::optional<tfel::math::result_type<
         real, std::invoke_result_t<FunctionType, real>, OpMult>>;
     constexpr auto zero = real{};
@@ -121,8 +120,7 @@ namespace tfel::math {
               real,
               numeric_type<std::invoke_result_t<FunctionType, real>>,
               OpMult>>>  //
-    requires(std::is_invocable_v<FunctionType, real>)
-  {
+  requires(std::is_invocable_v<FunctionType, real>) {
     using result_type = std::optional<std::tuple<
         tfel::math::result_type<real, std::invoke_result_t<FunctionType, real>,
                                 OpMult>,
@@ -199,8 +197,7 @@ namespace tfel::math {
           tfel::math::result_type<real,
                                   std::invoke_result_t<FunctionType, real>,
                                   OpMult>>  //
-    requires(std::is_invocable_v<FunctionType, real>)
-  {
+  requires(std::is_invocable_v<FunctionType, real>) {
     if (params.maximum_number_of_refinements == 0) {
       return {};
     }
@@ -229,8 +226,7 @@ namespace tfel::math {
                                                    const real a,
                                                    const real b) const  //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)         //
-    requires(std::is_invocable_v<FunctionType, real>)
-  {
+      requires(std::is_invocable_v<FunctionType, real>) {
     using result_type = std::decay_t<std::invoke_result_t<FunctionType, real>>;
     // positions of Kronrod's quadrature points in [-1:1]
     // Those points are sorted so that pt2, pt4, pt6 and pt8 also corresponds to
@@ -246,8 +242,8 @@ namespace tfel::math {
     // values of the function evaluated at Kronrod's quadature points.
     // those values will be reused to evaluate the integral using the Gauss'
     // quadrature rule.
-    const auto values = [&f, a, b]<std::size_t... Is>(
-                            std::integer_sequence<std::size_t, Is...>) {
+    const auto values = [&f, a, b ]<std::size_t... Is>(
+        std::integer_sequence<std::size_t, Is...>) {
       constexpr auto kronrod_pts = std::array<base_type<real>, 15>{
           -pt1, -pt2, -pt3, -pt4, -pt5, -pt6, -pt7, pt8,
           pt7,  pt6,  pt5,  pt4,  pt3,  pt2,  pt1};
@@ -257,10 +253,11 @@ namespace tfel::math {
       };
       // evaluation of the function
       return std::array<result_type, 15>{f(shift(kronrod_pts[Is]))...};
-    }(std::make_integer_sequence<std::size_t, 15>{});
+    }
+    (std::make_integer_sequence<std::size_t, 15>{});
     // value of the integral using Kronrod's quadrature rule
-    const auto k15 = [&values, a, b]<std::size_t... Is>(
-                         std::integer_sequence<std::size_t, Is...>) {
+    const auto k15 = [&values, a, b ]<std::size_t... Is>(
+        std::integer_sequence<std::size_t, Is...>) {
       // Kronrod's weights in [-1: 1]
       constexpr auto kronrod_w1 =
           static_cast<base_type<real>>(0.022935322010529);
@@ -289,10 +286,11 @@ namespace tfel::math {
       // approximation of the integral
       const auto r = (... + (scale(kronrod_weights[Is]) * values[Is]));
       return eval_if_required(r);
-    }(std::make_integer_sequence<std::size_t, 15>{});
+    }
+    (std::make_integer_sequence<std::size_t, 15>{});
     // value of the integral using Gauss's quadrature rule
-    const auto g7 = [&values, a, b]<std::size_t... Is>(
-                        std::integer_sequence<std::size_t, Is...>) {
+    const auto g7 = [&values, a, b ]<std::size_t... Is>(
+        std::integer_sequence<std::size_t, Is...>) {
       constexpr auto gauss_w1 = static_cast<base_type<real>>(0.129484966168870);
       constexpr auto gauss_w2 = static_cast<base_type<real>>(0.279705391489277);
       constexpr auto gauss_w3 = static_cast<base_type<real>>(0.381830050505119);
@@ -312,7 +310,8 @@ namespace tfel::math {
       const auto r = (... + (scale(gauss_weights[Is]) *
                              values[from_kronrod_to_gauss(Is)]));
       return eval_if_required(r);
-    }(std::make_integer_sequence<std::size_t, 7>{});
+    }
+    (std::make_integer_sequence<std::size_t, 7>{});
     //
     const auto e = [&k15, &g7] {
       const auto r = k15 - g7;
@@ -325,8 +324,7 @@ namespace tfel::math {
   constexpr auto GaussKronrodQuadrature::computeUnboundedIntegral(
       const FunctionType& f) const                               //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
-    requires(std::is_invocable_v<FunctionType, real>)
-  {
+      requires(std::is_invocable_v<FunctionType, real>) {
     auto u = [f](const base_type<real> t) noexcept(
                  std::is_nothrow_invocable_v<FunctionType, real>) {
       constexpr auto one = real{1};
@@ -344,8 +342,7 @@ namespace tfel::math {
       const FunctionType& f,
       const real b) const                                        //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
-    requires(std::is_invocable_v<FunctionType, real>)
-  {
+      requires(std::is_invocable_v<FunctionType, real>) {
     auto u = [f, b](const base_type<real> t) noexcept(
                  std::is_nothrow_invocable_v<FunctionType, real>) {
       constexpr auto one = real{1};
@@ -363,8 +360,7 @@ namespace tfel::math {
       const FunctionType& f,
       const real a) const                                        //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
-    requires(std::is_invocable_v<FunctionType, real>)
-  {
+      requires(std::is_invocable_v<FunctionType, real>) {
     auto u = [&](const base_type<real> t) noexcept(
                  std::is_nothrow_invocable_v<FunctionType, real>) {
       constexpr auto one = real{1};
@@ -382,8 +378,7 @@ namespace tfel::math {
       const FunctionType& f,
       const NumericalParameters<real>& params) const             //
       noexcept(std::is_nothrow_invocable_v<FunctionType, real>)  //
-    requires(std::is_invocable_v<FunctionType, real>)
-  {
+      requires(std::is_invocable_v<FunctionType, real>) {
     auto u = [f](const base_type<real> t) noexcept(
                  std::is_nothrow_invocable_v<FunctionType, real>) {
       constexpr auto one = real{1};
@@ -406,8 +401,7 @@ namespace tfel::math {
           tfel::math::result_type<real,
                                   std::invoke_result_t<FunctionType, real>,
                                   OpMult>>
-    requires(std::is_invocable_v<FunctionType, real>)
-  {
+  requires(std::is_invocable_v<FunctionType, real>) {
     auto u = [f, b](const base_type<real> t) noexcept(
                  std::is_nothrow_invocable_v<FunctionType, real>) {
       constexpr auto one = real{1};
@@ -433,8 +427,7 @@ namespace tfel::math {
           tfel::math::result_type<real,
                                   std::invoke_result_t<FunctionType, real>,
                                   OpMult>>
-    requires(std::is_invocable_v<FunctionType, real>)
-  {
+  requires(std::is_invocable_v<FunctionType, real>) {
     auto u = [&](const base_type<real> t) noexcept(
                  std::is_nothrow_invocable_v<FunctionType, real>) {
       constexpr auto one = real{1};

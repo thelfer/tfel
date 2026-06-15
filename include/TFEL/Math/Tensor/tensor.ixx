@@ -140,8 +140,7 @@ namespace tfel::math {
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr void exportToBaseTypeArray(const tensor<N, T>& t,
                                                         const auto p) noexcept
-    requires(isScalar<T>())
-  {
+      requires(isScalar<T>()) {
     tfel::fsalgo::transform<TensorDimeToSize<N>::value>::exe(
         t.cbegin(), p, [](const auto& v) { return base_type_cast(v); });
   }

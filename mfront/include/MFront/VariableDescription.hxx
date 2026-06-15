@@ -114,15 +114,14 @@ namespace mfront {
      * \param[in] n : name
      */
     template <typename T>
-    T& getAttribute(const std::string&)
-      requires(isVariableAttribute<T>);
+    T& getAttribute(const std::string&) requires(isVariableAttribute<T>);
     /*!
      * \return the attribute with the given name
      * \param[in] n : name
      */
     template <typename T>
     const T& getAttribute(const std::string&) const
-      requires(isVariableAttribute<T>);
+        requires(isVariableAttribute<T>);
     /*!
      * \return the attribute with the given name or the given default
      * value if the variable does not exists
@@ -131,7 +130,7 @@ namespace mfront {
      */
     template <typename T>
     T getAttribute(const std::string&, const T&) const
-      requires(isVariableAttribute<T>);
+        requires(isVariableAttribute<T>);
     /*!
      * \return all the attribute registred
      * \param[in] n : name

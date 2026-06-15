@@ -37,10 +37,10 @@ namespace cyrano {
    * \author Thomas Helfer
    * \date   24 Jul 2013
    */
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct CyranoInterfaceDispatch : public CyranoInterfaceExceptions {
     TFEL_CYRANO_INLINE2 static void exe(
         const CyranoReal* const DTIME,
@@ -72,7 +72,7 @@ namespace cyrano {
       Handler::exe(DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS,
                    NPROPS, PREDEF, DPRED, STATEV, NSTATV, STRESS, sfeh, op);
     }  // end of exe
-  };  // end of struct CyranoInterfaceDispatch
+  };   // end of struct CyranoInterfaceDispatch
 
 }  // end of namespace cyrano
 

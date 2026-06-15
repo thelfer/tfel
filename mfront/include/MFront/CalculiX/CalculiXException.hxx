@@ -50,8 +50,8 @@ namespace calculix {
    * \brief exception thrown when an invalid modelling hypothesis is
    * to be used
    */
-  struct MFRONT_CALCULIX_VISIBILITY_EXPORT
-      CalculiXInvalidModellingHypothesis final : public CalculiXException {
+  struct MFRONT_CALCULIX_VISIBILITY_EXPORT CalculiXInvalidModellingHypothesis
+      final : public CalculiXException {
     /*!
      * \param[in] b : behaviour name
      */

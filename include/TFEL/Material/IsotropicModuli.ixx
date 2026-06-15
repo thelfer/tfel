@@ -15,10 +15,11 @@
 namespace tfel::material {
 
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE constexpr tfel::math::st2tost2<3u, StressType>
-  computeIsotropicStiffnessTensor(const IsotropicModuli<StressType>& IM) {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      constexpr tfel::math::
+          st2tost2<3u, StressType> computeIsotropicStiffnessTensor(
+              const IsotropicModuli<StressType>& IM) {
     const auto KG = IM.ToKG();
     const auto kappa = KG.kappa;
     const auto mu = KG.mu;

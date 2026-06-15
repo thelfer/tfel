@@ -24,41 +24,41 @@
 namespace aster {
 
   //! forward declaration
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct AsterOrthotropicSmallStrainBehaviourHandler2D;
 
   //! forward declaration
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct AsterOrthotropicSmallStrainBehaviourHandler3D;
 
   //! forward declaration
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct AsterOrthotropicFiniteStrainBehaviourHandler2D;
 
   //! forward declaration
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct AsterOrthotropicFiniteStrainBehaviourHandler3D;
 
   /*!
    * An helper structure to make an appropriate dispatch based on the
    * spatial dimension
    */
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicSmallStrainBehaviourDispatcher {
     //! a simple alias
     typedef tfel::material::ModellingHypothesisToSpaceDimension<H>
@@ -77,10 +77,10 @@ namespace aster {
    * An helper structure to make an appropriate dispatch based on the
    * spatial dimension
    */
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicFiniteStrainBehaviourDispatcher {
     //! a simple alias
     typedef tfel::material::ModellingHypothesisToSpaceDimension<H>
@@ -100,11 +100,11 @@ namespace aster {
    * The handler for orthotropic behaviours
    * By default, this is unsupported (cohesive zone models)
    */
-  template <AsterBehaviourType type,
-            tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      AsterBehaviourType type,
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicBehaviourHandler
       : public AsterUnSupportedCaseHandler {
     using AsterUnSupportedCaseHandler::exe;
@@ -113,10 +113,10 @@ namespace aster {
   /*!
    * The handler for small strain orthotropic behaviours
    */
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL
       AsterOrthotropicBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,
                                        H,
@@ -130,10 +130,10 @@ namespace aster {
     using Handler::exe;
   };
 
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicSmallStrainBehaviourHandler1D
       : private AsterBehaviourHandler<H, Behaviour> {
     TFEL_ASTER_INLINE2 static void exe(
@@ -171,12 +171,12 @@ namespace aster {
                       STATEV, STRESS, op, sfeh);
       handler.exe(DDSOE, STRESS, STATEV, nullptr);
     }  // end of AsterOrthotropicBehaviourHander<1u,Behaviour>::exe
-  };  // end of struct AsterOrthotropicBehaviourHander<1u,Behaviour>
+  };   // end of struct AsterOrthotropicBehaviourHander<1u,Behaviour>
 
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicSmallStrainBehaviourHandler2D
       : private AsterBehaviourHandler<H, Behaviour> {
     TFEL_ASTER_INLINE2 static void exe(
@@ -226,11 +226,11 @@ namespace aster {
         m.rotateTangentOperatorBackward(DDSOE);
       }
     }  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>::exe
-  };  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
+  };   // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
 
-  template <template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicSmallStrainBehaviourHandler2D<
       tfel::material::ModellingHypothesis::PLANESTRESS,
       Behaviour>
@@ -286,12 +286,12 @@ namespace aster {
         m.rotateTangentOperatorBackward(DDSOE);
       }
     }  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>::exe
-  };  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
+  };   // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
 
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicSmallStrainBehaviourHandler3D
       : private AsterBehaviourHandler<H, Behaviour> {
     TFEL_ASTER_INLINE2 static void exe(
@@ -347,10 +347,10 @@ namespace aster {
   /*!
    * The handler for finite strain orthotropic behaviours
    */
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL
       AsterOrthotropicBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,
                                        H,
@@ -363,10 +363,10 @@ namespace aster {
     using Handler::exe;
   };
 
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicFiniteStrainBehaviourHandler1D
       : private AsterBehaviourHandler<H, Behaviour> {
     TFEL_ASTER_INLINE2 static void exe(
@@ -404,12 +404,12 @@ namespace aster {
                       STRESS, op, sfeh);
       handler.exe(DDSOE, STRESS, STATEV, F1);
     }  // end of AsterOrthotropicBehaviourHander<1u,Behaviour>::exe
-  };  // end of struct AsterOrthotropicBehaviourHander<1u,Behaviour>
+  };   // end of struct AsterOrthotropicBehaviourHander<1u,Behaviour>
 
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicFiniteStrainBehaviourHandler2D
       : private AsterBehaviourHandler<H, Behaviour> {
     TFEL_ASTER_INLINE2 static void exe(
@@ -459,11 +459,11 @@ namespace aster {
         m.rotateTangentOperatorBackward(DDSOE);
       }
     }  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>::exe
-  };  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
+  };   // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
 
-  template <template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicFiniteStrainBehaviourHandler2D<
       tfel::material::ModellingHypothesis::PLANESTRESS,
       Behaviour>
@@ -519,12 +519,12 @@ namespace aster {
         m.rotateTangentOperatorBackward(DDSOE);
       }
     }  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>::exe
-  };  // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
+  };   // end of AsterOrthotropicBehaviourHander<2u,Behaviour>
 
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterOrthotropicFiniteStrainBehaviourHandler3D
       : private AsterBehaviourHandler<H, Behaviour> {
     TFEL_ASTER_INLINE2 static void exe(

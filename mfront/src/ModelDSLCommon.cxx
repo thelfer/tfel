@@ -113,7 +113,7 @@ namespace mfront {
         "unimplemented feature");
   }  // end of getOverridableVariableNameByExternalName
 
-  void ModelDSLCommon::overrideByAParameter(const std::string&, const double) {
+  void ModelDSLCommon::overrideByAParameter(const std::string&, const double){
 #pragma message("unimplemented")
   }  // end of overrideByAParameter
 

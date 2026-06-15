@@ -51,10 +51,10 @@ namespace lsdyna {
    * duplication between two different finite strain strategies (to
    * reduce both compile-time and library size).
    */
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL LSDYNAInterface
       : protected LSDYNAInterfaceExceptions {
     TFEL_LSDYNA_INLINE2 static int exe(const LSDYNAData& d) {
@@ -122,7 +122,7 @@ namespace lsdyna {
         i.exe(d);
       }
     };  // end of struct CallBehaviour2
-  };  // end of struct LSDYNAInterface
+  };    // end of struct LSDYNAInterface
 
 }  // end of namespace lsdyna
 

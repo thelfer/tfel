@@ -193,8 +193,7 @@ namespace tfel::math {
 
   template <int N, unsigned int D>
   TFEL_HOST_DEVICE auto power(const std::floating_point auto x) noexcept
-    requires(D != 0)
-  {
+      requires(D != 0) {
     return tfel::math::internals::PowerImplSelector<N, D>::type::exe(x);
   }
 

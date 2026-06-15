@@ -22,11 +22,11 @@
 
 namespace castem {
 
-  template <CastemBehaviourType type,
-            tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      CastemBehaviourType type,
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemIsotropicBehaviourHandlerBase
       : public CastemBehaviourHandler<type, H, Behaviour> {
     TFEL_CASTEM_INLINE static void exe(
@@ -78,20 +78,20 @@ namespace castem {
 
   };  // end of struct CastemIsotropicBehaviourHandlerBase
 
-  template <CastemBehaviourType type,
-            tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      CastemBehaviourType type,
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemIsotropicBehaviourHandler
       : public CastemIsotropicBehaviourHandlerBase<type, H, Behaviour> {
     using CastemIsotropicBehaviourHandlerBase<type, H, Behaviour>::exe;
   };
 
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL
       CastemIsotropicBehaviourHandler<COHESIVEZONEMODEL, H, Behaviour>
       : public CastemIsotropicBehaviourHandlerBase<COHESIVEZONEMODEL,

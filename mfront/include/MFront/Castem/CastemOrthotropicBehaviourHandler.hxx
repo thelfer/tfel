@@ -23,55 +23,55 @@
 namespace castem {
 
   //! forward declaration
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct CastemOrthotropicSmallStrainBehaviourHandler1D;
 
   //! forward declaration
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct CastemOrthotropicSmallStrainBehaviourHandler2D;
 
   //! forward declaration
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct CastemOrthotropicSmallStrainBehaviourHandler3D;
 
   //! forward declaration
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct CastemOrthotropicFiniteStrainBehaviourHandler1D;
 
   //! forward declaration
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct CastemOrthotropicFiniteStrainBehaviourHandler2D;
 
   //! forward declaration
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct CastemOrthotropicFiniteStrainBehaviourHandler3D;
 
   /*!
    * An helper structure to make an appropriate dispatch based on the
    * spatial dimension
    */
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemOrthotropicSmallStrainBehaviourDispatcher {
     //! a simple alias
     typedef tfel::material::ModellingHypothesisToSpaceDimension<H>
@@ -94,10 +94,10 @@ namespace castem {
    * An helper structure to make an appropriate dispatch based on the
    * spatial dimension
    */
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL
       CastemOrthotropicFiniteStrainBehaviourDispatcher {
     //! a simple alias
@@ -121,11 +121,11 @@ namespace castem {
    * The handler for orthotropic behaviours
    * By default, this is unsupported (cohesive zone models)
    */
-  template <CastemBehaviourType type,
-            tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      CastemBehaviourType type,
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemOrthotropicBehaviourHandler
       : public CastemUnSupportedCaseHandler {
     using CastemUnSupportedCaseHandler::exe;
@@ -134,10 +134,10 @@ namespace castem {
   /*!
    * The handler for small strain orthotropic behaviours
    */
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL
       CastemOrthotropicBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,
                                         H,
@@ -150,10 +150,10 @@ namespace castem {
     using Handler::exe;
   };
 
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemOrthotropicSmallStrainBehaviourHandler1D
       : private CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,
                                        H,
@@ -208,12 +208,12 @@ namespace castem {
                       STATEV, STRESS, op, sfeh);
       handler.exe(DDSDDE, STRESS, STATEV, PNEWDT);
     }  // end of CastemOrthotropicBehaviourHander<1u,Behaviour>::exe
-  };  // end of struct CastemOrthotropicBehaviourHander<1u,Behaviour>
+  };   // end of struct CastemOrthotropicBehaviourHander<1u,Behaviour>
 
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemOrthotropicSmallStrainBehaviourHandler2D
       : private CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,
                                        H,
@@ -280,11 +280,11 @@ namespace castem {
         m.rotateTangentOperatorBackward(DDSDDE);
       }
     }  // end of CastemOrthotropicBehaviourHander<2u,Behaviour>::exe
-  };  // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
+  };   // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
 
-  template <template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemOrthotropicSmallStrainBehaviourHandler2D<
       tfel::material::ModellingHypothesis::PLANESTRESS,
       Behaviour>
@@ -355,12 +355,12 @@ namespace castem {
         m.rotateTangentOperatorBackward(DDSDDE);
       }
     }  // end of CastemOrthotropicBehaviourHander<2u,Behaviour>::exe
-  };  // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
+  };   // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
 
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemOrthotropicSmallStrainBehaviourHandler3D
       : private CastemBehaviourHandler<STANDARDSTRAINBASEDBEHAVIOUR,
                                        H,
@@ -433,10 +433,10 @@ namespace castem {
   /*!
    * The handler for finite strain orthotropic behaviours
    */
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL
       CastemOrthotropicBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,
                                         H,
@@ -449,10 +449,10 @@ namespace castem {
     using Handler::exe;
   };
 
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemOrthotropicFiniteStrainBehaviourHandler1D
       : private CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,
                                        H,
@@ -508,12 +508,12 @@ namespace castem {
                       STRESS, op, sfeh);
       handler.exe(DDSDDE, STRESS, STATEV, PNEWDT);
     }  // end of CastemOrthotropicBehaviourHander<1u,Behaviour>::exe
-  };  // end of struct CastemOrthotropicBehaviourHander<1u,Behaviour>
+  };   // end of struct CastemOrthotropicBehaviourHander<1u,Behaviour>
 
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemOrthotropicFiniteStrainBehaviourHandler2D
       : private CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,
                                        H,
@@ -581,11 +581,11 @@ namespace castem {
         m.rotateTangentOperatorBackward(DDSDDE);
       }
     }  // end of CastemOrthotropicBehaviourHander<2u,Behaviour>::exe
-  };  // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
+  };   // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
 
-  template <template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemOrthotropicFiniteStrainBehaviourHandler2D<
       tfel::material::ModellingHypothesis::PLANESTRESS,
       Behaviour>
@@ -658,12 +658,12 @@ namespace castem {
         m.rotateTangentOperatorBackward(DDSDDE);
       }
     }  // end of CastemOrthotropicBehaviourHander<2u,Behaviour>::exe
-  };  // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
+  };   // end of CastemOrthotropicBehaviourHander<2u,Behaviour>
 
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CastemOrthotropicFiniteStrainBehaviourHandler3D
       : private CastemBehaviourHandler<STANDARDFINITESTRAINBEHAVIOUR,
                                        H,

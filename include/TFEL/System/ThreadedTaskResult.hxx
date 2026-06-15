@@ -87,8 +87,8 @@ namespace tfel::system {
 
   //! Partial specialisation for non-returning tasks
   template <>
-  struct TFELSYSTEM_VISIBILITY_EXPORT
-      ThreadedTaskResult<void> : public ThreadedTaskResultBase {
+  struct TFELSYSTEM_VISIBILITY_EXPORT ThreadedTaskResult<void>
+      : public ThreadedTaskResultBase {
     //! \brief default constructor
     ThreadedTaskResult();
     //! \brief move constructor

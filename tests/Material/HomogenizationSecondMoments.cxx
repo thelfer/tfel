@@ -58,9 +58,8 @@ struct HomogenizationSecondMomentsTest final : public tfel::tests::TestCase {
 
  private:
   template <tfel::math::ScalarConcept stress>
-    requires(
-        tfel::math::checkUnitCompatibility<tfel::math::unit::Stress, stress>())
-  void test_e2_r() {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              stress>()) void test_e2_r() {
 #ifndef _LIBCPP_VERSION
     // here we test for stiff inclusions in soft matrix. The derivative is
     // performed by finite difference
@@ -140,9 +139,8 @@ struct HomogenizationSecondMomentsTest final : public tfel::tests::TestCase {
 
  private:
   template <tfel::math::ScalarConcept stress>
-    requires(
-        tfel::math::checkUnitCompatibility<tfel::math::unit::Stress, stress>())
-  void test_e2_s() {
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              stress>()) void test_e2_s() {
 #ifndef _LIBCPP_VERSION
     // here we test for soft inclusions in stiff matrix. The derivative is
     // performed by finite difference

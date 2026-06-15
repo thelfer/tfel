@@ -68,8 +68,8 @@ namespace tfel::math {
      */
     template <typename ValueType2>
     matrix& operator=(
-        const std::initializer_list<std::initializer_list<ValueType2>>&)
-      requires(isAssignableTo<ValueType2, ValueType2>());
+        const std::initializer_list<std::initializer_list<
+            ValueType2>>&) requires(isAssignableTo<ValueType2, ValueType2>());
     /*!
      * \brief swap two matrixs
      * \param[in,out] the other matrix

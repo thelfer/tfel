@@ -494,7 +494,7 @@ namespace mfront {
         << name << "("
         << "aster::AsterReal *const STRESS," /*< tenseur des contraintes */
         << "aster::AsterReal *const STATEV," /*< variables internes */
-        << "aster::AsterReal *const DDSOE,"  /*< matrice jacobienne du modèle */
+        << "aster::AsterReal *const DDSOE," /*< matrice jacobienne du modèle */
         << "const aster::AsterReal *const " << dv0
         << "," /*< tenseur des déformations totales au début du pas */
         << "const aster::AsterReal *const " << dv1
@@ -502,8 +502,8 @@ namespace mfront {
         << "const aster::AsterReal *const DTIME," /*< incrément de temps */
         << "const aster::AsterReal *const TEMP," /*< température au début du pas
                                                   */
-        << "const aster::AsterReal *const DTEMP,"  /*< incrément de température
-                                                    */
+        << "const aster::AsterReal *const DTEMP," /*< incrément de température
+                                                   */
         << "const aster::AsterReal *const PREDEF," /*< variables externes au
                                                        début du pas */
         << "const aster::AsterReal *const DPRED,"  /*< incréments des variables
@@ -700,7 +700,7 @@ namespace mfront {
         << this->getFunctionNameBasis(name) << "("
         << "aster::AsterReal *const STRESS," /*< tenseur des contraintes */
         << "aster::AsterReal *const STATEV," /*< variables internes */
-        << "aster::AsterReal *const DDSOE,"  /*< matrice jacobienne du modèle */
+        << "aster::AsterReal *const DDSOE," /*< matrice jacobienne du modèle */
         << "const aster::AsterReal *const " << dv0
         << "," /*< tenseur des déformations totales au début du pas */
         << "const aster::AsterReal *const " << dv1
@@ -708,8 +708,8 @@ namespace mfront {
         << "const aster::AsterReal *const DTIME," /*< incrément de temps */
         << "const aster::AsterReal *const TEMP," /*< température au début du pas
                                                   */
-        << "const aster::AsterReal *const DTEMP,"  /*< incrément de température
-                                                    */
+        << "const aster::AsterReal *const DTEMP," /*< incrément de température
+                                                   */
         << "const aster::AsterReal *const PREDEF," /*< variables externes au
                                                        début du pas */
         << "const aster::AsterReal *const DPRED,"  /*< incréments des variables

@@ -21,7 +21,8 @@ namespace tfel::math {
   template <unsigned short N,
             typename NumericType,
             typename Child,
-            template <unsigned short, typename> typename ExternalWorkSpace>
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
   bool TinyLevenbergMarquardtSolver<N, NumericType, Child, ExternalWorkSpace>::
       computeLevenbergMarquardtCorrection() {
     auto& child = static_cast<Child&>(*this);
@@ -54,7 +55,8 @@ namespace tfel::math {
   template <unsigned short N,
             typename NumericType,
             typename Child,
-            template <unsigned short, typename> typename ExternalWorkSpace>
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
   bool TinyLevenbergMarquardtSolver<N, NumericType, Child, ExternalWorkSpace>::
       computeNewCorrection() {
     auto& child = static_cast<Child&>(*this);

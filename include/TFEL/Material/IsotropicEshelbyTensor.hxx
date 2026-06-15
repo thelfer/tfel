@@ -42,10 +42,11 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] IM_0: Isotropic Moduli of the matrix
    */
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE tfel::math::st2tost2<2u, types::compliance<StressType>>
-  computeDiskPlaneStrainHillTensor(const IsotropicModuli<StressType>&);
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<2u, types::compliance<StressType>> computeDiskPlaneStrainHillTensor(
+          const IsotropicModuli<StressType>&);
 
   /*!
    * This function builds the Eshelby tensor of an elliptic cylinder
@@ -74,14 +75,14 @@ namespace tfel::material::homogenization::elasticity {
    * \param [in] b: length of semi-axis relative to the other direction
    */
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE tfel::math::st2tost2<2u, types::compliance<StressType>>
-  computePlaneStrainHillTensor(
-      const IsotropicModuli<StressType>&,
-      const tfel::math::tvector<2u, types::real<StressType>>&,
-      const types::length<StressType>&,
-      const types::length<StressType>&);
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<2u, types::compliance<StressType>> computePlaneStrainHillTensor(
+          const IsotropicModuli<StressType>&,
+          const tfel::math::tvector<2u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&);
 
   /*!
    * This function builds the Eshelby tensor of a sphere embedded in an
@@ -103,11 +104,14 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] nu: Poisson's ratio of the matrix
    */
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
-  computeSphereHillPolarisationTensor(const StressType&,
-                                      const types::real<StressType>&);
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>())
+      TFEL_HOST_DEVICE tfel::math::st2tost2<
+          3u,
+          types::compliance<
+              StressType>> computeSphereHillPolarisationTensor(const StressType&,
+                                                               const types::real<
+                                                                   StressType>&);
 
   /*!
    * This function is an overload of computeSphereHillPolarisationTensor
@@ -117,10 +121,11 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] IM0: isotropic moduli of the matrix
    */
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
-  computeSphereHillPolarisationTensor(const IsotropicModuli<StressType>&);
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<3u, types::compliance<StressType>> computeSphereHillPolarisationTensor(
+          const IsotropicModuli<StressType>&);
 
   /*!
    * This function builds the Eshelby tensor of an axisymmetrical ellipsoid
@@ -168,16 +173,16 @@ namespace tfel::material::homogenization::elasticity {
    *
    */
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
-  computeAxisymmetricalHillPolarisationTensor(
-      const StressType&,
-      const types::real<StressType>&,
-      const tfel::math::tvector<3u, types::real<StressType>>&,
-      const types::real<StressType>&,
-      const tfel::math::base_type<StressType> = tfel::material::
-          EshelbyTolerances::get<tfel::math::base_type<StressType>>());
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<3u, types::compliance<StressType>> computeAxisymmetricalHillPolarisationTensor(
+          const StressType&,
+          const types::real<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::real<StressType>&,
+          const tfel::math::base_type<StressType> = tfel::material::
+              EshelbyTolerances::get<tfel::math::base_type<StressType>>());
 
   /*!
    * This function is an overload of computeAxisymmetricalHillPolarisationTensor
@@ -187,15 +192,15 @@ namespace tfel::material::homogenization::elasticity {
    * \param[in] IM0: isotropic moduli of the matrix
    */
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
-  computeAxisymmetricalHillPolarisationTensor(
-      const IsotropicModuli<StressType>&,
-      const tfel::math::tvector<3u, types::real<StressType>>&,
-      const types::real<StressType>&,
-      const tfel::math::base_type<StressType> = tfel::material::
-          EshelbyTolerances::get<tfel::math::base_type<StressType>>());
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<3u, types::compliance<StressType>> computeAxisymmetricalHillPolarisationTensor(
+          const IsotropicModuli<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::real<StressType>&,
+          const tfel::math::base_type<StressType> = tfel::material::
+              EshelbyTolerances::get<tfel::math::base_type<StressType>>());
 
   /*!
    * This function builds the Eshelby tensor of a general ellipsoid embedded
@@ -218,16 +223,15 @@ namespace tfel::material::homogenization::elasticity {
    * in Eshelby (1957).
    */
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::real<StressType>>
-  computeEshelbyTensor(const types::real<StressType>&,
-                       const types::length<StressType>&,
-                       const types::length<StressType>&,
-                       const types::length<StressType>&,
-                       const tfel::math::base_type<StressType> =
-                           tfel::material::EshelbyTolerances::get<
-                               tfel::math::base_type<StressType>>());
+  requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
+                                              StressType>()) TFEL_HOST_DEVICE
+      tfel::math::st2tost2<3u, types::real<StressType>> computeEshelbyTensor(
+          const types::real<StressType>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const tfel::math::base_type<StressType> = tfel::material::
+              EshelbyTolerances::get<tfel::math::base_type<StressType>>());
 
   /*!
    * This function builds the Hill tensor of a general ellipsoid embedded
@@ -251,19 +255,19 @@ namespace tfel::material::homogenization::elasticity {
    *
    */
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
-  computeHillPolarisationTensor(
-      const StressType&,
-      const types::real<StressType>&,
-      const tfel::math::tvector<3u, types::real<StressType>>&,
-      const types::length<StressType>&,
-      const tfel::math::tvector<3u, types::real<StressType>>&,
-      const types::length<StressType>&,
-      const types::length<StressType>&,
-      const tfel::math::base_type<StressType> = tfel::material::
-          EshelbyTolerances::get<tfel::math::base_type<StressType>>());
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<3u, types::compliance<StressType>> computeHillPolarisationTensor(
+          const StressType&,
+          const types::real<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const tfel::math::base_type<StressType> = tfel::material::
+              EshelbyTolerances::get<tfel::math::base_type<StressType>>());
 
   /*!
    * This function is an overload of computeHillPolarisationTensor
@@ -284,18 +288,18 @@ namespace tfel::material::homogenization::elasticity {
    * tensor is computeAxisymmetricalHillTensor.
    */
   template <tfel::math::ScalarConcept StressType>
-    requires(tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
-                                                StressType>())
-  TFEL_HOST_DEVICE tfel::math::st2tost2<3u, types::compliance<StressType>>
-  computeHillPolarisationTensor(
-      const IsotropicModuli<StressType>&,
-      const tfel::math::tvector<3u, types::real<StressType>>&,
-      const types::length<StressType>&,
-      const tfel::math::tvector<3u, types::real<StressType>>&,
-      const types::length<StressType>&,
-      const types::length<StressType>&,
-      const tfel::math::base_type<StressType> = tfel::material::
-          EshelbyTolerances::get<tfel::math::base_type<StressType>>());
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>()) TFEL_HOST_DEVICE tfel::math::
+      st2tost2<3u, types::compliance<StressType>> computeHillPolarisationTensor(
+          const IsotropicModuli<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const tfel::math::tvector<3u, types::real<StressType>>&,
+          const types::length<StressType>&,
+          const types::length<StressType>&,
+          const tfel::math::base_type<StressType> = tfel::material::
+              EshelbyTolerances::get<tfel::math::base_type<StressType>>());
 
 }  // end of namespace tfel::material::homogenization::elasticity
 

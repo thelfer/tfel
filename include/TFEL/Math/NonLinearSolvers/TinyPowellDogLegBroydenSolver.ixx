@@ -22,7 +22,8 @@ namespace tfel::math {
   template <unsigned short N,
             typename NumericType,
             typename Child,
-            template <unsigned short, typename> typename ExternalWorkSpace>
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
   void TinyPowellDogLegBroydenSolver<N, NumericType, Child, ExternalWorkSpace>::
       updateOrCheckJacobian() {
     if (this->iter == 0) {
@@ -40,7 +41,8 @@ namespace tfel::math {
   template <unsigned short N,
             typename NumericType,
             typename Child,
-            template <unsigned short, typename> typename ExternalWorkSpace>
+            template <unsigned short, typename>
+            typename ExternalWorkSpace>
   bool TinyPowellDogLegBroydenSolver<N, NumericType, Child, ExternalWorkSpace>::
       computeNewCorrection() {
     auto& child = static_cast<Child&>(*this);

@@ -772,7 +772,8 @@ namespace mfront {
     }
     out << "{\n"
         << "using namespace tfel::math;\n"
-        << iprefix + "s = " << "this->sig;\n";
+        << iprefix + "s = "
+        << "this->sig;\n";
     if (!ivs.empty()) {
       this->exportResults(out, mb, ivs, iprefix + "d.stateNew");
     }

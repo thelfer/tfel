@@ -54,11 +54,11 @@ namespace lsdyna {
    * duplication between two different finite strain strategies (to
    * reduce both compile-time and library size).
    */
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            typename T,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      typename T,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL LSDYNAExplicitInterface
       : protected LSDYNAInterfaceExceptions {
     //! space dimension
@@ -78,7 +78,7 @@ namespace lsdyna {
                                      buas>::exe(data.getStiffnessTensor(),
                                                 props);
       }  // end of exe
-    };  // end of struct StiffnessOperatorInitializer
+    };   // end of struct StiffnessOperatorInitializer
     //! structure in charge of initializing the stiffness operator
     struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer {
       typedef typename BV::BehaviourData BData;
@@ -89,7 +89,7 @@ namespace lsdyna {
             ATraits::stype>::exe(props + o,
                                  data.getThermalExpansionCoefficientTensor());
       }  // end of exe
-    };  // end of struct ThermalExpansionCoefficientTensorInitializer
+    };   // end of struct ThermalExpansionCoefficientTensorInitializer
     //! place holder for tag dispatching
     struct TFEL_VISIBILITY_LOCAL DoNothingInitializer {
       typedef typename BV::BehaviourData BData;
@@ -317,7 +317,7 @@ namespace lsdyna {
         b.setBehaviourDataGradients(e);
         b.setIntegrationDataGradients(de);
       }  // end of exe
-    };  // end of struct GradientInitialiserWithStressFreeExpansion
+    };   // end of struct GradientInitialiserWithStressFreeExpansion
     //! An helper structure used to initialise the driving variables
     struct TFEL_VISIBILITY_LOCAL GradientInitialiserWithoutStressFreeExpansion {
       /*!
@@ -337,8 +337,8 @@ namespace lsdyna {
         b.setBehaviourDataGradients(e);
         b.setIntegrationDataGradients(de);
       }  // end of exe
-    };  // end of struct GradientInitialiserWithoutStressFreeExpansion
-  };  // end of struct LSDYNAExplicitInterface
+    };   // end of struct GradientInitialiserWithoutStressFreeExpansion
+  };     // end of struct LSDYNAExplicitInterface
 
 }  // end of namespace lsdyna
 

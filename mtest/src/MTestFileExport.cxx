@@ -115,6 +115,6 @@ namespace mtest {
     static_cast<void>(d);
     tfel::raise("write: unsupported file extension '" + ext + "'");
 #endif /* MADNEX_MTEST_TEST_SUPPORT */
-  }  // end of write
+  }    // end of write
 
 }  // namespace mtest

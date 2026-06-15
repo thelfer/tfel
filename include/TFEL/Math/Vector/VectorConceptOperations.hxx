@@ -93,8 +93,8 @@ namespace tfel::math {
    * an operation : use of parenthesis is required.
    */
   template <VectorConcept T1, VectorConcept T2>
-  TFEL_HOST_DEVICE constexpr auto operator|(const T1&, const T2&)
-    requires(!isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>());
+  TFEL_HOST_DEVICE constexpr auto operator|(const T1&, const T2&) requires(
+      !isInvalid<BinaryOperationResult<T1, T2, OpDotProduct>>());
 
   /*!
    * \brief  return the euclidian norm of a tvector
@@ -102,8 +102,8 @@ namespace tfel::math {
    * \return const typename tfel::typetraits::RealPartType<T>::type, the result
    */
   template <VectorConcept T1>
-  TFEL_HOST_DEVICE auto norm(const T1& v)
-    requires(!isInvalid<BinaryOperationResult<T1, T1, OpDotProduct>>());
+  TFEL_HOST_DEVICE auto norm(const T1& v) requires(
+      !isInvalid<BinaryOperationResult<T1, T1, OpDotProduct>>());
 
 }  // end of namespace tfel::math
 

@@ -50,7 +50,7 @@ namespace tfel::math {
    */
   template <typename T>
   concept ST2toST2Concept =
-      (std::is_same_v<typename std::decay_t<T>::ConceptTag, ST2toST2Tag>) &&  //
+      (std::is_same_v<typename std::decay_t<T>::ConceptTag, ST2toST2Tag>)&&  //
       (requires(const T t, const unsigned short i, const unsigned short j) {
         t(i, j);
       });
@@ -59,8 +59,7 @@ namespace tfel::math {
    * which hold value types without unit
    */
   template <typename T>
-  concept NoUnitST2toST2Concept =
-      ST2toST2Concept<T> &&
+  concept NoUnitST2toST2Concept = ST2toST2Concept<T> &&
       (checkUnitCompatibility<unit::NoUnit, numeric_type<T>>());
   /*!
    * \brief refinement of the `ST2toST2Concept` concept matched by `st2tost2`
@@ -69,8 +68,7 @@ namespace tfel::math {
    * \see checkUnitCompatibility for details
    */
   template <typename T>
-  concept StressST2toST2Concept =
-      ST2toST2Concept<T> &&
+  concept StressST2toST2Concept = ST2toST2Concept<T> &&
       (checkUnitCompatibility<unit::Stress, numeric_type<T>>());
 
   /*!
@@ -152,8 +150,8 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr void computePushForwardDerivative(
       ST2toST2ResultType&,
       const TensorType&) noexcept  //
-    requires(tfel::typetraits::IsFundamentalNumericType<
-             numeric_type<TensorType>>::cond);
+      requires(tfel::typetraits::IsFundamentalNumericType<
+               numeric_type<TensorType>>::cond);
   /*!
    * \brief performs the push_forward of a st2tost2:
    * \[
@@ -169,10 +167,10 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr void push_forward(ST2toST2Type&,
                                                const ST2toST2Type2&,
                                                const TensorType&) noexcept  //
-    requires(getSpaceDimension<ST2toST2Type>() ==
-                 getSpaceDimension<ST2toST2Type2>() &&
-             getSpaceDimension<ST2toST2Type>() ==
-                 getSpaceDimension<TensorType>());
+      requires(getSpaceDimension<ST2toST2Type>() ==
+                   getSpaceDimension<ST2toST2Type2>() &&
+               getSpaceDimension<ST2toST2Type>() ==
+                   getSpaceDimension<TensorType>());
 
   /*!
    * \brief an helper function which returns if the given type implements the

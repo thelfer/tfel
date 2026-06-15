@@ -27,9 +27,7 @@ namespace tfel::math::internals {
         StensorType& n1,
         StensorType& n2,
         const rotation_matrix<numeric_type<StensorType>>&)  //
-        noexcept
-      requires(getSpaceDimension<StensorType>() == 1u)
-    {
+        noexcept requires(getSpaceDimension<StensorType>() == 1u) {
       using real = base_type<numeric_type<StensorType>>;
       constexpr auto zero = real(0);
       constexpr auto one = real(1);
@@ -47,8 +45,7 @@ namespace tfel::math::internals {
         StensorType& n1,
         StensorType& n2,
         const rotation_matrix<numeric_type<StensorType>>& m) noexcept  //
-      requires(getSpaceDimension<StensorType>() == 2u)
-    {
+        requires(getSpaceDimension<StensorType>() == 2u) {
       using real = base_type<numeric_type<StensorType>>;
       constexpr auto zero = real(0);
       constexpr auto one = real(1);
@@ -68,8 +65,7 @@ namespace tfel::math::internals {
         StensorType& n1,
         StensorType& n2,
         const rotation_matrix<numeric_type<StensorType>>& m) noexcept  //
-      requires(getSpaceDimension<StensorType>() == 3u)
-    {
+        requires(getSpaceDimension<StensorType>() == 3u) {
       using real = base_type<numeric_type<StensorType>>;
       const tvector<3u, real> v0 = m.template column_view<0u>();
       const tvector<3u, real> v1 = m.template column_view<1u>();

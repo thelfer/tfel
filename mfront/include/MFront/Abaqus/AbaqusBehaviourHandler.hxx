@@ -68,10 +68,10 @@ namespace abaqus {
     static constexpr unsigned short value = 3u;
   };  // end of struct AbaqusStensorSize
 
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AbaqusBehaviourHandler
       : public AbaqusInterfaceExceptions {
     //! a simple alias
@@ -141,7 +141,7 @@ namespace abaqus {
         b.setABAQUSBehaviourDataGradients(STRAN);
         b.setABAQUSIntegrationDataGradients(DSTRAN);
       }  // end of exe
-    };  // namespace abaqus
+    };   // namespace abaqus
 
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer {
       typedef typename BV::BehaviourData BData;
@@ -154,7 +154,7 @@ namespace abaqus {
                                      buas>::exe(data.getStiffnessTensor(),
                                                 props);
       }  // end of exe
-    };  // end of struct StiffnessOperatorInitializer
+    };   // end of struct StiffnessOperatorInitializer
 
     struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer {
       typedef typename BV::BehaviourData BData;
@@ -165,7 +165,7 @@ namespace abaqus {
             AbaqusTraits<BV>::btype, H, AbaqusTraits<BV>::stype>::
             exe(props + o, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
-    };  // end of struct ThermalExpansionCoefficientTensorInitializer
+    };   // end of struct ThermalExpansionCoefficientTensorInitializer
 
     struct TFEL_VISIBILITY_LOCAL DoNothingInitializer {
       typedef typename BV::BehaviourData BData;
@@ -186,7 +186,7 @@ namespace abaqus {
         TFEL_ABAQUS_INLINE static void exe(T& Psi_d, const BV& b) {
           b.computeDissipatedEnergy(Psi_d);
         }  // end of exe
-      };  // end of struct DissipatedEnergyComputer
+      };   // end of struct DissipatedEnergyComputer
       //! place holder for tag dispatching
       struct TFEL_VISIBILITY_LOCAL DoNothingEnergyComputer {
         template <typename T>
@@ -329,7 +329,7 @@ namespace abaqus {
         throwInvalidTensorSize(Traits::getName(), ntens, size);
       }
     }  // end of checkNSTATV
-  };  // end of struct AbaqusBehaviourHandler
+  };   // end of struct AbaqusBehaviourHandler
 
 }  // end of namespace abaqus
 

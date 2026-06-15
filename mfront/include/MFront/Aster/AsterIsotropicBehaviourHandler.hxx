@@ -20,11 +20,11 @@
 
 namespace aster {
 
-  template <AsterBehaviourType btype,
-            tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      AsterBehaviourType btype,
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterIsotropicBehaviourHandler
       : public AsterBehaviourHandler<H, Behaviour> {
     TFEL_ASTER_INLINE static void exe(

@@ -41,15 +41,15 @@ namespace tfel::math::internals {
               StressT2toST2Concept CauchyStressDerivativeType,
               NoUnitTensorConcept DeformationGradientType,
               StressStensorConcept CauchyStressType>
-      requires(checkThatAllSpaceDimensionsAreEqual<PK1StressDerivativeType,
-                                                   CauchyStressDerivativeType,
-                                                   DeformationGradientType,
-                                                   CauchyStressType>())  //
-    TFEL_HOST_DEVICE static constexpr void                               //
-    exe(PK1StressDerivativeType& dP,
-        const CauchyStressDerivativeType& ds,
-        const DeformationGradientType& F,
-        const CauchyStressType& s) noexcept {
+    requires(checkThatAllSpaceDimensionsAreEqual<PK1StressDerivativeType,
+                                                 CauchyStressDerivativeType,
+                                                 DeformationGradientType,
+                                                 CauchyStressType>())  //
+        TFEL_HOST_DEVICE static constexpr void                         //
+        exe(PK1StressDerivativeType& dP,
+            const CauchyStressDerivativeType& ds,
+            const DeformationGradientType& F,
+            const CauchyStressType& s) noexcept {
       dP(0, 0) = ds(0, 0) * F[1] * F[2];
       dP(1, 0) = F[0] * ds(1, 0) * F[2] + s[1] * F[2];
       dP(2, 0) = F[0] * ds(2, 0) * F[1] + s[2] * F[1];
@@ -78,15 +78,15 @@ namespace tfel::math::internals {
               StressT2toST2Concept CauchyStressDerivativeType,
               NoUnitTensorConcept DeformationGradientType,
               StressStensorConcept CauchyStressType>
-      requires(checkThatAllSpaceDimensionsAreEqual<PK1StressDerivativeType,
-                                                   CauchyStressDerivativeType,
-                                                   DeformationGradientType,
-                                                   CauchyStressType>())  //
-    TFEL_HOST_DEVICE static constexpr void                               //
-    exe(PK1StressDerivativeType& dP,
-        const CauchyStressDerivativeType& ds,
-        const DeformationGradientType& F,
-        const CauchyStressType& s) noexcept {
+    requires(checkThatAllSpaceDimensionsAreEqual<PK1StressDerivativeType,
+                                                 CauchyStressDerivativeType,
+                                                 DeformationGradientType,
+                                                 CauchyStressType>())  //
+        TFEL_HOST_DEVICE static constexpr void                         //
+        exe(PK1StressDerivativeType& dP,
+            const CauchyStressDerivativeType& ds,
+            const DeformationGradientType& F,
+            const CauchyStressType& s) noexcept {
       using real = numeric_type<DeformationGradientType>;
       constexpr auto cste = tfel::math::Cste<real>::sqrt2;
       constexpr auto icste = tfel::math::Cste<real>::isqrt2;
@@ -176,15 +176,15 @@ namespace tfel::math::internals {
               StressT2toST2Concept CauchyStressDerivativeType,
               NoUnitTensorConcept DeformationGradientType,
               StressStensorConcept CauchyStressType>
-      requires(checkThatAllSpaceDimensionsAreEqual<PK1StressDerivativeType,
-                                                   CauchyStressDerivativeType,
-                                                   DeformationGradientType,
-                                                   CauchyStressType>())  //
-    TFEL_HOST_DEVICE static constexpr void                               //
-    exe(PK1StressDerivativeType& dP,
-        const CauchyStressDerivativeType& ds,
-        const DeformationGradientType& F,
-        const CauchyStressType& s) noexcept {
+    requires(checkThatAllSpaceDimensionsAreEqual<PK1StressDerivativeType,
+                                                 CauchyStressDerivativeType,
+                                                 DeformationGradientType,
+                                                 CauchyStressType>())  //
+        TFEL_HOST_DEVICE static constexpr void                         //
+        exe(PK1StressDerivativeType& dP,
+            const CauchyStressDerivativeType& ds,
+            const DeformationGradientType& F,
+            const CauchyStressType& s) noexcept {
       using real = numeric_type<DeformationGradientType>;
       constexpr auto cste = tfel::math::Cste<real>::sqrt2;
       // -->  f90(diff(P[1],F_0));
@@ -649,10 +649,10 @@ namespace tfel::math {
   template <StressT2toST2Concept CauchyStressDerivativeType,
             NoUnitTensorConcept DeformationGradientType,
             StressStensorConcept CauchyStressType>
-    requires(checkThatAllSpaceDimensionsAreEqual<CauchyStressDerivativeType,
-                                                 DeformationGradientType,
-                                                 CauchyStressType>())  //
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr                             //
+  requires(checkThatAllSpaceDimensionsAreEqual<CauchyStressDerivativeType,
+                                               DeformationGradientType,
+                                               CauchyStressType>())  //
+      TFEL_HOST_DEVICE [[nodiscard]] constexpr                       //
       t2tot2<space_dimension<CauchyStressDerivativeType>,
              numeric_type<CauchyStressDerivativeType>>  //
       convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
@@ -670,16 +670,16 @@ namespace tfel::math {
             StressT2toST2Concept CauchyStressDerivativeType,
             NoUnitTensorConcept DeformationGradientType,
             StressStensorConcept CauchyStressType>
-    requires(checkThatAllSpaceDimensionsAreEqual<PK1StressDerivativeType,
-                                                 CauchyStressDerivativeType,
-                                                 DeformationGradientType,
-                                                 CauchyStressType>())  //
-  TFEL_HOST_DEVICE constexpr void                                      //
-  convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
-      PK1StressDerivativeType& dP,
-      const CauchyStressDerivativeType& ds,
-      const DeformationGradientType& F,
-      const CauchyStressType& s) noexcept {
+  requires(checkThatAllSpaceDimensionsAreEqual<PK1StressDerivativeType,
+                                               CauchyStressDerivativeType,
+                                               DeformationGradientType,
+                                               CauchyStressType>())  //
+      TFEL_HOST_DEVICE constexpr void                                //
+      convertCauchyStressDerivativeToFirstPiolaKirchoffStressDerivative(
+          PK1StressDerivativeType& dP,
+          const CauchyStressDerivativeType& ds,
+          const DeformationGradientType& F,
+          const CauchyStressType& s) noexcept {
     constexpr auto N = space_dimension<CauchyStressDerivativeType>;
     tfel::math::internals::DSIG_DF_to_DPK1_DF_Converter<N>::exe(dP, ds, F, s);
   }  // end of
@@ -688,10 +688,10 @@ namespace tfel::math {
   template <StressST2toST2Concept PK2StressDerivativeType,
             NoUnitTensorConcept DeformationGradientType,
             StressStensorConcept CauchyStressType>
-    requires(checkThatAllSpaceDimensionsAreEqual<PK2StressDerivativeType,
-                                                 DeformationGradientType,
-                                                 CauchyStressType>())  //
-  TFEL_HOST_DEVICE [[nodiscard]] constexpr                             //
+  requires(checkThatAllSpaceDimensionsAreEqual<PK2StressDerivativeType,
+                                               DeformationGradientType,
+                                               CauchyStressType>())  //
+      TFEL_HOST_DEVICE [[nodiscard]] constexpr                       //
       t2tot2<space_dimension<PK2StressDerivativeType>,
              numeric_type<PK2StressDerivativeType>>  //
       convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
@@ -710,16 +710,16 @@ namespace tfel::math {
             StressST2toST2Concept PK2StressDerivativeType,
             NoUnitTensorConcept DeformationGradientType,
             StressStensorConcept CauchyStressType>
-    requires(checkThatAllSpaceDimensionsAreEqual<PK1StressDerivativeType,
-                                                 PK2StressDerivativeType,
-                                                 DeformationGradientType,
-                                                 CauchyStressType>())  //
-  TFEL_HOST_DEVICE constexpr void                                      //
-  convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
-      PK1StressDerivativeType& dP,
-      const PK2StressDerivativeType& dS,
-      const DeformationGradientType& F,
-      const CauchyStressType& s) noexcept {
+  requires(checkThatAllSpaceDimensionsAreEqual<PK1StressDerivativeType,
+                                               PK2StressDerivativeType,
+                                               DeformationGradientType,
+                                               CauchyStressType>())  //
+      TFEL_HOST_DEVICE constexpr void                                //
+      convertSecondPiolaKirchhoffStressDerivativeToFirstPiolaKirchoffStressDerivative(
+          PK1StressDerivativeType& dP,
+          const PK2StressDerivativeType& dS,
+          const DeformationGradientType& F,
+          const CauchyStressType& s) noexcept {
     using real = numeric_type<DeformationGradientType>;
     using stress = numeric_type<CauchyStressType>;
     constexpr auto N = space_dimension<PK1StressDerivativeType>;

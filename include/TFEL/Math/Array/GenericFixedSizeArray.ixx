@@ -58,7 +58,7 @@ namespace tfel::math {
   template <typename ValueType>
   TFEL_HOST_DEVICE constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::
       GenericFixedSizeArray(const ValueType& value) noexcept
-    requires(isAssignableTo<ValueType, value_type>())
+      requires(isAssignableTo<ValueType, value_type>())
       : GenericFixedSizeArray() {
     this->fill(value);
   }  // end of GenericFixedSizeArray
@@ -69,8 +69,8 @@ namespace tfel::math {
   template <typename OtherArray>
   TFEL_HOST_DEVICE constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::
       GenericFixedSizeArray(const OtherArray& src) noexcept  //
-    requires((isAssignableTo<OtherArray, Child>()) &&
-             (!std::is_same_v<OtherArray, Child>))
+      requires((isAssignableTo<OtherArray, Child>()) &&
+               (!std::is_same_v<OtherArray, Child>))
       : GenericFixedSizeArray() {
     //     static_assert(checkIndexingPoliciesCompatiblity<
     //                   typename ArrayPolicy::indexing_policy,
@@ -86,7 +86,7 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::
       GenericFixedSizeArray(
           const std::initializer_list<ValueType>& values) noexcept  //
-    requires(isAssignableTo<ValueType, value_type>())
+      requires(isAssignableTo<ValueType, value_type>())
       : GenericFixedSizeArray() {
     if (values.size() == 1u) {
       this->fill(*(values.begin()));
@@ -101,10 +101,9 @@ namespace tfel::math {
   template <typename InputIterator>
   TFEL_HOST_DEVICE constexpr GenericFixedSizeArray<Child, ArrayPolicy, N>::
       GenericFixedSizeArray(const InputIterator p) noexcept  //
-    requires(
-        std::is_same_v<typename std::iterator_traits<InputIterator>::value_type,
-                       base_type<value_type>>)
-  {
+      requires(std::is_same_v<
+               typename std::iterator_traits<InputIterator>::value_type,
+               base_type<value_type>>) {
     const auto& policy = this->getRowMajorIndexingPolicy();
     this->import(policy, p, p + this->size());
   }  // end of GenericFixedSizeArray
@@ -136,8 +135,7 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr Child&
   GenericFixedSizeArray<Child, ArrayPolicy, N>::operator=(
       const OtherArray& src) noexcept
-    requires(isAssignableTo<OtherArray, Child>())
-  {
+      requires(isAssignableTo<OtherArray, Child>()) {
     auto& child = static_cast<Child&>(*this);
     child.assign(src);
     return child;
@@ -150,8 +148,7 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr Child&
   GenericFixedSizeArray<Child, ArrayPolicy, N>::operator+=(
       const OtherArray& src) noexcept  //
-    requires(isAssignableTo<OtherArray, Child>())
-  {
+      requires(isAssignableTo<OtherArray, Child>()) {
     auto& child = static_cast<Child&>(*this);
     child.addAndAssign(src);
     return child;
@@ -164,8 +161,7 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr Child&
   GenericFixedSizeArray<Child, ArrayPolicy, N>::operator-=(
       const OtherArray& src) noexcept
-    requires(isAssignableTo<OtherArray, Child>())
-  {
+      requires(isAssignableTo<OtherArray, Child>()) {
     auto& child = static_cast<Child&>(*this);
     child.substractAndAssign(src);
     return child;
@@ -178,10 +174,9 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr Child&
   GenericFixedSizeArray<Child, ArrayPolicy, N>::operator*=(
       const ValueType2& s) noexcept  //
-    requires(
-        isAssignableTo<BinaryOperationResult<ValueType2, value_type, OpMult>,
-                       value_type>())
-  {
+      requires(
+          isAssignableTo<BinaryOperationResult<ValueType2, value_type, OpMult>,
+                         value_type>()) {
     auto& child = static_cast<Child&>(*this);
     child.multiplyByScalar(s);
     return child;
@@ -194,10 +189,9 @@ namespace tfel::math {
   TFEL_HOST_DEVICE constexpr Child&
   GenericFixedSizeArray<Child, ArrayPolicy, N>::operator/=(
       const ValueType2& s) noexcept  //
-    requires(
-        isAssignableTo<BinaryOperationResult<value_type, ValueType2, OpDiv>,
-                       value_type>())
-  {
+      requires(
+          isAssignableTo<BinaryOperationResult<value_type, ValueType2, OpDiv>,
+                         value_type>()) {
     auto& child = static_cast<Child&>(*this);
     child.multiplyByScalar(1 / s);
     return child;

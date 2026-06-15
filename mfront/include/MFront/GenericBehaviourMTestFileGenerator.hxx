@@ -21,9 +21,8 @@
 
 namespace mfront {
 
-  struct MTESTFILEGENERATOR_VISIBILITY_EXPORT
-      GenericBehaviourMTestFileGenerator final
-      : public mfront::MTestFileGeneratorBase {
+  struct MTESTFILEGENERATOR_VISIBILITY_EXPORT GenericBehaviourMTestFileGenerator
+      final : public mfront::MTestFileGeneratorBase {
     /*!
      * \brief a small helper structure describing the gradients and
      * thermodynamic forces of the behaviour

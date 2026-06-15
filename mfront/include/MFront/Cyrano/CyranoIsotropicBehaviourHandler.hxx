@@ -22,10 +22,10 @@
 
 namespace cyrano {
 
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL CyranoIsotropicBehaviourHandler {
     TFEL_CYRANO_INLINE static void exe(
         const CyranoReal* const DTIME,

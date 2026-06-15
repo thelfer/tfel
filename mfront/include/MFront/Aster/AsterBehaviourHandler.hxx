@@ -112,10 +112,10 @@ namespace aster {
     using view_type = tfel::math::TMatrixView<N, N, AsterReal>;
   };
 
-  template <tfel::material::ModellingHypothesis::Hypothesis H,
-            template <tfel::material::ModellingHypothesis::Hypothesis,
-                      typename,
-                      bool> class Behaviour>
+  template <
+      tfel::material::ModellingHypothesis::Hypothesis H,
+      template <tfel::material::ModellingHypothesis::Hypothesis, typename, bool>
+      class Behaviour>
   struct TFEL_VISIBILITY_LOCAL AsterBehaviourHandler
       : public AsterInterfaceExceptions {
     /*!
@@ -186,7 +186,7 @@ namespace aster {
         b.setASTERBehaviourDataGradients(STRAN);
         b.setASTERIntegrationDataGradients(DSTRAN);
       }  // end of exe
-    };  // end of struct GradientInitialiserWithoutStressFreeExpansion
+    };   // end of struct GradientInitialiserWithoutStressFreeExpansion
 
     struct TFEL_VISIBILITY_LOCAL StiffnessOperatorInitializer {
       typedef Behaviour<H, AsterReal, false> BV;
@@ -200,7 +200,7 @@ namespace aster {
                                     buas>::exe(data.getStiffnessTensor(),
                                                props);
       }  // end of exe
-    };  // end of struct StiffnessOperatorInitializer
+    };   // end of struct StiffnessOperatorInitializer
 
     struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer {
       typedef Behaviour<H, AsterReal, false> BV;
@@ -212,7 +212,7 @@ namespace aster {
                                                       AsterTraits<BV>::stype>::
             exe(props + o, data.getThermalExpansionCoefficientTensor());
       }  // end of exe
-    };  // end of struct ThermalExpansionCoefficientTensorInitializer
+    };   // end of struct ThermalExpansionCoefficientTensorInitializer
 
     struct TFEL_VISIBILITY_LOCAL DoNothingInitializer {
       typedef Behaviour<H, AsterReal, false> BV;
@@ -473,7 +473,7 @@ namespace aster {
                                              NSTATV);
       }
     }  // end of checkNSTATV
-  };  // end of struct AsterBehaviourHandler
+  };   // end of struct AsterBehaviourHandler
 
 }  // end of namespace aster
 

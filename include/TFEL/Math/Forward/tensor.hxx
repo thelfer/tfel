@@ -57,12 +57,12 @@ namespace tfel::math {
    * \tparam N, the spatial dimension.
    */
   template <unsigned short N>
-    requires((N == 1u) || (N == 2u) || (N == 3u))
-  struct TensorDimeToSize {
+  requires((N == 1u) || (N == 2u) || (N == 3u)) struct TensorDimeToSize {
     static constexpr auto value = []() constexpr -> unsigned short {
       constexpr unsigned short values[4] = {0u, 3u, 5u, 9u};
       return values[N];
-    }();
+    }
+    ();
   };
 
   /*!
@@ -73,13 +73,13 @@ namespace tfel::math {
    * \param value, the spatial dimension.
    */
   template <unsigned short N>
-    requires((N == 3u) || (N == 5u) || (N == 9u))
-  struct TensorSizeToDime {
+  requires((N == 3u) || (N == 5u) || (N == 9u)) struct TensorSizeToDime {
     static constexpr auto value = []() constexpr -> unsigned short {
       constexpr unsigned short values[10] = {0u, 0u, 0u, 1u, 0u,  //
                                              2u, 0u, 0u, 0u, 3u};
       return values[N];
-    }();
+    }
+    ();
   };
 
 }  // end of namespace tfel::math

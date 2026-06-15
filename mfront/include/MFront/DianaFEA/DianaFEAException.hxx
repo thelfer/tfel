@@ -49,8 +49,8 @@ namespace dianafea {
    * \brief exception thrown when an invalid modelling hypothesis is
    * to be used
    */
-  struct MFRONT_DIANAFEA_VISIBILITY_EXPORT
-      DianaFEAInvalidModellingHypothesis final : public DianaFEAException {
+  struct MFRONT_DIANAFEA_VISIBILITY_EXPORT DianaFEAInvalidModellingHypothesis
+      final : public DianaFEAException {
     /*!
      * \param[in] b : behaviour name
      */

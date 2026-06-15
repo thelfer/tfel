@@ -36,7 +36,7 @@ namespace tfel::material {
 
    public:
     //! \brief default constructor
-    IsotropicLinearFourierLaw() {};
+    IsotropicLinearFourierLaw(){};
     /*!
      * Law integration
      */

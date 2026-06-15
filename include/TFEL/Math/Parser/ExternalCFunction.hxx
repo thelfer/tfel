@@ -133,8 +133,8 @@ namespace tfel::math::parser {
   }  // end of ExternalCFunctionBase<N>::getNumberOfVariables() const
 
   template <>
-  struct TFELMATHPARSER_VISIBILITY_EXPORT
-      ExternalCFunctionBase<0u> : public ExternalFunction {
+  struct TFELMATHPARSER_VISIBILITY_EXPORT ExternalCFunctionBase<0u>
+      : public ExternalFunction {
     virtual void setVariableValue(const std::vector<double>::size_type,
                                   const double) override;
     virtual std::vector<double>::size_type getNumberOfVariables()
