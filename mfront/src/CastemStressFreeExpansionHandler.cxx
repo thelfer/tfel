@@ -21,10 +21,10 @@
 namespace castem {
 
   void CastemStandardSmallStrainStressFreeExpansionHandler(
-      CastemReal *const e,
-      CastemReal *const de,
-      const CastemReal *const s0,
-      const CastemReal *const s1,
+      CastemReal* const e,
+      CastemReal* const de,
+      const CastemReal* const s0,
+      const CastemReal* const s1,
       const CastemInt d) {
     constexpr auto cste = tfel::math::Cste<CastemReal>::sqrt2;
     e[0] -= s0[0];
@@ -48,10 +48,10 @@ namespace castem {
   }  // end of CastemStandardSmallStrainStressFreeExpansionHandler
 
   void CastemLogarithmicStrainStressFreeExpansionHandler(
-      CastemReal *const e,
-      CastemReal *const de,
-      const CastemReal *const s0,
-      const CastemReal *const s1,
+      CastemReal* const e,
+      CastemReal* const de,
+      const CastemReal* const s0,
+      const CastemReal* const s1,
       const CastemInt d) {
     constexpr auto cste = tfel::math::Cste<CastemReal>::sqrt2;
     CastemReal log_s0[6];

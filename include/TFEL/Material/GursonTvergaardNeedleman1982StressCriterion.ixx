@@ -27,10 +27,10 @@
 namespace tfel::material {
 
   template <typename StressStensor>
-  std::ostream &operator<<(
-      std::ostream &os,
-      const GursonTvergaardNeedleman1982StressCriterionParameters<StressStensor>
-          &p) {
+  std::ostream& operator<<(
+      std::ostream& os,
+      const GursonTvergaardNeedleman1982StressCriterionParameters<
+          StressStensor>& p) {
     os << "{f_c: " << p.f_c << ", f_r: " << p.f_r << ", q_1: " << p.q_1
        << ", q_2: " << p.q_2 << ", q_3: " << p.q_3 << "}";
     return os;
@@ -39,10 +39,10 @@ namespace tfel::material {
   template <typename StressStensor>
   GursonTvergaardNeedleman1982StressType<StressStensor>
   computeGursonTvergaardNeedleman1982Stress(
-      const StressStensor &sig,
+      const StressStensor& sig,
       const GursonTvergaardNeedleman1982PorosityType<StressStensor> f,
-      const GursonTvergaardNeedleman1982StressCriterionParameters<StressStensor>
-          &p,
+      const GursonTvergaardNeedleman1982StressCriterionParameters<
+          StressStensor>& p,
       const GursonTvergaardNeedleman1982StressType<StressStensor> seps) {
     using istress = GursonTvergaardNeedleman1982InvertStressType<StressStensor>;
     using real = GursonTvergaardNeedleman1982BaseType<StressStensor>;
@@ -133,10 +133,10 @@ namespace tfel::material {
       GursonTvergaardNeedleman1982StressDerivativeWithRespectToPorosityType<
           StressStensor>>
   computeGursonTvergaardNeedleman1982StressNormal(
-      const StressStensor &sig,
+      const StressStensor& sig,
       const GursonTvergaardNeedleman1982PorosityType<StressStensor> f,
-      const GursonTvergaardNeedleman1982StressCriterionParameters<StressStensor>
-          &p,
+      const GursonTvergaardNeedleman1982StressCriterionParameters<
+          StressStensor>& p,
       const GursonTvergaardNeedleman1982StressType<StressStensor> seps) {
     using normal = GursonTvergaardNeedleman1982StressNormalType<StressStensor>;
     using result = std::tuple<
@@ -187,10 +187,10 @@ namespace tfel::material {
       GursonTvergaardNeedleman1982NormalDerivativeWithRespectToPorosityType<
           StressStensor>>
   computeGursonTvergaardNeedleman1982StressSecondDerivative(
-      const StressStensor &sig,
+      const StressStensor& sig,
       const GursonTvergaardNeedleman1982PorosityType<StressStensor> f,
-      const GursonTvergaardNeedleman1982StressCriterionParameters<StressStensor>
-          &p,
+      const GursonTvergaardNeedleman1982StressCriterionParameters<
+          StressStensor>& p,
       const GursonTvergaardNeedleman1982StressType<StressStensor> seps) {
     using namespace tfel::math;
     using normal = GursonTvergaardNeedleman1982StressNormalType<StressStensor>;

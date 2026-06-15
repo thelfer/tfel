@@ -30,7 +30,7 @@
 #include <sstream>
 namespace std {
   template <typename T>
-  std::string to_string(const T &v) {
+  std::string to_string(const T& v) {
     std::ostringstream s;
     s << v;
     return s.str();
@@ -43,10 +43,10 @@ namespace tfel::utilities {
   static std::pair<std::string::const_iterator, std::string> findSeparator(
       const std::string::const_iterator p,
       const std::string::const_iterator pe,
-      const std::vector<std::string> &separators) {
+      const std::vector<std::string>& separators) {
     const auto w = std::string{p, pe};
     std::pair<std::string::const_iterator, std::string> r = {pe, ""};
-    for (const auto &s : separators) {
+    for (const auto& s : separators) {
       const auto pos = w.find(s);
       if (pos != std::string::npos) {
         if (p + pos < r.first) {
@@ -59,14 +59,14 @@ namespace tfel::utilities {
 
   CxxTokenizer::CxxTokenizer() = default;
 
-  CxxTokenizer::CxxTokenizer(const CxxTokenizerOptions &o)
+  CxxTokenizer::CxxTokenizer(const CxxTokenizerOptions& o)
       : CxxTokenizerOptions(o) {}  // end of CxxTokenizer::CxxTokenizer
 
-  CxxTokenizer::CxxTokenizer(const std::string &f) : CxxTokenizer() {
+  CxxTokenizer::CxxTokenizer(const std::string& f) : CxxTokenizer() {
     this->openFile(f);
   }  // end of CxxTokenizer::CxxTokenizer
 
-  CxxTokenizer::CxxTokenizer(const std::string &f, const CxxTokenizerOptions &o)
+  CxxTokenizer::CxxTokenizer(const std::string& f, const CxxTokenizerOptions& o)
       : CxxTokenizerOptions(o) {
     this->openFile(f);
   }  // end of CxxTokenizer::CxxTokenizer
@@ -99,7 +99,7 @@ namespace tfel::utilities {
     this->treatNumbers = b;
   }  // end of CxxTokenizer::extractNumbers
 
-  void CxxTokenizer::openFile(const std::string &f) {
+  void CxxTokenizer::openFile(const std::string& f) {
     std::ifstream file{f};
     raise_if(!file,
              "CxxTokenizer::openFile: "
@@ -109,7 +109,7 @@ namespace tfel::utilities {
     this->parseStream(file, n, " of file '" + f + "'");
   }
 
-  void CxxTokenizer::addSeparator(const std::string &s) {
+  void CxxTokenizer::addSeparator(const std::string& s) {
     if (std::find(this->additional_separators.begin(),
                   this->additional_separators.end(),
                   s) == this->additional_separators.end()) {
@@ -117,16 +117,16 @@ namespace tfel::utilities {
     }
   }  // end of CxxTokenizer::addSeparator
 
-  void CxxTokenizer::parseString(const std::string &s) {
+  void CxxTokenizer::parseString(const std::string& s) {
     std::istringstream iss(s);
     auto n = Token::size_type{};
     this->parseStream(iss, n, " of string '" + s + "'");
   }  // end of CxxTokenizer::parseOneString
 
-  void CxxTokenizer::parseStream(std::istream &in,
-                                 Token::size_type &n,
-                                 const std::string &from) {
-    auto throw_if = [](const bool b, const std::string &m) {
+  void CxxTokenizer::parseStream(std::istream& in,
+                                 Token::size_type& n,
+                                 const std::string& from) {
+    auto throw_if = [](const bool b, const std::string& m) {
       raise_if(b, "CxxTokenizer::parseStream: " + m);
     };
     try {
@@ -138,7 +138,7 @@ namespace tfel::utilities {
         ++n;
         try {
           this->splitLine(line, n);
-        } catch (std::runtime_error &e) {
+        } catch (std::runtime_error& e) {
           raise(std::string(e.what()) + ".\n" +
                 "Error at line: " + std::to_string(n) + from);
         }
@@ -150,7 +150,7 @@ namespace tfel::utilities {
     if (this->addCurlyBraces) {
       this->tokens.insert(this->tokens.begin(), Token("{", 0, 0));
       if (!this->tokens.empty()) {
-        const auto &b = this->tokens.back();
+        const auto& b = this->tokens.back();
         this->tokens.insert(this->tokens.end(), Token("}", b.line + 1u, 0u));
       } else {
         this->tokens.insert(this->tokens.end(), Token("}", 0u, 0u));
@@ -168,7 +168,7 @@ namespace tfel::utilities {
           plus_as_separator(bp),
           minus_as_separator(bm),
           grave_accent_as_separator(ba) {}  // end of is_separator
-    bool operator()(const std::string::value_type &c) const {
+    bool operator()(const std::string::value_type& c) const {
       using ctype = std::string::value_type;
       constexpr std::array<ctype, 24> s = {
           {'?', ';', '/', '!', '&', '*', '|', '{', '}',  '[',  ']', '(',
@@ -206,33 +206,33 @@ namespace tfel::utilities {
     }
   };  // end of struct is_separator_or_space
 
-  static void advance(Token::size_type &o,
-                      std::string::const_iterator &p,
+  static void advance(Token::size_type& o,
+                      std::string::const_iterator& p,
                       Token::size_type n) {
     o += n;
     std::advance(p, n);
   }
 
-  static void advance(Token::size_type &o,
-                      std::string::const_iterator &p,
+  static void advance(Token::size_type& o,
+                      std::string::const_iterator& p,
                       const std::string::const_iterator np) {
     o += Token::size_type(np - p);
     p = np;
   }
 
-  static void ignore_space(Token::size_type &o,
-                           std::string::const_iterator &p,
+  static void ignore_space(Token::size_type& o,
+                           std::string::const_iterator& p,
                            const std::string::const_iterator pe) {
     auto np = std::find_if_not(
         p, pe, [](const std::string::value_type c) { return std::isspace(c); });
     advance(o, p, np);
   }
 
-  void CxxTokenizer::parseChar(Token::size_type &o,
-                               std::string::const_iterator &p,
+  void CxxTokenizer::parseChar(Token::size_type& o,
+                               std::string::const_iterator& p,
                                const std::string::const_iterator pe,
                                const Token::size_type n) {
-    auto throw_if = [](const bool b, const std::string &m) {
+    auto throw_if = [](const bool b, const std::string& m) {
       raise_if(b, "CxxTokenizer::parseCChar: " + m);
     };
     if (this->charAsString) {
@@ -258,12 +258,12 @@ namespace tfel::utilities {
     }
   }
 
-  void CxxTokenizer::parseString(Token::size_type &o,
-                                 std::string::const_iterator &p,
+  void CxxTokenizer::parseString(Token::size_type& o,
+                                 std::string::const_iterator& p,
                                  const std::string::const_iterator pe,
                                  const Token::size_type n,
                                  const char e) {
-    auto throw_if = [](const bool b, const std::string &m) {
+    auto throw_if = [](const bool b, const std::string& m) {
       raise_if(b, "CxxTokenizer::parseString: " + m);
     };
     auto ps = std::next(p, 1);
@@ -284,7 +284,7 @@ namespace tfel::utilities {
     if (((!this->tokens.empty()) &&
          (this->tokens.back().flag == Token::String)) &&
         (*p == '\"') && (this->shallMergeStrings)) {
-      auto &value = this->tokens.back().value;
+      auto& value = this->tokens.back().value;
       this->tokens.back().value =
           value.substr(0, value.size() - 1) + std::string(p + 1, ps);
     } else {
@@ -293,8 +293,8 @@ namespace tfel::utilities {
     advance(o, p, ps);
   }
 
-  void CxxTokenizer::try_join(Token::size_type &o,
-                              std::string::const_iterator &p,
+  void CxxTokenizer::try_join(Token::size_type& o,
+                              std::string::const_iterator& p,
                               const std::string::const_iterator pe,
                               const Token::size_type n,
                               const char c) {
@@ -313,8 +313,8 @@ namespace tfel::utilities {
     }
   }  // end of CxxTokenizer::try_join
 
-  void CxxTokenizer::try_join(Token::size_type &o,
-                              std::string::const_iterator &p,
+  void CxxTokenizer::try_join(Token::size_type& o,
+                              std::string::const_iterator& p,
                               const std::string::const_iterator pe,
                               const Token::size_type n,
                               const char c1,
@@ -334,11 +334,11 @@ namespace tfel::utilities {
     }
   }  // end of CxxTokenizer::try_join
 
-  void CxxTokenizer::parseNumber(Token::size_type &o,
-                                 std::string::const_iterator &p,
+  void CxxTokenizer::parseNumber(Token::size_type& o,
+                                 std::string::const_iterator& p,
                                  const std::string::const_iterator pe,
                                  const Token::size_type n) {
-    auto throw_if = [](const bool b, const std::string &m) {
+    auto throw_if = [](const bool b, const std::string& m) {
       raise_if(b, "CxxTokenizer::parseNumber: " + m);
     };
     auto is_binary = [](const char c) { return (c == '0') || (c == '1'); };
@@ -527,11 +527,11 @@ namespace tfel::utilities {
     advance(o, p, d);
   }  // end of CxxTokenizer::parseNumber
 
-  void CxxTokenizer::parseCComment(Token::size_type &o,
-                                   std::string::const_iterator &p,
+  void CxxTokenizer::parseCComment(Token::size_type& o,
+                                   std::string::const_iterator& p,
                                    const std::string::const_iterator pe,
                                    const Token::size_type n) {
-    auto throw_if = [](const bool b, const std::string &m) {
+    auto throw_if = [](const bool b, const std::string& m) {
       raise_if(b, "CxxTokenizer::parseCComment: " + m);
     };
     auto get_end = [&pe](const std::string::const_iterator cp)
@@ -603,11 +603,11 @@ namespace tfel::utilities {
     }
   }
 
-  void CxxTokenizer::parseCxxComment(Token::size_type &o,
-                                     std::string::const_iterator &p,
+  void CxxTokenizer::parseCxxComment(Token::size_type& o,
+                                     std::string::const_iterator& p,
                                      const std::string::const_iterator pe,
                                      const Token::size_type n) {
-    auto throw_if = [](const bool b, const std::string &m) {
+    auto throw_if = [](const bool b, const std::string& m) {
       raise_if(b, "CxxTokenizer::parseCxxComment: " + m);
     };
     auto next_token = [this, &p, &o] {
@@ -642,8 +642,8 @@ namespace tfel::utilities {
     advance(o, p, pe - p);
   }
 
-  void CxxTokenizer::parseRawString(Token::size_type &o,
-                                    std::string::const_iterator &p,
+  void CxxTokenizer::parseRawString(Token::size_type& o,
+                                    std::string::const_iterator& p,
                                     const std::string::const_iterator pe,
                                     const Token::size_type n) {
     auto findDelimiter = [this, pe](std::string::const_iterator c) {
@@ -667,7 +667,7 @@ namespace tfel::utilities {
       return *c == '\"';
     };
     this->tokens.emplace_back("", n, o, Token::String);
-    auto &value = this->tokens.back().value;
+    auto& value = this->tokens.back().value;
     while (p != pe) {
       if (findDelimiter(p)) {
         advance(o, p, this->currentRawStringDelimiter.size() + 2);
@@ -682,18 +682,18 @@ namespace tfel::utilities {
   }  // end of parseRawString
 
   void CxxTokenizer::parsePreprocessorDirective(
-      Token::size_type &o,
-      std::string::const_iterator &p,
+      Token::size_type& o,
+      std::string::const_iterator& p,
       const std::string::const_iterator,
       const std::string::const_iterator pe,
       const Token::size_type n) {
-    auto is_preprocessor_keyword = [](const std::string &k) {
-      const std::array<const char *, 13> keys = {
+    auto is_preprocessor_keyword = [](const std::string& k) {
+      const std::array<const char*, 13> keys = {
           {"#define", "#undef", "#include", "#line", "#error", "#if", "#ifdef",
            "#ifndef", "#elif", "#else", "#endif", "#pragma", "#warning"}};
       return std::find(keys.begin(), keys.end(), k) != keys.end();
     };
-    auto throw_if = [](const bool c, const std::string &m) {
+    auto throw_if = [](const bool c, const std::string& m) {
       raise_if(c, "CxxTokenizer::parsePreprocessorDirective: " + m);
     };
     // preprocessor
@@ -716,12 +716,12 @@ namespace tfel::utilities {
     this->parseStandardLine(o, p, p, pe, n);
   }  // end of CxxTokenizer::parsePreprocessorDirective
 
-  void CxxTokenizer::parseStandardLine(Token::size_type &o,
-                                       std::string::const_iterator &p,
+  void CxxTokenizer::parseStandardLine(Token::size_type& o,
+                                       std::string::const_iterator& p,
                                        const std::string::const_iterator b,
                                        const std::string::const_iterator pe,
                                        const Token::size_type n) {
-    auto throw_if = [](const bool c, const std::string &m) {
+    auto throw_if = [](const bool c, const std::string& m) {
       raise_if(c, "CxxTokenizer::parseStandardLine: " + m);
     };
     ignore_space(o, p, pe);
@@ -897,9 +897,9 @@ namespace tfel::utilities {
     }
   }
 
-  void CxxTokenizer::splitLine(const std::string &line,
+  void CxxTokenizer::splitLine(const std::string& line,
                                const Token::size_type n) {
-    auto throw_if = [](const bool b, const std::string &m) {
+    auto throw_if = [](const bool b, const std::string& m) {
       raise_if(b, "CxxTokenizer::splitLine: " + m);
     };
     auto b = line.begin();
@@ -1005,10 +1005,10 @@ namespace tfel::utilities {
     }
   }  // end of CxxTokenizer::stripComments
 
-  void CxxTokenizer::printFileTokens(std::ostream &out) const {
+  void CxxTokenizer::printFileTokens(std::ostream& out) const {
     auto p = this->tokens.begin();
     auto line = p->line;
-    for (const auto &t : this->tokens) {
+    for (const auto& t : this->tokens) {
       if (t.line != line) {
         out << '\n';
         line = t.line;
@@ -1056,7 +1056,7 @@ namespace tfel::utilities {
     return true;
   }  // end of CxxTokenizer::isValidIdentifier
 
-  bool CxxTokenizer::isValidFunctionIdentifier(const std::string &s,
+  bool CxxTokenizer::isValidFunctionIdentifier(const std::string& s,
                                                const bool checkCxxKeywords) {
     if (s.empty()) {
       return false;
@@ -1096,7 +1096,7 @@ namespace tfel::utilities {
     return true;
   }  // end of CxxTokenizer::isValidFunctionIdentifier
 
-  const Token &CxxTokenizer::operator[](const size_type i) const {
+  const Token& CxxTokenizer::operator[](const size_type i) const {
     raise_if<std::out_of_range>(i >= this->size(), "CxxTokenizer::operator[]");
     const auto p = std::next(this->begin(), i);
     return *p;
@@ -1152,15 +1152,15 @@ namespace tfel::utilities {
     this->comments.clear();
   }  // end of CxxTokenizer::clear
 
-  void CxxTokenizer::checkNotEndOfLine(const std::string &method,
-                                       const_iterator &p,
+  void CxxTokenizer::checkNotEndOfLine(const std::string& method,
+                                       const_iterator& p,
                                        const const_iterator pe) {
     raise_if(p == pe, method + " : unexpected end of line");
   }  // end of CxxTokenizer::checkNotEndOfLine
 
-  void CxxTokenizer::checkNotEndOfLine(const std::string &method,
-                                       const std::string &error,
-                                       const_iterator &p,
+  void CxxTokenizer::checkNotEndOfLine(const std::string& method,
+                                       const std::string& error,
+                                       const_iterator& p,
                                        const const_iterator pe) {
     if (p == pe) {
       auto msg = method + ": unexpected end of line";
@@ -1171,9 +1171,9 @@ namespace tfel::utilities {
     }
   }  // end of CxxTokenizer::checkNotEndOfLine
 
-  void CxxTokenizer::readSpecifiedToken(const std::string &method,
-                                        const std::string &value,
-                                        const_iterator &p,
+  void CxxTokenizer::readSpecifiedToken(const std::string& method,
+                                        const std::string& value,
+                                        const_iterator& p,
                                         const const_iterator pe) {
     CxxTokenizer::checkNotEndOfLine(method, "expected '" + value + "'", p, pe);
     raise_if(p->value != value, method + ": unexpected token '" + p->value +
@@ -1183,7 +1183,7 @@ namespace tfel::utilities {
     ++p;
   }  // end of CxxTokenizer::readSpecifiedToken
 
-  std::string CxxTokenizer::readString(const_iterator &p,
+  std::string CxxTokenizer::readString(const_iterator& p,
                                        const const_iterator pe) {
     CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readString", "", p, pe);
     raise_if(p->flag != Token::String,
@@ -1198,7 +1198,7 @@ namespace tfel::utilities {
     return value;
   }  // end of CxxTokenizer::readString
 
-  double CxxTokenizer::readDouble(const_iterator &p, const const_iterator pe)
+  double CxxTokenizer::readDouble(const_iterator& p, const const_iterator pe)
 
   {
     double res;
@@ -1222,7 +1222,7 @@ namespace tfel::utilities {
 #else
     try {
       res = convert<double>(value);
-    } catch (std::exception &e) {
+    } catch (std::exception& e) {
       raise(
           "CxxTokenizer::readDouble: "
           "could not read value from token "
@@ -1234,7 +1234,7 @@ namespace tfel::utilities {
     return res;
   }  // end of CxxTokenizer::readDouble
 
-  int CxxTokenizer::readInt(const_iterator &p, const const_iterator pe)
+  int CxxTokenizer::readInt(const_iterator& p, const const_iterator pe)
 
   {
     int res;
@@ -1258,7 +1258,7 @@ namespace tfel::utilities {
     return res;
   }  // end of CxxTokenizer::readInt
 
-  unsigned int CxxTokenizer::readUnsignedInt(const_iterator &p,
+  unsigned int CxxTokenizer::readUnsignedInt(const_iterator& p,
                                              const const_iterator pe) {
     unsigned int res;
     CxxTokenizer::checkNotEndOfLine("CxxTokenizer::readUnsignedInt",
@@ -1283,11 +1283,11 @@ namespace tfel::utilities {
     return res;
   }  // end of CxxTokenizer::readUnsignedInt
 
-  void CxxTokenizer::readList(std::vector<Token> &l,
-                              const std::string &m,
-                              const std::string &db,
-                              const std::string &de,
-                              const_iterator &p,
+  void CxxTokenizer::readList(std::vector<Token>& l,
+                              const std::string& m,
+                              const std::string& db,
+                              const std::string& de,
+                              const_iterator& p,
                               const const_iterator pe) {
     CxxTokenizer::readSpecifiedToken(m, db, p, pe);
     CxxTokenizer::checkNotEndOfLine(m, p, pe);
@@ -1311,19 +1311,19 @@ namespace tfel::utilities {
     CxxTokenizer::readSpecifiedToken(m, de, p, pe);
   }
 
-  std::vector<Token> CxxTokenizer::readList(const std::string &m,
-                                            const std::string &db,
-                                            const std::string &de,
-                                            const_iterator &p,
+  std::vector<Token> CxxTokenizer::readList(const std::string& m,
+                                            const std::string& db,
+                                            const std::string& de,
+                                            const_iterator& p,
                                             const const_iterator pe) {
     std::vector<Token> l;
     CxxTokenizer::readList(l, m, db, de, p, pe);
     return l;
   }
 
-  void CxxTokenizer::readArray(const std::string &m,
-                               std::vector<std::string> &v,
-                               const_iterator &p,
+  void CxxTokenizer::readArray(const std::string& m,
+                               std::vector<std::string>& v,
+                               const_iterator& p,
                                const const_iterator pe) {
     CxxTokenizer::readSpecifiedToken(m, "{", p, pe);
     CxxTokenizer::checkNotEndOfLine(m, p, pe);
@@ -1344,8 +1344,8 @@ namespace tfel::utilities {
     CxxTokenizer::readSpecifiedToken(m, "}", p, pe);
   }  // end of CxxTokenizer::readArray
 
-  std::vector<std::string> CxxTokenizer::readArray(const std::string &m,
-                                                   const_iterator &p,
+  std::vector<std::string> CxxTokenizer::readArray(const std::string& m,
+                                                   const_iterator& p,
                                                    const const_iterator pe) {
     std::vector<std::string> v;
     CxxTokenizer::readArray(m, v, p, pe);
@@ -1353,7 +1353,7 @@ namespace tfel::utilities {
   }  // end of CxxTokenizer::readArray
 
   std::vector<std::string> CxxTokenizer::readStringArray(
-      const_iterator &p, const const_iterator pe) {
+      const_iterator& p, const const_iterator pe) {
     const std::string m = "CxxTokenizer::readStringArray";
     CxxTokenizer::readSpecifiedToken(m, "{", p, pe);
     CxxTokenizer::checkNotEndOfLine(m, p, pe);

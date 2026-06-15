@@ -14,8 +14,8 @@
 #include "MFront/Castem/CastemRotationMatrix.hxx"
 
 namespace castem {
-  CastemRotationMatrix2D::CastemRotationMatrix2D(const CastemReal *const V,
-                                                 const CastemReal *const drot) {
+  CastemRotationMatrix2D::CastemRotationMatrix2D(const CastemReal* const V,
+                                                 const CastemReal* const drot) {
     // Premier vecteur
     // a[1,1]
     a[0] = drot[0] * V[0] + drot[3] * V[1];
@@ -30,8 +30,8 @@ namespace castem {
   }  // end of CastemRotationMatrix2D::CastemRotationMatrix2D
 
   // Compute strains in the material space
-  void CastemRotationMatrix2D::rotateStrainsForward(const CastemReal *const e,
-                                                    CastemReal *const em) {
+  void CastemRotationMatrix2D::rotateStrainsForward(const CastemReal* const e,
+                                                    CastemReal* const em) {
     em[0] = a[0] * a[1] * e[3] + a[1] * a[1] * e[1] + a[0] * a[0] * e[0];
     em[1] = a[2] * a[3] * e[3] + a[3] * a[3] * e[1] + a[2] * a[2] * e[0];
     em[2] = e[2];
@@ -40,8 +40,8 @@ namespace castem {
   }  // end of CastemRotationMatrix2D::rotateStrainsForward
 
   // Compute strains back in the global space
-  void CastemRotationMatrix2D::rotateStrainsBackward(const CastemReal *const e,
-                                                     CastemReal *const eg) {
+  void CastemRotationMatrix2D::rotateStrainsBackward(const CastemReal* const e,
+                                                     CastemReal* const eg) {
     eg[0] = a[0] * a[2] * e[3] + a[2] * a[2] * e[1] + a[0] * a[0] * e[0];
     eg[1] = a[1] * a[3] * e[3] + a[3] * a[3] * e[1] + a[1] * a[1] * e[0];
     eg[2] = e[2];
@@ -50,8 +50,8 @@ namespace castem {
   }  // end of CastemRotationMatrix2D::rotateStrainsBackward
 
   // Compute stresses in the material space
-  void CastemRotationMatrix2D::rotateStressesForward(const CastemReal *const s,
-                                                     CastemReal *const sm) {
+  void CastemRotationMatrix2D::rotateStressesForward(const CastemReal* const s,
+                                                     CastemReal* const sm) {
     sm[0] = 2 * a[0] * a[1] * s[3] + a[1] * a[1] * s[1] + a[0] * a[0] * s[0];
     sm[1] = 2 * a[2] * a[3] * s[3] + a[3] * a[3] * s[1] + a[2] * a[2] * s[0];
     sm[2] = s[2];
@@ -60,8 +60,8 @@ namespace castem {
   }  // end of CastemRotationMatrix2D::rotateStressesForward
 
   // Compute stresses back in the global space
-  void CastemRotationMatrix2D::rotateStressesBackward(const CastemReal *const s,
-                                                      CastemReal *const sg) {
+  void CastemRotationMatrix2D::rotateStressesBackward(const CastemReal* const s,
+                                                      CastemReal* const sg) {
     sg[0] = 2 * a[0] * a[2] * s[3] + a[2] * a[2] * s[1] + a[0] * a[0] * s[0];
     sg[1] = 2 * a[1] * a[3] * s[3] + a[3] * a[3] * s[1] + a[1] * a[1] * s[0];
     sg[2] = s[2];
@@ -70,7 +70,7 @@ namespace castem {
   }  // end of CastemRotationMatrix2D::rotateStressesBackward
 
   void CastemRotationMatrix2D::rotateDeformationGradientForward(
-      const CastemReal *const F, CastemReal *const Fm) {
+      const CastemReal* const F, CastemReal* const Fm) {
     Fm[0] = a[1] * a[1] * F[4] + a[0] * a[1] * F[3] + a[0] * a[1] * F[1] +
             a[0] * a[0] * F[0];
     Fm[1] = a[1] * a[3] * F[4] + a[1] * a[2] * F[3] + a[0] * a[3] * F[1] +
@@ -87,7 +87,7 @@ namespace castem {
   }  // end of CastemRotationMatrix2D::rotateDeformationGradientForward
 
   void CastemRotationMatrix2D::rotateTangentOperatorBackward(
-      CastemReal *const D) const {
+      CastemReal* const D) const {
     CastemReal MN[4][4];
     // Première ligne
     MN[0][0] = a[0] * a[0];
@@ -144,8 +144,8 @@ namespace castem {
     }
   }  // end of CastemRotationMatrix2D::rotateTangentOperatorBackward
 
-  CastemRotationMatrix3D::CastemRotationMatrix3D(const CastemReal *const V,
-                                                 const CastemReal *const drot) {
+  CastemRotationMatrix3D::CastemRotationMatrix3D(const CastemReal* const V,
+                                                 const CastemReal* const drot) {
     // Premier vecteur
     a[0] = drot[0] * V[0] + drot[3] * V[1] + drot[6] * V[2];
     a[1] = drot[1] * V[0] + drot[4] * V[1] + drot[7] * V[2];
@@ -162,8 +162,8 @@ namespace castem {
   }  // end of CastemRotationMatrix3D::CastemRotationMatrix3D
 
   // Compute strains in the material space
-  void CastemRotationMatrix3D::rotateStrainsForward(const CastemReal *const e,
-                                                    CastemReal *const em) {
+  void CastemRotationMatrix3D::rotateStrainsForward(const CastemReal* const e,
+                                                    CastemReal* const em) {
     em[0] = a[1] * a[2] * e[5] + a[0] * a[2] * e[4] + a[0] * a[1] * e[3] +
             a[2] * a[2] * e[2] + a[1] * a[1] * e[1] + a[0] * a[0] * e[0];
     em[1] = a[4] * a[5] * e[5] + a[3] * a[5] * e[4] + a[3] * a[4] * e[3] +
@@ -185,8 +185,8 @@ namespace castem {
   }  // end of CastemRotationMatrix3D::rotateStrainsForward
 
   // Compute strains back in the global space
-  void CastemRotationMatrix3D::rotateStrainsBackward(const CastemReal *const e,
-                                                     CastemReal *const eg) {
+  void CastemRotationMatrix3D::rotateStrainsBackward(const CastemReal* const e,
+                                                     CastemReal* const eg) {
     eg[0] = a[3] * a[6] * e[5] + a[0] * a[6] * e[4] + a[0] * a[3] * e[3] +
             a[6] * a[6] * e[2] + a[3] * a[3] * e[1] + a[0] * a[0] * e[0];
     eg[1] = a[4] * a[7] * e[5] + a[1] * a[7] * e[4] + a[1] * a[4] * e[3] +
@@ -208,8 +208,8 @@ namespace castem {
   }  // end of CastemRotationMatrix3D::rotateStrainsBackward
 
   // Compute stresses in the material space
-  void CastemRotationMatrix3D::rotateStressesForward(const CastemReal *const s,
-                                                     CastemReal *const sm) {
+  void CastemRotationMatrix3D::rotateStressesForward(const CastemReal* const s,
+                                                     CastemReal* const sm) {
     sm[0] = 2 * a[1] * a[2] * s[5] + 2 * a[0] * a[2] * s[4] +
             2 * a[0] * a[1] * s[3] + a[2] * a[2] * s[2] + a[1] * a[1] * s[1] +
             a[0] * a[0] * s[0];
@@ -234,8 +234,8 @@ namespace castem {
   }  // end of CastemRotationMatrix3D::rotateStressesForward
 
   // Compute stresses back in the global space
-  void CastemRotationMatrix3D::rotateStressesBackward(const CastemReal *const s,
-                                                      CastemReal *const sg) {
+  void CastemRotationMatrix3D::rotateStressesBackward(const CastemReal* const s,
+                                                      CastemReal* const sg) {
     sg[0] = 2 * a[3] * a[6] * s[5] + 2 * a[0] * a[6] * s[4] +
             2 * a[0] * a[3] * s[3] + a[6] * a[6] * s[2] + a[3] * a[3] * s[1] +
             a[0] * a[0] * s[0];
@@ -260,7 +260,7 @@ namespace castem {
   }  // end of CastemRotationMatrix3D::rotateStressesBackward
 
   void CastemRotationMatrix3D::rotateDeformationGradientForward(
-      const CastemReal *const F, CastemReal *const Fm) {
+      const CastemReal* const F, CastemReal* const Fm) {
     Fm[0] = a[2] * a[2] * F[8] + a[1] * a[2] * F[7] + a[0] * a[2] * F[6] +
             a[1] * a[2] * F[5] + a[1] * a[1] * F[4] + a[0] * a[1] * F[3] +
             a[0] * a[2] * F[2] + a[0] * a[1] * F[1] + a[0] * a[0] * F[0];
@@ -291,7 +291,7 @@ namespace castem {
   }  // end of CastemRotationMatrix3D::rotateDeformationGradientForward
 
   void CastemRotationMatrix3D::rotateDeformationGradientBackward(
-      const CastemReal *const F, CastemReal *const Fg) {
+      const CastemReal* const F, CastemReal* const Fg) {
     Fg[0] = a[6] * a[6] * F[8] + a[3] * a[6] * F[7] + a[0] * a[6] * F[6] +
             a[3] * a[6] * F[5] + a[3] * a[3] * F[4] + a[0] * a[3] * F[3] +
             a[0] * a[6] * F[2] + a[0] * a[3] * F[1] + a[0] * a[0] * F[0];
@@ -322,7 +322,7 @@ namespace castem {
   }
 
   void CastemRotationMatrix3D::rotateTangentOperatorBackward(
-      CastemReal *const D) const {
+      CastemReal* const D) const {
     CastemReal MN[6][6];
     // Contruction de la matrice de passage N (pour les tenseurs)
     // Première ligne

@@ -39,9 +39,9 @@ namespace mfront {
      * \param[in] f    : behaviour domain specific language
      */
     MaterialPropertyDocumentationGenerator(const int,
-                                           const char *const *const,
+                                           const char* const* const,
                                            std::shared_ptr<MaterialPropertyDSL>,
-                                           const std::string &);
+                                           const std::string&);
     //! treat the requests
     void exe() const override;
     //! destructor
@@ -50,20 +50,20 @@ namespace mfront {
     struct VariableInformation
         : DocumentationGeneratorBase::VariableInformationBase {
       VariableInformation();
-      VariableInformation(VariableInformation &&) noexcept;
-      VariableInformation(const VariableInformation &);
-      VariableInformation &operator=(VariableInformation &&);
-      VariableInformation &operator=(const VariableInformation &);
+      VariableInformation(VariableInformation&&) noexcept;
+      VariableInformation(const VariableInformation&);
+      VariableInformation& operator=(VariableInformation&&);
+      VariableInformation& operator=(const VariableInformation&);
       ~VariableInformation() noexcept;
     };
 
    private:
-    void writeWebOutput(std::ostream &,
-                        const MaterialPropertyDescription &,
-                        const FileDescription &) const;
-    void writeFullOutput(std::ostream &,
-                         const MaterialPropertyDescription &,
-                         const FileDescription &) const;
+    void writeWebOutput(std::ostream&,
+                        const MaterialPropertyDescription&,
+                        const FileDescription&) const;
+    void writeFullOutput(std::ostream&,
+                         const MaterialPropertyDescription&,
+                         const FileDescription&) const;
     //! abstract behaviour dsl
     std::shared_ptr<MaterialPropertyDSL> dsl;
   };  // end of struct MaterialPropertyDocumentationGenerator

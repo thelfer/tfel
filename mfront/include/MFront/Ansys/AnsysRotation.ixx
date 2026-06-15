@@ -27,8 +27,8 @@ namespace ansys {
   // eg : Déformations dans le repère global
   // em : Déformations dans le repère matériau
   template <typename real>
-  void AnsysRotation2D<real>::rotateStrainsForward(const real *const eg,
-                                                   real *const em) {
+  void AnsysRotation2D<real>::rotateStrainsForward(const real* const eg,
+                                                   real* const em) {
     em[0] = a[0] * a[1] * eg[3] + a[1] * a[1] * eg[1] + a[0] * a[0] * eg[0];
     em[1] = a[2] * a[3] * eg[3] + a[3] * a[3] * eg[1] + a[2] * a[2] * eg[0];
     em[2] = eg[2];
@@ -41,8 +41,8 @@ namespace ansys {
   // em : Contraintes dans le repère matériau
   // eg : Contraintes dans le repère global
   template <typename real>
-  void AnsysRotation2D<real>::rotateStrainsBackward(const real *const em,
-                                                    real *const eg) {
+  void AnsysRotation2D<real>::rotateStrainsBackward(const real* const em,
+                                                    real* const eg) {
     eg[0] = a[0] * a[2] * em[3] + a[2] * a[2] * em[1] + a[0] * a[0] * em[0];
     eg[1] = a[1] * a[3] * em[3] + a[3] * a[3] * em[1] + a[1] * a[1] * em[0];
     eg[2] = em[2];
@@ -55,8 +55,8 @@ namespace ansys {
   // sg : Contraintes dans le repère global
   // sm : Contraintes dans le repère matériau
   template <typename real>
-  void AnsysRotation2D<real>::rotateStressesForward(const real *const sg,
-                                                    real *const sm) {
+  void AnsysRotation2D<real>::rotateStressesForward(const real* const sg,
+                                                    real* const sm) {
     sm[0] = 2 * a[0] * a[1] * sg[3] + a[1] * a[1] * sg[1] + a[0] * a[0] * sg[0];
     sm[1] = 2 * a[2] * a[3] * sg[3] + a[3] * a[3] * sg[1] + a[2] * a[2] * sg[0];
     sm[2] = sg[2];
@@ -69,8 +69,8 @@ namespace ansys {
   // sm : Contraintes dans le repère matériau
   // sg : Contraintes dans le repère global
   template <typename real>
-  void AnsysRotation2D<real>::rotateStressesBackward(const real *const sm,
-                                                     real *const sg) {
+  void AnsysRotation2D<real>::rotateStressesBackward(const real* const sm,
+                                                     real* const sg) {
     sg[0] = 2 * a[0] * a[2] * sm[3] + a[2] * a[2] * sm[1] + a[0] * a[0] * sm[0];
     sg[1] = 2 * a[1] * a[3] * sm[3] + a[3] * a[3] * sm[1] + a[1] * a[1] * sm[0];
     sg[2] = sm[2];
@@ -80,7 +80,7 @@ namespace ansys {
 
   template <typename real>
   void AnsysRotation2D<real>::rotateDeformationGradientForward(
-      const real *const F, real *const Fm) {
+      const real* const F, real* const Fm) {
     Fm[0] = a[1] * a[1] * F[4] + a[0] * a[1] * F[3] + a[0] * a[1] * F[1] +
             a[0] * a[0] * F[0];
     Fm[1] = a[1] * a[3] * F[4] + a[1] * a[2] * F[3] + a[0] * a[3] * F[1] +
@@ -100,7 +100,7 @@ namespace ansys {
   // D^g=tN:D^m:N
   template <typename real>
   void AnsysRotation2D<real>::rotateTangentOperatorBackward(
-      real *const D) const {
+      real* const D) const {
     real MN[4][4];
     // Première ligne
     MN[0][0] = a[0] * a[0];
@@ -176,8 +176,8 @@ namespace ansys {
   // eg : Déformations dans le repère global
   // em : Déformations dans le repère matériau
   template <typename real>
-  void AnsysRotation3D<real>::rotateStrainsForward(const real *const eg,
-                                                   real *const em) {
+  void AnsysRotation3D<real>::rotateStrainsForward(const real* const eg,
+                                                   real* const em) {
     em[0] = a[1] * a[2] * eg[4] + a[0] * a[2] * eg[5] + a[0] * a[1] * eg[3] +
             a[2] * a[2] * eg[2] + a[1] * a[1] * eg[1] + a[0] * a[0] * eg[0];
     em[1] = a[4] * a[5] * eg[4] + a[3] * a[5] * eg[5] + a[3] * a[4] * eg[3] +
@@ -203,8 +203,8 @@ namespace ansys {
   // em : Contraintes dans le repère matériau
   // eg : Contraintes dans le repère global
   template <typename real>
-  void AnsysRotation3D<real>::rotateStrainsBackward(const real *const em,
-                                                    real *const eg) {
+  void AnsysRotation3D<real>::rotateStrainsBackward(const real* const em,
+                                                    real* const eg) {
     eg[0] = a[3] * a[6] * em[4] + a[0] * a[6] * em[5] + a[0] * a[3] * em[3] +
             a[6] * a[6] * em[2] + a[3] * a[3] * em[1] + a[0] * a[0] * em[0];
     eg[1] = a[4] * a[7] * em[4] + a[1] * a[7] * em[5] + a[1] * a[4] * em[3] +
@@ -230,8 +230,8 @@ namespace ansys {
   // sg : Contraintes dans le repère global
   // sm : Contraintes dans le repère matériau
   template <typename real>
-  void AnsysRotation3D<real>::rotateStressesForward(const real *const sg,
-                                                    real *const sm) {
+  void AnsysRotation3D<real>::rotateStressesForward(const real* const sg,
+                                                    real* const sm) {
     sm[0] = 2 * a[1] * a[2] * sg[4] + 2 * a[0] * a[2] * sg[5] +
             2 * a[0] * a[1] * sg[3] + a[2] * a[2] * sg[2] +
             a[1] * a[1] * sg[1] + a[0] * a[0] * sg[0];
@@ -260,8 +260,8 @@ namespace ansys {
   // sm : Contraintes dans le repère matériau
   // sg : Contraintes dans le repère global
   template <typename real>
-  void AnsysRotation3D<real>::rotateStressesBackward(const real *const sm,
-                                                     real *const sg) {
+  void AnsysRotation3D<real>::rotateStressesBackward(const real* const sm,
+                                                     real* const sg) {
     sg[0] = 2 * a[3] * a[6] * sm[4] + 2 * a[0] * a[6] * sm[5] +
             2 * a[0] * a[3] * sm[3] + a[6] * a[6] * sm[2] +
             a[3] * a[3] * sm[1] + a[0] * a[0] * sm[0];
@@ -287,7 +287,7 @@ namespace ansys {
 
   template <typename real>
   void AnsysRotation3D<real>::rotateDeformationGradientForward(
-      const real *const F, real *const Fm) {
+      const real* const F, real* const Fm) {
     Fm[0] = a[2] * a[2] * F[8] + a[1] * a[2] * F[7] + a[0] * a[2] * F[6] +
             a[1] * a[2] * F[5] + a[1] * a[1] * F[4] + a[0] * a[1] * F[3] +
             a[0] * a[2] * F[2] + a[0] * a[1] * F[1] + a[0] * a[0] * F[0];
@@ -320,8 +320,8 @@ namespace ansys {
   // compute the stiffness matrix in the global space
   template <typename real>
   void AnsysRotation3D<real>::rotateTangentOperatorBackward(
-      real *const D) const {
-    auto aD = [&D](const size_t i, const size_t j) -> real & {
+      real* const D) const {
+    auto aD = [&D](const size_t i, const size_t j) -> real& {
       return D[j * 6 + i];
     };
     // convert D to Abaqus conventions

@@ -190,11 +190,11 @@ namespace castem {
        *                      at the beginning of the time step
        */
       TFEL_CASTEM_INLINE static void exe(
-          BData &bData,
-          IData &iData,
-          const CastemReal *const STRAN,
-          const CastemReal *const DSTRAN,
-          const StressFreeExpansionHandler &sfeh) {
+          BData& bData,
+          IData& iData,
+          const CastemReal* const STRAN,
+          const CastemReal* const DSTRAN,
+          const StressFreeExpansionHandler& sfeh) {
         using Traits = tfel::material::MechanicalBehaviourTraits<BV>;
         using StressFreeExpansionType = typename BV::StressFreeExpansionType;
         CastemReal dv0[CastemTraits<BV>::GradientSize];
@@ -210,8 +210,8 @@ namespace castem {
         std::pair<StressFreeExpansionType, StressFreeExpansionType> s;
         BV b(bData, iData);
         b.computeStressFreeExpansion(s);
-        const auto &s0 = s.first;
-        const auto &s1 = s.second;
+        const auto& s0 = s.first;
+        const auto& s1 = s.second;
         sfeh(dv0, dv1, &s0[0], &s1[0], CastemInt(N));
         bData.setCASTEMBehaviourDataGradients(dv0);
         iData.setCASTEMIntegrationDataGradients(dv1);
@@ -226,10 +226,10 @@ namespace castem {
        *                      at the beginning of the time step
        */
       TFEL_CASTEM_INLINE static void exe(
-          BV &b,
-          const CastemReal *const STRAN,
-          const CastemReal *const DSTRAN,
-          const StressFreeExpansionHandler &sfeh) {
+          BV& b,
+          const CastemReal* const STRAN,
+          const CastemReal* const DSTRAN,
+          const StressFreeExpansionHandler& sfeh) {
         using std::pair;
         using tfel::fsalgo::copy;
         using tfel::material::MechanicalBehaviourTraits;
@@ -245,8 +245,8 @@ namespace castem {
         }
         pair<StressFreeExpansionType, StressFreeExpansionType> s;
         b.computeStressFreeExpansion(s);
-        const auto &s0 = s.first;
-        const auto &s1 = s.second;
+        const auto& s0 = s.first;
+        const auto& s1 = s.second;
         sfeh(dv0, dv1, &s0[0], &s1[0], CastemInt(N));
         b.setCASTEMBehaviourDataGradients(dv0);
         b.setCASTEMIntegrationDataGradients(dv1);
@@ -274,10 +274,10 @@ namespace castem {
        * \param[in]  sfeh   : function handling the stress-free expansion
        *                      at the beginning of the time step
        */
-      TFEL_CASTEM_INLINE static void exe(BData &bData,
-                                         IData &iData,
-                                         const CastemReal *const STRAN,
-                                         const CastemReal *const DSTRAN,
+      TFEL_CASTEM_INLINE static void exe(BData& bData,
+                                         IData& iData,
+                                         const CastemReal* const STRAN,
+                                         const CastemReal* const DSTRAN,
                                          const StressFreeExpansionHandler) {
         bData.setCASTEMBehaviourDataGradients(STRAN);
         iData.setCASTEMIntegrationDataGradients(DSTRAN);
@@ -291,10 +291,10 @@ namespace castem {
        * \param[in]  sfeh   : function handling the stress-free expansion
        *                      at the beginning of the time step
        */
-      TFEL_CASTEM_INLINE static void exe(BV &b,
-                                         const CastemReal *const STRAN,
-                                         const CastemReal *const DSTRAN,
-                                         const StressFreeExpansionHandler &) {
+      TFEL_CASTEM_INLINE static void exe(BV& b,
+                                         const CastemReal* const STRAN,
+                                         const CastemReal* const DSTRAN,
+                                         const StressFreeExpansionHandler&) {
         b.setCASTEMBehaviourDataGradients(STRAN);
         b.setCASTEMIntegrationDataGradients(DSTRAN);
       }  // end of exe
@@ -307,8 +307,8 @@ namespace castem {
     struct TFEL_VISIBILITY_LOCAL StiffnessTensorInitializer {
       typedef Behaviour<H, CastemReal, false> BV;
       typedef typename BV::BehaviourData BData;
-      TFEL_CASTEM_INLINE static void exe(BData &data,
-                                         const CastemReal *const props) {
+      TFEL_CASTEM_INLINE static void exe(BData& data,
+                                         const CastemReal* const props) {
         typedef CastemTraits<BV> Traits;
         const bool buas = Traits::requiresUnAlteredStiffnessTensor;
         CastemComputeStiffnessTensor<type, H, Traits::stype, buas>::exe(
@@ -323,8 +323,8 @@ namespace castem {
     struct TFEL_VISIBILITY_LOCAL ThermalExpansionCoefficientTensorInitializer {
       typedef Behaviour<H, CastemReal, false> BV;
       typedef typename BV::BehaviourData BData;
-      TFEL_CASTEM_INLINE static void exe(BData &data,
-                                         const CastemReal *const props) {
+      TFEL_CASTEM_INLINE static void exe(BData& data,
+                                         const CastemReal* const props) {
         CastemComputeThermalExpansionCoefficientTensor<
             type, H, CastemTraits<BV>::stype>::
             exe(props, data.getThermalExpansionCoefficientTensor());
@@ -337,7 +337,7 @@ namespace castem {
     struct TFEL_VISIBILITY_LOCAL DoNothingInitializer {
       typedef Behaviour<H, CastemReal, false> BV;
       typedef typename BV::BehaviourData BData;
-      TFEL_CASTEM_INLINE static void exe(BData &, const CastemReal *const) {}
+      TFEL_CASTEM_INLINE static void exe(BData&, const CastemReal* const) {}
     };  // end of struct DoNothingInitializer
 
     /*!
@@ -348,24 +348,24 @@ namespace castem {
      * structure will be used if the user tries to use it in 2D or 3D.
      */
     struct TFEL_VISIBILITY_LOCAL Error {
-      TFEL_CASTEM_INLINE Error(const CastemReal *const,
-                               const CastemReal *const,
-                               const CastemReal *const,
-                               const CastemReal *const,
-                               const CastemReal *const,
-                               const CastemReal *const,
-                               const CastemReal *const,
-                               const CastemReal *const,
-                               const CastemReal *const,
-                               const CastemReal *const,
+      TFEL_CASTEM_INLINE Error(const CastemReal* const,
+                               const CastemReal* const,
+                               const CastemReal* const,
+                               const CastemReal* const,
+                               const CastemReal* const,
+                               const CastemReal* const,
+                               const CastemReal* const,
+                               const CastemReal* const,
+                               const CastemReal* const,
+                               const CastemReal* const,
                                const tfel::material::OutOfBoundsPolicy,
-                               const StressFreeExpansionHandler &) {
+                               const StressFreeExpansionHandler&) {
       }  // end of Error
 
-      TFEL_CASTEM_INLINE void exe(CastemReal *const,
-                                  CastemReal *const,
-                                  CastemReal *const,
-                                  CastemReal *const) {
+      TFEL_CASTEM_INLINE void exe(CastemReal* const,
+                                  CastemReal* const,
+                                  CastemReal* const,
+                                  CastemReal* const) {
         using namespace std;
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<Behaviour<H, CastemReal, false>>
@@ -392,18 +392,18 @@ namespace castem {
           DoNothingInitializer>::type AInitializer;
 
       TFEL_CASTEM_INLINE
-      IntegratorWithTimeStepping(const CastemReal *const DTIME_,
-                                 const CastemReal *const STRAN_,
-                                 const CastemReal *const DSTRAN_,
-                                 const CastemReal *const TEMP_,
-                                 const CastemReal *const DTEMP_,
-                                 const CastemReal *const PROPS_,
-                                 const CastemReal *const PREDEF_,
-                                 const CastemReal *const DPRED_,
-                                 CastemReal *const STATEV_,
-                                 CastemReal *const STRESS_,
+      IntegratorWithTimeStepping(const CastemReal* const DTIME_,
+                                 const CastemReal* const STRAN_,
+                                 const CastemReal* const DSTRAN_,
+                                 const CastemReal* const TEMP_,
+                                 const CastemReal* const DTEMP_,
+                                 const CastemReal* const PROPS_,
+                                 const CastemReal* const PREDEF_,
+                                 const CastemReal* const DPRED_,
+                                 CastemReal* const STATEV_,
+                                 CastemReal* const STRESS_,
                                  const tfel::material::OutOfBoundsPolicy op,
-                                 const StressFreeExpansionHandler &sfeh_)
+                                 const StressFreeExpansionHandler& sfeh_)
           : DTIME(DTIME_),
             STRAN(STRAN_),
             DSTRAN(DSTRAN_),
@@ -417,10 +417,10 @@ namespace castem {
             policy(op),
             sfeh(sfeh_) {}  // end of IntegratorWithTimeStepping
 
-      TFEL_CASTEM_INLINE2 void exe(CastemReal *const ddsdde,
-                                   CastemReal *const stress,
-                                   CastemReal *const statev,
-                                   CastemReal *const pnewdt) {
+      TFEL_CASTEM_INLINE2 void exe(CastemReal* const ddsdde,
+                                   CastemReal* const stress,
+                                   CastemReal* const statev,
+                                   CastemReal* const pnewdt) {
         if (*ddsdde < -0.5) {
           this->computePredictionOperator(ddsdde);
         } else {
@@ -429,7 +429,7 @@ namespace castem {
       }  // end of IntegratorWithTimeStepping::exe
 
      private:
-      void computePredictionOperator(CastemReal *const DDSDDE) {
+      void computePredictionOperator(CastemReal* const DDSDDE) {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename std::conditional<
@@ -478,10 +478,10 @@ namespace castem {
         ConsistentTangentOperatorHandler::exe(behaviour, DDSDDE);
       }
 
-      void integrate(CastemReal *const stress,
-                     CastemReal *const statev,
-                     CastemReal *const ddsdde,
-                     CastemReal *const pnewdt) {
+      void integrate(CastemReal* const stress,
+                     CastemReal* const statev,
+                     CastemReal* const ddsdde,
+                     CastemReal* const pnewdt) {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
         typedef typename std::conditional<
@@ -553,10 +553,10 @@ namespace castem {
           }
         }
 #ifdef MFRONT_CASTEM_VERBOSE
-        catch (const tfel::material::DivergenceException &e) {
+        catch (const tfel::material::DivergenceException& e) {
           std::cerr << "no convergence : " << e.what() << std::endl;
 #else
-        catch (const tfel::material::DivergenceException &) {
+        catch (const tfel::material::DivergenceException&) {
 #endif
           r = BV::FAILURE;
         }
@@ -573,10 +573,10 @@ namespace castem {
       }
 
       void integrate2(
-          CastemReal *const stress,
-          CastemReal *const statev,
-          CastemReal *const ddsdde,
-          CastemReal *const pnewdt,
+          CastemReal* const stress,
+          CastemReal* const statev,
+          CastemReal* const ddsdde,
+          CastemReal* const pnewdt,
           const typename Behaviour<H, CastemReal, false>::SMType smtype) {
         using namespace tfel::material;
         typedef MechanicalBehaviourTraits<BV> Traits;
@@ -632,10 +632,10 @@ namespace castem {
             }
           }
 #ifdef MFRONT_CASTEM_VERBOSE
-          catch (const tfel::material::DivergenceException &e) {
+          catch (const tfel::material::DivergenceException& e) {
             std::cerr << "no convergence : " << e.what() << std::endl;
 #else
-          catch (const tfel::material::DivergenceException &) {
+          catch (const tfel::material::DivergenceException&) {
 #endif
             result = BV::FAILURE;
           }
@@ -653,7 +653,7 @@ namespace castem {
                 ConsistentTangentOperatorHandler::exe(behaviour, ddsdde);
               }
             } else {
-              bData = static_cast<const BData &>(behaviour);
+              bData = static_cast<const BData&>(behaviour);
             }
           } else if ((result == BV::UNRELIABLE_RESULTS) &&
                      (CastemTraits<BV>::doSubSteppingOnInvalidResults)) {
@@ -677,16 +677,16 @@ namespace castem {
       typedef typename BV::BehaviourData BData;
       typedef typename BV::IntegrationData IData;
 
-      const CastemReal *const DTIME;
-      const CastemReal *const STRAN;
-      const CastemReal *const DSTRAN;
-      const CastemReal *const TEMP;
-      const CastemReal *const DTEMP;
-      const CastemReal *const PROPS;
-      const CastemReal *const PREDEF;
-      const CastemReal *const DPRED;
-      const CastemReal *const STATEV;
-      const CastemReal *const STRESS;
+      const CastemReal* const DTIME;
+      const CastemReal* const STRAN;
+      const CastemReal* const DSTRAN;
+      const CastemReal* const TEMP;
+      const CastemReal* const DTEMP;
+      const CastemReal* const PROPS;
+      const CastemReal* const PREDEF;
+      const CastemReal* const DPRED;
+      const CastemReal* const STATEV;
+      const CastemReal* const STRESS;
       const tfel::material::OutOfBoundsPolicy policy;
       const StressFreeExpansionHandler sfeh;
 
@@ -705,18 +705,18 @@ namespace castem {
           ThermalExpansionCoefficientTensorInitializer,
           DoNothingInitializer>::type AInitializer;
 
-      TFEL_CASTEM_INLINE Integrator(const CastemReal *const DTIME,
-                                    const CastemReal *const STRAN,
-                                    const CastemReal *const DSTRAN,
-                                    const CastemReal *const TEMP,
-                                    const CastemReal *const DTEMP,
-                                    const CastemReal *const PROPS,
-                                    const CastemReal *const PREDEF,
-                                    const CastemReal *const DPRED,
-                                    const CastemReal *const STATEV,
-                                    const CastemReal *const STRESS,
+      TFEL_CASTEM_INLINE Integrator(const CastemReal* const DTIME,
+                                    const CastemReal* const STRAN,
+                                    const CastemReal* const DSTRAN,
+                                    const CastemReal* const TEMP,
+                                    const CastemReal* const DTEMP,
+                                    const CastemReal* const PROPS,
+                                    const CastemReal* const PREDEF,
+                                    const CastemReal* const DPRED,
+                                    const CastemReal* const STATEV,
+                                    const CastemReal* const STRESS,
                                     const tfel::material::OutOfBoundsPolicy op,
-                                    const StressFreeExpansionHandler &sfeh)
+                                    const StressFreeExpansionHandler& sfeh)
           : behaviour(DTIME,
                       TEMP,
                       DTEMP,
@@ -739,10 +739,10 @@ namespace castem {
       }  // end of Integrator::Integrator
 
       TFEL_CASTEM_INLINE2
-      void exe(CastemReal *const DDSDDE,
-               CastemReal *const STRESS,
-               CastemReal *const STATEV,
-               CastemReal *const PNEWDT) {
+      void exe(CastemReal* const DDSDDE,
+               CastemReal* const STRESS,
+               CastemReal* const STATEV,
+               CastemReal* const PNEWDT) {
         using namespace tfel::material;
         using Traits = MechanicalBehaviourTraits<BV>;
         using ConsistentTangentOperatorHandler = std::conditional_t<
@@ -839,7 +839,7 @@ namespace castem {
 
     struct StandardPredictionOperatorComputer {
       typedef Behaviour<H, CastemReal, false> BV;
-      static typename BV::IntegrationResult exe(BV &b,
+      static typename BV::IntegrationResult exe(BV& b,
                                                 const typename BV::SMFlag smf,
                                                 const typename BV::SMType smt) {
         return b.computePredictionOperator(smf, smt);
@@ -848,7 +848,7 @@ namespace castem {
 
     struct PredictionOperatorIsNotAvalaible {
       typedef Behaviour<H, CastemReal, false> BV;
-      static typename BV::IntegrationResult exe(BV &,
+      static typename BV::IntegrationResult exe(BV&,
                                                 const typename BV::SMFlag,
                                                 const typename BV::SMType) {
         typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
@@ -862,7 +862,7 @@ namespace castem {
       typedef tfel::material::MechanicalBehaviourTraits<BV> Traits;
       const static unsigned short N =
           tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
-      static void exe(BV &, CastemReal *const) {
+      static void exe(BV&, CastemReal* const) {
         throwConsistentTangentOperatorIsNotAvalaible(Traits::getName());
       }  // end of exe
     };
@@ -871,7 +871,7 @@ namespace castem {
       typedef Behaviour<H, CastemReal, false> BV;
       const static unsigned short N =
           tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
-      static void exe(const BV &bv, CastemReal *const DDSDDE) {
+      static void exe(const BV& bv, CastemReal* const DDSDDE) {
         using TangentOperatorType =
             typename CastemTangentOperatorType<CastemTraits<BV>::btype,
                                                N>::type;
@@ -879,7 +879,7 @@ namespace castem {
             typename CastemTangentOperatorType<CastemTraits<BV>::btype,
                                                N>::view_type;
         TangentOperatorViewType Dt{DDSDDE};
-        Dt = static_cast<const TangentOperatorType &>(bv.getTangentOperator());
+        Dt = static_cast<const TangentOperatorType&>(bv.getTangentOperator());
         // l'opérateur tangent contient des sqrt(2) en petites et grandes
         // transformations...
         CastemTangentOperator::normalize(Dt);
@@ -890,7 +890,7 @@ namespace castem {
       typedef Behaviour<H, CastemReal, false> BV;
       const static unsigned short N =
           tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
-      static void exe(const BV &bv, CastemReal *const DDSDDE) {
+      static void exe(const BV& bv, CastemReal* const DDSDDE) {
         ConsistentTangentOperatorComputer::exe(bv, DDSDDE);
       }  // end of exe
     };
@@ -899,7 +899,7 @@ namespace castem {
       typedef Behaviour<H, CastemReal, false> BV;
       const static unsigned short N =
           tfel::material::ModellingHypothesisToSpaceDimension<H>::value;
-      static void exe(const BV &bv, CastemReal *const DDSDDE) {
+      static void exe(const BV& bv, CastemReal* const DDSDDE) {
         using namespace tfel::math;
         using TangentOperatorViewType =
             typename CastemTangentOperatorType<CastemTraits<BV>::btype,

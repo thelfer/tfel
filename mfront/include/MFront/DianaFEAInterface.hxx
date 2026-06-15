@@ -27,7 +27,7 @@ namespace mfront {
    */
   struct DianaFEAInterface : public UMATInterfaceBase {
     //! name of finite strain strategy attribute
-    static const char *const finiteStrainStrategy;
+    static const char* const finiteStrainStrategy;
     //! \return the name of the interface
     static std::string getName();
     /*!
@@ -41,9 +41,9 @@ namespace mfront {
      * the last token treated.
      */
     std::pair<bool, tokens_iterator> treatKeyword(
-        BehaviourDescription &,
-        const std::string &,
-        const std::vector<std::string> &,
+        BehaviourDescription&,
+        const std::string&,
+        const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
     /*!
@@ -51,14 +51,14 @@ namespace mfront {
      * \param[in] mb        : mechanical behaviour description
      * \param[in] fd        : mfront file description
      */
-    void endTreatment(const BehaviourDescription &,
-                      const FileDescription &) const override;
+    void endTreatment(const BehaviourDescription&,
+                      const FileDescription&) const override;
     /*!
      * \param[out] d  : target description
      * \param[out] bd : behaviour description
      */
-    void getTargetsDescription(TargetsDescription &,
-                               const BehaviourDescription &) override;
+    void getTargetsDescription(TargetsDescription&,
+                               const BehaviourDescription&) override;
     //! destructor
     ~DianaFEAInterface() override;
 
@@ -71,8 +71,8 @@ namespace mfront {
      * \param[in] o  : variable offsert
      */
     virtual void writeBehaviourDataGradientSetter(
-        std::ostream &,
-        const Gradient &,
+        std::ostream&,
+        const Gradient&,
         const SupportedTypes::TypeSize) const override;
     /*!
      * \brief write the initialisation of a driving variables
@@ -81,8 +81,8 @@ namespace mfront {
      * \param[in] o  : variable offsert
      */
     virtual void writeIntegrationDataGradientSetter(
-        std::ostream &,
-        const Gradient &,
+        std::ostream&,
+        const Gradient&,
         const SupportedTypes::TypeSize) const override;
     /*!
      * \brief write the instruction of exporting a thermodynamic force in an
@@ -93,9 +93,9 @@ namespace mfront {
      * \param[in]  o   : thermodynamic force offset
      */
     virtual void exportThermodynamicForce(
-        std::ostream &,
-        const std::string &,
-        const ThermodynamicForce &,
+        std::ostream&,
+        const std::string&,
+        const ThermodynamicForce&,
         const SupportedTypes::TypeSize) const override;
     /*!
      * write interface specific includes
@@ -103,7 +103,7 @@ namespace mfront {
      * \param[in] mb  : mechanical behaviour description
      */
     virtual void writeInterfaceSpecificIncludes(
-        std::ostream &, const BehaviourDescription &) const override;
+        std::ostream&, const BehaviourDescription&) const override;
     /*!
      * \brief write the initialisation of a thermodynamic force
      * \param[in] os : output file
@@ -111,23 +111,23 @@ namespace mfront {
      * \param[in] o  : variable offsert
      */
     void writeBehaviourDataThermodynamicForceSetter(
-        std::ostream &,
-        const ThermodynamicForce &,
+        std::ostream&,
+        const ThermodynamicForce&,
         const SupportedTypes::TypeSize) const override;
     void writeMTestFileGeneratorSetModellingHypothesis(
-        std::ostream &) const override;
+        std::ostream&) const override;
     std::string getModellingHypothesisTest(const Hypothesis) const override;
     std::map<UMATInterfaceBase::Hypothesis, std::string>
     gatherModellingHypothesesAndTests(
-        const BehaviourDescription &) const override;
-    std::string getFunctionNameBasis(const std::string &) const override;
+        const BehaviourDescription&) const override;
+    std::string getFunctionNameBasis(const std::string&) const override;
     std::set<Hypothesis> getModellingHypothesesToBeTreated(
-        const BehaviourDescription &) const override;
-    std::string getLibraryName(const BehaviourDescription &) const override;
+        const BehaviourDescription&) const override;
+    std::string getLibraryName(const BehaviourDescription&) const override;
     void writeGetOutOfBoundsPolicyFunctionImplementation(
-        std::ostream &,
-        const BehaviourDescription &,
-        const std::string &) const override;
+        std::ostream&,
+        const BehaviourDescription&,
+        const std::string&) const override;
     bool areExternalStateVariablesSupported() const override;
     bool isTemperatureIncrementSupported() const override;
     /*!
@@ -138,16 +138,16 @@ namespace mfront {
      * DianaFEA-Standard. If false, write the example for
      * DianaFEA-Explicit
      */
-    virtual void writeInputFileExample(const BehaviourDescription &,
-                                       const FileDescription &,
+    virtual void writeInputFileExample(const BehaviourDescription&,
+                                       const FileDescription&,
                                        const bool) const;
     /*!
      * \brief write a trait class used for tag dispatching
      * \param[out] os: output stream
      * \param[in] bd: behaviour description
      */
-    virtual void writeBehaviourTraits(std::ostream &,
-                                      const BehaviourDescription &) const;
+    virtual void writeBehaviourTraits(std::ostream&,
+                                      const BehaviourDescription&) const;
   };  // end of DianaFEAInterface
 
 }  // end of namespace mfront

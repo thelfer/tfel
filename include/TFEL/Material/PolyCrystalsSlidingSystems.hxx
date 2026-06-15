@@ -72,19 +72,28 @@ namespace tfel::material {
     typedef NumType real;
     typedef tfel::math::stensor<3u, real> StrainStensor;
 
-    static const ExtendedPolyCrystalsSlidingSystems &
-    getPolyCrystalsSlidingSystems(const std::string &);
+    static const ExtendedPolyCrystalsSlidingSystems&
+    getPolyCrystalsSlidingSystems(const std::string&);
+
     tfel::math::vector<tfel::math::vector<StrainStensor>> mus;
 
     //! \brief volume fractions per phases
     tfel::math::vector<real> volume_fractions;
 
    private:
+<<<<<<< HEAD
     ExtendedPolyCrystalsSlidingSystems(const std::string &);
     ExtendedPolyCrystalsSlidingSystems(
         const ExtendedPolyCrystalsSlidingSystems &);
     ExtendedPolyCrystalsSlidingSystems &operator=(
         const ExtendedPolyCrystalsSlidingSystems &);
+=======
+    ExtendedPolyCrystalsSlidingSystems(const std::string&);
+    ExtendedPolyCrystalsSlidingSystems(
+        const ExtendedPolyCrystalsSlidingSystems&);
+    ExtendedPolyCrystalsSlidingSystems& operator=(
+        const ExtendedPolyCrystalsSlidingSystems&);
+>>>>>>> master
   };
 
 }  // end of namespace tfel::material

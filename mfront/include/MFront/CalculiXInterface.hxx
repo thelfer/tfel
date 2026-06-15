@@ -27,14 +27,14 @@ namespace mfront {
    */
   struct CalculiXInterface : public UMATInterfaceBase {
     //! name of finite strain strategy attribute
-    static const char *const finiteStrainStrategy;
+    static const char* const finiteStrainStrategy;
     //! \return the name of the interface
     static std::string getName();
     /*!
      * \return true if a finite strain strategy has been set up
      * \param[in] bd: behaviour description
      */
-    static bool hasFiniteStrainStrategy(const BehaviourDescription &);
+    static bool hasFiniteStrainStrategy(const BehaviourDescription&);
     /*!
      * \param[in,out] mb: behaviour description
      * \param[in] k  : keyword treated
@@ -46,9 +46,9 @@ namespace mfront {
      * the last token treated.
      */
     std::pair<bool, tokens_iterator> treatKeyword(
-        BehaviourDescription &,
-        const std::string &,
-        const std::vector<std::string> &,
+        BehaviourDescription&,
+        const std::string&,
+        const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
     /*!
@@ -56,14 +56,14 @@ namespace mfront {
      * \param[in] mb        : mechanical behaviour description
      * \param[in] fd        : mfront file description
      */
-    void endTreatment(const BehaviourDescription &,
-                      const FileDescription &) const override;
+    void endTreatment(const BehaviourDescription&,
+                      const FileDescription&) const override;
     /*!
      * \param[out] d  : target description
      * \param[out] bd : behaviour description
      */
-    void getTargetsDescription(TargetsDescription &,
-                               const BehaviourDescription &) override;
+    void getTargetsDescription(TargetsDescription&,
+                               const BehaviourDescription&) override;
     //! destructor
     ~CalculiXInterface() override;
 
@@ -76,8 +76,8 @@ namespace mfront {
      * \param[in] o  : variable offsert
      */
     virtual void writeBehaviourDataGradientSetter(
-        std::ostream &,
-        const Gradient &,
+        std::ostream&,
+        const Gradient&,
         const SupportedTypes::TypeSize) const override;
     /*!
      * \brief write the initialisation of a driving variables
@@ -86,8 +86,8 @@ namespace mfront {
      * \param[in] o  : variable offsert
      */
     virtual void writeIntegrationDataGradientSetter(
-        std::ostream &,
-        const Gradient &,
+        std::ostream&,
+        const Gradient&,
         const SupportedTypes::TypeSize) const override;
     /*!
      * \brief write the instruction of exporting a thermodynamic force in an
@@ -96,9 +96,9 @@ namespace mfront {
      * \param[in]  o   : thermodynamic force offset
      */
     virtual void exportThermodynamicForce(
-        std::ostream &,
-        const std::string &,
-        const ThermodynamicForce &,
+        std::ostream&,
+        const std::string&,
+        const ThermodynamicForce&,
         const SupportedTypes::TypeSize) const override;
     /*!
      * write interface specific includes
@@ -106,7 +106,7 @@ namespace mfront {
      * \param[in] mb  : mechanical behaviour description
      */
     virtual void writeInterfaceSpecificIncludes(
-        std::ostream &, const BehaviourDescription &) const override;
+        std::ostream&, const BehaviourDescription&) const override;
     /*!
      * \brief write the initialisation of a thermodynamic force
      * \param[in] os : output file
@@ -114,8 +114,8 @@ namespace mfront {
      * \param[in] o  : variable offsert
      */
     void writeBehaviourDataThermodynamicForceSetter(
-        std::ostream &,
-        const ThermodynamicForce &,
+        std::ostream&,
+        const ThermodynamicForce&,
         const SupportedTypes::TypeSize) const override;
     /*!
      * \brief write the call to the base function
@@ -127,10 +127,10 @@ namespace mfront {
      * \param[in] sfeh: name of the function used to handle the stress
      *                  expansion
      */
-    virtual void writeFunctionBase(std::ostream &,
-                                   const BehaviourDescription &,
-                                   const std::string &,
-                                   const std::string &) const;
+    virtual void writeFunctionBase(std::ostream&,
+                                   const BehaviourDescription&,
+                                   const std::string&,
+                                   const std::string&) const;
     /*!
      * \brief write the call to the base function
      * \param[in] out:  output file
@@ -139,9 +139,9 @@ namespace mfront {
      *                  (generally taking into account the material
      *                  and the behaviour name)
      */
-    virtual void writeSmallStrainFunction(std::ostream &,
-                                          const BehaviourDescription &,
-                                          const std::string &) const;
+    virtual void writeSmallStrainFunction(std::ostream&,
+                                          const BehaviourDescription&,
+                                          const std::string&) const;
     /*!
      * \brief write the integration of a "true" finite strain
      * behaviour, i.e. a finite strain behaviour not associated to a
@@ -152,9 +152,9 @@ namespace mfront {
      *                  (generally taking into account the material
      *                  and the behaviour name)
      */
-    virtual void writeFiniteStrainFunction(std::ostream &,
-                                           const BehaviourDescription &,
-                                           const std::string &) const;
+    virtual void writeFiniteStrainFunction(std::ostream&,
+                                           const BehaviourDescription&,
+                                           const std::string&) const;
     /*!
      * \brief integrate the behaiour using the
      * `FiniteRotationSmallStrain` finite strain strategy.
@@ -165,9 +165,7 @@ namespace mfront {
      *                  and the behaviour name)
      */
     virtual void writeFiniteRotationSmallStrainFunction(
-        std::ostream &,
-        const BehaviourDescription &,
-        const std::string &) const;
+        std::ostream&, const BehaviourDescription&, const std::string&) const;
     /*!
      * \brief integrate the behaiour using the
      * `MieheApelLambrechtLogarithmiSstrain` finite strain strategy.
@@ -178,21 +176,19 @@ namespace mfront {
      *                  and the behaviour name)
      */
     virtual void writeMieheApelLambrechtLogarithmicStrainFunction(
-        std::ostream &,
-        const BehaviourDescription &,
-        const std::string &) const;
-    std::string getLibraryName(const BehaviourDescription &) const override;
-    void writeCalculiXBehaviourTraits(std::ostream &,
-                                      const BehaviourDescription &) const;
+        std::ostream&, const BehaviourDescription&, const std::string&) const;
+    std::string getLibraryName(const BehaviourDescription&) const override;
+    void writeCalculiXBehaviourTraits(std::ostream&,
+                                      const BehaviourDescription&) const;
     void writeMTestFileGeneratorSetModellingHypothesis(
-        std::ostream &) const override;
+        std::ostream&) const override;
     std::string getModellingHypothesisTest(const Hypothesis) const override;
     std::map<UMATInterfaceBase::Hypothesis, std::string>
     gatherModellingHypothesesAndTests(
-        const BehaviourDescription &) const override;
-    std::string getFunctionNameBasis(const std::string &) const override;
+        const BehaviourDescription&) const override;
+    std::string getFunctionNameBasis(const std::string&) const override;
     std::set<Hypothesis> getModellingHypothesesToBeTreated(
-        const BehaviourDescription &) const override;
+        const BehaviourDescription&) const override;
     /*!
      * \return the input file example
      * \param[in] mb: behaviour description
@@ -201,8 +197,8 @@ namespace mfront {
      * CalculiX-Standard. If false, write the example for
      * CalculiX-Explicit
      */
-    virtual void writeInputFileExample(const BehaviourDescription &,
-                                       const FileDescription &,
+    virtual void writeInputFileExample(const BehaviourDescription&,
+                                       const FileDescription&,
                                        const bool) const;
     //! \return true if the interface handles external state variables
     bool areExternalStateVariablesSupported() const override;

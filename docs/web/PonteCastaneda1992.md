@@ -102,11 +102,7 @@ which can be shown to be equivalent to
     \mathrm{div}\left(3k_r\,\varepsilon_m\,\tenseur 1+2\mu_0^r\,\tepsilon^d\right)=0,\qquad\tepsilon\in\mathcal K(\overline{\tepsilon})
   \end{aligned}
   
-  Besides, noting that
-  \begin{aligned}
-    W_0^{\mathrm{eff}}(\overline{\tepsilon})=\sum_r c_r\,\left(\Frac92 k_r\,\langle\varepsilon_m^2\rangle_r+\Frac32 \mu_0^r\langle \epsiloneq^2\rangle_r\right)
-  \end{aligned}
-  it follows that
+  Besides, we can show (see [@ponte_castaneda_nonlinear_1998], IX.B.) that the derivative of the effective energy of the linear composite w.r.t. the secant shear modulus gives the second-moment of the strain in this linear composite:
 \begin{aligned}
     \langle \epsiloneq^2\rangle_r= \Frac{2}{3c_r}\deriv{W_0^{\mathrm{eff}}}{\mu_0^r}
   \end{aligned}

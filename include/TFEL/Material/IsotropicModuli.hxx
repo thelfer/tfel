@@ -61,7 +61,17 @@ namespace tfel::material {
   requires(
       tfel::math::checkUnitCompatibility<tfel::math::unit::Stress,
                                          StressType>()) struct IsotropicModuli {
+    IsotropicModuli() = default;
+
+    IsotropicModuli(const IsotropicModuli<StressType>&) = default;
+    IsotropicModuli<StressType>& operator=(const IsotropicModuli&) = default;
+
+    IsotropicModuli(IsotropicModuli<StressType>&&) = default;
+    IsotropicModuli<StressType>& operator=(IsotropicModuli<StressType>&&) =
+        default;
+
     virtual ~IsotropicModuli() = default;
+
     virtual YoungNuModuli<StressType> ToYoungNu() const = 0;
     virtual LambdaMuModuli<StressType> ToLambdaMu() const = 0;
     virtual KGModuli<StressType> ToKG() const = 0;
@@ -76,7 +86,11 @@ namespace tfel::material {
     types::real<StressType> nu;
 
     YoungNuModuli() = default;
+<<<<<<< HEAD
     YoungNuModuli(const YoungNuModuli<StressType>&) = default;
+=======
+
+>>>>>>> master
     YoungNuModuli(const StressType& Young, const types::real<StressType>& Nu)
         : IsotropicModuli<StressType>(), young(Young), nu(Nu) {}
 
@@ -112,7 +126,11 @@ namespace tfel::material {
     StressType mu;
 
     KGModuli() = default;
+<<<<<<< HEAD
     KGModuli(const KGModuli<StressType>&) = default;
+=======
+
+>>>>>>> master
     KGModuli(const StressType& Kappa, const StressType& Mu)
         : IsotropicModuli<StressType>(), kappa(Kappa), mu(Mu) {}
 
@@ -149,7 +167,11 @@ namespace tfel::material {
     StressType mu;
 
     LambdaMuModuli() = default;
+<<<<<<< HEAD
     LambdaMuModuli(const LambdaMuModuli<StressType>&) = default;
+=======
+
+>>>>>>> master
     LambdaMuModuli(const StressType& Lambda, const StressType& Mu)
         : IsotropicModuli<StressType>(), lambda(Lambda), mu(Mu) {}
 

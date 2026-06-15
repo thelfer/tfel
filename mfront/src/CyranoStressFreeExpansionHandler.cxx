@@ -21,12 +21,12 @@
 namespace cyrano {
 
   void CyranoStandardSmallStrainStressFreeExpansionHandler(
-      CyranoReal *const em,
-      CyranoReal *const dem,
-      const CyranoReal *const e,
-      const CyranoReal *const de,
-      const CyranoReal *const s0,
-      const CyranoReal *const s1) {
+      CyranoReal* const em,
+      CyranoReal* const dem,
+      const CyranoReal* const e,
+      const CyranoReal* const de,
+      const CyranoReal* const s0,
+      const CyranoReal* const s1) {
     em[0] = e[0] - s0[0];
     em[1] = e[2] - s0[1];
     em[2] = e[1] - s0[2];
@@ -36,12 +36,12 @@ namespace cyrano {
   }  // end of CyranoStandardSmallStrainStressFreeExpansionHandler
 
   void CyranoLogarithmicStrainStressFreeExpansionHandler(
-      CyranoReal *const em,
-      CyranoReal *const dem,
-      const CyranoReal *const e,
-      const CyranoReal *const de,
-      const CyranoReal *const s0,
-      const CyranoReal *const s1) {
+      CyranoReal* const em,
+      CyranoReal* const dem,
+      const CyranoReal* const e,
+      const CyranoReal* const de,
+      const CyranoReal* const s0,
+      const CyranoReal* const s1) {
     CyranoReal log_s0[3];
     CyranoReal log_s1[3];
     log_s0[0] = std::log1p(s0[0]);

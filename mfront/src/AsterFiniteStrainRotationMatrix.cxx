@@ -22,7 +22,7 @@
 namespace aster {
 
   AsterFiniteStrainRotationMatrix2D::AsterFiniteStrainRotationMatrix2D(
-      const AsterReal *const drot) {
+      const AsterReal* const drot) {
     // Premier vecteur
     // a[1,1]
     a[0] = drot[0];
@@ -39,7 +39,7 @@ namespace aster {
 
   // Compute strains in the material space
   void AsterFiniteStrainRotationMatrix2D::rotateStrainsForward(
-      const AsterReal *const e, AsterReal *const em) {
+      const AsterReal* const e, AsterReal* const em) {
     em[0] = a[0] * a[1] * e[3] + a[1] * a[1] * e[1] + a[0] * a[0] * e[0];
     em[1] = a[2] * a[3] * e[3] + a[3] * a[3] * e[1] + a[2] * a[2] * e[0];
     em[2] = e[2];
@@ -49,7 +49,7 @@ namespace aster {
 
   // Compute strains back in the global space
   void AsterFiniteStrainRotationMatrix2D::rotateStrainsBackward(
-      const AsterReal *const e, AsterReal *const eg) {
+      const AsterReal* const e, AsterReal* const eg) {
     eg[0] = a[0] * a[2] * e[3] + a[2] * a[2] * e[1] + a[0] * a[0] * e[0];
     eg[1] = a[1] * a[3] * e[3] + a[3] * a[3] * e[1] + a[1] * a[1] * e[0];
     eg[2] = e[2];
@@ -59,7 +59,7 @@ namespace aster {
 
   // Compute stresses in the material space
   void AsterFiniteStrainRotationMatrix2D::rotateStressesForward(
-      const AsterReal *const s, AsterReal *const sm) {
+      const AsterReal* const s, AsterReal* const sm) {
     sm[0] = 2 * a[0] * a[1] * s[3] + a[1] * a[1] * s[1] + a[0] * a[0] * s[0];
     sm[1] = 2 * a[2] * a[3] * s[3] + a[3] * a[3] * s[1] + a[2] * a[2] * s[0];
     sm[2] = s[2];
@@ -69,7 +69,7 @@ namespace aster {
 
   // Compute stresses back in the global space
   void AsterFiniteStrainRotationMatrix2D::rotateStressesBackward(
-      const AsterReal *const s, AsterReal *const sg) {
+      const AsterReal* const s, AsterReal* const sg) {
     sg[0] = 2 * a[0] * a[2] * s[3] + a[2] * a[2] * s[1] + a[0] * a[0] * s[0];
     sg[1] = 2 * a[1] * a[3] * s[3] + a[3] * a[3] * s[1] + a[1] * a[1] * s[0];
     sg[2] = s[2];
@@ -78,7 +78,7 @@ namespace aster {
   }  // end of AsterFiniteStrainRotationMatrix2D::rotateStressesBackward
 
   void AsterFiniteStrainRotationMatrix2D::rotateDeformationGradientForward(
-      const AsterReal *const F, AsterReal *const Fg) {
+      const AsterReal* const F, AsterReal* const Fg) {
     Fg[0] = a[1] * a[1] * F[4] + a[0] * a[1] * F[3] + a[0] * a[1] * F[1] +
             a[0] * a[0] * F[0];
     Fg[1] = a[1] * a[3] * F[4] + a[1] * a[2] * F[3] + a[0] * a[3] * F[1] +
@@ -95,14 +95,14 @@ namespace aster {
      // AsterFiniteStrainRotationMatrix2D::rotateDeformationGradientForward
 
   void AsterFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward(
-      AsterReal *const) const {
+      AsterReal* const) const {
     tfel::raise(
         "AsterFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward : "
         "unimplemented feature");
   }  // end of AsterFiniteStrainRotationMatrix2D::rotateTangentOperatorBackward
 
   AsterFiniteStrainRotationMatrix3D::AsterFiniteStrainRotationMatrix3D(
-      const AsterReal *const drot) {
+      const AsterReal* const drot) {
     // Premier vecteur
     a[0] = drot[0];
     a[1] = drot[1];
@@ -121,7 +121,7 @@ namespace aster {
 
   // Compute strains in the material space
   void AsterFiniteStrainRotationMatrix3D::rotateStrainsForward(
-      const AsterReal *const e, AsterReal *const em) {
+      const AsterReal* const e, AsterReal* const em) {
     em[0] = a[1] * a[2] * e[5] + a[0] * a[2] * e[4] + a[0] * a[1] * e[3] +
             a[2] * a[2] * e[2] + a[1] * a[1] * e[1] + a[0] * a[0] * e[0];
     em[1] = a[4] * a[5] * e[5] + a[3] * a[5] * e[4] + a[3] * a[4] * e[3] +
@@ -144,7 +144,7 @@ namespace aster {
 
   // Compute strains back in the global space
   void AsterFiniteStrainRotationMatrix3D::rotateStrainsBackward(
-      const AsterReal *const e, AsterReal *const eg) {
+      const AsterReal* const e, AsterReal* const eg) {
     eg[0] = a[3] * a[6] * e[5] + a[0] * a[6] * e[4] + a[0] * a[3] * e[3] +
             a[6] * a[6] * e[2] + a[3] * a[3] * e[1] + a[0] * a[0] * e[0];
     eg[1] = a[4] * a[7] * e[5] + a[1] * a[7] * e[4] + a[1] * a[4] * e[3] +
@@ -167,7 +167,7 @@ namespace aster {
 
   // Compute stresses in the material space
   void AsterFiniteStrainRotationMatrix3D::rotateStressesForward(
-      const AsterReal *const s, AsterReal *const sm) {
+      const AsterReal* const s, AsterReal* const sm) {
     sm[0] = 2 * a[1] * a[2] * s[5] + 2 * a[0] * a[2] * s[4] +
             2 * a[0] * a[1] * s[3] + a[2] * a[2] * s[2] + a[1] * a[1] * s[1] +
             a[0] * a[0] * s[0];
@@ -193,7 +193,7 @@ namespace aster {
 
   // Compute stresses back in the global space
   void AsterFiniteStrainRotationMatrix3D::rotateStressesBackward(
-      const AsterReal *const s, AsterReal *const sg) {
+      const AsterReal* const s, AsterReal* const sg) {
     // avec les racines de 2
     // tg[0]=cste*a[3]*a[6]*s[5]+cste*a[0]*a[6]*s[4]+cste*a[0]*a[3]*s[3]+a[6]*a[6]*s[2]+a[3]*a[3]*s[1]+a[0]*a[0]*s[0];
     // tg[1]=cste*a[4]*a[7]*s[5]+cste*a[1]*a[7]*s[4]+cste*a[1]*a[4]*s[3]+a[7]*a[7]*s[2]+a[4]*a[4]*s[1]+a[1]*a[1]*s[0];
@@ -225,7 +225,7 @@ namespace aster {
   }  // end of AsterFiniteStrainRotationMatrix3D::rotateStressesBackward
 
   void AsterFiniteStrainRotationMatrix3D::rotateDeformationGradientForward(
-      const AsterReal *const F, AsterReal *const Fm) {
+      const AsterReal* const F, AsterReal* const Fm) {
     Fm[0] = a[2] * a[2] * F[8] + a[1] * a[2] * F[7] + a[0] * a[2] * F[6] +
             a[1] * a[2] * F[5] + a[1] * a[1] * F[4] + a[0] * a[1] * F[3] +
             a[0] * a[2] * F[2] + a[0] * a[1] * F[1] + a[0] * a[0] * F[0];
@@ -257,7 +257,7 @@ namespace aster {
      // AsterFiniteStrainRotationMatrix3D::rotateDeformationGradientForward
 
   void AsterFiniteStrainRotationMatrix3D::rotateDeformationGradientBackward(
-      const AsterReal *const F, AsterReal *const Fg) {
+      const AsterReal* const F, AsterReal* const Fg) {
     Fg[0] = a[6] * a[6] * F[8] + a[3] * a[6] * F[7] + a[0] * a[6] * F[6] +
             a[3] * a[6] * F[5] + a[3] * a[3] * F[4] + a[0] * a[3] * F[3] +
             a[0] * a[6] * F[2] + a[0] * a[3] * F[1] + a[0] * a[0] * F[0];
@@ -344,7 +344,7 @@ namespace aster {
   }
 
   void AsterFiniteStrainRotationMatrix3D::rotateTangentOperatorBackward(
-      AsterReal *const Dg) const {
+      AsterReal* const Dg) const {
     // note sur le rangement fortran :
     // on récupère Dm(k,i,j)=dtau[k]_dF[ij] à l'adresse Dm[k+n1*(i+3*j)]
     constexpr auto cste = tfel::math::Cste<AsterReal>::sqrt2;

@@ -24,17 +24,17 @@ namespace mfront {
     static std::string getName();
 
     std::pair<bool, tokens_iterator> treatKeyword(
-        BehaviourDescription &,
-        const std::string &,
-        const std::vector<std::string> &,
+        BehaviourDescription&,
+        const std::string&,
+        const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
 
-    void endTreatment(const BehaviourDescription &,
-                      const FileDescription &) const override;
+    void endTreatment(const BehaviourDescription&,
+                      const FileDescription&) const override;
 
-    void getTargetsDescription(TargetsDescription &,
-                               const BehaviourDescription &) override;
+    void getTargetsDescription(TargetsDescription&,
+                               const BehaviourDescription&) override;
 
     std::string getInterfaceName() const override;
 
@@ -43,17 +43,17 @@ namespace mfront {
 
    protected:
     std::set<Hypothesis> getModellingHypothesesToBeTreated(
-        const BehaviourDescription &) const override;
+        const BehaviourDescription&) const override;
 
     void writeInterfaceSpecificIncludes(
-        std::ostream &, const BehaviourDescription &) const override;
+        std::ostream&, const BehaviourDescription&) const override;
 
-    std::string getFunctionNameBasis(const std::string &) const override;
+    std::string getFunctionNameBasis(const std::string&) const override;
 
-    std::string getLibraryName(const BehaviourDescription &) const override;
+    std::string getLibraryName(const BehaviourDescription&) const override;
 
     void writeMTestFileGeneratorSetModellingHypothesis(
-        std::ostream &) const override;
+        std::ostream&) const override;
 
     bool areExternalStateVariablesSupported() const override;
 

@@ -58,13 +58,13 @@ static std::string getErrorMessage() {
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
 }  // end of  getErrorMessage
 
-static void usrmat_log(const std::string &m) {
+static void usrmat_log(const std::string& m) {
   static std::ofstream log("mfront-usrmat.log");
   log << m << std::endl;
   std::clog << m << std::endl;
 }
 
-static std::vector<std::string> tokenize(const std::string &s,
+static std::vector<std::string> tokenize(const std::string& s,
                                          const char c = ' ') {
   std::vector<std::string> res;
   std::string::size_type b = 0u;
@@ -78,7 +78,7 @@ static std::vector<std::string> tokenize(const std::string &s,
   return res;
 }  // end of tokenize
 
-static void usrmat_exit(const std::string &m) {
+static void usrmat_exit(const std::string& m) {
   usrmat_log(m);
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
   MessageBox(nullptr, m.c_str(), "mfront", 0);
@@ -93,34 +93,34 @@ namespace dianafea {
    */
   struct ExternalBehavioursHandler {
     //! a simple alias
-    using fct = void (*)(double *const,
-                         double *const,
-                         double *const,
-                         const int *const,
-                         const int *const,
-                         const int *const,
-                         const double *const,
-                         const double *const,
-                         const double *const,
-                         const double *const,
-                         const double *const,
-                         const double *const);
+    using fct = void (*)(double* const,
+                         double* const,
+                         double* const,
+                         const int* const,
+                         const int* const,
+                         const int* const,
+                         const double* const,
+                         const double* const,
+                         const double* const,
+                         const double* const,
+                         const double* const,
+                         const double* const);
     //! \brief default constructor
     ExternalBehavioursHandler();
     /*!
      * \return the function pointer associated with the given identifier
      * \param[in] id: identifer
      */
-    fct get(const char *const) const;
+    fct get(const char* const) const;
     //! \brief destructor
     ~ExternalBehavioursHandler();
 
    private:
 //! a simple alias
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
-    using libhandler = HINSTANCE__ *;
+    using libhandler = HINSTANCE__*;
 #else  /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
-    using libhandler = void *;
+    using libhandler = void*;
 #endif /* (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__) */
        /*!
         * \brief internal data structure storing pointers to MFront
@@ -144,33 +144,33 @@ namespace dianafea {
      * declared. nullptr is returned otherwise.
      * \param[in] id: identifer
      */
-    fct find(const char *const) const;
+    fct find(const char* const) const;
     //! \brief list of all loaded behaviours and associated identifiers
     std::vector<BehaviourHandler> behaviours;
     //! \brief list of loaded libraries
     std::vector<ExternalLibraryHandler> libraries;
     /* deleted methods */
-    ExternalBehavioursHandler(ExternalBehavioursHandler &&) = delete;
-    ExternalBehavioursHandler(const ExternalBehavioursHandler &) = delete;
-    ExternalBehavioursHandler &operator=(ExternalBehavioursHandler &&) = delete;
-    ExternalBehavioursHandler &operator=(const ExternalBehavioursHandler &) =
+    ExternalBehavioursHandler(ExternalBehavioursHandler&&) = delete;
+    ExternalBehavioursHandler(const ExternalBehavioursHandler&) = delete;
+    ExternalBehavioursHandler& operator=(ExternalBehavioursHandler&&) = delete;
+    ExternalBehavioursHandler& operator=(const ExternalBehavioursHandler&) =
         delete;
   };  // end of struct ExternalBehavioursHandler
 
   ExternalBehavioursHandler::ExternalBehavioursHandler() {
-    auto find_library = [this](const std::string &n) {
+    auto find_library = [this](const std::string& n) {
       return std::find_if(
           this->libraries.begin(), this->libraries.end(),
-          [&n](const ExternalLibraryHandler &l) { return l.name == n; });
+          [&n](const ExternalLibraryHandler& l) { return l.name == n; });
     };
-    auto exit_if = [](const bool b, const std::string &m) {
+    auto exit_if = [](const bool b, const std::string& m) {
       if (b) {
         usrmat_exit("ExternalBehavioursHandler::ExternalBehavioursHandler: " +
                     m);
       }
     };
     auto emsg = std::string{};
-    auto open_library = [&emsg](const std::string &lib) -> libhandler {
+    auto open_library = [&emsg](const std::string& lib) -> libhandler {
 #if (defined _WIN32 || defined _WIN64) && (!defined __CYGWIN__)
       for (const auto prefix : {"", "lib"}) {
         for (const auto suffix : {"", ".dll"}) {
@@ -246,7 +246,7 @@ namespace dianafea {
   }  // end of ExternalBehavioursHandler::ExternalBehavioursHandler
 
   ExternalBehavioursHandler::fct ExternalBehavioursHandler::get(
-      const char *const n) const {
+      const char* const n) const {
     const auto f = this->find(n);
     if (f == nullptr) {
       usrmat_exit(
@@ -258,10 +258,10 @@ namespace dianafea {
   }  // end of ExternalBehavioursHandler::get
 
   ExternalBehavioursHandler::fct ExternalBehavioursHandler::find(
-      const char *const n) const {
+      const char* const n) const {
     const auto p =
         std::find_if(this->behaviours.begin(), this->behaviours.end(),
-                     [n](const BehaviourHandler &b) {
+                     [n](const BehaviourHandler& b) {
                        return std::strncmp(b.id.data(), n, 6) == 0;
                      });
     return (p == this->behaviours.end()) ? nullptr : p->f;
@@ -288,17 +288,17 @@ extern "C" {
  * \param[in] temp: temperature at the beginning of the time step
  * \param[in] dtemp: temperature increment
  */
-void dianafea_external_behaviour_call(double *const sig,
-                                      double *const ddsdde,
-                                      double *const statev,
-                                      const char *const cname,
+void dianafea_external_behaviour_call(double* const sig,
+                                      double* const ddsdde,
+                                      double* const statev,
+                                      const char* const cname,
                                       const int ntens,
                                       const int nprops,
                                       const int nstatv,
-                                      const double *const eto,
-                                      const double *const deto,
+                                      const double* const eto,
+                                      const double* const deto,
                                       const double dt,
-                                      const double *const props,
+                                      const double* const props,
                                       const double temp,
                                       const double dtemp) {
   static dianafea::ExternalBehavioursHandler h;

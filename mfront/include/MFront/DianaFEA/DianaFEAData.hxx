@@ -24,11 +24,11 @@ namespace dianafea {
    */
   struct DianaFEAData {
     //! stress values
-    DianaFEAReal *const STRESS;
+    DianaFEAReal* const STRESS;
     //! tangent operator
-    DianaFEAReal *const DDSDDE;
+    DianaFEAReal* const DDSDDE;
     //! state variables
-    DianaFEAReal *const STATEV;
+    DianaFEAReal* const STATEV;
     //! number of components of symmetric tensors
     const DianaFEAInt NTENS;
     //! number of material properties
@@ -38,11 +38,11 @@ namespace dianafea {
     //! time increment
     const DianaFEAReal DTIME;
     //! strain
-    const DianaFEAReal *const STRAN;
+    const DianaFEAReal* const STRAN;
     //! strain increment
-    const DianaFEAReal *const DSTRAN;
+    const DianaFEAReal* const DSTRAN;
     //! material properties
-    const DianaFEAReal *const PROPS;
+    const DianaFEAReal* const PROPS;
     //! temperature
     const DianaFEAReal TEMP;
     //! temperature increment

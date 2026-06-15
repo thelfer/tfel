@@ -49,10 +49,10 @@ namespace fses {
   // in the LAPACK routine DLAEV2, where |rt1| >= |rt2|.
   // ----------------------------------------------------------------------------
   template <typename real>
-  inline void syev2(real &rt1,
-                    real &rt2,
-                    real &cs,
-                    real &sn,
+  inline void syev2(real& rt1,
+                    real& rt2,
+                    real& cs,
+                    real& sn,
                     const real A,
                     const real B,
                     const real C);

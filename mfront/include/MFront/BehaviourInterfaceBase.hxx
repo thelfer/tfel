@@ -29,7 +29,7 @@ namespace mfront {
       : public AbstractBehaviourInterface,
         public SupportedTypes {
     //! attribute used to store if an MTest file shall be generated
-    static const char *const generateMTestFileAttribute;
+    static const char* const generateMTestFileAttribute;
     //! \brief a simple alias
     using ModellingHypothesis = tfel::material::ModellingHypothesis;
     //! \brief a simple alias
@@ -40,15 +40,15 @@ namespace mfront {
     void setOptions(const DataMap &) override;
     std::string getInterfaceVersion() const override;
     bool isBehaviourConstructorRequired(
-        const Hypothesis, const BehaviourDescription &) const override;
+        const Hypothesis, const BehaviourDescription&) const override;
     std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
-    buildMaterialPropertiesList(const BehaviourDescription &,
+    buildMaterialPropertiesList(const BehaviourDescription&,
                                 const Hypothesis) const override;
-    void writeBehaviourInitializeFunctions(std::ostream &,
-                                           const BehaviourDescription &,
+    void writeBehaviourInitializeFunctions(std::ostream&,
+                                           const BehaviourDescription&,
                                            const Hypothesis) const override;
-    void writeBehaviourPostProcessings(std::ostream &,
-                                       const BehaviourDescription &,
+    void writeBehaviourPostProcessings(std::ostream&,
+                                       const BehaviourDescription&,
                                        const Hypothesis) const override;
     /*!
      * \return the basis for the function(s)' names implementing the
@@ -70,54 +70,46 @@ namespace mfront {
      *                (generally taking into account the material
      *                 and the behaviour name)
      */
-    virtual std::string getFunctionNameBasis(const std::string &) const = 0;
+    virtual std::string getFunctionNameBasis(const std::string&) const = 0;
     /*!
      * \return an header guard based on the name of the interface, as returned
      * by `getInterfaceName`, and the name of the behaviour.
      * \param[in] bd: behaviour description
      */
-    virtual std::string getHeaderGuard(const BehaviourDescription &) const;
+    virtual std::string getHeaderGuard(const BehaviourDescription&) const;
     /*!
      * \brief include the appropriate headers and write the definition
      * of the `MFRONT_SHAREDOBJ` macro which is used to define the
      * visibility of the generated functions.
      * \param[out] out: output file
      */
-    virtual void writeVisibilityDefines(std::ostream &) const;
+    virtual void writeVisibilityDefines(std::ostream&) const;
 
     virtual void writeSetOutOfBoundsPolicyFunctionDeclaration(
-        std::ostream &, const std::string &) const;
+        std::ostream&, const std::string&) const;
 
     virtual void writeGetOutOfBoundsPolicyFunctionImplementation(
-        std::ostream &,
-        const BehaviourDescription &,
-        const std::string &) const;
+        std::ostream&, const BehaviourDescription&, const std::string&) const;
 
     virtual void writeSetOutOfBoundsPolicyFunctionImplementation(
-        std::ostream &,
-        const BehaviourDescription &,
-        const std::string &) const;
+        std::ostream&, const BehaviourDescription&, const std::string&) const;
 
     virtual void writeSetParametersFunctionsDeclarations(
-        std::ostream &,
-        const BehaviourDescription &,
-        const std::string &) const;
+        std::ostream&, const BehaviourDescription&, const std::string&) const;
     /*!
      * \brief generate the implementations of the functions allowing
      * to modify the parameters of a behaviour.
      * \param[out] out: output stream
      */
     virtual void writeSetParametersFunctionsImplementations(
-        std::ostream &,
-        const BehaviourDescription &,
-        const std::string &) const;
+        std::ostream&, const BehaviourDescription&, const std::string&) const;
     /*!
      * \brief set an attribute stating that a `MTest` file shall be generated on
      * integration failure.
      * \param[in,out] bd: behavour description
      * \param[in] b: attribute value
      */
-    virtual void setGenerateMTestFileOnFailureAttribute(BehaviourDescription &,
+    virtual void setGenerateMTestFileOnFailureAttribute(BehaviourDescription&,
                                                         const bool) const;
     /*!
      * \return if a behaviour shall generate a `MTest` file
@@ -125,7 +117,7 @@ namespace mfront {
      * \param[in] bd: behavour description
      */
     virtual bool shallGenerateMTestFileOnFailure(
-        const BehaviourDescription &) const;
+        const BehaviourDescription&) const;
     /*!
      * \return a pair. If the first entry is true, the "axial strain"
      * was found and the second contains its offset
@@ -133,7 +125,7 @@ namespace mfront {
      * \param[in] h: modelling hypothesis
      */
     virtual std::pair<bool, SupportedTypes::TypeSize>
-    checkIfAxialStrainIsDefinedAndGetItsOffset(const BehaviourDescription &,
+    checkIfAxialStrainIsDefinedAndGetItsOffset(const BehaviourDescription&,
                                                const Hypothesis) const;
     /*!
      * \return a pair. If the first entry is true, the "deformation gradient"
@@ -143,15 +135,15 @@ namespace mfront {
      */
     virtual std::pair<bool, SupportedTypes::TypeSize>
     checkIfAxialDeformationGradientIsDefinedAndGetItsOffset(
-        const BehaviourDescription &, const Hypothesis) const;
+        const BehaviourDescription&, const Hypothesis) const;
     /*!
      * \brief extract a boolean value from the current token
      * \param[in] key: currently treated keyword
      * \param[in] current: iterator to the current token
      * \param[in] end: iterator after the last token
      */
-    virtual bool readBooleanValue(const std::string &,
-                                  tokens_iterator &,
+    virtual bool readBooleanValue(const std::string&,
+                                  tokens_iterator&,
                                   const tokens_iterator) const;
     //! \brief destructor
     ~BehaviourInterfaceBase() override;

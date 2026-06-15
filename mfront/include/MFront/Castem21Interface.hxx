@@ -35,10 +35,10 @@ namespace mfront {
    protected:
     //
     std::vector<BehaviourMaterialProperty> getDefaultMaterialPropertiesList(
-        const BehaviourDescription &, const Hypothesis) const override;
+        const BehaviourDescription&, const Hypothesis) const override;
     //
     std::string getMaterialPropertiesOffsetForBehaviourTraits(
-        const BehaviourDescription &) const override;
+        const BehaviourDescription&) const override;
   };  // end of struct Castem21Interface
 
 }  // end of namespace mfront

@@ -818,12 +818,12 @@ A `ParticulateMicrostructure` consists on a matrix, in which are embedded
 several distributions of inclusions. The class has three (private) attributes:
 
  - `number_of_phases`
- - `matrixPhase`
- - `inclusionPhases`
+ - `matrix_phase`
+ - `inclusion_phases`
 
-The `matrixPhase` is of type `Phase`, described below.
+The `matrix_phase` is of type `Phase`, described below.
  
-The `inclusionPhases` is a `std::vector` of pointers on
+The `inclusion_phases` is a `std::vector` of pointers on
 `InclusionDistribution` objects (which represent the distributions of inclusions). This
 class is also described below. 
 
@@ -842,18 +842,18 @@ const auto micro_2=ParticulateMicrostructure(C0);
 `ParticulateMicrostructure` has also some methods (see 'MicrostructureDescription.hxx'
 for details). The following ones allow to get some attributes of the class:
 
- - `get_number_of_phases`
- - `get_matrix_fraction` (attribute `fraction` of `matrixPhase`)
- - `get_matrix_elasticity` (attribute `stiffness` of `matrixPhase`)
- - `is_isotropic_matrix` (private attribute `is_isotropic` of `matrixPhase`)
+ - `getNumberOfPhases`
+ - `getMatrixFraction` (attribute `fraction` of `matrix_phase`)
+ - `getMatrixElasticity` (attribute `stiffness` of `matrix_phase`)
+ - `isIsotropicMatrix` (private attribute `isotropic` of `matrix_phase`)
  
 Last method returns a boolean which states if the matrix is considered isotropic
 or not. In fact, depending on how was instantiated the `ParticulateMicrostructure`,
 the matrix is considered isotropic or not. For example, by doing
 
 ~~~~{.cpp}
-bool val_1=micro_1.is_isotropic_matrix();
-bool val_2=micro_2.is_isotropic_matrix();
+bool val_1=micro_1.isIsotropicMatrix();
+bool val_2=micro_2.isIsotropicMatrix();
 ~~~~
 
 `val_1` will be `True` because `micro_1` was instantiated above with a `KGModuli`,
@@ -862,32 +862,41 @@ that the matrix elasticity is not isotropic, but that it is CONSIDERED
 as not isotropic.
 
 Other methods allows to add/remove `InclusionDistribution` objects
-to the attribute `inclusionPhases`, and also to replace
-`matrixPhase`:
+to the attribute `inclusion_phases`, and also to modifiy the properties of
+the phases:
 
- - `get_inclusionPhase`
+ - `getInclusionPhase`
  - `addInclusionPhase`
  - `removeInclusionPhase`
- - `replaceMatrixPhase`
+ - `changeElasticityOfMatrixPhase`
+ - `changeElasticityOfInclusionPhase`
+ - `changeFractionOfInclusionPhase`
  
 But we first describe `Phase`, `InclusionDistribution`
 and `Inclusion` classes.
 
 #### The `Phase` class
 
-The `Phase class` is very simple. It has two attributes:
+The `Phase class` has three attributes:
 
  - `fraction` (`real` type)
- - `stiffness` (`st2tost2` type)
+ - `isotropic` (`bool` type, private attribute)
+ - `stiffness` (`st2tost2` type, private attribute)
 
-and one method: `is_isotropic()` which returns a `bool` stating if the phase is
+and three methods: 
+
+ - `isIsotropic`
+ - `changeElasticityOfPhase`
+ - `getElasticityOfPhase`
+ 
+`isIsotropic()` returns a `bool` stating if the phase is
 considered isotropic or not. Again, the value of this `bool` depends on the
 way the `Phase` was constructed. By doing
 
 ~~~~{.cpp}
 const auto C0=tfel::math::st2tost2<stress>::Id();
 Phase<stress> ph(f,C0);
-bool b = ph.is_isotropic();
+bool b = ph.isIsotropic();
 ~~~~
 
 `b` will have the value `false`, whereas by doing
@@ -895,13 +904,13 @@ bool b = ph.is_isotropic();
 ~~~~{.cpp}
 const auto KG=tfel::material::KGModuli<stress>(k,g);
 Phase<stress> ph(f,KG);
-bool b = ph.is_isotropic();
+bool b = ph.isIsotropic();
 ~~~~
 
 `b` will have the value `true`. Hence,
 when a `ParticulateMicrostructure` is instantiated,
 it automatically instantiates a `Phase` object corresponding to 
-the attribute `matrixPhase`. However, we note that the user can
+the attribute `matrix_phase`. However, we note that the user can
 construct a microstructure without using `Phase` instantiation
 himself.
 
@@ -976,20 +985,20 @@ We can now construct our `ParticulateMicrostructure` by adding some
 
 ~~~~{.cpp}
 micro_1.addInclusionPhase(distrib_sph);
-std::cout<< micro_1.get_number_of_phases()<< std::endl;
-std::cout<< micro_1.get_matrix_fraction()<< std::endl;
+std::cout<< micro_1.getNumberOfPhases()<< std::endl;
+std::cout<< micro_1.getMatrixFraction()<< std::endl;
 
 micro_1.addInclusionPhase(distrib_ell);
-std::cout<< micro_1.get_number_of_phases()<< std::endl;
-std::cout<< micro_1.get_matrix_fraction()<< std::endl;
+std::cout<< micro_1.getNumberOfPhases()<< std::endl;
+std::cout<< micro_1.getMatrixFraction()<< std::endl;
 ~~~~
 
 or remove them:
 
 ~~~~{.cpp}
 micro_1.removeInclusionPhase(0);
-std::cout<< micro_1.get_number_of_phases()<< std::endl;
-std::cout<< micro_1.get_matrix_fraction()<< std::endl;
+std::cout<< micro_1.getNumberOfPhases()<< std::endl;
+std::cout<< micro_1.getMatrixFraction()<< std::endl;
 ~~~~
 
 At this stage, we have added the distribution of spheres `distrib_sph`,
@@ -999,7 +1008,7 @@ the distribution of spheres. Hence, only one `InclusionDistribution` object
 remains in the microstructure. We can get this distribution by doing:
 
 ~~~~{.cpp}
-const auto ell_dist=micro_1.get_inclusionPhase(0);
+const auto ell_dist=micro_1.getInclusionPhase(0);
 ~~~~
 
 Each `InclusionDistribution` object has three attributes:
@@ -1012,7 +1021,7 @@ it was instantiated with a `KGModuli`, so that it is considered isotropic.
 Hence,
 
 ~~~~{.cpp}
-std::cout<< ell_dist.is_isotropic()<< std::endl;
+std::cout<< ell_dist.isIsotropic()<< std::endl;
 ~~~~
 
 prints `1`.
@@ -1042,13 +1051,13 @@ Here, the integer `10` is the number of subdivisions in the integration
 process in the computation of the Hill tensor relative to the inclusions.
 It is `12` by default.
 
-A last method of the `ParticulateMicrostructure` object allows to replace
-the matrix phase:
+A last method of the `ParticulateMicrostructure` object allows to change the
+elasticity of the matrix phase:
 
 ~~~~{.cpp}
-micro_1.replaceMatrixPhase(C0);
-std::cout<< micro_1.get_matrix_elasticity()<< std::endl;
-std::cout<< micro_1.is_isotropic_matrix()<< std::endl;
+micro_1.changeElasticityOfMatrixPhase(C0);
+std::cout<< micro_1.getMatrixElasticity()<< std::endl;
+std::cout<< micro_1.isIsotropicMatrix()<< std::endl;
 ~~~~
 
 Here we see that the matrix is no more isotropic
@@ -1111,7 +1120,7 @@ std::cout<< "SC aniso: "<< hmSC_aniso.homogenized_stiffness<< std::endl;
 (the "std::cout" does not work when  using quantities).
 For the oter schemes, the isotropic character of the matrix
 when computing the strain localisators will depend
-on what returns `micro_1.is_isotropic_matrix()`. Hence, it is important
+on what returns `micro_1.isIsotropicMatrix()`. Hence, it is important
 to initialized the matrix or the microstructure with the appropriate
 elastic moduli. If isotropic, it will works in all case, whereas
 if not isotropic, it will fail depending on the distributions that are present
@@ -1121,7 +1130,7 @@ number of subdivisions in the numerical integration (this value is
 `12` by default):
 
 ~~~~{.cpp}
-micro_1.replaceMatrixPhase(C0);
+micro_1.changeElasticityOfMatrixPhase(C0);
 micro_1.removeInclusionPhase(0);
 micro_1.addInclusionPhase(distrib_O);
 auto hmDS_aniso=computeDilute<3u,stress>(micro_1,10);
@@ -1138,7 +1147,7 @@ std::cout<<"A_0_DS: "<< A_i_DS[0]<<"A_1_DS: "<< A_i_DS[1]<< std::endl;
 We can also add a polarization on each phase:
 
 ~~~~{.cpp}
-micro_1.replaceMatrixPhase(IM0);
+micro_1.changeElasticityOfMatrixPhase(IM0);
 const auto P0 = Stensor<3u,stress>::zero();
 const Stensor<3u,stress> P1 = {stress(6.e8),stress(6.e8),stress(6.e8),stress(0.),stress(0.),stress(0.)};
 const auto pola={P0,P1};

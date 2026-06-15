@@ -47,8 +47,8 @@ namespace mfront {
      * \param[in] f    : filename
      */
     DocumentationGeneratorBase(const int,
-                               const char *const *const,
-                               const std::string &);
+                               const char* const* const,
+                               const std::string&);
     virtual void exe() const = 0;
     //! destructor
     ~DocumentationGeneratorBase() override;
@@ -69,15 +69,15 @@ namespace mfront {
     //! type of ouput
     OutputType otype;
     //! \brief generate latex macros for header of output file
-    static void writeStandardLatexMacros(std::ostream &);
+    static void writeStandardLatexMacros(std::ostream&);
 
     //! \brief data structure describing a variable
     struct VariableInformationBase {
       VariableInformationBase();
-      VariableInformationBase(VariableInformationBase &&) noexcept;
-      VariableInformationBase(const VariableInformationBase &);
-      VariableInformationBase &operator=(VariableInformationBase &&);
-      VariableInformationBase &operator=(const VariableInformationBase &);
+      VariableInformationBase(VariableInformationBase&&) noexcept;
+      VariableInformationBase(const VariableInformationBase&);
+      VariableInformationBase& operator=(VariableInformationBase&&);
+      VariableInformationBase& operator=(const VariableInformationBase&);
       ~VariableInformationBase() noexcept;
       std::string name;
       std::string type;
@@ -95,7 +95,7 @@ namespace mfront {
     //! treat the web argument
     virtual void treatWeb();
     //! return the current argument
-    const tfel::utilities::Argument &getCurrentCommandLineArgument()
+    const tfel::utilities::Argument& getCurrentCommandLineArgument()
         const override final;
     //! treat an unknown argument
     void treatUnknownArgument() override final;

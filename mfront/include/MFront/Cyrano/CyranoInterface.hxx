@@ -41,23 +41,23 @@ namespace cyrano {
      * spatial dimension and the modelling hypothesis.
      */
     TFEL_CYRANO_INLINE2 static void exe(
-        const CyranoInt *const NTENS,
-        const CyranoReal *const DTIME,
-        const CyranoReal *const DROT,
-        CyranoReal *const DDSOE,
-        const CyranoReal *const STRAN,
-        const CyranoReal *const DSTRAN,
-        const CyranoReal *const TEMP,
-        const CyranoReal *const DTEMP,
-        const CyranoReal *const PROPS,
-        const CyranoInt *const NPROPS,
-        const CyranoReal *const PREDEF,
-        const CyranoReal *const DPRED,
-        CyranoReal *const STATEV,
-        const CyranoInt *const NSTATV,
-        CyranoReal *const STRESS,
-        const CyranoInt *const NDI,
-        CyranoInt *const KINC,
+        const CyranoInt* const NTENS,
+        const CyranoReal* const DTIME,
+        const CyranoReal* const DROT,
+        CyranoReal* const DDSOE,
+        const CyranoReal* const STRAN,
+        const CyranoReal* const DSTRAN,
+        const CyranoReal* const TEMP,
+        const CyranoReal* const DTEMP,
+        const CyranoReal* const PROPS,
+        const CyranoInt* const NPROPS,
+        const CyranoReal* const PREDEF,
+        const CyranoReal* const DPRED,
+        CyranoReal* const STATEV,
+        const CyranoInt* const NSTATV,
+        CyranoReal* const STRESS,
+        const CyranoInt* const NDI,
+        CyranoInt* const KINC,
         const StressFreeExpansionHandler sfeh,
         const tfel::material::OutOfBoundsPolicy op) {
       using namespace tfel::material;
@@ -82,21 +82,21 @@ namespace cyrano {
 
     template <tfel::material::ModellingHypothesis::Hypothesis H>
     TFEL_CYRANO_INLINE2 static void callBehaviour(
-        const CyranoReal *const DTIME,
-        const CyranoReal *const DROT,
-        CyranoReal *const DDSOE,
-        const CyranoReal *const STRAN,
-        const CyranoReal *const DSTRAN,
-        const CyranoReal *const TEMP,
-        const CyranoReal *const DTEMP,
-        const CyranoReal *const PROPS,
-        const CyranoInt *const NPROPS,
-        const CyranoReal *const PREDEF,
-        const CyranoReal *const DPRED,
-        CyranoReal *const STATEV,
-        const CyranoInt *const NSTATV,
-        CyranoReal *const STRESS,
-        CyranoInt *const KINC,
+        const CyranoReal* const DTIME,
+        const CyranoReal* const DROT,
+        CyranoReal* const DDSOE,
+        const CyranoReal* const STRAN,
+        const CyranoReal* const DSTRAN,
+        const CyranoReal* const TEMP,
+        const CyranoReal* const DTEMP,
+        const CyranoReal* const PROPS,
+        const CyranoInt* const NPROPS,
+        const CyranoReal* const PREDEF,
+        const CyranoReal* const DPRED,
+        CyranoReal* const STATEV,
+        const CyranoInt* const NSTATV,
+        CyranoReal* const STRESS,
+        CyranoInt* const KINC,
         const StressFreeExpansionHandler sfeh,
         const tfel::material::OutOfBoundsPolicy op) {
       typedef Behaviour<H, CyranoReal, false> BV;
@@ -105,19 +105,19 @@ namespace cyrano {
         CyranoInterfaceDispatch<H, Behaviour>::exe(
             DTIME, DROT, DDSOE, STRAN, DSTRAN, TEMP, DTEMP, PROPS, NPROPS,
             PREDEF, DPRED, STATEV, NSTATV, STRESS, sfeh, op);
-      } catch (const CyranoIntegrationFailed &e) {
+      } catch (const CyranoIntegrationFailed& e) {
         CyranoInterfaceExceptions::treatCyranoException(Traits::getName(), e);
         *KINC = -1;
-      } catch (const CyranoException &e) {
+      } catch (const CyranoException& e) {
         CyranoInterfaceExceptions::treatCyranoException(Traits::getName(), e);
         *KINC = -2;
-      } catch (const tfel::material::MaterialException &e) {
+      } catch (const tfel::material::MaterialException& e) {
         CyranoInterfaceExceptions::treatMaterialException(Traits::getName(), e);
         *KINC = -3;
-      } catch (const tfel::exception::TFELException &e) {
+      } catch (const tfel::exception::TFELException& e) {
         CyranoInterfaceExceptions::treatTFELException(Traits::getName(), e);
         *KINC = -4;
-      } catch (const std::exception &e) {
+      } catch (const std::exception& e) {
         CyranoInterfaceExceptions::treatStandardException(Traits::getName(), e);
         *KINC = -5;
       } catch (...) {
