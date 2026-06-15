@@ -40,6 +40,8 @@ namespace tfel::material::homogenization::elasticity {
     tfel::math::st2tost2<N, StressType> homogenized_stiffness;
     tfel::math::stensor<N, StressType> effective_polarisation;
     std::vector<tfel::math::st2tost2<N, real>> mean_strain_localisation_tensors;
+    std::vector<tfel::math::st2tost2<N, real>> derivative_of_homogenized_stiffness_wrt_kr;
+    std::vector<tfel::math::st2tost2<N, real>> derivative_of_homogenized_stiffness_wrt_mur;
   };
 
   /*!

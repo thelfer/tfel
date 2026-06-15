@@ -16,6 +16,7 @@
 #include <cmath>
 #include <numbers>
 #include <stdexcept>
+#include <optional>
 
 namespace tfel::material::homogenization::elasticity {
 
@@ -66,6 +67,13 @@ namespace tfel::material::homogenization::elasticity {
     
     auto Chom = C0;
     auto tau_eff = tau0;
+    std::vector<tfel::math::st2tost2<3u,real>> dChom_dkr;
+    std::vector<tfel::math::st2tost2<3u,real>> dChom_dmur;
+    /// PHASE 0 derivatives...
+    dChom_dk0=;
+    dChom_dmu0=;
+    dChom_dkr[0]=dChom_dk0;
+    dChom_dkr[0]=dChom_dmu0;
 
     std::vector<tfel::math::st2tost2<N, real>> localisators = {
         tfel::math::st2tost2<N, real>::Id()};
@@ -76,17 +84,34 @@ namespace tfel::material::homogenization::elasticity {
       auto fi = (*phasei).fraction;
       auto taui = polarisations_[i + 1];
       tfel::math::st2tost2<N, real> Ai;
+      std::optional<tfel::math::st2tost2<3u,real>> dChom_dkr_;
+      std::optional<tfel::math::st2tost2<3u,real>> dChom_dmur_;
       if (micro.is_isotropic_matrix()) {
         Ai = (*phasei).computeMeanLocalisator(KG0);
+        const std::array<types::real<StressType>,4> dki = {0.,0.,1.,0.};
+        const std::array<types::real<StressType>,4> dmui = {0.,0.,0.,1.};
+        const auto dAi_dkr = (*phasei).computeDerivativesOfMeanLocalisator(KG0,dki);
+        const auto dAi_dmur = (*phasei).computeDerivativesOfMeanLocalisator(KG0,dmui);
+        dChom_dkr_=fi*(3*tfel::math::st2tost2<3u,real>::J()*Ai+Ci*dAi_dkr);
+        dChom_dmur_=fi*(2*tfel::math::st2tost2<3u,real>::K()*Ai+Ci*dAi_dmur);
+        dChom_dk0+=...;
+    	dChom_dmu0+=...;
+        
       } else {
+        dChom_dkr_=std::nullopt;
+        dChom_dmur_=std::nullopt;
         Ai = (*phasei).computeMeanLocalisator(C0,
                                               max_iter_anisotropic_integration);
       }
       Chom += fi * (Ci - C0) * Ai;
       tau_eff += fi * tfel::math::transpose(Ai) * (taui - tau0);
       localisators.push_back(Ai);
+      dChom_dkr.push_back(dChom_dkr_);
+      dChom_dmur.push_back(dChom_dmur_);
     }
-    HomogenizationScheme<N, StressType> h_s={.homogenized_stiffness = Chom,.effective_polarisation = tau_eff,.mean_strain_localisation_tensors = localisators};
+    dChom_dkr[0]=dChom_dk0;
+    dChom_dkr[0]=dChom_dmu0;
+    HomogenizationScheme<N, StressType> h_s={.homogenized_stiffness = Chom,.effective_polarisation = tau_eff,.mean_strain_localisation_tensors = localisators,.derivative_of_homogenized_stiffness_wrt_kr=dChom_dkr,.derivative_of_homogenized_stiffness_wrt_mur=dChom_dmur};
 
     return h_s;
   };

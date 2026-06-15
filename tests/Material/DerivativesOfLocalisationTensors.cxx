@@ -112,8 +112,6 @@ struct DerivativesOfLocalisationTensorsTest final : public tfel::tests::TestCase
         typename tfel::config::Types<1u, NumericType, use_qt>::stress;
     using real = typename tfel::config::Types<1u, NumericType, use_qt>::real;
     
-    using squared_compliance =
-        typename tfel::config::Types<1u, NumericType, use_qt>::squared_compliance;
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
    
     const tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
@@ -124,12 +122,15 @@ struct DerivativesOfLocalisationTensorsTest final : public tfel::tests::TestCase
     const auto mui =stress(100);
     const auto KG0=KGModuli<stress>(k0,mu0);
     const auto KGi=KGModuli<stress>(ki,mui);
-    const std::array<real,2> dkg0 = {1.,0.};
+    const std::array<real,2> dk0 = {1.,0.,0.,0.};
+    const std::array<real,2> dmu0 = {0.,1.,0.,0.};
+    const std::array<real,2> dki = {0.,0.,1.,0.};
+    const std::array<real,2> dmui = {0.,0.,0.,1.};
     using namespace tfel::material::homogenization::elasticity;
     
     const auto dASphere_dk0 =
           computeDerivativesOfAxisymmetricalLocalisationTensor<stress>(
-              KG0, n_a, real(1),dkg0);
+              KG0,KGi, n_a, real(1),dk0);
     
       for (int i : {0, 1, 2, 3, 4, 5}) {
         for (int j : {0, 1, 2, 3, 4, 5}) {
@@ -139,7 +140,7 @@ struct DerivativesOfLocalisationTensorsTest final : public tfel::tests::TestCase
     
     const auto dASphere_dmu0 =
           computeDerivativesOfAxisymmetricalLocalisationTensor<stress>(
-              KG0, n_a, real(1),{0.,1.});
+              KG0,KGi, n_a, real(1),dmu0);
    
       for (int i : {0, 1, 2, 3, 4, 5}) {
         for (int j : {0, 1, 2, 3, 4, 5}) {

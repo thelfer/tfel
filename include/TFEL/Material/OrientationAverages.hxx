@@ -19,6 +19,7 @@
 #include "TFEL/Material/IsotropicModuli.hxx"
 #include "TFEL/Material/EshelbyTolerances.hxx"
 #include "TFEL/Math/ST2toST2/WalpoleBasis.hxx"
+#include "TFEL/Material/DerivativesOfLocalisationTensors.hxx"
 
 namespace tfel::material::homogenization::elasticity {
 
@@ -364,6 +365,45 @@ namespace tfel::material::homogenization::elasticity {
 
   };  // end of struct EllipsoidMeanLocalisator ;
   
+        
+    template <unsigned short N, tfel::math::ScalarConcept StressType>
+  requires(tfel::math::checkUnitCompatibility<
+           tfel::math::unit::Stress,
+           StressType>())
+    TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u,types::real<StressType>> DerivativesOfMeanLocalisator(
+        const IsotropicModuli<StressType>& IM0,
+        const IsotropicModuli<StressType>& IMi,
+        const types::real<StressType>& e,
+        const tfel::math::stensor<3u, types::real<StressType>>& A2,
+        const tfel::math::st2tost2<3u, types::real<StressType>>& A4,
+        const std::array<types::real<StressType>,4>& dkg) {
+      
+      using real = types::real<StressType>;
+      using LengthType =types::length<StressType>;
+      if (not(e > LengthType{0})) {
+        tfel::reportContractViolation("e<=0");
+      }
+
+      const tfel::math::tvector<3u, real> n_1 = {1., 0., 0.};
+      using namespace tfel::math;
+        const auto dA_ = computeDerivativesOfAxisymmetricalLocalisationTensor<StressType>(
+        IM0, IMi, n_1, e,dkg);  
+        const auto dA = TransverseIsotropicWalpoleBasis<real>::components(n_1,dA_);
+        const auto I = tfel::math::st2tost2<3u,real>::Id();
+        const auto J = tfel::math::st2tost2<3u,real>::J();
+        const auto id = stensor<3u,real>::Id();
+        const auto E1_=A4;
+        const auto A2i = A2^id;
+        const auto iA2 = id^A2;
+        const auto E2_ = 0.5*(3*J+A4-A2i-iA2);
+        const auto E3_=1/sqrt(2)*(A2i-A4);
+        const auto E4_=1/sqrt(2)*(iA2-A4);
+      const auto F_=I-TransverseIsotropicWalpoleBasis<real>::dyadic_ov(id,A2)-TransverseIsotropicWalpoleBasis<real>::dyadic_ov(A2,id)-0.5*(3*J-A4-A2i-iA2);
+      const auto G_=TransverseIsotropicWalpoleBasis<real>::dyadic_ov(id,A2)+TransverseIsotropicWalpoleBasis<real>::dyadic_ov(A2,id)-2*A4;
+        const auto dA_av = dA[0]*E1_+dA[1]*E2_+dA[2]*E3_+dA[3]*E4_+dA[4]*F_+dA[5]*G_;
+      return dA_av;
+    }  // end of DerivativesOfMeanLocalisator
+       
 }  // end of namespace tfel::material::homogenization::elasticity
 
 

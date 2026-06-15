@@ -505,6 +505,15 @@ namespace tfel::material {
         auto semiL = (this->inclusion).semiLengths;
         return EllipsoidMeanLocalisator<3u,StressType>::UserDefinedDistributionOfSpheroids(IM0,KGi,semiL[0],semiL[1],A2,A4);
       }
+      
+      tfel::math::st2tost2<3u, real> computeDerivativesOfMeanLocalisator(
+          const IsotropicModuli<StressType> &IM0, const std::array<types::real<StressType>,4> &dKG){
+        auto Ci = this->getElasticityOfPhase();
+        const auto KGi = computeKGModuli<StressType>(Ci);
+        auto semiL = (this->inclusion).semiLengths;
+        const auto e =real(semiL[0]/semiL[1]);
+        return DerivativesOfMeanLocalisator(IM0,KGi,e,A2,A4,dKG);
+      }
     }; // End of UserDefinedDistributionOfSpheroids
      
    
