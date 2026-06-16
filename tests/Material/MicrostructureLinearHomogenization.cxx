@@ -48,6 +48,9 @@ struct MicrostructureLinearHomogenizationTest final
 
     this->template test_particulate<real, stress, length>();
     this->template test_particulate<real, real, real>();
+    
+    this->template user_defined_distribution<real,stress,length>();
+    this->template user_defined_distribution<real,real,real>();
 
     return this->result;
   }
@@ -161,6 +164,85 @@ struct MicrostructureLinearHomogenizationTest final
     TFEL_TESTS_ASSERT(tfel::material::relative_error(Chom_SC_3, Chom_MT_3) <
                       1e-3);
   }
+  
+  template <typename real, typename stress, typename length>
+  void user_defined_distribution() {
+  
+    static constexpr auto eps = std::numeric_limits<real>::epsilon();
+    using namespace tfel::material::homogenization::elasticity;
+   
+    tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
+    tfel::math::tvector<3u, real> n_b = {0., 1., 0.};
+
+    const auto J = tfel::math::st2tost2<3u,real>::J();
+    const auto K = tfel::math::st2tost2<3u,real>::K();
+    
+    const auto KG0 = tfel::material::KGModuli<stress>(stress{1.},stress(0.5));
+    const auto KGi = tfel::material::KGModuli<stress>(stress{100.},stress(60.));
+
+    Spheroid<length> spheroid1(length(100), length(1));
+    const tfel::math::stensor<3u,real> A2 = tfel::math::TransverseIsotropicWalpoleBasis<real>::p(n_a);
+    const tfel::math::st2tost2<3u,real> A4 = A2^A2;
+    UserDefinedDistributionOfSpheroids<stress> distrib1(spheroid1, real(0.5), KGi, A2, A4);
+
+    OrientedDistribution<stress> distrib2(spheroid1, real(0.5), KGi, n_a, n_b);
+    
+    ParticulateMicrostructure<3u, stress> micro1(KG0);
+    micro1.addInclusionPhase(distrib1);
+
+    ParticulateMicrostructure<3u, stress> micro2(KG0);
+    micro2.addInclusionPhase(distrib2);
+
+    auto h_s_1 = computeDilute<3u, stress>(micro1);
+    auto Chom_Or_1 = h_s_1.homogenized_stiffness;
+    auto h_s_2 = computeDilute<3u, stress>(micro2);
+    auto Chom_Or_2 = h_s_2.homogenized_stiffness;
+
+    TFEL_TESTS_ASSERT(tfel::material::relative_error(Chom_Or_1,Chom_Or_2) < 10*eps);
+    
+    micro1.removeInclusionPhase(0);
+    micro2.removeInclusionPhase(0);
+    
+    const tfel::math::stensor<3u,real> A2iso = 1./3*tfel::math::stensor<3u,real>::Id();
+    const tfel::math::st2tost2<3u,real> A4iso = 1./3*J+2./15*K;
+    UserDefinedDistributionOfSpheroids<stress> distrib3(spheroid1, real(0.5), KGi, A2iso, A4iso);
+    
+    IsotropicDistribution<stress> distrib4(spheroid1, real(0.5), KGi);
+    
+    micro1.addInclusionPhase(distrib3);
+    micro2.addInclusionPhase(distrib4);
+    
+    h_s_1 = computeDilute<3u, stress>(micro1);
+    auto Chom_iso_1 = h_s_1.homogenized_stiffness;
+    h_s_2 = computeDilute<3u, stress>(micro2);
+    auto Chom_iso_2 = h_s_2.homogenized_stiffness;
+
+    TFEL_TESTS_ASSERT(tfel::material::relative_error(Chom_iso_1,Chom_iso_2) < 10*eps);
+    
+    micro1.removeInclusionPhase(0);
+    micro2.removeInclusionPhase(0);
+
+    const tfel::math::stensor<3u,real> A2TI = 1./2*tfel::math::TransverseIsotropicWalpoleBasis<real>::q(n_b);
+    const auto E2d=tfel::math::TransverseIsotropicWalpoleBasis<real>::E2(n_b);
+    const auto Fd=tfel::math::TransverseIsotropicWalpoleBasis<real>::F(n_b);
+    const tfel::math::st2tost2<3u,real> A4TI = 1./2*E2d+1./4*Fd;
+    UserDefinedDistributionOfSpheroids<stress> distrib5(spheroid1, real(0.5), KGi, A2TI, A4TI);
+    
+    unsigned short int index = 1;
+    TransverseIsotropicDistribution<stress> distrib6(spheroid1, real(0.5), KGi,
+                                                     n_b, index);
+
+    micro1.addInclusionPhase(distrib5);
+    micro2.addInclusionPhase(distrib6);
+    
+    h_s_1 = computeMoriTanaka<3u, stress>(micro1);
+    auto Chom_tiso_1 = h_s_1.homogenized_stiffness;
+    h_s_2 = computeMoriTanaka<3u, stress>(micro2);
+    auto Chom_tiso_2 = h_s_2.homogenized_stiffness;
+
+    TFEL_TESTS_ASSERT(tfel::material::relative_error(Chom_tiso_1,Chom_tiso_2) < 10*eps);
+      
+    }
 
 };  // end of struct MicrostructureLinearHomogenizationTest
 
