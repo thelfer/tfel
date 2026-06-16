@@ -83,9 +83,14 @@ namespace mfront::generic_parallel::material_property {
     }
     auto write_kernel_call = [&os, this, &types](const bool handleStrides) {
       os << "// loop over the points\n"
+         << "#ifdef __ADAPTIVECPP__\n"
+         << "const auto mfront_index_range = "
+         << "std::views::iota(int{}, static_cast<int>(mfront_npoints));\n"
+         << "#else /* __ADAPTIVECPP__ */ \n"
          << "const auto mfront_index_range = "
          << "std::views::iota(" << types.integer_type
          << "{}, mfront_npoints);\n"
+         << "#endif /* __ADAPTIVECPP__ */ \n"
          << "std::for_each(" << this->execution_policy
          << ", mfront_index_range.begin(), "
          << "mfront_index_range.end(), "
