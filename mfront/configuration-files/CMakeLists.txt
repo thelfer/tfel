@@ -47,6 +47,7 @@ endif(_tfel-enable-generic-parallel-sycl-default-icpx-configuration)
 
 if(_tfel-enable-generic-parallel-sycl-default-acpp-configuration)
   install_configuration_file(config-sycl-default-acpp.json)
+  install_configuration_file(config-sycl-default-acpp-2.json)
 endif(_tfel-enable-generic-parallel-sycl-default-acpp-configuration)
 
 # if(_tfel-enable-generic-parallel-stlpar-parunseq-acpp-generic-configuration)
