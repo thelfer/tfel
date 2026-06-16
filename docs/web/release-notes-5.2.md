@@ -52,6 +52,12 @@ int values[8] = {1, 10, 2, 20, 3, 30, 4, 40};
 auto s1 = map_strided<stensor<2u, int>>(values, 2);
 ~~~~
 
+## Walpole basis
+
+The Walpole basis relative to transverse isotropic fourth-order tensors (`st2tost2`)
+is introduced with the `struct` `TransverseIsotropicWalpoleBasis`, member of
+`tfel::math`.
+
 # New `TFEL/Material` features
 
 ## Homogenization
@@ -62,6 +68,12 @@ to modify the microstructure:
  - `changeElasticityOfMatrixPhase`
  - `changeElasticityOfInclusionPhase`
  - `changeFractionOfInclusionPhase`
+
+The `UserDefinedDistributionOfSpheroids` allows to define
+a distribution of spheroids defined by two orientation
+tensors. This distribution can be used in a `ParticulateMicrostructure`
+and the associated homogenization schemes can be used with
+these microstructures.
 
 # New features in `tfel-check`
 

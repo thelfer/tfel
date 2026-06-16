@@ -14,7 +14,7 @@
 #define LIB_TFEL_MATERIAL_MICROSTRUCTUREDESCRIPTION_HXX
 
 #include "TFEL/Math/st2tost2.hxx"
-#include "TFEL/Material/LinearHomogenizationSchemes.hxx"
+#include "TFEL/Material/OrientationAverages.hxx"
 #include "TFEL/Material/LocalisationTensor.hxx"
 #include "TFEL/Material/AnisotropicEshelbyTensor.hxx"
 #include "TFEL/Material/IsotropicModuli.hxx"
@@ -113,11 +113,11 @@ namespace tfel::material {
       real fraction;
       Phase(real f, const tfel::math::st2tost2<N, StressType>& C)
           : fraction(f), stiffness(C), isotropic(false) {}
+
       Phase(real f, const IsotropicModuli<StressType>& IM)
           : fraction(f),
             stiffness(computeIsotropicStiffnessTensor<StressType>(IM)),
             isotropic(true) {}
-
       Phase() = default;
 
       tfel::math::st2tost2<N, StressType> getElasticityOfPhase() const {
@@ -134,8 +134,8 @@ namespace tfel::material {
         this->isotropic = true;
       }
 
-      bool is_isotropic() { return this->isotropic; }
-      bool isIsotropic() { return this->isotropic; }
+      bool is_isotropic() const { return this->isotropic; }
+      bool isIsotropic() const { return this->isotropic; }
 
      private:
       tfel::math::st2tost2<N, StressType> stiffness;
@@ -179,7 +179,7 @@ namespace tfel::material {
 
       virtual tfel::math::st2tost2<N, real> computeMeanLocalisator(
           const tfel::math::st2tost2<N, StressType>& C0,
-          int max_iter_anisotropic_integration) = 0;
+          int max_iter_anisotropic_integration = 12) = 0;
       virtual tfel::math::st2tost2<N, real> computeMeanLocalisator(
           const IsotropicModuli<StressType>& IM0) = 0;
       virtual ~InclusionDistribution() = default;
@@ -237,7 +237,7 @@ namespace tfel::material {
           return computeSphereLocalisationTensor<StressType>(IM0, KGi);
         }
       }
-    };
+    };  // End of SphereDistribution
 
     /*!
      * This struct represents an isotropic distribution of
@@ -285,7 +285,7 @@ namespace tfel::material {
         auto C1 = 1 / StressType(max_iter_anisotropic_integration) * C0;
         return C1;
       }
-    };
+    };  // End of IsotropicDistribution
 
     /*!
      * This struct represents a transverse isotropic distribution of inclusions
@@ -313,7 +313,7 @@ namespace tfel::material {
           : InclusionDistribution<3u, StressType>(ell, frac, IM),
             n(n_),
             index(ind) {
-        if ((ind != 0) and (ind != 1) and (ind != 2)) {
+        if ((ind != 0) && (ind != 1) && (ind != 2)) {
           tfel::reportContractViolation(
               "The index can only be 0, 1 or 2 and is the axis of the "
               "ellipsoid which does not rotate");
@@ -328,7 +328,7 @@ namespace tfel::material {
           : InclusionDistribution<3u, StressType>(sphero, frac, IM),
             n(n_),
             index(ind) {
-        if ((ind != 0) and (ind != 1) and (ind != 2)) {
+        if ((ind != 0) && (ind != 1) && (ind != 2)) {
           tfel::reportContractViolation(
               "The index can only be 0, 1 or 2 and is the axis of the "
               "ellipsoid which does not rotate");
@@ -353,14 +353,16 @@ namespace tfel::material {
         if (ind == 0) {
           bi = semiL[1];
           ci = semiL[2];
-        }
-        if (ind == 1) {
+        } else if (ind == 1) {
           bi = semiL[0];
           ci = semiL[2];
-        }
-        if (ind == 2) {
+        } else if (ind == 2) {
           bi = semiL[0];
           ci = semiL[1];
+        } else {
+          tfel::reportContractViolation(
+              "Bad index of ellipsoid semi-length. The index must be 0,1 or "
+              "2.");
         }
         return EllipsoidMeanLocalisator<3u, StressType>::TransverseIsotropic(
             IM0, KGi, this->n, ai, bi, ci);
@@ -376,7 +378,7 @@ namespace tfel::material {
         auto C1 = 1 / StressType(max_iter_anisotropic_integration) * C0;
         return C1;
       }
-    };
+    };  // End of TransverseIsotropicDistribution
 
     /*!
      * This struct represents a distribution of inclusions with a unique
@@ -473,7 +475,62 @@ namespace tfel::material {
         return computeIsotropicLocalisationTensor<3u, StressType>(
             IM0, Ci, n_a_i, n_b_i, semiL);
       }
-    };
+    };  // End of OrientedDistribution
+
+    /*!
+     * This struct represents a distribution of spheroidal inclusions
+     * whose orientation tensors A2 and A4 are given.
+     * A2 is the average of n^n and A4 the average of n^n^n^n.
+     */
+    template <tfel::math::ScalarConcept StressType>
+    requires(tfel::math::checkUnitCompatibility<
+             tfel::math::unit::Stress,
+             StressType>()) struct UserDefinedDistributionOfSpheroids
+        : public InclusionDistribution<3u, StressType> {
+      using real = tfel::types::real<StressType>;
+      using LengthType = tfel::types::length<StressType>;
+
+      tfel::math::stensor<3u, real> A2;
+      tfel::math::st2tost2<3u, real> A4;
+      UserDefinedDistributionOfSpheroids(
+          const Spheroid<LengthType>& sphero,
+          real frac,
+          const IsotropicModuli<StressType>& IMi,
+          const tfel::math::stensor<3u, real>& A2_,
+          const tfel::math::st2tost2<3u, real>& A4_)
+          : InclusionDistribution<3u, StressType>(sphero, frac, IMi),
+            A2(A2_),
+            A4(A4_) {}
+
+      std::unique_ptr<InclusionDistribution<3u, StressType>> clone()
+          const override {
+        return std::make_unique<UserDefinedDistributionOfSpheroids<StressType>>(
+            *this);
+      }
+
+      virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
+          const tfel::math::st2tost2<3u, StressType>& C0,
+          int max_iter_anisotropic_integration = 12) override {
+        tfel::reportContractViolation(
+            "I cannot compute the mean localisator for a distribution of non "
+            "oriented anisotropic inclusions in an anisotropic matrix. Try to "
+            "use an IsotropicModuli for the matrix");
+        auto C1 = 1 / StressType(max_iter_anisotropic_integration) * C0;
+        return C1;
+      }
+
+      virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
+          const IsotropicModuli<StressType>& IM0) override {
+        auto Ci = this->getElasticityOfPhase();
+        const auto KGi = computeKGModuli<StressType>(Ci);
+        auto semiL = (this->inclusion).semiLengths;
+        return EllipsoidMeanLocalisator<
+            3u, StressType>::UserDefinedDistributionOfSpheroids(IM0, KGi,
+                                                                semiL[0],
+                                                                semiL[1], A2,
+                                                                A4);
+      }
+    };  // End of UserDefinedDistributionOfSpheroids
 
     ////Definition of 'Microstructure' objects
 
@@ -540,9 +597,12 @@ namespace tfel::material {
         return (this->matrix_phase.getElasticityOfPhase());
       }
 
-      bool is_isotropic_matrix() { return (this->matrix_phase.isIsotropic()); }
-      bool isIsotropicMatrix() { return (this->matrix_phase.isIsotropic()); }
-
+      bool is_isotropic_matrix() const {
+        return (this->matrix_phase.isIsotropic());
+      }
+      bool isIsotropicMatrix() const {
+        return (this->matrix_phase.isIsotropic());
+      }
       real get_matrix_fraction() { return (this->matrix_phase.fraction); }
       real getMatrixFraction() { return (this->matrix_phase.fraction); }
 
