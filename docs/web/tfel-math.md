@@ -31,6 +31,7 @@ csl: iso690-numeric-en.csl
 \newcommand{\paren}[1]{{\left(#1\right)}}
 \newcommand{\absvalue}[1]{{\left|#1\right|}}
 \newcommand{\sigmaeq}{\sigma_{\mathrm{eq}}}
+\newcommand{\botimes}{\overline{\underline{\otimes}}}
 
 \newcommand{\ta}{\tns{a}}
 \newcommand{\ts}{\tenseur{s}}
@@ -502,6 +503,52 @@ respectively. Those classes have the following template arguments:
 
 - The space dimension (`1`, `2` or `3`).
 - The type used to perform the computation.
+
+#### Special bases for fourth-order tensors with symmetries
+
+The `st2tost2` objects which are transverse isotropic with a `tvector` 
+as the direction of isotropy can be expressed in the associated Walpole basis [@walpole_fourth-rank_1984].
+The 6 tensors \(\tenseurq E_1,\tenseurq E_2,\tenseurq E_3,\tenseurq E_4,\tenseurq F,\tenseurq G\) of this basis are defined with the `tvector` `n` by :
+
+\[
+\tenseur p(\vec n)=\vec n\otimes\vec n\qquad\tenseur q(\vec n)=\tenseur 1-\vec n\otimes\vec n
+\]
+\[
+\tenseurq E_1(\vec n)=\tenseur p\otimes\tenseur p\qquad\tenseurq E_2(\vec n)=\dfrac12\tenseur q\otimes\tenseur q
+\]
+\[
+\tenseurq E_3(\vec n)=\dfrac1{\sqrt2}\tenseur p\otimes\tenseur q\qquad\tenseurq E_4(\vec n)=\dfrac1{\sqrt2}\tenseur q\otimes\tenseur p
+\]
+\[
+\tenseurq F(\vec n)=\tenseur q\botimes\tenseur q-\dfrac12\tenseur q\otimes\tenseur q\qquad\tenseurq G(\vec n)=\tenseur p\botimes\tenseur q+\tenseur q\botimes\tenseur p
+\]
+
+with
+
+\[
+\left(\tenseur a \botimes \tenseur b\right)_{ijkl}=\dfrac12\left(a_{ik}b_{jl}+a_{il}b_{jk}\right)
+\]
+
+The tensors of the basis can be called with
+
+~~~~{.cxx}
+const auto n = tvector<3u,double>{0.,0.,1.};
+    
+const auto E1=TransverseIsotropicWalpoleBasis<double>::E1(n);
+const auto E2=TransverseIsotropicWalpoleBasis<double>::E2(n);
+const auto E3=TransverseIsotropicWalpoleBasis<double>::E3(n);
+const auto E4=TransverseIsotropicWalpoleBasis<double>::E4(n);
+const auto F=TransverseIsotropicWalpoleBasis<double>::F(n);
+const auto G=TransverseIsotropicWalpoleBasis<double>::G(n);
+~~~~
+
+and the components of a `st2tost2` object `A` are obtained by doing
+
+~~~~{.cxx}
+const auto c1=TransverseIsotropicWalpoleBasis<double>::components(n,A);
+~~~~
+
+The returned object is a `std::array<double,6>` in this case.
 
 ### The `tmatrix` case
 

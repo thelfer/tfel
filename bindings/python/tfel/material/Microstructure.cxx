@@ -355,6 +355,59 @@ requires(
           pybind11::arg("max_iter_anisotropic_integration") = 12);
 }
 
+template <tfel::math::ScalarConcept StressType>
+requires(
+    tfel::math::checkUnitCompatibility<
+        tfel::math::unit::Stress,
+        StressType>()) static void declareUserDefinedDistributionOfSpheroids(pybind11::
+                                                                                 module_&
+                                                                                     m,
+                                                                             const char* const
+                                                                                 n) {
+  using real = tfel::types::real<StressType>;
+  using LengthType = tfel::types::length<StressType>;
+  using Sphe = tfel::material::homogenization::elasticity::Spheroid<LengthType>;
+  using UDDS = tfel::material::homogenization::elasticity::
+      UserDefinedDistributionOfSpheroids<StressType>;
+  using ID = tfel::material::homogenization::elasticity::InclusionDistribution<
+      3u, StressType>;
+
+  pybind11::class_<UDDS, ID, std::shared_ptr<UDDS>>(m, n,
+                                                    pybind11::buffer_protocol())
+      .def(pybind11::init<const UDDS&>())
+      .def(pybind11::init<const Sphe&, real,
+                          const tfel::material::IsotropicModuli<StressType>&,
+                          const tfel::math::stensor<3, real>&,
+                          const tfel::math::st2tost2<3, real>&>())
+      .def_readwrite("inclusion", &UDDS::inclusion)
+      .def_readwrite("fraction", &UDDS::fraction)
+      .def("getElasticityOfPhase", &UDDS::getElasticityOfPhase)
+      .def("changeElasticityOfPhase",
+           [](UDDS& udds, const tfel::math::st2tost2<3u, StressType>& C0) {
+             return udds.changeElasticityOfPhase(C0);
+           })
+      .def("changeElasticityOfPhase",
+           [](UDDS& udds,
+              const tfel::material::IsotropicModuli<StressType>& IM0) {
+             return udds.changeElasticityOfPhase(IM0);
+           })
+      .def("is_isotropic", &UDDS::is_isotropic)
+      .def("computeMeanLocalisator",
+           [](UDDS& udds,
+              const tfel::material::IsotropicModuli<StressType>& IM0) {
+             return udds.computeMeanLocalisator(IM0);
+           })
+      .def(
+          "computeMeanLocalisator",
+          [](UDDS& udds, const tfel::math::st2tost2<3u, StressType>& C0,
+             int max_iter_anisotropic_integration) {
+            return udds.computeMeanLocalisator(
+                C0, max_iter_anisotropic_integration);
+          },
+          pybind11::arg("C0"),
+          pybind11::arg("max_iter_anisotropic_integration") = 12);
+}
+
 template <unsigned short int N, tfel::math::ScalarConcept StressType>
 requires(
     tfel::math::checkUnitCompatibility<
@@ -364,6 +417,9 @@ requires(
                                                                             m,
                                                                     const char* const
                                                                         n) {
+  using ID = tfel::material::homogenization::elasticity::InclusionDistribution<
+      N, StressType>;
+
   using PM =
       tfel::material::homogenization::elasticity::ParticulateMicrostructure<
           N, StressType>;
@@ -401,8 +457,13 @@ requires(
       .def("getMatrixElasticity", &PM::getMatrixElasticity)
       .def("is_isotropic_matrix", &PM::isIsotropicMatrix)
       .def("isIsotropicMatrix", &PM::isIsotropicMatrix)
-      .def("get_inclusionPhase", &PM::getInclusionPhase)
-      .def("getInclusionPhase", &PM::getInclusionPhase);
+      .def("get_inclusionPhase",
+           [](PM& pm, unsigned int i) {
+             return std::shared_ptr<ID>(pm.getInclusionPhase(i));
+           })
+      .def("getInclusionPhase", [](PM& pm, unsigned int i) {
+        return std::shared_ptr<ID>(pm.getInclusionPhase(i));
+      });
 }
 
 void declareMicrostructure(pybind11::module_&);
@@ -421,5 +482,7 @@ void declareMicrostructure(pybind11::module_& m) {
   declareTransverseIsotropicDistribution<double>(
       m, "TransverseIsotropicDistribution");
   declareOrientedDistribution<double>(m, "OrientedDistribution");
+  declareUserDefinedDistributionOfSpheroids<double>(
+      m, "UserDefinedDistributionOfSpheroids");
   declareParticulateMicrostructure<3, double>(m, "ParticulateMicrostructure");
 }
