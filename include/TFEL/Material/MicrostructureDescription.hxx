@@ -169,7 +169,7 @@ namespace tfel::material {
 
       virtual tfel::math::st2tost2<N, real> computeMeanLocalisator(
           const tfel::math::st2tost2<N, StressType> &C0,
-          int max_iter_anisotropic_integration) = 0;
+          int max_iter_anisotropic_integration = 12) = 0;
       virtual tfel::math::st2tost2<N, real> computeMeanLocalisator(
           const IsotropicModuli<StressType> &IM0) = 0;
       virtual ~InclusionDistribution() = default;

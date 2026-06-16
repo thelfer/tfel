@@ -285,7 +285,7 @@ namespace tfel::material::homogenization::elasticity {
       }
       using namespace tfel::math;
       st2tost2<3u, real> A;
-      if (areAlmostEqual(eps, b / a, real(1)) and
+      if (areAlmostEqual(eps, b / a, real(1)) &&
           areAlmostEqual(eps, b / c, real(1))) {
         A = computeSphereLocalisationTensor<StressType>(young, nu, young_i,
                                                         nu_i);

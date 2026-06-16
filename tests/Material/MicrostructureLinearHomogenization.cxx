@@ -170,22 +170,17 @@ struct MicrostructureLinearHomogenizationTest final
   
     static constexpr auto eps = std::numeric_limits<real>::epsilon();
     using namespace tfel::material::homogenization::elasticity;
-    length a = length(100);
-    length b = length(1);
+   
     tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
     tfel::math::tvector<3u, real> n_b = {0., 1., 0.};
 
-    const auto k0 = stress{1.};
-    const auto mu0 = stress(0.5);
-    const auto ki = stress{100.};
-    const auto mui = stress(60.);
     const auto J = tfel::math::st2tost2<3u,real>::J();
     const auto K = tfel::math::st2tost2<3u,real>::K();
     
-    const auto KG0 = tfel::material::KGModuli<stress>(k0,mu0);
-    const auto KGi = tfel::material::KGModuli<stress>(ki,mui);
+    const auto KG0 = tfel::material::KGModuli<stress>(stress{1.},stress(0.5));
+    const auto KGi = tfel::material::KGModuli<stress>(stress{100.},stress(60.));
 
-    Spheroid<length> spheroid1(a, b);
+    Spheroid<length> spheroid1(length(100), length(1));
     const tfel::math::stensor<3u,real> A2 = tfel::math::TransverseIsotropicWalpoleBasis<real>::p(n_a);
     const tfel::math::st2tost2<3u,real> A4 = A2^A2;
     UserDefinedDistributionOfSpheroids<stress> distrib1(spheroid1, real(0.5), KGi, A2, A4);
