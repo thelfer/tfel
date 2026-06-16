@@ -33,7 +33,7 @@ namespace tfel::material::homogenization::elasticity {
     static constexpr auto eps =
         tfel::material::EshelbyTolerances::get<tfel::math::base_type<real>>();
 
-    TFEL_HOST_DEVICE static const std::pair<real, real> Isotropic(
+    TFEL_HOST_DEVICE static std::pair<real, real> Isotropic(
         const StressType& young,
         const real& nu,
         const StressType& young_i,
@@ -41,7 +41,7 @@ namespace tfel::material::homogenization::elasticity {
         const LengthType& a,
         const LengthType& b,
         const LengthType& c) {
-      if (not((a > LengthType{0}) and (b > LengthType{0}) and
+      if (!((a > LengthType{0}) && (b > LengthType{0}) &&
               (c > LengthType{0}))) {
         tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
       }
@@ -51,7 +51,7 @@ namespace tfel::material::homogenization::elasticity {
       real mu;
       real ka;
       using namespace tfel::math;
-      if (areAlmostEqual(eps, b / a, real(1)) and
+      if (areAlmostEqual(eps, b / a, real(1)) &&
           areAlmostEqual(eps, b / c, real(1))) {
         const auto A = computeSphereLocalisationTensor<StressType>(
             young, nu, young_i, nu_i);
@@ -97,7 +97,7 @@ namespace tfel::material::homogenization::elasticity {
     }  // end of Isotropic
 
     // overloading of the function, for IsotropicModuli objects
-    TFEL_HOST_DEVICE static const std::pair<real, real> Isotropic(
+    TFEL_HOST_DEVICE static std::pair<real, real> Isotropic(
         const IsotropicModuli<StressType>& IM0,
         const IsotropicModuli<StressType>& IM_i,
         const LengthType& a,
@@ -109,7 +109,7 @@ namespace tfel::material::homogenization::elasticity {
     }  // end of overloading of Isotropic
 
     // overloading of the function, for 2d ellipses
-    TFEL_HOST_DEVICE static const tfel::math::st2tost2<2u, real> Isotropic(
+    TFEL_HOST_DEVICE static tfel::math::st2tost2<2u, real> Isotropic(
         const IsotropicModuli<StressType>& IM0,
         const IsotropicModuli<StressType>& IM_i,
         const LengthType& a,
@@ -142,16 +142,15 @@ namespace tfel::material::homogenization::elasticity {
     }  // end of overloading of Isotropic
 
     // overloading of the function for semiLengths argument in 2d
-    TFEL_HOST_DEVICE static const tfel::math::st2tost2<2u, real> Isotropic(
+    TFEL_HOST_DEVICE static tfel::math::st2tost2<2u, real> Isotropic(
         const IsotropicModuli<StressType>& IM0,
         const IsotropicModuli<StressType>& IM_i,
         const std::array<types::length<StressType>, 2u>& semiLengths) {
       return Isotropic(IM0, IM_i, semiLengths[0], semiLengths[1]);
-
     }  // end of Isotropic
 
     // overloading of the function for semiLengths argument in 3d
-    TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u, real> Isotropic(
+    TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real> Isotropic(
         const IsotropicModuli<StressType>& IM0,
         const IsotropicModuli<StressType>& IM_i,
         const std::array<types::length<StressType>, 3u>& semiLengths) {
@@ -163,7 +162,7 @@ namespace tfel::material::homogenization::elasticity {
              2 * muA * tfel::math::st2tost2<3u, real>::K();
     }  // end of Isotropic
 
-    TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u, real>
+    TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real>
     TransverseIsotropic(const StressType& young,
                         const real& nu,
                         const StressType& young_i,
@@ -172,7 +171,7 @@ namespace tfel::material::homogenization::elasticity {
                         const LengthType& a,
                         const LengthType& b,
                         const LengthType& c) {
-      if (not((a > LengthType{0}) and (b > LengthType{0}) and
+      if (!((a > LengthType{0}) && (b > LengthType{0}) &&
               (c > LengthType{0}))) {
         tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
       }
@@ -195,7 +194,7 @@ namespace tfel::material::homogenization::elasticity {
       const tvector<3u, real> n_y = {0., 1., 0.};
       const tvector<3u, real> n_z = {0., 0., 1.};
       st2tost2<3u, real> A;
-      if (areAlmostEqual(eps, b / a, real(1)) and
+      if (areAlmostEqual(eps, b / a, real(1)) &&
           areAlmostEqual(eps, c / b, real(1))) {
         A = computeSphereLocalisationTensor<StressType>(young, nu, young_i,
                                                         nu_i);
@@ -249,7 +248,7 @@ namespace tfel::material::homogenization::elasticity {
     }  // end of TransverseIsotropic
 
     // overloading of the function, for IsotropicModuli objects
-    TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u, real>
+    TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real>
     TransverseIsotropic(const IsotropicModuli<StressType>& IM0,
                         const IsotropicModuli<StressType>& IM_i,
                         const tfel::math::tvector<3u, real>& n_a,
@@ -262,7 +261,7 @@ namespace tfel::material::homogenization::elasticity {
                                  a, b, c);
     }  // end of overloading of TransverseIsotropic
 
-    TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u, real> Oriented(
+    TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real> Oriented(
         const StressType& young,
         const real& nu,
         const StressType& young_i,
@@ -272,11 +271,11 @@ namespace tfel::material::homogenization::elasticity {
         const tfel::math::tvector<3u, real>& n_b,
         const LengthType& b,
         const LengthType& c) {
-      if (not((a > LengthType{0}) and (b > LengthType{0}) and
+      if (!((a > LengthType{0}) && (b > LengthType{0}) &&
               (c > LengthType{0}))) {
         tfel::reportContractViolation("a<=0 or b<=0 or c<=0");
       }
-      if (not(tfel::math::ieee754::fpclassify(n_a | n_b) == FP_ZERO)) {
+      if (!(tfel::math::ieee754::fpclassify(n_a | n_b) == FP_ZERO)) {
         tfel::reportContractViolation("n_a and n_b not normals");
       }
       if (tfel::math::ieee754::fpclassify(norm(n_a)) == FP_ZERO) {
@@ -287,7 +286,7 @@ namespace tfel::material::homogenization::elasticity {
       }
       using namespace tfel::math;
       st2tost2<3u, real> A;
-      if (areAlmostEqual(eps, b / a, real(1)) and
+      if (areAlmostEqual(eps, b / a, real(1)) &&
           areAlmostEqual(eps, b / c, real(1))) {
         A = computeSphereLocalisationTensor<StressType>(young, nu, young_i,
                                                         nu_i);
@@ -310,7 +309,7 @@ namespace tfel::material::homogenization::elasticity {
     }  // end of Oriented
 
     // overloading of the function, for IsotropicModuli objects
-    TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u, real> Oriented(
+    TFEL_HOST_DEVICE static tfel::math::st2tost2<3u, real> Oriented(
         const IsotropicModuli<StressType>& IM0,
         const IsotropicModuli<StressType>& IM_i,
         const tfel::math::tvector<3u, real>& n_a,
@@ -325,14 +324,14 @@ namespace tfel::material::homogenization::elasticity {
     }  // end of overloading of Oriented
 
 
-    TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u,real> UserDefinedDistributionOfSpheroids(
+    TFEL_HOST_DEVICE static tfel::math::st2tost2<3u,real> UserDefinedDistributionOfSpheroids(
         const IsotropicModuli<StressType>& IM0,
         const IsotropicModuli<StressType>& IMi,
         const LengthType& a,
         const LengthType& b,
         const tfel::math::stensor<3u, real>& A2,
         const tfel::math::st2tost2<3u, real>& A4) {
-      if (not((a > LengthType{0}) and (b > LengthType{0}))) {
+      if (!((a > LengthType{0}) && (b > LengthType{0}))) {
         tfel::reportContractViolation("a<=0 or b<=0");
       }
 

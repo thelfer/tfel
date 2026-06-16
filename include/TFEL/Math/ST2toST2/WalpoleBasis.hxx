@@ -25,16 +25,16 @@ namespace tfel::math {
   template<typename real>
   struct TransverseIsotropicWalpoleBasis{
      
-     TFEL_HOST_DEVICE static const stensor<3u,real> p(const tvector<3u,real>& n){
+     TFEL_HOST_DEVICE static stensor<3u,real> p(const tvector<3u,real>& n){
       const stensor<3u,real> p_ = {n(0)*n(0),n(1)*n(1),n(2)*n(2),n(0)*n(1),n(0)*n(2),n(1)*n(2)};
       return p_;
      }
      
-     TFEL_HOST_DEVICE static const stensor<3u,real> q(const tvector<3u,real>& n){
+     TFEL_HOST_DEVICE static stensor<3u,real> q(const tvector<3u,real>& n){
       return stensor<3u,real>::Id()-p(n);
      }
      
-     TFEL_HOST_DEVICE static const st2tost2<3u,real> dyadic_ov(const stensor<3u,real>& a,const stensor<3u,real>& b){
+     TFEL_HOST_DEVICE static st2tost2<3u,real> dyadic_ov(const stensor<3u,real>& a,const stensor<3u,real>& b){
       const st2tost2<3u,real> a_b =
  {a(0)*b(0), a(3)*b(3), a(4)*b(4), sqrt(2)/2*(a(0)*b(3)+a(3)*b(0)), sqrt(2)/2*(a(0)*b(4)+a(4)*b(0)), sqrt(2)/2*(a(3)*b(4)+a(4)*b(3)),
   a(3)*b(3), a(1)*b(1), a(5)*b(5), sqrt(2)/2*(a(1)*b(3)+a(3)*b(1)), sqrt(2)/2*(a(3)*b(5)+a(5)*b(3)), sqrt(2)/2*(a(1)*b(5)+a(5)*b(1)),
@@ -46,35 +46,35 @@ namespace tfel::math {
       return a_b;
      }
      
-     TFEL_HOST_DEVICE static const st2tost2<3u,real> E1(const tvector<3u,real>& n){
+     TFEL_HOST_DEVICE static st2tost2<3u,real> E1(const tvector<3u,real>& n){
        return p(n)^p(n);
      }
      
-     TFEL_HOST_DEVICE static const st2tost2<3u,real> E2(const tvector<3u,real>& n){
+     TFEL_HOST_DEVICE static st2tost2<3u,real> E2(const tvector<3u,real>& n){
        return 0.5*(q(n)^q(n));
      }
      
-     TFEL_HOST_DEVICE static const st2tost2<3u,real> E3(const tvector<3u,real>& n){
+     TFEL_HOST_DEVICE static st2tost2<3u,real> E3(const tvector<3u,real>& n){
        return (1/sqrt(2))*p(n)^q(n);
      }
      
-     TFEL_HOST_DEVICE static const st2tost2<3u,real> E4(const tvector<3u,real>& n){
+     TFEL_HOST_DEVICE static st2tost2<3u,real> E4(const tvector<3u,real>& n){
        return (1/sqrt(2))*q(n)^p(n);
      }
      
-     TFEL_HOST_DEVICE static const st2tost2<3u,real> F(const tvector<3u,real>& n){
+     TFEL_HOST_DEVICE static st2tost2<3u,real> F(const tvector<3u,real>& n){
        const st2tost2<3u,real> F_= dyadic_ov(q(n),q(n));
        return F_-E2(n);
      }
      
-     TFEL_HOST_DEVICE static const st2tost2<3u,real> G(const tvector<3u,real>& n){
+     TFEL_HOST_DEVICE static st2tost2<3u,real> G(const tvector<3u,real>& n){
        st2tost2<3u,real> G_= dyadic_ov(p(n),q(n));
        G_+=dyadic_ov(q(n),p(n));
        return G_;
      }
      
      template<typename T>
-     TFEL_HOST_DEVICE static const std::array<T,6> components(const tvector<3u,real>& n,const st2tost2<3u,T>& P){
+     TFEL_HOST_DEVICE static std::array<T,6> components(const tvector<3u,real>& n,const st2tost2<3u,T>& P){
        const auto p1=trace(E1(n)*P*E1(n));
        const auto p2=trace(E2(n)*P*E2(n));
        const auto p3=trace(E1(n)*P*E4(n));

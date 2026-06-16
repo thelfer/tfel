@@ -13,7 +13,7 @@
 
 #ifdef NDEBUG
 #undef NDEBUG
-#endif /* NDEBUG */
+#endif NDEBUG
 
 #include <cmath>
 #include <cstdlib>
