@@ -23,15 +23,19 @@ namespace mfront::generic_parallel::material_property {
 
   SYCLBackend::SYCLBackend(const tfel::utilities::DataMap& opts) {
     auto validator = tfel::utilities::DataMapValidator{};
-    validator.addDataTypeValidator<std::string>("data_location");
+    validator.addDataTypeValidator<std::string>("data_transfer_policy");
     validator.validate(opts);
-    if (!contains(opts, "data_location")) {
-      tfel::raise("the 'data_location' option is not provided");
-    }
-    const auto dl = get<std::string>(opts, "data_location");
-    if (dl != "host") {
-      tfel::raise("unsuported data_location '" + dl +
-                  "'. The only valid value is: 'host'");
+    if (contains(opts, "data_transfer_policy")) {
+      const auto dl = get<std::string>(opts, "data_transfer_policy");
+      if ((dl == "auto") || (dl == "automatic")) {
+        this->data_transfer_policy = DataTransferPolicy::AUTOMATIC;
+      } else if (dl == "none") {
+        this->data_transfer_policy = DataTransferPolicy::NONE;
+      } else {
+        tfel::raise(
+            "unsuported data transfer policy '" + dl +
+            "'. The only valid value is: 'automatic' (or 'auto') and 'none'");
+      }
     }
   }  // end of SYCLBackend
 
@@ -224,8 +228,7 @@ namespace mfront::generic_parallel::material_property {
   }  // end of writeKernelCall
 
   bool SYCLBackend::handlesDataTransfer() const {
-    //    return false;
-    return this->data_location == "host";
+    return this->data_transfer_policy == DataTransferPolicy::AUTOMATIC;
   }  // end of handlesDataTransfer
 
   void SYCLBackend::writeDataTransfersToDevice(

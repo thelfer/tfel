@@ -64,8 +64,12 @@ namespace mfront::generic_parallel::material_property {
         const GenericParallelMaterialPropertyInterface&,
         const MaterialPropertyDescription&,
         const bool) const override;
+    /*!
+     * \brief enumeration giving if data transfer are handled
+     */
+    enum struct DataTransferPolicy { AUTOMATIC, NONE };
     //
-    std::string data_location = "host";
+    DataTransferPolicy data_transfer_policy = DataTransferPolicy::AUTOMATIC;
   };  // end of SYCLBackend
 
 }  // end of namespace mfront::generic_parallel::material_property
