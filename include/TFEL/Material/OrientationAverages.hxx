@@ -386,7 +386,7 @@ namespace tfel::material::homogenization::elasticity {
       const tfel::math::tvector<3u, real> n_1 = {1., 0., 0.};
       using namespace tfel::math;
         const auto dA_ = computeDerivativesOfAxisymmetricalLocalisationTensor<StressType>(
-        IM0, IMi, n_1, e,dkg);  
+        IM0.ToKG(), IMi.ToKG(), n_1, e,dkg);  
         const auto dA = TransverseIsotropicWalpoleBasis<real>::components(n_1,dA_);
         const auto I = tfel::math::st2tost2<3u,real>::Id();
         const auto J = tfel::math::st2tost2<3u,real>::J();

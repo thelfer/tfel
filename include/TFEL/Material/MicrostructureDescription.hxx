@@ -172,6 +172,8 @@ namespace tfel::material {
           int max_iter_anisotropic_integration = 12) = 0;
       virtual tfel::math::st2tost2<N, real> computeMeanLocalisator(
           const IsotropicModuli<StressType> &IM0) = 0;
+      virtual tfel::math::st2tost2<N, real> computeDerivativesOfMeanLocalisator(
+          const IsotropicModuli<StressType> &IM0, const std::array<types::real<StressType>,4> &dKG) = 0;
       virtual ~InclusionDistribution() = default;
     };
 
@@ -226,6 +228,9 @@ namespace tfel::material {
           return computeSphereLocalisationTensor<StressType>(IM0, KGi);
         }
       }
+      
+      virtual tfel::math::st2tost2<3u, real> computeDerivativesOfMeanLocalisator(
+          const IsotropicModuli<StressType> &IM0, const std::array<types::real<StressType>,4> &dKG) override {return tfel::math::st2tost2<3u, real>::Id();}
     };  // End of SphereDistribution
 
     /*!
@@ -273,6 +278,9 @@ namespace tfel::material {
         auto C1 = 1 / StressType(max_iter_anisotropic_integration) * C0;
         return C1;
       }
+      
+      virtual tfel::math::st2tost2<3u, real> computeDerivativesOfMeanLocalisator(
+          const IsotropicModuli<StressType> &IM0, const std::array<types::real<StressType>,4> &dKG) override {return tfel::math::st2tost2<3u, real>::Id();}
     };  // End of IsotropicDistribution
 
     /*!
@@ -365,6 +373,9 @@ namespace tfel::material {
         auto C1 = 1 / StressType(max_iter_anisotropic_integration) * C0;
         return C1;
       }
+      
+      virtual tfel::math::st2tost2<3u, real> computeDerivativesOfMeanLocalisator(
+          const IsotropicModuli<StressType> &IM0, const std::array<types::real<StressType>,4> &dKG) override {return tfel::math::st2tost2<3u, real>::Id();}
     }; // End of TransverseIsotropicDistribution
 
     /*!
@@ -461,6 +472,9 @@ namespace tfel::material {
         return computeIsotropicLocalisationTensor<3u, StressType>(
             IM0, Ci, n_a_i, n_b_i, semiL);
       }
+      
+      virtual tfel::math::st2tost2<3u, real> computeDerivativesOfMeanLocalisator(
+          const IsotropicModuli<StressType> &IM0, const std::array<types::real<StressType>,4> &dKG) override {return tfel::math::st2tost2<3u, real>::Id();}
     }; // End of OrientedDistribution
     
     /*!
@@ -510,13 +524,13 @@ namespace tfel::material {
         return EllipsoidMeanLocalisator<3u,StressType>::UserDefinedDistributionOfSpheroids(IM0,KGi,semiL[0],semiL[1],A2,A4);
       }
       
-      tfel::math::st2tost2<3u, real> computeDerivativesOfMeanLocalisator(
-          const IsotropicModuli<StressType> &IM0, const std::array<types::real<StressType>,4> &dKG){
+      virtual tfel::math::st2tost2<3u, real> computeDerivativesOfMeanLocalisator(
+          const IsotropicModuli<StressType> &IM0, const std::array<types::real<StressType>,4> &dKG) override {
         auto Ci = this->getElasticityOfPhase();
         const auto KGi = computeKGModuli<StressType>(Ci);
         auto semiL = (this->inclusion).semiLengths;
         const auto e =real(semiL[0]/semiL[1]);
-        return DerivativesOfMeanLocalisator(IM0,KGi,e,A2,A4,dKG);
+        return DerivativesOfMeanLocalisator<3u,StressType>(IM0,KGi,e,A2,A4,dKG);
       }
     }; // End of UserDefinedDistributionOfSpheroids
      
