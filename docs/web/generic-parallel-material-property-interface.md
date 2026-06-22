@@ -226,6 +226,23 @@ number of arguments passed).
 
 The `HIP` backend is similar to the `CUDA` backend.
 
+### Example of usage
+
+~~~~{.cxx}
+auto output = mfront_gmp_OutputStatus{};
+auto output_qt = mfront_gmp_OutputStatus{};
+auto E = createManagedData(4);
+const auto T = createManagedData({300, 500, 300, 800});
+const auto policy = mfront_gmp_OutOfBoundsPolicy{};
+const auto args = std::array<const double *, 1u>{T.get()};
+const auto args_strides = std::array<mfront_gmp_size_type, 1u>{1};
+Inconel600_YoungModulus(&output, E.get(), 1, args.data(),
+                        args_strides.data(), 1, 4, policy);
+~~~~
+
+where `createManagedData` is a simple wrapper around `hipMallocManaged`
+returning an `std::unique_ptr` for RAII.
+
 ## Parallel STL backend (`stdpar`)
 
 ### Example of usage
