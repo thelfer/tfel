@@ -181,11 +181,7 @@ namespace tfel::material::homogenization::elasticity {
       tfel::math::st2tost2<N, real> A0 =
           f0 * tfel::math::st2tost2<N, real>::Id();
       for (std::size_t i = 0; i < np - 1; i++) {
-<<<<<<< HEAD
-        auto phasei = micro.get_inclusionPhase(i);
-=======
         auto phasei = micro.getInclusionPhase(i);
->>>>>>> master
         auto fi = (*phasei).fraction;
         tfel::math::st2tost2<N, real> Ai;
         if (isotropic) {
