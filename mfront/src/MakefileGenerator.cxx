@@ -12,6 +12,7 @@
  */
 
 #include <set>
+#include <array>
 #include <cstring>
 #include <ostream>
 #include <sstream>
