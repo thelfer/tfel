@@ -321,6 +321,14 @@ namespace tfel::math {
   }
 
   template <unsigned short N, unsigned short M, typename T>
+  TFEL_HOST_DEVICE constexpr auto tmatrix<N, M, T>::generateIdComponent(
+      unsigned short i, unsigned short j) noexcept {
+    static_assert(N == M);
+    constexpr auto c1 = T{1};
+    return c1 * (i == j);
+  }  // end of tmatrix<N,M,T>::generateIdComponent
+
+  template <unsigned short N, unsigned short M, typename T>
   template <typename InputIterator>
   TFEL_HOST_DEVICE constexpr void tmatrix<N, M, T>::copy(
       const InputIterator src) {
