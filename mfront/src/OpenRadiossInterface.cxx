@@ -1,0 +1,539 @@
+/*!
+ * \file   mfront/src/OpenRadiossInterface.cxx
+ * \brief  OpenRadioss interface
+ * \author Thomas Helfer
+ * \date   10/04/2025
+ */
+
+#include <iostream>
+
+#include <fstream>
+#include "TFEL/Raise.hxx"
+#include "TFEL/Glossary/Glossary.hxx"
+#include "TFEL/Glossary/GlossaryEntry.hxx"
+#include "MFront/TargetsDescription.hxx"
+#include "MFront/LibraryDescription.hxx"
+#include "MFront/MFrontUtilities.hxx"
+#include "MFront/BehaviourDescription.hxx"
+#include "MFront/OpenRadiossInterface.hxx"
+
+/*
+  TODOs and Current limitations
+
+  - Currently 2D shells are not supported.
+  - The materials are generated with the ID = 1, therefore, only one material
+  is supported currently. In order to have serveral MFront generated materials
+  in OpenRadioss, this interface should be updated (maybe by adding a RADIOSS)
+  specific compilation flag/keyword that would allow the user to select the
+  material number.
+  - Double precision is used throughout the code, it is unlikely that we will
+  ever support single precision routines.
+  - Internal state variables do not seem to be correctly supported.
+  - Small/large strains need to be figured out. OpenRadioss defaults to large,
+  but may dynamicly change to a small strain approach if the time-step is small.
+  - Stress tensor storage needs to be figured out, see https://thelfer.github.io/tfel/web/tensors.html and https://help.altair.com/hwsolvers/rad/topics/solvers/rad/theory_basic_equations_stresses_in_solids_r.htm
+  - Plastic and viscous deformation/stresses need to be figured out
+ */
+
+namespace mfront {
+
+  std::string OpenRadiossInterface::getName() { return "OpenRadioss"; }
+
+  std::string OpenRadiossInterface::getInterfaceName() const {
+    return "OpenRadioss";
+  }
+
+  std::string OpenRadiossInterface::getLibraryName(
+      const BehaviourDescription& bd) const {
+    if (bd.getLibrary().empty()) {
+      if (!bd.getMaterialName().empty()) {
+        return bd.getMaterialName() + "-" + this->getInterfaceName();
+      } else {
+        return "OpenRadiossBehaviour";
+      }
+    }
+    return bd.getLibrary() + "-" + this->getInterfaceName();
+  }  // end of getLibraryName
+
+  void OpenRadiossInterface::getTargetsDescription(
+      TargetsDescription& td, const BehaviourDescription& bd) {
+    GenericBehaviourInterface::getTargetsDescription(td, bd);
+    const auto lib = this->getLibraryName(bd);
+    auto& l = td.getLibrary(lib);
+    insert_if(l.sources, "lecmuser01.f");
+    insert_if(l.sources, "luser01.f");
+    insert_if(l.sources, "luser01-interface.cxx");
+  }  // end of getTargetsDescription
+
+  std::pair<bool, OpenRadiossInterface::tokens_iterator>
+  OpenRadiossInterface::treatKeyword(BehaviourDescription&,
+                                     const std::string& k,
+                                     const std::vector<std::string>& i,
+                                     tokens_iterator current,
+                                     const tokens_iterator) {
+    if (!i.empty()) {
+      if (std::find(i.begin(), i.end(), this->getName()) != i.end()) {
+        tfel::raise("unsupported key '" + k + "'");
+      }
+    }
+    return {false, current};
+  }  // end of OpenRadiossInterface::treatKeyword
+
+  std::set<OpenRadiossInterface::Hypothesis>
+  OpenRadiossInterface::getModellingHypothesesToBeTreated(
+      const BehaviourDescription& bd) const {
+    const auto& bh = bd.getModellingHypotheses();
+    // TODO shell elements are also supported
+    tfel::raise_if(bh.find(ModellingHypothesis::TRIDIMENSIONAL) == bh.end(),
+                   "OpenRadiossInterface::getModellingHypothesesToBeTreated : "
+                   "the 'Tridimensional' hypothesis is not supported by the behaviour, "
+                   "which is required for the OpenRadioss interface");
+    return {ModellingHypothesis::TRIDIMENSIONAL};
+  }  // end of getModellingHypothesesToBeTreated
+
+  void OpenRadiossInterface::endTreatment(const BehaviourDescription& bd,
+                                          const FileDescription& fd) const {
+    constexpr auto h = ModellingHypothesis::TRIDIMENSIONAL;
+    const auto& d = bd.getBehaviourData(h);
+
+    if (!bd.isTemperatureDefinedAsTheFirstExternalStateVariable()) {
+      tfel::raise(
+          "the temperature must be defined as the first external state "
+          "variable to be compatible with the OpenRadioss's interface");
+    }
+    // TODO, check if external variables are supported!
+    if(d.getExternalStateVariables().size() != 1u){
+      tfel::raise(
+          "external state variables other than the temperature are not "
+          "supported by OpenRadioss's interface");
+    }
+
+    // TODO Anisotropic behaviours are also supported, delete
+    if (bd.getSymmetryType() != mfront::ISOTROPIC && bd.getSymmetryType() != mfront::ORTHOTROPIC) {
+      tfel::raise(
+          "only isotropic or orthotropic behaviours are "
+          "supported by OpenRadioss's interface");
+    }
+
+    // TODO Check that large deformation are not available directly in material behaviours with Marian
+    // Default strain behaviour is finite/large, see https://help.altair.com/hwsolvers/rad/topics/solvers/rad/theory_basic_equations_small_strain_formulation_r.htm
+    // Small strain is also supported and large deformation can switch to small strains at runtime
+    if (bd.getBehaviourType() !=
+        BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) {
+      tfel::raise(
+          "Only small strain behaviours are "
+          "supported by OpenRadioss's interface.\n"
+          "OpenRadioss handles internally finite strains.");
+    }
+
+    GenericBehaviourInterface::endTreatment(bd, fd);
+    // generating the starter sources
+    const auto mprops = this->buildMaterialPropertiesList(bd, h);
+    const auto nprops = [&mprops] {
+      auto r = SupportedTypes::TypeSize{};
+      if (!mprops.first.empty()) {
+        const auto& m = mprops.first.back();
+        r = m.offset;
+        r += SupportedTypes::getTypeSize(m.type, m.arraySize);
+        r -= mprops.second;
+      }
+      return r.getValueForModellingHypothesis(h);
+    }();
+    auto out = std::ofstream("src/lecmuser01.f");
+    if (!out) {
+      tfel::raise("could not open file 'src/lecmuser01.f'");
+    }
+    out << "      SUBROUTINE "
+        << "LECMUSER01(IIN,IOUT,UPARAM,MAXUPARAM,NUPARAM, \n"
+        << "     .                NUVAR,IFUNC,MAXFUNC,NFUNC,STIFINT,\n"
+        << "     .                USERBUF)\n"
+        << "      USE LAW_USER\n"
+        << "      IMPLICIT NONE\n"
+        << "      INTEGER IIN,IOUT,MAXUPARAM,NUPARAM,NUVAR,\n"
+        << "     .        MAXFUNC,NFUNC,IFUNC(MAXFUNC)\n"
+        << "      DOUBLE PRECISION   UPARAM(MAXUPARAM),STIFINT\n"
+        << "      TYPE(ULAWBUF) :: USERBUF\n"
+        << "      NUPARAM = " << nprops << "\n"
+        << "      IF(NUPARAM.GT.MAXUPARAM)THEN\n"
+        << "        WRITE(IOUT,*)' ** ERROR : NUPARAM GT MAXUPARAM'\n"
+        << "        WRITE(IOUT,*)'      NUPARAM =',NUPARAM,\n"
+        << "     .               ' MAXUPARAM =',MAXUPARAM\n"
+        << "        RETURN\n"
+        << "      ENDIF\n";
+    if (nprops != 0) {
+      out << "C\n"
+          << "C-----------------------------------------------\n"
+          << "C     INPUT FILE READING (USER DATA)\n"
+          << "C-----------------------------------------------\n"
+          << "\n"
+          << "      READ(IIN,'(" << nprops << "F20.0)') ";
+      for (int i = 1; i != nprops + 1; ++i) {
+        out << "UPARAM(" << i << ")";
+        if (i != nprops) {
+          out << ", ";
+          if (i % 4 == 0) {
+            out << '\n'  //
+                << "     &";
+          }
+        }
+      }
+      out << "\n";
+    }
+    out << "C-------------------------------------------------\n"
+        << "C     NUMBER OF USER ELEMENT VARIABLES AND CURVES\n"
+        << "C-------------------------------------------------\n";
+    const auto nstatev = mfront::getTypeSize(d.getPersistentVariables())
+                             .getValueForModellingHypothesis(h);
+    out << "      NUVAR = " << nstatev << '\n';
+    // TODO, we are not setting the number of curves that the material
+    // is going to use... Do we even want to allow for such a thing?
+    out << "C-------------------------------------------------\n"
+        << "C     INITIAL STIFFNESS                           \n"
+        << "C-------------------------------------------------\n";
+    auto found = false;
+    if (bd.getSymmetryType() == mfront::ISOTROPIC) {
+      for (const auto& mp : mprops.first) {
+        if (mp.getExternalName() == tfel::glossary::Glossary::ShearModulus) {
+          const auto offset = [&mp, &mprops] {
+            auto r = mp.offset;
+            r -= mprops.second;
+            return r.getValueForModellingHypothesis(h);
+          }();
+          out << "      STIFINT = " << offset + 1 << "\n";
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        for (const auto& mp : mprops.first) {
+          if (mp.getExternalName() == tfel::glossary::Glossary::YoungModulus) {
+            const auto offset = [&mp, &mprops] {
+              auto r = mp.offset;
+              r -= mprops.second;
+              return r.getValueForModellingHypothesis(h);
+            }();
+            out << "      STIFINT = " << offset + 1 << "\n";
+            found = true;
+            break;
+          }
+        }
+      }
+      if (!found) {
+        const auto& parameters = d.getParameters();
+        const auto pp1 = findByExternalName(
+            parameters, tfel::glossary::Glossary::ShearModulus);
+        if (pp1 != parameters.end()) {
+          out << "      STIFINT = "
+              << d.getFloattingPointParameterDefaultValue(
+                     tfel::glossary::Glossary::ShearModulus)
+              << "\n";
+          found = true;
+        } else {
+            const auto pp2 = findByExternalName(
+                parameters, tfel::glossary::Glossary::YoungModulus);
+            if (pp2 != parameters.end()) {
+                out << "      STIFINT = "
+                    << d.getFloattingPointParameterDefaultValue(
+                        tfel::glossary::Glossary::YoungModulus)
+                    << "\n";
+                found = true;
+            } else {
+                const auto pp3 = findByExternalName(
+                    parameters, tfel::glossary::Glossary::BulkModulus);
+                if (pp3 != parameters.end()) {
+                    out << "      STIFINT = "
+                        << d.getFloattingPointParameterDefaultValue(
+                            tfel::glossary::Glossary::BulkModulus)
+                        << "\n";
+                    found = true;
+                }
+            }
+        }
+      }
+    }
+    // Check for othotropic properties
+    if (bd.getSymmetryType() == mfront::ORTHOTROPIC) {
+      if (!found) {
+          const auto& parameters = d.getParameters();
+          const auto pp1 = findByExternalName(
+              parameters, tfel::glossary::Glossary::ShearModulus12);
+          if (pp1 != parameters.end()) {
+              out << "      STIFINT = "
+                  << d.getFloattingPointParameterDefaultValue(
+                      tfel::glossary::Glossary::ShearModulus12)
+                  << "\n";
+              found = true;
+          } else {
+              const auto pp2 = findByExternalName(
+                  parameters, tfel::glossary::Glossary::YoungModulus1);
+              if (pp2 != parameters.end()) {
+                  out << "      STIFINT = "
+                      << d.getFloattingPointParameterDefaultValue(
+                          tfel::glossary::Glossary::YoungModulus1)
+                      << "\n";
+                  found = true;
+              }
+          }
+      }
+    }
+    if (!found) {
+        tfel::raise("No way to initialize the initial sitffness.\n"
+                    "Please, set the glossary name for the YoungModulus,\n"
+                    "ShearModulus or BulkModulus of your material.\n"
+                    "Example: young.setGlossaryName(\"YoungModulus\");");
+    }
+
+    // C
+    // C-------------------------------------------------
+    // C     OUTPUT FILE PRINT
+    // C-------------------------------------------------
+    //       WRITE(IOUT,1000)
+    //       WRITE(IOUT,1100)E,NU,FID,SCAL
+    // C
+    //  1000 FORMAT(
+    //      & 5X,'  "+ bd.getClassName() + " ',/,
+    //      & 5X,'          compiled with TFEL ',/,
+    //      & 5X,'                                            ',/,
+    //      & 5X,'         ---------------------              ',/,
+    //      & 5X,'             only SOLIDS !!!                ',/,
+    //      & 5X,'         ---------------------              ',//)
+    //  1100 FORMAT(
+    //      & 5X,'E . . . . . . . . . . . . . . . . . . .=',E12.4/
+    //      & 5X,'NU. . . . . . . . . . . . . . . . . . .=',E12.4/
+    //      & 5X,'Temperature FUNCTION ID . . . . . . . .=',I10/
+    //      & 5X,'Scaling factor for FUNCTION Ordinate. .=',E12.4//)
+    // C
+    // C-------------------------------------------------
+    out << "      RETURN\n"
+        << "      END\n";
+    out.close();
+    // generating the engine source for solids
+    out.open("src/luser01.f");
+    if (!out) {
+      tfel::raise("could not open file 'src/luser01.f'");
+    }
+    const auto estatev = nstatev == 0 ? 1 : nstatev;
+    out << "      SUBROUTINE LUSER01 (\n"
+        << "     1     NEL    ,NUPARAM,NUVAR   ,NFUNC   ,IFUNC   ,NPF    ,\n"
+        << "     2     TF     ,TIME   ,TIMESTEP,UPARAM  ,RHO     ,VOLUME , \n"
+        << "     3     EINT   ,NGL    ,SOUNDSP ,VISCMAX ,UVAR    ,OFF     , \n"
+        << "     4     SIGY   ,PLA    ,USERBUF) \n"
+        << "\n"
+        << "      USE LAW_USERSO \n"
+        << "      IMPLICIT NONE\n"
+        << "C-----------------------------------------------\n"
+        << "C    INPUT DATA\n"
+        << "C-----------------------------------------------\n"
+        << "      INTEGER NEL, NUPARAM, NUVAR, NGL(NEL), IDX\n"
+        << "      INTEGER NPF(*), NFUNC, IFUNC(NFUNC)\n"
+        << "      DOUBLE PRECISION\n"
+        << "     .   TIME,TIMESTEP,UPARAM(NUPARAM),\n"
+        << "     .   RHO(NEL), VOLUME(NEL), EINT(NEL), TEMP(NEL)\n"
+        << "      DOUBLE PRECISION TF(*)\n"
+        << "C-----------------------------------------------\n"
+        << "C   OUTPUT VARIABLES\n"
+        << "C-----------------------------------------------\n"
+        << "      DOUBLE PRECISION SOUNDSP(NEL),VISCMAX(NEL)\n"
+        << "C-----------------------------------------------\n"
+        << "C   INPUT-OUTPUT VARIABLES\n"
+        << "C-----------------------------------------------\n"
+        << "      TYPE(ULAWINTBUF) :: USERBUF\n"
+        << "      DOUBLE PRECISION UVAR(NEL,NUVAR)\n"
+        << "      DOUBLE PRECISION OFF(NEL),PLA(NEL), SIGY(NEL)\n"
+        << "C-----------------------------------------------\n"
+        << "C   TEMPORARY VARIABLES\n"
+        << "C-----------------------------------------------\n"
+        << "      DOUBLE PRECISION\n"
+        << "     .    SOUNDSP0,\n"
+        << "     .    RHO0,\n"
+        << "     .    EPS_BTS(6),\n"
+        << "     .    EPS_ETS(6),\n"
+        << "     .    SIG_BTS(6),\n"
+        << "     .    SIG_ETS(6),\n"
+        << "     .    STATEV_BTS(" << estatev << "),\n"
+        << "     .    STATEV_ETS(" << estatev << "),\n"
+        << "     .    T,\n"
+        << "     .    SQRT2\n"
+        << "      INTEGER DEBUG\n"
+        << "C-----------------------------------------------\n"
+        << "C   C-interface\n"
+        << "C-----------------------------------------------\n"
+        << "      interface\n"
+        << "         subroutine mfront_luser01_wrapper(\n"
+        << "     .                 sig_ets, soundsp, statev_ets,\n"
+        << "     .                 eps_bts, eps_ets, sig_bts,\n"
+        << "     .                 statev_bts, props, rho, T, dt)\n"
+        << "     .         bind(c,name = 'openradioss_luser01_interface')\n"
+        << "           use, intrinsic :: iso_c_binding, only: c_int,\n"
+        << "     .                                            c_double\n"
+        << "           implicit none\n"
+        << "           real(kind = c_double), dimension(6), intent(out) :: "
+           "sig_ets\n"
+        << "           real(kind = c_double), intent(inout) :: soundsp\n"
+        << "           real(kind = c_double), dimension(" << estatev
+        << "), intent(out) ::\n"
+        << "     . statev_ets\n"
+        << "           real(kind = c_double), dimension(6), intent(in) :: "
+        << "eps_bts\n"
+        << "           real(kind = c_double), dimension(6), intent(out) :: "
+        << "eps_ets\n"
+        << "           real(kind = c_double), dimension(6), intent(in) :: "
+        << "sig_bts\n"
+        << "           real(kind = c_double), dimension(" << estatev
+        << "), intent(in) ::\n"
+        << "     . statev_bts\n"
+        << "           real(kind = c_double), dimension(" << nprops
+        << "), intent(in) :: props\n"
+        << "           real(kind = c_double), intent(in), value :: rho\n"
+        << "           real(kind = c_double), intent(in), value :: T\n"
+        << "           real(kind = c_double), intent(in), value :: dt\n"
+        << "         end subroutine mfront_luser01_wrapper\n"
+        << "      end interface\n"
+        << "C-----------------------------------------------\n"
+        << "C   LOOP OVER INTEGRATION POINTS\n"
+        << "C-----------------------------------------------\n"
+        << "      DEBUG  = 1\n"
+        << "      SQRT2  = SQRT(2.0)\n"
+        << "      DO IDX = 1,NEL\n"
+        << "        SIG_BTS(1) =  USERBUF%SIGOXX(IDX)\n"
+        << "        SIG_BTS(2) =  USERBUF%SIGOYY(IDX)\n"
+        << "        SIG_BTS(3) =  USERBUF%SIGOZZ(IDX)\n"
+        // We scale the shear stresses to obtain the storage format for MFront
+        << "        SIG_BTS(4) =  USERBUF%SIGOXY(IDX)*SQRT2\n"
+        << "        SIG_BTS(5) =  USERBUF%SIGOZX(IDX)*SQRT2\n"
+        << "        SIG_BTS(6) =  USERBUF%SIGOYZ(IDX)*SQRT2\n"
+        << "        EPS_BTS(1) =  USERBUF%EPSXX(IDX)\n"
+        << "        EPS_BTS(2) =  USERBUF%EPSYY(IDX)\n"
+        << "        EPS_BTS(3) =  USERBUF%EPSZZ(IDX)\n"
+        << "        EPS_BTS(4) =  USERBUF%EPSXY(IDX)/SQRT2\n"
+        << "        EPS_BTS(5) =  USERBUF%EPSZX(IDX)/SQRT2\n"
+        << "        EPS_BTS(6) =  USERBUF%EPSYZ(IDX)/SQRT2\n"
+        << "        EPS_ETS(1) =  USERBUF%EPSXX(IDX) + USERBUF%DEPSXX(IDX)\n"
+        << "        EPS_ETS(2) =  USERBUF%EPSYY(IDX) + USERBUF%DEPSYY(IDX)\n"
+        << "        EPS_ETS(3) =  USERBUF%EPSZZ(IDX) + USERBUF%DEPSZZ(IDX)\n"
+        << "        EPS_ETS(4) =  (USERBUF%EPSXY(IDX) +\n"
+        << "     .                 USERBUF%DEPSXY(IDX))/SQRT2\n"
+        << "        EPS_ETS(5) =  (USERBUF%EPSZX(IDX) +\n"
+        << "     .                 USERBUF%DEPSZX(IDX))/SQRT2\n"
+        << "        EPS_ETS(6) =  (USERBUF%EPSYZ(IDX) +\n"
+        << "     .                 USERBUF%DEPSYZ(IDX))/SQRT2\n"
+        << "        RHO0       =  USERBUF%RHO0(IDX)\n"
+        << "        T          =  USERBUF%TEMP(IDX)\n"
+        << "        SOUNDSP0   =  SOUNDSP(IDX)\n";
+    if (nstatev != 0) {
+      for (int i = 0; i != nstatev; ++i) {
+        out << "        STATEV_BTS(" << i + 1 << ") = UVAR(IDX, " << i + 1
+            << ")\n";
+      }
+    }
+    // Only compute elements that have not been deleted
+    out << "        IF (OFF(IDX) .EQ. 1) THEN\n"
+        << "          CALL MFRONT_LUSER01_WRAPPER(SIG_ETS, SOUNDSP0,\n"
+        << "     .       STATEV_ETS, EPS_BTS, EPS_ETS, SIG_BTS, STATEV_BTS,\n"
+        << "     .       UPARAM, RHO0, T, TIMESTEP)\n"
+        << "        ENDIF\n"
+        << "        USERBUF%SIGNXX(IDX) = SIG_ETS(1)\n"
+        << "        USERBUF%SIGNYY(IDX) = SIG_ETS(2)\n"
+        << "        USERBUF%SIGNZZ(IDX) = SIG_ETS(3)\n"
+        << "        USERBUF%SIGNXY(IDX) = SIG_ETS(4)/SQRT2\n"
+        << "        USERBUF%SIGNZX(IDX) = SIG_ETS(5)/SQRT2\n"
+        << "        USERBUF%SIGNYZ(IDX) = SIG_ETS(6)/SQRT2\n"
+        // TODO, fix this hardcoded value!
+//        << "        SOUNDSP(IDX) = SOUNDSP0\n"
+        << "        SOUNDSP(IDX) = 6000.9798318020739\n"
+        << "        VISCMAX(IDX) = 0.0\n";
+    if (nstatev != 0) {
+      for (int i = 0; i != nstatev; ++i) {
+        out << "        UVAR(IDX, " << i + 1 << ") = STATEV_ETS(" << i + 1
+            << ")\n";
+      }
+    }
+    out << "      IF (DEBUG .EQ. 1) THEN\n"
+        << "         PRINT *,'DATA FOR ELEMENT: ',IDX\n"
+        << "         PRINT *,'  STRESSES RECEIVED: ',SIG_BTS(1),\n"
+        << "     .   SIG_BTS(2),SIG_BTS(3),SIG_BTS(4),\n"
+        << "     .   SIG_BTS(5),SIG_BTS(6)\n"
+        << "         PRINT *,'  STRAIN RECEIVED: ',EPS_BTS(1),\n"
+        << "     .   EPS_BTS(2),EPS_BTS(3),EPS_BTS(4),\n"
+        << "     .   EPS_BTS(5),EPS_BTS(6)\n"
+        << "         PRINT *,'  FINAL STRAIN RECEIVED: ',EPS_ETS(1),\n"
+        << "     .   EPS_ETS(2),EPS_ETS(3),EPS_ETS(4),\n"
+        << "     .   EPS_ETS(5),EPS_ETS(6)\n"
+        << "         PRINT *,'  STRESSES COMPUTED: ',SIG_ETS(1),\n"
+        << "     .   SIG_ETS(2),SIG_ETS(3),SIG_ETS(4),\n"
+        << "     .   SIG_ETS(5),SIG_ETS(6)\n"
+        << "         PRINT *,'SPEED OF SOUND AFTER: ', SOUNDSP(IDX)\n"
+        << "         PRINT *,' '\n"
+        << "      ENDIF\n";
+    out << "      ENDDO\n"
+        << "      RETURN\n"
+        << "      END\n";
+    out.close();
+    //
+    const auto name = bd.getLibrary() + bd.getClassName();
+    const auto header = name + "-" + this->getInterfaceName() + ".hxx";
+    const auto f = this->getFunctionNameForHypothesis(name, h);
+    out.open("src/luser01-interface.cxx");
+    if (!out) {
+      tfel::raise("could not open file 'src/luser01-interface.cxx'");
+    }
+    out << "#include \"MFront/GenericBehaviour/BehaviourData.hxx\"\n"
+        << "#include \"MFront/GenericBehaviour/" << header << "\"\n\n"
+        << "#ifdef __cplusplus\n"
+        << "extern \"C\" {\n"
+        << "#endif /* __cplusplus */\n\n"
+        << "void openradioss_luser01_interface(double* const sig_ets,\n"
+        << "double *const speed_of_sound,\n"
+        << "double *const statev_ets,\n"
+        << "double *const eps_bts,\n"
+        << "double *const eps_ets,\n"
+        << "const double *const sig_bts,\n"
+        << "const double *const statev_bts,\n"
+        << "const double *const mps,\n"
+        << "const double rho,\n"
+        << "const double T,\n"
+        << "const double dt)\n"
+        << "{\n"
+        << "static char error_msg[512];\n"
+        // K is greater than 50 in order to force the computation of the speed
+        // of sound in mfront_gb_BehaviourData (see BehaviourData.h)
+        // Ke is K[0] - 100; For the given value, Ke = 0, which indicates that
+        // the behaviour integration is carried out, but the stiffness matrix is not computed
+        // K[1] and K[2] are needed for finite strains
+        // Parameters selected from the documentation in BehaviourData.h and
+        // "Kinetic Description" and "Stress Rates" from the Radioss documentation
+        << "double K[3] = {100.0, 0.0, 0.0};\n"
+        << "double rdt;\n"
+        << "mfront_gb_BehaviourData d;\n"
+        << "d.error_message = error_msg;\n"
+        << "d.K = K;\n"
+        << "d.dt = dt;\n"
+        << "d.rdt = &rdt;\n"
+        << "d.speed_of_sound = speed_of_sound;\n\n"
+        << "d.s0.gradients = eps_bts;\n"
+        << "d.s0.thermodynamic_forces = sig_bts;\n"
+        << "d.s0.mass_density = &rho;\n"
+        << "d.s0.material_properties = mps;\n"
+        << "d.s0.internal_state_variables = statev_bts;\n"
+        << "d.s0.stored_energy = nullptr;\n"
+        << "d.s0.dissipated_energy = nullptr;\n"
+        << "d.s0.external_state_variables = &T;\n\n"
+        << "d.s1.gradients = eps_ets;\n"
+        << "d.s1.thermodynamic_forces = sig_ets;\n"
+        << "d.s1.mass_density = &rho;\n"
+        << "d.s1.material_properties = mps;\n"
+        << "d.s1.internal_state_variables = statev_ets;\n"
+        << "d.s1.stored_energy = nullptr;\n"
+        << "d.s1.dissipated_energy = nullptr;\n"
+        << "d.s1.external_state_variables = &T;\n"
+        << "const auto r = " << f << "(&d);\n"
+        << "} // end of openradioss_luser01_interface\n\n"
+        << "#ifdef __cplusplus\n"
+        << "} // end of extern \"C\"\n"
+        << "#endif /* __cplusplus */\n";
+    out.close();
+  }  // end of endTreatment
+
+  OpenRadiossInterface::~OpenRadiossInterface() = default;
+
+}  // end of namespace mfront
