@@ -16,7 +16,7 @@ The keyword `@APrioriTimeStepScalingFactor` is not documented yet
 # The `@AdditionalConvergenceChecks` keyword
 
 The `@AdditionalConvergenceChecks` keyword is meant to introduce a
-code block returning stating if convergence has been reached. More
+code block stating if convergence has been reached. More
 precisely, this code block is meant to modify a boolean variable
 called `converged`. This boolean is `true` if the standard convergence
 criterion has been reached, `false` otherwise.

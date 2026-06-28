@@ -94,7 +94,7 @@ The trace of a tensor is defined by:
  \trace{\tns{F}}=\sum_{i=0}^{3}F_{ii}
 \]
 
-The products of two tensors is defined by:
+The product of two tensors is defined by:
 
 \[
   \paren{\tns{F}\,.\,\tns{G}}_{ij}=\sum_{k=0}^{3}F_{ik}\,G_{kj}\neq\paren{\tns{G}\,.\,\tns{F}}_{ij}
@@ -134,7 +134,7 @@ Symmetric tensors are diagonalisable:
 \]
 
 - \(\lambda_{i}\) are the eigenvalues of the tensor.
-- The eigentensors \(\tenseur{n}_{i}\) are orthogonals.
+- The eigentensors \(\tenseur{n}_{i}\) are orthogonal.
 
 ### Isotropic functions of symmetric tensors
 
@@ -182,7 +182,7 @@ tensors (logarithm, exponential, square root, ..):
   J=\det\paren{\deriv{\vec{x}}{\vec{X}}}=\det{\tns{F}}
   \]
   
-Higher order theories will not be considered in this course in this
+Higher order theories will not be considered in this course or in this
 paper.
 
 
@@ -190,7 +190,7 @@ paper.
 
 ![Polar decomposition (Wikipedia)](img/Polar_decomposition_of_F.png "Polar decomposition (Wikipedia)"){width=75%}
 
-- Unicity and existence of a polar decomposition of \(\tns{F}\):
+- Uniqueness and existence of a polar decomposition of \(\tns{F}\):
   \(
   \quad\quad\tns{F}=\tns{R}\,.\tenseur{U}=\tenseur{V}\,.\tns{R}
   \)
@@ -198,7 +198,7 @@ paper.
 - \(\tenseur{V}\) and \(\tenseur{U}\) are {\bf symmetric tensors}
 - \(\tenseur{V}\) is the eulerian stretch tensor:
     - \(\bts{\tenseur{V}}\) and \(\ets{\tenseur{V}}\) are
-    expressed in two different configuration:
+    expressed in two different configurations:
   - \(\Delta\,\tenseur{V}=\ets{\tenseur{V}}-\bts{\tenseur{V}}\)
     is {\bf not} well defined
   - \(\tenseur{U}\) is the lagrangian stretch tensor:
@@ -264,7 +264,7 @@ paper.
   \]
 - \(\displaystyle\int_{0}^{t}D_{11}\,\dtot\,t=\int_{l_{0}}^{l\paren{t}}\Frac{\dtot\,l}{l}=\log\paren{\Frac{l\paren{t}}{l_{0}}}\)
 - \(\displaystyle\log\paren{\Frac{l\paren{t}}{l_{0}}}\) is
-  sometimes calls the true strain, altough the meaning of this is
+  sometimes called the true strain, although the meaning of this is
   dubious, as discussed later
 - The expression
   \(\displaystyle\int_{l_{0}}^{l\paren{t}}\Frac{\dtot\,l}{l}\) is
@@ -294,7 +294,7 @@ paper.
   \)
     - \(\dtot\vec{s}\): oriented unit surface
   - \(\dtot\vec{T}\): traction acting on \(\dtot\vec{s}\)
-  - \(\dtot\vec{s}\) is defined of the current configuration
+  - \(\dtot\vec{s}\) is defined in the current configuration
 - Example of a pressure \(p\) applied to the boundary of a body,
   \(\vec{n}\) being the outer normal to the boundary:
   \[
@@ -381,7 +381,7 @@ paper.
     theory's assumptions are satisfied;
   - is objective (filters finite body rotation)
   - is symmetric
-  - many isotropic functions of \(\tenseur{U}\) satisfy those
+    - many isotropic functions of \(\tenseur{U}\) satisfy those
   requirements:
     - Green-Lagrange strain:
     \[

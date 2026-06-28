@@ -53,7 +53,7 @@
 
 `MFront` version 3.0 provides two interfaces for the `Abaqus/Standard`
 and `Abaqus/Explicit` finite element solvers. Those interfaces are
-fairly features complete:
+fairly feature complete:
 
 - Isotropic and orthotropic materials are supported.
 - Small and finite strain behaviours are supported.
@@ -67,7 +67,7 @@ consequence, those interfaces are not compatible "out of the box":
 i.e. one cannot restart a simulation with `Abaqus/Explicit` after a
 computation with `Abaqus/Standard` without precautions.
 
-`MFront` strives to provides behaviours that can be used "just-like"
+`MFront` strives to provide behaviours that can be used "just-like"
 other `UMAT` and `VUMAT` subroutines, but there are some cases (namely
 finite strain orthotropic behaviours) where we were obliged to make
 some unusual choices that are described in this document for various
@@ -95,10 +95,10 @@ following:
   aware that when using the `Native` finite strain strategy, results
   will depend on the fact that an orientation is defined or
   not*.
-  Futhermore, behaviours using the `Native` finite strain strategy (or
-  no strategy at all) can not be ported to other solver. If
+  Furthermore, behaviours using the `Native` finite strain strategy (or
+  no strategy at all) can not be ported to other solvers. If
   portability is an issue, consider using one of the other finite
-  strain strategy (see below).
+  strain strategies (see below).
 - For `Abaqus/Standard`, the usage of the `Native` finite strain
   strategy is **not** compatible with `Abaqus/Explicit` because the
   latter always uses a corotationnal frame associated with the
@@ -109,18 +109,18 @@ following:
   to external state variables in `MFront`) can not be checked.
 - For `Abaqus/Standard`, one shall *not* combine the `MFront`
   orthotropy policy with the definition of an orientation.
-- For `Abaqus/Standard`, one have to use the `MFront` orthotropy
+- For `Abaqus/Standard`, one has to use the `MFront` orthotropy
   policy to handle orthotropic finite strain behaviours (see below for
   details).
 
 ## Current status
 
 These interfaces have been extensively tested through `MTest`. Tests
-on `Abaqus/Standard` and `Abaqus/Explicit` shows that MFront
+on `Abaqus/Standard` and `Abaqus/Explicit` show that MFront
 behaviours are efficient (to the extent allowed by the `UMAT` and
 `VUMAT` interfaces respectively) and reliable.
 
-# How the use `MFront` behaviours in `Abaqus/Standard` and `Abaqus/Explicit`
+# How to use `MFront` behaviours in `Abaqus/Standard` and `Abaqus/Explicit`
 
 When compiling mechanical behaviours with the `Abaqus/Standard` and/or
 `Abaqus/Explicit` interfaces, `MFront` generates:
@@ -142,7 +142,7 @@ called and the library in which this function is implemented.
 
 The function name includes the modelling hypothesis, see below. An
 identifier can *optionally* be added to reuse the same behaviour for
-several material (with different material properties for instance). The
+several materials (with different material properties for instance). The
 identifier is discarded in the `umat.cpp`, `vumat-sp.cpp` and
 `vumat-dp.cpp` files.
 
@@ -155,7 +155,7 @@ suffix (`.dll` or `.so` depending on the system). *This convention
 implies that the library name does not contain an underscore
 character*.
 
-For example, on `UNIX` systems, if one want to call the
+For example, on `UNIX` systems, if one wants to call the
 `ELASTICITY_3D` behaviour in ` libABAQUSBEHAVIOUR.so` library, the
 name of the material in the `Abaqus/Standard` input file has to be:
 `ABAQUSBEHAVIOUR_ELASTICITY_3D`.
@@ -178,7 +178,7 @@ rename `MFront` generated libraries using lower-case letters*.
   files needs to be recompiled at each run. This is very handy since
   compiling the `MFront` libraries can be time-consuming. Those
   libraries can be shared between computations and/or between users
-  when placed in a shared folders.
+  when placed in shared folders.
 - The fact that `MFront` generates one implementation per modelling
   hypothesis allows the distinction between the plane strain
   hypothesis and the axisymmetrical hypothesis. This is mandatory to
@@ -194,8 +194,8 @@ loader of the operating system.
 
 #### Under Linux
 
-Under Linux, the search path for dynamic libraries are specified using
-the `LD_LIBRARY_PATH` variable environment. This variable defines a
+Under Linux, the search path for dynamic libraries is specified using
+the `LD_LIBRARY_PATH` environment variable. This variable defines a
 colon-separated set of directories where libraries should be searched
 for first, before the standard set of directories.
 
@@ -207,7 +207,7 @@ can be considered by default.
 Under Windows, the dynamic libraries are searched:
 
 - in the current directory
-- in the directories listed in the `PATH` environment. This
+- in the directories listed in the `PATH` environment variable. This
   variable defines a semicolon-separated set of directories.
 
 ## Compilation of the generic `umat.cpp` or `vumat-*.cpp` files
@@ -262,9 +262,9 @@ compile_cpp = ['g++', '-O2', '-std=c++11','-c', '-fPIC', '-w', '-Wno-deprecated'
 usub_lib_dir='<path_to_mfront_generated_libraries>:<path_to_mfront>/lib'
 ~~~~
 
-The last line define a set of paths where shared libraries will be
+The last line defines a set of paths where shared libraries will be
 searched for, which is useful if one does not want to install `TFEL`
-and `MFront` on in system-wide path (such as `/usr/`) or modify the
+and `MFront` in a system-wide path (such as `/usr/`) or modify the
 `LD_LIBRARY_PATH` environment variable. One can also specify a shared
 directory (on a NFS file system for example) to access material
 behaviours shared among a team of colleagues.
@@ -274,7 +274,7 @@ behaviours shared among a team of colleagues.
 The appropriate flags can be defined in the `abaqus_v6.env` file that
 can be overridden by the user.
 
-For the `gcc` compiler, one have to add the `--std=c++11` flag. The
+For the `gcc` compiler, one has to add the `--std=c++11` flag. The
 modifications to be made to the `abaqus_v6.env` are the following:
 
 ~~~~{.python}
@@ -331,10 +331,10 @@ For orthotropic behaviours, there are two orthotropy management policy
 
 For `Abaqus/Standard`, small and finite strain behaviours are
 supported. **For orthotropic finite strain behaviours, one must use
-the `MFront` orthotropy management policy**. The reason of these
-choices is given below.
+the `MFront` orthotropy management policy**. The reasons for these
+choices are given below.
 
-For `Abaqus/Explicit`, only finite strain are supported. Small strain
+For `Abaqus/Explicit`, only finite strain is supported. Small strain
 behaviours can be used using one of the finite strain strategies
 available.
 
@@ -355,12 +355,12 @@ The `Abaqus/Standard` solver provides the `UMAT` interface. In this
 case, the behaviour shall compute:
 
 - The evolution of the state variables.
-- The value the Cauchy stress at the end of the time step.
+- The value of the Cauchy stress at the end of the time step.
 - The consistent tangent operator. The definition of the consistent
   tangent operator is given below.
 
 For finite strain analyses, small strain behaviours can be written in
-rate form. The behaviour in integrated in the
+rate form. The behaviour is integrated in the
 Jauman framework. This is different from `Abaqus/Explicit` which
 uses a corotational basis based on the Green-Nagdi rate.
 
@@ -381,7 +381,7 @@ exist to:
 - guarantee some desirable properties such as energetic consistency
   and objectivity.
 
-Through the `@AbaqusFiniteStrainStrategy`, the user can select on of
+Through the `@AbaqusFiniteStrainStrategy`, the user can select one of
 various finite strain strategies supported by `MFront`, which are
 described in this paragraph.
 
@@ -393,7 +393,7 @@ described in this paragraph.
 ### The `Native` finite strain strategy
 
 Among them is the `Native` finite strain strategy which relies on
-build-in `Abaqus/Standard` facilities to integrate the behaviours
+built-in `Abaqus/Standard` facilities to integrate the behaviours
 written in rate form. The `Native` finite strain strategy will use the
 Jauman rate.
 
@@ -417,7 +417,7 @@ keyword):
 Those two strategies use lagrangian tensors, which automatically
 ensures the objectivity of the behaviour.
 
-Each of these two strategies define an energetic conjugate pair of
+Each of these two strategies defines an energetic conjugate pair of
 strain or stress tensors:
 
 - For the 'FiniteRotationSmallStrain' case, the strain tensor is the
@@ -499,9 +499,9 @@ strategies available through `MFront`.
 
 ### The `Native` finite strain strategy
 
-The `Native` finite strain strategy relies on build-in
+The `Native` finite strain strategy relies on built-in
 `Abaqus/Explicit` facilities to integrate the behaviours written in
-rate form, i.e. it will integrate the behaviour using a corotationnal
+rate form, i.e. it will integrate the behaviour using a corotational
 approach based on the polar decomposition of the deformation gradient.
 
 ### Recommended finite strain strategies
@@ -533,7 +533,7 @@ the `enerInelasNew` output.
 
 !["Relation between tangent operators"](img/FiniteStrainTangentOperatorConvertion.svg "Supported relations between tangent operators in `MFront`")
 
-Most information reported here are extracted from the book of
+Most information reported here is extracted from the book of
 Belytschko (@belytschko_nonlinear_2000).
 
 ## Relations between tangent operator

@@ -47,7 +47,7 @@ Several polycrystal behaviours based on the Berveiller-Zaoui
 homogeneisation scheme are available in the tests of `MFront`.
 
 For some unknown reasons, those implementations declared the equivalent
-plastic strain as an auxiliary state variable. This lead to a
+plastic strain as an auxiliary state variable. This led to a
 significantly more difficult convergence of the `Runge-Kutta` algorithm.
 
 Since the results are correct, those implementations are kept as they
@@ -101,8 +101,8 @@ Two boost components are searched when enabling `python` bindings:
 second one is optional.
 
 The detection process that was used in previous versions called
-`find_package` for two components at the same time and then we checkd of
-two components were found.
+`find_package` for two components at the same time and then we checked if
+the two components were found.
 
 In `cmake` 3.16 (at least), the behaviour of `find_package` changed and
 if one component is missing, both are declared not found.

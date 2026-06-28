@@ -26,7 +26,7 @@ The `amitex` interface is mostly an alias for the `castem` interface,
 i.e. the interface for the `Cast3M` interface prior to Version `21` and
 also generates an input file template which is meant to be copy-pasted
 into the `material.xml` file of the user. See [this page](castem.html)
-for a description of the `castem` interface
+for a description of the `castem` interface.
 
 # Generated input file template
 

@@ -15,7 +15,7 @@ Two improvements were made to the numerical treatment of the `DDIF2`
 stress potential:
 
 - The `DDIF2` damage behaviour is now treated by default using an
-  algorithm based on statuses. In each damage directions, the damage
+  algorithm based on statuses. In each damage direction, the damage
   state is kept constant during the Newton iterations. Once converged,
   the consistency of the damage state with the solution found is tested.
   If the state is inconsistent, the iterations are restarted with a new
@@ -24,7 +24,7 @@ stress potential:
   first step, the time step is set to zero before the prediction stage.
   This is meant to filter all viscoplastic flows and the convergence is
   thus performed only on the damage state (unless another
-  rate-independent mechanisms is considered). Once converged on the
+  rate-independent mechanism is considered). Once converged on the
   damage state, the time step is reset to its original value and the
   implicit resolution is restarted.
 
@@ -32,7 +32,7 @@ The `DDIF2` stress potential (and thus the DDIF2 brick) has two new
 options:
 
 - `use_status_algorithm` (boolean value, true by default). If false, the algorithm used
-  in previous version is used.
+  in the previous version is used.
 - `first_converge_on_damage` (boolean value, true by default). If false,
   the time step is not set to zero at the prediction stage.
 

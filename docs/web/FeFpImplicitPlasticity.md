@@ -98,7 +98,7 @@ following the work of Mandel [@mandel_equations_1973].
 ## Kinematics
 
 Let \(\vec{x}\) be the current position of a point located at
-\(\vec{X}\) int the intial configuration.
+\(\vec{X}\) in the initial configuration.
 
 The displacement of this point is denoted \(\vec{u}\):
 \[
@@ -134,7 +134,7 @@ gradient by chain rule:
 \tns{L}=\deriv{\vec{\dot{x}}}{\vec{X}}\,\cdot\,\deriv{\vec{X}}{\vec{x}}=\tns{\dot{F}}\,\cdot\,\inverse{\F}
 \]{#eq:mfront:FeFpImplicitPlasticity:L_F}
 
-The rate of deformation is the symmetric part of  is \(\tns{L}\):
+The rate of deformation is the symmetric part of \(\tns{L}\):
 \[
 \D= \Frac{1}{2}\paren{\tns{L}+\transpose{\tns{L}}}
 \]{#eq:mfront:FeFpImplicitPlasticity:D}
@@ -197,7 +197,7 @@ The mechanical power per unit of volume in the current configuration
 \(p_{v}\) is given by the contracted product of the Cauchy stress and
 the deformation gradient.
 
-Assuming the symmetry of the Cauchy stress, \(p_{v}\) can be developped
+Assuming the symmetry of the Cauchy stress, \(p_{v}\) can be developed
 as follows:
 
 \[
@@ -207,7 +207,7 @@ as follows:
 \]
 
 The term \(\tsigma\,\colon\,\Le\) is assumed to be reversible and must
-derive from an convex free energy \(\Psi\), as developped in Section
+derive from a convex free energy \(\Psi\), as developed in Section
 @sec:mfront:FeFpImplicitPlasticity:hyperelasticity, such that:
 
 \[
@@ -297,7 +297,7 @@ the intermediate configuration.
 > 
 > which is valid for any matrices \(A\) and \(B\).
 
-The behaviour is hyperelastic if the the second Piola-Kirchhoff stress
+The behaviour is hyperelastic if the second Piola-Kirchhoff stress
 derives from a convex free energy \(\Psi\), such that:
 
 \[
@@ -306,10 +306,10 @@ derives from a convex free energy \(\Psi\), such that:
 \]
 
 For metals, the Green-Lagrange strain \(\egl\) is generally small in
-practice, the choice of the free energy \(\Psi\) generally have little
+practice, so the choice of the free energy \(\Psi\) generally has little
 influence. The Saint-Venant Kirchhoff hyperelastic behaviour, which is
-the simpliest generalisation of the Hooke behaviour at finite strain, is
-thus generally choosen.
+the simplest generalisation of the Hooke behaviour at finite strain, is
+thus generally chosen.
 
 ### The Saint-Venant Kirchhoff hyperelastic behaviour
 
@@ -335,7 +335,7 @@ gradient \(\Lp\), i.e. as the stress measure which satisfies:
 \tsigma\,\colon\,\paren{\Fe\,\cdot\,\Lp\,\cdot\,\inverse{\Fe}} = \Frac{1}{J_{e}}\,\M\,\colon\Lp
 \]
 
-The Mandel stress \(\M\) is egal to (see demonstration below):
+The Mandel stress \(\M\) is equal to (see demonstration below):
 
 \[
 \M = \Ce\,\cdot\,\Se = \paren{2\,\egl+\tns{I}}\,\cdot\,\,\Se
@@ -371,7 +371,7 @@ where:
 - \(s\) is the entropy density in the current configuration.
 - \(\vec{y}\) a set of internal state variables
 
-Let \(\Psi = e - T\,s\) be the free energy in in the current
+Let \(\Psi = e - T\,s\) be the free energy in the current
 configuration. Using Equation
 @eq:mfront:FeFpImplicitPlasticity:mechanical_power, one gets:
 
@@ -394,7 +394,7 @@ s = \deriv{\Psi}{T}
 where \(\rho_{e}\) is the density in the intermediate configuration
 (\(\rho_{e}=\rho\,J_{e}\)).
 
-Assuming that the dissipation du to heat transfer \(D_{T}\) and the
+Assuming that the dissipation due to heat transfer \(D_{T}\) and the
 mechanical dissipation \(D_{m}\) are both positive, one gets:
 \[
 \begin{aligned}
@@ -420,12 +420,12 @@ In this section, we consider two examples:
 - An isotropic incompressible viscoplastic behaviour.
 - An isotropic incompressible plastic behaviour.
 
-Those examples shares the same hyperelastic behaviour and the same
+Those examples share the same hyperelastic behaviour and the same
 stress criterion.
 
 ### Hyperelastic behaviour
 
-The simpliest isotropic hyperelastic behaviour is the Saint
+The simplest isotropic hyperelastic behaviour is the Saint
 Venant-Kirchhoff law:
 
 \[
@@ -437,7 +437,7 @@ coefficients.
 
 ### Choice of the stress criterion
 
-Du to isotropy, the dissipation potential must be a function of the
+Due to isotropy, the dissipation potential must be a function of the
 invariants of the Mandel stress:
 
 - the trace of the Mandel stress, \(I_{1}\).
@@ -449,9 +449,9 @@ invariants of the Mandel stress:
 - the determinant of the deviator of the Mandel stress.
 
 Since the plastic flow is assumed to be isochoric, \(L_{p}\) must be
-traceless, so the dissipation potentiel can't be a function of \(I_{1}\).
+traceless, so the dissipation potential can't be a function of \(I_{1}\).
 
-In this section, we assume that the behaviour oly depends on \(\Meq\).
+In this section, we assume that the behaviour only depends on \(\Meq\).
 Thus,
 
 \[
@@ -478,18 +478,18 @@ stress and \(H\) is the hardening slope.
 ## Single crystal plasticity {#sec:mfront:FeFpImplicitPlasticity:single_crystal}
 
 It is assumed that the crystal deforms by gliding of dislocations on a
-set of \(N_{s}\) prescribed cristallographic planes called *slip
+set of \(N_{s}\) prescribed crystallographic planes called *slip
 planes*, also called *slip systems* or *gliding systems*.
 
 A slip plane is characterized by its normal \(\ns\) and a slip direction
 \(\ms\) in the plane (\(s\,\in\,\left[1, N_{s}\right]\)). By
-definition, the vectors are \(\ns\) and \(\ms\) are orthogonal. A slip
+definition, the vectors \(\ns\) and \(\ms\) are orthogonal. A slip
 plane is also characterized by its orientation tensor \(\Ns\) such that:
 \[
 \Ns = \ms\,\otimes\,\ns
 \]
 
-The gliding of dislocations leave the crystal orientations unchanged, so
+The gliding of dislocations leaves the crystal orientations unchanged, so
 the orientation tensors are the same in the initial configuration
 \(C_{0}\) and in the intermediate configuration \(C_{i}\).
 
@@ -583,7 +583,7 @@ where \(\DsFp\) denotes the product
 > \]
 >
 > Using an exponential mapping does ensure this condition, but is much
-> more computationaly intensive and will not be considered in this
+> more computationally intensive and will not be considered in this
 > document.
 
 \(\DsFp\) can be directly obtained by the constitutive equations. For
@@ -615,7 +615,7 @@ satisfies this non linear equation:
 
 ### Plastic case
 
-The equation allowing to determine is value of the increment of the
+The equation allowing to determine the value of the increment of the
 equivalent plastic strain is to impose that the stress state lies on the
 yield surface in case of plastic loading:
 \[
@@ -634,10 +634,10 @@ This resolution is generally based on the iterative Newton algorithm to
 find the zero of a function called the residual \(\vec{R}\). Let
 \(\Delta\,\vec{Y}^{n}\) be a vector containing the current estimate of
 the increment of the integration variables (the Green-Lagrange strain in
-the viscoplatic case, the the Green-Lagrange strain and the equivalent
+the viscoplastic case, the Green-Lagrange strain and the equivalent
 plastic strain in the plastic case).
 
-A new estimate \(\Delta\,\vec{Y}^{n+1}\) is assumed to close be the solution searched, i.e. that:
+A new estimate \(\Delta\,\vec{Y}^{n+1}\) is assumed to be close to the solution searched, i.e. that:
 \[
 \vec{R}\paren{\Delta\,\vec{Y}^{n+1}}\approx \vec{0}
 \]
@@ -718,10 +718,10 @@ f_{p}    &=  \Frac{1}{E}\,\paren{M_{eq} - M_{0} - H\,\paren{p+\Delta\,p}}
 \end{aligned}
 \right.
 \]
-where normalisation factor \(\Frac{1}{E}\) has be introduced so that
+where normalisation factor \(\Frac{1}{E}\) has been introduced so that
 \(f_{p}\) has the same magnitude as \(f_{\egl}\). \(E\) is generally
-choosen to be Young' modulus for isotropic behaviours and the first
-component of the siffness matrix for orthotropic behaviours.
+chosen to be Young's modulus for isotropic behaviours and the first
+component of the stiffness matrix for orthotropic behaviours.
 
 ## Consistent tangent operator
 
@@ -741,7 +741,7 @@ with:
 \]
 
 This definition of \(\ets{\tau}\) differs from the one used in the
-previous section since we directly uses \(\Fe\) to compute \(\Se\)
+previous section since we directly use \(\Fe\) to compute \(\Se\)
 rather than \(\egl\).
 
 The consistent tangent operator is then:
@@ -765,7 +765,7 @@ with:
 \partial_{\star}^{r}\paren{\Fe^{tr}}\,\cdot\,\deriv{\DsFp}{\Delta\,\vec{Y}}\,\cdot\,\deriv{\Delta\,\vec{Y}}{\ets{\F}}
 \]
 
-# Plastic behaviour' implementation
+# Plastic behaviour's implementation
 
 ~~~~{.cxx}
 @DSL ImplicitFiniteStrain;
@@ -1019,15 +1019,15 @@ in the variable `dM_ddeel` respectively.
 
 # Alternative consistent tangent operators{#sec:mfront:FeFpImplicitPlasticity:consistent_tangent_operators}
 
-## Another expression of the derivative of the Kirchhoff stress with respect ot the deformation gradient {#sec:mfront:FeFpImplicitPlasticity:dtau_dF}
+## Another expression of the derivative of the Kirchhoff stress with respect to the deformation gradient {#sec:mfront:FeFpImplicitPlasticity:dtau_dF}
 
 The Kirchhoff stress \(\ets{\tau}\) is defined as the push-forward of the
 second Piola-Kirchhoff stress \(\ets{\Se}\):
 \[
 \ets{\tau}=\ets{\Fe}\,\cdot\,\ets{\Se}\,\cdot\,\transpose{\ets{\Fe}}
 \]
-f
-his section is devoted to the computation of the derivative
+
+This section is devoted to the computation of the derivative
 \(\deriv{\ets{\tenseur{\tau}}}{\ets{\F}}\) which can be obtained by the
 chain rule, as follows:
 \[
@@ -1078,7 +1078,7 @@ J\,\deriv{\Delta\,\vec{Y}}{\ets{\F}}=-\deriv{\vec{R}}{\ets{\F}}
 \]
 
 where \(\deriv{\vec{R}}{\ets{F}}\) must be computed assuming that the
-internal state variables are constant constant. Only the block
+internal state variables are constant. Only the block
 \(\deriv{f_{\egl}}{\ets{F}}\) is not null and is given by:
 \[
 \deriv{f_{\egl}}{\ets{F}}=
@@ -1134,7 +1134,7 @@ where:
 \end{aligned}
 \]
 
-Its derivative requires one again to compute
+Its derivative requires once again computing
 \(\deriv{\inverse{\Fp}}{\ets{\Cr}}\) which can be related to the derivative
 \(\deriv{\DsFp}{\ets{\Cr}}\) since the relation:
 \[

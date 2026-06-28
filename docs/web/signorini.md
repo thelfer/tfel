@@ -42,7 +42,7 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script src="js/slideshow.js"></script>
 
-This page describe how to implement the Signorini hyperelastic
+This page describes how to implement the Signorini hyperelastic
 behaviour (see @edf_loi_2013).
 
 The whole implementation is available here:
@@ -50,11 +50,11 @@ The whole implementation is available here:
 
 > **Compatibility with previous versions of `TFEL`**
 >
-> This implementation presented here is based on the version \(3.0\)
-> of `TFEL`. However, only a few adaptations are required for used
+> The implementation presented here is based on the version \(3.0\)
+> of `TFEL`. However, only a few adaptations are required for use
 > with previous versions:
 >
-> - the first line of the file must be replace by: `@Parser DefaultFiniteStrainParser;`
+> - the first line of the file must be replaced by: `@Parser DefaultFiniteStrainParser;`
 > - the `power` function is not available. It can be replaced by
 >   explicit multiplications.
 > - the `computeDeterminantSecondDerivative` is not available. It can
@@ -105,9 +105,9 @@ where
   defined by: \(\tenseur{\bar{C}}=J^{-2/3}\,\C = I_{3}^{-1/3}\,\C\)
 
 **A general derivation of the stress and the consistent tangent
-operator for this kind of hyperelastic behaviours is described
+operator for this kind of hyperelastic behaviour is described
 [here](hyperelasticity.html).** The reader shall refer to this page
-for intermediate computations that won't be detailled here.
+for intermediate computations that won't be detailed here.
 
 For our implementation, we choose \(W^{v}\) as follows: 
 \[
@@ -128,7 +128,7 @@ The general expression of the second Piola-Kirchhoff stress is:
 \]
 
 where \(\S^{v}=2\,\deriv{W^{v}}{\C}\) is the
-volumetric part of the the second Piola-Kirchhoff stress and
+volumetric part of the second Piola-Kirchhoff stress and
 \(\S^{i}=2\,\deriv{W^{i}}{\C}\) is the isochoric
 part.
 
@@ -186,9 +186,9 @@ Then we compute the right Cauchy tensor \(\C\):
 const auto C  = computeRightCauchyGreenTensor(F1);
 ~~~~~
 
-For the computation of the invariants of \(\C\) and theirs
+For the computation of the invariants of \(\C\) and their
 derivatives, we need to compute \(\C^{2}\). Since the multiplication
-of two symmetric tensors leads to a non symmetric tensors, we use the
+of two symmetric tensors leads to a non symmetric tensor, we use the
 special function `square` which is a more efficient equivalent of
 `syme(C*C)`:
 
@@ -217,10 +217,10 @@ const auto dI2_dC = I1*id-C;
 
 > At this stage, \(\deriv{I_{2}}{\C}\) is not evaluated: the
 > associated variable `dI2_dC` is an evaluation tree that stores the
-> computation that will be performed latter. This is an essential
-> optimization techniques used in `MFront` to achieve optimal
-> performances. If we wanted or needed to explicitly evaluate, we
-> could either use the `eval` function or explicitly precise the type
+> computation that will be performed later. This is an essential
+> optimization technique used in `MFront` to achieve optimal
+> performance. If we wanted or needed to explicitly evaluate it, we
+> could either use the `eval` function or explicitly specify the type
 > of `dI2_dC`.
 
 The derivative \(\deriv{I_{3}}{\C}\) of the third invariant is given
@@ -328,7 +328,7 @@ sig = convertSecondPiolaKirchhoffStressToCauchyStress(Sv+Si,F1);
 
 ## Computation of the consistent tangent operator
 
-The most direct expression the consistent tangent operator is given by
+The most direct expression of the consistent tangent operator is given by
 \(\deriv{\S}{\C}\). We let `MFront` make the appropriate conversion to
 the consistent tangent operator expected by the solver.
 
@@ -406,7 +406,7 @@ const auto dSi_dC = 2*(d2Pi_dI1b2*(dI1b_dC^dI1b_dC)+dPi_dI1b*d2I1b_dC2+
 
 ### Tests
 
-The comparison of previous derivation of the consistent tangent
+The comparison of the previous derivation of the consistent tangent
 operator to a numerical approximation is made in the
 `Hyperelasticity.cxx` test that can be found in the `tests/Material`
 directory of the `TFEL` sources. The components of the consistent

@@ -8,7 +8,7 @@
 `MFront` files. `mfront-doc` generates files in `pandoc`
 [markdown format](http://pandoc.org/demo/example9/pandocs-markdown.html). These
 files can be processed using [`pandoc`](http://pandoc.org/) and be
-converted to one of the many file format supported by
+converted to one of the many file formats supported by
 [`pandoc`](http://pandoc.org/), including
 [`LaTeX`](www.latex-project.org), `html` or various Word processor
 formats: Microsoft Word

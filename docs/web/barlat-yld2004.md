@@ -23,7 +23,7 @@
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
 
 This article discusses the implementation of the Yld2004-18p
-behaviour, as decribed by Barlat et al. (See @barlat_linear_2005).
+behaviour, as described by Barlat et al. (See @barlat_linear_2005).
 
 # Description of the behaviour
 
@@ -62,7 +62,7 @@ The Barlat equivalent stress is defined as follows (See @barlat_linear_2005):
 
 where \(s'_{i}\) and \(s''_{i}\) are the eigenvalues of two
 transformed stresses \(\tenseur{s}'\) and \(\tenseur{s}''\) by two
-linear transformation \(\tenseurq{L}'\) and \(\tenseurq{L}''\):
+linear transformations \(\tenseurq{L}'\) and \(\tenseurq{L}''\):
 \[
 \left\{
 \begin{aligned}
@@ -74,7 +74,7 @@ linear transformation \(\tenseurq{L}'\) and \(\tenseurq{L}''\):
 
 The linear transformations \(\tenseurq{L}'\) and \(\tenseurq{L}''\)
 are defined by \(9\) coefficients (each) which describe the material
-orthotropy. There are defined through auxiliary linear transformations
+orthotropy. They are defined through auxiliary linear transformations
 \(\tenseurq{C}'\) and \(\tenseurq{C}''\) as follows:
 \[
 \begin{aligned}
@@ -133,8 +133,8 @@ The elastic strain is automatically defined by the
 ## Elastic prediction
 
 First, an elastic prediction of the stress \(\tsigma^{\mathrm{tr}}\)
-is made (The following expression is not valid in plane stress
-hypothesis, this is the reason why we will use the
+is made (the following expression is not valid in the plane stress
+hypothesis, which is the reason why we will use the
 `computeElasticPrediction` method defined by the `StandardElasticity`
 brick, see below):
 
@@ -211,7 +211,7 @@ are available to the following list: `Tridimensional`, `PlaneStrain`,
 
 Thanks to the `StandardElasticity` brick defined below, all those
 modelling hypotheses can be supported, but the support for the plane
-stress hypothesis as to be explicitly requested. The following
+stress hypothesis has to be explicitly requested. The following
 statement, starting with the `@ModellingHypotheses`, enables all the
 previously listed modelling hypotheses:
 
@@ -245,7 +245,7 @@ The usage of the `StandardElasticity` is introduced as follows:
 
 ## Numerical parameters
 
-The following part of file give some default values for numerical
+The following part of the file gives some default values for numerical
 parameters used by the integration algorithm:
 
 ~~~~{.cpp}
@@ -256,7 +256,7 @@ parameters used by the integration algorithm:
 ## Elastic properties and yield stress
 
 The material properties are hard-coded. The
-`@ElasticMaterialProperties` is used to declare the Young modulus and
+`@ElasticMaterialProperties` keyword is used to declare the Young modulus and
 the Poisson ratio.
 
 ~~~~{.cpp}
@@ -266,9 +266,9 @@ the Poisson ratio.
 This keyword automatically declares two parameters called
 `YoungModulus` and `PoissonRatio`.
 
-In the `Implicit` scheme, the lame coefficients are automatically
+In the `Implicit` scheme, the Lamé coefficients are automatically
 deduced from the Young modulus and the Poisson ratio. They are
-accessible though the `lambda` and `mu` local variables which are
+accessible through the `lambda` and `mu` local variables which are
 automatically defined.
 
 The parameters associated with the plastic part of the behaviour are
@@ -304,7 +304,7 @@ details):
 \left(c^{1}_{xy},c^{1}_{yx},c^{1}_{xz},c^{1}_{zx},c^{1}_{yz},c^{1}_{zy},c^{1}_{xy},c^{1}_{xz},c^{1}_{yz}\right)
 \]
 
-> **Note** In his paper, Barlat and coworkers seems to use the
+> **Note** In his paper, Barlat and coworkers seem to use the
 > following convention for storing symmetric tensors:
 > 
 > \[
@@ -322,12 +322,12 @@ details):
 > \end{pmatrix}
 > \]
 > 
-> Therefore, if one wants to uses coeficients \(c^{B}\) given
+> Therefore, if one wants to use coefficients \(c^{B}\) given
 > by Barlat et al., one shall "swap" the appropriate coefficients.
 
 ## State variables
 
-The elastic strain is automatically declared the `StandardElasticity`
+The elastic strain is automatically declared by the `StandardElasticity`
 brick. The associated variable is `eel`.
 
 The following statement introduces the equivalent plastic strain named
@@ -344,7 +344,7 @@ For the implementations, we will need three local variables:
 
 - a boolean `b`. This boolean will be `true` if a plastic loading
   occurs.
-- two fourth order tensors `l1` and `l2` that stands for the linear
+- two fourth order tensors `l1` and `l2` that stand for the linear
   transformation of the stress tensors.
 
 ~~~~{.cpp}
@@ -360,7 +360,7 @@ elastic prediction of the stress lies inside the yield surface.
 ~~~~{.cpp}
 @InitializeLocalVariables{
   // when using the `Plate` orthotropic axes convention, all the
-  // modelling hypotheses uses the same convention, so we can just
+  // modelling hypotheses use the same convention, so we can just
   // use the `makeBarlatLinearTransformation` function with the
   // space dimension N as the template parameter
   l1 = makeBarlatLinearTransformation<N>(c1p[0],c1p[1],c1p[2],
@@ -382,7 +382,7 @@ stress and takes into account the modelling hypothesis. This
 prediction is thus valid under the plane stress hypothesis.
 
 The `makeBarlatLinearTransformation` and the `computeBarlatStress`
-functions are described in details [here](tensors.hml)
+functions are described in details [here](tensors.html)
 
 ## Implicit system
 
@@ -419,13 +419,13 @@ It shall be noted that, at the beginning of this code block:
   \(\Delta\,\tepsilonel-\Delta\,\tepsilonto\) by the
   `StandardElasticity` brick
 - `fp` has been initialized to \(\Delta\,p\) following standard
-  conventions defined in the the `Implicit` domain specific language.
+  conventions defined in the `Implicit` domain specific language.
 - the jacobian has been set to identity, following standard
   conventions defined in the `Implicit` domain specific language.
 
 Thus, all the variables have been set to describe a purely elastic
 behaviour. Hence, nothing is to be done if the boolean variable `b` is
-`false`. In this case, one just return `true`.
+`false`. In this case, one just returns `true`.
 
 If a plastic loading has been predicted, one uses the
 `computeBarlatStressSecondDerivative` function which returns:
@@ -437,7 +437,7 @@ If a plastic loading has been predicted, one uses the
 The implicit system is then readily written, using expressions given
 in the previous paragraph.
 
-In `C++17`, the previous code can be more simplier and smaller, using
+In `C++17`, the previous code can be simpler and smaller, using
 *structured bindings*:
 
 ~~~~{.cpp}

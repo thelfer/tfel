@@ -44,7 +44,7 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/249/>
 
 ## Ticket #242: The factor in front of the hyperbolic sine is discarded when using the `HyperbolicSine` inelastic flow
 
-The optional factor in in front of the hyperbolic sine was not generated when using the `HyperbolicSine` inelastic flow.
+The optional factor in front of the hyperbolic sine was not generated when using the `HyperbolicSine` inelastic flow.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/242/>
 
@@ -54,13 +54,13 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/228/>
 
 ## Ticket #222: Handling stored and dissated energies is broken in `MTest` for `Abaqus/Standard` behaviours
 
-There were a bug in `MTest` in the `Abaqus/Standard` behaviours which
+There was a bug in `MTest` in the `Abaqus/Standard` behaviours which
 didn't reinitialize the values of the stored and dissipated energies at
 the end of the time step to their values at the beginning of the time
 step before the behaviour integration.
 
 Thus, the dissipated and stored energies, when computed incrementally,
-are the sums of their increments at each iterations.
+are the sums of their increments at each iteration.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/222/>
 
