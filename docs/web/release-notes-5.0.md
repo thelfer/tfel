@@ -62,7 +62,7 @@ Versions of `clang` prior to Version \(17\) are known not to work.
 ## Support for `C++` digit separator in `CxxTokenizer`
 
 The `CxxTokenizer` class now supports `C++` digit separators in numbers,
-(integer of floatting point numbers), as illustrated in the following
+(integer or floating point numbers), as illustrated in the following
 example:
 
 ~~~~{.cxx}
@@ -99,7 +99,7 @@ const auto m3 = m1 * m2;
 
 ## New solver  eigen solver {#sec:tfel-5.0.0:tfel-math:eigensolvers}
 
-A new eigen solver based on Harari's analytical solution have been
+A new eigen solver based on Harari's analytical solution has been
 introduced for symmetric tensors. The computation of eigen values is
 done with Harari's algorithm [@harari_computation_2023] and the
 computation of eigen vectors is done with the default eigen solver for
@@ -181,7 +181,7 @@ eigenvalues and eigenvectors failed if:
 \[
 \Delta_{\infty}=\max_{i\in[1,2,3]}\left\|\tenseur{s}\,\cdot\,\vec{v}_{i}-\lambda_{i}\,\vec{v}_{i}\right\|>10\,\varepsilon
 \]
-where \(\varepsilon\) is the accuracy of the floatting point considered.
+where \(\varepsilon\) is the accuracy of the floating point considered.
 
 The results of those tests are reported on Tables
 @tbl:comp_eigensolvers_float, @tbl:comp_eigensolvers_double and
@@ -228,7 +228,7 @@ and `computeOrientedMoriTanakaScheme`.
 
 ### The `@Data` keyword
 
-The `@Data` keyword allow the definition of a material properties using
+The `@Data` keyword allows the definition of a material property using
 the interpolation of a set of values.
 
 The `@Data` keyword is followed by a set of options defining:
@@ -292,7 +292,7 @@ The `StrainRateSensitive` isotropic hardening rule is defined by:
 
 where:
 
-- \(R_{0}\paren{p}\) is the yield radius corresponding to an infinitly
+- \(R_{0}\paren{p}\) is the yield radius corresponding to an infinitely
   slow loading. It can be built by summing any isotropic hardening rule
   already implemented in the `StandardElastoViscoPlasticity\ brick.
 - \(R_{rs}\paren{\dot{p}}\) is a correction describing the strain rate
@@ -304,8 +304,8 @@ options:
 - `rate_independent_isotropic_hardening`: this option introduces a
   contribution to \(R_{0}\paren{p}\). This option can be repeated
   multiple times.
-- `rate_sensitivity_factor`: this option introduces the rate sensivity
-  factor \(R_{rs}\paren{\dot{p}}\). The list of available rate sensivity
+- `rate_sensitivity_factor`: this option introduces the rate sensitivity
+  factor \(R_{rs}\paren{\dot{p}}\). The list of available rate sensitivity
   factors is given in section @sec:rate_sensitivity_factors.
 
 #### Example of usage
@@ -364,7 +364,7 @@ options:
 
 ### The `disable_runtime_checks` option
 
-If this option is set to `true`, interfaces may disable as much runtime
+If this option is set to `true`, interfaces may disable as many runtime
 checks as possible. Those runtime checks include checking standard
 bounds and physical bounds for instance.
 
@@ -373,7 +373,7 @@ bounds and physical bounds for instance.
 ### The `@SelectedModellingHypothesis` and `@SelectedModellingHypotheses` keywords
 
 The `@SelectedModellingHypothesis` and `@SelectedModellingHypotheses`
-keywords allows to select which modelling hypotheses will be
+keywords allow the selection of which modelling hypotheses will be
 generated.
 
 Their syntaxes are similar to the keywords
@@ -393,7 +393,7 @@ The following library has been built :
 
 # Documentation
 
-The page [Libaries usage in C++](libraries_usage.html) describe how to
+The page [Libraries usage in C++](libraries_usage.html) describes how to
 use the `TFEL` libraries in `C++` projects, using either the
 `tfel-config` utility or `cmake` packages.
 

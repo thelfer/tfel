@@ -34,7 +34,7 @@ eqnPrefixTemplate: "($$i$$)"
 \newcommand{\mts}[1]{{\left.#1\right|_{t+\theta\,\Delta\,t}}}
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
 
-This paper is dedicated to the implementation a perfect plastic
+This paper is dedicated to the implementation of a perfect plastic
 behaviour based on the Hosford equivalent stress.
 
 The whole implementation is available
@@ -70,7 +70,7 @@ where \(\sigma_{1}\), \(\sigma_{2}\) and \(\sigma_{3}\) are the eigenvalues of t
 stress.
 
 Therefore, when \(a\) goes to infinity, the Hosford stress reduces to
-the Tresca stress. When \(n = 2\) the Hosford stress reduces to the
+the Tresca stress. When \(n = 2\), the Hosford stress reduces to the
 von Mises stress.
 
 ![Comparison of the Hosford stress \(a=100,a=8\) and the von Mises stress in plane stress](img/HosfordStress.svg
@@ -104,7 +104,7 @@ post-processing purposes, we choose to keep it as a state variable.
 ## Elastic prediction
 
 First, an elastic prediction of the stress \(\tsigma^{\mathrm{tr}}\)
-is made (The following expression is not valid in plane stress
+is made (the following expression is not valid in the plane stress
 hypothesis, see below):
 \[
 \tsigma^{\mathrm{tr}}=\lambda\,\trace{\bts{\tepsilonel}+\theta\,\Delta\,\tepsilonto}\,\tenseur{I}+2\,\mu\,\paren{\bts{\tepsilonel}+\theta\,\Delta\,\tepsilonto} \]
@@ -195,9 +195,9 @@ brick which provides:
   behaviour integration.
 - Automatic computation of the consistent tangent operator.
 - Automatic support for plane stress and generalized plane stress
-  modelling hypotheses (The axial strain is defined as an additional
+  modelling hypotheses (the axial strain is defined as an additional
   state variable and the associated equation in the implicit system is
-  added to enforce the plane stess condition).
+  added to enforce the plane stress condition).
 - Automatic addition of the standard terms associated with the elastic
   strain state variable.
 
@@ -211,7 +211,7 @@ The usage of the `StandardElasticity` is introduced as follows:
 
 ## Numerical parameters
 
-The following part of file give some default values for numerical
+The following part of the file gives some default values for numerical
 parameters used by the integration algorithm:
 
 ~~~~{.cpp}
@@ -221,7 +221,7 @@ parameters used by the integration algorithm:
 
 ## State variables
 
-The elastic strain is automatically declared the `StandardElasticity`
+The elastic strain is automatically declared by the `StandardElasticity`
 brick. The associated variable is `eel`.
 
 The following statement introduces the equivalent plastic strain named
@@ -244,7 +244,7 @@ the Poisson ratio.
 
 In the `Implicit` scheme, the lame coefficients are automatically
 deduced from the Young modulus and the Poisson ratio. They are
-accessible though the `lambda` and `mu` local variables which are
+accessible through the `lambda` and `mu` local variables which are
 automatically defined.
 
 The parameters associated with the plastic part of the behaviour are
@@ -335,13 +335,13 @@ It shall be noted that, at the beginning of this code block:
   \(\Delta\,\tepsilonel-\Delta\,\tepsilonto\) by the
   `StandardElasticity` brick
 - `fp` has been initialized to \(\Delta\,p\) following standard
-  conventions defined in the the `Implicit` domain specific language.
+  conventions defined in the `Implicit` domain specific language.
 - the jacobian has been set to identity, following standard
   conventions defined in the `Implicit` domain specific language.
 
 Thus, all the variables have been set to describe a purely elastic
 behaviour. Hence, nothing is to be done if the boolean variable `b` is
-`false`. In this case, one just return `true`.
+`false`. In this case, one just returns `true`.
 
 If a plastic loading has been predicted, one uses the
 `computeHosfordStressSecondDerivative` function which returns:
@@ -392,7 +392,7 @@ The following library has been built :
 The following script determines the yield stress under the plane
 stress assumption in the principal stress space by a brute force
 approach. It imposes strain paths in varying directions and a
-constraint the shear stress is null. The computations stops when the
+constraint that the shear stress is null. The computation stops when the
 plastic equivalent strain exceeds \(10^{-3}\). The current stress
 state is then printed.
 
@@ -441,14 +441,14 @@ The test presented is based on the paper of Scherzinger (see
 @scherzinger_return_2017). The test is based on the following steps:
 
 - A direction in the \(\pi\)-plane, characterized by an angle
-  \(\alpha\), is choosen. \(\alpha\) varies from \(-\pi\) to \(\pi\):
+  \(\alpha\), is chosen. \(\alpha\) varies from \(-\pi\) to \(\pi\):
   this range is discretized \(1000\) times.
 - A stress state \(\tsigma_{\alpha}\) which lies on the yield surface
   \(\sigmaeq^{H}=\sigma_{Y}\) is determined. Such a stress state is
   characterized by its unique coordinates
   \(\tilde{\pi}\paren{\tsigma_{\alpha}}\) in the \(\pi\)-plane and
   this projection determines its three
-  eigenvalues. \(\tsigma_{\alpha}\) is choosen diagonal.
+  eigenvalues. \(\tsigma_{\alpha}\) is chosen diagonal.
 - The elastic strain \(\tepsilonel_{\alpha}\) corresponding to
   \(\tsigma_{\alpha}\) is determined.
 - Starting from a virgin state (all state variables are set to zero),
@@ -456,19 +456,19 @@ The test presented is based on the paper of Scherzinger (see
   increment \(\Delta\,\tepsilonto\) equal to
   \(x\,\tepsilonel_{\alpha}\) where \(x\) is increased from \(1\) to a
   maximal value of \(30\). If the behaviour integration succeeds,
-  \(x\) is increased by an increment egal to \(30/1000\). This step is
+  \(x\) is increased by an increment equal to \(30/1000\). This step is
   stopped if the behaviour integration fails or if \(x\) reaches
   \(30\).
 
-For each values of \(\alpha\) and \(x\), the number of iterations
+For each value of \(\alpha\) and \(x\), the number of iterations
 needed to solve the implicit system is recorded.
 
 The implementation presented so far is modified to declare an
-additional state variable using to save the number of iterations
+additional state variable used to save the number of iterations
 required to reach the convergence.
 
 The `python` script which implements the test is the following, in the
-case of a Hosford exponent egal to \(100\):
+case of a Hosford exponent equal to \(100\):
 
 ~~~~{.python}
 from math import pi,cos,sin
@@ -535,9 +535,9 @@ The following algorithms are considered:
   \(\mts{\sigmaeq^{H}}\) is greater than \(\beta\,\sigma_{Y}\), the
   Newton step is rejected: the direction is kept unchanged but the
   amplitude of the correction to the internal state variables
-  increment is divided by two. In the following, \(\beta\) is choosen
+  increment is divided by two. In the following, \(\beta\) is chosen
   equal to \(\frac{3}{2}\). The test has to be made in the
-  `@Integrator` code block: if the test fails, one just have to return
+  `@Integrator` code block: if the test fails, one just has to return
   the `false` value. This is obtained by adding the following line
   after the computation of the Hosford equivalent stress:
   
@@ -556,7 +556,7 @@ if(seq>3*(sigy/2)){
 
 ## Hosford \(a=6\)
 
-The Hosford yield surface for an exponent egal to \(a=6\) is smooth.
+The Hosford yield surface for an exponent equal to \(a=6\) is smooth.
 
 ![Robustness of Algorithm 1 for \(a=6\)](img/Scherzinger/Hosford6/Newton.png
  "Robustness of Algorithm 1 for \(a=6\)"){#fig:hosford6:alg1 width=70%}
@@ -568,7 +568,7 @@ convergence is \(100\) by default. However, as stated by Scherzinger,
 if the convergence is not reached for \(30\) iterations, most of the
 time the convergence will not be reached.
 
-The results depicted on Figure @fig:hosford6:alg1 confirms the ones of
+The results depicted on Figure @fig:hosford6:alg1 confirm the ones of
 Scherzinger: the standard Newton algorithm conditionally converges.
 Indeed, it can be seen that the standard Newton algorithm converges
 for all values of \(\alpha\) if \(x\) is low enough. For large values
@@ -586,7 +586,7 @@ the robustness: the convergence is reached for all tested values of
 Results for the third and fourth algorithms are not shown but are very
 similar to the one obtained with the second algorithm. Indeed, in
 terms of robustness, differences between those three algorithms only
-arises for high values of the Hosford exponent \(a\).
+arise for high values of the Hosford exponent \(a\).
 
 ## Hosford \(a=8\)
 
@@ -621,21 +621,21 @@ performs very poorly.
 
 In this case, the second algorithm does not improve the robustness as
 shown on Figure @fig:hosford100:alg2. This algorithm performs almost
-as poorly than the standard Newton algorithm.
+as poorly as the standard Newton algorithm.
 
 ![Robustness of Algorithm 3 for \(a=100\)](img/Scherzinger/Hosford100/MaximumIncrementValuePerIteration.png
  "Robustness of Algorithm 3 for \(a=100\)"){#fig:hosford100:alg3 width=70%}
 
 Figure @fig:hosford100:alg3 shows that the third algorithm clearly
 increases the robustness in some directions but the robustness remains
-low for angles close the edges of the yield surfaces.
+low for angles close to the edges of the yield surfaces.
 
 ![Robustness of Algorithm 4 for \(a=100\)](img/Scherzinger/Hosford100/LevenbergMarquardt.png
  "Robustness of Algorithm 4 for \(a=100\)"){#fig:hosford100:alg4 width=70%}
 
 Figure @fig:hosford100:alg3 shows that the Levenberg-Marquardt
 algorithm outperforms Algorithm 3. However, the robustness remains low
-for angles close the edges of the yield surfaces.
+for angles close to the edges of the yield surfaces.
 
 ### Influence of the eigen solver
 
@@ -643,10 +643,10 @@ In this section, we consider the influence of the eigen solver. In the
 previous tests, the default eigen solver was used. This analytical
 solver has been shown to provide a very interesting trade-off between
 accuracy and numerical efficiency. It was also shown that the Jacobi
-eigensolver provides very accurate results but is less efficient by
+eigensolver provides very accurate results but is less efficient than
 our default eigen solver (about 2 times less efficient).
 
-Our tests, not reported here, shows that changing the eigen solver:
+Our tests, not reported here, show that changing the eigen solver:
 
 - does not change the results presented for exponents \(a=6\) and
   \(a=8\).
@@ -667,17 +667,17 @@ is reached for all tested values of \(\alpha\) and \(x\).
 
 ## Conclusions
 
-Our tests shows that for high values of the Hosford exponent,
+Our tests show that for high values of the Hosford exponent,
 sophisticated algorithms and accurate eigen solvers are required to
 guarantee the convergence of the algorithm for large trial stress.
 
 However, for standard values of the Hosford exponent (\(a=6\) and
-\(a=8\)), our results shows that Algorithm 2, which a very simple
+\(a=8\)), our results show that Algorithm 2, which is a very simple
 modification of the standard Newton algorithm based on a simple and
 intuitive physical consideration, is very robust.
 
-Those results has to confirmed on real structural analyses. In
-particular, the impact of each algorithms on the overall efficiency of
+Those results have to be confirmed on real structural analyses. In
+particular, the impact of each algorithm on the overall efficiency of
 the simulations has to be evaluated.
 
 # References

@@ -13,7 +13,7 @@ eqnPrefixTemplate: "($$i$$)"
 
 <div id="slideshow">
   <ul class="slides">
-	<li><img src="img/AnsysTwistOfABar.svg" width="620" height="320" alt="Torsional twist of a notched bar using an Hosford plastic behaviour with a bilinear hardening law. Alex Grishin. Ansys MAPDL. 2020." /></li>
+	<li><img src="img/AnsysTwistOfABar.svg" width="620" height="320" alt="Torsional twist of a notched bar using a Hosford plastic behaviour with a bilinear hardening law. Alex Grishin. Ansys MAPDL. 2020." /></li>
 	<li><img src="img/AbdominalMusclesModelling2019.png" width="620" height="320" alt="Abdominal muscles modelling by Lluís Tuset, Gerard Fortuny, Joan Herrero, Dolors Puigjaner, Josep M. López." /></li>
 	<li><img src="img/PSACylinderHeadDesign.png" width="620" height="320" alt="This PSA study by Agathe Forré et al. deals with the Thermal-Mechanical Fatigue design of automotive cylinder heads." /></li>
 	<li>
@@ -53,7 +53,7 @@ knowledge:
 - [material properties](material-properties.html) (for instance the
   Young's modulus, the thermal conductivity, etc.)
 - [mechanical behaviours](behaviours.html). Numerical performance of
-  generated mechanical behaviours were given a particular
+  generated mechanical behaviours was given particular
   attention. [Various benchmarks](benchmarks.html) show that `MFront`
   implementations are competitive with native implementations
   available in the `Cast3M`, `Code-Aster`, `Abaqus Standard` and
@@ -90,7 +90,7 @@ A set of interfaces are provided for various solvers:
   atomique"). Note that
   [`AMITEX_FFTP`](http://www.maisondelasimulation.fr/projects/amitex/html/)
   is distributed under a free license for research and education
-  purpose. Those solvers reuse the interface developed for the
+  purposes. Those solvers reuse the interface developed for the
   [`Cast3M`](http://www-cast3m.cea.fr) finite element solver.
 - the [`ElmerFEM`](https://www.elmerfem.org/blog/) multiphysics
   solver. This interface is described [here](elmerfem.html).
@@ -109,8 +109,8 @@ cover the following languages: `C`, `C++`, `python`, `fortran`, etc.
 
 # Licences
 
-`TFEL` version prior to 0.1 were released under both the LGPL and the
-CECILL-B licences. A copy of those licences are included in the
+`TFEL` versions prior to 0.1 were released under both the LGPL and the
+CECILL-B licences. A copy of those licences is included in the
 distributions of TFEL.
 
 `TFEL` versions 1.x were developed by CEA within the PLEIADES
@@ -118,7 +118,7 @@ project. Since svn revision 584, TFEL was part of the `PLEIADES`
 project.
 
 Starting from versions 2.x, TFEL has been publicly released under either
-the GPL or the CECILL-A licence. A copy of those licences are delivered
+the GPL or the CECILL-A licence. A copy of those licences is delivered
 with the sources of TFEL. CEA or EDF may also distribute this project
 under specific licensing conditions. Since 2023, the linking exception
 clause was added to the GPL licence.

@@ -47,16 +47,16 @@ eqnPrefixTemplate: "($$i$$)"
 
 
 We present here an implementation of the affine formulation [@masson_affine_2000]
-for the homogenization of a viscoplastic polycrystal, example which is treated in [@bornert_second-order_2001]
+for the homogenization of a viscoplastic polycrystal, an example which is treated in [@bornert_second-order_2001]
 but with Ponte-Castaneda second-order estimates.
 
-Here, the idea is to show that an implementation of that procedure based
+Here, the idea is to show an implementation of that procedure based
 on morphological tensors computed by FFT,
 on a given geometry of polycrystal.
 
 This tutorial first presents the homogenization problem, recalls the methodology
-of the affine formulation, presents different the possible implementations,
-and show the details of the `mfront` file.
+of the affine formulation, presents the different possible implementations,
+and shows the details of the `mfront` file.
 
 # The viscoplastic polycrystal
 
@@ -88,7 +88,7 @@ corresponding slip systems $\tenseur \mu_k^r$ ($1\leq k\leq K$). The strain rate
     \dot{\tepsilon}=\deriv{\psi_r}{\tsigma}\left(\tsigma\right)\qquad\psi(\tsigma)= \sum_{r=1}^{N}\chi_r\,\psi_r (\tsigma)
   \end{aligned}
 \]
-where $N$ is the number of phases (or crystals) and $\chi_r$ is characteristic function of phase $r$.
+where $N$ is the number of phases (or crystals) and $\chi_r$ is the characteristic function of phase $r$.
  
  In all the sequel, we just note $\tepsilon$ for $\dot{\tepsilon}$.
   
@@ -133,7 +133,7 @@ The idea is to linearize the behaviour around a reference stress $\tsigma^r$:
   \langle\tepsilon\rangle_r = \tenseurq A_r\left(\tsigma^1,...,\tsigma^N\right)\dbldot\tE + \sum_s \tenseurq B_{rs}\left(\tsigma^1,...,\tsigma^N\right)\dbldot\tenseur e^s\left(\tsigma^s\right)
   \end{aligned}
 \]
-  where $\tenseurq A_r\left(\tsigma^1,...,\tsigma^N\right)$ and $\tenseurq B_{rs}\left(\tsigma^1,...,\tsigma^N\right)$ can be obtained by a homogenization procedure (mean-field scheme, FFT...). The stresses are obtained by substracting the strain $\tenseur e^r$ and multiplying by the moduli $\tenseurq L_r=\left(\tenseurq M_r\right)^{-1}$, if it exists:
+  where $\tenseurq A_r\left(\tsigma^1,...,\tsigma^N\right)$ and $\tenseurq B_{rs}\left(\tsigma^1,...,\tsigma^N\right)$ can be obtained by a homogenization procedure (mean-field scheme, FFT...). The stresses are obtained by subtracting the strain $\tenseur e^r$ and multiplying by the moduli $\tenseurq L_r=\left(\tenseurq M_r\right)^{-1}$, if it exists:
   \[
   \begin{aligned}
   \langle\tsigma\rangle_r = \tenseurq L_r\left(\tsigma^r\right)\dbldot\tenseurq A_r\left(\tsigma^1,...,\tsigma^N\right)\dbldot\tE + \sum_s \tenseurq L_r\left(\tsigma^r\right)\dbldot\tenseurq B_{rs}\left(\tsigma^1,...,\tsigma^N\right)\dbldot\tenseur e^s\left(\tsigma^s\right) - \tenseurq L_r\left(\tsigma^r\right)\dbldot\tenseur e^r\left(\tsigma^r\right)
@@ -202,7 +202,7 @@ The iterative resolution of the non-linear system can be summarized as
 \end{aligned}
 \]
 
-The first step of the resolution consists in computing the moduli $\tenseurq M_r$ and free strains $\tenseur e^r$. It can be done analytically (as below) or via finite difference or automatic differentiation. Moreover, for both strategies, we could use a `BehaviourVariable`, defining the local behaviour in an external file (in our example, the potential is to simple to do that).
+The first step of the resolution consists in computing the moduli $\tenseurq M_r$ and free strains $\tenseur e^r$. It can be done analytically (as below) or via finite difference or automatic differentiation. Moreover, for both strategies, we could use a `BehaviourVariable`, defining the local behaviour in an external file (in our example, the potential is too simple to do that).
 
 The second step is the computation of the tensors $\tenseurq A_r$ and $\tenseurq B_{rs}$. This can be achieved by means of mean-field schemes (the `namespace` `tfel::material::homogenization` provides the good tensors). This can also be done via morphological tensors, computed on a given geometry of polycrystal. We will present this second possibility below.
 
@@ -214,7 +214,7 @@ We note that the equation relative to the third step will give our residue.
 ### The Lippmann-Schwinger equation discretized
 
 In fact, the thermoelastic problem can be rewritten as a Lippmann-Schwinger equation (see [@willis_bounds_1977;@castaneda_effect_1995]). 
-Let us write $\tenseur\tau=\tsigma-\tenseurq L_0\dbldot\tepsilon$ with $\tsigma=\tenseurq L\dbldot\left(\tepsilon-\tenseur e\right)$.  We have $\tenseur\tau=\tenseurq\delta\tenseurq L\dbldot\tepsilon-\tenseurq L\dbldot\tenseur e$ with $\tenseurq\delta\tenseurq L=\tenseurq L-\tenseurq L_0$. We have, because, $\div\,\tsigma=0$,
+Let us write $\tenseur\tau=\tsigma-\tenseurq L_0\dbldot\tepsilon$ with $\tsigma=\tenseurq L\dbldot\left(\tepsilon-\tenseur e\right)$.  We have $\tenseur\tau=\tenseurq\delta\tenseurq L\dbldot\tepsilon-\tenseurq L\dbldot\tenseur e$ with $\tenseurq\delta\tenseurq L=\tenseurq L-\tenseurq L_0$. We have, because $\div\,\tsigma=0$,
 \[
 \begin{aligned}
 \tepsilon=\tE-\tenseurq \Gamma_0\left(\tenseur\tau\right)
@@ -238,7 +238,7 @@ where
 \tenseurq \Gamma_{rs} = \sum_j\langle\,\tenseurq\Gamma_0(\chi_s\,\tenseur s_j)\otimes\tenseur s_j\,\rangle_r
 \end{aligned}
 \]
-is what we call a morphological tensor or an interaction tensor, and can be computed by FFT or FEM before the `mfront` integration. This tensor depends on the Green operator $\tenseurq \Gamma_0$, relative to the elasticity $\tenseurq L_0$, and a basis of symmetric second-order tensors $(\tenseur s_1,...,\tenseur s_d)$ ($d=6$ in 3D).
+is what we call a morphological tensor or an interaction tensor, and can be computed by FFT or FEM before the `mfront` integration. This tensor depends on the Green operator $\tenseurq \Gamma_0$, relative to the elasticity $\tenseurq L_0$, and on a basis of symmetric second-order tensors $(\tenseur s_1,...,\tenseur s_d)$ ($d=6$ in 3D).
 Depending on the number of phases $N$, the computation of the $\tenseurq \Gamma_{rs}$ is more or less costly, but it is achieved
 at the beginning, once and for all.
 
@@ -265,7 +265,7 @@ We note that the reference medium can be chosen in this approach. A natural appr
 \]
 Hence, we will compute the morphological tensors $\tenseurq \Gamma_{rs}$ for a given elasticity $\tenseurq C_0$, and we can change the reference medium by multiplication of $\tenseurq C_0$ by $r_0$ and division of $\tenseurq \Gamma_0$ by $r_0$.
 
-Moreover, in our case, it makes sense to take a reference medium $\tenseurq C_0=2\mu_0\tenseurq K$. Afterwards, we will update the elasticity by taking $\tenseurq C_1=2\mu_{\mathrm{hom}}\tenseurq K$, where $\mu_{\mathrm{hom}}$ is equal to the shear modulus given by the projection of $\tenseurq C_{\mathrm{hom}}$ on $\tenseurq K$, where $\tenseurq C_{\mathrm{hom}}$ is the homogenized tensors obtained at previous step of the Newton-Raphson algorithm.
+Moreover, in our case, it makes sense to take a reference medium $\tenseurq C_0=2\mu_0\tenseurq K$. Afterwards, we will update the elasticity by taking $\tenseurq C_1=2\mu_{\mathrm{hom}}\tenseurq K$, where $\mu_{\mathrm{hom}}$ is equal to the shear modulus given by the projection of $\tenseurq C_{\mathrm{hom}}$ on $\tenseurq K$, where $\tenseurq C_{\mathrm{hom}}$ is the homogenized tensor obtained at the previous step of the Newton-Raphson algorithm.
 
 
 # Implementation in MFront
@@ -275,7 +275,7 @@ All the files are available in the `MFrontGallery` project, [here](https://githu
 ## Example used for the implementation
 
    The geometry of our polycrystal is generated with [`merope`](https://github.com/MarcJos/Merope/),
-  with a Voronoi tesselation.
+  with a Voronoi tessellation.
   This geometry is saved as an array and will be used only for the approach based on morphological
   tensors. The image below shows an example of such a polycrystal. There are here 10 crystals. The
   volume fractions can also be computed on this microstructure
@@ -354,7 +354,7 @@ The compilation hence will be done like that:
 mfront -I ../extra-headers/TFEL/Material --obuild --interface=generic Affine_tensors.mfront
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Of cours the tensors are computed before via FFT as explained above
+Of course the tensors are computed before via FFT as explained above
 (see the folder mentioned above for the computation).
 
 ### Sliding systems

@@ -26,7 +26,7 @@
 \newcommand{\ets}[1]{{\left.#1\right|_{t+\Delta\,t}}}
 \newcommand{\transpose}[1]{{#1^{\mathrm{T}}}}
 
-This paper is dedicated to the implementation a multi-surface,
+This paper is dedicated to the implementation of a multi-surface,
 compressible, perfect plastic behaviour.
 
 # Description
@@ -47,7 +47,7 @@ where \(\lambda\) and \(\mu\) are the first and second Lamé parameters.
   \sigmaeq^{\mathrm{DP}}=q+\tan\paren{\beta}\,p
   \]
   where:
-    - \(p\) is the hydrostatique pressure:
+    - \(p\) is the hydrostatic pressure:
       \[
       p = \Frac{1}{3}\,\trace{\tsigma}
       \]
@@ -64,7 +64,7 @@ where \(\lambda\) and \(\mu\) are the first and second Lamé parameters.
   \]
   This surface is a line in the \(\paren{p,q}\) plane.
 - The second surface forms a so-called cap which closes the first
-  plastic surface. This plastic surface is based on a criterion close the Green one
+  plastic surface. This plastic surface is based on a criterion close to the Green one
   (See @fritzen_computational_2013 and [this page](greenplasticity.html)
   for details):
   \[
@@ -77,13 +77,13 @@ where \(\lambda\) and \(\mu\) are the first and second Lamé parameters.
   \]  
   This surface is an ellipse in the \(\paren{p,q}\)
   plane. The material parameter \(p_{a}\) marks the transition between the two
-  plastic surface. For the two surface to intersect at \(p_{a}\),
+  plastic surfaces. For the two surfaces to intersect at \(p_{a}\),
   the following relation must hold:
   \[
   R_{0}^{c}=R\,\paren{R_{0}^{\mathrm{DP}}-p_{a}\,\tan{\beta}}
   \]
   The material constants associated with the cap are
-  \(p_{a}\) and the ellipse exentricity \(R\). Here, we prefer
+  \(p_{a}\) and the ellipse eccentricity \(R\). Here, we prefer
   another material constant, denoted \(p_{b}\), which stands for
   the minimal pressure allowed. \(p_{b}\) is related to \(R\) by:
   \[
@@ -102,8 +102,8 @@ Drucker-Prager criterion and a cap"){width=80%}
 > With our definition, \(p\) is negative in tri-axial compression
 > (\(\trace{\tsigma}<0\)).
 
-Both criterion \(\sigmaeq^{\mathrm{DP}}\) and \(\sigmaeq^{c}\)
-are homogeneous function of degree 1.
+Both criteria \(\sigmaeq^{\mathrm{DP}}\) and \(\sigmaeq^{c}\)
+are homogeneous functions of degree 1.
 
 In the following, the flow rule is assumed associated. For each
 mechanism \(i\), the plastic strain rate \(\tdepsilonpi\) is given by:
@@ -209,16 +209,16 @@ Three state variables are introduced:
 The elastic strain is automatically defined by the `Implicit` domain
 specific language.
 
-\(p^{\mathrm{DP}}\) and \(p^{c}\)could be considered as an integration
-variables, but, for post-processing purposes, we choose to keep it as a
+\(p^{\mathrm{DP}}\) and \(p^{c}\) could be considered as integration
+variables, but, for post-processing purposes, we choose to keep them as
 state variables.
 
 ## Implicit scheme
 
 Let \(\bts{\vec{Y}}\) be a vector containing the values of the state
 variables at the beginning of the time step and \(\Delta\,\vec{Y}\) a
-vector holding the values of unknown increment of those state variables.
-Here, \(\vec{Y}\) and \(\Delta\,\vec{Y}\) have the the following form:
+vector holding the values of the unknown increment of those state variables.
+Here, \(\vec{Y}\) and \(\Delta\,\vec{Y}\) have the following form:
 
 \[
 \bts{\vec{Y}} =
@@ -238,7 +238,7 @@ Here, \(\vec{Y}\) and \(\Delta\,\vec{Y}\) have the the following form:
 
 The principle of implicit schemes is to discretize the constitutive
 equations so that the increment of the unknowns \(\Delta\,\vec{Y}\)
-satisfy the following equation:
+satisfies the following equation:
 \[
 \vec{F}\paren{\Delta\,\vec{Y}}=0
 \]
@@ -302,14 +302,14 @@ The integration scheme will be based on a set of three implicit equations:
   (cap).
 
 The last two equations depend on whether the associated mechanism is
-assumed active or not. For each systems, a first guess will be made
+assumed active or not. For each system, a first guess will be made
 based on an elastic prediction of the stress, as discussed in the next
-paragraph. After a solution to the implicit systems will be found, the
+paragraph. After a solution to the implicit systems has been found, the
 validity of those two assumptions will be checked. If one of the
-assumption is false, the resolution will be restarted by making the
+assumptions is false, the resolution will be restarted by making the
 opposite assumption.
 
-In pratice, the activation of a plastic mechanism is associated to a
+In practice, the activation of a plastic mechanism is associated with a
 boolean value.
 
 ## Elastic prediction
@@ -326,8 +326,8 @@ hypothesis, see below):
 - Otherwise, the material state at the end of the time step lies on
   at least one of the yield surfaces.
 
-As describe in the previous paragraph, this elastic prediction is used
-initialize the status associated with each mechanism.
+As described in the previous paragraph, this elastic prediction is used
+to initialize the status associated with each mechanism.
 
 ## Equation associated with the elastic strain
 
@@ -387,7 +387,7 @@ The derivatives of this equation with respect to
 \right.
 \]
 
-If the Drucker-Prager mechanism is not active, the equation assoaciated
+If the Drucker-Prager mechanism is not active, the equation associated
 with \(p^{\mathrm{DP}}\) is simply:
 
 \[
@@ -417,7 +417,7 @@ The derivatives of this equation with respect to
 \right.
 \]
 
-If the cap mechanism is not active, the equation assoaciated
+If the cap mechanism is not active, the equation associated
 with \(p^{c}\) is simply:
 
 \[
@@ -468,7 +468,7 @@ brick which provides:
 - Automatic support for plane stress and generalized plane stress
   modelling hypotheses (The axial strain is defined as an additional
   state variable and the associated equation in the implicit system is
-  added to enforce the plane stess condition).
+  added to enforce the plane stress condition).
 - Automatic addition of the standard terms associated with the elastic
   strain state variable.
 
@@ -519,8 +519,8 @@ mechanism.
 
 ## Local variables
 
-Local variables are helpers variables that are accessible in each code
-blocks during the all the integration of the behaviour:
+Local variables are helper variables that are accessible in each code
+block during the whole integration of the behaviour:
 
 ~~~~{.cpp}
 @LocalVariable real tg;
@@ -566,7 +566,7 @@ the behaviour integration.
 ## Elastic prediction, initial value of the statuses
 
 The `@Predictor` code block is called just before the beginning of the
-Newton-Raphson algorihtm.
+Newton-Raphson algorithm.
 
 ~~~~{.cpp}
 @Predictor{
@@ -588,7 +588,7 @@ This method takes the modelling hypothesis into account when required
 
 ## Implicit system
 
-The implicit system is build inside the `@Integrator` code block:
+The implicit system is built inside the `@Integrator` code block:
 
 ~~~~{.cpp}
 @Integrator {
@@ -677,7 +677,7 @@ Finally, the `@Integrator` code block is closed:
 } // end of @Integrator
 ~~~~
 
-## A posterio checks: validation of the assumptions
+## A posteriori checks: validation of the assumptions
 
 The `@AdditionalConvergenceChecks` code block has been introduced in
 `TFEL-3.1` to have a better control on the convergence of the
@@ -689,10 +689,10 @@ Newton-Raphson algorithm has converged (this is indicated by the
 `converged` boolean variable).
 
 If a mechanism is active, we check that \(\Delta\,p_{i}\) is positive.
-Otherwise, the mechanism is desactivated and the `converged` flag is set
+Otherwise, the mechanism is deactivated and the `converged` flag is set
 to `false`.
 
-If a mechanism is not active, we check that the final solution remain
+If a mechanism is not active, we check that the final solution remains
 below the yield surface. Otherwise, the mechanism is activated and the
 `converged` flag is set to `false`.
 
@@ -733,7 +733,7 @@ below the yield surface. Otherwise, the mechanism is activated and the
 # Evolution of the porosity
 
 In this paragraph, we will discuss how the evolution of the porosity of
-the material du to the plastic flow can be added.
+the material due to the plastic flow can be added.
 
 The porosity \(f\) is defined as the ratio between the current mass
 density \(\rho\) and the theoretical density \(\rho^{\mathrm{th}}\):
@@ -768,7 +768,7 @@ Finally, the evolution of the porosity is:
 \dot{f}=\paren{1-f}\,\trace{\tdepsilonto}
 \]
 
-Following @chaboche_endommagement_2001, the elasic part of the strain is neglected and the following evolution of \(f\) is finally kept:
+Following @chaboche_endommagement_2001, the elastic part of the strain is neglected and the following evolution of \(f\) is finally kept:
 \[
 \dot{f}=\paren{1-f}\,\trace{\tdepsilonp}
 \]
@@ -777,15 +777,15 @@ Following @chaboche_endommagement_2001, the elasic part of the strain is neglect
 > 
 > For simplicity, we don't treat here the case where the elastic
 > properties depend on the porosity. Indeed, in this case, the usage of
-> the `StandardElasticity` brick is not more justified. In pratice,
-> however, neglecting the additional terms du to such a dependency may
+> the `StandardElasticity` brick is no longer justified. In practice,
+> however, neglecting the additional terms due to such a dependency may
 > work quite well.
 
 Assuming no dependency of elastic material properties with the porosity,
 two cases can be distinguished:
 
 - The yield criteria and the isotropic hardening depend on the porosity.
-  In this case, the simpliest approach is to consider the porosity as a
+  In this case, the simplest approach is to consider the porosity as a
   new state variable and to add the appropriate derivatives of the yield
   surface in the definition of the jacobian of the implicit system.
 - The yield criteria and the isotropic hardening do not depend on the

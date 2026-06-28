@@ -48,9 +48,9 @@ directory of the sources.
 
 This document describes the generic installation procedure for `TFEL`
 from the sources on posix-compliant systems. Please note that the main
-systems on which `TFEL` was developed is `Linux`. Extensive testing on
+system on which `TFEL` was developed is `Linux`. Extensive testing on
 other posix-compliant operating systems, notably `FreeBSD`, is
-lacking, although compilation and unit testing is known to work. A
+lacking, although compilation and unit testing are known to work. A
 page dedicated to `FreeBSD` is available [here](install-freebsd.html).
 
 The installation on [Windows platform](http://windows.microsoft.com)
@@ -62,14 +62,14 @@ is described in the following pages:
   requiring `Cast3M` to be installed.
 - [Installation on [Windows](http://windows.microsoft.com) in the [`MSYS2`](https://www.msys2.org/) environment](install-windows-msys.html).
 
-The creation of binary packages are detailed [here](packages.html). 
+The creation of binary packages is detailed [here](packages.html). 
 
 A quick way of installing `TFEL` on `Ubuntu` systems is given in Section
 @sec:QuickUbuntu.
 
 `TFEL` is known to work on standard architectures implemented by the
 Intel and AMD processors, either 32 or 64 bits. As no specific
-instructions relative to the underlying architecture is used in the
+instructions relative to the underlying architecture are used in the
 code, other architectures shall work as well.
 
 You must have the `cmake` build system (version greater than \(2.8\))
@@ -82,11 +82,11 @@ $ make
 $ make install
 ~~~~
 
-The optional parameters of `cmake` allows you to:
+The optional parameters of `cmake` allow you to:
 
 - specify the source location
 - specify the installation directory
-- *specify the interfaces to be build*
+- *specify the interfaces to be built*
 
 The rest of this document is dedicated to giving all the details
 related to the installation process. For completeness, we will break
@@ -104,8 +104,8 @@ the installation procedure down into five steps:
 ## Compilers 
 
 `TFEL` version 5.0 requires a `C++-20` compliant compiler, a `C`
-compiler and optionally a `fortran` compiler. The following compilers
-suite are officially supported:
+compiler and optionally a `fortran` compiler. The following compiler
+suites are officially supported:
 
 - [The GNU Compiler Collection](https://gcc.gnu.org/). This is the
   default on most Linux distributions and is used for the development
@@ -116,7 +116,7 @@ suite are officially supported:
 
 ## Third party libraries
 
-`TFEL` has been designed to have no dependencies to third parties
+`TFEL` has been designed to have no dependencies on third-party
 libraries with the very exception of the
 [pybind11](https://github.com/pybind/pybind11) library used to create
 optional bindings for the [`Python`](https://www.python.org/) language.
@@ -149,7 +149,7 @@ of the navigation bar).
 
 ## Creating a `build` directory
 
-We highly recommend to use a separate directory to build the
+We highly recommend using a separate directory to build the
 sources.
 
 In the following, we use the following convention:
@@ -243,8 +243,8 @@ names of:
 
 - The executables.
 - The libraries.
-- The python modules. Note that, to comply with `python` restriction
-  on modules' names, the characters `.` and `-` are replace by `_` and
+- The python modules. Note that, to comply with `python` restrictions
+  on modules' names, the characters `.` and `-` are replaced by `_` and
   that only the first level modules are affected.
 - The directories in the `share` folder.
 
@@ -331,7 +331,7 @@ available, code source documentation can be built through:
 $ make doc-html
 ~~~~
 
-If [`pandoc`](http://johnmacfarlane.net/pandoc/index.html) is build
+If [`pandoc`](http://johnmacfarlane.net/pandoc/index.html) is built
 and if you are using the `cmake` build system, the previous command
 will also install a local version of the `TFEL` website.
 
@@ -358,7 +358,7 @@ The previous command also installs the documentation if built.
 
 # Scripts to define environment variables for `TFEL` to work properly
 
-Depending on the system and compilation options, some of following
+Depending on the system and compilation options, some of the following
 variables shall be set for `TFEL` to work properly after the
 installation: `TFELHOME`, `PATH`, `LD_LIBRARY_PATH` and `PYTHONPATH`.
 
@@ -424,7 +424,7 @@ $ mkdir build && cd build
 $ ccmake ../tfel
 ~~~~
 
-`ccmake` allows to select various options. In this tutorial, we choose
+`ccmake` allows you to select various options. In this tutorial, we choose
 the following options:
 
 ~~~~{.sh}
@@ -435,7 +435,7 @@ the following options:
   enable-python-bindings        ON
 ~~~~
 
-The `TFEL_APPEND_VERSION` allows to install different versions of `TFEL`
+The `TFEL_APPEND_VERSION` option allows you to install different versions of `TFEL`
 at the same location.
 
 Then configure twice `[c]`,`[c]` and generate `[g]`. Once done, just

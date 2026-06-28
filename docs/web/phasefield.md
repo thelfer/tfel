@@ -70,19 +70,19 @@ associated with the creation of crack network. This quantity is the
 fundamental brick when building a thermodynamically consistent
 approach to the phase field modelling of brittle failure.
 
-In pratice, the crack network is an unknown of the mechanical problem,
+In practice, the crack network is an unknown of the mechanical problem,
 so the idea of the phase field approach is to introduce the damage
 field \(d\) and add \(g_{c}\,\gamma\paren{d}\) in the free energy of
-the material. Application of the Claussis-Duhem inegality then leads
+the material. Application of the Clausius-Duhem inequality then leads
 to an explicit equation satisfied by the damage field, as described
 below.
 
 ## Choice of the free energy
 
 To motivate the choice of the free energy for the phase-field
-behaviour, we begin to recall some classical results about the
+behaviour, we begin by recalling some classical results about the
 decomposition of the free energy of an isotropic elastic material into
-a positive and negative parts.
+a positive part and a negative part.
 
 ### Decomposition in positive and negative parts of the free energy of an isotropic elastic material
 
@@ -132,7 +132,7 @@ follows:
 
 ## Definition of the free energy for the phase-field behaviour
 
-To take into choi The free energy \(\Psi\) is choosen to have the
+The free energy \(\Psi\) is chosen to have the
 following form:
 
 \[
@@ -141,7 +141,7 @@ following form:
 
 where:
 
-- \(m(d) = \paren{1-d}^2\) describe the effect of damage on the
+- \(m(d) = \paren{1-d}^2\) describes the effect of damage on the
   positive part of the energy.
 - \(k\) is a small constant to ensure a minimal stiffness to the fully
   damaged material.
@@ -160,7 +160,7 @@ The stress is defined as the thermodynamic force associated with the elastic str
 ## Thermodynamic force associated with the damage
 
 Inspired by thermodynamic arguments, namely the respect of the
-Clausis-Duhem inegality, Miehe introduces the following equation:
+Clausius-Duhem inequality, Miehe introduces the following equation:
 
 \[
 	\frac{g_{c}}{l}\left[d - l^2 \triangle d\right] = 2\,(1 - d)\,H 
@@ -172,8 +172,8 @@ where
 \]
 
 This definition of \(H\), which appears as the driving force of the
-damage evolution, has been introduced to described the irreversibility
-of the crack propagation, altough the demonstration that this choice
+damage evolution, has been introduced to describe the irreversibility
+of the crack propagation, although the demonstration that this choice
 leads to an increasing value of the damage is not straightforward.
 
 # Implementation

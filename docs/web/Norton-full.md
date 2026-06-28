@@ -127,4 +127,4 @@ requires the definition of \(f\) and \(\deriv{f}{\sigmaeq}\) (see
 details).
 
 We introduce an auxiliary variable called `tmp` to
-limit the number of call to the `pow` function
+limit the number of calls to the `pow` function

@@ -43,7 +43,7 @@ For more details, see: <https://sourceforge.net/p/tfel/tickets/156/>
 
 The issue is related to the `cmake` build system.
 
-The processor' optimized flags were not separed from the other
+The processor's optimized flags were not separated from the other
 optimisation flags and stored in the generic
 `OPTIMISATION_FLAGS` variable.
 
@@ -62,7 +62,7 @@ install(TARGETS py_${package}_${name}
         COMPONENT python_bindings)
 ~~~~
 
-In Python 3.x under linux, this led to install the module in
+In Python 3.x under linux, this led to installing the module in
 `python3.xm`. The `m` suffix is not standard and had to be
 removed. The install path definition has been corrected as follows:
 

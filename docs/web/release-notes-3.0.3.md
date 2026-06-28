@@ -37,8 +37,8 @@ error: use of undeclared identifier 'l'
          return incref(l.ptr());
 ~~~~
 
-The error is du to an ambiguity between `std::list` and
-`boost::python::list`, probably du to an implicit inclusion of the
+The error is due to an ambiguity between `std::list` and
+`boost::python::list`, probably due to an implicit inclusion of the
 `<list>` header file with `libc++`. This ambiguity has been eliminated.
 
 For more details, see: <https://sourceforge.net/p/tfel/tickets/97/>

@@ -2,26 +2,26 @@
 % Thomas Helfer
 % 11/09/2017
 
-This page' purpose is twofold:
+This page's purpose is twofold:
 
 - it shows how to define:
     - the crystal structure.
     - the slip systems. Once the slip systems are defined, the normals
-      to the slips planes, the slip directions (normalized Burger's
-      vector), the orientations tensors and their symmetric parts
+      to the slip planes, the slip directions (normalized Burger's
+      vector), the orientation tensors and their symmetric parts
       are automatically defined.
     - the interaction matrix (used to describe hardening).
     - the interaction matrix used to evaluate the effect of all the
       dislocation on the mean free path of dislocations of a specific
       system.
-- how to use to information in pratice.
+- how to use the information in practice.
 
 # Description of the slip systems, orientation tensors and of the interaction matrices
 
 ## Crystal structure
 
 The crystal structure must be defined through the `@CrystalStructure`
-keyword. This keyword is followed by one of the following value:
+keyword. This keyword is followed by one of the following values:
 
 - `Cubic`: cubic structure.
 - `BCC`: body centered cubic structure.
@@ -34,7 +34,7 @@ keyword. This keyword is followed by one of the following value:
 
 ## Definition of the slip systems
 
-A single slip systems family can be defined by one of the following
+A single slip system family can be defined by one of the following
 keywords: `@SlidingSystem`, `@GlidingSystem` or `@SlipSystem`. Those
 keywords are followed by the definition of one family of slip systems.
 
@@ -43,14 +43,14 @@ keywords: `@SlidingSystems`, `@GlidingSystems` or
 `@SlipSystems`. Those keywords are followed by an array giving the
 definition of the families of slip systems.
 
-A slip system is defined by its Burgers'vector and its plane. In the
+A slip system is defined by its Burgers' vector and its plane. In the
 case of a cubic system, the syntax is as follows:
 
 ~~~~{.cpp}
 <1,-1,0>{1,1,1}
 ~~~~
 
-> **Hexagonal systems** For an hexagonal system, a fourth indices
+> **Hexagonal systems** For a hexagonal system, a fourth indices
 > notation is used.
 
 Thus, an example of the usage of the `@SlidingSystem` keyword is:
@@ -78,7 +78,7 @@ Consider the following example:
 @SlidingSystem <1,-1,0>{1,1,1};
 ~~~~
 
-If the previous code is saved a file called
+If the previous code is saved in a file called
 `SlipSystemGenerationTest.mfront`, one may use `mfront-query` as
 follows:
 
@@ -99,7 +99,7 @@ $ mfront-query --help-behaviour-queries-list |grep slip
 ~~~~
 
 The `--slip-systems-by-index` query gives the index associated to a
-given slip system, which is helpfull for postprocessing purposes. For
+given slip system, which is helpful for postprocessing purposes. For
 this example:
 
 ~~~~{.sh}
@@ -124,7 +124,7 @@ Concerning the orientation tensors, the following queries are
 available:
 
 - `--orientation-tensors`: list all the orientation tensors, sorted by
-  family".
+  family.
 - `--orientation-tensors-by-index`: list all the orientation tensors.
 - `--orientation-tensors-by-slip-system`: list all the orientation
   tensors sorted by slip systems.
@@ -135,7 +135,7 @@ Concerning the climb tensors, the following queries are
 available:
 
 - `--climb-tensors`: list all the climb tensors, sorted by
-  family".
+  family.
 - `--climb-tensors-by-index`: list all the climb tensors.
 - `--climb-tensors-by-slip-system`: list all the climb
   tensors sorted by slip systems.
@@ -146,7 +146,7 @@ Concerning the Schmid factors, the following queries are
 available:
 
 - `--schmid-factors`: list all the Schmid factors, sorted by
-  family".
+  family.
 - `--schmid-factors-by-index`: list all the Schmid factors.
 
 ~~~~{.sh}
@@ -154,7 +154,7 @@ $ mfront-query --schmid-factors-by-index='<1,1,1>' SlipSystemGenerationTest.mfro
 ~~~~
 
 **Note** In this example, the direction must be surrounded by simple
-quote to avoid interpretation by the shell.
+quotes to avoid interpretation by the shell.
 
 ## Definition of the interaction matrix
 
@@ -226,11 +226,11 @@ effects. Please refer to the previous paragraph for details.
 This second matrix can be defined using the
 `@DislocationsMeanFreePathInteractionMatrix` keywords.
 
-# Usage in pratice
+# Usage in practice
 
 ## Number of slip systems
 
-Once the sliding system families has been defined, a static integer
+Once the sliding system families have been defined, a static integer
 variable called `Nss` is available which contains the total number of
 slip systems defined. In the previous example, `Nss` value is \(12\).
 
@@ -250,7 +250,7 @@ to define variables specific to a slip system family.
 
 ## Data structure generated
 
-For performances reasons, it would be too costly to build the
+For performance reasons, it would be too costly to build the
 information about slip systems and interaction matrices every time the
 behaviour is integrated.
 
@@ -261,10 +261,10 @@ the data structure is the name of the behaviour, followed by
 `FCCSingleCrystalSlipSystems`.
 
 This data structure is
-build once for the whole duration of the execution following a
+built once for the whole duration of the execution following a
 technique called `singleton`.
 
-When using the `FiniteStrainSingleCrystal` brick, this uniq instance
+When using the `FiniteStrainSingleCrystal` brick, this unique instance
 is available in `@Integrator` block through a (reference) variable
 called `ss`.
 
@@ -283,7 +283,7 @@ user to match his/her own conventions.
 The previous data structure has the following public members:
 
 - `np`: an array containing all the normals to the slip planes
-- `ns`: an array containing all the slip directions (unit vector based on the Burger's vector)
+- `ns`: an array containing all the slip directions (unit vectors based on the Burger's vector)
 - `mu`: an array containing all the orientation tensors
 - `mus`: an array containing all the symmetric part of the orientation tensors
 - `climb_tensors`: an array containing all the climb tensors (as
@@ -304,7 +304,7 @@ interaction matrix) member.
 const auto& m = ss.him;
 ~~~~
 
-For backward compatibility and ease the transition from previous
+For backward compatibility and to ease the transition from previous
 implementations, this matrix is also accessible through the `mh`
 member.
 
@@ -325,7 +325,7 @@ const auto& m = ss.dim;
 The member function `buildInteractionMatrix` can be used to compute
 manually the interaction matrix.
 
-It allows to define the coefficients of the interaction matrix as
+It allows defining the coefficients of the interaction matrix as
 parameters or as material properties:
 
 ~~~~{.cxx}
@@ -361,16 +361,16 @@ for(unsigned short i=0;i!=Nss;++i){
 ## Handling of multiple slip systems families
 
 The `FiniteStrainSingleCrystal` brick creates a huge vector of
-internal state variable describing the plastic slips along the slips
+internal state variables describing the plastic slips along the slip
 systems. It is sometimes useful to be able to distinguish each slip
 systems' family: for example to prescribe different constitutive
 equations for each family.
 
-The slips systems are sorted by family. So the `Nss0` first plastic
+The slip systems are sorted by family. So the `Nss0` first plastic
 slips correspond to the first family. One can thus use the `Nss.+`
 variables to compute the offset of each family. For example, the
 plastic slip of the second system of the third family can be accessed
-as follows (remember that `C++` indices starts at `0`, so the index of
+as follows (remember that `C++` indices start at `0`, so the index of
 the second system is `1`):
 
 ~~~~{.cpp}
@@ -386,9 +386,9 @@ for(const unsigned short i=0;i!=Nss2;++i){
 }
 ~~~~
 
-However, this approach is error-prone, the data structure describing
+However, this approach is error-prone; the data structure describing
 the slip systems provides methods to compute the offset of each
-family. There is one general method called `offset` and one methods
+family. There is one general method called `offset` and one method
 per family called `offset` plus the number of the family
 (e.g. `offset1` for the second family).
 
