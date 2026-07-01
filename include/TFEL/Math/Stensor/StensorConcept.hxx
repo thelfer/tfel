@@ -102,8 +102,7 @@ namespace tfel::math {
    * \param[in] s: symmetric tensor
    */
   template <typename StensorType>
-  TFEL_HOST_DEVICE TFEL_MATH_INLINE2
-      TFEL_HOST_DEVICE constexpr std::enable_if_t<
+  TFEL_HOST_DEVICE TFEL_MATH_INLINE2 constexpr std::enable_if_t<
           implementsStensorConcept<StensorType>(),
           numeric_type<StensorType>>
       sigmaeq(const StensorType&);
@@ -121,7 +120,7 @@ namespace tfel::math {
    * dimension
    * \param[in] d: space dimension
    */
-  TFEL_HOST TFELMATH_VISIBILITY_EXPORT unsigned short getStensorSize(
+  TFELMATH_VISIBILITY_EXPORT unsigned short getStensorSize(
       const unsigned short);
   /*!
    * \brief compute the derivative of the determinant with respect
