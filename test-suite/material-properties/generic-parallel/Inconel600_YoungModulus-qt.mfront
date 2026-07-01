@@ -1,0 +1,23 @@
+@DSL MaterialLaw;
+@Material Inconel600;
+@Law YoungModulus_qt;
+
+@UseQt true;
+
+@Input temperature TK;
+TK.setGlossaryName("Temperature");
+
+@Output stress E;
+E.setGlossaryName("YoungModulus");
+
+@PhysicalBounds TK in [0:*[;
+@Bounds TK in [0:*[;
+
+@Parameter stress E0 = 2.1421e+11;
+@Parameter derivative_type<stress,temperature> E1 = -3.8654e7;
+@Parameter derivative_type<stress,temperature,temperature> E2 = -3.1636e4;
+
+@Function {
+  const auto TC = TK - temperature{273.15};
+  E = E2 * TC * TC + E1 * TC + E0;
+}

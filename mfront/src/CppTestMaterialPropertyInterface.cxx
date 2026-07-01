@@ -48,6 +48,13 @@ namespace mfront {
   CppTestMaterialPropertyInterface::~CppTestMaterialPropertyInterface() =
       default;
 
+  void CppTestMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
+
   std::pair<bool,
             tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CppTestMaterialPropertyInterface::treatKeyword(

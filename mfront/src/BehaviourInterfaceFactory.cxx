@@ -44,6 +44,23 @@ namespace mfront {
     return this->getAliasesMap().count(n) != 0;
   }  // end of BehaviourInterfaceFactory::exists
 
+  std::string BehaviourInterfaceFactory::getUniqueNameFromAlias(
+      const std::string& n) const {
+    auto p = this->getAliasesMap().find(n);
+    if (p == this->getAliasesMap().end()) {
+      auto msg = std::string(
+          "MaterialPropertyInterfaceFactory::getUniqueNameFromAlias: ");
+      msg += "no interface named '" + n + "'.\n";
+      msg += "Available interface are : \n";
+      for (p = this->getAliasesMap().begin(); p != this->getAliasesMap().end();
+           ++p) {
+        msg += p->first + " ";
+      }
+      tfel::raise(msg);
+    }
+    return p->second;
+  }  // end of getUniqueNameFromAlias
+
   void BehaviourInterfaceFactory::registerInterfaceCreator(
       const std::string& i,
       const BehaviourInterfaceFactory::InterfaceCreator f) {
@@ -73,20 +90,8 @@ namespace mfront {
 
   std::shared_ptr<AbstractBehaviourInterface>
   BehaviourInterfaceFactory::getInterface(const std::string& n) {
-    auto p2 = this->getAliasesMap().find(n);
-    if (p2 == this->getAliasesMap().end()) {
-      auto msg = std::string(
-          "BehaviourInterfaceFactory::createNewInterface:"
-          " no interface named '");
-      msg += n + "'.\n";
-      msg += "Available interfaces are : \n";
-      for (p2 = this->getAliasesMap().begin();
-           p2 != this->getAliasesMap().end(); ++p2) {
-        msg += p2->first + " ";
-      }
-      tfel::raise(msg);
-    }
-    const auto p = this->getInterfaceCreatorsMap().find(p2->second);
+    const auto id = this->getUniqueNameFromAlias(n);
+    const auto p = this->getInterfaceCreatorsMap().find(id);
     assert(p != this->getInterfaceCreatorsMap().end());
     auto c = p->second;
     return c();

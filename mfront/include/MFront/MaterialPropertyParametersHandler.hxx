@@ -23,12 +23,34 @@ namespace mfront {
   // forward declaration
   struct MaterialPropertyDescription;
 
+  struct WriteMaterialPropertyParametersHandlerArguments {
+    //!\brief name of the material property
+    const std::string material_property_name;
+    //!\brief floating point type
+    const std::string floating_point_type;
+    //!\brief interface associated with the interface
+    const std::string interface_namespace;
+  };
+
+  /*!
+   * \brief write the implementation of the class able to manage the parameters
+   * of a material property for a given interface.
+   *
+   * \param[out] os: ouptut stream
+   * \param[in]  mpd: material property description
+   * \param[in]  args: additional arguments
+   */
+  MFRONT_VISIBILITY_EXPORT void writeMaterialPropertyParametersHandler(
+      std::ostream&,
+      const MaterialPropertyDescription&,
+      const WriteMaterialPropertyParametersHandlerArguments&);
+
   /*!
    * \param[out] os: ouptut stream
    * \param[in]  mpd: material property description
    * \param[in]  n: name of the material property
    * \param[in]  t: type of the parameters
-   * \param[in]  i: interface name
+   * \param[in]  i: namspace associated with the interface
    */
   MFRONT_VISIBILITY_EXPORT void writeMaterialPropertyParametersHandler(
       std::ostream&,
@@ -42,7 +64,7 @@ namespace mfront {
    * \param[in]  mpd: material property description
    * \param[in]  n: name of the material property
    * \param[in]  t: type of the parameters
-   * \param[in]  i: interface name
+   * \param[in]  i: namespace associated with the interface
    */
   MFRONT_VISIBILITY_EXPORT void writeAssignMaterialPropertyParameters(
       std::ostream&,
@@ -53,8 +75,48 @@ namespace mfront {
   /*!
    * \param[in]  n: name of the material property
    */
+  MFRONT_VISIBILITY_EXPORT std::string getMaterialPropertyParametersClassName(
+      const std::string&);
+  /*!
+   * \param[in]  n: name of the material property
+   */
   MFRONT_VISIBILITY_EXPORT std::string
   getMaterialPropertyParametersHandlerClassName(const std::string&);
+
+  struct WriteMaterialPropertyParametersSetterFunctionArguments {
+    //!\brief name of the material property
+    const std::string material_property_name;
+    //!\brief floating point type
+    const std::string floating_point_type;
+    //!\brief interface associated with the interface
+    const std::string interface_namespace;
+  };
+
+  /*!
+   * \brief write the declaration of the function allowing the set the values
+   * of the parameters of a material property
+   *
+   * \param[out] os: ouptut stream
+   * \param[in]  mpd: material property description
+   * \param[in]  args: additional arguments
+   */
+  MFRONT_VISIBILITY_EXPORT void writeParametersSetterFunctionDeclaration(
+      std::ostream&,
+      const MaterialPropertyDescription&,
+      const WriteMaterialPropertyParametersSetterFunctionArguments&);
+
+  /*!
+   * \brief write the implementation of the function allowing the set the values
+   * of the parameters of a material property
+   *
+   * \param[out] os: ouptut stream
+   * \param[in]  mpd: material property description
+   * \param[in]  args: additional arguments
+   */
+  MFRONT_VISIBILITY_EXPORT void writeParametersSetterFunctionImplementation(
+      std::ostream&,
+      const MaterialPropertyDescription&,
+      const WriteMaterialPropertyParametersSetterFunctionArguments&);
 
 }  // namespace mfront
 

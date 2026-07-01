@@ -1,0 +1,22 @@
+@Requires {"mfront::material_property::generic-parallel_interface::supported_configuration::sycl-gpu-acpp"};
+
+@Environment {"LD_LIBRARY_PATH": "src"};
+@Command "@mfront@ --interface=generic-parallel --configuration-file=config-sycl-default-acpp.json ../PoissonRatioTest.mfront";
+@Command "@mfront@ --interface=generic-parallel --configuration-file=config-sycl-default-acpp.json ../Inconel600_YoungModulus.mfront";
+@Command "@mfront@ --interface=generic-parallel --configuration-file=config-sycl-default-acpp.json ../Inconel600_YoungModulus-qt.mfront";
+@Command "@mfront@ --obuild --configuration-file=config-sycl-default-acpp.json";
+
+@Command "@TFEL_ACPP_COMPILER@ -DTFEL_SYCL_DEVICE=1 -I @TFEL_INCLUDE_DIR@ -I include -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ ../test-sycl.cxx -o test-sycl -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelInconel600-sycl -lGenericParallelMaterialLaw-sycl";
+@Command "./test-sycl test-sycl-gpu-acpp";
+
+@Command "@TFEL_ACPP_COMPILER@ -I @TFEL_INCLUDE_DIR@ -DTFEL_SYCL_DEVICE=1 -DTFEL_SYCL_USM_ALLOCATOR=0 -I include -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ ../test-sycl-usm.cxx -o test-sycl-usm-1-0 -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelInconel600-sycl -lGenericParallelMaterialLaw-sycl";
+@Command "./test-sycl-usm-1-0 test-sycl-usm-default-acpp-1-0";
+
+@Command "@TFEL_ACPP_COMPILER@ -I @TFEL_INCLUDE_DIR@ -DTFEL_SYCL_DEVICE=1 -DTFEL_SYCL_USM_ALLOCATOR=1 -I include -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ ../test-sycl-usm.cxx -o test-sycl-usm-1-1 -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelInconel600-sycl -lGenericParallelMaterialLaw-sycl";
+@Command "./test-sycl-usm-1-1 test-sycl-usm-default-acpp-1-1";
+
+@Command "@TFEL_ACPP_COMPILER@ -I @TFEL_INCLUDE_DIR@ -I include -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ ../test-sycl-device.cxx -o test-sycl-device -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelInconel600-sycl -lGenericParallelMaterialLaw-sycl";
+@Command "./test-sycl-device test-sycl-device-default-acpp";
+
+@CleanFiles {"test-sycl"};
+@CleanDirectories {"include", "src"};

@@ -21,24 +21,34 @@
 #include <vector>
 
 #include "MFront/MFrontConfig.hxx"
+#include "TFEL/Utilities/Data.hxx"
 #include "TFEL/Utilities/CxxTokenizer.hxx"
 
 namespace mfront {
 
-  // forward declartion
+  // forward declarations
   struct MaterialPropertyDescription;
-  // forward declartion
   struct FileDescription;
-  // forward declartion
   struct TargetsDescription;
 
   /*!
    * \brief abstract interface for material property interface.
    */
   struct MFRONT_VISIBILITY_EXPORT AbstractMaterialPropertyInterface {
-    //! a simple alias
+    //! \brief a simple alias
+    using DataMap = tfel::utilities::DataMap;
+    //! \brief a simple alias
     using tokens_iterator =
         tfel::utilities::CxxTokenizer::TokensContainer::const_iterator;
+    /*!
+     * \brief give options to the interface
+     *
+     * Those options may have been read from a configuration file or from the
+     * command line
+     *
+     * \param[in] opts: options
+     */
+    virtual void setOptions(const DataMap&) = 0;
     /*!
      * \param[in] k  : keyword to be treated
      * \param[in] i:   list of interfaces to which the keyword is restricted
@@ -67,7 +77,7 @@ namespace mfront {
      */
     virtual void getTargetsDescription(
         TargetsDescription&, const MaterialPropertyDescription&) const = 0;
-    //! destructor
+    //! \brief destructor
     virtual ~AbstractMaterialPropertyInterface();
   };  // end of AbstractMaterialPropertyInterface
 

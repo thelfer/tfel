@@ -37,12 +37,6 @@ namespace mfront {
     add_option(options, o, tfel::utilities::Data::read(b, t.end()));
   }  // end of add_option
 
-  GlobalDomainSpecificLanguageOptionsManager&
-  GlobalDomainSpecificLanguageOptionsManager::get() {
-    static GlobalDomainSpecificLanguageOptionsManager m;
-    return m;
-  }  // end of get
-
   void GlobalDomainSpecificLanguageOptionsManager::addDSLOption(
       const std::string& n, const std::string& v) {
     this->addMaterialPropertyDSLOption(n, v);

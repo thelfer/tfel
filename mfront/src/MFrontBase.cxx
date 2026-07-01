@@ -2,7 +2,7 @@
  * \file  MFrontBase.cxx
  * \brief
  * \author Thomas Helfer
- * \date   04 mars 2015
+ * \date   04/03/2015
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -36,7 +36,7 @@
 #include "MFront/DefaultDSL.hxx"
 #include "MFront/DSLFactory.hxx"
 #include "MFront/PathSpecifier.hxx"
-#include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
+#include "MFront/ConfigurationManager.hxx"
 #include "MFront/MFrontBase.hxx"
 
 namespace mfront {
@@ -52,7 +52,8 @@ namespace mfront {
     // local dsl options
     auto ldsl_options = dsl_options;
     const auto& global_options =
-        GlobalDomainSpecificLanguageOptionsManager::get();
+        static_cast<const GlobalDomainSpecificLanguageOptionsManager&>(
+            ConfigurationManager::get());
     auto& dslFactory = DSLFactory::getDSLFactory();
     std::shared_ptr<AbstractDSL> dsl;
     std::string library, dslName;
@@ -224,7 +225,18 @@ namespace mfront {
         lm.loadLibrary(l);
       }
     }
-  }  // end of MFrontBase
+    //
+#ifdef MFRONT_DEFAULT_SUBSTITUTIONS
+    for (const auto& co :
+         tfel::utilities::tokenize(MFRONT_DEFAULT_SUBSTITUTIONS, '@')) {
+      const auto kv = tfel::utilities::tokenize(co, '%');
+      if (kv.size() != 2) {
+        tfel::raise("internal error: invalid substitution '" + co + "'");
+      }
+      this->substitutions.insert({"@" + kv.at(0) + "@", kv.at(1)});
+    }
+#endif /* MFRONT_DEFAULT_SUBSTITUTIONS */
+  }    // end of MFrontBase
 
   void MFrontBase::finalizeArgumentsParsing() {
     auto check = [](const std::string& s, const char* const t) {
@@ -517,77 +529,90 @@ namespace mfront {
   }  // end of splitDSLOption
 
   void MFrontBase::addDSLOption(const std::string& o) {
-    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+    auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+        ConfigurationManager::get());
     const auto& kv = splitDSLOption(o);
     g.addDSLOption(kv.first, kv.second);
   }
 
   void MFrontBase::addMaterialPropertyDSLOption(const std::string& o) {
-    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+    auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+        ConfigurationManager::get());
     const auto& kv = splitDSLOption(o);
     g.addMaterialPropertyDSLOption(kv.first, kv.second);
   }
 
   void MFrontBase::addBehaviourDSLOption(const std::string& o) {
-    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+    auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+        ConfigurationManager::get());
     const auto& kv = splitDSLOption(o);
     g.addBehaviourDSLOption(kv.first, kv.second);
   }
 
   void MFrontBase::addModelDSLOption(const std::string& o) {
-    auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+    auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+        ConfigurationManager::get());
     const auto& kv = splitDSLOption(o);
     g.addModelDSLOption(kv.first, kv.second);
   }
 
   template <typename CallBack>
-  static void parseDSLOptionsFile(const CallBack& callback,
-                                  const std::string& f) {
-    std::ifstream ifs(f);
-    if (!ifs) {
-      tfel::raise("parseDSLOptionsFile: can't open file '" + f + "'");
+  static void parseConfigurationFile(const CallBack& callback,
+                                     const std::string& f) {
+    const auto file = SearchPathsHandler::search(f);
+    try {
+      for (const auto& d : readConfigurationFile(file)) {
+        callback(d.first, d.second);
+      }
+    } catch (std::exception& e) {
+      tfel::raise("Error while parsing configuration file '" + f +
+                  "': " + e.what());
+    } catch (...) {
+      tfel::raise("Error while parsing configuration file '" + f +
+                  "': unknown exception");
     }
-    tfel::utilities::CxxTokenizer t;
-    t.parseString('{' + std::string{std::istreambuf_iterator<char>{ifs}, {}} +
-                  '}');
-    auto b = t.begin();
-    const auto data = read<tfel::utilities::DataMap>(b, t.end());
-    for (const auto& d : data) {
-      callback(d.first, d.second);
-    }
-  }  // end of parseDSLOptionsFile
+  }  // end of parseConfigurationFile
 
   void MFrontBase::parseDSLOptionsFile(const std::string& f) {
     const auto c = [](const std::string& k, const tfel::utilities::Data& d) {
-      auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+      auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+          ConfigurationManager::get());
       g.addDSLOption(k, d);
     };
-    mfront::parseDSLOptionsFile(c, f);
+    mfront::parseConfigurationFile(c, f);
   }
 
   void MFrontBase::parseMaterialPropertyDSLOptionsFile(const std::string& f) {
     const auto c = [](const std::string& k, const tfel::utilities::Data& d) {
-      auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+      auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+          ConfigurationManager::get());
       g.addMaterialPropertyDSLOption(k, d);
     };
-    mfront::parseDSLOptionsFile(c, f);
+    mfront::parseConfigurationFile(c, f);
   }
 
   void MFrontBase::parseBehaviourDSLOptionsFile(const std::string& f) {
     const auto c = [](const std::string& k, const tfel::utilities::Data& d) {
-      auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+      auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+          ConfigurationManager::get());
       g.addBehaviourDSLOption(k, d);
     };
-    mfront::parseDSLOptionsFile(c, f);
+    mfront::parseConfigurationFile(c, f);
   }
 
   void MFrontBase::parseModelDSLOptionsFile(const std::string& f) {
     const auto c = [](const std::string& k, const tfel::utilities::Data& d) {
-      auto& g = GlobalDomainSpecificLanguageOptionsManager::get();
+      auto& g = static_cast<GlobalDomainSpecificLanguageOptionsManager&>(
+          ConfigurationManager::get());
       g.addModelDSLOption(k, d);
     };
-    mfront::parseDSLOptionsFile(c, f);
+    mfront::parseConfigurationFile(c, f);
   }
+
+  void MFrontBase::treatConfigurationFile() {
+    ::mfront::parseConfigurationFile(
+        this->getCurrentCommandLineArgument().getOption());
+  }  // end of treatConfigurationFile
 
   void MFrontBase::treatDSLOption() {
     MFrontBase::addDSLOption(this->getCurrentCommandLineArgument().getOption());
@@ -630,7 +655,7 @@ namespace mfront {
 
   void MFrontBase::setInterface(const std::string& i) {
     tfel::raise_if(!this->interfaces.insert(i).second,
-                   "MFrontBase::treatInterface : "
+                   "MFrontBase::sInterface : "
                    "the interface '" +
                        i +
                        "' has "
@@ -643,9 +668,30 @@ namespace mfront {
     };
     const auto& o = this->getCurrentCommandLineArgument().getOption();
     throw_if(o.empty(), "no option given to the '--interface' argument");
-    for (const auto& i : tfel::utilities::tokenize(o, ',')) {
-      throw_if(i.empty(), "empty interface specified.");
-      this->setInterface(i);
+    auto t = tfel::utilities::CxxTokenizer{getConfigurationParsingOptions()};
+    t.parseString("{" + o + "}");
+    auto opts = tfel::utilities::DataParsingOptions{};
+    opts.rawStringParsingOptions = {.allowPlusSign = true,
+                                    .allowMinusSign = true};
+    auto b = t.begin();
+    const auto idata = tfel::utilities::Data::read_vector(b, t.end(), opts)
+                           .get<std::vector<tfel::utilities::Data>>();
+    for (const auto& i : idata) {
+      if (i.is<std::string>()) {
+        const auto iname = i.get<std::string>();
+        throw_if(iname.empty(), "empty interface specified.");
+        this->setInterface(iname);
+        continue;
+      }
+      throw_if(!tfel::utilities::DataStructure::is_convertible(i),
+               "invalid interface definition string '" + o + "'");
+      const auto ds = tfel::utilities::DataStructure::convert(i);
+      throw_if(ds.name.empty(), "empty interface specified.");
+      if (!ds.data.empty()) {
+        auto& m = ConfigurationManager::get();
+        m.addInterfaceOptions(ds.name, ds.data);
+      }
+      this->setInterface(ds.name);
     }
   }  // end of treatInterface
 

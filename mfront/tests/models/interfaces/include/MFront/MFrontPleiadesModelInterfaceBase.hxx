@@ -22,21 +22,13 @@ namespace mfront {
 
   struct MFrontPleiadesModelInterfaceBase : public AbstractModelInterface {
     MFrontPleiadesModelInterfaceBase();
-
-    virtual void declareReservedNames(std::set<std::string>&) override;
-    /*!
-     * \brief : fill the target descripton
-     * \param[out] d  : target description
-     * \param[in]  md : model description
-     */
-    virtual void getTargetsDescription(TargetsDescription&,
-                                       const ModelDescription&) override;
-    /*!
-     * \param pdata : processing data
-     * \param data  : model data
-     */
-    virtual void writeOutputFiles(const FileDescription&,
-                                  const ModelDescription&) override;
+    //
+    void setOptions(const DataMap& opts) override;
+    void declareReservedNames(std::set<std::string>&) override;
+    void getTargetsDescription(TargetsDescription&,
+                               const ModelDescription&) override;
+    void writeOutputFiles(const FileDescription&,
+                          const ModelDescription&) override;
 
    protected:
     virtual void openOutputFiles();

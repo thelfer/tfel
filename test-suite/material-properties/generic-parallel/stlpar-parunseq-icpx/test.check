@@ -1,0 +1,12 @@
+@Requires {"mfront::material_property::generic-parallel_interface::supported_configuration::stlpar-parunseq-icpx"};
+
+@Environment {"LD_LIBRARY_PATH": "src"};
+@Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-icpx.json ../PoissonRatioTest.mfront";
+@Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-icpx.json ../Inconel600_YoungModulus.mfront";
+@Command "@mfront@ --interface=generic-parallel --configuration-file=config-stlpar-parunseq-icpx.json ../Inconel600_YoungModulus-qt.mfront";
+@Command "@mfront@ --obuild --configuration-file=config-stlpar-parunseq-icpx.json";
+@Command "@TFEL_ICPX_COMPILER@ -I @TFEL_INCLUDE_DIR@ -I include -O2 -march=native --std=c++@TFEL_CXX_STANDARD@ ../test-stlpar.cxx -o test-stlpar -L @TFEL_LIBRARY_DIR@ -lTFELTests -L src -lGenericParallelInconel600-stlpar -lGenericParallelMaterialLaw-stlpar";
+@Command "./test-stlpar test-stlpar-parunseq-icpx";
+
+@CleanFiles {"test-stlpar"};
+@CleanDirectories {"include", "src"};

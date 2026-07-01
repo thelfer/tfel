@@ -1,0 +1,17 @@
+interfaces_options: {
+  generic-parallel: {
+    backend: {stlpar: {
+        execution_policy: "parallel_unsequenced_policy"
+      }
+    }
+  }
+},
+compilation_options : {
+  cxx : {
+    compiler: "@TFEL_GXX_COMPILER@",
+    compilation_flags: "-O2 -std=c++@TFEL_CXX_STANDARD@ -march=native" 
+  }
+},
+linking_options : {
+  linker_flags : "-ltbb"
+}

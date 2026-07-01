@@ -41,6 +41,11 @@ namespace mfront {
 
     std::vector<std::string> getInterfaceDependencies(const std::string&) const;
     /*!
+     * \return the unique name associated with the interface
+     * \param[in] n: interface name
+     */
+    std::string getUniqueNameFromAlias(const std::string&) const;
+    /*!
      * \return true if the given interface exists
      * \param[in] n : interface name
      */
