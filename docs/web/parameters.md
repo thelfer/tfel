@@ -24,7 +24,7 @@ behaviour. The main idea behind material properties is to write
 generic behaviours that can be used to describe a wide range of
 materials.
 
-There are a important shortcomings associated with the use of material
+There are important shortcomings associated with the use of material
 properties:
 
 - For Assurance Quality reasons, we consider that the usage of generic
@@ -32,7 +32,7 @@ properties:
   of the behaviour is put in the user input file: we do think that the
   whole description of the behaviour shall be included in the `MFront`
   implementation. This can not be achieved with material properties
-  since their is no easy cross-solver way to define their default
+  since there is no easy cross-solver way to define their default
   values from the behaviour implementation.
 - The use of material properties can have significant numerical impact
   in some finite element solver: those costs are associated to the
@@ -86,7 +86,7 @@ There are two ways to modify a parameter at runtime:
 From our point of view, the first method is preferable but is not
 always available. Some examples are provided below.
 
-## Examples of modify the calling solver input file
+## Examples of modifying the calling solver input file
 
 ### `MTest`
 
@@ -113,7 +113,7 @@ it is automatically read at the first behaviour call. This file must
 contain lines beginning with a parameter name and its value. No
 comments are allowed.
 
-If our case, this file may contain the following line:
+In our case, this file may contain the following line:
 
 ~~~~~~~~~{#external-file .txt}
 DamageThreshold 0.95

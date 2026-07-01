@@ -89,7 +89,7 @@ tutorial before is highly recommended.
 ## Notations
 
 - \(\tSigma\): the macroscopic stress.
-- \(\Sigmaeq\): the macroscropic von Mises stress.
+- \(\Sigmaeq\): the macroscopic von Mises stress.
 - \(\tEpsilonto\): the macroscopic strain.
 - \(\tEpsilonvp\): the macroscopic viscoplastic strain.
 - \(N_{g}\): number of grains/phases.
@@ -100,8 +100,8 @@ tutorial before is highly recommended.
   \[
   \kphase{\phi}=\dfrac{\kphase{V}}{\sum_{l=1}^{N_{g}}\lphase{V}}
   \]
-- \(M\): the macroscropic shear modulus.
-- \(\Nu\): the macroscropic Poisson ratio.
+- \(M\): the macroscopic shear modulus.
+- \(\Nu\): the macroscopic Poisson ratio.
 - \(P\): the equivalent macroscopic viscoplastic strain.
 - \(\kislip{g}\): average plastic slip along the
   i\(\mbox{}^{\text{th}}\) slip system of the k\(\mbox{}^{\text{th}}\)
@@ -164,15 +164,15 @@ relationship:
 
 where:
 
-- \(\Sigmaeq\) is the macroscropic von Mises stress.
-- \(P\) is the equivalent macroscropic viscoplastic strain defined in an
+- \(\Sigmaeq\) is the macroscopic von Mises stress.
+- \(P\) is the equivalent macroscopic viscoplastic strain defined in an
   incremental way as follows:
   \[
   \dot{P}=\sqrt{\dfrac{2}{3}\,\tdEpsilonvp\,\colon\,\tdEpsilonvp}
   \]
   with \(0\) as the initial value.
 
-> The \(\beta\paren{\Nu}\) factor is closed to
+> The \(\beta\paren{\Nu}\) factor is close to
 > \(\frac{1}{2}\) for a macroscopic Poisson ratio close to \(0.3\). In
 > this case, the Localisation Equation @eq:mfront:bz:sig may be simplified
 > as:
@@ -213,7 +213,7 @@ following form:
 \kphase{\tdepsilonvp}=\kphase{v}\paren{\kphase{\tsigma}}
 \]{#eq:mfront:bz:flow_rule}
 
-where the microscopic plastic strain may results from the slips along
+where the microscopic plastic strain may result from the slips along
 the slip systems of the crystal following:
 
 \[
@@ -534,7 +534,7 @@ macroscopic elastic strain.
 ## Resolution algorithm
 
 1. Given an estimation of the \(\Delta\,\tEpsilonel\), \(\Delta\,\tEpsilonvp\)
-2. If the iteration number if greater than 1, loop over the phases
+2. If the iteration number is greater than 1, loop over the phases
    a. Update \(\Delta\,\kphase{\tepsilonvp}\) using Equation @eq:mfront:bz:static_condensation.
 3. Compute  \(f_{\kphase{\tEpsilonel}}\)
 4. Loop over the phases
