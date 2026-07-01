@@ -80,11 +80,11 @@ We will use the Norton behaviour described in the
 [tutorial](tutorial.html). All the files used can be downloaded
 [here](downloads/example-castem2014.tar.bz2).
 
-We broke this documents in three parts:
+We broke this document into three parts:
 
 - compilation of the behaviour
 - use in the `Cast3M` finite element solver
-- unit testing of an uniaxial tensile test.
+- unit testing of a uniaxial tensile test.
 
 ## Compilation of the behaviour
 
@@ -267,13 +267,13 @@ The following keywords are specific to the `Cast3M` interface:
   \(2\) at each sub steps. This time step is never increased.
 - `@CastemMaximumSubStepping` (or `@UMATMaximumSubStepping`). This
   keyword is followed by a strictly positive integer which indicates the
-  maximum number of sub steps allowed. Any value greater that \(5\) is
+  maximum number of sub steps allowed. Any value greater than \(5\) is
   not reasonable, as it would lead to reduction by a factor of at most
   \(2^{5}\) (i.e. \(32\)) of the initial time step.
 - `@CastemDoSubSteppingOnInvalidResults` (or
   `@UMATDoSubSteppingOnInvalidResults`). This keyword is followed by a
   boolean. If true, invalid results will lead to a sub step. By default,
-  invalid results does not lead to a substep. Invalid results are
+  invalid results do not lead to a substep. Invalid results are
   dubious results according to user defined criteria in the
   `@APosterioriTimeStepScalingFactor` code block.
 - `@CastemFiniteStrainStrategy` (or `@UMATFiniteStrainStrategy`). This

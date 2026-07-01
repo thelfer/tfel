@@ -90,9 +90,9 @@ to read.
 
 #### Example of code size reduction related to compile-time conditionals
 
-The `sigmaeq` function compute the von Mises norm of a symmetric second
+The `sigmaeq` function computes the von Mises norm of a symmetric second
 order tensor. Depending on the space dimension, some components are null
-are shall be neglected. Since the space dimension is known at
+and shall be neglected. Since the space dimension is known at
 compile-time, the correct implementation can be chosen at this stage,
 thus avoiding a conditional branch at runtime.
 

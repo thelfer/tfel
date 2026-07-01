@@ -3,7 +3,7 @@
 % 12/2017
 
 This page describes the `DDIF2` stress potential which describes a
-damaging law used in CEA' fuel performance codes. See
+damaging law used in CEA's fuel performance codes. See
 [@michel_3d_2008;@michel_3d_2016;@michel_new_2017].
 
 The `DDIF2` behaviour is used to describe the brittle nature of
@@ -31,15 +31,15 @@ The description of damage is based on the following material
 properties:
 
 - the fracture stresses in each direction. Two options can be used to
-  described them:
+  describe them:
     - if the `fracture_stress` option is used, the fracture stresses
-	  are equal in each directions.
+	  are equal in each direction.
 	- otherwise, the `fracture_stresses` keyword can be used to
       describe the fracture stresses in each of the three directions.
 - the softening slopes stresses in each direction. Two options can be
-  used to described them:
+  used to describe them:
     - if the `softening_slope` option is used, the softening slopes
-	  are equal in each directions.
+	  are equal in each direction.
 	- otherwise, the `softening_slopes` keyword can be used to
       describe the softening slopes in each of the three directions.
 
@@ -66,7 +66,7 @@ name is `PressureOnCrackSurface`, is automatically declared.
 # Resolution algorithm
 
 By default, the `DDIF2` damage behaviour is treated using an algorithm
-based on statuses. In each damage directions, the damage state is kept
+based on statuses. In each damage direction, the damage state is kept
 constant during the Newton iterations. Once converged, the consistency
 of the damage state with the solution found is tested. If the state is
 inconsistent, the iterations are restarted with a new state.
@@ -83,7 +83,7 @@ The `DDIF2` stress potential (and thus the DDIF2 brick) has two options
 to change this behaviour:
 
 - `use_status_algorithm` (boolean value, true by default). If false, the
-  damage state is updated at each iterations.
+  damage state is updated at each iteration.
 - `first_converge_on_damage` (boolean value, true by default). If false,
   the time step is not set to zero at the prediction stage.
 

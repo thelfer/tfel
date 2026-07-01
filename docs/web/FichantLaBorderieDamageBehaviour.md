@@ -106,7 +106,7 @@ the time step.
 
 > **Hillerborg regularisation (see @hillerborg_analysis_1976)**
 > 
-> Local damage models suffers from spurious mesh dependency. In particular, the 
+> Local damage models suffer from spurious mesh dependency. In particular, the 
 > dissipated energy tends to \(0\) as the mesh size decreases.
 > 
 > The Hillerborg regularisation consists in introducing the mesh size in the 
@@ -160,8 +160,8 @@ respectively \(\lambda\) and \(\mu\), as follows:
 
 > **Note**
 >
-> The restriction to isotropy has an important pratical consequence:
-> \(\tsigmae\) and \(\tepsilonto\) have the same egein basis.
+> The restriction to isotropy has an important practical consequence:
+> \(\tsigmae\) and \(\tepsilonto\) have the same eigen basis.
 
 The stress tensor \(\tsigma\) is then computed as follows:
 \[
@@ -207,7 +207,7 @@ The `@Behaviour` keyword defines the name of the behaviour:
 
 ## Metadata
 
-The implementation starts by defining somme metadata associated with the
+The implementation starts by defining some metadata associated with the
 behaviour:
 
 - the date.
@@ -226,7 +226,7 @@ behaviour:
 
 ### Elastic material properties
 
-Most solvers uses the Young modulus and the Poisson ratio to
+Most solvers use the Young modulus and the Poisson ratio to
 characterize the elasticity of an isotropic material. Here we adopt this
 convention by defining them as two material properties named `young` and
 `nu` and associate those variables with the appropriate glossary names:
@@ -287,8 +287,8 @@ d.setGlossaryName("Damage");
 
 ## Local variables
 
-In `MFront`, a local variable are variables in each code blocks. They
-are usually evaluated once for all in the `@InitLocalVariables` code
+In `MFront`, local variables are variables in each code block. They
+are usually evaluated once and for all in the `@InitLocalVariables` code
 block which is called before the behaviour integration (as defined by
 the `@Integrator` code block) or before the computation of the
 prediction operator (as defined in the `@PredictionOperator` code
@@ -348,7 +348,7 @@ which is meant to:
 > The computation of the consistent tangent operator is usually
 > performed in the `@TangentOperator` code block. However, in the
 > case of the Fichant-La Borderie behaviour, this would lead to
-> an unneccessary complexity as a lot of local variables would
+> an unnecessary complexity as a lot of local variables would
 > have been required to store the results of complex computations
 > required in both the `@Integrator` and the `@TangentOperator`
 > code blocks.
@@ -371,9 +371,9 @@ which is meant to:
 At the beginning of this block, we define two constant used in the
 following to decide if two eigenvalues are equal:
 
-- The first constant `eeps` is used when dealing a tensor of the strain
+- The first constant `eeps` is used when dealing with a tensor of the strain
   type.
-- The second constant `seps` is used when dealing a tensor of the stress
+- The second constant `seps` is used when dealing with a tensor of the stress
   type.
 
 ~~~~{.cxx}
@@ -466,7 +466,7 @@ follows:
   }
 ~~~~
 
-The previous lines also defines two additional variables:
+The previous lines also define two additional variables:
 
 - `Cd` which is used to compute the expression
   \(\Frac{\epsilon_{0}}{\ets{\eeq}}\exp\paren{B_{t}\,\paren{\epsilon_{0}-\ets{\eeq}}}\)
@@ -475,7 +475,7 @@ The previous lines also defines two additional variables:
   step. This boolean will be used in the computation of the consistent
   tangent operator.
 
-The next two lines computes the effective stress:
+The next two lines compute the effective stress:
 
 ~~~~{.cxx}
   // effective stress at the end of the time step
@@ -483,7 +483,7 @@ The next two lines computes the effective stress:
   const auto s = eval(l_tr_e * id + 2 * mu * e);
 ~~~~
 
-The next lines computes the positive part of the effective stress:
+The next lines compute the positive part of the effective stress:
 
 ~~~~{.cxx}
   // positive part of the effective stress
@@ -493,7 +493,7 @@ The next lines computes the positive part of the effective stress:
   const auto sp = StressStensor::computeIsotropicFunction(pp, s_vp, m);
 ~~~~
 
-Those lines uses the `computeIsotropicFunction` which takes the function
+Those lines use the `computeIsotropicFunction` which takes the function
 computing the positive part, the eigenvalues of the effective stress and
 its eigen vectors.
 
@@ -528,7 +528,7 @@ derivative of the positive part:
     };
 ~~~~
 
-Various kind of tangent operator can be computed. To see which one was
+Various kinds of tangent operator can be computed. To see which one was
 requested by the calling solver, one must check the value of the `smt`
 variable (`smt` stands "stiffness matrix type"):
 
@@ -540,8 +540,8 @@ The first case corresponds to the `ELASTIC` value:
 ~~~~
 
 The second case corresponds to the `SECANTOPERATOR` value. This case
-also corresponds to the consistent tangent operator was no damage
-increase occurs (i.e. the `bp` variable' value is `false`):
+also corresponds to the consistent tangent operator when no damage
+increase occurs (i.e. the `bp` variable's value is `false`):
 
 ~~~~{.cxx}
     } else if ((smt == SECANTOPERATOR) || (!bp)) {

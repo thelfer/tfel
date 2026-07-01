@@ -48,7 +48,7 @@ Introducing a new porous stress criterion in the
 > **Note**
 >
 > This tutorial only covers *isotropic* stress criteria.
-> Orthotropic stress criteria requires to take care of
+> Orthotropic stress criteria require taking care of
 > the orthotropic axes convention.
 > 
 > See the documentation of the `@OrthotropicBehaviour`
@@ -58,9 +58,9 @@ Introducing a new porous stress criterion in the
 > mfront --help-keyword=Implicit:@OrthotropicBehaviour
 > ~~~~
 
-Those steps are illustrated by the implementation so-called hollow
-sphere criterion proposed by Michel and Suquet which describe the
-macroscopic viscoplasticty of a porous material by the following law
+Those steps are illustrated by the implementation of the so-called hollow
+sphere criterion proposed by Michel and Suquet which describes the
+macroscopic viscoplasticity of a porous material by the following law
 (see @michel_constitutive_1992):
 
 The viscoplastic strain rate is defined by:
@@ -89,7 +89,7 @@ where:
 - \(B\paren{f}=\paren{1+\Frac{2}{3}\,f}\,\paren{1-f}^{\frac{-2\,n}{n+1}}\)
 - \(n\) is the Norton exponent of the matrix
 
-This flow is associated, to the flow direction is given by:
+This flow is associated; the flow direction is given by:
 
 \[
 \tenseur{n}^{MS}=\deriv{\sigmaeq^{MS}}{\tsigma}
@@ -97,7 +97,7 @@ This flow is associated, to the flow direction is given by:
 
 > **Implicit schemes**
 >
-> This document assumes that the reader has prior knowledge on how the
+> This document assumes that the reader has prior knowledge on how to
 > integrate a behaviour using an implicit scheme with `MFront`.
 >
 > Appropriate introductory materials are given in the
@@ -125,12 +125,12 @@ The first file declares:
   - The value of the stress criterion and its first and second
     derivatives for the given stress state.
 
-The second file give a skeleton required to implement those three
+The second file gives a skeleton required to implement those three
 functions.
 
 Implementing a new stress criterion boils down to the following steps:
 
-1. Rename those file to explicitly indicate the name of the stress
+1. Rename those files to explicitly indicate the name of the stress
   criterion.
 2. Replace the following strings by the appropriate values as described
   below:
@@ -144,11 +144,11 @@ Implementing a new stress criterion boils down to the following steps:
 
 ## Creating a proper working directory for the example of the so-called hollow sphere criterion proposed by Michel and Suquet
 
-In this paragraph, we detail Steps 1 and 2. for the case of the
+In this paragraph, we detail Steps 1 and 2 for the case of the
 so-called hollow sphere criterion proposed by Michel and Suquet
-criterion (see @michel_constitutive_1992) which will be used as an
+(see @michel_constitutive_1992) which will be used as an
 illustrative example throughout this document. We describe all those
-steps in details and finally gives a shell script that automates the
+steps in detail and finally give a shell script that automates the
 whole process for `LiNuX` users. When providing command line examples,
 we assume that the shell is `bash`.
 
@@ -159,7 +159,7 @@ The header files `PorousStressCriterionTemplate.hxx` and
 `MichelAndSuquet1992HollowPorousStressCriterionTest.ixx`.
 
 The `MFront` template files must be copied in the working directory and
-renamed appropriatly.
+renamed appropriately.
 
 This can be done by taping the following commands in the terminal (under
 `LiNuX` or `Mac Os`):
@@ -204,14 +204,14 @@ done
 All those steps are summarized in the following script, which can be
 downloaded [here](scripts/generate-porous.sh).
 
-In conclusion, a recommended for starting the development of the a new
+In conclusion, a recommended way for starting the development of a new
 stress criterion is to download the previous script, modify
 appropriately the first lines to match your need and run it.
 
 > **Note**
 >
 > At this stage, you shall already be able to verify that the provided
-> `MFront` implementations barely compiles by typing in the
+> `MFront` implementations barely compile by typing in the
 > `tests/test1` directory:
 >
 > ~~~~{.sh}
@@ -220,14 +220,14 @@ appropriately the first lines to match your need and run it.
 >        MichelAndSuquet1992HollowSphereTestPerfectPlasticity.mfront
 > ~~~~
 >
-> Note the `-I $(pwd)/../../include` flags which allows `MFront` to find the
+> Note the `-I $(pwd)/../../include` flags which allow `MFront` to find the
 > header files implementing the stress criterion (In `bash`, `$(pwd)`
-> return the current directory).
+> returns the current directory).
 
-## Implementing the Michel and Suquet' hollow sphere stress criterion
+## Implementing the Michel and Suquet hollow sphere stress criterion
 
 In this paragraph, we detail all the steps required to implement the
-Michel and Suquet' hollow sphere stress criterion. In a new directory,
+Michel and Suquet hollow sphere stress criterion. In a new directory,
 we just follow the steps given by the previous paragraph:
 
 ~~~~{.sh}
@@ -244,7 +244,7 @@ values of the Norton exponent of the matrix \(n\).
 
 In the implementation, we will also need to define two small values:
 
-- `feps`, which will be used to tell if the porosity is closed to its
+- `feps`, which will be used to tell if the porosity is close to its
   physical bounds, \(0\) and \(1\).
 - `feps2`, which will be used to regularise the derivative
   \(\deriv{A}{f}\) as described below.
@@ -303,7 +303,7 @@ The `computeMichelAndSuquet1992HollowSphereTestStress` function is implemented i
 `MichelAndSuquet1992HollowSphereTestStressCriterion.ixx` file.
 
 The main difficulty is the computation of \(A\paren{f}\) when the
-porosity ends toward \(0\). The limit is well defined, but the
+porosity tends toward \(0\). The limit is well defined, but the
 intermediate expression \(f^{-1/n}\) is undefined. To avoid this issue,
 we will use the following approximated expression:
 
@@ -914,9 +914,9 @@ std::vector<OptionDescription> MichelAndSuquet1992HollowSphereTestStressCriterio
 } // end of MichelAndSuquet1992HollowSphereTestStressCriterion::getOptions()
 ~~~~
 
-The `getPorosityEffectOnEquivalentPlasticStrain` method must be modified. But default,
-its returns the `STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN` value which
-would define define the increment of the viscoplastic strain as:
+The `getPorosityEffectOnEquivalentPlasticStrain` method must be modified. By default,
+it returns the `STANDARD_POROSITY_CORRECTION_ON_EQUIVALENT_PLASTIC_STRAIN` value which
+would define the increment of the viscoplastic strain as:
 
 \[
 \Delta\,\tepsilonvp = \paren{1-f}\,\Delta\,p\,\tenseur{n}
@@ -954,8 +954,8 @@ $ g++ -I ../include/ `tfel-config --includes `            \
       -o libAdditionalStressCriteria.so
 ~~~~
 
-The calls to `tfel-config` allows retrieving the paths to the `TFEL`
-headers and libraries. The `MFRONT_ADITIONNAL_LIBRARY` flag activate a
+The calls to `tfel-config` allow retrieving the paths to the `TFEL`
+headers and libraries. The `MFRONT_ADITIONNAL_LIBRARY` flag activates a
 portion of the source file whose only purpose is to register the
 `MichelAndSuquet1992HollowSphereTest` stress criterion in an abstract factory.
 
@@ -1013,12 +1013,12 @@ $ MFRONT_ADDITIONAL_LIBRARIES=../../mfront/src/libAdditionalStressCriteria.so \
   MichelAndSuquet1992HollowSphereTestViscoPlasticity.mfront
 ~~~~
 
-This implementation can be checked with the same `MTest` file than in
+This implementation can be checked with the same `MTest` file as in
 the first part of this tutorial.
 
-# Applications to uranimum dioxyde viscoplastic behaviours
+# Applications to uranium dioxide viscoplastic behaviours
 
-## Implementation of Salvo' viscoplastic behaviour
+## Implementation of Salvo's viscoplastic behaviour
 
 This behaviour has been described in [@salvo_experimental_2015-1].
 
@@ -1072,12 +1072,12 @@ This behaviour has been described in [@salvo_experimental_2015-1].
 > in practice. This implementation barely compiles at this stage and
 > shall be carefully verified before any usage in a fuel performance code.
 
-## Coupling of the Salvo' viscoplastic behaviour with the `DDIF2` damage law
+## Coupling of the Salvo's viscoplastic behaviour with the `DDIF2` damage law
 
 The `DDIF2` damage law is currently the standard damage law used in
-`CEA`' fuel performance codes (see
+`CEA`'s fuel performance codes (see
 [@michel_3d_2008;@michel_3d_2016;@michel_new_2017] for a complete
-description). Coupling of the Salvo' viscoplastic behaviour with the
+description). Coupling of the Salvo's viscoplastic behaviour with the
 `DDIF2` damage law boils downs to replacing the `Hooke` stress potential
 with the `DDIF2` stress potential, as follows:
 

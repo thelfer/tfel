@@ -47,12 +47,12 @@ thermal strain (`LITS`) following Torelli et al (See
 [@fichant_endommagement_1996;@gangnant_etude_2016;@torelli_confinement-dependent_2018;@draup_development_2019]
 for details).
 
-We strongly advice readers to refer to the following documents before
+We strongly advise readers to refer to the following documents before
 continuing:
 
 - The implementation of the Fichant-La Borderie damage behaviour is
-  detailled [here](FichantLaBorderieDamageBehaviour.html).
-- The implementation of the the load induced thermal strain is detailled
+  detailed [here](FichantLaBorderieDamageBehaviour.html).
+- The implementation of the load induced thermal strain is detailed
   [here](LoadInducedThermalStrainBehaviourTorelli2018.html).
 
 # Description of the coupled behaviour
@@ -67,7 +67,7 @@ denoted \(\tepsilonel\) and \(\telits\):
 
 ## Damage behaviour
 
-The stress \(\tsigma\) is related to the the elastic strain
+The stress \(\tsigma\) is related to the elastic strain
 \(\tepsilonel\) by the Fichant-La Borderie damage behaviour:
 
 \[
@@ -191,7 +191,7 @@ material over time.
 
 # Implicit algorithm
 
-Following the implementation of Torelli' LITS behaviour (see
+Following the implementation of Torelli's LITS behaviour (see
 [here](LoadInducedThermalStrainBehaviourTorelli2018.html) for details),
 the implicit scheme can be reduced to one non linear equation whose only
 unknown is the elastic strain increment:
@@ -227,13 +227,13 @@ domain specific language to be used:
 
 ## Choice of the behaviour name
 
-The `@Behaviour` allows giving a name the behaviour:
+The `@Behaviour` allows giving a name to the behaviour:
 
 ~~~~{.cxx}
 @Behaviour FichantLaBorderieDamageAndTorelliLoadInducedThermalStrainBehaviour;
 ~~~~
 
-Defining the name of behaviour is required.
+Defining the name of the behaviour is required.
 
 
 ## Metadata
@@ -256,7 +256,7 @@ short description), as follows:
 
 We specify two numerical parameters impacting the implicit scheme:
 
-- the \(\theta\) parameter (default value is \(1/2\)). In pratice, we
+- the \(\theta\) parameter (default value is \(1/2\)). In practice, we
   set to \(1\) to indicate that the resolution is purely implicit, but
   we won't use this value in the implementation.
 - the stopping criteria (default value is \(10^{-8}\)). This may be

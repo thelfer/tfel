@@ -20,6 +20,8 @@ eqnPrefixTemplate: "($$i$$)"
 The page describes the new functionalities of Version 3.0.17 of the
 `TFEL` project.
 
+This version was released on June 22, 2026.
+
 # Issues fixed
 
 ## Issue 983: [cmake] PYTHON_VERSION_MAJOR is deprecated in favour of Python_VERSION_MAJOR
