@@ -150,6 +150,10 @@ the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
 
+## Issue 987: `StridedCoalescedView` has no exposed data pointer and stride
+
+For more details, see <https://github.com/thelfer/tfel/issues/987>
+
 ## Issue 926: [tfel-math] Add `TFEL_HOST_DEVICE` to `LeftCauchyGreenTensorDerivativeExpr` and `RightCauchyGreenTensorDerivativeExpr` classes
 
 For more details, see <https://github.com/thelfer/tfel/issues/926>
