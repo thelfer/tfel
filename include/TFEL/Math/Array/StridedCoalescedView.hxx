@@ -14,6 +14,7 @@
 #ifndef LIB_TFEL_MATH_ARRAY_STRIDEDCOALESCEDVIEW_HXX
 #define LIB_TFEL_MATH_ARRAY_STRIDEDCOALESCEDVIEW_HXX
 
+#include <utility>
 #include "TFEL/Math/Array/CoalescedView.hxx"
 
 namespace tfel::math {
@@ -42,8 +43,7 @@ namespace tfel::math {
      * and the stride between successive components
      */
     [[nodiscard]] TFEL_HOST_DEVICE constexpr auto data() const noexcept {
-      return std::pair<ViewDataPointerType<MappedType>, std::size_t>{
-          this->ptr, this->stride};
+      return std::make_pair(this->ptr, this->stride);
     }
 
    protected:
