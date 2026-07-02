@@ -37,15 +37,13 @@ namespace tfel::math {
     constexpr StridedCoalescedAccessPolicy(
         StridedCoalescedAccessPolicy&&) noexcept = default;
 
-    //! \return a pointer to the first component of the mapped object
-    [[nodiscard]] TFEL_HOST_DEVICE constexpr ViewDataPointerType<MappedType>
-    data() const noexcept {
-      return this->ptr;
-    }
-    //! \return the stride between successive components
-    [[nodiscard]] TFEL_HOST_DEVICE constexpr std::size_t getStride()
-        const noexcept {
-      return this->stride;
+    /*!
+     * \return the pointer to the first component of the mapped object
+     * and the stride between successive components
+     */
+    [[nodiscard]] TFEL_HOST_DEVICE constexpr auto data() const noexcept {
+      return std::pair<ViewDataPointerType<MappedType>, std::size_t>{
+          this->ptr, this->stride};
     }
 
    protected:
