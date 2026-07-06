@@ -13,7 +13,7 @@
 
 #include <stdexcept>
 #include "TFEL/Raise.hxx"
-#include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/NewtonRaphsonSolvers.hxx"
 #include "MFront/BroydenSolvers.hxx"
 #include "MFront/SecondBroydenSolver.hxx"
@@ -23,8 +23,8 @@
 namespace mfront {
 
   template <typename T>
-  static std::shared_ptr<NonLinearSystemSolver> buildSolverConstructor() {
-    return std::shared_ptr<NonLinearSystemSolver>(new T());
+  static std::shared_ptr<AbstractNonLinearSystemSolver> buildSolverConstructor() {
+    return std::shared_ptr<AbstractNonLinearSystemSolver>(new T());
   }  // end of buildAlgoritmConstructor
 
   NonLinearSystemSolverFactory&
@@ -33,7 +33,7 @@ namespace mfront {
     return factory;
   }
 
-  std::shared_ptr<NonLinearSystemSolver>
+  std::shared_ptr<AbstractNonLinearSystemSolver>
   NonLinearSystemSolverFactory::getSolver(const std::string& a) const {
     const auto p = this->constructors.find(a);
     if (p == this->constructors.end()) {

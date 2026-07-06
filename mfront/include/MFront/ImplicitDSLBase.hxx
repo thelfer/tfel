@@ -24,7 +24,7 @@ namespace mfront {
 
   // forward declarations
   struct AbstractLinearSystemSolver;
-  struct NonLinearSystemSolver;
+  struct AbstractNonLinearSystemSolver;
 
   //! \brief Base class for all parser based on an implicit scheme
   struct MFRONT_VISIBILITY_EXPORT ImplicitDSLBase
@@ -43,7 +43,7 @@ namespace mfront {
      * the rest of the endsInputFileProcessing method, in the
      * endTreatment method of the behaviour bricks in particular.
      */
-    const NonLinearSystemSolver& getSolver() const;
+    const AbstractNonLinearSystemSolver& getSolver() const;
 
     std::string getCodeBlockTemplate(
         const std::string&,
@@ -155,7 +155,7 @@ namespace mfront {
      * \param[in] s: non linear solver
      * \param[in] n: name of the non linear solver
      */
-    virtual void setNonLinearSolver(std::shared_ptr<NonLinearSystemSolver>,
+    virtual void setNonLinearSolver(std::shared_ptr<AbstractNonLinearSystemSolver>,
                                     const std::string&);
     /*!
      * \brief set the non linear solver
@@ -186,7 +186,7 @@ namespace mfront {
     //! \brief linear solver
     std::shared_ptr<AbstractLinearSystemSolver> linear_solver;
     //! \brief non linear solver
-    std::shared_ptr<NonLinearSystemSolver> solver;
+    std::shared_ptr<AbstractNonLinearSystemSolver> solver;
   };  // end of struct ImplicitDSLBase
 
 }  // end of namespace mfront

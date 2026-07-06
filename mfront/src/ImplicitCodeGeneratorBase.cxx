@@ -22,8 +22,8 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/PerformanceProfiling.hxx"
 #include "MFront/SupportedTypes.hxx"
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/NonLinearSystemSolverBase.hxx"
-#include "MFront/NonLinearSystemSolver.hxx"
 #include "MFront/ImplicitCodeGeneratorBase.hxx"
 
 namespace mfront {
@@ -79,7 +79,7 @@ namespace mfront {
       const BehaviourDescription& d,
       const BehaviourInterfaceMap& bim,
       const AbstractLinearSystemSolver& ls,
-      const NonLinearSystemSolver& s,
+      const AbstractNonLinearSystemSolver& s,
       const std::set<std::string>& s1,
       const std::set<std::string>& s2)
       : BehaviourCodeGeneratorBase(f, d, bim),

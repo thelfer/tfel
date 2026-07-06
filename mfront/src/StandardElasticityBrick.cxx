@@ -23,7 +23,6 @@
 #include "MFront/LocalDataStructure.hxx"
 #include "MFront/BehaviourDescription.hxx"
 #include "MFront/ImplicitDSLBase.hxx"
-#include "MFront/NonLinearSystemSolver.hxx"
 #include "MFront/BehaviourBrick/OptionDescription.hxx"
 #include "MFront/BehaviourBrick/StressPotential.hxx"
 #include "MFront/BehaviourBrick/StressPotentialFactory.hxx"

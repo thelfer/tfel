@@ -20,7 +20,7 @@ namespace mfront {
 
   // forward declarations
   struct AbstractLinearSystemSolver;
-  struct NonLinearSystemSolver;
+  struct AbstractNonLinearSystemSolver;
 
   struct ImplicitCodeGeneratorBase : BehaviourCodeGeneratorBase {
     /*!
@@ -35,7 +35,7 @@ namespace mfront {
                               const BehaviourDescription&,
                               const BehaviourInterfaceMap&,
                               const AbstractLinearSystemSolver&,
-                              const NonLinearSystemSolver&,
+                              const AbstractNonLinearSystemSolver&,
                               const std::set<std::string>&,
                               const std::set<std::string>&);
     //! \brief destructor
@@ -120,7 +120,7 @@ namespace mfront {
     //! \brief linear solver
     const AbstractLinearSystemSolver& linear_solver;
     //! \brief non linear solver
-    const NonLinearSystemSolver& solver;
+    const AbstractNonLinearSystemSolver& solver;
 
 #pragma message("shall be removed, this is ugly !")
     const std::set<std::string>& jacobianPartsUsedInIntegrator;

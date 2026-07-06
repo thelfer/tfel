@@ -29,7 +29,7 @@
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/AbstractLinearSystemSolver.hxx"
 #include "MFront/DefaultLinearSystemSolver.hxx"
-#include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/NonLinearSystemSolverBase.hxx"
 #include "MFront/NonLinearSystemSolverFactory.hxx"
 #include "MFront/UserDefinedNonLinearSystemSolver.hxx"
@@ -160,7 +160,7 @@ namespace mfront {
         this->integrationVariablesIncrementsUsedInPredictor);
   }  // end of getCodeGenerator
 
-  const NonLinearSystemSolver& ImplicitDSLBase::getSolver() const {
+  const AbstractNonLinearSystemSolver& ImplicitDSLBase::getSolver() const {
     if (this->solver == nullptr) {
       this->throwRuntimeError("ImplicitBase::getSolver", "no solver defined");
     }
@@ -572,7 +572,7 @@ namespace mfront {
   }  // end of setLinearSystemSolver
 
   void ImplicitDSLBase::setNonLinearSolver(
-      std::shared_ptr<NonLinearSystemSolver> s, const std::string& name) {
+      std::shared_ptr<AbstractNonLinearSystemSolver> s, const std::string& name) {
     if (s.get() == nullptr) {
       tfel::raise(
           "ImplicitDSLBase::setNonLinearSolver: "

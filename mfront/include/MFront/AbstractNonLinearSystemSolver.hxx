@@ -1,5 +1,5 @@
 /*!
- * \file  mfront/include/MFront/NonLinearSystemSolver.hxx
+ * \file  mfront/include/MFront/AbstractNonLinearSystemSolver.hxx
  * \brief
  * \author Thomas Helfer
  * \brief 22 août 2014
@@ -11,8 +11,8 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVER_HXX
-#define LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVER_HXX
+#ifndef LIB_MFRONT_ABSTRACTNONLINEARSYSTEMSOLVER_HXX
+#define LIB_MFRONT_ABSTRACTNONLINEARSYSTEMSOLVER_HXX
 
 #include <iosfwd>
 #include <vector>
@@ -30,7 +30,7 @@ namespace mfront {
    * \brief Base class for non linear system solver used in by implicit
    * parser.
    */
-  struct MFRONT_VISIBILITY_EXPORT NonLinearSystemSolver {
+  struct MFRONT_VISIBILITY_EXPORT AbstractNonLinearSystemSolver {
     //! a simple alias
     using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
     //! a simple alias
@@ -139,10 +139,10 @@ namespace mfront {
                                       const BehaviourDescription&,
                                       const Hypothesis) const = 0;
     //! \brief destructor
-    virtual ~NonLinearSystemSolver();
+    virtual ~AbstractNonLinearSystemSolver();
 
-  };  // end of struct NonLinearSystemSolver
+  };  // end of struct AbstractNonLinearSystemSolver
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVER_HXX */
+#endif /* LIB_MFRONT_ABSTRACTNONLINEARSYSTEMSOLVER_HXX */
