@@ -27,6 +27,8 @@
 #include "TFEL/Material/FiniteStrainBehaviourTangentOperator.hxx"
 #include "MFront/MFrontWarningMode.hxx"
 #include "MFront/MFrontDebugMode.hxx"
+#include "MFront/AbstractLinearSystemSolver.hxx"
+#include "MFront/DefaultLinearSystemSolver.hxx"
 #include "MFront/NonLinearSystemSolver.hxx"
 #include "MFront/NonLinearSystemSolverBase.hxx"
 #include "MFront/NonLinearSystemSolverFactory.hxx"
@@ -102,6 +104,8 @@ namespace mfront {
     this->registerNewCallBack(
         "@IsTangentOperatorSymmetric",
         &ImplicitDSLBase::treatIsTangentOperatorSymmetric);
+    this->registerNewCallBack("@LinearSystemSolver",
+                              &ImplicitDSLBase::treatLinearSystemSolver);
     this->registerNewCallBack("@InitJacobian",
                               &ImplicitDSLBase::treatInitJacobian);
     this->registerNewCallBack("@InitializeJacobian",
@@ -145,9 +149,14 @@ namespace mfront {
 
   std::unique_ptr<AbstractBehaviourCodeGenerator>
   ImplicitDSLBase::getCodeGenerator() const {
+    if (this->linear_solver == nullptr) {
+      tfel::raise(
+          "ImplicitDSLBase::getCodeGenerator: "
+          "linear solver has not been initialized");
+    }
     return std::make_unique<ImplicitCodeGeneratorBase>(
-        this->fd, this->mb, this->interfaces, *(this->solver),
-        this->jacobianPartsUsedInIntegrator,
+        this->fd, this->mb, this->interfaces, *(this->linear_solver),
+        this->getSolver(), this->jacobianPartsUsedInIntegrator,
         this->integrationVariablesIncrementsUsedInPredictor);
   }  // end of getCodeGenerator
 
@@ -264,6 +273,32 @@ namespace mfront {
     }
     BehaviourDSLCommon::treatUnknownKeyword();
   }  // end of treatUnknownKeyword
+
+  void ImplicitDSLBase::treatLinearSystemSolver() {
+    this->checkNotEndOfFile("ImplicitDSLBase::treatLinearSystemSolver");
+    const auto& s = this->current->value;
+    ++this->current;
+    this->checkNotEndOfFile("ImplicitDSLBase::treatLinearSystemSolver");
+    const auto opts = [this] {
+      using namespace tfel::utilities;
+      if (this->current->value == "{") {
+        DataParsingOptions o;
+        o.allowMultipleKeysInMap = true;
+        const auto opts = Data::read(this->current, this->tokens.end(), o);
+        if (opts.empty()) {
+          return DataMap{};
+        }
+        if (!opts.is<DataMap>()) {
+          this->throwRuntimeError("ImplicitDSLBase::treatLinearSystemSolver",
+                                  "expected to read a dictionary");
+        }
+        return opts.get<DataMap>();
+      }
+      return DataMap{};
+    }();
+    this->setLinearSystemSolver(s, {});
+    this->readSpecifiedToken("ImplicitDSLBase::treatAlgorithm", ";");
+  }  // end of treatLinearSystemSolver
 
   void ImplicitDSLBase::treatProcessNewCorrection() {
     std::function<std::string(const Hypothesis, const std::string&, const bool)>
@@ -490,8 +525,64 @@ namespace mfront {
                                       jacobianComparisonCriterion);
   }  // ImplicitDSLBase::treatJacobianComparisonCriterion
 
+  void ImplicitDSLBase::setLinearSystemSolver(
+      std::shared_ptr<AbstractLinearSystemSolver> s, const std::string& n) {
+    if (s == nullptr) {
+      tfel::raise(
+          "ImplicitDSLBase::setLinearSystemSolver: "
+          "invalid nonlinear solver given");
+    }
+    if (this->linear_solver != nullptr) {
+      tfel::raise(
+          "ImplicitDSLBase::setLinearSystemSolver: "
+          "nonlinear solver has already been set");
+    }
+    this->linear_solver = s;
+  }  // end of setLinearSystemSolver
+
+  void ImplicitDSLBase::setLinearSystemSolver(const std::string& n,
+                                        const tfel::utilities::DataMap& opts) {
+    if ((n == "TDLS") || (n == "TinyDeviceCallableLinearSolver")) {
+#ifdef TFEL_MATH_TDLS_SUPPORT
+      auto ptr = std::make_shared<DefaultLinearSystemSolver>();
+      //      auto ptr = std::make_shared<TDLS>(opts);
+      this->setLinearSystemSolver(ptr, n);
+#else
+    reportWarning(
+        "ImplicitDSLBase::setLinearSystemSolver: "
+        "MFront was not build with TDLS support, "
+        "falling back to default linear solver");
+    this->setLinearSystemSolver("Default", {});
+#endif
+    } else if (n == "Default") {
+      if (!opts.empty()) {
+        this->throwRuntimeError(
+            "ImplicitDSLBase::setLinearSystemSolver",
+            "no options expected for the 'Default' linear solver");
+      }
+      auto ptr = std::make_shared<DefaultLinearSystemSolver>();
+      this->setLinearSystemSolver(ptr, n);
+    } else {
+      this->throwRuntimeError(
+          "ImplicitDSLBase::setLinearSystemSolver",
+          "invalid linear solver '" + n +
+              "'. Valid linear solvers are "
+              "'TDLS' (or 'TinyDeviceCallableLinearSystemSolver') and 'Default'");
+    }
+  }  // end of setLinearSystemSolver
+
   void ImplicitDSLBase::setNonLinearSolver(
       std::shared_ptr<NonLinearSystemSolver> s, const std::string& name) {
+    if (s.get() == nullptr) {
+      tfel::raise(
+          "ImplicitDSLBase::setNonLinearSolver: "
+          "invalid nonlinear solver given");
+    }
+    if (this->solver.get() != nullptr) {
+      tfel::raise(
+          "ImplicitDSLBase::setNonLinearSolver: "
+          "nonlinear solver has already been set");
+    }
     this->solver = s;
     for (const auto& n : this->solver->getReservedNames()) {
       this->reserveName(n);
@@ -1257,6 +1348,9 @@ namespace mfront {
     const auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     if (this->solver == nullptr) {
       this->setNonLinearSolver("NewtonRaphson");
+    }
+    if (this->linear_solver == nullptr) {
+      this->setLinearSystemSolver("Default", {});
     }
     BehaviourDSLCommon::completeVariableDeclaration();
     if (this->mb.getAttribute<bool>(

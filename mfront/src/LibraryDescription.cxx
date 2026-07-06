@@ -145,6 +145,10 @@ namespace mfront {
               "$(shell " + tfel_config + " --cppflags --compiler-flags)");
     insert_if(this->include_directories,
               "$(shell " + tfel_config + " --include-path)");
+#ifdef TFEL_MATH_TDLS_SUPPORT
+    insert_if(this->include_directories,
+              "$(shell " + tfel_config + " --tdls-include-path)");
+#endif
   }  // end of LibraryDescription::LibraryDescription
 
   LibraryDescription::LibraryDescription(const LibraryDescription&) = default;

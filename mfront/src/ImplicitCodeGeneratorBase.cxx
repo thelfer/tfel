@@ -78,10 +78,12 @@ namespace mfront {
       const FileDescription& f,
       const BehaviourDescription& d,
       const BehaviourInterfaceMap& bim,
+      const AbstractLinearSystemSolver& ls,
       const NonLinearSystemSolver& s,
       const std::set<std::string>& s1,
       const std::set<std::string>& s2)
       : BehaviourCodeGeneratorBase(f, d, bim),
+        linear_solver(ls),
         solver(s),
         jacobianPartsUsedInIntegrator(s1),
         integrationVariablesIncrementsUsedInPredictor(s2) {
