@@ -1,5 +1,5 @@
 /*!
- * \file   MFrontDefaultLinearSystemSolver.hxx
+ * \file   MFront/DefaultLinearSystemSolver.hxx
  * \brief    
  * \author Thomas Helfer
  * \date   05/07/2026
@@ -14,11 +14,11 @@
 #ifndef LIB_MFRONT_DEFAULTLINEARSYSTEMSOLVER_HXX
 #define LIB_MFRONT_DEFAULTLINEARSYSTEMSOLVER_HXX
 
-#include "MFront/AbstractLinearSystemSolver.hxx"
+#include "MFront/LinearSystemSolverBase.hxx"
 
 namespace mfront{
 
-  struct DefaultLinearSystemSolver : AbstractLinearSystemSolver {
+  struct DefaultLinearSystemSolver : LinearSystemSolverBase {
     //! \brief destructor
     ~DefaultLinearSystemSolver() override;
   };

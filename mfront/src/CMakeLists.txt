@@ -155,6 +155,7 @@ set(TFELMFront_SOURCES
     ImplicitModelDSL.cxx
     ImplicitCZMDSL.cxx
     AbstractLinearSystemSolver.cxx
+    LinearSystemSolverBase.cxx
     DefaultLinearSystemSolver.cxx
     AbstractNonLinearSystemSolver.cxx
     NonLinearSystemSolverBase.cxx
