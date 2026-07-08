@@ -1,5 +1,5 @@
 /*!
- * \file   MFront/DefaultLinearSystemSolver.hxx
+ * \file   MFront/TDLSLinearSystemSolver.hxx
  * \brief    
  * \author Thomas Helfer
  * \date   05/07/2026
@@ -11,15 +11,16 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_DEFAULTLINEARSYSTEMSOLVER_HXX
-#define LIB_MFRONT_DEFAULTLINEARSYSTEMSOLVER_HXX
+#ifndef LIB_MFRONT_TDLSLINEARSYSTEMSOLVER_HXX
+#define LIB_MFRONT_TDLSLINEARSYSTEMSOLVER_HXX
 
 #include "MFront/LinearSystemSolverBase.hxx"
 
 namespace mfront{
 
-  struct DefaultLinearSystemSolver : LinearSystemSolverBase {
+  struct TDLSLinearSystemSolver : LinearSystemSolverBase {
     //
+    std::vector<std::string> getSpecificHeaders() const override;
     void writeLinearSystemResolution(
         std::ostream&,
         const BehaviourDescription&,
@@ -27,9 +28,9 @@ namespace mfront{
         const Hypothesis,
         const LinearSystemVariables&) const override;
     //! \brief destructor
-    ~DefaultLinearSystemSolver() override;
+    ~TDLSLinearSystemSolver() override;
   };
 
 } // end of namespace mfront
 
-#endif /* LIB_MFRONT_DEFAULTLINEARSYSTEMSOLVER_HXX */
+#endif /* LIB_MFRONT_TDLSLINEARSYSTEMSOLVER_HXX */

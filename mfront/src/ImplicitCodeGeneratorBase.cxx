@@ -22,6 +22,7 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/PerformanceProfiling.hxx"
 #include "MFront/SupportedTypes.hxx"
+#include "MFront/AbstractLinearSystemSolver.hxx"
 #include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/NonLinearSystemSolverBase.hxx"
 #include "MFront/ImplicitCodeGeneratorBase.hxx"
@@ -289,6 +290,9 @@ namespace mfront {
        << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n"
        << "#include\"TFEL/Math/st2tost2.hxx\"\n"
        << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
+    for (const auto& h : this->linear_solver.getSpecificHeaders()) {
+      os << "#include\"" << h << "\"\n";
+    }
     for (const auto& h : this->solver.getSpecificHeaders()) {
       os << "#include\"" << h << "\"\n";
     }
@@ -1358,11 +1362,13 @@ namespace mfront {
        << "auto mfront_success = true;\n";
     if (this->bd.getAttribute(BehaviourData::profiling, false)) {
       writeStandardPerformanceProfilingBegin(os, this->bd.getClassName(),
-                                             "TinyMatrixSolve", "lu");
+                                             "solveLinearSystem", "lu");
     }
-    os << "mfront_success = "
-       << this->solver.getExternalAlgorithmClassName(this->bd, h)
-       << "::solveLinearSystem(mfront_matrix, mfront_vector);\n";
+    this->linear_solver.writeLinearSystemResolution(
+        os, bd, this->solver, h,
+        {.returned_value = "mfront_success",
+         .matrix = "mfront_matrix",
+         .rhs = "mfront_vector"});
     if (this->bd.getAttribute(BehaviourData::profiling, false)) {
       writeStandardPerformanceProfilingEnd(os);
     }

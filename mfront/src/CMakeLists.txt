@@ -493,6 +493,12 @@ if(HAVE_CYRANO)
     TFELException)
 endif(HAVE_CYRANO)
 
+if(enable-tdls)
+  set(TFELMFront_SOURCES
+      TDLSLinearSystemSolver.cxx
+      ${TFELMFront_SOURCES})
+endif(enable-tdls)
+
 mfront_library(TFELMFront ${TFELMFront_SOURCES})
 if(enable-tdls)
   target_compile_definitions(TFELMFront

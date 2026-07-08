@@ -14,6 +14,9 @@
 #ifndef LIB_MFRONT_ABSTRACTLINEARSYSTEMSOLVER_HXX
 #define LIB_MFRONT_ABSTRACTLINEARSYSTEMSOLVER_HXX
 
+#include <iosfwd>
+#include <optional>
+#include <string_view>
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontConfig.hxx"
 
@@ -28,6 +31,12 @@ namespace mfront {
    * domain specific languages.
    */
   struct MFRONT_VISIBILITY_EXPORT AbstractLinearSystemSolver {
+    //
+    struct LinearSystemVariables {
+      std::optional<std::string> returned_value;
+      std::string matrix;
+      std::string rhs;
+    };
     //! a simple alias
     using Hypothesis = tfel::material::ModellingHypothesis::Hypothesis;
     //! \return the header to be included
@@ -35,9 +44,14 @@ namespace mfront {
     //! \return the reserved names
     virtual std::vector<std::string> getReservedNames() const = 0;
     /*!
-     * \brief write the solveLinearSystem method
+     * \brief write the resolution of a linear system
      */
-
+    virtual void writeLinearSystemResolution(
+        std::ostream&,
+        const BehaviourDescription&,
+        const AbstractNonLinearSystemSolver&,
+        const Hypothesis,
+        const LinearSystemVariables&) const = 0;
     /*!
      * \brief write the solver specific members
      * \param[in] out : output file

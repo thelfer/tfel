@@ -11,10 +11,26 @@
  * project under specific licensing conditions.
  */
 
+#include <ostream>
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/DefaultLinearSystemSolver.hxx"
 
 namespace mfront {
 
+  void DefaultLinearSystemSolver::writeLinearSystemResolution(
+      std::ostream& os,
+      const BehaviourDescription& bd,
+      const AbstractNonLinearSystemSolver& solver,
+      const Hypothesis h,
+      const LinearSystemVariables& s) const {
+    if (s.returned_value.has_value()) {
+      os << *(s.returned_value) << " = ";
+    }
+    os << solver.getExternalAlgorithmClassName(bd, h) << "::solveLinearSystem("
+       << s.matrix << ", " << s.rhs << ");\n";
+  } // end of writeLinearSystemResolution
+
   DefaultLinearSystemSolver::~DefaultLinearSystemSolver() = default;
+
 
 }  // end of namespace mfront

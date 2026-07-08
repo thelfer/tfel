@@ -29,6 +29,9 @@
 #include "MFront/MFrontDebugMode.hxx"
 #include "MFront/AbstractLinearSystemSolver.hxx"
 #include "MFront/DefaultLinearSystemSolver.hxx"
+#ifdef TFEL_MATH_TDLS_SUPPORT
+#include "MFront/TDLSLinearSystemSolver.hxx"
+#endif /* TFEL_MATH_TDLS_SUPPORT */
 #include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/NonLinearSystemSolverBase.hxx"
 #include "MFront/NonLinearSystemSolverFactory.hxx"
@@ -544,8 +547,7 @@ namespace mfront {
                                         const tfel::utilities::DataMap& opts) {
     if ((n == "TDLS") || (n == "TinyDeviceCallableLinearSolver")) {
 #ifdef TFEL_MATH_TDLS_SUPPORT
-      auto ptr = std::make_shared<DefaultLinearSystemSolver>();
-      //      auto ptr = std::make_shared<TDLS>(opts);
+      auto ptr = std::make_shared<TDLSLinearSystemSolver>();
       this->setLinearSystemSolver(ptr, n);
 #else
     reportWarning(
