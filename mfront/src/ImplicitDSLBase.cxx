@@ -287,19 +287,19 @@ namespace mfront {
       if (this->current->value == "{") {
         DataParsingOptions o;
         o.allowMultipleKeysInMap = true;
-        const auto opts = Data::read(this->current, this->tokens.end(), o);
-        if (opts.empty()) {
+        const auto options = Data::read(this->current, this->tokens.end(), o);
+        if (options.empty()) {
           return DataMap{};
         }
-        if (!opts.is<DataMap>()) {
+        if (!options.is<DataMap>()) {
           this->throwRuntimeError("ImplicitDSLBase::treatLinearSystemSolver",
                                   "expected to read a dictionary");
         }
-        return opts.get<DataMap>();
+        return options.get<DataMap>();
       }
       return DataMap{};
     }();
-    this->setLinearSystemSolver(s, {});
+    this->setLinearSystemSolver(s, opts);
     this->readSpecifiedToken("ImplicitDSLBase::treatAlgorithm", ";");
   }  // end of treatLinearSystemSolver
 
@@ -533,28 +533,29 @@ namespace mfront {
     if (s == nullptr) {
       tfel::raise(
           "ImplicitDSLBase::setLinearSystemSolver: "
-          "invalid nonlinear solver given");
+          "invalid nonlinear solver '" +
+          n + "'given");
     }
     if (this->linear_solver != nullptr) {
       tfel::raise(
           "ImplicitDSLBase::setLinearSystemSolver: "
-          "nonlinear solver has already been set");
+          "linear solver has already been set");
     }
     this->linear_solver = s;
   }  // end of setLinearSystemSolver
 
-  void ImplicitDSLBase::setLinearSystemSolver(const std::string& n,
-                                        const tfel::utilities::DataMap& opts) {
+  void ImplicitDSLBase::setLinearSystemSolver(
+      const std::string& n, const tfel::utilities::DataMap& opts) {
     if ((n == "TDLS") || (n == "TinyDeviceCallableLinearSolver")) {
 #ifdef TFEL_MATH_TDLS_SUPPORT
-      auto ptr = std::make_shared<TDLSLinearSystemSolver>();
+      auto ptr = std::make_shared<TDLSLinearSystemSolver>(opts);
       this->setLinearSystemSolver(ptr, n);
 #else
-    reportWarning(
-        "ImplicitDSLBase::setLinearSystemSolver: "
-        "MFront was not build with TDLS support, "
-        "falling back to default linear solver");
-    this->setLinearSystemSolver("Default", {});
+      reportWarning(
+          "ImplicitDSLBase::setLinearSystemSolver: "
+          "MFront was not build with TDLS support, "
+          "falling back to default linear solver");
+      this->setLinearSystemSolver("Default", {});
 #endif
     } else if (n == "Default") {
       if (!opts.empty()) {
@@ -569,12 +570,14 @@ namespace mfront {
           "ImplicitDSLBase::setLinearSystemSolver",
           "invalid linear solver '" + n +
               "'. Valid linear solvers are "
-              "'TDLS' (or 'TinyDeviceCallableLinearSystemSolver') and 'Default'");
+              "'TDLS' (or 'TinyDeviceCallableLinearSystemSolver') and "
+              "'Default'");
     }
   }  // end of setLinearSystemSolver
 
   void ImplicitDSLBase::setNonLinearSolver(
-      std::shared_ptr<AbstractNonLinearSystemSolver> s, const std::string& name) {
+      std::shared_ptr<AbstractNonLinearSystemSolver> s,
+      const std::string& name) {
     if (s.get() == nullptr) {
       tfel::raise(
           "ImplicitDSLBase::setNonLinearSolver: "

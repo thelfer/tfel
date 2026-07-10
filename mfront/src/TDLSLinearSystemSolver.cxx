@@ -19,6 +19,17 @@
 
 namespace mfront {
 
+  TDLSLinearSystemSolver::TDLSLinearSystemSolver(
+      const tfel::utilities::DataMap& opts){
+    auto validator =
+        tfel::utilities::DataMapValidator{}  //
+            .addDataTypeValidator<int>("tile_size")
+            .addDataTypeValidator<std::string>("schedule")
+            .addDataTypeValidator<std::string>("out_of_tile_search_strategy")
+            .addDataTypeValidator<bool>("unroll_inner");
+    validator.validate(opts);
+  }
+
   std::vector<std::string> TDLSLinearSystemSolver::getSpecificHeaders() const {
     auto headers = LinearSystemSolverBase::getSpecificHeaders();
     headers.push_back("tdls/tdls.hpp");

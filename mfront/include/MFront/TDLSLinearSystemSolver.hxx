@@ -14,11 +14,17 @@
 #ifndef LIB_MFRONT_TDLSLINEARSYSTEMSOLVER_HXX
 #define LIB_MFRONT_TDLSLINEARSYSTEMSOLVER_HXX
 
+#include "TFEL/Utilities/Data.hxx"
 #include "MFront/LinearSystemSolverBase.hxx"
 
 namespace mfront{
 
   struct TDLSLinearSystemSolver : LinearSystemSolverBase {
+    /*!
+     * \brief constructor
+     * \param[in] opts: options passed to the linear solver
+     */
+    TDLSLinearSystemSolver(const tfel::utilities::DataMap&);
     //
     std::vector<std::string> getSpecificHeaders() const override;
     void writeLinearSystemResolution(
