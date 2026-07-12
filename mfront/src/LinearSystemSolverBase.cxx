@@ -19,11 +19,11 @@ namespace mfront {
 
   std::vector<std::string> LinearSystemSolverBase::getSpecificHeaders() const {
     return {};
-  } // end of getSpecificHeaders
+  }  // end of getSpecificHeaders
 
   std::vector<std::string> LinearSystemSolverBase::getReservedNames() const {
     return {};
-  } // end of getReservedNames
+  }  // end of getReservedNames
 
   void LinearSystemSolverBase::writeSpecificMembers(std::ostream&,
                                                     const BehaviourDescription&,

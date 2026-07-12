@@ -1,6 +1,6 @@
 /*!
  * \file   MFront/DefaultLinearSystemSolver.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   05/07/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
@@ -16,7 +16,7 @@
 
 #include "MFront/LinearSystemSolverBase.hxx"
 
-namespace mfront{
+namespace mfront {
 
   struct DefaultLinearSystemSolver : LinearSystemSolverBase {
     //
@@ -30,6 +30,6 @@ namespace mfront{
     ~DefaultLinearSystemSolver() override;
   };
 
-} // end of namespace mfront
+}  // end of namespace mfront
 
 #endif /* LIB_MFRONT_DEFAULTLINEARSYSTEMSOLVER_HXX */

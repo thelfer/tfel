@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/include/LinearSystemSolverBase.hxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   07/07/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
@@ -36,7 +36,7 @@ namespace mfront {
                               const Hypothesis) const override;
     //! \brief destructor
     ~LinearSystemSolverBase() override;
-  }; // end of struct LinearSystemSolverBase
+  };  // end of struct LinearSystemSolverBase
 
 }  // end of namespace mfront
 

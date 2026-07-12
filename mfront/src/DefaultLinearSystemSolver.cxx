@@ -1,6 +1,6 @@
 /*!
  * \file   mfront/src/DefaultLinearSystemSolver.cxx
- * \brief    
+ * \brief
  * \author Thomas Helfer
  * \date   05/07/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
@@ -28,9 +28,8 @@ namespace mfront {
     }
     os << solver.getExternalAlgorithmClassName(bd, h) << "::solveLinearSystem("
        << s.matrix << ", " << s.rhs << ");\n";
-  } // end of writeLinearSystemResolution
+  }  // end of writeLinearSystemResolution
 
   DefaultLinearSystemSolver::~DefaultLinearSystemSolver() = default;
-
 
 }  // end of namespace mfront

@@ -651,11 +651,10 @@ int main(const int argc, const char* const* const argv) {
       std::cout << includeDir() << ";" << TFEL_TDLS_INCLUDEDIR << " ";
     }
 #else
-    if (incspaths) {
-      std::cout << includeDir() << " ";
-    }
-#endif /* TFEL_MATH_TDLS_SUPPORT */    
-
+  if (incspaths) {
+    std::cout << includeDir() << " ";
+  }
+#endif /* TFEL_MATH_TDLS_SUPPORT */
 
 #ifdef HAVE_CASTEM
 #ifdef LOCAL_CASTEM_HEADER

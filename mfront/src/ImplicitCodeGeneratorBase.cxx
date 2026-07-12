@@ -510,10 +510,16 @@ namespace mfront {
         n += SupportedTypes::getTypeSize(v.type, v.arraySize);
       }
     }
+    //
+    os << "\n/* members declared by the linear solver */\n";
+    this->linear_solver.writeSpecificMembers(os, this->bd, h);
+    os << "\n/* members declared by the nonlinear solver */\n";
+    this->solver.writeSpecificMembers(os, this->bd, h);
+    os << "\n//\n";
+    //
+    os << "SMType stiffness_matrix_type;\n";
     // size of linear system
     n = n3;
-    this->solver.writeSpecificMembers(os, this->bd, h);
-    os << "SMType stiffness_matrix_type;\n";
     //
     if (this->solver.usesJacobian()) {
       // compute the numerical part of the jacobian.  This method is

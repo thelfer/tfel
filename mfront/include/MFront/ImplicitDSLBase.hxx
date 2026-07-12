@@ -155,8 +155,8 @@ namespace mfront {
      * \param[in] s: non linear solver
      * \param[in] n: name of the non linear solver
      */
-    virtual void setNonLinearSolver(std::shared_ptr<AbstractNonLinearSystemSolver>,
-                                    const std::string&);
+    virtual void setNonLinearSolver(
+        std::shared_ptr<AbstractNonLinearSystemSolver>, const std::string&);
     /*!
      * \brief set the non linear solver
      * \param[in] s: non linear solver

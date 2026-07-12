@@ -23,7 +23,8 @@
 namespace mfront {
 
   template <typename T>
-  static std::shared_ptr<AbstractNonLinearSystemSolver> buildSolverConstructor() {
+  static std::shared_ptr<AbstractNonLinearSystemSolver>
+  buildSolverConstructor() {
     return std::shared_ptr<AbstractNonLinearSystemSolver>(new T());
   }  // end of buildAlgoritmConstructor
 
