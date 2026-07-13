@@ -32,6 +32,10 @@
 
 namespace mfront {
 
+  const char* const BehaviourDescription::useViewsToExternalData =
+      "use_views_to_external_data";
+  const char* const BehaviourDescription::enableSupportOfTimeSubStepping =
+      "allow_support_for_time_sub_stepping";
   const char* const BehaviourDescription::
       automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable =
           "automatic_declaration_of_the_temperature_as_first_external_state_"
@@ -445,6 +449,26 @@ namespace mfront {
   BehaviourDescription::BehaviourDescription(
       const tfel::utilities::DataMap& opts) {
     constexpr auto uh = ModellingHypothesis::UNDEFINEDHYPOTHESIS;
+    auto treatBooleanOption = [this, &opts](const char* const n) {
+      if (opts.contains(n)) {
+        const auto& opt = opts.at(n);
+        if (!opt.is<bool>()) {
+          tfel::raise(
+              "BehaviourDescription::BehaviourDescription: "
+              "invalid data type in option '" +
+              std::string{n} + "'");
+        }
+        this->setAttribute(n, opt.get<bool>(), false);
+      }
+    };
+    //
+    treatBooleanOption(BehaviourDescription::useViewsToExternalData);
+    if (this->shallUseViewsToExternalData()) {
+      this->areDynamicallyAllocatedVectorsAllowed(false);
+    }
+    treatBooleanOption(BehaviourDescription::enableSupportOfTimeSubStepping);
+    treatBooleanOption(BehaviourDescription::defaultConstructor);
+    treatBooleanOption(BehaviourDescription::finalClass);
     //
     if ((opts.contains(BehaviourDescription::modellingHypothesis)) &&
         (opts.contains(BehaviourDescription::modellingHypotheses))) {
@@ -472,28 +496,6 @@ namespace mfront {
         this->overriden_hypotheses.insert(
             ModellingHypothesis::fromString(h.get<std::string>()));
       }
-    }
-    if (opts.contains(BehaviourDescription::defaultConstructor)) {
-      const auto& opt = opts.at(BehaviourDescription::defaultConstructor);
-      if (!opt.is<bool>()) {
-        tfel::raise(
-            "BehaviourDescription::BehaviourDescription: "
-            "invalid data type in option '" +
-            std::string{BehaviourDescription::defaultConstructor} + "'");
-      }
-      this->setAttribute(BehaviourDescription::defaultConstructor,
-                         opt.get<bool>(), false);
-    }
-    if (opts.contains(BehaviourDescription::finalClass)) {
-      const auto& opt = opts.at(BehaviourDescription::finalClass);
-      if (!opt.is<bool>()) {
-        tfel::raise(
-            "BehaviourDescription::BehaviourDescription: "
-            "invalid data type in option '" +
-            std::string{BehaviourDescription::finalClass} + "'");
-      }
-      this->setAttribute(BehaviourDescription::finalClass, opt.get<bool>(),
-                         false);
     }
     if (opts.contains(BehaviourDescription::internalNamespace)) {
       const auto& ns_opt = opts.at(BehaviourDescription::internalNamespace);
@@ -536,6 +538,23 @@ namespace mfront {
 
   BehaviourDescription::BehaviourDescription(const BehaviourDescription&) =
       default;
+
+  bool BehaviourDescription::shallUseViewsToExternalData() const {
+    if (!this->hasAttribute(BehaviourDescription::useViewsToExternalData)) {
+      return false;
+    }
+    return this->getAttribute<bool>(
+        BehaviourDescription::useViewsToExternalData);
+  }  // end of shallUseViewsToExternalData
+
+  bool BehaviourDescription::isSupportOfTimeSubSteppingEnabled() const {
+    if (!this->hasAttribute(
+            BehaviourDescription::enableSupportOfTimeSubStepping)) {
+      return true;
+    }
+    return this->getAttribute<bool>(
+        BehaviourDescription::enableSupportOfTimeSubStepping);
+  }  // end of isSupportOfTimeSubSteppingEnabled
 
   bool BehaviourDescription::shallDefineDefaultConstructor() const {
     if (!this->hasAttribute(BehaviourDescription::defaultConstructor)) {

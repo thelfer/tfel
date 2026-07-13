@@ -905,30 +905,37 @@ namespace mfront {
   void BehaviourCodeGeneratorBase::writeVariablesDeclarations(
       std::ostream& f,
       const VariableDescriptionContainer& v,
-      const std::string& prefix,
-      const std::string& suffix,
-      const std::string& fileName,
-      const bool useTimeDerivative) const {
+      const WriteVariableDeclarationArguments& args) const {
     for (const auto& e : v) {
-      this->writeVariableDeclaration(f, e, prefix, suffix, fileName,
-                                     useTimeDerivative);
+      this->writeVariableDeclaration(f, e, args);
     }
   }  // end of writeVariablesDeclarations
 
   void BehaviourCodeGeneratorBase::writeVariableDeclaration(
       std::ostream& f,
       const VariableDescription& v,
-      const std::string& prefix,
-      const std::string& suffix,
-      const std::string& fileName,
-      const bool useTimeDerivative) const {
-    const auto n = prefix + v.name + suffix;
-    const auto t = (!useTimeDerivative)
+      const WriteVariableDeclarationArguments& args) const {
+    const auto n = args.prefix + v.name + args.suffix;
+    const auto t = (!args.useTimeDerivative)
                        ? v.type
                        : SupportedTypes::getTimeDerivativeType(v.type);
     if (!getDebugMode()) {
       printLinePragma(f, v.lineNumber, this->fd.fileName);
     }
+    //     if (this->bd.shallUseViewsToExternalData()) {
+    //       if (v.arraySize == 1u) {
+    //         if (SupportedTypes::isScalarType(t)) {
+    //           if (this->bd.useQt()) {
+    //             f << t << "& " << n << ";\n";
+    //           } else {
+    //             f << t << "& " << n << ";\n";
+    //           }
+    //         } else {
+    //           f << "tfel::math::View<" << t << "> " << n << ";\n";
+    //         }
+    //       } else {
+    //       }
+    //     } else {
     if (v.arraySize == 1u) {
       f << t << " " << n << ";\n";
     } else {
@@ -939,6 +946,7 @@ namespace mfront {
           << ";\n";
       }
     }
+    //    }
   }  // end of writeVariableDeclaration
 
   void BehaviourCodeGeneratorBase::writeIncludes(std::ostream& file) const {
@@ -1283,73 +1291,71 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     const auto& md = this->bd.getBehaviourData(h);
     this->checkBehaviourDataFile(os);
-    os << "/*!\n"
-       << "* \\brief Default constructor\n"
-       << "*/\n"
-       << this->bd.getClassName() << "BehaviourData()\n"
-       << "{}\n\n"
-       << "/*!\n"
-       << "* \\brief copy constructor\n"
-       << "*/\n"
-       << this->bd.getClassName() << "BehaviourData(const "
-       << this->bd.getClassName() << "BehaviourData& src)\n"
-       << ": ";
-    auto first = true;
-    if (this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
-                              false)) {
-      os << "D(src.D)";
-      first = false;
-    }
-    if (this->bd.getAttribute(
-            BehaviourDescription::requiresThermalExpansionCoefficientTensor,
-            false)) {
-      if (!first) {
-        os << ",\n";
+    if (!this->bd.shallUseViewsToExternalData()) {
+      os << "//! \\brief Default constructor\n"
+         << this->bd.getClassName() << "BehaviourData()\n"
+         << "{}\n\n"
+         << "//! \\brief copy constructor\n"
+         << this->bd.getClassName() << "BehaviourData(const "
+         << this->bd.getClassName() << "BehaviourData& src)\n"
+         << ": ";
+      auto first = true;
+      if (this->bd.getAttribute(BehaviourDescription::requiresStiffnessTensor,
+                                false)) {
+        os << "D(src.D)";
+        first = false;
       }
-      os << "A(src.A)";
-      first = false;
-    }
-    for (const auto& mv : this->bd.getMainVariables()) {
-      if (!first) {
-        os << ",\n";
+      if (this->bd.getAttribute(
+              BehaviourDescription::requiresThermalExpansionCoefficientTensor,
+              false)) {
+        if (!first) {
+          os << ",\n";
+        }
+        os << "A(src.A)";
+        first = false;
       }
-      if (Gradient::isIncrementKnown(mv.first)) {
-        os << mv.first.name << "(src." << mv.first.name << "),\n";
-      } else {
-        os << mv.first.name << "0(src." << mv.first.name << "0),\n";
+      for (const auto& mv : this->bd.getMainVariables()) {
+        if (!first) {
+          os << ",\n";
+        }
+        if (Gradient::isIncrementKnown(mv.first)) {
+          os << mv.first.name << "(src." << mv.first.name << "),\n";
+        } else {
+          os << mv.first.name << "0(src." << mv.first.name << "0),\n";
+        }
+        os << mv.second.name << "(src." << mv.second.name << ")";
+        first = false;
       }
-      os << mv.second.name << "(src." << mv.second.name << ")";
-      first = false;
-    }
-    for (const auto& v : md.getMaterialProperties()) {
-      if (!first) {
-        os << ",\n";
+      for (const auto& v : md.getMaterialProperties()) {
+        if (!first) {
+          os << ",\n";
+        }
+        os << v.name << "(src." << v.name << ")";
+        first = false;
       }
-      os << v.name << "(src." << v.name << ")";
-      first = false;
-    }
-    for (const auto& v : md.getStateVariables()) {
-      if (!first) {
-        os << ",\n";
+      for (const auto& v : md.getStateVariables()) {
+        if (!first) {
+          os << ",\n";
+        }
+        os << v.name << "(src." << v.name << ")";
+        first = false;
       }
-      os << v.name << "(src." << v.name << ")";
-      first = false;
-    }
-    for (const auto& v : md.getAuxiliaryStateVariables()) {
-      if (!first) {
-        os << ",\n";
+      for (const auto& v : md.getAuxiliaryStateVariables()) {
+        if (!first) {
+          os << ",\n";
+        }
+        os << v.name << "(src." << v.name << ")";
+        first = false;
       }
-      os << v.name << "(src." << v.name << ")";
-      first = false;
-    }
-    for (const auto& v : md.getExternalStateVariables()) {
-      if (!first) {
-        os << ",\n";
+      for (const auto& v : md.getExternalStateVariables()) {
+        if (!first) {
+          os << ",\n";
+        }
+        os << v.name << "(src." << v.name << ")";
+        first = false;
       }
-      os << v.name << "(src." << v.name << ")";
-      first = false;
+      os << "\n{}\n\n";
     }
-    os << "\n{}\n\n";
     // Creating constructor for external interfaces
     for (const auto& i : this->interfaces) {
       if (i.second->isBehaviourConstructorRequired(h, this->bd)) {
@@ -1360,6 +1366,9 @@ namespace mfront {
 
   void BehaviourCodeGeneratorBase::writeBehaviourDataAssignementOperator(
       std::ostream& os, const Hypothesis h) const {
+    if (this->bd.shallUseViewsToExternalData()) {
+      return;
+    }
     const auto& md = this->bd.getBehaviourData(h);
     this->checkBehaviourDataFile(os);
     os << "/*\n"
@@ -1395,6 +1404,9 @@ namespace mfront {
 
   void BehaviourCodeGeneratorBase::writeBehaviourDataExport(
       std::ostream& os, const Hypothesis h) const {
+    if (this->bd.shallUseViewsToExternalData()) {
+      return;
+    }
     this->checkBehaviourDataFile(os);
     for (const auto& i : this->interfaces) {
       i.second->exportMechanicalData(os, h, this->bd);
@@ -1574,8 +1586,8 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourDataFile(os);
     this->writeVariablesDeclarations(
-        os, this->bd.getBehaviourData(h).getMaterialProperties(), "", "",
-        this->fd.fileName, false);
+        os, this->bd.getBehaviourData(h).getMaterialProperties(),
+        {.useTimeDerivative = false});
     os << '\n';
   }
 
@@ -1583,12 +1595,12 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourDataFile(os);
     const auto& d = this->bd.getBehaviourData(h);
-    this->writeVariablesDeclarations(os, d.getStateVariables(), "", "",
-                                     this->fd.fileName, false);
-    this->writeVariablesDeclarations(os, d.getAuxiliaryStateVariables(), "", "",
-                                     this->fd.fileName, false);
-    this->writeVariablesDeclarations(os, d.getExternalStateVariables(), "", "",
-                                     this->fd.fileName, false);
+    this->writeVariablesDeclarations(os, d.getStateVariables(),
+                                     {.useTimeDerivative = false});
+    this->writeVariablesDeclarations(os, d.getAuxiliaryStateVariables(),
+                                     {.useTimeDerivative = false});
+    this->writeVariablesDeclarations(os, d.getExternalStateVariables(),
+                                     {.useTimeDerivative = false});
     os << '\n';
   }
 
@@ -2389,47 +2401,47 @@ namespace mfront {
     this->checkBehaviourFile(os);
     // initializers
     const auto& init = this->getBehaviourConstructorsInitializers(h);
-    // writing constructors
-    if (this->bd.shallDefineDefaultConstructor()) {
-      os << "//! \\brief default constructor\n"
-         << this->bd.getClassName() << "()";
-      if (!init.empty()) {
-        os << "\n: " << init;
+    if (!this->bd.shallUseViewsToExternalData()) {
+      // writing constructors
+      if (this->bd.shallDefineDefaultConstructor()) {
+        os << "//! \\brief default constructor\n"
+           << this->bd.getClassName() << "()";
+        if (!init.empty()) {
+          os << "\n: " << init;
+        }
+        os << "\n{";
+        write_body();
+        os << "}\n\n";
       }
-      os << "\n{";
+      os << "//! \\brief constructor\n";
+      if (this->bd.useQt()) {
+        os << this->bd.getClassName() << "("
+           << "const " << this->bd.getClassName()
+           << "BehaviourData<hypothesis, NumericType, use_qt>& src1,\n"
+           << "const " << this->bd.getClassName()
+           << "IntegrationData<hypothesis, NumericType, use_qt>& src2)\n"
+           << ": " << this->bd.getClassName()
+           << "BehaviourData<hypothesis, NumericType, use_qt>(src1),\n"
+           << this->bd.getClassName()
+           << "IntegrationData<hypothesis, NumericType, use_qt>(src2)";
+      } else {
+        os << this->bd.getClassName() << "("
+           << "const " << this->bd.getClassName()
+           << "BehaviourData<hypothesis, NumericType, false>& src1,\n"
+           << "const " << this->bd.getClassName()
+           << "IntegrationData<hypothesis, NumericType, false>& src2)\n"
+           << ": " << this->bd.getClassName()
+           << "BehaviourData<hypothesis, NumericType, false>(src1),\n"
+           << this->bd.getClassName()
+           << "IntegrationData<hypothesis, NumericType, false>(src2)";
+      }
+      if (!init.empty()) {
+        os << ",\n" << init;
+      }
+      os << "\n{\n";
       write_body();
       os << "}\n\n";
     }
-    os << "/*!\n"
-       << "* \\brief Constructor\n"
-       << "*/\n";
-    if (this->bd.useQt()) {
-      os << this->bd.getClassName() << "("
-         << "const " << this->bd.getClassName()
-         << "BehaviourData<hypothesis, NumericType, use_qt>& src1,\n"
-         << "const " << this->bd.getClassName()
-         << "IntegrationData<hypothesis, NumericType, use_qt>& src2)\n"
-         << ": " << this->bd.getClassName()
-         << "BehaviourData<hypothesis, NumericType, use_qt>(src1),\n"
-         << this->bd.getClassName()
-         << "IntegrationData<hypothesis, NumericType, use_qt>(src2)";
-    } else {
-      os << this->bd.getClassName() << "("
-         << "const " << this->bd.getClassName()
-         << "BehaviourData<hypothesis, NumericType, false>& src1,\n"
-         << "const " << this->bd.getClassName()
-         << "IntegrationData<hypothesis, NumericType, false>& src2)\n"
-         << ": " << this->bd.getClassName()
-         << "BehaviourData<hypothesis, NumericType, false>(src1),\n"
-         << this->bd.getClassName()
-         << "IntegrationData<hypothesis, NumericType, false>(src2)";
-    }
-    if (!init.empty()) {
-      os << ",\n" << init;
-    }
-    os << "\n{\n";
-    write_body();
-    os << "}\n\n";
     // constructor specific to interfaces
     for (const auto& i : this->interfaces) {
       if (i.second->isBehaviourConstructorRequired(h, this->bd)) {
@@ -3549,8 +3561,8 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
     const auto& md = this->bd.getBehaviourData(h);
-    this->writeVariablesDeclarations(os, md.getLocalVariables(), "", "",
-                                     this->fd.fileName, false);
+    this->writeVariablesDeclarations(os, md.getLocalVariables(),
+                                     {.useTimeDerivative = false});
     os << '\n';
     auto write_wrapper = [this, &os](const BehaviourVariableDescription& b) {
       const auto wrapper = getBehaviourWrapperClassName(b);
@@ -3615,8 +3627,7 @@ namespace mfront {
     for (const auto& v : md.getIntegrationVariables()) {
       if (!md.isStateVariableName(v.name)) {
         if (md.isMemberUsedInCodeBlocks(v.name)) {
-          this->writeVariableDeclaration(os, v, "", "", this->fd.fileName,
-                                         false);
+          this->writeVariableDeclaration(os, v, {.useTimeDerivative = false});
         }
       }
     }
@@ -3717,9 +3728,9 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     const auto& md = this->bd.getBehaviourData(h);
     this->checkBehaviourFile(os);
-    this->writeVariablesDeclarations(os, md.getIntegrationVariables(), "d", "",
-                                     this->fd.fileName,
-                                     this->usesStateVariableTimeDerivative());
+    this->writeVariablesDeclarations(
+        os, md.getIntegrationVariables(),
+        {.prefix = "d", .useTimeDerivative = this->usesStateVariableTimeDerivative()});
     os << '\n';
   }
 
@@ -5504,29 +5515,27 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     const auto& md = this->bd.getBehaviourData(h);
     this->checkIntegrationDataFile(os);
-    os << "/*!\n"
-       << "* \\brief Default constructor\n"
-       << "*/\n"
-       << this->bd.getClassName() << "IntegrationData()\n"
-       << "{}\n\n"
-       << "/*!\n"
-       << "* \\brief Copy constructor\n"
-       << "*/\n"
-       << this->bd.getClassName() << "IntegrationData(const "
-       << this->bd.getClassName() << "IntegrationData& src)\n"
-       << ": ";
-    for (const auto& v : this->bd.getMainVariables()) {
-      if (Gradient::isIncrementKnown(v.first)) {
-        os << "d" << v.first.name << "(src.d" << v.first.name << "),\n";
-      } else {
-        os << v.first.name << "1(src." << v.first.name << "1),\n";
+    if (!this->bd.shallUseViewsToExternalData()) {
+      os << "//! \\brief default constructor\n"
+         << this->bd.getClassName() << "IntegrationData()\n"
+         << "{}\n\n"
+         << "//! \\brief copy constructor\n"
+         << this->bd.getClassName() << "IntegrationData(const "
+         << this->bd.getClassName() << "IntegrationData& src)\n"
+         << ": ";
+      for (const auto& v : this->bd.getMainVariables()) {
+        if (Gradient::isIncrementKnown(v.first)) {
+          os << "d" << v.first.name << "(src.d" << v.first.name << "),\n";
+        } else {
+          os << v.first.name << "1(src." << v.first.name << "1),\n";
+        }
       }
+      os << "dt(src.dt)";
+      for (const auto& v : md.getExternalStateVariables()) {
+        os << ",\nd" << v.name << "(src.d" << v.name << ")";
+      }
+      os << "\n{}\n\n";
     }
-    os << "dt(src.dt)";
-    for (const auto& v : md.getExternalStateVariables()) {
-      os << ",\nd" << v.name << "(src.d" << v.name << ")";
-    }
-    os << "\n{}\n\n";
     // Creating constructor for external interfaces
     for (const auto& i : this->interfaces) {
       if (i.second->isBehaviourConstructorRequired(h, this->bd)) {
@@ -5840,8 +5849,9 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     const auto& md = this->bd.getBehaviourData(h);
     this->checkIntegrationDataFile(os);
-    this->writeVariablesDeclarations(os, md.getExternalStateVariables(), "d",
-                                     "", this->fd.fileName, false);
+    this->writeVariablesDeclarations(
+        os, md.getExternalStateVariables(),
+        {.prefix = "d", .useTimeDerivative = false});
   }
 
   void BehaviourCodeGeneratorBase::writeIntegrationDataFileBegin(

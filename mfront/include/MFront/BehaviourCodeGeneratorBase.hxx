@@ -72,35 +72,37 @@ namespace mfront {
      */
     virtual bool usesStateVariableTimeDerivative() const;
     /*!
-     * write the given variable declaration
-     * \param[out] f                 : output file
-     * \param[in]  v                 : variable to be declared
-     * \param[in]  prefix            : prefix added to variable's names
-     * \param[in]  suffix            : suffix added to variable's names
-     * \param[in]  useTimeDerivative : declare time derivative of the
-     * variables
+     * \brief data structure passed to the  `writeVariableDeclaration` and
+     * `writeVariableDeclarations` methods
      */
-    virtual void writeVariableDeclaration(std::ostream&,
-                                          const VariableDescription&,
-                                          const std::string&,
-                                          const std::string&,
-                                          const std::string&,
-                                          const bool) const;
+    struct WriteVariableDeclarationArguments {
+      //! \brief prefix added to variable's names
+      std::string prefix = "";
+      //! \brief suffix added to variable's names
+      std::string suffix = "";
+      //! \brief declare time derivative of the variable
+      bool useTimeDerivative = false;
+    };
     /*!
-     * write the given variables declaration
+     * \brief write the given variable declaration
+     * \param[out] f: output file
+     * \param[in]  v: variable to be declared
+     * \param[in]  args: additional arguments to customize the declarations
+     */
+    virtual void writeVariableDeclaration(
+        std::ostream&,
+        const VariableDescription&,
+        const WriteVariableDeclarationArguments&) const;
+    /*!
+     * \brief write the given variables declaration
      * \param[out] f                 : output file
      * \param[in]  v                 : variables to be declared
-     * \param[in]  prefix            : prefix added to variable's names
-     * \param[in]  suffix            : suffix added to variable's names
-     * \param[in]  useTimeDerivative : declare time derivative of the
-     * variables
+     * \param[in]  args: additional arguments to customize the declarations
      */
-    virtual void writeVariablesDeclarations(std::ostream&,
-                                            const VariableDescriptionContainer&,
-                                            const std::string&,
-                                            const std::string&,
-                                            const std::string&,
-                                            const bool) const;
+    virtual void writeVariablesDeclarations(
+        std::ostream&,
+        const VariableDescriptionContainer&,
+        const WriteVariableDeclarationArguments&) const;
 
     virtual void writeIncludes(std::ostream&) const;
 

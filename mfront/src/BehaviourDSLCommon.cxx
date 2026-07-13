@@ -76,6 +76,10 @@ namespace mfront {
   BehaviourDSLCommon::getDSLOptionsValidator() {
     return DSLBase::getDSLOptionsValidator()
         .addDataTypeValidator<bool>(
+            BehaviourDescription::useViewsToExternalData)
+        .addDataTypeValidator<bool>(
+            BehaviourDescription::enableSupportOfTimeSubStepping)
+        .addDataTypeValidator<bool>(
             BehaviourDescription::
                 automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable)
         .addDataTypeValidator<std::string>(
@@ -122,6 +126,10 @@ namespace mfront {
         mb(tfel::utilities::extract(
             opts,
             {DSLBase::overridingParameters,
+             BehaviourDescription::useViewsToExternalData,
+             BehaviourDescription::enableSupportOfTimeSubStepping,
+             BehaviourDescription::
+                 automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable,
              BehaviourDescription::
                  automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable,
              BehaviourDescription::modellingHypothesis,

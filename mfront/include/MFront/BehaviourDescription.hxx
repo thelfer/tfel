@@ -1,4 +1,3 @@
-
 /*!
  * \file  mfront/include/MFront/BehaviourDescription.hxx
  * \brief
@@ -61,6 +60,10 @@ namespace mfront {
       : public tfel::material::MechanicalBehaviourBase,
         public MaterialKnowledgeDescription,
         public SupportedTypes {
+    //! \brief standard option name
+    static const char* const useViewsToExternalData;
+    //! \brief standard option name
+    static const char* const enableSupportOfTimeSubStepping;
     //! \brief standard option and attribute name
     static const char* const
         automaticDeclarationOfTheTemperatureAsFirstExternalStateVariable;
@@ -354,6 +357,13 @@ namespace mfront {
      * defined
      */
     std::string getFullClassName() const;
+    /*!
+     * \brief return if views to external data shall be use rather than copy to
+     * local variables (generally stack allocated)
+     */
+    bool shallUseViewsToExternalData() const;
+    //! \brief return if time sub stepping is enabled
+    bool isSupportOfTimeSubSteppingEnabled() const;
     //! \return if the generated class shall define the default constructor
     bool shallDefineDefaultConstructor() const;
     //! \return if the generated class shall be declared final
