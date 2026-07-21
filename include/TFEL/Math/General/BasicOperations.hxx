@@ -161,6 +161,17 @@ namespace tfel ::math {
     }
   };  // end of OpDiv
 
+  /*!
+   * \brief an helpful concept for the partial specialization
+   * of the `ResultType`, `ComputeBinaryResultType` classes, etc.
+   */
+  template <typename Operation>
+  concept BasicScalarBinaryOperationConcept =
+      std::same_as<Operation, OpPlus> ||   //
+      std::same_as<Operation, OpMinus> ||  //
+      std::same_as<Operation, OpMult> ||   //
+      std::same_as<Operation, OpDiv>;
+
   struct OpNeg {
     template <typename T1>
     TFEL_HOST_DEVICE static constexpr auto apply(T1&& a)
