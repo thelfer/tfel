@@ -2296,6 +2296,9 @@ namespace mfront {
       std::ostream& os,
       const Hypothesis h,
       const BehaviourDescription& bd) const {
+    if (bd.shallUseViewsToExternalData()) {
+      return;
+    }
     auto export_variable = [this, &bd, &os](const VariableDescription& v,
                                             const char* const dest,
                                             const SupportedTypes::TypeSize o) {

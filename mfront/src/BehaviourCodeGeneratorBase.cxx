@@ -916,37 +916,41 @@ namespace mfront {
       const VariableDescription& v,
       const WriteVariableDeclarationArguments& args) const {
     const auto n = args.prefix + v.name + args.suffix;
-    const auto t = (!args.useTimeDerivative)
-                       ? v.type
-                       : SupportedTypes::getTimeDerivativeType(v.type);
+    const auto type = args.use_time_derivative
+                          ? SupportedTypes::getTimeDerivativeType(v.type)
+                          : v.type;
+    const auto decorated_type = (args.is_const ? "const " : "") + type;
     if (!getDebugMode()) {
       printLinePragma(f, v.lineNumber, this->fd.fileName);
     }
-    //     if (this->bd.shallUseViewsToExternalData()) {
-    //       if (v.arraySize == 1u) {
-    //         if (SupportedTypes::isScalarType(t)) {
-    //           if (this->bd.useQt()) {
-    //             f << t << "& " << n << ";\n";
-    //           } else {
-    //             f << t << "& " << n << ";\n";
-    //           }
-    //         } else {
-    //           f << "tfel::math::View<" << t << "> " << n << ";\n";
-    //         }
-    //       } else {
-    //       }
-    //     } else {
-    if (v.arraySize == 1u) {
-      f << t << " " << n << ";\n";
-    } else {
-      if (this->bd.useDynamicallyAllocatedVector(v.arraySize)) {
-        f << "tfel::math::runtime_array<" << t << " > " << n << ";\n";
+    if ((this->bd.shallUseViewsToExternalData()) && (!args.make_local_copy)) {
+      if (v.arraySize == 1u) {
+        if (SupportedTypes::isScalarType(type)) {
+          f << "tfel::math::scalar_view<" << decorated_type << "> " << n
+            << ";\n";
+        } else {
+          f << "tfel::math::View<" << decorated_type << "> " << n << ";\n";
+        }
       } else {
-        f << "tfel::math::fsarray<" << v.arraySize << ", " << t << " > " << n
-          << ";\n";
+        const auto array_type =
+            (args.is_const ? "const " : "") +
+            ("tfel::math::fsarray<" + std::to_string(v.arraySize) + ", " +
+             type + ">");
+        f << "tfel::math::StandardFixedSizeViewsArray"
+          << "<" << array_type << "> " << n << ";\n";
+      }
+    } else {
+      if (v.arraySize == 1u) {
+        f << decorated_type << " " << n << ";\n";
+      } else {
+        if (this->bd.useDynamicallyAllocatedVector(v.arraySize)) {
+          f << "tfel::math::runtime_array<" << type << " > " << n << ";\n";
+        } else {
+          f << "tfel::math::fsarray<" << v.arraySize << ", " << type << " > "
+            << n << ";\n";
+        }
       }
     }
-    //    }
   }  // end of writeVariableDeclaration
 
   void BehaviourCodeGeneratorBase::writeIncludes(std::ostream& file) const {
@@ -994,9 +998,11 @@ namespace mfront {
     }
     file << "using ushort =  unsigned short;\n";
     if (this->bd.useQt()) {
-      file << "using Types = tfel::config::Types<N, NumericType, use_qt>;\n";
+      file << "using Types = tfel::config::Types<N, NumericType, "
+              "use_qt>;\n";
     } else {
-      file << "using Types = tfel::config::Types<N, NumericType, false>;\n";
+      file << "using Types = tfel::config::Types<N, NumericType, "
+              "false>;\n";
     }
     file << "using Type = NumericType;\n";
     for (const auto& a : getTypeAliases()) {
@@ -1215,7 +1221,8 @@ namespace mfront {
          BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) ||
         (this->bd.getBehaviourType() ==
          BehaviourDescription::GENERALBEHAVIOUR)) {
-      os << "#include\"TFEL/Math/ST2toST2/ConvertToTangentModuli.hxx\"\n"
+      os << "#include\"TFEL/Math/ST2toST2/"
+            "ConvertToTangentModuli.hxx\"\n"
          << "#include\"TFEL/Math/ST2toST2/"
             "ConvertSpatialModuliToKirchhoffJaumanRateModuli.hxx\"\n"
          << "#include\"TFEL/Material/"
@@ -1240,11 +1247,13 @@ namespace mfront {
     for (const auto& mv : this->bd.getMainVariables()) {
       if (mv.first.arraySize != mv.second.arraySize) {
         tfel::raise(
-            "BehaviourCodeGeneratorBase::writeBehaviourDataDefaultMembers: "
+            "BehaviourCodeGeneratorBase::"
+            "writeBehaviourDataDefaultMembers: "
             "the array size of the gradient '" +
             mv.first.name +
             "' is "
-            "different from the array size of the thermodynamic force '" +
+            "different from the array size of the thermodynamic force "
+            "'" +
             mv.second.name + "'");
       }
       if (mv.first.arraySize == 1) {
@@ -1272,7 +1281,8 @@ namespace mfront {
       std::ostream& os) const {
     this->checkBehaviourDataFile(os);
     os << "static constexpr unsigned short TVectorSize = N;\n"
-       << "using StensorDimeToSize = tfel::math::StensorDimeToSize<N>;\n"
+       << "using StensorDimeToSize = "
+          "tfel::math::StensorDimeToSize<N>;\n"
        << "static constexpr unsigned short StensorSize = "
        << "StensorDimeToSize::value;\n"
        << "using TensorDimeToSize = tfel::math::TensorDimeToSize<N>;\n"
@@ -1461,7 +1471,8 @@ namespace mfront {
        << " .\n"
        << "* \\tparam H: modelling hypothesis.\n"
        << "* \\tparam NumericType: numerical type.\n"
-       << "* \\tparam use_qt: conditional saying if quantities are use.\n";
+       << "* \\tparam use_qt: conditional saying if quantities are "
+          "use.\n";
     if (!this->fd.authorName.empty()) {
       os << "* \\author " << this->fd.authorName << '\n';
     }
@@ -1497,7 +1508,8 @@ namespace mfront {
       os << "const " << this->bd.getClassName()
          << "BehaviourData<hypothesis, NumericType,false>&);\n\n";
     }
-    // maintenant, il faut déclarer toutes les spécialisations partielles...
+    // maintenant, il faut déclarer toutes les spécialisations
+    // partielles...
     for (const auto& h : this->bd.getModellingHypotheses()) {
       if (this->bd.hasSpecialisedMechanicalData(h)) {
         if (this->bd.useQt()) {
@@ -1552,7 +1564,8 @@ namespace mfront {
     }
     os << "{\n\n";
     if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      os << "static constexpr ModellingHypothesis::Hypothesis hypothesis = "
+      os << "static constexpr ModellingHypothesis::Hypothesis "
+            "hypothesis = "
          << "ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h)
          << ";\n";
     }
@@ -1561,7 +1574,8 @@ namespace mfront {
        << "static_assert(N==1||N==2||N==3);\n"
        << "static_assert(tfel::typetraits::"
        << "IsFundamentalNumericType<NumericType>::cond);\n"
-       << "static_assert(tfel::typetraits::IsReal<NumericType>::cond);\n\n"
+       << "static_assert(tfel::typetraits::IsReal<NumericType>::cond);"
+          "\n\n"
        << "friend std::ostream& operator<< <>(std::ostream&,const "
        << this->bd.getClassName() << "BehaviourData&);\n\n"
        << "/* integration data is declared friend to access"
@@ -1587,7 +1601,7 @@ namespace mfront {
     this->checkBehaviourDataFile(os);
     this->writeVariablesDeclarations(
         os, this->bd.getBehaviourData(h).getMaterialProperties(),
-        {.useTimeDerivative = false});
+        {.use_time_derivative = false, .is_const = false});
     os << '\n';
   }
 
@@ -1596,11 +1610,11 @@ namespace mfront {
     this->checkBehaviourDataFile(os);
     const auto& d = this->bd.getBehaviourData(h);
     this->writeVariablesDeclarations(os, d.getStateVariables(),
-                                     {.useTimeDerivative = false});
+                                     {.use_time_derivative = false});
     this->writeVariablesDeclarations(os, d.getAuxiliaryStateVariables(),
-                                     {.useTimeDerivative = false});
+                                     {.use_time_derivative = false});
     this->writeVariablesDeclarations(os, d.getExternalStateVariables(),
-                                     {.useTimeDerivative = false});
+                                     {.use_time_derivative = false});
     os << '\n';
   }
 
@@ -1752,7 +1766,8 @@ namespace mfront {
          << "const " << this->bd.getClassName()
          << "<hypothesis, NumericType, false>&);\n\n";
     }
-    // maintenant, il faut déclarer toutes les spécialisations partielles...
+    // maintenant, il faut déclarer toutes les spécialisations
+    // partielles...
     const auto& mh = this->bd.getModellingHypotheses();
     for (const auto& h : mh) {
       if (this->bd.hasSpecialisedMechanicalData(h)) {
@@ -1785,7 +1800,8 @@ namespace mfront {
     os << "* \\tparam hypothesis: modelling hypothesis.\n";
     os << "* \\tparam NumericType: numerical type.\n";
     if (this->bd.useQt()) {
-      os << "* \\tparam use_qt: conditional saying if quantities are use.\n";
+      os << "* \\tparam use_qt: conditional saying if quantities are "
+            "use.\n";
     }
     if (!this->fd.authorName.empty()) {
       os << "* \\author " << this->fd.authorName << '\n';
@@ -1878,7 +1894,8 @@ namespace mfront {
     }
     os << "{\n\n";
     if (h != ModellingHypothesis::UNDEFINEDHYPOTHESIS) {
-      os << "static constexpr ModellingHypothesis::Hypothesis hypothesis = "
+      os << "static constexpr ModellingHypothesis::Hypothesis "
+            "hypothesis = "
          << "ModellingHypothesis::" << ModellingHypothesis::toUpperCaseString(h)
          << ";\n";
     }
@@ -1887,7 +1904,8 @@ namespace mfront {
     os << "static_assert(N==1||N==2||N==3);\n";
     os << "static_assert(tfel::typetraits::"
        << "IsFundamentalNumericType<NumericType>::cond);\n";
-    os << "static_assert(tfel::typetraits::IsReal<NumericType>::cond);\n\n";
+    os << "static_assert(tfel::typetraits::IsReal<NumericType>::cond);"
+          "\n\n";
   }
 
   void BehaviourCodeGeneratorBase::writeBehaviourFriends(
@@ -1986,9 +2004,11 @@ namespace mfront {
         BehaviourDescription::ExternalModelBasedOnBehaviourVariableFactory;
     auto tmpnames = std::vector<std::string>{};
     os << "/*!\n"
-       << " * \\brief Update auxiliary state variables at end of integration\n"
+       << " * \\brief Update auxiliary state variables at end of "
+          "integration\n"
        << " */\n"
-       << "TFEL_HOST_DEVICE [[nodiscard]] bool updateAuxiliaryStateVariables()"
+       << "TFEL_HOST_DEVICE [[nodiscard]] bool "
+          "updateAuxiliaryStateVariables()"
        << "{\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n";
@@ -2062,10 +2082,13 @@ namespace mfront {
   void BehaviourCodeGeneratorBase::writeBehaviourComputeInternalEnergy(
       std::ostream& os, const Hypothesis h) const {
     os << "/*!\n"
-       << "* \\brief Update the internal energy at end of the time step\n"
-       << "* \\param[in] Psi_s: internal energy at end of the time step\n"
+       << "* \\brief Update the internal energy at end of the time "
+          "step\n"
+       << "* \\param[in] Psi_s: internal energy at end of the time "
+          "step\n"
        << "*/\n"
-       << "TFEL_HOST_DEVICE void computeInternalEnergy(stress& Psi_s) const";
+       << "TFEL_HOST_DEVICE void computeInternalEnergy(stress& Psi_s) "
+          "const";
     if (this->bd.hasCode(h, BehaviourData::ComputeInternalEnergy)) {
       os << "{\n"
          << "using namespace std;\n"
@@ -2081,10 +2104,13 @@ namespace mfront {
   void BehaviourCodeGeneratorBase::writeBehaviourComputeDissipatedEnergy(
       std::ostream& os, const Hypothesis h) const {
     os << "/*!\n"
-       << "* \\brief Update the dissipated energy at end of the time step\n"
-       << "* \\param[in] Psi_d: dissipated energy at end of the time step\n"
+       << "* \\brief Update the dissipated energy at end of the time "
+          "step\n"
+       << "* \\param[in] Psi_d: dissipated energy at end of the time "
+          "step\n"
        << "*/\n"
-       << "TFEL_HOST_DEVICE void computeDissipatedEnergy(stress& Psi_d) "
+       << "TFEL_HOST_DEVICE void computeDissipatedEnergy(stress& "
+          "Psi_d) "
           "const";
     if (this->bd.hasCode(h, BehaviourData::ComputeDissipatedEnergy)) {
       os << "{\n"
@@ -2108,7 +2134,8 @@ namespace mfront {
     if (this->bd.hasCode(h, BehaviourData::ComputeSpeedOfSound)) {
       const auto vs = tfel::unicode::getMangledString("vₛ");
       const auto rho_m0 = tfel::unicode::getMangledString("ρₘ₀");
-      os << "TFEL_HOST_DEVICE speed computeSpeedOfSound(const massdensity& "
+      os << "TFEL_HOST_DEVICE speed computeSpeedOfSound(const "
+            "massdensity& "
             "rho_m0) const {\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n";
@@ -2122,7 +2149,8 @@ namespace mfront {
          << "return v_sound;\n"
          << "}\n\n";
     } else {
-      os << "TFEL_HOST_DEVICE speed computeSpeedOfSound(const massdensity&) "
+      os << "TFEL_HOST_DEVICE speed computeSpeedOfSound(const "
+            "massdensity&) "
             "const {\n"
          << "return speed(0);\n"
          << "\n}\n\n";
@@ -2161,11 +2189,13 @@ namespace mfront {
              << "\"invalid tangent operator flag\");\n";
         } else {
           os << "raise_if(smflag!=MechanicalBehaviour<" << btype
-             << ",hypothesis, NumericType, false>::STANDARDTANGENTOPERATOR,\n"
+             << ",hypothesis, NumericType, "
+                "false>::STANDARDTANGENTOPERATOR,\n"
              << "\"invalid tangent operator flag\");\n";
         }
       }
-      os << "bool computeTangentOperator_ = smt!=NOSTIFFNESSREQUESTED;\n";
+      os << "bool computeTangentOperator_ = "
+            "smt!=NOSTIFFNESSREQUESTED;\n";
     }
     if (this->bd.hasCode(h, BehaviourData::ComputePredictor)) {
       os << this->bd.getCode(h, BehaviourData::ComputePredictor) << '\n';
@@ -2199,7 +2229,8 @@ namespace mfront {
         os << "if(computeTangentOperator_){\n";
         if (this->bd.getBehaviourType() ==
             BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR) {
-          os << "if(!this->computeConsistentTangentOperator(smflag,smt)){\n";
+          os << "if(!this->computeConsistentTangentOperator(smflag,smt)"
+                "){\n";
         } else {
           os << "if(!this->computeConsistentTangentOperator(smt)){\n";
         }
@@ -2348,7 +2379,8 @@ namespace mfront {
       tfel::raise_if(
           ((blocks.size() != 1u) || (blocks.front().first.arraySize != 1u) ||
            (blocks.front().second.arraySize != 1u)),
-          "BehaviourCodeGeneratorBase::getBehaviourConstructorsInitializers: "
+          "BehaviourCodeGeneratorBase::"
+          "getBehaviourConstructorsInitializers: "
           "internal "
           "error");
       if (this->bd.getBehaviourType() !=
@@ -2419,7 +2451,8 @@ namespace mfront {
            << "const " << this->bd.getClassName()
            << "BehaviourData<hypothesis, NumericType, use_qt>& src1,\n"
            << "const " << this->bd.getClassName()
-           << "IntegrationData<hypothesis, NumericType, use_qt>& src2)\n"
+           << "IntegrationData<hypothesis, NumericType, use_qt>& "
+              "src2)\n"
            << ": " << this->bd.getClassName()
            << "BehaviourData<hypothesis, NumericType, use_qt>(src1),\n"
            << this->bd.getClassName()
@@ -2511,10 +2544,14 @@ namespace mfront {
           (mh.find(ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRESS) !=
            mh.end())) {
         this->throwRuntimeError(
-            "BehaviourCodeGeneratorBase::writeStiffnessTensorComputation",
-            "For plane stress hypotheses, it is required to precise whether "
-            "the expected stiffness tensor is 'Altered' (the plane stress "
-            "hypothesis is taken into account) or 'UnAltered' (the stiffness "
+            "BehaviourCodeGeneratorBase::"
+            "writeStiffnessTensorComputation",
+            "For plane stress hypotheses, it is required to precise "
+            "whether "
+            "the expected stiffness tensor is 'Altered' (the plane "
+            "stress "
+            "hypothesis is taken into account) or 'UnAltered' (the "
+            "stiffness "
             "tensor is the same as in plane strain). "
             "See the '@ComputeStiffnessTensor' documentation");
       }
@@ -2525,18 +2562,21 @@ namespace mfront {
     if (this->bd.getElasticSymmetryType() == mfront::ISOTROPIC) {
       if (emps.size() != 2u) {
         this->throwRuntimeError(
-            "BehaviourCodeGeneratorBase::writeStiffnessTensorComputation",
+            "BehaviourCodeGeneratorBase::"
+            "writeStiffnessTensorComputation",
             "invalid number of material properties");
       }
       this->writeMaterialPropertyCheckBoundsEvaluation(out, emps[0], f);
       this->writeMaterialPropertyCheckBoundsEvaluation(out, emps[1], f);
       if (ua) {
-        out << "tfel::material::computeIsotropicStiffnessTensor<hypothesis,"
+        out << "tfel::material::computeIsotropicStiffnessTensor<"
+               "hypothesis,"
                "StiffnessTensorAlterationCharacteristic::"
                "UNALTERED"
             << ">(" << D << ",";
       } else {
-        out << "tfel::material::computeIsotropicStiffnessTensor<hypothesis,"
+        out << "tfel::material::computeIsotropicStiffnessTensor<"
+               "hypothesis,"
                "StiffnessTensorAlterationCharacteristic::"
                "ALTERED"
             << ">(" << D << ", ";
@@ -2549,7 +2589,8 @@ namespace mfront {
     } else if (this->bd.getElasticSymmetryType() == mfront::ORTHOTROPIC) {
       if (emps.size() != 9u) {
         this->throwRuntimeError(
-            "BehaviourCodeGeneratorBase::writeStiffnessTensorComputation",
+            "BehaviourCodeGeneratorBase::"
+            "writeStiffnessTensorComputation",
             "invalid number of material properties");
       }
       for (decltype(emps.size()) i = 0; i != emps.size(); ++i) {
@@ -2962,12 +3003,14 @@ namespace mfront {
        << "StressFreeExpansionType>\n"
        << "computeStressFreeExpansion()\n{\n"
        << "auto mfront_dl01_l0 = "
-       << "std::pair<StressFreeExpansionType, StressFreeExpansionType>{};\n"
+       << "std::pair<StressFreeExpansionType, "
+          "StressFreeExpansionType>{};\n"
        << "this->computeStressFreeExpansion(mfront_dl01_l0);\n"
        << "return mfront_dl01_l0;\n"
        << "}\n\n"
        << "void\n"
-       << "computeStressFreeExpansion(std::pair<StressFreeExpansionType,"
+       << "computeStressFreeExpansion(std::pair<"
+          "StressFreeExpansionType,"
        << "StressFreeExpansionType>& mfront_dl01_l0)\n{\n"
        << "using namespace std;\n"
        << "using namespace tfel::math;\n"
@@ -3057,9 +3100,11 @@ namespace mfront {
                   BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
                      (this->bd.getBehaviourType() !=
                       BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
-                 "only finite strain or small strain behaviour are supported");
+                 "only finite strain or small strain behaviour are "
+                 "supported");
         throw_if(this->bd.getSymmetryType() != mfront::ORTHOTROPIC,
-                 "axial growth is only supported for orthotropic behaviours");
+                 "axial growth is only supported for orthotropic "
+                 "behaviours");
         const auto& s = d.get<BehaviourData::AxialGrowth>();
         throw_if(s.sfe.is<BehaviourData::NullExpansion>(),
                  "null swelling is not supported here");
@@ -3104,7 +3149,8 @@ namespace mfront {
                   BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
                      (this->bd.getBehaviourType() !=
                       BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
-                 "only finite strain or small strain behaviour are supported");
+                 "only finite strain or small strain behaviour are "
+                 "supported");
         const auto& s = d.get<BehaviourData::Relocation>();
         throw_if(s.sfe.is<BehaviourData::NullExpansion>(),
                  "null swelling is not supported here");
@@ -3187,7 +3233,8 @@ namespace mfront {
                   BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
                      (this->bd.getBehaviourType() !=
                       BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
-                 "only finite strain or small strain behaviour are supported");
+                 "only finite strain or small strain behaviour are "
+                 "supported");
         throw_if(this->bd.getSymmetryType() != mfront::ORTHOTROPIC,
                  "orthotropic stress free expansion is only supported "
                  "for orthotropic behaviours");
@@ -3206,7 +3253,8 @@ namespace mfront {
                   BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
                      (this->bd.getBehaviourType() !=
                       BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
-                 "only finite strain or small strain behaviour are supported");
+                 "only finite strain or small strain behaviour are "
+                 "supported");
         throw_if(this->bd.getSymmetryType() != mfront::ORTHOTROPIC,
                  "orthotropic stress free expansion is only supported "
                  "for orthotropic behaviours");
@@ -3224,7 +3272,8 @@ namespace mfront {
                   BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
                      (this->bd.getBehaviourType() !=
                       BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
-                 "only finite strain or small strain behaviour are supported");
+                 "only finite strain or small strain behaviour are "
+                 "supported");
         const auto& s = d.get<BehaviourData::IsotropicStressFreeExpansion>();
         throw_if(s.sfe.is<BehaviourData::NullExpansion>(),
                  "null swelling is not supported here");
@@ -3259,7 +3308,8 @@ namespace mfront {
                   BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) &&
                      (this->bd.getBehaviourType() !=
                       BehaviourDescription::STANDARDFINITESTRAINBEHAVIOUR),
-                 "only finite strain or small strain behaviour are supported");
+                 "only finite strain or small strain behaviour are "
+                 "supported");
         const auto& s =
             d.get<BehaviourData::VolumeSwellingStressFreeExpansion>();
         throw_if(s.sfe.is<BehaviourData::NullExpansion>(),
@@ -3302,18 +3352,22 @@ namespace mfront {
     if (this->bd.getSymmetryType() == mfront::ORTHOTROPIC) {
       if (this->bd.getOrthotropicAxesConvention() ==
           OrthotropicAxesConvention::PIPE) {
-        os << "tfel::material::convertStressFreeExpansionStrain<hypothesis,"
+        os << "tfel::material::convertStressFreeExpansionStrain<"
+              "hypothesis,"
               "tfel::material::OrthotropicAxesConvention::"
               "PIPE>(mfront_dl0_l0);\n"
-           << "tfel::material::convertStressFreeExpansionStrain<hypothesis,"
+           << "tfel::material::convertStressFreeExpansionStrain<"
+              "hypothesis,"
               "tfel::material::OrthotropicAxesConvention::"
               "PIPE>(mfront_dl1_l0);\n";
       } else if (this->bd.getOrthotropicAxesConvention() ==
                  OrthotropicAxesConvention::PLATE) {
-        os << "tfel::material::convertStressFreeExpansionStrain<hypothesis,"
+        os << "tfel::material::convertStressFreeExpansionStrain<"
+              "hypothesis,"
               "tfel::material::OrthotropicAxesConvention::"
               "PLATE>(mfront_dl0_l0);\n"
-           << "tfel::material::convertStressFreeExpansionStrain<hypothesis,"
+           << "tfel::material::convertStressFreeExpansionStrain<"
+              "hypothesis,"
               "tfel::material::OrthotropicAxesConvention::"
               "PLATE>(mfront_dl1_l0);\n";
       } else {
@@ -3561,8 +3615,9 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
     const auto& md = this->bd.getBehaviourData(h);
-    this->writeVariablesDeclarations(os, md.getLocalVariables(),
-                                     {.useTimeDerivative = false});
+    this->writeVariablesDeclarations(
+        os, md.getLocalVariables(),
+        {.use_time_derivative = false, .make_local_copy = true});
     os << '\n';
     auto write_wrapper = [this, &os](const BehaviourVariableDescription& b) {
       const auto wrapper = getBehaviourWrapperClassName(b);
@@ -3627,12 +3682,13 @@ namespace mfront {
     for (const auto& v : md.getIntegrationVariables()) {
       if (!md.isStateVariableName(v.name)) {
         if (md.isMemberUsedInCodeBlocks(v.name)) {
-          this->writeVariableDeclaration(os, v, {.useTimeDerivative = false});
+          this->writeVariableDeclaration(os, v, {.use_time_derivative = false});
         }
       }
     }
     os << '\n';
-  }  // end od BehaviourCodeGeneratorBase::writeBehaviourIntegrationVariables
+  }  // end od
+     // BehaviourCodeGeneratorBase::writeBehaviourIntegrationVariables
 
   void BehaviourCodeGeneratorBase::writeBehaviourParameters(
       std::ostream& os, const Hypothesis h) const {
@@ -3730,7 +3786,9 @@ namespace mfront {
     this->checkBehaviourFile(os);
     this->writeVariablesDeclarations(
         os, md.getIntegrationVariables(),
-        {.prefix = "d", .useTimeDerivative = this->usesStateVariableTimeDerivative()});
+        {.prefix = "d",
+         .use_time_derivative = this->usesStateVariableTimeDerivative(),
+         .make_local_copy = true});
     os << '\n';
   }
 
@@ -5851,7 +5909,7 @@ namespace mfront {
     this->checkIntegrationDataFile(os);
     this->writeVariablesDeclarations(
         os, md.getExternalStateVariables(),
-        {.prefix = "d", .useTimeDerivative = false});
+        {.prefix = "d", .use_time_derivative = false, .make_local_copy = true});
   }
 
   void BehaviourCodeGeneratorBase::writeIntegrationDataFileBegin(

@@ -81,7 +81,11 @@ namespace mfront {
       //! \brief suffix added to variable's names
       std::string suffix = "";
       //! \brief declare time derivative of the variable
-      bool useTimeDerivative = false;
+      bool use_time_derivative = false;
+      //! \brief declare the variable as const
+      bool is_const = false;
+      //! \brief never declare the variable as a reference to external data
+      bool make_local_copy = false;
     };
     /*!
      * \brief write the given variable declaration
