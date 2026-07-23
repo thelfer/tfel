@@ -232,9 +232,12 @@ namespace tfel::utilities {
     DataMapValidator& addDataValidator(const std::string&,
                                        const DataValidator&);
     //!
-    template <typename T1>
+    template <typename... Type>
     DataMapValidator& addDataTypeValidator(const std::string& k) requires(
-        tfel::meta::TLCountNbrOfT<std::decay_t<T1>, DataTypes>::value == 1);
+        (sizeof...(Type) > 0) &&
+        (... &&
+         (tfel::meta::TLCountNbrOfT<std::decay_t<Type>, DataTypes>::value ==
+          1)));
     //! \brief validate a data-map
     void validate(const DataMap&) const;
     //! \brief destructor

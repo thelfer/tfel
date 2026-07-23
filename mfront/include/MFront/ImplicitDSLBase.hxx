@@ -22,8 +22,9 @@
 
 namespace mfront {
 
-  // forward declaratin
-  struct NonLinearSystemSolver;
+  // forward declarations
+  struct AbstractLinearSystemSolver;
+  struct AbstractNonLinearSystemSolver;
 
   //! \brief Base class for all parser based on an implicit scheme
   struct MFRONT_VISIBILITY_EXPORT ImplicitDSLBase
@@ -42,7 +43,7 @@ namespace mfront {
      * the rest of the endsInputFileProcessing method, in the
      * endTreatment method of the behaviour bricks in particular.
      */
-    const NonLinearSystemSolver& getSolver() const;
+    const AbstractNonLinearSystemSolver& getSolver() const;
 
     std::string getCodeBlockTemplate(
         const std::string&,
@@ -83,7 +84,7 @@ namespace mfront {
 
     void treatUnknownVariableMethod(const Hypothesis,
                                     const std::string&) override;
-
+    //! \brief treat the `@StateVariable` keyword
     void treatStateVariable() override;
     //! \brief treat the `@ProcessNewCorrection` keyword
     void treatProcessNewCorrection();
@@ -117,6 +118,8 @@ namespace mfront {
     virtual void treatPerturbationValueForNumericalJacobianComputation();
     //! \brief treat the `@Algorithm` keyword
     virtual void treatAlgorithm();
+    //! \brief treat the `@LinearSystemSolver` keyword
+    virtual void treatLinearSystemSolver();
     //! \brief treat the `@Predictor` keyword
     virtual void treatPredictor();
     //! \brief treat the `@ComputeThermodynamicForces` keyword
@@ -134,12 +137,26 @@ namespace mfront {
     //! \brief treat the `@NumericallyComputedJacobianBlocks` keyword
     virtual void treatNumericallyComputedJacobianBlocks();
     /*!
+     * \brief set the linear solver
+     * \param[in] s: linear solver
+     * \param[in] n: name of the linear solver
+     */
+    virtual void setLinearSystemSolver(
+        std::shared_ptr<AbstractLinearSystemSolver>, const std::string&);
+    /*!
+     * \brief set the linear solver
+     * \param[in] s: linear solver
+     * \param[in] opts: option passed to sovlver
+     */
+    virtual void setLinearSystemSolver(const std::string&,
+                                       const tfel::utilities::DataMap&);
+    /*!
      * \brief set the non linear solver
      * \param[in] s: non linear solver
      * \param[in] n: name of the non linear solver
      */
-    virtual void setNonLinearSolver(std::shared_ptr<NonLinearSystemSolver>,
-                                    const std::string&);
+    virtual void setNonLinearSolver(
+        std::shared_ptr<AbstractNonLinearSystemSolver>, const std::string&);
     /*!
      * \brief set the non linear solver
      * \param[in] s: non linear solver
@@ -166,8 +183,10 @@ namespace mfront {
     std::set<std::string> jacobianPartsUsedInIntegrator;
 
     std::set<std::string> integrationVariablesIncrementsUsedInPredictor;
+    //! \brief linear solver
+    std::shared_ptr<AbstractLinearSystemSolver> linear_solver;
     //! \brief non linear solver
-    std::shared_ptr<NonLinearSystemSolver> solver;
+    std::shared_ptr<AbstractNonLinearSystemSolver> solver;
   };  // end of struct ImplicitDSLBase
 
 }  // end of namespace mfront

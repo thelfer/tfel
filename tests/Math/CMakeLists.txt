@@ -82,6 +82,12 @@ tests_math(invert)
 tests_math(invert2)
 tests_math(tinymatrixsolve)
 tests_math(tinymatrixsolve2)
+
+if(enable-tdls)
+  tests_math(lu-tdls)  
+endif(enable-tdls)
+
+
 tests_math(qr)
 tests_math(newton_raphson)
 tests_math(powell_dog_leg_newton_raphson)

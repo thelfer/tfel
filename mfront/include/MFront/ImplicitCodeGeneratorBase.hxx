@@ -18,8 +18,9 @@
 
 namespace mfront {
 
-  // forward declaration
-  struct NonLinearSystemSolver;
+  // forward declarations
+  struct AbstractLinearSystemSolver;
+  struct AbstractNonLinearSystemSolver;
 
   struct ImplicitCodeGeneratorBase : BehaviourCodeGeneratorBase {
     /*!
@@ -27,12 +28,14 @@ namespace mfront {
      * \param[in] f: file description
      * \param[in] d: behaviour description
      * \param[in] bim: behaviour interfaces
-     * \param[in] s: non linear system
+     * \param[in] ls: linear system solver
+     * \param[in] s: non linear system solver
      */
     ImplicitCodeGeneratorBase(const FileDescription&,
                               const BehaviourDescription&,
                               const BehaviourInterfaceMap&,
-                              const NonLinearSystemSolver&,
+                              const AbstractLinearSystemSolver&,
+                              const AbstractNonLinearSystemSolver&,
                               const std::set<std::string>&,
                               const std::set<std::string>&);
     //! \brief destructor
@@ -114,8 +117,10 @@ namespace mfront {
      */
     virtual void writeComputePartialJacobianInvert(std::ostream&,
                                                    const Hypothesis) const;
+    //! \brief linear solver
+    const AbstractLinearSystemSolver& linear_solver;
     //! \brief non linear solver
-    const NonLinearSystemSolver& solver;
+    const AbstractNonLinearSystemSolver& solver;
 
 #pragma message("shall be removed, this is ugly !")
     const std::set<std::string>& jacobianPartsUsedInIntegrator;

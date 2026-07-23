@@ -70,6 +70,8 @@ Options
 - `enable-mfront-quantity-tests`: enable tests of behaviours using 
   quantities (such tests fails on old compilers, i.e. gcc-8.1.0). 
   ON by default.
+- `enable-tdls`: add support for Tiny Device-callable Linear Solver
+  library
 
 cmake usefull variables
 =======================

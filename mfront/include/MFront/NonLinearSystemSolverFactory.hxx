@@ -11,14 +11,14 @@
  * project under specific licensing conditions.
  */
 
-#ifndef LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVERFACTORY_HXX
-#define LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVERFACTORY_HXX
+#ifndef LIB_MFRONT_NONLINEARSYSTEMSOLVERFACTORY_HXX
+#define LIB_MFRONT_NONLINEARSYSTEMSOLVERFACTORY_HXX
 
 #include <map>
 #include <string>
 #include <memory>
 #include "MFront/MFrontConfig.hxx"
-#include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 
 namespace mfront {
 
@@ -27,7 +27,7 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT NonLinearSystemSolverFactory {
     //! a simple alias
-    typedef std::shared_ptr<NonLinearSystemSolver> (*constructor)();
+    typedef std::shared_ptr<AbstractNonLinearSystemSolver> (*constructor)();
     /*!
      * \return the uniq instance of the solver factory
      */
@@ -36,7 +36,8 @@ namespace mfront {
      * \return the requested solver
      * \param[in] a : solver name
      */
-    std::shared_ptr<NonLinearSystemSolver> getSolver(const std::string&) const;
+    std::shared_ptr<AbstractNonLinearSystemSolver> getSolver(
+        const std::string&) const;
     /*!
      * \param[in] a : solver name
      * \param[in] c : solver constructor
@@ -66,4 +67,4 @@ namespace mfront {
 
 }  // end of namespace mfront
 
-#endif /* LIB_MFRONT_MFRONTNONLINEARSYSTEMSOLVERFACTORY_HXX */
+#endif /* LIB_MFRONT_NONLINEARSYSTEMSOLVERFACTORY_HXX */

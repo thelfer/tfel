@@ -22,8 +22,9 @@
 #include "MFront/MFrontLogStream.hxx"
 #include "MFront/PerformanceProfiling.hxx"
 #include "MFront/SupportedTypes.hxx"
+#include "MFront/AbstractLinearSystemSolver.hxx"
+#include "MFront/AbstractNonLinearSystemSolver.hxx"
 #include "MFront/NonLinearSystemSolverBase.hxx"
-#include "MFront/NonLinearSystemSolver.hxx"
 #include "MFront/ImplicitCodeGeneratorBase.hxx"
 
 namespace mfront {
@@ -78,10 +79,12 @@ namespace mfront {
       const FileDescription& f,
       const BehaviourDescription& d,
       const BehaviourInterfaceMap& bim,
-      const NonLinearSystemSolver& s,
+      const AbstractLinearSystemSolver& ls,
+      const AbstractNonLinearSystemSolver& s,
       const std::set<std::string>& s1,
       const std::set<std::string>& s2)
       : BehaviourCodeGeneratorBase(f, d, bim),
+        linear_solver(ls),
         solver(s),
         jacobianPartsUsedInIntegrator(s1),
         integrationVariablesIncrementsUsedInPredictor(s2) {
@@ -287,6 +290,9 @@ namespace mfront {
        << "#include\"TFEL/Math/Matrix/tmatrixIO.hxx\"\n"
        << "#include\"TFEL/Math/st2tost2.hxx\"\n"
        << "#include\"TFEL/Math/ST2toST2/ST2toST2ConceptIO.hxx\"\n";
+    for (const auto& h : this->linear_solver.getSpecificHeaders()) {
+      os << "#include\"" << h << "\"\n";
+    }
     for (const auto& h : this->solver.getSpecificHeaders()) {
       os << "#include\"" << h << "\"\n";
     }
@@ -504,10 +510,16 @@ namespace mfront {
         n += SupportedTypes::getTypeSize(v.type, v.arraySize);
       }
     }
+    //
+    os << "\n/* members declared by the linear solver */\n";
+    this->linear_solver.writeSpecificMembers(os, this->bd, h);
+    os << "\n/* members declared by the nonlinear solver */\n";
+    this->solver.writeSpecificMembers(os, this->bd, h);
+    os << "\n//\n";
+    //
+    os << "SMType stiffness_matrix_type;\n";
     // size of linear system
     n = n3;
-    this->solver.writeSpecificMembers(os, this->bd, h);
-    os << "SMType stiffness_matrix_type;\n";
     //
     if (this->solver.usesJacobian()) {
       // compute the numerical part of the jacobian.  This method is
@@ -1356,11 +1368,13 @@ namespace mfront {
        << "auto mfront_success = true;\n";
     if (this->bd.getAttribute(BehaviourData::profiling, false)) {
       writeStandardPerformanceProfilingBegin(os, this->bd.getClassName(),
-                                             "TinyMatrixSolve", "lu");
+                                             "solveLinearSystem", "lu");
     }
-    os << "mfront_success = "
-       << this->solver.getExternalAlgorithmClassName(this->bd, h)
-       << "::solveLinearSystem(mfront_matrix, mfront_vector);\n";
+    this->linear_solver.writeLinearSystemResolution(
+        os, bd, this->solver, h,
+        {.returned_value = "mfront_success",
+         .matrix = "mfront_matrix",
+         .rhs = "mfront_vector"});
     if (this->bd.getAttribute(BehaviourData::profiling, false)) {
       writeStandardPerformanceProfilingEnd(os);
     }

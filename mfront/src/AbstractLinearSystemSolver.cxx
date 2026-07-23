@@ -1,8 +1,8 @@
 /*!
- * \file  mfront/src/NonLinearSystemSolver.cxx
+ * \file  mfront/src/AbstractLinearSystemSolver.cxx
  * \brief
  * \author Thomas Helfer
- * \brief 22 août 2014
+ * \brief 5/07/2026
  * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
  * reserved.
  * This project is publicly released under either the GNU GPL Licence with
@@ -11,10 +11,10 @@
  * project under specific licensing conditions.
  */
 
-#include "MFront/NonLinearSystemSolver.hxx"
+#include "MFront/AbstractLinearSystemSolver.hxx"
 
 namespace mfront {
 
-  NonLinearSystemSolver::~NonLinearSystemSolver() = default;
+  AbstractLinearSystemSolver::~AbstractLinearSystemSolver() = default;
 
 }  // end of namespace mfront
