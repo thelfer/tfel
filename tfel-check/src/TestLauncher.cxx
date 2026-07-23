@@ -725,14 +725,22 @@ namespace tfel::check {
     tfel::raise("TestLauncher::ClockAction: invalid clockevent");
   }
 
-  bool TestLauncher::execute(const Command& c,
+  bool TestLauncher::execute(const Configuration& configuration,
+                             const Command& c,
                              const std::string& output_file,
                              const std::string& step) {
     try {
       tfel::system::ProcessManager manager;
       this->ClockAction(START);
-      manager.execute(this->directory, c.command, "", output_file,
-                      this->environments);
+      auto envs = this->environments;
+      for (const auto& kv : configuration.environments) {
+        if (!envs.insert(kv).second) {
+          this->log.addMessage("environment variable '" + kv.first +
+                               "' multiply defined: using the value defined in "
+                               "the test file");
+        }
+      }
+      manager.execute(this->directory, c.command, "", output_file, envs);
       this->ClockAction(STOP);
       if (c.output_check) {
         const auto output = getFileContent(output_file);
@@ -790,7 +798,7 @@ namespace tfel::check {
         }
         return this->directory + '/' + this->testname + "-" + step + ".out";
       }();
-      const auto success = this->execute(c, output_file, step);
+      const auto success = this->execute(configuration, c, output_file, step);
       this->glog.addSimpleTestResult("** " + step + " " + c.command, success);
       if (!success) {
         if (!configuration.discard_commands_failure) {

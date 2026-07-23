@@ -355,6 +355,7 @@ Configuration files can be used to define:
 
 - substitution strings
 - available components
+- environment variables
 
 The syntax of configuration file is loosely inspired by the `JSON`
 format and looks like:
@@ -363,6 +364,25 @@ format and looks like:
 components : {"pleiades::python"};
 substitutions : {"python" : "python3.5"};
 ~~~~
+
+## Defining environment variables in configuration files
+
+The `environment_variables` section introduce a map defining a
+set of environment variables.
+
+### Example of usage
+
+~~~~{.cxx}
+environment_variables: {"CXXFLAGS": "-Wall"};
+~~~~
+
+### Caution
+
+- An environment variable can only be defined once in configuration
+  files
+- If an environment variable is defined in a configuration file and in a
+  test file (through the `@Environment` keyword), the latter definition
+  is used.
 
 # Default components {#sec:tfel_check:default_components}
 

@@ -92,11 +92,15 @@ namespace tfel::check {
     };  // end of struct Command
     /*!
      * \brief execute the given comment
+     * \param[in] configuration: global configuration
      * \param[in] c: command
      * \param[in] output_file: output file name
      * \param[in] step:
      */
-    bool execute(const Command&, const std::string&, const std::string&);
+    bool execute(const Configuration&,
+                 const Command&,
+                 const std::string&,
+                 const std::string&);
     /*!
      * \brief register a new callback
      */
