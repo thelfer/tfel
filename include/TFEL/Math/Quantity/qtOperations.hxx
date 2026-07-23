@@ -341,7 +341,7 @@ namespace tfel::math {
   }
 
   /*!
-   * \brief Partial specialisation for substraction of two qt having the same
+   * \brief Partial specialisation for subtraction of two qt having the same
    * unit \see   ResultType
    */
   template <UnitConcept UnitType,
