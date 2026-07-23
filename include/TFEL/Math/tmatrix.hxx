@@ -321,6 +321,15 @@ namespace tfel::math {
         requires((sizeof...(d) == N) && ((d == M) && ...));
     //! \return the identity matrix
     TFEL_HOST_DEVICE static constexpr auto Id();
+    /*!
+     * \return the (i, j) component of Id(), computed directly without
+     * instantiating the full matrix. Useful on GPU when the indices are
+     * warp-divergent at runtime, where indexing a materialized Id()
+     * defeats coalescence / constant-memory broadcast.
+     * \param[in] i, j: indices in [0, N).
+     */
+    TFEL_HOST_DEVICE static constexpr auto generateIdComponent(
+        unsigned short, unsigned short) noexcept;
     // inheriting GenericFixedSizeArray' access operators
     using GenericFixedSizeArrayBase::operator[];
     using GenericFixedSizeArrayBase::operator();

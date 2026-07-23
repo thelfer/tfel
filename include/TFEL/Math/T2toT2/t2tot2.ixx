@@ -298,6 +298,15 @@ namespace tfel::math {
   }  // end of Id
 
   template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::generateIdComponent(
+      unsigned short i, unsigned short j) noexcept {
+    using base = base_type<T>;
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    constexpr auto c1 = base{1};
+    return c1 * (i == j);
+  }  // end of generateIdComponent
+
+  template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::IxI() noexcept {
     using base = base_type<T>;
     constexpr auto c1 = base{1};
@@ -327,6 +336,15 @@ namespace tfel::math {
                     c0, c0, c0, c0, c0, c0, c0, c0, c0};
     }
   }  // end of IxI
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::generateIxIComponent(
+      unsigned short i, unsigned short j) noexcept {
+    using base = base_type<T>;
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    constexpr auto c1 = base{1};
+    return c1 * ((i < 3) & (j < 3));
+  }  // end of generateIxIComponent
 
   template <unsigned short N, typename T>
   TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::K() noexcept {
@@ -361,6 +379,18 @@ namespace tfel::math {
                     c0,    c0,    c0,    c0, c0, c0, c0, c0, c1};
     }
   }  // end of K
+
+  template <unsigned short N, typename T>
+  TFEL_HOST_DEVICE constexpr auto t2tot2<N, T>::generateKComponent(
+      unsigned short i, unsigned short j) noexcept {
+    using base = base_type<T>;
+    static_assert((N == 1) || (N == 2) || (N == 3));
+    constexpr auto c2_3 = base{2} / base{3};
+    constexpr auto c1_3 = base{1} / base{3};
+    return c2_3 * (i == j) * ((i < 3) & (j < 3)) +
+                  (i == j) * ((i >= 3) & (j >= 3)) -
+           c1_3 * (1 - (i == j)) * ((i < 3) & (j < 3));
+  }  // end of generateKComponent
 
   template <unsigned short N, typename T>
   template <T2toST2Concept T2toST2Type>
