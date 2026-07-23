@@ -375,20 +375,25 @@ namespace tfel::math {
       ViewsFixedSizeVectorIndexingPolicy<MappedType, SizeType, N, Stride>>;
 
   template <typename ArrayType>
+  concept FixedSizeArrayTypeDefininigArrayViewConcept =
+      ((ArrayType::indexing_policy::hasFixedSizes) &&
+       (ArrayType::indexing_policy::arity == 1u));
+
+  template <FixedSizeArrayTypeDefininigArrayViewConcept ArrayType>
+  using StandardFixedSizeViewsArray = std::conditional_t<
+      std::is_const_v<ArrayType>,
+      ViewsFixedSizeVector<const numeric_type<ArrayType>,
+                           typename ArrayType::indexing_policy::size_type,
+                           typename ArrayType::indexing_policy().size(0)>,
+      ViewsFixedSizeVector<numeric_type<ArrayType>,
+                           typename ArrayType::indexing_policy::size_type,
+                           typename ArrayType::indexing_policy().size(0)>>;
+
+  template <FixedSizeArrayTypeDefininigArrayViewConcept ArrayType>
   constexpr auto map_array(
       const ViewsArrayDataPointerType<numeric_type<ArrayType>> p) {
-    using MappedType = numeric_type<ArrayType>;
-    using IndexingPolicy = typename ArrayType::indexing_policy;
-    using size_type = typename IndexingPolicy::size_type;
-    static_assert(IndexingPolicy::hasFixedSizes);
-    static_assert(IndexingPolicy::arity == 1u);
-    constexpr auto N = IndexingPolicy().size(0);
-    if constexpr (std::is_const_v<ArrayType>) {
-      return ViewsFixedSizeVector<const MappedType, size_type, N>(p);
-    } else {
-      return ViewsFixedSizeVector<MappedType, size_type, N>(p);
-    }
-  }
+    return StandardFixedSizeViewsArray<ArrayType>{p};
+  } // end of map_array
 
 }  // end of namespace tfel::math
 

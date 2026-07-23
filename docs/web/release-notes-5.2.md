@@ -129,6 +129,25 @@ Another example would be to use `@CleanDirectories` and `@CleanFiles`
 commands inappropriately and erase data used by commands of other
 `.check` files.
 
+## Defining environment variables in configuration files
+
+Configuration files can now contain an `environment_variables` sections
+which can introduce a map defining a set of environment variables.
+
+### Example of usage
+
+~~~~{.cxx}
+environment_variables: {"CXXFLAGS": "-Wall"};
+~~~~
+
+### Caution
+
+- An environment variable can only be defined once in configuration
+  files
+- If an environment variable is defined in a configuration file and in a
+  test file (through the `@Environment` keyword), the latter definition
+  is used.
+
 ##  New features in `TFEL/System`
 
 ### Improvements in `ProcessManager`
@@ -238,6 +257,10 @@ France) and Framatome. Homogenization developments were conducted within
 the framework of the AnoHonA ANR project (n° AAPG2023).
 
 # Issues fixed
+
+## Issue 995: [tfel-check] Adding @Environment section in configuration file
+
+For more details, see <https://github.com/thelfer/tfel/issues/995>
 
 ## Issue 987: `StridedCoalescedView` has no exposed data pointer and stride
 
