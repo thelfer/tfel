@@ -42,7 +42,7 @@
 #include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontMaterialPropertyInterface.hxx"
 #include "MFront/StaticVariableDescription.hxx"
-#include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
+#include "MFront/ConfigurationManager.hxx"
 #include "MFront/MaterialPropertyDSL.hxx"
 
 // fixing a bug on current glibc++ cygwin versions (19/08/2015)
@@ -1054,7 +1054,8 @@ namespace mfront {
   DSLBase::handleMaterialPropertyDescription(const std::string& f) {
     // getting informations the source file
     const auto& global_options =
-        GlobalDomainSpecificLanguageOptionsManager::get();
+        static_cast<const GlobalDomainSpecificLanguageOptionsManager&>(
+            ConfigurationManager::get());
     auto mp = MaterialPropertyDSL{
         tfel::utilities::merge(global_options.getMaterialPropertyDSLOptions(),
                                this->buildDSLOptions(), true)};

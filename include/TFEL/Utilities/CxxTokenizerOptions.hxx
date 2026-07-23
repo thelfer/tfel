@@ -76,6 +76,8 @@ namespace tfel::utilities {
     bool charAsString = false;
     //! \brief treat `.` as a separator
     bool dotAsSeparator = true;
+    //! \brief treat `+` as a separator
+    bool plusAsSeparator = true;
     //! \brief treat `-` as a separator
     bool minusAsSeparator = true;
     //! \brief add curly braces at the beginning and at the end of the file

@@ -1,4 +1,3 @@
-
 install_header(TFEL Macros.hxx)
 install_header(TFEL ContractViolation.hxx)
 install_header(TFEL Raise.hxx)
@@ -11,6 +10,7 @@ install_header(TFEL/Config TFELTypes.hxx)
 install_header(TFEL/Config TFELConfig.hxx)
 install_header(TFEL/Config GetInstallPath.hxx)
 install_header(TFEL/Config GetTFELVersion.h)
+install_header(TFEL/Config Substitutions.hxx)
 
 install_header(TFEL/Glossary/Forward Glossary.hxx)
 install_header(TFEL/Glossary Glossary.hxx)

@@ -184,6 +184,13 @@ namespace mfront {
 
   CppMaterialPropertyInterface::CppMaterialPropertyInterface() = default;
 
+  void CppMaterialPropertyInterface::setOptions(const DataMap& opts) {
+    if (!opts.empty()) {
+      tfel::raise("no options expected for interface '" + this->getName() +
+                  "'");
+    }
+  }  // end of setOptions
+
   std::pair<bool,
             tfel::utilities::CxxTokenizer::TokensContainer::const_iterator>
   CppMaterialPropertyInterface::treatKeyword(const std::string& k,

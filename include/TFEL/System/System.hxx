@@ -49,30 +49,27 @@ namespace tfel::system {
    * posix system call.
    */
   struct TFELSYSTEM_VISIBILITY_EXPORT systemCall {
-    /*
+    /*!
      * An helper function to convert errno values to C++ exceptions.
      * \param[in] a description of the error.
      * \param const int, value of errno.
      */
     [[noreturn]] static void throwSystemError(const std::string&, const int);
-
-/*
- * create one or more directories.
- * This command is equivalent to the shell command 'mkdir -p'.
- * \param[in] path to be created.
- * \param const mode_t, opening mode.
- */
+    /*!
+     * create one or more directories.
+     * This command is equivalent to the shell command 'mkdir -p'.
+     * \param[in] path to be created.
+     * \param const mode_t, opening mode.
+     */
 #if defined _WIN32 || defined _WIN64
     static void mkdir(const std::string&);
 #else
     static void mkdir(const std::string&, const mode_t = S_IRWXU | S_IRWXG);
 #endif /* LIB_TFEL_SYSTEM_HXX */
-
     /*!
      * \param f : file to unlink
      */
     static void unlink(const std::string&);
-
     /*!
      * \param d : directory to remove
      */

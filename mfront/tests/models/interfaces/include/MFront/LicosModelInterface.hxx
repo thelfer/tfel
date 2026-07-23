@@ -21,39 +21,20 @@ namespace mfront {
 
   struct MFrontModelInterface final : public AbstractModelInterface {
     static std::string getName();
-
+    //! \brief constructor
     MFrontModelInterface();
-
+    //! \brief destructor
     ~MFrontModelInterface() override;
-
-    /*!
-     * \param[in] k  : keyword treated
-     * \param[in] i:   list of interfaces to which the keyword is restricted
-     * \param[in] p  : iterator to the current token
-     * \param[in] pe : iterator past the end of the file
-     * \return a pair. The first entry is true if the keyword was
-     * treated by the interface. The second entry is an iterator after
-     * the last token treated.
-     */
+    //
+    void setOptions(const DataMap&) override;
     std::pair<bool, tokens_iterator> treatKeyword(
         const std::string&,
         const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
-
     void declareReservedNames(std::set<std::string>&) override;
-
-    /*!
-     * \param pdata : processing data
-     * \param data  : model data
-     */
     void writeOutputFiles(const FileDescription&,
                           const ModelDescription&) override;
-    /*!
-     * \brief : fill the target descripton
-     * \param[out] d  : target description
-     * \param[in]  md : model description
-     */
     void getTargetsDescription(TargetsDescription&,
                                const ModelDescription&) override;
 

@@ -18,7 +18,6 @@
 #include <iterator>
 #include <algorithm>
 #include <stdexcept>
-
 #include "TFEL/Raise.hxx"
 #include "TFEL/Config/GetInstallPath.hxx"
 #include "TFEL/Utilities/Data.hxx"
@@ -27,9 +26,9 @@
 #include "TFEL/Glossary/Glossary.hxx"
 #include "TFEL/Glossary/GlossaryEntry.hxx"
 #include "TFEL/UnicodeSupport/UnicodeSupport.hxx"
-
 #include "MFront/MFrontHeader.hxx"
 #include "MFront/MFrontLogStream.hxx"
+#include "MFront/ConfigurationManager.hxx"
 #include "MFront/CodeGeneratorUtilities.hxx"
 #include "MFront/MFrontUtilities.hxx"
 #include "MFront/PedanticMode.hxx"
@@ -38,6 +37,7 @@
 #include "MFront/DSLFactory.hxx"
 #include "MFront/MaterialPropertyDSL.hxx"
 #include "MFront/TargetsDescription.hxx"
+#include "MFront/ModelInterfaceFactory.hxx"
 #include "MFront/DataInterpolationUtilities.hxx"
 #include "MFront/MaterialPropertyInterfaceFactory.hxx"
 
@@ -451,9 +451,15 @@ namespace mfront {
 
   void MaterialPropertyDSL::addInterface(const std::string& i) {
     using MLIF = mfront::MaterialPropertyInterfaceFactory;
+    const auto& m = ConfigurationManager::get();
     if (this->interfaces.find(i) == this->interfaces.end()) {
       auto& mlif = MLIF::getMaterialPropertyInterfaceFactory();
-      this->interfaces.insert({i, mlif.getInterface(i)});
+      auto ptr = mlif.getInterface(i);
+      const auto opts = m.getMaterialPropertyInterfaceOptions(i);
+      if (!opts.empty()) {
+        ptr->setOptions(opts);
+      }
+      this->interfaces.insert({i, ptr});
     }
   }  // end of addInterface
 

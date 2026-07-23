@@ -49,13 +49,21 @@ endif(enable-static)
 
 add_executable(tfel-check tfel-check.cxx)
 set_property(TARGET tfel-check PROPERTY POSITION_INDEPENDENT_CODE TRUE)
+
+# components
+if(tfel-check-components)
+  string(REPLACE ";" "@" TFEL_CHECK_COMPONENTS_VALUE "${tfel-check-components}")
+  target_compile_definitions(tfel-check
+    PRIVATE "TFEL_CHECK_COMPONENTS=\"${TFEL_CHECK_COMPONENTS_VALUE}\"")
+endif(tfel-check-components)
+
 if(enable-python OR enable-python-bindings)
   target_compile_definitions(tfel-check
     PRIVATE TFEL_PYTHON_EXECUTABLE="${Python_EXECUTABLE}")
 endif(enable-python OR enable-python-bindings)
 
 target_link_libraries(tfel-check
-  TFELMFront TFELCheck TFELUtilities TFELSystem)
+  TFELMFront TFELCheck TFELUtilities TFELSystem TFELConfig)
 if(TFEL_APPEND_SUFFIX)
   set_target_properties(tfel-check
     PROPERTIES OUTPUT_NAME "tfel-check-${TFEL_SUFFIX}")

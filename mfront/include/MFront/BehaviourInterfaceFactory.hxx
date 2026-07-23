@@ -36,6 +36,11 @@ namespace mfront {
      */
     bool exists(const std::string&) const;
     /*!
+     * \return the unique name associated with the interface
+     * \param[in] n: interface name
+     */
+    std::string getUniqueNameFromAlias(const std::string&) const;
+    /*!
      * \return a newly created interface
      * \param[in] n : interface name
      */

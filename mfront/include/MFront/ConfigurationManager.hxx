@@ -1,0 +1,276 @@
+/*!
+ * \file   MFront/ConfigurationManager.hxx
+ * \brief  This file declares the `ConfigurationManager` class
+ * \author Thomas Helfer
+ * \date   09/04/2026
+ * \copyright Copyright (C) 2006-2025 CEA/DEN, EDF R&D. All rights
+ * reserved.
+ * This project is publicly released under either the GNU GPL Licence with
+ * linking exception or the CECILL-A licence. A copy of thoses licences are
+ * delivered with the sources of TFEL. CEA or EDF may also distribute this
+ * project under specific licensing conditions.
+ */
+
+#ifndef LIB_MFRONT_CONFIGURATIONMANAGER_HXX
+#define LIB_MFRONT_CONFIGURATIONMANAGER_HXX
+
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
+#include <optional>
+#include "TFEL/Utilities/Data.hxx"
+#include "MFront/MFrontConfig.hxx"
+#include "MFront/GlobalDomainSpecificLanguageOptionsManager.hxx"
+
+namespace mfront {
+
+  /*!
+   * \brief class holding the global configuration of `MFront`
+   *
+   *
+   */
+  struct MFRONT_VISIBILITY_EXPORT ConfigurationManager
+      : GlobalDomainSpecificLanguageOptionsManager {
+    /*!
+     * \brief list of supported languages (including extensions) for which
+     * options may be defined
+     */
+    enum Language { CXX, C, FORTRAN, CUDA, HIP, SYCL };
+    //! \brief list of option categories for the supported languages
+    enum LanguageOptionCategory { PREPROCESSOR_FLAGS, COMPILATION_FLAGS };
+    //! \brief list of option categories for the linking the generated libraries
+    enum LinkerOptionCategory { LINKER_FLAGS, LINK_PATHS, LINK_LIBRARIES };
+    //! \brief a simple alias
+    using DataMap = tfel::utilities::DataMap;
+    /*!
+     * \brief return the language associated with the given string
+     *
+     * \param[in] s: string
+     */
+    [[nodiscard]] static Language getLanguage(std::string_view);
+    /*!
+     * \brief return the language options category associated with the given
+     * string
+     *
+     * \param[in] s: string
+     */
+    [[nodiscard]] static LanguageOptionCategory getLanguageOptionsCategory(
+        std::string_view);
+    /*!
+     * \brief return the language options category associated with the given
+     * string
+     *
+     * \param[in] s: string
+     */
+    [[nodiscard]] static LinkerOptionCategory getLinkerOptionsCategory(
+        std::string_view);
+    //! \brief return the unique instance of this class
+    [[nodiscard]] static ConfigurationManager& get() noexcept;
+    /*!
+     * \brief declare options for the given interface
+     *
+     * \param[in] i: interface name
+     * \param[in] opts: options
+     *
+     * \note the interface must be declared in the one of interface factories
+     * (`MaterialPropertyInterfaceFactory`, `BehaviourInterfaceFactory, or
+     * `ModelInterfaceFactory), otherwise an exception is thrown
+     */
+    void addInterfaceOptions(const std::string&, const DataMap&);
+    /*!
+     * \brief declare options for the given interface
+     *
+     * \param[in] i: interface name
+     * \param[in] opts: options
+     *
+     * \note the interface must be declared in the
+     * `MaterialPropertyInterfaceFactory` factory, otherwise an exception is
+     * thrown
+     */
+    void addMaterialPropertyInterfaceOptions(const std::string&,
+                                             const DataMap&);
+    /*!
+     * \brief declare options for the given interface
+     *
+     * \param[in] i: interface name
+     * \param[in] opts: options
+     *
+     * \note the interface must be declared in the
+     * `BehaviourInterfaceFactory` factory, otherwise an exception is
+     * thrown
+     */
+    void addBehaviourInterfaceOptions(const std::string&, const DataMap&);
+    /*!
+     * \brief declare options for the given interface
+     *
+     * \param[in] i: interface name
+     * \param[in] opts: options
+     *
+     * \note the interface must be declared in the
+     * `ModelInterfaceFactory` factory, otherwise an exception is
+     * thrown
+     */
+    void addModelInterfaceOptions(const std::string&, const DataMap&);
+    /*!
+     * \return the options for the given interface
+     *
+     * \param[in] i: interface name
+     *
+     * \note the options returned include the ones declared with
+     * `addMaterialPropertyInterfaceOptions` and `addInterfaceOptions`
+     *
+     * \note the interface must be declared in the
+     * `MaterialPropertyInterfaceFactory` factory, otherwise an exception is
+     * thrown
+     *
+     * \note if no option is declared for this interface, an empty data map is
+     * returned.
+     */
+    DataMap getMaterialPropertyInterfaceOptions(const std::string&) const;
+    /*!
+     * \return the options for the given interface
+     *
+     * \param[in] i: interface name
+     * \note the options returned include the ones declared with
+     * `addBehaviourInterfaceOptions` and `addInterfaceOptions`
+     *
+     * \note the interface must be declared in the
+     * `BehaviourInterfaceFactory` factory, otherwise an exception is
+     * thrown
+     */
+    DataMap getBehaviourInterfaceOptions(const std::string&) const;
+    /*!
+     * \return the options for the given interface
+     *
+     * \param[in] i: interface name
+     * \note the options returned include the ones declared with
+     * `addModelInterfaceOptions` and `addInterfaceOptions`
+     *
+     * \note the interface must be declared in the
+     * `ModelInterfaceFactory` factory, otherwise an exception is
+     * thrown
+     */
+    DataMap getModelInterfaceOptions(const std::string&) const;
+    /*!
+     * \brief set the compiler for the given language
+     *
+     * \param[in] c: compiler
+     * \note an exception is thrown if the compiler is already set for the given
+     * language
+     */
+    void setCompiler(const Language, const std::string&);
+    //! \return the compiler for the given language, if set
+    [[nodiscard]] std::optional<std::string> getCompiler(const Language) const;
+    /*!
+     * \brief add a compilation option of the given language
+     *
+     * \param[in] l: language
+     * \param[in] c: category
+     * \param[in] o: option
+     */
+    void addCompilationOption(const Language,
+                              const LanguageOptionCategory,
+                              const std::string&);
+    /*!
+     * \brief add a compilation option of the given language
+     *
+     * \param[in] l: language
+     * \param[in] c: category
+     * \param[in] opts: options
+     */
+    void addCompilationOptions(const Language,
+                               const LanguageOptionCategory,
+                               const std::vector<std::string>&);
+    /*!
+     * \return the compilation options for the given language and category
+     *
+     * \param[in] l: language
+     * \param[in] c: category
+     */
+    [[nodiscard]] std::optional<std::set<std::string>> getCompilationOptions(
+        const Language, const LanguageOptionCategory) const;
+    /*!
+     * \brief add a linker option
+     *
+     * \param[in] c: category
+     * \param[in] o: option
+     */
+    void addLinkerOption(const LinkerOptionCategory, const std::string&);
+    /*!
+     * \brief add a linker option
+     *
+     * \param[in] c: category
+     * \param[in] opts: options
+     */
+    void addLinkerOptions(const LinkerOptionCategory,
+                          const std::vector<std::string>&);
+    /*!
+     * \return the linker options of the given category
+     *
+     * \param[in] c: category
+     */
+    [[nodiscard]] std::optional<std::set<std::string>> getLinkerOptions(
+        const LinkerOptionCategory) const;
+    /*!
+     * \brief add a include path
+     *
+     * \param[in] p: path
+     */
+    void addIncludePath(const std::string&);
+    /*!
+     * \brief add a include path
+     *
+     * \param[in] c: category
+     * \param[in] path: paths
+     */
+    void addIncludePaths(const std::vector<std::string>&);
+    //! \return the include paths
+    [[nodiscard]] std::set<std::string> getIncludePaths() const;
+
+   private:
+    /*!
+     * \brief list of options given to an interface, regardless if it is an
+     * interface for material properties, behaviours or models.
+     */
+    std::map<std::string, DataMap> interfaces_options;
+    /*!
+     * \brief list of options given to interfaces dedicated to material
+     * properties
+     */
+    std::map<std::string, DataMap> material_property_interfaces_options;
+    //! \brief list of options given to interfaces dedicated to behaviours
+    std::map<std::string, DataMap> behaviour_interfaces_options;
+    //! \brief list of options given to interfaces dedicated to models
+    std::map<std::string, DataMap> model_interfaces_options;
+    //! \brief list of compilers
+    std::map<Language, std::string> compilers;
+    //! \brief list of compilation options
+    std::map<Language, std::map<LanguageOptionCategory, std::set<std::string>>>
+        compilation_options;
+    //! \brief list of include paths
+    std::set<std::string> include_paths;
+    //! \brief list of compilation options
+    std::map<LinkerOptionCategory, std::set<std::string>> linker_options;
+  };
+
+  //! \brief return the options used to read a configuration file
+  [[nodiscard]] MFRONT_VISIBILITY_EXPORT tfel::utilities::CxxTokenizerOptions
+  getConfigurationParsingOptions() noexcept;
+  /*!
+   * \brief read a configuration file and turn it into a `DataMap`
+   *
+   * \param[in] f: file name
+   */
+  [[nodiscard]] MFRONT_VISIBILITY_EXPORT tfel::utilities::DataMap
+  readConfigurationFile(const std::string&);
+  /*!
+   * \brief parse a configuration file
+   *
+   * \param[in] f: file name
+   */
+  MFRONT_VISIBILITY_EXPORT void parseConfigurationFile(const std::string&);
+
+}  // end of namespace mfront
+
+#endif /* LIB_MFRONT_CONFIGURATIONMANAGER_HXX */
