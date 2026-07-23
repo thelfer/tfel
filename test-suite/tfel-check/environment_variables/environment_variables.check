@@ -1,0 +1,1 @@
+@Command "tfel-check -c test.config test.checkfile";
