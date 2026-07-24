@@ -46,11 +46,11 @@ namespace mfront {
      */
     ThermodynamicForce(const VariableDescription&);
     //! \brief move constructor
-    ThermodynamicForce(ThermodynamicForce&&);
+    ThermodynamicForce(ThermodynamicForce&&) noexcept;
     //! \brief copy constructor
     ThermodynamicForce(const ThermodynamicForce&);
     //! \brief move assignement
-    ThermodynamicForce& operator=(ThermodynamicForce&&);
+    ThermodynamicForce& operator=(ThermodynamicForce&&) noexcept;
     //! \brief standard assignement
     ThermodynamicForce& operator=(const ThermodynamicForce&);
     //! destructor

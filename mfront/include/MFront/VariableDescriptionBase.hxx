@@ -31,15 +31,15 @@ namespace mfront {
    * than 1.
    */
   struct MFRONT_VISIBILITY_EXPORT VariableDescriptionBase {
-    //! default constructor
+    //! \brief default constructor
     VariableDescriptionBase();
-    //! copy constructor
+    //! \brief copy constructor
     VariableDescriptionBase(const VariableDescriptionBase&);
-    //! move constructor
-    VariableDescriptionBase(VariableDescriptionBase&&);
-    //! move operator
-    VariableDescriptionBase& operator=(VariableDescriptionBase&&);
-    //! assignement operator
+    //! \brief move constructor
+    VariableDescriptionBase(VariableDescriptionBase&&) noexcept;
+    //! \brief move operator
+    VariableDescriptionBase& operator=(VariableDescriptionBase&&) noexcept;
+    //! \brief assignement operator
     VariableDescriptionBase& operator=(const VariableDescriptionBase&);
     /*!
      * \brief constructor

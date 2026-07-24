@@ -30,9 +30,9 @@ namespace mfront {
       : VariableDescription(v) {
   }  // end of ThermodynamicForce::ThermodynamicForce
 
-  ThermodynamicForce::ThermodynamicForce(ThermodynamicForce&&) = default;
+  ThermodynamicForce::ThermodynamicForce(ThermodynamicForce&&) noexcept = default;
   ThermodynamicForce::ThermodynamicForce(const ThermodynamicForce&) = default;
-  ThermodynamicForce& ThermodynamicForce::operator=(ThermodynamicForce&&) =
+  ThermodynamicForce& ThermodynamicForce::operator=(ThermodynamicForce&&) noexcept =
       default;
   ThermodynamicForce& ThermodynamicForce::operator=(const ThermodynamicForce&) =
       default;

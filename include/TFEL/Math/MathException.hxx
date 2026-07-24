@@ -60,7 +60,7 @@ namespace tfel::math {
         MaximumNumberOfIterationsReachedException&&) = default;
     MaximumNumberOfIterationsReachedException(
         const MaximumNumberOfIterationsReachedException&) = default;
-    const char* what() const noexcept override final;
+    const char* what() const noexcept final;
     ~MaximumNumberOfIterationsReachedException() noexcept override;
   };  // end of struct MaximumNumberOfIterationsReachedException
 

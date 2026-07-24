@@ -104,7 +104,7 @@ namespace mfront {
       //! \brief assignement operator
       TypeSize& operator=(const TypeSize&);
       //! \brief move assignement operator
-      TypeSize& operator=(TypeSize&&);
+      TypeSize& operator=(TypeSize&&) noexcept;
       /*!
        * \brief plus-equal operator
        * \param[in] rhs: right hand side
@@ -229,9 +229,9 @@ namespace mfront {
      */
     struct MFRONT_VISIBILITY_EXPORT TypeParsingOptions {
       TypeParsingOptions();
-      TypeParsingOptions(TypeParsingOptions&&);
+      TypeParsingOptions(TypeParsingOptions&&) noexcept;
       TypeParsingOptions(const TypeParsingOptions&);
-      TypeParsingOptions& operator=(TypeParsingOptions&&);
+      TypeParsingOptions& operator=(TypeParsingOptions&&) noexcept;
       TypeParsingOptions& operator=(const TypeParsingOptions&);
       ~TypeParsingOptions();
       /*!

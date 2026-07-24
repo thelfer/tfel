@@ -58,9 +58,9 @@ namespace mfront {
     //! \brief copy constructor
     VariableDescription(const VariableDescription&);
     //! \brief move constructor
-    VariableDescription(VariableDescription&&);
+    VariableDescription(VariableDescription&&) noexcept;
     //! \brief move operator
-    VariableDescription& operator=(VariableDescription&&);
+    VariableDescription& operator=(VariableDescription&&) noexcept;
     //! \brief assignement operator
     VariableDescription& operator=(const VariableDescription&);
     /*!
@@ -321,9 +321,9 @@ namespace mfront {
     VariableDescriptionContainer();
     VariableDescriptionContainer(
         const std::initializer_list<VariableDescription>&);
-    VariableDescriptionContainer(VariableDescriptionContainer&&);
+    VariableDescriptionContainer(VariableDescriptionContainer&&) noexcept;
     VariableDescriptionContainer(const VariableDescriptionContainer&);
-    VariableDescriptionContainer& operator=(VariableDescriptionContainer&&);
+    VariableDescriptionContainer& operator=(VariableDescriptionContainer&&) noexcept;
     VariableDescriptionContainer& operator=(
         const VariableDescriptionContainer&);
     // resusing method from std::vector
