@@ -323,7 +323,8 @@ namespace mfront {
         const std::initializer_list<VariableDescription>&);
     VariableDescriptionContainer(VariableDescriptionContainer&&) noexcept;
     VariableDescriptionContainer(const VariableDescriptionContainer&);
-    VariableDescriptionContainer& operator=(VariableDescriptionContainer&&) noexcept;
+    VariableDescriptionContainer& operator=(
+        VariableDescriptionContainer&&) noexcept;
     VariableDescriptionContainer& operator=(
         const VariableDescriptionContainer&);
     // resusing method from std::vector

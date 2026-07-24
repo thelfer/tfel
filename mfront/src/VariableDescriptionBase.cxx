@@ -46,8 +46,8 @@ namespace mfront {
 
   VariableDescriptionBase::VariableDescriptionBase(
       const VariableDescriptionBase&) = default;
-  VariableDescriptionBase::VariableDescriptionBase(VariableDescriptionBase&&) noexcept =
-      default;
+  VariableDescriptionBase::VariableDescriptionBase(
+      VariableDescriptionBase&&) noexcept = default;
   VariableDescriptionBase& VariableDescriptionBase::operator=(
       VariableDescriptionBase&&) noexcept = default;
   VariableDescriptionBase& VariableDescriptionBase::operator=(

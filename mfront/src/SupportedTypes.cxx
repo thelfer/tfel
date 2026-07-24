@@ -84,12 +84,13 @@ namespace mfront {
   }  // end of isSupportedConstexprIntegerVariables
 
   SupportedTypes::TypeParsingOptions::TypeParsingOptions() = default;
-  SupportedTypes::TypeParsingOptions::TypeParsingOptions(TypeParsingOptions&&) noexcept =
-      default;
+  SupportedTypes::TypeParsingOptions::TypeParsingOptions(
+      TypeParsingOptions&&) noexcept = default;
   SupportedTypes::TypeParsingOptions::TypeParsingOptions(
       const TypeParsingOptions&) = default;
   SupportedTypes::TypeParsingOptions&
-  SupportedTypes::TypeParsingOptions::operator=(TypeParsingOptions&&) noexcept = default;
+  SupportedTypes::TypeParsingOptions::operator=(TypeParsingOptions&&) noexcept =
+      default;
   SupportedTypes::TypeParsingOptions&
   SupportedTypes::TypeParsingOptions::operator=(const TypeParsingOptions&) =
       default;
@@ -192,8 +193,8 @@ namespace mfront {
     }
   }  // end of TypeSize
 
-  SupportedTypes::TypeSize& SupportedTypes::TypeSize::operator=(TypeSize&&) noexcept =
-      default;
+  SupportedTypes::TypeSize& SupportedTypes::TypeSize::operator=(
+      TypeSize&&) noexcept = default;
 
   SupportedTypes::TypeSize& SupportedTypes::TypeSize::operator=(
       const TypeSize&) = default;

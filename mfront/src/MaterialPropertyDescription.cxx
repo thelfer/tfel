@@ -61,8 +61,8 @@ namespace mfront {
     os << "using NumericType [[maybe_unused]] = " << numeric_type << ";\n";
     for (const auto& a : getScalarTypeAliases()) {
       os << "using " << a << " [[maybe_unused]] = "
-         << "tfel::config::ScalarTypes<" << numeric_type << ", "
-         << use_qt << ">::" << a << ";\n";
+         << "tfel::config::ScalarTypes<" << numeric_type << ", " << use_qt
+         << ">::" << a << ";\n";
     }
   }  // end of writeScalarStandardTypedefs
 
