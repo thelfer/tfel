@@ -414,7 +414,7 @@ namespace tfel::math {
       (canMakeViewFromLastArgument<MappedType, Args...>())) {
     static_assert(sizeof...(Args) >= 2, "invalid call");
     const auto r =
-        buildIndexingPolicyAndExtractPointerToData<IndexingPolicyType>(args...);
+      buildIndexingPolicyAndExtractPointerToData<IndexingPolicyType>(std::forward<Args>(args)...);
     return View<MappedType, IndexingPolicyType>{std::get<1>(r), std::get<0>(r)};
   }  // end of map
 
@@ -433,7 +433,7 @@ namespace tfel::math {
                                         Args...>())) {
     static_assert(sizeof...(Args) >= 2, "invalid call");
     const auto r =
-        buildIndexingPolicyAndExtractPointerToData<IndexingPolicyType>(args...);
+      buildIndexingPolicyAndExtractPointerToData<IndexingPolicyType>(std::forward<Args>(args)...);
     return View<const MappedType, IndexingPolicyType>{std::get<1>(r),
                                                       std::get<0>(r)};
   }  // end of map

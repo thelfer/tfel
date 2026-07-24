@@ -34,7 +34,7 @@ namespace mfront {
     os << "[[maybe_unused]] static constexpr auto use_qt = " << use_qt << ";\n";
     for (const auto& a : getScalarTypeAliases()) {
       os << "using " << a << " [[maybe_unused]] = "
-         << "typename tfel::config::ScalarTypes<NumericType, " << use_qt
+         << "tfel::config::ScalarTypes<NumericType, " << use_qt
          << ">::" << a << ";\n";
     }
   }  // end of writeScalarStandardTypedefs
