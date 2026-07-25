@@ -39,11 +39,12 @@ namespace tfel::system {
     //! \brief default constructor
     ExternalBehaviourDescription();
     //! \brief move constructor
-    ExternalBehaviourDescription(ExternalBehaviourDescription&&);
+    ExternalBehaviourDescription(ExternalBehaviourDescription&&) noexcept;
     //! \brief copy constructor
     ExternalBehaviourDescription(const ExternalBehaviourDescription&);
     //! \brief move assignement
-    ExternalBehaviourDescription& operator=(ExternalBehaviourDescription&&);
+    ExternalBehaviourDescription& operator=(
+        ExternalBehaviourDescription&&) noexcept;
     //! \brief standard assignement
     ExternalBehaviourDescription& operator=(
         const ExternalBehaviourDescription&);

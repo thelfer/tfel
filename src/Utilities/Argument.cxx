@@ -19,9 +19,9 @@ namespace tfel::utilities {
 
   Argument::Argument(const char* const s) : name(s) {}
 
-  Argument::Argument(Argument&&) = default;
+  Argument::Argument(Argument&&) noexcept = default;
   Argument::Argument(const Argument&) = default;
-  Argument& Argument::operator=(Argument&&) = default;
+  Argument& Argument::operator=(Argument&&) noexcept = default;
   Argument& Argument::operator=(const Argument&) = default;
 
   std::string& Argument::as_string() noexcept { return this->name; }

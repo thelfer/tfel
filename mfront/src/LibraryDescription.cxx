@@ -152,7 +152,8 @@ namespace mfront {
   }  // end of LibraryDescription::LibraryDescription
 
   LibraryDescription::LibraryDescription(const LibraryDescription&) = default;
-  LibraryDescription::LibraryDescription(LibraryDescription&&) = default;
+  LibraryDescription::LibraryDescription(LibraryDescription&&) noexcept =
+      default;
   LibraryDescription::~LibraryDescription() = default;
 
   std::ostream& operator<<(std::ostream& os, const LibraryDescription& l) {

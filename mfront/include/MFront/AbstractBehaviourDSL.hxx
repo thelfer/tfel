@@ -46,7 +46,7 @@ namespace mfront {
     //! a simple alias
     using Hypothesis = ModellingHypothesis::Hypothesis;
     //! \return the target of the dsl
-    DSLTarget getTargetType() const override final;
+    DSLTarget getTargetType() const final;
     //! \return the declared behaviour interfaces
     virtual std::map<std::string, std::shared_ptr<AbstractBehaviourInterface>>
     getBehaviourInterfaces() const = 0;

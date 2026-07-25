@@ -19,15 +19,15 @@ namespace mtest {
 
   StudyCurrentState::StudyCurrentState() = default;
 
-  StudyCurrentState::StudyCurrentState(StudyCurrentState&&) = default;
+  StudyCurrentState::StudyCurrentState(StudyCurrentState&&) noexcept = default;
 
   StudyCurrentState::StudyCurrentState(const StudyCurrentState&) = default;
 
   StudyCurrentState& StudyCurrentState::operator=(const StudyCurrentState&) =
       default;
 
-  StudyCurrentState& StudyCurrentState::operator=(StudyCurrentState&&) =
-      default;
+  StudyCurrentState& StudyCurrentState::operator=(
+      StudyCurrentState&&) noexcept = default;
 
   StudyCurrentState StudyCurrentState::makeDeepCopy() const {
     StudyCurrentState copy(*this);

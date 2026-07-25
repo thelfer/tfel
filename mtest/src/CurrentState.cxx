@@ -24,11 +24,11 @@ namespace mtest {
 
   CurrentState::CurrentState(const CurrentState&) = default;
 
-  CurrentState::CurrentState(CurrentState&&) = default;
+  CurrentState::CurrentState(CurrentState&&) noexcept = default;
 
   CurrentState& CurrentState::operator=(const CurrentState&) = default;
 
-  CurrentState& CurrentState::operator=(CurrentState&&) = default;
+  CurrentState& CurrentState::operator=(CurrentState&&) noexcept = default;
 
   CurrentState::~CurrentState() noexcept = default;
 

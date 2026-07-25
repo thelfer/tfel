@@ -28,9 +28,9 @@ namespace cyrano {
 
     CyranoException(const CyranoException&);
 
-    virtual const char* what() const noexcept override final;
+    const char* what() const noexcept final;
 
-    virtual std::string getMsg() const noexcept final;
+    virtual const std::string& getMsg() const noexcept final;
 
     ~CyranoException() noexcept override;
 

@@ -42,7 +42,7 @@ namespace tfel::check {
      */
     PCILogDriver(const std::string&);
     //! move constructor
-    PCILogDriver(PCILogDriver&&);
+    PCILogDriver(PCILogDriver&&) noexcept;
     //! copy constructor
     PCILogDriver(const PCILogDriver&);
     /*!
@@ -83,7 +83,7 @@ namespace tfel::check {
      *
      */
     virtual void terminate();
-    //! destructor
+    //! \brief destructor
     virtual ~PCILogDriver();
 
    protected:

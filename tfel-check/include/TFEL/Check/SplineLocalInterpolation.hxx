@@ -36,11 +36,11 @@ namespace tfel::check {
     //! \brief copy constructor
     SplineLocalInterpolation(const SplineLocalInterpolation&);
     //! \brief move constructor
-    SplineLocalInterpolation(SplineLocalInterpolation&&);
+    SplineLocalInterpolation(SplineLocalInterpolation&&) noexcept;
     //! \brief copy assignement
     SplineLocalInterpolation& operator=(const SplineLocalInterpolation&);
     //! \brief move assignement
-    SplineLocalInterpolation& operator=(SplineLocalInterpolation&&);
+    SplineLocalInterpolation& operator=(SplineLocalInterpolation&&) noexcept;
     void interpolate(const std::vector<double>&,
                      const std::vector<double>&) override;
     double getValue(const double) const override;

@@ -32,7 +32,7 @@ namespace dianafea {
   DianaFEAException::DianaFEAException(const std::string& s)
       : msg(s) {}  // end of DianaFEAException::DianaFEAException
 
-  DianaFEAException::DianaFEAException(DianaFEAException&&) = default;
+  DianaFEAException::DianaFEAException(DianaFEAException&&) noexcept = default;
 
   DianaFEAException::DianaFEAException(const DianaFEAException&) = default;
 
@@ -40,14 +40,14 @@ namespace dianafea {
     return msg.c_str();
   }  // end of DianaFEAException::what
 
-  std::string DianaFEAException::getMsg() const noexcept {
+  const std::string& DianaFEAException::getMsg() const noexcept {
     return msg;
   }  // end of DianaFEAException::getMsg
 
   DianaFEAException::~DianaFEAException() noexcept = default;
 
   DianaFEAInvalidModellingHypothesis::DianaFEAInvalidModellingHypothesis(
-      DianaFEAInvalidModellingHypothesis&&) = default;
+      DianaFEAInvalidModellingHypothesis&&) noexcept = default;
 
   DianaFEAInvalidModellingHypothesis::DianaFEAInvalidModellingHypothesis(
       const DianaFEAInvalidModellingHypothesis&) = default;
@@ -67,7 +67,7 @@ namespace dianafea {
   }  // end of DianaFEAInvalidNTENSValue::DianaFEAInvalidNTENSValue
 
   DianaFEAInvalidNTENSValue::DianaFEAInvalidNTENSValue(
-      DianaFEAInvalidNTENSValue&&) = default;
+      DianaFEAInvalidNTENSValue&&) noexcept = default;
 
   DianaFEAInvalidNTENSValue::DianaFEAInvalidNTENSValue(
       const DianaFEAInvalidNTENSValue&) = default;
@@ -84,7 +84,7 @@ namespace dianafea {
       const DianaFEAInvalidDimension&) = default;
 
   DianaFEAInvalidDimension::DianaFEAInvalidDimension(
-      DianaFEAInvalidDimension&&) = default;
+      DianaFEAInvalidDimension&&) noexcept = default;
 
   DianaFEAInvalidDimension::~DianaFEAInvalidDimension() noexcept = default;
 

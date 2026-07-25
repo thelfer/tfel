@@ -34,7 +34,7 @@ namespace tfel::glossary {
     //! \brief copy constructor
     GlossaryEntry(const GlossaryEntry&);
     //! \brief move constructor
-    GlossaryEntry(GlossaryEntry&&);
+    GlossaryEntry(GlossaryEntry&&) noexcept;
     //! \return the key
     const std::string& getKey() const;
     //! \return names asssociated with this key
@@ -108,7 +108,7 @@ namespace tfel::glossary {
     //! \brief assignement operator
     GlossaryEntry& operator=(const GlossaryEntry&) = delete;
     //! \brief move assignement
-    GlossaryEntry& operator=(GlossaryEntry&&) = delete;
+    GlossaryEntry& operator=(GlossaryEntry&&) noexcept = delete;
     /*!
      * \brief check if this entry is valid.
      * Called by constructors

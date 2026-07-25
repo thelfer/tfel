@@ -40,9 +40,10 @@ namespace mtest {
   }  // end of getSourceFileContent
 
   TestDescription::TestDescription() = default;
-  TestDescription::TestDescription(TestDescription&&) = default;
+  TestDescription::TestDescription(TestDescription&&) noexcept = default;
   TestDescription::TestDescription(const TestDescription&) = default;
-  TestDescription& TestDescription::operator=(TestDescription&&) = default;
+  TestDescription& TestDescription::operator=(TestDescription&&) noexcept =
+      default;
   TestDescription& TestDescription::operator=(const TestDescription&) = default;
   TestDescription::~TestDescription() noexcept = default;
 

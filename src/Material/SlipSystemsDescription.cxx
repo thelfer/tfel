@@ -191,8 +191,8 @@ namespace tfel::material {
 
   SlipSystemsDescription::SlipSystemsDescription(
       const SlipSystemsDescription&) = default;
-  SlipSystemsDescription::SlipSystemsDescription(SlipSystemsDescription&&) =
-      default;
+  SlipSystemsDescription::SlipSystemsDescription(
+      SlipSystemsDescription&&) noexcept = default;
 
   CrystalStructure SlipSystemsDescription::getCrystalStructure() const {
     return this->cs;
@@ -719,7 +719,8 @@ namespace tfel::material {
       : ranks(r) {}  // end of InteractionMatrixStructure
 
   SlipSystemsDescription::InteractionMatrixStructure::
-      InteractionMatrixStructure(InteractionMatrixStructure&&) = default;
+      InteractionMatrixStructure(InteractionMatrixStructure&&) noexcept =
+          default;
 
   SlipSystemsDescription::size_type
   SlipSystemsDescription::InteractionMatrixStructure::rank() const {

@@ -76,7 +76,7 @@ namespace mfmtg {
           "external state variable");
   }  // end of BehaviourData::BehaviourData
 
-  BehaviourData::BehaviourData(BehaviourData&&) = default;
+  BehaviourData::BehaviourData(BehaviourData&&) noexcept = default;
 
   BehaviourData::BehaviourData(const BehaviourData&) = default;
 

@@ -50,7 +50,7 @@ namespace mfront {
     virtual const MaterialPropertyDescription& getMaterialPropertyDescription()
         const;
     //
-    DSLTarget getTargetType() const override final;
+    DSLTarget getTargetType() const final;
     const MaterialKnowledgeDescription& getMaterialKnowledgeDescription()
         const override;
     std::string getMaterialKnowledgeIdentifier() const override;

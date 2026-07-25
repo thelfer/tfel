@@ -39,11 +39,11 @@ namespace tfel::utilities {
        */
       CallBack(const std::string&, const std::function<void()>&, const bool);
       //! \brief move constructor
-      CallBack(CallBack&&);
+      CallBack(CallBack&&) noexcept;
       //! \brief copy constructor (deleted)
       CallBack(const CallBack&);
       //! \brief move assignement
-      CallBack& operator=(CallBack&&) = delete;
+      CallBack& operator=(CallBack&&) noexcept = delete;
       //! \brief assignement
       CallBack& operator=(const CallBack&) = delete;
       //! \brief description

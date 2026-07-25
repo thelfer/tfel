@@ -101,20 +101,19 @@ namespace mfront {
      * \param[in] out : output file
      * \param[in] mb  : mechanical behaviour description
      */
-    virtual void writeInterfaceSpecificIncludes(
+    void writeInterfaceSpecificIncludes(
         std::ostream&, const BehaviourDescription&) const override;
 
-    virtual std::string getModellingHypothesisTest(
-        const Hypothesis) const override;
+    std::string getModellingHypothesisTest(const Hypothesis) const override;
 
-    virtual std::map<UMATInterfaceBase::Hypothesis, std::string>
+    std::map<UMATInterfaceBase::Hypothesis, std::string>
     gatherModellingHypothesesAndTests(
         const BehaviourDescription&) const override;
     /*!
      * \return the list of modelling hypotheses treated by the interface
      * \param[in] mb : behaviour description
      */
-    virtual std::set<Hypothesis> getModellingHypothesesToBeTreated(
+    std::set<Hypothesis> getModellingHypothesesToBeTreated(
         const BehaviourDescription&) const override;
 
     bool compareToNumericalTangentOperator = false;

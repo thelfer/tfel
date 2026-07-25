@@ -68,8 +68,8 @@ namespace mfront::bbrick {
                                         const BehaviourDescription&,
                                         const StressPotential&,
                                         const Role) const override;
-    bool isCoupledWithPorosityEvolution() const override final;
-    bool isNormalDeviatoric() const override final;
+    bool isCoupledWithPorosityEvolution() const final;
+    bool isNormalDeviatoric() const final;
     //! destructor
     ~StandardPorousStressCriterionBase() override;
 

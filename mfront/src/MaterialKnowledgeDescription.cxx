@@ -35,13 +35,13 @@ namespace mfront {
 
   MaterialKnowledgeDescription::MaterialKnowledgeDescription() = default;
   MaterialKnowledgeDescription::MaterialKnowledgeDescription(
-      MaterialKnowledgeDescription&&) = default;
+      MaterialKnowledgeDescription&&) noexcept = default;
   MaterialKnowledgeDescription::MaterialKnowledgeDescription(
       const MaterialKnowledgeDescription&) = default;
   MaterialKnowledgeDescription& MaterialKnowledgeDescription::operator=(
       const MaterialKnowledgeDescription&) = default;
   MaterialKnowledgeDescription& MaterialKnowledgeDescription::operator=(
-      MaterialKnowledgeDescription&&) = default;
+      MaterialKnowledgeDescription&&) noexcept = default;
 
   void MaterialKnowledgeDescription::throwUndefinedAttribute(
       const std::string_view n) {

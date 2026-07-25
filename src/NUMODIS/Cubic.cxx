@@ -21,7 +21,7 @@
 
 namespace numodis {
 
-  Cubic::Cubic(Cubic&&) = default;
+  Cubic::Cubic(Cubic&&) noexcept = default;
 
   Cubic::Cubic(const Cubic&) = default;
 

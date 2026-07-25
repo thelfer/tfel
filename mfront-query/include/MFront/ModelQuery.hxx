@@ -65,14 +65,14 @@ namespace mfront {
     using query =
         std::function<void(const FileDescription&, const ModelDescription&)>;
     //
-    void treatGeneratedSources() override final;
-    void treatSpecificTargetGeneratedSources() override final;
-    void treatAllSpecificTargetsGeneratedSources() override final;
-    void treatCppFlags() override final;
-    void treatGeneratedHeaders() override final;
-    void treatLibrariesDependencies() override final;
-    void treatSpecificTargets() override final;
-    void treatDSLTarget() override final;
+    void treatGeneratedSources() final;
+    void treatSpecificTargetGeneratedSources() final;
+    void treatAllSpecificTargetsGeneratedSources() final;
+    void treatCppFlags() final;
+    void treatGeneratedHeaders() final;
+    void treatLibrariesDependencies() final;
+    void treatSpecificTargets() final;
+    void treatDSLTarget() final;
     //! \brief treat a standard query
     virtual void treatStandardQuery() final;
     //! \brief all the registred queries

@@ -213,7 +213,7 @@ namespace tfel::material {
         return std::make_unique<SphereDistribution<StressType>>(*this);
       }
 
-      virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
+      tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const tfel::math::st2tost2<3u, StressType>& C0,
           int max_iter_anisotropic_integration = 12) override {
         tfel::math::tvector<3u, real> n_a = {1., 0., 0.};
@@ -224,7 +224,7 @@ namespace tfel::material {
             max_iter_anisotropic_integration);
       }
 
-      virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
+      tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const IsotropicModuli<StressType>& IM0) override {
         auto Ci = this->getElasticityOfPhase();
         if (not(this->isIsotropic())) {
@@ -266,7 +266,7 @@ namespace tfel::material {
         return std::make_unique<IsotropicDistribution<StressType>>(*this);
       }
 
-      virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
+      tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const IsotropicModuli<StressType>& IM0) override {
         tfel::math::st2tost2<3u, StressType> Ci = this->getElasticityOfPhase();
         const auto KGi = computeKGModuli<StressType>(Ci);
@@ -275,7 +275,7 @@ namespace tfel::material {
                                                                    semiL);
       }
 
-      virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
+      tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const tfel::math::st2tost2<3u, StressType>& C0,
           int max_iter_anisotropic_integration = 12) override {
         tfel::reportContractViolation(
@@ -368,7 +368,7 @@ namespace tfel::material {
             IM0, KGi, this->n, ai, bi, ci);
       }
 
-      virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
+      tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const tfel::math::st2tost2<3u, StressType>& C0,
           int max_iter_anisotropic_integration = 12) override {
         tfel::reportContractViolation(
@@ -455,7 +455,7 @@ namespace tfel::material {
         return std::make_unique<OrientedDistribution<StressType>>(*this);
       }
 
-      virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
+      tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const tfel::math::st2tost2<3u, StressType>& C0,
           int max_iter_anisotropic_integration = 12) override {
         auto Ci = this->getElasticityOfPhase();
@@ -466,7 +466,7 @@ namespace tfel::material {
             C0, Ci, n_a_i, n_b_i, semiL, max_iter_anisotropic_integration);
       }
 
-      virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
+      tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const IsotropicModuli<StressType>& IM0) override {
         auto Ci = this->getElasticityOfPhase();
         auto semiL = (this->inclusion).semiLengths;
@@ -508,7 +508,7 @@ namespace tfel::material {
             *this);
       }
 
-      virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
+      tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const tfel::math::st2tost2<3u, StressType>& C0,
           int max_iter_anisotropic_integration = 12) override {
         tfel::reportContractViolation(
@@ -519,7 +519,7 @@ namespace tfel::material {
         return C1;
       }
 
-      virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
+      tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const IsotropicModuli<StressType>& IM0) override {
         auto Ci = this->getElasticityOfPhase();
         const auto KGi = computeKGModuli<StressType>(Ci);

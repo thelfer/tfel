@@ -1054,13 +1054,12 @@ namespace mfront {
        << " */\n"
        << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult ";
     if (this->bd.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
-      os << "integrate(const SMFlag smflag,const SMType smt) override final{\n";
+      os << "integrate(const SMFlag smflag,const SMType smt) final{\n";
     } else {
       if (!this->bd.getTangentOperatorBlocks().empty()) {
-        os << "integrate(const SMFlag smflag,const SMType smt) override "
-              "final{\n";
+        os << "integrate(const SMFlag smflag,const SMType smt) final{\n";
       } else {
-        os << "integrate(const SMFlag,const SMType smt) override final{\n";
+        os << "integrate(const SMFlag,const SMType smt) final{\n";
       }
     }
     os << "using namespace std;\n";

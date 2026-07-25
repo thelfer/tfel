@@ -40,9 +40,9 @@ namespace mtest {
     //! default constructor
     StudyCurrentState();
     StudyCurrentState(const StudyCurrentState&);
-    StudyCurrentState(StudyCurrentState&&);
+    StudyCurrentState(StudyCurrentState&&) noexcept;
     StudyCurrentState& operator=(const StudyCurrentState&);
-    StudyCurrentState& operator=(StudyCurrentState&&);
+    StudyCurrentState& operator=(StudyCurrentState&&) noexcept;
     ~StudyCurrentState();
     /*!
      * \brief make a deep copy of the object

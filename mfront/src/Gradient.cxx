@@ -35,9 +35,9 @@ namespace mfront {
   Gradient::Gradient(const VariableDescription& v)
       : VariableDescription(v) {}  // end of Gradient::Gradient
 
-  Gradient::Gradient(Gradient&&) = default;
+  Gradient::Gradient(Gradient&&) noexcept = default;
   Gradient::Gradient(const Gradient&) = default;
-  Gradient& Gradient::operator=(Gradient&&) = default;
+  Gradient& Gradient::operator=(Gradient&&) noexcept = default;
   Gradient& Gradient::operator=(const Gradient&) = default;
 
   Gradient::~Gradient() noexcept = default;

@@ -28,11 +28,11 @@ namespace mfront {
     //! \brief default constructor
     PathSpecifier();
     //! \brief move constructor
-    PathSpecifier(PathSpecifier&&);
+    PathSpecifier(PathSpecifier&&) noexcept;
     //! \brief copy constructor
     PathSpecifier(const PathSpecifier&);
     //! \brief move assignement
-    PathSpecifier& operator=(PathSpecifier&&);
+    PathSpecifier& operator=(PathSpecifier&&) noexcept;
     //! \brief standard assignement
     PathSpecifier& operator=(const PathSpecifier&);
     //! \brief destructor

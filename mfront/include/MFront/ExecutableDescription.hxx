@@ -54,11 +54,11 @@ namespace mfront {
     //! \brief copy constructor
     ExecutableDescription(const ExecutableDescription&);
     //! \brief move constructor
-    ExecutableDescription(ExecutableDescription&&);
+    ExecutableDescription(ExecutableDescription&&) noexcept;
     //! \brief standard assignement (deleted)
     ExecutableDescription& operator=(const ExecutableDescription&) = delete;
     //! \brief move assignement (deleted)
-    ExecutableDescription& operator=(ExecutableDescription&&) = delete;
+    ExecutableDescription& operator=(ExecutableDescription&&) noexcept = delete;
     //! \brief destructor
     ~ExecutableDescription();
   };  // end of struct ExecutableDescription

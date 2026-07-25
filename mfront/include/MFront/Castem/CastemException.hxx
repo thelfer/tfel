@@ -27,7 +27,7 @@ namespace castem {
     CastemException(const std::string&);
     CastemException(const CastemException&) = default;
     CastemException(CastemException&&) = default;
-    virtual const char* what() const noexcept override final;
+    const char* what() const noexcept final;
     ~CastemException() noexcept override;
 
    private:

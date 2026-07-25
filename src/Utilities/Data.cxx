@@ -22,25 +22,26 @@ namespace tfel::utilities {
 
   Data::Data() = default;
   Data::Data(const Data&) = default;
-  Data::Data(Data&&) = default;
+  Data::Data(Data&&) noexcept = default;
   Data& Data::operator=(const Data&) = default;
-  Data& Data::operator=(Data&&) = default;
+  Data& Data::operator=(Data&&) noexcept = default;
   Data::~Data() = default;
 
   DataStructure::DataStructure() = default;
   DataStructure::DataStructure(const DataStructure&) = default;
-  DataStructure::DataStructure(DataStructure&&) = default;
+  DataStructure::DataStructure(DataStructure&&) noexcept = default;
   DataStructure& DataStructure::operator=(const DataStructure&) = default;
-  DataStructure& DataStructure::operator=(DataStructure&&) = default;
+  DataStructure& DataStructure::operator=(DataStructure&&) noexcept = default;
   DataStructure::~DataStructure() = default;
 
   DataParsingOptions::DataParsingOptions() = default;
   DataParsingOptions::DataParsingOptions(const DataParsingOptions&) = default;
-  DataParsingOptions::DataParsingOptions(DataParsingOptions&&) = default;
+  DataParsingOptions::DataParsingOptions(DataParsingOptions&&) noexcept =
+      default;
   DataParsingOptions& DataParsingOptions::operator=(const DataParsingOptions&) =
       default;
-  DataParsingOptions& DataParsingOptions::operator=(DataParsingOptions&&) =
-      default;
+  DataParsingOptions& DataParsingOptions::operator=(
+      DataParsingOptions&&) noexcept = default;
   DataParsingOptions::~DataParsingOptions() = default;
 
   static void read_map(DataMap& r,
@@ -345,9 +346,10 @@ namespace tfel::utilities {
   }
 
   DataMapValidator::DataMapValidator() = default;
-  DataMapValidator::DataMapValidator(DataMapValidator&&) = default;
+  DataMapValidator::DataMapValidator(DataMapValidator&&) noexcept = default;
   DataMapValidator::DataMapValidator(const DataMapValidator&) = default;
-  DataMapValidator& DataMapValidator::operator=(DataMapValidator&&) = default;
+  DataMapValidator& DataMapValidator::operator=(DataMapValidator&&) noexcept =
+      default;
   DataMapValidator& DataMapValidator::operator=(const DataMapValidator&) =
       default;
 

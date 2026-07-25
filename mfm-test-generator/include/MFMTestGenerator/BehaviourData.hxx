@@ -30,7 +30,7 @@ namespace mfmtg {
      */
     BehaviourData(const TestCaseParameters&, const std::string&);
     //! \brief copy constructor
-    BehaviourData(BehaviourData&&);
+    BehaviourData(BehaviourData&&) noexcept;
     //! \brief copy constructor
     BehaviourData(const BehaviourData&);
     //! \brief interface used to generator the behaviour (optional)
@@ -50,7 +50,7 @@ namespace mfmtg {
 
    private:
     //! move assignement
-    BehaviourData& operator=(BehaviourData&&);
+    BehaviourData& operator=(BehaviourData&&) noexcept;
     //! copy assignement
     BehaviourData& operator=(const BehaviourData&);
   };  // end of struct BehaviourData

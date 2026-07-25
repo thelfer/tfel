@@ -47,7 +47,7 @@ namespace tfel::tests {
     //! copy constructor
     TestResult(TestResult&&) noexcept;
     //! assignement operator
-    TestResult& operator=(TestResult&&);
+    TestResult& operator=(TestResult&&) noexcept;
     //! assignement operator
     TestResult& operator=(const TestResult&);
     //! \brief report success

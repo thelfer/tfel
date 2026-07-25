@@ -41,11 +41,12 @@ namespace mfront {
     //! \brief copy constructor
     MaterialPropertyDescription(const MaterialPropertyDescription&);
     //! \brief move constructor
-    MaterialPropertyDescription(MaterialPropertyDescription&&);
+    MaterialPropertyDescription(MaterialPropertyDescription&&) noexcept;
     //! \brief standard assignement
     MaterialPropertyDescription& operator=(const MaterialPropertyDescription&);
     //! \brief move assignement
-    MaterialPropertyDescription& operator=(MaterialPropertyDescription&&);
+    MaterialPropertyDescription& operator=(
+        MaterialPropertyDescription&&) noexcept;
     /*!
      * \return the variable description with the given name
      * \param[in] n: variable name

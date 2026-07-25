@@ -29,12 +29,12 @@ namespace dianafea {
       : public std::exception {
     DianaFEAException(const std::string&);
     //! move constructor
-    DianaFEAException(DianaFEAException&&);
+    DianaFEAException(DianaFEAException&&) noexcept;
     //! copy constructor
     DianaFEAException(const DianaFEAException&);
 
-    const char* what() const noexcept override final;
-    virtual std::string getMsg() const noexcept final;
+    const char* what() const noexcept final;
+    virtual const std::string& getMsg() const noexcept final;
     //! destructor
     ~DianaFEAException() noexcept override;
 
@@ -56,7 +56,8 @@ namespace dianafea {
      */
     DianaFEAInvalidModellingHypothesis(const char*);
     //! move constructor
-    DianaFEAInvalidModellingHypothesis(DianaFEAInvalidModellingHypothesis&&);
+    DianaFEAInvalidModellingHypothesis(
+        DianaFEAInvalidModellingHypothesis&&) noexcept;
     //! copy constructor
     DianaFEAInvalidModellingHypothesis(
         const DianaFEAInvalidModellingHypothesis&);
@@ -75,7 +76,7 @@ namespace dianafea {
       : public DianaFEAException {
     DianaFEAInvalidNTENSValue(const unsigned short);
     //! move constructor
-    DianaFEAInvalidNTENSValue(DianaFEAInvalidNTENSValue&&);
+    DianaFEAInvalidNTENSValue(DianaFEAInvalidNTENSValue&&) noexcept;
     //! copy constructor
     DianaFEAInvalidNTENSValue(const DianaFEAInvalidNTENSValue&);
     //! desctructor
@@ -93,7 +94,7 @@ namespace dianafea {
       : public DianaFEAException {
     DianaFEAInvalidDimension(const std::string&, const unsigned short);
     //! move constructor
-    DianaFEAInvalidDimension(DianaFEAInvalidDimension&&);
+    DianaFEAInvalidDimension(DianaFEAInvalidDimension&&) noexcept;
     //! copy constructor
     DianaFEAInvalidDimension(const DianaFEAInvalidDimension&);
     //! destructor

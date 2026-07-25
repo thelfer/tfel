@@ -61,8 +61,8 @@ namespace mfront {
     os << "using NumericType [[maybe_unused]] = " << numeric_type << ";\n";
     for (const auto& a : getScalarTypeAliases()) {
       os << "using " << a << " [[maybe_unused]] = "
-         << "typename tfel::config::ScalarTypes<" << numeric_type << ", "
-         << use_qt << ">::" << a << ";\n";
+         << "tfel::config::ScalarTypes<" << numeric_type << ", " << use_qt
+         << ">::" << a << ";\n";
     }
   }  // end of writeScalarStandardTypedefs
 
@@ -70,11 +70,11 @@ namespace mfront {
   MaterialPropertyDescription::MaterialPropertyDescription(
       const MaterialPropertyDescription&) = default;
   MaterialPropertyDescription::MaterialPropertyDescription(
-      MaterialPropertyDescription&&) = default;
+      MaterialPropertyDescription&&) noexcept = default;
   MaterialPropertyDescription& MaterialPropertyDescription::operator=(
       const MaterialPropertyDescription&) = default;
   MaterialPropertyDescription& MaterialPropertyDescription::operator=(
-      MaterialPropertyDescription&&) = default;
+      MaterialPropertyDescription&&) noexcept = default;
 
   const VariableDescription&
   MaterialPropertyDescription::getVariableDescription(
