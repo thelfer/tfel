@@ -70,11 +70,11 @@ namespace mfront {
   MaterialPropertyDescription::MaterialPropertyDescription(
       const MaterialPropertyDescription&) = default;
   MaterialPropertyDescription::MaterialPropertyDescription(
-      MaterialPropertyDescription&&) = default;
+      MaterialPropertyDescription&&) noexcept = default;
   MaterialPropertyDescription& MaterialPropertyDescription::operator=(
       const MaterialPropertyDescription&) = default;
   MaterialPropertyDescription& MaterialPropertyDescription::operator=(
-      MaterialPropertyDescription&&) = default;
+      MaterialPropertyDescription&&) noexcept = default;
 
   const VariableDescription&
   MaterialPropertyDescription::getVariableDescription(

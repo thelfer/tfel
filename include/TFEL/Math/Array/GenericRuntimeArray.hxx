@@ -197,7 +197,7 @@ namespace tfel::math {
     //! \brief assignement operator
     GenericRuntimeArray& operator=(const GenericRuntimeArray&);
     //! \brief move assigment
-    GenericRuntimeArray& operator=(GenericRuntimeArray&&);
+    GenericRuntimeArray& operator=(GenericRuntimeArray&&) noexcept;
 
    protected:
     //! \brief values holded

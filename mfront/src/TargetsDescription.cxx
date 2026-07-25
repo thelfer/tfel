@@ -22,7 +22,8 @@ namespace mfront {
 
   TargetsDescription::TargetsDescription() = default;
   TargetsDescription::TargetsDescription(const TargetsDescription&) = default;
-  TargetsDescription::TargetsDescription(TargetsDescription&&) = default;
+  TargetsDescription::TargetsDescription(TargetsDescription&&) noexcept =
+      default;
   TargetsDescription::~TargetsDescription() = default;
 
   LibraryDescription& TargetsDescription::getLibrary(

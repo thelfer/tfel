@@ -16,13 +16,13 @@
 namespace tfel::math {
 
   LUException::LUException() = default;
-  LUException::LUException(LUException&&) = default;
+  LUException::LUException(LUException&&) noexcept = default;
   LUException::LUException(const LUException&) = default;
 
   LUException::~LUException() noexcept = default;
 
   LUMatrixNotSquare::LUMatrixNotSquare() = default;
-  LUMatrixNotSquare::LUMatrixNotSquare(LUMatrixNotSquare&&) = default;
+  LUMatrixNotSquare::LUMatrixNotSquare(LUMatrixNotSquare&&) noexcept = default;
   LUMatrixNotSquare::LUMatrixNotSquare(const LUMatrixNotSquare&) = default;
 
   const char* LUMatrixNotSquare::what() const noexcept {
@@ -32,7 +32,7 @@ namespace tfel::math {
   LUMatrixNotSquare::~LUMatrixNotSquare() noexcept = default;
 
   LUUnmatchedSize::LUUnmatchedSize() = default;
-  LUUnmatchedSize::LUUnmatchedSize(LUUnmatchedSize&&) = default;
+  LUUnmatchedSize::LUUnmatchedSize(LUUnmatchedSize&&) noexcept = default;
   LUUnmatchedSize::LUUnmatchedSize(const LUUnmatchedSize&) = default;
 
   const char* LUUnmatchedSize::what() const noexcept {
@@ -42,7 +42,8 @@ namespace tfel::math {
   LUUnmatchedSize::~LUUnmatchedSize() noexcept = default;
 
   LUInvalidMatrixSize::LUInvalidMatrixSize() = default;
-  LUInvalidMatrixSize::LUInvalidMatrixSize(LUInvalidMatrixSize&&) = default;
+  LUInvalidMatrixSize::LUInvalidMatrixSize(LUInvalidMatrixSize&&) noexcept =
+      default;
   LUInvalidMatrixSize::LUInvalidMatrixSize(const LUInvalidMatrixSize&) =
       default;
 
@@ -53,7 +54,7 @@ namespace tfel::math {
   LUInvalidMatrixSize::~LUInvalidMatrixSize() noexcept = default;
 
   LUNullPivot::LUNullPivot() = default;
-  LUNullPivot::LUNullPivot(LUNullPivot&&) = default;
+  LUNullPivot::LUNullPivot(LUNullPivot&&) noexcept = default;
   LUNullPivot::LUNullPivot(const LUNullPivot&) = default;
 
   const char* LUNullPivot::what() const noexcept {
@@ -63,7 +64,7 @@ namespace tfel::math {
   LUNullPivot::~LUNullPivot() noexcept = default;
 
   LUNullDeterminant::LUNullDeterminant() = default;
-  LUNullDeterminant::LUNullDeterminant(LUNullDeterminant&&) = default;
+  LUNullDeterminant::LUNullDeterminant(LUNullDeterminant&&) noexcept = default;
   LUNullDeterminant::LUNullDeterminant(const LUNullDeterminant&) = default;
 
   const char* LUNullDeterminant::what() const noexcept {

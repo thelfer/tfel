@@ -201,7 +201,7 @@ namespace mfront {
       auto expr =
           std::regex{*(q.interface_filter),
                      q.regular_expression_syntax | std::regex_constants::icase};
-      filters.push_back([&elm, &q, r = expr](const EntryPoint& e) noexcept {
+      filters.push_back([&elm, r = expr](const EntryPoint& e) noexcept {
         return std::regex_match(elm.getInterface(e.library, e.name), r);
       });
     }

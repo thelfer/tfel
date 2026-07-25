@@ -96,13 +96,13 @@ namespace mfront {
     virtual void treatWeb();
     //! return the current argument
     const tfel::utilities::Argument& getCurrentCommandLineArgument()
-        const override final;
+        const final;
     //! treat an unknown argument
-    void treatUnknownArgument() override final;
+    void treatUnknownArgument() final;
     //! get the version description
-    std::string getVersionDescription() const override final;
+    std::string getVersionDescription() const final;
     //! get the usage description
-    std::string getUsageDescription() const override final;
+    std::string getUsageDescription() const final;
 
   };  // end of struct DocumentationGeneratorBase
 

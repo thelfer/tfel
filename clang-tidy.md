@@ -3,5 +3,5 @@ $ python /media/th202608/0ed06489-8de7-451c-9cf5-7c6d11bec927/codes/llvm/3.9/ins
 ~~~~
 
 ~~~~
-~/codes/llvm/22.1.3/install/bin/run-clang-tidy -checks='cppcoreguidelines-*',-cppcoreguidelines-macro-usage,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-pro-bounds-avoid-unchecked-container-access,-cppcoreguidelines-pro-bounds-pointer-arithmetic &> out
+~/codes/llvm/22.1.3/install/bin/run-clang-tidy -checks='cppcoreguidelines-*',-cppcoreguidelines-macro-usage,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-pro-bounds-avoid-unchecked-container-access,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-avoid-const-or-ref-data-members,-cppcoreguidelines-non-private-member-variables-in-classes &> out
 ~~~~

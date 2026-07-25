@@ -50,9 +50,9 @@ namespace mfront {
   }  // end of CodeBlock::throwUndeclaredAttribute
 
   CodeBlock::CodeBlock() = default;
-  CodeBlock::CodeBlock(CodeBlock&&) = default;
+  CodeBlock::CodeBlock(CodeBlock&&) noexcept = default;
   CodeBlock::CodeBlock(const CodeBlock&) = default;
-  CodeBlock& CodeBlock::operator=(CodeBlock&&) = default;
+  CodeBlock& CodeBlock::operator=(CodeBlock&&) noexcept = default;
   CodeBlock& CodeBlock::operator=(const CodeBlock&) = default;
   CodeBlock::~CodeBlock() = default;
 

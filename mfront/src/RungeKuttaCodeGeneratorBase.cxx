@@ -2218,16 +2218,16 @@ namespace mfront {
        << "*/\n"
        << "[[nodiscard]] IntegrationResult\n";
     if (this->bd.hasAttribute(h, BehaviourData::hasConsistentTangentOperator)) {
-      os << "integrate(const SMFlag smflag,const SMType smt) override final{\n";
+      os << "integrate(const SMFlag smflag,const SMType smt) final{\n";
     } else {
       if ((this->bd.getBehaviourType() ==
            BehaviourDescription::STANDARDSTRAINBASEDBEHAVIOUR) ||
           (this->bd.getBehaviourType() ==
            BehaviourDescription::COHESIVEZONEMODEL)) {
         os << "integrate(const SMFlag smflag, const SMType smt) "
-           << "override final{\n";
+           << "final{\n";
       } else {
-        os << "integrate(const SMFlag, const SMType smt) override final{\n";
+        os << "integrate(const SMFlag, const SMType smt) final{\n";
       }
     }
     os << "using namespace std;\n"

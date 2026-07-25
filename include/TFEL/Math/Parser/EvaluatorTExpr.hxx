@@ -208,9 +208,9 @@ namespace tfel::math {
 
   struct Evaluator::TNumber final : public Evaluator::TExpr {
     TNumber(const std::string&, const double);
-    virtual bool isOperator() const override;
-    virtual parser::ExprPtr analyse() override;
-    virtual void reduce() override;
+    bool isOperator() const override;
+    parser::ExprPtr analyse() override;
+    void reduce() override;
 
    private:
     const std::string str;
@@ -239,10 +239,10 @@ namespace tfel::math {
         std::shared_ptr<ExternalFunction>,
         std::vector<std::shared_ptr<Evaluator::TExpr>>&,
         const std::vector<std::vector<double>::size_type>&);
-    virtual bool isOperator() const override;
-    virtual parser::ExprPtr analyse() override;
-    virtual void reduce() override;
-    virtual ~TDifferentiatedFunctionExpr() noexcept override;
+    bool isOperator() const override;
+    parser::ExprPtr analyse() override;
+    void reduce() override;
+    ~TDifferentiatedFunctionExpr() noexcept override;
 
    private:
     std::shared_ptr<ExternalFunction> f;

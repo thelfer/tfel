@@ -29,9 +29,9 @@ namespace mtest {
    */
   struct PipeProfileHandler {
     PipeProfileHandler();
-    PipeProfileHandler(PipeProfileHandler&&);
+    PipeProfileHandler(PipeProfileHandler&&) noexcept;
     PipeProfileHandler(const PipeProfileHandler&);
-    PipeProfileHandler& operator=(PipeProfileHandler&&);
+    PipeProfileHandler& operator=(PipeProfileHandler&&) noexcept;
     PipeProfileHandler& operator=(const PipeProfileHandler&);
     std::shared_ptr<std::ostream> out;
     std::vector<std::shared_ptr<PipeProfile>> profiles;

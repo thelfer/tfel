@@ -32,11 +32,11 @@ namespace mfront {
   BehaviourMaterialProperty::BehaviourMaterialProperty(
       const BehaviourMaterialProperty&) = default;
   BehaviourMaterialProperty::BehaviourMaterialProperty(
-      BehaviourMaterialProperty&&) = default;
+      BehaviourMaterialProperty&&) noexcept = default;
   BehaviourMaterialProperty& BehaviourMaterialProperty::operator=(
       const BehaviourMaterialProperty&) = default;
   BehaviourMaterialProperty& BehaviourMaterialProperty::operator=(
-      BehaviourMaterialProperty&&) = default;
+      BehaviourMaterialProperty&&) noexcept = default;
 
   bool BehaviourMaterialProperty::isScalar() const {
     return SupportedTypes::isScalarType(this->type);

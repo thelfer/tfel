@@ -27,7 +27,7 @@ namespace tfel::system {
       : public SignalHandler {
     typedef void (*Fct)(const int);
     FctSignalHandler(const Fct);
-    void execute(const int) override final;
+    void execute(const int) final;
     ~FctSignalHandler() override;
 
    private:
@@ -38,7 +38,7 @@ namespace tfel::system {
   struct MemberSignalHandler final : public SignalHandler {
     typedef void (Class::*Fct)(const int);
     MemberSignalHandler(Class&, const Fct);
-    void execute(const int) override final;
+    void execute(const int) final;
     ~MemberSignalHandler() override;
 
    private:

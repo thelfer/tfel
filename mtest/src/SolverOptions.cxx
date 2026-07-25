@@ -16,9 +16,9 @@
 namespace mtest {
 
   SolverOptions::SolverOptions() = default;
-  SolverOptions::SolverOptions(SolverOptions&&) = default;
+  SolverOptions::SolverOptions(SolverOptions&&) noexcept = default;
   SolverOptions::SolverOptions(const SolverOptions&) = default;
-  SolverOptions& SolverOptions::operator=(SolverOptions&&) = default;
+  SolverOptions& SolverOptions::operator=(SolverOptions&&) noexcept = default;
   SolverOptions& SolverOptions::operator=(const SolverOptions&) = default;
   SolverOptions::~SolverOptions() = default;
 

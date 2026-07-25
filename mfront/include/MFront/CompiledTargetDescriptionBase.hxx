@@ -56,13 +56,13 @@ namespace mfront {
     //! \brief copy constructor
     CompiledTargetDescriptionBase(const CompiledTargetDescriptionBase&);
     //! \brief move constructor
-    CompiledTargetDescriptionBase(CompiledTargetDescriptionBase&&);
+    CompiledTargetDescriptionBase(CompiledTargetDescriptionBase&&) noexcept;
     //! \brief standard assignement (deleted)
     CompiledTargetDescriptionBase& operator=(
         const CompiledTargetDescriptionBase&) = delete;
     //! \brief move assignement (deleted)
-    CompiledTargetDescriptionBase& operator=(CompiledTargetDescriptionBase&&) =
-        delete;
+    CompiledTargetDescriptionBase& operator=(
+        CompiledTargetDescriptionBase&&) noexcept = delete;
     //! \brief destructor
     ~CompiledTargetDescriptionBase();
     //! \brief name

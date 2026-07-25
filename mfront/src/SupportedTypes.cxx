@@ -150,7 +150,7 @@ namespace mfront {
 
   SupportedTypes::TypeSize::TypeSize() = default;
 
-  SupportedTypes::TypeSize::TypeSize(TypeSize&&) = default;
+  SupportedTypes::TypeSize::TypeSize(TypeSize&&) noexcept = default;
 
   SupportedTypes::TypeSize::TypeSize(const TypeSize&) = default;
 

@@ -39,7 +39,7 @@ namespace cyrano {
     return msg.c_str();
   }  // end of CyranoException::what
 
-  std::string CyranoException::getMsg() const noexcept {
+  const std::string& CyranoException::getMsg() const noexcept {
     return msg;
   }  // end of CyranoException::getMsg
 

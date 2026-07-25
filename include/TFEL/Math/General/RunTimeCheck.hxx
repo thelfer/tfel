@@ -30,7 +30,7 @@ namespace tfel::math {
     RuntimeCheckFailure(RuntimeCheckFailure&&) = default;
     RuntimeCheckFailure(const RuntimeCheckFailure&) = default;
     //! \return a string describing the error
-    const char* what() const noexcept override final;
+    const char* what() const noexcept final;
     //! destructor
     ~RuntimeCheckFailure() noexcept override;
   };  // end of struct RuntimeCheckFailure

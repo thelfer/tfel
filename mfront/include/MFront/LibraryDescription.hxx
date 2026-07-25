@@ -68,11 +68,11 @@ namespace mfront {
     //! \brief copy constructor
     LibraryDescription(const LibraryDescription&);
     //! \brief move constructor
-    LibraryDescription(LibraryDescription&&);
+    LibraryDescription(LibraryDescription&&) noexcept;
     //! \brief standard assignement (deleted)
     LibraryDescription& operator=(const LibraryDescription&) = delete;
     //! \brief move assignement (deleted)
-    LibraryDescription& operator=(LibraryDescription&&) = delete;
+    LibraryDescription& operator=(LibraryDescription&&) noexcept = delete;
     //! \brief destructor
     ~LibraryDescription();
     //! \brief libray type

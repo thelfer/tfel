@@ -60,40 +60,40 @@ namespace mfront {
     virtual std::string getGeneratedLibraryName(
         const MaterialPropertyDescription&) const;
 
-    virtual void writeBeginHeaderNamespace(std::ostream&) const override;
+    void writeBeginHeaderNamespace(std::ostream&) const override;
 
-    virtual void writeEndHeaderNamespace(std::ostream&) const override;
+    void writeEndHeaderNamespace(std::ostream&) const override;
 
-    virtual void writeBeginSrcNamespace(std::ostream&) const override;
+    void writeBeginSrcNamespace(std::ostream&) const override;
 
-    virtual void writeEndSrcNamespace(std::ostream&) const override;
+    void writeEndSrcNamespace(std::ostream&) const override;
     /*!
      * \param[in] m: material name
      * \param[in] c: class name
      */
-    virtual std::string getHeaderFileName(const std::string&,
-                                          const std::string&) const override;
+    std::string getHeaderFileName(const std::string&,
+                                  const std::string&) const override;
     /*!
      * \param[in] m: material name
      * \param[in] c: class name
      */
-    virtual std::string getSrcFileName(const std::string&,
-                                       const std::string&) const override;
+    std::string getSrcFileName(const std::string&,
+                               const std::string&) const override;
     /*!
      * \param[in] mpd: material property description
      */
-    virtual std::string getFunctionName(
+    std::string getFunctionName(
         const MaterialPropertyDescription&) const override;
 
     /*!
      * \param[in] mpd: material property description
      */
-    virtual std::string getCheckBoundsFunctionName(
+    std::string getCheckBoundsFunctionName(
         const MaterialPropertyDescription&) const override;
     /*!
      * \return true if a check bounds function is required
      */
-    virtual bool requiresCheckBoundsFunction() const override;
+    bool requiresCheckBoundsFunction() const override;
   };  // end of CMaterialPropertyInterface
 
 }  // end of namespace mfront

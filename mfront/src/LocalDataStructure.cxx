@@ -32,12 +32,12 @@ namespace mfront {
         name(n),
         asize(s) {}  // end of LocalDataStructure::Variable::Variable
 
-  LocalDataStructure::Variable::Variable(Variable&&) = default;
+  LocalDataStructure::Variable::Variable(Variable&&) noexcept = default;
 
   LocalDataStructure::Variable::Variable(const Variable&) = default;
 
   LocalDataStructure::Variable& LocalDataStructure::Variable::operator=(
-      Variable&&) = default;
+      Variable&&) noexcept = default;
 
   LocalDataStructure::Variable& LocalDataStructure::Variable::operator=(
       const Variable&) = default;

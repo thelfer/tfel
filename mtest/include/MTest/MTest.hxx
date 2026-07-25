@@ -257,13 +257,13 @@ namespace mtest {
      * manager
      * \param[in] s: current state
      */
-    virtual void setGaussPointPositionForEvolutionsEvaluation(
+    void setGaussPointPositionForEvolutionsEvaluation(
         const CurrentState&) const override;
     /*!
      * \return the number of unknowns (size of driving variables plus
      * the number of lagrangian multipliers)
      */
-    virtual size_t getNumberOfUnknowns() const override;
+    size_t getNumberOfUnknowns() const override;
     //! \brief list of events
     std::map<double, std::vector<std::string>> events;
     //! \brief list of tests

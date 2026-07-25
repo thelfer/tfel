@@ -36,7 +36,7 @@ namespace mfront {
   struct MFRONT_VISIBILITY_EXPORT TargetsDescription {
     TargetsDescription();
     TargetsDescription(const TargetsDescription&);
-    TargetsDescription(TargetsDescription&&);
+    TargetsDescription(TargetsDescription&&) noexcept;
     ~TargetsDescription();
     /*!
      * \return the library description associated with the given

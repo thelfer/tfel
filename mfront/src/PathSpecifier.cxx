@@ -27,9 +27,9 @@
 namespace mfront {
 
   PathSpecifier::PathSpecifier() = default;
-  PathSpecifier::PathSpecifier(PathSpecifier&&) = default;
+  PathSpecifier::PathSpecifier(PathSpecifier&&) noexcept = default;
   PathSpecifier::PathSpecifier(const PathSpecifier&) = default;
-  PathSpecifier& PathSpecifier::operator=(PathSpecifier&&) = default;
+  PathSpecifier& PathSpecifier::operator=(PathSpecifier&&) noexcept = default;
   PathSpecifier& PathSpecifier::operator=(const PathSpecifier&) = default;
   PathSpecifier::~PathSpecifier() = default;
 

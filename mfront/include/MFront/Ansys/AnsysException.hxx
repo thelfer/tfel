@@ -29,19 +29,19 @@ namespace ansys {
     //! \brief constructor
     AnsysException(std::string);
     //! \brief move constructor
-    AnsysException(AnsysException&&);
+    AnsysException(AnsysException&&) noexcept;
     //! \brief copy constructor
     AnsysException(const AnsysException&);
 
-    const char* what() const noexcept override final;
-    virtual std::string getMsg() const noexcept final;
+    const char* what() const noexcept final;
+    virtual const std::string& getMsg() const noexcept final;
     //! \brief destructor
     ~AnsysException() noexcept override;
 
    private:
     AnsysException() = delete;
     AnsysException& operator=(const AnsysException&) = delete;
-    AnsysException& operator=(AnsysException&&) = delete;
+    AnsysException& operator=(AnsysException&&) noexcept = delete;
     //! \brief error message
     const std::string msg;
   };  // end of struct AnsysException
@@ -56,7 +56,7 @@ namespace ansys {
      */
     AnsysInvalidModellingHypothesis(const char*);
     //! \brief move constructor
-    AnsysInvalidModellingHypothesis(AnsysInvalidModellingHypothesis&&);
+    AnsysInvalidModellingHypothesis(AnsysInvalidModellingHypothesis&&) noexcept;
     //! \brief copy constructor
     AnsysInvalidModellingHypothesis(const AnsysInvalidModellingHypothesis&);
     //! \brief destructor
@@ -74,7 +74,7 @@ namespace ansys {
       : public AnsysException {
     AnsysInvalidNTENSValue(const unsigned short);
     //! \brief move constructor
-    AnsysInvalidNTENSValue(AnsysInvalidNTENSValue&&);
+    AnsysInvalidNTENSValue(AnsysInvalidNTENSValue&&) noexcept;
     //! \brief copy constructor
     AnsysInvalidNTENSValue(const AnsysInvalidNTENSValue&);
     //! \brief desctructor
@@ -91,7 +91,7 @@ namespace ansys {
       : public AnsysException {
     AnsysInvalidDimension(const std::string&, const unsigned short);
     //! \brief move constructor
-    AnsysInvalidDimension(AnsysInvalidDimension&&);
+    AnsysInvalidDimension(AnsysInvalidDimension&&) noexcept;
     //! \brief copy constructor
     AnsysInvalidDimension(const AnsysInvalidDimension&);
     //! \brief destructor

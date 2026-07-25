@@ -625,7 +625,7 @@ namespace mfront {
       const VariableInformation&) = default;
   BehaviourDocumentationGenerator::VariableInformation&
   BehaviourDocumentationGenerator::VariableInformation::operator=(
-      VariableInformation&&) = default;
+      VariableInformation&&) noexcept = default;
   BehaviourDocumentationGenerator::VariableInformation&
   BehaviourDocumentationGenerator::VariableInformation::operator=(
       const VariableInformation&) = default;

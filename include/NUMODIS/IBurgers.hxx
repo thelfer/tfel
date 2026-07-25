@@ -27,7 +27,7 @@ namespace numodis {
   //! IBurgers handles the index of a burgers vector
   //===============================================================
   struct TFELNUMODIS_VISIBILITY_EXPORT IBurgers {
-    IBurgers(IBurgers&&);
+    IBurgers(IBurgers&&) noexcept;
 
     IBurgers(const IBurgers&);
 

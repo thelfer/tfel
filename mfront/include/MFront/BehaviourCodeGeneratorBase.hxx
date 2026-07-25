@@ -84,7 +84,6 @@ namespace mfront {
                                           const VariableDescription&,
                                           const std::string&,
                                           const std::string&,
-                                          const std::string&,
                                           const bool) const;
     /*!
      * write the given variables declaration
@@ -97,7 +96,6 @@ namespace mfront {
      */
     virtual void writeVariablesDeclarations(std::ostream&,
                                             const VariableDescriptionContainer&,
-                                            const std::string&,
                                             const std::string&,
                                             const std::string&,
                                             const bool) const;

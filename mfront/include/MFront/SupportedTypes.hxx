@@ -84,7 +84,7 @@ namespace mfront {
       //! \brief constructor
       TypeSize();
       //! \brief move constructor
-      TypeSize(TypeSize&&);
+      TypeSize(TypeSize&&) noexcept;
       //! \brief copy constructor
       TypeSize(const TypeSize&);
       /*!

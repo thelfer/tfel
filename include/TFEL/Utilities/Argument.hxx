@@ -31,9 +31,9 @@ namespace tfel::utilities {
     Argument(std::string);
     //! \param s : argument name
     Argument(const char* const s);
-    Argument(Argument&&);
+    Argument(Argument&&) noexcept;
     Argument(const Argument&);
-    Argument& operator=(Argument&&);
+    Argument& operator=(Argument&&) noexcept;
     Argument& operator=(const Argument&);
     //! \return true if an option was given for this argument
     bool hasOption() const noexcept;

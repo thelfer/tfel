@@ -25,7 +25,7 @@ namespace numodis {
   //! IPlane handles the indices of a critallographic plane
   //===============================================================
   struct TFELNUMODIS_VISIBILITY_EXPORT IPlane {
-    IPlane(IPlane&&);
+    IPlane(IPlane&&) noexcept;
 
     IPlane(const IPlane&);
 
