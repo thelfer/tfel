@@ -88,16 +88,6 @@ namespace mfront {
       bool make_local_copy = false;
     };
     /*!
-     * \brief write the given variable declaration
-     * \param[out] f: output file
-     * \param[in]  v: variable to be declared
-     * \param[in]  args: additional arguments to customize the declarations
-     */
-    virtual void writeVariableDeclaration(
-        std::ostream&,
-        const VariableDescription&,
-        const WriteVariableDeclarationArguments&) const;
-    /*!
      * \brief write the given variables declaration
      * \param[out] f                 : output file
      * \param[in]  v                 : variables to be declared
@@ -106,6 +96,16 @@ namespace mfront {
     virtual void writeVariablesDeclarations(
         std::ostream&,
         const VariableDescriptionContainer&,
+        const WriteVariableDeclarationArguments&) const;
+    /*!
+     * \brief write the given variable declaration
+     * \param[out] f: output file
+     * \param[in]  v: variable to be declared
+     * \param[in]  args: additional arguments to customize the declarations
+     */
+    virtual void writeVariableDeclaration(
+        std::ostream&,
+        const VariableDescription&,
         const WriteVariableDeclarationArguments&) const;
 
     virtual void writeIncludes(std::ostream&) const;
