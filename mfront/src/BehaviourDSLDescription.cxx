@@ -20,14 +20,14 @@ namespace mfront {
   BehaviourDSLDescription::BehaviourDSLDescription(
       const BehaviourDSLDescription&) = default;
 
-  BehaviourDSLDescription::BehaviourDSLDescription(BehaviourDSLDescription&&) =
-      default;
+  BehaviourDSLDescription::BehaviourDSLDescription(
+      BehaviourDSLDescription&&) noexcept = default;
 
   BehaviourDSLDescription& BehaviourDSLDescription::operator=(
       const BehaviourDSLDescription&) = default;
 
   BehaviourDSLDescription& BehaviourDSLDescription::operator=(
-      BehaviourDSLDescription&&) = default;
+      BehaviourDSLDescription&&) noexcept = default;
 
   BehaviourDSLDescription::~BehaviourDSLDescription() = default;
 

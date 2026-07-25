@@ -25,7 +25,7 @@ namespace tfel::material {
     MaterialException() = default;
     MaterialException(const char* const);
     MaterialException(const std::string&);
-    MaterialException(MaterialException&&) = default;
+    MaterialException(MaterialException&&) noexcept = default;
     MaterialException(const MaterialException&) = default;
     ~MaterialException() noexcept override;
   };
@@ -35,18 +35,18 @@ namespace tfel::material {
     DivergenceException() = default;
     DivergenceException(const char* const);
     DivergenceException(const std::string&);
-    DivergenceException(DivergenceException&&) = default;
+    DivergenceException(DivergenceException&&) noexcept = default;
     DivergenceException(const DivergenceException&) = default;
-    const char* what() const noexcept override final;
+    const char* what() const noexcept final;
     ~DivergenceException() noexcept override;
   };
 
   struct TFELMATERIAL_VISIBILITY_EXPORT OutOfBoundsException final
       : public MaterialException {
     OutOfBoundsException(std::string);
-    OutOfBoundsException(OutOfBoundsException&&) = default;
+    OutOfBoundsException(OutOfBoundsException&&) noexcept = default;
     OutOfBoundsException(const OutOfBoundsException&) = default;
-    const char* what() const noexcept override final;
+    const char* what() const noexcept final;
     ~OutOfBoundsException() noexcept override;
 
    private:

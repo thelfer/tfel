@@ -47,7 +47,7 @@ namespace numodis {
   void BCC::Init() {}
 
   BCC::BCC(const BCC&) = default;
-  BCC::BCC(BCC&&) = default;
+  BCC::BCC(BCC&&) noexcept = default;
   BCC::~BCC() = default;
 
 }  // end of namespace numodis

@@ -24,13 +24,13 @@ namespace mfront {
       const BehaviourBrickDescription&) = default;
 
   BehaviourBrickDescription::BehaviourBrickDescription(
-      BehaviourBrickDescription&&) = default;
+      BehaviourBrickDescription&&) noexcept = default;
 
   BehaviourBrickDescription& BehaviourBrickDescription::operator=(
       const BehaviourBrickDescription&) = default;
 
   BehaviourBrickDescription& BehaviourBrickDescription::operator=(
-      BehaviourBrickDescription&&) = default;
+      BehaviourBrickDescription&&) noexcept = default;
 
   BehaviourBrickDescription::~BehaviourBrickDescription() = default;
 

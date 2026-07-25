@@ -46,13 +46,13 @@ namespace tfel::system {
      */
     ThreadedTaskResult(const T&);
     //! \brief move constructor
-    ThreadedTaskResult(ThreadedTaskResult&&);
+    ThreadedTaskResult(ThreadedTaskResult&&) noexcept;
     //! \brief copy constructor
     ThreadedTaskResult(const ThreadedTaskResult&);
     //! \brief assignement
     ThreadedTaskResult& operator=(const ThreadedTaskResult&);
     //! \brief move assignement
-    ThreadedTaskResult& operator=(ThreadedTaskResult&&);
+    ThreadedTaskResult& operator=(ThreadedTaskResult&&) noexcept;
     //! \brief assignement
     ThreadedTaskResult& operator=(const T&);
     //! \brief move assignement

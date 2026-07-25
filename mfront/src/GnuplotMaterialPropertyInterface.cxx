@@ -44,13 +44,13 @@ namespace mfront {
   GnuplotMaterialPropertyInterface::dataFile::dataFile(
       const GnuplotMaterialPropertyInterface::dataFile&) = default;
   GnuplotMaterialPropertyInterface::dataFile::dataFile(
-      GnuplotMaterialPropertyInterface::dataFile&&) = default;
+      GnuplotMaterialPropertyInterface::dataFile&&) noexcept = default;
   GnuplotMaterialPropertyInterface::dataFile&
   GnuplotMaterialPropertyInterface::dataFile::operator=(
       const GnuplotMaterialPropertyInterface::dataFile&) = default;
   GnuplotMaterialPropertyInterface::dataFile&
   GnuplotMaterialPropertyInterface::dataFile::operator=(
-      GnuplotMaterialPropertyInterface::dataFile&&) = default;
+      GnuplotMaterialPropertyInterface::dataFile&&) noexcept = default;
   GnuplotMaterialPropertyInterface::dataFile::~dataFile() = default;
 
   GnuplotMaterialPropertyInterface::tokens_iterator

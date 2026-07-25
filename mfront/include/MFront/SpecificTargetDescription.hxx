@@ -36,11 +36,11 @@ namespace mfront {
     //! \brief copy constructor
     SpecificTargetDescription(const SpecificTargetDescription&);
     //! \brief move constructor
-    SpecificTargetDescription(SpecificTargetDescription&&);
+    SpecificTargetDescription(SpecificTargetDescription&&) noexcept;
     //! \brief standard assignement (deleted)
     SpecificTargetDescription& operator=(const SpecificTargetDescription&);
     //! \brief move assignement (deleted)
-    SpecificTargetDescription& operator=(SpecificTargetDescription&&);
+    SpecificTargetDescription& operator=(SpecificTargetDescription&&) noexcept;
     //! \brief destructor
     ~SpecificTargetDescription();
     //! \brief sources

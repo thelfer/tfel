@@ -34,9 +34,9 @@ namespace mfront {
       Variable();
       Variable(const std::string&, const std::string&);
       Variable(const std::string&, const std::string&, unsigned short);
-      Variable(Variable&&);
+      Variable(Variable&&) noexcept;
       Variable(const Variable&);
-      Variable& operator=(Variable&&);
+      Variable& operator=(Variable&&) noexcept;
       Variable& operator=(const Variable&);
       //! type of the variable
       std::string type;

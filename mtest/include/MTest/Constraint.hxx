@@ -33,11 +33,11 @@ namespace mtest {
     //! default constructor
     ConstraintOptions();
     //! move constructor
-    ConstraintOptions(ConstraintOptions&&);
+    ConstraintOptions(ConstraintOptions&&) noexcept;
     //! copy constructor
     ConstraintOptions(const ConstraintOptions&);
     //! move assignement
-    ConstraintOptions& operator=(ConstraintOptions&&);
+    ConstraintOptions& operator=(ConstraintOptions&&) noexcept;
     //! standard assignement
     ConstraintOptions& operator=(const ConstraintOptions&);
     //! current state

@@ -81,14 +81,14 @@ namespace mfront {
     //! \brief triggering the query is required)
     virtual void treatStandardQuery2() final;
     //
-    void treatGeneratedSources() override final;
-    void treatSpecificTargetGeneratedSources() override final;
-    void treatAllSpecificTargetsGeneratedSources() override final;
-    void treatCppFlags() override final;
-    void treatGeneratedHeaders() override final;
-    void treatLibrariesDependencies() override final;
-    void treatSpecificTargets() override final;
-    void treatDSLTarget() override final;
+    void treatGeneratedSources() final;
+    void treatSpecificTargetGeneratedSources() final;
+    void treatAllSpecificTargetsGeneratedSources() final;
+    void treatCppFlags() final;
+    void treatGeneratedHeaders() final;
+    void treatLibrariesDependencies() final;
+    void treatSpecificTargets() final;
+    void treatDSLTarget() final;
     //! \brief treat the "--modelling-hypothesis" command line argument
     virtual void treatModellingHypothesis() final;
     //! \return a query that show a list of variables

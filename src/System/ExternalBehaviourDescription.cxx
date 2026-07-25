@@ -188,13 +188,13 @@ namespace tfel::system {
 
   ExternalBehaviourDescription::ExternalBehaviourDescription() = default;
   ExternalBehaviourDescription::ExternalBehaviourDescription(
-      ExternalBehaviourDescription&&) = default;
+      ExternalBehaviourDescription&&) noexcept = default;
   ExternalBehaviourDescription::ExternalBehaviourDescription(
       const ExternalBehaviourDescription&) = default;
   ExternalBehaviourDescription& ExternalBehaviourDescription::operator=(
       const ExternalBehaviourDescription&) = default;
   ExternalBehaviourDescription& ExternalBehaviourDescription::operator=(
-      ExternalBehaviourDescription&&) = default;
+      ExternalBehaviourDescription&&) noexcept = default;
   ExternalBehaviourDescription::~ExternalBehaviourDescription() = default;
 
 }  // end of namespace tfel::system

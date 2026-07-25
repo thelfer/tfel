@@ -28,20 +28,20 @@ namespace abaqus {
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT AbaqusException
       : public std::exception {
     AbaqusException(const std::string&);
-    //! move constructor
-    AbaqusException(AbaqusException&&);
-    //! copy constructor
+    //! \brief move constructor
+    AbaqusException(AbaqusException&&) noexcept;
+    //! \brief copy constructor
     AbaqusException(const AbaqusException&);
-    const char* what() const noexcept override final;
-    virtual std::string getMsg() const noexcept final;
-    //! destructor
+    const char* what() const noexcept final;
+    virtual const std::string& getMsg() const noexcept final;
+    //! \brief destructor
     ~AbaqusException() noexcept override;
 
    private:
     AbaqusException() = delete;
     AbaqusException& operator=(const AbaqusException&) = delete;
     AbaqusException& operator=(AbaqusException&&) = delete;
-    //! error message
+    //! \brief error message
     const std::string msg;
   };  // end of struct AbaqusException
   /*!
@@ -55,13 +55,14 @@ namespace abaqus {
      */
     AbaqusInvalidModellingHypothesis(const char*);
     //! \brief move constructor
-    AbaqusInvalidModellingHypothesis(AbaqusInvalidModellingHypothesis&&);
+    AbaqusInvalidModellingHypothesis(
+        AbaqusInvalidModellingHypothesis&&) noexcept;
     //! \brief copy constructor
     AbaqusInvalidModellingHypothesis(const AbaqusInvalidModellingHypothesis&);
     //! \brief assignement operator
     AbaqusInvalidModellingHypothesis& operator=(
         const AbaqusInvalidModellingHypothesis&) = delete;
-    //! destructor
+    //! \brief destructor
     ~AbaqusInvalidModellingHypothesis() noexcept override;
   };  // end of struct AbaqusInvalidModellingHypothesis
   /*!
@@ -71,11 +72,11 @@ namespace abaqus {
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT AbaqusInvalidNTENSValue
       : public AbaqusException {
     AbaqusInvalidNTENSValue(const unsigned short);
-    //! move constructor
-    AbaqusInvalidNTENSValue(AbaqusInvalidNTENSValue&&);
-    //! copy constructor
+    //! \brief move constructor
+    AbaqusInvalidNTENSValue(AbaqusInvalidNTENSValue&&) noexcept;
+    //! \brief copy constructor
     AbaqusInvalidNTENSValue(const AbaqusInvalidNTENSValue&);
-    //! desctructor
+    //! \brief desctructor
     ~AbaqusInvalidNTENSValue() noexcept override;
 
    private:
@@ -88,11 +89,11 @@ namespace abaqus {
   struct MFRONT_ABAQUS_VISIBILITY_EXPORT AbaqusInvalidDimension
       : public AbaqusException {
     AbaqusInvalidDimension(const std::string&, const unsigned short);
-    //! move constructor
-    AbaqusInvalidDimension(AbaqusInvalidDimension&&);
-    //! copy constructor
+    //! \brief move constructor
+    AbaqusInvalidDimension(AbaqusInvalidDimension&&) noexcept;
+    //! \brief copy constructor
     AbaqusInvalidDimension(const AbaqusInvalidDimension&);
-    //! destructor
+    //! \brief destructor
     ~AbaqusInvalidDimension() noexcept override;
 
    private:

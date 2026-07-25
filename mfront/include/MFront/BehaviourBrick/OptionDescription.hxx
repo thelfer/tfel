@@ -102,11 +102,11 @@ namespace mfront::bbrick {
     //! \brief copy constructor
     OptionDescription(const OptionDescription&);
     //! \brief move constructor
-    OptionDescription(OptionDescription&&);
+    OptionDescription(OptionDescription&&) noexcept;
     //! \brief standard assignement
     OptionDescription& operator=(const OptionDescription&);
     //! \brief move assignement
-    OptionDescription& operator=(OptionDescription&&);
+    OptionDescription& operator=(OptionDescription&&) noexcept;
     //! \brief destructor
     ~OptionDescription();
     //! \brief name of the option

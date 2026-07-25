@@ -54,14 +54,15 @@ namespace mfront {
     //! \brief default constructor
     MaterialKnowledgeDescription();
     //! \brief move constructor
-    MaterialKnowledgeDescription(MaterialKnowledgeDescription&&);
+    MaterialKnowledgeDescription(MaterialKnowledgeDescription&&) noexcept;
     //! \brief copy constructor
     MaterialKnowledgeDescription(const MaterialKnowledgeDescription&);
     //! \brief default assignement
     MaterialKnowledgeDescription& operator=(
         const MaterialKnowledgeDescription&);
     //! \brief move assignement
-    MaterialKnowledgeDescription& operator=(MaterialKnowledgeDescription&&);
+    MaterialKnowledgeDescription& operator=(
+        MaterialKnowledgeDescription&&) noexcept;
     /*!
      * \brief insert a new attribute
      * \param[in] n : name

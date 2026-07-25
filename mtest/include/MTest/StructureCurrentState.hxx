@@ -45,11 +45,11 @@ namespace mtest {
      */
     StructureCurrentState();
     //! \brief move constructor
-    StructureCurrentState(StructureCurrentState&&);
+    StructureCurrentState(StructureCurrentState&&) noexcept;
     //! \brief copy constructor
     StructureCurrentState(const StructureCurrentState&);
     //! \brief move assignment operator
-    StructureCurrentState& operator=(StructureCurrentState&&);
+    StructureCurrentState& operator=(StructureCurrentState&&) noexcept;
     //! \brief assignment operator
     StructureCurrentState& operator=(const StructureCurrentState&);
     /*!

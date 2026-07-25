@@ -73,6 +73,16 @@ namespace tfel::check {
                          const std::string&,
                          const bool = true);
     /*!
+     * \brief add a new environment variable
+     * \param[in] s1: name of the environment variable
+     * \param[in] s2: value of the environment variable
+     * \param[in] b: if true, throws if the environment variable already exists.
+     * Otherwise, nothing is done.
+     */
+    void addEnvironmentVariable(const std::string&,
+                                const std::string&,
+                                const bool = true);
+    /*!
      * \brief add a new component
      * \param[in] c: component
      */

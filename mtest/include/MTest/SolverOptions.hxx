@@ -81,9 +81,9 @@ namespace mtest {
    */
   struct SolverOptions {
     SolverOptions();
-    SolverOptions(SolverOptions&&);
+    SolverOptions(SolverOptions&&) noexcept;
     SolverOptions(const SolverOptions&);
-    SolverOptions& operator=(SolverOptions&&);
+    SolverOptions& operator=(SolverOptions&&) noexcept;
     SolverOptions& operator=(const SolverOptions&);
     ~SolverOptions();
     //! acceleration algorithm

@@ -82,7 +82,7 @@ namespace mfront {
     static tfel::utilities::DataMapValidator getDSLOptionsValidator();
     //
     std::vector<DSLOptionDescription> getDSLOptions() const override;
-    const FileDescription& getFileDescription() const override final;
+    const FileDescription& getFileDescription() const final;
     const TargetsDescription& getTargetsDescription() const override;
     /*!
      * \brief open a file and add given external instructions at the

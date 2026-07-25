@@ -23,11 +23,12 @@ namespace mfront {
   ModelDescription::Function::Function() = default;
   ModelDescription::Function::Function(const ModelDescription::Function&) =
       default;
-  ModelDescription::Function::Function(ModelDescription::Function&&) = default;
+  ModelDescription::Function::Function(ModelDescription::Function&&) noexcept =
+      default;
   ModelDescription::Function& ModelDescription::Function::operator=(
       const ModelDescription::Function&) = default;
   ModelDescription::Function& ModelDescription::Function::operator=(
-      ModelDescription::Function&&) = default;
+      ModelDescription::Function&&) noexcept = default;
   ModelDescription::Function::~Function() = default;
 
   std::pair<std::string, unsigned short>
@@ -63,10 +64,11 @@ namespace mfront {
 
   ModelDescription::ModelDescription() = default;
   ModelDescription::ModelDescription(const ModelDescription&) = default;
-  ModelDescription::ModelDescription(ModelDescription&&) = default;
+  ModelDescription::ModelDescription(ModelDescription&&) noexcept = default;
   ModelDescription& ModelDescription::operator=(const ModelDescription&) =
       default;
-  ModelDescription& ModelDescription::operator=(ModelDescription&&) = default;
+  ModelDescription& ModelDescription::operator=(ModelDescription&&) noexcept =
+      default;
 
   void ModelDescription::reserveName(const std::string& n) {
     tfel::raise_if(!this->reservedNames.insert(n).second,

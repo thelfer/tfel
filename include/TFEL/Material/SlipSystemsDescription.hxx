@@ -72,7 +72,7 @@ namespace tfel::material {
       //! constructor
       InteractionMatrixStructure(const SSIContainer&);
       //! move constructor
-      InteractionMatrixStructure(InteractionMatrixStructure&&);
+      InteractionMatrixStructure(InteractionMatrixStructure&&) noexcept;
       //! copy constructor
       InteractionMatrixStructure(const InteractionMatrixStructure&);
       //! \return the number of independant coefficients
@@ -101,7 +101,7 @@ namespace tfel::material {
      * move constructor
      * \param[in] src: object moved
      */
-    SlipSystemsDescription(SlipSystemsDescription&&);
+    SlipSystemsDescription(SlipSystemsDescription&&) noexcept;
     //! \return the crystal structure
     CrystalStructure getCrystalStructure() const;
     /*!

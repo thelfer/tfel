@@ -31,9 +31,9 @@ namespace tfel::check {
   struct TFELCHECK_VISIBILITY_EXPORT Column {
     Column(int);
     Column(std::string);
-    Column(Column&&);
+    Column(Column&&) noexcept;
     Column(const Column&);
-    Column& operator=(Column&&);
+    Column& operator=(Column&&) noexcept;
     Column& operator=(const Column&);
     /*!
      * \brief returns the name of the column used in file. If name

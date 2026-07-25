@@ -97,7 +97,7 @@ namespace mfront {
     virtual void writeInputFileExample(const BehaviourDescription&,
                                        const FileDescription&) const;
 
-    virtual std::string getInterfaceName() const override;
+    std::string getInterfaceName() const override;
     void writeBehaviourDataMainVariablesSetters(
         std::ostream&, const BehaviourDescription&) const override;
     void writeBehaviourDataGradientSetter(
@@ -196,7 +196,7 @@ namespace mfront {
         const std::string&,
         const Hypothesis) const;
     //! \return true if the interface handles external state variables
-    virtual bool areExternalStateVariablesSupported() const override;
+    bool areExternalStateVariablesSupported() const override;
     /*!
      * \brief boolean stating the we want a comparison of the user
      * defined tangent operator with a numerical approximation.

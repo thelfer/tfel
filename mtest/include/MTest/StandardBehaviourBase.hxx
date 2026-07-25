@@ -35,9 +35,10 @@ namespace mtest {
                                  const std::string&,
                                  const std::string&);
     StandardBehaviourDescription();
-    StandardBehaviourDescription(StandardBehaviourDescription&&);
+    StandardBehaviourDescription(StandardBehaviourDescription&&) noexcept;
     StandardBehaviourDescription(const StandardBehaviourDescription&);
-    StandardBehaviourDescription& operator=(StandardBehaviourDescription&&);
+    StandardBehaviourDescription& operator=(
+        StandardBehaviourDescription&&) noexcept;
     StandardBehaviourDescription& operator=(
         const StandardBehaviourDescription&);
   };

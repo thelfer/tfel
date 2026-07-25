@@ -523,7 +523,7 @@ value associated with the quantity is handled.
 
 ##### Operations on quantities
 
-Common operations on quantities, such as additions, substraction,
+Common operations on quantities, such as additions, subtraction,
 multiplications, division and negations are supported.
 
 Scaling and multiplication by a standard numeric value works as

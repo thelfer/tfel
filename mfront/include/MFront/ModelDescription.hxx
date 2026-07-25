@@ -36,11 +36,11 @@ namespace mfront {
       //! \brief copy constructor
       Function(const Function&);
       //! \brief move constructor
-      Function(Function&&);
+      Function(Function&&) noexcept;
       //! \brief assignement
       Function& operator=(const Function&);
       //! \brief move assignement
-      Function& operator=(Function&&);
+      Function& operator=(Function&&) noexcept;
       //! \brief destructor
       ~Function();
       //! \brief list of variables used by the function
@@ -74,11 +74,11 @@ namespace mfront {
     //! \brief copy constructor
     ModelDescription(const ModelDescription&);
     //! \brief move constructor
-    ModelDescription(ModelDescription&&);
+    ModelDescription(ModelDescription&&) noexcept;
     //! \brief assignement operator
     ModelDescription& operator=(const ModelDescription&);
     //! \brief move assignement operator
-    ModelDescription& operator=(ModelDescription&&);
+    ModelDescription& operator=(ModelDescription&&) noexcept;
     /*!
      * \return the variable description with the given name
      * \param[in] n: variable name

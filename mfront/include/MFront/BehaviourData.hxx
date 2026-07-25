@@ -1051,9 +1051,10 @@ namespace mfront {
       typedef BehaviourData::Mode Mode;
       //! \brief constructor
       CodeBlocksAggregator();
-      CodeBlocksAggregator(CodeBlocksAggregator&&) = default;
+      CodeBlocksAggregator(CodeBlocksAggregator&&) noexcept = default;
       CodeBlocksAggregator(const CodeBlocksAggregator&) = default;
-      CodeBlocksAggregator& operator=(CodeBlocksAggregator&&) = default;
+      CodeBlocksAggregator& operator=(CodeBlocksAggregator&&) noexcept =
+          default;
       CodeBlocksAggregator& operator=(const CodeBlocksAggregator&) = default;
       /*!
        * setter

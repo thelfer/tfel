@@ -35,11 +35,11 @@ namespace tfel::check {
      */
     PCLogger(const Driver&);
     //! \brief move constructor
-    PCLogger(PCLogger&&);
+    PCLogger(PCLogger&&) noexcept;
     //! \brief copy constructor
     PCLogger(const PCLogger&);
     //! \brief move assignement
-    PCLogger& operator=(PCLogger&&);
+    PCLogger& operator=(PCLogger&&) noexcept;
     //! \brief standard assignement
     PCLogger& operator=(const PCLogger&);
     //! \brief destructor

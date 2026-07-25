@@ -55,11 +55,11 @@ namespace mfront {
                               const unsigned int,
                               const StaticVariableValueType);
     //! \brief move constructor
-    StaticVariableDescription(StaticVariableDescription&&);
+    StaticVariableDescription(StaticVariableDescription&&) noexcept;
     //! \brief copy constructor
     StaticVariableDescription(const StaticVariableDescription&);
     //! \brief move assignement
-    StaticVariableDescription& operator=(StaticVariableDescription&&);
+    StaticVariableDescription& operator=(StaticVariableDescription&&) noexcept;
     //! \brief standard assignement
     StaticVariableDescription& operator=(const StaticVariableDescription&);
     //! \brief destructor

@@ -26,11 +26,10 @@ namespace tfel::check {
 
   struct TFELCHECK_VISIBILITY_EXPORT Interpolation {
     Interpolation();
-    Interpolation(Interpolation&&);
+    Interpolation(Interpolation&&) noexcept;
     Interpolation(const Interpolation&);
-    Interpolation& operator=(Interpolation&&);
+    Interpolation& operator=(Interpolation&&) noexcept;
     Interpolation& operator=(const Interpolation&);
-    virtual ~Interpolation();
     /*!
      * \brief stores the values of abscissa and ordinate and does the
      * interpolation
@@ -65,6 +64,8 @@ namespace tfel::check {
     virtual bool isConform() const = 0;
 
     virtual std::shared_ptr<Interpolation> clone() const = 0;
+    //! \brief destructor
+    virtual ~Interpolation();
   };
 
 }  // end of namespace tfel::check

@@ -44,11 +44,11 @@ namespace mfront {
     //! \brief copy constructor
     BehaviourDSLDescription(const BehaviourDSLDescription&);
     //! \brief move constructor
-    BehaviourDSLDescription(BehaviourDSLDescription&&);
+    BehaviourDSLDescription(BehaviourDSLDescription&&) noexcept;
     //! \brief standard assignement
     BehaviourDSLDescription& operator=(const BehaviourDSLDescription&);
     //! \brief move assignement
-    BehaviourDSLDescription& operator=(BehaviourDSLDescription&&);
+    BehaviourDSLDescription& operator=(BehaviourDSLDescription&&) noexcept;
     //! \brief destructor
     ~BehaviourDSLDescription();
     //! \brief type of the behaviour handled
@@ -91,7 +91,6 @@ namespace mfront {
     bool allowStiffnessTensorDefinition = true;
     //! \brief require the definition stiffness tensor
     bool requireStiffnessTensorDefinition = false;
-
   };  // end of struct BehaviourDSLDescription
 
   /*!

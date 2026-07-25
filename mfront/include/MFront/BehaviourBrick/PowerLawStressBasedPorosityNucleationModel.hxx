@@ -28,9 +28,9 @@ namespace mfront::bbrick {
     ~PowerLawStressBasedPorosityNucleationModel() override;
 
    protected:
-    std::string getModelName() const override final;
+    std::string getModelName() const final;
     std::vector<MaterialCoefficientDescription>
-    getMaterialCoefficientDescriptions() const override final;
+    getMaterialCoefficientDescriptions() const final;
   };  // end of struct PowerLawStressBasedPorosityNucleationModel
 
 }  // end of namespace mfront::bbrick

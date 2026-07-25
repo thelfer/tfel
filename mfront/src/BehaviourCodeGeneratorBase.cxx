@@ -907,11 +907,9 @@ namespace mfront {
       const VariableDescriptionContainer& v,
       const std::string& prefix,
       const std::string& suffix,
-      const std::string& fileName,
       const bool useTimeDerivative) const {
     for (const auto& e : v) {
-      this->writeVariableDeclaration(f, e, prefix, suffix, fileName,
-                                     useTimeDerivative);
+      this->writeVariableDeclaration(f, e, prefix, suffix, useTimeDerivative);
     }
   }  // end of writeVariablesDeclarations
 
@@ -920,7 +918,6 @@ namespace mfront {
       const VariableDescription& v,
       const std::string& prefix,
       const std::string& suffix,
-      const std::string& fileName,
       const bool useTimeDerivative) const {
     const auto n = prefix + v.name + suffix;
     const auto t = (!useTimeDerivative)
@@ -1575,7 +1572,7 @@ namespace mfront {
     this->checkBehaviourDataFile(os);
     this->writeVariablesDeclarations(
         os, this->bd.getBehaviourData(h).getMaterialProperties(), "", "",
-        this->fd.fileName, false);
+        false);
     os << '\n';
   }
 
@@ -1583,12 +1580,11 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourDataFile(os);
     const auto& d = this->bd.getBehaviourData(h);
-    this->writeVariablesDeclarations(os, d.getStateVariables(), "", "",
-                                     this->fd.fileName, false);
+    this->writeVariablesDeclarations(os, d.getStateVariables(), "", "", false);
     this->writeVariablesDeclarations(os, d.getAuxiliaryStateVariables(), "", "",
-                                     this->fd.fileName, false);
+                                     false);
     this->writeVariablesDeclarations(os, d.getExternalStateVariables(), "", "",
-                                     this->fd.fileName, false);
+                                     false);
     os << '\n';
   }
 
@@ -2126,11 +2122,10 @@ namespace mfront {
        << "*/\n";
     if (!this->bd.getTangentOperatorBlocks().empty()) {
       os << "[[nodiscard]] IntegrationResult\n"
-         << "integrate(const SMFlag smflag, const SMType smt) override "
-            "final{\n";
+         << "integrate(const SMFlag smflag, const SMType smt) final{\n";
     } else {
       os << "[[nodiscard]] IntegrationResult\n"
-         << "integrate(const SMFlag, const SMType) override final{\n";
+         << "integrate(const SMFlag, const SMType) final{\n";
     }
     os << "using namespace std;\n"
        << "using namespace tfel::math;\n";
@@ -3549,8 +3544,7 @@ namespace mfront {
       std::ostream& os, const Hypothesis h) const {
     this->checkBehaviourFile(os);
     const auto& md = this->bd.getBehaviourData(h);
-    this->writeVariablesDeclarations(os, md.getLocalVariables(), "", "",
-                                     this->fd.fileName, false);
+    this->writeVariablesDeclarations(os, md.getLocalVariables(), "", "", false);
     os << '\n';
     auto write_wrapper = [this, &os](const BehaviourVariableDescription& b) {
       const auto wrapper = getBehaviourWrapperClassName(b);
@@ -3615,8 +3609,7 @@ namespace mfront {
     for (const auto& v : md.getIntegrationVariables()) {
       if (!md.isStateVariableName(v.name)) {
         if (md.isMemberUsedInCodeBlocks(v.name)) {
-          this->writeVariableDeclaration(os, v, "", "", this->fd.fileName,
-                                         false);
+          this->writeVariableDeclaration(os, v, "", "", false);
         }
       }
     }
@@ -3718,7 +3711,6 @@ namespace mfront {
     const auto& md = this->bd.getBehaviourData(h);
     this->checkBehaviourFile(os);
     this->writeVariablesDeclarations(os, md.getIntegrationVariables(), "d", "",
-                                     this->fd.fileName,
                                      this->usesStateVariableTimeDerivative());
     os << '\n';
   }
@@ -4523,7 +4515,7 @@ namespace mfront {
     }
     if (!hasUserDefinedPredictionOperatorCode(this->bd, h)) {
       os << "[[nodiscard]] IntegrationResult computePredictionOperator("
-         << "const SMFlag, const SMType) override final{\n"
+         << "const SMFlag, const SMType) final{\n"
          << "tfel::raise(\"" << this->bd.getClassName()
          << "::computePredictionOperator: \"\n"
          << "\"unsupported prediction operator flag\");\n"
@@ -4634,7 +4626,7 @@ namespace mfront {
         }
         os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult "
            << "computePredictionOperator(const SMFlag smflag, "
-           << "const SMType smt) override final{\n"
+           << "const SMType smt) final{\n"
            << "using namespace std;\n"
            << "switch(smflag){\n";
         for (const auto& t : tos) {
@@ -4653,7 +4645,7 @@ namespace mfront {
     } else {
       os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult\n"
          << "computePredictionOperator(const SMFlag smflag,const SMType smt) "
-         << "override final{\n"
+         << "final{\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using std::vector;\n";
@@ -4836,7 +4828,7 @@ namespace mfront {
       std::ostream& os) const {
     this->checkBehaviourFile(os);
     os << "TFEL_HOST_DEVICE real getMinimalTimeStepScalingFactor() const "
-          "noexcept override final{\n"
+          "noexcept final{\n"
           "  return this->minimal_time_step_scaling_factor;\n"
           "}\n\n";
   }
@@ -4847,7 +4839,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     os << "TFEL_HOST_DEVICE std::pair<bool, real>\n"
           "computeAPrioriTimeStepScalingFactor(const real "
-          "current_time_step_scaling_factor) const override final{\n"
+          "current_time_step_scaling_factor) const final{\n"
           "const auto time_scaling_factor = "
           "this->computeAPrioriTimeStepScalingFactorII();\n"
           "return {time_scaling_factor.first,\n"
@@ -4884,7 +4876,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     os << "TFEL_HOST_DEVICE std::pair<bool, real>\n"
           "computeAPosterioriTimeStepScalingFactor(const real "
-          "current_time_step_scaling_factor) const override final{\n"
+          "current_time_step_scaling_factor) const final{\n"
           "const auto time_scaling_factor = "
           "this->computeAPosterioriTimeStepScalingFactorII();\n"
           "return {time_scaling_factor.first,\n"
@@ -5841,7 +5833,7 @@ namespace mfront {
     const auto& md = this->bd.getBehaviourData(h);
     this->checkIntegrationDataFile(os);
     this->writeVariablesDeclarations(os, md.getExternalStateVariables(), "d",
-                                     "", this->fd.fileName, false);
+                                     "", false);
   }
 
   void BehaviourCodeGeneratorBase::writeIntegrationDataFileBegin(

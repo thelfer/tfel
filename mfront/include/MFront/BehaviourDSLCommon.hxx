@@ -56,7 +56,7 @@ namespace mfront {
     //! a simple alias
     using OrthotropicAxesConvention = tfel::material::OrthotropicAxesConvention;
     //
-    const BehaviourDescription& getBehaviourDescription() const override final;
+    const BehaviourDescription& getBehaviourDescription() const final;
     std::map<std::string, std::shared_ptr<AbstractBehaviourInterface>>
     getBehaviourInterfaces() const override;
     std::shared_ptr<MaterialPropertyDescription>

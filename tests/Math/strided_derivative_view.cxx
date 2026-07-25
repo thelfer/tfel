@@ -33,8 +33,8 @@ struct StridedDerivativeViewTest final : public tfel::tests::TestCase {
 
  private:
   // Checks that the SoA buffer holds `expected` strided by `stride`, i.e. the
-  // element \((i, j)\) of the base matrix is at index `(i * M + j) * stride` and
-  // every other slot is left untouched (zero).
+  // element \((i, j)\) of the base matrix is at index `(i * M + j) * stride`
+  // and every other slot is left untouched (zero).
   template <unsigned short N, unsigned short M, std::size_t SZ>
   static constexpr bool checkStridedValuesAtCompileTime(
       const std::array<int, SZ>& buf,
@@ -103,9 +103,8 @@ struct StridedDerivativeViewTest final : public tfel::tests::TestCase {
     };
     constexpr auto buf = []() constexpr {
       auto a = std::array<int, 5 * 3 * stride>{};
-      map_derivative_strided<1, 1, stensor<2u, int>, int, 5, 3>(a.data(),
-                                                                stride) =
-          stensor<2u, int>::Id();
+      map_derivative_strided<1, 1, stensor<2u, int>, int, 5, 3>(
+          a.data(), stride) = stensor<2u, int>::Id();
       return a;
     }
     ();
@@ -123,9 +122,8 @@ struct StridedDerivativeViewTest final : public tfel::tests::TestCase {
     };
     constexpr auto buf = []() constexpr {
       auto a = std::array<int, 2 * 5 * stride>{};
-      map_derivative_strided<0, 1, int, stensor<2u, int>, 2, 5>(a.data(),
-                                                                stride) =
-          stensor<2u, int>::Id();
+      map_derivative_strided<0, 1, int, stensor<2u, int>, 2, 5>(
+          a.data(), stride) = stensor<2u, int>::Id();
       return a;
     }
     ();
@@ -157,7 +155,8 @@ struct StridedDerivativeViewTest final : public tfel::tests::TestCase {
   }
 };  // end of struct StridedDerivativeViewTest
 
-TFEL_TESTS_GENERATE_PROXY(StridedDerivativeViewTest, "StridedDerivativeViewTest");
+TFEL_TESTS_GENERATE_PROXY(StridedDerivativeViewTest,
+                          "StridedDerivativeViewTest");
 
 /* coverity [UNCAUGHT_EXCEPT]*/
 int main() {

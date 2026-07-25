@@ -25,7 +25,7 @@ namespace numodis {
 
   Crystallo::Crystallo() = default;
 
-  Crystallo::Crystallo(Crystallo&&) = default;
+  Crystallo::Crystallo(Crystallo&&) noexcept = default;
 
   Crystallo::Crystallo(const Crystallo&) = default;
 
