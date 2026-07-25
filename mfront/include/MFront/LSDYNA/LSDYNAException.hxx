@@ -29,11 +29,11 @@ namespace lsdyna {
       : public std::exception {
     LSDYNAException(const std::string&);
     //! move constructor
-    LSDYNAException(LSDYNAException&&);
+    LSDYNAException(LSDYNAException&&) noexcept;
     //! copy constructor
     LSDYNAException(const LSDYNAException&);
-    const char* what() const noexcept override final;
-    virtual std::string getMsg() const noexcept final;
+    const char* what() const noexcept final;
+    virtual const std::string& getMsg() const noexcept final;
     //! destructor
     ~LSDYNAException() noexcept override;
 
@@ -55,7 +55,8 @@ namespace lsdyna {
      */
     LSDYNAInvalidModellingHypothesis(const char*);
     //! move constructor
-    LSDYNAInvalidModellingHypothesis(LSDYNAInvalidModellingHypothesis&&);
+    LSDYNAInvalidModellingHypothesis(
+        LSDYNAInvalidModellingHypothesis&&) noexcept;
     //! copy constructor
     LSDYNAInvalidModellingHypothesis(const LSDYNAInvalidModellingHypothesis&);
     //! destructor
@@ -71,7 +72,7 @@ namespace lsdyna {
       : public LSDYNAException {
     LSDYNAInvalidNTENSValue(const unsigned short);
     //! move constructor
-    LSDYNAInvalidNTENSValue(LSDYNAInvalidNTENSValue&&);
+    LSDYNAInvalidNTENSValue(LSDYNAInvalidNTENSValue&&) noexcept;
     //! copy constructor
     LSDYNAInvalidNTENSValue(const LSDYNAInvalidNTENSValue&);
     //! desctructor
@@ -88,7 +89,7 @@ namespace lsdyna {
       : public LSDYNAException {
     LSDYNAInvalidDimension(const std::string&, const unsigned short);
     //! move constructor
-    LSDYNAInvalidDimension(LSDYNAInvalidDimension&&);
+    LSDYNAInvalidDimension(LSDYNAInvalidDimension&&) noexcept;
     //! copy constructor
     LSDYNAInvalidDimension(const LSDYNAInvalidDimension&);
     //! destructor

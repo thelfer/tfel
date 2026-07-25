@@ -53,11 +53,11 @@ namespace mfront {
      */
     Gradient(const VariableDescription&);
     //! \brief move constructor
-    Gradient(Gradient&&);
+    Gradient(Gradient&&) noexcept;
     //! \brief copy constructor
     Gradient(const Gradient&);
     //! \brief move assignement
-    Gradient& operator=(Gradient&&);
+    Gradient& operator=(Gradient&&) noexcept;
     //! \brief standard assignement
     Gradient& operator=(const Gradient&);
     //! destructor

@@ -393,7 +393,7 @@ namespace tfel::math {
   constexpr auto map_array(
       const ViewsArrayDataPointerType<numeric_type<ArrayType>> p) {
     return StandardFixedSizeViewsArray<ArrayType>{p};
-  } // end of map_array
+  }  // end of map_array
 
 }  // end of namespace tfel::math
 

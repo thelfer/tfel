@@ -18,9 +18,10 @@
 namespace mfront {
 
   FileDescription::FileDescription() = default;
-  FileDescription::FileDescription(FileDescription&&) = default;
+  FileDescription::FileDescription(FileDescription&&) noexcept = default;
   FileDescription::FileDescription(const FileDescription&) = default;
-  FileDescription& FileDescription::operator=(FileDescription&&) = default;
+  FileDescription& FileDescription::operator=(FileDescription&&) noexcept =
+      default;
   FileDescription& FileDescription::operator=(const FileDescription&) = default;
   FileDescription::~FileDescription() = default;
 

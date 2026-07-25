@@ -43,10 +43,10 @@ namespace mfront {
     //! \brief ArgumentParserBase must be a friend
     friend struct tfel::utilities::ArgumentParserBase<QueryHandlerBase>;
     const tfel::utilities::Argument& getCurrentCommandLineArgument()
-        const override final;
-    void treatUnknownArgument() override final;
-    std::string getVersionDescription() const override final;
-    std::string getUsageDescription() const override final;
+        const final;
+    void treatUnknownArgument() final;
+    std::string getVersionDescription() const final;
+    std::string getUsageDescription() const final;
     /*!
      * \brief print the description of a variable
      * \param[in] v: variable

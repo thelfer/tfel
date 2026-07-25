@@ -26,9 +26,9 @@ namespace aster {
 
     AsterException(const AsterException&);
 
-    const char* what() const noexcept override final;
+    const char* what() const noexcept final;
 
-    virtual std::string getMsg() const noexcept final;
+    virtual const std::string& getMsg() const noexcept final;
 
     ~AsterException() noexcept override;
 

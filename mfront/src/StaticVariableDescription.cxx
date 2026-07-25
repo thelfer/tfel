@@ -36,11 +36,11 @@ namespace mfront {
         value(value_) {}
 
   StaticVariableDescription::StaticVariableDescription(
-      StaticVariableDescription&&) = default;
+      StaticVariableDescription&&) noexcept = default;
   StaticVariableDescription::StaticVariableDescription(
       const StaticVariableDescription&) = default;
   StaticVariableDescription& StaticVariableDescription::operator=(
-      StaticVariableDescription&&) = default;
+      StaticVariableDescription&&) noexcept = default;
   StaticVariableDescription& StaticVariableDescription::operator=(
       const StaticVariableDescription&) = default;
   StaticVariableDescription::~StaticVariableDescription() = default;

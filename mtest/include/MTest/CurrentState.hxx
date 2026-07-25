@@ -55,11 +55,11 @@ namespace mtest {
     //! \brief copy constructor
     CurrentState(const CurrentState&);
     //! \brief move constructor
-    CurrentState(CurrentState&&);
+    CurrentState(CurrentState&&) noexcept;
     //! \brief assignement
     CurrentState& operator=(const CurrentState&);
     //! \brief move assignement
-    CurrentState& operator=(CurrentState&&);
+    CurrentState& operator=(CurrentState&&) noexcept;
     //! \brief destructor
     ~CurrentState() noexcept;
     //! \brief behaviour

@@ -60,16 +60,16 @@ namespace mfront {
     friend struct tfel::utilities::ArgumentParserBase<MFront>;
 
     //! treat an unknown argument
-    void treatUnknownArgument() override final;
+    void treatUnknownArgument() final;
     //! a do nothing callback
     virtual void doNothing() final;
     //! return the current argument
     const tfel::utilities::Argument& getCurrentCommandLineArgument()
-        const override final;
+        const final;
     //! get the version description
-    std::string getVersionDescription() const override final;
+    std::string getVersionDescription() const final;
     //! get the usage description
-    std::string getUsageDescription() const override final;
+    std::string getUsageDescription() const final;
     //! treat the -G command line option
     virtual void treatGenerator();
     //! treat the -D command line option

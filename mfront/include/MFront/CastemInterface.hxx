@@ -352,7 +352,7 @@ namespace mfront {
      * \return the list of modelling hypotheses treated by the interface
      * \param[in] mb : behaviour description
      */
-    virtual std::set<Hypothesis> getModellingHypothesesToBeTreated(
+    std::set<Hypothesis> getModellingHypothesesToBeTreated(
         const BehaviourDescription&) const override;
 
   };  // end of CastemInterface

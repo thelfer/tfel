@@ -2166,11 +2166,10 @@ namespace mfront {
        << "*/\n";
     if (!this->bd.getTangentOperatorBlocks().empty()) {
       os << "[[nodiscard]] IntegrationResult\n"
-         << "integrate(const SMFlag smflag, const SMType smt) override "
-            "final{\n";
+         << "integrate(const SMFlag smflag, const SMType smt) final{\n";
     } else {
       os << "[[nodiscard]] IntegrationResult\n"
-         << "integrate(const SMFlag, const SMType) override final{\n";
+         << "integrate(const SMFlag, const SMType) final{\n";
     }
     os << "using namespace std;\n"
        << "using namespace tfel::math;\n";
@@ -4592,7 +4591,7 @@ namespace mfront {
     }
     if (!hasUserDefinedPredictionOperatorCode(this->bd, h)) {
       os << "[[nodiscard]] IntegrationResult computePredictionOperator("
-         << "const SMFlag, const SMType) override final{\n"
+         << "const SMFlag, const SMType) final{\n"
          << "tfel::raise(\"" << this->bd.getClassName()
          << "::computePredictionOperator: \"\n"
          << "\"unsupported prediction operator flag\");\n"
@@ -4703,7 +4702,7 @@ namespace mfront {
         }
         os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult "
            << "computePredictionOperator(const SMFlag smflag, "
-           << "const SMType smt) override final{\n"
+           << "const SMType smt) final{\n"
            << "using namespace std;\n"
            << "switch(smflag){\n";
         for (const auto& t : tos) {
@@ -4722,7 +4721,7 @@ namespace mfront {
     } else {
       os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult\n"
          << "computePredictionOperator(const SMFlag smflag,const SMType smt) "
-         << "override final{\n"
+         << "final{\n"
          << "using namespace std;\n"
          << "using namespace tfel::math;\n"
          << "using std::vector;\n";
@@ -4905,7 +4904,7 @@ namespace mfront {
       std::ostream& os) const {
     this->checkBehaviourFile(os);
     os << "TFEL_HOST_DEVICE real getMinimalTimeStepScalingFactor() const "
-          "noexcept override final{\n"
+          "noexcept final{\n"
           "  return this->minimal_time_step_scaling_factor;\n"
           "}\n\n";
   }
@@ -4916,7 +4915,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     os << "TFEL_HOST_DEVICE std::pair<bool, real>\n"
           "computeAPrioriTimeStepScalingFactor(const real "
-          "current_time_step_scaling_factor) const override final{\n"
+          "current_time_step_scaling_factor) const final{\n"
           "const auto time_scaling_factor = "
           "this->computeAPrioriTimeStepScalingFactorII();\n"
           "return {time_scaling_factor.first,\n"
@@ -4953,7 +4952,7 @@ namespace mfront {
     this->checkBehaviourFile(os);
     os << "TFEL_HOST_DEVICE std::pair<bool, real>\n"
           "computeAPosterioriTimeStepScalingFactor(const real "
-          "current_time_step_scaling_factor) const override final{\n"
+          "current_time_step_scaling_factor) const final{\n"
           "const auto time_scaling_factor = "
           "this->computeAPosterioriTimeStepScalingFactorII();\n"
           "return {time_scaling_factor.first,\n"

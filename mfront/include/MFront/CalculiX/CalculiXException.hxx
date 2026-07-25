@@ -28,22 +28,22 @@ namespace calculix {
   struct MFRONT_CALCULIX_VISIBILITY_EXPORT CalculiXException
       : public std::exception {
     CalculiXException(const std::string&);
-    //! move constructor
-    CalculiXException(CalculiXException&&);
-    //! copy constructor
+    //! \brief move constructor
+    CalculiXException(CalculiXException&&) noexcept;
+    //! \brief copy constructor
     CalculiXException(const CalculiXException&);
 
-    const char* what() const noexcept override final;
+    const char* what() const noexcept final;
 
-    virtual std::string getMsg() const noexcept final;
-    //! destructor
+    virtual const std::string& getMsg() const noexcept final;
+    //! \brief destructor
     ~CalculiXException() noexcept override;
 
    private:
     CalculiXException() = delete;
     CalculiXException& operator=(const CalculiXException&) = delete;
     CalculiXException& operator=(CalculiXException&&) = delete;
-    //! error message
+    //! \brief error message
     const std::string msg;
   };  // end of struct CalculiXException
   /*!
@@ -56,12 +56,13 @@ namespace calculix {
      * \param[in] b : behaviour name
      */
     CalculiXInvalidModellingHypothesis(const char*);
-    //! move constructor
-    CalculiXInvalidModellingHypothesis(CalculiXInvalidModellingHypothesis&&);
-    //! copy constructor
+    //! \brief move constructor
+    CalculiXInvalidModellingHypothesis(
+        CalculiXInvalidModellingHypothesis&&) noexcept;
+    //! \brief copy constructor
     CalculiXInvalidModellingHypothesis(
         const CalculiXInvalidModellingHypothesis&);
-    //! destructor
+    //! \brief destructor
     ~CalculiXInvalidModellingHypothesis() noexcept override;
 
    private:
@@ -75,11 +76,11 @@ namespace calculix {
   struct MFRONT_CALCULIX_VISIBILITY_EXPORT CalculiXInvalidNTENSValue final
       : public CalculiXException {
     CalculiXInvalidNTENSValue(const unsigned short);
-    //! move constructor
-    CalculiXInvalidNTENSValue(CalculiXInvalidNTENSValue&&);
-    //! copy constructor
+    //! \brief move constructor
+    CalculiXInvalidNTENSValue(CalculiXInvalidNTENSValue&&) noexcept;
+    //! \brief copy constructor
     CalculiXInvalidNTENSValue(const CalculiXInvalidNTENSValue&);
-    //! desctructor
+    //! \brief desctructor
     ~CalculiXInvalidNTENSValue() noexcept override;
 
    private:
@@ -93,11 +94,11 @@ namespace calculix {
   struct MFRONT_CALCULIX_VISIBILITY_EXPORT CalculiXInvalidDimension final
       : public CalculiXException {
     CalculiXInvalidDimension(const std::string&, const unsigned short);
-    //! move constructor
-    CalculiXInvalidDimension(CalculiXInvalidDimension&&);
-    //! copy constructor
+    //! \brief move constructor
+    CalculiXInvalidDimension(CalculiXInvalidDimension&&) noexcept;
+    //! \brief copy constructor
     CalculiXInvalidDimension(const CalculiXInvalidDimension&);
-    //! destructor
+    //! \brief destructor
     ~CalculiXInvalidDimension() noexcept override;
 
    private:

@@ -19,7 +19,7 @@
 
 namespace numodis {
 
-  IBurgers::IBurgers(IBurgers&&) = default;
+  IBurgers::IBurgers(IBurgers&&) noexcept = default;
 
   IBurgers::IBurgers(const IBurgers&) = default;
 

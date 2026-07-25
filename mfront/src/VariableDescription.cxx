@@ -53,9 +53,10 @@ namespace mfront {
 
   VariableDescription::VariableDescription(const VariableDescription&) =
       default;
-  VariableDescription::VariableDescription(VariableDescription&&) = default;
-  VariableDescription& VariableDescription::operator=(VariableDescription&&) =
+  VariableDescription::VariableDescription(VariableDescription&&) noexcept =
       default;
+  VariableDescription& VariableDescription::operator=(
+      VariableDescription&&) noexcept = default;
   VariableDescription& VariableDescription::operator=(
       const VariableDescription&) = default;
 
@@ -547,11 +548,11 @@ namespace mfront {
       : std::vector<VariableDescription>(l) {}
 
   VariableDescriptionContainer::VariableDescriptionContainer(
-      VariableDescriptionContainer&&) = default;
+      VariableDescriptionContainer&&) noexcept = default;
   VariableDescriptionContainer::VariableDescriptionContainer(
       const VariableDescriptionContainer&) = default;
   VariableDescriptionContainer& VariableDescriptionContainer::operator=(
-      VariableDescriptionContainer&&) = default;
+      VariableDescriptionContainer&&) noexcept = default;
   VariableDescriptionContainer& VariableDescriptionContainer::operator=(
       const VariableDescriptionContainer&) = default;
 

@@ -89,8 +89,8 @@ namespace mfront {
 
   ExecutableDescription::ExecutableDescription(const ExecutableDescription&) =
       default;
-  ExecutableDescription::ExecutableDescription(ExecutableDescription&&) =
-      default;
+  ExecutableDescription::ExecutableDescription(
+      ExecutableDescription&&) noexcept = default;
   ExecutableDescription::~ExecutableDescription() = default;
 
   std::ostream& operator<<(std::ostream& os, const ExecutableDescription& l) {

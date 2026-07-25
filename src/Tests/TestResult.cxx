@@ -21,7 +21,7 @@ namespace tfel::tests {
   TestResult::TestResult(const TestResult&) = default;
   TestResult::TestResult(TestResult&&) noexcept = default;
   TestResult& TestResult::operator=(const TestResult&) = default;
-  TestResult& TestResult::operator=(TestResult&&) = default;
+  TestResult& TestResult::operator=(TestResult&&) noexcept = default;
 
   TestResult::TestResult(const bool b)
       : status(b) {}  // end of TestResult::TestResult

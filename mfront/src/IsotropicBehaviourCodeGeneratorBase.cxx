@@ -143,7 +143,7 @@ namespace mfront {
     if (!this->bd.hasCode(h, BehaviourData::ComputePredictionOperator)) {
       os << "[[nodiscard]] TFEL_HOST_DEVICE IntegrationResult\n"
          << "computePredictionOperator(const SMFlag smflag, const SMType smt) "
-         << "override final {\n";
+         << "final {\n";
       os << "using namespace std;\n";
       if (this->bd.useQt()) {
         os << "if(smflag!=MechanicalBehaviour<" << btype

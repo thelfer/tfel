@@ -25,12 +25,13 @@ namespace mfront {
   SpecificTargetDescription::SpecificTargetDescription(
       const SpecificTargetDescription&) = default;
   SpecificTargetDescription::SpecificTargetDescription(
-      SpecificTargetDescription&&) = default;
-  SpecificTargetDescription::~SpecificTargetDescription() = default;
+      SpecificTargetDescription&&) noexcept = default;
 
   SpecificTargetDescription& SpecificTargetDescription::operator=(
       const SpecificTargetDescription&) = default;
   SpecificTargetDescription& SpecificTargetDescription::operator=(
-      SpecificTargetDescription&&) = default;
+      SpecificTargetDescription&&) noexcept = default;
+
+  SpecificTargetDescription::~SpecificTargetDescription() = default;
 
 }  // end of namespace mfront

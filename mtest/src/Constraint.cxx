@@ -16,10 +16,10 @@
 namespace mtest {
 
   ConstraintOptions::ConstraintOptions() = default;
-  ConstraintOptions::ConstraintOptions(ConstraintOptions&&) = default;
+  ConstraintOptions::ConstraintOptions(ConstraintOptions&&) noexcept = default;
   ConstraintOptions::ConstraintOptions(const ConstraintOptions&) = default;
-  ConstraintOptions& ConstraintOptions::operator=(ConstraintOptions&&) =
-      default;
+  ConstraintOptions& ConstraintOptions::operator=(
+      ConstraintOptions&&) noexcept = default;
   ConstraintOptions& ConstraintOptions::operator=(const ConstraintOptions&) =
       default;
 

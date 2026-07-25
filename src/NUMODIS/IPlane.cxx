@@ -19,7 +19,7 @@
 
 namespace numodis {
 
-  IPlane::IPlane(IPlane&&) = default;
+  IPlane::IPlane(IPlane&&) noexcept = default;
 
   IPlane::IPlane(const IPlane&) = default;
 

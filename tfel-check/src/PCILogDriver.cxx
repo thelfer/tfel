@@ -21,7 +21,7 @@
 namespace tfel::check {
 
   PCILogDriver::PCILogDriver() = default;
-  PCILogDriver::PCILogDriver(PCILogDriver&&) = default;
+  PCILogDriver::PCILogDriver(PCILogDriver&&) noexcept = default;
   PCILogDriver::PCILogDriver(const PCILogDriver&) = default;
 
   PCILogDriver::PCILogDriver(std::ostream& os) : log_ptr(&os) {}

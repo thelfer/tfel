@@ -60,7 +60,7 @@ namespace mfront {
      */
     void writeOutputFiles(const MaterialPropertyDescription&,
                           const FileDescription&) const override;
-    //! destructorx
+    //! \brief destructor
     ~GnuplotMaterialPropertyInterface() override;
 
    private:
@@ -77,17 +77,17 @@ namespace mfront {
                               const std::string& msg = "");
     // map : variable,datafile
     struct dataFile {
-      //! constructor
+      //! \brief constructor
       dataFile();
-      //! copy constructor
+      //! \brief copy constructor
       dataFile(const dataFile&);
-      //! move constructor
-      dataFile(dataFile&&);
-      //! copy assignement operator
+      //! \brief move constructor
+      dataFile(dataFile&&) noexcept;
+      //! \brief copy assignement operator
       dataFile& operator=(const dataFile&);
-      //! move assignement operator
-      dataFile& operator=(dataFile&&);
-      //! destructor
+      //! \brief move assignement operator
+      dataFile& operator=(dataFile&&) noexcept;
+      //! \brief destructor
       ~dataFile();
       std::string name;
       std::string legend;

@@ -44,7 +44,7 @@ namespace numodis {
   struct TFELNUMODIS_VISIBILITY_EXPORT Crystallo {
     Crystallo();
 
-    Crystallo(Crystallo&&);
+    Crystallo(Crystallo&&) noexcept;
 
     Crystallo(const Crystallo&);
 

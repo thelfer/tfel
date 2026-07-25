@@ -75,7 +75,7 @@ namespace mfront {
      * \param[in] v  : variable to be initialised
      * \param[in] o  : variable offsert
      */
-    virtual void writeBehaviourDataGradientSetter(
+    void writeBehaviourDataGradientSetter(
         std::ostream&,
         const Gradient&,
         const SupportedTypes::TypeSize) const override;
@@ -85,7 +85,7 @@ namespace mfront {
      * \param[in] v  : variable to be initialised
      * \param[in] o  : variable offsert
      */
-    virtual void writeIntegrationDataGradientSetter(
+    void writeIntegrationDataGradientSetter(
         std::ostream&,
         const Gradient&,
         const SupportedTypes::TypeSize) const override;
@@ -95,7 +95,7 @@ namespace mfront {
      * \param[in]  f   : thermodynamic force
      * \param[in]  o   : thermodynamic force offset
      */
-    virtual void exportThermodynamicForce(
+    void exportThermodynamicForce(
         std::ostream&,
         const std::string&,
         const ThermodynamicForce&,
@@ -105,7 +105,7 @@ namespace mfront {
      * \param[in] out : output file
      * \param[in] mb  : mechanical behaviour description
      */
-    virtual void writeInterfaceSpecificIncludes(
+    void writeInterfaceSpecificIncludes(
         std::ostream&, const BehaviourDescription&) const override;
     /*!
      * \brief write the initialisation of a thermodynamic force

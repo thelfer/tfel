@@ -44,7 +44,7 @@ namespace mfront {
      */
     ModelDSLCommon(const DSLOptions&);
     //
-    DSLTarget getTargetType() const override final;
+    DSLTarget getTargetType() const final;
     const MaterialKnowledgeDescription& getMaterialKnowledgeDescription()
         const override;
     std::string getMaterialKnowledgeIdentifier() const override;

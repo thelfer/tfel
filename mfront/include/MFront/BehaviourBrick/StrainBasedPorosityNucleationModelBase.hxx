@@ -44,7 +44,7 @@ namespace mfront::bbrick {
         const BehaviourDescription&,
         const std::map<std::string, std::shared_ptr<bbrick::InelasticFlow>>&,
         const std::string&) const override;
-    bool requiresSavingNucleatedPorosity() const override final;
+    bool requiresSavingNucleatedPorosity() const final;
     //! \brief destructor
     ~StrainBasedPorosityNucleationModelBase() override;
 

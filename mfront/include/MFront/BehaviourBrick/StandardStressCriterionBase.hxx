@@ -68,9 +68,9 @@ namespace mfront::bbrick {
                                         const BehaviourDescription&,
                                         const StressPotential&,
                                         const Role) const override;
-    bool isCoupledWithPorosityEvolution() const override final;
+    bool isCoupledWithPorosityEvolution() const final;
     PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
-        const override final;
+        const final;
     //! destructor
     ~StandardStressCriterionBase() override;
 

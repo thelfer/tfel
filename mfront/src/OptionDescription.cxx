@@ -59,11 +59,11 @@ namespace mfront::bbrick {
 
   OptionDescription::OptionDescription() = default;
   OptionDescription::OptionDescription(const OptionDescription&) = default;
-  OptionDescription::OptionDescription(OptionDescription&&) = default;
+  OptionDescription::OptionDescription(OptionDescription&&) noexcept = default;
   OptionDescription& OptionDescription::operator=(const OptionDescription&) =
       default;
-  OptionDescription& OptionDescription::operator=(OptionDescription&&) =
-      default;
+  OptionDescription& OptionDescription::operator=(
+      OptionDescription&&) noexcept = default;
   OptionDescription::~OptionDescription() = default;
 
   void check(const tfel::utilities::DataMap& dv,

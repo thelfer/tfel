@@ -30,7 +30,7 @@ namespace tfel::math {
     CubicSplineUninitialised() = default;
     CubicSplineUninitialised(const CubicSplineUninitialised&) = default;
     CubicSplineUninitialised(CubicSplineUninitialised&&) = default;
-    const char* what() const noexcept override final;
+    const char* what() const noexcept final;
     ~CubicSplineUninitialised() noexcept override;
   };  // end of struct CubicSplineUninitialised
 
@@ -45,7 +45,7 @@ namespace tfel::math {
         const CubicSplineInvalidAbscissaVectorSize&) = default;
     CubicSplineInvalidAbscissaVectorSize(
         CubicSplineInvalidAbscissaVectorSize&&) = default;
-    const char* what() const noexcept override final;
+    const char* what() const noexcept final;
     ~CubicSplineInvalidAbscissaVectorSize() noexcept override;
   };  // end of struct CubicSplineInvalidAbscissaVectorSize
 
@@ -57,7 +57,7 @@ namespace tfel::math {
     CubicSplineNullPivot() = default;
     CubicSplineNullPivot(const CubicSplineNullPivot&) = default;
     CubicSplineNullPivot(CubicSplineNullPivot&&) = default;
-    const char* what() const noexcept override final;
+    const char* what() const noexcept final;
     ~CubicSplineNullPivot() noexcept override;
   };  // end of struct CubicSplineInvalidAbscissaVectorSize
 
@@ -72,7 +72,7 @@ namespace tfel::math {
         const CubicSplineInvalidOrdinateVectorSize&) = default;
     CubicSplineInvalidOrdinateVectorSize(
         CubicSplineInvalidOrdinateVectorSize&&) = default;
-    const char* what() const noexcept override final;
+    const char* what() const noexcept final;
     ~CubicSplineInvalidOrdinateVectorSize() noexcept override;
   };  // end of struct CubicSplineInvalidOrdinateVectorSize
 
@@ -85,7 +85,7 @@ namespace tfel::math {
     CubicSplineInvalidInputs() = default;
     CubicSplineInvalidInputs(const CubicSplineInvalidInputs&) = default;
     CubicSplineInvalidInputs(CubicSplineInvalidInputs&&) = default;
-    const char* what() const noexcept override final;
+    const char* what() const noexcept final;
     ~CubicSplineInvalidInputs() noexcept override;
   };  // end of struct CubicSplineInvalidInputs
 
@@ -99,7 +99,7 @@ namespace tfel::math {
         const CubicSplineUnorderedAbscissaVector&) = default;
     CubicSplineUnorderedAbscissaVector(CubicSplineUnorderedAbscissaVector&&) =
         default;
-    const char* what() const noexcept override final;
+    const char* what() const noexcept final;
     ~CubicSplineUnorderedAbscissaVector() noexcept override;
   };  // end of struct CubicSplineUnorderedAbscissaVector
 

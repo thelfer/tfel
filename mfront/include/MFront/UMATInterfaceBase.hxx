@@ -239,7 +239,7 @@ namespace mfront {
         std::ostream&,
         const Hypothesis,
         const BehaviourDescription&) const override;
-    virtual void writeIntegrationDataMainVariablesSetters(
+    void writeIntegrationDataMainVariablesSetters(
         std::ostream&, const BehaviourDescription&) const override;
     /*!
      * \brief write the initialisation of a driving variables

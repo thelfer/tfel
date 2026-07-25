@@ -55,9 +55,9 @@ namespace mfront {
                               const SupportedTypes::TypeSize,
                               const bool);
     BehaviourMaterialProperty(const BehaviourMaterialProperty&);
-    BehaviourMaterialProperty(BehaviourMaterialProperty&&);
+    BehaviourMaterialProperty(BehaviourMaterialProperty&&) noexcept;
     BehaviourMaterialProperty& operator=(const BehaviourMaterialProperty&);
-    BehaviourMaterialProperty& operator=(BehaviourMaterialProperty&&);
+    BehaviourMaterialProperty& operator=(BehaviourMaterialProperty&&) noexcept;
     ~BehaviourMaterialProperty();
     //! \return if the material property is scalar
     bool isScalar() const;

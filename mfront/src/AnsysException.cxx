@@ -32,7 +32,7 @@ namespace ansys {
   AnsysException::AnsysException(std::string s)
       : msg(s) {}  // end of AnsysException::AnsysException
 
-  AnsysException::AnsysException(AnsysException&&) = default;
+  AnsysException::AnsysException(AnsysException&&) noexcept = default;
 
   AnsysException::AnsysException(const AnsysException&) = default;
 
@@ -40,14 +40,14 @@ namespace ansys {
     return msg.c_str();
   }  // end of AnsysException::what
 
-  std::string AnsysException::getMsg() const noexcept {
+  const std::string& AnsysException::getMsg() const noexcept {
     return msg;
   }  // end of AnsysException::getMsg
 
   AnsysException::~AnsysException() noexcept = default;
 
   AnsysInvalidModellingHypothesis::AnsysInvalidModellingHypothesis(
-      AnsysInvalidModellingHypothesis&&) = default;
+      AnsysInvalidModellingHypothesis&&) noexcept = default;
 
   AnsysInvalidModellingHypothesis::AnsysInvalidModellingHypothesis(
       const AnsysInvalidModellingHypothesis&) = default;
@@ -66,8 +66,8 @@ namespace ansys {
                        std::to_string(static_cast<unsigned int>(N)) + "'") {
   }  // end of AnsysInvalidNTENSValue::AnsysInvalidNTENSValue
 
-  AnsysInvalidNTENSValue::AnsysInvalidNTENSValue(AnsysInvalidNTENSValue&&) =
-      default;
+  AnsysInvalidNTENSValue::AnsysInvalidNTENSValue(
+      AnsysInvalidNTENSValue&&) noexcept = default;
 
   AnsysInvalidNTENSValue::AnsysInvalidNTENSValue(
       const AnsysInvalidNTENSValue&) = default;
@@ -83,8 +83,8 @@ namespace ansys {
   AnsysInvalidDimension::AnsysInvalidDimension(const AnsysInvalidDimension&) =
       default;
 
-  AnsysInvalidDimension::AnsysInvalidDimension(AnsysInvalidDimension&&) =
-      default;
+  AnsysInvalidDimension::AnsysInvalidDimension(
+      AnsysInvalidDimension&&) noexcept = default;
 
   AnsysInvalidDimension::~AnsysInvalidDimension() noexcept = default;
 
