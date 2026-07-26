@@ -194,7 +194,7 @@ namespace mfront {
       const VariableInformationBase&) = default;
   DocumentationGeneratorBase::VariableInformationBase&
   DocumentationGeneratorBase::VariableInformationBase::operator=(
-      VariableInformationBase&&) = default;
+      VariableInformationBase&&) noexcept = default;
   DocumentationGeneratorBase::VariableInformationBase&
   DocumentationGeneratorBase::VariableInformationBase::operator=(
       const VariableInformationBase&) = default;

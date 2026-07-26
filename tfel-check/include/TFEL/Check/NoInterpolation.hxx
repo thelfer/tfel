@@ -28,9 +28,9 @@ namespace tfel::check {
 
   struct TFELCHECK_VISIBILITY_EXPORT NoInterpolation : public Interpolation {
     NoInterpolation();
-    NoInterpolation(NoInterpolation&&);
+    NoInterpolation(NoInterpolation&&) noexcept;
     NoInterpolation(const NoInterpolation&);
-    NoInterpolation& operator=(NoInterpolation&&);
+    NoInterpolation& operator=(NoInterpolation&&) noexcept;
     NoInterpolation& operator=(const NoInterpolation&);
     void interpolate(const std::vector<double>&,
                      const std::vector<double>&) override;

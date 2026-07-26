@@ -48,10 +48,10 @@
 namespace tfel::check {
 
   TestLauncher::Command::Command() = default;
-  TestLauncher::Command::Command(Command&&) = default;
+  TestLauncher::Command::Command(Command&&) noexcept = default;
   TestLauncher::Command::Command(const Command&) = default;
   TestLauncher::Command&  //
-  TestLauncher::Command::operator=(Command&&) = default;
+  TestLauncher::Command::operator=(Command&&) noexcept = default;
   TestLauncher::Command&  //
   TestLauncher::Command::operator=(const Command&) = default;
   TestLauncher::Command::~Command() = default;

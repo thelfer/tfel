@@ -16,11 +16,12 @@
 namespace tfel::check {
 
   LinearInterpolation::LinearInterpolation() = default;
-  LinearInterpolation::LinearInterpolation(LinearInterpolation&&) = default;
+  LinearInterpolation::LinearInterpolation(LinearInterpolation&&) noexcept =
+      default;
   LinearInterpolation::LinearInterpolation(const LinearInterpolation&) =
       default;
-  LinearInterpolation& LinearInterpolation::operator=(LinearInterpolation&&) =
-      default;
+  LinearInterpolation& LinearInterpolation::operator=(
+      LinearInterpolation&&) noexcept = default;
   LinearInterpolation& LinearInterpolation::operator=(
       const LinearInterpolation&) = default;
   LinearInterpolation::~LinearInterpolation() = default;

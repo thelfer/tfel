@@ -28,9 +28,9 @@ namespace tfel::check {
   struct TFELCHECK_VISIBILITY_EXPORT LinearInterpolation
       : public Interpolation {
     LinearInterpolation();
-    LinearInterpolation(LinearInterpolation&&);
+    LinearInterpolation(LinearInterpolation&&) noexcept;
     LinearInterpolation(const LinearInterpolation&);
-    LinearInterpolation& operator=(LinearInterpolation&&);
+    LinearInterpolation& operator=(LinearInterpolation&&) noexcept;
     LinearInterpolation& operator=(const LinearInterpolation&);
     void interpolate(const std::vector<double>&,
                      const std::vector<double>&) override;

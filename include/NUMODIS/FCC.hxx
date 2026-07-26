@@ -50,13 +50,11 @@ namespace numodis {
   //===============================================================
   struct TFELNUMODIS_VISIBILITY_EXPORT FCC : public Cubic {
     FCC();
-
-    FCC(FCC&&);
-
+    FCC(FCC&&) noexcept;
     FCC(const FCC&);
 
    private:
-    virtual void Init() override;
+    void Init() override;
   };
 
 }  // end of namespace numodis

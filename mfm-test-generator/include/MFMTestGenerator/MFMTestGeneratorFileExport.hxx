@@ -27,11 +27,11 @@ namespace mfmtg {
     //! \brief default constructor
     TestDescription();
     //! \brief move constructor
-    TestDescription(TestDescription&&);
+    TestDescription(TestDescription&&) noexcept;
     //! \brief copy constructor
     TestDescription(const TestDescription&);
     //! \brief move constructor
-    TestDescription& operator=(TestDescription&&);
+    TestDescription& operator=(TestDescription&&) noexcept;
     //! \brief copy constructor
     TestDescription& operator=(const TestDescription&);
     //! \brief destructor

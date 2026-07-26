@@ -24,9 +24,9 @@ namespace tfel::check {
 
   struct TFELCHECK_VISIBILITY_EXPORT Test {
     Test();
-    Test(Test&&);
+    Test(Test&&) noexcept;
     Test(const Test&);
-    Test& operator=(Test&&);
+    Test& operator=(Test&&) noexcept;
     Test& operator=(const Test&);
     virtual ~Test();
 
