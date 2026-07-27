@@ -53,14 +53,14 @@ namespace tfel::utilities::internals {
     };  // end of struct EndRecursionII
 
    public:
-    typedef typename std::conditional<
+    using Next = std::conditional_t<
         N + 1 == tfel::meta::TLSize<List>::value,
-        typename std::conditional<std::is_same<return_type, void>::value,
-                                  EndRecursionII,
-                                  EndRecursion>::type,
-        GenTypeBaseApply<T, List, N + 1>>::type Next;
+        std::conditional_t<std::is_same<return_type, void>::value,
+                           EndRecursionII,
+                           EndRecursion>,
+        GenTypeBaseApply<T, List, N + 1>>;
 
-    static return_type apply(const GenTypeBase<List>& v) {
+    [[nodiscard]] static return_type apply(const GenTypeBase<List>& v) {
       typedef typename tfel::meta::TLFindNthElt<List, N>::type current_value;
       if (v.template is<current_value>()) {
         return T::apply(v.template get<current_value>());
@@ -69,7 +69,7 @@ namespace tfel::utilities::internals {
       }
     }
 
-    static return_type apply(T& f, const GenTypeBase<List>& v) {
+    [[nodiscard]] static return_type apply(T& f, const GenTypeBase<List>& v) {
       typedef typename tfel::meta::TLFindNthElt<List, N>::type current_value;
       if (v.template is<current_value>()) {
         return f(v.template get<current_value>());

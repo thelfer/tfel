@@ -126,9 +126,9 @@ namespace tfel::check {
      */
     void treatUnknownArgument() override;
     //! \brief treat a substituion pattern
-    virtual bool treatSubstitution();
+    bool treatSubstitution();
     //! \brief register call backs associated to command line arguments
-    virtual void registerArgumentCallBacks();
+    void registerArgumentCallBacks();
     //! \return the current version of `tfel-check`
     std::string getVersionDescription() const override;
     //! \return the description of the usage of `tfel-check`

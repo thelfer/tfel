@@ -43,8 +43,7 @@ namespace tfel::tests {
   }
 
   template <bool (*f)()>
-  TestFunctionWrapper<f>::~TestFunctionWrapper() {
-  }  // end of TestFunctionWrapper<f>::~TestFunctionWrapper
+  TestFunctionWrapper<f>::~TestFunctionWrapper() = default;
 
 }  // end of namespace tfel::tests
 

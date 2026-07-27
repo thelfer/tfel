@@ -84,15 +84,15 @@ struct ExprTest final : public tfel::tests::TestCase {
     TFEL_TESTS_STATIC_ASSERT(
         (isBinaryOperationResultTypeValid<MyVector, MyVector, OpPlus>()));
     TFEL_TESTS_STATIC_ASSERT(
-        (std::is_same<typename ResultType<MyVector, MyVector, OpPlus>::type,
-                      MyVector>::value));
+        (std::is_same_v<typename ResultType<MyVector, MyVector, OpPlus>::type,
+                        MyVector>));
     TFEL_TESTS_STATIC_ASSERT(
-        (std::is_same<BinaryOperationResult<MyVector, MyVector, OpPlus>,
-                      MyVector>::value));
+        (std::is_same_v<BinaryOperationResult<MyVector, MyVector, OpPlus>,
+                        MyVector>));
     TFEL_TESTS_STATIC_ASSERT(
-        (std::is_same<BinaryOperationHandler<MyVector, MyVector, OpPlus>,
-                      Expr<MyVector, BinaryOperation<MyVector, MyVector,
-                                                     OpPlus>>>::value));
+        (std::is_same_v<
+            BinaryOperationHandler<MyVector, MyVector, OpPlus>,
+            Expr<MyVector, BinaryOperation<MyVector, MyVector, OpPlus>>>));
     TFEL_TESTS_STATIC_ASSERT(
         (std::is_same_v<typename handler::lhs_storage_type, const MyVector>));
     TFEL_TESTS_STATIC_ASSERT(

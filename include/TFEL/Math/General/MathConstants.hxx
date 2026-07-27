@@ -42,9 +42,9 @@ namespace tfel::math {
   };
 
   template <typename T>
-  struct Cste : std::conditional<tfel::typetraits::IsReal<T>::cond,
-                                 CsteBase<base_type<T>>,
-                                 tfel::meta::EmptyClass>::type {};
+  struct Cste : std::conditional_t<tfel::typetraits::IsReal<T>::cond,
+                                   CsteBase<base_type<T>>,
+                                   tfel::meta::EmptyClass> {};
 
 }  // end of namespace tfel::math
 

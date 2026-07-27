@@ -40,6 +40,7 @@ else(enable-fast-math)
   tfel_add_cxx_compiler_flag_if_available(OPTIMISATION_FLAGS2 "ffast-math")
 endif(enable-fast-math)
 
+option(enable-static-analysis  "enable gcc static analysis" OFF)
 option(enable-sanitize-options "enable various gcc sanitize options (undefined, address,...)" OFF)
 
 option(enable-glibcxx-debug "use the debug version of the C++ standard as implemented by the glib C++ library" OFF)
@@ -57,6 +58,11 @@ set(TFEL_CMAKE_C_FLAGS_DEBUG "-g" CACHE STRING
     "Flags used by the C compiler during debug builds."
     FORCE)
 
+if(enable-static-analysis)
+  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "fanalyzer")
+  tfel_add_cxx_compiler_flag_if_available(COMPILER_FLAGS "Wno-analyzer-use-of-uninitialized-value")
+endif(enable-static-analysis)
+  
 # coverage
 set(TFEL_CMAKE_CXX_FLAGS_COVERAGE "-O0 -g -DNDEBUG -fprofile-arcs -ftest-coverage" CACHE STRING
     "Flags used by the C++ compiler during builds with tests coverage checks."

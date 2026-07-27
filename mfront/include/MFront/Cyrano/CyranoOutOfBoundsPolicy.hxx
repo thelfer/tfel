@@ -22,15 +22,17 @@ namespace cyrano {
 
   struct MFRONT_CYRANO_VISIBILITY_EXPORT CyranoOutOfBoundsPolicy {
     static const CyranoOutOfBoundsPolicy& getCyranoOutOfBoundsPolicy();
-    std::optional<tfel::material::OutOfBoundsPolicy> getOutOfBoundsPolicy()
-        const;
-
-   private:
-    CyranoOutOfBoundsPolicy();
+    //
     CyranoOutOfBoundsPolicy(CyranoOutOfBoundsPolicy&&) = delete;
     CyranoOutOfBoundsPolicy(const CyranoOutOfBoundsPolicy&) = delete;
     CyranoOutOfBoundsPolicy& operator=(CyranoOutOfBoundsPolicy&&) = delete;
     CyranoOutOfBoundsPolicy& operator=(const CyranoOutOfBoundsPolicy&) = delete;
+    //
+    [[nodiscard]] std::optional<tfel::material::OutOfBoundsPolicy>
+    getOutOfBoundsPolicy() const;
+
+   private:
+    CyranoOutOfBoundsPolicy();
     std::optional<tfel::material::OutOfBoundsPolicy> policy;
   };  // end of struct CyranoOutOfBounds
 

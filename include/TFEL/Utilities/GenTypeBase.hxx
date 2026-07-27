@@ -144,12 +144,14 @@ namespace tfel::utilities {
       return *this;
     }
     //! \return true if empty
-    bool empty() const { return std::holds_alternative<std::monostate>(*this); }
+    [[nodiscard]] bool empty() const {
+      return std::holds_alternative<std::monostate>(*this);
+    }
     /*!
      * \brief copy a GenType (calls the assignement operator).
      * \param src: object to be copied
      */
-    bool copy(const GenTypeBase& src) {
+    [[nodiscard]] bool copy(const GenTypeBase& src) {
       this->operator=(src);
       return true;
     }
@@ -169,18 +171,20 @@ namespace tfel::utilities {
     }
     //! \return the value hold by the `GenTypeBase`.
     template <typename T1>
-    TFEL_INLINE const T1& get() const requires(isValidType<T1>) {
+    [[nodiscard]] TFEL_INLINE const T1& get() const requires(isValidType<T1>) {
       tfel::raise_if<GenTypeCastError>(!this->template is<T1>());
       return std::get<T1>(*this);
     }
     //! \return the value hold by the `GenTypeBase`.
     template <typename T1>
-    TFEL_INLINE T1& get() requires(isValidType<T1>) {
+    [[nodiscard]] TFEL_INLINE T1& get() requires(isValidType<T1>) {
       tfel::raise_if<GenTypeCastError>(!this->template is<T1>());
       return std::get<T1>(*this);
     }
     //! \return the type index of the object
-    TFEL_INLINE unsigned short getTypeIndex() const { return this->index(); }
+    [[nodiscard]] TFEL_INLINE unsigned short getTypeIndex() const {
+      return this->index();
+    }
 
    protected:
     //! \brief clear the GenType

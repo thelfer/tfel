@@ -422,10 +422,10 @@ namespace tfel::meta {
     template <unsigned short N, typename T, typename TList>
     struct TFEL_VISIBILITY_LOCAL TLPosition {
       static_assert(std::is_base_of_v<TL, TList>);
-      typedef typename std::conditional<
-          std::is_same_v<T, typename TList::Current>,
-          IntegerValue<N>,
-          TLPosition<N + 1, T, typename TList::Next>>::type Select;
+      using Select =
+          std::conditional_t<std::is_same_v<T, typename TList::Current>,
+                             IntegerValue<N>,
+                             TLPosition<N + 1, T, typename TList::Next>>;
       static constexpr unsigned short value = Select::value;
     };  // end of TLPosition
 
