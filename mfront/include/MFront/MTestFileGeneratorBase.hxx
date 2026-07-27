@@ -108,14 +108,14 @@ namespace mfront {
                                           const bool);
     virtual void generate(const std::string&) const;
     //! \return the size of a variable
-    virtual unsigned short getVariableSize(
+    [[nodiscard]] virtual unsigned short getVariableSize(
         const SupportedTypes::TypeFlag&) const;
     //! \return the size of an tiny vector
-    virtual unsigned short getTVectorSize() const;
+    [[nodiscard]] virtual unsigned short getTVectorSize() const;
     //! \return the size of an stensor
-    virtual unsigned short getStensorSize() const;
+    [[nodiscard]] virtual unsigned short getStensorSize() const;
     //! \return the size of an tensor
-    virtual unsigned short getTensorSize() const;
+    [[nodiscard]] virtual unsigned short getTensorSize() const;
     //! \brief destructor
     virtual ~MTestFileGeneratorBase();
 
@@ -124,27 +124,29 @@ namespace mfront {
      * \return the names of the components of a vector
      * \param[in] n: name of the vector
      */
-    virtual std::vector<std::string> getTVectorComponentsNames(
+    [[nodiscard]] virtual std::vector<std::string> getTVectorComponentsNames(
         const std::string& = "") const;
     /*!
      * \return the names of the components of a symmetric tensor
      * \param[in] n: name of the symmetric tensor
      */
-    virtual std::vector<std::string> getStensorComponentsNames(
+    [[nodiscard]] virtual std::vector<std::string> getStensorComponentsNames(
         const std::string& = "") const;
     /*!
      * \return the names of the components of a tensor
      * \param[in] n: name of the tensor
      */
-    virtual std::vector<std::string> getTensorComponentsNames(
+    [[nodiscard]] virtual std::vector<std::string> getTensorComponentsNames(
         const std::string& = "") const;
     //! \return the names of the components of the strain tensor
-    virtual std::vector<std::string> getStrainComponentsNames() const;
-    //! \return the names of the components of the deformation gradient
-    virtual std::vector<std::string> getDeformationGradientComponentsNames()
+    [[nodiscard]] virtual std::vector<std::string> getStrainComponentsNames()
         const;
+    //! \return the names of the components of the deformation gradient
+    [[nodiscard]] virtual std::vector<std::string>
+    getDeformationGradientComponentsNames() const;
     //! \return the names of the components of the stress tensor
-    virtual std::vector<std::string> getStressComponentsNames() const;
+    [[nodiscard]] virtual std::vector<std::string> getStressComponentsNames()
+        const;
     /*!
      * write modelling hypothesis
      * \param[in] os : output stream

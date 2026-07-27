@@ -31,8 +31,8 @@ namespace tfel::math {
     AndersonBase(const Allocator);
     //! Destructor
     virtual ~AndersonBase();
-    const std::vector<Field*>& getU() const;
-    const std::vector<Field*>& getD() const;
+    [[nodiscard]] const std::vector<Field*>& getU() const;
+    [[nodiscard]] const std::vector<Field*>& getD() const;
     //! Set Anderson algorithm
     //! \param Nmax:  method order
     //! \param alMax: alternance order
@@ -42,7 +42,7 @@ namespace tfel::math {
     //! Memory allocation
     void alloc();
     //! \return the Anderson method order
-    size_type size() const;
+    [[nodiscard]] size_type size() const;
     //! Reseting the Covariance matrix with a new vector
     void reset();
     anderson::CovarianceMatrix<real> cM;  //!< Covariance matrix

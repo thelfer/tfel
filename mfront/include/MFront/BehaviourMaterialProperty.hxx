@@ -60,7 +60,7 @@ namespace mfront {
     BehaviourMaterialProperty& operator=(BehaviourMaterialProperty&&) noexcept;
     ~BehaviourMaterialProperty();
     //! \return if the material property is scalar
-    bool isScalar() const;
+    [[nodiscard]] bool isScalar() const;
     /*!
      * offset of the variable in the indirection map
      */

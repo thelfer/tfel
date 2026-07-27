@@ -28,30 +28,35 @@ namespace tfel::math::parser {
      */
     Variable(const std::vector<double>&, const std::vector<double>::size_type);
     //
-    bool isConstant() const override;
-    bool dependsOnVariable(const std::vector<double>::size_type) const override;
-    double getValue() const override;
-    std::string getCxxFormula(const std::vector<std::string>&) const override;
+    Variable& operator=(const Variable&) = delete;
+    Variable& operator=(Variable&&) = delete;
+    //
+    [[nodiscard]] bool isConstant() const override;
+    [[nodiscard]] bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::string getCxxFormula(
+        const std::vector<std::string>&) const override;
 
     void checkCyclicDependency(std::vector<std::string>&) const override;
-    std::shared_ptr<Expr> differentiate(
+    [[nodiscard]] std::shared_ptr<Expr> differentiate(
         const std::vector<double>::size_type,
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr> clone(
+        const std::vector<double>&) const override;
     void getParametersNames(std::set<std::string>&) const override;
-    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+    [[nodiscard]] std::shared_ptr<Expr>
+    createFunctionByChangingParametersIntoVariables(
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
         const override;
-    std::shared_ptr<Expr> resolveDependencies(
+    [[nodiscard]] std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
     //! \brief destructor
     ~Variable() override;
 
    private:
-    Variable& operator=(const Variable&) = delete;
-    Variable& operator=(Variable&&) = delete;
     const std::vector<double>& v;
     const std::vector<double>::size_type pos;
   };  // end of struct Variable

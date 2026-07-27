@@ -119,7 +119,7 @@ namespace tfel::utilities {
     //! \brief a variable checking if the given type is valid
     template <typename T>
     static constexpr bool isValidType =
-        tfel::meta::TLCountNbrOfT<typename std::decay<T>::type, List>::value;
+        tfel::meta::TLCountNbrOfT<std::decay_t<T>, List>::value;
     //! \brief a simple alias
     using variant =
         typename tfel::utilities::internals::StdVariantFromTypeList<List>::type;

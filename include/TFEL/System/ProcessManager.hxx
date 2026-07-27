@@ -144,11 +144,11 @@ namespace tfel::system {
                          const std::string& = "",
                          const std::map<std::string, std::string>& = {});
 
-    virtual wstream getInputStream(const ProcessId) const;
+    [[nodiscard]] virtual wstream getInputStream(const ProcessId) const;
 
-    virtual rstream getOutputStream(const ProcessId) const;
+    [[nodiscard]] virtual rstream getOutputStream(const ProcessId) const;
 
-    virtual ProcessId createProcess(ProcessManager::Command&);
+    [[nodiscard]] virtual ProcessId createProcess(ProcessManager::Command&);
 
     virtual void wait(const ProcessId);
 

@@ -42,11 +42,11 @@ struct TestFunction final : public tfel::tests::Test {
     assert(e > 0);
   }  // end of TestFunction
 
-  std::string name() const override { return fn; }
+  [[nodiscard]] std::string name() const override { return fn; }
 
-  std::string classname() const override { return "TFEL/Math"; }
+  [[nodiscard]] std::string classname() const override { return "TFEL/Math"; }
 
-  tfel::tests::TestResult execute() override {
+  [[nodiscard]] tfel::tests::TestResult execute() override {
     using namespace std;
     using namespace tfel::math;
     Evaluator ev(this->f + "(x)");

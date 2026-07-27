@@ -45,7 +45,8 @@ namespace tfel::math {
     //! a simple alias
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! \brief return the runtime properties
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
+    getRunTimeProperties() const {
       return {};
     }  // end of getRunTimeProperties
     /*!

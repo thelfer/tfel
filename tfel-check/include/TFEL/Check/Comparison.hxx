@@ -36,13 +36,9 @@ namespace tfel::check {
                const bool interpolationIsConform,
                const std::shared_ptr<Column> colIntegralInterpolated,
                const std::shared_ptr<Interpolation> integralInterpolation);
-    /*!
-     * \brief returns true if Comparison has succeed
-     */
-    bool hasSucceed() const;
-    /*!
-     * \brief returns the log message with comparison info
-     */
+    //! \return true if Comparison has succeed
+    [[nodiscard]] bool hasSucceed() const;
+    //! \return the log message with comparison info
     std::string getMsgLog() const;
     /*!
      * \brief executes the comparison between the values
@@ -62,7 +58,7 @@ namespace tfel::check {
         const std::shared_ptr<Column> colIntegralInterpolated,
         const std::shared_ptr<Interpolation> integralInterpolation);
 
-    const std::string& getName() const;
+    [[nodiscard]] const std::string& getName() const;
     //! destructor
     virtual ~Comparison();
 

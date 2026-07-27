@@ -30,15 +30,15 @@ namespace tfel::math {
     tvector<N, T> k4;
     tvector<N, T> tmp;
 
-    RungeKutta4(const RungeKutta4&);
-    RungeKutta4& operator=(const RungeKutta4&);
-
    protected:
     tvector<N, T> f;
 
    public:
-    RungeKutta4() {}
-
+    RungeKutta4() = default;
+    //
+    RungeKutta4(const RungeKutta4&) = delete;
+    RungeKutta4& operator=(const RungeKutta4&) = delete;
+    //
     TFEL_MATH_INLINE2 void set_y(const tvector<N, T>& y_) { this->y = y_; }
 
     TFEL_MATH_INLINE2 void set_t(const T t_) { this->t = t_; }
@@ -72,11 +72,13 @@ namespace tfel::math {
       }
     }
 
-    TFEL_MATH_INLINE2 const tvector<N, T>& get_y() const { return this->y; }
+    [[nodiscard]] TFEL_MATH_INLINE2 const tvector<N, T>& get_y() const {
+      return this->y;
+    }
 
-    TFEL_MATH_INLINE2 T get_t() const { return this->t; }
+    [[nodiscard]] TFEL_MATH_INLINE2 T get_t() const { return this->t; }
 
-    TFEL_MATH_INLINE2 T get_h() const { return this->h; }
+    [[nodiscard]] TFEL_MATH_INLINE2 T get_h() const { return this->h; }
   };
 
 }  // end of namespace tfel::math

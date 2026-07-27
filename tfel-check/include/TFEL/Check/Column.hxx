@@ -39,11 +39,11 @@ namespace tfel::check {
      * \brief returns the name of the column used in file. If name
      *        hasn't been given, returns number instead
      */
-    std::string getName() const;
+    [[nodiscard]] std::string getName() const;
     /*!
      * \brief returns the column values
      */
-    const std::vector<double>& getValues();
+    [[nodiscard]] const std::vector<double>& getValues();
     /*!
      * \brief clears the values vector
      */
@@ -60,15 +60,12 @@ namespace tfel::check {
      * \brief returns the filename
      */
     void setFilename(std::string);
-    /*!
-     * \brief returns the filename
-     */
-    const std::string& getFilename() const;
-    /*!
-     * \brief returns the TextData used to create column
-     */
-    const std::shared_ptr<tfel::utilities::TextData> getData() const;
-    //! destructor
+    //! \return the filename
+    [[nodiscard]] const std::string& getFilename() const;
+    //! \return the TextData used to create column
+    [[nodiscard]] std::shared_ptr<const tfel::utilities::TextData> getData()
+        const;
+    //! \brief destructor
     virtual ~Column();
 
    private:
