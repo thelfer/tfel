@@ -51,19 +51,20 @@ namespace mfront {
      * \return the variable description with the given name
      * \param[in] n: variable name
      */
-    const VariableDescription& getVariableDescription(const std::string&) const;
+    [[nodiscard]] const VariableDescription& getVariableDescription(
+        const std::string&) const;
     //! \brief \return the external names of each input variables.
-    std::vector<std::string> getInputVariablesExternalNames();
+    [[nodiscard]] std::vector<std::string> getInputVariablesExternalNames();
     /*!
      * \return true if the given variable is the name of a input
      * \param[in] n: name
      */
-    bool isInputName(const std::string&) const;
+    [[nodiscard]] bool isInputName(const std::string&) const;
     /*!
      * \return true if the given variable is the name of a parameter
      * \param[in] n: name
      */
-    bool isParameterName(const std::string&) const;
+    [[nodiscard]] bool isParameterName(const std::string&) const;
     /*!
      * \brief associate a glossary name to a variable
      * \param[in] n : variable name
@@ -74,7 +75,7 @@ namespace mfront {
      * \return true if the given name is used as a glossary name
      * \param[in] g: glossary name
      */
-    bool isGlossaryNameUsed(const std::string&) const;
+    [[nodiscard]] bool isGlossaryNameUsed(const std::string&) const;
     /*!
      * \brief associate an entry name to a variable
      * \param[in] n: variable name
@@ -85,7 +86,7 @@ namespace mfront {
      * \return true if the given name is used as a entry name
      * \param[in] e: entry name
      */
-    bool isEntryNameUsed(const std::string&) const;
+    [[nodiscard]] bool isEntryNameUsed(const std::string&) const;
     /*!
      * \brief add a material law
      * \param[in] m : added material law name
@@ -111,11 +112,11 @@ namespace mfront {
      * \return true a parameter with the given name has been declared
      * \param[in] n: name
      */
-    bool hasParameter(const std::string&) const;
+    [[nodiscard]] bool hasParameter(const std::string&) const;
     /*!
      * \return true if at least one parameter has been declared
      */
-    bool hasParameters() const;
+    [[nodiscard]] bool hasParameters() const;
     /*!
      * \brief register a name.
      * \param[in] n : name
@@ -125,7 +126,7 @@ namespace mfront {
      * \brief look if a name is reserved
      * \param[in] n : name
      */
-    bool isNameReserved(const std::string&) const;
+    [[nodiscard]] bool isNameReserved(const std::string&) const;
     //! \brief check and complete the physical bounds of variables
     void checkAndCompletePhysicalBoundsDeclaration();
     /*!
@@ -133,8 +134,8 @@ namespace mfront {
      * external name.
      * \param[in] n: external name.
      */
-    const VariableDescription& getVariableDescriptionByExternalName(
-        const std::string&) const;
+    [[nodiscard]] const VariableDescription&
+    getVariableDescriptionByExternalName(const std::string&) const;
     //! \brief destructor
     ~MaterialPropertyDescription();
     //! \brief use quantities if available

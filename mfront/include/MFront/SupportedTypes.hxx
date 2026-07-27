@@ -127,7 +127,7 @@ namespace mfront {
        * - The size of a symmetric tensor is `StensorSize`.
        * - The size of a (unsymmetric) tensor is `TensorSize`.
        */
-      std::string asString() const;
+      [[nodiscard]] std::string asString() const;
       /*!
        * \brief return a string representation of the type size given
        * the string representation of a tiny vector, a symmetric tensor and a
@@ -135,24 +135,25 @@ namespace mfront {
        * \param[in] values: string representations of a tiny vector, a symmetric
        * tensor and a non symmetric tensor
        */
-      std::string asString(const std::array<std::string, 3u>&) const;
+      [[nodiscard]] std::string asString(
+          const std::array<std::string, 3u>&) const;
       /*!
        *
        */
-      int getValueForDimension(const unsigned short) const;
+      [[nodiscard]] int getValueForDimension(const unsigned short) const;
       /*!
        *
        */
-      int getValueForModellingHypothesis(const Hypothesis) const;
+      [[nodiscard]] int getValueForModellingHypothesis(const Hypothesis) const;
       //! \return true if all components of the TipeSize are null
-      bool isNull() const;
+      [[nodiscard]] bool isNull() const;
       /*!
        * \return true if only the scalar component is not null and is
        * equal to one
        */
-      bool isOne() const;
+      [[nodiscard]] bool isOne() const;
       //! \return true if the type size describe an array of an unique type
-      bool isArray() const;
+      [[nodiscard]] bool isArray() const;
       /*!
        * \brief multiply the array size by the given parameter
        * \param[in] a: array size
@@ -193,11 +194,11 @@ namespace mfront {
        * \param[in] m1: first monomial
        * \param[in] m2: second monomial
        */
-      static bool matches(const Monomial& m1, const Monomial& m2);
+      [[nodiscard]] static bool matches(const Monomial& m1, const Monomial& m2);
       /*!
        * \return true if the type size is only described by an unique monomial.
        */
-      bool isMonomial() const;
+      [[nodiscard]] bool isMonomial() const;
       /*!
        * \return an iterator to a matching monomial (i.e. a monomial with
        * the same exponent but not necessarily the same array size) if any
@@ -205,7 +206,8 @@ namespace mfront {
        *
        * \param[in] m: monomial
        */
-      std::vector<Monomial>::iterator findMatchingMonomial(const Monomial&);
+      [[nodiscard]] std::vector<Monomial>::iterator findMatchingMonomial(
+          const Monomial&);
       /*!
        * \return an iterator to a matching monomial (i.e. a monomial with the
        * same exponent but not necessarily the same array size) if any or an
@@ -213,7 +215,7 @@ namespace mfront {
        *
        * \param[in] m: monomial
        */
-      std::vector<Monomial>::const_iterator findMatchingMonomial(
+      [[nodiscard]] std::vector<Monomial>::const_iterator findMatchingMonomial(
           const Monomial&) const;
 
       //!  \brief list of monomials

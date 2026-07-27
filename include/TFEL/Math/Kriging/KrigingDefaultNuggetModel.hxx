@@ -22,8 +22,9 @@ namespace tfel::math {
   struct KrigingDefaultNuggetModel {
     KrigingDefaultNuggetModel() : nugget(T(0)) {}
 
-    T nuggetEffect(typename vector<T>::size_type,
-                   const typename KrigingVariable<N, T>::type&) const {
+    [[nodiscard]] T nuggetEffect(
+        typename vector<T>::size_type,
+        const typename KrigingVariable<N, T>::type&) const {
       using namespace std;
       return this->nugget;
     }  // end of nuggetEffect

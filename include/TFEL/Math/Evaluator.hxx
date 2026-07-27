@@ -137,11 +137,11 @@ namespace tfel::math {
      * \param[in] v: value
      */
     explicit Evaluator(const double);
-    //! Default constructor
+    //! \brief efault constructor
     Evaluator();
-    //! Copy constructor
+    //! \brief opy constructor
     Evaluator(const Evaluator&);
-    //! Assignement operator constructor
+    //! \brief ssignement operator constructor
     Evaluator& operator=(const Evaluator&);
     /*!
      * \param const std::string&, function definition
@@ -202,16 +202,8 @@ namespace tfel::math {
      * have been set with the `setVariableValue` method.
      */
     double operator()(const std::map<std::string, double>&);
-    /*!
-     * \return a string representation of the evaluator suitable to
-     * be integrated in a C++ code.
-     * \param[in] m: a map used to change the names of the variables
-     */
-    virtual std::string getCxxFormula(
-        const std::map<std::string, std::string>& = {}) const;
-    virtual std::vector<std::string> getVariablesNames() const;
+    //
     std::vector<double>::size_type getNumberOfVariables() const override;
-    virtual void checkCyclicDependency() const;
     void checkCyclicDependency(const std::string&) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
     std::shared_ptr<tfel::math::parser::ExternalFunction> differentiate(
@@ -220,11 +212,8 @@ namespace tfel::math {
         const std::string&) const override;
     std::shared_ptr<tfel::math::parser::ExternalFunction> resolveDependencies()
         const override;
-    virtual void removeDependencies();
     void setVariableValue(const std::vector<double>::size_type,
                           const double) override;
-    virtual void setVariableValue(const std::string&, const double);
-    virtual void setVariableValue(const char* const, const double);
     std::shared_ptr<ExternalFunction>
     createFunctionByChangingParametersIntoVariables(
         const std::vector<std::string>&) const override;
@@ -236,6 +225,19 @@ namespace tfel::math {
         const std::map<std::string, std::vector<double>::size_type>&)
         const override;
     void getParametersNames(std::set<std::string>&) const override;
+    /*!
+     * \return a string representation of the evaluator suitable to
+     * be integrated in a C++ code.
+     * \param[in] m: a map used to change the names of the variables
+     */
+    virtual std::string getCxxFormula(
+        const std::map<std::string, std::string>& = {}) const;
+    virtual std::vector<std::string> getVariablesNames() const;
+    virtual void checkCyclicDependency() const;
+    virtual void removeDependencies();
+    virtual void setVariableValue(const std::string&, const double);
+    virtual void setVariableValue(const char* const, const double);
+    //
     ~Evaluator() override;
 
    private:

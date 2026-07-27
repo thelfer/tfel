@@ -11,7 +11,9 @@
  * project under specific licensing conditions.
  */
 
+#include <tuple>
 #include <string>
+#include <utility>
 #include <stdexcept>
 #include "NUMODIS/HCP.hxx"
 #include "NUMODIS/BCC.hxx"
@@ -326,12 +328,12 @@ namespace tfel::material {
     if (cs == CrystalStructure::FCC) {
       auto s = numodis::FCC();
       auto bv = s.burgers_vector(to_numodis<numodis::IBurgers>(b));
-      bv.Normalize();
+      std::ignore = bv.Normalize();
       return to_array(bv);
     } else if (cs == CrystalStructure::BCC) {
       auto s = numodis::BCC();
       auto bv = s.burgers_vector(to_numodis<numodis::IBurgers>(b));
-      bv.Normalize();
+      std::ignore = bv.Normalize();
       return to_array(bv);
     }
     raise_if(cs != CrystalStructure::Cubic,
@@ -339,7 +341,7 @@ namespace tfel::material {
              "(unsupported crystal structure)");
     auto s = numodis::Cubic();
     auto bv = s.burgers_vector(to_numodis<numodis::IBurgers>(b));
-    bv.Normalize();
+    std::ignore = bv.Normalize();
     return to_array(bv);
   }
 
@@ -350,7 +352,7 @@ namespace tfel::material {
              "(unsupported crystal structure)");
     auto s = numodis::HCP();
     auto bv = s.burgers_vector(to_numodis<numodis::IBurgers>(b));
-    bv.Normalize();
+    std::ignore = bv.Normalize();
     return to_array(bv);
   }
 

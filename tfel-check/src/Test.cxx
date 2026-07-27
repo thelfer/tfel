@@ -19,9 +19,9 @@
 namespace tfel::check {
 
   Test::Test() = default;
-  Test::Test(Test&&) = default;
+  Test::Test(Test&&) noexcept = default;
   Test::Test(const Test&) = default;
-  Test& Test::operator=(Test&&) = default;
+  Test& Test::operator=(Test&&) noexcept = default;
   Test& Test::operator=(const Test&) = default;
   Test::~Test() = default;
 

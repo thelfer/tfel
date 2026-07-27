@@ -341,7 +341,7 @@ namespace tfel::material {
             *this);
       }
 
-      virtual tfel::math::st2tost2<3u, real> computeMeanLocalisator(
+      tfel::math::st2tost2<3u, real> computeMeanLocalisator(
           const IsotropicModuli<StressType>& IM0) override {
         tfel::math::st2tost2<3u, StressType> Ci = this->getElasticityOfPhase();
         const auto KGi = computeKGModuli<StressType>(Ci);

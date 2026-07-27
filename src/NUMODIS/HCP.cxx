@@ -97,7 +97,7 @@ namespace numodis {
     _plattice[3][2] = 1. / (4. * _ratio);
   }
 
-  HCP::HCP(HCP&&) = default;
+  HCP::HCP(HCP&&) noexcept = default;
 
   HCP::HCP(const HCP&) = default;
 

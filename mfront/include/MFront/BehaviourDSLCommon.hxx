@@ -490,23 +490,13 @@ namespace mfront {
                                      const Hypothesis,
                                      const VariableDescriptionContainer&,
                                      const BehaviourData::RegistrationStatus));
-
-    /*!
-     * set the interfaces to be used
-     */
-    void setInterfaces(const std::set<std::string>&) override;
-    /*!
-     * \brief register a name.
-     * \param[in] n : name
-     */
-    void reserveName(const std::string&) override;
-    /*!
-     * \brief look if a name is reserved
-     * \param[in] n : name
-     */
-    bool isNameReserved(const std::string&) const override;
+    // this method is declared final to be called safely in constructors
+    void reserveName(const std::string&) final;
     //! \brief register the default variable names
-    virtual void registerDefaultVarNames();
+    void registerDefaultVarNames();
+    //
+    void setInterfaces(const std::set<std::string>&) override;
+    bool isNameReserved(const std::string&) const override;
     void setUnitSystem(const std::string_view) override;
     void setMaterial(const std::string&) override;
     void setMaterialKnowledgeIdentifier(const std::string&) override;

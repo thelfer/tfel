@@ -23,14 +23,14 @@ namespace tfel::tests {
   //! \brief base class of all unit tests.
   struct TFELTESTS_VISIBILITY_EXPORT Test {
     //! \return the name of the test
-    virtual std::string name() const = 0;
+    [[nodiscard]] virtual std::string name() const = 0;
     //! \return the group of the test
-    virtual std::string classname() const = 0;
+    [[nodiscard]] virtual std::string classname() const = 0;
     /*!
      * \brief execute test
      * \return the results of the test
      */
-    virtual TestResult execute() = 0;
+    [[nodiscard]] virtual TestResult execute() = 0;
     //! destructor
     virtual ~Test();
   };  // end of struct Test

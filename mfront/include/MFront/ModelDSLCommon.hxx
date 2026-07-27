@@ -45,13 +45,14 @@ namespace mfront {
     ModelDSLCommon(const DSLOptions&);
     //
     DSLTarget getTargetType() const final;
+    void overrideByAParameter(const std::string&, const double) final;
+    //
     const MaterialKnowledgeDescription& getMaterialKnowledgeDescription()
         const override;
     std::string getMaterialKnowledgeIdentifier() const override;
     std::string getMaterialName() const override;
     std::string getOverridableVariableNameByExternalName(
         const std::string&) const override;
-    void overrideByAParameter(const std::string&, const double) override;
     std::map<std::string, double> getOverridenParameters() const override;
     void endsInputFileProcessing() override;
     void makeConsistencyChecks() const override;
@@ -63,17 +64,19 @@ namespace mfront {
 
    protected:
     //
+    // those methods are declared final to be called safely in constructors
+    void reserveName(const std::string&) final;
+    void appendToIncludes(const std::string&) final;
+    //
     void addExternalMFrontFile(const std::string&,
                                const std::vector<std::string>&,
                                const tfel::utilities::DataMap&) override;
     DSLOptions buildDSLOptions() const override;
     void disableQuantitiesUsageIfNotAlreadySet() override;
     bool useQt() const override;
-    void reserveName(const std::string&) override;
     bool isNameReserved(const std::string&) const override;
     std::string getClassName() const override;
     void addMaterialLaw(const std::string&) override;
-    void appendToIncludes(const std::string&) override;
     void appendToMembers(const std::string&) override;
     void appendToPrivateCode(const std::string&) override;
     void appendToSources(const std::string&) override;

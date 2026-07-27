@@ -29,11 +29,11 @@ namespace tfel::check {
     //! \brief default constructor
     Configuration();
     //! \brief move constructor
-    Configuration(Configuration&&);
+    Configuration(Configuration&&) noexcept;
     //! \brief copy constructor
     Configuration(const Configuration&);
     //! \brief move assignement
-    Configuration& operator=(Configuration&&);
+    Configuration& operator=(Configuration&&) noexcept;
     //! \brief standard assignement
     Configuration& operator=(const Configuration&);
     /*!

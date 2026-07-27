@@ -73,30 +73,30 @@ namespace mfront {
      */
     virtual void writeEndSrcNamespace(std::ostream&) const = 0;
     //
-    virtual bool requiresCheckBoundsFunction() const = 0;
+    [[nodiscard]] virtual bool requiresCheckBoundsFunction() const = 0;
     /*!
      * \return the name of the generated function.
      * \param[in] mpd: material property description
      */
-    virtual std::string getFunctionName(
+    [[nodiscard]] virtual std::string getFunctionName(
         const MaterialPropertyDescription&) const = 0;
     /*!
      * \param[in] mpd: material property description
      */
-    virtual std::string getCheckBoundsFunctionName(
+    [[nodiscard]] virtual std::string getCheckBoundsFunctionName(
         const MaterialPropertyDescription&) const = 0;
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
-    virtual std::string getHeaderFileName(const std::string&,
-                                          const std::string&) const = 0;
+    [[nodiscard]] virtual std::string getHeaderFileName(
+        const std::string&, const std::string&) const = 0;
     /*!
      * \param const std::string&, name of the material
      * \param const std::string&, name of the class
      */
-    virtual std::string getSrcFileName(const std::string&,
-                                       const std::string&) const = 0;
+    [[nodiscard]] virtual std::string getSrcFileName(
+        const std::string&, const std::string&) const = 0;
     /*!
      * \return the list of supported floating-point types. Supported
      * floating-point types are `float`, `double` and `long double`. For each
@@ -104,7 +104,8 @@ namespace mfront {
      *
      * The default implementation only returns `double`.
      */
-    virtual std::vector<std::string> getSupportedFloatingPointTypes() const;
+    [[nodiscard]] virtual std::vector<std::string>
+    getSupportedFloatingPointTypes() const;
     /*!
      * \brief if the material property supports quantities, this methods
      * returns if an overloaded function supporting quantities shall be
@@ -112,7 +113,8 @@ namespace mfront {
      *
      * The default implementation of this method returns `false`.
      */
-    virtual bool shallGenerateOverloadedFunctionForQuantities() const;
+    [[nodiscard]] virtual bool shallGenerateOverloadedFunctionForQuantities()
+        const;
     /*!
      * \brief write the list of arguments
      * \param[out] os: output stream
@@ -276,13 +278,14 @@ namespace mfront {
                                     const std::string_view,
                                     const bool) const;
     //
-    virtual std::string getCallingConvention() const;
+    [[nodiscard]] virtual std::string getCallingConvention() const;
     /*!
      * \return the name used to generate the symbols associated with the
      * material property.
      * \param[in] mpd: material property description
      */
-    virtual std::string getSymbolName(const MaterialPropertyDescription&) const;
+    [[nodiscard]] virtual std::string getSymbolName(
+        const MaterialPropertyDescription&) const;
     /*!
      * \brief : write the source file. The headerFile member has been
      * opened appropriately and will be closed after the call.

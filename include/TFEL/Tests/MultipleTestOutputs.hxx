@@ -32,6 +32,14 @@ namespace tfel::tests {
     using TestOutputPtr = std::shared_ptr<TestOutput>;
     //! \brief default constructor
     MultipleTestOutputs();
+    //! \brief move constructor (disabled)
+    MultipleTestOutputs(MultipleTestOutputs&&) = delete;
+    //! \brief copy constructor (disabled)
+    MultipleTestOutputs(const MultipleTestOutputs&) = delete;
+    //! \brief assignement operator (disabled)
+    MultipleTestOutputs& operator=(const MultipleTestOutputs&) = delete;
+    //! \brief move assignement operator (disabled)
+    MultipleTestOutputs& operator=(MultipleTestOutputs&&) = delete;
     /*!
      * \brief add a test output
      * \param o: output to be added
@@ -56,18 +64,10 @@ namespace tfel::tests {
      * \param r: (global) result of the test suite
      */
     void endTestSuite(const TestResult&) override;
-    //! destructor
+    //! \brief destructor
     ~MultipleTestOutputs() override;
 
    private:
-    //! \brief move constructor (disabled)
-    MultipleTestOutputs(MultipleTestOutputs&&) = delete;
-    //! \brief copy constructor (disabled)
-    MultipleTestOutputs(const MultipleTestOutputs&) = delete;
-    //! \brief assignement operator (disabled)
-    MultipleTestOutputs& operator=(const MultipleTestOutputs&) = delete;
-    //! \brief move assignement operator (disabled)
-    MultipleTestOutputs& operator=(MultipleTestOutputs&&) = delete;
     //! registred outputs
     std::vector<TestOutputPtr> outputs;
   };  // end of struct MultipleTestOutputs

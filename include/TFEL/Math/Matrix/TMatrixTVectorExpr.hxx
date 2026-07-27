@@ -46,7 +46,7 @@ namespace tfel::math {
     typedef EmptyRunTimeProperties RunTimeProperties;
     //! \brief return the runtime properties
     TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const {
-      return RunTimeProperties();
+      return {};
     }  // end of getRunTimeProperties
     /*!
      * a pseudo iterator allowing to iterate over values in the same

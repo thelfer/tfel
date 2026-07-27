@@ -92,13 +92,13 @@ namespace tfel::system {
     //! \brief default constructor
     ThreadedTaskResult();
     //! \brief move constructor
-    ThreadedTaskResult(ThreadedTaskResult&&);
+    ThreadedTaskResult(ThreadedTaskResult&&) noexcept;
     //! \brief copy constructor
     ThreadedTaskResult(const ThreadedTaskResult&);
     //! \brief assignement
     ThreadedTaskResult& operator=(const ThreadedTaskResult&);
     //! \brief move assignement
-    ThreadedTaskResult& operator=(ThreadedTaskResult&&);
+    ThreadedTaskResult& operator=(ThreadedTaskResult&&) noexcept;
     //! \brief set current exception
     void setException(const std::exception_ptr&);
     //! \brief throw the catched exception

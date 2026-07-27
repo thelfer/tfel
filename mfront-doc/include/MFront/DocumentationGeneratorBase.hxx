@@ -76,7 +76,7 @@ namespace mfront {
       VariableInformationBase();
       VariableInformationBase(VariableInformationBase&&) noexcept;
       VariableInformationBase(const VariableInformationBase&);
-      VariableInformationBase& operator=(VariableInformationBase&&);
+      VariableInformationBase& operator=(VariableInformationBase&&) noexcept;
       VariableInformationBase& operator=(const VariableInformationBase&);
       ~VariableInformationBase() noexcept;
       std::string name;

@@ -35,11 +35,11 @@ namespace mtest {
      * \return the value of the evolution at the given time
      * \param[in] t: time
      */
-    virtual real operator()(const real) const = 0;
+    [[nodiscard]] virtual real operator()(const real) const = 0;
     /*!
      * \return true if the evolution is constant
      */
-    virtual bool isConstant() const = 0;
+    [[nodiscard]] virtual bool isConstant() const = 0;
     /*!
      * \brief set the evolution value
      * \note most evolution will throw an exception (this
@@ -69,16 +69,17 @@ namespace mtest {
      */
     ConstantEvolution(const real);
     //
-    real operator()(const real) const override;
-    bool isConstant() const override;
+    ConstantEvolution& operator=(const ConstantEvolution&) = delete;
+    ConstantEvolution& operator=(ConstantEvolution&&) = delete;
+    //
+    [[nodiscard]] real operator()(const real) const override;
+    [[nodiscard]] bool isConstant() const override;
     void setValue(const real) override;
     void setValue(const real, const real) override;
     //! \brief destructor
     ~ConstantEvolution() override;
 
    protected:
-    ConstantEvolution& operator=(const ConstantEvolution&) = delete;
-    ConstantEvolution& operator=(ConstantEvolution&&) = delete;
     real value;
   };
 
@@ -89,7 +90,8 @@ namespace mtest {
      * \param[in] values: values use to create the interpolation
      * \param[in] t: absicssa
      */
-    static real interpolate(const std::map<real, real>&, const real);
+    [[nodiscard]] static real interpolate(const std::map<real, real>&,
+                                          const real);
     /*!
      * constructor
      * \param[in] t : times
@@ -97,8 +99,8 @@ namespace mtest {
      */
     LPIEvolution(const std::vector<real>&, const std::vector<real>&);
     //
-    real operator()(const real) const override;
-    bool isConstant() const override;
+    [[nodiscard]] real operator()(const real) const override;
+    [[nodiscard]] bool isConstant() const override;
     void setValue(const real) override;
     void setValue(const real, const real) override;
     //! \brief destructor

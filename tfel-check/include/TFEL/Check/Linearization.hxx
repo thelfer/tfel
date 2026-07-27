@@ -25,32 +25,26 @@
 namespace tfel::check {
 
   struct TFELCHECK_VISIBILITY_EXPORT Linearization {
-    //! constructor
+    //! \brief constructor
     Linearization();
-    //! move constructor
-    Linearization(Linearization&&);
-    //! copy constructor
+    //! \brief move constructor
+    Linearization(Linearization&&) noexcept;
+    //! \brief copy constructor
     Linearization(const Linearization&);
-    //! move assignement
-    Linearization& operator=(Linearization&&);
-    //! copy assignement
+    //! \brief move assignement
+    Linearization& operator=(Linearization&&) noexcept;
+    //! \brief copy assignement
     Linearization& operator=(const Linearization&);
     /*!
      * \param[in] times
      * \param[in] values
      */
     Linearization(const std::vector<double>&, const std::vector<double>&);
-    //! destructor
+    //! \brief destructor
     ~Linearization();
-    /*!
-     * \return the value at time in parameter
-     */
+    //! \return the value at time in parameter
     double operator()(const double x) const;
-
-    /*!
-     * \return true if the evolution
-     * is constant
-     */
+    //! \return true if the evolution is constant
     bool isConstant() const;
 
    private:

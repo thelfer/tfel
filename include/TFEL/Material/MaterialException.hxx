@@ -37,7 +37,7 @@ namespace tfel::material {
     DivergenceException(const std::string&);
     DivergenceException(DivergenceException&&) noexcept = default;
     DivergenceException(const DivergenceException&) = default;
-    const char* what() const noexcept final;
+    [[nodiscard]] const char* what() const noexcept final;
     ~DivergenceException() noexcept override;
   };
 
@@ -46,7 +46,7 @@ namespace tfel::material {
     OutOfBoundsException(std::string);
     OutOfBoundsException(OutOfBoundsException&&) noexcept = default;
     OutOfBoundsException(const OutOfBoundsException&) = default;
-    const char* what() const noexcept final;
+    [[nodiscard]] const char* what() const noexcept final;
     ~OutOfBoundsException() noexcept override;
 
    private:

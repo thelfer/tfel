@@ -23,57 +23,53 @@ namespace aster {
 
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterException : public std::exception {
     AsterException(const std::string&);
-
     AsterException(const AsterException&);
-
-    const char* what() const noexcept final;
-
-    virtual const std::string& getMsg() const noexcept final;
-
+    //
+    AsterException() = delete;
+    AsterException& operator=(const AsterException&) = delete;
+    //
+    [[nodiscard]] const char* what() const noexcept final;
+    [[nodiscard]] virtual const std::string& getMsg() const noexcept final;
+    //
     ~AsterException() noexcept override;
 
    private:
-    AsterException() = delete;
-
-    AsterException& operator=(const AsterException&) = delete;
-
     const std::string msg;
-
   };  // end of struct AsterException
 
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterInvalidNTENSValue final
       : public AsterException {
     AsterInvalidNTENSValue(const unsigned short);
     AsterInvalidNTENSValue(const AsterInvalidNTENSValue&);
+    //
+    AsterInvalidNTENSValue() = delete;
+    AsterInvalidNTENSValue& operator=(const AsterInvalidNTENSValue&) = delete;
+    //
     ~AsterInvalidNTENSValue() noexcept override;
-
-   private:
-    AsterInvalidNTENSValue();
-    AsterInvalidNTENSValue& operator=(const AsterInvalidNTENSValue&);
   };  // end of struct AsterInvalidNTENSValue
 
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterInvalidModellingHypothesis final
       : public AsterException {
     AsterInvalidModellingHypothesis();
     AsterInvalidModellingHypothesis(const AsterInvalidModellingHypothesis&);
-    ~AsterInvalidModellingHypothesis() noexcept override;
-
-   private:
+    //
     AsterInvalidModellingHypothesis& operator=(
         const AsterInvalidModellingHypothesis&) = delete;
     AsterInvalidModellingHypothesis& operator=(
         AsterInvalidModellingHypothesis&&) = delete;
+    //
+    ~AsterInvalidModellingHypothesis() noexcept override;
   };  // end of struct AsterInvalidModellingHypothesis
 
   struct MFRONT_ASTER_VISIBILITY_EXPORT AsterInvalidDimension final
       : public AsterException {
     AsterInvalidDimension(const std::string&, const unsigned short);
     AsterInvalidDimension(const AsterInvalidDimension&);
-    ~AsterInvalidDimension() noexcept override;
-
-   private:
+    //
     AsterInvalidDimension();
     AsterInvalidDimension& operator=(const AsterInvalidDimension&);
+    //
+    ~AsterInvalidDimension() noexcept override;
   };  // end of struct AsterInvalidDimension
 
 }  // end of namespace aster

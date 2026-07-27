@@ -84,7 +84,7 @@ namespace mtest {
                                     const real,
                                     const StiffnessMatrixType) const override;
     //! \brief destructor
-    virtual ~AsterLogarithmicStrainBehaviourWrapper() override;
+    ~AsterLogarithmicStrainBehaviourWrapper() override;
 
    private:
     /*!

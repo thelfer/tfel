@@ -40,7 +40,7 @@ namespace tfel::math {
     LUUnmatchedSize(LUUnmatchedSize&&) noexcept;
     LUUnmatchedSize(const LUUnmatchedSize&);
     //! \return a string describing the error
-    const char* what() const noexcept final;
+    [[nodiscard]] const char* what() const noexcept final;
     //! \brief destructor
     ~LUUnmatchedSize() noexcept override;
   };  // end of struct LUException
@@ -55,7 +55,7 @@ namespace tfel::math {
     LUMatrixNotSquare(LUMatrixNotSquare&&) noexcept;
     LUMatrixNotSquare(const LUMatrixNotSquare&);
     //! \return a string describing the error
-    const char* what() const noexcept final;
+    [[nodiscard]] const char* what() const noexcept final;
     //! \brief destructor
     ~LUMatrixNotSquare() noexcept override;
   };  // end of struct LUException
@@ -70,7 +70,7 @@ namespace tfel::math {
     LUInvalidMatrixSize(LUInvalidMatrixSize&&) noexcept;
     LUInvalidMatrixSize(const LUInvalidMatrixSize&);
     //! \return a string describing the error
-    const char* what() const noexcept final;
+    [[nodiscard]] const char* what() const noexcept final;
     //! \brief destructor
     ~LUInvalidMatrixSize() noexcept override;
   };  // end of struct LUException
@@ -84,7 +84,7 @@ namespace tfel::math {
     LUNullPivot(LUNullPivot&&) noexcept;
     LUNullPivot(const LUNullPivot&);
     //! \return a string describing the error
-    const char* what() const noexcept final;
+    [[nodiscard]] const char* what() const noexcept final;
     //! \brief destructor
     ~LUNullPivot() noexcept override;
   };  // end of struct LUException
@@ -99,7 +99,7 @@ namespace tfel::math {
     LUNullDeterminant(LUNullDeterminant&&) noexcept;
     LUNullDeterminant(const LUNullDeterminant&);
     //! \return a string describing the error
-    const char* what() const noexcept final;
+    [[nodiscard]] const char* what() const noexcept final;
     //! \brief destructor
     ~LUNullDeterminant() noexcept override;
   };  // end of struct LUException
