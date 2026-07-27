@@ -166,7 +166,7 @@ namespace tfel::utilities {
     }
     //
     template <typename T1>
-    TFEL_INLINE bool is() const requires(isValidType<T1>) {
+    [[nodiscard]] TFEL_INLINE bool is() const requires(isValidType<T1>) {
       return std::holds_alternative<T1>(*this);
     }
     //! \return the value hold by the `GenTypeBase`.

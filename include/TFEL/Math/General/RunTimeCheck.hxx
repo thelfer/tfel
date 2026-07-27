@@ -94,7 +94,7 @@ namespace tfel::math {
     //! \brief a do nothing function.
     [[nodiscard]] static constexpr EmptyRunTimeProperties exe(
         const EmptyRunTimeProperties, const EmptyRunTimeProperties) noexcept {
-      return EmptyRunTimeProperties();
+      return {};
     }  // end of exe
   };   // end of RunTimeCheck<EmptyRunTimeProperties>
 

@@ -28,7 +28,7 @@ namespace mtest {
      */
     CastemMaterialProperty(const std::string&, const std::string&);
     //
-    real getValue() const override;
+    [[nodiscard]] real getValue() const override;
     //! \brief destructor
     ~CastemMaterialProperty() override;
 

@@ -32,16 +32,17 @@ namespace dianafea {
     DianaFEAException(DianaFEAException&&) noexcept;
     //! copy constructor
     DianaFEAException(const DianaFEAException&);
-
-    const char* what() const noexcept final;
-    virtual const std::string& getMsg() const noexcept final;
+    //
+    DianaFEAException() = delete;
+    DianaFEAException& operator=(const DianaFEAException&) = delete;
+    DianaFEAException& operator=(DianaFEAException&&) = delete;
+    //
+    [[nodiscard]] const char* what() const noexcept final;
+    [[nodiscard]] virtual const std::string& getMsg() const noexcept final;
     //! destructor
     ~DianaFEAException() noexcept override;
 
    private:
-    DianaFEAException() = delete;
-    DianaFEAException& operator=(const DianaFEAException&) = delete;
-    DianaFEAException& operator=(DianaFEAException&&) = delete;
     //! error message
     const std::string msg;
   };  // end of struct DianaFEAException
@@ -61,12 +62,11 @@ namespace dianafea {
     //! copy constructor
     DianaFEAInvalidModellingHypothesis(
         const DianaFEAInvalidModellingHypothesis&);
-    //! destructor
-    ~DianaFEAInvalidModellingHypothesis() noexcept override;
-
-   private:
+    //
     DianaFEAInvalidModellingHypothesis& operator=(
         const DianaFEAInvalidModellingHypothesis&) = delete;
+    //! destructor
+    ~DianaFEAInvalidModellingHypothesis() noexcept override;
   };  // end of struct DianaFEAInvalidModellingHypothesis
   /*!
    * \brief exception thrown when an invalid value of the *NTENS
@@ -79,13 +79,12 @@ namespace dianafea {
     DianaFEAInvalidNTENSValue(DianaFEAInvalidNTENSValue&&) noexcept;
     //! copy constructor
     DianaFEAInvalidNTENSValue(const DianaFEAInvalidNTENSValue&);
-    //! desctructor
-    ~DianaFEAInvalidNTENSValue() noexcept override;
-
-   private:
+    //
     DianaFEAInvalidNTENSValue() = delete;
     DianaFEAInvalidNTENSValue& operator=(const DianaFEAInvalidNTENSValue&) =
         delete;
+    //! desctructor
+    ~DianaFEAInvalidNTENSValue() noexcept override;
   };  // end of struct DianaFEAInvalidNTENSValue
   /*!
    * \brief exception thrown when an invalid dimension is detected
@@ -97,13 +96,12 @@ namespace dianafea {
     DianaFEAInvalidDimension(DianaFEAInvalidDimension&&) noexcept;
     //! copy constructor
     DianaFEAInvalidDimension(const DianaFEAInvalidDimension&);
-    //! destructor
-    ~DianaFEAInvalidDimension() noexcept override;
-
-   private:
+    //
     DianaFEAInvalidDimension() = delete;
     DianaFEAInvalidDimension& operator=(const DianaFEAInvalidDimension&) =
         delete;
+    //! destructor
+    ~DianaFEAInvalidDimension() noexcept override;
   };  // end of struct DianaFEAInvalidDimension
 
 }  // end of namespace dianafea

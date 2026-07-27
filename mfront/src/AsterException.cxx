@@ -51,9 +51,7 @@ namespace aster {
   }  // end of AsterInvalidNTENSValue::AsterInvalidNTENSValue
 
   AsterInvalidNTENSValue::AsterInvalidNTENSValue(
-      const AsterInvalidNTENSValue& e)
-      : AsterException(e) {
-  }  // end of AsterInvalidNTENSValue::AsterInvalidNTENSValue
+      const AsterInvalidNTENSValue&) = default;
 
   AsterInvalidNTENSValue::~AsterInvalidNTENSValue() noexcept = default;
 

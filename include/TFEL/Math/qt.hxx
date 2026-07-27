@@ -71,11 +71,12 @@ namespace tfel::math::internals {
                  (AllowImplicitConversion))
         : value(src) {}
     //! \brief return the value
-    TFEL_HOST_DEVICE constexpr ValueType& getValue() noexcept {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr ValueType& getValue() noexcept {
       return this->value;
     }
     //! \brief return the value
-    TFEL_HOST_DEVICE constexpr const ValueType& getValue() const noexcept {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const ValueType& getValue()
+        const noexcept {
       return this->value;
     }
     //! \brief assignement operator

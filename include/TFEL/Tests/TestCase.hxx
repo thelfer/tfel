@@ -60,7 +60,7 @@
     bool tfel_test_has_thrown = false;                                       \
     auto tfel_test_details = std::string{};                                  \
     try {                                                                    \
-      X;                                                                     \
+      static_cast<void>(X);                                                  \
     } catch (Y&) {                                                           \
       tfel_test_has_thrown = true;                                           \
     } catch (...) {                                                          \

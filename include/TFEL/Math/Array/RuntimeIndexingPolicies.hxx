@@ -98,7 +98,7 @@ namespace tfel::math {
     //!
     TFEL_HOST_DEVICE [[nodiscard]] constexpr RuntimeVectorIndexingPolicy
     getRowMajorIndexingPolicy() const {
-      return RuntimeVectorIndexingPolicy(this->data_size);
+      return {this->data_size};
     }
 
    private:
@@ -177,7 +177,7 @@ namespace tfel::math {
     //!
     TFEL_HOST_DEVICE [[nodiscard]] constexpr RuntimeRowMajorMatrixIndexingPolicy
     getRowMajorIndexingPolicy() {
-      return RuntimeRowMajorMatrixIndexingPolicy(*this);
+      return {*this};
     }  // end of getRowMajorIndexingPolicy
        //! \return if the matrix is empty
     TFEL_HOST_DEVICE [[nodiscard]] constexpr bool empty() const noexcept {

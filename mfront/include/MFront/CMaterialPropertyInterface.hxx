@@ -57,7 +57,7 @@ namespace mfront {
      * \return the name of the generated library
      * \param[in] mpd: material property description
      */
-    virtual std::string getGeneratedLibraryName(
+    [[nodiscard]] virtual std::string getGeneratedLibraryName(
         const MaterialPropertyDescription&) const;
 
     void writeBeginHeaderNamespace(std::ostream&) const override;
@@ -71,29 +71,29 @@ namespace mfront {
      * \param[in] m: material name
      * \param[in] c: class name
      */
-    std::string getHeaderFileName(const std::string&,
-                                  const std::string&) const override;
+    [[nodiscard]] std::string getHeaderFileName(
+        const std::string&, const std::string&) const override;
     /*!
      * \param[in] m: material name
      * \param[in] c: class name
      */
-    std::string getSrcFileName(const std::string&,
-                               const std::string&) const override;
+    [[nodiscard]] std::string getSrcFileName(const std::string&,
+                                             const std::string&) const override;
     /*!
      * \param[in] mpd: material property description
      */
-    std::string getFunctionName(
+    [[nodiscard]] std::string getFunctionName(
         const MaterialPropertyDescription&) const override;
 
     /*!
      * \param[in] mpd: material property description
      */
-    std::string getCheckBoundsFunctionName(
+    [[nodiscard]] std::string getCheckBoundsFunctionName(
         const MaterialPropertyDescription&) const override;
     /*!
      * \return true if a check bounds function is required
      */
-    bool requiresCheckBoundsFunction() const override;
+    [[nodiscard]] bool requiresCheckBoundsFunction() const override;
   };  // end of CMaterialPropertyInterface
 
 }  // end of namespace mfront

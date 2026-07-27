@@ -11,8 +11,10 @@
  * project under specific licensing conditions.
  */
 
+#include <tuple>
 #include <cmath>
 #include <limits>
+#include <utility>
 #include <ostream>
 #include <stdexcept>
 
@@ -145,7 +147,7 @@ namespace numodis {
   //===============================================================
   Vect3 Vect3::UnitCross(const Vect3& vec) const {
     Vect3 cross = this->Cross(vec);
-    cross.Normalize();
+    std::ignore = cross.Normalize();
     return cross;
   }
 
