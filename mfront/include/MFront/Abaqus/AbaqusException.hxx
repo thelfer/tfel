@@ -30,17 +30,18 @@ namespace abaqus {
     AbaqusException(const std::string&);
     //! \brief move constructor
     AbaqusException(AbaqusException&&) noexcept;
+    //
+    AbaqusException() = delete;
+    AbaqusException& operator=(const AbaqusException&) = delete;
+    AbaqusException& operator=(AbaqusException&&) = delete;
     //! \brief copy constructor
     AbaqusException(const AbaqusException&);
-    const char* what() const noexcept final;
-    virtual const std::string& getMsg() const noexcept final;
+    [[nodiscard]] const char* what() const noexcept final;
+    [[nodiscard]] virtual const std::string& getMsg() const noexcept final;
     //! \brief destructor
     ~AbaqusException() noexcept override;
 
    private:
-    AbaqusException() = delete;
-    AbaqusException& operator=(const AbaqusException&) = delete;
-    AbaqusException& operator=(AbaqusException&&) = delete;
     //! \brief error message
     const std::string msg;
   };  // end of struct AbaqusException
@@ -76,12 +77,11 @@ namespace abaqus {
     AbaqusInvalidNTENSValue(AbaqusInvalidNTENSValue&&) noexcept;
     //! \brief copy constructor
     AbaqusInvalidNTENSValue(const AbaqusInvalidNTENSValue&);
-    //! \brief desctructor
-    ~AbaqusInvalidNTENSValue() noexcept override;
-
-   private:
+    //
     AbaqusInvalidNTENSValue() = delete;
     AbaqusInvalidNTENSValue& operator=(const AbaqusInvalidNTENSValue&) = delete;
+    //! \brief destructor
+    ~AbaqusInvalidNTENSValue() noexcept override;
   };  // end of struct AbaqusInvalidNTENSValue
   /*!
    * \brief exception thrown when an invalid dimension is detected
@@ -93,12 +93,11 @@ namespace abaqus {
     AbaqusInvalidDimension(AbaqusInvalidDimension&&) noexcept;
     //! \brief copy constructor
     AbaqusInvalidDimension(const AbaqusInvalidDimension&);
-    //! \brief destructor
-    ~AbaqusInvalidDimension() noexcept override;
-
-   private:
+    //
     AbaqusInvalidDimension() = delete;
     AbaqusInvalidDimension& operator=(const AbaqusInvalidDimension&) = delete;
+    //! \brief destructor
+    ~AbaqusInvalidDimension() noexcept override;
   };  // end of struct AbaqusInvalidDimension
 
 }  // end of namespace abaqus

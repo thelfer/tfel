@@ -260,7 +260,7 @@ namespace tfel::utilities {
      * This is usefull when parsing a file line by line
      * \param[in] b: boolean
      */
-    bool isCStyleCommentOpened() const;
+    [[nodiscard]] bool isCStyleCommentOpened() const;
     /*!
      * \brief assume that a raw string was opened at the
      * beginning of the processing.
@@ -289,12 +289,12 @@ namespace tfel::utilities {
      * This is usefull when parsing a file line by line
      * \param[in] b: boolean
      */
-    bool isRawStringOpened() const;
+    [[nodiscard]] bool isRawStringOpened() const;
     /*!
      * \return the current raw string delimiter.
      * This is usefull when parsing a file line by line
      */
-    std::string getCurrentRawStringDelimiter() const noexcept;
+    [[nodiscard]] std::string getCurrentRawStringDelimiter() const noexcept;
     /*!
      * \brief remove all comment tokens
      */
@@ -345,29 +345,29 @@ namespace tfel::utilities {
      */
     void addSeparator(const std::string&);
     //! \return true if the token list is empty
-    bool empty() const;
+    [[nodiscard]] bool empty() const;
     //! \return an iterator to the first token
-    const_iterator begin() const;
+    [[nodiscard]] const_iterator begin() const;
     //! \return an iterator past the last token
-    const_iterator end() const;
+    [[nodiscard]] const_iterator end() const;
     //! \return an iterator to the first token
-    const_iterator cbegin() const;
+    [[nodiscard]] const_iterator cbegin() const;
     //! \return an iterator past the last token
-    const_iterator cend() const;
+    [[nodiscard]] const_iterator cend() const;
     /*!
      * \return the ith token
      * \param[in] i : index
      * \throw an exception if i>=this->size()
      */
-    const Token& operator[](const size_type) const;
+    [[nodiscard]] const Token& operator[](const size_type) const;
     //! \return the number of token
-    size_type size() const;
+    [[nodiscard]] size_type size() const;
     //! \brief destructor
     virtual ~CxxTokenizer();
 
    protected:
-    static bool isValidFunctionIdentifier(const std::string&,
-                                          const bool = true);
+    [[nodiscard]] static bool isValidFunctionIdentifier(const std::string&,
+                                                        const bool = true);
     /*!
      * \param[in]     in:   input stream
      * \param[in,out] n:    line number

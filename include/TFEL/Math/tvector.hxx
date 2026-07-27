@@ -43,7 +43,7 @@ namespace tfel::math {
   template <typename T, typename T2, typename Op>
   struct IsTVectorScalarOperationValid {
     static constexpr bool cond =
-        isScalar<T2>() && std::is_same<result_type<T, T2, OpMult>, T>::value;
+        isScalar<T2>() && std::is_same_v<result_type<T, T2, OpMult>, T>;
   };  // end of struct IsTVectorScalarOperationValid
 
   /*!

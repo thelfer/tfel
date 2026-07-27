@@ -51,13 +51,14 @@ namespace mfront {
         const;
     //
     DSLTarget getTargetType() const final;
+    void overrideByAParameter(const std::string&, const double) final;
+    //
     const MaterialKnowledgeDescription& getMaterialKnowledgeDescription()
         const override;
     std::string getMaterialKnowledgeIdentifier() const override;
     std::string getMaterialName() const override;
     std::string getOverridableVariableNameByExternalName(
         const std::string&) const override;
-    void overrideByAParameter(const std::string&, const double) override;
     std::map<std::string, double> getOverridenParameters() const override;
     void getKeywordsList(std::vector<std::string>&) const override;
     void setInterfaces(const std::set<std::string>&) override;
@@ -78,6 +79,9 @@ namespace mfront {
     typedef void (MaterialPropertyDSL::*MemberFuncPtr)();
     typedef std::map<std::string, MemberFuncPtr> CallBackContainer;
     //
+    // this method is declared final to be called safely in constructors
+    void reserveName(const std::string&) final;
+    //
     DSLOptions buildDSLOptions() const override;
     std::map<std::string, int> getIntegerConstants() const override;
     bool useQt() const override;
@@ -86,7 +90,6 @@ namespace mfront {
                                const std::vector<std::string>&,
                                const tfel::utilities::DataMap&) override;
     void treatUnknownKeyword() override;
-    void reserveName(const std::string&) override;
     bool isNameReserved(const std::string&) const override;
     std::string getClassName() const override;
     void addMaterialLaw(const std::string&) override;
@@ -141,16 +144,16 @@ namespace mfront {
     virtual void treatBounds();
     //! \brief treat the `@PhysicalBounds` keyword
     virtual void treatPhysicalBounds();
-
-    virtual void registerNewCallBack(const std::string&, const MemberFuncPtr);
+    //! \brief perform pedantic checks
+    virtual void doPedanticChecks() const;
+    //
+    void registerNewCallBack(const std::string&, const MemberFuncPtr);
     /*!
      * \brief method that shall be called when all variables are declared.
      *
      * This method overrides variables by parameters
      */
     void finalizeVariablesDeclaration();
-    //! \brief perform pedantic checks
-    virtual void doPedanticChecks() const;
     //! \brief description of the material property
     MaterialPropertyDescription md;
     //! \brief overriding parameters

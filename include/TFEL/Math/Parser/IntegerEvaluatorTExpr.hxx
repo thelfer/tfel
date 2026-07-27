@@ -125,7 +125,7 @@ namespace tfel::math {
 
    private:
     TVariable& operator=(const TVariable&) = delete;
-    TVariable& operator=(TVariable&&) = delete;
+    TVariable& operator=(TVariable&&) noexcept = delete;
     std::vector<int>& vars;
     std::vector<int>::size_type pos;
   };
@@ -133,7 +133,7 @@ namespace tfel::math {
   struct IntegerEvaluator::TOperator final : public IntegerEvaluator::TExpr {
     TOperator(const std::string&);
     TOperator(const TOperator&);
-    TOperator(TOperator&&);
+    TOperator(TOperator&&) noexcept;
     virtual std::string getOperatorType() const;
     bool isOperator() const override;
     void reduce() override;
@@ -142,7 +142,7 @@ namespace tfel::math {
 
    private:
     TOperator& operator=(const TOperator&) = delete;
-    TOperator& operator=(TOperator&&) = delete;
+    TOperator& operator=(TOperator&&) noexcept = delete;
     const std::string type;
   };  // end of struct IntegerEvaluator::TOperator
 
@@ -176,7 +176,7 @@ namespace tfel::math {
 
    private:
     TNumber& operator=(const TNumber&);
-    TNumber& operator=(TNumber&&);
+    TNumber& operator=(TNumber&&) noexcept;
     const int value;
   };  // end of struct IntegerEvaluator::TNumber
 

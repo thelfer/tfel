@@ -32,18 +32,19 @@ namespace tfel::math::parser {
      * given position
      * \param[in] p: position
      */
-    virtual bool dependsOnVariable(
+    [[nodiscard]] virtual bool dependsOnVariable(
         const std::vector<double>::size_type) const = 0;
     //! \brief return if the expression is constant
-    virtual bool isConstant() const = 0;
+    [[nodiscard]] virtual bool isConstant() const = 0;
     //! \return the result of the evaluation of the expression
-    virtual double getValue() const = 0;
+    [[nodiscard]] virtual double getValue() const = 0;
     //! \brief check if the expression does not lead to a cyclic dependency
     virtual void checkCyclicDependency(std::vector<std::string>&) const = 0;
-    virtual std::shared_ptr<Expr> resolveDependencies(
+    [[nodiscard]] virtual std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const = 0;
-    virtual std::shared_ptr<Expr> clone(const std::vector<double>&) const = 0;
-    virtual std::shared_ptr<Expr> differentiate(
+    [[nodiscard]] virtual std::shared_ptr<Expr> clone(
+        const std::vector<double>&) const = 0;
+    [[nodiscard]] virtual std::shared_ptr<Expr> differentiate(
         const std::vector<double>::size_type,
         const std::vector<double>&) const = 0;
     virtual void getParametersNames(std::set<std::string>&) const = 0;
@@ -52,14 +53,15 @@ namespace tfel::math::parser {
      * be integrated in a C++ code.
      * \param[in] m: a map used to change the names of the variables
      */
-    virtual std::string getCxxFormula(
+    [[nodiscard]] virtual std::string getCxxFormula(
         const std::vector<std::string>&) const = 0;
 
-    virtual std::shared_ptr<Expr>
+    [[nodiscard]] virtual std::shared_ptr<Expr>
     createFunctionByChangingParametersIntoVariables(
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&) const = 0;
+    //! \brief destructor
     virtual ~Expr();
   };  // end of struct Expr
 

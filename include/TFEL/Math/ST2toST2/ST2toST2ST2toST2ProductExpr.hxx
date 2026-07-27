@@ -278,14 +278,15 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 6 + j];
     }  // end of operator()
     /*!
      * \return the runtime properties
      */
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
+    getRunTimeProperties() const {
       return RunTimeProperties();
     }
   };  // end of struct Expr<ST2toST2ResultType,ST2toST2ST2toST2ProductExpr>

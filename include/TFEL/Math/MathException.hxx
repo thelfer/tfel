@@ -41,7 +41,7 @@ namespace tfel::math {
     InvalidTimeStepException() = default;
     InvalidTimeStepException(InvalidTimeStepException&&) noexcept = default;
     InvalidTimeStepException(const InvalidTimeStepException&) = default;
-    const char* what() const noexcept final;
+    [[nodiscard]] const char* what() const noexcept final;
     ~InvalidTimeStepException() noexcept override;
   };  // end of struct InvalidTimeStepException
 
@@ -60,7 +60,7 @@ namespace tfel::math {
         MaximumNumberOfIterationsReachedException&&) noexcept = default;
     MaximumNumberOfIterationsReachedException(
         const MaximumNumberOfIterationsReachedException&) = default;
-    const char* what() const noexcept final;
+    [[nodiscard]] const char* what() const noexcept final;
     ~MaximumNumberOfIterationsReachedException() noexcept override;
   };  // end of struct MaximumNumberOfIterationsReachedException
 
@@ -69,7 +69,7 @@ namespace tfel::math {
     SingularJacobianException() = default;
     SingularJacobianException(SingularJacobianException&&) noexcept = default;
     SingularJacobianException(const SingularJacobianException&) = default;
-    const char* what() const noexcept final;
+    [[nodiscard]] const char* what() const noexcept final;
     ~SingularJacobianException() noexcept override;
   };  // end of struct SingularJacobianException
 

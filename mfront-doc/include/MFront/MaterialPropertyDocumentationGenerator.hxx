@@ -52,7 +52,7 @@ namespace mfront {
       VariableInformation();
       VariableInformation(VariableInformation&&) noexcept;
       VariableInformation(const VariableInformation&);
-      VariableInformation& operator=(VariableInformation&&);
+      VariableInformation& operator=(VariableInformation&&) noexcept;
       VariableInformation& operator=(const VariableInformation&);
       ~VariableInformation() noexcept;
     };

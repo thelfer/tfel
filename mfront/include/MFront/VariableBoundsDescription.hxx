@@ -44,9 +44,9 @@ namespace mfront {
     VariableBoundsDescription& operator=(const VariableBoundsDescription&) =
         default;
     //! \return true if the bounds type is either LOWER or LOWERANDUPPER
-    bool hasLowerBound() const;
+    [[nodiscard]] bool hasLowerBound() const;
     //! \return true if the bounds type is either UPPER or LOWERANDUPPER
-    bool hasUpperBound() const;
+    [[nodiscard]] bool hasUpperBound() const;
     //! \brief destructor
     ~VariableBoundsDescription() noexcept;
     //! \brief type of the bound

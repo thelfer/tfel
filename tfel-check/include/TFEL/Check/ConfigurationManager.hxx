@@ -41,11 +41,11 @@ namespace tfel::check {
      */
     ConfigurationManager(const Configuration&);
     //! \brief move constructor
-    ConfigurationManager(ConfigurationManager&&);
+    ConfigurationManager(ConfigurationManager&&) noexcept;
     //! \brief copy constructor
     ConfigurationManager(const ConfigurationManager&);
     //! \brief move assignement
-    ConfigurationManager& operator=(ConfigurationManager&&);
+    ConfigurationManager& operator=(ConfigurationManager&&) noexcept;
     //! \brief standard assignement
     ConfigurationManager& operator=(const ConfigurationManager&);
     /*!

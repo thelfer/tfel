@@ -29,9 +29,9 @@ namespace tfel::check {
   struct TFELCHECK_VISIBILITY_EXPORT SplineInterpolation
       : public Interpolation {
     SplineInterpolation();
-    SplineInterpolation(SplineInterpolation&&);
+    SplineInterpolation(SplineInterpolation&&) noexcept;
     SplineInterpolation(const SplineInterpolation&);
-    SplineInterpolation& operator=(SplineInterpolation&&);
+    SplineInterpolation& operator=(SplineInterpolation&&) noexcept;
     SplineInterpolation& operator=(const SplineInterpolation&);
     void interpolate(const std::vector<double>&,
                      const std::vector<double>&) override;

@@ -16,9 +16,10 @@
 namespace tfel::check {
 
   NoInterpolation::NoInterpolation() = default;
-  NoInterpolation::NoInterpolation(NoInterpolation&&) = default;
+  NoInterpolation::NoInterpolation(NoInterpolation&&) noexcept = default;
   NoInterpolation::NoInterpolation(const NoInterpolation&) = default;
-  NoInterpolation& NoInterpolation::operator=(NoInterpolation&&) = default;
+  NoInterpolation& NoInterpolation::operator=(NoInterpolation&&) noexcept =
+      default;
   NoInterpolation& NoInterpolation::operator=(const NoInterpolation&) = default;
   NoInterpolation::~NoInterpolation() = default;
 

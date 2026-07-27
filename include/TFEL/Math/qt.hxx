@@ -71,11 +71,12 @@ namespace tfel::math::internals {
                  (AllowImplicitConversion))
         : value(src) {}
     //! \brief return the value
-    TFEL_HOST_DEVICE constexpr ValueType& getValue() noexcept {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr ValueType& getValue() noexcept {
       return this->value;
     }
     //! \brief return the value
-    TFEL_HOST_DEVICE constexpr const ValueType& getValue() const noexcept {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const ValueType& getValue()
+        const noexcept {
       return this->value;
     }
     //! \brief assignement operator
@@ -201,8 +202,7 @@ namespace tfel::math {
       static constexpr bool cond =
           tfel::typetraits::IsFundamentalNumericType<T2>::cond &&
           isScalar<T>() &&
-          std::is_same<typename tfel::typetraits::Promote<T, T2>::type,
-                       T>::value;
+          std::is_same_v<typename tfel::typetraits::Promote<T, T2>::type, T>;
     };
     //! \brief a simple alias
     template <typename ValueType1, typename ValueType2>
@@ -264,8 +264,7 @@ namespace tfel::math {
     template <typename ValueType2, typename OwnershipPolicy2>
     TFEL_HOST_DEVICE constexpr Quantity& operator-=(
         const Quantity<UnitType, ValueType2, OwnershipPolicy2>& src) noexcept
-        requires(
-            std::is_same<promote<ValueType, ValueType2>, ValueType>::value) {
+        requires(std::is_same_v<promote<ValueType, ValueType2>, ValueType>) {
       this->getValue() -= src.getValue();
       return *this;
     }

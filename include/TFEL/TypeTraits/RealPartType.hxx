@@ -70,7 +70,7 @@ namespace tfel::typetraits {
    */
   template <typename T>
   struct RealPartType {
-    typedef tfel::meta::InvalidType type;
+    using type = tfel::meta::InvalidType;
   };  // end of struct RealPartType
 
   TFEL_TYPETRAITS_REALPARTTYPE(unsigned short);

@@ -54,18 +54,25 @@ namespace tfel::math::parser {
                            const std::shared_ptr<Expr>,
                            const std::shared_ptr<Expr>) noexcept;
     //
-    bool isConstant() const override;
-    bool dependsOnVariable(const std::vector<double>::size_type) const override;
-    double getValue() const override;
-    std::string getCxxFormula(const std::vector<std::string>&) const override;
+    StandardBinaryFunction& operator=(const StandardBinaryFunction&) = delete;
+    StandardBinaryFunction& operator=(StandardBinaryFunction&&) = delete;
+    //
+    [[nodiscard]] bool isConstant() const override;
+    [[nodiscard]] bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::string getCxxFormula(
+        const std::vector<std::string>&) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
-    std::shared_ptr<Expr> resolveDependencies(
+    [[nodiscard]] std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> differentiate(
+    [[nodiscard]] std::shared_ptr<Expr> differentiate(
         const std::vector<double>::size_type,
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
-    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+    [[nodiscard]] std::shared_ptr<Expr> clone(
+        const std::vector<double>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr>
+    createFunctionByChangingParametersIntoVariables(
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
@@ -74,8 +81,6 @@ namespace tfel::math::parser {
     ~StandardBinaryFunction() override;
 
    private:
-    StandardBinaryFunction& operator=(const StandardBinaryFunction&) = delete;
-    StandardBinaryFunction& operator=(StandardBinaryFunction&&) = delete;
     //! function name
     const char* const name;
     //! first argument

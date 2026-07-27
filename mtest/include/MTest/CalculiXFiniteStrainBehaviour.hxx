@@ -34,28 +34,13 @@ namespace mtest {
     CalculiXFiniteStrainBehaviour(const Hypothesis,
                                   const std::string&,
                                   const std::string&);
-    /*!
-     * \param[out] v : initial values of the driving variables
-     */
+    //
     void getGradientsDefaultInitialValues(
         tfel::math::vector<real>&) const override;
-    //! destructor
+    //! \brief destructor
     ~CalculiXFiniteStrainBehaviour() override;
 
    protected:
-    /*!
-     * \brief call the mechanical behaviour
-     * \return a pair. The first member is true if the integration was
-     * successfull, false otherwise. The second member contains a time
-     * step scaling factor.
-     * \param[out]    Kt    : tangent operator
-     * \param[in,out] s     : current state
-     * \param[out]    wk    : workspace
-     * \param[in]     dt    : time increment
-     * \param[in]     ktype : type of the stiffness matrix
-     * \param[in] b : if true, integrate the behaviour over the time
-     * step, if false compute a prediction of the stiffness matrix
-     */
     std::pair<bool, real> call_behaviour(tfel::math::matrix<real>&,
                                          CurrentState&,
                                          BehaviourWorkSpace&,

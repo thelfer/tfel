@@ -32,13 +32,15 @@ namespace mtest {
     static std::shared_ptr<MaterialProperty> getMaterialProperty(
         const std::string&, const std::string&, const std::string&);
     //! \return the names of the arguments
-    virtual std::size_t getNumberOfVariables() const = 0;
+    [[nodiscard]] virtual std::size_t getNumberOfVariables() const = 0;
     //! \return the names of the arguments
-    virtual std::vector<std::string> getVariablesNames() const = 0;
+    [[nodiscard]] virtual std::vector<std::string> getVariablesNames()
+        const = 0;
     //! \return the names of the parameters
-    virtual std::vector<std::string> getParametersNames() const = 0;
+    [[nodiscard]] virtual std::vector<std::string> getParametersNames()
+        const = 0;
     //! \return the names of the output
-    virtual std::string getOutputName() const = 0;
+    [[nodiscard]] virtual std::string getOutputName() const = 0;
     /*!
      * \brief set variable value
      * \param[in] n: name of the variable
@@ -52,7 +54,7 @@ namespace mtest {
      */
     virtual void setVariableValue(const std::size_t, const real) = 0;
     //! \brief return the value of the material property
-    virtual real getValue() const = 0;
+    [[nodiscard]] virtual real getValue() const = 0;
     /*!
      * \brief set the value of a parameter
      * \param[in] n: name of the variable

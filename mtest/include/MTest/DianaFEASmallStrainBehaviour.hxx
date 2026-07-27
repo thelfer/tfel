@@ -33,6 +33,7 @@ namespace mtest {
     DianaFEASmallStrainBehaviour(const Hypothesis,
                                  const std::string&,
                                  const std::string&);
+    //
     void getGradientsDefaultInitialValues(
         tfel::math::vector<real>&) const override;
     StiffnessMatrixType getDefaultStiffnessMatrixType() const override;
@@ -40,7 +41,6 @@ namespace mtest {
     tfel::math::tmatrix<3u, 3u, real> getRotationMatrix(
         const tfel::math::vector<real>&,
         const tfel::math::tmatrix<3u, 3u, real>&) const override;
-
     std::pair<bool, real> computePredictionOperator(
         BehaviourWorkSpace&,
         const CurrentState&,
@@ -52,7 +52,7 @@ namespace mtest {
     std::vector<std::string> getOptionalMaterialProperties() const override;
     void setOptionalMaterialPropertiesDefaultValues(
         EvolutionManager&, const EvolutionManager&) const override;
-    //! destructor
+    //! \brief destructor
     ~DianaFEASmallStrainBehaviour() override;
 
    protected:
