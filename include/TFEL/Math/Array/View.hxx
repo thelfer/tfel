@@ -207,13 +207,14 @@ namespace tfel::math {
     using selectViewArrayBase<MappedType, IndexingPolicyType>::operator[];
     using selectViewArrayBase<MappedType, IndexingPolicyType>::operator();
     //! \return a pointer to the underlying array serving as element storage.
-    TFEL_HOST_DEVICE constexpr data_pointer_type data() noexcept
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr data_pointer_type data() noexcept
         requires(!is_const) {
       return this->data_pointer;
     }  // end of data
 
     //! \return a pointer to the underlying array serving as element storage.
-    TFEL_HOST_DEVICE constexpr const_data_pointer_type data() const noexcept {
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const_data_pointer_type data()
+        const noexcept {
       return this->data_pointer;
     }  // end of data
 

@@ -456,7 +456,7 @@ namespace tfel::math {
      * \return the logical size of the array for the given dimension
      * \param[in] i: dimension
      */
-    TFEL_HOST_DEVICE constexpr size_type size(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr size_type size(
         const size_type i) const noexcept {
       if (i >= FixedSizeIndexingPoliciesCartesianProduct::arity) {
         tfel::reportContractViolation(
