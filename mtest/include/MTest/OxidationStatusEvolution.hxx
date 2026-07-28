@@ -35,8 +35,8 @@ namespace mtest {
      */
     OxidationStatusEvolution(const PipeMesh&, const EvolutionManager&);
     //
-    real operator()(const real) const override;
-    bool isConstant() const override;
+    [[nodiscard]] real operator()(const real) const override;
+    [[nodiscard]] bool isConstant() const override;
     void setValue(const real) override;
     void setValue(const real, const real) override;
     /*!
@@ -61,12 +61,14 @@ namespace mtest {
      * \return the oxidation length at the inner boundary at the given time
      * \param[in] t: time
      */
-    virtual real getInnerBoundaryOxidationLength(const real) const;
+    [[nodiscard]] virtual real getInnerBoundaryOxidationLength(
+        const real) const;
     /*!
      * \return the oxidation length at the outer boundary at the given time
      * \param[in] t: time
      */
-    virtual real getOuterBoundaryOxidationLength(const real) const;
+    [[nodiscard]] virtual real getOuterBoundaryOxidationLength(
+        const real) const;
     //! \brief inner radius
     const real inner_radius;
     //! \brief outer radius

@@ -21,8 +21,7 @@ namespace mfront {
 
   std::string AmitexInterface::getName() { return "amitex"; }  // end of getName
 
-  AmitexInterface::AmitexInterface() {
-  }  // end of AmitexInterface::AmitexInterface
+  AmitexInterface::AmitexInterface() = default;
 
   void AmitexInterface::generateInputFileExampleForHypothesis(
       std::ostream& out,

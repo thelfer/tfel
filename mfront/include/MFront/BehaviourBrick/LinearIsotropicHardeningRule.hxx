@@ -33,22 +33,24 @@ namespace mfront::bbrick {
                     const std::string&,
                     const std::string&,
                     const DataMap&) override;
-    std::vector<OptionDescription> getOptions() const override;
-    std::string computeElasticPrediction(const BehaviourDescription&,
-                                         const std::string&,
-                                         const std::string&) const override;
-    std::string computeElasticLimit(const BehaviourDescription&,
-                                    const std::string&,
-                                    const std::string&) const override;
-    std::string computeElasticLimitAndDerivative(
-        const BehaviourDescription&,
-        const std::string&,
-        const std::string&) const override;
     void endTreatment(BehaviourDescription&,
                       const AbstractBehaviourDSL&,
                       const std::string&,
                       const std::string&) const override;
-    //! destructor
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::string computeElasticPrediction(
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&) const override;
+    [[nodiscard]] std::string computeElasticLimit(
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&) const override;
+    [[nodiscard]] std::string computeElasticLimitAndDerivative(
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&) const override;
+    //! \brief destructor
     ~LinearIsotropicHardeningRule() override;
 
    protected:

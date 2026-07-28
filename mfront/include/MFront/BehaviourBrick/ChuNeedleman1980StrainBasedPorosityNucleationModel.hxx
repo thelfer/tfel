@@ -33,9 +33,9 @@ namespace mfront::bbrick {
     ~ChuNeedleman1980StrainBasedPorosityNucleationModel() override;
 
    protected:
-    std::string getModelName() const override;
-    bool requiresLimitOnNucleationPorosity() const override;
-    std::vector<MaterialCoefficientDescription>
+    [[nodiscard]] std::string getModelName() const override;
+    [[nodiscard]] bool requiresLimitOnNucleationPorosity() const override;
+    [[nodiscard]] std::vector<MaterialCoefficientDescription>
     getMaterialCoefficientDescriptions() const override;
   };  // end of struct ChuNeedleman1980StrainBasedPorosityNucleationModel
 

@@ -125,14 +125,14 @@ namespace tfel::check {
      * arguments.
      */
     void treatUnknownArgument() override;
+    //! \return the current version of `tfel-check`
+    [[nodiscard]] std::string getVersionDescription() const override;
+    //! \return the description of the usage of `tfel-check`
+    [[nodiscard]] std::string getUsageDescription() const override;
     //! \brief treat a substituion pattern
     bool treatSubstitution();
     //! \brief register call backs associated to command line arguments
     void registerArgumentCallBacks();
-    //! \return the current version of `tfel-check`
-    std::string getVersionDescription() const override;
-    //! \return the description of the usage of `tfel-check`
-    std::string getUsageDescription() const override;
     //! \brief configuration manager
     ConfigurationManager configurations;
     //! \brief list of configuration files

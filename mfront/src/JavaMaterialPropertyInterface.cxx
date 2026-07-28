@@ -73,7 +73,7 @@ namespace mfront {
 
   std::string JavaMaterialPropertyInterface::getName() { return "java"; }
 
-  JavaMaterialPropertyInterface::JavaMaterialPropertyInterface() {}
+  JavaMaterialPropertyInterface::JavaMaterialPropertyInterface() = default;
 
   std::pair<bool, JavaMaterialPropertyInterface::tokens_iterator>
   JavaMaterialPropertyInterface::treatKeyword(const std::string& key,

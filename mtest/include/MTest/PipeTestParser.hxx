@@ -54,7 +54,7 @@ namespace mtest {
      */
     void parseString(PipeTest&, const std::string&);
     //! \return the list of keywords
-    virtual std::vector<std::string> getKeyWordsList() const;
+    [[nodiscard]] virtual std::vector<std::string> getKeyWordsList() const;
     //! \brief display the list of keywords
     virtual void displayKeyWordsList() const;
     //! \brief display the list of keywords

@@ -47,19 +47,20 @@ namespace mfront {
      */
     MaterialPropertyDSL(const DSLOptions&);
     //! \return the description of the material property treated by the DSL
-    virtual const MaterialPropertyDescription& getMaterialPropertyDescription()
-        const;
+    [[nodiscard]] virtual const MaterialPropertyDescription&
+    getMaterialPropertyDescription() const;
     //
-    DSLTarget getTargetType() const final;
+    [[nodiscard]] DSLTarget getTargetType() const final;
     void overrideByAParameter(const std::string&, const double) final;
     //
-    const MaterialKnowledgeDescription& getMaterialKnowledgeDescription()
-        const override;
-    std::string getMaterialKnowledgeIdentifier() const override;
-    std::string getMaterialName() const override;
-    std::string getOverridableVariableNameByExternalName(
+    [[nodiscard]] const MaterialKnowledgeDescription&
+    getMaterialKnowledgeDescription() const override;
+    [[nodiscard]] std::string getMaterialKnowledgeIdentifier() const override;
+    [[nodiscard]] std::string getMaterialName() const override;
+    [[nodiscard]] std::string getOverridableVariableNameByExternalName(
         const std::string&) const override;
-    std::map<std::string, double> getOverridenParameters() const override;
+    [[nodiscard]] std::map<std::string, double> getOverridenParameters()
+        const override;
     void getKeywordsList(std::vector<std::string>&) const override;
     void setInterfaces(const std::set<std::string>&) override;
     void analyseFile(const std::string&,
@@ -82,16 +83,17 @@ namespace mfront {
     // this method is declared final to be called safely in constructors
     void reserveName(const std::string&) final;
     //
-    DSLOptions buildDSLOptions() const override;
-    std::map<std::string, int> getIntegerConstants() const override;
-    bool useQt() const override;
+    [[nodiscard]] DSLOptions buildDSLOptions() const override;
+    [[nodiscard]] std::map<std::string, int> getIntegerConstants()
+        const override;
+    [[nodiscard]] bool useQt() const override;
     void disableQuantitiesUsageIfNotAlreadySet() override;
     void addExternalMFrontFile(const std::string&,
                                const std::vector<std::string>&,
                                const tfel::utilities::DataMap&) override;
     void treatUnknownKeyword() override;
-    bool isNameReserved(const std::string&) const override;
-    std::string getClassName() const override;
+    [[nodiscard]] bool isNameReserved(const std::string&) const override;
+    [[nodiscard]] std::string getClassName() const override;
     void addMaterialLaw(const std::string&) override;
     void appendToIncludes(const std::string&) override;
     void appendToMembers(const std::string&) override;
@@ -100,7 +102,7 @@ namespace mfront {
     void generateOutputFiles() override;
     void addStaticVariableDescription(
         const StaticVariableDescription&) override;
-    int getIntegerConstant(const std::string&) const override;
+    [[nodiscard]] int getIntegerConstant(const std::string&) const override;
     void setUnitSystem(const std::string_view) override;
     void setMaterial(const std::string&) override;
     void setMaterialKnowledgeIdentifier(const std::string&) override;

@@ -24,8 +24,9 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT AnsysSymbolsGenerator
       : public SymbolsGenerator {
-    //! constructor
+    //! \brief constructor
     AnsysSymbolsGenerator();
+    //
     void writeAdditionalSymbols(std::ostream&,
                                 const BehaviourInterfaceBase&,
                                 const BehaviourDescription&,
@@ -45,8 +46,8 @@ namespace mfront {
                               const BehaviourDescription&,
                               const FileDescription&,
                               const std::string&) const override;
-    bool handleStrainMeasure() const override;
-    //! destructor
+    [[nodiscard]] bool handleStrainMeasure() const override;
+    //! \brief destructor
     ~AnsysSymbolsGenerator() override;
   };  // end of struct AnsysSymbolsGenerator
 

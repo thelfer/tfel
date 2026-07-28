@@ -503,7 +503,7 @@ namespace mfront {
       const Hypothesis h) const {
     const auto& d = mb.getBehaviourData(h);
     const auto& persistentVarsHolder = d.getPersistentVariables();
-    const unsigned short nStateVariables = static_cast<unsigned short>(
+    const auto nStateVariables = static_cast<unsigned short>(
         persistentVarsHolder.getNumberOfVariables());
     out << "MFRONT_EXPORT_SYMBOL(unsigned short, "
         << this->getSymbolName(i, name, h) << "_nInternalStateVariables, "

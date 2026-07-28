@@ -11,6 +11,7 @@
  * project under specific licensing conditions.
  */
 
+#include <numbers>
 #include <ostream>
 #include "TFEL/Material/ModellingHypothesis.hxx"
 #include "MFront/MFrontLogStream.hxx"
@@ -157,7 +158,7 @@ namespace mtest {
       const StiffnessMatrixType mt,
       const size_t i) {
     //! a simple alias
-    constexpr real pi = 3.14159265358979323846;
+    constexpr real pi = std::numbers::pi_v<real>;
     // number of elements
     const auto ne = size_t(m.number_of_elements);
     // number of nodes

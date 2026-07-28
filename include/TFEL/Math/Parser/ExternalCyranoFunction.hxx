@@ -39,7 +39,7 @@ namespace tfel::math::parser {
                           const double) override;
     [[nodiscard]] std::vector<double>::size_type getNumberOfVariables()
         const override;
-    double getValue() const override;
+    [[nodiscard]] double getValue() const override;
     void checkCyclicDependency(const std::string&) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
     [[nodiscard]] std::shared_ptr<ExternalFunction> differentiate(

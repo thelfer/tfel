@@ -77,9 +77,9 @@ namespace mfront::bbrick {
      */
     virtual void setPorosityEvolutionHandled(const bool) = 0;
     //! \return if the the flow is coupled with the porosity evolution
-    virtual bool isCoupledWithPorosityEvolution() const = 0;
+    [[nodiscard]] virtual bool isCoupledWithPorosityEvolution() const = 0;
     //! \return the flow options
-    virtual std::vector<OptionDescription> getOptions() const = 0;
+    [[nodiscard]] virtual std::vector<OptionDescription> getOptions() const = 0;
     /*!
      * \brief complete the variable description
      * \param[in/out] bd: behaviour description
@@ -108,7 +108,7 @@ namespace mfront::bbrick {
      * `isIsotropicHardeningRuleDefined`, but this name does not reflect the
      * true intention of the author.
      */
-    virtual bool requiresActivationState() const = 0;
+    [[nodiscard]] virtual bool requiresActivationState() const = 0;
     /*!
      * \brief add the intialization of the activation state of the
      * `BehaviourData::BeforeInitializeLocalVariables` code block`.
@@ -128,7 +128,7 @@ namespace mfront::bbrick {
      * \param[in] bd: behaviour description
      * \param[in] id: flow id
      */
-    virtual std::string updateNextEstimateOfThePorosityIncrement(
+    [[nodiscard]] virtual std::string updateNextEstimateOfThePorosityIncrement(
         const BehaviourDescription&, const std::string&) const = 0;
     /*!
      * \return the code updating the upper bound of the porosity.
@@ -137,8 +137,8 @@ namespace mfront::bbrick {
      * \param[in] bd: behaviour description
      * \param[in] id: flow id
      */
-    virtual std::string updatePorosityUpperBound(const BehaviourDescription&,
-                                                 const std::string&) const = 0;
+    [[nodiscard]] virtual std::string updatePorosityUpperBound(
+        const BehaviourDescription&, const std::string&) const = 0;
     //! destructor
     virtual ~InelasticFlow();
 

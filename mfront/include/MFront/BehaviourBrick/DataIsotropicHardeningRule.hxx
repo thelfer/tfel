@@ -33,19 +33,22 @@ namespace mfront::bbrick {
   struct DataIsotropicHardeningRule final
       : public IsotropicHardeningRule,
         private SingleVariableInterpolatedData {
+    //
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
                     const std::string&,
                     const DataMap&) override;
-    std::vector<OptionDescription> getOptions() const override;
-    std::string computeElasticPrediction(const BehaviourDescription&,
-                                         const std::string&,
-                                         const std::string&) const override;
-    std::string computeElasticLimit(const BehaviourDescription&,
-                                    const std::string&,
-                                    const std::string&) const override;
-    std::string computeElasticLimitAndDerivative(
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::string computeElasticPrediction(
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&) const override;
+    [[nodiscard]] std::string computeElasticLimit(
+        const BehaviourDescription&,
+        const std::string&,
+        const std::string&) const override;
+    [[nodiscard]] std::string computeElasticLimitAndDerivative(
         const BehaviourDescription&,
         const std::string&,
         const std::string&) const override;

@@ -342,8 +342,7 @@ namespace tfel::math {
     this->expr = g->analyse();
   }
 
-  IntegerEvaluator::IntegerEvaluator() {
-  }  // end of IntegerEvaluator::IntegerEvaluator
+  IntegerEvaluator::IntegerEvaluator() = default;
 
   IntegerEvaluator::IntegerEvaluator(const IntegerEvaluator& src)
       : EvaluatorBase(src), variables(src.variables), positions(src.positions) {

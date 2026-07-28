@@ -31,7 +31,8 @@ namespace mfront {
 
   struct OctaveMaterialPropertyInterface
       : public AbstractMaterialPropertyInterface {
-    static std::string getName();
+    //
+    [[nodiscard]] static std::string getName();
 
     OctaveMaterialPropertyInterface();
     /*!
@@ -43,7 +44,7 @@ namespace mfront {
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    std::pair<bool, tokens_iterator> treatKeyword(
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
         const std::string&,
         const std::vector<std::string>&,
         tokens_iterator,
@@ -66,13 +67,13 @@ namespace mfront {
     ~OctaveMaterialPropertyInterface() override;
 
    private:
-    static std::string toString(const unsigned short);
+    [[nodiscard]] static std::string toString(const unsigned short);
 
     static void replace(std::string&,
                         const std::string::value_type,
                         const std::string::value_type);
 
-    std::string treatDescriptionString(const std::string&) const;
+    [[nodiscard]] std::string treatDescriptionString(const std::string&) const;
 
   };  // end of MfrontOctaveLawInterface
 

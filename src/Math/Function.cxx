@@ -13,6 +13,7 @@
  */
 
 #include <cmath>
+#include <numbers>
 #include <sstream>
 #include <stdexcept>
 
@@ -148,7 +149,7 @@ namespace tfel::math::parser {
     if (!expr->dependsOnVariable(pos)) {
       return Number::zero();
     }
-    static double ln10 = std::log(10.);
+    static double ln10 = std::numbers::ln10_v<double>;
     auto ce = expr->clone(v);
     auto de = expr->differentiate(pos, v);
     auto de_ = std::make_shared<BinaryOperation<OpMult>>(

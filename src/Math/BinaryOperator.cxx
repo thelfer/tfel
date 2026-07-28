@@ -194,14 +194,14 @@ namespace tfel::math::parser {
       auto tmp3 = std::make_shared<BinaryOperation<OpMult>>(tmp1, tmp2);
       this->derivative = applyChainRule(tmp3, this->db);
     }  // end of ExponentDerivative
-    bool dependsOnVariable(
+    [[nodiscard]] bool dependsOnVariable(
         const std::vector<double>::size_type pos) const override {
       return this->derivative->dependsOnVariable(pos);
     }  // end of dependsOnVariable
-    bool isConstant() const override {
+    [[nodiscard]] bool isConstant() const override {
       return this->derivative->isConstant();
     }  // end of isConstant
-    double getValue() const override {
+    [[nodiscard]] double getValue() const override {
       const auto va = this->a->getValue();
       const auto vb = this->b->getValue();
       if ((tfel::math::ieee754::fpclassify(va) == FP_ZERO) && (vb > 0)) {
@@ -213,15 +213,15 @@ namespace tfel::math::parser {
         std::vector<std::string>& variables) const override {
       this->derivative->checkCyclicDependency(variables);
     }  // end of checkCyclicDependency
-    std::shared_ptr<Expr> resolveDependencies(
+    [[nodiscard]] std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>& values) const override {
       return this->derivative->resolveDependencies(values);
     }  // end of resolveDependencies
-    std::shared_ptr<Expr> clone(
+    [[nodiscard]] std::shared_ptr<Expr> clone(
         const std::vector<double>& values) const override {
       return this->derivative->clone(values);
     }  // end of clone
-    std::shared_ptr<Expr> differentiate(
+    [[nodiscard]] std::shared_ptr<Expr> differentiate(
         const std::vector<double>::size_type pos,
         const std::vector<double>& values) const override {
       return this->derivative->differentiate(pos, values);
@@ -229,7 +229,7 @@ namespace tfel::math::parser {
     void getParametersNames(std::set<std::string>& parameters) const override {
       this->derivative->getParametersNames(parameters);
     }  // end of getParametersNames
-    std::string getCxxFormula(
+    [[nodiscard]] std::string getCxxFormula(
         const std::vector<std::string>& variables) const override {
       const auto df = this->derivative->getCxxFormula(variables);
       if (this->a->isConstant()) {
@@ -240,7 +240,8 @@ namespace tfel::math::parser {
       return "(((tfel::math::ieee754::fpclassify(" + af + ")==FP_ZERO)&&(" +
              bf + " > 0)) ? 0 : " + df + ")";
     }  // end of getCxxFormula
-    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+    [[nodiscard]] std::shared_ptr<Expr>
+    createFunctionByChangingParametersIntoVariables(
         const std::vector<double>& values,
         const std::vector<std::string>& variables,
         const std::map<std::string, std::vector<double>::size_type>& mapping)

@@ -45,7 +45,7 @@ namespace mtest {
      */
     void setActive(const bool) override;
     //! \return if the constraint is active
-    bool isActive() const override;
+    [[nodiscard]] bool isActive() const override;
     //! destructor
     ~ConstraintBase() override;
   };  // end of struct ConstraintBase

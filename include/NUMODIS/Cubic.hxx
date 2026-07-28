@@ -150,7 +150,8 @@ namespace numodis {
    protected:
     virtual void Init();
 
-    std::vector<int> Symmetry(int k, const std::vector<int>& indices) const;
+    [[nodiscard]] std::vector<int> Symmetry(
+        int k, const std::vector<int>& indices) const;
   };
 
 }  // end of namespace numodis

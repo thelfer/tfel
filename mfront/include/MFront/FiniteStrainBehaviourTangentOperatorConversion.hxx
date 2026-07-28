@@ -25,10 +25,10 @@ namespace mfront {
    * \brief structure describing a conversion between two tangent operator
    */
   struct FiniteStrainBehaviourTangentOperatorConversion {
-    //! a simple alias
+    //! \brief a simple alias
     typedef tfel::material::FiniteStrainBehaviourTangentOperatorBase::Flag
         TangentOperatorFlag;
-    //! \return : the list of all available conversions
+    //! \brief \return : the list of all available conversions
     static std::vector<FiniteStrainBehaviourTangentOperatorConversion>
     getAvailableFiniteStrainBehaviourTangentOperatorConversions();
     /* copy and move constructors/assignement operators */
@@ -41,14 +41,14 @@ namespace mfront {
     FiniteStrainBehaviourTangentOperatorConversion& operator=(
         FiniteStrainBehaviourTangentOperatorConversion&&) = default;
     //! \return the conversion starting point
-    TangentOperatorFlag from() const;
+    [[nodiscard]] TangentOperatorFlag from() const;
     //! \return the conversion result point
-    TangentOperatorFlag to() const;
+    [[nodiscard]] TangentOperatorFlag to() const;
     //! \return ther intermediate conversion code
-    const std::string& getIntermediateConversion() const;
+    [[nodiscard]] const std::string& getIntermediateConversion() const;
     //! \return ther intermediate conversion code
-    const std::string& getFinalConversion() const;
-    //! destrutor
+    [[nodiscard]] const std::string& getFinalConversion() const;
+    //! \brief destrutor
     ~FiniteStrainBehaviourTangentOperatorConversion() noexcept;
 
    protected:
@@ -62,13 +62,13 @@ namespace mfront {
                                                    const TangentOperatorFlag,
                                                    const std::string&,
                                                    const std::string&);
-    //! starting point
+    //! \brief starting point
     TangentOperatorFlag b;
-    //! result
+    //! \brief result
     TangentOperatorFlag e;
-    //! code associated with the intermediate conversion
+    //! \brief code associated with the intermediate conversion
     std::string c;
-    //! code associated with the final conversion
+    //! \brief code associated with the final conversion
     std::string cf;
   };
 

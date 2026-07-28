@@ -25,17 +25,17 @@ namespace mfront {
     // \brief constructor
     MFrontMaterialPropertyInterface();
     //
-    std::pair<bool, tokens_iterator> treatKeyword(
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
         const std::string&,
         const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
     void getTargetsDescription(
         TargetsDescription&, const MaterialPropertyDescription&) const override;
-    std::string getFunctionName(
+    [[nodiscard]] std::string getFunctionName(
         const MaterialPropertyDescription&) const override;
-    std::string getHeaderFileName(const std::string&,
-                                  const std::string&) const override;
+    [[nodiscard]] std::string getHeaderFileName(
+        const std::string&, const std::string&) const override;
     void writeLawSymbol(std::ostream&,
                         const MaterialPropertyDescription&) const override;
     void writeMaterialSymbol(std::ostream&,
@@ -47,16 +47,19 @@ namespace mfront {
 
    private:
     //
-    std::vector<std::string> getSupportedFloatingPointTypes() const override;
-    bool shallGenerateOverloadedFunctionForQuantities() const override;
+    [[nodiscard]] std::vector<std::string> getSupportedFloatingPointTypes()
+        const override;
+    [[nodiscard]] bool shallGenerateOverloadedFunctionForQuantities()
+        const override;
+    [[nodiscard]] std::string getSrcFileName(const std::string&,
+                                             const std::string&) const override;
+    [[nodiscard]] std::string getCheckBoundsFunctionName(
+        const MaterialPropertyDescription&) const override;
+    [[nodiscard]] bool requiresCheckBoundsFunction() const override;
     void writeBeginHeaderNamespace(std::ostream&) const override;
     void writeEndHeaderNamespace(std::ostream&) const override;
     void writeBeginSrcNamespace(std::ostream&) const override;
     void writeEndSrcNamespace(std::ostream&) const override;
-    std::string getSrcFileName(const std::string&,
-                               const std::string&) const override;
-    std::string getCheckBoundsFunctionName(
-        const MaterialPropertyDescription&) const override;
     void writeFileDescriptionSymbols(std::ostream&,
                                      const MaterialPropertyDescription&,
                                      const FileDescription&) const override;
@@ -76,7 +79,6 @@ namespace mfront {
         std::ostream&, const MaterialPropertyDescription&) const override;
     void writeVariablesBoundsSymbols(
         std::ostream&, const MaterialPropertyDescription&) const override;
-    bool requiresCheckBoundsFunction() const override;
 
   };  // end of MFrontMaterialPropertyInterface
 

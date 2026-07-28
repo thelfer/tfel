@@ -40,9 +40,9 @@ namespace tfel::system {
     virtual void execute(const int, const int) = 0;
 
     void setPid(const pid_t);
-    pid_t getPid() const;
-    int getOutputStream() const;
-    int getInputStream() const;
+    [[nodiscard]] pid_t getPid() const;
+    [[nodiscard]] int getOutputStream() const;
+    [[nodiscard]] int getInputStream() const;
     virtual ~ChildProcess();
 
    protected:

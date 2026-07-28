@@ -21,12 +21,21 @@ namespace mfront::bbrick {
 
   //! \brief abstract factory for isotropic hardening rules.
   struct MFRONT_VISIBILITY_EXPORT IsotropicHardeningRuleFactory {
-    //! a simple alias
+    //! \brief a simple alias
     using Generator = std::function<std::shared_ptr<IsotropicHardeningRule>()>;
     //! \return the uniq instance of the class
-    static IsotropicHardeningRuleFactory& getFactory();
+    [[nodiscard]] static IsotropicHardeningRuleFactory& getFactory();
+    //
+    IsotropicHardeningRuleFactory(IsotropicHardeningRuleFactory&&) = delete;
+    IsotropicHardeningRuleFactory(const IsotropicHardeningRuleFactory&) =
+        delete;
+    IsotropicHardeningRuleFactory& operator=(IsotropicHardeningRuleFactory&&) =
+        delete;
+    IsotropicHardeningRuleFactory& operator=(
+        const IsotropicHardeningRuleFactory&) = delete;
     //! \brief return the list of available isotropic hardening rules
-    std::vector<std::string> getRegistredIsotropicHardeningRules() const;
+    [[nodiscard]] std::vector<std::string> getRegistredIsotropicHardeningRules()
+        const;
     /*!
      * \brief add a new generator
      * \param[in] n: name of the generator
@@ -37,23 +46,13 @@ namespace mfront::bbrick {
      * \brief generate a new inelastic potential
      * \param[in] n: name of the inelastic potential
      */
-    std::shared_ptr<IsotropicHardeningRule> generate(const std::string&) const;
+    [[nodiscard]] std::shared_ptr<IsotropicHardeningRule> generate(
+        const std::string&) const;
 
    private:
-    //! default constructor
+    //! \brief default constructor
     IsotropicHardeningRuleFactory();
-    //! move constructor (deleted)
-    IsotropicHardeningRuleFactory(IsotropicHardeningRuleFactory&&) = delete;
-    //! copy constructor (deleted)
-    IsotropicHardeningRuleFactory(const IsotropicHardeningRuleFactory&) =
-        delete;
-    //! move assignement (deleted)
-    IsotropicHardeningRuleFactory& operator=(IsotropicHardeningRuleFactory&&) =
-        delete;
-    //! standard assignement(deleted)
-    IsotropicHardeningRuleFactory& operator=(
-        const IsotropicHardeningRuleFactory&) = delete;
-    //! \brief destructor
+    //! \brief \brief destructor
     ~IsotropicHardeningRuleFactory();
     //! \brief generators
     std::map<std::string, Generator> generators;

@@ -45,9 +45,10 @@ namespace mfront::bbrick {
      */
     StandardStressCriterionBase(const std::string& n);
 
-    std::string computeElasticPrediction(const std::string&,
-                                         const BehaviourDescription&,
-                                         const StressPotential&) const override;
+    [[nodiscard]] std::string computeElasticPrediction(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&) const override;
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
@@ -57,21 +58,23 @@ namespace mfront::bbrick {
                       const AbstractBehaviourDSL&,
                       const std::string&,
                       const Role) override;
-    std::string computeCriterion(const std::string&,
-                                 const BehaviourDescription&,
-                                 const StressPotential&) const override;
-    std::string computeNormal(const std::string&,
-                              const BehaviourDescription&,
-                              const StressPotential&,
-                              const Role) const override;
-    std::string computeNormalDerivative(const std::string&,
-                                        const BehaviourDescription&,
-                                        const StressPotential&,
-                                        const Role) const override;
-    bool isCoupledWithPorosityEvolution() const final;
-    PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
-        const final;
-    //! destructor
+    [[nodiscard]] std::string computeCriterion(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&) const override;
+    [[nodiscard]] std::string computeNormal(const std::string&,
+                                            const BehaviourDescription&,
+                                            const StressPotential&,
+                                            const Role) const override;
+    [[nodiscard]] std::string computeNormalDerivative(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&,
+        const Role) const override;
+    [[nodiscard]] bool isCoupledWithPorosityEvolution() const final;
+    [[nodiscard]] PorosityEffectOnFlowRule
+    getPorosityEffectOnEquivalentPlasticStrain() const final;
+    //! \brief destructor
     ~StandardStressCriterionBase() override;
 
    private:

@@ -32,17 +32,11 @@ namespace mfront {
    * conventions of Cast3M makes those two interfaces incompatibles.
    */
   struct CyranoInterface : public UMATInterfaceBase, protected InterfaceBase {
-    static std::string getName();
+    [[nodiscard]] static std::string getName();
 
     CyranoInterface();
     //
-    void writeGetOutOfBoundsPolicyFunctionImplementation(
-        std::ostream&,
-        const BehaviourDescription&,
-        const std::string&) const override;
-    void writeInterfaceSpecificIncludes(
-        std::ostream&, const BehaviourDescription&) const override;
-    std::pair<bool, tokens_iterator> treatKeyword(
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
         BehaviourDescription&,
         const std::string&,
         const std::vector<std::string>&,
@@ -52,26 +46,34 @@ namespace mfront {
                       const FileDescription&) const override;
     void getTargetsDescription(TargetsDescription&,
                                const BehaviourDescription&) override;
-    //! destructor
+    void writeGetOutOfBoundsPolicyFunctionImplementation(
+        std::ostream&,
+        const BehaviourDescription&,
+        const std::string&) const override;
+    void writeInterfaceSpecificIncludes(
+        std::ostream&, const BehaviourDescription&) const override;
+    //! \brief destructor
     ~CyranoInterface() override;
 
    protected:
-    static int getModellingHypothesisIdentifier(const Hypothesis);
-
-    std::string getLibraryName(const BehaviourDescription&) const override;
-
-    std::string getInterfaceName() const override;
-
-    std::string getFunctionNameBasis(const std::string&) const override;
-
-    std::string getBehaviourName(const std::string&, const std::string&) const;
-
-    virtual std::string getUmatFunctionName(const std::string&,
-                                            const std::string&) const;
-
+    [[nodiscard]] static int getModellingHypothesisIdentifier(const Hypothesis);
+    //
+    [[nodiscard]] std::string getLibraryName(
+        const BehaviourDescription&) const override;
+    [[nodiscard]] std::string getInterfaceName() const override;
+    [[nodiscard]] std::string getFunctionNameBasis(
+        const std::string&) const override;
+    [[nodiscard]] std::string getBehaviourName(const std::string&,
+                                               const std::string&) const;
+    [[nodiscard]] std::string getModellingHypothesisTest(
+        const Hypothesis) const override;
+    [[nodiscard]] std::set<Hypothesis> getModellingHypothesesToBeTreated(
+        const BehaviourDescription&) const override;
     void writeMTestFileGeneratorSetModellingHypothesis(
         std::ostream&) const override;
-
+    //
+    [[nodiscard]] virtual std::string getUmatFunctionName(
+        const std::string&, const std::string&) const;
     virtual void writeCyranoFunctionDeclaration(std::ostream&,
                                                 const std::string&) const;
     /*!
@@ -85,7 +87,6 @@ namespace mfront {
     virtual void writeStandardCyranoFunction(std::ostream&,
                                              const std::string&,
                                              const BehaviourDescription&) const;
-
     /*!
      * \brief write the cyrano function for behaviour based on the Hencky strain
      * measure. The kinematic choosen is the ptest finite strain kinematic
@@ -97,7 +98,6 @@ namespace mfront {
      */
     virtual void writeLogarithmicStrainCyranoFunction(
         std::ostream&, const std::string&, const BehaviourDescription&) const;
-
     /*!
      * \brief write a  specialisation of the CyranoTraits class
      * \param[in] out : ouptut file
@@ -107,16 +107,10 @@ namespace mfront {
     virtual void writeCyranoBehaviourTraits(std::ostream&,
                                             const BehaviourDescription&,
                                             const Hypothesis) const;
-
-    std::string getModellingHypothesisTest(const Hypothesis) const override;
-    std::set<Hypothesis> getModellingHypothesesToBeTreated(
-        const BehaviourDescription&) const override;
     //
-    bool useTimeSubStepping;
-
-    bool doSubSteppingOnInvalidResults;
-
-    unsigned short maximumSubStepping;
+    bool useTimeSubStepping = false;
+    bool doSubSteppingOnInvalidResults = false;
+    unsigned short maximumSubStepping = 0u;
 
   };  // end of CyranoInterface
 

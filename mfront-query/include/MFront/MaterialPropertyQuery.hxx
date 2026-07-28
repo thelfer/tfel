@@ -49,7 +49,7 @@ namespace mfront {
                           std::shared_ptr<MaterialPropertyDSL>,
                           const std::string&);
     //! \brief return the number of queries to be treated
-    std::size_t getNumberOfQueriesToBeTreated();
+    [[nodiscard]] std::size_t getNumberOfQueriesToBeTreated();
     //! \brief treat the requests
     virtual void exe();
     //! \brief destructor
@@ -57,7 +57,7 @@ namespace mfront {
 
    protected:
     //
-    std::shared_ptr<const AbstractDSL> getDSL() const override;
+    [[nodiscard]] std::shared_ptr<const AbstractDSL> getDSL() const override;
     void registerCommandLineCallBacks() override;
 
    private:

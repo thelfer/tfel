@@ -255,7 +255,7 @@ namespace tfel::math {
     TFEL_VISIBILITY_LOCAL std::vector<double>::size_type registerVariable(
         const std::string&);
     TFEL_VISIBILITY_LOCAL
-    [[nodiscard]] std::shared_ptr<tfel::math::parser::ExternalFunctionManager>
+    std::shared_ptr<tfel::math::parser::ExternalFunctionManager>
     getExternalFunctionManager();
     TFEL_VISIBILITY_LOCAL std::vector<double>::size_type getVariablePosition(
         const std::string&) const;

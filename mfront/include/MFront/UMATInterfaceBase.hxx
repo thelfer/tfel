@@ -43,7 +43,7 @@ namespace mfront {
       : public BehaviourInterfaceBase {
     //! \brief constructor
     UMATInterfaceBase();
-
+    //
     void exportMechanicalData(std::ostream&,
                               const Hypothesis,
                               const BehaviourDescription&) const override;
@@ -173,7 +173,7 @@ namespace mfront {
      * For each item in the list, the first element is the variable
      * name and the second element is the variable description.
      */
-    virtual std::vector<std::pair<std::string, std::string>>
+    [[nodiscard]] virtual std::vector<std::pair<std::string, std::string>>
     getBehaviourConstructorsAdditionalVariables() const;
     /*!
      * \return the list of additional variables to be passed to the
@@ -182,7 +182,7 @@ namespace mfront {
      * For each item in the list, the first element is the variable
      * name and the second element is the variable description.
      */
-    virtual std::vector<std::pair<std::string, std::string>>
+    [[nodiscard]] virtual std::vector<std::pair<std::string, std::string>>
     getBehaviourDataConstructorAdditionalVariables() const;
     /*!
      * \return the list of additional variables to be passed to the
@@ -191,7 +191,7 @@ namespace mfront {
      * For each item in the list, the first element is the variable
      * name and the second element is the variable description.
      */
-    virtual std::vector<std::pair<std::string, std::string>>
+    [[nodiscard]] virtual std::vector<std::pair<std::string, std::string>>
     getIntegrationDataConstructorAdditionalVariables() const;
     void writeBehaviourConstructorHeader(std::ostream&,
                                          const BehaviourDescription&,
@@ -257,7 +257,8 @@ namespace mfront {
      * \return the name of the generated library
      * \param[in] mb : behaviour description
      */
-    virtual std::string getLibraryName(const BehaviourDescription&) const = 0;
+    [[nodiscard]] virtual std::string getLibraryName(
+        const BehaviourDescription&) const = 0;
 
     /*!
      * \param[out] f      : output file
@@ -361,8 +362,8 @@ namespace mfront {
      * This method is called internally by `generateMTestFile2` method.
      * \param[in] mb : behaviour description
      */
-    virtual std::map<Hypothesis, std::string> gatherModellingHypothesesAndTests(
-        const BehaviourDescription&) const;
+    [[nodiscard]] virtual std::map<Hypothesis, std::string>
+    gatherModellingHypothesesAndTests(const BehaviourDescription&) const;
     /*!
      * \return a test for the given modelling hypotesis
      * This method is called by the `gatherModellingHypothesesAndTests`.
@@ -370,11 +371,12 @@ namespace mfront {
      * entry point (i.e. does not provide an entry point by modelling
      * hypothesis), the default implementation throws an exception.
      */
-    virtual std::string getModellingHypothesisTest(const Hypothesis) const;
+    [[nodiscard]] virtual std::string getModellingHypothesisTest(
+        const Hypothesis) const;
     //! \return true if the interface handles external state variables
-    virtual bool areExternalStateVariablesSupported() const;
+    [[nodiscard]] virtual bool areExternalStateVariablesSupported() const;
     //! \return true if the interface handles temperature increment
-    virtual bool isTemperatureIncrementSupported() const;
+    [[nodiscard]] virtual bool isTemperatureIncrementSupported() const;
   };  // end of struct UMATInterfaceBase
 
 }  // end of namespace mfront

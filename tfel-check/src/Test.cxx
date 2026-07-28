@@ -40,7 +40,7 @@ namespace tfel::check {
     return this->comparison->getMsgLog() + "\n" + this->msgLog;
   }
 
-  const std::shared_ptr<Comparison> Test::getComparison() const {
+  std::shared_ptr<Comparison> Test::getComparison() const {
     return this->comparison;
   }
 

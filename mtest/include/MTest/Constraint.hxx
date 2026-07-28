@@ -75,12 +75,13 @@ namespace mtest {
      */
     virtual void setActive(const bool) = 0;
     //! \return if the constraint is active
-    virtual bool isActive() const = 0;
+    [[nodiscard]] virtual bool isActive() const = 0;
     /*!
      * \return the number of Lagrange Multipliers
      * associated with this contraint
      */
-    virtual unsigned short getNumberOfLagrangeMultipliers() const = 0;
+    [[nodiscard]] virtual unsigned short getNumberOfLagrangeMultipliers()
+        const = 0;
     /*!
      * \brief builds up the stiffness matrix and the residual.
      * \param[out] K:  stiffness matrix
@@ -120,12 +121,12 @@ namespace mtest {
      * \param[in]  t    : beginning of the time step
      * \param[in]  dt   : time increment
      */
-    virtual bool checkConvergence(const tfel::math::vector<real>&,
-                                  const tfel::math::vector<real>&,
-                                  const real,
-                                  const real,
-                                  const real,
-                                  const real) const = 0;
+    [[nodiscard]] virtual bool checkConvergence(const tfel::math::vector<real>&,
+                                                const tfel::math::vector<real>&,
+                                                const real,
+                                                const real,
+                                                const real,
+                                                const real) const = 0;
     /*!
      * \param[in]  e    : driving variables
      * \param[in]  s    : thermodynamic forces
@@ -134,7 +135,7 @@ namespace mtest {
      * \param[in]  t    : beginning of the time step
      * \param[in]  dt   : time increment
      */
-    virtual std::string getFailedCriteriaDiagnostic(
+    [[nodiscard]] virtual std::string getFailedCriteriaDiagnostic(
         const tfel::math::vector<real>&,
         const tfel::math::vector<real>&,
         const real,

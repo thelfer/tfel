@@ -29,83 +29,61 @@ namespace tfel::check {
     Test& operator=(Test&&) noexcept;
     Test& operator=(const Test&);
     virtual ~Test();
-
     /*!
      * \brief Does the comparison between the two columns, based on
      * comparison_
      */
     void compare();
-
-    /*!
-     * \brief Returns true if the current test succeeded
-     */
-    bool hasSucceed() const;
-
-    /*!
-     * \brief Returns the message to be added in the log
-     */
-    std::string getMsgLog();
-
-    /*!
-     * \brief Returns comparison_
-     */
-    const std::shared_ptr<Comparison> getComparison() const;
-
-    /*!
-     * \brief Sets the value of comparison_
-     */
+    //! \return true if the current test succeeded
+    [[nodiscard]] bool hasSucceed() const;
+    //! \return the message to be added in the log
+    [[nodiscard]] std::string getMsgLog();
+    //! \return comparison_
+    [[nodiscard]] std::shared_ptr<Comparison> getComparison() const;
+    //! \brief sets the value of comparison_
     void setComparison(const std::shared_ptr<Comparison>&);
-
     /*!
-     * \brief Returns true if user allowed less values for the results in the
+     * \return true if user allowed less values for the results in the
      * test
      */
-    bool isAllowLessResults() const;
-
+    [[nodiscard]] bool isAllowLessResults() const;
     /*!
      * \brief Sets the value of allowLessResults_
      */
     void setAllowLessResults(const bool);
-
     /*!
      * \brief Sets the first column to compare
      */
     void setColA(const std::shared_ptr<Column>&);
-
     /*!
      * \brief Sets the second column to compare
      */
     void setColB(const std::shared_ptr<Column>&);
-
     /*!
      * \brief Sets the column to be interpolated
      */
     void setColInterpolated(const std::shared_ptr<Column>& ci);
-
     /*!
      * \brief Returns the name of the file containing the references
      */
-    const std::string& getFileA() const;
-
+    [[nodiscard]] const std::string& getFileA() const;
     /*!
      * \brief Sets the name of the file containing the references
      */
     void setFileA(const std::string& f1);
-
     /*!
      * \brief Returns the name of the file containing the results
      */
-    const std::string& getFileB() const;
-
+    [[nodiscard]] const std::string& getFileB() const;
     /*!
      * \brief Sets the name of the file containing the results
      */
     void setFileB(const std::string& f2);
-
     /*!
      * \brief Returns the interpolation used for this test
      */
-    const std::shared_ptr<Interpolation>& getInterpolation() const;
+    [[nodiscard]] const std::shared_ptr<Interpolation>& getInterpolation()
+        const;
 
     /*!
      * \brief Sets the interpolation used for this test
@@ -115,7 +93,7 @@ namespace tfel::check {
     /*!
      * \brief Returns the first precision
      */
-    double getPrec() const;
+    [[nodiscard]] double getPrec() const;
 
     /*!
      * \brief Sets the first precision
@@ -125,7 +103,7 @@ namespace tfel::check {
     /*!
      * \brief Returns the second precision
      */
-    double getPrecision2() const;
+    [[nodiscard]] double getPrecision2() const;
 
     /*!
      * \brief Sets the second precision
@@ -140,7 +118,8 @@ namespace tfel::check {
     /*!
      * \brief Gets the column to be interpolated for the integration
      */
-    const std::shared_ptr<Column>& getColIntegralInterpolated() const;
+    [[nodiscard]] const std::shared_ptr<Column>& getColIntegralInterpolated()
+        const;
 
     /*!
      * \brief Sets the column to be interpolated for the integration
@@ -151,7 +130,8 @@ namespace tfel::check {
     /*!
      * \brief Gets the interpolation for the integration
      */
-    const std::shared_ptr<Interpolation>& getIntegralInterpolation() const;
+    [[nodiscard]] const std::shared_ptr<Interpolation>&
+    getIntegralInterpolation() const;
 
     /*!
      * \brief Sets the interpolation for the integration
@@ -162,12 +142,12 @@ namespace tfel::check {
     /*!
      * \brief Gets the column of values of the first file
      */
-    const std::shared_ptr<Column>& getColA() const;
+    [[nodiscard]] const std::shared_ptr<Column>& getColA() const;
 
     /*!
      * \brief Gets the column of values of the second file
      */
-    const std::shared_ptr<Column>& getColB() const;
+    [[nodiscard]] const std::shared_ptr<Column>& getColB() const;
 
    private:
     double prec = 0;       /**!< the first precision given */

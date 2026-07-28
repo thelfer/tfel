@@ -227,7 +227,7 @@ namespace tfel::system {
     unsigned short sHandlerSIGINT;
     unsigned short sHandlerSIGTERM;
     unsigned short sHandlerSIGQUIT;
-    bool shallStopOnSignals;
+    bool shallStopOnSignals = false;
 
   };  // end of struct ProcessManager
 

@@ -39,10 +39,8 @@ namespace tfel::system {
         protected std::shared_ptr<int> {
     // default constructor
     wfstream();
-
     // copy constructor
     wfstream(const wfstream&);
-
     // assignement operator
     wfstream& operator=(const wfstream&);
 
@@ -56,11 +54,10 @@ namespace tfel::system {
 
     void close();
 
-    int getFileDescriptor() const;
+    [[nodiscard]] int getFileDescriptor() const;
 
     // destructor
     ~wfstream();
-
   };  // end of struct basic_wstream
 
 }  // end of namespace tfel::system

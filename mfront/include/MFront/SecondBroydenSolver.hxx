@@ -23,17 +23,18 @@ namespace mfront {
    * second Broyden algorithm.
    */
   struct SecondBroydenSolver : public NonLinearSystemSolverBase {
-    std::vector<std::string> getSpecificHeaders() const override;
-    std::string getExternalAlgorithmClassName(const BehaviourDescription&,
-                                              const Hypothesis) const override;
-    bool usesJacobian() const override;
-    bool usesJacobianInvert() const override;
-    bool requiresNumericalJacobian() const override;
-    bool allowsJacobianInitialisation() const override;
-    bool allowsJacobianInvertInitialisation() const override;
-    bool requiresJacobianToBeReinitialisedToIdentityAtEachIterations()
+    [[nodiscard]] std::vector<std::string> getSpecificHeaders() const override;
+    [[nodiscard]] std::string getExternalAlgorithmClassName(
+        const BehaviourDescription&, const Hypothesis) const override;
+    [[nodiscard]] bool usesJacobian() const override;
+    [[nodiscard]] bool usesJacobianInvert() const override;
+    [[nodiscard]] bool requiresNumericalJacobian() const override;
+    [[nodiscard]] bool allowsJacobianInitialisation() const override;
+    [[nodiscard]] bool allowsJacobianInvertInitialisation() const override;
+    [[nodiscard]] bool
+    requiresJacobianToBeReinitialisedToIdentityAtEachIterations()
         const override;
-    std::pair<bool, tokens_iterator> treatSpecificKeywords(
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatSpecificKeywords(
         BehaviourDescription&,
         const std::string&,
         const tokens_iterator,

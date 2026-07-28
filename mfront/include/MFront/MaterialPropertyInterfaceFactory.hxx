@@ -61,7 +61,7 @@ namespace mfront {
      */
     [[nodiscard]] std::shared_ptr<AbstractMaterialPropertyInterface>
     getInterface(const std::string&) const;
-
+    //! \brief destructor
     ~MaterialPropertyInterfaceFactory();
 
    private:

@@ -45,19 +45,21 @@ namespace mfront::bbrick {
                       const AbstractBehaviourDSL&,
                       const StressPotential&,
                       const std::string&) const override;
-    std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
     //! \brief destructor
     ~UserDefinedViscoplasticFlow() override;
 
    protected:
     void checkOptions(const DataMap&) const override;
-    bool describesStrainHardeningExplicitly() const override;
-    std::string computeFlowRate(const BehaviourDescription&,
-                                const StressPotential&,
-                                const std::string&) const override;
-    std::string computeFlowRateAndDerivative(const BehaviourDescription&,
-                                             const StressPotential&,
-                                             const std::string&) const override;
+    [[nodiscard]] bool describesStrainHardeningExplicitly() const override;
+    [[nodiscard]] std::string computeFlowRate(
+        const BehaviourDescription&,
+        const StressPotential&,
+        const std::string&) const override;
+    [[nodiscard]] std::string computeFlowRateAndDerivative(
+        const BehaviourDescription&,
+        const StressPotential&,
+        const std::string&) const override;
     //! \brief viscoplastic strain rate
     tfel::math::Evaluator vp;
     //! \brief derivative of the viscoplastic strain rate with respect to f

@@ -220,7 +220,8 @@ namespace mfront {
       std::pair<real, std::vector<real>> final_values;
     };  // end of struct ExternalStateVariable
     //! \brief modelling hypothesis
-    Hypothesis hypothesis;
+    Hypothesis hypothesis =
+        tfel::material::ModellingHypothesis::UNDEFINEDHYPOTHESIS;
     //! \brief real time step
     std::set<real> times;
     //! \brief values of the material properties
@@ -230,9 +231,9 @@ namespace mfront {
     //! \brief values of the external state variables
     std::vector<ExternalStateVariable> evs;
     //! \brief if true handles thermal expansion
-    bool handleThermalExpansion;
+    bool handleThermalExpansion = false;
     //! \brief flag true if the rotation matrix is defined
-    bool hasRotationMatrix;
+    bool hasRotationMatrix = false;
     //! \brief rotation matrix
     real m[9u];
   };

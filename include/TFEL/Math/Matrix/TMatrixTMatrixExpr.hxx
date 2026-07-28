@@ -51,14 +51,15 @@ namespace tfel::math {
     using const_reference = const NumType&;
     using size_type = IndexType;
     using difference_type = ptrdiff_t;
-
-    TFEL_HOST_DEVICE constexpr auto getRunTimeProperties() const noexcept {
+    //
+    TMatrixTMatrixExpr() = delete;
+    //
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr auto getRunTimeProperties()
+        const noexcept {
       return RunTimeProperties();
     }
 
    protected:
-    TMatrixTMatrixExpr() = delete;
-
     /*!
      * \brief a pseudo iterator allowing to iterate over values in the same
      * row

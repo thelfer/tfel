@@ -27,23 +27,23 @@ namespace mfront {
   struct MFRONT_VISIBILITY_EXPORT GenericBehaviourInterface
       : public BehaviourInterfaceBase {
     //! \return the interface name
-    static std::string getName();
+    [[nodiscard]] static std::string getName();
     /*!
      * \return the current API version
      *
      * This API version changes everytime the API of the generic interface
      * changes.
      */
-    static unsigned short getAPIVersion();
+    [[nodiscard]] static unsigned short getAPIVersion();
     //
-    std::string getInterfaceName() const override;
-    std::pair<bool, tokens_iterator> treatKeyword(
+    [[nodiscard]] std::string getInterfaceName() const override;
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
         BehaviourDescription&,
         const std::string&,
         const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
-    std::set<Hypothesis> getModellingHypothesesToBeTreated(
+    [[nodiscard]] std::set<Hypothesis> getModellingHypothesesToBeTreated(
         const BehaviourDescription&) const override;
     void writeInterfaceSpecificIncludes(
         std::ostream&, const BehaviourDescription&) const override;
@@ -79,16 +79,17 @@ namespace mfront {
     void writeBehaviourPostProcessings(std::ostream&,
                                        const BehaviourDescription&,
                                        const Hypothesis) const override;
-    std::string getFunctionNameBasis(const std::string&) const override;
-
-    virtual std::string getLibraryName(const BehaviourDescription&) const;
+    [[nodiscard]] std::string getFunctionNameBasis(
+        const std::string&) const override;
+    //
+    [[nodiscard]] virtual std::string getLibraryName(
+        const BehaviourDescription&) const;
     /*!
      * \return the name of the function generated for the given hypothesis
      * \param[in] base name for the function to be generated
      */
-    virtual std::string getFunctionNameForHypothesis(const std::string&,
-                                                     const Hypothesis) const;
-
+    [[nodiscard]] virtual std::string getFunctionNameForHypothesis(
+        const std::string&, const Hypothesis) const;
     //! \brief destructor
     ~GenericBehaviourInterface() override;
 

@@ -44,10 +44,7 @@ namespace mfront::bbrick {
      * \param[in] n: name of the stress criterion
      */
     StandardPorousStressCriterionBase(const std::string& n);
-
-    std::string computeElasticPrediction(const std::string&,
-                                         const BehaviourDescription&,
-                                         const StressPotential&) const override;
+    //
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
@@ -57,19 +54,25 @@ namespace mfront::bbrick {
                       const AbstractBehaviourDSL&,
                       const std::string&,
                       const Role) override;
-    std::string computeCriterion(const std::string&,
-                                 const BehaviourDescription&,
-                                 const StressPotential&) const override;
-    std::string computeNormal(const std::string&,
-                              const BehaviourDescription&,
-                              const StressPotential&,
-                              const Role) const override;
-    std::string computeNormalDerivative(const std::string&,
-                                        const BehaviourDescription&,
-                                        const StressPotential&,
-                                        const Role) const override;
-    bool isCoupledWithPorosityEvolution() const final;
-    bool isNormalDeviatoric() const final;
+    [[nodiscard]] std::string computeElasticPrediction(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&) const override;
+    [[nodiscard]] std::string computeCriterion(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&) const override;
+    [[nodiscard]] std::string computeNormal(const std::string&,
+                                            const BehaviourDescription&,
+                                            const StressPotential&,
+                                            const Role) const override;
+    [[nodiscard]] std::string computeNormalDerivative(
+        const std::string&,
+        const BehaviourDescription&,
+        const StressPotential&,
+        const Role) const override;
+    [[nodiscard]] bool isCoupledWithPorosityEvolution() const final;
+    [[nodiscard]] bool isNormalDeviatoric() const final;
     //! destructor
     ~StandardPorousStressCriterionBase() override;
 
@@ -88,7 +91,8 @@ namespace mfront::bbrick {
      * \param[in] r: role
      * \param[in] n: name of the material property
      */
-    virtual std::string generateMissingMaterialPropertyInitializationCode(
+    [[nodiscard]] virtual std::string
+    generateMissingMaterialPropertyInitializationCode(
         BehaviourDescription&,
         const AbstractBehaviourDSL&,
         const std::string&,

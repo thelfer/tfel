@@ -81,9 +81,11 @@ namespace mfront {
     //! \return a validator for the options passed to the DSL
     static tfel::utilities::DataMapValidator getDSLOptionsValidator();
     //
-    std::vector<DSLOptionDescription> getDSLOptions() const override;
-    const FileDescription& getFileDescription() const final;
-    const TargetsDescription& getTargetsDescription() const override;
+    [[nodiscard]] std::vector<DSLOptionDescription> getDSLOptions()
+        const override;
+    [[nodiscard]] const FileDescription& getFileDescription() const final;
+    [[nodiscard]] const TargetsDescription& getTargetsDescription()
+        const override;
     /*!
      * \brief open a file and add given external instructions at the
      * beginning
@@ -208,7 +210,7 @@ namespace mfront {
                                        const std::vector<std::string>&,
                                        const tfel::utilities::DataMap&) = 0;
     // \return options for child DSL (DSL called by this DSL)
-    virtual DSLOptions buildDSLOptions() const = 0;
+    [[nodiscard]] virtual DSLOptions buildDSLOptions() const = 0;
     /*!
      * \brief register a name.
      * \param[in] n : name
@@ -218,7 +220,7 @@ namespace mfront {
      * \brief look if a name is reserved
      * \param[in] n : name
      */
-    virtual bool isNameReserved(const std::string&) const = 0;
+    [[nodiscard]] virtual bool isNameReserved(const std::string&) const = 0;
     /*!
      * \brief specify the name of the implementation before parsing the
      * `MFront` source file. Any name specified in the `MFront` file, through
@@ -274,16 +276,17 @@ namespace mfront {
     virtual void addStaticVariableDescription(
         const StaticVariableDescription&) = 0;
     //! \return all the integer constants (static variables of the integer type)
-    virtual std::map<std::string, int> getIntegerConstants() const = 0;
+    [[nodiscard]] virtual std::map<std::string, int> getIntegerConstants()
+        const = 0;
     /*!
      * \return the value of an integer constant
      * \param[in] n: variable name
      */
-    virtual int getIntegerConstant(const std::string&) const = 0;
+    [[nodiscard]] virtual int getIntegerConstant(const std::string&) const = 0;
     /*!
      * \return the name of the generated class
      */
-    virtual std::string getClassName() const = 0;
+    [[nodiscard]] virtual std::string getClassName() const = 0;
     /*!
      * \brief add a material law
      * \param[in] m : added material law name
@@ -328,12 +331,12 @@ namespace mfront {
      * \return concatenate all the tokens from the current position up
      * to the first ';' token
      */
-    std::string readUntilEndOfInstruction();
+    [[nodiscard]] std::string readUntilEndOfInstruction();
     /*!
      * read an unsigned short in the file
      * \param[in] m : calling method
      */
-    unsigned short readUnsignedShort(const std::string&);
+    [[nodiscard]] unsigned short readUnsignedShort(const std::string&);
     /*!
      * \brief parse the next code block twice.
      * \param[out] res1 : resulting code block with the first  option set.
@@ -349,35 +352,38 @@ namespace mfront {
      * \return the code block read.
      * \param[in] o : options
      */
-    CodeBlock readNextBlock(const CodeBlockParserOptions&);
+    [[nodiscard]] CodeBlock readNextBlock(const CodeBlockParserOptions&);
     /*!
      * \brief read one token and increment "current"
      */
-    std::string readOnlyOneToken();
+    [[nodiscard]] std::string readOnlyOneToken();
     /*!
      *
      */
     template <typename T>
-    std::pair<bool, T> readInitialisationValue(const std::string&, const bool);
+    [[nodiscard]] std::pair<bool, T> readInitialisationValue(const std::string&,
+                                                             const bool);
     //! \return if the usage of quantities is alllowed
-    virtual bool useQt() const = 0;
+    [[nodiscard]] virtual bool useQt() const = 0;
     //! \brief disable the usage of quantities if not already set
     virtual void disableQuantitiesUsageIfNotAlreadySet() = 0;
     //! \brief return the type parsing options used by the DSL
-    virtual SupportedTypes::TypeParsingOptions getTypeParsingOptions() const;
+    [[nodiscard]] virtual SupportedTypes::TypeParsingOptions
+    getTypeParsingOptions() const;
     //! \brief read a C++ type
-    std::string readType();
+    [[nodiscard]] std::string readType();
     //! \brief read a C++ type if present
-    std::optional<std::string> readVariableTypeIfPresent();
+    [[nodiscard]] std::optional<std::string> readVariableTypeIfPresent();
     //! \return true if the next tokens are '<safe>', false otherwise
-    bool readSafeOptionTypeIfPresent();
+    [[nodiscard]] bool readSafeOptionTypeIfPresent();
     /*!
      * \return the size of an array of variables, or 1 if the variable are not
      * defined as an array.
      * \param[in] n: variable name
      * \param[in] b: allow arrays of variables to be defined
      */
-    unsigned int readArrayOfVariablesSize(const std::string&, const bool);
+    [[nodiscard]] unsigned int readArrayOfVariablesSize(const std::string&,
+                                                        const bool);
     /*!
      * \param[in] cont : variable container to wich variables are
      * added
@@ -399,27 +405,28 @@ namespace mfront {
      * \param[in] m : calling method name (used for error message)
      * \return the boolean value read
      */
-    bool readBooleanValue(const std::string&);
+    [[nodiscard]] bool readBooleanValue(const std::string&);
     /*!
      * extract a string from the current token and go the next token
      * \param[in] m : calling method name (used for error message)
      * \return the extracted string
      */
-    std::string readString(const std::string&);
+    [[nodiscard]] std::string readString(const std::string&);
     /*!
      * extract an array of string starting from the current token and
      * go the token following the end of the array
      * \param[in] m : calling method name (used for error message)
      * \return the extracted array of strings
      */
-    std::vector<std::string> readArrayOfString(const std::string&);
+    [[nodiscard]] std::vector<std::string> readArrayOfString(
+        const std::string&);
     /*!
      * extract an array of double starting from the current token and
      * go the token following the end of the array
      * \param[in] m : calling method name (used for error message)
      * \return the extracted array of doubles
      */
-    std::vector<double> readArrayOfDouble(const std::string&);
+    [[nodiscard]] std::vector<double> readArrayOfDouble(const std::string&);
     /*!
      * extract an array of string starting from the current token and
      * go the token following the end of the array
@@ -427,7 +434,8 @@ namespace mfront {
      * \return the extracted array of strings which contains only one
      * element if a string was read
      */
-    std::vector<std::string> readStringOrArrayOfString(const std::string&);
+    [[nodiscard]] std::vector<std::string> readStringOrArrayOfString(
+        const std::string&);
     /*!
      * \brief extract a list of token
      * \param[out] l  : list read
@@ -452,24 +460,23 @@ namespace mfront {
      * delimiter (or is past the end of the file), nothing is returned
      * if this parameter is true. An exception is thrown otherwise
      */
-    std::vector<tfel::utilities::Token> readList(const std::string&,
-                                                 const std::string&,
-                                                 const std::string&,
-                                                 const bool);
+    [[nodiscard]] std::vector<tfel::utilities::Token> readList(
+        const std::string&, const std::string&, const std::string&, const bool);
 
-    std::string readSpecifiedValue(const std::string&, const std::string&);
-
-    std::vector<std::string> readSpecifiedValues(const std::string&,
-                                                 const std::string&,
+    [[nodiscard]] std::string readSpecifiedValue(const std::string&,
                                                  const std::string&);
 
-    std::vector<std::string> readSpecifiedValues(
+    [[nodiscard]] std::vector<std::string> readSpecifiedValues(
+        const std::string&, const std::string&, const std::string&);
+
+    [[nodiscard]] std::vector<std::string> readSpecifiedValues(
         const std::string&, const std::vector<std::string>&);
     /*!
      * \brief read the bounds associated to a variable
      * \return a pair giving the variable name and the bounds
      */
-    std::pair<std::string, VariableBoundsDescription> readVariableBounds();
+    [[nodiscard]] std::pair<std::string, VariableBoundsDescription>
+    readVariableBounds();
     /*!
      * call mfront in a subprocess
      * \param[in] files      : list of files
@@ -496,7 +503,7 @@ namespace mfront {
      * \param[in] f : file in which the material law is
      * implemented. This must be the full path.
      */
-    virtual std::shared_ptr<MaterialPropertyDescription>
+    [[nodiscard]] virtual std::shared_ptr<MaterialPropertyDescription>
     handleMaterialPropertyDescription(const std::string&);
     /*!
      * \brief set the material described by the implementation
@@ -578,7 +585,7 @@ namespace mfront {
                                          const size_t,
                                          const int);
     //! \brief extract a double from the current token
-    double readDouble();
+    [[nodiscard]] double readDouble();
     //! \brief destructor
     ~DSLBase() override;
     //! \brief description of the file treated

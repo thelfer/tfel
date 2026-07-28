@@ -43,7 +43,7 @@ namespace mfront {
     static const char* const grot_gdep;
     //! \return the name of the interface
     static std::string getName();
-    //! constructor
+    //! \brief constructor
     AsterInterface();
     /*!
      * \param[in,out] mb: behaviour description
@@ -55,7 +55,7 @@ namespace mfront {
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    std::pair<bool, tokens_iterator> treatKeyword(
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
         BehaviourDescription&,
         const std::string&,
         const std::vector<std::string>&,
@@ -74,17 +74,25 @@ namespace mfront {
      */
     void getTargetsDescription(TargetsDescription&,
                                const BehaviourDescription&) override;
-    //! destructor
+    //! \brief destructor
     ~AsterInterface() override;
 
    protected:
-    std::string getLibraryName(const BehaviourDescription&) const override;
-
-    std::string getInterfaceName() const override;
-    std::string getFunctionNameBasis(const std::string&) const override;
-    /*!
-     * \param[in] out : output file
-     */
+    //
+    [[nodiscard]] std::string getLibraryName(
+        const BehaviourDescription&) const override;
+    [[nodiscard]] std::string getInterfaceName() const override;
+    [[nodiscard]] std::string getFunctionNameBasis(
+        const std::string&) const override;
+    [[nodiscard]] std::string getModellingHypothesisTest(
+        const Hypothesis) const override;
+    [[nodiscard]] std::map<UMATInterfaceBase::Hypothesis, std::string>
+    gatherModellingHypothesesAndTests(
+        const BehaviourDescription&) const override;
+    [[nodiscard]] std::set<Hypothesis> getModellingHypothesesToBeTreated(
+        const BehaviourDescription&) const override;
+    void writeInterfaceSpecificIncludes(
+        std::ostream&, const BehaviourDescription&) const override;
     void writeMTestFileGeneratorSetModellingHypothesis(
         std::ostream&) const override;
     /*!
@@ -96,25 +104,6 @@ namespace mfront {
     virtual void writeAsterBehaviourTraits(std::ostream&,
                                            const BehaviourDescription&,
                                            const Hypothesis) const;
-    /*!
-     * write interface specific includes
-     * \param[in] out : output file
-     * \param[in] mb  : mechanical behaviour description
-     */
-    void writeInterfaceSpecificIncludes(
-        std::ostream&, const BehaviourDescription&) const override;
-
-    std::string getModellingHypothesisTest(const Hypothesis) const override;
-
-    std::map<UMATInterfaceBase::Hypothesis, std::string>
-    gatherModellingHypothesesAndTests(
-        const BehaviourDescription&) const override;
-    /*!
-     * \return the list of modelling hypotheses treated by the interface
-     * \param[in] mb : behaviour description
-     */
-    std::set<Hypothesis> getModellingHypothesesToBeTreated(
-        const BehaviourDescription&) const override;
 
     bool compareToNumericalTangentOperator = false;
 
