@@ -24,6 +24,7 @@ namespace mfront {
       : AbstractBehaviourInterface {
     //
     [[nodiscard]] static std::string getName();
+    //
     void setOptions(const DataMap &) override;
     [[nodiscard]] std::string getInterfaceName() const override;
     [[nodiscard]] std::string getInterfaceVersion() const override;
