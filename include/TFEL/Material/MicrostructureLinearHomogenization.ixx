@@ -16,7 +16,6 @@
 #include <cmath>
 #include <numbers>
 #include <stdexcept>
-#include <optional>
 
 namespace tfel::material::homogenization::elasticity {
 
@@ -50,6 +49,7 @@ namespace tfel::material::homogenization::elasticity {
                                               StressType>())
       HomogenizationScheme<N, StressType> computeDilute(
           ParticulateMicrostructure<N, StressType> &micro,
+          bool with_Chom_derivatives,
           int max_iter_anisotropic_integration,
           const std::vector<tfel::math::stensor<N, StressType>>
               &polarisations) {
@@ -67,13 +67,18 @@ namespace tfel::material::homogenization::elasticity {
     
     auto Chom = C0;
     auto tau_eff = tau0;
-    std::vector<tfel::math::st2tost2<3u,real>> dChom_dkr;
-    std::vector<tfel::math::st2tost2<3u,real>> dChom_dmur;
-    /// PHASE 0 derivatives...
-    //dChom_dk0=;
-    //dChom_dmu0=;
-    //dChom_dkr[0]=dChom_dk0;
-    //dChom_dkr[0]=dChom_dmu0;
+    
+    std::vector<tfel::math::st2tost2<N,real>> dChom_dkr={};
+    std::vector<tfel::math::st2tost2<N,real>> dChom_dmur{};
+    const auto J=tfel::math::st2tost2<3u,real>::J();
+    const auto K=tfel::math::st2tost2<3u,real>::K();
+    if ((with_Chom_derivatives) and (micro.is_isotropic_matrix()) and (N==3)){
+      const auto f0 = micro.getMatrixFraction();
+      tfel::math::st2tost2<3u,real> dChom_dk0=3*f0*J;
+      tfel::math::st2tost2<3u,real> dChom_dmu0=2*f0*K;
+      dChom_dkr={dChom_dk0};
+      dChom_dmur={dChom_dmu0};
+    }
 
     std::vector<tfel::math::st2tost2<N, real>> localisators = {
         tfel::math::st2tost2<N, real>::Id()};
@@ -85,33 +90,36 @@ namespace tfel::material::homogenization::elasticity {
       auto taui = polarisations_[i + 1];
       tfel::math::st2tost2<N, real> Ai;
 
-      //std::optional<tfel::math::st2tost2<3u,real>> dChom_dkr_;
-      //std::optional<tfel::math::st2tost2<3u,real>> dChom_dmur_;
       if (micro.is_isotropic_matrix()) {
         Ai = (*phasei).computeMeanLocalisator(KG0);
-        const std::array<types::real<StressType>,4> dki = {0.,0.,1.,0.};
-        const std::array<types::real<StressType>,4> dmui = {0.,0.,0.,1.};
-        const auto dAi_dkr = (*phasei).computeDerivativesOfMeanLocalisator(KG0,dki);
-        const auto dAi_dmur = (*phasei).computeDerivativesOfMeanLocalisator(KG0,dmui);
-        //dChom_dkr_=fi*(3*tfel::math::st2tost2<3u,real>::J()*Ai+Ci*dAi_dkr);
-        //dChom_dmur_=fi*(2*tfel::math::st2tost2<3u,real>::K()*Ai+Ci*dAi_dmur);
-        //dChom_dk0+=...;
-    	//dChom_dmu0+=...;
-        
+        if (with_Chom_derivatives and (N==3)){
+          const auto u =real(1.);
+          const auto z= real(0.);
+          const std::array<real,4> dk0 = {u,z,z,z};
+          const std::array<real,4> dmu0 = {z,u,z,z};
+          const std::array<real,4> dki = {z,z,u,z};
+          const std::array<real,4> dmui = {z,z,z,u};
+          const auto dAi_dk0 = (*phasei).computeDerivativesOfMeanLocalisator(KG0,dk0);
+          const auto dAi_dmu0 = (*phasei).computeDerivativesOfMeanLocalisator(KG0,dmu0);
+          const auto dAi_dki = (*phasei).computeDerivativesOfMeanLocalisator(KG0,dki);
+          const auto dAi_dmui = (*phasei).computeDerivativesOfMeanLocalisator(KG0,dmui);
+          const auto cdAk = Ci*dAi_dk0;
+          const auto cdAm = Ci*dAi_dmu0;
+          dChom_dkr[0]+=fi*cdAk;
+          dChom_dmur[0]+=fi*cdAm;
+          auto dChom_dki=fi*(3*tfel::math::st2tost2<3u,real>::J()*Ai+Ci*dAi_dki);
+          auto dChom_dmui=fi*(2*tfel::math::st2tost2<3u,real>::K()*Ai+Ci*dAi_dmui);
+          dChom_dkr.push_back(dChom_dki);
+    	    dChom_dmur.push_back(dChom_dmui);
+        }
       } else {
-        //dChom_dkr_=std::nullopt;
-        //dChom_dmur_=std::nullopt;
         Ai = (*phasei).computeMeanLocalisator(C0,
                                               max_iter_anisotropic_integration);
       }
       Chom += fi * (Ci - C0) * Ai;
       tau_eff += fi * tfel::math::transpose(Ai) * (taui - tau0);
       localisators.push_back(Ai);
-      //dChom_dkr.push_back(dChom_dkr_);
-      //dChom_dmur.push_back(dChom_dmur_);
-    }
-    //dChom_dkr[0]=dChom_dk0;
-    //dChom_dkr[0]=dChom_dmu0;
+      }
     HomogenizationScheme<N, StressType> h_s={.homogenized_stiffness = Chom,.effective_polarisation = tau_eff,.mean_strain_localisation_tensors = localisators,.derivative_of_homogenized_stiffness_wrt_kr=dChom_dkr,.derivative_of_homogenized_stiffness_wrt_mur=dChom_dmur};
 
     return h_s;
@@ -122,6 +130,7 @@ namespace tfel::material::homogenization::elasticity {
                                               StressType>())
       HomogenizationScheme<N, StressType> computeMoriTanaka(
           ParticulateMicrostructure<N, StressType> &micro,
+          bool with_Chom_derivatives,
           int max_iter_anisotropic_integration,
           const std::vector<tfel::math::stensor<N, StressType>>
               &polarisations) {
@@ -142,6 +151,14 @@ namespace tfel::material::homogenization::elasticity {
     auto tau_eff = tau0;
     std::vector<tfel::math::st2tost2<N, real>> localisators = {};
     tfel::math::st2tost2<N, real> A0 = f0 * tfel::math::st2tost2<N, real>::Id();
+    std::vector<tfel::math::st2tost2<N,real>> dChom_dkr={};
+    std::vector<tfel::math::st2tost2<N,real>> dChom_dmur{};
+
+    if ((with_Chom_derivatives) and (micro.is_isotropic_matrix()) and (N==3)){
+      dChom_dkr={dChom_dk0};
+      dChom_dmur={dChom_dmu0};
+    }
+    
     for (std::size_t i = 0; i < np - 1; i++) {
       auto phasei = micro.getInclusionPhase(i);
       auto fi = (*phasei).fraction;
@@ -167,7 +184,7 @@ namespace tfel::material::homogenization::elasticity {
       Chom += fi * (Ci - C0) * Ai;
       tau_eff += fi * transpose(Ai) * (taui - tau0);
     }
-    HomogenizationScheme<N, StressType> h_s={.homogenized_stiffness = Chom,.effective_polarisation = tau_eff,.mean_strain_localisation_tensors = localisators};
+    HomogenizationScheme<N, StressType> h_s={.homogenized_stiffness = Chom,.effective_polarisation = tau_eff,.mean_strain_localisation_tensors = localisators,.derivative_of_homogenized_stiffness_wrt_kr=dChom_dkr,.derivative_of_homogenized_stiffness_wrt_mur=dChom_dmur};
 
     return h_s;
   };
@@ -179,6 +196,7 @@ namespace tfel::material::homogenization::elasticity {
           ParticulateMicrostructure<N, StressType> &micro,
           const tfel::types::real<StressType> &tolerance,
           bool isotropic,
+          bool with_Chom_derivatives,
           int max_iter_anisotropic_integration,
           const std::vector<tfel::math::stensor<N, StressType>>
               &polarisations) {

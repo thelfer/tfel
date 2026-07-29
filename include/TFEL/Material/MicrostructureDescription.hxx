@@ -14,6 +14,7 @@
 #define LIB_TFEL_MATERIAL_MICROSTRUCTUREDESCRIPTION_HXX
 
 #include "TFEL/Math/st2tost2.hxx"
+#include "TFEL/Math/ST2toST2/WalpoleBasis.hxx"
 #include "TFEL/Material/OrientationAverages.hxx"
 #include "TFEL/Material/LocalisationTensor.hxx"
 #include "TFEL/Material/AnisotropicEshelbyTensor.hxx"
@@ -147,6 +148,7 @@ namespace tfel::material {
              StressType>()) struct InclusionDistribution
         : Phase<N, StressType> {
       using real = tfel::types::real<StressType>;
+      using compliance = tfel::types::compliance<StressType>;
       using LengthType = tfel::types::length<StressType>;
 
       Inclusion<N, LengthType> inclusion;
@@ -172,8 +174,8 @@ namespace tfel::material {
           int max_iter_anisotropic_integration = 12) = 0;
       virtual tfel::math::st2tost2<N, real> computeMeanLocalisator(
           const IsotropicModuli<StressType> &IM0) = 0;
-      virtual tfel::math::st2tost2<N, real> computeDerivativesOfMeanLocalisator(
-          const IsotropicModuli<StressType> &IM0, const std::array<types::real<StressType>,4> &dKG) = 0;
+      virtual tfel::math::st2tost2<N, compliance> computeDerivativesOfMeanLocalisator(
+          const IsotropicModuli<StressType> &IM0, const std::array<real,4> &dKG) = 0;
       virtual ~InclusionDistribution() = default;
     };
 
@@ -188,6 +190,7 @@ namespace tfel::material {
              StressType>()) struct SphereDistribution
         : public InclusionDistribution<3u, StressType> {
       using real = tfel::types::real<StressType>;
+      using compliance = tfel::types::compliance<StressType>;
       using LengthType = tfel::types::length<StressType>;
 
       SphereDistribution(const Sphere<LengthType> &sph,
@@ -229,8 +232,40 @@ namespace tfel::material {
         }
       }
       
-      virtual tfel::math::st2tost2<3u, real> computeDerivativesOfMeanLocalisator(
-          const IsotropicModuli<StressType> &IM0, const std::array<types::real<StressType>,4> &dKG) override {return tfel::math::st2tost2<3u, real>::Id();}
+      virtual tfel::math::st2tost2<3u, compliance> computeDerivativesOfMeanLocalisator(
+          const IsotropicModuli<StressType> &IM0, const std::array<real,4> &dKG) override {
+            const auto KG0=IM0.ToKG();
+            const auto k0 = KG0.kappa;
+            const auto mu0 = KG0.mu;
+            const auto Ci = this->getElasticityOfPhase();
+            if (this->isIsotropic()){
+              const auto KGi = computeKGModuli<StressType>(Ci);
+              const auto ki = KGi.kappa;
+              const auto mui = KGi.mu;
+              const auto dk0=dKG[0];
+              const auto dmu0=dKG[1];
+              const auto dki=dKG[2];
+              const auto dmui=dKG[3];
+              const auto alpha0 = 3.*k0+4.*mu0;
+              const auto beta0 = 5*mu0*alpha0/(k0+2*mu0);
+              const auto dalpha0 = 3.*dk0+4.*dmu0;
+              const auto denb = k0 + 2*mu0;
+              const auto dbeta0 = (5*(dmu0*alpha0+mu0*dalpha0)*denb-5*mu0*alpha0*(dk0+2*dmu0))/denb/denb;
+              const auto da_=(3*(dki-dk0)*alpha0-3*(ki-k0)*dalpha0)/alpha0/alpha0;
+              const auto db_=(6*(dmui-dmu0)*beta0-6*(mui-mu0)*dbeta0)/beta0/beta0;
+              const auto denJ = 1.+ 3.*(ki-k0)/alpha0;
+              const auto daJ = -1./denJ/denJ*da_;
+              const auto denK = 1.+ 6.* (mui-mu0) * (k0 + 2. * mu0) / 5. / mu0 / alpha0;
+              const auto daK = -1./denK/denK*db_;
+              return daJ*tfel::math::st2tost2<3u,real>::J()+daK*tfel::math::st2tost2<3u,real>::K();
+            }
+            else{
+              tfel::reportContractViolation(
+              "I cannot compute the derivatives of the mean localisator "
+              "for a distribution of inclusions with elasticities defined as st2tost2. "
+              "Try to use a IsotropicModuli for the definition of inclusion elasticity.");
+            }
+          }
     };  // End of SphereDistribution
 
     /*!
@@ -245,6 +280,7 @@ namespace tfel::material {
         : public InclusionDistribution<3u, StressType> {
       using real = tfel::types::real<StressType>;
       using LengthType = tfel::types::length<StressType>;
+      using compliance = tfel::types::compliance<StressType>;
 
       IsotropicDistribution(const Ellipsoid<LengthType> &ell,
                             real frac,
@@ -279,8 +315,22 @@ namespace tfel::material {
         return C1;
       }
       
-      virtual tfel::math::st2tost2<3u, real> computeDerivativesOfMeanLocalisator(
-          const IsotropicModuli<StressType> &IM0, const std::array<types::real<StressType>,4> &dKG) override {return tfel::math::st2tost2<3u, real>::Id();}
+      virtual tfel::math::st2tost2<3u, compliance> computeDerivativesOfMeanLocalisator(
+          const IsotropicModuli<StressType> &IM0, const std::array<real,4> &dKG) override {
+            auto Ci = this->getElasticityOfPhase();
+            const auto KGi = computeKGModuli<StressType>(Ci);
+            auto semiL = (this->inclusion).semiLengths;
+            if (tfel::math::ieee754::fpclassify(semiL[1]-semiL[2]) == FP_ZERO){
+              const auto e =real(semiL[0]/semiL[1]);
+              return DerivativesOfMeanLocalisator<3u,StressType>(IM0,KGi,e,real(1./3.)*tfel::math::stensor<3u,real>::Id(),real(1./3.)*tfel::math::st2tost2<3u,real>::J()+real(2./15.)*tfel::math::st2tost2<3u,real>::K(),dKG);
+            }
+            else{
+              tfel::reportContractViolation(
+              "I cannot compute the derivatives of the mean localisator "
+              "for a distribution of ellipsoids with 3 different semi-axes. "
+              "Try to use spheroids instead.");
+            }
+          }
     };  // End of IsotropicDistribution
 
     /*!
@@ -297,6 +347,7 @@ namespace tfel::material {
         : public InclusionDistribution<3u, StressType> {
       using real = tfel::types::real<StressType>;
       using LengthType = tfel::types::length<StressType>;
+      using compliance = tfel::types::compliance<StressType>;
 
       tfel::math::tvector<3u, real> n;
       unsigned short int index;
@@ -374,8 +425,26 @@ namespace tfel::material {
         return C1;
       }
       
-      virtual tfel::math::st2tost2<3u, real> computeDerivativesOfMeanLocalisator(
-          const IsotropicModuli<StressType> &IM0, const std::array<types::real<StressType>,4> &dKG) override {return tfel::math::st2tost2<3u, real>::Id();}
+      virtual tfel::math::st2tost2<3u, compliance> computeDerivativesOfMeanLocalisator(
+          const IsotropicModuli<StressType> &IM0, const std::array<real,4> &dKG) override {
+            auto Ci = this->getElasticityOfPhase();
+            const auto KGi = computeKGModuli<StressType>(Ci);
+            auto semiL = (this->inclusion).semiLengths;
+            if (tfel::math::ieee754::fpclassify(semiL[1]-semiL[2]) == FP_ZERO){
+              const auto e =real(semiL[0]/semiL[1]);
+              const auto nd = n;
+              const auto qd=tfel::math::TransverseIsotropicWalpoleBasis<real>::q(nd);
+              const auto E2d=tfel::math::TransverseIsotropicWalpoleBasis<real>::E2(nd);
+              const auto Fd=tfel::math::TransverseIsotropicWalpoleBasis<real>::F(nd);
+              return DerivativesOfMeanLocalisator<3u,StressType>(IM0,KGi,e,real(1./2.)*qd,real(1./2.)*E2d+real(1./4.)*Fd,dKG);
+            }
+            else{
+              tfel::reportContractViolation(
+                  "I cannot compute the derivatives of the mean localisator "
+                  "for a distribution of ellipsoids with 3 different semi-axes. "
+                  "Try to use spheroids instead.");
+            }
+          }
     }; // End of TransverseIsotropicDistribution
 
     /*!
@@ -392,6 +461,7 @@ namespace tfel::material {
         : public InclusionDistribution<3u, StressType> {
       using real = tfel::types::real<StressType>;
       using LengthType = tfel::types::length<StressType>;
+      using compliance = tfel::types::compliance<StressType>;
 
       tfel::math::tvector<3u, real> n_a;
       tfel::math::tvector<3u, real> n_b;
@@ -473,8 +543,28 @@ namespace tfel::material {
             IM0, Ci, n_a_i, n_b_i, semiL);
       }
       
-      virtual tfel::math::st2tost2<3u, real> computeDerivativesOfMeanLocalisator(
-          const IsotropicModuli<StressType> &IM0, const std::array<types::real<StressType>,4> &dKG) override {return tfel::math::st2tost2<3u, real>::Id();}
+      virtual tfel::math::st2tost2<3u, compliance> computeDerivativesOfMeanLocalisator(
+          const IsotropicModuli<StressType> &IM0, const std::array<real,4> &dKG) override {
+            auto Ci = this->getElasticityOfPhase();
+            const auto KGi = computeKGModuli<StressType>(Ci);
+            auto semiL = (this->inclusion).semiLengths;
+            if ((tfel::math::ieee754::fpclassify(semiL[1]-semiL[2]) == FP_ZERO) and (this->isIsotropic())){
+              const auto e =real(semiL[0]/semiL[1]);
+              const auto nd = this->n_a;
+              const tfel::math::stensor<3u,real> pd=tfel::math::TransverseIsotropicWalpoleBasis<real>::p(nd);
+              const auto E1d=tfel::math::TransverseIsotropicWalpoleBasis<real>::E1(nd);
+              return DerivativesOfMeanLocalisator<3u,StressType>(IM0,KGi,e,pd,E1d,dKG);
+            }
+            else{
+              tfel::reportContractViolation(
+              "I cannot compute the derivatives of the mean localisator "
+              "for a distribution of spheroids with an elasticity defined as "
+              "a st2tost2 object, or for a distribution of ellipsoids with "
+              "3 different semi-axes. "
+              "Try to use spheroids with elasticities defined by a IsotropicModuli "
+              "object instead.");          
+            }
+          }
     }; // End of OrientedDistribution
     
     /*!
@@ -489,6 +579,7 @@ namespace tfel::material {
         : public InclusionDistribution<3u, StressType> {
       using real = tfel::types::real<StressType>;
       using LengthType = tfel::types::length<StressType>;
+      using compliance = tfel::types::compliance<StressType>;
 
       tfel::math::stensor<3u,real> A2;
       tfel::math::st2tost2<3u,real> A4;
@@ -524,13 +615,14 @@ namespace tfel::material {
         return EllipsoidMeanLocalisator<3u,StressType>::UserDefinedDistributionOfSpheroids(IM0,KGi,semiL[0],semiL[1],A2,A4);
       }
       
-      virtual tfel::math::st2tost2<3u, real> computeDerivativesOfMeanLocalisator(
-          const IsotropicModuli<StressType> &IM0, const std::array<types::real<StressType>,4> &dKG) override {
+      virtual tfel::math::st2tost2<3u, compliance> computeDerivativesOfMeanLocalisator(
+          const IsotropicModuli<StressType> &IM0, const std::array<real,4> &dKG) override {
         auto Ci = this->getElasticityOfPhase();
         const auto KGi = computeKGModuli<StressType>(Ci);
         auto semiL = (this->inclusion).semiLengths;
         const auto e =real(semiL[0]/semiL[1]);
-        return DerivativesOfMeanLocalisator<3u,StressType>(IM0,KGi,e,A2,A4,dKG);
+        const tfel::math::st2tost2<3u, compliance> dA = DerivativesOfMeanLocalisator<3u,StressType>(IM0,KGi,e,A2,A4,dKG);
+        return dA;
       }
     }; // End of UserDefinedDistributionOfSpheroids
      

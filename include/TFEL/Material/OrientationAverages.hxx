@@ -369,7 +369,7 @@ namespace tfel::material::homogenization::elasticity {
   requires(tfel::math::checkUnitCompatibility<
            tfel::math::unit::Stress,
            StressType>())
-    TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u,types::real<StressType>> DerivativesOfMeanLocalisator(
+    TFEL_HOST_DEVICE static const tfel::math::st2tost2<3u,types::compliance<StressType>> DerivativesOfMeanLocalisator(
         const IsotropicModuli<StressType>& IM0,
         const IsotropicModuli<StressType>& IMi,
         const types::real<StressType>& e,
@@ -378,16 +378,17 @@ namespace tfel::material::homogenization::elasticity {
         const std::array<types::real<StressType>,4>& dkg) {
       
       using real = types::real<StressType>;
-      using LengthType =types::length<StressType>;
-      if (not(e > LengthType{0})) {
-        tfel::reportContractViolation("e<=0");
+      using compliance =types::compliance<StressType>;
+      
+      if (not(e > real(0))) {
+       tfel::reportContractViolation("e<=0");
       }
 
       const tfel::math::tvector<3u, real> n_1 = {1., 0., 0.};
       using namespace tfel::math;
-        const auto dA_ = computeDerivativesOfAxisymmetricalLocalisationTensor<StressType>(
+        const tfel::math::st2tost2<3u,compliance> dA_ = computeDerivativesOfAxisymmetricalLocalisationTensor<StressType>(
         IM0.ToKG(), IMi.ToKG(), n_1, e,dkg);  
-        const auto dA = TransverseIsotropicWalpoleBasis<real>::components(n_1,dA_);
+        const std::array<compliance, 6> dA = TransverseIsotropicWalpoleBasis<real>::components(n_1,dA_);
         const auto I = tfel::math::st2tost2<3u,real>::Id();
         const auto J = tfel::math::st2tost2<3u,real>::J();
         const auto id = stensor<3u,real>::Id();

@@ -92,7 +92,10 @@ namespace tfel::material::homogenization::elasticity {
           const KGModuli<StressType>& kgi,
           const types::real<StressType> &e,
           const std::array<types::real<StressType>,4>& dkg){
-          
+            
+            using real = types::real<StressType>;
+            using compliance = types::compliance<StressType>;
+            using sq_compliance = types::squared_compliance<StressType>;
             const auto p=computeHillTensorComponents(kg0,e);
             const auto dp=computeDerivativesOfHillTensorComponents(kg0,e,{dkg[0],dkg[1]});
             
@@ -107,16 +110,16 @@ namespace tfel::material::homogenization::elasticity {
             const auto ddmu = dkg[3]-dkg[1];
             
             using namespace tfel::math;
-            const tmatrix<2,2> dP = {{dp[0],dp[2]},{dp[3],dp[1]}};
-            const tmatrix<2,2> P = {{p[0],p[2]},{p[3],p[1]}};
-            const tmatrix<2,2> J = {{1./3,sqrt(2)/3},{sqrt(2)/3,2./3}};
-            const tmatrix<2,2> K = {{2./3,-sqrt(2)/3},{-sqrt(2)/3,1./3}};
-            const tmatrix<2,2> dC = 3*dk*J+2*dmu*K;
-            const tmatrix<2,2> ddC = 3*ddk*J+2*ddmu*K;
+            const tmatrix<2,2,sq_compliance> dP = {{dp[0],dp[2]},{dp[3],dp[1]}};
+            const tmatrix<2,2,compliance> P = {{p[0],p[2]},{p[3],p[1]}};
+            const tmatrix<2,2,real> J = {{1./3,sqrt(2)/3},{sqrt(2)/3,2./3}};
+            const tmatrix<2,2,real> K = {{2./3,-sqrt(2)/3},{-sqrt(2)/3,1./3}};
+            const tmatrix<2,2,StressType> dC = 3*dk*J+2*dmu*K;
+            const tmatrix<2,2,real> ddC = 3*ddk*J+2*ddmu*K;
             
-            const tmatrix<2,2> dB = dP*dC+P*ddC;
+            const tmatrix<2,2,compliance> dB = dP*dC+P*ddC;
             const auto I = J+K;
-            const tmatrix<2,2> B = I+P*dC;
+            const tmatrix<2,2,real> B = I+P*dC;
             const auto Delta = det(B);
             
             const auto db1=dB(0,0);

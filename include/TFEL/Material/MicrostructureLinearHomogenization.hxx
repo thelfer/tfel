@@ -70,6 +70,7 @@ namespace tfel::material::homogenization::elasticity {
                                               StressType>())
       HomogenizationScheme<N, StressType> computeDilute(
           ParticulateMicrostructure<N, StressType> &,
+          bool with_Chom_derivatives=false,
           int max_iter_anisotropic_integration = 12,
           const std::vector<tfel::math::stensor<N, StressType>> & = {});
 
@@ -86,6 +87,7 @@ namespace tfel::material::homogenization::elasticity {
                                               StressType>())
       HomogenizationScheme<N, StressType> computeMoriTanaka(
           ParticulateMicrostructure<N, StressType> &,
+          bool with_Chom_derivatives=false,
           int max_iter_anisotropic_integration = 12,
           const std::vector<tfel::math::stensor<N, StressType>> & = {});
 
@@ -105,6 +107,7 @@ namespace tfel::material::homogenization::elasticity {
           ParticulateMicrostructure<N, StressType> &,
           const tfel::types::real<StressType> &,
           bool isotropic,
+          bool with_Chom_derivatives=false,
           int max_iter_anisotropic_integration = 8,
           const std::vector<tfel::math::stensor<N, StressType>> & = {});
 
