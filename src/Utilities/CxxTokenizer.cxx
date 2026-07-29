@@ -201,7 +201,7 @@ namespace tfel::utilities {
   static void advance(Token::size_type& o,
                       std::string::const_iterator& p,
                       const std::string::const_iterator np) {
-    o += Token::size_type(np - p);
+    o += static_cast<Token::size_type>(np - p);
     p = np;
   }
 

@@ -81,7 +81,7 @@ namespace numodis {
     //-----------------------------------------------------------
     /*! \return true if burgers=0, false otherwise             */
     //===========================================================
-    bool IsNull() const {
+    [[nodiscard]] bool IsNull() const {
       for (unsigned i = 0; i < _index.size(); i++)
         if (_index[i] != 0) return false;
       return true;
@@ -103,7 +103,7 @@ namespace numodis {
     //-------------------------------------------------------------
     /*! \return reference on the Burgers vector's index          */
     //=============================================================
-    const std::vector<int>& getIndex() const { return _index; }
+    [[nodiscard]] const std::vector<int>& getIndex() const { return _index; }
 
     //=============================================================
     // IBurgers::getNindices
@@ -112,7 +112,7 @@ namespace numodis {
     //-------------------------------------------------------------
     /*! \return number of indices                                */
     //=============================================================
-    size_type getNindices() const { return _index.size(); }
+    [[nodiscard]] size_type getNindices() const { return _index.size(); }
 
     //=============================================================
     // IBurgers::Operator[]
@@ -124,9 +124,9 @@ namespace numodis {
       \return iburgers[i]
     */
     //=============================================================
-    int operator[](const size_type i) const { return _index[i]; }
+    [[nodiscard]] int operator[](const size_type i) const { return _index[i]; }
 
-    int& operator[](const size_type i) { return _index[i]; }
+    [[nodiscard]] int& operator[](const size_type i) { return _index[i]; }
 
    protected:
     //! index of the burgers vector

@@ -78,10 +78,10 @@ namespace tfel::material::internals {
         tfel::math::st2tost2<2u, StressType>& C,
         const StressType E,
         const RealType n) noexcept {
-      constexpr StressType zero = StressType(0);
-      const StressType l = E * n / ((1 - 2 * n) * (1 + n));
-      const StressType G = E / (1 + n);
-      const StressType C11 = l + G;
+      constexpr auto zero = StressType(0);
+      const auto l = E * n / ((1 - 2 * n) * (1 + n));
+      const auto G = E / (1 + n);
+      const auto C11 = l + G;
       C(0, 0) = C11;
       C(0, 1) = l;
       C(0, 2) = l;
@@ -108,10 +108,10 @@ namespace tfel::material::internals {
         tfel::math::st2tost2<2u, StressType>& C,
         const StressType E,
         const RealType n) noexcept {
-      constexpr StressType zero = StressType(0);
-      const StressType C1 = E / (1 - n * n);
-      const StressType C2 = n * C1;
-      const StressType C3 = (1 - n) * C1;
+      constexpr auto zero = StressType(0);
+      const auto C1 = E / (1 - n * n);
+      const auto C2 = n * C1;
+      const auto C3 = (1 - n) * C1;
       C(0, 0) = C1;
       C(0, 1) = C2;
       C(0, 2) = C(0, 3) = zero;
@@ -133,10 +133,10 @@ namespace tfel::material::internals {
         tfel::math::st2tost2<3u, StressType>& C,
         const StressType E,
         const RealType n) noexcept {
-      constexpr StressType zero = StressType(0);
-      const StressType l = E * n / ((1 - 2 * n) * (1 + n));
-      const StressType G = E / (1 + n);
-      const StressType C11 = l + G;
+      constexpr auto zero = StressType(0);
+      const auto l = E * n / ((1 - 2 * n) * (1 + n));
+      const auto G = E / (1 + n);
+      const auto C11 = l + G;
       C(0, 0) = C11;
       C(0, 1) = C(0, 2) = l;
       C(0, 3) = C(0, 4) = C(0, 5) = zero;

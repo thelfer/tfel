@@ -457,15 +457,15 @@ namespace tfel::math {
     using TensorType = decltype(R);
     using TensorType2 = decltype(F);
     using StensorType = decltype(U);
-    static_assert(std::is_same<numeric_type<StensorType>,
-                               numeric_type<TensorType2>>::value &&
-                      std::is_same<base_type<numeric_type<TensorType2>>,
-                                   numeric_type<TensorType>>::value &&
-                      (getSpaceDimension<TensorType>() ==
-                       getSpaceDimension<TensorType2>()) &&
-                      (getSpaceDimension<TensorType>() ==
-                       getSpaceDimension<StensorType>()),
-                  "invalid arguments");
+    static_assert(
+        std::is_same_v<numeric_type<StensorType>, numeric_type<TensorType2>> &&
+            std::is_same_v<base_type<numeric_type<TensorType2>>,
+                           numeric_type<TensorType>> &&
+            (getSpaceDimension<TensorType>() ==
+             getSpaceDimension<TensorType2>()) &&
+            (getSpaceDimension<TensorType>() ==
+             getSpaceDimension<StensorType>()),
+        "invalid arguments");
     if constexpr (getSpaceDimension<TensorType>() == 1u) {
       typedef numeric_type<TensorType2> T;
       using real = base_type<T>;

@@ -49,7 +49,7 @@ namespace mfront {
                std::shared_ptr<ModelDSL>,
                const std::string&);
     //! \brief return the number of queries to be treated
-    std::size_t getNumberOfQueriesToBeTreated();
+    [[nodiscard]] std::size_t getNumberOfQueriesToBeTreated();
     //! \brief treat the requests
     virtual void exe();
     //! \brief destructor
@@ -57,7 +57,7 @@ namespace mfront {
 
    protected:
     //
-    std::shared_ptr<const AbstractDSL> getDSL() const override;
+    [[nodiscard]] std::shared_ptr<const AbstractDSL> getDSL() const override;
     void registerCommandLineCallBacks() override;
 
    private:
@@ -65,6 +65,7 @@ namespace mfront {
     using query =
         std::function<void(const FileDescription&, const ModelDescription&)>;
     //
+    virtual void treatStandardQuery() final;
     void treatGeneratedSources() final;
     void treatSpecificTargetGeneratedSources() final;
     void treatAllSpecificTargetsGeneratedSources() final;
@@ -73,8 +74,6 @@ namespace mfront {
     void treatLibrariesDependencies() final;
     void treatSpecificTargets() final;
     void treatDSLTarget() final;
-    //! \brief treat a standard query
-    virtual void treatStandardQuery() final;
     //! \brief all the registred queries
     std::vector<std::pair<std::string, query>> queries;
     //! \brief abstract behaviour dsl

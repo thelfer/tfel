@@ -37,10 +37,11 @@ namespace mfront {
     //! \brief constructor
     BehaviourInterfaceBase();
     //
-    std::string getInterfaceVersion() const override;
-    bool isBehaviourConstructorRequired(
+    [[nodiscard]] std::string getInterfaceVersion() const override;
+    [[nodiscard]] bool isBehaviourConstructorRequired(
         const Hypothesis, const BehaviourDescription&) const override;
-    std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
+    [[nodiscard]] std::pair<std::vector<BehaviourMaterialProperty>,
+                            SupportedTypes::TypeSize>
     buildMaterialPropertiesList(const BehaviourDescription&,
                                 const Hypothesis) const override;
     void writeBehaviourInitializeFunctions(std::ostream&,
@@ -69,13 +70,15 @@ namespace mfront {
      *                (generally taking into account the material
      *                 and the behaviour name)
      */
-    virtual std::string getFunctionNameBasis(const std::string&) const = 0;
+    [[nodiscard]] virtual std::string getFunctionNameBasis(
+        const std::string&) const = 0;
     /*!
      * \return an header guard based on the name of the interface, as returned
      * by `getInterfaceName`, and the name of the behaviour.
      * \param[in] bd: behaviour description
      */
-    virtual std::string getHeaderGuard(const BehaviourDescription&) const;
+    [[nodiscard]] virtual std::string getHeaderGuard(
+        const BehaviourDescription&) const;
     /*!
      * \brief include the appropriate headers and write the definition
      * of the `MFRONT_SHAREDOBJ` macro which is used to define the
@@ -115,7 +118,7 @@ namespace mfront {
      * on integration failure.
      * \param[in] bd: behavour description
      */
-    virtual bool shallGenerateMTestFileOnFailure(
+    [[nodiscard]] virtual bool shallGenerateMTestFileOnFailure(
         const BehaviourDescription&) const;
     /*!
      * \return a pair. If the first entry is true, the "axial strain"
@@ -123,7 +126,7 @@ namespace mfront {
      * \param[in] mb: material description
      * \param[in] h: modelling hypothesis
      */
-    virtual std::pair<bool, SupportedTypes::TypeSize>
+    [[nodiscard]] virtual std::pair<bool, SupportedTypes::TypeSize>
     checkIfAxialStrainIsDefinedAndGetItsOffset(const BehaviourDescription&,
                                                const Hypothesis) const;
     /*!
@@ -132,7 +135,7 @@ namespace mfront {
      * \param[in] mb: material description
      * \param[in] h: modelling hypothesis
      */
-    virtual std::pair<bool, SupportedTypes::TypeSize>
+    [[nodiscard]] virtual std::pair<bool, SupportedTypes::TypeSize>
     checkIfAxialDeformationGradientIsDefinedAndGetItsOffset(
         const BehaviourDescription&, const Hypothesis) const;
     /*!
@@ -141,9 +144,9 @@ namespace mfront {
      * \param[in] current: iterator to the current token
      * \param[in] end: iterator after the last token
      */
-    virtual bool readBooleanValue(const std::string&,
-                                  tokens_iterator&,
-                                  const tokens_iterator) const;
+    [[nodiscard]] virtual bool readBooleanValue(const std::string&,
+                                                tokens_iterator&,
+                                                const tokens_iterator) const;
     //! \brief destructor
     ~BehaviourInterfaceBase() override;
   };  // end of struct BehaviourInterfaceBase

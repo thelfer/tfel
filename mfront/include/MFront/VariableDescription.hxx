@@ -355,19 +355,19 @@ namespace mfront {
      * \param[in] n : variable name
      * \return true if a variable with the given name exists
      */
-    bool contains(const std::string&) const;
+    [[nodiscard]] bool contains(const std::string&) const;
     /*!
      * \return the sum of the sizes of all the variables
      */
-    SupportedTypes::TypeSize getTypeSize() const;
+    [[nodiscard]] SupportedTypes::TypeSize getTypeSize() const;
     //! \return the sum of the array sizes of all the variables
-    unsigned short getNumberOfVariables() const;
+    [[nodiscard]] unsigned short getNumberOfVariables() const;
     /*!
      * \return the list of external names associated with this
      * container.
      * \see VariableDescription::getExternalName
      */
-    std::vector<std::string> getExternalNames() const;
+    [[nodiscard]] std::vector<std::string> getExternalNames() const;
     /*!
      * get the external names associated with this container.
      * \see VariableDescription::getExternalName
@@ -385,19 +385,20 @@ namespace mfront {
      * \return the variable with the given name
      * \param[in] n : name
      */
-    VariableDescription& getVariable(const std::string&);
+    [[nodiscard]] VariableDescription& getVariable(const std::string&);
     /*!
      * \return the variable with the given name
      * \param[in] n : name
      */
-    const VariableDescription& getVariable(const std::string&) const;
+    [[nodiscard]] const VariableDescription& getVariable(
+        const std::string&) const;
     /*!
      * \return the variable with the given name
      * \param[in] n:  external name
      */
-    const VariableDescription& getVariableByExternalName(
+    [[nodiscard]] const VariableDescription& getVariableByExternalName(
         const std::string&) const;
-    //! destructor
+    //! \brief destructor
     ~VariableDescriptionContainer();
   };  // end of struct VariableDescriptionContainer
 

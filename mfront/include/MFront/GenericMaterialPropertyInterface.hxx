@@ -29,12 +29,14 @@ namespace mfront {
     ~GenericMaterialPropertyInterface() override;
 
    protected:
-    TypesDescription getTypesDescription() const override;
-    std::vector<std::string> getInterfaceHeaderFiles() const override;
-    std::string getInterfaceName() const override;
-    std::string getInterfaceNameInCamelCase() const override;
-    std::string getInterfaceNameInUpperCase() const override;
-    std::string getOutOfBoundsPolicyEnumerationPrefix() const override;
+    [[nodiscard]] TypesDescription getTypesDescription() const override;
+    [[nodiscard]] std::vector<std::string> getInterfaceHeaderFiles()
+        const override;
+    [[nodiscard]] std::string getInterfaceName() const override;
+    [[nodiscard]] std::string getInterfaceNameInCamelCase() const override;
+    [[nodiscard]] std::string getInterfaceNameInUpperCase() const override;
+    [[nodiscard]] std::string getOutOfBoundsPolicyEnumerationPrefix()
+        const override;
   };  // end of GenericMaterialPropertyInterface
 
 }  // end of namespace mfront

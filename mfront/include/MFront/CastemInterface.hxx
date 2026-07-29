@@ -65,100 +65,80 @@ namespace mfront {
         std::ostream&, const BehaviourDescription::BehaviourType&);
     //! \brief default constructor
     CastemInterface();
-    /*!
-     * \param[in,out] mb: behaviour description
-     * \param[in] k:  keyword treated
-     * \param[in] i:  list of interfaces to which the keyword is restricted
-     * \param[in] p:  iterator to the current token
-     * \param[in] pe: iterator past the end of the file
-     * \return a pair. The first entry is true if the keyword was
-     * treated by the interface. The second entry is an iterator after
-     * the last token treated.
-     */
-    std::pair<bool, tokens_iterator> treatKeyword(
+    //
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
         BehaviourDescription&,
         const std::string&,
         const std::vector<std::string>&,
         tokens_iterator,
         const tokens_iterator) override;
-    /*!
-     * \param[out] d  : target description
-     * \param[out] bd : behaviour description
-     */
     void getTargetsDescription(TargetsDescription&,
                                const BehaviourDescription&) override;
-    /*!
-     * write interface specific includes
-     * \param[in] out : output file
-     * \param[in] mb  : mechanical behaviour description
-     */
     void writeInterfaceSpecificIncludes(
         std::ostream&, const BehaviourDescription&) const override;
-
-    /*!
-     * \brief write output files
-     * \param[in] mb        : mechanical behaviour description
-     * \param[in] fd        : mfront file description
-     */
     void endTreatment(const BehaviourDescription&,
                       const FileDescription&) const override;
     //! \brief destructor
     ~CastemInterface() override;
 
    protected:
-    std::string getLibraryName(const BehaviourDescription&) const override;
-
-    static std::string treatScalar(const std::string&);
-
-    static std::string treatScalar(const std::string&, const unsigned short);
-
-    static std::string treatTVector(const Hypothesis, const std::string&);
-
-    static std::string treatTVector(const Hypothesis,
-                                    const std::string&,
-                                    const unsigned short);
-
-    static std::string treatStensor(const Hypothesis, const std::string&);
-
-    static std::string treatStensor(const Hypothesis,
-                                    const std::string&,
-                                    const unsigned short);
-
-    static std::string treatTensor(const Hypothesis, const std::string&);
-
-    static std::string treatTensor(const Hypothesis,
-                                   const std::string&,
-                                   const unsigned short);
-
-    std::string getInterfaceName() const override;
-
-    std::string getFunctionNameBasis(const std::string&) const override;
-
-    std::string getBehaviourName(const BehaviourDescription&) const;
-
-    virtual std::string getUmatFunctionName(const BehaviourDescription&) const;
-
+    //
+    [[nodiscard]] static std::string treatScalar(const std::string&);
+    [[nodiscard]] static std::string treatScalar(const std::string&,
+                                                 const unsigned short);
+    [[nodiscard]] static std::string treatTVector(const Hypothesis,
+                                                  const std::string&);
+    [[nodiscard]] static std::string treatTVector(const Hypothesis,
+                                                  const std::string&,
+                                                  const unsigned short);
+    [[nodiscard]] static std::string treatStensor(const Hypothesis,
+                                                  const std::string&);
+    [[nodiscard]] static std::string treatStensor(const Hypothesis,
+                                                  const std::string&,
+                                                  const unsigned short);
+    [[nodiscard]] static std::string treatTensor(const Hypothesis,
+                                                 const std::string&);
+    [[nodiscard]] static std::string treatTensor(const Hypothesis,
+                                                 const std::string&,
+                                                 const unsigned short);
+    //
+    [[nodiscard]] std::string getLibraryName(
+        const BehaviourDescription&) const override;
+    [[nodiscard]] std::string getInterfaceName() const override;
+    [[nodiscard]] std::string getFunctionNameBasis(
+        const std::string&) const override;
+    [[nodiscard]] std::string getBehaviourName(
+        const BehaviourDescription&) const;
+    [[nodiscard]] std::string getModellingHypothesisTest(
+        const Hypothesis) const override;
+    [[nodiscard]] std::map<UMATInterfaceBase::Hypothesis, std::string>
+    gatherModellingHypothesesAndTests(
+        const BehaviourDescription&) const override;
+    [[nodiscard]] std::set<Hypothesis> getModellingHypothesesToBeTreated(
+        const BehaviourDescription&) const override;
+    [[nodiscard]] std::pair<std::vector<BehaviourMaterialProperty>,
+                            SupportedTypes::TypeSize>
+    buildMaterialPropertiesList(const BehaviourDescription&,
+                                const Hypothesis) const override;
+    void writeMTestFileGeneratorSetModellingHypothesis(
+        std::ostream&) const override;
+    void writeGetOutOfBoundsPolicyFunctionImplementation(
+        std::ostream&,
+        const BehaviourDescription&,
+        const std::string&) const override;
+    //
+    [[nodiscard]] virtual std::string getUmatFunctionName(
+        const BehaviourDescription&) const;
     /*!
      * \return the list of material properties required by the `Cast3M` finite
      * element solver.
      * \param[in] mb: mechanical behaviour description
      * \param[in] h: modelling hypothesis
      */
-    virtual std::vector<BehaviourMaterialProperty>
+    [[nodiscard]] virtual std::vector<BehaviourMaterialProperty>
     getDefaultMaterialPropertiesList(const BehaviourDescription&,
                                      const Hypothesis) const;
 
-    std::pair<std::vector<BehaviourMaterialProperty>, SupportedTypes::TypeSize>
-    buildMaterialPropertiesList(const BehaviourDescription&,
-                                const Hypothesis) const override;
-
-    void writeMTestFileGeneratorSetModellingHypothesis(
-        std::ostream&) const override;
-
-    void writeGetOutOfBoundsPolicyFunctionImplementation(
-        std::ostream&,
-        const BehaviourDescription&,
-        const std::string&) const override;
     /*!
      * \brief write the set out of bounds policy function for an alias
      * behaviour \param[out] out   : output stream \param[out] name  : name of
@@ -286,7 +266,8 @@ namespace mfront {
      * properties when declaring the `CastemTraits` class.
      * \param[in]  mb: mechanical behaviour description
      */
-    virtual std::string getMaterialPropertiesOffsetForBehaviourTraits(
+    [[nodiscard]] virtual std::string
+    getMaterialPropertiesOffsetForBehaviourTraits(
         const BehaviourDescription&) const;
     /*!
      * \brief write a  specialisation of the `CastemTraits` class
@@ -307,9 +288,8 @@ namespace mfront {
      * \param[in] c: '0' (beginning of time step) or '1' (end of time
      * step)
      */
-    virtual bool writeInitializeAxialStrain(std::ostream& out,
-                                            const BehaviourDescription& mb,
-                                            const char c) const;
+    [[nodiscard]] virtual bool writeInitializeAxialStrain(
+        std::ostream&, const BehaviourDescription&, const char) const;
     /*!
      * \brief plane stress handling requires to have access to the
      * axial strain, but it is not obvious nor always possible to get it...
@@ -328,7 +308,6 @@ namespace mfront {
         const std::string&,
         const std::string&,
         const char) const;
-
     /*!
      * \return true if the interface supports the given modelling
      * hypothesis.
@@ -340,21 +319,8 @@ namespace mfront {
      * \param[in] h  : modelling hypothesis
      * \param[in] mb : behaviour description
      */
-    virtual bool isModellingHypothesisSupported(
+    [[nodiscard]] virtual bool isModellingHypothesisSupported(
         const Hypothesis, const BehaviourDescription&) const;
-
-    std::string getModellingHypothesisTest(const Hypothesis) const override;
-
-    std::map<UMATInterfaceBase::Hypothesis, std::string>
-    gatherModellingHypothesesAndTests(
-        const BehaviourDescription&) const override;
-    /*!
-     * \return the list of modelling hypotheses treated by the interface
-     * \param[in] mb : behaviour description
-     */
-    std::set<Hypothesis> getModellingHypothesesToBeTreated(
-        const BehaviourDescription&) const override;
-
   };  // end of CastemInterface
 
 }  // end of namespace mfront

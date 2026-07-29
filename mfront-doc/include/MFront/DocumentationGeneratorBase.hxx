@@ -50,7 +50,7 @@ namespace mfront {
                                const char* const* const,
                                const std::string&);
     virtual void exe() const = 0;
-    //! destructor
+    //! \brief destructor
     ~DocumentationGeneratorBase() override;
 
     // Private member data
@@ -66,7 +66,7 @@ namespace mfront {
 
     //! \brief generate output on standard output
     bool std_output = false;
-    //! type of ouput
+    //! \brief type of ouput
     OutputType otype;
     //! \brief generate latex macros for header of output file
     static void writeStandardLatexMacros(std::ostream&);
@@ -90,19 +90,19 @@ namespace mfront {
     //! ArgumentParserBase must be a friend
     friend struct tfel::utilities::ArgumentParserBase<
         DocumentationGeneratorBase>;
+    //! \brief treat an unknown argument
+    void treatUnknownArgument() final;
+    //! \brief get the version description
+    [[nodiscard]] std::string getVersionDescription() const final;
+    //! \brief get the usage description
+    [[nodiscard]] std::string getUsageDescription() const final;
+    //! \brief return the current argument
+    [[nodiscard]] const tfel::utilities::Argument&
+    getCurrentCommandLineArgument() const final;
     //! \brief register call-backs associated with command line arguments
     virtual void registerCommandLineCallBacks();
     //! treat the web argument
     virtual void treatWeb();
-    //! return the current argument
-    const tfel::utilities::Argument& getCurrentCommandLineArgument()
-        const final;
-    //! treat an unknown argument
-    void treatUnknownArgument() final;
-    //! get the version description
-    std::string getVersionDescription() const final;
-    //! get the usage description
-    std::string getUsageDescription() const final;
 
   };  // end of struct DocumentationGeneratorBase
 

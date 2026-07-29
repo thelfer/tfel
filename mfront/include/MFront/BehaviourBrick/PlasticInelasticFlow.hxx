@@ -23,19 +23,20 @@ namespace mfront::bbrick {
    * \note the base class must declare a state variable named `p`+id.
    */
   struct PlasticInelasticFlow : InelasticFlowBase {
-    std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const std::string&,
                     const DataMap&) override;
-    //! destructor
+    //! \brief destructor
     ~PlasticInelasticFlow() override;
 
    protected:
-    std::string buildFlowImplicitEquations(const BehaviourDescription&,
-                                           const StressPotential&,
-                                           const std::string&,
-                                           const bool) const override;
+    [[nodiscard]] std::string buildFlowImplicitEquations(
+        const BehaviourDescription&,
+        const StressPotential&,
+        const std::string&,
+        const bool) const override;
 
     /*!
      *\brief maximum equivalent stress factor

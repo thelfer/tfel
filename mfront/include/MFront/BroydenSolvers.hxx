@@ -28,10 +28,12 @@ namespace mfront {
     using NonLinearSystemSolverBase::tokens_iterator;
     //! a simple alias
     using Hypothesis = NonLinearSystemSolverBase::Hypothesis;
-    bool requiresNumericalJacobian() const override;
-    bool allowsJacobianInitialisation() const override;
-    bool allowsJacobianInvertInitialisation() const override;
-    bool requiresJacobianToBeReinitialisedToIdentityAtEachIterations()
+    //
+    [[nodiscard]] bool requiresNumericalJacobian() const override;
+    [[nodiscard]] bool allowsJacobianInitialisation() const override;
+    [[nodiscard]] bool allowsJacobianInvertInitialisation() const override;
+    [[nodiscard]] bool
+    requiresJacobianToBeReinitialisedToIdentityAtEachIterations()
         const override;
     void writeSpecificInitializeMethodPart(std::ostream&,
                                            const BehaviourDescription&,
@@ -45,12 +47,12 @@ namespace mfront {
 
   //! \brief the standard Broyden Solver
   struct BroydenSolver : public BroydenSolverBase {
-    std::vector<std::string> getSpecificHeaders() const override;
-    std::string getExternalAlgorithmClassName(const BehaviourDescription&,
-                                              const Hypothesis) const override;
-    bool usesJacobian() const override;
-    bool usesJacobianInvert() const override;
-    std::pair<bool, tokens_iterator> treatSpecificKeywords(
+    [[nodiscard]] std::vector<std::string> getSpecificHeaders() const override;
+    [[nodiscard]] std::string getExternalAlgorithmClassName(
+        const BehaviourDescription&, const Hypothesis) const override;
+    [[nodiscard]] bool usesJacobian() const override;
+    [[nodiscard]] bool usesJacobianInvert() const override;
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatSpecificKeywords(
         BehaviourDescription&,
         const std::string&,
         const tokens_iterator,
@@ -70,13 +72,13 @@ namespace mfront {
     using BroydenSolverBase::Hypothesis;
     using BroydenSolverBase::tokens_iterator;
     //
-    std::vector<std::string> getReservedNames() const override;
-    std::vector<std::string> getSpecificHeaders() const override;
-    std::string getExternalAlgorithmClassName(const BehaviourDescription&,
-                                              const Hypothesis) const override;
-    bool usesJacobian() const override;
-    bool usesJacobianInvert() const override;
-    std::pair<bool, tokens_iterator> treatSpecificKeywords(
+    [[nodiscard]] std::vector<std::string> getReservedNames() const override;
+    [[nodiscard]] std::vector<std::string> getSpecificHeaders() const override;
+    [[nodiscard]] std::string getExternalAlgorithmClassName(
+        const BehaviourDescription&, const Hypothesis) const override;
+    [[nodiscard]] bool usesJacobian() const override;
+    [[nodiscard]] bool usesJacobianInvert() const override;
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatSpecificKeywords(
         BehaviourDescription&,
         const std::string&,
         const tokens_iterator,

@@ -37,7 +37,7 @@ namespace mfront {
       ERRORSUMMATIONEVALUATION,
       MAXIMUMVALUEERROREVALUATION
     };  // end of ErrorEvaluation
-    bool usesStateVariableTimeDerivative() const override;
+    [[nodiscard]] bool usesStateVariableTimeDerivative() const override;
     void writeBehaviourParserSpecificIncludes(std::ostream&) const override;
     void writeBehaviourParserSpecificTypedefs(std::ostream&) const override;
     void writeBehaviourParserSpecificMembers(std::ostream&,

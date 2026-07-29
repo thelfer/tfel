@@ -117,15 +117,15 @@ namespace mfront {
      * \param[in] d: directory
      * \return the results of the analysis
      */
-    AnalyseDirectoryResults analyseDirectory(const std::string&);
+    [[nodiscard]] AnalyseDirectoryResults analyseDirectory(const std::string&);
     /*!
      * \brief method used to analyse a directory
      * \param[in] d: directory
      * \param[in] opts: options used for the analysis
      * \return the results of the analysis
      */
-    AnalyseDirectoryResults analyseDirectory(const std::string&,
-                                             const AnalyseDirectoryOptions&);
+    [[nodiscard]] AnalyseDirectoryResults analyseDirectory(
+        const std::string&, const AnalyseDirectoryOptions&);
     /*!
      * \brief method used to analyse a list of directories with the default
      * options
@@ -133,15 +133,16 @@ namespace mfront {
      * \param[in] d: directory
      * \return the results of the analysis
      */
-    AnalyseDirectoryResults analyseDirectories(const std::vector<std::string>&);
+    [[nodiscard]] AnalyseDirectoryResults analyseDirectories(
+        const std::vector<std::string>&);
     /*!
      * \brief method used to analyse a list of directories
      * \param[in] d: directory
      * \param[in] opts: options used for the analysis
      * \return the results of the analysis
      */
-    AnalyseDirectoryResults analyseDirectories(const std::vector<std::string>&,
-                                               const AnalyseDirectoryOptions&);
+    [[nodiscard]] AnalyseDirectoryResults analyseDirectories(
+        const std::vector<std::string>&, const AnalyseDirectoryOptions&);
     /*!
      * \brief method used to analyse a list of directories given in an
      * environment variable
@@ -151,8 +152,8 @@ namespace mfront {
      *
      * \note if the environment variable is not defined, nothing is done
      */
-    AnalyseDirectoryResults analyseDirectoriesListedInEnvironmentVariable(
-        const std::string&);
+    [[nodiscard]] AnalyseDirectoryResults
+    analyseDirectoriesListedInEnvironmentVariable(const std::string&);
     /*!
      * \brief method used to analyse a list of directories given in an
      * environment variable
@@ -163,15 +164,16 @@ namespace mfront {
      *
      * \note if the environment variable is not defined, nothing is done
      */
-    AnalyseDirectoryResults analyseDirectoriesListedInEnvironmentVariable(
+    [[nodiscard]] AnalyseDirectoryResults
+    analyseDirectoriesListedInEnvironmentVariable(
         const std::string&, const AnalyseDirectoryOptions&);
     /*!
      * \return the list of entry points matching the given query
      * \param[in] q: query
      */
-    std::vector<EntryPoint> getEntryPoints(const Query&) const;
+    [[nodiscard]] std::vector<EntryPoint> getEntryPoints(const Query&) const;
     //! \return all the entry points
-    const std::vector<EntryPoint>& getEntryPoints() const;
+    [[nodiscard]] const std::vector<EntryPoint>& getEntryPoints() const;
     //! \brief clear all registred entry points
     void clear();
 

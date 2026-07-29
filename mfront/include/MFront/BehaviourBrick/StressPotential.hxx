@@ -53,14 +53,14 @@ namespace mfront::bbrick {
     //! \brief a simple alias
     using MaterialProperty = BehaviourDescription::MaterialProperty;
     //! \return the name of the stress potential
-    virtual std::string getName() const = 0;
+    [[nodiscard]] virtual std::string getName() const = 0;
     /*!
      * \param[in] bd: behavour description
      * \param[in] b: if true, all options are returned. Otherwise, only the
      * most adapted options for the behaviour are returned.
      * \return the stress potential option description
      */
-    virtual std::vector<OptionDescription> getOptions(
+    [[nodiscard]] virtual std::vector<OptionDescription> getOptions(
         const BehaviourDescription&, const bool) const = 0;
     /*!
      * \param[in,out] bd: behaviour description
@@ -90,8 +90,9 @@ namespace mfront::bbrick {
      * \param[in/out] bd: behaviour description
      * \param[in] dsl: abstract behaviour dsl
      */
-    virtual std::vector<Hypothesis> getSupportedModellingHypotheses(
-        const BehaviourDescription&, const AbstractBehaviourDSL&) const = 0;
+    [[nodiscard]] virtual std::vector<Hypothesis>
+    getSupportedModellingHypotheses(const BehaviourDescription&,
+                                    const AbstractBehaviourDSL&) const = 0;
     /*!
      * \brief complete the variable description
      * \param[in] dsl: abstract behaviour dsl
@@ -116,7 +117,7 @@ namespace mfront::bbrick {
      *   derived.
      * \param[in] bd: behaviour description
      */
-    virtual std::vector<
+    [[nodiscard]] virtual std::vector<
         std::tuple<std::string, std::string, mfront::SupportedTypes::TypeFlag>>
     getStressDerivatives(const BehaviourDescription& bd) const = 0;
     /*!
@@ -132,7 +133,7 @@ namespace mfront::bbrick {
      * with respect to the effective stress
      * \param[in] b: boolean static that the flow criterion is deviatoric
      */
-    virtual std::string generateImplicitEquationDerivatives(
+    [[nodiscard]] virtual std::string generateImplicitEquationDerivatives(
         const BehaviourDescription&,
         const std::string&,
         const std::string&,
@@ -150,14 +151,14 @@ namespace mfront::bbrick {
      * equations of the order of the stress
      * \param[in] bd: behaviour description
      */
-    virtual std::string getStressNormalisationFactor(
+    [[nodiscard]] virtual std::string getStressNormalisationFactor(
         const BehaviourDescription&) const = 0;
     /*!
      * \brief return an expression that can be used as a lower bound for the
      * equivalent stress,
      * \param[in] bd: behaviour description
      */
-    virtual std::string getEquivalentStressLowerBound(
+    [[nodiscard]] virtual std::string getEquivalentStressLowerBound(
         const BehaviourDescription&) const = 0;
     //! destructor
     virtual ~StressPotential();

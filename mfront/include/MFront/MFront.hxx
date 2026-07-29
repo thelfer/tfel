@@ -49,7 +49,7 @@ namespace mfront {
      * \param[in] dsl_options : options passed to the domain specific language
      * \return the target's description
      */
-    virtual TargetsDescription treatFile(
+    [[nodiscard]] virtual TargetsDescription treatFile(
         const std::string&, const tfel::utilities::DataMap& = {}) const;
     //! \brief execute MFront process
     virtual void exe();
@@ -64,12 +64,12 @@ namespace mfront {
     //! a do nothing callback
     virtual void doNothing() final;
     //! return the current argument
-    const tfel::utilities::Argument& getCurrentCommandLineArgument()
-        const final;
+    [[nodiscard]] const tfel::utilities::Argument&
+    getCurrentCommandLineArgument() const final;
     //! get the version description
-    std::string getVersionDescription() const final;
+    [[nodiscard]] std::string getVersionDescription() const final;
     //! get the usage description
-    std::string getUsageDescription() const final;
+    [[nodiscard]] std::string getUsageDescription() const final;
     //! treat the -G command line option
     virtual void treatGenerator();
     //! treat the -D command line option

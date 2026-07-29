@@ -34,7 +34,7 @@ namespace mfront {
      * \return the name of this interface
      */
     static std::string getName();
-    //! constructor
+    //! \brief constructor
     ExcelMaterialPropertyInternalInterface();
     /*!
      * \param[out] os:  output file stream
@@ -42,16 +42,16 @@ namespace mfront {
      */
     void writeInterfaceSymbol(
         std::ostream&, const MaterialPropertyDescription&) const override;
-    //! destructor
+    //! \brief destructor
     ~ExcelMaterialPropertyInternalInterface() override;
 
    private:
-    std::string getCallingConvention() const override;
+    [[nodiscard]] std::string getCallingConvention() const override;
     /*!
      * \return the name of the generated library
      * \param[in] mpd: material property description
      */
-    std::string getGeneratedLibraryName(
+    [[nodiscard]] std::string getGeneratedLibraryName(
         const MaterialPropertyDescription&) const override;
     /*!
      * \brief write the header preprocessor directives
@@ -64,14 +64,14 @@ namespace mfront {
      * \param[in] m: material name
      * \param[in] c: class name
      */
-    std::string getHeaderFileName(const std::string&,
-                                  const std::string&) const override;
+    [[nodiscard]] std::string getHeaderFileName(
+        const std::string&, const std::string&) const override;
     /*!
      * \param[in] m: material name
      * \param[in] c: class name
      */
-    std::string getSrcFileName(const std::string&,
-                               const std::string&) const override;
+    [[nodiscard]] std::string getSrcFileName(const std::string&,
+                                             const std::string&) const override;
   };  // end of MfrontExcelLawInternalInterface
 
 }  // end of namespace mfront

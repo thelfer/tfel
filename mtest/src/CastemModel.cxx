@@ -110,8 +110,8 @@ namespace mtest {
     using tfel::math::vector;
     CastemInt ntens;
     CastemInt ndi;
-    CastemInt nprops = static_cast<CastemInt>(s.mprops1.size());
     CastemInt nstatv;
+    auto nprops = static_cast<CastemInt>(s.mprops1.size());
     const auto h = this->getHypothesis();
     if (h == ModellingHypothesis::AXISYMMETRICALGENERALISEDPLANESTRAIN) {
       ndi = 14;

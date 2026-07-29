@@ -252,7 +252,7 @@ namespace tfel::math {
         return;
       }
       auto x1 = x - f(x) / dfv;
-      auto iter = integer(0);
+      auto iter = integer{};
       while ((tfel::math::abs(x1 - x) > prec) && (iter < iter_max)) {
         x = x1;
         dfv = df(x);

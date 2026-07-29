@@ -43,31 +43,30 @@ namespace tfel::math::parser {
 
     KrigedFunction(const std::vector<Point>&,  // data
                    const double = 0.);         // nugget effect
-
     KrigedFunction(const KrigedFunction&);
+    //
+    KrigedFunction() = delete;
+    KrigedFunction& operator=(KrigedFunction&&) = delete;
+    KrigedFunction& operator=(const KrigedFunction&) = delete;
 
-    double getValue() const override;
-
+    //
+    [[nodiscard]] double getValue() const override;
     void setVariableValue(const std::vector<double>::size_type,
                           const double) override;
-
-    std::vector<double>::size_type getNumberOfVariables() const override;
-
+    [[nodiscard]] std::vector<double>::size_type getNumberOfVariables()
+        const override;
     void checkCyclicDependency(const std::string&) const override;
-
     void checkCyclicDependency(std::vector<std::string>&) const override;
-
-    std::shared_ptr<ExternalFunction> differentiate(
+    [[nodiscard]] std::shared_ptr<ExternalFunction> differentiate(
         const std::vector<double>::size_type) const override;
-    std::shared_ptr<ExternalFunction> differentiate(
+    [[nodiscard]] std::shared_ptr<ExternalFunction> differentiate(
         const std::string&) const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
-
-    std::shared_ptr<ExternalFunction>
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction>
     createFunctionByChangingParametersIntoVariables(
         const std::vector<std::string>&) const override;
-
-    std::shared_ptr<ExternalFunction>
+    [[nodiscard]] std::shared_ptr<ExternalFunction>
     createFunctionByChangingParametersIntoVariables(
         std::vector<std::string>&,
         const std::vector<double>&,
@@ -80,15 +79,8 @@ namespace tfel::math::parser {
     ~KrigedFunction() override;
 
    private:
-    KrigedFunction() = delete;
-
-    KrigedFunction& operator=(KrigedFunction&&) = delete;
-    KrigedFunction& operator=(const KrigedFunction&) = delete;
-
     std::shared_ptr<tfel::math::Kriging<N>> k;
-
     Variable v;
-
   };  // end of struct KrigedFunction
 
 }  // end of namespace tfel::math::parser

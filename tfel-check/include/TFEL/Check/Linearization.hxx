@@ -43,9 +43,9 @@ namespace tfel::check {
     //! \brief destructor
     ~Linearization();
     //! \return the value at time in parameter
-    double operator()(const double x) const;
+    [[nodiscard]] double operator()(const double x) const;
     //! \return true if the evolution is constant
-    bool isConstant() const;
+    [[nodiscard]] bool isConstant() const;
 
    private:
     std::map<double, double> values; /*< the times and values */

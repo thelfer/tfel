@@ -31,9 +31,7 @@ namespace mtest {
   // forward declaration
   struct StructureCurrentState;
 
-  /*!
-   * structure describing the current state of a study
-   */
+  //! \brief structure describing the current state of a study
   struct MTEST_VISIBILITY_EXPORT StudyCurrentState {
     //! a simple alias
     using size_type = tfel::math::vector<real>::size_type;
@@ -50,7 +48,7 @@ namespace mtest {
      * states with the original object, those states are duplicated in a deep
      * copy.
      */
-    StudyCurrentState makeDeepCopy() const;
+    [[nodiscard]] StudyCurrentState makeDeepCopy() const;
     /*!
      * \brief allocate memory
      * \param[out] psz: problem size
@@ -71,17 +69,18 @@ namespace mtest {
      * \return the state associated with a structure
      * \param[in] n: structure name
      */
-    StructureCurrentState& getStructureCurrentState(const std::string&);
+    [[nodiscard]] StructureCurrentState& getStructureCurrentState(
+        const std::string&);
     /*!
      * \return the state associated with a structure
      * \param[in] n: structure name
      */
-    const StructureCurrentState& getStructureCurrentState(
+    [[nodiscard]] const StructureCurrentState& getStructureCurrentState(
         const std::string&) const;
     /*!
      * \param[in] n: parameter name
      */
-    bool containsParameter(const std::string&) const;
+    [[nodiscard]] bool containsParameter(const std::string&) const;
     /*!
      * \return true if the study parameter with the specified name has the
      * specified type
@@ -91,7 +90,7 @@ namespace mtest {
      * is found or if the object type has not the requested type
      */
     template <typename T>
-    bool checkParameterType(const std::string&) const;
+    [[nodiscard]] bool checkParameterType(const std::string&) const;
     /*!
      * \return the object holded by the study parameter with the
      * specified name
@@ -102,7 +101,7 @@ namespace mtest {
      * is found or if the object type has not the requested type
      */
     template <typename T>
-    T& getParameter(const std::string&, const bool = false);
+    [[nodiscard]] T& getParameter(const std::string&, const bool = false);
     /*!
      * \return the object holded by the study parameter with the
      * specified name
@@ -112,7 +111,7 @@ namespace mtest {
      * is found or if the object type has not the requested type
      */
     template <typename T>
-    const T& getParameter(const std::string&) const;
+    [[nodiscard]] const T& getParameter(const std::string&) const;
     /*!
      * \brief set a parameter
      * \tparam T    : type of the parameter
@@ -126,7 +125,7 @@ namespace mtest {
     /*!
      * \param[in] n : name of the evolution
      */
-    bool containsEvolution(const std::string&) const;
+    [[nodiscard]] bool containsEvolution(const std::string&) const;
     /*!
      * \brief add a new evolution
      * \param[in] n : name of the evolution
@@ -137,19 +136,19 @@ namespace mtest {
      * \return the evolution with the given name
      * \param[in] n  : name of the evolution
      */
-    Evolution& getEvolution(const std::string&);
+    [[nodiscard]] Evolution& getEvolution(const std::string&);
     /*!
      * \return the evolution with the given name
      * \param[in] n  : name of the evolution
      */
-    const Evolution& getEvolution(const std::string&) const;
+    [[nodiscard]] const Evolution& getEvolution(const std::string&) const;
     //! \return if any of the failure criterion is true
-    bool getFailureStatus() const;
+    [[nodiscard]] bool getFailureStatus() const;
     /*!
      * \return the status of a failure criterion
      * \param[in] i: index of the failure criterion
      */
-    bool getFailureCriterionStatus(const std::size_t) const;
+    [[nodiscard]] bool getFailureCriterionStatus(const std::size_t) const;
     /*!
      * \brief set the status of a failure criterion
      * \param[in] i: index of the failure criterion
@@ -163,7 +162,8 @@ namespace mtest {
      */
     void setNumberOfFailureCriterionStatus(const std::size_t);
     //! \return the number of failure criterion status
-    std::size_t getNumberOfFailureCriterionStatus() const noexcept;
+    [[nodiscard]] std::size_t getNumberOfFailureCriterionStatus()
+        const noexcept;
     // vector of unknows at
     // the beginning of the
     // previous time step.

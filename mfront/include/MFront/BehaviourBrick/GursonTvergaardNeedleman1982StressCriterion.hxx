@@ -25,29 +25,24 @@ namespace mfront::bbrick {
    */
   struct GursonTvergaardNeedleman1982StressCriterion
       : StandardPorousStressCriterionBase {
-    /*!
-     * \brief constructor
-     */
+    //! \brief constructor
     GursonTvergaardNeedleman1982StressCriterion();
-
-    std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
-        const override;
-
-    std::vector<OptionDescription> getOptions() const override;
-
-    PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
-        const override;
-
-    std::string updatePorosityUpperBound(const BehaviourDescription&,
-                                         const std::string&,
-                                         const Role) const override;
-
+    //
+    [[nodiscard]] std::vector<BehaviourSymmetry>
+    getSupportedBehaviourSymmetries() const override;
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] PorosityEffectOnFlowRule
+    getPorosityEffectOnEquivalentPlasticStrain() const override;
+    [[nodiscard]] std::string updatePorosityUpperBound(
+        const BehaviourDescription&,
+        const std::string&,
+        const Role) const override;
     //! \brief destructor
     ~GursonTvergaardNeedleman1982StressCriterion() override;
 
    protected:
     void initializeMissingMaterialProperty(const std::string&) override;
-    std::string generateMissingMaterialPropertyInitializationCode(
+    [[nodiscard]] std::string generateMissingMaterialPropertyInitializationCode(
         BehaviourDescription&,
         const AbstractBehaviourDSL&,
         const std::string&,

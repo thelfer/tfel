@@ -25,9 +25,9 @@ namespace mfront {
    */
   struct MFRONT_VISIBILITY_EXPORT ModelDSL : public ModelDSLBase<ModelDSL> {
     //! \return the name of the dsl
-    static std::string getName();
+    [[nodiscard]] static std::string getName();
     //! \return the description of the dsl
-    static std::string getDescription();
+    [[nodiscard]] static std::string getDescription();
     /*!
      * \brief constructor
      *\param[in] opts: options passed to the DSL
@@ -39,7 +39,7 @@ namespace mfront {
      * \note This method shall be called after the `analyseFile`
      * method.
      */
-    virtual ModelDescription getModelDescription() const;
+    [[nodiscard]] virtual ModelDescription getModelDescription() const;
     //
     void setInterfaces(const std::set<std::string>&) override;
     //! \brief destructor

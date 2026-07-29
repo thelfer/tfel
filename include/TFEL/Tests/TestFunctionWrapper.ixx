@@ -39,7 +39,7 @@ namespace tfel::tests {
   template <bool (*f)()>
   TestResult TestFunctionWrapper<f>::execute() {
     const bool b = (*f)();
-    return TestResult(b, this->fname);
+    return {b, this->fname};
   }
 
   template <bool (*f)()>

@@ -19,7 +19,7 @@ namespace calculix {
   tfel::math::tmatrix<3u, 3u, CalculiXReal> getRotationMatrix(
       const CalculiXReal* const c, const CalculiXReal* const p) {
     using namespace tfel::math;
-    constexpr CalculiXReal eps = CalculiXReal(1.e-10);
+    constexpr auto eps = CalculiXReal{1.e-10};
     tmatrix<3u, 3u, CalculiXReal> r;
     tvector<3u, CalculiXReal> e1, e2, e3;
     if (c[6] >= 0) {

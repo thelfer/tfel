@@ -30,15 +30,17 @@ namespace mfront {
   //! The Great Mfront Lock
   struct MFRONT_VISIBILITY_EXPORT MFrontLock {
     static MFrontLock& getMFrontLock();
+    //
+    MFrontLock(const MFrontLock&) = delete;
+    MFrontLock(MFrontLock&&) = delete;
+    MFrontLock& operator=(const MFrontLock&) = delete;
+    MFrontLock& operator=(MFrontLock&&) = delete;
+    //
     void lock();
     void unlock();
 
    private:
     MFrontLock();
-    MFrontLock(const MFrontLock&) = delete;
-    MFrontLock(MFrontLock&&) = delete;
-    MFrontLock& operator=(const MFrontLock&) = delete;
-    MFrontLock& operator=(MFrontLock&&) = delete;
     ~MFrontLock();
 #if defined _WIN32 || defined _WIN64 || defined __CYGWIN__
     HANDLE ghMutex;
@@ -51,16 +53,15 @@ namespace mfront {
    * structure performing RAII on MFrontLock objects.
    */
   struct MFRONT_VISIBILITY_EXPORT MFrontLockGuard {
-    //! constructor
+    //! \brief constructor
     MFrontLockGuard();
-    //! destructor
-    ~MFrontLockGuard();
-
-   private:
+    //
     MFrontLockGuard(MFrontLockGuard&&) = delete;
     MFrontLockGuard(const MFrontLockGuard&) = delete;
     MFrontLockGuard& operator=(MFrontLockGuard&&) = delete;
     MFrontLockGuard& operator=(const MFrontLockGuard&) = delete;
+    //! \brief destructor
+    ~MFrontLockGuard();
   };
 
 }  // end of namespace mfront

@@ -156,7 +156,13 @@ namespace mfront {
       const AnalyseDirectoryOptions& opts) {
     auto r = AnalyseDirectoryResults{};
     for (const auto& d : directories) {
-      this->analyseDirectory(d, opts);
+      const auto r2 = this->analyseDirectory(d, opts);
+      r.library_analysis_failures.insert(r.library_analysis_failures.end(),
+                                         r2.library_analysis_failures.begin(),
+                                         r2.library_analysis_failures.end());
+      r.invalid_directories.insert(r.invalid_directories.end(),
+                                   r2.invalid_directories.begin(),
+                                   r2.invalid_directories.end());
     }
     return r;
   }  // end of analyseDirectories

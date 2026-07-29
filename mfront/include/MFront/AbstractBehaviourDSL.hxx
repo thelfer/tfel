@@ -46,17 +46,20 @@ namespace mfront {
     //! a simple alias
     using Hypothesis = ModellingHypothesis::Hypothesis;
     //! \return the target of the dsl
-    DSLTarget getTargetType() const final;
+    [[nodiscard]] DSLTarget getTargetType() const final;
     //! \return the declared behaviour interfaces
-    virtual std::map<std::string, std::shared_ptr<AbstractBehaviourInterface>>
+    [[nodiscard]] virtual std::map<std::string,
+                                   std::shared_ptr<AbstractBehaviourInterface>>
     getBehaviourInterfaces() const = 0;
     //! \return a description of the DSL
-    virtual BehaviourDSLDescription getBehaviourDSLDescription() const = 0;
-    //! \return the behaviour description
-    virtual const BehaviourDescription& getBehaviourDescription() const = 0;
-    //! \return a suitable code generator
-    virtual std::unique_ptr<AbstractBehaviourCodeGenerator> getCodeGenerator()
+    [[nodiscard]] virtual BehaviourDSLDescription getBehaviourDSLDescription()
         const = 0;
+    //! \return the behaviour description
+    [[nodiscard]] virtual const BehaviourDescription& getBehaviourDescription()
+        const = 0;
+    //! \return a suitable code generator
+    [[nodiscard]] virtual std::unique_ptr<AbstractBehaviourCodeGenerator>
+    getCodeGenerator() const = 0;
     /*!
      * \brief add the given material properties
      * \param[in] mps: material properties
@@ -100,7 +103,7 @@ namespace mfront {
      * \param[in] c: code block name
      * \param[in] o: generation options
      */
-    virtual std::string getCodeBlockTemplate(
+    [[nodiscard]] virtual std::string getCodeBlockTemplate(
         const std::string&, const MFrontTemplateGenerationOptions&) const = 0;
     /*!
      * \return the list of hypothesis a priori supported by
@@ -110,7 +113,8 @@ namespace mfront {
      * supported, the user must use the `@ModellingHypothesis` or
      * `@ModellingHypotheses` keywords.
      */
-    virtual std::set<Hypothesis> getDefaultModellingHypotheses() const = 0;
+    [[nodiscard]] virtual std::set<Hypothesis> getDefaultModellingHypotheses()
+        const = 0;
     /*!
      * \brief write the call to a material property
      * \param[out] out: output stream
@@ -141,7 +145,7 @@ namespace mfront {
      * \param[in] f : file in which the material law is
      * implemented. This must be the full path.
      */
-    virtual std::shared_ptr<MaterialPropertyDescription>
+    [[nodiscard]] virtual std::shared_ptr<MaterialPropertyDescription>
     handleMaterialPropertyDescription(const std::string&) = 0;
     /*!
      * \return true if the given modelling hypothesis is handled by
@@ -160,7 +164,8 @@ namespace mfront {
      * enable this modelling hypothesis by calling explicitely
      * `@ModellingHypothesis` or `@ModellingHypotheses` keywords.
      */
-    virtual bool isModellingHypothesisSupported(const Hypothesis) const = 0;
+    [[nodiscard]] virtual bool isModellingHypothesisSupported(
+        const Hypothesis) const = 0;
     //! \brief destructor
     ~AbstractBehaviourDSL() override;
   };

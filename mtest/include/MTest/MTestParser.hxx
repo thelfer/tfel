@@ -56,7 +56,7 @@ namespace mtest {
      */
     void parseString(MTest&, const std::string&);
     //! \return the list of keywords
-    virtual std::vector<std::string> getKeyWordsList() const;
+    [[nodiscard]] std::vector<std::string> getKeyWordsList() const;
     //! \brief display the list of keywords
     virtual void displayKeyWordsList() const;
     //! \brief display the list of keywords

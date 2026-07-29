@@ -31,9 +31,9 @@ namespace tfel::math {
     using IndexType = index_type<A>;
     using NumType = numeric_type<A>;
 
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties()
-        const noexcept {
-      return EmptyRunTimeProperties();
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
+    getRunTimeProperties() const noexcept {
+      return {};
     }
 
    protected:

@@ -66,7 +66,7 @@ namespace numodis {
     //-----------------------------------------------------------
     /*! \return true if vector=0, false otherwise              */
     //===========================================================
-    bool IsNull() const {
+    [[nodiscard]] bool IsNull() const {
       for (unsigned i = 0; i < _index.size(); i++)
         if (_index[i] != 0) return false;
       return true;
@@ -93,7 +93,7 @@ namespace numodis {
     //-------------------------------------------------------------
     /*! \return reference on the vector's indices                */
     //=============================================================
-    const std::vector<int>& getIndex() const { return _index; }
+    [[nodiscard]] const std::vector<int>& getIndex() const { return _index; }
 
     //=============================================================
     // IDirection::getNindices
@@ -102,7 +102,9 @@ namespace numodis {
     //-------------------------------------------------------------
     /*! \return number of indices                                */
     //=============================================================
-    long unsigned int getNindices() const { return _index.size(); }
+    [[nodiscard]] long unsigned int getNindices() const {
+      return _index.size();
+    }
 
    protected:
     //! index of the vector

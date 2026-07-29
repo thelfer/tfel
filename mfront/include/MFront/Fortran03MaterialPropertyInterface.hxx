@@ -24,7 +24,7 @@ namespace mfront {
 
     Fortran03MaterialPropertyInterface();
     //
-    std::pair<bool, tokens_iterator> treatKeyword(
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
         const std::string&,
         const std::vector<std::string>&,
         tokens_iterator,
@@ -51,15 +51,15 @@ namespace mfront {
     void writeEndHeaderNamespace(std::ostream&) const override;
     void writeBeginSrcNamespace(std::ostream&) const override;
     void writeEndSrcNamespace(std::ostream&) const override;
-    std::string getHeaderFileName(const std::string&,
-                                  const std::string&) const override;
-    std::string getSrcFileName(const std::string&,
-                               const std::string&) const override;
-    std::string getFunctionName(
+    [[nodiscard]] std::string getHeaderFileName(
+        const std::string&, const std::string&) const override;
+    [[nodiscard]] std::string getSrcFileName(const std::string&,
+                                             const std::string&) const override;
+    [[nodiscard]] std::string getFunctionName(
         const MaterialPropertyDescription&) const override;
-    std::string getCheckBoundsFunctionName(
+    [[nodiscard]] std::string getCheckBoundsFunctionName(
         const MaterialPropertyDescription&) const override;
-    bool requiresCheckBoundsFunction() const override;
+    [[nodiscard]] bool requiresCheckBoundsFunction() const override;
 
    private:
     std::string module;

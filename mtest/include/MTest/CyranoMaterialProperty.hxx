@@ -28,7 +28,7 @@ namespace mtest {
      */
     CyranoMaterialProperty(const std::string&, const std::string&);
     //
-    real getValue() const override;
+    [[nodiscard]] real getValue() const override;
     //! \brief destructor
     ~CyranoMaterialProperty() override;
 

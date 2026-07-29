@@ -49,12 +49,12 @@ namespace mfront {
      * \return the name of the generated function
      * \param[in] mpd : material property description
      */
-    virtual std::string getFunctionName(
+    [[nodiscard]] virtual std::string getFunctionName(
         const MaterialPropertyDescription&) const;
     //
     void getTargetsDescription(
         TargetsDescription&, const MaterialPropertyDescription&) const override;
-    std::pair<bool, tokens_iterator> treatKeyword(
+    [[nodiscard]] std::pair<bool, tokens_iterator> treatKeyword(
         const std::string&,
         const std::vector<std::string>&,
         tokens_iterator,
@@ -72,18 +72,20 @@ namespace mfront {
       std::string output_status_type;
     };
 
-    virtual TypesDescription getTypesDescription() const = 0;
-
-    virtual std::vector<std::string> getInterfaceHeaderFiles() const = 0;
-    virtual std::string getInterfaceName() const = 0;
-    virtual std::string getInterfaceNameInCamelCase() const = 0;
-    virtual std::string getInterfaceNameInUpperCase() const = 0;
-    virtual std::string getOutOfBoundsPolicyEnumerationPrefix() const = 0;
-
+    [[nodiscard]] virtual TypesDescription getTypesDescription() const = 0;
+    [[nodiscard]] virtual std::vector<std::string> getInterfaceHeaderFiles()
+        const = 0;
+    [[nodiscard]] virtual std::string getInterfaceName() const = 0;
+    [[nodiscard]] virtual std::string getInterfaceNameInCamelCase() const = 0;
+    [[nodiscard]] virtual std::string getInterfaceNameInUpperCase() const = 0;
+    [[nodiscard]] virtual std::string getOutOfBoundsPolicyEnumerationPrefix()
+        const = 0;
     //! \return the name of the header file
-    virtual std::string getHeaderFileName(const std::string&) const;
+    [[nodiscard]] virtual std::string getHeaderFileName(
+        const std::string&) const;
     //! \return the name of the source file
-    virtual std::string getSourceFileName(const std::string&) const;
+    [[nodiscard]] virtual std::string getSourceFileName(
+        const std::string&) const;
     /*!
      * \brief generate the output files
      * \param[in] mpd: material property description

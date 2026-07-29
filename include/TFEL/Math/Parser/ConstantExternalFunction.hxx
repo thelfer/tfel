@@ -24,21 +24,28 @@ namespace tfel::math::parser {
   struct TFELMATHPARSER_VISIBILITY_EXPORT ConstantExternalFunction final
       : public ExternalFunction {
     ConstantExternalFunction(const double);
-    double getValue() const override;
+    //
+    ConstantExternalFunction& operator=(const ConstantExternalFunction&) =
+        delete;
+    ConstantExternalFunction& operator=(ConstantExternalFunction&&) = delete;
+    //
+    [[nodiscard]] double getValue() const override;
     void setVariableValue(const std::vector<double>::size_type,
                           const double) override;
-    std::vector<double>::size_type getNumberOfVariables() const override;
+    [[nodiscard]] std::vector<double>::size_type getNumberOfVariables()
+        const override;
     void checkCyclicDependency(const std::string&) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
-    std::shared_ptr<ExternalFunction> differentiate(
+    [[nodiscard]] std::shared_ptr<ExternalFunction> differentiate(
         const std::vector<double>::size_type) const override;
-    std::shared_ptr<ExternalFunction> differentiate(
+    [[nodiscard]] std::shared_ptr<ExternalFunction> differentiate(
         const std::string&) const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
-    std::shared_ptr<ExternalFunction>
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction>
     createFunctionByChangingParametersIntoVariables(
         const std::vector<std::string>&) const override;
-    std::shared_ptr<ExternalFunction>
+    [[nodiscard]] std::shared_ptr<ExternalFunction>
     createFunctionByChangingParametersIntoVariables(
         std::vector<std::string>&,
         const std::vector<double>&,
@@ -49,9 +56,7 @@ namespace tfel::math::parser {
     ~ConstantExternalFunction() override;
 
    protected:
-    ConstantExternalFunction& operator=(const ConstantExternalFunction&) =
-        delete;
-    ConstantExternalFunction& operator=(ConstantExternalFunction&&) = delete;
+    //
     const double value;
   };  // end of struct ConstantExternalFunction
 

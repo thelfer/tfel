@@ -20,39 +20,40 @@
 
 namespace tfel::math {
 
-  //! Weights for the Anderson accelation algorithm
+  //! \brief Weights for the Anderson accelation algorithm
   template <typename Field, typename real>
   struct AndersonBase {
-    //! a simple alias
+    //! \brief a simple alias
     using size_type = unsigned char;
-    //! memory allocator
+    //! \brief memory allocator
     using Allocator = std::function<Field*()>;
-    //! Default constructor
+    //! \brief constructor
     AndersonBase(const Allocator);
-    //! Destructor
-    virtual ~AndersonBase();
-    const std::vector<Field*>& getU() const;
-    const std::vector<Field*>& getD() const;
-    //! Set Anderson algorithm
+    //
+    [[nodiscard]] const std::vector<Field*>& getU() const;
+    [[nodiscard]] const std::vector<Field*>& getD() const;
+    //! \brief Set Anderson algorithm
     //! \param Nmax:  method order
     //! \param alMax: alternance order
     void setAnderson(const size_type, const size_type);
+    //! \brief Destructor
+    virtual ~AndersonBase();
 
    protected:
-    //! Memory allocation
+    //! \brief Memory allocation
     void alloc();
     //! \return the Anderson method order
-    size_type size() const;
-    //! Reseting the Covariance matrix with a new vector
+    [[nodiscard]] size_type size() const;
+    //! \brief Reseting the Covariance matrix with a new vector
     void reset();
     anderson::CovarianceMatrix<real> cM;  //!< Covariance matrix
     std::vector<Field*> u;                //!< Deplacement Fields
     std::vector<Field*> D;                //!< Result fields
-    //! memory allocator
+    //! \brief memory allocator
     Allocator ma;
-    //! Number of stored solutions
-    size_type n;  //!< Number of stored displacement fields
-    //! Anderson weights
+    //! \brief Number of stored solutions
+    size_type n = size_type{};  //!< Number of stored displacement fields
+    //! \brief Anderson weights
     std::vector<real> w;
     size_type alt = 0;
     size_type alMax = 0;

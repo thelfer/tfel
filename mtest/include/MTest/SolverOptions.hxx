@@ -99,9 +99,9 @@ namespace mtest {
     //! use a prediction matrix before beginning the resolution
     PredictionPolicy ppolicy = PredictionPolicy::UNSPECIFIEDPREDICTIONPOLICY;
     //! order of magnitude of the precision expected for the unknows
-    real eeps = -real(1);
+    real eeps = -real{1};
     //! order of magnitude of the precision expected for the forces
-    real seps = -real(1);
+    real seps = -real{1};
     //! maximal time step
     real maximal_time_step = -1;
     //! minimal time step

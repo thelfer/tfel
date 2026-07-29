@@ -44,7 +44,7 @@ namespace mfront {
                                const BehaviourInterfaceMap&);
     //
     void generateOutputFiles(const std::set<Hypothesis>&) override;
-    bool isSrcFileRequired() const override;
+    [[nodiscard]] bool isSrcFileRequired() const override;
     //! \brief destructor
     ~BehaviourCodeGeneratorBase() override;
 
@@ -70,7 +70,7 @@ namespace mfront {
      * \brief return if the code must generate the time derivatives of the
      * state variables
      */
-    virtual bool usesStateVariableTimeDerivative() const;
+    [[nodiscard]] virtual bool usesStateVariableTimeDerivative() const;
     /*!
      * \brief data structure passed to the  `writeVariableDeclaration` and
      * `writeVariableDeclarations` methods
@@ -316,10 +316,11 @@ namespace mfront {
                                             const Hypothesis) const;
 
     //! \return behaviour constructor initializers.
-    virtual std::string getBehaviourConstructorsInitializers(
+    [[nodiscard]] virtual std::string getBehaviourConstructorsInitializers(
         const Hypothesis) const;
     //! \return local variables initalizers.
-    virtual std::string getLocalVariablesInitializers(const Hypothesis) const;
+    [[nodiscard]] virtual std::string getLocalVariablesInitializers(
+        const Hypothesis) const;
     /*!
      * \brief write the arguments of a material property, including
      * the the surrounding parenthesis. Those arguments are used to
@@ -428,8 +429,8 @@ namespace mfront {
     /*!
      * \param[in] h: modelling hypothesis
      */
-    virtual std::string getIntegrationVariablesIncrementsInitializers(
-        const Hypothesis) const;
+    [[nodiscard]] virtual std::string
+    getIntegrationVariablesIncrementsInitializers(const Hypothesis) const;
 
     virtual void writeBehaviourIntegrationVariablesIncrements(
         std::ostream&, const Hypothesis) const;

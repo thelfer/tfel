@@ -67,7 +67,7 @@ namespace mfront {
      * \brief decompose a variable name to get the basis and the depth
      * of the variable
      */
-    std::pair<std::string, unsigned short> decomposeVariableName(
+    [[nodiscard]] std::pair<std::string, unsigned short> decomposeVariableName(
         const std::string&) const;
     //! \brief defaut constructor
     ModelDescription();
@@ -83,7 +83,8 @@ namespace mfront {
      * \return the variable description with the given name
      * \param[in] n: variable name
      */
-    const VariableDescription& getVariableDescription(const std::string&) const;
+    [[nodiscard]] const VariableDescription& getVariableDescription(
+        const std::string&) const;
     /*!
      * \brief associate a glossary name to a variable
      * \param[in] v: variable name
@@ -142,7 +143,7 @@ namespace mfront {
      * \brief look if a name is reserved
      * \param[in] n : name
      */
-    bool isNameReserved(const std::string&) const;
+    [[nodiscard]] bool isNameReserved(const std::string&) const;
     //! \brief check and complete the physical bounds of variables
     void checkAndCompletePhysicalBoundsDeclaration();
     //! \brief destructor
@@ -196,14 +197,15 @@ namespace mfront {
      */
     void checkVariableExistence(const std::string&) const;
     //! \return the list of reserved names
-    const std::set<std::string>& getReservedNames() const;
+    [[nodiscard]] const std::set<std::string>& getReservedNames() const;
 
    private:
     /*!
      * \return the variable description with the given name
      * \param[in] n: variable name
      */
-    VariableDescription& getVariableDescription(const std::string&);
+    [[nodiscard]] VariableDescription& getVariableDescription(
+        const std::string&);
     //! \brief set glossary names
     std::map<std::string, std::string> glossaryNames;
     //! \brief entry names

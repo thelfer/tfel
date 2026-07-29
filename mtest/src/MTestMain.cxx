@@ -90,8 +90,8 @@ namespace mtest {
     //! treat the `--backtrace` option
     void treatBacktrace();
 #endif
-    std::string getVersionDescription() const override;
-    std::string getUsageDescription() const override;
+    [[nodiscard]] std::string getVersionDescription() const override;
+    [[nodiscard]] std::string getUsageDescription() const override;
     void registerArgumentCallBacks();
     /*!
      * \brief add a single test and defines the output files
@@ -99,8 +99,10 @@ namespace mtest {
      * \param[in] n: name of the test
      */
     void addTest(std::shared_ptr<SchemeBase>, const std::string&);
-    std::shared_ptr<SchemeBase> createMTestTest(const std::string&);
-    std::shared_ptr<SchemeBase> createPTestTest(const std::string&);
+    [[nodiscard]] std::shared_ptr<SchemeBase> createMTestTest(
+        const std::string&);
+    [[nodiscard]] std::shared_ptr<SchemeBase> createPTestTest(
+        const std::string&);
     void treatMadnexInputFile(const std::string&);
     void treatStandardInputFile(const std::string&);
 

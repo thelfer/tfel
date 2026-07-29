@@ -30,21 +30,22 @@ namespace mfront {
 
   //! \brief abstract factor for behaviour bricks
   struct MFRONT_VISIBILITY_EXPORT BehaviourBrickFactory {
-    //! a simple alias
+    //! \brief a simple alias
     using CxxTokenizer = tfel::utilities::CxxTokenizer;
-    //! a simple alias
+    //! \brief a simple alias
     using tokens_iterator = CxxTokenizer::const_iterator;
-    //! a simple alias
+    //! \brief a simple alias
     using constructor = std::shared_ptr<AbstractBehaviourBrick> (*)(
         AbstractBehaviourDSL&, BehaviourDescription&);
-    //! a simple alias
+    //! \brief a simple alias
     using BehaviourType = BehaviourDescription::BehaviourType;
-    //! a simple alias
+    //! \brief a simple alias
     using IntegrationScheme = BehaviourDescription::IntegrationScheme;
-    /*!
-     * \return the uniq instance of the AbstractBehaviourBrick factory
-     */
-    static BehaviourBrickFactory& getFactory();
+    //! \return the uniq instance of the AbstractBehaviourBrick factory
+    [[nodiscard]] static BehaviourBrickFactory& getFactory();
+    //
+    BehaviourBrickFactory(const BehaviourBrickFactory&) = delete;
+    BehaviourBrickFactory& operator=(const BehaviourBrickFactory&) = delete;
     /*!
      * \return the requested behaviour brick
      * \param[in]     a:   behaviour brick name
@@ -52,9 +53,8 @@ namespace mfront {
      * \param[in,out] mb:  mechanical behaviour description to be
      * treated
      */
-    std::shared_ptr<AbstractBehaviourBrick> get(const std::string&,
-                                                AbstractBehaviourDSL&,
-                                                BehaviourDescription&) const;
+    [[nodiscard]] std::shared_ptr<AbstractBehaviourBrick> get(
+        const std::string&, AbstractBehaviourDSL&, BehaviourDescription&) const;
     /*!
      * \param[in] a: name of the behaviour brick
      * \param[in] t: behaviour type for which the brick is valid
@@ -84,35 +84,28 @@ namespace mfront {
                                         const std::vector<IntegrationScheme>,
                                         const constructor);
     //! \return the names of all the registred bricks
-    std::vector<std::string> getRegistredBricks() const;
+    [[nodiscard]] std::vector<std::string> getRegistredBricks() const;
     /*!
      * \return the names of all the registred bricks which are valid for the
      * given behaviour type and integration scheme.
      * \param[in] t: behaviour type
      * \param[in] i: integration scheme
      */
-    std::vector<std::string> getRegistredBricks(const BehaviourType,
-                                                const IntegrationScheme) const;
+    [[nodiscard]] std::vector<std::string> getRegistredBricks(
+        const BehaviourType, const IntegrationScheme) const;
 
    private:
-    /*!
-     * default constructor
-     */
+    //! \brief default constructor
     BehaviourBrickFactory();
-    /*!
-     * copy constructor (disabled)
-     */
-    BehaviourBrickFactory(const BehaviourBrickFactory&);
-    /*!
-     * assignement operator (disabled)
-     */
-    BehaviourBrickFactory& operator=(const BehaviourBrickFactory&);
-    //! all registred constructors
+    //! \brief all registred constructors
     std::map<std::string, constructor> constructors;
-    //! mapping between a brick and the behaviour type for which it is valid
-    std::map<std::string, std::vector<BehaviourType>> btypes;
-    //! mapping between a brick and the integration schemes for which it is
+    //! \brief mapping between a brick and the behaviour type for which it is
     //! valid
+    std::map<std::string, std::vector<BehaviourType>> btypes;
+    /*!
+     * \brief mapping between a brick and the integration schemes for which it
+     * is valid
+     */
     std::map<std::string, std::vector<IntegrationScheme>> ischemes;
   };  // end of struct BehaviourBrickFactory
 

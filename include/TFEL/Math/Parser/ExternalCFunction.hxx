@@ -36,17 +36,18 @@ namespace tfel::math::parser {
                                  protected ExternalCFunctionException {
     void setVariableValue(const std::vector<double>::size_type,
                           const double) override;
-    std::vector<double>::size_type getNumberOfVariables() const override;
+    [[nodiscard]] std::vector<double>::size_type getNumberOfVariables()
+        const override;
     void checkCyclicDependency(const std::string&) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
-    std::shared_ptr<ExternalFunction> differentiate(
+    [[nodiscard]] std::shared_ptr<ExternalFunction> differentiate(
         const std::vector<double>::size_type) const override;
-    std::shared_ptr<ExternalFunction> differentiate(
+    [[nodiscard]] std::shared_ptr<ExternalFunction> differentiate(
         const std::string&) const override;
-    std::shared_ptr<ExternalFunction>
+    [[nodiscard]] std::shared_ptr<ExternalFunction>
     createFunctionByChangingParametersIntoVariables(
         const std::vector<std::string>&) const override;
-    std::shared_ptr<ExternalFunction>
+    [[nodiscard]] std::shared_ptr<ExternalFunction>
     createFunctionByChangingParametersIntoVariables(
         std::vector<std::string>&,
         const std::vector<double>&,
@@ -138,21 +139,22 @@ namespace tfel::math::parser {
     //
     void setVariableValue(const std::vector<double>::size_type,
                           const double) override;
-    std::vector<double>::size_type getNumberOfVariables() const override;
+    [[nodiscard]] std::vector<double>::size_type getNumberOfVariables()
+        const override;
     void checkCyclicDependency(const std::string&) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
-    std::shared_ptr<ExternalFunction> differentiate(
+    [[nodiscard]] std::shared_ptr<ExternalFunction> differentiate(
         const std::vector<double>::size_type) const override;
-    std::shared_ptr<ExternalFunction> differentiate(
+    [[nodiscard]] std::shared_ptr<ExternalFunction> differentiate(
         const std::string&) const override;
-    std::shared_ptr<ExternalFunction>
+    [[nodiscard]] std::shared_ptr<ExternalFunction>
     createFunctionByChangingParametersIntoVariables(
         std::vector<std::string>&,
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
         const override;
-    std::shared_ptr<ExternalFunction>
+    [[nodiscard]] std::shared_ptr<ExternalFunction>
     createFunctionByChangingParametersIntoVariables(
         const std::vector<std::string>&) const override;
     void getParametersNames(std::set<std::string>&) const override;
@@ -167,8 +169,9 @@ namespace tfel::math::parser {
     typedef tfel::system::CFunction0Ptr FunctionPtr;
     ExternalCFunction(FunctionPtr);
     //
-    double getValue() const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
 
    private:
     FunctionPtr f;
@@ -180,8 +183,9 @@ namespace tfel::math::parser {
     typedef tfel::system::CFunction1Ptr FunctionPtr;
     ExternalCFunction(FunctionPtr);
     //
-    double getValue() const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
 
    private:
     FunctionPtr f;
@@ -193,8 +197,9 @@ namespace tfel::math::parser {
     typedef tfel::system::CFunction2Ptr FunctionPtr;
     ExternalCFunction(FunctionPtr);
     //
-    double getValue() const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
 
    private:
     FunctionPtr f;
@@ -206,8 +211,9 @@ namespace tfel::math::parser {
     typedef tfel::system::CFunction3Ptr FunctionPtr;
     ExternalCFunction(FunctionPtr);
     //
-    double getValue() const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
 
    private:
     FunctionPtr f;
@@ -219,8 +225,9 @@ namespace tfel::math::parser {
     typedef tfel::system::CFunction4Ptr FunctionPtr;
     ExternalCFunction(FunctionPtr);
     //
-    double getValue() const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
 
    private:
     FunctionPtr f;
@@ -232,8 +239,9 @@ namespace tfel::math::parser {
     typedef tfel::system::CFunction5Ptr FunctionPtr;
     ExternalCFunction(FunctionPtr);
     //
-    double getValue() const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
 
    private:
     FunctionPtr f;
@@ -245,8 +253,9 @@ namespace tfel::math::parser {
     typedef tfel::system::CFunction6Ptr FunctionPtr;
     ExternalCFunction(FunctionPtr);
     //
-    double getValue() const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
 
    private:
     FunctionPtr f;
@@ -258,8 +267,9 @@ namespace tfel::math::parser {
     typedef tfel::system::CFunction7Ptr FunctionPtr;
     ExternalCFunction(FunctionPtr);
     //
-    double getValue() const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
 
    private:
     FunctionPtr f;
@@ -271,8 +281,9 @@ namespace tfel::math::parser {
     typedef tfel::system::CFunction8Ptr FunctionPtr;
     ExternalCFunction(FunctionPtr);
     //
-    double getValue() const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
 
    private:
     FunctionPtr f;
@@ -284,8 +295,9 @@ namespace tfel::math::parser {
     typedef tfel::system::CFunction9Ptr FunctionPtr;
     ExternalCFunction(FunctionPtr);
     //
-    double getValue() const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
 
    private:
     FunctionPtr f;
@@ -297,8 +309,9 @@ namespace tfel::math::parser {
     typedef tfel::system::CFunction10Ptr FunctionPtr;
     ExternalCFunction(FunctionPtr);
     //
-    double getValue() const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
 
    private:
     FunctionPtr f;
@@ -310,8 +323,9 @@ namespace tfel::math::parser {
     typedef tfel::system::CFunction11Ptr FunctionPtr;
     ExternalCFunction(FunctionPtr);
     //
-    double getValue() const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
 
    private:
     FunctionPtr f;
@@ -323,8 +337,9 @@ namespace tfel::math::parser {
     typedef tfel::system::CFunction12Ptr FunctionPtr;
     ExternalCFunction(FunctionPtr);
     //
-    double getValue() const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
 
    private:
     FunctionPtr f;
@@ -336,8 +351,9 @@ namespace tfel::math::parser {
     typedef tfel::system::CFunction13Ptr FunctionPtr;
     ExternalCFunction(FunctionPtr);
     //
-    double getValue() const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
 
    private:
     FunctionPtr f;
@@ -349,8 +365,9 @@ namespace tfel::math::parser {
     typedef tfel::system::CFunction14Ptr FunctionPtr;
     ExternalCFunction(FunctionPtr);
     //
-    double getValue() const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
 
    private:
     FunctionPtr f;
@@ -362,8 +379,9 @@ namespace tfel::math::parser {
     typedef tfel::system::CFunction15Ptr FunctionPtr;
     ExternalCFunction(FunctionPtr);
     //
-    double getValue() const override;
-    std::shared_ptr<ExternalFunction> resolveDependencies() const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<ExternalFunction> resolveDependencies()
+        const override;
 
    private:
     FunctionPtr f;

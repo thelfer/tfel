@@ -49,22 +49,22 @@ namespace castem {
       : public CastemException {
     CastemInvalidNTENSValue(const unsigned short);
     CastemInvalidNTENSValue(const CastemInvalidNTENSValue&);
+    //
+    CastemInvalidNTENSValue() = delete;
+    CastemInvalidNTENSValue& operator=(const CastemInvalidNTENSValue&) = delete;
+    //
     ~CastemInvalidNTENSValue() noexcept override;
-
-   private:
-    CastemInvalidNTENSValue();
-    CastemInvalidNTENSValue& operator=(const CastemInvalidNTENSValue&);
   };  // end of struct CastemInvalidNTENSValue
 
   struct MFRONT_CASTEM_VISIBILITY_EXPORT CastemInvalidDimension final
       : public CastemException {
     CastemInvalidDimension(const std::string&, const unsigned short);
     CastemInvalidDimension(const CastemInvalidDimension&);
+    //
+    CastemInvalidDimension() = delete;
+    CastemInvalidDimension& operator=(const CastemInvalidDimension&) = delete;
+    //
     ~CastemInvalidDimension() noexcept override;
-
-   private:
-    CastemInvalidDimension();
-    CastemInvalidDimension& operator=(const CastemInvalidDimension&);
   };  // end of struct CastemInvalidDimension
 
 }  // end of namespace castem

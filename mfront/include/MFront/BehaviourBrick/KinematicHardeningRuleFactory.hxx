@@ -23,12 +23,21 @@ namespace mfront::bbrick {
    * \brief abstract factory for Kinematic hardening rules.
    */
   struct MFRONT_VISIBILITY_EXPORT KinematicHardeningRuleFactory {
-    //! a simple alias
+    //! \brief a simple alias
     using Generator = std::function<std::shared_ptr<KinematicHardeningRule>()>;
     //! \return the uniq instance of the class
-    static KinematicHardeningRuleFactory& getFactory();
+    [[nodiscard]] static KinematicHardeningRuleFactory& getFactory();
+    //
+    KinematicHardeningRuleFactory(KinematicHardeningRuleFactory&&) = delete;
+    KinematicHardeningRuleFactory(const KinematicHardeningRuleFactory&) =
+        delete;
+    KinematicHardeningRuleFactory& operator=(KinematicHardeningRuleFactory&&) =
+        delete;
+    KinematicHardeningRuleFactory& operator=(
+        const KinematicHardeningRuleFactory&) = delete;
     //! \brief return the list of kinematic hardening rules
-    std::vector<std::string> getRegistredKinematicHardeningRules() const;
+    [[nodiscard]] std::vector<std::string> getRegistredKinematicHardeningRules()
+        const;
     /*!
      * \brief add a new generator
      * \param[in] n: name of the generator
@@ -39,23 +48,13 @@ namespace mfront::bbrick {
      * \brief generate a new inelastic potential
      * \param[in] n: name of the inelastic potential
      */
-    std::shared_ptr<KinematicHardeningRule> generate(const std::string&) const;
+    [[nodiscard]] std::shared_ptr<KinematicHardeningRule> generate(
+        const std::string&) const;
 
    private:
-    //! default constructor
+    //! \brief default constructor
     KinematicHardeningRuleFactory();
-    //! move constructor (deleted)
-    KinematicHardeningRuleFactory(KinematicHardeningRuleFactory&&) = delete;
-    //! copy constructor (deleted)
-    KinematicHardeningRuleFactory(const KinematicHardeningRuleFactory&) =
-        delete;
-    //! move assignement (deleted)
-    KinematicHardeningRuleFactory& operator=(KinematicHardeningRuleFactory&&) =
-        delete;
-    //! standard assignement(deleted)
-    KinematicHardeningRuleFactory& operator=(
-        const KinematicHardeningRuleFactory&) = delete;
-    //! \brief destructor
+    //! \brief \brief destructor
     ~KinematicHardeningRuleFactory();
     //! \brief generators
     std::map<std::string, Generator> generators;
