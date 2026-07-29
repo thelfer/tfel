@@ -157,7 +157,8 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
             [this]() noexcept { this->show_sources = true; }, false));
   }  // end of registerCommandLineCallBacks
 
-  const tfel::utilities::Argument& getCurrentCommandLineArgument() const {
+  [[nodiscard]] const tfel::utilities::Argument& getCurrentCommandLineArgument()
+      const {
     return *(this->currentArgument);
   }
 
@@ -206,9 +207,11 @@ struct MFM : tfel::utilities::ArgumentParserBase<MFM>, mfront::MFrontDatabase {
     }
   }  // end of treatUnknownArgument
 
-  std::string getVersionDescription() const override { return "1.0"; }
+  [[nodiscard]] std::string getVersionDescription() const override {
+    return "1.0";
+  }
 
-  std::string getUsageDescription() const override {
+  [[nodiscard]] std::string getUsageDescription() const override {
     return "Usage: " + this->programName + " [options] [files]";
   }
 

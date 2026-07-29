@@ -34,7 +34,14 @@ namespace mtest {
     using Generator = std::function<std::unique_ptr<PipeFailureCriterion>(
         const std::string&, const ParametersMap&)>;
     //! \brief return the unique instance of the factory
-    static PipeFailureCriteriaFactory& getFactory() noexcept;
+    [[nodiscard]] static PipeFailureCriteriaFactory& getFactory() noexcept;
+    //
+    PipeFailureCriteriaFactory(PipeFailureCriteriaFactory&&) = delete;
+    PipeFailureCriteriaFactory(const PipeFailureCriteriaFactory&) = delete;
+    PipeFailureCriteriaFactory& operator=(PipeFailureCriteriaFactory&&) =
+        delete;
+    PipeFailureCriteriaFactory& operator=(const PipeFailureCriteriaFactory&) =
+        delete;
     /*!
      * \brief declare a new generator
      * \param[in] n: name of the failure criterion
@@ -46,22 +53,12 @@ namespace mtest {
      * \param[in] n: name of the failure criterion
      * \param[in] d: data passed to initialize the failure criterion
      */
-    std::unique_ptr<PipeFailureCriterion> generate(const std::string&,
-                                                   const ParametersMap&) const;
+    [[nodiscard]] std::unique_ptr<PipeFailureCriterion> generate(
+        const std::string&, const ParametersMap&) const;
 
    private:
     //! \brief default constructor
     PipeFailureCriteriaFactory() noexcept;
-    //! \brief move constructor (disabled)
-    PipeFailureCriteriaFactory(PipeFailureCriteriaFactory&&) = delete;
-    //! \brief copy constructor (disabled)
-    PipeFailureCriteriaFactory(const PipeFailureCriteriaFactory&) = delete;
-    //! \brief move assignement (disabled)
-    PipeFailureCriteriaFactory& operator=(PipeFailureCriteriaFactory&&) =
-        delete;
-    //! \brief copy assignement (disabled)
-    PipeFailureCriteriaFactory& operator=(const PipeFailureCriteriaFactory&) =
-        delete;
     //! \brief destructor
     ~PipeFailureCriteriaFactory();
     //! \brief list of registred generators

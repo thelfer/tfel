@@ -53,6 +53,12 @@ namespace tfel::utilities {
      *   set key autotitle columnhead
      */
     TextData(const std::string&, const std::string& = "");
+    //
+    TextData() = delete;
+    TextData(TextData&&) = delete;
+    TextData(const TextData&) = delete;
+    TextData& operator=(TextData&&) = delete;
+    TextData& operator=(const TextData&) = delete;
     /*!
      * \param[in] i : column number
      * \return the specified column, converting all values to double
@@ -60,7 +66,7 @@ namespace tfel::utilities {
      * specified column number or if a value can't be converted to
      * a double
      */
-    std::vector<double> getColumn(const size_type) const;
+    [[nodiscard]] std::vector<double> getColumn(const size_type) const;
     /*!
      * \brief extract the specified column, converting all values to
      * double
@@ -77,29 +83,29 @@ namespace tfel::utilities {
      * \throw std::runtime_error if no column with the specified
      * title is found
      */
-    size_type findColumn(const std::string&) const;
+    [[nodiscard]] size_type findColumn(const std::string&) const;
     /*!
      * \return the legend associated to the curves
      */
-    const std::vector<std::string>& getLegends() const;
+    [[nodiscard]] const std::vector<std::string>& getLegends() const;
     /*!
      * \return the title of the specified column
      * \param[in] c : column number
      * \throw std::runtime_error if no title is found
      */
-    std::string getLegend(const size_type c) const;
+    [[nodiscard]] std::string getLegend(const size_type c) const;
     /*!
      * \return an iterator to the first line
      */
-    std::vector<Line>::const_iterator begin() const;
+    [[nodiscard]] std::vector<Line>::const_iterator begin() const;
     /*!
      * \return an iterator past the last line
      */
-    std::vector<Line>::const_iterator end() const;
+    [[nodiscard]] std::vector<Line>::const_iterator end() const;
     /*!
      * get the first commented lines
      */
-    const std::vector<std::string>& getPreamble() const;
+    [[nodiscard]] const std::vector<std::string>& getPreamble() const;
     /*!
      * skip the first lines of the file
      * \param[in] n : number of lines to be skipped
@@ -107,11 +113,6 @@ namespace tfel::utilities {
     void skipLines(const Token::size_type);
 
    private:
-    TextData() = delete;
-    TextData(TextData&&) = delete;
-    TextData(const TextData&) = delete;
-    TextData& operator=(TextData&&) = delete;
-    TextData& operator=(const TextData&) = delete;
     //! list of all tokens of the file, sorted by line
     std::vector<Line> lines;
     //! list of column titles

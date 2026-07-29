@@ -44,7 +44,7 @@ namespace tfel::system {
 
   ProcessManager::Command::~Command() = default;
 
-  ProcessManager::ProcessManager() : shallStopOnSignals(false) {
+  ProcessManager::ProcessManager() {
     auto& sm = SignalManager::getSignalManager();
     struct sigaction action;
     auto f = &ProcessManager::sigChildHandler;

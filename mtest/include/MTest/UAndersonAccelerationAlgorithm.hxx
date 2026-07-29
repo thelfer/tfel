@@ -30,7 +30,7 @@ namespace mtest {
     /*!
      * \return the name of the acceleration algorithm
      */
-    std::string getName() const override;
+    [[nodiscard]] std::string getName() const override;
     /*!
      * \param[in] psz : total number of unknowns (problem size)
      */

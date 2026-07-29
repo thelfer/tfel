@@ -74,15 +74,16 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 3 + j];
     }  // end of operator()
     /*!
      * \return the runtime properties
      */
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const {
-      return RunTimeProperties();
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
+    getRunTimeProperties() const {
+      return {};
     }
   };  // end of struct Expr<ST2toST2ResultType,ST2toST2ST2toST2ProductExpr>
 
@@ -156,15 +157,16 @@ namespace tfel::math {
      * \param[in] i : line index
      * \param[in] j : column index
      */
-    TFEL_HOST_DEVICE constexpr const value_type& operator()(
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr const value_type& operator()(
         const unsigned short i, const unsigned short j) const {
       return this->v[i * 4 + j];
     }  // end of operator()
     /*!
      * \return the runtime properties
      */
-    TFEL_HOST_DEVICE constexpr RunTimeProperties getRunTimeProperties() const {
-      return RunTimeProperties();
+    TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
+    getRunTimeProperties() const {
+      return {};
     }
   };  // end of struct Expr<ST2toST2ResultType,ST2toST2ST2toST2ProductExpr>
 
@@ -287,7 +289,7 @@ namespace tfel::math {
      */
     TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
     getRunTimeProperties() const {
-      return RunTimeProperties();
+      return {};
     }
   };  // end of struct Expr<ST2toST2ResultType,ST2toST2ST2toST2ProductExpr>
 

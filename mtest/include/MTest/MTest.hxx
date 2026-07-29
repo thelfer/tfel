@@ -65,7 +65,7 @@ namespace mtest {
       /*!
        * \return the results of the test
        */
-      virtual tfel::tests::TestResult getResults() const = 0;
+      [[nodiscard]] virtual tfel::tests::TestResult getResults() const = 0;
       //! desctructor
       virtual ~UTest();
     };
@@ -73,14 +73,10 @@ namespace mtest {
      * default constructor
      */
     MTest();
-    /*!
-     * \return the name of the test
-     */
-    std::string name() const override;
-    /*!
-     * \return the group of the test
-     */
-    std::string classname() const override;
+    //! \return the name of the test
+    [[nodiscard]] std::string name() const override;
+    //! \return the group of the test
+    [[nodiscard]] std::string classname() const override;
     /*!
      * \param[in] f : file to be read
      * \param[in] ecmds: external commands
@@ -106,9 +102,9 @@ namespace mtest {
      * \brief integrate the behaviour along the loading path
      * \param[in] bInit: if true, call the completeInitialisationMethod
      */
-    virtual tfel::tests::TestResult execute(const bool);
+    [[nodiscard]] virtual tfel::tests::TestResult execute(const bool);
     //
-    tfel::tests::TestResult execute() override;
+    [[nodiscard]] tfel::tests::TestResult execute() override;
     [[nodiscard]] std::pair<bool, real> prepare(StudyCurrentState&,
                                                 const real,
                                                 const real) const override;

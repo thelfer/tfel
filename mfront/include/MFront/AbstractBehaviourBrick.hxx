@@ -68,15 +68,15 @@ namespace mfront {
     //! \brief a simple alias
     using DataMap = tfel::utilities::DataMap;
     //! \brief return the name of the brick
-    virtual std::string getName() const = 0;
+    [[nodiscard]] virtual std::string getName() const = 0;
     //! \return a description of the brick
-    virtual BehaviourBrickDescription getDescription() const = 0;
+    [[nodiscard]] virtual BehaviourBrickDescription getDescription() const = 0;
     /*!
      * \param[in] b: if true, all options are returned. Otherwise, only the most
      * adapted options for the behaviour are returned.
      * \return the description of the brick options
      */
-    virtual std::vector<bbrick::OptionDescription> getOptions(
+    [[nodiscard]] virtual std::vector<bbrick::OptionDescription> getOptions(
         const bool) const = 0;
     /*!
      * \brief intialize the brick
@@ -93,7 +93,7 @@ namespace mfront {
      * treated by the interface. The second entry is an iterator after
      * the last token treated.
      */
-    virtual std::pair<bool, tokens_iterator> treatKeyword(
+    [[nodiscard]] virtual std::pair<bool, tokens_iterator> treatKeyword(
         const std::string&, tokens_iterator&, const tokens_iterator) = 0;
     /*!
      * \brief This method returns the list of supported modelling
@@ -112,7 +112,8 @@ namespace mfront {
      *   hypotheses selection. If all the bricks returns an empty
      *   list, a set of default modelling hypotheses is selected.
      */
-    virtual std::vector<Hypothesis> getSupportedModellingHypotheses() const = 0;
+    [[nodiscard]] virtual std::vector<Hypothesis>
+    getSupportedModellingHypotheses() const = 0;
     //! method called at the end of the input file processing
     virtual void endTreatment() const = 0;
     //! complete the variable description

@@ -178,25 +178,26 @@ namespace tfel::math {
      * \return the spline value at the given point
      * \param[in] x : point at which the spline is evaluated
      */
-    ValueType operator()(const AbscissaType) const;
+    [[nodiscard]] ValueType operator()(const AbscissaType) const;
     /*!
      * \return the spline integral
      * \param[in] xa: beginning of interval
      * \param[in] xb: end of interval
      */
-    result_type<ValueType, AbscissaType, OpMult> computeIntegral(
+    [[nodiscard]] result_type<ValueType, AbscissaType, OpMult> computeIntegral(
         const AbscissaType, const AbscissaType) const;
     /*!
      * \return the spline mean value
      * \param[in] xa: beginning of interval
      * \param[in] xb: end of interval
      */
-    ValueType computeMeanValue(const AbscissaType, const AbscissaType) const;
+    [[nodiscard]] ValueType computeMeanValue(const AbscissaType,
+                                             const AbscissaType) const;
     /*!
      * \return the spline value at the given point
      * \param[in] x : point at which the spline is evaluated
      */
-    ValueType getValue(const AbscissaType) const;
+    [[nodiscard]] ValueType getValue(const AbscissaType) const;
     /*!
      * \return the value of the spline and the value of its
      * derivative at the given point
@@ -223,7 +224,7 @@ namespace tfel::math {
                    derivative_type<ValueType, AbscissaType, AbscissaType>&,
                    const AbscissaType) const;
     //! \brief return the collocation points
-    const auto& getCollocationPoints() const;
+    [[nodiscard]] const auto& getCollocationPoints() const;
 
    protected:
     //! \brief a simple alias
@@ -235,8 +236,8 @@ namespace tfel::math {
        * \param p : first point
        * \param x : abscissa
        */
-      constexpr bool operator()(const Point&,
-                                const AbscissaType&) const noexcept;
+      [[nodiscard]] constexpr bool operator()(
+          const Point&, const AbscissaType&) const noexcept;
     };  // end of struct PointComparator
 
     /*!

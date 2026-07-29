@@ -68,14 +68,14 @@ namespace mfront {
                             const unsigned short,
                             const size_t);
     //! \return the type flag associated to a the variable
-    SupportedTypes::TypeFlag getTypeFlag() const;
+    [[nodiscard]] SupportedTypes::TypeFlag getTypeFlag() const;
     //! \return the size of the variable
-    SupportedTypes::TypeSize getTypeSize() const;
+    [[nodiscard]] SupportedTypes::TypeSize getTypeSize() const;
     /*!
      * \return an integer describing the type of variable
      * \see `SupportedTypes::getVariableTypeIdentifier` for details.
      */
-    int getVariableTypeIdentifier() const;
+    [[nodiscard]] int getVariableTypeIdentifier() const;
     //! \brief destructor
     ~VariableDescriptionBase();
     /*!

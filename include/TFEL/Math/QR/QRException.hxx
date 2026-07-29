@@ -40,8 +40,8 @@ namespace tfel::math {
     QRUnmatchedSize(QRUnmatchedSize&&) noexcept;
     QRUnmatchedSize(const QRUnmatchedSize&);
     //! \return a string describing the error
-    const char* what() const noexcept final;
-    //! destructor
+    [[nodiscard]] const char* what() const noexcept final;
+    //! \brief destructor
     ~QRUnmatchedSize() noexcept override;
   };  // end of struct QRException
 
@@ -55,8 +55,8 @@ namespace tfel::math {
     QRInvalidMatrixSize(QRInvalidMatrixSize&&) noexcept;
     QRInvalidMatrixSize(const QRInvalidMatrixSize&);
     //! \return a string describing the error
-    const char* what() const noexcept final;
-    //! destructor
+    [[nodiscard]] const char* what() const noexcept final;
+    //! \brief destructor
     ~QRInvalidMatrixSize() noexcept override;
   };  // end of struct QRException
 
@@ -69,8 +69,8 @@ namespace tfel::math {
     QRNullPivot(QRNullPivot&&) noexcept;
     QRNullPivot(const QRNullPivot&);
     //! \return a string describing the error
-    const char* what() const noexcept final;
-    //! destructor
+    [[nodiscard]] const char* what() const noexcept final;
+    //! \brief destructor
     ~QRNullPivot() noexcept override;
   };  // end of struct QRException
 

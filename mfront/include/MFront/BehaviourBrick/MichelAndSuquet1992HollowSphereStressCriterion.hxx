@@ -25,19 +25,14 @@ namespace mfront::bbrick {
    */
   struct MichelAndSuquet1992HollowSphereStressCriterion
       : StandardPorousStressCriterionBase {
-    /*!
-     * \brief constructor
-     */
+    //! \brief constructor
     MichelAndSuquet1992HollowSphereStressCriterion();
-
-    std::vector<BehaviourSymmetry> getSupportedBehaviourSymmetries()
-        const override;
-
-    std::vector<OptionDescription> getOptions() const override;
-
-    PorosityEffectOnFlowRule getPorosityEffectOnEquivalentPlasticStrain()
-        const override;
-
+    //
+    [[nodiscard]] std::vector<BehaviourSymmetry>
+    getSupportedBehaviourSymmetries() const override;
+    [[nodiscard]] std::vector<OptionDescription> getOptions() const override;
+    [[nodiscard]] PorosityEffectOnFlowRule
+    getPorosityEffectOnEquivalentPlasticStrain() const override;
     //! \brief destructor
     ~MichelAndSuquet1992HollowSphereStressCriterion() override;
   };  // end of struct MichelAndSuquet1992HollowSphereStressCriterion

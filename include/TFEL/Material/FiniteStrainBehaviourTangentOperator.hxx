@@ -73,7 +73,7 @@ namespace tfel::material {
                 tfel::math::t2tot2<N, StressType>*,
                 tfel::math::t2tost2<N, StressType>*,
                 tfel::math::st2tost2<N, StressType>*>::type> {
-    //! supported tangent operator types;
+    //! \brief supported tangent operator types;
     using TOTypes = typename tfel::meta::GenerateTypeList<
         tfel::math::t2tot2<N, StressType>,
         tfel::math::t2tost2<N, StressType>,
@@ -81,11 +81,11 @@ namespace tfel::material {
         tfel::math::t2tot2<N, StressType>*,
         tfel::math::t2tost2<N, StressType>*,
         tfel::math::st2tost2<N, StressType>*>::type;
-    //! a simple alias
+    //! \brief a simple alias
     using GenType = tfel::utilities::GenTypeBase<TOTypes>;
-    //! default constructor
-    FiniteStrainBehaviourTangentOperator() {}
-    //! copy constructor
+    //! \brief default constructor
+    FiniteStrainBehaviourTangentOperator() = default;
+    //! \brief copy constructor
     FiniteStrainBehaviourTangentOperator(
         const FiniteStrainBehaviourTangentOperator& src)
         : GenType(src) {}  // end of FiniteStrainBehaviourTangentOperator
@@ -178,7 +178,7 @@ namespace tfel::material {
       FiniteStrainBehaviourTangentOperatorBase::DSIG_DF,
       N,
       StressType> {
-    //! the result of the meta function
+    //! \brief the result of the meta function
     using type = tfel::math::t2tost2<N, StressType>;
   };  // end of struct
       // FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DSIG_DF,N,StressType>
@@ -192,7 +192,7 @@ namespace tfel::material {
       FiniteStrainBehaviourTangentOperatorBase::DSIG_DDF,
       N,
       StressType> {
-    //! the result of the meta function
+    //! \brief the result of the meta function
     using type = tfel::math::t2tost2<N, StressType>;
   };  // end of struct
       // FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DSIG_DDF,N,StressType>
@@ -206,7 +206,7 @@ namespace tfel::material {
       FiniteStrainBehaviourTangentOperatorBase::C_TRUESDELL,
       N,
       StressType> {
-    //! the result of the meta function
+    //! \brief the result of the meta function
     using type = tfel::math::st2tost2<N, StressType>;
   };  // end of struct
       // FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::C_TRUESDELL,N,StressType>
@@ -220,7 +220,7 @@ namespace tfel::material {
       FiniteStrainBehaviourTangentOperatorBase::ABAQUS,
       N,
       StressType> {
-    //! the result of the meta function
+    //! \brief the result of the meta function
     using type = tfel::math::st2tost2<N, StressType>;
   };
   /*!
@@ -232,7 +232,7 @@ namespace tfel::material {
       FiniteStrainBehaviourTangentOperatorBase::C_TAU_JAUMANN,
       N,
       StressType> {
-    //! the result of the meta function
+    //! \brief the result of the meta function
     using type = tfel::math::st2tost2<N, StressType>;
   };
   /*!
@@ -243,7 +243,7 @@ namespace tfel::material {
       FiniteStrainBehaviourTangentOperatorBase::SPATIAL_MODULI,
       N,
       StressType> {
-    //! the result of the meta function
+    //! \brief the result of the meta function
     using type = tfel::math::st2tost2<N, StressType>;
   };
 
@@ -256,7 +256,7 @@ namespace tfel::material {
       FiniteStrainBehaviourTangentOperatorBase::DTAU_DF,
       N,
       StressType> {
-    //! the result of the meta function
+    //! \brief the result of the meta function
     using type = tfel::math::t2tost2<N, StressType>;
   };  // end of struct
       // FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DTAU_DF,N,StressType>
@@ -270,7 +270,7 @@ namespace tfel::material {
       FiniteStrainBehaviourTangentOperatorBase::DTAU_DDF,
       N,
       StressType> {
-    //! the result of the meta function
+    //! \brief the result of the meta function
     using type = tfel::math::t2tost2<N, StressType>;
   };  // end of struct
       // FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DTAU_DDF,N,StressType>
@@ -284,7 +284,7 @@ namespace tfel::material {
       FiniteStrainBehaviourTangentOperatorBase::DS_DF,
       N,
       StressType> {
-    //! the result of the meta function
+    //! \brief the result of the meta function
     using type = tfel::math::t2tost2<N, StressType>;
   };  // end of struct
       // FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DS_DF,N,StressType>
@@ -299,7 +299,7 @@ namespace tfel::material {
       FiniteStrainBehaviourTangentOperatorBase::DS_DDF,
       N,
       StressType> {
-    //! the result of the meta function
+    //! \brief the result of the meta function
     using type = tfel::math::t2tost2<N, StressType>;
   };  // end of struct
       // FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DS_DDF,N,StressType>
@@ -314,7 +314,7 @@ namespace tfel::material {
       FiniteStrainBehaviourTangentOperatorBase::DS_DC,
       N,
       StressType> {
-    //! the result of the meta function
+    //! \brief the result of the meta function
     using type = tfel::math::st2tost2<N, StressType>;
   };  // end of struct
       // FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DS_DC,N,StressType>
@@ -329,7 +329,7 @@ namespace tfel::material {
       FiniteStrainBehaviourTangentOperatorBase::DS_DEGL,
       N,
       StressType> {
-    //! the result of the meta function
+    //! \brief the result of the meta function
     using type = tfel::math::st2tost2<N, StressType>;
   };  // end of struct
       // FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DS_DEGL,N,StressType>
@@ -343,7 +343,7 @@ namespace tfel::material {
       FiniteStrainBehaviourTangentOperatorBase::DT_DELOG,
       N,
       StressType> {
-    //! the result of the meta function
+    //! \brief the result of the meta function
     using type = tfel::math::st2tost2<N, StressType>;
   };  // end of struct
       // FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DT_DELOG,N,StressType>
@@ -358,12 +358,12 @@ namespace tfel::material {
       FiniteStrainBehaviourTangentOperatorBase::DPK1_DF,
       N,
       StressType> {
-    //! the result of the meta function
+    //! \brief the result of the meta function
     using type = tfel::math::t2tot2<N, StressType>;
   };  // end of struct
       // FiniteStrainBehaviourTangentOperatorType<FiniteStrainBehaviourTangentOperatorBase::DPK1_DF,N,StressType>
 
-  //! a simple alias
+  //! \brief a simple alias
   template <FiniteStrainBehaviourTangentOperatorBase::Flag TangenOperatorType,
             unsigned short N,
             typename StressType>

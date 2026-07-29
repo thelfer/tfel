@@ -73,7 +73,6 @@ namespace tfel::material {
       //! \brief default constructor
       TFEL_HOST_DEVICE constexpr IntegrationResult() noexcept
           : status(SUCCESS) {}
-#ifndef __clang__
       //! \brief move constructor
       constexpr IntegrationResult(IntegrationResult&&) noexcept = default;
       //! \brief default constructor
@@ -84,26 +83,6 @@ namespace tfel::material {
       //! \brief standard assignement
       constexpr IntegrationResult& operator=(
           const IntegrationResult&) noexcept = default;
-#else
-      //! \brief move constructor
-      TFEL_HOST_DEVICE IntegrationResult(IntegrationResult&& src) noexcept
-          : status(src.status) {}
-      //! \brief default constructor
-      TFEL_HOST_DEVICE IntegrationResult(const IntegrationResult& src) noexcept
-          : status(src.status) {}
-      //! \brief move assignement
-      TFEL_HOST_DEVICE IntegrationResult& operator=(
-          IntegrationResult&& src) noexcept {
-        this->status = src.status;
-        return *this;
-      }
-      //! \brief standard assignement
-      TFEL_HOST_DEVICE IntegrationResult& operator=(
-          const IntegrationResult& src) noexcept {
-        this->status = src.status;
-        return *this;
-      }
-#endif
       /*!
        * \brief constructor from an ExitStatus
        */

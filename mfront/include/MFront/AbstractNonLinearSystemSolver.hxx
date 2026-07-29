@@ -42,7 +42,7 @@ namespace mfront {
      * \param[in] bd: behaviour description
      * \param[in] h: modelling hypothesis
      */
-    virtual std::string getExternalAlgorithmClassName(
+    [[nodiscard]] virtual std::string getExternalAlgorithmClassName(
         const BehaviourDescription&, const Hypothesis) const = 0;
     /*!
      * \brief initialize numerical parameters for the behaviour parameters
@@ -54,29 +54,30 @@ namespace mfront {
                                                const BehaviourDescription&,
                                                const Hypothesis) const = 0;
     //! \return the header to be included
-    virtual std::vector<std::string> getSpecificHeaders() const = 0;
+    [[nodiscard]] virtual std::vector<std::string> getSpecificHeaders()
+        const = 0;
     //! \return the reserved names
-    virtual std::vector<std::string> getReservedNames() const = 0;
+    [[nodiscard]] virtual std::vector<std::string> getReservedNames() const = 0;
     /*!
      * \return list of member names that are defined by the non
      * linear system solver.
      */
-    virtual std::vector<std::string> getMemberNames() const = 0;
+    [[nodiscard]] virtual std::vector<std::string> getMemberNames() const = 0;
     /*!
      * \return true if the solver uses the jacobian of the system
      * (Newton-Raphson solvers) or an approximation of it (Broyden
      * method).d'
      */
-    virtual bool usesJacobian() const = 0;
+    [[nodiscard]] virtual bool usesJacobian() const = 0;
     /*!
      * \return true if the solver uses the invert jacobian of the system
      * or an approximation of it (second Broyden method).
      */
-    virtual bool usesJacobianInvert() const = 0;
+    [[nodiscard]] virtual bool usesJacobianInvert() const = 0;
     /*!
      * \return true if the solver requires a numerical jacobian
      */
-    virtual bool requiresNumericalJacobian() const = 0;
+    [[nodiscard]] virtual bool requiresNumericalJacobian() const = 0;
     /*!
      * \return true if the solver allows the user to initialize the
      * jacobian.
@@ -84,7 +85,7 @@ namespace mfront {
      * jacobian could for example be initialised to identity in the
      * behaviour constructor.
      */
-    virtual bool allowsJacobianInitialisation() const = 0;
+    [[nodiscard]] virtual bool allowsJacobianInitialisation() const = 0;
     /*!
      * \return true if the solver allows the user to initialize the
      * invert of the jacobian.
@@ -92,14 +93,14 @@ namespace mfront {
      * invert of the jacobian could for example be initialised to
      * identity in the behaviour constructor.
      */
-    virtual bool allowsJacobianInvertInitialisation() const = 0;
+    [[nodiscard]] virtual bool allowsJacobianInvertInitialisation() const = 0;
     /*!
      * \return true if the solver requires the jacobian to be
      * initialized to the identity matrix at the beginning of the
      * computeFdF method.
      */
-    virtual bool requiresJacobianToBeReinitialisedToIdentityAtEachIterations()
-        const = 0;
+    [[nodiscard]] virtual bool
+    requiresJacobianToBeReinitialisedToIdentityAtEachIterations() const = 0;
     /*!
      * \brief write the algorithm specific members
      * \param[in,out] md  : mechanical description
@@ -107,11 +108,11 @@ namespace mfront {
      * \param[in] p       : current position in file (after keyword)
      * \param[in] pe      : end of file
      */
-    virtual std::pair<bool, tokens_iterator> treatSpecificKeywords(
-        BehaviourDescription&,
-        const std::string&,
-        const tokens_iterator,
-        const tokens_iterator) = 0;
+    [[nodiscard]] virtual std::pair<bool, tokens_iterator>
+    treatSpecificKeywords(BehaviourDescription&,
+                          const std::string&,
+                          const tokens_iterator,
+                          const tokens_iterator) = 0;
     /*!
      * \brief method called when all the user defined variables have been set.
      * \param[in,out] md  : mechanical description

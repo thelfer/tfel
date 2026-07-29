@@ -102,10 +102,7 @@ namespace mfront {
     return "cyrano" + makeLowerCase(this->getBehaviourName(library, className));
   }  // end of getUmatFunctionName
 
-  CyranoInterface::CyranoInterface()
-      : useTimeSubStepping(false),
-        doSubSteppingOnInvalidResults(false),
-        maximumSubStepping(0u) {}  // end of CyranoInterface
+  CyranoInterface::CyranoInterface() = default;
 
   std::pair<bool, CyranoInterface::tokens_iterator>
   CyranoInterface::treatKeyword(BehaviourDescription& bd,

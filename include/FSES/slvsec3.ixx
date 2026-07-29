@@ -38,6 +38,7 @@
 
 #include <cmath>
 #include <limits>
+#include <numbers>
 #include <utility>
 #include "FSES/Utilities.hxx"
 
@@ -51,7 +52,7 @@ namespace fses {
                int i0,
                int i1,
                int i2) {
-    constexpr auto c_sqrt3 = real(1.73205080756887729352744634151);
+    constexpr auto c_sqrt3 = std::numbers::sqrt3_v<real>;
     constexpr auto zero = real(0);
     constexpr auto one = real(1);
     constexpr auto two = real(2);

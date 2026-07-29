@@ -21,10 +21,15 @@ namespace mfront::bbrick {
 
   //! \brief abstract factory for inelastic Flows.
   struct MFRONT_VISIBILITY_EXPORT InelasticFlowFactory {
-    //! a simple alias
+    //! \brief a simple alias
     using Generator = std::function<std::shared_ptr<InelasticFlow>()>;
     //! \return the uniq instance of the class
-    static InelasticFlowFactory& getFactory();
+    [[nodiscard]] static InelasticFlowFactory& getFactory();
+    //
+    InelasticFlowFactory(InelasticFlowFactory&&) = delete;
+    InelasticFlowFactory(const InelasticFlowFactory&) = delete;
+    InelasticFlowFactory& operator=(InelasticFlowFactory&&) = delete;
+    InelasticFlowFactory& operator=(const InelasticFlowFactory&) = delete;
     /*!
      * \brief add a new generator
      * \param[in] n: name of the generator
@@ -32,24 +37,17 @@ namespace mfront::bbrick {
      */
     void addGenerator(const std::string&, const Generator&);
     //! \return the list of available inelastic flows
-    std::vector<std::string> getRegistredInelasticFlows() const;
+    [[nodiscard]] std::vector<std::string> getRegistredInelasticFlows() const;
     /*!
      * \brief generate a new inelastic flow
      * \param[in] n: name of the inelastic flow
      */
-    std::shared_ptr<InelasticFlow> generate(const std::string&) const;
+    [[nodiscard]] std::shared_ptr<InelasticFlow> generate(
+        const std::string&) const;
 
    private:
-    //! default constructor
+    //! \brief default constructor
     InelasticFlowFactory();
-    //! move constructor (deleted)
-    InelasticFlowFactory(InelasticFlowFactory&&) = delete;
-    //! copy constructor (deleted)
-    InelasticFlowFactory(const InelasticFlowFactory&) = delete;
-    //! move assignement (deleted)
-    InelasticFlowFactory& operator=(InelasticFlowFactory&&) = delete;
-    //! standard assignement(deleted)
-    InelasticFlowFactory& operator=(const InelasticFlowFactory&) = delete;
     //! \brief destructor
     ~InelasticFlowFactory();
     //! \brief generators

@@ -57,9 +57,9 @@ namespace mfront::bbrick {
      * \param[in] fid: flow id
      * \param[in] id: identifier
      */
-    static std::string getVariableId(const std::string&,
-                                     const std::string&,
-                                     const std::string&);
+    [[nodiscard]] static std::string getVariableId(const std::string&,
+                                                   const std::string&,
+                                                   const std::string&);
     /*!
      * \param[in,out] bd: behaviour description
      * \param[in,out] dsl: abstract behaviour dsl
@@ -79,7 +79,7 @@ namespace mfront::bbrick {
      * \param[in] fid: flow id
      * \param[in] id: identifier
      */
-    virtual std::string computeStrainRateSensitivityFactor(
+    [[nodiscard]] virtual std::string computeStrainRateSensitivityFactor(
         const BehaviourDescription&,
         const std::string&,
         const std::string&) const = 0;
@@ -91,7 +91,8 @@ namespace mfront::bbrick {
      * \param[in] fid: flow id
      * \param[in] id: identifier
      */
-    virtual std::string computeStrainRateSensitivityFactorAndDerivative(
+    [[nodiscard]] virtual std::string
+    computeStrainRateSensitivityFactorAndDerivative(
         const BehaviourDescription&,
         const std::string&,
         const std::string&) const = 0;
@@ -107,7 +108,7 @@ namespace mfront::bbrick {
                               const std::string&,
                               const std::string&) const = 0;
     //! \return the flow options
-    virtual std::vector<OptionDescription> getOptions() const = 0;
+    [[nodiscard]] virtual std::vector<OptionDescription> getOptions() const = 0;
     //! destructor
     virtual ~StrainRateSensitivityFactor();
   };  // end of struct StrainRateSensitivityFactor

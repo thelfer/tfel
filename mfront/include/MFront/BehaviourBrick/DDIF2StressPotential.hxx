@@ -38,9 +38,10 @@ namespace mfront::bbrick {
   struct DDIF2StressPotential : HookeStressPotential {
     //! \brief constructor
     DDIF2StressPotential();
-    std::string getName() const override;
-    std::vector<OptionDescription> getOptions(const BehaviourDescription&,
-                                              const bool) const override;
+    //
+    [[nodiscard]] std::string getName() const override;
+    [[nodiscard]] std::vector<OptionDescription> getOptions(
+        const BehaviourDescription&, const bool) const override;
     void initialize(BehaviourDescription&,
                     AbstractBehaviourDSL&,
                     const DataMap&) override;
@@ -48,7 +49,7 @@ namespace mfront::bbrick {
         BehaviourDescription&, const AbstractBehaviourDSL&) const override;
     void endTreatment(BehaviourDescription&,
                       const AbstractBehaviourDSL&) const override;
-    //! destructor
+    //! \brief destructor
     ~DDIF2StressPotential() override;
 
    protected:

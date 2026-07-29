@@ -37,6 +37,7 @@
 #define LIB_FSES_SYEVC3_IXX
 
 #include <cmath>
+#include <numbers>
 #include "FSES/Utilities.hxx"
 
 namespace fses {
@@ -44,8 +45,7 @@ namespace fses {
   template <typename MatrixType, typename VectorType>
   int syevc3(VectorType& w, const MatrixType& A) {
     using real = GetMatrixNumericType_t<MatrixType>;
-
-    constexpr auto c_sqrt3 = real(1.73205080756887729352744634151);
+    constexpr auto c_sqrt3 = std::numbers::sqrt3_v<real>;
     constexpr auto one = real(1);
     constexpr auto two = real(2);
     constexpr auto three = real(3);

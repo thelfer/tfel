@@ -22,7 +22,7 @@ namespace mfront::bbrick {
    * \brief class describing the Prager kinematic hardening rule
    */
   struct PragerKinematicHardeningRule : KinematicHardeningRuleBase {
-    std::string buildBackStrainImplicitEquations(
+    [[nodiscard]] std::string buildBackStrainImplicitEquations(
         const BehaviourDescription&,
         const StressPotential&,
         const StressCriterion&,

@@ -47,14 +47,15 @@ namespace mfront {
        * \param[in]     cn : code block
        */
       Timer(BehaviourProfiler&, const index_type);
-      //! destructor
+      //
+      Timer& operator=(const Timer&) = delete;
+      Timer& operator=(Timer&&) = delete;
+      //! \brief destructor
       ~Timer();
 
      protected:
       Timer(const Timer&) = default;
       Timer(Timer&&) = default;
-      Timer& operator=(const Timer&) = delete;
-      Timer& operator=(Timer&&) = delete;
       //! timer to which the results are reported
       BehaviourProfiler& gtimer;
       //! code block associated with the timer

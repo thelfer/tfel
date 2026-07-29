@@ -12,6 +12,7 @@
  */
 
 #include <cmath>
+#include <numbers>
 #include <algorithm>
 #include "NUMODIS/Math/Utilities.hxx"
 #include "NUMODIS/GSystem.hxx"
@@ -40,11 +41,11 @@ namespace numodis {
     // atom basis
     //---------------
     _alattice.resize(4, Vect3());
-    _alattice[0][0] = sqrt(3.) / 2.;
+    _alattice[0][0] = std::numbers::sqrt3_v<double> / 2.;
     _alattice[0][1] = 1 / 2.;
     _alattice[0][2] = 0.;
 
-    _alattice[1][0] = -sqrt(3.) / 2.;
+    _alattice[1][0] = -std::numbers::sqrt3_v<double> / 2.;
     _alattice[1][1] = 1 / 2.;
     _alattice[1][2] = 0.;
 
@@ -60,11 +61,11 @@ namespace numodis {
     // Burgers basis
     //---------------
     _blattice.resize(4, Vect3());
-    _blattice[0][0] = sqrt(3.) / 2.;
+    _blattice[0][0] = std::numbers::sqrt3_v<double> / 2.;
     _blattice[0][1] = 1 / 2.;
     _blattice[0][2] = 0.;
 
-    _blattice[1][0] = -sqrt(3.) / 2.;
+    _blattice[1][0] = -std::numbers::sqrt3_v<double> / 2.;
     _blattice[1][1] = 1 / 2.;
     _blattice[1][2] = 0.;
 
@@ -80,11 +81,11 @@ namespace numodis {
     // plane basis
     //-------------
     _plattice.resize(4, Vect3());
-    _plattice[0][0] = sqrt(3.) / 12.;
+    _plattice[0][0] = std::numbers::sqrt3_v<double> / 12.;
     _plattice[0][1] = 1. / 12.;
     _plattice[0][2] = 0.;
 
-    _plattice[1][0] = -sqrt(3.) / 12;
+    _plattice[1][0] = -std::numbers::sqrt3_v<double> / 12;
     _plattice[1][1] = 1. / 12.;
     _plattice[1][2] = 0.;
 

@@ -49,7 +49,7 @@ namespace mfront {
      * This method returns true if the stress update algorithm is used and the
      * elastic material properties are defined and non constant.
      */
-    virtual bool shallComputeTheElasticStrain() const;
+    [[nodiscard]] virtual bool shallComputeTheElasticStrain() const;
     /*!
      * \brief this method writes the computation of deviatoric part of the trial
      * stress, the normal. If required, it also write the computation of the

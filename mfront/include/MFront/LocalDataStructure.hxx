@@ -54,19 +54,19 @@ namespace mfront {
      */
     LocalDataStructure& addVariable(const Hypothesis, const Variable&);
     //! \brief return the list of specialised hypotheses
-    std::vector<Hypothesis> getSpecialisedHypotheses() const;
+    [[nodiscard]] std::vector<Hypothesis> getSpecialisedHypotheses() const;
     /*!
      * \brief return the list of variables of variables of the given
      * hypothesis
      * \param[in] h: modelling hypothesis
      */
-    const std::vector<Variable>& get(const Hypothesis) const;
+    [[nodiscard]] const std::vector<Variable>& get(const Hypothesis) const;
     /*!
      * \brief return true if a variable has been defined
      * \param[in] h: modelling hypothesis
      * \param[in] n: variable name
      */
-    bool contains(const Hypothesis, const std::string&) const;
+    [[nodiscard]] bool contains(const Hypothesis, const std::string&) const;
 
    private:
     //! variable for the undefined hypothesis

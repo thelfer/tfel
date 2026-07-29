@@ -230,7 +230,8 @@ namespace mfmtg {
 #endif /* MFM_TEST_GENERATOR_HAVE_MADNEX */
     }  // end of registerCommandLineCallBacks
 
-    const tfel::utilities::Argument& getCurrentCommandLineArgument() const {
+    [[nodiscard]] const tfel::utilities::Argument&
+    getCurrentCommandLineArgument() const {
       return *(this->currentArgument);
     }
 
@@ -292,11 +293,11 @@ namespace mfmtg {
       }
     }  // end of treatUnknownArgument
 
-    std::string getVersionDescription() const override {
+    [[nodiscard]] std::string getVersionDescription() const override {
       return "1.0";
     }  // end of getVersionDescription
 
-    std::string getUsageDescription() const override {
+    [[nodiscard]] std::string getUsageDescription() const override {
       return "Usage: " + this->programName + " [options] [files]";
     }  // end of getUsageDescription
 

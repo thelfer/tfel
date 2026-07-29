@@ -31,10 +31,10 @@ namespace numodis {
   struct TFELNUMODIS_VISIBILITY_EXPORT Hardening {
     Hardening(const Crystallo&, const std::vector<GSystem>&);
 
-    int getNinteractions() const;
+    [[nodiscard]] int getNinteractions() const;
 
-    int getRankInteraction(const GSystem& gsystem1,
-                           const GSystem& gsystem2) const;
+    [[nodiscard]] int getRankInteraction(const GSystem& gsystem1,
+                                         const GSystem& gsystem2) const;
 
    private:
     TFELNUMODIS_VISIBILITY_FRIEND_EXPORT friend std::ostream& operator<<(

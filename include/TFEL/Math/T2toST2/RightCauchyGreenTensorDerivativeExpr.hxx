@@ -73,7 +73,7 @@ namespace tfel::math {
      */
     TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
     getRunTimeProperties() const noexcept {
-      return RunTimeProperties();
+      return {};
     }
   };  // end of Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> >
 
@@ -132,7 +132,7 @@ namespace tfel::math {
      */
     TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
     getRunTimeProperties() const noexcept {
-      return RunTimeProperties();
+      return {};
     }
   };  // end of Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> >
 
@@ -221,7 +221,7 @@ namespace tfel::math {
      */
     TFEL_HOST_DEVICE [[nodiscard]] constexpr RunTimeProperties
     getRunTimeProperties() const noexcept {
-      return RunTimeProperties();
+      return {};
     }
   };  // end of Expr<T2toST2Type,RightCauchyGreenTensorDerivativeExpr<1u> >
 

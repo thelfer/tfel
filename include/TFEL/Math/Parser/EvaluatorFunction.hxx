@@ -41,8 +41,9 @@ namespace tfel::math::parser {
   struct EvaluatorFunctionBase : public Expr {
     //! \brief constructor
     EvaluatorFunctionBase();
-    std::string getCxxFormula(const std::vector<std::string>&) const override;
-    std::shared_ptr<Expr> differentiate(
+    [[nodiscard]] std::string getCxxFormula(
+        const std::vector<std::string>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr> differentiate(
         const std::vector<double>::size_type,
         const std::vector<double>&) const override;
     //! \brief destructor
@@ -52,14 +53,16 @@ namespace tfel::math::parser {
   struct EvaluatorFunction1VBase : public EvaluatorFunctionBase {
     EvaluatorFunction1VBase(const std::shared_ptr<Expr>);
     //
-    bool isConstant() const override;
-    bool dependsOnVariable(const std::vector<double>::size_type) const override;
+    EvaluatorFunction1VBase& operator=(const EvaluatorFunction1VBase&) = delete;
+    EvaluatorFunction1VBase& operator=(EvaluatorFunction1VBase&&) = delete;
+    //
+    [[nodiscard]] bool isConstant() const override;
+    [[nodiscard]] bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
     ~EvaluatorFunction1VBase() override;
 
    protected:
-    EvaluatorFunction1VBase& operator=(const EvaluatorFunction1VBase&) = delete;
-    EvaluatorFunction1VBase& operator=(EvaluatorFunction1VBase&&) = delete;
     const std::shared_ptr<Expr> expr;
   };  // end of struct EvaluatorFunction1V
 
@@ -67,14 +70,16 @@ namespace tfel::math::parser {
     EvaluatorFunction2VBase(const std::shared_ptr<Expr>,
                             const std::shared_ptr<Expr>);
     //
-    bool isConstant() const override;
-    bool dependsOnVariable(const std::vector<double>::size_type) const override;
+    EvaluatorFunction2VBase& operator=(const EvaluatorFunction2VBase&) = delete;
+    EvaluatorFunction2VBase& operator=(EvaluatorFunction2VBase&&) = delete;
+    //
+    [[nodiscard]] bool isConstant() const override;
+    [[nodiscard]] bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
     void checkCyclicDependency(std::vector<std::string>&) const override;
     ~EvaluatorFunction2VBase() override;
 
    protected:
-    EvaluatorFunction2VBase& operator=(const EvaluatorFunction2VBase&) = delete;
-    EvaluatorFunction2VBase& operator=(EvaluatorFunction2VBase&&) = delete;
     const std::shared_ptr<Expr> e1;
     const std::shared_ptr<Expr> e2;
   };  // end of struct EvaluatorFunction2V
@@ -83,11 +88,17 @@ namespace tfel::math::parser {
     EvaluatorFunction1P1V(const EvaluatorProxyFunctionPtr1P1V,
                           const int,
                           const std::shared_ptr<Expr>);
-    double getValue() const override;
-    std::shared_ptr<Expr> resolveDependencies(
+    //
+    EvaluatorFunction1P1V& operator=(const EvaluatorFunction1P1V&) = delete;
+    EvaluatorFunction1P1V& operator=(EvaluatorFunction1P1V&&) = delete;
+    //
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
-    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+    [[nodiscard]] std::shared_ptr<Expr> clone(
+        const std::vector<double>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr>
+    createFunctionByChangingParametersIntoVariables(
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
@@ -96,8 +107,6 @@ namespace tfel::math::parser {
     ~EvaluatorFunction1P1V() override;
 
    private:
-    EvaluatorFunction1P1V& operator=(const EvaluatorFunction1P1V&) = delete;
-    EvaluatorFunction1P1V& operator=(EvaluatorFunction1P1V&&) = delete;
     EvaluatorProxyFunctionPtr1P1V f;
     const int n;
   };  // end of struct EvaluatorFunction1P1V
@@ -107,11 +116,17 @@ namespace tfel::math::parser {
                           const int,
                           const int,
                           const std::shared_ptr<Expr>);
-    double getValue() const override;
-    std::shared_ptr<Expr> resolveDependencies(
+    //
+    EvaluatorFunction2P1V& operator=(const EvaluatorFunction2P1V&) = delete;
+    EvaluatorFunction2P1V& operator=(EvaluatorFunction2P1V&&) = delete;
+    //
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
-    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+    [[nodiscard]] std::shared_ptr<Expr> clone(
+        const std::vector<double>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr>
+    createFunctionByChangingParametersIntoVariables(
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
@@ -120,8 +135,6 @@ namespace tfel::math::parser {
     ~EvaluatorFunction2P1V() override;
 
    private:
-    EvaluatorFunction2P1V& operator=(const EvaluatorFunction2P1V&) = delete;
-    EvaluatorFunction2P1V& operator=(EvaluatorFunction2P1V&&) = delete;
     EvaluatorProxyFunctionPtr2P1V f;
     const int n;
     const int m;
@@ -132,11 +145,17 @@ namespace tfel::math::parser {
                           const int,
                           const std::shared_ptr<Expr>,
                           const std::shared_ptr<Expr>);
-    double getValue() const override;
-    std::shared_ptr<Expr> resolveDependencies(
+    //
+    EvaluatorFunction1P2V& operator=(const EvaluatorFunction1P2V&) = delete;
+    EvaluatorFunction1P2V& operator=(EvaluatorFunction1P2V&&) = delete;
+    //
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
-    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+    [[nodiscard]] std::shared_ptr<Expr> clone(
+        const std::vector<double>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr>
+    createFunctionByChangingParametersIntoVariables(
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
@@ -145,8 +164,6 @@ namespace tfel::math::parser {
     ~EvaluatorFunction1P2V() override;
 
    private:
-    EvaluatorFunction1P2V& operator=(const EvaluatorFunction1P2V&) = delete;
-    EvaluatorFunction1P2V& operator=(EvaluatorFunction1P2V&&) = delete;
     EvaluatorProxyFunctionPtr1P2V f;
     const int n;
   };  // end of struct EvaluatorFunction1P2V
@@ -157,11 +174,17 @@ namespace tfel::math::parser {
                           const int,
                           const std::shared_ptr<Expr>,
                           const std::shared_ptr<Expr>);
-    double getValue() const override;
-    std::shared_ptr<Expr> resolveDependencies(
+    //
+    EvaluatorFunction2P2V& operator=(const EvaluatorFunction2P2V&) = delete;
+    EvaluatorFunction2P2V& operator=(EvaluatorFunction2P2V&&) = delete;
+    //
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
-    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+    [[nodiscard]] std::shared_ptr<Expr> clone(
+        const std::vector<double>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr>
+    createFunctionByChangingParametersIntoVariables(
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
@@ -170,8 +193,6 @@ namespace tfel::math::parser {
     ~EvaluatorFunction2P2V() override;
 
    private:
-    EvaluatorFunction2P2V& operator=(const EvaluatorFunction2P2V&) = delete;
-    EvaluatorFunction2P2V& operator=(EvaluatorFunction2P2V&&) = delete;
     EvaluatorProxyFunctionPtr2P2V f;
     const int n;
     const int m;
@@ -186,13 +207,19 @@ namespace tfel::math::parser {
     EvaluatorFunctionNV(typename EvaluatorFunctionWrapper<N>::type,
                         const std::vector<std::shared_ptr<Expr>>&);
     //
-    bool isConstant() const override;
-    bool dependsOnVariable(const std::vector<double>::size_type) const override;
-    double getValue() const override;
-    std::shared_ptr<Expr> resolveDependencies(
+    EvaluatorFunctionNV& operator=(const EvaluatorFunctionNV&) = delete;
+    EvaluatorFunctionNV& operator=(EvaluatorFunctionNV&&) = delete;
+    //
+    [[nodiscard]] bool isConstant() const override;
+    [[nodiscard]] bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
-    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+    [[nodiscard]] std::shared_ptr<Expr> clone(
+        const std::vector<double>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr>
+    createFunctionByChangingParametersIntoVariables(
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
@@ -202,8 +229,6 @@ namespace tfel::math::parser {
     ~EvaluatorFunctionNV() override;
 
    protected:
-    EvaluatorFunctionNV& operator=(const EvaluatorFunctionNV&) = delete;
-    EvaluatorFunctionNV& operator=(EvaluatorFunctionNV&&) = delete;
     typename EvaluatorFunctionWrapper<N>::type f;
     const std::vector<std::shared_ptr<Expr>> args;
   };  // end of struct EvaluatorFunctionNV
@@ -215,13 +240,19 @@ namespace tfel::math::parser {
                           const int,
                           const std::vector<std::shared_ptr<Expr>>&);
     //
-    bool isConstant() const override;
-    bool dependsOnVariable(const std::vector<double>::size_type) const override;
-    double getValue() const override;
-    std::shared_ptr<Expr> resolveDependencies(
+    EvaluatorFunction1PNV& operator=(const EvaluatorFunction1PNV&) = delete;
+    EvaluatorFunction1PNV& operator=(EvaluatorFunction1PNV&&) = delete;
+    //
+    [[nodiscard]] bool isConstant() const override;
+    [[nodiscard]] bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
-    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+    [[nodiscard]] std::shared_ptr<Expr> clone(
+        const std::vector<double>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr>
+    createFunctionByChangingParametersIntoVariables(
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
@@ -231,8 +262,6 @@ namespace tfel::math::parser {
     ~EvaluatorFunction1PNV() override;
 
    protected:
-    EvaluatorFunction1PNV& operator=(const EvaluatorFunction1PNV&) = delete;
-    EvaluatorFunction1PNV& operator=(EvaluatorFunction1PNV&&) = delete;
     typename EvaluatorFunctionWrapper<N>::type1P f;
     const int n;
     const std::vector<std::shared_ptr<Expr>> args;
@@ -246,13 +275,19 @@ namespace tfel::math::parser {
                           const int,
                           const std::vector<std::shared_ptr<Expr>>&);
     //
-    bool isConstant() const override;
-    bool dependsOnVariable(const std::vector<double>::size_type) const override;
-    double getValue() const override;
-    std::shared_ptr<Expr> resolveDependencies(
+    EvaluatorFunction2PNV& operator=(const EvaluatorFunction2PNV&) = delete;
+    EvaluatorFunction2PNV& operator=(EvaluatorFunction2PNV&&) = delete;
+    //
+    [[nodiscard]] bool isConstant() const override;
+    [[nodiscard]] bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
-    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+    [[nodiscard]] std::shared_ptr<Expr> clone(
+        const std::vector<double>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr>
+    createFunctionByChangingParametersIntoVariables(
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
@@ -261,8 +296,6 @@ namespace tfel::math::parser {
     ~EvaluatorFunction2PNV() override;
 
    protected:
-    EvaluatorFunction2PNV& operator=(const EvaluatorFunction2PNV&) = delete;
-    EvaluatorFunction2PNV& operator=(EvaluatorFunction2PNV&&) = delete;
     typename EvaluatorFunctionWrapper<N>::type2P f;
     const int n;
     const int m;
@@ -276,13 +309,19 @@ namespace tfel::math::parser {
                            const unsigned int,
                            const std::vector<std::shared_ptr<Expr>>&);
     //
-    bool isConstant() const override;
-    bool dependsOnVariable(const std::vector<double>::size_type) const override;
-    double getValue() const override;
-    std::shared_ptr<Expr> resolveDependencies(
+    EvaluatorFunction1UPNV& operator=(const EvaluatorFunction1UPNV&) = delete;
+    EvaluatorFunction1UPNV& operator=(EvaluatorFunction1UPNV&&) = delete;
+    //
+    [[nodiscard]] bool isConstant() const override;
+    [[nodiscard]] bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
-    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+    [[nodiscard]] std::shared_ptr<Expr> clone(
+        const std::vector<double>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr>
+    createFunctionByChangingParametersIntoVariables(
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
@@ -292,8 +331,6 @@ namespace tfel::math::parser {
     ~EvaluatorFunction1UPNV();
 
    protected:
-    EvaluatorFunction1UPNV& operator=(const EvaluatorFunction1UPNV&) = delete;
-    EvaluatorFunction1UPNV& operator=(EvaluatorFunction1UPNV&&) = delete;
     typename EvaluatorFunctionWrapper<N>::type1UP f;
     const unsigned int n;
     const std::vector<std::shared_ptr<Expr>> args;
@@ -307,13 +344,19 @@ namespace tfel::math::parser {
                            const unsigned int m,
                            const std::vector<std::shared_ptr<Expr>>&);
     //
-    bool isConstant() const override;
-    bool dependsOnVariable(const std::vector<double>::size_type) const override;
-    double getValue() const override;
-    std::shared_ptr<Expr> resolveDependencies(
+    EvaluatorFunction2UPNV& operator=(const EvaluatorFunction2UPNV&) = delete;
+    EvaluatorFunction2UPNV& operator=(EvaluatorFunction2UPNV&&) = delete;
+    //
+    [[nodiscard]] bool isConstant() const override;
+    [[nodiscard]] bool dependsOnVariable(
+        const std::vector<double>::size_type) const override;
+    [[nodiscard]] double getValue() const override;
+    [[nodiscard]] std::shared_ptr<Expr> resolveDependencies(
         const std::vector<double>&) const override;
-    std::shared_ptr<Expr> clone(const std::vector<double>&) const override;
-    std::shared_ptr<Expr> createFunctionByChangingParametersIntoVariables(
+    [[nodiscard]] std::shared_ptr<Expr> clone(
+        const std::vector<double>&) const override;
+    [[nodiscard]] std::shared_ptr<Expr>
+    createFunctionByChangingParametersIntoVariables(
         const std::vector<double>&,
         const std::vector<std::string>&,
         const std::map<std::string, std::vector<double>::size_type>&)
@@ -323,8 +366,6 @@ namespace tfel::math::parser {
     ~EvaluatorFunction2UPNV() override;
 
    protected:
-    EvaluatorFunction2UPNV& operator=(const EvaluatorFunction2UPNV&) = delete;
-    EvaluatorFunction2UPNV& operator=(EvaluatorFunction2UPNV&&) = delete;
     typename EvaluatorFunctionWrapper<N>::type2UP f;
     const unsigned int n;
     const unsigned int m;

@@ -38,9 +38,9 @@ namespace tfel::math {
     using Handler = std::conditional_t<
         getSpaceDimension<TensorTypeA>() == 1u,
         TensorProductExpr1D<A, B>,
-        typename std::conditional<getSpaceDimension<TensorTypeA>() == 2u,
-                                  TensorProductExpr2D<A, B>,
-                                  TensorProductExpr3D<A, B>>::type>;
+        typename std::conditional_t<getSpaceDimension<TensorTypeA>() == 2u,
+                                    TensorProductExpr2D<A, B>,
+                                    TensorProductExpr3D<A, B>>>;
 
    public:
     using Result = result_type<TensorTypeA, TensorTypeB, OpMult>;
@@ -126,9 +126,9 @@ namespace tfel::math {
     using TensorProductOperation = std::conditional_t<
         getSpaceDimension<TensorTypeA>() == 1u,
         TensorProductExpr1D<A, TensorTypeB&&>,
-        typename std::conditional<getSpaceDimension<TensorTypeA>() == 2u,
-                                  TensorProductExpr2D<A, TensorTypeB&&>,
-                                  TensorProductExpr3D<A, TensorTypeB&&>>::type>;
+        typename std::conditional_t<getSpaceDimension<TensorTypeA>() == 2u,
+                                    TensorProductExpr2D<A, TensorTypeB&&>,
+                                    TensorProductExpr3D<A, TensorTypeB&&>>>;
 
    public:
     using Result = result_type<TensorTypeA, StensorTypeB, OpMult>;
@@ -152,9 +152,9 @@ namespace tfel::math {
     using TensorProductOperation = std::conditional_t<
         getSpaceDimension<TensorTypeB>() == 1u,
         TensorProductExpr1D<TensorTypeA&&, B>,
-        typename std::conditional<getSpaceDimension<TensorTypeB>() == 2u,
-                                  TensorProductExpr2D<TensorTypeA&&, B>,
-                                  TensorProductExpr3D<TensorTypeA&&, B>>::type>;
+        typename std::conditional_t<getSpaceDimension<TensorTypeB>() == 2u,
+                                    TensorProductExpr2D<TensorTypeA&&, B>,
+                                    TensorProductExpr3D<TensorTypeA&&, B>>>;
 
    public:
     using Result = result_type<StensorTypeA, TensorTypeB, OpMult>;

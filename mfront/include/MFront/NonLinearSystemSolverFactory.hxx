@@ -31,12 +31,17 @@ namespace mfront {
     /*!
      * \return the uniq instance of the solver factory
      */
-    static NonLinearSystemSolverFactory& getNonLinearSystemSolverFactory();
+    [[nodiscard]] static NonLinearSystemSolverFactory&
+    getNonLinearSystemSolverFactory();
+    //
+    NonLinearSystemSolverFactory(const NonLinearSystemSolverFactory&) = delete;
+    NonLinearSystemSolverFactory& operator=(
+        const NonLinearSystemSolverFactory&) = delete;
     /*!
      * \return the requested solver
      * \param[in] a : solver name
      */
-    std::shared_ptr<AbstractNonLinearSystemSolver> getSolver(
+    [[nodiscard]] std::shared_ptr<NonLinearSystemSolver> getSolver(
         const std::string&) const;
     /*!
      * \param[in] a : solver name
@@ -45,23 +50,12 @@ namespace mfront {
     void registerSolver(const std::string&, const constructor);
     /*!
      */
-    std::vector<std::string> getRegistredSolvers() const;
+    [[nodiscard]] std::vector<std::string> getRegistredSolvers() const;
 
    private:
-    /*!
-     * default constructor
-     */
+    //! \brief default constructor
     NonLinearSystemSolverFactory();
-    /*!
-     * copy constructor (disabled)
-     */
-    NonLinearSystemSolverFactory(const NonLinearSystemSolverFactory&);
-    /*!
-     * assignement operator (disabled)
-     */
-    NonLinearSystemSolverFactory& operator=(
-        const NonLinearSystemSolverFactory&);
-    //! all registred constructors
+    //! \brief all registred constructors
     std::map<std::string, constructor> constructors;
   };  // end of struct NonLinearSystemSolverFactory
 

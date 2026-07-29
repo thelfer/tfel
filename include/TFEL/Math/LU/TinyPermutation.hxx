@@ -42,7 +42,7 @@ namespace tfel::math {
     TFEL_HOST_DEVICE [[nodiscard]] constexpr bool isIdentity() const;
 
    protected:
-    bool is_identity;
+    bool is_identity = true;
   };
 
 }  // end of namespace tfel::math

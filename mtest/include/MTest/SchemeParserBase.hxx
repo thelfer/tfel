@@ -1,4 +1,3 @@
-
 /*!
  * \file   SchemeParserBase.hxx
  * \brief
@@ -201,40 +200,40 @@ namespace mtest {
      * \param[in] s: scheme
      * \param[in] k: keyword
      */
-    virtual std::string getDocumentationFilePath(const std::string&,
-                                                 const std::string&) const;
+    [[nodiscard]] virtual std::string getDocumentationFilePath(
+        const std::string&, const std::string&) const;
     /*!
      * \return everything from the given starting point up to the next
      * semi-colon.
      * \param[in,out] p : position in the input file
      */
-    virtual std::string readUntilEndOfInstruction(tokens_iterator&);
+    [[nodiscard]] virtual std::string readUntilEndOfInstruction(
+        tokens_iterator&);
     /*!
      * \return a real value
      * \param[in] t : structure to be filled
      * \param[in,out] p : position in the input file
      */
-    virtual real readDouble(SchemeBase&, tokens_iterator&);
+    [[nodiscard]] virtual real readDouble(SchemeBase&, tokens_iterator&);
     /*!
      * read a time
      * \param[in,out] t : structure to be filled
      * \param[in,out] p : position in the input file
      */
-    virtual real readTime(SchemeBase&, tokens_iterator&);
+    [[nodiscard]] virtual real readTime(SchemeBase&, tokens_iterator&);
     /*!
      * \brief parse an evolution
      * \param[in,out] t    : structure to be filled
      * \param[in]     type : evolution type
      * \param[in,out] p    : position in the input file
      */
-    virtual std::shared_ptr<Evolution> parseEvolution(SchemeBase&,
-                                                      const std::string&,
-                                                      tokens_iterator&);
+    [[nodiscard]] virtual std::shared_ptr<Evolution> parseEvolution(
+        SchemeBase&, const std::string&, tokens_iterator&);
     /*!
      * \brief try to read the type of an evolution
      * \param[in,out] p : position in the input file
      */
-    virtual std::string readEvolutionType(tokens_iterator&);
+    [[nodiscard]] virtual std::string readEvolutionType(tokens_iterator&);
     /*!
      * read an array
      * The expected size of the array is given by the output vector
@@ -252,16 +251,16 @@ namespace mtest {
      * \param[in,out] t : structure to be filled
      * \param[in,out] p : position in the input file
      */
-    virtual std::vector<real> readTimesArray(const std::string& m,
-                                             SchemeBase& t,
-                                             tokens_iterator& p);
+    [[nodiscard]] virtual std::vector<real> readTimesArray(const std::string& m,
+                                                           SchemeBase& t,
+                                                           tokens_iterator& p);
     /*!
      * \brief treat the current keyword
      * \param[in,out] p : position in the input file
      */
-    bool treatKeyword(SchemeBase&, tokens_iterator&);
+    [[nodiscard]] bool treatKeyword(SchemeBase&, tokens_iterator&);
     //! \return the list of keywords
-    std::vector<std::string> getKeyWordsList() const;
+    [[nodiscard]] std::vector<std::string> getKeyWordsList() const;
     //! \brief a simple alias
     using ExternalFunctionManager = tfel::math::parser::ExternalFunctionManager;
     //! \brief external function imported through the `@Import` keyword

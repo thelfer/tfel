@@ -46,14 +46,14 @@ namespace tfel::check {
      * \param[in] x
      * \return value at time in parameter
      */
-    virtual double getValue(const double) const = 0;
+    [[nodiscard]] virtual double getValue(const double) const = 0;
 
     /*!
      * \brief returns the type of interpolation
      *
      * \return string : type of interpolation
      */
-    virtual std::string getType() const = 0;
+    [[nodiscard]] virtual std::string getType() const = 0;
 
     /*!
      * \brief check if interpolation is usable or not
@@ -61,9 +61,9 @@ namespace tfel::check {
      * \return true if interpolation type is other than None, otherwise
      * returns false
      */
-    virtual bool isConform() const = 0;
+    [[nodiscard]] virtual bool isConform() const = 0;
 
-    virtual std::shared_ptr<Interpolation> clone() const = 0;
+    [[nodiscard]] virtual std::shared_ptr<Interpolation> clone() const = 0;
     //! \brief destructor
     virtual ~Interpolation();
   };
